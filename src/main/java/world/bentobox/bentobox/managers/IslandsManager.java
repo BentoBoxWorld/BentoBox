@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -744,12 +746,18 @@ public class IslandsManager {
     /**
      * Clear and reload all islands from database
      */
-    public void load(){
+    public void load() {
         islandCache.clear();
         quarantineCache.clear();
         List<Island> toQuarantine = new ArrayList<>();
+        int owned = 0;
+        int unowned = 0;
         // Attempt to load islands
-        handler.loadObjects().forEach(island -> {
+        for (Island island : handler.loadObjects()) {
+            if (island == null) {
+                plugin.logWarning("Null island when loading...");
+                continue;
+            }
             if (island.isDeleted()) {
                 // These will be deleted later
                 deletedIslands.add(island.getUniqueId());
@@ -765,6 +773,11 @@ public class IslandsManager {
                     // Add to quarantine cache
                     island.setDoNotLoad(true);
                     quarantineCache.computeIfAbsent(island.getOwner(), k -> new ArrayList<>()).add(island);
+                    if (island.getOwner() == null) {
+                        unowned++;
+                    } else {
+                        owned++;
+                    }
                 } else if (island.isSpawn()) {
                     // Success, set spawn if this is the spawn island.
                     this.setSpawn(island);
@@ -779,10 +792,34 @@ public class IslandsManager {
             if (island.getGameMode() == null) {
                 island.setGameMode(plugin.getIWM().getAddon(island.getWorld()).map(gm -> gm.getDescription().getName()).orElse(""));
             }
-        });
+        }
         if (!toQuarantine.isEmpty()) {
             plugin.logError(toQuarantine.size() + " islands could not be loaded successfully; moving to trash bin.");
+            plugin.logError(unowned + " are unowned, " + owned + " are owned.");
+
             toQuarantine.forEach(handler::saveObject);
+            // Check if there are any islands with duplicate islands
+            Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+                Set<UUID> duplicatedUUIDRemovedSet = new HashSet<>();
+                Set<UUID> duplicated = islandCache.getIslands().stream()
+                        .map(Island::getOwner)
+                        .filter(Objects::nonNull)
+                        .filter(n -> !duplicatedUUIDRemovedSet.add(n))
+                        .collect(Collectors.toSet());
+                if (duplicated.size() > 0) {
+                    plugin.logError("**** Owners that have more than one island = " + duplicated.size());
+                    for (UUID uuid : duplicated) {
+                        Set<Island> set = islandCache.getIslands().stream().filter(i -> uuid.equals(i.getOwner())).collect(Collectors.toSet());
+                        plugin.logError(plugin.getPlayers().getName(uuid) + "(" + uuid.toString() + ") has " + set.size() + " islands:");
+                        set.forEach(i -> {
+                            plugin.logError("Island at " + i.getCenter());
+                            plugin.logError("Island unique ID = " + i.getUniqueId());
+                        });
+                        plugin.logError("You should find out which island is real and delete the uniqueID from the database for the bogus one.");
+                        plugin.logError("");
+                    }
+                }
+            });
         }
     }
 

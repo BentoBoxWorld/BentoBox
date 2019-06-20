@@ -13,6 +13,7 @@ import world.bentobox.bentobox.database.objects.Island;
  */
 class IslandGrid {
     private TreeMap<Integer, TreeMap<Integer, Island>> grid = new TreeMap<>();
+    private BentoBox plugin = BentoBox.getInstance();
 
     /**
      * Adds island to grid
@@ -23,9 +24,41 @@ class IslandGrid {
         if (grid.containsKey(island.getMinX())) {
             TreeMap<Integer, Island> zEntry = grid.get(island.getMinX());
             if (zEntry.containsKey(island.getMinZ())) {
-                BentoBox.getInstance().logError("Cannot add island to grid because there is an overlapping");
-                BentoBox.getInstance().logError("island already registered at this location: " + island.getCenter());
-                BentoBox.getInstance().logError("This is most likely caused by island distances changing mid-game, or an old database file");
+                // There is an overlap or duplicate
+                plugin.logError("Cannot load island. Overlapping: " + island.getUniqueId());
+                plugin.logError("Location: " + island.getCenter());
+                // Get the previously loaded island
+                Island firstLoaded = zEntry.get(island.getMinZ());
+                if (firstLoaded.getOwner() == null && island.getOwner() != null) {
+                    // This looks fishy. We prefer to load islands that have an owner. Swap the two
+                    plugin.logError("Duplicate island has an owner, so using that one. " + island.getOwner());
+                    Island clone = new Island(firstLoaded);
+                    firstLoaded = new Island(island);
+                    zEntry.put(island.getMinZ(), firstLoaded);
+                    island = new Island(clone);
+                } else if (firstLoaded.getOwner() != null && island.getOwner() != null) {
+                    // Check if the owners are the same - this is a true duplicate
+                    if (firstLoaded.getOwner().equals(island.getOwner())) {
+                        // Find out which one is the original
+                        if (firstLoaded.getCreatedDate() > island.getCreatedDate()) {
+                            plugin.logError("Same owner duplicate. Swaping based on creation date.");
+                            // FirstLoaded is the newer
+                            Island clone = new Island(firstLoaded);
+                            firstLoaded = new Island(island);
+                            zEntry.put(island.getMinZ(), firstLoaded);
+                            island = new Island(clone);
+                        } else {
+                            plugin.logError("Same owner duplicate.");
+                        }
+                    } else {
+                        plugin.logError("Duplicate but different owner. Keeping first loaded.");
+                        plugin.logError("This is serious!");
+                        plugin.logError("1st loaded ID: " + firstLoaded.getUniqueId());
+                        plugin.logError("1st loaded owner: " + firstLoaded.getOwner());
+                        plugin.logError("2nd loaded ID: " + island.getUniqueId());
+                        plugin.logError("2nd loaded owner: " + island.getOwner());
+                    }
+                }
                 return false;
             } else {
                 // Add island

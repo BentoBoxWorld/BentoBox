@@ -50,14 +50,23 @@ public class AdminTrashCommand extends CompositeCommand {
             }
             return false;
         } else {
-            user.sendMessage("commands.admin.trash.title");
-            for (int i = 0; i < islands.size(); i++) {
-                user.sendMessage("commands.admin.trash.count", TextVariables.NUMBER, String.valueOf(i+1));
-                islands.get(i).showInfo(user);
+            if (targetUUID == null) {
+                showTrash(user, islands);
+            } else {
+                getIslands().getQuarantineCache().values().forEach(v -> showTrash(user, v));
             }
-            user.sendMessage("commands.admin.trash.use-switch", TextVariables.LABEL, getTopLabel());
-            user.sendMessage("commands.admin.trash.use-emptytrash", TextVariables.LABEL, getTopLabel());
             return true;
         }
+    }
+
+    private void showTrash(User user, List<Island> islands) {
+        user.sendMessage("commands.admin.trash.title");
+        for (int i = 0; i < islands.size(); i++) {
+            user.sendMessage("commands.admin.trash.count", TextVariables.NUMBER, String.valueOf(i+1));
+            islands.get(i).showInfo(user);
+        }
+        user.sendMessage("commands.admin.trash.use-switch", TextVariables.LABEL, getTopLabel());
+        user.sendMessage("commands.admin.trash.use-emptytrash", TextVariables.LABEL, getTopLabel());
+
     }
 }

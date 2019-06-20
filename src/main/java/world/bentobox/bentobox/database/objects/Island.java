@@ -159,6 +159,33 @@ public class Island implements DataObject {
     }
 
     /**
+     * Clones an island object
+     * @param island - island to clone
+     */
+    public Island(Island island) {
+        this.center = island.getCenter().clone();
+        this.createdDate = island.createdDate;
+        this.deleted = island.deleted;
+        this.doNotLoad = island.doNotLoad;
+        this.flags.putAll(island.getFlags());
+        this.gameMode = island.gameMode;
+        this.history.addAll(island.history);
+        this.levelHandicap = island.levelHandicap;
+        this.maxEverProtectionRange = island.maxEverProtectionRange;
+        this.members.putAll(island.members);
+        this.name = island.name;
+        this.owner = island.owner;
+        this.protectionRange = island.protectionRange;
+        this.purgeProtected = island.purgeProtected;
+        this.range = island.range;
+        this.spawn = island.spawn;
+        island.spawnPoint.forEach((k,v) -> this.spawnPoint.put(k, v.clone()));
+        this.uniqueId = island.uniqueId;
+        this.updatedDate = island.updatedDate;
+        this.world = island.world;
+    }
+
+    /**
      * Adds a team member. If player is on banned list, they will be removed from it.
      * @param playerUUID - the player's UUID
      */
@@ -1018,5 +1045,18 @@ public class Island implements DataObject {
         return iwm.isEndGenerate(getWorld()) && iwm.isEndIslands(getWorld()) &&
                 iwm.getEndWorld(getWorld()) != null &&
                 !getCenter().toVector().toLocation(iwm.getEndWorld(getWorld())).getBlock().getType().equals(Material.AIR);
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "Island [deleted=" + deleted + ", uniqueId=" + uniqueId + ", center=" + center + ", range=" + range
+                + ", protectionRange=" + protectionRange + ", maxEverProtectionRange=" + maxEverProtectionRange
+                + ", world=" + world + ", gameMode=" + gameMode + ", name=" + name + ", createdDate=" + createdDate
+                + ", updatedDate=" + updatedDate + ", owner=" + owner + ", members=" + members + ", spawn=" + spawn
+                + ", purgeProtected=" + purgeProtected + ", flags=" + flags + ", history=" + history
+                + ", levelHandicap=" + levelHandicap + ", spawnPoint=" + spawnPoint + ", doNotLoad=" + doNotLoad + "]";
     }
 }
