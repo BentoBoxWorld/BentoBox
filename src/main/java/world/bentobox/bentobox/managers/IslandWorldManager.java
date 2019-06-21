@@ -180,7 +180,7 @@ public class IslandWorldManager {
         }
 
         // If allow-nether or allow-end is false, then we will send the user some help.
-        if ((settings.isNetherGenerate() || settings.isEndGenerate()) && (!Bukkit.getAllowNether() || !Bukkit.getAllowEnd())) {
+        if ((settings.isNetherGenerate() && !Bukkit.getAllowNether()) || (settings.isEndGenerate() && !Bukkit.getAllowEnd())) {
             plugin.logWarning("If this is intended in order to prevent the vanilla worlds from being generated, please read the following page:");
             plugin.logWarning("https://github.com/BentoBoxWorld/BentoBox/wiki/Set-one-of-BentoBox-worlds-as-the-server-default-world");
         }
