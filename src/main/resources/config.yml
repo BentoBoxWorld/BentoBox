@@ -1,4 +1,4 @@
-# BentoBox Configuration 1.5.2
+# BentoBox Configuration 1.5.3
 # This config file is dynamic and is updated right after BentoBox loaded its settings from it.
 # You can edit it while the server is online and you can do '/bbox reload' to take the changes into account.
 # However, it is a better practice to edit this file while the server is offline.
@@ -21,6 +21,7 @@ general:
     # MYSQL might not work with all implementations: if available, use a dedicated database type (e.g. MARIADB).
     # If you use MONGODB, you must also run the BSBMongo plugin (not addon).
     # See https://github.com/tastybento/bsbMongo/releases/.
+    # You can find more details in this video: https://youtu.be/FFzCk5-y7-g
     type: JSON
     host: localhost
     # Port 3306 is MySQL's default. Port 27017 is MongoDB's default.
