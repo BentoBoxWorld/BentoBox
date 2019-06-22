@@ -6,6 +6,7 @@ import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoDatabase;
 
+import org.eclipse.jdt.annotation.NonNull;
 import world.bentobox.bentobox.database.DatabaseConnectionSettingsImpl;
 import world.bentobox.bentobox.database.DatabaseConnector;
 
@@ -38,6 +39,7 @@ public class MongoDBDatabaseConnector implements DatabaseConnector {
     }
 
     @Override
+    @NonNull
     public String getUniqueId(String tableName) {
         // Not used
         return "";

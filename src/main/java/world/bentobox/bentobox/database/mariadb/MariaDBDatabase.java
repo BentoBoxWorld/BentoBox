@@ -12,7 +12,7 @@ import world.bentobox.bentobox.database.DatabaseSetup;
 public class MariaDBDatabase implements DatabaseSetup {
 
     /* (non-Javadoc)
-     * @see world.bentobox.bentobox.database.BSBDbSetup#getHandler(java.lang.Class)
+     * @see world.bentobox.bentobox.database.DatabaseSetup#getHandler(java.lang.Class)
      */
     @Override
     public <T> AbstractDatabaseHandler<T> getHandler(Class<T> type) {
