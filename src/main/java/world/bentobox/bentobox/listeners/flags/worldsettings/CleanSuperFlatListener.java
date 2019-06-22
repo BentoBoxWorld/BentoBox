@@ -60,6 +60,10 @@ public class CleanSuperFlatListener extends FlagListener {
         if (!ready) {
             return;
         }
+        if (!getIWM().inWorld(e.getWorld()) || Flags.CLEAN_SUPER_FLAT.isSetForWorld(e.getWorld())) {
+            // We do not want to run any check if this is not the right world or if it is allowed.
+            return;
+        }
         BentoBox plugin = BentoBox.getInstance();
         World world = e.getWorld();
         if (!e.getChunk().getBlock(0, 0, 0).getType().equals(Material.BEDROCK)
