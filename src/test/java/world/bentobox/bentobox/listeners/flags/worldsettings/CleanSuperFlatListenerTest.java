@@ -1,6 +1,3 @@
-/**
- *
- */
 package world.bentobox.bentobox.listeners.flags.worldsettings;
 
 import static org.mockito.Mockito.mock;
@@ -75,6 +72,7 @@ public class CleanSuperFlatListenerTest {
         when(iwm.getWorldSettings(Mockito.any())).thenReturn(ws);
         Map<String, Boolean> worldFlags = new HashMap<>();
         when(ws.getWorldFlags()).thenReturn(worldFlags);
+        when(iwm.inWorld(Mockito.any(World.class))).thenReturn(true);
         when(iwm.isNetherGenerate(Mockito.any())).thenReturn(true);
         when(iwm.isEndGenerate(Mockito.any())).thenReturn(true);
         when(iwm.isNetherIslands(Mockito.any())).thenReturn(true);
