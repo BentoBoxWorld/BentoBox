@@ -60,10 +60,13 @@ public class CleanSuperFlatListener extends FlagListener {
         if (!ready) {
             return;
         }
-        BentoBox plugin = BentoBox.getInstance();
         World world = e.getWorld();
+        if (!getIWM().inWorld(world) || !Flags.CLEAN_SUPER_FLAT.isSetForWorld(world)) {
+            // We do not want to run any check if this is not the right world or if it is turned off.
+            return;
+        }
+        BentoBox plugin = BentoBox.getInstance();
         if (!e.getChunk().getBlock(0, 0, 0).getType().equals(Material.BEDROCK)
-                || !Flags.CLEAN_SUPER_FLAT.isSetForWorld(world)
                 || (world.getEnvironment().equals(Environment.NETHER) && (!plugin.getIWM().isNetherGenerate(world) || !plugin.getIWM().isNetherIslands(world)))
                 || (world.getEnvironment().equals(Environment.THE_END) && (!plugin.getIWM().isEndGenerate(world) || !plugin.getIWM().isEndIslands(world)))) {
             return;
