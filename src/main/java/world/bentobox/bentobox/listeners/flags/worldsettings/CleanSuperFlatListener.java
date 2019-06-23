@@ -62,7 +62,7 @@ public class CleanSuperFlatListener extends FlagListener {
         }
         World world = e.getWorld();
         if (!getIWM().inWorld(world) || !Flags.CLEAN_SUPER_FLAT.isSetForWorld(world)) {
-            // We do not want to run any check if this is not the right world or if it is allowed.
+            // We do not want to run any check if this is not the right world or if it is turned off.
             return;
         }
         BentoBox plugin = BentoBox.getInstance();
