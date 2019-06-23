@@ -193,6 +193,7 @@ commands:
     blueprint:
       parameters: "<load/copy/paste/pos1/pos2/save>"
       description: "manipulate blueprints"
+      bedrock-required: "&cAt least one bedrock block must be in a blueprint!"
       copy-first: "&cCopy first!"
       file-exists: "&cFile already exists, overwrite?"
       no-such-file: "&cNo such file!"

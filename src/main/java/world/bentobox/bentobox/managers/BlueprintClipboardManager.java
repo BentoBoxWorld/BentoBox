@@ -14,6 +14,9 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
+import org.bukkit.Material;
+import org.bukkit.util.Vector;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -21,6 +24,7 @@ import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.blueprints.Blueprint;
 import world.bentobox.bentobox.blueprints.BlueprintClipboard;
+import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBlock;
 import world.bentobox.bentobox.database.json.BentoboxTypeAdapterFactory;
 
 /**
@@ -101,8 +105,17 @@ public class BlueprintClipboardManager {
         Blueprint bp;
         try (FileReader fr = new FileReader(file)) {
             bp = gson.fromJson(fr, Blueprint.class);
+        } catch (Exception e) {
+            plugin.logError("Blueprint has JSON error: " + zipFile.getName());
+            throw new IOException("Blueprint has JSON error: " + zipFile.getName());
         }
         Files.delete(file.toPath());
+        // Bedrock check and set
+        if (bp.getBedrock() == null) {
+            bp.setBedrock(new Vector(bp.getxSize() / 2, bp.getySize() / 2, bp.getzSize() / 2));
+            bp.getBlocks().put(bp.getBedrock(), new BlueprintBlock(Material.BEDROCK.createBlockData().getAsString()));
+            plugin.logWarning("Blueprint " + fileName + " had no bedrock block in it so one was added automatically in the center. You should check it.");
+        }
         return bp;
     }
 
