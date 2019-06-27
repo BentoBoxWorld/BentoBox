@@ -207,7 +207,7 @@ public class NewIsland {
             // Delete old island
             if (oldIsland != null) {
                 // Delete the old island
-                plugin.getIslands().deleteIsland(oldIsland, true);
+                plugin.getIslands().deleteIsland(oldIsland, true, user.getUniqueId());
             }
 
             // Fire exit event

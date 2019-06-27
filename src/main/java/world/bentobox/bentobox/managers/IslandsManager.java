@@ -276,10 +276,11 @@ public class IslandsManager {
      * Deletes island.
      * @param island island to delete, not null
      * @param removeBlocks whether the island blocks should be removed or not
+     * @param involvedPlayer - player related to the island deletion, if any
      */
-    public void deleteIsland(@NonNull Island island, boolean removeBlocks) {
+    public void deleteIsland(@NonNull Island island, boolean removeBlocks, UUID involvedPlayer) {
         // Fire event
-        IslandBaseEvent event = IslandEvent.builder().island(island).reason(Reason.DELETE).build();
+        IslandBaseEvent event = IslandEvent.builder().island(island).involvedPlayer(involvedPlayer).reason(Reason.DELETE).build();
         if (event.isCancelled()) {
             return;
         }

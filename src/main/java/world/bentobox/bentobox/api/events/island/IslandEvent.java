@@ -222,7 +222,10 @@ public class IslandEvent extends IslandBaseEvent {
         }
     }
     /**
-     * Fired when an island is deleted.
+     * Fired when island blocks are going to be deleted.
+     * If canceled, the island blocks will not be deleted. Note that by the time this is called
+     * the ownership of the island may have been removed. This event is just for detecting
+     * that the island blocks are going to be removed.
      *
      */
     public static class IslandDeletedEvent extends IslandBaseEvent {

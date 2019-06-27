@@ -27,10 +27,10 @@ public class AdminDeleteCommand extends ConfirmableCommand {
 
     @Override
     public boolean canExecute(User user, String label, List<String> args) {
-		if (args.size() != 1) {
-			showHelp(this, user);
-			return false;
-		}
+        if (args.size() != 1) {
+            showHelp(this, user);
+            return false;
+        }
         // Get target
         UUID targetUUID = getPlayers().getUUID(args.get(0));
         if (targetUUID == null) {
@@ -86,7 +86,7 @@ public class AdminDeleteCommand extends ConfirmableCommand {
                     getPlugin().getVault().ifPresent(vault -> vault.withdraw(target, vault.getBalance(target)));
                 }
             }
-            getIslands().deleteIsland(oldIsland, true);
+            getIslands().deleteIsland(oldIsland, true, targetUUID);
         }
         getPlayers().clearHomeLocations(getWorld(), targetUUID);
         user.sendMessage("general.success");
