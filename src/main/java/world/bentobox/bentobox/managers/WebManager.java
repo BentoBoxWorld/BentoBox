@@ -3,13 +3,13 @@ package world.bentobox.bentobox.managers;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import io.github.TheBusyBiscuit.GitHubWebAPI4Java.GitHubWebAPI;
+import io.github.TheBusyBiscuit.GitHubWebAPI4Java.objects.GitHubGist;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.web.catalog.CatalogEntry;
-import world.bentobox.githubapi4java.GitHub;
-import world.bentobox.githubapi4java.objects.GitHubGist;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +24,7 @@ import java.util.Optional;
 public class WebManager {
 
     private @NonNull BentoBox plugin;
-    private @Nullable GitHub gitHub;
+    private @Nullable GitHubWebAPI gitHub;
     private @NonNull List<CatalogEntry> addonsCatalog;
     private @NonNull List<CatalogEntry> gamemodesCatalog;
 
@@ -35,7 +35,7 @@ public class WebManager {
 
         // Setup the GitHub connection
         if (plugin.getSettings().isGithubDownloadData()) {
-            this.gitHub = new GitHub();
+            this.gitHub = new GitHubWebAPI();
 
             long connectionInterval = plugin.getSettings().getGithubConnectionInterval() * 20L * 60L;
             if (connectionInterval <= 0) {
@@ -98,12 +98,12 @@ public class WebManager {
     }
 
     /**
-     * Returns an optional that may contain the {@link GitHub} instance only and only if {@link Settings#isGithubDownloadData()} is {@code true}.
+     * Returns an optional that may contain the {@link GitHubWebAPI} instance only and only if {@link Settings#isGithubDownloadData()} is {@code true}.
      * @return the GitHub instance.
      * @since 1.5.0
      */
     @NonNull
-    public Optional<GitHub> getGitHub() {
+    public Optional<GitHubWebAPI> getGitHub() {
         return Optional.ofNullable(gitHub);
     }
 }
