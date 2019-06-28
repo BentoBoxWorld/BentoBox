@@ -1,10 +1,9 @@
 package world.bentobox.bentobox.managers;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.github.TheBusyBiscuit.GitHubWebAPI4Java.GitHubWebAPI;
-import io.github.TheBusyBiscuit.GitHubWebAPI4Java.objects.GitHubGist;
+import io.github.TheBusyBiscuit.GitHubWebAPI4Java.objects.repositories.GitHubRepository;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import world.bentobox.bentobox.BentoBox;
@@ -12,6 +11,7 @@ import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.web.catalog.CatalogEntry;
 
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 
@@ -54,25 +54,28 @@ public class WebManager {
             if (plugin.getSettings().isLogGithubDownloadData()) {
                 plugin.log("Downloading data from GitHub...");
             }
+            GitHubRepository repo = new GitHubRepository(gh, "BentoBoxWorld/weblink");
+            String catalogContent = "";
+            // Downloading the data
             try {
-                JsonElement gistContent = new GitHubGist(gh, "bccabc20bce17f358d0f94bbbe83babd").getRawResponseAsJson();
-                if (gistContent != null) {
-                    if (clearCache) {
-                        gh.clearCache();
-                        this.addonsCatalog.clear();
-                        this.gamemodesCatalog.clear();
-                    }
-
-                    String catalogContent = gistContent.getAsJsonObject().getAsJsonObject("files").getAsJsonObject("catalog.json")
-                            .get("content").getAsString().replace("\n", "").replace("\\", "");
-
-                    JsonObject catalog = new JsonParser().parse(catalogContent).getAsJsonObject();
-                    catalog.getAsJsonArray("gamemodes").forEach(gamemode -> gamemodesCatalog.add(new CatalogEntry(gamemode.getAsJsonObject())));
-                    catalog.getAsJsonArray("addons").forEach(addon -> addonsCatalog.add(new CatalogEntry(addon.getAsJsonObject())));
-                }
+                catalogContent = repo.getContent("catalog/catalog.json").getContent().replaceAll("\\n", "");
+                catalogContent = new String(Base64.getDecoder().decode(catalogContent));
             } catch (Exception e) {
-                plugin.logError("An error occurred when downloading or parsing data from GitHub...");
+                plugin.logError("An error occurred when downloading from GitHub...");
                 plugin.logStacktrace(e);
+            }
+
+            // Parsing the data
+            if (!catalogContent.isEmpty()) {
+                if (clearCache) {
+                    gh.clearCache();
+                    this.addonsCatalog.clear();
+                    this.gamemodesCatalog.clear();
+                }
+
+                JsonObject catalog = new JsonParser().parse(catalogContent).getAsJsonObject();
+                catalog.getAsJsonArray("gamemodes").forEach(gamemode -> gamemodesCatalog.add(new CatalogEntry(gamemode.getAsJsonObject())));
+                catalog.getAsJsonArray("addons").forEach(addon -> addonsCatalog.add(new CatalogEntry(addon.getAsJsonObject())));
             }
         });
     }

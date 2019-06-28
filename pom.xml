@@ -242,7 +242,7 @@
         <dependency>
             <groupId>com.github.TheBusyBiscuit</groupId>
             <artifactId>GitHubWebAPI4Java</artifactId>
-            <version>f972b82</version>
+            <version>d5f5e0bbd8</version>
         </dependency>
 		<!-- Static analysis -->
 		<!-- We are using Eclipse's annotations.
