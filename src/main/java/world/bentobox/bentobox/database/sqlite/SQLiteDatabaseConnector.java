@@ -22,7 +22,7 @@ public class SQLiteDatabaseConnector implements DatabaseConnector {
 
     SQLiteDatabaseConnector(@NonNull BentoBox plugin) {
         File dataFolder = new File(plugin.getDataFolder(), DATABASE_FOLDER_NAME);
-        connectionUrl = "jdbc:sqlite:" + dataFolder.getAbsolutePath() + "database.db";
+        connectionUrl = "jdbc:sqlite:" + dataFolder.getAbsolutePath() + File.separator + "database.db";
     }
 
     @Override

@@ -59,7 +59,7 @@ public class SQLiteDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
     private void createSchema() {
         String sql = "CREATE TABLE IF NOT EXISTS `" +
                 dataObject.getCanonicalName() +
-                "` (json JSON, uniqueId VARCHAR(255) GENERATED ALWAYS AS (json->\"$.uniqueId\"), UNIQUE INDEX i (uniqueId) )";
+                "` (json JSON, uniqueId VARCHAR(255) NOT NULL PRIMARY KEY)";
         // Prepare and execute the database statements
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.executeUpdate();
@@ -139,14 +139,15 @@ public class SQLiteDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
         String sb = "INSERT INTO " +
                 "`" +
                 dataObject.getCanonicalName() +
-                "` (json) VALUES (?) ON DUPLICATE KEY UPDATE json = ?";
+                "` (json, uniqueId) VALUES (?, ?) ON CONFLICT(uniqueId) DO UPDATE SET json = ?";
 
         Gson gson = getGson();
         String toStore = gson.toJson(instance);
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(sb)) {
             preparedStatement.setString(1, toStore);
-            preparedStatement.setString(2, toStore);
+            preparedStatement.setString(2, ((DataObject)instance).getUniqueId());
+            preparedStatement.setString(3, toStore);
             preparedStatement.execute();
         } catch (SQLException e) {
             plugin.logError("Could not save object " + instance.getClass().getName() + " " + e.getMessage());
@@ -175,9 +176,9 @@ public class SQLiteDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
     @Override
     public boolean objectExists(String uniqueId) {
         // Create the query to see if this key exists
-        String query = "SELECT IF ( EXISTS( SELECT * FROM `" +
+        String query = "SELECT EXISTS (SELECT 1 FROM `" +
                 dataObject.getCanonicalName() +
-                "` WHERE `uniqueId` = ?), 1, 0)";
+                "` WHERE `uniqueId` = ?)";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             // UniqueId needs to be placed in quotes
