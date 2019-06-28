@@ -233,5 +233,15 @@ public class IslandDeletion implements DataObject {
         this.box = box;
     }
 
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "IslandDeletion [uniqueId=" + uniqueId + ", location=" + location + ", minXChunk=" + minXChunk
+                + ", maxXChunk=" + maxXChunk + ", minZChunk=" + minZChunk + ", maxZChunk=" + maxZChunk + ", minX="
+                + minX + ", minZ=" + minZ + ", maxX=" + maxX + ", maxZ=" + maxZ + ", box=" + box + "]";
+    }
+
 }
 
