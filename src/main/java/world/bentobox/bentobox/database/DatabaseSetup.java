@@ -5,6 +5,7 @@ import world.bentobox.bentobox.database.json.JSONDatabase;
 import world.bentobox.bentobox.database.mariadb.MariaDBDatabase;
 import world.bentobox.bentobox.database.mongodb.MongoDBDatabase;
 import world.bentobox.bentobox.database.mysql.MySQLDatabase;
+import world.bentobox.bentobox.database.sqlite.SQLiteDatabase;
 import world.bentobox.bentobox.database.transition.Json2MariaDBDatabase;
 import world.bentobox.bentobox.database.transition.Json2MySQLDatabase;
 import world.bentobox.bentobox.database.transition.MySQL2JsonDatabase;
@@ -80,7 +81,12 @@ public interface DatabaseSetup {
          */
         MARIADB(new MariaDBDatabase()),
 
-        MONGODB(new MongoDBDatabase());
+        MONGODB(new MongoDBDatabase()),
+
+        /**
+         * @since 1.6.0
+         */
+        SQLITE(new SQLiteDatabase());
 
         DatabaseSetup database;
 

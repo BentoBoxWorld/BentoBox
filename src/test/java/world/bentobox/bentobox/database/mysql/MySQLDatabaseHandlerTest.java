@@ -398,21 +398,8 @@ public class MySQLDatabaseHandlerTest {
     @Test
     public void testClose() throws SQLException {
         handler.close();
-        verify(connection).close();
+        verify(dbConn).closeConnection();
     }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.database.mysql.MySQLDatabaseHandler#close()}.
-     * @throws SQLException
-     */
-    @Ignore("it doesn't recognize the #close() ran in the database connector")
-    @Test
-    public void testCloseError() throws SQLException {
-        Mockito.doThrow(new SQLException("error")).when(connection).close();
-        handler.close();
-        verify(plugin).logError(eq("Could not close database for some reason"));
-    }
-
 
     /**
      * Test method for {@link world.bentobox.bentobox.database.mysql.MySQLDatabaseHandler#deleteID(java.lang.String)}.

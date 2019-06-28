@@ -11,7 +11,7 @@ general:
   # If there is no economy plugin present anyway, money will be automatically disabled.
   use-economy: true
   database:
-    # JSON, MYSQL, MARIADB (10.2.3+), MONGODB, and YAML(deprecated).
+    # JSON, MYSQL, MARIADB (10.2.3+), MONGODB, SQLITE and YAML(deprecated).
     # Transition database options are:
     #   YAML2JSON, YAML2MARIADB, YAML2MYSQL
     #   JSON2MARIADB, JSON2MYSQL, MYSQL2JSON

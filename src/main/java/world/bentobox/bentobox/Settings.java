@@ -38,7 +38,7 @@ public class Settings implements ConfigObject {
     private boolean useEconomy = true;
 
     // Database
-    @ConfigComment("JSON, MYSQL, MARIADB (10.2.3+), MONGODB, and YAML(deprecated).")
+    @ConfigComment("JSON, MYSQL, MARIADB (10.2.3+), MONGODB, SQLITE and YAML(deprecated).")
     @ConfigComment("Transition database options are:")
     @ConfigComment("  YAML2JSON, YAML2MARIADB, YAML2MYSQL")
     @ConfigComment("  JSON2MARIADB, JSON2MYSQL, MYSQL2JSON")
