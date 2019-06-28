@@ -62,16 +62,16 @@ public class BentoBoxVersionCommand extends CompositeCommand {
                    &c = dimension does not exist
                 */
                 // Get the nether color
-                if (addon.getNetherWorld() == null || !getIWM().isNetherGenerate(addon.getNetherWorld())) {
+                if (addon.getNetherWorld() == null || !getIWM().isNetherGenerate(addon.getOverWorld())) {
                     netherColor = GAMEWORLD_COLOR_NOT_EXIST;
-                } else if (!getIWM().isNetherIslands(addon.getNetherWorld())) {
+                } else if (!getIWM().isNetherIslands(addon.getOverWorld())) {
                     netherColor = GAMEWORLD_COLOR_EXISTS_NO_ISLANDS;
                 }
 
                 // Get the nether color
-                if (addon.getEndWorld() == null || !getIWM().isEndGenerate(addon.getEndWorld())) {
+                if (addon.getEndWorld() == null || !getIWM().isEndGenerate(addon.getOverWorld())) {
                     endColor = GAMEWORLD_COLOR_NOT_EXIST;
-                } else if (!getIWM().isEndIslands(addon.getEndWorld())) {
+                } else if (!getIWM().isEndIslands(addon.getOverWorld())) {
                     endColor = GAMEWORLD_COLOR_EXISTS_NO_ISLANDS;
                 }
             }
