@@ -11,6 +11,7 @@ import org.bukkit.World.Environment;
 import org.bukkit.block.Biome;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.generator.ChunkGenerator.BiomeGrid;
 import org.bukkit.generator.ChunkGenerator.ChunkData;
 import org.bukkit.inventory.InventoryHolder;
@@ -81,15 +82,19 @@ public class DeleteIslandChunks {
         .forEach(te -> ((InventoryHolder)te).getInventory().clear());
         // Reset blocks
         MyBiomeGrid grid = new MyBiomeGrid(chunk.getWorld().getEnvironment());
-        ChunkData cd = gm.getDefaultWorldGenerator(chunk.getWorld().getName(), "").generateChunkData(chunk.getWorld(), new Random(), chunk.getX(), chunk.getZ(), grid);
-        int baseX = chunk.getX() << 4;
-        int baseZ = chunk.getZ() << 4;
-        for (int x = 0; x < 16; x++) {
-            for (int z = 0; z < 16; z++) {
-                if (di.inBounds(baseX + x, baseZ + z)) {
-                    chunk.getBlock(x, 0, z).setBiome(grid.getBiome(x, z));
-                    for (int y = 0; y < chunk.getWorld().getMaxHeight(); y++) {
-                        chunk.getBlock(x, y, z).setBlockData(cd.getBlockData(x, y, z));
+        ChunkGenerator cg = gm.getDefaultWorldGenerator(chunk.getWorld().getName(), "");
+        // Will be null if use-own-generator is set to true
+        if (cg != null) {
+            ChunkData cd = cg.generateChunkData(chunk.getWorld(), new Random(), chunk.getX(), chunk.getZ(), grid);
+            int baseX = chunk.getX() << 4;
+            int baseZ = chunk.getZ() << 4;
+            for (int x = 0; x < 16; x++) {
+                for (int z = 0; z < 16; z++) {
+                    if (di.inBounds(baseX + x, baseZ + z)) {
+                        chunk.getBlock(x, 0, z).setBiome(grid.getBiome(x, z));
+                        for (int y = 0; y < chunk.getWorld().getMaxHeight(); y++) {
+                            chunk.getBlock(x, y, z).setBlockData(cd.getBlockData(x, y, z));
+                        }
                     }
                 }
             }
