@@ -205,9 +205,12 @@ public class SQLiteDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
                 dataObject.getCanonicalName() +
                 "` WHERE uniqueId = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sb)) {
-            // UniqueId needs to be placed in quotes
-            preparedStatement.setString(1, "\"" + uniqueId + "\"");
-            preparedStatement.execute();
+            // UniqueId must not be placed in quotes
+            preparedStatement.setString(1, uniqueId);
+            int result = preparedStatement.executeUpdate();
+            if (result != 1) {
+                throw new SQLException("Delete did not affect any rows!");
+            }
         } catch (Exception e) {
             plugin.logError("Could not delete object " + dataObject.getCanonicalName() + " " + uniqueId + " " + e.getMessage());
         }
