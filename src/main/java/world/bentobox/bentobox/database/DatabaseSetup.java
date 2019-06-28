@@ -6,12 +6,7 @@ import world.bentobox.bentobox.database.mariadb.MariaDBDatabase;
 import world.bentobox.bentobox.database.mongodb.MongoDBDatabase;
 import world.bentobox.bentobox.database.mysql.MySQLDatabase;
 import world.bentobox.bentobox.database.sqlite.SQLiteDatabase;
-import world.bentobox.bentobox.database.transition.Json2MariaDBDatabase;
-import world.bentobox.bentobox.database.transition.Json2MySQLDatabase;
-import world.bentobox.bentobox.database.transition.MySQL2JsonDatabase;
-import world.bentobox.bentobox.database.transition.Yaml2JsonDatabase;
-import world.bentobox.bentobox.database.transition.Yaml2MariaDBDatabase;
-import world.bentobox.bentobox.database.transition.Yaml2MySQLDatabase;
+import world.bentobox.bentobox.database.transition.*;
 import world.bentobox.bentobox.database.yaml.YamlDatabase;
 
 import java.util.Arrays;
@@ -58,6 +53,18 @@ public interface DatabaseSetup {
          */
         YAML2MARIADB(new Yaml2MariaDBDatabase()),
 
+        /**
+         * Transition database, from YAML to MongoDB
+         * @since 1.6.0
+         */
+        YAML2MONGODB(new Yaml2MongoDBDatabase()),
+
+        /**
+         * Transition database, from YAML to SQLite
+         * @since 1.6.0
+         */
+        YAML2SQLITE(new Yaml2SQLiteDatabase()),
+
         JSON(new JSONDatabase()),
         /**
          * Transition database, from JSON to MySQL
@@ -70,7 +77,20 @@ public interface DatabaseSetup {
          */
         JSON2MARIADB(new Json2MariaDBDatabase()),
 
+        /**
+         * Transition database, from JSON to MongoDB
+         * @since 1.6.0
+         */
+        JSON2MONGODB(new Json2MongoDBDatabase()),
+
+        /**
+         * Transition database, from JSON to SQLite
+         * @since 1.6.0
+         */
+        JSON2SQLITE(new Json2SQLiteDatabase()),
+
         MYSQL(new MySQLDatabase()),
+
         /**
          * Transition database, from MySQL to JSON
          * @since 1.5.0
@@ -81,12 +101,30 @@ public interface DatabaseSetup {
          */
         MARIADB(new MariaDBDatabase()),
 
+        /**
+         * Transition database, from MariaDB to JSON
+         * @since 1.6.0
+         */
+        MARIADB2JSON(new MariaDB2JsonDatabase()),
+
         MONGODB(new MongoDBDatabase()),
+
+        /**
+         * Transition database, from MongoDB to JSON
+         * @since 1.6.0
+         */
+        MONGODB2JSON(new MongoDB2JsonDatabase()),
 
         /**
          * @since 1.6.0
          */
-        SQLITE(new SQLiteDatabase());
+        SQLITE(new SQLiteDatabase()),
+
+        /**
+         * Transition database, from SQLite to JSON
+         * @since 1.6.0
+         */
+        SQLITE2JSON(new SQLite2JsonDatabase());
 
         DatabaseSetup database;
 
