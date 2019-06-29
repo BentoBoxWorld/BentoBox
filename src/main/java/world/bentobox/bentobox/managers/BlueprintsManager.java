@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -150,17 +151,19 @@ public class BlueprintsManager {
      * @param addon the {@link GameModeAddon} to load the blueprints of.
      */
     public void loadBlueprintBundles(@NonNull GameModeAddon addon) {
-        blueprintBundles.put(addon, new ArrayList<>());
+        Bukkit.getServer().getScheduler().runTaskAsynchronously(BentoBox.getInstance(), () -> {
+            blueprintBundles.put(addon, new ArrayList<>());
 
-        // See if there are any schems that need converting
-        new SchemToBlueprint(plugin).convertSchems(addon);
+            // See if there are any schems that need converting
+            new SchemToBlueprint(plugin).convertSchems(addon);
 
-        if (!loadBundles(addon)) {
-            makeDefaults(addon);
-            loadBundles(addon);
-        }
-        // Load blueprints
-        loadBlueprints(addon);
+            if (!loadBundles(addon)) {
+                makeDefaults(addon);
+                loadBundles(addon);
+            }
+            // Load blueprints
+            loadBlueprints(addon);
+        });
     }
 
     private boolean loadBundles(@NonNull GameModeAddon addon) {
