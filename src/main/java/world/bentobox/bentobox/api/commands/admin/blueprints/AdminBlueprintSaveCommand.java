@@ -34,6 +34,11 @@ public class AdminBlueprintSaveCommand extends ConfirmableCommand {
         BlueprintClipboard clipboard = parent.getClipboards().computeIfAbsent(user.getUniqueId(), v -> new BlueprintClipboard());
         String fileName = args.get(0).toLowerCase(Locale.ENGLISH);
         if (clipboard.isFull()) {
+            // Check if blueprint had bedrock
+            if (clipboard.getBlueprint().getBedrock() == null) {
+                user.sendMessage("commands.admin.blueprint.bedrock-required");
+                return false;
+            }
             // Check if file exists
             File newFile = new File(parent.getBlueprintsFolder(), fileName + BlueprintsManager.BLUEPRINT_SUFFIX);
             if (newFile.exists()) {

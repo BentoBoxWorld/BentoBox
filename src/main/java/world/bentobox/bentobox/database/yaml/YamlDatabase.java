@@ -16,6 +16,9 @@ public class YamlDatabase implements DatabaseSetup {
         return new ConfigHandler<>(BentoBox.getInstance(), type, new YamlDatabaseConnector(BentoBox.getInstance()));
     }
 
+    /* (non-Javadoc)
+     * @see world.bentobox.bentobox.database.DatabaseSetup#getHandler(java.lang.Class)
+     */
     @Override
     public <T> AbstractDatabaseHandler<T> getHandler(Class<T> type) {
         return new YamlDatabaseHandler<>(BentoBox.getInstance(), type, new YamlDatabaseConnector(BentoBox.getInstance()));

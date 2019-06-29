@@ -147,8 +147,5 @@ public class MongoDBDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
     @Override
     public void close() {
         dbConnecter.closeConnection();
-
     }
-
-
 }

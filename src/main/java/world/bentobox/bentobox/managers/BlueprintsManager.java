@@ -55,6 +55,7 @@ public class BlueprintsManager {
     public static final String DEFAULT_BUNDLE_NAME = "default";
 
     public static final @NonNull String FOLDER_NAME = "blueprints";
+    private static final String FOR = "' for ";
 
     /**
      * Map of blueprint bundles to game mode addon.
@@ -182,7 +183,7 @@ public class BlueprintsManager {
             try {
                 BlueprintBundle bb = gson.fromJson(new FileReader(file), BlueprintBundle.class);
                 blueprintBundles.get(addon).add(bb);
-                plugin.log("Loaded Blueprint Bundle '" + bb.getUniqueId() + "' for " + addon.getDescription().getName());
+                plugin.log("Loaded Blueprint Bundle '" + bb.getUniqueId() + FOR + addon.getDescription().getName());
                 loaded = true;
             } catch (Exception e) {
                 plugin.logError("Could not load blueprint bundle " + file.getName() + " " + e.getMessage());
@@ -256,7 +257,7 @@ public class BlueprintsManager {
                     bp.setName(fileName);
                 }
                 blueprints.get(addon).add(bp);
-                plugin.log("Loaded blueprint '" + bp.getName() + "' for " + addon.getDescription().getName());
+                plugin.log("Loaded blueprint '" + bp.getName() + FOR + addon.getDescription().getName());
             } catch (Exception e) {
                 plugin.logError("Could not load blueprint " + fileName + " " + e.getMessage());
                 plugin.logStacktrace(e);
@@ -274,7 +275,7 @@ public class BlueprintsManager {
         blueprints.putIfAbsent(addon, new ArrayList<>());
         blueprints.get(addon).removeIf(b -> b.getName().equals(bp.getName()));
         blueprints.get(addon).add(bp);
-        plugin.log("Added blueprint '" + bp.getName() + "' for " + addon.getDescription().getName());
+        plugin.log("Added blueprint '" + bp.getName() + FOR + addon.getDescription().getName());
     }
 
     /**

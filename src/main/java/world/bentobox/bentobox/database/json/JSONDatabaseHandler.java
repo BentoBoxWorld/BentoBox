@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
+import org.eclipse.jdt.annotation.NonNull;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.database.DatabaseConnector;
 import world.bentobox.bentobox.database.objects.DataObject;
@@ -61,7 +62,6 @@ public class JSONDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
                     throw new IOException("JSON file created a null object: " + file.getPath());
                 }
                 list.add(object);
-                reader.close();
             } catch (FileNotFoundException e) {
                 plugin.logError("Could not load file '" + file.getName() + "': File not found.");
 
@@ -73,7 +73,7 @@ public class JSONDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
     }
 
     @Override
-    public T loadObject(String uniqueId) {
+    public T loadObject(@NonNull String uniqueId) {
         // Objects are loaded from a folder named after the simple name of the class being stored
         String path = DATABASE_FOLDER_NAME + File.separator + dataObject.getSimpleName();
 

@@ -20,7 +20,7 @@ import java.util.List;
 public class CatalogPanel {
 
     private static final String LOCALE_REF = "catalog.panel.";
-    private static final int[] PANES = {0, 3, 4, 5, 6, 7, 8, 9, 17, 18, 26, 27, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44,};
+    private static final int[] PANES = {0, 3, 4, 5, 6, 7, 8, 9, 17, 18, 26, 27, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44};
 
     private CatalogPanel() {}
 
@@ -77,7 +77,12 @@ public class CatalogPanel {
             for (CatalogEntry addon : catalog) {
                 PanelItemBuilder itemBuilder = new PanelItemBuilder();
 
-                itemBuilder.icon(addon.getIcon()).name(ChatColor.WHITE + addon.getName());
+                String name = ChatColor.WHITE + addon.getName();
+                if (addon.getTag() != null) {
+                    name += " " + ChatColor.AQUA + "" + ChatColor.BOLD + user.getTranslation("catalog.tags." + addon.getTag());
+                }
+
+                itemBuilder.icon(addon.getIcon()).name(name);
 
                 // If the addon is already installed, then tell the user it's already installed
                 String install;
@@ -89,7 +94,7 @@ public class CatalogPanel {
                 }
 
                 itemBuilder.description(user.getTranslation(LOCALE_REF + "icon.description-template",
-                        "[topic]", StringUtils.capitalize(addon.getTopic()),
+                        "[topic]", StringUtils.capitalize(user.getTranslation("catalog.topics." + addon.getTopic())),
                         "[install]", install,
                         "[description]", addon.getDescription()));
 

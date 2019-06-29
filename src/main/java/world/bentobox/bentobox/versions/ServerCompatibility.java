@@ -107,7 +107,11 @@ public class ServerCompatibility {
         /**
          * @since 1.5.0
          */
-        V1_14_2(Compatibility.SUPPORTED);
+        V1_14_2(Compatibility.SUPPORTED),
+        /**
+         * @since 1.6.0
+         */
+        V1_14_3(Compatibility.SUPPORTED);
 
         private Compatibility compatibility;
 

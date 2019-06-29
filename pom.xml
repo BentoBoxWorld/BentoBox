@@ -80,7 +80,7 @@
         <!-- Do not change unless you want different name for local builds. -->
         <build.number>-LOCAL</build.number>
         <!-- This allows to change between versions. -->
-        <build.version>1.5.3</build.version>
+        <build.version>1.6.0</build.version>
     </properties>
 
     <!-- Profiles will allow to automatically change build version. -->
@@ -176,12 +176,6 @@
 			<version>${spigot.version}</version>
 			<scope>provided</scope>
 		</dependency>
-        <!-- Some APIs from us :D -->
-        <dependency>
-            <groupId>world.bentobox</groupId>
-            <artifactId>GitHubAPI4Java</artifactId>
-            <version>${githubapi.version}</version>
-        </dependency>
 		<!-- Metrics -->
 		<dependency>
 			<groupId>org.bstats</groupId>
@@ -243,6 +237,12 @@
             <artifactId>dynmap-api</artifactId>
             <version>3.0-SNAPSHOT</version>
             <scope>provided</scope>
+        </dependency>
+        <!-- Shaded APIs -->
+        <dependency>
+            <groupId>com.github.TheBusyBiscuit</groupId>
+            <artifactId>GitHubWebAPI4Java</artifactId>
+            <version>d5f5e0bbd8</version>
         </dependency>
 		<!-- Static analysis -->
 		<!-- We are using Eclipse's annotations.
@@ -336,7 +336,7 @@
                             <shadedPattern>world.bentobox.bentobox.util.metrics</shadedPattern>
                         </relocation>
                         <relocation>
-                            <pattern>world.bentobox.githubapi4java</pattern>
+                            <pattern>io.github.TheBusyBiscuit.GitHubWebAPI4Java</pattern>
                             <shadedPattern>world.bentobox.bentobox.api.github</shadedPattern>
                         </relocation>
                     </relocations>

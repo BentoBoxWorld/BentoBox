@@ -49,6 +49,7 @@ public class BlueprintManagementPanel {
     private static final int MAX_WORLD_SLOT = 9;
     private static final int MIN_WORLD_SLOT = 0;
     public static final int MAX_BP_SLOT = 35;
+    private static final String INSTRUCTION = "instruction";
     private Entry<Integer, Blueprint> selected;
     private Map<Integer, Blueprint> blueprints = new HashMap<>();
     private final User user;
@@ -58,9 +59,9 @@ public class BlueprintManagementPanel {
         this.plugin = plugin;
         this.user = user;
         this.addon = addon;
-        normalBlueprint = new Blueprint().setIcon(Material.GREEN_STAINED_GLASS_PANE).setName(t("normal")).setDescription(t("instruction"));
-        netherBlueprint = new Blueprint().setIcon(Material.RED_STAINED_GLASS_PANE).setName(t("nether")).setDescription(t("instruction"));
-        endBlueprint = new Blueprint().setIcon(Material.YELLOW_STAINED_GLASS_PANE).setName(t("end")).setDescription(t("instruction"));
+        normalBlueprint = new Blueprint().setIcon(Material.GREEN_STAINED_GLASS_PANE).setName(t("normal")).setDescription(t(INSTRUCTION));
+        netherBlueprint = new Blueprint().setIcon(Material.RED_STAINED_GLASS_PANE).setName(t("nether")).setDescription(t(INSTRUCTION));
+        endBlueprint = new Blueprint().setIcon(Material.YELLOW_STAINED_GLASS_PANE).setName(t("end")).setDescription(t(INSTRUCTION));
         slotToEnvironment = ImmutableMap.of(3, World.Environment.NORMAL, 5, World.Environment.NETHER, 7, World.Environment.THE_END);
         environmentToBlueprint = ImmutableMap.of(World.Environment.NORMAL, normalBlueprint, World.Environment.NETHER, netherBlueprint, World.Environment.THE_END, endBlueprint);
     }

@@ -117,10 +117,10 @@ public abstract class GameModeAddon extends Addon {
      * Defines the world generator for this game mode
      * @param worldName - name of world that this applies to
      * @param id - id if any
-     * @return Chunk generator
+     * @return Chunk generator or null if one does not exist, e.g. the use own generator setting is true
      * @since 1.2.0
      */
-    @NonNull
+    @Nullable
     public abstract ChunkGenerator getDefaultWorldGenerator(String worldName, String id);
 
     /**

@@ -6,6 +6,7 @@ import java.sql.SQLException;
 
 import org.bukkit.Bukkit;
 
+import org.eclipse.jdt.annotation.NonNull;
 import world.bentobox.bentobox.database.DatabaseConnectionSettingsImpl;
 import world.bentobox.bentobox.database.DatabaseConnector;
 
@@ -41,6 +42,7 @@ public class MySQLDatabaseConnector implements DatabaseConnector {
     }
 
     @Override
+    @NonNull
     public String getUniqueId(String tableName) {
         // Not used
         return "";

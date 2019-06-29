@@ -7,6 +7,7 @@ import org.bukkit.block.Dropper;
 import org.bukkit.block.Furnace;
 import org.bukkit.block.Hopper;
 import org.bukkit.entity.Animals;
+import org.bukkit.entity.NPC;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.minecart.HopperMinecart;
 import org.bukkit.event.EventHandler;
@@ -56,6 +57,9 @@ public class InventoryListener extends FlagListener {
         }
         else if (inventoryHolder instanceof Beacon) {
             checkIsland(e, player, e.getInventory().getLocation(), Flags.BEACON);
+        }
+        else if (inventoryHolder instanceof NPC) {
+            checkIsland(e, player, e.getInventory().getLocation(), Flags.TRADING);
         }
         else if (!(inventoryHolder instanceof Player)) {
             // All other containers

@@ -431,7 +431,7 @@ public class IslandsManagerTest {
         IslandsManager im = new IslandsManager(plugin);
         UUID owner = UUID.randomUUID();
         Island island = im.createIsland(location, owner);
-        im.deleteIsland(island, false);
+        im.deleteIsland(island, false, owner);
         assertNull(island.getOwner());
         Mockito.verify(pim, Mockito.times(2)).callEvent(Mockito.any(IslandDeleteEvent.class));
     }
@@ -445,7 +445,7 @@ public class IslandsManagerTest {
         IslandsManager im = new IslandsManager(plugin);
         UUID owner = UUID.randomUUID();
         Island island = im.createIsland(location, owner);
-        im.deleteIsland(island, true);
+        im.deleteIsland(island, true, owner);
         assertNull(island.getOwner());
         Mockito.verify(pim, Mockito.times(4)).callEvent(Mockito.any(IslandDeleteEvent.class));
     }

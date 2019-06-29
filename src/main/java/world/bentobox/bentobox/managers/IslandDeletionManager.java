@@ -1,5 +1,6 @@
 package world.bentobox.bentobox.managers;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -46,14 +47,22 @@ public class IslandDeletionManager implements Listener {
     public void onBentoBoxReady(BentoBoxReadyEvent e) {
         // Load list of islands that were mid deletion and delete them
         List<IslandDeletion> toBeDeleted = handler.loadObjects();
+        List<IslandDeletion> toBeRemoved = new ArrayList<>();
         if (!toBeDeleted.isEmpty()) {
             plugin.log("There are " + toBeDeleted.size() + " islands pending deletion.");
             toBeDeleted.forEach(di -> {
-                plugin.log("Resuming deletion of island at " + di.getLocation().getWorld().getName() + " " + Util.xyz(di.getLocation().toVector()));
-                inDeletion.add(di.getLocation());
-                new DeleteIslandChunks(plugin, di);
+                if (di.getLocation() == null || di.getLocation().getWorld() == null) {
+                    plugin.logError("Island queued for deletion refers to a non-existant game world. Skipping...");
+                    toBeRemoved.add(di);
+                } else {
+                    plugin.log("Resuming deletion of island at " + di.getLocation().getWorld().getName() + " " + Util.xyz(di.getLocation().toVector()));
+                    inDeletion.add(di.getLocation());
+                    new DeleteIslandChunks(plugin, di);
+                }
             });
         }
+        // Remove the islands from the database so they don't come back
+        toBeRemoved.forEach(handler::deleteObject);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)

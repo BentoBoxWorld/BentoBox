@@ -11,10 +11,11 @@ general:
   # If there is no economy plugin present anyway, money will be automatically disabled.
   use-economy: true
   database:
-    # JSON, MYSQL, MARIADB (10.2.3+), MONGODB, and YAML(deprecated).
+    # JSON, MYSQL, MARIADB (10.2.3+), MONGODB, SQLITE and YAML(deprecated).
     # Transition database options are:
-    #   YAML2JSON, YAML2MARIADB, YAML2MYSQL
-    #   JSON2MARIADB, JSON2MYSQL, MYSQL2JSON
+    #   YAML2JSON, YAML2MARIADB, YAML2MYSQL, YAML2MONGODB, YAML2SQLITE
+    #   JSON2MARIADB, JSON2MYSQL, JSON2MONGODB, JSON2SQLITE
+    #   MYSQL2JSON, MARIADB2JSON, MONGODB2JSON, SQLITE2JSON
     # If you need others, please make a feature request.
     # Transition options enable migration from one database type to another. Use /bbox migrate.
     # YAML and JSON are file-based databases.

@@ -89,7 +89,7 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
             getIslands().homeTeleport(getWorld(), user.getPlayer());
             // Delete the old island
             if (island != null) {
-                getIslands().deleteIsland(island, true);
+                getIslands().deleteIsland(island, true, user.getUniqueId());
             }
             // TODO Set the cooldown
             // Reset deaths

@@ -273,13 +273,6 @@ public class MySQLDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
 
     @Override
     public void close() {
-        if (connection != null) {
-            try {
-                connection.close();
-            } catch (SQLException e) {
-                plugin.logError("Could not close database for some reason");
-            }
-        }
+        databaseConnector.closeConnection();
     }
-
 }

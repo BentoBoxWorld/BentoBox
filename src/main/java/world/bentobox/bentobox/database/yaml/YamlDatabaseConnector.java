@@ -27,6 +27,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.google.common.base.Charsets;
 
+import org.eclipse.jdt.annotation.NonNull;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.database.DatabaseConnector;
 
@@ -191,6 +192,7 @@ public class YamlDatabaseConnector implements DatabaseConnector {
     }
 
     @Override
+    @NonNull
     public String getUniqueId(String tableName) {
         UUID uuid = UUID.randomUUID();
         File file = new File(dataFolder, tableName + File.separator + uuid.toString() + YML);
