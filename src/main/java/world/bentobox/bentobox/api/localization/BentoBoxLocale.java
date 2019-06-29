@@ -7,6 +7,7 @@ import java.util.Locale;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 
+import org.eclipse.jdt.annotation.NonNull;
 import world.bentobox.bentobox.util.ItemParser;
 
 /**
@@ -96,13 +97,24 @@ public class BentoBoxLocale {
      * Merges a language YAML file to this locale
      * @param toBeMerged the YamlConfiguration of the language file
      */
-    public void merge(YamlConfiguration toBeMerged) {
+    public void merge(@NonNull YamlConfiguration toBeMerged) {
         for (String key : toBeMerged.getKeys(true)) {
             if (!key.startsWith("meta") && !config.contains(key)) {
                 config.set(key, toBeMerged.get(key));
             }
         }
         updateAuthors(toBeMerged);
+    }
+
+    /**
+     * Sets a reference and its value in the locale.
+     * If the reference already exists, it will overwrite its value.
+     * @param reference the reference to add, not null.
+     * @param value the value to set, not null.
+     * @since 1.6.0
+     */
+    public void set(@NonNull String reference, @NonNull String value) {
+        config.set(reference, value);
     }
 
     public boolean contains(String reference) {
