@@ -62,7 +62,6 @@ public class IslandDeletionManager implements Listener {
             });
         }
         // Remove the islands from the database so they don't come back
-        toBeRemoved.forEach(i -> plugin.logDebug("Island - " + i.toString()));
         toBeRemoved.forEach(handler::deleteObject);
     }
 
