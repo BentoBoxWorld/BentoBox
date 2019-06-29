@@ -1,5 +1,6 @@
 package world.bentobox.bentobox.managers;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.github.TheBusyBiscuit.GitHubWebAPI4Java.GitHubWebAPI;
@@ -10,6 +11,7 @@ import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.web.catalog.CatalogEntry;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -55,20 +57,55 @@ public class WebManager {
                 plugin.log("Downloading data from GitHub...");
             }
             GitHubRepository repo = new GitHubRepository(gh, "BentoBoxWorld/weblink");
+
+            String tagsContent = "";
+            String topicsContent = "";
             String catalogContent = "";
+
             // Downloading the data
             try {
+                tagsContent = repo.getContent("catalog/tags.json").getContent().replaceAll("\\n", "");
+                topicsContent = repo.getContent("catalog/topics.json").getContent().replaceAll("\\n", "");
                 catalogContent = repo.getContent("catalog/catalog.json").getContent().replaceAll("\\n", "");
-                catalogContent = new String(Base64.getDecoder().decode(catalogContent));
+            } catch (IllegalAccessException e) {
+                plugin.log("Could not connect to GitHub.");
             } catch (Exception e) {
                 plugin.logError("An error occurred when downloading from GitHub...");
                 plugin.logStacktrace(e);
             }
 
-            // Parsing the data
+            // Decoding the Base64 encoded contents
+            tagsContent = new String(Base64.getDecoder().decode(tagsContent), StandardCharsets.UTF_8);
+            topicsContent = new String(Base64.getDecoder().decode(topicsContent), StandardCharsets.UTF_8);
+            catalogContent = new String(Base64.getDecoder().decode(catalogContent), StandardCharsets.UTF_8);
+
+            /* Parsing the data */
+
+            // Register the tags translations in the locales
+            if (!tagsContent.isEmpty()) {
+                JsonObject tags = new JsonParser().parse(tagsContent).getAsJsonObject();
+                tags.entrySet().forEach((entry) -> plugin.getLocalesManager().getLanguages().values().forEach((locale) -> {
+                    JsonElement translation = entry.getValue().getAsJsonObject().get(locale.toLanguageTag());
+                    if (translation != null) {
+                        locale.set("catalog.tags." + entry.getKey(), translation.getAsString());
+                    }
+                }));
+            }
+
+            // Register the topics translations in the locales
+            if (!topicsContent.isEmpty()) {
+                JsonObject topics = new JsonParser().parse(topicsContent).getAsJsonObject();
+                topics.entrySet().forEach((entry) -> plugin.getLocalesManager().getLanguages().values().forEach((locale) -> {
+                    JsonElement translation = entry.getValue().getAsJsonObject().get(locale.toLanguageTag());
+                    if (translation != null) {
+                        locale.set("catalog.topics." + entry.getKey(), translation.getAsString());
+                    }
+                }));
+            }
+
+            // Register the catalog data
             if (!catalogContent.isEmpty()) {
                 if (clearCache) {
-                    gh.clearCache();
                     this.addonsCatalog.clear();
                     this.gamemodesCatalog.clear();
                 }
