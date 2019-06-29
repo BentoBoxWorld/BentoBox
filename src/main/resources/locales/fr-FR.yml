@@ -197,6 +197,7 @@ commands:
       description: "sélectionne la langue"
     expel:
       parameters: "<joueur>"
+      success: "&aVous avez expulsé &b[name] &ade votre île."
 
 ranks:
   owner: "Propriétaire"

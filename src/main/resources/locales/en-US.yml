@@ -536,6 +536,7 @@ commands:
       cannot-ban-member: "&cYou cannot expel a team member!"
       not-on-island: "&cThat player is not on your island!"
       player-expelled-you: "&b[name]&c expelled you from the island!"
+      success: "&aYou expelled &b[name] &afrom the island."
 
 ranks:
   owner: "Owner"
