@@ -415,6 +415,7 @@ commands:
         cannot-coop-yourself: "&cYou cannot coop yourself!"
         already-has-rank: "&cPlayer already has a rank!"
         you-are-a-coop-member: "&2You were cooped by [name]"
+        success: "&aYou cooped &b[name]."
       uncoop:
         description: "remove a coop rank from player"
         parameters: "<player>"
@@ -423,20 +424,23 @@ commands:
         player-not-cooped: "&cPlayer is not cooped!"
         you-are-no-longer-a-coop-member: "&cYou are no longer a coop member of [name]'s island"
         all-members-logged-off: "&cAll island members logged off so you are no longer a coop member of [name]'s island"
+        success: "&b[name] &ais no longer a coop member of your island."
       trust:
         description: "give a player trusted rank on your island"
         parameters: "<player>"
         trust-in-yourself: "&cTrust in yourself!"
         members-trusted: "&cMembers are already trusted"
         player-already-trusted: "&cPlayer is already trusted!"
-        you-are-trusted: "&2You are trusted by [name]!"
+        you-are-trusted: "&2You are trusted by &b[name]&a!"
+        success: "&aYou trusted &b[name]&a."
       untrust:
         description: "remove trusted player rank from player"
         parameters: "<player>"
         cannot-untrust-yourself: "&cYou cannot untrust yourself!"
         cannot-untrust-member: "&cYou cannot untrust a team member!"
         player-not-trusted: "&cPlayer is not trusted!"
-        you-are-no-longer-trusted: "&cYou are no longer trusted by [name]!"
+        you-are-no-longer-trusted: "&cYou are no longer trusted by &b[name]&a!"
+        success: "&b[name] &ais no longer trusted on your island."
       invite:
         description: "invite a player to join your island"
         invitation-sent: "&aInvitation sent to [name]"
@@ -471,6 +475,7 @@ commands:
         cannot-leave: "&cOwners cannot leave! Become a member first, or kick all members."
         description: "leave your island"
         left-your-island: "&c[name] &cleft your island"
+        success: "&aYou left this island."
       kick:
         description: "remove a member from your island"
         parameters: "<player>"
