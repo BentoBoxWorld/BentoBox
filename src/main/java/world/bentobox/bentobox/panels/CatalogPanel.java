@@ -20,7 +20,7 @@ import java.util.List;
 public class CatalogPanel {
 
     private static final String LOCALE_REF = "catalog.panel.";
-    private static final int[] PANES = {0, 3, 4, 5, 6, 7, 8, 9, 17, 18, 26, 27, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44,};
+    private static final int[] PANES = {0, 3, 4, 5, 6, 7, 8, 9, 17, 18, 26, 27, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44};
 
     private CatalogPanel() {}
 
