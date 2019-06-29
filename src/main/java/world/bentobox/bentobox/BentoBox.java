@@ -53,7 +53,6 @@ import world.bentobox.bentobox.versions.ServerCompatibility;
  */
 public class BentoBox extends JavaPlugin {
 
-    //coucou
     private static BentoBox instance;
 
     // Databases

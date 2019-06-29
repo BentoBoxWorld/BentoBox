@@ -45,8 +45,9 @@ import world.bentobox.bentobox.util.Util;
 
 /**
  * Handles Blueprints
- * @since 1.5.0
+ *
  * @author Poslovitch, tastybento
+ * @since 1.5.0
  */
 public class BlueprintsManager {
 
@@ -82,16 +83,16 @@ public class BlueprintsManager {
         this.plugin = plugin;
         this.blueprintBundles = new HashMap<>();
         this.blueprints = new HashMap<>();
-        @SuppressWarnings({ "rawtypes", "unchecked" })
+        @SuppressWarnings({"rawtypes", "unchecked"})
         GsonBuilder builder = new GsonBuilder()
-        .excludeFieldsWithoutExposeAnnotation()
-        .enableComplexMapKeySerialization()
-        .setPrettyPrinting()
-        // This enables gson to deserialize enum maps
-        .registerTypeAdapter(EnumMap.class, (InstanceCreator<EnumMap>) type -> {
-            Type[] types = (((ParameterizedType) type).getActualTypeArguments());
-            return new EnumMap((Class<?>) types[0]);
-        });
+                .excludeFieldsWithoutExposeAnnotation()
+                .enableComplexMapKeySerialization()
+                .setPrettyPrinting()
+                // This enables gson to deserialize enum maps
+                .registerTypeAdapter(EnumMap.class, (InstanceCreator<EnumMap>) type -> {
+                    Type[] types = (((ParameterizedType) type).getActualTypeArguments());
+                    return new EnumMap((Class<?>) types[0]);
+                });
         // Disable <>'s escaping etc.
         builder.disableHtmlEscaping();
         // Register adapter factory
@@ -102,6 +103,7 @@ public class BlueprintsManager {
     /**
      * Extracts the blueprints and bundles provided by this {@link GameModeAddon} in its .jar file.
      * This will do nothing if the blueprints folder already exists for this GameModeAddon.
+     *
      * @param addon the {@link GameModeAddon} to extract the blueprints from.
      */
     public void extractDefaultBlueprints(@NonNull GameModeAddon addon) {
@@ -128,6 +130,7 @@ public class BlueprintsManager {
 
     /**
      * Get the blueprint bundles of this addon.
+     *
      * @param addon the {@link GameModeAddon} to get the blueprint bundles.
      */
     public Map<String, BlueprintBundle> getBlueprintBundles(@NonNull GameModeAddon addon) {
@@ -139,6 +142,7 @@ public class BlueprintsManager {
 
     /**
      * Returns a {@link File} instance of the blueprints folder of this {@link GameModeAddon}.
+     *
      * @param addon the {@link GameModeAddon}
      * @return a {@link File} instance of the blueprints folder of this GameModeAddon.
      */
@@ -149,6 +153,7 @@ public class BlueprintsManager {
 
     /**
      * Loads the blueprint bundles of this addon from its blueprints folder.
+     *
      * @param addon the {@link GameModeAddon} to load the blueprints of.
      */
     public void loadBlueprintBundles(@NonNull GameModeAddon addon) {
@@ -174,12 +179,12 @@ public class BlueprintsManager {
             bpf.mkdirs();
         }
         boolean loaded = false;
-        File[] bundles = bpf.listFiles((dir, name) ->  name.toLowerCase(Locale.ENGLISH).endsWith(BLUEPRINT_BUNDLE_SUFFIX));
+        File[] bundles = bpf.listFiles((dir, name) -> name.toLowerCase(Locale.ENGLISH).endsWith(BLUEPRINT_BUNDLE_SUFFIX));
         if (bundles == null || bundles.length == 0) {
             makeDefaults(addon);
             return loadBundles(addon);
         }
-        for (File file: bundles) {
+        for (File file : bundles) {
             try {
                 BlueprintBundle bb = gson.fromJson(new FileReader(file), BlueprintBundle.class);
                 blueprintBundles.get(addon).add(bb);
@@ -206,15 +211,16 @@ public class BlueprintsManager {
         Blueprint defaultBp = new Blueprint();
         defaultBp.setName("bedrock");
         defaultBp.setDescription(Collections.singletonList(ChatColor.AQUA + "A bedrock block"));
-        defaultBp.setBedrock(new Vector(0,0,0));
+        defaultBp.setBedrock(new Vector(0, 0, 0));
         Map<Vector, BlueprintBlock> map = new HashMap<>();
-        map.put(new Vector(0,0,0), new BlueprintBlock("minecraft:bedrock"));
+        map.put(new Vector(0, 0, 0), new BlueprintBlock("minecraft:bedrock"));
         defaultBp.setBlocks(map);
         return defaultBp;
     }
 
     /**
      * This should never be needed and is just a boot strap
+     *
      * @param addon
      */
     private void makeDefaults(@NonNull GameModeAddon addon) {
@@ -235,41 +241,43 @@ public class BlueprintsManager {
 
     /**
      * Loads all the blueprints of this addon from its blueprints folder.
+     *
      * @param addon the {@link GameModeAddon} to load the blueprints of.
      */
     public void loadBlueprints(@NonNull GameModeAddon addon) {
-        blueprints.put(addon, new ArrayList<>());
-        File bpf = getBlueprintsFolder(addon);
-        if (!bpf.exists()) {
-            plugin.logError("There is no blueprint folder for addon " + addon.getDescription().getName());
-            bpf.mkdirs();
-        }
-        File[] bps = bpf.listFiles((dir, name) ->  name.toLowerCase(Locale.ENGLISH).endsWith(BLUEPRINT_SUFFIX));
-        if (bps == null || bps.length == 0) {
-            plugin.logError("No blueprints found for " + addon.getDescription().getName());
-            return;
-        }
-        for (File file: bps) {
-            String fileName = file.getName().substring(0, file.getName().length() - BLUEPRINT_SUFFIX.length());
-            try {
-                Blueprint bp = new BlueprintClipboardManager(plugin, bpf).loadBlueprint(fileName);
-                if (bp.getName() == null) {
-                    bp.setName(fileName);
-                }
-                blueprints.get(addon).add(bp);
-                plugin.log("Loaded blueprint '" + bp.getName() + FOR + addon.getDescription().getName());
-            } catch (Exception e) {
-                plugin.logError("Could not load blueprint " + fileName + " " + e.getMessage());
-                plugin.logStacktrace(e);
+            blueprints.put(addon, new ArrayList<>());
+            File bpf = getBlueprintsFolder(addon);
+            if (!bpf.exists()) {
+                plugin.logError("There is no blueprint folder for addon " + addon.getDescription().getName());
+                bpf.mkdirs();
             }
-        }
+            File[] bps = bpf.listFiles((dir, name) -> name.toLowerCase(Locale.ENGLISH).endsWith(BLUEPRINT_SUFFIX));
+            if (bps == null || bps.length == 0) {
+                plugin.logError("No blueprints found for " + addon.getDescription().getName());
+                return;
+            }
+            for (File file : bps) {
+                String fileName = file.getName().substring(0, file.getName().length() - BLUEPRINT_SUFFIX.length());
+                try {
+                    Blueprint bp = new BlueprintClipboardManager(plugin, bpf).loadBlueprint(fileName);
+                    if (bp.getName() == null) {
+                        bp.setName(fileName);
+                    }
+                    blueprints.get(addon).add(bp);
+                    plugin.log("Loaded blueprint '" + bp.getName() + FOR + addon.getDescription().getName());
+                } catch (Exception e) {
+                    plugin.logError("Could not load blueprint " + fileName + " " + e.getMessage());
+                    plugin.logStacktrace(e);
+                }
+            }
     }
 
     /**
      * Adds a blueprint to addon's list of blueprints. If the list already contains a blueprint with the same name
      * it is replaced.
+     *
      * @param addon - the {@link GameModeAddon}
-     * @param bp - blueprint
+     * @param bp    - blueprint
      */
     public void addBlueprint(@NonNull GameModeAddon addon, @NonNull Blueprint bp) {
         blueprints.putIfAbsent(addon, new ArrayList<>());
@@ -280,8 +288,9 @@ public class BlueprintsManager {
 
     /**
      * Saves a blueprint into addon's blueprint folder
+     *
      * @param addon - the {@link GameModeAddon}
-     * @param bp - blueprint to save
+     * @param bp    - blueprint to save
      */
     public boolean saveBlueprint(@NonNull GameModeAddon addon, @NonNull Blueprint bp) {
         return new BlueprintClipboardManager(plugin, getBlueprintsFolder(addon)).saveBlueprint(bp);
@@ -289,32 +298,36 @@ public class BlueprintsManager {
 
     /**
      * Save blueprint bundle for game mode
+     *
      * @param addon - gamemode addon
-     * @param bb blueprint bundle to save
+     * @param bb    blueprint bundle to save
      */
     public void saveBlueprintBundle(GameModeAddon addon, BlueprintBundle bb) {
-        File bpf = getBlueprintsFolder(addon);
-        if (!bpf.exists()) {
-            bpf.mkdirs();
-        }
-        File fileName = new File(bpf, bb.getUniqueId() + BLUEPRINT_BUNDLE_SUFFIX);
-        String toStore = gson.toJson(bb, BlueprintBundle.class);
-        try (FileWriter fileWriter = new FileWriter(fileName)) {
-            fileWriter.write(toStore);
-        } catch (IOException e) {
-            plugin.logError("Could not save blueprint bundle file: " + e.getMessage());
-        }
+        Bukkit.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
+            File bpf = getBlueprintsFolder(addon);
+            if (!bpf.exists()) {
+                bpf.mkdirs();
+            }
+            File fileName = new File(bpf, bb.getUniqueId() + BLUEPRINT_BUNDLE_SUFFIX);
+            String toStore = gson.toJson(bb, BlueprintBundle.class);
+            try (FileWriter fileWriter = new FileWriter(fileName)) {
+                fileWriter.write(toStore);
+            } catch (IOException e) {
+                plugin.logError("Could not save blueprint bundle file: " + e.getMessage());
+            }
+        });
     }
 
     /**
      * Saves all the blueprint bundles
      */
     public void saveBlueprintBundles() {
-        blueprintBundles.forEach((k,v) -> v.forEach(m -> saveBlueprintBundle(k, m)));
+        blueprintBundles.forEach((k, v) -> v.forEach(m -> saveBlueprintBundle(k, m)));
     }
 
     /**
      * Get blueprints for this game mode
+     *
      * @param addon - game mdoe addon
      * @return Map of name and blueprint or empty map
      */
@@ -327,9 +340,10 @@ public class BlueprintsManager {
 
     /**
      * Paste the islands to world
-     * @param addon - GameModeAddon
+     *
+     * @param addon  - GameModeAddon
      * @param island - island
-     * @param name - bundle name
+     * @param name   - bundle name
      */
     public void paste(GameModeAddon addon, Island island, String name) {
         paste(addon, island, name, null);
@@ -337,10 +351,11 @@ public class BlueprintsManager {
 
     /**
      * Paste islands to the world and run task afterwards
-     * @param addon - the game mode addon
+     *
+     * @param addon  - the game mode addon
      * @param island - the island
-     * @param name - name of bundle to paste
-     * @param task - task to run after pasting is completed
+     * @param name   - name of bundle to paste
+     * @param task   - task to run after pasting is completed
      * @return true if okay, false is there is a problem
      */
     public boolean paste(GameModeAddon addon, Island island, String name, Runnable task) {
@@ -392,8 +407,9 @@ public class BlueprintsManager {
 
     /**
      * Validate if the bundle name is valid or not
+     *
      * @param addon - game mode addon
-     * @param name - bundle name
+     * @param name  - bundle name
      * @return bundle name or null if it's invalid
      */
     public @Nullable String validate(GameModeAddon addon, String name) {
@@ -408,8 +424,9 @@ public class BlueprintsManager {
 
     /**
      * Adds a blueprint bundle. If a bundle with the same uniqueId exists, it will be replaced
+     *
      * @param addon - the game mode addon
-     * @param bb - the blueprint bundle
+     * @param bb    - the blueprint bundle
      */
     public void addBlueprintBundle(GameModeAddon addon, BlueprintBundle bb) {
         if (blueprintBundles.containsKey(addon)) {
@@ -421,16 +438,17 @@ public class BlueprintsManager {
 
     /**
      * Checks if a player has permission to see or use this blueprint bundle.
+     *
      * @param addon - addon making the request
-     * @param user - user making the request
-     * @param name - name of the blueprint bundle
+     * @param user  - user making the request
+     * @param name  - name of the blueprint bundle
      * @return <tt>true</tt> if allowed, <tt>false</tt> if not or bundle does not exist
      */
     public boolean checkPerm(@NonNull Addon addon, @NonNull User user, @NonNull String name) {
         // Permission
         String permission = addon.getPermissionPrefix() + "island.create." + name;
         // Get Blueprint bundle
-        BlueprintBundle bb = getBlueprintBundles((GameModeAddon)addon).get(name.toLowerCase(Locale.ENGLISH));
+        BlueprintBundle bb = getBlueprintBundles((GameModeAddon) addon).get(name.toLowerCase(Locale.ENGLISH));
         if (bb == null || (bb.isRequirePermission() && !name.equals(DEFAULT_BUNDLE_NAME) && !user.hasPermission(permission))) {
             user.sendMessage("general.errors.no-permission", TextVariables.PERMISSION, permission);
             return false;
@@ -440,8 +458,9 @@ public class BlueprintsManager {
 
     /**
      * Removes a blueprint bundle
+     *
      * @param addon - Game Mode Addon
-     * @param bb - Blueprint Bundle to delete
+     * @param bb    - Blueprint Bundle to delete
      */
     public void deleteBlueprintBundle(@NonNull GameModeAddon addon, BlueprintBundle bb) {
         if (blueprintBundles.containsKey(addon)) {
@@ -458,9 +477,10 @@ public class BlueprintsManager {
 
     /**
      * Rename a blueprint
+     *
      * @param addon - Game Mode Addon
-     * @param bp - blueprint
-     * @param name - new name
+     * @param bp    - blueprint
+     * @param name  - new name
      */
     public void renameBlueprint(GameModeAddon addon, Blueprint bp, String name) {
         if (bp.getName().equalsIgnoreCase(name)) {
