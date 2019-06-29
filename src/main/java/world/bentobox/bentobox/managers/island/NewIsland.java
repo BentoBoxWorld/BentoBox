@@ -2,7 +2,9 @@ package world.bentobox.bentobox.managers.island;
 
 import java.io.IOException;
 import java.util.EnumMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -257,7 +259,9 @@ public class NewIsland {
         }
         // Find a free spot
         Map<Result, Integer> result = new EnumMap<>(Result.class);
+        // Check center
         Result r = isIsland(last);
+
         while (!r.equals(Result.FREE) && result.getOrDefault(Result.BLOCK_AT_CENTER, 0) < MAX_UNOWNED_ISLANDS) {
             last = nextGridLocation(last);
             result.merge(r, 1, (k,v) -> v++);
@@ -282,8 +286,20 @@ public class NewIsland {
      */
     private Result isIsland(Location location){
         location = Util.getClosestIsland(location);
-        if (plugin.getIslands().getIslandAt(location).isPresent() || plugin.getIslandDeletionManager().inDeletion(location)) {
-            return Result.ISLAND_FOUND;
+
+        // Check 4 corners
+        int dist = plugin.getIWM().getIslandDistance(location.getWorld());
+        Set<Location> locs = new HashSet<>();
+        locs.add(location);
+        locs.add(new Location(location.getWorld(), location.getBlockX() - dist, 0, location.getBlockZ() - dist));
+        locs.add(new Location(location.getWorld(), location.getBlockX() - dist, 0, location.getBlockZ() + dist - 1));
+        locs.add(new Location(location.getWorld(), location.getBlockX() + dist - 1, 0, location.getBlockZ() - dist));
+        locs.add(new Location(location.getWorld(), location.getBlockX() + dist - 1, 0, location.getBlockZ() + dist - 1));
+
+        for (Location l : locs) {
+            if (plugin.getIslands().getIslandAt(l).isPresent() || plugin.getIslandDeletionManager().inDeletion(l)) {
+                return Result.ISLAND_FOUND;
+            }
         }
 
         if (!plugin.getIWM().isUseOwnGenerator(location.getWorld())) {
