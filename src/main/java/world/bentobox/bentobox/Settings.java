@@ -191,10 +191,10 @@ public class Settings implements ConfigObject {
 
     @ConfigComment("Time in minutes between each connection to the GitHub API.")
     @ConfigComment("This allows for up-to-the-minute information gathering.")
-    @ConfigComment("However, as the GitHub API data does not get updated instantly, this value cannot be set less than 15 minutes.")
+    @ConfigComment("However, as the GitHub API data does not get updated instantly, this value cannot be set to less than 60 minutes.")
     @ConfigComment("Setting this to 0 will make BentoBox download data only at startup.")
     @ConfigEntry(path = "web.github.connection-interval", since = "1.5.0")
-    private int githubConnectionInterval = 60;
+    private int githubConnectionInterval = 120;
 
     @ConfigEntry(path = "web.updater.check-updates.bentobox", since = "1.3.0", hidden = true)
     private boolean checkBentoBoxUpdates = true;

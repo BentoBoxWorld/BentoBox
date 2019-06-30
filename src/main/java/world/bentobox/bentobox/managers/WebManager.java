@@ -44,8 +44,8 @@ public class WebManager {
                 // If below 0, it means we shouldn't run this as a repeating task.
                 plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, () -> requestGitHubData(true), 20L);
             } else {
-                // Set connection interval to be at least 15 minutes.
-                connectionInterval = Math.max(connectionInterval, 15 * 20 * 60L);
+                // Set connection interval to be at least 60 minutes.
+                connectionInterval = Math.max(connectionInterval, 60 * 20 * 60L);
                 plugin.getServer().getScheduler().runTaskTimerAsynchronously(plugin, () -> requestGitHubData(true), 20L, connectionInterval);
             }
         }
