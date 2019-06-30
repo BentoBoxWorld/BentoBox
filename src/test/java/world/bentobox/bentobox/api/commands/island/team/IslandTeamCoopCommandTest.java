@@ -32,6 +32,7 @@ import org.powermock.reflect.Whitebox;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
+import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.CommandsManager;
@@ -298,9 +299,7 @@ public class IslandTeamCoopCommandTest {
         // Execute
         when(im.getIsland(any(), Mockito.any(UUID.class))).thenReturn(island);
         assertTrue(itl.execute(user, itl.getLabel(), Collections.singletonList("tastybento")));
-        verify(user).sendMessage(eq("general.success"));
+        verify(user).sendMessage("commands.island.team.coop.success",  TextVariables.NAME, null);
         verify(island).setRank(target, RanksManager.COOP_RANK);
     }
-
-
 }

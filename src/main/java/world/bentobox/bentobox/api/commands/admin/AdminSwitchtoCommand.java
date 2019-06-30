@@ -67,7 +67,7 @@ public class AdminSwitchtoCommand extends ConfirmableCommand {
                 }
                 this.askConfirmation(user, () -> {
                     if (getIslands().switchIsland(getWorld(), targetUUID, islands.get(n -1))) {
-                        user.sendMessage("general.success");
+                        user.sendMessage("commands.admin.switchto.success");
                     } else {
                         user.sendMessage("commands.admin.switchto.cannot-switch");
                     }

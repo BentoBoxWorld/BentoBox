@@ -53,7 +53,7 @@ public class AdminEmptyTrashCommand extends ConfirmableCommand {
         } else {
             this.askConfirmation(user, () -> {
                 getIslands().deleteQuarantinedIslandByUser(getWorld(), targetUUID);
-                user.sendMessage("general.success");
+                user.sendMessage("commands.admin.emptytrash.success");
             });
             return true;
         }

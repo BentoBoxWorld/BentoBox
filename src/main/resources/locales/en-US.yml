@@ -151,7 +151,8 @@ commands:
       parameters: "<player> <number>"
       description: "switch player's island to the numbered one in trash"
       out-of-range: "&cNumber must be between 1 and [number]. Use &l[label] trash [player] &r&cto see island numbers"
-      cannot-switch: "&cSwitch failed. See console log for error."   
+      cannot-switch: "&cSwitch failed. See console log for error."
+      success: "&Successfully switched the player's island to the specified one."
     trash:
       no-unowned-in-trash: "&cNo unowned islands in trash"
       no-islands-in-trash: "&cPlayer has no islands in trash"
@@ -164,12 +165,13 @@ commands:
     emptytrash:
       parameters: "[player]"
       description: "Clear trash for player, or all unowned islands in trash"
+      success: "&aTrash successfully emptied."
     version:
       description: "display BentoBox and addons versions"
     setrange:
       parameters: "<player> <range>"
       description: "set the range of player's island"
-      range-updated: "Island range updated to [number]"
+      range-updated: "&aIsland range updated to &b[number]&a."
     reload:
       description: "reload"
     tp:
@@ -186,10 +188,11 @@ commands:
       unknown-rank: "&cUnknown rank!"
       rank-set: "&aRank set from [from] to [to]."
     setspawn:
-      description: "set an Island as spawn for this world"
+      description: "set an island as spawn for this world"
       already-spawn: "&cThis island is already a spawn!"
       no-island-here: "&cThere is no island here."
-      confirmation: "&cAre you sure you want to set this Island as the spawn for this world?"
+      confirmation: "&cAre you sure you want to set this island as the spawn for this world?"
+      success: "&aSuccessfully set this island as the spawn for this world."
     blueprint:
       parameters: "<load/copy/paste/pos1/pos2/save>"
       description: "manipulate blueprints"
@@ -279,6 +282,7 @@ commands:
           &aRight click to decrement
     resetflags:
       description: "Reset all islands to default flag settings in config.yml"
+      success: "&aSuccessfully reset all islands' flags to the default settings."
     world:
       description: "Manage world settings"
     delete:

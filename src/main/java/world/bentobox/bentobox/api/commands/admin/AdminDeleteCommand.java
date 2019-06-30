@@ -65,8 +65,6 @@ public class AdminDeleteCommand extends ConfirmableCommand {
 
     private void deletePlayer(User user, UUID targetUUID) {
         // Delete player and island
-        user.sendMessage("commands.admin.delete.deleted-island", "[xyz]", Util.xyz(getIslands().getIsland(getWorld(), targetUUID).getCenter().toVector()));
-
         // Get the target's island
         Island oldIsland = getIslands().getIsland(getWorld(), targetUUID);
         if (oldIsland != null) {
@@ -89,7 +87,7 @@ public class AdminDeleteCommand extends ConfirmableCommand {
             getIslands().deleteIsland(oldIsland, true, targetUUID);
         }
         getPlayers().clearHomeLocations(getWorld(), targetUUID);
-        user.sendMessage("general.success");
+        user.sendMessage("commands.admin.delete.deleted-island", "[xyz]", Util.xyz(getIslands().getIsland(getWorld(), targetUUID).getCenter().toVector()));
     }
 
     @Override
