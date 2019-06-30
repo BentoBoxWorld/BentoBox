@@ -19,6 +19,7 @@ import world.bentobox.bentobox.api.user.Notifier;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.commands.BentoBoxCommand;
 import world.bentobox.bentobox.hooks.DynmapHook;
+import world.bentobox.bentobox.hooks.WorldEditHook;
 import world.bentobox.bentobox.hooks.placeholders.MVdWPlaceholderAPIHook;
 import world.bentobox.bentobox.hooks.MultiverseCoreHook;
 import world.bentobox.bentobox.hooks.placeholders.PlaceholderAPIHook;
@@ -200,6 +201,7 @@ public class BentoBox extends JavaPlugin {
 
             // Register additional hooks
             hooksManager.registerHook(new DynmapHook());
+            hooksManager.registerHook(new WorldEditHook());
 
             webManager = new WebManager(this);
 
