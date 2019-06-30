@@ -168,7 +168,7 @@ public class IslandTeamLeaveCommandTest {
         IslandTeamLeaveCommand itl = new IslandTeamLeaveCommand(ic);
         assertTrue(itl.execute(user, itl.getLabel(), new ArrayList<>()));
         verify(im).setLeaveTeam(any(), eq(uuid));
-        verify(user).sendMessage(eq("general.success"));
+        verify(user).sendMessage(eq("commands.island.team.leave.success"));
     }
 
     /**
@@ -227,7 +227,7 @@ public class IslandTeamLeaveCommandTest {
         IslandTeamLeaveCommand itl = new IslandTeamLeaveCommand(ic);
         assertTrue(itl.execute(user, itl.getLabel(), new ArrayList<>()));
         verify(im).setLeaveTeam(any(), eq(uuid));
-        verify(user).sendMessage(eq("general.success"));
+        verify(user).sendMessage(eq("commands.island.team.leave.success"));
         verify(pm).addReset(eq(world), eq(uuid));
         verify(user).sendMessage(eq("commands.island.reset.resets-left"), eq(TextVariables.NUMBER), eq("100"));
     }
@@ -255,7 +255,7 @@ public class IslandTeamLeaveCommandTest {
         IslandTeamLeaveCommand itl = new IslandTeamLeaveCommand(ic);
         assertTrue(itl.execute(user, itl.getLabel(), new ArrayList<>()));
         verify(im).setLeaveTeam(any(), eq(uuid));
-        verify(user).sendMessage(eq("general.success"));
+        verify(user).sendMessage(eq("commands.island.team.leave.success"));
 
         verify(enderChest).clear();
         verify(inv).clear();

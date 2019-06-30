@@ -367,7 +367,7 @@ public class IslandExpelCommandTest {
     public void testExecuteUserStringListOfStringHasIsland() {
         testCanExecute();
         assertTrue(iec.execute(user, "", Collections.singletonList("tasty")));
-        Mockito.verify(user).sendMessage("general.success");
+        Mockito.verify(user).sendMessage("commands.island.expel.success");
         Mockito.verify(im).homeTeleport(Mockito.any(), Mockito.any());
     }
 
@@ -381,7 +381,7 @@ public class IslandExpelCommandTest {
         testCanExecute();
         when(im.hasIsland(Mockito.any(), Mockito.any(User.class))).thenReturn(false);
         assertTrue(iec.execute(user, "", Collections.singletonList("tasty")));
-        Mockito.verify(user).sendMessage("general.success");
+        Mockito.verify(user).sendMessage("commands.island.expel.success");
         Mockito.verify(im).spawnTeleport(Mockito.any(), Mockito.any());
     }
 
@@ -401,7 +401,7 @@ public class IslandExpelCommandTest {
         testCanExecute();
         when(im.hasIsland(Mockito.any(), Mockito.any(User.class))).thenReturn(false);
         assertTrue(iec.execute(user, "", Collections.singletonList("tasty")));
-        Mockito.verify(user).sendMessage("general.success");
+        Mockito.verify(user).sendMessage("commands.island.expel.success");
         Mockito.verify(addon).logWarning(Mockito.eq("Expel: target had no island, so one was created"));
     }
 
