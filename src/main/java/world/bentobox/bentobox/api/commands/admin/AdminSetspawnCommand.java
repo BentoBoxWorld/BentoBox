@@ -75,7 +75,6 @@ public class AdminSetspawnCommand extends ConfirmableCommand {
         }
         getIslands().setSpawn(i);
         i.setSpawnPoint(World.Environment.NORMAL, user.getLocation());
-        user.sendMessage("general.success");
-
+        user.sendMessage("commands.admin.setspawn.success");
     }
 }

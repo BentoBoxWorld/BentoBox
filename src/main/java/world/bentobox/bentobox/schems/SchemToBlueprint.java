@@ -41,7 +41,6 @@ public class SchemToBlueprint {
      * @param addon - GameModeAddon
      */
     public void convertSchems(GameModeAddon addon) {
-        Bukkit.getServer().getScheduler().runTaskAsynchronously(BentoBox.getInstance(), () -> {
             File schems = new File(addon.getDataFolder(), FOLDER_NAME);
             if (!schems.exists()) {
                 return;
@@ -62,7 +61,6 @@ public class SchemToBlueprint {
             } catch (IOException e) {
                 plugin.logError("Could not move schems folder: " + e.getLocalizedMessage());
             }
-        });
     }
 
     /**

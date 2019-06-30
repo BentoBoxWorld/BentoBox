@@ -94,7 +94,6 @@ public class AdminRegisterCommand extends ConfirmableCommand {
                 getIslands().setOwner(user, targetUUID, i);
                 getWorld().getBlockAt(i.getCenter()).setType(Material.BEDROCK);
                 user.sendMessage("commands.admin.register.registered-island", "[xyz]", Util.xyz(i.getCenter().toVector()));
-                user.sendMessage("general.success");
                 IslandBaseEvent event = IslandEvent.builder()
                         .island(i)
                         .location(i.getCenter())

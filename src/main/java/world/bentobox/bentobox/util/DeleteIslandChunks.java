@@ -50,14 +50,13 @@ public class DeleteIslandChunks {
         task = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
             for (int i = 0; i < SPEED; i++) {
                 plugin.getIWM().getAddon(di.getWorld()).ifPresent(gm -> {
-
-                    regerateChunk(gm, di.getWorld().getChunkAt(chunkX, chunkZ));
+                    regenerateChunk(gm, di.getWorld().getChunkAt(chunkX, chunkZ));
 
                     if (plugin.getIWM().isNetherGenerate(di.getWorld()) && plugin.getIWM().isNetherIslands(di.getWorld())) {
-                        regerateChunk(gm, plugin.getIWM().getNetherWorld(di.getWorld()).getChunkAt(chunkX, chunkZ));
+                        regenerateChunk(gm, plugin.getIWM().getNetherWorld(di.getWorld()).getChunkAt(chunkX, chunkZ));
                     }
                     if (plugin.getIWM().isEndGenerate(di.getWorld()) && plugin.getIWM().isEndIslands(di.getWorld())) {
-                        regerateChunk(gm, plugin.getIWM().getEndWorld(di.getWorld()).getChunkAt(chunkX, chunkZ));
+                        regenerateChunk(gm, plugin.getIWM().getEndWorld(di.getWorld()).getChunkAt(chunkX, chunkZ));
                     }
                     chunkZ++;
                     if (chunkZ > di.getMaxZChunk()) {
@@ -75,7 +74,7 @@ public class DeleteIslandChunks {
         }, 0L, 1L);
     }
 
-    private void regerateChunk(GameModeAddon gm, Chunk chunk) {
+    private void regenerateChunk(GameModeAddon gm, Chunk chunk) {
         // Clear all inventories
         Arrays.stream(chunk.getTileEntities()).filter(te -> (te instanceof InventoryHolder))
         .filter(te -> di.inBounds(te.getLocation().getBlockX(), te.getLocation().getBlockZ()))

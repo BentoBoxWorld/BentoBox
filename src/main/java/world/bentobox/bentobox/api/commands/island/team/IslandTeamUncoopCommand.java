@@ -81,7 +81,7 @@ public class IslandTeamUncoopCommand extends CompositeCommand {
         Island island = getIslands().getIsland(getWorld(), user.getUniqueId());
         if (island != null) {
             island.removeMember(targetUUID);
-            user.sendMessage("general.success");
+            user.sendMessage("commands.island.team.uncoop.success", TextVariables.NAME, target.getName());
             target.sendMessage("commands.island.team.uncoop.you-are-no-longer-a-coop-member", TextVariables.NAME, user.getName());
             // Set cooldown
             if (getSettings().getCoopCooldown() > 0 && getParent() != null) {

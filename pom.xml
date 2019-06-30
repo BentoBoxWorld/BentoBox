@@ -72,7 +72,7 @@
         <spigot.version>1.13.2-R0.1-SNAPSHOT</spigot.version>
         <bstats.version>1.5</bstats.version>
         <vault.version>1.7</vault.version>
-        <placeholderapi.version>2.10.1</placeholderapi.version>
+        <placeholderapi.version>2.10.3</placeholderapi.version>
         <mvdwplaceholderapi.version>2.5.1-SNAPSHOT</mvdwplaceholderapi.version>
         <githubapi.version>1.0</githubapi.version>
         <!-- Revision variable removes warning about dynamic version -->
@@ -166,6 +166,10 @@
             <id>dynmap-repo</id>
             <url>http://repo.mikeprimm.com/</url>
         </repository>
+        <repository>
+            <id>worldedit-repo</id>
+            <url>http://maven.sk89q.com/repo/</url>
+        </repository>
     </repositories>
 
 	<dependencies>
@@ -236,6 +240,12 @@
             <groupId>us.dynmap</groupId>
             <artifactId>dynmap-api</artifactId>
             <version>3.0-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.sk89q.worldedit</groupId>
+            <artifactId>worldedit-core</artifactId>
+            <version>7.0.0</version>
             <scope>provided</scope>
         </dependency>
         <!-- Shaded APIs -->

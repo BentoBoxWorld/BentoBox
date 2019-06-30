@@ -7,7 +7,7 @@
 
 meta:
   authors:
-    - Poslovitch
+  - Poslovitch
   banner: "WHITE_BANNER:1:STRIPE_TOP:BLUE:STRIPE_BOTTOM:RED"
 
 general:
@@ -180,6 +180,13 @@ commands:
         parameters: "<joueur>"
       setowner:
         parameters: "<joueur>"
+      leave:
+        cannot-leave: |
+          &cEn tant que propriétaire, vous ne pouvez pas quittez l'île.
+          &cVous devez d'abord devenir membre sur l'île ou en expulser les membres actuels.
+        description: "quittez votre île"
+        left-your-island: "&c[name] &ca quitté votre île."
+        success: "&aVous avez quitté l'île."
     ban:
       parameters: "<joueur>"
     unban:
@@ -190,6 +197,7 @@ commands:
       description: "sélectionne la langue"
     expel:
       parameters: "<joueur>"
+      success: "&aVous avez expulsé &b[name] &ade votre île."
 
 ranks:
   owner: "Propriétaire"

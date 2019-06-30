@@ -19,7 +19,7 @@ import java.util.UUID;
 public class IslandExpelCommand extends CompositeCommand {
 
     private static final String CANNOT_EXPEL = "commands.island.expel.cannot-expel";
-    private static final String SUCCESS = "general.success";
+    private static final String SUCCESS = "commands.island.expel.success";
 
     private @Nullable User target;
 
@@ -110,13 +110,13 @@ public class IslandExpelCommand extends CompositeCommand {
         island.getWorld().playSound(target.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 1F, 1F);
         if (getIslands().hasIsland(getWorld(), target)) {
             // Success
-            user.sendMessage(SUCCESS);
+            user.sendMessage(SUCCESS, TextVariables.NAME, target.getName());
             // Teleport home
             getIslands().homeTeleport(getWorld(), target.getPlayer());
             return true;
         } else if (getIslands().getSpawn(getWorld()).isPresent()){
             // Success
-            user.sendMessage(SUCCESS);
+            user.sendMessage(SUCCESS, TextVariables.NAME, target.getName());
             getIslands().spawnTeleport(getWorld(), target.getPlayer());
             return true;
         } else if (getIWM().getAddon(getWorld())
@@ -126,7 +126,7 @@ public class IslandExpelCommand extends CompositeCommand {
                 .orElse(false)
                 && target.performCommand(this.getTopLabel() + " create")) {
             getAddon().logWarning("Expel: " + target.getName() + " had no island, so one was created");
-            user.sendMessage(SUCCESS);
+            user.sendMessage(SUCCESS, TextVariables.NAME, target.getName());
             return true;
         }
 

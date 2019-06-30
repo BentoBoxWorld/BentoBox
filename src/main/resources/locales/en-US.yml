@@ -151,7 +151,8 @@ commands:
       parameters: "<player> <number>"
       description: "switch player's island to the numbered one in trash"
       out-of-range: "&cNumber must be between 1 and [number]. Use &l[label] trash [player] &r&cto see island numbers"
-      cannot-switch: "&cSwitch failed. See console log for error."   
+      cannot-switch: "&cSwitch failed. See console log for error."
+      success: "&Successfully switched the player's island to the specified one."
     trash:
       no-unowned-in-trash: "&cNo unowned islands in trash"
       no-islands-in-trash: "&cPlayer has no islands in trash"
@@ -164,12 +165,13 @@ commands:
     emptytrash:
       parameters: "[player]"
       description: "Clear trash for player, or all unowned islands in trash"
+      success: "&aTrash successfully emptied."
     version:
       description: "display BentoBox and addons versions"
     setrange:
       parameters: "<player> <range>"
       description: "set the range of player's island"
-      range-updated: "Island range updated to [number]"
+      range-updated: "&aIsland range updated to &b[number]&a."
     reload:
       description: "reload"
     tp:
@@ -186,10 +188,11 @@ commands:
       unknown-rank: "&cUnknown rank!"
       rank-set: "&aRank set from [from] to [to]."
     setspawn:
-      description: "set an Island as spawn for this world"
+      description: "set an island as spawn for this world"
       already-spawn: "&cThis island is already a spawn!"
       no-island-here: "&cThere is no island here."
-      confirmation: "&cAre you sure you want to set this Island as the spawn for this world?"
+      confirmation: "&cAre you sure you want to set this island as the spawn for this world?"
+      success: "&aSuccessfully set this island as the spawn for this world."
     blueprint:
       parameters: "<load/copy/paste/pos1/pos2/save>"
       description: "manipulate blueprints"
@@ -279,6 +282,7 @@ commands:
           &aRight click to decrement
     resetflags:
       description: "Reset all islands to default flag settings in config.yml"
+      success: "&aSuccessfully reset all islands' flags to the default settings."
     world:
       description: "Manage world settings"
     delete:
@@ -415,6 +419,7 @@ commands:
         cannot-coop-yourself: "&cYou cannot coop yourself!"
         already-has-rank: "&cPlayer already has a rank!"
         you-are-a-coop-member: "&2You were cooped by [name]"
+        success: "&aYou cooped &b[name]."
       uncoop:
         description: "remove a coop rank from player"
         parameters: "<player>"
@@ -423,20 +428,23 @@ commands:
         player-not-cooped: "&cPlayer is not cooped!"
         you-are-no-longer-a-coop-member: "&cYou are no longer a coop member of [name]'s island"
         all-members-logged-off: "&cAll island members logged off so you are no longer a coop member of [name]'s island"
+        success: "&b[name] &ais no longer a coop member of your island."
       trust:
         description: "give a player trusted rank on your island"
         parameters: "<player>"
         trust-in-yourself: "&cTrust in yourself!"
         members-trusted: "&cMembers are already trusted"
         player-already-trusted: "&cPlayer is already trusted!"
-        you-are-trusted: "&2You are trusted by [name]!"
+        you-are-trusted: "&2You are trusted by &b[name]&a!"
+        success: "&aYou trusted &b[name]&a."
       untrust:
         description: "remove trusted player rank from player"
         parameters: "<player>"
         cannot-untrust-yourself: "&cYou cannot untrust yourself!"
         cannot-untrust-member: "&cYou cannot untrust a team member!"
         player-not-trusted: "&cPlayer is not trusted!"
-        you-are-no-longer-trusted: "&cYou are no longer trusted by [name]!"
+        you-are-no-longer-trusted: "&cYou are no longer trusted by &b[name]&a!"
+        success: "&b[name] &ais no longer trusted on your island."
       invite:
         description: "invite a player to join your island"
         invitation-sent: "&aInvitation sent to [name]"
@@ -471,6 +479,7 @@ commands:
         cannot-leave: "&cOwners cannot leave! Become a member first, or kick all members."
         description: "leave your island"
         left-your-island: "&c[name] &cleft your island"
+        success: "&aYou left this island."
       kick:
         description: "remove a member from your island"
         parameters: "<player>"
@@ -531,6 +540,7 @@ commands:
       cannot-ban-member: "&cYou cannot expel a team member!"
       not-on-island: "&cThat player is not on your island!"
       player-expelled-you: "&b[name]&c expelled you from the island!"
+      success: "&aYou expelled &b[name] &afrom the island."
 
 ranks:
   owner: "Owner"

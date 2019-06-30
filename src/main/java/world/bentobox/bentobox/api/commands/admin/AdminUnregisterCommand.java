@@ -63,7 +63,6 @@ public class AdminUnregisterCommand extends ConfirmableCommand {
     private void unregisterPlayer(User user, UUID targetUUID) {
         // Unregister island
         Island oldIsland = getIslands().getIsland(getWorld(), targetUUID);
-        user.sendMessage("commands.admin.unregister.unregistered-island", "[xyz]", Util.xyz(oldIsland.getCenter().toVector()));
         IslandBaseEvent event = IslandEvent.builder()
                 .island(oldIsland)
                 .location(oldIsland.getCenter())
@@ -77,7 +76,7 @@ public class AdminUnregisterCommand extends ConfirmableCommand {
             getIslands().removePlayer(getWorld(), m);
             getPlayers().clearHomeLocations(getWorld(), m);
         });
-        user.sendMessage("general.success");
+        user.sendMessage("commands.admin.unregister.unregistered-island", "[xyz]", Util.xyz(oldIsland.getCenter().toVector()));
     }
 
     @Override

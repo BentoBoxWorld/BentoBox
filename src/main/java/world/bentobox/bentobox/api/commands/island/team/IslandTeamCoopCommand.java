@@ -81,7 +81,7 @@ public class IslandTeamCoopCommand extends CompositeCommand {
         Island island = getIslands().getIsland(getWorld(), user.getUniqueId());
         if (island != null) {
             island.setRank(target, RanksManager.COOP_RANK);
-            user.sendMessage("general.success");
+            user.sendMessage("commands.island.team.coop.success", TextVariables.NAME, target.getName());
             target.sendMessage("commands.island.team.coop.you-are-a-coop-member", TextVariables.NAME, user.getName());
             return true;
         } else {
