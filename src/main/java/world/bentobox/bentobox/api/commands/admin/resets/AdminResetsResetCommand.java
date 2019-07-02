@@ -24,7 +24,7 @@ public class AdminResetsResetCommand extends ConfirmableCommand {
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        if (args.isEmpty() || args.size() != 1) {
+        if (args.size() != 1) {
             showHelp(this, user);
             return false;
         }
