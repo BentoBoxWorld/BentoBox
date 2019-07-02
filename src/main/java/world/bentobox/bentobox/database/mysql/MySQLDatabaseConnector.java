@@ -5,8 +5,8 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import org.bukkit.Bukkit;
-
 import org.eclipse.jdt.annotation.NonNull;
+
 import world.bentobox.bentobox.database.DatabaseConnectionSettingsImpl;
 import world.bentobox.bentobox.database.DatabaseConnector;
 
@@ -14,7 +14,7 @@ public class MySQLDatabaseConnector implements DatabaseConnector {
 
     private String connectionUrl;
     private DatabaseConnectionSettingsImpl dbSettings;
-    private Connection connection = null;
+    private static Connection connection = null;
 
     /**
      * Class for MySQL database connections using the settings provided
@@ -28,10 +28,13 @@ public class MySQLDatabaseConnector implements DatabaseConnector {
 
     @Override
     public Connection createConnection() {
-        try {
-            connection = DriverManager.getConnection(connectionUrl, dbSettings.getUsername(), dbSettings.getPassword());
-        } catch (SQLException e) {
-            Bukkit.getLogger().severe("Could not connect to the database! " + e.getMessage());
+        // Only make one connection to the database
+        if (connection == null) {
+            try {
+                connection = DriverManager.getConnection(connectionUrl, dbSettings.getUsername(), dbSettings.getPassword());
+            } catch (SQLException e) {
+                Bukkit.getLogger().severe("Could not connect to the database! " + e.getMessage());
+            }
         }
         return connection;
     }
