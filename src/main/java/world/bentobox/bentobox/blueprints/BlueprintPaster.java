@@ -183,27 +183,39 @@ public class BlueprintPaster {
         BlueprintBlock bpBlock = entry.getValue();
         Block block = pasteTo.getBlock();
         // Set the block data - default is AIR
-        BlockData bd = Bukkit.createBlockData(Material.AIR);
+        BlockData bd;
         try {
             bd = Bukkit.createBlockData(bpBlock.getBlockData());
         } catch (Exception e) {
-            // This may happen if the block type is no longer supported by the server
-            plugin.logWarning("Blueprint references materials not supported on this server version.");
-            plugin.logWarning("Load blueprint manually, check and save to fix for this server version.");
-            plugin.logWarning("World: " + world.getName() + " Failed block data: " + bpBlock.getBlockData());
-            // Try to fix
-            for (Entry<String, String> en : BLOCK_CONVERSION.entrySet()) {
-                if (bpBlock.getBlockData().startsWith(MINECRAFT + en.getKey())) {
-                    bd = Bukkit.createBlockData(
-                            bpBlock.getBlockData().replace(MINECRAFT + en.getKey(), MINECRAFT + en.getValue()));
-                    break;
-                }
-            }
+            bd = convertBlockData(world, bpBlock);
         }
         block.setBlockData(bd, false);
         setBlockState(island, block, bpBlock);
         // pos1 and pos2 update
         updatePos(world, entry.getKey());
+    }
+
+    /**
+     * Tries to convert the BlockData to a newer version, and logs a warning if it fails to do so.
+     * @return the converted BlockData or a default AIR BlockData.
+     * @since 1.6.0
+     */
+    private BlockData convertBlockData(World world, BlueprintBlock block) {
+        BlockData blockData = Bukkit.createBlockData(Material.AIR);
+        try {
+            for (Entry<String, String> en : BLOCK_CONVERSION.entrySet()) {
+                if (block.getBlockData().startsWith(MINECRAFT + en.getKey())) {
+                    blockData = Bukkit.createBlockData(block.getBlockData().replace(MINECRAFT + en.getKey(), MINECRAFT + en.getValue()));
+                    break;
+                }
+            }
+        } catch (IllegalArgumentException e) {
+            // This may happen if the block type is no longer supported by the server
+            plugin.logWarning("Blueprint references materials not supported on this server version.");
+            plugin.logWarning("Load blueprint manually, check and save to fix for this server version.");
+            plugin.logWarning("World: " + world.getName() + "; Failed block data: " + block.getBlockData());
+        }
+        return blockData;
     }
 
     private void pasteEntity(World world, Location location, Entry<Vector, List<BlueprintEntity>> entry) {
