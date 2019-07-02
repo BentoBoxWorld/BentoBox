@@ -1,4 +1,4 @@
-package world.bentobox.bentobox.blueprints;
+package world.bentobox.bentobox.blueprints.converter;
 
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormats;
