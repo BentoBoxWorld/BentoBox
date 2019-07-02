@@ -18,7 +18,7 @@ public class MariaDBDatabaseConnector implements DatabaseConnector {
 
     private String connectionUrl;
     private DatabaseConnectionSettingsImpl dbSettings;
-    private Connection connection = null;
+    private static Connection connection = null;
 
     /**
      * Class for MariaDB database connections using the settings provided
@@ -32,10 +32,13 @@ public class MariaDBDatabaseConnector implements DatabaseConnector {
 
     @Override
     public Connection createConnection() {
-        try {
-            connection = DriverManager.getConnection(connectionUrl, dbSettings.getUsername(), dbSettings.getPassword());
-        } catch (SQLException e) {
-            Bukkit.getLogger().severe("Could not connect to the database! " + e.getMessage());
+        // Only get one connection at a time
+        if (connection == null) {
+            try {
+                connection = DriverManager.getConnection(connectionUrl, dbSettings.getUsername(), dbSettings.getPassword());
+            } catch (SQLException e) {
+                Bukkit.getLogger().severe("Could not connect to the database! " + e.getMessage());
+            }
         }
         return connection;
     }

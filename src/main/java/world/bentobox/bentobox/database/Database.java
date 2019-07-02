@@ -21,6 +21,7 @@ public class Database<T> {
 
     private AbstractDatabaseHandler<T> handler;
     private Logger logger;
+    private static DatabaseSetup database;
 
     /**
      * Construct a database
@@ -29,7 +30,7 @@ public class Database<T> {
      */
     public Database(BentoBox plugin, Class<T> type)  {
         this.logger = plugin.getLogger();
-        handler = DatabaseSetup.getDatabase().getHandler(type);
+        setup(type);
     }
 
     /**
@@ -39,7 +40,15 @@ public class Database<T> {
      */
     public Database(Addon addon, Class<T> type)  {
         this.logger = addon.getLogger();
-        handler = DatabaseSetup.getDatabase().getHandler(type);
+        setup(type);
+    }
+
+    private void setup(Class<T> type) {
+        // Only do this query once
+        if (database == null) {
+            database = DatabaseSetup.getDatabase();
+        }
+        handler = database.getHandler(type);
     }
 
     /**
@@ -129,6 +138,7 @@ public class Database<T> {
      * Close the database
      */
     public void close() {
+        database = null;
         handler.close();
     }
 

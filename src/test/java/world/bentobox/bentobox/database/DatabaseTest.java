@@ -68,6 +68,9 @@ public class DatabaseTest {
 
         PowerMockito.mockStatic(DatabaseSetup.class);
 
+        // Set the internal state of the static database variable to null for each test
+        Whitebox.setInternalState(Database.class, "database", (DatabaseSetup)null);
+
         dbSetup = mock(DatabaseSetup.class);
         handler = mock(AbstractDatabaseHandler.class);
         when(dbSetup.getHandler(Mockito.any())).thenReturn(handler);
@@ -87,6 +90,7 @@ public class DatabaseTest {
      */
     @After
     public void tearDown() throws Exception {
+        dbSetup = null;
     }
 
     /**

@@ -12,7 +12,7 @@ import world.bentobox.bentobox.database.DatabaseConnector;
 
 public class MongoDBDatabaseConnector implements DatabaseConnector {
 
-    private MongoClient client;
+    private static MongoClient client;
     private DatabaseConnectionSettingsImpl dbSettings;
 
     /**
@@ -21,15 +21,18 @@ public class MongoDBDatabaseConnector implements DatabaseConnector {
      */
     MongoDBDatabaseConnector(DatabaseConnectionSettingsImpl dbSettings) {
         this.dbSettings = dbSettings;
-        MongoCredential credential = MongoCredential.createCredential(dbSettings.getUsername(),
-                dbSettings.getDatabaseName(),
-                dbSettings.getPassword().toCharArray());
-        MongoClientOptions options = MongoClientOptions.builder().sslEnabled(false).build();
-        client = new MongoClient(new ServerAddress(dbSettings.getHost(), dbSettings.getPort()), credential,options);
     }
 
     @Override
     public MongoDatabase createConnection() {
+        // Only get one client
+        if (client == null) {
+            MongoCredential credential = MongoCredential.createCredential(dbSettings.getUsername(),
+                    dbSettings.getDatabaseName(),
+                    dbSettings.getPassword().toCharArray());
+            MongoClientOptions options = MongoClientOptions.builder().sslEnabled(false).build();
+            client = new MongoClient(new ServerAddress(dbSettings.getHost(), dbSettings.getPort()), credential,options);
+        }
         return client.getDatabase(dbSettings.getDatabaseName());
     }
 
