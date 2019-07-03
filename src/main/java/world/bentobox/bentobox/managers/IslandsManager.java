@@ -646,12 +646,6 @@ public class IslandsManager {
         } else {
             user.sendMessage("commands.island.go.teleported", TextVariables.NUMBER, String.valueOf(number));
         }
-        // Exit spectator mode if in it - running this too quickly after teleporting can result in the player dropping a block
-        Bukkit.getScheduler().runTaskLater(plugin, () -> {
-            if (player.getGameMode().equals(GameMode.SPECTATOR)) {
-                player.setGameMode(plugin.getIWM().getDefaultGameMode(world));
-            }
-        }, 4L);
         // If this is a new island, then run commands and do resets
         if (newIsland) {
             // TODO add command running
@@ -920,10 +914,6 @@ public class IslandsManager {
                 if (spawn.containsKey(w)) {
                     // go to island spawn
                     p.teleport(spawn.get(w).getSpawnPoint(w.getEnvironment()));
-                } else {
-                    plugin.logWarning("During island deletion player " + p.getName() + " could not be sent home so was placed into spectator mode.");
-                    p.setGameMode(GameMode.SPECTATOR);
-                    p.setFlying(true);
                 }
             }
         });

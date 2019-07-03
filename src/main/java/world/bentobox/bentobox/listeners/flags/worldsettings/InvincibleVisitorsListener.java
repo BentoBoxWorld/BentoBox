@@ -113,10 +113,7 @@ public class InvincibleVisitorsListener extends FlagListener implements ClickHan
         Player p = (Player) e.getEntity();
         // Handle the void - teleport player back to island in a safe spot
         if(e.getCause().equals(DamageCause.VOID)) {
-            if (getIslands().getIslandAt(p.getLocation()).isPresent()) {
-                // Will be set back after the teleport
-                p.setGameMode(GameMode.SPECTATOR);
-                getIslands().getIslandAt(p.getLocation()).ifPresent(i -> new SafeSpotTeleport.Builder(getPlugin()).entity(p).island(i).build());
+            if (getIslands().getIslandAt(p.getLocation()).isPresent()) {                getIslands().getIslandAt(p.getLocation()).ifPresent(i -> new SafeSpotTeleport.Builder(getPlugin()).entity(p).island(i).build());
             } else if (getIslands().hasIsland(p.getWorld(), p.getUniqueId())) {
                 // No island in this location - if the player has an island try to teleport them back
                 getIslands().homeTeleport(p.getWorld(), p);

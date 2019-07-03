@@ -1,6 +1,3 @@
-/**
- *
- */
 package world.bentobox.bentobox.util.teleport;
 
 import static org.mockito.Matchers.any;
@@ -109,14 +106,13 @@ public class SafeSpotTeleportTest {
 
         // Player
         // Return first survival and then spectator
-        when(player.getGameMode()).thenReturn(GameMode.SURVIVAL, GameMode.SPECTATOR);
+        when(player.getGameMode()).thenReturn(GameMode.SURVIVAL);
         when(loc.getWorld()).thenReturn(world);
         when(loc.getBlockX()).thenReturn(0);
         when(loc.getBlockY()).thenReturn(120);
         when(loc.getBlockZ()).thenReturn(0);
         Block block = mock(Block.class);
         when(loc.getBlock()).thenReturn(block);
-
     }
 
     /**
@@ -126,23 +122,8 @@ public class SafeSpotTeleportTest {
     public void testSafeSpotTeleportImmediateSafe() throws Exception {
         boolean portal = false;
         int homeNumber = 1;
-        new SafeSpotTeleport(plugin, player, loc, "failure message", portal, homeNumber, true);
-        Mockito.verify(player).setGameMode(GameMode.SPECTATOR);
+        new SafeSpotTeleport(plugin, player, loc, "failure message", portal, homeNumber);
         Mockito.verify(player).teleport(loc);
-        Mockito.verify(player).setGameMode(GameMode.SURVIVAL);
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.util.teleport.SafeSpotTeleport#SafeSpotTeleport(world.bentobox.bentobox.BentoBox, org.bukkit.entity.Entity, org.bukkit.Location, java.lang.String, boolean, int)}.
-     */
-    @Test
-    public void testSafeSpotTeleportImmediateSafeNoOverride() throws Exception {
-        boolean portal = false;
-        int homeNumber = 1;
-        new SafeSpotTeleport(plugin, player, loc, "failure message", portal, homeNumber, false);
-        Mockito.verify(player, Mockito.never()).setGameMode(GameMode.SPECTATOR);
-        Mockito.verify(player).teleport(loc);
-        Mockito.verify(player, Mockito.never()).setGameMode(GameMode.SURVIVAL);
     }
 
     /**
@@ -153,11 +134,8 @@ public class SafeSpotTeleportTest {
         when(im.isSafeLocation(Mockito.any())).thenReturn(false);
         boolean portal = false;
         int homeNumber = 1;
-        new SafeSpotTeleport(plugin, player, loc, "failure message", portal, homeNumber, true);
-        Mockito.verify(player).setGameMode(GameMode.SPECTATOR);
+        new SafeSpotTeleport(plugin, player, loc, "failure message", portal, homeNumber);
         Mockito.verify(player, Mockito.never()).teleport(loc);
         Mockito.verify(sch).runTaskTimer(Mockito.any(), Mockito.any(Runnable.class), Mockito.eq(0L), Mockito.eq(1L));
-
     }
-
 }

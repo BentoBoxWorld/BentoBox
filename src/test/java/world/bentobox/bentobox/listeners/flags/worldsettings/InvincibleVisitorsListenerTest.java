@@ -137,7 +137,6 @@ public class InvincibleVisitorsListenerTest {
         when(panel.getInventory()).thenReturn(top);
 
         when(Bukkit.createInventory(Mockito.any(), Mockito.anyInt(), Mockito.any())).thenReturn(top);
-
     }
 
     @Test
@@ -244,7 +243,6 @@ public class InvincibleVisitorsListenerTest {
         // Player should be teleported to this island
         listener.onVisitorGetDamage(e);
         assertTrue(e.isCancelled());
-        Mockito.verify(player).setGameMode(Mockito.eq(GameMode.SPECTATOR));
     }
 
     @Test
@@ -255,7 +253,6 @@ public class InvincibleVisitorsListenerTest {
         // Player should die
         listener.onVisitorGetDamage(e);
         assertFalse(e.isCancelled());
-        Mockito.verify(player, Mockito.never()).setGameMode(Mockito.eq(GameMode.SPECTATOR));
     }
 
     @Test
@@ -266,9 +263,6 @@ public class InvincibleVisitorsListenerTest {
         // Player should be teleported to their island
         listener.onVisitorGetDamage(e);
         assertTrue(e.isCancelled());
-        Mockito.verify(player, Mockito.never()).setGameMode(Mockito.eq(GameMode.SPECTATOR));
         Mockito.verify(im).homeTeleport(Mockito.any(), Mockito.eq(player));
     }
-
-
 }

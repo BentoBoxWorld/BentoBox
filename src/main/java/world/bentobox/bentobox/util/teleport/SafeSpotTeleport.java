@@ -40,7 +40,6 @@ public class SafeSpotTeleport {
     private final Location location;
     private boolean portal;
     private final int homeNumber;
-    private final boolean overrideGamemode;
 
     // Locations
     private Location bestSpot;
@@ -57,18 +56,12 @@ public class SafeSpotTeleport {
      * @param portal - true if this is a portal teleport
      * @param homeNumber - home number to go to
      */
-    public SafeSpotTeleport(BentoBox plugin, final Entity entity, final Location location, final String failureMessage, boolean portal, int homeNumber, boolean overrideGamemode) {
+    public SafeSpotTeleport(BentoBox plugin, final Entity entity, final Location location, final String failureMessage, boolean portal, int homeNumber) {
         this.plugin = plugin;
         this.entity = entity;
         this.location = location;
         this.portal = portal;
         this.homeNumber = homeNumber;
-        this.overrideGamemode = overrideGamemode;
-
-        // Put player into spectator mode
-        if (overrideGamemode && entity instanceof Player && ((Player)entity).getGameMode().equals(GameMode.SURVIVAL)) {
-            ((Player)entity).setGameMode(GameMode.SPECTATOR);
-        }
 
         // If there is no portal scan required, try the desired location immediately
         if (plugin.getIslands().isSafeLocation(location)) {
@@ -78,13 +71,6 @@ public class SafeSpotTeleport {
             } else {
                 // If this is not a portal teleport, then go to the safe location immediately
                 entity.teleport(location);
-                // Exit spectator mode if in it
-                if (entity instanceof Player) {
-                    Player player = (Player)entity;
-                    if (overrideGamemode && player.getGameMode().equals(GameMode.SPECTATOR)) {
-                        player.setGameMode(plugin.getIWM().getDefaultGameMode(player.getWorld()));
-                    }
-                }
                 return;
             }
         }
@@ -125,25 +111,17 @@ public class SafeSpotTeleport {
         if (portal && bestSpot != null) {
             // Portals found, teleport to the best spot we found
             teleportEntity(bestSpot);
-            if (overrideGamemode && entity instanceof Player && ((Player)entity).getGameMode().equals(GameMode.SPECTATOR)) {
-                ((Player)entity).setGameMode(plugin.getIWM().getDefaultGameMode(bestSpot.getWorld()));
-            }
         } else if (entity instanceof Player) {
             // Failed, no safe spot
             if (!failureMessage.isEmpty()) {
                 User.getInstance(entity).notify(failureMessage);
             }
-            if (overrideGamemode && ((Player)entity).getGameMode().equals(GameMode.SPECTATOR)) {
-                if (plugin.getIWM().inWorld(entity.getLocation())) {
-                    ((Player)entity).setGameMode(plugin.getIWM().getDefaultGameMode(entity.getWorld()));
+            if (!plugin.getIWM().inWorld(entity.getLocation())) {
+                // Last resort
+                if (Bukkit.getServer().isPrimaryThread()) {
+                    ((Player)entity).performCommand("spawn");
                 } else {
-                    // Last resort
-                    ((Player)entity).setGameMode(GameMode.SURVIVAL);
-                    if (Bukkit.getServer().isPrimaryThread()) {
-                        ((Player)entity).performCommand("spawn");
-                    } else {
-                        Bukkit.getScheduler().runTask(plugin, () -> ((Player)entity).performCommand("spawn"));
-                    }
+                    Bukkit.getScheduler().runTask(plugin, () -> ((Player)entity).performCommand("spawn"));
                 }
             }
         }
@@ -247,17 +225,8 @@ public class SafeSpotTeleport {
             }
             Vector velocity = entity.getVelocity();
             entity.teleport(loc);
-            // Exit spectator mode if in it
-            if (entity instanceof Player) {
-                Player player = (Player)entity;
-                if (overrideGamemode && player.getGameMode().equals(GameMode.SPECTATOR)) {
-                    player.setGameMode(plugin.getIWM().getDefaultGameMode(loc.getWorld()));
-                }
-            } else {
-                entity.setVelocity(velocity);
-            }
+            entity.setVelocity(velocity);
         });
-
     }
 
     /**
@@ -333,7 +302,6 @@ public class SafeSpotTeleport {
         private boolean portal = false;
         private String failureMessage = "";
         private Location location;
-        private boolean overrideGamemode = true;
 
         public Builder(BentoBox plugin) {
             this.plugin = plugin;
@@ -402,9 +370,10 @@ public class SafeSpotTeleport {
          * Sets whether the player's gamemode should be overridden. Default is <tt>true</tt>
          * @param overrideGamemode whether the player's gamemode should be overridden.
          * @return Builder
+         * @deprecated As of 1.6.0, for removal. No longer in use as the player's gamemode is no longer changed upon teleporting.
          */
+        @Deprecated
         public Builder overrideGamemode(boolean overrideGamemode) {
-            this.overrideGamemode = overrideGamemode;
             return this;
         }
 
@@ -426,7 +395,7 @@ public class SafeSpotTeleport {
             if (failureMessage.isEmpty() && entity instanceof Player) {
                 failureMessage = "general.errors.no-safe-location-found";
             }
-            return new SafeSpotTeleport(plugin, entity, location, failureMessage, portal, homeNumber, overrideGamemode);
+            return new SafeSpotTeleport(plugin, entity, location, failureMessage, portal, homeNumber);
         }
     }
 }
