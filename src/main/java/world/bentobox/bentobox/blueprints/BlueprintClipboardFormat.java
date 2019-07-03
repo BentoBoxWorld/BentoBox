@@ -3,6 +3,8 @@ package world.bentobox.bentobox.blueprints;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormat;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardReader;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardWriter;
@@ -11,6 +13,7 @@ import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintCommand;
 import world.bentobox.bentobox.blueprints.converter.BlueprintClipboardReader;
 import world.bentobox.bentobox.blueprints.converter.BlueprintClipboardWriter;
+import world.bentobox.bentobox.database.json.BentoboxTypeAdapterFactory;
 import world.bentobox.bentobox.managers.BlueprintClipboardManager;
 import world.bentobox.bentobox.managers.BlueprintsManager;
 
@@ -47,13 +50,21 @@ public class BlueprintClipboardFormat implements ClipboardFormat{
         return new BlueprintClipboardWriter(outputStream);
     }
 
-
     @Override
     public boolean isFormat(File file) {
         try {
+            Gson gson = getGson();
+
             unzip(file.getAbsolutePath());
-            FileReader fileReader = new FileReader(file);
-            // TODO: Read this file to know if it's a Blueprint file
+
+            File unzippedFile = new File(file.getParentFile(), file.getName());
+
+            try (FileReader fr = new FileReader(unzippedFile)) {
+                gson.fromJson(fr, Blueprint.class);
+                return true;
+            } catch (Exception e) {
+                return false;
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -67,7 +78,16 @@ public class BlueprintClipboardFormat implements ClipboardFormat{
 
     @Override
     public Set<String> getFileExtensions() {
-        return ImmutableSet.of("bp", "blueprint");
+        return ImmutableSet.of("blu", "blueprint");
+    }
+
+    private Gson getGson() {
+        GsonBuilder builder = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().enableComplexMapKeySerialization();
+        // Disable <>'s escaping etc.
+        builder.disableHtmlEscaping();
+        // Register adapter factory
+        builder.registerTypeAdapterFactory(new BentoboxTypeAdapterFactory(BentoBox.getInstance()));
+        return builder.create();
     }
 
     private void unzip(final String zipFilePath) throws IOException {
