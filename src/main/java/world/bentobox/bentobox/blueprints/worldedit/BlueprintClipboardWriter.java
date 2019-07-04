@@ -1,7 +1,6 @@
-package world.bentobox.bentobox.blueprints.converter;
+package world.bentobox.bentobox.blueprints.worldedit;
 
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
-import com.sk89q.worldedit.extent.clipboard.io.ClipboardReader;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardWriter;
 
 import java.io.IOException;
@@ -11,7 +10,7 @@ import java.io.OutputStream;
  * @since 1.6.0
  * @author CustomEntity
  */
-public class BlueprintClipboardWriter implements ClipboardWriter{
+public class BlueprintClipboardWriter implements ClipboardWriter {
 
     private OutputStream outputStream;
 

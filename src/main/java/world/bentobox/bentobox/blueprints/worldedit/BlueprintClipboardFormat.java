@@ -1,6 +1,5 @@
-package world.bentobox.bentobox.blueprints;
+package world.bentobox.bentobox.blueprints.worldedit;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import com.google.gson.Gson;
@@ -9,19 +8,13 @@ import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormat;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardReader;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardWriter;
 import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.api.addons.GameModeAddon;
-import world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintCommand;
-import world.bentobox.bentobox.blueprints.converter.BlueprintClipboardReader;
-import world.bentobox.bentobox.blueprints.converter.BlueprintClipboardWriter;
+import world.bentobox.bentobox.blueprints.Blueprint;
 import world.bentobox.bentobox.database.json.BentoboxTypeAdapterFactory;
-import world.bentobox.bentobox.managers.BlueprintClipboardManager;
-import world.bentobox.bentobox.managers.BlueprintsManager;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;

@@ -219,9 +219,11 @@ public class BlueprintPaster {
     }
 
     private void pasteEntity(World world, Location location, Entry<Vector, List<BlueprintEntity>> entry) {
+        System.out.println(location.toString());
         int x = location.getBlockX() + entry.getKey().getBlockX();
         int y = location.getBlockY() + entry.getKey().getBlockY();
         int z = location.getBlockZ() + entry.getKey().getBlockZ();
+        System.out.println(x + " " + y + " " + z);
         setEntity(new Location(world, x, y, z), entry.getValue());
     }
 
