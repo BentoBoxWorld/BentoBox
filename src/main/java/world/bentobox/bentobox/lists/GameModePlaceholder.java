@@ -1,14 +1,14 @@
 package world.bentobox.bentobox.lists;
 
-import world.bentobox.bentobox.api.placeholders.GameModePlaceholderReplacer;
-import world.bentobox.bentobox.database.objects.Island;
-import world.bentobox.bentobox.managers.RanksManager;
-import world.bentobox.bentobox.util.Util;
-
 import java.text.DateFormat;
 import java.time.Instant;
 import java.util.Date;
 import java.util.Optional;
+
+import world.bentobox.bentobox.api.placeholders.GameModePlaceholderReplacer;
+import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.managers.RanksManager;
+import world.bentobox.bentobox.util.Util;
 
 public enum GameModePlaceholder {
 

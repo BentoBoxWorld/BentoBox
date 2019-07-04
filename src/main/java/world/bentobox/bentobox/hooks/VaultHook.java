@@ -1,10 +1,11 @@
 package world.bentobox.bentobox.hooks;
 
-import net.milkbowl.vault.economy.Economy;
-import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.plugin.RegisteredServiceProvider;
+
+import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault.economy.EconomyResponse;
 import world.bentobox.bentobox.api.hooks.Hook;
 import world.bentobox.bentobox.api.user.User;
 

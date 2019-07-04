@@ -1,5 +1,20 @@
 package world.bentobox.bentobox.blueprints.worldedit;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Set;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import com.google.gson.Gson;
@@ -8,17 +23,10 @@ import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormat;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormats;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardReader;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardWriter;
+
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.blueprints.Blueprint;
 import world.bentobox.bentobox.database.json.BentoboxTypeAdapterFactory;
-
-import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Set;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 /**
  * @since 1.6.0
@@ -59,16 +67,21 @@ public class BlueprintClipboardFormat implements ClipboardFormat {
 
             File unzippedFile = new File(file.getParentFile(), file.getName());
 
-            try (FileReader fr = new FileReader(unzippedFile)) {
-                gson.fromJson(fr, Blueprint.class);
-                return true;
-            } catch (Exception e) {
-                return false;
-            }
+            return gsonCheck(gson, unzippedFile);
+
         } catch (IOException e) {
-            e.printStackTrace();
+            BentoBox.getInstance().logStacktrace(e);
         }
         return false;
+    }
+
+    private boolean gsonCheck(Gson gson, File unzippedFile) {
+        try (FileReader fr = new FileReader(unzippedFile)) {
+            gson.fromJson(fr, Blueprint.class);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     @Override

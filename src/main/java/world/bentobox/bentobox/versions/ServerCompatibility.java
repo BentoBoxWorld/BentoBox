@@ -1,12 +1,12 @@
 package world.bentobox.bentobox.versions;
 
-import org.bukkit.Bukkit;
-import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
-
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+
+import org.bukkit.Bukkit;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 
 /**
  * Checks and ensures the current server software is compatible with BentoBox.

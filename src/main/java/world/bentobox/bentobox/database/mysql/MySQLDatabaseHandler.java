@@ -14,11 +14,11 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitTask;
+import org.eclipse.jdt.annotation.NonNull;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
-import org.eclipse.jdt.annotation.NonNull;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.database.DatabaseConnector;
 import world.bentobox.bentobox.database.json.AbstractJSONDatabaseHandler;

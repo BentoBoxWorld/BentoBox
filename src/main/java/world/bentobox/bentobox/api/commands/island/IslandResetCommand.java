@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.util.List;
 
 import org.bukkit.entity.Player;
-
 import org.eclipse.jdt.annotation.NonNull;
+
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;

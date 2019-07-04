@@ -15,10 +15,10 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.eclipse.jdt.annotation.NonNull;
 
 import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.util.Util;
-import world.bentobox.bentobox.util.teleport.SafeSpotTeleport;
 import world.bentobox.bentobox.blueprints.BlueprintPaster;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.util.Util;
+import world.bentobox.bentobox.util.teleport.SafeSpotTeleport;
 
 /**
  * Handles teleportation via the Nether/End portals to the Nether and End dimensions of the worlds added by the GameModeAddons.

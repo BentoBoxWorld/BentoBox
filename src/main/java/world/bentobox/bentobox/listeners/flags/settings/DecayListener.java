@@ -1,13 +1,14 @@
 package world.bentobox.bentobox.listeners.flags.settings;
 
+import java.util.Optional;
+
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.LeavesDecayEvent;
+
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.Flags;
-
-import java.util.Optional;
 
 /**
  * Handles {@link world.bentobox.bentobox.lists.Flags#LEAF_DECAY}.

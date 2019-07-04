@@ -3,6 +3,7 @@ package world.bentobox.bentobox.hooks;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
+
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.hooks.Hook;
 

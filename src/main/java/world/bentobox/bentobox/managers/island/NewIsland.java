@@ -193,14 +193,14 @@ public class NewIsland {
 
         // Get the new BlueprintBundle if it was changed
         switch (reason) {
-            case CREATE:
-                name = ((IslandEvent.IslandCreateEvent) event).getBlueprintBundle().getUniqueId();
-                break;
-            case RESET:
-                name = ((IslandEvent.IslandResetEvent) event).getBlueprintBundle().getUniqueId();
-                break;
-            default:
-                break;
+        case CREATE:
+            name = ((IslandEvent.IslandCreateEvent) event).getBlueprintBundle().getUniqueId();
+            break;
+        case RESET:
+            name = ((IslandEvent.IslandResetEvent) event).getBlueprintBundle().getUniqueId();
+            break;
+        default:
+            break;
         }
 
         // Task to run after creating the island
@@ -305,10 +305,11 @@ public class NewIsland {
         int dist = plugin.getIWM().getIslandDistance(location.getWorld());
         Set<Location> locs = new HashSet<>();
         locs.add(location);
-        locs.add(new Location(location.getWorld(), location.getBlockX() - dist, 0, location.getBlockZ() - dist));
-        locs.add(new Location(location.getWorld(), location.getBlockX() - dist, 0, location.getBlockZ() + dist - 1));
-        locs.add(new Location(location.getWorld(), location.getBlockX() + dist - 1, 0, location.getBlockZ() - dist));
-        locs.add(new Location(location.getWorld(), location.getBlockX() + dist - 1, 0, location.getBlockZ() + dist - 1));
+
+        locs.add(new Location(location.getWorld(), location.getX() - dist, 0, location.getZ() - dist));
+        locs.add(new Location(location.getWorld(), location.getX() - dist, 0, location.getZ() + dist - 1));
+        locs.add(new Location(location.getWorld(), location.getX() + dist - 1, 0, location.getZ() - dist));
+        locs.add(new Location(location.getWorld(), location.getX() + dist - 1, 0, location.getZ() + dist - 1));
 
         for (Location l : locs) {
             if (plugin.getIslands().getIslandAt(l).isPresent() || plugin.getIslandDeletionManager().inDeletion(l)) {

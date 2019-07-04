@@ -1,13 +1,11 @@
 package world.bentobox.bentobox.web.catalog;
 
-import com.google.gson.JsonNull;
-import com.google.gson.JsonObject;
 import org.bukkit.Material;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.google.gson.JsonNull;
+import com.google.gson.JsonObject;
 
 /**
  * @author Poslovitch

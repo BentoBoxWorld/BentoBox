@@ -1,18 +1,5 @@
 package world.bentobox.bentobox.api.addons;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.permissions.PermissionDefault;
-import org.bukkit.plugin.InvalidDescriptionException;
-import org.bukkit.util.permissions.DefaultPermissions;
-import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
-import world.bentobox.bentobox.api.addons.exceptions.InvalidAddonFormatException;
-import world.bentobox.bentobox.api.addons.exceptions.InvalidAddonInheritException;
-import world.bentobox.bentobox.managers.AddonsManager;
-
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
@@ -22,6 +9,20 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.permissions.PermissionDefault;
+import org.bukkit.plugin.InvalidDescriptionException;
+import org.bukkit.util.permissions.DefaultPermissions;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
+
+import world.bentobox.bentobox.api.addons.exceptions.InvalidAddonFormatException;
+import world.bentobox.bentobox.api.addons.exceptions.InvalidAddonInheritException;
+import world.bentobox.bentobox.managers.AddonsManager;
 
 /**
  * Loads addons and sets up permissions

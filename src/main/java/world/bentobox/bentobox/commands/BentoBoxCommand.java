@@ -1,9 +1,9 @@
 package world.bentobox.bentobox.commands;
 
+import java.util.List;
+
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.user.User;
-
-import java.util.List;
 
 public class BentoBoxCommand extends CompositeCommand {
 

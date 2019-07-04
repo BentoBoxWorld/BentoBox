@@ -1,5 +1,6 @@
 package world.bentobox.bentobox.api.commands.admin;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -24,6 +25,7 @@ public class AdminSwitchtoCommand extends ConfirmableCommand {
      */
     public AdminSwitchtoCommand(CompositeCommand parent) {
         super(parent, "switchto");
+        islands = new ArrayList<>();
     }
 
     @Override

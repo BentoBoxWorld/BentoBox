@@ -1,16 +1,17 @@
 package world.bentobox.bentobox.commands;
 
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
 import org.bukkit.Bukkit;
+
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.versions.ServerCompatibility;
-
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 /**
  * Displays information about Gamemodes, Addons and versioning.

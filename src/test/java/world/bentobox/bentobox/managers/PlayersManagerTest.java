@@ -52,7 +52,7 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, User.class, Util.class, Logger.class})
+@PrepareForTest({Bukkit.class, BentoBox.class, User.class, Util.class, Logger.class, Database.class})
 public class PlayersManagerTest {
 
     private BentoBox plugin;
@@ -62,12 +62,12 @@ public class PlayersManagerTest {
     private World world;
     private World nether;
     private World end;
-    @Mock
     private Database<Players> db;
 
     /**
      * @throws java.lang.Exception
      */
+    @SuppressWarnings("unchecked")
     @Before
     public void setUp() throws Exception {
         // Clear any lingering database
@@ -145,6 +145,8 @@ public class PlayersManagerTest {
         // Normally in world
         Util.setPlugin(plugin);
 
+        // Database
+        db = mock(Database.class);
     }
 
     @After

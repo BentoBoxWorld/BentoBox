@@ -1,14 +1,15 @@
 package world.bentobox.bentobox.database.sqlite;
 
-import org.bukkit.Bukkit;
-import org.eclipse.jdt.annotation.NonNull;
-import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.database.DatabaseConnector;
-
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+
+import org.bukkit.Bukkit;
+import org.eclipse.jdt.annotation.NonNull;
+
+import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.database.DatabaseConnector;
 
 /**
  * @since 1.6.0

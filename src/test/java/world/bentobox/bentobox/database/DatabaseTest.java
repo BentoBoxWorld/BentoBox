@@ -67,14 +67,11 @@ public class DatabaseTest {
         when(plugin.getLogger()).thenReturn(logger);
 
         PowerMockito.mockStatic(DatabaseSetup.class);
-
-        // Set the internal state of the static database variable to null for each test
-        Whitebox.setInternalState(Database.class, "database", (DatabaseSetup)null);
-
         dbSetup = mock(DatabaseSetup.class);
         handler = mock(AbstractDatabaseHandler.class);
         when(dbSetup.getHandler(Mockito.any())).thenReturn(handler);
-        when(DatabaseSetup.getDatabase()).thenReturn(dbSetup);
+        // Set the internal state of the static database variable to null for each test
+        Whitebox.setInternalState(Database.class, "databaseSetup", dbSetup);
 
         when(handler.loadObject(Mockito.anyString())).thenReturn(island);
         objectList = new ArrayList<>();

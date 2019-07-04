@@ -24,10 +24,10 @@ import java.util.UUID;
 
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.eclipse.jdt.annotation.NonNull;
 
 import com.google.common.base.Charsets;
 
-import org.eclipse.jdt.annotation.NonNull;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.database.DatabaseConnector;
 

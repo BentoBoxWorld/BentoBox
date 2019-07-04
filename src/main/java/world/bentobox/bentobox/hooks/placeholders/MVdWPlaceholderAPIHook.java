@@ -1,8 +1,9 @@
 package world.bentobox.bentobox.hooks.placeholders;
 
-import be.maximvdw.placeholderapi.PlaceholderAPI;
 import org.bukkit.entity.Player;
 import org.eclipse.jdt.annotation.NonNull;
+
+import be.maximvdw.placeholderapi.PlaceholderAPI;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.placeholders.PlaceholderReplacer;

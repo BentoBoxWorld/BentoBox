@@ -1,6 +1,10 @@
 package world.bentobox.bentobox.api.commands.island.team;
 
+import java.util.List;
+import java.util.UUID;
+
 import org.bukkit.Bukkit;
+
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
@@ -8,9 +12,6 @@ import world.bentobox.bentobox.api.events.team.TeamEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
-
-import java.util.List;
-import java.util.UUID;
 
 
 public class IslandTeamKickCommand extends ConfirmableCommand {

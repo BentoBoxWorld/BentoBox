@@ -1,12 +1,13 @@
 package world.bentobox.bentobox.database.mongodb;
 
+import org.eclipse.jdt.annotation.NonNull;
+
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoDatabase;
 
-import org.eclipse.jdt.annotation.NonNull;
 import world.bentobox.bentobox.database.DatabaseConnectionSettingsImpl;
 import world.bentobox.bentobox.database.DatabaseConnector;
 

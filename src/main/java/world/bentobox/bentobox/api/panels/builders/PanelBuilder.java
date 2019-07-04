@@ -1,7 +1,8 @@
 package world.bentobox.bentobox.api.panels.builders;
 
-import org.bukkit.ChatColor;
 import java.util.TreeMap;
+
+import org.bukkit.ChatColor;
 
 import world.bentobox.bentobox.api.panels.Panel;
 import world.bentobox.bentobox.api.panels.PanelItem;

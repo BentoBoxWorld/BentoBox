@@ -1,15 +1,5 @@
 package world.bentobox.bentobox.database.sqlite;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
-import org.bukkit.Bukkit;
-import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
-import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.database.DatabaseConnector;
-import world.bentobox.bentobox.database.json.AbstractJSONDatabaseHandler;
-import world.bentobox.bentobox.database.objects.DataObject;
-
 import java.beans.IntrospectionException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -21,6 +11,18 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import org.bukkit.Bukkit;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+
+import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.database.DatabaseConnector;
+import world.bentobox.bentobox.database.json.AbstractJSONDatabaseHandler;
+import world.bentobox.bentobox.database.objects.DataObject;
 
 /**
  * @since 1.6.0

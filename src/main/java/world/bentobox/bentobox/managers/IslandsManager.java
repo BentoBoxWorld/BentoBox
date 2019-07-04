@@ -14,7 +14,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.TreeSpecies;
@@ -801,7 +800,7 @@ public class IslandsManager {
                         .filter(Objects::nonNull)
                         .filter(n -> !duplicatedUUIDRemovedSet.add(n))
                         .collect(Collectors.toSet());
-                if (duplicated.size() > 0) {
+                if (!duplicated.isEmpty()) {
                     plugin.logError("**** Owners that have more than one island = " + duplicated.size());
                     for (UUID uuid : duplicated) {
                         Set<Island> set = islandCache.getIslands().stream().filter(i -> uuid.equals(i.getOwner())).collect(Collectors.toSet());

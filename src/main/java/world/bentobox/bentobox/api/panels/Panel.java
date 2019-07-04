@@ -11,8 +11,8 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-
 import org.eclipse.jdt.annotation.NonNull;
+
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.listeners.PanelListenerManager;
 import world.bentobox.bentobox.util.heads.HeadGetter;

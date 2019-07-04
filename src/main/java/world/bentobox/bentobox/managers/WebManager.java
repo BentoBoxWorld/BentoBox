@@ -1,21 +1,23 @@
 package world.bentobox.bentobox.managers;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import io.github.TheBusyBiscuit.GitHubWebAPI4Java.GitHubWebAPI;
-import io.github.TheBusyBiscuit.GitHubWebAPI4Java.objects.repositories.GitHubRepository;
-import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
-import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.Settings;
-import world.bentobox.bentobox.web.catalog.CatalogEntry;
-
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
+
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
+
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
+import io.github.TheBusyBiscuit.GitHubWebAPI4Java.GitHubWebAPI;
+import io.github.TheBusyBiscuit.GitHubWebAPI4Java.objects.repositories.GitHubRepository;
+import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.Settings;
+import world.bentobox.bentobox.web.catalog.CatalogEntry;
 
 /**
  * Handles web-related stuff.
@@ -84,7 +86,7 @@ public class WebManager {
             // Register the tags translations in the locales
             if (!tagsContent.isEmpty()) {
                 JsonObject tags = new JsonParser().parse(tagsContent).getAsJsonObject();
-                tags.entrySet().forEach((entry) -> plugin.getLocalesManager().getLanguages().values().forEach((locale) -> {
+                tags.entrySet().forEach(entry -> plugin.getLocalesManager().getLanguages().values().forEach(locale -> {
                     JsonElement translation = entry.getValue().getAsJsonObject().get(locale.toLanguageTag());
                     if (translation != null) {
                         locale.set("catalog.tags." + entry.getKey(), translation.getAsString());
@@ -95,7 +97,7 @@ public class WebManager {
             // Register the topics translations in the locales
             if (!topicsContent.isEmpty()) {
                 JsonObject topics = new JsonParser().parse(topicsContent).getAsJsonObject();
-                topics.entrySet().forEach((entry) -> plugin.getLocalesManager().getLanguages().values().forEach((locale) -> {
+                topics.entrySet().forEach(entry -> plugin.getLocalesManager().getLanguages().values().forEach(locale -> {
                     JsonElement translation = entry.getValue().getAsJsonObject().get(locale.toLanguageTag());
                     if (translation != null) {
                         locale.set("catalog.topics." + entry.getKey(), translation.getAsString());

@@ -1,14 +1,15 @@
 package world.bentobox.bentobox.api.placeholders.placeholderapi;
 
-import me.clip.placeholderapi.expansion.PlaceholderExpansion;
-import org.bukkit.entity.Player;
-import org.eclipse.jdt.annotation.NonNull;
-import world.bentobox.bentobox.api.placeholders.PlaceholderReplacer;
-import world.bentobox.bentobox.api.user.User;
-
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+
+import org.bukkit.entity.Player;
+import org.eclipse.jdt.annotation.NonNull;
+
+import me.clip.placeholderapi.expansion.PlaceholderExpansion;
+import world.bentobox.bentobox.api.placeholders.PlaceholderReplacer;
+import world.bentobox.bentobox.api.user.User;
 
 /**
  * @author Poslovitch

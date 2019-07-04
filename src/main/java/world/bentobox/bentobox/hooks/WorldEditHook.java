@@ -14,8 +14,6 @@ import world.bentobox.bentobox.blueprints.worldedit.BlueprintClipboardFormat;
  */
 public class WorldEditHook extends Hook {
 
-    private WorldEdit instance;
-
     public WorldEditHook() {
         super("WorldEdit", Material.WOODEN_AXE);
     }
@@ -23,6 +21,7 @@ public class WorldEditHook extends Hook {
     @Override
     public boolean hook() {
 
+        WorldEdit instance;
         try {
             instance = WorldEdit.getInstance();
             new BlueprintClipboardFormat();

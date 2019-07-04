@@ -1,8 +1,11 @@
 package world.bentobox.bentobox.panels;
 
+import java.util.Locale;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.localization.BentoBoxLocale;
 import world.bentobox.bentobox.api.localization.TextVariables;
@@ -10,8 +13,6 @@ import world.bentobox.bentobox.api.panels.builders.PanelBuilder;
 import world.bentobox.bentobox.api.panels.builders.PanelItemBuilder;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.managers.LocalesManager;
-
-import java.util.Locale;
 
 /**
  * @author Poslovitch

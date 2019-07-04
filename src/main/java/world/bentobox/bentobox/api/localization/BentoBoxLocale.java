@@ -6,8 +6,8 @@ import java.util.Locale;
 
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
-
 import org.eclipse.jdt.annotation.NonNull;
+
 import world.bentobox.bentobox.util.ItemParser;
 
 /**

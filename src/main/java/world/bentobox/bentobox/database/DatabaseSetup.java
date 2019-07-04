@@ -1,5 +1,7 @@
 package world.bentobox.bentobox.database;
 
+import java.util.Arrays;
+
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.database.json.JSONDatabase;
 import world.bentobox.bentobox.database.mariadb.MariaDBDatabase;
@@ -7,10 +9,22 @@ import world.bentobox.bentobox.database.mongodb.MongoDBDatabase;
 import world.bentobox.bentobox.database.mysql.MySQLDatabase;
 import world.bentobox.bentobox.database.postgresql.PostgreSQLDatabase;
 import world.bentobox.bentobox.database.sqlite.SQLiteDatabase;
-import world.bentobox.bentobox.database.transition.*;
+import world.bentobox.bentobox.database.transition.Json2MariaDBDatabase;
+import world.bentobox.bentobox.database.transition.Json2MongoDBDatabase;
+import world.bentobox.bentobox.database.transition.Json2MySQLDatabase;
+import world.bentobox.bentobox.database.transition.Json2PostgreSQLDatabase;
+import world.bentobox.bentobox.database.transition.Json2SQLiteDatabase;
+import world.bentobox.bentobox.database.transition.MariaDB2JsonDatabase;
+import world.bentobox.bentobox.database.transition.MongoDB2JsonDatabase;
+import world.bentobox.bentobox.database.transition.MySQL2JsonDatabase;
+import world.bentobox.bentobox.database.transition.PostgreSQL2JsonDatabase;
+import world.bentobox.bentobox.database.transition.SQLite2JsonDatabase;
+import world.bentobox.bentobox.database.transition.Yaml2JsonDatabase;
+import world.bentobox.bentobox.database.transition.Yaml2MariaDBDatabase;
+import world.bentobox.bentobox.database.transition.Yaml2MongoDBDatabase;
+import world.bentobox.bentobox.database.transition.Yaml2MySQLDatabase;
+import world.bentobox.bentobox.database.transition.Yaml2SQLiteDatabase;
 import world.bentobox.bentobox.database.yaml.YamlDatabase;
-
-import java.util.Arrays;
 
 /**
  * @author Poslovitch, tastybento

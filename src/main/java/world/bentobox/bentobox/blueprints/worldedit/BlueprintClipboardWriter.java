@@ -1,10 +1,10 @@
 package world.bentobox.bentobox.blueprints.worldedit;
 
-import com.sk89q.worldedit.extent.clipboard.Clipboard;
-import com.sk89q.worldedit.extent.clipboard.io.ClipboardWriter;
-
 import java.io.IOException;
 import java.io.OutputStream;
+
+import com.sk89q.worldedit.extent.clipboard.Clipboard;
+import com.sk89q.worldedit.extent.clipboard.io.ClipboardWriter;
 
 /**
  * @since 1.6.0

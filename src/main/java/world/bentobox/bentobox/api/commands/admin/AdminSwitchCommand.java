@@ -1,10 +1,10 @@
 package world.bentobox.bentobox.api.commands.admin;
 
+import java.util.List;
+
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.user.User;
-
-import java.util.List;
 
 /**
  * @since 1.5.0

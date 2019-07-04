@@ -1,16 +1,5 @@
 package world.bentobox.bentobox.api.addons;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Server;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.event.Listener;
-import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.api.addons.request.AddonRequestHandler;
-import world.bentobox.bentobox.api.flags.Flag;
-import world.bentobox.bentobox.managers.IslandsManager;
-import world.bentobox.bentobox.managers.PlayersManager;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,6 +9,18 @@ import java.util.Optional;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.logging.Logger;
+
+import org.bukkit.Bukkit;
+import org.bukkit.Server;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.event.Listener;
+
+import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.addons.request.AddonRequestHandler;
+import world.bentobox.bentobox.api.flags.Flag;
+import world.bentobox.bentobox.managers.IslandsManager;
+import world.bentobox.bentobox.managers.PlayersManager;
 
 /**
  * Add-on class for BentoBox. Extend this to create an add-on. The operation

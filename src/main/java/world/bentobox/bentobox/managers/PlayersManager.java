@@ -1,15 +1,5 @@
 package world.bentobox.bentobox.managers;
 
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
-import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.database.Database;
-import world.bentobox.bentobox.database.objects.Names;
-import world.bentobox.bentobox.database.objects.Players;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -17,6 +7,17 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
+
+import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.database.Database;
+import world.bentobox.bentobox.database.objects.Names;
+import world.bentobox.bentobox.database.objects.Players;
 
 public class PlayersManager {
 

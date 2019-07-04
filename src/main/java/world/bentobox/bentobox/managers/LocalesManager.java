@@ -1,15 +1,5 @@
 package world.bentobox.bentobox.managers;
 
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.configuration.file.YamlConfiguration;
-import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.api.addons.Addon;
-import world.bentobox.bentobox.api.localization.BentoBoxLocale;
-import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.util.FileLister;
-import world.bentobox.bentobox.util.Util;
-
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -22,6 +12,17 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.jar.JarFile;
+
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.configuration.file.YamlConfiguration;
+
+import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.addons.Addon;
+import world.bentobox.bentobox.api.localization.BentoBoxLocale;
+import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.util.FileLister;
+import world.bentobox.bentobox.util.Util;
 
 /**
  * @author tastybento, Poslovitch
