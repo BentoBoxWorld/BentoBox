@@ -5,6 +5,7 @@ import world.bentobox.bentobox.database.json.JSONDatabase;
 import world.bentobox.bentobox.database.mariadb.MariaDBDatabase;
 import world.bentobox.bentobox.database.mongodb.MongoDBDatabase;
 import world.bentobox.bentobox.database.mysql.MySQLDatabase;
+import world.bentobox.bentobox.database.postgresql.PostgreSQLDatabase;
 import world.bentobox.bentobox.database.sqlite.SQLiteDatabase;
 import world.bentobox.bentobox.database.transition.*;
 import world.bentobox.bentobox.database.yaml.YamlDatabase;
@@ -89,6 +90,12 @@ public interface DatabaseSetup {
          */
         JSON2SQLITE(new Json2SQLiteDatabase()),
 
+        /**
+         * Transition database, from JSON to PostgreSQL
+         * @since 1.6.0
+         */
+        JSON2POSTGRESQL(new Json2PostgreSQLDatabase()),
+
         MYSQL(new MySQLDatabase()),
 
         /**
@@ -124,7 +131,18 @@ public interface DatabaseSetup {
          * Transition database, from SQLite to JSON
          * @since 1.6.0
          */
-        SQLITE2JSON(new SQLite2JsonDatabase());
+        SQLITE2JSON(new SQLite2JsonDatabase()),
+
+        /**
+         * @since 1.6.0
+         */
+        POSTGRESQL(new PostgreSQLDatabase()),
+
+        /**
+         * Transition database, from PostgreSQL to JSON
+         * @since 1.6.0
+         */
+        POSTGRESQL2JSON(new PostgreSQL2JsonDatabase());
 
         DatabaseSetup database;
 
