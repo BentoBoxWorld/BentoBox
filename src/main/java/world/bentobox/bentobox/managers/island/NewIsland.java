@@ -37,7 +37,7 @@ public class NewIsland {
     private final User user;
     private final Reason reason;
     private final World world;
-    private final String name;
+    private String name;
     private final boolean noPaste;
     private GameModeAddon addon;
 
@@ -185,10 +185,24 @@ public class NewIsland {
                 .reason(reason)
                 .island(island)
                 .location(island.getCenter())
+                .blueprintBundle(plugin.getBlueprintsManager().getBlueprintBundles(addon).get(name))
                 .build();
         if (event.isCancelled()) {
             return;
         }
+
+        // Get the new BlueprintBundle if it was changed
+        switch (reason) {
+            case CREATE:
+                name = ((IslandEvent.IslandCreateEvent) event).getBlueprintBundle().getUniqueId();
+                break;
+            case RESET:
+                name = ((IslandEvent.IslandResetEvent) event).getBlueprintBundle().getUniqueId();
+                break;
+            default:
+                break;
+        }
+
         // Task to run after creating the island
         Runnable task = () -> {
             // Set initial spawn point if one exists
