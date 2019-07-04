@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Objects;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -36,34 +37,36 @@ public class SchemToBlueprint {
 
     /**
      * Converts schems to blueprints and blueprint bundles
+     *
      * @param addon - GameModeAddon
      */
     public void convertSchems(GameModeAddon addon) {
-        File schems = new File(addon.getDataFolder(), FOLDER_NAME);
-        if (!schems.exists()) {
-            return;
-        }
-        // Convert all schems in folder
-        // Look through the folder
-        FilenameFilter schemFilter = (File dir, String name) -> name.toLowerCase(java.util.Locale.ENGLISH).endsWith(FILE_EXTENSION)
-                && !name.toLowerCase(java.util.Locale.ENGLISH).startsWith("nether-")
-                && !name.toLowerCase(java.util.Locale.ENGLISH).startsWith("end-");
+            File schems = new File(addon.getDataFolder(), FOLDER_NAME);
+            if (!schems.exists()) {
+                return;
+            }
+            // Convert all schems in folder
+            // Look through the folder
+            FilenameFilter schemFilter = (File dir, String name) -> name.toLowerCase(java.util.Locale.ENGLISH).endsWith(FILE_EXTENSION)
+                    && !name.toLowerCase(java.util.Locale.ENGLISH).startsWith("nether-")
+                    && !name.toLowerCase(java.util.Locale.ENGLISH).startsWith("end-");
 
-        Arrays.stream(Objects.requireNonNull(schems.list(schemFilter)))
-        .map(name -> name.substring(0, name.length() - FILE_EXTENSION.length()))
-        .forEach(name -> importSchemSet(addon, schems, name));
+            Arrays.stream(Objects.requireNonNull(schems.list(schemFilter)))
+                    .map(name -> name.substring(0, name.length() - FILE_EXTENSION.length()))
+                    .forEach(name -> importSchemSet(addon, schems, name));
 
-        File newDir = new File(addon.getDataFolder(), FOLDER_NAME + "_converted");
-        try {
-            Files.move(schems.toPath(), newDir.toPath());
-        } catch (IOException e) {
-            plugin.logError("Could not move schems folder: " + e.getLocalizedMessage());
-        }
+            File newDir = new File(addon.getDataFolder(), FOLDER_NAME + "_converted");
+            try {
+                Files.move(schems.toPath(), newDir.toPath());
+            } catch (IOException e) {
+                plugin.logError("Could not move schems folder: " + e.getLocalizedMessage());
+            }
     }
 
     /**
      * Imports one schem set to the game mode
-     * @param addon - game mode addon
+     *
+     * @param addon  - game mode addon
      * @param schems
      * @param name
      */
