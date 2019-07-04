@@ -9,7 +9,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 /**
- * Created by CustomEntity on 6/30/2019 for BentoBox.
+ * @since 1.6.0
+ * @author CustomEntity
  */
 public class BlueprintSchematicConverter {
 
