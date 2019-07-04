@@ -1,9 +1,10 @@
 package world.bentobox.bentobox.hooks;
 
-import com.sk89q.worldedit.WorldEdit;
-import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormats;
 import org.bukkit.Material;
 import org.eclipse.jdt.annotation.Nullable;
+
+import com.sk89q.worldedit.WorldEdit;
+
 import world.bentobox.bentobox.api.hooks.Hook;
 import world.bentobox.bentobox.blueprints.worldedit.BlueprintClipboardFormat;
 
@@ -14,7 +15,6 @@ import world.bentobox.bentobox.blueprints.worldedit.BlueprintClipboardFormat;
 public class WorldEditHook extends Hook {
 
     private WorldEdit instance;
-    private BlueprintClipboardFormat clipboardFormat;
 
     public WorldEditHook() {
         super("WorldEdit", Material.WOODEN_AXE);
@@ -22,15 +22,16 @@ public class WorldEditHook extends Hook {
 
     @Override
     public boolean hook() {
+
         try {
             instance = WorldEdit.getInstance();
-            clipboardFormat = new BlueprintClipboardFormat();
-            ClipboardFormats.registerClipboardFormat(clipboardFormat);
-        } catch (Exception | NoClassDefFoundError | NoSuchMethodError e) {
+            new BlueprintClipboardFormat();
+        } catch (Exception e) {
             return false;
         }
 
         return instance != null;
+
     }
 
     @Override

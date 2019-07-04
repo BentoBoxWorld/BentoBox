@@ -5,6 +5,7 @@ import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormat;
+import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormats;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardReader;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardWriter;
 import world.bentobox.bentobox.BentoBox;
@@ -24,6 +25,11 @@ import java.util.zip.ZipInputStream;
  * @author CustomEntity
  */
 public class BlueprintClipboardFormat implements ClipboardFormat {
+
+    public BlueprintClipboardFormat() {
+        ClipboardFormats.registerClipboardFormat(this);
+    }
+
     @Override
     public String getName() {
         return "Blueprint";
