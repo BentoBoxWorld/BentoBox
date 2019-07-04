@@ -8,7 +8,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 /**
- * Created by CustomEntity on 7/2/2019 for BentoBox.
+ * @since 1.6.0
+ * @author CustomEntity
  */
 public class BlueprintClipboardWriter implements ClipboardWriter{
 
@@ -19,6 +20,7 @@ public class BlueprintClipboardWriter implements ClipboardWriter{
     }
     @Override
     public void write(Clipboard clipboard) throws IOException {
+        // TODO
     }
 
     @Override
