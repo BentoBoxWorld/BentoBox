@@ -3,6 +3,7 @@ package world.bentobox.bentobox.hooks;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormats;
 import org.bukkit.Material;
+import org.eclipse.jdt.annotation.Nullable;
 import world.bentobox.bentobox.api.hooks.Hook;
 import world.bentobox.bentobox.blueprints.BlueprintClipboardFormat;
 
@@ -20,12 +21,18 @@ public class WorldEditHook extends Hook {
 
     @Override
     public boolean hook() {
-        instance = WorldEdit.getInstance();
-        ClipboardFormats.registerClipboardFormat(new BlueprintClipboardFormat());
+        try {
+            instance = WorldEdit.getInstance();
+            ClipboardFormats.registerClipboardFormat(new BlueprintClipboardFormat());
+        } catch (Exception | NoClassDefFoundError | NoSuchMethodError e) {
+            return false;
+        }
+
         return instance != null;
     }
 
     @Override
+    @Nullable
     public String getFailureCause() {
         return null; // The process shouldn't fail
     }
