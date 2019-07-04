@@ -27,9 +27,10 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 /**
- * Created by CustomEntity on 7/2/2019 for BentoBox.
+ * @since 1.6.0
+ * @author CustomEntity
  */
-public class BlueprintClipboardFormat implements ClipboardFormat{
+public class BlueprintClipboardFormat implements ClipboardFormat {
     @Override
     public String getName() {
         return "Blueprint";
