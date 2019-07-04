@@ -19,7 +19,7 @@ public interface DatabaseSetup {
     /**
      * Gets the type of database being used.
      * Currently supported options are YAML, JSON, MYSQL, MARIADB and MONGODB.
-     * Default is YAML.
+     * Default is JSON.
      * @return Database type
      */
     static DatabaseSetup getDatabase() {

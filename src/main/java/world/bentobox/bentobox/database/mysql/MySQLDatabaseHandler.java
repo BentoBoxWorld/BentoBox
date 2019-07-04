@@ -18,6 +18,7 @@ import org.bukkit.scheduler.BukkitTask;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
+import org.eclipse.jdt.annotation.NonNull;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.database.DatabaseConnector;
 import world.bentobox.bentobox.database.json.AbstractJSONDatabaseHandler;
@@ -149,7 +150,7 @@ public class MySQLDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
     }
 
     @Override
-    public T loadObject(String uniqueId) {
+    public T loadObject(@NonNull String uniqueId) {
         String sb = "SELECT `json` FROM `" + dataObject.getCanonicalName() + "` WHERE uniqueId = ? LIMIT 1";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sb)) {
             // UniqueId needs to be placed in quotes
