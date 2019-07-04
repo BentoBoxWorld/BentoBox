@@ -8,7 +8,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 /**
- * Created by CustomEntity on 7/2/2019 for BentoBox.
+ * @since 1.6.0
+ * @author CustomEntity
  */
 public class BlueprintClipboardReader implements ClipboardReader {
 
@@ -20,7 +21,7 @@ public class BlueprintClipboardReader implements ClipboardReader {
 
     @Override
     public Clipboard read() throws IOException {
-        return null;
+        return null; //TODO
     }
 
     @Override
