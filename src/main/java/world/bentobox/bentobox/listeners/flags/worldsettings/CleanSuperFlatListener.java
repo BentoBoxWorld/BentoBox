@@ -2,6 +2,7 @@ package world.bentobox.bentobox.listeners.flags.worldsettings;
 
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.Random;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -10,6 +11,8 @@ import org.bukkit.World.Environment;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.world.ChunkLoadEvent;
+import org.bukkit.generator.ChunkGenerator;
+import org.bukkit.generator.ChunkGenerator.ChunkData;
 import org.bukkit.scheduler.BukkitTask;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -18,6 +21,7 @@ import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.events.BentoBoxReadyEvent;
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.lists.Flags;
+import world.bentobox.bentobox.util.MyBiomeGrid;
 import world.bentobox.bentobox.util.Pair;
 
 /**
@@ -54,33 +58,48 @@ public class CleanSuperFlatListener extends FlagListener {
         ready = true;
     }
 
-    @SuppressWarnings("deprecation")
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onChunkLoad(ChunkLoadEvent e) {
         if (!ready) {
             return;
         }
         World world = e.getWorld();
-        if (!getIWM().inWorld(world) || !Flags.CLEAN_SUPER_FLAT.isSetForWorld(world)) {
-            // We do not want to run any check if this is not the right world or if it is turned off.
+        // Clean super flat does not work if the world handles its own generator explicitly
+        if (getIWM().inWorld(world) && Flags.CLEAN_SUPER_FLAT.isSetForWorld(world) && getIWM().isUseOwnGenerator(world)) {
+            Flags.CLEAN_SUPER_FLAT.setSetting(world, false);
+            getPlugin().logWarning("Clean super flat is not available for " + world.getName());
             return;
         }
         BentoBox plugin = BentoBox.getInstance();
-        if (!e.getChunk().getBlock(0, 0, 0).getType().equals(Material.BEDROCK)
-                || (world.getEnvironment().equals(Environment.NETHER) && (!plugin.getIWM().isNetherGenerate(world) || !plugin.getIWM().isNetherIslands(world)))
-                || (world.getEnvironment().equals(Environment.THE_END) && (!plugin.getIWM().isEndGenerate(world) || !plugin.getIWM().isEndIslands(world)))) {
+        if (!getIWM().inWorld(world) || !Flags.CLEAN_SUPER_FLAT.isSetForWorld(world) ||
+                (!e.getChunk().getBlock(0, 0, 0).getType().equals(Material.BEDROCK)
+                        || (world.getEnvironment().equals(Environment.NETHER) && (!plugin.getIWM().isNetherGenerate(world)
+                                || !plugin.getIWM().isNetherIslands(world)))
+                        || (world.getEnvironment().equals(Environment.THE_END) && (!plugin.getIWM().isEndGenerate(world)
+                                || !plugin.getIWM().isEndIslands(world))))) {
             return;
         }
+        MyBiomeGrid grid = new MyBiomeGrid(world.getEnvironment());
+        ChunkGenerator cg = plugin.getAddonsManager().getDefaultWorldGenerator(world.getName(), "");
         // Add to queue
         chunkQueue.add(new Pair<>(e.getChunk().getX(), e.getChunk().getZ()));
-        if (task == null) {
+        if (task == null || task.isCancelled()) {
             task = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
                 if (!chunkQueue.isEmpty()) {
                     Pair<Integer, Integer> chunkXZ = chunkQueue.poll();
-                    world.regenerateChunk(chunkXZ.x, chunkXZ.z); // NOSONAR - the deprecation doesn't cause any issues to us
+                    ChunkData cd = cg.generateChunkData(world, new Random(), e.getChunk().getX(), e.getChunk().getZ(), grid);
+                    for (int x = 0; x < 16; x++) {
+                        for (int z = 0; z < 16; z++) {
+                            for (int y = 0; y < world.getMaxHeight(); y++) {
+                                e.getChunk().getBlock(x, y, z).setBlockData(cd.getBlockData(x, y, z));
+                            }
+                        }
+                    }
                     if (plugin.getSettings().isLogCleanSuperFlatChunks()) {
                         plugin.log(chunkQueue.size() + " Regenerating superflat chunk " + world.getName() + " " + chunkXZ.x + ", " + chunkXZ.z);
                     }
+                } else {
+                    task.cancel();
                 }
             }, 0L, 1L);
         }

@@ -1,22 +1,16 @@
 package world.bentobox.bentobox.util;
 
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
-import org.bukkit.World.Environment;
-import org.bukkit.block.Biome;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.generator.ChunkGenerator;
-import org.bukkit.generator.ChunkGenerator.BiomeGrid;
 import org.bukkit.generator.ChunkGenerator.ChunkData;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.scheduler.BukkitTask;
-import org.bukkit.util.Vector;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
@@ -100,32 +94,5 @@ public class DeleteIslandChunks {
         }
         // Remove all entities in chunk, including any dropped items as a result of clearing the blocks above
         Arrays.stream(chunk.getEntities()).filter(e -> !(e instanceof Player) && di.inBounds(e.getLocation().getBlockX(), e.getLocation().getBlockZ())).forEach(Entity::remove);
-    }
-
-    class MyBiomeGrid implements BiomeGrid {
-        Map<Vector, Biome> map = new HashMap<>();
-        private Biome defaultBiome;
-        public MyBiomeGrid(Environment environment) {
-            switch(environment) {
-            case NETHER:
-                defaultBiome = Biome.NETHER;
-                break;
-            case THE_END:
-                defaultBiome = Biome.THE_END;
-                break;
-            default:
-                defaultBiome = Biome.PLAINS;
-                break;
-            }
-
-        }
-        @Override
-        public Biome getBiome(int x, int z) {
-            return map.getOrDefault(new Vector(x,0,z), defaultBiome);
-        }
-        @Override
-        public void setBiome(int x, int z, Biome bio) {
-            map.put(new Vector(x,0,z), bio);
-        }
     }
 }
