@@ -147,7 +147,6 @@ public class LockAndBanListener extends FlagListener {
      * @param player - player
      */
     private void eject(Player player) {
-        player.setGameMode(GameMode.SPECTATOR);
         // Teleport player to their home
         if (getIslands().hasIsland(player.getWorld(), player.getUniqueId())) {
             getIslands().homeTeleport(player.getWorld(), player);
