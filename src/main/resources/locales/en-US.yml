@@ -616,6 +616,10 @@ protection:
       name: "Droppers"
       description: "Toggle dropper interaction"
       hint: "Dropper interaction disabled"
+    ELYTRA:
+      name: "Elytra"
+      description: "Toggle elytra allowed or not"
+      hint: "&cWARNING: Elytra cannot be used here!"
     HOPPER:
       name: "Hoppers"
       description: "Toggle hopper interaction"

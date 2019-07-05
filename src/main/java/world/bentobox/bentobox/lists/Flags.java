@@ -18,6 +18,7 @@ import world.bentobox.bentobox.listeners.flags.protection.BreedingListener;
 import world.bentobox.bentobox.listeners.flags.protection.BucketListener;
 import world.bentobox.bentobox.listeners.flags.protection.DyeListener;
 import world.bentobox.bentobox.listeners.flags.protection.EggListener;
+import world.bentobox.bentobox.listeners.flags.protection.ElytraListener;
 import world.bentobox.bentobox.listeners.flags.protection.EntityInteractListener;
 import world.bentobox.bentobox.listeners.flags.protection.ExperiencePickupListener;
 import world.bentobox.bentobox.listeners.flags.protection.FireListener;
@@ -418,6 +419,13 @@ public final class Flags {
      * @see DyeListener
      */
     public static final Flag DYE = new Flag.Builder("DYE", Material.LIGHT_BLUE_DYE).type(Type.PROTECTION).listener(new DyeListener()).build();
+
+    /**
+     * Protects against visitors using elytra. By default, it is allowed.
+     *
+     * @since 1.6.0
+     */
+    public static final Flag ELYTRA = new Flag.Builder("ELYTRA",  Material.ELYTRA).type(Type.PROTECTION).defaultRank(RanksManager.VISITOR_RANK).listener(new ElytraListener()).build();
 
     /**
      * Provides a list of all the Flag instances contained in this class using reflection.
