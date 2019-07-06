@@ -81,6 +81,11 @@ public class CleanSuperFlatListener extends FlagListener {
         }
         MyBiomeGrid grid = new MyBiomeGrid(world.getEnvironment());
         ChunkGenerator cg = plugin.getAddonsManager().getDefaultWorldGenerator(world.getName(), "");
+        if (cg == null) {
+            Flags.CLEAN_SUPER_FLAT.setSetting(world, false);
+            getPlugin().logWarning("Clean super flat is not available for " + world.getName());
+            return;
+        }
         // Add to queue
         chunkQueue.add(new Pair<>(e.getChunk().getX(), e.getChunk().getZ()));
         if (task == null || task.isCancelled()) {

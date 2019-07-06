@@ -2,19 +2,27 @@ package world.bentobox.bentobox.listeners.flags.worldsettings;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyInt;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.event.world.ChunkLoadEvent;
+import org.bukkit.generator.ChunkGenerator;
+import org.bukkit.generator.ChunkGenerator.ChunkData;
 import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitScheduler;
+import org.eclipse.jdt.annotation.Nullable;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,7 +36,9 @@ import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.events.BentoBoxReadyEvent;
 import world.bentobox.bentobox.lists.Flags;
+import world.bentobox.bentobox.managers.AddonsManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
+import world.bentobox.bentobox.util.MyBiomeGrid;
 import world.bentobox.bentobox.util.Util;
 
 /**
@@ -77,6 +87,7 @@ public class CleanSuperFlatListenerTest {
         when(iwm.isEndGenerate(Mockito.any())).thenReturn(true);
         when(iwm.isNetherIslands(Mockito.any())).thenReturn(true);
         when(iwm.isEndIslands(Mockito.any())).thenReturn(true);
+        when(iwm.isUseOwnGenerator(any())).thenReturn(false);
 
 
         PowerMockito.mockStatic(Bukkit.class);
@@ -84,9 +95,9 @@ public class CleanSuperFlatListenerTest {
         ItemMeta im = mock(ItemMeta.class);
         when(itemF.getItemMeta(Mockito.any())).thenReturn(im);
         when(Bukkit.getItemFactory()).thenReturn(itemF);
-
+        // Default is that flag is active
         Flags.CLEAN_SUPER_FLAT.setSetting(world, true);
-
+        // Default is that chunk has bedrock
         chunk = mock(Chunk.class);
         when(chunk.getWorld()).thenReturn(world);
         block = mock(Block.class);
@@ -100,6 +111,18 @@ public class CleanSuperFlatListenerTest {
         // Scheduler
         scheduler = mock(BukkitScheduler.class);
         when(Bukkit.getScheduler()).thenReturn(scheduler);
+
+        // Addons Manager
+        AddonsManager am = mock(AddonsManager.class);
+        @Nullable
+        ChunkGenerator cg = mock(ChunkGenerator.class);
+        ChunkData cd = mock(ChunkData.class);
+        when(cg.generateChunkData(any(World.class), any(Random.class), anyInt(), anyInt(), any(MyBiomeGrid.class))).thenReturn(cd);
+        BlockData bd = mock(BlockData.class);
+        when(cd.getBlockData(anyInt(), anyInt(), anyInt())).thenReturn(bd);
+
+        when(plugin.getAddonsManager()).thenReturn(am);
+        when(am.getDefaultWorldGenerator(anyString(), anyString())).thenReturn(cg);
     }
 
     /**
