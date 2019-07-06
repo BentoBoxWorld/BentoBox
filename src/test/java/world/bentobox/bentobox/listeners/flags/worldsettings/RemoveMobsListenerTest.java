@@ -5,19 +5,23 @@ package world.bentobox.bentobox.listeners.flags.worldsettings;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.any;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.scheduler.BukkitScheduler;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -37,13 +41,15 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({BentoBox.class, Util.class })
+@PrepareForTest({BentoBox.class, Util.class, Bukkit.class })
 public class RemoveMobsListenerTest {
 
     private IslandsManager im;
     private World world;
     private Location inside;
     private Player player;
+    @Mock
+    private BukkitScheduler scheduler;
 
     /**
      * @throws java.lang.Exception
@@ -93,6 +99,10 @@ public class RemoveMobsListenerTest {
         UUID uuid = UUID.randomUUID();
         when(player.getUniqueId()).thenReturn(uuid);
 
+        // Scheduler
+        PowerMockito.mockStatic(Bukkit.class);
+        when(Bukkit.getScheduler()).thenReturn(scheduler);
+
     }
 
     /**
@@ -102,7 +112,7 @@ public class RemoveMobsListenerTest {
     public void testOnUserTeleport() {
         PlayerTeleportEvent e = new PlayerTeleportEvent(player, inside, inside, PlayerTeleportEvent.TeleportCause.PLUGIN);
         new RemoveMobsListener().onUserTeleport(e);
-        Mockito.verify(im).clearArea(Mockito.any());
+        Mockito.verify(scheduler).runTask(any(), any(Runnable.class));
     }
 
     /**
@@ -113,7 +123,7 @@ public class RemoveMobsListenerTest {
         Flags.REMOVE_MOBS.setSetting(world, false);
         PlayerTeleportEvent e = new PlayerTeleportEvent(player, inside, inside, PlayerTeleportEvent.TeleportCause.PLUGIN);
         new RemoveMobsListener().onUserTeleport(e);
-        Mockito.verify(im, Mockito.never()).clearArea(Mockito.any());
+        Mockito.verify(scheduler, Mockito.never()).runTask(any(), any(Runnable.class));
     }
 
     /**
@@ -125,7 +135,7 @@ public class RemoveMobsListenerTest {
         when(im.locationIsOnIsland(Mockito.any(), Mockito.any())).thenReturn(false);
         PlayerTeleportEvent e = new PlayerTeleportEvent(player, inside, inside, PlayerTeleportEvent.TeleportCause.PLUGIN);
         new RemoveMobsListener().onUserTeleport(e);
-        Mockito.verify(im, Mockito.never()).clearArea(Mockito.any());
+        Mockito.verify(scheduler, Mockito.never()).runTask(any(), any(Runnable.class));
     }
 
 }
