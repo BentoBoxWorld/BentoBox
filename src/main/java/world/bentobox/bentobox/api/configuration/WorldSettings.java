@@ -252,6 +252,12 @@ public interface WorldSettings extends ConfigObject {
     boolean isDeathsCounted();
 
     /**
+     * @return true if deaths in the world are reset when the player has a new island
+     * @since 1.6.0
+     */
+    boolean isDeathsResetOnNew();
+
+    /**
      * @return whether a player can set their home in the Nether or not.
      */
     boolean isAllowSetHomeInNether();

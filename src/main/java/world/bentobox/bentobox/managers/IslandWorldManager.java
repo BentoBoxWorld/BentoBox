@@ -700,8 +700,24 @@ public class IslandWorldManager {
         gameModes.get(world).getWorldSettings().setResetEpoch(System.currentTimeMillis());
     }
 
+    /**
+     * Check if the death count should be reset when joining a team in this world
+     * @param world - world
+     * @return true or false
+     */
     public boolean isTeamJoinDeathReset(@NonNull World world) {
         return gameModes.get(world).getWorldSettings().isTeamJoinDeathReset();
+    }
+
+    /**
+     * Check if deaths in the world are reset when the player starts a new island.
+     * This includes a totally new island and also a new island from a reset.
+     * @param world - world
+     * @return true or false
+     * @since 1.6.0
+     */
+    public boolean isDeathsResetOnNew(@NonNull World world) {
+        return gameModes.get(world).getWorldSettings().isDeathsResetOnNew();
     }
 
     /**
