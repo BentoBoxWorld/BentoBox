@@ -102,7 +102,7 @@ public class PortalTeleportationListener implements Listener {
         Location to = optionalIsland.map(i -> i.getSpawnPoint(Environment.THE_END)).orElse(e.getFrom().toVector().toLocation(endWorld));
         e.setCancelled(true);
         // Check if there is a missing end island
-        if (plugin.getIWM().isEndGenerate(overWorld)
+        if (!plugin.getIWM().isUseOwnGenerator(overWorld) && plugin.getIWM().isEndGenerate(overWorld)
                 && plugin.getIWM().isEndIslands(overWorld)
                 && plugin.getIWM().getEndWorld(overWorld) != null
                 && !optionalIsland.map(Island::hasEndIsland).orElse(true)) {
@@ -171,7 +171,7 @@ public class PortalTeleportationListener implements Listener {
         Location to = optionalIsland.map(i -> i.getSpawnPoint(Environment.NETHER)).orElse(e.getFrom().toVector().toLocation(nether));
         e.setCancelled(true);
         // Check if there is an island there or not
-        if (plugin.getIWM().isNetherGenerate(overWorld)
+        if (!plugin.getIWM().isUseOwnGenerator(overWorld) && plugin.getIWM().isNetherGenerate(overWorld)
                 && plugin.getIWM().isNetherIslands(overWorld)
                 && plugin.getIWM().getNetherWorld(overWorld) != null
                 && !optionalIsland.map(Island::hasNetherIsland).orElse(true)) {
