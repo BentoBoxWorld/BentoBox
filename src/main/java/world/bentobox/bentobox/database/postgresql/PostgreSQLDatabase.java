@@ -11,15 +11,20 @@ import world.bentobox.bentobox.database.DatabaseSetup;
  */
 public class PostgreSQLDatabase implements DatabaseSetup {
 
+    PostgreSQLDatabaseConnector connector;
+
     @Override
     public <T> AbstractDatabaseHandler<T> getHandler(Class<T> dataObjectClass) {
         BentoBox plugin = BentoBox.getInstance();
-        return new PostgreSQLDatabaseHandler<>(plugin, dataObjectClass, new PostgreSQLDatabaseConnector(new DatabaseConnectionSettingsImpl(
-                plugin.getSettings().getDatabaseHost(),
-                plugin.getSettings().getDatabasePort(),
-                plugin.getSettings().getDatabaseName(),
-                plugin.getSettings().getDatabaseUsername(),
-                plugin.getSettings().getDatabasePassword()
-        )));
+        if (connector == null) {
+            connector = new PostgreSQLDatabaseConnector(new DatabaseConnectionSettingsImpl(
+                    plugin.getSettings().getDatabaseHost(),
+                    plugin.getSettings().getDatabasePort(),
+                    plugin.getSettings().getDatabaseName(),
+                    plugin.getSettings().getDatabaseUsername(),
+                    plugin.getSettings().getDatabasePassword()
+                    ));
+        }
+        return new PostgreSQLDatabaseHandler<>(plugin, dataObjectClass, connector);
     }
 }

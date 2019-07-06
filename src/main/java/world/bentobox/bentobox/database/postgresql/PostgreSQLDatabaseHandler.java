@@ -57,6 +57,8 @@ public class PostgreSQLDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T>
      */
     private BukkitTask asyncSaveTask;
 
+    private boolean shutdown;
+
     /**
      * Constructor
      *
@@ -67,7 +69,7 @@ public class PostgreSQLDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T>
      */
     protected PostgreSQLDatabaseHandler(BentoBox plugin, Class<T> type, DatabaseConnector databaseConnector) {
         super(plugin, type, databaseConnector);
-        connection = (Connection) databaseConnector.createConnection();
+        connection = (Connection) databaseConnector.createConnection(dataObject);
         if (connection == null) {
             plugin.logError("Are the settings in config.yml correct?");
             Bukkit.getPluginManager().disablePlugin(plugin);
@@ -79,7 +81,8 @@ public class PostgreSQLDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T>
         if (plugin.isEnabled()) {
             asyncSaveTask = Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
                 // Loop continuously
-                while (plugin.isEnabled() || !processQueue.isEmpty()) {
+                while (!shutdown || !processQueue.isEmpty()) {
+
                     while (!processQueue.isEmpty()) {
                         processQueue.poll().run();
                     }
@@ -93,6 +96,7 @@ public class PostgreSQLDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T>
                 }
                 // Cancel
                 asyncSaveTask.cancel();
+                databaseConnector.closeConnection(dataObject);
             });
         }
     }
@@ -171,7 +175,7 @@ public class PostgreSQLDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T>
 
     @Override
     public void saveObject(T instance) throws IllegalAccessException, InvocationTargetException, IntrospectionException {
-// Null check
+        // Null check
         if (instance == null) {
             plugin.logError("MySQL database request to store a null. ");
             return;
@@ -261,7 +265,7 @@ public class PostgreSQLDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T>
 
     @Override
     public void close() {
-
+        shutdown = true;
     }
 
     @Override

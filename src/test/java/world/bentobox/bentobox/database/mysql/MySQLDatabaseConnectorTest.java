@@ -1,6 +1,3 @@
-/**
- *
- */
 package world.bentobox.bentobox.database.mysql;
 
 import static org.junit.Assert.assertEquals;
@@ -92,7 +89,7 @@ public class MySQLDatabaseConnectorTest {
     @Test
     public void testCreateConnection() {
         MySQLDatabaseConnector dc = new MySQLDatabaseConnector(dbSettings);
-        assertEquals(connection, dc.createConnection());
+        assertEquals(connection, dc.createConnection(null));
     }
 
     /**
@@ -104,7 +101,7 @@ public class MySQLDatabaseConnectorTest {
         PowerMockito.doThrow(new SQLException("error")).when(DriverManager.class);
         DriverManager.getConnection(any(), any(), any());
         MySQLDatabaseConnector dc = new MySQLDatabaseConnector(dbSettings);
-        dc.createConnection();
+        dc.createConnection(null);
         verify(logger).severe("Could not connect to the database! No suitable driver found for jdbc:mysql://localhost:1234/bentobox?autoReconnect=true&useSSL=false&allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8");
     }
 
@@ -141,8 +138,8 @@ public class MySQLDatabaseConnectorTest {
     @Test
     public void testCloseConnection() {
         MySQLDatabaseConnector dc = new MySQLDatabaseConnector(dbSettings);
-        dc.createConnection();
-        dc.closeConnection();
+        dc.createConnection(null);
+        dc.closeConnection(null);
     }
 
     /**
@@ -151,8 +148,8 @@ public class MySQLDatabaseConnectorTest {
     @Test
     public void testCloseConnectionError() throws SQLException {
         MySQLDatabaseConnector dc = new MySQLDatabaseConnector(dbSettings);
-        dc.createConnection();
-        dc.closeConnection();
+        dc.createConnection(null);
+        dc.closeConnection(null);
     }
 
 }

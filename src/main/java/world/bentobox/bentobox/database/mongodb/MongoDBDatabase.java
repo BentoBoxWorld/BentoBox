@@ -9,6 +9,8 @@ import world.bentobox.bentobox.database.DatabaseSetup;
 
 public class MongoDBDatabase implements DatabaseSetup {
 
+    private MongoDBDatabaseConnector connector;
+
     /* (non-Javadoc)
      * @see world.bentobox.bentobox.database.DatabaseSetup#getHandler(java.lang.Class)
      */
@@ -22,13 +24,16 @@ public class MongoDBDatabase implements DatabaseSetup {
             Bukkit.getServer().getPluginManager().disablePlugin(plugin);
             return null;
         }
-        return new MongoDBDatabaseHandler<>(plugin, type, new MongoDBDatabaseConnector(new DatabaseConnectionSettingsImpl(
-                plugin.getSettings().getDatabaseHost(),
-                plugin.getSettings().getDatabasePort(),
-                plugin.getSettings().getDatabaseName(),
-                plugin.getSettings().getDatabaseUsername(),
-                plugin.getSettings().getDatabasePassword()
-                )));
+        if (connector == null) {
+            connector = new MongoDBDatabaseConnector(new DatabaseConnectionSettingsImpl(
+                    plugin.getSettings().getDatabaseHost(),
+                    plugin.getSettings().getDatabasePort(),
+                    plugin.getSettings().getDatabaseName(),
+                    plugin.getSettings().getDatabaseUsername(),
+                    plugin.getSettings().getDatabasePassword()
+                    ));
+        }
+        return new MongoDBDatabaseHandler<>(plugin, type, connector);
     }
 
 }

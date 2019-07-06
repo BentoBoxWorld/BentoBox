@@ -13,7 +13,6 @@ import java.io.PrintWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -42,11 +41,6 @@ public class YamlDatabaseConnector implements DatabaseConnector {
     YamlDatabaseConnector(BentoBox plugin) {
         this.plugin = plugin;
         dataFolder = new File(plugin.getDataFolder(), DATABASE_FOLDER_NAME);
-    }
-
-    @Override
-    public Connection createConnection() {
-        return null; // Not used
     }
 
     @Override
@@ -211,8 +205,16 @@ public class YamlDatabaseConnector implements DatabaseConnector {
     }
 
     @Override
-    public void closeConnection() {
+    public Object createConnection(Class<?> type) {
         // Not used
+        return null;
+    }
+
+
+    @Override
+    public void closeConnection(Class<?> type) {
+        // not used
+
     }
 
 }

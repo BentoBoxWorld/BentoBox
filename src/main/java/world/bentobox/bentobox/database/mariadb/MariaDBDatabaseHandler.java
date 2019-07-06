@@ -54,6 +54,8 @@ public class MariaDBDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
      */
     private BukkitTask asyncSaveTask;
 
+    private boolean shutdown;
+
 
     /**
      * Handles the connection to the database and creation of the initial database schema (tables) for
@@ -64,7 +66,7 @@ public class MariaDBDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
      */
     MariaDBDatabaseHandler(BentoBox plugin, Class<T> type, DatabaseConnector dbConnecter) {
         super(plugin, type, dbConnecter);
-        connection = (Connection)dbConnecter.createConnection();
+        connection = (Connection)dbConnecter.createConnection(dataObject);
         if (connection == null) {
             plugin.logError("Are the settings in config.yml correct?");
             Bukkit.getPluginManager().disablePlugin(plugin);
@@ -76,7 +78,10 @@ public class MariaDBDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
         if (plugin.isEnabled()) {
             asyncSaveTask = Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
                 // Loop continuously
-                while (plugin.isEnabled() || !processQueue.isEmpty()) {
+                while (!shutdown || !processQueue.isEmpty()) {
+                    if (!plugin.isEnabled()) {
+                        shutdown = true;
+                    }
                     while (!processQueue.isEmpty()) {
                         processQueue.poll().run();
                     }
@@ -90,6 +95,7 @@ public class MariaDBDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
                 }
                 // Cancel
                 asyncSaveTask.cancel();
+                dbConnecter.closeConnection(dataObject);
             });
         }
     }
@@ -272,6 +278,6 @@ public class MariaDBDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
 
     @Override
     public void close() {
-        databaseConnector.closeConnection();
+        shutdown = true;
     }
 }

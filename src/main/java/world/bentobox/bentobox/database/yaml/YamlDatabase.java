@@ -6,6 +6,8 @@ import world.bentobox.bentobox.database.DatabaseSetup;
 
 public class YamlDatabase implements DatabaseSetup {
 
+    private YamlDatabaseConnector connector = new YamlDatabaseConnector(BentoBox.getInstance());
+
     /**
      * Get the config
      * @param <T> - Class type
@@ -13,7 +15,7 @@ public class YamlDatabase implements DatabaseSetup {
      * @return - the config handler
      */
     public <T> AbstractDatabaseHandler<T> getConfig(Class<T> type) {
-        return new ConfigHandler<>(BentoBox.getInstance(), type, new YamlDatabaseConnector(BentoBox.getInstance()));
+        return new ConfigHandler<>(BentoBox.getInstance(), type, connector);
     }
 
     /* (non-Javadoc)
@@ -21,7 +23,7 @@ public class YamlDatabase implements DatabaseSetup {
      */
     @Override
     public <T> AbstractDatabaseHandler<T> getHandler(Class<T> type) {
-        return new YamlDatabaseHandler<>(BentoBox.getInstance(), type, new YamlDatabaseConnector(BentoBox.getInstance()));
+        return new YamlDatabaseHandler<>(BentoBox.getInstance(), type, connector);
     }
 
 }

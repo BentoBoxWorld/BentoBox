@@ -9,9 +9,14 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -42,6 +47,7 @@ import org.bukkit.entity.Wither;
 import org.bukkit.entity.Zombie;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitScheduler;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -61,6 +67,7 @@ import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.events.island.IslandEvent.IslandDeleteEvent;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.database.Database;
 import world.bentobox.bentobox.database.DatabaseSetup.DatabaseType;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.Flags;
@@ -100,12 +107,33 @@ public class IslandsManagerTest {
     private Island is;
     @Mock
     private PluginManager pim;
+    // Database
+    Database<Island> db;
 
     /**
      * @throws java.lang.Exception
      */
+    @SuppressWarnings("unchecked")
     @Before
     public void setUp() throws Exception {
+        // Clear any lingering database
+        clear();
+        // Set up plugin
+        plugin = mock(BentoBox.class);
+        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+
+        // island world mgr
+        when(world.getName()).thenReturn("world");
+        when(world.getEnvironment()).thenReturn(World.Environment.NORMAL);
+        when(iwm.inWorld(any(World.class))).thenReturn(true);
+        when(iwm.inWorld(any(Location.class))).thenReturn(true);
+        when(plugin.getIWM()).thenReturn(iwm);
+
+        // Settings
+        Settings s = mock(Settings.class);
+        when(plugin.getSettings()).thenReturn(s);
+        when(s.getDatabaseType()).thenReturn(DatabaseType.JSON);
+
         // World
         when(world.getEnvironment()).thenReturn(World.Environment.NORMAL);
         // Set up plugin
@@ -114,12 +142,6 @@ public class IslandsManagerTest {
         // Command manager
         CommandsManager cm = mock(CommandsManager.class);
         when(plugin.getCommandsManager()).thenReturn(cm);
-
-        // Settings
-        Settings s = mock(Settings.class);
-        when(plugin.getSettings()).thenReturn(s);
-        when(s.getDatabaseType()).thenReturn(DatabaseType.JSON);
-
         // Player
         when(user.isOp()).thenReturn(false);
         uuid = UUID.randomUUID();
@@ -198,8 +220,22 @@ public class IslandsManagerTest {
         // Cover hostile entities
         when(Util.isHostileEntity(Mockito.any())).thenCallRealMethod();
 
+        // database must be mocked here
+        db = mock(Database.class);
     }
 
+    @After
+    public void clear() throws IOException{
+        //remove any database data
+        File file = new File("database");
+        Path pathToBeDeleted = file.toPath();
+        if (file.exists()) {
+            Files.walk(pathToBeDeleted)
+            .sorted(Comparator.reverseOrder())
+            .map(Path::toFile)
+            .forEach(File::delete);
+        }
+    }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#isSafeLocation(org.bukkit.Location)}.

@@ -45,7 +45,7 @@ public class SQLiteDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
      */
     protected SQLiteDatabaseHandler(BentoBox plugin, Class<T> type, DatabaseConnector databaseConnector) {
         super(plugin, type, databaseConnector);
-        connection = (Connection) databaseConnector.createConnection();
+        connection = (Connection) databaseConnector.createConnection(dataObject);
         if (connection == null) {
             plugin.logError("Are the settings in config.yml correct?");
             Bukkit.getPluginManager().disablePlugin(plugin);
@@ -198,7 +198,7 @@ public class SQLiteDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
 
     @Override
     public void close() {
-        databaseConnector.closeConnection();
+        databaseConnector.closeConnection(dataObject);
     }
 
     @Override

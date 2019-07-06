@@ -10,14 +10,16 @@ public interface DatabaseConnector {
     /**
      * Establishes a new connection to the database
      *
+     * @param type of class
      * @return A new connection to the database using the settings provided
      */
-    Object createConnection();
+    Object createConnection(Class<?> type);
 
     /**
      * Close the database connection
+     * @param type of class being closed
      */
-    void closeConnection();
+    void closeConnection(Class<?> type);
 
     /**
      * Returns the connection url
@@ -43,6 +45,10 @@ public interface DatabaseConnector {
      * @return true if it exists
      */
     boolean uniqueIdExists(String tableName, String key);
+
+
+
+
 
 }
 

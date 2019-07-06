@@ -96,7 +96,7 @@ public class MariaDBDatabaseHandlerTest {
         when(Bukkit.getPluginManager()).thenReturn(pluginManager);
 
         // MySQLDatabaseConnector
-        when(dbConn.createConnection()).thenReturn(connection);
+        when(dbConn.createConnection(any())).thenReturn(connection);
 
         // Queries
         when(connection.prepareStatement(Mockito.anyString())).thenReturn(ps);
@@ -394,17 +394,6 @@ public class MariaDBDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.mariadb.MariaDBDatabaseHandler#close()}.
-     * @throws SQLException
-     */
-    @Ignore("it doesn't recognize the #close() ran in the database connector")
-    @Test
-    public void testClose() throws SQLException {
-        handler.close();
-        verify(dbConn).closeConnection();
-    }
-
-    /**
      * Test method for {@link world.bentobox.bentobox.database.mariadb.MariaDBDatabaseHandler#deleteID(java.lang.String)}.
      * @throws SQLException
      */
@@ -435,7 +424,7 @@ public class MariaDBDatabaseHandlerTest {
      */
     @Test
     public void testMariaDBDatabaseHandlerBadPassword() {
-        when(dbConn.createConnection()).thenReturn(null);
+        when(dbConn.createConnection(any())).thenReturn(null);
         new MariaDBDatabaseHandler<>(plugin, Island.class, dbConn);
         verify(plugin).logError("Are the settings in config.yml correct?");
         verify(pluginManager).disablePlugin(plugin);
@@ -447,8 +436,7 @@ public class MariaDBDatabaseHandlerTest {
      */
     @Test
     public void testMariaDBDatabaseHandlerCreateSchema() throws SQLException {
-        verify(dbConn).createConnection();
-        //verify(connection).prepareStatement("CREATE TABLE IF NOT EXISTS `world.bentobox.bentobox.database.objects.Island` (json JSON, uniqueId VARCHAR(255) GENERATED ALWAYS AS (json->\"$.uniqueId\"), UNIQUE INDEX i (uniqueId) )");
+        verify(dbConn).createConnection(any());
         verify(connection).prepareStatement("CREATE TABLE IF NOT EXISTS `world.bentobox.bentobox.database.objects.Island` (json JSON, uniqueId VARCHAR(255) GENERATED ALWAYS AS (JSON_EXTRACT(json, \"$.uniqueId\")), UNIQUE INDEX i (uniqueId))");
     }
 

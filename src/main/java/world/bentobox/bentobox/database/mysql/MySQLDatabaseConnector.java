@@ -3,6 +3,8 @@ package world.bentobox.bentobox.database.mysql;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.eclipse.jdt.annotation.NonNull;
@@ -14,7 +16,8 @@ public class MySQLDatabaseConnector implements DatabaseConnector {
 
     private String connectionUrl;
     private DatabaseConnectionSettingsImpl dbSettings;
-    private static Connection connection = null;
+    private Connection connection = null;
+    private Set<Class<?>> types = new HashSet<>();
 
     /**
      * Class for MySQL database connections using the settings provided
@@ -24,19 +27,6 @@ public class MySQLDatabaseConnector implements DatabaseConnector {
         this.dbSettings = dbSettings;
         connectionUrl = "jdbc:mysql://" + dbSettings.getHost() + ":" + dbSettings.getPort() + "/" + dbSettings.getDatabaseName()
         + "?autoReconnect=true&useSSL=false&allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8";
-    }
-
-    @Override
-    public Connection createConnection() {
-        // Only make one connection to the database
-        if (connection == null) {
-            try {
-                connection = DriverManager.getConnection(connectionUrl, dbSettings.getUsername(), dbSettings.getPassword());
-            } catch (SQLException e) {
-                Bukkit.getLogger().severe("Could not connect to the database! " + e.getMessage());
-            }
-        }
-        return connection;
     }
 
     @Override
@@ -58,13 +48,29 @@ public class MySQLDatabaseConnector implements DatabaseConnector {
     }
 
     @Override
-    public void closeConnection() {
-        if (connection != null) {
+    public void closeConnection(Class<?> type) {
+        types.remove(type);
+        if (types.isEmpty() && connection != null) {
             try {
                 connection.close();
+                Bukkit.getLogger().info("Closed database connection");
             } catch (SQLException e) {
                 Bukkit.getLogger().severe("Could not close MySQL database connection");
             }
         }
+    }
+
+    @Override
+    public Object createConnection(Class<?> type) {
+        types.add(type);
+        // Only make one connection to the database
+        if (connection == null) {
+            try {
+                connection = DriverManager.getConnection(connectionUrl, dbSettings.getUsername(), dbSettings.getPassword());
+            } catch (SQLException e) {
+                Bukkit.getLogger().severe("Could not connect to the database! " + e.getMessage());
+            }
+        }
+        return connection;
     }
 }

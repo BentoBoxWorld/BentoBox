@@ -10,6 +10,7 @@ import world.bentobox.bentobox.database.DatabaseSetup;
  * @since 1.1
  */
 public class MariaDBDatabase implements DatabaseSetup {
+    private MariaDBDatabaseConnector connector;
 
     /* (non-Javadoc)
      * @see world.bentobox.bentobox.database.DatabaseSetup#getHandler(java.lang.Class)
@@ -17,13 +18,16 @@ public class MariaDBDatabase implements DatabaseSetup {
     @Override
     public <T> AbstractDatabaseHandler<T> getHandler(Class<T> type) {
         BentoBox plugin = BentoBox.getInstance();
-        return new MariaDBDatabaseHandler<>(plugin, type, new MariaDBDatabaseConnector(new DatabaseConnectionSettingsImpl(
-                plugin.getSettings().getDatabaseHost(),
-                plugin.getSettings().getDatabasePort(),
-                plugin.getSettings().getDatabaseName(),
-                plugin.getSettings().getDatabaseUsername(),
-                plugin.getSettings().getDatabasePassword()
-                )));
+        if (connector == null) {
+            connector = new MariaDBDatabaseConnector(new DatabaseConnectionSettingsImpl(
+                    plugin.getSettings().getDatabaseHost(),
+                    plugin.getSettings().getDatabasePort(),
+                    plugin.getSettings().getDatabaseName(),
+                    plugin.getSettings().getDatabaseUsername(),
+                    plugin.getSettings().getDatabasePassword()
+                    ));
+        }
+        return new MariaDBDatabaseHandler<>(plugin, type, connector);
     }
 
 }

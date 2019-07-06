@@ -111,6 +111,14 @@ public class IslandsManager {
     }
 
     /**
+     * Used only for testing. Sets the database to a mock database.
+     * @param handler - handler
+     */
+    public void setHandler(Database<Island> handler) {
+        this.handler = handler;
+    }
+
+    /**
      * This is a generic scan that can work in the overworld or the nether
      * @param l - location around which to scan
      * @param i - the range to scan for a location less than 0 means the full island.
@@ -930,7 +938,6 @@ public class IslandsManager {
                 plugin.logError("Could not save island to database when running sync! " + e.getMessage());
             }
         }
-
     }
 
     /**

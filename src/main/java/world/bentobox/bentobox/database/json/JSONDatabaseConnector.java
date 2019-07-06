@@ -39,17 +39,19 @@ public class JSONDatabaseConnector implements DatabaseConnector {
     }
 
     @Override
-    public Object createConnection() {
-        return null; // Not used
-    }
-
-    @Override
     public String getConnectionUrl() {
         return null; // Not used
     }
 
     @Override
-    public void closeConnection() {
+    public Object createConnection(Class<?> type) {
+        // Not used
+        return null;
+    }
+
+    @Override
+    public void closeConnection(Class<?> type) {
         // Not used
     }
+
 }

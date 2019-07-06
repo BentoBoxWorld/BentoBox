@@ -1,5 +1,9 @@
 package world.bentobox.bentobox.database.mongodb;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import org.bukkit.Bukkit;
 import org.eclipse.jdt.annotation.NonNull;
 
 import com.mongodb.MongoClient;
@@ -13,8 +17,9 @@ import world.bentobox.bentobox.database.DatabaseConnector;
 
 public class MongoDBDatabaseConnector implements DatabaseConnector {
 
-    private static MongoClient client;
+    private MongoClient client;
     private DatabaseConnectionSettingsImpl dbSettings;
+    private Set<Class<?>> types = new HashSet<>();
 
     /**
      * Class for MySQL database connections using the settings provided
@@ -25,7 +30,8 @@ public class MongoDBDatabaseConnector implements DatabaseConnector {
     }
 
     @Override
-    public MongoDatabase createConnection() {
+    public MongoDatabase createConnection(Class<?> type) {
+        types.add(type);
         // Only get one client
         if (client == null) {
             MongoCredential credential = MongoCredential.createCredential(dbSettings.getUsername(),
@@ -56,8 +62,12 @@ public class MongoDBDatabaseConnector implements DatabaseConnector {
     }
 
     @Override
-    public void closeConnection() {
-        client.close();
+    public void closeConnection(Class<?> type) {
+        types.remove(type);
+        if (types.isEmpty() && client != null) {
+            client.close();
+            Bukkit.getLogger().info("Closed database connection");
+        }
     }
 
 }
