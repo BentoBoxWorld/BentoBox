@@ -27,6 +27,8 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.util.Vector;
+import org.eclipse.jdt.annotation.Nullable;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -114,6 +116,11 @@ public class InvincibleVisitorsListenerTest {
         // Island Manager
         Island island = mock(Island.class);
         when(island.getOwner()).thenReturn(uuid);
+        @Nullable
+        Location location = mock(Location.class);
+        Vector vector = mock(Vector.class);
+        when(location.toVector()).thenReturn(vector);
+        when(island.getCenter()).thenReturn(location);
         when(im.getIsland(Mockito.any(World.class), Mockito.any(User.class))).thenReturn(island);
         optionalIsland = Optional.of(island);
         // Visitor
