@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.bukkit.util.Vector;
+
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
@@ -67,6 +69,7 @@ public class AdminDeleteCommand extends ConfirmableCommand {
         // Delete player and island
         // Get the target's island
         Island oldIsland = getIslands().getIsland(getWorld(), targetUUID);
+        Vector vector = null;
         if (oldIsland != null) {
             // Check if player is online and on the island
             User target = User.getInstance(targetUUID);
@@ -84,10 +87,15 @@ public class AdminDeleteCommand extends ConfirmableCommand {
                     getPlugin().getVault().ifPresent(vault -> vault.withdraw(target, vault.getBalance(target)));
                 }
             }
+            vector = oldIsland.getCenter().toVector();
             getIslands().deleteIsland(oldIsland, true, targetUUID);
         }
         getPlayers().clearHomeLocations(getWorld(), targetUUID);
-        user.sendMessage("commands.admin.delete.deleted-island", "[xyz]", Util.xyz(getIslands().getIsland(getWorld(), targetUUID).getCenter().toVector()));
+        if (vector == null) {
+            user.sendMessage("general.success");
+        } else {
+            user.sendMessage("commands.admin.delete.deleted-island", "[xyz]", Util.xyz(vector));
+        }
     }
 
     @Override
