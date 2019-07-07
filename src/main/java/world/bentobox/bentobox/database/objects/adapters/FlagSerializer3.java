@@ -14,7 +14,7 @@ import world.bentobox.bentobox.api.flags.Flag;
  * {@link world.bentobox.bentobox.database.objects.Island#setFlags(Map)} () setFlags()}
  * in {@link world.bentobox.bentobox.database.objects.Island}
  * @author tastybento
- *
+ * @since 1.6.0
  */
 public class FlagSerializer3 implements AdapterInterface<Map<Flag, Long>, Map<String, Long>> {
 
