@@ -717,7 +717,7 @@ public class IslandWorldManager {
      * @since 1.6.0
      */
     public boolean isDeathsResetOnNew(@NonNull World world) {
-        return gameModes.get(world).getWorldSettings().isDeathsResetOnNew();
+        return gameModes.get(world).getWorldSettings().isDeathsResetOnNewIsland();
     }
 
     /**
