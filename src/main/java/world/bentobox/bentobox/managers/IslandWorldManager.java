@@ -417,16 +417,6 @@ public class IslandWorldManager {
     }
 
     /**
-     * Check if nether trees should be created in the nether or not
-     *
-     * @param world - world
-     * @return true or false
-     */
-    public boolean isNetherTrees(@Nullable World world) {
-        return world != null && (gameModes.containsKey(world) && gameModes.get(world).getWorldSettings().isNetherTrees());
-    }
-
-    /**
      * Whether the End Dragon can spawn or not in this world
      *
      * @param world world

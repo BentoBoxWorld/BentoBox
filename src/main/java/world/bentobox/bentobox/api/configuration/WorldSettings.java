@@ -172,11 +172,6 @@ public interface WorldSettings extends ConfigObject {
     boolean isNetherIslands();
 
     /**
-     * @return the netherTrees
-     */
-    boolean isNetherTrees();
-
-    /**
      * @return the onJoinResetEnderChest
      */
     boolean isOnJoinResetEnderChest();
