@@ -77,6 +77,7 @@ public class Flag implements Comparable<Flag> {
     private final boolean subPanel;
     private Set<GameModeAddon> gameModes = new HashSet<>();
     private final Addon addon;
+    private final int cooldown;
 
     private Flag(Builder builder) {
         this.id = builder.id;
@@ -90,6 +91,7 @@ public class Flag implements Comparable<Flag> {
         if (builder.gameModeAddon != null) {
             this.gameModes.add(builder.gameModeAddon);
         }
+        this.cooldown = builder.cooldown;
         this.addon = builder.addon;
     }
 
@@ -103,6 +105,13 @@ public class Flag implements Comparable<Flag> {
 
     public Optional<Listener> getListener() {
         return Optional.ofNullable(listener);
+    }
+
+    /**
+     * @return the cooldown
+     */
+    public int getCooldown() {
+        return cooldown;
     }
 
     /**
@@ -322,6 +331,9 @@ public class Flag implements Comparable<Flag> {
                     : user.getTranslation("protection.panel.flag-item.setting-disabled");
             pib.description(user.getTranslation("protection.panel.flag-item.setting-layout", TextVariables.DESCRIPTION, user.getTranslation(getDescriptionReference())
                     , "[setting]", islandSetting));
+            if (this.cooldown > 0 && island.isCooldown(this)) {
+                pib.description(user.getTranslation("protection.panel.flag-item.setting-cooldown"));
+            }
         }
         return pib;
     }
@@ -383,6 +395,9 @@ public class Flag implements Comparable<Flag> {
         // GameModeAddon
         private GameModeAddon gameModeAddon;
         private Addon addon;
+
+        // Cooldown
+        private int cooldown;
 
         /**
          * Builder for making flags
@@ -473,6 +488,17 @@ public class Flag implements Comparable<Flag> {
          */
         public Builder addon(Addon addon) {
             this.addon = addon;
+            return this;
+        }
+
+        /**
+         * Set a cooldown for {@link Type#SETTING} flag. Only applicable for settings.
+         * @param cooldown in seconds
+         * @return Builder
+         * @since 1.6.0
+         */
+        public Builder cooldown(int cooldown) {
+            this.cooldown = cooldown;
             return this;
         }
 

@@ -146,6 +146,11 @@ public class Island implements DataObject {
     @Expose
     private boolean doNotLoad;
 
+    /**
+     * Used to store flag cooldowns for this island
+     */
+    private transient Map<Flag, Long> cooldowns = new HashMap<>();
+
     public Island() {}
 
     public Island(@NonNull Location location, UUID owner, int protectionRange) {
@@ -1049,6 +1054,29 @@ public class Island implements DataObject {
                 !getCenter().toVector().toLocation(iwm.getEndWorld(getWorld())).getBlock().getType().equals(Material.AIR);
     }
 
+
+    /**
+     * Checks if a flag is on cooldown. Only stored in memory so a server restart will reset the cooldown.
+     * @param flag - flag
+     * @return true if on cooldown, false if not
+     * @since 1.6.0
+     */
+    public boolean isCooldown(Flag flag) {
+        if (cooldowns.containsKey(flag) && cooldowns.get(flag) > System.currentTimeMillis()) {
+            return true;
+        }
+        cooldowns.remove(flag);
+        return false;
+    }
+
+    /**
+     * Sets a cooldown for this flag on this island.
+     * @param flag - Flag to cooldown
+     */
+    public void setCooldown(Flag flag) {
+        cooldowns.put(flag, flag.getCooldown() * 1000 + System.currentTimeMillis());
+    }
+
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
@@ -1061,4 +1089,6 @@ public class Island implements DataObject {
                 + ", purgeProtected=" + purgeProtected + ", flags=" + flags + ", history=" + history
                 + ", levelHandicap=" + levelHandicap + ", spawnPoint=" + spawnPoint + ", doNotLoad=" + doNotLoad + "]";
     }
+
+
 }
