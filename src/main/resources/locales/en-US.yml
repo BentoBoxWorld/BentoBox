@@ -1053,6 +1053,7 @@ protection:
       blocked-rank: "&3- &c"
       minimal-rank: "&3- &2"
       menu-layout: "&a[description]"
+      setting-cooldown: "&cSetting is on cooldown"
       setting-layout: |
         &a[description]
         
