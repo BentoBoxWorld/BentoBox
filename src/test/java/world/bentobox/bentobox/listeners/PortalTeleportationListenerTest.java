@@ -155,7 +155,7 @@ public class PortalTeleportationListenerTest {
         when(from.toVector()).thenReturn(new Vector(1,2,3));
         PortalTeleportationListener np = new PortalTeleportationListener(plugin);
         // Wrong cause
-        PlayerPortalEvent e = new PlayerPortalEvent(null, from, null, null, TeleportCause.CHORUS_FRUIT);
+        PlayerPortalEvent e = new PlayerPortalEvent(null, from, null, TeleportCause.CHORUS_FRUIT);
         np.onEndIslandPortal(e);
         assertFalse(e.isCancelled());
     }
@@ -172,7 +172,7 @@ public class PortalTeleportationListenerTest {
         // No end world
         when(iwm.isEndGenerate(Mockito.any())).thenReturn(false);
         PortalTeleportationListener np = new PortalTeleportationListener(plugin);
-        PlayerPortalEvent e = new PlayerPortalEvent(null, from, null, null, TeleportCause.END_PORTAL);
+        PlayerPortalEvent e = new PlayerPortalEvent(null, from, null, TeleportCause.END_PORTAL);
         np.onEndIslandPortal(e);
         assertFalse(e.isCancelled());
     }
@@ -188,7 +188,7 @@ public class PortalTeleportationListenerTest {
         // Right cause, end exists, wrong world
         when(loc.getWorld()).thenReturn(mock(World.class));
         wrongWorld();
-        PlayerPortalEvent e = new PlayerPortalEvent(null, loc, null, null, TeleportCause.END_PORTAL);
+        PlayerPortalEvent e = new PlayerPortalEvent(null, loc, null, TeleportCause.END_PORTAL);
         when(iwm.isEndGenerate(world)).thenReturn(true);
         np.onEndIslandPortal(e);
         assertFalse(e.isCancelled());
@@ -202,7 +202,7 @@ public class PortalTeleportationListenerTest {
         PortalTeleportationListener np = new PortalTeleportationListener(plugin);
         Location loc = mock(Location.class);
         when(loc.getWorld()).thenReturn(null);
-        PlayerPortalEvent e = new PlayerPortalEvent(null, loc, null, null, TeleportCause.END_PORTAL);
+        PlayerPortalEvent e = new PlayerPortalEvent(null, loc, null, TeleportCause.END_PORTAL);
         assertFalse(np.onEndIslandPortal(e));
         assertFalse(e.isCancelled());
     }
@@ -222,7 +222,7 @@ public class PortalTeleportationListenerTest {
         when(player.getUniqueId()).thenReturn(UUID.randomUUID());
         when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(false);
         // Right cause, end exists, right world
-        PlayerPortalEvent e = new PlayerPortalEvent(player, from, null, null, TeleportCause.END_PORTAL);
+        PlayerPortalEvent e = new PlayerPortalEvent(player, from, null, TeleportCause.END_PORTAL);
         when(iwm.isEndGenerate(world)).thenReturn(true);
         np.onEndIslandPortal(e);
         assertFalse(e.isCancelled());
@@ -243,7 +243,7 @@ public class PortalTeleportationListenerTest {
         Location from = mock(Location.class);
         // Teleport from nether to world
         when(from.getWorld()).thenReturn(mock(World.class));
-        PlayerPortalEvent e = new PlayerPortalEvent(null, from, null, null, TeleportCause.NETHER_PORTAL);
+        PlayerPortalEvent e = new PlayerPortalEvent(null, from, null, TeleportCause.NETHER_PORTAL);
         assertFalse(np.onEndIslandPortal(e));
         // Verify
         assertFalse(e.isCancelled());
@@ -261,13 +261,13 @@ public class PortalTeleportationListenerTest {
         when(from.getWorld()).thenReturn(mock(World.class));
         // Not in world
         wrongWorld();
-        EntityPortalEvent e = new EntityPortalEvent(ent, from, null, null);
+        EntityPortalEvent e = new EntityPortalEvent(ent, from, null);
         np.onEntityPortal(e);
         assertFalse(e.isCancelled());
         // In world
         when(iwm.inWorld(any(World.class))).thenReturn(true);
         when(iwm.inWorld(any(Location.class))).thenReturn(true);
-        e = new EntityPortalEvent(ent, from, null, null);
+        e = new EntityPortalEvent(ent, from, null);
         np.onEntityPortal(e);
         assertTrue(e.isCancelled());
     }
@@ -278,7 +278,7 @@ public class PortalTeleportationListenerTest {
     @Test
     public void testOnNetherPortalNotPortal() {
         PortalTeleportationListener np = new PortalTeleportationListener(plugin);
-        PlayerPortalEvent e = new PlayerPortalEvent(null, null, null, null, TeleportCause.COMMAND);
+        PlayerPortalEvent e = new PlayerPortalEvent(null, null, null, TeleportCause.COMMAND);
         assertFalse(np.onNetherPortal(e));
     }
 
@@ -291,7 +291,7 @@ public class PortalTeleportationListenerTest {
         Location from = mock(Location.class);
         when(from.getWorld()).thenReturn(mock(World.class));
         wrongWorld();
-        PlayerPortalEvent e = new PlayerPortalEvent(null, from, null, null, TeleportCause.NETHER_PORTAL);
+        PlayerPortalEvent e = new PlayerPortalEvent(null, from, null, TeleportCause.NETHER_PORTAL);
         assertFalse(np.onNetherPortal(e));
     }
 
@@ -305,7 +305,7 @@ public class PortalTeleportationListenerTest {
         // Teleport from world to nether
         when(from.getWorld()).thenReturn(world);
         when(from.toVector()).thenReturn(new Vector(1,2,3));
-        PlayerPortalEvent e = new PlayerPortalEvent(null, from, null, null, TeleportCause.NETHER_PORTAL);
+        PlayerPortalEvent e = new PlayerPortalEvent(null, from, null, TeleportCause.NETHER_PORTAL);
         // Nether islands active
         when(iwm.isNetherIslands(Mockito.any())).thenReturn(true);
         when(iwm.isNetherGenerate(Mockito.any())).thenReturn(true);
@@ -328,7 +328,7 @@ public class PortalTeleportationListenerTest {
         // Teleport from world to nether
         when(from.getWorld()).thenReturn(world);
         when(from.toVector()).thenReturn(new Vector(1,2,3));
-        PlayerPortalEvent e = new PlayerPortalEvent(null, from, null, null, TeleportCause.NETHER_PORTAL);
+        PlayerPortalEvent e = new PlayerPortalEvent(null, from, null, TeleportCause.NETHER_PORTAL);
         // Nether islands active
         when(iwm.isNetherIslands(Mockito.any())).thenReturn(true);
         when(iwm.isNetherGenerate(Mockito.any())).thenReturn(true);
@@ -360,7 +360,7 @@ public class PortalTeleportationListenerTest {
         // Teleport from world to nether
         when(from.getWorld()).thenReturn(world);
         when(from.toVector()).thenReturn(new Vector(1,2,3));
-        PlayerPortalEvent e = new PlayerPortalEvent(null, from, null, null, TeleportCause.NETHER_PORTAL);
+        PlayerPortalEvent e = new PlayerPortalEvent(null, from, null, TeleportCause.NETHER_PORTAL);
         // Nether islands active
         when(iwm.isNetherIslands(Mockito.any())).thenReturn(true);
         when(iwm.isNetherGenerate(Mockito.any())).thenReturn(true);
@@ -391,7 +391,7 @@ public class PortalTeleportationListenerTest {
         // Teleport from world to nether
         when(from.getWorld()).thenReturn(world);
         when(from.toVector()).thenReturn(new Vector(1,2,3));
-        PlayerPortalEvent e = new PlayerPortalEvent(null, from, null, null, TeleportCause.NETHER_PORTAL);
+        PlayerPortalEvent e = new PlayerPortalEvent(null, from, null, TeleportCause.NETHER_PORTAL);
         // Nether islands inactive
         when(iwm.isNetherIslands(Mockito.any())).thenReturn(false);
         when(iwm.isNetherGenerate(Mockito.any())).thenReturn(true);
@@ -414,7 +414,7 @@ public class PortalTeleportationListenerTest {
         Player p = mock(Player.class);
         when(p.getUniqueId()).thenReturn(UUID.randomUUID());
 
-        PlayerPortalEvent e = new PlayerPortalEvent(p, from, null, null, TeleportCause.NETHER_PORTAL);
+        PlayerPortalEvent e = new PlayerPortalEvent(p, from, null, TeleportCause.NETHER_PORTAL);
         // Nether islands inactive
         when(iwm.isNetherIslands(Mockito.any())).thenReturn(false);
         when(iwm.isNetherGenerate(Mockito.any())).thenReturn(true);
@@ -435,7 +435,7 @@ public class PortalTeleportationListenerTest {
         // Teleport from nether to world
         when(from.getWorld()).thenReturn(nether);
         when(from.toVector()).thenReturn(new Vector(1,2,3));
-        PlayerPortalEvent e = new PlayerPortalEvent(null, from, null, null, TeleportCause.NETHER_PORTAL);
+        PlayerPortalEvent e = new PlayerPortalEvent(null, from, null, TeleportCause.NETHER_PORTAL);
         // Nether islands active
         when(iwm.isNetherIslands(Mockito.any())).thenReturn(true);
         when(iwm.isNetherGenerate(Mockito.any())).thenReturn(true);
@@ -454,7 +454,7 @@ public class PortalTeleportationListenerTest {
     public void testOnNetherIslandPortalNullLocation() {
         PortalTeleportationListener np = new PortalTeleportationListener(plugin);
         Location loc = null;
-        PlayerPortalEvent e = new PlayerPortalEvent(null, loc, null, null, TeleportCause.END_PORTAL);
+        PlayerPortalEvent e = new PlayerPortalEvent(null, loc, null, TeleportCause.END_PORTAL);
         assertFalse(np.onNetherPortal(e));
         assertFalse(e.isCancelled());
     }
@@ -468,7 +468,7 @@ public class PortalTeleportationListenerTest {
         Location from = mock(Location.class);
         // Teleport from nether to world
         when(from.getWorld()).thenReturn(null);
-        PlayerPortalEvent e = new PlayerPortalEvent(null, from, null, null, TeleportCause.NETHER_PORTAL);
+        PlayerPortalEvent e = new PlayerPortalEvent(null, from, null, TeleportCause.NETHER_PORTAL);
         assertFalse(np.onNetherPortal(e));
         // Verify
         assertFalse(e.isCancelled());
@@ -484,7 +484,7 @@ public class PortalTeleportationListenerTest {
         Location from = mock(Location.class);
         // Teleport from nether to world
         when(from.getWorld()).thenReturn(mock(World.class));
-        PlayerPortalEvent e = new PlayerPortalEvent(null, from, null, null, TeleportCause.NETHER_PORTAL);
+        PlayerPortalEvent e = new PlayerPortalEvent(null, from, null, TeleportCause.NETHER_PORTAL);
         assertFalse(np.onNetherPortal(e));
         // Verify
         assertFalse(e.isCancelled());

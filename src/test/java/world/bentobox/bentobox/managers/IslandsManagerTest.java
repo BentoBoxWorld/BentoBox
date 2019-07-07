@@ -110,6 +110,10 @@ public class IslandsManagerTest {
     // Database
     Database<Island> db;
 
+    private Material sign;
+    private Material wallSign;
+
+
     /**
      * @throws java.lang.Exception
      */
@@ -222,6 +226,16 @@ public class IslandsManagerTest {
 
         // database must be mocked here
         db = mock(Database.class);
+
+        // Signs
+        sign = Material.getMaterial("SIGN");
+        if (sign == null) {
+            sign = Material.getMaterial("OAK_SIGN");
+        }
+        wallSign = Material.getMaterial("WALL_SIGN");
+        if (wallSign == null) {
+            wallSign = Material.getMaterial("OAK_WALL_SIGN");
+        }
     }
 
     @After
@@ -360,9 +374,9 @@ public class IslandsManagerTest {
             assertFalse("Fence :" + m.toString(), manager.isSafeLocation(location));
         });
         // Signs
-        when(ground.getType()).thenReturn(Material.SIGN);
+        when(ground.getType()).thenReturn(sign);
         assertFalse("Sign", manager.isSafeLocation(location));
-        when(ground.getType()).thenReturn(Material.WALL_SIGN);
+        when(ground.getType()).thenReturn(wallSign);
         assertFalse("Sign", manager.isSafeLocation(location));
         // Bad Blocks
         Material[] badMats = {Material.CACTUS, Material.OAK_BOAT};
@@ -385,20 +399,20 @@ public class IslandsManagerTest {
         when(space2.getType()).thenReturn(Material.STONE);
         assertFalse("Solid", manager.isSafeLocation(location));
 
-        when(space1.getType()).thenReturn(Material.WALL_SIGN);
+        when(space1.getType()).thenReturn(wallSign);
         when(space2.getType()).thenReturn(Material.AIR);
         assertTrue("Wall sign 1", manager.isSafeLocation(location));
 
         when(space1.getType()).thenReturn(Material.AIR);
-        when(space2.getType()).thenReturn(Material.WALL_SIGN);
+        when(space2.getType()).thenReturn(wallSign);
         assertTrue("Wall sign 2", manager.isSafeLocation(location));
 
-        when(space1.getType()).thenReturn(Material.SIGN);
+        when(space1.getType()).thenReturn(sign);
         when(space2.getType()).thenReturn(Material.AIR);
         assertTrue("Wall sign 1", manager.isSafeLocation(location));
 
         when(space1.getType()).thenReturn(Material.AIR);
-        when(space2.getType()).thenReturn(Material.SIGN);
+        when(space2.getType()).thenReturn(sign);
         assertTrue("Wall sign 2", manager.isSafeLocation(location));
     }
 
