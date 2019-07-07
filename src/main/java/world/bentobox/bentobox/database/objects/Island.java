@@ -35,6 +35,7 @@ import world.bentobox.bentobox.api.logs.LogEntry;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.adapters.Adapter;
 import world.bentobox.bentobox.database.objects.adapters.FlagSerializer;
+import world.bentobox.bentobox.database.objects.adapters.FlagSerializer3;
 import world.bentobox.bentobox.database.objects.adapters.LogEntryListAdapter;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.IslandWorldManager;
@@ -149,7 +150,9 @@ public class Island implements DataObject {
     /**
      * Used to store flag cooldowns for this island
      */
-    private transient Map<Flag, Long> cooldowns = new HashMap<>();
+    @Adapter(FlagSerializer3.class)
+    @Expose
+    private Map<Flag, Long> cooldowns = new HashMap<>();
 
     public Island() {}
 
@@ -1075,6 +1078,20 @@ public class Island implements DataObject {
      */
     public void setCooldown(Flag flag) {
         cooldowns.put(flag, flag.getCooldown() * 1000 + System.currentTimeMillis());
+    }
+
+    /**
+     * @return the cooldowns
+     */
+    public Map<Flag, Long> getCooldowns() {
+        return cooldowns;
+    }
+
+    /**
+     * @param cooldowns the cooldowns to set
+     */
+    public void setCooldowns(Map<Flag, Long> cooldowns) {
+        this.cooldowns = cooldowns;
     }
 
     /* (non-Javadoc)

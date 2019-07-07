@@ -22,7 +22,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -59,7 +58,8 @@ public class MySQLDatabaseHandlerTest {
             "  \"history\": [],\n" +
             "  \"levelHandicap\": 0,\n" +
             "  \"spawnPoint\": {},\n" +
-            "  \"doNotLoad\": false\n" +
+            "  \"doNotLoad\": false,\n" +
+            "  \"cooldowns\": {}\n" +
             "}";
     private MySQLDatabaseHandler<Island> handler;
     private Island instance;
@@ -278,7 +278,8 @@ public class MySQLDatabaseHandlerTest {
                 "  \"history\": [],\n" +
                 "  \"levelHandicap\": 0,\n" +
                 "  \"spawnPoint\": {},\n" +
-                "  \"doNotLoad\": false\n" +
+                "  \"doNotLoad\": false,\n" +
+                "  \"cooldowns\": {}\n" +
                 "}");
     }
 
