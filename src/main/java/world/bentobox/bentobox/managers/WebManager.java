@@ -70,10 +70,17 @@ public class WebManager {
                 topicsContent = repo.getContent("catalog/topics.json").getContent().replaceAll("\\n", "");
                 catalogContent = repo.getContent("catalog/catalog.json").getContent().replaceAll("\\n", "");
             } catch (IllegalAccessException e) {
-                plugin.log("Could not connect to GitHub.");
+                if (plugin.getSettings().isLogGithubDownloadData()) {
+                    plugin.log("Could not connect to GitHub.");
+                }
             } catch (Exception e) {
-                plugin.logError("An error occurred when downloading from GitHub...");
+                plugin.logError("An error occurred when downloading data from GitHub...");
                 plugin.logStacktrace(e);
+            }
+            
+            // People were concerned that the download took ages, so we need to tell them it's over now.
+            if (plugin.getSettings().isLogGithubDownloadData()) {
+                plugin.log("Successfully downloaded data from GitHub.");
             }
 
             // Decoding the Base64 encoded contents

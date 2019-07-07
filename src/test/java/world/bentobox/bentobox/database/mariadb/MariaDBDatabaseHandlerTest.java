@@ -59,7 +59,8 @@ public class MariaDBDatabaseHandlerTest {
             "  \"history\": [],\n" +
             "  \"levelHandicap\": 0,\n" +
             "  \"spawnPoint\": {},\n" +
-            "  \"doNotLoad\": false\n" +
+            "  \"doNotLoad\": false,\n" +
+            "  \"cooldowns\": {}\n" +
             "}";
     private MariaDBDatabaseHandler<Island> handler;
     private Island instance;
@@ -278,7 +279,8 @@ public class MariaDBDatabaseHandlerTest {
                 "  \"history\": [],\n" +
                 "  \"levelHandicap\": 0,\n" +
                 "  \"spawnPoint\": {},\n" +
-                "  \"doNotLoad\": false\n" +
+                "  \"doNotLoad\": false,\n" +
+                "  \"cooldowns\": {}\n" +
                 "}");
     }
 

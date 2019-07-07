@@ -176,6 +176,11 @@ public class NewIsland {
         // Set home location
         plugin.getPlayers().setHomeLocation(user, new Location(next.getWorld(), next.getX() + 0.5D, next.getY(), next.getZ() + 0.5D), 1);
 
+        // Reset deaths
+        if (plugin.getIWM().isDeathsResetOnNewIsland(world)) {
+            plugin.getPlayers().setDeaths(world, user.getUniqueId(), 0);
+        }
+
         // Save the player so that if the server crashes weird things won't happen
         plugin.getPlayers().save(user.getUniqueId());
 

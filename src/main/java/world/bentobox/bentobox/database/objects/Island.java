@@ -35,6 +35,7 @@ import world.bentobox.bentobox.api.logs.LogEntry;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.adapters.Adapter;
 import world.bentobox.bentobox.database.objects.adapters.FlagSerializer;
+import world.bentobox.bentobox.database.objects.adapters.FlagSerializer3;
 import world.bentobox.bentobox.database.objects.adapters.LogEntryListAdapter;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.IslandWorldManager;
@@ -145,6 +146,13 @@ public class Island implements DataObject {
      */
     @Expose
     private boolean doNotLoad;
+
+    /**
+     * Used to store flag cooldowns for this island
+     */
+    @Adapter(FlagSerializer3.class)
+    @Expose
+    private Map<Flag, Long> cooldowns = new HashMap<>();
 
     public Island() {}
 
@@ -1049,6 +1057,43 @@ public class Island implements DataObject {
                 !getCenter().toVector().toLocation(iwm.getEndWorld(getWorld())).getBlock().getType().equals(Material.AIR);
     }
 
+
+    /**
+     * Checks if a flag is on cooldown. Only stored in memory so a server restart will reset the cooldown.
+     * @param flag - flag
+     * @return true if on cooldown, false if not
+     * @since 1.6.0
+     */
+    public boolean isCooldown(Flag flag) {
+        if (cooldowns.containsKey(flag) && cooldowns.get(flag) > System.currentTimeMillis()) {
+            return true;
+        }
+        cooldowns.remove(flag);
+        return false;
+    }
+
+    /**
+     * Sets a cooldown for this flag on this island.
+     * @param flag - Flag to cooldown
+     */
+    public void setCooldown(Flag flag) {
+        cooldowns.put(flag, flag.getCooldown() * 1000 + System.currentTimeMillis());
+    }
+
+    /**
+     * @return the cooldowns
+     */
+    public Map<Flag, Long> getCooldowns() {
+        return cooldowns;
+    }
+
+    /**
+     * @param cooldowns the cooldowns to set
+     */
+    public void setCooldowns(Map<Flag, Long> cooldowns) {
+        this.cooldowns = cooldowns;
+    }
+
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
@@ -1061,4 +1106,6 @@ public class Island implements DataObject {
                 + ", purgeProtected=" + purgeProtected + ", flags=" + flags + ", history=" + history
                 + ", levelHandicap=" + levelHandicap + ", spawnPoint=" + spawnPoint + ", doNotLoad=" + doNotLoad + "]";
     }
+
+
 }

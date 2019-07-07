@@ -61,9 +61,17 @@ public class IslandToggleClick implements ClickHandler {
                     // Save changes
                     plugin.getIWM().getAddon(user.getWorld()).ifPresent(GameModeAddon::saveWorldSettings);
                 } else {
+                    // Check cooldown
+                    if (!user.isOp() && island.isCooldown(flag)) {
+                        user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_BEACON_DEACTIVATE, 1F, 1F);
+                        user.notify("protection.panel.flag-item.setting-cooldown");
+                        return;
+                    }
                     // Toggle flag
                     island.toggleFlag(flag);
                     user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 1F, 1F);
+                    // Set cooldown
+                    island.setCooldown(flag);
                 }
                 // Apply change to panel
                 panel.getInventory().setItem(slot, flag.toPanelItem(plugin, user, invisible).getItem());
