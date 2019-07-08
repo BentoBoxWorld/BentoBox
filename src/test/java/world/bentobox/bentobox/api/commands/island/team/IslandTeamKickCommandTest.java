@@ -7,6 +7,7 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.anyString;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -45,6 +46,7 @@ import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.managers.PlayersManager;
+import world.bentobox.bentobox.managers.RanksManager;
 
 /**
  * @author tastybento
@@ -73,6 +75,8 @@ public class IslandTeamKickCommandTest {
     private Player target;
     @Mock
     private CompositeCommand subCommand;
+    @Mock
+    private Island island;
 
     /**
      * @throws java.lang.Exception
@@ -159,9 +163,10 @@ public class IslandTeamKickCommandTest {
         when(Bukkit.getServer()).thenReturn(server);
 
         // Island
-        Island island = mock(Island.class);
         when(island.getUniqueId()).thenReturn("uniqueid");
         when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
+        when(im.getIsland(any(), any(User.class))).thenReturn(island);
+        when(island.getRankCommand(anyString())).thenReturn(RanksManager.VISITOR_RANK);
 
     }
 
@@ -226,9 +231,22 @@ public class IslandTeamKickCommandTest {
     public void testExecuteDifferentPlayerNotInTeam() {
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
         when(pm.getUUID(any())).thenReturn(notUUID);
-        when(im.getMembers(any(), any())).thenReturn(new HashSet<>());
+        when(im.getMembers(any(), any())).thenReturn(Collections.emptySet());
         assertFalse(itl.execute(user, itl.getLabel(), Collections.singletonList("poslovitch")));
         verify(user).sendMessage(eq("general.errors.not-in-team"));
+    }
+
+    /**
+     * Test method for {@link IslandTeamKickCommand#execute(User, String, java.util.List)}
+     */
+    @Test
+    public void testExecuteDifferentPlayerNoRank() {
+        IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
+        when(pm.getUUID(any())).thenReturn(notUUID);
+        when(island.getRankCommand(anyString())).thenReturn(RanksManager.OWNER_RANK);
+        when(island.getRank(any())).thenReturn(RanksManager.VISITOR_RANK);
+        assertFalse(itl.execute(user, itl.getLabel(), Collections.singletonList("poslovitch")));
+        verify(user).sendMessage(eq("general.errors.no-permission"));
     }
 
     /**

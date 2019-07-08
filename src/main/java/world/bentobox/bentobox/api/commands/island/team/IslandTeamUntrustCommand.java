@@ -48,7 +48,8 @@ public class IslandTeamUntrustCommand extends CompositeCommand {
             return false;
         }
         // Check rank to use command
-        if (getIslands().getIsland(getWorld(), user).getRank(user) < getPlugin().getSettings().getRankCommand(getUsage())) {
+        Island island = getIslands().getIsland(getWorld(), user);
+        if (island.getRank(user) < island.getRankCommand(getUsage())) {
             user.sendMessage("general.errors.no-permission");
             return false;
         }

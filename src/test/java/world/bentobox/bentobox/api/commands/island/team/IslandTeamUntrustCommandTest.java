@@ -5,6 +5,7 @@ package world.bentobox.bentobox.api.commands.island.team;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -25,6 +26,7 @@ import org.bukkit.scheduler.BukkitScheduler;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -60,6 +62,7 @@ public class IslandTeamUntrustCommandTest {
     private IslandsManager im;
     private PlayersManager pm;
     private UUID notUUID;
+    @Mock
     private Settings s;
     private Island island;
 
@@ -77,9 +80,6 @@ public class IslandTeamUntrustCommandTest {
         when(plugin.getCommandsManager()).thenReturn(cm);
 
         // Settings
-        s = mock(Settings.class);
-        when(s.getRankCommand(Mockito.anyString())).thenReturn(RanksManager.OWNER_RANK);
-
         when(plugin.getSettings()).thenReturn(s);
 
         // Player
@@ -103,18 +103,18 @@ public class IslandTeamUntrustCommandTest {
 
         // Player has island to begin with
         im = mock(IslandsManager.class);
-        when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(true);
-        when(im.inTeam(Mockito.any(), Mockito.any(UUID.class))).thenReturn(true);
-        when(im.isOwner(Mockito.any(), Mockito.any())).thenReturn(true);
-        when(im.getOwner(Mockito.any(), Mockito.any())).thenReturn(uuid);
+        when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
+        when(im.inTeam(any(), any(UUID.class))).thenReturn(true);
+        when(im.isOwner(any(), any())).thenReturn(true);
+        when(im.getOwner(any(), any())).thenReturn(uuid);
         island = mock(Island.class);
-        when(island.getRank(Mockito.any())).thenReturn(RanksManager.OWNER_RANK);
-        when(im.getIsland(Mockito.any(), Mockito.any(User.class))).thenReturn(island);
-        when(im.getIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(island);
+        when(island.getRank(any())).thenReturn(RanksManager.OWNER_RANK);
+        when(im.getIsland(any(), any(User.class))).thenReturn(island);
+        when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
         when(plugin.getIslands()).thenReturn(im);
 
         // Has team
-        when(im.inTeam(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
+        when(im.inTeam(any(), Mockito.eq(uuid))).thenReturn(true);
 
         // Player Manager
         pm = mock(PlayersManager.class);
@@ -128,12 +128,12 @@ public class IslandTeamUntrustCommandTest {
 
         // Locales
         LocalesManager lm = mock(LocalesManager.class);
-        when(lm.get(Mockito.any(), Mockito.any())).thenReturn("mock translation");
+        when(lm.get(any(), any())).thenReturn("mock translation");
         when(plugin.getLocalesManager()).thenReturn(lm);
 
         // IWM friendly name
         IslandWorldManager iwm = mock(IslandWorldManager.class);
-        when(iwm.getFriendlyName(Mockito.any())).thenReturn("BSkyBlock");
+        when(iwm.getFriendlyName(any())).thenReturn("BSkyBlock");
         when(plugin.getIWM()).thenReturn(iwm);
     }
 
@@ -142,8 +142,8 @@ public class IslandTeamUntrustCommandTest {
      */
     @Test
     public void testExecuteNoisland() {
-        when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(false);
-        when(im.inTeam(Mockito.any(), Mockito.any(UUID.class))).thenReturn(false);
+        when(im.hasIsland(any(), any(UUID.class))).thenReturn(false);
+        when(im.inTeam(any(), any(UUID.class))).thenReturn(false);
         IslandTeamUntrustCommand itl = new IslandTeamUntrustCommand(ic);
         assertFalse(itl.execute(user, itl.getLabel(), Collections.singletonList("bill")));
         Mockito.verify(user).sendMessage(Mockito.eq("general.errors.no-island"));
@@ -154,7 +154,8 @@ public class IslandTeamUntrustCommandTest {
      */
     @Test
     public void testExecuteLowRank() {
-        when(island.getRank(Mockito.any())).thenReturn(RanksManager.MEMBER_RANK);
+        when(island.getRank(any())).thenReturn(RanksManager.MEMBER_RANK);
+        when(island.getRankCommand(any())).thenReturn(RanksManager.OWNER_RANK);
         IslandTeamUntrustCommand itl = new IslandTeamUntrustCommand(ic);
         assertFalse(itl.execute(user, itl.getLabel(), Collections.singletonList("bill")));
         Mockito.verify(user).sendMessage(Mockito.eq("general.errors.no-permission"));
@@ -176,7 +177,7 @@ public class IslandTeamUntrustCommandTest {
     @Test
     public void testExecuteUnknownPlayer() {
         IslandTeamUntrustCommand itl = new IslandTeamUntrustCommand(ic);
-        when(pm.getUUID(Mockito.any())).thenReturn(null);
+        when(pm.getUUID(any())).thenReturn(null);
         assertFalse(itl.execute(user, itl.getLabel(), Collections.singletonList("tastybento")));
         Mockito.verify(user).sendMessage("general.errors.unknown-player", "[name]", "tastybento");
     }
@@ -187,10 +188,10 @@ public class IslandTeamUntrustCommandTest {
     @Test
     public void testExecuteSamePlayer() {
         PowerMockito.mockStatic(User.class);
-        when(User.getInstance(Mockito.any(UUID.class))).thenReturn(user);
+        when(User.getInstance(any(UUID.class))).thenReturn(user);
         when(user.isOnline()).thenReturn(true);
         IslandTeamUntrustCommand itl = new IslandTeamUntrustCommand(ic);
-        when(pm.getUUID(Mockito.any())).thenReturn(uuid);
+        when(pm.getUUID(any())).thenReturn(uuid);
         assertFalse(itl.execute(user, itl.getLabel(), Collections.singletonList("tastybento")));
         Mockito.verify(user).sendMessage(Mockito.eq("commands.island.team.untrust.cannot-untrust-yourself"));
     }
@@ -202,12 +203,12 @@ public class IslandTeamUntrustCommandTest {
     @Test
     public void testExecutePlayerHasRank() {
         PowerMockito.mockStatic(User.class);
-        when(User.getInstance(Mockito.any(UUID.class))).thenReturn(user);
+        when(User.getInstance(any(UUID.class))).thenReturn(user);
         when(user.isOnline()).thenReturn(true);
         IslandTeamUntrustCommand itl = new IslandTeamUntrustCommand(ic);
-        when(pm.getUUID(Mockito.any())).thenReturn(notUUID);
-        when(im.inTeam(Mockito.any(), Mockito.any())).thenReturn(true);
-        when(im.getMembers(Mockito.any(), Mockito.any())).thenReturn(Collections.singleton(notUUID));
+        when(pm.getUUID(any())).thenReturn(notUUID);
+        when(im.inTeam(any(), any())).thenReturn(true);
+        when(im.getMembers(any(), any())).thenReturn(Collections.singleton(notUUID));
         assertFalse(itl.execute(user, itl.getLabel(), Collections.singletonList("bento")));
         Mockito.verify(user).sendMessage(Mockito.eq("commands.island.team.untrust.cannot-untrust-member"));
     }
@@ -227,7 +228,7 @@ public class IslandTeamUntrustCommandTest {
     @Test
     public void testTabCompleteNoIsland() {
         // No island
-        when(im.getIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(null);
+        when(im.getIsland(any(), any(UUID.class))).thenReturn(null);
         IslandTeamUntrustCommand ibc = new IslandTeamUntrustCommand(ic);
         // Set up the user
         User user = mock(User.class);
@@ -263,9 +264,9 @@ public class IslandTeamUntrustCommandTest {
         // Return a set of players
         PowerMockito.mockStatic(Bukkit.class);
         OfflinePlayer offlinePlayer = mock(OfflinePlayer.class);
-        when(Bukkit.getOfflinePlayer(Mockito.any(UUID.class))).thenReturn(offlinePlayer);
+        when(Bukkit.getOfflinePlayer(any(UUID.class))).thenReturn(offlinePlayer);
         when(offlinePlayer.getName()).thenReturn("adam", "ben", "cara", "dave", "ed", "frank", "freddy", "george", "harry", "ian", "joe");
-        when(island.getRank(Mockito.any())).thenReturn(
+        when(island.getRank(any())).thenReturn(
                 RanksManager.TRUSTED_RANK,
                 RanksManager.TRUSTED_RANK,
                 RanksManager.TRUSTED_RANK,

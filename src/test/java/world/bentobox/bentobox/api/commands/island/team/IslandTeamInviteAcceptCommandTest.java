@@ -21,6 +21,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -55,6 +56,7 @@ public class IslandTeamInviteAcceptCommandTest {
     private IslandsManager im;
     private PlayersManager pm;
     private UUID notUUID;
+    @Mock
     private Settings s;
     private Island island;
     private IslandTeamInviteAcceptCommand c;
@@ -76,8 +78,6 @@ public class IslandTeamInviteAcceptCommandTest {
         when(plugin.getCommandsManager()).thenReturn(cm);
 
         // Settings
-        s = mock(Settings.class);
-        when(s.getRankCommand(Mockito.anyString())).thenReturn(RanksManager.OWNER_RANK);
         when(plugin.getSettings()).thenReturn(s);
 
         // Player
