@@ -28,6 +28,7 @@ import com.google.common.collect.ImmutableSet.Builder;
 import com.google.gson.annotations.Expose;
 
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.localization.TextVariables;
@@ -154,6 +155,16 @@ public class Island implements DataObject {
     @Expose
     private Map<Flag, Long> cooldowns = new HashMap<>();
 
+    /**
+     * Commands and the rank required to use them for this island
+     */
+    @Expose
+    private Map<String, Integer> commandRanks;
+
+    /*
+     * *************************** Constructors ******************************
+     */
+
     public Island() {}
 
     public Island(@NonNull Location location, UUID owner, int protectionRange) {
@@ -194,6 +205,10 @@ public class Island implements DataObject {
         this.updatedDate = island.updatedDate;
         this.world = island.world;
     }
+
+    /*
+     * *************************** Methods ******************************
+     */
 
     /**
      * Adds a team member. If player is on banned list, they will be removed from it.
@@ -1092,6 +1107,40 @@ public class Island implements DataObject {
      */
     public void setCooldowns(Map<Flag, Long> cooldowns) {
         this.cooldowns = cooldowns;
+    }
+
+    /**
+     * @return the commandRanks
+     */
+    public Map<String, Integer> getCommandRanks() {
+        return commandRanks;
+    }
+
+    /**
+     * @param commandRanks the commandRanks to set
+     */
+    public void setCommandRanks(Map<String, Integer> commandRanks) {
+        this.commandRanks = commandRanks;
+    }
+
+    /**
+     * Get the rank required to run command on this island.
+     * The command must have been registered with a rank.
+     * @param command - the string given by {@link CompositeCommand#getUsage()}
+     * @return Rank value required, or if command is not set {@link RanksManager#OWNER_RANK}
+     */
+    public int getRankCommand(String command) {
+        return commandRanks == null ? RanksManager.OWNER_RANK : commandRanks.getOrDefault(command, RanksManager.OWNER_RANK);
+    }
+
+    /**
+     *
+     * @param command - the string given by {@link CompositeCommand#getUsage()}
+     * @param rank value as used by {@link RanksManager}
+     */
+    public void setRankCommand(String command, int rank) {
+        if (this.commandRanks == null) this.commandRanks = new HashMap<>();
+        this.commandRanks.put(command, rank);
     }
 
     /* (non-Javadoc)

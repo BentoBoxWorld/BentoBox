@@ -39,6 +39,12 @@ public class IslandTeamKickCommand extends ConfirmableCommand {
             user.sendMessage("general.errors.not-owner");
             return false;
         }
+        // Check rank to use command
+        Island island = getIslands().getIsland(getWorld(), user);
+        if (island.getRank(user) < island.getRankCommand(getUsage())) {
+            user.sendMessage("general.errors.no-permission");
+            return false;
+        }
         // If args are not right, show help
         if (args.size() != 1) {
             showHelp(this, user);

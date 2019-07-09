@@ -2,6 +2,7 @@ package world.bentobox.bentobox.api.commands.island;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -74,7 +75,6 @@ public class IslandBanCommandTest {
 
         // Settings
         Settings s = mock(Settings.class);
-        when(s.getRankCommand(Mockito.anyString())).thenReturn(RanksManager.OWNER_RANK);
         when(plugin.getSettings()).thenReturn(s);
 
         // Player
@@ -164,6 +164,7 @@ public class IslandBanCommandTest {
         IslandBanCommand ibc = new IslandBanCommand(ic);
         when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
         when(island.getRank(Mockito.any())).thenReturn(RanksManager.MEMBER_RANK);
+        when(island.getRankCommand(anyString())).thenReturn(RanksManager.OWNER_RANK);
         assertFalse(ibc.execute(user, ibc.getLabel(), Collections.singletonList("bill")));
         Mockito.verify(user).sendMessage("general.errors.no-permission");
     }

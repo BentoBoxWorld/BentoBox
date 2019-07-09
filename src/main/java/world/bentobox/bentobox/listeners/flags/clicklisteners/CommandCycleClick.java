@@ -36,26 +36,26 @@ public class CommandCycleClick implements ClickHandler {
         Island island = plugin.getIslands().getIsland(user.getWorld(), user.getUniqueId());
         if (island != null && island.getOwner().equals(user.getUniqueId())) {
             RanksManager rm = plugin.getRanksManager();
-            int currentRank = plugin.getSettings().getRankCommand(command);
+            int currentRank = island.getRankCommand(command);
             if (click.equals(ClickType.LEFT)) {
                 if (currentRank == RanksManager.OWNER_RANK) {
-                    plugin.getSettings().setRankCommand(command, RanksManager.MEMBER_RANK);
+                    island.setRankCommand(command, RanksManager.MEMBER_RANK);
                 } else {
-                    plugin.getSettings().setRankCommand(command, rm.getRankUpValue(currentRank));
+                    island.setRankCommand(command, rm.getRankUpValue(currentRank));
                 }
                 user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 1F, 1F);
             } else if (click.equals(ClickType.RIGHT)) {
                 if (currentRank == RanksManager.MEMBER_RANK) {
-                    plugin.getSettings().setRankCommand(command, RanksManager.OWNER_RANK);
+                    island.setRankCommand(command, RanksManager.OWNER_RANK);
                 } else {
-                    plugin.getSettings().setRankCommand(command, rm.getRankDownValue(currentRank));
+                    island.setRankCommand(command, rm.getRankDownValue(currentRank));
                 }
                 user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 1F, 1F);
             }
             // Apply change to panel
             panel.getInventory().setItem(slot, commandRankClickListener.getPanelItem(command, user).getItem());
-            // Save config
-            plugin.saveConfig();
+            // Save island
+            plugin.getIslands().save(island);
 
         } else {
             user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_METAL_HIT, 1F, 1F);

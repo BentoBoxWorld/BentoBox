@@ -39,8 +39,6 @@ general:
   # /!\ This feature is experimental and might not work as expected or might not work at all.
   fakeplayers:
     - '[CoFH]'
-  # Rank required to use a command. e.g., use the invite command. Default is owner rank is required.
-  rank-command: {}
 panel:
   close-on-click-outside: true
 logs:

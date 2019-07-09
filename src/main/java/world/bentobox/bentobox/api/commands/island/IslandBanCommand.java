@@ -48,7 +48,7 @@ public class IslandBanCommand extends CompositeCommand {
         }
         // Check rank to use command
         Island island = getIslands().getIsland(getWorld(), user);
-        if (island.getRank(user) < getPlugin().getSettings().getRankCommand(getUsage())) {
+        if (island.getRank(user) < island.getRankCommand(getUsage())) {
             user.sendMessage("general.errors.no-permission");
             return false;
         }

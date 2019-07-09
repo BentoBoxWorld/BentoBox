@@ -1,8 +1,6 @@
 package world.bentobox.bentobox;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import world.bentobox.bentobox.api.configuration.ConfigComment;
@@ -10,7 +8,6 @@ import world.bentobox.bentobox.api.configuration.ConfigEntry;
 import world.bentobox.bentobox.api.configuration.ConfigObject;
 import world.bentobox.bentobox.api.configuration.StoreAt;
 import world.bentobox.bentobox.database.DatabaseSetup.DatabaseType;
-import world.bentobox.bentobox.managers.RanksManager;
 
 /**
  * All the plugin settings are here
@@ -78,10 +75,6 @@ public class Settings implements ConfigObject {
     @ConfigComment("Add other fake player names here if required")
     @ConfigEntry(path = "general.fakeplayers", experimental = true)
     private Set<String> fakePlayers = new HashSet<>();
-
-    @ConfigComment("Rank required to use a command. e.g., use the invite command. Default is owner rank is required.")
-    @ConfigEntry(path = "general.rank-command")
-    private Map<String, Integer> rankCommand = new HashMap<>();
 
     @ConfigEntry(path = "panel.close-on-click-outside")
     private boolean closePanelOnClickOutside = true;
@@ -291,22 +284,6 @@ public class Settings implements ConfigObject {
 
     public void setFakePlayers(Set<String> fakePlayers) {
         this.fakePlayers = fakePlayers;
-    }
-
-    public Map<String, Integer> getRankCommand() {
-        return rankCommand;
-    }
-
-    public int getRankCommand(String command) {
-        return rankCommand.getOrDefault(command, RanksManager.OWNER_RANK);
-    }
-
-    public void setRankCommand(String command, int rank) {
-        rankCommand.put(command, rank);
-    }
-
-    public void setRankCommand(Map<String, Integer> rankCommand) {
-        this.rankCommand = rankCommand;
     }
 
     public boolean isClosePanelOnClickOutside() {

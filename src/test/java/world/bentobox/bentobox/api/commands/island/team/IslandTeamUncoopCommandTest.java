@@ -5,6 +5,7 @@ package world.bentobox.bentobox.api.commands.island.team;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -25,6 +26,7 @@ import org.bukkit.scheduler.BukkitScheduler;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -60,6 +62,7 @@ public class IslandTeamUncoopCommandTest {
     private IslandsManager im;
     private PlayersManager pm;
     private UUID notUUID;
+    @Mock
     private Settings s;
     private Island island;
 
@@ -77,9 +80,6 @@ public class IslandTeamUncoopCommandTest {
         when(plugin.getCommandsManager()).thenReturn(cm);
 
         // Settings
-        s = mock(Settings.class);
-        when(s.getRankCommand(Mockito.anyString())).thenReturn(RanksManager.OWNER_RANK);
-
         when(plugin.getSettings()).thenReturn(s);
 
         // Player
@@ -155,6 +155,7 @@ public class IslandTeamUncoopCommandTest {
     @Test
     public void testExecuteLowRank() {
         when(island.getRank(Mockito.any())).thenReturn(RanksManager.MEMBER_RANK);
+        when(island.getRankCommand(anyString())).thenReturn(RanksManager.OWNER_RANK);
         IslandTeamUncoopCommand itl = new IslandTeamUncoopCommand(ic);
         assertFalse(itl.execute(user, itl.getLabel(), Collections.singletonList("bill")));
         Mockito.verify(user).sendMessage(Mockito.eq("general.errors.no-permission"));
