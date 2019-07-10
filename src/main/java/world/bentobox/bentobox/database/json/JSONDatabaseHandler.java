@@ -65,7 +65,6 @@ public class JSONDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
                         shutdown = true;
                     }
                     while (!processQueue.isEmpty()) {
-                        Bukkit.getLogger().info("Queue = " + processQueue.size());
                         processQueue.poll().run();
                     }
                     // Clear the queue and then sleep
