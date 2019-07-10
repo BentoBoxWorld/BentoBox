@@ -57,6 +57,24 @@ commands:
       reset:
         description: "resets the resets of this player to 0"
         parameters: "<player>"
+    purge:
+      parameters: "[days]" 
+      description: "purge islands abandoned for more than [days]"
+      days-or-more: "Must be at least 1 day or more"     
+      purgable-islands: "Found [number] purgable islands."
+      purge-in-progress: "&cPurging in progress. Use purge stop to cancel"
+      number-error: "&cArgument must be a number of days"
+      confirm: "&dType [label] purge confirm to start purging"  
+      completed: "&aPurging stopped"
+      see-console-for-status: "Purge started. See console for status"   
+      stop:
+        description: "Stop a purge in progress"
+        stopping: "Stopping the purge"
+        no-purge-in-progress: "&cNo purge in progress!"
+      unowned:
+        description: "Purge unowned islands - requires confirmation"
+        unowned-islands: "&dFound [number] islands"
+        
     team:
       add:
         parameters: "<owner> <player>"
