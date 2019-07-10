@@ -15,7 +15,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
+import org.bukkit.Bukkit;
+import org.bukkit.scheduler.BukkitTask;
 import org.eclipse.jdt.annotation.NonNull;
 
 import world.bentobox.bentobox.BentoBox;
@@ -27,6 +31,21 @@ public class JSONDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
     private static final String JSON = ".json";
 
     /**
+     * FIFO queue for saves or deletions. Note that the assumption here is that most database objects will be held
+     * in memory because loading is not handled with this queue. That means that it is theoretically
+     * possible to load something before it has been saved. So, in general, load your objects and then
+     * save them async only when you do not need the data again immediately.
+     */
+    private Queue<Runnable> processQueue;
+
+    /**
+     * Async save task that runs repeatedly
+     */
+    private BukkitTask asyncSaveTask;
+
+    private boolean shutdown;
+
+    /**
      * Constructor
      *
      * @param plugin
@@ -36,6 +55,31 @@ public class JSONDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
      */
     JSONDatabaseHandler(BentoBox plugin, Class<T> type, DatabaseConnector databaseConnector) {
         super(plugin, type, databaseConnector);
+        processQueue = new ConcurrentLinkedQueue<>();
+        if (plugin.isEnabled()) {
+            asyncSaveTask = Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+                // Loop continuously
+                while (!shutdown || !processQueue.isEmpty()) {
+                    // This catches any databases that are not explicitly closed
+                    if (!plugin.isEnabled()) {
+                        shutdown = true;
+                    }
+                    while (!processQueue.isEmpty()) {
+                        Bukkit.getLogger().info("Queue = " + processQueue.size());
+                        processQueue.poll().run();
+                    }
+                    // Clear the queue and then sleep
+                    try {
+                        Thread.sleep(25);
+                    } catch (InterruptedException e) {
+                        plugin.logError("Thread sleep error " + e.getMessage());
+                        Thread.currentThread().interrupt();
+                    }
+                }
+                // Cancel
+                asyncSaveTask.cancel();
+            });
+        }
     }
 
     @Override
@@ -120,7 +164,16 @@ public class JSONDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
         }
 
         String toStore = getGson().toJson(instance);
+        if (plugin.isEnabled()) {
+            // Async
+            processQueue.add(() -> store(instance, toStore, file, tableFolder, fileName));
+        } else {
+            // Sync
+            store(instance, toStore, file, tableFolder, fileName);
+        }
+    }
 
+    private void store(T instance, String toStore, File file, File tableFolder, String fileName) {
         try (FileWriter fileWriter = new FileWriter(file)) {
             File tmpFile = new File(tableFolder, fileName + ".bak");
             if (file.exists()) {
@@ -130,12 +183,23 @@ public class JSONDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
             fileWriter.write(toStore);
             Files.deleteIfExists(tmpFile.toPath());
         } catch (IOException e) {
-            plugin.logError("Could not save json file: " + path + " " + fileName + " " + e.getMessage());
+            plugin.logError("Could not save JSON file: " + tableFolder.getName() + " " + fileName + " " + e.getMessage());
         }
     }
 
+    /* (non-Javadoc)
+     * @see world.bentobox.bentobox.database.AbstractDatabaseHandler#deleteID(java.lang.String)
+     */
     @Override
     public void deleteID(String uniqueId) {
+        if (plugin.isEnabled()) {
+            processQueue.add(() -> delete(uniqueId));
+        } else {
+            delete(uniqueId);
+        }
+    }
+
+    private void delete(String uniqueId) {
         // The filename of the JSON file is the value of uniqueId field plus .json. Sometimes the .json is already appended.
         if (!uniqueId.endsWith(JSON)) {
             uniqueId = uniqueId + JSON;
@@ -149,27 +213,28 @@ public class JSONDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
             try {
                 Files.deleteIfExists(file.toPath());
             } catch (IOException e) {
-                plugin.logError("Could not delete json database object! " + file.getName() + " - " + e.getMessage());
+                plugin.logError("Could not delete JSON database object! " + file.getName() + " - " + e.getMessage());
             }
         }
     }
 
     @Override
-    public void deleteObject(T instance) throws IllegalAccessException, InvocationTargetException, IntrospectionException {
+    public void deleteObject(T instance) {
         // Null check
         if (instance == null) {
-            plugin.logError("JSON database request to delete a null. ");
+            plugin.logError("JSON database request to delete a null.");
             return;
         }
         if (!(instance instanceof DataObject)) {
             plugin.logError("This class is not a DataObject: " + instance.getClass().getName());
             return;
         }
-
-        // Obtain the value of uniqueId within the instance (which must be a DataObject)
-        PropertyDescriptor propertyDescriptor = new PropertyDescriptor("uniqueId", dataObject);
-        Method method = propertyDescriptor.getReadMethod();
-        deleteID((String) method.invoke(instance));
+        try {
+            Method getUniqueId = dataObject.getMethod("getUniqueId");
+            deleteID((String) getUniqueId.invoke(instance));
+        } catch (Exception e) {
+            plugin.logError("Could not delete object " + instance.getClass().getName() + " " + e.getMessage());
+        }
     }
 
     @Override
@@ -180,6 +245,6 @@ public class JSONDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
 
     @Override
     public void close() {
-        // Not used
+        shutdown = true;
     }
 }
