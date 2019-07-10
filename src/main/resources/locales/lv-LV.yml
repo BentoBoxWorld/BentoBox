@@ -235,6 +235,10 @@ commands:
           default-color: ''
           success: Izdevās!
           cancelling: Atceļ
+        slot: '&fVēlamā pozīcija [number]'
+        slot-instructions: |
+          &aKreisais peles klikšķis, lai samazinātu
+          &aLabais peles klikšķis, lai palielinātu
       parameters: "<load/copy/paste/pos1/pos2/save>"
       description: "manipulē ar shēmām"
       copy-first: "&cKopē shēmu sākumā!"
@@ -309,13 +313,15 @@ commands:
     about:
       description: "parādīt autortiesības un licenses informāciju"
     reload:
-      description: "parādīt iestatījumu, papildinājumus (ja atbalstīts) un valodas"
+      description: "parlādēt iestatījumus, papildinājumus (ja atbalstīts) un valodas"
       locales-reloaded: "&2Valodas faili pārlādēti."
-      addons-reloaded: "&2Papildinājumu pārlādēti."
+      addons-reloaded: "&2Papildinājumi pārlādēti."
       settings-reloaded: "&2Iestatījumi pārlādēti."
       addon: '&6Pārlādē &b[name]&2.'
       addon-reloaded: '&b[name] &2pārlādēts.'
       unknown-addon: '&2Nezināms papildinājums!'
+      warning: '&cUzmanību: pārlādēšana var izraisīt nestabilitāti, tāpēc, ja rodas 
+        problēmas, iesakam restartēt serveri.'
     version:
       plugin-version: "&2BentoBox versija: &3[version]"
       description: "parādīt BentoBox un papildinājumu versijas"
