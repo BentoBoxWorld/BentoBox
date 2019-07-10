@@ -166,14 +166,14 @@ public class JSONDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
         String toStore = getGson().toJson(instance);
         if (plugin.isEnabled()) {
             // Async
-            processQueue.add(() -> store(instance, toStore, file, tableFolder, fileName));
+            processQueue.add(() -> store(toStore, file, tableFolder, fileName));
         } else {
             // Sync
-            store(instance, toStore, file, tableFolder, fileName);
+            store(toStore, file, tableFolder, fileName);
         }
     }
 
-    private void store(T instance, String toStore, File file, File tableFolder, String fileName) {
+    private void store(String toStore, File file, File tableFolder, String fileName) {
         try (FileWriter fileWriter = new FileWriter(file)) {
             File tmpFile = new File(tableFolder, fileName + ".bak");
             if (file.exists()) {
