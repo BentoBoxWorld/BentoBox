@@ -61,6 +61,24 @@ commands:
       reset:
         description: "uzstāta spēlētājam 'resetus' uz 0"
         parameters: "<spēlētājs>"
+    purge:
+      parameters: "[days]"
+      description: "nodzēst salas kas nav aktīvas vairāk par [days] dienām"
+      days-or-more: "Nevar būt mazāks par 1 dienu"
+      purgable-islands: "Atrastas [number] dzēšamas salas."
+      purge-in-progress: "&cNotiek salu dzēšana. Izmanto '&e[label] purge stop&c', lai atceltu."
+      number-error: "&cParametram ir jābūt dienu skatitam."
+      confirm: "&dRaksti &e[label] purge confirm&d, lai sāktu dzēšanu"
+      completed: "&aDzēšana pabeigta."
+      see-console-for-status: "Dzēšana uzsākta. Skati terminālī, lai redzētu satusu."
+      stop:
+        description: "Apturēt uzsāktu dzēšanu."
+        stopping: "Apstādina dzēšanu"
+        no-purge-in-progress: "&cNav aktīvas dzēšanas!"
+      unowned:
+        description: "Dzēst bezīpašnieku salas - nepieciešams apstiprinājums"
+        unowned-islands: "&dAtrastas [number] salas"
+
     team:
       add:
         parameters: "<īpašnieks> <spēlētājs>"
@@ -235,10 +253,6 @@ commands:
           default-color: ''
           success: Izdevās!
           cancelling: Atceļ
-        slot: '&fVēlamā pozīcija [number]'
-        slot-instructions: |
-          &aKreisais peles klikšķis, lai samazinātu
-          &aLabais peles klikšķis, lai palielinātu
       parameters: "<load/copy/paste/pos1/pos2/save>"
       description: "manipulē ar shēmām"
       copy-first: "&cKopē shēmu sākumā!"
@@ -313,15 +327,13 @@ commands:
     about:
       description: "parādīt autortiesības un licenses informāciju"
     reload:
-      description: "parlādēt iestatījumus, papildinājumus (ja atbalstīts) un valodas"
+      description: "parādīt iestatījumu, papildinājumus (ja atbalstīts) un valodas"
       locales-reloaded: "&2Valodas faili pārlādēti."
-      addons-reloaded: "&2Papildinājumi pārlādēti."
+      addons-reloaded: "&2Papildinājumu pārlādēti."
       settings-reloaded: "&2Iestatījumi pārlādēti."
       addon: '&6Pārlādē &b[name]&2.'
       addon-reloaded: '&b[name] &2pārlādēts.'
       unknown-addon: '&2Nezināms papildinājums!'
-      warning: '&cUzmanību: pārlādēšana var izraisīt nestabilitāti, tāpēc, ja rodas 
-        problēmas, iesakam restartēt serveri.'
     version:
       plugin-version: "&2BentoBox versija: &3[version]"
       description: "parādīt BentoBox un papildinājumu versijas"

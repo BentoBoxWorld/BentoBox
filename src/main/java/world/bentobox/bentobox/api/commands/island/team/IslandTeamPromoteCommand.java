@@ -54,7 +54,7 @@ public class IslandTeamPromoteCommand extends CompositeCommand {
         }
         // Check if the user is not trying to promote/ demote himself
         if (target == user) {
-            user.sendMessage("demote.errors.cant-demote-yourself");
+            user.sendMessage("commands.island.team.demote.errors.cant-demote-yourself");
             return true;
         }
         if (!inTeam(getWorld(), target) || !getOwner(getWorld(), user).equals(getOwner(getWorld(), target))) {
