@@ -16,8 +16,8 @@ public abstract class SQLDatabaseConnector implements DatabaseConnector {
 
     protected String connectionUrl;
     private DatabaseConnectionSettingsImpl dbSettings;
-    protected Connection connection = null;
-    protected Set<Class<?>> types = new HashSet<>();
+    protected static Connection connection = null;
+    protected static Set<Class<?>> types = new HashSet<>();
 
     public SQLDatabaseConnector(DatabaseConnectionSettingsImpl dbSettings, String connectionUrl) {
         this.dbSettings = dbSettings;
@@ -47,10 +47,8 @@ public abstract class SQLDatabaseConnector implements DatabaseConnector {
         types.remove(type);
         if (types.isEmpty() && connection != null) {
             try {
-                if (!connection.isClosed()) {
-                    connection.close();
-                    Bukkit.getLogger().info("Closed database connection");
-                }
+                connection.close();
+                Bukkit.getLogger().info("Closed database connection");
             } catch (SQLException e) {
                 Bukkit.getLogger().severe("Could not close database connection");
             }

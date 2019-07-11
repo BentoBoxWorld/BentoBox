@@ -2,7 +2,7 @@ package world.bentobox.bentobox.database.sql.mysql;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.database.DatabaseConnector;
-import world.bentobox.bentobox.database.sql.AbstractSQLDatabaseHandler;
+import world.bentobox.bentobox.database.sql.SQLDatabaseHandler;
 import world.bentobox.bentobox.database.sql.SQLConfiguration;
 
 /**
@@ -13,7 +13,7 @@ import world.bentobox.bentobox.database.sql.SQLConfiguration;
  *
  * @param <T>
  */
-public class MySQLDatabaseHandler<T> extends AbstractSQLDatabaseHandler<T> {
+public class MySQLDatabaseHandler<T> extends SQLDatabaseHandler<T> {
 
     /**
      * Handles the connection to the database and creation of the initial database schema (tables) for

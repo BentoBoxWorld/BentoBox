@@ -8,14 +8,14 @@ import com.google.gson.Gson;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.database.DatabaseConnector;
 import world.bentobox.bentobox.database.objects.DataObject;
-import world.bentobox.bentobox.database.sql.AbstractSQLDatabaseHandler;
+import world.bentobox.bentobox.database.sql.SQLDatabaseHandler;
 import world.bentobox.bentobox.database.sql.SQLConfiguration;
 
 /**
  * @since 1.6.0
  * @author Poslovitch, tastybento
  */
-public class SQLiteDatabaseHandler<T> extends AbstractSQLDatabaseHandler<T> {
+public class SQLiteDatabaseHandler<T> extends SQLDatabaseHandler<T> {
 
     /**
      * Constructor
@@ -44,30 +44,33 @@ public class SQLiteDatabaseHandler<T> extends AbstractSQLDatabaseHandler<T> {
             plugin.logError("This class is not a DataObject: " + instance.getClass().getName());
             return;
         }
-        Gson gson = getGson();
-        String toStore = gson.toJson(instance);
-
-        try (PreparedStatement preparedStatement = getConnection().prepareStatement(getSqlConfig().getSaveObjectSQL())) {
-            preparedStatement.setString(1, toStore);
-            preparedStatement.setString(2, ((DataObject)instance).getUniqueId());
-            preparedStatement.setString(3, toStore);
-            preparedStatement.execute();
-        } catch (SQLException e) {
-            plugin.logError("Could not save object " + instance.getClass().getName() + " " + e.getMessage());
-        }
+        processQueue.add(() -> {
+            Gson gson = getGson();
+            String toStore = gson.toJson(instance);
+            try (PreparedStatement preparedStatement = getConnection().prepareStatement(getSqlConfig().getSaveObjectSQL())) {
+                preparedStatement.setString(1, toStore);
+                preparedStatement.setString(2, ((DataObject)instance).getUniqueId());
+                preparedStatement.setString(3, toStore);
+                preparedStatement.execute();
+            } catch (SQLException e) {
+                plugin.logError("Could not save object " + instance.getClass().getName() + " " + e.getMessage());
+            }
+        });
     }
 
     @Override
     public void deleteID(String uniqueId) {
-        try (PreparedStatement preparedStatement = getConnection().prepareStatement(getSqlConfig().getDeleteObjectSQL())) {
-            // UniqueId must *not* be placed in quotes
-            preparedStatement.setString(1, uniqueId);
-            int result = preparedStatement.executeUpdate();
-            if (result != 1) {
-                throw new SQLException("Delete did not affect any rows!");
+        processQueue.add(() -> {
+            try (PreparedStatement preparedStatement = getConnection().prepareStatement(getSqlConfig().getDeleteObjectSQL())) {
+                // UniqueId must *not* be placed in quotes
+                preparedStatement.setString(1, uniqueId);
+                int result = preparedStatement.executeUpdate();
+                if (result != 1) {
+                    throw new SQLException("Delete did not affect any rows!");
+                }
+            } catch (Exception e) {
+                plugin.logError("Could not delete object " + dataObject.getCanonicalName() + " " + uniqueId + " " + e.getMessage());
             }
-        } catch (Exception e) {
-            plugin.logError("Could not delete object " + dataObject.getCanonicalName() + " " + uniqueId + " " + e.getMessage());
-        }
+        });
     }
 }

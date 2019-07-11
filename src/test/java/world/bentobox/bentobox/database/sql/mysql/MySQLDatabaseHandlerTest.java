@@ -1,4 +1,4 @@
-package world.bentobox.bentobox.database.mariadb;
+package world.bentobox.bentobox.database.sql.mysql;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -22,6 +22,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -33,8 +34,8 @@ import org.powermock.reflect.Whitebox;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.database.objects.Island;
-import world.bentobox.bentobox.database.sql.mariadb.MariaDBDatabaseHandler;
 import world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseConnector;
+import world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler;
 import world.bentobox.bentobox.util.Util;
 
 /**
@@ -43,7 +44,7 @@ import world.bentobox.bentobox.util.Util;
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( { Bukkit.class, BentoBox.class, Util.class })
-public class MariaDBDatabaseHandlerTest {
+public class MySQLDatabaseHandlerTest {
 
     private static final String JSON = "{\n" +
             "  \"deleted\": false,\n" +
@@ -63,7 +64,7 @@ public class MariaDBDatabaseHandlerTest {
             "  \"doNotLoad\": false,\n" +
             "  \"cooldowns\": {}\n" +
             "}";
-    private MariaDBDatabaseHandler<Island> handler;
+    private MySQLDatabaseHandler<Island> handler;
     private Island instance;
     private String UNIQUE_ID = "xyz";
     @Mock
@@ -109,12 +110,12 @@ public class MariaDBDatabaseHandlerTest {
         // Instance to save
         instance = new Island();
         instance.setUniqueId(UNIQUE_ID);
-        handler = new MariaDBDatabaseHandler<>(plugin, Island.class, dbConn);
+        handler = new MySQLDatabaseHandler<>(plugin, Island.class, dbConn);
 
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.sql.mariadb.MariaDBDatabaseHandler#loadObjects()}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#loadObjects()}.
      * @throws SQLException
      */
     @Test
@@ -125,7 +126,7 @@ public class MariaDBDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.sql.mariadb.MariaDBDatabaseHandler#loadObjects()}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#loadObjects()}.
      * @throws SQLException
      */
     @Test
@@ -142,7 +143,7 @@ public class MariaDBDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.sql.mariadb.MariaDBDatabaseHandler#loadObjects()}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#loadObjects()}.
      * @throws SQLException
      */
     @Test
@@ -159,7 +160,7 @@ public class MariaDBDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.sql.mariadb.MariaDBDatabaseHandler#loadObjects()}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#loadObjects()}.
      * @throws SQLException
      */
     @Test
@@ -177,7 +178,7 @@ public class MariaDBDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.sql.mariadb.MariaDBDatabaseHandler#loadObject(java.lang.String)}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#loadObject(java.lang.String)}.
      */
     @Test
     public void testLoadObjectNoConnection() throws SQLException {
@@ -187,7 +188,7 @@ public class MariaDBDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.sql.mariadb.MariaDBDatabaseHandler#loadObject(java.lang.String)}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#loadObject(java.lang.String)}.
      * @throws SQLException
      */
     @Test
@@ -205,7 +206,7 @@ public class MariaDBDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.sql.mariadb.MariaDBDatabaseHandler#loadObject(java.lang.String)}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#loadObject(java.lang.String)}.
      * @throws SQLException
      */
     @Test
@@ -220,7 +221,7 @@ public class MariaDBDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.sql.mariadb.MariaDBDatabaseHandler#loadObject(java.lang.String)}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#loadObject(java.lang.String)}.
      * @throws SQLException
      */
     @Test
@@ -235,7 +236,7 @@ public class MariaDBDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.sql.mariadb.MariaDBDatabaseHandler#saveObject(java.lang.Object)}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#saveObject(java.lang.Object)}.
      */
     @Test
     public void testSaveObjectNull() {
@@ -244,21 +245,22 @@ public class MariaDBDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.sql.mariadb.MariaDBDatabaseHandler#saveObject(java.lang.Object)}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#saveObject(java.lang.Object)}.
      */
     @Test
     public void testSaveObjectNotDataObject() {
         @SuppressWarnings("rawtypes")
-        MariaDBDatabaseHandler<List> h = new MariaDBDatabaseHandler<List>(plugin, List.class, dbConn);
+        MySQLDatabaseHandler<List> h = new MySQLDatabaseHandler<List>(plugin, List.class, dbConn);
         h.saveObject(Collections.singletonList("test"));
         verify(plugin).logError(eq("This class is not a DataObject: java.util.Collections$SingletonList"));
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.sql.mariadb.MariaDBDatabaseHandler#saveObject(java.lang.Object)}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#saveObject(java.lang.Object)}.
      * @throws SQLException
      */
     @Test
+    @Ignore("Async cannot be tested")
     public void testSaveObject() throws SQLException {
         // Disable plugin
         when(plugin.isEnabled()).thenReturn(false);
@@ -286,10 +288,11 @@ public class MariaDBDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.sql.mariadb.MariaDBDatabaseHandler#saveObject(java.lang.Object)}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#saveObject(java.lang.Object)}.
      * @throws SQLException
      */
     @Test
+    @Ignore("Async cannot be tested")
     public void testSaveObjectFail() throws SQLException {
         // Disable plugin
         when(plugin.isEnabled()).thenReturn(false);
@@ -300,7 +303,7 @@ public class MariaDBDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.sql.mariadb.MariaDBDatabaseHandler#deleteObject(java.lang.Object)}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#deleteObject(java.lang.Object)}.
      */
     @Test
     public void testDeleteObjectNull() {
@@ -309,18 +312,18 @@ public class MariaDBDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.sql.mariadb.MariaDBDatabaseHandler#deleteObject(java.lang.Object)}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#deleteObject(java.lang.Object)}.
      */
     @Test
     public void testDeleteObjectIncorrectType() {
         @SuppressWarnings("rawtypes")
-        MariaDBDatabaseHandler<List> h = new MariaDBDatabaseHandler<List>(plugin, List.class, dbConn);
+        MySQLDatabaseHandler<List> h = new MySQLDatabaseHandler<List>(plugin, List.class, dbConn);
         h.deleteObject(Collections.singletonList("test"));
         verify(plugin).logError(eq("This class is not a DataObject: java.util.Collections$SingletonList"));
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.sql.mariadb.MariaDBDatabaseHandler#deleteObject(java.lang.Object)}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#deleteObject(java.lang.Object)}.
      * @throws SQLException
      */
     @Test
@@ -333,7 +336,7 @@ public class MariaDBDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.sql.mariadb.MariaDBDatabaseHandler#objectExists(java.lang.String)}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#objectExists(java.lang.String)}.
      * @throws SQLException
      */
     @Test
@@ -342,14 +345,13 @@ public class MariaDBDatabaseHandlerTest {
         when(ps.executeQuery()).thenReturn(resultSet);
         when(resultSet.next()).thenReturn(false);
         assertFalse(handler.objectExists("hello"));
-        //verify(connection).prepareStatement("CREATE TABLE IF NOT EXISTS `world.bentobox.bentobox.database.objects.Island` (json JSON, uniqueId VARCHAR(255) GENERATED ALWAYS AS (json->\"$.uniqueId\"), UNIQUE INDEX i (uniqueId) )");
-        verify(connection).prepareStatement("CREATE TABLE IF NOT EXISTS `world.bentobox.bentobox.database.objects.Island` (json JSON, uniqueId VARCHAR(255) GENERATED ALWAYS AS (JSON_EXTRACT(json, \"$.uniqueId\")), UNIQUE INDEX i (uniqueId))");
+        verify(connection).prepareStatement("CREATE TABLE IF NOT EXISTS `world.bentobox.bentobox.database.objects.Island` (json JSON, uniqueId VARCHAR(255) GENERATED ALWAYS AS (json->\"$.uniqueId\"), UNIQUE INDEX i (uniqueId) )");
         verify(ps).executeQuery();
         verify(ps).setString(1, "\"hello\"");
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.sql.mariadb.MariaDBDatabaseHandler#objectExists(java.lang.String)}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#objectExists(java.lang.String)}.
      * @throws SQLException
      */
     @Test
@@ -359,14 +361,13 @@ public class MariaDBDatabaseHandlerTest {
         when(resultSet.next()).thenReturn(true);
         when(resultSet.getBoolean(eq(1))).thenReturn(false);
         assertFalse(handler.objectExists("hello"));
-        //verify(connection).prepareStatement("CREATE TABLE IF NOT EXISTS `world.bentobox.bentobox.database.objects.Island` (json JSON, uniqueId VARCHAR(255) GENERATED ALWAYS AS (json->\"$.uniqueId\"), UNIQUE INDEX i (uniqueId) )");
-        verify(connection).prepareStatement("CREATE TABLE IF NOT EXISTS `world.bentobox.bentobox.database.objects.Island` (json JSON, uniqueId VARCHAR(255) GENERATED ALWAYS AS (JSON_EXTRACT(json, \"$.uniqueId\")), UNIQUE INDEX i (uniqueId))");
+        verify(connection).prepareStatement("CREATE TABLE IF NOT EXISTS `world.bentobox.bentobox.database.objects.Island` (json JSON, uniqueId VARCHAR(255) GENERATED ALWAYS AS (json->\"$.uniqueId\"), UNIQUE INDEX i (uniqueId) )");
         verify(ps).executeQuery();
         verify(ps).setString(1, "\"hello\"");
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.sql.mariadb.MariaDBDatabaseHandler#objectExists(java.lang.String)}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#objectExists(java.lang.String)}.
      * @throws SQLException
      */
     @Test
@@ -376,14 +377,13 @@ public class MariaDBDatabaseHandlerTest {
         when(resultSet.next()).thenReturn(true);
         when(resultSet.getBoolean(eq(1))).thenReturn(true);
         assertTrue(handler.objectExists("hello"));
-        //verify(connection).prepareStatement("CREATE TABLE IF NOT EXISTS `world.bentobox.bentobox.database.objects.Island` (json JSON, uniqueId VARCHAR(255) GENERATED ALWAYS AS (json->\"$.uniqueId\"), UNIQUE INDEX i (uniqueId) )");
-        verify(connection).prepareStatement("CREATE TABLE IF NOT EXISTS `world.bentobox.bentobox.database.objects.Island` (json JSON, uniqueId VARCHAR(255) GENERATED ALWAYS AS (JSON_EXTRACT(json, \"$.uniqueId\")), UNIQUE INDEX i (uniqueId))");
+        verify(connection).prepareStatement("CREATE TABLE IF NOT EXISTS `world.bentobox.bentobox.database.objects.Island` (json JSON, uniqueId VARCHAR(255) GENERATED ALWAYS AS (json->\"$.uniqueId\"), UNIQUE INDEX i (uniqueId) )");
         verify(ps).executeQuery();
         verify(ps).setString(1, "\"hello\"");
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.sql.mariadb.MariaDBDatabaseHandler#objectExists(java.lang.String)}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#objectExists(java.lang.String)}.
      * @throws SQLException
      */
     @Test
@@ -396,7 +396,7 @@ public class MariaDBDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.sql.mariadb.MariaDBDatabaseHandler#deleteID(java.lang.String)}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#deleteID(java.lang.String)}.
      * @throws SQLException
      */
     @Test
@@ -409,7 +409,7 @@ public class MariaDBDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.sql.mariadb.MariaDBDatabaseHandler#deleteID(java.lang.String)}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#deleteID(java.lang.String)}.
      * @throws SQLException
      */
     @Test
@@ -422,34 +422,34 @@ public class MariaDBDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.sql.mariadb.MariaDBDatabaseHandler#MariaDBDatabaseHandler(world.bentobox.bentobox.BentoBox, java.lang.Class, world.bentobox.bentobox.database.DatabaseConnector)}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#MySQLDatabaseHandler(world.bentobox.bentobox.BentoBox, java.lang.Class, world.bentobox.bentobox.database.DatabaseConnector)}.
      */
     @Test
-    public void testMariaDBDatabaseHandlerBadPassword() {
+    public void testMySQLDatabaseHandlerBadPassword() {
         when(dbConn.createConnection(any())).thenReturn(null);
-        new MariaDBDatabaseHandler<>(plugin, Island.class, dbConn);
+        new MySQLDatabaseHandler<>(plugin, Island.class, dbConn);
         verify(plugin).logError("Are the settings in config.yml correct?");
         verify(pluginManager).disablePlugin(plugin);
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.sql.mariadb.MariaDBDatabaseHandler#MariaDBDatabaseHandler(world.bentobox.bentobox.BentoBox, java.lang.Class, world.bentobox.bentobox.database.DatabaseConnector)}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#MySQLDatabaseHandler(world.bentobox.bentobox.BentoBox, java.lang.Class, world.bentobox.bentobox.database.DatabaseConnector)}.
      * @throws SQLException
      */
     @Test
-    public void testMariaDBDatabaseHandlerCreateSchema() throws SQLException {
+    public void testMySQLDatabaseHandlerCreateSchema() throws SQLException {
         verify(dbConn).createConnection(any());
-        verify(connection).prepareStatement("CREATE TABLE IF NOT EXISTS `world.bentobox.bentobox.database.objects.Island` (json JSON, uniqueId VARCHAR(255) GENERATED ALWAYS AS (JSON_EXTRACT(json, \"$.uniqueId\")), UNIQUE INDEX i (uniqueId))");
+        verify(connection).prepareStatement("CREATE TABLE IF NOT EXISTS `world.bentobox.bentobox.database.objects.Island` (json JSON, uniqueId VARCHAR(255) GENERATED ALWAYS AS (json->\"$.uniqueId\"), UNIQUE INDEX i (uniqueId) )");
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.sql.mariadb.MariaDBDatabaseHandler#MariaDBDatabaseHandler(world.bentobox.bentobox.BentoBox, java.lang.Class, world.bentobox.bentobox.database.DatabaseConnector)}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#MySQLDatabaseHandler(world.bentobox.bentobox.BentoBox, java.lang.Class, world.bentobox.bentobox.database.DatabaseConnector)}.
      * @throws SQLException
      */
     @Test
-    public void testMariaDBDatabaseHandlerSchemaFail() throws SQLException {
+    public void testMySQLDatabaseHandlerSchemaFail() throws SQLException {
         when(ps.executeUpdate()).thenThrow(new SQLException("oh no!"));
-        handler = new MariaDBDatabaseHandler<>(plugin, Island.class, dbConn);
+        handler = new MySQLDatabaseHandler<>(plugin, Island.class, dbConn);
         verify(plugin).logError("Problem trying to create schema for data object world.bentobox.bentobox.database.objects.Island oh no!");
 
     }

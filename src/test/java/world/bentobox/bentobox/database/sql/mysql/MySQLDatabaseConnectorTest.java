@@ -1,4 +1,4 @@
-package world.bentobox.bentobox.database.mysql;
+package world.bentobox.bentobox.database.sql.mysql;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;

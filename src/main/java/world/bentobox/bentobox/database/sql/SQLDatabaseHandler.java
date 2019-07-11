@@ -30,7 +30,7 @@ import world.bentobox.bentobox.database.objects.DataObject;
  *
  * @param <T>
  */
-public class AbstractSQLDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
+public class SQLDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
 
     private static final String COULD_NOT_LOAD_OBJECTS = "Could not load objects ";
     private static final String COULD_NOT_LOAD_OBJECT = "Could not load object ";
@@ -53,7 +53,7 @@ public class AbstractSQLDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T
      * @param dbConnecter - authentication details for the database
      * @param sqlConfiguration - SQL configuration
      */
-    protected AbstractSQLDatabaseHandler(BentoBox plugin, Class<T> type, DatabaseConnector dbConnecter, SQLConfiguration sqlConfiguration) {
+    protected SQLDatabaseHandler(BentoBox plugin, Class<T> type, DatabaseConnector dbConnecter, SQLConfiguration sqlConfiguration) {
         super(plugin, type, dbConnecter);
         this.sqlConfig = sqlConfiguration;
         if (setConnection((Connection)databaseConnector.createConnection(type))) {
@@ -154,6 +154,7 @@ public class AbstractSQLDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T
             plugin.logError("This class is not a DataObject: " + instance.getClass().getName());
             return;
         }
+        // TODO add back in shutdown sync saving
         // Async
         processQueue.add(() -> store(instance, sqlConfig.getSaveObjectSQL()));
     }
@@ -174,11 +175,11 @@ public class AbstractSQLDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T
      */
     @Override
     public void deleteID(String uniqueId) {
-        if (plugin.isEnabled()) {
-            processQueue.add(() -> delete(uniqueId));
-        } else {
-            delete(uniqueId);
-        }
+        //if (plugin.isEnabled()) {
+        processQueue.add(() -> delete(uniqueId));
+        //} else {
+        //    delete(uniqueId);
+        //}
     }
 
     private void delete(String uniqueId) {
