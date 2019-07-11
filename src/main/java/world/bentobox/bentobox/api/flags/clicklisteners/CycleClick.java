@@ -39,9 +39,9 @@ public class CycleClick implements PanelItem.ClickHandler {
 
     /**
      * Construct a cycle clicker with a min and max rank
-     * @param id
-     * @param minRank
-     * @param maxRank
+     * @param id flag id
+     * @param minRank minimum rank value
+     * @param maxRank maximum rank value
      */
     public CycleClick(String id, int minRank, int maxRank) {
         this.id = id;

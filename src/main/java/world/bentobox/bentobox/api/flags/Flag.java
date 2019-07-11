@@ -472,7 +472,7 @@ public class Flag implements Comparable<Flag> {
 
         /**
          * Make this flag specific to this gameMode
-         * @param gameModeAddon
+         * @param gameModeAddon game mode addon
          * @return Builder
          */
         public Builder setGameMode(GameModeAddon gameModeAddon) {
@@ -482,7 +482,7 @@ public class Flag implements Comparable<Flag> {
 
         /**
          * The addon registering this flag. Ensure this is set to enable the addon to be reloaded.
-         * @param addon
+         * @param addon addon
          * @return Builder
          * @since 1.5.0
          */

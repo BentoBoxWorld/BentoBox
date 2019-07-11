@@ -1,9 +1,5 @@
 package world.bentobox.bentobox.listeners;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
-
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
@@ -14,8 +10,8 @@ import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.eclipse.jdt.annotation.NonNull;
-
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
@@ -24,6 +20,10 @@ import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
 
 public class JoinLeaveListener implements Listener {
 
@@ -141,6 +141,7 @@ public class JoinLeaveListener implements Listener {
 
                 if (!candidates.isEmpty() && !plugin.getSettings().isAutoOwnershipTransferIgnoreRanks()) {
                     // Ranks are not ignored, our candidates can only have the highest rank
+                    // TODO Complete this section
                 }
             }
         });
@@ -153,7 +154,7 @@ public class JoinLeaveListener implements Listener {
             Island island = plugin.getIslands().getIsland(world, user);
             if (island != null) {
                 // Check if new owner has a different range permission than the island size
-                int range = user.getPermissionValue(plugin.getIWM().getAddon(island.getWorld()).get().getPermissionPrefix() + "island.range", island.getProtectionRange());
+                int range = user.getPermissionValue(plugin.getIWM().getAddon(island.getWorld()).map(GameModeAddon::getPermissionPrefix).orElse("") + "island.range", island.getProtectionRange());
 
                 // Range can go up or down
                 if (range != island.getProtectionRange()) {

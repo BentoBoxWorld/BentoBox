@@ -1,16 +1,7 @@
 package world.bentobox.bentobox.blueprints;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import com.google.common.collect.ImmutableMap;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
@@ -18,12 +9,7 @@ import org.bukkit.block.CreatureSpawner;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.type.Sign;
 import org.bukkit.block.data.type.WallSign;
-import org.bukkit.entity.AbstractHorse;
-import org.bukkit.entity.Ageable;
-import org.bukkit.entity.ChestedHorse;
-import org.bukkit.entity.Horse;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Tameable;
+import org.bukkit.entity.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.material.Colorable;
@@ -31,9 +17,6 @@ import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-
-import com.google.common.collect.ImmutableMap;
-
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
@@ -42,6 +25,12 @@ import world.bentobox.bentobox.blueprints.dataobjects.BlueprintCreatureSpawner;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintEntity;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.util.Util;
+
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * This class pastes the clipboard it is given
@@ -115,9 +104,9 @@ public class BlueprintPaster {
      */
     private void paste(@NonNull World world, @Nullable Island island, @NonNull Location loc, @NonNull Blueprint blueprint, @Nullable Runnable task) {
         // Iterators for the various maps to paste
-        Map<Vector, BlueprintBlock> blocks = blueprint.getBlocks() == null ? new HashMap<>() : blueprint.getBlocks();
-        Map<Vector, BlueprintBlock> attached = blueprint.getAttached() == null ? new HashMap<>() : blueprint.getAttached();
-        Map<Vector, List<BlueprintEntity>> entities = blueprint.getEntities() == null ? new HashMap<>() : blueprint.getEntities();
+        Map<Vector, BlueprintBlock> blocks = blueprint.getBlocks() == null ? Collections.emptyMap() : blueprint.getBlocks();
+        Map<Vector, BlueprintBlock> attached = blueprint.getAttached() == null ? Collections.emptyMap() : blueprint.getAttached();
+        Map<Vector, List<BlueprintEntity>> entities = blueprint.getEntities() == null ? Collections.emptyMap() : blueprint.getEntities();
         Iterator<Entry<Vector, BlueprintBlock>> it = blocks.entrySet().iterator();
         Iterator<Entry<Vector, BlueprintBlock>> it2 = attached.entrySet().iterator();
         Iterator<Entry<Vector, List<BlueprintEntity>>> it3 = entities.entrySet().iterator();
@@ -132,28 +121,23 @@ public class BlueprintPaster {
                 pasteBlock(world, island, loc, it.next());
                 count++;
             }
-            while (it2 != null && pasteState.equals(PasteState.ATTACHMENTS) && count < pasteSpeed && it2.hasNext()) {
+            while (pasteState.equals(PasteState.ATTACHMENTS) && count < pasteSpeed && it2.hasNext()) {
                 pasteBlock(world, island, loc, it2.next());
                 count++;
             }
-            while (it3 != null && pasteState.equals(PasteState.ENTITIES) && count < pasteSpeed && it3.hasNext()) {
+            while (pasteState.equals(PasteState.ENTITIES) && count < pasteSpeed && it3.hasNext()) {
                 pasteEntity(world, loc, it3.next());
                 count++;
             }
             // STATE SHIFT
             if (pasteState.equals(PasteState.BLOCKS) && !it.hasNext()) {
-                // Blocks done.
-                if (it2 == null && it3 == null) {
-                    // No attachments or entities
-                    pasteState = PasteState.DONE;
-                } else {
-                    // Next paste attachments, otherwise skip to entities
-                    pasteState = it2 != null ? PasteState.ATTACHMENTS : PasteState.ENTITIES;
-                }
+                // Blocks done
+                // Next paste attachments
+                pasteState = PasteState.ATTACHMENTS;
             }
             if (pasteState.equals(PasteState.ATTACHMENTS) && !it2.hasNext()) {
-                // Attachments done. Next paste entities, otherwise done
-                pasteState = it3 != null ? PasteState.ENTITIES : PasteState.DONE;
+                // Attachments done. Next paste entities
+                pasteState = PasteState.ENTITIES;
             }
             if (pasteState.equals(PasteState.ENTITIES) && !it3.hasNext()) {
                 pasteState = PasteState.DONE;
@@ -270,6 +254,7 @@ public class BlueprintPaster {
             // Center, and just a bit high
             Location center = location.add(new Vector(0.5, 0.5, 0.5));
             LivingEntity e = (LivingEntity)location.getWorld().spawnEntity(center, k.getType());
+            if (e == null) return;
             if (k.getCustomName() != null) {
                 e.setCustomName(k.getCustomName());
             }
@@ -336,7 +321,7 @@ public class BlueprintPaster {
     }
 
     private void writeSign(final Island island, final Block block, final List<String> lines) {
-        BlockFace bf = null;
+        BlockFace bf;
         if (block.getType().name().contains("WALL_SIGN")) {
             WallSign wallSign = (WallSign)block.getBlockData();
             bf = wallSign.getFacing();

@@ -59,7 +59,7 @@ public class LockAndBanListener extends FlagListener {
         }
         if (!checkAndNotify(e.getPlayer(), e.getTo()).equals(CheckResult.OPEN)) {
             e.setCancelled(true);
-            e.getFrom().getWorld().playSound(e.getFrom(), Sound.BLOCK_ANVIL_HIT, 1F, 1F);
+            e.getPlayer().playSound(e.getFrom(), Sound.BLOCK_ANVIL_HIT, 1F, 1F);
             e.getPlayer().setVelocity(new Vector(0,0,0));
             e.getPlayer().setGliding(false);
         }
@@ -82,7 +82,7 @@ public class LockAndBanListener extends FlagListener {
             if (!checkAndNotify(p, e.getTo()).equals(CheckResult.OPEN)) {
                 p.leaveVehicle();
                 p.teleport(e.getFrom());
-                e.getFrom().getWorld().playSound(e.getFrom(), Sound.BLOCK_ANVIL_HIT, 1F, 1F);
+                e.getVehicle().getWorld().playSound(e.getFrom(), Sound.BLOCK_ANVIL_HIT, 1F, 1F);
                 eject(p);
             }
         });

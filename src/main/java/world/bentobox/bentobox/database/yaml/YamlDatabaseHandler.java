@@ -138,9 +138,9 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      * @param config - YAML config file
      *
      * @return <T> filled with values
-     * @throws SecurityException
-     * @throws NoSuchMethodException
-     * @throws IllegalArgumentException
+     * @throws SecurityException security exception
+     * @throws NoSuchMethodException no such method
+     * @throws IllegalArgumentException illegal argument
      */
     private T createObject(YamlConfiguration config) throws InstantiationException, IllegalAccessException, IntrospectionException, InvocationTargetException, ClassNotFoundException, NoSuchMethodException {
         // Create a new instance of the dataObject of type T (which can be any class)

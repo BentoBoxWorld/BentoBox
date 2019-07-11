@@ -29,7 +29,7 @@ public class JSONDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
     /**
      * Constructor
      *
-     * @param plugin
+     * @param plugin            BentoBox plugin
      * @param type              The type of the objects that should be created and filled with
      *                          values from the database or inserted into the database
      * @param databaseConnector Contains the settings to create a connection to the database

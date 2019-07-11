@@ -87,7 +87,6 @@ public class CommandRankClickListener implements ClickHandler {
      * Gets the rank command panel item
      * @param c - rank string
      * @param user - user
-     * @param island - user's island
      * @return panel item for this command
      */
     public PanelItem getPanelItem(String c, User user) {

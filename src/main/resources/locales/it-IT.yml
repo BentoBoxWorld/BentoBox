@@ -807,7 +807,6 @@ protection:
       description: "Abilita/disabilita uso"
       name: "Uso di leve"
       hint: "Uso di leve disabilitato"
-      hint: "Uso di leve disabilitato"
     LIQUIDS_FLOWING_OUT:
       name: "Liquidi scorrono fuori dall'isola"
       description: |-

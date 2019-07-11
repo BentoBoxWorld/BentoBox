@@ -94,7 +94,9 @@ public class SafeSpotTeleport {
                 // Add chunk snapshots to the list
                 while (it.hasNext() && chunkSnapshot.size() < MAX_CHUNKS) {
                     Pair<Integer, Integer> pair = it.next();
-                    chunkSnapshot.add(location.getWorld().getChunkAt(pair.x, pair.z).getChunkSnapshot());
+                    if (location.getWorld() != null) {
+                        chunkSnapshot.add(location.getWorld().getChunkAt(pair.x, pair.z).getChunkSnapshot());
+                    }
                     it.remove();
                 }
                 // Move to next step

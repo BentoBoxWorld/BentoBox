@@ -28,7 +28,7 @@ public class VaultHook extends Hook {
             return false;
         }
         economy = rsp.getProvider();
-        return economy != null;
+        return true;
     }
 
     @Override

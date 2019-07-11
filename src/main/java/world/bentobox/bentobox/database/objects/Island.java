@@ -204,6 +204,8 @@ public class Island implements DataObject {
         this.uniqueId = island.uniqueId;
         this.updatedDate = island.updatedDate;
         this.world = island.world;
+        this.cooldowns = island.cooldowns;
+        this.commandRanks = island.commandRanks;
     }
 
     /*

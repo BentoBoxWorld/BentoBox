@@ -105,7 +105,7 @@ public class NewIsland {
         }
 
         /**
-         * @param world
+         * @param world world where the island will go
          * @deprecated use {@link #addon} instead
          */
         @Deprecated
@@ -155,7 +155,7 @@ public class NewIsland {
 
     /**
      * Makes an island.
-     * @param oldIsland
+     * @param oldIsland old island that is being replaced, if any
      */
     public void newIsland(Island oldIsland) {
         Location next = getNextIsland();
@@ -282,7 +282,7 @@ public class NewIsland {
         Result r = isIsland(last);
 
         while (!r.equals(Result.FREE) && result.getOrDefault(Result.BLOCK_AT_CENTER, 0) < MAX_UNOWNED_ISLANDS) {
-            last = nextGridLocation(last);
+            nextGridLocation(last);
             result.merge(r, 1, (k,v) -> v++);
             r = isIsland(last);
         }

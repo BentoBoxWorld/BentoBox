@@ -88,7 +88,7 @@ public class BlueprintClipboardManager {
      * Loads a blueprint
      * @param fileName - the filename without the suffix
      * @return the blueprint
-     * @throws IOException
+     * @throws IOException exception if there's an issue loading or unzipping
      */
     public Blueprint loadBlueprint(String fileName) throws IOException {
         File zipFile = new File(blueprintFolder, fileName + BlueprintsManager.BLUEPRINT_SUFFIX);

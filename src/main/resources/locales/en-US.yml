@@ -714,11 +714,7 @@ protection:
       description: "Toggle egg throwing"
       name: "Egg throwing"
       hint: "No egg throwing"
-    ELYTRA: 
-      description: "Toggle use on island"
-      name: "Elytra"
-      hint: "No elytra flying allowed"
-    ENCHANTING: 
+    ENCHANTING:
       description: "Toggle use"
       name: "Enchanting table"
       hint: "No table use"

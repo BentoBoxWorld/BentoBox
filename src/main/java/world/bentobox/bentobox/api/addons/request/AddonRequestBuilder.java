@@ -18,7 +18,7 @@ public class AddonRequestBuilder
 	/**
 	 * Define the addon you wish to request.
 	 *
-	 * @param addonName
+	 * @param addonName addon name
 	 */
 	public AddonRequestBuilder addon(String addonName) {
 		this.addonName = addonName;
@@ -28,7 +28,7 @@ public class AddonRequestBuilder
 	/**
 	 * Define label for addon request.
 	 *
-	 * @param requestLabel
+	 * @param requestLabel request label
 	 */
 	public AddonRequestBuilder label(String requestLabel) {
 		this.requestLabel = requestLabel;
@@ -38,8 +38,8 @@ public class AddonRequestBuilder
 	/**
 	 * Add meta data to addon request.
 	 *
-	 * @param key
-	 * @param value
+	 * @param key key
+	 * @param value value
 	 */
 	public AddonRequestBuilder addMetaData(String key, Object value) {
 		metaData.put(key, value);

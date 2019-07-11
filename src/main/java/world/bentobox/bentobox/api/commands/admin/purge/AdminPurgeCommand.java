@@ -15,6 +15,7 @@ import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.events.island.IslandEvent.IslandDeletedEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.database.objects.Island;
 
 public class AdminPurgeCommand extends CompositeCommand implements Listener {
 
@@ -120,7 +121,7 @@ public class AdminPurgeCommand extends CompositeCommand implements Listener {
         return getPlugin().getIslands().getIslands().stream()
                 .filter(i -> i.getWorld().equals(this.getWorld()))
                 .filter(i -> i.getOwner() == null)
-                .map(i -> i.getUniqueId())
+                .map(Island::getUniqueId)
                 .collect(Collectors.toSet());
 
     }
@@ -131,7 +132,7 @@ public class AdminPurgeCommand extends CompositeCommand implements Listener {
                 .filter(i -> i.getOwner() != null)
                 .filter(i -> i.getMembers().size() == 1)
                 .filter(i -> (System.currentTimeMillis() - Bukkit.getOfflinePlayer(i.getOwner()).getLastPlayed()) > days * 1000 * 24 * 3600)
-                .map(i -> i.getUniqueId())
+                .map(Island::getUniqueId)
                 .collect(Collectors.toSet());
     }
 

@@ -695,7 +695,11 @@ public class IslandsManager {
                     player.leaveVehicle();
                     // Remove the boat so they don't lie around everywhere
                     boat.remove();
-                    player.getInventory().addItem(new ItemStack(Material.getMaterial(((Boat) boat).getWoodType().toString() + "_BOAT"), 1));
+                    Material boatMat = Material.getMaterial(((Boat) boat).getWoodType().toString() + "_BOAT");
+                    if (boatMat == null) {
+                        boatMat = Material.OAK_BOAT;
+                    }
+                    player.getInventory().addItem(new ItemStack(boatMat, 1));
                     player.updateInventory();
                 }
             }
