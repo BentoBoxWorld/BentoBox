@@ -507,6 +507,8 @@ commands:
       demote:
         description: "demote a player on your island down a rank"
         parameters: "<player>"
+        errors:
+          cant-demote-yourself: "&cYou can't demote yourself!"
         failure: "&cPlayer cannot be demoted any further!"
         success: "&aDemoted [name] to [rank]"      
       promote:
