@@ -1,4 +1,4 @@
-package world.bentobox.bentobox.database.mariadb;
+package world.bentobox.bentobox.database.sql.mariadb;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.database.AbstractDatabaseHandler;

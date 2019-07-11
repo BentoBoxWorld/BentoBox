@@ -25,6 +25,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import world.bentobox.bentobox.database.DatabaseConnectionSettingsImpl;
+import world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseConnector;
 
 /**
  * @author tastybento
@@ -72,7 +73,7 @@ public class MySQLDatabaseConnectorTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.mysql.MySQLDatabaseConnector#MySQLDatabaseConnector(world.bentobox.bentobox.database.DatabaseConnectionSettingsImpl)}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseConnector#MySQLDatabaseConnector(world.bentobox.bentobox.database.DatabaseConnectionSettingsImpl)}.
      */
     @Test
     public void testMySQLDatabaseConnector() {
@@ -83,7 +84,7 @@ public class MySQLDatabaseConnectorTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.mysql.MySQLDatabaseConnector#createConnection()}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseConnector#createConnection()}.
      */
     @Ignore("This is apparently very hard to do!")
     @Test
@@ -93,7 +94,7 @@ public class MySQLDatabaseConnectorTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.mysql.MySQLDatabaseConnector#createConnection()}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseConnector#createConnection()}.
      * @throws SQLException
      */
     @Test
@@ -106,7 +107,7 @@ public class MySQLDatabaseConnectorTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.mysql.MySQLDatabaseConnector#getConnectionUrl()}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseConnector#getConnectionUrl()}.
      */
     @Test
     public void testGetConnectionUrl() {
@@ -116,7 +117,7 @@ public class MySQLDatabaseConnectorTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.mysql.MySQLDatabaseConnector#getUniqueId(java.lang.String)}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseConnector#getUniqueId(java.lang.String)}.
      */
     @Test
     public void testGetUniqueId() {
@@ -125,7 +126,7 @@ public class MySQLDatabaseConnectorTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.mysql.MySQLDatabaseConnector#uniqueIdExists(java.lang.String, java.lang.String)}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseConnector#uniqueIdExists(java.lang.String, java.lang.String)}.
      */
     @Test
     public void testUniqueIdExists() {
@@ -133,7 +134,7 @@ public class MySQLDatabaseConnectorTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.mysql.MySQLDatabaseConnector#closeConnection()}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseConnector#closeConnection()}.
      */
     @Test
     public void testCloseConnection() {
@@ -143,7 +144,7 @@ public class MySQLDatabaseConnectorTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.mysql.MySQLDatabaseConnector#closeConnection()}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseConnector#closeConnection()}.
      */
     @Test
     public void testCloseConnectionError() throws SQLException {

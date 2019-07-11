@@ -32,8 +32,9 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
 import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.database.mysql.MySQLDatabaseConnector;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.database.sql.mariadb.MariaDBDatabaseHandler;
+import world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseConnector;
 import world.bentobox.bentobox.util.Util;
 
 /**
@@ -113,7 +114,7 @@ public class MariaDBDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.mariadb.MariaDBDatabaseHandler#loadObjects()}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mariadb.MariaDBDatabaseHandler#loadObjects()}.
      * @throws SQLException
      */
     @Test
@@ -124,7 +125,7 @@ public class MariaDBDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.mariadb.MariaDBDatabaseHandler#loadObjects()}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mariadb.MariaDBDatabaseHandler#loadObjects()}.
      * @throws SQLException
      */
     @Test
@@ -141,7 +142,7 @@ public class MariaDBDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.mariadb.MariaDBDatabaseHandler#loadObjects()}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mariadb.MariaDBDatabaseHandler#loadObjects()}.
      * @throws SQLException
      */
     @Test
@@ -158,7 +159,7 @@ public class MariaDBDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.mariadb.MariaDBDatabaseHandler#loadObjects()}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mariadb.MariaDBDatabaseHandler#loadObjects()}.
      * @throws SQLException
      */
     @Test
@@ -176,7 +177,7 @@ public class MariaDBDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.mariadb.MariaDBDatabaseHandler#loadObject(java.lang.String)}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mariadb.MariaDBDatabaseHandler#loadObject(java.lang.String)}.
      */
     @Test
     public void testLoadObjectNoConnection() throws SQLException {
@@ -186,7 +187,7 @@ public class MariaDBDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.mariadb.MariaDBDatabaseHandler#loadObject(java.lang.String)}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mariadb.MariaDBDatabaseHandler#loadObject(java.lang.String)}.
      * @throws SQLException
      */
     @Test
@@ -204,7 +205,7 @@ public class MariaDBDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.mariadb.MariaDBDatabaseHandler#loadObject(java.lang.String)}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mariadb.MariaDBDatabaseHandler#loadObject(java.lang.String)}.
      * @throws SQLException
      */
     @Test
@@ -219,7 +220,7 @@ public class MariaDBDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.mariadb.MariaDBDatabaseHandler#loadObject(java.lang.String)}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mariadb.MariaDBDatabaseHandler#loadObject(java.lang.String)}.
      * @throws SQLException
      */
     @Test
@@ -234,16 +235,16 @@ public class MariaDBDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.mariadb.MariaDBDatabaseHandler#saveObject(java.lang.Object)}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mariadb.MariaDBDatabaseHandler#saveObject(java.lang.Object)}.
      */
     @Test
     public void testSaveObjectNull() {
         handler.saveObject(null);
-        verify(plugin).logError(eq("MySQL database request to store a null. "));
+        verify(plugin).logError(eq("SQL database request to store a null. "));
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.mariadb.MariaDBDatabaseHandler#saveObject(java.lang.Object)}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mariadb.MariaDBDatabaseHandler#saveObject(java.lang.Object)}.
      */
     @Test
     public void testSaveObjectNotDataObject() {
@@ -254,7 +255,7 @@ public class MariaDBDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.mariadb.MariaDBDatabaseHandler#saveObject(java.lang.Object)}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mariadb.MariaDBDatabaseHandler#saveObject(java.lang.Object)}.
      * @throws SQLException
      */
     @Test
@@ -285,7 +286,7 @@ public class MariaDBDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.mariadb.MariaDBDatabaseHandler#saveObject(java.lang.Object)}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mariadb.MariaDBDatabaseHandler#saveObject(java.lang.Object)}.
      * @throws SQLException
      */
     @Test
@@ -299,16 +300,16 @@ public class MariaDBDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.mariadb.MariaDBDatabaseHandler#deleteObject(java.lang.Object)}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mariadb.MariaDBDatabaseHandler#deleteObject(java.lang.Object)}.
      */
     @Test
     public void testDeleteObjectNull() {
         handler.deleteObject(null);
-        verify(plugin).logError(eq("MariaDB database request to delete a null."));
+        verify(plugin).logError(eq("SQL database request to delete a null."));
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.mariadb.MariaDBDatabaseHandler#deleteObject(java.lang.Object)}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mariadb.MariaDBDatabaseHandler#deleteObject(java.lang.Object)}.
      */
     @Test
     public void testDeleteObjectIncorrectType() {
@@ -319,7 +320,7 @@ public class MariaDBDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.mariadb.MariaDBDatabaseHandler#deleteObject(java.lang.Object)}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mariadb.MariaDBDatabaseHandler#deleteObject(java.lang.Object)}.
      * @throws SQLException
      */
     @Test
@@ -332,7 +333,7 @@ public class MariaDBDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.mariadb.MariaDBDatabaseHandler#objectExists(java.lang.String)}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mariadb.MariaDBDatabaseHandler#objectExists(java.lang.String)}.
      * @throws SQLException
      */
     @Test
@@ -348,7 +349,7 @@ public class MariaDBDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.mariadb.MariaDBDatabaseHandler#objectExists(java.lang.String)}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mariadb.MariaDBDatabaseHandler#objectExists(java.lang.String)}.
      * @throws SQLException
      */
     @Test
@@ -365,7 +366,7 @@ public class MariaDBDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.mariadb.MariaDBDatabaseHandler#objectExists(java.lang.String)}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mariadb.MariaDBDatabaseHandler#objectExists(java.lang.String)}.
      * @throws SQLException
      */
     @Test
@@ -382,7 +383,7 @@ public class MariaDBDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.mariadb.MariaDBDatabaseHandler#objectExists(java.lang.String)}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mariadb.MariaDBDatabaseHandler#objectExists(java.lang.String)}.
      * @throws SQLException
      */
     @Test
@@ -395,7 +396,7 @@ public class MariaDBDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.mariadb.MariaDBDatabaseHandler#deleteID(java.lang.String)}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mariadb.MariaDBDatabaseHandler#deleteID(java.lang.String)}.
      * @throws SQLException
      */
     @Test
@@ -408,7 +409,7 @@ public class MariaDBDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.mariadb.MariaDBDatabaseHandler#deleteID(java.lang.String)}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mariadb.MariaDBDatabaseHandler#deleteID(java.lang.String)}.
      * @throws SQLException
      */
     @Test
@@ -421,7 +422,7 @@ public class MariaDBDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.mariadb.MariaDBDatabaseHandler#MariaDBDatabaseHandler(world.bentobox.bentobox.BentoBox, java.lang.Class, world.bentobox.bentobox.database.DatabaseConnector)}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mariadb.MariaDBDatabaseHandler#MariaDBDatabaseHandler(world.bentobox.bentobox.BentoBox, java.lang.Class, world.bentobox.bentobox.database.DatabaseConnector)}.
      */
     @Test
     public void testMariaDBDatabaseHandlerBadPassword() {
@@ -432,7 +433,7 @@ public class MariaDBDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.mariadb.MariaDBDatabaseHandler#MariaDBDatabaseHandler(world.bentobox.bentobox.BentoBox, java.lang.Class, world.bentobox.bentobox.database.DatabaseConnector)}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mariadb.MariaDBDatabaseHandler#MariaDBDatabaseHandler(world.bentobox.bentobox.BentoBox, java.lang.Class, world.bentobox.bentobox.database.DatabaseConnector)}.
      * @throws SQLException
      */
     @Test
@@ -442,7 +443,7 @@ public class MariaDBDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.mariadb.MariaDBDatabaseHandler#MariaDBDatabaseHandler(world.bentobox.bentobox.BentoBox, java.lang.Class, world.bentobox.bentobox.database.DatabaseConnector)}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mariadb.MariaDBDatabaseHandler#MariaDBDatabaseHandler(world.bentobox.bentobox.BentoBox, java.lang.Class, world.bentobox.bentobox.database.DatabaseConnector)}.
      * @throws SQLException
      */
     @Test

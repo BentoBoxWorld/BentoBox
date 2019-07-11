@@ -15,11 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
-import org.bukkit.Bukkit;
-import org.bukkit.scheduler.BukkitTask;
 import org.eclipse.jdt.annotation.NonNull;
 
 import world.bentobox.bentobox.BentoBox;
@@ -31,21 +27,6 @@ public class JSONDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
     private static final String JSON = ".json";
 
     /**
-     * FIFO queue for saves or deletions. Note that the assumption here is that most database objects will be held
-     * in memory because loading is not handled with this queue. That means that it is theoretically
-     * possible to load something before it has been saved. So, in general, load your objects and then
-     * save them async only when you do not need the data again immediately.
-     */
-    private Queue<Runnable> processQueue;
-
-    /**
-     * Async save task that runs repeatedly
-     */
-    private BukkitTask asyncSaveTask;
-
-    private boolean shutdown;
-
-    /**
      * Constructor
      *
      * @param plugin
@@ -55,30 +36,6 @@ public class JSONDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
      */
     JSONDatabaseHandler(BentoBox plugin, Class<T> type, DatabaseConnector databaseConnector) {
         super(plugin, type, databaseConnector);
-        processQueue = new ConcurrentLinkedQueue<>();
-        if (plugin.isEnabled()) {
-            asyncSaveTask = Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-                // Loop continuously
-                while (!shutdown || !processQueue.isEmpty()) {
-                    // This catches any databases that are not explicitly closed
-                    if (!plugin.isEnabled()) {
-                        shutdown = true;
-                    }
-                    while (!processQueue.isEmpty()) {
-                        processQueue.poll().run();
-                    }
-                    // Clear the queue and then sleep
-                    try {
-                        Thread.sleep(25);
-                    } catch (InterruptedException e) {
-                        plugin.logError("Thread sleep error " + e.getMessage());
-                        Thread.currentThread().interrupt();
-                    }
-                }
-                // Cancel
-                asyncSaveTask.cancel();
-            });
-        }
     }
 
     @Override

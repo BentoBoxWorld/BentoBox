@@ -33,6 +33,8 @@ import org.powermock.reflect.Whitebox;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseConnector;
+import world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler;
 import world.bentobox.bentobox.util.Util;
 
 /**
@@ -112,7 +114,7 @@ public class MySQLDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.mysql.MySQLDatabaseHandler#loadObjects()}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#loadObjects()}.
      * @throws SQLException
      */
     @Test
@@ -123,7 +125,7 @@ public class MySQLDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.mysql.MySQLDatabaseHandler#loadObjects()}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#loadObjects()}.
      * @throws SQLException
      */
     @Test
@@ -140,7 +142,7 @@ public class MySQLDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.mysql.MySQLDatabaseHandler#loadObjects()}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#loadObjects()}.
      * @throws SQLException
      */
     @Test
@@ -157,7 +159,7 @@ public class MySQLDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.mysql.MySQLDatabaseHandler#loadObjects()}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#loadObjects()}.
      * @throws SQLException
      */
     @Test
@@ -175,7 +177,7 @@ public class MySQLDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.mysql.MySQLDatabaseHandler#loadObject(java.lang.String)}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#loadObject(java.lang.String)}.
      */
     @Test
     public void testLoadObjectNoConnection() throws SQLException {
@@ -185,7 +187,7 @@ public class MySQLDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.mysql.MySQLDatabaseHandler#loadObject(java.lang.String)}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#loadObject(java.lang.String)}.
      * @throws SQLException
      */
     @Test
@@ -203,7 +205,7 @@ public class MySQLDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.mysql.MySQLDatabaseHandler#loadObject(java.lang.String)}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#loadObject(java.lang.String)}.
      * @throws SQLException
      */
     @Test
@@ -218,7 +220,7 @@ public class MySQLDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.mysql.MySQLDatabaseHandler#loadObject(java.lang.String)}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#loadObject(java.lang.String)}.
      * @throws SQLException
      */
     @Test
@@ -233,16 +235,16 @@ public class MySQLDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.mysql.MySQLDatabaseHandler#saveObject(java.lang.Object)}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#saveObject(java.lang.Object)}.
      */
     @Test
     public void testSaveObjectNull() {
         handler.saveObject(null);
-        verify(plugin).logError(eq("MySQL database request to store a null. "));
+        verify(plugin).logError(eq("SQL database request to store a null. "));
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.mysql.MySQLDatabaseHandler#saveObject(java.lang.Object)}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#saveObject(java.lang.Object)}.
      */
     @Test
     public void testSaveObjectNotDataObject() {
@@ -253,7 +255,7 @@ public class MySQLDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.mysql.MySQLDatabaseHandler#saveObject(java.lang.Object)}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#saveObject(java.lang.Object)}.
      * @throws SQLException
      */
     @Test
@@ -284,7 +286,7 @@ public class MySQLDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.mysql.MySQLDatabaseHandler#saveObject(java.lang.Object)}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#saveObject(java.lang.Object)}.
      * @throws SQLException
      */
     @Test
@@ -298,16 +300,16 @@ public class MySQLDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.mysql.MySQLDatabaseHandler#deleteObject(java.lang.Object)}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#deleteObject(java.lang.Object)}.
      */
     @Test
     public void testDeleteObjectNull() {
         handler.deleteObject(null);
-        verify(plugin).logError(eq("MySQL database request to delete a null."));
+        verify(plugin).logError(eq("SQL database request to delete a null."));
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.mysql.MySQLDatabaseHandler#deleteObject(java.lang.Object)}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#deleteObject(java.lang.Object)}.
      */
     @Test
     public void testDeleteObjectIncorrectType() {
@@ -318,7 +320,7 @@ public class MySQLDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.mysql.MySQLDatabaseHandler#deleteObject(java.lang.Object)}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#deleteObject(java.lang.Object)}.
      * @throws SQLException
      */
     @Test
@@ -331,7 +333,7 @@ public class MySQLDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.mysql.MySQLDatabaseHandler#objectExists(java.lang.String)}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#objectExists(java.lang.String)}.
      * @throws SQLException
      */
     @Test
@@ -346,7 +348,7 @@ public class MySQLDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.mysql.MySQLDatabaseHandler#objectExists(java.lang.String)}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#objectExists(java.lang.String)}.
      * @throws SQLException
      */
     @Test
@@ -362,7 +364,7 @@ public class MySQLDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.mysql.MySQLDatabaseHandler#objectExists(java.lang.String)}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#objectExists(java.lang.String)}.
      * @throws SQLException
      */
     @Test
@@ -378,7 +380,7 @@ public class MySQLDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.mysql.MySQLDatabaseHandler#objectExists(java.lang.String)}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#objectExists(java.lang.String)}.
      * @throws SQLException
      */
     @Test
@@ -391,7 +393,7 @@ public class MySQLDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.mysql.MySQLDatabaseHandler#deleteID(java.lang.String)}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#deleteID(java.lang.String)}.
      * @throws SQLException
      */
     @Test
@@ -404,7 +406,7 @@ public class MySQLDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.mysql.MySQLDatabaseHandler#deleteID(java.lang.String)}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#deleteID(java.lang.String)}.
      * @throws SQLException
      */
     @Test
@@ -417,7 +419,7 @@ public class MySQLDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.mysql.MySQLDatabaseHandler#MySQLDatabaseHandler(world.bentobox.bentobox.BentoBox, java.lang.Class, world.bentobox.bentobox.database.DatabaseConnector)}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#MySQLDatabaseHandler(world.bentobox.bentobox.BentoBox, java.lang.Class, world.bentobox.bentobox.database.DatabaseConnector)}.
      */
     @Test
     public void testMySQLDatabaseHandlerBadPassword() {
@@ -428,7 +430,7 @@ public class MySQLDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.mysql.MySQLDatabaseHandler#MySQLDatabaseHandler(world.bentobox.bentobox.BentoBox, java.lang.Class, world.bentobox.bentobox.database.DatabaseConnector)}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#MySQLDatabaseHandler(world.bentobox.bentobox.BentoBox, java.lang.Class, world.bentobox.bentobox.database.DatabaseConnector)}.
      * @throws SQLException
      */
     @Test
@@ -438,7 +440,7 @@ public class MySQLDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.mysql.MySQLDatabaseHandler#MySQLDatabaseHandler(world.bentobox.bentobox.BentoBox, java.lang.Class, world.bentobox.bentobox.database.DatabaseConnector)}.
+     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#MySQLDatabaseHandler(world.bentobox.bentobox.BentoBox, java.lang.Class, world.bentobox.bentobox.database.DatabaseConnector)}.
      * @throws SQLException
      */
     @Test
