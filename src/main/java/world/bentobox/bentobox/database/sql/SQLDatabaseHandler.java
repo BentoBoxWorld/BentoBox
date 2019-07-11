@@ -154,7 +154,6 @@ public class SQLDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
             plugin.logError("This class is not a DataObject: " + instance.getClass().getName());
             return;
         }
-        // TODO add back in shutdown sync saving
         // Async
         processQueue.add(() -> store(instance, sqlConfig.getSaveObjectSQL()));
     }
@@ -175,11 +174,7 @@ public class SQLDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
      */
     @Override
     public void deleteID(String uniqueId) {
-        //if (plugin.isEnabled()) {
         processQueue.add(() -> delete(uniqueId));
-        //} else {
-        //    delete(uniqueId);
-        //}
     }
 
     private void delete(String uniqueId) {
