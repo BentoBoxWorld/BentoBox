@@ -1,4 +1,4 @@
-package world.bentobox.bentobox.database.mariadb;
+package world.bentobox.bentobox.database.sql;
 
 import java.lang.reflect.Method;
 import java.sql.Connection;
@@ -9,11 +9,9 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.bukkit.Bukkit;
-import org.bukkit.scheduler.BukkitTask;
+import org.eclipse.jdt.annotation.NonNull;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
@@ -25,13 +23,14 @@ import world.bentobox.bentobox.database.objects.DataObject;
 
 /**
  *
+ * Abstract class that covers SQL style databases
  * Class that inserts a <T> into the corresponding database-table.
  *
- * @author tastybento, barpec12
+ * @author tastybento
  *
  * @param <T>
  */
-public class MariaDBDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
+public class SQLDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
 
     private static final String COULD_NOT_LOAD_OBJECTS = "Could not load objects ";
     private static final String COULD_NOT_LOAD_OBJECT = "Could not load object ";
@@ -42,20 +41,9 @@ public class MariaDBDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
     private Connection connection;
 
     /**
-     * FIFO queue for saves or deletions. Note that the assumption here is that most database objects will be held
-     * in memory because loading is not handled with this queue. That means that it is theoretically
-     * possible to load something before it has been saved. So, in general, load your objects and then
-     * save them async only when you do not need the data again immediately.
+     * SQL configuration
      */
-    private Queue<Runnable> processQueue;
-
-    /**
-     * Async save task that runs repeatedly
-     */
-    private BukkitTask asyncSaveTask;
-
-    private boolean shutdown;
-
+    private SQLConfiguration sqlConfig;
 
     /**
      * Handles the connection to the database and creation of the initial database schema (tables) for
@@ -63,52 +51,37 @@ public class MariaDBDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
      * @param plugin - plugin object
      * @param type - the type of class to be stored in the database. Must inherit DataObject
      * @param dbConnecter - authentication details for the database
+     * @param sqlConfiguration - SQL configuration
      */
-    MariaDBDatabaseHandler(BentoBox plugin, Class<T> type, DatabaseConnector dbConnecter) {
+    protected SQLDatabaseHandler(BentoBox plugin, Class<T> type, DatabaseConnector dbConnecter, SQLConfiguration sqlConfiguration) {
         super(plugin, type, dbConnecter);
-        connection = (Connection)dbConnecter.createConnection(dataObject);
-        if (connection == null) {
-            plugin.logError("Are the settings in config.yml correct?");
-            Bukkit.getPluginManager().disablePlugin(plugin);
-            return;
+        this.sqlConfig = sqlConfiguration;
+        if (setConnection((Connection)databaseConnector.createConnection(type))) {
+            // Check if the table exists in the database and if not, create it
+            createSchema();
         }
-        // Check if the table exists in the database and if not, create it
-        createSchema();
-        processQueue = new ConcurrentLinkedQueue<>();
-        if (plugin.isEnabled()) {
-            asyncSaveTask = Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-                // Loop continuously
-                while (!shutdown || !processQueue.isEmpty()) {
-                    if (!plugin.isEnabled()) {
-                        shutdown = true;
-                    }
-                    while (!processQueue.isEmpty()) {
-                        processQueue.poll().run();
-                    }
-                    // Clear the queue and then sleep
-                    try {
-                        Thread.sleep(25);
-                    } catch (InterruptedException e) {
-                        plugin.logError("Thread sleep error " + e.getMessage());
-                        Thread.currentThread().interrupt();
-                    }
-                }
-                // Cancel
-                asyncSaveTask.cancel();
-                dbConnecter.closeConnection(dataObject);
-            });
-        }
+    }
+
+    /**
+     * @return the sqlConfig
+     */
+    public SQLConfiguration getSqlConfig() {
+        return sqlConfig;
+    }
+
+    /**
+     * @param sqlConfig the sqlConfig to set
+     */
+    public void setSqlConfig(SQLConfiguration sqlConfig) {
+        this.sqlConfig = sqlConfig;
     }
 
     /**
      * Creates the table in the database if it doesn't exist already
      */
-    private void createSchema() {
-        String sql = "CREATE TABLE IF NOT EXISTS `" +
-                dataObject.getCanonicalName() +
-                "` (json JSON, uniqueId VARCHAR(255) GENERATED ALWAYS AS (JSON_EXTRACT(json, \"$.uniqueId\")), UNIQUE INDEX i (uniqueId))";
+    protected void createSchema() {
         // Prepare and execute the database statements
-        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+        try (PreparedStatement pstmt = connection.prepareStatement(sqlConfig.getSchemaSQL())) {
             pstmt.executeUpdate();
         } catch (SQLException e) {
             plugin.logError("Problem trying to create schema for data object " + dataObject.getCanonicalName() + " " + e.getMessage());
@@ -127,11 +100,7 @@ public class MariaDBDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
 
     private List<T> loadIt(Statement preparedStatement) {
         List<T> list = new ArrayList<>();
-
-        String sb = "SELECT `json` FROM `" +
-                dataObject.getCanonicalName() +
-                "`";
-        try (ResultSet resultSet = preparedStatement.executeQuery(sb)) {
+        try (ResultSet resultSet = preparedStatement.executeQuery(sqlConfig.getLoadObjectsSQL())) {
             // Load all the results
             Gson gson = getGson();
             while (resultSet.next()) {
@@ -144,6 +113,7 @@ public class MariaDBDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
                         }
                     } catch (JsonSyntaxException ex) {
                         plugin.logError(COULD_NOT_LOAD_OBJECT + ex.getMessage());
+                        plugin.logError(json);
                     }
                 }
             }
@@ -154,9 +124,8 @@ public class MariaDBDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
     }
 
     @Override
-    public T loadObject(String uniqueId) {
-        String sb = "SELECT `json` FROM `" + dataObject.getCanonicalName() + "` WHERE uniqueId = ? LIMIT 1";
-        try (PreparedStatement preparedStatement = connection.prepareStatement(sb)) {
+    public T loadObject(@NonNull String uniqueId) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sqlConfig.getLoadObjectSQL())) {
             // UniqueId needs to be placed in quotes
             preparedStatement.setString(1, "\"" + uniqueId + "\"");
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
@@ -178,30 +147,19 @@ public class MariaDBDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
     public void saveObject(T instance) {
         // Null check
         if (instance == null) {
-            plugin.logError("MySQL database request to store a null. ");
+            plugin.logError("SQL database request to store a null. ");
             return;
         }
         if (!(instance instanceof DataObject)) {
             plugin.logError("This class is not a DataObject: " + instance.getClass().getName());
             return;
         }
-        String sb = "INSERT INTO " +
-                "`" +
-                dataObject.getCanonicalName() +
-                "` (json) VALUES (?) ON DUPLICATE KEY UPDATE json = ?";
-
-        Gson gson = getGson();
-        String toStore = gson.toJson(instance);
-        if (plugin.isEnabled()) {
-            // Async
-            processQueue.add(() -> store(instance, toStore, sb));
-        } else {
-            // Sync
-            store(instance, toStore, sb);
-        }
+        // Async
+        processQueue.add(() -> store(instance, sqlConfig.getSaveObjectSQL()));
     }
 
-    private void store(T instance, String toStore, String sb) {
+    private void store(T instance, String sb) {
+        String toStore = getGson().toJson(instance);
         try (PreparedStatement preparedStatement = connection.prepareStatement(sb)) {
             preparedStatement.setString(1, toStore);
             preparedStatement.setString(2, toStore);
@@ -216,18 +174,11 @@ public class MariaDBDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
      */
     @Override
     public void deleteID(String uniqueId) {
-        if (plugin.isEnabled()) {
-            processQueue.add(() -> delete(uniqueId));
-        } else {
-            delete(uniqueId);
-        }
+        processQueue.add(() -> delete(uniqueId));
     }
 
     private void delete(String uniqueId) {
-        String sb = "DELETE FROM `" +
-                dataObject.getCanonicalName() +
-                "` WHERE uniqueId = ?";
-        try (PreparedStatement preparedStatement = connection.prepareStatement(sb)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sqlConfig.getDeleteObjectSQL())) {
             // UniqueId needs to be placed in quotes
             preparedStatement.setString(1, "\"" + uniqueId + "\"");
             preparedStatement.execute();
@@ -240,7 +191,7 @@ public class MariaDBDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
     public void deleteObject(T instance) {
         // Null check
         if (instance == null) {
-            plugin.logError("MariaDB database request to delete a null.");
+            plugin.logError("SQL database request to delete a null.");
             return;
         }
         if (!(instance instanceof DataObject)) {
@@ -257,12 +208,8 @@ public class MariaDBDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
 
     @Override
     public boolean objectExists(String uniqueId) {
-        // Create the query to see if this key exists
-        String query = "SELECT IF ( EXISTS( SELECT * FROM `" +
-                dataObject.getCanonicalName() +
-                "` WHERE `uniqueId` = ?), 1, 0)";
-
-        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+        // Query to see if this key exists
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sqlConfig.getObjectExistsSQL())) {
             // UniqueId needs to be placed in quotes
             preparedStatement.setString(1, "\"" + uniqueId + "\"");
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
@@ -279,5 +226,26 @@ public class MariaDBDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
     @Override
     public void close() {
         shutdown = true;
+    }
+
+    /**
+     * @return the connection
+     */
+    public Connection getConnection() {
+        return connection;
+    }
+
+    /**
+     * @param connection the connection to set
+     * @return true if connection is not null
+     */
+    public boolean setConnection(Connection connection) {
+        if (connection == null) {
+            plugin.logError("Are the settings in config.yml correct?");
+            Bukkit.getPluginManager().disablePlugin(plugin);
+            return false;
+        }
+        this.connection = connection;
+        return true;
     }
 }

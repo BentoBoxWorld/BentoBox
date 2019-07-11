@@ -41,6 +41,7 @@ public abstract class AbstractJSONDatabaseHandler<T> extends AbstractDatabaseHan
         builder.disableHtmlEscaping();
 
         gson = builder.create();
+
     }
 
     protected Gson getGson() {

@@ -4,11 +4,11 @@ import java.util.Arrays;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.database.json.JSONDatabase;
-import world.bentobox.bentobox.database.mariadb.MariaDBDatabase;
 import world.bentobox.bentobox.database.mongodb.MongoDBDatabase;
-import world.bentobox.bentobox.database.mysql.MySQLDatabase;
-import world.bentobox.bentobox.database.postgresql.PostgreSQLDatabase;
-import world.bentobox.bentobox.database.sqlite.SQLiteDatabase;
+import world.bentobox.bentobox.database.sql.mariadb.MariaDBDatabase;
+import world.bentobox.bentobox.database.sql.mysql.MySQLDatabase;
+import world.bentobox.bentobox.database.sql.postgresql.PostgreSQLDatabase;
+import world.bentobox.bentobox.database.sql.sqlite.SQLiteDatabase;
 import world.bentobox.bentobox.database.transition.Json2MariaDBDatabase;
 import world.bentobox.bentobox.database.transition.Json2MongoDBDatabase;
 import world.bentobox.bentobox.database.transition.Json2MySQLDatabase;

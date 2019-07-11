@@ -1,4 +1,4 @@
-package world.bentobox.bentobox.database.mysql;
+package world.bentobox.bentobox.database.sql;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -12,21 +12,16 @@ import org.eclipse.jdt.annotation.NonNull;
 import world.bentobox.bentobox.database.DatabaseConnectionSettingsImpl;
 import world.bentobox.bentobox.database.DatabaseConnector;
 
-public class MySQLDatabaseConnector implements DatabaseConnector {
+public abstract class SQLDatabaseConnector implements DatabaseConnector {
 
-    private String connectionUrl;
+    protected String connectionUrl;
     private DatabaseConnectionSettingsImpl dbSettings;
-    private Connection connection = null;
-    private Set<Class<?>> types = new HashSet<>();
+    protected static Connection connection = null;
+    protected static Set<Class<?>> types = new HashSet<>();
 
-    /**
-     * Class for MySQL database connections using the settings provided
-     * @param dbSettings - database settings
-     */
-    MySQLDatabaseConnector(DatabaseConnectionSettingsImpl dbSettings) {
+    public SQLDatabaseConnector(DatabaseConnectionSettingsImpl dbSettings, String connectionUrl) {
         this.dbSettings = dbSettings;
-        connectionUrl = "jdbc:mysql://" + dbSettings.getHost() + ":" + dbSettings.getPort() + "/" + dbSettings.getDatabaseName()
-        + "?autoReconnect=true&useSSL=false&allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8";
+        this.connectionUrl = connectionUrl;
     }
 
     @Override
@@ -55,7 +50,7 @@ public class MySQLDatabaseConnector implements DatabaseConnector {
                 connection.close();
                 Bukkit.getLogger().info("Closed database connection");
             } catch (SQLException e) {
-                Bukkit.getLogger().severe("Could not close MySQL database connection");
+                Bukkit.getLogger().severe("Could not close database connection");
             }
         }
     }
@@ -73,4 +68,5 @@ public class MySQLDatabaseConnector implements DatabaseConnector {
         }
         return connection;
     }
+
 }

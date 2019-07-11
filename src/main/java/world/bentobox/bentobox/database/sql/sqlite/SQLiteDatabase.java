@@ -1,4 +1,4 @@
-package world.bentobox.bentobox.database.sqlite;
+package world.bentobox.bentobox.database.sql.sqlite;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.database.AbstractDatabaseHandler;
