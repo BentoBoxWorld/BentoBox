@@ -911,6 +911,9 @@ public class Island implements DataObject {
             user.sendMessage("commands.admin.info.banned-players");
             banned.forEach(u -> user.sendMessage("commands.admin.info.banned-format", TextVariables.NAME, plugin.getPlayers().getName(u)));
         }
+        if (purgeProtected) {
+            user.sendMessage("commands.admin.info.purge-protected");
+        }
         return true;
     }
 

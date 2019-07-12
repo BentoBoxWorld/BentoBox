@@ -2,10 +2,12 @@ package world.bentobox.bentobox.api.commands.admin.purge;
 
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.database.objects.Island;
 
 public class AdminPurgeUnownedCommand extends ConfirmableCommand {
 
@@ -33,7 +35,7 @@ public class AdminPurgeUnownedCommand extends ConfirmableCommand {
             user.sendMessage("commands.admin.purge.purge-in-progress");
             return false;
         }
-        Set<String> unowned = parentCommand.getUnownedIslands();
+        Set<String> unowned = getUnownedIslands();
         user.sendMessage("commands.admin.purge.unowned.unowned-islands", TextVariables.NUMBER, String.valueOf(unowned.size()));
         if (!unowned.isEmpty()) {
             this.askConfirmation(user, () -> {
@@ -44,4 +46,15 @@ public class AdminPurgeUnownedCommand extends ConfirmableCommand {
         }
         return true;
     }
+
+    Set<String> getUnownedIslands() {
+        return getPlugin().getIslands().getIslands().stream()
+                .filter(i -> !i.getPurgeProtected())
+                .filter(i -> i.getWorld().equals(this.getWorld()))
+                .filter(i -> i.getOwner() == null)
+                .map(Island::getUniqueId)
+                .collect(Collectors.toSet());
+
+    }
+
 }

@@ -39,10 +39,11 @@ public class AdminPurgeCommand extends CompositeCommand implements Listener {
         setDescription("commands.admin.purge.description");
         new AdminPurgeStopCommand(this);
         new AdminPurgeUnownedCommand(this);
+        new AdminPurgeProtectCommand(this);
     }
 
     @Override
-    public boolean execute(User user, String label, List<String> args) {
+    public boolean canExecute(User user, String label, List<String> args) {
         if (inPurge) {
             user.sendMessage("commands.admin.purge.purge-in-progress");
             return false;
@@ -52,6 +53,11 @@ public class AdminPurgeCommand extends CompositeCommand implements Listener {
             showHelp(this, user);
             return false;
         }
+        return true;
+    }
+
+    @Override
+    public boolean execute(User user, String label, List<String> args) {
         if (args.get(0).equalsIgnoreCase("confirm") && toBeConfirmed && this.user.equals(user)) {
             removeIslands();
             return true;
@@ -105,29 +111,14 @@ public class AdminPurgeCommand extends CompositeCommand implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     void onIslandDeleted(IslandDeletedEvent e) {
-        if (inPurge && it.hasNext()) {
-            getIslands().getIslandById(it.next()).ifPresent(i -> {
-                getIslands().deleteIsland(i, true, null);
-                count++;
-                getPlugin().log(count + " islands purged");
-            });
-        } else {
-            user.sendMessage("commands.admin.purge.completed");
-            inPurge = false;
+        if (inPurge) {
+            deleteIsland();
         }
-    }
-
-    Set<String> getUnownedIslands() {
-        return getPlugin().getIslands().getIslands().stream()
-                .filter(i -> i.getWorld().equals(this.getWorld()))
-                .filter(i -> i.getOwner() == null)
-                .map(Island::getUniqueId)
-                .collect(Collectors.toSet());
-
     }
 
     Set<String> getOldIslands(int days) {
         return getPlugin().getIslands().getIslands().stream()
+                .filter(i -> !i.getPurgeProtected())
                 .filter(i -> i.getWorld().equals(this.getWorld()))
                 .filter(i -> i.getOwner() != null)
                 .filter(i -> i.getMembers().size() == 1)
@@ -153,14 +144,14 @@ public class AdminPurgeCommand extends CompositeCommand implements Listener {
     /**
      * @param user the user to set
      */
-    public void setUser(User user) {
+    void setUser(User user) {
         this.user = user;
     }
 
     /**
      * @param islands the islands to set
      */
-    public void setIslands(Set<String> islands) {
+    void setIslands(Set<String> islands) {
         this.islands = islands;
     }
 }

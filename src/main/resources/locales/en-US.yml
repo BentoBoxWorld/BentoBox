@@ -66,7 +66,12 @@ commands:
       number-error: "&cArgument must be a number of days"
       confirm: "&dType [label] purge confirm to start purging"  
       completed: "&aPurging stopped"
-      see-console-for-status: "Purge started. See console for status"   
+      see-console-for-status: "Purge started. See console for status" 
+      protect:
+        description: "Toggle island purge protection"
+        move-to-island: "&cMove to an island first!"
+        protecting: "&aPurge-protecting island"
+        unprotecting: "&aRemoving purge protection"
       stop:
         description: "Stop a purge in progress"
         stopping: "Stopping the purge"
@@ -154,6 +159,7 @@ commands:
       island-coords: "Island coordinates: [xz1] to [xz2]"
       islands-in-trash: "&dPlayer has islands in trash."
       protection-range: "Protection range: [range]"
+      purge-protected: "Island is purge protected"
       max-protection-range: "Largest historical protection range: [range]"
       protection-coords: "Protection coordinates: [xz1] to [xz2]"
       is-spawn: "Island is a spawn island"
