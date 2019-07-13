@@ -1047,6 +1047,7 @@ protection:
       hint: "&cYou cannot teleport back to your island while you are falling."
   locked: "&cThis island is locked!"
   protected: "&cIsland protected: [description]"
+  world-protected: "&cWorld protected: [description]"
   spawn-protected: "&cSpawn protected: [description]"
 
   panel:

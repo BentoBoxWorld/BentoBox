@@ -216,7 +216,7 @@ public class EnderChestListenerTest {
         Flags.ENDER_CHEST.setSetting(world, false);
         new BlockInteractionListener().onPlayerInteract(e);
         assertTrue(e.isCancelled());
-        Mockito.verify(notifier).notify(Mockito.any(User.class), Mockito.eq("protection.protected"));
+        Mockito.verify(notifier).notify(Mockito.any(User.class), Mockito.eq("protection.world-protected"));
     }
 
     @Test

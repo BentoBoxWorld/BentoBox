@@ -1,8 +1,6 @@
 package world.bentobox.bentobox.api.flags;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -25,7 +23,6 @@ import world.bentobox.bentobox.api.panels.builders.PanelItemBuilder;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.RanksManager;
-import world.bentobox.bentobox.util.Util;
 
 public class Flag implements Comparable<Flag> {
 
@@ -71,7 +68,6 @@ public class Flag implements Comparable<Flag> {
     private final Listener listener;
     private final Type type;
     private boolean setting;
-    private Map<World, Boolean> defaultWorldSettings = new HashMap<>();
     private final int defaultRank;
     private final PanelItem.ClickHandler clickHandler;
     private final boolean subPanel;
@@ -121,16 +117,23 @@ public class Flag implements Comparable<Flag> {
      * If world is not a game world, then the result will always be false!
      */
     public boolean isSetForWorld(World world) {
+        WorldSettings ws = BentoBox.getInstance().getIWM().getWorldSettings(world);
+        if (ws == null) return false;
         if (type.equals(Type.WORLD_SETTING)) {
-            WorldSettings ws = BentoBox.getInstance().getIWM().getWorldSettings(world);
-            if (ws != null) {
-                ws.getWorldFlags().putIfAbsent(getID(), setting);
-                return ws.getWorldFlags().get(getID());
+            if (!ws.getWorldFlags().containsKey(getID())) {
+                ws.getWorldFlags().put(getID(), setting);
+                // Save config file
+                BentoBox.getInstance().getIWM().getAddon(world).ifPresent(GameModeAddon::saveWorldSettings);
             }
-            return false;
+            return ws.getWorldFlags().get(getID());
         } else {
+            if (!ws.getWorldProtectionFlags().containsKey(getID())) {
+                ws.getWorldProtectionFlags().put(getID(), setting);
+                // Save config file
+                BentoBox.getInstance().getIWM().getAddon(world).ifPresent(GameModeAddon::saveWorldSettings);
+            }
             // Setting
-            return defaultWorldSettings.getOrDefault(Util.getWorld(world), setting);
+            return ws.getWorldProtectionFlags().get(getID());
         }
     }
 
@@ -141,12 +144,17 @@ public class Flag implements Comparable<Flag> {
      */
     public void setSetting(World world, boolean setting) {
         if (getType().equals(Type.WORLD_SETTING)) {
-            BentoBox.getInstance().getIWM().getWorldSettings(world).getWorldFlags().put(getID(), setting);
+            BentoBox.getInstance()
+            .getIWM()
+            .getWorldSettings(world)
+            .getWorldFlags()
+            .put(getID(), setting);
         }
     }
 
     /**
-     * Set the status of this flag for locations outside of island spaces
+     * Set the original status of this flag for locations outside of island spaces.
+     * May be overriden by the the setting for this world.
      * @param defaultSetting - true means it is allowed. false means it is not allowed
      */
     public void setDefaultSetting(boolean defaultSetting) {
@@ -158,7 +166,11 @@ public class Flag implements Comparable<Flag> {
      * @param defaultSetting - true means it is allowed. false means it is not allowed
      */
     public void setDefaultSetting(World world, boolean defaultSetting) {
-        this.defaultWorldSettings.put(world, defaultSetting);
+        WorldSettings ws = BentoBox.getInstance().getIWM().getWorldSettings(world);
+        if (ws == null) return;
+        ws.getWorldProtectionFlags().put(getID(),defaultSetting);
+        // Save config file
+        BentoBox.getInstance().getIWM().getAddon(world).ifPresent(GameModeAddon::saveWorldSettings);
     }
 
     /**
