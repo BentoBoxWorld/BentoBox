@@ -200,8 +200,6 @@ public class PVPListenerTest {
         GameModeAddon gma = mock(GameModeAddon.class);
         Optional<GameModeAddon> opGma = Optional.of(gma );
         when(iwm.getAddon(any())).thenReturn(opGma);
-        Map<String, Boolean> worldProtectionFlags = new HashMap<>();
-        when(ws.getWorldProtectionFlags()).thenReturn(worldProtectionFlags);
 
         // Notifier
         notifier = mock(Notifier.class);

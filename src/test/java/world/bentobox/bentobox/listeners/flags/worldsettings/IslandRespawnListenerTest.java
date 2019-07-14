@@ -93,9 +93,6 @@ public class IslandRespawnListenerTest {
         GameModeAddon gma = mock(GameModeAddon.class);
         Optional<GameModeAddon> opGma = Optional.of(gma );
         when(iwm.getAddon(any())).thenReturn(opGma);
-        Map<String, Boolean> worldProtectionFlags = new HashMap<>();
-        when(ws.getWorldProtectionFlags()).thenReturn(worldProtectionFlags);
-
 
         im = mock(IslandsManager.class);
         when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(true);

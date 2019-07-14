@@ -119,22 +119,15 @@ public class Flag implements Comparable<Flag> {
     public boolean isSetForWorld(World world) {
         WorldSettings ws = BentoBox.getInstance().getIWM().getWorldSettings(world);
         if (ws == null) return false;
-        if (type.equals(Type.WORLD_SETTING)) {
+        if (type.equals(Type.WORLD_SETTING) || type.equals(Type.PROTECTION)) {
             if (!ws.getWorldFlags().containsKey(getID())) {
                 ws.getWorldFlags().put(getID(), setting);
                 // Save config file
                 BentoBox.getInstance().getIWM().getAddon(world).ifPresent(GameModeAddon::saveWorldSettings);
             }
             return ws.getWorldFlags().get(getID());
-        } else {
-            if (!ws.getWorldProtectionFlags().containsKey(getID())) {
-                ws.getWorldProtectionFlags().put(getID(), setting);
-                // Save config file
-                BentoBox.getInstance().getIWM().getAddon(world).ifPresent(GameModeAddon::saveWorldSettings);
-            }
-            // Setting
-            return ws.getWorldProtectionFlags().get(getID());
         }
+        return setting;
     }
 
     /**
@@ -167,8 +160,7 @@ public class Flag implements Comparable<Flag> {
      */
     public void setDefaultSetting(World world, boolean defaultSetting) {
         WorldSettings ws = BentoBox.getInstance().getIWM().getWorldSettings(world);
-        if (ws == null) return;
-        ws.getWorldProtectionFlags().put(getID(),defaultSetting);
+        ws.getWorldFlags().put(getID(), defaultSetting);
         // Save config file
         BentoBox.getInstance().getIWM().getAddon(world).ifPresent(GameModeAddon::saveWorldSettings);
     }

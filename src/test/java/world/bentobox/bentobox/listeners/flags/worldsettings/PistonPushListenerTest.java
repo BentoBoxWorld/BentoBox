@@ -98,8 +98,6 @@ public class PistonPushListenerTest {
         when(iwm.getWorldSettings(Mockito.any())).thenReturn(ws);
         Map<String, Boolean> worldFlags = new HashMap<>();
         when(ws.getWorldFlags()).thenReturn(worldFlags);
-        Map<String, Boolean> worldProtectionFlags = new HashMap<>();
-        when(ws.getWorldProtectionFlags()).thenReturn(worldProtectionFlags);
         GameModeAddon gma = mock(GameModeAddon.class);
         Optional<GameModeAddon> opGma = Optional.of(gma );
         when(iwm.getAddon(any())).thenReturn(opGma);

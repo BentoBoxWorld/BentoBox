@@ -86,8 +86,6 @@ public class FlagTest {
         GameModeAddon gma = mock(GameModeAddon.class);
         Optional<GameModeAddon> opGma = Optional.of(gma );
         when(iwm.getAddon(any())).thenReturn(opGma);
-        Map<String, Boolean> worldProtectionFlags = new HashMap<>();
-        when(ws.getWorldProtectionFlags()).thenReturn(worldProtectionFlags);
 
         worldFlags = new HashMap<>();
         when(ws.getWorldFlags()).thenReturn(worldFlags);

@@ -142,13 +142,6 @@ public interface WorldSettings extends ConfigObject {
     Map<String, Boolean> getWorldFlags();
 
     /**
-     * Get world protection flags.
-     * For locations outside of island spaces.
-     * @return Map of world protection flags
-     */
-    Map<String, Boolean> getWorldProtectionFlags();
-
-    /**
      * @return the worldName
      */
     String getWorldName();

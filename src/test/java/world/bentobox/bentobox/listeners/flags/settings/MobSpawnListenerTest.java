@@ -121,8 +121,6 @@ public class MobSpawnListenerTest {
         GameModeAddon gma = mock(GameModeAddon.class);
         Optional<GameModeAddon> opGma = Optional.of(gma );
         when(iwm.getAddon(any())).thenReturn(opGma);
-        Map<String, Boolean> worldProtectionFlags = new HashMap<>();
-        when(ws.getWorldProtectionFlags()).thenReturn(worldProtectionFlags);
 
         // Default - plugin is loaded
         when(plugin.isLoaded()).thenReturn(true);
