@@ -128,6 +128,11 @@ public class Settings implements ConfigObject {
     @ConfigEntry(path = "island.confirmation.time")
     private int confirmationTime = 10;
 
+    // Timeout for team kick and leave commands
+    @ConfigComment("Time in seconds that players have to stand still before teleport commands activate, e.g. island go.")
+    @ConfigEntry(path = "island.delay.time")
+    private int delayTime = 0;
+
     @ConfigComment("Ask the player to confirm the command he is using by typing it again.")
     @ConfigEntry(path = "island.confirmation.commands.kick")
     private boolean kickConfirmation = true;
@@ -474,5 +479,16 @@ public class Settings implements ConfigObject {
 
     public void setLogGithubDownloadData(boolean logGithubDownloadData) {
         this.logGithubDownloadData = logGithubDownloadData;
+    }
+
+    public int getDelayTime() {
+        return delayTime;
+    }
+
+    /**
+     * @param delayTime the delayTime to set
+     */
+    public void setDelayTime(int delayTime) {
+        this.delayTime = delayTime;
     }
 }

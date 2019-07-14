@@ -78,6 +78,9 @@ island:
       kick: true
       leave: true
       reset: true
+  delay:
+    # Time in seconds that players have to stand still before teleport commands activate, e.g. island go.
+    time: 0 
   name:
     # These set the minimum and maximum size of a name.
     min-length: 4

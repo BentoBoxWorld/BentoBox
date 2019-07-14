@@ -371,6 +371,10 @@ commands:
     confirm: "&cType command again within &b[seconds]s&c to confirm."
     previous-request-cancelled: "&6Previous confirmation request cancelled."
     request-cancelled: "&cConfirmation timeout - &brequest cancelled."
+  delay:
+    previous-command-cancelled: "&cPrevious command cancelled"
+    stand-still: "&6Do not move! Teleporting in [seconds] seconds"
+    moved-so-command-cancelled: "&cYou moved. Teleport cancelled!"
   island:
     about:
       description: "About this addon"
@@ -379,7 +383,6 @@ commands:
       description: "teleport you to your island"
       teleport: "&aTeleporting you to your island."
       teleported: "&aTeleported you to home &e#[number]."
-      tip: "&bType /[label] help &afor help."
     help:
       description: "The main island command"
       pick-world: "&cSpecify world from [worlds]"

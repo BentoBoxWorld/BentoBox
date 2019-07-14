@@ -5,14 +5,14 @@ import java.util.List;
 import org.apache.commons.lang.math.NumberUtils;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
-import world.bentobox.bentobox.api.localization.TextVariables;
+import world.bentobox.bentobox.api.commands.DelayedTeleportCommand;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.lists.Flags;
 
 /**
  * @author tastybento
  */
-public class IslandGoCommand extends CompositeCommand {
+public class IslandGoCommand extends DelayedTeleportCommand {
 
     public IslandGoCommand(CompositeCommand islandCommand) {
         super(islandCommand, "go", "home", "h");
@@ -33,8 +33,8 @@ public class IslandGoCommand extends CompositeCommand {
             return false;
         }
         if ((getIWM().inWorld(user.getWorld()) && Flags.PREVENT_TELEPORT_WHEN_FALLING.isSetForWorld(user.getWorld()))
-            && user.getPlayer().getFallDistance() > 0) {
-			// We're sending the "hint" to the player to tell them they cannot teleport while falling.
+                && user.getPlayer().getFallDistance() > 0) {
+            // We're sending the "hint" to the player to tell them they cannot teleport while falling.
             user.sendMessage(Flags.PREVENT_TELEPORT_WHEN_FALLING.getHintReference());
             return false;
         }
@@ -42,12 +42,11 @@ public class IslandGoCommand extends CompositeCommand {
             int homeValue = Integer.parseInt(args.get(0));
             int maxHomes = user.getPermissionValue(getPermissionPrefix() + "island.maxhomes", getIWM().getMaxHomes(getWorld()));
             if (homeValue > 1 && homeValue <= maxHomes) {
-                getIslands().homeTeleport(getWorld(), user.getPlayer(), homeValue);
-                user.sendMessage("commands.island.go.tip", TextVariables.LABEL, getTopLabel());
+                this.delayCommand(user, () -> getIslands().homeTeleport(getWorld(), user.getPlayer(), homeValue));
                 return true;
             }
         }
-        getIslands().homeTeleport(getWorld(), user.getPlayer());
+        this.delayCommand(user, () -> getIslands().homeTeleport(getWorld(), user.getPlayer()));
         return true;
     }
 
