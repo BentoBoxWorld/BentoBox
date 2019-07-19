@@ -149,6 +149,13 @@ public class Settings implements ConfigObject {
     @ConfigEntry(path = "island.name.max-length")
     private int nameMaxLength = 20;
 
+    @ConfigComment("Remove hostile mob on teleport box radius")
+    @ConfigComment("If hostile mobs are cleared on player teleport, then this sized box will be cleared")
+    @ConfigComment("around the player. e.g. 5 means a 10 x 10 x 10 box around the player")
+    @ConfigComment("Be careful not to make this too big. Does not cover standard nether or end teleports.")
+    @ConfigEntry(path = "island.clear-radius")
+    private int clearRadius = 5;
+
     @ConfigComment("Number of blocks to paste per tick when pasting blueprints")
     @ConfigComment("Smaller values will help reduce noticeable lag but will make pasting take longer")
     @ConfigEntry(path = "island.paste-speed")
@@ -491,4 +498,22 @@ public class Settings implements ConfigObject {
     public void setDelayTime(int delayTime) {
         this.delayTime = delayTime;
     }
+
+    /**
+     * @return the clearRadius
+     */
+    public int getClearRadius() {
+        if (clearRadius < 0) clearRadius = 0;
+        return clearRadius;
+    }
+
+    /**
+     * @param clearRadius the clearRadius to set. Cannot be negative.
+     */
+    public void setClearRadius(int clearRadius) {
+        if (clearRadius < 0) clearRadius = 0;
+        this.clearRadius = clearRadius;
+    }
+
+
 }
