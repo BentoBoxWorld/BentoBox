@@ -39,7 +39,8 @@ public abstract class GameModeAddon extends Addon {
 
     /**
      * Make the worlds for this GameMode in this method. BentoBox will call it
-     * after onLoad() and before onEnable().
+     * after onLoad() and before onEnable(). Do not register flags in this method.
+     * They ,ust be registered afterwards in onEnable()
      * {@link #islandWorld} must be created and assigned,
      * {@link #netherWorld} and {@link #endWorld} are optional and may be null.
      */

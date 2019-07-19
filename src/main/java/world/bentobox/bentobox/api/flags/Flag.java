@@ -155,11 +155,16 @@ public class Flag implements Comparable<Flag> {
     }
 
     /**
-     * Set the status of this flag for locations outside of island spaces for a specific world
+     * Set the status of this flag for locations outside of island spaces for a specific world.
+     * World must exist and be registered before this method can be called.
      * @param defaultSetting - true means it is allowed. false means it is not allowed
      */
     public void setDefaultSetting(World world, boolean defaultSetting) {
         WorldSettings ws = BentoBox.getInstance().getIWM().getWorldSettings(world);
+        if (ws == null ) {
+            BentoBox.getInstance().logError("Attempt to set default world setting for unregistered world. Register flags in onEnable.");
+            return;
+        }
         ws.getWorldFlags().put(getID(), defaultSetting);
         // Save config file
         BentoBox.getInstance().getIWM().getAddon(world).ifPresent(GameModeAddon::saveWorldSettings);
