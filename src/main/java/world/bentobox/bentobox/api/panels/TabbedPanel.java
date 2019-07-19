@@ -32,12 +32,8 @@ public class TabbedPanel extends Panel {
      */
     public void openPanel(@NonNull BentoBox plugin, @NonNull User user, @NonNull World world, int tab, int page) {
         String friendlyWorldName = plugin.getIWM().getFriendlyName(world);
-        // Create the panel
-        PanelBuilder panelBuilder = new PanelBuilder()
-                .name(user.getTranslation(tpb.getName(), "[world_name]", friendlyWorldName))
-                .size(54);
 
-        setupHeader(user, panelBuilder, tab, world, friendlyWorldName);
+        setupHeader(user, tab, world, friendlyWorldName);
 
         // Show the tab
         if (tpb.getTabs().containsKey(tab)) {
