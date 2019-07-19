@@ -109,4 +109,39 @@ public class PanelBuilder {
         // items.lastKey() is a slot position, so the panel size is this value + 1
         return new Panel(name, items, Math.max(size, items.isEmpty() ? size : items.lastKey() + 1), user, listener);
     }
+
+    /**
+     * @return the name
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * @return the items
+     */
+    public TreeMap<Integer, PanelItem> getItems() {
+        return items;
+    }
+
+    /**
+     * @return the size
+     */
+    public int getSize() {
+        return size;
+    }
+
+    /**
+     * @return the user
+     */
+    public User getUser() {
+        return user;
+    }
+
+    /**
+     * @return the listener
+     */
+    public PanelListener getListener() {
+        return listener;
+    }
 }
