@@ -86,6 +86,8 @@ public class BentoBox extends JavaPlugin {
     @Nullable
     private BStats metrics;
 
+    private Config<Settings> configObject;
+
     @Override
     public void onEnable(){
         if (!ServerCompatibility.getInstance().checkCompatibility().isCanLaunch()) {
@@ -338,7 +340,8 @@ public class BentoBox extends JavaPlugin {
     public boolean loadSettings() {
         log("Loading Settings from config.yml...");
         // Load settings from config.yml. This will check if there are any issues with it too.
-        settings = new Config<>(this, Settings.class).loadConfigObject();
+        if (configObject == null) configObject = new Config<>(this, Settings.class);
+        settings = configObject.loadConfigObject();
         if (settings == null) {
             // Settings did not load correctly. Disable plugin.
             logError("Settings did not load correctly - disabling plugin - please check config.yml");
@@ -350,7 +353,7 @@ public class BentoBox extends JavaPlugin {
 
     @Override
     public void saveConfig() {
-        if (settings != null) new Config<>(this, Settings.class).saveConfigObject(settings);
+        if (settings != null) configObject.saveConfigObject(settings);
     }
 
     /**
