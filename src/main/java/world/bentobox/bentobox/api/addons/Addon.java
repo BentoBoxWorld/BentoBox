@@ -386,7 +386,7 @@ public abstract class Addon {
 
     /**
      * Register request handler to answer requests from plugins.
-     * @param handler
+     * @param handler request handler
      */
     public void registerRequestHandler(AddonRequestHandler handler) {
         requestHandlers.put(handler.getLabel(), handler);
@@ -394,8 +394,8 @@ public abstract class Addon {
 
     /**
      * Send request to addon.
-     * @param label
-     * @param metaData
+     * @param label label
+     * @param metaData meta data
      * @return request response, null if no response.
      */
     public Object request(String label, Map<String, Object> metaData) {

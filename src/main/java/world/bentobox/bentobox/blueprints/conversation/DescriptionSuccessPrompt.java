@@ -19,8 +19,8 @@ public class DescriptionSuccessPrompt extends MessagePrompt {
     private BlueprintBundle bb;
 
     /**
-     * @param addon
-     * @param bb
+     * @param addon game mode addon
+     * @param bb blueprint bundle
      */
     public DescriptionSuccessPrompt(GameModeAddon addon, BlueprintBundle bb) {
         this.addon = addon;

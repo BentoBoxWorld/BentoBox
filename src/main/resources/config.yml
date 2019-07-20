@@ -39,8 +39,6 @@ general:
   # /!\ This feature is experimental and might not work as expected or might not work at all.
   fakeplayers:
     - '[CoFH]'
-  # Rank required to use a command. e.g., use the invite command. Default is owner rank is required.
-  rank-command: {}
 panel:
   close-on-click-outside: true
 logs:
@@ -80,10 +78,18 @@ island:
       kick: true
       leave: true
       reset: true
+  delay:
+    # Time in seconds that players have to stand still before teleport commands activate, e.g. island go.
+    time: 0 
   name:
     # These set the minimum and maximum size of a name.
     min-length: 4
     max-length: 20
+  # Remove hostile mob on teleport box radius
+  # If hostile mobs are cleared on player teleport, then this sized box will be cleared
+  # around the player. e.g. 5 means a 10 x 10 x 10 box around the player
+  # Be careful not to make this too big. Does not cover standard nether or end teleports.
+  clear-radius: 5
   # Number of blocks to paste per tick when pasting blueprints
   # Smaller values will help reduce noticeable lag but will make pasting take longer
   paste-speed: 1000

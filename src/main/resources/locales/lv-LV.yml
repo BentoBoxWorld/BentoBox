@@ -61,6 +61,24 @@ commands:
       reset:
         description: "uzstāta spēlētājam 'resetus' uz 0"
         parameters: "<spēlētājs>"
+    purge:
+      parameters: "[days]"
+      description: "nodzēst salas kas nav aktīvas vairāk par [days] dienām"
+      days-or-more: "Nevar būt mazāks par 1 dienu"
+      purgable-islands: "Atrastas [number] dzēšamas salas."
+      purge-in-progress: "&cNotiek salu dzēšana. Izmanto '&e[label] purge stop&c', lai atceltu."
+      number-error: "&cParametram ir jābūt dienu skatitam."
+      confirm: "&dRaksti &e[label] purge confirm&d, lai sāktu dzēšanu"
+      completed: "&aDzēšana pabeigta."
+      see-console-for-status: "Dzēšana uzsākta. Skati terminālī, lai redzētu satusu."
+      stop:
+        description: "Apturēt uzsāktu dzēšanu."
+        stopping: "Apstādina dzēšanu"
+        no-purge-in-progress: "&cNav aktīvas dzēšanas!"
+      unowned:
+        description: "Dzēst bezīpašnieku salas - nepieciešams apstiprinājums"
+        unowned-islands: "&dAtrastas [number] salas"
+
     team:
       add:
         parameters: "<īpašnieks> <spēlētājs>"

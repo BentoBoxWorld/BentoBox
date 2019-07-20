@@ -145,7 +145,7 @@ public class Panel implements HeadRequester, InventoryHolder {
             ItemStack it = inventory.getItem(i);
             if (it != null && it.getType().equals(Material.PLAYER_HEAD)) {
                 ItemMeta meta = it.getItemMeta();
-                if (item.getName().equals(meta.getLocalizedName())) {
+                if (meta != null && item.getName().equals(meta.getLocalizedName())) {
                     inventory.setItem(i, item.getItem());
                     // If one is found, we are done
                     return;

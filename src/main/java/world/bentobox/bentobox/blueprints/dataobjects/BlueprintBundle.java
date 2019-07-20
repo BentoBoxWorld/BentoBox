@@ -155,7 +155,7 @@ public class BlueprintBundle implements DataObject {
     /**
      * Adds a line to the description
      *
-     * @param string
+     * @param string description
      */
     public void setDescription(String string) {
         if (description == null)

@@ -105,7 +105,7 @@ public class NewIsland {
         }
 
         /**
-         * @param world
+         * @param world world where the island will go
          * @deprecated use {@link #addon} instead
          */
         @Deprecated
@@ -155,7 +155,7 @@ public class NewIsland {
 
     /**
      * Makes an island.
-     * @param oldIsland
+     * @param oldIsland old island that is being replaced, if any
      */
     public void newIsland(Island oldIsland) {
         Location next = getNextIsland();
@@ -175,6 +175,11 @@ public class NewIsland {
 
         // Set home location
         plugin.getPlayers().setHomeLocation(user, new Location(next.getWorld(), next.getX() + 0.5D, next.getY(), next.getZ() + 0.5D), 1);
+
+        // Reset deaths
+        if (plugin.getIWM().isDeathsResetOnNewIsland(world)) {
+            plugin.getPlayers().setDeaths(world, user.getUniqueId(), 0);
+        }
 
         // Save the player so that if the server crashes weird things won't happen
         plugin.getPlayers().save(user.getUniqueId());
@@ -277,7 +282,7 @@ public class NewIsland {
         Result r = isIsland(last);
 
         while (!r.equals(Result.FREE) && result.getOrDefault(Result.BLOCK_AT_CENTER, 0) < MAX_UNOWNED_ISLANDS) {
-            last = nextGridLocation(last);
+            nextGridLocation(last);
             result.merge(r, 1, (k,v) -> v++);
             r = isIsland(last);
         }

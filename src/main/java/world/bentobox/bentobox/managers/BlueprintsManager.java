@@ -224,7 +224,7 @@ public class BlueprintsManager {
     /**
      * This should never be needed and is just a boot strap
      *
-     * @param addon
+     * @param addon addon
      */
     private void makeDefaults(@NonNull GameModeAddon addon) {
         plugin.logError("No blueprint bundles found! Creating a default one.");

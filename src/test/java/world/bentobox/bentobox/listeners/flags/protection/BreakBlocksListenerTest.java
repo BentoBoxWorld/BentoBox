@@ -3,7 +3,10 @@ package world.bentobox.bentobox.listeners.flags.protection;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
@@ -47,6 +50,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
@@ -76,14 +80,21 @@ import world.bentobox.bentobox.util.Util;
 @PrepareForTest( {BentoBox.class, Flags.class, Util.class, Bukkit.class} )
 public class BreakBlocksListenerTest {
 
+    @Mock
     private Location location;
+    @Mock
     private BentoBox plugin;
+    @Mock
     private Notifier notifier;
 
     private BreakBlocksListener bbl;
+    @Mock
     private Player player;
+    @Mock
     private World world;
+    @Mock
     private Island island;
+    @Mock
     private IslandWorldManager iwm;
 
 
@@ -93,11 +104,9 @@ public class BreakBlocksListenerTest {
     @Before
     public void setUp() throws Exception {
         // Set up plugin
-        plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
 
         Server server = mock(Server.class);
-        world = mock(World.class);
         when(server.getLogger()).thenReturn(Logger.getAnonymousLogger());
         when(server.getWorld("world")).thenReturn(world);
         when(server.getVersion()).thenReturn("BSB_Mocking");
@@ -115,7 +124,8 @@ public class BreakBlocksListenerTest {
         when(itemFactory.getItemMeta(any())).thenReturn(meta);
         when(Bukkit.getItemFactory()).thenReturn(itemFactory);
         when(Bukkit.getLogger()).thenReturn(Logger.getAnonymousLogger());
-        location = mock(Location.class);
+
+        // Location
         when(location.getWorld()).thenReturn(world);
         when(location.getBlockX()).thenReturn(0);
         when(location.getBlockY()).thenReturn(0);
@@ -126,8 +136,7 @@ public class BreakBlocksListenerTest {
         when(plugin.getFlagsManager()).thenReturn(flagsManager);
 
 
-        // Worlds
-        iwm = mock(IslandWorldManager.class);
+        // Island World Manager
         when(iwm.inWorld(any(World.class))).thenReturn(true);
         when(iwm.inWorld(any(Location.class))).thenReturn(true);
         when(plugin.getIWM()).thenReturn(iwm);
@@ -152,31 +161,28 @@ public class BreakBlocksListenerTest {
 
         // World Settings
         WorldSettings ws = mock(WorldSettings.class);
-        when(iwm.getWorldSettings(Mockito.any())).thenReturn(ws);
+        when(iwm.getWorldSettings(any())).thenReturn(ws);
         Map<String, Boolean> worldFlags = new HashMap<>();
         when(ws.getWorldFlags()).thenReturn(worldFlags);
 
         // Island manager
         IslandsManager im = mock(IslandsManager.class);
         when(plugin.getIslands()).thenReturn(im);
-        island = mock(Island.class);
         Optional<Island> optional = Optional.of(island);
-        when(im.getProtectedIslandAt(Mockito.any())).thenReturn(optional);
+        when(im.getProtectedIslandAt(any())).thenReturn(optional);
         // Default is that everything is allowed
-        when(island.isAllowed(Mockito.any(), Mockito.any())).thenReturn(true);
+        when(island.isAllowed(any(), any())).thenReturn(true);
 
         // Notifier
-        notifier = mock(Notifier.class);
         when(plugin.getNotifier()).thenReturn(notifier);
 
         PowerMockito.mockStatic(Util.class);
-        when(Util.getWorld(Mockito.any())).thenReturn(mock(World.class));
+        when(Util.getWorld(any())).thenReturn(mock(World.class));
 
         // Addon
-        when(iwm.getAddon(Mockito.any())).thenReturn(Optional.empty());
+        when(iwm.getAddon(any())).thenReturn(Optional.empty());
 
         // Player
-        player = mock(Player.class);
         when(player.getLocation()).thenReturn(location);
         when(player.getUniqueId()).thenReturn(UUID.randomUUID());
         when(player.getName()).thenReturn("tastybento");
@@ -208,13 +214,13 @@ public class BreakBlocksListenerTest {
      */
     @Test
     public void testOnBlockBreakNotAllowed() {
-        when(island.isAllowed(Mockito.any(), Mockito.any())).thenReturn(false);
+        when(island.isAllowed(any(), any())).thenReturn(false);
         Block block = mock(Block.class);
         when(block.getLocation()).thenReturn(location);
         BlockBreakEvent e = new BlockBreakEvent(block, player);
         bbl.onBlockBreak(e);
         assertTrue(e.isCancelled());
-        Mockito.verify(notifier).notify(Mockito.any(), Mockito.eq("protection.protected"));
+        verify(notifier).notify(any(), eq("protection.protected"));
     }
 
     /**
@@ -235,14 +241,14 @@ public class BreakBlocksListenerTest {
      */
     @Test
     public void testOnBreakHangingNotAllowed() {
-        when(island.isAllowed(Mockito.any(), Mockito.any())).thenReturn(false);
+        when(island.isAllowed(any(), any())).thenReturn(false);
         Hanging hanging = mock(Hanging.class);
         when(hanging.getLocation()).thenReturn(location);
         RemoveCause cause = RemoveCause.ENTITY;
         HangingBreakByEntityEvent e = new HangingBreakByEntityEvent(hanging, player, cause);
         bbl.onBreakHanging(e);
         assertTrue(e.isCancelled());
-        Mockito.verify(notifier).notify(Mockito.any(), Mockito.eq("protection.protected"));
+        verify(notifier).notify(any(), eq("protection.protected"));
     }
 
     /**
@@ -312,7 +318,7 @@ public class BreakBlocksListenerTest {
      */
     @Test
     public void testOnPlayerInteractHitCakeSpawnerDragonEggNotOK() {
-        when(island.isAllowed(Mockito.any(), Mockito.any())).thenReturn(false);
+        when(island.isAllowed(any(), any())).thenReturn(false);
         ItemStack item = mock(ItemStack.class);
         Block block = mock(Block.class);
         when(block.getLocation()).thenReturn(location);
@@ -328,7 +334,7 @@ public class BreakBlocksListenerTest {
         e = new PlayerInteractEvent(player, Action.LEFT_CLICK_BLOCK, item, block, BlockFace.EAST);
         bbl.onPlayerInteract(e);
         assertTrue(e.isCancelled());
-        Mockito.verify(notifier, Mockito.times(3)).notify(Mockito.any(), Mockito.eq("protection.protected"));
+        verify(notifier, times(3)).notify(any(), eq("protection.protected"));
     }
 
     /**
@@ -348,13 +354,13 @@ public class BreakBlocksListenerTest {
      */
     @Test
     public void testOnVehicleDamageEventNotAllowed() {
-        when(island.isAllowed(Mockito.any(), Mockito.any())).thenReturn(false);
+        when(island.isAllowed(any(), any())).thenReturn(false);
         Vehicle vehicle = mock(Vehicle.class);
         when(vehicle.getLocation()).thenReturn(location);
         VehicleDamageEvent e = new VehicleDamageEvent(vehicle, player, 10);
         bbl.onVehicleDamageEvent(e);
         assertTrue(e.isCancelled());
-        Mockito.verify(notifier).notify(Mockito.any(), Mockito.eq("protection.protected"));
+        verify(notifier).notify(any(), eq("protection.protected"));
     }
 
     /**
@@ -421,7 +427,7 @@ public class BreakBlocksListenerTest {
      */
     @Test
     public void testOnEntityDamageNotAllowed() {
-        when(island.isAllowed(Mockito.any(), Mockito.any())).thenReturn(false);
+        when(island.isAllowed(any(), any())).thenReturn(false);
         DamageCause cause = DamageCause.ENTITY_ATTACK;
         Entity damagee = mock(ArmorStand.class);
         when(damagee.getLocation()).thenReturn(location);
@@ -439,7 +445,7 @@ public class BreakBlocksListenerTest {
         e = new EntityDamageByEntityEvent(damager, damagee, cause, 10);
         bbl.onEntityDamage(e);
         assertTrue(e.isCancelled());
-        Mockito.verify(notifier, Mockito.times(3)).notify(Mockito.any(), Mockito.eq("protection.protected"));
+        verify(notifier, times(3)).notify(any(), eq("protection.protected"));
     }
 
     /**
@@ -492,7 +498,7 @@ public class BreakBlocksListenerTest {
      */
     @Test
     public void testOnEntityDamageNotAllowedProjectile() {
-        when(island.isAllowed(Mockito.any(), Mockito.any())).thenReturn(false);
+        when(island.isAllowed(any(), any())).thenReturn(false);
         DamageCause cause = DamageCause.ENTITY_ATTACK;
         Entity damagee = mock(ArmorStand.class);
         when(damagee.getLocation()).thenReturn(location);
@@ -501,23 +507,21 @@ public class BreakBlocksListenerTest {
         EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(damager, damagee, cause, 10);
         bbl.onEntityDamage(e);
         assertTrue(e.isCancelled());
-        Mockito.verify(damagee).setFireTicks(0);
+        verify(damagee).setFireTicks(0);
 
         damagee = mock(ItemFrame.class);
         when(damagee.getLocation()).thenReturn(location);
         e = new EntityDamageByEntityEvent(damager, damagee, cause, 10);
         bbl.onEntityDamage(e);
         assertTrue(e.isCancelled());
-        Mockito.verify(damagee).setFireTicks(0);
+        verify(damagee).setFireTicks(0);
 
         damagee = mock(EnderCrystal.class);
         when(damagee.getLocation()).thenReturn(location);
         e = new EntityDamageByEntityEvent(damager, damagee, cause, 10);
         bbl.onEntityDamage(e);
         assertTrue(e.isCancelled());
-        Mockito.verify(notifier, Mockito.times(3)).notify(Mockito.any(), Mockito.eq("protection.protected"));
-        Mockito.verify(damager, Mockito.times(3)).remove();
-        Mockito.verify(damagee).setFireTicks(0);
-
+        verify(notifier, times(3)).notify(any(), eq("protection.protected"));
+        verify(damagee).setFireTicks(0);
     }
 }

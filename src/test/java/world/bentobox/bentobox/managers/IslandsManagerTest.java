@@ -6,7 +6,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.when;
 
 import java.io.File;
@@ -42,6 +44,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.PufferFish;
+import org.bukkit.entity.Skeleton;
 import org.bukkit.entity.Slime;
 import org.bukkit.entity.Wither;
 import org.bukkit.entity.Zombie;
@@ -109,6 +112,20 @@ public class IslandsManagerTest {
     private PluginManager pim;
     // Database
     Database<Island> db;
+    @Mock
+    private Zombie zombie;
+    @Mock
+    private Slime slime;
+    @Mock
+    private Cow cow;
+    @Mock
+    private Wither wither;
+    @Mock
+    private Creeper creeper;
+    @Mock
+    private PufferFish pufferfish;
+    @Mock
+    private Skeleton skelly;
 
     private Material sign;
     private Material wallSign;
@@ -223,6 +240,51 @@ public class IslandsManagerTest {
 
         // Cover hostile entities
         when(Util.isHostileEntity(Mockito.any())).thenCallRealMethod();
+
+        // Set up island entities
+        WorldSettings ws = mock(WorldSettings.class);
+        when(iwm.getWorldSettings(eq(world))).thenReturn(ws);
+        Map<String, Boolean> worldFlags = new HashMap<>();
+        when(ws.getWorldFlags()).thenReturn(worldFlags);
+
+        Flags.REMOVE_MOBS.setSetting(world, true);
+        // Default whitelist
+        Set<EntityType> whitelist = new HashSet<>();
+        whitelist.add(EntityType.ENDERMAN);
+        whitelist.add(EntityType.WITHER);
+        whitelist.add(EntityType.ZOMBIE_VILLAGER);
+        whitelist.add(EntityType.PIG_ZOMBIE);
+        when(iwm.getRemoveMobsWhitelist(Mockito.any())).thenReturn(whitelist);
+
+
+        // Monsters and animals
+        when(zombie.getLocation()).thenReturn(location);
+        when(zombie.getType()).thenReturn(EntityType.ZOMBIE);
+        when(slime.getLocation()).thenReturn(location);
+        when(slime.getType()).thenReturn(EntityType.SLIME);
+        when(cow.getLocation()).thenReturn(location);
+        when(cow.getType()).thenReturn(EntityType.COW);
+        when(wither.getType()).thenReturn(EntityType.WITHER);
+        when(creeper.getType()).thenReturn(EntityType.CREEPER);
+        when(pufferfish.getType()).thenReturn(EntityType.PUFFERFISH);
+        // Named monster
+        when(skelly.getType()).thenReturn(EntityType.SKELETON);
+        when(skelly.getCustomName()).thenReturn("Skelly");
+
+        Collection<Entity> collection = new ArrayList<>();
+        collection.add(player);
+        collection.add(zombie);
+        collection.add(cow);
+        collection.add(slime);
+        collection.add(wither);
+        collection.add(creeper);
+        collection.add(pufferfish);
+        collection.add(skelly);
+        when(world
+                .getNearbyEntities(Mockito.any(Location.class), Mockito.anyDouble(), Mockito.anyDouble(), Mockito.anyDouble()))
+        .thenReturn(collection);
+
+
 
         // database must be mocked here
         db = mock(Database.class);
@@ -491,7 +553,7 @@ public class IslandsManagerTest {
      */
     @Test
     public void testDeleteIslandIslandBooleanRemoveBlocks() {
-        Mockito.verify(pim, Mockito.never()).callEvent(Mockito.any());
+        Mockito.verify(pim, never()).callEvent(Mockito.any());
         IslandsManager im = new IslandsManager(plugin);
         UUID owner = UUID.randomUUID();
         Island island = im.createIsland(location, owner);
@@ -989,61 +1051,38 @@ public class IslandsManagerTest {
      * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#clearArea(Location)}.
      */
     @Test
-    public void testClearArea() {
-        WorldSettings ws = mock(WorldSettings.class);
-        when(iwm.getWorldSettings(Mockito.any())).thenReturn(ws);
-        Map<String, Boolean> worldFlags = new HashMap<>();
-        when(ws.getWorldFlags()).thenReturn(worldFlags);
-
-        Flags.REMOVE_MOBS.setSetting(world, true);
-        // Default whitelist
-        Set<EntityType> whitelist = new HashSet<>();
-        whitelist.add(EntityType.ENDERMAN);
-        whitelist.add(EntityType.WITHER);
-        whitelist.add(EntityType.ZOMBIE_VILLAGER);
-        whitelist.add(EntityType.PIG_ZOMBIE);
-        when(iwm.getRemoveMobsWhitelist(Mockito.any())).thenReturn(whitelist);
-
-
-        // Monsters and animals
-        Zombie zombie = mock(Zombie.class);
-        when(zombie.getLocation()).thenReturn(location);
-        when(zombie.getType()).thenReturn(EntityType.ZOMBIE);
-        Slime slime = mock(Slime.class);
-        when(slime.getLocation()).thenReturn(location);
-        when(slime.getType()).thenReturn(EntityType.SLIME);
-        Cow cow = mock(Cow.class);
-        when(cow.getLocation()).thenReturn(location);
-        when(cow.getType()).thenReturn(EntityType.COW);
-        Wither wither = mock(Wither.class);
-        when(wither.getType()).thenReturn(EntityType.WITHER);
-        Creeper creeper = mock(Creeper.class);
-        when(creeper.getType()).thenReturn(EntityType.CREEPER);
-        PufferFish pufferfish = mock(PufferFish.class);
-        when(pufferfish.getType()).thenReturn(EntityType.PUFFERFISH);
-
-        Collection<Entity> collection = new ArrayList<>();
-        collection.add(player);
-        collection.add(zombie);
-        collection.add(cow);
-        collection.add(slime);
-        collection.add(wither);
-        collection.add(creeper);
-        collection.add(pufferfish);
-        when(world
-                .getNearbyEntities(Mockito.any(Location.class), Mockito.anyDouble(), Mockito.anyDouble(), Mockito.anyDouble()))
-        .thenReturn(collection);
-
+    public void testClearAreaWrongWorld() {
+        when(iwm.inWorld(any(Location.class))).thenReturn(false);
         IslandsManager im = new IslandsManager(plugin);
         im.clearArea(location);
+        // No entities should be cleared
+        Mockito.verify(zombie, never()).remove();
+        Mockito.verify(player, never()).remove();
+        Mockito.verify(cow, never()).remove();
+        Mockito.verify(slime, never()).remove();
+        Mockito.verify(wither, never()).remove();
+        Mockito.verify(creeper, never()).remove();
+        Mockito.verify(pufferfish, never()).remove();
+        Mockito.verify(skelly, never()).remove();
 
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#clearArea(Location)}.
+     */
+    @Test
+    public void testClearArea() {
+        IslandsManager im = new IslandsManager(plugin);
+        im.clearArea(location);
+        // Only the correct entities should be cleared
         Mockito.verify(zombie).remove();
-        Mockito.verify(player, Mockito.never()).remove();
-        Mockito.verify(cow, Mockito.never()).remove();
+        Mockito.verify(player, never()).remove();
+        Mockito.verify(cow, never()).remove();
         Mockito.verify(slime).remove();
-        Mockito.verify(wither, Mockito.never()).remove();
+        Mockito.verify(wither, never()).remove();
         Mockito.verify(creeper).remove();
-        Mockito.verify(pufferfish, Mockito.never()).remove();
+        Mockito.verify(pufferfish, never()).remove();
+        Mockito.verify(skelly, never()).remove();
     }
 
     /**

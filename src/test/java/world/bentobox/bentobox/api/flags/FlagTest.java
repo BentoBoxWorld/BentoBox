@@ -10,6 +10,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.any;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -81,7 +82,10 @@ public class FlagTest {
         IslandWorldManager iwm = mock(IslandWorldManager.class);
         when(plugin.getIWM()).thenReturn(iwm);
         WorldSettings ws = mock(WorldSettings.class);
-        when(iwm.getWorldSettings(Mockito.any())).thenReturn(ws);
+        when(iwm.getWorldSettings(any())).thenReturn(ws);
+        GameModeAddon gma = mock(GameModeAddon.class);
+        Optional<GameModeAddon> opGma = Optional.of(gma );
+        when(iwm.getAddon(any())).thenReturn(opGma);
 
         worldFlags = new HashMap<>();
         when(ws.getWorldFlags()).thenReturn(worldFlags);
@@ -93,7 +97,7 @@ public class FlagTest {
         when(Bukkit.getItemFactory()).thenReturn(itemF);
 
         // Flag
-        f = new Flag.Builder("flagID", Material.ACACIA_PLANKS).listener(listener).build();
+        f = new Flag.Builder("flagID", Material.ACACIA_PLANKS).type(Flag.Type.PROTECTION).listener(listener).build();
 
     }
 
@@ -194,9 +198,11 @@ public class FlagTest {
     @Test
     public void testSetDefaultSettingBoolean() {
         f.setDefaultSetting(true);
+        // Checking will set it to the default
         assertTrue(f.isSetForWorld(world));
         f.setDefaultSetting(false);
-        assertFalse(f.isSetForWorld(world));
+        // Checking again will use the previous default
+        assertTrue(f.isSetForWorld(world));
     }
 
     /**
@@ -204,6 +210,7 @@ public class FlagTest {
      */
     @Test
     public void testSetDefaultSettingWorldBoolean() {
+
         f.setDefaultSetting(world, true);
         assertTrue(f.isSetForWorld(world));
         f.setDefaultSetting(world, false);

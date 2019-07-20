@@ -246,7 +246,7 @@ public class User {
      */
     public boolean removePerm(String name) {
         for (PermissionAttachmentInfo p : player.getEffectivePermissions()) {
-            if (p.getPermission().equals(name)) {
+            if (p.getPermission().equals(name) && p.getAttachment() != null) {
                 player.removeAttachment(p.getAttachment());
                 break;
             }
@@ -422,7 +422,7 @@ public class User {
     }
 
     /**
-     * Sends a message to sender if message is not empty and if the same wasn't sent within the previous {@link Notifier#NOTIFICATION_DELAY} seconds.
+     * Sends a message to sender if message is not empty and if the same wasn't sent within the previous Notifier.NOTIFICATION_DELAY seconds.
      * @param reference - language file reference
      * @param variables - CharSequence target, replacement pairs
      *
@@ -436,7 +436,7 @@ public class User {
     }
 
     /**
-     * Sends a message to sender if message is not empty and if the same wasn't sent within the previous {@link Notifier#NOTIFICATION_DELAY} seconds.
+     * Sends a message to sender if message is not empty and if the same wasn't sent within the previous Notifier.NOTIFICATION_DELAY seconds.
      * @param world - the world the translation should come from
      * @param reference - language file reference
      * @param variables - CharSequence target, replacement pairs

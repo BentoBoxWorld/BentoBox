@@ -17,6 +17,7 @@ import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.team.TeamEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.util.Util;
 
 public class IslandTeamInviteCommand extends CompositeCommand {
@@ -45,7 +46,8 @@ public class IslandTeamInviteCommand extends CompositeCommand {
             return false;
         }
         // Check rank to use command
-        if (getIslands().getIsland(getWorld(), user).getRank(user) < getPlugin().getSettings().getRankCommand(getUsage())) {
+        Island island = getIslands().getIsland(getWorld(), user);
+        if (island.getRank(user) < island.getRankCommand(getUsage())) {
             user.sendMessage("general.errors.no-permission");
             return false;
         }

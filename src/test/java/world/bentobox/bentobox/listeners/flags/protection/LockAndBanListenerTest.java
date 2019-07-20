@@ -361,6 +361,7 @@ public class LockAndBanListenerTest {
         passengers.add(player);
         passengers.add(player2);
         when(vehicle.getPassengers()).thenReturn(passengers);
+        when(vehicle.getWorld()).thenReturn(world);
         // Move vehicle
         listener.onVehicleMove(new VehicleMoveEvent(vehicle, outside, inside));
         // Player should see a message and nothing should be sent to Player 2
@@ -702,6 +703,7 @@ public class LockAndBanListenerTest {
         passengers.add(player);
         passengers.add(player2);
         when(vehicle.getPassengers()).thenReturn(passengers);
+        when(vehicle.getWorld()).thenReturn(world);
         // Move vehicle
         listener.onVehicleMove(new VehicleMoveEvent(vehicle, outside, inside));
         // Player should see a message and nothing should be sent to Player 2

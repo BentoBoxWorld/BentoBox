@@ -190,7 +190,7 @@ public class LocalesManager {
 
     private void copyFile(String name, File targetFile) {
         try (InputStream initialStream = plugin.getResource(name)) {
-            if (!targetFile.exists()) {
+            if (initialStream != null && !targetFile.exists()) {
                 java.nio.file.Files.copy(initialStream, targetFile.toPath());
             }
         } catch (IOException e) {

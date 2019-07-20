@@ -238,6 +238,11 @@ public final class Flags {
     // Experience
     public static final Flag EXPERIENCE_PICKUP = new Flag.Builder("EXPERIENCE_PICKUP", Material.EXPERIENCE_BOTTLE).listener(new ExperiencePickupListener()).build();
 
+    // Command ranks
+    public static final Flag COMMAND_RANKS = new Flag.Builder("COMMAND_RANKS", Material.PLAYER_HEAD)
+            .clickHandler(new CommandRankClickListener()).usePanel(true).build();
+
+
     // TNT
     /**
      * @deprecated As of 1.5.0, for removal.
@@ -256,11 +261,11 @@ public final class Flags {
      */
     // PVP
     public static final Flag PVP_OVERWORLD = new Flag.Builder("PVP_OVERWORLD", Material.ARROW).type(Type.SETTING)
-            .defaultRank(DISABLED).listener(new PVPListener()).build();
+            .defaultRank(DISABLED).listener(new PVPListener()).cooldown(60).build();
     public static final Flag PVP_NETHER = new Flag.Builder("PVP_NETHER", Material.IRON_AXE).type(Type.SETTING)
-            .defaultRank(DISABLED).build();
+            .defaultRank(DISABLED).cooldown(60).build();
     public static final Flag PVP_END = new Flag.Builder("PVP_END", Material.END_CRYSTAL).type(Type.SETTING)
-            .defaultRank(DISABLED).build();
+            .defaultRank(DISABLED).cooldown(60).build();
 
     // Fire
     /**
@@ -364,9 +369,6 @@ public final class Flags {
      * @see CreeperListener
      */
     public static final Flag CREEPER_GRIEFING = new Flag.Builder("CREEPER_GRIEFING", Material.CREEPER_HEAD).type(Type.WORLD_SETTING).build();
-
-    public static final Flag COMMAND_RANKS = new Flag.Builder("COMMAND_RANKS", Material.PLAYER_HEAD).type(Type.WORLD_SETTING)
-            .clickHandler(new CommandRankClickListener()).usePanel(true).build();
 
     public static final Flag COARSE_DIRT_TILLING = new Flag.Builder("COARSE_DIRT_TILLING", Material.COARSE_DIRT).type(Type.WORLD_SETTING).defaultSetting(true).listener(new CoarseDirtTillingListener()).build();
 

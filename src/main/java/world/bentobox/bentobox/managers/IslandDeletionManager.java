@@ -41,7 +41,7 @@ public class IslandDeletionManager implements Listener {
 
     /**
      * When BentoBox is fully loaded, load the islands that still need to be deleted and kick them off
-     * @param e
+     * @param e BentoBox Ready event
      */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBentoBoxReady(BentoBoxReadyEvent e) {

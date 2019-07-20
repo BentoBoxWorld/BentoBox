@@ -48,7 +48,7 @@ public class AdminWhyCommand extends ConfirmableCommand {
         }
         // Determine the debug mode and toggle if required
         boolean newValue = !target.getPlayer().getMetadata(getWorld().getName() + "_why_debug").stream()
-                .filter(p -> p.getOwningPlugin().equals(getPlugin())).findFirst().map(MetadataValue::asBoolean).orElse(false);
+                .filter(p -> getPlugin().equals(p.getOwningPlugin())).findFirst().map(MetadataValue::asBoolean).orElse(false);
         if (newValue) {
             user.sendMessage("commands.admin.why.turning-on", TextVariables.NAME, target.getName());
         } else {

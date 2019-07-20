@@ -1,8 +1,6 @@
 package world.bentobox.bentobox;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import world.bentobox.bentobox.api.configuration.ConfigComment;
@@ -10,7 +8,6 @@ import world.bentobox.bentobox.api.configuration.ConfigEntry;
 import world.bentobox.bentobox.api.configuration.ConfigObject;
 import world.bentobox.bentobox.api.configuration.StoreAt;
 import world.bentobox.bentobox.database.DatabaseSetup.DatabaseType;
-import world.bentobox.bentobox.managers.RanksManager;
 
 /**
  * All the plugin settings are here
@@ -79,10 +76,6 @@ public class Settings implements ConfigObject {
     @ConfigEntry(path = "general.fakeplayers", experimental = true)
     private Set<String> fakePlayers = new HashSet<>();
 
-    @ConfigComment("Rank required to use a command. e.g., use the invite command. Default is owner rank is required.")
-    @ConfigEntry(path = "general.rank-command")
-    private Map<String, Integer> rankCommand = new HashMap<>();
-
     @ConfigEntry(path = "panel.close-on-click-outside")
     private boolean closePanelOnClickOutside = true;
 
@@ -135,6 +128,11 @@ public class Settings implements ConfigObject {
     @ConfigEntry(path = "island.confirmation.time")
     private int confirmationTime = 10;
 
+    // Timeout for team kick and leave commands
+    @ConfigComment("Time in seconds that players have to stand still before teleport commands activate, e.g. island go.")
+    @ConfigEntry(path = "island.delay.time")
+    private int delayTime = 0;
+
     @ConfigComment("Ask the player to confirm the command he is using by typing it again.")
     @ConfigEntry(path = "island.confirmation.commands.kick")
     private boolean kickConfirmation = true;
@@ -150,6 +148,13 @@ public class Settings implements ConfigObject {
     private int nameMinLength = 4;
     @ConfigEntry(path = "island.name.max-length")
     private int nameMaxLength = 20;
+
+    @ConfigComment("Remove hostile mob on teleport box radius")
+    @ConfigComment("If hostile mobs are cleared on player teleport, then this sized box will be cleared")
+    @ConfigComment("around the player. e.g. 5 means a 10 x 10 x 10 box around the player")
+    @ConfigComment("Be careful not to make this too big. Does not cover standard nether or end teleports.")
+    @ConfigEntry(path = "island.clear-radius")
+    private int clearRadius = 5;
 
     @ConfigComment("Number of blocks to paste per tick when pasting blueprints")
     @ConfigComment("Smaller values will help reduce noticeable lag but will make pasting take longer")
@@ -291,22 +296,6 @@ public class Settings implements ConfigObject {
 
     public void setFakePlayers(Set<String> fakePlayers) {
         this.fakePlayers = fakePlayers;
-    }
-
-    public Map<String, Integer> getRankCommand() {
-        return rankCommand;
-    }
-
-    public int getRankCommand(String command) {
-        return rankCommand.getOrDefault(command, RanksManager.OWNER_RANK);
-    }
-
-    public void setRankCommand(String command, int rank) {
-        rankCommand.put(command, rank);
-    }
-
-    public void setRankCommand(Map<String, Integer> rankCommand) {
-        this.rankCommand = rankCommand;
     }
 
     public boolean isClosePanelOnClickOutside() {
@@ -498,4 +487,33 @@ public class Settings implements ConfigObject {
     public void setLogGithubDownloadData(boolean logGithubDownloadData) {
         this.logGithubDownloadData = logGithubDownloadData;
     }
+
+    public int getDelayTime() {
+        return delayTime;
+    }
+
+    /**
+     * @param delayTime the delayTime to set
+     */
+    public void setDelayTime(int delayTime) {
+        this.delayTime = delayTime;
+    }
+
+    /**
+     * @return the clearRadius
+     */
+    public int getClearRadius() {
+        if (clearRadius < 0) clearRadius = 0;
+        return clearRadius;
+    }
+
+    /**
+     * @param clearRadius the clearRadius to set. Cannot be negative.
+     */
+    public void setClearRadius(int clearRadius) {
+        if (clearRadius < 0) clearRadius = 0;
+        this.clearRadius = clearRadius;
+    }
+
+
 }

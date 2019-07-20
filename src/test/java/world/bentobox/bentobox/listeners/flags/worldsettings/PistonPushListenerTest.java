@@ -2,6 +2,7 @@ package world.bentobox.bentobox.listeners.flags.worldsettings;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -27,6 +28,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.Flags;
@@ -48,13 +50,13 @@ public class PistonPushListenerTest {
         // Set up plugin
         BentoBox plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
-        
+
         // World
         world = mock(World.class);
-        
+
         // Owner
         UUID uuid = UUID.randomUUID();
-        
+
         // Island initialization
         island = mock(Island.class);
         when(island.getOwner()).thenReturn(uuid);
@@ -74,12 +76,12 @@ public class PistonPushListenerTest {
         when(block.getLocation()).thenReturn(inside);
 
         Block blockPushed = mock(Block.class);
-        
+
         when(block.getRelative(Mockito.any(BlockFace.class))).thenReturn(blockPushed);
-        
+
         // The blocks in the pushed list are all inside the island
         when(blockPushed.getLocation()).thenReturn(inside);
-        
+
         // Make a list of ten blocks
         blocks = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
@@ -88,7 +90,7 @@ public class PistonPushListenerTest {
 
         PowerMockito.mockStatic(Util.class);
         when(Util.getWorld(Mockito.any())).thenReturn(world);
-                
+
         // World Settings
         IslandWorldManager iwm = mock(IslandWorldManager.class);
         when(plugin.getIWM()).thenReturn(iwm);
@@ -96,7 +98,13 @@ public class PistonPushListenerTest {
         when(iwm.getWorldSettings(Mockito.any())).thenReturn(ws);
         Map<String, Boolean> worldFlags = new HashMap<>();
         when(ws.getWorldFlags()).thenReturn(worldFlags);
-        
+        GameModeAddon gma = mock(GameModeAddon.class);
+        Optional<GameModeAddon> opGma = Optional.of(gma );
+        when(iwm.getAddon(any())).thenReturn(opGma);
+
+        // Set default on
+        Flags.PISTON_PUSH.setSetting(world, true);
+
     }
 
     @Test
@@ -104,32 +112,32 @@ public class PistonPushListenerTest {
         Flags.PISTON_PUSH.setSetting(world, false);
         BlockPistonExtendEvent e = new BlockPistonExtendEvent(block, blocks, BlockFace.EAST);
         new PistonPushListener().onPistonExtend(e);
-        
+
         // Should fail because flag is not set
         assertFalse(e.isCancelled());
     }
-    
+
     @Test
-    public void testOnPistonExtendFlagSetOnIsland() { 
-        
+    public void testOnPistonExtendFlagSetOnIsland() {
+
         // The blocks in the pushed list are all inside the island
         when(island.onIsland(Mockito.any())).thenReturn(true);
-        
+
         BlockPistonExtendEvent e = new BlockPistonExtendEvent(block, blocks, BlockFace.EAST);
         new PistonPushListener().onPistonExtend(e);
-        
+
         // Should fail because on island
         assertFalse(e.isCancelled());
     }
-    
+
     @Test
     public void testOnPistonExtendFlagSetOffIsland() {
         // The blocks in the pushed list are all outside the island
         when(island.onIsland(Mockito.any())).thenReturn(false);
-        
+
         BlockPistonExtendEvent e = new BlockPistonExtendEvent(block, blocks, BlockFace.EAST);
         new PistonPushListener().onPistonExtend(e);
-        
+
         // Should fail because on island
         assertTrue(e.isCancelled());
     }

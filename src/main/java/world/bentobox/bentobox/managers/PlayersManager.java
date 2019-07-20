@@ -425,8 +425,8 @@ public class PlayersManager {
 
     /**
      * Adds a reset to this player's number of resets
-     * @param world
-     * @param playerUUID
+     * @param world world where island is
+     * @param playerUUID player's UUID
      */
     public void addReset(World world, UUID playerUUID) {
         addPlayer(playerUUID);

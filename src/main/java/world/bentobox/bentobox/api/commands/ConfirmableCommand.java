@@ -91,6 +91,11 @@ public abstract class ConfirmableCommand extends CompositeCommand {
         askConfirmation(user, "", confirmed);
     }
 
+    /**
+     * Holds the data to run once the confirmation is given
+     * @author tastybento
+     *
+     */
     private class Confirmer {
         private final String topLabel;
         private final String label;

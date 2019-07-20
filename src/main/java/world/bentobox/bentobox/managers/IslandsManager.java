@@ -695,7 +695,11 @@ public class IslandsManager {
                     player.leaveVehicle();
                     // Remove the boat so they don't lie around everywhere
                     boat.remove();
-                    player.getInventory().addItem(new ItemStack(Material.getMaterial(((Boat) boat).getWoodType().toString() + "_BOAT"), 1));
+                    Material boatMat = Material.getMaterial(((Boat) boat).getWoodType().toString() + "_BOAT");
+                    if (boatMat == null) {
+                        boatMat = Material.OAK_BOAT;
+                    }
+                    player.getInventory().addItem(new ItemStack(boatMat, 1));
                     player.updateInventory();
                 }
             }
@@ -1027,14 +1031,20 @@ public class IslandsManager {
     }
 
     /**
-     * Clear an area of mobs as per world rules. Radius is 5 blocks in every direction.
+     * Clear an area of mobs as per world rules. Radius is default 5 blocks in every direction.
+     * Value is set in BentoBox config.yml
+     * Will not remove any named monsters.
      * @param loc - location to clear
      */
     public void clearArea(Location loc) {
-        loc.getWorld().getNearbyEntities(loc, 5D, 5D, 5D).stream()
+        if (!plugin.getIWM().inWorld(loc)) return;
+        loc.getWorld().getNearbyEntities(loc, plugin.getSettings().getClearRadius(),
+                plugin.getSettings().getClearRadius(),
+                plugin.getSettings().getClearRadius()).stream()
         .filter(en -> Util.isHostileEntity(en)
                 && !plugin.getIWM().getRemoveMobsWhitelist(loc.getWorld()).contains(en.getType())
                 && !(en instanceof PufferFish))
+        .filter(en -> en.getCustomName() == null)
         .forEach(Entity::remove);
     }
 

@@ -172,11 +172,6 @@ public interface WorldSettings extends ConfigObject {
     boolean isNetherIslands();
 
     /**
-     * @return the netherTrees
-     */
-    boolean isNetherTrees();
-
-    /**
      * @return the onJoinResetEnderChest
      */
     boolean isOnJoinResetEnderChest();
@@ -250,6 +245,12 @@ public interface WorldSettings extends ConfigObject {
      * @return whether deaths should be counted.
      */
     boolean isDeathsCounted();
+
+    /**
+     * @return true if deaths in the world are reset when the player has a new island
+     * @since 1.6.0
+     */
+    boolean isDeathsResetOnNewIsland();
 
     /**
      * @return whether a player can set their home in the Nether or not.

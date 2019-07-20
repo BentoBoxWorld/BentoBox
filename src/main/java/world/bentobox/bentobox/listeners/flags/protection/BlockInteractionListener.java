@@ -290,7 +290,7 @@ public class BlockInteractionListener extends FlagListener {
         default:
             if (stringFlags.containsKey(type.name())) {
                 Optional<Flag> f = BentoBox.getInstance().getFlagsManager().getFlag(stringFlags.get(type.name()));
-                if (f.isPresent()) checkIsland(e, player, loc, f.get());
+                f.ifPresent(flag -> checkIsland(e, player, loc, flag));
             }
         }
     }

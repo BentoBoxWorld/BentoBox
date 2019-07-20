@@ -3,7 +3,7 @@ package world.bentobox.bentobox.database.transition;
 import world.bentobox.bentobox.database.AbstractDatabaseHandler;
 import world.bentobox.bentobox.database.DatabaseSetup;
 import world.bentobox.bentobox.database.json.JSONDatabase;
-import world.bentobox.bentobox.database.mariadb.MariaDBDatabase;
+import world.bentobox.bentobox.database.sql.mariadb.MariaDBDatabase;
 
 
 /**

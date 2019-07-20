@@ -57,6 +57,29 @@ commands:
       reset:
         description: "resets the resets of this player to 0"
         parameters: "<player>"
+    purge:
+      parameters: "[days]" 
+      description: "purge islands abandoned for more than [days]"
+      days-or-more: "Must be at least 1 day or more"     
+      purgable-islands: "Found [number] purgable islands."
+      purge-in-progress: "&cPurging in progress. Use purge stop to cancel"
+      number-error: "&cArgument must be a number of days"
+      confirm: "&dType [label] purge confirm to start purging"  
+      completed: "&aPurging stopped"
+      see-console-for-status: "Purge started. See console for status" 
+      protect:
+        description: "Toggle island purge protection"
+        move-to-island: "&cMove to an island first!"
+        protecting: "&aPurge-protecting island"
+        unprotecting: "&aRemoving purge protection"
+      stop:
+        description: "Stop a purge in progress"
+        stopping: "Stopping the purge"
+        no-purge-in-progress: "&cNo purge in progress!"
+      unowned:
+        description: "Purge unowned islands - requires confirmation"
+        unowned-islands: "&dFound [number] islands"
+        
     team:
       add:
         parameters: "<owner> <player>"
@@ -136,6 +159,7 @@ commands:
       island-coords: "Island coordinates: [xz1] to [xz2]"
       islands-in-trash: "&dPlayer has islands in trash."
       protection-range: "Protection range: [range]"
+      purge-protected: "Island is purge protected"
       max-protection-range: "Largest historical protection range: [range]"
       protection-coords: "Protection coordinates: [xz1] to [xz2]"
       is-spawn: "Island is a spawn island"
@@ -347,6 +371,10 @@ commands:
     confirm: "&cType command again within &b[seconds]s&c to confirm."
     previous-request-cancelled: "&6Previous confirmation request cancelled."
     request-cancelled: "&cConfirmation timeout - &brequest cancelled."
+  delay:
+    previous-command-cancelled: "&cPrevious command cancelled"
+    stand-still: "&6Do not move! Teleporting in [seconds] seconds"
+    moved-so-command-cancelled: "&cYou moved. Teleport cancelled!"
   island:
     about:
       description: "About this addon"
@@ -355,7 +383,6 @@ commands:
       description: "teleport you to your island"
       teleport: "&aTeleporting you to your island."
       teleported: "&aTeleported you to home &e#[number]."
-      tip: "&bType /[label] help &afor help."
     help:
       description: "The main island command"
       pick-world: "&cSpecify world from [worlds]"
@@ -489,6 +516,8 @@ commands:
       demote:
         description: "demote a player on your island down a rank"
         parameters: "<player>"
+        errors:
+          cant-demote-yourself: "&cYou can't demote yourself!"
         failure: "&cPlayer cannot be demoted any further!"
         success: "&aDemoted [name] to [rank]"      
       promote:
@@ -694,11 +723,7 @@ protection:
       description: "Toggle egg throwing"
       name: "Egg throwing"
       hint: "No egg throwing"
-    ELYTRA: 
-      description: "Toggle use on island"
-      name: "Elytra"
-      hint: "No elytra flying allowed"
-    ENCHANTING: 
+    ENCHANTING:
       description: "Toggle use"
       name: "Enchanting table"
       hint: "No table use"
@@ -1025,6 +1050,7 @@ protection:
       hint: "&cYou cannot teleport back to your island while you are falling."
   locked: "&cThis island is locked!"
   protected: "&cIsland protected: [description]"
+  world-protected: "&cWorld protected: [description]"
   spawn-protected: "&cSpawn protected: [description]"
 
   panel:
@@ -1053,6 +1079,7 @@ protection:
       blocked-rank: "&3- &c"
       minimal-rank: "&3- &2"
       menu-layout: "&a[description]"
+      setting-cooldown: "&cSetting is on cooldown"
       setting-layout: |
         &a[description]
         

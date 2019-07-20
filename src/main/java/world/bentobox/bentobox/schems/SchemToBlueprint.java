@@ -66,8 +66,8 @@ public class SchemToBlueprint {
      * Imports one schem set to the game mode
      *
      * @param addon  - game mode addon
-     * @param schems
-     * @param name
+     * @param schems - schems folder
+     * @param name - name of the schematic
      */
     private void importSchemSet(GameModeAddon addon, File schems, String name) {
         // Make a new blueprint bundle

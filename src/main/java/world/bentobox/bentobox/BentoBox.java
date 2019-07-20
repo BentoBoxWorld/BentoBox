@@ -28,7 +28,6 @@ import world.bentobox.bentobox.listeners.BannedVisitorCommands;
 import world.bentobox.bentobox.listeners.BlockEndDragon;
 import world.bentobox.bentobox.listeners.DeathListener;
 import world.bentobox.bentobox.listeners.JoinLeaveListener;
-import world.bentobox.bentobox.listeners.NetherTreesListener;
 import world.bentobox.bentobox.listeners.PanelListenerManager;
 import world.bentobox.bentobox.listeners.PortalTeleportationListener;
 import world.bentobox.bentobox.listeners.StandardSpawnProtectionListener;
@@ -86,6 +85,8 @@ public class BentoBox extends JavaPlugin {
     // Metrics
     @Nullable
     private BStats metrics;
+
+    private Config<Settings> configObject;
 
     @Override
     public void onEnable(){
@@ -232,8 +233,6 @@ public class BentoBox extends JavaPlugin {
         manager.registerEvents(new StandardSpawnProtectionListener(this), this);
         // Nether portals
         manager.registerEvents(new PortalTeleportationListener(this), this);
-        // Nether trees conversion
-        manager.registerEvents(new NetherTreesListener(this), this);
         // End dragon blocking
         manager.registerEvents(new BlockEndDragon(this), this);
         // Banned visitor commands
@@ -341,7 +340,8 @@ public class BentoBox extends JavaPlugin {
     public boolean loadSettings() {
         log("Loading Settings from config.yml...");
         // Load settings from config.yml. This will check if there are any issues with it too.
-        settings = new Config<>(this, Settings.class).loadConfigObject();
+        if (configObject == null) configObject = new Config<>(this, Settings.class);
+        settings = configObject.loadConfigObject();
         if (settings == null) {
             // Settings did not load correctly. Disable plugin.
             logError("Settings did not load correctly - disabling plugin - please check config.yml");
@@ -353,7 +353,7 @@ public class BentoBox extends JavaPlugin {
 
     @Override
     public void saveConfig() {
-        if (settings != null) new Config<>(this, Settings.class).saveConfigObject(settings);
+        if (settings != null) configObject.saveConfigObject(settings);
     }
 
     /**
