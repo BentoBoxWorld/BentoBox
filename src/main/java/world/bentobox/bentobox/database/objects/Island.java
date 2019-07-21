@@ -1167,6 +1167,7 @@ public class Island implements DataObject {
 
     /**
      * @param reserved the reserved to set
+     * @since 1.6.0
      */
     public void setReserved(boolean reserved) {
         this.reserved = reserved;
