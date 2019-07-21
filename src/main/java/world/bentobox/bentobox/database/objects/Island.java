@@ -166,6 +166,7 @@ public class Island implements DataObject {
      * @since 1.6.0
      */
     @Expose
+    @Nullable
     private Boolean reserved = null;
 
     /*
