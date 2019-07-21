@@ -7,6 +7,7 @@ import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.events.island.IslandEvent.Reason;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.BlueprintsManager;
 import world.bentobox.bentobox.managers.island.NewIsland;
 import world.bentobox.bentobox.panels.IslandCreationPanel;
@@ -17,6 +18,8 @@ import world.bentobox.bentobox.panels.IslandCreationPanel;
  * @author tastybento
  */
 public class IslandCreateCommand extends CompositeCommand {
+
+    private Island island;
 
     /**
      * Command to create an island
@@ -36,8 +39,14 @@ public class IslandCreateCommand extends CompositeCommand {
 
     @Override
     public boolean canExecute(User user, String label, List<String> args) {
-        if (getIslands().hasIsland(getWorld(), user.getUniqueId())
-                || getIslands().inTeam(getWorld(), user.getUniqueId())) {
+        // Check if the island is reserved
+        island = getIslands().getIsland(getWorld(), user);
+        if (island != null) {
+            // Reserved islands can be made
+            if (island.isReserved()) {
+                return true;
+            }
+            // You cannot make an island
             user.sendMessage("general.errors.already-have-island");
             return false;
         }

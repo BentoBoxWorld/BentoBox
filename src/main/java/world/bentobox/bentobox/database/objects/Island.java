@@ -161,6 +161,14 @@ public class Island implements DataObject {
     @Expose
     private Map<String, Integer> commandRanks;
 
+    /**
+     * If true then this space is reserved for the owner and when they teleport there they will be asked to make an island
+     * @since 1.6.0
+     */
+    @Expose
+    @Nullable
+    private Boolean reserved = null;
+
     /*
      * *************************** Constructors ******************************
      */
@@ -1148,6 +1156,24 @@ public class Island implements DataObject {
         this.commandRanks.put(command, rank);
     }
 
+    /**
+     * Returns whether this Island is currently reserved or not.
+     * If {@code true}, this means no blocks, except a bedrock one at the center of the island, exist.
+     * @return {@code true} if this Island is reserved, {@code false} otherwise.
+     * @since 1.6.0
+     */
+    public boolean isReserved() {
+        return reserved == null ? false : reserved;
+    }
+
+    /**
+     * @param reserved the reserved to set
+     * @since 1.6.0
+     */
+    public void setReserved(boolean reserved) {
+        this.reserved = reserved;
+    }
+
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
@@ -1160,6 +1186,5 @@ public class Island implements DataObject {
                 + ", purgeProtected=" + purgeProtected + ", flags=" + flags + ", history=" + history
                 + ", levelHandicap=" + levelHandicap + ", spawnPoint=" + spawnPoint + ", doNotLoad=" + doNotLoad + "]";
     }
-
 
 }
