@@ -163,6 +163,7 @@ public class Island implements DataObject {
 
     /**
      * If true then this space is reserved for the owner and when they teleport there they will be asked to make an island
+     * @since 1.6.0
      */
     @Expose
     private Boolean reserved = null;
