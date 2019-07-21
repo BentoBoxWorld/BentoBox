@@ -1156,7 +1156,10 @@ public class Island implements DataObject {
     }
 
     /**
-     * @return the reserved
+     * Returns whether this Island is currently reserved or not.
+     * If {@code true}, this means no blocks, except a bedrock one at the center of the island, exist.
+     * @return {@code true} if this Island is reserved, {@code false} otherwise.
+     * @since 1.6.0
      */
     public boolean isReserved() {
         return reserved == null ? false : reserved;
