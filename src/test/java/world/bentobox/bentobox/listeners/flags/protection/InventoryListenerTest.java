@@ -76,7 +76,7 @@ public class InventoryListenerTest {
 
     private final static List<Class<?>> HOLDERS = Arrays.asList(Horse.class, Chest.class,ShulkerBox.class, StorageMinecart.class,
             Dispenser.class,
-            Dropper.class, Hopper.class, Furnace.class, BrewingStand.class, Beacon.class,
+            Dropper.class, Hopper.class, Furnace.class, BrewingStand.class,
             Villager.class);
 
     private Location location;

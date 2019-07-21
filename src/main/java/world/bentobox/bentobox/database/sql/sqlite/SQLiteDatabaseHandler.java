@@ -8,8 +8,8 @@ import com.google.gson.Gson;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.database.DatabaseConnector;
 import world.bentobox.bentobox.database.objects.DataObject;
-import world.bentobox.bentobox.database.sql.SQLDatabaseHandler;
 import world.bentobox.bentobox.database.sql.SQLConfiguration;
+import world.bentobox.bentobox.database.sql.SQLDatabaseHandler;
 
 /**
  * @since 1.6.0

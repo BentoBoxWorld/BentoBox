@@ -42,6 +42,7 @@ public class ItemStackTypeAdapter extends TypeAdapter<ItemStack> {
             c.loadFromString(reader.nextString());
             return c.getItemStack("is");
         } catch (InvalidConfigurationException e) {
+            e.printStackTrace();
             throw new IOException(e.getMessage());
         }
     }

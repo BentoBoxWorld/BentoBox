@@ -25,7 +25,6 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import world.bentobox.bentobox.database.DatabaseConnectionSettingsImpl;
-import world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseConnector;
 
 /**
  * @author tastybento

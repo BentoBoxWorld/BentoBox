@@ -3,9 +3,9 @@
  */
 package world.bentobox.bentobox.listeners.flags.worldsettings;
 
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.any;
 
 import java.util.HashMap;
 import java.util.Map;

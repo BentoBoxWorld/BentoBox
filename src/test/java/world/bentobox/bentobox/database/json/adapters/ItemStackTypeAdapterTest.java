@@ -3,13 +3,20 @@
  */
 package world.bentobox.bentobox.database.json.adapters;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -68,7 +75,7 @@ public class ItemStackTypeAdapterTest {
         when(unsafe.getDataVersion()).thenReturn(777);
         when(Bukkit.getUnsafe()).thenReturn(unsafe);
         isa = new ItemStackTypeAdapter();
-        out = mock(JsonWriter.class);
+        out = mock(JsonWriter.class, Mockito.withSettings().verboseLogging());
         reader = mock(JsonReader.class);
         when(reader.peek()).thenReturn(JsonToken.STRING);
     }
@@ -79,10 +86,10 @@ public class ItemStackTypeAdapterTest {
      */
     @Test
     public void testWriteJsonWriterItemStack() throws IOException {
-        ItemStack stack = new ItemStack(Material.STICK, 4);
+        ItemStack stack = new ItemStack(Material.STONE, 4);
         isa.write(out, stack);
         Mockito.verify(out).value(Mockito.contains("==: org.bukkit.inventory.ItemStack"));
-        Mockito.verify(out).value(Mockito.contains("type: STICK"));
+        Mockito.verify(out).value(Mockito.contains("type: STONE"));
         Mockito.verify(out).value(Mockito.contains("amount: 4"));
     }
 
@@ -112,10 +119,23 @@ public class ItemStackTypeAdapterTest {
      */
     @Test
     public void testReadJsonReader() throws IOException {
-        when(reader.nextString()).thenReturn("is:\n    ==: org.bukkit.inventory.ItemStack\n    v: 777\n    type: STICK\n    amount: 4\n");
-        ItemStack i = isa.read(reader);
-        assertTrue(i.getType().equals(Material.STICK));
-        assertTrue(i.getAmount() == 4);
+        // Write a file
+        /*
+        try (FileWriter writer = new FileWriter("test.json");
+                Writer buffWriter = new BufferedWriter(writer);
+                JsonWriter realOut = new JsonWriter(buffWriter)) {
+
+            ItemStack stack = new ItemStack(Material.STONE, 4);
+            isa.write(realOut, stack);
+        }*/
+        try (FileReader reader = new FileReader("test.json");
+                Reader buffReader = new BufferedReader(reader);
+                JsonReader realIn = new JsonReader(buffReader)) {
+
+            ItemStack i = isa.read(realIn);
+            System.out.println(i);
+        }
+
     }
 
 
