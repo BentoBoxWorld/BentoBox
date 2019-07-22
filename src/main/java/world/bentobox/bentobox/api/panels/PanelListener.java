@@ -5,6 +5,11 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 
 import world.bentobox.bentobox.api.user.User;
 
+/**
+ * This will be called if registered and if a player clicks on a panel
+ * @author tastybento
+ *
+ */
 public interface PanelListener {
 
     /**

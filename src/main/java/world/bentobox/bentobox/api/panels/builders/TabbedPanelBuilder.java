@@ -4,6 +4,8 @@ import java.security.InvalidParameterException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.bukkit.World;
+
 import world.bentobox.bentobox.api.panels.Panel;
 import world.bentobox.bentobox.api.panels.Tab;
 import world.bentobox.bentobox.api.panels.TabbedPanel;
@@ -17,6 +19,7 @@ public class TabbedPanelBuilder extends PanelBuilder {
 
     private Map<Integer, Tab> tabs = new HashMap<>();
     private int startingSlot;
+    private World world;
 
     /**
      * Add a tab to the panel
@@ -51,6 +54,8 @@ public class TabbedPanelBuilder extends PanelBuilder {
      */
     @Override
     public Panel build() {
+        // The size is fixed right now
+        this.size(54);
         return new TabbedPanel(this);
     }
 

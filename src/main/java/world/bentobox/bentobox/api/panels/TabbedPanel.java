@@ -4,6 +4,8 @@ import java.security.InvalidParameterException;
 import java.util.Map.Entry;
 
 import org.bukkit.World;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.eclipse.jdt.annotation.NonNull;
 
 import world.bentobox.bentobox.BentoBox;
@@ -11,7 +13,7 @@ import world.bentobox.bentobox.api.panels.builders.PanelBuilder;
 import world.bentobox.bentobox.api.panels.builders.TabbedPanelBuilder;
 import world.bentobox.bentobox.api.user.User;
 
-public class TabbedPanel extends Panel {
+public class TabbedPanel extends Panel implements PanelListener {
 
     //
     private final TabbedPanelBuilder tpb;
@@ -32,8 +34,8 @@ public class TabbedPanel extends Panel {
      */
     public void openPanel(@NonNull BentoBox plugin, @NonNull User user, @NonNull World world, int tab, int page) {
         String friendlyWorldName = plugin.getIWM().getFriendlyName(world);
-
-        setupHeader(user, tab, world, friendlyWorldName);
+        PanelBuilder panelBuilder = new PanelBuilder().listener(this);
+        setupHeader(user, panelBuilder, tab, world, friendlyWorldName);
 
         // Show the tab
         if (tpb.getTabs().containsKey(tab)) {
@@ -56,6 +58,27 @@ public class TabbedPanel extends Panel {
             tabPanel.getValue().setFriendlyWorldName(friendlyWorldName);
             // Add the icon to the top row
             panelBuilder.item(tabPanel.getKey(), tabPanel.getValue().getIcon());
+        }
+
+    }
+
+    @Override
+    public void setup() {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void onInventoryClose(InventoryCloseEvent event) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void onInventoryClick(User user, InventoryClickEvent event) {
+        // Get tab by slot
+        if (event.isLeftClick() && tpb.getTabs().containsKey(event.getRawSlot())) {
+            this.openPanel(plugin, user, , tab, page);
         }
 
     }
