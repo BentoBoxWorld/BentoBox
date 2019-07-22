@@ -4,8 +4,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.bukkit.Bukkit;
+
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
+import world.bentobox.bentobox.api.events.BentoBoxReadyEvent;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.listeners.PanelListenerManager;
 
@@ -50,6 +53,9 @@ public class BentoBoxReloadCommand extends ConfirmableCommand {
                 // Reload locales
                 getPlugin().getLocalesManager().reloadLanguages();
                 user.sendMessage("commands.bentobox.reload.locales-reloaded");
+
+                // Fire ready event
+                Bukkit.getServer().getPluginManager().callEvent(new BentoBoxReadyEvent());
             });
         } else {
             showHelp(this, user);
