@@ -6,20 +6,51 @@ import java.util.Map;
 
 import org.bukkit.World;
 
-import world.bentobox.bentobox.api.panels.Panel;
 import world.bentobox.bentobox.api.panels.Tab;
 import world.bentobox.bentobox.api.panels.TabbedPanel;
+import world.bentobox.bentobox.api.user.User;
 
 /**
  * Builds tabbed panels
  * @author tastybento
  *
  */
-public class TabbedPanelBuilder extends PanelBuilder {
+public class TabbedPanelBuilder {
 
+    private int size;
     private Map<Integer, Tab> tabs = new HashMap<>();
     private int startingSlot;
     private World world;
+    private User user;
+
+    /**
+     * Forces panel to be a specific number of slots.
+     * @param size - size to be
+     * @return PanelBuilder - PanelBuilder
+     */
+    public TabbedPanelBuilder size(int size) {
+        this.size = size;
+        return this;
+    }
+
+    /**
+     * Sets the user who will get this panel. This will open it immediately when it is built
+     * @param user - the User
+     * @return PanelBuilder
+     */
+    public TabbedPanelBuilder user(User user) {
+        this.user = user;
+        return this;
+    }
+
+    /**
+     * @param world - world that applies to this tab
+     * @return TabbedPanelBuilder
+     */
+    public TabbedPanelBuilder world(World world) {
+        this.world = world;
+        return this;
+    }
 
     /**
      * Add a tab to the panel
@@ -27,7 +58,7 @@ public class TabbedPanelBuilder extends PanelBuilder {
      * @param tab - tab to show
      * @return TabbedPanelBuilder
      */
-    TabbedPanelBuilder tab(int slot, Tab tab) {
+    public TabbedPanelBuilder tab(int slot, Tab tab) {
         if (slot < 0 || slot > 9) {
             throw new InvalidParameterException("Slot must be between 0 and 9");
         }
@@ -40,7 +71,7 @@ public class TabbedPanelBuilder extends PanelBuilder {
      * @param slot - slot value between 0 and 9
      * @return TabbedPanelBuilder
      */
-    TabbedPanelBuilder startingSlot(int slot) {
+    public TabbedPanelBuilder startingSlot(int slot) {
         if (slot < 0 || slot > 9) {
             throw new InvalidParameterException("Slot must be between 0 and 9");
         }
@@ -52,8 +83,7 @@ public class TabbedPanelBuilder extends PanelBuilder {
      * Build the panel
      * @return Panel
      */
-    @Override
-    public Panel build() {
+    public TabbedPanel build() {
         // The size is fixed right now
         this.size(54);
         return new TabbedPanel(this);
@@ -71,6 +101,27 @@ public class TabbedPanelBuilder extends PanelBuilder {
      */
     public int getStartingSlot() {
         return startingSlot;
+    }
+
+    /**
+     * @return the world
+     */
+    public World getWorld() {
+        return world;
+    }
+
+    /**
+     * @return the size
+     */
+    public int getSize() {
+        return size;
+    }
+
+    /**
+     * @return the user
+     */
+    public User getUser() {
+        return user;
     }
 
 

@@ -1,9 +1,6 @@
 package world.bentobox.bentobox.api.panels;
 
-import org.bukkit.World;
-
-import world.bentobox.bentobox.api.panels.builders.PanelBuilder;
-import world.bentobox.bentobox.api.user.User;
+import java.util.List;
 
 /**
  * Represents a tab in a Tabbed Panel. Contains panel items.
@@ -17,25 +14,14 @@ public interface Tab {
     PanelItem getIcon();
 
     /**
+     * @return the name of this tab
+     */
+    String getName();
+
+    /**
      * Return the panel items for this tab
-     * @param user
-     * @param world
-     * @param page
-     * @param panelBuilder
+     * @return a list of items in slot order
      */
-    void returnPanelItems(User user, World world, int page, PanelBuilder panelBuilder);
-
-    /**
-     * Set user who is viewing - used for translations
-     * @param user
-     */
-    void setUser(User user);
-
-    /**
-     * Set friendly name of world - substitutes placeholders
-     * @param friendlyWorldName
-     */
-    void setFriendlyWorldName(String friendlyWorldName);
-
+    List<PanelItem> getPanelItems();
 
 }

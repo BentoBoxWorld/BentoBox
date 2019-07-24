@@ -104,6 +104,14 @@ public class PanelItem {
         return Optional.ofNullable(clickHandler);
     }
 
+    /**
+     * @param clickHandler the clickHandler to set
+     * @since 1.6.0
+     */
+    public void setClickHandler(ClickHandler clickHandler) {
+        this.clickHandler = clickHandler;
+    }
+
     public boolean isGlow() {
         return glow;
     }
