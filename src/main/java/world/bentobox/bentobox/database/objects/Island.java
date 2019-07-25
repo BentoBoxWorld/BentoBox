@@ -592,7 +592,7 @@ public class Island implements DataObject {
      * @see #getVisitors()
      */
     public boolean hasVisitors() {
-        return !getVisitors().isEmpty();
+        return Bukkit.getOnlinePlayers().stream().anyMatch(player -> onIsland(player.getLocation()) && getRank(User.getInstance(player)) == RanksManager.VISITOR_RANK);
     }
     
     /**
@@ -616,7 +616,7 @@ public class Island implements DataObject {
      * @see #getPlayersOnIsland()
      */
     public boolean hasPlayersOnIsland() {
-        return !getPlayersOnIsland().isEmpty();
+        return Bukkit.getOnlinePlayers().stream().anyMatch(player -> onIsland(player.getLocation()));
     }
                         
     /**
