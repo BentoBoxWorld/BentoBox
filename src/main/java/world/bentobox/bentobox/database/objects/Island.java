@@ -594,7 +594,31 @@ public class Island implements DataObject {
     public boolean hasVisitors() {
         return !getVisitors().isEmpty();
     }
-
+    
+    /**
+     * Returns a list of players that are physically inside the island's protection range
+     * @return list of players
+     * @since 1.6.0
+     */
+    @NonNull
+    public List<Player> getPlayersOnIsland() {
+        return Bukkit.getOnlinePlayers().stream()
+                .filter(player -> onIsland(player.getLocation())
+                .collect(Collectors.toList());
+    }
+    
+    /**
+     * Returns whether this Island has players inside its protection range.
+     * Note this is equivalent to {@code !island.getPlayersOnIsland().isEmpty()}.
+     * @return {@code true} if there are players inside this Island's protection range, {@code false} otherwise.
+     *
+     * @since 1.6.0
+     * @see #getPlayersOnIsland()
+     */
+    public boolean hasPlayersOnIsland() {
+        return !getPlayersOnIsland().isEmpty();
+    }
+                        
     /**
      * Check if the flag is allowed or not
      * For flags that are for the island in general and not related to rank.
