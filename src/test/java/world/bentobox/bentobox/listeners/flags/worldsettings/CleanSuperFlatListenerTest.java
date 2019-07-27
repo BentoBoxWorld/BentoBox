@@ -101,7 +101,8 @@ public class CleanSuperFlatListenerTest {
         chunk = mock(Chunk.class);
         when(chunk.getWorld()).thenReturn(world);
         block = mock(Block.class);
-        when(block.getType()).thenReturn(Material.BEDROCK);
+        // Super flat!
+        when(block.getType()).thenReturn(Material.BEDROCK, Material.DIRT, Material.DIRT, Material.GRASS_BLOCK);
         when(chunk.getBlock(Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt())).thenReturn(block);
 
         // Fire the ready event
