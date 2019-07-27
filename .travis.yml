@@ -9,7 +9,8 @@ addons:
             - develop
             - master
 jdk:
-    - oraclejdk8
+    - openjdk8
+    - openjdk11
     
 script:
     #- sonar-scanner
