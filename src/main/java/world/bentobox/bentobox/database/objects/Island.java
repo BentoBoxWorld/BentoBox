@@ -603,7 +603,7 @@ public class Island implements DataObject {
     @NonNull
     public List<Player> getPlayersOnIsland() {
         return Bukkit.getOnlinePlayers().stream()
-                .filter(player -> onIsland(player.getLocation())
+                .filter(player -> onIsland(player.getLocation()))
                 .collect(Collectors.toList());
     }
     
