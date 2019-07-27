@@ -246,8 +246,6 @@ public class BlueprintsManagerTest {
                 File blueprints = new File(dataFolder, BlueprintsManager.FOLDER_NAME);
                 File d = new File(blueprints, "default.json");
                 assertTrue(d.exists());
-                verify(plugin).log("Loaded Blueprint Bundle 'default' for name");
-                verify(plugin).log("Loaded blueprint 'bedrock' for name");
                 return task;
             }});
 
@@ -267,8 +265,6 @@ public class BlueprintsManagerTest {
             public BukkitTask answer(InvocationOnMock invocation) throws Throwable {
                 invocation.getArgumentAt(1,Runnable.class).run();
                 verify(plugin).logError(eq("No blueprint bundles found! Creating a default one."));
-                verify(plugin).log("Loaded Blueprint Bundle 'default' for name");
-                verify(plugin).log("Loaded blueprint 'bedrock' for name");
                 return task;
             }});
         BlueprintsManager bpm = new BlueprintsManager(plugin);
@@ -309,7 +305,6 @@ public class BlueprintsManagerTest {
             @Override
             public BukkitTask answer(InvocationOnMock invocation) throws Throwable {
                 invocation.getArgumentAt(1,Runnable.class).run();
-                verify(plugin, Mockito.times(2)).log("Loaded blueprint 'bedrock' for name");
                 return task;
             }});
         BlueprintsManager bpm = new BlueprintsManager(plugin);
@@ -317,7 +312,7 @@ public class BlueprintsManagerTest {
         bpm.loadBlueprintBundles(addon);
         // Load them again
         bpm.loadBlueprints(addon);
-
+        verify(plugin, Mockito.times(2)).log("Loaded blueprint 'bedrock' for name");
     }
 
     /**

@@ -157,7 +157,6 @@ public class BlueprintsManager {
      * @param addon the {@link GameModeAddon} to load the blueprints of.
      */
     public void loadBlueprintBundles(@NonNull GameModeAddon addon) {
-        plugin.logDebug("Loading blueprint bundles");
         Bukkit
         .getScheduler()
         .runTaskAsynchronously(
