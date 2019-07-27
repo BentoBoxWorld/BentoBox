@@ -157,15 +157,15 @@ public class BlueprintsManager {
      * @param addon the {@link GameModeAddon} to load the blueprints of.
      */
     public void loadBlueprintBundles(@NonNull GameModeAddon addon) {
+        plugin.logDebug("Loading blueprint bundles");
         Bukkit
         .getScheduler()
         .runTaskAsynchronously(
-                BentoBox.getInstance(), () -> {
+                plugin, () -> {
                     blueprintBundles.put(addon, new ArrayList<>());
 
                     // See if there are any schems that need converting
                     new SchemToBlueprint(plugin).convertSchems(addon);
-
                     if (!loadBundles(addon)) {
                         makeDefaults(addon);
                         loadBundles(addon);
@@ -184,8 +184,7 @@ public class BlueprintsManager {
         boolean loaded = false;
         File[] bundles = bpf.listFiles((dir, name) -> name.toLowerCase(Locale.ENGLISH).endsWith(BLUEPRINT_BUNDLE_SUFFIX));
         if (bundles == null || bundles.length == 0) {
-            makeDefaults(addon);
-            return loadBundles(addon);
+            return false;
         }
         for (File file : bundles) {
             try {
