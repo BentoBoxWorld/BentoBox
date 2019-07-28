@@ -64,6 +64,7 @@ public class BlueprintClipboard {
     private Map<Vector, List<BlueprintEntity>> bpEntities = new LinkedHashMap<>();
     private Map<Vector, BlueprintBlock> bpAttachable = new LinkedHashMap<>();
     private Map<Vector, BlueprintBlock> bpBlocks = new LinkedHashMap<>();
+    private BentoBox plugin = BentoBox.getInstance();
 
     /**
      * Create a clipboard for blueprint
@@ -115,47 +116,47 @@ public class BlueprintClipboard {
         blueprint.setySize((int)toCopy.getHeight());
         blueprint.setzSize((int)toCopy.getWidthZ());
 
-        BentoBox plugin = BentoBox.getInstance();
-
-        final int speed = plugin.getSettings().getPasteSpeed();
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-            final List<Vector> vectorsToCopy = getVectors(toCopy);
-            copying = false;
-            copyTask = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
-                if (copying) {
-                    return;
-                }
-                copying = true;
-                vectorsToCopy.stream().skip(index).limit(speed).forEach(v -> {
-                    List<LivingEntity> ents = world.getLivingEntities().stream()
-                            .filter(Objects::nonNull)
-                            .filter(e -> !(e instanceof Player))
-                            .filter(e -> new Vector(Math.rint(e.getLocation().getX()),
-                                    Math.rint(e.getLocation().getY()),
-                                    Math.rint(e.getLocation().getZ())).equals(v))
-                            .collect(Collectors.toList());
-                    if (copyBlock(v.toLocation(world), origin, copyAir, ents)) {
-                        count++;
-                    }
-                });
-                index += speed;
-                int percent = (int)(index * 100 / (double)vectorsToCopy.size());
-                if (percent != lastPercentage && percent % 10 == 0) {
-                    user.sendMessage("commands.admin.blueprint.copied-percent", TextVariables.NUMBER, String.valueOf(percent));
-                    lastPercentage = percent;
-                }
-                if (index > vectorsToCopy.size()) {
-                    copyTask.cancel();
-                    blueprint.setAttached(bpAttachable);
-                    blueprint.setBlocks(bpBlocks);
-                    blueprint.setEntities(bpEntities);
-                    user.sendMessage("general.success");
-                    user.sendMessage("commands.admin.blueprint.copied-blocks", TextVariables.NUMBER, String.valueOf(count));
-                }
-                copying = false;
-            }, 0L, 1L);
-        });
+        int speed = plugin.getSettings().getPasteSpeed();
+        List<Vector> vectorsToCopy = getVectors(toCopy);
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> copyAsync(world, user, vectorsToCopy, speed, copyAir));
         return true;
+    }
+
+    private void copyAsync(World world, User user, List<Vector> vectorsToCopy, int speed, boolean copyAir) {
+        copying = false;
+        copyTask = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
+            if (copying) {
+                return;
+            }
+            copying = true;
+            vectorsToCopy.stream().skip(index).limit(speed).forEach(v -> {
+                List<LivingEntity> ents = world.getLivingEntities().stream()
+                        .filter(Objects::nonNull)
+                        .filter(e -> !(e instanceof Player))
+                        .filter(e -> new Vector(Math.rint(e.getLocation().getX()),
+                                Math.rint(e.getLocation().getY()),
+                                Math.rint(e.getLocation().getZ())).equals(v))
+                        .collect(Collectors.toList());
+                if (copyBlock(v.toLocation(world), origin, copyAir, ents)) {
+                    count++;
+                }
+            });
+            index += speed;
+            int percent = (int)(index * 100 / (double)vectorsToCopy.size());
+            if (percent != lastPercentage && percent % 10 == 0) {
+                user.sendMessage("commands.admin.blueprint.copied-percent", TextVariables.NUMBER, String.valueOf(percent));
+                lastPercentage = percent;
+            }
+            if (index > vectorsToCopy.size()) {
+                copyTask.cancel();
+                blueprint.setAttached(bpAttachable);
+                blueprint.setBlocks(bpBlocks);
+                blueprint.setEntities(bpEntities);
+                user.sendMessage("general.success");
+                user.sendMessage("commands.admin.blueprint.copied-blocks", TextVariables.NUMBER, String.valueOf(count));
+            }
+            copying = false;
+        }, 0L, 1L);
     }
 
     /**

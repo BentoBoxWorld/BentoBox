@@ -1,6 +1,3 @@
-/**
- *
- */
 package world.bentobox.bentobox.api.commands.island.team;
 
 import static org.junit.Assert.assertEquals;
@@ -8,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.any;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -23,6 +21,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -33,6 +32,9 @@ import com.google.common.collect.HashBiMap;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
+import world.bentobox.bentobox.api.events.IslandBaseEvent;
+import world.bentobox.bentobox.api.events.team.TeamEvent;
+import world.bentobox.bentobox.api.events.team.TeamEvent.TeamEventBuilder;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.CommandsManager;
@@ -47,7 +49,7 @@ import world.bentobox.bentobox.managers.RanksManager;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, User.class })
+@PrepareForTest({Bukkit.class, BentoBox.class, User.class, TeamEvent.class })
 public class IslandTeamInviteAcceptCommandTest {
 
     private IslandTeamCommand ic;
@@ -213,6 +215,28 @@ public class IslandTeamInviteAcceptCommandTest {
         when(im.inTeam(Mockito.any(), Mockito.any())).thenReturn(false);
         when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(true);
         assertTrue(c.canExecute(user, "accept", Collections.emptyList()));
+        Mockito.verify(pim).callEvent(Mockito.any());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteAcceptCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     */
+    @Test
+    public void testCanExecuteEventBlocked() {
+        biMap.put(uuid, notUUID);
+        when(im.inTeam(Mockito.any(), Mockito.any())).thenReturn(false);
+        when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(true);
+        // Block event
+        PowerMockito.mockStatic(TeamEvent.class);
+        TeamEventBuilder teb = mock(TeamEventBuilder.class);
+        when(teb.island(any())).thenReturn(teb);
+        when(teb.involvedPlayer(any())).thenReturn(teb);
+        when(teb.reason(any())).thenReturn(teb);
+        IslandBaseEvent ibe = mock(IslandBaseEvent.class);
+        when(ibe.isCancelled()).thenReturn(true);
+        when(teb.build()).thenReturn(ibe);
+        when(TeamEvent.builder()).thenReturn(teb);
+        assertFalse(c.canExecute(user, "accept", Collections.emptyList()));
         Mockito.verify(pim).callEvent(Mockito.any());
     }
 
