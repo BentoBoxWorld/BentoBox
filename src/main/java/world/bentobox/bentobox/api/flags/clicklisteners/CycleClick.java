@@ -1,10 +1,12 @@
 package world.bentobox.bentobox.api.flags.clicklisteners;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.event.inventory.ClickType;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
+import world.bentobox.bentobox.api.events.island.FlagProtectionChangeEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.panels.Panel;
 import world.bentobox.bentobox.api.panels.PanelItem;
@@ -86,6 +88,8 @@ public class CycleClick implements PanelItem.ClickHandler {
                         island.setFlag(flag, rm.getRankUpValue(currentRank));
                     }
                     user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_OFF, 1F, 1F);
+                    // Fire event
+                    Bukkit.getPluginManager().callEvent(new FlagProtectionChangeEvent(island, user.getUniqueId(), flag, island.getFlag(flag)));
                 } else if (click.equals(ClickType.RIGHT)) {
                     if (currentRank <= minRank) {
                         island.setFlag(flag, maxRank);
@@ -93,6 +97,8 @@ public class CycleClick implements PanelItem.ClickHandler {
                         island.setFlag(flag, rm.getRankDownValue(currentRank));
                     }
                     user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 1F, 1F);
+                    // Fire event
+                    Bukkit.getPluginManager().callEvent(new FlagProtectionChangeEvent(island, user.getUniqueId(), flag, island.getFlag(flag)));
                 } else if (click.equals(ClickType.SHIFT_LEFT) && user.isOp()) {
                     if (!plugin.getIWM().getHiddenFlags(user.getWorld()).contains(flag.getID())) {
                         invisible = true;
@@ -103,8 +109,7 @@ public class CycleClick implements PanelItem.ClickHandler {
                         user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1F, 1F);
                     }
                     // Save changes
-                    plugin.getIWM().getAddon(user.getWorld()).ifPresent(GameModeAddon::saveWorldSettings);
-                }
+                    plugin.getIWM().getAddon(user.getWorld()).ifPresent(GameModeAddon::saveWorldSettings);                                    }
                 // Apply change to panel
                 panel.getInventory().setItem(slot, flag.toPanelItem(plugin, user, invisible).getItem());
             });

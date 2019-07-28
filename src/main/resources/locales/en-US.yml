@@ -134,6 +134,7 @@ commands:
       parameters: "<player>"
       description: "register player to unowned island you are on"
       registered-island: "&aRegistered player to island at [xyz]."
+      reserved-island: "&aReserved island at [xyz] for player."
       already-owned: "&cIsland is already owned by another player!"
       no-island-here: "&cThere is no island here. Confirm to make one."
       in-deletion: "&cThis island space is currently being deleted. Try later."
@@ -210,6 +211,7 @@ commands:
       parameters: "<player> <rank>"
       description: "set a player's rank on their island"
       unknown-rank: "&cUnknown rank!"
+      not-possible: "&cRank must be higher than visitor"
       rank-set: "&aRank set from [from] to [to]."
     setspawn:
       description: "set an island as spawn for this world"
@@ -350,6 +352,7 @@ commands:
       addon-syntax: "&2[name] &3[version] &7(&3[state]&7)"
       game-world: "&2[name] &7(&3[addon]&7): &aOverworld&7, &r[nether_color]Nether&7, &r[end_color]End"
       server: "&2Running &3[name] [version]&2."
+      database: "&2Database: &3[database]"
     manage:
       description: "displays the Management Panel"
     catalog:

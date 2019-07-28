@@ -37,9 +37,9 @@ public class IslandTeamInviteCommand extends CompositeCommand {
         setConfigurableRankCommand();
     }
 
+
     @Override
-    public boolean execute(User user, String label, List<String> args) {
-        UUID playerUUID = user.getUniqueId();
+    public boolean canExecute(User user, String label, List<String> args) {
         // Player issuing the command must have an island or be in a team
         if (!getIslands().inTeam(getWorld(), user.getUniqueId()) && !getIslands().hasIsland(getWorld(), user.getUniqueId())) {
             user.sendMessage("general.errors.no-island");
@@ -51,6 +51,7 @@ public class IslandTeamInviteCommand extends CompositeCommand {
             user.sendMessage("general.errors.no-permission");
             return false;
         }
+        UUID playerUUID = user.getUniqueId();
         if (args.isEmpty() || args.size() > 1) {
             // Invite label with no name, i.e., /island invite - tells the player who has invited them so far
             if (inviteList.containsKey(playerUUID)) {
@@ -61,34 +62,41 @@ public class IslandTeamInviteCommand extends CompositeCommand {
             // Show help
             showHelp(this, user);
             return false;
-        } else  {
-            // Only online players can be invited
-            UUID invitedPlayerUUID = getPlayers().getUUID(args.get(0));
-            if (invitedPlayerUUID == null) {
-                user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
-                return false;
-            }
-            User invitedPlayer = User.getInstance(invitedPlayerUUID);
-            if (!invitedPlayer.isOnline()) {
-                user.sendMessage("general.errors.offline-player");
-                return false;
-            }
-            // Player cannot invite themselves
-            if (playerUUID.equals(invitedPlayerUUID)) {
-                user.sendMessage("commands.island.team.invite.errors.cannot-invite-self");
-                return false;
-            }
-            // Check cool down
-            if (getSettings().getInviteCooldown() > 0 && checkCooldown(user, getIslands().getIsland(getWorld(), user).getUniqueId(), invitedPlayerUUID.toString())) {
-                return false;
-            }
-            // Player cannot invite someone already on a team
-            if (getIslands().inTeam(getWorld(), invitedPlayerUUID)) {
-                user.sendMessage("commands.island.team.invite.errors.already-on-team");
-                return false;
-            }
-            return invite(user,invitedPlayer);
         }
+        return true;
+    }
+
+    @Override
+    public boolean execute(User user, String label, List<String> args) {
+        UUID playerUUID = user.getUniqueId();
+
+        // Only online players can be invited
+        UUID invitedPlayerUUID = getPlayers().getUUID(args.get(0));
+        if (invitedPlayerUUID == null) {
+            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
+            return false;
+        }
+        User invitedPlayer = User.getInstance(invitedPlayerUUID);
+        if (!invitedPlayer.isOnline()) {
+            user.sendMessage("general.errors.offline-player");
+            return false;
+        }
+        // Player cannot invite themselves
+        if (playerUUID.equals(invitedPlayerUUID)) {
+            user.sendMessage("commands.island.team.invite.errors.cannot-invite-self");
+            return false;
+        }
+        // Check cool down
+        if (getSettings().getInviteCooldown() > 0 && checkCooldown(user, getIslands().getIsland(getWorld(), user).getUniqueId(), invitedPlayerUUID.toString())) {
+            return false;
+        }
+        // Player cannot invite someone already on a team
+        if (getIslands().inTeam(getWorld(), invitedPlayerUUID)) {
+            user.sendMessage("commands.island.team.invite.errors.already-on-team");
+            return false;
+        }
+        return invite(user,invitedPlayer);
+
     }
 
     private boolean invite(User user, User invitedPlayer) {

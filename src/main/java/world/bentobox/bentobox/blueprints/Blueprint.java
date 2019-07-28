@@ -2,6 +2,7 @@ package world.bentobox.bentobox.blueprints;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.bukkit.Material;
@@ -49,7 +50,8 @@ public class Blueprint {
      * @return the name
      */
     public String getName() {
-        return name;
+        // Force lower case
+        return name.toLowerCase(Locale.ENGLISH);
     }
     /**
      * @param name the name to set

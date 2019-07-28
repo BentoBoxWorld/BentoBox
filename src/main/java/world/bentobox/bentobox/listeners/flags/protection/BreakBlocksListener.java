@@ -114,7 +114,7 @@ public class BreakBlocksListener extends FlagListener {
             Projectile p = (Projectile) e.getDamager();
             if (p.getShooter() instanceof Player && !checkIsland(e, (Player)p.getShooter(), e.getEntity().getLocation(), Flags.BREAK_BLOCKS)) {
                 e.getEntity().setFireTicks(0);
-                e.getDamager().remove();
+                p.setFireTicks(0);
             }
         }
     }

@@ -144,6 +144,7 @@ commands:
       addon-syntax: "&2[name] &3[version] &7(&3[state]&7)"
       game-world: "&2[name] &7(&3[addon]&7): &aOverworld&7, &r[nether_color]Nether&7, &r[end_color]End"
       server: "&2Serveur : &3[name] [version]&2."
+      database: "&2Base de données : &3[database]"
     manage:
       description: "affiche le menu de gestion"
     catalog:

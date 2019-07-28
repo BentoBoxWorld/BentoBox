@@ -70,8 +70,8 @@ public class JoinLeaveListener implements Listener {
             }
 
             // If mobs have to be removed when a player joins, then wipe all the mobs on his island.
-            if (plugin.getIWM().inWorld(user.getLocation()) && Flags.REMOVE_MOBS.isSetForWorld(user.getWorld())) {
-                plugin.getIslands().clearArea(user.getLocation());
+            if (plugin.getIslands().locationIsOnIsland(event.getPlayer(), user.getLocation()) && Flags.REMOVE_MOBS.isSetForWorld(user.getWorld())) {
+                Bukkit.getScheduler().runTask(plugin, () -> plugin.getIslands().clearArea(user.getLocation()));
             }
 
             // Clear inventory if required
