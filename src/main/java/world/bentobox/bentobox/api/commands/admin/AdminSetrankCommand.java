@@ -6,6 +6,8 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.eclipse.jdt.annotation.Nullable;
+
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
@@ -18,6 +20,10 @@ import world.bentobox.bentobox.managers.RanksManager;
  */
 public class AdminSetrankCommand extends CompositeCommand {
 
+    private int rankValue;
+    private @Nullable UUID targetUUID;
+    private RanksManager rm;
+
     public AdminSetrankCommand(CompositeCommand adminCommand) {
         super(adminCommand, "setrank");
     }
@@ -28,17 +34,18 @@ public class AdminSetrankCommand extends CompositeCommand {
         setOnlyPlayer(false);
         setParametersHelp("commands.admin.setrank.parameters");
         setDescription("commands.admin.setrank.description");
+        rm = getPlugin().getRanksManager();
     }
 
     @Override
-    public boolean execute(User user, String label, List<String> args) {
+    public boolean canExecute(User user, String label, List<String> args) {
         if (args.size() != 2) {
             // Show help
             showHelp(this, user);
             return false;
         }
         // Get target player
-        UUID targetUUID = getPlayers().getUUID(args.get(0));
+        targetUUID = getPlayers().getUUID(args.get(0));
         if (targetUUID == null) {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
             return false;
@@ -48,16 +55,23 @@ public class AdminSetrankCommand extends CompositeCommand {
             return false;
         }
         // Get rank
-        RanksManager rm = getPlugin().getRanksManager();
-        int rankValue = rm.getRanks().entrySet().stream()
+        rankValue = rm.getRanks().entrySet().stream()
                 .filter(r -> user.getTranslation(r.getKey()).equalsIgnoreCase(args.get(1))).findFirst()
                 .map(Map.Entry::getValue).orElse(-999);
         if (rankValue < RanksManager.BANNED_RANK) {
             user.sendMessage("commands.admin.setrank.unknown-rank");
             return false;
         }
-        User target = User.getInstance(targetUUID);
+        if (rankValue <= RanksManager.VISITOR_RANK) {
+            user.sendMessage("commands.admin.setrank.not-possible");
+            return false;
+        }
+        return true;
+    }
 
+    @Override
+    public boolean execute(User user, String label, List<String> args) {
+        User target = User.getInstance(targetUUID);
         Island island = getPlugin().getIslands().getIsland(getWorld(), targetUUID);
         int currentRank = island.getRank(target);
         island.setRank(target, rankValue);

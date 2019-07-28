@@ -211,6 +211,7 @@ commands:
       parameters: "<player> <rank>"
       description: "set a player's rank on their island"
       unknown-rank: "&cUnknown rank!"
+      not-possible: "&cRank must be higher than visitor"
       rank-set: "&aRank set from [from] to [to]."
     setspawn:
       description: "set an island as spawn for this world"
