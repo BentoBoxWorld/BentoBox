@@ -188,9 +188,11 @@ public class BlueprintsManager {
         for (File file : bundles) {
             try {
                 BlueprintBundle bb = gson.fromJson(new FileReader(file), BlueprintBundle.class);
-                blueprintBundles.putIfAbsent(addon, new ArrayList<>()).add(bb);
-                plugin.log("Loaded Blueprint Bundle '" + bb.getUniqueId() + FOR + addon.getDescription().getName());
-                loaded = true;
+                if (bb != null) {
+                    blueprintBundles.putIfAbsent(addon, new ArrayList<>()).add(bb);
+                    plugin.log("Loaded Blueprint Bundle '" + bb.getUniqueId() + FOR + addon.getDescription().getName());
+                    loaded = true;
+                }
             } catch (Exception e) {
                 plugin.logError("Could not load blueprint bundle " + file.getName() + " " + e.getMessage());
                 plugin.logStacktrace(e);
