@@ -88,7 +88,7 @@ public class CleanSuperFlatListener extends FlagListener {
             for (int x = 0; x < 16; x++) {
                 for (int z = 0; z < 16; z++) {
                     for (int y = 0; y < world.getMaxHeight(); y++) {
-                        e.getChunk().getBlock(x, y, z).setBlockData(cd.getBlockData(x, y, z));
+                        e.getChunk().getBlock(x, y, z).setBlockData(cd.getBlockData(x, y, z), false);
                     }
                 }
             }
