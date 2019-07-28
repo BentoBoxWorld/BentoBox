@@ -1,8 +1,8 @@
 package world.bentobox.bentobox.listeners.flags.worldsettings;
 
+import java.security.SecureRandom;
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.Random;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -82,9 +82,10 @@ public class CleanSuperFlatListener extends FlagListener {
     }
 
     private void cleanChunk(ChunkLoadEvent e, World world, ChunkGenerator cg, MyBiomeGrid grid) {
+        SecureRandom random = new SecureRandom();
         if (!chunkQueue.isEmpty()) {
             Pair<Integer, Integer> chunkXZ = chunkQueue.poll();
-            ChunkData cd = cg.generateChunkData(world, new Random(), e.getChunk().getX(), e.getChunk().getZ(), grid);
+            ChunkData cd = cg.generateChunkData(world, random, e.getChunk().getX(), e.getChunk().getZ(), grid);
             for (int x = 0; x < 16; x++) {
                 for (int z = 0; z < 16; z++) {
                     for (int y = 0; y < world.getMaxHeight(); y++) {
@@ -92,6 +93,8 @@ public class CleanSuperFlatListener extends FlagListener {
                     }
                 }
             }
+            // Run populators
+            cg.getDefaultPopulators(world).forEach(pop -> pop.populate(world, random, e.getChunk()));
             if (plugin.getSettings().isLogCleanSuperFlatChunks()) {
                 plugin.log(chunkQueue.size() + " Regenerating superflat chunk " + world.getName() + " " + chunkXZ.x + ", " + chunkXZ.z);
             }
