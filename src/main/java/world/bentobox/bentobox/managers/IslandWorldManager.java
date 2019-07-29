@@ -63,7 +63,7 @@ public class IslandWorldManager {
      * @param world the World to register
      */
     private void registerToMultiverse(@NonNull World world) {
-        if (!isUseOwnGenerator(world) && plugin.getHooks() != null) {
+        if (plugin.getHooks() != null) {
             plugin.getHooks().getHook("Multiverse-Core").ifPresent(hook -> {
                 if (Bukkit.isPrimaryThread()) {
                     ((MultiverseCoreHook) hook).registerWorld(world);
