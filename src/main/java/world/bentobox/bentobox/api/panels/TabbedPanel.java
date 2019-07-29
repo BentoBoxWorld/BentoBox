@@ -17,10 +17,10 @@ import world.bentobox.bentobox.api.panels.builders.TabbedPanelBuilder;
 import world.bentobox.bentobox.api.user.User;
 
 /**
- * Represents a panel with tabs. The top row of the panel is made up of up to 9 icons that are made of {@link Tab}s.
+ * Represents a panel with tabs. The top row of the panel is made up of up to 9 icons that are made of {@link world.bentobox.bentobox.api.panels.Tab}s.
  * Only the active tab is shown. The panel will auto-refresh when a panel item is clicked, so panel item
  * click listeners do not have to actively update the panel. Viewers of the panel who do not have permission
- * to see a {@link Tab} will not be shown it.
+ * to see a {@link world.bentobox.bentobox.api.panels.Tab} will not be shown it.
  *
  * @author tastybento
  * @since 1.6.0
@@ -54,23 +54,41 @@ public class TabbedPanel implements PanelListener {
     }
 
     /**
+     * Open the tabbed panel at the starting slot
+     */
+    public void openPanel() {
+        openPanel(tpb.getStartingSlot(), 0);
+    }
+
+    /**
      * Open the tabbed panel
      * @param activeTab - the tab to show referenced by the slot (0 through 8)
      * @param page - the page of the tab to show (if multi paged)
      */
     public void openPanel(int activeTab, int page) {
+        if (!tpb.getTabs().containsKey(activeTab)) {
+            // Request to open a non-existent tab
+            throw new InvalidParameterException("Attemot to open a non-existent tab in a tabbed panel. Missing tab #" + activeTab);
+        }
+        if (page < 0) {
+            // Request to open a non-existent tab
+            throw new InvalidParameterException("Attemot to open a tab in a tabbed panel to a negative page! " + page);
+        }
         this.activeTab = activeTab;
         this.activePage = page;
-        PanelBuilder panelBuilder = new PanelBuilder().listener(this);
+        PanelBuilder panelBuilder = new PanelBuilder().listener(this).size(tpb.getSize());
+        // Get the tab
+        Tab tab = tpb.getTabs().get(activeTab);
+
         // Set title
-        panelBuilder.name(tpb.getTabs().get(activeTab).getName());
+        panelBuilder.name(tab.getName());
 
         // Set up the tabbed header
         setupHeader(panelBuilder);
 
         // Show the active tab
         if (tpb.getTabs().containsKey(activeTab)) {
-            List<PanelItem> items = tpb.getTabs().get(activeTab).getPanelItems();
+            List<PanelItem> items = tab.getPanelItems();
             items.stream().skip(page * 43L).limit(page * 43L + 43L).forEach(panelBuilder::item);
             // Add forward and backward icons
             if (page > 0) {
@@ -96,8 +114,7 @@ public class TabbedPanel implements PanelListener {
 
     /**
      * Shows the top row of icons
-     * @param user - viewer
-     * @param tab - active tab
+     * @param panelBuilder - panel builder
      */
     private void setupHeader(PanelBuilder panelBuilder) {
         // Set up top

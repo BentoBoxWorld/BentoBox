@@ -87,7 +87,7 @@ public abstract class FlagListener implements Listener {
      * @param e - event
      * @param flag - the flag that has been checked
      * @param silent - if true, message is not sent
-     * @param string
+     * @param string - translation reference
      */
     public void noGo(@NonNull Event e, @NonNull Flag flag, boolean silent, String string) {
         if (e instanceof Cancellable) {

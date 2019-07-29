@@ -16,7 +16,7 @@ import world.bentobox.bentobox.api.user.User;
  */
 public class PanelBuilder {
     private String name;
-    private TreeMap<Integer, PanelItem> items = new TreeMap<>();
+    private final TreeMap<Integer, PanelItem> items = new TreeMap<>();
     private int size;
     private User user;
     private PanelListener listener;

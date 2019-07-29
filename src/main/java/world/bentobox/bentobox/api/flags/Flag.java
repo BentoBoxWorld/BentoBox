@@ -27,7 +27,7 @@ import world.bentobox.bentobox.managers.RanksManager;
 public class Flag implements Comparable<Flag> {
 
     /**
-     * Defines the behavior and operation of the flag, as well as its category in the {@link world.bentobox.bentobox.panels.SettingsPanel}.
+     * Defines the behavior and operation of the flag.
      */
     public enum Type {
         /**

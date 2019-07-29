@@ -1,8 +1,8 @@
 package world.bentobox.bentobox.api.panels.builders;
 
 import java.security.InvalidParameterException;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.bukkit.World;
 
@@ -18,7 +18,7 @@ import world.bentobox.bentobox.api.user.User;
 public class TabbedPanelBuilder {
 
     private int size;
-    private Map<Integer, Tab> tabs = new HashMap<>();
+    private final Map<Integer, Tab> tabs = new TreeMap<>();
     private int startingSlot;
     private World world;
     private User user;
@@ -84,8 +84,10 @@ public class TabbedPanelBuilder {
      * @return Panel
      */
     public TabbedPanel build() {
-        // The size is fixed right now
-        this.size(54);
+        // Set starting slot
+        if (!tabs.isEmpty() && !tabs.containsKey(startingSlot)) {
+            startingSlot = ((TreeMap<Integer, Tab>)tabs).firstKey();
+        }
         return new TabbedPanel(this);
     }
 

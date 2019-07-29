@@ -29,7 +29,7 @@ public class PanelItem {
     private String name;
     private boolean glow;
     private ItemMeta meta;
-    private boolean playerHead;
+    private final boolean playerHead;
     private boolean invisible;
 
     public PanelItem(PanelItemBuilder builtItem) {

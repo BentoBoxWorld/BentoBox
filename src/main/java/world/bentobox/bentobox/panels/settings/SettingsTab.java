@@ -16,7 +16,7 @@ import world.bentobox.bentobox.api.user.User;
 
 /**
  * Implements a {@link Tab} that shows settings for
- * {@link Flag.Type#PROTECTION}, {@link Flag.Type#SETTING}, {@link Flag.Type#WORLD_SETTING}
+ * {@link world.bentobox.bentobox.api.flags.Flag.Type#PROTECTION}, {@link world.bentobox.bentobox.api.flags.Flag.Type#SETTING}, {@link world.bentobox.bentobox.api.flags.Flag.Type#WORLD_SETTING}
  * @author tastybento
  * @since 1.6.0
  *

@@ -106,7 +106,6 @@ public class CleanSuperFlatListener extends FlagListener {
     /**
      * Check if chunk should be cleaned or not
      * @param world - world
-     * @param plugin - plugin
      * @param e chunk load event
      * @return true if the chunk should not be cleaned
      */
@@ -114,17 +113,14 @@ public class CleanSuperFlatListener extends FlagListener {
         if (!ready) {
             return true;
         }
-        if (!getIWM().inWorld(world) || !Flags.CLEAN_SUPER_FLAT.isSetForWorld(world) ||
+        return !getIWM().inWorld(world) || !Flags.CLEAN_SUPER_FLAT.isSetForWorld(world) ||
                 (!(e.getChunk().getBlock(0, 0, 0).getType().equals(Material.BEDROCK)
                         && e.getChunk().getBlock(0, 1, 0).getType().equals(Material.DIRT)
                         && e.getChunk().getBlock(0, 2, 0).getType().equals(Material.DIRT)
                         && e.getChunk().getBlock(0, 3, 0).getType().equals(Material.GRASS_BLOCK))
                         || (world.getEnvironment().equals(Environment.NETHER) && (!plugin.getIWM().isNetherGenerate(world)
-                                || !plugin.getIWM().isNetherIslands(world)))
+                        || !plugin.getIWM().isNetherIslands(world)))
                         || (world.getEnvironment().equals(Environment.THE_END) && (!plugin.getIWM().isEndGenerate(world)
-                                || !plugin.getIWM().isEndIslands(world))))) {
-            return true;
-        }
-        return false;
+                        || !plugin.getIWM().isEndIslands(world))));
     }
 }

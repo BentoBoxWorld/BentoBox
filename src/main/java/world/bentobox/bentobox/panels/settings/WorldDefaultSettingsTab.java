@@ -26,7 +26,6 @@ public class WorldDefaultSettingsTab extends SettingsTab implements Tab {
     /**
      * @param world - world
      * @param user - user
-     * @param type - flag type
      */
     public WorldDefaultSettingsTab(World world, User user) {
         super(world, user, Type.PROTECTION);
