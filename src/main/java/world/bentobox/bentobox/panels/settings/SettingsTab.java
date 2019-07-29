@@ -15,8 +15,10 @@ import world.bentobox.bentobox.api.panels.builders.PanelItemBuilder;
 import world.bentobox.bentobox.api.user.User;
 
 /**
- * Implements a tab that shows three types of settings
+ * Implements a {@link Tab} that shows settings for
+ * {@link Flag.Type#PROTECTION}, {@link Flag.Type#SETTING}, {@link Flag.Type#WORLD_SETTING}
  * @author tastybento
+ * @since 1.6.0
  *
  */
 public class SettingsTab implements Tab {
@@ -38,6 +40,9 @@ public class SettingsTab implements Tab {
         this.type = type;
     }
 
+    /**
+     * @return list of flags that will be shown in this panel
+     */
     protected List<Flag> getFlags() {
         // Get a list of flags of the correct type and sort by the translated names
         List<Flag> flags = plugin.getFlagsManager().getFlags().stream().filter(f -> f.getType().equals(type))
@@ -62,6 +67,9 @@ public class SettingsTab implements Tab {
         return pib.build();
     }
 
+    /* (non-Javadoc)
+     * @see world.bentobox.bentobox.api.panels.Tab#getName()
+     */
     @Override
     public String getName() {
         return user.getTranslation(PROTECTION_PANEL + type.toString() + ".title", "[world_name]", plugin.getIWM().getFriendlyName(world));
@@ -76,8 +84,12 @@ public class SettingsTab implements Tab {
         return getFlags().stream().map((f -> f.toPanelItem(plugin, user, plugin.getIWM().getHiddenFlags(world).contains(f.getID())))).collect(Collectors.toList());
     }
 
+    /* (non-Javadoc)
+     * @see world.bentobox.bentobox.api.panels.Tab#getPermission()
+     */
     @Override
     public String getPermission() {
+        // All of these tabs can be seen by anyone
         return "";
     }
 

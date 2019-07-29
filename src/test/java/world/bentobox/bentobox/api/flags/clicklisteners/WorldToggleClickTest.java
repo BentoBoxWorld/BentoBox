@@ -123,7 +123,6 @@ public class WorldToggleClickTest {
         when(user.hasPermission(Mockito.anyString())).thenReturn(true);
         listener.onClick(panel, user, ClickType.LEFT, 0);
         verify(flag).setSetting(Mockito.any(), Mockito.eq(true));
-        verify(panel).getInventory();
         verify(addon).saveWorldSettings();
         verify(pim).callEvent(any(FlagWorldSettingChangeEvent.class));
     }

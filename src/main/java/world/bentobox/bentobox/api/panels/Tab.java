@@ -3,9 +3,10 @@ package world.bentobox.bentobox.api.panels;
 import java.util.List;
 
 /**
- * Represents a tab in a Tabbed Panel. Contains panel items.
+ * Represents a tab in a {@link TabbedPanel}. Contains {@link PanelItem}'s.
  *
  * @author tastybento
+ * @since 1.6.0
  *
  */
 public interface Tab {

@@ -3,9 +3,9 @@
  */
 package world.bentobox.bentobox.listeners.flags.worldsettings;
 
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.any;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -87,6 +87,7 @@ public class RemoveMobsListenerTest {
 
         // World Settings
         IslandWorldManager iwm = mock(IslandWorldManager.class);
+        when(iwm.getAddon(any())).thenReturn(Optional.empty());
         when(plugin.getIWM()).thenReturn(iwm);
         WorldSettings ws = mock(WorldSettings.class);
         when(iwm.getWorldSettings(Mockito.any())).thenReturn(ws);

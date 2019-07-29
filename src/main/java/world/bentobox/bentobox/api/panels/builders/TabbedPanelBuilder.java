@@ -11,9 +11,9 @@ import world.bentobox.bentobox.api.panels.TabbedPanel;
 import world.bentobox.bentobox.api.user.User;
 
 /**
- * Builds tabbed panels
+ * Builds {@link TabbedPanel}'s
  * @author tastybento
- *
+ * @since 1.6.0
  */
 public class TabbedPanelBuilder {
 

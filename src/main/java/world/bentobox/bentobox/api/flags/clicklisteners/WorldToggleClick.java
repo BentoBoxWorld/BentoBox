@@ -45,11 +45,8 @@ public class WorldToggleClick implements ClickHandler {
         }
         // Get flag
         plugin.getFlagsManager().getFlag(id).ifPresent(flag -> {
-            // Visibility
-            boolean invisible = false;
             if (click.equals(ClickType.SHIFT_LEFT) && user.isOp()) {
                 if (!plugin.getIWM().getHiddenFlags(user.getWorld()).contains(flag.getID())) {
-                    invisible = true;
                     plugin.getIWM().getHiddenFlags(user.getWorld()).add(flag.getID());
                     user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_GLASS_BREAK, 1F, 1F);
                 } else {
@@ -65,8 +62,6 @@ public class WorldToggleClick implements ClickHandler {
                 // Fire event
                 Bukkit.getPluginManager().callEvent(new FlagWorldSettingChangeEvent(user.getWorld(), user.getUniqueId(), flag, flag.isSetForWorld(user.getWorld())));
             }
-            // Apply change to panel
-            panel.getInventory().setItem(slot, flag.toPanelItem(plugin, user, invisible).getItem());
 
             // Save world settings
             plugin.getIWM().getAddon(Util.getWorld(user.getWorld())).ifPresent(GameModeAddon::saveWorldSettings);

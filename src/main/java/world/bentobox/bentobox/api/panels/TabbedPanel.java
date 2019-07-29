@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.eclipse.jdt.annotation.NonNull;
@@ -16,27 +17,50 @@ import world.bentobox.bentobox.api.panels.builders.TabbedPanelBuilder;
 import world.bentobox.bentobox.api.user.User;
 
 /**
- * Represents a tabbed panel. The top row of the panel is made up of up to 9 icons that relate to tabs.
- * Only the active tab is shown.
- * @author tastybento
+ * Represents a panel with tabs. The top row of the panel is made up of up to 9 icons that are made of {@link Tab}s.
+ * Only the active tab is shown. The panel will auto-refresh when a panel item is clicked, so panel item
+ * click listeners do not have to actively update the panel. Viewers of the panel who do not have permission
+ * to see a {@link Tab} will not be shown it.
  *
+ * @author tastybento
+ * @since 1.6.0
  */
 public class TabbedPanel implements PanelListener {
 
     private final TabbedPanelBuilder tpb;
     private @NonNull BentoBox plugin = BentoBox.getInstance();
     private int activeTab;
+    private int activePage;
+    private boolean closed;
 
+    /**
+     * Construct the tabbed panel
+     * @param tpb - tabbed panel builder
+     */
     public TabbedPanel(TabbedPanelBuilder tpb) {
         this.tpb = tpb;
     }
 
+    /* (non-Javadoc)
+     * @see world.bentobox.bentobox.api.panels.PanelListener#refreshPanel()
+     */
+    @Override
+    public void refreshPanel() {
+        if (closed) return;
+        // Called when a player clicks on the panel
+        openPanel(activeTab, activePage);
+        // Reset the closed flag
+        closed = false;
+    }
+
     /**
+     * Open the tabbed panel
      * @param activeTab - the tab to show referenced by the slot (0 through 8)
      * @param page - the page of the tab to show (if multi paged)
      */
     public void openPanel(int activeTab, int page) {
         this.activeTab = activeTab;
+        this.activePage = page;
         PanelBuilder panelBuilder = new PanelBuilder().listener(this);
         // Set title
         panelBuilder.name(tpb.getTabs().get(activeTab).getName());
@@ -78,7 +102,7 @@ public class TabbedPanel implements PanelListener {
     private void setupHeader(PanelBuilder panelBuilder) {
         // Set up top
         for (int i = 0; i < 9; i++) {
-            panelBuilder.item(i, new PanelItemBuilder().icon(Material.BLACK_STAINED_GLASS_PANE).build());
+            panelBuilder.item(i, new PanelItemBuilder().icon(Material.BLACK_STAINED_GLASS_PANE).name("").build());
         }
         // Add icons
         for (Entry<Integer, Tab> tabPanel : tpb.getTabs().entrySet()) {
@@ -94,22 +118,26 @@ public class TabbedPanel implements PanelListener {
 
     @Override
     public void setup() {
-        // TODO Auto-generated method stub
-
+        // Not used
     }
 
     @Override
     public void onInventoryClose(InventoryCloseEvent event) {
-        // TODO Auto-generated method stub
-
+        // This flag is set every time the inventory is closed or refreshed (closed and opened)
+        closed = true;
     }
 
     @Override
     public void onInventoryClick(User user, InventoryClickEvent event) {
-        // Trap tab clicks else pass to tab
-        if (event.isLeftClick() && tpb.getTabs().containsKey(event.getRawSlot())) {
+        // Trap top row tab clicks
+        if (event.isLeftClick() && tpb.getTabs().containsKey(event.getRawSlot())
+                && (tpb.getTabs().get(event.getRawSlot()).getPermission().isEmpty()
+                        || tpb.getUser().hasPermission(tpb.getTabs().get(event.getRawSlot()).getPermission()) || tpb.getUser().isOp())) {
             event.setCancelled(true);
             this.openPanel(event.getRawSlot(), 0);
+            user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_OFF, 1F, 1F);
+            // Reset the closed flag
+            closed = false;
         }
     }
 

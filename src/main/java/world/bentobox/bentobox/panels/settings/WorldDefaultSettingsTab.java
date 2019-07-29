@@ -16,8 +16,9 @@ import world.bentobox.bentobox.api.panels.builders.PanelItemBuilder;
 import world.bentobox.bentobox.api.user.User;
 
 /**
- * Implements a tab that shows all three types of settings
+ * Implements a {@link Tab} that enables the default world protection settings to be set
  * @author tastybento
+ * @since 1.6.0
  *
  */
 public class WorldDefaultSettingsTab extends SettingsTab implements Tab {
@@ -45,14 +46,21 @@ public class WorldDefaultSettingsTab extends SettingsTab implements Tab {
         return pib.build();
     }
 
+    /* (non-Javadoc)
+     * @see world.bentobox.bentobox.panels.settings.SettingsTab#getName()
+     */
     @Override
     public String getName() {
         // Different name
         return user.getTranslation(PROTECTION_PANEL + "WORLD_DEFAULTS.title", "[world_name]", plugin.getIWM().getFriendlyName(world));
     }
 
+    /* (non-Javadoc)
+     * @see world.bentobox.bentobox.panels.settings.SettingsTab#getPermission()
+     */
     @Override
     public String getPermission() {
+        // This permission should be in the Game Mode Addon's permissions list
         return plugin.getIWM().getPermissionPrefix(world) + "admin.set-world-defaults";
     }
 
@@ -62,19 +70,19 @@ public class WorldDefaultSettingsTab extends SettingsTab implements Tab {
      */
     @Override
     public List<PanelItem> getPanelItems() {
-        // Different descriptipn and click handlers
+        // Different description and click handlers
         return getFlags().stream().map(f -> {
-            PanelItem i = f.toPanelItem(plugin, user, plugin.getIWM().getHiddenFlags(world).contains(f.getID()));
-            // Replace the click handler with a new one
+            PanelItem i = f.toPanelItem(plugin, user, false);
+            // Replace the click handler with WorldToggleClick
             i.setClickHandler(new WorldToggleClick(f.getID()));
             // Replace the description
             String worldSetting = f.isSetForWorld(user.getWorld()) ? user.getTranslation("protection.panel.flag-item.setting-active")
                     : user.getTranslation("protection.panel.flag-item.setting-disabled");
-            i.setDescription(Arrays.asList(user.getTranslation("protection.panel.flag-item.setting-layout", TextVariables.DESCRIPTION, user.getTranslation(f.getDescriptionReference())
-                    , "[setting]", worldSetting).split("\n")));
+            i.setDescription(Arrays.asList(user.getTranslation("protection.panel.flag-item.setting-layout",
+                    TextVariables.DESCRIPTION, user.getTranslation(f.getDescriptionReference()),
+                    "[setting]", worldSetting).split("\n")));
             return i;
         }).collect(Collectors.toList());
     }
-
 
 }

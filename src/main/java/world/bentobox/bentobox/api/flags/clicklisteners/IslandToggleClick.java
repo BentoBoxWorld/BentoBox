@@ -48,12 +48,8 @@ public class IslandToggleClick implements ClickHandler {
         Island island = plugin.getIslands().getIslandAt(user.getLocation()).orElse(plugin.getIslands().getIsland(user.getWorld(), user.getUniqueId()));
         if (island != null && (user.isOp() || user.getUniqueId().equals(island.getOwner()))) {
             plugin.getFlagsManager().getFlag(id).ifPresent(flag -> {
-
-                // Visibility
-                boolean invisible = false;
                 if (click.equals(ClickType.SHIFT_LEFT) && user.isOp()) {
                     if (!plugin.getIWM().getHiddenFlags(user.getWorld()).contains(flag.getID())) {
-                        invisible = true;
                         plugin.getIWM().getHiddenFlags(user.getWorld()).add(flag.getID());
                         user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_GLASS_BREAK, 1F, 1F);
                     } else {
@@ -77,8 +73,6 @@ public class IslandToggleClick implements ClickHandler {
                     // Fire event
                     Bukkit.getPluginManager().callEvent(new FlagSettingChangeEvent(island, user.getUniqueId(), flag, island.isAllowed(flag)));
                 }
-                // Apply change to panel
-                panel.getInventory().setItem(slot, flag.toPanelItem(plugin, user, invisible).getItem());
             });
         } else {
             // Player is not the owner of the island.

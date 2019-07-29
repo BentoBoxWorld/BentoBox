@@ -21,4 +21,10 @@ public interface PanelListener {
 
     void onInventoryClick(User user, InventoryClickEvent event);
 
+    /**
+     * Called after a user has clicked on a panel item.
+     * Used to refresh the panel in its entirety
+     * @since 1.6.0
+     */
+    default void refreshPanel() {}
 }

@@ -76,9 +76,6 @@ public class CycleClick implements PanelItem.ClickHandler {
             changeOccurred = true;
             RanksManager rm = plugin.getRanksManager();
             plugin.getFlagsManager().getFlag(id).ifPresent(flag -> {
-
-                // Flag visibility
-                boolean invisible = false;
                 // Rank
                 int currentRank = island.getFlag(flag);
                 if (click.equals(ClickType.LEFT)) {
@@ -101,7 +98,6 @@ public class CycleClick implements PanelItem.ClickHandler {
                     Bukkit.getPluginManager().callEvent(new FlagProtectionChangeEvent(island, user.getUniqueId(), flag, island.getFlag(flag)));
                 } else if (click.equals(ClickType.SHIFT_LEFT) && user.isOp()) {
                     if (!plugin.getIWM().getHiddenFlags(user.getWorld()).contains(flag.getID())) {
-                        invisible = true;
                         plugin.getIWM().getHiddenFlags(user.getWorld()).add(flag.getID());
                         user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_GLASS_BREAK, 1F, 1F);
                     } else {
@@ -110,8 +106,6 @@ public class CycleClick implements PanelItem.ClickHandler {
                     }
                     // Save changes
                     plugin.getIWM().getAddon(user.getWorld()).ifPresent(GameModeAddon::saveWorldSettings);                                    }
-                // Apply change to panel
-                panel.getInventory().setItem(slot, flag.toPanelItem(plugin, user, invisible).getItem());
             });
         } else {
             // Player is not the owner of the island.

@@ -12,6 +12,11 @@ import org.bukkit.inventory.meta.ItemMeta;
 import world.bentobox.bentobox.api.panels.builders.PanelItemBuilder;
 import world.bentobox.bentobox.api.user.User;
 
+/**
+ * Represents an item in a {@link Panel}
+ * @author tastybento
+ *
+ */
 public class PanelItem {
 
     public static PanelItem empty() {

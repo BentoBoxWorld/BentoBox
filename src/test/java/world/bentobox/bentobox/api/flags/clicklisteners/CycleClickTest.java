@@ -246,15 +246,11 @@ public class CycleClickTest {
         // Click left
         assertTrue(udc.onClick(panel, user, ClickType.LEFT, SLOT));
         verify(island).setFlag(eq(flag), eq(RanksManager.OWNER_RANK));
-        verify(flag).toPanelItem(any(), any(), eq(false));
-        verify(inv).setItem(eq(SLOT), any());
         // Check rollover
         // Clicking when Owner should go to Visitor
         when(island.getFlag(any())).thenReturn(RanksManager.OWNER_RANK);
         assertTrue(udc.onClick(panel, user, ClickType.LEFT, SLOT));
         verify(island).setFlag(eq(flag), eq(RanksManager.VISITOR_RANK));
-        verify(flag, times(2)).toPanelItem(any(), any(), eq(false));
-        verify(inv, times(2)).setItem(eq(SLOT), any());
         verify(pim, times(2)).callEvent(any(FlagProtectionChangeEvent.class));
     }
 
@@ -268,15 +264,11 @@ public class CycleClickTest {
         // Click left
         assertTrue(udc.onClick(panel, user, ClickType.LEFT, SLOT));
         verify(island).setFlag(eq(flag), eq(RanksManager.TRUSTED_RANK));
-        verify(flag).toPanelItem(any(), any(), eq(false));
-        verify(inv).setItem(eq(SLOT), any());
         // Check rollover
         // Clicking when Member should go to Coop
         when(island.getFlag(any())).thenReturn(RanksManager.MEMBER_RANK);
         assertTrue(udc.onClick(panel, user, ClickType.LEFT, SLOT));
         verify(island).setFlag(eq(flag), eq(RanksManager.COOP_RANK));
-        verify(flag, times(2)).toPanelItem(any(), any(), eq(false));
-        verify(inv, times(2)).setItem(eq(SLOT), any());
         verify(pim, times(2)).callEvent(any(FlagProtectionChangeEvent.class));
     }
 
@@ -288,15 +280,11 @@ public class CycleClickTest {
         // Right click - down rank to Trusted
         assertTrue(udc.onClick(panel, user, ClickType.RIGHT, SLOT));
         verify(island).setFlag(eq(flag), eq(RanksManager.TRUSTED_RANK));
-        verify(flag).toPanelItem(any(), any(), eq(false));
-        verify(inv).setItem(eq(SLOT), any());
         // Check rollover
         // Clicking when Visitor should go to Owner
         when(island.getFlag(any())).thenReturn(RanksManager.VISITOR_RANK);
         assertTrue(udc.onClick(panel, user, ClickType.RIGHT, SLOT));
         verify(island).setFlag(eq(flag), eq(RanksManager.OWNER_RANK));
-        verify(flag, times(2)).toPanelItem(any(), any(), eq(false));
-        verify(inv, times(2)).setItem(eq(SLOT), any());
         verify(pim, times(2)).callEvent(any(FlagProtectionChangeEvent.class));
     }
 
@@ -310,15 +298,11 @@ public class CycleClickTest {
         // Right click
         assertTrue(udc.onClick(panel, user, ClickType.RIGHT, SLOT));
         verify(island).setFlag(eq(flag), eq(RanksManager.COOP_RANK));
-        verify(flag).toPanelItem(any(), any(), eq(false));
-        verify(inv).setItem(eq(SLOT), any());
         // Check rollover
         // Clicking when Coop should go to Member
         when(island.getFlag(any())).thenReturn(RanksManager.COOP_RANK);
         assertTrue(udc.onClick(panel, user, ClickType.RIGHT, SLOT));
         verify(island).setFlag(eq(flag), eq(RanksManager.MEMBER_RANK));
-        verify(flag, times(2)).toPanelItem(any(), any(), eq(false));
-        verify(inv, times(2)).setItem(eq(SLOT), any());
         verify(pim, times(2)).callEvent(any(FlagProtectionChangeEvent.class));
     }
 

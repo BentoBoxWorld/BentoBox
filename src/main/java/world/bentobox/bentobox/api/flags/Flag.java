@@ -136,12 +136,14 @@ public class Flag implements Comparable<Flag> {
      * @param setting - true or false
      */
     public void setSetting(World world, boolean setting) {
-        if (getType().equals(Type.WORLD_SETTING)) {
+        if (getType().equals(Type.WORLD_SETTING) || type.equals(Type.PROTECTION)) {
             BentoBox.getInstance()
             .getIWM()
             .getWorldSettings(world)
             .getWorldFlags()
             .put(getID(), setting);
+            // Save config file
+            BentoBox.getInstance().getIWM().getAddon(world).ifPresent(GameModeAddon::saveWorldSettings);
         }
     }
 
