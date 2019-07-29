@@ -165,7 +165,7 @@ public class IslandWorldManager {
                 registerToMultiverse(gameMode.getNetherWorld());
             }
         }
-        if (settings.isEndGenerate() && settings.isEndIslands()) {
+        if (settings.isEndGenerate()) {
             if (!Bukkit.getAllowEnd()) {
                 // Warn the users that players might not be able to teleport to these worlds later on
                 plugin.logWarning("'settings.allow-end' is set to 'false' in the bukkit.yml file!");
