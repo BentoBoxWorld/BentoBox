@@ -40,7 +40,7 @@ public class InvincibleVisitorsListener extends FlagListener implements ClickHan
             user.sendMessage("general.errors.wrong-world");
             return true;
         }
-        String reqPerm = getIWM().getPermissionPrefix(Util.getWorld(user.getWorld())) + ".admin.settings.INVINCIBLE_VISITORS";
+        String reqPerm = getIWM().getPermissionPrefix(Util.getWorld(user.getWorld())) + "admin.settings.INVINCIBLE_VISITORS";
         if (!user.hasPermission(reqPerm)) {
             user.sendMessage("general.errors.no-permission", "[permission]", reqPerm);
             user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_METAL_HIT, 1F, 1F);

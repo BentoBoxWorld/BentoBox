@@ -73,7 +73,7 @@ public class IslandToggleClickTest {
         iwm = mock(IslandWorldManager.class);
         when(iwm.inWorld(any(World.class))).thenReturn(true);
         when(iwm.inWorld(any(Location.class))).thenReturn(true);
-        when(iwm.getPermissionPrefix(any())).thenReturn("bskyblock");
+        when(iwm.getPermissionPrefix(any())).thenReturn("bskyblock.");
         when(plugin.getIWM()).thenReturn(iwm);
 
         listener = new IslandToggleClick("test");

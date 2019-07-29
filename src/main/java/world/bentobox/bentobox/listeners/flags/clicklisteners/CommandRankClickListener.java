@@ -42,7 +42,7 @@ public class CommandRankClickListener implements ClickHandler {
             return true;
         }
         IslandWorldManager iwm = plugin.getIWM();
-        String reqPerm = iwm.getPermissionPrefix(Util.getWorld(user.getWorld())) + ".admin.settings.COMMAND_RANKS";
+        String reqPerm = iwm.getPermissionPrefix(Util.getWorld(user.getWorld())) + "admin.settings.COMMAND_RANKS";
         if (!user.hasPermission(reqPerm)) {
             user.sendMessage("general.errors.no-permission", "[permission]", reqPerm);
             user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_METAL_HIT, 1F, 1F);

@@ -110,7 +110,7 @@ public class PVPListenerTest {
         iwm = mock(IslandWorldManager.class);
         when(iwm.inWorld(any(World.class))).thenReturn(true);
         when(iwm.inWorld(any(Location.class))).thenReturn(true);
-        when(iwm.getPermissionPrefix(Mockito.any())).thenReturn("bskyblock");
+        when(iwm.getPermissionPrefix(Mockito.any())).thenReturn("bskyblock.");
         // No visitor protection right now
         when(iwm.getIvSettings(Mockito.any())).thenReturn(new ArrayList<>());
         when(plugin.getIWM()).thenReturn(iwm);

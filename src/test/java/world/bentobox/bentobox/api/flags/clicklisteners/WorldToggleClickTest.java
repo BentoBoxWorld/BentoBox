@@ -65,7 +65,7 @@ public class WorldToggleClickTest {
         // Island World Manager
         when(iwm.inWorld(any(World.class))).thenReturn(true);
         when(iwm.inWorld(any(Location.class))).thenReturn(true);
-        when(iwm.getPermissionPrefix(Mockito.any())).thenReturn("bskyblock");
+        when(iwm.getPermissionPrefix(Mockito.any())).thenReturn("bskyblock.");
         Optional<GameModeAddon> optionalAddon = Optional.of(addon);
         when(iwm.getAddon(Mockito.any())).thenReturn(optionalAddon);
         when(plugin.getIWM()).thenReturn(iwm);

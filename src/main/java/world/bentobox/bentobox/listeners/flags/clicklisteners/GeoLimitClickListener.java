@@ -45,7 +45,7 @@ public class GeoLimitClickListener implements ClickHandler {
             return true;
         }
         IslandWorldManager iwm = BentoBox.getInstance().getIWM();
-        String reqPerm = iwm.getPermissionPrefix(Util.getWorld(user.getWorld())) + ".admin.settings.GEO_LIMIT_MOBS";
+        String reqPerm = iwm.getPermissionPrefix(Util.getWorld(user.getWorld())) + "admin.settings.GEO_LIMIT_MOBS";
         if (!user.hasPermission(reqPerm)) {
             user.sendMessage("general.errors.no-permission", "[permission]", reqPerm);
             user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_METAL_HIT, 1F, 1F);

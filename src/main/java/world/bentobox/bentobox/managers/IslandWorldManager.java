@@ -483,14 +483,13 @@ public class IslandWorldManager {
     }
 
     /**
-     * Get the permission prefix for this world. No trailing dot included.
+     * Get the permission prefix for this world. Trailing dot included.
      *
-     * @param world
-     *            - world
+     * @param world - world
      * @return permission prefix for this world
      */
     public String getPermissionPrefix(@NonNull World world) {
-        return gameModes.get(world).getWorldSettings().getPermissionPrefix();
+        return gameModes.get(world).getWorldSettings().getPermissionPrefix() + ".";
 
     }
 

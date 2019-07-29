@@ -204,7 +204,7 @@ public class CycleClickTest {
         when(plugin.getIWM()).thenReturn(iwm);
         when(iwm.inWorld(any(World.class))).thenReturn(true);
         when(iwm.inWorld(any(Location.class))).thenReturn(true);
-        when(iwm.getPermissionPrefix(any())).thenReturn("bskyblock");
+        when(iwm.getPermissionPrefix(any())).thenReturn("bskyblock.");
 
         // Util
         PowerMockito.mockStatic(Util.class);

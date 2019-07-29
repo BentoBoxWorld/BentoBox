@@ -37,7 +37,7 @@ public class EnderChestListener extends FlagListener {
         if (type.equals(Material.ENDER_CHEST)
                 && getIWM().inWorld(player.getLocation())
                 && !player.isOp()
-                && !player.hasPermission(getPlugin().getIWM().getPermissionPrefix(player.getWorld()) + ".craft.enderchest")
+                && !player.hasPermission(getPlugin().getIWM().getPermissionPrefix(player.getWorld()) + "craft.enderchest")
                 && !Flags.ENDER_CHEST.isSetForWorld(player.getWorld())) {
             // Not allowed
             User user = User.getInstance(player);

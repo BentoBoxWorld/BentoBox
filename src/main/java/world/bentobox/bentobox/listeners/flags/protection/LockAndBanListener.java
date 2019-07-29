@@ -111,10 +111,10 @@ public class LockAndBanListener extends FlagListener {
         return getIslands().getProtectedIslandAt(loc)
                 .map(is -> {
                     if (is.isBanned(player.getUniqueId())) {
-                        return player.hasPermission(getIWM().getPermissionPrefix(loc.getWorld()) + ".mod.bypassban") ? CheckResult.OPEN : CheckResult.BANNED;
+                        return player.hasPermission(getIWM().getPermissionPrefix(loc.getWorld()) + "mod.bypassban") ? CheckResult.OPEN : CheckResult.BANNED;
                     }
                     if (!is.isAllowed(User.getInstance(player), Flags.LOCK)) {
-                        return player.hasPermission(getIWM().getPermissionPrefix(loc.getWorld()) + ".mod.bypasslock") ? CheckResult.OPEN : CheckResult.LOCKED;
+                        return player.hasPermission(getIWM().getPermissionPrefix(loc.getWorld()) + "mod.bypasslock") ? CheckResult.OPEN : CheckResult.LOCKED;
                     }
                     return CheckResult.OPEN;
                 }).orElse(CheckResult.OPEN);

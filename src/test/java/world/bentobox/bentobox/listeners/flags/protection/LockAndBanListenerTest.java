@@ -80,7 +80,7 @@ public class LockAndBanListenerTest {
 
         // Island world manager
         IslandWorldManager iwm = mock(IslandWorldManager.class);
-        when(iwm.getPermissionPrefix(Mockito.any())).thenReturn("bskyblock");
+        when(iwm.getPermissionPrefix(Mockito.any())).thenReturn("bskyblock.");
 
         when(plugin.getIWM()).thenReturn(iwm);
 

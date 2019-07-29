@@ -47,7 +47,7 @@ public class DeathListenerTest {
         iwm = mock(IslandWorldManager.class);
         when(iwm.inWorld(any(World.class))).thenReturn(true);
         when(iwm.inWorld(any(Location.class))).thenReturn(true);
-        when(iwm.getPermissionPrefix(Mockito.any())).thenReturn("bskyblock");
+        when(iwm.getPermissionPrefix(Mockito.any())).thenReturn("bskyblock.");
         when(iwm.getVisitorBannedCommands(Mockito.any())).thenReturn(new ArrayList<>());
         when(plugin.getIWM()).thenReturn(iwm);
 
