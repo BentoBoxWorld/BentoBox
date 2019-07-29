@@ -76,5 +76,9 @@ public class SettingsTab implements Tab {
         return getFlags().stream().map((f -> f.toPanelItem(plugin, user, plugin.getIWM().getHiddenFlags(world).contains(f.getID())))).collect(Collectors.toList());
     }
 
+    @Override
+    public String getPermission() {
+        return "";
+    }
 
 }

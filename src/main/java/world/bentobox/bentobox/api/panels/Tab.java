@@ -24,4 +24,9 @@ public interface Tab {
      */
     List<PanelItem> getPanelItems();
 
+    /**
+     * @return the permission required to view this tab or empty if no permission required
+     */
+    String getPermission();
+
 }

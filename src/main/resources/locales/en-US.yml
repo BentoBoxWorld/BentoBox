@@ -1072,6 +1072,11 @@ protection:
     WORLD_SETTING:
       title: "&b[world_name] &6Settings"
       description: "&aSettings for this game world"
+    WORLD_DEFAULTS:
+      title: "&b[world_name] &6World Protections"
+      description: |
+        &aProtection settings when
+        &aplayer is outside their island
     flag-item:
       name-layout: "&a[name]"
       description-layout: |

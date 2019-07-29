@@ -1,9 +1,10 @@
 package world.bentobox.bentobox.panels.settings;
 
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.bukkit.Material;
 import org.bukkit.World;
 
 import world.bentobox.bentobox.api.flags.Flag.Type;
@@ -37,18 +38,22 @@ public class WorldDefaultSettingsTab extends SettingsTab implements Tab {
     @Override
     public PanelItem getIcon() {
         PanelItemBuilder pib = new PanelItemBuilder();
-        // Set the icon TODO could be different
-        pib.icon(type.getIcon());
+        pib.icon(Material.STONE_BRICKS);
         pib.name(getName());
         // Different description
-        pib.description(user.getTranslation(PROTECTION_PANEL + "world-defaults.description"));
+        pib.description(user.getTranslation(PROTECTION_PANEL + "WORLD_DEFAULTS.description"));
         return pib.build();
     }
 
     @Override
     public String getName() {
         // Different name
-        return user.getTranslation(PROTECTION_PANEL + "world-defaults.title", "[world_name]", plugin.getIWM().getFriendlyName(world));
+        return user.getTranslation(PROTECTION_PANEL + "WORLD_DEFAULTS.title", "[world_name]", plugin.getIWM().getFriendlyName(world));
+    }
+
+    @Override
+    public String getPermission() {
+        return plugin.getIWM().getPermissionPrefix(world) + "admin.set-world-defaults";
     }
 
     /**
@@ -65,9 +70,8 @@ public class WorldDefaultSettingsTab extends SettingsTab implements Tab {
             // Replace the description
             String worldSetting = f.isSetForWorld(user.getWorld()) ? user.getTranslation("protection.panel.flag-item.setting-active")
                     : user.getTranslation("protection.panel.flag-item.setting-disabled");
-            i.setDescription(Collections.singletonList(
-                    user.getTranslation("protection.panel.flag-item.setting-layout", TextVariables.DESCRIPTION, user.getTranslation(f.getDescriptionReference())
-                            , "[setting]", worldSetting)));
+            i.setDescription(Arrays.asList(user.getTranslation("protection.panel.flag-item.setting-layout", TextVariables.DESCRIPTION, user.getTranslation(f.getDescriptionReference())
+                    , "[setting]", worldSetting).split("\n")));
             return i;
         }).collect(Collectors.toList());
     }
