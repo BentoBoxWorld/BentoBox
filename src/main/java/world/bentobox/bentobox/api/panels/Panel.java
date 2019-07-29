@@ -46,6 +46,16 @@ public class Panel implements HeadRequester, InventoryHolder {
             if (size > 54) size = 54;
 
             inventory = Bukkit.createInventory(null, size, name);
+            // Fill the inventory and return
+            for (Map.Entry<Integer, PanelItem> en: items.entrySet()) {
+                if (en.getKey() < 54) {
+                    inventory.setItem(en.getKey(), en.getValue().getItem());
+                    // Get player head async
+                    if (en.getValue().isPlayerHead()) {
+                        HeadGetter.getHead(en.getValue(), this);
+                    }
+                }
+            }
         } else {
             inventory = Bukkit.createInventory(null, 9, name);
         }
@@ -91,16 +101,6 @@ public class Panel implements HeadRequester, InventoryHolder {
      * @param users - users that should see the panel
      */
     public void open(User... users) {
-        // Fill the inventory and return
-        for (Map.Entry<Integer, PanelItem> en: items.entrySet()) {
-            if (en.getKey() < 54) {
-                inventory.setItem(en.getKey(), en.getValue().getItem());
-                // Get player head async
-                if (en.getValue().isPlayerHead()) {
-                    HeadGetter.getHead(en.getValue(), this);
-                }
-            }
-        }
         for (User u : users) {
             u.getPlayer().openInventory(inventory);
             PanelListenerManager.getOpenPanels().put(u.getUniqueId(), this);
