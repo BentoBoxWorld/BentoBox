@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 
@@ -81,8 +82,9 @@ public class BlueprintsManager {
 
     public BlueprintsManager(@NonNull BentoBox plugin) {
         this.plugin = plugin;
-        this.blueprintBundles = new HashMap<>();
-        this.blueprints = new HashMap<>();
+        // Must use ConcurrentHashMap because the maps are loaded async and they need to be thread safe
+        this.blueprintBundles = new ConcurrentHashMap<>();
+        this.blueprints = new ConcurrentHashMap<>();
         @SuppressWarnings({"rawtypes", "unchecked"})
         GsonBuilder builder = new GsonBuilder()
         .excludeFieldsWithoutExposeAnnotation()
@@ -162,7 +164,6 @@ public class BlueprintsManager {
         .runTaskAsynchronously(
                 plugin, () -> {
                     blueprintBundles.put(addon, new ArrayList<>());
-
                     // See if there are any schems that need converting
                     new SchemToBlueprint(plugin).convertSchems(addon);
                     if (!loadBundles(addon)) {
@@ -189,7 +190,9 @@ public class BlueprintsManager {
             try {
                 BlueprintBundle bb = gson.fromJson(new FileReader(file), BlueprintBundle.class);
                 if (bb != null) {
-                    blueprintBundles.putIfAbsent(addon, new ArrayList<>()).add(bb);
+                    blueprintBundles
+                    .get(addon)
+                    .add(bb);
                     plugin.log("Loaded Blueprint Bundle '" + bb.getUniqueId() + FOR + addon.getDescription().getName());
                     loaded = true;
                 }
