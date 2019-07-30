@@ -15,6 +15,7 @@ import world.bentobox.bentobox.panels.settings.SettingsTab;
 
 /**
  * @author tastybento
+ * @since 1.6.0
  */
 public class AdminSettingsCommand extends CompositeCommand {
 
