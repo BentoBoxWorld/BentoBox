@@ -219,6 +219,9 @@ commands:
       no-island-here: "&cThere is no island here."
       confirmation: "&cAre you sure you want to set this island as the spawn for this world?"
       success: "&aSuccessfully set this island as the spawn for this world."
+    settings:
+      parameters: "<player>"
+      description: "open island settings for player"
     blueprint:
       parameters: "<load/copy/paste/pos1/pos2/save>"
       description: "manipulate blueprints"

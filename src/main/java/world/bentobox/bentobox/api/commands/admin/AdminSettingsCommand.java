@@ -12,7 +12,6 @@ import world.bentobox.bentobox.api.panels.builders.TabbedPanelBuilder;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.panels.settings.SettingsTab;
-import world.bentobox.bentobox.panels.settings.WorldDefaultSettingsTab;
 
 /**
  * @author tastybento
