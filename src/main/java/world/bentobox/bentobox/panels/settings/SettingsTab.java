@@ -13,6 +13,7 @@ import world.bentobox.bentobox.api.panels.PanelItem;
 import world.bentobox.bentobox.api.panels.Tab;
 import world.bentobox.bentobox.api.panels.builders.PanelItemBuilder;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.database.objects.Island;
 
 /**
  * Implements a {@link Tab} that shows settings for
@@ -28,10 +29,26 @@ public class SettingsTab implements Tab {
     protected Flag.Type type;
     protected User user;
     protected World world;
+    protected Island island;
 
     /**
+     * Show a tab of settings for the island owned by targetUUID to user
      * @param world - world
-     * @param user - user
+     * @param user - user who is viewing the tab
+     * @param island - the island
+     * @param type - flag type
+     */
+    public SettingsTab(World world, User user, Island island, Type type) {
+        this.world = world;
+        this.user = user;
+        this.island = island;
+        this.type = type;
+    }
+
+    /**
+     * Show a tab of settings for the island owned by targetUUID to user
+     * @param world - world
+     * @param user - user who is viewing the tab
      * @param type - flag type
      */
     public SettingsTab(World world, User user, Type type) {
@@ -81,7 +98,7 @@ public class SettingsTab implements Tab {
      */
     @Override
     public List<PanelItem> getPanelItems() {
-        return getFlags().stream().map((f -> f.toPanelItem(plugin, user, plugin.getIWM().getHiddenFlags(world).contains(f.getID())))).collect(Collectors.toList());
+        return getFlags().stream().map((f -> f.toPanelItem(plugin, user, island, plugin.getIWM().getHiddenFlags(world).contains(f.getID())))).collect(Collectors.toList());
     }
 
     /* (non-Javadoc)
@@ -91,6 +108,34 @@ public class SettingsTab implements Tab {
     public String getPermission() {
         // All of these tabs can be seen by anyone
         return "";
+    }
+
+    /**
+     * @return the type
+     */
+    public Flag.Type getType() {
+        return type;
+    }
+
+    /**
+     * @return the user
+     */
+    public User getUser() {
+        return user;
+    }
+
+    /**
+     * @return the world
+     */
+    public World getWorld() {
+        return world;
+    }
+
+    /**
+     * @return the island
+     */
+    public Island getIsland() {
+        return island;
     }
 
 }

@@ -9,6 +9,7 @@ import org.bukkit.World;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
@@ -297,10 +298,11 @@ public class Flag implements Comparable<Flag> {
      * Converts a flag to a panel item. The content of the flag will change depending on who the user is and where they are.
      * @param plugin - plugin
      * @param user - user that will see this flag
+     * @param island - target island, if any
      * @param invisible - true if this flag is not visible to players
-     * @return - PanelItem for this flag or null if item is inivisible to user
+     * @return - PanelItem for this flag or null if item is invisible to user
      */
-    public PanelItem toPanelItem(BentoBox plugin, User user, boolean invisible) {
+    public PanelItem toPanelItem(BentoBox plugin, User user, @Nullable Island island, boolean invisible) {
         // Invisibility
         if (!user.isOp() && invisible) {
             return null;
@@ -315,7 +317,6 @@ public class Flag implements Comparable<Flag> {
             pib.description(user.getTranslation("protection.panel.flag-item.menu-layout", TextVariables.DESCRIPTION, user.getTranslation(getDescriptionReference())));
             return pib.build();
         }
-        Island island = plugin.getIslands().getIslandAt(user.getLocation()).orElse(plugin.getIslands().getIsland(user.getWorld(), user.getUniqueId()));
         switch(getType()) {
         case PROTECTION:
             return createProtectionFlag(plugin, user, island, pib).build();

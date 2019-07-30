@@ -363,7 +363,7 @@ public class FlagTest {
         when(rm.getRank(Mockito.eq(RanksManager.OWNER_RANK))).thenReturn("Owner");
 
 
-        PanelItem pi = f.toPanelItem(plugin, user, false);
+        PanelItem pi = f.toPanelItem(plugin, user, island, false);
 
         verify(user).getTranslation(Mockito.eq("protection.flags.flagID.name"));
         verify(user).getTranslation(Mockito.eq("protection.panel.flag-item.name-layout"), Mockito.anyVararg());

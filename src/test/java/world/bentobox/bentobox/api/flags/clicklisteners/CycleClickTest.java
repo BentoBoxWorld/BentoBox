@@ -2,13 +2,13 @@ package world.bentobox.bentobox.api.flags.clicklisteners;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.anyString;
-import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -21,7 +21,6 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.junit.Before;
@@ -39,7 +38,6 @@ import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.events.island.FlagProtectionChangeEvent;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.panels.Panel;
-import world.bentobox.bentobox.api.panels.PanelItem;
 import world.bentobox.bentobox.api.user.Notifier;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
@@ -175,9 +173,6 @@ public class CycleClickTest {
         when(im.getProtectedIslandAt(eq(outside))).thenReturn(Optional.empty());
         when(im.getIslandAt(any())).thenReturn(opIsland);
 
-        PanelItem panelItem = mock(PanelItem.class);
-        when(flag.toPanelItem(any(), any(), eq(false))).thenReturn(panelItem);
-        when(panelItem.getItem()).thenReturn(mock(ItemStack.class));
         FlagsManager fm = mock(FlagsManager.class);
         when(fm.getFlag(anyString())).thenReturn(Optional.of(flag));
         when(plugin.getFlagsManager()).thenReturn(fm);

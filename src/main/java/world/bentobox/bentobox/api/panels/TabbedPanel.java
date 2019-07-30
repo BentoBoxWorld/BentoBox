@@ -25,7 +25,7 @@ import world.bentobox.bentobox.api.user.User;
  * @author tastybento
  * @since 1.6.0
  */
-public class TabbedPanel implements PanelListener {
+public class TabbedPanel extends Panel implements PanelListener {
 
     private final TabbedPanelBuilder tpb;
     private @NonNull BentoBox plugin = BentoBox.getInstance();
@@ -156,6 +156,13 @@ public class TabbedPanel implements PanelListener {
             // Reset the closed flag
             closed = false;
         }
+    }
+
+    /**
+     * @return the active tab being shown to the user
+     */
+    public Tab getActiveTab() {
+        return tpb.getTabs().get(activeTab);
     }
 
 }

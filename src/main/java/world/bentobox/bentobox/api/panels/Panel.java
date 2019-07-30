@@ -29,7 +29,7 @@ public class Panel implements HeadRequester, InventoryHolder {
     private Map<Integer, PanelItem> items;
     private PanelListener listener;
     private User user;
-    private final String name;
+    private String name;
 
     public Panel(String name, Map<Integer, PanelItem> items, int size, User user, PanelListener listener) {
         this.name = name;
@@ -66,6 +66,9 @@ public class Panel implements HeadRequester, InventoryHolder {
         // If the user is defined, then open panel immediately
         this.user = user;
         if (user != null) this.open(user);
+    }
+
+    public Panel() {
     }
 
     @NonNull

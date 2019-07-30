@@ -15,7 +15,6 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.PluginManager;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,7 +30,6 @@ import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.events.island.FlagSettingChangeEvent;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.panels.Panel;
-import world.bentobox.bentobox.api.panels.PanelItem;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.FlagsManager;
@@ -93,9 +91,6 @@ public class IslandToggleClickTest {
 
         FlagsManager fm = mock(FlagsManager.class);
         when(flag.isSetForWorld(any())).thenReturn(false);
-        PanelItem item = mock(PanelItem.class);
-        when(item.getItem()).thenReturn(mock(ItemStack.class));
-        when(flag.toPanelItem(any(), Mockito.eq(user), Mockito.eq(false))).thenReturn(item);
         when(fm.getFlag(Mockito.anyString())).thenReturn(Optional.of(flag));
         when(plugin.getFlagsManager()).thenReturn(fm);
 
