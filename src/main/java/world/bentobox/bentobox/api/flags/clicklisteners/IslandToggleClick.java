@@ -9,9 +9,11 @@ import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.events.island.FlagSettingChangeEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.panels.Panel;
+import world.bentobox.bentobox.api.panels.TabbedPanel;
 import world.bentobox.bentobox.api.panels.PanelItem.ClickHandler;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.panels.settings.SettingsTab;
 import world.bentobox.bentobox.util.Util;
 
 /**
@@ -33,20 +35,23 @@ public class IslandToggleClick implements ClickHandler {
 
     @Override
     public boolean onClick(Panel panel, User user, ClickType click, int slot) {
-        // Get the world
-        if (!plugin.getIWM().inWorld(user.getLocation())) {
-            user.sendMessage("general.errors.wrong-world");
-            return true;
-        }
-        String reqPerm = plugin.getIWM().getPermissionPrefix(Util.getWorld(user.getWorld())) + "settings." + id;
-        if (!user.hasPermission(reqPerm)) {
+        // This click listener is used with TabbedPanel and SettingsTabs only
+        TabbedPanel tp = (TabbedPanel)panel;
+        SettingsTab st = (SettingsTab)tp.getActiveTab();
+
+        // Permission prefix
+        String prefix = plugin.getIWM().getPermissionPrefix(Util.getWorld(user.getWorld()));
+        String reqPerm = prefix + "settings." + id;
+        String allPerms = prefix + "settings.*";
+        if (!user.hasPermission(reqPerm) && !user.hasPermission(allPerms)
+                && !user.isOp() && !user.hasPermission(prefix + "admin.settings")) {
             user.sendMessage("general.errors.no-permission", TextVariables.PERMISSION, reqPerm);
             user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_METAL_HIT, 1F, 1F);
             return true;
         }
-        // Get the user's island or where they are standing
-        Island island = plugin.getIslands().getIslandAt(user.getLocation()).orElse(plugin.getIslands().getIsland(user.getWorld(), user.getUniqueId()));
-        if (island != null && (user.isOp() || user.getUniqueId().equals(island.getOwner()))) {
+        // Get the island for this tab
+        Island island = st.getIsland();
+        if (island != null && (user.isOp() || user.getUniqueId().equals(island.getOwner()) || user.hasPermission(prefix + "admin.settings"))) {
             plugin.getFlagsManager().getFlag(id).ifPresent(flag -> {
                 if (click.equals(ClickType.SHIFT_LEFT) && user.isOp()) {
                     if (!plugin.getIWM().getHiddenFlags(user.getWorld()).contains(flag.getID())) {

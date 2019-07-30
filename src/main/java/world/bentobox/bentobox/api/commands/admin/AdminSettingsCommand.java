@@ -60,10 +60,8 @@ public class AdminSettingsCommand extends CompositeCommand {
         new TabbedPanelBuilder()
         .user(user)
         .world(getWorld())
-        .tab(1, new SettingsTab(getWorld(), user, island, Flag.Type.PROTECTION))
-        .tab(3, new SettingsTab(getWorld(), user, island, Flag.Type.SETTING))
-        .tab(5, new SettingsTab(getWorld(), user, Flag.Type.WORLD_SETTING))
-        .tab(7, new WorldDefaultSettingsTab(getWorld(), user))
+        .tab(2, new SettingsTab(getWorld(), user, island, Flag.Type.PROTECTION))
+        .tab(6, new SettingsTab(getWorld(), user, island, Flag.Type.SETTING))
         .startingSlot(1)
         .build().openPanel();
         return true;

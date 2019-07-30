@@ -1,6 +1,7 @@
 package world.bentobox.bentobox.api.flags.clicklisteners;
 
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -29,12 +30,13 @@ import org.powermock.reflect.Whitebox;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.events.island.FlagSettingChangeEvent;
 import world.bentobox.bentobox.api.flags.Flag;
-import world.bentobox.bentobox.api.panels.Panel;
+import world.bentobox.bentobox.api.panels.TabbedPanel;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.FlagsManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
+import world.bentobox.bentobox.panels.settings.SettingsTab;
 import world.bentobox.bentobox.util.Util;
 
 @RunWith(PowerMockRunner.class)
@@ -45,7 +47,7 @@ public class IslandToggleClickTest {
     private IslandWorldManager iwm;
     private IslandToggleClick listener;
     @Mock
-    private Panel panel;
+    private TabbedPanel panel;
     @Mock
     private User user;
     @Mock
@@ -57,6 +59,8 @@ public class IslandToggleClickTest {
     private UUID uuid;
     @Mock
     private PluginManager pim;
+    @Mock
+    private SettingsTab settingsTab;
 
     /**
      * @throws java.lang.Exception
@@ -106,14 +110,10 @@ public class IslandToggleClickTest {
         // Event
         PowerMockito.mockStatic(Bukkit.class);
         when(Bukkit.getPluginManager()).thenReturn(pim);
-    }
 
-    @Test
-    public void testOnClickWrongWorld() {
-        when(iwm.inWorld(any(World.class))).thenReturn(false);
-        when(iwm.inWorld(any(Location.class))).thenReturn(false);
-        listener.onClick(panel, user, ClickType.LEFT, 0);
-        verify(user).sendMessage("general.errors.wrong-world");
+        // Active tab
+        when(panel.getActiveTab()).thenReturn(settingsTab);
+        when(settingsTab.getIsland()).thenReturn(island);
     }
 
     @Test
@@ -132,14 +132,15 @@ public class IslandToggleClickTest {
 
     @Test
     public void testOnClickNoIsland() {
-        when(im.getIslandAt(any())).thenReturn(Optional.empty());
-        when(im.getIsland(any(), any(User.class))).thenReturn(null);
+        when(settingsTab.getIsland()).thenReturn(null);
         listener.onClick(panel, user, ClickType.LEFT, 0);
         verify(island, never()).toggleFlag(flag);
     }
 
     @Test
     public void testOnClickNotOwner() {
+        // No permission
+        when(user.hasPermission(anyString())).thenReturn(false);
         // Pick a different UUID from owner
         UUID u = UUID.randomUUID();
         while(u.equals(uuid)) {

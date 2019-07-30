@@ -3,6 +3,7 @@ package world.bentobox.bentobox.api.panels;
 import java.security.InvalidParameterException;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -11,7 +12,6 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.eclipse.jdt.annotation.NonNull;
 
 import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.api.panels.builders.PanelBuilder;
 import world.bentobox.bentobox.api.panels.builders.PanelItemBuilder;
 import world.bentobox.bentobox.api.panels.builders.TabbedPanelBuilder;
 import world.bentobox.bentobox.api.user.User;
@@ -76,31 +76,29 @@ public class TabbedPanel extends Panel implements PanelListener {
         }
         this.activeTab = activeTab;
         this.activePage = page;
-        PanelBuilder panelBuilder = new PanelBuilder().listener(this).size(tpb.getSize());
+        // The items in the panel
+        TreeMap<Integer, PanelItem> items = new TreeMap<>();
         // Get the tab
         Tab tab = tpb.getTabs().get(activeTab);
 
-        // Set title
-        panelBuilder.name(tab.getName());
-
         // Set up the tabbed header
-        setupHeader(panelBuilder);
+        setupHeader(items);
 
         // Show the active tab
         if (tpb.getTabs().containsKey(activeTab)) {
-            List<PanelItem> items = tab.getPanelItems();
-            items.stream().skip(page * 43L).limit(page * 43L + 43L).forEach(panelBuilder::item);
+            List<PanelItem> panelItems = tab.getPanelItems();
+            panelItems.stream().skip(page * 43L).limit(page * 43L + 43L).forEach(i -> items.put(items.lastKey() + 1, i));
             // Add forward and backward icons
             if (page > 0) {
                 // Previous page icon
-                panelBuilder.item(new PanelItemBuilder().icon(Material.ARROW).name(tpb.getUser().getTranslation("previous")).clickHandler((panel, user1, clickType, slot1) -> {
+                items.put(items.lastKey() + 1, new PanelItemBuilder().icon(Material.ARROW).name(tpb.getUser().getTranslation("previous")).clickHandler((panel, user1, clickType, slot1) -> {
                     openPanel(activeTab, page - 1);
                     return true;
                 }).build());
             }
             if ((page + 1) * 44 < items.size()) {
                 // Next page icon
-                panelBuilder.item(new PanelItemBuilder().icon(Material.ARROW).name(tpb.getUser().getTranslation("next")).clickHandler((panel, user1, clickType, slot1) -> {
+                items.put(items.lastKey() + 1, new PanelItemBuilder().icon(Material.ARROW).name(tpb.getUser().getTranslation("next")).clickHandler((panel, user1, clickType, slot1) -> {
                     openPanel(activeTab, page + 1);
                     return true;
                 }).build());
@@ -109,17 +107,17 @@ public class TabbedPanel extends Panel implements PanelListener {
             throw new InvalidParameterException("Unknown tab slot number " + activeTab);
         }
         // Show it to the player
-        panelBuilder.build().open(tpb.getUser());
+        this.makePanel(tab.getName(), items, tpb.getSize(), tpb.getUser(), this);
     }
 
     /**
      * Shows the top row of icons
-     * @param panelBuilder - panel builder
+     * @param items - panel builder
      */
-    private void setupHeader(PanelBuilder panelBuilder) {
+    private void setupHeader(TreeMap<Integer, PanelItem> items) {
         // Set up top
         for (int i = 0; i < 9; i++) {
-            panelBuilder.item(i, new PanelItemBuilder().icon(Material.BLACK_STAINED_GLASS_PANE).name("").build());
+            items.put(i, new PanelItemBuilder().icon(Material.BLACK_STAINED_GLASS_PANE).name("").build());
         }
         // Add icons
         for (Entry<Integer, Tab> tabPanel : tpb.getTabs().entrySet()) {
@@ -127,7 +125,7 @@ public class TabbedPanel extends Panel implements PanelListener {
             tabPanel.getValue().getIcon().setGlow(tabPanel.getKey() == activeTab);
             // Add the icon to the top row
             if (tabPanel.getValue().getPermission().isEmpty() || tpb.getUser().hasPermission(tabPanel.getValue().getPermission()) || tpb.getUser().isOp()) {
-                panelBuilder.item(tabPanel.getKey(), tabPanel.getValue().getIcon());
+                items.put(tabPanel.getKey(), tabPanel.getValue().getIcon());
             }
         }
 

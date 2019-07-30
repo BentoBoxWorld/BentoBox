@@ -37,7 +37,7 @@ import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.events.island.FlagProtectionChangeEvent;
 import world.bentobox.bentobox.api.flags.Flag;
-import world.bentobox.bentobox.api.panels.Panel;
+import world.bentobox.bentobox.api.panels.TabbedPanel;
 import world.bentobox.bentobox.api.user.Notifier;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
@@ -47,6 +47,7 @@ import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.RanksManager;
+import world.bentobox.bentobox.panels.settings.SettingsTab;
 import world.bentobox.bentobox.util.Util;
 
 @RunWith(PowerMockRunner.class)
@@ -69,7 +70,7 @@ public class CycleClickTest {
     @Mock
     private Flag flag;
     @Mock
-    private Panel panel;
+    private TabbedPanel panel;
     @Mock
     private Inventory inv;
     @Mock
@@ -78,6 +79,8 @@ public class CycleClickTest {
     private RanksManager rm;
     @Mock
     private PluginManager pim;
+    @Mock
+    private SettingsTab settingsTab;
 
     /**
      * @throws java.lang.Exception - exception
@@ -192,9 +195,6 @@ public class CycleClickTest {
         when(rm.getRankDownValue(eq(RanksManager.TRUSTED_RANK))).thenReturn(RanksManager.COOP_RANK);
         when(rm.getRankDownValue(eq(RanksManager.COOP_RANK))).thenReturn(RanksManager.VISITOR_RANK);
 
-        // Panel
-        when(panel.getInventory()).thenReturn(inv);
-
         // IslandWorldManager
         when(plugin.getIWM()).thenReturn(iwm);
         when(iwm.inWorld(any(World.class))).thenReturn(true);
@@ -208,15 +208,11 @@ public class CycleClickTest {
         // Event
         when(Bukkit.getPluginManager()).thenReturn(pim);
 
-    }
+        // Active tab
+        when(panel.getActiveTab()).thenReturn(settingsTab);
+        when(settingsTab.getIsland()).thenReturn(island);
 
-    @Test
-    public void testNotInWorld() {
-        when(iwm.inWorld(any(World.class))).thenReturn(false);
-        when(iwm.inWorld(any(Location.class))).thenReturn(false);
-        CycleClick udc = new CycleClick("LOCK");
-        assertTrue(udc.onClick(panel, user, ClickType.LEFT, 5));
-        verify(user).sendMessage(eq("general.errors.wrong-world"));
+
     }
 
     @Test
@@ -312,7 +308,6 @@ public class CycleClickTest {
     @Test
     public void testNotOwner() {
         UUID u = UUID.randomUUID();
-
         when(island.getOwner()).thenReturn(u);
         verify(plugin, Mockito.never()).getRanksManager();
 
