@@ -477,7 +477,7 @@ public class IslandWorldManagerTest {
     @Test
     public void testGetPermissionPrefix() {
         when(ws.getPermissionPrefix()).thenReturn("bsky");
-        assertEquals("bsky", iwm.getPermissionPrefix(world));
+        assertEquals("bsky.", iwm.getPermissionPrefix(world));
     }
 
     /**
