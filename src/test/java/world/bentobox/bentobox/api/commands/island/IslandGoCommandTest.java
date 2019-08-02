@@ -208,7 +208,7 @@ public class IslandGoCommandTest {
         when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
         when(ic.call(any(), any(), any())).thenReturn(true);
         when(island.isReserved()).thenReturn(true);
-        assertTrue(igc.canExecute(user, igc.getLabel(), Collections.emptyList()));
+        assertFalse(igc.canExecute(user, igc.getLabel(), Collections.emptyList()));
         verify(ic).call(any(), any(), any());
     }
 

@@ -37,8 +37,9 @@ public class IslandGoCommand extends DelayedTeleportCommand {
             return false;
         }
         if (island.isReserved()) {
-            // Send player to create and island
-            return getParent().getSubCommand("create").map(createCmd -> createCmd.call(user, createCmd.getLabel(), Collections.emptyList())).orElse(false);
+            // Send player to create an island
+            getParent().getSubCommand("create").ifPresent(createCmd -> createCmd.call(user, createCmd.getLabel(), Collections.emptyList()));
+            return false;
         }
         if ((getIWM().inWorld(user.getWorld()) && Flags.PREVENT_TELEPORT_WHEN_FALLING.isSetForWorld(user.getWorld()))
                 && user.getPlayer().getFallDistance() > 0) {
