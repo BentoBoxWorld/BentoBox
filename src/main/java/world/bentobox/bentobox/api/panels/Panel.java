@@ -18,15 +18,27 @@ import world.bentobox.bentobox.listeners.PanelListenerManager;
 import world.bentobox.bentobox.util.heads.HeadGetter;
 import world.bentobox.bentobox.util.heads.HeadRequester;
 
+/**
+ * A GUI panel that uses the Bukkit inventory API
+ * @author tastybento
+ *
+ */
 public class Panel implements HeadRequester, InventoryHolder {
 
     private Inventory inventory;
     private Map<Integer, PanelItem> items;
     private PanelListener listener;
     private User user;
-    private final String name;
+    private String name;
 
     public Panel(String name, Map<Integer, PanelItem> items, int size, User user, PanelListener listener) {
+        makePanel(name, items, size, user, listener);
+    }
+
+    public Panel() {}
+
+    protected void makePanel(String name, Map<Integer, PanelItem> items, int size, User user,
+            PanelListener listener) {
         this.name = name;
         this.items = items;
         // If size is undefined (0) then use the number of items
@@ -43,7 +55,6 @@ public class Panel implements HeadRequester, InventoryHolder {
             inventory = Bukkit.createInventory(null, size, name);
             // Fill the inventory and return
             for (Map.Entry<Integer, PanelItem> en: items.entrySet()) {
-                //TODO allow multi-paging
                 if (en.getKey() < 54) {
                     inventory.setItem(en.getKey(), en.getValue().getItem());
                     // Get player head async

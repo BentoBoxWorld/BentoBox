@@ -94,6 +94,7 @@ public class OfflineRedstoneListenerTest {
         when(iwm.getWorldSettings(any())).thenReturn(ws);
         Map<String, Boolean> worldFlags = new HashMap<>();
         when(ws.getWorldFlags()).thenReturn(worldFlags);
+        when(iwm.getAddon(any())).thenReturn(Optional.empty());
 
         PowerMockito.mockStatic(Bukkit.class);
     }

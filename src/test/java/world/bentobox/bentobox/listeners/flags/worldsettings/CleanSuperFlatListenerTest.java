@@ -1,13 +1,14 @@
 package world.bentobox.bentobox.listeners.flags.worldsettings;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.anyString;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.anyInt;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
 
 import org.bukkit.Bukkit;
@@ -88,6 +89,7 @@ public class CleanSuperFlatListenerTest {
         when(iwm.isNetherIslands(Mockito.any())).thenReturn(true);
         when(iwm.isEndIslands(Mockito.any())).thenReturn(true);
         when(iwm.isUseOwnGenerator(any())).thenReturn(false);
+        when(iwm.getAddon(any())).thenReturn(Optional.empty());
 
 
         PowerMockito.mockStatic(Bukkit.class);

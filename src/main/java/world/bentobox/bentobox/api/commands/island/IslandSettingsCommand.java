@@ -4,12 +4,15 @@ import java.util.List;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.flags.Flag;
+import world.bentobox.bentobox.api.panels.builders.TabbedPanelBuilder;
 import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.panels.SettingsPanel;
+import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.panels.settings.SettingsTab;
+import world.bentobox.bentobox.panels.settings.WorldDefaultSettingsTab;
 import world.bentobox.bentobox.util.Util;
 
 /**
- * @author Poslovitch
+ * @author tastybento
  */
 public class IslandSettingsCommand extends CompositeCommand {
 
@@ -37,7 +40,16 @@ public class IslandSettingsCommand extends CompositeCommand {
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        SettingsPanel.openPanel(getPlugin(), user, Flag.Type.PROTECTION, getWorld(), 0);
+        Island island = getIslands().getIslandAt(user.getLocation()).orElse(getIslands().getIsland(user.getWorld(), user.getUniqueId()));
+        new TabbedPanelBuilder()
+        .user(user)
+        .world(getWorld())
+        .tab(1, new SettingsTab(getWorld(), user, island, Flag.Type.PROTECTION))
+        .tab(3, new SettingsTab(getWorld(), user, island, Flag.Type.SETTING))
+        .tab(5, new SettingsTab(getWorld(), user, Flag.Type.WORLD_SETTING))
+        .tab(7, new WorldDefaultSettingsTab(getWorld(), user))
+        .startingSlot(1)
+        .build().openPanel();
         return true;
     }
 }

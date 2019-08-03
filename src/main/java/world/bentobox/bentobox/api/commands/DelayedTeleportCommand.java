@@ -123,9 +123,9 @@ public abstract class DelayedTeleportCommand extends CompositeCommand implements
         private final Location location;
 
         /**
-         * @param label - command label
          * @param runnable - runnable to run when confirmed
          * @param task - task ID to cancel when confirmed
+         * @param location - location
          */
         DelayedCommand(Runnable runnable, BukkitTask task, Location location) {
             this.runnable = runnable;

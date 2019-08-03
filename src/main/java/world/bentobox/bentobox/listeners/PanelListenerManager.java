@@ -54,9 +54,12 @@ public class PanelListenerManager implements Listener {
                     // Execute the handler's onClick method and optionally cancel the event if the handler returns true
                     event.setCancelled(handler.onClick(panel, user, event.getClick(), event.getSlot())));
                 }
-                // If there is a listener, then run it.
-                panel.getListener().ifPresent(l -> l.onInventoryClick(user, event));
-
+                // If there is a listener, then run it and refresh the panel
+                panel.getListener().ifPresent(l -> {
+                    l.onInventoryClick(user, event);
+                    // Refresh
+                    l.refreshPanel();
+                });
             } else {
                 // Wrong name - delete this panel
                 openPanels.remove(user.getUniqueId());

@@ -219,6 +219,9 @@ commands:
       no-island-here: "&cThere is no island here."
       confirmation: "&cAre you sure you want to set this island as the spawn for this world?"
       success: "&aSuccessfully set this island as the spawn for this world."
+    settings:
+      parameters: "<player>"
+      description: "open island settings for player"
     blueprint:
       parameters: "<load/copy/paste/pos1/pos2/save>"
       description: "manipulate blueprints"
@@ -1072,6 +1075,11 @@ protection:
     WORLD_SETTING:
       title: "&b[world_name] &6Settings"
       description: "&aSettings for this game world"
+    WORLD_DEFAULTS:
+      title: "&b[world_name] &6World Protections"
+      description: |
+        &aProtection settings when
+        &aplayer is outside their island
     flag-item:
       name-layout: "&a[name]"
       description-layout: |

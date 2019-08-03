@@ -10,9 +10,11 @@ import world.bentobox.bentobox.api.events.island.FlagProtectionChangeEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.panels.Panel;
 import world.bentobox.bentobox.api.panels.PanelItem;
+import world.bentobox.bentobox.api.panels.TabbedPanel;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.RanksManager;
+import world.bentobox.bentobox.panels.settings.SettingsTab;
 import world.bentobox.bentobox.util.Util;
 
 /**
@@ -53,16 +55,19 @@ public class CycleClick implements PanelItem.ClickHandler {
 
     @Override
     public boolean onClick(Panel panel, User user, ClickType click, int slot) {
+        // This click listener is used with TabbedPanel and SettingsTabs only
+        TabbedPanel tp = (TabbedPanel)panel;
+        SettingsTab st = (SettingsTab)tp.getActiveTab();
+        // Get the island for this tab
+        island = st.getIsland();
         this.user = user;
         changeOccurred = false;
-        // Get the world
-        if (!plugin.getIWM().inWorld(user.getLocation())) {
-            user.sendMessage("general.errors.wrong-world");
-            return true;
-        }
-        String reqPerm = plugin.getIWM().getPermissionPrefix(Util.getWorld(user.getWorld())) + "settings." + id;
-        String allPerms = plugin.getIWM().getPermissionPrefix(Util.getWorld(user.getWorld())) + "settings.*";
-        if (!user.hasPermission(reqPerm) && !user.hasPermission(allPerms)) {
+        // Permission prefix
+        String prefix = plugin.getIWM().getPermissionPrefix(Util.getWorld(user.getWorld()));
+        String reqPerm = prefix + "settings." + id;
+        String allPerms = prefix + "settings.*";
+        if (!user.hasPermission(reqPerm) && !user.hasPermission(allPerms)
+                && !user.isOp() && !user.hasPermission(prefix + "admin.settings")) {
             user.sendMessage("general.errors.no-permission", TextVariables.PERMISSION, reqPerm);
             user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_METAL_HIT, 1F, 1F);
             return true;
@@ -70,15 +75,10 @@ public class CycleClick implements PanelItem.ClickHandler {
         // Left clicking increases the rank required
         // Right clicking decreases the rank required
         // Shift Left Click toggles player visibility
-        // Get the user's island
-        island = plugin.getIslands().getIslandAt(user.getLocation()).orElse(plugin.getIslands().getIsland(user.getWorld(), user.getUniqueId()));
-        if (island != null && (user.isOp() || user.getUniqueId().equals(island.getOwner()))) {
+        if (island != null && (user.isOp() || user.getUniqueId().equals(island.getOwner()) || user.hasPermission(prefix + "admin.settings"))) {
             changeOccurred = true;
             RanksManager rm = plugin.getRanksManager();
             plugin.getFlagsManager().getFlag(id).ifPresent(flag -> {
-
-                // Flag visibility
-                boolean invisible = false;
                 // Rank
                 int currentRank = island.getFlag(flag);
                 if (click.equals(ClickType.LEFT)) {
@@ -101,7 +101,6 @@ public class CycleClick implements PanelItem.ClickHandler {
                     Bukkit.getPluginManager().callEvent(new FlagProtectionChangeEvent(island, user.getUniqueId(), flag, island.getFlag(flag)));
                 } else if (click.equals(ClickType.SHIFT_LEFT) && user.isOp()) {
                     if (!plugin.getIWM().getHiddenFlags(user.getWorld()).contains(flag.getID())) {
-                        invisible = true;
                         plugin.getIWM().getHiddenFlags(user.getWorld()).add(flag.getID());
                         user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_GLASS_BREAK, 1F, 1F);
                     } else {
@@ -109,9 +108,8 @@ public class CycleClick implements PanelItem.ClickHandler {
                         user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1F, 1F);
                     }
                     // Save changes
-                    plugin.getIWM().getAddon(user.getWorld()).ifPresent(GameModeAddon::saveWorldSettings);                                    }
-                // Apply change to panel
-                panel.getInventory().setItem(slot, flag.toPanelItem(plugin, user, invisible).getItem());
+                    plugin.getIWM().getAddon(user.getWorld()).ifPresent(GameModeAddon::saveWorldSettings);
+                }
             });
         } else {
             // Player is not the owner of the island.

@@ -2,8 +2,8 @@ package world.bentobox.bentobox.api.flags.clicklisteners;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 
@@ -13,7 +13,6 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.PluginManager;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,7 +29,6 @@ import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.events.island.FlagWorldSettingChangeEvent;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.panels.Panel;
-import world.bentobox.bentobox.api.panels.PanelItem;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.managers.FlagsManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
@@ -90,9 +88,6 @@ public class WorldToggleClickTest {
         flag = mock(Flag.class);
         when(flag.isSetForWorld(Mockito.any())).thenReturn(false);
 
-        PanelItem item = mock(PanelItem.class);
-        when(item.getItem()).thenReturn(mock(ItemStack.class));
-        when(flag.toPanelItem(Mockito.any(), Mockito.eq(user), Mockito.eq(false))).thenReturn(item);
         when(fm.getFlag(Mockito.anyString())).thenReturn(Optional.of(flag));
         when(plugin.getFlagsManager()).thenReturn(fm);
 
@@ -123,7 +118,6 @@ public class WorldToggleClickTest {
         when(user.hasPermission(Mockito.anyString())).thenReturn(true);
         listener.onClick(panel, user, ClickType.LEFT, 0);
         verify(flag).setSetting(Mockito.any(), Mockito.eq(true));
-        verify(panel).getInventory();
         verify(addon).saveWorldSettings();
         verify(pim).callEvent(any(FlagWorldSettingChangeEvent.class));
     }
