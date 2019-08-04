@@ -120,7 +120,7 @@ public class AdminTeleportCommandTest {
 
             @Override
             public String answer(InvocationOnMock invocation) throws Throwable {
-                return invocation.getArgumentAt(0, String.class);
+                return invocation.getArgument(0, String.class);
             }});
 
         // Island location

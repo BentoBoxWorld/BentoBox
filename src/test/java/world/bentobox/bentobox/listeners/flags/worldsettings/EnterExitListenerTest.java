@@ -1,8 +1,12 @@
 package world.bentobox.bentobox.listeners.flags.worldsettings;
 
-import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.times;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,7 +24,6 @@ import org.bukkit.util.Vector;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -123,7 +126,7 @@ public class EnterExitListenerTest {
         when(island.getProtectionRange()).thenReturn(PROTECTION_RANGE);
         when(island.getOwner()).thenReturn(uuid);
 
-        when(im.getIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(island);
+        when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
 
         // Common from to's
         outside = mock(Location.class);
@@ -148,9 +151,9 @@ public class EnterExitListenerTest {
         when(inside.toVector()).thenReturn(new Vector(X + PROTECTION_RANGE -2, Y, Z));
 
         Optional<Island> opIsland = Optional.ofNullable(island);
-        when(im.getProtectedIslandAt(Mockito.eq(inside))).thenReturn(opIsland);
-        when(im.getProtectedIslandAt(Mockito.eq(inside2))).thenReturn(opIsland);
-        when(im.getProtectedIslandAt(Mockito.eq(outside))).thenReturn(Optional.empty());
+        when(im.getProtectedIslandAt(eq(inside))).thenReturn(opIsland);
+        when(im.getProtectedIslandAt(eq(inside2))).thenReturn(opIsland);
+        when(im.getProtectedIslandAt(eq(outside))).thenReturn(Optional.empty());
 
         // Island World Manager
         IslandWorldManager iwm = mock(IslandWorldManager.class);
@@ -160,23 +163,23 @@ public class EnterExitListenerTest {
 
         // Player's manager
         PlayersManager pm = mock(PlayersManager.class);
-        when(pm.getName(Mockito.any())).thenReturn("tastybento");
+        when(pm.getName(any())).thenReturn("tastybento");
         when(plugin.getPlayers()).thenReturn(pm);
 
         // Listener
         listener = new EnterExitListener();
 
         PowerMockito.mockStatic(Util.class);
-        when(Util.getWorld(Mockito.any())).thenReturn(world);
+        when(Util.getWorld(any())).thenReturn(world);
 
         // World Settings
         WorldSettings ws = mock(WorldSettings.class);
-        when(iwm.getWorldSettings(Mockito.any())).thenReturn(ws);
+        when(iwm.getWorldSettings(any())).thenReturn(ws);
         Map<String, Boolean> worldFlags = new HashMap<>();
         when(ws.getWorldFlags()).thenReturn(worldFlags);
 
         // Addon
-        when(iwm.getAddon(Mockito.any())).thenReturn(Optional.empty());
+        when(iwm.getAddon(any())).thenReturn(Optional.empty());
 
         // Flags
         Flags.ENTER_EXIT_MESSAGES.setSetting(world, true);
@@ -190,7 +193,7 @@ public class EnterExitListenerTest {
         PlayerMoveEvent e = new PlayerMoveEvent(user.getPlayer(), inside, inside);
         listener.onMove(e);
         // Moving in the island should result in no messages to the user
-        Mockito.verify(user, Mockito.never()).sendMessage(Mockito.anyVararg());
+        verify(user, never()).sendMessage(any());
     }
 
     /**
@@ -201,7 +204,7 @@ public class EnterExitListenerTest {
         PlayerMoveEvent e = new PlayerMoveEvent(user.getPlayer(), outside, outside);
         listener.onMove(e);
         // Moving outside the island should result in no messages to the user
-        Mockito.verify(user, Mockito.never()).sendMessage(Mockito.anyVararg());
+        verify(user, never()).sendMessage(any());
     }
 
     /**
@@ -213,9 +216,9 @@ public class EnterExitListenerTest {
         PlayerMoveEvent e = new PlayerMoveEvent(user.getPlayer(), outside, inside);
         listener.onMove(e);
         // Moving into the island should show a message
-        Mockito.verify(lm).get(Mockito.any(), Mockito.eq("protection.flags.ENTER_EXIT_MESSAGES.now-entering"));
+        verify(lm).get(any(), eq("protection.flags.ENTER_EXIT_MESSAGES.now-entering"));
         // The island owner needs to be checked
-        Mockito.verify(island).getOwner();
+        verify(island).getOwner();
     }
 
     /**
@@ -227,10 +230,10 @@ public class EnterExitListenerTest {
         PlayerMoveEvent e = new PlayerMoveEvent(user.getPlayer(), outside, inside);
         listener.onMove(e);
         // Moving into the island should show a message
-        Mockito.verify(lm).get(Mockito.any(), Mockito.eq("protection.flags.ENTER_EXIT_MESSAGES.now-entering"));
+        verify(lm).get(any(), eq("protection.flags.ENTER_EXIT_MESSAGES.now-entering"));
         // No owner check
-        Mockito.verify(island).getOwner();
-        Mockito.verify(island, Mockito.times(2)).getName();
+        verify(island).getOwner();
+        verify(island, times(2)).getName();
     }
 
     /**
@@ -242,9 +245,9 @@ public class EnterExitListenerTest {
         PlayerMoveEvent e = new PlayerMoveEvent(user.getPlayer(), inside, outside);
         listener.onMove(e);
         // Moving into the island should show a message
-        Mockito.verify(lm).get(Mockito.any(), Mockito.eq("protection.flags.ENTER_EXIT_MESSAGES.now-leaving"));
+        verify(lm).get(any(), eq("protection.flags.ENTER_EXIT_MESSAGES.now-leaving"));
         // The island owner needs to be checked
-        Mockito.verify(island).getOwner();
+        verify(island).getOwner();
     }
 
     /**
@@ -256,10 +259,10 @@ public class EnterExitListenerTest {
         PlayerMoveEvent e = new PlayerMoveEvent(user.getPlayer(), inside, outside);
         listener.onMove(e);
         // Moving into the island should show a message
-        Mockito.verify(lm).get(Mockito.any(), Mockito.eq("protection.flags.ENTER_EXIT_MESSAGES.now-leaving"));
+        verify(lm).get(any(), eq("protection.flags.ENTER_EXIT_MESSAGES.now-leaving"));
         // No owner check
-        Mockito.verify(island).getOwner();
-        Mockito.verify(island, Mockito.times(2)).getName();
+        verify(island).getOwner();
+        verify(island, times(2)).getName();
     }
 
     /**
@@ -274,6 +277,6 @@ public class EnterExitListenerTest {
         PlayerMoveEvent e = new PlayerMoveEvent(user.getPlayer(), inside, outside);
         listener.onMove(e);
         // No messages should be sent
-        Mockito.verify(user, Mockito.never()).sendMessage(Mockito.anyVararg());
+        verify(user, never()).sendMessage(any());
     }
 }

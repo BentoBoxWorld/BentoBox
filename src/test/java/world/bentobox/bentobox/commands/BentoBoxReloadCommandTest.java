@@ -98,7 +98,7 @@ public class BentoBoxReloadCommandTest {
         when(Bukkit.getScheduler()).thenReturn(sch);
 
         // User
-        when(user.getTranslation(Mockito.anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgumentAt(0, String.class));
+        when(user.getTranslation(Mockito.anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
 
         // Panels
         PowerMockito.mockStatic(PanelListenerManager.class);

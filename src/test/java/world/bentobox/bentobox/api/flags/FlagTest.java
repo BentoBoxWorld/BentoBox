@@ -76,7 +76,7 @@ public class FlagTest {
 
         PowerMockito.mockStatic(Util.class);
         // Return world
-        when(Util.getWorld(Mockito.any())).thenAnswer((Answer<World>) invocation -> invocation.getArgumentAt(0, World.class));
+        when(Util.getWorld(Mockito.any())).thenAnswer((Answer<World>) invocation -> invocation.getArgument(0, World.class));
 
         // World Settings
         IslandWorldManager iwm = mock(IslandWorldManager.class);
@@ -366,7 +366,7 @@ public class FlagTest {
         PanelItem pi = f.toPanelItem(plugin, user, island, false);
 
         verify(user).getTranslation(Mockito.eq("protection.flags.flagID.name"));
-        verify(user).getTranslation(Mockito.eq("protection.panel.flag-item.name-layout"), Mockito.anyVararg());
+        verify(user).getTranslation(Mockito.eq("protection.panel.flag-item.name-layout"), any());
 
         assertEquals(Material.ACACIA_PLANKS, pi.getItem().getType());
 

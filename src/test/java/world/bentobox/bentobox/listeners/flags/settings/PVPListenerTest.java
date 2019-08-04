@@ -171,7 +171,7 @@ public class PVPListenerTest {
         // Locales - this returns the string that was requested for translation
         LocalesManager lm = mock(LocalesManager.class);
         when(plugin.getLocalesManager()).thenReturn(lm);
-        Answer<String> answer = (Answer<String>) invocation -> invocation.getArgumentAt(1, String.class);
+        Answer<String> answer = (Answer<String>) invocation -> invocation.getArgument(1, String.class);
         when(lm.get(any(), any())).thenAnswer(answer);
 
         // Placeholders

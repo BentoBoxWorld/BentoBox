@@ -101,7 +101,7 @@ public class AdminRangeCommandTest {
 
         // Locales
         LocalesManager lm = mock(LocalesManager.class);
-        Answer<String> answer = invocation -> invocation.getArgumentAt(1, String.class);
+        Answer<String> answer = invocation -> invocation.getArgument(1, String.class);
         when(lm.get(Mockito.any(), Mockito.any())).thenAnswer(answer );
         when(plugin.getLocalesManager()).thenReturn(lm);
 

@@ -78,7 +78,7 @@ public class IslandSethomeCommandTest {
         when(user.getPlayer()).thenReturn(player);
         when(user.getName()).thenReturn("tastybento");
         when(user.getWorld()).thenReturn(mock(World.class));
-        when(user.getTranslation(Mockito.anyString())).thenAnswer(i -> i.getArgumentAt(0, String.class));
+        when(user.getTranslation(Mockito.anyString())).thenAnswer(i -> i.getArgument(0, String.class));
 
         // Parent command has no aliases
         ic = mock(CompositeCommand.class);

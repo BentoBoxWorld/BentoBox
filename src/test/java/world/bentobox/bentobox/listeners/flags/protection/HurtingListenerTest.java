@@ -143,7 +143,7 @@ public class HurtingListenerTest {
         // Locales
         lm = mock(LocalesManager.class);
         when(plugin.getLocalesManager()).thenReturn(lm);
-        Answer<String> answer = invocation -> invocation.getArgumentAt(1, String.class);
+        Answer<String> answer = invocation -> invocation.getArgument(1, String.class);
         when(lm.get(Mockito.any(), Mockito.any())).thenAnswer(answer);
 
         // Placeholders

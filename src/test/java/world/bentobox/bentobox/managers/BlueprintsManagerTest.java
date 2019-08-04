@@ -240,7 +240,7 @@ public class BlueprintsManagerTest {
 
             @Override
             public BukkitTask answer(InvocationOnMock invocation) throws Throwable {
-                invocation.getArgumentAt(1,Runnable.class).run();
+                invocation.getArgument(1,Runnable.class).run();
                 verify(plugin).logError(eq("There is no blueprint folder for addon name"));
                 verify(plugin).logError(eq("No blueprint bundles found! Creating a default one."));
                 File blueprints = new File(dataFolder, BlueprintsManager.FOLDER_NAME);
@@ -263,7 +263,7 @@ public class BlueprintsManagerTest {
 
             @Override
             public BukkitTask answer(InvocationOnMock invocation) throws Throwable {
-                invocation.getArgumentAt(1,Runnable.class).run();
+                invocation.getArgument(1,Runnable.class).run();
                 verify(plugin).logError(eq("No blueprint bundles found! Creating a default one."));
                 return task;
             }});
@@ -304,7 +304,7 @@ public class BlueprintsManagerTest {
 
             @Override
             public BukkitTask answer(InvocationOnMock invocation) throws Throwable {
-                invocation.getArgumentAt(1,Runnable.class).run();
+                invocation.getArgument(1,Runnable.class).run();
                 return task;
             }});
         BlueprintsManager bpm = new BlueprintsManager(plugin);
@@ -361,7 +361,7 @@ public class BlueprintsManagerTest {
 
             @Override
             public BukkitTask answer(InvocationOnMock invocation) throws Throwable {
-                invocation.getArgumentAt(1,Runnable.class).run();
+                invocation.getArgument(1,Runnable.class).run();
                 File d = new File(blueprints, "bundle.json");
                 assertTrue(d.exists());
                 return task;
@@ -405,7 +405,7 @@ public class BlueprintsManagerTest {
 
             @Override
             public BukkitTask answer(InvocationOnMock invocation) throws Throwable {
-                invocation.getArgumentAt(1,Runnable.class).run();
+                invocation.getArgument(1,Runnable.class).run();
                 // Verify
                 times++;
                 if (times > 2) {
@@ -627,7 +627,7 @@ public class BlueprintsManagerTest {
 
             @Override
             public BukkitTask answer(InvocationOnMock invocation) throws Throwable {
-                invocation.getArgumentAt(1,Runnable.class).run();
+                invocation.getArgument(1,Runnable.class).run();
 
                 // Verify
                 assertFalse(d.exists());

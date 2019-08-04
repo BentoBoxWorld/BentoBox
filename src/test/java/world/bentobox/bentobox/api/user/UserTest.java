@@ -113,7 +113,7 @@ public class UserTest {
         PlaceholdersManager placeholdersManager = mock(PlaceholdersManager.class);
         when(plugin.getPlaceholdersManager()).thenReturn(placeholdersManager);
         // This will just return the value of the second argument of replacePlaceholders. i.e., it won't change anything
-        when(placeholdersManager.replacePlaceholders(any(), any())).thenAnswer((Answer<String>) invocation -> invocation.getArgumentAt(1, String.class));
+        when(placeholdersManager.replacePlaceholders(any(), any())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
 
     }
 

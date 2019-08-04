@@ -161,11 +161,11 @@ public class IslandGoCommandTest {
 
         // Locales
         LocalesManager lm = mock(LocalesManager.class);
-        when(lm.get(Mockito.any(), Mockito.any())).thenAnswer((Answer<String>) invocation -> invocation.getArgumentAt(1, String.class));
+        when(lm.get(Mockito.any(), Mockito.any())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
         when(plugin.getLocalesManager()).thenReturn(lm);
         // Return the same string
         PlaceholdersManager phm = mock(PlaceholdersManager.class);
-        when(phm.replacePlaceholders(any(), anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgumentAt(1, String.class));
+        when(phm.replacePlaceholders(any(), anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
         when(plugin.getPlaceholdersManager()).thenReturn(phm);
 
         // Notifier

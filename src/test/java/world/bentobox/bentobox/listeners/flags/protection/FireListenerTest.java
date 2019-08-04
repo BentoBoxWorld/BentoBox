@@ -2,7 +2,7 @@ package world.bentobox.bentobox.listeners.flags.protection;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -30,7 +30,6 @@ import org.bukkit.plugin.PluginManager;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
@@ -150,7 +149,7 @@ public class FireListenerTest {
         IslandsManager im = mock(IslandsManager.class);
         when(plugin.getIslands()).thenReturn(im);
         Island island = mock(Island.class);
-        when(im.getIslandAt(Matchers.any())).thenReturn(Optional.of(island));
+        when(im.getIslandAt(any())).thenReturn(Optional.of(island));
 
         // Block on fire
         Block block = mock(Block.class);
@@ -178,7 +177,7 @@ public class FireListenerTest {
         assertFalse(listener.checkFire(e, location, Flags.FLINT_AND_STEEL));
 
         // Check with no island
-        when(im.getIslandAt(Matchers.any())).thenReturn(Optional.empty());
+        when(im.getIslandAt(any())).thenReturn(Optional.empty());
         // Fire is not allowed, so should be cancelled
         Flags.FLINT_AND_STEEL.setDefaultSetting(false);
         assertTrue(listener.checkFire(e, location, Flags.FLINT_AND_STEEL));
@@ -193,7 +192,7 @@ public class FireListenerTest {
         IslandsManager im = mock(IslandsManager.class);
         when(plugin.getIslands()).thenReturn(im);
         Island island = mock(Island.class);
-        when(im.getIslandAt(Matchers.any())).thenReturn(Optional.of(island));
+        when(im.getIslandAt(any())).thenReturn(Optional.of(island));
 
         // Block on fire
         Block block = mock(Block.class);
@@ -222,7 +221,7 @@ public class FireListenerTest {
 
         // Check with no island
         e = new BlockBurnEvent(block, block);
-        when(im.getIslandAt(Matchers.any())).thenReturn(Optional.empty());
+        when(im.getIslandAt(any())).thenReturn(Optional.empty());
         // Fire is not allowed, so should be cancelled
         Flags.FIRE_BURNING.setDefaultSetting(false);
         listener.onBlockBurn(e);
@@ -238,7 +237,7 @@ public class FireListenerTest {
         IslandsManager im = mock(IslandsManager.class);
         when(plugin.getIslands()).thenReturn(im);
         Island island = mock(Island.class);
-        when(im.getIslandAt(Matchers.any())).thenReturn(Optional.of(island));
+        when(im.getIslandAt(any())).thenReturn(Optional.of(island));
 
         // Block on fire spread
 
@@ -271,7 +270,7 @@ public class FireListenerTest {
         assertFalse(listener.onBlockSpread(e));
 
         // Check with no island
-        when(im.getIslandAt(Matchers.any())).thenReturn(Optional.empty());
+        when(im.getIslandAt(any())).thenReturn(Optional.empty());
         // Fire spread is not allowed, so should be cancelled
         Flags.FIRE_SPREAD.setDefaultSetting(false);
         assertTrue(listener.onBlockSpread(e));
@@ -286,7 +285,7 @@ public class FireListenerTest {
         IslandsManager im = mock(IslandsManager.class);
         when(plugin.getIslands()).thenReturn(im);
         Island island = mock(Island.class);
-        when(im.getIslandAt(Matchers.any())).thenReturn(Optional.of(island));
+        when(im.getIslandAt(any())).thenReturn(Optional.of(island));
 
         // Block on fire spread
 
@@ -323,7 +322,7 @@ public class FireListenerTest {
         assertFalse(listener.onBlockIgnite(e));
 
         // Check with no island
-        when(im.getIslandAt(Matchers.any())).thenReturn(Optional.empty());
+        when(im.getIslandAt(any())).thenReturn(Optional.empty());
         // Fire spread is not allowed, so should be cancelled
         Flags.FIRE_IGNITE.setDefaultSetting(false);
         assertTrue(listener.onBlockIgnite(e));

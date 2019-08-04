@@ -47,7 +47,7 @@ public class ItemParserTest {
          */
         bannerMeta = mock(BannerMeta.class);
         when(itemFactory.getItemMeta(Mockito.any())).thenAnswer((Answer<ItemMeta>) invocation -> {
-            switch (invocation.getArgumentAt(0, Material.class)) {
+            switch (invocation.getArgument(0, Material.class)) {
             case RED_BANNER:
             case WHITE_BANNER:
                 return bannerMeta;

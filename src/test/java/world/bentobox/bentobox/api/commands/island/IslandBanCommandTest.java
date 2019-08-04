@@ -146,10 +146,10 @@ public class IslandBanCommandTest {
 
         // Locales
         LocalesManager lm = mock(LocalesManager.class);
-        when(lm.get(Mockito.any(), Mockito.any())).thenAnswer(invocation -> invocation.getArgumentAt(1, String.class));
+        when(lm.get(Mockito.any(), Mockito.any())).thenAnswer(invocation -> invocation.getArgument(1, String.class));
         when(plugin.getLocalesManager()).thenReturn(lm);
         PlaceholdersManager phm = mock(PlaceholdersManager.class);
-        when(phm.replacePlaceholders(any(), any())).thenAnswer(invocation -> invocation.getArgumentAt(1, String.class));
+        when(phm.replacePlaceholders(any(), any())).thenAnswer(invocation -> invocation.getArgument(1, String.class));
         // Placeholder manager
         when(plugin.getPlaceholdersManager()).thenReturn(phm);
 
@@ -348,9 +348,9 @@ public class IslandBanCommandTest {
             onlinePlayers.add(p);
         }
 
-        when(island.isBanned(any(UUID.class))).thenAnswer((Answer<Boolean>) invocation -> banned.contains(invocation.getArgumentAt(0, UUID.class)));
+        when(island.isBanned(any(UUID.class))).thenAnswer((Answer<Boolean>) invocation -> banned.contains(invocation.getArgument(0, UUID.class)));
         // Create the names
-        when(pm.getName(any(UUID.class))).then((Answer<String>) invocation -> online.getOrDefault(invocation.getArgumentAt(0, UUID.class), "tastybento"));
+        when(pm.getName(any(UUID.class))).then((Answer<String>) invocation -> online.getOrDefault(invocation.getArgument(0, UUID.class), "tastybento"));
 
         // Return a set of online players
         PowerMockito.mockStatic(Bukkit.class);
@@ -362,7 +362,7 @@ public class IslandBanCommandTest {
         Player player = mock(Player.class);
         // Player can see every other player except Ian
         when(player.canSee(any(Player.class))).thenAnswer((Answer<Boolean>) invocation -> {
-            Player p = invocation.getArgumentAt(0, Player.class);
+            Player p = invocation.getArgument(0, Player.class);
             return !p.getName().equals("ian");
         });
         when(user.getPlayer()).thenReturn(player);

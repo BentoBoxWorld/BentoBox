@@ -155,7 +155,7 @@ public class IslandBanlistCommandTest {
         }
         when(island.getBanned()).thenReturn(banned);
         // Respond to name queries
-        when(pm.getName(Mockito.any(UUID.class))).then((Answer<String>) invocation -> uuidToName.getOrDefault(invocation.getArgumentAt(0, UUID.class), "tastybento"));
+        when(pm.getName(Mockito.any(UUID.class))).then((Answer<String>) invocation -> uuidToName.getOrDefault(invocation.getArgument(0, UUID.class), "tastybento"));
         assertTrue(iubc.execute(user, iubc.getLabel(), new ArrayList<>()));
         Mockito.verify(user).sendMessage("commands.island.banlist.the-following");
     }

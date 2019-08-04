@@ -2,9 +2,12 @@ package world.bentobox.bentobox.listeners.flags.worldsettings;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.verify;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -82,24 +85,24 @@ public class EnderChestListenerTest {
 
         IslandsManager im = mock(IslandsManager.class);
         when(plugin.getIslands()).thenReturn(im);
-        when(im.getIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(island);
+        when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
 
         Location inside = mock(Location.class);
         when(inside.getWorld()).thenReturn(world);
 
         Optional<Island> opIsland = Optional.ofNullable(island);
-        when(im.getProtectedIslandAt(Mockito.eq(inside))).thenReturn(opIsland);
+        when(im.getProtectedIslandAt(eq(inside))).thenReturn(opIsland);
         // On island
-        when(im.locationIsOnIsland(Mockito.any(), Mockito.any())).thenReturn(true);
+        when(im.locationIsOnIsland(any(), any())).thenReturn(true);
 
         PowerMockito.mockStatic(Util.class);
-        when(Util.getWorld(Mockito.any())).thenReturn(world);
+        when(Util.getWorld(any())).thenReturn(world);
 
         // World Settings
         iwm = mock(IslandWorldManager.class);
         when(plugin.getIWM()).thenReturn(iwm);
         WorldSettings ws = mock(WorldSettings.class);
-        when(iwm.getWorldSettings(Mockito.any())).thenReturn(ws);
+        when(iwm.getWorldSettings(any())).thenReturn(ws);
         Map<String, Boolean> worldFlags = new HashMap<>();
         when(ws.getWorldFlags()).thenReturn(worldFlags);
         // By default everything is in world
@@ -116,7 +119,7 @@ public class EnderChestListenerTest {
         when(player.getUniqueId()).thenReturn(uuid);
         when(player.isOp()).thenReturn(false);
         // No special perms
-        when(player.hasPermission(Mockito.anyString())).thenReturn(false);
+        when(player.hasPermission(anyString())).thenReturn(false);
         when(player.getWorld()).thenReturn(world);
         User.setPlugin(plugin);
         User.getInstance(player);
@@ -124,7 +127,7 @@ public class EnderChestListenerTest {
         // Locales - this returns the string that was requested for translation
         LocalesManager lm = mock(LocalesManager.class);
         when(plugin.getLocalesManager()).thenReturn(lm);
-        Answer<String> answer = invocation -> invocation.getArgumentAt(1, String.class);
+        Answer<String> answer = invocation -> invocation.getArgument(1, String.class);
         when(lm.get(any(), any())).thenAnswer(answer);
 
         // Placeholders
@@ -144,7 +147,7 @@ public class EnderChestListenerTest {
         when(clickedBlock.getLocation()).thenReturn(inside);
         when(clickedBlock.getType()).thenReturn(Material.ENDER_CHEST);
         // Addon
-        when(iwm.getAddon(Mockito.any())).thenReturn(Optional.empty());
+        when(iwm.getAddon(any())).thenReturn(Optional.empty());
 
         Settings settings = mock(Settings.class);
         // Fake players
@@ -192,7 +195,7 @@ public class EnderChestListenerTest {
         BlockFace clickedBlockFace = BlockFace.EAST;
         PlayerInteractEvent e = new PlayerInteractEvent(player, action, item, clickedBlock, clickedBlockFace);
         // Has bypass perm
-        when(player.hasPermission(Mockito.anyString())).thenReturn(true);
+        when(player.hasPermission(anyString())).thenReturn(true);
         new BlockInteractionListener().onPlayerInteract(e);
         assertFalse(e.isCancelled());
     }
@@ -206,7 +209,7 @@ public class EnderChestListenerTest {
         BlockInteractionListener bil = new BlockInteractionListener();
         bil.onPlayerInteract(e);
         assertFalse(e.isCancelled());
-        Mockito.verify(notifier, Mockito.never()).notify(Mockito.anyObject(), Mockito.anyString());
+        verify(notifier, Mockito.never()).notify(any(), anyString());
     }
 
     @Test
@@ -217,7 +220,7 @@ public class EnderChestListenerTest {
         Flags.ENDER_CHEST.setSetting(world, false);
         new BlockInteractionListener().onPlayerInteract(e);
         assertTrue(e.isCancelled());
-        Mockito.verify(notifier).notify(Mockito.any(User.class), Mockito.eq("protection.world-protected"));
+        verify(notifier).notify(any(User.class), eq("protection.world-protected"));
     }
 
     @Test

@@ -107,7 +107,7 @@ public class AdminSetspawnCommandTest {
         when(lm.get(Mockito.any(), Mockito.any())).thenReturn("mock translation");
         when(plugin.getLocalesManager()).thenReturn(lm);
         // Return the reference (USE THIS IN THE FUTURE)
-        when(user.getTranslation(Mockito.anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgumentAt(0, String.class));
+        when(user.getTranslation(Mockito.anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
 
         // Plugin Manager
         Server server = mock(Server.class);

@@ -1,6 +1,3 @@
-/**
- *
- */
 package world.bentobox.bentobox.api.commands.island;
 
 import static org.junit.Assert.assertEquals;
@@ -8,6 +5,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.verify;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -73,8 +73,8 @@ public class CustomIslandMultiHomeHelpTest {
         UUID uuid = UUID.randomUUID();
         when(user.getUniqueId()).thenReturn(uuid);
         when(user.getPlayer()).thenReturn(player);
-        when(user.hasPermission(Mockito.anyString())).thenReturn(true);
-        when(user.getTranslation(Mockito.anyVararg())).thenAnswer((Answer<String>) invocation -> invocation.getArgumentAt(0, String.class));
+        when(user.hasPermission(anyString())).thenReturn(true);
+        when(user.getTranslation(any())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
         User.setPlugin(plugin);
         // Set up user already
         User.getInstance(player);
@@ -90,10 +90,10 @@ public class CustomIslandMultiHomeHelpTest {
 
         // No island for player to begin with (set it later in the tests)
         IslandsManager im = mock(IslandsManager.class);
-        when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
-        when(im.isOwner(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
+        when(im.hasIsland(any(), Mockito.eq(uuid))).thenReturn(false);
+        when(im.isOwner(any(), Mockito.eq(uuid))).thenReturn(false);
         // Has team
-        when(im.inTeam(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
+        when(im.inTeam(any(), Mockito.eq(uuid))).thenReturn(true);
         when(plugin.getIslands()).thenReturn(im);
 
 
@@ -107,7 +107,7 @@ public class CustomIslandMultiHomeHelpTest {
 
         // IWM friendly name
         IslandWorldManager iwm = mock(IslandWorldManager.class);
-        when(iwm.getFriendlyName(Mockito.any())).thenReturn("BSkyBlock");
+        when(iwm.getFriendlyName(any())).thenReturn("BSkyBlock");
         when(plugin.getIWM()).thenReturn(iwm);
 
         // Command
@@ -166,7 +166,7 @@ public class CustomIslandMultiHomeHelpTest {
     @Test
     public void testExecuteUserStringListOfString() {
         assertTrue(ch.execute(user, "", Collections.emptyList()));
-        Mockito.verify(user).sendMessage(
+        verify(user).sendMessage(
                 "commands.help.syntax",
                 "[usage]",
                 "",
@@ -184,7 +184,7 @@ public class CustomIslandMultiHomeHelpTest {
     public void testExecuteUserStringListOfStringMaxHomes() {
         when(user.getPermissionValue(Mockito.anyString(), Mockito.anyInt())).thenReturn(20);
         assertTrue(ch.execute(user, "", Collections.emptyList()));
-        Mockito.verify(user).sendMessage(
+        verify(user).sendMessage(
                 "commands.help.syntax",
                 "[usage]",
                 "",
