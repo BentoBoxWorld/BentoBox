@@ -3,8 +3,9 @@ package world.bentobox.bentobox.listeners.flags.worldsettings;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -21,9 +22,9 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.event.world.StructureGrowEvent;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -46,20 +47,32 @@ import world.bentobox.bentobox.managers.IslandsManager;
 public class TreesGrowingOutsideRangeListenerTest {
 
     /* IslandWorldManager */
+    @Mock
     private IslandWorldManager iwm;
 
     /* Event */
     private StructureGrowEvent event;
 
     /* Block */
+    @Mock
     private Block sapling;
     private List<BlockState> blockStates;
 
     /* World */
+    @Mock
     private World world;
 
     /* Islands */
+    @Mock
     private IslandsManager islandsManager;
+
+    @Mock
+    private Island island;
+
+    @Mock
+    private BlockState firstBlock;
+    @Mock
+    private BlockState lastBlock;
 
     @Before
     public void setUp() throws Exception {
@@ -68,7 +81,6 @@ public class TreesGrowingOutsideRangeListenerTest {
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
 
         /* Blocks */
-        sapling = mock(Block.class);
         when(sapling.getType()).thenReturn(Material.OAK_SAPLING);
         when(sapling.getLocation()).thenReturn(new Location(world, 2, 0, 2));
 
@@ -78,16 +90,13 @@ public class TreesGrowingOutsideRangeListenerTest {
         /* Event */
         event = new StructureGrowEvent(sapling.getLocation(), TreeType.TREE, false, null, blockStates);
 
-        /* World */
-        world = mock(World.class);
-
         /* Island World Manager */
-        iwm = mock(IslandWorldManager.class);
         when(plugin.getIWM()).thenReturn(iwm);
+
 
         // WorldSettings and World Flags
         WorldSettings ws = mock(WorldSettings.class);
-        when(iwm.getWorldSettings(Mockito.any())).thenReturn(ws);
+        when(iwm.getWorldSettings(any())).thenReturn(ws);
         Map<String, Boolean> worldFlags = new HashMap<>();
         when(ws.getWorldFlags()).thenReturn(worldFlags);
 
@@ -101,17 +110,17 @@ public class TreesGrowingOutsideRangeListenerTest {
         Flags.TREES_GROWING_OUTSIDE_RANGE.setSetting(world, false);
 
         /* Islands */
-        islandsManager = mock(IslandsManager.class);
         when(plugin.getIslands()).thenReturn(islandsManager);
         // By default, there should be an island.
-        Island island = mock(Island.class);
-        when(islandsManager.getProtectedIslandAt(Mockito.any())).thenReturn(Optional.of(island));
+        when(islandsManager.getProtectedIslandAt(any())).thenReturn(Optional.of(island));
     }
 
     /**
      * Populates {@link TreesGrowingOutsideRangeListenerTest#blockStates} with a tree schema.
      */
     private void populateBlockStatesList() {
+        //when(firstBlock.getLocation()).thenReturn(new Location(world, 2, 0, 2));
+        blockStates.add(firstBlock);
         // Tree logs
         for (int i = 0; i < 3; i++) {
             BlockState logState = mock(BlockState.class);
@@ -133,6 +142,8 @@ public class TreesGrowingOutsideRangeListenerTest {
                 }
             }
         }
+        //when(lastBlock.getLocation()).thenReturn(new Location(world, 2, 0, 2));
+        blockStates.add(lastBlock);
     }
 
     /**
@@ -189,13 +200,18 @@ public class TreesGrowingOutsideRangeListenerTest {
         assertFalse(event.isCancelled());
     }
 
-    @Ignore
+    @SuppressWarnings("unchecked")
     @Test
     public void testTreePartiallyOutsideIsland() {
-        //FIXME
-
+        // Only the first few blocks are inside the island
+        when(islandsManager.getProtectedIslandAt(any())).thenReturn(Optional.of(island),
+                Optional.of(island),
+                Optional.of(island),
+                Optional.empty());
         // Run
         new TreesGrowingOutsideRangeListener().onTreeGrow(event);
         assertFalse(event.isCancelled());
+        verify(firstBlock, Mockito.never()).setType(Material.AIR);
+        verify(lastBlock).setType(Material.AIR);
     }
 }

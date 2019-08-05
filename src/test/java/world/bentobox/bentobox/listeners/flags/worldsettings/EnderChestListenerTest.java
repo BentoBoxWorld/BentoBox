@@ -34,6 +34,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
@@ -59,11 +60,17 @@ import world.bentobox.bentobox.util.Util;
 @PrepareForTest({BentoBox.class, Util.class })
 public class EnderChestListenerTest {
 
+    @Mock
     private World world;
+    @Mock
     private Player player;
+    @Mock
     private IslandWorldManager iwm;
+    @Mock
     private Notifier notifier;
+    @Mock
     private ItemStack item;
+    @Mock
     private Block clickedBlock;
     private Action action;
 
@@ -72,9 +79,6 @@ public class EnderChestListenerTest {
         // Set up plugin
         BentoBox plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
-
-        // World
-        world = mock(World.class);
 
         // Owner
         UUID uuid1 = UUID.randomUUID();
@@ -99,7 +103,6 @@ public class EnderChestListenerTest {
         when(Util.getWorld(any())).thenReturn(world);
 
         // World Settings
-        iwm = mock(IslandWorldManager.class);
         when(plugin.getIWM()).thenReturn(iwm);
         WorldSettings ws = mock(WorldSettings.class);
         when(iwm.getWorldSettings(any())).thenReturn(ws);
@@ -114,7 +117,6 @@ public class EnderChestListenerTest {
         Flags.ENDER_CHEST.setSetting(world, false);
 
         // Sometimes use Mockito.withSettings().verboseLogging()
-        player = mock(Player.class);
         UUID uuid = UUID.randomUUID();
         when(player.getUniqueId()).thenReturn(uuid);
         when(player.isOp()).thenReturn(false);
@@ -136,14 +138,11 @@ public class EnderChestListenerTest {
         when(placeholdersManager.replacePlaceholders(any(), any())).thenAnswer(answer);
 
         // Notifier
-        notifier = mock(Notifier.class);
         when(plugin.getNotifier()).thenReturn(notifier);
 
         // Action, Item and clicked block
         action = Action.RIGHT_CLICK_BLOCK;
-        item = mock(ItemStack.class);
         when(item.getType()).thenReturn(Material.ENDER_CHEST);
-        clickedBlock = mock(Block.class);
         when(clickedBlock.getLocation()).thenReturn(inside);
         when(clickedBlock.getType()).thenReturn(Material.ENDER_CHEST);
         // Addon

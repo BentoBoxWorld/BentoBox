@@ -3,12 +3,13 @@ package world.bentobox.bentobox.listeners.flags.settings;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.times;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -44,6 +45,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.scheduler.BukkitScheduler;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -210,6 +212,11 @@ public class PVPListenerTest {
 
     }
 
+    @After
+    public void tearDown() {
+        User.clearUsers();
+    }
+
     private void wrongWorld() {
         when(iwm.inWorld(any(World.class))).thenReturn(false);
         when(iwm.inWorld(any(Location.class))).thenReturn(false);
@@ -303,8 +310,7 @@ public class PVPListenerTest {
         e = new EntityDamageByEntityEvent(damager, damagee, EntityDamageEvent.DamageCause.ENTITY_ATTACK,
                 new EnumMap<>(ImmutableMap.of(DamageModifier.BASE, 0D)),
                 new EnumMap<DamageModifier, Function<? super Double, Double>>(ImmutableMap.of(DamageModifier.BASE, Functions.constant(-0.0))));
-        when(iwm.inWorld(any(World.class))).thenReturn(false);
-        when(iwm.inWorld(any(Location.class))).thenReturn(false);
+        wrongWorld();
         new PVPListener().onEntityDamage(e);
         assertFalse(e.isCancelled());
     }
@@ -314,6 +320,28 @@ public class PVPListenerTest {
      */
     @Test
     public void testOnEntityDamageOnVisitorByZombieVisitorProtected() {
+        Entity damager = mock(Zombie.class);
+        Entity damagee = mock(Player.class);
+        when(damager.getWorld()).thenReturn(world);
+        when(damagee.getWorld()).thenReturn(world);
+
+        // Protect visitors
+        when(iwm.getIvSettings(world)).thenReturn(Collections.singletonList("ENTITY_ATTACK"));
+        // This player is a visitor
+        when(im.userIsOnIsland(any(), any())).thenReturn(false);
+
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(damager, damagee, EntityDamageEvent.DamageCause.ENTITY_ATTACK,
+                new EnumMap<>(ImmutableMap.of(DamageModifier.BASE, 0D)),
+                new EnumMap<DamageModifier, Function<? super Double, Double>>(ImmutableMap.of(DamageModifier.BASE, Functions.constant(-0.0))));
+        new PVPListener().onEntityDamage(e);
+        assertTrue(e.isCancelled());
+    }
+
+    /**
+     * Test method for {@link PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
+     */
+    @Test
+    public void testOnEntityDamageOnVisitorByZombieVisitorProtectedWrongWorld() {
         Entity damager = mock(Zombie.class);
         Entity damagee = mock(Player.class);
         World world = mock(World.class);
@@ -328,17 +356,10 @@ public class PVPListenerTest {
         // This player is a visitor
         when(im.userIsOnIsland(any(), any())).thenReturn(false);
 
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(damager, damagee, EntityDamageEvent.DamageCause.ENTITY_ATTACK,
+        EntityDamageByEntityEvent e  = new EntityDamageByEntityEvent(damager, damagee, EntityDamageEvent.DamageCause.ENTITY_ATTACK,
                 new EnumMap<>(ImmutableMap.of(DamageModifier.BASE, 0D)),
                 new EnumMap<DamageModifier, Function<? super Double, Double>>(ImmutableMap.of(DamageModifier.BASE, Functions.constant(-0.0))));
-        new PVPListener().onEntityDamage(e);
-        assertTrue(e.isCancelled());
-        // Wrong world
-        e = new EntityDamageByEntityEvent(damager, damagee, EntityDamageEvent.DamageCause.ENTITY_ATTACK,
-                new EnumMap<>(ImmutableMap.of(DamageModifier.BASE, 0D)),
-                new EnumMap<DamageModifier, Function<? super Double, Double>>(ImmutableMap.of(DamageModifier.BASE, Functions.constant(-0.0))));
-        when(iwm.inWorld(any(World.class))).thenReturn(false);
-        when(iwm.inWorld(any(Location.class))).thenReturn(false);
+        wrongWorld();
         new PVPListener().onEntityDamage(e);
         assertFalse(e.isCancelled());
     }
@@ -805,10 +826,11 @@ public class PVPListenerTest {
         LingeringPotionSplashEvent e = new LingeringPotionSplashEvent(tp, cloud);
         new PVPListener().onLingeringPotionSplash(e);
         // Verify
-        verify(player, Mockito.times(3)).getUniqueId();
+        verify(player, times(3)).getUniqueId();
         verify(cloud).getEntityId();
-        verify(tp, Mockito.times(2)).getShooter();
+        verify(tp, times(2)).getShooter();
         PowerMockito.verifyStatic(Bukkit.class);
+        Bukkit.getScheduler();
     }
 
     /**
@@ -826,6 +848,7 @@ public class PVPListenerTest {
         verify(cloud, never()).getEntityId();
         verify(tp).getShooter();
         PowerMockito.verifyStatic(Bukkit.class, never());
+        Bukkit.getScheduler();
     }
 
     /**

@@ -3,11 +3,12 @@ package world.bentobox.bentobox.api.commands.admin;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.eq;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -199,13 +200,13 @@ public class AdminSetrankCommandTest {
         Island island = mock(Island.class);
         when(island.getRank(any())).thenReturn(RanksManager.SUB_OWNER_RANK);
         when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
-        when(user.getTranslation(anyString())).thenReturn("sub-owner", "member");
+        when(user.getTranslation(any())).thenReturn("sub-owner", "member");
         assertTrue(c.execute(user, "", Arrays.asList("tastybento", "member")));
-        verify(user).sendMessage("commands.admin.setrank.rank-set",
-                "[from]",
-                "sub-owner",
-                "[to]",
-                "member");
+        verify(user).sendMessage(eq("commands.admin.setrank.rank-set"),
+                eq("[from]"),
+                eq("sub-owner"),
+                eq("[to]"),
+                eq("member"));
     }
 
     /**
@@ -214,7 +215,7 @@ public class AdminSetrankCommandTest {
     @Test
     public void testTabCompleteUserStringListOfString() {
         when(rm.getRanks()).thenReturn(Collections.singletonMap("visitor", 0));
-        when(user.getTranslation(anyString())).thenReturn("visitor");
+        when(user.getTranslation(any())).thenReturn("visitor");
         Optional<List<String>> result = c.tabComplete(user, "", Collections.emptyList());
         assertTrue(result.isPresent());
         result.ifPresent(list -> {

@@ -2,7 +2,7 @@ package world.bentobox.bentobox.listeners.flags.settings;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -25,7 +25,6 @@ import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.PluginManager;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -60,6 +59,8 @@ public class MobSpawnListenerTest {
     private Cow cow;
     @Mock
     private IslandWorldManager iwm;
+    @Mock
+    private LivingEntity livingEntity;
 
     @Before
     public void setUp() {
@@ -123,13 +124,15 @@ public class MobSpawnListenerTest {
 
         // Default - plugin is loaded
         when(plugin.isLoaded()).thenReturn(true);
+
+        // Living Entity
+        when(livingEntity.getLocation()).thenReturn(location);
     }
 
-    @Ignore //FIXME don't know why it is failing
     @Test
     public void testNotLoaded() {
         when(plugin.isLoaded()).thenReturn(false);
-        CreatureSpawnEvent e = new CreatureSpawnEvent(null, SpawnReason.NATURAL);
+        CreatureSpawnEvent e = new CreatureSpawnEvent(livingEntity, SpawnReason.NATURAL);
         MobSpawnListener l = new MobSpawnListener();
         assertFalse(l.onNaturalMobSpawn(e));
         assertFalse(e.isCancelled());

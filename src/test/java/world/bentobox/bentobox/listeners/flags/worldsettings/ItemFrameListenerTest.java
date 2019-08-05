@@ -1,11 +1,8 @@
-/**
- *
- */
 package world.bentobox.bentobox.listeners.flags.worldsettings;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -19,11 +16,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.World;
+import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Enderman;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Hanging;
 import org.bukkit.entity.ItemFrame;
-import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Slime;
@@ -36,6 +31,7 @@ import org.bukkit.plugin.PluginManager;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -60,7 +56,14 @@ import world.bentobox.bentobox.util.Util;
 @PrepareForTest( {BentoBox.class, Flags.class, Util.class, Bukkit.class} )
 public class ItemFrameListenerTest {
 
-    private static Enderman enderman;
+    @Mock
+    private Enderman enderman;
+    @Mock
+    private World world;
+    @Mock
+    private ItemFrame entity;
+    @Mock
+    private Location location;
 
     @Before
     public void setUp() {
@@ -69,7 +72,6 @@ public class ItemFrameListenerTest {
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
 
         Server server = mock(Server.class);
-        World world = mock(World.class);
         when(server.getLogger()).thenReturn(Logger.getAnonymousLogger());
         when(server.getWorld("world")).thenReturn(world);
         when(server.getVersion()).thenReturn("BSB_Mocking");
@@ -86,8 +88,7 @@ public class ItemFrameListenerTest {
         SkullMeta skullMeta = mock(SkullMeta.class);
         when(itemFactory.getItemMeta(any())).thenReturn(skullMeta);
         when(Bukkit.getItemFactory()).thenReturn(itemFactory);
-        when(Bukkit.getLogger()).thenReturn(Logger.getAnonymousLogger());
-        Location location = mock(Location.class);
+        // Location
         when(location.getWorld()).thenReturn(world);
         when(location.getBlockX()).thenReturn(0);
         when(location.getBlockY()).thenReturn(0);
@@ -97,7 +98,6 @@ public class ItemFrameListenerTest {
         FlagsManager flagsManager = new FlagsManager(plugin);
         when(plugin.getFlagsManager()).thenReturn(flagsManager);
 
-
         // Worlds
         IslandWorldManager iwm = mock(IslandWorldManager.class);
         when(iwm.inWorld(any(World.class))).thenReturn(true);
@@ -106,7 +106,6 @@ public class ItemFrameListenerTest {
         when(iwm.getAddon(any())).thenReturn(Optional.empty());
 
         // Monsters and animals
-        enderman = mock(Enderman.class);
         when(enderman.getLocation()).thenReturn(location);
         when(enderman.getWorld()).thenReturn(world);
         Slime slime = mock(Slime.class);
@@ -132,6 +131,11 @@ public class ItemFrameListenerTest {
 
         PowerMockito.mockStatic(Util.class);
         when(Util.getWorld(Mockito.any())).thenReturn(mock(World.class));
+
+        // Item Frame
+        when(entity.getWorld()).thenReturn(world);
+        when(entity.getLocation()).thenReturn(location);
+
         // Not allowed to start
         Flags.ITEM_FRAME_DAMAGE.setSetting(world, false);
 
@@ -143,7 +147,6 @@ public class ItemFrameListenerTest {
     @Test
     public void testOnItemFrameDamageEntityDamageByEntityEvent() {
         ItemFrameListener ifl = new ItemFrameListener();
-        Entity entity = mock(ItemFrame.class);
         DamageCause cause = DamageCause.ENTITY_ATTACK;
         EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(enderman, entity, cause , 0);
         ifl.onItemFrameDamage(e);
@@ -156,9 +159,10 @@ public class ItemFrameListenerTest {
     @Test
     public void testNotItemFrame() {
         ItemFrameListener ifl = new ItemFrameListener();
-        Entity entity = mock(Monster.class);
+        Creeper creeper = mock(Creeper.class);
+        when(creeper.getLocation()).thenReturn(location);
         DamageCause cause = DamageCause.ENTITY_ATTACK;
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(enderman, entity, cause , 0);
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(enderman, creeper, cause , 0);
         ifl.onItemFrameDamage(e);
         assertFalse(e.isCancelled());
     }
@@ -169,7 +173,6 @@ public class ItemFrameListenerTest {
     @Test
     public void testProjectile() {
         ItemFrameListener ifl = new ItemFrameListener();
-        Entity entity = mock(ItemFrame.class);
         DamageCause cause = DamageCause.ENTITY_ATTACK;
         Projectile p = mock(Projectile.class);
         when(p.getShooter()).thenReturn(enderman);
@@ -184,7 +187,6 @@ public class ItemFrameListenerTest {
     @Test
     public void testPlayerProjectile() {
         ItemFrameListener ifl = new ItemFrameListener();
-        Entity entity = mock(ItemFrame.class);
         DamageCause cause = DamageCause.ENTITY_ATTACK;
         Projectile p = mock(Projectile.class);
         Player player = mock(Player.class);
@@ -200,8 +202,7 @@ public class ItemFrameListenerTest {
     @Test
     public void testOnItemFrameDamageHangingBreakByEntityEvent() {
         ItemFrameListener ifl = new ItemFrameListener();
-        Hanging hanging = mock(ItemFrame.class);
-        HangingBreakByEntityEvent e = new HangingBreakByEntityEvent(hanging, enderman);
+        HangingBreakByEntityEvent e = new HangingBreakByEntityEvent(entity, enderman);
         ifl.onItemFrameDamage(e);
         assertTrue(e.isCancelled());
     }

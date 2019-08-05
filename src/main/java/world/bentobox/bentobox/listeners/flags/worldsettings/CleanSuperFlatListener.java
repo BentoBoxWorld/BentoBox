@@ -119,8 +119,8 @@ public class CleanSuperFlatListener extends FlagListener {
                         && e.getChunk().getBlock(0, 2, 0).getType().equals(Material.DIRT)
                         && e.getChunk().getBlock(0, 3, 0).getType().equals(Material.GRASS_BLOCK))
                         || (world.getEnvironment().equals(Environment.NETHER) && (!plugin.getIWM().isNetherGenerate(world)
-                        || !plugin.getIWM().isNetherIslands(world)))
+                                || !plugin.getIWM().isNetherIslands(world)))
                         || (world.getEnvironment().equals(Environment.THE_END) && (!plugin.getIWM().isEndGenerate(world)
-                        || !plugin.getIWM().isEndIslands(world))));
+                                || !plugin.getIWM().isEndIslands(world))));
     }
 }

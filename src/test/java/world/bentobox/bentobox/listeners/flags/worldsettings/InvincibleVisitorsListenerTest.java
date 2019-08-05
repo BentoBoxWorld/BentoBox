@@ -99,12 +99,15 @@ public class InvincibleVisitorsListenerTest {
         // Sometimes use Mockito.withSettings().verboseLogging()
         when(user.inWorld()).thenReturn(true);
         when(user.getWorld()).thenReturn(mock(World.class));
+        when(player.getWorld()).thenReturn(mock(World.class));
         when(user.getLocation()).thenReturn(mock(Location.class));
+        when(player.getLocation()).thenReturn(mock(Location.class));
         when(user.getPlayer()).thenReturn(player);
         when(user.hasPermission(Mockito.anyString())).thenReturn(true);
         when(user.getTranslation(Mockito.anyString())).thenReturn("panel");
         UUID uuid = UUID.randomUUID();
         when(user.getUniqueId()).thenReturn(uuid);
+        when(player.getUniqueId()).thenReturn(uuid);
         PowerMockito.mockStatic(Util.class);
         when(Util.getWorld(any())).thenReturn(mock(World.class));
 
@@ -268,7 +271,9 @@ public class InvincibleVisitorsListenerTest {
 
     @Test
     public void testOnVisitorGetDamageVoidPlayerHasIsland() {
+        // No island at this location
         when(im.getIslandAt(any())).thenReturn(Optional.empty());
+        // Player has an island
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
         EntityDamageEvent e = new EntityDamageEvent(player, EntityDamageEvent.DamageCause.VOID, 0D);
         // Player should be teleported to their island

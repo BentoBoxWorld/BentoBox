@@ -29,6 +29,8 @@ public class TreesGrowingOutsideRangeListener extends FlagListener {
         }
 
         // Now, run through all the blocks that will be generated and if there is no protected island at their location, turn them into AIR.
-        e.getBlocks().stream().filter(blockState -> !getIslands().getProtectedIslandAt(blockState.getLocation()).isPresent()).forEach(blockState -> blockState.setType(Material.AIR));
+        e.getBlocks().stream()
+        .filter(blockState -> !getIslands().getProtectedIslandAt(blockState.getLocation()).isPresent())
+        .forEach(blockState -> blockState.setType(Material.AIR));
     }
 }
