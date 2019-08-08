@@ -64,6 +64,10 @@ public class FlagTest {
     @Mock
     private World world;
     private Map<String, Boolean> worldFlags;
+    @Mock
+    private IslandWorldManager iwm;
+    @Mock
+    private BentoBox plugin;
 
     /**
      * @throws java.lang.Exception
@@ -71,7 +75,6 @@ public class FlagTest {
     @Before
     public void setUp() throws Exception {
         // Set up plugin
-        BentoBox plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
 
         PowerMockito.mockStatic(Util.class);
@@ -79,7 +82,6 @@ public class FlagTest {
         when(Util.getWorld(Mockito.any())).thenAnswer((Answer<World>) invocation -> invocation.getArgument(0, World.class));
 
         // World Settings
-        IslandWorldManager iwm = mock(IslandWorldManager.class);
         when(plugin.getIWM()).thenReturn(iwm);
         WorldSettings ws = mock(WorldSettings.class);
         when(iwm.getWorldSettings(any())).thenReturn(ws);
@@ -215,6 +217,16 @@ public class FlagTest {
         assertTrue(f.isSetForWorld(world));
         f.setDefaultSetting(world, false);
         assertFalse(f.isSetForWorld(world));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.api.flags.Flag#setDefaultSetting(org.bukkit.World, boolean)}.
+     */
+    @Test
+    public void testSetDefaultSettingWorldBooleanNullWorldSettings() {
+        when(iwm.getWorldSettings(any())).thenReturn(null);
+        f.setDefaultSetting(world, true);
+        verify(plugin).logError("Attempt to set default world setting for unregistered world. Register flags in onEnable.");
     }
 
     /**
@@ -390,5 +402,6 @@ public class FlagTest {
         assertTrue(aaa.compareTo(bbb) < bbb.compareTo(aaa));
         assertTrue(aaa.compareTo(aaa) == 0);
     }
+
 
 }
