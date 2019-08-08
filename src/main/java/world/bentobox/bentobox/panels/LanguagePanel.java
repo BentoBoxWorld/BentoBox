@@ -51,8 +51,7 @@ public class LanguagePanel {
                 openPanel(u);
                 return true;
             });
-
-            if (user.getLocale().toLanguageTag().equals(locale.toLanguageTag())) {
+            if (user.getLocale().equals(locale)) {
                 localeIcon.description(user.getTranslation("language.description.selected"), "");
             } else {
                 localeIcon.description(user.getTranslation("language.description.click-to-select"), "");
