@@ -5,8 +5,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -481,6 +481,16 @@ public class UserTest {
         assertEquals(33, u.getPermissionValue("bskyblock.max", 2));
     }
 
+    /**
+     * Test for {@link User#getPermissionValue(String, int)}
+     */
+    @Test
+    public void testGetPermissionValueConsole() {
+        User.clearUsers();
+        CommandSender console = mock(CommandSender.class);
+        User u = User.getInstance(console);
+        assertEquals(35, u.getPermissionValue("bskyblock.max", 35));
+    }
 
     /**
      * Test for {@link User#getPermissionValue(String, int)}
