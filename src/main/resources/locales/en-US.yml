@@ -220,8 +220,8 @@ commands:
       confirmation: "&cAre you sure you want to set this island as the spawn for this world?"
       success: "&aSuccessfully set this island as the spawn for this world."
     settings:
-      parameters: "<player>"
-      description: "open island settings for player"
+      parameters: "[player]"
+      description: "open system settings or island settings for player"
     blueprint:
       parameters: "<load/copy/paste/pos1/pos2/save>"
       description: "manipulate blueprints"
@@ -1054,6 +1054,11 @@ protection:
         &aback to their island using commands
         &aif they are falling.
       hint: "&cYou cannot teleport back to your island while you are falling."
+    WITHER_DAMAGE:
+      name: "Toggle wither damage"
+      description: |-
+        &aIf active, withers can
+        &adamage blocks and players
   locked: "&cThis island is locked!"
   protected: "&cIsland protected: [description]"
   world-protected: "&cWorld protected: [description]"
