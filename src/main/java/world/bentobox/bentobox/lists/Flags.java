@@ -56,6 +56,7 @@ import world.bentobox.bentobox.listeners.flags.worldsettings.OfflineRedstoneList
 import world.bentobox.bentobox.listeners.flags.worldsettings.PistonPushListener;
 import world.bentobox.bentobox.listeners.flags.worldsettings.RemoveMobsListener;
 import world.bentobox.bentobox.listeners.flags.worldsettings.TreesGrowingOutsideRangeListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.WitherListener;
 import world.bentobox.bentobox.managers.RanksManager;
 
 /**
@@ -428,6 +429,12 @@ public final class Flags {
      * @since 1.6.0
      */
     public static final Flag ELYTRA = new Flag.Builder("ELYTRA",  Material.ELYTRA).type(Type.PROTECTION).defaultRank(RanksManager.VISITOR_RANK).listener(new ElytraListener()).build();
+
+    /**
+     * Toggles wither explosion damage
+     * @since 1.6.0
+     */
+    public static final Flag WITHER_DAMAGE = new Flag.Builder("WITHER_DAMAGE", Material.WITHER_SKELETON_SKULL).listener(new WitherListener()).type(Type.WORLD_SETTING).build();
 
     /**
      * Provides a list of all the Flag instances contained in this class using reflection.
