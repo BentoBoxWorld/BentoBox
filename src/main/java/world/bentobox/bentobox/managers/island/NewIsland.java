@@ -197,6 +197,10 @@ public class NewIsland {
             plugin.getPlayers().setDeaths(world, user.getUniqueId(), 0);
         }
 
+        // Check if owner has a different range permission than the island size
+        island.setProtectionRange(user.getPermissionValue(plugin.getIWM().getAddon(island.getWorld())
+                .map(GameModeAddon::getPermissionPrefix).orElse("") + "island.range", island.getProtectionRange()));
+
         // Save the player so that if the server crashes weird things won't happen
         plugin.getPlayers().save(user.getUniqueId());
 
