@@ -24,6 +24,7 @@ import world.bentobox.bentobox.api.user.User;
 public class WorldDefaultSettingsTab extends SettingsTab implements Tab {
 
     /**
+     * Creates a {@link Tab} that enables the default world protection settings to be set
      * @param world - world
      * @param user - user
      */

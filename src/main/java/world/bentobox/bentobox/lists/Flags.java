@@ -430,6 +430,26 @@ public final class Flags {
      */
     public static final Flag ELYTRA = new Flag.Builder("ELYTRA",  Material.ELYTRA).type(Type.PROTECTION).defaultRank(RanksManager.VISITOR_RANK).listener(new ElytraListener()).build();
 
+    /*
+     * Basic tab flags - these set the other flags
+     */
+    public static final Flag BASIC_GATES_AND_DOORS = new Flag.Builder("BASIC_GATES_AND_DOORS", Material.IRON_TRAPDOOR).type(Type.BASIC)
+            .subFlag(Flags.GATE, Flags.DOOR, Flags.TRAPDOOR).build();
+    public static final Flag BASIC_MAKING = new Flag.Builder("BASIC_MAKING", Material.CRAFTING_TABLE).type(Type.BASIC)
+            .subFlag(Flags.ANVIL, Flags.BREWING, Flags.CRAFTING, Flags.ENCHANTING, Flags.FURNACE).build();
+    public static final Flag BASIC_MACHINES = new Flag.Builder("BASIC_MACHINES", Material.STICKY_PISTON).type(Type.BASIC)
+            .subFlag(Flags.BUTTON, Flags.DISPENSER, Flags.DROPPER, Flags.HOPPER, Flags.ITEM_DROP, Flags.ITEM_PICKUP,
+                    Flags.JUKEBOX, Flags.LEVER, Flags.MINECART, Flags.NOTE_BLOCK, Flags.REDSTONE).build();
+    public static final Flag BASIC_FARMING = new Flag.Builder("BASIC_FARMING", Material.HAY_BLOCK).type(Type.BASIC)
+            .subFlag(Flags.BREEDING, Flags.EGGS, Flags.BREAK_BLOCKS, Flags.PLACE_BLOCKS, Flags.HURT_ANIMALS, Flags.ITEM_PICKUP, Flags.ITEM_DROP
+                    , Flags.LEASH, Flags.MILKING, Flags.NAME_TAG, Flags.RIDING, Flags.SHEARING, Flags.SPAWN_EGGS, Flags.TURTLE_EGGS
+                    , Flags.DYE, Flags.MOUNT_INVENTORY).build();
+    public static final Flag BASIC_BUILDING = new Flag.Builder("BASIC_BUILDING", Material.JUNGLE_WOOD).type(Type.BASIC)
+            .subFlag(Flags.PLACE_BLOCKS, Flags.BREAK_BLOCKS, Flags.BUCKET, Flags.COLLECT_WATER, Flags.COLLECT_LAVA, Flags.CRAFTING
+                    , Flags.ITEM_DROP, Flags.ITEM_PICKUP, Flags.ITEM_FRAME, Flags.ITEM_FRAME_DAMAGE).build();
+    public static final Flag BASIC_CONTAINERS = new Flag.Builder("BASIC_CONTAINERS", Material.JUNGLE_WOOD).type(Type.BASIC)
+            .subFlag(Flags.CONTAINER, Flags.HOPPER, Flags.DROPPER, Flags.FURNACE, Flags.DISPENSER, Flags.MOUNT_INVENTORY, Flags.ITEM_FRAME).build();
+
     /**
      * Toggles wither explosion damage
      * @since 1.6.0

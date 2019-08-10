@@ -1,8 +1,11 @@
 package world.bentobox.bentobox.api.flags;
 
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -15,6 +18,7 @@ import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
+import world.bentobox.bentobox.api.flags.clicklisteners.BasicClick;
 import world.bentobox.bentobox.api.flags.clicklisteners.CycleClick;
 import world.bentobox.bentobox.api.flags.clicklisteners.IslandToggleClick;
 import world.bentobox.bentobox.api.flags.clicklisteners.WorldToggleClick;
@@ -48,7 +52,12 @@ public class Flag implements Comparable<Flag> {
          * It can only be modified by administrators (permission or operator).
          * This is usually an on/off setting.
          */
-        WORLD_SETTING(Material.GRASS_BLOCK);
+        WORLD_SETTING(Material.GRASS_BLOCK),
+
+        /**
+         * The basic tab Flags.
+         */
+        BASIC(Material.STONE);
 
         private @NonNull Material icon;
 
@@ -75,6 +84,7 @@ public class Flag implements Comparable<Flag> {
     private Set<GameModeAddon> gameModes = new HashSet<>();
     private final Addon addon;
     private final int cooldown;
+    private final List<Flag> subFlags;
 
     private Flag(Builder builder) {
         this.id = builder.id;
@@ -90,6 +100,7 @@ public class Flag implements Comparable<Flag> {
         }
         this.cooldown = builder.cooldown;
         this.addon = builder.addon;
+        this.subFlags = builder.subFlags;
     }
 
     public String getID() {
@@ -185,6 +196,13 @@ public class Flag implements Comparable<Flag> {
      */
     public int getDefaultRank() {
         return defaultRank;
+    }
+
+    /**
+     * @return the subFlags
+     */
+    public List<Flag> getSubFlags() {
+        return subFlags;
     }
 
     /**
@@ -324,9 +342,38 @@ public class Flag implements Comparable<Flag> {
             return createSettingFlag(user, island, pib).build();
         case WORLD_SETTING:
             return createWorldSettingFlag(user, pib).build();
+        case BASIC:
+            return createBasicFlag(plugin, user, island, pib).build();
         default:
             return pib.build();
         }
+    }
+
+    private PanelItemBuilder createBasicFlag(BentoBox plugin, User user, @Nullable Island island, PanelItemBuilder pib) {
+        pib.description(user.getTranslation("protection.panel.flag-item.description-layout",
+                TextVariables.DESCRIPTION, user.getTranslation(getDescriptionReference())));
+        if (island == null) return pib;
+        // Check if all the settings for the flag are the same. If not, show an interim description
+        // If empty, nothing to do
+        if (subFlags.isEmpty()) return pib;
+        // Show a description
+        if (subFlags.stream().map(island::getFlag).collect(Collectors.toSet()).size() > 1) {
+            // Flag settings are different so show instructions
+            pib.description(user.getTranslation("protection.panel.flag-item.basic-instructions"));
+        } else {
+            Flag primaryFlag = subFlags.get(0);
+            // Flag values are all the same
+            plugin.getRanksManager().getRanks().forEach((reference, score) -> {
+                if (score > RanksManager.BANNED_RANK && score < island.getFlag(primaryFlag)) {
+                    pib.description(user.getTranslation("protection.panel.flag-item.blocked-rank") + user.getTranslation(reference));
+                } else if (score <= RanksManager.OWNER_RANK && score > island.getFlag(primaryFlag)) {
+                    pib.description(user.getTranslation("protection.panel.flag-item.allowed-rank") + user.getTranslation(reference));
+                } else if (score == island.getFlag(primaryFlag)) {
+                    pib.description(user.getTranslation("protection.panel.flag-item.minimal-rank") + user.getTranslation(reference));
+                }
+            });
+        }
+        return pib;
     }
 
     private PanelItemBuilder createWorldSettingFlag(User user, PanelItemBuilder pib) {
@@ -410,6 +457,9 @@ public class Flag implements Comparable<Flag> {
 
         // Cooldown
         private int cooldown;
+
+        // Flags covered by this flag
+        public List<Flag> subFlags;
 
         /**
          * Builder for making flags
@@ -515,6 +565,17 @@ public class Flag implements Comparable<Flag> {
         }
 
         /**
+         * Add a flag or flags to be affected by this group flag. Only applies to {@link Flag.Type#BASIC}
+         * @param flag - flag
+         * @return Builder
+         * @since 1.6.0
+         */
+        public Builder subFlag(Flag... flags) {
+            this.subFlags.addAll(Arrays.asList(flags));
+            return null;
+        }
+
+        /**
          * Build the flag
          * @return Flag
          */
@@ -531,6 +592,9 @@ public class Flag implements Comparable<Flag> {
                 case WORLD_SETTING:
                     clickHandler = new WorldToggleClick(id);
                     break;
+                case BASIC:
+                    clickHandler = new BasicClick(id);
+                    break;
                 default:
                     clickHandler = new CycleClick(id);
                     break;
@@ -539,6 +603,7 @@ public class Flag implements Comparable<Flag> {
 
             return new Flag(this);
         }
+
     }
 
 }
