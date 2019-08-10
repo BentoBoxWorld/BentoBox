@@ -44,7 +44,8 @@ public class DeleteIslandChunks {
         task = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
             for (int i = 0; i < SPEED; i++) {
                 plugin.getIWM().getAddon(di.getWorld()).ifPresent(gm -> {
-                    regenerateChunk(gm, di.getWorld().getChunkAt(chunkX, chunkZ));
+                    Chunk chunk = di.getWorld().getChunkAt(chunkX, chunkZ);
+                    regenerateChunk(gm, chunk);
 
                     if (plugin.getIWM().isNetherGenerate(di.getWorld()) && plugin.getIWM().isNetherIslands(di.getWorld())) {
                         regenerateChunk(gm, plugin.getIWM().getNetherWorld(di.getWorld()).getChunkAt(chunkX, chunkZ));
@@ -69,6 +70,7 @@ public class DeleteIslandChunks {
     }
 
     private void regenerateChunk(GameModeAddon gm, Chunk chunk) {
+        boolean isLoaded = chunk.isLoaded();
         // Clear all inventories
         Arrays.stream(chunk.getTileEntities()).filter(te -> (te instanceof InventoryHolder))
         .filter(te -> di.inBounds(te.getLocation().getBlockX(), te.getLocation().getBlockZ()))
@@ -94,5 +96,8 @@ public class DeleteIslandChunks {
         }
         // Remove all entities in chunk, including any dropped items as a result of clearing the blocks above
         Arrays.stream(chunk.getEntities()).filter(e -> !(e instanceof Player) && di.inBounds(e.getLocation().getBlockX(), e.getLocation().getBlockZ())).forEach(Entity::remove);
+        if (!isLoaded) {
+            chunk.unload(true);
+        }
     }
 }
