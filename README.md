@@ -49,6 +49,7 @@ And these include some of the official Addons that are bringing incredible new f
 * [**MagicCobblestoneGenerator**](https://github.com/BentoBoxWorld/MagicCobblestoneGenerator): generates any blocks in cobblestone generators.
 * [**IslandFly**](https://github.com/BentoBoxWorld/IslandFly): allows your players to fly on their islands.
 * [**Limits**](https://github.com/BentoBoxWorld/addon-limits): limits blocks and entities that your players can place on their islands.
+* [**Greenhouses**](https://github.com/BentoBoxWorld/greenhouses): enables players to make mini biome glass houses on their island.
 
 And there are plenty of other official or community-made Addons you can try and use for your server!
 
