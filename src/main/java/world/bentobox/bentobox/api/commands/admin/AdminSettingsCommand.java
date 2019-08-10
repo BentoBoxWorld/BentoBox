@@ -12,6 +12,7 @@ import world.bentobox.bentobox.api.panels.builders.TabbedPanelBuilder;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.panels.settings.SettingsTab;
+import world.bentobox.bentobox.panels.settings.WorldDefaultSettingsTab;
 
 /**
  * @author tastybento
@@ -19,7 +20,6 @@ import world.bentobox.bentobox.panels.settings.SettingsTab;
  */
 public class AdminSettingsCommand extends CompositeCommand {
 
-    private @Nullable UUID targetUUID;
     private Island island;
 
     public AdminSettingsCommand(CompositeCommand islandCommand) {
@@ -36,13 +36,17 @@ public class AdminSettingsCommand extends CompositeCommand {
 
     @Override
     public boolean canExecute(User user, String label, List<String> args) {
-        if (args.size() != 1) {
+        if (args.size() > 1) {
             // Show help
             showHelp(this, user);
             return false;
         }
+        if (args.isEmpty()) {
+            // World settings
+            return true;
+        }
         // Get target player
-        targetUUID = getPlayers().getUUID(args.get(0));
+        @Nullable UUID targetUUID = getPlayers().getUUID(args.get(0));
         if (targetUUID == null) {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
             return false;
@@ -57,12 +61,23 @@ public class AdminSettingsCommand extends CompositeCommand {
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
+        if (args.isEmpty()) {
+            new TabbedPanelBuilder()
+            .user(user)
+            .world(getWorld())
+            .tab(2, new SettingsTab(getWorld(), user, Flag.Type.WORLD_SETTING))
+            .tab(6, new WorldDefaultSettingsTab(getWorld(), user))
+            .startingSlot(2)
+            .build().openPanel();
+            return true;
+        }
+        // Player settings
         new TabbedPanelBuilder()
         .user(user)
         .world(getWorld())
         .tab(2, new SettingsTab(getWorld(), user, island, Flag.Type.PROTECTION))
         .tab(6, new SettingsTab(getWorld(), user, island, Flag.Type.SETTING))
-        .startingSlot(1)
+        .startingSlot(2)
         .build().openPanel();
         return true;
     }

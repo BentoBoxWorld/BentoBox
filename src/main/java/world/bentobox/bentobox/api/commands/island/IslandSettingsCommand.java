@@ -8,7 +8,6 @@ import world.bentobox.bentobox.api.panels.builders.TabbedPanelBuilder;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.panels.settings.SettingsTab;
-import world.bentobox.bentobox.panels.settings.WorldDefaultSettingsTab;
 import world.bentobox.bentobox.util.Util;
 
 /**
@@ -44,11 +43,9 @@ public class IslandSettingsCommand extends CompositeCommand {
         new TabbedPanelBuilder()
         .user(user)
         .world(getWorld())
-        .tab(1, new SettingsTab(getWorld(), user, island, Flag.Type.PROTECTION))
-        .tab(3, new SettingsTab(getWorld(), user, island, Flag.Type.SETTING))
-        .tab(5, new SettingsTab(getWorld(), user, Flag.Type.WORLD_SETTING))
-        .tab(7, new WorldDefaultSettingsTab(getWorld(), user))
-        .startingSlot(1)
+        .tab(2, new SettingsTab(getWorld(), user, island, Flag.Type.PROTECTION))
+        .tab(6, new SettingsTab(getWorld(), user, island, Flag.Type.SETTING))
+        .startingSlot(2)
         .build().openPanel();
         return true;
     }
