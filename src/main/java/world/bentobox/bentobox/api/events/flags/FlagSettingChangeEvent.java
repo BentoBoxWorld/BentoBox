@@ -1,4 +1,4 @@
-package world.bentobox.bentobox.api.events.island;
+package world.bentobox.bentobox.api.events.flags;
 
 import java.util.UUID;
 

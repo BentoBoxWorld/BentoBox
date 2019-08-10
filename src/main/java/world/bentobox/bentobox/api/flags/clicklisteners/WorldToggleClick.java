@@ -6,7 +6,7 @@ import org.bukkit.event.inventory.ClickType;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
-import world.bentobox.bentobox.api.events.island.FlagWorldSettingChangeEvent;
+import world.bentobox.bentobox.api.events.flags.FlagWorldSettingChangeEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.panels.Panel;
 import world.bentobox.bentobox.api.panels.PanelItem.ClickHandler;

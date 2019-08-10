@@ -1,42 +1,44 @@
-package world.bentobox.bentobox.api.events.island;
+package world.bentobox.bentobox.api.events.flags;
 
 import java.util.UUID;
 
+import org.bukkit.World;
+
 import world.bentobox.bentobox.api.events.BentoBoxEvent;
 import world.bentobox.bentobox.api.flags.Flag;
-import world.bentobox.bentobox.database.objects.Island;
 
 /**
  * @author tastybento
  * @since 1.6.0
  */
-public class FlagProtectionChangeEvent extends BentoBoxEvent {
+public class FlagWorldSettingChangeEvent extends BentoBoxEvent {
 
-    private final Island island;
+    private final World world;
     private final UUID player;
     private final Flag editedFlag;
-    private final int setTo;
+    private final boolean setTo;
 
     /**
-     * Event that fires when an island protection flag is changed
-     * @param island - island
+     * Event that fires when a world setting is changed
+     * @param world - world
      * @param player - player changing the flag
      * @param editedFlag - flag that has changed
      * @param setTo - value it was set to
      */
-    public FlagProtectionChangeEvent(Island island, UUID player, Flag editedFlag, int setTo) {
-        this.island = island;
+    public FlagWorldSettingChangeEvent(World world, UUID player, Flag editedFlag, boolean setTo) {
+        this.world = world;
         this.player = player;
         this.editedFlag = editedFlag;
         this.setTo = setTo;
     }
 
     /**
-     * @return the island
+     * @return the world
      */
-    public Island getIsland() {
-        return island;
+    public World getWorld() {
+        return world;
     }
+
 
     /**
      * @return the player
@@ -55,7 +57,7 @@ public class FlagProtectionChangeEvent extends BentoBoxEvent {
     /**
      * @return the setTo
      */
-    public int getSetTo() {
+    public boolean isSetTo() {
         return setTo;
     }
 

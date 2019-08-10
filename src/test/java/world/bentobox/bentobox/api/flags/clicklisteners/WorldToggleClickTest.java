@@ -26,7 +26,7 @@ import org.powermock.reflect.Whitebox;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
-import world.bentobox.bentobox.api.events.island.FlagWorldSettingChangeEvent;
+import world.bentobox.bentobox.api.events.flags.FlagWorldSettingChangeEvent;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.panels.Panel;
 import world.bentobox.bentobox.api.user.User;
