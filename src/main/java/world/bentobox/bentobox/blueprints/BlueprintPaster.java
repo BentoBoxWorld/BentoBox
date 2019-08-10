@@ -254,7 +254,6 @@ public class BlueprintPaster {
             // Center, and just a bit high
             Location center = location.add(new Vector(0.5, 0.5, 0.5));
             LivingEntity e = (LivingEntity)location.getWorld().spawnEntity(center, k.getType());
-            if (e == null) return;
             if (k.getCustomName() != null) {
                 e.setCustomName(k.getCustomName());
             }

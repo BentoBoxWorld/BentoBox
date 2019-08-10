@@ -67,9 +67,9 @@ import world.bentobox.bentobox.util.Util;
 @PrepareForTest( {BentoBox.class, Flags.class, Util.class, Bukkit.class} )
 public class TNTListenerTest {
 
-    private static Location location;
-    private static BentoBox plugin;
-    private static Notifier notifier;
+    private Location location;
+    private BentoBox plugin;
+    private Notifier notifier;
 
     @Before
     public void setUp() {

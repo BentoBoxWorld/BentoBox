@@ -214,6 +214,7 @@ public class Island implements DataObject {
         this.world = island.world;
         this.cooldowns = island.cooldowns;
         this.commandRanks = island.commandRanks;
+        this.reserved = island.reserved;
     }
 
     /*

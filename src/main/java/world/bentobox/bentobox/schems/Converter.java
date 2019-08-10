@@ -64,9 +64,7 @@ public class Converter {
                     .map(this::convertLegacyEntity)
                     // Collect into a map
                     .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-            if (le != null) {
-                bp.setEntities(le);
-            }
+            bp.setEntities(le);
         }
         // Attached blocks
         if (bc.isConfigurationSection(ATTACHED_YAML_PREFIX)) {
