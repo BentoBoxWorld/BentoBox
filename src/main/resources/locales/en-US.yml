@@ -1067,6 +1067,9 @@ protection:
   panel:
     next: "Next Page"
     previous: "Previous Page"
+    advanced: "Advanced Settings"
+    basic: "Basic Settings"
+    expert: "Expert Settings"
     PROTECTION:
       title: "&6Protection"
       description: |-

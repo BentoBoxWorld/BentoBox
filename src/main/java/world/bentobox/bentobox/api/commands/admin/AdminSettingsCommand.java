@@ -65,9 +65,10 @@ public class AdminSettingsCommand extends CompositeCommand {
             new TabbedPanelBuilder()
             .user(user)
             .world(getWorld())
-            .tab(2, new SettingsTab(getWorld(), user, Flag.Type.WORLD_SETTING))
-            .tab(6, new WorldDefaultSettingsTab(getWorld(), user))
-            .startingSlot(2)
+            .tab(1, new SettingsTab(getWorld(), user, Flag.Type.WORLD_SETTING))
+            .tab(2, new WorldDefaultSettingsTab(getWorld(), user))
+            .startingSlot(1)
+            .size(54)
             .build().openPanel();
             return true;
         }
@@ -75,9 +76,10 @@ public class AdminSettingsCommand extends CompositeCommand {
         new TabbedPanelBuilder()
         .user(user)
         .world(getWorld())
-        .tab(2, new SettingsTab(getWorld(), user, island, Flag.Type.PROTECTION))
-        .tab(6, new SettingsTab(getWorld(), user, island, Flag.Type.SETTING))
-        .startingSlot(2)
+        .tab(1, new SettingsTab(getWorld(), user, island, Flag.Type.PROTECTION))
+        .tab(2, new SettingsTab(getWorld(), user, island, Flag.Type.SETTING))
+        .startingSlot(1)
+        .size(54)
         .build().openPanel();
         return true;
     }

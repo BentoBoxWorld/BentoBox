@@ -43,9 +43,10 @@ public class IslandSettingsCommand extends CompositeCommand {
         new TabbedPanelBuilder()
         .user(user)
         .world(getWorld())
-        .tab(2, new SettingsTab(getWorld(), user, island, Flag.Type.PROTECTION))
-        .tab(6, new SettingsTab(getWorld(), user, island, Flag.Type.SETTING))
-        .startingSlot(2)
+        .tab(1, new SettingsTab(getWorld(), user, island, Flag.Type.PROTECTION))
+        .tab(2, new SettingsTab(getWorld(), user, island, Flag.Type.SETTING))
+        .startingSlot(1)
+        .size(54)
         .build().openPanel();
         return true;
     }

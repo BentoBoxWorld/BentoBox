@@ -1,19 +1,28 @@
 package world.bentobox.bentobox.panels.settings;
 
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.event.inventory.ClickType;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.flags.Flag.Type;
+import world.bentobox.bentobox.api.flags.FlagMode;
+import world.bentobox.bentobox.api.panels.Panel;
 import world.bentobox.bentobox.api.panels.PanelItem;
+import world.bentobox.bentobox.api.panels.PanelItem.ClickHandler;
 import world.bentobox.bentobox.api.panels.Tab;
+import world.bentobox.bentobox.api.panels.TabbedPanel;
 import world.bentobox.bentobox.api.panels.builders.PanelItemBuilder;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.lists.Flags;
 
 /**
  * Implements a {@link Tab} that shows settings for
@@ -22,7 +31,7 @@ import world.bentobox.bentobox.database.objects.Island;
  * @since 1.6.0
  *
  */
-public class SettingsTab implements Tab {
+public class SettingsTab implements Tab, ClickHandler {
 
     protected static final String PROTECTION_PANEL = "protection.panel.";
     protected BentoBox plugin = BentoBox.getInstance();
@@ -30,9 +39,10 @@ public class SettingsTab implements Tab {
     protected User user;
     protected World world;
     protected Island island;
+    protected FlagMode mode = FlagMode.BASIC;
 
     /**
-     * Show a tab of settings for the island owned by targetUUID to user
+     * Show a tab of settings
      * @param world - world
      * @param user - user who is viewing the tab
      * @param island - the island
@@ -46,7 +56,7 @@ public class SettingsTab implements Tab {
     }
 
     /**
-     * Show a tab of settings for the island owned by targetUUID to user
+     * Show a tab of settings
      * @param world - world
      * @param user - user who is viewing the tab
      * @param type - flag type
@@ -67,6 +77,9 @@ public class SettingsTab implements Tab {
                 .collect(Collectors.toList());
         // Remove any that are not for this game mode
         plugin.getIWM().getAddon(world).ifPresent(gm -> flags.removeIf(f -> !f.getGameModes().isEmpty() && !f.getGameModes().contains(gm)));
+        // Remove any that are the wrong rank or that will be on the top row
+        plugin.getIWM().getAddon(world).ifPresent(gm -> flags.removeIf(f -> f.getMode().isGreaterThan(mode) ||
+                f.getMode().equals(FlagMode.TOP_ROW)));
         return flags;
     }
 
@@ -98,7 +111,44 @@ public class SettingsTab implements Tab {
      */
     @Override
     public List<PanelItem> getPanelItems() {
-        return getFlags().stream().map((f -> f.toPanelItem(plugin, user, island, plugin.getIWM().getHiddenFlags(world).contains(f.getID())))).collect(Collectors.toList());
+        List<Flag> flags = getFlags();
+        int i = 0;
+        // Jump past empty tabs
+        while (flags.isEmpty() && i++ < FlagMode.values().length) {
+            mode = mode.getNextFlag();
+            flags = getFlags();
+        }
+        return flags.stream().map((f -> f.toPanelItem(plugin, user, island, plugin.getIWM().getHiddenFlags(world).contains(f.getID())))).collect(Collectors.toList());
+    }
+
+    @Override
+    public Map<Integer, PanelItem> getTabIcons() {
+        Map<Integer, PanelItem> icons = new HashMap<>();
+        // Add the lock icon
+        if (type.equals(Flag.Type.PROTECTION) && island != null) {
+            icons.put(5, Flags.LOCK.toPanelItem(plugin, user, island, false));
+        }
+        // Add the mode icon
+        switch(mode) {
+        case ADVANCED:
+            icons.put(7, new PanelItemBuilder().icon(Material.GOLD_INGOT)
+                    .name(user.getTranslation(PROTECTION_PANEL + "advanced"))
+                    .clickHandler(this)
+                    .build());
+            break;
+        case EXPERT:
+            icons.put(7, new PanelItemBuilder().icon(Material.NETHER_BRICK)
+                    .name(user.getTranslation(PROTECTION_PANEL + "expert"))
+                    .clickHandler(this)
+                    .build());
+            break;
+        default:
+            icons.put(7, new PanelItemBuilder().icon(Material.IRON_INGOT)
+                    .name(user.getTranslation(PROTECTION_PANEL + "basic"))
+                    .clickHandler(this)
+                    .build());
+        }
+        return icons;
     }
 
     /* (non-Javadoc)
@@ -136,6 +186,18 @@ public class SettingsTab implements Tab {
      */
     public Island getIsland() {
         return island;
+    }
+
+    @Override
+    public boolean onClick(Panel panel, User user, ClickType clickType, int slot) {
+        // Cycle the mode
+        mode = mode.getNextFlag();
+        if (panel instanceof TabbedPanel) {
+            TabbedPanel tp = ((TabbedPanel)panel);
+            tp.setActivePage(0);
+            tp.refreshPanel();
+        }
+        return true;
     }
 
 }

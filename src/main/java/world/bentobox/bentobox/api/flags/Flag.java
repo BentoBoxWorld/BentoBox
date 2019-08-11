@@ -75,6 +75,7 @@ public class Flag implements Comparable<Flag> {
     private Set<GameModeAddon> gameModes = new HashSet<>();
     private final Addon addon;
     private final int cooldown;
+    private final FlagMode mode;
 
     private Flag(Builder builder) {
         this.id = builder.id;
@@ -90,6 +91,7 @@ public class Flag implements Comparable<Flag> {
         }
         this.cooldown = builder.cooldown;
         this.addon = builder.addon;
+        this.mode = builder.mode;
     }
 
     public String getID() {
@@ -369,6 +371,13 @@ public class Flag implements Comparable<Flag> {
     }
 
 
+    /**
+     * @return the mode
+     */
+    public FlagMode getMode() {
+        return mode;
+    }
+
     @Override
     public String toString() {
         return "Flag [id=" + id + "]";
@@ -410,6 +419,9 @@ public class Flag implements Comparable<Flag> {
 
         // Cooldown
         private int cooldown;
+
+        // Mode
+        public FlagMode mode = FlagMode.EXPERT;
 
         /**
          * Builder for making flags
@@ -511,6 +523,17 @@ public class Flag implements Comparable<Flag> {
          */
         public Builder cooldown(int cooldown) {
             this.cooldown = cooldown;
+            return this;
+        }
+
+        /**
+         * Set the flag difficulty mode
+         * @param mode
+         * @return Builder
+         * @since 1.6.0
+         */
+        public Builder mode(FlagMode mode) {
+            this.mode = mode;
             return this;
         }
 
