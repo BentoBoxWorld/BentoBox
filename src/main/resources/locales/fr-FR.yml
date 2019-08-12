@@ -118,6 +118,23 @@ commands:
       parameters: "<joueur>"
     getrank:
       parameters: "<joueur>"
+      description: "affiche le rang d'un joueur sur son île"
+      rank-is: "&aCe joueur est &b[rank] &asur son île."
+    setrank:
+      parameters: "<joueur> <rang>"
+      description: "modifie le rang d'un joueur sur son île"
+      unknown-rank: "&cRang inconnu!"
+      not-possible: "&cLe rang spécifié doit être supérieur à Visiteur."
+      rank-set: "&aRang modifié de &b[from] &aà &b[to]&a."
+    setspawn:
+      description: "définit une île comme étant le spawn de ce monde"
+      already-spawn: "&cCette île est déjà le spawn !"
+      no-island-here: "&cIl n'y a pas d'île ici."
+      confirmation: "&cÊtes-vous certain de vouloir définir cette île comme étant le spawn de ce monde ?"
+      success: "&aCette île a été définie comme spawn pour ce monde."
+    settings:
+      parameters: "[joueur]"
+      description: "affiche les paramètres du monde ou de l'île du joueur"
     delete:
       parameters: "<joueur>"
     why:
@@ -181,6 +198,12 @@ commands:
         parameters: "<joueur>"
       setowner:
         parameters: "<joueur>"
+        description: "transfère la propriété de l'île à un membre"
+        errors:
+          cant-transfer-to-yourself: "&cVous ne pouvez pas transférer la propriété à vous-même! &7(&oTechniquement, c'est possible. Mais nous ne voulons pas que vous le fassiez. Parce que c'est inutile.&r&7)"
+          target-is-not-member: "&cCe joueur n'est pas membre sur votre île."
+        name-is-the-owner: "&a[name] est désormais le propriétaire de l'île !"
+        you-are-the-owner: "&aVous êtes désormais le propriétaire de l'île !"
       leave:
         cannot-leave: |
           &cEn tant que propriétaire, vous ne pouvez pas quittez l'île.
