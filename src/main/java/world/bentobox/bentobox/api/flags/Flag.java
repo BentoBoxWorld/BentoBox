@@ -86,10 +86,10 @@ public class Flag implements Comparable<Flag> {
         TOP_ROW;
 
         /**
-         * Get the next ranking flag above this one. If at the top, it cycles back to the bottom rank
-         * @return next rank
+         * Get the next ranking mode above this one. If at the top, it cycles back to the bottom mode
+         * @return next ranking mode
          */
-        public Mode getNextFlag() {
+        public Mode getNext() {
             switch(this) {
                 case ADVANCED:
                     return EXPERT;

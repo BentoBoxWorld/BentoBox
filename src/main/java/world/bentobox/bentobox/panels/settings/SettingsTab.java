@@ -38,7 +38,6 @@ public class SettingsTab implements Tab, ClickHandler {
     protected User user;
     protected World world;
     protected Island island;
-    protected Flag.Mode mode = Flag.Mode.BASIC;
 
     /**
      * Show a tab of settings
@@ -77,6 +76,7 @@ public class SettingsTab implements Tab, ClickHandler {
         // Remove any that are not for this game mode
         plugin.getIWM().getAddon(world).ifPresent(gm -> flags.removeIf(f -> !f.getGameModes().isEmpty() && !f.getGameModes().contains(gm)));
         // Remove any that are the wrong rank or that will be on the top row
+        Flag.Mode mode = plugin.getPlayers().getFlagsDisplayMode(user.getUniqueId());
         plugin.getIWM().getAddon(world).ifPresent(gm -> flags.removeIf(f -> f.getMode().isGreaterThan(mode) ||
                 f.getMode().equals(Flag.Mode.TOP_ROW)));
         return flags;
@@ -114,7 +114,7 @@ public class SettingsTab implements Tab, ClickHandler {
         int i = 0;
         // Jump past empty tabs
         while (flags.isEmpty() && i++ < Flag.Mode.values().length) {
-            mode = mode.getNextFlag();
+            plugin.getPlayers().setFlagsDisplayMode(user.getUniqueId(), plugin.getPlayers().getFlagsDisplayMode(user.getUniqueId()).getNext());
             flags = getFlags();
         }
         return flags.stream().map((f -> f.toPanelItem(plugin, user, island, plugin.getIWM().getHiddenFlags(world).contains(f.getID())))).collect(Collectors.toList());
@@ -128,7 +128,7 @@ public class SettingsTab implements Tab, ClickHandler {
             icons.put(5, Flags.LOCK.toPanelItem(plugin, user, island, false));
         }
         // Add the mode icon
-        switch(mode) {
+        switch(plugin.getPlayers().getFlagsDisplayMode(user.getUniqueId())) {
         case ADVANCED:
             icons.put(7, new PanelItemBuilder().icon(Material.GOLD_INGOT)
                     .name(user.getTranslation(PROTECTION_PANEL + "advanced"))
@@ -190,7 +190,7 @@ public class SettingsTab implements Tab, ClickHandler {
     @Override
     public boolean onClick(Panel panel, User user, ClickType clickType, int slot) {
         // Cycle the mode
-        mode = mode.getNextFlag();
+        plugin.getPlayers().setFlagsDisplayMode(user.getUniqueId(), plugin.getPlayers().getFlagsDisplayMode(user.getUniqueId()).getNext());
         if (panel instanceof TabbedPanel) {
             TabbedPanel tp = ((TabbedPanel)panel);
             tp.setActivePage(0);
