@@ -73,12 +73,12 @@ public final class Flags {
      * Prevents players from breaking blocks on one's island.
      * @see BreakBlocksListener
      */
-    public static final Flag BREAK_BLOCKS = new Flag.Builder("BREAK_BLOCKS", Material.STONE).listener(new BreakBlocksListener()).mode(Flag.Mode.BASIC).build();
+    public static final Flag BREAK_BLOCKS = new Flag.Builder("BREAK_BLOCKS", Material.STONE_PICKAXE).listener(new BreakBlocksListener()).mode(Flag.Mode.BASIC).build();
     /**
      * Prevents players from placing blocks on one's island.
      * @see PlaceBlocksListener
      */
-    public static final Flag PLACE_BLOCKS = new Flag.Builder("PLACE_BLOCKS", Material.GRASS).listener(new PlaceBlocksListener()).mode(Flag.Mode.BASIC).build();
+    public static final Flag PLACE_BLOCKS = new Flag.Builder("PLACE_BLOCKS", Material.OAK_PLANKS).listener(new PlaceBlocksListener()).mode(Flag.Mode.BASIC).build();
 
     /**
      * Prevents players from generating Frosted Ice on one's island using "Frost Walker" enchanted boots.
@@ -233,8 +233,8 @@ public final class Flags {
     public static final Flag SHEARING = new Flag.Builder("SHEARING", Material.SHEARS).listener(new ShearingListener()).mode(Flag.Mode.ADVANCED).build();
 
     // Item pickup or drop
-    public static final Flag ITEM_DROP = new Flag.Builder("ITEM_DROP", Material.BEETROOT_SOUP).defaultSetting(true).listener(new ItemDropPickUpListener()).mode(Flag.Mode.BASIC).build();
-    public static final Flag ITEM_PICKUP = new Flag.Builder("ITEM_PICKUP", Material.BEETROOT_SEEDS).mode(Flag.Mode.BASIC).build();
+    public static final Flag ITEM_DROP = new Flag.Builder("ITEM_DROP", Material.DIAMOND).defaultSetting(true).listener(new ItemDropPickUpListener()).mode(Flag.Mode.BASIC).build();
+    public static final Flag ITEM_PICKUP = new Flag.Builder("ITEM_PICKUP", Material.SUGAR_CANE).mode(Flag.Mode.BASIC).build();
 
     // Experience
     public static final Flag EXPERIENCE_PICKUP = new Flag.Builder("EXPERIENCE_PICKUP", Material.EXPERIENCE_BOTTLE).listener(new ExperiencePickupListener()).mode(Flag.Mode.ADVANCED).build();
