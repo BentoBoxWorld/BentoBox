@@ -13,7 +13,6 @@ import org.bukkit.event.inventory.ClickType;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.flags.Flag.Type;
-import world.bentobox.bentobox.api.flags.FlagMode;
 import world.bentobox.bentobox.api.panels.Panel;
 import world.bentobox.bentobox.api.panels.PanelItem;
 import world.bentobox.bentobox.api.panels.PanelItem.ClickHandler;
@@ -39,7 +38,7 @@ public class SettingsTab implements Tab, ClickHandler {
     protected User user;
     protected World world;
     protected Island island;
-    protected FlagMode mode = FlagMode.BASIC;
+    protected Flag.Mode mode = Flag.Mode.BASIC;
 
     /**
      * Show a tab of settings
@@ -79,7 +78,7 @@ public class SettingsTab implements Tab, ClickHandler {
         plugin.getIWM().getAddon(world).ifPresent(gm -> flags.removeIf(f -> !f.getGameModes().isEmpty() && !f.getGameModes().contains(gm)));
         // Remove any that are the wrong rank or that will be on the top row
         plugin.getIWM().getAddon(world).ifPresent(gm -> flags.removeIf(f -> f.getMode().isGreaterThan(mode) ||
-                f.getMode().equals(FlagMode.TOP_ROW)));
+                f.getMode().equals(Flag.Mode.TOP_ROW)));
         return flags;
     }
 
@@ -114,7 +113,7 @@ public class SettingsTab implements Tab, ClickHandler {
         List<Flag> flags = getFlags();
         int i = 0;
         // Jump past empty tabs
-        while (flags.isEmpty() && i++ < FlagMode.values().length) {
+        while (flags.isEmpty() && i++ < Flag.Mode.values().length) {
             mode = mode.getNextFlag();
             flags = getFlags();
         }
