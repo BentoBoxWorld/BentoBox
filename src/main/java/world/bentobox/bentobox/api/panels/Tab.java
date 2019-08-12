@@ -1,6 +1,8 @@
 package world.bentobox.bentobox.api.panels;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Represents a tab in a {@link TabbedPanel}. Contains {@link PanelItem}'s.
@@ -30,4 +32,11 @@ public interface Tab {
      */
     String getPermission();
 
+    /**
+     * @return Map of icons to be shown in the tab row when the tab is active
+     * Make sure these do not overlap any tabs that are in the tab row
+     */
+    default Map<Integer, PanelItem> getTabIcons() {
+        return Collections.emptyMap();
+    }
 }

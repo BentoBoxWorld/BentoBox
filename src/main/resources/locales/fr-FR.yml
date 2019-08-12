@@ -279,6 +279,17 @@ protection:
   panel:
     next: "Page suivante"
     previous: "Page précédente"
+    mode:
+      advanced:
+        name: "&6Paramètres avancés"
+        description: "&aAffiche un nombre important de paramètres."
+      basic:
+        name: "&aParamètres simplifiés"
+        description: "&aAffiche les paramètres les plus utilisés."
+      expert:
+        name: "&cParamètres complets"
+        description: "&aAffiche tous les paramètres disponibles."
+      click-to-switch: "&eCliquez &apour afficher les &r[next]&r&a."
     PROTECTION:
       title: "&6Protection"
       description: |-

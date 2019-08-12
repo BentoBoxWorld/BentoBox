@@ -62,6 +62,61 @@ public class Flag implements Comparable<Flag> {
         }
     }
 
+    /**
+     * Defines the flag mode
+     * @author tastybento
+     * @since 1.6.0
+     */
+    public enum Mode {
+        /**
+         * Flag should be shown in the basic settings
+         */
+        BASIC,
+        /**
+         * Flag should be shown in the advanced settings
+         */
+        ADVANCED,
+        /**
+         * Flag should be shown in the expert settings
+         */
+        EXPERT,
+        /**
+         * Flag should be shown in the top row if applicable
+         */
+        TOP_ROW;
+
+        /**
+         * Get the next ranking mode above this one. If at the top, it cycles back to the bottom mode
+         * @return next ranking mode
+         */
+        public Mode getNext() {
+            switch(this) {
+                case ADVANCED:
+                    return EXPERT;
+                case BASIC:
+                    return ADVANCED;
+                default:
+                    return BASIC;
+            }
+        }
+
+        /**
+         * Get a list of ranks that are ranked greater than this rank
+         * @param rank - rank to compare
+         * @return true if ranked greater
+         */
+        public boolean isGreaterThan(Mode rank) {
+            switch(this) {
+                case EXPERT:
+                    return rank.equals(BASIC) || rank.equals(ADVANCED);
+                case ADVANCED:
+                    return rank.equals(BASIC);
+                default:
+                    return false;
+            }
+        }
+    }
+
     private static final String PROTECTION_FLAGS = "protection.flags.";
 
     private final String id;
@@ -75,6 +130,7 @@ public class Flag implements Comparable<Flag> {
     private Set<GameModeAddon> gameModes = new HashSet<>();
     private final Addon addon;
     private final int cooldown;
+    private final Mode mode;
 
     private Flag(Builder builder) {
         this.id = builder.id;
@@ -90,6 +146,7 @@ public class Flag implements Comparable<Flag> {
         }
         this.cooldown = builder.cooldown;
         this.addon = builder.addon;
+        this.mode = builder.mode;
     }
 
     public String getID() {
@@ -369,6 +426,14 @@ public class Flag implements Comparable<Flag> {
     }
 
 
+    /**
+     * @return the mode
+     * @since 1.6.0
+     */
+    public Mode getMode() {
+        return mode;
+    }
+
     @Override
     public String toString() {
         return "Flag [id=" + id + "]";
@@ -410,6 +475,9 @@ public class Flag implements Comparable<Flag> {
 
         // Cooldown
         private int cooldown;
+
+        // Mode
+        public Mode mode = Mode.EXPERT;
 
         /**
          * Builder for making flags
@@ -511,6 +579,18 @@ public class Flag implements Comparable<Flag> {
          */
         public Builder cooldown(int cooldown) {
             this.cooldown = cooldown;
+            return this;
+        }
+
+        /**
+         * Set the flag difficulty mode.
+         * Defaults to {@link Flag.Mode#EXPERT}.
+         * @param mode
+         * @return Builder
+         * @since 1.6.0
+         */
+        public Builder mode(Mode mode) {
+            this.mode = mode;
             return this;
         }
 
