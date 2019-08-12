@@ -89,25 +89,25 @@ public final class Flags {
     // Block interactions - all use BlockInteractionListener()
     public static final Flag ANVIL = new Flag.Builder("ANVIL", Material.ANVIL).listener(new BlockInteractionListener()).mode(Flag.Mode.BASIC).build();
     public static final Flag BEACON = new Flag.Builder("BEACON", Material.BEACON).build();
-    public static final Flag BED = new Flag.Builder("BED", Material.RED_BED).mode(Flag.Mode.ADVANCED).build();
+    public static final Flag BED = new Flag.Builder("BED", Material.RED_BED).build();
     public static final Flag BREWING = new Flag.Builder("BREWING", Material.BREWING_STAND).mode(Flag.Mode.ADVANCED).build();
     public static final Flag CONTAINER = new Flag.Builder("CONTAINER", Material.CHEST).mode(Flag.Mode.BASIC).build();
-    public static final Flag DISPENSER = new Flag.Builder("DISPENSER", Material.DISPENSER).build();
-    public static final Flag DROPPER = new Flag.Builder("DROPPER", Material.DROPPER).build();
-    public static final Flag HOPPER = new Flag.Builder("HOPPER", Material.HOPPER).build();
+    public static final Flag DISPENSER = new Flag.Builder("DISPENSER", Material.DISPENSER).mode(Flag.Mode.ADVANCED).build();
+    public static final Flag DROPPER = new Flag.Builder("DROPPER", Material.DROPPER).mode(Flag.Mode.ADVANCED).build();
+    public static final Flag HOPPER = new Flag.Builder("HOPPER", Material.HOPPER).mode(Flag.Mode.ADVANCED).build();
     public static final Flag DOOR = new Flag.Builder("DOOR", Material.OAK_DOOR).defaultSetting(true).mode(Flag.Mode.BASIC).build();
-    public static final Flag TRAPDOOR = new Flag.Builder("TRAPDOOR", Material.OAK_TRAPDOOR).defaultSetting(true).mode(Flag.Mode.ADVANCED).build();
-    public static final Flag CRAFTING = new Flag.Builder("CRAFTING", Material.CRAFTING_TABLE).defaultSetting(true).mode(Flag.Mode.BASIC).build();
+    public static final Flag TRAPDOOR = new Flag.Builder("TRAPDOOR", Material.OAK_TRAPDOOR).defaultSetting(true).mode(Flag.Mode.BASIC).build();
+    public static final Flag CRAFTING = new Flag.Builder("CRAFTING", Material.CRAFTING_TABLE).defaultSetting(true).build();
     public static final Flag ENCHANTING = new Flag.Builder("ENCHANTING", Material.ENCHANTING_TABLE).defaultSetting(true).mode(Flag.Mode.BASIC).build();
     public static final Flag FURNACE = new Flag.Builder("FURNACE", Material.FURNACE).mode(Flag.Mode.BASIC).build();
     public static final Flag GATE = new Flag.Builder("GATE", Material.OAK_FENCE_GATE).mode(Flag.Mode.BASIC).defaultSetting(true).build();
     public static final Flag NOTE_BLOCK = new Flag.Builder("NOTE_BLOCK", Material.NOTE_BLOCK).build();
     public static final Flag JUKEBOX = new Flag.Builder("JUKEBOX", Material.JUKEBOX).build();
-    public static final Flag LEVER = new Flag.Builder("LEVER", Material.LEVER).mode(Flag.Mode.BASIC).build();
-    public static final Flag BUTTON = new Flag.Builder("BUTTON", Material.OAK_BUTTON).mode(Flag.Mode.BASIC).build();
-    public static final Flag REDSTONE = new Flag.Builder("REDSTONE", Material.REDSTONE).mode(Flag.Mode.BASIC).build();
-    public static final Flag SPAWN_EGGS = new Flag.Builder("SPAWN_EGGS", Material.COW_SPAWN_EGG).mode(Flag.Mode.ADVANCED).build();
-    public static final Flag ITEM_FRAME = new Flag.Builder("ITEM_FRAME", Material.ITEM_FRAME).build();
+    public static final Flag LEVER = new Flag.Builder("LEVER", Material.LEVER).mode(Flag.Mode.ADVANCED).build();
+    public static final Flag BUTTON = new Flag.Builder("BUTTON", Material.OAK_BUTTON).mode(Flag.Mode.ADVANCED).build();
+    public static final Flag REDSTONE = new Flag.Builder("REDSTONE", Material.REDSTONE).mode(Flag.Mode.ADVANCED).build();
+    public static final Flag SPAWN_EGGS = new Flag.Builder("SPAWN_EGGS", Material.COW_SPAWN_EGG).build();
+    public static final Flag ITEM_FRAME = new Flag.Builder("ITEM_FRAME", Material.ITEM_FRAME).mode(Flag.Mode.ADVANCED).build();
     /**
      * Prevents players from interacting with the Dragon Egg.
      * @since 1.3.1
@@ -118,7 +118,7 @@ public final class Flags {
 
     // Entity interactions
     public static final Flag ARMOR_STAND = new Flag.Builder("ARMOR_STAND", Material.ARMOR_STAND).listener(new EntityInteractListener()).mode(Flag.Mode.ADVANCED).build();
-    public static final Flag RIDING = new Flag.Builder("RIDING", Material.GOLDEN_HORSE_ARMOR).mode(Flag.Mode.ADVANCED).build();
+    public static final Flag RIDING = new Flag.Builder("RIDING", Material.GOLDEN_HORSE_ARMOR).build();
     /**
      * Prevents players from issuing any kind of interactions with Minecarts (entering, placing and opening if chest).
      * @since 1.3.0
@@ -133,8 +133,8 @@ public final class Flags {
      * @see PlaceBlocksListener
      */
     public static final Flag BOAT = new Flag.Builder("BOAT", Material.OAK_BOAT).mode(Flag.Mode.BASIC).build();
-    public static final Flag TRADING = new Flag.Builder("TRADING", Material.EMERALD).defaultSetting(true).mode(Flag.Mode.ADVANCED).build();
-    public static final Flag NAME_TAG = new Flag.Builder("NAME_TAG", Material.NAME_TAG).build();
+    public static final Flag TRADING = new Flag.Builder("TRADING", Material.EMERALD).defaultSetting(true).mode(Flag.Mode.BASIC).build();
+    public static final Flag NAME_TAG = new Flag.Builder("NAME_TAG", Material.NAME_TAG).mode(Flag.Mode.ADVANCED).build();
 
     // Breeding
     public static final Flag BREEDING = new Flag.Builder("BREEDING", Material.CARROT).listener(new BreedingListener()).mode(Flag.Mode.ADVANCED).build();
@@ -152,7 +152,7 @@ public final class Flags {
 
     // Physical interactions
     public static final Flag CROP_TRAMPLE = new Flag.Builder("CROP_TRAMPLE", Material.WHEAT).listener(new PhysicalInteractionListener()).build();
-    public static final Flag PRESSURE_PLATE = new Flag.Builder("PRESSURE_PLATE", Material.STONE_PRESSURE_PLATE).build();
+    public static final Flag PRESSURE_PLATE = new Flag.Builder("PRESSURE_PLATE", Material.STONE_PRESSURE_PLATE).mode(Flag.Mode.ADVANCED).build();
     public static final Flag TURTLE_EGGS = new Flag.Builder("TURTLE_EGGS", Material.TURTLE_EGG).build();
 
     // Throwing things
@@ -160,7 +160,7 @@ public final class Flags {
      * Prevents players from throwing eggs.
      * @see EggListener
      */
-    public static final Flag EGGS = new Flag.Builder("EGGS", Material.EGG).listener(new EggListener()).mode(Flag.Mode.ADVANCED).build();
+    public static final Flag EGGS = new Flag.Builder("EGGS", Material.EGG).listener(new EggListener()).build();
     /**
      * Prevents players from throwing potions / experience bottles.
      * @since 1.1
@@ -211,33 +211,33 @@ public final class Flags {
 
     // Hurting things
     public static final Flag HURT_ANIMALS = new Flag.Builder("HURT_ANIMALS", Material.STONE_SWORD).listener(new HurtingListener()).mode(Flag.Mode.ADVANCED).build();
-    public static final Flag HURT_MONSTERS = new Flag.Builder("HURT_MONSTERS", Material.WOODEN_SWORD).mode(Flag.Mode.ADVANCED).build();
-    public static final Flag HURT_VILLAGERS = new Flag.Builder("HURT_VILLAGERS", Material.GOLDEN_SWORD).build();
+    public static final Flag HURT_MONSTERS = new Flag.Builder("HURT_MONSTERS", Material.WOODEN_SWORD).mode(Flag.Mode.BASIC).build();
+    public static final Flag HURT_VILLAGERS = new Flag.Builder("HURT_VILLAGERS", Material.GOLDEN_SWORD).mode(Flag.Mode.ADVANCED).build();
 
     // Leashes
-    public static final Flag LEASH = new Flag.Builder("LEASH", Material.LEAD).listener(new LeashListener()).mode(Flag.Mode.ADVANCED).build();
+    public static final Flag LEASH = new Flag.Builder("LEASH", Material.LEAD).listener(new LeashListener()).build();
 
     // Portal use protection
     /**
      * Prevents players from going through the Nether Portal.
      * @see PortalListener
      */
-    public static final Flag NETHER_PORTAL = new Flag.Builder("NETHER_PORTAL", Material.NETHERRACK).listener(new PortalListener()).mode(Flag.Mode.ADVANCED).build();
+    public static final Flag NETHER_PORTAL = new Flag.Builder("NETHER_PORTAL", Material.NETHERRACK).listener(new PortalListener()).build();
     /**
      * Prevents players from going through the End Portal.
      * @see PortalListener
      */
-    public static final Flag END_PORTAL = new Flag.Builder("END_PORTAL", Material.END_PORTAL_FRAME).mode(Flag.Mode.ADVANCED).build();
+    public static final Flag END_PORTAL = new Flag.Builder("END_PORTAL", Material.END_PORTAL_FRAME).build();
 
     // Shearing
     public static final Flag SHEARING = new Flag.Builder("SHEARING", Material.SHEARS).listener(new ShearingListener()).mode(Flag.Mode.ADVANCED).build();
 
     // Item pickup or drop
-    public static final Flag ITEM_DROP = new Flag.Builder("ITEM_DROP", Material.BEETROOT_SOUP).defaultSetting(true).listener(new ItemDropPickUpListener()).build();
-    public static final Flag ITEM_PICKUP = new Flag.Builder("ITEM_PICKUP", Material.BEETROOT_SEEDS).build();
+    public static final Flag ITEM_DROP = new Flag.Builder("ITEM_DROP", Material.BEETROOT_SOUP).defaultSetting(true).listener(new ItemDropPickUpListener()).mode(Flag.Mode.BASIC).build();
+    public static final Flag ITEM_PICKUP = new Flag.Builder("ITEM_PICKUP", Material.BEETROOT_SEEDS).mode(Flag.Mode.BASIC).build();
 
     // Experience
-    public static final Flag EXPERIENCE_PICKUP = new Flag.Builder("EXPERIENCE_PICKUP", Material.EXPERIENCE_BOTTLE).listener(new ExperiencePickupListener()).build();
+    public static final Flag EXPERIENCE_PICKUP = new Flag.Builder("EXPERIENCE_PICKUP", Material.EXPERIENCE_BOTTLE).listener(new ExperiencePickupListener()).mode(Flag.Mode.ADVANCED).build();
 
     // Command ranks
     public static final Flag COMMAND_RANKS = new Flag.Builder("COMMAND_RANKS", Material.PLAYER_HEAD)
@@ -256,7 +256,7 @@ public final class Flags {
      *
      * @since 1.6.0
      */
-    public static final Flag ELYTRA = new Flag.Builder("ELYTRA",  Material.ELYTRA).defaultRank(RanksManager.VISITOR_RANK).listener(new ElytraListener()).build();
+    public static final Flag ELYTRA = new Flag.Builder("ELYTRA",  Material.ELYTRA).defaultRank(RanksManager.VISITOR_RANK).listener(new ElytraListener()).mode(Flag.Mode.ADVANCED).build();
 
 
     // TNT
