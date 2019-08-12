@@ -1067,9 +1067,17 @@ protection:
   panel:
     next: "Next Page"
     previous: "Previous Page"
-    advanced: "Advanced Settings"
-    basic: "Basic Settings"
-    expert: "Expert Settings"
+    mode:
+      advanced:
+        name: "&6Advanced Settings"
+        description: "&aDisplays a sensible amount of settings."
+      basic:
+        name: "&aBasic Settings"
+        description: "&aDisplays the most useful settings."
+      expert:
+        name: "&cExpert Settings"
+        description: "&aDisplays all the available settings."
+      click-to-switch: "&eClick &ato switch to the &r[next]&r&a."
     PROTECTION:
       title: "&6Protection"
       description: |-

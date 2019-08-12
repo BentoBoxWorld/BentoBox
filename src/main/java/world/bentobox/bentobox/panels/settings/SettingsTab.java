@@ -132,19 +132,25 @@ public class SettingsTab implements Tab, ClickHandler {
         switch(plugin.getPlayers().getFlagsDisplayMode(user.getUniqueId())) {
         case ADVANCED:
             icons.put(7, new PanelItemBuilder().icon(Material.GOLD_INGOT)
-                    .name(user.getTranslation(PROTECTION_PANEL + "advanced"))
+                    .name(user.getTranslation(PROTECTION_PANEL + "mode.advanced.name"))
+                    .description(user.getTranslation(PROTECTION_PANEL + "mode.advanced.description"), "",
+                            user.getTranslation(PROTECTION_PANEL + "mode.click-to-switch", "[next]", user.getTranslation(PROTECTION_PANEL + "mode.expert.name")))
                     .clickHandler(this)
                     .build());
             break;
         case EXPERT:
             icons.put(7, new PanelItemBuilder().icon(Material.NETHER_BRICK)
-                    .name(user.getTranslation(PROTECTION_PANEL + "expert"))
+                    .name(user.getTranslation(PROTECTION_PANEL + "mode.expert.name"))
+                    .description(user.getTranslation(PROTECTION_PANEL + "mode.expert.description"), "",
+                            user.getTranslation(PROTECTION_PANEL + "mode.click-to-switch", "[next]", user.getTranslation(PROTECTION_PANEL + "mode.basic.name")))
                     .clickHandler(this)
                     .build());
             break;
         default:
             icons.put(7, new PanelItemBuilder().icon(Material.IRON_INGOT)
-                    .name(user.getTranslation(PROTECTION_PANEL + "basic"))
+                    .name(user.getTranslation(PROTECTION_PANEL + "mode.basic.name"))
+                    .description(user.getTranslation(PROTECTION_PANEL + "mode.basic.description"), "",
+                            user.getTranslation(PROTECTION_PANEL + "mode.click-to-switch", "[next]", user.getTranslation(PROTECTION_PANEL + "mode.advanced.name")))
                     .clickHandler(this)
                     .build());
         }
