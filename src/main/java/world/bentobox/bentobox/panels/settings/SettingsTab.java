@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.event.inventory.ClickType;
 
@@ -195,6 +196,7 @@ public class SettingsTab implements Tab, ClickHandler {
             TabbedPanel tp = ((TabbedPanel)panel);
             tp.setActivePage(0);
             tp.refreshPanel();
+            user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_OFF, 1F, 1F);
         }
         return true;
     }
