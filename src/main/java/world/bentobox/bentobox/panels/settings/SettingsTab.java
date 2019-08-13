@@ -14,6 +14,7 @@ import org.bukkit.event.inventory.ClickType;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.flags.Flag.Type;
+import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.panels.Panel;
 import world.bentobox.bentobox.api.panels.PanelItem;
 import world.bentobox.bentobox.api.panels.PanelItem.ClickHandler;
@@ -134,7 +135,8 @@ public class SettingsTab implements Tab, ClickHandler {
             icons.put(7, new PanelItemBuilder().icon(Material.GOLD_INGOT)
                     .name(user.getTranslation(PROTECTION_PANEL + "mode.advanced.name"))
                     .description(user.getTranslation(PROTECTION_PANEL + "mode.advanced.description"), "",
-                            user.getTranslation(PROTECTION_PANEL + "mode.click-to-switch", "[next]", user.getTranslation(PROTECTION_PANEL + "mode.expert.name")))
+                            user.getTranslation(PROTECTION_PANEL + "mode.click-to-switch",
+                                    TextVariables.NEXT, user.getTranslation(PROTECTION_PANEL + "mode.expert.name")))
                     .clickHandler(this)
                     .build());
             break;
@@ -142,7 +144,8 @@ public class SettingsTab implements Tab, ClickHandler {
             icons.put(7, new PanelItemBuilder().icon(Material.NETHER_BRICK)
                     .name(user.getTranslation(PROTECTION_PANEL + "mode.expert.name"))
                     .description(user.getTranslation(PROTECTION_PANEL + "mode.expert.description"), "",
-                            user.getTranslation(PROTECTION_PANEL + "mode.click-to-switch", "[next]", user.getTranslation(PROTECTION_PANEL + "mode.basic.name")))
+                            user.getTranslation(PROTECTION_PANEL + "mode.click-to-switch",
+                                    TextVariables.NEXT, user.getTranslation(PROTECTION_PANEL + "mode.basic.name")))
                     .clickHandler(this)
                     .build());
             break;
@@ -150,7 +153,8 @@ public class SettingsTab implements Tab, ClickHandler {
             icons.put(7, new PanelItemBuilder().icon(Material.IRON_INGOT)
                     .name(user.getTranslation(PROTECTION_PANEL + "mode.basic.name"))
                     .description(user.getTranslation(PROTECTION_PANEL + "mode.basic.description"), "",
-                            user.getTranslation(PROTECTION_PANEL + "mode.click-to-switch", "[next]", user.getTranslation(PROTECTION_PANEL + "mode.advanced.name")))
+                            user.getTranslation(PROTECTION_PANEL + "mode.click-to-switch",
+                                    TextVariables.NEXT, user.getTranslation(PROTECTION_PANEL + "mode.advanced.name")))
                     .clickHandler(this)
                     .build());
         }

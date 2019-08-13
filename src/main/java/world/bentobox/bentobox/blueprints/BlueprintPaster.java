@@ -56,8 +56,6 @@ public class BlueprintPaster {
     private Location pos1;
     // The maximum block position (x,y,z)
     private Location pos2;
-    // Speed of pasting
-    private int pasteSpeed;
     private PasteState pasteState;
     private BukkitTask pastingTask;
     private BlueprintClipboard clipboard;
@@ -113,7 +111,7 @@ public class BlueprintPaster {
 
         // Initial state & speed
         pasteState = PasteState.BLOCKS;
-        pasteSpeed = plugin.getSettings().getPasteSpeed();
+        final int pasteSpeed = plugin.getSettings().getPasteSpeed();
 
         pastingTask = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
             int count = 0;
