@@ -177,7 +177,7 @@ commands:
       description: "switch player's island to the numbered one in trash"
       out-of-range: "&cNumber must be between 1 and [number]. Use &l[label] trash [player] &r&cto see island numbers"
       cannot-switch: "&cSwitch failed. See console log for error."
-      success: "&Successfully switched the player's island to the specified one."
+      success: "&aSuccessfully switched the player's island to the specified one."
     trash:
       no-unowned-in-trash: "&cNo unowned islands in trash"
       no-islands-in-trash: "&cPlayer has no islands in trash"
