@@ -1,5 +1,7 @@
 package world.bentobox.bentobox.api.panels;
 
+import org.eclipse.jdt.annotation.Nullable;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +27,7 @@ public interface Tab {
      * Return the panel items for this tab
      * @return a list of items in slot order
      */
-    List<PanelItem> getPanelItems();
+    List<@Nullable PanelItem> getPanelItems();
 
     /**
      * @return the permission required to view this tab or empty if no permission required

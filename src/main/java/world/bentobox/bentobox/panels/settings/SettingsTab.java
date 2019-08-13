@@ -11,6 +11,8 @@ import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.event.inventory.ClickType;
 
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.flags.Flag.Type;
@@ -111,7 +113,8 @@ public class SettingsTab implements Tab, ClickHandler {
      * @return list of all the panel items for this flag type
      */
     @Override
-    public List<PanelItem> getPanelItems() {
+    @NonNull
+    public List<@Nullable PanelItem> getPanelItems() {
         List<Flag> flags = getFlags();
         int i = 0;
         // Jump past empty tabs

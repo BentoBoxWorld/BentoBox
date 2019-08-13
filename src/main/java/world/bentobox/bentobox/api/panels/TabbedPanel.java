@@ -3,6 +3,7 @@ package world.bentobox.bentobox.api.panels;
 import java.security.InvalidParameterException;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.TreeMap;
 
 import org.bukkit.Material;
@@ -88,7 +89,7 @@ public class TabbedPanel extends Panel implements PanelListener {
         // Show the active tab
         if (tpb.getTabs().containsKey(activeTab)) {
             List<PanelItem> panelItems = tab.getPanelItems();
-            panelItems.stream().skip(page * 43L).limit(page * 43L + 43L).forEach(i -> items.put(items.lastKey() + 1, i));
+            panelItems.stream().filter(Objects::nonNull).skip(page * 43L).limit(page * 43L + 43L).forEach(i -> items.put(items.lastKey() + 1, i));
             // Add forward and backward icons
             if (page > 0) {
                 // Previous page icon
