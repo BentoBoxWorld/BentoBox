@@ -105,16 +105,6 @@ public class NewIsland {
         }
 
         /**
-         * @param world world where the island will go
-         * @deprecated use {@link #addon} instead
-         */
-        @Deprecated
-        public Builder world(World world) {
-            this.world2 = world;
-            return this;
-        }
-
-        /**
          * Set the addon
          * @param addon a game mode addon
          */
