@@ -28,11 +28,11 @@ public class IslandBanlistCommand extends CompositeCommand {
             // Show help
             showHelp(this, user);
             return false;
-        } 
-        // Player issuing the command must have an island       
-        if (!getIslands().hasIsland(getWorld(), user.getUniqueId())) {
+        }
+        // Player issuing the command must have an island
+        if (!getIslands().hasIsland(getWorld(), user.getUniqueId()) && !getIslands().inTeam(getWorld(), user.getUniqueId())) {
             user.sendMessage("general.errors.no-island");
-            return false; 
+            return false;
         }
         Island island = getIslands().getIsland(getWorld(), user.getUniqueId());
         // Show all the players banned on the island
