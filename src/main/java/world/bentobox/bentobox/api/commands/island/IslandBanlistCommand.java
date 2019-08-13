@@ -11,6 +11,8 @@ import world.bentobox.bentobox.database.objects.Island;
 
 public class IslandBanlistCommand extends CompositeCommand {
 
+    private Island island;
+
     public IslandBanlistCommand(CompositeCommand islandCommand) {
         super(islandCommand, "banlist", "banned", "bans");
     }
@@ -23,7 +25,7 @@ public class IslandBanlistCommand extends CompositeCommand {
     }
 
     @Override
-    public boolean execute(User user, String label, List<String> args) {
+    public boolean canExecute(User user, String label, List<String> args) {
         if (!args.isEmpty()) {
             // Show help
             showHelp(this, user);
@@ -34,7 +36,17 @@ public class IslandBanlistCommand extends CompositeCommand {
             user.sendMessage("general.errors.no-island");
             return false;
         }
-        Island island = getIslands().getIsland(getWorld(), user.getUniqueId());
+        // Check rank to use command
+        island = getIslands().getIsland(getWorld(), user.getUniqueId());
+        if (island.getRank(user) < island.getRankCommand("ban")) {
+            user.sendMessage("general.errors.no-permission");
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean execute(User user, String label, List<String> args) {
         // Show all the players banned on the island
         if (island.getBanned().isEmpty()) {
             user.sendMessage("commands.island.banlist.noone");

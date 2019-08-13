@@ -3,12 +3,12 @@ package world.bentobox.bentobox.api.commands.island;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -38,6 +38,7 @@ import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.PlayersManager;
+import world.bentobox.bentobox.managers.RanksManager;
 
 /**
  * @author tastybento
@@ -116,25 +117,38 @@ public class IslandBanlistCommandTest {
     }
 
     /**
-     * Test method for {@link IslandBanlistCommand#execute(User, String, java.util.List)}.
+     * Test method for {@link IslandBanlistCommand#canExecute(User, String, java.util.List)}.
      */
     @Test
     public void testWithArgs() {
         IslandBanlistCommand iubc = new IslandBanlistCommand(ic);
-        assertFalse(iubc.execute(user, iubc.getLabel(), Collections.singletonList("bill")));
+        assertFalse(iubc.canExecute(user, iubc.getLabel(), Collections.singletonList("bill")));
         // Verify show help
+        verify(user).sendMessage("commands.help.header", "[label]", null);
     }
 
     /**
-     * Test method for {@link IslandBanlistCommand#execute(User, String, java.util.List)}.
+     * Test method for {@link IslandBanlistCommand#canExecute(User, String, java.util.List)}.
      */
     @Test
     public void testNoIsland() {
         // not in team
         when(im.inTeam(any(), eq(uuid))).thenReturn(false);
         IslandBanlistCommand iubc = new IslandBanlistCommand(ic);
-        assertFalse(iubc.execute(user, iubc.getLabel(), new ArrayList<>()));
+        assertFalse(iubc.canExecute(user, iubc.getLabel(), Collections.emptyList()));
         verify(user).sendMessage("general.errors.no-island");
+    }
+
+    /**
+     * Test method for {@link IslandBanlistCommand#canExecute(User, String, java.util.List)}.
+     */
+    @Test
+    public void testTooLowRank() {
+        when(island.getRank(any())).thenReturn(RanksManager.MEMBER_RANK);
+        when(island.getRankCommand(anyString())).thenReturn(RanksManager.OWNER_RANK);
+        IslandBanlistCommand iubc = new IslandBanlistCommand(ic);
+        assertFalse(iubc.canExecute(user, iubc.getLabel(), Collections.emptyList()));
+        verify(user).sendMessage("general.errors.no-permission");
     }
 
     /**
@@ -144,7 +158,8 @@ public class IslandBanlistCommandTest {
     public void testBanlistNooneBanned() {
         IslandBanlistCommand iubc = new IslandBanlistCommand(ic);
         when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
-        assertTrue(iubc.execute(user, iubc.getLabel(), new ArrayList<>()));
+        iubc.canExecute(user, iubc.getLabel(), Collections.emptyList());
+        assertTrue(iubc.execute(user, iubc.getLabel(), Collections.emptyList()));
         verify(user).sendMessage("commands.island.banlist.noone");
     }
 
@@ -167,7 +182,8 @@ public class IslandBanlistCommandTest {
         when(island.getBanned()).thenReturn(banned);
         // Respond to name queries
         when(pm.getName(any(UUID.class))).then((Answer<String>) invocation -> uuidToName.getOrDefault(invocation.getArgument(0, UUID.class), "tastybento"));
-        assertTrue(iubc.execute(user, iubc.getLabel(), new ArrayList<>()));
+        iubc.canExecute(user, iubc.getLabel(), Collections.emptyList());
+        assertTrue(iubc.execute(user, iubc.getLabel(), Collections.emptyList()));
         verify(user).sendMessage("commands.island.banlist.the-following");
     }
 
