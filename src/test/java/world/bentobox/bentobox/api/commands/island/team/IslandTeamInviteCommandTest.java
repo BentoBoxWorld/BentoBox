@@ -4,6 +4,7 @@
 package world.bentobox.bentobox.api.commands.island.team;
 
 import static org.junit.Assert.assertFalse;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -18,6 +19,7 @@ import org.bukkit.scheduler.BukkitScheduler;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -50,6 +52,7 @@ public class IslandTeamInviteCommandTest {
     private IslandsManager im;
     private PlayersManager pm;
     private UUID notUUID;
+    @Mock
     private Settings s;
     private Island island;
 
@@ -67,8 +70,6 @@ public class IslandTeamInviteCommandTest {
         when(plugin.getCommandsManager()).thenReturn(cm);
 
         // Settings
-        s = mock(Settings.class);
-        when(s.getRankCommand(Mockito.anyString())).thenReturn(RanksManager.OWNER_RANK);
         when(plugin.getSettings()).thenReturn(s);
 
         // Player
@@ -126,40 +127,41 @@ public class IslandTeamInviteCommandTest {
     }
 
     /**
-     * Test method for .
+     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteCommand#canExecute(User, String, java.util.List)}.
      */
     @Test
     public void testExecuteNoIsland() {
         when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(false);
         when(im.inTeam(Mockito.any(), Mockito.any(UUID.class))).thenReturn(false);
         IslandTeamInviteCommand itl = new IslandTeamInviteCommand(ic);
-        assertFalse(itl.execute(user, itl.getLabel(), new ArrayList<>()));
+        assertFalse(itl.canExecute(user, itl.getLabel(), new ArrayList<>()));
         Mockito.verify(user).sendMessage(Mockito.eq("general.errors.no-island"));
     }
 
     /**
-     * Test method for .
+     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteCommand#canExecute(User, String, java.util.List)}.
      */
     @Test
     public void testExecuteLowRank() {
         when(island.getRank(Mockito.any())).thenReturn(RanksManager.MEMBER_RANK);
+        when(island.getRankCommand(anyString())).thenReturn(RanksManager.OWNER_RANK);
         IslandTeamInviteCommand itl = new IslandTeamInviteCommand(ic);
-        assertFalse(itl.execute(user, itl.getLabel(), new ArrayList<>()));
+        assertFalse(itl.canExecute(user, itl.getLabel(), new ArrayList<>()));
         Mockito.verify(user).sendMessage(Mockito.eq("general.errors.no-permission"));
     }
 
     /**
-     * Test method for .
+     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteCommand#canExecute(User, String, java.util.List)}.
      */
     @Test
     public void testExecuteNoTarget() {
         IslandTeamInviteCommand itl = new IslandTeamInviteCommand(ic);
-        assertFalse(itl.execute(user, itl.getLabel(), new ArrayList<>()));
+        assertFalse(itl.canExecute(user, itl.getLabel(), new ArrayList<>()));
         // Show help
     }
 
     /**
-     * Test method for .
+     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteCommand#execute(User, String, java.util.List)}.
      */
     @Test
     public void testExecuteUnknownPlayer() {
@@ -172,7 +174,7 @@ public class IslandTeamInviteCommandTest {
 
 
     /**
-     * Test method for .
+     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteCommand#execute(User, String, java.util.List)}.
      */
     @Test
     public void testExecuteOfflinePlayer() {
@@ -187,7 +189,7 @@ public class IslandTeamInviteCommandTest {
     }
 
     /**
-     * Test method for .
+     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteCommand#execute(User, String, java.util.List)}.
      */
     @Test
     public void testExecuteSamePlayer() {
@@ -203,7 +205,7 @@ public class IslandTeamInviteCommandTest {
 
 
     /**
-     * Test method for .
+     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteCommand#execute(User, String, java.util.List)}.
      */
     @Test
     public void testExecuteDifferentPlayerInTeam() {
@@ -219,7 +221,7 @@ public class IslandTeamInviteCommandTest {
     }
 
     /**
-     * Test method for .
+     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteCommand#execute(User, String, java.util.List)}.
      */
     @Test
     public void testExecuteCoolDownActive() {

@@ -5,11 +5,11 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.HashSet;
 import java.util.Locale;
@@ -113,7 +113,7 @@ public class UserTest {
         PlaceholdersManager placeholdersManager = mock(PlaceholdersManager.class);
         when(plugin.getPlaceholdersManager()).thenReturn(placeholdersManager);
         // This will just return the value of the second argument of replacePlaceholders. i.e., it won't change anything
-        when(placeholdersManager.replacePlaceholders(any(), any())).thenAnswer((Answer<String>) invocation -> invocation.getArgumentAt(1, String.class));
+        when(placeholdersManager.replacePlaceholders(any(), any())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
 
     }
 
@@ -481,6 +481,16 @@ public class UserTest {
         assertEquals(33, u.getPermissionValue("bskyblock.max", 2));
     }
 
+    /**
+     * Test for {@link User#getPermissionValue(String, int)}
+     */
+    @Test
+    public void testGetPermissionValueConsole() {
+        User.clearUsers();
+        CommandSender console = mock(CommandSender.class);
+        User u = User.getInstance(console);
+        assertEquals(35, u.getPermissionValue("bskyblock.max", 35));
+    }
 
     /**
      * Test for {@link User#getPermissionValue(String, int)}

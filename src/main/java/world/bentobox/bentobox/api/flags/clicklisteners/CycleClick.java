@@ -1,15 +1,20 @@
 package world.bentobox.bentobox.api.flags.clicklisteners;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.event.inventory.ClickType;
+
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
+import world.bentobox.bentobox.api.events.flags.FlagProtectionChangeEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.panels.Panel;
 import world.bentobox.bentobox.api.panels.PanelItem;
+import world.bentobox.bentobox.api.panels.TabbedPanel;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.RanksManager;
+import world.bentobox.bentobox.panels.settings.SettingsTab;
 import world.bentobox.bentobox.util.Util;
 
 /**
@@ -38,9 +43,9 @@ public class CycleClick implements PanelItem.ClickHandler {
 
     /**
      * Construct a cycle clicker with a min and max rank
-     * @param id
-     * @param minRank
-     * @param maxRank
+     * @param id flag id
+     * @param minRank minimum rank value
+     * @param maxRank maximum rank value
      */
     public CycleClick(String id, int minRank, int maxRank) {
         this.id = id;
@@ -50,16 +55,19 @@ public class CycleClick implements PanelItem.ClickHandler {
 
     @Override
     public boolean onClick(Panel panel, User user, ClickType click, int slot) {
+        // This click listener is used with TabbedPanel and SettingsTabs only
+        TabbedPanel tp = (TabbedPanel)panel;
+        SettingsTab st = (SettingsTab)tp.getActiveTab();
+        // Get the island for this tab
+        island = st.getIsland();
         this.user = user;
         changeOccurred = false;
-        // Get the world
-        if (!plugin.getIWM().inWorld(user.getLocation())) {
-            user.sendMessage("general.errors.wrong-world");
-            return true;
-        }
-        String reqPerm = plugin.getIWM().getPermissionPrefix(Util.getWorld(user.getWorld())) + ".settings." + id;
-        String allPerms = plugin.getIWM().getPermissionPrefix(Util.getWorld(user.getWorld())) + ".settings.*";
-        if (!user.hasPermission(reqPerm) && !user.hasPermission(allPerms)) {
+        // Permission prefix
+        String prefix = plugin.getIWM().getPermissionPrefix(Util.getWorld(user.getWorld()));
+        String reqPerm = prefix + "settings." + id;
+        String allPerms = prefix + "settings.*";
+        if (!user.hasPermission(reqPerm) && !user.hasPermission(allPerms)
+                && !user.isOp() && !user.hasPermission(prefix + "admin.settings")) {
             user.sendMessage("general.errors.no-permission", TextVariables.PERMISSION, reqPerm);
             user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_METAL_HIT, 1F, 1F);
             return true;
@@ -67,15 +75,10 @@ public class CycleClick implements PanelItem.ClickHandler {
         // Left clicking increases the rank required
         // Right clicking decreases the rank required
         // Shift Left Click toggles player visibility
-        // Get the user's island
-        island = plugin.getIslands().getIslandAt(user.getLocation()).orElse(plugin.getIslands().getIsland(user.getWorld(), user.getUniqueId()));
-        if (island != null && (user.isOp() || user.getUniqueId().equals(island.getOwner()))) {
+        if (island != null && (user.isOp() || user.getUniqueId().equals(island.getOwner()) || user.hasPermission(prefix + "admin.settings"))) {
             changeOccurred = true;
             RanksManager rm = plugin.getRanksManager();
             plugin.getFlagsManager().getFlag(id).ifPresent(flag -> {
-
-                // Flag visibility
-                boolean invisible = false;
                 // Rank
                 int currentRank = island.getFlag(flag);
                 if (click.equals(ClickType.LEFT)) {
@@ -85,6 +88,8 @@ public class CycleClick implements PanelItem.ClickHandler {
                         island.setFlag(flag, rm.getRankUpValue(currentRank));
                     }
                     user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_OFF, 1F, 1F);
+                    // Fire event
+                    Bukkit.getPluginManager().callEvent(new FlagProtectionChangeEvent(island, user.getUniqueId(), flag, island.getFlag(flag)));
                 } else if (click.equals(ClickType.RIGHT)) {
                     if (currentRank <= minRank) {
                         island.setFlag(flag, maxRank);
@@ -92,9 +97,10 @@ public class CycleClick implements PanelItem.ClickHandler {
                         island.setFlag(flag, rm.getRankDownValue(currentRank));
                     }
                     user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 1F, 1F);
+                    // Fire event
+                    Bukkit.getPluginManager().callEvent(new FlagProtectionChangeEvent(island, user.getUniqueId(), flag, island.getFlag(flag)));
                 } else if (click.equals(ClickType.SHIFT_LEFT) && user.isOp()) {
                     if (!plugin.getIWM().getHiddenFlags(user.getWorld()).contains(flag.getID())) {
-                        invisible = true;
                         plugin.getIWM().getHiddenFlags(user.getWorld()).add(flag.getID());
                         user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_GLASS_BREAK, 1F, 1F);
                     } else {
@@ -104,8 +110,6 @@ public class CycleClick implements PanelItem.ClickHandler {
                     // Save changes
                     plugin.getIWM().getAddon(user.getWorld()).ifPresent(GameModeAddon::saveWorldSettings);
                 }
-                // Apply change to panel
-                panel.getInventory().setItem(slot, flag.toPanelItem(plugin, user, invisible).getItem());
             });
         } else {
             // Player is not the owner of the island.

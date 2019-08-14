@@ -1,7 +1,6 @@
 package world.bentobox.bentobox.listeners.flags.protection;
 
 import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -60,7 +59,7 @@ public class LockAndBanListener extends FlagListener {
         }
         if (!checkAndNotify(e.getPlayer(), e.getTo()).equals(CheckResult.OPEN)) {
             e.setCancelled(true);
-            e.getFrom().getWorld().playSound(e.getFrom(), Sound.BLOCK_ANVIL_HIT, 1F, 1F);
+            e.getPlayer().playSound(e.getFrom(), Sound.BLOCK_ANVIL_HIT, 1F, 1F);
             e.getPlayer().setVelocity(new Vector(0,0,0));
             e.getPlayer().setGliding(false);
         }
@@ -83,7 +82,7 @@ public class LockAndBanListener extends FlagListener {
             if (!checkAndNotify(p, e.getTo()).equals(CheckResult.OPEN)) {
                 p.leaveVehicle();
                 p.teleport(e.getFrom());
-                e.getFrom().getWorld().playSound(e.getFrom(), Sound.BLOCK_ANVIL_HIT, 1F, 1F);
+                e.getVehicle().getWorld().playSound(e.getFrom(), Sound.BLOCK_ANVIL_HIT, 1F, 1F);
                 eject(p);
             }
         });
@@ -112,10 +111,10 @@ public class LockAndBanListener extends FlagListener {
         return getIslands().getProtectedIslandAt(loc)
                 .map(is -> {
                     if (is.isBanned(player.getUniqueId())) {
-                        return player.hasPermission(getIWM().getPermissionPrefix(loc.getWorld()) + ".mod.bypassban") ? CheckResult.OPEN : CheckResult.BANNED;
+                        return player.hasPermission(getIWM().getPermissionPrefix(loc.getWorld()) + "mod.bypassban") ? CheckResult.OPEN : CheckResult.BANNED;
                     }
                     if (!is.isAllowed(User.getInstance(player), Flags.LOCK)) {
-                        return player.hasPermission(getIWM().getPermissionPrefix(loc.getWorld()) + ".mod.bypasslock") ? CheckResult.OPEN : CheckResult.LOCKED;
+                        return player.hasPermission(getIWM().getPermissionPrefix(loc.getWorld()) + "mod.bypasslock") ? CheckResult.OPEN : CheckResult.LOCKED;
                     }
                     return CheckResult.OPEN;
                 }).orElse(CheckResult.OPEN);
@@ -147,7 +146,6 @@ public class LockAndBanListener extends FlagListener {
      * @param player - player
      */
     private void eject(Player player) {
-        player.setGameMode(GameMode.SPECTATOR);
         // Teleport player to their home
         if (getIslands().hasIsland(player.getWorld(), player.getUniqueId())) {
             getIslands().homeTeleport(player.getWorld(), player);

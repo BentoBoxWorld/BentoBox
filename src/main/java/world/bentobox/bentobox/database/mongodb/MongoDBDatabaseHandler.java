@@ -49,7 +49,7 @@ public class MongoDBDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
         this.dbConnecter = dbConnecter;
 
         // Connection to the database
-        MongoDatabase database = (MongoDatabase) dbConnecter.createConnection();
+        MongoDatabase database = (MongoDatabase) dbConnecter.createConnection(dataObject);
         if (database == null) {
             plugin.logError("Are the settings in config.yml correct?");
             Bukkit.getPluginManager().disablePlugin(plugin);
@@ -146,9 +146,6 @@ public class MongoDBDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
 
     @Override
     public void close() {
-        dbConnecter.closeConnection();
-
+        dbConnecter.closeConnection(dataObject);
     }
-
-
 }

@@ -1,6 +1,3 @@
-/**
- *
- */
 package world.bentobox.bentobox.api.commands.island;
 
 import static org.junit.Assert.assertEquals;
@@ -23,6 +20,7 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitScheduler;
+import org.eclipse.jdt.annotation.Nullable;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -102,7 +100,7 @@ public class IslandCreateCommandTest {
         when(user.getUniqueId()).thenReturn(uuid);
         when(user.getPlayer()).thenReturn(player);
         when(user.hasPermission(Mockito.anyString())).thenReturn(true);
-        when(user.getTranslation(Mockito.anyVararg())).thenAnswer((Answer<String>) invocation -> invocation.getArgumentAt(0, String.class));
+        when(user.getTranslation(Mockito.anyVararg())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
         User.setPlugin(plugin);
         // Set up user already
         User.getInstance(player);
@@ -126,6 +124,7 @@ public class IslandCreateCommandTest {
         when(im.isOwner(any(), eq(uuid))).thenReturn(false);
         // Has team
         when(im.inTeam(any(), eq(uuid))).thenReturn(true);
+
         when(plugin.getIslands()).thenReturn(im);
 
 
@@ -146,7 +145,6 @@ public class IslandCreateCommandTest {
         when(NewIsland.builder()).thenReturn(builder);
         when(builder.player(any())).thenReturn(builder);
         when(builder.name(Mockito.anyString())).thenReturn(builder);
-        when(builder.world(any())).thenReturn(builder);
         when(builder.addon(addon)).thenReturn(builder);
         when(builder.reason(any())).thenReturn(builder);
         when(builder.build()).thenReturn(mock(Island.class));
@@ -194,7 +192,9 @@ public class IslandCreateCommandTest {
      */
     @Test
     public void testCanExecuteUserStringListOfStringHasIsland() {
-        when(im.hasIsland(any(), Mockito.any(UUID.class))).thenReturn(true);
+        @Nullable
+        Island island = mock(Island.class);
+        when(im.getIsland(any(), Mockito.any(User.class))).thenReturn(island);
         assertFalse(cc.canExecute(user, "", Collections.emptyList()));
         verify(user).sendMessage(eq("general.errors.already-have-island"));
     }
@@ -203,11 +203,13 @@ public class IslandCreateCommandTest {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandCreateCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteUserStringListOfStringInTeam() {
-        when(im.hasIsland(any(), Mockito.any(UUID.class))).thenReturn(false);
-        when(im.inTeam(any(), Mockito.any(UUID.class))).thenReturn(true);
-        assertFalse(cc.canExecute(user, "", Collections.emptyList()));
-        verify(user).sendMessage(eq("general.errors.already-have-island"));
+    public void testCanExecuteUserStringListOfStringHasIslandReserved() {
+        @Nullable
+        Island island = mock(Island.class);
+        when(im.getIsland(any(), Mockito.any(User.class))).thenReturn(island);
+        when(island.isReserved()).thenReturn(true);
+        assertTrue(cc.canExecute(user, "", Collections.emptyList()));
+        verify(user, never()).sendMessage(eq("general.errors.already-have-island"));
 
     }
 

@@ -1,11 +1,11 @@
 package world.bentobox.bentobox.api.addons;
 
-import org.bukkit.Material;
-import org.eclipse.jdt.annotation.NonNull;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import org.bukkit.Material;
+import org.eclipse.jdt.annotation.NonNull;
 
 /**
  * @author tastybento, Poslovitch

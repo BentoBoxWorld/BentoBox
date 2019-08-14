@@ -195,7 +195,7 @@ public class Util {
     }
 
     /**
-     * Checks is world = world2 irrespective of the world type
+     * Checks is world = world2 irrespective of the world type. Only strips _nether and _the_end from world name.
      * @param world - world
      * @param world2 - world
      * @return true if the same
@@ -205,14 +205,13 @@ public class Util {
     }
 
     private static String stripName(World world) {
-        switch (world.getEnvironment()) {
-        case NETHER:
+        if (world.getName().endsWith(NETHER)) {
             return world.getName().substring(0, world.getName().length() - NETHER.length());
-        case THE_END:
-            return world.getName().substring(0, world.getName().length() - THE_END.length());
-        default:
-            return world.getName();
         }
+        if (world.getName().endsWith(THE_END)) {
+            return world.getName().substring(0, world.getName().length() - THE_END.length());
+        }
+        return world.getName();
     }
 
     /**

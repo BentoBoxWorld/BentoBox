@@ -2,7 +2,9 @@ package world.bentobox.bentobox.managers.island;
 
 import java.io.IOException;
 import java.util.EnumMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -35,7 +37,7 @@ public class NewIsland {
     private final User user;
     private final Reason reason;
     private final World world;
-    private final String name;
+    private String name;
     private final boolean noPaste;
     private GameModeAddon addon;
 
@@ -103,16 +105,6 @@ public class NewIsland {
         }
 
         /**
-         * @param world
-         * @deprecated use {@link #addon} instead
-         */
-        @Deprecated
-        public Builder world(World world) {
-            this.world2 = world;
-            return this;
-        }
-
-        /**
          * Set the addon
          * @param addon a game mode addon
          */
@@ -153,19 +145,35 @@ public class NewIsland {
 
     /**
      * Makes an island.
-     * @param oldIsland
+     * @param oldIsland old island that is being replaced, if any
      */
     public void newIsland(Island oldIsland) {
-        Location next = getNextIsland();
-        if (next == null) {
-            plugin.logError("Failed to make island - no unoccupied spot found");
-            return;
+        Location next = null;
+        if (plugin.getIslands().hasIsland(world, user)) {
+            // Island exists, it just needs pasting
+            island = plugin.getIslands().getIsland(world, user);
+            if (island != null && island.isReserved()) {
+                next = island.getCenter();
+                // Clear the reservation
+                island.setReserved(false);
+            } else {
+                // This should never happen unless we allow another way to paste over islands without reserving
+                plugin.logError("New island for user " + user.getName() + " was not reserved!");
+            }
         }
-        // Add to the grid
-        island = plugin.getIslands().createIsland(next, user.getUniqueId());
-        if (island == null) {
-            plugin.logError("Failed to make island! Island could not be added to the grid.");
-            return;
+        // If the reservation fails, then we need to make a new island anyway
+        if (next == null) {
+            next = getNextIsland();
+            if (next == null) {
+                plugin.logError("Failed to make island - no unoccupied spot found");
+                return;
+            }
+            // Add to the grid
+            island = plugin.getIslands().createIsland(next, user.getUniqueId());
+            if (island == null) {
+                plugin.logError("Failed to make island! Island could not be added to the grid.");
+                return;
+            }
         }
 
         // Clear any old home locations (they should be clear, but just in case)
@@ -173,6 +181,15 @@ public class NewIsland {
 
         // Set home location
         plugin.getPlayers().setHomeLocation(user, new Location(next.getWorld(), next.getX() + 0.5D, next.getY(), next.getZ() + 0.5D), 1);
+
+        // Reset deaths
+        if (plugin.getIWM().isDeathsResetOnNewIsland(world)) {
+            plugin.getPlayers().setDeaths(world, user.getUniqueId(), 0);
+        }
+
+        // Check if owner has a different range permission than the island size
+        island.setProtectionRange(user.getPermissionValue(plugin.getIWM().getAddon(island.getWorld())
+                .map(GameModeAddon::getPermissionPrefix).orElse("") + "island.range", island.getProtectionRange()));
 
         // Save the player so that if the server crashes weird things won't happen
         plugin.getPlayers().save(user.getUniqueId());
@@ -183,10 +200,24 @@ public class NewIsland {
                 .reason(reason)
                 .island(island)
                 .location(island.getCenter())
+                .blueprintBundle(plugin.getBlueprintsManager().getBlueprintBundles(addon).get(name))
                 .build();
         if (event.isCancelled()) {
             return;
         }
+
+        // Get the new BlueprintBundle if it was changed
+        switch (reason) {
+        case CREATE:
+            name = ((IslandEvent.IslandCreateEvent) event).getBlueprintBundle().getUniqueId();
+            break;
+        case RESET:
+            name = ((IslandEvent.IslandResetEvent) event).getBlueprintBundle().getUniqueId();
+            break;
+        default:
+            break;
+        }
+
         // Task to run after creating the island
         Runnable task = () -> {
             // Set initial spawn point if one exists
@@ -207,7 +238,7 @@ public class NewIsland {
             // Delete old island
             if (oldIsland != null) {
                 // Delete the old island
-                plugin.getIslands().deleteIsland(oldIsland, true);
+                plugin.getIslands().deleteIsland(oldIsland, true, user.getUniqueId());
             }
 
             // Fire exit event
@@ -237,7 +268,9 @@ public class NewIsland {
         }
         // Set default settings
         island.setFlagsDefaults();
-        plugin.getMetrics().ifPresent(BStats::increaseIslandsCreatedCount);
+        if (!reason.equals(Reason.RESERVED)) {
+            plugin.getMetrics().ifPresent(BStats::increaseIslandsCreatedCount);
+        }
         // Save island
         plugin.getIslands().save(island);
     }
@@ -257,9 +290,11 @@ public class NewIsland {
         }
         // Find a free spot
         Map<Result, Integer> result = new EnumMap<>(Result.class);
+        // Check center
         Result r = isIsland(last);
+
         while (!r.equals(Result.FREE) && result.getOrDefault(Result.BLOCK_AT_CENTER, 0) < MAX_UNOWNED_ISLANDS) {
-            last = nextGridLocation(last);
+            nextGridLocation(last);
             result.merge(r, 1, (k,v) -> v++);
             r = isIsland(last);
         }
@@ -282,8 +317,21 @@ public class NewIsland {
      */
     private Result isIsland(Location location){
         location = Util.getClosestIsland(location);
-        if (plugin.getIslands().getIslandAt(location).isPresent() || plugin.getIslandDeletionManager().inDeletion(location)) {
-            return Result.ISLAND_FOUND;
+
+        // Check 4 corners
+        int dist = plugin.getIWM().getIslandDistance(location.getWorld());
+        Set<Location> locs = new HashSet<>();
+        locs.add(location);
+
+        locs.add(new Location(location.getWorld(), location.getX() - dist, 0, location.getZ() - dist));
+        locs.add(new Location(location.getWorld(), location.getX() - dist, 0, location.getZ() + dist - 1));
+        locs.add(new Location(location.getWorld(), location.getX() + dist - 1, 0, location.getZ() - dist));
+        locs.add(new Location(location.getWorld(), location.getX() + dist - 1, 0, location.getZ() + dist - 1));
+
+        for (Location l : locs) {
+            if (plugin.getIslands().getIslandAt(l).isPresent() || plugin.getIslandDeletionManager().inDeletion(l)) {
+                return Result.ISLAND_FOUND;
+            }
         }
 
         if (!plugin.getIWM().isUseOwnGenerator(location.getWorld())) {

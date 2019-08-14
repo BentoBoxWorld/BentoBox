@@ -94,7 +94,7 @@ public class IslandTeamLeaveCommand extends ConfirmableCommand {
             // Notify how many resets are left
             showResets(user);
         }
-        user.sendMessage("general.success");
+        user.sendMessage("commands.island.team.leave.success");
         // Fire event
         IslandBaseEvent e = TeamEvent.builder()
                 .island(island)
@@ -103,5 +103,4 @@ public class IslandTeamLeaveCommand extends ConfirmableCommand {
                 .build();
         Bukkit.getServer().getPluginManager().callEvent(e);
     }
-
 }

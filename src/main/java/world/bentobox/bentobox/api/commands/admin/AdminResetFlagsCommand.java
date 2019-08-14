@@ -29,7 +29,7 @@ public class AdminResetFlagsCommand extends ConfirmableCommand {
         // Everything's fine, we can set the island as spawn :)
         askConfirmation(user, () -> {
             getIslands().resetAllFlags(getWorld());
-            user.sendMessage("general.success");
+            user.sendMessage("commands.admin.resetflags.success");
         });
         return true;
     }

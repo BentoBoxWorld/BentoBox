@@ -1,12 +1,13 @@
 package world.bentobox.bentobox.managers;
 
-import org.eclipse.jdt.annotation.NonNull;
-import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.api.hooks.Hook;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import org.eclipse.jdt.annotation.NonNull;
+
+import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.hooks.Hook;
 
 /**
  * @author Poslovitch

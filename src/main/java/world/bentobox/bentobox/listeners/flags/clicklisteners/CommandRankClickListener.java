@@ -18,6 +18,7 @@ import world.bentobox.bentobox.api.panels.PanelItem.ClickHandler;
 import world.bentobox.bentobox.api.panels.builders.PanelBuilder;
 import world.bentobox.bentobox.api.panels.builders.PanelItemBuilder;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
@@ -41,9 +42,17 @@ public class CommandRankClickListener implements ClickHandler {
             return true;
         }
         IslandWorldManager iwm = plugin.getIWM();
-        String reqPerm = iwm.getPermissionPrefix(Util.getWorld(user.getWorld())) + ".admin.settings.COMMAND_RANKS";
+        String reqPerm = iwm.getPermissionPrefix(Util.getWorld(user.getWorld())) + "admin.settings.COMMAND_RANKS";
         if (!user.hasPermission(reqPerm)) {
             user.sendMessage("general.errors.no-permission", "[permission]", reqPerm);
+            user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_METAL_HIT, 1F, 1F);
+            return true;
+        }
+
+        // Get the user's island
+        Island island = plugin.getIslands().getIsland(user.getWorld(), user.getUniqueId());
+        if (island == null || !island.getOwner().equals(user.getUniqueId())) {
+            user.sendMessage("general.errors.not-owner");
             user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_METAL_HIT, 1F, 1F);
             return true;
         }
@@ -81,6 +90,7 @@ public class CommandRankClickListener implements ClickHandler {
      * @return panel item for this command
      */
     public PanelItem getPanelItem(String c, User user) {
+        Island island = plugin.getIslands().getIsland(user.getWorld(), user);
         PanelItemBuilder pib = new PanelItemBuilder();
         pib.name(c);
         pib.clickHandler(new CommandCycleClick(this, c));
@@ -89,11 +99,11 @@ public class CommandRankClickListener implements ClickHandler {
         String d = user.getTranslation("protection.panel.flag-item.description-layout", TextVariables.DESCRIPTION, "");
         pib.description(d);
         plugin.getRanksManager().getRanks().forEach((reference, score) -> {
-            if (score >= RanksManager.MEMBER_RANK && score < plugin.getSettings().getRankCommand(c)) {
+            if (score >= RanksManager.MEMBER_RANK && score < island.getRankCommand(c)) {
                 pib.description(user.getTranslation("protection.panel.flag-item.blocked-rank") + user.getTranslation(reference));
-            } else if (score <= RanksManager.OWNER_RANK && score > plugin.getSettings().getRankCommand(c)) {
+            } else if (score <= RanksManager.OWNER_RANK && score > island.getRankCommand(c)) {
                 pib.description(user.getTranslation("protection.panel.flag-item.allowed-rank") + user.getTranslation(reference));
-            } else if (score == plugin.getSettings().getRankCommand(c)) {
+            } else if (score == island.getRankCommand(c)) {
                 pib.description(user.getTranslation("protection.panel.flag-item.minimal-rank") + user.getTranslation(reference));
             }
         });

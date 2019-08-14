@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.bukkit.util.Vector;
+
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
@@ -27,10 +29,10 @@ public class AdminDeleteCommand extends ConfirmableCommand {
 
     @Override
     public boolean canExecute(User user, String label, List<String> args) {
-		if (args.size() != 1) {
-			showHelp(this, user);
-			return false;
-		}
+        if (args.size() != 1) {
+            showHelp(this, user);
+            return false;
+        }
         // Get target
         UUID targetUUID = getPlayers().getUUID(args.get(0));
         if (targetUUID == null) {
@@ -65,10 +67,9 @@ public class AdminDeleteCommand extends ConfirmableCommand {
 
     private void deletePlayer(User user, UUID targetUUID) {
         // Delete player and island
-        user.sendMessage("commands.admin.delete.deleted-island", "[xyz]", Util.xyz(getIslands().getIsland(getWorld(), targetUUID).getCenter().toVector()));
-
         // Get the target's island
         Island oldIsland = getIslands().getIsland(getWorld(), targetUUID);
+        Vector vector = null;
         if (oldIsland != null) {
             // Check if player is online and on the island
             User target = User.getInstance(targetUUID);
@@ -86,10 +87,15 @@ public class AdminDeleteCommand extends ConfirmableCommand {
                     getPlugin().getVault().ifPresent(vault -> vault.withdraw(target, vault.getBalance(target)));
                 }
             }
-            getIslands().deleteIsland(oldIsland, true);
+            vector = oldIsland.getCenter().toVector();
+            getIslands().deleteIsland(oldIsland, true, targetUUID);
         }
         getPlayers().clearHomeLocations(getWorld(), targetUUID);
-        user.sendMessage("general.success");
+        if (vector == null) {
+            user.sendMessage("general.success");
+        } else {
+            user.sendMessage("commands.admin.delete.deleted-island", "[xyz]", Util.xyz(vector));
+        }
     }
 
     @Override

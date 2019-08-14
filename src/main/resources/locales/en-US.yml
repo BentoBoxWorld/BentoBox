@@ -57,6 +57,29 @@ commands:
       reset:
         description: "resets the resets of this player to 0"
         parameters: "<player>"
+    purge:
+      parameters: "[days]" 
+      description: "purge islands abandoned for more than [days]"
+      days-or-more: "Must be at least 1 day or more"     
+      purgable-islands: "Found [number] purgable islands."
+      purge-in-progress: "&cPurging in progress. Use purge stop to cancel"
+      number-error: "&cArgument must be a number of days"
+      confirm: "&dType [label] purge confirm to start purging"  
+      completed: "&aPurging stopped"
+      see-console-for-status: "Purge started. See console for status" 
+      protect:
+        description: "Toggle island purge protection"
+        move-to-island: "&cMove to an island first!"
+        protecting: "&aPurge-protecting island"
+        unprotecting: "&aRemoving purge protection"
+      stop:
+        description: "Stop a purge in progress"
+        stopping: "Stopping the purge"
+        no-purge-in-progress: "&cNo purge in progress!"
+      unowned:
+        description: "Purge unowned islands - requires confirmation"
+        unowned-islands: "&dFound [number] islands"
+        
     team:
       add:
         parameters: "<owner> <player>"
@@ -111,6 +134,7 @@ commands:
       parameters: "<player>"
       description: "register player to unowned island you are on"
       registered-island: "&aRegistered player to island at [xyz]."
+      reserved-island: "&aReserved island at [xyz] for player."
       already-owned: "&cIsland is already owned by another player!"
       no-island-here: "&cThere is no island here. Confirm to make one."
       in-deletion: "&cThis island space is currently being deleted. Try later."
@@ -136,6 +160,7 @@ commands:
       island-coords: "Island coordinates: [xz1] to [xz2]"
       islands-in-trash: "&dPlayer has islands in trash."
       protection-range: "Protection range: [range]"
+      purge-protected: "Island is purge protected"
       max-protection-range: "Largest historical protection range: [range]"
       protection-coords: "Protection coordinates: [xz1] to [xz2]"
       is-spawn: "Island is a spawn island"
@@ -151,7 +176,8 @@ commands:
       parameters: "<player> <number>"
       description: "switch player's island to the numbered one in trash"
       out-of-range: "&cNumber must be between 1 and [number]. Use &l[label] trash [player] &r&cto see island numbers"
-      cannot-switch: "&cSwitch failed. See console log for error."   
+      cannot-switch: "&cSwitch failed. See console log for error."
+      success: "&aSuccessfully switched the player's island to the specified one."
     trash:
       no-unowned-in-trash: "&cNo unowned islands in trash"
       no-islands-in-trash: "&cPlayer has no islands in trash"
@@ -164,12 +190,13 @@ commands:
     emptytrash:
       parameters: "[player]"
       description: "Clear trash for player, or all unowned islands in trash"
+      success: "&aTrash successfully emptied."
     version:
       description: "display BentoBox and addons versions"
     setrange:
       parameters: "<player> <range>"
       description: "set the range of player's island"
-      range-updated: "Island range updated to [number]"
+      range-updated: "&aIsland range updated to &b[number]&a."
     reload:
       description: "reload"
     tp:
@@ -184,15 +211,21 @@ commands:
       parameters: "<player> <rank>"
       description: "set a player's rank on their island"
       unknown-rank: "&cUnknown rank!"
+      not-possible: "&cRank must be higher than visitor"
       rank-set: "&aRank set from [from] to [to]."
     setspawn:
-      description: "set an Island as spawn for this world"
+      description: "set an island as spawn for this world"
       already-spawn: "&cThis island is already a spawn!"
       no-island-here: "&cThere is no island here."
-      confirmation: "&cAre you sure you want to set this Island as the spawn for this world?"
+      confirmation: "&cAre you sure you want to set this island as the spawn for this world?"
+      success: "&aSuccessfully set this island as the spawn for this world."
+    settings:
+      parameters: "[player]"
+      description: "open system settings or island settings for player"
     blueprint:
       parameters: "<load/copy/paste/pos1/pos2/save>"
       description: "manipulate blueprints"
+      bedrock-required: "&cAt least one bedrock block must be in a blueprint!"
       copy-first: "&cCopy first!"
       file-exists: "&cFile already exists, overwrite?"
       no-such-file: "&cNo such file!"
@@ -278,6 +311,7 @@ commands:
           &aRight click to decrement
     resetflags:
       description: "Reset all islands to default flag settings in config.yml"
+      success: "&aSuccessfully reset all islands' flags to the default settings."
     world:
       description: "Manage world settings"
     delete:
@@ -321,6 +355,7 @@ commands:
       addon-syntax: "&2[name] &3[version] &7(&3[state]&7)"
       game-world: "&2[name] &7(&3[addon]&7): &aOverworld&7, &r[nether_color]Nether&7, &r[end_color]End"
       server: "&2Running &3[name] [version]&2."
+      database: "&2Database: &3[database]"
     manage:
       description: "displays the Management Panel"
     catalog:
@@ -342,6 +377,10 @@ commands:
     confirm: "&cType command again within &b[seconds]s&c to confirm."
     previous-request-cancelled: "&6Previous confirmation request cancelled."
     request-cancelled: "&cConfirmation timeout - &brequest cancelled."
+  delay:
+    previous-command-cancelled: "&cPrevious command cancelled"
+    stand-still: "&6Do not move! Teleporting in [seconds] seconds"
+    moved-so-command-cancelled: "&cYou moved. Teleport cancelled!"
   island:
     about:
       description: "About this addon"
@@ -350,7 +389,6 @@ commands:
       description: "teleport you to your island"
       teleport: "&aTeleporting you to your island."
       teleported: "&aTeleported you to home &e#[number]."
-      tip: "&bType /[label] help &afor help."
     help:
       description: "The main island command"
       pick-world: "&cSpecify world from [worlds]"
@@ -414,6 +452,7 @@ commands:
         cannot-coop-yourself: "&cYou cannot coop yourself!"
         already-has-rank: "&cPlayer already has a rank!"
         you-are-a-coop-member: "&2You were cooped by [name]"
+        success: "&aYou cooped &b[name]."
       uncoop:
         description: "remove a coop rank from player"
         parameters: "<player>"
@@ -422,20 +461,23 @@ commands:
         player-not-cooped: "&cPlayer is not cooped!"
         you-are-no-longer-a-coop-member: "&cYou are no longer a coop member of [name]'s island"
         all-members-logged-off: "&cAll island members logged off so you are no longer a coop member of [name]'s island"
+        success: "&b[name] &ais no longer a coop member of your island."
       trust:
         description: "give a player trusted rank on your island"
         parameters: "<player>"
         trust-in-yourself: "&cTrust in yourself!"
         members-trusted: "&cMembers are already trusted"
         player-already-trusted: "&cPlayer is already trusted!"
-        you-are-trusted: "&2You are trusted by [name]!"
+        you-are-trusted: "&2You are trusted by &b[name]&a!"
+        success: "&aYou trusted &b[name]&a."
       untrust:
         description: "remove trusted player rank from player"
         parameters: "<player>"
         cannot-untrust-yourself: "&cYou cannot untrust yourself!"
         cannot-untrust-member: "&cYou cannot untrust a team member!"
         player-not-trusted: "&cPlayer is not trusted!"
-        you-are-no-longer-trusted: "&cYou are no longer trusted by [name]!"
+        you-are-no-longer-trusted: "&cYou are no longer trusted by &b[name]&a!"
+        success: "&b[name] &ais no longer trusted on your island."
       invite:
         description: "invite a player to join your island"
         invitation-sent: "&aInvitation sent to [name]"
@@ -470,6 +512,7 @@ commands:
         cannot-leave: "&cOwners cannot leave! Become a member first, or kick all members."
         description: "leave your island"
         left-your-island: "&c[name] &cleft your island"
+        success: "&aYou left this island."
       kick:
         description: "remove a member from your island"
         parameters: "<player>"
@@ -479,6 +522,8 @@ commands:
       demote:
         description: "demote a player on your island down a rank"
         parameters: "<player>"
+        errors:
+          cant-demote-yourself: "&cYou can't demote yourself!"
         failure: "&cPlayer cannot be demoted any further!"
         success: "&aDemoted [name] to [rank]"      
       promote:
@@ -530,6 +575,7 @@ commands:
       cannot-ban-member: "&cYou cannot expel a team member!"
       not-on-island: "&cThat player is not on your island!"
       player-expelled-you: "&b[name]&c expelled you from the island!"
+      success: "&aYou expelled &b[name] &afrom the island."
 
 ranks:
   owner: "Owner"
@@ -605,6 +651,10 @@ protection:
       name: "Droppers"
       description: "Toggle dropper interaction"
       hint: "Dropper interaction disabled"
+    ELYTRA:
+      name: "Elytra"
+      description: "Toggle elytra allowed or not"
+      hint: "&cWARNING: Elytra cannot be used here!"
     HOPPER:
       name: "Hoppers"
       description: "Toggle hopper interaction"
@@ -679,11 +729,7 @@ protection:
       description: "Toggle egg throwing"
       name: "Egg throwing"
       hint: "No egg throwing"
-    ELYTRA: 
-      description: "Toggle use on island"
-      name: "Elytra"
-      hint: "No elytra flying allowed"
-    ENCHANTING: 
+    ENCHANTING:
       description: "Toggle use"
       name: "Enchanting table"
       hint: "No table use"
@@ -1008,13 +1054,30 @@ protection:
         &aback to their island using commands
         &aif they are falling.
       hint: "&cYou cannot teleport back to your island while you are falling."
+    WITHER_DAMAGE:
+      name: "Toggle wither damage"
+      description: |-
+        &aIf active, withers can
+        &adamage blocks and players
   locked: "&cThis island is locked!"
   protected: "&cIsland protected: [description]"
+  world-protected: "&cWorld protected: [description]"
   spawn-protected: "&cSpawn protected: [description]"
 
   panel:
     next: "Next Page"
     previous: "Previous Page"
+    mode:
+      advanced:
+        name: "&6Advanced Settings"
+        description: "&aDisplays a sensible amount of settings."
+      basic:
+        name: "&aBasic Settings"
+        description: "&aDisplays the most useful settings."
+      expert:
+        name: "&cExpert Settings"
+        description: "&aDisplays all the available settings."
+      click-to-switch: "&eClick &ato switch to the &r[next]&r&a."
     PROTECTION:
       title: "&6Protection"
       description: |-
@@ -1028,6 +1091,11 @@ protection:
     WORLD_SETTING:
       title: "&b[world_name] &6Settings"
       description: "&aSettings for this game world"
+    WORLD_DEFAULTS:
+      title: "&b[world_name] &6World Protections"
+      description: |
+        &aProtection settings when
+        &aplayer is outside their island
     flag-item:
       name-layout: "&a[name]"
       description-layout: |
@@ -1038,6 +1106,7 @@ protection:
       blocked-rank: "&3- &c"
       minimal-rank: "&3- &2"
       menu-layout: "&a[description]"
+      setting-cooldown: "&cSetting is on cooldown"
       setting-layout: |
         &a[description]
         

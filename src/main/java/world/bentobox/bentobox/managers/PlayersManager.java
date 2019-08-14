@@ -1,15 +1,5 @@
 package world.bentobox.bentobox.managers;
 
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
-import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.database.Database;
-import world.bentobox.bentobox.database.objects.Names;
-import world.bentobox.bentobox.database.objects.Players;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -17,6 +7,18 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
+
+import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.flags.Flag;
+import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.database.Database;
+import world.bentobox.bentobox.database.objects.Names;
+import world.bentobox.bentobox.database.objects.Players;
 
 public class PlayersManager {
 
@@ -421,16 +423,35 @@ public class PlayersManager {
         return User.getInstance(uuid);
     }
 
-
     /**
      * Adds a reset to this player's number of resets
-     * @param world
-     * @param playerUUID
+     * @param world world where island is
+     * @param playerUUID player's UUID
      */
     public void addReset(World world, UUID playerUUID) {
         addPlayer(playerUUID);
         playerCache.get(playerUUID).addReset(world);
-
     }
 
+    /**
+     * Sets the Flags display mode for the Settings Panel for this player.
+     * @param playerUUID player's UUID
+     * @param displayMode the {@link Flag.Mode} to set
+     * @since 1.6.0
+     */
+    public void setFlagsDisplayMode(UUID playerUUID, Flag.Mode displayMode) {
+        addPlayer(playerUUID);
+        playerCache.get(playerUUID).setFlagsDisplayMode(displayMode);
+    }
+
+    /**
+     * Returns the Flags display mode for the Settings Panel for this player.
+     * @param playerUUID player's UUID
+     * @return the {@link Flag.Mode display mode} for the Flags in the Settings Panel.
+     * @since 1.6.0
+     */
+    public Flag.Mode getFlagsDisplayMode(UUID playerUUID) {
+        addPlayer(playerUUID);
+        return playerCache.get(playerUUID).getFlagsDisplayMode();
+    }
 }

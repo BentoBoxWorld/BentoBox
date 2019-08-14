@@ -1,11 +1,12 @@
 package world.bentobox.bentobox.database.transition;
 
-import org.eclipse.jdt.annotation.Nullable;
-import world.bentobox.bentobox.database.AbstractDatabaseHandler;
-
 import java.beans.IntrospectionException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+
+import org.eclipse.jdt.annotation.Nullable;
+
+import world.bentobox.bentobox.database.AbstractDatabaseHandler;
 
 /**
  * Class that transitions from one database type to another

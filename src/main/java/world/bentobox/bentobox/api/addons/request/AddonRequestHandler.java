@@ -24,7 +24,7 @@ public abstract class AddonRequestHandler
 	 * This is used only for Addons to respond to addon requests from plugins.
 	 * Example: request island level from Levels addon.
 	 *
-	 * @param metaData
+	 * @param metaData meta data
 	 * @return request response
 	 */
 	public abstract Object handle(Map<String, Object> metaData);

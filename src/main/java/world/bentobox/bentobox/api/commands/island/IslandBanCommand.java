@@ -1,9 +1,16 @@
 package world.bentobox.bentobox.api.commands.island;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
+
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.island.IslandEvent;
@@ -12,12 +19,9 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.util.Util;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
 public class IslandBanCommand extends CompositeCommand {
+
+    private @Nullable User target;
 
     public IslandBanCommand(CompositeCommand islandCommand) {
         super(islandCommand, "ban");
@@ -33,7 +37,7 @@ public class IslandBanCommand extends CompositeCommand {
     }
 
     @Override
-    public boolean execute(User user, String label, List<String> args) {
+    public boolean canExecute(User user, String label, List<String> args) {
         if (args.size() != 1) {
             // Show help
             showHelp(this, user);
@@ -47,7 +51,7 @@ public class IslandBanCommand extends CompositeCommand {
         }
         // Check rank to use command
         Island island = getIslands().getIsland(getWorld(), user);
-        if (island.getRank(user) < getPlugin().getSettings().getRankCommand(getUsage())) {
+        if (island.getRank(user) < island.getRankCommand(getUsage())) {
             user.sendMessage("general.errors.no-permission");
             return false;
         }
@@ -73,12 +77,19 @@ public class IslandBanCommand extends CompositeCommand {
         if (getSettings().getBanCooldown() > 0 && checkCooldown(user, island.getUniqueId(), targetUUID.toString())) {
             return false;
         }
-        User target = User.getInstance(targetUUID);
+        target = User.getInstance(targetUUID);
         // Cannot ban ops
-        if (target.hasPermission(getAddon().getPermissionPrefix() + "admin.noban")) {
+        if (target.isOp() || (target.isOnline() && target.hasPermission(
+                getAddon()
+                .getPermissionPrefix() + "admin.noban"))) {
             user.sendMessage("commands.island.ban.cannot-ban");
             return false;
         }
+        return true;
+    }
+
+    @Override
+    public boolean execute(User user, String label, List<String> args) {
         // Finished error checking - start the banning
         return ban(user, target);
     }

@@ -82,7 +82,7 @@ public class AdminRegisterCommand extends ConfirmableCommand {
             Bukkit.getServer().getPluginManager().callEvent(event);
             return true;
         }).orElse(false)) {
-            // Island does not exist
+            // Island does not exist - this is a reservation
             user.sendMessage("commands.admin.register.no-island-here");
             this.askConfirmation(user, () -> {
                 // Make island here
@@ -92,13 +92,13 @@ public class AdminRegisterCommand extends ConfirmableCommand {
                     return;
                 }
                 getIslands().setOwner(user, targetUUID, i);
-                getWorld().getBlockAt(i.getCenter()).setType(Material.BEDROCK);
-                user.sendMessage("commands.admin.register.registered-island", "[xyz]", Util.xyz(i.getCenter().toVector()));
-                user.sendMessage("general.success");
+                i.setReserved(true);
+                i.getCenter().getBlock().setType(Material.BEDROCK);
+                user.sendMessage("commands.admin.register.reserved-island", "[xyz]", Util.xyz(i.getCenter().toVector()));
                 IslandBaseEvent event = IslandEvent.builder()
                         .island(i)
                         .location(i.getCenter())
-                        .reason(IslandEvent.Reason.CREATED)
+                        .reason(IslandEvent.Reason.RESERVED)
                         .involvedPlayer(targetUUID)
                         .admin(true)
                         .build();

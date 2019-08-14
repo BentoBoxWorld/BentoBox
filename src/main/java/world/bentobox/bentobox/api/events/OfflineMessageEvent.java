@@ -13,8 +13,8 @@ public class OfflineMessageEvent extends BentoBoxEvent {
     private final String message;
 
     /**
-     * @param offlinePlayer
-     * @param message
+     * @param offlinePlayer - offline player
+     * @param message message to send offline player
      */
     public OfflineMessageEvent(UUID offlinePlayer, String message) {
         this.offlinePlayer = offlinePlayer;

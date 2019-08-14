@@ -1,14 +1,14 @@
 package world.bentobox.bentobox.lists;
 
-import world.bentobox.bentobox.api.placeholders.GameModePlaceholderReplacer;
-import world.bentobox.bentobox.database.objects.Island;
-import world.bentobox.bentobox.managers.RanksManager;
-import world.bentobox.bentobox.util.Util;
-
 import java.text.DateFormat;
 import java.time.Instant;
 import java.util.Date;
 import java.util.Optional;
+
+import world.bentobox.bentobox.api.placeholders.GameModePlaceholderReplacer;
+import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.managers.RanksManager;
+import world.bentobox.bentobox.util.Util;
 
 public enum GameModePlaceholder {
 
@@ -42,11 +42,6 @@ public enum GameModePlaceholder {
     ISLAND_PROTECTION_RANGE_DIAMETER("island_protection_range_diameter", (addon, user, island) -> island == null ? "" : String.valueOf(2 * island.getProtectionRange())),
     ISLAND_OWNER("island_owner", (addon, user, island) -> island == null ? "" : addon.getPlayers().getName(island.getOwner())),
     ISLAND_CREATION_DATE("island_creation_date", (addon, user, island) -> island == null ? "" : DateFormat.getInstance().format(Date.from(Instant.ofEpochMilli(island.getCreatedDate())))),
-    /**
-     * @deprecated As of 1.5.2, for removal; use {@link #ISLAND_CENTER} instead.
-     */
-    @Deprecated
-    ISLAND_SPAWNPOINT("island_spawnpoint", (addon, user, island) -> island == null ? "" : Util.xyz(island.getCenter().toVector())),
     ISLAND_NAME("island_name", (addon, user, island) -> {
         if (island == null || island.getName() == null) {
             return "";

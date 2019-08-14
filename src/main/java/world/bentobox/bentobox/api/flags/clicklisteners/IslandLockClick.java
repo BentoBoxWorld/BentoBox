@@ -10,16 +10,16 @@ import world.bentobox.bentobox.api.events.island.IslandEvent;
 public class IslandLockClick extends CycleClick {
 
     /**
-     * @param id
+     * @param id flag id
      */
     public IslandLockClick(String id) {
         super(id);
     }
 
     /**
-     * @param id
-     * @param minRank
-     * @param maxRank
+     * @param id flag id
+     * @param minRank minimum rank
+     * @param maxRank maximum rank
      */
     public IslandLockClick(String id, int minRank, int maxRank) {
         super(id, minRank, maxRank);

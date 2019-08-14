@@ -62,7 +62,7 @@ public class SafeSpotTeleportBuilderTest {
     public void test() throws Exception {
         sstb = new SafeSpotTeleport.Builder(plugin);
         sstb.build();
-        SafeSpotTeleport ttt = new SafeSpotTeleport(plugin, player, loc, null, false, 0, false);
+        SafeSpotTeleport ttt = new SafeSpotTeleport(plugin, player, loc, null, false, 0);
         assertEquals(sst, ttt);
     }
 

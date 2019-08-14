@@ -1,10 +1,12 @@
 package world.bentobox.bentobox.api.flags.clicklisteners;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.event.inventory.ClickType;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
+import world.bentobox.bentobox.api.events.flags.FlagWorldSettingChangeEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.panels.Panel;
 import world.bentobox.bentobox.api.panels.PanelItem.ClickHandler;
@@ -18,8 +20,8 @@ import world.bentobox.bentobox.util.Util;
  */
 public class WorldToggleClick implements ClickHandler {
 
-    private BentoBox plugin = BentoBox.getInstance();
-    private String id;
+    private final BentoBox plugin = BentoBox.getInstance();
+    private final String id;
 
     /**
      * @param id - the flag ID that this click listener is associated with
@@ -35,7 +37,7 @@ public class WorldToggleClick implements ClickHandler {
             user.sendMessage("general.errors.wrong-world");
             return true;
         }
-        String reqPerm = plugin.getIWM().getPermissionPrefix(Util.getWorld(user.getWorld())) + ".admin.world.settings." + id;
+        String reqPerm = plugin.getIWM().getPermissionPrefix(Util.getWorld(user.getWorld())) + "admin.world.settings." + id;
         if (!user.hasPermission(reqPerm)) {
             user.sendMessage("general.errors.no-permission", TextVariables.PERMISSION, reqPerm);
             user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_METAL_HIT, 1F, 1F);
@@ -43,11 +45,8 @@ public class WorldToggleClick implements ClickHandler {
         }
         // Get flag
         plugin.getFlagsManager().getFlag(id).ifPresent(flag -> {
-            // Visibility
-            boolean invisible = false;
             if (click.equals(ClickType.SHIFT_LEFT) && user.isOp()) {
                 if (!plugin.getIWM().getHiddenFlags(user.getWorld()).contains(flag.getID())) {
-                    invisible = true;
                     plugin.getIWM().getHiddenFlags(user.getWorld()).add(flag.getID());
                     user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_GLASS_BREAK, 1F, 1F);
                 } else {
@@ -60,9 +59,9 @@ public class WorldToggleClick implements ClickHandler {
                 // Toggle flag
                 flag.setSetting(user.getWorld(), !flag.isSetForWorld(user.getWorld()));
                 user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 1F, 1F);
+                // Fire event
+                Bukkit.getPluginManager().callEvent(new FlagWorldSettingChangeEvent(user.getWorld(), user.getUniqueId(), flag, flag.isSetForWorld(user.getWorld())));
             }
-            // Apply change to panel
-            panel.getInventory().setItem(slot, flag.toPanelItem(plugin, user, invisible).getItem());
 
             // Save world settings
             plugin.getIWM().getAddon(Util.getWorld(user.getWorld())).ifPresent(GameModeAddon::saveWorldSettings);

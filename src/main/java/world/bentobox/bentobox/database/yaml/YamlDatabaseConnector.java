@@ -13,7 +13,6 @@ import java.io.PrintWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +23,7 @@ import java.util.UUID;
 
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.eclipse.jdt.annotation.NonNull;
 
 import com.google.common.base.Charsets;
 
@@ -41,11 +41,6 @@ public class YamlDatabaseConnector implements DatabaseConnector {
     YamlDatabaseConnector(BentoBox plugin) {
         this.plugin = plugin;
         dataFolder = new File(plugin.getDataFolder(), DATABASE_FOLDER_NAME);
-    }
-
-    @Override
-    public Connection createConnection() {
-        return null; // Not used
     }
 
     @Override
@@ -191,6 +186,7 @@ public class YamlDatabaseConnector implements DatabaseConnector {
     }
 
     @Override
+    @NonNull
     public String getUniqueId(String tableName) {
         UUID uuid = UUID.randomUUID();
         File file = new File(dataFolder, tableName + File.separator + uuid.toString() + YML);
@@ -209,8 +205,16 @@ public class YamlDatabaseConnector implements DatabaseConnector {
     }
 
     @Override
-    public void closeConnection() {
+    public Object createConnection(Class<?> type) {
         // Not used
+        return null;
+    }
+
+
+    @Override
+    public void closeConnection(Class<?> type) {
+        // not used
+
     }
 
 }

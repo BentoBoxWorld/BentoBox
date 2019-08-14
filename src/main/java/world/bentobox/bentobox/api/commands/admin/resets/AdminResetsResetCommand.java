@@ -1,6 +1,9 @@
 package world.bentobox.bentobox.api.commands.admin.resets;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -24,7 +27,7 @@ public class AdminResetsResetCommand extends ConfirmableCommand {
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        if (args.isEmpty() || args.size() != 1) {
+        if (args.size() != 1) {
             showHelp(this, user);
             return false;
         }

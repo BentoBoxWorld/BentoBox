@@ -29,19 +29,22 @@ import world.bentobox.bentobox.lists.Flags;
  */
 public class BlockInteractionListener extends FlagListener {
 
+    private static final String FURNACE = "FURNACE";
+    private static final String CRAFTING = "CRAFTING";
+
     /**
      * These cover materials in another server version.
      * This avoids run time errors due to unknown enum values, at the expense of a string comparison
      */
     private final Map<String, String> stringFlags = ImmutableMap.<String, String>builder()
-            .put("CAMPFIRE", "FURNACE")
-            .put("CARTOGRAPHY_TABLE", "CRAFTING")
-            .put("GRINDSTONE", "CRAFTING")
+            .put("CAMPFIRE", FURNACE)
+            .put("CARTOGRAPHY_TABLE", CRAFTING)
+            .put("GRINDSTONE", CRAFTING)
             .put("LECTERN", "BREAK_BLOCKS")
-            .put("LOOM", "CRAFTING")
-            .put("STONECUTTER", "CRAFTING")
-            .put("SMOKER", "FURNACE")
-            .put("BLAST_FURNACE", "FURNACE")
+            .put("LOOM", CRAFTING)
+            .put("STONECUTTER", CRAFTING)
+            .put("SMOKER", FURNACE)
+            .put("BLAST_FURNACE", FURNACE)
             .put("COMPOSTER", "CONTAINER")
             .build();
 
@@ -153,6 +156,8 @@ public class BlockInteractionListener extends FlagListener {
         }
         switch (type) {
         case ANVIL:
+        case CHIPPED_ANVIL:
+        case DAMAGED_ANVIL:
             checkIsland(e, player, loc, Flags.ANVIL);
             break;
         case BEACON:
@@ -287,7 +292,7 @@ public class BlockInteractionListener extends FlagListener {
         default:
             if (stringFlags.containsKey(type.name())) {
                 Optional<Flag> f = BentoBox.getInstance().getFlagsManager().getFlag(stringFlags.get(type.name()));
-                if (f.isPresent()) checkIsland(e, player, loc, f.get());
+                f.ifPresent(flag -> checkIsland(e, player, loc, flag));
             }
         }
     }

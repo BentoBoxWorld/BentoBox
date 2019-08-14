@@ -12,6 +12,11 @@ import org.bukkit.inventory.meta.ItemMeta;
 import world.bentobox.bentobox.api.panels.builders.PanelItemBuilder;
 import world.bentobox.bentobox.api.user.User;
 
+/**
+ * Represents an item in a {@link Panel}
+ * @author tastybento
+ *
+ */
 public class PanelItem {
 
     public static PanelItem empty() {
@@ -24,7 +29,7 @@ public class PanelItem {
     private String name;
     private boolean glow;
     private ItemMeta meta;
-    private boolean playerHead;
+    private final boolean playerHead;
     private boolean invisible;
 
     public PanelItem(PanelItemBuilder builtItem) {
@@ -104,6 +109,14 @@ public class PanelItem {
         return Optional.ofNullable(clickHandler);
     }
 
+    /**
+     * @param clickHandler the clickHandler to set
+     * @since 1.6.0
+     */
+    public void setClickHandler(ClickHandler clickHandler) {
+        this.clickHandler = clickHandler;
+    }
+
     public boolean isGlow() {
         return glow;
     }
@@ -142,8 +155,8 @@ public class PanelItem {
     public void setHead(ItemStack itemStack) {
         this.icon = itemStack;
         // Get the meta
+        meta = icon.getItemMeta();
         if (meta != null) {
-            meta = icon.getItemMeta();
             // Set flags to neaten up the view
             meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
             meta.addItemFlags(ItemFlag.HIDE_DESTROYS);

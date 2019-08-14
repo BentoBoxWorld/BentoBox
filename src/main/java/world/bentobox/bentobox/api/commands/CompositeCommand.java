@@ -238,8 +238,8 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * Does not traverse the tree of subcommands in args.
      * Event is not fired and it cannot be cancelled.
      * @param user - user calling this command
-     * @param label - label used
-     * @param args - list of args
+     * @param cmdLabel - label used
+     * @param cmdArgs - list of args
      * @return {@code true} if successful, {@code false} if not.
      * @since 1.5.3
      */
@@ -250,7 +250,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
             return false;
         }
         // Check perms, but only if this isn't the console
-        if (user.isPlayer() && !user.isOp() && !getPermission().isEmpty() && !user.hasPermission(getPermission())) {
+        if (user.isPlayer() && !user.isOp() && getPermission() != null && !getPermission().isEmpty() && !user.hasPermission(getPermission())) {
             user.sendMessage("general.errors.no-permission", TextVariables.PERMISSION, getPermission());
             return false;
         }
@@ -592,7 +592,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         if (command.isOnlyPlayer() && !(sender instanceof Player)) {
             return options;
         }
-        if (!command.getPermission().isEmpty() && !sender.hasPermission(command.getPermission()) && !sender.isOp()) {
+        if (command.getPermission() != null && !command.getPermission().isEmpty() && !sender.hasPermission(command.getPermission()) && !sender.isOp()) {
             return options;
         }
         // Add any tab completion from the subcommand
@@ -624,7 +624,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     @NonNull
     private List<String> getSubCommandLabels(@NonNull CommandSender sender, @NonNull CompositeCommand command) {
         return command.getSubCommands().values().stream()
-                .filter(cmd -> !cmd.isOnlyPlayer() || sender.isOp() || (sender instanceof Player && (cmd.getPermission().isEmpty() || sender.hasPermission(cmd.getPermission()))) )
+                .filter(cmd -> !cmd.isOnlyPlayer() || sender.isOp() || (sender instanceof Player && cmd.getPermission() != null && (cmd.getPermission().isEmpty() || sender.hasPermission(cmd.getPermission()))) )
                 .map(CompositeCommand::getLabel).collect(Collectors.toList());
     }
 

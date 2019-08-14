@@ -14,7 +14,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.TreeSpecies;
@@ -109,6 +108,14 @@ public class IslandsManager {
         // This list should always be empty unless database deletion failed
         // In that case a purge utility may be required in the future
         deletedIslands = new ArrayList<>();
+    }
+
+    /**
+     * Used only for testing. Sets the database to a mock database.
+     * @param handler - handler
+     */
+    public void setHandler(Database<Island> handler) {
+        this.handler = handler;
     }
 
     /**
@@ -276,10 +283,11 @@ public class IslandsManager {
      * Deletes island.
      * @param island island to delete, not null
      * @param removeBlocks whether the island blocks should be removed or not
+     * @param involvedPlayer - player related to the island deletion, if any
      */
-    public void deleteIsland(@NonNull Island island, boolean removeBlocks) {
+    public void deleteIsland(@NonNull Island island, boolean removeBlocks, UUID involvedPlayer) {
         // Fire event
-        IslandBaseEvent event = IslandEvent.builder().island(island).reason(Reason.DELETE).build();
+        IslandBaseEvent event = IslandEvent.builder().island(island).involvedPlayer(involvedPlayer).reason(Reason.DELETE).build();
         if (event.isCancelled()) {
             return;
         }
@@ -544,7 +552,7 @@ public class IslandsManager {
     }
 
     /**
-     * Checks if a player has an island in the world
+     * Checks if a player has an island in the world and owns it
      * @param world - world to check
      * @param user - the user
      * @return true if player has island and owns it
@@ -645,12 +653,6 @@ public class IslandsManager {
         } else {
             user.sendMessage("commands.island.go.teleported", TextVariables.NUMBER, String.valueOf(number));
         }
-        // Exit spectator mode if in it - running this too quickly after teleporting can result in the player dropping a block
-        Bukkit.getScheduler().runTaskLater(plugin, () -> {
-            if (player.getGameMode().equals(GameMode.SPECTATOR)) {
-                player.setGameMode(plugin.getIWM().getDefaultGameMode(world));
-            }
-        }, 4L);
         // If this is a new island, then run commands and do resets
         if (newIsland) {
             // TODO add command running
@@ -693,7 +695,11 @@ public class IslandsManager {
                     player.leaveVehicle();
                     // Remove the boat so they don't lie around everywhere
                     boat.remove();
-                    player.getInventory().addItem(new ItemStack(Material.getMaterial(((Boat) boat).getWoodType().toString() + "_BOAT"), 1));
+                    Material boatMat = Material.getMaterial(((Boat) boat).getWoodType().toString() + "_BOAT");
+                    if (boatMat == null) {
+                        boatMat = Material.OAK_BOAT;
+                    }
+                    player.getInventory().addItem(new ItemStack(boatMat, 1));
                     player.updateInventory();
                 }
             }
@@ -806,7 +812,7 @@ public class IslandsManager {
                         .filter(Objects::nonNull)
                         .filter(n -> !duplicatedUUIDRemovedSet.add(n))
                         .collect(Collectors.toSet());
-                if (duplicated.size() > 0) {
+                if (!duplicated.isEmpty()) {
                     plugin.logError("**** Owners that have more than one island = " + duplicated.size());
                     for (UUID uuid : duplicated) {
                         Set<Island> set = islandCache.getIslands().stream().filter(i -> uuid.equals(i.getOwner())).collect(Collectors.toSet());
@@ -919,10 +925,6 @@ public class IslandsManager {
                 if (spawn.containsKey(w)) {
                     // go to island spawn
                     p.teleport(spawn.get(w).getSpawnPoint(w.getEnvironment()));
-                } else {
-                    plugin.logWarning("During island deletion player " + p.getName() + " could not be sent home so was placed into spectator mode.");
-                    p.setGameMode(GameMode.SPECTATOR);
-                    p.setFlying(true);
                 }
             }
         });
@@ -940,7 +942,6 @@ public class IslandsManager {
                 plugin.logError("Could not save island to database when running sync! " + e.getMessage());
             }
         }
-
     }
 
     /**
@@ -1030,14 +1031,20 @@ public class IslandsManager {
     }
 
     /**
-     * Clear an area of mobs as per world rules. Radius is 5 blocks in every direction.
+     * Clear an area of mobs as per world rules. Radius is default 5 blocks in every direction.
+     * Value is set in BentoBox config.yml
+     * Will not remove any named monsters.
      * @param loc - location to clear
      */
     public void clearArea(Location loc) {
-        loc.getWorld().getNearbyEntities(loc, 5D, 5D, 5D).stream()
+        if (!plugin.getIWM().inWorld(loc)) return;
+        loc.getWorld().getNearbyEntities(loc, plugin.getSettings().getClearRadius(),
+                plugin.getSettings().getClearRadius(),
+                plugin.getSettings().getClearRadius()).stream()
         .filter(en -> Util.isHostileEntity(en)
                 && !plugin.getIWM().getRemoveMobsWhitelist(loc.getWorld()).contains(en.getType())
                 && !(en instanceof PufferFish))
+        .filter(en -> en.getCustomName() == null)
         .forEach(Entity::remove);
     }
 

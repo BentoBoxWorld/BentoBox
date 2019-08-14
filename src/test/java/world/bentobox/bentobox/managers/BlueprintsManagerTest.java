@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -29,6 +30,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.scheduler.BukkitScheduler;
+import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 import org.junit.After;
 import org.junit.Before;
@@ -36,6 +39,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
+import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
@@ -67,6 +73,8 @@ public class BlueprintsManagerTest {
     private GameModeAddon addon;
     @Mock
     private Island island;
+    @Mock
+    private BukkitScheduler scheduler;
 
     private File dataFolder;
     private File jarFile;
@@ -81,6 +89,10 @@ public class BlueprintsManagerTest {
     @Mock
     private User user;
 
+    @Mock
+    private BukkitTask task;
+
+    private int times;
     /**
      * @throws java.lang.Exception
      */
@@ -101,6 +113,9 @@ public class BlueprintsManagerTest {
         Map<Vector, BlueprintBlock> map = new HashMap<>();
         map.put(new Vector(0,0,0), new BlueprintBlock("minecraft:bedrock"));
         defaultBp.setBlocks(map);
+        // Scheduler
+        PowerMockito.mockStatic(Bukkit.class);
+        when(Bukkit.getScheduler()).thenReturn(scheduler);
 
     }
 
@@ -162,6 +177,7 @@ public class BlueprintsManagerTest {
         .forEach(File::delete);
         // Delete addon.jar
         Files.deleteIfExists(jarFile.toPath());
+
     }
 
 
@@ -219,15 +235,22 @@ public class BlueprintsManagerTest {
      */
     @Test
     public void testLoadBlueprintBundlesNoBlueprintFolder() {
+        // Set up running and verification
+        when(scheduler.runTaskAsynchronously(eq(plugin), any(Runnable.class))).thenAnswer(new Answer<BukkitTask>() {
+
+            @Override
+            public BukkitTask answer(InvocationOnMock invocation) throws Throwable {
+                invocation.getArgument(1,Runnable.class).run();
+                verify(plugin).logError(eq("There is no blueprint folder for addon name"));
+                verify(plugin).logError(eq("No blueprint bundles found! Creating a default one."));
+                File blueprints = new File(dataFolder, BlueprintsManager.FOLDER_NAME);
+                File d = new File(blueprints, "default.json");
+                assertTrue(d.exists());
+                return task;
+            }});
+
         BlueprintsManager bpm = new BlueprintsManager(plugin);
         bpm.loadBlueprintBundles(addon);
-        verify(plugin).logError(eq("There is no blueprint folder for addon name"));
-        verify(plugin).logError(eq("No blueprint bundles found! Creating a default one."));
-        File blueprints = new File(dataFolder, BlueprintsManager.FOLDER_NAME);
-        File d = new File(blueprints, "default.json");
-        assertTrue(d.exists());
-        verify(plugin).log("Loaded Blueprint Bundle 'default' for name");
-        verify(plugin).log("Loaded blueprint 'bedrock' for name");
     }
 
     /**
@@ -235,12 +258,19 @@ public class BlueprintsManagerTest {
      */
     @Test
     public void testLoadBlueprintBundles() {
+        // Set up running and verification
+        when(scheduler.runTaskAsynchronously(eq(plugin), any(Runnable.class))).thenAnswer(new Answer<BukkitTask>() {
+
+            @Override
+            public BukkitTask answer(InvocationOnMock invocation) throws Throwable {
+                invocation.getArgument(1,Runnable.class).run();
+                verify(plugin).logError(eq("No blueprint bundles found! Creating a default one."));
+                return task;
+            }});
         BlueprintsManager bpm = new BlueprintsManager(plugin);
         bpm.extractDefaultBlueprints(addon);
         bpm.loadBlueprintBundles(addon);
-        verify(plugin).logError(eq("No blueprint bundles found! Creating a default one."));
-        verify(plugin).log("Loaded Blueprint Bundle 'default' for name");
-        verify(plugin).log("Loaded blueprint 'bedrock' for name");
+
     }
 
     /**
@@ -269,6 +299,14 @@ public class BlueprintsManagerTest {
      */
     @Test
     public void testLoadBlueprints() {
+        // Set up running and verification
+        when(scheduler.runTaskAsynchronously(eq(plugin), any(Runnable.class))).thenAnswer(new Answer<BukkitTask>() {
+
+            @Override
+            public BukkitTask answer(InvocationOnMock invocation) throws Throwable {
+                invocation.getArgument(1,Runnable.class).run();
+                return task;
+            }});
         BlueprintsManager bpm = new BlueprintsManager(plugin);
         // Load once (makes default files too)
         bpm.loadBlueprintBundles(addon);
@@ -317,10 +355,21 @@ public class BlueprintsManagerTest {
         bb.setDescription(Collections.singletonList(ChatColor.AQUA + "A bundle of blueprints"));
         // Save it
         File blueprints = new File(dataFolder, BlueprintsManager.FOLDER_NAME);
+
+        // Set up running and verification
+        when(scheduler.runTaskAsynchronously(eq(plugin), any(Runnable.class))).thenAnswer(new Answer<BukkitTask>() {
+
+            @Override
+            public BukkitTask answer(InvocationOnMock invocation) throws Throwable {
+                invocation.getArgument(1,Runnable.class).run();
+                File d = new File(blueprints, "bundle.json");
+                assertTrue(d.exists());
+                return task;
+            }});
+
         BlueprintsManager bpm = new BlueprintsManager(plugin);
         bpm.saveBlueprintBundle(addon, bb);
-        File d = new File(blueprints, "bundle.json");
-        assertTrue(d.exists());
+
     }
 
     /**
@@ -345,15 +394,28 @@ public class BlueprintsManagerTest {
         bb2.setDescription(Collections.singletonList(ChatColor.AQUA + "A bundle of blueprints2"));
         // Add
         bpm.addBlueprintBundle(addon, bb2);
-        // Save
-        bpm.saveBlueprintBundles();
-        // Verify
+        // check that there are 2 in there
+        assertEquals(2, bpm.getBlueprintBundles(addon).size());
         File blueprints = new File(dataFolder, BlueprintsManager.FOLDER_NAME);
         File d = new File(blueprints, "bundle.json");
-        assertTrue(d.exists());
-        d = new File(blueprints, "bundle2.json");
-        assertTrue(d.exists());
+        File d2 = new File(blueprints, "bundle2.json");
+        times = 0;
+        // Set up running and verification
+        when(scheduler.runTaskAsynchronously(eq(plugin), any(Runnable.class))).thenAnswer(new Answer<BukkitTask>() {
 
+            @Override
+            public BukkitTask answer(InvocationOnMock invocation) throws Throwable {
+                invocation.getArgument(1,Runnable.class).run();
+                // Verify
+                times++;
+                if (times > 2) {
+                    assertTrue(d.exists());
+                    assertTrue(d2.exists());
+                }
+                return task;
+            }});
+        // Save
+        bpm.saveBlueprintBundles();
     }
 
     /**
@@ -543,24 +605,38 @@ public class BlueprintsManagerTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.BlueprintsManager#deleteBlueprintBundle(world.bentobox.bentobox.api.addons.GameModeAddon, world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle)}.
+     * @throws IOException
      */
     @Test
-    public void testDeleteBlueprintBundle() {
+    public void testDeleteBlueprintBundle() throws IOException {
         // Make bundle
         BlueprintBundle bb = new BlueprintBundle();
         bb.setIcon(Material.PAPER);
         bb.setUniqueId("bundle");
         bb.setDisplayName("A bundle");
         bb.setDescription(Collections.singletonList(ChatColor.AQUA + "A bundle of blueprints"));
-        // Save it
+        // Create a dummy file
         File blueprints = new File(dataFolder, BlueprintsManager.FOLDER_NAME);
-        BlueprintsManager bpm = new BlueprintsManager(plugin);
-        bpm.saveBlueprintBundle(addon, bb);
+        blueprints.mkdirs();
         File d = new File(blueprints, "bundle.json");
-        assertTrue(d.exists());
+        Files.createFile(d.toPath());
+
+        BlueprintsManager bpm = new BlueprintsManager(plugin);
+        // Set up running and verification
+        when(scheduler.runTaskAsynchronously(eq(plugin), any(Runnable.class))).thenAnswer(new Answer<BukkitTask>() {
+
+            @Override
+            public BukkitTask answer(InvocationOnMock invocation) throws Throwable {
+                invocation.getArgument(1,Runnable.class).run();
+
+                // Verify
+                assertFalse(d.exists());
+                return task;
+            }});
+
         // Delete it
         bpm.deleteBlueprintBundle(addon, bb);
-        assertFalse(d.exists());
+
     }
 
     /**

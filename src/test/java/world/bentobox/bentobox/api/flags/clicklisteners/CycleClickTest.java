@@ -3,7 +3,11 @@ package world.bentobox.bentobox.api.flags.clicklisteners;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
@@ -17,11 +21,12 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -30,9 +35,9 @@ import org.powermock.reflect.Whitebox;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
+import world.bentobox.bentobox.api.events.flags.FlagProtectionChangeEvent;
 import world.bentobox.bentobox.api.flags.Flag;
-import world.bentobox.bentobox.api.panels.Panel;
-import world.bentobox.bentobox.api.panels.PanelItem;
+import world.bentobox.bentobox.api.panels.TabbedPanel;
 import world.bentobox.bentobox.api.user.Notifier;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
@@ -42,6 +47,7 @@ import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.RanksManager;
+import world.bentobox.bentobox.panels.settings.SettingsTab;
 import world.bentobox.bentobox.util.Util;
 
 @RunWith(PowerMockRunner.class)
@@ -52,16 +58,29 @@ public class CycleClickTest {
     private static final Integer X = 600;
     private static final Integer Y = 120;
     private static final Integer Z = 10000;
+    @Mock
     private BentoBox plugin;
     private UUID uuid;
+    @Mock
     private User user;
+    @Mock
     private IslandsManager im;
+    @Mock
     private Island island;
+    @Mock
     private Flag flag;
-    private Panel panel;
+    @Mock
+    private TabbedPanel panel;
+    @Mock
     private Inventory inv;
+    @Mock
     private IslandWorldManager iwm;
+    @Mock
     private RanksManager rm;
+    @Mock
+    private PluginManager pim;
+    @Mock
+    private SettingsTab settingsTab;
 
     /**
      * @throws java.lang.Exception - exception
@@ -70,7 +89,6 @@ public class CycleClickTest {
     public void setUp() throws Exception {
 
         // Set up plugin
-        plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
 
         // World
@@ -83,7 +101,6 @@ public class CycleClickTest {
         // Player
         Player p = mock(Player.class);
         // Sometimes use Mockito.withSettings().verboseLogging()
-        user = mock(User.class);
         User.setPlugin(plugin);
         when(user.isOp()).thenReturn(false);
         uuid = UUID.randomUUID();
@@ -91,17 +108,16 @@ public class CycleClickTest {
         when(user.getPlayer()).thenReturn(p);
         when(user.getName()).thenReturn("tastybento");
         when(user.getWorld()).thenReturn(world);
-        when(user.hasPermission(Mockito.anyString())).thenReturn(true);
+        when(user.hasPermission(anyString())).thenReturn(true);
 
         // No island for player to begin with (set it later in the tests)
-        im = mock(IslandsManager.class);
-        when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
-        when(im.isOwner(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
+        when(im.hasIsland(any(), eq(uuid))).thenReturn(false);
+        when(im.isOwner(any(), eq(uuid))).thenReturn(false);
         when(plugin.getIslands()).thenReturn(im);
 
         // Has team
         PlayersManager pm = mock(PlayersManager.class);
-        when(im.inTeam(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
+        when(im.inTeam(any(), eq(uuid))).thenReturn(true);
         when(plugin.getPlayers()).thenReturn(pm);
 
         // Server & Scheduler
@@ -119,9 +135,8 @@ public class CycleClickTest {
         when(plugin.getNotifier()).thenReturn(notifier);
 
         // Island Banned list initialization
-        island = mock(Island.class);
         when(island.getBanned()).thenReturn(new HashSet<>());
-        when(island.isBanned(Mockito.any())).thenReturn(false);
+        when(island.isBanned(any())).thenReturn(false);
         Location loc = mock(Location.class);
         when(loc.getWorld()).thenReturn(world);
         when(loc.getBlockX()).thenReturn(X);
@@ -130,11 +145,11 @@ public class CycleClickTest {
         when(island.getCenter()).thenReturn(loc);
         when(island.getProtectionRange()).thenReturn(PROTECTION_RANGE);
         // Island is not locked by default
-        when(island.isAllowed(Mockito.any(), Mockito.any())).thenReturn(true);
+        when(island.isAllowed(any(), any())).thenReturn(true);
         // Island owner is user by default
         when(island.getOwner()).thenReturn(uuid);
 
-        when(im.getIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(island);
+        when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
 
         // Common from to's
         Location outside = mock(Location.class);
@@ -156,67 +171,56 @@ public class CycleClickTest {
         when(inside.getBlockZ()).thenReturn(Z);
 
         Optional<Island> opIsland = Optional.ofNullable(island);
-        when(im.getProtectedIslandAt(Mockito.eq(inside))).thenReturn(opIsland);
-        when(im.getProtectedIslandAt(Mockito.eq(inside2))).thenReturn(opIsland);
-        when(im.getProtectedIslandAt(Mockito.eq(outside))).thenReturn(Optional.empty());
-        when(im.getIslandAt(Mockito.any())).thenReturn(opIsland);
+        when(im.getProtectedIslandAt(eq(inside))).thenReturn(opIsland);
+        when(im.getProtectedIslandAt(eq(inside2))).thenReturn(opIsland);
+        when(im.getProtectedIslandAt(eq(outside))).thenReturn(Optional.empty());
+        when(im.getIslandAt(any())).thenReturn(opIsland);
 
-        PanelItem panelItem = mock(PanelItem.class);
-        flag = mock(Flag.class);
-        when(flag.toPanelItem(Mockito.any(), Mockito.any(), Mockito.eq(false))).thenReturn(panelItem);
-        when(panelItem.getItem()).thenReturn(mock(ItemStack.class));
         FlagsManager fm = mock(FlagsManager.class);
-        when(fm.getFlag(Mockito.anyString())).thenReturn(Optional.of(flag));
+        when(fm.getFlag(anyString())).thenReturn(Optional.of(flag));
         when(plugin.getFlagsManager()).thenReturn(fm);
 
-        rm = mock(RanksManager.class);
-
+        // Ranks Manager
         when(plugin.getRanksManager()).thenReturn(rm);
 
         // Provide a current rank value - member
-        when(island.getFlag(Mockito.any())).thenReturn(RanksManager.MEMBER_RANK);
+        when(island.getFlag(any())).thenReturn(RanksManager.MEMBER_RANK);
         // Set up up and down ranks
-        when(rm.getRankUpValue(Mockito.eq(RanksManager.VISITOR_RANK))).thenReturn(RanksManager.COOP_RANK);
-        when(rm.getRankUpValue(Mockito.eq(RanksManager.COOP_RANK))).thenReturn(RanksManager.TRUSTED_RANK);
-        when(rm.getRankUpValue(Mockito.eq(RanksManager.TRUSTED_RANK))).thenReturn(RanksManager.MEMBER_RANK);
-        when(rm.getRankUpValue(Mockito.eq(RanksManager.MEMBER_RANK))).thenReturn(RanksManager.OWNER_RANK);
-        when(rm.getRankDownValue(Mockito.eq(RanksManager.OWNER_RANK))).thenReturn(RanksManager.MEMBER_RANK);
-        when(rm.getRankDownValue(Mockito.eq(RanksManager.MEMBER_RANK))).thenReturn(RanksManager.TRUSTED_RANK);
-        when(rm.getRankDownValue(Mockito.eq(RanksManager.TRUSTED_RANK))).thenReturn(RanksManager.COOP_RANK);
-        when(rm.getRankDownValue(Mockito.eq(RanksManager.COOP_RANK))).thenReturn(RanksManager.VISITOR_RANK);
-
-        panel = mock(Panel.class);
-        inv = mock(Inventory.class);
-        when(panel.getInventory()).thenReturn(inv);
+        when(rm.getRankUpValue(eq(RanksManager.VISITOR_RANK))).thenReturn(RanksManager.COOP_RANK);
+        when(rm.getRankUpValue(eq(RanksManager.COOP_RANK))).thenReturn(RanksManager.TRUSTED_RANK);
+        when(rm.getRankUpValue(eq(RanksManager.TRUSTED_RANK))).thenReturn(RanksManager.MEMBER_RANK);
+        when(rm.getRankUpValue(eq(RanksManager.MEMBER_RANK))).thenReturn(RanksManager.OWNER_RANK);
+        when(rm.getRankDownValue(eq(RanksManager.OWNER_RANK))).thenReturn(RanksManager.MEMBER_RANK);
+        when(rm.getRankDownValue(eq(RanksManager.MEMBER_RANK))).thenReturn(RanksManager.TRUSTED_RANK);
+        when(rm.getRankDownValue(eq(RanksManager.TRUSTED_RANK))).thenReturn(RanksManager.COOP_RANK);
+        when(rm.getRankDownValue(eq(RanksManager.COOP_RANK))).thenReturn(RanksManager.VISITOR_RANK);
 
         // IslandWorldManager
-        iwm = mock(IslandWorldManager.class);
         when(plugin.getIWM()).thenReturn(iwm);
         when(iwm.inWorld(any(World.class))).thenReturn(true);
         when(iwm.inWorld(any(Location.class))).thenReturn(true);
-        when(iwm.getPermissionPrefix(Mockito.any())).thenReturn("bskyblock");
+        when(iwm.getPermissionPrefix(any())).thenReturn("bskyblock.");
 
         // Util
         PowerMockito.mockStatic(Util.class);
-        when(Util.getWorld(Mockito.any())).thenReturn(world);
+        when(Util.getWorld(any())).thenReturn(world);
 
-    }
+        // Event
+        when(Bukkit.getPluginManager()).thenReturn(pim);
 
-    @Test
-    public void testNotInWorld() {
-        when(iwm.inWorld(any(World.class))).thenReturn(false);
-        when(iwm.inWorld(any(Location.class))).thenReturn(false);
-        CycleClick udc = new CycleClick("LOCK");
-        assertTrue(udc.onClick(panel, user, ClickType.LEFT, 5));
-        Mockito.verify(user).sendMessage(Mockito.eq("general.errors.wrong-world"));
+        // Active tab
+        when(panel.getActiveTab()).thenReturn(settingsTab);
+        when(settingsTab.getIsland()).thenReturn(island);
+
+
     }
 
     @Test
     public void testNoPremission() {
-        when(user.hasPermission(Mockito.anyString())).thenReturn(false);
+        when(user.hasPermission(anyString())).thenReturn(false);
         CycleClick udc = new CycleClick("LOCK");
         assertTrue(udc.onClick(panel, user, ClickType.LEFT, 5));
-        Mockito.verify(user).sendMessage(Mockito.eq("general.errors.no-permission"), Mockito.eq("[permission]"), Mockito.eq("bskyblock.settings.LOCK"));
+        verify(user).sendMessage(eq("general.errors.no-permission"), eq("[permission]"), eq("bskyblock.settings.LOCK"));
     }
 
     @Test
@@ -232,37 +236,31 @@ public class CycleClickTest {
         // Rank starts at member
         // Click left
         assertTrue(udc.onClick(panel, user, ClickType.LEFT, SLOT));
-        Mockito.verify(island).setFlag(Mockito.eq(flag), Mockito.eq(RanksManager.OWNER_RANK));
-        Mockito.verify(flag).toPanelItem(Mockito.any(), Mockito.any(), Mockito.eq(false));
-        Mockito.verify(inv).setItem(Mockito.eq(SLOT), Mockito.any());
+        verify(island).setFlag(eq(flag), eq(RanksManager.OWNER_RANK));
         // Check rollover
         // Clicking when Owner should go to Visitor
-        when(island.getFlag(Mockito.any())).thenReturn(RanksManager.OWNER_RANK);
+        when(island.getFlag(any())).thenReturn(RanksManager.OWNER_RANK);
         assertTrue(udc.onClick(panel, user, ClickType.LEFT, SLOT));
-        Mockito.verify(island).setFlag(Mockito.eq(flag), Mockito.eq(RanksManager.VISITOR_RANK));
-        Mockito.verify(flag, Mockito.times(2)).toPanelItem(Mockito.any(), Mockito.any(), Mockito.eq(false));
-        Mockito.verify(inv, Mockito.times(2)).setItem(Mockito.eq(SLOT), Mockito.any());
+        verify(island).setFlag(eq(flag), eq(RanksManager.VISITOR_RANK));
+        verify(pim, times(2)).callEvent(any(FlagProtectionChangeEvent.class));
     }
 
     @Test
     public void testOnLeftClickSetMinMax() {
         // Provide a current rank value - coop
-        when(island.getFlag(Mockito.any())).thenReturn(RanksManager.COOP_RANK);
+        when(island.getFlag(any())).thenReturn(RanksManager.COOP_RANK);
         final int SLOT = 5;
         CycleClick udc = new CycleClick("LOCK", RanksManager.COOP_RANK, RanksManager.MEMBER_RANK);
         // Rank starts at member
         // Click left
         assertTrue(udc.onClick(panel, user, ClickType.LEFT, SLOT));
-        Mockito.verify(island).setFlag(Mockito.eq(flag), Mockito.eq(RanksManager.TRUSTED_RANK));
-        Mockito.verify(flag).toPanelItem(Mockito.any(), Mockito.any(), Mockito.eq(false));
-        Mockito.verify(inv).setItem(Mockito.eq(SLOT), Mockito.any());
+        verify(island).setFlag(eq(flag), eq(RanksManager.TRUSTED_RANK));
         // Check rollover
         // Clicking when Member should go to Coop
-        when(island.getFlag(Mockito.any())).thenReturn(RanksManager.MEMBER_RANK);
+        when(island.getFlag(any())).thenReturn(RanksManager.MEMBER_RANK);
         assertTrue(udc.onClick(panel, user, ClickType.LEFT, SLOT));
-        Mockito.verify(island).setFlag(Mockito.eq(flag), Mockito.eq(RanksManager.COOP_RANK));
-        Mockito.verify(flag, Mockito.times(2)).toPanelItem(Mockito.any(), Mockito.any(), Mockito.eq(false));
-        Mockito.verify(inv, Mockito.times(2)).setItem(Mockito.eq(SLOT), Mockito.any());
+        verify(island).setFlag(eq(flag), eq(RanksManager.COOP_RANK));
+        verify(pim, times(2)).callEvent(any(FlagProtectionChangeEvent.class));
     }
 
     @Test
@@ -272,37 +270,31 @@ public class CycleClickTest {
         // Rank starts at member
         // Right click - down rank to Trusted
         assertTrue(udc.onClick(panel, user, ClickType.RIGHT, SLOT));
-        Mockito.verify(island).setFlag(Mockito.eq(flag), Mockito.eq(RanksManager.TRUSTED_RANK));
-        Mockito.verify(flag).toPanelItem(Mockito.any(), Mockito.any(), Mockito.eq(false));
-        Mockito.verify(inv).setItem(Mockito.eq(SLOT), Mockito.any());
+        verify(island).setFlag(eq(flag), eq(RanksManager.TRUSTED_RANK));
         // Check rollover
         // Clicking when Visitor should go to Owner
-        when(island.getFlag(Mockito.any())).thenReturn(RanksManager.VISITOR_RANK);
+        when(island.getFlag(any())).thenReturn(RanksManager.VISITOR_RANK);
         assertTrue(udc.onClick(panel, user, ClickType.RIGHT, SLOT));
-        Mockito.verify(island).setFlag(Mockito.eq(flag), Mockito.eq(RanksManager.OWNER_RANK));
-        Mockito.verify(flag, Mockito.times(2)).toPanelItem(Mockito.any(), Mockito.any(), Mockito.eq(false));
-        Mockito.verify(inv, Mockito.times(2)).setItem(Mockito.eq(SLOT), Mockito.any());
+        verify(island).setFlag(eq(flag), eq(RanksManager.OWNER_RANK));
+        verify(pim, times(2)).callEvent(any(FlagProtectionChangeEvent.class));
     }
 
     @Test
     public void testOnRightClickMinMaxSet() {
         // Provide a current rank value - coop
-        when(island.getFlag(Mockito.any())).thenReturn(RanksManager.TRUSTED_RANK);
+        when(island.getFlag(any())).thenReturn(RanksManager.TRUSTED_RANK);
         final int SLOT = 5;
         CycleClick udc = new CycleClick("LOCK", RanksManager.COOP_RANK, RanksManager.MEMBER_RANK);
         // Rank starts at member
         // Right click
         assertTrue(udc.onClick(panel, user, ClickType.RIGHT, SLOT));
-        Mockito.verify(island).setFlag(Mockito.eq(flag), Mockito.eq(RanksManager.COOP_RANK));
-        Mockito.verify(flag).toPanelItem(Mockito.any(), Mockito.any(), Mockito.eq(false));
-        Mockito.verify(inv).setItem(Mockito.eq(SLOT), Mockito.any());
+        verify(island).setFlag(eq(flag), eq(RanksManager.COOP_RANK));
         // Check rollover
         // Clicking when Coop should go to Member
-        when(island.getFlag(Mockito.any())).thenReturn(RanksManager.COOP_RANK);
+        when(island.getFlag(any())).thenReturn(RanksManager.COOP_RANK);
         assertTrue(udc.onClick(panel, user, ClickType.RIGHT, SLOT));
-        Mockito.verify(island).setFlag(Mockito.eq(flag), Mockito.eq(RanksManager.MEMBER_RANK));
-        Mockito.verify(flag, Mockito.times(2)).toPanelItem(Mockito.any(), Mockito.any(), Mockito.eq(false));
-        Mockito.verify(inv, Mockito.times(2)).setItem(Mockito.eq(SLOT), Mockito.any());
+        verify(island).setFlag(eq(flag), eq(RanksManager.MEMBER_RANK));
+        verify(pim, times(2)).callEvent(any(FlagProtectionChangeEvent.class));
     }
 
     @Test
@@ -310,21 +302,21 @@ public class CycleClickTest {
         // Test all possible click types
         CycleClick udc = new CycleClick("LOCK");
         Arrays.asList(ClickType.values()).forEach(c -> assertTrue(udc.onClick(panel, user, c, 0)));
+        verify(pim, times(2)).callEvent(any(FlagProtectionChangeEvent.class));
     }
 
     @Test
     public void testNotOwner() {
         UUID u = UUID.randomUUID();
-
         when(island.getOwner()).thenReturn(u);
-        Mockito.verify(plugin, Mockito.never()).getRanksManager();
+        verify(plugin, Mockito.never()).getRanksManager();
 
     }
 
     @Test
     public void testNullIsland() {
-        when(im.getIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(null);
-        Mockito.verify(plugin, Mockito.never()).getRanksManager();
+        when(im.getIsland(any(), any(UUID.class))).thenReturn(null);
+        verify(plugin, Mockito.never()).getRanksManager();
     }
 
 }

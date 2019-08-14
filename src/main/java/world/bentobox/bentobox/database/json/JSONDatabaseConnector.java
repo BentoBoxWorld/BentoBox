@@ -3,6 +3,8 @@ package world.bentobox.bentobox.database.json;
 import java.io.File;
 import java.util.UUID;
 
+import org.eclipse.jdt.annotation.NonNull;
+
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.database.DatabaseConnector;
 
@@ -18,6 +20,7 @@ public class JSONDatabaseConnector implements DatabaseConnector {
     }
 
     @Override
+    @NonNull
     public String getUniqueId(String tableName) {
         UUID uuid = UUID.randomUUID();
         File file = new File(dataFolder, tableName + File.separator + uuid.toString() + JSON);
@@ -36,17 +39,19 @@ public class JSONDatabaseConnector implements DatabaseConnector {
     }
 
     @Override
-    public Object createConnection() {
-        return null; // Not used
-    }
-
-    @Override
     public String getConnectionUrl() {
         return null; // Not used
     }
 
     @Override
-    public void closeConnection() {
+    public Object createConnection(Class<?> type) {
+        // Not used
+        return null;
+    }
+
+    @Override
+    public void closeConnection(Class<?> type) {
         // Not used
     }
+
 }

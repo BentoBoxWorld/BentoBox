@@ -1,7 +1,9 @@
 package world.bentobox.bentobox.api.panels.builders;
 
-import org.bukkit.ChatColor;
+import java.util.SortedMap;
 import java.util.TreeMap;
+
+import org.bukkit.ChatColor;
 
 import world.bentobox.bentobox.api.panels.Panel;
 import world.bentobox.bentobox.api.panels.PanelItem;
@@ -15,7 +17,7 @@ import world.bentobox.bentobox.api.user.User;
  */
 public class PanelBuilder {
     private String name;
-    private TreeMap<Integer, PanelItem> items = new TreeMap<>();
+    private final SortedMap<Integer, PanelItem> items = new TreeMap<>();
     private int size;
     private User user;
     private PanelListener listener;
@@ -107,5 +109,40 @@ public class PanelBuilder {
     public Panel build() {
         // items.lastKey() is a slot position, so the panel size is this value + 1
         return new Panel(name, items, Math.max(size, items.isEmpty() ? size : items.lastKey() + 1), user, listener);
+    }
+
+    /**
+     * @return the name
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * @return the items
+     */
+    public SortedMap<Integer, PanelItem> getItems() {
+        return items;
+    }
+
+    /**
+     * @return the size
+     */
+    public int getSize() {
+        return size;
+    }
+
+    /**
+     * @return the user
+     */
+    public User getUser() {
+        return user;
+    }
+
+    /**
+     * @return the listener
+     */
+    public PanelListener getListener() {
+        return listener;
     }
 }

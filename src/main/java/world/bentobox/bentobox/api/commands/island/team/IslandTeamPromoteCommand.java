@@ -5,6 +5,7 @@ import java.util.List;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.RanksManager;
 
 public class IslandTeamPromoteCommand extends CompositeCommand {
@@ -24,6 +25,7 @@ public class IslandTeamPromoteCommand extends CompositeCommand {
             setParametersHelp("commands.island.team.demote.parameters");
             setDescription("commands.island.team.demote.description");
         }
+        this.setConfigurableRankCommand();
     }
 
     @Override
@@ -33,7 +35,8 @@ public class IslandTeamPromoteCommand extends CompositeCommand {
             return true;
         }
         // Check rank to use command
-        if (getIslands().getIsland(getWorld(), user).getRank(user) < getPlugin().getSettings().getRankCommand(getUsage())) {
+        Island island = getIslands().getIsland(getWorld(), user);
+        if (island.getRank(user) < island.getRankCommand(getUsage())) {
             user.sendMessage("general.errors.no-permission");
             return false;
         }
@@ -47,6 +50,11 @@ public class IslandTeamPromoteCommand extends CompositeCommand {
         User target = getPlayers().getUser(args.get(0));
         if (target == null) {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
+            return true;
+        }
+        // Check if the user is not trying to promote/ demote himself
+        if (target == user) {
+            user.sendMessage("commands.island.team.demote.errors.cant-demote-yourself");
             return true;
         }
         if (!inTeam(getWorld(), target) || !getOwner(getWorld(), user).equals(getOwner(getWorld(), target))) {

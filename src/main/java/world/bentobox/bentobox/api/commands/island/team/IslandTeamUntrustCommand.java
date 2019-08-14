@@ -48,7 +48,8 @@ public class IslandTeamUntrustCommand extends CompositeCommand {
             return false;
         }
         // Check rank to use command
-        if (getIslands().getIsland(getWorld(), user).getRank(user) < getPlugin().getSettings().getRankCommand(getUsage())) {
+        Island island = getIslands().getIsland(getWorld(), user);
+        if (island.getRank(user) < island.getRankCommand(getUsage())) {
             user.sendMessage("general.errors.no-permission");
             return false;
         }
@@ -81,7 +82,7 @@ public class IslandTeamUntrustCommand extends CompositeCommand {
         Island island = getIslands().getIsland(getWorld(), user.getUniqueId());
         if (island != null) {
             island.removeMember(targetUUID);
-            user.sendMessage("general.success");
+            user.sendMessage("commands.island.team.untrust.success", TextVariables.NAME, target.getName());
             target.sendMessage("commands.island.team.untrust.you-are-no-longer-trusted", TextVariables.NAME, user.getName());
             // Set cooldown
             if (getSettings().getTrustCooldown() > 0 && getParent() != null) {

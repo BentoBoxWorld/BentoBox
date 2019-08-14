@@ -6,6 +6,7 @@ package world.bentobox.bentobox.api.commands.island.team;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -23,6 +24,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -32,6 +34,7 @@ import org.powermock.reflect.Whitebox;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
+import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.CommandsManager;
@@ -50,13 +53,19 @@ import world.bentobox.bentobox.managers.RanksManager;
 @PrepareForTest({Bukkit.class, BentoBox.class, User.class })
 public class IslandTeamCoopCommandTest {
 
+    @Mock
     private CompositeCommand ic;
     private UUID uuid;
+    @Mock
     private User user;
+    @Mock
     private IslandsManager im;
+    @Mock
     private PlayersManager pm;
     private UUID notUUID;
+    @Mock
     private Settings s;
+    @Mock
     private Island island;
 
     /**
@@ -72,16 +81,11 @@ public class IslandTeamCoopCommandTest {
         CommandsManager cm = mock(CommandsManager.class);
         when(plugin.getCommandsManager()).thenReturn(cm);
 
-        // Settings
-        s = mock(Settings.class);
-        when(s.getRankCommand(Mockito.anyString())).thenReturn(RanksManager.OWNER_RANK);
-
         when(plugin.getSettings()).thenReturn(s);
 
         // Player
         Player p = mock(Player.class);
         // Sometimes use Mockito.withSettings().verboseLogging()
-        user = mock(User.class);
         when(user.isOp()).thenReturn(false);
         uuid = UUID.randomUUID();
         notUUID = UUID.randomUUID();
@@ -94,16 +98,14 @@ public class IslandTeamCoopCommandTest {
         User.setPlugin(plugin);
 
         // Parent command has no aliases
-        ic = mock(CompositeCommand.class);
         when(ic.getSubCommandAliases()).thenReturn(new HashMap<>());
 
         // Player has island to begin with
-        im = mock(IslandsManager.class);
         when(im.hasIsland(any(), Mockito.any(UUID.class))).thenReturn(true);
         when(im.inTeam(any(), Mockito.any(UUID.class))).thenReturn(true);
         when(im.isOwner(any(), any())).thenReturn(true);
         when(im.getOwner(any(), any())).thenReturn(uuid);
-        island = mock(Island.class);
+        // Island
         when(island.getRank(any())).thenReturn(RanksManager.OWNER_RANK);
         when(im.getIsland(any(), Mockito.any(User.class))).thenReturn(island);
         when(im.getIsland(any(), Mockito.any(UUID.class))).thenReturn(island);
@@ -113,8 +115,6 @@ public class IslandTeamCoopCommandTest {
         when(im.inTeam(any(), eq(uuid))).thenReturn(true);
 
         // Player Manager
-        pm = mock(PlayersManager.class);
-
         when(plugin.getPlayers()).thenReturn(pm);
 
         // Server & Scheduler
@@ -133,7 +133,7 @@ public class IslandTeamCoopCommandTest {
         when(plugin.getIWM()).thenReturn(iwm);
 
         PlaceholdersManager phm = mock(PlaceholdersManager.class);
-        when(phm.replacePlaceholders(any(), any())).thenAnswer(invocation -> invocation.getArgumentAt(1, String.class));
+        when(phm.replacePlaceholders(any(), any())).thenAnswer(invocation -> invocation.getArgument(1, String.class));
         // Placeholder manager
         when(plugin.getPlaceholdersManager()).thenReturn(phm);
     }
@@ -161,6 +161,7 @@ public class IslandTeamCoopCommandTest {
     @Test
     public void testCanExecuteLowRank() {
         when(island.getRank(any())).thenReturn(RanksManager.MEMBER_RANK);
+        when(island.getRankCommand(anyString())).thenReturn(RanksManager.OWNER_RANK);
         IslandTeamCoopCommand itl = new IslandTeamCoopCommand(ic);
         assertFalse(itl.canExecute(user, itl.getLabel(), Collections.singletonList("bill")));
         verify(user).sendMessage(eq("general.errors.no-permission"));
@@ -298,9 +299,7 @@ public class IslandTeamCoopCommandTest {
         // Execute
         when(im.getIsland(any(), Mockito.any(UUID.class))).thenReturn(island);
         assertTrue(itl.execute(user, itl.getLabel(), Collections.singletonList("tastybento")));
-        verify(user).sendMessage(eq("general.success"));
+        verify(user).sendMessage("commands.island.team.coop.success",  TextVariables.NAME, null);
         verify(island).setRank(target, RanksManager.COOP_RANK);
     }
-
-
 }

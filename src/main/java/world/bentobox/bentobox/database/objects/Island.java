@@ -1,33 +1,5 @@
 package world.bentobox.bentobox.database.objects;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSet.Builder;
-import com.google.gson.annotations.Expose;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
-import org.bukkit.World.Environment;
-import org.bukkit.entity.Player;
-import org.bukkit.util.BoundingBox;
-import org.bukkit.util.Vector;
-import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
-import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.api.configuration.WorldSettings;
-import world.bentobox.bentobox.api.flags.Flag;
-import world.bentobox.bentobox.api.localization.TextVariables;
-import world.bentobox.bentobox.api.logs.LogEntry;
-import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.database.objects.adapters.Adapter;
-import world.bentobox.bentobox.database.objects.adapters.FlagSerializer;
-import world.bentobox.bentobox.database.objects.adapters.LogEntryListAdapter;
-import world.bentobox.bentobox.lists.Flags;
-import world.bentobox.bentobox.managers.IslandWorldManager;
-import world.bentobox.bentobox.managers.RanksManager;
-import world.bentobox.bentobox.util.Pair;
-import world.bentobox.bentobox.util.Util;
-
 import java.util.Date;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -39,6 +11,38 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.World.Environment;
+import org.bukkit.entity.Player;
+import org.bukkit.util.BoundingBox;
+import org.bukkit.util.Vector;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
+
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSet.Builder;
+import com.google.gson.annotations.Expose;
+
+import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.commands.CompositeCommand;
+import world.bentobox.bentobox.api.configuration.WorldSettings;
+import world.bentobox.bentobox.api.flags.Flag;
+import world.bentobox.bentobox.api.localization.TextVariables;
+import world.bentobox.bentobox.api.logs.LogEntry;
+import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.database.objects.adapters.Adapter;
+import world.bentobox.bentobox.database.objects.adapters.FlagSerializer;
+import world.bentobox.bentobox.database.objects.adapters.FlagSerializer3;
+import world.bentobox.bentobox.database.objects.adapters.LogEntryListAdapter;
+import world.bentobox.bentobox.lists.Flags;
+import world.bentobox.bentobox.managers.IslandWorldManager;
+import world.bentobox.bentobox.managers.RanksManager;
+import world.bentobox.bentobox.util.Pair;
+import world.bentobox.bentobox.util.Util;
 
 /**
  * Stores all the info about an island
@@ -144,6 +148,31 @@ public class Island implements DataObject {
     @Expose
     private boolean doNotLoad;
 
+    /**
+     * Used to store flag cooldowns for this island
+     */
+    @Adapter(FlagSerializer3.class)
+    @Expose
+    private Map<Flag, Long> cooldowns = new HashMap<>();
+
+    /**
+     * Commands and the rank required to use them for this island
+     */
+    @Expose
+    private Map<String, Integer> commandRanks;
+
+    /**
+     * If true then this space is reserved for the owner and when they teleport there they will be asked to make an island
+     * @since 1.6.0
+     */
+    @Expose
+    @Nullable
+    private Boolean reserved = null;
+
+    /*
+     * *************************** Constructors ******************************
+     */
+
     public Island() {}
 
     public Island(@NonNull Location location, UUID owner, int protectionRange) {
@@ -183,7 +212,14 @@ public class Island implements DataObject {
         this.uniqueId = island.uniqueId;
         this.updatedDate = island.updatedDate;
         this.world = island.world;
+        this.cooldowns = island.cooldowns;
+        this.commandRanks = island.commandRanks;
+        this.reserved = island.reserved;
     }
+
+    /*
+     * *************************** Methods ******************************
+     */
 
     /**
      * Adds a team member. If player is on banned list, they will be removed from it.
@@ -557,9 +593,33 @@ public class Island implements DataObject {
      * @see #getVisitors()
      */
     public boolean hasVisitors() {
-        return !getVisitors().isEmpty();
+        return Bukkit.getOnlinePlayers().stream().anyMatch(player -> onIsland(player.getLocation()) && getRank(User.getInstance(player)) == RanksManager.VISITOR_RANK);
     }
-
+    
+    /**
+     * Returns a list of players that are physically inside the island's protection range
+     * @return list of players
+     * @since 1.6.0
+     */
+    @NonNull
+    public List<Player> getPlayersOnIsland() {
+        return Bukkit.getOnlinePlayers().stream()
+                .filter(player -> onIsland(player.getLocation()))
+                .collect(Collectors.toList());
+    }
+    
+    /**
+     * Returns whether this Island has players inside its protection range.
+     * Note this is equivalent to {@code !island.getPlayersOnIsland().isEmpty()}.
+     * @return {@code true} if there are players inside this Island's protection range, {@code false} otherwise.
+     *
+     * @since 1.6.0
+     * @see #getPlayersOnIsland()
+     */
+    public boolean hasPlayersOnIsland() {
+        return Bukkit.getOnlinePlayers().stream().anyMatch(player -> onIsland(player.getLocation()));
+    }
+                        
     /**
      * Check if the flag is allowed or not
      * For flags that are for the island in general and not related to rank.
@@ -884,6 +944,9 @@ public class Island implements DataObject {
             user.sendMessage("commands.admin.info.banned-players");
             banned.forEach(u -> user.sendMessage("commands.admin.info.banned-format", TextVariables.NAME, plugin.getPlayers().getName(u)));
         }
+        if (purgeProtected) {
+            user.sendMessage("commands.admin.info.purge-protected");
+        }
         return true;
     }
 
@@ -1047,6 +1110,95 @@ public class Island implements DataObject {
                 !getCenter().toVector().toLocation(iwm.getEndWorld(getWorld())).getBlock().getType().equals(Material.AIR);
     }
 
+
+    /**
+     * Checks if a flag is on cooldown. Only stored in memory so a server restart will reset the cooldown.
+     * @param flag - flag
+     * @return true if on cooldown, false if not
+     * @since 1.6.0
+     */
+    public boolean isCooldown(Flag flag) {
+        if (cooldowns.containsKey(flag) && cooldowns.get(flag) > System.currentTimeMillis()) {
+            return true;
+        }
+        cooldowns.remove(flag);
+        return false;
+    }
+
+    /**
+     * Sets a cooldown for this flag on this island.
+     * @param flag - Flag to cooldown
+     */
+    public void setCooldown(Flag flag) {
+        cooldowns.put(flag, flag.getCooldown() * 1000 + System.currentTimeMillis());
+    }
+
+    /**
+     * @return the cooldowns
+     */
+    public Map<Flag, Long> getCooldowns() {
+        return cooldowns;
+    }
+
+    /**
+     * @param cooldowns the cooldowns to set
+     */
+    public void setCooldowns(Map<Flag, Long> cooldowns) {
+        this.cooldowns = cooldowns;
+    }
+
+    /**
+     * @return the commandRanks
+     */
+    public Map<String, Integer> getCommandRanks() {
+        return commandRanks;
+    }
+
+    /**
+     * @param commandRanks the commandRanks to set
+     */
+    public void setCommandRanks(Map<String, Integer> commandRanks) {
+        this.commandRanks = commandRanks;
+    }
+
+    /**
+     * Get the rank required to run command on this island.
+     * The command must have been registered with a rank.
+     * @param command - the string given by {@link CompositeCommand#getUsage()}
+     * @return Rank value required, or if command is not set {@link RanksManager#OWNER_RANK}
+     */
+    public int getRankCommand(String command) {
+        return commandRanks == null ? RanksManager.OWNER_RANK : commandRanks.getOrDefault(command, RanksManager.OWNER_RANK);
+    }
+
+    /**
+     *
+     * @param command - the string given by {@link CompositeCommand#getUsage()}
+     * @param rank value as used by {@link RanksManager}
+     */
+    public void setRankCommand(String command, int rank) {
+        if (this.commandRanks == null) this.commandRanks = new HashMap<>();
+        this.commandRanks.put(command, rank);
+    }
+
+    /**
+     * Returns whether this Island is currently reserved or not.
+     * If {@code true}, this means no blocks, except a bedrock one at the center of the island, exist.
+     * @return {@code true} if this Island is reserved, {@code false} otherwise.
+     * @since 1.6.0
+     */
+    public boolean isReserved() {
+        return reserved != null && reserved;
+    }
+
+    /**
+     * @param reserved the reserved to set
+     * @since 1.6.0
+     */
+    public void setReserved(boolean reserved) {
+        this.reserved = reserved;
+    }
+
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
@@ -1059,4 +1211,5 @@ public class Island implements DataObject {
                 + ", purgeProtected=" + purgeProtected + ", flags=" + flags + ", history=" + history
                 + ", levelHandicap=" + levelHandicap + ", spawnPoint=" + spawnPoint + ", doNotLoad=" + doNotLoad + "]";
     }
+
 }

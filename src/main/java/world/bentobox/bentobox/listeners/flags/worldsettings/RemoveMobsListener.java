@@ -1,5 +1,6 @@
 package world.bentobox.bentobox.listeners.flags.worldsettings;
 
+import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -18,7 +19,7 @@ public class RemoveMobsListener extends FlagListener {
     public void onUserTeleport(PlayerTeleportEvent e) {
         // Only process if flag is active
         if (getIslands().locationIsOnIsland(e.getPlayer(), e.getTo()) && Flags.REMOVE_MOBS.isSetForWorld(e.getTo().getWorld())) {
-            getIslands().clearArea(e.getTo());
+            Bukkit.getScheduler().runTask(getPlugin(), () -> getIslands().clearArea(e.getTo()));
         }
     }
 }

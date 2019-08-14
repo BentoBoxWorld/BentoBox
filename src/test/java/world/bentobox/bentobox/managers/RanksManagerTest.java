@@ -1,6 +1,3 @@
-/**
- *
- */
 package world.bentobox.bentobox.managers;
 
 import static org.junit.Assert.assertEquals;

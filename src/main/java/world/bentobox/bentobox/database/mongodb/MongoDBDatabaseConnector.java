@@ -1,5 +1,11 @@
 package world.bentobox.bentobox.database.mongodb;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import org.bukkit.Bukkit;
+import org.eclipse.jdt.annotation.NonNull;
+
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoCredential;
@@ -13,6 +19,7 @@ public class MongoDBDatabaseConnector implements DatabaseConnector {
 
     private MongoClient client;
     private DatabaseConnectionSettingsImpl dbSettings;
+    private Set<Class<?>> types = new HashSet<>();
 
     /**
      * Class for MySQL database connections using the settings provided
@@ -20,15 +27,19 @@ public class MongoDBDatabaseConnector implements DatabaseConnector {
      */
     MongoDBDatabaseConnector(DatabaseConnectionSettingsImpl dbSettings) {
         this.dbSettings = dbSettings;
-        MongoCredential credential = MongoCredential.createCredential(dbSettings.getUsername(),
-                dbSettings.getDatabaseName(),
-                dbSettings.getPassword().toCharArray());
-        MongoClientOptions options = MongoClientOptions.builder().sslEnabled(false).build();
-        client = new MongoClient(new ServerAddress(dbSettings.getHost(), dbSettings.getPort()), credential,options);
     }
 
     @Override
-    public MongoDatabase createConnection() {
+    public MongoDatabase createConnection(Class<?> type) {
+        types.add(type);
+        // Only get one client
+        if (client == null) {
+            MongoCredential credential = MongoCredential.createCredential(dbSettings.getUsername(),
+                    dbSettings.getDatabaseName(),
+                    dbSettings.getPassword().toCharArray());
+            MongoClientOptions options = MongoClientOptions.builder().sslEnabled(false).build();
+            client = new MongoClient(new ServerAddress(dbSettings.getHost(), dbSettings.getPort()), credential,options);
+        }
         return client.getDatabase(dbSettings.getDatabaseName());
     }
 
@@ -38,6 +49,7 @@ public class MongoDBDatabaseConnector implements DatabaseConnector {
     }
 
     @Override
+    @NonNull
     public String getUniqueId(String tableName) {
         // Not used
         return "";
@@ -50,8 +62,12 @@ public class MongoDBDatabaseConnector implements DatabaseConnector {
     }
 
     @Override
-    public void closeConnection() {
-        client.close();
+    public void closeConnection(Class<?> type) {
+        types.remove(type);
+        if (types.isEmpty() && client != null) {
+            client.close();
+            Bukkit.getLogger().info("Closed database connection");
+        }
     }
 
 }

@@ -1,12 +1,11 @@
 package world.bentobox.bentobox.web.catalog;
 
-import com.google.gson.JsonObject;
 import org.bukkit.Material;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.google.gson.JsonNull;
+import com.google.gson.JsonObject;
 
 /**
  * @author Poslovitch
@@ -22,7 +21,7 @@ public class CatalogEntry {
     private @NonNull String name;
     private @NonNull String description;
     private @Nullable String topic;
-    private @NonNull List<String> tags = new ArrayList<>();
+    private @Nullable String tag;
     private @NonNull String repository;
 
     public CatalogEntry(@NonNull JsonObject object) {
@@ -33,6 +32,7 @@ public class CatalogEntry {
         this.description = object.get("description").getAsString();
         this.repository = object.get("repository").getAsString();
         this.topic = object.get("topic").getAsString();
+        this.tag = (!(object.get("tag") instanceof JsonNull)) ? object.get("tag").getAsString() : null;
     }
 
     public int getSlot() {
@@ -59,9 +59,9 @@ public class CatalogEntry {
         return topic;
     }
 
-    @NonNull
-    public List<String> getTags() {
-        return tags;
+    @Nullable
+    public String getTag() {
+        return tag;
     }
 
     @NonNull

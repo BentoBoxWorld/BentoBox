@@ -2,7 +2,7 @@ package world.bentobox.bentobox.listeners.flags.settings;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -25,10 +25,8 @@ import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.PluginManager;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
@@ -37,6 +35,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.Flags;
@@ -60,6 +59,8 @@ public class MobSpawnListenerTest {
     private Cow cow;
     @Mock
     private IslandWorldManager iwm;
+    @Mock
+    private LivingEntity livingEntity;
 
     @Before
     public void setUp() {
@@ -117,16 +118,21 @@ public class MobSpawnListenerTest {
         when(iwm.getWorldSettings(Mockito.any())).thenReturn(ws);
         Map<String, Boolean> worldFlags = new HashMap<>();
         when(ws.getWorldFlags()).thenReturn(worldFlags);
+        GameModeAddon gma = mock(GameModeAddon.class);
+        Optional<GameModeAddon> opGma = Optional.of(gma );
+        when(iwm.getAddon(any())).thenReturn(opGma);
 
         // Default - plugin is loaded
         when(plugin.isLoaded()).thenReturn(true);
+
+        // Living Entity
+        when(livingEntity.getLocation()).thenReturn(location);
     }
 
-    @Ignore //FIXME don't know why it is failing
     @Test
     public void testNotLoaded() {
         when(plugin.isLoaded()).thenReturn(false);
-        CreatureSpawnEvent e = new CreatureSpawnEvent(null, SpawnReason.NATURAL);
+        CreatureSpawnEvent e = new CreatureSpawnEvent(livingEntity, SpawnReason.NATURAL);
         MobSpawnListener l = new MobSpawnListener();
         assertFalse(l.onNaturalMobSpawn(e));
         assertFalse(e.isCancelled());
@@ -138,7 +144,7 @@ public class MobSpawnListenerTest {
         IslandsManager im = mock(IslandsManager.class);
         when(plugin.getIslands()).thenReturn(im);
         Island island = mock(Island.class);
-        when(im.getIslandAt(Matchers.any())).thenReturn(Optional.of(island));
+        when(im.getIslandAt(any())).thenReturn(Optional.of(island));
 
         // Set up entity
         LivingEntity entity = mock(LivingEntity.class);
@@ -164,7 +170,7 @@ public class MobSpawnListenerTest {
         IslandsManager im = mock(IslandsManager.class);
         when(plugin.getIslands()).thenReturn(im);
         Island island = mock(Island.class);
-        when(im.getIslandAt(Matchers.any())).thenReturn(Optional.of(island));
+        when(im.getIslandAt(any())).thenReturn(Optional.of(island));
 
         // Block mobs
         when(island.isAllowed(Mockito.any())).thenReturn(false);
@@ -210,7 +216,7 @@ public class MobSpawnListenerTest {
         IslandsManager im = mock(IslandsManager.class);
         when(plugin.getIslands()).thenReturn(im);
         Island island = mock(Island.class);
-        when(im.getIslandAt(Matchers.any())).thenReturn(Optional.of(island));
+        when(im.getIslandAt(any())).thenReturn(Optional.of(island));
 
         // Allow mobs
         when(island.isAllowed(Mockito.any())).thenReturn(true);
@@ -246,7 +252,7 @@ public class MobSpawnListenerTest {
     public void testOnNaturalMonsterSpawnBlockedNoIsland() {
         IslandsManager im = mock(IslandsManager.class);
         when(plugin.getIslands()).thenReturn(im);
-        when(im.getIslandAt(Matchers.any())).thenReturn(Optional.empty());
+        when(im.getIslandAt(any())).thenReturn(Optional.empty());
 
         // Block mobs
         Flags.MONSTER_SPAWN.setDefaultSetting(false);
@@ -274,7 +280,7 @@ public class MobSpawnListenerTest {
     public void testOnNaturalMobSpawnUnBlockedNoIsland() {
         IslandsManager im = mock(IslandsManager.class);
         when(plugin.getIslands()).thenReturn(im);
-        when(im.getIslandAt(Matchers.any())).thenReturn(Optional.empty());
+        when(im.getIslandAt(any())).thenReturn(Optional.empty());
 
         // Block mobs
         Flags.MONSTER_SPAWN.setDefaultSetting(true);

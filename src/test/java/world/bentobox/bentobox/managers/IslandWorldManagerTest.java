@@ -403,22 +403,6 @@ public class IslandWorldManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#isNetherTrees(org.bukkit.World)}.
-     */
-    @Test
-    public void testIsNetherTrees() {
-        assertFalse(iwm.isNetherTrees(netherWorld));
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#isNetherTrees(org.bukkit.World)}.
-     */
-    @Test
-    public void testIsNetherTreesNull() {
-        assertFalse(iwm.isNetherTrees(null));
-    }
-
-    /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#isDragonSpawn(org.bukkit.World)}.
      */
     @Test
@@ -493,7 +477,7 @@ public class IslandWorldManagerTest {
     @Test
     public void testGetPermissionPrefix() {
         when(ws.getPermissionPrefix()).thenReturn("bsky");
-        assertEquals("bsky", iwm.getPermissionPrefix(world));
+        assertEquals("bsky.", iwm.getPermissionPrefix(world));
     }
 
     /**

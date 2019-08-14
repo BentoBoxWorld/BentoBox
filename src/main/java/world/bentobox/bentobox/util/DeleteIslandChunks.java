@@ -1,21 +1,16 @@
 package world.bentobox.bentobox.util;
 
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
-import org.bukkit.World.Environment;
-import org.bukkit.block.Biome;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.generator.ChunkGenerator.BiomeGrid;
+import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.generator.ChunkGenerator.ChunkData;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.scheduler.BukkitTask;
-import org.bukkit.util.Vector;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
@@ -49,14 +44,14 @@ public class DeleteIslandChunks {
         task = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
             for (int i = 0; i < SPEED; i++) {
                 plugin.getIWM().getAddon(di.getWorld()).ifPresent(gm -> {
-
-                    regerateChunk(gm, di.getWorld().getChunkAt(chunkX, chunkZ));
+                    Chunk chunk = di.getWorld().getChunkAt(chunkX, chunkZ);
+                    regenerateChunk(gm, chunk);
 
                     if (plugin.getIWM().isNetherGenerate(di.getWorld()) && plugin.getIWM().isNetherIslands(di.getWorld())) {
-                        regerateChunk(gm, plugin.getIWM().getNetherWorld(di.getWorld()).getChunkAt(chunkX, chunkZ));
+                        regenerateChunk(gm, plugin.getIWM().getNetherWorld(di.getWorld()).getChunkAt(chunkX, chunkZ));
                     }
                     if (plugin.getIWM().isEndGenerate(di.getWorld()) && plugin.getIWM().isEndIslands(di.getWorld())) {
-                        regerateChunk(gm, plugin.getIWM().getEndWorld(di.getWorld()).getChunkAt(chunkX, chunkZ));
+                        regenerateChunk(gm, plugin.getIWM().getEndWorld(di.getWorld()).getChunkAt(chunkX, chunkZ));
                     }
                     chunkZ++;
                     if (chunkZ > di.getMaxZChunk()) {
@@ -74,54 +69,35 @@ public class DeleteIslandChunks {
         }, 0L, 1L);
     }
 
-    private void regerateChunk(GameModeAddon gm, Chunk chunk) {
+    private void regenerateChunk(GameModeAddon gm, Chunk chunk) {
+        boolean isLoaded = chunk.isLoaded();
         // Clear all inventories
         Arrays.stream(chunk.getTileEntities()).filter(te -> (te instanceof InventoryHolder))
         .filter(te -> di.inBounds(te.getLocation().getBlockX(), te.getLocation().getBlockZ()))
         .forEach(te -> ((InventoryHolder)te).getInventory().clear());
         // Reset blocks
         MyBiomeGrid grid = new MyBiomeGrid(chunk.getWorld().getEnvironment());
-        ChunkData cd = gm.getDefaultWorldGenerator(chunk.getWorld().getName(), "").generateChunkData(chunk.getWorld(), new Random(), chunk.getX(), chunk.getZ(), grid);
-        int baseX = chunk.getX() << 4;
-        int baseZ = chunk.getZ() << 4;
-        for (int x = 0; x < 16; x++) {
-            for (int z = 0; z < 16; z++) {
-                if (di.inBounds(baseX + x, baseZ + z)) {
-                    chunk.getBlock(x, 0, z).setBiome(grid.getBiome(x, z));
-                    for (int y = 0; y < chunk.getWorld().getMaxHeight(); y++) {
-                        chunk.getBlock(x, y, z).setBlockData(cd.getBlockData(x, y, z));
+        ChunkGenerator cg = gm.getDefaultWorldGenerator(chunk.getWorld().getName(), "");
+        // Will be null if use-own-generator is set to true
+        if (cg != null) {
+            ChunkData cd = cg.generateChunkData(chunk.getWorld(), new Random(), chunk.getX(), chunk.getZ(), grid);
+            int baseX = chunk.getX() << 4;
+            int baseZ = chunk.getZ() << 4;
+            for (int x = 0; x < 16; x++) {
+                for (int z = 0; z < 16; z++) {
+                    if (di.inBounds(baseX + x, baseZ + z)) {
+                        chunk.getBlock(x, 0, z).setBiome(grid.getBiome(x, z));
+                        for (int y = 0; y < chunk.getWorld().getMaxHeight(); y++) {
+                            chunk.getBlock(x, y, z).setBlockData(cd.getBlockData(x, y, z));
+                        }
                     }
                 }
             }
         }
         // Remove all entities in chunk, including any dropped items as a result of clearing the blocks above
         Arrays.stream(chunk.getEntities()).filter(e -> !(e instanceof Player) && di.inBounds(e.getLocation().getBlockX(), e.getLocation().getBlockZ())).forEach(Entity::remove);
-    }
-
-    class MyBiomeGrid implements BiomeGrid {
-        Map<Vector, Biome> map = new HashMap<>();
-        private Biome defaultBiome;
-        public MyBiomeGrid(Environment environment) {
-            switch(environment) {
-            case NETHER:
-                defaultBiome = Biome.NETHER;
-                break;
-            case THE_END:
-                defaultBiome = Biome.THE_END;
-                break;
-            default:
-                defaultBiome = Biome.PLAINS;
-                break;
-            }
-
-        }
-        @Override
-        public Biome getBiome(int x, int z) {
-            return map.getOrDefault(new Vector(x,0,z), defaultBiome);
-        }
-        @Override
-        public void setBiome(int x, int z, Biome bio) {
-            map.put(new Vector(x,0,z), bio);
+        if (!isLoaded) {
+            chunk.unload(true);
         }
     }
 }

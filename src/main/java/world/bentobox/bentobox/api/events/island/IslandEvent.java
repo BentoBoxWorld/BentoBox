@@ -4,8 +4,10 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.eclipse.jdt.annotation.NonNull;
 
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
+import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.database.objects.IslandDeletion;
 import world.bentobox.bentobox.lists.Flags;
@@ -122,7 +124,12 @@ public class IslandEvent extends IslandBaseEvent {
          * Player was expelled
          * @since 1.4.0
          */
-        EXPEL
+        EXPEL,
+        /**
+         * The island was reserved and now is being pasted.
+         * @since 1.6.0
+         */
+        RESERVED
     }
 
     public static IslandEventBuilder builder() {
@@ -177,9 +184,27 @@ public class IslandEvent extends IslandBaseEvent {
      *
      */
     public static class IslandCreateEvent extends IslandBaseEvent {
-        private IslandCreateEvent(Island island, UUID player, boolean admin, Location location) {
+        private @NonNull BlueprintBundle blueprintBundle;
+
+        private IslandCreateEvent(Island island, UUID player, boolean admin, Location location, @NonNull BlueprintBundle blueprintBundle) {
             // Final variables have to be declared in the constructor
             super(island, player, admin, location);
+            this.blueprintBundle = blueprintBundle;
+        }
+
+        /**
+         * @since 1.6.0
+         */
+        @NonNull
+        public BlueprintBundle getBlueprintBundle() {
+            return blueprintBundle;
+        }
+
+        /**
+         * @since 1.6.0
+         */
+        public void setBlueprintBundle(@NonNull BlueprintBundle blueprintBundle) {
+            this.blueprintBundle = blueprintBundle;
         }
     }
     /**
@@ -222,7 +247,10 @@ public class IslandEvent extends IslandBaseEvent {
         }
     }
     /**
-     * Fired when an island is deleted.
+     * Fired when island blocks are going to be deleted.
+     * If canceled, the island blocks will not be deleted. Note that by the time this is called
+     * the ownership of the island may have been removed. This event is just for detecting
+     * that the island blocks are going to be removed.
      *
      */
     public static class IslandDeletedEvent extends IslandBaseEvent {
@@ -304,9 +332,27 @@ public class IslandEvent extends IslandBaseEvent {
      * May be cancelled.
      */
     public static class IslandResetEvent extends IslandBaseEvent {
-        private IslandResetEvent(Island island, UUID player, boolean admin, Location location) {
+        private @NonNull BlueprintBundle blueprintBundle;
+
+        private IslandResetEvent(Island island, UUID player, boolean admin, Location location, @NonNull BlueprintBundle blueprintBundle) {
             // Final variables have to be declared in the constructor
             super(island, player, admin, location);
+            this.blueprintBundle = blueprintBundle;
+        }
+
+        /**
+         * @since 1.6.0
+         */
+        @NonNull
+        public BlueprintBundle getBlueprintBundle() {
+            return blueprintBundle;
+        }
+
+        /**
+         * @since 1.6.0
+         */
+        public void setBlueprintBundle(@NonNull BlueprintBundle blueprintBundle) {
+            this.blueprintBundle = blueprintBundle;
         }
     }
     /**
@@ -338,6 +384,7 @@ public class IslandEvent extends IslandBaseEvent {
         private boolean admin;
         private Location location;
         private IslandDeletion deletedIslandInfo;
+        private BlueprintBundle blueprintBundle;
 
         public IslandEventBuilder island(Island island) {
             this.island = island;
@@ -382,6 +429,15 @@ public class IslandEvent extends IslandBaseEvent {
             return this;
         }
 
+        /**
+         * @since 1.6.0
+         */
+        @NonNull
+        public IslandEventBuilder blueprintBundle(@NonNull BlueprintBundle blueprintBundle) {
+            this.blueprintBundle = blueprintBundle;
+            return this;
+        }
+
         public IslandBaseEvent build() {
             // Call the generic event for developers who just want one event and use the Reason enum
             Bukkit.getServer().getPluginManager().callEvent(new IslandEvent(island, player, admin, location, reason));
@@ -396,7 +452,7 @@ public class IslandEvent extends IslandBaseEvent {
                 Bukkit.getServer().getPluginManager().callEvent(ban);
                 return ban;
             case CREATE:
-                IslandCreateEvent create = new IslandCreateEvent(island, player, admin, location);
+                IslandCreateEvent create = new IslandCreateEvent(island, player, admin, location, blueprintBundle);
                 Bukkit.getServer().getPluginManager().callEvent(create);
                 return create;
             case CREATED:
@@ -428,7 +484,7 @@ public class IslandEvent extends IslandBaseEvent {
                 Bukkit.getServer().getPluginManager().callEvent(lock);
                 return lock;
             case RESET:
-                IslandResetEvent reset = new IslandResetEvent(island, player, admin, location);
+                IslandResetEvent reset = new IslandResetEvent(island, player, admin, location, blueprintBundle);
                 Bukkit.getServer().getPluginManager().callEvent(reset);
                 return reset;
             case RESETTED:

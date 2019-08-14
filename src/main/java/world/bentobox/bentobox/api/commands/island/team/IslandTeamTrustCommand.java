@@ -45,7 +45,7 @@ public class IslandTeamTrustCommand extends CompositeCommand {
         }
         // Check rank to use command
         Island island = getIslands().getIsland(getWorld(), user);
-        if (island.getRank(user) < getPlugin().getSettings().getRankCommand(getUsage())) {
+        if (island.getRank(user) < island.getRankCommand(getUsage())) {
             user.sendMessage("general.errors.no-permission");
             return false;
         }
@@ -77,7 +77,7 @@ public class IslandTeamTrustCommand extends CompositeCommand {
         Island island = getIslands().getIsland(getWorld(), user.getUniqueId());
         if (island != null) {
             island.setRank(target, RanksManager.TRUSTED_RANK);
-            user.sendMessage("general.success");
+            user.sendMessage("commands.island.team.trust.success", TextVariables.NAME, target.getName());
             target.sendMessage("commands.island.team.trust.you-are-trusted", TextVariables.NAME, user.getName());
             return true;
         } else {

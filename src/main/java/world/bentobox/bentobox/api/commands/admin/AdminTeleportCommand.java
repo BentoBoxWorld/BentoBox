@@ -60,7 +60,6 @@ public class AdminTeleportCommand extends CompositeCommand {
                 .entity(user.getPlayer())
                 .location(warpSpot)
                 .failureMessage(failureMessage)
-                .overrideGamemode(false)
                 .build();
                 return true;
             }

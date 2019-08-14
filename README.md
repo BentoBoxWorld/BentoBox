@@ -90,7 +90,7 @@ Do not submit PRs that only address code formatting because they will not be acc
 
 BentoBox uses Maven, and its Maven repository is kindly provided by [CodeMC](https://codemc.org).
 
-### Maven dependency
+### Maven
 ```xml
 <repositories>
   <repository>
@@ -107,4 +107,15 @@ BentoBox uses Maven, and its Maven repository is kindly provided by [CodeMC](htt
     <scope>provided</scope>
   </dependency>
 </dependencies>
+```
+
+### Gradle
+```groovy
+repositories {
+  maven { url "https://repo.codemc.org/repository/maven-public/" }
+}
+
+dependencies {
+  compileOnly 'world.bentobox:bentobox:PUT-VERSION-HERE'
+}
 ```

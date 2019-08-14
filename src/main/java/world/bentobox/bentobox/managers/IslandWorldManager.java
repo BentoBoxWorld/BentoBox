@@ -63,7 +63,7 @@ public class IslandWorldManager {
      * @param world the World to register
      */
     private void registerToMultiverse(@NonNull World world) {
-        if (!isUseOwnGenerator(world) && plugin.getHooks() != null) {
+        if (plugin.getHooks() != null) {
             plugin.getHooks().getHook("Multiverse-Core").ifPresent(hook -> {
                 if (Bukkit.isPrimaryThread()) {
                     ((MultiverseCoreHook) hook).registerWorld(world);
@@ -165,7 +165,7 @@ public class IslandWorldManager {
                 registerToMultiverse(gameMode.getNetherWorld());
             }
         }
-        if (settings.isEndGenerate() && settings.isEndIslands()) {
+        if (settings.isEndGenerate()) {
             if (!Bukkit.getAllowEnd()) {
                 // Warn the users that players might not be able to teleport to these worlds later on
                 plugin.logWarning("'settings.allow-end' is set to 'false' in the bukkit.yml file!");
@@ -417,16 +417,6 @@ public class IslandWorldManager {
     }
 
     /**
-     * Check if nether trees should be created in the nether or not
-     *
-     * @param world - world
-     * @return true or false
-     */
-    public boolean isNetherTrees(@Nullable World world) {
-        return world != null && (gameModes.containsKey(world) && gameModes.get(world).getWorldSettings().isNetherTrees());
-    }
-
-    /**
      * Whether the End Dragon can spawn or not in this world
      *
      * @param world world
@@ -493,14 +483,13 @@ public class IslandWorldManager {
     }
 
     /**
-     * Get the permission prefix for this world. No trailing dot included.
+     * Get the permission prefix for this world. Trailing dot included.
      *
-     * @param world
-     *            - world
+     * @param world - world
      * @return permission prefix for this world
      */
     public String getPermissionPrefix(@NonNull World world) {
-        return gameModes.get(world).getWorldSettings().getPermissionPrefix();
+        return gameModes.get(world).getWorldSettings().getPermissionPrefix() + ".";
 
     }
 
@@ -700,8 +689,24 @@ public class IslandWorldManager {
         gameModes.get(world).getWorldSettings().setResetEpoch(System.currentTimeMillis());
     }
 
+    /**
+     * Check if the death count should be reset when joining a team in this world
+     * @param world - world
+     * @return true or false
+     */
     public boolean isTeamJoinDeathReset(@NonNull World world) {
         return gameModes.get(world).getWorldSettings().isTeamJoinDeathReset();
+    }
+
+    /**
+     * Check if deaths in the world are reset when the player starts a new island.
+     * This includes a totally new island and also a new island from a reset.
+     * @param world - world
+     * @return true or false
+     * @since 1.6.0
+     */
+    public boolean isDeathsResetOnNewIsland(@NonNull World world) {
+        return gameModes.get(world).getWorldSettings().isDeathsResetOnNewIsland();
     }
 
     /**

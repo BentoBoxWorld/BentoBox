@@ -88,6 +88,7 @@ public class LiquidsFlowingOutListenerTest {
         when(iwm.getWorldSettings(Mockito.any())).thenReturn(ws);
         Map<String, Boolean> worldFlags = new HashMap<>();
         when(ws.getWorldFlags()).thenReturn(worldFlags);
+        when(iwm.getAddon(any())).thenReturn(Optional.empty());
 
         // By default everything is in world
         when(iwm.inWorld(any(World.class))).thenReturn(true);

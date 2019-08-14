@@ -1,10 +1,16 @@
 package world.bentobox.bentobox.api.flags;
 
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
+
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
+
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
@@ -18,18 +24,11 @@ import world.bentobox.bentobox.api.panels.builders.PanelItemBuilder;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.RanksManager;
-import world.bentobox.bentobox.util.Util;
-
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
 
 public class Flag implements Comparable<Flag> {
 
     /**
-     * Defines the behavior and operation of the flag, as well as its category in the {@link world.bentobox.bentobox.panels.SettingsPanel}.
+     * Defines the behavior and operation of the flag.
      */
     public enum Type {
         /**
@@ -63,6 +62,61 @@ public class Flag implements Comparable<Flag> {
         }
     }
 
+    /**
+     * Defines the flag mode
+     * @author tastybento
+     * @since 1.6.0
+     */
+    public enum Mode {
+        /**
+         * Flag should be shown in the basic settings
+         */
+        BASIC,
+        /**
+         * Flag should be shown in the advanced settings
+         */
+        ADVANCED,
+        /**
+         * Flag should be shown in the expert settings
+         */
+        EXPERT,
+        /**
+         * Flag should be shown in the top row if applicable
+         */
+        TOP_ROW;
+
+        /**
+         * Get the next ranking mode above this one. If at the top, it cycles back to the bottom mode
+         * @return next ranking mode
+         */
+        public Mode getNext() {
+            switch(this) {
+                case ADVANCED:
+                    return EXPERT;
+                case BASIC:
+                    return ADVANCED;
+                default:
+                    return BASIC;
+            }
+        }
+
+        /**
+         * Get a list of ranks that are ranked greater than this rank
+         * @param rank - rank to compare
+         * @return true if ranked greater
+         */
+        public boolean isGreaterThan(Mode rank) {
+            switch(this) {
+                case EXPERT:
+                    return rank.equals(BASIC) || rank.equals(ADVANCED);
+                case ADVANCED:
+                    return rank.equals(BASIC);
+                default:
+                    return false;
+            }
+        }
+    }
+
     private static final String PROTECTION_FLAGS = "protection.flags.";
 
     private final String id;
@@ -70,12 +124,13 @@ public class Flag implements Comparable<Flag> {
     private final Listener listener;
     private final Type type;
     private boolean setting;
-    private Map<World, Boolean> defaultWorldSettings = new HashMap<>();
     private final int defaultRank;
     private final PanelItem.ClickHandler clickHandler;
     private final boolean subPanel;
     private Set<GameModeAddon> gameModes = new HashSet<>();
     private final Addon addon;
+    private final int cooldown;
+    private final Mode mode;
 
     private Flag(Builder builder) {
         this.id = builder.id;
@@ -89,7 +144,9 @@ public class Flag implements Comparable<Flag> {
         if (builder.gameModeAddon != null) {
             this.gameModes.add(builder.gameModeAddon);
         }
+        this.cooldown = builder.cooldown;
         this.addon = builder.addon;
+        this.mode = builder.mode;
     }
 
     public String getID() {
@@ -105,23 +162,30 @@ public class Flag implements Comparable<Flag> {
     }
 
     /**
+     * @return the cooldown
+     */
+    public int getCooldown() {
+        return cooldown;
+    }
+
+    /**
      * Check if a setting is set in this world
      * @param world - world
      * @return world setting or default flag setting if a specific world setting is not set.
      * If world is not a game world, then the result will always be false!
      */
     public boolean isSetForWorld(World world) {
-        if (type.equals(Type.WORLD_SETTING)) {
-            WorldSettings ws = BentoBox.getInstance().getIWM().getWorldSettings(world);
-            if (ws != null) {
-                ws.getWorldFlags().putIfAbsent(getID(), setting);
-                return ws.getWorldFlags().get(getID());
+        WorldSettings ws = BentoBox.getInstance().getIWM().getWorldSettings(world);
+        if (ws == null) return false;
+        if (type.equals(Type.WORLD_SETTING) || type.equals(Type.PROTECTION)) {
+            if (!ws.getWorldFlags().containsKey(getID())) {
+                ws.getWorldFlags().put(getID(), setting);
+                // Save config file
+                BentoBox.getInstance().getIWM().getAddon(world).ifPresent(GameModeAddon::saveWorldSettings);
             }
-            return false;
-        } else {
-            // Setting
-            return defaultWorldSettings.getOrDefault(Util.getWorld(world), setting);
+            return ws.getWorldFlags().get(getID());
         }
+        return setting;
     }
 
     /**
@@ -130,13 +194,20 @@ public class Flag implements Comparable<Flag> {
      * @param setting - true or false
      */
     public void setSetting(World world, boolean setting) {
-        if (getType().equals(Type.WORLD_SETTING)) {
-            BentoBox.getInstance().getIWM().getWorldSettings(world).getWorldFlags().put(getID(), setting);
+        if (getType().equals(Type.WORLD_SETTING) || type.equals(Type.PROTECTION)) {
+            BentoBox.getInstance()
+            .getIWM()
+            .getWorldSettings(world)
+            .getWorldFlags()
+            .put(getID(), setting);
+            // Save config file
+            BentoBox.getInstance().getIWM().getAddon(world).ifPresent(GameModeAddon::saveWorldSettings);
         }
     }
 
     /**
-     * Set the status of this flag for locations outside of island spaces
+     * Set the original status of this flag for locations outside of island spaces.
+     * May be overriden by the the setting for this world.
      * @param defaultSetting - true means it is allowed. false means it is not allowed
      */
     public void setDefaultSetting(boolean defaultSetting) {
@@ -144,11 +215,19 @@ public class Flag implements Comparable<Flag> {
     }
 
     /**
-     * Set the status of this flag for locations outside of island spaces for a specific world
+     * Set the status of this flag for locations outside of island spaces for a specific world.
+     * World must exist and be registered before this method can be called.
      * @param defaultSetting - true means it is allowed. false means it is not allowed
      */
     public void setDefaultSetting(World world, boolean defaultSetting) {
-        this.defaultWorldSettings.put(world, defaultSetting);
+        WorldSettings ws = BentoBox.getInstance().getIWM().getWorldSettings(world);
+        if (ws == null ) {
+            BentoBox.getInstance().logError("Attempt to set default world setting for unregistered world. Register flags in onEnable.");
+            return;
+        }
+        ws.getWorldFlags().put(getID(), defaultSetting);
+        // Save config file
+        BentoBox.getInstance().getIWM().getAddon(world).ifPresent(GameModeAddon::saveWorldSettings);
     }
 
     /**
@@ -276,10 +355,12 @@ public class Flag implements Comparable<Flag> {
      * Converts a flag to a panel item. The content of the flag will change depending on who the user is and where they are.
      * @param plugin - plugin
      * @param user - user that will see this flag
+     * @param island - target island, if any
      * @param invisible - true if this flag is not visible to players
-     * @return - PanelItem for this flag or null if item is inivisible to user
+     * @return - PanelItem for this flag or null if item is invisible to user
      */
-    public PanelItem toPanelItem(BentoBox plugin, User user, boolean invisible) {
+    @Nullable
+    public PanelItem toPanelItem(BentoBox plugin, User user, @Nullable Island island, boolean invisible) {
         // Invisibility
         if (!user.isOp() && invisible) {
             return null;
@@ -294,7 +375,6 @@ public class Flag implements Comparable<Flag> {
             pib.description(user.getTranslation("protection.panel.flag-item.menu-layout", TextVariables.DESCRIPTION, user.getTranslation(getDescriptionReference())));
             return pib.build();
         }
-        Island island = plugin.getIslands().getIslandAt(user.getLocation()).orElse(plugin.getIslands().getIsland(user.getWorld(), user.getUniqueId()));
         switch(getType()) {
         case PROTECTION:
             return createProtectionFlag(plugin, user, island, pib).build();
@@ -321,6 +401,9 @@ public class Flag implements Comparable<Flag> {
                     : user.getTranslation("protection.panel.flag-item.setting-disabled");
             pib.description(user.getTranslation("protection.panel.flag-item.setting-layout", TextVariables.DESCRIPTION, user.getTranslation(getDescriptionReference())
                     , "[setting]", islandSetting));
+            if (this.cooldown > 0 && island.isCooldown(this)) {
+                pib.description(user.getTranslation("protection.panel.flag-item.setting-cooldown"));
+            }
         }
         return pib;
     }
@@ -343,6 +426,14 @@ public class Flag implements Comparable<Flag> {
         return pib;
     }
 
+
+    /**
+     * @return the mode
+     * @since 1.6.0
+     */
+    public Mode getMode() {
+        return mode;
+    }
 
     @Override
     public String toString() {
@@ -382,6 +473,12 @@ public class Flag implements Comparable<Flag> {
         // GameModeAddon
         private GameModeAddon gameModeAddon;
         private Addon addon;
+
+        // Cooldown
+        private int cooldown;
+
+        // Mode
+        public Mode mode = Mode.EXPERT;
 
         /**
          * Builder for making flags
@@ -456,7 +553,7 @@ public class Flag implements Comparable<Flag> {
 
         /**
          * Make this flag specific to this gameMode
-         * @param gameModeAddon
+         * @param gameModeAddon game mode addon
          * @return Builder
          */
         public Builder setGameMode(GameModeAddon gameModeAddon) {
@@ -466,12 +563,35 @@ public class Flag implements Comparable<Flag> {
 
         /**
          * The addon registering this flag. Ensure this is set to enable the addon to be reloaded.
-         * @param addon
+         * @param addon addon
          * @return Builder
          * @since 1.5.0
          */
         public Builder addon(Addon addon) {
             this.addon = addon;
+            return this;
+        }
+
+        /**
+         * Set a cooldown for {@link Type#SETTING} flag. Only applicable for settings.
+         * @param cooldown in seconds
+         * @return Builder
+         * @since 1.6.0
+         */
+        public Builder cooldown(int cooldown) {
+            this.cooldown = cooldown;
+            return this;
+        }
+
+        /**
+         * Set the flag difficulty mode.
+         * Defaults to {@link Flag.Mode#EXPERT}.
+         * @param mode
+         * @return Builder
+         * @since 1.6.0
+         */
+        public Builder mode(Mode mode) {
+            this.mode = mode;
             return this;
         }
 

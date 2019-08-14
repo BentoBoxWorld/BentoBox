@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.stream.Collectors;
 
-import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
@@ -41,7 +40,7 @@ public class InvincibleVisitorsListener extends FlagListener implements ClickHan
             user.sendMessage("general.errors.wrong-world");
             return true;
         }
-        String reqPerm = getIWM().getPermissionPrefix(Util.getWorld(user.getWorld())) + ".admin.settings.INVINCIBLE_VISITORS";
+        String reqPerm = getIWM().getPermissionPrefix(Util.getWorld(user.getWorld())) + "admin.settings.INVINCIBLE_VISITORS";
         if (!user.hasPermission(reqPerm)) {
             user.sendMessage("general.errors.no-permission", "[permission]", reqPerm);
             user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_METAL_HIT, 1F, 1F);
@@ -103,7 +102,7 @@ public class InvincibleVisitorsListener extends FlagListener implements ClickHan
     public void onVisitorGetDamage(EntityDamageEvent e) {
         World world = e.getEntity().getWorld();
         if (!(e.getEntity() instanceof Player)
-                || !getIWM().inWorld(e.getEntity().getLocation())
+                || !getIWM().inWorld(world)
                 || !getIWM().getIvSettings(world).contains(e.getCause().name())
                 || getIslands().userIsOnIsland(world, User.getInstance(e.getEntity()))) {
             return;
@@ -114,9 +113,12 @@ public class InvincibleVisitorsListener extends FlagListener implements ClickHan
         // Handle the void - teleport player back to island in a safe spot
         if(e.getCause().equals(DamageCause.VOID)) {
             if (getIslands().getIslandAt(p.getLocation()).isPresent()) {
-                // Will be set back after the teleport
-                p.setGameMode(GameMode.SPECTATOR);
-                getIslands().getIslandAt(p.getLocation()).ifPresent(i -> new SafeSpotTeleport.Builder(getPlugin()).entity(p).island(i).build());
+                getIslands().getIslandAt(p.getLocation()).ifPresent(island ->
+                // Teleport
+                new SafeSpotTeleport.Builder(getPlugin())
+                .entity(p)
+                .location(island.getCenter().toVector().toLocation(p.getWorld()))
+                .build());
             } else if (getIslands().hasIsland(p.getWorld(), p.getUniqueId())) {
                 // No island in this location - if the player has an island try to teleport them back
                 getIslands().homeTeleport(p.getWorld(), p);
@@ -126,5 +128,7 @@ public class InvincibleVisitorsListener extends FlagListener implements ClickHan
             }
         }
     }
+
+
 }
 

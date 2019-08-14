@@ -1,18 +1,5 @@
 package world.bentobox.bentobox.api.addons;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.permissions.PermissionDefault;
-import org.bukkit.plugin.InvalidDescriptionException;
-import org.bukkit.util.permissions.DefaultPermissions;
-import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
-import world.bentobox.bentobox.api.addons.exceptions.InvalidAddonFormatException;
-import world.bentobox.bentobox.api.addons.exceptions.InvalidAddonInheritException;
-import world.bentobox.bentobox.managers.AddonsManager;
-
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
@@ -23,12 +10,27 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.permissions.PermissionDefault;
+import org.bukkit.plugin.InvalidDescriptionException;
+import org.bukkit.util.permissions.DefaultPermissions;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
+
+import world.bentobox.bentobox.api.addons.exceptions.InvalidAddonFormatException;
+import world.bentobox.bentobox.api.addons.exceptions.InvalidAddonInheritException;
+import world.bentobox.bentobox.managers.AddonsManager;
+
 /**
  * Loads addons and sets up permissions
  * @author Tastybento, ComminQ
  */
 public class AddonClassLoader extends URLClassLoader {
 
+    private static final String DEFAULT = ".default";
     private final Map<String, Class<?>> classes = new HashMap<>();
     private Addon addon;
     private AddonsManager loader;
@@ -70,7 +72,7 @@ public class AddonClassLoader extends URLClassLoader {
         if (data.isConfigurationSection("permissions")) {
             ConfigurationSection perms = data.getConfigurationSection("permissions");
             perms.getKeys(true).forEach(perm -> {
-                if (perms.contains(perm + ".default") && perms.contains(perm + ".description")) {
+                if (perms.contains(perm + DEFAULT) && perms.contains(perm + ".description")) {
                     registerPermission(perms, perm);
                 }
             });
@@ -78,7 +80,11 @@ public class AddonClassLoader extends URLClassLoader {
     }
 
     private void registerPermission(ConfigurationSection perms, String perm) {
-        PermissionDefault pd = PermissionDefault.getByName(perms.getString(perm + ".default"));
+        if (perms.getString(perm + DEFAULT) == null) {
+            Bukkit.getLogger().severe("Permission default is invalid : " + perms.getName());
+            return;
+        }
+        PermissionDefault pd = PermissionDefault.getByName(perms.getString(perm + DEFAULT));
         if (pd == null) {
             Bukkit.getLogger().severe("Permission default is invalid : " + perms.getName());
             return;
@@ -137,7 +143,6 @@ public class AddonClassLoader extends URLClassLoader {
                     result = super.findClass(name);
                 } catch (ClassNotFoundException | NoClassDefFoundError e) {
                     // Do nothing.
-                    result = null;
                 }
                 if (result != null) {
                     loader.setClass(name, result);

@@ -35,7 +35,7 @@ public class BentoboxTypeAdapterFactory implements TypeAdapterFactory {
     BentoBox plugin;
 
     /**
-     * @param plugin
+     * @param plugin plugin
      */
     public BentoboxTypeAdapterFactory(BentoBox plugin) {
         this.plugin = plugin;

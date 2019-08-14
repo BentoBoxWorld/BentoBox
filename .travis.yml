@@ -9,10 +9,16 @@ addons:
             - develop
             - master
 jdk:
-    - oraclejdk8
+    - openjdk8
+    - openjdk11
+    
+matrix:
+  allow_failures:
+    - jdk: openjdk11
     
 script:
-    #- mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent package -P sonar sonar:sonar -B
+    #- sonar-scanner
+    - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent package -P sonar sonar:sonar -B
     #- echo "${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH}"
 cache:
     directories:
