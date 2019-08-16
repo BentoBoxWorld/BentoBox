@@ -359,6 +359,7 @@ public class Flag implements Comparable<Flag> {
      * @param invisible - true if this flag is not visible to players
      * @return - PanelItem for this flag or null if item is invisible to user
      */
+    @Nullable
     public PanelItem toPanelItem(BentoBox plugin, User user, @Nullable Island island, boolean invisible) {
         // Invisibility
         if (!user.isOp() && invisible) {

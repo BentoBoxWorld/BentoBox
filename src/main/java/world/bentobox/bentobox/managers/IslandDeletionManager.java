@@ -62,7 +62,7 @@ public class IslandDeletionManager implements Listener {
             });
         }
         // Remove the islands from the database so they don't come back
-        toBeRemoved.forEach(handler::deleteObject);
+        //toBeRemoved.forEach(handler::deleteObject);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)

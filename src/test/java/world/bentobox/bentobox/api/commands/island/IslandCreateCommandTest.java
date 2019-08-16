@@ -145,7 +145,6 @@ public class IslandCreateCommandTest {
         when(NewIsland.builder()).thenReturn(builder);
         when(builder.player(any())).thenReturn(builder);
         when(builder.name(Mockito.anyString())).thenReturn(builder);
-        when(builder.world(any())).thenReturn(builder);
         when(builder.addon(addon)).thenReturn(builder);
         when(builder.reason(any())).thenReturn(builder);
         when(builder.build()).thenReturn(mock(Island.class));

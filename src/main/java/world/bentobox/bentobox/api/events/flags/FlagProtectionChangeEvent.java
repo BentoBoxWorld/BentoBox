@@ -2,7 +2,6 @@ package world.bentobox.bentobox.api.events.flags;
 
 import java.util.UUID;
 
-import world.bentobox.bentobox.api.events.BentoBoxEvent;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.database.objects.Island;
 
@@ -10,11 +9,9 @@ import world.bentobox.bentobox.database.objects.Island;
  * @author tastybento
  * @since 1.6.0
  */
-public class FlagProtectionChangeEvent extends BentoBoxEvent {
+public class FlagProtectionChangeEvent extends FlagChangeEvent {
 
     private final Island island;
-    private final UUID player;
-    private final Flag editedFlag;
     private final int setTo;
 
     /**
@@ -25,9 +22,8 @@ public class FlagProtectionChangeEvent extends BentoBoxEvent {
      * @param setTo - value it was set to
      */
     public FlagProtectionChangeEvent(Island island, UUID player, Flag editedFlag, int setTo) {
+        super(player, editedFlag);
         this.island = island;
-        this.player = player;
-        this.editedFlag = editedFlag;
         this.setTo = setTo;
     }
 
@@ -36,20 +32,6 @@ public class FlagProtectionChangeEvent extends BentoBoxEvent {
      */
     public Island getIsland() {
         return island;
-    }
-
-    /**
-     * @return the player
-     */
-    public UUID getPlayer() {
-        return player;
-    }
-
-    /**
-     * @return the editedFlag
-     */
-    public Flag getEditedFlag() {
-        return editedFlag;
     }
 
     /**

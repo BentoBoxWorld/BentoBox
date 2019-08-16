@@ -1188,7 +1188,7 @@ public class Island implements DataObject {
      * @since 1.6.0
      */
     public boolean isReserved() {
-        return reserved == null ? false : reserved;
+        return reserved != null && reserved;
     }
 
     /**

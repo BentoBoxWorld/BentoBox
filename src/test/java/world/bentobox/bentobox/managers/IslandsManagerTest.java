@@ -155,8 +155,6 @@ public class IslandsManagerTest {
 
         // World
         when(world.getEnvironment()).thenReturn(World.Environment.NORMAL);
-        // Set up plugin
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
 
         // Command manager
         CommandsManager cm = mock(CommandsManager.class);
