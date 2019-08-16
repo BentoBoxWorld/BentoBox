@@ -3,8 +3,13 @@
  */
 package world.bentobox.bentobox.listeners.flags.protection;
 
-import static org.mockito.Matchers.any;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.HashMap;
@@ -25,14 +30,17 @@ import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Slime;
 import org.bukkit.entity.Villager;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerFishEvent.State;
 import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.PluginManager;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
@@ -62,10 +70,24 @@ import world.bentobox.bentobox.util.Util;
 @PrepareForTest( {BentoBox.class, Flags.class, Util.class, Bukkit.class} )
 public class HurtingListenerTest {
 
+    @Mock
     private Enderman enderman;
+    @Mock
     private LocalesManager lm;
+    @Mock
     private Notifier notifier;
+    @Mock
     private Island island;
+    @Mock
+    private Player player;
+    @Mock
+    private Location location;
+    @Mock
+    private World world;
+    @Mock
+    private FishHook hookEntity;
+
+    private User user;
 
     /**
      * @throws java.lang.Exception
@@ -77,7 +99,6 @@ public class HurtingListenerTest {
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
 
         Server server = mock(Server.class);
-        World world = mock(World.class);
         when(server.getLogger()).thenReturn(Logger.getAnonymousLogger());
         when(server.getWorld("world")).thenReturn(world);
         when(server.getVersion()).thenReturn("BSB_Mocking");
@@ -95,7 +116,6 @@ public class HurtingListenerTest {
         when(itemFactory.getItemMeta(any())).thenReturn(skullMeta);
         when(Bukkit.getItemFactory()).thenReturn(itemFactory);
         when(Bukkit.getLogger()).thenReturn(Logger.getAnonymousLogger());
-        Location location = mock(Location.class);
         when(location.getWorld()).thenReturn(world);
         when(location.getBlockX()).thenReturn(0);
         when(location.getBlockY()).thenReturn(0);
@@ -105,7 +125,6 @@ public class HurtingListenerTest {
         FlagsManager flagsManager = new FlagsManager(plugin);
         when(plugin.getFlagsManager()).thenReturn(flagsManager);
 
-
         // Worlds
         IslandWorldManager iwm = mock(IslandWorldManager.class);
         when(iwm.inWorld(any(World.class))).thenReturn(true);
@@ -113,7 +132,6 @@ public class HurtingListenerTest {
         when(plugin.getIWM()).thenReturn(iwm);
 
         // Monsters and animals
-        enderman = mock(Enderman.class);
         when(enderman.getLocation()).thenReturn(location);
         when(enderman.getWorld()).thenReturn(world);
         Slime slime = mock(Slime.class);
@@ -126,25 +144,23 @@ public class HurtingListenerTest {
 
         // World Settings
         WorldSettings ws = mock(WorldSettings.class);
-        when(iwm.getWorldSettings(Mockito.any())).thenReturn(ws);
+        when(iwm.getWorldSettings(any())).thenReturn(ws);
         Map<String, Boolean> worldFlags = new HashMap<>();
         when(ws.getWorldFlags()).thenReturn(worldFlags);
 
         // Island manager
         IslandsManager im = mock(IslandsManager.class);
         when(plugin.getIslands()).thenReturn(im);
-        island = mock(Island.class);
         Optional<Island> optional = Optional.of(island);
-        when(im.getProtectedIslandAt(Mockito.any())).thenReturn(optional);
+        when(im.getProtectedIslandAt(any())).thenReturn(optional);
 
         PowerMockito.mockStatic(Util.class);
-        when(Util.getWorld(Mockito.any())).thenReturn(mock(World.class));
+        when(Util.getWorld(any())).thenReturn(mock(World.class));
 
         // Locales
-        lm = mock(LocalesManager.class);
         when(plugin.getLocalesManager()).thenReturn(lm);
         Answer<String> answer = invocation -> invocation.getArgument(1, String.class);
-        when(lm.get(Mockito.any(), Mockito.any())).thenAnswer(answer);
+        when(lm.get(any(), any())).thenAnswer(answer);
 
         // Placeholders
         PlaceholdersManager placeholdersManager = mock(PlaceholdersManager.class);
@@ -152,24 +168,59 @@ public class HurtingListenerTest {
         when(placeholdersManager.replacePlaceholders(any(), any())).thenAnswer(answer);
 
         // Notifier
-        notifier = mock(Notifier.class);
         when(plugin.getNotifier()).thenReturn(notifier);
 
         // Addon
-        when(iwm.getAddon(Mockito.any())).thenReturn(Optional.empty());
+        when(iwm.getAddon(any())).thenReturn(Optional.empty());
 
         // Utils
-        when(Util.isPassiveEntity(Mockito.any())).thenCallRealMethod();
-        when(Util.isHostileEntity(Mockito.any())).thenCallRealMethod();
+        when(Util.isPassiveEntity(any())).thenCallRealMethod();
+        when(Util.isHostileEntity(any())).thenCallRealMethod();
 
+        // User & player
+        when(player.getLocation()).thenReturn(location);
+        user = User.getInstance(player);
+    }
+
+    @After
+    public void tearDown() {
+        User.clearUsers();
     }
 
     /**
      * Test method for {@link HurtingListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
     @Test
-    public void testOnEntityDamage() {
-        //fail("Not yet implemented"); // TODO
+    public void testOnEntityDamageMonsteronMonster() {
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(enderman, enderman, null, 0);
+        HurtingListener hl = new HurtingListener();
+        hl.onEntityDamage(e);
+        assertFalse(e.isCancelled());
+    }
+
+    /**
+     * Test method for {@link HurtingListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
+     */
+    @Test
+    public void testOnEntityDamagePlayeronMonster() {
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(player, enderman, null, 0);
+        HurtingListener hl = new HurtingListener();
+        hl.onEntityDamage(e);
+        assertTrue(e.isCancelled());
+        verify(notifier).notify(eq(user), eq("protection.protected"));
+    }
+
+    /**
+     * Test method for {@link HurtingListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
+     */
+    @Test
+    public void testOnEntityDamagePlayeronMonsterOp() {
+        when(player.isOp()).thenReturn(true);
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(player, enderman, null, 0);
+        HurtingListener hl = new HurtingListener();
+        hl.onEntityDamage(e);
+        assertFalse(e.isCancelled());
+        verify(notifier, never()).notify(eq(user), eq("protection.protected"));
     }
 
     /**
@@ -177,20 +228,14 @@ public class HurtingListenerTest {
      */
     @Test
     public void testOnFishingDisallowArmorStandCatching() {
-        Player player = mock(Player.class);
-        User user = User.getInstance(player);
         ArmorStand entity = mock(ArmorStand.class);
-        Location location = mock(Location.class);
-        World world = mock(World.class);
-        when(location.getWorld()).thenReturn(world);
         when(entity.getLocation()).thenReturn(location);
-        FishHook hookEntity = mock(FishHook.class);
         State state = State.CAUGHT_ENTITY;
         PlayerFishEvent e = new PlayerFishEvent(player, entity, hookEntity, state);
         HurtingListener hl = new HurtingListener();
         hl.onFishing(e);
         // Verify
-        Mockito.verify(notifier).notify(Mockito.eq(user), Mockito.eq("protection.protected"));
+        verify(notifier).notify(eq(user), eq("protection.protected"));
     }
 
     /**
@@ -198,22 +243,16 @@ public class HurtingListenerTest {
      */
     @Test
     public void testOnFishingAllowArmorStandCatching() {
-        Player player = mock(Player.class);
-        User user = User.getInstance(player);
         ArmorStand entity = mock(ArmorStand.class);
-        Location location = mock(Location.class);
-        World world = mock(World.class);
-        when(location.getWorld()).thenReturn(world);
         when(entity.getLocation()).thenReturn(location);
-        FishHook hookEntity = mock(FishHook.class);
         State state = State.CAUGHT_ENTITY;
         PlayerFishEvent e = new PlayerFishEvent(player, entity, hookEntity, state);
         HurtingListener hl = new HurtingListener();
         // Allow
-        when(island.isAllowed(Mockito.any(), Mockito.any())).thenReturn(true);
+        when(island.isAllowed(any(), any())).thenReturn(true);
         hl.onFishing(e);
         // Verify
-        Mockito.verify(notifier, Mockito.never()).notify(Mockito.eq(user), Mockito.eq("protection.protected"));
+        verify(notifier, never()).notify(eq(user), eq("protection.protected"));
     }
 
     /**
@@ -221,20 +260,14 @@ public class HurtingListenerTest {
      */
     @Test
     public void testOnFishingDisallowAnimalCatching() {
-        Player player = mock(Player.class);
-        User user = User.getInstance(player);
         Animals entity = mock(Animals.class);
-        Location location = mock(Location.class);
-        World world = mock(World.class);
-        when(location.getWorld()).thenReturn(world);
         when(entity.getLocation()).thenReturn(location);
-        FishHook hookEntity = mock(FishHook.class);
         State state = State.CAUGHT_ENTITY;
         PlayerFishEvent e = new PlayerFishEvent(player, entity, hookEntity, state);
         HurtingListener hl = new HurtingListener();
         hl.onFishing(e);
         // Verify
-        Mockito.verify(notifier).notify(Mockito.eq(user), Mockito.eq("protection.protected"));
+        verify(notifier).notify(eq(user), eq("protection.protected"));
     }
 
     /**
@@ -242,22 +275,16 @@ public class HurtingListenerTest {
      */
     @Test
     public void testOnFishingAllowAnimalsCatching() {
-        Player player = mock(Player.class);
-        User user = User.getInstance(player);
         Animals entity = mock(Animals.class);
-        Location location = mock(Location.class);
-        World world = mock(World.class);
-        when(location.getWorld()).thenReturn(world);
         when(entity.getLocation()).thenReturn(location);
-        FishHook hookEntity = mock(FishHook.class);
         State state = State.CAUGHT_ENTITY;
         PlayerFishEvent e = new PlayerFishEvent(player, entity, hookEntity, state);
         HurtingListener hl = new HurtingListener();
         // Allow
-        when(island.isAllowed(Mockito.any(), Mockito.any())).thenReturn(true);
+        when(island.isAllowed(any(), any())).thenReturn(true);
         hl.onFishing(e);
         // Verify
-        Mockito.verify(notifier, Mockito.never()).notify(Mockito.eq(user), Mockito.eq("protection.protected"));
+        verify(notifier, never()).notify(eq(user), eq("protection.protected"));
     }
 
     /**
@@ -265,20 +292,14 @@ public class HurtingListenerTest {
      */
     @Test
     public void testOnFishingDisallowMonsterCatching() {
-        Player player = mock(Player.class);
-        User user = User.getInstance(player);
         Monster entity = mock(Monster.class);
-        Location location = mock(Location.class);
-        World world = mock(World.class);
-        when(location.getWorld()).thenReturn(world);
         when(entity.getLocation()).thenReturn(location);
-        FishHook hookEntity = mock(FishHook.class);
         State state = State.CAUGHT_ENTITY;
         PlayerFishEvent e = new PlayerFishEvent(player, entity, hookEntity, state);
         HurtingListener hl = new HurtingListener();
         hl.onFishing(e);
         // Verify
-        Mockito.verify(notifier).notify(Mockito.eq(user), Mockito.eq("protection.protected"));
+        verify(notifier).notify(eq(user), eq("protection.protected"));
     }
 
     /**
@@ -286,22 +307,16 @@ public class HurtingListenerTest {
      */
     @Test
     public void testOnFishingAllowMonsterCatching() {
-        Player player = mock(Player.class);
-        User user = User.getInstance(player);
         Monster entity = mock(Monster.class);
-        Location location = mock(Location.class);
-        World world = mock(World.class);
-        when(location.getWorld()).thenReturn(world);
         when(entity.getLocation()).thenReturn(location);
-        FishHook hookEntity = mock(FishHook.class);
         State state = State.CAUGHT_ENTITY;
         PlayerFishEvent e = new PlayerFishEvent(player, entity, hookEntity, state);
         HurtingListener hl = new HurtingListener();
         // Allow
-        when(island.isAllowed(Mockito.any(), Mockito.any())).thenReturn(true);
+        when(island.isAllowed(any(), any())).thenReturn(true);
         hl.onFishing(e);
         // Verify
-        Mockito.verify(notifier, Mockito.never()).notify(Mockito.eq(user), Mockito.eq("protection.protected"));
+        verify(notifier, never()).notify(eq(user), eq("protection.protected"));
     }
 
     /**
@@ -309,20 +324,14 @@ public class HurtingListenerTest {
      */
     @Test
     public void testOnFishingDisallowVillagerCatching() {
-        Player player = mock(Player.class);
-        User user = User.getInstance(player);
         Villager entity = mock(Villager.class);
-        Location location = mock(Location.class);
-        World world = mock(World.class);
-        when(location.getWorld()).thenReturn(world);
         when(entity.getLocation()).thenReturn(location);
-        FishHook hookEntity = mock(FishHook.class);
         State state = State.CAUGHT_ENTITY;
         PlayerFishEvent e = new PlayerFishEvent(player, entity, hookEntity, state);
         HurtingListener hl = new HurtingListener();
         hl.onFishing(e);
         // Verify
-        Mockito.verify(notifier).notify(Mockito.eq(user), Mockito.eq("protection.protected"));
+        verify(notifier).notify(eq(user), eq("protection.protected"));
     }
 
     /**
@@ -330,22 +339,16 @@ public class HurtingListenerTest {
      */
     @Test
     public void testOnFishingAllowVillagerCatching() {
-        Player player = mock(Player.class);
-        User user = User.getInstance(player);
         Villager entity = mock(Villager.class);
-        Location location = mock(Location.class);
-        World world = mock(World.class);
-        when(location.getWorld()).thenReturn(world);
         when(entity.getLocation()).thenReturn(location);
-        FishHook hookEntity = mock(FishHook.class);
         State state = State.CAUGHT_ENTITY;
         PlayerFishEvent e = new PlayerFishEvent(player, entity, hookEntity, state);
         HurtingListener hl = new HurtingListener();
         // Allow
-        when(island.isAllowed(Mockito.any(), Mockito.any())).thenReturn(true);
+        when(island.isAllowed(any(), any())).thenReturn(true);
         hl.onFishing(e);
         // Verify
-        Mockito.verify(notifier, Mockito.never()).notify(Mockito.eq(user), Mockito.eq("protection.protected"));
+        verify(notifier, never()).notify(eq(user), eq("protection.protected"));
     }
     /**
      * Test method for {@link HurtingListener#onPlayerFeedParrots(org.bukkit.event.player.PlayerInteractEntityEvent)}.

@@ -69,7 +69,6 @@ public class HurtingListener extends FlagListener {
             Projectile p = (Projectile) damager;
             if (p.getShooter() instanceof Player && !checkIsland(e, (Player)p.getShooter(), damager.getLocation(), flag)) {
                 e.getEntity().setFireTicks(0);
-                damager.remove();
             }
         }
     }
