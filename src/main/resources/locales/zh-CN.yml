@@ -58,6 +58,7 @@ commands:
           quit: 放弃
           success: 成功！
           too-long: "＆cToo很久"
+          prompt: 输入名称，或“放弃”退出
         nether: 虚空
         new-bundle: 新捆绑
         new-bundle-instructions: 单击以创建新捆绑包
@@ -281,6 +282,8 @@ commands:
       parameters: "[播放]"
       title: "＆d ===========垃圾中的岛屿==========="
       use-emptytrash: "＆a使用＆l [label] emptytrash [player]＆r＆a永久删除垃圾邮件"
+      use-switch: "&aUse &l[label] switchto <player> <number>&r&a to switch player
+        to island in trash"
   bentobox:
     about:
       description: 显示版权和协议信息
