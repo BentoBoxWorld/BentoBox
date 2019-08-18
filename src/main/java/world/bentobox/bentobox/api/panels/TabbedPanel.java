@@ -83,6 +83,11 @@ public class TabbedPanel extends Panel implements PanelListener {
         // Get the tab
         Tab tab = tpb.getTabs().get(activeTab);
 
+        // Remove any tabs that have no items, if required
+        if (tpb.isHideIfEmpty()) {
+            tpb.getTabs().values().removeIf(t -> !t.equals(tab) && !t.getPanelItems().stream().anyMatch(Objects::nonNull));
+        }
+
         // Set up the tabbed header
         setupHeader(tab, items);
 
@@ -127,7 +132,9 @@ public class TabbedPanel extends Panel implements PanelListener {
         // Add icons
         for (Entry<Integer, Tab> tabPanel : tpb.getTabs().entrySet()) {
             // Add the icon to the top row
-            if (tabPanel.getValue().getPermission().isEmpty() || tpb.getUser().hasPermission(tabPanel.getValue().getPermission()) || tpb.getUser().isOp()) {
+            if (tabPanel.getValue().getPermission().isEmpty()
+                    || tpb.getUser().hasPermission(tabPanel.getValue().getPermission())
+                    || tpb.getUser().isOp()) {
                 PanelItem activeIcon = tabPanel.getValue().getIcon();
                 // Set the glow of the active tab
                 activeIcon.setGlow(tabPanel.getValue().equals(tab));

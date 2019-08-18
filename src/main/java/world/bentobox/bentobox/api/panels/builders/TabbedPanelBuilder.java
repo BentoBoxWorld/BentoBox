@@ -22,6 +22,7 @@ public class TabbedPanelBuilder {
     private int startingSlot;
     private World world;
     private User user;
+    private boolean hideIfEmpty;
 
     /**
      * Forces panel to be a specific number of slots.
@@ -80,6 +81,14 @@ public class TabbedPanelBuilder {
     }
 
     /**
+     * Hides the panel from view if there are no panel items in it
+     * @return TabbedPanelBuilder
+     */
+    public TabbedPanelBuilder hideIfEmpty() {
+        this.hideIfEmpty = true;
+        return this;
+    }
+    /**
      * Build the panel
      * @return Panel
      */
@@ -124,6 +133,13 @@ public class TabbedPanelBuilder {
      */
     public User getUser() {
         return user;
+    }
+
+    /**
+     * @return the hideIfEmpty
+     */
+    public boolean isHideIfEmpty() {
+        return hideIfEmpty;
     }
 
 

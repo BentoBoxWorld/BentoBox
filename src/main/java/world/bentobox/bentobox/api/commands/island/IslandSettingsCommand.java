@@ -47,6 +47,7 @@ public class IslandSettingsCommand extends CompositeCommand {
         .tab(2, new SettingsTab(getWorld(), user, island, Flag.Type.SETTING))
         .startingSlot(1)
         .size(54)
+        .hideIfEmpty()
         .build().openPanel();
         return true;
     }
