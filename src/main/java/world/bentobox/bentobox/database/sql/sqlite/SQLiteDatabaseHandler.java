@@ -1,21 +1,26 @@
 package world.bentobox.bentobox.database.sql.sqlite;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+
+import org.eclipse.jdt.annotation.NonNull;
 
 import com.google.gson.Gson;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.database.DatabaseConnector;
 import world.bentobox.bentobox.database.objects.DataObject;
-import world.bentobox.bentobox.database.sql.SQLDatabaseHandler;
 import world.bentobox.bentobox.database.sql.SQLConfiguration;
+import world.bentobox.bentobox.database.sql.SQLDatabaseHandler;
 
 /**
  * @since 1.6.0
  * @author Poslovitch, tastybento
  */
 public class SQLiteDatabaseHandler<T> extends SQLDatabaseHandler<T> {
+
+    private static final String COULD_NOT_LOAD_OBJECT = "Could not load object ";
 
     /**
      * Constructor
@@ -73,4 +78,42 @@ public class SQLiteDatabaseHandler<T> extends SQLDatabaseHandler<T> {
             }
         });
     }
+
+    @Override
+    public boolean objectExists(String uniqueId) {
+        // Query to see if this key exists
+        try (PreparedStatement preparedStatement = getConnection().prepareStatement(getSqlConfig().getObjectExistsSQL())) {
+            // UniqueId needs to be placed in quotes
+            preparedStatement.setString(1, uniqueId);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getBoolean(1);
+                }
+            }
+        } catch (SQLException e) {
+            plugin.logError("Could not check if key exists in database! " + uniqueId + " " + e.getMessage());
+        }
+        return false;
+    }
+
+    @Override
+    public T loadObject(@NonNull String uniqueId) {
+        try (PreparedStatement preparedStatement = getConnection().prepareStatement(getSqlConfig().getLoadObjectSQL())) {
+            // UniqueId needs to be placed in quotes
+            preparedStatement.setString(1, uniqueId);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    // If there is a result, we only want/need the first one
+                    Gson gson = getGson();
+                    return gson.fromJson(resultSet.getString("json"), dataObject);
+                }
+            } catch (Exception e) {
+                plugin.logError(COULD_NOT_LOAD_OBJECT + uniqueId + " " + e.getMessage());
+            }
+        } catch (SQLException e) {
+            plugin.logError(COULD_NOT_LOAD_OBJECT + uniqueId + " " + e.getMessage());
+        }
+        return null;
+    }
+
 }
