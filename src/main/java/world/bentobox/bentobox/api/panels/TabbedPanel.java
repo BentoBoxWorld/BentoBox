@@ -104,7 +104,7 @@ public class TabbedPanel extends Panel implements PanelListener {
                     return true;
                 }).build());
             }
-            if ((page + 1) * 45 < items.size()) {
+            if ((page + 1) * 43L < panelItems.stream().filter(Objects::nonNull).count()) {
                 // Next page icon
                 items.put(items.lastKey() + 1, new PanelItemBuilder().icon(Material.ARROW).name(tpb.getUser().getTranslation(PROTECTION_PANEL + "next")).clickHandler((panel, user1, clickType, slot1) -> {
                     this.activePage++;
