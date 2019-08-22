@@ -88,7 +88,7 @@ public class DeleteIslandChunks {
                     if (di.inBounds(baseX + x, baseZ + z)) {
                         chunk.getBlock(x, 0, z).setBiome(grid.getBiome(x, z));
                         for (int y = 0; y < chunk.getWorld().getMaxHeight(); y++) {
-                            chunk.getBlock(x, y, z).setBlockData(cd.getBlockData(x, y, z));
+                            chunk.getBlock(x, y, z).setBlockData(cd.getBlockData(x, y, z), false);
                         }
                     }
                 }
