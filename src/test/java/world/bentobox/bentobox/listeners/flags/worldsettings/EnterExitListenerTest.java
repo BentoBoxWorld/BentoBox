@@ -23,10 +23,12 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.util.Vector;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -68,13 +70,18 @@ public class EnterExitListenerTest {
     private Location outside;
     @Mock
     private Location inside;
-    private EnterExitListener listener;
+    @Mock
+    private Location anotherWorld;
     @Mock
     private LocalesManager lm;
     @Mock
     private World world;
     @Mock
     private PluginManager pim;
+    @Mock
+    private Notifier notifier;
+
+    private EnterExitListener listener;
 
     /**
      * @throws java.lang.Exception
@@ -111,15 +118,14 @@ public class EnterExitListenerTest {
 
         // Locales
         when(plugin.getLocalesManager()).thenReturn(lm);
-        when(lm.get(any(), any())).thenReturn("mock translation");
+        when(lm.get(any(), any())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
 
         // Placeholders
         PlaceholdersManager placeholdersManager = mock(PlaceholdersManager.class);
         when(plugin.getPlaceholdersManager()).thenReturn(placeholdersManager);
-        when(placeholdersManager.replacePlaceholders(any(), any())).thenReturn("mock translation");
+        when(placeholdersManager.replacePlaceholders(any(), any())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
 
         // Notifier
-        Notifier notifier = mock(Notifier.class);
         when(plugin.getNotifier()).thenReturn(notifier);
 
         // Island initialization
@@ -153,6 +159,13 @@ public class EnterExitListenerTest {
         when(inside.getBlockY()).thenReturn(Y);
         when(inside.getBlockZ()).thenReturn(Z);
         when(inside.toVector()).thenReturn(new Vector(X + PROTECTION_RANGE -2, Y, Z));
+
+        // Same as inside, but another world
+        when(anotherWorld.getWorld()).thenReturn(mock(World.class));
+        when(anotherWorld.getBlockX()).thenReturn(X + PROTECTION_RANGE - 1);
+        when(anotherWorld.getBlockY()).thenReturn(Y);
+        when(anotherWorld.getBlockZ()).thenReturn(Z);
+        when(anotherWorld.toVector()).thenReturn(new Vector(X + PROTECTION_RANGE - 1, Y, Z));
 
         Optional<Island> opIsland = Optional.ofNullable(island);
         when(im.getProtectedIslandAt(eq(inside))).thenReturn(opIsland);
@@ -189,6 +202,11 @@ public class EnterExitListenerTest {
         Flags.ENTER_EXIT_MESSAGES.setSetting(world, true);
     }
 
+    @After
+    public void tearDown() {
+        User.clearUsers();
+    }
+
     /**
      * Test method for {@link EnterExitListener#onMove(org.bukkit.event.player.PlayerMoveEvent)}.
      */
@@ -197,7 +215,7 @@ public class EnterExitListenerTest {
         PlayerMoveEvent e = new PlayerMoveEvent(user.getPlayer(), inside, inside);
         listener.onMove(e);
         // Moving in the island should result in no messages to the user
-        verify(user, never()).sendMessage(any());
+        verify(notifier, never()).notify(any(), any());
         verify(pim, never()).callEvent(any(IslandEnterEvent.class));
         verify(pim, never()).callEvent(any(IslandExitEvent.class));
     }
@@ -210,7 +228,7 @@ public class EnterExitListenerTest {
         PlayerMoveEvent e = new PlayerMoveEvent(user.getPlayer(), outside, outside);
         listener.onMove(e);
         // Moving outside the island should result in no messages to the user
-        verify(user, never()).sendMessage(any());
+        verify(notifier, never()).notify(any(), any());
         verify(pim, never()).callEvent(any(IslandEnterEvent.class));
         verify(pim, never()).callEvent(any(IslandExitEvent.class));
     }
@@ -229,6 +247,7 @@ public class EnterExitListenerTest {
         verify(island).getOwner();
         verify(pim).callEvent(any(IslandEnterEvent.class));
         verify(pim, never()).callEvent(any(IslandExitEvent.class));
+        verify(notifier).notify(any(User.class), eq("protection.flags.ENTER_EXIT_MESSAGES.now-entering"));
     }
 
     /**
@@ -246,6 +265,7 @@ public class EnterExitListenerTest {
         verify(island, times(2)).getName();
         verify(pim).callEvent(any(IslandEnterEvent.class));
         verify(pim, never()).callEvent(any(IslandExitEvent.class));
+        verify(notifier).notify(any(User.class), eq("protection.flags.ENTER_EXIT_MESSAGES.now-entering"));
     }
 
     /**
@@ -262,6 +282,7 @@ public class EnterExitListenerTest {
         verify(island).getOwner();
         verify(pim).callEvent(any(IslandExitEvent.class));
         verify(pim, never()).callEvent(any(IslandEnterEvent.class));
+        verify(notifier).notify(any(User.class), eq("protection.flags.ENTER_EXIT_MESSAGES.now-leaving"));
     }
 
     /**
@@ -279,6 +300,7 @@ public class EnterExitListenerTest {
         verify(island, times(2)).getName();
         verify(pim).callEvent(any(IslandExitEvent.class));
         verify(pim, never()).callEvent(any(IslandEnterEvent.class));
+        verify(notifier).notify(any(User.class), eq("protection.flags.ENTER_EXIT_MESSAGES.now-leaving"));
     }
 
     /**
@@ -293,7 +315,7 @@ public class EnterExitListenerTest {
         PlayerMoveEvent e = new PlayerMoveEvent(user.getPlayer(), inside, outside);
         listener.onMove(e);
         // No messages should be sent
-        verify(user, never()).sendMessage(any());
+        verify(notifier, never()).notify(any(), any());
         // Still send event
         verify(pim).callEvent(any(IslandExitEvent.class));
         verify(pim, never()).callEvent(any(IslandEnterEvent.class));
@@ -304,8 +326,9 @@ public class EnterExitListenerTest {
      */
     @Test
     public void testEnterIslandTeleport() {
-        PlayerTeleportEvent e = new PlayerTeleportEvent(user.getPlayer(), outside, inside, TeleportCause.PLUGIN);
+        PlayerTeleportEvent e = new PlayerTeleportEvent(user.getPlayer(), anotherWorld, inside, TeleportCause.PLUGIN);
         listener.onTeleport(e);
+        verify(notifier).notify(any(User.class), eq("protection.flags.ENTER_EXIT_MESSAGES.now-entering"));
         verify(pim).callEvent(any(IslandEnterEvent.class));
         verify(pim, never()).callEvent(any(IslandExitEvent.class));
     }
@@ -315,8 +338,9 @@ public class EnterExitListenerTest {
      */
     @Test
     public void testExitIslandTeleport() {
-        PlayerTeleportEvent e = new PlayerTeleportEvent(user.getPlayer(), inside, outside, TeleportCause.PLUGIN);
+        PlayerTeleportEvent e = new PlayerTeleportEvent(user.getPlayer(), inside, anotherWorld, TeleportCause.PLUGIN);
         listener.onTeleport(e);
+        verify(notifier).notify(any(User.class), eq("protection.flags.ENTER_EXIT_MESSAGES.now-leaving"));
         verify(pim, never()).callEvent(any(IslandEnterEvent.class));
         verify(pim).callEvent(any(IslandExitEvent.class));
     }
