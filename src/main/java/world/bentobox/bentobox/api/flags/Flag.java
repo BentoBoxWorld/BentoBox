@@ -377,7 +377,7 @@ public class Flag implements Comparable<Flag> {
         // Start the flag conversion
 
         // Change that icons in translation will be always prefered over hard-coded.
-        ItemStack icon = ItemParser.parse(user.getTranslation(this.getIconReference()));
+        ItemStack icon = ItemParser.parse(user.getTranslation(this.getIconReference()) + ":1");
         
         if (icon == null ) {
             icon = this.icon != null ? new ItemStack(this.icon) : new ItemStack(Material.PAPER);
