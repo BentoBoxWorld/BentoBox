@@ -24,6 +24,8 @@ import world.bentobox.bentobox.api.panels.builders.PanelItemBuilder;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.RanksManager;
+import world.bentobox.bentobox.util.ItemParser;
+
 
 public class Flag implements Comparable<Flag> {
 
@@ -320,6 +322,13 @@ public class Flag implements Comparable<Flag> {
     }
 
     /**
+     * @return a locale reference for the icon of this protection flag
+     */
+    public String getIconReference() {
+        return PROTECTION_FLAGS + this.id + ".icon";
+    }
+
+    /**
      * A set of game mode addons that use this flag. If empty, flag applies to all.
      * @return the gameModeAddon
      */
@@ -366,8 +375,13 @@ public class Flag implements Comparable<Flag> {
             return null;
         }
         // Start the flag conversion
+
+        ItemStack icon = this.icon != null ?
+            new ItemStack(this.icon) :
+            ItemParser.parse(user.getTranslation(this.getIconReference()));
+
         PanelItemBuilder pib = new PanelItemBuilder()
-                .icon(new ItemStack(icon))
+                .icon(icon == null ? new ItemStack(Material.PAPER) : icon)
                 .name(user.getTranslation("protection.panel.flag-item.name-layout", TextVariables.NAME, user.getTranslation(getNameReference())))
                 .clickHandler(clickHandler)
                 .invisible(invisible);
@@ -483,11 +497,30 @@ public class Flag implements Comparable<Flag> {
         /**
          * Builder for making flags
          * @param id - a unique id that MUST be the same as the enum of the flag
+         */
+        public Builder(String id) {
+            this.id = id;
+            this.icon = null;
+        }
+
+        /**
+         * Builder for making flags
+         * @param id - a unique id that MUST be the same as the enum of the flag
          * @param icon - a material that will be used as the icon in the GUI
          */
         public Builder(String id, Material icon) {
             this.id = id;
             this.icon = icon;
+        }
+
+        /**
+         * This method allows to set up icon for this flag.
+         * @param icon - a material that will be used as the icon in the GUI.
+         * @return Builder
+         */
+        public Builder icon(Material icon) {
+            this.icon = icon;
+            return this;
         }
 
         /**
