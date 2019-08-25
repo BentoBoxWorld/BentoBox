@@ -21,6 +21,7 @@ public class PanelBuilder {
     private int size;
     private User user;
     private PanelListener listener;
+    private Panel.PanelType panelType = Panel.PanelType.INVENTORY;
 
     public PanelBuilder name(String name) {
         this.name = ChatColor.translateAlternateColorCodes('&', name);
@@ -86,6 +87,17 @@ public class PanelBuilder {
     }
 
     /**
+     * Sets which PanelType will be used.
+     * @param type - PanelType of current panel
+     * @return PanelBuilder
+     */
+    public PanelBuilder type(Panel.PanelType type)
+    {
+        this.panelType = type;
+        return this;
+    }
+
+    /**
      * Get the next free slot number after the largest slot.
      * @return next slot number, or -1 in case none has been found.
      */
@@ -108,7 +120,7 @@ public class PanelBuilder {
      */
     public Panel build() {
         // items.lastKey() is a slot position, so the panel size is this value + 1
-        return new Panel(name, items, Math.max(size, items.isEmpty() ? size : items.lastKey() + 1), user, listener);
+        return new Panel(name, items, Math.max(size, items.isEmpty() ? size : items.lastKey() + 1), user, listener, panelType);
     }
 
     /**
@@ -144,5 +156,14 @@ public class PanelBuilder {
      */
     public PanelListener getListener() {
         return listener;
+    }
+
+
+    /**
+     * @return the panelType
+     */
+    public Panel.PanelType getPanelType()
+    {
+        return this.panelType;
     }
 }
