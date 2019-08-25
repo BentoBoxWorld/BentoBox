@@ -376,12 +376,15 @@ public class Flag implements Comparable<Flag> {
         }
         // Start the flag conversion
 
-        ItemStack icon = this.icon != null ?
-            new ItemStack(this.icon) :
-            ItemParser.parse(user.getTranslation(this.getIconReference()));
-
+        // Change that icons in translation will be always prefered over hard-coded.
+        ItemStack icon = ItemParser.parse(user.getTranslation(this.getIconReference()));
+        
+        if (icon == null ) {
+            icon = this.icon != null ? new ItemStack(this.icon) : new ItemStack(Material.PAPER);
+        }
+        
         PanelItemBuilder pib = new PanelItemBuilder()
-                .icon(icon == null ? new ItemStack(Material.PAPER) : icon)
+                .icon(icon)
                 .name(user.getTranslation("protection.panel.flag-item.name-layout", TextVariables.NAME, user.getTranslation(getNameReference())))
                 .clickHandler(clickHandler)
                 .invisible(invisible);
