@@ -3,7 +3,6 @@ package world.bentobox.bentobox.util.teleport;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChunkSnapshot;
@@ -28,11 +27,11 @@ import world.bentobox.bentobox.util.Pair;
  */
 public class SafeSpotTeleport {
 
-    private static final int MAX_CHUNKS = 200;
+    private static final int MAX_CHUNKS = 3;
     private static final long SPEED = 1;
     private static final int MAX_RADIUS = 200;
     private static final int MAX_HEIGHT = 235;
-    private boolean checking;
+    private boolean notChecking;
     private BukkitTask task;
 
     // Parameters
@@ -79,12 +78,13 @@ public class SafeSpotTeleport {
         chunksToScan = getChunksToScan();
 
         // Start checking
-        checking = true;
+        notChecking = true;
 
         // Start a recurring task until done or cancelled
         task = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
-            List<ChunkSnapshot> chunkSnapshot = new ArrayList<>();
-            if (checking) {
+            if (notChecking) {
+                notChecking = false;
+                List<ChunkSnapshot> chunkSnapshot = new ArrayList<>();
                 Iterator<Pair<Integer, Integer>> it = chunksToScan.iterator();
                 if (!it.hasNext()) {
                     // Nothing left
@@ -95,12 +95,15 @@ public class SafeSpotTeleport {
                 while (it.hasNext() && chunkSnapshot.size() < MAX_CHUNKS) {
                     Pair<Integer, Integer> pair = it.next();
                     if (location.getWorld() != null) {
+                        boolean isLoaded = location.getWorld().getChunkAt(pair.x, pair.z).isLoaded();
                         chunkSnapshot.add(location.getWorld().getChunkAt(pair.x, pair.z).getChunkSnapshot());
+                        if (!isLoaded) {
+                            location.getWorld().getChunkAt(pair.x, pair.z).unload();
+                        }
                     }
                     it.remove();
                 }
                 // Move to next step
-                checking = false;
                 checkChunks(chunkSnapshot);
             }
         }, 0L, SPEED);
@@ -136,14 +139,8 @@ public class SafeSpotTeleport {
      */
     private List<Pair<Integer, Integer>> getChunksToScan() {
         List<Pair<Integer, Integer>> result = new ArrayList<>();
-        // Get island if available
-        Optional<Island> island = plugin.getIslands().getIslandAt(location);
-        if (!island.isPresent()) {
-            return new ArrayList<>();
-        }
-        int maxRadius = island.map(Island::getProtectionRange).orElse(plugin.getIWM().getIslandProtectionRange(location.getWorld()));
-        maxRadius = maxRadius > MAX_RADIUS ? MAX_RADIUS : maxRadius;
-
+        int maxRadius = plugin.getIslands().getIslandAt(location).map(Island::getProtectionRange).orElse(plugin.getIWM().getIslandProtectionRange(location.getWorld()));
+        maxRadius = Math.min(MAX_RADIUS, maxRadius);
         int x = location.getBlockX();
         int z = location.getBlockZ();
         // Create ever increasing squares around the target location
@@ -151,7 +148,7 @@ public class SafeSpotTeleport {
         do {
             for (int i = x - radius; i <= x + radius; i+=16) {
                 for (int j = z - radius; j <= z + radius; j+=16) {
-                    addChunk(result, island, new Pair<>(i,j), new Pair<>(i >> 4, j >> 4));
+                    addChunk(result, new Pair<>(i,j), new Pair<>(i >> 4, j >> 4));
                 }
             }
             radius++;
@@ -159,20 +156,9 @@ public class SafeSpotTeleport {
         return result;
     }
 
-    private void addChunk(List<Pair<Integer, Integer>> result, Optional<Island> island, Pair<Integer, Integer> blockCoord, Pair<Integer, Integer> chunkCoord) {
-        if (!result.contains(chunkCoord)) {
-            // Add the chunk coord
-            if (!island.isPresent()) {
-                // If there is no island, just add it
-                result.add(chunkCoord);
-            } else {
-                // If there is an island, only add it if the coord is in island space
-                island.ifPresent(is -> {
-                    if (is.inIslandSpace(blockCoord)) {
-                        result.add(chunkCoord);
-                    }
-                });
-            }
+    private void addChunk(List<Pair<Integer, Integer>> result, Pair<Integer, Integer> blockCoord, Pair<Integer, Integer> chunkCoord) {
+        if (!result.contains(chunkCoord) && plugin.getIslands().getIslandAt(location).map(is -> is.inIslandSpace(blockCoord)).orElse(true)) {
+            result.add(chunkCoord);
         }
     }
 
@@ -190,7 +176,7 @@ public class SafeSpotTeleport {
                 }
             }
             // Nothing happened, change state
-            checking = true;
+            notChecking = true;
         });
     }
 
@@ -247,7 +233,7 @@ public class SafeSpotTeleport {
             Material space2 = chunk.getBlockType(x, Math.min(y + 2, SafeSpotTeleport.MAX_HEIGHT), z);
             if ((space1.equals(Material.AIR) && space2.equals(Material.AIR)) || (space1.equals(Material.NETHER_PORTAL) && space2.equals(Material.NETHER_PORTAL))
                     && (!type.toString().contains("FENCE") && !type.toString().contains("DOOR") && !type.toString().contains("GATE") && !type.toString().contains("PLATE")
-                    && !type.toString().contains("SIGN"))) {
+                            && !type.toString().contains("SIGN"))) {
                 switch (type) {
                 // Unsafe
                 case ANVIL:
