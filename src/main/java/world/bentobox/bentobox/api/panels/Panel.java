@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -31,19 +32,55 @@ public class Panel implements HeadRequester, InventoryHolder {
     private User user;
     private String name;
 
-    public Panel(String name, Map<Integer, PanelItem> items, int size, User user, PanelListener listener) {
-        makePanel(name, items, size, user, listener);
+    /**
+     * Various types of Panel that can be created.
+     * @since 1.7.0
+     */
+    public enum Type {
+        INVENTORY,
+        HOPPER,
+        DROPPER
     }
 
     public Panel() {}
 
+    public Panel(String name, Map<Integer, PanelItem> items, int size, User user, PanelListener listener) {
+        this(name, items, size, user, listener, Type.INVENTORY);
+    }
+
+    /**
+     * @since 1.7.0
+     */
+    public Panel(String name, Map<Integer, PanelItem> items, int size, User user, PanelListener listener, Type type) {
+        makePanel(name, items, size, user, listener, type);
+    }
+
     protected void makePanel(String name, Map<Integer, PanelItem> items, int size, User user,
-            PanelListener listener) {
+        PanelListener listener) {
+        this.makePanel(name, items, size, user, listener, Type.INVENTORY);
+    }
+
+    /**
+     * @since 1.7.0
+     */
+    protected void makePanel(String name, Map<Integer, PanelItem> items, int size, User user,
+            PanelListener listener, Type type) {
         this.name = name;
         this.items = items;
-        size = fixSize(size);
+
         // Create panel
-        inventory = Bukkit.createInventory(null, size, name);
+        switch (type) {
+            case INVENTORY:
+                inventory = Bukkit.createInventory(null, fixSize(size), name);
+                break;
+            case HOPPER:
+                inventory = Bukkit.createInventory(null, InventoryType.HOPPER, name);
+                break;
+            case DROPPER:
+                inventory = Bukkit.createInventory(null, InventoryType.DROPPER, name);
+                break;
+        }
+
         // Fill the inventory and return
         for (Map.Entry<Integer, PanelItem> en: items.entrySet()) {
             if (en.getKey() < 54) {
