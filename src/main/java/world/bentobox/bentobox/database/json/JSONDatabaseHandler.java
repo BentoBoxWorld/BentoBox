@@ -59,7 +59,6 @@ public class JSONDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
             try (FileReader reader = new FileReader(file)){
                 T object = getGson().fromJson(reader, dataObject);
                 if (object == null) {
-                    reader.close();
                     throw new IOException("JSON file created a null object: " + file.getPath());
                 }
                 list.add(object);

@@ -1,8 +1,8 @@
 package world.bentobox.bentobox.listeners.flags.worldsettings;
 
+import java.security.SecureRandom;
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.Random;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -62,7 +62,6 @@ public class CleanSuperFlatListener extends FlagListener {
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onChunkLoad(ChunkLoadEvent e) {
-
         World world = e.getWorld();
         if (noClean(world, e)) {
             return;
@@ -71,7 +70,13 @@ public class CleanSuperFlatListener extends FlagListener {
         ChunkGenerator cg = plugin.getAddonsManager().getDefaultWorldGenerator(world.getName(), "");
         if (cg == null) {
             Flags.CLEAN_SUPER_FLAT.setSetting(world, false);
-            getPlugin().logWarning("Clean super flat is not available for " + world.getName());
+
+            plugin.logWarning("Could not enable Clean Super Flat for " + world.getName());
+            plugin.logWarning("There is no world generator assigned to this world.");
+            plugin.logWarning("This is often caused by the 'use-own-generator' being set to 'true' in the gamemode's" +
+                    " configuration while there hasn't been any custom world generator assigned to the world.");
+            plugin.logWarning("Either revert the changes in the gamemode's config.yml or assign your custom world generator to the world.");
+
             return;
         }
         // Add to queue
@@ -82,18 +87,22 @@ public class CleanSuperFlatListener extends FlagListener {
     }
 
     private void cleanChunk(ChunkLoadEvent e, World world, ChunkGenerator cg, MyBiomeGrid grid) {
+        SecureRandom random = new SecureRandom();
         if (!chunkQueue.isEmpty()) {
             Pair<Integer, Integer> chunkXZ = chunkQueue.poll();
-            ChunkData cd = cg.generateChunkData(world, new Random(), e.getChunk().getX(), e.getChunk().getZ(), grid);
+            ChunkData cd = cg.generateChunkData(world, random, e.getChunk().getX(), e.getChunk().getZ(), grid);
             for (int x = 0; x < 16; x++) {
                 for (int z = 0; z < 16; z++) {
                     for (int y = 0; y < world.getMaxHeight(); y++) {
-                        e.getChunk().getBlock(x, y, z).setBlockData(cd.getBlockData(x, y, z));
+                        e.getChunk().getBlock(x, y, z).setBlockData(cd.getBlockData(x, y, z), false);
                     }
                 }
             }
+            // Run populators
+            cg.getDefaultPopulators(world).forEach(pop -> pop.populate(world, random, e.getChunk()));
             if (plugin.getSettings().isLogCleanSuperFlatChunks()) {
-                plugin.log(chunkQueue.size() + " Regenerating superflat chunk " + world.getName() + " " + chunkXZ.x + ", " + chunkXZ.z);
+                plugin.log("Regenerating superflat chunk in " + world.getName() + " at (" + chunkXZ.x + ", " + chunkXZ.z + ") " +
+                        "(" + chunkQueue.size() + " chunk(s) remaining in the queue)");
             }
         } else {
             task.cancel();
@@ -103,7 +112,6 @@ public class CleanSuperFlatListener extends FlagListener {
     /**
      * Check if chunk should be cleaned or not
      * @param world - world
-     * @param plugin - plugin
      * @param e chunk load event
      * @return true if the chunk should not be cleaned
      */
@@ -111,21 +119,14 @@ public class CleanSuperFlatListener extends FlagListener {
         if (!ready) {
             return true;
         }
-        // Clean super flat does not work if the world handles its own generator explicitly
-        if (getIWM().inWorld(world) && Flags.CLEAN_SUPER_FLAT.isSetForWorld(world) && getIWM().isUseOwnGenerator(world)) {
-            Flags.CLEAN_SUPER_FLAT.setSetting(world, false);
-            getPlugin().logWarning("Clean super flat is not available for " + world.getName());
-            return true;
-        }
-
-        if (!getIWM().inWorld(world) || !Flags.CLEAN_SUPER_FLAT.isSetForWorld(world) ||
-                (!e.getChunk().getBlock(0, 0, 0).getType().equals(Material.BEDROCK)
+        return !getIWM().inWorld(world) || !Flags.CLEAN_SUPER_FLAT.isSetForWorld(world) ||
+                (!(e.getChunk().getBlock(0, 0, 0).getType().equals(Material.BEDROCK)
+                        && e.getChunk().getBlock(0, 1, 0).getType().equals(Material.DIRT)
+                        && e.getChunk().getBlock(0, 2, 0).getType().equals(Material.DIRT)
+                        && e.getChunk().getBlock(0, 3, 0).getType().equals(Material.GRASS_BLOCK))
                         || (world.getEnvironment().equals(Environment.NETHER) && (!plugin.getIWM().isNetherGenerate(world)
                                 || !plugin.getIWM().isNetherIslands(world)))
                         || (world.getEnvironment().equals(Environment.THE_END) && (!plugin.getIWM().isEndGenerate(world)
-                                || !plugin.getIWM().isEndIslands(world))))) {
-            return true;
-        }
-        return false;
+                                || !plugin.getIWM().isEndIslands(world))));
     }
 }

@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 
@@ -81,8 +82,9 @@ public class BlueprintsManager {
 
     public BlueprintsManager(@NonNull BentoBox plugin) {
         this.plugin = plugin;
-        this.blueprintBundles = new HashMap<>();
-        this.blueprints = new HashMap<>();
+        // Must use ConcurrentHashMap because the maps are loaded async and they need to be thread safe
+        this.blueprintBundles = new ConcurrentHashMap<>();
+        this.blueprints = new ConcurrentHashMap<>();
         @SuppressWarnings({"rawtypes", "unchecked"})
         GsonBuilder builder = new GsonBuilder()
         .excludeFieldsWithoutExposeAnnotation()
@@ -160,12 +162,10 @@ public class BlueprintsManager {
         Bukkit
         .getScheduler()
         .runTaskAsynchronously(
-                BentoBox.getInstance(), () -> {
+                plugin, () -> {
                     blueprintBundles.put(addon, new ArrayList<>());
-
                     // See if there are any schems that need converting
                     new SchemToBlueprint(plugin).convertSchems(addon);
-
                     if (!loadBundles(addon)) {
                         makeDefaults(addon);
                         loadBundles(addon);
@@ -184,15 +184,18 @@ public class BlueprintsManager {
         boolean loaded = false;
         File[] bundles = bpf.listFiles((dir, name) -> name.toLowerCase(Locale.ENGLISH).endsWith(BLUEPRINT_BUNDLE_SUFFIX));
         if (bundles == null || bundles.length == 0) {
-            makeDefaults(addon);
-            return loadBundles(addon);
+            return false;
         }
         for (File file : bundles) {
             try {
                 BlueprintBundle bb = gson.fromJson(new FileReader(file), BlueprintBundle.class);
-                blueprintBundles.get(addon).add(bb);
-                plugin.log("Loaded Blueprint Bundle '" + bb.getUniqueId() + FOR + addon.getDescription().getName());
-                loaded = true;
+                if (bb != null) {
+                    blueprintBundles
+                    .get(addon)
+                    .add(bb);
+                    plugin.log("Loaded Blueprint Bundle '" + bb.getUniqueId() + FOR + addon.getDescription().getName());
+                    loaded = true;
+                }
             } catch (Exception e) {
                 plugin.logError("Could not load blueprint bundle " + file.getName() + " " + e.getMessage());
                 plugin.logStacktrace(e);

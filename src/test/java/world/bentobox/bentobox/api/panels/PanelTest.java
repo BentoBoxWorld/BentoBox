@@ -1,6 +1,3 @@
-/**
- *
- */
 package world.bentobox.bentobox.api.panels;
 
 import static org.junit.Assert.assertEquals;

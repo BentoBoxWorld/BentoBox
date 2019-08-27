@@ -6,6 +6,7 @@ import java.util.UUID;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.database.objects.Island;
 
 /**
  * @author Poslovitch
@@ -45,12 +46,14 @@ public class IslandInfoCommand extends CompositeCommand {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
             return false;
         }
-        if (!getIslands().hasIsland(getWorld(), targetUUID)) {
+        // Get island
+        Island island = getIslands().getIsland(getWorld(), targetUUID);
+        if (island == null) {
             user.sendMessage("general.errors.player-has-no-island");
             return false;
         }
         // Show info for this player
-        getIslands().getIsland(getWorld(), targetUUID).showInfo(user);
+        island.showInfo(user);
         return true;
     }
 }

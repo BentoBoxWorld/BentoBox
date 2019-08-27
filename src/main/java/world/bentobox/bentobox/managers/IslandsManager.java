@@ -552,7 +552,7 @@ public class IslandsManager {
     }
 
     /**
-     * Checks if a player has an island in the world
+     * Checks if a player has an island in the world and owns it
      * @param world - world to check
      * @param user - the user
      * @return true if player has island and owns it

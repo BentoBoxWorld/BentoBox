@@ -2,8 +2,12 @@ package world.bentobox.bentobox.api.commands.island;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -25,6 +29,7 @@ import org.bukkit.scheduler.BukkitScheduler;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -51,11 +56,16 @@ import world.bentobox.bentobox.managers.RanksManager;
 @PrepareForTest({Bukkit.class, BentoBox.class, User.class })
 public class IslandUnbanCommandTest {
 
+    @Mock
     private CompositeCommand ic;
     private UUID uuid;
+    @Mock
     private User user;
+    @Mock
     private IslandsManager im;
+    @Mock
     private PlayersManager pm;
+    @Mock
     private Island island;
 
     /**
@@ -78,8 +88,7 @@ public class IslandUnbanCommandTest {
 
         // Player
         Player p = mock(Player.class);
-        // Sometimes use Mockito.withSettings().verboseLogging()
-        user = mock(User.class);
+        // User
         when(user.isOp()).thenReturn(false);
         uuid = UUID.randomUUID();
         when(user.getUniqueId()).thenReturn(uuid);
@@ -87,18 +96,15 @@ public class IslandUnbanCommandTest {
         when(user.getName()).thenReturn("tastybento");
 
         // Parent command has no aliases
-        ic = mock(CompositeCommand.class);
         when(ic.getSubCommandAliases()).thenReturn(new HashMap<>());
 
         // No island for player to begin with (set it later in the tests)
-        im = mock(IslandsManager.class);
-        when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
-        when(im.isOwner(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
+        when(im.hasIsland(any(), eq(uuid))).thenReturn(false);
+        when(im.isOwner(any(), eq(uuid))).thenReturn(false);
         when(plugin.getIslands()).thenReturn(im);
 
         // Has team
-        pm = mock(PlayersManager.class);
-        when(im.inTeam(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
+        when(im.inTeam(any(), eq(uuid))).thenReturn(true);
         when(plugin.getPlayers()).thenReturn(pm);
 
         // Server & Scheduler
@@ -107,16 +113,15 @@ public class IslandUnbanCommandTest {
         when(Bukkit.getScheduler()).thenReturn(sch);
 
         // Island Banned list initialization
-        island = mock(Island.class);
         when(island.getBanned()).thenReturn(new HashSet<>());
-        when(island.isBanned(Mockito.any())).thenReturn(false);
-        when(island.getRank(Mockito.any())).thenReturn(RanksManager.OWNER_RANK);
-        when(im.getIsland(Mockito.any(), Mockito.any(User.class))).thenReturn(island);
-        when(im.getIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(island);
+        when(island.isBanned(any())).thenReturn(false);
+        when(island.getRank(any())).thenReturn(RanksManager.OWNER_RANK);
+        when(im.getIsland(any(), any(User.class))).thenReturn(island);
+        when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
 
         // IWM friendly name
         IslandWorldManager iwm = mock(IslandWorldManager.class);
-        when(iwm.getFriendlyName(Mockito.any())).thenReturn("BSkyBlock");
+        when(iwm.getFriendlyName(any())).thenReturn("BSkyBlock");
         when(plugin.getIWM()).thenReturn(iwm);
 
         // Server and Plugin Manager for events
@@ -128,7 +133,7 @@ public class IslandUnbanCommandTest {
     }
 
     /**
-     * Test method for .
+     * Test method for {@link IslandUnbanCommand#canExecute(User, String, List)}
      */
     // Island ban command by itself
 
@@ -145,64 +150,82 @@ public class IslandUnbanCommandTest {
     @Test
     public void testNoArgs() {
         IslandUnbanCommand iubc = new IslandUnbanCommand(ic);
-        assertFalse(iubc.execute(user, iubc.getLabel(), new ArrayList<>()));
+        assertFalse(iubc.canExecute(user, iubc.getLabel(), new ArrayList<>()));
     }
 
+    /**
+     * Test method for {@link IslandUnbanCommand#canExecute(User, String, List)}
+     */
     @Test
     public void testNoIsland() {
-        when(im.inTeam(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
+        when(im.inTeam(any(), eq(uuid))).thenReturn(false);
         IslandUnbanCommand iubc = new IslandUnbanCommand(ic);
-        assertFalse(iubc.execute(user, iubc.getLabel(), Collections.singletonList("bill")));
-        Mockito.verify(user).sendMessage("general.errors.no-island");
+        assertFalse(iubc.canExecute(user, iubc.getLabel(), Collections.singletonList("bill")));
+        verify(user).sendMessage("general.errors.no-island");
     }
 
+    /**
+     * Test method for {@link IslandUnbanCommand#canExecute(User, String, List)}
+     */
     @Test
     public void testTooLowRank() {
         IslandUnbanCommand iubc = new IslandUnbanCommand(ic);
-        when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
-        when(island.getRank(Mockito.any())).thenReturn(RanksManager.MEMBER_RANK);
+        when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
+        when(island.getRank(any())).thenReturn(RanksManager.MEMBER_RANK);
         when(island.getRankCommand(anyString())).thenReturn(RanksManager.OWNER_RANK);
-        assertFalse(iubc.execute(user, iubc.getLabel(), Collections.singletonList("bill")));
-        Mockito.verify(user).sendMessage("general.errors.no-permission");
+        assertFalse(iubc.canExecute(user, iubc.getLabel(), Collections.singletonList("bill")));
+        verify(user).sendMessage("general.errors.no-permission");
     }
 
+    /**
+     * Test method for {@link IslandUnbanCommand#canExecute(User, String, List)}
+     */
     @Test
     public void testUnknownUser() {
         IslandUnbanCommand iubc = new IslandUnbanCommand(ic);
-        when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
-        when(im.isOwner(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
+        when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
+        when(im.isOwner(any(), eq(uuid))).thenReturn(true);
         when(pm.getUUID(Mockito.anyString())).thenReturn(null);
-        assertFalse(iubc.execute(user, iubc.getLabel(), Collections.singletonList("bill")));
-        Mockito.verify(user).sendMessage("general.errors.unknown-player", "[name]", "bill");
+        assertFalse(iubc.canExecute(user, iubc.getLabel(), Collections.singletonList("bill")));
+        verify(user).sendMessage("general.errors.unknown-player", "[name]", "bill");
     }
 
+    /**
+     * Test method for {@link IslandUnbanCommand#canExecute(User, String, List)}
+     */
     @Test
     public void testBanSelf() {
         IslandUnbanCommand iubc = new IslandUnbanCommand(ic);
-        when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
-        when(im.isOwner(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
+        when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
+        when(im.isOwner(any(), eq(uuid))).thenReturn(true);
         when(pm.getUUID(Mockito.anyString())).thenReturn(uuid);
-        assertFalse(iubc.execute(user, iubc.getLabel(), Collections.singletonList("bill")));
-        Mockito.verify(user).sendMessage("commands.island.unban.cannot-unban-yourself");
+        assertFalse(iubc.canExecute(user, iubc.getLabel(), Collections.singletonList("bill")));
+        verify(user).sendMessage("commands.island.unban.cannot-unban-yourself");
     }
 
+    /**
+     * Test method for {@link IslandUnbanCommand#canExecute(User, String, List)}
+     */
     @Test
     public void testBanNotBanned() {
         IslandUnbanCommand iubc = new IslandUnbanCommand(ic);
-        when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
-        when(im.isOwner(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
+        when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
+        when(im.isOwner(any(), eq(uuid))).thenReturn(true);
         UUID bannedUser = UUID.randomUUID();
         when(pm.getUUID(Mockito.anyString())).thenReturn(bannedUser);
-        when(island.isBanned(Mockito.eq(bannedUser))).thenReturn(false);
-        assertFalse(iubc.execute(user, iubc.getLabel(), Collections.singletonList("bill")));
-        Mockito.verify(user).sendMessage("commands.island.unban.player-not-banned");
+        when(island.isBanned(eq(bannedUser))).thenReturn(false);
+        assertFalse(iubc.canExecute(user, iubc.getLabel(), Collections.singletonList("bill")));
+        verify(user).sendMessage("commands.island.unban.player-not-banned");
     }
 
+    /**
+     * Test method for {@link IslandUnbanCommand#execute(User, String, List)}
+     */
     @Test
     public void testUnbanUser() {
         IslandUnbanCommand iubc = new IslandUnbanCommand(ic);
-        when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
-        when(im.isOwner(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
+        when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
+        when(im.isOwner(any(), eq(uuid))).thenReturn(true);
         UUID targetUUID = UUID.randomUUID();
         when(pm.getUUID(Mockito.anyString())).thenReturn(targetUUID);
         PowerMockito.mockStatic(User.class);
@@ -210,23 +233,26 @@ public class IslandUnbanCommandTest {
         when(targetUser.isOp()).thenReturn(false);
         when(targetUser.isPlayer()).thenReturn(true);
         when(targetUser.isOnline()).thenReturn(false);
-        when(User.getInstance(Mockito.any(UUID.class))).thenReturn(targetUser);
+        when(User.getInstance(any(UUID.class))).thenReturn(targetUser);
         // Mark as banned
-        when(island.isBanned(Mockito.eq(targetUUID))).thenReturn(true);
+        when(island.isBanned(eq(targetUUID))).thenReturn(true);
 
         // Allow removing from ban list
-        when(island.unban(Mockito.any(), Mockito.any())).thenReturn(true);
+        when(island.unban(any(), any())).thenReturn(true);
 
         assertTrue(iubc.execute(user, iubc.getLabel(), Collections.singletonList("bill")));
-        Mockito.verify(user).sendMessage("commands.island.unban.player-unbanned", TextVariables.NAME, targetUser.getName());
-        Mockito.verify(targetUser).sendMessage("commands.island.unban.you-are-unbanned", TextVariables.NAME, user.getName());
+        verify(user).sendMessage("commands.island.unban.player-unbanned", TextVariables.NAME, targetUser.getName());
+        verify(targetUser).sendMessage("commands.island.unban.you-are-unbanned", TextVariables.NAME, user.getName());
     }
 
+    /**
+     * Test method for {@link IslandUnbanCommand#execute(User, String, List)}
+     */
     @Test
     public void testCancelledUnban() {
         IslandUnbanCommand iubc = new IslandUnbanCommand(ic);
-        when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
-        when(im.isOwner(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
+        when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
+        when(im.isOwner(any(), eq(uuid))).thenReturn(true);
         UUID targetUUID = UUID.randomUUID();
         when(pm.getUUID(Mockito.anyString())).thenReturn(targetUUID);
         PowerMockito.mockStatic(User.class);
@@ -234,18 +260,21 @@ public class IslandUnbanCommandTest {
         when(targetUser.isOp()).thenReturn(false);
         when(targetUser.isPlayer()).thenReturn(true);
         when(targetUser.isOnline()).thenReturn(false);
-        when(User.getInstance(Mockito.any(UUID.class))).thenReturn(targetUser);
+        when(User.getInstance(any(UUID.class))).thenReturn(targetUser);
         // Mark as banned
-        when(island.isBanned(Mockito.eq(targetUUID))).thenReturn(true);
+        when(island.isBanned(eq(targetUUID))).thenReturn(true);
 
         // Allow removing from ban list
-        when(island.unban(Mockito.any(), Mockito.any())).thenReturn(false);
+        when(island.unban(any(), any())).thenReturn(false);
 
         assertFalse(iubc.execute(user, iubc.getLabel(), Collections.singletonList("bill")));
-        Mockito.verify(user, Mockito.never()).sendMessage("commands.island.unban.player-unbanned", TextVariables.NAME, targetUser.getName());
-        Mockito.verify(targetUser, Mockito.never()).sendMessage("commands.island.unban.you-are-unbanned", "[owner]", user.getName());
+        verify(user, never()).sendMessage("commands.island.unban.player-unbanned", TextVariables.NAME, targetUser.getName());
+        verify(targetUser, never()).sendMessage("commands.island.unban.you-are-unbanned", "[owner]", user.getName());
     }
 
+    /**
+     * Test method for {@link IslandUnbanCommand#tabComplete(User, String, List)}
+     */
     @Test
     public void testTabComplete() {
         Set<UUID> banned = new HashSet<>();
@@ -254,7 +283,7 @@ public class IslandUnbanCommandTest {
             banned.add(UUID.randomUUID());
         }
         when(island.getBanned()).thenReturn(banned);
-        when(pm.getName(Mockito.any())).thenReturn("a", "b", "c", "d", "e", "f", "g", "h", "i", "j");
+        when(pm.getName(any())).thenReturn("a", "b", "c", "d", "e", "f", "g", "h", "i", "j");
         IslandUnbanCommand iubc = new IslandUnbanCommand(ic);
         User user = mock(User.class);
         when(user.getUniqueId()).thenReturn(UUID.randomUUID());
@@ -264,10 +293,13 @@ public class IslandUnbanCommandTest {
         assertTrue(Arrays.equals(names, result.get().toArray()));
     }
 
+    /**
+     * Test method for {@link IslandUnbanCommand#tabComplete(User, String, List)}
+     */
     @Test
     public void testTabCompleteNoIsland() {
         // No island
-        when(im.getIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(null);
+        when(im.getIsland(any(), any(UUID.class))).thenReturn(null);
         IslandUnbanCommand iubc = new IslandUnbanCommand(ic);
         // Set up the user
         User user = mock(User.class);

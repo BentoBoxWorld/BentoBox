@@ -9,6 +9,7 @@ import org.bukkit.World;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
@@ -27,7 +28,7 @@ import world.bentobox.bentobox.managers.RanksManager;
 public class Flag implements Comparable<Flag> {
 
     /**
-     * Defines the behavior and operation of the flag, as well as its category in the {@link world.bentobox.bentobox.panels.SettingsPanel}.
+     * Defines the behavior and operation of the flag.
      */
     public enum Type {
         /**
@@ -61,6 +62,61 @@ public class Flag implements Comparable<Flag> {
         }
     }
 
+    /**
+     * Defines the flag mode
+     * @author tastybento
+     * @since 1.6.0
+     */
+    public enum Mode {
+        /**
+         * Flag should be shown in the basic settings
+         */
+        BASIC,
+        /**
+         * Flag should be shown in the advanced settings
+         */
+        ADVANCED,
+        /**
+         * Flag should be shown in the expert settings
+         */
+        EXPERT,
+        /**
+         * Flag should be shown in the top row if applicable
+         */
+        TOP_ROW;
+
+        /**
+         * Get the next ranking mode above this one. If at the top, it cycles back to the bottom mode
+         * @return next ranking mode
+         */
+        public Mode getNext() {
+            switch(this) {
+                case ADVANCED:
+                    return EXPERT;
+                case BASIC:
+                    return ADVANCED;
+                default:
+                    return BASIC;
+            }
+        }
+
+        /**
+         * Get a list of ranks that are ranked greater than this rank
+         * @param rank - rank to compare
+         * @return true if ranked greater
+         */
+        public boolean isGreaterThan(Mode rank) {
+            switch(this) {
+                case EXPERT:
+                    return rank.equals(BASIC) || rank.equals(ADVANCED);
+                case ADVANCED:
+                    return rank.equals(BASIC);
+                default:
+                    return false;
+            }
+        }
+    }
+
     private static final String PROTECTION_FLAGS = "protection.flags.";
 
     private final String id;
@@ -74,6 +130,7 @@ public class Flag implements Comparable<Flag> {
     private Set<GameModeAddon> gameModes = new HashSet<>();
     private final Addon addon;
     private final int cooldown;
+    private final Mode mode;
 
     private Flag(Builder builder) {
         this.id = builder.id;
@@ -89,6 +146,7 @@ public class Flag implements Comparable<Flag> {
         }
         this.cooldown = builder.cooldown;
         this.addon = builder.addon;
+        this.mode = builder.mode;
     }
 
     public String getID() {
@@ -136,12 +194,14 @@ public class Flag implements Comparable<Flag> {
      * @param setting - true or false
      */
     public void setSetting(World world, boolean setting) {
-        if (getType().equals(Type.WORLD_SETTING)) {
+        if (getType().equals(Type.WORLD_SETTING) || type.equals(Type.PROTECTION)) {
             BentoBox.getInstance()
             .getIWM()
             .getWorldSettings(world)
             .getWorldFlags()
             .put(getID(), setting);
+            // Save config file
+            BentoBox.getInstance().getIWM().getAddon(world).ifPresent(GameModeAddon::saveWorldSettings);
         }
     }
 
@@ -295,10 +355,12 @@ public class Flag implements Comparable<Flag> {
      * Converts a flag to a panel item. The content of the flag will change depending on who the user is and where they are.
      * @param plugin - plugin
      * @param user - user that will see this flag
+     * @param island - target island, if any
      * @param invisible - true if this flag is not visible to players
-     * @return - PanelItem for this flag or null if item is inivisible to user
+     * @return - PanelItem for this flag or null if item is invisible to user
      */
-    public PanelItem toPanelItem(BentoBox plugin, User user, boolean invisible) {
+    @Nullable
+    public PanelItem toPanelItem(BentoBox plugin, User user, @Nullable Island island, boolean invisible) {
         // Invisibility
         if (!user.isOp() && invisible) {
             return null;
@@ -313,7 +375,6 @@ public class Flag implements Comparable<Flag> {
             pib.description(user.getTranslation("protection.panel.flag-item.menu-layout", TextVariables.DESCRIPTION, user.getTranslation(getDescriptionReference())));
             return pib.build();
         }
-        Island island = plugin.getIslands().getIslandAt(user.getLocation()).orElse(plugin.getIslands().getIsland(user.getWorld(), user.getUniqueId()));
         switch(getType()) {
         case PROTECTION:
             return createProtectionFlag(plugin, user, island, pib).build();
@@ -366,6 +427,14 @@ public class Flag implements Comparable<Flag> {
     }
 
 
+    /**
+     * @return the mode
+     * @since 1.6.0
+     */
+    public Mode getMode() {
+        return mode;
+    }
+
     @Override
     public String toString() {
         return "Flag [id=" + id + "]";
@@ -407,6 +476,9 @@ public class Flag implements Comparable<Flag> {
 
         // Cooldown
         private int cooldown;
+
+        // Mode
+        public Mode mode = Mode.EXPERT;
 
         /**
          * Builder for making flags
@@ -508,6 +580,18 @@ public class Flag implements Comparable<Flag> {
          */
         public Builder cooldown(int cooldown) {
             this.cooldown = cooldown;
+            return this;
+        }
+
+        /**
+         * Set the flag difficulty mode.
+         * Defaults to {@link Flag.Mode#EXPERT}.
+         * @param mode
+         * @return Builder
+         * @since 1.6.0
+         */
+        public Builder mode(Mode mode) {
+            this.mode = mode;
             return this;
         }
 

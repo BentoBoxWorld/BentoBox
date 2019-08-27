@@ -2,8 +2,8 @@ package world.bentobox.bentobox.api.commands.island;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -19,7 +19,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -174,7 +173,6 @@ public class IslandResetCommandTest {
         verify(user).sendMessage("commands.island.reset.none-left");
     }
 
-    @Ignore("NPE with ChatColor")
     @Test
     public void testNoConfirmationRequired() throws IOException {
         IslandResetCommand irc = new IslandResetCommand(ic);

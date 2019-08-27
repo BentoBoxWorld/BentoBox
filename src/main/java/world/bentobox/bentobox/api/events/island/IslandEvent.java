@@ -124,7 +124,12 @@ public class IslandEvent extends IslandBaseEvent {
          * Player was expelled
          * @since 1.4.0
          */
-        EXPEL
+        EXPEL,
+        /**
+         * The island was reserved and now is being pasted.
+         * @since 1.6.0
+         */
+        RESERVED
     }
 
     public static IslandEventBuilder builder() {

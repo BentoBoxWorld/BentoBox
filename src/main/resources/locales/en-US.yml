@@ -134,6 +134,7 @@ commands:
       parameters: "<player>"
       description: "register player to unowned island you are on"
       registered-island: "&aRegistered player to island at [xyz]."
+      reserved-island: "&aReserved island at [xyz] for player."
       already-owned: "&cIsland is already owned by another player!"
       no-island-here: "&cThere is no island here. Confirm to make one."
       in-deletion: "&cThis island space is currently being deleted. Try later."
@@ -176,7 +177,7 @@ commands:
       description: "switch player's island to the numbered one in trash"
       out-of-range: "&cNumber must be between 1 and [number]. Use &l[label] trash [player] &r&cto see island numbers"
       cannot-switch: "&cSwitch failed. See console log for error."
-      success: "&Successfully switched the player's island to the specified one."
+      success: "&aSuccessfully switched the player's island to the specified one."
     trash:
       no-unowned-in-trash: "&cNo unowned islands in trash"
       no-islands-in-trash: "&cPlayer has no islands in trash"
@@ -210,6 +211,7 @@ commands:
       parameters: "<player> <rank>"
       description: "set a player's rank on their island"
       unknown-rank: "&cUnknown rank!"
+      not-possible: "&cRank must be higher than visitor"
       rank-set: "&aRank set from [from] to [to]."
     setspawn:
       description: "set an island as spawn for this world"
@@ -217,6 +219,9 @@ commands:
       no-island-here: "&cThere is no island here."
       confirmation: "&cAre you sure you want to set this island as the spawn for this world?"
       success: "&aSuccessfully set this island as the spawn for this world."
+    settings:
+      parameters: "[player]"
+      description: "open system settings or island settings for player"
     blueprint:
       parameters: "<load/copy/paste/pos1/pos2/save>"
       description: "manipulate blueprints"
@@ -350,6 +355,7 @@ commands:
       addon-syntax: "&2[name] &3[version] &7(&3[state]&7)"
       game-world: "&2[name] &7(&3[addon]&7): &aOverworld&7, &r[nether_color]Nether&7, &r[end_color]End"
       server: "&2Running &3[name] [version]&2."
+      database: "&2Database: &3[database]"
     manage:
       description: "displays the Management Panel"
     catalog:
@@ -1048,6 +1054,11 @@ protection:
         &aback to their island using commands
         &aif they are falling.
       hint: "&cYou cannot teleport back to your island while you are falling."
+    WITHER_DAMAGE:
+      name: "Toggle wither damage"
+      description: |-
+        &aIf active, withers can
+        &adamage blocks and players
   locked: "&cThis island is locked!"
   protected: "&cIsland protected: [description]"
   world-protected: "&cWorld protected: [description]"
@@ -1056,6 +1067,17 @@ protection:
   panel:
     next: "Next Page"
     previous: "Previous Page"
+    mode:
+      advanced:
+        name: "&6Advanced Settings"
+        description: "&aDisplays a sensible amount of settings."
+      basic:
+        name: "&aBasic Settings"
+        description: "&aDisplays the most useful settings."
+      expert:
+        name: "&cExpert Settings"
+        description: "&aDisplays all the available settings."
+      click-to-switch: "&eClick &ato switch to the &r[next]&r&a."
     PROTECTION:
       title: "&6Protection"
       description: |-
@@ -1069,6 +1091,11 @@ protection:
     WORLD_SETTING:
       title: "&b[world_name] &6Settings"
       description: "&aSettings for this game world"
+    WORLD_DEFAULTS:
+      title: "&b[world_name] &6World Protections"
+      description: |
+        &aProtection settings when
+        &aplayer is outside their island
     flag-item:
       name-layout: "&a[name]"
       description-layout: |

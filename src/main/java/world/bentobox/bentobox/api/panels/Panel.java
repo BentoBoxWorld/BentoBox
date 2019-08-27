@@ -18,42 +18,41 @@ import world.bentobox.bentobox.listeners.PanelListenerManager;
 import world.bentobox.bentobox.util.heads.HeadGetter;
 import world.bentobox.bentobox.util.heads.HeadRequester;
 
+/**
+ * A GUI panel that uses the Bukkit inventory API
+ * @author tastybento
+ *
+ */
 public class Panel implements HeadRequester, InventoryHolder {
 
     private Inventory inventory;
     private Map<Integer, PanelItem> items;
     private PanelListener listener;
     private User user;
-    private final String name;
+    private String name;
 
     public Panel(String name, Map<Integer, PanelItem> items, int size, User user, PanelListener listener) {
+        makePanel(name, items, size, user, listener);
+    }
+
+    public Panel() {}
+
+    protected void makePanel(String name, Map<Integer, PanelItem> items, int size, User user,
+            PanelListener listener) {
         this.name = name;
         this.items = items;
-        // If size is undefined (0) then use the number of items
-        if (size == 0) {
-            size = items.keySet().size();
-        }
+        size = fixSize(size);
         // Create panel
-        if (size > 0) {
-            // Make sure size is a multiple of 9 and is 54 max.
-            size = size + 8;
-            size -= (size % 9);
-            if (size > 54) size = 54;
-
-            inventory = Bukkit.createInventory(null, size, name);
-            // Fill the inventory and return
-            for (Map.Entry<Integer, PanelItem> en: items.entrySet()) {
-                //TODO allow multi-paging
-                if (en.getKey() < 54) {
-                    inventory.setItem(en.getKey(), en.getValue().getItem());
-                    // Get player head async
-                    if (en.getValue().isPlayerHead()) {
-                        HeadGetter.getHead(en.getValue(), this);
-                    }
+        inventory = Bukkit.createInventory(null, size, name);
+        // Fill the inventory and return
+        for (Map.Entry<Integer, PanelItem> en: items.entrySet()) {
+            if (en.getKey() < 54) {
+                inventory.setItem(en.getKey(), en.getValue().getItem());
+                // Get player head async
+                if (en.getValue().isPlayerHead()) {
+                    HeadGetter.getHead(en.getValue(), this);
                 }
             }
-        } else {
-            inventory = Bukkit.createInventory(null, 9, name);
         }
         this.listener = listener;
         // If the listener is defined, then run setup
@@ -62,6 +61,22 @@ public class Panel implements HeadRequester, InventoryHolder {
         // If the user is defined, then open panel immediately
         this.user = user;
         if (user != null) this.open(user);
+    }
+
+    private int fixSize(int size) {
+        // If size is undefined (0) then use the number of items
+        if (size == 0) {
+            size = items.keySet().size();
+        }
+        if (size > 0) {
+            // Make sure size is a multiple of 9 and is 54 max.
+            size = size + 8;
+            size -= (size % 9);
+            if (size > 54) size = 54;
+        } else {
+            return 9;
+        }
+        return size;
     }
 
     @NonNull

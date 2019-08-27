@@ -105,16 +105,6 @@ public class NewIsland {
         }
 
         /**
-         * @param world world where the island will go
-         * @deprecated use {@link #addon} instead
-         */
-        @Deprecated
-        public Builder world(World world) {
-            this.world2 = world;
-            return this;
-        }
-
-        /**
          * Set the addon
          * @param addon a game mode addon
          */
@@ -158,16 +148,32 @@ public class NewIsland {
      * @param oldIsland old island that is being replaced, if any
      */
     public void newIsland(Island oldIsland) {
-        Location next = getNextIsland();
-        if (next == null) {
-            plugin.logError("Failed to make island - no unoccupied spot found");
-            return;
+        Location next = null;
+        if (plugin.getIslands().hasIsland(world, user)) {
+            // Island exists, it just needs pasting
+            island = plugin.getIslands().getIsland(world, user);
+            if (island != null && island.isReserved()) {
+                next = island.getCenter();
+                // Clear the reservation
+                island.setReserved(false);
+            } else {
+                // This should never happen unless we allow another way to paste over islands without reserving
+                plugin.logError("New island for user " + user.getName() + " was not reserved!");
+            }
         }
-        // Add to the grid
-        island = plugin.getIslands().createIsland(next, user.getUniqueId());
-        if (island == null) {
-            plugin.logError("Failed to make island! Island could not be added to the grid.");
-            return;
+        // If the reservation fails, then we need to make a new island anyway
+        if (next == null) {
+            next = getNextIsland();
+            if (next == null) {
+                plugin.logError("Failed to make island - no unoccupied spot found");
+                return;
+            }
+            // Add to the grid
+            island = plugin.getIslands().createIsland(next, user.getUniqueId());
+            if (island == null) {
+                plugin.logError("Failed to make island! Island could not be added to the grid.");
+                return;
+            }
         }
 
         // Clear any old home locations (they should be clear, but just in case)
@@ -180,6 +186,10 @@ public class NewIsland {
         if (plugin.getIWM().isDeathsResetOnNewIsland(world)) {
             plugin.getPlayers().setDeaths(world, user.getUniqueId(), 0);
         }
+
+        // Check if owner has a different range permission than the island size
+        island.setProtectionRange(user.getPermissionValue(plugin.getIWM().getAddon(island.getWorld())
+                .map(GameModeAddon::getPermissionPrefix).orElse("") + "island.range", island.getProtectionRange()));
 
         // Save the player so that if the server crashes weird things won't happen
         plugin.getPlayers().save(user.getUniqueId());
@@ -258,7 +268,9 @@ public class NewIsland {
         }
         // Set default settings
         island.setFlagsDefaults();
-        plugin.getMetrics().ifPresent(BStats::increaseIslandsCreatedCount);
+        if (!reason.equals(Reason.RESERVED)) {
+            plugin.getMetrics().ifPresent(BStats::increaseIslandsCreatedCount);
+        }
         // Save island
         plugin.getIslands().save(island);
     }

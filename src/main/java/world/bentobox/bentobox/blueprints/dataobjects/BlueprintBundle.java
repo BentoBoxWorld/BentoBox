@@ -3,6 +3,7 @@ package world.bentobox.bentobox.blueprints.dataobjects;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.bukkit.Material;
@@ -68,7 +69,7 @@ public class BlueprintBundle implements DataObject {
      */
     @Override
     public String getUniqueId() {
-        return uniqueId;
+        return uniqueId.toLowerCase(Locale.ENGLISH);
     }
     /**
      * @param uniqueId the uniqueId to set

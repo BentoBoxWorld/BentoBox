@@ -133,7 +133,7 @@ public class IslandTeamCoopCommandTest {
         when(plugin.getIWM()).thenReturn(iwm);
 
         PlaceholdersManager phm = mock(PlaceholdersManager.class);
-        when(phm.replacePlaceholders(any(), any())).thenAnswer(invocation -> invocation.getArgumentAt(1, String.class));
+        when(phm.replacePlaceholders(any(), any())).thenAnswer(invocation -> invocation.getArgument(1, String.class));
         // Placeholder manager
         when(plugin.getPlaceholdersManager()).thenReturn(phm);
     }

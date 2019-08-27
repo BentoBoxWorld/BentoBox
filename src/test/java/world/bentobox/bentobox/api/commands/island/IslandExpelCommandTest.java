@@ -141,7 +141,7 @@ public class IslandExpelCommandTest {
         when(island.getWorld()).thenReturn(mock(World.class));
 
         // Locales
-        Answer<String> answer = invocation -> invocation.getArgumentAt(1, String.class);
+        Answer<String> answer = invocation -> invocation.getArgument(1, String.class);
         when(lm.get(Mockito.any(User.class), Mockito.anyString())).thenAnswer(answer);
         when(plugin.getLocalesManager()).thenReturn(lm);
 

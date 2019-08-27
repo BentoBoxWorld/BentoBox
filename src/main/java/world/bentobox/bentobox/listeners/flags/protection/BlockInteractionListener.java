@@ -156,6 +156,8 @@ public class BlockInteractionListener extends FlagListener {
         }
         switch (type) {
         case ANVIL:
+        case CHIPPED_ANVIL:
+        case DAMAGED_ANVIL:
             checkIsland(e, player, loc, Flags.ANVIL);
             break;
         case BEACON:

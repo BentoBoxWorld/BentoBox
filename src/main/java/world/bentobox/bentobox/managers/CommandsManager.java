@@ -50,6 +50,7 @@ public class CommandsManager {
         try {
             @SuppressWarnings("unchecked")
             Map<String, Command> knownCommands = (Map<String, Command>) commandMap.getClass().getMethod("getKnownCommands").invoke(commandMap);
+            //noinspection SuspiciousMethodCalls
             knownCommands.values().removeIf(commands.values()::contains);
             // Not sure if this is needed, but it clears out all references
             commands.values().forEach(c -> c.unregister(commandMap));

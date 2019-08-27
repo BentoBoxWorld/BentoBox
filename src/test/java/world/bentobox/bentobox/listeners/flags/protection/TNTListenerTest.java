@@ -2,7 +2,7 @@ package world.bentobox.bentobox.listeners.flags.protection;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -41,7 +41,6 @@ import org.bukkit.plugin.PluginManager;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Matchers;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
@@ -68,9 +67,9 @@ import world.bentobox.bentobox.util.Util;
 @PrepareForTest( {BentoBox.class, Flags.class, Util.class, Bukkit.class} )
 public class TNTListenerTest {
 
-    private static Location location;
-    private static BentoBox plugin;
-    private static Notifier notifier;
+    private Location location;
+    private BentoBox plugin;
+    private Notifier notifier;
 
     @Before
     public void setUp() {
@@ -219,7 +218,7 @@ public class TNTListenerTest {
         IslandsManager im = mock(IslandsManager.class);
         when(plugin.getIslands()).thenReturn(im);
         Island island = mock(Island.class);
-        when(im.getIslandAt(Matchers.any())).thenReturn(Optional.of(island));
+        when(im.getIslandAt(any())).thenReturn(Optional.of(island));
         when(im.getProtectedIslandAt(Mockito.any())).thenReturn(Optional.of(island));
 
         // Block on fire

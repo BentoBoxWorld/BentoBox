@@ -1,4 +1,4 @@
-# BentoBox Configuration 1.5.3
+# BentoBox Configuration 1.6.0
 # This config file is dynamic and is updated right after BentoBox loaded its settings from it.
 # You can edit it while the server is online and you can do '/bbox reload' to take the changes into account.
 # However, it is a better practice to edit this file while the server is offline.
@@ -11,11 +11,11 @@ general:
   # If there is no economy plugin present anyway, money will be automatically disabled.
   use-economy: true
   database:
-    # JSON, MYSQL, MARIADB (10.2.3+), MONGODB, SQLITE and YAML(deprecated).
+    # JSON, MYSQL, MARIADB (10.2.3+), MONGODB, SQLITE, POSTGRESQL and YAML(deprecated).
     # Transition database options are:
     #   YAML2JSON, YAML2MARIADB, YAML2MYSQL, YAML2MONGODB, YAML2SQLITE
-    #   JSON2MARIADB, JSON2MYSQL, JSON2MONGODB, JSON2SQLITE
-    #   MYSQL2JSON, MARIADB2JSON, MONGODB2JSON, SQLITE2JSON
+    #   JSON2MARIADB, JSON2MYSQL, JSON2MONGODB, JSON2SQLITE, JSON2POSTGRESQL
+    #   MYSQL2JSON, MARIADB2JSON, MONGODB2JSON, SQLITE2JSON, POSTGRESQL2JSON
     # If you need others, please make a feature request.
     # Transition options enable migration from one database type to another. Use /bbox migrate.
     # YAML and JSON are file-based databases.
@@ -80,7 +80,7 @@ island:
       reset: true
   delay:
     # Time in seconds that players have to stand still before teleport commands activate, e.g. island go.
-    time: 0 
+    time: 0
   name:
     # These set the minimum and maximum size of a name.
     min-length: 4
@@ -107,7 +107,7 @@ web:
     download-data: true
     # Time in minutes between each connection to the GitHub API.
     # This allows for up-to-the-minute information gathering.
-    # However, as the GitHub API data does not get updated instantly, this value cannot be set less than 15 minutes.
+    # However, as the GitHub API data does not get updated instantly, this value cannot be set to less than 60 minutes.
     # Setting this to 0 will make BentoBox download data only at startup.
     # Added since 1.5.0.
     connection-interval: 60

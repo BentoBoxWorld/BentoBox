@@ -87,6 +87,7 @@ public class RemoveMobsListenerTest {
 
         // World Settings
         IslandWorldManager iwm = mock(IslandWorldManager.class);
+        when(iwm.getAddon(any())).thenReturn(Optional.empty());
         when(plugin.getIWM()).thenReturn(iwm);
         WorldSettings ws = mock(WorldSettings.class);
         when(iwm.getWorldSettings(Mockito.any())).thenReturn(ws);

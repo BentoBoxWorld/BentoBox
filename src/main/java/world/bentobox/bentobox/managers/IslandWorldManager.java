@@ -63,7 +63,7 @@ public class IslandWorldManager {
      * @param world the World to register
      */
     private void registerToMultiverse(@NonNull World world) {
-        if (!isUseOwnGenerator(world) && plugin.getHooks() != null) {
+        if (plugin.getHooks() != null) {
             plugin.getHooks().getHook("Multiverse-Core").ifPresent(hook -> {
                 if (Bukkit.isPrimaryThread()) {
                     ((MultiverseCoreHook) hook).registerWorld(world);
@@ -165,7 +165,7 @@ public class IslandWorldManager {
                 registerToMultiverse(gameMode.getNetherWorld());
             }
         }
-        if (settings.isEndGenerate() && settings.isEndIslands()) {
+        if (settings.isEndGenerate()) {
             if (!Bukkit.getAllowEnd()) {
                 // Warn the users that players might not be able to teleport to these worlds later on
                 plugin.logWarning("'settings.allow-end' is set to 'false' in the bukkit.yml file!");
@@ -483,14 +483,13 @@ public class IslandWorldManager {
     }
 
     /**
-     * Get the permission prefix for this world. No trailing dot included.
+     * Get the permission prefix for this world. Trailing dot included.
      *
-     * @param world
-     *            - world
+     * @param world - world
      * @return permission prefix for this world
      */
     public String getPermissionPrefix(@NonNull World world) {
-        return gameModes.get(world).getWorldSettings().getPermissionPrefix();
+        return gameModes.get(world).getWorldSettings().getPermissionPrefix() + ".";
 
     }
 

@@ -80,7 +80,7 @@ public class LockAndBanListenerTest {
 
         // Island world manager
         IslandWorldManager iwm = mock(IslandWorldManager.class);
-        when(iwm.getPermissionPrefix(Mockito.any())).thenReturn("bskyblock");
+        when(iwm.getPermissionPrefix(Mockito.any())).thenReturn("bskyblock.");
 
         when(plugin.getIWM()).thenReturn(iwm);
 
@@ -695,7 +695,7 @@ public class LockAndBanListenerTest {
         when(player2.getUniqueId()).thenReturn(uuid2);
 
         // Player 1 is not a member, player 2 is an island member
-        when(island.isAllowed(Mockito.any(User.class), Mockito.any())).thenAnswer((Answer<Boolean>) invocation -> invocation.getArgumentAt(0, User.class).getUniqueId().equals(uuid2));
+        when(island.isAllowed(Mockito.any(User.class), Mockito.any())).thenAnswer((Answer<Boolean>) invocation -> invocation.getArgument(0, User.class).getUniqueId().equals(uuid2));
 
         // Create vehicle and put two players in it. One is a member, the other is not
         Vehicle vehicle = mock(Vehicle.class);

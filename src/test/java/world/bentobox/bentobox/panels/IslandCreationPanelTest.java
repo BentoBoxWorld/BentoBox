@@ -1,7 +1,8 @@
 package world.bentobox.bentobox.panels;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -99,8 +100,8 @@ public class IslandCreationPanelTest {
         UUID uuid = UUID.randomUUID();
         when(user.getUniqueId()).thenReturn(uuid);
         when(user.getPlayer()).thenReturn(player);
-        when(user.hasPermission(Mockito.anyString())).thenReturn(true);
-        when(user.getTranslation(Mockito.anyVararg())).thenAnswer((Answer<String>) invocation -> invocation.getArgumentAt(0, String.class));
+        when(user.hasPermission(anyString())).thenReturn(true);
+        when(user.getTranslation(any())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
         User.setPlugin(plugin);
         // Set up user already
         User.getInstance(player);

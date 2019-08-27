@@ -3,6 +3,7 @@ package world.bentobox.bentobox.listeners;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World.Environment;
+import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -30,11 +31,13 @@ public class BlockEndDragon implements Listener {
      */
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerChangeWorld(PlayerChangedWorldEvent event) {
-        Location location = event.getPlayer().getLocation();
+        testLocation(event.getPlayer().getLocation());
+    }
 
+    private void testLocation(Location location) {
         if (!plugin.getIWM().isIslandEnd(location.getWorld())
-            || !Flags.REMOVE_END_EXIT_ISLAND.isSetForWorld(location.getWorld())
-            || location.getWorld().getBlockAt(0, 255, 0).getType().equals(Material.END_PORTAL)) {
+                || !Flags.REMOVE_END_EXIT_ISLAND.isSetForWorld(location.getWorld())
+                || location.getWorld().getBlockAt(0, 255, 0).getType().equals(Material.END_PORTAL)) {
             return;
         }
 
@@ -49,16 +52,7 @@ public class BlockEndDragon implements Listener {
      */
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerJoinWorld(PlayerJoinEvent event) {
-        Location location = event.getPlayer().getLocation();
-
-        if (!plugin.getIWM().isIslandEnd(location.getWorld())
-            || !Flags.REMOVE_END_EXIT_ISLAND.isSetForWorld(location.getWorld())
-            || location.getWorld().getBlockAt(0, 255, 0).getType().equals(Material.END_PORTAL)) {
-            return;
-        }
-
-        // Setting a End Portal at the top will trick dragon legacy check.
-        location.getWorld().getBlockAt(0, 255, 0).setType(Material.END_PORTAL, false);
+        testLocation(event.getPlayer().getLocation());
     }
 
     /**
@@ -68,18 +62,18 @@ public class BlockEndDragon implements Listener {
      */
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onEndBlockPlace(BlockPlaceEvent e) {
-        if (e.getBlock().getY() != 255
-                || e.getBlock().getX() != 0
-                || e.getBlock().getZ() != 0
-                || !e.getBlock().getType().equals(Material.END_PORTAL)
-                || !e.getBlock().getWorld().getEnvironment().equals(Environment.THE_END)
-                || !Flags.REMOVE_END_EXIT_ISLAND.isSetForWorld(e.getBlock().getWorld())
-                || !plugin.getIWM().inWorld(e.getBlock().getWorld())
-                || !plugin.getIWM().isEndGenerate(e.getBlock().getWorld())
-                || !plugin.getIWM().isEndIslands(e.getBlock().getWorld())) {
-            return;
-        }
-        e.setCancelled(true);
+        e.setCancelled(testBlock(e.getBlock()));
+    }
+
+    private boolean testBlock(Block block) {
+        return block.getY() == 255
+                && block.getX() == 0
+                && block.getZ() == 0
+                && block.getWorld().getEnvironment().equals(Environment.THE_END)
+                && Flags.REMOVE_END_EXIT_ISLAND.isSetForWorld(block.getWorld())
+                && plugin.getIWM().inWorld(block.getWorld())
+                && plugin.getIWM().isEndGenerate(block.getWorld())
+                && plugin.getIWM().isEndIslands(block.getWorld());
     }
 
     /**
@@ -89,17 +83,6 @@ public class BlockEndDragon implements Listener {
      */
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onEndBlockBreak(BlockBreakEvent e) {
-        if (e.getBlock().getY() != 255
-                || e.getBlock().getX() != 0
-                || e.getBlock().getZ() != 0
-                || !e.getBlock().getType().equals(Material.END_PORTAL)
-                || !e.getBlock().getWorld().getEnvironment().equals(Environment.THE_END)
-                || !Flags.REMOVE_END_EXIT_ISLAND.isSetForWorld(e.getBlock().getWorld())
-                || !plugin.getIWM().inWorld(e.getBlock().getWorld())
-                || !plugin.getIWM().isEndGenerate(e.getBlock().getWorld())
-                || !plugin.getIWM().isEndIslands(e.getBlock().getWorld())) {
-            return;
-        }
-        e.setCancelled(true);
+        e.setCancelled(testBlock(e.getBlock()));
     }
 }

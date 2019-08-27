@@ -67,8 +67,6 @@ public class BlueprintPaster {
     private Location pos1;
     // The maximum block position (x,y,z)
     private Location pos2;
-    // Speed of pasting
-    private int pasteSpeed;
     private PasteState pasteState;
     private BukkitTask pastingTask;
     private BlueprintClipboard clipboard;
@@ -124,7 +122,7 @@ public class BlueprintPaster {
 
         // Initial state & speed
         pasteState = PasteState.BLOCKS;
-        pasteSpeed = plugin.getSettings().getPasteSpeed();
+        final int pasteSpeed = plugin.getSettings().getPasteSpeed();
 
         pastingTask = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
             int count = 0;
@@ -265,7 +263,6 @@ public class BlueprintPaster {
             // Center, and just a bit high
             Location center = location.add(new Vector(0.5, 0.5, 0.5));
             LivingEntity e = (LivingEntity)location.getWorld().spawnEntity(center, k.getType());
-            if (e == null) return;
             if (k.getCustomName() != null) {
                 e.setCustomName(k.getCustomName());
             }

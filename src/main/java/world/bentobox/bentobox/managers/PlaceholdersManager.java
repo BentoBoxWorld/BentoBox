@@ -71,15 +71,6 @@ public class PlaceholdersManager {
         Arrays.stream(GameModePlaceholder.values())
         .filter(placeholder -> !isPlaceholder(addon, placeholder.getPlaceholder()))
         .forEach(placeholder -> registerPlaceholder(addon, placeholder.getPlaceholder(), new DefaultPlaceholder(addon, placeholder)));
-
-        // TODO legacy placeholders, do not forget to remove at some point
-        String prefix = addon.getDescription().getName().toLowerCase();
-        Map<GameModePlaceholder, String> placeholders = new EnumMap<>(GameModePlaceholder.class);
-        Arrays.stream(GameModePlaceholder.values()).forEach(placeholder -> placeholders.put(placeholder, prefix + "-" + placeholder.getPlaceholder().replace('_', '-')));
-
-        // Register placeholders only if they have not already been registered by the addon itself
-        placeholders.entrySet().stream().filter(en -> !isPlaceholder(addon, en.getValue()))
-        .forEach(en -> registerPlaceholder(en.getValue(), new DefaultPlaceholder(addon, en.getKey())));
     }
 
     /**

@@ -13,16 +13,24 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Difficulty;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
+import org.eclipse.jdt.annotation.Nullable;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,9 +46,12 @@ import org.powermock.reflect.Whitebox;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
+import world.bentobox.bentobox.api.configuration.WorldSettings;
+import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.user.Notifier;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
@@ -75,6 +86,9 @@ public class IslandGoCommandTest {
     private IslandGoCommand igc;
     @Mock
     private Notifier notifier;
+    @Mock
+    private World world;
+    private @Nullable WorldSettings ws;
 
     /**
      * @throws java.lang.Exception
@@ -97,6 +111,7 @@ public class IslandGoCommandTest {
         UUID uuid = UUID.randomUUID();
         when(player.getUniqueId()).thenReturn(uuid);
         when(player.getName()).thenReturn("tastybento");
+        when(player.getWorld()).thenReturn(world);
         user = User.getInstance(player);
         // Set the User class plugin as this one
         User.setPlugin(plugin);
@@ -105,6 +120,9 @@ public class IslandGoCommandTest {
         // Parent command has no aliases
         when(ic.getSubCommandAliases()).thenReturn(new HashMap<>());
         when(ic.getTopLabel()).thenReturn("island");
+        // Have the create command point to the ic command
+        Optional<CompositeCommand> createCommand = Optional.of(ic);
+        when(ic.getSubCommand(eq("create"))).thenReturn(createCommand);
 
         // No island for player to begin with (set it later in the tests)
         when(im.hasIsland(any(), eq(uuid))).thenReturn(false);
@@ -133,16 +151,21 @@ public class IslandGoCommandTest {
         IslandWorldManager iwm = mock(IslandWorldManager.class);
         when(iwm.getFriendlyName(any())).thenReturn("BSkyBlock");
         when(plugin.getIWM()).thenReturn(iwm);
+        when(iwm.inWorld(any(World.class))).thenReturn(true);
+        ws = new MyWorldSettings();
+        when(iwm.getWorldSettings(any())).thenReturn(ws);
+        // Just return an empty addon for now
+        when(iwm.getAddon(any())).thenReturn(Optional.empty());
 
         PowerMockito.mockStatic(Util.class);
 
         // Locales
         LocalesManager lm = mock(LocalesManager.class);
-        when(lm.get(Mockito.any(), Mockito.any())).thenAnswer((Answer<String>) invocation -> invocation.getArgumentAt(1, String.class));
+        when(lm.get(Mockito.any(), Mockito.any())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
         when(plugin.getLocalesManager()).thenReturn(lm);
         // Return the same string
         PlaceholdersManager phm = mock(PlaceholdersManager.class);
-        when(phm.replacePlaceholders(any(), anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgumentAt(1, String.class));
+        when(phm.replacePlaceholders(any(), anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
         when(plugin.getPlaceholdersManager()).thenReturn(phm);
 
         // Notifier
@@ -159,22 +182,68 @@ public class IslandGoCommandTest {
     }
 
     /**
-     * Test method for {@link IslandGoCommand#execute(User, String, List)}
+     * Test method for {@link IslandGoCommand#canExecute(User, String, List)}
      */
     @Test
     public void testExecuteNoArgsNoIsland() {
         when(im.getIsland(any(), any(UUID.class))).thenReturn(null);
-        assertFalse(igc.execute(user, igc.getLabel(), Collections.emptyList()));
+        assertFalse(igc.canExecute(user, igc.getLabel(), Collections.emptyList()));
         verify(player).sendMessage("general.errors.no-island");
     }
 
     /**
-     * Test method for {@link IslandGoCommand#execute(User, String, List)}
+     * Test method for {@link IslandGoCommand#canExecute(User, String, List)}
      */
     @Test
     public void testExecuteNoArgs() {
         when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
-        assertTrue(igc.execute(user, igc.getLabel(), Collections.emptyList()));
+        assertTrue(igc.canExecute(user, igc.getLabel(), Collections.emptyList()));
+    }
+
+    /**
+     * Test method for {@link IslandGoCommand#canExecute(User, String, List)}
+     */
+    @Test
+    public void testExecuteNoArgsReservedIsland() {
+        when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
+        when(ic.call(any(), any(), any())).thenReturn(true);
+        when(island.isReserved()).thenReturn(true);
+        assertFalse(igc.canExecute(user, igc.getLabel(), Collections.emptyList()));
+        verify(ic).call(any(), any(), any());
+    }
+
+    /**
+     * Test method for {@link IslandGoCommand#canExecute(User, String, List)}
+     */
+    @Test
+    public void testExecuteNoArgsReservedIslandNoCreateCommand() {
+        when(ic.getSubCommand(eq("create"))).thenReturn(Optional.empty());
+        when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
+        when(ic.call(any(), any(), any())).thenReturn(true);
+        when(island.isReserved()).thenReturn(true);
+        assertFalse(igc.canExecute(user, igc.getLabel(), Collections.emptyList()));
+        verify(ic, Mockito.never()).call(any(), any(), any());
+    }
+
+    /**
+     * Test method for {@link IslandGoCommand#canExecute(User, String, List)}
+     */
+    @Test
+    public void testExecuteNoArgsNoTeleportWhenFalling() {
+        Flags.PREVENT_TELEPORT_WHEN_FALLING.setSetting(world, true);
+        when(player.getFallDistance()).thenReturn(10F);
+        assertFalse(igc.canExecute(user, igc.getLabel(), Collections.emptyList()));
+        verify(player).sendMessage(eq("protection.flags.PREVENT_TELEPORT_WHEN_FALLING.hint"));
+    }
+
+    /**
+     * Test method for {@link IslandGoCommand#canExecute(User, String, List)}
+     */
+    @Test
+    public void testExecuteNoArgsNoTeleportWhenFallingNotFalling() {
+        Flags.PREVENT_TELEPORT_WHEN_FALLING.setSetting(world, true);
+        when(player.getFallDistance()).thenReturn(0F);
+        assertTrue(igc.canExecute(user, igc.getLabel(), Collections.emptyList()));
     }
 
     /**
@@ -302,5 +371,335 @@ public class IslandGoCommandTest {
         PlayerMoveEvent e = new PlayerMoveEvent(player, l, l2);
         igc.onPlayerMove(e);
         verify(notifier).notify(any(), eq("commands.delay.moved-so-command-cancelled"));
+    }
+
+    class MyWorldSettings implements WorldSettings {
+
+        private Map<String, Boolean> worldFlags = new HashMap<>();
+
+        /**
+         * @param worldFlags the worldFlags to set
+         */
+        public void setWorldFlags(Map<String, Boolean> worldFlags) {
+            this.worldFlags = worldFlags;
+        }
+
+        @Override
+        public GameMode getDefaultGameMode() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public Map<Flag, Integer> getDefaultIslandFlags() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public Map<Flag, Integer> getDefaultIslandSettings() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public Difficulty getDifficulty() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public void setDifficulty(Difficulty difficulty) {
+            // TODO Auto-generated method stub
+
+        }
+
+        @Override
+        public String getFriendlyName() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public int getIslandDistance() {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        @Override
+        public int getIslandHeight() {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        @Override
+        public int getIslandProtectionRange() {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        @Override
+        public int getIslandStartX() {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        @Override
+        public int getIslandStartZ() {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        @Override
+        public int getIslandXOffset() {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        @Override
+        public int getIslandZOffset() {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        @Override
+        public List<String> getIvSettings() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public int getMaxHomes() {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        @Override
+        public int getMaxIslands() {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        @Override
+        public int getMaxTeamSize() {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        @Override
+        public int getNetherSpawnRadius() {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        @Override
+        public String getPermissionPrefix() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public Set<EntityType> getRemoveMobsWhitelist() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public int getSeaHeight() {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        @Override
+        public List<String> getHiddenFlags() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public List<String> getVisitorBannedCommands() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public Map<String, Boolean> getWorldFlags() {
+            return worldFlags;
+        }
+
+        @Override
+        public String getWorldName() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public boolean isDragonSpawn() {
+            // TODO Auto-generated method stub
+            return false;
+        }
+
+        @Override
+        public boolean isEndGenerate() {
+            // TODO Auto-generated method stub
+            return false;
+        }
+
+        @Override
+        public boolean isEndIslands() {
+            // TODO Auto-generated method stub
+            return false;
+        }
+
+        @Override
+        public boolean isNetherGenerate() {
+            // TODO Auto-generated method stub
+            return false;
+        }
+
+        @Override
+        public boolean isNetherIslands() {
+            // TODO Auto-generated method stub
+            return false;
+        }
+
+        @Override
+        public boolean isOnJoinResetEnderChest() {
+            // TODO Auto-generated method stub
+            return false;
+        }
+
+        @Override
+        public boolean isOnJoinResetInventory() {
+            // TODO Auto-generated method stub
+            return false;
+        }
+
+        @Override
+        public boolean isOnJoinResetMoney() {
+            // TODO Auto-generated method stub
+            return false;
+        }
+
+        @Override
+        public boolean isOnLeaveResetEnderChest() {
+            // TODO Auto-generated method stub
+            return false;
+        }
+
+        @Override
+        public boolean isOnLeaveResetInventory() {
+            // TODO Auto-generated method stub
+            return false;
+        }
+
+        @Override
+        public boolean isOnLeaveResetMoney() {
+            // TODO Auto-generated method stub
+            return false;
+        }
+
+        @Override
+        public boolean isUseOwnGenerator() {
+            // TODO Auto-generated method stub
+            return false;
+        }
+
+        @Override
+        public boolean isWaterUnsafe() {
+            // TODO Auto-generated method stub
+            return false;
+        }
+
+        @Override
+        public List<String> getGeoLimitSettings() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public int getResetLimit() {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        @Override
+        public long getResetEpoch() {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        @Override
+        public void setResetEpoch(long timestamp) {
+            // TODO Auto-generated method stub
+
+        }
+
+        @Override
+        public boolean isTeamJoinDeathReset() {
+            // TODO Auto-generated method stub
+            return false;
+        }
+
+        @Override
+        public int getDeathsMax() {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        @Override
+        public boolean isDeathsCounted() {
+            // TODO Auto-generated method stub
+            return false;
+        }
+
+        @Override
+        public boolean isDeathsResetOnNewIsland() {
+            // TODO Auto-generated method stub
+            return false;
+        }
+
+        @Override
+        public boolean isAllowSetHomeInNether() {
+            // TODO Auto-generated method stub
+            return false;
+        }
+
+        @Override
+        public boolean isAllowSetHomeInTheEnd() {
+            // TODO Auto-generated method stub
+            return false;
+        }
+
+        @Override
+        public boolean isRequireConfirmationToSetHomeInNether() {
+            // TODO Auto-generated method stub
+            return false;
+        }
+
+        @Override
+        public boolean isRequireConfirmationToSetHomeInTheEnd() {
+            // TODO Auto-generated method stub
+            return false;
+        }
+
+        @Override
+        public int getBanLimit() {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        @Override
+        public boolean isLeaversLoseReset() {
+            // TODO Auto-generated method stub
+            return false;
+        }
+
+        @Override
+        public boolean isKickedKeepInventory() {
+            // TODO Auto-generated method stub
+            return false;
+        }
+
     }
 }

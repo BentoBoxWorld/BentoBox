@@ -2,9 +2,13 @@ package world.bentobox.bentobox.listeners.flags.worldsettings;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -83,9 +87,9 @@ public class InvincibleVisitorsListenerTest {
         // Island World Manager
         when(iwm.inWorld(any(World.class))).thenReturn(true);
         when(iwm.inWorld(any(Location.class))).thenReturn(true);
-        when(iwm.getPermissionPrefix(Mockito.any())).thenReturn("bskyblock");
+        when(iwm.getPermissionPrefix(Mockito.any())).thenReturn("bskyblock.");
         Optional<GameModeAddon> optionalAddon = Optional.of(addon);
-        when(iwm.getAddon(Mockito.any())).thenReturn(optionalAddon);
+        when(iwm.getAddon(any())).thenReturn(optionalAddon);
         when(plugin.getIWM()).thenReturn(iwm);
 
         listener = new InvincibleVisitorsListener();
@@ -95,21 +99,24 @@ public class InvincibleVisitorsListenerTest {
         // Sometimes use Mockito.withSettings().verboseLogging()
         when(user.inWorld()).thenReturn(true);
         when(user.getWorld()).thenReturn(mock(World.class));
+        when(player.getWorld()).thenReturn(mock(World.class));
         when(user.getLocation()).thenReturn(mock(Location.class));
+        when(player.getLocation()).thenReturn(mock(Location.class));
         when(user.getPlayer()).thenReturn(player);
         when(user.hasPermission(Mockito.anyString())).thenReturn(true);
         when(user.getTranslation(Mockito.anyString())).thenReturn("panel");
         UUID uuid = UUID.randomUUID();
         when(user.getUniqueId()).thenReturn(uuid);
+        when(player.getUniqueId()).thenReturn(uuid);
         PowerMockito.mockStatic(Util.class);
-        when(Util.getWorld(Mockito.any())).thenReturn(mock(World.class));
+        when(Util.getWorld(any())).thenReturn(mock(World.class));
 
         FlagsManager fm = mock(FlagsManager.class);
         Flag flag = mock(Flag.class);
-        when(flag.isSetForWorld(Mockito.any())).thenReturn(false);
+        when(flag.isSetForWorld(any())).thenReturn(false);
         PanelItem item = mock(PanelItem.class);
         when(item.getItem()).thenReturn(mock(ItemStack.class));
-        when(flag.toPanelItem(Mockito.any(), Mockito.eq(user), Mockito.eq(false))).thenReturn(item);
+        when(flag.toPanelItem(any(), eq(user), any(), eq(false))).thenReturn(item);
         when(fm.getFlag(Mockito.anyString())).thenReturn(Optional.of(flag));
         when(plugin.getFlagsManager()).thenReturn(fm);
 
@@ -121,43 +128,43 @@ public class InvincibleVisitorsListenerTest {
         Vector vector = mock(Vector.class);
         when(location.toVector()).thenReturn(vector);
         when(island.getCenter()).thenReturn(location);
-        when(im.getIsland(Mockito.any(World.class), Mockito.any(User.class))).thenReturn(island);
+        when(im.getIsland(any(World.class), any(User.class))).thenReturn(island);
         optionalIsland = Optional.of(island);
         // Visitor
-        when(im.userIsOnIsland(Mockito.any(), Mockito.any())).thenReturn(false);
+        when(im.userIsOnIsland(any(), any())).thenReturn(false);
         when(plugin.getIslands()).thenReturn(im);
 
         // IV Settings
         ivSettings = new ArrayList<>();
         ivSettings.add(EntityDamageEvent.DamageCause.CRAMMING.name());
         ivSettings.add(EntityDamageEvent.DamageCause.VOID.name());
-        when(iwm.getIvSettings(Mockito.any())).thenReturn(ivSettings);
+        when(iwm.getIvSettings(any())).thenReturn(ivSettings);
 
         PowerMockito.mockStatic(Bukkit.class);
         ItemFactory itemF = mock(ItemFactory.class);
         ItemMeta imeta = mock(ItemMeta.class);
-        when(itemF.getItemMeta(Mockito.any())).thenReturn(imeta);
+        when(itemF.getItemMeta(any())).thenReturn(imeta);
         when(Bukkit.getItemFactory()).thenReturn(itemF);
 
         Inventory top = mock(Inventory.class);
         when(top.getSize()).thenReturn(9);
         when(panel.getInventory()).thenReturn(top);
 
-        when(Bukkit.createInventory(Mockito.any(), Mockito.anyInt(), Mockito.any())).thenReturn(top);
+        when(Bukkit.createInventory(any(), Mockito.anyInt(), any())).thenReturn(top);
     }
 
     @Test
     public void testOnClickWrongWorld() {
         when(user.inWorld()).thenReturn(false);
         listener.onClick(panel, user, ClickType.LEFT, 0);
-        Mockito.verify(user).sendMessage("general.errors.wrong-world");
+        verify(user).sendMessage("general.errors.wrong-world");
     }
 
     @Test
     public void testOnClickNoPermission() {
         when(user.hasPermission(Mockito.anyString())).thenReturn(false);
         listener.onClick(panel, user, ClickType.LEFT, 0);
-        Mockito.verify(user).sendMessage("general.errors.no-permission", "[permission]", "bskyblock.admin.settings.INVINCIBLE_VISITORS");
+        verify(user).sendMessage("general.errors.no-permission", "[permission]", "bskyblock.admin.settings.INVINCIBLE_VISITORS");
     }
 
     @Test
@@ -167,8 +174,8 @@ public class InvincibleVisitorsListenerTest {
         when(panel.getName()).thenReturn("not_panel");
         listener.onClick(panel, user, clickType, slot );
         // Should open inv visitors
-        Mockito.verify(user).closeInventory();
-        Mockito.verify(player).openInventory(Mockito.any(Inventory.class));
+        verify(user).closeInventory();
+        verify(player).openInventory(any(Inventory.class));
     }
 
     @Test
@@ -185,19 +192,19 @@ public class InvincibleVisitorsListenerTest {
             // Click on the icon
             listener.onClick(panel, user, clickType, slot);
             // Should keep panel open
-            Mockito.verify(user, Mockito.never()).closeInventory();
+            verify(user, never()).closeInventory();
             // IV settings should now have the damage cause in it
             assertTrue(ivSettings.contains(dc.name()));
 
             // Click on it again
             listener.onClick(panel, user, clickType, slot );
             // Should keep panel open
-            Mockito.verify(user, Mockito.never()).closeInventory();
+            verify(user, never()).closeInventory();
             // IV settings should not have the damage cause in it anymore
             assertFalse(ivSettings.contains(dc.name()));
         }
         // The values should be saved twice because there are two clicks
-        Mockito.verify(addon, Mockito.times(DamageCause.values().length * 2)).saveWorldSettings();
+        verify(addon, times(DamageCause.values().length * 2)).saveWorldSettings();
     }
 
     @Test
@@ -229,7 +236,7 @@ public class InvincibleVisitorsListenerTest {
     @Test
     public void testOnVisitorGetDamageNotVisitor() {
         EntityDamageEvent e = new EntityDamageEvent(player, EntityDamageEvent.DamageCause.CRAMMING, 0D);
-        when(im.userIsOnIsland(Mockito.any(), Mockito.any())).thenReturn(true);
+        when(im.userIsOnIsland(any(), any())).thenReturn(true);
         listener.onVisitorGetDamage(e);
         assertFalse(e.isCancelled());
     }
@@ -239,13 +246,13 @@ public class InvincibleVisitorsListenerTest {
         EntityDamageEvent e = new EntityDamageEvent(player, EntityDamageEvent.DamageCause.CRAMMING, 0D);
         listener.onVisitorGetDamage(e);
         assertTrue(e.isCancelled());
-        Mockito.verify(player, Mockito.never()).setGameMode(Mockito.eq(GameMode.SPECTATOR));
+        verify(player, never()).setGameMode(eq(GameMode.SPECTATOR));
     }
 
 
     @Test
     public void testOnVisitorGetDamageVoidIslandHere() {
-        when(im.getIslandAt(Mockito.any())).thenReturn(optionalIsland);
+        when(im.getIslandAt(any())).thenReturn(optionalIsland);
         EntityDamageEvent e = new EntityDamageEvent(player, EntityDamageEvent.DamageCause.VOID, 0D);
         // Player should be teleported to this island
         listener.onVisitorGetDamage(e);
@@ -254,8 +261,8 @@ public class InvincibleVisitorsListenerTest {
 
     @Test
     public void testOnVisitorGetDamageVoidNoIslandHerePlayerHasNoIsland() {
-        when(im.getIslandAt(Mockito.any())).thenReturn(Optional.empty());
-        when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(false);
+        when(im.getIslandAt(any())).thenReturn(Optional.empty());
+        when(im.hasIsland(any(), any(UUID.class))).thenReturn(false);
         EntityDamageEvent e = new EntityDamageEvent(player, EntityDamageEvent.DamageCause.VOID, 0D);
         // Player should die
         listener.onVisitorGetDamage(e);
@@ -264,12 +271,14 @@ public class InvincibleVisitorsListenerTest {
 
     @Test
     public void testOnVisitorGetDamageVoidPlayerHasIsland() {
-        when(im.getIslandAt(Mockito.any())).thenReturn(Optional.empty());
-        when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(true);
+        // No island at this location
+        when(im.getIslandAt(any())).thenReturn(Optional.empty());
+        // Player has an island
+        when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
         EntityDamageEvent e = new EntityDamageEvent(player, EntityDamageEvent.DamageCause.VOID, 0D);
         // Player should be teleported to their island
         listener.onVisitorGetDamage(e);
         assertTrue(e.isCancelled());
-        Mockito.verify(im).homeTeleport(Mockito.any(), Mockito.eq(player));
+        verify(im).homeTeleport(any(), eq(player));
     }
 }
