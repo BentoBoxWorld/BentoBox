@@ -62,7 +62,6 @@ public class CleanSuperFlatListener extends FlagListener {
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onChunkLoad(ChunkLoadEvent e) {
-
         World world = e.getWorld();
         if (noClean(world, e)) {
             return;
@@ -71,7 +70,13 @@ public class CleanSuperFlatListener extends FlagListener {
         ChunkGenerator cg = plugin.getAddonsManager().getDefaultWorldGenerator(world.getName(), "");
         if (cg == null) {
             Flags.CLEAN_SUPER_FLAT.setSetting(world, false);
-            getPlugin().logWarning("Clean super flat is not available for " + world.getName());
+
+            plugin.logWarning("Could not enable Clean Super Flat for " + world.getName());
+            plugin.logWarning("There is no world generator assigned to this world.");
+            plugin.logWarning("This is often caused by the 'use-own-generator' being set to 'true' in the gamemode's" +
+                    " configuration while there hasn't been any custom world generator assigned to the world.");
+            plugin.logWarning("Either revert the changes in the gamemode's config.yml or assign your custom world generator to the world.");
+
             return;
         }
         // Add to queue
@@ -96,7 +101,8 @@ public class CleanSuperFlatListener extends FlagListener {
             // Run populators
             cg.getDefaultPopulators(world).forEach(pop -> pop.populate(world, random, e.getChunk()));
             if (plugin.getSettings().isLogCleanSuperFlatChunks()) {
-                plugin.log(chunkQueue.size() + " Regenerating superflat chunk " + world.getName() + " " + chunkXZ.x + ", " + chunkXZ.z);
+                plugin.log("Regenerating superflat chunk in " + world.getName() + " at (" + chunkXZ.x + ", " + chunkXZ.z + ") " +
+                        "(" + chunkQueue.size() + " chunk(s) remaining in the queue)");
             }
         } else {
             task.cancel();

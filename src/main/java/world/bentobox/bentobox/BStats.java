@@ -128,7 +128,8 @@ public class BStats {
     private void registerPlayersPerServerChart() {
         metrics.addCustomChart(new Metrics.SimplePie("playersPerServer", () -> {
             int players = Bukkit.getOnlinePlayers().size();
-            if (players <= 10) return "0-10";
+            if (players <= 0) return "0";
+            else if (players <= 10) return "1-10";
             else if (players <= 30) return "11-30";
             else if (players <= 50) return "31-50";
             else if (players <= 100) return "51-100";
