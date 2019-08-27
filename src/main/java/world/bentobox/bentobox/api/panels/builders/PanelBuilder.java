@@ -21,7 +21,7 @@ public class PanelBuilder {
     private int size;
     private User user;
     private PanelListener listener;
-    private Panel.PanelType panelType = Panel.PanelType.INVENTORY;
+    private Panel.Type type = Panel.Type.INVENTORY;
 
     public PanelBuilder name(String name) {
         this.name = ChatColor.translateAlternateColorCodes('&', name);
@@ -87,13 +87,14 @@ public class PanelBuilder {
     }
 
     /**
-     * Sets which PanelType will be used.
-     * @param type - PanelType of current panel
+     * Sets which Panel.Type will be used.
+     * Defaults to {@link Panel.Type#INVENTORY}.
+     * @param type - Panel.Type for this panel.
      * @return PanelBuilder
+     * @since 1.7.0
      */
-    public PanelBuilder type(Panel.PanelType type)
-    {
-        this.panelType = type;
+    public PanelBuilder type(Panel.Type type) {
+        this.type = type;
         return this;
     }
 
@@ -120,7 +121,7 @@ public class PanelBuilder {
      */
     public Panel build() {
         // items.lastKey() is a slot position, so the panel size is this value + 1
-        return new Panel(name, items, Math.max(size, items.isEmpty() ? size : items.lastKey() + 1), user, listener, panelType);
+        return new Panel(name, items, Math.max(size, items.isEmpty() ? size : items.lastKey() + 1), user, listener, type);
     }
 
     /**
@@ -161,9 +162,9 @@ public class PanelBuilder {
 
     /**
      * @return the panelType
+     * @since 1.7.0
      */
-    public Panel.PanelType getPanelType()
-    {
-        return this.panelType;
+    public Panel.Type getPanelType() {
+        return type;
     }
 }
