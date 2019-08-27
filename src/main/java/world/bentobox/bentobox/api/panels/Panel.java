@@ -36,7 +36,7 @@ public class Panel implements HeadRequester, InventoryHolder {
      * Various types of Panel that can be created.
      * @since 1.7.0
      */
-    public enum PanelType {
+    public enum Type {
         INVENTORY,
         HOPPER,
         DROPPER
@@ -45,31 +45,31 @@ public class Panel implements HeadRequester, InventoryHolder {
     public Panel() {}
 
     public Panel(String name, Map<Integer, PanelItem> items, int size, User user, PanelListener listener) {
-        this(name, items, size, user, listener, PanelType.INVENTORY);
+        this(name, items, size, user, listener, Type.INVENTORY);
     }
 
     /**
      * @since 1.7.0
      */
-    public Panel(String name, Map<Integer, PanelItem> items, int size, User user, PanelListener listener, PanelType panelType) {
-        makePanel(name, items, size, user, listener, panelType);
+    public Panel(String name, Map<Integer, PanelItem> items, int size, User user, PanelListener listener, Type type) {
+        makePanel(name, items, size, user, listener, type);
     }
 
     protected void makePanel(String name, Map<Integer, PanelItem> items, int size, User user,
         PanelListener listener) {
-        this.makePanel(name, items, size, user, listener, PanelType.INVENTORY);
+        this.makePanel(name, items, size, user, listener, Type.INVENTORY);
     }
 
     /**
      * @since 1.7.0
      */
     protected void makePanel(String name, Map<Integer, PanelItem> items, int size, User user,
-            PanelListener listener, PanelType panelType) {
+            PanelListener listener, Type type) {
         this.name = name;
         this.items = items;
 
         // Create panel
-        switch (panelType) {
+        switch (type) {
             case INVENTORY:
                 inventory = Bukkit.createInventory(null, fixSize(size), name);
                 break;
