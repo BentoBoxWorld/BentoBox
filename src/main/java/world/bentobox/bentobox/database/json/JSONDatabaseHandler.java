@@ -58,10 +58,12 @@ public class JSONDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
         for (File file: Objects.requireNonNull(tableFolder.listFiles((dir, name) ->  name.toLowerCase(Locale.ENGLISH).endsWith(JSON)))) {
             try (FileReader reader = new FileReader(file)){
                 T object = getGson().fromJson(reader, dataObject);
-                if (object == null) {
-                    throw new IOException("JSON file created a null object: " + file.getPath());
+                if (object != null) {
+                    list.add(object);
+                } else {
+                    plugin.logError("JSON file created a null object: " + file.getPath());
+                    reader.close();
                 }
-                list.add(object);
             } catch (FileNotFoundException e) {
                 plugin.logError("Could not load file '" + file.getName() + "': File not found.");
 
