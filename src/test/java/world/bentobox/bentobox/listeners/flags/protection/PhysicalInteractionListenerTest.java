@@ -28,6 +28,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Slime;
 import org.bukkit.entity.Zombie;
+import org.bukkit.event.Event.Result;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityInteractEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -203,7 +204,7 @@ public class PhysicalInteractionListenerTest {
         when(clickedBlock.getType()).thenReturn(Material.STONE);
         PlayerInteractEvent e  = new PlayerInteractEvent(player, Action.RIGHT_CLICK_AIR, item, clickedBlock, BlockFace.UP);
         new PhysicalInteractionListener().onPlayerInteract(e);
-        assertFalse(e.isCancelled());
+        assertTrue(e.useInteractedBlock().equals(Result.ALLOW));
     }
 
     /**
@@ -214,7 +215,7 @@ public class PhysicalInteractionListenerTest {
         when(clickedBlock.getType()).thenReturn(Material.STONE);
         PlayerInteractEvent e  = new PlayerInteractEvent(player, Action.PHYSICAL, item, clickedBlock, BlockFace.UP);
         new PhysicalInteractionListener().onPlayerInteract(e);
-        assertFalse(e.isCancelled());
+        assertTrue(e.useInteractedBlock().equals(Result.ALLOW));
     }
 
     /**
@@ -226,7 +227,8 @@ public class PhysicalInteractionListenerTest {
         PlayerInteractEvent e  = new PlayerInteractEvent(player, Action.PHYSICAL, item, clickedBlock, BlockFace.UP);
         PhysicalInteractionListener i = new PhysicalInteractionListener();
         i.onPlayerInteract(e);
-        assertTrue(e.isCancelled());
+        assertTrue(e.useInteractedBlock().equals(Result.DENY));
+        assertTrue(e.useItemInHand().equals(Result.DENY));
         Mockito.verify(notifier).notify(Mockito.any(), Mockito.eq("protection.protected"));
     }
 
@@ -240,7 +242,7 @@ public class PhysicalInteractionListenerTest {
         PlayerInteractEvent e  = new PlayerInteractEvent(player, Action.PHYSICAL, item, clickedBlock, BlockFace.UP);
         PhysicalInteractionListener i = new PhysicalInteractionListener();
         i.onPlayerInteract(e);
-        assertFalse(e.isCancelled());
+        assertTrue(e.useInteractedBlock().equals(Result.ALLOW));
     }
 
     /**
@@ -253,7 +255,7 @@ public class PhysicalInteractionListenerTest {
         PlayerInteractEvent e  = new PlayerInteractEvent(player, Action.PHYSICAL, item, clickedBlock, BlockFace.UP);
         PhysicalInteractionListener i = new PhysicalInteractionListener();
         i.onPlayerInteract(e);
-        assertFalse(e.isCancelled());
+        assertTrue(e.useInteractedBlock().equals(Result.ALLOW));
     }
 
     /**
@@ -265,7 +267,8 @@ public class PhysicalInteractionListenerTest {
         PlayerInteractEvent e  = new PlayerInteractEvent(player, Action.PHYSICAL, item, clickedBlock, BlockFace.UP);
         PhysicalInteractionListener i = new PhysicalInteractionListener();
         i.onPlayerInteract(e);
-        assertTrue(e.isCancelled());
+        assertTrue(e.useInteractedBlock().equals(Result.DENY));
+        assertTrue(e.useItemInHand().equals(Result.DENY));
         Mockito.verify(notifier).notify(Mockito.any(), Mockito.eq("protection.protected"));
     }
 
@@ -279,7 +282,9 @@ public class PhysicalInteractionListenerTest {
             PlayerInteractEvent e  = new PlayerInteractEvent(player, Action.PHYSICAL, item, clickedBlock, BlockFace.UP);
             PhysicalInteractionListener i = new PhysicalInteractionListener();
             i.onPlayerInteract(e);
-            assertTrue(e.isCancelled());
+            assertTrue(e.useInteractedBlock().equals(Result.DENY));
+            assertTrue(e.useItemInHand().equals(Result.DENY));
+
         });
     }
 

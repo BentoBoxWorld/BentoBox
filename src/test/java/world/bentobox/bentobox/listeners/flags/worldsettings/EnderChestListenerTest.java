@@ -20,6 +20,7 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event.Result;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.CraftItemEvent;
@@ -165,7 +166,7 @@ public class EnderChestListenerTest {
         BlockFace clickedBlockFace = BlockFace.EAST;
         PlayerInteractEvent e = new PlayerInteractEvent(player, action, item, clickedBlock, clickedBlockFace);
         new BlockInteractionListener().onPlayerInteract(e);
-        assertFalse(e.isCancelled());
+        assertTrue(e.useInteractedBlock().equals(Result.ALLOW));
     }
 
     @Test
@@ -176,7 +177,7 @@ public class EnderChestListenerTest {
         when(iwm.inWorld(any(World.class))).thenReturn(false);
         when(iwm.inWorld(any(Location.class))).thenReturn(false);
         new BlockInteractionListener().onPlayerInteract(e);
-        assertFalse(e.isCancelled());
+        assertTrue(e.useInteractedBlock().equals(Result.ALLOW));
     }
 
     @Test
@@ -186,7 +187,7 @@ public class EnderChestListenerTest {
         // Op player
         when(player.isOp()).thenReturn(true);
         new BlockInteractionListener().onPlayerInteract(e);
-        assertFalse(e.isCancelled());
+        assertTrue(e.useInteractedBlock().equals(Result.ALLOW));
     }
 
     @Test
@@ -196,7 +197,7 @@ public class EnderChestListenerTest {
         // Has bypass perm
         when(player.hasPermission(anyString())).thenReturn(true);
         new BlockInteractionListener().onPlayerInteract(e);
-        assertFalse(e.isCancelled());
+        assertTrue(e.useInteractedBlock().equals(Result.ALLOW));
     }
 
     @Test
@@ -207,7 +208,7 @@ public class EnderChestListenerTest {
         Flags.ENDER_CHEST.setSetting(world, true);
         BlockInteractionListener bil = new BlockInteractionListener();
         bil.onPlayerInteract(e);
-        assertFalse(e.isCancelled());
+        assertTrue(e.useInteractedBlock().equals(Result.ALLOW));
         verify(notifier, Mockito.never()).notify(any(), anyString());
     }
 
@@ -218,7 +219,7 @@ public class EnderChestListenerTest {
         // Enderchest use is blocked
         Flags.ENDER_CHEST.setSetting(world, false);
         new BlockInteractionListener().onPlayerInteract(e);
-        assertTrue(e.isCancelled());
+        assertTrue(e.useInteractedBlock().equals(Result.ALLOW));
         verify(notifier).notify(any(User.class), eq("protection.world-protected"));
     }
 

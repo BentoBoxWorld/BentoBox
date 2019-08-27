@@ -30,6 +30,7 @@ import org.bukkit.entity.Creeper;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event.Result;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
@@ -41,6 +42,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.PluginManager;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -293,7 +295,7 @@ public class PlaceBlocksListenerTest {
         for (int i = 0; i < 7; i++) {
             PlayerInteractEvent e = new PlayerInteractEvent(player, Action.RIGHT_CLICK_BLOCK, item, clickedBlock, BlockFace.UP, EquipmentSlot.HAND);
             pbl.onPlayerInteract(e);
-            assertFalse("Failed on " + item.getType().toString(), e.isCancelled());
+            assertTrue("Failed on " + item.getType().toString(), e.useInteractedBlock().equals(Result.ALLOW));
         }
     }
 
@@ -311,7 +313,7 @@ public class PlaceBlocksListenerTest {
         for (int i = 0; i < 7; i++) {
             PlayerInteractEvent e = new PlayerInteractEvent(player, Action.RIGHT_CLICK_BLOCK, item, clickedBlock, BlockFace.UP, EquipmentSlot.HAND);
             pbl.onPlayerInteract(e);
-            assertTrue("Failed on " + item.getType().toString(), e.isCancelled());
+            assertTrue("Failed on " + item.getType().toString(), e.useInteractedBlock().equals(Result.DENY));
         }
         Mockito.verify(notifier, Mockito.times(7)).notify(Mockito.any(), Mockito.eq("protection.protected"));
     }
@@ -320,6 +322,7 @@ public class PlaceBlocksListenerTest {
      * Test method for {@link PlaceBlocksListener#onBlockForm(org.bukkit.event.block.EntityBlockFormEvent)}.
      */
     @Test
+    @Ignore("Unfinished")
     public void testOnBlockForm() {
         // TODO
     }

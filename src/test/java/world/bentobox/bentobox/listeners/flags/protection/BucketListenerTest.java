@@ -191,7 +191,7 @@ public class BucketListenerTest {
         when(block.getLocation()).thenReturn(location);
         when(block.getRelative(Mockito.any())).thenReturn(block);
         ItemStack item = mock(ItemStack.class);
-        PlayerBucketEmptyEvent e = new PlayerBucketEmptyEvent(player, block, BlockFace.UP, Material.WATER_BUCKET, item);
+        PlayerBucketEmptyEvent e = new PlayerBucketEmptyEvent(player, block, block, BlockFace.UP, Material.WATER_BUCKET, item);
         l.onBucketEmpty(e);
         assertFalse(e.isCancelled());
     }
@@ -206,7 +206,7 @@ public class BucketListenerTest {
         when(block.getLocation()).thenReturn(location);
         when(block.getRelative(Mockito.any())).thenReturn(block);
         ItemStack item = mock(ItemStack.class);
-        PlayerBucketEmptyEvent e = new PlayerBucketEmptyEvent(player, block, BlockFace.UP, Material.WATER_BUCKET, item);
+        PlayerBucketEmptyEvent e = new PlayerBucketEmptyEvent(player, block, block, BlockFace.UP, Material.WATER_BUCKET, item);
         l.onBucketEmpty(e);
         assertTrue(e.isCancelled());
         Mockito.verify(notifier).notify(Mockito.any(), Mockito.eq("protection.protected"));
@@ -222,22 +222,22 @@ public class BucketListenerTest {
         when(block.getRelative(Mockito.any())).thenReturn(block);
         ItemStack item = mock(ItemStack.class);
         when(item.getType()).thenReturn(Material.WATER_BUCKET);
-        PlayerBucketFillEvent e = new PlayerBucketFillEvent(player, block, BlockFace.UP, Material.WATER_BUCKET, item);
+        PlayerBucketFillEvent e = new PlayerBucketFillEvent(player, block, block, BlockFace.UP, Material.WATER_BUCKET, item);
         l.onBucketFill(e);
         assertFalse(e.isCancelled());
 
         when(item.getType()).thenReturn(Material.BUCKET);
-        e = new PlayerBucketFillEvent(player, block, BlockFace.UP, Material.WATER_BUCKET, item);
+        e = new PlayerBucketFillEvent(player, block, block, BlockFace.UP, Material.WATER_BUCKET, item);
         l.onBucketFill(e);
         assertFalse(e.isCancelled());
 
         when(item.getType()).thenReturn(Material.LAVA_BUCKET);
-        e = new PlayerBucketFillEvent(player, block, BlockFace.UP, Material.WATER_BUCKET, item);
+        e = new PlayerBucketFillEvent(player, block, block, BlockFace.UP, Material.WATER_BUCKET, item);
         l.onBucketFill(e);
         assertFalse(e.isCancelled());
 
         when(item.getType()).thenReturn(Material.MILK_BUCKET);
-        e = new PlayerBucketFillEvent(player, block, BlockFace.UP, Material.WATER_BUCKET, item);
+        e = new PlayerBucketFillEvent(player, block, block, BlockFace.UP, Material.WATER_BUCKET, item);
         l.onBucketFill(e);
         assertFalse(e.isCancelled());
     }
@@ -253,22 +253,22 @@ public class BucketListenerTest {
         when(block.getRelative(Mockito.any())).thenReturn(block);
         ItemStack item = mock(ItemStack.class);
         when(item.getType()).thenReturn(Material.WATER_BUCKET);
-        PlayerBucketFillEvent e = new PlayerBucketFillEvent(player, block, BlockFace.UP, Material.WATER_BUCKET, item);
+        PlayerBucketFillEvent e = new PlayerBucketFillEvent(player, block, block, BlockFace.UP, Material.WATER_BUCKET, item);
         l.onBucketFill(e);
         assertTrue(e.isCancelled());
 
         when(item.getType()).thenReturn(Material.BUCKET);
-        e = new PlayerBucketFillEvent(player, block, BlockFace.UP, Material.WATER_BUCKET, item);
+        e = new PlayerBucketFillEvent(player, block, block, BlockFace.UP, Material.WATER_BUCKET, item);
         l.onBucketFill(e);
         assertTrue(e.isCancelled());
 
         when(item.getType()).thenReturn(Material.LAVA_BUCKET);
-        e = new PlayerBucketFillEvent(player, block, BlockFace.UP, Material.WATER_BUCKET, item);
+        e = new PlayerBucketFillEvent(player, block, block, BlockFace.UP, Material.WATER_BUCKET, item);
         l.onBucketFill(e);
         assertTrue(e.isCancelled());
 
         when(item.getType()).thenReturn(Material.MILK_BUCKET);
-        e = new PlayerBucketFillEvent(player, block, BlockFace.UP, Material.WATER_BUCKET, item);
+        e = new PlayerBucketFillEvent(player, block, block, BlockFace.UP, Material.WATER_BUCKET, item);
         l.onBucketFill(e);
         assertTrue(e.isCancelled());
 

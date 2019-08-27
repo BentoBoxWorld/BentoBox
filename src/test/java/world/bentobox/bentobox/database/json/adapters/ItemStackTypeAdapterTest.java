@@ -1,22 +1,21 @@
-/**
- *
- */
 package world.bentobox.bentobox.database.json.adapters;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
+import java.nio.file.Files;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -29,6 +28,7 @@ import org.bukkit.plugin.PluginManager;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -45,12 +45,14 @@ import com.google.gson.stream.JsonWriter;
  */
 @SuppressWarnings("deprecation")
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( {Bukkit.class} )
+@PrepareForTest( {Bukkit.class, ItemStack.class} )
 public class ItemStackTypeAdapterTest {
 
     private ItemStackTypeAdapter isa;
     private JsonWriter out;
     private JsonReader reader;
+    @Mock
+    private ItemFactory itemFactory;
 
     /**
      * @throws java.lang.Exception
@@ -62,7 +64,6 @@ public class ItemStackTypeAdapterTest {
         PluginManager pluginManager = mock(PluginManager.class);
         when(server.getPluginManager()).thenReturn(pluginManager);
 
-        ItemFactory itemFactory = mock(ItemFactory.class);
         when(server.getItemFactory()).thenReturn(itemFactory);
 
         PowerMockito.mockStatic(Bukkit.class);
@@ -75,9 +76,13 @@ public class ItemStackTypeAdapterTest {
         when(unsafe.getDataVersion()).thenReturn(777);
         when(Bukkit.getUnsafe()).thenReturn(unsafe);
         isa = new ItemStackTypeAdapter();
-        out = mock(JsonWriter.class, Mockito.withSettings().verboseLogging());
+        out = mock(JsonWriter.class);
         reader = mock(JsonReader.class);
         when(reader.peek()).thenReturn(JsonToken.STRING);
+
+        // Mock up the deserialization
+        PowerMockito.mockStatic(ItemStack.class);
+        when(ItemStack.deserialize(any())).thenReturn(new ItemStack(Material.STONE, 4));
     }
 
     /**
@@ -88,9 +93,9 @@ public class ItemStackTypeAdapterTest {
     public void testWriteJsonWriterItemStack() throws IOException {
         ItemStack stack = new ItemStack(Material.STONE, 4);
         isa.write(out, stack);
-        Mockito.verify(out).value(Mockito.contains("==: org.bukkit.inventory.ItemStack"));
-        Mockito.verify(out).value(Mockito.contains("type: STONE"));
-        Mockito.verify(out).value(Mockito.contains("amount: 4"));
+        verify(out).value(Mockito.contains("==: org.bukkit.inventory.ItemStack"));
+        verify(out).value(Mockito.contains("type: STONE"));
+        verify(out).value(Mockito.contains("amount: 4"));
     }
 
     /**
@@ -100,7 +105,7 @@ public class ItemStackTypeAdapterTest {
     @Test
     public void testWriteJsonWriterItemStackNull() throws IOException {
         isa.write(out, null);
-        Mockito.verify(out).nullValue();
+        verify(out).nullValue();
     }
 
     /**
@@ -119,24 +124,24 @@ public class ItemStackTypeAdapterTest {
      */
     @Test
     public void testReadJsonReader() throws IOException {
-        // Write a file
-        /*
-        try (FileWriter writer = new FileWriter("test.json");
+        File tmp = new File("test.json");
+        // Write a file - skip the meta because it causes the reader to choke if the class mentioned isn't known
+        try (FileWriter writer = new FileWriter(tmp.getName());
                 Writer buffWriter = new BufferedWriter(writer);
                 JsonWriter realOut = new JsonWriter(buffWriter)) {
-
-            ItemStack stack = new ItemStack(Material.STONE, 4);
-            isa.write(realOut, stack);
-        }*/
-        try (FileReader reader = new FileReader("test.json");
+            realOut.value("is:\n  ==: org.bukkit.inventory.ItemStack\n  v: 777\n  type: STONE\n  amount: 4\n");
+            realOut.flush();
+        }
+        // Read it back
+        try (FileReader reader = new FileReader(tmp.getName());
                 Reader buffReader = new BufferedReader(reader);
                 JsonReader realIn = new JsonReader(buffReader)) {
-
             ItemStack i = isa.read(realIn);
-            System.out.println(i);
+            assertEquals(Material.STONE, i.getType());
+            assertEquals(4, i.getAmount());
         }
-
+        // Delete temp file
+        Files.deleteIfExists(tmp.toPath());
     }
-
 
 }
