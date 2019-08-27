@@ -156,8 +156,8 @@ public class LocalesManager {
      * @param localeFolder - locale folder location relative to the plugin's data folder
      */
     public void loadLocalesFromFile(String localeFolder) {
-        // Filter for files of length 9 and ending with .yml
-        FilenameFilter ymlFilter = (dir, name) -> name.toLowerCase(java.util.Locale.ENGLISH).endsWith(".yml") && name.length() == 9;
+        // Filter for files ending with .yml with a name whose length is >= 6 (xx.yml)
+        FilenameFilter ymlFilter = (dir, name) -> name.toLowerCase(java.util.Locale.ENGLISH).endsWith(".yml") && name.length() >= 6;
 
         // Get the folder
         File localeDir = new File(plugin.getDataFolder(), LOCALE_FOLDER + File.separator + localeFolder);
@@ -182,8 +182,7 @@ public class LocalesManager {
             } catch (Exception e) {
                 BentoBox.getInstance().logError("Could not load '" + language.getName() + "' : " + e.getMessage()
                 + " with the following cause '" + e.getCause() + "'." +
-                " The file has likely an invalid YML format or has been made unreadable during the process."
-                        );
+                " The file has likely an invalid YML format or has been made unreadable during the process.");
             }
         }
     }
