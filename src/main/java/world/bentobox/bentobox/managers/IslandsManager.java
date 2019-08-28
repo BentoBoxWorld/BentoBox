@@ -1199,4 +1199,15 @@ public class IslandsManager {
         islandCache.resetAllFlags(world);
         this.saveAll();
     }
+
+    /**
+     * Returns whether the specified island custom name exists in this world.
+     * @param world World of the gamemode
+     * @param name Name of an island
+     * @return {@code true} if there is an island with the specified name in this world, {@code false} otherwise.
+     * @since 1.7.0
+     */
+    public boolean nameExists(@NonNull World world, @NonNull String name) {
+        return getIslands(world).stream().filter(island -> island.getName() != null).map(Island::getName).anyMatch(n -> n.equals(name));
+    }
 }
