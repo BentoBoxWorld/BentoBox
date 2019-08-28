@@ -1,12 +1,15 @@
 package world.bentobox.bentobox.managers.island;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -156,6 +159,23 @@ public class IslandCache {
     @NonNull
     public Collection<Island> getIslands() {
         return Collections.unmodifiableCollection(islandsByLocation.values());
+    }
+
+    /**
+     * Returns an <strong>unmodifiable collection</strong> of all the islands (even those who may be unowned) in the specified world.
+     * @param world World of the gamemode.
+     * @return unmodifiable collection containing all the islands in the specified world.
+     * @since 1.7.0
+     */
+    @NonNull
+    public Collection<Island> getIslands(@NonNull World world) {
+        World overworld = Util.getWorld(world);
+        List<Island> islandsInWorld = islandsByLocation.entrySet().stream()
+                .filter(entry -> overworld.equals(Util.getWorld(entry.getKey().getWorld()))) // shouldn't make NPEs
+                .map(Map.Entry::getValue)
+                .collect(Collectors.toCollection(ArrayList::new));
+
+        return Collections.unmodifiableCollection(islandsInWorld);
     }
 
     /**

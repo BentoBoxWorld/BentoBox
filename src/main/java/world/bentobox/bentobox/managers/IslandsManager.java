@@ -356,13 +356,24 @@ public class IslandsManager {
     }
 
     /**
-     * Returns an <strong>unmodifiable collection</strong> of all the islands (even those who may be unowned).
+     * Returns an <strong>unmodifiable collection</strong> of all existing islands (even those who may be unowned).
      * @return unmodifiable collection containing every island.
      * @since 1.1
      */
     @NonNull
     public Collection<Island> getIslands() {
         return islandCache.getIslands();
+    }
+
+    /**
+     * Returns an <strong>unmodifiable collection</strong> of all the islands (even those who may be unowned) in the specified world.
+     * @param world World of the gamemode.
+     * @return unmodifiable collection containing all the islands in the specified world.
+     * @since 1.7.0
+     */
+    @NonNull
+    public Collection<Island> getIslands(@NonNull World world) {
+        return islandCache.getIslands(world);
     }
 
     /**
