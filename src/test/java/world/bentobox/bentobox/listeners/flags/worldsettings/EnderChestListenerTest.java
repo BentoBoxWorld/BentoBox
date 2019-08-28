@@ -2,12 +2,12 @@ package world.bentobox.bentobox.listeners.flags.worldsettings;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.anyString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -219,7 +219,7 @@ public class EnderChestListenerTest {
         // Enderchest use is blocked
         Flags.ENDER_CHEST.setSetting(world, false);
         new BlockInteractionListener().onPlayerInteract(e);
-        assertTrue(e.useInteractedBlock().equals(Result.ALLOW));
+        assertTrue(e.useInteractedBlock().equals(Result.DENY));
         verify(notifier).notify(any(User.class), eq("protection.world-protected"));
     }
 
