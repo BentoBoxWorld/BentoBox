@@ -41,7 +41,7 @@ public class IslandNearCommand extends CompositeCommand {
         }
 
         UUID playerUUID = user.getUniqueId();
-        if (!getIslands().hasIsland(getWorld(), playerUUID)) {
+        if (!getIslands().hasIsland(getWorld(), playerUUID) || !getIslands().inTeam(getWorld(), playerUUID)) {
             user.sendMessage("general.errors.no-island");
             return false;
         }
