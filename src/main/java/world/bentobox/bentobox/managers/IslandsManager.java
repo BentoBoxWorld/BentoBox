@@ -14,6 +14,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.TreeSpecies;
@@ -1208,6 +1209,7 @@ public class IslandsManager {
      * @since 1.7.0
      */
     public boolean nameExists(@NonNull World world, @NonNull String name) {
-        return getIslands(world).stream().filter(island -> island.getName() != null).map(Island::getName).anyMatch(n -> n.equals(name));
+        return getIslands(world).stream().filter(island -> island.getName() != null).map(Island::getName)
+                .anyMatch(n -> ChatColor.stripColor(n).equals(ChatColor.stripColor(name)));
     }
 }

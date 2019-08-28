@@ -149,6 +149,11 @@ public class Settings implements ConfigObject {
     @ConfigComment("Sets the maximum length an island custom name cannot exceed.")
     @ConfigEntry(path = "island.name.max-length")
     private int nameMaxLength = 20;
+    @ConfigComment("Requires island custom names to be unique in the gamemode the island is in.")
+    @ConfigComment("As a result, only one island per gamemode are allowed to share the same name.")
+    @ConfigComment("Note that island names are purely cosmetics and are not used as a way to programmatically identify islands.")
+    @ConfigEntry(path = "island.name.uniqueness", since = "1.7.0")
+    private boolean nameUniqueness = false;
 
     @ConfigComment("Remove hostile mob on teleport box radius")
     @ConfigComment("If hostile mobs are cleared on player teleport, then this sized box will be cleared")
@@ -393,6 +398,20 @@ public class Settings implements ConfigObject {
 
     public void setNameMaxLength(int nameMaxLength) {
         this.nameMaxLength = nameMaxLength;
+    }
+
+    /**
+     * @since 1.7.0
+     */
+    public boolean isNameUniqueness() {
+        return nameUniqueness;
+    }
+
+    /**
+     * @since 1.7.0
+     */
+    public void setNameUniqueness(boolean nameUniqueness) {
+        this.nameUniqueness = nameUniqueness;
     }
 
     /**

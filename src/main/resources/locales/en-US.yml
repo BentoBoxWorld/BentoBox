@@ -439,6 +439,7 @@ commands:
       description: "set a name for your island"
       name-too-short: "&cToo short. Minimum size is [number] characters."
       name-too-long: "&cToo long. Maximum size is [number] characters."
+      name-already-exists: "&cThere is already an island with that name in this gamemode."
       parameters: "<name>"
     resetname:
       description: "reset your island name"
