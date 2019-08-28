@@ -390,7 +390,7 @@ public class IslandsManager {
      * Used for testing only to inject the islandCache mock object
      * @param islandCache - island cache
      */
-    public void setIslandCache(IslandCache islandCache) {
+    public void setIslandCache(@NonNull IslandCache islandCache) {
         this.islandCache = islandCache;
     }
 
