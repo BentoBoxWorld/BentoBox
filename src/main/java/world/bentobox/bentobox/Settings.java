@@ -153,7 +153,7 @@ public class Settings implements ConfigObject {
     @ConfigComment("If hostile mobs are cleared on player teleport, then this sized box will be cleared")
     @ConfigComment("around the player. e.g. 5 means a 10 x 10 x 10 box around the player")
     @ConfigComment("Be careful not to make this too big. Does not cover standard nether or end teleports.")
-    @ConfigEntry(path = "island.clear-radius")
+    @ConfigEntry(path = "island.clear-radius", since = "1.6.0")
     private int clearRadius = 5;
 
     @ConfigComment("Number of blocks to paste per tick when pasting blueprints")
