@@ -165,7 +165,7 @@ public class IslandCache {
      * @return set of UUID's of island members. If there is no island, this set will be empty
      */
     @NonNull
-    public Set<UUID> getMembers(@NonNull World world, @NonNull UUID uuid, @NonNull int minimumRank) {
+    public Set<UUID> getMembers(@NonNull World world, @NonNull UUID uuid, int minimumRank) {
         islandsByUUID.putIfAbsent(Util.getWorld(world), new HashMap<>());
         Island island = islandsByUUID.get(Util.getWorld(world)).get(uuid);
         if (island != null) {

@@ -338,6 +338,7 @@ public class IslandsManager {
      * @param uuid user's uuid
      * @return Island or null
      */
+    @Nullable
     public Island getIsland(World world, UUID uuid){
         return islandCache.get(world, uuid);
     }
@@ -369,6 +370,7 @@ public class IslandsManager {
      * @return the islandCache
      * @since 1.5.0
      */
+    @NonNull
     public IslandCache getIslandCache() {
         return islandCache;
     }
@@ -389,6 +391,7 @@ public class IslandsManager {
      * @param uuid - the player's UUID
      * @return Location of player's island or null if one does not exist
      */
+    @Nullable
     public Location getIslandLocation(World world, UUID uuid) {
         Island island = getIsland(world, uuid);
         return island != null ? island.getCenter() : null;

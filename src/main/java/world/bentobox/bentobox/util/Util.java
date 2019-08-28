@@ -219,6 +219,7 @@ public class Util {
      * @param world - world
      * @return over world
      */
+    @Nullable
     public static World getWorld(@Nullable World world) {
         return world == null ? null : world.getEnvironment().equals(Environment.NORMAL) ? world : Bukkit.getWorld(world.getName().replaceAll(NETHER, "").replaceAll(THE_END, ""));
     }
