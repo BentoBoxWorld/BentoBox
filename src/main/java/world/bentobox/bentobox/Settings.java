@@ -143,9 +143,10 @@ public class Settings implements ConfigObject {
     @ConfigEntry(path = "island.confirmation.commands.reset")
     private boolean resetConfirmation = true;
 
-    @ConfigComment("These set the minimum and maximum size of a name.")
+    @ConfigComment("Sets the minimum length an island custom name is required to have.")
     @ConfigEntry(path = "island.name.min-length")
     private int nameMinLength = 4;
+    @ConfigComment("Sets the maximum length an island custom name cannot exceed.")
     @ConfigEntry(path = "island.name.max-length")
     private int nameMaxLength = 20;
 
