@@ -420,9 +420,12 @@ commands:
     reset:
       description: "restart your island and remove the old one"
       parameters: "<blueprint>"
-      must-remove-members: "&cYou must remove all members from your island before you can restart it (/island team kick <player>)."
       none-left: "&cYou have no more resets left!"
-      resets-left: "&cYou have [number] resets left"
+      resets-left: "&cYou have &b[number] &cresets left"
+      confirmation: |-
+        &cAre you sure you want to do this?
+        &cAll island members will be kicked from the island, you will have to reinvite them afterwards.
+        &cThere is no going back: once your current island is deleted, there will be &lno &r&cway to retrieve it later on.
     sethome:
       description: "set your home teleport point"
       must-be-on-your-island: "&cYou must be on your island to set home!"

@@ -22,6 +22,9 @@ public class TeamEvent {
         KICK,
         SETOWNER,
         INFO,
+        /**
+         * The island has been reset by the owner.
+         */
         DELETE,
         UNKNOWN,
         UNINVITE,

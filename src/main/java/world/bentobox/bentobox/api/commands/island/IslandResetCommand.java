@@ -3,13 +3,16 @@ package world.bentobox.bentobox.api.commands.island;
 import java.io.IOException;
 import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.eclipse.jdt.annotation.NonNull;
 
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
+import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.island.IslandEvent.Reason;
+import world.bentobox.bentobox.api.events.team.TeamEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
@@ -49,10 +52,6 @@ public class IslandResetCommand extends ConfirmableCommand {
             user.sendMessage("general.errors.not-owner");
             return false;
         }
-        if (getIslands().inTeam(getWorld(), user.getUniqueId())) {
-            user.sendMessage("commands.island.reset.must-remove-members");
-            return false;
-        }
         int resetsLeft = getPlayers().getResetsLeft(getWorld(), user.getUniqueId());
         if (resetsLeft != -1) {
             // Resets are not unlimited here
@@ -87,7 +86,7 @@ public class IslandResetCommand extends ConfirmableCommand {
         } else {
             // Show panel after confirmation
             if (getPlugin().getSettings().isResetConfirmation()) {
-                this.askConfirmation(user, () -> selectBundle(user, label));
+                this.askConfirmation(user, user.getTranslation("commands.island.reset.confirmation"), () -> selectBundle(user, label));
             } else {
                 selectBundle(user, label);
             }
@@ -102,7 +101,7 @@ public class IslandResetCommand extends ConfirmableCommand {
     private void selectBundle(@NonNull User user, @NonNull String label) {
         // Show panel only if there are multiple bundles available
         if (getPlugin().getBlueprintsManager().getBlueprintBundles((GameModeAddon)getAddon()).size() > 1) {
-            // Show panel
+            // Show panel - once the player selected a bundle, this will re-run this command
             IslandCreationPanel.openPanel(this, user, label);
         } else {
             resetIsland(user, BlueprintsManager.DEFAULT_BUNDLE_NAME);
@@ -114,19 +113,11 @@ public class IslandResetCommand extends ConfirmableCommand {
         Player player = user.getPlayer();
         user.sendMessage("commands.island.create.creating-island");
         // Get the player's old island
-        Island oldIsland = getIslands().getIsland(getWorld(), player.getUniqueId());
-        // Remove them from this island (it still exists and will be deleted later)
-        getIslands().removePlayer(getWorld(), player.getUniqueId());
-        // Remove money inventory etc.
-        if (getIWM().isOnLeaveResetEnderChest(getWorld())) {
-            user.getPlayer().getEnderChest().clear();
-        }
-        if (getIWM().isOnLeaveResetInventory(getWorld())) {
-            user.getPlayer().getInventory().clear();
-        }
-        if (getSettings().isUseEconomy() && getIWM().isOnLeaveResetMoney(getWorld())) {
-            getPlugin().getVault().ifPresent(vault -> vault.withdraw(user, vault.getBalance(user)));
-        }
+        Island oldIsland = getIslands().getIsland(getWorld(), user.getUniqueId());
+
+        // Kick all island members (including the owner)
+        kickMembers(oldIsland);
+
         // Add a reset
         getPlayers().addReset(getWorld(), user.getUniqueId());
         // Create new island and then delete the old one
@@ -145,5 +136,52 @@ public class IslandResetCommand extends ConfirmableCommand {
         }
         setCooldown(user.getUniqueId(), getSettings().getResetCooldown());
         return true;
+    }
+
+    /**
+     * Kicks the members (incl. owner) of the island.
+     * @since 1.7.0
+     */
+    private void kickMembers(Island island) {
+        /*
+         * We cannot assume the island owner can run /[cmd] team kick (it might be disabled, or there could be permission restrictions...)
+         * Therefore, we need to do it manually.
+         * Plus, a more specific team event (TeamDeleteEvent) is called by this method.
+         */
+
+        island.getMemberSet().forEach(memberUUID -> {
+            getIslands().removePlayer(getWorld(), memberUUID);
+            User member = User.getInstance(memberUUID);
+
+            // Remove money inventory etc.
+            if (getIWM().isOnLeaveResetEnderChest(getWorld())) {
+                if (member.isOnline()) {
+                    member.getPlayer().getEnderChest().clear();
+                }
+                else {
+                    getPlayers().getPlayer(memberUUID).addToPendingKick(getWorld());
+                    getPlayers().save(memberUUID);
+                }
+            }
+            if (getIWM().isOnLeaveResetInventory(getWorld()) && !getIWM().isKickedKeepInventory(getWorld())) {
+                if (member.isOnline()) {
+                    member.getPlayer().getInventory().clear();
+                } else {
+                    getPlayers().getPlayer(memberUUID).addToPendingKick(getWorld());
+                    getPlayers().save(memberUUID);
+                }
+            }
+            if (getSettings().isUseEconomy() && getIWM().isOnLeaveResetMoney(getWorld())) {
+                getPlugin().getVault().ifPresent(vault -> vault.withdraw(member, vault.getBalance(member)));
+            }
+
+            // Fire event
+            IslandBaseEvent e = TeamEvent.builder()
+                    .island(island)
+                    .reason(TeamEvent.Reason.DELETE)
+                    .involvedPlayer(memberUUID)
+                    .build();
+            Bukkit.getServer().getPluginManager().callEvent(e);
+        });
     }
 }
