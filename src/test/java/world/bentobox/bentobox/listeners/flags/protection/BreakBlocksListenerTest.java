@@ -34,6 +34,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Skeleton;
 import org.bukkit.entity.Vehicle;
+import org.bukkit.event.Event.Result;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -274,7 +275,7 @@ public class BreakBlocksListenerTest {
         when(block.getLocation()).thenReturn(location);
         PlayerInteractEvent e = new PlayerInteractEvent(player, Action.LEFT_CLICK_AIR, item, block, BlockFace.EAST);
         bbl.onPlayerInteract(e);
-        assertFalse(e.isCancelled());
+        assertTrue(e.useInteractedBlock().equals(Result.ALLOW));
     }
 
     /**
@@ -288,12 +289,13 @@ public class BreakBlocksListenerTest {
         when(block.getType()).thenReturn(Material.STONE);
         PlayerInteractEvent e = new PlayerInteractEvent(player, Action.LEFT_CLICK_BLOCK, item, block, BlockFace.EAST);
         bbl.onPlayerInteract(e);
-        assertFalse(e.isCancelled());
+        assertTrue(e.useInteractedBlock().equals(Result.ALLOW));
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractEvent)}.
      */
+    @SuppressWarnings("deprecation")
     @Test
     public void testOnPlayerInteractHitCakeSpawnerDragonEggOK() {
         ItemStack item = mock(ItemStack.class);
@@ -325,15 +327,15 @@ public class BreakBlocksListenerTest {
         when(block.getType()).thenReturn(Material.CAKE);
         PlayerInteractEvent e = new PlayerInteractEvent(player, Action.LEFT_CLICK_BLOCK, item, block, BlockFace.EAST);
         bbl.onPlayerInteract(e);
-        assertTrue(e.isCancelled());
+        assertTrue(e.useInteractedBlock().equals(Result.DENY));
         when(block.getType()).thenReturn(Material.SPAWNER);
         e = new PlayerInteractEvent(player, Action.LEFT_CLICK_BLOCK, item, block, BlockFace.EAST);
         bbl.onPlayerInteract(e);
-        assertTrue(e.isCancelled());
+        assertTrue(e.useInteractedBlock().equals(Result.DENY));
         when(block.getType()).thenReturn(Material.DRAGON_EGG);
         e = new PlayerInteractEvent(player, Action.LEFT_CLICK_BLOCK, item, block, BlockFace.EAST);
         bbl.onPlayerInteract(e);
-        assertTrue(e.isCancelled());
+        assertTrue(e.useInteractedBlock().equals(Result.DENY));
         verify(notifier, times(3)).notify(any(), eq("protection.protected"));
     }
 

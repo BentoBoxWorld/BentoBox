@@ -34,8 +34,6 @@ import org.powermock.reflect.Whitebox;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.database.objects.Island;
-import world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseConnector;
-import world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler;
 import world.bentobox.bentobox.util.Util;
 
 /**

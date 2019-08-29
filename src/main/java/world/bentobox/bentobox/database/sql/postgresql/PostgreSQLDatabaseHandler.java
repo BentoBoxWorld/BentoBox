@@ -2,8 +2,8 @@ package world.bentobox.bentobox.database.sql.postgresql;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.database.DatabaseConnector;
-import world.bentobox.bentobox.database.sql.SQLDatabaseHandler;
 import world.bentobox.bentobox.database.sql.SQLConfiguration;
+import world.bentobox.bentobox.database.sql.SQLDatabaseHandler;
 
 /**
  *

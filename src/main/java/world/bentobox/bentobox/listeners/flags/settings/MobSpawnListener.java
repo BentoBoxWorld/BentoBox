@@ -36,7 +36,6 @@ public class MobSpawnListener extends FlagListener {
         // Deal with natural spawning
         if (e.getSpawnReason().equals(SpawnReason.NATURAL)
                 || e.getSpawnReason().equals(SpawnReason.JOCKEY)
-                || e.getSpawnReason().equals(SpawnReason.CHUNK_GEN)
                 || e.getSpawnReason().equals(SpawnReason.DEFAULT)
                 || e.getSpawnReason().equals(SpawnReason.MOUNT)
                 || e.getSpawnReason().equals(SpawnReason.NETHER_PORTAL)) {

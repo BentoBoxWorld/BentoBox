@@ -124,16 +124,16 @@ public class PanelListenerManagerTest {
     class MyView extends InventoryView {
 
         private Inventory top;
+        private String name;
 
         /**
          * @param name
          */
-        @SuppressWarnings("deprecation")
         public MyView(String name) {
             top = mock(Inventory.class);
             when(top.getSize()).thenReturn(9);
             when(top.getHolder()).thenReturn(panel);
-            when(top.getTitle()).thenReturn(name);
+            this.name = name;
         }
 
         @Override
@@ -154,6 +154,11 @@ public class PanelListenerManagerTest {
         @Override
         public InventoryType getType() {
             return InventoryType.PLAYER;
+        }
+
+        @Override
+        public String getTitle() {
+            return name;
         }
 
     }

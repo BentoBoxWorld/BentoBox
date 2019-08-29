@@ -199,7 +199,6 @@ public class MobSpawnListenerTest {
             when(e.getSpawnReason()).thenReturn(reason);
             if (reason.equals(SpawnReason.NATURAL)
                     || reason.equals(SpawnReason.JOCKEY)
-                    || reason.equals(SpawnReason.CHUNK_GEN)
                     || reason.equals(SpawnReason.DEFAULT)
                     || reason.equals(SpawnReason.MOUNT)
                     || reason.equals(SpawnReason.NETHER_PORTAL)) {
