@@ -55,6 +55,7 @@ import world.bentobox.bentobox.listeners.flags.worldsettings.OfflineGrowthListen
 import world.bentobox.bentobox.listeners.flags.worldsettings.OfflineRedstoneListener;
 import world.bentobox.bentobox.listeners.flags.worldsettings.PistonPushListener;
 import world.bentobox.bentobox.listeners.flags.worldsettings.RemoveMobsListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.SpawnerSpawnEggsListener;
 import world.bentobox.bentobox.listeners.flags.worldsettings.TreesGrowingOutsideRangeListener;
 import world.bentobox.bentobox.listeners.flags.worldsettings.WitherListener;
 import world.bentobox.bentobox.managers.RanksManager;
@@ -437,8 +438,16 @@ public final class Flags {
     /**
      * Toggles wither explosion damage
      * @since 1.6.0
+     * @see WitherListener
      */
     public static final Flag WITHER_DAMAGE = new Flag.Builder("WITHER_DAMAGE", Material.WITHER_SKELETON_SKULL).listener(new WitherListener()).type(Type.WORLD_SETTING).build();
+
+    /**
+     * Toggles whether players can change a spawner's entity using spawn eggs.
+     * @since 1.7.0
+     * @see SpawnerSpawnEggsListener
+     */
+    public static final Flag SPAWNER_SPAWN_EGGS = new Flag.Builder("SPAWNER_SPAWN_EGGS", Material.SPAWNER).listener(new SpawnerSpawnEggsListener()).type(Type.WORLD_SETTING).defaultSetting(true).build();
 
     /**
      * Provides a list of all the Flag instances contained in this class using reflection.

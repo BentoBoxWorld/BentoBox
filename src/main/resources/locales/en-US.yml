@@ -1005,6 +1005,12 @@ protection:
       description: "Toggle use"
       name: "Spawn eggs"
       hint: "No throwing spawn eggs"
+    SPAWNER_SPAWN_EGGS:
+      description: |-
+        &aAllows to change a spawner's entity type
+        &ausing spawn eggs.
+      name: "Spawn eggs on spawners"
+      hint: "changing a spawner's entity type using spawn eggs is not allowed"
     TNT_DAMAGE:
       description: |-
         &aAllow TNT and TNT minecarts
