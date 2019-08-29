@@ -91,12 +91,12 @@ public class Flag implements Comparable<Flag> {
          */
         public Mode getNext() {
             switch(this) {
-                case ADVANCED:
-                    return EXPERT;
-                case BASIC:
-                    return ADVANCED;
-                default:
-                    return BASIC;
+            case ADVANCED:
+                return EXPERT;
+            case BASIC:
+                return ADVANCED;
+            default:
+                return BASIC;
             }
         }
 
@@ -107,12 +107,12 @@ public class Flag implements Comparable<Flag> {
          */
         public boolean isGreaterThan(Mode rank) {
             switch(this) {
-                case EXPERT:
-                    return rank.equals(BASIC) || rank.equals(ADVANCED);
-                case ADVANCED:
-                    return rank.equals(BASIC);
-                default:
-                    return false;
+            case EXPERT:
+                return rank.equals(BASIC) || rank.equals(ADVANCED);
+            case ADVANCED:
+                return rank.equals(BASIC);
+            default:
+                return false;
             }
         }
     }
@@ -478,7 +478,7 @@ public class Flag implements Comparable<Flag> {
         private int cooldown;
 
         // Mode
-        public Mode mode = Mode.EXPERT;
+        private Mode mode = Mode.EXPERT;
 
         /**
          * Builder for making flags
