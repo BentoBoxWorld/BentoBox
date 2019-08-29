@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.List;
 
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.eclipse.jdt.annotation.NonNull;
 
 import world.bentobox.bentobox.api.addons.GameModeAddon;
@@ -43,13 +42,8 @@ public class IslandResetCommand extends ConfirmableCommand {
         if (getSettings().getResetCooldown() > 0 && checkCooldown(user)) {
             return false;
         }
-
         if (!getIslands().hasIsland(getWorld(), user.getUniqueId())) {
             user.sendMessage("general.errors.no-island");
-            return false;
-        }
-        if (!getIslands().isOwner(getWorld(), user.getUniqueId())) {
-            user.sendMessage("general.errors.not-owner");
             return false;
         }
         int resetsLeft = getPlayers().getResetsLeft(getWorld(), user.getUniqueId());
@@ -110,10 +104,9 @@ public class IslandResetCommand extends ConfirmableCommand {
 
     private boolean resetIsland(User user, String name) {
         // Reset the island
-        Player player = user.getPlayer();
         user.sendMessage("commands.island.create.creating-island");
         // Get the player's old island
-        Island oldIsland = getIslands().getIsland(getWorld(), user.getUniqueId());
+        Island oldIsland = getIslands().getIsland(getWorld(), user);
 
         // Kick all island members (including the owner)
         kickMembers(oldIsland);
@@ -181,7 +174,7 @@ public class IslandResetCommand extends ConfirmableCommand {
                     .reason(TeamEvent.Reason.DELETE)
                     .involvedPlayer(memberUUID)
                     .build();
-            Bukkit.getServer().getPluginManager().callEvent(e);
+            Bukkit.getPluginManager().callEvent(e);
         });
     }
 }
