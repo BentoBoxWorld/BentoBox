@@ -36,7 +36,7 @@ public class IslandRespawnListener extends FlagListener {
         if (!Flags.ISLAND_RESPAWN.isSetForWorld(e.getEntity().getWorld())) {
             return; // world doesn't have the island respawn flag
         }
-        if (!getIslands().hasIsland(e.getEntity().getWorld(), e.getEntity().getUniqueId())) {
+        if (!getIslands().hasIsland(e.getEntity().getWorld(), e.getEntity().getUniqueId()) || !getIslands().inTeam(e.getEntity().getWorld(), e.getEntity().getUniqueId())) {
             return; // doesn't have an island in this world
         }
         
