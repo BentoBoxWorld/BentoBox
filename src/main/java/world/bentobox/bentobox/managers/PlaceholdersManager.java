@@ -1,8 +1,6 @@
 package world.bentobox.bentobox.managers;
 
 import java.util.Arrays;
-import java.util.EnumMap;
-import java.util.Map;
 import java.util.Optional;
 
 import org.bukkit.entity.Player;

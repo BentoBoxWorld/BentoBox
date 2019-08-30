@@ -229,8 +229,6 @@ public class IslandResetCommandTest {
     public void testUnlimitedResets() throws IOException {
         // Now has island, but is not the owner
         when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
-        // Now is owner, but still has team
-        when(im.isOwner(any(), eq(uuid))).thenReturn(true);
         // Now has no team
         when(im.inTeam(any(), eq(uuid))).thenReturn(false);
         // Set so no confirmation required
@@ -255,6 +253,39 @@ public class IslandResetCommandTest {
 
         // Reset
         assertTrue(irc.canExecute(user, irc.getLabel(), Collections.emptyList()));
+    }
+
+    /**
+     * Test method for {@link IslandResetCommand#canExecute(User, String, java.util.List)}
+     */
+    @Test
+    public void testNoPaste() throws IOException {
+        irc = new IslandResetCommand(ic, true);
+        // Now has island, but is not the owner
+        when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
+        // Set so no confirmation required
+        when(s.isResetConfirmation()).thenReturn(false);
+
+        // Old island mock
+        Island oldIsland = mock(Island.class);
+        when(im.getIsland(any(), eq(uuid))).thenReturn(oldIsland);
+
+        // Mock up NewIsland builder
+        NewIsland.Builder builder = mock(NewIsland.Builder.class);
+        when(builder.player(any())).thenReturn(builder);
+        when(builder.oldIsland(any())).thenReturn(builder);
+        when(builder.reason(any())).thenReturn(builder);
+        when(builder.name(any())).thenReturn(builder);
+        when(builder.addon(any())).thenReturn(builder);
+        when(builder.build()).thenReturn(mock(Island.class));
+        PowerMockito.mockStatic(NewIsland.class);
+        when(NewIsland.builder()).thenReturn(builder);
+        // Test with unlimited resets
+        when(pm.getResetsLeft(eq(world), eq(uuid))).thenReturn(-1);
+
+        // Reset
+        assertTrue(irc.canExecute(user, irc.getLabel(), Collections.emptyList()));
+        verify(builder, never()).noPaste();
     }
 
     /**

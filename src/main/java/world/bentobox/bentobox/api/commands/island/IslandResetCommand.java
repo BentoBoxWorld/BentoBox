@@ -17,6 +17,7 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.BlueprintsManager;
 import world.bentobox.bentobox.managers.island.NewIsland;
+import world.bentobox.bentobox.managers.island.NewIsland.Builder;
 import world.bentobox.bentobox.panels.IslandCreationPanel;
 
 /**
@@ -24,8 +25,20 @@ import world.bentobox.bentobox.panels.IslandCreationPanel;
  */
 public class IslandResetCommand extends ConfirmableCommand {
 
+    private boolean noPaste;
+
     public IslandResetCommand(CompositeCommand islandCommand) {
         super(islandCommand, "reset", "restart");
+    }
+
+    /**
+     * Creates the island reset command
+     * @param islandCommand - parent command
+     * @param noPaste - true if resetting should not paste a new island
+     */
+    public IslandResetCommand(CompositeCommand islandCommand, boolean noPaste) {
+        super(islandCommand, "reset", "restart");
+        this.noPaste = noPaste;
     }
 
     @Override
@@ -115,13 +128,14 @@ public class IslandResetCommand extends ConfirmableCommand {
         getPlayers().addReset(getWorld(), user.getUniqueId());
         // Create new island and then delete the old one
         try {
-            NewIsland.builder()
-            .player(user)
-            .reason(Reason.RESET)
-            .addon((GameModeAddon)getAddon())
-            .oldIsland(oldIsland)
-            .name(name)
-            .build();
+            Builder builder = NewIsland.builder()
+                    .player(user)
+                    .reason(Reason.RESET)
+                    .addon((GameModeAddon)getAddon())
+                    .oldIsland(oldIsland)
+                    .name(name);
+            if (noPaste) builder.noPaste();
+            builder.build();
         } catch (IOException e) {
             getPlugin().logError("Could not create island for player. " + e.getMessage());
             user.sendMessage("commands.island.create.unable-create-island");
