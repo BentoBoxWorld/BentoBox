@@ -29,23 +29,11 @@ import world.bentobox.bentobox.lists.Flags;
  */
 public class BlockInteractionListener extends FlagListener {
 
-    private static final String FURNACE = "FURNACE";
-    private static final String CRAFTING = "CRAFTING";
-
     /**
      * These cover materials in another server version.
      * This avoids run time errors due to unknown enum values, at the expense of a string comparison
      */
     private final Map<String, String> stringFlags = ImmutableMap.<String, String>builder()
-            .put("CAMPFIRE", FURNACE)
-            .put("CARTOGRAPHY_TABLE", CRAFTING)
-            .put("GRINDSTONE", CRAFTING)
-            .put("LECTERN", "BREAK_BLOCKS")
-            .put("LOOM", CRAFTING)
-            .put("STONECUTTER", CRAFTING)
-            .put("SMOKER", FURNACE)
-            .put("BLAST_FURNACE", FURNACE)
-            .put("COMPOSTER", "CONTAINER")
             .build();
 
     /**
@@ -185,6 +173,7 @@ public class BlockInteractionListener extends FlagListener {
         case CAULDRON:
             checkIsland(e, player, loc, Flags.BREWING);
             break;
+        case BARREL:
         case CHEST:
         case CHEST_MINECART:
         case TRAPPED_CHEST:
@@ -206,6 +195,7 @@ public class BlockInteractionListener extends FlagListener {
         case YELLOW_SHULKER_BOX:
         case SHULKER_BOX:
         case FLOWER_POT:
+        case COMPOSTER:
             checkIsland(e, player, loc, Flags.CONTAINER);
             break;
         case DISPENSER:
@@ -244,8 +234,11 @@ public class BlockInteractionListener extends FlagListener {
         case SPRUCE_FENCE_GATE:
             checkIsland(e, player, loc, Flags.GATE);
             break;
+        case BLAST_FURNACE:
+        case CAMPFIRE:
         case FURNACE_MINECART:
         case FURNACE:
+        case SMOKER:
             checkIsland(e, player, loc, Flags.FURNACE);
             break;
         case ENCHANTING_TABLE:
@@ -261,6 +254,10 @@ public class BlockInteractionListener extends FlagListener {
             checkIsland(e, player, loc, Flags.NOTE_BLOCK);
             break;
         case CRAFTING_TABLE:
+        case CARTOGRAPHY_TABLE:
+        case GRINDSTONE:
+        case STONECUTTER:
+        case LOOM:
             checkIsland(e, player, loc, Flags.CRAFTING);
             break;
         case STONE_BUTTON:
@@ -288,6 +285,9 @@ public class BlockInteractionListener extends FlagListener {
             break;
         case ITEM_FRAME:
             checkIsland(e, player, loc, Flags.ITEM_FRAME);
+            break;
+        case LECTERN:
+            checkIsland(e, player, loc, Flags.BREAK_BLOCKS);
             break;
         default:
             if (stringFlags.containsKey(type.name())) {
