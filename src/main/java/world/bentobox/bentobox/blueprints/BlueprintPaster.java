@@ -154,7 +154,7 @@ public class BlueprintPaster {
             if (pasteState.equals(PasteState.DONE)) {
                 // All done. Cancel task
                 // Set pos1 and 2 if this was a clipboard paste
-                if (island == null && clipboard != null &&(clipboard.getPos1() == null || clipboard.getPos2() == null)) {
+                if (island == null && clipboard != null) {
                     clipboard.setPos1(pos1);
                     clipboard.setPos2(pos2);
                 }
@@ -185,7 +185,7 @@ public class BlueprintPaster {
         block.setBlockData(bd, false);
         setBlockState(island, block, bpBlock);
         // pos1 and pos2 update
-        updatePos(world, entry.getKey());
+        updatePos(block.getLocation());
     }
 
     /**
@@ -299,32 +299,32 @@ public class BlueprintPaster {
     /**
      * Tracks the minimum and maximum block positions
      * @param world - world
-     * @param v - vector
+     * @param l - location of block pasted
      */
-    private void updatePos(World world, Vector v) {
+    private void updatePos(Location l) {
         if (pos1 == null) {
-            pos1 = v.toLocation(world);
+            pos1 = l.clone();
         }
         if (pos2 == null) {
-            pos2 = v.toLocation(world);
+            pos2 = l.clone();
         }
-        if (v.getBlockX() < pos1.getBlockX()) {
-            pos1.setX(v.getBlockX());
+        if (l.getBlockX() < pos1.getBlockX()) {
+            pos1.setX(l.getBlockX());
         }
-        if (v.getBlockX() > pos2.getBlockX()) {
-            pos2.setX(v.getBlockX());
+        if (l.getBlockX() > pos2.getBlockX()) {
+            pos2.setX(l.getBlockX());
         }
-        if (v.getBlockY() < pos1.getBlockY()) {
-            pos1.setY(v.getBlockY());
+        if (l.getBlockY() < pos1.getBlockY()) {
+            pos1.setY(l.getBlockY());
         }
-        if (v.getBlockY() > pos2.getBlockY()) {
-            pos2.setY(v.getBlockY());
+        if (l.getBlockY() > pos2.getBlockY()) {
+            pos2.setY(l.getBlockY());
         }
-        if (v.getBlockZ() < pos1.getBlockZ()) {
-            pos1.setZ(v.getBlockZ());
+        if (l.getBlockZ() < pos1.getBlockZ()) {
+            pos1.setZ(l.getBlockZ());
         }
-        if (v.getBlockZ() > pos2.getBlockZ()) {
-            pos2.setZ(v.getBlockZ());
+        if (l.getBlockZ() > pos2.getBlockZ()) {
+            pos2.setZ(l.getBlockZ());
         }
     }
 
