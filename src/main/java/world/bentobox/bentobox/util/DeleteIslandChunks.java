@@ -28,7 +28,6 @@ public class DeleteIslandChunks {
     /**
      * This is how many chunks per world will be done in one tick.
      */
-    private static final int SPEED = 5;
     private int chunkX;
     private int chunkZ;
     private BukkitTask task;
@@ -37,12 +36,13 @@ public class DeleteIslandChunks {
     public DeleteIslandChunks(BentoBox plugin, IslandDeletion di) {
         // Fire event
         IslandEvent.builder().deletedIslandInfo(di).reason(Reason.DELETE_CHUNKS).build();
+
         this.chunkX = di.getMinXChunk();
         this.chunkZ = di.getMinZChunk();
         this.di = di;
         // Run through all chunks of the islands and regenerate them.
         task = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
-            for (int i = 0; i < SPEED; i++) {
+            for (int i = 0; i < plugin.getSettings().getDeleteSpeed(); i++) {
                 plugin.getIWM().getAddon(di.getWorld()).ifPresent(gm -> {
                     Chunk chunk = di.getWorld().getChunkAt(chunkX, chunkZ);
                     regenerateChunk(gm, chunk);

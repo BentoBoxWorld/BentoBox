@@ -93,6 +93,11 @@ island:
   # Number of blocks to paste per tick when pasting blueprints
   # Smaller values will help reduce noticeable lag but will make pasting take longer
   paste-speed: 1000
+  # Number of chunks per world to regenerate per tick. If there is a nether and end then
+  # 3x this number will be regenerated
+  # Smaller values will help reduce noticeable lag but will make deleting take longer.
+  # A setting of 0 will leave island blocks (not recommended).
+  delete-speed: 1
 web:
   # BentoBox uses bStats.org to get global data about the plugin to help improving it.
   # bStats has nearly no effect on your server's performance and the sent data is completely

@@ -167,6 +167,14 @@ public class Settings implements ConfigObject {
     @ConfigEntry(path = "island.paste-speed")
     private int pasteSpeed = 1000;
 
+    @ConfigComment("Number of chunks per world to regenerate per tick. If there is a nether and end then")
+    @ConfigComment("3x this number will be regenerated")
+    @ConfigComment("Smaller values will help reduce noticeable lag but will make deleting take longer.")
+    @ConfigComment("A setting of 0 will leave island blocks (not recommended).")
+    @ConfigEntry(path = "island.delete-speed")
+    private int deleteSpeed = 5;
+
+
     // Automated ownership transfer
     @ConfigComment("Toggles the automated ownership transfer.")
     @ConfigComment("It automatically transfers the ownership of an island to one of its members in case the current owner is inactive.")
@@ -426,6 +434,22 @@ public class Settings implements ConfigObject {
      */
     public int getPasteSpeed() {
         return this.pasteSpeed;
+    }
+
+    /**
+     * @return the deleteSpeed
+     * @since 1.7.0
+     */
+    public int getDeleteSpeed() {
+        return deleteSpeed;
+    }
+
+    /**
+     * @param deleteSpeed the deleteSpeed to set
+     * @since 1.7.0
+     */
+    public void setDeleteSpeed(int deleteSpeed) {
+        this.deleteSpeed = deleteSpeed;
     }
 
     public boolean isEnableAutoOwnershipTransfer() {
