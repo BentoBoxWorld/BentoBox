@@ -85,12 +85,37 @@ commands:
           prompt: Ingrese un nombre o 'quit' para salir
           too-long: "&cDemasiado largo"
           conversation-prefix: ">"
+          quit: dejar
+          pick-a-unique-name: Elige un nombre más exclusivo
+          success: "¡Éxito!"
         description:
           instructions: |-
             Ingrese una descripción de varias líneas para [name]
             y 'quit'  en una línea por sí solo para finalizar.
+          quit: dejar
+          success: "¡Éxito!"
+          cancelling: Cancelado
         slot: "&f Ranura preferida [number]"
         slot-instructions: "&aHaga clic para aumentar \n&aHaga clic para disminuir"
+        back: atrás
+        instruction: Haga clic en el plano y luego haga clic aquí
+        normal: Normal
+        end: El fin
+        title: Gerente de paquete de planos
+        edit: Haz click para editar
+        rename: Haga clic derecho para cambiar el nombre
+        edit-description: Haga clic para editar la descripción
+        world-instructions: Coloque el plano a la derecha para configurar
+        trash: Basura
+        trash-instructions: Haga clic derecho aquí para eliminar
+        permission: Permiso
+        perm-not-required: No requerido
+        remove: Haga clic derecho para eliminar
+        blueprint-instruction: Haga clic para seleccionar, luego agregue al paquete.
+          Haga clic derecho para cambiar el nombre.
+        select-first: Seleccione Blueprint primero
+        new-bundle: Nuevo paquete
+        new-bundle-instructions: Haga clic para hacer un nuevo paquete
     deaths:
       description: editar muertes de jugadores
       reset:
@@ -141,6 +166,7 @@ commands:
       team-owner-format: "&a[name] [rank]"
       title: "========== Island Info ============"
       unowned: "&cSin propietario"
+      purge-protected: La isla está protegida por purga
     range:
       description: Comando de rango de la isla de administración
       display:
@@ -282,14 +308,25 @@ commands:
         move-to-island: "&c¡Muévete primero a una isla!"
         protecting: "&aRemover isla protegida"
         unprotecting: "&a Eliminación de la protección de purga"
+        description: Activar protección de purga de isla
       stop:
         no-purge-in-progress: "&c ¡No hay purga en progreso!"
+        description: Detener una purga en progreso
+        stopping: Deteniendo la purga
       unowned:
         unowned-islands: "&dEncontradas [number] islas"
+        description: Purga islas sin dueño - requiere confirmación
+      days-or-more: Debe tener al menos 1 día o más.
+      see-console-for-status: La purga comenzó. Ver consola para el estado
     switch:
       op: "&cOps siempre puede evitar la protección. Deop para usar el comando."
+      description: activar / desactivar bypass de protección
+      removing: Retirar la derivación de protección ...
+      adding: Adición de derivación de protección ...
     settings:
       parameters: "[player]"
+      description: configuración del sistema abierto o configuración de la isla para
+        el jugador
   bentobox:
     about:
       description: Mostrar derechos de autor e información de licencia
@@ -324,12 +361,14 @@ commands:
     locale:
       see-console: "&aCompruebe la consola para ver los comentarios. \n&aEste comando
         es tan spam que los comentarios no se pueden leer desde el chat ..."
+      description: realiza análisis de archivos de localización
     migrate:
       players: "&6 Jugadores emigrantes"
       names: "&6Migrando nombres"
       addons: "&6Migrando complementos"
       class: "&6Migrando[description]"
       migrated: "&AMigrado"
+      description: migra datos de una base de datos a otra
   confirmation:
     confirm: "&cVuelva a escribir el comando antes de &b[seconds]s&c para confirmar."
     previous-request-cancelled: "&6Previa solicitud de confirmación cancelada."
@@ -544,6 +583,11 @@ commands:
       the-following-islands: "&aLas siguientes islas están cerca:"
       syntax: "&6[direction]: &a[name]"
       no-neighbors: "&c¡No tienes islas vecinas inmediatas!"
+      description: muestra el nombre de las islas vecinas a tu alrededor
+      north: norte
+      south: Sur
+      east: Este
+      west: Oeste
   delay:
     previous-command-cancelled: "&cAnterior comando cancelado"
     stand-still: "&6¡No te muevas! Teletransportación en [seconds] segundos"
@@ -1106,11 +1150,15 @@ protection:
     TNT_DAMAGE:
       description: "&aPermitir carros de minas TNT y TNT \n&aromper bloques y daños
         y entidades."
+      name: TNT daños
     TNT_PRIMING:
       description: "&a Evita el cebado de TNT. \n&a No anula la \n&aFlint y la protección
         de acero."
+      name: TNT cebado
+      hint: Sin cebado TNT
     WITHER_DAMAGE:
       description: "&aSi está activo, Withers puede \n&adañar bloques y jugadores"
+      name: Alternar el daño de marchitar
   locked: "&cEsta isla esta cerrada!"
   panel:
     flag-item:
