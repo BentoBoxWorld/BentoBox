@@ -22,10 +22,15 @@ public class MultiverseCoreHook extends Hook {
     }
 
     public void registerWorld(World world) {
-        String cmd1 = MULTIVERSE_IMPORT + world.getName() + " " + world.getEnvironment().name().toLowerCase() + " -g " + BentoBox.getInstance().getName();
+        // Only register generator if one is defined in the addon (is not null)
+        String generator = BentoBox.getInstance().getIWM().getAddon(world).map(gm -> gm.getDefaultWorldGenerator(world.getName(), "") != null).orElse(false) ? " -g " + BentoBox.getInstance().getName() : "";
+        String cmd1 = MULTIVERSE_IMPORT + world.getName() + " " + world.getEnvironment().name().toLowerCase() + generator;
         String cmd2 = MULTIVERSE_SET_GENERATOR + BentoBox.getInstance().getName() + " " + world.getName();
         Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), cmd1);
-        Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), cmd2);
+        if (!generator.isEmpty()) {
+            // Register the generator
+            Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), cmd2);
+        }
     }
 
     @Override
