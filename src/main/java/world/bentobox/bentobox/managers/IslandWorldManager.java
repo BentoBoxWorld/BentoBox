@@ -47,12 +47,12 @@ public class IslandWorldManager {
 
     public void registerWorldsToMultiverse() {
         gameModes.values().stream().distinct().forEach(gm -> {
-            registerToMultiverse(gm.getOverWorld());
-            if (gm.getWorldSettings().isNetherGenerate() && gm.getWorldSettings().isNetherIslands()) {
-                registerToMultiverse(gm.getNetherWorld());
+            registerToMultiverse(gm.getOverWorld(), true);
+            if (gm.getWorldSettings().isNetherGenerate()) {
+                registerToMultiverse(gm.getNetherWorld(), gm.getWorldSettings().isNetherIslands());
             }
-            if (gm.getWorldSettings().isEndGenerate() && gm.getWorldSettings().isEndIslands()) {
-                registerToMultiverse(gm.getEndWorld());
+            if (gm.getWorldSettings().isEndGenerate()) {
+                registerToMultiverse(gm.getEndWorld(), gm.getWorldSettings().isEndIslands());
             }
         });
     }
@@ -61,14 +61,15 @@ public class IslandWorldManager {
      * Registers a world with Multiverse if Multiverse is available.
      *
      * @param world the World to register
+     * @param islandWorld true if this is an island world
      */
-    private void registerToMultiverse(@NonNull World world) {
+    private void registerToMultiverse(@NonNull World world, boolean islandWorld) {
         if (plugin.getHooks() != null) {
             plugin.getHooks().getHook("Multiverse-Core").ifPresent(hook -> {
                 if (Bukkit.isPrimaryThread()) {
-                    ((MultiverseCoreHook) hook).registerWorld(world);
+                    ((MultiverseCoreHook) hook).registerWorld(world, islandWorld);
                 } else {
-                    Bukkit.getScheduler().runTask(plugin, () -> ((MultiverseCoreHook) hook).registerWorld(world));
+                    Bukkit.getScheduler().runTask(plugin, () -> ((MultiverseCoreHook) hook).registerWorld(world, islandWorld));
                 }
             });
         }
@@ -151,7 +152,7 @@ public class IslandWorldManager {
         // Add worlds to map
         gameModes.put(world, gameMode);
         // Call Multiverse
-        registerToMultiverse(world);
+        registerToMultiverse(world, true);
         if (settings.isNetherGenerate()) {
             if (!Bukkit.getAllowNether()) {
                 // Warn the users that players might not be able to teleport to these worlds later on
@@ -162,7 +163,7 @@ public class IslandWorldManager {
 
             gameModes.put(gameMode.getNetherWorld(), gameMode);
             if (settings.isNetherIslands()) {
-                registerToMultiverse(gameMode.getNetherWorld());
+                registerToMultiverse(gameMode.getNetherWorld(), true);
             }
         }
         if (settings.isEndGenerate()) {
@@ -174,8 +175,8 @@ public class IslandWorldManager {
             }
 
             gameModes.put(gameMode.getEndWorld(), gameMode);
-            if (settings.isEndGenerate()) {
-                registerToMultiverse(gameMode.getEndWorld());
+            if (settings.isEndIslands()) {
+                registerToMultiverse(gameMode.getEndWorld(), true);
             }
         }
 

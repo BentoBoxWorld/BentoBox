@@ -21,14 +21,27 @@ public class MultiverseCoreHook extends Hook {
         super("Multiverse-Core", Material.COMPASS);
     }
 
-    public void registerWorld(World world) {
-        // Only register generator if one is defined in the addon (is not null)
-        String generator = BentoBox.getInstance().getIWM().getAddon(world).map(gm -> gm.getDefaultWorldGenerator(world.getName(), "") != null).orElse(false) ? " -g " + BentoBox.getInstance().getName() : "";
-        String cmd1 = MULTIVERSE_IMPORT + world.getName() + " " + world.getEnvironment().name().toLowerCase() + generator;
-        String cmd2 = MULTIVERSE_SET_GENERATOR + BentoBox.getInstance().getName() + " " + world.getName();
-        Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), cmd1);
-        if (!generator.isEmpty()) {
-            // Register the generator
+    /**
+     * Register the world with Multiverse
+     * @param world - world to register
+     * @param islandWorld - if true, then this is an island world
+     */
+    public void registerWorld(World world, boolean islandWorld) {
+        if (islandWorld) {
+            // Only register generator if one is defined in the addon (is not null)
+            String generator = BentoBox.getInstance().getIWM().getAddon(world).map(gm -> gm.getDefaultWorldGenerator(world.getName(), "") != null).orElse(false) ? " -g " + BentoBox.getInstance().getName() : "";
+            String cmd1 = MULTIVERSE_IMPORT + world.getName() + " " + world.getEnvironment().name().toLowerCase() + generator;
+            String cmd2 = MULTIVERSE_SET_GENERATOR + BentoBox.getInstance().getName() + " " + world.getName();
+            Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), cmd1);
+            if (!generator.isEmpty()) {
+                // Register the generator
+                Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), cmd2);
+            }
+        } else {
+            // Set the generator to null - this will remove any previous registration
+            String cmd1 = MULTIVERSE_IMPORT + world.getName() + " " + world.getEnvironment().name().toLowerCase();
+            String cmd2 = MULTIVERSE_SET_GENERATOR + "null " + world.getName();
+            Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), cmd1);
             Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), cmd2);
         }
     }
