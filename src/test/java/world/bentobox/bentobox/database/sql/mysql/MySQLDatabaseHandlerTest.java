@@ -344,7 +344,7 @@ public class MySQLDatabaseHandlerTest {
         when(ps.executeQuery()).thenReturn(resultSet);
         when(resultSet.next()).thenReturn(false);
         assertFalse(handler.objectExists("hello"));
-        verify(connection).prepareStatement("CREATE TABLE IF NOT EXISTS `world.bentobox.bentobox.database.objects.Island` (json JSON, uniqueId VARCHAR(255) GENERATED ALWAYS AS (json->\"$.uniqueId\"), UNIQUE INDEX i (uniqueId) )");
+        verify(connection).prepareStatement("CREATE TABLE IF NOT EXISTS `world.bentobox.bentobox.database.objects.Island` (json JSON, uniqueId VARCHAR(255) GENERATED ALWAYS AS (json->\"$.uniqueId\"), UNIQUE INDEX i (uniqueId) ) ENGINE = INNODB");
         verify(ps).executeQuery();
         verify(ps).setString(1, "\"hello\"");
     }
@@ -360,7 +360,7 @@ public class MySQLDatabaseHandlerTest {
         when(resultSet.next()).thenReturn(true);
         when(resultSet.getBoolean(eq(1))).thenReturn(false);
         assertFalse(handler.objectExists("hello"));
-        verify(connection).prepareStatement("CREATE TABLE IF NOT EXISTS `world.bentobox.bentobox.database.objects.Island` (json JSON, uniqueId VARCHAR(255) GENERATED ALWAYS AS (json->\"$.uniqueId\"), UNIQUE INDEX i (uniqueId) )");
+        verify(connection).prepareStatement("CREATE TABLE IF NOT EXISTS `world.bentobox.bentobox.database.objects.Island` (json JSON, uniqueId VARCHAR(255) GENERATED ALWAYS AS (json->\"$.uniqueId\"), UNIQUE INDEX i (uniqueId) ) ENGINE = INNODB");
         verify(ps).executeQuery();
         verify(ps).setString(1, "\"hello\"");
     }
@@ -376,7 +376,7 @@ public class MySQLDatabaseHandlerTest {
         when(resultSet.next()).thenReturn(true);
         when(resultSet.getBoolean(eq(1))).thenReturn(true);
         assertTrue(handler.objectExists("hello"));
-        verify(connection).prepareStatement("CREATE TABLE IF NOT EXISTS `world.bentobox.bentobox.database.objects.Island` (json JSON, uniqueId VARCHAR(255) GENERATED ALWAYS AS (json->\"$.uniqueId\"), UNIQUE INDEX i (uniqueId) )");
+        verify(connection).prepareStatement("CREATE TABLE IF NOT EXISTS `world.bentobox.bentobox.database.objects.Island` (json JSON, uniqueId VARCHAR(255) GENERATED ALWAYS AS (json->\"$.uniqueId\"), UNIQUE INDEX i (uniqueId) ) ENGINE = INNODB");
         verify(ps).executeQuery();
         verify(ps).setString(1, "\"hello\"");
     }
@@ -440,7 +440,7 @@ public class MySQLDatabaseHandlerTest {
     @Test
     public void testMySQLDatabaseHandlerCreateSchema() throws SQLException {
         verify(dbConn).createConnection(any());
-        verify(connection).prepareStatement("CREATE TABLE IF NOT EXISTS `world.bentobox.bentobox.database.objects.Island` (json JSON, uniqueId VARCHAR(255) GENERATED ALWAYS AS (json->\"$.uniqueId\"), UNIQUE INDEX i (uniqueId) )");
+        verify(connection).prepareStatement("CREATE TABLE IF NOT EXISTS `world.bentobox.bentobox.database.objects.Island` (json JSON, uniqueId VARCHAR(255) GENERATED ALWAYS AS (json->\"$.uniqueId\"), UNIQUE INDEX i (uniqueId) ) ENGINE = INNODB");
     }
 
     /**
