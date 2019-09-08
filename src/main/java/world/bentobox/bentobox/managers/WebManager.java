@@ -75,7 +75,7 @@ public class WebManager {
                     plugin.log("Could not connect to GitHub.");
                 }
             } catch (Exception e) {
-                plugin.logError("An error occurred when downloading data from GitHub...");
+                plugin.logError("An unhandled exception occurred when downloading data from GitHub...");
                 plugin.logStacktrace(e);
             }
             
