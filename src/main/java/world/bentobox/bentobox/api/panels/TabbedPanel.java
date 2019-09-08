@@ -85,7 +85,7 @@ public class TabbedPanel extends Panel implements PanelListener {
 
         // Remove any tabs that have no items, if required
         if (tpb.isHideIfEmpty()) {
-            tpb.getTabs().values().removeIf(t -> !t.equals(tab) && !t.getPanelItems().stream().anyMatch(Objects::nonNull));
+            tpb.getTabs().values().removeIf(t -> !t.equals(tab) && t.getPanelItems().stream().noneMatch(Objects::nonNull));
         }
 
         // Set up the tabbed header

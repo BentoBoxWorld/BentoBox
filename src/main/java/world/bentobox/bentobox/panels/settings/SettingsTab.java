@@ -36,7 +36,8 @@ import world.bentobox.bentobox.lists.Flags;
  */
 public class SettingsTab implements Tab, ClickHandler {
 
-    protected static final String PROTECTION_PANEL = "protection.panel.";
+    private static final String PROTECTION_PANEL = "protection.panel.";
+    private static final String CLICK_TO_SWITCH = PROTECTION_PANEL + "mode.click-to-switch";
     protected BentoBox plugin = BentoBox.getInstance();
     protected Flag.Type type;
     protected User user;
@@ -138,7 +139,7 @@ public class SettingsTab implements Tab, ClickHandler {
             icons.put(7, new PanelItemBuilder().icon(Material.GOLD_INGOT)
                     .name(user.getTranslation(PROTECTION_PANEL + "mode.advanced.name"))
                     .description(user.getTranslation(PROTECTION_PANEL + "mode.advanced.description"), "",
-                            user.getTranslation(PROTECTION_PANEL + "mode.click-to-switch",
+                            user.getTranslation(CLICK_TO_SWITCH,
                                     TextVariables.NEXT, user.getTranslation(PROTECTION_PANEL + "mode.expert.name")))
                     .clickHandler(this)
                     .build());
@@ -147,7 +148,7 @@ public class SettingsTab implements Tab, ClickHandler {
             icons.put(7, new PanelItemBuilder().icon(Material.NETHER_BRICK)
                     .name(user.getTranslation(PROTECTION_PANEL + "mode.expert.name"))
                     .description(user.getTranslation(PROTECTION_PANEL + "mode.expert.description"), "",
-                            user.getTranslation(PROTECTION_PANEL + "mode.click-to-switch",
+                            user.getTranslation(CLICK_TO_SWITCH,
                                     TextVariables.NEXT, user.getTranslation(PROTECTION_PANEL + "mode.basic.name")))
                     .clickHandler(this)
                     .build());
@@ -156,7 +157,7 @@ public class SettingsTab implements Tab, ClickHandler {
             icons.put(7, new PanelItemBuilder().icon(Material.IRON_INGOT)
                     .name(user.getTranslation(PROTECTION_PANEL + "mode.basic.name"))
                     .description(user.getTranslation(PROTECTION_PANEL + "mode.basic.description"), "",
-                            user.getTranslation(PROTECTION_PANEL + "mode.click-to-switch",
+                            user.getTranslation(CLICK_TO_SWITCH,
                                     TextVariables.NEXT, user.getTranslation(PROTECTION_PANEL + "mode.advanced.name")))
                     .clickHandler(this)
                     .build());
