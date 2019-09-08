@@ -6,6 +6,7 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 
+import com.google.gson.JsonParseException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
@@ -92,36 +93,49 @@ public class WebManager {
 
             // Register the tags translations in the locales
             if (!tagsContent.isEmpty()) {
-                JsonObject tags = new JsonParser().parse(tagsContent).getAsJsonObject();
-                tags.entrySet().forEach(entry -> plugin.getLocalesManager().getLanguages().values().forEach(locale -> {
-                    JsonElement translation = entry.getValue().getAsJsonObject().get(locale.toLanguageTag());
-                    if (translation != null) {
-                        locale.set("catalog.tags." + entry.getKey(), translation.getAsString());
-                    }
-                }));
+                try {
+                    JsonObject tags = new JsonParser().parse(tagsContent).getAsJsonObject();
+                    tags.entrySet().forEach(entry -> plugin.getLocalesManager().getLanguages().values().forEach(locale -> {
+                        JsonElement translation = entry.getValue().getAsJsonObject().get(locale.toLanguageTag());
+                        if (translation != null) {
+                            locale.set("catalog.tags." + entry.getKey(), translation.getAsString());
+                        }
+                    }));
+                } catch (JsonParseException e) {
+                    plugin.log("Could not update the Catalog Tags: the gathered JSON data is malformed.");
+                }
             }
 
             // Register the topics translations in the locales
             if (!topicsContent.isEmpty()) {
-                JsonObject topics = new JsonParser().parse(topicsContent).getAsJsonObject();
-                topics.entrySet().forEach(entry -> plugin.getLocalesManager().getLanguages().values().forEach(locale -> {
-                    JsonElement translation = entry.getValue().getAsJsonObject().get(locale.toLanguageTag());
-                    if (translation != null) {
-                        locale.set("catalog.topics." + entry.getKey(), translation.getAsString());
-                    }
-                }));
+                try {
+                    JsonObject topics = new JsonParser().parse(topicsContent).getAsJsonObject();
+                    topics.entrySet().forEach(entry -> plugin.getLocalesManager().getLanguages().values().forEach(locale -> {
+                        JsonElement translation = entry.getValue().getAsJsonObject().get(locale.toLanguageTag());
+                        if (translation != null) {
+                            locale.set("catalog.topics." + entry.getKey(), translation.getAsString());
+                        }
+                    }));
+                } catch (JsonParseException e) {
+                    plugin.log("Could not update the Catalog Topics: the gathered JSON data is malformed.");
+                }
             }
 
             // Register the catalog data
             if (!catalogContent.isEmpty()) {
-                if (clearCache) {
-                    this.addonsCatalog.clear();
-                    this.gamemodesCatalog.clear();
-                }
+                try {
+                    JsonObject catalog = new JsonParser().parse(catalogContent).getAsJsonObject();
 
-                JsonObject catalog = new JsonParser().parse(catalogContent).getAsJsonObject();
-                catalog.getAsJsonArray("gamemodes").forEach(gamemode -> gamemodesCatalog.add(new CatalogEntry(gamemode.getAsJsonObject())));
-                catalog.getAsJsonArray("addons").forEach(addon -> addonsCatalog.add(new CatalogEntry(addon.getAsJsonObject())));
+                    if (clearCache) {
+                        this.addonsCatalog.clear();
+                        this.gamemodesCatalog.clear();
+                    }
+
+                    catalog.getAsJsonArray("gamemodes").forEach(gamemode -> gamemodesCatalog.add(new CatalogEntry(gamemode.getAsJsonObject())));
+                    catalog.getAsJsonArray("addons").forEach(addon -> addonsCatalog.add(new CatalogEntry(addon.getAsJsonObject())));
+                } catch (JsonParseException e) {
+                    plugin.log("Could not update the Catalog content: the gathered JSON data is malformed.");
+                }
             }
         });
     }
