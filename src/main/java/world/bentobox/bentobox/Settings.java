@@ -162,17 +162,19 @@ public class Settings implements ConfigObject {
     @ConfigEntry(path = "island.clear-radius", since = "1.6.0")
     private int clearRadius = 5;
 
-    @ConfigComment("Number of blocks to paste per tick when pasting blueprints")
-    @ConfigComment("Smaller values will help reduce noticeable lag but will make pasting take longer")
+    @ConfigComment("Number of blocks to paste per tick when pasting blueprints.")
+    @ConfigComment("Smaller values will help reduce noticeable lag but will make pasting take slightly longer.")
+    @ConfigComment("On the contrary, greater values will make pasting take less time, but this benefit is quickly severely impacted by the")
+    @ConfigComment("resulting amount of chunks that must be loaded to fulfill the process, which often causes the server to hang out.")
     @ConfigEntry(path = "island.paste-speed")
-    private int pasteSpeed = 1000;
+    private int pasteSpeed = 128;
 
     @ConfigComment("Number of chunks per world to regenerate per tick.")
     @ConfigComment("If there is a nether and end then 3x this number will be regenerated per tick.")
     @ConfigComment("Smaller values will help reduce noticeable lag but will make deleting take longer.")
     @ConfigComment("A setting of 0 will leave island blocks (not recommended).")
     @ConfigEntry(path = "island.delete-speed", since = "1.7.0")
-    private int deleteSpeed = 5;
+    private int deleteSpeed = 1;
 
     // Automated ownership transfer
     @ConfigComment("Toggles the automated ownership transfer.")
