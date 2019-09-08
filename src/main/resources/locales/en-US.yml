@@ -426,6 +426,7 @@ commands:
         &cAre you sure you want to do this?
         &cAll island members will be kicked from the island, you will have to reinvite them afterwards.
         &cThere is no going back: once your current island is deleted, there will be &lno &r&cway to retrieve it later on.
+      kicked-from-island: "&cYou are kicked from your island in [gamemode] because the owner is resetting it."
     sethome:
       description: "set your home teleport point"
       must-be-on-your-island: "&cYou must be on your island to set home!"
@@ -520,7 +521,7 @@ commands:
       kick:
         description: "remove a member from your island"
         parameters: "<player>"
-        owner-kicked: "&cThe owner kicked you from the island!"
+        owner-kicked: "&cThe owner kicked you from the island in [gamemode]!"
         cannot-kick: "&cYou cannot kick yourself!"
         success: "&b[name] &ahas been kicked from your island."
       demote:
