@@ -18,6 +18,7 @@ import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.Notifier;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.commands.BentoBoxCommand;
+import world.bentobox.bentobox.database.DatabaseSetup;
 import world.bentobox.bentobox.hooks.DynmapHook;
 import world.bentobox.bentobox.hooks.MultiverseCoreHook;
 import world.bentobox.bentobox.hooks.VaultHook;
@@ -217,6 +218,14 @@ public class BentoBox extends JavaPlugin {
             // Fire plugin ready event - this should go last after everything else
             isLoaded = true;
             Bukkit.getServer().getPluginManager().callEvent(new BentoBoxReadyEvent());
+
+            if (getSettings().getDatabaseType().equals(DatabaseSetup.DatabaseType.YAML)) {
+                logWarning("*** You're still using YAML database ! ***");
+                logWarning("This database type is being deprecated from BentoBox as some official addons encountered difficulties supporting it correctly.");
+                logWarning("You should switch ASAP to an alternative database type. Please refer to the comments in BentoBox's config.yml.");
+                logWarning("There is NO warranty YAML database will remain properly supported in the following updates, and its usage should as such be considered a non-viable situation.");
+                logWarning("*** *** *** *** *** *** *** *** *** *** ***");
+            }
         });
     }
 

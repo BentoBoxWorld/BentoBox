@@ -75,7 +75,7 @@ public class IslandTeamKickCommand extends ConfirmableCommand {
 
     private void kick(User user, UUID targetUUID) {
         User target = User.getInstance(targetUUID);
-        target.sendMessage("commands.island.team.kick.owner-kicked");
+        target.sendMessage("commands.island.team.kick.owner-kicked", "[gamemode]", getAddon().getDescription().getName());
         Island oldIsland = getIslands().getIsland(getWorld(), targetUUID);
         getIslands().removePlayer(getWorld(), targetUUID);
         // Remove money inventory etc.

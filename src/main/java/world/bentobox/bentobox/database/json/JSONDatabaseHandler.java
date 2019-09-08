@@ -62,8 +62,7 @@ public class JSONDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
                     list.add(object);
                 } else {
                     plugin.logError("JSON file created a null object: " + file.getPath());
-                    // Required to keep OS file handlers low and not rely on GC NOSONAR
-                    reader.close();
+                    reader.close(); // NOSONAR Required to keep OS file handlers low and not rely on GC
                 }
             } catch (FileNotFoundException e) {
                 plugin.logError("Could not load file '" + file.getName() + "': File not found.");

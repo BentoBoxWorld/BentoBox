@@ -457,11 +457,15 @@ commands:
       west: Rietumos
     reset:
       description: pārstartē salu vai izdzēš iepriekšējo
-      must-remove-members: "&cTev nepieciešams izmest visus spēlētājus no komandas
-        pirms vari pārstartēt salu (/island team kick <spēlētājs>)."
       none-left: "&cTu esi sasniedzis restartu limitu!"
       parameters: "<shēma>"
-      resets-left: "&cTev palikuši [number] restarti"
+      resets-left: "&cTev ir palikušas &b[number] &catstatīšanas reizes"
+      confirmation: |-
+        &cVai esi pārliecināts, ka vēlies to darīt?
+        &cVisi salas biedri tiks izmesti no komandas, nāksies viņus aicināt vēlreiz.
+        &cŠai darbībai nav atpakaļceļa. Salu nevarēs atjaunot!
+      kicked-from-island: "&cTu esi izmests no salas iekš [gamemode], jo tās īpašnieks
+        savu salu atstatīja."
     resetname:
       description: noņemt salas nosaukumu
     sethome:
@@ -481,6 +485,7 @@ commands:
       name-too-long: "&cPārāk garšs. Maksimālais izmērs ir [number] simboli."
       name-too-short: "&cPārāk īss. Minimālais izmērs ir [number] simboli."
       parameters: "<nosaukums>"
+      name-already-exists: "&cSala ar šādu nosaukumu jau eksistē šajā spēles režīmā."
     settings:
       description: attaino salas iestatījumus
     spawn:
@@ -542,9 +547,9 @@ commands:
       kick:
         cannot-kick: "&cTu nevari izmest pats sevi!"
         description: izmest spēlētāju no tavas salas
-        owner-kicked: "&cSalas īpašnieks izmeta tevi no salas!"
         parameters: "<spēlētājs>"
         success: "&b[name] &atika izmests no šīs salas."
+        owner-kicked: "&cĪpašnieks jūs izmeta no savas salas iekš [gamemode]!"
       leave:
         cannot-leave: "&cĪpašnieks nevar pamest komandu! Nodod salu citam vai izmet
           visus no komandas."
@@ -1223,6 +1228,14 @@ protection:
         &aĻauj katlem saplēst blokus
         &aun bojāt radības.
       name: Pārslēgt
+    SPAWNER_SPAWN_EGGS:
+      description: |-
+        &aAtļauj mainīt radību iekš radīšanas
+        &ablokiem lietojot radīšanas olas.
+      name: Radīšanas olas uz radīšanas blokiem
+      hint: 'mainīt radību radīšanas bloka radību izmantojot radīšanas olu nav atļauta
+
+'
   locked: "&cŠī sala ir slēgta!"
   panel:
     flag-item:
