@@ -1,4 +1,4 @@
-# BentoBox Configuration 1.6.0
+# BentoBox Configuration 1.7.0
 # This config file is dynamic and is updated right after BentoBox loaded its settings from it.
 # You can edit it while the server is online and you can do '/bbox reload' to take the changes into account.
 # However, it is a better practice to edit this file while the server is offline.
@@ -82,21 +82,31 @@ island:
     # Time in seconds that players have to stand still before teleport commands activate, e.g. island go.
     time: 0
   name:
-    # These set the minimum and maximum size of a name.
+    # Sets the minimum length an island custom name is required to have.
     min-length: 4
+    # Sets the maximum length an island custom name cannot exceed.
     max-length: 20
+    # Requires island custom names to be unique in the gamemode the island is in.
+    # As a result, only one island per gamemode are allowed to share the same name.
+    # Note that island names are purely cosmetics and are not used as a way to programmatically identify islands.
+    # Added since 1.7.0.
+    uniqueness: false
   # Remove hostile mob on teleport box radius
   # If hostile mobs are cleared on player teleport, then this sized box will be cleared
   # around the player. e.g. 5 means a 10 x 10 x 10 box around the player
   # Be careful not to make this too big. Does not cover standard nether or end teleports.
+  # Added since 1.6.0.
   clear-radius: 5
-  # Number of blocks to paste per tick when pasting blueprints
-  # Smaller values will help reduce noticeable lag but will make pasting take longer
-  paste-speed: 1000
-  # Number of chunks per world to regenerate per tick. If there is a nether and end then
-  # 3x this number will be regenerated
+  # Number of blocks to paste per tick when pasting blueprints.
+  # Smaller values will help reduce noticeable lag but will make pasting take slightly longer.
+  # On the contrary, greater values will make pasting take less time, but this benefit is quickly severely impacted by the
+  # resulting amount of chunks that must be loaded to fulfill the process, which often causes the server to hang out.
+  paste-speed: 128
+  # Number of chunks per world to regenerate per tick.
+  # If there is a nether and end then 3x this number will be regenerated per tick.
   # Smaller values will help reduce noticeable lag but will make deleting take longer.
   # A setting of 0 will leave island blocks (not recommended).
+  # Added since 1.7.0.
   delete-speed: 1
 web:
   # BentoBox uses bStats.org to get global data about the plugin to help improving it.
