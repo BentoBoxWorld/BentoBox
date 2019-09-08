@@ -36,7 +36,7 @@ import world.bentobox.bentobox.lists.Flags;
  */
 public class SettingsTab implements Tab, ClickHandler {
 
-    private static final String PROTECTION_PANEL = "protection.panel.";
+    protected static final String PROTECTION_PANEL = "protection.panel.";
     private static final String CLICK_TO_SWITCH = PROTECTION_PANEL + "mode.click-to-switch";
     protected BentoBox plugin = BentoBox.getInstance();
     protected Flag.Type type;
