@@ -32,17 +32,22 @@ public class DynmapHook extends Hook {
 
     @Override
     public boolean hook() {
-        DynmapAPI dynmapAPI = (DynmapAPI) getPlugin();
-        MarkerAPI markers = dynmapAPI.getMarkerAPI();
+        try {
+            DynmapAPI dynmapAPI = (DynmapAPI) getPlugin();
 
-        if (markers == null) {
+            MarkerAPI markers = dynmapAPI.getMarkerAPI();
+
+            if (markers == null) {
+                return false;
+            }
+            markerAPI = markers;
+
+            BentoBox.getInstance().getAddonsManager().getGameModeAddons().forEach(this::registerMarkerSet);
+
+            return true;
+        } catch (Exception e) {
             return false;
         }
-        markerAPI = markers;
-
-        BentoBox.getInstance().getAddonsManager().getGameModeAddons().forEach(this::registerMarkerSet);
-
-        return true;
     }
 
     public void registerMarkerSet(@NonNull GameModeAddon addon) {
@@ -79,6 +84,6 @@ public class DynmapHook extends Hook {
 
     @Override
     public String getFailureCause() {
-        return "the version of dynmap you're using is incompatible with this hook";
+        return "the version of dynmap you're using is incompatible with this hook. Use a newer version.";
     }
 }
