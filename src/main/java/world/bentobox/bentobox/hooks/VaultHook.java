@@ -23,12 +23,16 @@ public class VaultHook extends Hook {
 
     @Override
     public boolean hook() {
-        RegisteredServiceProvider<Economy> rsp = Bukkit.getServer().getServicesManager().getRegistration(Economy.class);
-        if (rsp == null) {
+        try {
+            RegisteredServiceProvider<Economy> rsp = Bukkit.getServer().getServicesManager().getRegistration(Economy.class);
+            if (rsp == null) {
+                return false;
+            }
+            economy = rsp.getProvider();
+            return true;
+        } catch (Exception e) {
             return false;
         }
-        economy = rsp.getProvider();
-        return true;
     }
 
     @Override
