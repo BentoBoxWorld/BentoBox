@@ -250,8 +250,9 @@ public class AddonsManager {
      * @return Optional addon object
      */
     @NonNull
-    public Optional<Addon> getAddonByName(@NonNull String name){
-        return addons.stream().filter(a -> a.getDescription().getName().equalsIgnoreCase(name)).findFirst();
+    @SuppressWarnings("unchecked")
+    public <T extends Addon> Optional<T> getAddonByName(@NonNull String name){
+        return addons.stream().filter(a -> a.getDescription().getName().equalsIgnoreCase(name)).map(a -> (T) a).findFirst();
     }
 
     @NonNull
