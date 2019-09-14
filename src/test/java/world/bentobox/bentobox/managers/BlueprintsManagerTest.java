@@ -218,7 +218,7 @@ public class BlueprintsManagerTest {
         when(addon.getFile()).thenReturn(dataFolder);
         BlueprintsManager bpm = new BlueprintsManager(plugin);
         bpm.extractDefaultBlueprints(addon);
-        verify(plugin).logError(eq("Could not load blueprint files from addon jar dataFolder (Is a directory)"));
+        verify(plugin).logError(Mockito.startsWith("Could not load blueprint files from addon jar dataFolder"));
     }
 
     /**
