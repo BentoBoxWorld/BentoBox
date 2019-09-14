@@ -15,12 +15,11 @@
 
     <developers>
         <developer>
-            <name>Florian Cuny</name>
             <id>Poslovitch</id>
             <email>poslovitch@bentobox.world</email>
             <timezone>1</timezone>
             <roles>
-                <role>Project manager</role>
+                <role>Project Manager</role>
                 <role>Developer</role>
             </roles>
         </developer>
@@ -73,8 +72,10 @@
         <bstats.version>1.5</bstats.version>
         <vault.version>1.7</vault.version>
         <placeholderapi.version>2.10.3</placeholderapi.version>
-        <mvdwplaceholderapi.version>2.5.1-SNAPSHOT</mvdwplaceholderapi.version>
-        <githubapi.version>1.0</githubapi.version>
+        <mvdwplaceholderapi.version>master-SNAPSHOT</mvdwplaceholderapi.version>
+        <githubapi.version>d5f5e0bbd8</githubapi.version>
+        <dynmap.version>3.0-SNAPSHOT</dynmap.version>
+        <worldedit.version>7.0.0</worldedit.version>
         <!-- Revision variable removes warning about dynamic version -->
         <revision>${build.version}-SNAPSHOT</revision>
         <!-- Do not change unless you want different name for local builds. -->
@@ -233,26 +234,26 @@
                  thus making its repository unusable. -->
             <groupId>com.github.Prouser123-forks</groupId>
             <artifactId>MVdWPlaceholderAPI</artifactId>
-            <version>master-SNAPSHOT</version>
+            <version>${mvdwplaceholderapi.version}</version>
         </dependency>
         <!-- Hooks -->
         <dependency>
             <groupId>us.dynmap</groupId>
             <artifactId>dynmap-api</artifactId>
-            <version>3.0-SNAPSHOT</version>
+            <version>${dynmap.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.sk89q.worldedit</groupId>
             <artifactId>worldedit-core</artifactId>
-            <version>7.0.0</version>
+            <version>${worldedit.version}</version>
             <scope>provided</scope>
         </dependency>
         <!-- Shaded APIs -->
         <dependency>
             <groupId>com.github.TheBusyBiscuit</groupId>
             <artifactId>GitHubWebAPI4Java</artifactId>
-            <version>d5f5e0bbd8</version>
+            <version>${githubapi.version}</version>
         </dependency>
 		<!-- Static analysis -->
 		<!-- We are using Eclipse's annotations.
