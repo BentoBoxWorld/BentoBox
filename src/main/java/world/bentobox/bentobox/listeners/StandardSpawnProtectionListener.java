@@ -17,6 +17,7 @@ import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.lists.Flags;
+import world.bentobox.bentobox.util.Util;
 
 /**
  * Handles protection of the standard Nether and/or End spawns.
@@ -74,7 +75,7 @@ public class StandardSpawnProtectionListener implements Listener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public boolean onExplosion(EntityExplodeEvent e) {
-        if (!plugin.getIWM().inWorld(e.getLocation())
+        if (!plugin.getIWM().inWorld(Util.getWorld(e.getLocation().getWorld()))
                 || plugin.getIWM().isIslandNether(e.getLocation().getWorld())
                 || plugin.getIWM().isIslandEnd(e.getLocation().getWorld())) {
             // Not used in island worlds
@@ -122,13 +123,9 @@ public class StandardSpawnProtectionListener implements Listener {
      * @return true if nothing needs to be done
      */
     private boolean noAction(@NonNull Player player) {
-        if (player.isOp()
-                || player.getWorld().getEnvironment().equals(World.Environment.NORMAL)
-                || !plugin.getIWM().inWorld(player.getLocation())) {
-            return true;
-        }
-        // Player is in an island world and in a nether or end
-        return (player.getWorld().getEnvironment().equals(World.Environment.NETHER) && plugin.getIWM().isNetherIslands(player.getWorld()))
-                || (player.getWorld().getEnvironment().equals(World.Environment.THE_END) && plugin.getIWM().isEndIslands(player.getWorld()));
+        return (player.isOp() || player.getWorld().getEnvironment().equals(World.Environment.NORMAL) 
+                || !plugin.getIWM().inWorld(Util.getWorld(player.getWorld()))
+                || (player.getWorld().getEnvironment().equals(World.Environment.NETHER) && plugin.getIWM().isNetherIslands(player.getWorld()))
+                || (player.getWorld().getEnvironment().equals(World.Environment.THE_END) && plugin.getIWM().isEndIslands(player.getWorld())));
     }
 }
