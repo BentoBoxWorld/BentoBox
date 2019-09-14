@@ -87,7 +87,7 @@ public class User {
      * @return user - user
      */
     @Nullable
-    public static User getInstance(UUID uuid) {
+    public static User getInstance(@Nullable UUID uuid) {
         if (uuid == null) {
             return null;
         }
