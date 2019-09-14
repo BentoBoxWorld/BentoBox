@@ -673,8 +673,9 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     /**
      * @return the addon
      */
-    public Addon getAddon() {
-        return addon;
+    @SuppressWarnings("unchecked")
+    public <T extends Addon> T getAddon() {
+        return (T) addon;
     }
 
     /**
