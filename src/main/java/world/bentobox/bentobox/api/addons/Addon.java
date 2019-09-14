@@ -418,4 +418,10 @@ public abstract class Addon {
     public boolean registerFlag(Flag flag) {
         return getPlugin().getFlagsManager().registerFlag(this, flag);
     }
+
+    /**
+     * Called when all addons have been loaded by BentoBox
+     * @since 1.8.0
+     */
+    public void allLoaded() {}
 }

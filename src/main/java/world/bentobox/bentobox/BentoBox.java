@@ -215,15 +215,17 @@ public class BentoBox extends JavaPlugin {
                     TextVariables.VERSION, instance.getDescription().getVersion(),
                     "[time]", String.valueOf(loadTime + enableTime));
 
-            // Fire plugin ready event - this should go last after everything else
+            // Tell all addons that everything is loaded
             isLoaded = true;
+            this.addonsManager.allLoaded();
+            // Fire plugin ready event - this should go last after everything else
             Bukkit.getServer().getPluginManager().callEvent(new BentoBoxReadyEvent());
 
             if (getSettings().getDatabaseType().equals(DatabaseSetup.DatabaseType.YAML)) {
                 logWarning("*** You're still using YAML database ! ***");
                 logWarning("This database type is being deprecated from BentoBox as some official addons encountered difficulties supporting it correctly.");
                 logWarning("You should switch ASAP to an alternative database type. Please refer to the comments in BentoBox's config.yml.");
-                logWarning("There is NO warranty YAML database will remain properly supported in the following updates, and its usage should as such be considered a non-viable situation.");
+                logWarning("There is NO guarantee YAML database will remain properly supported in the following updates, and its usage should as such be considered a non-viable situation.");
                 logWarning("*** *** *** *** *** *** *** *** *** *** ***");
             }
         });

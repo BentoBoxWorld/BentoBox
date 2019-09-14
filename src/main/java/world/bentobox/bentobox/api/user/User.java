@@ -293,7 +293,7 @@ public class User {
     public int getPermissionValue(String permissionPrefix, int defaultValue) {
         // If requester is console, then return the default value
         if (!isPlayer()) return defaultValue;
-        
+
         int value = defaultValue;
 
         // If there is a dot at the end of the permissionPrefix, remove it

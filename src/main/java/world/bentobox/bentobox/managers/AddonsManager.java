@@ -445,4 +445,12 @@ public class AddonsManager {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Notifies all addons that BentoBox has loaded all addons
+     * @since 1.8.0
+     */
+    public void allLoaded() {
+        addons.forEach(Addon::allLoaded);
+    }
+
 }
