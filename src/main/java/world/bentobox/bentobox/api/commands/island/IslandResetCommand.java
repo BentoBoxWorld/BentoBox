@@ -155,15 +155,17 @@ public class IslandResetCommand extends ConfirmableCommand {
          * Therefore, we need to do it manually.
          * Plus, a more specific team event (TeamDeleteEvent) is called by this method.
          */
-
         island.getMemberSet().forEach(memberUUID -> {
-            getIslands().removePlayer(getWorld(), memberUUID);
-            User member = User.getInstance(memberUUID);
 
-            // Send a "you're kicked" message if the member is not the island owner
+            User member = User.getInstance(memberUUID);
+            // Send a "you're kicked" message if the member is not the island owner (send before removing!)
             if (!memberUUID.equals(island.getOwner())) {
                 member.sendMessage("commands.island.reset.kicked-from-island", "[gamemode]", getAddon().getDescription().getName());
+            } else {
+                System.out.println(memberUUID);
             }
+            // Remove player
+            getIslands().removePlayer(getWorld(), memberUUID);
 
             // Remove money inventory etc.
             if (getIWM().isOnLeaveResetEnderChest(getWorld())) {
