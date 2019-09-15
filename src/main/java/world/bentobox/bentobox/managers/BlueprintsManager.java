@@ -143,6 +143,19 @@ public class BlueprintsManager {
     }
 
     /**
+     * Get the default blueprint bundle for game mode
+     * @param addon - game mode addon
+     * @return the default blueprint bundle or null if none
+     * @since 1.8.0
+     */
+    public BlueprintBundle getDefaultBlueprintBundle(@NonNull GameModeAddon addon) {
+        if (blueprintBundles.containsKey(addon)) {
+            return blueprintBundles.get(addon).stream().filter(bb -> bb.getUniqueId().equals(DEFAULT_BUNDLE_NAME)).findFirst().orElse(null);
+        }
+        return null;
+    }
+
+    /**
      * Returns a {@link File} instance of the blueprints folder of this {@link GameModeAddon}.
      *
      * @param addon the {@link GameModeAddon}

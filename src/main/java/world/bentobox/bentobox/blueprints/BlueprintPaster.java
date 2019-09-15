@@ -94,7 +94,7 @@ public class BlueprintPaster {
      * @param island - island related to this paste
      * @param task - task to run after pasting
      */
-    public BlueprintPaster(@NonNull BentoBox plugin, Blueprint bp, World world, Island island, Runnable task) {
+    public BlueprintPaster(@NonNull BentoBox plugin, @NonNull Blueprint bp, World world, Island island, Runnable task) {
         this.plugin = plugin;
         // Offset due to bedrock
         Vector off = bp.getBedrock() != null ? bp.getBedrock() : new Vector(0,0,0);
