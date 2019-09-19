@@ -3,6 +3,7 @@ package world.bentobox.bentobox.listeners.flags.worldsettings;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -47,7 +48,11 @@ public class WitherListenerTest {
     @Mock
     private Location location;
     @Mock
+    private Location location2;
+    @Mock
     private World world;
+    @Mock
+    private World world2;
     @Mock
     private IslandWorldManager iwm;
 
@@ -65,6 +70,8 @@ public class WitherListenerTest {
         BentoBox plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
         when(plugin.getIWM()).thenReturn(iwm);
+        when(iwm.inWorld(eq(world))).thenReturn(true);
+        when(iwm.inWorld(eq(location))).thenReturn(true);
         map = new HashMap<>();
         when(ws.getWorldFlags()).thenReturn(map);
         when(iwm.getWorldSettings(any())).thenReturn(ws);
@@ -73,6 +80,11 @@ public class WitherListenerTest {
         when(location.getBlockX()).thenReturn(0);
         when(location.getBlockY()).thenReturn(0);
         when(location.getBlockZ()).thenReturn(0);
+        
+        when(location2.getWorld()).thenReturn(world2);
+        when(location2.getBlockX()).thenReturn(0);
+        when(location2.getBlockY()).thenReturn(0);
+        when(location2.getBlockZ()).thenReturn(0);
 
         blocks = new ArrayList<>();
         for (int i = 0; i < 4; i++) {
@@ -108,6 +120,21 @@ public class WitherListenerTest {
         EntityExplodeEvent e = new EntityExplodeEvent(entity, location, blocks, 0);
         wl.onExplosion(e);
         assertTrue(blocks.isEmpty());
+    }
+
+    
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.WitherListener#onExplosion(org.bukkit.event.entity.EntityExplodeEvent)}.
+     */
+    @Test
+    public void testOnExplosionWitherWrongWorld() {
+        Entity entity = mock(Entity.class);
+        when(entity.getLocation()).thenReturn(location2);
+        when(entity.getWorld()).thenReturn(world2);
+        when(entity.getType()).thenReturn(EntityType.WITHER);
+        EntityExplodeEvent e = new EntityExplodeEvent(entity, location2, blocks, 0);
+        wl.onExplosion(e);
+        assertFalse(blocks.isEmpty());
     }
 
     /**
@@ -165,10 +192,29 @@ public class WitherListenerTest {
         when(entity.getType()).thenReturn(EntityType.WITHER);
         Block block = mock(Block.class);
         when(block.getLocation()).thenReturn(location);
+        when(block.getWorld()).thenReturn(world);
         BlockData blockData = mock(BlockData.class);
         EntityChangeBlockEvent e = new EntityChangeBlockEvent(entity, block, blockData);
         wl.onWitherChangeBlocks(e);
         assertTrue(e.isCancelled());
+    }
+    
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.WitherListener#WitherChangeBlocks(org.bukkit.event.entity.EntityChangeBlockEvent)}.
+     */
+    @Test
+    public void testWitherChangeBlocksWrongWorld() {
+        Entity entity = mock(Entity.class);
+        when(entity.getLocation()).thenReturn(location2);
+        when(entity.getWorld()).thenReturn(world2);
+        when(entity.getType()).thenReturn(EntityType.WITHER);
+        Block block = mock(Block.class);
+        when(block.getLocation()).thenReturn(location2);
+        when(block.getWorld()).thenReturn(world2);
+        BlockData blockData = mock(BlockData.class);
+        EntityChangeBlockEvent e = new EntityChangeBlockEvent(entity, block, blockData);
+        wl.onWitherChangeBlocks(e);
+        assertFalse(e.isCancelled());
     }
 
     /**
@@ -183,6 +229,7 @@ public class WitherListenerTest {
         when(entity.getType()).thenReturn(EntityType.WITHER);
         Block block = mock(Block.class);
         when(block.getLocation()).thenReturn(location);
+        when(block.getWorld()).thenReturn(world);
         BlockData blockData = mock(BlockData.class);
         EntityChangeBlockEvent e = new EntityChangeBlockEvent(entity, block, blockData);
         wl.onWitherChangeBlocks(e);
