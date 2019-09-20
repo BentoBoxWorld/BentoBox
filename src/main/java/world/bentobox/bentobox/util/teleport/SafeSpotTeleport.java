@@ -27,9 +27,9 @@ import world.bentobox.bentobox.util.Pair;
  */
 public class SafeSpotTeleport {
 
-    private static final int MAX_CHUNKS = 3;
+    private static final int MAX_CHUNKS = 6;
     private static final long SPEED = 1;
-    private static final int MAX_RADIUS = 200;
+    private static final int MAX_RADIUS = 50;
     private static final int MAX_HEIGHT = 235;
     private boolean notChecking;
     private BukkitTask task;
