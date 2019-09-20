@@ -117,7 +117,6 @@ public class PortalTeleportationListener implements Listener {
         new SafeSpotTeleport.Builder(plugin)
         .entity(e.getPlayer())
         .location(to)
-        .portal()
         .build();
         return true;
     }
