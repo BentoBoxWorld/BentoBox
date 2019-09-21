@@ -287,6 +287,7 @@ public class BlockInteractionListener extends FlagListener {
             checkIsland(e, player, loc, Flags.ITEM_FRAME);
             break;
         case LECTERN:
+        case SWEET_BERRY_BUSH:
             checkIsland(e, player, loc, Flags.BREAK_BLOCKS);
             break;
         default:
