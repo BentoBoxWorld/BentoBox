@@ -8,6 +8,7 @@ import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.api.panels.PanelItem;
@@ -22,13 +23,19 @@ public class PanelItemBuilder {
     private boolean playerHead;
     private boolean invisible;
 
-    public PanelItemBuilder icon(Material icon) {
-        this.icon = new ItemStack(icon);
+    /**
+     * Default icon if someone gives invalid material or item stack.
+     */
+    private final static ItemStack DEFAULT_ICON = new ItemStack(Material.PAPER);
+
+
+    public PanelItemBuilder icon(@NonNull Material icon) {
+        this.icon = icon == null ? DEFAULT_ICON : new ItemStack(icon);
         return this;
     }
 
-    public PanelItemBuilder icon(ItemStack icon) {
-        this.icon = icon;
+    public PanelItemBuilder icon(@NonNull ItemStack icon) {
+        this.icon = icon == null ? DEFAULT_ICON : icon;
         return this;
     }
 
