@@ -368,7 +368,7 @@ public class PlayersManager {
      */
     public int getDeaths(World world, UUID playerUUID) {
         addPlayer(playerUUID);
-        return playerCache.get(playerUUID).getDeaths(world);
+        return playerCache.get(playerUUID) == null ? 0 : playerCache.get(playerUUID).getDeaths(world);
     }
 
     /**
