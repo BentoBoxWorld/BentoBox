@@ -54,7 +54,6 @@ public class IslandTeamInviteRejectCommand extends CompositeCommand {
             }
         } else {
             // Someone typed /island reject and had not been invited
-            // TODO: make the error nicer if there are invites in other worlds
             user.sendMessage("commands.island.team.invite.errors.none-invited-you");
             return false;
         }

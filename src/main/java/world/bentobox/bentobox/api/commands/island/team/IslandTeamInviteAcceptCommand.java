@@ -91,7 +91,6 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
             if (island != null) {
                 getIslands().deleteIsland(island, true, user.getUniqueId());
             }
-            // TODO Set the cooldown
             // Reset deaths
             if (getIWM().isTeamJoinDeathReset(getWorld())) {
                 getPlayers().setDeaths(getWorld(), playerUUID, 0);
