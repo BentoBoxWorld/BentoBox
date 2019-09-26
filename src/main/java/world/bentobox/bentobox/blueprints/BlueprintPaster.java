@@ -18,16 +18,10 @@ import org.bukkit.block.CreatureSpawner;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.type.Sign;
 import org.bukkit.block.data.type.WallSign;
-import org.bukkit.entity.AbstractHorse;
-import org.bukkit.entity.Ageable;
-import org.bukkit.entity.ChestedHorse;
-import org.bukkit.entity.Horse;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Tameable;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
-import org.bukkit.material.Colorable;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
@@ -279,34 +273,8 @@ public class BlueprintPaster {
                 // Actually set the custom name
                 e.setCustomName(customName);
             }
-            if (e instanceof Colorable && k.getColor() != null) {
-                ((Colorable) e).setColor(k.getColor());
-            }
-            if (e instanceof Tameable && k.getTamed() != null) {
-                ((Tameable)e).setTamed(k.getTamed());
-            }
-            if (e instanceof ChestedHorse && k.getChest() != null) {
-                ((ChestedHorse)e).setCarryingChest(k.getChest());
-            }
-            if (e instanceof Ageable && k.getAdult() != null) {
-                if (k.getAdult()) {
-                    ((Ageable)e).setAdult();
-                } else {
-                    ((Ageable)e).setBaby();
-                }
-            }
-            if (e instanceof AbstractHorse) {
-                AbstractHorse horse = (AbstractHorse)e;
-                if (k.getDomestication() != null) horse.setDomestication(k.getDomestication());
-                if (k.getInventory() != null) {
-                    k.getInventory().forEach(horse.getInventory()::setItem);
-                }
-            }
-            if (e instanceof Horse && k.getStyle() != null) {
-                ((Horse)e).setStyle(k.getStyle());
-            }
+            k.configureEntity(e);
         });
-
     }
 
     /**
