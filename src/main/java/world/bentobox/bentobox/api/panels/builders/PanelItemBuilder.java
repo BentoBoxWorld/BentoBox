@@ -25,7 +25,7 @@ public class PanelItemBuilder {
     /**
      * Default icon if someone gives invalid material or item stack.
      */
-    private final static ItemStack DEFAULT_ICON = new ItemStack(Material.PAPER);
+    private static final ItemStack DEFAULT_ICON = new ItemStack(Material.PAPER);
 
 
     public PanelItemBuilder icon(@Nullable Material icon) {
