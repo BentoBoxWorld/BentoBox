@@ -59,35 +59,26 @@ public class WebManager {
             if (plugin.getSettings().isLogGithubDownloadData()) {
                 plugin.log("Downloading data from GitHub...");
             }
-            GitHubRepository repo = new GitHubRepository(gh, "BentoBoxWorld/weblink");
+            GitHubRepository repo;
+            try {
+                repo = new GitHubRepository(gh, "BentoBoxWorld/weblink");
+            } catch (Exception e) {
+                plugin.logError("An unhandled exception occurred when trying to connect to GitHub...");
+                plugin.logStacktrace(e);
 
-            String tagsContent = "";
-            String topicsContent = "";
-            String catalogContent = "";
+                // Stop the execution of the method right away.
+                return;
+            }
 
             // Downloading the data
-            try {
-                tagsContent = repo.getContent("catalog/tags.json").getContent().replaceAll("\\n", "");
-                topicsContent = repo.getContent("catalog/topics.json").getContent().replaceAll("\\n", "");
-                catalogContent = repo.getContent("catalog/catalog.json").getContent().replaceAll("\\n", "");
-            } catch (IllegalAccessException e) {
-                if (plugin.getSettings().isLogGithubDownloadData()) {
-                    plugin.log("Could not connect to GitHub.");
-                }
-            } catch (Exception e) {
-                plugin.logError("An unhandled exception occurred when downloading data from GitHub...");
-                plugin.logStacktrace(e);
-            }
+            String tagsContent = getContent(repo, "catalog/tags.json");
+            String topicsContent = getContent(repo, "catalog/topics.json");
+            String catalogContent = getContent(repo, "catalog/catalog.json");
             
             // People were concerned that the download took ages, so we need to tell them it's over now.
             if (plugin.getSettings().isLogGithubDownloadData()) {
                 plugin.log("Successfully downloaded data from GitHub.");
             }
-
-            // Decoding the Base64 encoded contents
-            tagsContent = new String(Base64.getDecoder().decode(tagsContent), StandardCharsets.UTF_8);
-            topicsContent = new String(Base64.getDecoder().decode(topicsContent), StandardCharsets.UTF_8);
-            catalogContent = new String(Base64.getDecoder().decode(catalogContent), StandardCharsets.UTF_8);
 
             /* Parsing the data */
 
@@ -138,6 +129,29 @@ public class WebManager {
                 }
             }
         });
+    }
+
+    /**
+     *
+     * @param repo
+     * @param fileName
+     * @return
+     * @since 1.8.0
+     */
+    @NonNull
+    private String getContent(@NonNull GitHubRepository repo, String fileName) {
+        try {
+            String content = repo.getContent(fileName).getContent().replaceAll("\\n", "");
+            return new String(Base64.getDecoder().decode(content), StandardCharsets.UTF_8);
+        } catch (IllegalAccessException e) {
+            if (plugin.getSettings().isLogGithubDownloadData()) {
+                plugin.log("Could not connect to GitHub.");
+            }
+        } catch (Exception e) {
+            plugin.logError("An unhandled exception occurred when downloading '" + fileName + "' from GitHub...");
+            plugin.logStacktrace(e);
+        }
+        return "";
     }
 
     /**
