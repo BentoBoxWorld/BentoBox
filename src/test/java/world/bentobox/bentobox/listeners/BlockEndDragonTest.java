@@ -29,6 +29,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.junit.After;
 import org.junit.Before;
@@ -275,6 +276,15 @@ public class BlockEndDragonTest {
 
         private Map<String, Boolean> worldFlags = new HashMap<>();
 
+        @Override
+        public @NonNull List<String> getOnLeaveCommands() {
+            return null;
+        }
+
+        @Override
+        public @NonNull List<String> getOnJoinCommands() {
+            return null;
+        }
 
         @Override
         public GameMode getDefaultGameMode() {

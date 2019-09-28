@@ -30,6 +30,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.junit.After;
 import org.junit.Before;
@@ -701,5 +702,14 @@ public class IslandGoCommandTest {
             return false;
         }
 
+        @Override
+        public @NonNull List<String> getOnJoinCommands() {
+            return null;
+        }
+
+        @Override
+        public @NonNull List<String> getOnLeaveCommands() {
+            return null;
+        }
     }
 }
