@@ -78,6 +78,17 @@ public class IslandTeamKickCommand extends ConfirmableCommand {
         target.sendMessage("commands.island.team.kick.owner-kicked", "[gamemode]", getAddon().getDescription().getName());
         Island oldIsland = getIslands().getIsland(getWorld(), targetUUID);
         getIslands().removePlayer(getWorld(), targetUUID);
+        // Execute commands when leaving
+        getIWM().getOnLeaveCommands(oldIsland.getWorld()).forEach(command -> {
+            command = command.replace("[player]", target.getName());
+            if (command.startsWith("[SUDO]") && target.isOnline()) {
+                // Execute the command by the player
+                target.performCommand(command.substring(6));
+            } else {
+                // Otherwise execute as the server console
+                getPlugin().getServer().dispatchCommand(Bukkit.getConsoleSender(), command);
+            }
+        });
         // Remove money inventory etc.
         if (getIWM().isOnLeaveResetEnderChest(getWorld())) {
             if (target.isOnline()) {

@@ -563,6 +563,18 @@ public class IslandWorldManager {
     }
 
     /**
+     * Returns a list of commands to execute when the player creates or joins an island.
+     * @param world the World
+     * @return a list of commands
+     * @since 1.8.0
+     * @see #getOnLeaveCommands(World)
+     */
+    @NonNull
+    public List<String> getOnJoinCommands(@NonNull World world) {
+        return gameModes.get(world).getWorldSettings().getOnJoinCommands();
+    }
+
+    /**
      * @return the onLeaveResetMoney
      */
     public boolean isOnLeaveResetMoney(@NonNull World world) {
@@ -581,6 +593,18 @@ public class IslandWorldManager {
      */
     public boolean isOnLeaveResetEnderChest(@NonNull World world) {
         return gameModes.get(world).getWorldSettings().isOnLeaveResetEnderChest();
+    }
+
+    /**
+     * Returns a list of commands to execute when the player resets or leaves an island.
+     * @param world the World
+     * @return a list of commands
+     * @since 1.8.0
+     * @see #getOnJoinCommands(World)
+     */
+    @NonNull
+    public List<String> getOnLeaveCommands(@NonNull World world) {
+        return gameModes.get(world).getWorldSettings().getOnLeaveCommands();
     }
 
     /**
