@@ -334,6 +334,14 @@ commands:
         description: "sets deaths of the player"
         parameters: "<player> <deaths>"
         success: "&aSuccessfully set &b[name]&a's deaths to &b[number]&a."
+      add:
+        description: "adds deaths to the player"
+        parameters: "<player> <deaths>"
+        success: "&aSuccessfully added &b[number] &adeaths to &b[name], increasing the total to &b[total]&a deaths."
+      remove:
+        description: "removes deaths to the player"
+        parameters: "<player> <deaths>"
+        success: "&aSuccessfully removed &b[number] &adeaths to &b[name], decreasing the total to &b[total]&a deaths."
   bentobox:
     description: "BentoBox admin command"
     about:
