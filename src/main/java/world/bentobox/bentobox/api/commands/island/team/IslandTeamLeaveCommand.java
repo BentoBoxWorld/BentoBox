@@ -72,6 +72,17 @@ public class IslandTeamLeaveCommand extends ConfirmableCommand {
             User.getInstance(ownerUUID).sendMessage("commands.island.team.leave.left-your-island", TextVariables.NAME, user.getName());
         }
         getIslands().setLeaveTeam(getWorld(), user.getUniqueId());
+        // Execute commands when leaving
+        getIWM().getOnLeaveCommands(island.getWorld()).forEach(command -> {
+            command = command.replace("[player]", user.getName());
+            if (command.startsWith("[SUDO]") && user.isOnline()) {
+                // Execute the command by the player
+                user.performCommand(command.substring(6));
+            } else {
+                // Otherwise execute as the server console
+                getPlugin().getServer().dispatchCommand(Bukkit.getConsoleSender(), command);
+            }
+        });
         // Remove money inventory etc.
         if (getIWM().isOnLeaveResetEnderChest(getWorld())) {
             user.getPlayer().getEnderChest().clear();

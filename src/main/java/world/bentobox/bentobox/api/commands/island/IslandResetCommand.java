@@ -167,6 +167,18 @@ public class IslandResetCommand extends ConfirmableCommand {
             // Remove player
             getIslands().removePlayer(getWorld(), memberUUID);
 
+            // Execute commands when leaving
+            getIWM().getOnLeaveCommands(island.getWorld()).forEach(command -> {
+                command = command.replace("[player]", member.getName());
+                if (command.startsWith("[SUDO]") && member.isOnline()) {
+                    // Execute the command by the player
+                    member.performCommand(command.substring(6));
+                } else {
+                    // Otherwise execute as the server console
+                    getPlugin().getServer().dispatchCommand(Bukkit.getConsoleSender(), command);
+                }
+            });
+
             // Remove money inventory etc.
             if (getIWM().isOnLeaveResetEnderChest(getWorld())) {
                 if (member.isOnline()) {
