@@ -58,7 +58,7 @@ commands:
       reset:
         description: "resets the resets of this player to 0"
         parameters: "<player>"
-        success-everyone: "&aSuccessfully reset &beveryone&a's name resets to &b0&a."
+        success-everyone: "&aSuccessfully reset &beveryone&a's resets to &b0&a."
         success: "&aSuccessfully reset &b[name]&a's resets to &b0&a."
     purge:
       parameters: "[days]" 
