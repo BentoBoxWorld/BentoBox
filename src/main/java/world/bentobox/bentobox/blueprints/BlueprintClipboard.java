@@ -14,6 +14,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Banner;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.CreatureSpawner;
@@ -288,6 +289,12 @@ public class BlueprintClipboard {
             cs.setSpawnRange(spawner.getSpawnRange());
             b.setCreatureSpawner(cs);
         }
+
+        // Banners
+        if (blockState instanceof Banner) {
+            b.setBannerPatterns(((Banner) blockState).getPatterns());
+        }
+
         this.bpBlocks.put(pos, b);
         return true;
     }

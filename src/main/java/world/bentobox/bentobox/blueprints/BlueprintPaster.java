@@ -11,6 +11,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Banner;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
@@ -245,6 +246,12 @@ public class BlueprintPaster {
             spawner.setRequiredPlayerRange(s.getRequiredPlayerRange());
             spawner.setSpawnRange(s.getSpawnRange());
             bs.update(true, false);
+        }
+        // Banners
+        if (bs instanceof Banner) {
+            Banner banner = (Banner) bs;
+            banner.setPatterns(bpBlock.getBannerPatterns());
+            banner.update(true, false);
         }
     }
 
