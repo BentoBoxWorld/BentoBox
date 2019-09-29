@@ -38,8 +38,12 @@ public class AdminDeathsRemoveCommand extends CompositeCommand {
         } else if (!NumberUtils.isNumber(args.get(1)) || Integer.valueOf(args.get(1)) < 0) {
             user.sendMessage("general.errors.must-be-positive-number", TextVariables.NUMBER, args.get(1));
         } else {
-            getPlayers().setDeaths(getWorld(), target, getPlayers().getDeaths(getWorld(), target) - Integer.valueOf(args.get(1)));
-            user.sendMessage("commands.admin.deaths.remove.success", TextVariables.NAME, args.get(0), TextVariables.NUMBER, args.get(1));
+            // Make sure it cannot go under 0.
+            int newDeaths = Math.max(getPlayers().getDeaths(getWorld(), target) - Integer.valueOf(args.get(1)), 0);
+            getPlayers().setDeaths(getWorld(), target, newDeaths);
+            user.sendMessage("commands.admin.deaths.remove.success",
+                    TextVariables.NAME, args.get(0), TextVariables.NUMBER, args.get(1),
+                    "[total]", String.valueOf(newDeaths));
             return true;
         }
 
