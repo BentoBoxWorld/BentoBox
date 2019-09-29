@@ -23,7 +23,7 @@ public class AdminResetsSetCommand extends CompositeCommand {
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        if (args.isEmpty() || args.size() != 2) {
+        if (args.size() != 2) {
             showHelp(this, user);
             return false;
         }
@@ -31,11 +31,12 @@ public class AdminResetsSetCommand extends CompositeCommand {
         UUID target = getPlayers().getUUID(args.get(0));
         if (target == null) {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
-        } else if (!NumberUtils.isNumber(args.get(1)) || Integer.valueOf(args.get(1)) < 0) {
+        } else if (!NumberUtils.isNumber(args.get(1)) || Integer.valueOf(args.get(1)) <= 0) {
             user.sendMessage("general.errors.must-be-positive-number", TextVariables.NUMBER, args.get(1));
         } else {
             getPlayers().setResets(getWorld(), target, Integer.valueOf(args.get(1)));
-            user.sendMessage("general.success");
+            user.sendMessage("commands.admin.resets.set.success",
+                    TextVariables.NAME, args.get(0), TextVariables.NUMBER, args.get(1));
             return true;
         }
 

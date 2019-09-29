@@ -1,4 +1,4 @@
-package world.bentobox.bentobox.api.commands.admin.deaths;
+package world.bentobox.bentobox.api.commands.admin.resets;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.eclipse.jdt.annotation.NonNull;
@@ -10,19 +10,19 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * @since 1.8.0
  * @author Poslovitch
+ * @since 1.8.0
  */
-public class AdminDeathsRemoveCommand extends CompositeCommand {
+public class AdminResetsAddCommand extends CompositeCommand {
 
-    public AdminDeathsRemoveCommand(AdminDeathsCommand parent) {
-        super(parent, "remove");
+    public AdminResetsAddCommand(AdminResetsCommand parent) {
+        super(parent, "add");
     }
 
     @Override
     public void setup() {
-        setDescription("commands.admin.deaths.remove.description");
-        setParametersHelp("commands.admin.deaths.remove.parameters");
+        setDescription("commands.admin.resets.add.description");
+        setParametersHelp("commands.admin.resets.add.parameters");
     }
 
     @Override
@@ -38,12 +38,10 @@ public class AdminDeathsRemoveCommand extends CompositeCommand {
         } else if (!NumberUtils.isNumber(args.get(1)) || Integer.valueOf(args.get(1)) < 0) {
             user.sendMessage("general.errors.must-be-positive-number", TextVariables.NUMBER, args.get(1));
         } else {
-            // Make sure it cannot go under 0.
-            int newDeaths = Math.max(getPlayers().getDeaths(getWorld(), target) - Integer.valueOf(args.get(1)), 0);
-            getPlayers().setDeaths(getWorld(), target, newDeaths);
-            user.sendMessage("commands.admin.deaths.remove.success",
+            getPlayers().setResets(getWorld(), target, getPlayers().getResets(getWorld(), target) + Integer.valueOf(args.get(1)));
+            user.sendMessage("commands.admin.resets.add.success",
                     TextVariables.NAME, args.get(0), TextVariables.NUMBER, args.get(1),
-                    "[total]", String.valueOf(newDeaths));
+                    "[total]", String.valueOf(getPlayers().getResets(getWorld(), target)));
             return true;
         }
 

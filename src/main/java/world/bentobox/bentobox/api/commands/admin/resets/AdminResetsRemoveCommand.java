@@ -1,4 +1,4 @@
-package world.bentobox.bentobox.api.commands.admin.deaths;
+package world.bentobox.bentobox.api.commands.admin.resets;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.eclipse.jdt.annotation.NonNull;
@@ -10,19 +10,19 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * @since 1.8.0
  * @author Poslovitch
+ * @since 1.8.0
  */
-public class AdminDeathsRemoveCommand extends CompositeCommand {
+public class AdminResetsRemoveCommand extends CompositeCommand {
 
-    public AdminDeathsRemoveCommand(AdminDeathsCommand parent) {
+    public AdminResetsRemoveCommand(AdminResetsCommand parent) {
         super(parent, "remove");
     }
 
     @Override
     public void setup() {
-        setDescription("commands.admin.deaths.remove.description");
-        setParametersHelp("commands.admin.deaths.remove.parameters");
+        setDescription("commands.admin.resets.remove.description");
+        setParametersHelp("commands.admin.resets.remove.parameters");
     }
 
     @Override
@@ -39,11 +39,11 @@ public class AdminDeathsRemoveCommand extends CompositeCommand {
             user.sendMessage("general.errors.must-be-positive-number", TextVariables.NUMBER, args.get(1));
         } else {
             // Make sure it cannot go under 0.
-            int newDeaths = Math.max(getPlayers().getDeaths(getWorld(), target) - Integer.valueOf(args.get(1)), 0);
-            getPlayers().setDeaths(getWorld(), target, newDeaths);
-            user.sendMessage("commands.admin.deaths.remove.success",
+            int newResets = Math.max(getPlayers().getResets(getWorld(), target) - Integer.valueOf(args.get(1)), 0);
+            getPlayers().setResets(getWorld(), target, newResets);
+            user.sendMessage("commands.admin.resets.remove.success",
                     TextVariables.NAME, args.get(0), TextVariables.NUMBER, args.get(1),
-                    "[total]", String.valueOf(newDeaths));
+                    "[total]", String.valueOf(newResets));
             return true;
         }
 

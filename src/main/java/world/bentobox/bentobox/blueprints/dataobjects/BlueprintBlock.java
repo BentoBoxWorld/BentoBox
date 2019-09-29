@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.bukkit.block.banner.Pattern;
 import org.bukkit.inventory.ItemStack;
 
 import com.google.gson.annotations.Expose;
@@ -22,6 +23,11 @@ public class BlueprintBlock {
     private Map<Integer, ItemStack> inventory;
     @Expose
     private BlueprintCreatureSpawner creatureSpawner;
+    /**
+     * @since 1.8.0
+     */
+    @Expose
+    private List<Pattern> bannerPatterns;
 
     public BlueprintBlock(String blockData) {
         this.blockData = blockData;
@@ -81,5 +87,21 @@ public class BlueprintBlock {
      */
     public void setCreatureSpawner(BlueprintCreatureSpawner creatureSpawner) {
         this.creatureSpawner = creatureSpawner;
+    }
+
+    /**
+     * @return list of the banner patterns
+     * @since 1.8.0
+     */
+    public List<Pattern> getBannerPatterns() {
+        return bannerPatterns;
+    }
+
+    /**
+     * @param bannerPatterns the banner Patterns to set
+     * @since 1.8.0
+     */
+    public void setBannerPatterns(List<Pattern> bannerPatterns) {
+        this.bannerPatterns = bannerPatterns;
     }
 }

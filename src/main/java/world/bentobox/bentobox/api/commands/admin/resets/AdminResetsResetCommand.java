@@ -39,7 +39,7 @@ public class AdminResetsResetCommand extends ConfirmableCommand {
                 getIWM().setResetEpoch(getWorld());
                 // Reset all current players
                 Bukkit.getOnlinePlayers().stream().map(Player::getUniqueId).filter(getPlayers()::isKnown).forEach(u -> getPlayers().setResets(getWorld(), u, 0));
-                user.sendMessage("general.success");
+                user.sendMessage("commands.admin.resets.reset.success-everyone");
             });
             return true;
         } else {
@@ -50,7 +50,7 @@ public class AdminResetsResetCommand extends ConfirmableCommand {
                 return false;
             } else {
                 getPlayers().setResets(getWorld(), target, 0);
-                user.sendMessage("general.success");
+                user.sendMessage("commands.admin.resets.reset.success", TextVariables.NAME, args.get(0));
                 return true;
             }
         }

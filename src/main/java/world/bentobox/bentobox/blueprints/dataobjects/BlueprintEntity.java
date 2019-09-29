@@ -41,6 +41,9 @@ public class BlueprintEntity {
     @Expose
     private Style style;
 
+    /**
+     * @since 1.8.0
+     */
     public void configureEntity(Entity e) {
         if (e instanceof Colorable) {
             ((Colorable) e).setColor(color);
