@@ -3,6 +3,7 @@ package world.bentobox.bentobox.api.addons;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -12,6 +13,7 @@ import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.Listener;
@@ -244,8 +246,9 @@ public abstract class Addon {
      *            - if true, will overwrite previous file
      * @param noPath
      *            - if true, the resource's path will be ignored when saving
+     * @return file written, or null if none
      */
-    public void saveResource(String jarResource, File destinationFolder, boolean replace, boolean noPath) {
+    public File saveResource(String jarResource, File destinationFolder, boolean replace, boolean noPath) {
         if (jarResource == null || jarResource.equals("")) {
             throw new IllegalArgumentException("ResourcePath cannot be null or empty");
         }
@@ -269,6 +272,7 @@ public abstract class Addon {
                     if (!outFile.exists() || replace) {
                         java.nio.file.Files.copy(in, outFile.toPath());
                     }
+                    return outFile;
                 }
             } else {
                 // No file in the jar
@@ -279,6 +283,31 @@ public abstract class Addon {
             BentoBox.getInstance().logError(
                     "Could not save from jar file. From " + jarResource + " to " + destinationFolder.getAbsolutePath());
         }
+        return null;
+    }
+
+    /**
+     * Tries to load a YAML file from the Jar
+     * @param jarResource - YAML file in jar
+     * @return YamlConfiguration - may be empty
+     * @throws IOException - if the file cannot be found or loaded from the Jar
+     * @throws InvalidConfigurationException - if the yaml is malformed
+     */
+    public YamlConfiguration getYamlFromJar(String jarResource) throws IOException, InvalidConfigurationException {
+        if (jarResource == null || jarResource.equals("")) {
+            throw new IllegalArgumentException("jarResource cannot be null or empty");
+        }
+        YamlConfiguration result = new YamlConfiguration();
+        jarResource = jarResource.replace('\\', '/');
+        try (JarFile jar = new JarFile(file)) {
+            JarEntry jarConfig = jar.getJarEntry(jarResource);
+            if (jarConfig != null) {
+                try (InputStreamReader in = new InputStreamReader(jar.getInputStream(jarConfig))) {
+                    result.load(in);
+                }
+            }
+        }
+        return result;
     }
 
     /**
