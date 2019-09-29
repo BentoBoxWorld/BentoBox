@@ -310,8 +310,11 @@ commands:
           &aLeft click to increment
           &aRight click to decrement
     resetflags:
+      parameters: "[flag]"
       description: "Reset all islands to default flag settings in config.yml"
+      confirm: "&4This will reset the flag(s) to default for all islands!"
       success: "&aSuccessfully reset all islands' flags to the default settings."
+      success-one: "&a[name] flag set to default for all islands."
     world:
       description: "Manage world settings"
     delete:
