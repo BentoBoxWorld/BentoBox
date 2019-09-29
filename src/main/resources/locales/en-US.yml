@@ -60,6 +60,14 @@ commands:
         parameters: "<player>"
         success-everyone: "&aSuccessfully reset &beveryone&a's resets to &b0&a."
         success: "&aSuccessfully reset &b[name]&a's resets to &b0&a."
+      add:
+        description: "adds resets to the player"
+        parameters: "<player> <resets>"
+        success: "&aSuccessfully added &b[number] &aresets to &b[name], increasing the total to &b[total]&a resets."
+      remove:
+        description: "removes resets to the player"
+        parameters: "<player> <resets>"
+        success: "&aSuccessfully removed &b[number] &aresets to &b[name], decreasing the total to &b[total]&a resets."
     purge:
       parameters: "[days]" 
       description: "purge islands abandoned for more than [days]"
