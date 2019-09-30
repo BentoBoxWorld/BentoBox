@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
@@ -18,6 +21,8 @@ import world.bentobox.bentobox.util.Util;
  */
 public class IslandTeamTrustCommand extends CompositeCommand {
 
+    private BiMap<UUID, UUID> inviteList;
+
     public IslandTeamTrustCommand(CompositeCommand parentCommand) {
         super(parentCommand, "trust");
     }
@@ -29,6 +34,7 @@ public class IslandTeamTrustCommand extends CompositeCommand {
         setParametersHelp("commands.island.team.trust.parameters");
         setDescription("commands.island.team.trust.description");
         setConfigurableRankCommand();
+        inviteList = HashBiMap.create();
     }
 
     @Override
@@ -76,9 +82,19 @@ public class IslandTeamTrustCommand extends CompositeCommand {
         }
         Island island = getIslands().getIsland(getWorld(), user.getUniqueId());
         if (island != null) {
-            island.setRank(target, RanksManager.TRUSTED_RANK);
-            user.sendMessage("commands.island.team.trust.success", TextVariables.NAME, target.getName());
-            target.sendMessage("commands.island.team.trust.you-are-trusted", TextVariables.NAME, user.getName());
+            if (getPlugin().getSettings().isInviteConfirmation()) {
+                // Put the invited player (key) onto the list with inviter (value)
+                // If someone else has invited a player, then this invite will overwrite the previous invite!
+                inviteList.put(target.getUniqueId(), user.getUniqueId());
+                user.sendMessage("commands.island.team.invite.invitation-sent", TextVariables.NAME, target.getName());
+                // Send message to online player
+                target.sendMessage("commands.island.team.trust.name-has-invited-you", TextVariables.NAME, user.getName());
+                target.sendMessage("commands.island.team.trust.to-accept-or-reject", TextVariables.LABEL, getTopLabel());
+            } else {
+                island.setRank(target, RanksManager.TRUSTED_RANK);
+                user.sendMessage("commands.island.team.trust.success", TextVariables.NAME, target.getName());
+                target.sendMessage("commands.island.team.trust.you-are-trusted", TextVariables.NAME, user.getName());
+            }
             return true;
         } else {
             // Should not happen

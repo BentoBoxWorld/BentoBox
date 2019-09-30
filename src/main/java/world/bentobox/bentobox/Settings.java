@@ -143,6 +143,10 @@ public class Settings implements ConfigObject {
     @ConfigEntry(path = "island.confirmation.commands.reset")
     private boolean resetConfirmation = true;
 
+    @ConfigComment("Ask the recipient to confirm trust or coop invites. Team invites always require confirmation.")
+    @ConfigEntry(path = "island.confirmation.invite")
+    private boolean inviteConfirmation = false;
+
     @ConfigComment("Sets the minimum length an island custom name is required to have.")
     @ConfigEntry(path = "island.name.min-length")
     private int nameMinLength = 4;
@@ -558,6 +562,20 @@ public class Settings implements ConfigObject {
     public void setClearRadius(int clearRadius) {
         if (clearRadius < 0) clearRadius = 0;
         this.clearRadius = clearRadius;
+    }
+
+    /**
+     * @return the inviteConfirmation
+     */
+    public boolean isInviteConfirmation() {
+        return inviteConfirmation;
+    }
+
+    /**
+     * @param inviteConfirmation the inviteConfirmation to set
+     */
+    public void setInviteConfirmation(boolean inviteConfirmation) {
+        this.inviteConfirmation = inviteConfirmation;
     }
 
 

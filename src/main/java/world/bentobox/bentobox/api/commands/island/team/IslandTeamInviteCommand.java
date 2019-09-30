@@ -9,9 +9,6 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
-
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.team.TeamEvent;
@@ -22,10 +19,11 @@ import world.bentobox.bentobox.util.Util;
 
 public class IslandTeamInviteCommand extends CompositeCommand {
 
-    private BiMap<UUID, UUID> inviteList;
+    private IslandTeamCommand itc;
 
-    public IslandTeamInviteCommand(CompositeCommand islandCommand) {
-        super(islandCommand, "invite");
+    public IslandTeamInviteCommand(IslandTeamCommand parent) {
+        super(parent, "invite");
+        itc = parent;
     }
 
     @Override
@@ -33,7 +31,6 @@ public class IslandTeamInviteCommand extends CompositeCommand {
         setPermission("island.team");
         setOnlyPlayer(true);
         setDescription("commands.island.team.invite.description");
-        inviteList = HashBiMap.create();
         setConfigurableRankCommand();
     }
 
@@ -54,8 +51,8 @@ public class IslandTeamInviteCommand extends CompositeCommand {
         UUID playerUUID = user.getUniqueId();
         if (args.isEmpty() || args.size() > 1) {
             // Invite label with no name, i.e., /island invite - tells the player who has invited them so far
-            if (inviteList.containsKey(playerUUID)) {
-                OfflinePlayer inviter = Bukkit.getServer().getOfflinePlayer(inviteList.get(playerUUID));
+            if (itc.getInviteList().containsKey(playerUUID)) {
+                OfflinePlayer inviter = Bukkit.getServer().getOfflinePlayer(itc.getInviteList().get(playerUUID));
                 user.sendMessage("commands.island.team.invite.name-has-invited-you", TextVariables.NAME, inviter.getName());
                 return true;
             }
@@ -106,8 +103,8 @@ public class IslandTeamInviteCommand extends CompositeCommand {
         if (teamMembers.size() < maxSize) {
             // If that player already has an invite out then retract it.
             // Players can only have one invite one at a time - interesting
-            if (inviteList.containsValue(user.getUniqueId())) {
-                inviteList.inverse().remove(user.getUniqueId());
+            if (itc.getInviteList().containsValue(user.getUniqueId())) {
+                itc.getInviteList().inverse().remove(user.getUniqueId());
                 user.sendMessage("commands.island.team.invite.removing-invite");
             }
             // Fire event so add-ons can run commands, etc.
@@ -122,7 +119,7 @@ public class IslandTeamInviteCommand extends CompositeCommand {
             }
             // Put the invited player (key) onto the list with inviter (value)
             // If someone else has invited a player, then this invite will overwrite the previous invite!
-            inviteList.put(invitedPlayer.getUniqueId(), user.getUniqueId());
+            itc.getInviteList().put(invitedPlayer.getUniqueId(), user.getUniqueId());
             user.sendMessage("commands.island.team.invite.invitation-sent", TextVariables.NAME, invitedPlayer.getName());
             // Send message to online player
             invitedPlayer.sendMessage("commands.island.team.invite.name-has-invited-you", TextVariables.NAME, user.getName());
@@ -146,14 +143,6 @@ public class IslandTeamInviteCommand extends CompositeCommand {
         }
         List<String> options = new ArrayList<>(Util.getOnlinePlayerList(user));
         return Optional.of(Util.tabLimit(options, lastArg));
-    }
-
-    /**
-     * Order is Invited, Inviter
-     * @return the inviteList
-     */
-    public BiMap<UUID, UUID> getInviteList() {
-        return inviteList;
     }
 
     /**

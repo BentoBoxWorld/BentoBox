@@ -78,6 +78,8 @@ island:
       kick: true
       leave: true
       reset: true
+    # Ask the recipient to confirm trust or coop invites. Team invites always require confirmation.
+    invite: false
   delay:
     # Time in seconds that players have to stand still before teleport commands activate, e.g. island go.
     time: 0

@@ -40,7 +40,7 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
     public boolean canExecute(User user, String label, List<String> args) {
         playerUUID = user.getUniqueId();
         // Check if player has been invited
-        BiMap<UUID, UUID> inviteList = itc.getInviteCommand().getInviteList();
+        BiMap<UUID, UUID> inviteList = itc.getInviteList();
         if (!inviteList.containsKey(playerUUID)) {
             user.sendMessage("commands.island.team.invite.errors.none-invited-you");
             return false;
@@ -71,7 +71,7 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
     public boolean execute(User user, String label, List<String> args) {
         askConfirmation(user, user.getTranslation("commands.island.team.invite.accept.confirmation"), () -> {
             // Remove the invite
-            itc.getInviteCommand().getInviteList().remove(playerUUID);
+            itc.getInviteList().remove(playerUUID);
             // Put player into Spectator mode
             user.setGameMode(GameMode.SPECTATOR);
             // Get the player's island - may be null if the player has no island
@@ -99,7 +99,7 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
             user.setGameMode(getIWM().getDefaultGameMode(getWorld()));
 
             user.sendMessage("commands.island.team.invite.accept.you-joined-island", TextVariables.LABEL, getTopLabel());
-            User inviter = User.getInstance(itc.getInviteCommand().getInviteList().get(playerUUID));
+            User inviter = User.getInstance(itc.getInviteList().get(playerUUID));
             if (inviter != null) {
                 inviter.sendMessage("commands.island.team.invite.accept.name-joined-your-island", TextVariables.NAME, user.getName());
             }

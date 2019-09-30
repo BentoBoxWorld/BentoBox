@@ -6,6 +6,9 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.team.TeamEvent;
@@ -14,10 +17,16 @@ import world.bentobox.bentobox.api.user.User;
 
 public class IslandTeamCommand extends CompositeCommand {
 
+    /**
+     * Invited map. Key is the invited party, value is the inviter.
+     */
+    private BiMap<UUID, UUID> inviteList;
+
     private IslandTeamInviteCommand inviteCommand;
 
     public IslandTeamCommand(CompositeCommand parent) {
         super(parent, "team");
+        inviteList = HashBiMap.create();
     }
 
     @Override
@@ -81,10 +90,17 @@ public class IslandTeamCommand extends CompositeCommand {
     }
 
     /**
-     * @return the inviteCommand
+     * @return the inviteList
      */
-    public IslandTeamInviteCommand getInviteCommand() {
-        return inviteCommand;
+    public BiMap<UUID, UUID> getInviteList() {
+        return inviteList;
+    }
+
+    /**
+     * @param inviteList the inviteList to set
+     */
+    public void setInviteList(BiMap<UUID, UUID> inviteList) {
+        this.inviteList = inviteList;
     }
 
 }
