@@ -155,17 +155,16 @@ public class SQLDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
             return;
         }
         // Async
-        processQueue.add(() -> store(instance, sqlConfig.getSaveObjectSQL()));
+        processQueue.add(() -> store(instance.getClass().getName(), getGson().toJson(instance), sqlConfig.getSaveObjectSQL()));
     }
 
-    private void store(T instance, String sb) {
-        String toStore = getGson().toJson(instance);
+    private void store(String name, String toStore, String sb) {
         try (PreparedStatement preparedStatement = connection.prepareStatement(sb)) {
             preparedStatement.setString(1, toStore);
             preparedStatement.setString(2, toStore);
             preparedStatement.execute();
         } catch (SQLException e) {
-            plugin.logError("Could not save object " + instance.getClass().getName() + " " + e.getMessage());
+            plugin.logError("Could not save object " + name + " " + e.getMessage());
         }
     }
 

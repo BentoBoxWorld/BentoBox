@@ -49,9 +49,9 @@ public class SQLiteDatabaseHandler<T> extends SQLDatabaseHandler<T> {
             plugin.logError("This class is not a DataObject: " + instance.getClass().getName());
             return;
         }
-        processQueue.add(() -> {
-            Gson gson = getGson();
-            String toStore = gson.toJson(instance);
+        Gson gson = getGson();
+        String toStore = gson.toJson(instance);
+        processQueue.add(() -> {            
             try (PreparedStatement preparedStatement = getConnection().prepareStatement(getSqlConfig().getSaveObjectSQL())) {
                 preparedStatement.setString(1, toStore);
                 preparedStatement.setString(2, ((DataObject)instance).getUniqueId());
