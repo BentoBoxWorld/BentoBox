@@ -38,6 +38,7 @@ import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.island.IslandEvent;
 import world.bentobox.bentobox.api.events.island.IslandEvent.Reason;
+import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.logs.LogEntry;
 import world.bentobox.bentobox.api.user.User;
@@ -670,7 +671,17 @@ public class IslandsManager {
         }
         // If this is a new island, then run commands and do resets
         if (newIsland) {
-            // TODO add command running
+            // Execute commands
+            plugin.getIWM().getOnJoinCommands(world).forEach(command -> {
+                command = command.replace("[player]", player.getName());
+                if (command.startsWith("[SUDO]")) {
+                    // Execute the command by the player
+                    player.performCommand(command.substring(6));
+                } else {
+                    // Otherwise execute as the server console
+                    plugin.getServer().dispatchCommand(Bukkit.getConsoleSender(), command);
+                }
+            });
 
             // Remove money inventory etc.
             if (plugin.getIWM().isOnJoinResetEnderChest(world)) {
@@ -1202,6 +1213,17 @@ public class IslandsManager {
     }
 
     /**
+     * Resets a flag to gamemode config.yml default
+     * @param world - world
+     * @param flag - flag to reset
+     * @since 1.8.0
+     */
+    public void resetFlag(World world, Flag flag) {
+        islandCache.resetFlag(world, flag);
+        this.saveAll();
+    }
+
+    /**
      * Returns whether the specified island custom name exists in this world.
      * @param world World of the gamemode
      * @param name Name of an island
@@ -1212,4 +1234,5 @@ public class IslandsManager {
         return getIslands(world).stream().filter(island -> island.getName() != null).map(Island::getName)
                 .anyMatch(n -> ChatColor.stripColor(n).equals(ChatColor.stripColor(name)));
     }
+
 }

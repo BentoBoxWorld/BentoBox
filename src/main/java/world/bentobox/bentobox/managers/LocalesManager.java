@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -15,6 +16,7 @@ import java.util.jar.JarFile;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import world.bentobox.bentobox.BentoBox;
@@ -108,7 +110,7 @@ public class LocalesManager {
     }
 
     /**
-     * Copies locale files from the addon jar to the file system
+     * Copies locale files from the addon jar to the file system and updates current locales with the latest references
      * @param addon - addon
      */
     void copyLocalesFromAddonJar(Addon addon) {
@@ -116,12 +118,37 @@ public class LocalesManager {
             File localeDir = new File(plugin.getDataFolder(), LOCALE_FOLDER + File.separator + addon.getDescription().getName());
             if (!localeDir.exists()) {
                 localeDir.mkdirs();
-                // Obtain any locale files and save them
-                Util.listJarFiles(jar, LOCALE_FOLDER, ".yml").forEach(lf -> addon.saveResource(lf, localeDir, false, true));
             }
+            // Obtain any locale files, save them and update
+            Util.listJarFiles(jar, LOCALE_FOLDER, ".yml").forEach(lf -> {
+                File file = addon.saveResource(lf, localeDir, false, true);
+                // Update
+                if (file != null) {
+                    updateLocale(addon, file, lf);
+                }
+            });
+
         } catch (Exception e) {
             plugin.logError(e.getMessage());
         }
+    }
+
+    private void updateLocale(Addon addon, File fileLocaleFile, String lf) {
+        try {
+            // Load the JAR locale file
+            YamlConfiguration jarLocale = addon.getYamlFromJar(lf);
+            // Load the locale file system locale file
+            YamlConfiguration fileLocale = new YamlConfiguration();
+            fileLocale.load(fileLocaleFile);
+            // Copy new keys to file
+            jarLocale.getKeys(true).stream().filter(k -> !fileLocale.contains(k, false)).forEach(k -> fileLocale.set(k, jarLocale.get(k)));
+            // Save file
+            fileLocale.save(fileLocaleFile);
+        } catch (Exception e) {
+            plugin.logError("Error updating locale file: " + lf + " : " + e.getMessage());
+            plugin.logStacktrace(e);
+        }
+
     }
 
     /**
@@ -135,18 +162,36 @@ public class LocalesManager {
         // If it does exist, then new files will NOT be written!
         if (!localeDir.exists()) {
             localeDir.mkdirs();
-            FileLister lister = new FileLister(plugin);
-            try {
-                for (String name : lister.listJar(LOCALE_FOLDER)) {
-                    // We cannot use Bukkit's saveResource, because we want it to go into a specific folder, so...
-                    // Get the last part of the name
-                    int lastIndex = name.lastIndexOf('/');
-                    File targetFile = new File(localeDir, name.substring(lastIndex >= 0 ? lastIndex : 0));
-                    copyFile(name, targetFile);
+        }
+        FileLister lister = new FileLister(plugin);
+        try {
+            for (String name : lister.listJar(LOCALE_FOLDER)) {
+                // We cannot use Bukkit's saveResource, because we want it to go into a specific folder, so...
+                // Get the last part of the name
+                int lastIndex = name.lastIndexOf('/');
+                File targetFile = new File(localeDir, name.substring(lastIndex >= 0 ? lastIndex : 0));
+                copyFile(name, targetFile);
+                // Update the locale file if it exists already
+                try (InputStreamReader in = new InputStreamReader(plugin.getResource(name))) {
+                    YamlConfiguration jarLocale = new YamlConfiguration();
+                    jarLocale.load(in);
+
+                    YamlConfiguration fileLocale = new YamlConfiguration();
+                    fileLocale.load(targetFile);
+                    for (String k : jarLocale.getKeys(true)) {
+                        if (!fileLocale.contains(k, false)) {
+                            fileLocale.set(k, jarLocale.get(k));
+                        }
+                    }
+                    // Save it
+                    fileLocale.save(targetFile);
+                } catch (InvalidConfigurationException e) {
+                    plugin.logError("Could not update locale files from jar " + e.getMessage());
                 }
-            } catch (IOException e) {
-                plugin.logError("Could not copy locale files from jar " + e.getMessage());
+
             }
+        } catch (IOException e) {
+            plugin.logError("Could not copy locale files from jar " + e.getMessage());
         }
     }
 
@@ -180,9 +225,9 @@ public class LocalesManager {
                     languages.put(localeObject, new BentoBoxLocale(localeObject, languageYaml));
                 }
             } catch (Exception e) {
-                BentoBox.getInstance().logError("Could not load '" + language.getName() + "' : " + e.getMessage()
+                plugin.logError("Could not load '" + language.getName() + "' : " + e.getMessage()
                 + " with the following cause '" + e.getCause() + "'." +
-                " The file has likely an invalid YML format or has been made unreadable during the process.");
+                        " The file has likely an invalid YML format or has been made unreadable during the process.");
             }
         }
     }
@@ -256,7 +301,11 @@ public class LocalesManager {
         plugin.log(ChatColor.AQUA + "Analyzing BentoBox locale files");
         user.sendRawMessage(ChatColor.AQUA + SPACER);
         loadLocalesFromFile(BENTOBOX);
-        analyze(fix);
+        if (languages.containsKey(Locale.US)) {
+            analyze(user, fix);
+        } else {
+            user.sendRawMessage(ChatColor.RED + "No US English in BentoBox to use for analysis!");
+        }
         user.sendRawMessage(ChatColor.AQUA + "Analyzing Addon locale files");
         plugin.getAddonsManager().getAddons().forEach(addon -> {
             user.sendRawMessage(ChatColor.AQUA + SPACER);
@@ -264,22 +313,23 @@ public class LocalesManager {
             user.sendRawMessage(ChatColor.AQUA + SPACER);
             languages.clear();
             loadLocalesFromFile(addon.getDescription().getName());
-            analyze(fix);
+            if (languages.containsKey(Locale.US)) {
+                analyze(user, fix);
+            } else {
+                user.sendRawMessage(ChatColor.RED + "No US English to use for analysis!");
+            }
         });
         reloadLanguages();
     }
 
     /**
      *
+     * @param user
      * @param fix whether or not locale files with missing translations should be fixed.
      *            Not currently supported.
      * @since 1.5.0
      */
-    private void analyze(boolean fix) {
-        if (!languages.containsKey(Locale.US)) {
-            return;
-        }
-        User user = User.getInstance(Bukkit.getConsoleSender());
+    private void analyze(User user, boolean fix) {
 
         user.sendRawMessage(ChatColor.GREEN + "The following locales are supported:");
         languages.forEach((k,v) -> user.sendRawMessage(ChatColor.GOLD + k.toLanguageTag() + " " + k.getDisplayLanguage() + " " + k.getDisplayCountry()));

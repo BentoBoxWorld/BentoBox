@@ -21,6 +21,8 @@ public class AdminDeathsCommand extends CompositeCommand {
 
         new AdminDeathsResetCommand(this);
         new AdminDeathsSetCommand(this);
+        new AdminDeathsAddCommand(this);
+        new AdminDeathsRemoveCommand(this);
     }
 
     @Override

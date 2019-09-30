@@ -54,9 +54,20 @@ commands:
       set:
         description: "sets the resets of this player"
         parameters: "<player> <resets>"
+        success: "&aSuccessfully set &b[name]&a's resets to &b[number]&a."
       reset:
         description: "resets the resets of this player to 0"
         parameters: "<player>"
+        success-everyone: "&aSuccessfully reset &beveryone&a's resets to &b0&a."
+        success: "&aSuccessfully reset &b[name]&a's resets to &b0&a."
+      add:
+        description: "adds resets to the player"
+        parameters: "<player> <resets>"
+        success: "&aSuccessfully added &b[number] &aresets to &b[name], increasing the total to &b[total]&a resets."
+      remove:
+        description: "removes resets to the player"
+        parameters: "<player> <resets>"
+        success: "&aSuccessfully removed &b[number] &aresets to &b[name], decreasing the total to &b[total]&a resets."
     purge:
       parameters: "[days]" 
       description: "purge islands abandoned for more than [days]"
@@ -310,8 +321,11 @@ commands:
           &aLeft click to increment
           &aRight click to decrement
     resetflags:
+      parameters: "[flag]"
       description: "Reset all islands to default flag settings in config.yml"
+      confirm: "&4This will reset the flag(s) to default for all islands!"
       success: "&aSuccessfully reset all islands' flags to the default settings."
+      success-one: "&a[name] flag set to default for all islands."
     world:
       description: "Manage world settings"
     delete:
@@ -334,6 +348,14 @@ commands:
         description: "sets deaths of the player"
         parameters: "<player> <deaths>"
         success: "&aSuccessfully set &b[name]&a's deaths to &b[number]&a."
+      add:
+        description: "adds deaths to the player"
+        parameters: "<player> <deaths>"
+        success: "&aSuccessfully added &b[number] &adeaths to &b[name], increasing the total to &b[total]&a deaths."
+      remove:
+        description: "removes deaths to the player"
+        parameters: "<player> <deaths>"
+        success: "&aSuccessfully removed &b[number] &adeaths to &b[name], decreasing the total to &b[total]&a deaths."
   bentobox:
     description: "BentoBox admin command"
     about:
