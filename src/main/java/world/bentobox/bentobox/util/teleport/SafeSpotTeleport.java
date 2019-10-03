@@ -9,6 +9,8 @@ import org.bukkit.ChunkSnapshot;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.World.Environment;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
@@ -50,7 +52,7 @@ public class SafeSpotTeleport {
      * Teleports and entity to a safe spot on island
      * @param plugin - plugin object
      * @param entity - entity to teleport
-     * @param location - the location
+     * @param location - the location initial desired location to go to
      * @param failureMessage - locale key for the failure message
      * @param portal - true if this is a portal teleport
      * @param homeNumber - home number to go to
@@ -128,9 +130,25 @@ public class SafeSpotTeleport {
                 } else {
                     Bukkit.getScheduler().runTask(plugin, () -> ((Player)entity).performCommand("spawn"));
                 }
+            } else {
+                // Create a spot for the player to be
+                if (location.getWorld().getEnvironment().equals(Environment.NETHER)) {
+                    makeAndTelport(Material.NETHERRACK);
+                } else if (location.getWorld().getEnvironment().equals(Environment.THE_END)) {
+                    makeAndTelport(Material.END_STONE);
+                } else {
+                    makeAndTelport(Material.COBBLESTONE);
+                }
             }
         }
+    }
 
+    private void makeAndTelport(Material m) {
+        location.getBlock().getRelative(BlockFace.DOWN).setType(m, false);
+        location.getBlock().setType(Material.AIR, false);
+        location.getBlock().getRelative(BlockFace.UP).setType(Material.AIR, false);
+        location.getBlock().getRelative(BlockFace.UP).getRelative(BlockFace.UP).setType(m, false);
+        entity.teleport(location.clone().add(new Vector(0.5D, 0D, 0.5D)));
     }
 
     /**
