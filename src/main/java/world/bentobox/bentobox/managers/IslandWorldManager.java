@@ -669,6 +669,14 @@ public class IslandWorldManager {
     public List<String> getVisitorBannedCommands(@NonNull World world) {
         return gameModes.get(world).getWorldSettings().getVisitorBannedCommands();
     }
+    
+    /**
+     * Return banned commands when falling
+     * @return the fallingbannedcommands
+     */
+    public List<String> getFallingBannedCommands(@NonNull World world) {
+        return gameModes.get(world).getWorldSettings().getFallingBannedCommands();
+    }
 
     /**
      * Check if water is not safe, e.g., it is acid, in the world

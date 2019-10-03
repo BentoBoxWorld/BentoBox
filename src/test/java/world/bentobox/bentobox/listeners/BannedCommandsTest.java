@@ -1,10 +1,10 @@
 package world.bentobox.bentobox.listeners;
 
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -23,6 +23,7 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -40,11 +41,15 @@ import world.bentobox.bentobox.util.Util;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({BentoBox.class, Util.class, Bukkit.class })
-public class BannedVisitorCommandsTest {
+public class BannedCommandsTest {
 
+    @Mock
     private IslandWorldManager iwm;
+    @Mock
     private Player player;
+    @Mock
     private BentoBox plugin;
+    @Mock
     private IslandsManager im;
 
     @Before
@@ -53,15 +58,14 @@ public class BannedVisitorCommandsTest {
         plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
         // Island World Manager
-        iwm = mock(IslandWorldManager.class);
         when(iwm.inWorld(any(World.class))).thenReturn(true);
         when(iwm.inWorld(any(Location.class))).thenReturn(true);
-        when(iwm.getPermissionPrefix(Mockito.any())).thenReturn("bskyblock.");
-        when(iwm.getVisitorBannedCommands(Mockito.any())).thenReturn(new ArrayList<>());
+        when(iwm.getPermissionPrefix(any())).thenReturn("bskyblock.");
+        when(iwm.getVisitorBannedCommands(any())).thenReturn(new ArrayList<>());
+        when(iwm.getFallingBannedCommands(any())).thenReturn(new ArrayList<>());
         when(plugin.getIWM()).thenReturn(iwm);
 
         // Player
-        player = mock(Player.class);
         when(player.isOp()).thenReturn(false);
         when(player.hasPermission(Mockito.anyString())).thenReturn(false);
         when(player.getWorld()).thenReturn(mock(World.class));
@@ -80,9 +84,8 @@ public class BannedVisitorCommandsTest {
         when(player.getServer()).thenReturn(server);
 
         // Island manager
-        im = mock(IslandsManager.class);
         // Default not on island, so is a visitor
-        when(im.locationIsOnIsland(Mockito.any(), Mockito.any())).thenReturn(false);
+        when(im.locationIsOnIsland(any(), any())).thenReturn(false);
         when(plugin.getIslands()).thenReturn(im);
 
         // Locales
@@ -100,26 +103,24 @@ public class BannedVisitorCommandsTest {
         when(plugin.getNotifier()).thenReturn(notifier);
 
         // Addon
-        when(iwm.getAddon(Mockito.any())).thenReturn(Optional.empty());
+        when(iwm.getAddon(any())).thenReturn(Optional.empty());
 
 
     }
 
-    @Test
-    public void testBannedVisitorCommands() {
-        assertNotNull(new BannedVisitorCommands(plugin));
-    }
-
+    /**
+     * Test for {@link BannedCommands#onCommand(PlayerCommandPreprocessEvent)}
+     */
     @Test
     public void testInstantReturn() {
         PlayerCommandPreprocessEvent e = new PlayerCommandPreprocessEvent(player, "/blah");
-        BannedVisitorCommands bvc = new BannedVisitorCommands(plugin);
+        BannedCommands bvc = new BannedCommands(plugin);
 
         // Not in world
         when(iwm.inWorld(any(World.class))).thenReturn(false);
         when(iwm.inWorld(any(Location.class))).thenReturn(false);
 
-        bvc.onVisitorCommand(e);
+        bvc.onCommand(e);
         assertFalse(e.isCancelled());
 
         // In world
@@ -127,96 +128,132 @@ public class BannedVisitorCommandsTest {
         when(iwm.inWorld(any(Location.class))).thenReturn(true);
         // Op
         when(player.isOp()).thenReturn(true);
-        bvc.onVisitorCommand(e);
+        bvc.onCommand(e);
         assertFalse(e.isCancelled());
 
         // Not op
         when(player.isOp()).thenReturn(false);
         // Has bypass perm
         when(player.hasPermission(Mockito.anyString())).thenReturn(true);
-        bvc.onVisitorCommand(e);
+        bvc.onCommand(e);
         assertFalse(e.isCancelled());
 
         // Does not have perm
         when(player.hasPermission(Mockito.anyString())).thenReturn(false);
         // Not a visitor
-        when(im.locationIsOnIsland(Mockito.any(), Mockito.any())).thenReturn(true);
-        bvc.onVisitorCommand(e);
+        when(im.locationIsOnIsland(any(), any())).thenReturn(true);
+        bvc.onCommand(e);
         assertFalse(e.isCancelled());
     }
 
+    /**
+     * Test for {@link BannedCommands#onCommand(PlayerCommandPreprocessEvent)}
+     */
     @Test
     public void testEmptyBannedCommands() {
         PlayerCommandPreprocessEvent e = new PlayerCommandPreprocessEvent(player, "/blah");
-        BannedVisitorCommands bvc = new BannedVisitorCommands(plugin);
-        bvc.onVisitorCommand(e);
+        BannedCommands bvc = new BannedCommands(plugin);
+        bvc.onCommand(e);
         assertFalse(e.isCancelled());
     }
 
+    /**
+     * Test for {@link BannedCommands#onCommand(PlayerCommandPreprocessEvent)}
+     */
     @Test
     public void testBannedCommands() {
         PlayerCommandPreprocessEvent e = new PlayerCommandPreprocessEvent(player, "/blah");
-        BannedVisitorCommands bvc = new BannedVisitorCommands(plugin);
+        BannedCommands bvc = new BannedCommands(plugin);
         List<String> banned = new ArrayList<>();
         banned.add("banned_command");
         banned.add("another_banned_command");
-        when(iwm.getVisitorBannedCommands(Mockito.any())).thenReturn(banned);
-        bvc.onVisitorCommand(e);
+        when(iwm.getVisitorBannedCommands(any())).thenReturn(banned);
+        bvc.onCommand(e);
         assertFalse(e.isCancelled());
-        Mockito.verify(iwm).getVisitorBannedCommands(Mockito.any());
+        verify(iwm).getVisitorBannedCommands(any());
     }
 
+    /**
+     * Test for {@link BannedCommands#onCommand(PlayerCommandPreprocessEvent)}
+     */
     @Test
     public void testBannedCommandsWithExtra() {
         PlayerCommandPreprocessEvent e = new PlayerCommandPreprocessEvent(player, "/blah with extra stuff");
-        BannedVisitorCommands bvc = new BannedVisitorCommands(plugin);
+        BannedCommands bvc = new BannedCommands(plugin);
         List<String> banned = new ArrayList<>();
         banned.add("banned_command");
         banned.add("another_banned_command");
-        when(iwm.getVisitorBannedCommands(Mockito.any())).thenReturn(banned);
-        bvc.onVisitorCommand(e);
+        when(iwm.getVisitorBannedCommands(any())).thenReturn(banned);
+        bvc.onCommand(e);
         assertFalse(e.isCancelled());
-        Mockito.verify(iwm).getVisitorBannedCommands(Mockito.any());
+        verify(iwm).getVisitorBannedCommands(any());
     }
 
+    /**
+     * Test for {@link BannedCommands#onCommand(PlayerCommandPreprocessEvent)}
+     */
     @Test
     public void testBannedCommandsWithBannedCommand() {
         PlayerCommandPreprocessEvent e = new PlayerCommandPreprocessEvent(player, "/banned_command");
-        BannedVisitorCommands bvc = new BannedVisitorCommands(plugin);
+        BannedCommands bvc = new BannedCommands(plugin);
         List<String> banned = new ArrayList<>();
         banned.add("banned_command");
         banned.add("another_banned_command");
-        when(iwm.getVisitorBannedCommands(Mockito.any())).thenReturn(banned);
-        bvc.onVisitorCommand(e);
-        Mockito.verify(iwm).getVisitorBannedCommands(Mockito.any());
+        when(iwm.getVisitorBannedCommands(any())).thenReturn(banned);
+        bvc.onCommand(e);
+        verify(iwm).getVisitorBannedCommands(any());
         assertTrue(e.isCancelled());
 
     }
 
+    /**
+     * Test for {@link BannedCommands#onCommand(PlayerCommandPreprocessEvent)}
+     */
     @Test
     public void testBannedCommandsWithBannedCommandWithExtra() {
         PlayerCommandPreprocessEvent e = new PlayerCommandPreprocessEvent(player, "/banned_command with extra stuff");
-        BannedVisitorCommands bvc = new BannedVisitorCommands(plugin);
+        BannedCommands bvc = new BannedCommands(plugin);
         List<String> banned = new ArrayList<>();
         banned.add("banned_command");
         banned.add("another_banned_command");
-        when(iwm.getVisitorBannedCommands(Mockito.any())).thenReturn(banned);
-        bvc.onVisitorCommand(e);
-        Mockito.verify(iwm).getVisitorBannedCommands(Mockito.any());
+        when(iwm.getVisitorBannedCommands(any())).thenReturn(banned);
+        bvc.onCommand(e);
+        verify(iwm).getVisitorBannedCommands(any());
         assertTrue(e.isCancelled());
 
     }
 
+    /**
+     * Test for {@link BannedCommands#onCommand(PlayerCommandPreprocessEvent)}
+     */
     @Test
     public void testAnotherBannedCommandsWithBannedCommandWithExtra() {
         PlayerCommandPreprocessEvent e = new PlayerCommandPreprocessEvent(player, "/another_banned_command with extra stuff");
-        BannedVisitorCommands bvc = new BannedVisitorCommands(plugin);
+        BannedCommands bvc = new BannedCommands(plugin);
         List<String> banned = new ArrayList<>();
         banned.add("banned_command");
         banned.add("another_banned_command");
-        when(iwm.getVisitorBannedCommands(Mockito.any())).thenReturn(banned);
-        bvc.onVisitorCommand(e);
-        Mockito.verify(iwm).getVisitorBannedCommands(Mockito.any());
+        when(iwm.getVisitorBannedCommands(any())).thenReturn(banned);
+        bvc.onCommand(e);
+        verify(iwm).getVisitorBannedCommands(any());
+        assertTrue(e.isCancelled());
+
+    }
+    
+    
+    /**
+     * Test for {@link BannedCommands#onCommand(PlayerCommandPreprocessEvent)}
+     */
+    @Test
+    public void testBannedCommandsWithBannedFallingCommand() {
+        PlayerCommandPreprocessEvent e = new PlayerCommandPreprocessEvent(player, "/banned_command");
+        BannedCommands bvc = new BannedCommands(plugin);
+        List<String> banned = new ArrayList<>();
+        banned.add("banned_command");
+        banned.add("another_banned_command");
+        when(iwm.getFallingBannedCommands(any())).thenReturn(banned);
+        bvc.onCommand(e);
+        verify(iwm).getVisitorBannedCommands(any());
         assertTrue(e.isCancelled());
 
     }

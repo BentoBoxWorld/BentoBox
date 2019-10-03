@@ -11,18 +11,18 @@ import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 
 /**
- * Blocks visitors from executing commands that they should not in the island world
+ * Blocks command usage for various scenarios
  * @author tastybento
  *
  */
-public class BannedVisitorCommands implements Listener {
+public class BannedCommands implements Listener {
 
     private BentoBox plugin;
 
     /**
      * @param plugin - plugin
      */
-    public BannedVisitorCommands(@NonNull BentoBox plugin) {
+    public BannedCommands(@NonNull BentoBox plugin) {
         this.plugin = plugin;
     }
 
@@ -30,8 +30,8 @@ public class BannedVisitorCommands implements Listener {
      * Prevents visitors from using commands on islands, like /spawner
      * @param e - event
      */
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onVisitorCommand(PlayerCommandPreprocessEvent e) {
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    public void onCommand(PlayerCommandPreprocessEvent e) {
         if (!plugin.getIWM().inWorld(e.getPlayer().getLocation()) || e.getPlayer().isOp()
                 || e.getPlayer().hasPermission(plugin.getIWM().getPermissionPrefix(e.getPlayer().getWorld()) + "mod.bypassprotect")
                 || plugin.getIslands().locationIsOnIsland(e.getPlayer(), e.getPlayer().getLocation())) {
@@ -39,7 +39,8 @@ public class BannedVisitorCommands implements Listener {
         }
         // Check banned commands
         String[] args = e.getMessage().substring(1).toLowerCase(java.util.Locale.ENGLISH).split(" ");
-        if (plugin.getIWM().getVisitorBannedCommands(e.getPlayer().getWorld()).contains(args[0])) {
+        if (plugin.getIWM().getVisitorBannedCommands(e.getPlayer().getWorld()).contains(args[0])
+                || plugin.getIWM().getFallingBannedCommands(e.getPlayer().getWorld()).contains(args[0])) {
             User user = User.getInstance(e.getPlayer());
             user.notify("protection.protected", TextVariables.DESCRIPTION, user.getTranslation("protection.command-is-banned"));
             e.setCancelled(true);

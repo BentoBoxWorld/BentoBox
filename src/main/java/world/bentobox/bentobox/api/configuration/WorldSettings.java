@@ -1,5 +1,6 @@
 package world.bentobox.bentobox.api.configuration;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -7,8 +8,8 @@ import java.util.Set;
 import org.bukkit.Difficulty;
 import org.bukkit.GameMode;
 import org.bukkit.entity.EntityType;
-
 import org.eclipse.jdt.annotation.NonNull;
+
 import world.bentobox.bentobox.api.flags.Flag;
 
 /**
@@ -135,6 +136,15 @@ public interface WorldSettings extends ConfigObject {
      * @return the visitorBannedCommands
      */
     List<String> getVisitorBannedCommands();
+    
+    /**
+     * Optional list of commands that are banned when falling. Not applicable to all game modes so defaults to empty.
+     * @return the fallingBannedCommands
+     * @since 1.8.0
+     */
+    default List<String> getFallingBannedCommands() {
+        return Collections.emptyList();
+    }
 
     /**
      * Get world flags

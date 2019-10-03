@@ -25,7 +25,7 @@ import world.bentobox.bentobox.hooks.VaultHook;
 import world.bentobox.bentobox.hooks.WorldEditHook;
 import world.bentobox.bentobox.hooks.placeholders.MVdWPlaceholderAPIHook;
 import world.bentobox.bentobox.hooks.placeholders.PlaceholderAPIHook;
-import world.bentobox.bentobox.listeners.BannedVisitorCommands;
+import world.bentobox.bentobox.listeners.BannedCommands;
 import world.bentobox.bentobox.listeners.BlockEndDragon;
 import world.bentobox.bentobox.listeners.DeathListener;
 import world.bentobox.bentobox.listeners.JoinLeaveListener;
@@ -247,7 +247,7 @@ public class BentoBox extends JavaPlugin {
         // End dragon blocking
         manager.registerEvents(new BlockEndDragon(this), this);
         // Banned visitor commands
-        manager.registerEvents(new BannedVisitorCommands(this), this);
+        manager.registerEvents(new BannedCommands(this), this);
         // Death counter
         manager.registerEvents(new DeathListener(this), this);
         // Island Delete Manager
