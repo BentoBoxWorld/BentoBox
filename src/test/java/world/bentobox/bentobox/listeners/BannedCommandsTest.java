@@ -246,6 +246,7 @@ public class BannedCommandsTest {
      */
     @Test
     public void testBannedCommandsWithBannedFallingCommand() {
+        when(player.getFallDistance()).thenReturn(10F);
         PlayerCommandPreprocessEvent e = new PlayerCommandPreprocessEvent(player, "/banned_command");
         BannedCommands bvc = new BannedCommands(plugin);
         List<String> banned = new ArrayList<>();
@@ -253,8 +254,24 @@ public class BannedCommandsTest {
         banned.add("another_banned_command");
         when(iwm.getFallingBannedCommands(any())).thenReturn(banned);
         bvc.onCommand(e);
-        verify(iwm).getVisitorBannedCommands(any());
         assertTrue(e.isCancelled());
+
+    }
+    
+    /**
+     * Test for {@link BannedCommands#onCommand(PlayerCommandPreprocessEvent)}
+     */
+    @Test
+    public void testBannedCommandsWithBannedFallingCommandNotFalling() {
+        when(player.getFallDistance()).thenReturn(0F);
+        PlayerCommandPreprocessEvent e = new PlayerCommandPreprocessEvent(player, "/banned_command");
+        BannedCommands bvc = new BannedCommands(plugin);
+        List<String> banned = new ArrayList<>();
+        banned.add("banned_command");
+        banned.add("another_banned_command");
+        when(iwm.getFallingBannedCommands(any())).thenReturn(banned);
+        bvc.onCommand(e);
+        assertFalse(e.isCancelled());
 
     }
 

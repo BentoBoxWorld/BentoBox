@@ -1,5 +1,6 @@
 package world.bentobox.bentobox.listeners;
 
+import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -37,10 +38,12 @@ public class BannedCommands implements Listener {
                 || plugin.getIslands().locationIsOnIsland(e.getPlayer(), e.getPlayer().getLocation())) {
             return;
         }
+        World w = e.getPlayer().getWorld();
         // Check banned commands
         String[] args = e.getMessage().substring(1).toLowerCase(java.util.Locale.ENGLISH).split(" ");
-        if (plugin.getIWM().getVisitorBannedCommands(e.getPlayer().getWorld()).contains(args[0])
-                || plugin.getIWM().getFallingBannedCommands(e.getPlayer().getWorld()).contains(args[0])) {
+        if (plugin.getIWM().getVisitorBannedCommands(w).contains(args[0])
+                || (plugin.getIWM().getFallingBannedCommands(w).contains(args[0])
+                        && e.getPlayer().getFallDistance() > 0)) {
             User user = User.getInstance(e.getPlayer());
             user.notify("protection.protected", TextVariables.DESCRIPTION, user.getTranslation("protection.command-is-banned"));
             e.setCancelled(true);
