@@ -1086,7 +1086,7 @@ protection:
         &aPrevent players from teleporting
         &aback to their island using commands
         &aif they are falling.
-      hint: "&cYou cannot teleport back to your island while you are falling."
+      hint: "&cYou cannot do that while falling."
     WITHER_DAMAGE:
       name: "Toggle wither damage"
       description: |-

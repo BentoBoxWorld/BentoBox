@@ -8,18 +8,24 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Difficulty;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.World;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.eclipse.jdt.annotation.NonNull;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,8 +37,11 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.configuration.WorldSettings;
+import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.user.Notifier;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
@@ -51,6 +60,8 @@ public class BannedCommandsTest {
     private BentoBox plugin;
     @Mock
     private IslandsManager im;
+    @Mock
+    private World world;
 
     @Before
     public void setUp() throws Exception {
@@ -63,12 +74,14 @@ public class BannedCommandsTest {
         when(iwm.getPermissionPrefix(any())).thenReturn("bskyblock.");
         when(iwm.getVisitorBannedCommands(any())).thenReturn(new ArrayList<>());
         when(iwm.getFallingBannedCommands(any())).thenReturn(new ArrayList<>());
+        WorldSettings ws = new MyWorldSettings();
+        when(iwm.getWorldSettings(any())).thenReturn(ws);
         when(plugin.getIWM()).thenReturn(iwm);
 
         // Player
         when(player.isOp()).thenReturn(false);
         when(player.hasPermission(Mockito.anyString())).thenReturn(false);
-        when(player.getWorld()).thenReturn(mock(World.class));
+        when(player.getWorld()).thenReturn(world);
         when(player.getLocation()).thenReturn(mock(Location.class));
         User.getInstance(player);
         Server server = mock(Server.class);
@@ -105,6 +118,8 @@ public class BannedCommandsTest {
         // Addon
         when(iwm.getAddon(any())).thenReturn(Optional.empty());
 
+        // Set flag
+        Flags.PREVENT_TELEPORT_WHEN_FALLING.setSetting(world, true);
 
     }
 
@@ -120,7 +135,7 @@ public class BannedCommandsTest {
         when(iwm.inWorld(any(World.class))).thenReturn(false);
         when(iwm.inWorld(any(Location.class))).thenReturn(false);
 
-        bvc.onCommand(e);
+        bvc.onVisitorCommand(e);
         assertFalse(e.isCancelled());
 
         // In world
@@ -128,21 +143,21 @@ public class BannedCommandsTest {
         when(iwm.inWorld(any(Location.class))).thenReturn(true);
         // Op
         when(player.isOp()).thenReturn(true);
-        bvc.onCommand(e);
+        bvc.onVisitorCommand(e);
         assertFalse(e.isCancelled());
 
         // Not op
         when(player.isOp()).thenReturn(false);
         // Has bypass perm
         when(player.hasPermission(Mockito.anyString())).thenReturn(true);
-        bvc.onCommand(e);
+        bvc.onVisitorCommand(e);
         assertFalse(e.isCancelled());
 
         // Does not have perm
         when(player.hasPermission(Mockito.anyString())).thenReturn(false);
         // Not a visitor
         when(im.locationIsOnIsland(any(), any())).thenReturn(true);
-        bvc.onCommand(e);
+        bvc.onVisitorCommand(e);
         assertFalse(e.isCancelled());
     }
 
@@ -153,7 +168,7 @@ public class BannedCommandsTest {
     public void testEmptyBannedCommands() {
         PlayerCommandPreprocessEvent e = new PlayerCommandPreprocessEvent(player, "/blah");
         BannedCommands bvc = new BannedCommands(plugin);
-        bvc.onCommand(e);
+        bvc.onVisitorCommand(e);
         assertFalse(e.isCancelled());
     }
 
@@ -168,7 +183,7 @@ public class BannedCommandsTest {
         banned.add("banned_command");
         banned.add("another_banned_command");
         when(iwm.getVisitorBannedCommands(any())).thenReturn(banned);
-        bvc.onCommand(e);
+        bvc.onVisitorCommand(e);
         assertFalse(e.isCancelled());
         verify(iwm).getVisitorBannedCommands(any());
     }
@@ -184,7 +199,7 @@ public class BannedCommandsTest {
         banned.add("banned_command");
         banned.add("another_banned_command");
         when(iwm.getVisitorBannedCommands(any())).thenReturn(banned);
-        bvc.onCommand(e);
+        bvc.onVisitorCommand(e);
         assertFalse(e.isCancelled());
         verify(iwm).getVisitorBannedCommands(any());
     }
@@ -200,7 +215,7 @@ public class BannedCommandsTest {
         banned.add("banned_command");
         banned.add("another_banned_command");
         when(iwm.getVisitorBannedCommands(any())).thenReturn(banned);
-        bvc.onCommand(e);
+        bvc.onVisitorCommand(e);
         verify(iwm).getVisitorBannedCommands(any());
         assertTrue(e.isCancelled());
 
@@ -217,7 +232,7 @@ public class BannedCommandsTest {
         banned.add("banned_command");
         banned.add("another_banned_command");
         when(iwm.getVisitorBannedCommands(any())).thenReturn(banned);
-        bvc.onCommand(e);
+        bvc.onVisitorCommand(e);
         verify(iwm).getVisitorBannedCommands(any());
         assertTrue(e.isCancelled());
 
@@ -234,7 +249,7 @@ public class BannedCommandsTest {
         banned.add("banned_command");
         banned.add("another_banned_command");
         when(iwm.getVisitorBannedCommands(any())).thenReturn(banned);
-        bvc.onCommand(e);
+        bvc.onVisitorCommand(e);
         verify(iwm).getVisitorBannedCommands(any());
         assertTrue(e.isCancelled());
 
@@ -253,7 +268,7 @@ public class BannedCommandsTest {
         banned.add("banned_command");
         banned.add("another_banned_command");
         when(iwm.getFallingBannedCommands(any())).thenReturn(banned);
-        bvc.onCommand(e);
+        bvc.onFallingCommand(e);
         assertTrue(e.isCancelled());
 
     }
@@ -270,9 +285,362 @@ public class BannedCommandsTest {
         banned.add("banned_command");
         banned.add("another_banned_command");
         when(iwm.getFallingBannedCommands(any())).thenReturn(banned);
-        bvc.onCommand(e);
+        bvc.onFallingCommand(e);
         assertFalse(e.isCancelled());
 
     }
 
+    /**
+     * Test for {@link BannedCommands#onCommand(PlayerCommandPreprocessEvent)}
+     */
+    @Test
+    public void testBannedCommandsWithBannedFallingCommandNoFlag() {
+        Flags.PREVENT_TELEPORT_WHEN_FALLING.setSetting(world, false);
+        when(player.getFallDistance()).thenReturn(0F);
+        PlayerCommandPreprocessEvent e = new PlayerCommandPreprocessEvent(player, "/banned_command");
+        BannedCommands bvc = new BannedCommands(plugin);
+        List<String> banned = new ArrayList<>();
+        banned.add("banned_command");
+        banned.add("another_banned_command");
+        when(iwm.getFallingBannedCommands(any())).thenReturn(banned);
+        bvc.onFallingCommand(e);
+        assertFalse(e.isCancelled());
+
+    }
+
+    /*
+     * internal storage class
+     */
+    class MyWorldSettings implements WorldSettings {
+
+        private Map<String, Boolean> worldFlags = new HashMap<>();
+
+        @Override
+        public @NonNull List<String> getOnLeaveCommands() {
+            return null;
+        }
+
+        @Override
+        public @NonNull List<String> getOnJoinCommands() {
+            return null;
+        }
+
+        @Override
+        public GameMode getDefaultGameMode() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public Map<Flag, Integer> getDefaultIslandFlags() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public Map<Flag, Integer> getDefaultIslandSettings() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public Difficulty getDifficulty() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public void setDifficulty(Difficulty difficulty) {
+            // TODO Auto-generated method stub
+
+        }
+
+        @Override
+        public String getFriendlyName() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public int getIslandDistance() {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        @Override
+        public int getIslandHeight() {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        @Override
+        public int getIslandProtectionRange() {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        @Override
+        public int getIslandStartX() {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        @Override
+        public int getIslandStartZ() {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        @Override
+        public int getIslandXOffset() {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        @Override
+        public int getIslandZOffset() {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        @Override
+        public List<String> getIvSettings() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public int getMaxHomes() {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        @Override
+        public int getMaxIslands() {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        @Override
+        public int getMaxTeamSize() {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        @Override
+        public int getNetherSpawnRadius() {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        @Override
+        public String getPermissionPrefix() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public Set<EntityType> getRemoveMobsWhitelist() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public int getSeaHeight() {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        @Override
+        public List<String> getHiddenFlags() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public List<String> getVisitorBannedCommands() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public Map<String, Boolean> getWorldFlags() {
+            return worldFlags;
+        }
+
+        @Override
+        public String getWorldName() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public boolean isDragonSpawn() {
+            // TODO Auto-generated method stub
+            return false;
+        }
+
+        @Override
+        public boolean isEndGenerate() {
+            // TODO Auto-generated method stub
+            return false;
+        }
+
+        @Override
+        public boolean isEndIslands() {
+            // TODO Auto-generated method stub
+            return false;
+        }
+
+        @Override
+        public boolean isNetherGenerate() {
+            // TODO Auto-generated method stub
+            return false;
+        }
+
+        @Override
+        public boolean isNetherIslands() {
+            // TODO Auto-generated method stub
+            return false;
+        }
+
+        @Override
+        public boolean isOnJoinResetEnderChest() {
+            // TODO Auto-generated method stub
+            return false;
+        }
+
+        @Override
+        public boolean isOnJoinResetInventory() {
+            // TODO Auto-generated method stub
+            return false;
+        }
+
+        @Override
+        public boolean isOnJoinResetMoney() {
+            // TODO Auto-generated method stub
+            return false;
+        }
+
+        @Override
+        public boolean isOnLeaveResetEnderChest() {
+            // TODO Auto-generated method stub
+            return false;
+        }
+
+        @Override
+        public boolean isOnLeaveResetInventory() {
+            // TODO Auto-generated method stub
+            return false;
+        }
+
+        @Override
+        public boolean isOnLeaveResetMoney() {
+            // TODO Auto-generated method stub
+            return false;
+        }
+
+        @Override
+        public boolean isUseOwnGenerator() {
+            // TODO Auto-generated method stub
+            return false;
+        }
+
+        @Override
+        public boolean isWaterUnsafe() {
+            // TODO Auto-generated method stub
+            return false;
+        }
+
+        @Override
+        public List<String> getGeoLimitSettings() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public int getResetLimit() {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        @Override
+        public long getResetEpoch() {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        @Override
+        public void setResetEpoch(long timestamp) {
+            // TODO Auto-generated method stub
+
+        }
+
+        @Override
+        public boolean isTeamJoinDeathReset() {
+            // TODO Auto-generated method stub
+            return false;
+        }
+
+        @Override
+        public int getDeathsMax() {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        @Override
+        public boolean isDeathsCounted() {
+            // TODO Auto-generated method stub
+            return false;
+        }
+
+        @Override
+        public boolean isDeathsResetOnNewIsland() {
+            // TODO Auto-generated method stub
+            return false;
+        }
+
+        @Override
+        public boolean isAllowSetHomeInNether() {
+            // TODO Auto-generated method stub
+            return false;
+        }
+
+        @Override
+        public boolean isAllowSetHomeInTheEnd() {
+            // TODO Auto-generated method stub
+            return false;
+        }
+
+        @Override
+        public boolean isRequireConfirmationToSetHomeInNether() {
+            // TODO Auto-generated method stub
+            return false;
+        }
+
+        @Override
+        public boolean isRequireConfirmationToSetHomeInTheEnd() {
+            // TODO Auto-generated method stub
+            return false;
+        }
+
+        @Override
+        public int getBanLimit() {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
+        @Override
+        public boolean isLeaversLoseReset() {
+            // TODO Auto-generated method stub
+            return false;
+        }
+
+        @Override
+        public boolean isKickedKeepInventory() {
+            // TODO Auto-generated method stub
+            return false;
+        }
+
+    }
 }
