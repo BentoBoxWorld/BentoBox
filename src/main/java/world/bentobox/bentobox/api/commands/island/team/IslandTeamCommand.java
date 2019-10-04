@@ -1,15 +1,15 @@
 package world.bentobox.bentobox.api.commands.island.team;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
-
 import world.bentobox.bentobox.api.commands.CompositeCommand;
+import world.bentobox.bentobox.api.commands.island.team.Invite.InviteType;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.team.TeamEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
@@ -18,15 +18,15 @@ import world.bentobox.bentobox.api.user.User;
 public class IslandTeamCommand extends CompositeCommand {
 
     /**
-     * Invited map. Key is the invited party, value is the inviter.
+     * Invited list. Key is the invited party, value is the invite.
      */
-    private BiMap<UUID, UUID> inviteList;
+    private Map<UUID, Invite> inviteList;
 
     private IslandTeamInviteCommand inviteCommand;
 
     public IslandTeamCommand(CompositeCommand parent) {
         super(parent, "team");
-        inviteList = HashBiMap.create();
+        inviteList = new HashMap<>();
     }
 
     @Override
@@ -89,18 +89,38 @@ public class IslandTeamCommand extends CompositeCommand {
         return event.isCancelled();
     }
 
-    /**
-     * @return the inviteList
-     */
-    public BiMap<UUID, UUID> getInviteList() {
-        return inviteList;
+    public void addInvite(InviteType type, UUID inviter, UUID invitee) {
+        inviteList.put(invitee, new Invite(type, inviter, invitee));
+    }
+
+    public boolean isInvited(UUID invitee) {
+        return inviteList.containsKey(invitee);
     }
 
     /**
-     * @param inviteList the inviteList to set
+     * Get whoever invited invitee
+     * @param invitee - uuid
+     * @return UUID of inviter, or null if invitee has not been invited
      */
-    public void setInviteList(BiMap<UUID, UUID> inviteList) {
-        this.inviteList = inviteList;
+    public UUID getInviter(UUID invitee) {
+        return isInvited(invitee) ? inviteList.get(invitee).getInviter() : null;
     }
 
+    /**
+     * Get the invite for an invitee
+     * @param invitee - UUID of invitee
+     * @return invite or null if none
+     */
+    public Invite getInvite(UUID invitee) {
+        return inviteList.get(invitee);
+    }
+
+    /**
+     * Remove an invite made
+     * @param uniqueId - UUID of invited user
+     */
+    public void removeInvite(UUID uniqueId) {
+        inviteList.remove(uniqueId);
+
+    }
 }

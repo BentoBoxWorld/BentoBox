@@ -1,10 +1,7 @@
-/**
- *
- */
 package world.bentobox.bentobox.api.commands.island.team;
 
 import static org.junit.Assert.assertFalse;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -28,7 +25,6 @@ import org.powermock.reflect.Whitebox;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
-import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.CommandsManager;
@@ -46,14 +42,19 @@ import world.bentobox.bentobox.managers.RanksManager;
 @PrepareForTest({Bukkit.class, BentoBox.class, User.class })
 public class IslandTeamInviteCommandTest {
 
-    private CompositeCommand ic;
+    @Mock
+    private IslandTeamCommand ic;
     private UUID uuid;
+    @Mock
     private User user;
+    @Mock
     private IslandsManager im;
+    @Mock
     private PlayersManager pm;
     private UUID notUUID;
     @Mock
     private Settings s;
+    @Mock
     private Island island;
 
     /**
@@ -75,7 +76,6 @@ public class IslandTeamInviteCommandTest {
         // Player
         Player p = mock(Player.class);
         // Sometimes use Mockito.withSettings().verboseLogging()
-        user = mock(User.class);
         when(user.isOp()).thenReturn(false);
         uuid = UUID.randomUUID();
         notUUID = UUID.randomUUID();
@@ -88,16 +88,13 @@ public class IslandTeamInviteCommandTest {
         User.setPlugin(plugin);
 
         // Parent command has no aliases
-        ic = mock(CompositeCommand.class);
         when(ic.getSubCommandAliases()).thenReturn(new HashMap<>());
 
         // Player has island to begin with
-        im = mock(IslandsManager.class);
         when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(true);
         when(im.inTeam(Mockito.any(), Mockito.any(UUID.class))).thenReturn(true);
         when(im.isOwner(Mockito.any(), Mockito.any())).thenReturn(true);
         when(im.getOwner(Mockito.any(), Mockito.any())).thenReturn(uuid);
-        island = mock(Island.class);
         when(island.getRank(Mockito.any())).thenReturn(RanksManager.OWNER_RANK);
         when(im.getIsland(Mockito.any(), Mockito.any(User.class))).thenReturn(island);
         when(plugin.getIslands()).thenReturn(im);
@@ -106,8 +103,6 @@ public class IslandTeamInviteCommandTest {
         when(im.inTeam(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
 
         // Player Manager
-        pm = mock(PlayersManager.class);
-
         when(plugin.getPlayers()).thenReturn(pm);
 
         // Server & Scheduler

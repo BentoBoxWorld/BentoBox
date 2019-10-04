@@ -7,9 +7,9 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
+import world.bentobox.bentobox.api.commands.island.team.Invite.InviteType;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.team.TeamEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
@@ -50,10 +50,21 @@ public class IslandTeamInviteCommand extends CompositeCommand {
         }
         UUID playerUUID = user.getUniqueId();
         if (args.isEmpty() || args.size() > 1) {
-            // Invite label with no name, i.e., /island invite - tells the player who has invited them so far
-            if (itc.getInviteList().containsKey(playerUUID)) {
-                OfflinePlayer inviter = Bukkit.getServer().getOfflinePlayer(itc.getInviteList().get(playerUUID));
-                user.sendMessage("commands.island.team.invite.name-has-invited-you", TextVariables.NAME, inviter.getName());
+            // Invite label with no name, i.e., /island invite - tells the player who has invited them so far and why
+            if (itc.isInvited(playerUUID)) {
+                Invite invite = itc.getInvite(playerUUID);
+                String name = getPlayers().getName(playerUUID);
+                switch (invite.getType()) {
+                case COOP:
+                    user.sendMessage("commands.island.team.invite.name-has-invited-you.coop", TextVariables.NAME, name);
+                    break;
+                case TRUST:
+                    user.sendMessage("commands.island.team.invite.name-has-invited-you.trust", TextVariables.NAME, name);
+                    break;
+                default:
+                    user.sendMessage("commands.island.team.invite.name-has-invited-you", TextVariables.NAME, name);
+                    break;
+                }
                 return true;
             }
             // Show help
@@ -103,8 +114,8 @@ public class IslandTeamInviteCommand extends CompositeCommand {
         if (teamMembers.size() < maxSize) {
             // If that player already has an invite out then retract it.
             // Players can only have one invite one at a time - interesting
-            if (itc.getInviteList().containsValue(user.getUniqueId())) {
-                itc.getInviteList().inverse().remove(user.getUniqueId());
+            if (itc.isInvited(user.getUniqueId())) {
+                itc.removeInvite(user.getUniqueId());
                 user.sendMessage("commands.island.team.invite.removing-invite");
             }
             // Fire event so add-ons can run commands, etc.
@@ -119,7 +130,7 @@ public class IslandTeamInviteCommand extends CompositeCommand {
             }
             // Put the invited player (key) onto the list with inviter (value)
             // If someone else has invited a player, then this invite will overwrite the previous invite!
-            itc.getInviteList().put(invitedPlayer.getUniqueId(), user.getUniqueId());
+            itc.addInvite(InviteType.TEAM, invitedPlayer.getUniqueId(), user.getUniqueId());
             user.sendMessage("commands.island.team.invite.invitation-sent", TextVariables.NAME, invitedPlayer.getName());
             // Send message to online player
             invitedPlayer.sendMessage("commands.island.team.invite.name-has-invited-you", TextVariables.NAME, user.getName());

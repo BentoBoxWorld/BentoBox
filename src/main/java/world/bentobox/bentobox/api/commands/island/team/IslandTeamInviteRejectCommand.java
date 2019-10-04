@@ -31,11 +31,11 @@ public class IslandTeamInviteRejectCommand extends CompositeCommand {
     public boolean execute(User user, String label, List<String> args) {
         UUID playerUUID = user.getUniqueId();
         // Reject /island reject
-        if (itc.getInviteList().containsKey(playerUUID)) {
+        if (itc.isInvited(playerUUID)) {
             // Fire event so add-ons can run commands, etc.
             IslandBaseEvent event = TeamEvent.builder()
                     .island(getIslands()
-                            .getIsland(getWorld(), itc.getInviteList().get(playerUUID)))
+                            .getIsland(getWorld(), itc.getInviter(playerUUID)))
                     .reason(TeamEvent.Reason.REJECT)
                     .involvedPlayer(playerUUID)
                     .build();
@@ -45,10 +45,10 @@ public class IslandTeamInviteRejectCommand extends CompositeCommand {
             }
 
             // Remove this player from the global invite list
-            itc.getInviteList().remove(user.getUniqueId());
+            itc.removeInvite(user.getUniqueId());
             user.sendMessage("commands.island.team.invite.reject.you-rejected-invite");
 
-            User inviter = User.getInstance(itc.getInviteList().get(playerUUID));
+            User inviter = User.getInstance(itc.getInviter(playerUUID));
             if (inviter != null) {
                 inviter.sendMessage("commands.island.team.invite.reject.name-rejected-your-invite", TextVariables.NAME, user.getName());
             }
