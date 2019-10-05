@@ -508,7 +508,7 @@ public class BlueprintsManager {
         }
         File bpf = getBlueprintsFolder(addon);
         // Get the filename
-        File fileName = new File(bpf, bp.getName().toLowerCase(Locale.ENGLISH) + BLUEPRINT_SUFFIX);
+        File fileName = new File(bpf, bp.getName() + BLUEPRINT_SUFFIX);
         // Delete the old file
         try {
             Files.deleteIfExists(fileName.toPath());
@@ -516,10 +516,9 @@ public class BlueprintsManager {
             plugin.logError("Could not delete old Blueprint " + e.getLocalizedMessage());
         }
         // Set new name
-        bp.setName(name);
+        bp.setName(name.toLowerCase(Locale.ENGLISH));
         // Save it
         saveBlueprint(addon, bp);
-
     }
 
 }
