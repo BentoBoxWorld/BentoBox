@@ -106,6 +106,7 @@ public class IslandTeamInviteAcceptCommandTest {
         // Parent command has no aliases
         when(itc.getSubCommandAliases()).thenReturn(new HashMap<>());
         when(itc.getPermissionPrefix()).thenReturn("bskyblock.");
+        when(itc.getInvite(any())).thenReturn(invite);
 
         // Player has island to begin with
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
@@ -280,8 +281,31 @@ public class IslandTeamInviteAcceptCommandTest {
      */
     @Test
     public void testExecuteUserStringListOfString() {
+        // Team
         assertTrue(c.execute(user, "accept", Collections.emptyList()));
         verify(user).getTranslation("commands.island.team.invite.accept.confirmation");
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteAcceptCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     */
+    @Test
+    public void testExecuteUserStringListOfStringCoop() {
+        // Coop
+        when(invite.getType()).thenReturn(InviteType.COOP);
+        assertTrue(c.execute(user, "accept", Collections.emptyList()));
+        verify(user).sendMessage("commands.confirmation.confirm", "[seconds]", "0");
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteAcceptCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     */
+    @Test
+    public void testExecuteUserStringListOfStringTrust() {
+        // Trust
+        when(invite.getType()).thenReturn(InviteType.TRUST);
+        assertTrue(c.execute(user, "accept", Collections.emptyList()));
+        verify(user).sendMessage("commands.confirmation.confirm", "[seconds]", "0");
     }
 
 }
