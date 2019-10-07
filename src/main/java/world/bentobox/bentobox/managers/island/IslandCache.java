@@ -326,4 +326,13 @@ public class IslandCache {
         int setting = BentoBox.getInstance().getIWM().getDefaultIslandFlags(w).getOrDefault(flag, flag.getDefaultRank());
         islandsById.values().stream().filter(i -> i.getWorld().equals(w)).forEach(i -> i.setFlag(flag, setting));
     }
+    
+    /**
+     * Get all the island ids
+     * @return set of ids
+     * @since 1.8.0
+     */
+    public Set<String> getAllIslandIds() {
+        return islandsById.keySet();
+    }
 }

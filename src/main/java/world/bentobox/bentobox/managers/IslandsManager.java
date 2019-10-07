@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -28,6 +29,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.PufferFish;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -94,6 +96,12 @@ public class IslandsManager {
     // Deleted islands
     @NonNull
     private List<String> deletedIslands;
+
+    private Set<String> toSave = new HashSet<>();
+
+    private Iterator<String> it;
+
+    private BukkitTask task;
 
     /**
      * Islands Manager
@@ -970,6 +978,24 @@ public class IslandsManager {
         }
     }
 
+    /**
+     * Saves all the players at a rate of 1 per tick. Used as a backup.
+     * @since 1.8.0
+     */
+    public void asyncSaveAll() {
+        if (!toSave.isEmpty()) return;
+        // Get a list of ID's to save
+        toSave = islandCache.getAllIslandIds();
+        it = toSave.iterator();
+        task = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
+            if (plugin.isEnabled() && it.hasNext()) {
+                getIslandById(it.next()).ifPresent(this::save);
+            } else {
+               toSave.clear();
+               task.cancel();
+            }
+        }, 0L, 1L);
+    }
     /**
      * Puts a player in a team. Removes them from their old island if required.
      * @param teamIsland - team island
