@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.eclipse.jdt.annotation.Nullable;
+
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.island.team.Invite.InviteType;
 import world.bentobox.bentobox.api.localization.TextVariables;
@@ -20,6 +22,7 @@ import world.bentobox.bentobox.util.Util;
 public class IslandTeamTrustCommand extends CompositeCommand {
 
     IslandTeamCommand itc;
+    private @Nullable UUID targetUUID;
 
     public IslandTeamTrustCommand(IslandTeamCommand parentCommand) {
         super(parentCommand, "trust");
@@ -36,7 +39,7 @@ public class IslandTeamTrustCommand extends CompositeCommand {
     }
 
     @Override
-    public boolean execute(User user, String label, List<String> args) {
+    public boolean canExecute(User user, String label, List<String> args) {
         if (args.size() != 1) {
             // Show help
             showHelp(this, user);
@@ -54,22 +57,18 @@ public class IslandTeamTrustCommand extends CompositeCommand {
             return false;
         }
         // Get target player
-        UUID targetUUID = getPlayers().getUUID(args.get(0));
+        targetUUID = getPlayers().getUUID(args.get(0));
         if (targetUUID == null) {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
             return false;
         }
-        return (getSettings().getTrustCooldown() <= 0 || !checkCooldown(user, island.getUniqueId(), targetUUID.toString())) && trustCmd(user, targetUUID);
-    }
-
-    private boolean trustCmd(User user, UUID targetUUID) {
-        // Player cannot trust themselves
-        if (user.getUniqueId().equals(targetUUID)) {
-            user.sendMessage("commands.island.team.trust.trust-in-yourself");
+        // Check cooldown
+        if (getSettings().getTrustCooldown() > 0 && checkCooldown(user, island.getUniqueId(), targetUUID.toString())) {
             return false;
         }
-        if (getIslands().getMembers(getWorld(), user.getUniqueId()).contains(targetUUID)) {
-            user.sendMessage("commands.island.team.trust.members-trusted");
+        // Player cannot coop themselves
+        if (user.getUniqueId().equals(targetUUID)) {
+            user.sendMessage("commands.island.team.trust.trust-in-yourself");
             return false;
         }
         User target = User.getInstance(targetUUID);
@@ -78,9 +77,49 @@ public class IslandTeamTrustCommand extends CompositeCommand {
             user.sendMessage("commands.island.team.trust.player-already-trusted");
             return false;
         }
+        if (itc.isInvited(targetUUID) && itc.getInviter(targetUUID).equals(user.getUniqueId()) && itc.getInvite(targetUUID).getType().equals(InviteType.TRUST)) {
+            // Prevent spam
+            user.sendMessage("commands.island.team.invite.errors.you-have-already-invited");
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean execute(User user, String label, List<String> args) {
+        User target = User.getInstance(targetUUID);
         Island island = getIslands().getIsland(getWorld(), user.getUniqueId());
         if (island != null) {
             if (getPlugin().getSettings().isInviteConfirmation()) {
+                // Put the invited player (key) onto the list with inviter (value)
+                // If someone else has invited a player, then this invite will overwrite the previous invite!
+                itc.addInvite(InviteType.TRUST, user.getUniqueId(), target.getUniqueId());
+                user.sendMessage("commands.island.team.invite.invitation-sent", TextVariables.NAME, target.getName());
+                // Send message to online player
+                target.sendMessage("commands.island.team.trust.name-has-invited-you", TextVariables.NAME, user.getName());
+                target.sendMessage("commands.island.team.invite.to-accept-or-reject", TextVariables.LABEL, getTopLabel());
+            } else {
+                island.setRank(target, RanksManager.TRUSTED_RANK);
+                user.sendMessage("commands.island.team.trust.success", TextVariables.NAME, target.getName());
+                target.sendMessage("commands.island.team.coop.you-are-a-coop-member", TextVariables.NAME, user.getName());
+            }
+            return true;
+        } else {
+            // Should not happen
+            user.sendMessage("general.errors.general");
+            return false;
+        }
+    }
+
+    /*
+        Island island = getIslands().getIsland(getWorld(), user.getUniqueId());
+        if (island != null) {
+            if (getPlugin().getSettings().isInviteConfirmation()) {
+                if (itc.isInvited(targetUUID) && itc.getInviter(targetUUID).equals(user.getUniqueId()) && itc.getInvite(targetUUID).getType().equals(InviteType.TRUST)) {
+                    // Prevent spam
+                    user.sendMessage("commands.island.team.invite.errors.you-have-already-invited");
+                    return false;
+                }
                 // Put the invited player (key) onto the list with inviter (value)
                 // If someone else has invited a player, then this invite will overwrite the previous invite!
                 itc.addInvite(InviteType.TRUST, user.getUniqueId(), target.getUniqueId());
@@ -99,7 +138,7 @@ public class IslandTeamTrustCommand extends CompositeCommand {
             user.sendMessage("general.errors.general");
             return false;
         }
-    }
+    }*/
 
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {

@@ -103,6 +103,11 @@ public class IslandTeamInviteCommand extends CompositeCommand {
             user.sendMessage("commands.island.team.invite.errors.already-on-team");
             return false;
         }
+        if (itc.isInvited(invitedPlayerUUID) && itc.getInviter(invitedPlayerUUID).equals(user.getUniqueId()) && itc.getInvite(invitedPlayerUUID).getType().equals(InviteType.TEAM)) {
+            // Prevent spam
+            user.sendMessage("commands.island.team.invite.errors.you-have-already-invited");
+            return false;
+        }
         return invite(user,invitedPlayer);
 
     }

@@ -222,18 +222,6 @@ public class IslandTeamCoopCommandTest {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamCoopCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteCoolDownActive() {
-        when(s.getCoopCooldown()).thenReturn(10);
-        when(pm.getUUID(any())).thenReturn(uuid);
-        IslandTeamCoopCommand itl = new IslandTeamCoopCommand(ic);
-        itl.setCooldown(uuid, uuid, 10);
-        assertFalse(itl.canExecute(user, itl.getLabel(), Collections.singletonList("tastybento")));
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamCoopCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
-     */
-    @Test
     public void testCanExecuteCannotCoopSelf() {
         when(pm.getUUID(any())).thenReturn(uuid);
         IslandTeamCoopCommand itl = new IslandTeamCoopCommand(ic);

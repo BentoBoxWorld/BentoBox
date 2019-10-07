@@ -495,7 +495,6 @@ commands:
         parameters: "<player>"
         trust-in-yourself: "&cTrust in yourself!"
         name-has-invited-you: "&a[name] has invited you to join be a trusted member of their island."
-        members-trusted: "&cMembers are already trusted"
         player-already-trusted: "&cPlayer is already trusted!"
         you-are-trusted: "&2You are trusted by &b[name]&a!"
         success: "&aYou trusted &b[name]&a."
@@ -522,6 +521,7 @@ commands:
           you-already-are-in-team: "&cYou are already on a team!"
           already-on-team: "&cThat player is already on a team!"
           invalid-invite: "&cThat invite is no longer valid, sorry."
+          you-have-already-invited: "&cYou have already invited that player!"
         parameters: "<player>"
         you-can-invite: "&aYou can invite [number] more players."
         accept:

@@ -75,6 +75,11 @@ public class IslandTeamCoopCommand extends CompositeCommand {
             user.sendMessage("commands.island.team.coop.already-has-rank");
             return false;
         }
+        if (itc.isInvited(targetUUID) && itc.getInviter(targetUUID).equals(user.getUniqueId()) && itc.getInvite(targetUUID).getType().equals(InviteType.COOP)) {
+            // Prevent spam
+            user.sendMessage("commands.island.team.invite.errors.you-have-already-invited");
+            return false;
+        }
         return true;
     }
 
