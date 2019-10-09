@@ -2,7 +2,12 @@ package world.bentobox.bentobox.api.commands.admin.team;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -16,13 +21,14 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
+import org.mockito.Mock;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -47,12 +53,20 @@ import world.bentobox.bentobox.managers.PlayersManager;
 @PrepareForTest({Bukkit.class, BentoBox.class, User.class })
 public class AdminTeamKickCommandTest {
 
+    @Mock
     private CompositeCommand ac;
     private UUID uuid;
+    @Mock
     private User user;
+    @Mock
     private IslandsManager im;
+    @Mock
     private PlayersManager pm;
     private UUID notUUID;
+    @Mock
+    private World world;
+    @Mock
+    private PluginManager pim;
 
     /**
      * @throws java.lang.Exception
@@ -70,7 +84,6 @@ public class AdminTeamKickCommandTest {
         // Player
         Player p = mock(Player.class);
         // Sometimes use Mockito.withSettings().verboseLogging()
-        user = mock(User.class);
         when(user.isOp()).thenReturn(false);
         uuid = UUID.randomUUID();
         notUUID = UUID.randomUUID();
@@ -83,8 +96,8 @@ public class AdminTeamKickCommandTest {
         User.setPlugin(plugin);
 
         // Parent command has no aliases
-        ac = mock(CompositeCommand.class);
         when(ac.getSubCommandAliases()).thenReturn(new HashMap<>());
+        when(ac.getWorld()).thenReturn(world);
 
         // Island World Manager
         IslandWorldManager iwm = mock(IslandWorldManager.class);
@@ -92,16 +105,14 @@ public class AdminTeamKickCommandTest {
 
 
         // Player has island to begin with
-        im = mock(IslandsManager.class);
-        when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(true);
-        when(im.hasIsland(Mockito.any(), Mockito.any(User.class))).thenReturn(true);
-        when(im.isOwner(Mockito.any(),Mockito.any())).thenReturn(true);
-        when(im.getOwner(Mockito.any(),Mockito.any())).thenReturn(uuid);
+        when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
+        when(im.hasIsland(any(), any(User.class))).thenReturn(true);
+        when(im.isOwner(any(),any())).thenReturn(true);
+        when(im.getOwner(any(),any())).thenReturn(uuid);
         when(plugin.getIslands()).thenReturn(im);
 
         // Has team
-        pm = mock(PlayersManager.class);
-        when(im.inTeam(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
+        when(im.inTeam(any(), eq(uuid))).thenReturn(true);
 
         when(plugin.getPlayers()).thenReturn(pm);
 
@@ -109,15 +120,15 @@ public class AdminTeamKickCommandTest {
         BukkitScheduler sch = mock(BukkitScheduler.class);
         PowerMockito.mockStatic(Bukkit.class);
         when(Bukkit.getScheduler()).thenReturn(sch);
-        when(Bukkit.getPluginManager()).thenReturn(mock(PluginManager.class));
+        when(Bukkit.getPluginManager()).thenReturn(pim);
 
         // Locales
         LocalesManager lm = mock(LocalesManager.class);
-        when(lm.get(Mockito.any(), Mockito.any())).thenReturn("mock translation");
+        when(lm.get(any(), any())).thenReturn("mock translation");
         when(plugin.getLocalesManager()).thenReturn(lm);
 
         // Addon
-        when(iwm.getAddon(Mockito.any())).thenReturn(Optional.empty());
+        when(iwm.getAddon(any())).thenReturn(Optional.empty());
 
         // Plugin Manager
         Server server = mock(Server.class);
@@ -144,9 +155,9 @@ public class AdminTeamKickCommandTest {
     public void testCanExecuteUnknownPlayer() {
         AdminTeamKickCommand itl = new AdminTeamKickCommand(ac);
         String[] name = {"tastybento"};
-        when(pm.getUUID(Mockito.any())).thenReturn(null);
+        when(pm.getUUID(any())).thenReturn(null);
         assertFalse(itl.canExecute(user, itl.getLabel(), Arrays.asList(name)));
-        Mockito.verify(user).sendMessage("general.errors.unknown-player", "[name]", name[0]);
+        verify(user).sendMessage("general.errors.unknown-player", "[name]", name[0]);
     }
 
     /**
@@ -156,10 +167,10 @@ public class AdminTeamKickCommandTest {
     public void testCanExecutePlayerNotInTeam() {
         AdminTeamKickCommand itl = new AdminTeamKickCommand(ac);
         String[] name = {"tastybento"};
-        when(pm.getUUID(Mockito.any())).thenReturn(notUUID);
-        when(im.getMembers(Mockito.any(), Mockito.any())).thenReturn(new HashSet<>());
+        when(pm.getUUID(any())).thenReturn(notUUID);
+        when(im.getMembers(any(), any())).thenReturn(new HashSet<>());
         assertFalse(itl.canExecute(user, itl.getLabel(), Arrays.asList(name)));
-        Mockito.verify(user).sendMessage(Mockito.eq("commands.admin.team.kick.not-in-team"));
+        verify(user).sendMessage(eq("commands.admin.team.kick.not-in-team"));
     }
 
     /**
@@ -167,18 +178,22 @@ public class AdminTeamKickCommandTest {
      */
     @Test
     public void testExecuteKickOwner() {
-        when(im.inTeam(Mockito.any(), Mockito.any())).thenReturn(true);
+        when(im.inTeam(any(), any())).thenReturn(true);
         Island is = mock(Island.class);
-        when(im.getIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(is);
+        when(im.getIsland(any(), any(UUID.class))).thenReturn(is);
         String[] name = {"tastybento"};
-        when(pm.getUUID(Mockito.any())).thenReturn(notUUID);
+        when(pm.getUUID(any())).thenReturn(notUUID);
 
         when(is.getOwner()).thenReturn(notUUID);
 
         AdminTeamKickCommand itl = new AdminTeamKickCommand(ac);
         assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
-        Mockito.verify(user).sendMessage(Mockito.eq("commands.admin.team.kick.cannot-kick-owner"));
-        Mockito.verify(is).showMembers(Mockito.any());
+        verify(user).sendMessage(eq("commands.admin.team.kick.cannot-kick-owner"));
+        verify(is).showMembers(any());
+        verify(im, never()).removePlayer(eq(world), eq(notUUID));
+        verify(pm, never()).clearHomeLocations(eq(world), eq(notUUID));
+        verify(user, never()).sendMessage(eq("commands.admin.team.kick.success"), anyString(), anyString(), anyString(), anyString());
+        verify(pim, never()).callEvent(any());
     }
 
     /**
@@ -186,19 +201,21 @@ public class AdminTeamKickCommandTest {
      */
     @Test
     public void testExecute() {
-        when(im.inTeam(Mockito.any(), Mockito.any())).thenReturn(true);
+        when(im.inTeam(any(), any())).thenReturn(true);
         Island is = mock(Island.class);
-        when(im.getIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(is);
+        when(im.getIsland(any(), any(UUID.class))).thenReturn(is);
         String name = "tastybento";
-        when(pm.getUUID(Mockito.any())).thenReturn(notUUID);
-        when(pm.getName(Mockito.any())).thenReturn(name);
+        when(pm.getUUID(any())).thenReturn(notUUID);
+        when(pm.getName(any())).thenReturn(name);
 
         when(is.getOwner()).thenReturn(uuid);
 
         AdminTeamKickCommand itl = new AdminTeamKickCommand(ac);
         assertTrue(itl.execute(user, itl.getLabel(), Collections.singletonList(name)));
-        Mockito.verify(im).removePlayer(Mockito.any(), Mockito.eq(notUUID));
-        Mockito.verify(user).sendMessage(Mockito.eq("commands.admin.team.kick.success"), Mockito.eq(TextVariables.NAME), Mockito.eq(name), Mockito.eq("[owner]"), Mockito.anyString());
+        verify(im).removePlayer(eq(world), eq(notUUID));
+        verify(pm).clearHomeLocations(eq(world), eq(notUUID));
+        verify(user).sendMessage(eq("commands.admin.team.kick.success"), eq(TextVariables.NAME), eq(name), eq("[owner]"), anyString());
+        verify(pim).callEvent(any());
     }
 
 }
