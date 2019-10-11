@@ -985,14 +985,14 @@ public class IslandsManager {
     public void asyncSaveAll() {
         if (!toSave.isEmpty()) return;
         // Get a list of ID's to save
-        toSave = islandCache.getAllIslandIds();
+        toSave = new HashSet<>(islandCache.getAllIslandIds());
         it = toSave.iterator();
         task = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
             if (plugin.isEnabled() && it.hasNext()) {
                 getIslandById(it.next()).ifPresent(this::save);
             } else {
-               toSave.clear();
-               task.cancel();
+                toSave.clear();
+                task.cancel();
             }
         }, 0L, 1L);
     }
