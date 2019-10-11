@@ -75,7 +75,7 @@ public class PlayersManager {
     public void saveAll(){
         Collections.unmodifiableCollection(playerCache.values()).forEach(handler::saveObject);
     }
-    
+
     /**
      * Saves all the players at a rate of 1 per tick. Used as a backup.
      * @since 1.8.0
@@ -83,14 +83,14 @@ public class PlayersManager {
     public void asyncSaveAll() {
         if (!toSave.isEmpty()) return;
         // Get a list of ID's to save
-        toSave = playerCache.keySet();
+        toSave = new HashSet<>(playerCache.keySet());
         it = toSave.iterator();
         task = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
             if (plugin.isEnabled() && it.hasNext()) {
                 this.save(it.next());
             } else {
-               toSave.clear();
-               task.cancel();
+                toSave.clear();
+                task.cancel();
             }
         }, 0L, 1L);
     }
