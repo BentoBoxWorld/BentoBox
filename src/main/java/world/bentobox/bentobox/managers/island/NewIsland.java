@@ -1,18 +1,12 @@
 package world.bentobox.bentobox.managers.island;
 
 import java.io.IOException;
-import java.util.EnumMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.util.Vector;
-import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.BStats;
 import world.bentobox.bentobox.BentoBox;
@@ -23,7 +17,6 @@ import world.bentobox.bentobox.api.events.island.IslandEvent.Reason;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.BlueprintsManager;
-import world.bentobox.bentobox.util.Util;
 
 /**
  * Create and paste a new island
@@ -31,7 +24,6 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 public class NewIsland {
-    private static final Integer MAX_UNOWNED_ISLANDS = 10;
     private BentoBox plugin;
     private Island island;
     private final User user;
@@ -41,12 +33,7 @@ public class NewIsland {
     private final boolean noPaste;
     private GameModeAddon addon;
 
-    private enum Result {
-        ISLAND_FOUND,
-        BLOCK_AT_CENTER,
-        BLOCKS_IN_AREA,
-        FREE
-    }
+    private NewIslandLocationStrategy locationStrategy;
 
     public NewIsland(Builder builder) {
         plugin = BentoBox.getInstance();
@@ -56,6 +43,12 @@ public class NewIsland {
         this.name = builder.name2;
         this.noPaste = builder.noPaste2;
         this.addon = builder.addon2;
+        this.locationStrategy = builder.locationStrategy2;
+
+        if (this.locationStrategy == null) {
+            this.locationStrategy = new DefaultNewIslandLocationStrategy();
+        }
+
         newIsland(builder.oldIsland2);
     }
 
@@ -86,6 +79,7 @@ public class NewIsland {
         private String name2 = BlueprintsManager.DEFAULT_BUNDLE_NAME;
         private boolean noPaste2;
         private GameModeAddon addon2;
+        private NewIslandLocationStrategy locationStrategy2;
 
         public Builder oldIsland(Island oldIsland) {
             this.oldIsland2 = oldIsland;
@@ -131,6 +125,14 @@ public class NewIsland {
         }
 
         /**
+         * @param strategy - the location strategy to use
+         */
+        public Builder locationStrategy(NewIslandLocationStrategy strategy) {
+            this.locationStrategy2 = strategy;
+            return this;
+        }
+
+        /**
          * @return Island
          * @throws IOException - if there are insufficient parameters defined
          */
@@ -163,7 +165,7 @@ public class NewIsland {
         }
         // If the reservation fails, then we need to make a new island anyway
         if (next == null) {
-            next = getNextIsland();
+            next = this.locationStrategy.getNextLocation(world);
             if (next == null) {
                 plugin.logError("Failed to make island - no unoccupied spot found");
                 return;
@@ -273,122 +275,5 @@ public class NewIsland {
         }
         // Save island
         plugin.getIslands().save(island);
-    }
-
-    /**
-     * Get the location of next free island spot
-     * @return Location of island spot or null if one cannot be found
-     */
-    @Nullable
-    private Location getNextIsland() {
-        Location last = plugin.getIslands().getLast(world);
-        if (last == null) {
-            last = new Location(world,
-                    (double) plugin.getIWM().getIslandXOffset(world) + plugin.getIWM().getIslandStartX(world),
-                    plugin.getIWM().getIslandHeight(world),
-                    (double) plugin.getIWM().getIslandZOffset(world) + plugin.getIWM().getIslandStartZ(world));
-        }
-        // Find a free spot
-        Map<Result, Integer> result = new EnumMap<>(Result.class);
-        // Check center
-        Result r = isIsland(last);
-
-        while (!r.equals(Result.FREE) && result.getOrDefault(Result.BLOCK_AT_CENTER, 0) < MAX_UNOWNED_ISLANDS) {
-            nextGridLocation(last);
-            result.merge(r, 1, (k,v) -> v++);
-            r = isIsland(last);
-        }
-        if (!r.equals(Result.FREE)) {
-            // We could not find a free spot within the limit required. It's likely this world is not empty
-            plugin.logError("Could not find a free spot for islands! Is this world empty?");
-            plugin.logError("Blocks at center locations: " + result.getOrDefault(Result.BLOCK_AT_CENTER, 0) + " max " + MAX_UNOWNED_ISLANDS);
-            plugin.logError("Blocks around center locations: " + result.getOrDefault(Result.BLOCKS_IN_AREA, 0) + " max " + MAX_UNOWNED_ISLANDS);
-            plugin.logError("Known islands: " + result.getOrDefault(Result.ISLAND_FOUND, 0) + " max unlimited.");
-            return null;
-        }
-        plugin.getIslands().setLast(last);
-        return last;
-    }
-
-    /**
-     * Checks if there is an island or blocks at this location
-     * @param location - the location
-     * @return true if island found, null if blocks found, false if nothing found
-     */
-    private Result isIsland(Location location){
-        location = Util.getClosestIsland(location);
-
-        // Check 4 corners
-        int dist = plugin.getIWM().getIslandDistance(location.getWorld());
-        Set<Location> locs = new HashSet<>();
-        locs.add(location);
-
-        locs.add(new Location(location.getWorld(), location.getX() - dist, 0, location.getZ() - dist));
-        locs.add(new Location(location.getWorld(), location.getX() - dist, 0, location.getZ() + dist - 1));
-        locs.add(new Location(location.getWorld(), location.getX() + dist - 1, 0, location.getZ() - dist));
-        locs.add(new Location(location.getWorld(), location.getX() + dist - 1, 0, location.getZ() + dist - 1));
-
-        for (Location l : locs) {
-            if (plugin.getIslands().getIslandAt(l).isPresent() || plugin.getIslandDeletionManager().inDeletion(l)) {
-                return Result.ISLAND_FOUND;
-            }
-        }
-
-        if (!plugin.getIWM().isUseOwnGenerator(location.getWorld())) {
-            // Block check
-            if (!location.getBlock().isEmpty() && !location.getBlock().getType().equals(Material.WATER)) {
-                plugin.getIslands().createIsland(location);
-                return Result.BLOCK_AT_CENTER;
-            }
-            // Look around
-            for (int x = -5; x <= 5; x++) {
-                for (int y = 10; y < location.getWorld().getMaxHeight(); y++) {
-                    for (int z = -5; z <= 5; z++) {
-                        if (!location.getWorld().getBlockAt(x + location.getBlockX(), y, z + location.getBlockZ()).isEmpty()
-                                && !location.getWorld().getBlockAt(x + location.getBlockX(), y, z + location.getBlockZ()).getType().equals(Material.WATER)) {
-                            plugin.getIslands().createIsland(location);
-                            return Result.BLOCKS_IN_AREA;
-                        }
-                    }
-                }
-            }
-        }
-        return Result.FREE;
-    }
-
-
-    /**
-     * Finds the next free island spot based off the last known island Uses
-     * island_distance setting from the config file Builds up in a grid fashion
-     *
-     * @param lastIsland - last island location
-     * @return Location of next free island
-     */
-    private Location nextGridLocation(final Location lastIsland) {
-        int x = lastIsland.getBlockX();
-        int z = lastIsland.getBlockZ();
-        int d = plugin.getIWM().getIslandDistance(lastIsland.getWorld()) * 2;
-        if (x < z) {
-            if (-1 * x < z) {
-                lastIsland.setX(lastIsland.getX() + d);
-                return lastIsland;
-            }
-            lastIsland.setZ(lastIsland.getZ() + d);
-            return lastIsland;
-        }
-        if (x > z) {
-            if (-1 * x >= z) {
-                lastIsland.setX(lastIsland.getX() - d);
-                return lastIsland;
-            }
-            lastIsland.setZ(lastIsland.getZ() - d);
-            return lastIsland;
-        }
-        if (x <= 0) {
-            lastIsland.setZ(lastIsland.getZ() + d);
-            return lastIsland;
-        }
-        lastIsland.setZ(lastIsland.getZ() - d);
-        return lastIsland;
     }
 }
