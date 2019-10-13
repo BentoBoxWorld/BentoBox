@@ -14,7 +14,8 @@ import world.bentobox.bentobox.util.Util;
 
 /**
  * The default strategy for generating locations for island
- * @author tastybento
+ * @author tastybento, leonardochaia
+ * @since 1.8.0
  *
  */
 public class DefaultNewIslandLocationStrategy implements NewIslandLocationStrategy {
