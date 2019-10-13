@@ -110,6 +110,20 @@ public class IslandTeamKickCommand extends ConfirmableCommand {
         if (getSettings().isUseEconomy() && getIWM().isOnLeaveResetMoney(getWorld())) {
             getPlugin().getVault().ifPresent(vault -> vault.withdraw(target, vault.getBalance(target)));
         }
+        // Reset the health
+        if (getIWM().isOnLeaveResetHealth(getWorld())) {
+            target.getPlayer().setHealth(20.0D);
+        }
+
+        // Reset the hunger
+        if (getIWM().isOnLeaveResetHunger(getWorld())) {
+            target.getPlayer().setFoodLevel(20);
+        }
+
+        // Reset the XP
+        if (getIWM().isOnLeaveResetXP(getWorld())) {
+            target.getPlayer().setTotalExperience(0);
+        }
         user.sendMessage("commands.island.team.kick.success", TextVariables.NAME, target.getName());
         // Fire event
         IslandBaseEvent e = TeamEvent.builder()

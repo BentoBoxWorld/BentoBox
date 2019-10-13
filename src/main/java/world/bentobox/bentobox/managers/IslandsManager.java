@@ -701,6 +701,21 @@ public class IslandsManager {
             if (plugin.getSettings().isUseEconomy() && plugin.getIWM().isOnJoinResetMoney(world)) {
                 plugin.getVault().ifPresent(vault -> vault.withdraw(user, vault.getBalance(user)));
             }
+
+            // Reset the health
+            if (plugin.getIWM().isOnJoinResetHealth(world)) {
+                user.getPlayer().setHealth(20.0D);
+            }
+
+            // Reset the hunger
+            if (plugin.getIWM().isOnJoinResetHunger(world)) {
+                user.getPlayer().setFoodLevel(20);
+            }
+
+            // Reset the XP
+            if (plugin.getIWM().isOnJoinResetXP(world)) {
+                user.getPlayer().setTotalExperience(0);
+            }
         }
     }
 

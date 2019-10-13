@@ -93,6 +93,20 @@ public class IslandTeamLeaveCommand extends ConfirmableCommand {
         if (getSettings().isUseEconomy() && getIWM().isOnLeaveResetMoney(getWorld())) {
             getPlugin().getVault().ifPresent(vault -> vault.withdraw(user, vault.getBalance(user)));
         }
+        // Reset the health
+        if (getIWM().isOnLeaveResetHealth(getWorld())) {
+            user.getPlayer().setHealth(20.0D);
+        }
+
+        // Reset the hunger
+        if (getIWM().isOnLeaveResetHunger(getWorld())) {
+            user.getPlayer().setFoodLevel(20);
+        }
+
+        // Reset the XP
+        if (getIWM().isOnLeaveResetXP(getWorld())) {
+            user.getPlayer().setTotalExperience(0);
+        }
         // Add cooldown for this player and target
         if (getSettings().getInviteCooldown() > 0 && getParent() != null) {
             // Get the invite class from the parent

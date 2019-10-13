@@ -170,5 +170,20 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
         if (getSettings().isUseEconomy() && (getIWM().isOnLeaveResetMoney(getWorld()) || getIWM().isOnJoinResetMoney(getWorld()))) {
             getPlugin().getVault().ifPresent(vault -> vault.withdraw(user, vault.getBalance(user)));
         }
+
+        // Reset the health
+        if (getIWM().isOnJoinResetHealth(getWorld())) {
+            user.getPlayer().setHealth(20.0D);
+        }
+
+        // Reset the hunger
+        if (getIWM().isOnJoinResetHunger(getWorld())) {
+            user.getPlayer().setFoodLevel(20);
+        }
+
+        // Reset the XP
+        if (getIWM().isOnJoinResetXP(getWorld())) {
+            user.getPlayer().setTotalExperience(0);
+        }
     }
 }

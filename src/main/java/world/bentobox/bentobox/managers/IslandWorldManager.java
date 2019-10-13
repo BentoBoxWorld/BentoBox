@@ -563,6 +563,36 @@ public class IslandWorldManager {
     }
 
     /**
+     * Returns whether a player's health should be reset upon him joining or creating an island in this World.
+     * @param world the World
+     * @return {@code true} if health should be reset, {@code false} otherwise.
+     * @since 1.8.0
+     */
+    public boolean isOnJoinResetHealth(@NonNull World world) {
+        return gameModes.get(world).getWorldSettings().isOnJoinResetHealth();
+    }
+
+    /**
+     * Returns whether a player's hunger should be reset upon him joining or creating an island in this World.
+     * @param world the World
+     * @return {@code true} if hunger should be reset, {@code false} otherwise.
+     * @since 1.8.0
+     */
+    public boolean isOnJoinResetHunger(@NonNull World world) {
+        return gameModes.get(world).getWorldSettings().isOnJoinResetHunger();
+    }
+
+    /**
+     * Returns whether a player's XP should be reset upon him joining or creating an island in this World.
+     * @param world the World
+     * @return {@code true} if XP should be reset, {@code false} otherwise.
+     * @since 1.8.0
+     */
+    public boolean isOnJoinResetXP(@NonNull World world) {
+        return gameModes.get(world).getWorldSettings().isOnJoinResetXP();
+    }
+
+    /**
      * Returns a list of commands to execute when the player creates or joins an island.
      * @param world the World
      * @return a list of commands
@@ -593,6 +623,36 @@ public class IslandWorldManager {
      */
     public boolean isOnLeaveResetEnderChest(@NonNull World world) {
         return gameModes.get(world).getWorldSettings().isOnLeaveResetEnderChest();
+    }
+
+    /**
+     * Returns whether a player's health should be reset upon him leaving or resetting his island in this World.
+     * @param world the World
+     * @return {@code true} if health should be reset, {@code false} otherwise.
+     * @since 1.8.0
+     */
+    public boolean isOnLeaveResetHealth(@NonNull World world) {
+        return gameModes.get(world).getWorldSettings().isOnLeaveResetHealth();
+    }
+
+    /**
+     * Returns whether a player's hunger should be reset upon him leaving or resetting his island in this World.
+     * @param world the World
+     * @return {@code true} if hunger should be reset, {@code false} otherwise.
+     * @since 1.8.0
+     */
+    public boolean isOnLeaveResetHunger(@NonNull World world) {
+        return gameModes.get(world).getWorldSettings().isOnLeaveResetHunger();
+    }
+
+    /**
+     * Returns whether a player's XP should be reset upon him leaving or resetting his island in this World.
+     * @param world the World
+     * @return {@code true} if XP should be reset, {@code false} otherwise.
+     * @since 1.8.0
+     */
+    public boolean isOnLeaveResetXP(@NonNull World world) {
+        return gameModes.get(world).getWorldSettings().isOnLeaveResetXP();
     }
 
     /**

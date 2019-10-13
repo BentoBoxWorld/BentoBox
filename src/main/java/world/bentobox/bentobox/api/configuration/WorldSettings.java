@@ -198,6 +198,27 @@ public interface WorldSettings extends ConfigObject {
     boolean isOnJoinResetMoney();
 
     /**
+     * Whether the player's health should be reset upon him joining an island or creating it.
+     * @return the onJoinResetHealth
+     * @since 1.8.0
+     */
+    boolean isOnJoinResetHealth();
+
+    /**
+     * Whether the player's hunger should be reset upon him joining an island or creating it.
+     * @return the onJoinResetHunger
+     * @since 1.8.0
+     */
+    boolean isOnJoinResetHunger();
+
+    /**
+     * Whether the player's XP should be reset upon him joining an island or creating it.
+     * @return the onJoinResetXP
+     * @since 1.8.0
+     */
+    boolean isOnJoinResetXP();
+
+    /**
      * Returns a list of commands that should be executed when the player joins an island or creates one.<br/>
      * These commands are executed by the console, unless otherwise stated using the {@code [SUDO]} prefix, in which case they are executed by the player.<br/>
      * <br/>
@@ -232,6 +253,27 @@ public interface WorldSettings extends ConfigObject {
      * @return the onLeaveResetMoney
      */
     boolean isOnLeaveResetMoney();
+
+    /**
+     * Whether the player's health should be reset upon him leaving his island or resetting it.
+     * @return the onLeaveResetHealth
+     * @since 1.8.0
+     */
+    boolean isOnLeaveResetHealth();
+
+    /**
+     * Whether the player's hunger should be reset upon him leaving his island or resetting it.
+     * @return the onLeaveResetHunger
+     * @since 1.8.0
+     */
+    boolean isOnLeaveResetHunger();
+
+    /**
+     * Whether the player's XP should be reset upon him leaving his island or resetting it.
+     * @return the onLeaveResetXP
+     * @since 1.8.0
+     */
+    boolean isOnLeaveResetXP();
 
     /**
      * Returns a list of commands that should be executed when the player leaves an island or resets one.<br/>

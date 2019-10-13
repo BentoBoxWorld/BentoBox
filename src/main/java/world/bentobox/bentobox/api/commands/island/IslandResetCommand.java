@@ -131,7 +131,7 @@ public class IslandResetCommand extends ConfirmableCommand {
             Builder builder = NewIsland.builder()
                     .player(user)
                     .reason(Reason.RESET)
-                    .addon((GameModeAddon)getAddon())
+                    .addon(getAddon())
                     .oldIsland(oldIsland)
                     .name(name);
             if (noPaste) builder.noPaste();
@@ -197,6 +197,21 @@ public class IslandResetCommand extends ConfirmableCommand {
             }
             if (getSettings().isUseEconomy() && getIWM().isOnLeaveResetMoney(getWorld())) {
                 getPlugin().getVault().ifPresent(vault -> vault.withdraw(member, vault.getBalance(member)));
+            }
+
+            // Reset the health
+            if (getIWM().isOnLeaveResetHealth(getWorld())) {
+                member.getPlayer().setHealth(20.0D);
+            }
+
+            // Reset the hunger
+            if (getIWM().isOnLeaveResetHunger(getWorld())) {
+                member.getPlayer().setFoodLevel(20);
+            }
+
+            // Reset the XP
+            if (getIWM().isOnLeaveResetXP(getWorld())) {
+                member.getPlayer().setTotalExperience(0);
             }
 
             // Fire event
