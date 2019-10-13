@@ -484,6 +484,21 @@ public class BlockEndDragonTest {
         }
 
         @Override
+        public boolean isOnJoinResetHealth() {
+            return false;
+        }
+
+        @Override
+        public boolean isOnJoinResetHunger() {
+            return false;
+        }
+
+        @Override
+        public boolean isOnJoinResetXP() {
+            return false;
+        }
+
+        @Override
         public boolean isOnLeaveResetEnderChest() {
             // TODO Auto-generated method stub
             return false;
@@ -498,6 +513,21 @@ public class BlockEndDragonTest {
         @Override
         public boolean isOnLeaveResetMoney() {
             // TODO Auto-generated method stub
+            return false;
+        }
+
+        @Override
+        public boolean isOnLeaveResetHealth() {
+            return false;
+        }
+
+        @Override
+        public boolean isOnLeaveResetHunger() {
+            return false;
+        }
+
+        @Override
+        public boolean isOnLeaveResetXP() {
             return false;
         }
 
