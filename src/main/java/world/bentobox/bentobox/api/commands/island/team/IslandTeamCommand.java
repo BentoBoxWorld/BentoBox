@@ -1,11 +1,15 @@
 package world.bentobox.bentobox.api.commands.island.team;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
 
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.team.TeamEvent;
@@ -14,10 +18,17 @@ import world.bentobox.bentobox.api.user.User;
 
 public class IslandTeamCommand extends CompositeCommand {
 
+    /**
+     * Invited list. Key is the invited party, value is the invite.
+     * @since 1.8.0
+     */
+    private Map<UUID, Invite> inviteList;
+
     private IslandTeamInviteCommand inviteCommand;
 
     public IslandTeamCommand(CompositeCommand parent) {
         super(parent, "team");
+        inviteList = new HashMap<>();
     }
 
     @Override
@@ -81,10 +92,54 @@ public class IslandTeamCommand extends CompositeCommand {
     }
 
     /**
-     * @return the inviteCommand
+     *
+     * @param type
+     * @param inviter
+     * @param invitee
+     * @since 1.8.0
      */
-    public IslandTeamInviteCommand getInviteCommand() {
-        return inviteCommand;
+    public void addInvite(Invite.Type type, @NonNull UUID inviter, @NonNull UUID invitee) {
+        inviteList.put(invitee, new Invite(type, inviter, invitee));
     }
 
+    /**
+     *
+     * @param invitee
+     * @return
+     * @since 1.8.0
+     */
+    public boolean isInvited(@NonNull UUID invitee) {
+        return inviteList.containsKey(invitee);
+    }
+
+    /**
+     * Get whoever invited invitee
+     * @param invitee - uuid
+     * @return UUID of inviter, or null if invitee has not been invited
+     * @since 1.8.0
+     */
+    @Nullable
+    public UUID getInviter(UUID invitee) {
+        return isInvited(invitee) ? inviteList.get(invitee).getInviter() : null;
+    }
+
+    /**
+     * Gets the invite for an invitee.
+     * @param invitee - UUID of invitee
+     * @return invite or null if none
+     * @since 1.8.0
+     */
+    @Nullable
+    public Invite getInvite(UUID invitee) {
+        return inviteList.get(invitee);
+    }
+
+    /**
+     * Removes a pending invite.
+     * @param uniqueId - UUID of invited user
+     * @since 1.8.0
+     */
+    public void removeInvite(@NonNull UUID uniqueId) {
+        inviteList.remove(uniqueId);
+    }
 }

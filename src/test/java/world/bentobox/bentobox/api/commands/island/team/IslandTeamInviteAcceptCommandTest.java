@@ -3,8 +3,12 @@ package world.bentobox.bentobox.api.commands.island.team;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
@@ -20,17 +24,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
-
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
+import world.bentobox.bentobox.api.commands.island.team.Invite.Type;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.team.TeamEvent;
 import world.bentobox.bentobox.api.events.team.TeamEvent.TeamEventBuilder;
@@ -51,19 +52,26 @@ import world.bentobox.bentobox.managers.RanksManager;
 @PrepareForTest({Bukkit.class, BentoBox.class, User.class, TeamEvent.class })
 public class IslandTeamInviteAcceptCommandTest {
 
-    private IslandTeamCommand ic;
+    @Mock
+    private IslandTeamCommand itc;
     private UUID uuid;
+    @Mock
     private User user;
+    @Mock
     private IslandsManager im;
+    @Mock
     private PlayersManager pm;
     private UUID notUUID;
     @Mock
     private Settings s;
+    @Mock
     private Island island;
+    @Mock
     private IslandTeamInviteAcceptCommand c;
-    private BiMap<UUID, UUID> biMap;
-    private IslandTeamInviteCommand inviteCommand;
+    @Mock
     private PluginManager pim;
+    @Mock
+    private Invite invite;
 
     /**
      * @throws java.lang.Exception
@@ -84,7 +92,6 @@ public class IslandTeamInviteAcceptCommandTest {
         // Player
         Player p = mock(Player.class);
         // Sometimes use Mockito.withSettings().verboseLogging()
-        user = mock(User.class);
         when(user.isOp()).thenReturn(false);
         uuid = UUID.randomUUID();
         notUUID = UUID.randomUUID();
@@ -97,53 +104,48 @@ public class IslandTeamInviteAcceptCommandTest {
         User.setPlugin(plugin);
 
         // Parent command has no aliases
-        ic = mock(IslandTeamCommand.class);
-        when(ic.getSubCommandAliases()).thenReturn(new HashMap<>());
-        when(ic.getPermissionPrefix()).thenReturn("bskyblock.");
-        inviteCommand = mock(IslandTeamInviteCommand.class);
-        biMap = HashBiMap.create();
-        when(inviteCommand.getInviteList()).thenReturn(biMap);
-        when(ic.getInviteCommand()).thenReturn(inviteCommand);
+        when(itc.getSubCommandAliases()).thenReturn(new HashMap<>());
+        when(itc.getPermissionPrefix()).thenReturn("bskyblock.");
+        when(itc.getInvite(any())).thenReturn(invite);
 
         // Player has island to begin with
-        im = mock(IslandsManager.class);
-        when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(true);
-        when(im.inTeam(Mockito.any(), Mockito.any(UUID.class))).thenReturn(true);
-        when(im.isOwner(Mockito.any(), Mockito.any())).thenReturn(true);
-        when(im.getOwner(Mockito.any(), Mockito.any())).thenReturn(uuid);
-        island = mock(Island.class);
-        when(island.getRank(Mockito.any())).thenReturn(RanksManager.OWNER_RANK);
-        when(im.getIsland(Mockito.any(), Mockito.any(User.class))).thenReturn(island);
+        when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
+        when(im.inTeam(any(), any(UUID.class))).thenReturn(true);
+        when(im.isOwner(any(), any())).thenReturn(true);
+        when(im.getOwner(any(), any())).thenReturn(uuid);
+        // Island
+        when(island.getRank(any())).thenReturn(RanksManager.OWNER_RANK);
+        when(im.getIsland(any(), any(User.class))).thenReturn(island);
         when(plugin.getIslands()).thenReturn(im);
 
         // Has team
-        when(im.inTeam(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
+        when(im.inTeam(any(), eq(uuid))).thenReturn(true);
 
         // Player Manager
-        pm = mock(PlayersManager.class);
-
         when(plugin.getPlayers()).thenReturn(pm);
 
         // Server & Scheduler
         BukkitScheduler sch = mock(BukkitScheduler.class);
         PowerMockito.mockStatic(Bukkit.class);
         when(Bukkit.getScheduler()).thenReturn(sch);
-        pim = mock(PluginManager.class);
         when(Bukkit.getPluginManager()).thenReturn(pim);
 
         // Locales
         LocalesManager lm = mock(LocalesManager.class);
-        when(lm.get(Mockito.any(), Mockito.any())).thenReturn("mock translation");
+        when(lm.get(any(), any())).thenReturn("mock translation");
         when(plugin.getLocalesManager()).thenReturn(lm);
-        when(user.getTranslation(Mockito.anyString())).thenReturn("mock translation2");
+        when(user.getTranslation(anyString())).thenReturn("mock translation2");
 
         // IWM friendly name
         IslandWorldManager iwm = mock(IslandWorldManager.class);
-        when(iwm.getFriendlyName(Mockito.any())).thenReturn("BSkyBlock");
+        when(iwm.getFriendlyName(any())).thenReturn("BSkyBlock");
         when(plugin.getIWM()).thenReturn(iwm);
 
+        // Invite
+        when(invite.getType()).thenReturn(Invite.Type.TEAM);
+
         // Team invite accept command
-        c = new IslandTeamInviteAcceptCommand(ic);
+        c = new IslandTeamInviteAcceptCommand(itc);
     }
 
     /**
@@ -178,7 +180,7 @@ public class IslandTeamInviteAcceptCommandTest {
     @Test
     public void testCanExecuteNoInvite() {
         assertFalse(c.canExecute(user, "accept", Collections.emptyList()));
-        Mockito.verify(user).sendMessage("commands.island.team.invite.errors.none-invited-you");
+        verify(user).sendMessage("commands.island.team.invite.errors.none-invited-you");
     }
 
     /**
@@ -186,10 +188,10 @@ public class IslandTeamInviteAcceptCommandTest {
      */
     @Test
     public void testCanExecuteInTeam() {
-        biMap.put(uuid, notUUID);
-        when(im.inTeam(Mockito.any(), Mockito.any())).thenReturn(true);
+        when(itc.isInvited(any())).thenReturn(true);
+        when(im.inTeam(any(), any())).thenReturn(true);
         assertFalse(c.canExecute(user, "accept", Collections.emptyList()));
-        Mockito.verify(user).sendMessage("commands.island.team.invite.errors.you-already-are-in-team");
+        verify(user).sendMessage("commands.island.team.invite.errors.you-already-are-in-team");
     }
 
     /**
@@ -197,12 +199,11 @@ public class IslandTeamInviteAcceptCommandTest {
      */
     @Test
     public void testCanExecuteInvalidInvite() {
-        biMap.put(uuid, notUUID);
-        when(im.inTeam(Mockito.any(), Mockito.any())).thenReturn(false);
-        when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(false);
+        when(itc.isInvited(any())).thenReturn(true);
+        when(im.inTeam(any(), any())).thenReturn(false);
+        when(im.hasIsland(any(), any(UUID.class))).thenReturn(false);
         assertFalse(c.canExecute(user, "accept", Collections.emptyList()));
-        Mockito.verify(user).sendMessage("commands.island.team.invite.errors.invalid-invite");
-        Mockito.verify(inviteCommand).getInviteList();
+        verify(user).sendMessage("commands.island.team.invite.errors.invalid-invite");
     }
 
     /**
@@ -210,11 +211,45 @@ public class IslandTeamInviteAcceptCommandTest {
      */
     @Test
     public void testCanExecuteOkay() {
-        biMap.put(uuid, notUUID);
-        when(im.inTeam(Mockito.any(), Mockito.any())).thenReturn(false);
-        when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(true);
+        when(itc.isInvited(any())).thenReturn(true);
+        when(itc.getInviter(any())).thenReturn(notUUID);
+        when(itc.getInvite(any())).thenReturn(invite);
+        when(im.inTeam(any(), any())).thenReturn(false);
+        when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
         assertTrue(c.canExecute(user, "accept", Collections.emptyList()));
-        Mockito.verify(pim).callEvent(Mockito.any());
+        verify(pim).callEvent(any());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteAcceptCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     */
+    @Test
+    public void testCanExecuteOkayTrust() {
+        when(itc.isInvited(any())).thenReturn(true);
+        when(itc.getInviter(any())).thenReturn(notUUID);
+        when(itc.getInvite(any())).thenReturn(invite);
+        when(invite.getType()).thenReturn(Type.TRUST);
+        when(im.inTeam(any(), any())).thenReturn(false);
+        when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
+        assertTrue(c.canExecute(user, "accept", Collections.emptyList()));
+        // No event
+        verify(pim, never()).callEvent(any());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteAcceptCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     */
+    @Test
+    public void testCanExecuteOkayCoop() {
+        when(itc.isInvited(any())).thenReturn(true);
+        when(itc.getInviter(any())).thenReturn(notUUID);
+        when(itc.getInvite(any())).thenReturn(invite);
+        when(invite.getType()).thenReturn(Invite.Type.COOP);
+        when(im.inTeam(any(), any())).thenReturn(false);
+        when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
+        assertTrue(c.canExecute(user, "accept", Collections.emptyList()));
+        // No event
+        verify(pim, never()).callEvent(any());
     }
 
     /**
@@ -222,9 +257,11 @@ public class IslandTeamInviteAcceptCommandTest {
      */
     @Test
     public void testCanExecuteEventBlocked() {
-        biMap.put(uuid, notUUID);
-        when(im.inTeam(Mockito.any(), Mockito.any())).thenReturn(false);
-        when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(true);
+        when(itc.isInvited(any())).thenReturn(true);
+        when(itc.getInviter(any())).thenReturn(notUUID);
+        when(itc.getInvite(any())).thenReturn(invite);
+        when(im.inTeam(any(), any())).thenReturn(false);
+        when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
         // Block event
         PowerMockito.mockStatic(TeamEvent.class);
         TeamEventBuilder teb = mock(TeamEventBuilder.class);
@@ -236,7 +273,7 @@ public class IslandTeamInviteAcceptCommandTest {
         when(teb.build()).thenReturn(ibe);
         when(TeamEvent.builder()).thenReturn(teb);
         assertFalse(c.canExecute(user, "accept", Collections.emptyList()));
-        Mockito.verify(pim).callEvent(Mockito.any());
+        verify(pim).callEvent(any());
     }
 
     /**
@@ -244,8 +281,31 @@ public class IslandTeamInviteAcceptCommandTest {
      */
     @Test
     public void testExecuteUserStringListOfString() {
+        // Team
         assertTrue(c.execute(user, "accept", Collections.emptyList()));
-        Mockito.verify(user).getTranslation("commands.island.team.invite.accept.confirmation");
+        verify(user).getTranslation("commands.island.team.invite.accept.confirmation");
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteAcceptCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     */
+    @Test
+    public void testExecuteUserStringListOfStringCoop() {
+        // Coop
+        when(invite.getType()).thenReturn(Invite.Type.COOP);
+        assertTrue(c.execute(user, "accept", Collections.emptyList()));
+        verify(user).sendMessage("commands.confirmation.confirm", "[seconds]", "0");
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteAcceptCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     */
+    @Test
+    public void testExecuteUserStringListOfStringTrust() {
+        // Trust
+        when(invite.getType()).thenReturn(Invite.Type.TRUST);
+        assertTrue(c.execute(user, "accept", Collections.emptyList()));
+        verify(user).sendMessage("commands.confirmation.confirm", "[seconds]", "0");
     }
 
 }
