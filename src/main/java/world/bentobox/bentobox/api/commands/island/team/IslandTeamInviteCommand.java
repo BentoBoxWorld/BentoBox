@@ -9,7 +9,7 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
-import world.bentobox.bentobox.api.commands.island.team.Invite.InviteType;
+import world.bentobox.bentobox.api.commands.island.team.Invite.Type;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.team.TeamEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
@@ -103,7 +103,7 @@ public class IslandTeamInviteCommand extends CompositeCommand {
             user.sendMessage("commands.island.team.invite.errors.already-on-team");
             return false;
         }
-        if (itc.isInvited(invitedPlayerUUID) && itc.getInviter(invitedPlayerUUID).equals(user.getUniqueId()) && itc.getInvite(invitedPlayerUUID).getType().equals(InviteType.TEAM)) {
+        if (itc.isInvited(invitedPlayerUUID) && itc.getInviter(invitedPlayerUUID).equals(user.getUniqueId()) && itc.getInvite(invitedPlayerUUID).getType().equals(Type.TEAM)) {
             // Prevent spam
             user.sendMessage("commands.island.team.invite.errors.you-have-already-invited");
             return false;
@@ -135,7 +135,7 @@ public class IslandTeamInviteCommand extends CompositeCommand {
             }
             // Put the invited player (key) onto the list with inviter (value)
             // If someone else has invited a player, then this invite will overwrite the previous invite!
-            itc.addInvite(InviteType.TEAM, invitedPlayer.getUniqueId(), user.getUniqueId());
+            itc.addInvite(Invite.Type.TEAM, invitedPlayer.getUniqueId(), user.getUniqueId());
             user.sendMessage("commands.island.team.invite.invitation-sent", TextVariables.NAME, invitedPlayer.getName());
             // Send message to online player
             invitedPlayer.sendMessage("commands.island.team.invite.name-has-invited-you", TextVariables.NAME, user.getName());

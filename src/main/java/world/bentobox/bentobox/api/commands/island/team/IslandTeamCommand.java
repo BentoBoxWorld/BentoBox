@@ -11,7 +11,6 @@ import org.bukkit.Bukkit;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
-import world.bentobox.bentobox.api.commands.island.team.Invite.InviteType;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.team.TeamEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
@@ -99,7 +98,7 @@ public class IslandTeamCommand extends CompositeCommand {
      * @param invitee
      * @since 1.8.0
      */
-    public void addInvite(@NonNull InviteType type, @NonNull UUID inviter, @NonNull UUID invitee) {
+    public void addInvite(@NonNull Invite.Type type, @NonNull UUID inviter, @NonNull UUID invitee) {
         inviteList.put(invitee, new Invite(type, inviter, invitee));
     }
 

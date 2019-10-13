@@ -7,7 +7,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
-import world.bentobox.bentobox.api.commands.island.team.Invite.InviteType;
+import world.bentobox.bentobox.api.commands.island.team.Invite.Type;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.team.TeamEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
@@ -57,7 +57,7 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
             return false;
         }
         Invite invite = itc.getInvite(playerUUID);
-        if (invite.getType().equals(InviteType.TEAM)) {
+        if (invite.getType().equals(Type.TEAM)) {
             // Fire event so add-ons can run commands, etc.
             IslandBaseEvent event = TeamEvent.builder()
                     .island(getIslands().getIsland(getWorld(), prospectiveOwnerUUID))

@@ -31,7 +31,7 @@ import org.powermock.reflect.Whitebox;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
-import world.bentobox.bentobox.api.commands.island.team.Invite.InviteType;
+import world.bentobox.bentobox.api.commands.island.team.Invite.Type;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.team.TeamEvent;
 import world.bentobox.bentobox.api.events.team.TeamEvent.TeamEventBuilder;
@@ -142,7 +142,7 @@ public class IslandTeamInviteAcceptCommandTest {
         when(plugin.getIWM()).thenReturn(iwm);
 
         // Invite
-        when(invite.getType()).thenReturn(InviteType.TEAM);
+        when(invite.getType()).thenReturn(Invite.Type.TEAM);
 
         // Team invite accept command
         c = new IslandTeamInviteAcceptCommand(itc);
@@ -228,7 +228,7 @@ public class IslandTeamInviteAcceptCommandTest {
         when(itc.isInvited(any())).thenReturn(true);
         when(itc.getInviter(any())).thenReturn(notUUID);
         when(itc.getInvite(any())).thenReturn(invite);
-        when(invite.getType()).thenReturn(InviteType.TRUST);
+        when(invite.getType()).thenReturn(Type.TRUST);
         when(im.inTeam(any(), any())).thenReturn(false);
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
         assertTrue(c.canExecute(user, "accept", Collections.emptyList()));
@@ -244,7 +244,7 @@ public class IslandTeamInviteAcceptCommandTest {
         when(itc.isInvited(any())).thenReturn(true);
         when(itc.getInviter(any())).thenReturn(notUUID);
         when(itc.getInvite(any())).thenReturn(invite);
-        when(invite.getType()).thenReturn(InviteType.COOP);
+        when(invite.getType()).thenReturn(Invite.Type.COOP);
         when(im.inTeam(any(), any())).thenReturn(false);
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
         assertTrue(c.canExecute(user, "accept", Collections.emptyList()));
@@ -292,7 +292,7 @@ public class IslandTeamInviteAcceptCommandTest {
     @Test
     public void testExecuteUserStringListOfStringCoop() {
         // Coop
-        when(invite.getType()).thenReturn(InviteType.COOP);
+        when(invite.getType()).thenReturn(Invite.Type.COOP);
         assertTrue(c.execute(user, "accept", Collections.emptyList()));
         verify(user).sendMessage("commands.confirmation.confirm", "[seconds]", "0");
     }
@@ -303,7 +303,7 @@ public class IslandTeamInviteAcceptCommandTest {
     @Test
     public void testExecuteUserStringListOfStringTrust() {
         // Trust
-        when(invite.getType()).thenReturn(InviteType.TRUST);
+        when(invite.getType()).thenReturn(Invite.Type.TRUST);
         assertTrue(c.execute(user, "accept", Collections.emptyList()));
         verify(user).sendMessage("commands.confirmation.confirm", "[seconds]", "0");
     }

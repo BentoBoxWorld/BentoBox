@@ -14,13 +14,13 @@ public class Invite {
      * Type of invitation
      *
      */
-    public enum InviteType {
+    public enum Type {
         COOP,
         TEAM,
         TRUST
     }
 
-    private final InviteType type;
+    private final Type type;
     private final UUID inviter;
     private final UUID invitee;
 
@@ -29,7 +29,7 @@ public class Invite {
      * @param inviter
      * @param invitee
      */
-    public Invite(InviteType type, UUID inviter, UUID invitee) {
+    public Invite(Type type, UUID inviter, UUID invitee) {
         this.type = type;
         this.inviter = inviter;
         this.invitee = invitee;
@@ -38,7 +38,7 @@ public class Invite {
     /**
      * @return the type
      */
-    public InviteType getType() {
+    public Type getType() {
         return type;
     }
 

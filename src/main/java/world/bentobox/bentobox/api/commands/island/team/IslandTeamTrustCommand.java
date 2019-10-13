@@ -7,7 +7,7 @@ import java.util.UUID;
 import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
-import world.bentobox.bentobox.api.commands.island.team.Invite.InviteType;
+import world.bentobox.bentobox.api.commands.island.team.Invite.Type;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
@@ -77,7 +77,7 @@ public class IslandTeamTrustCommand extends CompositeCommand {
             user.sendMessage("commands.island.team.trust.player-already-trusted");
             return false;
         }
-        if (itc.isInvited(targetUUID) && itc.getInviter(targetUUID).equals(user.getUniqueId()) && itc.getInvite(targetUUID).getType().equals(InviteType.TRUST)) {
+        if (itc.isInvited(targetUUID) && itc.getInviter(targetUUID).equals(user.getUniqueId()) && itc.getInvite(targetUUID).getType().equals(Type.TRUST)) {
             // Prevent spam
             user.sendMessage("commands.island.team.invite.errors.you-have-already-invited");
             return false;
@@ -93,7 +93,7 @@ public class IslandTeamTrustCommand extends CompositeCommand {
             if (getPlugin().getSettings().isInviteConfirmation()) {
                 // Put the invited player (key) onto the list with inviter (value)
                 // If someone else has invited a player, then this invite will overwrite the previous invite!
-                itc.addInvite(InviteType.TRUST, user.getUniqueId(), target.getUniqueId());
+                itc.addInvite(Type.TRUST, user.getUniqueId(), target.getUniqueId());
                 user.sendMessage("commands.island.team.invite.invitation-sent", TextVariables.NAME, target.getName());
                 // Send message to online player
                 target.sendMessage("commands.island.team.trust.name-has-invited-you", TextVariables.NAME, user.getName());
@@ -115,14 +115,14 @@ public class IslandTeamTrustCommand extends CompositeCommand {
         Island island = getIslands().getIsland(getWorld(), user.getUniqueId());
         if (island != null) {
             if (getPlugin().getSettings().isInviteConfirmation()) {
-                if (itc.isInvited(targetUUID) && itc.getInviter(targetUUID).equals(user.getUniqueId()) && itc.getInvite(targetUUID).getType().equals(InviteType.TRUST)) {
+                if (itc.isInvited(targetUUID) && itc.getInviter(targetUUID).equals(user.getUniqueId()) && itc.getInvite(targetUUID).getType().equals(Type.TRUST)) {
                     // Prevent spam
                     user.sendMessage("commands.island.team.invite.errors.you-have-already-invited");
                     return false;
                 }
                 // Put the invited player (key) onto the list with inviter (value)
                 // If someone else has invited a player, then this invite will overwrite the previous invite!
-                itc.addInvite(InviteType.TRUST, user.getUniqueId(), target.getUniqueId());
+                itc.addInvite(Type.TRUST, user.getUniqueId(), target.getUniqueId());
                 user.sendMessage("commands.island.team.invite.invitation-sent", TextVariables.NAME, target.getName());
                 // Send message to online player
                 target.sendMessage("commands.island.team.trust.name-has-invited-you", TextVariables.NAME, user.getName());
