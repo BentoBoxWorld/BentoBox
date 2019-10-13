@@ -6,7 +6,7 @@ import java.util.UUID;
 /**
  * Represents an invite
  * @author tastybento
- *
+ * @since 1.8.0
  */
 public class Invite {
 
@@ -81,6 +81,4 @@ public class Invite {
         Invite other = (Invite) obj;
         return Objects.equals(invitee, other.invitee) && Objects.equals(inviter, other.inviter) && type == other.type;
     }
-
-
 }
