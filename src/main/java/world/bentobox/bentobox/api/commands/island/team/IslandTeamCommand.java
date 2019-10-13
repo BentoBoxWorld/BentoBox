@@ -98,7 +98,7 @@ public class IslandTeamCommand extends CompositeCommand {
      * @param invitee
      * @since 1.8.0
      */
-    public void addInvite(@NonNull Invite.Type type, @NonNull UUID inviter, @NonNull UUID invitee) {
+    public void addInvite(Invite.Type type, @NonNull UUID inviter, @NonNull UUID invitee) {
         inviteList.put(invitee, new Invite(type, inviter, invitee));
     }
 
