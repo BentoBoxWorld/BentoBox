@@ -126,6 +126,7 @@ public class NewIsland {
 
         /**
          * @param strategy - the location strategy to use
+         * @since 1.8.0
          */
         public Builder locationStrategy(NewIslandLocationStrategy strategy) {
             this.locationStrategy2 = strategy;
