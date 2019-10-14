@@ -9,6 +9,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitTask;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
@@ -89,6 +90,8 @@ public class BentoBox extends JavaPlugin {
 
     private Config<Settings> configObject;
 
+    private BukkitTask blueprintLoadingTask;
+
     @Override
     public void onEnable(){
         if (!ServerCompatibility.getInstance().checkCompatibility().isCanLaunch()) {
@@ -163,7 +166,7 @@ public class BentoBox extends JavaPlugin {
 
         final long loadTime = System.currentTimeMillis() - loadStart;
 
-        getServer().getScheduler().runTask(instance, () -> {
+        Bukkit.getScheduler().runTask(instance, () -> {
             final long enableStart = System.currentTimeMillis();
             hooksManager.registerHook(new PlaceholderAPIHook());
             hooksManager.registerHook(new MVdWPlaceholderAPIHook());
@@ -183,7 +186,7 @@ public class BentoBox extends JavaPlugin {
             islandsManager.load();
 
             // Save islands & players data every X minutes
-            instance.getServer().getScheduler().runTaskTimer(instance, () -> {
+            Bukkit.getScheduler().runTaskTimer(instance, () -> {
                 playersManager.asyncSaveAll();
                 islandsManager.asyncSaveAll();
             }, getSettings().getDatabaseBackupPeriod() * 20 * 60L, getSettings().getDatabaseBackupPeriod() * 20 * 60L);
@@ -215,11 +218,18 @@ public class BentoBox extends JavaPlugin {
                     TextVariables.VERSION, instance.getDescription().getVersion(),
                     "[time]", String.valueOf(loadTime + enableTime));
 
-            // Tell all addons that everything is loaded
-            isLoaded = true;
-            this.addonsManager.allLoaded();
-            // Fire plugin ready event - this should go last after everything else
-            Bukkit.getServer().getPluginManager().callEvent(new BentoBoxReadyEvent());
+            // Poll for blueprints loading to be finished - async so could be a completely variable time
+            blueprintLoadingTask = Bukkit.getScheduler().runTaskTimer(instance, () -> {
+                if (getBlueprintsManager().isBlueprintsLoaded()) {
+                    blueprintLoadingTask.cancel();
+                    // Tell all addons that everything is loaded
+                    isLoaded = true;
+                    this.addonsManager.allLoaded();
+                    // Fire plugin ready event - this should go last after everything else
+                    Bukkit.getServer().getPluginManager().callEvent(new BentoBoxReadyEvent());
+                    instance.log("All blueprints loaded.");
+                }
+            }, 0L, 1L);
 
             if (getSettings().getDatabaseType().equals(DatabaseSetup.DatabaseType.YAML)) {
                 logWarning("*** You're still using YAML database ! ***");
