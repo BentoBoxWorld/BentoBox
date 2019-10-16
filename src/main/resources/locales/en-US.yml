@@ -671,7 +671,8 @@ protection:
       name: "Containers"
       description: |-
         &aToggle interaction with chests,
-        &ashulker boxes and flower pots.
+        &ashulker boxes and flower pots,
+        &acomposters and barrels.
 
         &7Other containers are handled
         &7by dedicated flags.
