@@ -290,6 +290,9 @@ public class BlockInteractionListener extends FlagListener {
         case SWEET_BERRY_BUSH:
             checkIsland(e, player, loc, Flags.BREAK_BLOCKS);
             break;
+        case CAKE:
+            checkIsland(e, player, loc, Flags.CAKE);
+            break;
         default:
             if (stringFlags.containsKey(type.name())) {
                 Optional<Flag> f = BentoBox.getInstance().getFlagsManager().getFlag(stringFlags.get(type.name()));

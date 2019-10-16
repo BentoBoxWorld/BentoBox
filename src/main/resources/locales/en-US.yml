@@ -663,6 +663,10 @@ protection:
       description: "Toggle button use"
       name: "Buttons"
       hint: "No button use allowed"
+    CAKE:
+      description: "Cake eating disabled"
+      name: "Cakes"
+      hint: "Toggle cake interaction"
     CONTAINER:
       name: "Containers"
       description: |-
