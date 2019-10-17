@@ -109,6 +109,7 @@ public final class Flags {
     public static final Flag REDSTONE = new Flag.Builder("REDSTONE", Material.REDSTONE).mode(Flag.Mode.ADVANCED).build();
     public static final Flag SPAWN_EGGS = new Flag.Builder("SPAWN_EGGS", Material.COW_SPAWN_EGG).build();
     public static final Flag ITEM_FRAME = new Flag.Builder("ITEM_FRAME", Material.ITEM_FRAME).mode(Flag.Mode.ADVANCED).build();
+    public static final Flag CAKE = new Flag.Builder("CAKE", Material.CAKE).build();
     /**
      * Prevents players from interacting with the Dragon Egg.
      * @since 1.3.1
