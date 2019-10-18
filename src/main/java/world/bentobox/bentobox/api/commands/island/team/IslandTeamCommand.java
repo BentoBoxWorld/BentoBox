@@ -22,13 +22,13 @@ public class IslandTeamCommand extends CompositeCommand {
      * Invited list. Key is the invited party, value is the invite.
      * @since 1.8.0
      */
-    private Map<UUID, Invite> inviteList;
+    private Map<UUID, Invite> inviteMap;
 
     private IslandTeamInviteCommand inviteCommand;
 
     public IslandTeamCommand(CompositeCommand parent) {
         super(parent, "team");
-        inviteList = new HashMap<>();
+        inviteMap = new HashMap<>();
     }
 
     @Override
@@ -87,29 +87,29 @@ public class IslandTeamCommand extends CompositeCommand {
                 .reason(TeamEvent.Reason.INFO)
                 .involvedPlayer(user.getUniqueId())
                 .build();
-        Bukkit.getServer().getPluginManager().callEvent(event);
+        Bukkit.getPluginManager().callEvent(event);
         return event.isCancelled();
     }
 
     /**
-     *
-     * @param type
-     * @param inviter
-     * @param invitee
+     * Add an invite
+     * @param type - type of invite
+     * @param inviter - uuid of inviter
+     * @param invitee - uuid of invitee
      * @since 1.8.0
      */
     public void addInvite(Invite.Type type, @NonNull UUID inviter, @NonNull UUID invitee) {
-        inviteList.put(invitee, new Invite(type, inviter, invitee));
+        inviteMap.put(invitee, new Invite(type, inviter, invitee));
     }
 
     /**
-     *
-     * @param invitee
-     * @return
+     * Check if a player has been invited
+     * @param invitee - UUID of invitee to check
+     * @return true if invited, false if not
      * @since 1.8.0
      */
     public boolean isInvited(@NonNull UUID invitee) {
-        return inviteList.containsKey(invitee);
+        return inviteMap.containsKey(invitee);
     }
 
     /**
@@ -120,7 +120,7 @@ public class IslandTeamCommand extends CompositeCommand {
      */
     @Nullable
     public UUID getInviter(UUID invitee) {
-        return isInvited(invitee) ? inviteList.get(invitee).getInviter() : null;
+        return isInvited(invitee) ? inviteMap.get(invitee).getInviter() : null;
     }
 
     /**
@@ -131,15 +131,15 @@ public class IslandTeamCommand extends CompositeCommand {
      */
     @Nullable
     public Invite getInvite(UUID invitee) {
-        return inviteList.get(invitee);
+        return inviteMap.get(invitee);
     }
 
     /**
      * Removes a pending invite.
-     * @param uniqueId - UUID of invited user
+     * @param invitee - UUID of invited user
      * @since 1.8.0
      */
-    public void removeInvite(@NonNull UUID uniqueId) {
-        inviteList.remove(uniqueId);
+    public void removeInvite(@NonNull UUID invitee) {
+        inviteMap.remove(invitee);
     }
 }
