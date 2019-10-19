@@ -75,7 +75,7 @@ public class AdminTeamAddCommand extends CompositeCommand {
                     .involvedPlayer(targetUUID)
                     .admin(true)
                     .build();
-            Bukkit.getServer().getPluginManager().callEvent(event);
+            Bukkit.getPluginManager().callEvent(event);
             return true;
         } else {
             user.sendMessage("general.errors.player-has-no-island");

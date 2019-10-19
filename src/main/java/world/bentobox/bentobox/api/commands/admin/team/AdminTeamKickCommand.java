@@ -77,7 +77,7 @@ public class AdminTeamKickCommand extends CompositeCommand {
                 .involvedPlayer(targetUUID)
                 .admin(true)
                 .build();
-        Bukkit.getServer().getPluginManager().callEvent(event);
+        Bukkit.getPluginManager().callEvent(event);
         return true;
     }
 }

@@ -61,13 +61,13 @@ public class ItemStackTypeAdapterTest {
     public void setUp() throws Exception {
         Server server = mock(Server.class);
 
-        PluginManager pluginManager = mock(PluginManager.class);
-        when(server.getPluginManager()).thenReturn(pluginManager);
+        PluginManager pim = mock(PluginManager.class);
 
         when(server.getItemFactory()).thenReturn(itemFactory);
 
         PowerMockito.mockStatic(Bukkit.class);
         when(Bukkit.getServer()).thenReturn(server);
+        when(Bukkit.getPluginManager()).thenReturn(pim);
 
         ItemMeta meta = mock(ItemMeta.class);
         when(itemFactory.getItemMeta(any())).thenReturn(meta);

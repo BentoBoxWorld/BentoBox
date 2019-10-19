@@ -131,7 +131,7 @@ public class IslandTeamKickCommand extends ConfirmableCommand {
                 .reason(TeamEvent.Reason.KICK)
                 .involvedPlayer(targetUUID)
                 .build();
-        Bukkit.getServer().getPluginManager().callEvent(e);
+        Bukkit.getPluginManager().callEvent(e);
 
         // Add cooldown for this player and target
         if (getSettings().getInviteCooldown() > 0 && getParent() != null) {

@@ -2,9 +2,9 @@ package world.bentobox.bentobox.api.commands.island.team;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -17,14 +17,13 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Server;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitScheduler;
+import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -36,6 +35,8 @@ import org.powermock.reflect.Whitebox;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
+import world.bentobox.bentobox.api.addons.Addon;
+import world.bentobox.bentobox.api.addons.AddonDescription;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
@@ -78,6 +79,8 @@ public class IslandTeamKickCommandTest {
     private CompositeCommand subCommand;
     @Mock
     private Island island;
+    @Mock
+    private Addon addon;
 
     /**
      * @throws java.lang.Exception
@@ -119,6 +122,9 @@ public class IslandTeamKickCommandTest {
         subCommand = mock(CompositeCommand.class);
         Optional<CompositeCommand> optionalCommand = Optional.of(subCommand);
         when(ic.getSubCommand(Mockito.anyString())).thenReturn(optionalCommand);
+        when(ic.getAddon()).thenReturn(addon);
+        AddonDescription desc = new AddonDescription.Builder("main", "name", "version").build();
+        when(addon.getDescription()).thenReturn(desc);
 
         // Player has island to begin with
         im = mock(IslandsManager.class);
@@ -158,17 +164,20 @@ public class IslandTeamKickCommandTest {
         when(iwm.getAddon(any())).thenReturn(Optional.empty());
 
         // Plugin Manager
-        Server server = mock(Server.class);
         PluginManager pim = mock(PluginManager.class);
-        when(server.getPluginManager()).thenReturn(pim);
-        when(Bukkit.getServer()).thenReturn(server);
+        when(Bukkit.getPluginManager()).thenReturn(pim);
 
         // Island
         when(island.getUniqueId()).thenReturn("uniqueid");
         when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
         when(im.getIsland(any(), any(User.class))).thenReturn(island);
         when(island.getRankCommand(anyString())).thenReturn(RanksManager.VISITOR_RANK);
-
+        
+    }
+    
+    @After
+    public void tearDown() {
+        User.clearUsers();
     }
 
     /**
@@ -253,7 +262,6 @@ public class IslandTeamKickCommandTest {
     /**
      * Test method for {@link IslandTeamKickCommand#execute(User, String, java.util.List)}
      */
-    @Ignore("NPE")
     @Test
     public void testExecuteNoConfirmation() {
         when(s.isKickConfirmation()).thenReturn(false);
@@ -274,7 +282,6 @@ public class IslandTeamKickCommandTest {
     /**
      * Test method for {@link IslandTeamKickCommand#execute(User, String, java.util.List)}
      */
-    @Ignore("NPE")
     @Test
     public void testExecuteNoConfirmationKeepInventory() {
         when(iwm.isOnLeaveResetInventory(any())).thenReturn(true);
@@ -299,7 +306,6 @@ public class IslandTeamKickCommandTest {
     /**
      * Test method for {@link IslandTeamKickCommand#execute(User, String, java.util.List)}
      */
-    @Ignore("NPE")
     @Test
     public void testExecuteNoConfirmationLoseInventoryOffline() {
         when(iwm.isOnLeaveResetInventory(any())).thenReturn(true);
@@ -350,7 +356,6 @@ public class IslandTeamKickCommandTest {
     /**
      * Test method for {@link IslandTeamKickCommand#execute(User, String, java.util.List)}
      */
-    @Ignore("NPE")
     @Test
     public void testExecuteTestResets() {
         when(s.isKickConfirmation()).thenReturn(false);
@@ -388,7 +393,6 @@ public class IslandTeamKickCommandTest {
     /**
      * Test method for {@link IslandTeamKickCommand#setCooldown(UUID, UUID, int)}
      */
-    @Ignore("NPE")
     @Test
     public void testCooldown() {
         // 10 minutes = 600 seconds

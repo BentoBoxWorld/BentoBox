@@ -63,7 +63,7 @@ public class AdminTeamDisbandCommand extends CompositeCommand {
                         .involvedPlayer(targetUUID)
                         .admin(true)
                         .build();
-                Bukkit.getServer().getPluginManager().callEvent(event);
+                Bukkit.getPluginManager().callEvent(event);
             }
         });
         user.sendMessage("commands.admin.team.disband.success", TextVariables.NAME, args.get(0));

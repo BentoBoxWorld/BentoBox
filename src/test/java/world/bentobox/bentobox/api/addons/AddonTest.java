@@ -76,9 +76,10 @@ public class AddonTest {
         when(server.getVersion()).thenReturn("BSB_Mocking");
 
         PluginManager pluginManager = mock(PluginManager.class);
-        when(server.getPluginManager()).thenReturn(pluginManager);
+        
 
         PowerMockito.mockStatic(Bukkit.class);
+        when(Bukkit.getPluginManager()).thenReturn(pluginManager);
         when(Bukkit.getServer()).thenReturn(server);
         when(Bukkit.getPluginManager()).thenReturn(pluginManager);
         when(Bukkit.getLogger()).thenReturn(Logger.getAnonymousLogger());

@@ -226,7 +226,7 @@ public class BentoBox extends JavaPlugin {
                     isLoaded = true;
                     this.addonsManager.allLoaded();
                     // Fire plugin ready event - this should go last after everything else
-                    Bukkit.getServer().getPluginManager().callEvent(new BentoBoxReadyEvent());
+                    Bukkit.getPluginManager().callEvent(new BentoBoxReadyEvent());
                     instance.log("All blueprints loaded.");
                 }
             }, 0L, 1L);

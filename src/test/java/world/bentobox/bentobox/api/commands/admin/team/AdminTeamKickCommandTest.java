@@ -7,6 +7,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -20,7 +21,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
@@ -130,11 +130,6 @@ public class AdminTeamKickCommandTest {
         // Addon
         when(iwm.getAddon(any())).thenReturn(Optional.empty());
 
-        // Plugin Manager
-        Server server = mock(Server.class);
-        PluginManager pim = mock(PluginManager.class);
-        when(server.getPluginManager()).thenReturn(pim);
-        when(Bukkit.getServer()).thenReturn(server);
     }
 
 
@@ -215,7 +210,8 @@ public class AdminTeamKickCommandTest {
         verify(im).removePlayer(eq(world), eq(notUUID));
         verify(pm).clearHomeLocations(eq(world), eq(notUUID));
         verify(user).sendMessage(eq("commands.admin.team.kick.success"), eq(TextVariables.NAME), eq(name), eq("[owner]"), anyString());
-        verify(pim).callEvent(any());
+        // Offline so event will be called twice
+        verify(pim, times(2)).callEvent(any());
     }
 
 }

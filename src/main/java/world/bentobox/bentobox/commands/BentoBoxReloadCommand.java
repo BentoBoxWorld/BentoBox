@@ -55,7 +55,7 @@ public class BentoBoxReloadCommand extends ConfirmableCommand {
                 user.sendMessage("commands.bentobox.reload.locales-reloaded");
 
                 // Fire ready event
-                Bukkit.getServer().getPluginManager().callEvent(new BentoBoxReadyEvent());
+                Bukkit.getPluginManager().callEvent(new BentoBoxReadyEvent());
             });
         } else {
             showHelp(this, user);

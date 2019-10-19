@@ -2,7 +2,7 @@ package world.bentobox.bentobox.listeners.flags.worldsettings;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Logger;
 
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -29,7 +30,9 @@ import org.bukkit.plugin.PluginManager;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
@@ -43,17 +46,25 @@ import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlaceholdersManager;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({BentoBox.class, PlayerEvent.class, PlayerInteractEvent.class})
+@PrepareForTest({BentoBox.class, PlayerEvent.class, PlayerInteractEvent.class, Bukkit.class})
 public class ObsidianScoopingListenerTest {
 
+    @Mock
     private World world;
     private ObsidianScoopingListener listener;
+    @Mock
     private ItemStack item;
+    @Mock
     private Block clickedBlock;
+    @Mock
     private BentoBox plugin;
+    @Mock
     private Player who;
+    @Mock
     private IslandWorldManager iwm;
+    @Mock
     private IslandsManager im;
+    @Mock
     private LocalesManager lm;
     private Material inHand;
     private Material block;
@@ -61,11 +72,7 @@ public class ObsidianScoopingListenerTest {
     @Before
     public void setUp() throws Exception {
         // Set up plugin
-        plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
-
-        // Mock world
-        world = mock(World.class);
 
         // Mock server
         Server server = mock(Server.class);
@@ -73,21 +80,18 @@ public class ObsidianScoopingListenerTest {
         when(server.getWorld("world")).thenReturn(world);
         when(server.getVersion()).thenReturn("BSB_Mocking");
 
+        PowerMockito.mockStatic(Bukkit.class);
         PluginManager pluginManager = mock(PluginManager.class);
-        when(server.getPluginManager()).thenReturn(pluginManager);
+        when(Bukkit.getPluginManager()).thenReturn(pluginManager);
 
         // Mock item factory (for itemstacks)
         ItemFactory itemFactory = mock(ItemFactory.class);
         when(server.getItemFactory()).thenReturn(itemFactory);
 
-        // Set the server to the mock
-        //Bukkit.setServer(server);
-
         // Create new object
         listener = new ObsidianScoopingListener();
 
         // Mock player
-        who = mock(Player.class);
         when(who.getWorld()).thenReturn(world);
 
         Location location = mock(Location.class);
@@ -100,19 +104,15 @@ public class ObsidianScoopingListenerTest {
         when(who.getInventory()).thenReturn(mock(PlayerInventory.class));
 
         // Worlds
-        iwm = mock(IslandWorldManager.class);
         when(plugin.getIWM()).thenReturn(iwm);
         when(iwm.getIslandWorld(Mockito.any())).thenReturn(world);
         when(iwm.getNetherWorld(Mockito.any())).thenReturn(world);
         when(iwm.getEndWorld(Mockito.any())).thenReturn(world);
 
         // Mock up IslandsManager
-        im = mock(IslandsManager.class);
         when(plugin.getIslands()).thenReturn(im);
 
         // Mock up items and blocks
-        item = mock(ItemStack.class);
-        clickedBlock = mock(Block.class);
         when(clickedBlock.getX()).thenReturn(0);
         when(clickedBlock.getY()).thenReturn(0);
         when(clickedBlock.getZ()).thenReturn(0);
@@ -131,7 +131,6 @@ public class ObsidianScoopingListenerTest {
         when(who.getGameMode()).thenReturn(GameMode.SURVIVAL);
 
         // Locales
-        lm = mock(LocalesManager.class);
         when(plugin.getLocalesManager()).thenReturn(lm);
         when(lm.get(any(), any())).thenReturn("mock translation");
 

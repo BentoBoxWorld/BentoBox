@@ -68,7 +68,7 @@ public class IslandTeamSetownerCommand extends CompositeCommand {
                 .reason(TeamEvent.Reason.SETOWNER)
                 .involvedPlayer(targetUUID)
                 .build();
-        Bukkit.getServer().getPluginManager().callEvent(event);
+        Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             return false;
         }
