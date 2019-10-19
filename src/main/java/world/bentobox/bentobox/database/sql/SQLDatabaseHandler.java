@@ -240,7 +240,8 @@ public class SQLDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
      */
     public boolean setConnection(Connection connection) {
         if (connection == null) {
-            plugin.logError("Are the settings in config.yml correct?");
+            plugin.logError("Could not connect to the database. Are the credentials in the config.yml file correct?");
+            plugin.logWarning("Disabling the plugin...");
             Bukkit.getPluginManager().disablePlugin(plugin);
             return false;
         }
