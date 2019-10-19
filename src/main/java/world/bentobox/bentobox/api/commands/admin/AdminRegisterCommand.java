@@ -66,10 +66,23 @@ public class AdminRegisterCommand extends ConfirmableCommand {
             user.sendMessage("commands.admin.register.already-owned");
             return false;
         }
+        // Check if island is spawn
+        if (island.map(i -> i.isSpawn()).orElse(false)) {
+            askConfirmation(user, user.getTranslation("commands.admin.register.island-is-spawn"), () -> register(user, targetUUID, island, closestIsland));
+            return false;
+        }
+        return register(user, targetUUID, island, closestIsland);
+
+    }
+
+    private boolean register(User user, UUID targetUUID, Optional<Island> island, Location closestIsland) {
         // Register island if it exists
         if (!island.map(i -> {
             // Island exists
             getIslands().setOwner(user, targetUUID, i);
+            if (i.isSpawn()) {
+                getIslands().clearSpawn(i.getWorld());
+            }
             user.sendMessage("commands.admin.register.registered-island", "[xyz]", Util.xyz(i.getCenter().toVector()));
             user.sendMessage("general.success");
             IslandBaseEvent event = IslandEvent.builder()
@@ -79,7 +92,7 @@ public class AdminRegisterCommand extends ConfirmableCommand {
                     .involvedPlayer(targetUUID)
                     .admin(true)
                     .build();
-            Bukkit.getServer().getPluginManager().callEvent(event);
+            Bukkit.getPluginManager().callEvent(event);
             return true;
         }).orElse(false)) {
             // Island does not exist - this is a reservation
@@ -102,11 +115,12 @@ public class AdminRegisterCommand extends ConfirmableCommand {
                         .involvedPlayer(targetUUID)
                         .admin(true)
                         .build();
-                Bukkit.getServer().getPluginManager().callEvent(event);
+                Bukkit.getPluginManager().callEvent(event);
             });
             return false;
         }
         return true;
+        
     }
 
     @Override

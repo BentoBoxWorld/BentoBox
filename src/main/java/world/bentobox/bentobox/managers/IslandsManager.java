@@ -789,6 +789,19 @@ public class IslandsManager {
         this.spawn.put(spawn.getWorld(), spawn);
         spawn.setSpawn(true);
     }
+    
+    /**
+     * Clears the spawn island for this world
+     * @param world - world
+     * @since 1.8.0
+     */
+    public void clearSpawn(World world) {
+        Island spawnIsland = spawn.get(Util.getWorld(world));
+        if (spawnIsland != null) {
+            spawnIsland.setSpawn(false);
+        }
+        this.spawn.remove(world);
+    }
 
     /**
      * @param uniqueId - unique ID
