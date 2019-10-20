@@ -1,4 +1,4 @@
-# BentoBox Configuration 1.7.0
+# BentoBox Configuration 1.8.0
 # This config file is dynamic and is updated right after BentoBox loaded its settings from it.
 # You can edit it while the server is online and you can do '/bbox reload' to take the changes into account.
 # However, it is a better practice to edit this file while the server is offline.
@@ -78,8 +78,10 @@ island:
       kick: true
       leave: true
       reset: true
-    # Ask the recipient to confirm trust or coop invites. Team invites always require confirmation.
-    invite: false
+    # Ask the recipient to confirm trust or coop invites.
+    # Team invites will always require confirmation, for safety concerns.
+    # Added since 1.8.0.
+    invites: false
   delay:
     # Time in seconds that players have to stand still before teleport commands activate, e.g. island go.
     time: 0
