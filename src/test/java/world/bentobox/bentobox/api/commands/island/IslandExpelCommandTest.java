@@ -6,7 +6,7 @@ package world.bentobox.bentobox.api.commands.island;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -18,7 +18,6 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
@@ -133,10 +132,8 @@ public class IslandExpelCommandTest {
         when(plugin.getIWM()).thenReturn(iwm);
 
         // Server and Plugin Manager for events
-        Server server = mock(Server.class);
-        when(Bukkit.getServer()).thenReturn(server);
         PluginManager pim = mock(PluginManager.class);
-        when(server.getPluginManager()).thenReturn(pim);
+        when(Bukkit.getPluginManager()).thenReturn(pim);
 
         when(island.getWorld()).thenReturn(mock(World.class));
 

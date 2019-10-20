@@ -1,6 +1,3 @@
-/**
- *
- */
 package world.bentobox.bentobox.managers;
 
 import static org.junit.Assert.assertEquals;
@@ -51,15 +48,27 @@ import world.bentobox.bentobox.util.Util;
 @PrepareForTest( { Bukkit.class, BentoBox.class, Util.class, Location.class })
 public class IslandWorldManagerTest {
 
+    @Mock
     private BentoBox plugin;
+
     private IslandWorldManager iwm;
+
+    @Mock
     private Location location;
+
+    @Mock
     private World world;
+
+    @Mock
     private WorldSettings ws;
+
     @Mock
     private @Nullable World netherWorld;
+
     @Mock
     private @Nullable World endWorld;
+
+    @Mock
     private GameModeAddon gm;
 
     /**
@@ -68,12 +77,9 @@ public class IslandWorldManagerTest {
     @Before
     public void setUp() throws Exception {
         // Set up plugin
-        plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
         iwm = new IslandWorldManager(plugin);
-        location = mock(Location.class);
         // World
-        world = mock(World.class);
         when(world.getName()).thenReturn("test-world");
         when(world.getEnvironment()).thenReturn(World.Environment.NORMAL);
         when(location.getWorld()).thenReturn(world);
@@ -89,8 +95,6 @@ public class IslandWorldManagerTest {
         when(fm.getFlags()).thenReturn(new ArrayList<>());
         when(plugin.getFlagsManager()).thenReturn(fm);
         // Gamemode
-        gm = mock(GameModeAddon.class);
-        ws = mock(WorldSettings.class);
         when(ws.getFriendlyName()).thenReturn("friendly");
         when(gm.getWorldSettings()).thenReturn(ws);
         when(gm.getOverWorld()).thenReturn(world);

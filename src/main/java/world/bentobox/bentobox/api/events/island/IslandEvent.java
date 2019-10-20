@@ -440,76 +440,76 @@ public class IslandEvent extends IslandBaseEvent {
 
         public IslandBaseEvent build() {
             // Call the generic event for developers who just want one event and use the Reason enum
-            Bukkit.getServer().getPluginManager().callEvent(new IslandEvent(island, player, admin, location, reason));
+            Bukkit.getPluginManager().callEvent(new IslandEvent(island, player, admin, location, reason));
             // Generate explicit events
             switch (reason) {
             case EXPEL:
                 IslandExpelEvent expel = new IslandExpelEvent(island, player, admin, location);
-                Bukkit.getServer().getPluginManager().callEvent(expel);
+                Bukkit.getPluginManager().callEvent(expel);
                 return expel;
             case BAN:
                 IslandBanEvent ban = new IslandBanEvent(island, player, admin, location);
-                Bukkit.getServer().getPluginManager().callEvent(ban);
+                Bukkit.getPluginManager().callEvent(ban);
                 return ban;
             case CREATE:
                 IslandCreateEvent create = new IslandCreateEvent(island, player, admin, location, blueprintBundle);
-                Bukkit.getServer().getPluginManager().callEvent(create);
+                Bukkit.getPluginManager().callEvent(create);
                 return create;
             case CREATED:
                 IslandCreatedEvent created = new IslandCreatedEvent(island, player, admin, location);
-                Bukkit.getServer().getPluginManager().callEvent(created);
+                Bukkit.getPluginManager().callEvent(created);
                 return created;
             case DELETE:
                 IslandDeleteEvent delete = new IslandDeleteEvent(island, player, admin, location);
-                Bukkit.getServer().getPluginManager().callEvent(delete);
+                Bukkit.getPluginManager().callEvent(delete);
                 return delete;
             case DELETE_CHUNKS:
                 IslandDeleteChunksEvent deleteChunks = new IslandDeleteChunksEvent(island, player, admin, location, deletedIslandInfo);
-                Bukkit.getServer().getPluginManager().callEvent(deleteChunks);
+                Bukkit.getPluginManager().callEvent(deleteChunks);
                 return deleteChunks;
             case DELETED:
                 IslandDeletedEvent deleted = new IslandDeletedEvent(island, player, admin, location, deletedIslandInfo);
-                Bukkit.getServer().getPluginManager().callEvent(deleted);
+                Bukkit.getPluginManager().callEvent(deleted);
                 return deleted;
             case ENTER:
                 IslandEnterEvent enter = new IslandEnterEvent(island, player, admin, location);
-                Bukkit.getServer().getPluginManager().callEvent(enter);
+                Bukkit.getPluginManager().callEvent(enter);
                 return enter;
             case EXIT:
                 IslandExitEvent exit = new IslandExitEvent(island, player, admin, location);
-                Bukkit.getServer().getPluginManager().callEvent(exit);
+                Bukkit.getPluginManager().callEvent(exit);
                 return exit;
             case LOCK:
                 IslandLockEvent lock = new IslandLockEvent(island, player, admin, location);
-                Bukkit.getServer().getPluginManager().callEvent(lock);
+                Bukkit.getPluginManager().callEvent(lock);
                 return lock;
             case RESET:
                 IslandResetEvent reset = new IslandResetEvent(island, player, admin, location, blueprintBundle);
-                Bukkit.getServer().getPluginManager().callEvent(reset);
+                Bukkit.getPluginManager().callEvent(reset);
                 return reset;
             case RESETTED:
                 IslandResettedEvent resetted = new IslandResettedEvent(island, player, admin, location);
-                Bukkit.getServer().getPluginManager().callEvent(resetted);
+                Bukkit.getPluginManager().callEvent(resetted);
                 return resetted;
             case UNBAN:
                 IslandUnbanEvent unban = new IslandUnbanEvent(island, player, admin, location);
-                Bukkit.getServer().getPluginManager().callEvent(unban);
+                Bukkit.getPluginManager().callEvent(unban);
                 return unban;
             case UNLOCK:
                 IslandUnlockEvent unlock = new IslandUnlockEvent(island, player, admin, location);
-                Bukkit.getServer().getPluginManager().callEvent(unlock);
+                Bukkit.getPluginManager().callEvent(unlock);
                 return unlock;
             case REGISTERED:
                 IslandRegisteredEvent reg = new IslandRegisteredEvent(island, player, admin, location);
-                Bukkit.getServer().getPluginManager().callEvent(reg);
+                Bukkit.getPluginManager().callEvent(reg);
                 return reg;
             case UNREGISTERED:
                 IslandUnregisteredEvent unreg = new IslandUnregisteredEvent(island, player, admin, location);
-                Bukkit.getServer().getPluginManager().callEvent(unreg);
+                Bukkit.getPluginManager().callEvent(unreg);
                 return unreg;
             default:
                 IslandGeneralEvent general = new IslandGeneralEvent(island, player, admin, location);
-                Bukkit.getServer().getPluginManager().callEvent(general);
+                Bukkit.getPluginManager().callEvent(general);
                 return general;
             }
         }

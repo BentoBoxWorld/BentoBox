@@ -1,6 +1,6 @@
 package world.bentobox.bentobox.util.teleport;
 
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -70,7 +70,7 @@ public class SafeSpotTeleportTest {
         when(server.getVersion()).thenReturn("BSB_Mocking");
 
         PluginManager pluginManager = mock(PluginManager.class);
-        when(server.getPluginManager()).thenReturn(pluginManager);
+        when(Bukkit.getPluginManager()).thenReturn(pluginManager);
 
         when(Bukkit.getLogger()).thenReturn(Logger.getAnonymousLogger());
 

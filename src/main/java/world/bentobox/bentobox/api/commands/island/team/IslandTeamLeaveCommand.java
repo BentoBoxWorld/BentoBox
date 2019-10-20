@@ -126,6 +126,6 @@ public class IslandTeamLeaveCommand extends ConfirmableCommand {
                 .reason(TeamEvent.Reason.LEAVE)
                 .involvedPlayer(user.getUniqueId())
                 .build();
-        Bukkit.getServer().getPluginManager().callEvent(e);
+        Bukkit.getPluginManager().callEvent(e);
     }
 }

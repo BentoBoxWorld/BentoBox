@@ -15,7 +15,6 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -93,10 +92,8 @@ public class EnterExitListenerTest {
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
 
         // Server
-        Server server = mock(Server.class);
         PowerMockito.mockStatic(Bukkit.class);
-        when(Bukkit.getServer()).thenReturn(server);
-        when(server.getPluginManager()).thenReturn(pim);
+        when(Bukkit.getPluginManager()).thenReturn(pim);
 
         // Settings
         Settings s = mock(Settings.class);

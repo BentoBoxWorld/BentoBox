@@ -150,6 +150,7 @@ commands:
       no-island-here: "&cThere is no island here. Confirm to make one."
       in-deletion: "&cThis island space is currently being deleted. Try later."
       cannot-make-island: "&cAn island cannot be placed here, sorry. See console for possible errors."
+      island-is-spawn: "&6Island is spawn. Are you sure? Enter command again to confirm."
     unregister:
       parameters: "<owner>"
       description: "unregister owner from island, but keep island blocks"

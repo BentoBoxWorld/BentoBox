@@ -39,7 +39,7 @@ public class IslandTeamInviteRejectCommand extends CompositeCommand {
                     .reason(TeamEvent.Reason.REJECT)
                     .involvedPlayer(playerUUID)
                     .build();
-            Bukkit.getServer().getPluginManager().callEvent(event);
+            Bukkit.getPluginManager().callEvent(event);
             if (event.isCancelled()) {
                 return false;
             }

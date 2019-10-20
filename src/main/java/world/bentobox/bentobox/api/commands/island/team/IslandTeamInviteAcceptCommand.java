@@ -156,7 +156,7 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
                 .reason(TeamEvent.Reason.JOINED)
                 .involvedPlayer(playerUUID)
                 .build();
-        Bukkit.getServer().getPluginManager().callEvent(e);
+        Bukkit.getPluginManager().callEvent(e);
 
     }
 
