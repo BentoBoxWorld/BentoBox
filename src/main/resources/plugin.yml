@@ -38,4 +38,4 @@ permissions:
     default: true
   bentobox.version:
     description: Allows to use /bentobox version
-    default: true
+    default: op
