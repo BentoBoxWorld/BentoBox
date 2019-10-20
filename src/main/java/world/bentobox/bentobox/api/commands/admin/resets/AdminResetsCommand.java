@@ -18,6 +18,8 @@ public class AdminResetsCommand extends CompositeCommand {
 
         new AdminResetsSetCommand(this);
         new AdminResetsResetCommand(this);
+        new AdminResetsAddCommand(this);
+        new AdminResetsRemoveCommand(this);
     }
 
     @Override

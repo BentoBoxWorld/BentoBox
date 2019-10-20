@@ -16,13 +16,11 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
-import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -34,6 +32,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
@@ -56,55 +55,47 @@ import world.bentobox.bentobox.managers.PlayersManager;
 public class UserTest {
 
     private static final String TEST_TRANSLATION = "mock translation [test]";
+    @Mock
     private Player player;
+    @Mock
     private BentoBox plugin;
+    @Mock
     private LocalesManager lm;
+
     private User user;
+    @Mock
     private IslandWorldManager iwm;
-    private Server server;
+
     private UUID uuid;
+    @Mock
+    private PluginManager pim;
+    @Mock
+    private CommandSender sender;
 
     @Before
     public void setUp() throws Exception {
         // Set up plugin
-        plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
         User.setPlugin(plugin);
 
-        server = mock(Server.class);
-        World world = mock(World.class);
-        when(server.getLogger()).thenReturn(Logger.getAnonymousLogger());
-        when(server.getWorld("world")).thenReturn(world);
-        when(server.getVersion()).thenReturn("BSB_Mocking");
-
-        player = mock(Player.class);
         uuid = UUID.randomUUID();
-        when(player.getUniqueId()).thenReturn(uuid);
-        when(server.getPlayer(Mockito.any(UUID.class))).thenReturn(player);
-
-        PluginManager pluginManager = mock(PluginManager.class);
-        when(server.getPluginManager()).thenReturn(pluginManager);
+        when(player.getUniqueId()).thenReturn(uuid);      
 
         ItemFactory itemFactory = mock(ItemFactory.class);
-        when(server.getItemFactory()).thenReturn(itemFactory);
 
         PowerMockito.mockStatic(Bukkit.class);
-        when(Bukkit.getServer()).thenReturn(server);
-        when(Bukkit.getPlayer(Mockito.any(UUID.class))).thenReturn(player);
-        when(Bukkit.getLogger()).thenReturn(Logger.getAnonymousLogger());
-        when(Bukkit.getPluginManager()).thenReturn(mock(PluginManager.class));
+        when(Bukkit.getPlayer(any(UUID.class))).thenReturn(player);
+        when(Bukkit.getPluginManager()).thenReturn(pim);
+        when(Bukkit.getItemFactory()).thenReturn(itemFactory);
 
-        iwm = mock(IslandWorldManager.class);
+        // IWM
         when(plugin.getIWM()).thenReturn(iwm);
         // Addon
-        when(iwm .getAddon(Mockito.any())).thenReturn(Optional.empty());
-
-        sender = mock(CommandSender.class);
+        when(iwm .getAddon(any())).thenReturn(Optional.empty());
 
         user = User.getInstance(player);
 
         // Locales
-        lm = mock(LocalesManager.class);
         when(plugin.getLocalesManager()).thenReturn(lm);
         when(lm.get(any(), any())).thenReturn(TEST_TRANSLATION);
         when(lm.get(any())).thenReturn(TEST_TRANSLATION);
@@ -121,9 +112,6 @@ public class UserTest {
     public void cleanUp() {
         User.clearUsers();
     }
-
-    private CommandSender sender;
-
 
     @Test
     public void testGetInstanceCommandSender() {
@@ -152,7 +140,7 @@ public class UserTest {
         User.removePlayer(player);
         // If the player has been removed from the cache, then code will ask server for player
         // Return null and check if instance is null will show that the player is not in the cache
-        when(Bukkit.getPlayer(Mockito.any(UUID.class))).thenReturn(null);
+        when(Bukkit.getPlayer(any(UUID.class))).thenReturn(null);
         assertNull(User.getInstance(uuid).getPlayer());
     }
 
@@ -366,12 +354,12 @@ public class UserTest {
         for (GameMode gm: GameMode.values()) {
             user.setGameMode(gm);
         }
-        verify(player, Mockito.times(GameMode.values().length)).setGameMode(Mockito.any());
+        verify(player, Mockito.times(GameMode.values().length)).setGameMode(any());
     }
 
     @Test
     public void testTeleport() {
-        when(player.teleport(Mockito.any(Location.class))).thenReturn(true);
+        when(player.teleport(any(Location.class))).thenReturn(true);
         Location loc = mock(Location.class);
         user.teleport(loc);
         verify(player).teleport(loc);
@@ -395,7 +383,7 @@ public class UserTest {
     public void testGetLocalePlayer() {
         PlayersManager pm = mock(PlayersManager.class);
         when(plugin.getPlayers()).thenReturn(pm);
-        when(pm.getLocale(Mockito.any())).thenReturn("en-US");
+        when(pm.getLocale(any())).thenReturn("en-US");
 
         // Confirm that Locale object is correctly obtained
         assertEquals(Locale.US, user.getLocale());
@@ -405,7 +393,7 @@ public class UserTest {
     public void testGetLocaleConsole() {
         PlayersManager pm = mock(PlayersManager.class);
         when(plugin.getPlayers()).thenReturn(pm);
-        when(pm.getLocale(Mockito.any())).thenReturn("en-US");
+        when(pm.getLocale(any())).thenReturn("en-US");
 
         // Confirm that Locale object is correctly obtained
         Locale locale = Locale.US;

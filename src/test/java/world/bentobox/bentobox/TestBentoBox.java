@@ -6,7 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -92,13 +92,14 @@ public class TestBentoBox {
         Mockito.when(server.getVersion()).thenReturn("BentoBox_Mocking");
 
         PluginManager pluginManager = mock(PluginManager.class);
-        when(server.getPluginManager()).thenReturn(pluginManager);
+        
 
         ItemFactory itemFactory = mock(ItemFactory.class);
         when(server.getItemFactory()).thenReturn(itemFactory);
 
         PowerMockito.mockStatic(Bukkit.class);
         when(Bukkit.getServer()).thenReturn(server);
+        when(Bukkit.getPluginManager()).thenReturn(pluginManager);
 
         SkullMeta skullMeta = mock(SkullMeta.class);
         when(itemFactory.getItemMeta(any())).thenReturn(skullMeta);

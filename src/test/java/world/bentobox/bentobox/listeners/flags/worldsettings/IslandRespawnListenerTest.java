@@ -1,8 +1,10 @@
 package world.bentobox.bentobox.listeners.flags.worldsettings;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -13,15 +15,17 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.bukkit.Location;
+import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
+import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -46,11 +50,18 @@ import world.bentobox.bentobox.util.Util;
 @PrepareForTest( {BentoBox.class, Flags.class, Util.class })
 public class IslandRespawnListenerTest {
 
+    @Mock
     private World world;
+    @Mock
     private Player player;
+    @Mock
     private IslandsManager im;
+    @Mock
     private IslandWorldManager iwm;
+    @Mock
     private Location safeLocation;
+    @Mock
+    private Server server;
 
     /**
      * @throws java.lang.Exception
@@ -62,50 +73,116 @@ public class IslandRespawnListenerTest {
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
 
         // World
-        world = mock(World.class);
         when(world.getUID()).thenReturn(UUID.randomUUID());
+        when(server.getWorld(any(UUID.class))).thenReturn(world);
 
         // Settings
         Settings s = mock(Settings.class);
         when(plugin.getSettings()).thenReturn(s);
 
         // Player
-        player = mock(Player.class);
         when(player.getWorld()).thenReturn(world);
         when(player.getUniqueId()).thenReturn(UUID.randomUUID());
         when(player.getLocation()).thenReturn(mock(Location.class));
+        when(player.getServer()).thenReturn(server);
 
         // Island World Manager
-        iwm = mock(IslandWorldManager.class);
         // All locations are in world by default
         when(iwm.inWorld(any(World.class))).thenReturn(true);
         when(iwm.inWorld(any(Location.class))).thenReturn(true);
         when(plugin.getIWM()).thenReturn(iwm);
 
         PowerMockito.mockStatic(Util.class);
-        when(Util.getWorld(Mockito.any())).thenReturn(world);
+        when(Util.getWorld(any())).thenReturn(world);
 
         // World Settings
         WorldSettings ws = mock(WorldSettings.class);
-        when(iwm.getWorldSettings(Mockito.any())).thenReturn(ws);
+        when(iwm.getWorldSettings(any())).thenReturn(ws);
         Map<String, Boolean> worldFlags = new HashMap<>();
         when(ws.getWorldFlags()).thenReturn(worldFlags);
         GameModeAddon gma = mock(GameModeAddon.class);
         Optional<GameModeAddon> opGma = Optional.of(gma );
         when(iwm.getAddon(any())).thenReturn(opGma);
 
-        im = mock(IslandsManager.class);
-        when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(true);
+        when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
         when(plugin.getIslands()).thenReturn(im);
         safeLocation = mock(Location.class);
         when(safeLocation.getWorld()).thenReturn(world);
-        when(im.getSafeHomeLocation(Mockito.any(), Mockito.any(), Mockito.anyInt())).thenReturn(safeLocation);
+        when(im.getSafeHomeLocation(any(), any(), Mockito.anyInt())).thenReturn(safeLocation);
 
         // Sometimes use Mockito.withSettings().verboseLogging()
         User.setPlugin(plugin);
         User.getInstance(player);
     }
+    
+    @After
+    public void tearDown() {
+        User.clearUsers();
+    }
 
+    /**
+     * Test method for {@link IslandRespawnListener#onPlayerDeath(org.bukkit.event.entity.PlayerDeathEvent)}.
+     */
+    @Test
+    public void testOnPlayerDeathNotIslandWorld() {
+        when(iwm.inWorld(any(World.class))).thenReturn(false);
+        List<ItemStack> drops = new ArrayList<>();
+        PlayerDeathEvent e = new PlayerDeathEvent(player, drops, 0, 0, 0, 0, "");
+        new IslandRespawnListener().onPlayerDeath(e);
+        verify(world, never()).getUID();
+    }
+    
+    /**
+     * Test method for {@link IslandRespawnListener#onPlayerDeath(org.bukkit.event.entity.PlayerDeathEvent)}.
+     */
+    @Test
+    public void testOnPlayerDeathNoFlag() {
+        Flags.ISLAND_RESPAWN.setSetting(world, false);
+        List<ItemStack> drops = new ArrayList<>();
+        PlayerDeathEvent e = new PlayerDeathEvent(player, drops, 0, 0, 0, 0, "");
+        new IslandRespawnListener().onPlayerDeath(e);
+        verify(world, never()).getUID();
+    }
+    
+    /**
+     * Test method for {@link IslandRespawnListener#onPlayerDeath(org.bukkit.event.entity.PlayerDeathEvent)}.
+     */
+    @Test
+    public void testOnPlayerDeathNotOwnerNotTeam() {
+        when(im.hasIsland(any(), any(UUID.class))).thenReturn(false);
+        when(im.inTeam(any(), any(UUID.class))).thenReturn(false);
+        List<ItemStack> drops = new ArrayList<>();
+        PlayerDeathEvent e = new PlayerDeathEvent(player, drops, 0, 0, 0, 0, "");
+        new IslandRespawnListener().onPlayerDeath(e);
+        verify(world, never()).getUID();
+    }
+    
+    /**
+     * Test method for {@link IslandRespawnListener#onPlayerDeath(org.bukkit.event.entity.PlayerDeathEvent)}.
+     */
+    @Test
+    public void testOnPlayerDeathNotOwnerInTeam() {
+        when(im.hasIsland(any(), any(UUID.class))).thenReturn(false);
+        when(im.inTeam(any(), any(UUID.class))).thenReturn(true);
+        List<ItemStack> drops = new ArrayList<>();
+        PlayerDeathEvent e = new PlayerDeathEvent(player, drops, 0, 0, 0, 0, "");
+        new IslandRespawnListener().onPlayerDeath(e);
+        verify(world).getUID();
+    }
+    
+    /**
+     * Test method for {@link IslandRespawnListener#onPlayerDeath(org.bukkit.event.entity.PlayerDeathEvent)}.
+     */
+    @Test
+    public void testOnPlayerDeathOwnerNoTeam() {
+        when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
+        when(im.inTeam(any(), any(UUID.class))).thenReturn(false);
+        List<ItemStack> drops = new ArrayList<>();
+        PlayerDeathEvent e = new PlayerDeathEvent(player, drops, 0, 0, 0, 0, "");
+        new IslandRespawnListener().onPlayerDeath(e);
+        verify(world).getUID();
+    }
+    
     /**
      * Test method for {@link IslandRespawnListener#onPlayerDeath(org.bukkit.event.entity.PlayerDeathEvent)}.
      */
@@ -114,12 +191,12 @@ public class IslandRespawnListenerTest {
         List<ItemStack> drops = new ArrayList<>();
         PlayerDeathEvent e = new PlayerDeathEvent(player, drops, 0, 0, 0, 0, "");
         new IslandRespawnListener().onPlayerDeath(e);
+        verify(world).getUID();
     }
 
     /**
      * Test method for {@link IslandRespawnListener#onPlayerRespawn(org.bukkit.event.player.PlayerRespawnEvent)}.
      */
-    @Ignore("mock of the server needed")
     @Test
     public void testOnPlayerRespawn() {
         // Die
@@ -130,7 +207,7 @@ public class IslandRespawnListenerTest {
         Location location = mock(Location.class);
         when(location.getWorld()).thenReturn(world);
         // Has island
-        when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(true);
+        when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
         // Respawn
         PlayerRespawnEvent ev = new PlayerRespawnEvent(player, location, false);
         l.onPlayerRespawn(ev);
@@ -146,7 +223,7 @@ public class IslandRespawnListenerTest {
         Location location = mock(Location.class);
         when(location.getWorld()).thenReturn(world);
         // Has island
-        when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(true);
+        when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
         // Respawn
         PlayerRespawnEvent ev = new PlayerRespawnEvent(player, location, false);
         l.onPlayerRespawn(ev);
@@ -169,7 +246,7 @@ public class IslandRespawnListenerTest {
         Location location = mock(Location.class);
         when(location.getWorld()).thenReturn(world);
         // Has island
-        when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(true);
+        when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
         // Respawn
         PlayerRespawnEvent ev = new PlayerRespawnEvent(player, location, false);
         l.onPlayerRespawn(ev);
@@ -190,7 +267,7 @@ public class IslandRespawnListenerTest {
         Location location = mock(Location.class);
         when(location.getWorld()).thenReturn(world);
         // Has island
-        when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(true);
+        when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
         // Respawn
         PlayerRespawnEvent ev = new PlayerRespawnEvent(player, location, false);
         l.onPlayerRespawn(ev);

@@ -18,10 +18,10 @@ public class MongoDBDatabase implements DatabaseSetup {
     public <T> AbstractDatabaseHandler<T> getHandler(Class<T> type) {
         BentoBox plugin = BentoBox.getInstance();
         // Check if the MongoDB plugin exists
-        if (Bukkit.getServer().getPluginManager().getPlugin("BsbMongo") == null) {
+        if (Bukkit.getPluginManager().getPlugin("BsbMongo") == null) {
             plugin.logError("You must install BsbMongo plugin for MongoDB support!");
             plugin.logError("See: https://github.com/tastybento/bsbMongo/releases/");
-            Bukkit.getServer().getPluginManager().disablePlugin(plugin);
+            Bukkit.getPluginManager().disablePlugin(plugin);
             return null;
         }
         if (connector == null) {

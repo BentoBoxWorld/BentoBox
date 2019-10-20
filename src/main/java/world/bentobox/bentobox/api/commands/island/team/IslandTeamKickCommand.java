@@ -78,6 +78,17 @@ public class IslandTeamKickCommand extends ConfirmableCommand {
         target.sendMessage("commands.island.team.kick.owner-kicked", "[gamemode]", getAddon().getDescription().getName());
         Island oldIsland = getIslands().getIsland(getWorld(), targetUUID);
         getIslands().removePlayer(getWorld(), targetUUID);
+        // Execute commands when leaving
+        getIWM().getOnLeaveCommands(oldIsland.getWorld()).forEach(command -> {
+            command = command.replace("[player]", target.getName());
+            if (command.startsWith("[SUDO]") && target.isOnline()) {
+                // Execute the command by the player
+                target.performCommand(command.substring(6));
+            } else {
+                // Otherwise execute as the server console
+                getPlugin().getServer().dispatchCommand(Bukkit.getConsoleSender(), command);
+            }
+        });
         // Remove money inventory etc.
         if (getIWM().isOnLeaveResetEnderChest(getWorld())) {
             if (target.isOnline()) {
@@ -99,6 +110,20 @@ public class IslandTeamKickCommand extends ConfirmableCommand {
         if (getSettings().isUseEconomy() && getIWM().isOnLeaveResetMoney(getWorld())) {
             getPlugin().getVault().ifPresent(vault -> vault.withdraw(target, vault.getBalance(target)));
         }
+        // Reset the health
+        if (getIWM().isOnLeaveResetHealth(getWorld())) {
+            target.getPlayer().setHealth(20.0D);
+        }
+
+        // Reset the hunger
+        if (getIWM().isOnLeaveResetHunger(getWorld())) {
+            target.getPlayer().setFoodLevel(20);
+        }
+
+        // Reset the XP
+        if (getIWM().isOnLeaveResetXP(getWorld())) {
+            target.getPlayer().setTotalExperience(0);
+        }
         user.sendMessage("commands.island.team.kick.success", TextVariables.NAME, target.getName());
         // Fire event
         IslandBaseEvent e = TeamEvent.builder()
@@ -106,7 +131,7 @@ public class IslandTeamKickCommand extends ConfirmableCommand {
                 .reason(TeamEvent.Reason.KICK)
                 .involvedPlayer(targetUUID)
                 .build();
-        Bukkit.getServer().getPluginManager().callEvent(e);
+        Bukkit.getPluginManager().callEvent(e);
 
         // Add cooldown for this player and target
         if (getSettings().getInviteCooldown() > 0 && getParent() != null) {

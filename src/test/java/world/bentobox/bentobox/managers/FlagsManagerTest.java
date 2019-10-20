@@ -6,8 +6,10 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Comparator;
@@ -25,7 +27,7 @@ import org.bukkit.plugin.PluginManager;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
+import org.mockito.Mock;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -41,8 +43,10 @@ import world.bentobox.bentobox.lists.Flags;
 public class FlagsManagerTest {
 
 
-    private static BentoBox plugin;
-    private static Server server;
+    private BentoBox plugin;
+    private Server server;
+    @Mock
+    private PluginManager pluginManager;
 
     @Before
     public void setUp() throws Exception {
@@ -63,14 +67,11 @@ public class FlagsManagerTest {
         when(server.getWorld("world")).thenReturn(world);
         when(server.getVersion()).thenReturn("BSB_Mocking");
 
-        PluginManager pluginManager = mock(PluginManager.class);
-        when(server.getPluginManager()).thenReturn(pluginManager);
+        PowerMockito.mockStatic(Bukkit.class);
+        when(Bukkit.getPluginManager()).thenReturn(pluginManager);
 
         ItemFactory itemFactory = mock(ItemFactory.class);
         when(server.getItemFactory()).thenReturn(itemFactory);
-
-        PowerMockito.mockStatic(Bukkit.class);
-        when(Bukkit.getServer()).thenReturn(server);
 
         SkullMeta skullMeta = mock(SkullMeta.class);
         when(itemFactory.getItemMeta(any())).thenReturn(skullMeta);
@@ -111,12 +112,12 @@ public class FlagsManagerTest {
         Flag originalFlag = new Flag.Builder("ORIGINAL", Material.EMERALD_BLOCK).listener(ol).build();
         assertTrue(fm.registerFlag(originalFlag));
         // Verify registered
-        Mockito.verify(server).getPluginManager();
+        verify(pluginManager).registerEvents(any(), eq(plugin));
         // Register another flag with same listener
         Flag originalFlag2 = new Flag.Builder("ORIGINAL2", Material.COAL_ORE).listener(ol).build();
         assertTrue(fm.registerFlag(originalFlag2));
         // Verify registered only once
-        Mockito.verify(server).getPluginManager();
+        verify(pluginManager).registerEvents(any(), eq(plugin));
     }
 
     class OriginalListener implements Listener {

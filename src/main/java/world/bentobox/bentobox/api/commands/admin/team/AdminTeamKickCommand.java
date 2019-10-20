@@ -67,6 +67,7 @@ public class AdminTeamKickCommand extends CompositeCommand {
         target.sendMessage("commands.admin.team.kick.admin-kicked");
 
         getIslands().removePlayer(getWorld(), targetUUID);
+        getPlayers().clearHomeLocations(getWorld(), targetUUID);
         user.sendMessage("commands.admin.team.kick.success", TextVariables.NAME, target.getName(), "[owner]", getPlayers().getName(island.getOwner()));
 
         // Fire event so add-ons know
@@ -76,7 +77,7 @@ public class AdminTeamKickCommand extends CompositeCommand {
                 .involvedPlayer(targetUUID)
                 .admin(true)
                 .build();
-        Bukkit.getServer().getPluginManager().callEvent(event);
+        Bukkit.getPluginManager().callEvent(event);
         return true;
     }
 }

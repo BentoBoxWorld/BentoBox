@@ -87,7 +87,7 @@ public class FlagsManager {
     private void registerListener(@NonNull Listener l) {
         registeredListeners.putIfAbsent(l, false);
         if (!registeredListeners.get(l)) {
-            Bukkit.getServer().getPluginManager().registerEvents(l, plugin);
+            Bukkit.getPluginManager().registerEvents(l, plugin);
             registeredListeners.put(l, true);
         }
     }

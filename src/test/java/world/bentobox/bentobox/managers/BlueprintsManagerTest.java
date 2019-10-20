@@ -131,7 +131,7 @@ public class BlueprintsManagerTest {
         public void onDisable() { }
     }
 
-    public void makeAddon() throws IOException {
+    public void makeAddon() throws Exception {
         // Make a blueprint folder
         File blueprintFolder = new File(dataFolder, BlueprintsManager.FOLDER_NAME);
         blueprintFolder.mkdirs();
@@ -152,7 +152,7 @@ public class BlueprintsManagerTest {
         Files.deleteIfExists(configFile.toPath());
         Files.deleteIfExists(ymlFile.toPath());
         // Remove folder
-        Files.deleteIfExists(blueprintFolder.toPath());
+        deleteDir(blueprintFolder.toPath());
         // Mocks
         when(addon.getDataFolder()).thenReturn(dataFolder);
         when(addon.getFile()).thenReturn(jarFile);
@@ -169,17 +169,23 @@ public class BlueprintsManagerTest {
      */
     @After
     public void tearDown() throws Exception {
-
         // Clean up file system
-        Files.walk(dataFolder.toPath())
-        .sorted(Comparator.reverseOrder())
-        .map(Path::toFile)
-        .forEach(File::delete);
+        deleteDir(dataFolder.toPath());
         // Delete addon.jar
         Files.deleteIfExists(jarFile.toPath());
 
     }
 
+    private void deleteDir(Path path) throws Exception {
+        if (path.toFile().isDirectory()) {
+            // Clean up file system
+            Files.walk(path)
+            .sorted(Comparator.reverseOrder())
+            .map(Path::toFile)
+            .forEach(File::delete);
+        }
+        Files.deleteIfExists(path);
+    }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.BlueprintsManager#extractDefaultBlueprints(world.bentobox.bentobox.api.addons.GameModeAddon)}.
@@ -218,7 +224,7 @@ public class BlueprintsManagerTest {
         when(addon.getFile()).thenReturn(dataFolder);
         BlueprintsManager bpm = new BlueprintsManager(plugin);
         bpm.extractDefaultBlueprints(addon);
-        verify(plugin).logError(eq("Could not load blueprint files from addon jar dataFolder (Is a directory)"));
+        verify(plugin).logError(Mockito.startsWith("Could not load blueprint files from addon jar dataFolder"));
     }
 
     /**

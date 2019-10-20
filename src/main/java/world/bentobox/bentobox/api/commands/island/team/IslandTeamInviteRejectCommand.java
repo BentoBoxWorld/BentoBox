@@ -31,30 +31,29 @@ public class IslandTeamInviteRejectCommand extends CompositeCommand {
     public boolean execute(User user, String label, List<String> args) {
         UUID playerUUID = user.getUniqueId();
         // Reject /island reject
-        if (itc.getInviteCommand().getInviteList().containsKey(playerUUID)) {
+        if (itc.isInvited(playerUUID)) {
             // Fire event so add-ons can run commands, etc.
             IslandBaseEvent event = TeamEvent.builder()
                     .island(getIslands()
-                            .getIsland(getWorld(), itc.getInviteCommand().getInviteList().get(playerUUID)))
+                            .getIsland(getWorld(), itc.getInviter(playerUUID)))
                     .reason(TeamEvent.Reason.REJECT)
                     .involvedPlayer(playerUUID)
                     .build();
-            Bukkit.getServer().getPluginManager().callEvent(event);
+            Bukkit.getPluginManager().callEvent(event);
             if (event.isCancelled()) {
                 return false;
             }
 
             // Remove this player from the global invite list
-            itc.getInviteCommand().getInviteList().remove(user.getUniqueId());
+            itc.removeInvite(user.getUniqueId());
             user.sendMessage("commands.island.team.invite.reject.you-rejected-invite");
 
-            User inviter = User.getInstance(itc.getInviteCommand().getInviteList().get(playerUUID));
+            User inviter = User.getInstance(itc.getInviter(playerUUID));
             if (inviter != null) {
                 inviter.sendMessage("commands.island.team.invite.reject.name-rejected-your-invite", TextVariables.NAME, user.getName());
             }
         } else {
             // Someone typed /island reject and had not been invited
-            // TODO: make the error nicer if there are invites in other worlds
             user.sendMessage("commands.island.team.invite.errors.none-invited-you");
             return false;
         }

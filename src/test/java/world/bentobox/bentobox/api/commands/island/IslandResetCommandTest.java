@@ -3,9 +3,11 @@ package world.bentobox.bentobox.api.commands.island;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -21,11 +23,12 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
 import org.eclipse.jdt.annotation.Nullable;
+import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -37,6 +40,8 @@ import com.google.common.collect.ImmutableSet.Builder;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
+import world.bentobox.bentobox.api.addons.AddonDescription;
+import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.user.User;
@@ -45,6 +50,8 @@ import world.bentobox.bentobox.managers.BlueprintsManager;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
+import world.bentobox.bentobox.managers.LocalesManager;
+import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.island.NewIsland;
 
@@ -78,6 +85,10 @@ public class IslandResetCommandTest {
     private PluginManager pim;
 
     private IslandResetCommand irc;
+
+    @Mock
+    private Player pp;
+
     private UUID uuid;
 
     /**
@@ -99,10 +110,16 @@ public class IslandResetCommandTest {
 
         // Player
         Player p = mock(Player.class);
+        when(p.getUniqueId()).thenReturn(uuid);
+        User.getInstance(p);
+        when(p.isOnline()).thenReturn(true);
         // User
+        User.setPlugin(plugin);
+
         when(user.isOp()).thenReturn(false);
         uuid = UUID.randomUUID();
         when(user.getUniqueId()).thenReturn(uuid);
+        when(user.isOnline()).thenReturn(true);
         when(user.getPlayer()).thenReturn(p);
         when(user.getTranslation(any())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
 
@@ -131,7 +148,6 @@ public class IslandResetCommandTest {
         // Event
         when(Bukkit.getPluginManager()).thenReturn(pim);
 
-
         // IWM friendly name
         when(iwm.getFriendlyName(any())).thenReturn("BSkyBlock");
         when(plugin.getIWM()).thenReturn(iwm);
@@ -147,8 +163,30 @@ public class IslandResetCommandTest {
         when(im.getIsland(any(), any(User.class))).thenReturn(island);
         Builder<UUID> members = new ImmutableSet.Builder<>();
         members.add(uuid);
+        // Put a team on the island
+        for (int j = 0; j < 11; j++) {
+            UUID temp = UUID.randomUUID();
+            when(pp.getUniqueId()).thenReturn(temp);
+            User.getInstance(pp);
+            members.add(temp);
+        }
         when(island.getMemberSet()).thenReturn(members.build());
 
+        // Addon
+        GameModeAddon addon1 = mock(GameModeAddon.class);
+        AddonDescription desc = new AddonDescription.Builder("main", "BSkyBlock", "1.0.0").build();
+        when(addon1.getDescription()).thenReturn(desc);
+        when(ic.getAddon()).thenReturn(addon1);
+
+        // Locales
+        LocalesManager lm = mock(LocalesManager.class);
+        when(lm.get(Mockito.any(), Mockito.any())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
+        when(plugin.getLocalesManager()).thenReturn(lm);
+
+        PlaceholdersManager phm = mock(PlaceholdersManager.class);
+        when(phm.replacePlaceholders(any(), any())).thenAnswer(invocation -> invocation.getArgument(1, String.class));
+        // Placeholder manager
+        when(plugin.getPlaceholdersManager()).thenReturn(phm);
 
         // The command
         irc = new IslandResetCommand(ic);
@@ -190,17 +228,12 @@ public class IslandResetCommandTest {
     /**
      * Test method for {@link IslandResetCommand#execute(User, String, java.util.List)}
      */
-    @Ignore("NPE")
     @Test
     public void testNoConfirmationRequired() throws IOException {
         // Now has island, but is not the owner
         when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
         // Set so no confirmation required
         when(s.isResetConfirmation()).thenReturn(false);
-
-        // Old island mock
-        Island oldIsland = mock(Island.class);
-        when(im.getIsland(any(), eq(uuid))).thenReturn(oldIsland);
 
         // Mock up NewIsland builder
         NewIsland.Builder builder = mock(NewIsland.Builder.class);
@@ -218,9 +251,17 @@ public class IslandResetCommandTest {
         // TODO Verify that panel was shown
         // verify(bpm).showPanel(any(), eq(user), eq(irc.getLabel()));
         // Verify event
-        verify(pim).callEvent(any(IslandBaseEvent.class));
+        verify(pim, times(12)).callEvent(any(IslandBaseEvent.class));
         // Verify messaging
         verify(user).sendMessage("commands.island.create.creating-island");
+        verify(user, never()).sendMessage(eq("commands.island.reset.kicked-from-island"), eq("[gamemode]"), anyString());
+        // Only 11 because the leader should not see this
+        verify(pp, times(11)).sendMessage("commands.island.reset.kicked-from-island");
+    }
+
+    @After
+    public void tearDown() {
+        User.clearUsers();
     }
 
     /**
@@ -362,7 +403,6 @@ public class IslandResetCommandTest {
     /**
      * Test method for {@link IslandResetCommand#execute(User, String, java.util.List)}
      */
-    @Ignore("NPE")
     @Test
     public void testNoConfirmationRequiredCustomSchemHasPermission() throws IOException {
         // Now has island, but is not the owner
@@ -399,7 +439,7 @@ public class IslandResetCommandTest {
         assertTrue(irc.execute(user, irc.getLabel(), Collections.singletonList("custom")));
         verify(user).sendMessage("commands.island.create.creating-island");
         // Verify event
-        verify(pim).callEvent(any(IslandBaseEvent.class));
+        verify(pim, times(12)).callEvent(any(IslandBaseEvent.class));
 
     }
 }

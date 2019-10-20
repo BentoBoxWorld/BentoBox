@@ -54,9 +54,20 @@ commands:
       set:
         description: "sets the resets of this player"
         parameters: "<player> <resets>"
+        success: "&aSuccessfully set &b[name]&a's resets to &b[number]&a."
       reset:
         description: "resets the resets of this player to 0"
         parameters: "<player>"
+        success-everyone: "&aSuccessfully reset &beveryone&a's resets to &b0&a."
+        success: "&aSuccessfully reset &b[name]&a's resets to &b0&a."
+      add:
+        description: "adds resets to the player"
+        parameters: "<player> <resets>"
+        success: "&aSuccessfully added &b[number] &aresets to &b[name], increasing the total to &b[total]&a resets."
+      remove:
+        description: "removes resets to the player"
+        parameters: "<player> <resets>"
+        success: "&aSuccessfully removed &b[number] &aresets to &b[name], decreasing the total to &b[total]&a resets."
     purge:
       parameters: "[days]" 
       description: "purge islands abandoned for more than [days]"
@@ -139,6 +150,7 @@ commands:
       no-island-here: "&cThere is no island here. Confirm to make one."
       in-deletion: "&cThis island space is currently being deleted. Try later."
       cannot-make-island: "&cAn island cannot be placed here, sorry. See console for possible errors."
+      island-is-spawn: "&6Island is spawn. Are you sure? Enter command again to confirm."
     unregister:
       parameters: "<owner>"
       description: "unregister owner from island, but keep island blocks"
@@ -310,8 +322,11 @@ commands:
           &aLeft click to increment
           &aRight click to decrement
     resetflags:
+      parameters: "[flag]"
       description: "Reset all islands to default flag settings in config.yml"
+      confirm: "&4This will reset the flag(s) to default for all islands!"
       success: "&aSuccessfully reset all islands' flags to the default settings."
+      success-one: "&a[name] flag set to default for all islands."
     world:
       description: "Manage world settings"
     delete:
@@ -334,6 +349,14 @@ commands:
         description: "sets deaths of the player"
         parameters: "<player> <deaths>"
         success: "&aSuccessfully set &b[name]&a's deaths to &b[number]&a."
+      add:
+        description: "adds deaths to the player"
+        parameters: "<player> <deaths>"
+        success: "&aSuccessfully added &b[number] &adeaths to &b[name], increasing the total to &b[total]&a deaths."
+      remove:
+        description: "removes deaths to the player"
+        parameters: "<player> <deaths>"
+        success: "&aSuccessfully removed &b[number] &adeaths to &b[name], decreasing the total to &b[total]&a deaths."
   bentobox:
     description: "BentoBox admin command"
     about:
@@ -458,6 +481,7 @@ commands:
         already-has-rank: "&cPlayer already has a rank!"
         you-are-a-coop-member: "&2You were cooped by [name]"
         success: "&aYou cooped &b[name]."
+        name-has-invited-you: "&a[name] has invited you to join be a coop member of their island."
       uncoop:
         description: "remove a coop rank from player"
         parameters: "<player>"
@@ -471,7 +495,7 @@ commands:
         description: "give a player trusted rank on your island"
         parameters: "<player>"
         trust-in-yourself: "&cTrust in yourself!"
-        members-trusted: "&cMembers are already trusted"
+        name-has-invited-you: "&a[name] has invited you to join be a trusted member of their island."
         player-already-trusted: "&cPlayer is already trusted!"
         you-are-trusted: "&2You are trusted by &b[name]&a!"
         success: "&aYou trusted &b[name]&a."
@@ -498,6 +522,7 @@ commands:
           you-already-are-in-team: "&cYou are already on a team!"
           already-on-team: "&cThat player is already on a team!"
           invalid-invite: "&cThat invite is no longer valid, sorry."
+          you-have-already-invited: "&cYou have already invited that player!"
         parameters: "<player>"
         you-can-invite: "&aYou can invite [number] more players."
         accept:
@@ -639,11 +664,16 @@ protection:
       description: "Toggle button use"
       name: "Buttons"
       hint: "No button use allowed"
+    CAKE:
+      description: "Cake eating disabled"
+      name: "Cakes"
+      hint: "Toggle cake interaction"
     CONTAINER:
       name: "Containers"
       description: |-
         &aToggle interaction with chests,
-        &ashulker boxes and flower pots.
+        &ashulker boxes and flower pots,
+        &acomposters and barrels.
 
         &7Other containers are handled
         &7by dedicated flags.
@@ -1064,7 +1094,7 @@ protection:
         &aPrevent players from teleporting
         &aback to their island using commands
         &aif they are falling.
-      hint: "&cYou cannot teleport back to your island while you are falling."
+      hint: "&cYou cannot do that while falling."
     WITHER_DAMAGE:
       name: "Toggle wither damage"
       description: |-

@@ -250,8 +250,9 @@ public class AddonsManager {
      * @return Optional addon object
      */
     @NonNull
-    public Optional<Addon> getAddonByName(@NonNull String name){
-        return addons.stream().filter(a -> a.getDescription().getName().equalsIgnoreCase(name)).findFirst();
+    @SuppressWarnings("unchecked")
+    public <T extends Addon> Optional<T> getAddonByName(@NonNull String name){
+        return addons.stream().filter(a -> a.getDescription().getName().equalsIgnoreCase(name)).map(a -> (T) a).findFirst();
     }
 
     @NonNull
@@ -443,6 +444,14 @@ public class AddonsManager {
                 // Do not include config files
                 .filter(c -> !ConfigObject.class.isAssignableFrom(c))
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Notifies all addons that BentoBox has loaded all addons
+     * @since 1.8.0
+     */
+    public void allLoaded() {
+        addons.forEach(Addon::allLoaded);
     }
 
 }

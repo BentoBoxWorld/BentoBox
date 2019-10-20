@@ -1,11 +1,10 @@
-/**
- *
- */
 package world.bentobox.bentobox.listeners.flags.worldsettings;
 
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,6 +28,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.Flags;
@@ -44,12 +44,20 @@ import world.bentobox.bentobox.util.Util;
 @PrepareForTest({BentoBox.class, Util.class, Bukkit.class })
 public class RemoveMobsListenerTest {
 
+    @Mock
     private IslandsManager im;
+    @Mock
     private World world;
+    @Mock
     private Location inside;
+    @Mock
+    private Location outside;
+    @Mock
     private Player player;
     @Mock
     private BukkitScheduler scheduler;
+    @Mock
+    private Settings settings;
 
     /**
      * @throws java.lang.Exception
@@ -59,9 +67,9 @@ public class RemoveMobsListenerTest {
         // Set up plugin
         BentoBox plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
-
-        // World
-        world = mock(World.class);
+        // Settings
+        when(plugin.getSettings()).thenReturn(settings);
+        when(settings.getClearRadius()).thenReturn(10);
 
         // Owner
         UUID uuid1 = UUID.randomUUID();
@@ -70,12 +78,14 @@ public class RemoveMobsListenerTest {
         Island island = mock(Island.class);
         when(island.getOwner()).thenReturn(uuid1);
 
-        im = mock(IslandsManager.class);
         when(plugin.getIslands()).thenReturn(im);
         when(im.getIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(island);
 
-        inside = mock(Location.class);
+        // Location
         when(inside.getWorld()).thenReturn(world);
+        // Teleports are from far away
+        when(inside.distanceSquared(any())).thenReturn(100D);
+
 
         Optional<Island> opIsland = Optional.ofNullable(island);
         when(im.getProtectedIslandAt(Mockito.eq(inside))).thenReturn(opIsland);
@@ -96,9 +106,9 @@ public class RemoveMobsListenerTest {
         Flags.REMOVE_MOBS.setSetting(world, true);
 
         // Sometimes use Mockito.withSettings().verboseLogging()
-        player = mock(Player.class);
         UUID uuid = UUID.randomUUID();
         when(player.getUniqueId()).thenReturn(uuid);
+        when(player.getWorld()).thenReturn(world);
 
         // Scheduler
         PowerMockito.mockStatic(Bukkit.class);
@@ -113,9 +123,45 @@ public class RemoveMobsListenerTest {
     public void testOnUserTeleport() {
         PlayerTeleportEvent e = new PlayerTeleportEvent(player, inside, inside, PlayerTeleportEvent.TeleportCause.PLUGIN);
         new RemoveMobsListener().onUserTeleport(e);
-        Mockito.verify(scheduler).runTask(any(), any(Runnable.class));
+        verify(scheduler).runTask(any(), any(Runnable.class));
     }
 
+    /**
+     * Test method for {@link RemoveMobsListener#onUserTeleport(org.bukkit.event.player.PlayerTeleportEvent)}.
+     */
+    @Test
+    public void testOnUserTeleportDifferentWorld() {
+        when(player.getWorld()).thenReturn(mock(World.class));
+        PlayerTeleportEvent e = new PlayerTeleportEvent(player, inside, inside, PlayerTeleportEvent.TeleportCause.PLUGIN);
+        new RemoveMobsListener().onUserTeleport(e);
+        verify(scheduler).runTask(any(), any(Runnable.class));
+    }
+
+    /**
+     * Test method for {@link RemoveMobsListener#onUserTeleport(org.bukkit.event.player.PlayerTeleportEvent)}.
+     */
+    @Test
+    public void testOnUserTeleportChorusEtc() {
+        PlayerTeleportEvent e = new PlayerTeleportEvent(player, inside, inside, PlayerTeleportEvent.TeleportCause.CHORUS_FRUIT);
+        new RemoveMobsListener().onUserTeleport(e);
+        e = new PlayerTeleportEvent(player, inside, inside, PlayerTeleportEvent.TeleportCause.ENDER_PEARL);
+        new RemoveMobsListener().onUserTeleport(e);
+        e = new PlayerTeleportEvent(player, inside, inside, PlayerTeleportEvent.TeleportCause.SPECTATE);
+        new RemoveMobsListener().onUserTeleport(e);
+        verify(scheduler, never()).runTask(any(), any(Runnable.class));
+    }
+
+    /**
+     * Test method for {@link RemoveMobsListener#onUserTeleport(org.bukkit.event.player.PlayerTeleportEvent)}.
+     */
+    @Test
+    public void testOnUserTeleportTooClose() {
+        // Teleports are too close
+        when(inside.distanceSquared(any())).thenReturn(10D);
+        PlayerTeleportEvent e = new PlayerTeleportEvent(player, inside, inside, PlayerTeleportEvent.TeleportCause.PLUGIN);
+        new RemoveMobsListener().onUserTeleport(e);
+        verify(scheduler, never()).runTask(any(), any(Runnable.class));
+    }
     /**
      * Test method for {@link RemoveMobsListener#onUserTeleport(org.bukkit.event.player.PlayerTeleportEvent)}.
      */
@@ -124,7 +170,7 @@ public class RemoveMobsListenerTest {
         Flags.REMOVE_MOBS.setSetting(world, false);
         PlayerTeleportEvent e = new PlayerTeleportEvent(player, inside, inside, PlayerTeleportEvent.TeleportCause.PLUGIN);
         new RemoveMobsListener().onUserTeleport(e);
-        Mockito.verify(scheduler, Mockito.never()).runTask(any(), any(Runnable.class));
+        verify(scheduler, never()).runTask(any(), any(Runnable.class));
     }
 
     /**
@@ -136,7 +182,7 @@ public class RemoveMobsListenerTest {
         when(im.locationIsOnIsland(Mockito.any(), Mockito.any())).thenReturn(false);
         PlayerTeleportEvent e = new PlayerTeleportEvent(player, inside, inside, PlayerTeleportEvent.TeleportCause.PLUGIN);
         new RemoveMobsListener().onUserTeleport(e);
-        Mockito.verify(scheduler, Mockito.never()).runTask(any(), any(Runnable.class));
+        verify(scheduler, never()).runTask(any(), any(Runnable.class));
     }
 
 }

@@ -2,8 +2,8 @@ package world.bentobox.bentobox.api.commands.island.team;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -14,7 +14,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -120,10 +119,8 @@ public class IslandTeamLeaveCommandTest {
         when(plugin.getIWM()).thenReturn(iwm);
 
         // Plugin Manager
-        Server server = mock(Server.class);
         PluginManager pim = mock(PluginManager.class);
-        when(server.getPluginManager()).thenReturn(pim);
-        when(Bukkit.getServer()).thenReturn(server);
+        when(Bukkit.getPluginManager()).thenReturn(pim);
 
         // Island
         Island island = mock(Island.class);

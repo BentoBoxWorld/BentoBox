@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -28,6 +29,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.PufferFish;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -38,6 +40,7 @@ import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.island.IslandEvent;
 import world.bentobox.bentobox.api.events.island.IslandEvent.Reason;
+import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.logs.LogEntry;
 import world.bentobox.bentobox.api.user.User;
@@ -93,6 +96,12 @@ public class IslandsManager {
     // Deleted islands
     @NonNull
     private List<String> deletedIslands;
+
+    private Set<String> toSave = new HashSet<>();
+
+    private Iterator<String> it;
+
+    private BukkitTask task;
 
     /**
      * Islands Manager
@@ -670,7 +679,17 @@ public class IslandsManager {
         }
         // If this is a new island, then run commands and do resets
         if (newIsland) {
-            // TODO add command running
+            // Execute commands
+            plugin.getIWM().getOnJoinCommands(world).forEach(command -> {
+                command = command.replace("[player]", player.getName());
+                if (command.startsWith("[SUDO]")) {
+                    // Execute the command by the player
+                    player.performCommand(command.substring(6));
+                } else {
+                    // Otherwise execute as the server console
+                    plugin.getServer().dispatchCommand(Bukkit.getConsoleSender(), command);
+                }
+            });
 
             // Remove money inventory etc.
             if (plugin.getIWM().isOnJoinResetEnderChest(world)) {
@@ -681,6 +700,21 @@ public class IslandsManager {
             }
             if (plugin.getSettings().isUseEconomy() && plugin.getIWM().isOnJoinResetMoney(world)) {
                 plugin.getVault().ifPresent(vault -> vault.withdraw(user, vault.getBalance(user)));
+            }
+
+            // Reset the health
+            if (plugin.getIWM().isOnJoinResetHealth(world)) {
+                user.getPlayer().setHealth(20.0D);
+            }
+
+            // Reset the hunger
+            if (plugin.getIWM().isOnJoinResetHunger(world)) {
+                user.getPlayer().setFoodLevel(20);
+            }
+
+            // Reset the XP
+            if (plugin.getIWM().isOnJoinResetXP(world)) {
+                user.getPlayer().setTotalExperience(0);
             }
         }
     }
@@ -754,6 +788,19 @@ public class IslandsManager {
         }
         this.spawn.put(spawn.getWorld(), spawn);
         spawn.setSpawn(true);
+    }
+    
+    /**
+     * Clears the spawn island for this world
+     * @param world - world
+     * @since 1.8.0
+     */
+    public void clearSpawn(World world) {
+        Island spawnIsland = spawn.get(Util.getWorld(world));
+        if (spawnIsland != null) {
+            spawnIsland.setSpawn(false);
+        }
+        this.spawn.remove(world);
     }
 
     /**
@@ -959,6 +1006,24 @@ public class IslandsManager {
         }
     }
 
+    /**
+     * Saves all the players at a rate of 1 per tick. Used as a backup.
+     * @since 1.8.0
+     */
+    public void asyncSaveAll() {
+        if (!toSave.isEmpty()) return;
+        // Get a list of ID's to save
+        toSave = new HashSet<>(islandCache.getAllIslandIds());
+        it = toSave.iterator();
+        task = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
+            if (plugin.isEnabled() && it.hasNext()) {
+                getIslandById(it.next()).ifPresent(this::save);
+            } else {
+                toSave.clear();
+                task.cancel();
+            }
+        }, 0L, 1L);
+    }
     /**
      * Puts a player in a team. Removes them from their old island if required.
      * @param teamIsland - team island
@@ -1202,6 +1267,17 @@ public class IslandsManager {
     }
 
     /**
+     * Resets a flag to gamemode config.yml default
+     * @param world - world
+     * @param flag - flag to reset
+     * @since 1.8.0
+     */
+    public void resetFlag(World world, Flag flag) {
+        islandCache.resetFlag(world, flag);
+        this.saveAll();
+    }
+
+    /**
      * Returns whether the specified island custom name exists in this world.
      * @param world World of the gamemode
      * @param name Name of an island
@@ -1212,4 +1288,5 @@ public class IslandsManager {
         return getIslands(world).stream().filter(island -> island.getName() != null).map(Island::getName)
                 .anyMatch(n -> ChatColor.stripColor(n).equals(ChatColor.stripColor(name)));
     }
+
 }

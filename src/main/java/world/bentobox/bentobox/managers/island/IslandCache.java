@@ -16,6 +16,8 @@ import org.bukkit.World;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
+import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.util.Util;
 
@@ -311,5 +313,26 @@ public class IslandCache {
     public void resetAllFlags(World world) {
         World w = Util.getWorld(world);
         islandsById.values().stream().filter(i -> i.getWorld().equals(w)).forEach(Island::setFlagsDefaults);
+    }
+
+    /**
+     * Resets a specific flag on all game mode islands in world to default setting
+     * @param world - world
+     * @param flag - flag to reset
+     * @since 1.8.0
+     */
+    public void resetFlag(World world, Flag flag) {
+        World w = Util.getWorld(world);
+        int setting = BentoBox.getInstance().getIWM().getDefaultIslandFlags(w).getOrDefault(flag, flag.getDefaultRank());
+        islandsById.values().stream().filter(i -> i.getWorld().equals(w)).forEach(i -> i.setFlag(flag, setting));
+    }
+    
+    /**
+     * Get all the island ids
+     * @return set of ids
+     * @since 1.8.0
+     */
+    public Set<String> getAllIslandIds() {
+        return islandsById.keySet();
     }
 }

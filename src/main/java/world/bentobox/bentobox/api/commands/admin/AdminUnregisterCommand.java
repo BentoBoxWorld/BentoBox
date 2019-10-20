@@ -70,7 +70,7 @@ public class AdminUnregisterCommand extends ConfirmableCommand {
                 .involvedPlayer(targetUUID)
                 .admin(true)
                 .build();
-        Bukkit.getServer().getPluginManager().callEvent(event);
+        Bukkit.getPluginManager().callEvent(event);
         // Remove all island members
         new ImmutableSet.Builder<UUID>().addAll(oldIsland.getMembers().keySet()).build().forEach(m -> {
             getIslands().removePlayer(getWorld(), m);

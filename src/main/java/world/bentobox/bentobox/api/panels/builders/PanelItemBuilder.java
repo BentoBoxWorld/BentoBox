@@ -22,13 +22,19 @@ public class PanelItemBuilder {
     private boolean playerHead;
     private boolean invisible;
 
-    public PanelItemBuilder icon(Material icon) {
-        this.icon = new ItemStack(icon);
+    /**
+     * Default icon if someone gives invalid material or item stack.
+     */
+    private static final ItemStack DEFAULT_ICON = new ItemStack(Material.PAPER);
+
+
+    public PanelItemBuilder icon(@Nullable Material icon) {
+        this.icon = icon == null ? DEFAULT_ICON : new ItemStack(icon);
         return this;
     }
 
-    public PanelItemBuilder icon(ItemStack icon) {
-        this.icon = icon;
+    public PanelItemBuilder icon(@Nullable ItemStack icon) {
+        this.icon = icon == null ? DEFAULT_ICON : icon;
         return this;
     }
 

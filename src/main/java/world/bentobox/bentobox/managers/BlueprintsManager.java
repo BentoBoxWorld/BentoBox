@@ -11,9 +11,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
@@ -79,6 +81,8 @@ public class BlueprintsManager {
 
     private @NonNull BentoBox plugin;
 
+    private @NonNull Set<GameModeAddon> blueprintsLoaded;
+
 
     public BlueprintsManager(@NonNull BentoBox plugin) {
         this.plugin = plugin;
@@ -100,6 +104,8 @@ public class BlueprintsManager {
         // Register adapter factory
         builder.registerTypeAdapterFactory(new BentoboxTypeAdapterFactory(plugin));
         gson = builder.create();
+        // Loaded tracker
+        blueprintsLoaded = new HashSet<>();
     }
 
     /**
@@ -143,6 +149,19 @@ public class BlueprintsManager {
     }
 
     /**
+     * Get the default blueprint bundle for game mode
+     * @param addon - game mode addon
+     * @return the default blueprint bundle or null if none
+     * @since 1.8.0
+     */
+    public BlueprintBundle getDefaultBlueprintBundle(@NonNull GameModeAddon addon) {
+        if (blueprintBundles.containsKey(addon)) {
+            return blueprintBundles.get(addon).stream().filter(bb -> bb.getUniqueId().equals(DEFAULT_BUNDLE_NAME)).findFirst().orElse(null);
+        }
+        return null;
+    }
+
+    /**
      * Returns a {@link File} instance of the blueprints folder of this {@link GameModeAddon}.
      *
      * @param addon the {@link GameModeAddon}
@@ -159,10 +178,13 @@ public class BlueprintsManager {
      * @param addon the {@link GameModeAddon} to load the blueprints of.
      */
     public void loadBlueprintBundles(@NonNull GameModeAddon addon) {
+        // Set loading flag
+        blueprintsLoaded.add(addon);
         Bukkit
         .getScheduler()
         .runTaskAsynchronously(
                 plugin, () -> {
+                    // Load bundles
                     blueprintBundles.put(addon, new ArrayList<>());
                     // See if there are any schems that need converting
                     new SchemToBlueprint(plugin).convertSchems(addon);
@@ -172,7 +194,18 @@ public class BlueprintsManager {
                     }
                     // Load blueprints
                     loadBlueprints(addon);
+
+                    // Clear loading flag
+                    blueprintsLoaded.remove(addon);
                 });
+    }
+
+    /**
+     * Check if all blueprints are loaded. Only query after all GameModes have been loaded.
+     * @return true if all blueprints are loaded
+     */
+    public boolean isBlueprintsLoaded() {
+        return blueprintsLoaded.isEmpty();
     }
 
     private boolean loadBundles(@NonNull GameModeAddon addon) {
@@ -495,7 +528,7 @@ public class BlueprintsManager {
         }
         File bpf = getBlueprintsFolder(addon);
         // Get the filename
-        File fileName = new File(bpf, bp.getName().toLowerCase(Locale.ENGLISH) + BLUEPRINT_SUFFIX);
+        File fileName = new File(bpf, bp.getName() + BLUEPRINT_SUFFIX);
         // Delete the old file
         try {
             Files.deleteIfExists(fileName.toPath());
@@ -503,10 +536,9 @@ public class BlueprintsManager {
             plugin.logError("Could not delete old Blueprint " + e.getLocalizedMessage());
         }
         // Set new name
-        bp.setName(name);
+        bp.setName(name.toLowerCase(Locale.ENGLISH));
         // Save it
         saveBlueprint(addon, bp);
-
     }
 
 }

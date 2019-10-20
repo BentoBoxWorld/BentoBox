@@ -14,6 +14,7 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.lists.Flags;
+import world.bentobox.bentobox.util.Util;
 
 /**
  * Handles respawning back on island
@@ -30,17 +31,18 @@ public class IslandRespawnListener extends FlagListener {
      */
     @EventHandler(priority = EventPriority.LOW)
     public void onPlayerDeath(PlayerDeathEvent e) {
-        if (!getIWM().inWorld(e.getEntity().getLocation())) {
+        World world = Util.getWorld(e.getEntity().getWorld());
+        if (!getIWM().inWorld(world)) {
             return; // not in the island world
         }
-        if (!Flags.ISLAND_RESPAWN.isSetForWorld(e.getEntity().getWorld())) {
+        if (!Flags.ISLAND_RESPAWN.isSetForWorld(world)) {
             return; // world doesn't have the island respawn flag
         }
-        if (!getIslands().hasIsland(e.getEntity().getWorld(), e.getEntity().getUniqueId()) || !getIslands().inTeam(e.getEntity().getWorld(), e.getEntity().getUniqueId())) {
+        if (!getIslands().hasIsland(world, e.getEntity().getUniqueId()) && !getIslands().inTeam(world, e.getEntity().getUniqueId())) {
             return; // doesn't have an island in this world
         }
         
-        respawn.put(e.getEntity().getUniqueId(), e.getEntity().getWorld().getUID());
+        respawn.put(e.getEntity().getUniqueId(), world.getUID());
     }
     
     /**
@@ -59,7 +61,7 @@ public class IslandRespawnListener extends FlagListener {
             return; // world no longer available
         }
         
-        final Location respawnLocation = getIslands().getSafeHomeLocation(world, User.getInstance(e.getPlayer().getUniqueId()), 1);
+        final Location respawnLocation = getIslands().getSafeHomeLocation(Util.getWorld(world), User.getInstance(e.getPlayer().getUniqueId()), 1);
         if (respawnLocation != null) {
             e.setRespawnLocation(respawnLocation);
         }

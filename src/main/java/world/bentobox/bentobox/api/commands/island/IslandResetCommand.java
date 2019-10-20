@@ -131,7 +131,7 @@ public class IslandResetCommand extends ConfirmableCommand {
             Builder builder = NewIsland.builder()
                     .player(user)
                     .reason(Reason.RESET)
-                    .addon((GameModeAddon)getAddon())
+                    .addon(getAddon())
                     .oldIsland(oldIsland)
                     .name(name);
             if (noPaste) builder.noPaste();
@@ -155,15 +155,27 @@ public class IslandResetCommand extends ConfirmableCommand {
          * Therefore, we need to do it manually.
          * Plus, a more specific team event (TeamDeleteEvent) is called by this method.
          */
-
         island.getMemberSet().forEach(memberUUID -> {
-            getIslands().removePlayer(getWorld(), memberUUID);
-            User member = User.getInstance(memberUUID);
 
-            // Send a "you're kicked" message if the member is not the island owner
+            User member = User.getInstance(memberUUID);
+            // Send a "you're kicked" message if the member is not the island owner (send before removing!)
             if (!memberUUID.equals(island.getOwner())) {
                 member.sendMessage("commands.island.reset.kicked-from-island", "[gamemode]", getAddon().getDescription().getName());
             }
+            // Remove player
+            getIslands().removePlayer(getWorld(), memberUUID);
+
+            // Execute commands when leaving
+            getIWM().getOnLeaveCommands(island.getWorld()).forEach(command -> {
+                command = command.replace("[player]", member.getName());
+                if (command.startsWith("[SUDO]") && member.isOnline()) {
+                    // Execute the command by the player
+                    member.performCommand(command.substring(6));
+                } else {
+                    // Otherwise execute as the server console
+                    getPlugin().getServer().dispatchCommand(Bukkit.getConsoleSender(), command);
+                }
+            });
 
             // Remove money inventory etc.
             if (getIWM().isOnLeaveResetEnderChest(getWorld())) {
@@ -185,6 +197,21 @@ public class IslandResetCommand extends ConfirmableCommand {
             }
             if (getSettings().isUseEconomy() && getIWM().isOnLeaveResetMoney(getWorld())) {
                 getPlugin().getVault().ifPresent(vault -> vault.withdraw(member, vault.getBalance(member)));
+            }
+
+            // Reset the health
+            if (getIWM().isOnLeaveResetHealth(getWorld())) {
+                member.getPlayer().setHealth(20.0D);
+            }
+
+            // Reset the hunger
+            if (getIWM().isOnLeaveResetHunger(getWorld())) {
+                member.getPlayer().setFoodLevel(20);
+            }
+
+            // Reset the XP
+            if (getIWM().isOnLeaveResetXP(getWorld())) {
+                member.getPlayer().setTotalExperience(0);
             }
 
             // Fire event

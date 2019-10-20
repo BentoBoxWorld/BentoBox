@@ -30,6 +30,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.junit.After;
 import org.junit.Before;
@@ -582,6 +583,21 @@ public class IslandGoCommandTest {
         }
 
         @Override
+        public boolean isOnJoinResetHealth() {
+            return false;
+        }
+
+        @Override
+        public boolean isOnJoinResetHunger() {
+            return false;
+        }
+
+        @Override
+        public boolean isOnJoinResetXP() {
+            return false;
+        }
+
+        @Override
         public boolean isOnLeaveResetEnderChest() {
             // TODO Auto-generated method stub
             return false;
@@ -596,6 +612,21 @@ public class IslandGoCommandTest {
         @Override
         public boolean isOnLeaveResetMoney() {
             // TODO Auto-generated method stub
+            return false;
+        }
+
+        @Override
+        public boolean isOnLeaveResetHealth() {
+            return false;
+        }
+
+        @Override
+        public boolean isOnLeaveResetHunger() {
+            return false;
+        }
+
+        @Override
+        public boolean isOnLeaveResetXP() {
             return false;
         }
 
@@ -701,5 +732,14 @@ public class IslandGoCommandTest {
             return false;
         }
 
+        @Override
+        public @NonNull List<String> getOnJoinCommands() {
+            return null;
+        }
+
+        @Override
+        public @NonNull List<String> getOnLeaveCommands() {
+            return null;
+        }
     }
 }

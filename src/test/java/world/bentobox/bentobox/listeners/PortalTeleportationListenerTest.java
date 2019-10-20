@@ -2,7 +2,7 @@ package world.bentobox.bentobox.listeners;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -166,7 +166,7 @@ public class PortalTeleportationListenerTest {
     @Test
     public void testOnEndIslandPortalNoEndWorldGenerated() {
         Location from = mock(Location.class);
-        // Teleport from world to nether
+        // Teleport from world to end
         when(from.getWorld()).thenReturn(world);
         when(from.toVector()).thenReturn(new Vector(1,2,3));
         // No end world

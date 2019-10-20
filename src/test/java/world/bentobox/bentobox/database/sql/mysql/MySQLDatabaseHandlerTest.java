@@ -429,7 +429,7 @@ public class MySQLDatabaseHandlerTest {
     public void testMySQLDatabaseHandlerBadPassword() {
         when(dbConn.createConnection(any())).thenReturn(null);
         new MySQLDatabaseHandler<>(plugin, Island.class, dbConn);
-        verify(plugin).logError("Are the settings in config.yml correct?");
+        verify(plugin).logError("Could not connect to the database. Are the credentials in the config.yml file correct?");
         verify(pluginManager).disablePlugin(plugin);
     }
 

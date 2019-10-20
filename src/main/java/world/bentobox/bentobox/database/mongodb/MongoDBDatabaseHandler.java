@@ -3,6 +3,8 @@ package world.bentobox.bentobox.database.mongodb;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.mongodb.MongoClientException;
+import com.mongodb.MongoTimeoutException;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bukkit.Bukkit;
@@ -48,16 +50,33 @@ public class MongoDBDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
         super(plugin, type, dbConnecter);
         this.dbConnecter = dbConnecter;
 
-        // Connection to the database
-        MongoDatabase database = (MongoDatabase) dbConnecter.createConnection(dataObject);
-        if (database == null) {
-            plugin.logError("Are the settings in config.yml correct?");
-            Bukkit.getPluginManager().disablePlugin(plugin);
-            return;
+        boolean connected = true; // if it is set to false, it will consider there has been an error upon connecting.
+        try {
+            // Connection to the database
+            MongoDatabase database = (MongoDatabase) dbConnecter.createConnection(dataObject);
+            if (database == null) {
+                plugin.logError("Could not connect to the database. Are the credentials in the config.yml file correct?");
+                connected = false;
+            } else {
+                collection = database.getCollection(dataObject.getCanonicalName());
+                IndexOptions indexOptions = new IndexOptions().unique(true);
+                collection.createIndex(Indexes.text(UNIQUEID), indexOptions);
+            }
+        } catch (MongoTimeoutException e) {
+            plugin.logError("Could not connect to the database. MongoDB timed out.");
+            plugin.logError("Error code: " + e.getCode());
+            plugin.logError("Errors: " + String.join(", ", e.getErrorLabels()));
+            connected = false;
+        } catch (MongoClientException e) {
+            plugin.logError("Could not connect to the database. An unhandled error occurred.");
+            plugin.logStacktrace(e);
+            connected = false;
         }
-        collection = database.getCollection(dataObject.getCanonicalName());
-        IndexOptions indexOptions = new IndexOptions().unique(true);
-        collection.createIndex(Indexes.text(UNIQUEID), indexOptions);
+
+        if (!connected) {
+            plugin.logWarning("Disabling BentoBox...");
+            Bukkit.getPluginManager().disablePlugin(plugin);
+        }
     }
 
     @Override

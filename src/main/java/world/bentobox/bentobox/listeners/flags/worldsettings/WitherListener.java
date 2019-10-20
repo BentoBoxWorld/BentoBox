@@ -22,6 +22,7 @@ public class WitherListener extends FlagListener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onExplosion(final EntityExplodeEvent e) {
+        if (!getIWM().inWorld(e.getLocation())) return;
         // Remove  blocks from the explosion list if required
         if((e.getEntityType().equals(EntityType.WITHER_SKULL) || e.getEntityType().equals(EntityType.WITHER))
                 && !Flags.WITHER_DAMAGE.isSetForWorld(e.getLocation().getWorld())) {
@@ -36,6 +37,7 @@ public class WitherListener extends FlagListener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onWitherChangeBlocks(final EntityChangeBlockEvent e) {
+        if (!getIWM().inWorld(e.getBlock().getWorld())) return;
         e.setCancelled(e.getEntityType().equals(EntityType.WITHER) && !Flags.WITHER_DAMAGE.isSetForWorld(e.getBlock().getWorld()));
     }
 }

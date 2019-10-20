@@ -24,11 +24,6 @@ public class DyeListener extends FlagListener {
 	 */
 	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
 	public void onPlayerInteract(final PlayerInteractEvent e) {
-		if (!ServerCompatibility.getInstance().isVersion(ServerCompatibility.ServerVersion.V1_14, ServerCompatibility.ServerVersion.V1_14_1)) {
-			// We're disabling this check for non-1.14 servers.
-			return;
-		}
-
 		if (e.getClickedBlock() == null || e.getItem() == null) {
 			return;
 		}

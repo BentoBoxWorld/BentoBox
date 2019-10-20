@@ -41,7 +41,7 @@ public class IslandNearCommand extends CompositeCommand {
         }
 
         UUID playerUUID = user.getUniqueId();
-        if (!getIslands().hasIsland(getWorld(), playerUUID) || !getIslands().inTeam(getWorld(), playerUUID)) {
+        if (!getIslands().hasIsland(getWorld(), playerUUID) && !getIslands().inTeam(getWorld(), playerUUID)) {
             user.sendMessage("general.errors.no-island");
             return false;
         }
@@ -57,7 +57,11 @@ public class IslandNearCommand extends CompositeCommand {
         boolean noNeighbors = true;
         for (BlockFace face : COMPASS_POINTS) {
             String name = getIslands().getIslandAt(
-                    island.getCenter().getBlock().getRelative(face, dist).getLocation())
+                    island
+                    .getCenter()
+                    .getBlock()
+                    .getRelative(face, dist)
+                    .getLocation())
                     .map(i -> getName(user, i)).orElse("");
             if (!name.isEmpty()) {
                 noNeighbors = false;

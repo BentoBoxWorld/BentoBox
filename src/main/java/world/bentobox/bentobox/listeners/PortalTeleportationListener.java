@@ -15,7 +15,9 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.eclipse.jdt.annotation.NonNull;
 
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.blueprints.Blueprint;
 import world.bentobox.bentobox.blueprints.BlueprintPaster;
+import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.util.Util;
 import world.bentobox.bentobox.util.teleport.SafeSpotTeleport;
@@ -115,7 +117,6 @@ public class PortalTeleportationListener implements Listener {
         new SafeSpotTeleport.Builder(plugin)
         .entity(e.getPlayer())
         .location(to)
-        .portal()
         .build();
         return true;
     }
@@ -197,15 +198,24 @@ public class PortalTeleportationListener implements Listener {
      * @param env - NETHER or THE_END
      */
     private void pasteNewIsland(Player player, Location to, Island island, Environment env) {
-        String name = env.equals(Environment.NETHER) ? "nether-island" : "end-island";
         // Paste then teleport player
-        plugin.getIWM().getAddon(island.getWorld()).ifPresent(addon
-                -> new BlueprintPaster(plugin, plugin.getBlueprintsManager().getBlueprints(addon).get(name),
-                        to.getWorld(),
-                        island, () -> new SafeSpotTeleport.Builder(plugin)
-                        .entity(player)
-                        .location(island.getSpawnPoint(env) == null ? to : island.getSpawnPoint(env))
-                        // No need to use portal because there will be no portal on the other end
-                        .build()));
+        plugin.getIWM().getAddon(island.getWorld()).ifPresent(addon -> {
+            // Get the default bundle's nether or end blueprint
+            BlueprintBundle bb = plugin.getBlueprintsManager().getDefaultBlueprintBundle(addon);
+            if (bb != null) {
+                Blueprint bp = plugin.getBlueprintsManager().getBlueprints(addon).get(bb.getBlueprint(env));
+                if (bp != null) {
+                    new BlueprintPaster(plugin, bp,
+                            to.getWorld(),
+                            island, () -> new SafeSpotTeleport.Builder(plugin)
+                            .entity(player)
+                            .location(island.getSpawnPoint(env) == null ? to : island.getSpawnPoint(env))
+                            // No need to use portal because there will be no portal on the other end
+                            .build());
+                } else {
+                    plugin.logError("Could not paste default island in nether or end. Is there a nether-island or end-island blueprint?");
+                }
+            }
+        });
     }
 }

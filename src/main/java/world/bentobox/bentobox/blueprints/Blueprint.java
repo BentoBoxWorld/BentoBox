@@ -56,8 +56,9 @@ public class Blueprint {
     /**
      * @param name the name to set
      */
-    public Blueprint setName(String name) {
-        this.name = name;
+    public Blueprint setName(@NonNull String name) {
+        // Force lowercase
+        this.name = name.toLowerCase(Locale.ENGLISH);
         return this;
     }
     /**

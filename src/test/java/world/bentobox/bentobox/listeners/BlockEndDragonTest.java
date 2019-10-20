@@ -29,6 +29,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.junit.After;
 import org.junit.Before;
@@ -275,6 +276,15 @@ public class BlockEndDragonTest {
 
         private Map<String, Boolean> worldFlags = new HashMap<>();
 
+        @Override
+        public @NonNull List<String> getOnLeaveCommands() {
+            return null;
+        }
+
+        @Override
+        public @NonNull List<String> getOnJoinCommands() {
+            return null;
+        }
 
         @Override
         public GameMode getDefaultGameMode() {
@@ -474,6 +484,21 @@ public class BlockEndDragonTest {
         }
 
         @Override
+        public boolean isOnJoinResetHealth() {
+            return false;
+        }
+
+        @Override
+        public boolean isOnJoinResetHunger() {
+            return false;
+        }
+
+        @Override
+        public boolean isOnJoinResetXP() {
+            return false;
+        }
+
+        @Override
         public boolean isOnLeaveResetEnderChest() {
             // TODO Auto-generated method stub
             return false;
@@ -488,6 +513,21 @@ public class BlockEndDragonTest {
         @Override
         public boolean isOnLeaveResetMoney() {
             // TODO Auto-generated method stub
+            return false;
+        }
+
+        @Override
+        public boolean isOnLeaveResetHealth() {
+            return false;
+        }
+
+        @Override
+        public boolean isOnLeaveResetHunger() {
+            return false;
+        }
+
+        @Override
+        public boolean isOnLeaveResetXP() {
             return false;
         }
 

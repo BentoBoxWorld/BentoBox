@@ -33,7 +33,6 @@ import org.bukkit.Chunk;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -230,10 +229,8 @@ public class IslandsManagerTest {
         // User location
         when(user.getLocation()).thenReturn(location);
 
-        // Server for events
-        Server server = mock(Server.class);
-        when(Bukkit.getServer()).thenReturn(server);
-        when(server.getPluginManager()).thenReturn(pim);
+        // Plugin Manager for events
+        when(Bukkit.getPluginManager()).thenReturn(pim);
 
         // Addon
         when(iwm.getAddon(any())).thenReturn(Optional.empty());

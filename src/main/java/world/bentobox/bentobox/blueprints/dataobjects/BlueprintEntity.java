@@ -3,9 +3,16 @@ package world.bentobox.bentobox.blueprints.dataobjects;
 import java.util.Map;
 
 import org.bukkit.DyeColor;
+import org.bukkit.entity.AbstractHorse;
+import org.bukkit.entity.Ageable;
+import org.bukkit.entity.ChestedHorse;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Horse;
+import org.bukkit.entity.Tameable;
 import org.bukkit.entity.Horse.Style;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.Colorable;
 
 import com.google.gson.annotations.Expose;
 
@@ -34,6 +41,38 @@ public class BlueprintEntity {
     @Expose
     private Style style;
 
+    /**
+     * @since 1.8.0
+     */
+    public void configureEntity(Entity e) {
+        if (e instanceof Colorable) {
+            ((Colorable) e).setColor(color);
+        }
+        if (tamed != null && e instanceof Tameable) {
+            ((Tameable)e).setTamed(tamed);
+        }
+        if (chest != null && e instanceof ChestedHorse) {
+            ((ChestedHorse)e).setCarryingChest(chest);
+        }
+        if (adult != null && e instanceof Ageable) {
+            if (adult) {
+                ((Ageable)e).setAdult();
+            } else {
+                ((Ageable)e).setBaby();
+            }
+        }
+        if (e instanceof AbstractHorse) {
+            AbstractHorse horse = (AbstractHorse)e;
+            if (domestication != null) horse.setDomestication(domestication);
+            if (inventory != null) {
+                inventory.forEach(horse.getInventory()::setItem);
+            }
+        }
+        if (style != null && e instanceof Horse) {
+            ((Horse)e).setStyle(style);
+        }
+
+    }
     /**
      * @return the color
      */

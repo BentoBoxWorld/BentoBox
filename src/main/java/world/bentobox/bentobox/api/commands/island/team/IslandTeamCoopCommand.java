@@ -7,6 +7,7 @@ import java.util.UUID;
 import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
+import world.bentobox.bentobox.api.commands.island.team.Invite.Type;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
@@ -20,10 +21,12 @@ import world.bentobox.bentobox.util.Util;
  */
 public class IslandTeamCoopCommand extends CompositeCommand {
 
+    private IslandTeamCommand itc;
     private @Nullable UUID targetUUID;
 
-    public IslandTeamCoopCommand(CompositeCommand parentCommand) {
+    public IslandTeamCoopCommand(IslandTeamCommand parentCommand) {
         super(parentCommand, "coop");
+        this.itc = parentCommand;
     }
 
     @Override
@@ -72,6 +75,11 @@ public class IslandTeamCoopCommand extends CompositeCommand {
             user.sendMessage("commands.island.team.coop.already-has-rank");
             return false;
         }
+        if (itc.isInvited(targetUUID) && itc.getInviter(targetUUID).equals(user.getUniqueId()) && itc.getInvite(targetUUID).getType().equals(Type.COOP)) {
+            // Prevent spam
+            user.sendMessage("commands.island.team.invite.errors.you-have-already-invited");
+            return false;
+        }
         return true;
     }
 
@@ -80,9 +88,19 @@ public class IslandTeamCoopCommand extends CompositeCommand {
         User target = User.getInstance(targetUUID);
         Island island = getIslands().getIsland(getWorld(), user.getUniqueId());
         if (island != null) {
-            island.setRank(target, RanksManager.COOP_RANK);
-            user.sendMessage("commands.island.team.coop.success", TextVariables.NAME, target.getName());
-            target.sendMessage("commands.island.team.coop.you-are-a-coop-member", TextVariables.NAME, user.getName());
+            if (getPlugin().getSettings().isInviteConfirmation()) {
+                // Put the invited player (key) onto the list with inviter (value)
+                // If someone else has invited a player, then this invite will overwrite the previous invite!
+                itc.addInvite(Invite.Type.COOP, user.getUniqueId(), target.getUniqueId());
+                user.sendMessage("commands.island.team.invite.invitation-sent", TextVariables.NAME, target.getName());
+                // Send message to online player
+                target.sendMessage("commands.island.team.coop.name-has-invited-you", TextVariables.NAME, user.getName());
+                target.sendMessage("commands.island.team.invite.to-accept-or-reject", TextVariables.LABEL, getTopLabel());
+            } else {
+                island.setRank(target, RanksManager.COOP_RANK);
+                user.sendMessage("commands.island.team.coop.success", TextVariables.NAME, target.getName());
+                target.sendMessage("commands.island.team.coop.you-are-a-coop-member", TextVariables.NAME, user.getName());
+            }
             return true;
         } else {
             // Should not happen

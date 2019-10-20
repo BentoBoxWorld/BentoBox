@@ -72,6 +72,17 @@ public class IslandTeamLeaveCommand extends ConfirmableCommand {
             User.getInstance(ownerUUID).sendMessage("commands.island.team.leave.left-your-island", TextVariables.NAME, user.getName());
         }
         getIslands().setLeaveTeam(getWorld(), user.getUniqueId());
+        // Execute commands when leaving
+        getIWM().getOnLeaveCommands(island.getWorld()).forEach(command -> {
+            command = command.replace("[player]", user.getName());
+            if (command.startsWith("[SUDO]") && user.isOnline()) {
+                // Execute the command by the player
+                user.performCommand(command.substring(6));
+            } else {
+                // Otherwise execute as the server console
+                getPlugin().getServer().dispatchCommand(Bukkit.getConsoleSender(), command);
+            }
+        });
         // Remove money inventory etc.
         if (getIWM().isOnLeaveResetEnderChest(getWorld())) {
             user.getPlayer().getEnderChest().clear();
@@ -81,6 +92,20 @@ public class IslandTeamLeaveCommand extends ConfirmableCommand {
         }
         if (getSettings().isUseEconomy() && getIWM().isOnLeaveResetMoney(getWorld())) {
             getPlugin().getVault().ifPresent(vault -> vault.withdraw(user, vault.getBalance(user)));
+        }
+        // Reset the health
+        if (getIWM().isOnLeaveResetHealth(getWorld())) {
+            user.getPlayer().setHealth(20.0D);
+        }
+
+        // Reset the hunger
+        if (getIWM().isOnLeaveResetHunger(getWorld())) {
+            user.getPlayer().setFoodLevel(20);
+        }
+
+        // Reset the XP
+        if (getIWM().isOnLeaveResetXP(getWorld())) {
+            user.getPlayer().setTotalExperience(0);
         }
         // Add cooldown for this player and target
         if (getSettings().getInviteCooldown() > 0 && getParent() != null) {
@@ -101,6 +126,6 @@ public class IslandTeamLeaveCommand extends ConfirmableCommand {
                 .reason(TeamEvent.Reason.LEAVE)
                 .involvedPlayer(user.getUniqueId())
                 .build();
-        Bukkit.getServer().getPluginManager().callEvent(e);
+        Bukkit.getPluginManager().callEvent(e);
     }
 }

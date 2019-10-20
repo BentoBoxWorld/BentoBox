@@ -11,6 +11,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Banner;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
@@ -18,15 +19,10 @@ import org.bukkit.block.CreatureSpawner;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.type.Sign;
 import org.bukkit.block.data.type.WallSign;
-import org.bukkit.entity.AbstractHorse;
-import org.bukkit.entity.Ageable;
-import org.bukkit.entity.ChestedHorse;
-import org.bukkit.entity.Horse;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Tameable;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
-import org.bukkit.material.Colorable;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
@@ -93,7 +89,7 @@ public class BlueprintPaster {
      * @param island - island related to this paste
      * @param task - task to run after pasting
      */
-    public BlueprintPaster(@NonNull BentoBox plugin, Blueprint bp, World world, Island island, Runnable task) {
+    public BlueprintPaster(@NonNull BentoBox plugin, @NonNull Blueprint bp, World world, Island island, Runnable task) {
         this.plugin = plugin;
         // Offset due to bedrock
         Vector off = bp.getBedrock() != null ? bp.getBedrock() : new Vector(0,0,0);
@@ -135,7 +131,7 @@ public class BlueprintPaster {
                 count++;
             }
             while (pasteState.equals(PasteState.ENTITIES) && count < pasteSpeed && it3.hasNext()) {
-                pasteEntity(world, loc, it3.next());
+                pasteEntity(world, island, loc, it3.next());
                 count++;
             }
             // STATE SHIFT
@@ -211,11 +207,11 @@ public class BlueprintPaster {
         return blockData;
     }
 
-    private void pasteEntity(World world, Location location, Entry<Vector, List<BlueprintEntity>> entry) {
+    private void pasteEntity(World world, Island island, Location location, Entry<Vector, List<BlueprintEntity>> entry) {
         int x = location.getBlockX() + entry.getKey().getBlockX();
         int y = location.getBlockY() + entry.getKey().getBlockY();
         int z = location.getBlockZ() + entry.getKey().getBlockZ();
-        setEntity(new Location(world, x, y, z), entry.getValue());
+        setEntity(island, new Location(world, x, y, z), entry.getValue());
     }
 
     /**
@@ -251,54 +247,45 @@ public class BlueprintPaster {
             spawner.setSpawnRange(s.getSpawnRange());
             bs.update(true, false);
         }
+        // Banners
+        if (bs instanceof Banner) {
+            Banner banner = (Banner) bs;
+            banner.setPatterns(bpBlock.getBannerPatterns());
+            banner.update(true, false);
+        }
     }
 
     /**
      * Sets any entity that is in this location
+     * @param island - Island
      * @param location - location
      * @param list - list of entities to paste
      */
-    private void setEntity(Location location, List<BlueprintEntity> list) {
+    private void setEntity(@Nullable Island island, Location location, List<BlueprintEntity> list) {
         list.stream().filter(k -> k.getType() != null).forEach(k -> {
             // Center, and just a bit high
             Location center = location.add(new Vector(0.5, 0.5, 0.5));
             LivingEntity e = (LivingEntity)location.getWorld().spawnEntity(center, k.getType());
             if (k.getCustomName() != null) {
-                e.setCustomName(k.getCustomName());
-            }
-            if (e instanceof Colorable && k.getColor() != null) {
-                ((Colorable) e).setColor(k.getColor());
-            }
-            if (e instanceof Tameable && k.getTamed() != null) {
-                ((Tameable)e).setTamed(k.getTamed());
-            }
-            if (e instanceof ChestedHorse && k.getChest() != null) {
-                ((ChestedHorse)e).setCarryingChest(k.getChest());
-            }
-            if (e instanceof Ageable && k.getAdult() != null) {
-                if (k.getAdult()) {
-                    ((Ageable)e).setAdult();
-                } else {
-                    ((Ageable)e).setBaby();
-                }
-            }
-            if (e instanceof AbstractHorse) {
-                AbstractHorse horse = (AbstractHorse)e;
-                if (k.getDomestication() != null) horse.setDomestication(k.getDomestication());
-                if (k.getInventory() != null) {
-                    k.getInventory().forEach(horse.getInventory()::setItem);
-                }
-            }
-            if (e instanceof Horse && k.getStyle() != null) {
-                ((Horse)e).setStyle(k.getStyle());
-            }
-        });
+                String customName = k.getCustomName();
 
+                if (island != null) {
+                    // Parse any placeholders in the entity's name, if the owner's connected (he should)
+                    Player owner = User.getInstance(island.getOwner()).getPlayer();
+                    if (owner != null) {
+                        customName = plugin.getPlaceholdersManager().replacePlaceholders(owner, customName);
+                    }
+                }
+
+                // Actually set the custom name
+                e.setCustomName(customName);
+            }
+            k.configureEntity(e);
+        });
     }
 
     /**
      * Tracks the minimum and maximum block positions
-     * @param world - world
      * @param l - location of block pasted
      */
     private void updatePos(Location l) {

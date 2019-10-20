@@ -9,6 +9,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitTask;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
@@ -25,7 +26,7 @@ import world.bentobox.bentobox.hooks.VaultHook;
 import world.bentobox.bentobox.hooks.WorldEditHook;
 import world.bentobox.bentobox.hooks.placeholders.MVdWPlaceholderAPIHook;
 import world.bentobox.bentobox.hooks.placeholders.PlaceholderAPIHook;
-import world.bentobox.bentobox.listeners.BannedVisitorCommands;
+import world.bentobox.bentobox.listeners.BannedCommands;
 import world.bentobox.bentobox.listeners.BlockEndDragon;
 import world.bentobox.bentobox.listeners.DeathListener;
 import world.bentobox.bentobox.listeners.JoinLeaveListener;
@@ -88,6 +89,8 @@ public class BentoBox extends JavaPlugin {
     private BStats metrics;
 
     private Config<Settings> configObject;
+
+    private BukkitTask blueprintLoadingTask;
 
     @Override
     public void onEnable(){
@@ -163,7 +166,7 @@ public class BentoBox extends JavaPlugin {
 
         final long loadTime = System.currentTimeMillis() - loadStart;
 
-        getServer().getScheduler().runTask(instance, () -> {
+        Bukkit.getScheduler().runTask(instance, () -> {
             final long enableStart = System.currentTimeMillis();
             hooksManager.registerHook(new PlaceholderAPIHook());
             hooksManager.registerHook(new MVdWPlaceholderAPIHook());
@@ -183,9 +186,9 @@ public class BentoBox extends JavaPlugin {
             islandsManager.load();
 
             // Save islands & players data every X minutes
-            instance.getServer().getScheduler().runTaskTimer(instance, () -> {
-                playersManager.saveAll();
-                islandsManager.saveAll();
+            Bukkit.getScheduler().runTaskTimer(instance, () -> {
+                playersManager.asyncSaveAll();
+                islandsManager.asyncSaveAll();
             }, getSettings().getDatabaseBackupPeriod() * 20 * 60L, getSettings().getDatabaseBackupPeriod() * 20 * 60L);
 
             // Make sure all flag listeners are registered.
@@ -215,15 +218,24 @@ public class BentoBox extends JavaPlugin {
                     TextVariables.VERSION, instance.getDescription().getVersion(),
                     "[time]", String.valueOf(loadTime + enableTime));
 
-            // Fire plugin ready event - this should go last after everything else
-            isLoaded = true;
-            Bukkit.getServer().getPluginManager().callEvent(new BentoBoxReadyEvent());
+            // Poll for blueprints loading to be finished - async so could be a completely variable time
+            blueprintLoadingTask = Bukkit.getScheduler().runTaskTimer(instance, () -> {
+                if (getBlueprintsManager().isBlueprintsLoaded()) {
+                    blueprintLoadingTask.cancel();
+                    // Tell all addons that everything is loaded
+                    isLoaded = true;
+                    this.addonsManager.allLoaded();
+                    // Fire plugin ready event - this should go last after everything else
+                    Bukkit.getPluginManager().callEvent(new BentoBoxReadyEvent());
+                    instance.log("All blueprints loaded.");
+                }
+            }, 0L, 1L);
 
             if (getSettings().getDatabaseType().equals(DatabaseSetup.DatabaseType.YAML)) {
                 logWarning("*** You're still using YAML database ! ***");
                 logWarning("This database type is being deprecated from BentoBox as some official addons encountered difficulties supporting it correctly.");
                 logWarning("You should switch ASAP to an alternative database type. Please refer to the comments in BentoBox's config.yml.");
-                logWarning("There is NO warranty YAML database will remain properly supported in the following updates, and its usage should as such be considered a non-viable situation.");
+                logWarning("There is NO guarantee YAML database will remain properly supported in the following updates, and its usage should as such be considered a non-viable situation.");
                 logWarning("*** *** *** *** *** *** *** *** *** *** ***");
             }
         });
@@ -245,7 +257,7 @@ public class BentoBox extends JavaPlugin {
         // End dragon blocking
         manager.registerEvents(new BlockEndDragon(this), this);
         // Banned visitor commands
-        manager.registerEvents(new BannedVisitorCommands(this), this);
+        manager.registerEvents(new BannedCommands(this), this);
         // Death counter
         manager.registerEvents(new DeathListener(this), this);
         // Island Delete Manager

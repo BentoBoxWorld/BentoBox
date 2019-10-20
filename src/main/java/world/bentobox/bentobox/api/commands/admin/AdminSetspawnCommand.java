@@ -65,7 +65,7 @@ public class AdminSetspawnCommand extends ConfirmableCommand {
                         .involvedPlayer(i.getOwner())
                         .admin(true)
                         .build();
-                Bukkit.getServer().getPluginManager().callEvent(event);
+                Bukkit.getPluginManager().callEvent(event);
             }
             // If island is owned, then unregister the owner and any members
             new ImmutableSet.Builder<UUID>().addAll(i.getMembers().keySet()).build().forEach(m -> {

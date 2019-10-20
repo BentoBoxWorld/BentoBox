@@ -22,7 +22,6 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Server;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitScheduler;
@@ -125,10 +124,8 @@ public class IslandUnbanCommandTest {
         when(plugin.getIWM()).thenReturn(iwm);
 
         // Server and Plugin Manager for events
-        Server server = mock(Server.class);
-        when(Bukkit.getServer()).thenReturn(server);
         PluginManager pim = mock(PluginManager.class);
-        when(server.getPluginManager()).thenReturn(pim);
+        when(Bukkit.getPluginManager()).thenReturn(pim);
 
     }
 

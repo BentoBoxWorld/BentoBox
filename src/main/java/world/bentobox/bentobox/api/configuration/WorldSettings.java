@@ -1,5 +1,6 @@
 package world.bentobox.bentobox.api.configuration;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -7,6 +8,7 @@ import java.util.Set;
 import org.bukkit.Difficulty;
 import org.bukkit.GameMode;
 import org.bukkit.entity.EntityType;
+import org.eclipse.jdt.annotation.NonNull;
 
 import world.bentobox.bentobox.api.flags.Flag;
 
@@ -134,6 +136,15 @@ public interface WorldSettings extends ConfigObject {
      * @return the visitorBannedCommands
      */
     List<String> getVisitorBannedCommands();
+    
+    /**
+     * Optional list of commands that are banned when falling. Not applicable to all game modes so defaults to empty.
+     * @return the fallingBannedCommands
+     * @since 1.8.0
+     */
+    default List<String> getFallingBannedCommands() {
+        return Collections.emptyList();
+    }
 
     /**
      * Get world flags
@@ -187,6 +198,48 @@ public interface WorldSettings extends ConfigObject {
     boolean isOnJoinResetMoney();
 
     /**
+     * Whether the player's health should be reset upon him joining an island or creating it.
+     * @return the onJoinResetHealth
+     * @since 1.8.0
+     */
+    boolean isOnJoinResetHealth();
+
+    /**
+     * Whether the player's hunger should be reset upon him joining an island or creating it.
+     * @return the onJoinResetHunger
+     * @since 1.8.0
+     */
+    boolean isOnJoinResetHunger();
+
+    /**
+     * Whether the player's XP should be reset upon him joining an island or creating it.
+     * @return the onJoinResetXP
+     * @since 1.8.0
+     */
+    boolean isOnJoinResetXP();
+
+    /**
+     * Returns a list of commands that should be executed when the player joins an island or creates one.<br/>
+     * These commands are executed by the console, unless otherwise stated using the {@code [SUDO]} prefix, in which case they are executed by the player.<br/>
+     * <br/>
+     * Available placeholders for the commands are the following:
+     * <ul>
+     *     <li>{@code [player]}: name of the player</li>
+     * </ul>
+     * <br/>
+     * Here are some examples of valid commands to execute:
+     * <ul>
+     *     <li>{@code "[SUDO] bbox version"}</li>
+     *     <li>{@code "bsbadmin deaths set [player] 0"}</li>
+     * </ul>
+     * @return a list of commands.
+     * @since 1.8.0
+     * @see #getOnLeaveCommands()
+     */
+    @NonNull
+    List<String> getOnJoinCommands();
+
+    /**
      * @return the onLeaveResetEnderChest
      */
     boolean isOnLeaveResetEnderChest();
@@ -200,6 +253,50 @@ public interface WorldSettings extends ConfigObject {
      * @return the onLeaveResetMoney
      */
     boolean isOnLeaveResetMoney();
+
+    /**
+     * Whether the player's health should be reset upon him leaving his island or resetting it.
+     * @return the onLeaveResetHealth
+     * @since 1.8.0
+     */
+    boolean isOnLeaveResetHealth();
+
+    /**
+     * Whether the player's hunger should be reset upon him leaving his island or resetting it.
+     * @return the onLeaveResetHunger
+     * @since 1.8.0
+     */
+    boolean isOnLeaveResetHunger();
+
+    /**
+     * Whether the player's XP should be reset upon him leaving his island or resetting it.
+     * @return the onLeaveResetXP
+     * @since 1.8.0
+     */
+    boolean isOnLeaveResetXP();
+
+    /**
+     * Returns a list of commands that should be executed when the player leaves an island or resets one.<br/>
+     * These commands are executed by the console, unless otherwise stated using the {@code [SUDO]} prefix, in which case they are executed by the player.<br/>
+     * <br/>
+     * Available placeholders for the commands are the following:
+     * <ul>
+     *     <li>{@code [player]}: name of the player</li>
+     * </ul>
+     * <br/>
+     * Here are some examples of valid commands to execute:
+     * <ul>
+     *     <li>{@code "[SUDO] bbox version"}</li>
+     *     <li>{@code "bsbadmin deaths set [player] 0"}</li>
+     * </ul>
+     * <br/>
+     * Note that player-executed commands might not work, as these commands can be run with said player being offline.
+     * @return a list of commands.
+     * @since 1.8.0
+     * @see #getOnJoinCommands()
+     */
+    @NonNull
+    List<String> getOnLeaveCommands();
 
     /**
      * @return true if the default world generator should not operate in this world
