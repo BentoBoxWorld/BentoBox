@@ -1083,7 +1083,7 @@ protection:
     FROST_WALKER:
       description: "Toggle Frost Walker enchantment"
       name: "Frost Walker"
-      hint: "Frost walker disabled"
+      hint: "Frost Walker disabled"
     EXPERIENCE_PICKUP:
       name: "Experience pickup"
       description: "Toggle experience orb pickup"
