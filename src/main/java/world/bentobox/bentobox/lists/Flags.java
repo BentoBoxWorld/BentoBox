@@ -260,14 +260,6 @@ public final class Flags {
      */
     public static final Flag ELYTRA = new Flag.Builder("ELYTRA",  Material.ELYTRA).defaultRank(RanksManager.VISITOR_RANK).listener(new ElytraListener()).mode(Flag.Mode.ADVANCED).build();
 
-
-    // TNT
-    /**
-     * @deprecated As of 1.5.0, for removal.
-     */
-    @Deprecated
-    public static final Flag TNT = new Flag.Builder("TNT", Material.TNT).listener(new TNTListener()).build();
-
     // Island lock
     public static final Flag LOCK = new Flag.Builder("LOCK", Material.TRIPWIRE_HOOK).defaultSetting(true)
             .defaultRank(RanksManager.VISITOR_RANK).listener(new LockAndBanListener())
