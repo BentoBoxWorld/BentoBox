@@ -64,7 +64,7 @@ public class IslandCreateCommand extends CompositeCommand {
     public boolean execute(User user, String label, List<String> args) {
         // Permission check if the name is not the default one
         if (!args.isEmpty()) {
-            String name = getPlugin().getBlueprintsManager().validate((GameModeAddon)getAddon(), args.get(0).toLowerCase(java.util.Locale.ENGLISH));
+            String name = getPlugin().getBlueprintsManager().validate(getAddon(), args.get(0).toLowerCase(java.util.Locale.ENGLISH));
             if (name == null) {
                 // The blueprint name is not valid.
                 user.sendMessage("commands.island.create.unknown-blueprint");
@@ -77,7 +77,7 @@ public class IslandCreateCommand extends CompositeCommand {
             return makeIsland(user, name);
         } else {
             // Show panel only if there are multiple bundles available
-            if (getPlugin().getBlueprintsManager().getBlueprintBundles((GameModeAddon)getAddon()).size() > 1) {
+            if (getPlugin().getBlueprintsManager().getBlueprintBundles(getAddon()).size() > 1) {
                 // Show panel
                 IslandCreationPanel.openPanel(this, user, label);
                 return true;
@@ -91,7 +91,7 @@ public class IslandCreateCommand extends CompositeCommand {
         try {
             NewIsland.builder()
             .player(user)
-            .addon((GameModeAddon)getAddon())
+            .addon(getAddon())
             .reason(Reason.CREATE)
             .name(name)
             .build();

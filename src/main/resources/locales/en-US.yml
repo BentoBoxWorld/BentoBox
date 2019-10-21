@@ -425,6 +425,11 @@ commands:
       too-many-islands: "&cThere are too many islands in this world: there isn't enough room for yours to be created."
       unable-create-island: "&cYour island could not be generated, please contact an administrator."
       creating-island: "&aCreating your island, please wait a moment..."
+      pasting:
+        estimated-time: "&aThis might take up to &b[number] &aseconds."
+        blocks: "&aPasting &b[number] &ablocks..."
+        entities: "&aPasting &b[number] &aentities..."
+        done: "&aYour island is ready!"
       pick: "&aPick an island"
       unknown-blueprint: "&cThat blueprint has not been loaded yet."
     info:

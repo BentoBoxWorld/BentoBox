@@ -1,10 +1,13 @@
 package world.bentobox.bentobox.blueprints;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -149,6 +152,20 @@ public class BlueprintPaster {
         pasteState = PasteState.BLOCKS;
         final int pasteSpeed = plugin.getSettings().getPasteSpeed();
 
+        // If this is an island OVERWORLD paste, get the island owner.
+        final Optional<User> owner = Optional.ofNullable(island)
+                .filter(i -> location.getWorld().getEnvironment().equals(World.Environment.NORMAL))
+                .map(i -> User.getInstance(i.getOwner()));
+        // Tell the owner we're pasting blocks and how much time it might take
+        owner.ifPresent(user -> {
+            // Estimated time:
+            double total = blocks.size() + attached.size() + entities.size();
+            BigDecimal time = new BigDecimal(total / (pasteSpeed * 20.0D)).setScale(1, RoundingMode.UP);
+            user.sendMessage("commands.island.create.pasting.estimated-time", TextVariables.NUMBER, String.valueOf(time.doubleValue()));
+            // We're pasting blocks!
+            user.sendMessage("commands.island.create.pasting.blocks", TextVariables.NUMBER, String.valueOf(blocks.size() + attached.size()));
+        });
+
         pastingTask = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
             int count = 0;
             while (pasteState.equals(PasteState.BLOCKS) && count < pasteSpeed && it.hasNext()) {
@@ -169,14 +186,18 @@ public class BlueprintPaster {
                 // Next paste attachments
                 pasteState = PasteState.ATTACHMENTS;
             }
-            if (pasteState.equals(PasteState.ATTACHMENTS) && !it2.hasNext()) {
+            else if (pasteState.equals(PasteState.ATTACHMENTS) && !it2.hasNext()) {
                 // Attachments done. Next paste entities
                 pasteState = PasteState.ENTITIES;
+                if (entities.size() != 0) {
+                    owner.ifPresent(user -> user.sendMessage("commands.island.create.pasting.entities", TextVariables.NUMBER, String.valueOf(entities.size())));
+                }
             }
-            if (pasteState.equals(PasteState.ENTITIES) && !it3.hasNext()) {
+            else if (pasteState.equals(PasteState.ENTITIES) && !it3.hasNext()) {
                 pasteState = PasteState.DONE;
+                owner.ifPresent(user -> user.sendMessage("commands.island.create.pasting.done"));
             }
-            if (pasteState.equals(PasteState.DONE)) {
+            else if (pasteState.equals(PasteState.DONE)) {
                 // All done. Cancel task
                 // Set pos1 and 2 if this was a clipboard paste
                 if (island == null && clipboard != null) {
