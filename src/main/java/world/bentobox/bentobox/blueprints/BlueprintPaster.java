@@ -68,6 +68,30 @@ public class BlueprintPaster {
     private BlueprintClipboard clipboard;
 
     /**
+     * The Blueprint to paste.
+     */
+    @NonNull
+    private Blueprint blueprint;
+
+    /**
+     * The Location to paste to.
+     */
+    @NonNull
+    private Location location;
+
+    /**
+     * Task to run after pasting, null if none.
+     */
+    @Nullable
+    private Runnable afterPasteTask;
+
+    /**
+     * Island related to this paste, may be null.
+     */
+    @Nullable
+    private Island island;
+
+    /**
      * Paste a clipboard to a location and run task
      * @param plugin - BentoBox
      * @param clipboard - clipboard to paste
@@ -78,7 +102,13 @@ public class BlueprintPaster {
         this.plugin = plugin;
         this.clipboard = clipboard;
         // Calculate location for pasting
-        paste(location.getWorld(), null, location, clipboard.getBlueprint(), task);
+        this.blueprint = clipboard.getBlueprint();
+        this.location = location;
+        this.afterPasteTask = task;
+        this.island = null;
+
+        // Paste
+        paste();
     }
 
     /**
@@ -89,25 +119,24 @@ public class BlueprintPaster {
      * @param island - island related to this paste
      * @param task - task to run after pasting
      */
-    public BlueprintPaster(@NonNull BentoBox plugin, @NonNull Blueprint bp, World world, Island island, Runnable task) {
+    public BlueprintPaster(@NonNull BentoBox plugin, @NonNull Blueprint bp, World world, @NonNull Island island, @Nullable Runnable task) {
         this.plugin = plugin;
+        this.blueprint = bp;
+        this.afterPasteTask = task;
+        this.island = island;
         // Offset due to bedrock
         Vector off = bp.getBedrock() != null ? bp.getBedrock() : new Vector(0,0,0);
         // Calculate location for pasting
-        Location loc = island.getCenter().toVector().subtract(off).toLocation(world);
+        this.location = island.getCenter().toVector().subtract(off).toLocation(world);
+
         // Paste
-        paste(world, island, loc, bp, task);
+        paste();
     }
 
     /**
      * The main pasting method
-     * @param world - world to paste to
-     * @param island - the island related to this pasting - may be null
-     * @param loc - the location to paste to
-     * @param blueprint - the blueprint to paste
-     * @param task - task to run after pasting
      */
-    private void paste(@NonNull World world, @Nullable Island island, @NonNull Location loc, @NonNull Blueprint blueprint, @Nullable Runnable task) {
+    private void paste() {
         // Iterators for the various maps to paste
         Map<Vector, BlueprintBlock> blocks = blueprint.getBlocks() == null ? Collections.emptyMap() : blueprint.getBlocks();
         Map<Vector, BlueprintBlock> attached = blueprint.getAttached() == null ? Collections.emptyMap() : blueprint.getAttached();
@@ -123,15 +152,15 @@ public class BlueprintPaster {
         pastingTask = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
             int count = 0;
             while (pasteState.equals(PasteState.BLOCKS) && count < pasteSpeed && it.hasNext()) {
-                pasteBlock(world, island, loc, it.next());
+                pasteBlock(location, it.next());
                 count++;
             }
             while (pasteState.equals(PasteState.ATTACHMENTS) && count < pasteSpeed && it2.hasNext()) {
-                pasteBlock(world, island, loc, it2.next());
+                pasteBlock(location, it2.next());
                 count++;
             }
             while (pasteState.equals(PasteState.ENTITIES) && count < pasteSpeed && it3.hasNext()) {
-                pasteEntity(world, island, loc, it3.next());
+                pasteEntity(location, it3.next());
                 count++;
             }
             // STATE SHIFT
@@ -154,9 +183,9 @@ public class BlueprintPaster {
                     clipboard.setPos1(pos1);
                     clipboard.setPos2(pos2);
                 }
-                if (task != null) {
+                if (afterPasteTask != null) {
                     // Run follow-on task if it exists
-                    Bukkit.getScheduler().runTask(plugin, task);
+                    Bukkit.getScheduler().runTask(plugin, afterPasteTask);
                 }
                 pasteState = PasteState.CANCEL;
             } else if (pasteState.equals(PasteState.CANCEL)) {
@@ -164,10 +193,10 @@ public class BlueprintPaster {
                 pastingTask.cancel();
             }
         }, 0L, 1L);
-
     }
 
-    private void pasteBlock(World world, Island island, Location location, Entry<Vector, BlueprintBlock> entry) {
+    private void pasteBlock(Location location, Entry<Vector, BlueprintBlock> entry) {
+        World world = location.getWorld();
         Location pasteTo = location.clone().add(entry.getKey());
         BlueprintBlock bpBlock = entry.getValue();
         Block block = pasteTo.getBlock();
@@ -179,7 +208,7 @@ public class BlueprintPaster {
             bd = convertBlockData(world, bpBlock);
         }
         block.setBlockData(bd, false);
-        setBlockState(island, block, bpBlock);
+        setBlockState(block, bpBlock);
         // pos1 and pos2 update
         updatePos(block.getLocation());
     }
@@ -207,25 +236,24 @@ public class BlueprintPaster {
         return blockData;
     }
 
-    private void pasteEntity(World world, Island island, Location location, Entry<Vector, List<BlueprintEntity>> entry) {
+    private void pasteEntity(Location location, Entry<Vector, List<BlueprintEntity>> entry) {
         int x = location.getBlockX() + entry.getKey().getBlockX();
         int y = location.getBlockY() + entry.getKey().getBlockY();
         int z = location.getBlockZ() + entry.getKey().getBlockZ();
-        setEntity(island, new Location(world, x, y, z), entry.getValue());
+        setEntity(new Location(location.getWorld(), x, y, z), entry.getValue());
     }
 
     /**
      * Handles signs, chests and mob spawner blocks
-     * @param island - island
      * @param block - block
      * @param bpBlock - config
      */
-    private void setBlockState(Island island, Block block, BlueprintBlock bpBlock) {
+    private void setBlockState(Block block, BlueprintBlock bpBlock) {
         // Get the block state
         BlockState bs = block.getState();
         // Signs
         if (bs instanceof org.bukkit.block.Sign) {
-            writeSign(island, block, bpBlock.getSignLines());
+            writeSign(block, bpBlock.getSignLines());
         }
         // Chests, in general
         if (bs instanceof InventoryHolder) {
@@ -257,11 +285,10 @@ public class BlueprintPaster {
 
     /**
      * Sets any entity that is in this location
-     * @param island - Island
      * @param location - location
      * @param list - list of entities to paste
      */
-    private void setEntity(@Nullable Island island, Location location, List<BlueprintEntity> list) {
+    private void setEntity(Location location, List<BlueprintEntity> list) {
         list.stream().filter(k -> k.getType() != null).forEach(k -> {
             // Center, and just a bit high
             Location center = location.add(new Vector(0.5, 0.5, 0.5));
@@ -315,7 +342,7 @@ public class BlueprintPaster {
         }
     }
 
-    private void writeSign(final Island island, final Block block, final List<String> lines) {
+    private void writeSign(final Block block, final List<String> lines) {
         BlockFace bf;
         if (block.getType().name().contains("WALL_SIGN")) {
             WallSign wallSign = (WallSign)block.getBlockData();
@@ -357,5 +384,4 @@ public class BlueprintPaster {
         // Update the sign
         s.update();
     }
-
 }
