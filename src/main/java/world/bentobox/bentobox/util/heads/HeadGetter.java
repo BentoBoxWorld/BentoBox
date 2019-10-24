@@ -62,16 +62,16 @@ public class HeadGetter {
      */
     public static void getHead(PanelItem panelItem, HeadRequester requester) {
         // Check if in cache
-        if (cachedHeads.containsKey(panelItem.getName())) {
-            panelItem.setHead(cachedHeads.get(panelItem.getName()).clone());
+        if (cachedHeads.containsKey(panelItem.getPlayerHeadName())) {
+            panelItem.setHead(cachedHeads.get(panelItem.getPlayerHeadName()).clone());
             requester.setHead(panelItem);
         } else {
             // Get the name
-            headRequesters.putIfAbsent(panelItem.getName(), new HashSet<>());
-            Set<HeadRequester> requesters = headRequesters.get(panelItem.getName());
+            headRequesters.putIfAbsent(panelItem.getPlayerHeadName(), new HashSet<>());
+            Set<HeadRequester> requesters = headRequesters.get(panelItem.getPlayerHeadName());
             requesters.add(requester);
-            headRequesters.put(panelItem.getName(), requesters);
-            names.put(panelItem.getName(), panelItem);
+            headRequesters.put(panelItem.getPlayerHeadName(), requesters);
+            names.put(panelItem.getPlayerHeadName(), panelItem);
         }
     }
 
