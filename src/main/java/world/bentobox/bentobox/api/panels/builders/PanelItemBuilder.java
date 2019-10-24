@@ -19,7 +19,6 @@ public class PanelItemBuilder {
     private List<String> description = new ArrayList<>();
     private boolean glow = false;
     private PanelItem.ClickHandler clickHandler;
-    private boolean playerHead;
     private String playerHeadName;
     private boolean invisible;
 
@@ -47,7 +46,6 @@ public class PanelItemBuilder {
     public PanelItemBuilder icon(String playerName) {
         this.icon = new ItemStack(Material.PLAYER_HEAD, 1);
         this.playerHeadName = playerName;
-        this.playerHead = true;
         return this;
     }
 
@@ -148,11 +146,12 @@ public class PanelItemBuilder {
      * @return the playerHead
      */
     public boolean isPlayerHead() {
-        return playerHead;
+        return playerHeadName != null && !playerHeadName.isEmpty();
     }
     
     /**
      * @return the playerHead
+     * @since 1.9.0
      */
     public String getPlayerHeadName() {
         return playerHeadName;
@@ -164,5 +163,4 @@ public class PanelItemBuilder {
     public boolean isInvisible() {
         return invisible;
     }
-
 }
