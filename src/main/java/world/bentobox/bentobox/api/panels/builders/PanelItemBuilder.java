@@ -150,6 +150,13 @@ public class PanelItemBuilder {
     public boolean isPlayerHead() {
         return playerHead;
     }
+    
+    /**
+     * @return the playerHead
+     */
+    public String getPlayerHeadName() {
+        return playerHeadName;
+    }    
 
     /**
      * @return the invisible
