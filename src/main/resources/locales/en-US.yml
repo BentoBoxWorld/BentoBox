@@ -1197,6 +1197,9 @@ management:
       catalog:
         name: "&6Addons Catalog"
         description: "&aOpens the Addons Catalog"
+      credits:
+        name: "&6Credits"
+        description: "&aOpens the Credits for BentoBox"
       empty-here:
         name: "&bThis looks empty here..."
         description: "&aWhat if you take a look at our catalog?"
@@ -1275,6 +1278,22 @@ catalog:
       name: "&bThis looks empty here..."
       description: |+
         &cBentoBox could not connect to GitHub.
+
+        &aAllow BentoBox to connect to GitHub in
+        &athe configuration or try again later.
+
+panel:
+  credits:
+    title: "&8[name] &2Credits"
+    contributor:
+      name: "&a[name]"
+      description: |
+        &aCommits: &b[commits]
+    empty-here:
+      name: "&cThis looks empty here..."
+      description: |+
+        &cBentoBox could not gather the Contributors
+        &cfor this Addon.
 
         &aAllow BentoBox to connect to GitHub in
         &athe configuration or try again later.

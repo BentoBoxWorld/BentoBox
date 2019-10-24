@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.event.inventory.ClickType;
 import org.eclipse.jdt.annotation.NonNull;
 
 import world.bentobox.bentobox.BentoBox;
@@ -64,6 +65,12 @@ public class ManagementPanel {
                         .name(user.getTranslation(LOCALE_REF + "views.gamemodes.gamemode.name", TextVariables.NAME, addon.getDescription().getName()))
                         .description(user.getTranslation(LOCALE_REF + "views.gamemodes.gamemode.description",
                                 "[islands]", String.valueOf(addon.getIslands().getIslandCount(gameModeAddon.getOverWorld()))))
+                        .clickHandler((panel, user1, clickType, slot) -> {
+                            if (clickType.equals(ClickType.MIDDLE)) {
+                                CreditsPanel.openPanel(user, addon);
+                            }
+                            return true;
+                        })
                         .build();
 
                 builder.item(startSlot + i, addonItem);
@@ -92,6 +99,12 @@ public class ManagementPanel {
                 PanelItem addonItem = new PanelItemBuilder()
                         .icon(addon.getDescription().getIcon())
                         .name(ChatColor.WHITE + addon.getDescription().getName())
+                        .clickHandler((panel, user1, clickType, slot) -> {
+                            if (clickType.equals(ClickType.MIDDLE)) {
+                                CreditsPanel.openPanel(user, addon);
+                            }
+                            return true;
+                        })
                         .build();
 
                 builder.item(startSlot + i, addonItem);
@@ -134,6 +147,19 @@ public class ManagementPanel {
                 .build();
 
         builder.item(17, catalog);
+
+        // Credits
+        PanelItem credits = new PanelItemBuilder()
+                .icon(Material.KNOWLEDGE_BOOK)
+                .name(user.getTranslation(LOCALE_REF + "buttons.credits.name"))
+                .description(user.getTranslation(LOCALE_REF + "buttons.credits.description"))
+                .clickHandler((panel, user1, clickType, slot) -> {
+                    CreditsPanel.openPanel(user, "BentoBoxWorld/BentoBox");
+                    return true;
+                })
+                .build();
+
+        builder.item(26, credits);
 
         // Show it to the user
         builder.build().open(user);
