@@ -9,7 +9,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.lists.Flags;
-import world.bentobox.bentobox.versions.ServerCompatibility;
 
 /**
  * Protects against dying things.
