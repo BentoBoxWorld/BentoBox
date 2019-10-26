@@ -148,7 +148,8 @@ public abstract class AbstractDatabaseHandler<T> {
     public abstract void saveObject(T instance) throws IllegalAccessException, InvocationTargetException, IntrospectionException ;
 
     /**
-     * Deletes the object with the unique id from the database
+     * Deletes the object with the unique id from the database. If the object does not exist, it will fail silently.
+     * Use {@link #objectExists(String)} if you need to know if the object is in the database beforehand.
      * @param instance - object instance
      */
     public abstract void deleteObject(T instance) throws IllegalAccessException, InvocationTargetException, IntrospectionException ;
@@ -166,7 +167,8 @@ public abstract class AbstractDatabaseHandler<T> {
     public abstract void close();
 
     /**
-     * Attempts to delete the object with the uniqueId
+     * Attempts to delete the object with the uniqueId. If the object does not exist, it will fail silently.
+     * Use {@link #objectExists(String)} if you need to know if the object is in the database beforehand.
      * @param uniqueId - uniqueId of object
      * @since 1.1
      */

@@ -51,7 +51,7 @@ public class SQLiteDatabaseHandler<T> extends SQLDatabaseHandler<T> {
         }
         Gson gson = getGson();
         String toStore = gson.toJson(instance);
-        processQueue.add(() -> {            
+        processQueue.add(() -> {
             try (PreparedStatement preparedStatement = getConnection().prepareStatement(getSqlConfig().getSaveObjectSQL())) {
                 preparedStatement.setString(1, toStore);
                 preparedStatement.setString(2, ((DataObject)instance).getUniqueId());
@@ -69,10 +69,7 @@ public class SQLiteDatabaseHandler<T> extends SQLDatabaseHandler<T> {
             try (PreparedStatement preparedStatement = getConnection().prepareStatement(getSqlConfig().getDeleteObjectSQL())) {
                 // UniqueId must *not* be placed in quotes
                 preparedStatement.setString(1, uniqueId);
-                int result = preparedStatement.executeUpdate();
-                if (result != 1) {
-                    throw new SQLException("Delete did not affect any rows!");
-                }
+                preparedStatement.executeUpdate();
             } catch (Exception e) {
                 plugin.logError("Could not delete object " + dataObject.getCanonicalName() + " " + uniqueId + " " + e.getMessage());
             }
