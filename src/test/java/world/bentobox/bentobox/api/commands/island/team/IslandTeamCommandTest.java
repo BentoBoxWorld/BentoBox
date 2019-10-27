@@ -161,7 +161,6 @@ public class IslandTeamCommandTest {
     public void testExecuteUserStringListOfStringIslandIsNotFull() {
         assertTrue(tc.execute(user, "team", Collections.emptyList()));
         verify(user).sendMessage(eq("commands.island.team.invite.you-can-invite"), eq(TextVariables.NUMBER), eq("3"));
-        verify(island).showMembers(eq(user));
     }
 
     /**
@@ -172,7 +171,6 @@ public class IslandTeamCommandTest {
         when(user.getPermissionValue(eq("bskyblock.team.maxsize"), anyInt())).thenReturn(0);
         assertTrue(tc.execute(user, "team", Collections.emptyList()));
         verify(user).sendMessage(eq("commands.island.team.invite.errors.island-is-full"));
-        verify(island).showMembers(eq(user));
     }
 
     /**
@@ -233,5 +231,4 @@ public class IslandTeamCommandTest {
         tc.removeInvite(invitee);
         assertNull(tc.getInvite(invitee));
     }
-
 }

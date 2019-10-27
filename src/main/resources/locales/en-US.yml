@@ -479,6 +479,21 @@ commands:
       description: "manage your team"
       info:
         description: "display detailed info about your team"
+        member-layout:
+          online: "&a&l o &r&f[name]"
+          offline: "&c&l o &r&f[name] &7([last_seen])"
+        last-seen:
+          layout: "&b[number] &7[unit] ago"
+          days: "days"
+          hours: "hours"
+          minutes: "minutes"
+        header: |+
+          &f--- &aTeam details &f---
+          &aMembers: &b[total]&7/&b[max]
+          &aOnline members: &b[online]
+        rank-layout:
+          owner: "&6[rank]:"
+          generic: "&6[rank] &7(&b[number]&7)&6:"
       coop:
         description: "make a player coop rank on your island"
         parameters: "<player>"
