@@ -88,8 +88,12 @@ public class IslandTeamCommand extends CompositeCommand {
 
     private void showMembers(Island island, User user) {
         // Gather online members
-        List<UUID> onlineMembers = island.getMemberSet(RanksManager.MEMBER_RANK).stream()
-                .filter(uuid -> Bukkit.getOfflinePlayer(uuid).isOnline()).collect(Collectors.toList());
+        List<UUID> onlineMembers = island
+                .getMemberSet(RanksManager.MEMBER_RANK)
+                .stream()
+                .filter(uuid -> Bukkit.getOfflinePlayer(uuid)
+                        .isOnline())
+                .collect(Collectors.toList());
 
         // List of ranks that we will loop through
         Integer[] ranks = new Integer[]{RanksManager.OWNER_RANK, RanksManager.SUB_OWNER_RANK, RanksManager.MEMBER_RANK, RanksManager.TRUSTED_RANK, RanksManager.COOP_RANK};

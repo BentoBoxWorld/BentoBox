@@ -28,6 +28,8 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
+import com.google.common.collect.ImmutableSet;
+
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.island.team.Invite.Type;
@@ -103,6 +105,12 @@ public class IslandTeamCommandTest {
         when(im.getOwner(any(), any())).thenReturn(uuid);
         // No team members
         when(im.getMembers(any(), any(UUID.class))).thenReturn(Collections.emptySet());
+        // Add members
+        ImmutableSet<UUID> set = new ImmutableSet.Builder<UUID>().build();
+        // No members
+        when(island.getMemberSet(anyInt(), any(Boolean.class))).thenReturn(set);
+        when(island.getMemberSet(anyInt())).thenReturn(set);
+        when(island.getMemberSet()).thenReturn(set);
         // island
         when(im.getIsland(any(), eq(uuid))).thenReturn(island);
 
