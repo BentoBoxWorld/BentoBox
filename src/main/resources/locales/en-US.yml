@@ -1126,8 +1126,8 @@ protection:
   spawn-protected: "&cSpawn protected: [description]"
 
   panel:
-    next: "Next Page"
-    previous: "Previous Page"
+    next: "&fNext Page"
+    previous: "&fPrevious Page"
     mode:
       advanced:
         name: "&6Advanced Settings"
