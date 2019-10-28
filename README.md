@@ -56,7 +56,7 @@ And there are plenty of other official or community-made Addons you can try and 
 ## Documentation
 
 * [Installation guide](https://github.com/BentoBoxWorld/bentobox/wiki/Install-Bentobox)
-* [Javadocs](https://ci.codemc.org/job/BentoBoxWorld/job/BentoBox/javadoc/)
+* [Javadocs](https://ci.codemc.io/job/BentoBoxWorld/job/BentoBox/ws/target/apidocs/index.html)
 * [Wiki](https://github.com/BentoBoxWorld/BentoBox/wiki)
 
 ## Downloads
