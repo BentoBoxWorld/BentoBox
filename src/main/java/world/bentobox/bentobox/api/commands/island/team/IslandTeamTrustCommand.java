@@ -111,35 +111,6 @@ public class IslandTeamTrustCommand extends CompositeCommand {
         }
     }
 
-    /*
-        Island island = getIslands().getIsland(getWorld(), user.getUniqueId());
-        if (island != null) {
-            if (getPlugin().getSettings().isInviteConfirmation()) {
-                if (itc.isInvited(targetUUID) && itc.getInviter(targetUUID).equals(user.getUniqueId()) && itc.getInvite(targetUUID).getType().equals(Type.TRUST)) {
-                    // Prevent spam
-                    user.sendMessage("commands.island.team.invite.errors.you-have-already-invited");
-                    return false;
-                }
-                // Put the invited player (key) onto the list with inviter (value)
-                // If someone else has invited a player, then this invite will overwrite the previous invite!
-                itc.addInvite(Type.TRUST, user.getUniqueId(), target.getUniqueId());
-                user.sendMessage("commands.island.team.invite.invitation-sent", TextVariables.NAME, target.getName());
-                // Send message to online player
-                target.sendMessage("commands.island.team.trust.name-has-invited-you", TextVariables.NAME, user.getName());
-                target.sendMessage("commands.island.team.invite.to-accept-or-reject", TextVariables.LABEL, getTopLabel());
-            } else {
-                island.setRank(target, RanksManager.TRUSTED_RANK);
-                user.sendMessage("commands.island.team.trust.success", TextVariables.NAME, target.getName());
-                target.sendMessage("commands.island.team.trust.you-are-trusted", TextVariables.NAME, user.getName());
-            }
-            return true;
-        } else {
-            // Should not happen
-            user.sendMessage("general.errors.general");
-            return false;
-        }
-    }*/
-
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
         if (args.isEmpty()) {

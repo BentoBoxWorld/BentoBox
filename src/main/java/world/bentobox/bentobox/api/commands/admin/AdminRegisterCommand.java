@@ -67,7 +67,7 @@ public class AdminRegisterCommand extends ConfirmableCommand {
             return false;
         }
         // Check if island is spawn
-        if (island.map(i -> i.isSpawn()).orElse(false)) {
+        if (island.map(Island::isSpawn).orElse(false)) {
             askConfirmation(user, user.getTranslation("commands.admin.register.island-is-spawn"), () -> register(user, targetUUID, island, closestIsland));
             return false;
         }

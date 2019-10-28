@@ -159,8 +159,8 @@ public class BlueprintPaster {
         // Tell the owner we're pasting blocks and how much time it might take
         owner.ifPresent(user -> {
             // Estimated time:
-            double total = blocks.size() + attached.size() + entities.size();
-            BigDecimal time = new BigDecimal(total / (pasteSpeed * 20.0D)).setScale(1, RoundingMode.UP);
+            double total = (double) blocks.size() + attached.size() + entities.size();
+            BigDecimal time = BigDecimal.valueOf(total / (pasteSpeed * 20.0D)).setScale(1, RoundingMode.UP);
             user.sendMessage("commands.island.create.pasting.estimated-time", TextVariables.NUMBER, String.valueOf(time.doubleValue()));
             // We're pasting blocks!
             user.sendMessage("commands.island.create.pasting.blocks", TextVariables.NUMBER, String.valueOf(blocks.size() + attached.size()));
