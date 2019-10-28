@@ -1139,6 +1139,11 @@ protection:
         name: "&cExpert Settings"
         description: "&aDisplays all the available settings."
       click-to-switch: "&eClick &ato switch to the &r[next]&r&a."
+    reset-to-default:
+      name: "&cReset to default"
+      description: |+
+        &aResets &c&lALL &r&athe settings to their
+        &adefault value.
     PROTECTION:
       title: "&6Protection"
       description: |-

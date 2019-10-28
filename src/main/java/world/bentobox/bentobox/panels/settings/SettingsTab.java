@@ -162,6 +162,17 @@ public class SettingsTab implements Tab, ClickHandler {
                     .clickHandler(this)
                     .build());
         }
+        // Add the reset everything to default - it's only in the player's settings panel
+        if (island != null) {
+            icons.put(8, new PanelItemBuilder().icon(Material.TNT)
+                    .name(user.getTranslation(PROTECTION_PANEL + "reset-to-default.name"))
+                    .description(user.getTranslation(PROTECTION_PANEL + "reset-to-default.description"))
+                    .clickHandler((panel, user1, clickType, slot) -> {
+                        island.setFlagsDefaults();
+                        return true;
+                    })
+                    .build());
+        }
         return icons;
     }
 
