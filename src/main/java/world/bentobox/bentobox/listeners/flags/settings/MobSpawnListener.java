@@ -6,7 +6,6 @@ import org.bukkit.entity.PufferFish;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.CreatureSpawnEvent;
-import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.database.objects.Island;
@@ -29,17 +28,29 @@ public class MobSpawnListener extends FlagListener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public boolean onNaturalMobSpawn(CreatureSpawnEvent e) {
-        // If not in the right world, return
+        // If not in the right world, or spawning is not natural return
         if (!getIWM().inWorld(e.getEntity().getLocation())) {
             return false;
         }
-        // Deal with natural spawning
-        if (e.getSpawnReason().equals(SpawnReason.NATURAL)
-                || e.getSpawnReason().equals(SpawnReason.JOCKEY)
-                || e.getSpawnReason().equals(SpawnReason.DEFAULT)
-                || e.getSpawnReason().equals(SpawnReason.MOUNT)
-                || e.getSpawnReason().equals(SpawnReason.NETHER_PORTAL)) {
-
+        switch (e.getSpawnReason()) {
+        // Natural            
+        case DEFAULT:
+        case DROWNED:
+        case JOCKEY:
+        case LIGHTNING:
+        case MOUNT:
+        case NATURAL:
+        case NETHER_PORTAL:
+        case OCELOT_BABY:
+        case PATROL:
+        case RAID:
+        case REINFORCEMENTS:
+        case SILVERFISH_BLOCK:
+        case SLIME_SPLIT:
+        case TRAP:
+        case VILLAGE_DEFENSE:
+        case VILLAGE_INVASION:
+            // Deal with natural spawning
             Optional<Island> island = getIslands().getIslandAt(e.getLocation());
             // Cancel the event if these are true
             if (Util.isHostileEntity(e.getEntity()) && !(e.getEntity() instanceof PufferFish)) {
@@ -51,8 +62,9 @@ public class MobSpawnListener extends FlagListener {
                 e.setCancelled(cancel);
                 return cancel;
             }
+        default:
+            return false;
         }
-        return false;
     }
 
 }
