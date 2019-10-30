@@ -622,7 +622,7 @@ commands:
       parameters: "<player>"
       cannot-expel-yourself: "&cYou cannot expel yourself!"
       cannot-expel: "&cThat player cannot be expelled."
-      cannot-ban-member: "&cYou cannot expel a team member!"
+      cannot-expel-member: "&cYou cannot expel a team member!"
       not-on-island: "&cThat player is not on your island!"
       player-expelled-you: "&b[name]&c expelled you from the island!"
       success: "&aYou expelled &b[name] &afrom the island."
