@@ -5,9 +5,6 @@ addons:
         organization: "bentobox-world"
         token:
             secure: $SONAR_TOKEN
-        branches:
-            - develop
-            - master
 jdk:
     - openjdk8
     - openjdk11
