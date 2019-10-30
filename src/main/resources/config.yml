@@ -1,7 +1,25 @@
-# BentoBox Configuration 1.8.0
-# This config file is dynamic and is updated right after BentoBox loaded its settings from it.
-# You can edit it while the server is online and you can do '/bbox reload' to take the changes into account.
-# However, it is a better practice to edit this file while the server is offline.
+# BentoBox v1.9.0-SNAPSHOT-LOCAL configuration file.
+#
+# This configuration file contains settings that mainly apply to or manage the following elements:
+#  * Data storage
+#  * Gamemodes (commands, ...)
+#  * Internet connectivity (metrics, web-based content-enriched features, ...)
+#
+# Note that this configuration file is dynamic:
+#  * It gets updated with the newest settings and comments after BentoBox loaded its settings from it.
+#  * Upon updating BentoBox, new settings will be automatically added into this configuration file.
+#     * Said settings are distinguishable by a dedicated comment, which looks like this:
+#        Added since X.Y.Z.
+#     * They are provided with default values that should not cause issues on live production servers.
+#  * You can however edit this file while the server is online.
+#    You will therefore need to run the following command in order to take the changes into account: /bentobox reload.
+#
+# Here are a few pieces of advice before you get started:
+#  * You should check out our Wiki, which may provide you useful tips or insights about BentoBox's features.
+#     Link: https://github.com/BentoBoxWorld/BentoBox/wiki
+#  * You should edit this configuration file while the server is offline.
+#  * Moreover, whenever you update BentoBox, you should do so on a test server first.
+#     This will allow you to configure the new settings beforehand instead of applying them inadvertently on a live production server.
 general:
   # Default language for new players.
   # This is the filename in the locale folder without .yml.

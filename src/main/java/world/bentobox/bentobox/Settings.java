@@ -14,13 +14,29 @@ import world.bentobox.bentobox.database.DatabaseSetup.DatabaseType;
  * @author tastybento
  */
 @StoreAt(filename="config.yml") // Explicitly call out what name this should have.
-@ConfigComment("BentoBox Configuration [version]")
-@ConfigComment("This config file is dynamic and is updated right after BentoBox loaded its settings from it.")
-@ConfigComment("You can edit it while the server is online and you can do '/bbox reload' to take the changes into account.")
-@ConfigComment("However, it is a better practice to edit this file while the server is offline.")
+@ConfigComment("BentoBox v[version] configuration file.")
+@ConfigComment("")
+@ConfigComment("This configuration file contains settings that mainly apply to or manage the following elements:")
+@ConfigComment(" * Data storage")
+@ConfigComment(" * Gamemodes (commands, ...)")
+@ConfigComment(" * Internet connectivity (metrics, web-based content-enriched features, ...)")
+@ConfigComment("")
+@ConfigComment("Note that this configuration file is dynamic:")
+@ConfigComment(" * It gets updated with the newest settings and comments after BentoBox loaded its settings from it.")
+@ConfigComment(" * Upon updating BentoBox, new settings will be automatically added into this configuration file.")
+@ConfigComment("    * Said settings are distinguishable by a dedicated comment, which looks like this:")
+@ConfigComment("       Added since X.Y.Z.")
+@ConfigComment("    * They are provided with default values that should not cause issues on live production servers.")
+@ConfigComment(" * You can however edit this file while the server is online.")
+@ConfigComment("   You will therefore need to run the following command in order to take the changes into account: /bentobox reload.")
+@ConfigComment("")
+@ConfigComment("Here are a few pieces of advice before you get started:")
+@ConfigComment(" * You should check out our Wiki, which may provide you useful tips or insights about BentoBox's features.")
+@ConfigComment("    Link: https://github.com/BentoBoxWorld/BentoBox/wiki")
+@ConfigComment(" * You should edit this configuration file while the server is offline.")
+@ConfigComment(" * Moreover, whenever you update BentoBox, you should do so on a test server first.")
+@ConfigComment("    This will allow you to configure the new settings beforehand instead of applying them inadvertently on a live production server.")
 public class Settings implements ConfigObject {
-
-    // ---------------------------------------------
 
     /*      GENERAL     */
     @ConfigComment("Default language for new players.")
@@ -227,7 +243,7 @@ public class Settings implements ConfigObject {
     @ConfigEntry(path = "web.updater.check-updates.addons", since = "1.3.0", hidden = true)
     private boolean checkAddonsUpdates = true;
 
-    //---------------------------------------------------------------------------------------/
+    // ---------------------------------------------
     // Getters and setters
 
     public boolean isMetrics() {
