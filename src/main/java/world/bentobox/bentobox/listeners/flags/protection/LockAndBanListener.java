@@ -161,8 +161,8 @@ public class LockAndBanListener extends FlagListener {
             player.setGameMode(getIWM().getDefaultGameMode(player.getWorld()));
 
             // Log
-            getPlugin().log("Could not teleport '" + player.getName() + "' back to his island or the spawn.");
-            getPlugin().log("Please consider setting a spawn for this world using the admin setspawn command.");
+            getPlugin().logWarning("Could not teleport '" + player.getName() + "' back to his island or the spawn.");
+            getPlugin().logWarning("Please consider setting a spawn for this world using the admin setspawn command.");
         }
     }
 }
