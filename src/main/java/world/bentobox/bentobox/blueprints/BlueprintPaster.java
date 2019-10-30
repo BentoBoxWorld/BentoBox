@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.bukkit.Bukkit;
@@ -297,8 +298,9 @@ public class BlueprintPaster {
             bs.update(true, false);
         }
         // Banners
-        if (bs instanceof Banner) {
+        if (bs instanceof Banner && bpBlock.getBannerPatterns() != null) {
             Banner banner = (Banner) bs;
+            bpBlock.getBannerPatterns().removeIf(Objects::isNull);
             banner.setPatterns(bpBlock.getBannerPatterns());
             banner.update(true, false);
         }
