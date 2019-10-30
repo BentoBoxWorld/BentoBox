@@ -416,9 +416,16 @@ public class AddonsManager {
         plugin.getFlagsManager().unregister(addon);
         // Disable
         if (addon.isEnabled()) {
-            addon.onDisable();
-            Bukkit.getPluginManager().callEvent(new AddonEvent().builder().addon(addon).reason(AddonEvent.Reason.DISABLE).build());
             plugin.log("Disabling " + addon.getDescription().getName() + "...");
+            try {
+                addon.onDisable();
+            } catch (Exception e) {
+                plugin.logError("Error occured when disabling addon " + addon.getDescription().getName());
+                plugin.logError("Report this to the addon's author(s)");
+                addon.getDescription().getAuthors().forEach(plugin::logError);
+                plugin.logStacktrace(e);
+            }
+            Bukkit.getPluginManager().callEvent(new AddonEvent().builder().addon(addon).reason(AddonEvent.Reason.DISABLE).build());            
         }
         // Clear loaders
         if (loaders.containsKey(addon)) {
