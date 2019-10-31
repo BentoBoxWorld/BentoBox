@@ -33,7 +33,7 @@ public class MobSpawnListener extends FlagListener {
             return false;
         }
         switch (e.getSpawnReason()) {
-        // Natural            
+        // Natural
         case DEFAULT:
         case DROWNED:
         case JOCKEY:
@@ -62,6 +62,7 @@ public class MobSpawnListener extends FlagListener {
                 e.setCancelled(cancel);
                 return cancel;
             }
+            return false;
         default:
             return false;
         }
