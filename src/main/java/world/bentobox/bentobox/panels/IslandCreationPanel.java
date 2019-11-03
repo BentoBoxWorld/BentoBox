@@ -5,6 +5,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.bukkit.ChatColor;
 import org.eclipse.jdt.annotation.NonNull;
 
 import world.bentobox.bentobox.BentoBox;
@@ -47,7 +48,9 @@ public class IslandCreationPanel {
                     || !bb.isRequirePermission()
                     || user.hasPermission(perm)) {
                 // Add an item
-                PanelItem item = new PanelItemBuilder().name(bb.getDisplayName()).description(bb.getDescription())
+                PanelItem item = new PanelItemBuilder()
+                        .name(bb.getDisplayName())
+                        .description(bb.getDescription().stream().map(l -> ChatColor.translateAlternateColorCodes('&', l)).collect(Collectors.toList()))
                         .icon(bb.getIcon()).clickHandler((panel, user1, clickType, slot1) -> {
                             user1.closeInventory();
                             command.execute(user1, label, Collections.singletonList(bb.getUniqueId()));

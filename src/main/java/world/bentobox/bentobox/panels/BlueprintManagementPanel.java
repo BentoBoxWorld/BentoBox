@@ -7,7 +7,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
@@ -224,7 +226,7 @@ public class BlueprintManagementPanel {
     protected PanelItem getBundleIcon(BlueprintBundle bb) {
         return new PanelItemBuilder()
                 .name(t("edit-description"))
-                .description(bb.getDescription())
+                .description(bb.getDescription().stream().map(l -> ChatColor.translateAlternateColorCodes('&', l)).collect(Collectors.toList()))
                 .icon(bb.getIcon())
                 .clickHandler((panel, u, clickType, slot) -> {
                     u.closeInventory();
