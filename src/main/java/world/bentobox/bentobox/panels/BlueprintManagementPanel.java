@@ -287,6 +287,7 @@ public class BlueprintManagementPanel {
     protected PanelItem getBlueprintItem(GameModeAddon addon, int pos, BlueprintBundle bb, Blueprint blueprint) {
         // Create description
         List<String> desc = blueprint.getDescription() == null ? new ArrayList<>() : blueprint.getDescription();
+        desc = desc.stream().map(l -> ChatColor.translateAlternateColorCodes('&', l)).collect(Collectors.toList());
         if ((!blueprint.equals(endBlueprint) && !blueprint.equals(normalBlueprint) && !blueprint.equals(netherBlueprint))) {
             if ((pos > MIN_WORLD_SLOT && pos < MAX_WORLD_SLOT)) {
                 desc.add(t("remove"));
