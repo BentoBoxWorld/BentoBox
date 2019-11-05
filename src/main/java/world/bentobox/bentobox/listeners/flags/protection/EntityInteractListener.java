@@ -47,11 +47,11 @@ public class EntityInteractListener extends FlagListener {
             }
         }
         // Villager trading
-        else if (e.getRightClicked().getType().equals(EntityType.VILLAGER)) {
+        if (e.getRightClicked().getType().equals(EntityType.VILLAGER)) {
             checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.TRADING);
         }
         // Name tags
-        else if (e.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.NAME_TAG)) {
+        if (e.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.NAME_TAG)) {
             checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.NAME_TAG);
         }
     }
