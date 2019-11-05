@@ -147,7 +147,7 @@ public class LockAndBanListener extends FlagListener {
      */
     private void eject(Player player) {
         // Teleport player to their home
-        if (getIslands().hasIsland(player.getWorld(), player.getUniqueId())) {
+        if (getIslands().hasIsland(player.getWorld(), player.getUniqueId()) || getIslands().inTeam(player.getWorld(), player.getUniqueId())) {
             getIslands().homeTeleport(player.getWorld(), player);
         } else if (getIslands().getSpawn(player.getWorld()).isPresent()) {
             // Else, try to teleport him to the world spawn
