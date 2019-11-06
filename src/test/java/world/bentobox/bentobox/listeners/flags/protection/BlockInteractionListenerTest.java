@@ -14,6 +14,8 @@ import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.EnumMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -49,11 +51,13 @@ import org.powermock.reflect.Whitebox;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
+import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.flags.Flag.Type;
 import world.bentobox.bentobox.api.user.Notifier;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.Flags;
+import world.bentobox.bentobox.managers.FlagsManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
@@ -98,6 +102,118 @@ public class BlockInteractionListenerTest {
     private ItemStack item;
     @Mock
     private Block clickedBlock;
+    @Mock
+    private FlagsManager fm;
+
+    private Map<Material, Flag> inHandItems = new EnumMap<>(Material.class);
+
+    private Map<Material, Flag> clickedBlocks = new EnumMap<>(Material.class);
+
+    private void setFlags() {
+        inHandItems.put(Material.ENDER_PEARL, Flags.ENDER_PEARL);
+        inHandItems.put(Material.BONE_MEAL, Flags.PLACE_BLOCKS);
+        clickedBlocks.put(Material.ANVIL, Flags.ANVIL);
+        clickedBlocks.put(Material.CHIPPED_ANVIL, Flags.ANVIL);
+        clickedBlocks.put(Material.DAMAGED_ANVIL, Flags.ANVIL);
+        clickedBlocks.put(Material.BEACON, Flags.BEACON);
+        clickedBlocks.put(Material.BLACK_BED, Flags.BED);
+        clickedBlocks.put(Material.BLUE_BED, Flags.BED);
+        clickedBlocks.put(Material.BROWN_BED, Flags.BED);
+        clickedBlocks.put(Material.CYAN_BED, Flags.BED);
+        clickedBlocks.put(Material.GRAY_BED, Flags.BED);
+        clickedBlocks.put(Material.GREEN_BED, Flags.BED);
+        clickedBlocks.put(Material.LIGHT_BLUE_BED, Flags.BED);
+        clickedBlocks.put(Material.LIGHT_GRAY_BED, Flags.BED);
+        clickedBlocks.put(Material.LIME_BED, Flags.BED);
+        clickedBlocks.put(Material.MAGENTA_BED, Flags.BED);
+        clickedBlocks.put(Material.ORANGE_BED, Flags.BED);
+        clickedBlocks.put(Material.PINK_BED, Flags.BED);
+        clickedBlocks.put(Material.PURPLE_BED, Flags.BED);
+        clickedBlocks.put(Material.RED_BED, Flags.BED);
+        clickedBlocks.put(Material.WHITE_BED, Flags.BED);
+        clickedBlocks.put(Material.YELLOW_BED, Flags.BED);
+        clickedBlocks.put(Material.BREWING_STAND, Flags.BREWING);
+        clickedBlocks.put(Material.CAULDRON, Flags.BREWING);
+        clickedBlocks.put(Material.BARREL, Flags.CONTAINER);
+        clickedBlocks.put(Material.CHEST, Flags.CONTAINER);
+        clickedBlocks.put(Material.CHEST_MINECART, Flags.CONTAINER);
+        clickedBlocks.put(Material.TRAPPED_CHEST, Flags.CONTAINER);
+        clickedBlocks.put(Material.BLACK_SHULKER_BOX, Flags.CONTAINER);
+        clickedBlocks.put(Material.BLUE_SHULKER_BOX, Flags.CONTAINER);
+        clickedBlocks.put(Material.BROWN_SHULKER_BOX, Flags.CONTAINER);
+        clickedBlocks.put(Material.CYAN_SHULKER_BOX, Flags.CONTAINER);
+        clickedBlocks.put(Material.GRAY_SHULKER_BOX, Flags.CONTAINER);
+        clickedBlocks.put(Material.GREEN_SHULKER_BOX, Flags.CONTAINER);
+        clickedBlocks.put(Material.LIGHT_BLUE_SHULKER_BOX, Flags.CONTAINER);
+        clickedBlocks.put(Material.LIME_SHULKER_BOX, Flags.CONTAINER);
+        clickedBlocks.put(Material.PINK_SHULKER_BOX, Flags.CONTAINER);
+        clickedBlocks.put(Material.MAGENTA_SHULKER_BOX, Flags.CONTAINER);
+        clickedBlocks.put(Material.ORANGE_SHULKER_BOX, Flags.CONTAINER);
+        clickedBlocks.put(Material.PURPLE_SHULKER_BOX, Flags.CONTAINER);
+        clickedBlocks.put(Material.RED_SHULKER_BOX, Flags.CONTAINER);
+        clickedBlocks.put(Material.LIGHT_GRAY_SHULKER_BOX, Flags.CONTAINER);
+        clickedBlocks.put(Material.WHITE_SHULKER_BOX, Flags.CONTAINER);
+        clickedBlocks.put(Material.YELLOW_SHULKER_BOX, Flags.CONTAINER);
+        clickedBlocks.put(Material.SHULKER_BOX, Flags.CONTAINER);
+        clickedBlocks.put(Material.FLOWER_POT, Flags.CONTAINER);
+        clickedBlocks.put(Material.COMPOSTER, Flags.CONTAINER);
+        clickedBlocks.put(Material.DISPENSER, Flags.DISPENSER);
+        clickedBlocks.put(Material.DROPPER, Flags.DROPPER);
+        clickedBlocks.put(Material.HOPPER, Flags.HOPPER);
+        clickedBlocks.put(Material.HOPPER_MINECART, Flags.HOPPER);
+        clickedBlocks.put(Material.ACACIA_DOOR, Flags.DOOR);
+        clickedBlocks.put(Material.BIRCH_DOOR, Flags.DOOR);
+        clickedBlocks.put(Material.DARK_OAK_DOOR, Flags.DOOR);
+        clickedBlocks.put(Material.IRON_DOOR, Flags.DOOR);
+        clickedBlocks.put(Material.JUNGLE_DOOR, Flags.DOOR);
+        clickedBlocks.put(Material.SPRUCE_DOOR, Flags.DOOR);
+        clickedBlocks.put(Material.OAK_DOOR, Flags.DOOR);
+        clickedBlocks.put(Material.ACACIA_TRAPDOOR, Flags.TRAPDOOR);
+        clickedBlocks.put(Material.BIRCH_TRAPDOOR, Flags.TRAPDOOR);
+        clickedBlocks.put(Material.DARK_OAK_TRAPDOOR, Flags.TRAPDOOR);
+        clickedBlocks.put(Material.OAK_TRAPDOOR, Flags.TRAPDOOR);
+        clickedBlocks.put(Material.JUNGLE_TRAPDOOR, Flags.TRAPDOOR);
+        clickedBlocks.put(Material.SPRUCE_TRAPDOOR, Flags.TRAPDOOR);
+        clickedBlocks.put(Material.IRON_TRAPDOOR, Flags.TRAPDOOR);
+        clickedBlocks.put(Material.ACACIA_FENCE_GATE, Flags.GATE);
+        clickedBlocks.put(Material.BIRCH_FENCE_GATE, Flags.GATE);
+        clickedBlocks.put(Material.DARK_OAK_FENCE_GATE, Flags.GATE);
+        clickedBlocks.put(Material.OAK_FENCE_GATE, Flags.GATE);
+        clickedBlocks.put(Material.JUNGLE_FENCE_GATE, Flags.GATE);
+        clickedBlocks.put(Material.SPRUCE_FENCE_GATE, Flags.GATE);
+        clickedBlocks.put(Material.BLAST_FURNACE, Flags.FURNACE);
+        clickedBlocks.put(Material.CAMPFIRE, Flags.FURNACE);
+        clickedBlocks.put(Material.FURNACE_MINECART, Flags.FURNACE);
+        clickedBlocks.put(Material.FURNACE, Flags.FURNACE);
+        clickedBlocks.put(Material.SMOKER, Flags.FURNACE);
+        clickedBlocks.put(Material.ENCHANTING_TABLE, Flags.ENCHANTING);
+        clickedBlocks.put(Material.ENDER_CHEST, Flags.ENDER_CHEST);
+        clickedBlocks.put(Material.JUKEBOX, Flags.JUKEBOX);
+        clickedBlocks.put(Material.NOTE_BLOCK, Flags.NOTE_BLOCK);
+        clickedBlocks.put(Material.CRAFTING_TABLE, Flags.CRAFTING);
+        clickedBlocks.put(Material.CARTOGRAPHY_TABLE, Flags.CRAFTING);
+        clickedBlocks.put(Material.GRINDSTONE, Flags.CRAFTING);
+        clickedBlocks.put(Material.STONECUTTER, Flags.CRAFTING);
+        clickedBlocks.put(Material.LOOM, Flags.CRAFTING);
+        clickedBlocks.put(Material.STONE_BUTTON, Flags.BUTTON);
+        clickedBlocks.put(Material.ACACIA_BUTTON, Flags.BUTTON);
+        clickedBlocks.put(Material.BIRCH_BUTTON, Flags.BUTTON);
+        clickedBlocks.put(Material.DARK_OAK_BUTTON, Flags.BUTTON);
+        clickedBlocks.put(Material.JUNGLE_BUTTON, Flags.BUTTON);
+        clickedBlocks.put(Material.OAK_BUTTON, Flags.BUTTON);
+        clickedBlocks.put(Material.SPRUCE_BUTTON, Flags.BUTTON);
+        clickedBlocks.put(Material.LEVER, Flags.LEVER);
+        clickedBlocks.put(Material.REPEATER, Flags.REDSTONE);
+        clickedBlocks.put(Material.COMPARATOR, Flags.REDSTONE);
+        clickedBlocks.put(Material.DAYLIGHT_DETECTOR, Flags.REDSTONE);
+        clickedBlocks.put(Material.DRAGON_EGG, Flags.DRAGON_EGG);
+        clickedBlocks.put(Material.END_PORTAL_FRAME, Flags.PLACE_BLOCKS);
+        clickedBlocks.put(Material.ITEM_FRAME, Flags.ITEM_FRAME);
+        clickedBlocks.put(Material.LECTERN, Flags.BREAK_BLOCKS);
+        clickedBlocks.put(Material.SWEET_BERRY_BUSH, Flags.BREAK_BLOCKS);
+        clickedBlocks.put(Material.CAKE, Flags.CAKE);
+    }
+
 
     /**
      * @throws java.lang.Exception
@@ -165,6 +281,9 @@ public class BlockInteractionListenerTest {
         // Notifier
         when(plugin.getNotifier()).thenReturn(notifier);
 
+        // FlagsManager
+        setFlags();
+
         // Class under test
         bil = new BlockInteractionListener();
     }
@@ -224,14 +343,14 @@ public class BlockInteractionListenerTest {
     public void testOnPlayerInteractNothingInHandNotAllowed() {
         int count = 0;
         int worldSettingCount = 0;
-        for (Material bm : bil.getClickedBlocks().keySet()) {
+        for (Material bm : clickedBlocks.keySet()) {
             when(clickedBlock.getType()).thenReturn(bm);
             PlayerInteractEvent e = new PlayerInteractEvent(player, Action.RIGHT_CLICK_BLOCK, item, clickedBlock, BlockFace.EAST, hand);
             bil.onPlayerInteract(e);
             assertTrue("Failure " + bm, e.useInteractedBlock().equals(Event.Result.DENY));
-            if (bil.getClickedBlocks().get(bm).getType().equals(Type.PROTECTION)) {
+            if (clickedBlocks.get(bm).getType().equals(Type.PROTECTION)) {
                 count++;
-            } else if (bil.getClickedBlocks().get(bm).getType().equals(Type.WORLD_SETTING)) {
+            } else if (clickedBlocks.get(bm).getType().equals(Type.WORLD_SETTING)) {
                 worldSettingCount++;
             }
             verify(notifier, times(count)).notify(any(), eq("protection.protected"));
@@ -245,12 +364,12 @@ public class BlockInteractionListenerTest {
     @Test
     public void testOnPlayerInteractNothingInHandAllowed() {
         when(island.isAllowed(any(), any())).thenReturn(true);
-        for (Material bm : bil.getClickedBlocks().keySet()) {
+        for (Material bm : clickedBlocks.keySet()) {
             // Allow flags
-            if (bil.getClickedBlocks().get(bm).getType().equals(Type.PROTECTION)) {
-                when(island.isAllowed(any(), eq(bil.getClickedBlocks().get(bm)))).thenReturn(true);
-            } else if (bil.getClickedBlocks().get(bm).getType().equals(Type.WORLD_SETTING)) {
-                bil.getClickedBlocks().get(bm).setSetting(world, true);
+            if (clickedBlocks.get(bm).getType().equals(Type.PROTECTION)) {
+                when(island.isAllowed(any(), eq(clickedBlocks.get(bm)))).thenReturn(true);
+            } else if (clickedBlocks.get(bm).getType().equals(Type.WORLD_SETTING)) {
+                clickedBlocks.get(bm).setSetting(world, true);
             }
             when(clickedBlock.getType()).thenReturn(bm);
             PlayerInteractEvent e = new PlayerInteractEvent(player, Action.RIGHT_CLICK_BLOCK, item, clickedBlock, BlockFace.EAST, hand);

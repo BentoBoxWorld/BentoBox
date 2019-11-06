@@ -1,9 +1,7 @@
 package world.bentobox.bentobox.listeners.flags.protection;
 
-import java.util.EnumMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -30,117 +28,6 @@ import world.bentobox.bentobox.lists.Flags;
  * @author tastybento
  */
 public class BlockInteractionListener extends FlagListener {
-
-    private final Map<Material, String> inHandItems;
-
-    private final Map<Material, String> clickedBlocks;
-
-    public BlockInteractionListener() {
-        inHandItems = new EnumMap<>(Material.class);
-        inHandItems.put(Material.ENDER_PEARL, "ENDER_PEARL");
-        inHandItems.put(Material.BONE_MEAL, "PLACE_BLOCKS");
-        clickedBlocks = new EnumMap<>(Material.class);
-        clickedBlocks.put(Material.ANVIL, "ANVIL");
-        clickedBlocks.put(Material.CHIPPED_ANVIL, "ANVIL");
-        clickedBlocks.put(Material.DAMAGED_ANVIL, "ANVIL");
-        clickedBlocks.put(Material.BEACON, "BEACON");
-        clickedBlocks.put(Material.BLACK_BED, "BED");
-        clickedBlocks.put(Material.BLUE_BED, "BED");
-        clickedBlocks.put(Material.BROWN_BED, "BED");
-        clickedBlocks.put(Material.CYAN_BED, "BED");
-        clickedBlocks.put(Material.GRAY_BED, "BED");
-        clickedBlocks.put(Material.GREEN_BED, "BED");
-        clickedBlocks.put(Material.LIGHT_BLUE_BED, "BED");
-        clickedBlocks.put(Material.LIGHT_GRAY_BED, "BED");
-        clickedBlocks.put(Material.LIME_BED, "BED");
-        clickedBlocks.put(Material.MAGENTA_BED, "BED");
-        clickedBlocks.put(Material.ORANGE_BED, "BED");
-        clickedBlocks.put(Material.PINK_BED, "BED");
-        clickedBlocks.put(Material.PURPLE_BED, "BED");
-        clickedBlocks.put(Material.RED_BED, "BED");
-        clickedBlocks.put(Material.WHITE_BED, "BED");
-        clickedBlocks.put(Material.YELLOW_BED, "BED");
-        clickedBlocks.put(Material.BREWING_STAND, "BREWING");
-        clickedBlocks.put(Material.CAULDRON, "BREWING");
-        clickedBlocks.put(Material.BARREL, "CONTAINER");
-        clickedBlocks.put(Material.CHEST, "CONTAINER");
-        clickedBlocks.put(Material.CHEST_MINECART, "CONTAINER");
-        clickedBlocks.put(Material.TRAPPED_CHEST, "CONTAINER");
-        clickedBlocks.put(Material.BLACK_SHULKER_BOX, "CONTAINER");
-        clickedBlocks.put(Material.BLUE_SHULKER_BOX, "CONTAINER");
-        clickedBlocks.put(Material.BROWN_SHULKER_BOX, "CONTAINER");
-        clickedBlocks.put(Material.CYAN_SHULKER_BOX, "CONTAINER");
-        clickedBlocks.put(Material.GRAY_SHULKER_BOX, "CONTAINER");
-        clickedBlocks.put(Material.GREEN_SHULKER_BOX, "CONTAINER");
-        clickedBlocks.put(Material.LIGHT_BLUE_SHULKER_BOX, "CONTAINER");
-        clickedBlocks.put(Material.LIME_SHULKER_BOX, "CONTAINER");
-        clickedBlocks.put(Material.PINK_SHULKER_BOX, "CONTAINER");
-        clickedBlocks.put(Material.MAGENTA_SHULKER_BOX, "CONTAINER");
-        clickedBlocks.put(Material.ORANGE_SHULKER_BOX, "CONTAINER");
-        clickedBlocks.put(Material.PURPLE_SHULKER_BOX, "CONTAINER");
-        clickedBlocks.put(Material.RED_SHULKER_BOX, "CONTAINER");
-        clickedBlocks.put(Material.LIGHT_GRAY_SHULKER_BOX, "CONTAINER");
-        clickedBlocks.put(Material.WHITE_SHULKER_BOX, "CONTAINER");
-        clickedBlocks.put(Material.YELLOW_SHULKER_BOX, "CONTAINER");
-        clickedBlocks.put(Material.SHULKER_BOX, "CONTAINER");
-        clickedBlocks.put(Material.FLOWER_POT, "CONTAINER");
-        clickedBlocks.put(Material.COMPOSTER, "CONTAINER");
-        clickedBlocks.put(Material.DISPENSER, "DISPENSER");
-        clickedBlocks.put(Material.DROPPER, "DROPPER");
-        clickedBlocks.put(Material.HOPPER, "HOPPER");
-        clickedBlocks.put(Material.HOPPER_MINECART, "HOPPER");
-        clickedBlocks.put(Material.ACACIA_DOOR, "DOOR");
-        clickedBlocks.put(Material.BIRCH_DOOR, "DOOR");
-        clickedBlocks.put(Material.DARK_OAK_DOOR, "DOOR");
-        clickedBlocks.put(Material.IRON_DOOR, "DOOR");
-        clickedBlocks.put(Material.JUNGLE_DOOR, "DOOR");
-        clickedBlocks.put(Material.SPRUCE_DOOR, "DOOR");
-        clickedBlocks.put(Material.OAK_DOOR, "DOOR");
-        clickedBlocks.put(Material.ACACIA_TRAPDOOR, "TRAPDOOR");
-        clickedBlocks.put(Material.BIRCH_TRAPDOOR, "TRAPDOOR");
-        clickedBlocks.put(Material.DARK_OAK_TRAPDOOR, "TRAPDOOR");
-        clickedBlocks.put(Material.OAK_TRAPDOOR, "TRAPDOOR");
-        clickedBlocks.put(Material.JUNGLE_TRAPDOOR, "TRAPDOOR");
-        clickedBlocks.put(Material.SPRUCE_TRAPDOOR, "TRAPDOOR");
-        clickedBlocks.put(Material.IRON_TRAPDOOR, "TRAPDOOR");
-        clickedBlocks.put(Material.ACACIA_FENCE_GATE, "GATE");
-        clickedBlocks.put(Material.BIRCH_FENCE_GATE, "GATE");
-        clickedBlocks.put(Material.DARK_OAK_FENCE_GATE, "GATE");
-        clickedBlocks.put(Material.OAK_FENCE_GATE, "GATE");
-        clickedBlocks.put(Material.JUNGLE_FENCE_GATE, "GATE");
-        clickedBlocks.put(Material.SPRUCE_FENCE_GATE, "GATE");
-        clickedBlocks.put(Material.BLAST_FURNACE, "FURNACE");
-        clickedBlocks.put(Material.CAMPFIRE, "FURNACE");
-        clickedBlocks.put(Material.FURNACE_MINECART, "FURNACE");
-        clickedBlocks.put(Material.FURNACE, "FURNACE");
-        clickedBlocks.put(Material.SMOKER, "FURNACE");
-        clickedBlocks.put(Material.ENCHANTING_TABLE, "ENCHANTING");
-        clickedBlocks.put(Material.ENDER_CHEST, "ENDER_CHEST");
-        clickedBlocks.put(Material.JUKEBOX, "JUKEBOX");
-        clickedBlocks.put(Material.NOTE_BLOCK, "NOTE_BLOCK");
-        clickedBlocks.put(Material.CRAFTING_TABLE, "CRAFTING");
-        clickedBlocks.put(Material.CARTOGRAPHY_TABLE, "CRAFTING");
-        clickedBlocks.put(Material.GRINDSTONE, "CRAFTING");
-        clickedBlocks.put(Material.STONECUTTER, "CRAFTING");
-        clickedBlocks.put(Material.LOOM, "CRAFTING");
-        clickedBlocks.put(Material.STONE_BUTTON, "BUTTON");
-        clickedBlocks.put(Material.ACACIA_BUTTON, "BUTTON");
-        clickedBlocks.put(Material.BIRCH_BUTTON, "BUTTON");
-        clickedBlocks.put(Material.DARK_OAK_BUTTON, "BUTTON");
-        clickedBlocks.put(Material.JUNGLE_BUTTON, "BUTTON");
-        clickedBlocks.put(Material.OAK_BUTTON, "BUTTON");
-        clickedBlocks.put(Material.SPRUCE_BUTTON, "BUTTON");
-        clickedBlocks.put(Material.LEVER, "LEVER");
-        clickedBlocks.put(Material.REPEATER, "REDSTONE");
-        clickedBlocks.put(Material.COMPARATOR, "REDSTONE");
-        clickedBlocks.put(Material.DAYLIGHT_DETECTOR, "REDSTONE");
-        clickedBlocks.put(Material.DRAGON_EGG, "DRAGON_EGG");
-        clickedBlocks.put(Material.END_PORTAL_FRAME, "PLACE_BLOCKS");
-        clickedBlocks.put(Material.ITEM_FRAME, "ITEM_FRAME");
-        clickedBlocks.put(Material.LECTERN, "BREAK_BLOCKS");
-        clickedBlocks.put(Material.SWEET_BERRY_BUSH, "BREAK_BLOCKS");
-        clickedBlocks.put(Material.CAKE, "CAKE");
-    }
 
     /**
      * These cover materials in another server version.
@@ -173,16 +60,26 @@ public class BlockInteractionListener extends FlagListener {
             else if (e.getItem().getType().name().endsWith("_SPAWN_EGG")) {
                 checkIsland(e, e.getPlayer(), e.getClickedBlock().getLocation(), Flags.SPAWN_EGGS);
             }
-            // Other items
-            else if (inHandItems.containsKey(e.getItem().getType())) {
-                getInHandItemFlag(e.getItem().getType()).ifPresent(f -> checkIsland(e, e.getPlayer(), e.getClickedBlock().getLocation(), f));
+            // Now check for in-hand items
+            if (e.getItem() != null) {
+                if (e.getItem().getType().name().contains("BOAT")) {
+                    checkIsland(e, e.getPlayer(), e.getClickedBlock().getLocation(), Flags.PLACE_BLOCKS);
+                    return;
+                }
+                switch (e.getItem().getType()) {
+                case ENDER_PEARL:
+                    checkIsland(e, e.getPlayer(), e.getClickedBlock().getLocation(), Flags.ENDER_PEARL);
+                    break;
+                case BONE_MEAL:
+                    checkIsland(e, e.getPlayer(), e.getClickedBlock().getLocation(), Flags.PLACE_BLOCKS);
+                    break;
+                default:
+                    break;
+                }
             }
         }
     }
 
-    private Optional<Flag> getInHandItemFlag(Material type) {
-        return BentoBox.getInstance().getFlagsManager().getFlag(inHandItems.get(type));
-    }
     /**
      * Check if an action can occur on a clicked block
      * @param e - event called
@@ -196,18 +93,163 @@ public class BlockInteractionListener extends FlagListener {
             checkIsland(e, player, loc, Flags.CONTAINER);
             return;
         }
-
-        if (clickedBlocks.containsKey(type)) {
-            getClickedBlockFlag(type).ifPresent(f -> checkIsland(e, player, loc, f));
+        switch (type) {
+        case ANVIL:
+        case CHIPPED_ANVIL:
+        case DAMAGED_ANVIL:
+            checkIsland(e, player, loc, Flags.ANVIL);
+            break;
+        case BEACON:
+            checkIsland(e, player, loc, Flags.BEACON);
+            break;
+        case BLACK_BED:
+        case BLUE_BED:
+        case BROWN_BED:
+        case CYAN_BED:
+        case GRAY_BED:
+        case GREEN_BED:
+        case LIGHT_BLUE_BED:
+        case LIGHT_GRAY_BED:
+        case LIME_BED:
+        case MAGENTA_BED:
+        case ORANGE_BED:
+        case PINK_BED:
+        case PURPLE_BED:
+        case RED_BED:
+        case WHITE_BED:
+        case YELLOW_BED:
+            checkIsland(e, player, loc, Flags.BED);
+            break;
+        case BREWING_STAND:
+        case CAULDRON:
+            checkIsland(e, player, loc, Flags.BREWING);
+            break;
+        case BARREL:
+        case CHEST:
+        case CHEST_MINECART:
+        case TRAPPED_CHEST:
+        case BLACK_SHULKER_BOX:
+        case BLUE_SHULKER_BOX:
+        case BROWN_SHULKER_BOX:
+        case CYAN_SHULKER_BOX:
+        case GRAY_SHULKER_BOX:
+        case GREEN_SHULKER_BOX:
+        case LIGHT_BLUE_SHULKER_BOX:
+        case LIME_SHULKER_BOX:
+        case PINK_SHULKER_BOX:
+        case MAGENTA_SHULKER_BOX:
+        case ORANGE_SHULKER_BOX:
+        case PURPLE_SHULKER_BOX:
+        case RED_SHULKER_BOX:
+        case LIGHT_GRAY_SHULKER_BOX:
+        case WHITE_SHULKER_BOX:
+        case YELLOW_SHULKER_BOX:
+        case SHULKER_BOX:
+        case FLOWER_POT:
+        case COMPOSTER:
+            checkIsland(e, player, loc, Flags.CONTAINER);
+            break;
+        case DISPENSER:
+            checkIsland(e, player, loc, Flags.DISPENSER);
+            break;
+        case DROPPER:
+            checkIsland(e, player, loc, Flags.DROPPER);
+            break;
+        case HOPPER:
+        case HOPPER_MINECART:
+            checkIsland(e, player, loc, Flags.HOPPER);
+            break;
+        case ACACIA_DOOR:
+        case BIRCH_DOOR:
+        case DARK_OAK_DOOR:
+        case IRON_DOOR:
+        case JUNGLE_DOOR:
+        case SPRUCE_DOOR:
+        case OAK_DOOR:
+            checkIsland(e, player, loc, Flags.DOOR);
+            break;
+        case ACACIA_TRAPDOOR:
+        case BIRCH_TRAPDOOR:
+        case DARK_OAK_TRAPDOOR:
+        case OAK_TRAPDOOR:
+        case JUNGLE_TRAPDOOR:
+        case SPRUCE_TRAPDOOR:
+        case IRON_TRAPDOOR:
+            checkIsland(e, player, loc, Flags.TRAPDOOR);
+            break;
+        case ACACIA_FENCE_GATE:
+        case BIRCH_FENCE_GATE:
+        case DARK_OAK_FENCE_GATE:
+        case OAK_FENCE_GATE:
+        case JUNGLE_FENCE_GATE:
+        case SPRUCE_FENCE_GATE:
+            checkIsland(e, player, loc, Flags.GATE);
+            break;
+        case BLAST_FURNACE:
+        case CAMPFIRE:
+        case FURNACE_MINECART:
+        case FURNACE:
+        case SMOKER:
+            checkIsland(e, player, loc, Flags.FURNACE);
+            break;
+        case ENCHANTING_TABLE:
+            checkIsland(e, player, loc, Flags.ENCHANTING);
+            break;
+        case ENDER_CHEST:
+            checkIsland(e, player, loc, Flags.ENDER_CHEST);
+            break;
+        case JUKEBOX:
+            checkIsland(e, player, loc, Flags.JUKEBOX);
+            break;
+        case NOTE_BLOCK:
+            checkIsland(e, player, loc, Flags.NOTE_BLOCK);
+            break;
+        case CRAFTING_TABLE:
+        case CARTOGRAPHY_TABLE:
+        case GRINDSTONE:
+        case STONECUTTER:
+        case LOOM:
+            checkIsland(e, player, loc, Flags.CRAFTING);
+            break;
+        case STONE_BUTTON:
+        case ACACIA_BUTTON:
+        case BIRCH_BUTTON:
+        case DARK_OAK_BUTTON:
+        case JUNGLE_BUTTON:
+        case OAK_BUTTON:
+        case SPRUCE_BUTTON:
+            checkIsland(e, player, loc, Flags.BUTTON);
+            break;
+        case LEVER:
+            checkIsland(e, player, loc, Flags.LEVER);
+            break;
+        case REPEATER:
+        case COMPARATOR:
+        case DAYLIGHT_DETECTOR:
+            checkIsland(e, player, loc, Flags.REDSTONE);
+            break;
+        case DRAGON_EGG:
+            checkIsland(e, player, loc, Flags.DRAGON_EGG);
+            break;
+        case END_PORTAL_FRAME:
+            checkIsland(e, player, loc, Flags.PLACE_BLOCKS);
+            break;
+        case ITEM_FRAME:
+            checkIsland(e, player, loc, Flags.ITEM_FRAME);
+            break;
+        case LECTERN:
+        case SWEET_BERRY_BUSH:
+            checkIsland(e, player, loc, Flags.BREAK_BLOCKS);
+            break;
+        case CAKE:
+            checkIsland(e, player, loc, Flags.CAKE);
+            break;
+        default:
+            if (stringFlags.containsKey(type.name())) {
+                Optional<Flag> f = BentoBox.getInstance().getFlagsManager().getFlag(stringFlags.get(type.name()));
+                f.ifPresent(flag -> checkIsland(e, player, loc, flag));
+            }
         }
-        if (stringFlags.containsKey(type.name())) {
-            Optional<Flag> f = BentoBox.getInstance().getFlagsManager().getFlag(stringFlags.get(type.name()));
-            f.ifPresent(flag -> checkIsland(e, player, loc, flag));
-        }
-    }
-
-    private Optional<Flag> getClickedBlockFlag(Material type) {
-        return BentoBox.getInstance().getFlagsManager().getFlag(clickedBlocks.get(type));
     }
 
     /**
@@ -241,25 +283,5 @@ public class BlockInteractionListener extends FlagListener {
         fromIsland.ifPresent(from -> e.setCancelled(toIsland.map(to -> to != from).orElse(true)));
     }
 
-    /**
-     * @return the inHandItems with flag values
-     */
-    public Map<Material, Flag> getInHandItems() {
-        return inHandItems.entrySet().stream()
-                .collect(Collectors.toMap(
-                        e -> e.getKey(),
-                        e -> BentoBox.getInstance().getFlagsManager().getFlag(e.getValue()).orElse(null)
-                        ));
-    }
 
-    /**
-     * @return the clickedBlocks with flag values
-     */
-    public Map<Material, Flag> getClickedBlocks() {
-        return clickedBlocks.entrySet().stream()
-                .collect(Collectors.toMap(
-                        e -> e.getKey(),
-                        e -> BentoBox.getInstance().getFlagsManager().getFlag(e.getValue()).orElse(null)
-                        ));
-    }
 }
