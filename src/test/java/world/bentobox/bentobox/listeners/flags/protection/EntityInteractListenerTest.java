@@ -107,7 +107,6 @@ public class EntityInteractListenerTest {
         when(location.getBlockX()).thenReturn(0);
         when(location.getBlockY()).thenReturn(0);
         when(location.getBlockZ()).thenReturn(0);
-        when(clickedEntity.getLocation()).thenReturn(location);
 
         // Clicked block
         when(clickedEntity.getLocation()).thenReturn(location);
