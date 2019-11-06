@@ -4,8 +4,8 @@ import org.bukkit.Material;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Boat;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Vehicle;
+import org.bukkit.entity.Villager;
 import org.bukkit.entity.minecart.RideableMinecart;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -34,24 +34,31 @@ public class EntityInteractListener extends FlagListener {
     public void onPlayerInteractEntity(PlayerInteractEntityEvent e) {
         if (e.getRightClicked() instanceof Vehicle) {
             // Animal riding
-            if (e.getRightClicked() instanceof Animals) {
-                checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.RIDING);
+            if (e.getRightClicked() instanceof Animals
+                    && !checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.RIDING)) {
+                return;
             }
             // Minecart riding
-            else if (e.getRightClicked() instanceof RideableMinecart) {
-                checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.MINECART);
+            else if (e.getRightClicked() instanceof RideableMinecart
+                    && !checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.MINECART)) {
+                return;
             }
             // Boat riding
-            else if (e.getRightClicked() instanceof Boat) {
-                checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.BOAT);
+            else if (e.getRightClicked() instanceof Boat
+                    && !checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.BOAT)) {
+                return;
             }
         }
         // Villager trading
-        if (e.getRightClicked().getType().equals(EntityType.VILLAGER)) {
+        else if (e.getRightClicked() instanceof Villager) {
+            // Check naming and check trading
             checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.TRADING);
+            if (e.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.NAME_TAG)) {
+                checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.NAME_TAG);
+            }
         }
         // Name tags
-        if (e.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.NAME_TAG)) {
+        else if (e.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.NAME_TAG)) {
             checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.NAME_TAG);
         }
     }
