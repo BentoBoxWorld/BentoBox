@@ -1,6 +1,3 @@
-/*
-
- */
 package world.bentobox.bentobox.listeners.flags.worldsettings;
 
 import org.bukkit.Material;

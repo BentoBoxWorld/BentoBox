@@ -224,14 +224,14 @@ public class BlockInteractionListenerTest {
     public void testOnPlayerInteractNothingInHandNotAllowed() {
         int count = 0;
         int worldSettingCount = 0;
-        for (Material bm : BlockInteractionListener.CLICKED_BLOCKS.keySet()) {
+        for (Material bm : BlockInteractionListener.getClickedBlocks().keySet()) {
             when(clickedBlock.getType()).thenReturn(bm);
             PlayerInteractEvent e = new PlayerInteractEvent(player, Action.RIGHT_CLICK_BLOCK, item, clickedBlock, BlockFace.EAST, hand);
             bil.onPlayerInteract(e);
             assertTrue("Failure " + bm, e.useInteractedBlock().equals(Event.Result.DENY));
-            if (BlockInteractionListener.CLICKED_BLOCKS.get(bm).getType().equals(Type.PROTECTION)) {
+            if (BlockInteractionListener.getClickedBlocks().get(bm).getType().equals(Type.PROTECTION)) {
                 count++;
-            } else if (BlockInteractionListener.CLICKED_BLOCKS.get(bm).getType().equals(Type.WORLD_SETTING)) {
+            } else if (BlockInteractionListener.getClickedBlocks().get(bm).getType().equals(Type.WORLD_SETTING)) {
                 worldSettingCount++;
             }
             verify(notifier, times(count)).notify(any(), eq("protection.protected"));
@@ -245,12 +245,12 @@ public class BlockInteractionListenerTest {
     @Test
     public void testOnPlayerInteractNothingInHandAllowed() {
         when(island.isAllowed(any(), any())).thenReturn(true);
-        for (Material bm : BlockInteractionListener.CLICKED_BLOCKS.keySet()) {
+        for (Material bm : BlockInteractionListener.getClickedBlocks().keySet()) {
             // Allow flags
-            if (BlockInteractionListener.CLICKED_BLOCKS.get(bm).getType().equals(Type.PROTECTION)) {
-                when(island.isAllowed(any(), eq(BlockInteractionListener.CLICKED_BLOCKS.get(bm)))).thenReturn(true);
-            } else if (BlockInteractionListener.CLICKED_BLOCKS.get(bm).getType().equals(Type.WORLD_SETTING)) {
-                BlockInteractionListener.CLICKED_BLOCKS.get(bm).setSetting(world, true);
+            if (BlockInteractionListener.getClickedBlocks().get(bm).getType().equals(Type.PROTECTION)) {
+                when(island.isAllowed(any(), eq(BlockInteractionListener.getClickedBlocks().get(bm)))).thenReturn(true);
+            } else if (BlockInteractionListener.getClickedBlocks().get(bm).getType().equals(Type.WORLD_SETTING)) {
+                BlockInteractionListener.getClickedBlocks().get(bm).setSetting(world, true);
             }
             when(clickedBlock.getType()).thenReturn(bm);
             PlayerInteractEvent e = new PlayerInteractEvent(player, Action.RIGHT_CLICK_BLOCK, item, clickedBlock, BlockFace.EAST, hand);
