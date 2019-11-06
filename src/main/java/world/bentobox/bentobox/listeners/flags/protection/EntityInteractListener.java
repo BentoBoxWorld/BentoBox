@@ -34,19 +34,16 @@ public class EntityInteractListener extends FlagListener {
     public void onPlayerInteractEntity(PlayerInteractEntityEvent e) {
         if (e.getRightClicked() instanceof Vehicle) {
             // Animal riding
-            if (e.getRightClicked() instanceof Animals
-                    && !checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.RIDING)) {
-                return;
+            if (e.getRightClicked() instanceof Animals) {
+                checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.RIDING);
             }
             // Minecart riding
-            else if (e.getRightClicked() instanceof RideableMinecart
-                    && !checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.MINECART)) {
-                return;
+            else if (e.getRightClicked() instanceof RideableMinecart) {
+                checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.MINECART);
             }
             // Boat riding
-            else if (e.getRightClicked() instanceof Boat
-                    && !checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.BOAT)) {
-                return;
+            else if (e.getRightClicked() instanceof Boat) {
+                checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.BOAT);
             }
         }
         // Villager trading

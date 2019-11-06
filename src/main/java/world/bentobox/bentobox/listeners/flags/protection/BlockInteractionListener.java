@@ -30,15 +30,15 @@ import world.bentobox.bentobox.lists.Flags;
  */
 public class BlockInteractionListener extends FlagListener {
 
-    private static Map<Material, Flag> inHandItems;
+    private final Map<Material, Flag> inHandItems;
 
-    private static Map<Material, Flag> clickedBlocks;
+    private final Map<Material, Flag> clickedBlocks;
 
     public BlockInteractionListener() {
-        inHandItems = new EnumMap<Material, Flag>(Material.class);
+        inHandItems = new EnumMap<>(Material.class);
         inHandItems.put(Material.ENDER_PEARL, Flags.ENDER_PEARL);
         inHandItems.put(Material.BONE_MEAL, Flags.PLACE_BLOCKS);
-        clickedBlocks = new EnumMap<Material, Flag>(Material.class);
+        clickedBlocks = new EnumMap<>(Material.class);
         clickedBlocks.put(Material.ANVIL, Flags.ANVIL);
         clickedBlocks.put(Material.CHIPPED_ANVIL, Flags.ANVIL);
         clickedBlocks.put(Material.DAMAGED_ANVIL, Flags.ANVIL);
@@ -167,12 +167,10 @@ public class BlockInteractionListener extends FlagListener {
             // Boats
             if (e.getItem().getType().name().endsWith("_BOAT")) {
                 checkIsland(e, e.getPlayer(), e.getClickedBlock().getLocation(), Flags.PLACE_BLOCKS);
-                return;
             }
             // Spawn eggs
             else if (e.getItem().getType().name().endsWith("_SPAWN_EGG")) {
                 checkIsland(e, e.getPlayer(), e.getClickedBlock().getLocation(), Flags.SPAWN_EGGS);
-                return;
             }
             // Other items
             else if (inHandItems.containsKey(e.getItem().getType())) {
@@ -237,14 +235,14 @@ public class BlockInteractionListener extends FlagListener {
     /**
      * @return the inHandItems
      */
-    public static Map<Material, Flag> getInHandItems() {
+    public Map<Material, Flag> getInHandItems() {
         return inHandItems;
     }
 
     /**
      * @return the clickedBlocks
      */
-    public static Map<Material, Flag> getClickedBlocks() {
+    public Map<Material, Flag> getClickedBlocks() {
         return clickedBlocks;
     }
 }
