@@ -1,5 +1,6 @@
 package world.bentobox.bentobox.listeners.flags.protection;
 
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.ArmorStand;
@@ -108,14 +109,25 @@ public class BreakBlocksListener extends FlagListener {
         }
         // Get the attacker
         if (e.getDamager() instanceof Player) {
-            checkIsland(e, (Player)e.getDamager(), e.getEntity().getLocation(), Flags.BREAK_BLOCKS);
+            // Check the break blocks flag
+            notAllowed(e, (Player)e.getDamager(), e.getEntity().getLocation());
         } else if (e.getDamager() instanceof Projectile) {
             // Find out who fired the arrow
             Projectile p = (Projectile) e.getDamager();
-            if (p.getShooter() instanceof Player && !checkIsland(e, (Player)p.getShooter(), e.getEntity().getLocation(), Flags.BREAK_BLOCKS)) {
+            if (p.getShooter() instanceof Player && notAllowed(e, (Player)p.getShooter(), e.getEntity().getLocation())) {
                 e.getEntity().setFireTicks(0);
                 p.setFireTicks(0);
             }
         }
+    }
+
+    private boolean notAllowed(EntityDamageByEntityEvent e, Player player, Location location) {
+        if (!checkIsland(e, player, location, Flags.BREAK_BLOCKS)) return true;
+        if (e.getEntity() instanceof ItemFrame) {
+            return !checkIsland(e, player, location, Flags.ITEM_FRAME);
+        } else if (e.getEntity() instanceof ArmorStand) {
+            return !checkIsland(e, player, location, Flags.ARMOR_STAND);
+        }
+        return false;        
     }
 }
