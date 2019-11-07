@@ -874,7 +874,9 @@ protection:
       hint: "Villager hurting disabled"
     ITEM_FRAME:
       name: "Item Frame"
-      description: "Toggle interaction"
+      description: |-
+        &aToggle interaction.
+        &aOverrides place or break blocks
       hint: "Item Frame use disabled"
     ITEM_FRAME_DAMAGE:
       description: |-
