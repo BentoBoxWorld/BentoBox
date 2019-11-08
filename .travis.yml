@@ -3,8 +3,7 @@ sudo: false
 addons:
     sonarcloud:
         organization: "bentobox-world"
-        token:
-            secure: $SONAR_TOKEN
+
 jdk:
     - openjdk8
     - openjdk11
