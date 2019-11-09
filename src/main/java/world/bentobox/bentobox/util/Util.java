@@ -221,7 +221,7 @@ public class Util {
      */
     @Nullable
     public static World getWorld(@Nullable World world) {
-        return world == null ? null : world.getEnvironment().equals(Environment.NORMAL) ? world : Bukkit.getWorld(world.getName().replaceAll(NETHER, "").replaceAll(THE_END, ""));
+        return world == null ? null : world.getEnvironment().equals(Environment.NORMAL) ? world : Bukkit.getWorld(world.getName().replace(NETHER, "").replace(THE_END, ""));
     }
 
     /**
