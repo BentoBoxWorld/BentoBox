@@ -83,32 +83,35 @@ public class SafeSpotTeleport {
         notChecking = true;
 
         // Start a recurring task until done or cancelled
-        task = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
-            if (notChecking) {
-                notChecking = false;
-                List<ChunkSnapshot> chunkSnapshot = new ArrayList<>();
-                Iterator<Pair<Integer, Integer>> it = chunksToScan.iterator();
-                if (!it.hasNext()) {
-                    // Nothing left
-                    tidyUp(entity, failureMessage);
-                    return;
+        task = Bukkit.getScheduler().runTaskTimer(plugin, () -> gatherChunks(failureMessage), 0L, SPEED);
+    }
+
+    private void gatherChunks(String failureMessage) {
+        if (!notChecking) {
+            return;
+        }
+        notChecking = false;
+        List<ChunkSnapshot> chunkSnapshot = new ArrayList<>();
+        Iterator<Pair<Integer, Integer>> it = chunksToScan.iterator();
+        if (!it.hasNext()) {
+            // Nothing left
+            tidyUp(entity, failureMessage);
+            return;
+        }
+        // Add chunk snapshots to the list
+        while (it.hasNext() && chunkSnapshot.size() < MAX_CHUNKS) {
+            Pair<Integer, Integer> pair = it.next();
+            if (location.getWorld() != null) {
+                boolean isLoaded = location.getWorld().getChunkAt(pair.x, pair.z).isLoaded();
+                chunkSnapshot.add(location.getWorld().getChunkAt(pair.x, pair.z).getChunkSnapshot());
+                if (!isLoaded) {
+                    location.getWorld().getChunkAt(pair.x, pair.z).unload();
                 }
-                // Add chunk snapshots to the list
-                while (it.hasNext() && chunkSnapshot.size() < MAX_CHUNKS) {
-                    Pair<Integer, Integer> pair = it.next();
-                    if (location.getWorld() != null) {
-                        boolean isLoaded = location.getWorld().getChunkAt(pair.x, pair.z).isLoaded();
-                        chunkSnapshot.add(location.getWorld().getChunkAt(pair.x, pair.z).getChunkSnapshot());
-                        if (!isLoaded) {
-                            location.getWorld().getChunkAt(pair.x, pair.z).unload();
-                        }
-                    }
-                    it.remove();
-                }
-                // Move to next step
-                checkChunks(chunkSnapshot);
             }
-        }, 0L, SPEED);
+            it.remove();
+        }
+        // Move to next step
+        checkChunks(chunkSnapshot);
     }
 
     private void tidyUp(Entity entity, String failureMessage) {
