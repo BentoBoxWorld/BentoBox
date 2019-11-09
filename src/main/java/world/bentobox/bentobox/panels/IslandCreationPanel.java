@@ -39,7 +39,7 @@ public class IslandCreationPanel {
         PanelBuilder pb = new PanelBuilder().name(user.getTranslation("commands.island.create.pick")).user(user);
         // Get the bundles
         Comparator<BlueprintBundle> sortByDisplayName = (p, o) -> p.getDisplayName().compareToIgnoreCase(o.getDisplayName());
-        List<BlueprintBundle> bbs = plugin.getBlueprintsManager().getBlueprintBundles((@NonNull GameModeAddon) command.getAddon()).values()
+        List<BlueprintBundle> bbs = plugin.getBlueprintsManager().getBlueprintBundles(command.getAddon()).values()
                 .stream().sorted(sortByDisplayName).collect(Collectors.toList());
         // Loop through them and create items in the panel
         for (BlueprintBundle bb : bbs) {

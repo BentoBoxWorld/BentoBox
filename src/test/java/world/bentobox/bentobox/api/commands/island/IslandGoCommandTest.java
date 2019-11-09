@@ -733,6 +733,21 @@ public class IslandGoCommandTest {
         }
 
         @Override
+        public boolean isCreateIslandOnFirstLoginEnabled() {
+            return false;
+        }
+
+        @Override
+        public int getCreateIslandOnFirstLoginDelay() {
+            return 0;
+        }
+
+        @Override
+        public boolean isCreateIslandOnFirstLoginAbortOnLogout() {
+            return false;
+        }
+
+        @Override
         public @NonNull List<String> getOnJoinCommands() {
             return null;
         }

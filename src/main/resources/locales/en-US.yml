@@ -432,6 +432,7 @@ commands:
         done: "&aDone! Your island is ready and waiting for you!"
       pick: "&2Pick an island"
       unknown-blueprint: "&cThat blueprint has not been loaded yet."
+      on-first-login: "&aWelcome! We will start preparing your island in a few seconds."
     info:
       description: "display info about your island or the player's island"
       parameters: "<player>"

@@ -1,7 +1,9 @@
 package world.bentobox.bentobox.listeners;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -13,6 +15,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.eclipse.jdt.annotation.NonNull;
 
 import world.bentobox.bentobox.BentoBox;
@@ -22,6 +25,7 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.database.objects.Players;
 import world.bentobox.bentobox.lists.Flags;
+import world.bentobox.bentobox.managers.BlueprintsManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
@@ -42,12 +46,48 @@ public class JoinLeaveListener implements Listener {
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerJoin(final PlayerJoinEvent event) {
         User user = User.getInstance(event.getPlayer());
-        if (user.getUniqueId() == null) {
+        if (user == null || user.getUniqueId() == null) {
             return;
         }
         UUID playerUUID = user.getUniqueId();
-        // Load player
+
+        // Check if player hasn't joined before
+        if (!players.isKnown(playerUUID)) {
+            // Create a database entry for that player
+            players.addPlayer(playerUUID);
+
+            plugin.getIWM().getOverWorlds().stream()
+                    .filter(w -> plugin.getIWM().isCreateIslandOnFirstLoginEnabled(w))
+                    .forEach(w -> {
+                        // Even if that'd be extremely unlikely, it's better to check if the player doesn't have an already.
+                        if (!(plugin.getIslands().hasIsland(w, user) || plugin.getIslands().inTeam(w, user.getUniqueId()))) {
+                            int delay = plugin.getIWM().getCreateIslandOnFirstLoginDelay(w);
+                            user.sendMessage("commands.island.create.on-first-login",
+                                    TextVariables.NUMBER, String.valueOf(delay));
+
+                            Runnable createIsland = () -> {
+                                // should only execute if:
+                                // - abort on logout is false
+                                // - abort on logout is true && user is online
+                                if (!plugin.getIWM().isCreateIslandOnFirstLoginAbortOnLogout(w) || user.isOnline()){
+                                    plugin.getIWM().getAddon(w).ifPresent(addon -> addon.getPlayerCommand()
+                                            .map(command -> command.getSubCommand("create").orElse(null))
+                                            .ifPresent(command -> command.execute(user, "create", Collections.singletonList(BlueprintsManager.DEFAULT_BUNDLE_NAME))));
+                                }
+                            };
+
+                            if (delay <= 0) {
+                                createIsland.run();
+                            } else {
+                                plugin.getServer().getScheduler().runTaskLater(plugin, createIsland, delay * 20L);
+                            }
+                        }
+                    });
+        }
+
+        // Make sure the player is loaded into the cache (doesn't impact performance)
         players.addPlayer(playerUUID);
+
         // Reset island resets if required
         plugin.getIWM().getOverWorlds().stream()
                 .filter(w -> event.getPlayer().getLastPlayed() < plugin.getIWM().getResetEpoch(w))
@@ -75,7 +115,7 @@ public class JoinLeaveListener implements Listener {
         }
 
         // Clear inventory if required
-        clearPlayersInventory(Util.getWorld(event.getPlayer().getWorld()), User.getInstance(event.getPlayer()));
+        clearPlayersInventory(Util.getWorld(event.getPlayer().getWorld()), user);
     }
 
 
