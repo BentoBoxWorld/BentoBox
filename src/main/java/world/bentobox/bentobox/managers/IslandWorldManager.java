@@ -799,4 +799,33 @@ public class IslandWorldManager {
         return !gameModes.containsKey(world) || gameModes.get(world).getWorldSettings().isKickedKeepInventory();
     }
 
+    /**
+     *
+     * @param world
+     * @return
+     * @since 1.9.0
+     */
+    public boolean isCreateIslandOnFirstLoginEnabled(@NonNull World world) {
+        return gameModes.containsKey(world) && gameModes.get(world).getWorldSettings().isCreateIslandOnFirstLoginEnabled();
+    }
+
+    /**
+     *
+     * @param world
+     * @return
+     * @since 1.9.0
+     */
+    public int getCreateIslandOnFirstLoginDelay(@NonNull World world) {
+        return gameModes.containsKey(world) ? gameModes.get(world).getWorldSettings().getCreateIslandOnFirstLoginDelay() : 0;
+    }
+
+    /**
+     *
+     * @param world
+     * @return
+     * @since 1.9.0
+     */
+    public boolean isCreateIslandOnFirstLoginAbortOnLogout(@NonNull World world) {
+        return gameModes.containsKey(world) && gameModes.get(world).getWorldSettings().isCreateIslandOnFirstLoginAbortOnLogout();
+    }
 }

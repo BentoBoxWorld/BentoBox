@@ -672,5 +672,20 @@ public class BannedCommandsTest {
             return false;
         }
 
+        @Override
+        public boolean isCreateIslandOnFirstLoginEnabled() {
+            return false;
+        }
+
+        @Override
+        public int getCreateIslandOnFirstLoginDelay() {
+            return 0;
+        }
+
+        @Override
+        public boolean isCreateIslandOnFirstLoginAbortOnLogout() {
+            return false;
+        }
+
     }
 }

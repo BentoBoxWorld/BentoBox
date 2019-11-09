@@ -1,7 +1,9 @@
 package world.bentobox.bentobox.listeners;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -13,6 +15,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.eclipse.jdt.annotation.NonNull;
 
 import world.bentobox.bentobox.BentoBox;
@@ -22,6 +25,7 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.database.objects.Players;
 import world.bentobox.bentobox.lists.Flags;
+import world.bentobox.bentobox.managers.BlueprintsManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
@@ -42,42 +46,76 @@ public class JoinLeaveListener implements Listener {
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerJoin(final PlayerJoinEvent event) {
         User user = User.getInstance(event.getPlayer());
-        if (user.getUniqueId() == null) {
+        if (user == null || user.getUniqueId() == null) {
             return;
         }
         UUID playerUUID = user.getUniqueId();
-        // Load player
-        players.addPlayer(playerUUID);
-        if (plugin.getPlayers().isKnown(playerUUID)) {
-            // Reset island resets if required
+
+        // Check if player hasn't joined before
+        if (!players.isKnown(playerUUID)) {
+            // Create a database entry for that player
+            players.addPlayer(playerUUID);
+
             plugin.getIWM().getOverWorlds().stream()
-            .filter(w -> event.getPlayer().getLastPlayed() < plugin.getIWM().getResetEpoch(w))
-            .forEach(w -> players.setResets(w, playerUUID, 0));
+                    .filter(w -> plugin.getIWM().isCreateIslandOnFirstLoginEnabled(w))
+                    .forEach(w -> {
+                        // Even if that'd be extremely unlikely, it's better to check if the player doesn't have an already.
+                        if (!(plugin.getIslands().hasIsland(w, user) || plugin.getIslands().inTeam(w, user.getUniqueId()))) {
+                            int delay = plugin.getIWM().getCreateIslandOnFirstLoginDelay(w);
+                            user.sendMessage("commands.island.create.on-first-login",
+                                    TextVariables.NUMBER, String.valueOf(delay));
 
-            // Automated island ownership transfer
-            if (plugin.getSettings().isEnableAutoOwnershipTransfer()) {
-                runAutomatedOwnershipTransfer(user);
-            }
+                            Runnable createIsland = () -> {
+                                // should only execute if:
+                                // - abort on logout is false
+                                // - abort on logout is true && user is online
+                                if (!plugin.getIWM().isCreateIslandOnFirstLoginAbortOnLogout(w) || user.isOnline()){
+                                    plugin.getIWM().getAddon(w).ifPresent(addon -> addon.getPlayerCommand()
+                                            .map(command -> command.getSubCommand("create").orElse(null))
+                                            .ifPresent(command -> command.execute(user, "create", Collections.singletonList(BlueprintsManager.DEFAULT_BUNDLE_NAME))));
+                                }
+                            };
 
-            // Update the island range of the islands the player owns
-            updateIslandRange(user);
-
-            // Set the player's name (it may have changed), but only if it isn't empty
-            if (!user.getName().isEmpty()) {
-                players.setPlayerName(user);
-                players.save(playerUUID);
-            } else {
-                plugin.logWarning("Player that just logged in has no name! " + playerUUID.toString());
-            }
-
-            // If mobs have to be removed when a player joins, then wipe all the mobs on his island.
-            if (plugin.getIslands().locationIsOnIsland(event.getPlayer(), user.getLocation()) && Flags.REMOVE_MOBS.isSetForWorld(user.getWorld())) {
-                Bukkit.getScheduler().runTask(plugin, () -> plugin.getIslands().clearArea(user.getLocation()));
-            }
-
-            // Clear inventory if required
-            clearPlayersInventory(Util.getWorld(event.getPlayer().getWorld()), User.getInstance(event.getPlayer()));
+                            if (delay <= 0) {
+                                createIsland.run();
+                            } else {
+                                plugin.getServer().getScheduler().runTaskLater(plugin, createIsland, delay * 20L);
+                            }
+                        }
+                    });
         }
+
+        // Make sure the player is loaded into the cache (doesn't impact performance)
+        players.addPlayer(playerUUID);
+
+        // Reset island resets if required
+        plugin.getIWM().getOverWorlds().stream()
+                .filter(w -> event.getPlayer().getLastPlayed() < plugin.getIWM().getResetEpoch(w))
+                .forEach(w -> players.setResets(w, playerUUID, 0));
+
+        // Automated island ownership transfer
+        if (plugin.getSettings().isEnableAutoOwnershipTransfer()) {
+            runAutomatedOwnershipTransfer(user);
+        }
+
+        // Update the island range of the islands the player owns
+        updateIslandRange(user);
+
+        // Set the player's name (it may have changed), but only if it isn't empty
+        if (!user.getName().isEmpty()) {
+            players.setPlayerName(user);
+            players.save(playerUUID);
+        } else {
+            plugin.logWarning("Player that just logged in has no name! " + playerUUID.toString());
+        }
+
+        // If mobs have to be removed when a player joins, then wipe all the mobs on his island.
+        if (plugin.getIslands().locationIsOnIsland(event.getPlayer(), user.getLocation()) && Flags.REMOVE_MOBS.isSetForWorld(user.getWorld())) {
+            Bukkit.getScheduler().runTask(plugin, () -> plugin.getIslands().clearArea(user.getLocation()));
+        }
+
+        // Clear inventory if required
+        clearPlayersInventory(Util.getWorld(event.getPlayer().getWorld()), user);
     }
 
 
@@ -119,53 +157,53 @@ public class JoinLeaveListener implements Listener {
 
     private void runAutomatedOwnershipTransfer(User user) {
         plugin.getIWM().getOverWorlds().stream()
-        .filter(world -> plugin.getIslands().hasIsland(world, user) && !plugin.getIslands().isOwner(world, user.getUniqueId()))
-        .forEach(world -> {
-            Island island = plugin.getIslands().getIsland(world, user);
+                .filter(world -> plugin.getIslands().hasIsland(world, user) && !plugin.getIslands().isOwner(world, user.getUniqueId()))
+                .forEach(world -> {
+                    Island island = plugin.getIslands().getIsland(world, user);
 
-            OfflinePlayer owner = Bukkit.getOfflinePlayer(island.getOwner());
+                    OfflinePlayer owner = Bukkit.getOfflinePlayer(island.getOwner());
 
-            // Converting the setting (in days) to milliseconds.
-            long inactivityThreshold = plugin.getSettings().getAutoOwnershipTransferInactivityThreshold() * 24 * 60 * 60 * 1000L;
-            long timestamp = System.currentTimeMillis() - inactivityThreshold;
+                    // Converting the setting (in days) to milliseconds.
+                    long inactivityThreshold = plugin.getSettings().getAutoOwnershipTransferInactivityThreshold() * 24 * 60 * 60 * 1000L;
+                    long timestamp = System.currentTimeMillis() - inactivityThreshold;
 
-            // We make sure the current owner is inactive.
-            if (owner.getLastPlayed() != 0 && owner.getLastPlayed() < timestamp) {
-                // The current owner is inactive
-                // Now, let's run through all of the island members (except the player who's just joined) and see who's active.
-                // Sadly, this will make us calculate the owner inactivity again... :(
-                List<UUID> candidates = Arrays.asList((UUID[]) island.getMemberSet().stream()
-                        .filter(uuid -> !user.getUniqueId().equals(uuid))
-                        .filter(uuid -> Bukkit.getOfflinePlayer(uuid).getLastPlayed() != 0
-                        && Bukkit.getOfflinePlayer(uuid).getLastPlayed() < timestamp)
-                        .toArray());
+                    // We make sure the current owner is inactive.
+                    if (owner.getLastPlayed() != 0 && owner.getLastPlayed() < timestamp) {
+                        // The current owner is inactive
+                        // Now, let's run through all of the island members (except the player who's just joined) and see who's active.
+                        // Sadly, this will make us calculate the owner inactivity again... :(
+                        List<UUID> candidates = Arrays.asList((UUID[]) island.getMemberSet().stream()
+                                .filter(uuid -> !user.getUniqueId().equals(uuid))
+                                .filter(uuid -> Bukkit.getOfflinePlayer(uuid).getLastPlayed() != 0
+                                        && Bukkit.getOfflinePlayer(uuid).getLastPlayed() < timestamp)
+                                .toArray());
 
-                if (!candidates.isEmpty() && !plugin.getSettings().isAutoOwnershipTransferIgnoreRanks()) {
-                    // Ranks are not ignored, our candidates can only have the highest rank
-                    // TODO Complete this section
-                }
-            }
-        });
+                        if (!candidates.isEmpty() && !plugin.getSettings().isAutoOwnershipTransferIgnoreRanks()) {
+                            // Ranks are not ignored, our candidates can only have the highest rank
+                            // TODO Complete this section
+                        }
+                    }
+                });
     }
 
     private void updateIslandRange(User user) {
         plugin.getIWM().getOverWorlds().stream()
-        .filter(world -> plugin.getIslands().isOwner(world, user.getUniqueId()))
-        .forEach(world -> {
-            Island island = plugin.getIslands().getIsland(world, user);
-            if (island != null) {
-                // Check if new owner has a different range permission than the island size
-                int range = user.getPermissionValue(plugin.getIWM().getAddon(island.getWorld()).map(GameModeAddon::getPermissionPrefix).orElse("") + "island.range", island.getProtectionRange());
+                .filter(world -> plugin.getIslands().isOwner(world, user.getUniqueId()))
+                .forEach(world -> {
+                    Island island = plugin.getIslands().getIsland(world, user);
+                    if (island != null) {
+                        // Check if new owner has a different range permission than the island size
+                        int range = user.getPermissionValue(plugin.getIWM().getAddon(island.getWorld()).map(GameModeAddon::getPermissionPrefix).orElse("") + "island.range", island.getProtectionRange());
 
-                // Range can go up or down
-                if (range != island.getProtectionRange()) {
-                    user.sendMessage("commands.admin.setrange.range-updated", TextVariables.NUMBER, String.valueOf(range));
-                    plugin.log("Island protection range changed from " + island.getProtectionRange() + " to "
-                            + range + " for " + user.getName() + " due to permission.");
-                }
-                island.setProtectionRange(range);
-            }
-        });
+                        // Range can go up or down
+                        if (range != island.getProtectionRange()) {
+                            user.sendMessage("commands.admin.setrange.range-updated", TextVariables.NUMBER, String.valueOf(range));
+                            plugin.log("Island protection range changed from " + island.getProtectionRange() + " to "
+                                    + range + " for " + user.getName() + " due to permission.");
+                        }
+                        island.setProtectionRange(range);
+                    }
+                });
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
@@ -180,9 +218,9 @@ public class JoinLeaveListener implements Listener {
                 // No, there are no more players online on this island
                 // Tell players they are being removed
                 island.getMembers().entrySet().stream()
-                .filter(e -> e.getValue() == RanksManager.COOP_RANK)
-                .forEach(e -> User.getInstance(e.getKey())
-                        .sendMessage("commands.island.team.uncoop.all-members-logged-off", TextVariables.NAME, plugin.getPlayers().getName(island.getOwner())));
+                        .filter(e -> e.getValue() == RanksManager.COOP_RANK)
+                        .forEach(e -> User.getInstance(e.getKey())
+                                .sendMessage("commands.island.team.uncoop.all-members-logged-off", TextVariables.NAME, plugin.getPlayers().getName(island.getOwner())));
                 // Remove any coop players on this island
                 island.removeRank(RanksManager.COOP_RANK);
             }
