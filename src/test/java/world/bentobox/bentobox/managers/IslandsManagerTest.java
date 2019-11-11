@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -66,6 +67,9 @@ import org.powermock.reflect.Whitebox;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 
+import io.papermc.lib.PaperLib;
+import io.papermc.lib.environments.CraftBukkitEnvironment;
+import io.papermc.lib.environments.Environment;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
@@ -131,6 +135,8 @@ public class IslandsManagerTest {
     private Material sign;
     private Material wallSign;
 
+    private Environment env;
+
 
     /**
      * @throws java.lang.Exception
@@ -188,6 +194,8 @@ public class IslandsManagerTest {
         BukkitScheduler sch = mock(BukkitScheduler.class);
         PowerMockito.mockStatic(Bukkit.class);
         when(Bukkit.getScheduler()).thenReturn(sch);
+        // version
+        when(Bukkit.getVersion()).thenReturn("Paper version git-Paper-225 (MC: 1.14.4) (Implementing API version 1.14.4-R0.1-SNAPSHOT)");
 
         // Standard location
         manager = new IslandsManager(plugin);
@@ -295,6 +303,10 @@ public class IslandsManagerTest {
         if (wallSign == null) {
             wallSign = Material.getMaterial("OAK_WALL_SIGN");
         }
+
+        // PaperLib
+        env = new CraftBukkitEnvironment();
+        PaperLib.setCustomEnvironment(env);
     }
 
     @After
@@ -716,7 +728,7 @@ public class IslandsManagerTest {
         when(pm.getHomeLocation(any(), any(User.class), eq(0))).thenReturn(null);
         when(pm.getHomeLocation(any(), any(User.class), eq(1))).thenReturn(location);
         im.homeTeleport(world, player, 0);
-        verify(player).teleport(location);
+        verify(player).teleport(eq(location), any());
 
     }
 

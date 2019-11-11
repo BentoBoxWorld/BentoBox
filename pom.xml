@@ -87,8 +87,9 @@
     <!-- Profiles will allow to automatically change build version. -->
     <profiles>
         <profile>
-            <!-- ci profile is activated if exist environment variable BUILD_NUMBER.  -->
-            <!-- It replaces ${build.number} that is currently '-LOCAL' with correct build number from JENKINS machine.  -->
+            <!-- ci profile is activated if exist environment variable BUILD_NUMBER. -->
+            <!-- It replaces ${build.number} that is currently '-LOCAL' with 
+                correct build number from JENKINS machine. -->
             <id>ci</id>
             <activation>
                 <property>
@@ -101,10 +102,14 @@
             </properties>
         </profile>
         <profile>
-            <!-- Master profile is activated if exist environment variable GIT_BRANCH and its value is origin/master. -->
-            <!-- It will replace 'revision' with '${build.version}' so it removes '-SNAPSHOT' string at the end. -->
-            <!-- Also, as this is release build, build number can be set to empty string. -->
-            <!-- This profile will be used only if exist environment variable GIT_BRANCH with value origin/master. -->
+            <!-- Master profile is activated if exist environment variable 
+                GIT_BRANCH and its value is origin/master. -->
+            <!-- It will replace 'revision' with '${build.version}' so it 
+                removes '-SNAPSHOT' string at the end. -->
+            <!-- Also, as this is release build, build number can be set 
+                to empty string. -->
+            <!-- This profile will be used only if exist environment variable 
+                GIT_BRANCH with value origin/master. -->
             <id>master</id>
             <activation>
                 <property>
@@ -115,7 +120,7 @@
             <properties>
                 <!-- Override only if necessary -->
                 <revision>${build.version}</revision>
-                <!-- Empties build number variable.-->
+                <!-- Empties build number variable. -->
                 <build.number></build.number>
             </properties>
         </profile>
@@ -130,7 +135,7 @@
                     <plugin>
                         <groupId>org.sonarsource.scanner.maven</groupId>
                         <artifactId>sonar-maven-plugin</artifactId>
-                        <!--  was <version>3.4.1.1168</version> -->
+                        <!-- was <version>3.4.1.1168</version> -->
                         <version>3.6.0.1398</version>
                         <executions>
                             <execution>
@@ -171,67 +176,70 @@
             <id>worldedit-repo</id>
             <url>http://maven.sk89q.com/repo/</url>
         </repository>
+        <repository>
+            <id>papermc</id>
+            <url>https://papermc.io/repo/repository/maven-public/</url>
+        </repository>
     </repositories>
 
-	<dependencies>
-		<!-- Spigot API -->
-		<dependency>
-			<groupId>org.spigotmc</groupId>
-			<artifactId>spigot-api</artifactId>
-			<version>${spigot.version}</version>
-			<scope>provided</scope>
-		</dependency>
-		<!-- Metrics -->
-		<dependency>
-			<groupId>org.bstats</groupId>
-			<artifactId>bstats-bukkit</artifactId>
-			<version>${bstats.version}</version>
-		</dependency>
-		<!-- Mockito (Unit testing) -->
-		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-core</artifactId>
-			<version>3.1.0</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.powermock</groupId>
-			<artifactId>powermock-module-junit4</artifactId>
-			<version>${powermock.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.powermock</groupId>
-			<artifactId>powermock-api-mockito2</artifactId>
-			<version>${powermock.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<!-- Database -->
-		<dependency>
-			<groupId>org.mongodb</groupId>
-			<artifactId>mongodb-driver</artifactId>
-			<version>${mongodb.version}</version>
-		</dependency>
-		<!-- Vault: as their maven repo is down, we need to get it from jitpack -->
-        <!-- See https://github.com/MilkBowl/VaultAPI/issues/69 -->
-		<dependency>
-			<groupId>com.github.MilkBowl</groupId>
-			<artifactId>VaultAPI</artifactId>
-			<version>${vault.version}</version>
-			<scope>provided</scope>
-		</dependency>
-		<!-- Placeholders -->
-		<dependency>
-			<groupId>me.clip</groupId>
-			<artifactId>placeholderapi</artifactId>
-			<version>${placeholderapi.version}</version>
-			<scope>provided</scope>
-		</dependency>
+    <dependencies>
+        <!-- Spigot API -->
         <dependency>
-            <!-- We have to use a forked version of this api
-                 because Maxim had the brilliant idea to make one
-                 of the dependencies rely on an illegal artifact
-                 thus making its repository unusable. -->
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-api</artifactId>
+            <version>${spigot.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- Metrics -->
+        <dependency>
+            <groupId>org.bstats</groupId>
+            <artifactId>bstats-bukkit</artifactId>
+            <version>${bstats.version}</version>
+        </dependency>
+        <!-- Mockito (Unit testing) -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>3.1.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-module-junit4</artifactId>
+            <version>${powermock.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-api-mockito2</artifactId>
+            <version>${powermock.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- Database -->
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongodb-driver</artifactId>
+            <version>${mongodb.version}</version>
+        </dependency>
+        <!-- Vault: as their maven repo is down, we need to get it from jitpack -->
+        <!-- See https://github.com/MilkBowl/VaultAPI/issues/69 -->
+        <dependency>
+            <groupId>com.github.MilkBowl</groupId>
+            <artifactId>VaultAPI</artifactId>
+            <version>${vault.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- Placeholders -->
+        <dependency>
+            <groupId>me.clip</groupId>
+            <artifactId>placeholderapi</artifactId>
+            <version>${placeholderapi.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <!-- We have to use a forked version of this api because Maxim 
+                had the brilliant idea to make one of the dependencies rely on an illegal 
+                artifact thus making its repository unusable. -->
             <groupId>com.github.Prouser123-forks</groupId>
             <artifactId>MVdWPlaceholderAPI</artifactId>
             <version>${mvdwplaceholderapi.version}</version>
@@ -255,26 +263,35 @@
             <artifactId>GitHubWebAPI4Java</artifactId>
             <version>${githubapi.version}</version>
         </dependency>
-		<!-- Static analysis -->
-		<!-- We are using Eclipse's annotations.
-		If you're using IDEA, update your project settings to take these
-		into account for in real time static analysis -->
+        <!-- Static analysis -->
+        <!-- We are using Eclipse's annotations. If you're using IDEA, update 
+            your project settings to take these into account for in real time static 
+            analysis -->
         <dependency>
             <groupId>org.eclipse.jdt</groupId>
             <artifactId>org.eclipse.jdt.annotation</artifactId>
             <version>2.2.200</version>
         </dependency>
+        <!-- PaperLib -->
+        <dependency>
+            <groupId>io.papermc</groupId>
+            <artifactId>paperlib</artifactId>
+            <version>1.0.2</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
     <build>
         <!-- By default ${revision} is ${build.version}-SNAPSHOT -->
-        <!-- If GIT_BRANCH variable is set to origin/master, then it will be only ${build.version}. -->
+        <!-- If GIT_BRANCH variable is set to origin/master, then it will 
+            be only ${build.version}. -->
 
         <!-- By default ${build.number} is -LOCAL. -->
         <!-- If the BUILD_NUMBER variable is set, then it will be -b[number]. -->
-        <!-- If GIT_BRANCH variable is set to origin/master, then it will be the empty string. -->
+        <!-- If GIT_BRANCH variable is set to origin/master, then it will 
+            be the empty string. -->
         <finalName>${project.name}-${revision}${build.number}</finalName>
-        
+
         <defaultGoal>clean package</defaultGoal>
         <resources>
             <resource>
@@ -350,6 +367,10 @@
                             <pattern>io.github.TheBusyBiscuit.GitHubWebAPI4Java</pattern>
                             <shadedPattern>world.bentobox.bentobox.api.github</shadedPattern>
                         </relocation>
+                        <relocation>
+                            <pattern>io.papermc.lib</pattern>
+                            <shadedPattern>world.bentobox.bentobox.paperlib</shadedPattern> <!-- Replace this -->
+                        </relocation>
                     </relocations>
                     <artifactSet>
                         <excludes>
@@ -384,8 +405,8 @@
                 <configuration>
                     <append>true</append>
                     <excludes>
-                        <!-- This is required to prevent Jacoco from adding synthetic fields
-                            to a JavaBean class (causes errors in testing) -->
+                        <!-- This is required to prevent Jacoco from adding 
+                            synthetic fields to a JavaBean class (causes errors in testing) -->
                         <exclude>**/*Names*</exclude>
                     </excludes>
                 </configuration>

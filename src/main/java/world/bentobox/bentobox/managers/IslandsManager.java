@@ -20,6 +20,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.TreeSpecies;
 import org.bukkit.World;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
@@ -36,6 +37,7 @@ import org.eclipse.jdt.annotation.Nullable;
 
 import com.google.common.collect.ImmutableMap;
 
+import io.papermc.lib.PaperLib;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.island.IslandEvent;
@@ -667,24 +669,26 @@ public class IslandsManager {
         if (!home.getChunk().isLoaded()) {
             home.getChunk().load();
         }
-        player.teleport(home);
         // Add home
         if (plugin.getPlayers().getHomeLocations(world, player.getUniqueId()).isEmpty()) {
             plugin.getPlayers().setHomeLocation(player.getUniqueId(), home);
         }
-        if (number == 1) {
-            user.sendMessage("commands.island.go.teleport");
-        } else {
+        user.sendMessage("commands.island.go.teleport");
+        PaperLib.teleportAsync(player, home).thenAccept(b -> teleported(world, user, number, newIsland));
+    }
+
+    private void teleported(World world, User user, int number, boolean newIsland) {
+        if (number > 1) {
             user.sendMessage("commands.island.go.teleported", TextVariables.NUMBER, String.valueOf(number));
         }
         // If this is a new island, then run commands and do resets
         if (newIsland) {
             // Execute commands
             plugin.getIWM().getOnJoinCommands(world).forEach(command -> {
-                command = command.replace("[player]", player.getName());
+                command = command.replace("[player]", user.getName());
                 if (command.startsWith("[SUDO]")) {
                     // Execute the command by the player
-                    player.performCommand(command.substring(6));
+                    user.performCommand(command.substring(6));
                 } else {
                     // Otherwise execute as the server console
                     plugin.getServer().dispatchCommand(Bukkit.getConsoleSender(), command);
@@ -704,7 +708,7 @@ public class IslandsManager {
 
             // Reset the health
             if (plugin.getIWM().isOnJoinResetHealth(world)) {
-                user.getPlayer().setHealth(20.0D);
+                user.getPlayer().setHealth(user.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getDefaultValue());
             }
 
             // Reset the hunger
@@ -789,7 +793,7 @@ public class IslandsManager {
         this.spawn.put(spawn.getWorld(), spawn);
         spawn.setSpawn(true);
     }
-    
+
     /**
      * Clears the spawn island for this world
      * @param world - world
@@ -986,7 +990,7 @@ public class IslandsManager {
                 // Move player to spawn
                 if (spawn.containsKey(w)) {
                     // go to island spawn
-                    p.teleport(spawn.get(w).getSpawnPoint(w.getEnvironment()));
+                    PaperLib.teleportAsync(p, spawn.get(w).getSpawnPoint(w.getEnvironment()));
                 }
             }
         });
