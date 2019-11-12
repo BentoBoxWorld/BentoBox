@@ -666,9 +666,6 @@ public class IslandsManager {
             .build();
             return;
         }
-        if (!home.getChunk().isLoaded()) {
-            home.getChunk().load();
-        }
         // Add home
         if (plugin.getPlayers().getHomeLocations(world, player.getUniqueId()).isEmpty()) {
             plugin.getPlayers().setHomeLocation(player.getUniqueId(), home);
