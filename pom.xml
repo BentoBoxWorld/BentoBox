@@ -41,7 +41,7 @@
 
     <ciManagement>
         <system>jenkins</system>
-        <url>http://ci.codemc.org/job/BentoBoxWorld/job/BentoBox</url>
+        <url>https://ci.codemc.org/job/BentoBoxWorld/job/BentoBox</url>
     </ciManagement>
 
     <issueManagement>
@@ -166,15 +166,15 @@
         </repository>
         <repository>
             <id>placeholderapi-repo</id>
-            <url>http://repo.extendedclip.com/content/repositories/placeholderapi/</url>
+            <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
         </repository>
         <repository>
             <id>dynmap-repo</id>
-            <url>http://repo.mikeprimm.com/</url>
+            <url>https://repo.mikeprimm.com/</url>
         </repository>
         <repository>
             <id>worldedit-repo</id>
-            <url>http://maven.sk89q.com/repo/</url>
+            <url>https://maven.sk89q.com/repo/</url>
         </repository>
         <repository>
             <id>papermc</id>
@@ -240,7 +240,7 @@
             <!-- We have to use a forked version of this api because Maxim 
                 had the brilliant idea to make one of the dependencies rely on an illegal 
                 artifact thus making its repository unusable. -->
-            <groupId>com.github.Prouser123-forks</groupId>
+            <groupId>com.github.BentoBoxWorld</groupId>
             <artifactId>MVdWPlaceholderAPI</artifactId>
             <version>${mvdwplaceholderapi.version}</version>
         </dependency>
