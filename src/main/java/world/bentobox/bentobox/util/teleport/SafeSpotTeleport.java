@@ -17,6 +17,7 @@ import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.Nullable;
 
+import io.papermc.lib.PaperLib;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
@@ -226,16 +227,13 @@ public class SafeSpotTeleport {
      */
     private void teleportEntity(final Location loc) {
         task.cancel();
+        if (!portal && entity instanceof Player && homeNumber > 0) {
+            // Set home if so marked
+            plugin.getPlayers().setHomeLocation(User.getInstance(entity), loc, homeNumber);
+        }
+        Vector velocity = entity.getVelocity();
         // Return to main thread and teleport the player
-        Bukkit.getScheduler().runTask(plugin, () -> {
-            if (!portal && entity instanceof Player && homeNumber > 0) {
-                // Set home if so marked
-                plugin.getPlayers().setHomeLocation(User.getInstance(entity), loc, homeNumber);
-            }
-            Vector velocity = entity.getVelocity();
-            entity.teleport(loc);
-            entity.setVelocity(velocity);
-        });
+        Bukkit.getScheduler().runTask(plugin, () -> PaperLib.teleportAsync(entity, loc).thenAccept(b -> entity.setVelocity(velocity)));
     }
 
     /**
