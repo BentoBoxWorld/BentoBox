@@ -29,6 +29,7 @@ import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
+import org.bukkit.entity.WanderingTrader;
 import org.bukkit.entity.minecart.StorageMinecart;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryAction;
@@ -76,7 +77,7 @@ public class InventoryListenerTest {
     private final static List<Class<?>> HOLDERS = Arrays.asList(Horse.class, Chest.class,ShulkerBox.class, StorageMinecart.class,
             Dispenser.class,
             Dropper.class, Hopper.class, Furnace.class, BrewingStand.class,
-            Villager.class);
+            Villager.class, WanderingTrader.class);
 
     private Location location;
     private BentoBox plugin;
