@@ -988,6 +988,7 @@ protection:
           &awill not operate on islands
           &awhere all members are offline.
           &aMay help reduce lag.
+          &aDoes not affect spawn island.
       name: "Offline Redstone"
     PISTON_PUSH: 
       description: |-

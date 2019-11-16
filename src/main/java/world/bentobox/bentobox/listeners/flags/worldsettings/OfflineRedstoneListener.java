@@ -24,8 +24,10 @@ public class OfflineRedstoneListener extends FlagListener {
             return;
         }
 
-        // Check if island exists and members are online
-        getIslands().getProtectedIslandAt(e.getBlock().getLocation()).ifPresent(i -> {
+        // Check if island exists and members are online - excludes spawn
+        getIslands().getProtectedIslandAt(e.getBlock().getLocation())
+        .filter(i -> !i.isSpawn())
+        .ifPresent(i -> {
             for (UUID uuid : i.getMemberSet(RanksManager.COOP_RANK)) {
                 if (Bukkit.getPlayer(uuid) != null) {
                     return;
