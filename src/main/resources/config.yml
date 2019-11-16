@@ -124,8 +124,8 @@ island:
   # On the contrary, greater values will make pasting take less time, but this benefit is quickly severely impacted by the
   # resulting amount of chunks that must be loaded to fulfill the process, which often causes the server to hang out.
   paste-speed: 128
-  # Number of chunks per world to regenerate per tick.
-  # If there is a nether and end then 3x this number will be regenerated per tick.
+  # Number of chunks per world to regenerate per second.
+  # If there is a nether and end then 3x this number will be regenerated per second.
   # Smaller values will help reduce noticeable lag but will make deleting take longer.
   # A setting of 0 will leave island blocks (not recommended).
   # Added since 1.7.0.

@@ -190,8 +190,8 @@ public class Settings implements ConfigObject {
     @ConfigEntry(path = "island.paste-speed")
     private int pasteSpeed = 128;
 
-    @ConfigComment("Number of chunks per world to regenerate per tick.")
-    @ConfigComment("If there is a nether and end then 3x this number will be regenerated per tick.")
+    @ConfigComment("Island deletion: Number of chunks per world to regenerate per second.")
+    @ConfigComment("If there is a nether and end then 3x this number will be regenerated per second.")
     @ConfigComment("Smaller values will help reduce noticeable lag but will make deleting take longer.")
     @ConfigComment("A setting of 0 will leave island blocks (not recommended).")
     @ConfigEntry(path = "island.delete-speed", since = "1.7.0")

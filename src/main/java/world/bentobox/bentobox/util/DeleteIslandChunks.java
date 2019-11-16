@@ -71,7 +71,7 @@ public class DeleteIslandChunks {
                 });
             }
             inDelete = false;
-        }, 0L, 1L);
+        }, 0L, 20L);
     }
 
     private void processChunk(GameModeAddon gm, World world, int x, int z) {
