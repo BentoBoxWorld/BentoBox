@@ -1,6 +1,3 @@
-/**
- *
- */
 package world.bentobox.bentobox.listeners.flags.protection;
 
 import static org.junit.Assert.assertFalse;
@@ -30,6 +27,7 @@ import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Slime;
 import org.bukkit.entity.Villager;
+import org.bukkit.entity.WanderingTrader;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerFishEvent.State;
@@ -333,6 +331,22 @@ public class HurtingListenerTest {
         // Verify
         verify(notifier).notify(eq(user), eq("protection.protected"));
     }
+    
+    /**
+     * Test method for {@link HurtingListener#onFishing(org.bukkit.event.player.PlayerFishEvent)}.
+     */
+    @Test
+    public void testOnFishingDisallowWanderingTraderCatching() {
+        WanderingTrader entity = mock(WanderingTrader.class);
+        when(entity.getLocation()).thenReturn(location);
+        State state = State.CAUGHT_ENTITY;
+        PlayerFishEvent e = new PlayerFishEvent(player, entity, hookEntity, state);
+        HurtingListener hl = new HurtingListener();
+        hl.onFishing(e);
+        // Verify
+        verify(notifier).notify(eq(user), eq("protection.protected"));
+    }
+
 
     /**
      * Test method for {@link HurtingListener#onFishing(org.bukkit.event.player.PlayerFishEvent)}.
@@ -350,6 +364,24 @@ public class HurtingListenerTest {
         // Verify
         verify(notifier, never()).notify(eq(user), eq("protection.protected"));
     }
+    
+    /**
+     * Test method for {@link HurtingListener#onFishing(org.bukkit.event.player.PlayerFishEvent)}.
+     */
+    @Test
+    public void testOnFishingAllowWanderingTraderCatching() {
+        WanderingTrader entity = mock(WanderingTrader.class);
+        when(entity.getLocation()).thenReturn(location);
+        State state = State.CAUGHT_ENTITY;
+        PlayerFishEvent e = new PlayerFishEvent(player, entity, hookEntity, state);
+        HurtingListener hl = new HurtingListener();
+        // Allow
+        when(island.isAllowed(any(), any())).thenReturn(true);
+        hl.onFishing(e);
+        // Verify
+        verify(notifier, never()).notify(eq(user), eq("protection.protected"));
+    }
+    
     /**
      * Test method for {@link HurtingListener#onPlayerFeedParrots(org.bukkit.event.player.PlayerInteractEntityEvent)}.
      */

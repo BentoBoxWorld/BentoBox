@@ -1,11 +1,14 @@
 package world.bentobox.bentobox.listeners.flags.settings;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
+import java.util.WeakHashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Firework;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -16,6 +19,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.AreaEffectCloudApplyEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.LingeringPotionSplashEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.player.PlayerFishEvent;
@@ -32,7 +36,8 @@ import world.bentobox.bentobox.lists.Flags;
  */
 public class PVPListener extends FlagListener {
 
-    private HashMap<Integer, UUID> thrownPotions = new HashMap<>();
+    private Map<Integer, UUID> thrownPotions = new HashMap<>();
+    private Map<Entity, Player> firedFireworks = new WeakHashMap<>();
 
     /**
      * This method protects players from PVP if it is not allowed and from
@@ -79,21 +84,29 @@ public class PVPListener extends FlagListener {
         } else if (damager instanceof Projectile) {
             // Find out who fired the arrow
             Projectile p = (Projectile) damager;
-            Entity entity =(Entity)p.getShooter();
-            if (entity instanceof Player) {
-                // Allow self damage
-                if (hurtEntity.equals(entity)) {
-                    return;
-                }
-                User user = User.getInstance((Player)p.getShooter());
-                if (!checkIsland((Event)e, (Player)entity, damager.getLocation(), flag)) {
-                    damager.setFireTicks(0);
-                    hurtEntity.setFireTicks(0);
-                    user.notify(Flags.PVP_OVERWORLD.getHintReference());
-                    e.setCancelled(true);
-                }
+            Entity shooter =(Entity)p.getShooter();
+            if (shooter instanceof Player) {
+                processDamage(e, damager, (Player)shooter, hurtEntity, flag);
             }
+        } else if (damager instanceof Firework && firedFireworks.containsKey(damager)) {
+            Player shooter = firedFireworks.get(damager);
+            processDamage(e, damager, shooter, hurtEntity, flag);
         }
+    }
+
+    private void processDamage(Cancellable e, Entity damager, Player shooter, Entity hurtEntity, Flag flag) {
+        // Allow self damage
+        if (hurtEntity.equals(shooter)) {
+            return;
+        }
+        User user = User.getInstance(shooter);
+        if (!checkIsland((Event)e, shooter, damager.getLocation(), flag)) {
+            damager.setFireTicks(0);
+            hurtEntity.setFireTicks(0);
+            user.notify(Flags.PVP_OVERWORLD.getHintReference());
+            e.setCancelled(true);
+        }
+
     }
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
@@ -191,4 +204,11 @@ public class PVPListener extends FlagListener {
         }
     }
 
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled=true)
+    public void onPlayerShootFireworkEvent(final EntityShootBowEvent e) {
+        // Only care about players shooting fireworks
+        if (e.getEntity() instanceof Player && (e.getProjectile() instanceof Firework)) {
+            firedFireworks.put(e.getProjectile(), (Player)e.getEntity());
+        }
+    }
 }

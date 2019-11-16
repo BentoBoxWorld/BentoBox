@@ -6,14 +6,19 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 
+import javax.annotation.Nonnull;
+
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
+import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.Bat;
@@ -28,10 +33,13 @@ import org.bukkit.entity.Shulker;
 import org.bukkit.entity.Slime;
 import org.bukkit.entity.Snowman;
 import org.bukkit.entity.WaterMob;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
+import io.papermc.lib.PaperLib;
+import io.papermc.lib.features.blockstatesnapshot.BlockStateSnapshotResult;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.user.User;
 
@@ -351,4 +359,164 @@ public class Util {
         return entity instanceof Animals || entity instanceof IronGolem || entity instanceof Snowman ||
                 entity instanceof WaterMob && !(entity instanceof PufferFish) || entity instanceof Bat;
     }
+
+    /*
+     * PaperLib methods for addons to call
+     */
+
+    /**
+     * Teleports an Entity to the target location, loading the chunk asynchronously first if needed.
+     * @param entity The Entity to teleport
+     * @param location The Location to Teleport to
+     * @return Future that completes with the result of the teleport
+     */
+    @Nonnull
+    public static CompletableFuture<Boolean> teleportAsync(@Nonnull Entity entity, @Nonnull Location location) {
+        return PaperLib.teleportAsync(entity, location);
+    }
+
+    /**
+     * Teleports an Entity to the target location, loading the chunk asynchronously first if needed.
+     * @param entity The Entity to teleport
+     * @param location The Location to Teleport to
+     * @param cause The cause for the teleportation
+     * @return Future that completes with the result of the teleport
+     */
+    @Nonnull
+    public static CompletableFuture<Boolean> teleportAsync(@Nonnull Entity entity, @Nonnull Location location, TeleportCause cause) {
+        return PaperLib.teleportAsync(entity, location, cause);
+    }
+
+    /**
+     * Gets the chunk at the target location, loading it asynchronously if needed.
+     * @param loc Location to get chunk for
+     * @return Future that completes with the chunk
+     */
+    @Nonnull
+    public static CompletableFuture<Chunk> getChunkAtAsync(@Nonnull Location loc) {
+        return getChunkAtAsync(loc.getWorld(), loc.getBlockX() >> 4, loc.getBlockZ() >> 4, true);
+    }
+
+    /**
+     * Gets the chunk at the target location, loading it asynchronously if needed.
+     * @param loc Location to get chunk for
+     * @param gen Should the chunk generate or not. Only respected on some MC versions, 1.13 for CB, 1.12 for Paper
+     * @return Future that completes with the chunk, or null if the chunk did not exists and generation was not requested.
+     */
+    @Nonnull
+    public static CompletableFuture<Chunk> getChunkAtAsync(@Nonnull Location loc, boolean gen) {
+        return getChunkAtAsync(loc.getWorld(), loc.getBlockX() >> 4, loc.getBlockZ() >> 4, gen);
+    }
+
+    /**
+     * Gets the chunk at the target location, loading it asynchronously if needed.
+     * @param world World to load chunk for
+     * @param x X coordinate of the chunk to load
+     * @param z Z coordinate of the chunk to load
+     * @return Future that completes with the chunk
+     */
+    @Nonnull
+    public static CompletableFuture<Chunk> getChunkAtAsync(@Nonnull World world, int x, int z) {
+        return getChunkAtAsync(world, x, z, true);
+    }
+
+    /**
+     * Gets the chunk at the target location, loading it asynchronously if needed.
+     * @param world World to load chunk for
+     * @param x X coordinate of the chunk to load
+     * @param z Z coordinate of the chunk to load
+     * @param gen Should the chunk generate or not. Only respected on some MC versions, 1.13 for CB, 1.12 for Paper
+     * @return Future that completes with the chunk, or null if the chunk did not exists and generation was not requested.
+     */
+    @Nonnull
+    public static CompletableFuture<Chunk> getChunkAtAsync(@Nonnull World world, int x, int z, boolean gen) {
+        return PaperLib.getChunkAtAsync(world, x, z, gen);
+    }
+
+    /**
+     * Checks if the chunk has been generated or not. Only works on Paper 1.12+ or any 1.13.1+ version
+     * @param loc Location to check if the chunk is generated
+     * @return If the chunk is generated or not
+     */
+    public static boolean isChunkGenerated(@Nonnull Location loc) {
+        return isChunkGenerated(loc.getWorld(), loc.getBlockX() >> 4, loc.getBlockZ() >> 4);
+    }
+
+    /**
+     * Checks if the chunk has been generated or not. Only works on Paper 1.12+ or any 1.13.1+ version
+     * @param world World to check for
+     * @param x X coordinate of the chunk to check
+     * @param z Z coordinate of the chunk to checl
+     * @return If the chunk is generated or not
+     */
+    public static boolean isChunkGenerated(@Nonnull World world, int x, int z) {
+        return PaperLib.isChunkGenerated(world, x, z);
+    }
+
+    /**
+     * Get's a BlockState, optionally not using a snapshot
+     * @param block The block to get a State of
+     * @param useSnapshot Whether or not to use a snapshot when supported
+     * @return The BlockState
+     */
+    @Nonnull
+    public static BlockStateSnapshotResult getBlockState(@Nonnull Block block, boolean useSnapshot) {
+        return PaperLib.getBlockState(block, useSnapshot);
+    }
+
+    /**
+     * Detects if the current MC version is at least the following version.
+     *
+     * Assumes 0 patch version.
+     *
+     * @param minor Min Minor Version
+     * @return Meets the version requested
+     */
+    public static boolean isVersion(int minor) {
+        return PaperLib.isVersion(minor);
+    }
+
+    /**
+     * Detects if the current MC version is at least the following version.
+     * @param minor Min Minor Version
+     * @param patch Min Patch Version
+     * @return Meets the version requested
+     */
+    public static boolean isVersion(int minor, int patch) {
+        return PaperLib.isVersion(minor, patch);
+    }
+
+    /**
+     * Gets the current Minecraft Minor version. IE: 1.13.1 returns 13
+     * @return The Minor Version
+     */
+    public static int getMinecraftVersion() {
+        return PaperLib.getMinecraftVersion();
+    }
+
+    /**
+     * Gets the current Minecraft Patch version. IE: 1.13.1 returns 1
+     * @return The Patch Version
+     */
+    public static int getMinecraftPatchVersion() {
+        return PaperLib.getMinecraftPatchVersion();
+    }
+
+    /**
+     * Check if the server has access to the Spigot API
+     * @return True for Spigot <em>and</em> Paper environments
+     */
+    public static boolean isSpigot() {
+        return PaperLib.isSpigot();
+    }
+
+    /**
+     * Check if the server has access to the Paper API
+     * @return True for Paper environments
+     */
+    public static boolean isPaper() {
+        return PaperLib.isPaper();
+    }
+
+
 }

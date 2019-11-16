@@ -3,13 +3,13 @@ package world.bentobox.bentobox.listeners.flags.settings;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.times;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,10 +22,14 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.AreaEffectCloud;
+import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Firework;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.LingeringPotion;
 import org.bukkit.entity.LivingEntity;
@@ -37,7 +41,9 @@ import org.bukkit.entity.Zombie;
 import org.bukkit.event.entity.AreaEffectCloudApplyEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityDamageEvent.DamageModifier;
+import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.LingeringPotionSplashEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.player.PlayerFishEvent;
@@ -49,6 +55,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
@@ -87,15 +94,25 @@ import world.bentobox.bentobox.util.Util;
 @PrepareForTest({BentoBox.class, Util.class, Bukkit.class })
 public class PVPListenerTest {
 
+    @Mock
     private IslandWorldManager iwm;
+    @Mock
     private IslandsManager im;
+    @Mock
     private Island island;
+    @Mock
     private Player player;
+    @Mock
     private Player player2;
+    @Mock
     private Location loc;
+    @Mock
     private Zombie zombie;
+    @Mock
     private Creeper creeper;
+    @Mock
     private World world;
+    @Mock
     private Notifier notifier;
 
     /**
@@ -109,7 +126,6 @@ public class PVPListenerTest {
         // Make sure you set the plung for the User class otherwise it'll use an old object
         User.setPlugin(plugin);
         // Island World Manager
-        iwm = mock(IslandWorldManager.class);
         when(iwm.inWorld(any(World.class))).thenReturn(true);
         when(iwm.inWorld(any(Location.class))).thenReturn(true);
         when(iwm.getPermissionPrefix(Mockito.any())).thenReturn("bskyblock.");
@@ -120,23 +136,23 @@ public class PVPListenerTest {
         Panel panel = mock(Panel.class);
         when(panel.getInventory()).thenReturn(mock(Inventory.class));
 
-        // Sometimes use Mockito.withSettings().verboseLogging()
-        player = mock(Player.class);
-        UUID uuid = UUID.randomUUID();
-        when(player.getUniqueId()).thenReturn(uuid);
 
-        world = mock(World.class);
+        // World
         when(world.getEnvironment()).thenReturn(World.Environment.NORMAL);
-        when(player.getWorld()).thenReturn(world);
 
-        loc = mock(Location.class);
+        // Location
         when(loc.getWorld()).thenReturn(world);
 
+        // Sometimes use Mockito.withSettings().verboseLogging()
+        // Player
+        UUID uuid = UUID.randomUUID();
+        when(player.getUniqueId()).thenReturn(uuid);
         when(player.getLocation()).thenReturn(loc);
+        when(player.getWorld()).thenReturn(world);
         User.getInstance(player);
 
         // Sometimes use Mockito.withSettings().verboseLogging()
-        player2 = mock(Player.class);
+        // Player 2
         UUID uuid2 = UUID.randomUUID();
         when(player2.getUniqueId()).thenReturn(uuid2);
 
@@ -144,9 +160,11 @@ public class PVPListenerTest {
         when(player2.getLocation()).thenReturn(loc);
         User.getInstance(player2);
 
+        // Util
         PowerMockito.mockStatic(Util.class);
         when(Util.getWorld(any())).thenReturn(mock(World.class));
 
+        // Flags Manager
         FlagsManager fm = mock(FlagsManager.class);
         Flag flag = mock(Flag.class);
         when(flag.isSetForWorld(any())).thenReturn(false);
@@ -156,7 +174,7 @@ public class PVPListenerTest {
         when(fm.getFlag(Mockito.anyString())).thenReturn(Optional.of(flag));
         when(plugin.getFlagsManager()).thenReturn(fm);
 
-        im = mock(IslandsManager.class);
+        // Island Manager
         // Default is that player in on their island
         when(im.userIsOnIsland(any(), any())).thenReturn(true);
         island = mock(Island.class);
@@ -182,12 +200,12 @@ public class PVPListenerTest {
         when(placeholdersManager.replacePlaceholders(any(), any())).thenAnswer(answer);
 
         // Create some entities
-        zombie = mock(Zombie.class);
         when(zombie.getWorld()).thenReturn(world);
         when(zombie.getUniqueId()).thenReturn(UUID.randomUUID());
-        creeper = mock(Creeper.class);
+        when(zombie.getType()).thenReturn(EntityType.ZOMBIE);
         when(creeper.getWorld()).thenReturn(world);
         when(creeper.getUniqueId()).thenReturn(UUID.randomUUID());
+        when(creeper.getType()).thenReturn(EntityType.CREEPER);
 
         // Scheduler
         BukkitScheduler sch = mock(BukkitScheduler.class);
@@ -204,7 +222,6 @@ public class PVPListenerTest {
         when(iwm.getAddon(any())).thenReturn(opGma);
 
         // Notifier
-        notifier = mock(Notifier.class);
         when(plugin.getNotifier()).thenReturn(notifier);
 
         // Addon
@@ -1000,4 +1017,102 @@ public class PVPListenerTest {
         assertFalse(ae.getAffectedEntities().contains(player2));
         verify(notifier).notify(any(), eq(Flags.INVINCIBLE_VISITORS.getHintReference()));
     }
+
+    /**
+     * Test method for {@link PVPListener#onPlayerShootFireworkEvent(org.bukkit.event.entity.EntityShootBowEvent)}.
+     */
+    @Test
+    public void testOnPlayerShootFireworkEventNotPlayer() {
+        PVPListener listener = new PVPListener();
+        ItemStack bow = new ItemStack(Material.CROSSBOW);
+        Firework firework = mock(Firework.class);
+        when(firework.getEntityId()).thenReturn(123);
+        EntityShootBowEvent e = new EntityShootBowEvent(creeper, bow, firework, 0);
+        listener.onPlayerShootFireworkEvent(e);
+
+        // Now damage
+        EntityDamageByEntityEvent en = new EntityDamageByEntityEvent(firework, player, DamageCause.ENTITY_ATTACK, 0);
+        listener.onEntityDamage(en);
+        assertFalse(en.isCancelled());
+    }
+
+    /**
+     * Test method for {@link PVPListener#onPlayerShootFireworkEvent(org.bukkit.event.entity.EntityShootBowEvent)}.
+     */
+    @Test
+    public void testOnPlayerShootFireworkEventNotFirework() {
+        PVPListener listener = new PVPListener();
+        ItemStack bow = new ItemStack(Material.CROSSBOW);
+        Arrow arrow = mock(Arrow.class);
+        EntityShootBowEvent e = new EntityShootBowEvent(creeper, bow, arrow, 0);
+        listener.onPlayerShootFireworkEvent(e); 
+        // Now damage
+        EntityDamageByEntityEvent en = new EntityDamageByEntityEvent(arrow, player, DamageCause.ENTITY_ATTACK, 0);
+        listener.onEntityDamage(en);
+        assertFalse(en.isCancelled());
+    }
+
+    /**
+     * Test method for {@link PVPListener#onPlayerShootFireworkEvent(org.bukkit.event.entity.EntityShootBowEvent)}.
+     */
+    @Test
+    public void testOnPlayerShootFireworkEventNoPVPSelfDamage() {
+        // Disallow PVP
+        when(island.isAllowed(any())).thenReturn(false);
+        PVPListener listener = new PVPListener();
+        ItemStack bow = new ItemStack(Material.CROSSBOW);
+        Firework firework = mock(Firework.class);
+        when(firework.getEntityId()).thenReturn(123);
+        when(firework.getLocation()).thenReturn(loc);
+        EntityShootBowEvent e = new EntityShootBowEvent(player, bow, firework, 0);
+        listener.onPlayerShootFireworkEvent(e);
+
+        // Now damage
+        EntityDamageByEntityEvent en = new EntityDamageByEntityEvent(firework, player, DamageCause.ENTITY_EXPLOSION, 0);
+        listener.onEntityDamage(en);
+        assertFalse(en.isCancelled());
+    }
+
+    /**
+     * Test method for {@link PVPListener#onPlayerShootFireworkEvent(org.bukkit.event.entity.EntityShootBowEvent)}.
+     */
+    @Test
+    public void testOnPlayerShootFireworkEventNoPVP() {
+        // Disallow PVP
+        when(island.isAllowed(any())).thenReturn(false);
+        PVPListener listener = new PVPListener();
+        ItemStack bow = new ItemStack(Material.CROSSBOW);
+        Firework firework = mock(Firework.class);
+        when(firework.getEntityId()).thenReturn(123);
+        when(firework.getLocation()).thenReturn(loc);
+        EntityShootBowEvent e = new EntityShootBowEvent(player, bow, firework, 0);
+        listener.onPlayerShootFireworkEvent(e);
+
+        // Now damage
+        EntityDamageByEntityEvent en = new EntityDamageByEntityEvent(firework, player2, DamageCause.ENTITY_EXPLOSION, 0);
+        listener.onEntityDamage(en);
+        assertTrue(en.isCancelled());
+    }
+
+    /**
+     * Test method for {@link PVPListener#onPlayerShootFireworkEvent(org.bukkit.event.entity.EntityShootBowEvent)}.
+     */
+    @Test
+    public void testOnPlayerShootFireworkEventPVPAllowed() {
+        // Allow PVP
+        when(island.isAllowed(any())).thenReturn(true);
+        PVPListener listener = new PVPListener();
+        ItemStack bow = new ItemStack(Material.CROSSBOW);
+        Firework firework = mock(Firework.class);
+        when(firework.getEntityId()).thenReturn(123);
+        when(firework.getLocation()).thenReturn(loc);
+        EntityShootBowEvent e = new EntityShootBowEvent(player, bow, firework, 0);
+        listener.onPlayerShootFireworkEvent(e);
+
+        // Now damage
+        EntityDamageByEntityEvent en = new EntityDamageByEntityEvent(firework, player2, DamageCause.ENTITY_EXPLOSION, 0);
+        listener.onEntityDamage(en);
+        assertFalse(en.isCancelled());
+    }
+
 }
