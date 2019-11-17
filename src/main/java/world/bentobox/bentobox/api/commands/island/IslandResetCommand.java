@@ -126,6 +126,10 @@ public class IslandResetCommand extends ConfirmableCommand {
 
         // Add a reset
         getPlayers().addReset(getWorld(), user.getUniqueId());
+
+        // Reset the homes of the player
+        getPlayers().clearHomeLocations(getWorld(), user.getUniqueId());
+
         // Create new island and then delete the old one
         try {
             Builder builder = NewIsland.builder()
