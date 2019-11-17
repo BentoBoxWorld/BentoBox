@@ -433,7 +433,7 @@ public class PlayersManager {
     /**
      * Tries to get the user from his name
      * @param name - name
-     * @return user - user
+     * @return user - user or null if unknown
      */
     public User getUser(String name) {
         return getUser(getUUID(name));
