@@ -18,10 +18,6 @@ public class LiquidsFlowingOutListener extends FlagListener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onLiquidFlow(BlockFromToEvent e) {
         Block from = e.getBlock();
-        if (!from.isLiquid()) {
-            return;
-        }
-
         Block to = e.getToBlock();
         if (!getIWM().inWorld(from.getLocation()) || Flags.LIQUIDS_FLOWING_OUT.isSetForWorld(from.getWorld())) {
             // We do not want to run any check if this is not the right world or if it is allowed.

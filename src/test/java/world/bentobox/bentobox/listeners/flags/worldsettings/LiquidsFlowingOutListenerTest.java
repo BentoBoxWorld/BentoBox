@@ -106,19 +106,6 @@ public class LiquidsFlowingOutListenerTest {
     }
 
     /**
-     * Asserts that the event is never cancelled when the 'from' block is not liquid.
-     */
-    @Test
-    public void testFromIsNotLiquid() {
-        // The 'from' block is not liquid
-        when(from.isLiquid()).thenReturn(false);
-
-        // Run
-        new LiquidsFlowingOutListener().onLiquidFlow(event);
-        assertFalse(event.isCancelled());
-    }
-
-    /**
      * Asserts that the event is never cancelled when the 'from' block is not in the world.
      */
     @Test
