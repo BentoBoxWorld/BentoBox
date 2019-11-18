@@ -1,15 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>world.bentobox</groupId>
-    <artifactId>bentobox</artifactId>
-    <version>${revision}</version>
+    <artifactId>bentobox-parent</artifactId>
+    <version>1.9.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>bentobox</module>
+        <module>test</module>
+    </modules>
 
     <name>BentoBox</name>
-    <description>Highly scalable and customizable Minecraft Spigot plugin that enables you to run island-type gamemodes.</description>
+    <description>Highly scalable and customizable Minecraft Spigot plugin that enables you to run island-type
+        gamemodes.
+    </description>
     <url>https://github.com/BentoBoxWorld/BentoBox</url>
     <inceptionYear>2017</inceptionYear>
 
@@ -64,24 +72,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
-        <!-- Non-minecraft related dependencies -->
-        <powermock.version>2.0.4</powermock.version>
-        <mongodb.version>3.8.0</mongodb.version>
-        <!-- More visible way how to change dependency versions -->
-        <spigot.version>1.13.2-R0.1-SNAPSHOT</spigot.version>
-        <bstats.version>1.5</bstats.version>
-        <vault.version>1.7</vault.version>
-        <placeholderapi.version>2.10.4</placeholderapi.version>
-        <mvdwplaceholderapi.version>master-SNAPSHOT</mvdwplaceholderapi.version>
-        <githubapi.version>d5f5e0bbd8</githubapi.version>
-        <dynmap.version>3.0-SNAPSHOT</dynmap.version>
-        <worldedit.version>7.0.0</worldedit.version>
-        <!-- Revision variable removes warning about dynamic version -->
-        <revision>${build.version}-SNAPSHOT</revision>
         <!-- Do not change unless you want different name for local builds. -->
         <build.number>-LOCAL</build.number>
-        <!-- This allows to change between versions. -->
-        <build.version>1.9.0</build.version>
     </properties>
 
     <!-- Profiles will allow to automatically change build version. -->
@@ -102,29 +94,6 @@
             </properties>
         </profile>
         <profile>
-            <!-- Master profile is activated if exist environment variable 
-                GIT_BRANCH and its value is origin/master. -->
-            <!-- It will replace 'revision' with '${build.version}' so it 
-                removes '-SNAPSHOT' string at the end. -->
-            <!-- Also, as this is release build, build number can be set 
-                to empty string. -->
-            <!-- This profile will be used only if exist environment variable 
-                GIT_BRANCH with value origin/master. -->
-            <id>master</id>
-            <activation>
-                <property>
-                    <name>env.GIT_BRANCH</name>
-                    <value>origin/master</value>
-                </property>
-            </activation>
-            <properties>
-                <!-- Override only if necessary -->
-                <revision>${build.version}</revision>
-                <!-- Empties build number variable. -->
-                <build.number></build.number>
-            </properties>
-        </profile>
-        <profile>
             <id>sonar</id>
             <properties>
                 <sonar.host.url>https://sonarcloud.io</sonar.host.url>
@@ -135,7 +104,6 @@
                     <plugin>
                         <groupId>org.sonarsource.scanner.maven</groupId>
                         <artifactId>sonar-maven-plugin</artifactId>
-                        <!-- was <version>3.4.1.1168</version> -->
                         <version>3.6.0.1398</version>
                         <executions>
                             <execution>
@@ -158,11 +126,17 @@
         </repository>
         <repository>
             <id>codemc-repo</id>
-            <url>https://repo.codemc.org/repository/maven-public</url>
+            <url>https://repo.codemc.org/repository/maven-public/</url>
         </repository>
         <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
+            <id>vault-repo</id>
+            <url>http://nexus.hc.to/content/repositories/pub_releases</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
         </repository>
         <repository>
             <id>placeholderapi-repo</id>
@@ -177,107 +151,41 @@
             <url>https://maven.sk89q.com/repo/</url>
         </repository>
         <repository>
-            <id>papermc</id>
-            <url>https://papermc.io/repo/repository/maven-public/</url>
+            <id>papermc-releases</id>
+            <url>https://papermc.io/repo/repository/maven-releases/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>papermc-snapshots</id>
+            <url>https://papermc.io/repo/repository/maven-snapshots/</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>mvdw-repo</id>
+            <url>http://repo.mvdw-software.com/content/repositories/mvdw-software/</url>
         </repository>
     </repositories>
 
     <dependencies>
-        <!-- Spigot API -->
-        <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot-api</artifactId>
-            <version>${spigot.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <!-- Metrics -->
-        <dependency>
-            <groupId>org.bstats</groupId>
-            <artifactId>bstats-bukkit</artifactId>
-            <version>${bstats.version}</version>
-        </dependency>
-        <!-- Mockito (Unit testing) -->
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <version>3.1.0</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.powermock</groupId>
-            <artifactId>powermock-module-junit4</artifactId>
-            <version>${powermock.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.powermock</groupId>
-            <artifactId>powermock-api-mockito2</artifactId>
-            <version>${powermock.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <!-- Database -->
-        <dependency>
-            <groupId>org.mongodb</groupId>
-            <artifactId>mongodb-driver</artifactId>
-            <version>${mongodb.version}</version>
-        </dependency>
-        <!-- Vault: as their maven repo is down, we need to get it from jitpack -->
-        <!-- See https://github.com/MilkBowl/VaultAPI/issues/69 -->
-        <dependency>
-            <groupId>com.github.MilkBowl</groupId>
-            <artifactId>VaultAPI</artifactId>
-            <version>${vault.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <!-- Placeholders -->
-        <dependency>
-            <groupId>me.clip</groupId>
-            <artifactId>placeholderapi</artifactId>
-            <version>${placeholderapi.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <!-- We have to use a forked version of this api because Maxim 
-                had the brilliant idea to make one of the dependencies rely on an illegal 
-                artifact thus making its repository unusable. -->
-            <groupId>com.github.BentoBoxWorld</groupId>
-            <artifactId>MVdWPlaceholderAPI</artifactId>
-            <version>${mvdwplaceholderapi.version}</version>
-        </dependency>
-        <!-- Hooks -->
-        <dependency>
-            <groupId>us.dynmap</groupId>
-            <artifactId>dynmap-api</artifactId>
-            <version>${dynmap.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.sk89q.worldedit</groupId>
-            <artifactId>worldedit-core</artifactId>
-            <version>${worldedit.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <!-- Shaded APIs -->
-        <dependency>
-            <groupId>com.github.TheBusyBiscuit</groupId>
-            <artifactId>GitHubWebAPI4Java</artifactId>
-            <version>${githubapi.version}</version>
-        </dependency>
         <!-- Static analysis -->
-        <!-- We are using Eclipse's annotations. If you're using IDEA, update 
-            your project settings to take these into account for in real time static 
+        <!-- We are using Eclipse's annotations. If you're using IDEA, update
+            your project settings to take these into account for in real time static
             analysis -->
         <dependency>
             <groupId>org.eclipse.jdt</groupId>
             <artifactId>org.eclipse.jdt.annotation</artifactId>
             <version>2.2.200</version>
-        </dependency>
-        <!-- PaperLib -->
-        <dependency>
-            <groupId>io.papermc</groupId>
-            <artifactId>paperlib</artifactId>
-            <version>1.0.2</version>
-            <scope>compile</scope>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
@@ -290,9 +198,8 @@
         <!-- If the BUILD_NUMBER variable is set, then it will be -b[number]. -->
         <!-- If GIT_BRANCH variable is set to origin/master, then it will 
             be the empty string. -->
-        <finalName>${project.name}-${revision}${build.number}</finalName>
+        <finalName>${project.name}-${project.version}${build.number}</finalName>
 
-        <defaultGoal>clean package</defaultGoal>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
@@ -304,127 +211,72 @@
                 <filtering>false</filtering>
             </resource>
         </resources>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-clean-plugin</artifactId>
-                <version>3.1.0</version>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>3.1.0</version>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
-                <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.22.2</version>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>3.2.0</version>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.1.0</version>
-                <configuration>
-                    <show>private</show>
-                    <failOnError>false</failOnError>
-                    <additionalJOption>-Xdoclint:none</additionalJOption>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>3.2.1</version>
-                <configuration>
-                    <minimizeJar>true</minimizeJar>
-                    <relocations>
-                        <relocation>
-                            <pattern>org.bstats</pattern>
-                            <shadedPattern>world.bentobox.bentobox.util.metrics</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>io.github.TheBusyBiscuit.GitHubWebAPI4Java</pattern>
-                            <shadedPattern>world.bentobox.bentobox.api.github</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>io.papermc.lib</pattern>
-                            <shadedPattern>world.bentobox.bentobox.paperlib</shadedPattern> <!-- Replace this -->
-                        </relocation>
-                    </relocations>
-                    <artifactSet>
-                        <excludes>
-                            <exclude>org.mongodb:*</exclude>
-                            <exclude>org.eclipse.jdt:*</exclude>
-                        </excludes>
-                    </artifactSet>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-install-plugin</artifactId>
-                <version>2.5.2</version>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-deploy-plugin</artifactId>
-                <version>2.8.2</version>
-            </plugin>
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.3</version>
-                <configuration>
-                    <append>true</append>
-                    <excludes>
-                        <!-- This is required to prevent Jacoco from adding 
-                            synthetic fields to a JavaBean class (causes errors in testing) -->
-                        <exclude>**/*Names*</exclude>
-                    </excludes>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>pre-unit-test</id>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>post-unit-test</id>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-clean-plugin</artifactId>
+                    <version>3.1.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>3.1.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.8.1</version>
+                    <configuration>
+                        <source>${java.version}</source>
+                        <target>${java.version}</target>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>2.22.2</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>3.2.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>3.1.0</version>
+                    <configuration>
+                        <show>private</show>
+                        <failOnError>false</failOnError>
+                        <additionalJOption>-Xdoclint:none</additionalJOption>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>attach-javadocs</id>
+                            <goals>
+                                <goal>jar</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-shade-plugin</artifactId>
+                    <version>3.2.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-install-plugin</artifactId>
+                    <version>2.5.2</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>2.8.2</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
     </build>
+
 </project>
