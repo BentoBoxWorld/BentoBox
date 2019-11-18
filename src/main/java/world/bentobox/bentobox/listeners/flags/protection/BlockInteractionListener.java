@@ -93,162 +93,134 @@ public class BlockInteractionListener extends FlagListener {
             checkIsland(e, player, loc, Flags.CONTAINER);
             return;
         }
-        switch (type) {
-        case ANVIL:
-        case CHIPPED_ANVIL:
-        case DAMAGED_ANVIL:
+        if (type == Material.ANVIL
+                || type == Material.CHIPPED_ANVIL
+                || type == Material.DAMAGED_ANVIL) {
             checkIsland(e, player, loc, Flags.ANVIL);
-            break;
-        case BEACON:
+        } else if (type == Material.BEACON) {
             checkIsland(e, player, loc, Flags.BEACON);
-            break;
-        case BLACK_BED:
-        case BLUE_BED:
-        case BROWN_BED:
-        case CYAN_BED:
-        case GRAY_BED:
-        case GREEN_BED:
-        case LIGHT_BLUE_BED:
-        case LIGHT_GRAY_BED:
-        case LIME_BED:
-        case MAGENTA_BED:
-        case ORANGE_BED:
-        case PINK_BED:
-        case PURPLE_BED:
-        case RED_BED:
-        case WHITE_BED:
-        case YELLOW_BED:
+        } else if (type == Material.BLACK_BED
+                || type == Material.BLUE_BED
+                || type == Material.BROWN_BED
+                || type == Material.CYAN_BED
+                || type == Material.GRAY_BED
+                || type == Material.GREEN_BED
+                || type == Material.LIGHT_BLUE_BED
+                || type == Material.LIGHT_GRAY_BED
+                || type == Material.LIME_BED
+                || type == Material.MAGENTA_BED
+                || type == Material.ORANGE_BED
+                || type == Material.PINK_BED
+                || type == Material.PURPLE_BED
+                || type == Material.RED_BED
+                || type == Material.WHITE_BED
+                || type == Material.YELLOW_BED) {
             checkIsland(e, player, loc, Flags.BED);
-            break;
-        case BREWING_STAND:
-        case CAULDRON:
+        } else if (type == Material.BREWING_STAND
+                || type == Material.CAULDRON) {
             checkIsland(e, player, loc, Flags.BREWING);
-            break;
-        case BARREL:
-        case CHEST:
-        case CHEST_MINECART:
-        case TRAPPED_CHEST:
-        case BLACK_SHULKER_BOX:
-        case BLUE_SHULKER_BOX:
-        case BROWN_SHULKER_BOX:
-        case CYAN_SHULKER_BOX:
-        case GRAY_SHULKER_BOX:
-        case GREEN_SHULKER_BOX:
-        case LIGHT_BLUE_SHULKER_BOX:
-        case LIME_SHULKER_BOX:
-        case PINK_SHULKER_BOX:
-        case MAGENTA_SHULKER_BOX:
-        case ORANGE_SHULKER_BOX:
-        case PURPLE_SHULKER_BOX:
-        case RED_SHULKER_BOX:
-        case LIGHT_GRAY_SHULKER_BOX:
-        case WHITE_SHULKER_BOX:
-        case YELLOW_SHULKER_BOX:
-        case SHULKER_BOX:
-        case FLOWER_POT:
-        case COMPOSTER:
+        } else if (type.name().equals("BARREL")
+                || type == Material.CHEST
+                || type == Material.CHEST_MINECART
+                || type == Material.TRAPPED_CHEST
+                || type == Material.BLACK_SHULKER_BOX
+                || type == Material.BLUE_SHULKER_BOX
+                || type == Material.BROWN_SHULKER_BOX
+                || type == Material.CYAN_SHULKER_BOX
+                || type == Material.GRAY_SHULKER_BOX
+                || type == Material.GREEN_SHULKER_BOX
+                || type == Material.LIGHT_BLUE_SHULKER_BOX
+                || type == Material.LIME_SHULKER_BOX
+                || type == Material.PINK_SHULKER_BOX
+                || type == Material.MAGENTA_SHULKER_BOX
+                || type == Material.ORANGE_SHULKER_BOX
+                || type == Material.PURPLE_SHULKER_BOX
+                || type == Material.RED_SHULKER_BOX
+                || type == Material.LIGHT_GRAY_SHULKER_BOX
+                || type == Material.WHITE_SHULKER_BOX
+                || type == Material.YELLOW_SHULKER_BOX
+                || type == Material.SHULKER_BOX
+                || type == Material.FLOWER_POT
+                || type.name().equals("COMPOSTER")) {
             checkIsland(e, player, loc, Flags.CONTAINER);
-            break;
-        case DISPENSER:
+        } else if (type == Material.DISPENSER) {
             checkIsland(e, player, loc, Flags.DISPENSER);
-            break;
-        case DROPPER:
+        } else if (type == Material.DROPPER) {
             checkIsland(e, player, loc, Flags.DROPPER);
-            break;
-        case HOPPER:
-        case HOPPER_MINECART:
+        } else if (type == Material.HOPPER
+                || type == Material.HOPPER_MINECART) {
             checkIsland(e, player, loc, Flags.HOPPER);
-            break;
-        case ACACIA_DOOR:
-        case BIRCH_DOOR:
-        case DARK_OAK_DOOR:
-        case IRON_DOOR:
-        case JUNGLE_DOOR:
-        case SPRUCE_DOOR:
-        case OAK_DOOR:
+        } else if (type == Material.ACACIA_DOOR
+                || type == Material.BIRCH_DOOR
+                || type == Material.DARK_OAK_DOOR
+                || type == Material.IRON_DOOR
+                || type == Material.JUNGLE_DOOR
+                || type == Material.SPRUCE_DOOR
+                || type == Material.OAK_DOOR) {
             checkIsland(e, player, loc, Flags.DOOR);
-            break;
-        case ACACIA_TRAPDOOR:
-        case BIRCH_TRAPDOOR:
-        case DARK_OAK_TRAPDOOR:
-        case OAK_TRAPDOOR:
-        case JUNGLE_TRAPDOOR:
-        case SPRUCE_TRAPDOOR:
-        case IRON_TRAPDOOR:
+        } else if (type == Material.ACACIA_TRAPDOOR
+                || type == Material.BIRCH_TRAPDOOR
+                || type == Material.DARK_OAK_TRAPDOOR
+                || type == Material.OAK_TRAPDOOR
+                || type == Material.JUNGLE_TRAPDOOR
+                || type == Material.SPRUCE_TRAPDOOR
+                || type == Material.IRON_TRAPDOOR) {
             checkIsland(e, player, loc, Flags.TRAPDOOR);
-            break;
-        case ACACIA_FENCE_GATE:
-        case BIRCH_FENCE_GATE:
-        case DARK_OAK_FENCE_GATE:
-        case OAK_FENCE_GATE:
-        case JUNGLE_FENCE_GATE:
-        case SPRUCE_FENCE_GATE:
+        } else if (type == Material.ACACIA_FENCE_GATE
+                || type == Material.BIRCH_FENCE_GATE
+                || type == Material.DARK_OAK_FENCE_GATE
+                || type == Material.OAK_FENCE_GATE
+                || type == Material.JUNGLE_FENCE_GATE
+                || type == Material.SPRUCE_FENCE_GATE) {
             checkIsland(e, player, loc, Flags.GATE);
-            break;
-        case BLAST_FURNACE:
-        case CAMPFIRE:
-        case FURNACE_MINECART:
-        case FURNACE:
-        case SMOKER:
+        } else if (type.name().equals("BLAST_FURNACE")
+                || type.name().equals("CAMPFIRE")
+                || type == Material.FURNACE_MINECART
+                || type == Material.FURNACE
+                || type.name().equals("SMOKER")) {
             checkIsland(e, player, loc, Flags.FURNACE);
-            break;
-        case ENCHANTING_TABLE:
+        } else if (type == Material.ENCHANTING_TABLE) {
             checkIsland(e, player, loc, Flags.ENCHANTING);
-            break;
-        case ENDER_CHEST:
+        } else if (type == Material.ENDER_CHEST) {
             checkIsland(e, player, loc, Flags.ENDER_CHEST);
-            break;
-        case JUKEBOX:
+        } else if (type == Material.JUKEBOX) {
             checkIsland(e, player, loc, Flags.JUKEBOX);
-            break;
-        case NOTE_BLOCK:
+        } else if (type == Material.NOTE_BLOCK) {
             checkIsland(e, player, loc, Flags.NOTE_BLOCK);
-            break;
-        case CRAFTING_TABLE:
-        case CARTOGRAPHY_TABLE:
-        case GRINDSTONE:
-        case STONECUTTER:
-        case LOOM:
+        } else if (type == Material.CRAFTING_TABLE
+                || type.name().equals("CARTOGRAPHY_TABLE")
+                || type.name().equals("GRINDSTONE")
+                || type.name().equals("STONECUTTER")
+                || type.name().equals("LOOM")) {
             checkIsland(e, player, loc, Flags.CRAFTING);
-            break;
-        case STONE_BUTTON:
-        case ACACIA_BUTTON:
-        case BIRCH_BUTTON:
-        case DARK_OAK_BUTTON:
-        case JUNGLE_BUTTON:
-        case OAK_BUTTON:
-        case SPRUCE_BUTTON:
+        } else if (type == Material.STONE_BUTTON
+                || type == Material.ACACIA_BUTTON
+                || type == Material.BIRCH_BUTTON
+                || type == Material.DARK_OAK_BUTTON
+                || type == Material.JUNGLE_BUTTON
+                || type == Material.OAK_BUTTON
+                || type == Material.SPRUCE_BUTTON) {
             checkIsland(e, player, loc, Flags.BUTTON);
-            break;
-        case LEVER:
+        } else if (type == Material.LEVER) {
             checkIsland(e, player, loc, Flags.LEVER);
-            break;
-        case REPEATER:
-        case COMPARATOR:
-        case DAYLIGHT_DETECTOR:
+        } else if (type == Material.REPEATER
+                || type == Material.COMPARATOR
+                || type == Material.DAYLIGHT_DETECTOR) {
             checkIsland(e, player, loc, Flags.REDSTONE);
-            break;
-        case DRAGON_EGG:
+        } else if (type == Material.DRAGON_EGG) {
             checkIsland(e, player, loc, Flags.DRAGON_EGG);
-            break;
-        case END_PORTAL_FRAME:
+        } else if (type == Material.END_PORTAL_FRAME) {
             checkIsland(e, player, loc, Flags.PLACE_BLOCKS);
-            break;
-        case ITEM_FRAME:
+        } else if (type == Material.ITEM_FRAME) {
             checkIsland(e, player, loc, Flags.ITEM_FRAME);
-            break;
-        case LECTERN:
-        case SWEET_BERRY_BUSH:
+        } else if (type.name().equals("LECTERN")
+                || type.name().equals("SWEET_BERRY_BUSH")) {
             checkIsland(e, player, loc, Flags.BREAK_BLOCKS);
-            break;
-        case CAKE:
+        } else if (type == Material.CAKE) {
             checkIsland(e, player, loc, Flags.CAKE);
-            break;
-        default:
-            if (stringFlags.containsKey(type.name())) {
-                Optional<Flag> f = BentoBox.getInstance().getFlagsManager().getFlag(stringFlags.get(type.name()));
-                f.ifPresent(flag -> checkIsland(e, player, loc, flag));
-            }
+        } else if (stringFlags.containsKey(type.name())) {
+            Optional<Flag> f = BentoBox.getInstance().getFlagsManager().getFlag(stringFlags.get(type.name()));
+            f.ifPresent(flag -> checkIsland(e, player, loc, flag));
         }
     }
 

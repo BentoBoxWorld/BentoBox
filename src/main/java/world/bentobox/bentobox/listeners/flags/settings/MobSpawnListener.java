@@ -32,25 +32,23 @@ public class MobSpawnListener extends FlagListener {
         if (!getIWM().inWorld(e.getEntity().getLocation())) {
             return false;
         }
-        switch (e.getSpawnReason()) {
-        // Natural
-        case DEFAULT:
-        case DROWNED:
-        case JOCKEY:
-        case LIGHTNING:
-        case MOUNT:
-        case NATURAL:
-        case NETHER_PORTAL:
-        case OCELOT_BABY:
-        case PATROL:
-        case RAID:
-        case REINFORCEMENTS:
-        case SILVERFISH_BLOCK:
-        case SLIME_SPLIT:
-        case TRAP:
-        case VILLAGE_DEFENSE:
-        case VILLAGE_INVASION:
-            // Deal with natural spawning
+        CreatureSpawnEvent.SpawnReason spawnReason = e.getSpawnReason();// Natural
+        if (spawnReason == CreatureSpawnEvent.SpawnReason.DEFAULT
+                || spawnReason == CreatureSpawnEvent.SpawnReason.DROWNED
+                || spawnReason == CreatureSpawnEvent.SpawnReason.JOCKEY
+                || spawnReason == CreatureSpawnEvent.SpawnReason.LIGHTNING
+                || spawnReason == CreatureSpawnEvent.SpawnReason.MOUNT
+                || spawnReason == CreatureSpawnEvent.SpawnReason.NATURAL
+                || spawnReason == CreatureSpawnEvent.SpawnReason.NETHER_PORTAL
+                || spawnReason == CreatureSpawnEvent.SpawnReason.OCELOT_BABY
+                || spawnReason.name().equals("PATROL")
+                || spawnReason.name().equals("RAID")
+                || spawnReason == CreatureSpawnEvent.SpawnReason.REINFORCEMENTS
+                || spawnReason == CreatureSpawnEvent.SpawnReason.SILVERFISH_BLOCK
+                || spawnReason == CreatureSpawnEvent.SpawnReason.SLIME_SPLIT
+                || spawnReason == CreatureSpawnEvent.SpawnReason.TRAP
+                || spawnReason == CreatureSpawnEvent.SpawnReason.VILLAGE_DEFENSE
+                || spawnReason == CreatureSpawnEvent.SpawnReason.VILLAGE_INVASION) {// Deal with natural spawning
             Optional<Island> island = getIslands().getIslandAt(e.getLocation());
             // Cancel the event if these are true
             if (Util.isHostileEntity(e.getEntity()) && !(e.getEntity() instanceof PufferFish)) {
@@ -63,9 +61,8 @@ public class MobSpawnListener extends FlagListener {
                 return cancel;
             }
             return false;
-        default:
-            return false;
         }
+        return false;
     }
 
 }

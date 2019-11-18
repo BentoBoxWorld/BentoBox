@@ -1,11 +1,7 @@
 package world.bentobox.bentobox.listeners.flags.protection;
 
 import org.bukkit.Material;
-import org.bukkit.entity.AbstractVillager;
-import org.bukkit.entity.Animals;
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Boat;
-import org.bukkit.entity.Vehicle;
+import org.bukkit.entity.*;
 import org.bukkit.entity.minecart.RideableMinecart;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -47,7 +43,7 @@ public class EntityInteractListener extends FlagListener {
             }
         }
         // Villager trading
-        else if (e.getRightClicked() instanceof AbstractVillager) {
+        else if (e.getRightClicked().getType() == EntityType.VILLAGER) {
             // Check naming and check trading
             checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.TRADING);
             if (e.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.NAME_TAG)) {
