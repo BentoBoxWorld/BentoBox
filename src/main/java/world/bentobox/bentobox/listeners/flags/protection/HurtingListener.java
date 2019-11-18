@@ -52,7 +52,8 @@ public class HurtingListener extends FlagListener {
         // Mobs being hurt
         if (Util.isPassiveEntity(e.getEntity())) {
             respond(e, e.getDamager(), Flags.HURT_ANIMALS);
-        } else if (e.getEntity().getType() == EntityType.VILLAGER) {
+        } else if (e.getEntity().getType() == EntityType.VILLAGER
+                || e.getEntity().getType().name().equals("WANDERING_TRADER")) {
             respond(e, e.getDamager(), Flags.HURT_VILLAGERS);
         } else if (Util.isHostileEntity(e.getEntity())) {
             respond(e, e.getDamager(), Flags.HURT_MONSTERS);
@@ -90,7 +91,7 @@ public class HurtingListener extends FlagListener {
 
         if ((Util.isPassiveEntity(e.getCaught()) && checkIsland(e, e.getPlayer(), e.getCaught().getLocation(), Flags.HURT_ANIMALS))
                 || (Util.isHostileEntity(e.getCaught()) && checkIsland(e, e.getPlayer(), e.getCaught().getLocation(), Flags.HURT_MONSTERS))
-                || (e.getCaught().getType() == EntityType.VILLAGER && checkIsland(e, e.getPlayer(), e.getCaught().getLocation(), Flags.HURT_VILLAGERS))) {
+                || ((e.getCaught().getType() == EntityType.VILLAGER || e.getCaught().getType().name().equals("WANDERING_TRADER"))&& checkIsland(e, e.getPlayer(), e.getCaught().getLocation(), Flags.HURT_VILLAGERS))) {
             e.getHook().remove();
         }
 
@@ -144,7 +145,7 @@ public class HurtingListener extends FlagListener {
                 }
 
                 // Villagers being hurt
-                if (entity.getType() == EntityType.VILLAGER && !checkIsland(e, attacker, entity.getLocation(), Flags.HURT_VILLAGERS)) {
+                if ((entity.getType() == EntityType.VILLAGER || entity.getType().name().equals("WANDERING_TRADER")) && !checkIsland(e, attacker, entity.getLocation(), Flags.HURT_VILLAGERS)) {
                     for (PotionEffect effect : e.getPotion().getEffects()) {
                         entity.removePotionEffect(effect.getType());
                     }
@@ -197,7 +198,7 @@ public class HurtingListener extends FlagListener {
             checkIsland(e, attacker, entity.getLocation(), Flags.HURT_ANIMALS);
         }
         // Villagers being hurt
-        if (entity.getType() == EntityType.VILLAGER) {
+        if (entity.getType() == EntityType.VILLAGER || entity.getType().name().equals("WANDERING_TRADER")) {
             checkIsland(e, attacker, entity.getLocation(), Flags.HURT_VILLAGERS);
         }
 

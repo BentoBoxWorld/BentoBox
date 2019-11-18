@@ -43,7 +43,8 @@ public class EntityInteractListener extends FlagListener {
             }
         }
         // Villager trading
-        else if (e.getRightClicked().getType() == EntityType.VILLAGER) {
+        else if (e.getRightClicked().getType() == EntityType.VILLAGER
+                || e.getRightClicked().getType().name().equals("WANDERING_TRADER")) {
             // Check naming and check trading
             checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.TRADING);
             if (e.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.NAME_TAG)) {
