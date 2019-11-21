@@ -174,7 +174,7 @@ public class PortalTeleportationListenerTest {
         PortalTeleportationListener np = new PortalTeleportationListener(plugin);
         PlayerPortalEvent e = new PlayerPortalEvent(null, from, null, TeleportCause.END_PORTAL);
         np.onEndIslandPortal(e);
-        assertFalse(e.isCancelled());
+        assertTrue(e.isCancelled());
     }
 
     /**

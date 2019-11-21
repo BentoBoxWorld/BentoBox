@@ -60,9 +60,15 @@ public class PortalTeleportationListener implements Listener {
         }
         World fromWorld = e.getFrom().getWorld();
         World overWorld = Util.getWorld(fromWorld);
-
-        if (fromWorld == null || !plugin.getIWM().inWorld(overWorld) || !plugin.getIWM().isEndGenerate(overWorld)) {
+        
+        if (fromWorld == null || !plugin.getIWM().inWorld(overWorld)) {
             // Do nothing special
+            return false;
+        }
+        
+        // 1.14.4 requires explicit cancellation to prevent teleporting to the normal nether
+        if (!plugin.getIWM().isEndGenerate(overWorld)) {
+            e.setCancelled(true);
             return false;
         }
 
@@ -133,10 +139,17 @@ public class PortalTeleportationListener implements Listener {
         World fromWorld = e.getFrom().getWorld();
         World overWorld = Util.getWorld(fromWorld);
 
-        if (fromWorld == null || !plugin.getIWM().inWorld(overWorld) || !plugin.getIWM().isNetherGenerate(overWorld)) {
+        if (fromWorld == null || !plugin.getIWM().inWorld(overWorld)) {
             // Do nothing special
             return false;
         }
+        
+        // 1.14.4 requires explicit cancellation to prevent teleporting to the normal nether
+        if (!plugin.getIWM().isNetherGenerate(overWorld)) {
+            e.setCancelled(true);
+            return false;
+        }
+        
         // STANDARD NETHER
         if (!plugin.getIWM().isNetherIslands(overWorld)) {
             if (fromWorld.getEnvironment() != Environment.NETHER) {
