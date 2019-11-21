@@ -3,6 +3,7 @@ package world.bentobox.bentobox.database.json.adapters;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -33,10 +34,13 @@ import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.reflect.Whitebox;
 
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
+
+import world.bentobox.bentobox.BentoBox;
 
 /**
  * Tests the ItemStack type adapter for GSON
@@ -47,9 +51,13 @@ import com.google.gson.stream.JsonWriter;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( {Bukkit.class, ItemStack.class} )
 public class ItemStackTypeAdapterTest {
-
+    @Mock
+    private BentoBox plugin;
+    
     private ItemStackTypeAdapter isa;
+    @Mock
     private JsonWriter out;
+    @Mock
     private JsonReader reader;
     @Mock
     private ItemFactory itemFactory;
@@ -59,6 +67,10 @@ public class ItemStackTypeAdapterTest {
      */
     @Before
     public void setUp() throws Exception {
+     // Set up plugin
+        plugin = mock(BentoBox.class);
+        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        
         Server server = mock(Server.class);
 
         PluginManager pim = mock(PluginManager.class);
@@ -76,8 +88,8 @@ public class ItemStackTypeAdapterTest {
         when(unsafe.getDataVersion()).thenReturn(777);
         when(Bukkit.getUnsafe()).thenReturn(unsafe);
         isa = new ItemStackTypeAdapter();
-        out = mock(JsonWriter.class);
-        reader = mock(JsonReader.class);
+
+        // Resder
         when(reader.peek()).thenReturn(JsonToken.STRING);
 
         // Mock up the deserialization
@@ -139,6 +151,33 @@ public class ItemStackTypeAdapterTest {
             ItemStack i = isa.read(realIn);
             assertEquals(Material.STONE, i.getType());
             assertEquals(4, i.getAmount());
+        }
+        // Delete temp file
+        Files.deleteIfExists(tmp.toPath());
+    }
+    
+    /**
+     * Test method for {@link world.bentobox.bentobox.database.json.adapters.ItemStackTypeAdapter#read(com.google.gson.stream.JsonReader)}.
+     * @throws IOException
+     */
+    @Test
+    public void testReadJsonReaderUnknownMaterial() throws IOException {
+        File tmp = new File("test.json");
+        // Write a file - skip the meta because it causes the reader to choke if the class mentioned isn't known
+        try (FileWriter writer = new FileWriter(tmp.getName());
+                Writer buffWriter = new BufferedWriter(writer);
+                JsonWriter realOut = new JsonWriter(buffWriter)) {
+            realOut.value("is:\n  ==: org.bukkit.inventory.ItemStack\n  v: 777\n  type: UNOBTANIUM\n  amount: 4\n");
+            realOut.flush();
+        }
+        // Read it back
+        try (FileReader reader = new FileReader(tmp.getName());
+                Reader buffReader = new BufferedReader(reader);
+                JsonReader realIn = new JsonReader(buffReader)) {
+            ItemStack i = isa.read(realIn);
+            assertEquals(Material.AIR, i.getType());
+            assertEquals(1, i.getAmount());
+            verify(plugin).logWarning(eq("Unknown material: UNOBTANIUM"));
         }
         // Delete temp file
         Files.deleteIfExists(tmp.toPath());
