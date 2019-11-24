@@ -1,0 +1,5 @@
+# 
+# This is a YML file. Be careful when editing. Check your edits in a YAML checker like    #
+# the one at http://yaml-online-parser.appspot.com                                        #
+meta:
+  banner: RED_BANNER:1:STRIPE_TOP:GREEN
