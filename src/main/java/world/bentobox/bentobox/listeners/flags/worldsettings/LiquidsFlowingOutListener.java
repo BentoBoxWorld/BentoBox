@@ -1,11 +1,14 @@
 package world.bentobox.bentobox.listeners.flags.worldsettings;
 
+import java.util.Optional;
+
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockFromToEvent;
 
 import world.bentobox.bentobox.api.flags.FlagListener;
+import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.Flags;
 
 /**
@@ -15,10 +18,11 @@ import world.bentobox.bentobox.lists.Flags;
  */
 public class LiquidsFlowingOutListener extends FlagListener {
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onLiquidFlow(BlockFromToEvent e) {
         Block from = e.getBlock();
         Block to = e.getToBlock();
+
         if (!getIWM().inWorld(from.getLocation()) || Flags.LIQUIDS_FLOWING_OUT.isSetForWorld(from.getWorld())) {
             // We do not want to run any check if this is not the right world or if it is allowed.
             return;
@@ -31,8 +35,10 @@ public class LiquidsFlowingOutListener extends FlagListener {
             return;
         }
 
-        // Only prevent if it is flowing into the area between islands.
-        if (!getIslands().getProtectedIslandAt(to.getLocation()).isPresent()) {
+        // Only prevent if it is flowing into the area between islands or into another island.
+        Optional<Island> fromIsland = getIslands().getProtectedIslandAt(from.getLocation());
+        Optional<Island> toIsland = getIslands().getProtectedIslandAt(to.getLocation());
+        if (!toIsland.isPresent() || (fromIsland.isPresent() && !fromIsland.equals(toIsland))) {
             e.setCancelled(true);
         }
     }

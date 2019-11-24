@@ -2,7 +2,8 @@ package world.bentobox.bentobox.listeners.flags.worldsettings;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -158,6 +159,24 @@ public class LiquidsFlowingOutListenerTest {
         // Run
         new LiquidsFlowingOutListener().onLiquidFlow(event);
         assertFalse(event.isCancelled());
+    }
+
+    /**
+     * Asserts that the event is cancelled when liquid flows from one island's protection range into different island's range,
+     * e.g., when islands abut.
+     * Test for {@link LiquidsFlowingOutListener#onLiquidFlow(BlockFromToEvent)}
+     */
+    @Test
+    public void testLiquidFlowsToAdjacentIsland() {
+        // There's a protected island at the "to"
+        Island island = mock(Island.class);
+        when(islandsManager.getProtectedIslandAt(eq(to.getLocation()))).thenReturn(Optional.of(island));
+        // There is another island at the "from"
+        Island fromIsland = mock(Island.class);
+        when(islandsManager.getProtectedIslandAt(eq(from.getLocation()))).thenReturn(Optional.of(fromIsland));
+        // Run
+        new LiquidsFlowingOutListener().onLiquidFlow(event);
+        assertTrue(event.isCancelled());
     }
 
     /**
