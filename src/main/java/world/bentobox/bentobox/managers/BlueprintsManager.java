@@ -347,7 +347,7 @@ public class BlueprintsManager {
             if (!bpf.exists()) {
                 bpf.mkdirs();
             }
-            File fileName = new File(bpf, bb.getUniqueId() + BLUEPRINT_BUNDLE_SUFFIX);
+            File fileName = new File(bpf, sanitizeFileName(bb.getUniqueId()) + BLUEPRINT_BUNDLE_SUFFIX);
             String toStore = gson.toJson(bb, BlueprintBundle.class);
             try (FileWriter fileWriter = new FileWriter(fileName)) {
                 fileWriter.write(toStore);
@@ -355,6 +355,21 @@ public class BlueprintsManager {
                 plugin.logError("Could not save blueprint bundle file: " + e.getMessage());
             }
         });
+    }
+
+    /**
+     * Sanitizes a filename as much as possible retaining the original name
+     * @param name - filename to sanitize
+     * @return sanitized name
+     */
+    public static String sanitizeFileName(String name) {
+        return name
+                .chars()
+                .mapToObj(i -> (char) i)
+                .map(c -> Character.isWhitespace(c) ? '_' : c)
+                .filter(c -> Character.isLetterOrDigit(c) || c == '-' || c == '_')
+                .map(String::valueOf)
+                .collect(Collectors.joining());
     }
 
     /**
@@ -506,7 +521,7 @@ public class BlueprintsManager {
             blueprintBundles.get(addon).removeIf(k -> k.getUniqueId().equals(bb.getUniqueId()));
         }
         File bpf = getBlueprintsFolder(addon);
-        File fileName = new File(bpf, bb.getUniqueId() + BLUEPRINT_BUNDLE_SUFFIX);
+        File fileName = new File(bpf, sanitizeFileName(bb.getUniqueId()) + BLUEPRINT_BUNDLE_SUFFIX);
         try {
             Files.deleteIfExists(fileName.toPath());
         } catch (IOException e) {
@@ -528,7 +543,7 @@ public class BlueprintsManager {
         }
         File bpf = getBlueprintsFolder(addon);
         // Get the filename
-        File fileName = new File(bpf, bp.getName() + BLUEPRINT_SUFFIX);
+        File fileName = new File(bpf, sanitizeFileName(bp.getName()) + BLUEPRINT_SUFFIX);
         // Delete the old file
         try {
             Files.deleteIfExists(fileName.toPath());

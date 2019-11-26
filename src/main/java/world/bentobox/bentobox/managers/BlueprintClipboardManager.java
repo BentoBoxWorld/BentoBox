@@ -91,13 +91,13 @@ public class BlueprintClipboardManager {
      * @throws IOException exception if there's an issue loading or unzipping
      */
     public Blueprint loadBlueprint(String fileName) throws IOException {
-        File zipFile = new File(blueprintFolder, fileName + BlueprintsManager.BLUEPRINT_SUFFIX);
+        File zipFile = new File(blueprintFolder, BlueprintsManager.sanitizeFileName(fileName) + BlueprintsManager.BLUEPRINT_SUFFIX);
         if (!zipFile.exists()) {
             plugin.logError(LOAD_ERROR + zipFile.getName());
             throw new IOException(LOAD_ERROR + zipFile.getName());
         }
         unzip(zipFile.getAbsolutePath());
-        File file = new File(blueprintFolder, fileName);
+        File file = new File(blueprintFolder, BlueprintsManager.sanitizeFileName(fileName));
         if (!file.exists()) {
             plugin.logError(LOAD_ERROR + file.getName());
             throw new IOException(LOAD_ERROR + file.getName() + " temp file");
@@ -114,7 +114,7 @@ public class BlueprintClipboardManager {
         if (bp.getBedrock() == null) {
             bp.setBedrock(new Vector(bp.getxSize() / 2, bp.getySize() / 2, bp.getzSize() / 2));
             bp.getBlocks().put(bp.getBedrock(), new BlueprintBlock(Material.BEDROCK.createBlockData().getAsString()));
-            plugin.logWarning("Blueprint " + fileName + " had no bedrock block in it so one was added automatically in the center. You should check it.");
+            plugin.logWarning("Blueprint " + BlueprintsManager.sanitizeFileName(fileName) + BlueprintsManager.BLUEPRINT_SUFFIX + " had no bedrock block in it so one was added automatically in the center. You should check it.");
         }
         return bp;
     }
@@ -130,7 +130,7 @@ public class BlueprintClipboardManager {
             load(fileName);
         } catch (IOException e1) {
             user.sendMessage("commands.admin.blueprint.could-not-load");
-            plugin.logError("Could not load blueprint file: " + fileName + " " + e1.getMessage());
+            plugin.logError("Could not load blueprint file: " + BlueprintsManager.sanitizeFileName(fileName) + BlueprintsManager.BLUEPRINT_SUFFIX + " " + e1.getMessage());
             return false;
         }
         user.sendMessage("general.success");
@@ -163,7 +163,7 @@ public class BlueprintClipboardManager {
             plugin.logError("Blueprint name was empty - could not save it");
             return false;
         }
-        File file = new File(blueprintFolder, blueprint.getName());
+        File file = new File(blueprintFolder, BlueprintsManager.sanitizeFileName(blueprint.getName()));
         String toStore = gson.toJson(blueprint, Blueprint.class);
         try (FileWriter fileWriter = new FileWriter(file)) {
             fileWriter.write(toStore);
