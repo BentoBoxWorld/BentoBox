@@ -14,6 +14,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Parrot;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
+import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -53,7 +54,7 @@ public class HurtingListener extends FlagListener {
         // Mobs being hurt
         if (Util.isPassiveEntity(e.getEntity())) {
             respond(e, e.getDamager(), Flags.HURT_ANIMALS);
-        } else if (e.getEntity() instanceof AbstractVillager) {
+        } else if (e.getEntity() instanceof Villager || e.getEntityType().name().equals("WANDERING_TRADER")) { // TODO: Simplify when 1.13.2 support is dropped
             respond(e, e.getDamager(), Flags.HURT_VILLAGERS);
         } else if (Util.isHostileEntity(e.getEntity())) {
             respond(e, e.getDamager(), Flags.HURT_MONSTERS);

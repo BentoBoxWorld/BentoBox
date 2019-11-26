@@ -22,6 +22,7 @@ import org.bukkit.World;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Boat;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Sheep;
@@ -335,7 +336,7 @@ public class EntityInteractListenerTest {
         verify(notifier).notify(any(), eq("protection.protected"));
         assertTrue(e.isCancelled());
     }
-    
+
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.EntityInteractListener#onPlayerInteractEntity(org.bukkit.event.player.PlayerInteractEntityEvent)}.
      */
@@ -343,6 +344,7 @@ public class EntityInteractListenerTest {
     public void testOnPlayerInteractEntityWanderingTraderNoInteraction() {
         clickedEntity = mock(WanderingTrader.class);
         when(clickedEntity.getLocation()).thenReturn(location);
+        when(clickedEntity.getType()).thenReturn(EntityType.WANDERING_TRADER);
         PlayerInteractEntityEvent e = new PlayerInteractEntityEvent(player, clickedEntity, hand);
         eil.onPlayerInteractEntity(e);
         verify(notifier, times(2)).notify(any(), eq("protection.protected"));
@@ -356,6 +358,7 @@ public class EntityInteractListenerTest {
     public void testOnPlayerInteractAtEntityWanderingTraderAllowed() {
         when(island.isAllowed(any(), any())).thenReturn(true);
         clickedEntity = mock(WanderingTrader.class);
+        when(clickedEntity.getType()).thenReturn(EntityType.WANDERING_TRADER);
         when(clickedEntity.getLocation()).thenReturn(location);
         PlayerInteractEntityEvent e = new PlayerInteractEntityEvent(player, clickedEntity, hand);
         eil.onPlayerInteractEntity(e);
@@ -371,6 +374,7 @@ public class EntityInteractListenerTest {
         when(island.isAllowed(any(), eq(Flags.TRADING))).thenReturn(false);
         when(island.isAllowed(any(), eq(Flags.NAME_TAG))).thenReturn(true);
         clickedEntity = mock(WanderingTrader.class);
+        when(clickedEntity.getType()).thenReturn(EntityType.WANDERING_TRADER);
         when(clickedEntity.getLocation()).thenReturn(location);
         PlayerInteractEntityEvent e = new PlayerInteractEntityEvent(player, clickedEntity, hand);
         eil.onPlayerInteractEntity(e);
@@ -386,6 +390,7 @@ public class EntityInteractListenerTest {
         when(island.isAllowed(any(), eq(Flags.TRADING))).thenReturn(true);
         when(island.isAllowed(any(), eq(Flags.NAME_TAG))).thenReturn(false);
         clickedEntity = mock(WanderingTrader.class);
+        when(clickedEntity.getType()).thenReturn(EntityType.WANDERING_TRADER);
         when(clickedEntity.getLocation()).thenReturn(location);
         PlayerInteractEntityEvent e = new PlayerInteractEntityEvent(player, clickedEntity, hand);
         eil.onPlayerInteractEntity(e);
@@ -400,6 +405,7 @@ public class EntityInteractListenerTest {
     public void testOnPlayerInteractEntitySheepAllowed() {
         clickedEntity = mock(Sheep.class);
         when(clickedEntity.getLocation()).thenReturn(location);
+        when(clickedEntity.getType()).thenReturn(EntityType.SHEEP);
         when(inv.getItemInMainHand()).thenReturn(new ItemStack(Material.AIR));
         PlayerInteractEntityEvent e = new PlayerInteractEntityEvent(player, clickedEntity, hand);
         eil.onPlayerInteractEntity(e);
@@ -414,6 +420,7 @@ public class EntityInteractListenerTest {
     public void testOnPlayerInteractEntitySheepNameTagNoInteraction() {
         clickedEntity = mock(Sheep.class);
         when(clickedEntity.getLocation()).thenReturn(location);
+        when(clickedEntity.getType()).thenReturn(EntityType.SHEEP);
         PlayerInteractEntityEvent e = new PlayerInteractEntityEvent(player, clickedEntity, hand);
         eil.onPlayerInteractEntity(e);
         verify(notifier).notify(any(), eq("protection.protected"));

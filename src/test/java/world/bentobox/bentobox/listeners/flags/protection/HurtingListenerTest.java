@@ -22,6 +22,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Enderman;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FishHook;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
@@ -36,6 +37,7 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.PluginManager;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -132,6 +134,7 @@ public class HurtingListenerTest {
         // Monsters and animals
         when(enderman.getLocation()).thenReturn(location);
         when(enderman.getWorld()).thenReturn(world);
+        when(enderman.getType()).thenReturn(EntityType.ENDERMAN);
         Slime slime = mock(Slime.class);
         when(slime.getLocation()).thenReturn(location);
 
@@ -324,6 +327,7 @@ public class HurtingListenerTest {
     public void testOnFishingDisallowVillagerCatching() {
         Villager entity = mock(Villager.class);
         when(entity.getLocation()).thenReturn(location);
+        when(entity.getType()).thenReturn(EntityType.VILLAGER);
         State state = State.CAUGHT_ENTITY;
         PlayerFishEvent e = new PlayerFishEvent(player, entity, hookEntity, state);
         HurtingListener hl = new HurtingListener();
@@ -331,13 +335,14 @@ public class HurtingListenerTest {
         // Verify
         verify(notifier).notify(eq(user), eq("protection.protected"));
     }
-    
+
     /**
      * Test method for {@link HurtingListener#onFishing(org.bukkit.event.player.PlayerFishEvent)}.
      */
     @Test
     public void testOnFishingDisallowWanderingTraderCatching() {
         WanderingTrader entity = mock(WanderingTrader.class);
+        when(entity.getType()).thenReturn(EntityType.WANDERING_TRADER);
         when(entity.getLocation()).thenReturn(location);
         State state = State.CAUGHT_ENTITY;
         PlayerFishEvent e = new PlayerFishEvent(player, entity, hookEntity, state);
@@ -355,6 +360,7 @@ public class HurtingListenerTest {
     public void testOnFishingAllowVillagerCatching() {
         Villager entity = mock(Villager.class);
         when(entity.getLocation()).thenReturn(location);
+        when(entity.getType()).thenReturn(EntityType.VILLAGER);
         State state = State.CAUGHT_ENTITY;
         PlayerFishEvent e = new PlayerFishEvent(player, entity, hookEntity, state);
         HurtingListener hl = new HurtingListener();
@@ -364,7 +370,7 @@ public class HurtingListenerTest {
         // Verify
         verify(notifier, never()).notify(eq(user), eq("protection.protected"));
     }
-    
+
     /**
      * Test method for {@link HurtingListener#onFishing(org.bukkit.event.player.PlayerFishEvent)}.
      */
@@ -372,6 +378,7 @@ public class HurtingListenerTest {
     public void testOnFishingAllowWanderingTraderCatching() {
         WanderingTrader entity = mock(WanderingTrader.class);
         when(entity.getLocation()).thenReturn(location);
+        when(entity.getType()).thenReturn(EntityType.WANDERING_TRADER);
         State state = State.CAUGHT_ENTITY;
         PlayerFishEvent e = new PlayerFishEvent(player, entity, hookEntity, state);
         HurtingListener hl = new HurtingListener();
@@ -381,10 +388,11 @@ public class HurtingListenerTest {
         // Verify
         verify(notifier, never()).notify(eq(user), eq("protection.protected"));
     }
-    
+
     /**
      * Test method for {@link HurtingListener#onPlayerFeedParrots(org.bukkit.event.player.PlayerInteractEntityEvent)}.
      */
+    @Ignore("Not yet implemented")
     @Test
     public void testOnPlayerFeedParrots() {
         //fail("Not yet implemented"); // TODO
@@ -393,6 +401,7 @@ public class HurtingListenerTest {
     /**
      * Test method for {@link HurtingListener#onSplashPotionSplash(org.bukkit.event.entity.PotionSplashEvent)}.
      */
+    @Ignore("Not yet implemented")
     @Test
     public void testOnSplashPotionSplash() {
         //fail("Not yet implemented"); // TODO
@@ -401,6 +410,7 @@ public class HurtingListenerTest {
     /**
      * Test method for {@link HurtingListener#onLingeringPotionSplash(org.bukkit.event.entity.LingeringPotionSplashEvent)}.
      */
+    @Ignore("Not yet implemented")
     @Test
     public void testOnLingeringPotionSplash() {
         //fail("Not yet implemented"); // TODO
@@ -409,6 +419,7 @@ public class HurtingListenerTest {
     /**
      * Test method for {@link HurtingListener#onLingeringPotionDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
+    @Ignore("Not yet implemented")
     @Test
     public void testOnLingeringPotionDamage() {
         //fail("Not yet implemented"); // TODO
