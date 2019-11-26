@@ -329,6 +329,7 @@ commands:
       unknown-addon: "＆cUnknownアドオン！"
       addons-reloaded: "＆2アドオンがリロードされました。"
       addon-reloaded: "&b[name] &2reloaded."
+      locales-reloaded: "&2言語がリロードされた"
     version:
       addon-syntax: "&2[name] &3[version] &7(&3[state]&7)"
       description: 表示情報
