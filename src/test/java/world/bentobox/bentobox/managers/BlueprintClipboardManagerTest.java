@@ -250,7 +250,7 @@ public class BlueprintClipboardManagerTest {
         zip(configFile);
         BlueprintClipboardManager bcm = new BlueprintClipboardManager(plugin, blueprintFolder);
         Blueprint bp = bcm.loadBlueprint(BLUEPRINT);
-        verify(plugin).logWarning("Blueprint blueprint had no bedrock block in it so one was added automatically in the center. You should check it.");
+        verify(plugin).logWarning("Blueprint blueprint.blu had no bedrock block in it so one was added automatically in the center. You should check it.");
         // Verify bedrock was placed in the center of the blueprint
         assertEquals(5, bp.getBedrock().getBlockX());
         assertEquals(5, bp.getBedrock().getBlockY());
