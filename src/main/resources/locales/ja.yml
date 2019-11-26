@@ -100,6 +100,8 @@ commands:
       parameters: "<player>"
     getrank:
       parameters: "<プレーヤー>"
+      description: プレイヤーの島でのランクを見る。
+      rank-is: プレーヤーのランクは [rank]である。
     info:
       banned-players: 禁止選手
       deaths: '死亡: [number]'
@@ -123,6 +125,7 @@ commands:
       island-uuid: 'UUID: [uuid]'
       max-protection-range: 最大の歴史的保護範囲：[range]
       banned-format: "&c[name]"
+      no-island: "&cあなたは今島にはいません..."
     range:
       description: 管理島の範囲コマンド
       display:
@@ -131,6 +134,10 @@ commands:
         description: 島の範囲インジケータを表示/非表示
         hiding: 範囲インジケータの非表示
         showing: 範囲インジケーターの表示
+        hint: |-
+          赤いバリアのアイコンは、現在の島の保護範囲の制限を示しています。
+          グレイのパーティクルは最大アイランドリミットを表示します。
+          緑のパーティクルは、島の保護範囲が異なる場合に、デフォルトの保護範囲を示します。
       reset:
         description: 世界のデフォルトに島の保護された範囲をリセットします
         parameters: "<プレーヤー>"
@@ -153,6 +160,7 @@ commands:
       in-deletion: "＆cこの島のスペースは現在削除中です。後で試してください。"
       island-is-spawn: "＆6島が生成されます。本気ですか？もう一度コマンドを入力して確認します。"
       cannot-make-island: "&c島はここに配置できません。申し訳ありません。考えられるエラーについては、コンソールをご覧ください。"
+      description: あなたがいる未所有の島にプレーヤーを登録する。
     reload:
       description: リロードする
     setrange:
@@ -164,24 +172,32 @@ commands:
       rank-set: "&2[from] から [to] に設定されたランク。"
       unknown-rank: "&c不明ランク!"
       not-possible: "＆cランクは訪問者より高くなければなりません"
+      parameters: "＜プレーヤー＞　＜ランク＞"
     team:
       add:
         description: リーダーのチームにプレイヤーを追加する
         name-not-owner: "&c[name]はリーダーではありません"
         success: "＆b [name]＆aが＆b [owner]＆aの島に追加されました。"
         parameters: "<owner> <player>"
+        name-has-island: "&c[name]には島があります。登録を解除するか、最初に削除してください。"
       disband:
         description: チームリーダーのチームを解散
         disbanded: 管理者はあなたのチームを解散!
         success: "＆b [name]＆aのチームは解散しました。"
         parameters: "<owner>"
+        use-disband-owner: リーダーじゃない！解散を使用 [owner]
       setowner:
         already-owner: "&cプレイヤーはすでにリーダーです!"
         parameters: "<プレーヤー>"
         success: "＆b [name]＆aがこの島の所有者になりました。"
+        description: プレーヤーをチームのリーダーにする％
       kick:
         not-in-team: "＆cこのプレーヤーはチームに所属していません。"
         success: "＆b [name]＆aは＆b [owner]＆aの島から追い出されました。"
+        parameters: "<チームのプレーヤー>"
+        description: チームからプレーヤーを外す。
+        cannot-kick-owner: "&cチームリーダーを外すことはできません。まずはメンバーを外してください。"
+        admin-kicked: 管理者は、あなたをチームから外しました。
     tp:
       description: プレイヤーの島にテレポート
       manual: "&c安全なワープが見つかりません![location]の近くに手動でテレポートします。"
