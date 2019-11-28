@@ -3,6 +3,7 @@ package world.bentobox.bentobox.listeners.flags.protection;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -177,6 +178,9 @@ public class HurtingListenerTest {
         // Utils
         when(Util.isPassiveEntity(any())).thenCallRealMethod();
         when(Util.isHostileEntity(any())).thenCallRealMethod();
+        // Util strip spaces
+        when(Util.stripSpaceAfterColorCodes(anyString())).thenCallRealMethod();
+
 
         // User & player
         when(player.getLocation()).thenReturn(location);

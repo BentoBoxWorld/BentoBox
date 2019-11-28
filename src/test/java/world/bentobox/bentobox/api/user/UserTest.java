@@ -6,8 +6,11 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -33,7 +36,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -79,7 +81,7 @@ public class UserTest {
         User.setPlugin(plugin);
 
         uuid = UUID.randomUUID();
-        when(player.getUniqueId()).thenReturn(uuid);      
+        when(player.getUniqueId()).thenReturn(uuid);
 
         ItemFactory itemFactory = mock(ItemFactory.class);
 
@@ -221,7 +223,7 @@ public class UserTest {
 
     @Test
     public void testHasPermission() {
-        when(player.hasPermission(Mockito.anyString())).thenReturn(true);
+        when(player.hasPermission(anyString())).thenReturn(true);
         assertTrue(user.hasPermission(""));
         assertTrue(user.hasPermission("perm"));
     }
@@ -294,7 +296,7 @@ public class UserTest {
         when(iwm .getAddon(any())).thenReturn(optionalAddon);
         when(lm.get(any(), eq("name.a.reference"))).thenReturn("mockmockmock");
         user.sendMessage("a.reference");
-        verify(player, Mockito.never()).sendMessage(eq(TEST_TRANSLATION));
+        verify(player, never()).sendMessage(eq(TEST_TRANSLATION));
         verify(player).sendMessage(eq("mockmockmock"));
     }
 
@@ -303,7 +305,7 @@ public class UserTest {
         // Nothing - blank translation
         when(lm.get(any(), any())).thenReturn("");
         user.sendMessage("a.reference");
-        verify(player, Mockito.never()).sendMessage(Mockito.anyString());
+        verify(player, never()).sendMessage(anyString());
     }
 
     @Test
@@ -315,7 +317,14 @@ public class UserTest {
         }
         when(lm.get(any(), any())).thenReturn(allColors.toString());
         user.sendMessage("a.reference");
-        verify(player, Mockito.never()).sendMessage(Mockito.anyString());
+        verify(player, never()).sendMessage(anyString());
+    }
+
+    @Test
+    public void testSendMessageColorsAndSpaces() {
+        when(lm.get(any(), any())).thenReturn(ChatColor.COLOR_CHAR + "6 Hello there");
+        user.sendMessage("a.reference");
+        verify(player).sendMessage(eq(ChatColor.COLOR_CHAR + "6Hello there"));
     }
 
     @Test
@@ -330,7 +339,7 @@ public class UserTest {
         String raw = ChatColor.RED + "" + ChatColor.BOLD + "test message";
         user = User.getInstance((CommandSender)null);
         user.sendRawMessage(raw);
-        verify(player, Mockito.never()).sendMessage(Mockito.anyString());
+        verify(player, never()).sendMessage(anyString());
     }
 
     @Test
@@ -354,7 +363,7 @@ public class UserTest {
         for (GameMode gm: GameMode.values()) {
             user.setGameMode(gm);
         }
-        verify(player, Mockito.times(GameMode.values().length)).setGameMode(any());
+        verify(player, times(GameMode.values().length)).setGameMode(any());
     }
 
     @Test

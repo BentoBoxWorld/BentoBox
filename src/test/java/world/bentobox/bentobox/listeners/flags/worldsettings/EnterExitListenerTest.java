@@ -1,6 +1,7 @@
 package world.bentobox.bentobox.listeners.flags.worldsettings;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -197,6 +198,9 @@ public class EnterExitListenerTest {
 
         // Flags
         Flags.ENTER_EXIT_MESSAGES.setSetting(world, true);
+
+        // Util strip spaces
+        when(Util.stripSpaceAfterColorCodes(anyString())).thenCallRealMethod();
     }
 
     @After

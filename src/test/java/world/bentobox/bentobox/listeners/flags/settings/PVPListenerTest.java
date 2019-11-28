@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -226,6 +227,9 @@ public class PVPListenerTest {
 
         // Addon
         when(iwm.getAddon(any())).thenReturn(Optional.empty());
+
+        // Util strip spaces
+        when(Util.stripSpaceAfterColorCodes(anyString())).thenCallRealMethod();
 
     }
 
@@ -1045,7 +1049,7 @@ public class PVPListenerTest {
         ItemStack bow = new ItemStack(Material.CROSSBOW);
         Arrow arrow = mock(Arrow.class);
         EntityShootBowEvent e = new EntityShootBowEvent(creeper, bow, arrow, 0);
-        listener.onPlayerShootFireworkEvent(e); 
+        listener.onPlayerShootFireworkEvent(e);
         // Now damage
         EntityDamageByEntityEvent en = new EntityDamageByEntityEvent(arrow, player, DamageCause.ENTITY_ATTACK, 0);
         listener.onEntityDamage(en);

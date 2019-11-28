@@ -3,7 +3,10 @@ package world.bentobox.bentobox.listeners.flags.protection;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
@@ -41,7 +44,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -130,8 +132,8 @@ public class PhysicalInteractionListenerTest {
 
         // Fake players
         Settings settings = mock(Settings.class);
-        Mockito.when(plugin.getSettings()).thenReturn(settings);
-        Mockito.when(settings.getFakePlayers()).thenReturn(new HashSet<>());
+        when(plugin.getSettings()).thenReturn(settings);
+        when(settings.getFakePlayers()).thenReturn(new HashSet<>());
 
         // Users
         User.setPlugin(plugin);
@@ -151,12 +153,12 @@ public class PhysicalInteractionListenerTest {
 
         // Player name
         PlayersManager pm = mock(PlayersManager.class);
-        when(pm.getName(Mockito.any())).thenReturn("tastybento");
+        when(pm.getName(any())).thenReturn("tastybento");
         when(plugin.getPlayers()).thenReturn(pm);
 
         // World Settings
         WorldSettings ws = mock(WorldSettings.class);
-        when(iwm.getWorldSettings(Mockito.any())).thenReturn(ws);
+        when(iwm.getWorldSettings(any())).thenReturn(ws);
         Map<String, Boolean> worldFlags = new HashMap<>();
         when(ws.getWorldFlags()).thenReturn(worldFlags);
 
@@ -165,14 +167,14 @@ public class PhysicalInteractionListenerTest {
         when(plugin.getIslands()).thenReturn(im);
         Island island = mock(Island.class);
         Optional<Island> optional = Optional.of(island);
-        when(im.getProtectedIslandAt(Mockito.any())).thenReturn(optional);
+        when(im.getProtectedIslandAt(any())).thenReturn(optional);
 
         // Notifier
         notifier = mock(Notifier.class);
         when(plugin.getNotifier()).thenReturn(notifier);
 
         PowerMockito.mockStatic(Util.class);
-        when(Util.getWorld(Mockito.any())).thenReturn(mock(World.class));
+        when(Util.getWorld(any())).thenReturn(mock(World.class));
 
         // Player setup
         player = mock(Player.class);
@@ -186,9 +188,10 @@ public class PhysicalInteractionListenerTest {
         clickedBlock = mock(Block.class);
 
         // Addon
-        when(iwm.getAddon(Mockito.any())).thenReturn(Optional.empty());
+        when(iwm.getAddon(any())).thenReturn(Optional.empty());
 
-
+        // Util strip spaces
+        when(Util.stripSpaceAfterColorCodes(anyString())).thenCallRealMethod();
     }
 
     @After
@@ -229,7 +232,7 @@ public class PhysicalInteractionListenerTest {
         i.onPlayerInteract(e);
         assertTrue(e.useInteractedBlock().equals(Result.DENY));
         assertTrue(e.useItemInHand().equals(Result.DENY));
-        Mockito.verify(notifier).notify(Mockito.any(), Mockito.eq("protection.protected"));
+        verify(notifier).notify(any(), eq("protection.protected"));
     }
 
     /**
@@ -250,7 +253,7 @@ public class PhysicalInteractionListenerTest {
      */
     @Test
     public void testOnPlayerInteractFarmlandPermission() {
-        when(player.hasPermission(Mockito.anyString())).thenReturn(true);
+        when(player.hasPermission(anyString())).thenReturn(true);
         when(clickedBlock.getType()).thenReturn(Material.FARMLAND);
         PlayerInteractEvent e  = new PlayerInteractEvent(player, Action.PHYSICAL, item, clickedBlock, BlockFace.UP);
         PhysicalInteractionListener i = new PhysicalInteractionListener();
@@ -269,7 +272,7 @@ public class PhysicalInteractionListenerTest {
         i.onPlayerInteract(e);
         assertTrue(e.useInteractedBlock().equals(Result.DENY));
         assertTrue(e.useItemInHand().equals(Result.DENY));
-        Mockito.verify(notifier).notify(Mockito.any(), Mockito.eq("protection.protected"));
+        verify(notifier).notify(any(), eq("protection.protected"));
     }
 
     /**

@@ -153,6 +153,8 @@ public class EnderChestListenerTest {
         // Fake players
         when(plugin.getSettings()).thenReturn(settings);
 
+        // Util strip spaces
+        when(Util.stripSpaceAfterColorCodes(anyString())).thenCallRealMethod();
     }
 
     @After

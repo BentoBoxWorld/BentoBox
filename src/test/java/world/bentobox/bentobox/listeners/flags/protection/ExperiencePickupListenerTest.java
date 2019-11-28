@@ -5,6 +5,7 @@ package world.bentobox.bentobox.listeners.flags.protection;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -140,6 +141,9 @@ public class ExperiencePickupListenerTest {
         TargetReason reason = TargetReason.CLOSEST_PLAYER;
         e = new EntityTargetLivingEntityEvent(entity, targetEntity, reason);
         epl = new ExperiencePickupListener();
+
+        // Util strip spaces
+        when(Util.stripSpaceAfterColorCodes(anyString())).thenCallRealMethod();
 
         // Addon
         when(iwm.getAddon(Mockito.any())).thenReturn(Optional.empty());
