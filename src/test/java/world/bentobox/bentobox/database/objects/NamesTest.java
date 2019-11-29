@@ -1,6 +1,3 @@
-/**
- * 
- */
 package world.bentobox.bentobox.database.objects;
 
 import static org.junit.Assert.assertEquals;
@@ -48,7 +45,7 @@ public class NamesTest {
      */
     @Test
     public void testGetUuid() {
-        
+
         Names name = new Names();
         assertNull(name.getUuid());
         UUID t = UUID.randomUUID();

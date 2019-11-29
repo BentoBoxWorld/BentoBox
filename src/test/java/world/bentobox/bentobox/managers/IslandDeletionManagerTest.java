@@ -2,6 +2,7 @@ package world.bentobox.bentobox.managers;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -22,6 +23,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -46,7 +48,7 @@ import world.bentobox.bentobox.util.Util;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( { Bukkit.class, BentoBox.class, Util.class, Location.class })
 public class IslandDeletionManagerTest {
-    
+
     @Mock
     private BentoBox plugin;
     // Class under test
@@ -61,6 +63,8 @@ public class IslandDeletionManagerTest {
     private PluginManager pim;
     @Mock
     private BukkitScheduler scheduler;
+    @Mock
+    private IslandWorldManager iwm;
 
 
     /**
@@ -76,7 +80,7 @@ public class IslandDeletionManagerTest {
         when(Bukkit.getPluginManager()).thenReturn(pim);
         when(server.getPluginManager()).thenReturn(pim);
         when(Bukkit.getScheduler()).thenReturn(scheduler);
-        
+
         // Clear any remaining database
         clearDatabase();
         // Set up plugin
@@ -88,10 +92,13 @@ public class IslandDeletionManagerTest {
         when(s.getDatabaseType()).thenReturn(DatabaseType.JSON);
         // Location
         when(location.getWorld()).thenReturn(world);
-        when(world.getName()).thenReturn("bskyblock");       
+        when(world.getName()).thenReturn("bskyblock");
         // Island
         when(island.getCenter()).thenReturn(location);
-        
+        // IWM
+        when(plugin.getIWM()).thenReturn(iwm);
+        when(iwm.getIslandDistance(any())).thenReturn(64);
+
         // Island Deletion Manager
         idm = new IslandDeletionManager(plugin);
     }
@@ -104,7 +111,7 @@ public class IslandDeletionManagerTest {
         clearDatabase();
     }
 
-    
+
     private void clearDatabase() throws Exception {
         //remove any database data
         File file = new File("database");
@@ -115,15 +122,7 @@ public class IslandDeletionManagerTest {
             .map(Path::toFile)
             .forEach(File::delete);
         }
-        
-    }
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandDeletionManager#IslandDeletionManager(BentoBox)}.
-     */
-    @Test
-    public void testIslandDeletionManager() {
-        // Nothing
     }
 
     /**
@@ -140,7 +139,7 @@ public class IslandDeletionManagerTest {
         verify(plugin).log("There are 1 islands pending deletion.");
         verify(plugin).logError("Island queued for deletion refers to a non-existant game world. Skipping...");
     }
-    
+
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandDeletionManager#onBentoBoxReady(world.bentobox.bentobox.api.events.BentoBoxReadyEvent)}.
      */
@@ -175,15 +174,16 @@ public class IslandDeletionManagerTest {
         File file = new File("database", "IslandDeletion");
         assertTrue(file.exists());
         File entry = new File(file, id.getUniqueId() + ".json");
-        assertTrue(entry.exists());        
+        assertTrue(entry.exists());
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandDeletionManager#onIslandDeleted(world.bentobox.bentobox.api.events.island.IslandEvent.IslandDeletedEvent)}.
      */
+    @Ignore("To do")
     @Test
     public void testOnIslandDeleted() {
-        
+
     }
 
     /**

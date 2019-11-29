@@ -294,7 +294,7 @@ public class User {
         // If requester is console, then return the default value
         if (!isPlayer()) return defaultValue;
 
-        int value = defaultValue;
+        int value = 0;
 
         // If there is a dot at the end of the permissionPrefix, remove it
         if (permissionPrefix.endsWith(".")) {
@@ -308,10 +308,12 @@ public class User {
                 .filter(permission -> permission.startsWith(permPrefix))
                 .collect(Collectors.toList());
 
+        if (permissions.isEmpty()) return defaultValue;
+
         for (String permission : permissions) {
             if (permission.contains(permPrefix + "*")) {
                 // 'Star' permission
-                return value;
+                return defaultValue;
             } else {
                 String[] spl = permission.split(permPrefix);
                 if (spl.length > 1) {

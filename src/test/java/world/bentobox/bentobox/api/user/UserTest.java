@@ -11,6 +11,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Optional;
@@ -79,7 +80,7 @@ public class UserTest {
         User.setPlugin(plugin);
 
         uuid = UUID.randomUUID();
-        when(player.getUniqueId()).thenReturn(uuid);      
+        when(player.getUniqueId()).thenReturn(uuid);
 
         ItemFactory itemFactory = mock(ItemFactory.class);
 
@@ -520,5 +521,18 @@ public class UserTest {
         when(player.getEffectivePermissions()).thenReturn(permSet);
         User u = User.getInstance(player);
         assertEquals(22, u.getPermissionValue("bskyblock.max", 22));
+    }
+
+    /**
+     * Test for {@link User#getPermissionValue(String, int)}
+     */
+    @Test
+    public void testGetPermissionValueSmall() {
+        User.clearUsers();
+        PermissionAttachmentInfo pai = mock(PermissionAttachmentInfo.class);
+        when(pai.getPermission()).thenReturn("bskyblock.max.3");
+        when(player.getEffectivePermissions()).thenReturn(Collections.singleton(pai));
+        User u = User.getInstance(player);
+        assertEquals(3, u.getPermissionValue("bskyblock.max", 22));
     }
 }

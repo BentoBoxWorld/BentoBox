@@ -9,6 +9,8 @@ import org.bukkit.util.Vector;
 
 import com.google.gson.annotations.Expose;
 
+import world.bentobox.bentobox.BentoBox;
+
 /**
  * Data object to store islands in deletion
  * @author tastybento
@@ -52,15 +54,18 @@ public class IslandDeletion implements DataObject {
     public IslandDeletion() {}
 
     public IslandDeletion(Island island) {
+        // Get the world's island distance
+        int islandDistance = BentoBox.getInstance().getIWM().getIslandDistance(island.getWorld());
+        int range = Math.min(island.getMaxEverProtectionRange(), islandDistance);
         uniqueId = UUID.randomUUID().toString();
         location = island.getCenter();
-        minX = location.getBlockX() - island.getMaxEverProtectionRange();
+        minX = location.getBlockX() - range;
         minXChunk =  minX >> 4;
-        maxX = island.getMaxEverProtectionRange() + location.getBlockX();
+        maxX = range + location.getBlockX();
         maxXChunk = maxX >> 4;
-        minZ = location.getBlockZ() - island.getMaxEverProtectionRange();
+        minZ = location.getBlockZ() - range;
         minZChunk = minZ >> 4;
-        maxZ = island.getMaxEverProtectionRange() + location.getBlockZ();
+        maxZ = range + location.getBlockZ();
         maxZChunk = maxZ >> 4;
         box = BoundingBox.of(new Vector(minX, 0, minZ), new Vector(maxX, 255, maxZ));
     }
