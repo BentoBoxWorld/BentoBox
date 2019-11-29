@@ -1,673 +1,1322 @@
-###########################################################################################
-# This is a YML file. Be careful when editing. Check your edits in a YAML checker like    #
-# the one at http://yaml-online-parser.appspot.com                                        #
-###########################################################################################
-
-# Updated for <FC-1>
-
-meta:
-  authors:
-  - mozzaf1ato
-  - tastybento
-  banner: "WHITE_BANNER:1:CIRCLE_MIDDLE:RED"
-
-general:
-  success: "&a成否"
-  errors:
-    command-cancelled: "&cコマンドがキャンセルされました"
-    no-permission: "&cこのコマンドを実行する権限がありません ([permission])。"
-    use-in-game: "&cこのコマンドは、ゲームでのみ利用可能です。"
-    no-team: "&cチームを持っていない!"
-    no-island: "&cあなたは島を持っていない!"
-    player-has-island: "&cプレイヤーはすでに島を持っている!"
-    player-has-no-island: "&cあの選手には島がない!"
-    already-have-island: "&cあなたはすでに島を持っている!"
-    no-safe-location-found: "&cスタッフの方がとても親切でした。"
-    not-owner: "&cあなたの島のリーダーではありません!"
-    not-in-team: "&cあの選手はあなたのチームにはいない!"
-    offline-player: "&cそのプレイヤーはオフラインまたは存在しません。"
-    unknown-player: "&c不明なプレイヤー!"
-    general: "&cそのコマンドはまだ準備ができていません-お問い合わせ管理"
-    unknown-command: "&c不明なコマンドです。/[label] help を表示します。"
-    wrong-world: "&cあなたはそれを行うには、右の世界ではありません!"
-    you-must-wait: "&cそのコマンドを再度実行するには、[number]秒を待つ必要があります"
-  tips:
-    changing-obsidian-to-lava: "溶岩に戻って黒曜石を変更します。注意してください！"
-
+---
 commands:
-  # Parameters in <> are required, parameters in [] are optional:
-  help:
-    header: "&7=========== &c[label] ヘルプ &7==========="
-    syntax: "&b[usage] &a[parameters]&7: &e[description]"
-    end: "&7================================="
-    parameters: "[command]"
-    description: "ヘルプコマンド"
-    console: "コンソール"
   admin:
-    help:
-      parameters: ""
-      description: "管理コマンド"
-    clearresets:
-      parameters: "<プレーヤー>"
-      description: "この世界のプレーヤーリセットカウントをクリアします。"
-      cleared: "&2リセット解除"
+    blueprint:
+      copied-blocks: "&2[number]ブロックをクリップボードにコピー"
+      could-not-load: "&cそのファイルを読み込めませんでした!"
+      could-not-save: "&cうーん、何かが間違ってそのファイルを保存した: [message]"
+      file-exists: "&cファイルは既に存在し、上書きしますか?"
+      look-at-a-block: 20ブロック以内にブロックを見て設定する
+      need-pos1-pos2: "&cpos1 と pos2 を最初に設定!"
+      no-such-file: "&cそのようなファイルはありません!"
+      parameters: "<load><copy><paste><pos1><pos2><save>"
+      set-different-pos: "&c別の場所を設定する-この pos は既に設定されています!"
+      set-pos1: "&2位置1は [vector] で設定"
+      set-pos2: "&2位置2は [vector] で設定"
+      bedrock-required: "＆c少なくとも1つの岩盤ブロックを設計図に含める必要があります！"
+      copying: "＆bブロックをコピーしています..."
+      copy:
+        description: pos1とpos2で設定されたクリップボードと、オプションでエアブロックをコピーします
+        parameters: "[air]"
+      load:
+        parameters: "<name>"
+        description: 設計図をクリップボードに読み込みます
+      list:
+        description: 利用可能な設計図を一覧表示する
+        available-blueprints: "＆aこれらの設計図はロードできます："
+        no-blueprints: "＆c フォルダーにブループリントはありません！"
+      origin:
+        description: ブループリントの原点を自分の位置に設定します
+      paste:
+        description: あなたの場所にクリップボードを貼り付けます
+        pasting: "＆a貼り付け..."
+      pos1:
+        description: 立方体クリップボードの最初の角を設定します
+      pos2:
+        description: 立方体クリップボードの2番目のコーナーを設定します
+      save:
+        description: コピーしたクリップボードを保存します
+        parameters: "<青写真の名前>"
+      management:
+        back: バック
+        instruction: 設計図をクリックして、ここをクリックしてください
+        normal: 普通
+        nether: ネザー
+        title: ブループリントバンドルマネージャー
+        edit: クリックして編集する
+        rename: 右クリックして名前を変更
+        edit-description: クリックして説明を編集
+        world-instructions: |
+          青写真を配置
+          設定する権利
+        trash: ゴミ箱
+        trash-instructions: ここをクリックして削除します
+        permission: 許可
+        perm-required: 必須
+        perm-not-required: 必須ではありません
+        remove: 右クリックして削除
+        blueprint-instruction: |
+          クリックして選択、
+          その後、バンドルに追加します。
+          右クリックして名前を変更します。
+        select-first: 最初にブループリントを選択
+        new-bundle: 新しいバンドル
+        new-bundle-instructions: クリックして新しいバンドルを作成します
+        name:
+          prompt: 名前を入力するか、「quit」で終了します
+          too-long: "＆c長すぎる"
+          pick-a-unique-name: よりユニークな名前を選んでください
+          success: 成功！
+          quit: quit
+          conversation-prefix: ">"
+        description:
+          success: 成功！
+          cancelling: キャンセル中
+          quit: quit
+          instructions: |
+            [名前]に複数行の説明を入力してください
+            そして、終了するためにそれ自体で行を「quit」します。
+        end: The End
+        world-name-syntax: "[name]ワールド"
+        perm-format: "&e"
+        slot: "&fPreferred Slot [number]"
+        slot-instructions: |
+          &a左クリックして増加
+          &a右クリックして減少
+      description: 青写真の操作
+      copy-first: "&c最初に青写真をコピー!"
+      mid-copy: "＆cコピー中です。コピーが完了するまで待ちます。"
+      copied-percent: "＆6コピー済み[number]％"
     clearresetsall:
-      description: "この世界のプレーヤーリセットカウントをすべてクリアします。"
-    team:
-      add:
-        parameters: "<リーダー> <プレーヤー>"
-        description: "リーダーのチームにプレイヤーを追加する"
-        name-not-owner: "&c[name]はリーダーではありません"
-        name-has-island: "&c[name]には島があります。登録を解除するか、最初に削除します。"
-      disband:
-        parameters: "<リーダー>"
-        description: "チームリーダーのチームを解散"
-        use-disband-owner: "リーダーじゃない!解散を使用 [owner]"
-        disbanded: "管理者はあなたのチームを解散!"
-      kick:
-        parameters: "<プレーヤー>"
-        description: "チームからプレーヤーを蹴る"
-        cannot-kick-owner: "&cチームリーダーを蹴ることはできません。キックのメンバーは、まず"
-        admin-kicked: "管理者は、チームからあなたを蹴った。"
-      setowner:
-        parameters: "<プレーヤー>"
-        description: "プレーヤーをチームのリーダーにする"
-        already-owner: "&cプレイヤーはすでにリーダーです!"
+      description: この世界のプレーヤーリセットカウントをすべてクリアします。
+    clearresets:
+      cleared: "&2リセット解除"
+      description: この世界のプレーヤーリセットカウントをクリアします。
+      parameters: "<プレーヤー>"
+    delete:
+      cannot-delete-owner: "&cすべての島のメンバーは、それを削除する前に島から追い出される必要があります。"
+      deleted-island: "&2[xyz] の島は正常に削除されました。"
+      description: プレイヤーの島を削除します。
+      parameters: "<player>"
+    getrank:
+      parameters: "<プレーヤー>"
+      description: プレイヤーの島でのランクを見る。
+      rank-is: プレーヤーのランクは [rank]である。
+    info:
+      banned-players: 禁止選手
+      deaths: '死亡: [number]'
+      description: あなたがどこにいるか、プレイヤーの島に関する情報を取得する
+      island-coords: " 島座標: [xz1] - [xz2]"
+      island-location: '島の位置: [xyz]'
+      is-spawn: 島は産卵の島です
+      last-login: '最終ログイン: [date]'
+      owner: '所有者: [owner] ([uuid])'
+      parameters: "<プレーヤー>"
+      protection-coords: '保護座標: [xz1] - [xz2]'
+      protection-range: '保護範囲: [range]'
+      resets-left: 'リセット: [number] (最大:  [total])'
+      team-member-format: "[name] [rank]"
+      team-members-title: チームメンバー
+      team-owner-format: "[name] [rank]"
+      title: " ========== 島情報 ============"
+      unowned: 所有
+      islands-in-trash: "＆dPlayerにはゴミ箱があります。"
+      purge-protected: 島はパージ保護されています
+      island-uuid: 'UUID: [uuid]'
+      max-protection-range: 最大の歴史的保護範囲：[range]
+      banned-format: "&c[name]"
+      no-island: "&cあなたは今島にはいません..."
     range:
-      description: "管理島の範囲コマンド"
+      description: 管理島の範囲コマンド
       display:
         already-off: "&cインジケーターは既にオフです"
         already-on: "&cインジケーターは既に"
-        description: "島の範囲インジケータを表示/非表示"
-        hiding: "範囲インジケータの非表示"
-        hint: |
+        description: 島の範囲インジケータを表示/非表示
+        hiding: 範囲インジケータの非表示
+        showing: 範囲インジケーターの表示
+        hint: |-
           赤いバリアのアイコンは、現在の島の保護範囲の制限を示しています。
-          グレイパーティクルは最大アイランドリミットを表示します。
+          グレイのパーティクルは最大アイランドリミットを表示します。
           緑のパーティクルは、島の保護範囲が異なる場合に、デフォルトの保護範囲を示します。
-        showing: "範囲インジケーターの表示"
+      reset:
+        description: 世界のデフォルトに島の保護された範囲をリセットします
+        parameters: "<プレーヤー>"
+        success: "&2島の保護範囲を [number] にリセット"
       set:
-        parameters: "<プレーヤー><範囲>"
-        description: "島の保護範囲を設定します"
+        description: 島の保護範囲を設定します
         invalid-value:
           not-numeric: "&c[number]は整数ではありません!"
-          too-low: "&c保護範囲は1より大きくなければなりません"
-          too-high: "&c保護範囲は [number]と同じかそれ以下である必要があります。"
           same-as-before: "&c保護範囲はすでに [number]に設定されています!"
+          too-high: "&c保護範囲は [number]と同じかそれ以下である必要があります。"
+          too-low: "&c保護範囲は1より大きくなければなりません"
+        parameters: "<プレーヤー><範囲>"
         success: "&2島の保護範囲を [number]に設定します。"
-      reset:
-        parameters: "<プレーヤー>"
-        description: "世界のデフォルトに島の保護された範囲をリセットします"
-        success: "&2島の保護範囲を [number] にリセット"
     register:
-      parameters: "<プレーヤー>"
-      description: "あなたが上にある所有島に登録プレーヤー"
-      registered-island: "[xyz] で島に登録されたプレーヤー。"
       already-owned: "&c島はすでに他のプレイヤーが所有している!"
       no-island-here: "&cここには島はない1つを確認します。"
-    unregister:
-      parameters: "<所有者>"
-      description: "島から所有者を登録解除するが、島のブロックを維持する"
-      unregistered-island: "[xyz]で島から未登録のプレーヤー。"
-    info:
       parameters: "<プレーヤー>"
-      description: "あなたがどこにいるか、プレイヤーの島に関する情報を取得する"
-      no-island: "&cあなたは今、島にいない..."
-      title: " ========== 島情報 ============"
-      owner: "所有者: [owner] ([uuid])"
-      last-login: "最終ログイン: [date]"
-      deaths: "死亡: [number]"
-      resets-left: "リセット: [number] (最大:  [total])"
-      team-members-title: "チームメンバー"
-      team-owner-format: "[name] [rank]"
-      team-member-format: "[name] [rank]"
-      island-location: "島の位置: [xyz]"
-      island-coords: " 島座標: [xz1] - [xz2]"
-      protection-range: "保護範囲: [range]"
-      protection-coords: "保護座標: [xz1] - [xz2]"
-      is-spawn: "島は産卵の島です"
-      banned-players: "禁止選手"
-      banned-format: "[name]"
-      unowned: "所有"
-    version:
-      description: "表示BentoBoxとアドオンのバージョン"
+      registered-island: "[xyz] で島に登録されたプレーヤー。"
+      reserved-island: "＆aプレイヤー用に[xyz]に島を予約しました。"
+      in-deletion: "＆cこの島のスペースは現在削除中です。後で試してください。"
+      island-is-spawn: "＆6島が生成されます。本気ですか？もう一度コマンドを入力して確認します。"
+      cannot-make-island: "&c島はここに配置できません。申し訳ありません。考えられるエラーについては、コンソールをご覧ください。"
+      description: あなたがいる未所有の島にプレーヤーを登録する。
+    reload:
+      description: リロードする
     setrange:
+      description: プレイヤーの島の範囲を設定する
       parameters: "<プレーヤー><範囲>"
-      description: "プレイヤーの島の範囲を設定する"
       range-updated: "&2島の範囲は、[number]に更新"
-    reload:
-      description: "リロードする"
-    tp:
-      parameters: "<プレーヤー>"
-      description: "プレイヤーの島にテレポート"
-      manual: "&c安全なワープが見つかりません![location]の近くに手動でテレポートします。"
-    getrank:
-      parameters: "<プレーヤー>"
-      description: "自分の島でプレイヤーのランクを取得する"
-      rank-is: "ランクは彼らの島の [rank]である。"
     setrank:
-      parameters: "<プレーヤー>"
-      description: "プレイヤーのランクを設定する"
-      unknown-rank: "&c不明ランク!"
+      description: プレイヤーのランクを設定する
       rank-set: "&2[from] から [to] に設定されたランク。"
-    blueprint:
-      parameters: "<load><copy><paste><pos1><pos2><save>"
-      description: "blueprints の操作"
-      copy-first: "&c最初に blueprint をコピー!"
-      file-exists: "&cファイルは既に存在し、上書きしますか?"
-      no-such-file: "&cそのようなファイルはありません!"
-      could-not-load: "&cそのファイルを読み込めませんでした!"
-      could-not-save: "&cうーん、何かが間違ってそのファイルを保存した: [message]"
-      set-pos1: "&2位置1は [vector] で設定"
-      set-pos2: "&2位置2は [vector] で設定"
-      set-different-pos: "&c別の場所を設定する-この pos は既に設定されています!"
-      need-pos1-pos2: "&cpos1 と pos2 を最初に設定!"
-      copied-blocks: "&2[number]ブロックをクリップボードにコピー"
-      look-at-a-block: "20ブロック以内にブロックを見て設定する"
-    world:
-      description: "世界の設定を管理する"
-    delete:
-      parameters: "<player>"
-      description: "プレイヤーの島を削除します。"
-      cannot-delete-owner: "&cすべての島のメンバーは、それを削除する前に島から追い出される必要があります。"
-      deleted-island: "&2[xyz] の島は正常に削除されました。"
-  bentobox:
-    description: "BentoBox管理コマンド"
-    about:
-      description: "著作権とライセンス情報を表示する"
-    reload:
-      description: "すべてのロケールファイルを再読み込み"
-      locales-reloaded: "言語がリロードされた"
+      unknown-rank: "&c不明ランク!"
+      not-possible: "＆cランクは訪問者より高くなければなりません"
+      parameters: "＜プレーヤー＞　＜ランク＞"
+    team:
+      add:
+        description: リーダーのチームにプレイヤーを追加する
+        name-not-owner: "&c[name]はリーダーではありません"
+        success: "＆b [name]＆aが＆b [owner]＆aの島に追加されました。"
+        parameters: "<owner> <player>"
+        name-has-island: "&c[name]には島があります。登録を解除するか、最初に削除してください。"
+      disband:
+        description: チームリーダーのチームを解散
+        disbanded: 管理者はあなたのチームを解散!
+        success: "＆b [name]＆aのチームは解散しました。"
+        parameters: "<owner>"
+        use-disband-owner: リーダーじゃない！解散を使用 [owner]
+      setowner:
+        already-owner: "&cプレイヤーはすでにリーダーです!"
+        parameters: "<プレーヤー>"
+        success: "＆b [name]＆aがこの島の所有者になりました。"
+        description: プレーヤーをチームのリーダーにする％
+      kick:
+        not-in-team: "＆cこのプレーヤーはチームに所属していません。"
+        success: "＆b [name]＆aは＆b [owner]＆aの島から追い出されました。"
+        parameters: "<チームのプレーヤー>"
+        description: チームからプレーヤーを外す。
+        cannot-kick-owner: "&cチームリーダーを外すことはできません。まずはメンバーを外してください。"
+        admin-kicked: 管理者は、あなたをチームから外しました。
+    tp:
+      description: プレイヤーの島にテレポート
+      manual: "&c安全なワープが見つかりません![location]の近くに手動でテレポートします。"
+      parameters: "<プレーヤー>"
+    unregister:
+      description: 島から所有者を登録解除するが、島のブロックを維持する
+      parameters: "<所有者>"
+      unregistered-island: "[xyz]で島から未登録のプレーヤー。"
     version:
-      description: "表示情報"
-      loaded-addons: "読み込まれたアドオン"
-      loaded-game-worlds: "ロードされたゲームの世界"
+      description: 表示BentoBoxとアドオンのバージョン
+    world:
+      description: 世界の設定を管理する
+    resets:
+      description: プレーヤーのリセットを編集する
+      set:
+        description: このプレーヤーのリセットを設定します
+        success: "＆a＆b [name]＆aのリセットを＆b [number]＆aに正常に設定します。"
+        parameters: "<player> <resets>"
+      reset:
+        description: このプレーヤーのリセットを0にリセットします
+        success-everyone: "＆a＆beveryone＆aのリセットを＆b0＆aに正常にリセットします。"
+        success: "＆a＆b [name]＆aのリセットを＆b0＆aに正常にリセットします。"
+        parameters: "<player>"
+      add:
+        description: プレーヤーにリセットを追加します
+        parameters: "<player> <resets>"
+        success: "＆a＆b [number]＆aresetsを＆b [name]に追加し、合計を＆b [total]＆a resetsに増やしました。"
+      remove:
+        description: プレーヤーのリセットを削除します
+        parameters: "<player> <resets>"
+        success: "＆a＆b [number]＆aresetsを＆b [name]に削除し、合計を＆b [total]＆a resetsに減らしました。"
+    purge:
+      description: "[日]以上放棄された島をパージする"
+      purge-in-progress: "＆cパージ中です。キャンセルするにはパージ停止を使用します"
+      number-error: "＆cArgumentは日数でなければなりません"
+      confirm: "＆dType [label] purge confirmでパージを開始します"
+      completed: "＆aパージを停止しました"
+      see-console-for-status: パージが開始されました。ステータスについてはコンソールをご覧ください
+      protect:
+        description: アイランドパージ保護の切り替え
+        protecting: "＆aパージ保護島"
+        unprotecting: "＆aパージ保護の削除"
+        move-to-island: "&c最初に島に移動してください！"
+      stop:
+        description: 進行中のパージを停止する
+        stopping: パージの停止
+        no-purge-in-progress: "＆cパージは進行中です！"
+      unowned:
+        description: 未所有の島を削除-確認が必要
+        unowned-islands: "＆d[number]島を見つけました。"
+      parameters: "[日]"
+      days-or-more: 1日以上必要です
+      purgable-islands: "[number]個のパーガブル島が見つかりました。"
+    switch:
+      description: 保護バイパスのオン/オフを切り替えます
+      removing: 保護バイパスを削除しています...
+      adding: 保護バイパスを追加しています...
+      op: "＆cオップは常に保護をバイパスできます。コマンドを使用しないようにします。"
+    switchto:
+      parameters: "<player> <number>"
+      description: プレイヤーの島をゴミ箱にある番号付きの島に切り替える
+      success: "＆aプレイヤーの島を指定された島に切り替えました。"
+      out-of-range: "＆c数は1から[number]の間でなければなりません。島番号を見るには＆l [label] trash [player]＆r＆cを使用してください"
+      cannot-switch: "＆c変換が失敗しました。エラーについては、コンソールログを参照してください。"
+    trash:
+      description: 所有していない島またはプレイヤーの島をゴミ箱に表示する
+      title: "＆d ===========ゴミ箱の島==========="
+      use-emptytrash: "＆a＆l [label] emptytrash [player]＆r＆aを使用して、ゴミ箱のアイテムを完全に削除します"
+      no-unowned-in-trash: "&cゴミ箱に所有されていない島はありません"
+      no-islands-in-trash: "＆cプレイヤーにはゴミの島がありません"
+      parameters: "[プレイヤー]"
+      count: "&l&d島[number]："
+      use-switch: "＆a＆l [label] switchto <player> <number> を使用＆r＆aでプレイヤーをゴミ箱の島に切り替える"
+    emptytrash:
+      description: プレイヤーのゴミ箱、またはゴミ箱にあるすべての未所有の島をクリアする
+      success: "＆aTrashは正常に空になりました。"
+      parameters: "[プレイヤー]"
+    setspawn:
+      description: この世界のスポーンとして島を設定します
+      already-spawn: "＆cこの島はすでに出現しています！"
+      no-island-here: "＆cここには島はありません。"
+      confirmation: "＆cこの島をこの世界のスポーンとして設定してもよろしいですか？"
+      success: "&aこの島をこの世界のスポーンに設定しました。"
+    settings:
+      parameters: "[プレーヤー]"
+      description: プレーヤーのシステム設定またはアイランド設定を開きます
+    resetflags:
+      description: すべての島をconfig.ymlのデフォルトのフラグ設定にリセットします
+      confirm: "＆4これにより、すべての島のフラグがデフォルトにリセットされます！"
+      success-one: "＆a [name]フラグはすべての島でデフォルトに設定されています。"
+      success: "&aすべての島のフラグをデフォルト設定に正常にリセットします。"
+      parameters: "[flag]"
+    why:
+      description: コンソール保護デバッグレポートの切り替え
+      parameters: "<プレイヤー>"
+      turning-on: "[name]のコンソールデバッグをオンにします。"
+      turning-off: "[name]のコンソールデバッグをオフにします。"
+    deaths:
+      description: プレイヤーの死を編集する
+      reset:
+        description: プレイヤーの死亡をリセットします
+        success: "＆a＆b [name]＆aの死亡を＆b0＆aに正常にリセットします。"
+        parameters: "<プレイヤー>"
+      set:
+        description: プレイヤーの死を設定します
+        success: "＆a＆b [name]＆aの死亡を＆b [number]＆aに正常に設定します。"
+        parameters: "<プレイヤー> <死ぬの数>"
+      add:
+        description: プレイヤーに死を追加します
+        parameters: "<player> <deaths>"
+        success: |-
+          &a[name]に[number]の死亡が追加され、
+          &a合計が[total]に増加しました。
+      remove:
+        description: プレイヤーの死を取り除く
+        parameters: "<player> <deaths>"
+        success: "＆a＆b [number]＆adeathsを＆b [name]に正常に削除し、合計を＆b [total]＆a deathsに減らしました。"
+    help:
+      description: 管理者コマンド
+  bentobox:
+    about:
+      description: 著作権とライセンス情報を表示する
+    description: BentoBox管理コマンド
+    reload:
+      description: すべてのロケールファイルを再読み込み
+      settings-reloaded: "＆2Settingsがリロードされました。"
+      addon: "＆6＆b [name]＆2。をリロードしています。"
+      warning: "＆cWarning：再ロードすると不安定になる可能性があるため、その後エラーが発生した場合は、サーバーを再起動してください。"
+      unknown-addon: "＆cUnknownアドオン！"
+      addons-reloaded: "＆2アドオンがリロードされました。"
+      addon-reloaded: "&b[name] &2reloaded."
+      locales-reloaded: "&2言語がリロードされた"
+    version:
       addon-syntax: "&2[name] &3[version] &7(&3[state]&7)"
-      game-world: "&2[name] &7(&3[addon]&7): &aOverworld&7, &r[nether_color]Nether&7, &r[end_color]End"
+      description: 表示情報
+      game-world: "&2[name] &7(&3[addon]&7): &aOverworld&7, &r[nether_color]Nether&7,
+        &r[end_color]End"
+      loaded-addons: 読み込まれたアドオン
+      loaded-game-worlds: ロードされたゲームの世界
+      database: "＆2Database：＆3 [データベース]"
+      plugin-version: "&2BentoBox version: &3[version]"
+      server: "&2Running &3[name] [version]&2."
+    manage:
+      description: 管理パネルを表示します
+    catalog:
+      description: カタログを表示します
+    locale:
+      description: ローカライズファイル分析を実行します
+      see-console: |-
+        コンソールでフィードバックを確認してください。
+        ＆aこのコマンドはスパムであるため、チャットからフィードバックを読み取ることができません...
+    migrate:
+      description: あるデータベースから別のデータベースにデータを移行します
+      players: "＆6プレイヤーの移行"
+      names: "＆6名前の移行"
+      addons: "＆6アドオンの移行"
+      class: "＆6移行[description]"
+      migrated: "&a移行済み"
   confirmation:
     confirm: "&c[seconds]秒でコマンドをもう一度入力して確認します。"
     previous-request-cancelled: "&c前の確認要求が取り消されました"
     request-cancelled: "&c確認のタイムアウト-要求が取り消されました"
+  help:
+    console: コンソール
+    description: ヘルプコマンド
+    end: "&7================================="
+    parameters: "[command]"
+    syntax: "&b[usage] &a[parameters]&7: &e[description]"
+    header: "&7=========== &c[label]の ヘルプ &7==========="
+    syntax-no-parameters: "&b[usage]&7: &e[description]"
   island:
     about:
-      description: "情報について"
+      description: 情報について
+    ban:
+      cannot-ban: そのプレイヤーは禁止することはできません。
+      cannot-ban-member: まずはチームメンバーを蹴り、次に解禁。
+      cannot-ban-yourself: あなた自身を禁止することはできません!
+      description: 島からプレーヤーを禁止する
+      owner-banned-you: "[name]は、彼らの島からあなたを禁止!"
+      parameters: "<プレーヤー>"
+      player-already-banned: プレイヤーはすでに禁止されて
+      you-are-banned: あなたはこの島から禁止されています!
+      cannot-ban-more-players: "＆c禁止制限に達したため、これ以上島からプレイヤーを禁止することはできません。"
+      player-banned: これで、＆b [name]＆cはあなたの島から禁止されました。
+    banlist:
+      description: リスト禁止選手
+      noone: この島では誰も禁止されていない
+      the-following: 以下の選手は禁止されている
+      you-can-ban: "＆b＆e [number]人までのプレイヤーを禁止できます。"
+      names: "&c[line]"
+    create:
+      creating-island: "＆aあなたの島の場所を見つけました。あなたのために準備しましょう。"
+      description: 島を作成する
+      pick-world: 世界から選ぶ [worlds]
+      unable-create-island: 島を生成することができませんでした, 管理者に連絡してください.
+      too-many-islands: "＆cこの世界には島が多すぎます。あなたの島を作成するのに十分なスペースがありません。"
+      pasting:
+        estimated-time: "＆a推定時間：＆b [number]＆aseconds。"
+        blocks: "＆aブロックごとに構築：＆b [number]＆ablocks in all ..."
+        entities: "＆aエンティティを埋める：＆b [number]＆aentities in all ..."
+        done: "＆aDone！あなたの島の準備が整い、あなたを待っています！"
+      pick: "＆2島を選ぶ"
+      on-first-login: "＆aWelcome！数秒で島の準備を開始します。"
+      parameters: "<青写真>"
+      unknown-blueprint: "＆cそのブループリントはまだロードされていません。"
     go:
+      description: あなたの島にテレポート
       parameters: "[ホーム番号]"
-      description: "あなたの島にテレポート"
       teleport: "&a島にテレポート"
       teleported: "&aテレポート #[number]をホームにします。"
       tip: "&bヘルプの種類/[label]ヘルプを表示します。"
     help:
-      description: "本島のコマンド"
+      description: 本島のコマンド
       pick-world: "&c[worlds]からワールドを指定する"
-    spawn:
-      description: "スポーンにテレポート"
-    create:
-      description: "島を作成する"
-      unable-create-island: "島を生成することができませんでした, 管理者に連絡してください."
-      creating-island: "島を作成する..."
-      pick-world: "世界から選ぶ [worlds]"
     info:
-      description: "島についての情報を表示"
+      description: 島についての情報を表示
+      parameters: "<プレイヤー>"
+    language:
+      description: 言語の選択
     reset:
-      description: "島を再起動し、古いものを削除する"
-      must-remove-members: "あなたはそれを (/island team kick <player>) を再起動する前に、あなたの島からすべてのメンバーを削除する必要があります。"
-      none-left: "あなたはもうリセットが残っている!"
-      resets-left: "[number]を左にリセットしている"
-    sethome:
-      description: "ホームテレポートポイントを設定する"
-      must-be-on-your-island: "あなたの島に家を設定する必要があります!"
-      num-homes: "家は1から [number]である場合もある。"
-      home-set: "あなたの島の家はあなたの現在の場所に設定されています。"
-      parameters: "[home number]"
-    setname:
-      description: "島の名前を設定します"
-      name-too-short: "短すぎる。最小サイズは [number] 文字です。"
-      name-too-long: "長すぎます。最大サイズは [number] 文字です。"
-      parameters: "<名前>"
+      description: 島を再起動し、古いものを削除する
+      must-remove-members: あなたはそれを (/island team kick <player>) を再起動する前に、あなたの島からすべてのメンバーを削除する必要があります。
+      none-left: あなたはもうリセットが残っている!
+      resets-left: "＆c残りには＆b [number]個の＆cresetsがあります"
+      parameters: "<青写真>"
+      confirmation: |-
+        &cこれを実行してもよろしいですか？
+        &cすべての島のメンバーは島から追い
+        &c出されます。その後、それらを再招待する
+        &c必要があります。
+        &c戻ることはできません。
+        &c現在の島が削除されると、
+        &c後でそれを取得する方法はありません。
+      kicked-from-island: "＆c所有者がリセットしているため、[gamemode]で島から追い出されます。"
     resetname:
-      description: "島の名前をリセット"
+      description: 島の名前をリセット
+    sethome:
+      description: ホームテレポートポイントを設定する
+      home-set: あなたの島の家はあなたの現在の場所に設定されています。
+      must-be-on-your-island: あなたの島に家を設定する必要があります!
+      num-homes: 家は1から [number]である場合もある。
+      nether:
+        not-allowed: "＆cあなたはネザーにあなたの家を設定することはできません。"
+        confirmation: "＆cネザーにあなたの家を設定しますか？"
+      the-end:
+        not-allowed: "＆c最後に家を設定することはできません。"
+        confirmation: "＆c最後に家を設定してもよろしいですか？"
+      parameters: "[数]"
+    setname:
+      description: 島の名前を設定します
+      name-too-long: 長すぎます。最大サイズは [number] 文字です。
+      name-too-short: 短すぎる。最小サイズは [number] 文字です。
+      parameters: "<名前>"
+      name-already-exists: "＆cこのゲームモードでは、その名前の島がすでに存在します。"
+    settings:
+      description: 島の設定を表示
+    spawn:
+      description: スポーンにテレポート
+      no-spawn: "＆cこの世界にはスポーンはありません。"
+      teleporting: "＆aスポーンに移動します。"
     team:
-      description: "チームの管理"
-      info:
-        description: "チームに関する詳細情報を表示する"
       coop:
-        description: "島でプレイヤーコープランクを確認"
+        already-has-rank: プレイヤーはすでにランクを持っている!
+        cannot-coop-yourself: 自分を生協することはできません!
+        description: 島でプレイヤーコープランクを確認
         paramters: "<プレーヤー>"
-        cannot-coop-yourself: "自分を生協することはできません!"
-        already-has-rank: "プレイヤーはすでにランクを持っている!"
-        you-are-a-coop-member: "あなたは [name]に閉じこもっれた"
-      uncoop:
-        description: "プレイヤーから生協のランクを削除する"
-        paramters: "<プレーヤー>"
-        cannot-uncoop-yourself: "自分にそれを行うことはできません!"
-        cannot-uncoop-member: "チームメンバーを uncoop ことはできません!"
-        player-not-cooped: "プレイヤーは閉じこもっではありません!"
-        you-are-no-longer-a-coop-member: "あなたはもはや[name]の島の生協のメンバーではない"
-      trust:
-        description: "島でプレイヤーに信頼できるランクを与える"
-        paramters: "<プレーヤー>"
-        trust-in-yourself: "自分を信頼して!"
-        members-trusted: "メンバは既に信頼されています"
-        player-already-trusted: "プレイヤーはすでに信頼されている!"
-        you-are-trusted: "[name]はあなたを信頼!"
-      untrust:
-        description: "プレイヤーから信頼できるプレイヤーランクを削除する"
-        paramters: "<プレーヤー>"
-        cannot-untrust-yourself: "自分を untrust ことはできない!"
-        cannot-untrust-member: "チームメンバーを untrust ことはできません!"
-        player-not-trusted: "プレイヤーは信頼されていません!"
-        you-are-no-longer-trusted: "[name]はもはやあなたを信頼していない!"
-      invite:
-        description: "島に参加するプレーヤーを招待"
-        invitation-sent: "招待状を [name] に送信"
-        removing-invite: "招待の削除"
-        name-has-invited-you: "[name]は、彼らの島に参加することを招待しました。"
-        to-accept-or-reject: "/[label] team accept を受け入れるか、/[label] team reject を拒否すると言う"
-        you-will-lose-your-island: "警告！受け入れたら島を失うぞ!"
-        errors:
-          cannot-invite-self: "自分から誘うことはできない!"
-          cooldown: "その人を別の [number]秒に招待することはできません"
-          island-is-full: "島はいっぱいだ他の人は招待できない"
-          none-invited-you: "誰も誘ってくれなかっ"
-          you-already-are-in-team: "あなたはすでにチームにいます!"
-          already-on-team: "そのプレイヤーはすでにチームにいます!"
-          invalid-invite: "その招待はもはや有効ではない、申し訳ありません。"
-        parameters: "<プレーヤー>"
-        you-can-invite: "あなたは[number]より多くのプレイヤーを招待することができます。"
-        accept:
-          description: "招待を承諾する"
-          you-joined-island: "あなたは島に参加しました!チーム情報を使用/[label] team して他のメンバーを表示します。"
-          name-joined-your-island: "[name]あなたの島に参加しました!"
-        reject:
-          description: "招待を却下する"
-          you-rejected-invite: "島への招待を拒絶した"
-          name-rejected-your-invite: "[name]はあなたの島の招待を拒否!"
-        cancel:
-          description: "あなたの島に参加する保留中の招待をキャンセル"
-      leave:
-        cannot-leave: "チームリーダーは去ることができない!最初にメンバーになるか、すべてのメンバーを蹴る。"
-        description: "島を残す"
-        left-your-island: "[name]は島を去っ"
-      kick:
-        description: "島からメンバーを削除する"
-        parameters: "<プレーヤー>"
-        owner-kicked: "リーダーが島からあなたを削除しました!"
-        cannot-kick: "自分を削除することはできません!"
+        you-are-a-coop-member: あなたは [name]に閉じこもっれた
+        name-has-invited-you: "＆a [name]はあなたを彼らの島の協同組合員になるよう招待しました。"
+        parameters: "<プレイヤー>"
+        success: "&aYou cooped &b[name]."
       demote:
-        description: "ランクダウンあなたの島のプレーヤーを降格"
+        description: ランクダウンあなたの島のプレーヤーを降格
+        failure: プレイヤーはこれ以上降格することはできません!
         parameters: "<プレーヤー>"
-        failure: "プレイヤーはこれ以上降格することはできません!"
         success: "[name]を[rank]に降格"
-      promote:
-        description: "ランク上のあなたの島のプレーヤーを促進しなさい"
+        errors:
+          cant-demote-yourself: "＆c自分を降格することはできません！"
+      description: チームの管理
+      info:
+        description: チームに関する詳細情報を表示する
+        member-layout:
+          online: "＆a＆l o＆r＆f [name]"
+          offline: "＆c＆l o＆r＆f [name]＆7（[last_seen]）"
+        last-seen:
+          layout: "＆b [number]＆7 [unit]前"
+          days: 日々
+          hours: 営業時間
+          minutes: 数分
+        header: |
+          ＆f ---＆aTeamの詳細＆f ---
+          ＆aMembers：＆b [total]＆7 /＆b [max]
+          ＆aOnlineメンバー：＆b [online]
+        rank-layout:
+          owner: "＆6 [ランク]："
+          generic: "＆6 [rank]＆7（＆b [number]＆7）＆6："
+      invite:
+        accept:
+          description: 招待を承諾する
+          name-joined-your-island: "[name]あなたの島に参加しました!"
+          you-joined-island: あなたは島に参加しました!チーム情報を使用/[label] team して他のメンバーを表示します。
+          confirmation: "＆cこの招待を受け入れてもよろしいですか？"
+        cancel:
+          description: あなたの島に参加する保留中の招待をキャンセル
+        description: 島に参加するプレーヤーを招待
+        errors:
+          already-on-team: そのプレイヤーはすでにチームにいます!
+          cannot-invite-self: 自分から誘うことはできない!
+          cooldown: その人を別の [number]秒に招待することはできません
+          invalid-invite: その招待はもはや有効ではない、申し訳ありません。
+          island-is-full: 島はいっぱいだ他の人は招待できない
+          none-invited-you: 誰も誘ってくれなかっ
+          you-already-are-in-team: あなたはすでにチームにいます!
+          you-have-already-invited: "＆cそのプレイヤーは既に招待されています！"
+        invitation-sent: 招待状を [name] に送信
+        name-has-invited-you: "[name]は、彼らの島に参加することを招待しました。"
         parameters: "<プレーヤー>"
-        failure: "プレイヤーはこれ以上昇格することはできません!"
+        reject:
+          description: 招待を却下する
+          name-rejected-your-invite: "[name]はあなたの島の招待を拒否!"
+          you-rejected-invite: 島への招待を拒絶した
+        removing-invite: 招待の削除
+        to-accept-or-reject: "/[label] team accept を受け入れるか、/[label] team reject を拒否すると言う"
+        you-can-invite: あなたは[number]より多くのプレイヤーを招待することができます。
+        you-will-lose-your-island: 警告！受け入れたら島を失うぞ!
+      kick:
+        cannot-kick: 自分を削除することはできません!
+        description: 島からメンバーを削除する
+        owner-kicked: "＆c [gamemode]で所有者があなたを島から追い出しました！"
+        parameters: "<プレーヤー>"
+        success: "＆b [name]＆aはあなたの島から追い出されました。"
+      leave:
+        cannot-leave: チームリーダーは去ることができない!最初にメンバーになるか、すべてのメンバーを蹴る。
+        description: 島を残す
+        left-your-island: "[name]は島を去っ"
+        success: "＆aこの島を離れました。"
+      promote:
+        description: ランク上のあなたの島のプレーヤーを促進しなさい
+        failure: プレイヤーはこれ以上昇格することはできません!
+        parameters: "<プレーヤー>"
         success: "[name]を[rank]に昇格"
       setowner:
-        description: "島の所有権をメンバーに移す"
+        description: 島の所有権をメンバーに移す
         errors:
-          cant-transfer-to-yourself: "あなた自身に所有権を移すことができない!"
-          target-is-not-member: "そのプレイヤーはあなたの島のチームの一部ではありません!"
+          cant-transfer-to-yourself: あなた自身に所有権を移すことができない!
+          target-is-not-member: そのプレイヤーはあなたの島のチームの一部ではありません!
         name-is-the-owner: "[name]は、島の所有者になりました!"
         parameters: "<プレーヤー>"
-        you-are-the-owner: "あなたは今、島の所有者です!"
-    ban:
-      description: "島からプレーヤーを禁止する"
-      parameters: "<プレーヤー>"
-      cannot-ban-yourself: "あなた自身を禁止することはできません!"
-      cannot-ban: "そのプレイヤーは禁止することはできません。"
-      cannot-ban-member: "まずはチームメンバーを蹴り、次に解禁。"
-      player-already-banned: "プレイヤーはすでに禁止されて"
-      owner-banned-you: "[name]は、彼らの島からあなたを禁止!"
-      you-are-banned: "あなたはこの島から禁止されています!"
+        you-are-the-owner: あなたは今、島の所有者です!
+      trust:
+        description: 島でプレイヤーに信頼できるランクを与える
+        members-trusted: メンバは既に信頼されています
+        paramters: "<プレーヤー>"
+        player-already-trusted: プレイヤーはすでに信頼されている!
+        trust-in-yourself: 自分を信頼して!
+        you-are-trusted: "[name]はあなたを信頼!"
+        success: "＆a信頼済み＆b [name]＆a。"
+        name-has-invited-you: "＆a [name]は、あなたを彼らの島の信頼できるメンバーになるよう招待しています。"
+        parameters: "<プレイヤー>"
+      uncoop:
+        cannot-uncoop-member: チームメンバーを uncoop ことはできません!
+        cannot-uncoop-yourself: 自分にそれを行うことはできません!
+        description: プレイヤーから生協のランクを削除する
+        paramters: "<プレーヤー>"
+        player-not-cooped: プレイヤーは閉じこもっではありません!
+        you-are-no-longer-a-coop-member: あなたはもはや[name]の島の生協のメンバーではない
+        all-members-logged-off: "＆cすべての島のメンバーがログオフしたため、あなたはもはや[name]の島の協同組合員ではありません"
+        success: "＆b [name]＆aisはもはやあなたの島の協同組合員ではありません。"
+        parameters: "<プレイヤー>"
+      untrust:
+        cannot-untrust-member: チームメンバーを untrust ことはできません!
+        cannot-untrust-yourself: 自分を untrust ことはできない!
+        description: プレイヤーから信頼できるプレイヤーランクを削除する
+        paramters: "<プレーヤー>"
+        player-not-trusted: プレイヤーは信頼されていません!
+        you-are-no-longer-trusted: "[name]はもはやあなたを信頼していない!"
+        parameters: "<プレイヤー>"
+        success: "＆b [name]＆aはあなたの島ではもはや信頼されていません。"
     unban:
-      description: "あなたの島から選手を同時"
+      cannot-unban-yourself: 自分を同時ことはできない!
+      description: あなたの島から選手を同時
       parameters: "<プレーヤー>"
-      cannot-unban-yourself: "自分を同時ことはできない!"
-      player-not-banned: "プレイヤーは禁止されていません"
+      player-not-banned: プレイヤーは禁止されていません
       you-are-unbanned: "[name]は島からあなたをブロックを解除!"
-    banlist:
-      description: "リスト禁止選手"
-      noone: "この島では誰も禁止されていない"
-      the-following: "以下の選手は禁止されている"
-      names: "[line]"
-    settings:
-      description: "島の設定を表示"
-    language:
-      description: "言語の選択"
-
-ranks:
-  owner: "所有者"
-  sub-owner: "サブ所有者"
-  member: "メンバー"
-  trusted: "信頼"
-  coop: "生協"
-  visitor: "訪問 者"
-  banned: "禁止"
-  admin: "管理者"
-  mod: "モデレーター"
-  
+      player-unbanned: "＆b [name]＆aは現在、あなたの島から禁止されていません。"
+    near:
+      description: あなたの周りの近隣の島の名前を表示します
+      the-following-islands: "＆a次の島が近くにあります。"
+      north: 北
+      south: 南
+      east: 東
+      west: 西
+      no-neighbors: "＆cすぐ隣の島はありません！"
+      syntax: "&6[direction]: &a[name]"
+    expel:
+      description: プレイヤーを島から追放する
+      cannot-expel-yourself: "＆c自分を追放することはできません！"
+      cannot-expel: "＆cそのプレイヤーは追放できません。"
+      not-on-island: "＆cそのプレイヤーはあなたの島にいません！"
+      player-expelled-you: "＆b [name]＆cはあなたを島から追放しました！"
+      success: "＆a島から＆b [name]＆aを追放した。"
+      cannot-expel-member: "＆cチームメンバーを追放することはできません！"
+      parameters: "<プレイヤー>"
+  delay:
+    previous-command-cancelled: "＆c前のコマンドがキャンセルされました"
+    stand-still: "＆6移動しないでください！ [seconds]秒でのテレポート"
+    moved-so-command-cancelled: "＆c移動しました。テレポートがキャンセルされました！"
+general:
+  errors:
+    already-have-island: "&cあなたはすでに島を持っている!"
+    no-island: "&cあなたは島を持っていない!"
+    no-permission: "&cこのコマンドを実行する権限がありません ([permission])。"
+    not-owner: "＆cあなたは島の所有者ではありません！"
+    offline-player: "&cそのプレイヤーはオフラインまたは存在しません。"
+    use-in-game: "&cこのコマンドは、ゲームでのみ利用可能です。"
+    command-cancelled: "＆cCommandはキャンセルされました。"
+    must-be-positive-number: "＆c [number]は有効な正数ではありません。"
+    no-team: "&cあなたはチームを持っていない!"
+    player-has-island: "&cこのプレイヤーはすでに島を持っている!"
+    player-has-no-island: "&cこのプレイヤーには島を持っていない!"
+    no-safe-location-found: "＆c島にテレポートする安全な場所が見つかりませんでした。"
+    not-in-team: "&cそのプレイヤーはあなたのチームにはいない!"
+    unknown-player: "&c[name]というプレイヤーは存在しません!"
+    general: "&cそのコマンドはまだ準備ができていません。サーバー管理者にお問い合わせ下さい。"
+    unknown-command: "&c不明なコマンドです。＆b/[label] help ＆cはヘルプを表示します。"
+    wrong-world: "＆cあなたは正しい世界にいません！"
+    you-must-wait: "&cそのコマンドを再度実行するには、[number]秒を待つ必要があります。"
+  success: "&a成否"
+  invalid: 無効
+  tips:
+    changing-obsidian-to-lava: 黒曜石を溶岩に戻します。注意してください！
+language:
+  edited: 言語を[lang]に変更しました。
+  panel-title: 言語の選択
+  selected: 選ばれた
+  description:
+    selected: "＆a現在選択されています。"
+    click-to-select: "&eクリックして&a選択"
+    authors: "&a著者:"
+    author: "&3- &b[name]"
+meta:
+  authors:
+  - mozzaf1ato
+  - tastybento
+  banner: WHITE_BANNER:1:CIRCLE_MIDDLE:RED
 protection:
-  command-is-banned: "コマンドは、訪問者のために禁止され"
+  command-is-banned: コマンドは、訪問者のために禁止され
   flags:
     ANIMAL_SPAWN:
-      description: "産卵の切り替え"
-      name: "動物の産卵"
+      description: 産卵の切り替え
+      name: 動物の産卵
     ANVIL:
-      description: "トグル使用"
-      name: "金床"
-      hint: "金床使用不可"
+      description: トグル使用
+      hint: 金床使用不可
+      name: 金床
     ARMOR_STAND:
-      description: "トグル使用"
-      name: "アーマースタンド"
-      hint: "アーマースタンド使用不可"
+      description: トグル使用
+      hint: アーマースタンド使用不可
+      name: アーマースタンド
     BEACON:
-      description: "トグル使用"
-      name: "ビーコン"
-      hint: "ビーコン使用不可"
+      description: トグル使用
+      hint: ビーコン使用不可
+      name: ビーコン
     BED:
-      description: "トグル使用"
-      name: "ベッド"
-      hint: "ベッド使用不可"
+      description: トグル使用
+      hint: ベッド使用不可
+      name: ベッド
     BREAK_BLOCKS:
-      description: "破断ブロックの切り替え"
-      name: "ブレークブロック"
-      hint: "ブロックの破損を無効"
+      description: 破断ブロックの切り替え
+      hint: ブロックの破損を無効
+      name: ブレークブロック
     BREEDING:
-      description: "トグル繁殖"
-      name: "繁殖動物"
-      hint: "動物飼育保護"
+      description: トグル繁殖
+      hint: 動物飼育保護
+      name: 繁殖動物
     BREWING:
-      description: "トグル使用"
-      name: "醸造の立場"
-      hint: "醸造禁止"
+      description: トグル使用
+      hint: 醸造禁止
+      name: 醸造の立場
     BUCKET:
-      description: "トグル使用"
-      name: "バケット"
-      hint: "バケット使用不可"
+      description: トグル使用
+      hint: バケットの使用は無効です
+      name: バケット
     BUTTON:
-      description: "トグル使用"
-      name: "ボタン"
-      hint: "ボタン使用不可"
-    CHEST:
-      description: "トグル使用"
-      name: "箪笥"
-      hint: "箪笥アクセス不可"
+      description: トグル使用
+      hint: ボタンの使用は無効です
+      name: ボタン
     CHEST_DAMAGE:
-      description: "爆発によるチェスト損傷のトグル"
-      name: "チェスト損傷"
+      description: 爆発によるチェスト損傷のトグル
+      name: チェスト損傷
+    CHEST:
+      description: トグル使用
+      hint: 箪笥アクセス不可
+      name: 箪笥
     CHORUS_FRUIT:
-      description: "テレポーテーションの切り替え"
-      name: "コーラスフルーツ"
-      hint: "テレポートなし"
+      description: テレポーテーションの切り替え
+      hint: コーラスフルーツのテレポートが無効になりました
+      name: コーラスフルーツ
     CLEAN_SUPER_FLAT:
       description: |-
-          &a世界の
-          &aスーパーフラット
-          &aクリーン
-      name: "クリーンなスーパーフラット"
+        &a世界の
+        &aスーパーフラット
+        &aクリーン
+      name: クリーンなスーパーフラット
     COLLECT_LAVA:
-      description: "溶岩を収集トグル"
-      name: "溶岩を収集"
-      hint: "溶岩コレクションは許可されません"
+      description: 溶岩を収集トグル
+      hint: 溶岩コレクションは許可されません
+      name: 溶岩を収集
     COLLECT_WATER:
-      description: "水を集めるトグル"
-      name: "水を集める"
-      hint: "水のコレクションは許可されない"
+      description: 水を集めるトグル
+      hint: 水バケツ無効
+      name: 水を集める
     COMMAND_RANKS:
+      description: コマンドランクの設定
       name: "&eコマンドランク"
-      description: "コマンドランクの設定"
     CRAFTING:
-      description: "トグル使用"
-      name: "ワークベンチ"
-      hint: "ワークベンチを使用しない"
+      description: トグル使用
+      hint: ワークベンチアクセスが無効です
+      name: ワークベンチ
     CREEPER_DAMAGE:
-      description: "クリーパーダメージを切り替える"
-      name: "クリーパーダメージ"
+      description: クリーパーダメージを切り替える
+      name: クリーパーダメージ
     CREEPER_GRIEFING:
-      description: "トグルクリーパー苦情"
-      name: "クリーパー苦情"
-      hint: "クリーパー苦情は許可されません"
+      description: トグルクリーパー苦情
+      hint: クリーパーグリーフィングが無効
+      name: クリーパー苦情
     CROP_TRAMPLE:
-      description: "クロップ踏みつけを切り替える"
-      name: "作物を踏みにじる"
-      hint: "作物は保護される"
+      description: クロップ踏みつけを切り替える
+      hint: 切り取りの無効化
+      name: 作物を踏みにじる
     DOOR:
-      description: "トグル使用"
-      name: "ドアを使用"
-      hint: "ドア使用なし"
+      description: トグル使用
+      hint: ドアインタラクションが無効です
+      name: ドアを使用
     EGGS:
-      description: "卵を投げるトグル"
-      name: "卵投げ"
-      hint: "卵投げなし"
+      description: 卵を投げるトグル
+      hint: 卵投げ禁止
+      name: 卵投げ
     ELYTRA:
-      description: "トグル使用"
-      name: "Elytra"
-      hint: "elytra 飛行禁止"
+      description: トグル使用
+      hint: elytra 飛行禁止
+      name: Elytra
     ENCHANTING:
-      description: "トグル使用"
-      name: "魅惑のテーブル"
-      hint: "テーブル使用なし"
+      description: トグル使用
+      hint: エンチャントテーブルが無効になっています
+      name: 魅惑のテーブル
     ENDER_CHEST:
-      description: "トグル使用"
-      name: "エンダーチェスト"
-      hint: "エンダーチェストは、この世界で無効になっている"
+      description: トグル使用
+      hint: エンダーチェストは、この世界で無効になっている
+      name: エンダーチェスト
     ENDERMAN_DEATH_DROP:
       description: |-
-         &aエンダーマンは
-         &a彼らが殺されたら
-         &a保持している任意の
-         &aブロックをドロップします
-      name: "エンダーマン・デス・ドロップ"
+        &aエンダーマンは
+        &a彼らが殺されたら
+        &a保持している任意の
+        &aブロックをドロップします
+      name: エンダーマン・デス・ドロップ
     ENDERMAN_GRIEFING:
       description: |-
-         &aエンダーマンはブロックを
-         &a削除することができます
-      name: "エンダーマン苦情"
+        &aエンダーマンはブロックを
+        &a削除することができます
+      name: エンダーマン苦情
     ENDER_PEARL:
-      description: "トグル使用"
-      name: "エンダーパール"
-      hint: "エンダーパールの使用は許可されていません!"
+      description: トグル使用
+      hint: エンダーパールの使用は無効です
+      name: エンダーパール
     ENTER_EXIT_MESSAGES:
-      description: "入口と出口のメッセージを表示する"
+      description: 入口と出口のメッセージを表示する
       island: "[name]の島"
-      name: "入り口/終了メッセージ"
-      now-entering: "今[name]を入力する"
-      now-leaving: "今[name]を残し"
+      name: 入り口/終了メッセージ
+      now-entering: 今[name]を入力する
+      now-leaving: 今[name]を残し
     FIRE:
-      description: "火災が存在するかどうかを許可する"
-      name: "火"
-      hint: "火は許されない"
+      description: 火災が存在するかどうかを許可する
+      hint: 火は許されない
+      name: 火
     FIRE_EXTINGUISH:
-      description: "トグル消火"
-      name: "消火"
-      hint: "消火不可"
+      description: トグル消火
+      hint: 消火禁止
+      name: 消火
     FIRE_SPREAD:
-      description: "火の広がりをトグル"
-      name: "延焼"
-      hint: "延焼禁止"
+      description: 火の広がりをトグル
+      hint: 延焼禁止
+      name: 延焼
     FURNACE:
-      description: "トグル使用"
-      name: "炉"
-      hint: "炉使用なし"
+      description: トグル使用
+      hint: 炉の使用不可
+      name: 炉
     GATE:
-      description: "トグル使用"
-      name: "門"
-      hint: "門使用なし"
+      description: トグル使用
+      hint: ゲート使用不可
+      name: 門
     GEO_LIMIT_MOBS:
       description: |-
-         &a保護された領域を
-         &a終了するモンスターを
-         &a削除
+        &a保護された領域を
+        &a終了するモンスターを
+        &a削除
       name: "&e生き物を島に限る"
     HURT_ANIMALS:
-      description: "トグルを傷つける"
-      name: "動物を傷つける"
-      hint: "動物を傷つけることは許されない"
+      description: トグルを傷つける
+      hint: 動物の痛む障害
+      name: 動物を傷つける
     HURT_MONSTERS:
-      description: "トグルを傷つける"
-      name: "モンスターを傷つける"
-      hint: "モンスターを傷つけない"
+      description: トグルを傷つける
+      hint: 怪我の痛み
+      name: モンスターを傷つける
     HURT_VILLAGERS:
-      description: "トグルを傷つける"
-      name: "村人を傷つける"
-      hint: "村人を傷つけない"
+      description: トグルを傷つける
+      hint: 障害者の村人
+      name: 村人を傷つける
+    INVINCIBLE_VISITORS:
+      description: 無敵の訪問者の設定
+      hint: 訪問者保護
+      name: "&e無敵の訪問者"
+    ISLAND_RESPAWN:
+      description: 選手の島で再起動
+      name: 島の復活
+    ITEM_DROP:
+      description: 項目ドロップトグル
+      hint: アイテムのドロップは無効です
+      name: 項目ドロップ
     ITEM_FRAME_DAMAGE:
       description: |-
-          &aモンスターは項目フレームを
-          &a傷つけることができる
-      name: "アイテムフレームの損傷"
-    INVINCIBLE_VISITORS:
-      description: "無敵の訪問者の設定"
-      name: "&e無敵の訪問者"
-      hint: "訪問者保護"
-    ISLAND_RESPAWN:
-      description: "選手の島で再起動"
-      name: "島の復活"
-    ITEM_DROP:
-      description: "項目ドロップトグル"
-      name: "項目ドロップ"
-      hint: "アイテムを削除できません"
+        &aモンスターは項目フレームを
+        &a傷つけることができる
+      name: アイテムフレームの損傷
     ITEM_PICKUP:
-      description: "トグルピックアップ"
-      name: "アイテムピックアップ"
-      hint: "アイテムを拾うことができません"
+      description: トグルピックアップ
+      hint: アイテムの受け取りは無効です
+      name: アイテムピックアップ
     JUKEBOX:
-      description: "トグル使用"
-      name: "ジュークボックスの使用"
-      hint: "ジュークボックスの使用不可"
+      description: トグル使用
+      hint: ジュークボックスの使用は無効です
+      name: ジュークボックスの使用
     LEASH:
-      description: "トグル使用"
-      name: "ひもの使用"
+      description: トグル使用
+      name: ひもの使用
     LEVER:
-      description: "トグル使用"
-      name: "レバー使用"
-      hint: "レバー使用なし"
+      description: トグル使用
+      hint: レバー使用不可
+      name: レバー使用
     LOCK:
-      description: "トグル使用"
-      name: "ロック島"
+      description: トグル使用
+      name: ロック島
     MILKING:
-      description: "トグル牛搾乳"
-      name: "搾乳"
-      hint: "搾乳不可"
+      description: トグル牛搾乳
+      hint: 搾乳牛の障害
+      name: 搾乳
     MONSTER_SPAWN:
-      description: "産卵の切り替え"
-      name: "モンスターの産卵"
+      description: 産卵の切り替え
+      name: モンスターの産卵
     MOUNT_INVENTORY:
-      description: "アクセスの切り替え"
-      name: "在庫のマウント"
-      hint: "マウントインベントリへのアクセスなし"
+      description: アクセスの切り替え
+      hint: マウントインベントリが無効です
+      name: 在庫のマウント
     NOTE_BLOCK:
-      description: "トグル使用"
-      name: "音符ブロック"
-      hint: "音符ブロックを使用しない"
+      description: トグル使用
+      hint: メモ帳の操作は無効です
+      name: 音符ブロック
     OBSIDIAN_SCOOPING:
-      name: "黒曜石スクープ"
-      description: | 
+      description: |
         スクープを切り替える
         黒曜石を空のバケツですくい上げて
         溶岩に戻すことができます。
         初心者を保護します。
         リセットを減らします。
+      name: 黒曜石スクープ
     OFFLINE_REDSTONE:
       description: |-
-          &aレッドストーンは
-          &aチームメンバーが
-          &aオフラインのと
-          &aきは動作しません
-      name: "オフラインレッドストーン"
+        ＆a無効にすると、レッドストーン
+        ＆awillは島では機能しません
+        すべてのメンバーがオフラインです。
+        ＆aMayは遅延の削減に役立ちます。
+        スポーン島には影響しません。
+      name: オフラインレッドストーン
     PISTON_PUSH:
       description: |-
-          &aピストンが島の外に
-          &aブロックをプッシュできるようにする
-      name: "ピストンプッシュ"
+        &aピストンが島の外に
+        &aブロックをプッシュできるようにする
+      name: ピストンプッシュ
     PLACE_BLOCKS:
-      description: "トグル配置"
-      name: "ブロックの配置"
-      hint: "ブロックを配置できません"
+      description: トグル配置
+      hint: ブロック配置は無効です
+      name: ブロックの配置
     PORTAL:
-      description: "トグル使用"
-      name: "ポータル"
-      hint: "ポータルの使用は許可されない"
+      description: トグル使用
+      hint: ポータルの使用は許可されない
+      name: ポータル
     PRESSURE_PLATE:
-      description: "トグル使用"
-      name: "圧力プレート"
-      hint: "圧力プレート使用なし"
+      description: トグル使用
+      hint: プレッシャープレートの使用不可
+      name: 圧力プレート
     PVP_END:
-      description: "PVP を有効/無効にする"
-      name: "エンド PVP"
-      hint: "PVP は許可されません"
+      description: PVP を有効/無効にする
+      hint: 最後に無効になったPVP
+      name: エンド PVP
     PVP_NETHER:
-      description: "PVP を有効/無効にする"
-      name: "地獄の PVP"
-      hint: "PVP は許可されません"
+      description: PVP を有効/無効にする
+      hint: ネザーで無効にされたPVP
+      name: 地獄の PVP
     PVP_OVERWORLD:
-      description: "PVP を有効/無効にする"
-      name: "PVP"
-      hint: "PVP は許可されません"
-      active: "PVP はここでアクティブです!"
+      active: PVP はここでアクティブです!
+      description: PVP を有効/無効にする
+      hint: "＆cPVPはオーバーワールドで無効になっています"
+      name: PVP
     REDSTONE:
-      description: "トグル使用"
-      name: "レッドストーンアイテム"
-      hint: "レッドストーンアイテムの使用なし"
-    RIDING:
-      description: "トグル動物乗馬"
-      name: "動物乗馬"
-      hint: "動物の乗馬は許可されない"
+      description: トグル使用
+      hint: レッドストーンインタラクションが無効です
+      name: レッドストーンアイテム
     REMOVE_MOBS:
       description: |-
         &a島にテレポートと
         &aきにモンスターを削除する
-      name: "モンスターを削除"
+      name: モンスターを削除
+    RIDING:
+      description: トグル動物乗馬
+      hint: 動物乗り禁止
+      name: 動物乗馬
     SHEARING:
-      description: "トグルせん断"
-      name: "せん断"
-      hint: "せん断なし"
+      description: トグルせん断
+      hint: せん断が無効
+      name: せん断
     SPAWN_EGGS:
-      description: "トグル使用"
-      name: "産卵卵"
-      hint: "産卵卵を投げることはできません"
+      description: トグル使用
+      hint: スポーンエッグ無効
+      name: 産卵卵
     TNT:
-      description: "TNT のダメージを切り替える"
-      name: "TNT の損傷"
+      description: TNT のダメージを切り替える
+      name: TNT の損傷
     TRADING:
-      description: "トグルトレーディング"
-      name: "村人の取引"
-      hint: "村人の取引は許可されない"
+      description: トグルトレーディング
+      hint: 村人取引不可
+      name: 村人の取引
     TRAPDOOR:
-      description: "トグル使用"
-      name: "トラップドア"
-      hint: "トラップドア使用不可"
-  locked: "島はロックされている!"
-  protected: "島保護: [description]"
-  
+      description: トグル使用
+      hint: トラップドアの使用不可
+      name: トラップドア
+    BOAT:
+      name: ボート
+      description: ボートの相互作用の切り替え
+      hint: ボートの相互作用は許可されていません
+    CONTAINER:
+      name: コンテナ
+      hint: コンテナアクセスが無効です
+      description: |-
+        &aToggle interaction with chests,
+        &ashulker boxes and flower pots,
+        &acomposters and barrels.
+
+        &7Other containers are handled
+        &7by dedicated flags.
+    DISPENSER:
+      name: ディスペンサー
+      description: ディスペンサーインタラクションの切り替え
+      hint: ディスペンサーの操作が無効になっています
+    DROPPER:
+      name: ドロッパー
+      description: ドロッパーインタラクションの切り替え
+      hint: ドロッパーインタラクションが無効です
+    HOPPER:
+      name: ホッパー
+      description: ホッパー相互作用の切り替え
+      hint: ホッパーインタラクションが無効です
+    COARSE_DIRT_TILLING:
+      name: 粗い土の耕起
+      hint: 粗い土の耕作なし
+      description: |-
+        &a粗耕のトグル
+        &a土と破壊ポドゾル
+        &a汚れを取ります
+    DRAGON_EGG:
+      name: ドラゴンエッグ
+      hint: ドラゴンエッグインタラクションが無効
+      description: |-
+        &aドラゴンエッグとの相互作用を防ぎます。
+        &cこれは、配置または破損から保護しません。
+    DYE:
+      description: 染料の使用を防ぐ
+      name: 染料使用
+      hint: 死にかけている
+    EXPERIENCE_BOTTLE_THROWING:
+      name: ボトル投げ体験
+      description: エクスペリエンスボトルの投げを切り替えます。
+      hint: 障害者用ボトルを体験する
+    FIRE_BURNING:
+      name: 火が燃える
+      description: |-
+        &a火がブロックを燃やすことが
+        &aできるかどうかを切り替えます。
+    FIRE_IGNITE:
+      name: 火の点火
+      description: |-
+        &aプレイヤー以外の手段で
+        &a火を点火できるかどうか
+        &aを切り替えます。
+    FISH_SCOOPING:
+      name: 魚すくい
+      description: バケツを使用して魚をすくい取る
+      hint: 魚すくい無効
+    FLINT_AND_STEEL:
+      name: フリントとスチール
+      description: |-
+        ＆aを使用してプレイヤーに火を点ける
+        ＆アフリントと鉄鋼または火災料。
+      hint: フリントとスチールと火のチャージは無効です
+    ITEM_FRAME:
+      name: アイテムフレーム
+      hint: アイテムフレームの使用は無効です
+      description: |-
+        ＆aToggleインタラクション。
+        ブロックの配置または分割をオーバーライドします
+    LEAF_DECAY:
+      name: 葉の腐敗
+      description: 葉が自然に腐るのを許します
+    LIQUIDS_FLOWING_OUT:
+      name: 島の外を流れる液体
+      description: |-
+        &a液体が島の保護範囲外に
+        &a流れるかどうかを切り替えます。
+        &aこれを無効にすると、
+        &a2つの島の間の地域で溶岩と
+        &a石畳が生成されるのを
+        &a防ぐことができます。
+
+        &a液体は引き続き垂直に流れる
+        &aことに注意してください。
+        &aまた、島の保護範囲外に
+        &a配置されている場合、
+        &a水平方向には広がりません。
+    MINECART:
+      name: トロッコ
+      description: トロッコの相互作用の切り替え
+      hint: トロッコの操作が無効になっています
+    NAME_TAG:
+      name: ネームタグ
+      description: トグル使用
+      hint: 名前タグの対話は無効です
+    NATURAL_SPAWNING_OUTSIDE_RANGE:
+      name: 範囲外に産卵する自然生物
+      description: |-
+        &aクリーチャー（動物とモンスター）
+        &aが島の保護範囲外で自然に出現
+        &aできるかどうかを切り替えます。
+        &a クリーチャーがMob Spawnerまたは
+        &aSpawn Eggを介してスポーンすることを
+        &a妨げないことに注意してください。
+    OFFLINE_GROWTH:
+      name: オフライン成長
+      description: |-
+        &a無効にすると、すべてのメンバーが
+        &aオフラインの場合、植物は島で
+        &a成長しません。 遅れを減らすのを
+        &a助けるかもしれません。
+    POTION_THROWING:
+      name: ポーション投げ
+      hint: 投げポーションが無効になりました
+      description: |-
+        &aポーションの投げを切り替えます。
+        &aこれには、スプラッシュと
+        &a長引くポーションが含まれます。
+    NETHER_PORTAL:
+      description: トグル使用
+      name: ネザーポータル
+      hint: ポータルの使用は無効です
+    END_PORTAL:
+      description: トグル使用
+      name: 終了ポータル
+      hint: ポータルの使用は無効です
+    REMOVE_END_EXIT_ISLAND:
+      name: 終了出口島を削除
+      description: |-
+        &a終了出口島が座標
+        &a0,0で生成されない
+        &aようにします
+    TNT_DAMAGE:
+      name: TNTダメージ
+      description: |-
+        &aTNTおよびTNTトロッコが
+        &aブロックを破壊し、エンティティを
+        &a損傷することを許可します。
+    TNT_PRIMING:
+      name: TNTプライミング
+      hint: TNTプライミングが無効
+      description: "&aTNTのプライミングを防ぎます。 \n&aフリントおよびスチール\n&a保護を無効にしません。"
+    TREES_GROWING_OUTSIDE_RANGE:
+      name: 範囲外に成長する木
+      description: |-
+        &a木が島の保護範囲外で成長
+        &aできるかどうかを切り替えます。
+        &a島の保護範囲外に置かれた苗木が
+        &a成長するのを防ぐだけでなく、
+        &a島の外で葉/丸太の生成を
+        &aブロックして、木を切ります。
+    TURTLE_EGGS:
+      description: 粉砕の切り替え
+      name: 亀の卵
+      hint: タートルエッグクラッシュ無効
+    FROST_WALKER:
+      description: フロストウォーカーエンチャントの切り替え
+      name: フロストウォーカー
+      hint: フロストウォーカー無効
+    PREVENT_TELEPORT_WHEN_FALLING:
+      name: 落下時のテレポートを防ぐ
+      hint: "＆c落下中はできません。"
+      description: |-
+        &aプレイヤーのテレポートを防ぐ
+        &aコマンドを使用して島に戻る
+        &a落下している場合。
+    SPAWNER_SPAWN_EGGS:
+      name: スポナーにスポーンエッグ
+      hint: スポーンエッグを使用したスポナーのエンティティタイプの変更は許可されていません
+      description: |-
+        &aスポーナーのエンティティタイプの
+        &a変更を許可します卵を産卵します。
+    CAKE:
+      name: ケーキ
+      description: ケーキの相互作用の切り替え
+      hint: ケーキを食べることができない
+    EXPERIENCE_PICKUP:
+      hint: ピックアップが無効になっています
+      name: 体験オーブを拾う
+      description: 許可/禁止
+    WITHER_DAMAGE:
+      name: 許可/禁止
+      description: |-
+        &aアクティブな場合、枯れます
+        &aブロックとプレイヤーを破損
+  locked: 島はロックされている!
   panel:
-    PROTECTION:
-      title: "&6保護"
-      description: "&a場所の保護設定"
-    SETTING:
-      title: "&6設定"
-      description: "&a一般設定"
-    WORLD_SETTING:
-      title: "&b[world_name]&6設定"
-      description: "&aゲームの世界のための設定"
     flag-item:
+      allowed-rank: "&3- &a"
+      blocked-rank: "&3- &c"
       description-layout: |
         &a[description]
 
         &7許可:
-      allowed-rank: "&3- &a"
-      blocked-rank: "&3- &c"
-      minimal-rank: "&3- &2"
       menu-layout: "&a[description]"
+      minimal-rank: "&3- &2"
+      setting-active: 有効
+      setting-disabled: 無効
       setting-layout: |
         &a[description]
-        
-        &7現在の設定: [setting]
-      setting-active: "有効"
-      setting-disabled: "無効"
 
-language:
-  panel-title: "言語の選択"
-  selected: "選ばれた"
-  edited: "言語を[lang]に変更しました。"
+        &7現在の設定: [setting]
+      name-layout: "&a[name]"
+      setting-cooldown: "＆cクールダウン中です"
+    PROTECTION:
+      description: "&a場所の保護設定"
+      title: "&6保護"
+    SETTING:
+      description: "&a一般設定"
+      title: "&6設定"
+    WORLD_SETTING:
+      description: "&aゲームの世界のための設定"
+      title: "&b[world_name]&6設定"
+    next: "＆f次のページ"
+    previous: "＆f前のページ"
+    reset-to-default:
+      name: "＆cReset to default"
+      description: |
+        ＆aResets＆c＆lALL＆r＆athe settings to their
+        デフォルト値。
+    mode:
+      advanced:
+        name: "&6詳細設定"
+        description: "&a適切な量の設定を表示します。"
+      basic:
+        name: "&a基本設定"
+        description: "&a最も有用な設定を表示します。"
+      expert:
+        name: "&cエキスパート設定"
+        description: "&a使用可能なすべての設定を表示します。"
+      click-to-switch: "&eクリックして[next]に切り替えます。"
+    WORLD_DEFAULTS:
+      title: "&b[world_name] &6世界の保護"
+      description: |-
+        &aプレイヤーが島の
+        &a外にいるときの保護設定
+  protected: '島保護: [description]'
+  world-protected: "&c世界保護: [description]"
+  spawn-protected: "&c保護されたスポーン: [description]"
+ranks:
+  admin: 管理者
+  banned: 禁止
+  coop: 生協
+  member: メンバー
+  mod: モデレーター
+  owner: 所有者
+  sub-owner: サブ所有者
+  trusted: 信頼
+  visitor: 訪問 者
+management:
+  panel:
+    title: BentoBoxの管理
+    views:
+      gamemodes:
+        blueprints:
+          name: "＆6ブループリント"
+          description: "＆a管理者ブループリントメニューを開きます。"
+        name: "&6ゲームモード"
+        description: "&eクリックして&a現在ロードされているゲームモードを表示します"
+        gamemode:
+          name: "&f[name]"
+          description: "&a島: &b[islands]"
+      addons:
+        name: "＆6アドオン"
+        description: "&eクリックして、＆a現在ロードされているアドオンを表示します"
+      hooks:
+        name: "＆6フック"
+        description: "&eクリックして、＆a現在ロードされているフックを表示します"
+    buttons:
+      empty-here:
+        name: "＆bこれはここでは空に見えます..."
+        description: "＆aカタログをご覧になったらどうしますか？"
+      credits:
+        name: "＆6クレジット"
+        description: "＆aはBentoBoxのクレジットを開きます"
+      catalog:
+        name: "&6アドオンカタログ"
+        description: "&aアドオンカタログを開きます"
+    information:
+      state:
+        name: "＆6互換性"
+        description:
+          COMPATIBLE: |-
+            &aRunning &e[name] [version]&a.
+
+            &aBentoBox is currently running on a
+            &a&lCOMPATIBLE &r&aserver software and
+            &aversion.
+
+            &aIts features are fully designed to
+            &arun in this environment.
+          SUPPORTED: |-
+            &aRunning &e[name] [version]&a.
+
+            &aBentoBox is currently running on a
+            &a&lSUPPORTED &r&aserver software and
+            &aversion.
+
+            &aMost of its features will run smoothly
+            &ain this environment.
+          NOT_SUPPORTED: |-
+            &aRunning &e[name] [version]&a.
+
+            &aBentoBox is currently running on a
+            &6&lNOT SUPPORTED &r&aserver software or
+            &aversion.
+
+            &aWhile most of its features will run
+            &acorrectly, &6platform-specific bugs or
+            &6issues are to be expected&a.
+          INCOMPATIBLE: |-
+            &aRunning &e[name] [version]&a.
+
+            &aBentoBox is currently running on an
+            &c&lINCOMPATIBLE &r&aserver software or
+            &aversion.
+
+            &cWeird behaviour and bugs can occur
+            &cand most features may be unstable.
+    actions:
+      reload:
+        name: "＆cリロード"
+        description: "&c&l2回クリックして&r&aBentoBoxをリロードします"
+catalog:
+  panel:
+    GAMEMODES:
+      title: ゲームモードカタログ
+    ADDONS:
+      title: アドオンカタログ
+    views:
+      gamemodes:
+        name: "＆6ゲームモード"
+        description: |-
+          &eクリックして、利用可能な公式
+          &eゲームモードを参照します。
+      addons:
+        name: "＆6アドオン"
+        description: |-
+          &eクリックして、利用可能な公式
+          &eアドオンを参照します。
+    icon:
+      already-installed: すでにインストールされています！
+      install-now: 今すぐインストール！
+      description-template: |-
+        &8[topic]
+        &a[install]
+
+        &7&o[description]
+
+        &eクリックして、最新リリースへの
+        &eリンクを取得します。
+    empty-here:
+      name: "＆bこれはここでは空に見えます..."
+      description: |+
+        ＆cBentoBoxはGitHubに接続できませんでした。
+
+        ＆aBentoBoxでGitHubに接続できるようにする
+        設定を変更するか、後で再試行してください。
+
+panel:
+  credits:
+    title: "＆8 [名前]＆2クレジット"
+    contributor:
+      name: "＆名前]"
+      description: "＆aCommits：＆b [commits]\n"
+    empty-here:
+      name: "＆cこれはここでは空に見えます..."
+      description: |+
+        ＆cBentoBoxは貢献者を収集できませんでした
+        このアドオン用。
+
+        ＆aBentoBoxでGitHubに接続できるようにする
+        設定を変更するか、後で再試行してください。
+
+successfully-loaded: |-
+  &6  ____             _        ____
+  &6 |  _ \           | |      |  _ \             &7by &atastybento &7and &aPoslovitch
+  &6 | |_) | ___ _ __ | |_ ___ | |_) | _____  __  &72017 - 2019
+  &6 |  _ < / _ \ '_ \| __/ _ \|  _ < / _ \ \/ /
+  &6 | |_) |  __/ | | | || (_) | |_) | (_) >  <   &bv&e[version]
+  &6 |____/ \___|_| |_|\__\___/|____/ \___/_/\_\  &8Loaded in &e[time]&8ms.
