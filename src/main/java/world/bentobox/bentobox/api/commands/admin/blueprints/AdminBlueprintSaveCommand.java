@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.List;
 import java.util.Locale;
 
-import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.blueprints.BlueprintClipboard;
