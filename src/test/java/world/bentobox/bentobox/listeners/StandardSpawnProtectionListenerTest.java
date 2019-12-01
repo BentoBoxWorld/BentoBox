@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -75,13 +76,13 @@ public class StandardSpawnProtectionListenerTest {
     private Location location;
     @Mock
     private Block block;
-    
+
     private StandardSpawnProtectionListener ssp;
     @Mock
     private BlockState blockState;
     @Mock
     private Location spawnLocation;
-    
+
     /**
      * @throws java.lang.Exception
      */
@@ -94,7 +95,7 @@ public class StandardSpawnProtectionListenerTest {
         when(world.getEnvironment()).thenReturn(World.Environment.NORMAL);
         when(nether.getEnvironment()).thenReturn(World.Environment.NETHER);
         when(end.getEnvironment()).thenReturn(World.Environment.THE_END);
-        
+
         when(world.getSpawnLocation()).thenReturn(spawnLocation);
         when(nether.getSpawnLocation()).thenReturn(spawnLocation);
         when(end.getSpawnLocation()).thenReturn(spawnLocation);
@@ -127,7 +128,10 @@ public class StandardSpawnProtectionListenerTest {
 
         // Block
         when(block.getLocation()).thenReturn(location);
-        // BlockState
+
+        // Util strip spaces
+        when(Util.stripSpaceAfterColorCodes(anyString())).thenCallRealMethod();
+
         // Set up class
         ssp = new StandardSpawnProtectionListener(plugin);
     }
@@ -151,7 +155,7 @@ public class StandardSpawnProtectionListenerTest {
         assertTrue(e.isCancelled());
         verify(player).sendMessage("protection.spawn-protected");
     }
-    
+
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.StandardSpawnProtectionListener#onBlockPlace(org.bukkit.event.block.BlockPlaceEvent)}.
      */
@@ -163,7 +167,7 @@ public class StandardSpawnProtectionListenerTest {
         assertFalse(e.isCancelled());
         verify(player, never()).sendMessage("protection.spawn-protected");
     }
-    
+
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.StandardSpawnProtectionListener#onBlockPlace(org.bukkit.event.block.BlockPlaceEvent)}.
      */
@@ -175,7 +179,7 @@ public class StandardSpawnProtectionListenerTest {
         assertFalse(e.isCancelled());
         verify(player, never()).sendMessage("protection.spawn-protected");
     }
-    
+
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.StandardSpawnProtectionListener#onBlockPlace(org.bukkit.event.block.BlockPlaceEvent)}.
      */
@@ -188,7 +192,7 @@ public class StandardSpawnProtectionListenerTest {
         assertFalse(e.isCancelled());
         verify(player, never()).sendMessage("protection.spawn-protected");
     }
-    
+
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.StandardSpawnProtectionListener#onBlockPlace(org.bukkit.event.block.BlockPlaceEvent)}.
      */
@@ -200,7 +204,7 @@ public class StandardSpawnProtectionListenerTest {
         assertFalse(e.isCancelled());
         verify(player, never()).sendMessage("protection.spawn-protected");
     }
-    
+
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.StandardSpawnProtectionListener#onBlockPlace(org.bukkit.event.block.BlockPlaceEvent)}.
      */
@@ -226,7 +230,7 @@ public class StandardSpawnProtectionListenerTest {
         assertTrue(e.isCancelled());
         verify(player).sendMessage("protection.spawn-protected");
     }
-    
+
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.StandardSpawnProtectionListener#onBlockBreak(org.bukkit.event.block.BlockBreakEvent)}.
      */
@@ -272,7 +276,7 @@ public class StandardSpawnProtectionListenerTest {
         assertTrue(e.isCancelled());
         verify(player).sendMessage("protection.spawn-protected");
     }
-    
+
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.StandardSpawnProtectionListener#onBucketEmpty(org.bukkit.event.player.PlayerBucketEmptyEvent)}.
      */

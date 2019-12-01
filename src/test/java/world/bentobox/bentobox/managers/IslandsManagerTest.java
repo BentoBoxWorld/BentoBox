@@ -306,6 +306,9 @@ public class IslandsManagerTest {
         // PaperLib
         env = new CraftBukkitEnvironment();
         PaperLib.setCustomEnvironment(env);
+
+        // Util strip spaces
+        when(Util.stripSpaceAfterColorCodes(anyString())).thenCallRealMethod();
     }
 
     @After

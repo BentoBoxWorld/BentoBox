@@ -28,6 +28,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.events.OfflineMessageEvent;
+import world.bentobox.bentobox.util.Util;
 
 /**
  * Combines {@link Player}, {@link OfflinePlayer} and {@link CommandSender} to provide convenience methods related to
@@ -386,7 +387,7 @@ public class User {
             translation = plugin.getPlaceholdersManager().replacePlaceholders(player, translation);
         }
 
-        return ChatColor.translateAlternateColorCodes('&', translation);
+        return Util.stripSpaceAfterColorCodes(ChatColor.translateAlternateColorCodes('&', translation));
     }
 
     /**

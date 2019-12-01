@@ -13,7 +13,9 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 
+import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -518,5 +520,16 @@ public class Util {
         return PaperLib.isPaper();
     }
 
-
+    /**
+     * Strips spaces immediately after color codes. Used by {@link User#getTranslation(String, String...)}.
+     * @param textToStrip - text to strip
+     * @return text with spaces after color codes removed
+     * @since 1.9.0
+     */
+    @NonNull
+    public static String stripSpaceAfterColorCodes(@NonNull String textToStrip) {
+        Validate.notNull(textToStrip, "Cannot strip null text");
+        textToStrip = textToStrip.replaceAll("(" + ChatColor.COLOR_CHAR + ".)[\\s]", "$1");
+        return textToStrip;
+    }
 }
