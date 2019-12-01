@@ -13,6 +13,7 @@ import java.util.UUID;
 import static org.mockito.Mockito.*;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
@@ -53,7 +54,7 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({BentoBox.class, Util.class, Bukkit.class })
+@PrepareForTest({BentoBox.class, Util.class, Bukkit.class})
 public class JoinLeaveListenerTest {
 
     private static final String[] NAMES = {"adam", "ben", "cara", "dave", "ed", "frank", "freddy", "george", "harry", "ian", "joe"};
@@ -181,6 +182,7 @@ public class JoinLeaveListenerTest {
         // Util
         PowerMockito.mockStatic(Util.class);
         when(Util.getWorld(any())).thenReturn(world);
+        when(Util.stripSpaceAfterColorCodes(anyString())).thenCallRealMethod();
 
         // user text
 
