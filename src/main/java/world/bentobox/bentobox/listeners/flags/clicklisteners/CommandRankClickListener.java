@@ -19,7 +19,7 @@ import world.bentobox.bentobox.api.panels.builders.PanelBuilder;
 import world.bentobox.bentobox.api.panels.builders.PanelItemBuilder;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
-import world.bentobox.bentobox.managers.IslandWorldManager;
+import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
 
@@ -41,10 +41,14 @@ public class CommandRankClickListener implements ClickHandler {
             user.sendMessage("general.errors.wrong-world");
             return true;
         }
-        IslandWorldManager iwm = plugin.getIWM();
-        String reqPerm = iwm.getPermissionPrefix(Util.getWorld(user.getWorld())) + "admin.settings.COMMAND_RANKS";
-        if (!user.hasPermission(reqPerm)) {
-            user.sendMessage("general.errors.no-permission", "[permission]", reqPerm);
+
+        // Check if has permission
+        String prefix = plugin.getIWM().getPermissionPrefix(Util.getWorld(user.getWorld()));
+        String reqPerm = prefix + "settings." + Flags.COMMAND_RANKS.getID();
+        String allPerms = prefix + "settings.*";
+        if (!user.hasPermission(reqPerm) && !user.hasPermission(allPerms)
+                && !user.isOp() && !user.hasPermission(prefix + "admin.settings")) {
+            user.sendMessage("general.errors.no-permission", TextVariables.PERMISSION, reqPerm);
             user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_METAL_HIT, 1F, 1F);
             return true;
         }
