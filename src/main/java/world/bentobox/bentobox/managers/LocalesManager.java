@@ -324,7 +324,7 @@ public class LocalesManager {
 
     /**
      *
-     * @param user
+     * @param user - user
      * @param fix whether or not locale files with missing translations should be fixed.
      *            Not currently supported.
      * @since 1.5.0

@@ -586,8 +586,8 @@ public class Flag implements Comparable<Flag> {
         /**
          * Set the flag difficulty mode.
          * Defaults to {@link Flag.Mode#EXPERT}.
-         * @param mode
-         * @return Builder
+         * @param mode - difficulty mode
+         * @return Builder - flag builder
          * @since 1.6.0
          */
         public Builder mode(Mode mode) {

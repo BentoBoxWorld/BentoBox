@@ -175,9 +175,9 @@ public class WebManager {
 
     /**
      *
-     * @param repo
-     * @param fileName
-     * @return
+     * @param repo - Github repository
+     * @param fileName - file name
+     * @return content or nothing
      * @since 1.8.0
      */
     @NonNull

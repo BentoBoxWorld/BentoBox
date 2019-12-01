@@ -801,8 +801,8 @@ public class IslandWorldManager {
 
     /**
      *
-     * @param world
-     * @return
+     * @param world - world
+     * @return true if successful
      * @since 1.9.0
      */
     public boolean isCreateIslandOnFirstLoginEnabled(@NonNull World world) {
@@ -811,8 +811,8 @@ public class IslandWorldManager {
 
     /**
      *
-     * @param world
-     * @return
+     * @param world - world
+     * @return delay value
      * @since 1.9.0
      */
     public int getCreateIslandOnFirstLoginDelay(@NonNull World world) {
@@ -821,8 +821,8 @@ public class IslandWorldManager {
 
     /**
      *
-     * @param world
-     * @return
+     * @param world - world
+     * @return true if creation should happen
      * @since 1.9.0
      */
     public boolean isCreateIslandOnFirstLoginAbortOnLogout(@NonNull World world) {

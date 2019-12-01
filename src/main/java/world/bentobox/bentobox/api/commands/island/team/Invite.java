@@ -25,9 +25,9 @@ public class Invite {
     private final UUID invitee;
 
     /**
-     * @param type
-     * @param inviter
-     * @param invitee
+     * @param type - invitation type, e.g., coop, team, trust
+     * @param inviter - UUID of inviter
+     * @param invitee - UUID of invitee
      */
     public Invite(Type type, UUID inviter, UUID invitee) {
         this.type = type;
