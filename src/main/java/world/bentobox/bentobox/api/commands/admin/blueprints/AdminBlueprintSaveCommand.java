@@ -56,7 +56,7 @@ public class AdminBlueprintSaveCommand extends ConfirmableCommand {
         parent.hideClipboard(user);
         boolean result = new BlueprintClipboardManager(getPlugin(), parent.getBlueprintsFolder(), clipboard).save(user, name);
         if (result) {
-            getPlugin().getBlueprintsManager().addBlueprint((GameModeAddon)getAddon(), clipboard.getBlueprint());
+            getPlugin().getBlueprintsManager().addBlueprint(getAddon(), clipboard.getBlueprint());
         }
         return result;
     }

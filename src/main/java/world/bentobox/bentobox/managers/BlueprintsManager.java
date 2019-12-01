@@ -393,6 +393,28 @@ public class BlueprintsManager {
     }
 
     /**
+     * Unregisters the Blueprint from the manager and deletes the file.
+     * @param addon game mode addon
+     * @param name name of the Blueprint to delete
+     * @since 1.9.0
+     */
+    public void deleteBlueprint(GameModeAddon addon, String name) {
+        List<Blueprint> addonBlueprints = blueprints.get(addon);
+        addonBlueprints.stream().filter(b -> b.getName().equals(name)).forEach(b -> {
+            addonBlueprints.remove(b);
+            blueprints.put(addon, addonBlueprints);
+
+            File file = new File(getBlueprintsFolder(addon), name + BLUEPRINT_SUFFIX);
+            // Delete the file
+            try {
+                Files.deleteIfExists(file.toPath());
+            } catch (IOException e) {
+                plugin.logError("Could not delete Blueprint " + e.getLocalizedMessage());
+            }
+        });
+    }
+
+    /**
      * Paste the islands to world
      *
      * @param addon  - GameModeAddon

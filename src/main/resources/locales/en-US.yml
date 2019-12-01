@@ -255,6 +255,14 @@ commands:
       copy:
         parameters: "[air]"
         description: "copy the clipboard set by pos1 and pos2 and optionally the air blocks"
+      delete:
+        parameters: "<name>"
+        description: "delete the blueprint"
+        no-blueprint: "&b [name] &c does not exist."
+        confirmation: |
+          &c Are you sure you want to delete this blueprint?
+          &c Once deleted, there is no way to recover it.
+        success: "&a Successfully deleted blueprint &b [name]&a ."
       load:
         parameters: "<name>"
         description: "load blueprint into the clipboard"
