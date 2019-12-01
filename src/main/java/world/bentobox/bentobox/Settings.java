@@ -188,7 +188,7 @@ public class Settings implements ConfigObject {
     @ConfigComment("On the contrary, greater values will make pasting take less time, but this benefit is quickly severely impacted by the")
     @ConfigComment("resulting amount of chunks that must be loaded to fulfill the process, which often causes the server to hang out.")
     @ConfigEntry(path = "island.paste-speed")
-    private int pasteSpeed = 128;
+    private int pasteSpeed = 64;
 
     @ConfigComment("Island deletion: Number of chunks per world to regenerate per second.")
     @ConfigComment("If there is a nether and end then 3x this number will be regenerated per second.")
