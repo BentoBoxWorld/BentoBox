@@ -74,7 +74,7 @@ public abstract class DelayedTeleportCommand extends CompositeCommand implements
      * @param confirmed Runnable to be executed if successfully delayed.
      */
     public void delayCommand(User user, String message, Runnable confirmed) {
-        if (getSettings().getDelayTime() < 1) {
+        if (getSettings().getDelayTime() < 1 || user.isOp() || user.hasPermission(getPermissionPrefix() + "mod.bypasscooldowns")) {
             Bukkit.getScheduler().runTask(getPlugin(), confirmed);
             return;
         }
