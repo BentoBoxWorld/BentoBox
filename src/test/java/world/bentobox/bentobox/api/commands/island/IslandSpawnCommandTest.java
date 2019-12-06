@@ -50,7 +50,7 @@ import world.bentobox.bentobox.managers.PlaceholdersManager;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({Bukkit.class, BentoBox.class})
 public class IslandSpawnCommandTest {
-    
+
     @Mock
     private BentoBox plugin;
     @Mock
@@ -81,7 +81,7 @@ public class IslandSpawnCommandTest {
         // Command manager
         CommandsManager cm = mock(CommandsManager.class);
         when(plugin.getCommandsManager()).thenReturn(cm);
-        
+
         // Player
         when(player.isOp()).thenReturn(false);
         UUID uuid = UUID.randomUUID();
@@ -91,7 +91,7 @@ public class IslandSpawnCommandTest {
         User.setPlugin(plugin);
         // Set up user already
         user = User.getInstance(player);
-        
+
         // Addon
         GameModeAddon addon = mock(GameModeAddon.class);
 
@@ -110,10 +110,10 @@ public class IslandSpawnCommandTest {
         when(iwm.getWorldSettings(any())).thenReturn(ws);
         map = new HashMap<>();
         when(ws.getWorldFlags()).thenReturn(map);
-        
+
         // Island Manager
         when(plugin.getIslands()).thenReturn(im);
-        
+
         LocalesManager lm = mock(LocalesManager.class);
         // Locales
         when(plugin.getLocalesManager()).thenReturn(lm);
@@ -130,8 +130,9 @@ public class IslandSpawnCommandTest {
      * @throws java.lang.Exception
      */
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         User.clearUsers();
+        Mockito.framework().clearInlineMocks();
     }
 
     /**
@@ -160,7 +161,7 @@ public class IslandSpawnCommandTest {
         assertTrue(isc.execute(user, "spawn", Collections.emptyList()));
         verify(im).spawnTeleport(any(), any());
     }
-    
+
     /**
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandSpawnCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
@@ -173,7 +174,7 @@ public class IslandSpawnCommandTest {
         verify(im, never()).spawnTeleport(any(), any());
         verify(player).sendMessage(eq("protection.flags.PREVENT_TELEPORT_WHEN_FALLING.hint"));
     }
-    
+
     /**
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandSpawnCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
@@ -186,7 +187,7 @@ public class IslandSpawnCommandTest {
         verify(im).spawnTeleport(any(), any());
         verify(player, never()).sendMessage(eq("protection.flags.PREVENT_TELEPORT_WHEN_FALLING.hint"));
     }
-    
+
     /**
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandSpawnCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
@@ -199,7 +200,7 @@ public class IslandSpawnCommandTest {
         verify(im).spawnTeleport(any(), any());
         verify(player, never()).sendMessage(eq("protection.flags.PREVENT_TELEPORT_WHEN_FALLING.hint"));
     }
-    
+
     /**
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandSpawnCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */

@@ -24,6 +24,7 @@ import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.PluginManager;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,6 +38,7 @@ import org.powermock.reflect.Whitebox;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
+import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.FlagsManager;
@@ -87,7 +89,7 @@ public class MobSpawnListenerTest {
         when(Bukkit.getItemFactory()).thenReturn(itemFactory);
         when(Bukkit.getLogger()).thenReturn(Logger.getAnonymousLogger());
         when(Bukkit.getPluginManager()).thenReturn(pim);
-        
+
         location = mock(Location.class);
         when(location.getWorld()).thenReturn(world);
         when(location.getBlockX()).thenReturn(0);
@@ -128,6 +130,12 @@ public class MobSpawnListenerTest {
 
         // Living Entity
         when(livingEntity.getLocation()).thenReturn(location);
+    }
+
+    @After
+    public void tearDown() {
+        User.clearUsers();
+        Mockito.framework().clearInlineMocks();
     }
 
     @Test
@@ -199,7 +207,7 @@ public class MobSpawnListenerTest {
         for (SpawnReason reason: SpawnReason.values()) {
             when(e.getSpawnReason()).thenReturn(reason);
             switch (reason) {
-            // Natural            
+            // Natural
             case DEFAULT:
             case DROWNED:
             case JOCKEY:
@@ -216,10 +224,10 @@ public class MobSpawnListenerTest {
             case TRAP:
             case VILLAGE_DEFENSE:
             case VILLAGE_INVASION:
-             // These should be blocked
+                // These should be blocked
                 assertTrue("Should be blocked: " + reason.toString(), l.onNaturalMobSpawn(e));
-                               break;
-            // Unnatural - player involved
+                break;
+                // Unnatural - player involved
             case BREEDING:
             case BUILD_IRONGOLEM:
             case BUILD_SNOWMAN:
@@ -239,7 +247,7 @@ public class MobSpawnListenerTest {
                 break;
             default:
                 break;
-            
+
             }
         }
 

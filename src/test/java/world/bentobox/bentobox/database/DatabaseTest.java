@@ -85,6 +85,7 @@ public class DatabaseTest {
     @After
     public void tearDown() throws Exception {
         dbSetup = null;
+        Mockito.framework().clearInlineMocks();
     }
 
     /**

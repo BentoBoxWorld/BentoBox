@@ -106,6 +106,7 @@ public class AdminBlueprintsListCommandTest {
         .sorted(Comparator.reverseOrder())
         .map(Path::toFile)
         .forEach(File::delete);
+        Mockito.framework().clearInlineMocks();
     }
 
     /**

@@ -190,6 +190,7 @@ public class HurtingListenerTest {
     @After
     public void tearDown() {
         User.clearUsers();
+        Mockito.framework().clearInlineMocks();
     }
 
     /**

@@ -27,12 +27,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
+import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 
@@ -80,7 +82,7 @@ public class WitherListenerTest {
         when(location.getBlockX()).thenReturn(0);
         when(location.getBlockY()).thenReturn(0);
         when(location.getBlockZ()).thenReturn(0);
-        
+
         when(location2.getWorld()).thenReturn(world2);
         when(location2.getBlockX()).thenReturn(0);
         when(location2.getBlockY()).thenReturn(0);
@@ -105,7 +107,9 @@ public class WitherListenerTest {
      * @throws java.lang.Exception
      */
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
+        User.clearUsers();
+        Mockito.framework().clearInlineMocks();
     }
 
     /**
@@ -122,7 +126,7 @@ public class WitherListenerTest {
         assertTrue(blocks.isEmpty());
     }
 
-    
+
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.WitherListener#onExplosion(org.bukkit.event.entity.EntityExplodeEvent)}.
      */
@@ -198,7 +202,7 @@ public class WitherListenerTest {
         wl.onWitherChangeBlocks(e);
         assertTrue(e.isCancelled());
     }
-    
+
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.WitherListener#WitherChangeBlocks(org.bukkit.event.entity.EntityChangeBlockEvent)}.
      */

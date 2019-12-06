@@ -262,6 +262,7 @@ public class IslandResetCommandTest {
     @After
     public void tearDown() {
         User.clearUsers();
+        Mockito.framework().clearInlineMocks();
     }
 
     /**

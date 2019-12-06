@@ -15,6 +15,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitScheduler;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -123,6 +124,11 @@ public class IslandSethomeCommandTest {
         PowerMockito.mockStatic(Util.class);
         // 1 home for now
         when(user.getPermissionValue(Mockito.anyString(), Mockito.anyInt())).thenReturn(1);
+    }
+
+    @After
+    public void tearDown() {
+        Mockito.framework().clearInlineMocks();
     }
 
     /**

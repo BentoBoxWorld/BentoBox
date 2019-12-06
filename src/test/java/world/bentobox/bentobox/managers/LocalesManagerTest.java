@@ -104,6 +104,9 @@ public class LocalesManagerTest {
             .forEach(File::delete);
 
         }
+
+        Mockito.framework().clearInlineMocks();
+
     }
 
     /**

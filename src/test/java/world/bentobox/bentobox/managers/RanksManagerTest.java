@@ -6,8 +6,10 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Map;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 /**
  * @author tastybento
@@ -23,6 +25,11 @@ public class RanksManagerTest {
     @Before
     public void setUp() throws Exception {
         ranksManager = new RanksManager();
+    }
+
+    @After
+    public void tearDown() {
+        Mockito.framework().clearInlineMocks();
     }
 
     /**

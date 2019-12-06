@@ -144,7 +144,7 @@ public class IslandsManagerTest {
     @Before
     public void setUp() throws Exception {
         // Clear any lingering database
-        clear();
+        tearDown();
         // Set up plugin
         plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
@@ -312,7 +312,7 @@ public class IslandsManagerTest {
     }
 
     @After
-    public void clear() throws IOException{
+    public void tearDown() throws IOException{
         //remove any database data
         File file = new File("database");
         Path pathToBeDeleted = file.toPath();
@@ -322,6 +322,7 @@ public class IslandsManagerTest {
             .map(Path::toFile)
             .forEach(File::delete);
         }
+        Mockito.framework().clearInlineMocks();
     }
 
     /**

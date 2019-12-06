@@ -75,7 +75,8 @@ public class PanelTest {
      * @throws java.lang.Exception
      */
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
+        Mockito.framework().clearInlineMocks();
     }
 
     /**

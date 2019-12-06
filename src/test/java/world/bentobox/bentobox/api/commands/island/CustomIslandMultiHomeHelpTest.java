@@ -110,9 +110,9 @@ public class CustomIslandMultiHomeHelpTest {
         // IWM friendly name
         when(iwm.getFriendlyName(any())).thenReturn("BSkyBlock");
         when(plugin.getIWM()).thenReturn(iwm);
-        
+
         // Locales
-        
+
 
         // Command
         ch = new CustomIslandMultiHomeHelp(ic);
@@ -124,6 +124,7 @@ public class CustomIslandMultiHomeHelpTest {
     @After
     public void tearDown() throws Exception {
         User.clearUsers();
+        Mockito.framework().clearInlineMocks();
     }
 
     /**
@@ -198,5 +199,5 @@ public class CustomIslandMultiHomeHelpTest {
                 "description"
                 );
     }
-   
+
 }

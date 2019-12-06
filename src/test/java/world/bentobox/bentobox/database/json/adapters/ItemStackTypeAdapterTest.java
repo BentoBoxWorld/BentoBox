@@ -26,6 +26,7 @@ import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.PluginManager;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -53,7 +54,7 @@ import world.bentobox.bentobox.BentoBox;
 public class ItemStackTypeAdapterTest {
     @Mock
     private BentoBox plugin;
-    
+
     private ItemStackTypeAdapter isa;
     @Mock
     private JsonWriter out;
@@ -67,10 +68,10 @@ public class ItemStackTypeAdapterTest {
      */
     @Before
     public void setUp() throws Exception {
-     // Set up plugin
+        // Set up plugin
         plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
-        
+
         Server server = mock(Server.class);
 
         PluginManager pim = mock(PluginManager.class);
@@ -95,6 +96,11 @@ public class ItemStackTypeAdapterTest {
         // Mock up the deserialization
         PowerMockito.mockStatic(ItemStack.class);
         when(ItemStack.deserialize(any())).thenReturn(new ItemStack(Material.STONE, 4));
+    }
+
+    @After
+    public void tearDown() {
+        Mockito.framework().clearInlineMocks();
     }
 
     /**
@@ -155,7 +161,7 @@ public class ItemStackTypeAdapterTest {
         // Delete temp file
         Files.deleteIfExists(tmp.toPath());
     }
-    
+
     /**
      * Test method for {@link world.bentobox.bentobox.database.json.adapters.ItemStackTypeAdapter#read(com.google.gson.stream.JsonReader)}.
      * @throws IOException

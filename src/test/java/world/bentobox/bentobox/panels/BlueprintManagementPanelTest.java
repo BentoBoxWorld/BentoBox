@@ -59,7 +59,7 @@ public class BlueprintManagementPanelTest {
     BlueprintBundle bb2;
     @Mock
     BlueprintBundle bb3;
-    
+
     private BlueprintManagementPanel bmp;
     @Mock
     private BlueprintsManager bpm;
@@ -73,7 +73,7 @@ public class BlueprintManagementPanelTest {
      */
     @Before
     public void setUp() throws Exception {
-     // Set up plugin
+        // Set up plugin
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
         // Bukkit
         PowerMockito.mockStatic(Bukkit.class);
@@ -120,22 +120,23 @@ public class BlueprintManagementPanelTest {
         map.put("test2", bb2);
         map.put("test3", bb3);
         when(bpm.getBlueprintBundles(any())).thenReturn(map);
-        
+
         // Blueprint
         when(blueprint.getName()).thenReturn("blueprint name");
-        
-        
+
+
         // Set up
         bmp = new BlueprintManagementPanel(plugin, user, addon);
-        
+
     }
 
     /**
      * @throws java.lang.Exception
      */
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         User.clearUsers();
+        Mockito.framework().clearInlineMocks();
     }
 
     /**
@@ -155,7 +156,7 @@ public class BlueprintManagementPanelTest {
         bmp.openBB(bb);
         verify(bb).getDisplayName();
         verify(bb, times(3)).getBlueprint(any());
-        verify(inv, times(20)).setItem(anyInt(), any());        
+        verify(inv, times(20)).setItem(anyInt(), any());
     }
 
     /**
@@ -179,7 +180,7 @@ public class BlueprintManagementPanelTest {
         assertEquals(Material.PAPER, pi.getItem().getType());
         assertEquals("commands.admin.blueprint.management.blueprint-instruction", pi.getDescription().get(0));
     }
-    
+
     /**
      * Test method for {@link world.bentobox.bentobox.panels.BlueprintManagementPanel#getBlueprintItem(world.bentobox.bentobox.api.addons.GameModeAddon, int, world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle, world.bentobox.bentobox.blueprints.Blueprint)}.
      */
@@ -192,7 +193,7 @@ public class BlueprintManagementPanelTest {
         assertEquals(Material.BEACON, pi.getItem().getType());
         assertEquals("commands.admin.blueprint.management.blueprint-instruction", pi.getDescription().get(0));
     }
-    
+
     /**
      * Test method for {@link world.bentobox.bentobox.panels.BlueprintManagementPanel#getBlueprintItem(world.bentobox.bentobox.api.addons.GameModeAddon, int, world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle, world.bentobox.bentobox.blueprints.Blueprint)}.
      */

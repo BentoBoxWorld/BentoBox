@@ -12,8 +12,10 @@ import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import world.bentobox.bentobox.api.logs.LogEntry;
 
@@ -45,6 +47,11 @@ public class LogEntryListAdapterTest {
         toLog.add(new LogEntry.Builder("UNBAN").data("player", target.toString()).data("issuer", issuer.toString()).build());
         toLog.add(new LogEntry.Builder("UNOWNED").build());
         toLog.forEach(history::add);
+    }
+
+    @After
+    public void tearDown() {
+        Mockito.framework().clearInlineMocks();
     }
 
     /**

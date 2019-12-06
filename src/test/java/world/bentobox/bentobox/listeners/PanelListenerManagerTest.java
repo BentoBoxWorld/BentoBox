@@ -164,7 +164,9 @@ public class PanelListenerManagerTest {
     }
 
     @After
-    public void cleanUp() {
+    public void tearDown() {
+        User.clearUsers();
+        Mockito.framework().clearInlineMocks();
         PanelListenerManager.getOpenPanels().clear();
     }
 

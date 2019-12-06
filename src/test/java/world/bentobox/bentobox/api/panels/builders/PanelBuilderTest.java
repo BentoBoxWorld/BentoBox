@@ -11,6 +11,7 @@ import static org.mockito.Mockito.when;
 
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,6 +42,11 @@ public class PanelBuilderTest {
         Inventory inv = mock(Inventory.class);
         when(Bukkit.createInventory(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(inv);
 
+    }
+
+    @After
+    public void tearDown() {
+        Mockito.framework().clearInlineMocks();
     }
 
     /**

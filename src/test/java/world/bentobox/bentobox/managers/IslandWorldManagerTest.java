@@ -24,6 +24,7 @@ import org.bukkit.World;
 import org.bukkit.entity.EntityType;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.eclipse.jdt.annotation.Nullable;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -101,6 +102,11 @@ public class IslandWorldManagerTest {
         when(gm.getNetherWorld()).thenReturn(netherWorld);
         when(gm.getEndWorld()).thenReturn(endWorld);
         iwm.addGameMode(gm);
+    }
+
+    @After
+    public void tearDown() {
+        Mockito.framework().clearInlineMocks();
     }
 
     /**

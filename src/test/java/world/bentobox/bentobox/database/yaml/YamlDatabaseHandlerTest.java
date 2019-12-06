@@ -138,6 +138,7 @@ public class YamlDatabaseHandlerTest {
         .sorted(Comparator.reverseOrder())
         .map(Path::toFile)
         .forEach(File::delete);
+        Mockito.framework().clearInlineMocks();
     }
 
     /**

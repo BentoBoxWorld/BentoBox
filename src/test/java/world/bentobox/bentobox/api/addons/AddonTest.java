@@ -76,7 +76,7 @@ public class AddonTest {
         when(server.getVersion()).thenReturn("BSB_Mocking");
 
         PluginManager pluginManager = mock(PluginManager.class);
-        
+
 
         PowerMockito.mockStatic(Bukkit.class);
         when(Bukkit.getPluginManager()).thenReturn(pluginManager);
@@ -137,6 +137,7 @@ public class AddonTest {
             .map(Path::toFile)
             .forEach(File::delete);
         }
+        Mockito.framework().clearInlineMocks();
     }
 
     class TestClass extends Addon {

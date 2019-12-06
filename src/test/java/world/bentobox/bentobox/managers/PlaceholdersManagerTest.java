@@ -10,10 +10,12 @@ import static org.mockito.Mockito.when;
 import java.util.Optional;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
@@ -66,6 +68,11 @@ public class PlaceholdersManagerTest {
 
         // Placeholder manager
         pm = new PlaceholdersManager(plugin);
+    }
+
+    @After
+    public void tearDown() {
+        Mockito.framework().clearInlineMocks();
     }
 
     /**

@@ -26,6 +26,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.eclipse.jdt.annotation.NonNull;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -121,6 +122,12 @@ public class BannedCommandsTest {
         // Set flag
         Flags.PREVENT_TELEPORT_WHEN_FALLING.setSetting(world, true);
 
+    }
+
+    @After
+    public void tearDown() {
+        User.clearUsers();
+        Mockito.framework().clearInlineMocks();
     }
 
     /**
@@ -254,8 +261,8 @@ public class BannedCommandsTest {
         assertTrue(e.isCancelled());
 
     }
-    
-    
+
+
     /**
      * Test for {@link BannedCommands#onCommand(PlayerCommandPreprocessEvent)}
      */
@@ -272,7 +279,7 @@ public class BannedCommandsTest {
         assertTrue(e.isCancelled());
 
     }
-    
+
     /**
      * Test for {@link BannedCommands#onCommand(PlayerCommandPreprocessEvent)}
      */

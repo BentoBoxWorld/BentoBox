@@ -114,10 +114,11 @@ public class IslandRespawnListenerTest {
         User.setPlugin(plugin);
         User.getInstance(player);
     }
-    
+
     @After
     public void tearDown() {
         User.clearUsers();
+        Mockito.framework().clearInlineMocks();
     }
 
     /**
@@ -131,7 +132,7 @@ public class IslandRespawnListenerTest {
         new IslandRespawnListener().onPlayerDeath(e);
         verify(world, never()).getUID();
     }
-    
+
     /**
      * Test method for {@link IslandRespawnListener#onPlayerDeath(org.bukkit.event.entity.PlayerDeathEvent)}.
      */
@@ -143,7 +144,7 @@ public class IslandRespawnListenerTest {
         new IslandRespawnListener().onPlayerDeath(e);
         verify(world, never()).getUID();
     }
-    
+
     /**
      * Test method for {@link IslandRespawnListener#onPlayerDeath(org.bukkit.event.entity.PlayerDeathEvent)}.
      */
@@ -156,7 +157,7 @@ public class IslandRespawnListenerTest {
         new IslandRespawnListener().onPlayerDeath(e);
         verify(world, never()).getUID();
     }
-    
+
     /**
      * Test method for {@link IslandRespawnListener#onPlayerDeath(org.bukkit.event.entity.PlayerDeathEvent)}.
      */
@@ -169,7 +170,7 @@ public class IslandRespawnListenerTest {
         new IslandRespawnListener().onPlayerDeath(e);
         verify(world).getUID();
     }
-    
+
     /**
      * Test method for {@link IslandRespawnListener#onPlayerDeath(org.bukkit.event.entity.PlayerDeathEvent)}.
      */
@@ -182,7 +183,7 @@ public class IslandRespawnListenerTest {
         new IslandRespawnListener().onPlayerDeath(e);
         verify(world).getUID();
     }
-    
+
     /**
      * Test method for {@link IslandRespawnListener#onPlayerDeath(org.bukkit.event.entity.PlayerDeathEvent)}.
      */

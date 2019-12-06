@@ -158,8 +158,9 @@ public class EnderChestListenerTest {
     }
 
     @After
-    public void cleanUp() {
+    public void tearDown() {
         User.clearUsers();
+        Mockito.framework().clearInlineMocks();
     }
 
     @Test

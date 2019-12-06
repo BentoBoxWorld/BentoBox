@@ -37,6 +37,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.PluginManager;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -92,7 +93,7 @@ public class TestBentoBox {
         Mockito.when(server.getVersion()).thenReturn("BentoBox_Mocking");
 
         PluginManager pluginManager = mock(PluginManager.class);
-        
+
 
         ItemFactory itemFactory = mock(ItemFactory.class);
         when(server.getItemFactory()).thenReturn(itemFactory);
@@ -168,6 +169,12 @@ public class TestBentoBox {
         Settings settings = mock(Settings.class);
         Mockito.when(plugin.getSettings()).thenReturn(settings);
         Mockito.when(settings.getFakePlayers()).thenReturn(new HashSet<>());
+    }
+
+    @After
+    public void tearDown() {
+        User.clearUsers();
+        Mockito.framework().clearInlineMocks();
     }
 
     @Test

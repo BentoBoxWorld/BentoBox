@@ -236,6 +236,7 @@ public class PVPListenerTest {
     @After
     public void tearDown() {
         User.clearUsers();
+        Mockito.framework().clearInlineMocks();
     }
 
     private void wrongWorld() {
