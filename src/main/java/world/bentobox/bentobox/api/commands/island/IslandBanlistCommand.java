@@ -79,7 +79,7 @@ public class IslandBanlistCommand extends CompositeCommand {
         lines.forEach(l -> user.sendMessage("commands.island.banlist.names", "[line]", l));
 
         int banLimit = user.getPermissionValue(getPermissionPrefix() + "ban.maxlimit", getIWM().getBanLimit(getWorld()));
-        if (banLimit <= -1 || island.getBanned().size() < banLimit) {
+        if (banLimit > -1 && island.getBanned().size() < banLimit) {
             user.sendMessage("commands.island.banlist.you-can-ban", TextVariables.NUMBER, String.valueOf(banLimit - island.getBanned().size()));
         }
         return true;
