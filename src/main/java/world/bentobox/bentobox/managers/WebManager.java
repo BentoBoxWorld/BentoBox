@@ -114,7 +114,9 @@ public class WebManager {
                     addonRepo = null;
                 }
                 if (addonRepo != null) {
-                    plugin.log("Gathering contribution data for: " + repository);
+                    if (plugin.getSettings().isLogGithubDownloadData()) {
+                        plugin.log("Gathering contribution data for: " + repository);
+                    }
                     gatherContributors(addonRepo);
                 }
             }
