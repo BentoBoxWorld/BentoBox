@@ -256,7 +256,7 @@ public class IslandNearCommandTest {
     @Test
     public void testExecuteUserStringListOfStringUnowned() {
         when(island.getName()).thenReturn("");
-        when(island.getOwner()).thenReturn(null);
+        when(island.isUnowned()).thenReturn(true);
         assertTrue(inc.execute(user, "near", Collections.emptyList()));
         verify(user).sendMessage(eq("commands.island.near.the-following-islands"));
         verify(user).sendMessage(eq("commands.island.near.syntax"),

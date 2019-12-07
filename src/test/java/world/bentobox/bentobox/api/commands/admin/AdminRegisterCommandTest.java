@@ -199,6 +199,7 @@ public class AdminRegisterCommandTest {
         // Island has owner
         Island is = mock(Island.class);
         when(is.getOwner()).thenReturn(uuid);
+        when(is.isOwned()).thenReturn(true);
         Optional<Island> opi = Optional.of(is);
         when(im.getIslandAt(any())).thenReturn(opi);
         when(user.getLocation()).thenReturn(loc);

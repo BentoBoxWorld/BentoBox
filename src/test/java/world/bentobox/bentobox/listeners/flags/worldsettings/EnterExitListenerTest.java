@@ -247,7 +247,7 @@ public class EnterExitListenerTest {
         // Moving into the island should show a message
         verify(lm).get(any(), eq("protection.flags.ENTER_EXIT_MESSAGES.now-entering"));
         // The island owner needs to be checked
-        verify(island).getOwner();
+        verify(island).isOwned();
         verify(pim).callEvent(any(IslandEnterEvent.class));
         verify(pim, never()).callEvent(any(IslandExitEvent.class));
         verify(notifier).notify(any(User.class), eq("protection.flags.ENTER_EXIT_MESSAGES.now-entering"));
@@ -264,7 +264,7 @@ public class EnterExitListenerTest {
         // Moving into the island should show a message
         verify(lm).get(any(), eq("protection.flags.ENTER_EXIT_MESSAGES.now-entering"));
         // No owner check
-        verify(island).getOwner();
+        verify(island).isOwned();
         verify(island, times(2)).getName();
         verify(pim).callEvent(any(IslandEnterEvent.class));
         verify(pim, never()).callEvent(any(IslandExitEvent.class));
@@ -282,7 +282,7 @@ public class EnterExitListenerTest {
         // Moving into the island should show a message
         verify(lm).get(any(), eq("protection.flags.ENTER_EXIT_MESSAGES.now-leaving"));
         // The island owner needs to be checked
-        verify(island).getOwner();
+        verify(island).isOwned();
         verify(pim).callEvent(any(IslandExitEvent.class));
         verify(pim, never()).callEvent(any(IslandEnterEvent.class));
         verify(notifier).notify(any(User.class), eq("protection.flags.ENTER_EXIT_MESSAGES.now-leaving"));
@@ -299,7 +299,7 @@ public class EnterExitListenerTest {
         // Moving into the island should show a message
         verify(lm).get(any(), eq("protection.flags.ENTER_EXIT_MESSAGES.now-leaving"));
         // No owner check
-        verify(island).getOwner();
+        verify(island).isOwned();
         verify(island, times(2)).getName();
         verify(pim).callEvent(any(IslandExitEvent.class));
         verify(pim, never()).callEvent(any(IslandEnterEvent.class));
