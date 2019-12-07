@@ -67,7 +67,7 @@ public class IslandCache {
             // Make world
             islandsByUUID.putIfAbsent(island.getWorld(), new HashMap<>());
             // Only add islands to this map if they are owned
-            if (island.getOwner() != null) {
+            if (island.isOwned()) {
                 islandsByUUID.get(island.getWorld()).put(island.getOwner(), island);
                 island.getMemberSet().forEach(member -> islandsByUUID.get(island.getWorld()).put(member, island));
             }
@@ -235,7 +235,7 @@ public class IslandCache {
         islandsByUUID.putIfAbsent(world, new HashMap<>());
         Island island = islandsByUUID.get(world).get(uuid);
         if (island != null) {
-            if (island.getOwner() != null && island.getOwner().equals(uuid)) {
+            if (uuid.equals(island.getOwner())) {
                 // Clear ownership and members
                 island.getMembers().clear();
                 island.setOwner(null);

@@ -842,7 +842,7 @@ public class IslandsManager {
                     // Add to quarantine cache
                     island.setDoNotLoad(true);
                     quarantineCache.computeIfAbsent(island.getOwner(), k -> new ArrayList<>()).add(island);
-                    if (island.getOwner() == null) {
+                    if (island.isUnowned()) {
                         unowned++;
                     } else {
                         owned++;

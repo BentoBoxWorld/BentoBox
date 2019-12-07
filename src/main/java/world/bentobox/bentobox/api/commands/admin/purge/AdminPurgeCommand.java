@@ -120,7 +120,7 @@ public class AdminPurgeCommand extends CompositeCommand implements Listener {
         return getPlugin().getIslands().getIslands().stream()
                 .filter(i -> !i.getPurgeProtected())
                 .filter(i -> i.getWorld().equals(this.getWorld()))
-                .filter(i -> i.getOwner() != null)
+                .filter(Island::isOwned)
                 .filter(i -> i.getMembers().size() == 1)
                 .filter(i -> (System.currentTimeMillis() - Bukkit.getOfflinePlayer(i.getOwner()).getLastPlayed()) > days * 1000 * 24 * 3600)
                 .map(Island::getUniqueId)

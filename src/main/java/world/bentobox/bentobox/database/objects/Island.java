@@ -441,11 +441,36 @@ public class Island implements DataObject {
     }
 
     /**
-     * @return the owner
+     * Returns the owner of this island.
+     * @return the owner, may be null.
+     * @see #isOwned()
+     * @see #isUnowned()
      */
     @Nullable
     public UUID getOwner(){
         return owner;
+    }
+
+    /**
+     * Returns whether this island is owned or not.
+     * @return {@code true} if this island has an owner, {@code false} otherwise.
+     * @since 1.9.1
+     * @see #getOwner()
+     * @see #isUnowned()
+     */
+    public boolean isOwned() {
+        return owner != null;
+    }
+
+    /**
+     * Returns whether this island does not have an owner.
+     * @return {@code true} if this island does not have an owner, {@code false} otherwise.
+     * @since 1.9.1
+     * @see #getOwner()
+     * @see #isOwned()
+     */
+    public boolean isUnowned() {
+        return owner == null;
     }
 
     /**

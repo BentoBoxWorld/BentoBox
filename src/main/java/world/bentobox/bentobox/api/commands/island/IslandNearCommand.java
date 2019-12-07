@@ -80,7 +80,7 @@ public class IslandNearCommand extends CompositeCommand {
         if (island.getName() != null && !island.getName().isEmpty()) {
             return island.getName();
         }
-        if (island.getOwner() == null) {
+        if (island.isUnowned()) {
             return user.getTranslation("commands.admin.info.unowned");
         }
         return getPlayers().getName(island.getOwner());

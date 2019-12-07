@@ -56,7 +56,7 @@ public class AdminSetspawnCommand extends ConfirmableCommand {
 
     private void setSpawn(User user, Island i) {
         if (!i.getMembers().isEmpty()) {
-            if (i.getOwner() != null) {
+            if (i.isOwned()) {
                 // Fire event
                 IslandBaseEvent event = IslandEvent.builder()
                         .island(i)
