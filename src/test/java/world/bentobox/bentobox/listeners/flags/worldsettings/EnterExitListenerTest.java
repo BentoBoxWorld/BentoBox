@@ -136,6 +136,7 @@ public class EnterExitListenerTest {
         when(island.getCenter()).thenReturn(loc);
         when(island.getProtectionRange()).thenReturn(PROTECTION_RANGE);
         when(island.getOwner()).thenReturn(uuid);
+        when(island.isOwned()).thenReturn(true);
 
         when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
 
@@ -344,6 +345,33 @@ public class EnterExitListenerTest {
         PlayerTeleportEvent e = new PlayerTeleportEvent(user.getPlayer(), inside, anotherWorld, TeleportCause.PLUGIN);
         listener.onTeleport(e);
         verify(notifier).notify(any(User.class), eq("protection.flags.ENTER_EXIT_MESSAGES.now-leaving"));
+        verify(pim, never()).callEvent(any(IslandEnterEvent.class));
+        verify(pim).callEvent(any(IslandExitEvent.class));
+    }
+
+
+    /**
+     * Test method for {@link EnterExitListener#onTeleport(org.bukkit.event.player.PlayerTeleportEvent)}.
+     */
+    @Test
+    public void testEnterIslandTeleportUnowned() {
+        when(island.isOwned()).thenReturn(false);
+        PlayerTeleportEvent e = new PlayerTeleportEvent(user.getPlayer(), anotherWorld, inside, TeleportCause.PLUGIN);
+        listener.onTeleport(e);
+        verify(notifier, never()).notify(any(User.class), anyString());
+        verify(pim).callEvent(any(IslandEnterEvent.class));
+        verify(pim, never()).callEvent(any(IslandExitEvent.class));
+    }
+
+    /**
+     * Test method for {@link EnterExitListener#onTeleport(org.bukkit.event.player.PlayerTeleportEvent)}.
+     */
+    @Test
+    public void testExitIslandTeleportUnowned() {
+        when(island.isOwned()).thenReturn(false);
+        PlayerTeleportEvent e = new PlayerTeleportEvent(user.getPlayer(), inside, anotherWorld, TeleportCause.PLUGIN);
+        listener.onTeleport(e);
+        verify(notifier, never()).notify(any(User.class), anyString());
         verify(pim, never()).callEvent(any(IslandEnterEvent.class));
         verify(pim).callEvent(any(IslandExitEvent.class));
     }
