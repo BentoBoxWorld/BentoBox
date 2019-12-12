@@ -38,4 +38,13 @@ public class MyBiomeGrid implements BiomeGrid {
     public void setBiome(int x, int z, Biome bio) {
         map.put(new Vector(x,0,z), bio);
     }
+    @Override
+    public Biome getBiome(int x, int y, int z) {
+        return map.getOrDefault(new Vector(x,y,z), defaultBiome);
+    }
+    @Override
+    public void setBiome(int x, int y, int z, Biome bio) {
+        map.put(new Vector(x, y, z), bio);
+
+    }
 }
