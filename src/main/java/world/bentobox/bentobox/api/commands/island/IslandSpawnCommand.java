@@ -3,6 +3,7 @@ package world.bentobox.bentobox.api.commands.island;
 import java.util.List;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
+import world.bentobox.bentobox.api.commands.DelayedTeleportCommand;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.lists.Flags;
 
@@ -11,7 +12,7 @@ import world.bentobox.bentobox.lists.Flags;
  * @author Poslovitch
  * @since 1.1
  */
-public class IslandSpawnCommand extends CompositeCommand {
+public class IslandSpawnCommand extends DelayedTeleportCommand {
 
     public IslandSpawnCommand(CompositeCommand parent) {
         super(parent, "spawn");
@@ -33,7 +34,7 @@ public class IslandSpawnCommand extends CompositeCommand {
             return false;
         }
 
-        getIslands().spawnTeleport(getWorld(), user.getPlayer());
+        this.delayCommand(user, () -> getIslands().spawnTeleport(getWorld(), user.getPlayer()));
         return true;
     }
 }
