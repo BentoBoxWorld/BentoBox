@@ -20,6 +20,9 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.PluginManager;
+import org.bukkit.scheduler.BukkitScheduler;
+import org.bukkit.scheduler.BukkitTask;
 import org.eclipse.jdt.annotation.Nullable;
 import org.junit.After;
 import org.junit.Before;
@@ -28,11 +31,13 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
+import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
@@ -68,7 +73,12 @@ public class IslandSpawnCommandTest {
     private Map<String, Boolean> map;
     @Mock
     private Player player;
-
+    @Mock
+    private BukkitTask task;
+    @Mock
+    private PluginManager pim;
+    @Mock
+    private Settings s;
 
     /**
      * @throws java.lang.Exception
@@ -104,6 +114,18 @@ public class IslandSpawnCommandTest {
         when(ic.getUsage()).thenReturn("");
         when(ic.getSubCommand(Mockito.anyString())).thenReturn(Optional.empty());
         when(ic.getAddon()).thenReturn(addon);
+
+        // Server & Scheduler
+        BukkitScheduler sch = mock(BukkitScheduler.class);
+        PowerMockito.mockStatic(Bukkit.class);
+        when(Bukkit.getScheduler()).thenReturn(sch);
+        when(sch.runTaskLater(any(), any(Runnable.class), any(Long.class))).thenReturn(task);
+
+        // Event register
+        when(Bukkit.getPluginManager()).thenReturn(pim);
+
+        // Settings
+        when(plugin.getSettings()).thenReturn(s);
 
         // IWM
         when(plugin.getIWM()).thenReturn(iwm);
@@ -159,7 +181,6 @@ public class IslandSpawnCommandTest {
     @Test
     public void testExecuteUserStringListOfString() {
         assertTrue(isc.execute(user, "spawn", Collections.emptyList()));
-        verify(im).spawnTeleport(any(), any());
     }
 
     /**
@@ -171,7 +192,6 @@ public class IslandSpawnCommandTest {
         map.put("PREVENT_TELEPORT_WHEN_FALLING", true);
         when(iwm.inWorld(any(World.class))).thenReturn(true);
         assertFalse(isc.execute(user, "spawn", Collections.emptyList()));
-        verify(im, never()).spawnTeleport(any(), any());
         verify(player).sendMessage(eq("protection.flags.PREVENT_TELEPORT_WHEN_FALLING.hint"));
     }
 
@@ -184,7 +204,6 @@ public class IslandSpawnCommandTest {
         map.put("PREVENT_TELEPORT_WHEN_FALLING", false);
         when(iwm.inWorld(any(World.class))).thenReturn(true);
         assertTrue(isc.execute(user, "spawn", Collections.emptyList()));
-        verify(im).spawnTeleport(any(), any());
         verify(player, never()).sendMessage(eq("protection.flags.PREVENT_TELEPORT_WHEN_FALLING.hint"));
     }
 
@@ -197,7 +216,6 @@ public class IslandSpawnCommandTest {
         map.put("PREVENT_TELEPORT_WHEN_FALLING", true);
         when(iwm.inWorld(any(World.class))).thenReturn(false);
         assertTrue(isc.execute(user, "spawn", Collections.emptyList()));
-        verify(im).spawnTeleport(any(), any());
         verify(player, never()).sendMessage(eq("protection.flags.PREVENT_TELEPORT_WHEN_FALLING.hint"));
     }
 
@@ -210,7 +228,6 @@ public class IslandSpawnCommandTest {
         map.put("PREVENT_TELEPORT_WHEN_FALLING", true);
         when(iwm.inWorld(any(World.class))).thenReturn(true);
         assertTrue(isc.execute(user, "spawn", Collections.emptyList()));
-        verify(im).spawnTeleport(any(), any());
         verify(player, never()).sendMessage(eq("protection.flags.PREVENT_TELEPORT_WHEN_FALLING.hint"));
     }
 
