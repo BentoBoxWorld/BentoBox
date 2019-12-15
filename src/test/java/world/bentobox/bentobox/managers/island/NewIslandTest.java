@@ -9,7 +9,6 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.UUID;
@@ -175,23 +174,23 @@ public class NewIslandTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.island.NewIsland#builder()}.
-     * @throws IOException
+     * @throws Exception
      */
     @Test
     public void testBuilderNoUser(){
         try {
             NewIsland.builder().build();
-        } catch (IOException e) {
+        } catch (Exception e) {
             assertEquals("Insufficient parameters. Must have a user!", e.getMessage());
         }
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.island.NewIsland#builder()}.
-     * @throws IOException
+     * @throws Exception
      */
     @Test
-    public void testBuilder() throws IOException {
+    public void testBuilder() throws Exception {
         NewIsland.builder().addon(addon).name(NAME).player(user).noPaste().reason(Reason.CREATE).oldIsland(oldIsland).build();
         // Verifications
         verify(im).save(eq(island));
@@ -208,10 +207,10 @@ public class NewIslandTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.island.NewIsland#builder()}.
-     * @throws IOException
+     * @throws Exception
      */
     @Test
-    public void testBuilderReset() throws IOException {
+    public void testBuilderReset() throws Exception {
         when(builder.build()).thenReturn(ire);
         NewIsland.builder().addon(addon).name(NAME).player(user).noPaste().reason(Reason.RESET).oldIsland(oldIsland).build();
         // Verifications
@@ -229,10 +228,10 @@ public class NewIslandTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.island.NewIsland#builder()}.
-     * @throws IOException
+     * @throws Exception
      */
     @Test
-    public void testBuilderNoOldIsland() throws IOException {
+    public void testBuilderNoOldIsland() throws Exception {
         NewIsland.builder().addon(addon).name(NAME).player(user).noPaste().reason(Reason.CREATE).build();
         // Verifications
         verify(im).save(eq(island));
@@ -248,10 +247,10 @@ public class NewIslandTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.island.NewIsland#builder()}.
-     * @throws IOException
+     * @throws Exception
      */
     @Test
-    public void testBuilderNoOldIslandPaste() throws IOException {
+    public void testBuilderNoOldIslandPaste() throws Exception {
         NewIsland.builder().addon(addon).name(NAME).player(user).reason(Reason.CREATE).build();
         // Verifications
         verify(im).save(eq(island));
@@ -267,10 +266,10 @@ public class NewIslandTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.island.NewIsland#builder()}.
-     * @throws IOException
+     * @throws Exception
      */
     @Test
-    public void testBuilderHasIsland() throws IOException {
+    public void testBuilderHasIsland() throws Exception {
         when(im.hasIsland(any(), any(User.class))).thenReturn(true);
         NewIsland.builder().addon(addon).name(NAME).player(user).noPaste().reason(Reason.CREATE).oldIsland(oldIsland).build();
         // Verifications
@@ -289,10 +288,10 @@ public class NewIslandTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.island.NewIsland#builder()}.
-     * @throws IOException
+     * @throws Exception
      */
     @Test
-    public void testBuilderHasIslandFail() throws IOException {
+    public void testBuilderHasIslandFail() throws Exception {
         when(im.getIsland(any(), any(User.class))).thenReturn(null);
         when(im.hasIsland(any(), any(User.class))).thenReturn(true);
         NewIsland.builder().addon(addon).name(NAME).player(user).noPaste().reason(Reason.CREATE).oldIsland(oldIsland).build();
@@ -312,10 +311,10 @@ public class NewIslandTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.island.NewIsland#builder()}.
-     * @throws IOException
+     * @throws Exception
      */
     @Test
-    public void testBuilderHasIslandFailnoReserve() throws IOException {
+    public void testBuilderHasIslandFailnoReserve() throws Exception {
         when(island.isReserved()).thenReturn(false);
         when(im.hasIsland(any(), any(User.class))).thenReturn(true);
         NewIsland.builder().addon(addon).name(NAME).player(user).noPaste().reason(Reason.CREATE).oldIsland(oldIsland).build();

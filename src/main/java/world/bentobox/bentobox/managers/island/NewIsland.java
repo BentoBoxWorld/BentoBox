@@ -35,7 +35,7 @@ public class NewIsland {
 
     private NewIslandLocationStrategy locationStrategy;
 
-    public NewIsland(Builder builder) {
+    public NewIsland(Builder builder) throws Exception {
         plugin = BentoBox.getInstance();
         this.user = builder.user2;
         this.reason = builder.reason2;
@@ -135,9 +135,9 @@ public class NewIsland {
 
         /**
          * @return Island
-         * @throws IOException - if there are insufficient parameters defined
+         * @throws Exception
          */
-        public Island build() throws IOException {
+        public Island build() throws Exception {
             if (user2 != null) {
                 NewIsland newIsland = new NewIsland(this);
                 return newIsland.getIsland();
@@ -149,8 +149,9 @@ public class NewIsland {
     /**
      * Makes an island.
      * @param oldIsland old island that is being replaced, if any
+     * @throws IOException - if an island cannot be made. Message is the tag to show the user.
      */
-    public void newIsland(Island oldIsland) {
+    public void newIsland(Island oldIsland) throws IOException {
         Location next = null;
         if (plugin.getIslands().hasIsland(world, user)) {
             // Island exists, it just needs pasting
@@ -168,14 +169,15 @@ public class NewIsland {
         if (next == null) {
             next = this.locationStrategy.getNextLocation(world);
             if (next == null) {
-                plugin.logError("Failed to make island - no unoccupied spot found");
-                return;
+                plugin.logError("Failed to make island - no unoccupied spot found.");
+                plugin.logError("If the world was imported, try multiple times until all unowned islands are known.");
+                throw new IOException("commands.island.create.cannot-create-island");
             }
             // Add to the grid
             island = plugin.getIslands().createIsland(next, user.getUniqueId());
             if (island == null) {
                 plugin.logError("Failed to make island! Island could not be added to the grid.");
-                return;
+                throw new IOException("commands.island.create.unable-create-island");
             }
         }
 

@@ -1,6 +1,5 @@
 package world.bentobox.bentobox.api.commands.island;
 
-import java.io.IOException;
 import java.util.List;
 
 import org.eclipse.jdt.annotation.Nullable;
@@ -94,9 +93,9 @@ public class IslandCreateCommand extends CompositeCommand {
             .reason(Reason.CREATE)
             .name(name)
             .build();
-        } catch (IOException e) {
+        } catch (Exception e) {
             getPlugin().logError("Could not create island for player. " + e.getMessage());
-            user.sendMessage("commands.island.create.unable-create-island");
+            user.sendMessage(e.getMessage());
             return false;
         }
         if (getSettings().isResetCooldownOnCreate()) {

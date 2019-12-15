@@ -431,8 +431,9 @@ commands:
       description: "create an island, using optional blueprint (requires permission)"
       parameters: "<blueprint>"
       too-many-islands: "&c There are too many islands in this world: there isn't enough room for yours to be created."
+      cannot-create-island: "&c A spot could not be found in time, please try again..."
       unable-create-island: "&c Your island could not be generated, please contact an administrator."
-      creating-island: "&a We found a spot for your island, let us prepare it for you."
+      creating-island: "&a Finding a spot for your island..."
       pasting:
         estimated-time: "&a Estimated time: &b [number] &a seconds."
         blocks: "&a Building it block by block: &b [number] &a blocks in all..."

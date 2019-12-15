@@ -229,7 +229,7 @@ public class IslandResetCommandTest {
      * Test method for {@link IslandResetCommand#execute(User, String, java.util.List)}
      */
     @Test
-    public void testNoConfirmationRequired() throws IOException {
+    public void testNoConfirmationRequired() throws Exception {
         // Now has island, but is not the owner
         when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
         // Set so no confirmation required
@@ -269,7 +269,7 @@ public class IslandResetCommandTest {
      * Test method for {@link IslandResetCommand#canExecute(User, String, java.util.List)}
      */
     @Test
-    public void testUnlimitedResets() throws IOException {
+    public void testUnlimitedResets() throws Exception {
         // Now has island, but is not the owner
         when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
         // Now has no team
@@ -302,7 +302,7 @@ public class IslandResetCommandTest {
      * Test method for {@link IslandResetCommand#canExecute(User, String, java.util.List)}
      */
     @Test
-    public void testNoPaste() throws IOException {
+    public void testNoPaste() throws Exception {
         irc = new IslandResetCommand(ic, true);
         // Now has island, but is not the owner
         when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
@@ -335,7 +335,7 @@ public class IslandResetCommandTest {
      * Test method for {@link IslandResetCommand#execute(User, String, java.util.List)}
      */
     @Test
-    public void testConfirmationRequired() throws IOException {
+    public void testConfirmationRequired() throws Exception {
         // Now has island, but is not the owner
         when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
         // Now is owner, but still has team
@@ -405,7 +405,7 @@ public class IslandResetCommandTest {
      * Test method for {@link IslandResetCommand#execute(User, String, java.util.List)}
      */
     @Test
-    public void testNoConfirmationRequiredCustomSchemHasPermission() throws IOException {
+    public void testNoConfirmationRequiredCustomSchemHasPermission() throws Exception {
         // Now has island, but is not the owner
         when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
         // Now is owner, but still has team

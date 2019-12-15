@@ -233,7 +233,7 @@ public class IslandCreateCommandTest {
      * @throws IOException
      */
     @Test
-    public void testExecuteUserStringListOfStringSuccess() throws IOException {
+    public void testExecuteUserStringListOfStringSuccess() throws Exception {
         // Bundle exists
         when(bpm.validate(any(), any())).thenReturn("custom");
         // Has permission
@@ -253,17 +253,17 @@ public class IslandCreateCommandTest {
      * @throws IOException
      */
     @Test
-    public void testExecuteUserStringListOfStringThrowException() throws IOException {
+    public void testExecuteUserStringListOfStringThrowException() throws Exception {
         // Bundle exists
         when(bpm.validate(any(), any())).thenReturn("custom");
         // Has permission
         when(bpm.checkPerm(any(), any(), any())).thenReturn(true);
 
-        when(builder.build()).thenThrow(new IOException("message"));
+        when(builder.build()).thenThrow(new IOException("commands.island.create.unable-create-island"));
         assertFalse(cc.execute(user, "", Collections.singletonList("custom")));
         verify(user).sendMessage("commands.island.create.creating-island");
         verify(user).sendMessage("commands.island.create.unable-create-island");
-        verify(plugin).logError("Could not create island for player. message");
+        verify(plugin).logError("Could not create island for player. commands.island.create.unable-create-island");
     }
 
     /**
@@ -305,7 +305,7 @@ public class IslandCreateCommandTest {
      * @throws IOException
      */
     @Test
-    public void testExecuteUserStringListOfStringKnownBundle() throws IOException {
+    public void testExecuteUserStringListOfStringKnownBundle() throws Exception {
         // Has permission
         when(bpm.checkPerm(any(), any(), any())).thenReturn(true);
         when(bpm.validate(any(), any())).thenReturn("custom");

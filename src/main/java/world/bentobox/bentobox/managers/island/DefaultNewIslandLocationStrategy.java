@@ -1,5 +1,6 @@
 package world.bentobox.bentobox.managers.island;
 
+import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -8,6 +9,7 @@ import java.util.Set;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.BlockFace;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.util.Util;
@@ -24,14 +26,15 @@ public class DefaultNewIslandLocationStrategy implements NewIslandLocationStrate
      * The amount times to tolerate island check returning blocks without kwnon
      * island.
      */
-    protected static final Integer MAX_UNOWNED_ISLANDS = 10;
+    protected static final Integer MAX_UNOWNED_ISLANDS = 20;
 
     protected enum Result {
-        ISLAND_FOUND, BLOCK_AT_CENTER, BLOCKS_IN_AREA, FREE
+        ISLAND_FOUND, BLOCKS_IN_AREA, FREE
     }
 
     protected BentoBox plugin = BentoBox.getInstance();
 
+    @Override
     public Location getNextLocation(World world) {
         Location last = plugin.getIslands().getLast(world);
         if (last == null) {
@@ -46,10 +49,10 @@ public class DefaultNewIslandLocationStrategy implements NewIslandLocationStrate
         last = Util.getClosestIsland(last);
         Result r = isIsland(last);
 
-        while (!r.equals(Result.FREE) && result.getOrDefault(Result.BLOCK_AT_CENTER, 0) < MAX_UNOWNED_ISLANDS) {
+        while (!r.equals(Result.FREE) && result.getOrDefault(Result.BLOCKS_IN_AREA, 0) < MAX_UNOWNED_ISLANDS) {
             nextGridLocation(last);
             last = Util.getClosestIsland(last);
-            result.merge(r, 1, (k, v) -> v++);
+            result.put(r, result.getOrDefault(r, 0) + 1);
             r = isIsland(last);
         }
 
@@ -57,8 +60,6 @@ public class DefaultNewIslandLocationStrategy implements NewIslandLocationStrate
             // We could not find a free spot within the limit required. It's likely this
             // world is not empty
             plugin.logError("Could not find a free spot for islands! Is this world empty?");
-            plugin.logError("Blocks at center locations: " + result.getOrDefault(Result.BLOCK_AT_CENTER, 0) + " max "
-                    + MAX_UNOWNED_ISLANDS);
             plugin.logError("Blocks around center locations: " + result.getOrDefault(Result.BLOCKS_IN_AREA, 0) + " max "
                     + MAX_UNOWNED_ISLANDS);
             plugin.logError("Known islands: " + result.getOrDefault(Result.ISLAND_FOUND, 0) + " max unlimited.");
@@ -70,49 +71,41 @@ public class DefaultNewIslandLocationStrategy implements NewIslandLocationStrate
 
     /**
      * Checks if there is an island or blocks at this location
-     * 
+     *
      * @param location - the location
      * @return true if island found, null if blocks found, false if nothing found
      */
     protected Result isIsland(Location location) {
+
+        World world = location.getWorld();
 
         // Check 4 corners
         int dist = plugin.getIWM().getIslandDistance(location.getWorld());
         Set<Location> locs = new HashSet<>();
         locs.add(location);
 
-        locs.add(new Location(location.getWorld(), location.getX() - dist, 0, location.getZ() - dist));
-        locs.add(new Location(location.getWorld(), location.getX() - dist, 0, location.getZ() + dist - 1));
-        locs.add(new Location(location.getWorld(), location.getX() + dist - 1, 0, location.getZ() - dist));
-        locs.add(new Location(location.getWorld(), location.getX() + dist - 1, 0, location.getZ() + dist - 1));
+        locs.add(new Location(world, location.getX() - dist, 0, location.getZ() - dist));
+        locs.add(new Location(world, location.getX() - dist, 0, location.getZ() + dist - 1));
+        locs.add(new Location(world, location.getX() + dist - 1, 0, location.getZ() - dist));
+        locs.add(new Location(world, location.getX() + dist - 1, 0, location.getZ() + dist - 1));
 
+        boolean generated = false;
         for (Location l : locs) {
             if (plugin.getIslands().getIslandAt(l).isPresent() || plugin.getIslandDeletionManager().inDeletion(l)) {
                 return Result.ISLAND_FOUND;
             }
+            if (Util.isChunkGenerated(l)) generated = true;
         }
-
-        if (!plugin.getIWM().isUseOwnGenerator(location.getWorld())) {
-            // Block check
-            if (!location.getBlock().isEmpty() && !location.getBlock().getType().equals(Material.WATER)) {
-                plugin.getIslands().createIsland(location);
-                return Result.BLOCK_AT_CENTER;
-            }
-            // Look around
-            for (int x = -5; x <= 5; x++) {
-                for (int y = 10; y < location.getWorld().getMaxHeight(); y++) {
-                    for (int z = -5; z <= 5; z++) {
-                        if (!location.getWorld().getBlockAt(x + location.getBlockX(), y, z + location.getBlockZ())
-                                .isEmpty()
-                                && !location.getWorld()
-                                        .getBlockAt(x + location.getBlockX(), y, z + location.getBlockZ()).getType()
-                                        .equals(Material.WATER)) {
-                            plugin.getIslands().createIsland(location);
-                            return Result.BLOCKS_IN_AREA;
-                        }
-                    }
-                }
-            }
+        // If chunk has not been generated yet, then it's not occupied
+        if (!generated) {
+            return Result.FREE;
+        }
+        // Block check
+        if (!plugin.getIWM().isUseOwnGenerator(world) && Arrays.asList(BlockFace.values()).stream().anyMatch(bf -> location.getBlock().getRelative(bf).isEmpty()
+                && !location.getBlock().getRelative(bf).getType().equals(Material.WATER))) {
+            // Block found
+            plugin.getIslands().createIsland(location);
+            return Result.BLOCKS_IN_AREA;
         }
         return Result.FREE;
     }
