@@ -136,7 +136,7 @@ public interface WorldSettings extends ConfigObject {
      * @return the visitorBannedCommands
      */
     List<String> getVisitorBannedCommands();
-    
+
     /**
      * Optional list of commands that are banned when falling. Not applicable to all game modes so defaults to empty.
      * @return the fallingBannedCommands
@@ -413,4 +413,14 @@ public interface WorldSettings extends ConfigObject {
      * @since 1.9.0
      */
     boolean isCreateIslandOnFirstLoginAbortOnLogout();
+
+    /**
+     * Check if nether or end islands should be pasted on teleporting
+     * @return true if missing nether or end islands should be pasted
+     * @since 1.10.0
+     */
+    default boolean isPasteMissingIslands() {
+        // Note that glitches can enable bedrock to be removed in ways that will not generate events.
+        return true;
+    }
 }

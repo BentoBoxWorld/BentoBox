@@ -828,4 +828,14 @@ public class IslandWorldManager {
     public boolean isCreateIslandOnFirstLoginAbortOnLogout(@NonNull World world) {
         return gameModes.containsKey(world) && gameModes.get(world).getWorldSettings().isCreateIslandOnFirstLoginAbortOnLogout();
     }
+
+    /**
+     * Check if nether or end islands should be pasted on teleporting
+     * @param world - over world
+     * @return true if missing nether or end islands should be pasted
+     * @since 1.10.0
+     */
+    public boolean pasteMissingIslands(@NonNull World world) {
+        return gameModes.containsKey(world) && gameModes.get(world).getWorldSettings().isPasteMissingIslands();
+    }
 }

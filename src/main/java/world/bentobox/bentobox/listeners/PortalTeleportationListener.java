@@ -60,12 +60,12 @@ public class PortalTeleportationListener implements Listener {
         }
         World fromWorld = e.getFrom().getWorld();
         World overWorld = Util.getWorld(fromWorld);
-        
+
         if (fromWorld == null || !plugin.getIWM().inWorld(overWorld)) {
             // Do nothing special
             return false;
         }
-        
+
         // 1.14.4 requires explicit cancellation to prevent teleporting to the normal nether
         if (!plugin.getIWM().isEndGenerate(overWorld)) {
             e.setCancelled(true);
@@ -110,7 +110,9 @@ public class PortalTeleportationListener implements Listener {
         Location to = optionalIsland.map(i -> i.getSpawnPoint(Environment.THE_END)).orElse(e.getFrom().toVector().toLocation(endWorld));
         e.setCancelled(true);
         // Check if there is a missing end island
-        if (!plugin.getIWM().isUseOwnGenerator(overWorld) && plugin.getIWM().isEndGenerate(overWorld)
+        if (plugin.getIWM().pasteMissingIslands(overWorld)
+                && !plugin.getIWM().isUseOwnGenerator(overWorld)
+                && plugin.getIWM().isEndGenerate(overWorld)
                 && plugin.getIWM().isEndIslands(overWorld)
                 && plugin.getIWM().getEndWorld(overWorld) != null
                 && !optionalIsland.map(Island::hasEndIsland).orElse(true)) {
@@ -143,13 +145,13 @@ public class PortalTeleportationListener implements Listener {
             // Do nothing special
             return false;
         }
-        
+
         // 1.14.4 requires explicit cancellation to prevent teleporting to the normal nether
         if (!plugin.getIWM().isNetherGenerate(overWorld)) {
             e.setCancelled(true);
             return false;
         }
-        
+
         // STANDARD NETHER
         if (!plugin.getIWM().isNetherIslands(overWorld)) {
             if (fromWorld.getEnvironment() != Environment.NETHER) {
@@ -185,7 +187,8 @@ public class PortalTeleportationListener implements Listener {
         Location to = optionalIsland.map(i -> i.getSpawnPoint(Environment.NETHER)).orElse(e.getFrom().toVector().toLocation(nether));
         e.setCancelled(true);
         // Check if there is an island there or not
-        if (!plugin.getIWM().isUseOwnGenerator(overWorld) && plugin.getIWM().isNetherGenerate(overWorld)
+        if (plugin.getIWM().pasteMissingIslands(overWorld) &&
+                !plugin.getIWM().isUseOwnGenerator(overWorld) && plugin.getIWM().isNetherGenerate(overWorld)
                 && plugin.getIWM().isNetherIslands(overWorld)
                 && plugin.getIWM().getNetherWorld(overWorld) != null
                 && !optionalIsland.map(Island::hasNetherIsland).orElse(true)) {
