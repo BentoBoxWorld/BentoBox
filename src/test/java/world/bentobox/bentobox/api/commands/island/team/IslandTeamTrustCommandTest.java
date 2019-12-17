@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -63,6 +64,8 @@ public class IslandTeamTrustCommandTest {
     private Settings s;
     @Mock
     private Island island;
+    @Mock
+    private Player targetPlayer;
 
     /**
      * @throws java.lang.Exception
@@ -76,6 +79,8 @@ public class IslandTeamTrustCommandTest {
         // Command manager
         CommandsManager cm = mock(CommandsManager.class);
         when(plugin.getCommandsManager()).thenReturn(cm);
+        // Command
+        when(ic.getTopLabel()).thenReturn("island");
 
         when(plugin.getSettings()).thenReturn(s);
 
@@ -92,6 +97,10 @@ public class IslandTeamTrustCommandTest {
         when(user.getPlayer()).thenReturn(p);
         when(user.getName()).thenReturn("tastybento");
         User.setPlugin(plugin);
+        // Target player
+        when(targetPlayer.getUniqueId()).thenReturn(notUUID);
+        when(targetPlayer.getName()).thenReturn("target");
+        User.getInstance(targetPlayer);
 
         // Parent command has no aliases
         when(ic.getSubCommandAliases()).thenReturn(new HashMap<>());
@@ -120,7 +129,7 @@ public class IslandTeamTrustCommandTest {
 
         // Locales
         LocalesManager lm = mock(LocalesManager.class);
-        when(lm.get(any(), any())).thenReturn("mock translation");
+        when(lm.get(any(), any())).thenAnswer(invocation -> invocation.getArgument(1, String.class));
         when(plugin.getLocalesManager()).thenReturn(lm);
 
         // IWM friendly name
@@ -240,19 +249,6 @@ public class IslandTeamTrustCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamTrustCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
-     */
-    @Test
-    public void testCanExecuteSuccess() {
-        UUID other = UUID.randomUUID();
-        when(pm.getUUID(any())).thenReturn(other);
-        when(im.getMembers(any(), any())).thenReturn(Collections.emptySet());
-        when(island.getRank(any())).thenReturn(RanksManager.VISITOR_RANK);
-        IslandTeamTrustCommand itl = new IslandTeamTrustCommand(ic);
-        assertTrue(itl.canExecute(user, itl.getLabel(), Collections.singletonList("tastybento")));
-    }
-
-    /**
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamTrustCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
@@ -273,21 +269,45 @@ public class IslandTeamTrustCommandTest {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamTrustCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteSuccess() {
-        Player p = mock(Player.class);
-        when(p.getUniqueId()).thenReturn(notUUID);
-        User target = User.getInstance(p);
+    public void testExecuteSuccessNoConfirmation() {
+        User target = User.getInstance(targetPlayer);
         // Can execute
         when(pm.getUUID(any())).thenReturn(notUUID);
         when(im.getMembers(any(), any())).thenReturn(Collections.emptySet());
         when(island.getRank(any())).thenReturn(RanksManager.VISITOR_RANK);
         IslandTeamTrustCommand itl = new IslandTeamTrustCommand(ic);
-        assertTrue(itl.canExecute(user, itl.getLabel(), Collections.singletonList("tastybento")));
+        assertTrue(itl.canExecute(user, itl.getLabel(), Collections.singletonList("target")));
 
         // Execute
         when(im.getIsland(any(), Mockito.any(UUID.class))).thenReturn(island);
-        assertTrue(itl.execute(user, itl.getLabel(), Collections.singletonList("tastybento")));
-        verify(user).sendMessage("commands.island.team.trust.success",  TextVariables.NAME, null);
+        assertTrue(itl.execute(user, itl.getLabel(), Collections.singletonList("target")));
+        verify(user).sendMessage(eq("commands.island.team.trust.success"),  eq(TextVariables.NAME), eq("target"));
         verify(island).setRank(target, RanksManager.TRUSTED_RANK);
+        verify(targetPlayer).sendMessage("commands.island.team.trust.you-are-trusted");
     }
+    
+    /**
+     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamTrustCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     */
+    @Test
+    public void testExecuteSuccessConfirmation() {
+        when(s.isInviteConfirmation()).thenReturn(true);
+        User target = User.getInstance(targetPlayer);
+        // Can execute
+        when(pm.getUUID(any())).thenReturn(notUUID);
+        when(im.getMembers(any(), any())).thenReturn(Collections.emptySet());
+        when(island.getRank(any())).thenReturn(RanksManager.VISITOR_RANK);
+        IslandTeamTrustCommand itl = new IslandTeamTrustCommand(ic);
+        assertTrue(itl.canExecute(user, itl.getLabel(), Collections.singletonList("target")));
+
+        // Execute
+        when(im.getIsland(any(), Mockito.any(UUID.class))).thenReturn(island);
+        assertTrue(itl.execute(user, itl.getLabel(), Collections.singletonList("target")));
+        verify(user).sendMessage(eq("commands.island.team.invite.invitation-sent"), eq(TextVariables.NAME), eq("target"));
+        // Send message to online player
+        verify(targetPlayer).sendMessage(eq("commands.island.team.trust.name-has-invited-you"));
+        verify(targetPlayer).sendMessage(eq("commands.island.team.invite.to-accept-or-reject"));
+        verify(island, never()).setRank(target, RanksManager.TRUSTED_RANK);
+    }
+    
 }

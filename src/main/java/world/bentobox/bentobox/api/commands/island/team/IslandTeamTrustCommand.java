@@ -101,7 +101,7 @@ public class IslandTeamTrustCommand extends CompositeCommand {
             } else {
                 island.setRank(target, RanksManager.TRUSTED_RANK);
                 user.sendMessage("commands.island.team.trust.success", TextVariables.NAME, target.getName());
-                target.sendMessage("commands.island.team.coop.you-are-a-coop-member", TextVariables.NAME, user.getName());
+                target.sendMessage("commands.island.team.trust.you-are-trusted", TextVariables.NAME, user.getName());
             }
             return true;
         } else {
