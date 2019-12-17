@@ -1,5 +1,6 @@
 package world.bentobox.bentobox.api.commands.island;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.bukkit.Bukkit;
@@ -139,7 +140,7 @@ public class IslandResetCommand extends ConfirmableCommand {
                     .name(name);
             if (noPaste) builder.noPaste();
             builder.build();
-        } catch (Exception e) {
+        } catch (IOException e) {
             getPlugin().logError("Could not create island for player. " + e.getMessage());
             user.sendMessage(e.getMessage());
             return false;

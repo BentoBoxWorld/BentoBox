@@ -35,7 +35,7 @@ public class NewIsland {
 
     private NewIslandLocationStrategy locationStrategy;
 
-    public NewIsland(Builder builder) throws Exception {
+    public NewIsland(Builder builder) throws IOException {
         plugin = BentoBox.getInstance();
         this.user = builder.user2;
         this.reason = builder.reason2;
@@ -137,7 +137,7 @@ public class NewIsland {
          * @return Island
          * @throws Exception
          */
-        public Island build() throws Exception {
+        public Island build() throws IOException {
             if (user2 != null) {
                 NewIsland newIsland = new NewIsland(this);
                 return newIsland.getIsland();
