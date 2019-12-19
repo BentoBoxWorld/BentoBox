@@ -119,7 +119,11 @@ public class ServerCompatibility {
         /**
          * @since 1.9.2
          */
-        V1_15(Compatibility.COMPATIBLE)
+        V1_15(Compatibility.COMPATIBLE),
+        /**
+         * @since 1.10.0
+         */
+        V1_15_1(Compatibility.COMPATIBLE)
         ;
         
 
