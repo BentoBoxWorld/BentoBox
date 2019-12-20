@@ -44,11 +44,6 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
             user.sendMessage("commands.island.team.invite.errors.none-invited-you");
             return false;
         }
-        // Check if player is already in a team
-        if (getIslands().inTeam(getWorld(), playerUUID)) {
-            user.sendMessage("commands.island.team.invite.errors.you-already-are-in-team");
-            return false;
-        }
         // Get the island owner
         prospectiveOwnerUUID = itc.getInviter(playerUUID);
         if (!getIslands().hasIsland(getWorld(), prospectiveOwnerUUID)) {
@@ -58,6 +53,11 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
         }
         Invite invite = itc.getInvite(playerUUID);
         if (invite.getType().equals(Type.TEAM)) {
+            // Check if player is already in a team
+            if (getIslands().inTeam(getWorld(), playerUUID)) {
+                user.sendMessage("commands.island.team.invite.errors.you-already-are-in-team");
+                return false;
+            }
             // Fire event so add-ons can run commands, etc.
             IslandBaseEvent event = TeamEvent.builder()
                     .island(getIslands().getIsland(getWorld(), prospectiveOwnerUUID))
