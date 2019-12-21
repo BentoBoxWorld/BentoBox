@@ -474,9 +474,9 @@ public class Island implements DataObject {
     }
 
     /**
-     * Returns the radius of the protection range of this Island.
+     * Returns the protection range of this Island.
      * This represents half of the length of the side of a theoretical square around the island center inside which flags are enforced.
-     * @return the protectionRange
+     * @return the protection range of this island, strictly positive integer.
      * @see #getRange()
      */
     public int getProtectionRange() {
