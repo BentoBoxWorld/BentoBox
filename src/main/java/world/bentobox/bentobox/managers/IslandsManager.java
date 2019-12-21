@@ -109,7 +109,7 @@ public class IslandsManager {
      * Islands Manager
      * @param plugin - plugin
      */
-    public IslandsManager(BentoBox plugin){
+    public IslandsManager(@NonNull BentoBox plugin){
         this.plugin = plugin;
         // Set up the database handler to store and retrieve Island classes
         handler = new Database<>(plugin, Island.class);
@@ -262,7 +262,7 @@ public class IslandsManager {
      * @return Island or null if the island could not be created for some reason
      */
     @Nullable
-    public Island createIsland(Location location){
+    public Island createIsland(@NonNull Location location){
         return createIsland(location, null);
     }
 
@@ -297,7 +297,7 @@ public class IslandsManager {
      * @param removeBlocks whether the island blocks should be removed or not
      * @param involvedPlayer - player related to the island deletion, if any
      */
-    public void deleteIsland(@NonNull Island island, boolean removeBlocks, UUID involvedPlayer) {
+    public void deleteIsland(@NonNull Island island, boolean removeBlocks, @Nullable UUID involvedPlayer) {
         // Fire event
         IslandBaseEvent event = IslandEvent.builder().island(island).involvedPlayer(involvedPlayer).reason(Reason.DELETE).build();
         if (event.isCancelled()) {
@@ -328,7 +328,7 @@ public class IslandsManager {
         return islandCache.size();
     }
 
-    public int getIslandCount(World world) {
+    public int getIslandCount(@NonNull World world) {
         return islandCache.size(world);
     }
 
@@ -340,7 +340,7 @@ public class IslandsManager {
      * @return Island or null
      */
     @Nullable
-    public Island getIsland(World world, User user){
+    public Island getIsland(@NonNull World world, @NonNull User user){
         return islandCache.get(world, user.getUniqueId());
     }
 
@@ -351,7 +351,7 @@ public class IslandsManager {
      * @return Island or null
      */
     @Nullable
-    public Island getIsland(World world, UUID uuid){
+    public Island getIsland(@NonNull World world, @NonNull UUID uuid){
         return islandCache.get(world, uuid);
     }
 
@@ -363,7 +363,7 @@ public class IslandsManager {
      * @param location - the location
      * @return Optional Island object
      */
-    public Optional<Island> getIslandAt(Location location) {
+    public Optional<Island> getIslandAt(@NonNull Location location) {
         return plugin.getIWM().inWorld(location) ? Optional.ofNullable(islandCache.getIslandAt(location)) : Optional.empty();
     }
 
@@ -415,12 +415,12 @@ public class IslandsManager {
      * @return Location of player's island or null if one does not exist
      */
     @Nullable
-    public Location getIslandLocation(World world, UUID uuid) {
+    public Location getIslandLocation(@NonNull World world, @NonNull UUID uuid) {
         Island island = getIsland(world, uuid);
         return island != null ? island.getCenter() : null;
     }
 
-    public Location getLast(World world) {
+    public Location getLast(@NonNull World world) {
         return last.get(world);
     }
 
@@ -434,7 +434,7 @@ public class IslandsManager {
      * @param minimumRank - the minimum rank to be included in the set.
      * @return Set of team UUIDs
      */
-    public Set<UUID> getMembers(World world, UUID playerUUID, int minimumRank) {
+    public Set<UUID> getMembers(@NonNull World world, @NonNull UUID playerUUID, int minimumRank) {
         return islandCache.getMembers(world, playerUUID, minimumRank);
     }
 
@@ -447,7 +447,7 @@ public class IslandsManager {
      * @param playerUUID - the player's UUID
      * @return Set of team UUIDs
      */
-    public Set<UUID> getMembers(World world, UUID playerUUID) {
+    public Set<UUID> getMembers(@NonNull World world, @NonNull UUID playerUUID) {
         return islandCache.getMembers(world, playerUUID, RanksManager.MEMBER_RANK);
     }
 
@@ -460,7 +460,7 @@ public class IslandsManager {
      * @return Optional Island object
      */
 
-    public Optional<Island> getProtectedIslandAt(Location location) {
+    public Optional<Island> getProtectedIslandAt(@NonNull Location location) {
         return getIslandAt(location).filter(i -> i.onIsland(location));
     }
 
@@ -473,7 +473,7 @@ public class IslandsManager {
      * @param number - a number - starting home location e.g., 1
      * @return Location of a safe teleport spot or null if one cannot be found
      */
-    public Location getSafeHomeLocation(World world, User user, int number) {
+    public Location getSafeHomeLocation(@NonNull World world, @NonNull User user, int number) {
         // Try the numbered home location first
         Location l = plugin.getPlayers().getHomeLocation(world, user, number);
 
@@ -562,7 +562,7 @@ public class IslandsManager {
      * @param world - world
      * @return the spawnPoint or null if spawn does not exist
      */
-    public Location getSpawnPoint(World world) {
+    public Location getSpawnPoint(@NonNull World world) {
         return spawn.containsKey(world) ? spawn.get(world).getSpawnPoint(world.getEnvironment()) : null;
     }
 
@@ -583,7 +583,7 @@ public class IslandsManager {
      * @param user - the user
      * @return true if player has island and owns it
      */
-    public boolean hasIsland(World world, User user) {
+    public boolean hasIsland(@NonNull World world, @NonNull User user) {
         return islandCache.hasIsland(world, user.getUniqueId());
     }
 
@@ -593,7 +593,7 @@ public class IslandsManager {
      * @param uuid - the user's uuid
      * @return true if player has island and owns it
      */
-    public boolean hasIsland(World world, UUID uuid) {
+    public boolean hasIsland(@NonNull World world, @NonNull UUID uuid) {
         return islandCache.hasIsland(world, uuid);
     }
 
@@ -604,7 +604,7 @@ public class IslandsManager {
      * @param world - world to check
      * @param player - the player
      */
-    public void homeTeleport(World world, Player player) {
+    public void homeTeleport(@NonNull World world, @NonNull Player player) {
         homeTeleport(world, player, 1, false);
     }
 
@@ -616,7 +616,7 @@ public class IslandsManager {
      * @param player - the player
      * @param number - a number - home location to do to
      */
-    public void homeTeleport(World world, Player player, int number) {
+    public void homeTeleport(@NonNull World world, @NonNull Player player, int number) {
         homeTeleport(world, player, number, false);
     }
 
@@ -628,7 +628,7 @@ public class IslandsManager {
      * @param player - the player
      * @param newIsland - true if this is a new island teleport
      */
-    public void homeTeleport(World world, Player player, boolean newIsland) {
+    public void homeTeleport(@NonNull World world, @NonNull Player player, boolean newIsland) {
         homeTeleport(world, player, 1, newIsland);
     }
 
@@ -641,7 +641,7 @@ public class IslandsManager {
      * @param number - a number - home location to do to
      * @param newIsland - true if this is a new island teleport
      */
-    public void homeTeleport(World world, Player player, int number, boolean newIsland) {
+    public void homeTeleport(@NonNull World world, @NonNull Player player, int number, boolean newIsland) {
         User user = User.getInstance(player);
         Location home = getSafeHomeLocation(world, user, number);
         // Stop any gliding
