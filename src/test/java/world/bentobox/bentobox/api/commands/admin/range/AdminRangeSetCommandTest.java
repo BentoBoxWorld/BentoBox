@@ -231,7 +231,6 @@ public class AdminRangeSetCommandTest {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.range.AdminRangeSetCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test()
-    @Ignore("will fix later")
     public void testExecuteDoubleNumber() {
         when(pm.getUUID(Mockito.anyString())).thenReturn(uuid);
         AdminRangeSetCommand arc = new AdminRangeSetCommand(ac);

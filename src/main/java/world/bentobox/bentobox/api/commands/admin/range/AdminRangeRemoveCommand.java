@@ -6,6 +6,7 @@ import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.util.Util;
 
 import java.util.List;
 import java.util.UUID;
@@ -44,7 +45,7 @@ public class AdminRangeRemoveCommand extends CompositeCommand {
             return false;
         }
 
-        if (!NumberUtils.isNumber(args.get(1)) || Integer.valueOf(args.get(1)) < 0) {
+        if (!Util.isInteger(args.get(1), true) || Integer.valueOf(args.get(1)) < 0) {
             user.sendMessage("general.errors.must-be-positive-number", TextVariables.NUMBER, args.get(1));
             return false;
         }

@@ -8,6 +8,7 @@ import org.apache.commons.lang.math.NumberUtils;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.util.Util;
 
 public class AdminResetsSetCommand extends CompositeCommand {
 
@@ -31,7 +32,7 @@ public class AdminResetsSetCommand extends CompositeCommand {
         UUID target = getPlayers().getUUID(args.get(0));
         if (target == null) {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
-        } else if (!NumberUtils.isNumber(args.get(1)) || Integer.valueOf(args.get(1)) <= 0) {
+        } else if (!Util.isInteger(args.get(1), true) || Integer.valueOf(args.get(1)) <= 0) {
             user.sendMessage("general.errors.must-be-positive-number", TextVariables.NUMBER, args.get(1));
         } else {
             getPlayers().setResets(getWorld(), target, Integer.valueOf(args.get(1)));

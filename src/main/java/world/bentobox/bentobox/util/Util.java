@@ -532,4 +532,65 @@ public class Util {
         textToStrip = textToStrip.replaceAll("(" + ChatColor.COLOR_CHAR + ".)[\\s]", "$1");
         return textToStrip;
     }
+
+    /**
+     * Returns whether the input is an integer or not.
+     * @param nbr the input.
+     * @param parse whether the input should be checked to ensure it can be parsed as an Integer without throwing an exception.
+     * @return {@code true} if the input is an integer, {@code false} otherwise.
+     * @since 1.10.0
+     */
+    public static boolean isInteger(@NonNull String nbr, boolean parse) {
+        // Original code from Jonas Klemming on StackOverflow (https://stackoverflow.com/q/237159).
+        // I slightly refined it to catch more edge cases.
+        // It is a faster alternative to catch malformed strings than the NumberFormatException.
+        if (nbr == null) {
+            return false;
+        }
+        int length = nbr.length();
+        if (length == 0) {
+            return false;
+        }
+        int i = 0;
+        if (nbr.charAt(0) == '-' || nbr.charAt(0) == '+') {
+            if (length == 1) {
+                return false;
+            }
+            i = 1;
+        }
+        boolean trailingDot = false;
+        for (; i < length; i++) {
+            char c = nbr.charAt(i);
+            if (trailingDot && c != '0') {
+                // We only accept 0's after a trailing dot.
+                return false;
+            }
+            if (c == '.') {
+                if (i == length - 1) {
+                    // We're at the end of the integer, so it's okay
+                    return true;
+                } else {
+                    // we will need to make sure there is nothing else but 0's after the dot.
+                    trailingDot = true;
+                    continue;
+                }
+            } else if (!trailingDot && (c < '0' || c > '9')) {
+                return false;
+            }
+        }
+
+        // these tests above should have caught most likely issues
+        // We now need to make sure parsing the input as an Integer won't cause issues
+        if (parse) {
+            try {
+                Integer.parseInt(nbr); // NOSONAR we don't care about the result of this operation
+                return true;
+            } catch (NumberFormatException e) {
+                return false;
+            }
+        }
+
+        // Everything's green!
+        return true;
+    }
 }

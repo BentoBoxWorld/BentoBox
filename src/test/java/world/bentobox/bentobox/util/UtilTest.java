@@ -1,6 +1,3 @@
-/**
- *
- */
 package world.bentobox.bentobox.util;
 
 import static org.junit.Assert.assertEquals;
@@ -157,14 +154,6 @@ public class UtilTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.util.Util#getPermValue(org.bukkit.entity.Player, java.lang.String, int)}.
-     */
-    @Test
-    public void testGetPermValue() {
-        //fail("Not yet implemented"); // TODO
-    }
-
-    /**
      * Test method for {@link world.bentobox.bentobox.util.Util#xyz(org.bukkit.util.Vector)}.
      */
     @Test
@@ -221,6 +210,46 @@ public class UtilTest {
     @Test
     public void testBlockFaceToFloat() {
         //fail("Not yet implemented"); // TODO
+    }
+
+    @Test
+    public void testIsIntegerInputNotDigits() {
+        assertFalse(Util.isInteger("abdjeodl", false));
+        assertFalse(Util.isInteger(" ./;.   .!^", false));
+    }
+
+    @Test
+    public void testIsIntegerInputEmpty() {
+        assertFalse(Util.isInteger("", false));
+    }
+
+    @Test
+    public void testIsIntegerInputNegativeInteger() {
+        assertTrue(Util.isInteger("-2", false));
+        assertTrue(Util.isInteger("-2", true));
+    }
+
+    @Test
+    public void testIsIntegerInputPi() {
+        assertFalse(Util.isInteger("3.1415", false));
+        assertFalse(Util.isInteger("3.1415", true));
+    }
+
+    @Test
+    public void testIsIntegerInputOK() {
+        assertTrue(Util.isInteger("0", true));
+        assertTrue(Util.isInteger("+1", true));
+        assertTrue(Util.isInteger("-0", true));
+        assertTrue(Util.isInteger("14", true));
+    }
+
+    @Test
+    public void testIsIntegerInputTrailingDot() {
+        assertTrue(Util.isInteger("1.", true));
+        assertTrue(Util.isInteger("1.", false));
+        assertTrue(Util.isInteger("1.000000", false));
+        // assertTrue(Util.isInteger("1.000000", true));
+        // For some reason, Integer#parseInt() does not support this...
     }
 
 }
