@@ -1,9 +1,7 @@
-/**
- *
- */
 package world.bentobox.bentobox.api.commands.admin.range;
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -173,14 +171,27 @@ public class AdminRangeResetCommandTest {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.range.AdminRangeResetCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteKnownPlayerNoIsland() {
+    public void testExecuteKnownPlayerNotOwnerNoTeam() {
         when(pm.getUUID(Mockito.anyString())).thenReturn(uuid);
         when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(false);
+        when(im.inTeam(Mockito.any(), Mockito.any(UUID.class))).thenReturn(false);
         AdminRangeResetCommand arc = new AdminRangeResetCommand(ac);
         List<String> args = new ArrayList<>();
         args.add("tastybento");
         arc.execute(user, "", args);
         Mockito.verify(user).sendMessage("general.errors.player-has-no-island");
+    }
+
+    @Test
+    public void testExecuteKnownPlayerNotOwnerButInTeam() {
+        when(pm.getUUID(Mockito.anyString())).thenReturn(uuid);
+        when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(false);
+        when(im.inTeam(Mockito.any(), Mockito.any(UUID.class))).thenReturn(true);
+        AdminRangeResetCommand arc = new AdminRangeResetCommand(ac);
+        List<String> args = new ArrayList<>();
+        args.add("tastybento");
+        arc.execute(user, "", args);
+        Mockito.verify(user, never()).sendMessage("general.errors.player-has-no-island");
     }
 
     /**

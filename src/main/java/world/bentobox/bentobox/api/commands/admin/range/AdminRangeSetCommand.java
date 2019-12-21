@@ -40,7 +40,7 @@ public class AdminRangeSetCommand extends CompositeCommand {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
             return false;
         }
-        if (!getPlugin().getIslands().hasIsland(getWorld(), targetUUID)) {
+        if (!(getIslands().hasIsland(getWorld(), targetUUID) || getIslands().inTeam(getWorld(), targetUUID))) {
             user.sendMessage("general.errors.player-has-no-island");
             return false;
         }
