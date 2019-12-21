@@ -243,6 +243,7 @@
             <groupId>com.github.BentoBoxWorld</groupId>
             <artifactId>MVdWPlaceholderAPI</artifactId>
             <version>${mvdwplaceholderapi.version}</version>
+            <scope>provided</scope>
         </dependency>
         <!-- Hooks -->
         <dependency>
