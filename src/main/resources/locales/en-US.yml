@@ -118,6 +118,10 @@ commands:
         success: "&b [name]&a  is now the owner of this island."
     range:
       description: "Admin island range command"
+      invalid-value:
+        too-low: "&c The protection range must be greater than &b 1&c !"
+        too-high: "&c The protection range should be equal or less than &b [number]&c !"
+        same-as-before: "&c The protection range is already set to &b [number]&c !"
       display:
         already-off: "&c Indicators are already off"
         already-on: "&c Indicators are already on"
@@ -131,16 +135,19 @@ commands:
       set:
         parameters: "<player> <range>"
         description: "sets the island protected range"
-        invalid-value:
-          not-numeric: "&c [number] is not a whole number!"
-          too-low: "&c The protection range must be greater than &b 1&c !"
-          too-high: "&c The protection range should be equal or less than &b [number]&c !"
-          same-as-before: "&c The protection range is already set to &b [number]&c !"
         success: "&a Set island protection range to &b [number]&a ."
       reset:
         parameters: "<player>"
         description: "resets the island protected range to the world default"
         success: "&a Reset island protection range to &b [number]&a ."
+      add:
+        description: "increases the island protected range"
+        parameters: "<player> <range>"
+        success: "&a Successfully increased &b [name]&a 's island protected range to &b [total] &7 (&b +[number]&7 )&a ."
+      remove:
+        description: "decreases the island protected range"
+        parameters: "<player> <range>"
+        success: "&a Successfully decreased &b [name]&a 's island protected range to &b [total] &7 (&b -[number]&7 )&a ."
     register:
       parameters: "<player>"
       description: "register player to unowned island you are on"
