@@ -46,7 +46,7 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
         }
         // Get the island owner
         prospectiveOwnerUUID = itc.getInviter(playerUUID);
-        if (!getIslands().hasIsland(getWorld(), prospectiveOwnerUUID)) {
+        if (prospectiveOwnerUUID == null || !getIslands().hasIsland(getWorld(), prospectiveOwnerUUID)) {
             user.sendMessage("commands.island.team.invite.errors.invalid-invite");
             itc.removeInvite(playerUUID);
             return false;

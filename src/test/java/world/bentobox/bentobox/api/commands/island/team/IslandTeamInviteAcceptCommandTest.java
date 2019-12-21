@@ -107,6 +107,7 @@ public class IslandTeamInviteAcceptCommandTest {
         when(itc.getSubCommandAliases()).thenReturn(new HashMap<>());
         when(itc.getPermissionPrefix()).thenReturn("bskyblock.");
         when(itc.getInvite(any())).thenReturn(invite);
+        when(itc.getInviter(any())).thenReturn(notUUID);
 
         // Player has island to begin with
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
@@ -189,7 +190,6 @@ public class IslandTeamInviteAcceptCommandTest {
     @Test
     public void testCanExecuteInTeam() {
         when(itc.isInvited(any())).thenReturn(true);
-        when(im.inTeam(any(), any())).thenReturn(true);
         assertFalse(c.canExecute(user, "accept", Collections.emptyList()));
         verify(user).sendMessage("commands.island.team.invite.errors.you-already-are-in-team");
     }
@@ -199,6 +199,19 @@ public class IslandTeamInviteAcceptCommandTest {
      */
     @Test
     public void testCanExecuteInvalidInvite() {
+        when(itc.isInvited(any())).thenReturn(true);
+        when(im.inTeam(any(), any())).thenReturn(false);
+        when(im.hasIsland(any(), any(UUID.class))).thenReturn(false);
+        assertFalse(c.canExecute(user, "accept", Collections.emptyList()));
+        verify(user).sendMessage("commands.island.team.invite.errors.invalid-invite");
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteAcceptCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     */
+    @Test
+    public void testCanExecuteInvalidInviteNull() {
+        when(itc.getInviter(any())).thenReturn(null);
         when(itc.isInvited(any())).thenReturn(true);
         when(im.inTeam(any(), any())).thenReturn(false);
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(false);
