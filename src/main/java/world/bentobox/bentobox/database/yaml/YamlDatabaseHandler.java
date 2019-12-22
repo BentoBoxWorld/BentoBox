@@ -154,7 +154,7 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             }
             // Get the getter and setters for this field using the JavaBeans system
             //noinspection RedundantCast
-            PropertyDescriptor propertyDescriptor = new PropertyDescriptor((String)field.getName(), dataObject);
+            PropertyDescriptor propertyDescriptor = new PropertyDescriptor(field.getName(), dataObject);
             // Get the write method
             Method method = propertyDescriptor.getWriteMethod();
             /*
@@ -209,7 +209,13 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             Object setTo = deserialize(value,propertyDescriptor.getPropertyType());
             if (!(Enum.class.isAssignableFrom(propertyDescriptor.getPropertyType()) && setTo == null)) {
                 // Do not invoke null on Enums
-                method.invoke(instance, setTo);
+                try {
+                    method.invoke(instance, setTo);
+                } catch (Exception e) {
+                    plugin.logError("Could not deserialize. Attempt by " + instance.getClass().getCanonicalName() + " " + method.getName() + " to set to " + setTo);
+                    plugin.logError("Error message is: " + e.getMessage());
+                    plugin.logStacktrace(e);
+                }
             } else {
                 plugin.logError("Default setting value will be used: " + propertyDescriptor.getReadMethod().invoke(instance));
                 plugin.logError(method.getName());
@@ -346,7 +352,7 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             }
             // Get the property descriptor for this field
             //noinspection RedundantCast
-            PropertyDescriptor propertyDescriptor = new PropertyDescriptor((String)field.getName(), dataObject);
+            PropertyDescriptor propertyDescriptor = new PropertyDescriptor(field.getName(), dataObject);
             // Get the read method
             Method method = propertyDescriptor.getReadMethod();
             // Invoke the read method to get the value. We have no idea what type of value it is.
