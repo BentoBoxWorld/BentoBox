@@ -210,7 +210,15 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             if (!(Enum.class.isAssignableFrom(propertyDescriptor.getPropertyType()) && setTo == null)) {
                 // Do not invoke null on Enums
                 try {
-                    method.invoke(instance, setTo);
+                    // Floats need special handling because the database returns them as doubles
+                    Type setType = propertyDescriptor.getWriteMethod().getGenericParameterTypes()[0];
+                    if (setType.getTypeName().equals("float")) {
+                        double d = (double) setTo;
+                        float f = (float)d;
+                        method.invoke(instance, f);
+                    } else {
+                        method.invoke(instance, setTo);
+                    }
                 } catch (Exception e) {
                     plugin.logError("Could not deserialize. Attempt by " + instance.getClass().getCanonicalName() + " " + method.getName() + " to set to " + setTo);
                     plugin.logError("Error message is: " + e.getMessage());
