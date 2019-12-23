@@ -34,13 +34,13 @@ Start now to create the server you've dreamed of!
 
 ## Addons
 These include some popular Gamemodes:
-* [**AcidIsland**](https://github.com/BentoBoxWorld/AcidIsland): you are marooned in a sea of acid!
-* [**BSkyBlock**](https://github.com/BentoBoxWorld/BSkyBlock): the successor to the popular ASkyBlock.
-* [**CaveBlock**](https://github.com/BentoBoxWorld/CaveBlock): try to live underground!
-* [**SkyGrid**](https://github.com/BentoBoxWorld/SkyGrid): survive in world made up of scattered blocks - what an adventure!
+* [**AcidIsland**](https://github.com/BentoBoxWorld/AcidIsland): You are marooned in a sea of acid!
+* [**BSkyBlock**](https://github.com/BentoBoxWorld/BSkyBlock): The successor to the popular ASkyBlock.
+* [**CaveBlock**](https://github.com/BentoBoxWorld/CaveBlock): Try to live underground!
+* [**SkyGrid**](https://github.com/BentoBoxWorld/SkyGrid): Survive in world made up of scattered blocks - what an adventure!
 
 For a full list of addons:
-* [**Addons**](https://github.com/BentoBoxWorld/ADDON.md): a list of all addons currently make for bentobox by us.
+* [**Addons**](https://github.com/BentoBoxWorld/ADDON.md): A list of all addons currently make for bentobox by us.
 There are also plenty of other official or community-made Addons you can try and use for your server!
 
 ## Documentation
