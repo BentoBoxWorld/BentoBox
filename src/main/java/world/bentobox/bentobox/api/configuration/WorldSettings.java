@@ -423,4 +423,21 @@ public interface WorldSettings extends ConfigObject {
         // Note that glitches can enable bedrock to be removed in ways that will not generate events.
         return true;
     }
+
+    /**
+     * Toggles whether the player should be teleported on his island after it got created.
+     * <br/>
+     * If set to {@code true}, the player will be teleported right away.
+     * <br/>
+     * If set to {@code false}, the player will remain where he is and a message will be sent inviting him to teleport to his island.
+     * <br/><br/>
+     * This does not apply to any other occurrences such as island reset, or island join.
+     * <br/><br/>
+     * Default value: {@code true} (to retain backward compatibility).
+     * @return {@code true} if the player should be teleported to his island, {@code false} otherwise.
+     * @since 1.10.0
+     */
+    default boolean isTeleportPlayerToIslandUponIslandCreation() {
+        return true;
+    }
 }

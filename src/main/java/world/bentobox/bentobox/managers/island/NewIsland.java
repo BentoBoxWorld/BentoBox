@@ -238,11 +238,16 @@ public class NewIsland {
             }
             // Stop the player from falling or moving if they are
             if (user.isOnline()) {
-                user.getPlayer().setVelocity(new Vector(0,0,0));
-                user.getPlayer().setFallDistance(0F);
+                if (reason.equals(Reason.RESET) || (reason.equals(Reason.CREATE) && plugin.getIWM().isTeleportPlayerToIslandUponIslandCreation(world))) {
+                    user.getPlayer().setVelocity(new Vector(0, 0, 0));
+                    user.getPlayer().setFallDistance(0F);
 
-                // Teleport player after this island is built
-                plugin.getIslands().homeTeleport(world, user.getPlayer(), true);
+                    // Teleport player after this island is built
+                    plugin.getIslands().homeTeleport(world, user.getPlayer(), true);
+                } else {
+                    // let's send him a message so that he knows he can teleport to his island!
+                    user.sendMessage("commands.island.create.you-can-teleport-to-your-island");
+                }
             } else {
                 // Remove the player again to completely clear the data
                 User.removePlayer(user.getPlayer());
