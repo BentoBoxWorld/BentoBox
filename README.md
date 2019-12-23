@@ -40,7 +40,8 @@ These include some popular Gamemodes:
 * [**SkyGrid**](https://github.com/BentoBoxWorld/SkyGrid): Survive in world made up of scattered blocks - what an adventure!
 
 All Addons can be found below:
-* [**Addons**](https://github.com/BentoBoxWorld/ADDON.md): A list of all addons currently make for bentobox by us. There are also plenty of other official or community-made Addons you can try and use for your server!
+* [**Addons**](https://github.com/BentoBoxWorld/ADDON.md): A list of all addons currently make for bentobox by us.
+There are also plenty of other official or community-made Addons you can try and use for your server!
 
 ## Documentation
 
