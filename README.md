@@ -51,6 +51,8 @@ And these include some of the official Addons that are bringing incredible new f
 * [**Limits**](https://github.com/BentoBoxWorld/addon-limits): limits blocks and entities that your players can place on their islands.
 * [**Greenhouses**](https://github.com/BentoBoxWorld/greenhouses): enables players to make mini biome glass houses on their island.
 * [**TwerkingForTrees**](https://github.com/BentoBoxWorld/TwerkingForTrees): twerk to make trees grow faster on your island.
+* [**Chat**](https://github.com/BentoBoxWorld/Chat): teamchat and islandchat for BentoBox gamemodes.
+* [**Border**](https://github.com/BentoBoxWorld/Border): adds a world border around islands.
 
 And there are plenty of other official or community-made Addons you can try and use for your server!
 
