@@ -70,8 +70,10 @@ public class WebManager {
             try {
                 weblinkRepo = new GitHubRepository(gh, "BentoBoxWorld/weblink");
             } catch (Exception e) {
-                plugin.logError("An unhandled exception occurred when connecting to the GitHub weblink..");
-                plugin.logStacktrace(e);
+                if (plugin.getSettings().isLogGithubDownloadData()) {
+                    plugin.logError("An unhandled exception occurred when connecting to the GitHub weblink..");
+                    plugin.logStacktrace(e);
+                }
                 weblinkRepo = null;
             }
 
@@ -89,7 +91,6 @@ public class WebManager {
                 plugin.log("Updating Contributors information...");
             }
 
-            /* Download the contributors */
             List<String> repositories = new ArrayList<>();
             // Gather all the repositories of installed addons and or catalog entries.
             repositories.add("BentoBoxWorld/BentoBox");
@@ -104,19 +105,23 @@ public class WebManager {
                     .filter(repo -> !repositories.contains(repo))
                     .collect(Collectors.toList()));
 
+            /* Download the contributors */
+            if (plugin.getSettings().isLogGithubDownloadData()) {
+                plugin.log("Gathering contribution data for: " + String.join(", ", repositories));
+            }
+
             for (String repository : repositories) {
                 GitHubRepository addonRepo;
                 try {
                     addonRepo = new GitHubRepository(gh, repository);
                 } catch (Exception e) {
-                    plugin.logError("An unhandled exception occurred when gathering contributors data from the '" + repository + "' repository...");
-                    plugin.logStacktrace(e);
+                    if (plugin.getSettings().isLogGithubDownloadData()) {
+                        plugin.logError("An unhandled exception occurred when gathering contributors data from the '" + repository + "' repository...");
+                        plugin.logStacktrace(e);
+                    }
                     addonRepo = null;
                 }
                 if (addonRepo != null) {
-                    if (plugin.getSettings().isLogGithubDownloadData()) {
-                        plugin.log("Gathering contribution data for: " + repository);
-                    }
                     gatherContributors(addonRepo);
                 }
             }
@@ -140,7 +145,9 @@ public class WebManager {
                     }
                 }));
             } catch (JsonParseException e) {
-                plugin.log("Could not update the Catalog Tags: the gathered JSON data is malformed.");
+                if (plugin.getSettings().isLogGithubDownloadData()) {
+                    plugin.log("Could not update the Catalog Tags: the gathered JSON data is malformed.");
+                }
             }
         }
 
@@ -155,7 +162,9 @@ public class WebManager {
                     }
                 }));
             } catch (JsonParseException e) {
-                plugin.log("Could not update the Catalog Topics: the gathered JSON data is malformed.");
+                if (plugin.getSettings().isLogGithubDownloadData()) {
+                    plugin.log("Could not update the Catalog Topics: the gathered JSON data is malformed.");
+                }
             }
         }
 
@@ -170,7 +179,9 @@ public class WebManager {
                 catalog.getAsJsonArray("gamemodes").forEach(gamemode -> gamemodesCatalog.add(new CatalogEntry(gamemode.getAsJsonObject())));
                 catalog.getAsJsonArray("addons").forEach(addon -> addonsCatalog.add(new CatalogEntry(addon.getAsJsonObject())));
             } catch (JsonParseException e) {
-                plugin.log("Could not update the Catalog content: the gathered JSON data is malformed.");
+                if (plugin.getSettings().isLogGithubDownloadData()) {
+                    plugin.log("Could not update the Catalog content: the gathered JSON data is malformed.");
+                }
             }
         }
     }
@@ -190,8 +201,10 @@ public class WebManager {
         } catch (IllegalAccessException e) {
             // Fail silently
         } catch (Exception e) {
-            plugin.logError("An unhandled exception occurred when downloading '" + fileName + "' from GitHub...");
-            plugin.logStacktrace(e);
+            if (plugin.getSettings().isLogGithubDownloadData()) {
+                plugin.logError("An unhandled exception occurred when downloading '" + fileName + "' from GitHub...");
+                plugin.logStacktrace(e);
+            }
         }
         return "";
     }
