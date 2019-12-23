@@ -44,6 +44,7 @@ And these include some of the official Addons that are bringing incredible new f
 * [**Border**](https://github.com/BentoBoxWorld/Border): adds a world border around islands.
 * [**Challenges**](https://github.com/BentoBoxWorld/Challenges): gives your players challenges to accomplish.
 * [**Chat**](https://github.com/BentoBoxWorld/Chat): teamchat and islandchat for BentoBox gamemodes.
+* [**GreenHouses**](https://github.com/BentoBoxWorld/greenhouses): enables players to make mini biome glass houses on their island.
 * [**IslandFly**](https://github.com/BentoBoxWorld/IslandFly): allows your players to fly on their islands.
 * [**InvSwitcher**](https://github.com/BentoBoxWorld/addon-invSwitcher): allows you to split inventories between the different gamemode worlds.
 * [**Level**](https://github.com/BentoBoxWorld/Level): calculate your island level and show a top ten.
