@@ -98,7 +98,7 @@ public class NewIsland {
          * @param reason reason, can only be {@link Reason#CREATE} or {@link Reason#RESET}.
          */
         public Builder reason(Reason reason) {
-            if (!reason.equals(Reason.CREATE) || !reason.equals(Reason.RESET)) {
+            if (!reason.equals(Reason.CREATE) && !reason.equals(Reason.RESET)) {
                 throw new IllegalArgumentException("Reason must be CREATE or RESET.");
             }
             this.reason2 = reason;
