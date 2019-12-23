@@ -39,8 +39,7 @@ These include some popular Gamemodes:
 * [**CaveBlock**](https://github.com/BentoBoxWorld/CaveBlock): Try to live underground!
 * [**SkyGrid**](https://github.com/BentoBoxWorld/SkyGrid): Survive in world made up of scattered blocks - what an adventure!
 
-For a full list of addons:
-* [**Addons**](https://github.com/BentoBoxWorld/ADDON.md): A list of all addons currently make for bentobox by us.
+For a full list of addons: * [**Addons**](https://github.com/BentoBoxWorld/ADDON.md): A list of all addons currently make for bentobox by us.
 There are also plenty of other official or community-made Addons you can try and use for your server!
 
 ## Documentation
