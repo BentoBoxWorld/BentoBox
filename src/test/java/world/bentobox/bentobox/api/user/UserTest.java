@@ -226,8 +226,12 @@ public class UserTest {
 
     @Test
     public void testHasPermission() {
-        when(player.hasPermission(anyString())).thenReturn(true);
+        // default behaviours
         assertTrue(user.hasPermission(""));
+        assertTrue(user.hasPermission(null));
+
+        // test if player has the permission
+        when(player.hasPermission(anyString())).thenReturn(true);
         assertTrue(user.hasPermission("perm"));
     }
 
