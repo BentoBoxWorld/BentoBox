@@ -835,7 +835,7 @@ public class IslandWorldManager {
      * @return true if missing nether or end islands should be pasted
      * @since 1.10.0
      */
-    public boolean pasteMissingIslands(@NonNull World world) {
+    public boolean isPasteMissingIslands(@NonNull World world) {
         return gameModes.containsKey(world) && gameModes.get(world).getWorldSettings().isPasteMissingIslands();
     }
 }
