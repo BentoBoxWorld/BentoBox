@@ -93,7 +93,14 @@ public class NewIsland {
             return this;
         }
 
+        /**
+         * Sets the reason
+         * @param reason reason, can only be {@link Reason#CREATE} or {@link Reason#RESET}.
+         */
         public Builder reason(Reason reason) {
+            if (!reason.equals(Reason.CREATE) || !reason.equals(Reason.RESET)) {
+                throw new IllegalArgumentException("Reason must be CREATE or RESET.");
+            }
             this.reason2 = reason;
             return this;
         }
@@ -273,9 +280,7 @@ public class NewIsland {
         }
         // Set default settings
         island.setFlagsDefaults();
-        if (!reason.equals(Reason.RESERVED)) {
-            plugin.getMetrics().ifPresent(BStats::increaseIslandsCreatedCount);
-        }
+        plugin.getMetrics().ifPresent(BStats::increaseIslandsCreatedCount);
         // Save island
         plugin.getIslands().save(island);
     }
