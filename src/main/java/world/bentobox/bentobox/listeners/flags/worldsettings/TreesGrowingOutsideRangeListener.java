@@ -3,16 +3,11 @@ package world.bentobox.bentobox.listeners.flags.worldsettings;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.block.BlockFormEvent;
-import org.bukkit.event.block.BlockFromToEvent;
-import org.bukkit.event.block.BlockGrowEvent;
-import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.world.StructureGrowEvent;
 
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.lists.Flags;
-import world.bentobox.bentobox.util.Util;
 
 /**
  * Handles {@link world.bentobox.bentobox.lists.Flags#TREES_GROWING_OUTSIDE_RANGE}.
