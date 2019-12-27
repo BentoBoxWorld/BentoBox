@@ -11,6 +11,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
@@ -78,10 +80,27 @@ public class TNTListener extends FlagListener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onExplosion(final EntityExplodeEvent e) {
-        // Remove any blocks from the explosion list if they are inside a protected area and if the entity was a TNT
+        // Remove any blocks from the explosion list if they are inside a protected area
         if (tntTypes.contains(e.getEntityType())
                 && e.blockList().removeIf(b -> getIslands().getProtectedIslandAt(b.getLocation()).map(i -> !i.isAllowed(Flags.TNT_DAMAGE)).orElse(false))) {
-            // If any were removed, then prevent damage too
+            // If any were removed
+            e.setCancelled(true); // Seems to have no effect.
+        }
+    }
+
+    /**
+     * Prevents TNT explosion from damaging entities.
+     * @param e event
+     */
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    public void onExplosion(final EntityDamageByEntityEvent e) {
+        // Check if this a TNT exploding
+        if (!e.getCause().equals(EntityDamageEvent.DamageCause.ENTITY_EXPLOSION) || !tntTypes.contains(e.getDamager().getType())) {
+            return;
+        }
+
+        // Check if it is disallowed, then cancel it.
+        if(getIslands().getProtectedIslandAt(e.getEntity().getLocation()).map(i -> !i.isAllowed(Flags.TNT_DAMAGE)).orElse(false)) {
             e.setCancelled(true);
         }
     }
