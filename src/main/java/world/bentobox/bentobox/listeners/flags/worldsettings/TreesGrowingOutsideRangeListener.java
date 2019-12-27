@@ -3,10 +3,16 @@ package world.bentobox.bentobox.listeners.flags.worldsettings;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.block.BlockFormEvent;
+import org.bukkit.event.block.BlockFromToEvent;
+import org.bukkit.event.block.BlockGrowEvent;
+import org.bukkit.event.block.BlockPhysicsEvent;
+import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.world.StructureGrowEvent;
 
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.lists.Flags;
+import world.bentobox.bentobox.util.Util;
 
 /**
  * Handles {@link world.bentobox.bentobox.lists.Flags#TREES_GROWING_OUTSIDE_RANGE}.
@@ -32,5 +38,26 @@ public class TreesGrowingOutsideRangeListener extends FlagListener {
         e.getBlocks().stream()
         .filter(blockState -> !getIslands().getProtectedIslandAt(blockState.getLocation()).isPresent())
         .forEach(blockState -> blockState.setType(Material.AIR));
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onChorusGrow(BlockSpreadEvent e) {
+        if (!getIWM().inWorld(e.getSource().getWorld()) || Flags.TREES_GROWING_OUTSIDE_RANGE.isSetForWorld(e.getSource().getWorld())
+                || !e.getSource().getType().equals(Material.CHORUS_FLOWER)) {
+            // We do not want to run any check if this is not the right world or if it is allowed
+            // The same goes if this is not a Chorus Flower that is growing.
+            return;
+        }
+
+        // If there is no protected island at the location of the chorus flower, just cancel the event (prevents the flower from growing).
+        if (!getIslands().getProtectedIslandAt(e.getSource().getLocation()).isPresent()) {
+            e.setCancelled(true);
+            return;
+        }
+
+        // Now prevent the flower to grow if this is growing outside the island
+        if (!getIslands().getProtectedIslandAt(e.getBlock().getLocation()).isPresent()) {
+            e.setCancelled(true);
+        }
     }
 }
