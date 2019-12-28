@@ -429,7 +429,6 @@ commands:
       teleported: "&a Teleported you to home &e #[number]."
     help:
       description: "The main island command"
-      pick-world: "&c Specify world from [worlds]"
     spawn:
       description: "teleport you to the spawn"
       teleporting: "&a Teleporting you to the spawn."
