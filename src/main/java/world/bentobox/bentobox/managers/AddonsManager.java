@@ -166,7 +166,7 @@ public class AddonsManager {
                 plugin.getBlueprintsManager().loadBlueprintBundles(gameMode);
             }
             addon.onEnable();
-            if (!addon.isEnabled()) {
+            if (addon.getState().equals(State.DISABLED)) {
                 plugin.log(addon.getDescription().getName() + " is disabled.");
                 return;
             }
