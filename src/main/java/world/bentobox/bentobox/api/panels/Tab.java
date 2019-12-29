@@ -1,10 +1,10 @@
 package world.bentobox.bentobox.api.panels;
 
-import org.eclipse.jdt.annotation.Nullable;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
+import org.eclipse.jdt.annotation.Nullable;
 
 /**
  * Represents a tab in a {@link TabbedPanel}. Contains {@link PanelItem}'s.

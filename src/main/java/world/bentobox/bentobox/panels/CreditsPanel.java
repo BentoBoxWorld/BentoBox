@@ -3,6 +3,7 @@ package world.bentobox.bentobox.panels;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.eclipse.jdt.annotation.NonNull;
+
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.localization.TextVariables;

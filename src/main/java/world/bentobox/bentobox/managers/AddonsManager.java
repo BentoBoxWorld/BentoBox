@@ -166,6 +166,10 @@ public class AddonsManager {
                 plugin.getBlueprintsManager().loadBlueprintBundles(gameMode);
             }
             addon.onEnable();
+            if (!addon.isEnabled()) {
+                plugin.log(addon.getDescription().getName() + " is disabled.");
+                return;
+            }
             if (addon instanceof GameModeAddon) {
                 GameModeAddon gameMode = (GameModeAddon) addon;
                 // Set the worlds for the commands
@@ -425,7 +429,7 @@ public class AddonsManager {
                 addon.getDescription().getAuthors().forEach(plugin::logError);
                 plugin.logStacktrace(e);
             }
-            Bukkit.getPluginManager().callEvent(new AddonEvent().builder().addon(addon).reason(AddonEvent.Reason.DISABLE).build());            
+            Bukkit.getPluginManager().callEvent(new AddonEvent().builder().addon(addon).reason(AddonEvent.Reason.DISABLE).build());
         }
         // Clear loaders
         if (loaders.containsKey(addon)) {

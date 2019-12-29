@@ -79,6 +79,8 @@ public class AddonsManagerTest {
         Mockito.framework().clearInlineMocks();
     }
 
+    // TODO - add test cases that actually load an addon
+
     /**
      * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#AddonsManager(world.bentobox.bentobox.BentoBox)}.
      */

@@ -1,9 +1,9 @@
 package world.bentobox.bentobox.api.events.flags;
 
+import java.util.UUID;
+
 import world.bentobox.bentobox.api.events.BentoBoxEvent;
 import world.bentobox.bentobox.api.flags.Flag;
-
-import java.util.UUID;
 
 /**
  *

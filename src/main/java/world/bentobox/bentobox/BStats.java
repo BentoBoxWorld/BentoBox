@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.bstats.bukkit.Metrics;
-
 import org.bukkit.Bukkit;
+
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.flags.Flag;
 

@@ -9,8 +9,8 @@ import org.bukkit.entity.ChestedHorse;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Horse;
-import org.bukkit.entity.Tameable;
 import org.bukkit.entity.Horse.Style;
+import org.bukkit.entity.Tameable;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Colorable;
 

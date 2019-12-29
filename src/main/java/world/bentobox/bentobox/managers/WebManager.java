@@ -1,19 +1,5 @@
 package world.bentobox.bentobox.managers;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonParser;
-import io.github.TheBusyBiscuit.GitHubWebAPI4Java.GitHubWebAPI;
-import io.github.TheBusyBiscuit.GitHubWebAPI4Java.objects.repositories.GitHubContributor;
-import io.github.TheBusyBiscuit.GitHubWebAPI4Java.objects.repositories.GitHubRepository;
-import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
-import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.Settings;
-import world.bentobox.bentobox.web.catalog.CatalogEntry;
-import world.bentobox.bentobox.web.credits.Contributor;
-
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -23,6 +9,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
+
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonParser;
+
+import io.github.TheBusyBiscuit.GitHubWebAPI4Java.GitHubWebAPI;
+import io.github.TheBusyBiscuit.GitHubWebAPI4Java.objects.repositories.GitHubContributor;
+import io.github.TheBusyBiscuit.GitHubWebAPI4Java.objects.repositories.GitHubRepository;
+import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.Settings;
+import world.bentobox.bentobox.web.catalog.CatalogEntry;
+import world.bentobox.bentobox.web.credits.Contributor;
 
 /**
  * Handles web-related stuff.
@@ -244,7 +246,7 @@ public class WebManager {
     /**
      *
      * @param repository
-     * @return
+     * @return list of contributors
      * @since 1.9.0
      */
     @NonNull

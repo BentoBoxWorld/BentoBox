@@ -1,13 +1,13 @@
 package world.bentobox.bentobox.api.commands.admin.blueprints;
 
-import world.bentobox.bentobox.api.commands.ConfirmableCommand;
-import world.bentobox.bentobox.api.localization.TextVariables;
-import world.bentobox.bentobox.api.user.User;
-
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+
+import world.bentobox.bentobox.api.commands.ConfirmableCommand;
+import world.bentobox.bentobox.api.localization.TextVariables;
+import world.bentobox.bentobox.api.user.User;
 
 /**
  * Command that deletes a Blueprint.
