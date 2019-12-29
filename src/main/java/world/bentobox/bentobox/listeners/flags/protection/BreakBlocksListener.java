@@ -3,6 +3,8 @@ package world.bentobox.bentobox.listeners.flags.protection;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.entity.AbstractArrow;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EnderCrystal;
 import org.bukkit.entity.ItemFrame;
@@ -13,6 +15,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.vehicle.VehicleDamageEvent;
@@ -129,5 +132,34 @@ public class BreakBlocksListener extends FlagListener {
             return !checkIsland(e, player, location, Flags.ARMOR_STAND);
         }
         return false;        
+    }
+
+    /**
+     * Prevents Chorus Flowers from being broken by an arrow or a trident
+     * @param e event
+     */
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    public void onProjectileHitBreakBlock(ProjectileHitEvent e) {
+        // We want to make sure this is an actual projectile (arrow or trident)
+        if (!(e.getEntity() instanceof AbstractArrow)) {
+            return;
+        }
+
+        // We want to make sure it hit a CHORUS_FLOWER
+        if (e.getHitBlock() == null || !e.getHitBlock().getType().equals(Material.CHORUS_FLOWER)) {
+            return;
+        }
+
+        // Find out who fired the arrow
+        if (e.getEntity().getShooter() instanceof Player) {
+            if (!checkIsland(e, (Player) e.getEntity().getShooter(), e.getHitBlock().getLocation(), Flags.BREAK_BLOCKS)) {
+                final BlockData data = e.getHitBlock().getBlockData();
+                // We seemingly can't prevent the block from being destroyed
+                // So we need to put it back with a slight delay (yup, this is hacky - it makes the block flicker sometimes)
+                e.getHitBlock().setType(Material.AIR); // prevents the block from dropping a chorus flower
+                getPlugin().getServer().getScheduler().runTask(getPlugin(), () -> e.getHitBlock().setBlockData(data, true));
+                // Sorry, this might also cause some ghost blocks!
+            }
+        }
     }
 }
