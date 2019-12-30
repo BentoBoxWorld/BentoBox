@@ -11,8 +11,6 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 
-import javax.annotation.Nonnull;
-
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -372,8 +370,8 @@ public class Util {
      * @param location The Location to Teleport to
      * @return Future that completes with the result of the teleport
      */
-    @Nonnull
-    public static CompletableFuture<Boolean> teleportAsync(@Nonnull Entity entity, @Nonnull Location location) {
+    @NonNull
+    public static CompletableFuture<Boolean> teleportAsync(@NonNull Entity entity, @NonNull Location location) {
         return PaperLib.teleportAsync(entity, location);
     }
 
@@ -384,8 +382,8 @@ public class Util {
      * @param cause The cause for the teleportation
      * @return Future that completes with the result of the teleport
      */
-    @Nonnull
-    public static CompletableFuture<Boolean> teleportAsync(@Nonnull Entity entity, @Nonnull Location location, TeleportCause cause) {
+    @NonNull
+    public static CompletableFuture<Boolean> teleportAsync(@NonNull Entity entity, @NonNull Location location, TeleportCause cause) {
         return PaperLib.teleportAsync(entity, location, cause);
     }
 
@@ -394,8 +392,8 @@ public class Util {
      * @param loc Location to get chunk for
      * @return Future that completes with the chunk
      */
-    @Nonnull
-    public static CompletableFuture<Chunk> getChunkAtAsync(@Nonnull Location loc) {
+    @NonNull
+    public static CompletableFuture<Chunk> getChunkAtAsync(@NonNull Location loc) {
         return getChunkAtAsync(loc.getWorld(), loc.getBlockX() >> 4, loc.getBlockZ() >> 4, true);
     }
 
@@ -405,8 +403,8 @@ public class Util {
      * @param gen Should the chunk generate or not. Only respected on some MC versions, 1.13 for CB, 1.12 for Paper
      * @return Future that completes with the chunk, or null if the chunk did not exists and generation was not requested.
      */
-    @Nonnull
-    public static CompletableFuture<Chunk> getChunkAtAsync(@Nonnull Location loc, boolean gen) {
+    @NonNull
+    public static CompletableFuture<Chunk> getChunkAtAsync(@NonNull Location loc, boolean gen) {
         return getChunkAtAsync(loc.getWorld(), loc.getBlockX() >> 4, loc.getBlockZ() >> 4, gen);
     }
 
@@ -417,8 +415,8 @@ public class Util {
      * @param z Z coordinate of the chunk to load
      * @return Future that completes with the chunk
      */
-    @Nonnull
-    public static CompletableFuture<Chunk> getChunkAtAsync(@Nonnull World world, int x, int z) {
+    @NonNull
+    public static CompletableFuture<Chunk> getChunkAtAsync(@NonNull World world, int x, int z) {
         return getChunkAtAsync(world, x, z, true);
     }
 
@@ -430,8 +428,8 @@ public class Util {
      * @param gen Should the chunk generate or not. Only respected on some MC versions, 1.13 for CB, 1.12 for Paper
      * @return Future that completes with the chunk, or null if the chunk did not exists and generation was not requested.
      */
-    @Nonnull
-    public static CompletableFuture<Chunk> getChunkAtAsync(@Nonnull World world, int x, int z, boolean gen) {
+    @NonNull
+    public static CompletableFuture<Chunk> getChunkAtAsync(@NonNull World world, int x, int z, boolean gen) {
         return PaperLib.getChunkAtAsync(world, x, z, gen);
     }
 
@@ -440,7 +438,7 @@ public class Util {
      * @param loc Location to check if the chunk is generated
      * @return If the chunk is generated or not
      */
-    public static boolean isChunkGenerated(@Nonnull Location loc) {
+    public static boolean isChunkGenerated(@NonNull Location loc) {
         return isChunkGenerated(loc.getWorld(), loc.getBlockX() >> 4, loc.getBlockZ() >> 4);
     }
 
@@ -451,7 +449,7 @@ public class Util {
      * @param z Z coordinate of the chunk to checl
      * @return If the chunk is generated or not
      */
-    public static boolean isChunkGenerated(@Nonnull World world, int x, int z) {
+    public static boolean isChunkGenerated(@NonNull World world, int x, int z) {
         return PaperLib.isChunkGenerated(world, x, z);
     }
 
@@ -461,8 +459,8 @@ public class Util {
      * @param useSnapshot Whether or not to use a snapshot when supported
      * @return The BlockState
      */
-    @Nonnull
-    public static BlockStateSnapshotResult getBlockState(@Nonnull Block block, boolean useSnapshot) {
+    @NonNull
+    public static BlockStateSnapshotResult getBlockState(@NonNull Block block, boolean useSnapshot) {
         return PaperLib.getBlockState(block, useSnapshot);
     }
 
@@ -544,9 +542,6 @@ public class Util {
         // Original code from Jonas Klemming on StackOverflow (https://stackoverflow.com/q/237159).
         // I slightly refined it to catch more edge cases.
         // It is a faster alternative to catch malformed strings than the NumberFormatException.
-        if (nbr == null) {
-            return false;
-        }
         int length = nbr.length();
         if (length == 0) {
             return false;
@@ -572,7 +567,6 @@ public class Util {
                 } else {
                     // we will need to make sure there is nothing else but 0's after the dot.
                     trailingDot = true;
-                    continue;
                 }
             } else if (!trailingDot && (c < '0' || c > '9')) {
                 return false;

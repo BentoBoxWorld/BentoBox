@@ -35,7 +35,6 @@ class IslandGrid {
                     Island clone = new Island(firstLoaded);
                     firstLoaded = new Island(island);
                     zEntry.put(island.getMinZ(), firstLoaded);
-                    island = new Island(clone);
                 } else if (firstLoaded.getOwner() != null && island.getOwner() != null) {
                     // Check if the owners are the same - this is a true duplicate
                     if (firstLoaded.getOwner().equals(island.getOwner())) {
@@ -46,7 +45,6 @@ class IslandGrid {
                             Island clone = new Island(firstLoaded);
                             firstLoaded = new Island(island);
                             zEntry.put(island.getMinZ(), firstLoaded);
-                            island = new Island(clone);
                         } else {
                             plugin.logError("Same owner duplicate.");
                         }

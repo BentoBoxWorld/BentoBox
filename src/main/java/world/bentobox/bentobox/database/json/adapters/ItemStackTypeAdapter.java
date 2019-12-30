@@ -42,10 +42,10 @@ public class ItemStackTypeAdapter extends TypeAdapter<ItemStack> {
         }
         YamlConfiguration c = new YamlConfiguration();
         String n = reader.nextString();
-        // Verify material type because yaml loading errors of unknown materials cannot be trapped bu try clause.
+        // Verify material type because yaml loading errors of unknown materials cannot be trapped by try clause.
         if (n.contains("type:")) {
-            String type = n.substring(n.indexOf("type:") + 6, n.length());
-            type = type.substring(0, type.indexOf("\n"));
+            String type = n.substring(n.indexOf("type:") + 6);
+            type = type.substring(0, type.indexOf('\n'));
             Material m = Material.matchMaterial(type);            
             if (m == null) {
                 BentoBox.getInstance().logWarning("Unknown material: " + type);

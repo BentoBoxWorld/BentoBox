@@ -302,7 +302,7 @@ public class LocalesManager {
         user.sendRawMessage(ChatColor.AQUA + SPACER);
         loadLocalesFromFile(BENTOBOX);
         if (languages.containsKey(Locale.US)) {
-            analyze(user, fix);
+            analyze(user);
         } else {
             user.sendRawMessage(ChatColor.RED + "No US English in BentoBox to use for analysis!");
         }
@@ -314,7 +314,7 @@ public class LocalesManager {
             languages.clear();
             loadLocalesFromFile(addon.getDescription().getName());
             if (languages.containsKey(Locale.US)) {
-                analyze(user, fix);
+                analyze(user);
             } else {
                 user.sendRawMessage(ChatColor.RED + "No US English to use for analysis!");
             }
@@ -325,11 +325,9 @@ public class LocalesManager {
     /**
      *
      * @param user - user
-     * @param fix whether or not locale files with missing translations should be fixed.
-     *            Not currently supported.
      * @since 1.5.0
      */
-    private void analyze(User user, boolean fix) {
+    private void analyze(User user) {
 
         user.sendRawMessage(ChatColor.GREEN + "The following locales are supported:");
         languages.forEach((k,v) -> user.sendRawMessage(ChatColor.GOLD + k.toLanguageTag() + " " + k.getDisplayLanguage() + " " + k.getDisplayCountry()));

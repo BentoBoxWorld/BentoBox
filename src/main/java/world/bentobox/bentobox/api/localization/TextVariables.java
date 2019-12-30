@@ -21,4 +21,8 @@ public class TextVariables {
      * @since 1.6.0
      */
     public static final String NEXT = "[next]";
+    /**
+     * @since 1.10.0
+     */
+    public static final String UNIT = "[unit]";
 }

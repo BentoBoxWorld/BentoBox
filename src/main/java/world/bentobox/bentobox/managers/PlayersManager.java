@@ -32,7 +32,6 @@ public class PlayersManager {
     private Map<UUID, Players> playerCache;
     private Set<UUID> inTeleport;
     private Set<UUID> toSave = new HashSet<>();
-    private Iterator<UUID> it;
     private BukkitTask task;
 
     /**
@@ -84,7 +83,7 @@ public class PlayersManager {
         if (!toSave.isEmpty()) return;
         // Get a list of ID's to save
         toSave = new HashSet<>(playerCache.keySet());
-        it = toSave.iterator();
+        Iterator<UUID> it = toSave.iterator();
         task = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
             if (plugin.isEnabled() && it.hasNext()) {
                 this.save(it.next());
