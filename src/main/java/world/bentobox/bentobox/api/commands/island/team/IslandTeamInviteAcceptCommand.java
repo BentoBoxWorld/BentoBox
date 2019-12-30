@@ -118,8 +118,6 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
     private void acceptTeamInvite(User user, Invite invite) {
         // Remove the invite
         itc.removeInvite(playerUUID);
-        // Put player into Spectator mode
-        user.setGameMode(GameMode.SPECTATOR);
         // Get the player's island - may be null if the player has no island
         Island island = getIslands().getIsland(getWorld(), playerUUID);
         // Get the team's island
@@ -157,7 +155,6 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
                 .involvedPlayer(playerUUID)
                 .build();
         Bukkit.getPluginManager().callEvent(e);
-
     }
 
     private void cleanPlayer(User user) {

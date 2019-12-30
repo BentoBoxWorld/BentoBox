@@ -106,7 +106,6 @@ public class SafeSpotTeleportTest {
         when(iwm.getAddon(Mockito.any())).thenReturn(Optional.empty());
 
         // Player
-        // Return first survival and then spectator
         when(player.getGameMode()).thenReturn(GameMode.SURVIVAL);
         when(loc.getWorld()).thenReturn(world);
         when(loc.getBlockX()).thenReturn(0);
