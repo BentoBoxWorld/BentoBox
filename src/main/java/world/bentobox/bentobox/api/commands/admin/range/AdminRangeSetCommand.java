@@ -44,11 +44,11 @@ public class AdminRangeSetCommand extends CompositeCommand {
         }
 
         // Get new range
-        if (!Util.isInteger(args.get(1), true) || Integer.valueOf(args.get(1)) < 0) {
+        if (!Util.isInteger(args.get(1), true) || Integer.parseInt(args.get(1)) < 0) {
             user.sendMessage("general.errors.must-be-positive-number", TextVariables.NUMBER, args.get(1));
             return false;
         }
-        int range = Integer.valueOf(args.get(1));
+        int range = Integer.parseInt(args.get(1));
 
         // Get island
         Island island = getIslands().getIsland(getWorld(), targetUUID);

@@ -151,15 +151,14 @@ public class BreakBlocksListener extends FlagListener {
         }
 
         // Find out who fired the arrow
-        if (e.getEntity().getShooter() instanceof Player) {
-            if (!checkIsland(e, (Player) e.getEntity().getShooter(), e.getHitBlock().getLocation(), Flags.BREAK_BLOCKS)) {
-                final BlockData data = e.getHitBlock().getBlockData();
-                // We seemingly can't prevent the block from being destroyed
-                // So we need to put it back with a slight delay (yup, this is hacky - it makes the block flicker sometimes)
-                e.getHitBlock().setType(Material.AIR); // prevents the block from dropping a chorus flower
-                getPlugin().getServer().getScheduler().runTask(getPlugin(), () -> e.getHitBlock().setBlockData(data, true));
-                // Sorry, this might also cause some ghost blocks!
-            }
+        if (e.getEntity().getShooter() instanceof Player &&
+                !checkIsland(e, (Player) e.getEntity().getShooter(), e.getHitBlock().getLocation(), Flags.BREAK_BLOCKS)) {
+            final BlockData data = e.getHitBlock().getBlockData();
+            // We seemingly can't prevent the block from being destroyed
+            // So we need to put it back with a slight delay (yup, this is hacky - it makes the block flicker sometimes)
+            e.getHitBlock().setType(Material.AIR); // prevents the block from dropping a chorus flower
+            getPlugin().getServer().getScheduler().runTask(getPlugin(), () -> e.getHitBlock().setBlockData(data, true));
+            // Sorry, this might also cause some ghost blocks!
         }
     }
 }

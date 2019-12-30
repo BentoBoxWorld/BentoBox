@@ -32,7 +32,6 @@ class IslandGrid {
                 if (firstLoaded.getOwner() == null && island.getOwner() != null) {
                     // This looks fishy. We prefer to load islands that have an owner. Swap the two
                     plugin.logError("Duplicate island has an owner, so using that one. " + island.getOwner());
-                    Island clone = new Island(firstLoaded);
                     firstLoaded = new Island(island);
                     zEntry.put(island.getMinZ(), firstLoaded);
                 } else if (firstLoaded.getOwner() != null && island.getOwner() != null) {
@@ -42,7 +41,6 @@ class IslandGrid {
                         if (firstLoaded.getCreatedDate() > island.getCreatedDate()) {
                             plugin.logError("Same owner duplicate. Swaping based on creation date.");
                             // FirstLoaded is the newer
-                            Island clone = new Island(firstLoaded);
                             firstLoaded = new Island(island);
                             zEntry.put(island.getMinZ(), firstLoaded);
                         } else {
