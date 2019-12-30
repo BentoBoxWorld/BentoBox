@@ -43,11 +43,10 @@ public class LanguagePanel {
             } else {
                 localeIcon.icon(new ItemStack(Material.WHITE_BANNER, 1)); // Set to a blank banner.
             }
-            String lang = WordUtils.capitalize(locale.getDisplayName(user.getLocale()));
-            localeIcon.name(ChatColor.WHITE + lang)
+            localeIcon.name(ChatColor.WHITE + WordUtils.capitalize(locale.getDisplayName(user.getLocale())))
             .clickHandler((panel, u, click, slot) -> {
                 BentoBox.getInstance().getPlayers().setLocale(u.getUniqueId(), locale.toLanguageTag());
-                u.sendMessage("language.edited", "[lang]", lang);
+                u.sendMessage("language.edited", "[lang]", WordUtils.capitalize(locale.getDisplayName(user.getLocale())));
                 openPanel(u);
                 return true;
             });
