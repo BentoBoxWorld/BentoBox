@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
@@ -218,6 +219,7 @@ public class PlaceBlocksListenerTest {
         BlockState replacedBlockState = mock(BlockState.class);
         Block placedAgainst = mock(Block.class);
         ItemStack itemInHand = mock(ItemStack.class);
+        when(itemInHand.getType()).thenReturn(Material.STONE);
         EquipmentSlot hand = EquipmentSlot.HAND;
         BlockPlaceEvent e = new BlockPlaceEvent(placedBlock, replacedBlockState, placedAgainst, itemInHand, player, true, hand);
         pbl.onBlockPlace(e);
@@ -236,11 +238,39 @@ public class PlaceBlocksListenerTest {
         BlockState replacedBlockState = mock(BlockState.class);
         Block placedAgainst = mock(Block.class);
         ItemStack itemInHand = mock(ItemStack.class);
+        when(itemInHand.getType()).thenReturn(Material.STONE);
         EquipmentSlot hand = EquipmentSlot.HAND;
         BlockPlaceEvent e = new BlockPlaceEvent(placedBlock, replacedBlockState, placedAgainst, itemInHand, player, true, hand);
         pbl.onBlockPlace(e);
         assertTrue(e.isCancelled());
         Mockito.verify(notifier).notify(Mockito.any(), Mockito.eq("protection.protected"));
+    }
+
+    /**
+     * Test method for {@link PlaceBlocksListener#onBlockPlace(org.bukkit.event.block.BlockPlaceEvent)}.
+     * Ensures that books are not protected by this listener.
+     */
+    @Test
+    public void testOnBlockPlaceBook() {
+        when(island.isAllowed(Mockito.any(), Mockito.any())).thenReturn(false);
+        Block placedBlock = mock(Block.class);
+        when(placedBlock.getType()).thenReturn(Material.LECTERN);
+        when(placedBlock.getLocation()).thenReturn(location);
+        BlockState replacedBlockState = mock(BlockState.class);
+        Block placedAgainst = mock(Block.class);
+        ItemStack itemInHand = mock(ItemStack.class);
+        when(itemInHand.getType()).thenReturn(Material.WRITTEN_BOOK);
+        EquipmentSlot hand = EquipmentSlot.HAND;
+        BlockPlaceEvent e = new BlockPlaceEvent(placedBlock, replacedBlockState, placedAgainst, itemInHand, player, true, hand);
+        pbl.onBlockPlace(e);
+        assertFalse(e.isCancelled());
+        Mockito.verify(notifier, never()).notify(Mockito.any(), Mockito.eq("protection.protected"));
+
+        // With a WRITABLE BOOK now
+        when(itemInHand.getType()).thenReturn(Material.WRITABLE_BOOK);
+        pbl.onBlockPlace(e);
+        assertFalse(e.isCancelled());
+        Mockito.verify(notifier, never()).notify(Mockito.any(), Mockito.eq("protection.protected"));
     }
 
     /**
@@ -319,15 +349,4 @@ public class PlaceBlocksListenerTest {
         }
         Mockito.verify(notifier, Mockito.times(7)).notify(Mockito.any(), Mockito.eq("protection.protected"));
     }
-
-    /**
-     * Test method for {@link PlaceBlocksListener#onBlockForm(org.bukkit.event.block.EntityBlockFormEvent)}.
-     */
-    @Test
-    @Ignore("Unfinished")
-    public void testOnBlockForm() {
-        // TODO
-    }
-
-
 }

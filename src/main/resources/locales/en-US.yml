@@ -929,6 +929,15 @@ protection:
     LEASH: 
       description: "Toggle use"
       name: "Leash use"
+    LECTERN:
+      name: "Lecterns"
+      description: |-
+        &a Allow to place books on a lectern
+        &a or to take books from it.
+
+        &c It does not prevent players from
+        &c reading the books.
+      hint: "cannot place a book on a lectern or take a book from it."
     LEVER:
       description: "Toggle use"
       name: "Lever use"

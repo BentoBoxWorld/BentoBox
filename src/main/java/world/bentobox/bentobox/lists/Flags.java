@@ -26,6 +26,7 @@ import world.bentobox.bentobox.listeners.flags.protection.HurtingListener;
 import world.bentobox.bentobox.listeners.flags.protection.InventoryListener;
 import world.bentobox.bentobox.listeners.flags.protection.ItemDropPickUpListener;
 import world.bentobox.bentobox.listeners.flags.protection.LeashListener;
+import world.bentobox.bentobox.listeners.flags.protection.LecternListener;
 import world.bentobox.bentobox.listeners.flags.protection.LockAndBanListener;
 import world.bentobox.bentobox.listeners.flags.protection.PhysicalInteractionListener;
 import world.bentobox.bentobox.listeners.flags.protection.PlaceBlocksListener;
@@ -117,6 +118,12 @@ public final class Flags {
      * @see BreakBlocksListener
      */
     public static final Flag DRAGON_EGG = new Flag.Builder("DRAGON_EGG", Material.DRAGON_EGG).build();
+    /**
+     * Prevents players from placing a book on a lectern or taking the book from it.
+     * @since 1.10.0
+     * @see LecternListener
+     */
+    public static final Flag LECTERN = new Flag.Builder("LECTERN", Material.LECTERN).listener(new LecternListener()).build();
 
     // Entity interactions
     public static final Flag ARMOR_STAND = new Flag.Builder("ARMOR_STAND", Material.ARMOR_STAND).listener(new EntityInteractListener()).mode(Flag.Mode.ADVANCED).build();

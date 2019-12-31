@@ -26,7 +26,10 @@ public class PlaceBlocksListener extends FlagListener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onBlockPlace(final BlockPlaceEvent e) {
-        if (e.getBlock().getType().equals(Material.FIRE)) {
+        if (e.getBlock().getType().equals(Material.FIRE)
+                || e.getItemInHand().getType().equals(Material.WRITABLE_BOOK)
+                || e.getItemInHand().getType().equals(Material.WRITTEN_BOOK)) {
+            // Books can only be placed on lecterns and as such are protected by the LECTERN flag.
             return;
         }
         checkIsland(e, e.getPlayer(), e.getBlock().getLocation(), Flags.PLACE_BLOCKS);
