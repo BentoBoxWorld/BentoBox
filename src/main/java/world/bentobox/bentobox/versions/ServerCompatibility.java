@@ -73,7 +73,7 @@ public class ServerCompatibility {
         BUKKIT(Compatibility.INCOMPATIBLE),
         GLOWSTONE(Compatibility.INCOMPATIBLE),
         SPIGOT(Compatibility.COMPATIBLE),
-        PAPER(Compatibility.NOT_SUPPORTED),
+        PAPER(Compatibility.SUPPORTED),
         TACOSPIGOT(Compatibility.NOT_SUPPORTED),        
         AKARIN(Compatibility.NOT_SUPPORTED);
 
