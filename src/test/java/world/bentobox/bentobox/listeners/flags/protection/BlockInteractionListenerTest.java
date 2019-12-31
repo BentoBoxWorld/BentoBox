@@ -210,7 +210,6 @@ public class BlockInteractionListenerTest {
         clickedBlocks.put(Material.DRAGON_EGG, Flags.DRAGON_EGG);
         clickedBlocks.put(Material.END_PORTAL_FRAME, Flags.PLACE_BLOCKS);
         clickedBlocks.put(Material.ITEM_FRAME, Flags.ITEM_FRAME);
-        clickedBlocks.put(Material.LECTERN, Flags.BREAK_BLOCKS);
         clickedBlocks.put(Material.SWEET_BERRY_BUSH, Flags.BREAK_BLOCKS);
         clickedBlocks.put(Material.CAKE, Flags.CAKE);
     }
