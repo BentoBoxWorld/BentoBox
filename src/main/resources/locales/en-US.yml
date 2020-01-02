@@ -289,6 +289,11 @@ commands:
       save:
         parameters: "<blueprint name>"
         description: "save the copied clipboard"
+      rename:
+        parameters: "<blueprint name> <new name>"
+        description: "rename a blueprint"
+        success: "&a Blueprint &b [old] &a has been successfully renamed to &b [name]&a."
+        pick-different-name: "&c Please specify a name that is different from the blueprint's current name."
       management:
         back: "Back"
         instruction: "Click on blueprint then click here"

@@ -46,6 +46,7 @@ public class AdminBlueprintCommand extends ConfirmableCommand {
         new AdminBlueprintOriginCommand(this);
         new AdminBlueprintCopyCommand(this);
         new AdminBlueprintSaveCommand(this);
+        new AdminBlueprintRenameCommand(this);
         new AdminBlueprintDeleteCommand(this);
         new AdminBlueprintPos1Command(this);
         new AdminBlueprintPos2Command(this);
