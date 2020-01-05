@@ -13,6 +13,7 @@ import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.RanksManager;
+import world.bentobox.bentobox.util.Util;
 
 /**
  * @author tastybento
@@ -81,6 +82,19 @@ public class AdminSetrankCommand extends CompositeCommand {
 
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
-        return Optional.of(getPlugin().getRanksManager().getRanks().keySet().stream().map(user::getTranslation).collect(Collectors.toList()));
+        // Return the player names
+        if (args.size() == 2) {
+            return Optional.of(Util.getOnlinePlayerList(user));
+        }
+
+        // Return the rank first
+        if (args.size() == 3) {
+            return Optional.of(getPlugin().getRanksManager().getRanks()
+                    .entrySet().stream()
+                    .filter(entry -> entry.getValue() > RanksManager.VISITOR_RANK)
+                    .map(entry -> user.getTranslation(entry.getKey())).collect(Collectors.toList()));
+        }
+
+        return Optional.empty();
     }
 }
