@@ -23,6 +23,7 @@ public class AdminSetrankCommand extends CompositeCommand {
 
     private int rankValue;
     private @Nullable UUID targetUUID;
+    private @Nullable UUID ownerUUID;
     private RanksManager rm;
 
     public AdminSetrankCommand(CompositeCommand adminCommand) {
@@ -40,7 +41,7 @@ public class AdminSetrankCommand extends CompositeCommand {
 
     @Override
     public boolean canExecute(User user, String label, List<String> args) {
-        if (args.size() != 2) {
+        if (args.size() != 2 && args.size() != 3) {
             // Show help
             showHelp(this, user);
             return false;
@@ -49,10 +50,6 @@ public class AdminSetrankCommand extends CompositeCommand {
         targetUUID = getPlayers().getUUID(args.get(0));
         if (targetUUID == null) {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
-            return false;
-        }
-        if (!getPlugin().getIslands().hasIsland(getWorld(), targetUUID)) {
-            user.sendMessage("general.errors.player-has-no-island");
             return false;
         }
         // Get rank
@@ -67,16 +64,55 @@ public class AdminSetrankCommand extends CompositeCommand {
             user.sendMessage("commands.admin.setrank.not-possible");
             return false;
         }
+
+        if (args.size() == 2) {
+            // We want to change the player's rank on the island he is part of.
+
+            // Check if the target is part of an island
+            if (!getPlugin().getIslands().hasIsland(getWorld(), targetUUID) && !getPlugin().getIslands().inTeam(getWorld(), targetUUID)) {
+                user.sendMessage("general.errors.player-has-no-island");
+                return false;
+            }
+        } else {
+            // We want to change the player's rank on the island of the specified owner.
+
+            ownerUUID = getPlayers().getUUID(args.get(2));
+            if (ownerUUID == null) {
+                user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(2));
+                return false;
+            }
+
+            if (!getPlugin().getIslands().hasIsland(getWorld(), ownerUUID)) {
+                user.sendMessage("commands.admin.setrank.name-not-owner", TextVariables.NAME, args.get(2));
+                return false;
+            }
+        }
+
         return true;
     }
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
         User target = User.getInstance(targetUUID);
-        Island island = getPlugin().getIslands().getIsland(getWorld(), targetUUID);
+        Island island;
+        if (ownerUUID != null) {
+            island = getPlugin().getIslands().getIsland(getWorld(), ownerUUID);
+        } else {
+            island = getPlugin().getIslands().getIsland(getWorld(), targetUUID);
+        }
         int currentRank = island.getRank(target);
         island.setRank(target, rankValue);
-        user.sendMessage("commands.admin.setrank.rank-set", "[from]", user.getTranslation(rm.getRank(currentRank)), "[to]", user.getTranslation(rm.getRank(rankValue)));
+
+        String ownerName;
+        if (ownerUUID != null) {
+            ownerName = getPlayers().getName(ownerUUID);
+        } else {
+            ownerName = target.getName();
+        }
+        user.sendMessage("commands.admin.setrank.rank-set",
+                "[from]", user.getTranslation(rm.getRank(currentRank)),
+                "[to]", user.getTranslation(rm.getRank(rankValue)),
+                TextVariables.NAME, ownerName);
         return true;
     }
 
@@ -87,12 +123,17 @@ public class AdminSetrankCommand extends CompositeCommand {
             return Optional.of(Util.getOnlinePlayerList(user));
         }
 
-        // Return the rank first
+        // Return the ranks
         if (args.size() == 3) {
             return Optional.of(getPlugin().getRanksManager().getRanks()
                     .entrySet().stream()
                     .filter(entry -> entry.getValue() > RanksManager.VISITOR_RANK)
                     .map(entry -> user.getTranslation(entry.getKey())).collect(Collectors.toList()));
+        }
+
+        // Return the player names again for the optional island owner argument
+        if (args.size() == 4) {
+            return Optional.of(Util.getOnlinePlayerList(user));
         }
 
         return Optional.empty();

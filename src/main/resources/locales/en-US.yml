@@ -227,11 +227,12 @@ commands:
       description: "get a player's rank on their island"
       rank-is: "&a Rank is [rank] on their island."
     setrank:
-      parameters: "<player> <rank>"
-      description: "set a player's rank on their island"
+      parameters: "<player> <rank> [island owner]"
+      description: "set a player's rank on their island or the island of the owner"
       unknown-rank: "&c Unknown rank!"
-      not-possible: "&c Rank must be higher than visitor"
-      rank-set: "&a Rank set from [from] to [to]."
+      not-possible: "&c Rank must be higher than visitor."
+      rank-set: "&a Rank set from &b [from] &a to &b [to] &a on &b [name]&a 's island."
+      name-not-owner: "&b [name] &c is not the owner of an island."
     setspawn:
       description: "set an island as spawn for this world"
       already-spawn: "&c This island is already a spawn!"
