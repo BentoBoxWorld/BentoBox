@@ -129,7 +129,12 @@ public class IslandEvent extends IslandBaseEvent {
          * The island was reserved and now is being pasted.
          * @since 1.6.0
          */
-        RESERVED
+        RESERVED,
+        /**
+         * The island protection range was changed.
+         * @since 1.11.0
+         */
+        RANGE_CHANGE
     }
 
     public static IslandEventBuilder builder() {
@@ -376,6 +381,77 @@ public class IslandEvent extends IslandBaseEvent {
         }
     }
 
+
+    /**
+     * Fired when island protection range is changed.
+     * @since 1.11.0
+     */
+    public static class IslandProtectionRangeChangeEvent extends IslandBanEvent {
+        /**
+         * New protection range value.
+         */
+        private int newRange;
+
+        /**
+         * Old protection range value.
+         */
+        private int oldRange;
+
+        /**
+         * Constructor IslandProtectionRangeChange creates a new IslandProtectionRangeChange instance.
+         *
+         * @param island of type Island
+         * @param player of type UUID
+         * @param admin of type boolean
+         * @param location of type Location
+         * @param newRange of type int
+         * @param oldRange of type int
+         */
+        private IslandProtectionRangeChangeEvent(Island island, UUID player, boolean admin, Location location, int newRange, int oldRange) {
+            super(island, player, admin, location);
+            this.newRange = newRange;
+            this.oldRange = oldRange;
+        }
+
+
+        /**
+         * This method returns the newRange value.
+         * @return the value of newRange.
+         */
+        public int getNewRange() {
+            return newRange;
+        }
+
+
+        /**
+         * This method returns the oldRange value.
+         * @return the value of oldRange.
+         */
+        public int getOldRange() {
+            return oldRange;
+        }
+
+
+        /**
+         * This method sets the newRange value.
+         * @param newRange the newRange new value.
+         */
+        public void setNewRange(int newRange) {
+            this.newRange = newRange;
+        }
+
+
+        /**
+         * This method sets the oldRange value.
+         * @param oldRange the oldRange new value.
+         */
+        public void setOldRange(int oldRange) {
+            this.oldRange = oldRange;
+        }
+    }
+
+
+
     public static class IslandEventBuilder {
         // Here field are NOT final. They are just used for the building.
         private Island island;
@@ -385,6 +461,16 @@ public class IslandEvent extends IslandBaseEvent {
         private Location location;
         private IslandDeletion deletedIslandInfo;
         private BlueprintBundle blueprintBundle;
+
+        /**
+         * Stores new protection range for island.
+         */
+        private int newRange;
+
+        /**
+         * Stores old protection range for island.
+         */
+        private int oldRange;
 
         public IslandEventBuilder island(Island island) {
             this.island = island;
@@ -437,6 +523,21 @@ public class IslandEvent extends IslandBaseEvent {
             this.blueprintBundle = blueprintBundle;
             return this;
         }
+
+
+        /**
+         * Allows to set new and old protection range.
+         * @param newRange New value of protection range.
+         * @param oldRange Old value of protection range.
+         * @since 1.11.0
+         */
+        @NonNull
+        public IslandEventBuilder protectionRange(int newRange, int oldRange) {
+            this.newRange = newRange;
+            this.oldRange = oldRange;
+            return this;
+        }
+
 
         public IslandBaseEvent build() {
             // Call the generic event for developers who just want one event and use the Reason enum
@@ -507,6 +608,11 @@ public class IslandEvent extends IslandBaseEvent {
                 IslandUnregisteredEvent unreg = new IslandUnregisteredEvent(island, player, admin, location);
                 Bukkit.getPluginManager().callEvent(unreg);
                 return unreg;
+            case RANGE_CHANGE:
+                IslandProtectionRangeChangeEvent
+					change = new IslandProtectionRangeChangeEvent(island, player, admin, location, newRange, oldRange);
+                Bukkit.getPluginManager().callEvent(change);
+                return change;
             default:
                 IslandGeneralEvent general = new IslandGeneralEvent(island, player, admin, location);
                 Bukkit.getPluginManager().callEvent(general);
