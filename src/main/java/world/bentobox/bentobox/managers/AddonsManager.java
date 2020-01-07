@@ -108,7 +108,7 @@ public class AddonsManager {
         plugin.getLocalesManager().loadLocalesFromFile(addon.getDescription().getName());
 
         // Fire the load event
-        new AddonEvent().builder().addon(addon).reason(AddonEvent.Reason.LOAD).build();
+        AddonEvent.builder().addon(addon).reason(AddonEvent.Reason.LOAD).build();
 
         // Add it to the list of addons
         addons.remove(addon);
@@ -176,7 +176,7 @@ public class AddonsManager {
                 gameMode.getPlayerCommand().ifPresent(c -> c.setWorld(gameMode.getOverWorld()));
                 gameMode.getAdminCommand().ifPresent(c -> c.setWorld(gameMode.getOverWorld()));
             }
-            new AddonEvent().builder().addon(addon).reason(AddonEvent.Reason.ENABLE).build();
+            AddonEvent.builder().addon(addon).reason(AddonEvent.Reason.ENABLE).build();
             addon.setState(Addon.State.ENABLED);
             plugin.log("Enabling " + addon.getDescription().getName() + "...");
         } catch (NoClassDefFoundError | NoSuchMethodError | NoSuchFieldError e) {
@@ -429,7 +429,7 @@ public class AddonsManager {
                 addon.getDescription().getAuthors().forEach(plugin::logError);
                 plugin.logStacktrace(e);
             }
-            new AddonEvent().builder().addon(addon).reason(AddonEvent.Reason.DISABLE).build();
+            AddonEvent.builder().addon(addon).reason(AddonEvent.Reason.DISABLE).build();
         }
         // Clear loaders
         if (loaders.containsKey(addon)) {
