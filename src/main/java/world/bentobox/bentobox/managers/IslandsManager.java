@@ -910,8 +910,8 @@ public class IslandsManager {
             // Island is off grid
             x = Math.round((double) x / distance) * distance + plugin.getIWM().getIslandXOffset(world);
             z = Math.round((double) z / distance) * distance + plugin.getIWM().getIslandZOffset(world);
+            island.setCenter(new Location(world, x, island.getCenter().getBlockY(), z));
         }
-        island.setCenter(new Location(world, x, island.getCenter().getBlockY(), z));
     }
 
     /**
