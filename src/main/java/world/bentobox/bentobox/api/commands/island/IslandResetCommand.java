@@ -9,7 +9,6 @@ import org.eclipse.jdt.annotation.NonNull;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
-import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.island.IslandEvent.Reason;
 import world.bentobox.bentobox.api.events.team.TeamEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
@@ -223,12 +222,11 @@ public class IslandResetCommand extends ConfirmableCommand {
             }
 
             // Fire event
-            IslandBaseEvent e = TeamEvent.builder()
-                    .island(island)
-                    .reason(TeamEvent.Reason.DELETE)
-                    .involvedPlayer(memberUUID)
-                    .build();
-            Bukkit.getPluginManager().callEvent(e);
+            TeamEvent.builder()
+            .island(island)
+            .reason(TeamEvent.Reason.DELETE)
+            .involvedPlayer(memberUUID)
+            .build();
         });
     }
 }

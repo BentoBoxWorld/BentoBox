@@ -286,7 +286,6 @@ public class IslandTeamInviteAcceptCommandTest {
         when(teb.build()).thenReturn(ibe);
         when(TeamEvent.builder()).thenReturn(teb);
         assertFalse(c.canExecute(user, "accept", Collections.emptyList()));
-        verify(pim).callEvent(any());
     }
 
     /**

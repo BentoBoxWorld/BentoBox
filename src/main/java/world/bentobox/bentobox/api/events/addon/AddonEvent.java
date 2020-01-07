@@ -3,6 +3,8 @@ package world.bentobox.bentobox.api.events.addon;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.bukkit.Bukkit;
+
 import world.bentobox.bentobox.api.addons.Addon;
 
 public class AddonEvent {
@@ -16,36 +18,36 @@ public class AddonEvent {
     }
 
 
-    public AddonEventBuilder builder() {
+    public static AddonEventBuilder builder() {
         return new AddonEventBuilder();
     }
 
-    public class AddonEnableEvent extends AddonBaseEvent {
+    public static class AddonEnableEvent extends AddonBaseEvent {
         private AddonEnableEvent(Addon addon, Map<String, Object> keyValues) {
             // Final variables have to be declared in the constructor
             super(addon, keyValues);
         }
     }
-    public class AddonDisableEvent extends AddonBaseEvent {
+    public static class AddonDisableEvent extends AddonBaseEvent {
         private AddonDisableEvent(Addon addon, Map<String, Object> keyValues) {
             // Final variables have to be declared in the constructor
             super(addon, keyValues);
         }
     }
-    public class AddonLoadEvent extends AddonBaseEvent {
+    public static class AddonLoadEvent extends AddonBaseEvent {
         private AddonLoadEvent(Addon addon, Map<String, Object> keyValues) {
             // Final variables have to be declared in the constructor
             super(addon, keyValues);
         }
     }
-    public class AddonGeneralEvent extends AddonBaseEvent {
+    public static class AddonGeneralEvent extends AddonBaseEvent {
         private AddonGeneralEvent(Addon addon, Map<String, Object> keyValues) {
             // Final variables have to be declared in the constructor
             super(addon, keyValues);
         }
     }
 
-    public class AddonEventBuilder {
+    public static class AddonEventBuilder {
         // Here field are NOT final. They are just used for the building.
         private Addon addon;
         private Reason reason = Reason.UNKNOWN;
@@ -71,7 +73,7 @@ public class AddonEvent {
             return this;
         }
 
-        public AddonBaseEvent build() {
+        private AddonBaseEvent getEvent() {
             switch (reason) {
             case ENABLE:
                 return new AddonEnableEvent(addon, keyValues);
@@ -82,6 +84,16 @@ public class AddonEvent {
             default:
                 return new AddonGeneralEvent(addon, keyValues);
             }
+        }
+        
+        /**
+         * Build and fire event
+         * @return event
+         */
+        public AddonBaseEvent build() {
+            AddonBaseEvent e = getEvent();
+            Bukkit.getPluginManager().callEvent(e);
+            return e;
         }
     }
 }

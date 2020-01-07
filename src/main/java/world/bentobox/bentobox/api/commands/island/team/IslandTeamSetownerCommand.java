@@ -8,7 +8,6 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
-import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.team.TeamEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
@@ -63,13 +62,12 @@ public class IslandTeamSetownerCommand extends CompositeCommand {
         }
         // Fire event so add-ons can run commands, etc.
         Island island = getIslands().getIsland(getWorld(), playerUUID);
-        IslandBaseEvent event = TeamEvent.builder()
+        if (TeamEvent.builder()
                 .island(island)
                 .reason(TeamEvent.Reason.SETOWNER)
                 .involvedPlayer(targetUUID)
-                .build();
-        Bukkit.getPluginManager().callEvent(event);
-        if (event.isCancelled()) {
+                .build()
+                .isCancelled()) {
             return false;
         }
         getIslands().setOwner(getWorld(), user, targetUUID);

@@ -20,11 +20,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.stubbing.Answer;
+import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
@@ -36,14 +37,14 @@ import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.RanksManager;
+import world.bentobox.bentobox.util.Util;
 
 /**
  * @author tastybento
  *
  */
-@Ignore("Sorry, I don't have the time to fix the tests right now.")
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, User.class })
+@PrepareForTest({Bukkit.class, BentoBox.class, Util.class})
 public class AdminSetrankCommandTest {
 
     @Mock
@@ -55,7 +56,6 @@ public class AdminSetrankCommandTest {
     @Mock
     private PlayersManager pm;
 
-    @Mock
     private RanksManager rm;
     private AdminSetrankCommand c;
 
@@ -71,6 +71,7 @@ public class AdminSetrankCommandTest {
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
 
         // Ranks Manager
+        rm = new RanksManager();
         when(plugin.getRanksManager()).thenReturn(rm);
 
         // Players Manager
@@ -84,7 +85,14 @@ public class AdminSetrankCommandTest {
         Player p = mock(Player.class);
         when(p.getUniqueId()).thenReturn(targetUUID);
         User.getInstance(p);
-
+        
+        // Online players
+        PowerMockito.mockStatic(Util.class);
+        when(Util.getOnlinePlayerList(any())).thenReturn(Collections.singletonList("tastybento"));
+        
+        // Translations
+        when(user.getTranslation(anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
+        
         // Command
         c = new AdminSetrankCommand(ac);
     }
@@ -153,7 +161,7 @@ public class AdminSetrankCommandTest {
     @Test
     public void testCanExecuteKnownPlayerNoIsland() {
         when(pm.getUUID(any())).thenReturn(targetUUID);
-        assertFalse(c.canExecute(user, "", Arrays.asList("tastybento", "member")));
+        assertFalse(c.canExecute(user, "", Arrays.asList("tastybento", "ranks.member")));
         verify(user).sendMessage("general.errors.player-has-no-island");
     }
 
@@ -175,9 +183,7 @@ public class AdminSetrankCommandTest {
     public void testCanExecuteKnownPlayerHasIslandTooLowRank() {
         when(pm.getUUID(any())).thenReturn(targetUUID);
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
-        when(rm.getRanks()).thenReturn(Collections.singletonMap("visitor", 0));
-        when(user.getTranslation(anyString())).thenReturn("visitor");
-        assertFalse(c.canExecute(user, "", Arrays.asList("tastybento", "visitor")));
+        assertFalse(c.canExecute(user, "", Arrays.asList("tastybento", "ranks.visitor")));
         verify(user).sendMessage("commands.admin.setrank.not-possible");
     }
 
@@ -188,9 +194,7 @@ public class AdminSetrankCommandTest {
     public void testCanExecuteKnownPlayerHasIslandSuccess() {
         when(pm.getUUID(any())).thenReturn(targetUUID);
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
-        when(rm.getRanks()).thenReturn(Collections.singletonMap("member", 500));
-        when(user.getTranslation(anyString())).thenReturn("member");
-        assertTrue(c.canExecute(user, "", Arrays.asList("tastybento", "member")));
+        assertTrue(c.canExecute(user, "", Arrays.asList("tastybento", "ranks.member")));
     }
 
 
@@ -204,28 +208,26 @@ public class AdminSetrankCommandTest {
         Island island = mock(Island.class);
         when(island.getRank(any())).thenReturn(RanksManager.SUB_OWNER_RANK);
         when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
-        when(user.getTranslation(any())).thenReturn("sub-owner", "member");
         assertTrue(c.execute(user, "", Arrays.asList("tastybento", "member")));
         verify(user).sendMessage(eq("commands.admin.setrank.rank-set"),
                 eq("[from]"),
-                eq("sub-owner"),
+                eq("ranks.sub-owner"),
                 eq("[to]"),
-                eq("member"));
+                eq("ranks.member"),
+                eq("[name]"),
+                eq(null));
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminSetrankCommand#tabComplete(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
-    @Ignore("NPE on Bukkit method")
     @Test
     public void testTabCompleteUserStringListOfString() {
-        when(rm.getRanks()).thenReturn(Collections.singletonMap("owner", 0));
-        when(user.getTranslation(any())).thenReturn("owner");
         Optional<List<String>> result = c.tabComplete(user, "", Arrays.asList("setrank", ""));
         assertTrue(result.isPresent());
         result.ifPresent(list -> {
             assertTrue(list.size() == 1);
-            assertEquals("owner", list.get(0));
+            assertEquals("tastybento", list.get(0));
         });
     }
 

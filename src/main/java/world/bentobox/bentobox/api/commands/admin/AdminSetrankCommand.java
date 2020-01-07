@@ -69,7 +69,7 @@ public class AdminSetrankCommand extends CompositeCommand {
             // We want to change the player's rank on the island he is part of.
 
             // Check if the target is part of an island
-            if (!getPlugin().getIslands().hasIsland(getWorld(), targetUUID) && !getPlugin().getIslands().inTeam(getWorld(), targetUUID)) {
+            if (!getIslands().hasIsland(getWorld(), targetUUID) && !getPlugin().getIslands().inTeam(getWorld(), targetUUID)) {
                 user.sendMessage("general.errors.player-has-no-island");
                 return false;
             }
@@ -96,9 +96,9 @@ public class AdminSetrankCommand extends CompositeCommand {
         User target = User.getInstance(targetUUID);
         Island island;
         if (ownerUUID != null) {
-            island = getPlugin().getIslands().getIsland(getWorld(), ownerUUID);
+            island = getIslands().getIsland(getWorld(), ownerUUID);
         } else {
-            island = getPlugin().getIslands().getIsland(getWorld(), targetUUID);
+            island = getIslands().getIsland(getWorld(), targetUUID);
         }
         int currentRank = island.getRank(target);
         island.setRank(target, rankValue);
