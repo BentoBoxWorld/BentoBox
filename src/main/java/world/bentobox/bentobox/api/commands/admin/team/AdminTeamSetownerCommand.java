@@ -3,10 +3,7 @@ package world.bentobox.bentobox.api.commands.admin.team;
 import java.util.List;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
-
 import world.bentobox.bentobox.api.commands.CompositeCommand;
-import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.team.TeamEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
@@ -55,13 +52,12 @@ public class AdminTeamSetownerCommand extends CompositeCommand {
         user.sendMessage("commands.admin.team.setowner.success", TextVariables.NAME, args.get(0));
         // Fire event so add-ons know
         Island island = getIslands().getIsland(getWorld(), targetUUID);
-        IslandBaseEvent event = TeamEvent.builder()
-                .island(island)
-                .reason(TeamEvent.Reason.SETOWNER)
-                .involvedPlayer(targetUUID)
-                .admin(true)
-                .build();
-        Bukkit.getPluginManager().callEvent(event);
+        TeamEvent.builder()
+        .island(island)
+        .reason(TeamEvent.Reason.SETOWNER)
+        .involvedPlayer(targetUUID)
+        .admin(true)
+        .build();
         return true;
     }
 }

@@ -7,7 +7,6 @@ import org.bukkit.Bukkit;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
-import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.team.TeamEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
@@ -121,11 +120,10 @@ public class IslandTeamLeaveCommand extends ConfirmableCommand {
         }
         user.sendMessage("commands.island.team.leave.success");
         // Fire event
-        IslandBaseEvent e = TeamEvent.builder()
-                .island(island)
-                .reason(TeamEvent.Reason.LEAVE)
-                .involvedPlayer(user.getUniqueId())
-                .build();
-        Bukkit.getPluginManager().callEvent(e);
+        TeamEvent.builder()
+        .island(island)
+        .reason(TeamEvent.Reason.LEAVE)
+        .involvedPlayer(user.getUniqueId())
+        .build();
     }
 }

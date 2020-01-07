@@ -3,6 +3,8 @@ package world.bentobox.bentobox.api.events.addon;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.bukkit.Bukkit;
+
 import world.bentobox.bentobox.api.addons.Addon;
 
 public class AddonEvent {
@@ -71,7 +73,7 @@ public class AddonEvent {
             return this;
         }
 
-        public AddonBaseEvent build() {
+        private AddonBaseEvent getEvent() {
             switch (reason) {
             case ENABLE:
                 return new AddonEnableEvent(addon, keyValues);
@@ -82,6 +84,16 @@ public class AddonEvent {
             default:
                 return new AddonGeneralEvent(addon, keyValues);
             }
+        }
+        
+        /**
+         * Build and fire event
+         * @return event
+         */
+        public AddonBaseEvent build() {
+            AddonBaseEvent e = getEvent();
+            Bukkit.getPluginManager().callEvent(e);
+            return e;
         }
     }
 }

@@ -7,7 +7,6 @@ import org.bukkit.Bukkit;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
-import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.team.TeamEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
@@ -126,12 +125,11 @@ public class IslandTeamKickCommand extends ConfirmableCommand {
         }
         user.sendMessage("commands.island.team.kick.success", TextVariables.NAME, target.getName());
         // Fire event
-        IslandBaseEvent e = TeamEvent.builder()
-                .island(oldIsland)
-                .reason(TeamEvent.Reason.KICK)
-                .involvedPlayer(targetUUID)
-                .build();
-        Bukkit.getPluginManager().callEvent(e);
+        TeamEvent.builder()
+        .island(oldIsland)
+        .reason(TeamEvent.Reason.KICK)
+        .involvedPlayer(targetUUID)
+        .build();
 
         // Add cooldown for this player and target
         if (getSettings().getInviteCooldown() > 0 && getParent() != null) {
