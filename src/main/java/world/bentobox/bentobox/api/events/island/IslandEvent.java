@@ -386,7 +386,7 @@ public class IslandEvent extends IslandBaseEvent {
      * Fired when island protection range is changed.
      * @since 1.11.0
      */
-    public static class IslandProtectionRangeChangeEvent extends IslandBanEvent {
+    public static class IslandProtectionRangeChangeEvent extends IslandBaseEvent {
         /**
          * New protection range value.
          */
