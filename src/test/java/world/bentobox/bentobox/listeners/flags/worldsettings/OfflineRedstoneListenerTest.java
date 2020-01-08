@@ -7,8 +7,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -23,6 +25,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -42,6 +45,8 @@ import world.bentobox.bentobox.util.Util;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({BentoBox.class, Util.class, Bukkit.class })
 public class OfflineRedstoneListenerTest {
+
+    private static final String[] NAMES = {"adam", "ben", "cara", "dave", "ed", "frank", "freddy", "george", "harry", "ian", "joe"};
 
     @Mock
     private World world;
@@ -100,6 +105,19 @@ public class OfflineRedstoneListenerTest {
         when(iwm.getAddon(any())).thenReturn(Optional.empty());
 
         PowerMockito.mockStatic(Bukkit.class);
+        // Online players
+        Set<Player> onlinePlayers = new HashSet<>();
+        for (int j = 0; j < NAMES.length; j++) {
+            Player p1 = mock(Player.class);
+            UUID u = UUID.randomUUID();
+            when(p1.getUniqueId()).thenReturn(u);
+            when(p1.getName()).thenReturn(NAMES[j]);
+            // All ops
+            when(p1.isOp()).thenReturn(true);
+            onlinePlayers.add(p1);
+        }        
+        when(Bukkit.getOnlinePlayers()).then((Answer<Set<Player>>) invocation -> onlinePlayers);
+
     }
 
     @After
@@ -150,12 +168,50 @@ public class OfflineRedstoneListenerTest {
         OfflineRedstoneListener orl = new OfflineRedstoneListener();
         // Offline redstone not allowed
         Flags.OFFLINE_REDSTONE.setSetting(world, false);
-        // Members are online
+        // Members are offline
         when(Bukkit.getPlayer(any(UUID.class))).thenReturn(null);
 
         orl.onBlockRedstone(e);
         // Current will be 0
         assertEquals(0, e.getNewCurrent());
+    }
+
+    /**
+     * Test method for {@link OfflineRedstoneListener#onBlockRedstone(BlockRedstoneEvent)}.
+     */
+    @Test
+    public void testOnBlockRedstoneMembersOfflineOpsOnlineNotOnIsland() {
+        // Make an event to give some current to block
+        BlockRedstoneEvent e = new BlockRedstoneEvent(block, 0, 10);
+        OfflineRedstoneListener orl = new OfflineRedstoneListener();
+        // Offline redstone not allowed
+        Flags.OFFLINE_REDSTONE.setSetting(world, false);
+        // Members are offline
+        when(Bukkit.getPlayer(any(UUID.class))).thenReturn(null);
+
+        orl.onBlockRedstone(e);
+        // Current will be 0
+        assertEquals(0, e.getNewCurrent());
+    }
+
+    /**
+     * Test method for {@link OfflineRedstoneListener#onBlockRedstone(BlockRedstoneEvent)}.
+     */
+    @Test
+    public void testOnBlockRedstoneMembersOfflineOpsOnlineOnIsland() {
+        // Make an event to give some current to block
+        BlockRedstoneEvent e = new BlockRedstoneEvent(block, 0, 10);
+        OfflineRedstoneListener orl = new OfflineRedstoneListener();
+        // Offline redstone not allowed
+        Flags.OFFLINE_REDSTONE.setSetting(world, false);
+        // Members are offline
+        when(Bukkit.getPlayer(any(UUID.class))).thenReturn(null);
+        // On island
+        when(island.onIsland(any())).thenReturn(true);
+
+        orl.onBlockRedstone(e);
+        // Current remains 10
+        assertEquals(10, e.getNewCurrent());
     }
 
     /**
