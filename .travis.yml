@@ -5,13 +5,8 @@ addons:
         organization: "bentobox-world"
 
 jdk:
-    - openjdk8
     - openjdk11
-    
-matrix:
-  allow_failures:
-    - jdk: openjdk11
-    
+        
 script:
     #- sonar-scanner
     - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=BentoBoxWorld_BentoBox
