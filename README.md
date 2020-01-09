@@ -42,7 +42,7 @@ There are also plenty of other official or community-made Addons you can try and
 ## Downloads
 
 ### Webtool
-A [webtool](https://bentobox-tool.herokuapp.com/) is currently being developed to allow you to easily setup BentoBox and Addons on your server.
+A [webtool](https://bentobox.cleverapps.io/) is currently being developed to allow you to easily setup BentoBox and Addons on your server.
 
 ### Direct links
 * [Download](https://github.com/BentoBoxWorld/BentoBox/releases)
