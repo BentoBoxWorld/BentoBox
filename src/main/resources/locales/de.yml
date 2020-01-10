@@ -1,0 +1,10 @@
+---
+meta:
+  authors:
+  - xXjojojXx
+  banner: RED_BANNER:1:STRIPE_RIGHT:BLACK:LEFT_STRIPE:YELLOW
+commands:
+  admin:
+    setrank:
+      parameters: "<player> <rank> [Insels Besitzer]"
+      name-not-owner: "&b [name] &c ist nicht der Besitzer einer Insel. "
