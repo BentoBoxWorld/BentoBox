@@ -12,6 +12,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityPortalEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
 
 import world.bentobox.bentobox.BentoBox;
@@ -121,7 +122,10 @@ public class PortalTeleportationListener implements Listener {
             return true;
         }
 
-        // Else other worlds teleport to the nether
+        // Else other worlds teleport to the end
+        // Set player's velocity to zero
+        e.getPlayer().setVelocity(new Vector(0,0,0));
+        // Teleport
         new SafeSpotTeleport.Builder(plugin)
         .entity(e.getPlayer())
         .location(to)
