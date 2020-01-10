@@ -106,6 +106,8 @@ commands:
         success: "&a Inselschutzbereich einstellen auf &b [number]&a ."
       reset:
         parameters: "<player>"
+        description: Setzt den inselgeschützten Bereich auf den Weltstandard zurück
+        success: "& a Setzen Sie den Inselschutzbereich auf & b [Nummer] & a zurück."
       invalid-value:
         too-low: "&c Der Schutzbereich muss größer sein als &b 1&c !"
         too-high: "&c Der Schutzbereich sollte gleich groß oder kleiner sein als &b
