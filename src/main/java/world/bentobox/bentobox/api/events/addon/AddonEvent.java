@@ -18,7 +18,16 @@ public class AddonEvent {
     }
 
 
-    public static AddonEventBuilder builder() {
+    /**
+     * @return Addon event builder
+     * @deprecated Use static Builder instead
+     */
+    @Deprecated
+    public AddonEventBuilder builder() {
+        return new AddonEventBuilder();
+    }
+
+    public static AddonEventBuilder Builder() {
         return new AddonEventBuilder();
     }
 
@@ -85,7 +94,7 @@ public class AddonEvent {
                 return new AddonGeneralEvent(addon, keyValues);
             }
         }
-        
+
         /**
          * Build and fire event
          * @return event
