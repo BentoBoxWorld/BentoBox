@@ -37,7 +37,8 @@ public class EnterExitListener extends FlagListener {
 
     private void handleEnterExit(@NonNull User user, @NonNull Location from, @NonNull Location to) {
         // Only process if there is a change in X or Z coords
-        if (from.getWorld().equals(to.getWorld()) && from.toVector().multiply(XZ).equals(to.toVector().multiply(XZ))) {
+        if (from.getWorld() != null && from.getWorld().equals(to.getWorld())
+                && from.toVector().multiply(XZ).equals(to.toVector().multiply(XZ))) {
             return;
         }
 
