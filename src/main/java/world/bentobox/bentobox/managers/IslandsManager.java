@@ -931,7 +931,7 @@ public class IslandsManager {
     }
 
     /**
-     * Checks if an online player is in the protected area of an island he owns or he is part of. i.e. rank is > VISITOR_RANK
+     * Checks if an online player is in the protected area of an island he owns or he is part of. i.e. rank is greater than VISITOR_RANK
      *
      * @param world the World to check. Typically this is the user's world. Does not check nether or end worlds. If null the method will always return {@code false}.
      * @param user the User to check, if null or if this is not a Player the method will always return {@code false}.

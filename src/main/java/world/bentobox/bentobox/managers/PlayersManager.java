@@ -273,7 +273,7 @@ public class PlayersManager {
     }
 
     /**
-     * Sets the player's name and updates the name>UUID database
+     * Sets the player's name and updates the name to UUID database
      * @param user - the User
      */
     public void setPlayerName(@NonNull User user) {
