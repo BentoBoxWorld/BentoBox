@@ -141,6 +141,7 @@ public class BlueprintsManager {
      *
      * @param addon the {@link GameModeAddon} to get the blueprint bundles.
      */
+    @NonNull
     public Map<String, BlueprintBundle> getBlueprintBundles(@NonNull GameModeAddon addon) {
         if (!blueprintBundles.containsKey(addon)) {
             return new HashMap<>();
@@ -154,6 +155,7 @@ public class BlueprintsManager {
      * @return the default blueprint bundle or null if none
      * @since 1.8.0
      */
+    @Nullable
     public BlueprintBundle getDefaultBlueprintBundle(@NonNull GameModeAddon addon) {
         if (blueprintBundles.containsKey(addon)) {
             return blueprintBundles.get(addon).stream().filter(bb -> bb.getUniqueId().equals(DEFAULT_BUNDLE_NAME)).findFirst().orElse(null);
