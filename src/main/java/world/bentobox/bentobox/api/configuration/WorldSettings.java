@@ -276,7 +276,7 @@ public interface WorldSettings extends ConfigObject {
     boolean isOnLeaveResetXP();
 
     /**
-     * Returns a list of commands that should be executed when the player leaves an island or resets one.<br/>
+     * Returns a list of commands that should be executed when the player leaves an island, resets his island or gets kicked from it.<br/>
      * These commands are executed by the console, unless otherwise stated using the {@code [SUDO]} prefix, in which case they are executed by the player.<br/>
      * <br/>
      * Available placeholders for the commands are the following:
