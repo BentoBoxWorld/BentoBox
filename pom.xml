@@ -321,10 +321,9 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
                 <configuration>
-                    <!-- To build with Java 9+ use <release>8</release> here 
-                        instead of source and target tags -->
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
+                    <!-- To build with Java 8 use <source>${java.version}</source> 
+                        <target>${java.version}</target> -->
+                    <release>8</release>
                 </configuration>
             </plugin>
             <plugin>
@@ -345,8 +344,8 @@
                     <show>private</show>
                     <failOnError>false</failOnError>
                     <additionalJOption>-Xdoclint:none</additionalJOption>
-                    <!-- To compile with Java 11, this tag may be required -->
-                    <!-- <javadocExecutable>${java.home}/bin/javadoc</javadocExecutable> -->
+                    <!-- To compile with Java 8, remove this tag -->
+                    <javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
                     <source>8</source>
                 </configuration>
                 <executions>
