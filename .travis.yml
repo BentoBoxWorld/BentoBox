@@ -5,7 +5,7 @@ addons:
         organization: "bentobox-world"
 
 jdk:
-    - openjdk11
+    - openjdk8
         
 script:
     #- sonar-scanner

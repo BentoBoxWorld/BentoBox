@@ -63,7 +63,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>8</java.version>
+        <java.version>1.8</java.version>
         <!-- Non-minecraft related dependencies -->
         <powermock.version>2.0.4</powermock.version>
         <mongodb.version>3.8.0</mongodb.version>
@@ -321,7 +321,9 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
                 <configuration>
-                    <release>${java.version}</release>
+                    <!-- To build with Java 9+ use <release>8</release> here instead of source and target tags -->
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -342,7 +344,8 @@
                     <show>private</show>
                     <failOnError>false</failOnError>
                     <additionalJOption>-Xdoclint:none</additionalJOption>
-                    <javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
+                    <!-- To compile with Java 11, this tag may be required -->
+                    <!-- <javadocExecutable>${java.home}/bin/javadoc</javadocExecutable> -->
                     <source>8</source>
                 </configuration>
                 <executions>
