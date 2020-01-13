@@ -321,7 +321,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
                 <configuration>
-                    <!-- To build with Java 9+ use <release>8</release> here instead of source and target tags -->
+                    <!-- To build with Java 9+ use <release>8</release> here 
+                        instead of source and target tags -->
                     <source>${java.version}</source>
                     <target>${java.version}</target>
                 </configuration>
@@ -351,6 +352,7 @@
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>
+                        <phase>install</phase>
                         <goals>
                             <goal>jar</goal>
                         </goals>
@@ -364,6 +366,7 @@
                 <executions>
                     <execution>
                         <id>attach-sources</id>
+                        <phase>install</phase>
                         <goals>
                             <goal>jar-no-fork</goal>
                         </goals>
