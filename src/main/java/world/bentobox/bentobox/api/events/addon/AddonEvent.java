@@ -20,43 +20,37 @@ public class AddonEvent {
 
     /**
      * @return Addon event builder
-     * @deprecated Use static Builder instead
      */
-    @Deprecated
     public AddonEventBuilder builder() {
         return new AddonEventBuilder();
     }
 
-    public static AddonEventBuilder Builder() {
-        return new AddonEventBuilder();
-    }
-
-    public static class AddonEnableEvent extends AddonBaseEvent {
+    public class AddonEnableEvent extends AddonBaseEvent {
         private AddonEnableEvent(Addon addon, Map<String, Object> keyValues) {
             // Final variables have to be declared in the constructor
             super(addon, keyValues);
         }
     }
-    public static class AddonDisableEvent extends AddonBaseEvent {
+    public class AddonDisableEvent extends AddonBaseEvent {
         private AddonDisableEvent(Addon addon, Map<String, Object> keyValues) {
             // Final variables have to be declared in the constructor
             super(addon, keyValues);
         }
     }
-    public static class AddonLoadEvent extends AddonBaseEvent {
+    public class AddonLoadEvent extends AddonBaseEvent {
         private AddonLoadEvent(Addon addon, Map<String, Object> keyValues) {
             // Final variables have to be declared in the constructor
             super(addon, keyValues);
         }
     }
-    public static class AddonGeneralEvent extends AddonBaseEvent {
+    public class AddonGeneralEvent extends AddonBaseEvent {
         private AddonGeneralEvent(Addon addon, Map<String, Object> keyValues) {
             // Final variables have to be declared in the constructor
             super(addon, keyValues);
         }
     }
 
-    public static class AddonEventBuilder {
+    public class AddonEventBuilder {
         // Here field are NOT final. They are just used for the building.
         private Addon addon;
         private Reason reason = Reason.UNKNOWN;
