@@ -9,6 +9,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.Collections;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -23,6 +24,7 @@ import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.util.Vector;
+import org.eclipse.jdt.annotation.Nullable;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -36,8 +38,13 @@ import org.powermock.reflect.Whitebox;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
+import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.blueprints.Blueprint;
+import world.bentobox.bentobox.blueprints.BlueprintPaster;
+import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.managers.BlueprintsManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
@@ -49,7 +56,7 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, User.class, Util.class })
+@PrepareForTest({Bukkit.class, BentoBox.class, User.class, Util.class, BlueprintPaster.class })
 public class PortalTeleportationListenerTest {
 
     @Mock
@@ -67,6 +74,10 @@ public class PortalTeleportationListenerTest {
     private World end;
     @Mock
     private Player p;
+    @Mock
+    private BlueprintsManager bpm;
+    @Mock
+    private GameModeAddon gameModeAddon;
 
     @Before
     public void setUp() throws Exception {
@@ -141,7 +152,20 @@ public class PortalTeleportationListenerTest {
         Util.setPlugin(plugin);
 
         // Addon
-        when(iwm.getAddon(any())).thenReturn(Optional.empty());
+        Optional<GameModeAddon> opAddon = Optional.of(gameModeAddon);
+        when(iwm.getAddon(any())).thenReturn(opAddon);
+        
+        // Blueprints
+        when(plugin.getBlueprintsManager()).thenReturn(bpm);
+        @Nullable
+        BlueprintBundle defaultBB = new BlueprintBundle();
+        Blueprint bp = new Blueprint();
+        bp.setName("blueprintname");
+        defaultBB.setBlueprint(World.Environment.NETHER, bp);
+        defaultBB.setBlueprint(World.Environment.THE_END, bp);
+        when(bpm.getDefaultBlueprintBundle(any())).thenReturn(defaultBB);        
+        when(bpm.getBlueprints(any())).thenReturn(Collections.singletonMap("blueprintname", bp));
+        // Paster
 
     }
 
@@ -328,6 +352,63 @@ public class PortalTeleportationListenerTest {
         verify(from).toVector();
         // Do not go to spawn
         verify(nether, never()).getSpawnLocation();
+    }
+    
+    /**
+     * Test method for {@link PortalTeleportationListener#onNetherPortal(org.bukkit.event.player.PlayerPortalEvent)}.
+     */
+    @Test
+    public void testOnNetherPortalFromWorldToNetherIslandPasteBlueprintError() {
+        PortalTeleportationListener np = new PortalTeleportationListener(plugin);
+        Location from = mock(Location.class);
+        // Teleport from world to nether
+        when(from.getWorld()).thenReturn(world);
+        when(from.toVector()).thenReturn(new Vector(1,2,3));
+        PlayerPortalEvent e = new PlayerPortalEvent(null, from, null, TeleportCause.NETHER_PORTAL);
+        // Nether islands active
+        when(iwm.isNetherIslands(any())).thenReturn(true);
+        when(iwm.isNetherGenerate(any())).thenReturn(true);
+        // Paste
+        when(iwm.isPasteMissingIslands(any())).thenReturn(true);
+        Island isle = mock(Island.class);
+        when(isle.getWorld()).thenReturn(world);
+        when(isle.hasEndIsland()).thenReturn(false);
+        Optional<Island> island = Optional.of(isle );
+        when(im.getIslandAt(any())).thenReturn(island);
+        // No bp
+        when(bpm.getBlueprints(any())).thenReturn(Collections.emptyMap());
+        // Test
+        assertTrue(np.onNetherPortal(e));
+        // Error
+        verify(plugin).logError(eq("Could not paste default island in nether or end. Is there a nether-island or end-island blueprint?"));
+    }
+    
+    /**
+     * Test method for {@link PortalTeleportationListener#onNetherPortal(org.bukkit.event.player.PlayerPortalEvent)}.
+     */
+    @Test
+    public void testOnNetherPortalFromWorldToNetherIslandPasteBlueprint() {
+        PortalTeleportationListener np = new PortalTeleportationListener(plugin);
+        Location from = mock(Location.class);
+        // Teleport from world to nether
+        when(from.getWorld()).thenReturn(world);
+        when(from.toVector()).thenReturn(new Vector(1,2,3));
+        PlayerPortalEvent e = new PlayerPortalEvent(null, from, null, TeleportCause.NETHER_PORTAL);
+        // Nether islands active
+        when(iwm.isNetherIslands(any())).thenReturn(true);
+        when(iwm.isNetherGenerate(any())).thenReturn(true);
+        // Paste
+        when(iwm.isPasteMissingIslands(any())).thenReturn(true);
+        Island isle = mock(Island.class);
+        when(isle.getWorld()).thenReturn(world);
+        when(isle.getCenter()).thenReturn(from);
+        when(isle.hasEndIsland()).thenReturn(false);
+        Optional<Island> island = Optional.of(isle );
+        when(im.getIslandAt(any())).thenReturn(island);
+        // Test
+        assertTrue(np.onNetherPortal(e));
+        // Error
+        verify(plugin, never()).logError(eq("Could not paste default island in nether or end. Is there a nether-island or end-island blueprint?"));
     }
 
     /**
