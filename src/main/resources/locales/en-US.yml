@@ -834,8 +834,10 @@ protection:
       description: "Display entry and exit messages"
       island: "[name]'s island"
       name: "Enter/Exit messages"
-      now-entering: "&b Now entering [name]"
-      now-leaving: "&b Now leaving [name]"
+      now-entering: "&a Now entering &b [name]&a ."
+      now-entering-your-island: "&a Now entering your island."
+      now-leaving: "&a Now leaving &b [name]&a ."
+      now-leaving-your-island: "&a Now leaving your island."
     EXPERIENCE_BOTTLE_THROWING:
       name: "Experience bottle throwing"
       description: "Toggle throwing experience bottles."

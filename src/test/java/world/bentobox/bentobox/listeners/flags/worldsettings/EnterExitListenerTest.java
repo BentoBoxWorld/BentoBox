@@ -14,6 +14,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -136,6 +138,7 @@ public class EnterExitListenerTest {
         when(island.getCenter()).thenReturn(loc);
         when(island.getProtectionRange()).thenReturn(PROTECTION_RANGE);
         when(island.getOwner()).thenReturn(uuid);
+        when(island.getMemberSet()).thenReturn(ImmutableSet.of(uuid));
         when(island.isOwned()).thenReturn(true);
 
         when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
@@ -376,4 +379,5 @@ public class EnterExitListenerTest {
         verify(pim).callEvent(any(IslandExitEvent.class));
     }
 
+    // TODO add tests to make sure the enter/exit messages work properly when on an island the player is part of.
 }
