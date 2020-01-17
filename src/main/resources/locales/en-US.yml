@@ -52,20 +52,20 @@ commands:
     resets:
       description: "edit resets of the players"
       set:
-        description: "sets the resets of this player"
+        description: "sets how many time this player reset his island"
         parameters: "<player> <resets>"
         success: "&a Successfully set &b [name]&a 's resets to &b [number]&a ."
       reset:
-        description: "resets the resets of this player to 0"
+        description: "resets how many time this player reset his island to 0"
         parameters: "<player>"
         success-everyone: "&a Successfully reset &b everyone&a 's resets to &b 0&a ."
         success: "&a Successfully reset &b [name]&a 's resets to &b 0&a ."
       add:
-        description: "adds resets to the player"
+        description: "adds to how many times this player reset his island"
         parameters: "<player> <resets>"
         success: "&a Successfully added &b [number] &a resets to &b [name], increasing the total to &b [total]&a  resets."
       remove:
-        description: "removes resets to the player"
+        description: "removes from how many times this player reset his island"
         parameters: "<player> <resets>"
         success: "&a Successfully removed &b [number] &a resets to &b [name], decreasing the total to &b [total]&a  resets."
     purge:
