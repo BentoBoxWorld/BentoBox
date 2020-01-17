@@ -23,7 +23,18 @@ public class PostgreSQLDatabaseHandler<T> extends SQLDatabaseHandler<T> {
      * @param databaseConnector Contains the settings to create a connection to the database
      */
     PostgreSQLDatabaseHandler(BentoBox plugin, Class<T> type, DatabaseConnector databaseConnector) {
-        super(plugin, type, databaseConnector, new SQLConfiguration(type.getCanonicalName()));
-    }
+        super(plugin, type, databaseConnector, new SQLConfiguration(type.getCanonicalName())
+                .schema("CREATE TABLE IF NOT EXISTS `" + type.getCanonicalName() 
+                        + "` (uniqueId VARCHAR(255) NOT NULL PRIMARY KEY, json json NOT NULL)")
+                .saveObject("INSERT INTO `" + type.getCanonicalName() + "` (json) VALUES (?) ON CONFLICT (uniqueId) DO UPDATE " +
+                        "SET json = ?")
+                );
+        /*
+         * TODO complete
+        saveObjectSQL = "INSERT INTO `" + canonicalName + "` (json) VALUES (?) ON DUPLICATE KEY UPDATE json = ?";
+        deleteObjectSQL = "DELETE FROM `" + canonicalName + "` WHERE uniqueId = ?";
+        objectExistsSQL = "SELECT IF ( EXISTS( SELECT * FROM `" + canonicalName + "` WHERE `uniqueId` = ?), 1, 0)";
+    */
+        }
 
 }
