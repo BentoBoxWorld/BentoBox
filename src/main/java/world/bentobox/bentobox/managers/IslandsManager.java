@@ -1105,8 +1105,21 @@ public class IslandsManager {
                     target.sendMessage("commands.admin.setrange.range-updated", TextVariables.NUMBER, String.valueOf(range));
                     plugin.log("Setowner: Island protection range changed from " + island.getProtectionRange() + " to "
                             + range + " for " + user.getName() + " due to permission.");
+
+                    // Get old range for event
+                    int oldRange = island.getProtectionRange();
+                    island.setProtectionRange(range);
+
+                    // Call Protection Range Change event. Does not support cancelling.
+                    IslandEvent.builder()
+                        .island(island)
+                        .location(island.getCenter())
+                        .reason(IslandEvent.Reason.RANGE_CHANGE)
+                        .involvedPlayer(targetUUID)
+                        .admin(true)
+                        .protectionRange(range, oldRange)
+                        .build();
                 }
-                island.setProtectionRange(range);
             }
         });
     }

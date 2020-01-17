@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
+import world.bentobox.bentobox.api.events.island.IslandEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
@@ -46,9 +47,25 @@ public class AdminRangeResetCommand extends CompositeCommand {
         // Get island
         Island island = getIslands().getIsland(getWorld(), targetUUID);
 
+        // Get old range for event
+        int oldRange = island.getProtectionRange();
+
         // Reset the protection range
         int range = getIWM().getIslandProtectionRange(getWorld());
         island.setProtectionRange(range);
+
+        if (oldRange != range) {
+            // Call Protection Range Change event. Does not support cancelling.
+            IslandEvent.builder()
+                .island(island)
+                .location(island.getCenter())
+                .reason(IslandEvent.Reason.RANGE_CHANGE)
+                .involvedPlayer(targetUUID)
+                .admin(true)
+                .protectionRange(range, oldRange)
+                .build();
+        }
+
         user.sendMessage("commands.admin.range.reset.success", TextVariables.NUMBER, String.valueOf(range));
 
         return true;
