@@ -803,7 +803,7 @@ protection:
     DYE:
       description: "Prevent dye use"
       name: "Dye use"
-      hint: "Dying disabled"
+      hint: "Dyeing disabled"
     EGGS: 
       description: "Toggle egg throwing"
       name: "Egg throwing"
