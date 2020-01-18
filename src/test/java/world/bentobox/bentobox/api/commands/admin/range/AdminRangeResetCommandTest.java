@@ -15,11 +15,13 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
@@ -51,6 +53,8 @@ public class AdminRangeResetCommandTest {
     private User user;
     private IslandsManager im;
     private PlayersManager pm;
+    @Mock
+    private PluginManager pim;
 
 
     /**
@@ -113,6 +117,7 @@ public class AdminRangeResetCommandTest {
         BukkitScheduler sch = mock(BukkitScheduler.class);
         PowerMockito.mockStatic(Bukkit.class);
         when(Bukkit.getScheduler()).thenReturn(sch);
+        when(Bukkit.getPluginManager()).thenReturn(pim);
 
         // Locales
         LocalesManager lm = mock(LocalesManager.class);

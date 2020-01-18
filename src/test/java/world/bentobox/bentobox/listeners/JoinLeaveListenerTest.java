@@ -27,6 +27,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.permissions.PermissionAttachmentInfo;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.eclipse.jdt.annotation.Nullable;
 import org.junit.After;
@@ -96,6 +97,8 @@ public class JoinLeaveListenerTest {
     private @Nullable Island island;
     @Mock
     private GameModeAddon gameMode;
+    @Mock
+    private PluginManager pim;
 
     /**
      * @throws java.lang.Exception
@@ -166,6 +169,8 @@ public class JoinLeaveListenerTest {
         // Bukkit
         PowerMockito.mockStatic(Bukkit.class);
         when(Bukkit.getScheduler()).thenReturn(scheduler);
+
+        when(Bukkit.getPluginManager()).thenReturn(pim);
 
         // Bukkit - online players
         Map<UUID, String> online = new HashMap<>();
