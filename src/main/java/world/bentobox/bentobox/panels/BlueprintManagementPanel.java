@@ -61,9 +61,15 @@ public class BlueprintManagementPanel {
         this.plugin = plugin;
         this.user = user;
         this.addon = addon;
-        normalBlueprint = new Blueprint().setIcon(Material.GREEN_STAINED_GLASS_PANE).setName(t("normal")).setDescription(t(INSTRUCTION));
-        netherBlueprint = new Blueprint().setIcon(Material.RED_STAINED_GLASS_PANE).setName(t("nether")).setDescription(t(INSTRUCTION));
-        endBlueprint = new Blueprint().setIcon(Material.YELLOW_STAINED_GLASS_PANE).setName(t("end")).setDescription(t(INSTRUCTION));
+        normalBlueprint = new Blueprint().setIcon(Material.GREEN_STAINED_GLASS_PANE)
+                .setName(user.getTranslation("general.worlds.overworld"))
+                .setDescription(t(INSTRUCTION));
+        netherBlueprint = new Blueprint().setIcon(Material.RED_STAINED_GLASS_PANE)
+                .setName(user.getTranslation("general.worlds.nether"))
+                .setDescription(t(INSTRUCTION));
+        endBlueprint = new Blueprint().setIcon(Material.YELLOW_STAINED_GLASS_PANE)
+                .setName(user.getTranslation("general.worlds.the-end"))
+                .setDescription(t(INSTRUCTION));
         slotToEnvironment = ImmutableMap.of(3, World.Environment.NORMAL, 5, World.Environment.NETHER, 7, World.Environment.THE_END);
         environmentToBlueprint = ImmutableMap.of(World.Environment.NORMAL, normalBlueprint, World.Environment.NETHER, netherBlueprint, World.Environment.THE_END, endBlueprint);
     }

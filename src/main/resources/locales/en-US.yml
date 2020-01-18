@@ -36,6 +36,10 @@ general:
     must-be-positive-number: "&c [number] is not a valid positive number."
   tips:
     changing-obsidian-to-lava: "Changing obsidian back into lava. Be careful!"
+  worlds:
+    overworld: "Overworld"
+    nether: "Nether"
+    the-end: "The End"
 
 commands:
   # Parameters in <> are required, parameters in [] are optional
@@ -298,9 +302,6 @@ commands:
       management:
         back: "Back"
         instruction: "Click on blueprint then click here"
-        normal: "Normal"
-        nether: "Nether"
-        end: "The End"
         title: "Blueprint Bundle Manager"
         edit: "Click to edit"
         rename: "Right-click to rename"
