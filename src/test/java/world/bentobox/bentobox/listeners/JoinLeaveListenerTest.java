@@ -297,8 +297,8 @@ public class JoinLeaveListenerTest {
         jll.onPlayerJoin(event);
         // Verify
         verify(player, never()).sendMessage(eq("commands.admin.setrange.range-updated"));
-        // Verify island setting
-        verify(island).setProtectionRange(eq(50));
+        // Verify that the island protection range is not changed if it is already at that value
+        verify(island, never()).setProtectionRange(eq(50));
         // Verify log
         verify(plugin, never()).log("Island protection range changed from 50 to 10 for tastybento due to permission.");
     }
