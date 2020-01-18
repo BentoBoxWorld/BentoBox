@@ -117,6 +117,16 @@ public class AddonsManager {
         // Add to the list of loaders
         loaders.put(addon, addonClassLoader);
 
+        // Checks if this addon is compatible with the current BentoBox version.
+        if (!isAddonCompatibleWithBentoBox(addon)) {
+            // It is not, abort.
+            plugin.logWarning("Skipping " + addon.getDescription().getName() + " as it can only run on a more recent BentoBox version.");
+            plugin.logWarning("NOTE: The addon relies on API that is not available in the BentoBox version you are using.");
+            plugin.logWarning("NOTE: Please update BentoBox.");
+            addon.setState(State.INCOMPATIBLE);
+            return;
+        }
+
         try {
             // Run the onLoad.
             addon.onLoad();
@@ -202,6 +212,32 @@ public class AddonsManager {
         plugin.log("Skipping " + addon.getDescription().getName() + " as it is incompatible with the current version of BentoBox or of server software...");
         plugin.log("NOTE: The addon is referring to no longer existing classes.");
         plugin.log("NOTE: DO NOT report this as a bug from BentoBox.");
+    }
+
+    /**
+     * Checks if the addon does not explicitly rely on API from a more recent BentoBox version.
+     * @param addon instance of the Addon.
+     * @return {@code true} if the addon relies on available BentoBox API, {@code false} otherwise.
+     * @since 1.11.0
+     */
+    private boolean isAddonCompatibleWithBentoBox(@NonNull Addon addon) {
+        // We have to use lists instead of arrays for dynamic changes and optimization (appending something to an array is O(n) whereas O(1) with lists).
+        List<String> apiVersion = Arrays.asList(addon.getDescription().getApiVersion().split("\\."));
+        List<String> bentoboxVersion = Arrays.asList(plugin.getDescription().getVersion().split("\\."));
+
+        while (bentoboxVersion.size() < apiVersion.size()) {
+            bentoboxVersion.add("0");
+        }
+
+        for (int i = 0; i < apiVersion.size(); i++) {
+            int apiNumber = Integer.parseInt(apiVersion.get(i));
+            int bentoboxNumber = Integer.parseInt(bentoboxVersion.get(i));
+            if (bentoboxNumber < apiNumber) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
