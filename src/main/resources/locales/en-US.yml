@@ -25,6 +25,7 @@ general:
     already-have-island: "&c You already have an island!"
     no-safe-location-found: "&c Could not find a safe spot to teleport you to on the island."
     not-owner: "&c You are not the owner of the island!"
+    player-is-not-owner: "&b [name] &c is not the owner of an island!"
     not-in-team: "&c That player is not in your team!"
     offline-player: "&c That player is offline or doesn't exist."
     unknown-player: "&c [name] is an unknown player!"
@@ -223,16 +224,15 @@ commands:
       description: "teleport to a player's island"
       manual: "&c No safe warp found! Manually tp near to &b [location] &c and check it out"
     getrank:
-      parameters: "<player>"
-      description: "get a player's rank on their island"
-      rank-is: "&a Rank is [rank] on their island."
+      parameters: "<player> [island owner]"
+      description: "get a player's rank on their island or the island of the owner"
+      rank-is: "&a Rank is &b [rank] &a on &b [name]&a 's island."
     setrank:
       parameters: "<player> <rank> [island owner]"
       description: "set a player's rank on their island or the island of the owner"
       unknown-rank: "&c Unknown rank!"
       not-possible: "&c Rank must be higher than visitor."
       rank-set: "&a Rank set from &b [from] &a to &b [to] &a on &b [name]&a 's island."
-      name-not-owner: "&b [name] &c is not the owner of an island."
     setspawn:
       description: "set an island as spawn for this world"
       already-spawn: "&c This island is already a spawn!"

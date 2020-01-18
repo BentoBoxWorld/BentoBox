@@ -83,7 +83,7 @@ public class AdminSetrankCommand extends CompositeCommand {
             }
 
             if (!getPlugin().getIslands().hasIsland(getWorld(), ownerUUID)) {
-                user.sendMessage("commands.admin.setrank.name-not-owner", TextVariables.NAME, args.get(2));
+                user.sendMessage("general.errors.player-is-not-owner", TextVariables.NAME, args.get(2));
                 return false;
             }
         }
