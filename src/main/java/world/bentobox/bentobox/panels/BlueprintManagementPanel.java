@@ -169,7 +169,7 @@ public class BlueprintManagementPanel {
         });
 
         for (int i = 9; i < 18; i++) {
-            pb.item(i, new PanelItemBuilder().icon(Material.BLACK_STAINED_GLASS_PANE).name("-").build());
+            pb.item(i, new PanelItemBuilder().icon(Material.BLACK_STAINED_GLASS_PANE).name(" ").build());
         }
         blueprints.entrySet().stream().limit(18).forEach(b -> pb.item(getBlueprintItem(addon, b.getKey(), bb, b.getValue())));
         // Buttons for non-default bundle
@@ -244,10 +244,16 @@ public class BlueprintManagementPanel {
     }
 
     private PanelItem getWorldInstrTile(Environment env) {
+        Material icon;
+        if (env.equals(Environment.NORMAL)) icon = Material.GRASS_BLOCK;
+        else if (env.equals(Environment.NETHER)) icon = Material.NETHERRACK;
+        else icon = Material.END_STONE;
+
         return new PanelItemBuilder()
                 .name(t("world-name-syntax", TextVariables.NAME, Util.prettifyText(env.name())))
                 .description(t("world-instructions"))
-                .icon(Material.GRAY_STAINED_GLASS_PANE)
+                .glow(true)
+                .icon(icon)
                 .build();
     }
 
