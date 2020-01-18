@@ -120,9 +120,8 @@ public class AddonsManager {
         // Checks if this addon is compatible with the current BentoBox version.
         if (!isAddonCompatibleWithBentoBox(addon)) {
             // It is not, abort.
-            plugin.logWarning("Skipping " + addon.getDescription().getName() + " as it can only run on a more recent BentoBox version.");
-            plugin.logWarning("NOTE: The addon relies on API that is not available in the BentoBox version you are using.");
-            plugin.logWarning("NOTE: Please update BentoBox.");
+            plugin.logError("Cannot load " + addon.getDescription().getName() + " because it requires BentoBox version " + addon.getDescription().getApiVersion() + " or greater.");
+            plugin.logError("NOTE: Please update BentoBox.");
             addon.setState(State.INCOMPATIBLE);
             return;
         }
