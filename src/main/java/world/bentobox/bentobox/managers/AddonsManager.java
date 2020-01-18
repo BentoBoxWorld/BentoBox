@@ -209,9 +209,9 @@ public class AddonsManager {
     private void handleAddonIncompatibility(@NonNull Addon addon) {
         // Set the AddonState as "INCOMPATIBLE".
         addon.setState(Addon.State.INCOMPATIBLE);
-        plugin.log("Skipping " + addon.getDescription().getName() + " as it is incompatible with the current version of BentoBox or of server software...");
-        plugin.log("NOTE: The addon is referring to no longer existing classes.");
-        plugin.log("NOTE: DO NOT report this as a bug from BentoBox.");
+        plugin.logWarning("Skipping " + addon.getDescription().getName() + " as it is incompatible with the current version of BentoBox or of server software...");
+        plugin.logWarning("NOTE: The addon is referring to no longer existing classes.");
+        plugin.logWarning("NOTE: DO NOT report this as a bug from BentoBox.");
     }
 
     /**
