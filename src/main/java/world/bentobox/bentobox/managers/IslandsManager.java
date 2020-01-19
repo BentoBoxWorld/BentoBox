@@ -1094,7 +1094,10 @@ public class IslandsManager {
             // Tell target. If they are offline, then they may receive a message when they login
             target.sendMessage("commands.island.team.setowner.you-are-the-owner");
             // Permission checks for range changes only work when the target is online
-            if (target.isOnline()) {
+            if (target.isOnline() &&
+                    target.getEffectivePermissions().parallelStream()
+                    .map(p -> p.getPermission())
+                    .anyMatch(p -> p.startsWith(addon.getPermissionPrefix() + "island.range"))) {
                 // Check if new owner has a different range permission than the island size
                 int range = target.getPermissionValue(
                         addon.getPermissionPrefix() + "island.range",
@@ -1112,13 +1115,13 @@ public class IslandsManager {
 
                     // Call Protection Range Change event. Does not support cancelling.
                     IslandEvent.builder()
-                        .island(island)
-                        .location(island.getCenter())
-                        .reason(IslandEvent.Reason.RANGE_CHANGE)
-                        .involvedPlayer(targetUUID)
-                        .admin(true)
-                        .protectionRange(range, oldRange)
-                        .build();
+                    .island(island)
+                    .location(island.getCenter())
+                    .reason(IslandEvent.Reason.RANGE_CHANGE)
+                    .involvedPlayer(targetUUID)
+                    .admin(true)
+                    .protectionRange(range, oldRange)
+                    .build();
                 }
             }
         });
