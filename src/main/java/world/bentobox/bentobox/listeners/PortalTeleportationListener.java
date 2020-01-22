@@ -129,6 +129,7 @@ public class PortalTeleportationListener implements Listener {
         // Else other worlds teleport to the end
         // Set player's velocity to zero
         e.getPlayer().setVelocity(new Vector(0,0,0));
+        e.getPlayer().setFallDistance(0);
         // Teleport
         new SafeSpotTeleport.Builder(plugin)
         .entity(e.getPlayer())
