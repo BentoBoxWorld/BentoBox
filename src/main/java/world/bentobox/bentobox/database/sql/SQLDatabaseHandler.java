@@ -82,7 +82,6 @@ public class SQLDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
     protected void createSchema() {
         // Prepare and execute the database statements
         try (PreparedStatement pstmt = connection.prepareStatement(sqlConfig.getSchemaSQL())) {
-            plugin.logDebug(pstmt.toString());
             pstmt.executeUpdate();
         } catch (SQLException e) {
             plugin.logError("Problem trying to create schema for data object " + dataObject.getCanonicalName() + " " + e.getMessage());
