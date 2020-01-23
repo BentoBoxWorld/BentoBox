@@ -20,10 +20,6 @@ import world.bentobox.bentobox.versions.ServerCompatibility;
  */
 public class BentoBoxVersionCommand extends CompositeCommand {
 
-    private static final String GAMEWORLD_COLOR_ISLANDS = "&a";
-    private static final String GAMEWORLD_COLOR_EXISTS_NO_ISLANDS = "&6";
-    private static final String GAMEWORLD_COLOR_NOT_EXIST = "&c";
-
     /**
      * Info command
      * @param parent - command parent
@@ -51,35 +47,35 @@ public class BentoBoxVersionCommand extends CompositeCommand {
 
         getIWM().getOverWorldNames().entrySet().stream().sorted(Comparator.comparing(Map.Entry::getKey))
         .forEach(e -> {
-            String netherColor = GAMEWORLD_COLOR_ISLANDS;
-            String endColor = GAMEWORLD_COLOR_ISLANDS;
+            String worlds = user.getTranslation("general.worlds.overworld");
 
             // It should be present, but let's stay safe.
             Optional<GameModeAddon> addonOptional = getIWM().getAddon(Bukkit.getWorld(e.getKey()));
             if (addonOptional.isPresent()) {
                 GameModeAddon addon = addonOptional.get();
-                /* Get the colors
-                   &a = dimension exists and contains islands
-                   &6 = dimension exists but is vanilla
-                   &c = dimension does not exist
-                */
-                // Get the nether color
-                if (addon.getNetherWorld() == null || !getIWM().isNetherGenerate(addon.getOverWorld())) {
-                    netherColor = GAMEWORLD_COLOR_NOT_EXIST;
-                } else if (!getIWM().isNetherIslands(addon.getOverWorld())) {
-                    netherColor = GAMEWORLD_COLOR_EXISTS_NO_ISLANDS;
+                /*
+                 * If the dimension is generated, it is displayed.
+                 * If the dimension is not made up of islands, a '*' is appended to its name.
+                 */
+                // Append the nether
+                if (addon.getNetherWorld() != null && getIWM().isNetherGenerate(addon.getOverWorld())) {
+                    worlds += ", " + user.getTranslation("general.worlds.nether");
+                    if (!getIWM().isNetherIslands(addon.getOverWorld())) {
+                        worlds += "*";
+                    }
                 }
 
-                // Get the nether color
-                if (addon.getEndWorld() == null || !getIWM().isEndGenerate(addon.getOverWorld())) {
-                    endColor = GAMEWORLD_COLOR_NOT_EXIST;
-                } else if (!getIWM().isEndIslands(addon.getOverWorld())) {
-                    endColor = GAMEWORLD_COLOR_EXISTS_NO_ISLANDS;
+                // Append the End
+                if (addon.getEndWorld() != null && getIWM().isEndGenerate(addon.getOverWorld())) {
+                    worlds += ", " + user.getTranslation("general.worlds.the-end");
+                    if (!getIWM().isEndIslands(addon.getOverWorld())) {
+                        worlds += "*";
+                    }
                 }
             }
 
             user.sendMessage(user.getTranslation("commands.bentobox.version.game-world", TextVariables.NAME, e.getKey(), "[addon]", e.getValue(),
-                    "[nether_color]", netherColor, "[end_color]", endColor));
+                    "[worlds]", worlds));
         });
 
         user.sendMessage("commands.bentobox.version.loaded-addons");

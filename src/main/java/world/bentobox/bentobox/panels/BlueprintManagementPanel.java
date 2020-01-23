@@ -61,9 +61,15 @@ public class BlueprintManagementPanel {
         this.plugin = plugin;
         this.user = user;
         this.addon = addon;
-        normalBlueprint = new Blueprint().setIcon(Material.GREEN_STAINED_GLASS_PANE).setName(t("normal")).setDescription(t(INSTRUCTION));
-        netherBlueprint = new Blueprint().setIcon(Material.RED_STAINED_GLASS_PANE).setName(t("nether")).setDescription(t(INSTRUCTION));
-        endBlueprint = new Blueprint().setIcon(Material.YELLOW_STAINED_GLASS_PANE).setName(t("end")).setDescription(t(INSTRUCTION));
+        normalBlueprint = new Blueprint().setIcon(Material.GREEN_STAINED_GLASS_PANE)
+                .setName(user.getTranslation("general.worlds.overworld"))
+                .setDescription(t(INSTRUCTION));
+        netherBlueprint = new Blueprint().setIcon(Material.RED_STAINED_GLASS_PANE)
+                .setName(user.getTranslation("general.worlds.nether"))
+                .setDescription(t(INSTRUCTION));
+        endBlueprint = new Blueprint().setIcon(Material.YELLOW_STAINED_GLASS_PANE)
+                .setName(user.getTranslation("general.worlds.the-end"))
+                .setDescription(t(INSTRUCTION));
         slotToEnvironment = ImmutableMap.of(3, World.Environment.NORMAL, 5, World.Environment.NETHER, 7, World.Environment.THE_END);
         environmentToBlueprint = ImmutableMap.of(World.Environment.NORMAL, normalBlueprint, World.Environment.NETHER, netherBlueprint, World.Environment.THE_END, endBlueprint);
     }
@@ -163,7 +169,7 @@ public class BlueprintManagementPanel {
         });
 
         for (int i = 9; i < 18; i++) {
-            pb.item(i, new PanelItemBuilder().icon(Material.BLACK_STAINED_GLASS_PANE).name("-").build());
+            pb.item(i, new PanelItemBuilder().icon(Material.BLACK_STAINED_GLASS_PANE).name(" ").build());
         }
         blueprints.entrySet().stream().limit(18).forEach(b -> pb.item(getBlueprintItem(addon, b.getKey(), bb, b.getValue())));
         // Buttons for non-default bundle
@@ -238,10 +244,16 @@ public class BlueprintManagementPanel {
     }
 
     private PanelItem getWorldInstrTile(Environment env) {
+        Material icon;
+        if (env.equals(Environment.NORMAL)) icon = Material.GRASS_BLOCK;
+        else if (env.equals(Environment.NETHER)) icon = Material.NETHERRACK;
+        else icon = Material.END_STONE;
+
         return new PanelItemBuilder()
                 .name(t("world-name-syntax", TextVariables.NAME, Util.prettifyText(env.name())))
                 .description(t("world-instructions"))
-                .icon(Material.GRAY_STAINED_GLASS_PANE)
+                .glow(true)
+                .icon(icon)
                 .build();
     }
 

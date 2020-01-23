@@ -27,6 +27,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.permissions.PermissionAttachmentInfo;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.eclipse.jdt.annotation.Nullable;
 import org.junit.After;
@@ -96,6 +97,8 @@ public class JoinLeaveListenerTest {
     private @Nullable Island island;
     @Mock
     private GameModeAddon gameMode;
+    @Mock
+    private PluginManager pim;
 
     /**
      * @throws java.lang.Exception
@@ -166,6 +169,8 @@ public class JoinLeaveListenerTest {
         // Bukkit
         PowerMockito.mockStatic(Bukkit.class);
         when(Bukkit.getScheduler()).thenReturn(scheduler);
+
+        when(Bukkit.getPluginManager()).thenReturn(pim);
 
         // Bukkit - online players
         Map<UUID, String> online = new HashMap<>();
@@ -292,8 +297,8 @@ public class JoinLeaveListenerTest {
         jll.onPlayerJoin(event);
         // Verify
         verify(player, never()).sendMessage(eq("commands.admin.setrange.range-updated"));
-        // Verify island setting
-        verify(island).setProtectionRange(eq(50));
+        // Verify that the island protection range is not changed if it is already at that value
+        verify(island, never()).setProtectionRange(eq(50));
         // Verify log
         verify(plugin, never()).log("Island protection range changed from 50 to 10 for tastybento due to permission.");
     }

@@ -101,8 +101,8 @@ public class DefaultNewIslandLocationStrategy implements NewIslandLocationStrate
             return Result.FREE;
         }
         // Block check
-        if (!plugin.getIWM().isUseOwnGenerator(world) && Arrays.asList(BlockFace.values()).stream().anyMatch(bf -> location.getBlock().getRelative(bf).isEmpty()
-                && !location.getBlock().getRelative(bf).getType().equals(Material.WATER))) {
+        if (!plugin.getIWM().isUseOwnGenerator(world) && Arrays.asList(BlockFace.values()).stream().anyMatch(bf -> 
+        !location.getBlock().getRelative(bf).isEmpty() && !location.getBlock().getRelative(bf).getType().equals(Material.WATER))) {
             // Block found
             plugin.getIslands().createIsland(location);
             return Result.BLOCKS_IN_AREA;

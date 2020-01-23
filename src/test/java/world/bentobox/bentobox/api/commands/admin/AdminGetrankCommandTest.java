@@ -179,6 +179,7 @@ public class AdminGetrankCommandTest {
         when(pm.getUUID(any())).thenReturn(targetUUID);
         when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
         when(user.getTranslation(anyString())).thenReturn("member");
+        when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
         assertTrue(c.canExecute(user, "", Collections.singletonList("tastybento")));
     }
 
@@ -192,10 +193,14 @@ public class AdminGetrankCommandTest {
         testCanExecuteKnownPlayerHasIslandSuccess();
         when(island.getRank(any())).thenReturn(RanksManager.SUB_OWNER_RANK);
         when(user.getTranslation(any())).thenReturn("sub-owner", "sub-owner");
+        when(island.getOwner()).thenReturn(targetUUID);
+        when(pm.getName(targetUUID)).thenReturn("tastybento");
         assertTrue(c.execute(user, "", Collections.singletonList("tastybento")));
         verify(user).sendMessage(eq("commands.admin.getrank.rank-is"),
                 eq("[rank]"),
-                eq("sub-owner"));
+                eq("sub-owner"),
+                eq("[name]"),
+                eq("tastybento"));
     }
 
     /**
