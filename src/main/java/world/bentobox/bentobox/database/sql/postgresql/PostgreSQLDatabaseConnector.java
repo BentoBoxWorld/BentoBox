@@ -28,6 +28,7 @@ public class PostgreSQLDatabaseConnector extends SQLDatabaseConnector {
      * @param dbSettings - database settings
      */
     PostgreSQLDatabaseConnector(@NonNull DatabaseConnectionSettingsImpl dbSettings) {
-        super(dbSettings, "jdbc:postgresql://" + dbSettings.getHost() + ":" + dbSettings.getPort() + "/" + dbSettings.getDatabaseName());
+        super(dbSettings, "jdbc:postgresql://" + dbSettings.getHost() + ":" + dbSettings.getPort() + "/" + dbSettings.getDatabaseName()
+        + "?autoReconnect=true&useSSL=false&allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8");
     }
 }
