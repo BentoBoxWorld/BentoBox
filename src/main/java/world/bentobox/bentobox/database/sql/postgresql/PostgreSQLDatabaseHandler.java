@@ -54,7 +54,7 @@ public class PostgreSQLDatabaseHandler<T> extends SQLDatabaseHandler<T> {
     public void saveObject(T instance) {
         // Null check
         if (instance == null) {
-            plugin.logError("MySQL database request to store a null. ");
+            plugin.logError("Postgres database request to store a null. ");
             return;
         }
         if (!(instance instanceof DataObject)) {
