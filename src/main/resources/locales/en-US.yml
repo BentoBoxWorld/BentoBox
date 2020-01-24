@@ -224,7 +224,7 @@ commands:
     reload:
       description: "reload"
     tp:
-      parameters: "<player>"
+      parameters: "<player> [player to teleport]"
       description: "teleport to a player's island"
       manual: "&c No safe warp found! Manually tp near to &b [location] &c and check it out"
     getrank:

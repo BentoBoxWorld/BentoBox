@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import org.bukkit.Location;
 
+import org.bukkit.entity.Player;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
@@ -34,7 +35,7 @@ public class AdminTeleportCommand extends CompositeCommand {
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        if (args.isEmpty()) {
+        if (args.size() != 1 && args.size() != 2) {
             this.showHelp(this, user);
             return false;
         }
@@ -52,12 +53,31 @@ public class AdminTeleportCommand extends CompositeCommand {
                 } else if (getLabel().equals("tpend")) {
                     warpSpot = getIslands().getIslandLocation(getWorld(), targetUUID).toVector().toLocation(getPlugin().getIWM().getEndWorld(getWorld()));
                 }
-                // Otherwise, go to a safe spot
+                // Otherwise, ask the admin to go to a safe spot
                 String failureMessage = user.getTranslation("commands.admin.tp.manual", "[location]", warpSpot.getBlockX() + " " + warpSpot.getBlockY() + " "
                         + warpSpot.getBlockZ());
+
+                Player player = user.getPlayer();
+                if (args.size() == 2) {
+                    // We are trying to teleport another player
+                    UUID playerToTeleportUUID = getPlayers().getUUID(args.get(1));
+                    if (playerToTeleportUUID == null) {
+                        user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(1));
+                        return false;
+                    } else {
+                        User userToTeleport = User.getInstance(playerToTeleportUUID);
+                        if (!userToTeleport.isOnline()) {
+                            user.sendMessage("general.errors.offline-player");
+                            return false;
+                        }
+                        player = userToTeleport.getPlayer();
+                        failureMessage = userToTeleport.getTranslation("general.errors.no-safe-location-found");
+                    }
+                }
+
                 // Teleport
                 new SafeSpotTeleport.Builder(getPlugin())
-                .entity(user.getPlayer())
+                .entity(player)
                 .location(warpSpot)
                 .failureMessage(failureMessage)
                 .build();
