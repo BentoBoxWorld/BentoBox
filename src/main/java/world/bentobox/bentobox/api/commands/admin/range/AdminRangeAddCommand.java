@@ -24,6 +24,7 @@ public class AdminRangeAddCommand extends CompositeCommand {
 
     @Override
     public void setup() {
+        inheritPermission();
         setDescription("commands.admin.range.add.description");
         setParametersHelp("commands.admin.range.add.parameters");
     }

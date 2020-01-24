@@ -20,6 +20,7 @@ public class AdminBlueprintListCommand extends CompositeCommand {
 
     @Override
     public void setup() {
+        inheritPermission();
         setDescription("commands.admin.blueprint.list.description");
     }
 

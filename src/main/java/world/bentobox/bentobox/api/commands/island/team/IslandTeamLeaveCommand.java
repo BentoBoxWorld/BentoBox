@@ -20,7 +20,7 @@ public class IslandTeamLeaveCommand extends ConfirmableCommand {
 
     @Override
     public void setup() {
-        setPermission("island.team");
+        inheritPermission();
         setOnlyPlayer(true);
         setDescription("commands.island.team.leave.description");
     }
