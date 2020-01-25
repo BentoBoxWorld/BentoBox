@@ -221,6 +221,11 @@
             <artifactId>mongodb-driver</artifactId>
             <version>${mongodb.version}</version>
         </dependency>
+        <dependency>
+            <groupId>postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>9.1-901-1.jdbc4</version>
+        </dependency>
         <!-- Vault: as their maven repo is down, we need to get it from jitpack -->
         <!-- See https://github.com/MilkBowl/VaultAPI/issues/69 -->
         <dependency>
@@ -339,13 +344,13 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>3.1.1</version>
-                <configuration>                
+                <configuration>
                     <source>8</source>
                     <show>private</show>
                     <failOnError>false</failOnError>
                     <additionalJOption>-Xdoclint:none</additionalJOption>
                     <!-- To compile with Java 11, this tag may be required -->
-                    <!--  <javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>-->
+                    <!-- <javadocExecutable>${java.home}/bin/javadoc</javadocExecutable> -->
                 </configuration>
                 <executions>
                     <execution>

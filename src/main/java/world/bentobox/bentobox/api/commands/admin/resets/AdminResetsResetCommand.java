@@ -21,6 +21,7 @@ public class AdminResetsResetCommand extends ConfirmableCommand {
 
     @Override
     public void setup() {
+        inheritPermission();
         setDescription("commands.admin.resets.reset.description");
         setParametersHelp("commands.admin.resets.reset.parameters");
     }

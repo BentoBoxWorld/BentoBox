@@ -170,7 +170,7 @@ public class IslandTeamInviteAcceptCommandTest {
      */
     @Test
     public void testSetup() {
-        assertEquals("bskyblock.island.team", c.getPermission());
+        //TODO: test permission inheritance?
         assertTrue(c.isOnlyPlayer());
         assertEquals("commands.island.team.invite.accept.description", c.getDescription());
     }

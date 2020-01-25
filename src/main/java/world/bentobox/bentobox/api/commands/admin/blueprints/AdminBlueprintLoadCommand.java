@@ -17,13 +17,14 @@ public class AdminBlueprintLoadCommand extends CompositeCommand {
 
     @Override
     public void setup() {
+        inheritPermission();
         setParametersHelp("commands.admin.blueprint.load.parameters");
         setDescription("commands.admin.blueprint.load.description");
     }
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        if (args.isEmpty() || args.size() != 1) {
+        if (args.size() != 1) {
             showHelp(this, user);
             return false;
         }
