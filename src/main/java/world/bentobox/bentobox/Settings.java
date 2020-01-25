@@ -45,7 +45,7 @@ public class Settings implements ConfigObject {
     @ConfigEntry(path = "general.default-language")
     private String defaultLanguage = "en-US";
 
-    @ConfigComment("Use economy or not. If true, an economy plugin is required. If false, no money is used or give.")
+    @ConfigComment("Use economy or not. If true, an economy plugin is required. If false, no money is used or given.")
     @ConfigComment("If there is no economy plugin present anyway, money will be automatically disabled.")
     @ConfigEntry(path = "general.use-economy")
     private boolean useEconomy = true;
@@ -55,7 +55,7 @@ public class Settings implements ConfigObject {
     @ConfigComment("Transition database options are:")
     @ConfigComment("  YAML2JSON, YAML2MARIADB, YAML2MYSQL, YAML2MONGODB, YAML2SQLITE")
     @ConfigComment("  JSON2MARIADB, JSON2MYSQL, JSON2MONGODB, JSON2SQLITE, JSON2POSTGRESQL")
-    @ConfigComment("  MYSQL2JSON, MARIADB2JSON, MONGODB2JSON, SQLITE2JSON, POSTGRES2JSON")
+    @ConfigComment("  MYSQL2JSON, MARIADB2JSON, MONGODB2JSON, SQLITE2JSON, POSTGRESQL2JSON")
     @ConfigComment("If you need others, please make a feature request.")
     @ConfigComment("Minimum required versions:")
     @ConfigComment("   MySQL versions 5.7 or later")
