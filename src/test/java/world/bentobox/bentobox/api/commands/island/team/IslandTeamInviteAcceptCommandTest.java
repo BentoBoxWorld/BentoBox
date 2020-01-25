@@ -170,7 +170,7 @@ public class IslandTeamInviteAcceptCommandTest {
      */
     @Test
     public void testSetup() {
-        verify(c).inheritPermission();
+        //TODO: test permission inheritance?
         assertTrue(c.isOnlyPlayer());
         assertEquals("commands.island.team.invite.accept.description", c.getDescription());
     }
