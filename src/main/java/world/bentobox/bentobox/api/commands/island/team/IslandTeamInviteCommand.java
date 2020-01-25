@@ -28,7 +28,7 @@ public class IslandTeamInviteCommand extends CompositeCommand {
 
     @Override
     public void setup() {
-        inheritPermission();
+        setPermission("island.team.invite");
         setOnlyPlayer(true);
         setDescription("commands.island.team.invite.description");
         setConfigurableRankCommand();

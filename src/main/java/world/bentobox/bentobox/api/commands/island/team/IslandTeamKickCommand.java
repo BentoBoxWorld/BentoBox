@@ -21,7 +21,7 @@ public class IslandTeamKickCommand extends ConfirmableCommand {
 
     @Override
     public void setup() {
-        inheritPermission();
+        setPermission("island.team.kick");
         setOnlyPlayer(true);
         setParametersHelp("commands.island.team.kick.parameters");
         setDescription("commands.island.team.kick.description");

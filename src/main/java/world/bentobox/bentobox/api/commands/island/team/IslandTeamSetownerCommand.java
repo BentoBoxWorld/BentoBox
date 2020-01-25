@@ -22,7 +22,7 @@ public class IslandTeamSetownerCommand extends CompositeCommand {
 
     @Override
     public void setup() {
-        inheritPermission();
+        setPermission("island.team.setowner");
         setOnlyPlayer(true);
         setParametersHelp("commands.island.team.setowner.parameters");
         setDescription("commands.island.team.setowner.description");
