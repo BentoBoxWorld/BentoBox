@@ -398,7 +398,7 @@
                     </relocations>
                     <artifactSet>
                         <excludes>
-                            <exclude>com.google.gson:*</exclude>
+                            <exclude>com.google:*</exclude>
                             <exclude>org.mongodb:*</exclude>
                             <exclude>org.eclipse.jdt:*</exclude>
                         </excludes>
