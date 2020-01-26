@@ -12,6 +12,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityPortalEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
 
 import world.bentobox.bentobox.BentoBox;
@@ -115,13 +116,21 @@ public class PortalTeleportationListener implements Listener {
                 && plugin.getIWM().isEndGenerate(overWorld)
                 && plugin.getIWM().isEndIslands(overWorld)
                 && plugin.getIWM().getEndWorld(overWorld) != null
-                && !optionalIsland.map(Island::hasEndIsland).orElse(true)) {
-            // No end island present so paste the default one
-            pasteNewIsland(e.getPlayer(), to, optionalIsland.get(), Environment.THE_END);
+                && optionalIsland.filter(i -> !i.hasEndIsland())
+                .map(i -> {
+                    // No end island present so paste the default one
+                    pasteNewIsland(e.getPlayer(), to, i, Environment.THE_END);
+                    return true;
+                }).orElse(false)) {
+            // We are done here
             return true;
         }
 
-        // Else other worlds teleport to the nether
+        // Else other worlds teleport to the end
+        // Set player's velocity to zero
+        e.getPlayer().setVelocity(new Vector(0,0,0));
+        e.getPlayer().setFallDistance(0);
+        // Teleport
         new SafeSpotTeleport.Builder(plugin)
         .entity(e.getPlayer())
         .location(to)
@@ -188,15 +197,18 @@ public class PortalTeleportationListener implements Listener {
         e.setCancelled(true);
         // Check if there is an island there or not
         if (plugin.getIWM().isPasteMissingIslands(overWorld) &&
-                !plugin.getIWM().isUseOwnGenerator(overWorld) && plugin.getIWM().isNetherGenerate(overWorld)
+                !plugin.getIWM().isUseOwnGenerator(overWorld)
+                && plugin.getIWM().isNetherGenerate(overWorld)
                 && plugin.getIWM().isNetherIslands(overWorld)
                 && plugin.getIWM().getNetherWorld(overWorld) != null
-                && !optionalIsland.map(Island::hasNetherIsland).orElse(true)) {
-            // No nether island present so paste the default one
-            pasteNewIsland(e.getPlayer(), to, optionalIsland.get(), Environment.NETHER);
+                && optionalIsland.filter(i -> !i.hasNetherIsland()).map(i -> {
+                 // No nether island present so paste the default one
+                    pasteNewIsland(e.getPlayer(), to, i, Environment.NETHER);
+                    return true;
+                }).orElse(false)) {
+            // All done here
             return true;
         }
-
         // Else other worlds teleport to the nether
         new SafeSpotTeleport.Builder(plugin)
         .entity(e.getPlayer())

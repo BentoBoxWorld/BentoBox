@@ -5,13 +5,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
-
-import com.google.common.collect.ImmutableSet;
-
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
-import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.island.IslandEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
@@ -60,22 +55,25 @@ public class AdminUnregisterCommand extends ConfirmableCommand {
         return true;
     }
 
-    private void unregisterPlayer(User user, UUID targetUUID) {
+    void unregisterPlayer(User user, UUID targetUUID) {
         // Unregister island
         Island oldIsland = getIslands().getIsland(getWorld(), targetUUID);
-        IslandBaseEvent event = IslandEvent.builder()
-                .island(oldIsland)
-                .location(oldIsland.getCenter())
-                .reason(IslandEvent.Reason.UNREGISTERED)
-                .involvedPlayer(targetUUID)
-                .admin(true)
-                .build();
-        Bukkit.getPluginManager().callEvent(event);
+        if (oldIsland == null) return;
+        IslandEvent.builder()
+        .island(oldIsland)
+        .location(oldIsland.getCenter())
+        .reason(IslandEvent.Reason.UNREGISTERED)
+        .involvedPlayer(targetUUID)
+        .admin(true)
+        .build();
         // Remove all island members
-        new ImmutableSet.Builder<UUID>().addAll(oldIsland.getMembers().keySet()).build().forEach(m -> {
+        oldIsland.getMemberSet().forEach(m -> {
             getIslands().removePlayer(getWorld(), m);
             getPlayers().clearHomeLocations(getWorld(), m);
         });
+        // Remove all island players that reference this island
+        oldIsland.getMembers().clear();
+        getIslands().save(oldIsland);
         user.sendMessage("commands.admin.unregister.unregistered-island", "[xyz]", Util.xyz(oldIsland.getCenter().toVector()));
     }
 

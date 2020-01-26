@@ -5,13 +5,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
-import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.island.IslandEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
@@ -85,14 +83,14 @@ public class AdminRegisterCommand extends ConfirmableCommand {
             }
             user.sendMessage("commands.admin.register.registered-island", "[xyz]", Util.xyz(i.getCenter().toVector()));
             user.sendMessage("general.success");
-            IslandBaseEvent event = IslandEvent.builder()
-                    .island(i)
-                    .location(i.getCenter())
-                    .reason(IslandEvent.Reason.REGISTERED)
-                    .involvedPlayer(targetUUID)
-                    .admin(true)
-                    .build();
-            Bukkit.getPluginManager().callEvent(event);
+            // Build and call event
+            IslandEvent.builder()
+            .island(i)
+            .location(i.getCenter())
+            .reason(IslandEvent.Reason.REGISTERED)
+            .involvedPlayer(targetUUID)
+            .admin(true)
+            .build();
             return true;
         }).orElse(false)) {
             // Island does not exist - this is a reservation
@@ -108,19 +106,19 @@ public class AdminRegisterCommand extends ConfirmableCommand {
                 i.setReserved(true);
                 i.getCenter().getBlock().setType(Material.BEDROCK);
                 user.sendMessage("commands.admin.register.reserved-island", "[xyz]", Util.xyz(i.getCenter().toVector()));
-                IslandBaseEvent event = IslandEvent.builder()
-                        .island(i)
-                        .location(i.getCenter())
-                        .reason(IslandEvent.Reason.RESERVED)
-                        .involvedPlayer(targetUUID)
-                        .admin(true)
-                        .build();
-                Bukkit.getPluginManager().callEvent(event);
+                // Build and fire event
+                IslandEvent.builder()
+                .island(i)
+                .location(i.getCenter())
+                .reason(IslandEvent.Reason.RESERVED)
+                .involvedPlayer(targetUUID)
+                .admin(true)
+                .build();
             });
             return false;
         }
         return true;
-        
+
     }
 
     @Override

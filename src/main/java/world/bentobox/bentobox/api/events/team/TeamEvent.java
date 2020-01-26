@@ -2,6 +2,7 @@ package world.bentobox.bentobox.api.events.team;
 
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
@@ -179,7 +180,7 @@ public class TeamEvent {
             return this;
         }
 
-        public IslandBaseEvent build() {
+        private IslandBaseEvent getEvent() {
             switch (reason) {
             case JOIN:
                 return new TeamJoinEvent(island, player, admin, location);
@@ -204,6 +205,16 @@ public class TeamEvent {
             default:
                 return new TeamGeneralEvent(island, player, admin, location);
             }
+        }
+        
+        /**
+         * Build the event and call it
+         * @return event
+         */
+        public IslandBaseEvent build() {
+            IslandBaseEvent e = getEvent();
+            Bukkit.getPluginManager().callEvent(e);
+            return e;
         }
     }
 }

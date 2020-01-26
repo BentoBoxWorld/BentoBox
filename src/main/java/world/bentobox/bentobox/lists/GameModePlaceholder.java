@@ -5,6 +5,7 @@ import java.time.Instant;
 import java.util.Date;
 import java.util.Optional;
 
+import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.placeholders.GameModePlaceholderReplacer;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.RanksManager;
@@ -43,8 +44,11 @@ public enum GameModePlaceholder {
     ISLAND_OWNER("island_owner", (addon, user, island) -> island == null ? "" : addon.getPlayers().getName(island.getOwner())),
     ISLAND_CREATION_DATE("island_creation_date", (addon, user, island) -> island == null ? "" : DateFormat.getInstance().format(Date.from(Instant.ofEpochMilli(island.getCreatedDate())))),
     ISLAND_NAME("island_name", (addon, user, island) -> {
-        if (island == null || island.getName() == null) {
+        if (island == null || user == null) {
             return "";
+        }
+        if (island.getName() == null) {
+            return user.getTranslation(island.getWorld(), "protection.flags.ENTER_EXIT_MESSAGES.island", TextVariables.NAME, addon.getPlayers().getName(island.getOwner()));
         }
         return island.getName();
     }),
@@ -153,7 +157,14 @@ public enum GameModePlaceholder {
             return "";
         }
         Optional<Island> visitedIsland = addon.getIslands().getIslandAt(user.getLocation());
-        return visitedIsland.map(Island::getName).orElse("");
+
+        return visitedIsland.map(is -> {
+            if (is.getName() != null) {
+                return is.getName();
+            } else {
+                return user.getTranslation(is.getWorld(), "protection.flags.ENTER_EXIT_MESSAGES.island", TextVariables.NAME, addon.getPlayers().getName(is.getOwner()));
+            }
+        }).orElse("");
     }),
     /**
      * Returns the coordinates of the center of the island the player is standing on.

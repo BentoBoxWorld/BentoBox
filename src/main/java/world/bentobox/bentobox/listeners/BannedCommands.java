@@ -32,7 +32,7 @@ public class BannedCommands implements Listener {
      * Prevents visitors from using commands on islands, like /spawner
      * @param e - event
      */
-    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onVisitorCommand(PlayerCommandPreprocessEvent e) {
         if (!plugin.getIWM().inWorld(e.getPlayer().getLocation()) || e.getPlayer().isOp()
                 || e.getPlayer().hasPermission(plugin.getIWM().getPermissionPrefix(e.getPlayer().getWorld()) + "mod.bypassprotect")
@@ -53,7 +53,7 @@ public class BannedCommands implements Listener {
      * Prevents falling players from using commands, like /warp
      * @param e - event
      */
-    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onFallingCommand(PlayerCommandPreprocessEvent e) {
         if (!plugin.getIWM().inWorld(e.getPlayer().getLocation()) || e.getPlayer().isOp()
                 || e.getPlayer().hasPermission(plugin.getIWM().getPermissionPrefix(e.getPlayer().getWorld()) + "mod.bypassprotect")

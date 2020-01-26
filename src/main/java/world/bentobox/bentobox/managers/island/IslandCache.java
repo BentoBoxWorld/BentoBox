@@ -273,7 +273,9 @@ public class IslandCache {
      */
     public void setOwner(@NonNull Island island, @Nullable UUID newOwnerUUID) {
         island.setOwner(newOwnerUUID);
-        islandsByUUID.computeIfAbsent(Util.getWorld(island.getWorld()), k -> new HashMap<>()).put(newOwnerUUID, island);
+        if (newOwnerUUID != null) {
+            islandsByUUID.computeIfAbsent(Util.getWorld(island.getWorld()), k -> new HashMap<>()).put(newOwnerUUID, island);
+        }
         islandsByLocation.put(island.getCenter(), island);
         islandsById.put(island.getUniqueId(), island);
     }

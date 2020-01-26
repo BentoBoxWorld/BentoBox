@@ -18,6 +18,7 @@ import org.eclipse.jdt.annotation.NonNull;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
+import world.bentobox.bentobox.api.events.island.IslandEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
@@ -197,8 +198,22 @@ public class JoinLeaveListener implements Listener {
                     user.sendMessage("commands.admin.setrange.range-updated", TextVariables.NUMBER, String.valueOf(range));
                     plugin.log("Island protection range changed from " + island.getProtectionRange() + " to "
                             + range + " for " + user.getName() + " due to permission.");
+
+                    // Get old range for event
+                    int oldRange = island.getProtectionRange();
+
+                    island.setProtectionRange(range);
+
+                    // Call Protection Range Change event. Does not support cancelling.
+                    IslandEvent.builder()
+                        .island(island)
+                        .location(island.getCenter())
+                        .reason(IslandEvent.Reason.RANGE_CHANGE)
+                        .involvedPlayer(user.getUniqueId())
+                        .admin(true)
+                        .protectionRange(range, oldRange)
+                        .build();
                 }
-                island.setProtectionRange(range);
             }
         });
     }

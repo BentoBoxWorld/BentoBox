@@ -141,6 +141,7 @@ public class BlueprintsManager {
      *
      * @param addon the {@link GameModeAddon} to get the blueprint bundles.
      */
+    @NonNull
     public Map<String, BlueprintBundle> getBlueprintBundles(@NonNull GameModeAddon addon) {
         if (!blueprintBundles.containsKey(addon)) {
             return new HashMap<>();
@@ -154,6 +155,7 @@ public class BlueprintsManager {
      * @return the default blueprint bundle or null if none
      * @since 1.8.0
      */
+    @Nullable
     public BlueprintBundle getDefaultBlueprintBundle(@NonNull GameModeAddon addon) {
         if (blueprintBundles.containsKey(addon)) {
             return blueprintBundles.get(addon).stream().filter(bb -> bb.getUniqueId().equals(DEFAULT_BUNDLE_NAME)).findFirst().orElse(null);
@@ -180,24 +182,21 @@ public class BlueprintsManager {
     public void loadBlueprintBundles(@NonNull GameModeAddon addon) {
         // Set loading flag
         blueprintsLoaded.add(addon);
-        Bukkit
-        .getScheduler()
-        .runTaskAsynchronously(
-                plugin, () -> {
-                    // Load bundles
-                    blueprintBundles.put(addon, new ArrayList<>());
-                    // See if there are any schems that need converting
-                    new SchemToBlueprint(plugin).convertSchems(addon);
-                    if (!loadBundles(addon)) {
-                        makeDefaults(addon);
-                        loadBundles(addon);
-                    }
-                    // Load blueprints
-                    loadBlueprints(addon);
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            // Load bundles
+            blueprintBundles.put(addon, new ArrayList<>());
+            // See if there are any schems that need converting
+            new SchemToBlueprint(plugin).convertSchems(addon);
+            if (!loadBundles(addon)) {
+                makeDefaults(addon);
+                loadBundles(addon);
+            }
+            // Load blueprints
+            loadBlueprints(addon);
 
-                    // Clear loading flag
-                    blueprintsLoaded.remove(addon);
-                });
+            // Clear loading flag
+            blueprintsLoaded.remove(addon);
+        });
     }
 
     /**
@@ -223,14 +222,22 @@ public class BlueprintsManager {
             try {
                 BlueprintBundle bb = gson.fromJson(new FileReader(file), BlueprintBundle.class);
                 if (bb != null) {
-                    blueprintBundles
-                    .get(addon)
-                    .add(bb);
-                    plugin.log("Loaded Blueprint Bundle '" + bb.getUniqueId() + FOR + addon.getDescription().getName());
-                    loaded = true;
+                    // Make sure there is no existing bundle with the same uniqueId
+                    if (blueprintBundles.get(addon).stream().noneMatch(bundle ->  bundle.getUniqueId().equals(bb.getUniqueId()))) {
+                        blueprintBundles.get(addon).add(bb);
+                        plugin.log("Loaded Blueprint Bundle '" + bb.getUniqueId() + FOR + addon.getDescription().getName() + ".");
+                        loaded = true;
+                    } else {
+                        // There is a bundle that already uses this uniqueId.
+                        // In that case, we log that and do not load the new bundle.
+                        plugin.logWarning("Could not load blueprint bundle '" + file.getName() + FOR + addon.getDescription().getName() + ".");
+                        plugin.logWarning("The uniqueId '" + bb.getUniqueId() + "' is already used by another Blueprint Bundle.");
+                        plugin.logWarning("This can occur if the Blueprint Bundles' files were manually edited.");
+                        plugin.logWarning("Please review your Blueprint Bundles' files and make sure their uniqueIds are not in duplicate.");
+                    }
                 }
             } catch (Exception e) {
-                plugin.logError("Could not load blueprint bundle " + file.getName() + " " + e.getMessage());
+                plugin.logError("Could not load blueprint bundle '" + file.getName() + "'. Cause: " + e.getMessage() + ".");
                 plugin.logStacktrace(e);
             }
         }

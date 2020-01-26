@@ -154,8 +154,10 @@ public class SQLDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
             plugin.logError("This class is not a DataObject: " + instance.getClass().getName());
             return;
         }
+        // This has to be on the main thread to avoid concurrent modification errors
+        String toStore = getGson().toJson(instance);
         // Async
-        processQueue.add(() -> store(instance.getClass().getName(), getGson().toJson(instance), sqlConfig.getSaveObjectSQL()));
+        processQueue.add(() -> store(instance.getClass().getName(), toStore, sqlConfig.getSaveObjectSQL()));
     }
 
     private void store(String name, String toStore, String sb) {

@@ -3,11 +3,9 @@ package world.bentobox.bentobox.api.commands.admin.team;
 import java.util.List;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.eclipse.jdt.annotation.NonNull;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
-import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.team.TeamEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
@@ -71,13 +69,12 @@ public class AdminTeamKickCommand extends CompositeCommand {
         user.sendMessage("commands.admin.team.kick.success", TextVariables.NAME, target.getName(), "[owner]", getPlayers().getName(island.getOwner()));
 
         // Fire event so add-ons know
-        IslandBaseEvent event = TeamEvent.builder()
-                .island(island)
-                .reason(TeamEvent.Reason.KICK)
-                .involvedPlayer(targetUUID)
-                .admin(true)
-                .build();
-        Bukkit.getPluginManager().callEvent(event);
+        TeamEvent.builder()
+        .island(island)
+        .reason(TeamEvent.Reason.KICK)
+        .involvedPlayer(targetUUID)
+        .admin(true)
+        .build();
         return true;
     }
 }

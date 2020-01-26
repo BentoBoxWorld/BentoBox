@@ -25,6 +25,7 @@ general:
     already-have-island: "&c You already have an island!"
     no-safe-location-found: "&c Could not find a safe spot to teleport you to on the island."
     not-owner: "&c You are not the owner of the island!"
+    player-is-not-owner: "&b [name] &c is not the owner of an island!"
     not-in-team: "&c That player is not in your team!"
     offline-player: "&c That player is offline or doesn't exist."
     unknown-player: "&c [name] is an unknown player!"
@@ -35,6 +36,10 @@ general:
     must-be-positive-number: "&c [number] is not a valid positive number."
   tips:
     changing-obsidian-to-lava: "Changing obsidian back into lava. Be careful!"
+  worlds:
+    overworld: "Overworld"
+    nether: "Nether"
+    the-end: "The End"
 
 commands:
   # Parameters in <> are required, parameters in [] are optional
@@ -52,20 +57,20 @@ commands:
     resets:
       description: "edit resets of the players"
       set:
-        description: "sets the resets of this player"
+        description: "sets how many time this player reset his island"
         parameters: "<player> <resets>"
         success: "&a Successfully set &b [name]&a 's resets to &b [number]&a ."
       reset:
-        description: "resets the resets of this player to 0"
+        description: "resets how many time this player reset his island to 0"
         parameters: "<player>"
         success-everyone: "&a Successfully reset &b everyone&a 's resets to &b 0&a ."
         success: "&a Successfully reset &b [name]&a 's resets to &b 0&a ."
       add:
-        description: "adds resets to the player"
+        description: "adds to how many times this player reset his island"
         parameters: "<player> <resets>"
         success: "&a Successfully added &b [number] &a resets to &b [name], increasing the total to &b [total]&a  resets."
       remove:
-        description: "removes resets to the player"
+        description: "removes from how many times this player reset his island"
         parameters: "<player> <resets>"
         success: "&a Successfully removed &b [number] &a resets to &b [name], decreasing the total to &b [total]&a  resets."
     purge:
@@ -219,19 +224,19 @@ commands:
     reload:
       description: "reload"
     tp:
-      parameters: "<player>"
+      parameters: "<player> [player to teleport]"
       description: "teleport to a player's island"
       manual: "&c No safe warp found! Manually tp near to &b [location] &c and check it out"
     getrank:
-      parameters: "<player>"
-      description: "get a player's rank on their island"
-      rank-is: "&a Rank is [rank] on their island."
+      parameters: "<player> [island owner]"
+      description: "get a player's rank on their island or the island of the owner"
+      rank-is: "&a Rank is &b [rank] &a on &b [name]&a 's island."
     setrank:
-      parameters: "<player> <rank>"
-      description: "set a player's rank on their island"
+      parameters: "<player> <rank> [island owner]"
+      description: "set a player's rank on their island or the island of the owner"
       unknown-rank: "&c Unknown rank!"
-      not-possible: "&c Rank must be higher than visitor"
-      rank-set: "&a Rank set from [from] to [to]."
+      not-possible: "&c Rank must be higher than visitor."
+      rank-set: "&a Rank set from &b [from] &a to &b [to] &a on &b [name]&a 's island."
     setspawn:
       description: "set an island as spawn for this world"
       already-spawn: "&c This island is already a spawn!"
@@ -297,9 +302,6 @@ commands:
       management:
         back: "Back"
         instruction: "Click on blueprint then click here"
-        normal: "Normal"
-        nether: "Nether"
-        end: "The End"
         title: "Blueprint Bundle Manager"
         edit: "Click to edit"
         rename: "Right-click to rename"
@@ -396,7 +398,7 @@ commands:
       loaded-addons: "Loaded Addons:"
       loaded-game-worlds: "Loaded Game Worlds:"
       addon-syntax: "&2 [name] &3 [version] &7 (&3 [state]&7 )"
-      game-world: "&2 [name] &7 (&3 [addon]&7 ): &a Overworld&7 , &r [nether_color]Nether&7 , &r [end_color]End"
+      game-world: "&2 [name] &7 (&3 [addon]&7 ): &3 [worlds]"
       server: "&2 Running &3 [name] [version]&2 ."
       database: "&2 Database: &3 [database]"
     manage:
@@ -801,7 +803,7 @@ protection:
     DYE:
       description: "Prevent dye use"
       name: "Dye use"
-      hint: "Dying disabled"
+      hint: "Dyeing disabled"
     EGGS: 
       description: "Toggle egg throwing"
       name: "Egg throwing"
@@ -833,8 +835,10 @@ protection:
       description: "Display entry and exit messages"
       island: "[name]'s island"
       name: "Enter/Exit messages"
-      now-entering: "&b Now entering [name]"
-      now-leaving: "&b Now leaving [name]"
+      now-entering: "&a Now entering &b [name]&a ."
+      now-entering-your-island: "&a Now entering your island."
+      now-leaving: "&a Now leaving &b [name]&a ."
+      now-leaving-your-island: "&a Now leaving your island."
     EXPERIENCE_BOTTLE_THROWING:
       name: "Experience bottle throwing"
       description: "Toggle throwing experience bottles."

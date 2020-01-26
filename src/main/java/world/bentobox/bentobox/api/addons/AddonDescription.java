@@ -35,6 +35,12 @@ public final class AddonDescription {
      * @since 1.5.0
      */
     private final @NonNull Material icon;
+    /**
+     * Minimum BentoBox version this addon requires in order to work properly.
+     * Defaults to {@code "1"}.
+     * @since 1.11.0
+     */
+    private final @NonNull String apiVersion;
 
     private AddonDescription(@NonNull Builder builder) {
         this.main = builder.main;
@@ -47,6 +53,7 @@ public final class AddonDescription {
         this.metrics = builder.metrics;
         this.repository = builder.repository;
         this.icon = builder.icon;
+        this.apiVersion = builder.apiVersion;
     }
 
     @NonNull
@@ -120,6 +127,29 @@ public final class AddonDescription {
         return icon;
     }
 
+    /**
+     * Returns the minimum BentoBox version this addon requires in order to work properly.
+     * <br/>
+     * Examples:
+     * <ul>
+     *     <li>{@code "1"} means that the addon relies on BentoBox {@code 1.0.0} or higher.</li>
+     *     <li>Similarly, {@code "2"} sets the requirement to BentoBox {@code 2.0.0} or higher.</li>
+     *     <li>
+     *         More specific versions can be provided:
+     *         <ul>
+     *             <li>{@code "1.10"} -> BentoBox {@code 1.10.0} or higher.</li>
+     *             <li>{@code "1.9.2"} -> BentoBox {@code 1.9.2} or higher.</li>
+     *         </ul>
+     *     </li>
+     * </ul>
+     * Defaults to {@code "1"}.
+     * @return the minimum BentoBox version this addon requires in order to work properly.
+     */
+    @NonNull
+    public String getApiVersion() {
+        return apiVersion;
+    }
+
     public static class Builder {
         private @NonNull String main;
         private @NonNull String name;
@@ -131,6 +161,7 @@ public final class AddonDescription {
         private boolean metrics = true;
         private @NonNull String repository = "";
         private @NonNull Material icon = Material.PAPER;
+        private @NonNull String apiVersion = "1";
 
         /**
          * @since 1.1
@@ -193,6 +224,18 @@ public final class AddonDescription {
         @NonNull
         public Builder icon(@NonNull Material icon) {
             this.icon = icon;
+            return this;
+        }
+
+        /**
+         * Sets the minimum BentoBox version this addon requires in order to work properly.
+         * @param apiVersion the minimum BentoBox version this addon requires in order to work properly.
+         * @since 1.11.0
+         * @see AddonDescription#getApiVersion()
+         */
+        @NonNull
+        public Builder apiVersion(@NonNull String apiVersion) {
+            this.apiVersion = apiVersion;
             return this;
         }
 

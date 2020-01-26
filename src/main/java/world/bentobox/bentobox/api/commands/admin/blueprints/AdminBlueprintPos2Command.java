@@ -15,6 +15,7 @@ public class AdminBlueprintPos2Command extends CompositeCommand {
 
     @Override
     public void setup() {
+        inheritPermission();
         setParametersHelp("commands.admin.blueprint.pos2.parameters");
         setDescription("commands.admin.blueprint.pos2.description");
     }

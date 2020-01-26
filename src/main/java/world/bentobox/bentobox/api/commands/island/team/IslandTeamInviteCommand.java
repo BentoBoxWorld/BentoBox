@@ -6,12 +6,10 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.island.team.Invite.Type;
-import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.team.TeamEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
@@ -30,7 +28,7 @@ public class IslandTeamInviteCommand extends CompositeCommand {
 
     @Override
     public void setup() {
-        setPermission("island.team");
+        setPermission("island.team.invite");
         setOnlyPlayer(true);
         setDescription("commands.island.team.invite.description");
         setConfigurableRankCommand();
@@ -120,13 +118,12 @@ public class IslandTeamInviteCommand extends CompositeCommand {
                 user.sendMessage("commands.island.team.invite.removing-invite");
             }
             // Fire event so add-ons can run commands, etc.
-            IslandBaseEvent event = TeamEvent.builder()
+            if (TeamEvent.builder()
                     .island(getIslands().getIsland(getWorld(), user.getUniqueId()))
                     .reason(TeamEvent.Reason.INVITE)
                     .involvedPlayer(invitedPlayer.getUniqueId())
-                    .build();
-            Bukkit.getPluginManager().callEvent(event);
-            if (event.isCancelled()) {
+                    .build()
+                    .isCancelled()) {
                 return false;
             }
             // Put the invited player (key) onto the list with inviter (value)

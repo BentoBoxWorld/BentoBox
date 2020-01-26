@@ -35,6 +35,8 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
+import com.google.common.collect.ImmutableSet;
+
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
@@ -136,6 +138,7 @@ public class EnterExitListenerTest {
         when(island.getCenter()).thenReturn(loc);
         when(island.getProtectionRange()).thenReturn(PROTECTION_RANGE);
         when(island.getOwner()).thenReturn(uuid);
+        when(island.getMemberSet()).thenReturn(ImmutableSet.of(uuid));
         when(island.isOwned()).thenReturn(true);
 
         when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
@@ -376,4 +379,5 @@ public class EnterExitListenerTest {
         verify(pim).callEvent(any(IslandExitEvent.class));
     }
 
+    // TODO add tests to make sure the enter/exit messages work properly when on an island the player is part of.
 }

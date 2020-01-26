@@ -6,6 +6,7 @@ import java.util.UUID;
 import org.eclipse.jdt.annotation.NonNull;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
+import world.bentobox.bentobox.api.events.island.IslandEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
@@ -23,6 +24,7 @@ public class AdminRangeAddCommand extends CompositeCommand {
 
     @Override
     public void setup() {
+        inheritPermission();
         setDescription("commands.admin.range.add.description");
         setParametersHelp("commands.admin.range.add.parameters");
     }
@@ -61,8 +63,22 @@ public class AdminRangeAddCommand extends CompositeCommand {
             return false;
         }
 
-        // Well, now it can be applied without taking any risks !
+        // Get old range for event
+        int oldRange = island.getProtectionRange();
+
+        // Well, now it can be applied without taking any risks!
         island.setProtectionRange(newRange);
+
+        // Call Protection Range Change event. Does not support cancelling.
+        IslandEvent.builder()
+            .island(island)
+            .location(island.getCenter())
+            .reason(IslandEvent.Reason.RANGE_CHANGE)
+            .involvedPlayer(target)
+            .admin(true)
+            .protectionRange(newRange, oldRange)
+            .build();
+
         user.sendMessage("commands.admin.range.add.success",
                 TextVariables.NAME, args.get(0), TextVariables.NUMBER, args.get(1),
                 "[total]", String.valueOf(newRange));

@@ -3,12 +3,8 @@ package world.bentobox.bentobox.api.commands.island.team;
 import java.util.List;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.commands.island.team.Invite.Type;
-import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.team.TeamEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
@@ -31,7 +27,7 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
 
     @Override
     public void setup() {
-        setPermission("island.team");
+        setPermission("island.team.accept");
         setOnlyPlayer(true);
         setDescription("commands.island.team.invite.accept.description");
     }
@@ -59,13 +55,12 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
                 return false;
             }
             // Fire event so add-ons can run commands, etc.
-            IslandBaseEvent event = TeamEvent.builder()
+            return !TeamEvent.builder()
                     .island(getIslands().getIsland(getWorld(), prospectiveOwnerUUID))
                     .reason(TeamEvent.Reason.JOIN)
                     .involvedPlayer(playerUUID)
-                    .build();
-            Bukkit.getPluginManager().callEvent(event);
-            return !event.isCancelled();
+                    .build()
+                    .isCancelled();
         }
         return true;
     }
@@ -149,12 +144,11 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
         }
         getIslands().save(teamIsland);
         // Fire event
-        IslandBaseEvent e = TeamEvent.builder()
-                .island(getIslands().getIsland(getWorld(), prospectiveOwnerUUID))
-                .reason(TeamEvent.Reason.JOINED)
-                .involvedPlayer(playerUUID)
-                .build();
-        Bukkit.getPluginManager().callEvent(e);
+        TeamEvent.builder()
+        .island(getIslands().getIsland(getWorld(), prospectiveOwnerUUID))
+        .reason(TeamEvent.Reason.JOINED)
+        .involvedPlayer(playerUUID)
+        .build();
     }
 
     private void cleanPlayer(User user) {

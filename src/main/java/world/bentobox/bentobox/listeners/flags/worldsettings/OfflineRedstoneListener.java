@@ -24,15 +24,23 @@ public class OfflineRedstoneListener extends FlagListener {
             return;
         }
 
-        // Check if island exists and members are online - excludes spawn
+        // Check if island exists and members are online, or mods or ops are on the island - ignores spawn
         getIslands().getProtectedIslandAt(e.getBlock().getLocation())
         .filter(i -> !i.isSpawn())
         .ifPresent(i -> {
+            // Check team members
             for (UUID uuid : i.getMemberSet(RanksManager.COOP_RANK)) {
                 if (Bukkit.getPlayer(uuid) != null) {
                     return;
                 }
             }
+            // Check mods or Ops on island
+            if (Bukkit.getOnlinePlayers().parallelStream()
+                    .filter(p -> p.isOp() || p.hasPermission(getIWM().getPermissionPrefix(i.getWorld()) + "mod.bypassprotect"))
+                    .anyMatch(p -> i.onIsland(p.getLocation()))) {
+                return;
+            }
+            // No one there...
             e.setNewCurrent(0);
         });
     }
