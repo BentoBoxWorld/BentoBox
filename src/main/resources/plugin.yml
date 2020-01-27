@@ -11,7 +11,7 @@ load: STARTUP
 
 loadbefore: [Multiverse-Core, Residence]
 
-softdepend: [Vault, PlaceholderAPI, MVdWPlaceholderAPI, dynmap]
+softdepend: [Vault, PlaceholderAPI, MVdWPlaceholderAPI, dynmap, WorldEdit]
 
 permissions:
   bentobox.admin:
