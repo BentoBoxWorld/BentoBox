@@ -1,5 +1,6 @@
 package world.bentobox.bentobox.api.configuration;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -314,6 +315,15 @@ public interface WorldSettings extends ConfigObject {
     List<String> getGeoLimitSettings();
 
     /**
+     * Get list of entities that should not spawn in this game mode
+     * @return list of entities that should NOT spawn
+     * @since 1.12.0
+     */
+    default List<String> getMobLimitSettings() {
+        return new ArrayList<>();
+    }
+
+    /**
      * @return reset limit for world
      */
     int getResetLimit();
@@ -440,4 +450,5 @@ public interface WorldSettings extends ConfigObject {
     default boolean isTeleportPlayerToIslandUponIslandCreation() {
         return true;
     }
+
 }

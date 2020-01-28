@@ -951,6 +951,14 @@ protection:
       description: "Toggle use"
       name: "Lever use"
       hint: "Lever use disabled"
+    LIMIT_MOBS: 
+      description: |-
+         &a Limit entities from
+         &a spawning in this game
+         &a mode.
+      name: "&e Limit entity type spawning"
+      can: "&a Can spawn"
+      cannot: "&c Cannot spawn"
     LIQUIDS_FLOWING_OUT:
       name: "Liquids flowing outside islands"
       description: |-

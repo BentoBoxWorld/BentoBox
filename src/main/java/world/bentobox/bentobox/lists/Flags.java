@@ -12,6 +12,7 @@ import world.bentobox.bentobox.api.flags.Flag.Type;
 import world.bentobox.bentobox.api.flags.clicklisteners.CycleClick;
 import world.bentobox.bentobox.listeners.flags.clicklisteners.CommandRankClickListener;
 import world.bentobox.bentobox.listeners.flags.clicklisteners.GeoLimitClickListener;
+import world.bentobox.bentobox.listeners.flags.clicklisteners.MobLimitClickListener;
 import world.bentobox.bentobox.listeners.flags.protection.BlockInteractionListener;
 import world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener;
 import world.bentobox.bentobox.listeners.flags.protection.BreedingListener;
@@ -49,6 +50,7 @@ import world.bentobox.bentobox.listeners.flags.worldsettings.GeoLimitMobsListene
 import world.bentobox.bentobox.listeners.flags.worldsettings.InvincibleVisitorsListener;
 import world.bentobox.bentobox.listeners.flags.worldsettings.IslandRespawnListener;
 import world.bentobox.bentobox.listeners.flags.worldsettings.ItemFrameListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.LimitMobsListener;
 import world.bentobox.bentobox.listeners.flags.worldsettings.LiquidsFlowingOutListener;
 import world.bentobox.bentobox.listeners.flags.worldsettings.NaturalSpawningOutsideRangeListener;
 import world.bentobox.bentobox.listeners.flags.worldsettings.ObsidianScoopingListener;
@@ -353,6 +355,12 @@ public final class Flags {
 
     public static final Flag GEO_LIMIT_MOBS = new Flag.Builder("GEO_LIMIT_MOBS", Material.CHAINMAIL_CHESTPLATE).type(Type.WORLD_SETTING)
             .listener(new GeoLimitMobsListener()).clickHandler(new GeoLimitClickListener()).usePanel(true).build();
+    
+    /**
+     * @since 1.12.0
+     */
+    public static final Flag LIMIT_MOBS = new Flag.Builder("LIMIT_MOBS", Material.CHAINMAIL_BOOTS).type(Type.WORLD_SETTING)
+            .listener(new LimitMobsListener()).clickHandler(new MobLimitClickListener()).usePanel(true).build();
 
     public static final Flag REMOVE_MOBS = new Flag.Builder("REMOVE_MOBS", Material.GLOWSTONE_DUST).type(Type.WORLD_SETTING)
             .listener(new RemoveMobsListener()).defaultSetting(true).build();
