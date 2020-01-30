@@ -82,11 +82,13 @@ public class AdminTeleportCommandTest {
         when(user.getUniqueId()).thenReturn(uuid);
         when(user.getPlayer()).thenReturn(p);
         when(user.getName()).thenReturn("tastybento");
+        when(user.isPlayer()).thenReturn(true);
         User.setPlugin(plugin);
 
         // Parent command has no aliases
         ac = mock(CompositeCommand.class);
         when(ac.getSubCommandAliases()).thenReturn(new HashMap<>());
+        when(ac.getTopLabel()).thenReturn("bskyblock");
 
         // Island World Manager
         iwm = mock(IslandWorldManager.class);
@@ -160,14 +162,14 @@ public class AdminTeleportCommandTest {
     @Test
     public void testExecuteUserStringListOfStringEmptyArgs() {
         AdminTeleportCommand atc = new AdminTeleportCommand(ac,"tp");
-        assertFalse(atc.execute(user, "tp", new ArrayList<>()));
-        verify(user).sendMessage(Mockito.anyString());
+        assertFalse(atc.canExecute(user, "tp", new ArrayList<>()));
+        verify(user).sendMessage(eq("commands.help.header"), eq(TextVariables.LABEL), eq(null));
     }
 
     @Test
     public void testExecuteUserStringListOfStringUnknownTarget() {
         AdminTeleportCommand atc = new AdminTeleportCommand(ac,"tp");
-        assertFalse(atc.execute(user, "tp", Collections.singletonList("tastybento")));
+        assertFalse(atc.canExecute(user, "tp", Collections.singletonList("tastybento")));
         verify(user).sendMessage(eq("general.errors.unknown-player"), eq(TextVariables.NAME), eq("tastybento"));
     }
 
@@ -176,7 +178,7 @@ public class AdminTeleportCommandTest {
         when(pm.getUUID(eq("tastybento"))).thenReturn(notUUID);
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(false);
         AdminTeleportCommand atc = new AdminTeleportCommand(ac,"tp");
-        assertFalse(atc.execute(user, "tp", Collections.singletonList("tastybento")));
+        assertFalse(atc.canExecute(user, "tp", Collections.singletonList("tastybento")));
         verify(user).sendMessage(eq("general.errors.player-has-no-island"));
     }
 
