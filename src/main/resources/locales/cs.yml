@@ -1,0 +1,1379 @@
+###########################################################################################
+# This is a YML file. Be careful when editing. Check your edits in a YAML checker like    #
+# the one at http://yaml-online-parser.appspot.com                                        #
+#                                                                                         #
+# Translation by: CZghost                                                                 #
+###########################################################################################
+
+meta:
+  authors:
+  - tastybento
+  - Poslovitch
+  banner: WHITE_BANNER:1:STRIPE_SMALL:RED:SQUARE_TOP_RIGHT:CYAN:SQUARE_TOP_RIGHT:BLUE
+general:
+  success: '&a Povedlo se!'
+  invalid: Neplatné
+  errors:
+    command-cancelled: '&c Příkaz zrušen.'
+    no-permission: '&c Nemáš oprávnění k provedení tohoto příkazu (&7 [permission]&c ).'
+    use-in-game: '&c Tento příkaz je přístupný jen ve hře.'
+    no-team: '&c Nemáš tým!'
+    no-island: '&c Nemáš ostrov!'
+    player-has-island: '&c Hráč již má ostrov!'
+    player-has-no-island: '&c Hráč nemá ostrov!'
+    already-have-island: '&c Již máš ostrov!'
+    no-safe-location-found: '&c Nelze najít bezpečné místo k teleportu na ostrov.'
+    not-owner: '&c Nejsi vlastníkem tohoto ostrova!'
+    player-is-not-owner: '&b [name] &c není vlastník tohoto ostrova!'
+    not-in-team: '&c Tento hráč není v tvém týmu!'
+    offline-player: '&c Tento hráč je offline nebo neexistuje.'
+    unknown-player: '&c [name] je neznámý hráč!'
+    general: '&c Tento příkaz ještě není připraven - kontaktuj admina'
+    unknown-command: '&c Neznámý příkaz. Proveď &b /[label] help &c pro nápovědu.'
+    wrong-world: '&c Nejsi ve správném světě pro tuto akci!'
+    you-must-wait: '&c Musíš čekat [number]s před tím, než tento příkaz znovu použiješ.'
+    must-be-positive-number: '&c [number] není platné kladné číslo.'
+  tips:
+    changing-obsidian-to-lava: Měním obsidián zpět na lávu. Buď opatrný!
+  worlds:
+    overworld: Svět
+    nether: Nether
+    the-end: End
+
+commands:
+  # Parameters in <> are required, parameters in [] are optional
+  help:
+    header: '&7 =========== &c [label] help &7 ==========='
+    syntax: '&b [usage] &a [parameters]&7 : &e [description]'
+    syntax-no-parameters: '&b [usage]&7 : &e [description]'
+    end: '&7 ================================='
+    parameters: '[command]'
+    description: příkaz nápovědy
+    console: Konzole
+  admin:
+    help:
+      description: administrátorský příkaz
+    resets:
+      description: upravit resety hráčů
+      set:
+        description: nastavuje, kolikrát si hráč resetoval ostrov
+        parameters: <player> <resets>
+        success: '&a Úspěšně nastaveny resety &b [name]&a na &b [number]&a .'
+      reset:
+        description: nastavuje, kolikrát si hráč resetoval ostrov, na hodnotu 0
+        parameters: <player>
+        success-everyone: '&a Úspěšně nastaveny resety &b všech&a na &b 0&a
+          .'
+        success: '&a Úspěšně nastaveny resety &b [name]&a na &b 0&a .'
+      add:
+        description: přičítá, kolikrát si hráč resetoval ostrov
+        parameters: <player> <resets>
+        success: '&a Úspěšně přičteno &b [number] &a resetů hráči &b [name], celkem
+          navýšeno na &b [total]&a  resetů.'
+      remove:
+        description: odčítá, kolikrát si hráč resetoval ostrov
+        parameters: <player> <resets>
+        success: '&a Úspěšně odečteno &b [number] &a resetů hráči &b [name], celkem
+          sníženo na &b [total]&a  resetů.'
+    purge:
+      parameters: '[days]'
+      description: pročistit ostrovy opuštěné více než [days]
+      days-or-more: Musí být alespoň 1 den nebo více
+      purgable-islands: Nalezeno [number] pročistitelných ostrovů.
+      purge-in-progress: '&c Probíhá čištění. Použij &e purge stop &c k zastavení'
+      number-error: '&c Argument musí být číslo vyjadřující počet dní'
+      confirm: '&d Napiš [label] purge confirm ke spuštění čištění'
+      completed: '&a Čištění zastaveno'
+      see-console-for-status: Čištění začalo. Pro aktuální status použij konzoli
+      protect:
+        description: Přepnout protekci proti čištění
+        move-to-island: '&c Nejdříve se přesuň na ostrov!'
+        protecting: '&a Ostrov je chráněn proti čištění'
+        unprotecting: '&a Ostrov již není chráněn proti čištění'
+      stop:
+        description: Zastaví proces čištění
+        stopping: Zastavuji čištění
+        no-purge-in-progress: '&c Právě neprobíhá čištení!'
+      unowned:
+        description: Vyčistit nevlastněné ostrovy - vyžaduje potvrzení
+        unowned-islands: '&d Nalezeno [number] ostrovů'
+    team:
+      add:
+        parameters: <owner> <player>
+        description: přidat hráče k týmu vlastníka
+        name-not-owner: '&c [name] není vlastník.'
+        name-has-island: '&c [name] má ostrov. Nejdříve ho odregistruj nebo smaž!'
+        success: '&b [name]&a  byl přidán na ostrov &b [owner]&a .'
+      disband:
+        parameters: <owner>
+        description: rozpustit tým vlastníka
+        use-disband-owner: '&c Není vlastník! Použij &e disband [owner]&c.'
+        disbanded: '&c Admin rozpustil tvůj tým!'
+        success: '&a Tým hráče &b [name]&a byl rozpuštěn.'
+      kick:
+        parameters: <team player>
+        description: vykopnout hráče z týmu
+        cannot-kick-owner: '&c Nemůžeš vykopnout vlastníka. Vykopni nejdříve členy.'
+        not-in-team: '&c Tento hráč není v týmu.'
+        admin-kicked: '&c Admin tě vykopnul z týmu.'
+        success: '&b [name] &a byl vykopnut z ostrova hráče &b [owner]&a .'
+      setowner:
+        parameters: <player>
+        description: předat vlastnictví ostrova hráči
+        already-owner: '&c [name] již je vlastníkem ostrova!'
+        success: '&b [name]&a  je nyní vlastníkem tohoto ostrova.'
+    range:
+      description: Administrátorský příkaz pro vzdálenost ostrovů
+      invalid-value:
+        too-low: '&c Chráněná oblast musí být větší než &b 1&c !'
+        too-high: '&c Chráněná oblast nesmí být větší než &b [number]&c
+          !'
+        same-as-before: '&c Chráněná oblast je již nastavena na &b [number]&c !'
+      display:
+        already-off: '&c Ukazatelé jsou již vypnuty'
+        already-on: '&c Ukazatelé jsou již zapnuty'
+        description: zobrazit nebo skrýt ukazatele vzdálenosti ostrovů
+        hiding: '&2 Skrývám ukazatele vzdálenosti'
+        hint: |-
+          &c Ikony červené bariéry &f ukazují nynější limit chráněné oblasti ostrova.
+          &7 Šedé partikly &f ukazují maximální limit chráněné oblasti.
+          &a Zelené partikly &f ukazují výchozí chráněnou oblast, pokud se od ní nynější odlišuje.
+        showing: '&2 Zobrazuji ukazatele vzdálenosti'
+      set:
+        parameters: <player> <range>
+        description: nastavit chráněnou oblast ostrova
+        success: '&a Chráněná oblast ostrova nastavena na &b [number]&a .'
+      reset:
+        parameters: <player>
+        description: nastaví chráněnou oblast ostrova na výchozí hodnotu světa
+        success: '&a Chráněná oblast ostrova nastavena zpět na &b [number]&a .'
+      add:
+        description: zvětší chráněnou oblast ostrova
+        parameters: <player> <range>
+        success: '&a Úspěšně zvětšena chráněná oblast ostrova hráče &b [name]&a 
+          na &b [total] &7 (&b +[number]&7 )&a .'
+      remove:
+        description: decreases the island protected range
+        parameters: <player> <range>
+        success: '&a Úspěšně zmenšena chráněná oblast ostrova hráče &b [name]&a 
+          na &b [total] &7 (&b -[number]&7 )&a .'
+    register:
+      parameters: <player>
+      description: registrovat hráče na nevlastněný ostrov, na kterém se nacházíš
+      registered-island: '&a Hráč registrován na ostrov [xyz].'
+      reserved-island: '&a Ostrov [xyz] rezervován pro hráče.'
+      already-owned: '&c Ostrov je již vlastněn jiným hráčem!'
+      no-island-here: '&c Zde není žádný ostrov. Potvrď jeho vytvoření.'
+      in-deletion: '&c Tento ostrov bude smazán. Opakuj později.'
+      cannot-make-island: '&c Pardon, sem nelze umístit ostrov. Podívej se
+        do konzole pro přípané chyby.'
+      island-is-spawn: '&6 Ostrov je spawn. Jsi si jistý? Potvrď opětovným zadáním příkazu.'
+    unregister:
+      parameters: <owner>
+      description: odregistrovat vlastníka z ostrova, ale zachovat bloky ostrova
+      unregistered-island: '&a Hráč odregistrován z ostrova [xyz].'
+    info:
+      parameters: <player>
+      description: získat info, kde se nacházíš ty nebo hráčův ostrov
+      no-island: '&c Právě nejsi na žádném ostrovu...'
+      title: ========== Info o ostrovu ============
+      island-uuid: 'UUID: [uuid]'
+      owner: 'Vlastník: [owner] ([uuid])'
+      last-login: 'Naposledy spatřen: [date]'
+      deaths: 'Smrti: [number]'
+      resets-left: 'Resety: [number] (Max: [total])'
+      team-members-title: 'Členové týmu:'
+      team-owner-format: '&a [name] [rank]'
+      team-member-format: '&b [name] [rank]'
+      island-location: 'Lokace ostrova: [xyz]'
+      island-coords: 'Souřadnice ostrova: [xz1] - [xz2]'
+      islands-in-trash: '&d Hráčův ostrov je v koši.'
+      protection-range: 'Chráněná oblast: [range]'
+      purge-protected: Ostrov je chráněn proti smazání
+      max-protection-range: 'Největší historická chráněná oblast: [range]'
+      protection-coords: 'Chráněné souřadnice: [xz1] - [xz2]'
+      is-spawn: Ostrov je spawn
+      banned-players: 'Zakázaní hráči:'
+      banned-format: '&c [name]'
+      unowned: '&c Nevlastněný'
+    switch:
+      description: zapnout nebo vypnout obcházení protekce
+      op: '&c OP mohou vždy obcházet protekce. Odstraň OP k použití příkazu.'
+      removing: Vypínám obcházení protekce...
+      adding: Zapínám obcházení protekce...
+    switchto:
+      parameters: <player> <number>
+      description: nastavit ostrov hráče na pořadí v koši
+      out-of-range: '&c Číslo musí být mezi 1 a [number]. Použij &l [label] trash
+        [player] &r &c pro zobrazení čísel'
+      cannot-switch: '&c Nastavení nezdařeno. Podívej se do konzole pro výpis chyb.'
+      success: '&a Úspěšně nastaveno specifikované pořadí ostrova hráče v koši.'
+    trash:
+      no-unowned-in-trash: '&c V koši nejsou žádné nevlastněné ostrovy'
+      no-islands-in-trash: '&c Hráč nemá žádný ostrov v koši'
+      parameters: '[player]'
+      description: ukázat nevlastněné nebo hráčské ostrovy v koši
+      title: '&d =========== Ostrovy v koši ==========='
+      count: '&l &d Ostrov [number]:'
+      use-switch: '&a Použij &l [label] switchto <player> <number>&r &a  k nastavení
+        pořadí v koši'
+      use-emptytrash: '&a Použij &l [label] emptytrash [player]&r &a  k trvalému
+        smazání položek'
+    emptytrash:
+      parameters: '[player]'
+      description: Vysypat koš hráče, nebo všech nevlastněných ostrovů
+      success: '&a Koš byl úspěšně vysypán.'
+    version:
+      description: ukázat verze pluginu BentoBox a přídavků
+    setrange:
+      parameters: <player> <range>
+      description: nastavit oblast ostrova hráče
+      range-updated: '&a Oblast ostrova nastavena na &b [number]&a .'
+    reload:
+      description: obnovit
+    tp:
+      parameters: <player> [player to teleport]
+      description: teleportovat se na ostrov hráče
+      manual: '&c Nebyl nalezen bezpečný warp! Teleportuj se manuálně na &b [location] 
+        &c a podívej se na to'
+    getrank:
+      parameters: <player> [island owner]
+      description: získat hodnost hráče na jejich ostrově nebo na ostrově vlastníka
+      rank-is: '&a Hodnost je &b [rank] &a na ostrově &b [name]&a .'
+    setrank:
+      parameters: <player> <rank> [island owner]
+      description: nastavit hodnot hráče na jejich ostrově nebo na ostrově vlastníka
+      unknown-rank: '&c Neznámá hodnost!'
+      not-possible: '&c Hodnost musí být vyšší, než visitor.'
+      rank-set: '&a Hodnost nastavena z &b [from] &a na &b [to] &a na ostrově &b [name]&a .'
+    setspawn:
+      description: nastavit ostrov jako spawn pro tento svět
+      already-spawn: '&c Tento ostrov již je spawn!'
+      no-island-here: '&c Zde není ostrov.'
+      confirmation: '&c Jsi si jistý, že chceš tento ostrov nastavit jako spawn
+        pro tento svět?'
+      success: '&a Ostrov úspěšně nastaven jako spawn pro tento svět.'
+    settings:
+      parameters: '[player]'
+      description: otevřít systémová nastavení nebo nastavení ostrova hráče
+    blueprint:
+      parameters: <load/copy/paste/pos1/pos2/save>
+      description: manipulovat s předlohami
+      bedrock-required: '&c V předloze musí být alespoň jeden blok podloží!'
+      copy-first: '&c Nejdříve zkopíruj!'
+      file-exists: '&c Soubor již existuje, přepsat?'
+      no-such-file: '&c Soubor neexistuje!'
+      could-not-load: '&c Nelze načíst tento soubor!'
+      could-not-save: '&c Hmm, při zapisování souboru se něco zvrtlo: [message]'
+      set-pos1: '&a Pozice 1 nastavena na [vector]'
+      set-pos2: '&a Pozice 2 nastavena na [vector]'
+      set-different-pos: '&c Nastav jej na jiné lokaci - tato pozice je již nastavena!'
+      need-pos1-pos2: '&c Nastav nejdříve pos1 a pos2!'
+      copying: '&b Kopíruji bloky...'
+      copied-blocks: '&b Zkopírováno [number] bloků do schránky'
+      look-at-a-block: '&c Podívej se na blok v mezi 20 bloků k nastavení'
+      mid-copy: '&c Právě se kopíruje. Počkej, než se akce dokončí.'
+      copied-percent: '&6 Zkopírováno [number]%'
+      copy:
+        parameters: '[air]'
+        description: zkopírovat schránku nastavenou pomocí pos1 a pos2 a volitelně
+          i vzduchové bloky
+      delete:
+        parameters: <name>
+        description: smazat předlohu
+        no-blueprint: '&b [name] &c neexistuje.'
+        confirmation: |
+          &c Jsi si jistý, že chceš tuto předlohu smazat?
+          &c Jakmile ji smažeš, nelze ji již obnovit.
+        success: '&a Předloha &b [name]&a úspěšně smazána.'
+      load:
+        parameters: <name>
+        description: načíst předlohu do schránky
+      list:
+        description: vypsat seznam dostupných předloh
+        no-blueprints: '&c Nejsou zde žádné předlohy ve složce blueprints!'
+        available-blueprints: '&a Tyto předlohy jsou dostupné pro načtení:'
+      origin:
+        description: nastavit střed předlohy na tvou pozici
+      paste:
+        description: vložit obsah schránky
+        pasting: '&a Vkládám...'
+      pos1:
+        description: nastavit 1. roh kubické schránky
+      pos2:
+        description: nastavit 2. roh kubické schránky
+      save:
+        parameters: <blueprint name>
+        description: uložit zkopírovanou schránku
+      rename:
+        parameters: <blueprint name> <new name>
+        description: přejmenovat předlohu
+        success: '&a Předloha &b [old] &a byla úspěšně přejmenována na &b [name]&a.'
+        pick-different-name: '&c Prosím, zvol jméno předlohy, které se liší
+          od aktuálního jména předlohy.'
+      management:
+        back: Zpět
+        instruction: Klikni na předlohu, potom klikni sem
+        title: Správce balíku předloh
+        edit: Klikni k editaci
+        rename: Klikni pravým myšítkem k přejmenování
+        edit-description: Klikni k editaci popisu
+        world-name-syntax: '[name] world'
+        world-instructions: |
+          Přesuň předlohu
+          doprava k nastavení
+        trash: Koš
+        trash-instructions: Klikni pravým myšítkem sem ke smazání
+        permission: Oprávnění
+        perm-required: Vyžadováno
+        perm-not-required: Nevyžadováno
+        perm-format: '&e '
+        remove: Klikni pravým myšítkem ke smazání
+        blueprint-instruction: |
+          Klikni k výběru,
+          potom přidej do balíku.
+          Klikni pravým myšítkem ke smazání.
+        select-first: Nejdříve vyber předlohu
+        new-bundle: Nový balík
+        new-bundle-instructions: Klikni pro vytvoření nového balíku
+        name:
+          quit: quit
+          prompt: Napiš jméno, nebo 'quit' ke zrušení
+          too-long: '&c Příliš dlouhé'
+          pick-a-unique-name: Prosím, zvol více jedinečný název
+          success: Povedlo se!
+          conversation-prefix: '>'
+        description:
+          quit: quit
+          instructions: |
+            Napiš víceřádkový popis pro [name]
+            a 'quit' na samostatném řádku k dokončení.
+          default-color: ''
+          success: Povedlo se!
+          cancelling: Zrušeno
+        slot: '&f Preferovaný slot [number]'
+        slot-instructions: |
+          &a Klikni levým myšítkem ke zvýšení
+          &a Klikni pravým myšítkem ke snížení
+    resetflags:
+      parameters: '[flag]'
+      description: Obnov vlaječky všech ostrovů na výchozí nastavení v souboru config.yml
+      confirm: '&4 Toto obnoví vlaječku/-y všech ostrovů na výchozí hodnotu!'
+      success: '&a Výchozí hodnoty vlaječek všech ostrovů úspěšně obnoveny.'
+      success-one: '&a Vlaječka [name] všech ostrovů nastavena na výchozí hodnotu.'
+    world:
+      description: Spravovat nastavení světa
+    delete:
+      parameters: <player>
+      description: odstraní ostrov hráče
+      cannot-delete-owner: '&c Všichni členové ostrova musí být vykopnuti z ostrova,
+        než jej bude možné smazat.'
+      deleted-island: '&a Ostrov na &e [xyz] &a byl úspěšně smazán.'
+    why:
+      parameters: <player>
+      description: přepnout debug hlášení protekce v konzoli
+      turning-on: Zapínám debug v konzoli pro [name].
+      turning-off: Vypínám debug v konzoli pro [name].
+    deaths:
+      description: editovat smrti hráče
+      reset:
+        description: obnoví smrti hráče
+        parameters: <player>
+        success: '&a Úspěšně obnoveny smrti &b [name]&a zpět na &b 0&a .'
+      set:
+        description: nastaví smrti hráče
+        parameters: <player> <deaths>
+        success: '&a Úspěšně nastaveny smrti &b [name]&a na &b [number]&a .'
+      add:
+        description: přičte smrti hráči
+        parameters: <player> <deaths>
+        success: '&a Úspěšně přičteno &b [number] &a smrtí &b [name], zvyšující
+          celkový počet na &b [total]&a  smrtí.'
+      remove:
+        description: odečte smrti hráči
+        parameters: <player> <deaths>
+        success: '&a Úspěšně odečteno &b [number] &a smrtí &b [name], snižující
+          celkový počet na &b [total]&a  smrtí.'
+  bentobox:
+    description: BentoBox administrátorský příkaz
+    about:
+      description: ukáže copyright a informace o licenci
+    reload:
+      description: znovu načte BentoBox a všechny doplňky, nastavení a jazyky
+      locales-reloaded: '&2 Jazyky znovu načteny.'
+      addons-reloaded: '&2 Doplňky znovu načteny.'
+      settings-reloaded: '&2 Nastavení znovu načteno.'
+      addon: '&6 Znovu načítám &b [name]&2 .'
+      addon-reloaded: '&b [name] &2 znovu načten.'
+      warning: '&c Varování: Znovunačtení může způsobit nestabilitu, takže pokud po akci
+        vidíš chyby, restartuj server.'
+      unknown-addon: '&c Neznámý doplňek!'
+    version:
+      plugin-version: '&2 Verze BentoBox: &3 [version]'
+      description: ukáže verze BentoBox a doplňků
+      loaded-addons: 'Načtené doplňky:'
+      loaded-game-worlds: 'Načtené herní světy:'
+      addon-syntax: '&2 [name] &3 [version] &7 (&3 [state]&7 )'
+      game-world: '&2 [name] &7 (&3 [addon]&7 ): &3 [worlds]'
+      server: '&2 Běžím na &3 [name] [version]&2 .'
+      database: '&2 Databáze: &3 [database]'
+    manage:
+      description: ukáže Panel správy
+    catalog:
+      description: ukáže Katalog
+    locale:
+      description: provede analýzu jazykových souborů
+      see-console: |-
+        &a Podívej se do konzole na výsledky.
+        &a Tento příkaz by zaspamoval chat, nebylo by možné výsledky zkoumat...
+    migrate:
+      description: přetáhne data z jedné databáze do druhé
+      players: '&6 Přetahuji hráče'
+      names: '&6 Přetahuji názvy'
+      addons: '&6 Přetahuji doplňky'
+      class: '&6 Přetahuji [description]'
+      migrated: '&a Přetaženo'
+  confirmation:
+    confirm: '&c Napiš příkaz znovu během &b [seconds]s&c  k potvrzení.'
+    previous-request-cancelled: '&6 Předchozí žádost o potvrzení zamítnuta.'
+    request-cancelled: '&c Časový limit vypršel - &b žádost zamítnuta.'
+  delay:
+    previous-command-cancelled: '&c Předchozí příkaz zrušen'
+    stand-still: '&6 Nehýbej se! Teleportuji za [seconds] sekund'
+    moved-so-command-cancelled: '&c Pohnul ses. Teleport zrušen!'
+  island:
+    about:
+      description: O tomto doplňku
+    go:
+      parameters: '[home number]'
+      description: teleportuje tě na tvůj ostrov
+      teleport: '&a Teleportuji tě na tvůj ostrov.'
+      teleported: '&a Teleportoval ses do domova &e #[number].'
+    help:
+      description: Hlavní příkaz ostrova
+    spawn:
+      description: teleportuje tě na spawn
+      teleporting: '&a Teleportuji tě na spawn.'
+      no-spawn: '&c V tomto světě není žádný spawn.'
+    create:
+      description: vytvořit ostrov, s použitím volitelné předlohy (vyžaduje oprávnění)
+      parameters: <blueprint>
+      too-many-islands: '&c Je zde příliš mnoho ostrovů v tomto světě: není zde
+        dostatek místa k vytvoření toho tvého.'
+      cannot-create-island: '&c Nelze momentálně najít místo, prosím, opakuj později...'
+      unable-create-island: '&c Tvůj ostrov se nepovedlo vygenerovat, prosím, kontaktuj
+        administrátora.'
+      creating-island: '&a Hledám místo pro tvůj ostrov...'
+      pasting:
+        estimated-time: '&a Odhadovaný čas: &b [number] &a sekund.'
+        blocks: '&a Stavím blok po bloku: &b celkem [number] &a bloků...'
+        entities: '&a Plním entitami: &b celkem [number] &a entit...'
+        done: '&a Hotovo! Tvůj ostrov je připraven a čeká na tebe!'
+      pick: '&2 Zvol svůj ostrov'
+      unknown-blueprint: '&c Tato předloha dosud nebyla načtena.'
+      on-first-login: '&a Vítej! Za pár sekund začneme připravovat tvůj ostrov.'
+      you-can-teleport-to-your-island: '&a Můžeš se teleportovat na svůj ostrov,
+        kdy budeš chtít.'
+    info:
+      description: ukázat info o tvém ostrově nebo ostrově hráče
+      parameters: <player>
+    near:
+      description: ukázat jména sousedících ostrovů okolo tebe
+      parameters: ''
+      the-following-islands: '&a Následující ostrovy jsou poblíž:'
+      syntax: '&6 [direction]: &a [name]'
+      north: Sever
+      south: Jih
+      east: Východ
+      west: Západ
+      no-neighbors: '&c Nemáš bezprostřední sousední ostrovy!'
+    reset:
+      description: restartuj svůj ostrov a smaž svůj předchozí
+      parameters: <blueprint>
+      none-left: '&c Již jsi vyčerpal počet svých restartů!'
+      resets-left: '&c Ještě máš &b [number] &c zbývajících restartů'
+      confirmation: |-
+        &c Jsi si jistý, že to chceš udělat?
+        &c Všichni členové ostrova budou vykopnuti, budeš je muset znovu pozvat.
+        &c Není cesty zpět: jakmile je tvůj dosavadní ostrov smazán, není zde
+        &l žádný &r &c způsob jej znovu získat.
+      kicked-from-island: '&c Byl jsi vykopnut ze svého ostrova v módu [gamemode],
+        protože jej vlastník restartuje.'
+    sethome:
+      description: nastav si teleport na domov
+      must-be-on-your-island: '&c Musíš být na svém ostrově k nastavení domova!'
+      num-homes: '&c Domovy mohou být od 1 do [number].'
+      home-set: '&6 Domov tvého ostrova byl nastaven na tvou nynější pozici.'
+      nether:
+        not-allowed: '&c Nejsi oprávněn nastavit svůj domov v Netheru.'
+        confirmation: '&c Jsi si jistý, že chceš nastavit svůj domov v Netheru?'
+      the-end:
+        not-allowed: '&c Nejsi oprávněn nastavit svůj domov v Endu.'
+        confirmation: '&c Jsi si jistý, že chceš nastavit svůj domov v Endu?'
+      parameters: '[home number]'
+    setname:
+      description: nastavit jméno tvého ostrova
+      name-too-short: '&c Příliš krátké. Minimální délka je [number] znaků.'
+      name-too-long: '&c Příliš dlouhé. Maximální délka je [number] znaků.'
+      name-already-exists: '&c V tomto módu již existuje ostrov s tímto jménem.'
+      parameters: <name>
+    resetname:
+      description: obnovit jméno tvého ostrova
+    team:
+      description: spravovat svůj tým
+      info:
+        description: ukázat detailní informace o tvém týmu
+        member-layout:
+          online: '&a &l  o &r &f [name]'
+          offline: '&c &l  o &r &f [name] &7 ([last_seen])'
+        last-seen:
+          layout: '&7 před &b [number] &7 [unit] '
+          days: dny
+          hours: hodinami
+          minutes: minutami
+        header: |
+          &f --- &a Detaily týmu &f ---
+          &a Členů: &b [total]&7 /&b [max]
+          &a Online členů: &b [online]
+        rank-layout:
+          owner: '&6 [rank]:'
+          generic: '&6 [rank] &7 (&b [number]&7 )&6 :'
+      coop:
+        description: učinit hráče pomocníkem na tvém ostrově
+        parameters: <player>
+        cannot-coop-yourself: '&c Nemůžeš učinit pomocníkem sám sebe!'
+        already-has-rank: '&c Hráč již má svou hodnost!'
+        you-are-a-coop-member: '&2 Byl jsi učiněn pomocníkem hráčem [name]'
+        success: '&a Učinil jsi pomocníkem &b [name].'
+        name-has-invited-you: '&a [name] tě pozval jako pomocníka na svůj
+          ostrov.'
+      uncoop:
+        description: odstranit pomocníka u hráče
+        parameters: <player>
+        cannot-uncoop-yourself: '&c Nemůžeš odstranit pomocníka u sebe!'
+        cannot-uncoop-member: '&c Nemůžeš odstranit pomocníka u člena týmu!'
+        player-not-cooped: '&c Hráč není pomocníkem!'
+        you-are-no-longer-a-coop-member: '&c Nadále již nejsi pomocníkem na ostrově [name]'
+        all-members-logged-off: '&c Všichni členové ostrova se odhlásili, takže již
+          nadále nejsi pomocníkem na ostrově [name]'
+        success: '&b [name] &a již nadále není pomocníkem na tvém ostrově.'
+      trust:
+        description: dát hráči hodnost důvěryhodného na tvém ostrově
+        parameters: <player>
+        trust-in-yourself: '&c Věř sám sobě!'
+        name-has-invited-you: '&a [name] tě pozval na svůj ostrov jako důvěryhodného
+          člena ostrova.'
+        player-already-trusted: '&c Hráč je již důvěryhodný!'
+        you-are-trusted: '&2 Hráč &b [name]&2 do tebe vložil svou důvěru&a !'
+        success: '&a Vložil jsi důvěru hráči &b [name]&a .'
+      untrust:
+        description: odstranit hráči hodnost důvěryhodného
+        parameters: <player>
+        cannot-untrust-yourself: '&c Nemůžeš nevěřit sám sobě!'
+        cannot-untrust-member: '&c Nemůžeš odstranit důvěru členovi týmu!'
+        player-not-trusted: '&c Hráč nemá hodnost důvěryhodného!'
+        you-are-no-longer-trusted: '&c Hráč &b [name]&c v tobě již neshledává důvěru&a !'
+        success: '&b [name] &a již nadále není na tvém ostrově důvěryhodný.'
+      invite:
+        description: pozvi hráče jako člena tvého ostrova
+        invitation-sent: '&a Pozvánka poslána hráči [name]'
+        removing-invite: '&c Odstraňuji pozvánku'
+        name-has-invited-you: '&a [name] tě pozval jako člena jeho ostrova.'
+        to-accept-or-reject: '&a Proveď /[label] team accept k přijetí žádosti,
+          nebo /[label] team reject k odmítnutí'
+        you-will-lose-your-island: '&c VAROVÁNÍ! Ztatíš svůj ostrov, když žádost přijmeš!'
+        errors:
+          cannot-invite-self: '&c Nemůžeš pozvat sám sebe!'
+          cooldown: '&c Tohoto hráče nemůžeš pozvat dalších [number] sekund'
+          island-is-full: '&c Tvůj ostrov je plný, nemůžeš pozvat nikoho dalšího.'
+          none-invited-you: '&c Nikdo tě nepozval :c.'
+          you-already-are-in-team: '&c Již jsi v týmu!'
+          already-on-team: '&c Tento hráč je již členem týmu!'
+          invalid-invite: '&c Pardon, tato pozvánka již není platná.'
+          you-have-already-invited: '&c Tohoto hráče jsi již pozval!'
+        parameters: <player>
+        you-can-invite: '&a Můžeš pozvat ještě [number] dalších hráčů.'
+        accept:
+          description: přijmout pozvánku
+          you-joined-island: '&a Připojil ses na ostrov! Použij /[label] team info
+            pro zobrazení ostatních členů.'
+          name-joined-your-island: '&a [name] se připojil na tvůj ostrov!'
+          confirmation: |-
+            &c Jsi si jistý, že chceš přijmout tuto pozvánku?
+            &c&l&n ZTRATÍŠ&r&c&l svůj dosavadní ostrov!
+        reject:
+          description: odmítnout pozvánku
+          you-rejected-invite: '&a Odmítnul jsi pozvánku do týmu ostrova.'
+          name-rejected-your-invite: '&c [name] odmítnul tvou pozvánku!'
+        cancel:
+          description: zrušit čekající pozvánku na tvůj ostrov
+      leave:
+        cannot-leave: '&c Vlastník nemůže odejít! Nejdříve se staň členem,
+          nebo vykopni všechny členy.'
+        description: opustit svůj ostrov
+        left-your-island: '&c [name] &c opustil tvůj ostrov'
+        success: '&a Opustil jsi tento ostrov.'
+      kick:
+        description: odstranit člena tvého ostrova
+        parameters: <player>
+        owner-kicked: '&c Vlastník tě vykopnul ze svého ostrovu v módu [gamemode]!'
+        cannot-kick: '&c Nemůžeš vykopnout sám sebe!'
+        success: '&b [name] &a byl vykopnut z tvého ostrova.'
+      demote:
+        description: degradovat hráče na tvém ostrově
+        parameters: <player>
+        errors:
+          cant-demote-yourself: '&c Nemůžeš degradovat sám sebe!'
+        failure: '&c Hráče již nelze dále degradovat!'
+        success: '&a Degradovat jsi [name] na [rank]'
+      promote:
+        description: povýšit hráče na tvém ostrově
+        parameters: <player>
+        failure: '&c Hráče již nelze nadále povýšit!'
+        success: '&a Povýšil jsi [name] na [rank]'
+      setowner:
+        description: přenést vlastnictví svého ostrova na člena
+        errors:
+          cant-transfer-to-yourself: '&c Nemůžeš přenést vlastnictví sám na sebe!
+            &7 (&o Vlastně, v podstatě, můžeš... Ale nechceme. Protože
+            je to zbytečné.&r &7 )'
+          target-is-not-member: '&c Tento hráč není členem týmu na tvém ostrově!'
+        name-is-the-owner: '&a [name] je nyní vlastník ostrova!'
+        parameters: <player>
+        you-are-the-owner: '&a Nyní jsi vlastníkem ostrova!'
+    ban:
+      description: zakázat hráči přístup na tvůj ostrov
+      parameters: <player>
+      cannot-ban-yourself: '&c Nemůžeš zakázat sám sebe!'
+      cannot-ban: '&c Tomuto hráči nelze zakázat přístup.'
+      cannot-ban-member: '&c Nejdříve odstraň člena týmu, pak mu teprve zakaž přístup.'
+      cannot-ban-more-players: '&c Dosáhl jsi limitu zákazů, nemůžeš zakázat přístup
+        na tvůj ostrov dalším hráčům.'
+      player-already-banned: '&c Hráč má již přístup zakázán.'
+      player-banned: '&b [name]&c  má nyní přístup na tvůj ostrov zakázán.'
+      owner-banned-you: '&b [name]&c  ti zakázal přístup na svůj ostrov!'
+      you-are-banned: '&b Přístup na tento ostrov ti byl zakázán!'
+    unban:
+      description: povolit hráči přístup na tvůj ostrov
+      parameters: <player>
+      cannot-unban-yourself: '&c Nemůžeš povolit sám sebe!'
+      player-not-banned: '&c Hráč nemá přístup zakázán.'
+      player-unbanned: '&b [name]&a  má nyní přístup na tvůj ostrov povolen.'
+      you-are-unbanned: '&b [name]&a  ti povolil přístup na svůj ostrov!'
+    banlist:
+      description: ukázat seznam zakázaných hráčů
+      noone: '&a Nikdo nemá zakázaný přístup na tento ostrov.'
+      the-following: '&b Následující hráči mají zakázaný přístup:'
+      names: '&c [line]'
+      you-can-ban: '&b Můžeš zakázat přístup ještě &e [number] &b dalším hráčům.'
+    settings:
+      description: ukázat nastavení ostrova
+    language:
+      description: zvolit jazyk
+    expel:
+      description: vykázat hráče z tvého ostrova
+      parameters: <player>
+      cannot-expel-yourself: '&c Nemůžeš vykázat sám sebe!'
+      cannot-expel: '&c Tohoto hráče nelze vykázat.'
+      cannot-expel-member: '&c Nemůžeš vykázat člena týmu!'
+      not-on-island: '&c Tento hráč není na tvém ostrově!'
+      player-expelled-you: '&b [name]&c  tě vykázal ze svého ostrova!'
+      success: '&a Vykázal jsi &b [name] &a ze svého ostrova.'
+ranks:
+  owner: Vlastník
+  sub-owner: Spolu-vlastník
+  member: Člen
+  trusted: Důvěryhodný
+  coop: Pomocník
+  visitor: Návštěvník
+  banned: Zakázán
+  admin: Administrátor
+  mod: Moderátor
+protection:
+  command-is-banned: Příkaz je pro návštěvníky zakázán
+  flags:
+    ANIMAL_SPAWN:
+      description: Přepnout spawnování
+      name: Spawnování zvířat
+    ANVIL:
+      description: Přepnout interakce
+      name: Kovadliny
+      hint: Použití kovadliny zakázáno
+    ARMOR_STAND:
+      description: Přepnout interakce
+      name: Stojany na brnění
+      hint: Použití stojanu na brnění zakázáno
+    BEACON:
+      description: Přepnout interakce
+      name: Majáky
+      hint: Použití majáku zakázáno
+    BED:
+      description: Přepnout interakce
+      name: Postele
+      hint: Použití postele zakázáno
+    BOAT:
+      name: Lodě
+      description: Přepnout interakce lodí
+      hint: Interakce lodí zakázána
+    BREAK_BLOCKS:
+      description: Přepnout ničení
+      name: Ničení bloků
+      hint: Ničení bloků zakázáno
+    BREEDING:
+      description: Přepnout rozmnožování
+      name: Rozmnožit zvířata
+      hint: Množení zvířat chráněno
+    BREWING:
+      description: Přepnout interakce
+      name: Varné stojany
+      hint: Vaření lektvarů zakázáno
+    BUCKET:
+      description: Přepnout interakce
+      name: Kbelíky
+      hint: Použití kbelíku zakázáno
+    BUTTON:
+      description: Přepnout použití tlačítek
+      name: Tlačítka
+      hint: Použití tlačítek zakázáno
+    CAKE:
+      description: Přepnout interakce dortu
+      name: Dorty
+      hint: Ujídání dortu zakázáno
+    CONTAINER:
+      name: Kontejnery
+      description: |-
+        &a Přepnout interakce s truhlami,
+        &a shulker boxy a květináči,
+        &a kompostery a sudy.
+
+        &7 Ostatní kontejnery jsou řešeny
+        &7 vlastními vlaječkami.
+      hint: Přístup do kontejnerů zakázán
+    DISPENSER:
+      name: Dávkovače
+      description: Přepnout interakce dávkovače
+      hint: Interakce dávkovače zakázána
+    DROPPER:
+      name: Povadače
+      description: Přepnout interakce podavače
+      hint: Interakce podavače zakázána
+    ELYTRA:
+      name: Krovky
+      description: Přepnout povolení krovek
+      hint: '&c VAROVÁNÍ: Krovky zde nelze použít!'
+    HOPPER:
+      name: Násypky
+      description: Přepnout interakce násypek
+      hint: Interakce násypek zakázána
+    CHEST_DAMAGE:
+      description: Přepnout ničení truhel z explozí
+      name: Ničení truhel
+    CHORUS_FRUIT:
+      description: Přepnout teleportaci
+      name: Plody chorusu
+      hint: Teleportace plodem chorusu zakázána
+    CLEAN_SUPER_FLAT:
+      description: |-
+        &a Zapnout pro vyčištění
+        &a super-flat chunků
+        &a ve světech ostrovů
+      name: Vyčistit Superflat
+    COARSE_DIRT_TILLING:
+      description: |-
+        &a Přepnout rovnání hrubé
+        &a hlíny a ničení podzolu
+        &a k získání hlíny
+      name: Rovnání hrubé hlíny
+      hint: Rovnání hrubé hlíny zakázáno
+    COLLECT_LAVA:
+      description: |-
+        &a Přepnout sběr lávy
+        &a (přepisuje Kbelíky)
+      name: Sběr lávy
+      hint: Sběr lávy zakázán
+    COLLECT_WATER:
+      description: |-
+        &a Přepnout sběr vody
+        &a (přepisuje Kbelíky)
+      name: Sběr vody
+      hint: Sběr vody zakázán
+    COMMAND_RANKS:
+      name: '&e Hodnosti příkazů'
+      description: '&a Konfigurovat hodnosti příkazů'
+    CRAFTING:
+      description: Přepnout použití
+      name: Pracovní stolky
+      hint: Přístup k pracovním stolkům zakázán
+    CREEPER_DAMAGE:
+      description: Přepnout ničení creeperem
+      name: Ničení creeperem
+    CREEPER_GRIEFING:
+      description: Přepnout griefing creepera
+      name: Griefing creepera
+      hint: Griefing creepera zakázán
+    CROP_TRAMPLE:
+      description: Přepnout ničení plodin
+      name: Ničení plodin
+      hint: Ničení podin zakázáno
+    DOOR:
+      description: Přepnout použití dvěří
+      name: Použití dveří
+      hint: Interakce s dveřmi zakázány
+    DRAGON_EGG:
+      name: Dračí vejce
+      description: |-
+        &a Předchází interakci s dračím vejcem.
+
+        &c Toto nezahrnuje jeho
+        &c položení nebo ničení.
+      hint: Interakce s dračím vejcem zakázána
+    DYE:
+      description: Zakázat barvení
+      name: Barvení
+      hint: Barvení zakázáno
+    EGGS:
+      description: Přepnout házení vajíčkem
+      name: Házení vajíčkem
+      hint: Házení vajíčkem zakázáno
+    ENCHANTING:
+      description: Přepnout použití
+      name: Kouzlící stolky
+      hint: Kouzlící stolky zakázány
+    ENDER_CHEST:
+      description: Přepnout použití/výrobu
+      name: Endové truhly
+      hint: Endové truhly jsou v tomto světě zakázány
+    ENDERMAN_DEATH_DROP:
+      description: |-
+        &a Endermeni upustí
+        &a jakýkoliv blok, který
+        &a drží, při své smrti.
+      name: Enderman upustí předmět při smrti
+    ENDERMAN_GRIEFING:
+      description: |-
+        &a Endermeni mohou odstraňovat
+        &a bloky z ostrova
+      name: Griefing endermanů
+    ENDER_PEARL:
+      description: Přepnout použití
+      name: Endové perly
+      hint: Použití endových perel je zakázáno
+    ENTER_EXIT_MESSAGES:
+      description: Ukázat hlášení o návštěvě a opuštění ostrova
+      island: 'Ostrov [name]'
+      name: Hlášení o návštěvě/opuštění
+      now-entering: '&a Právě vcházíš l &b [name]&a .'
+      now-entering-your-island: '&a Právě vcházíš na svůj ostrov.'
+      now-leaving: '&a Právě odcházíš od &b [name]&a .'
+      now-leaving-your-island: '&a Právě odcházíš ze svého ostrova.'
+    EXPERIENCE_BOTTLE_THROWING:
+      name: Házení zkošenostními lahvičkami
+      description: Přepnout házení zkušenostními lahvičkami.
+      hint: Zkušenostní lahvičky zakázány
+    FIRE_BURNING:
+      name: Pálení ohněm
+      description: |-
+        &a Přepnout, zda může oheň
+        &a pálit bloky nebo ne.
+    FIRE_EXTINGUISH:
+      description: Přepnout hašení ohně
+      name: Hašení ohně
+      hint: Hašení ohně zakázáno
+    FIRE_IGNITE:
+      name: Zapalování ohně
+      description: |-
+        &a Přepnout, zda je možné oheň
+        &a zapálit jinak, než hráčem nebo ne.
+    FIRE_SPREAD:
+      name: Rozšiřování ohně
+      description: |-
+        &a Přepnout, zda se může oheň šířit
+        &a na sousedící bloky nebo ne.
+    FISH_SCOOPING:
+      name: Rybobraní
+      description: Povolit rybobraní použitím kbelíku
+      hint: Rybobraní zakázáno
+    FLINT_AND_STEEL:
+      name: Křesadlo
+      description: |-
+        &a Povolit hráčům zapalovat oheň
+        &a použitím křesadla nebo ohnivých koulí.
+      hint: Křesadlo a ohnivé koule zakázány
+    FURNACE:
+      description: Přepnout použití
+      name: Pec
+      hint: Použití pece zakázáno
+    GATE:
+      description: Přepnout použití
+      name: Brány
+      hint: Použití brány zakázáno
+    GEO_LIMIT_MOBS:
+      description: |-
+        &a Odstranit moby, které
+        &a se zapletou mimo chráněný
+        &a prostor ostrova
+      name: '&e Omezit moby na ostrov'
+    HURT_ANIMALS:
+      description: Přepnout ubližování
+      name: Ubližovat zvířatům
+      hint: Ubližování zvířatům zakázáno
+    HURT_MONSTERS:
+      description: Přepnout ubližování
+      name: Ubližovat příšerám
+      hint: Ubližování příšerám zakázáno
+    HURT_VILLAGERS:
+      description: Přepnout ubližování
+      name: Ubližovat vesničanům
+      hint: Ubližování vesničanům zakázáno
+    ITEM_FRAME:
+      name: Rámeček
+      description: |-
+        &a Přepnout interakce.
+        &a Přepisuje položení nebo ničení bloků
+      hint: Použití rámečku zakázáno
+    ITEM_FRAME_DAMAGE:
+      description: |-
+        &a Moby mohou ničit
+        &a rámečky
+      name: Ničení rámečků
+    INVINCIBLE_VISITORS:
+      description: |-
+        &a Konfigurovat nastavení
+        &a nesmrtelného návštěvníka.
+      name: '&e Nesmrtelní návštěvníci'
+      hint: '&c Návštěvníci chránění'
+    ISLAND_RESPAWN:
+      description: |-
+        &a Hráči se respawnují
+        &a na jejich ostrově
+      name: Respawn na ostrově
+    ITEM_DROP:
+      description: Přepnout vyhazování předmětů
+      name: Vyhazování předmětů
+      hint: Vyhazování předmětů zakázáno
+    ITEM_PICKUP:
+      description: Přepnout sběr předmětů
+      name: Sběr předmětů
+      hint: Sběr předmětů zakázán
+    JUKEBOX:
+      description: Přepnout použití
+      name: Použití hrací skříňky
+      hint: Použití hrací skříňky zakázáno
+    LEAF_DECAY:
+      name: Uhnívání listí
+      description: Povolit listí přirozeně uhnívat
+    LEASH:
+      description: Přepnout použití
+      name: Použití vodítka
+    LECTERN:
+      name: Čtecí pulty
+      description: |-
+        &a Povolit pokládání knih na čtecí
+        &a pult nebo sběr knih z něj.
+
+        &c Nezakazuje hráčům z knih číst.
+      hint: Nelze položit nebo vzít knihu ze čtecího pultu.
+    LEVER:
+      description: Přepnout použití
+      name: Použití páčky
+      hint: Piužití páčky zakázáno
+    LIQUIDS_FLOWING_OUT:
+      name: Přetékání kapalin mimo ostrov
+      description: |-
+        &a Přepíná, zda mohou kapaliny přetékat
+        &a mimo chráněné prostředí ostrova.
+        &a Zakázání pomáhá zabránit styku lávy a vody
+        &a a generování tak kamení v prostoru mezi
+        &a dvěma ostrovy.
+
+        &c Měj na paměti, že kapaliny stále budou téct
+        &c vertikálně. Též se nebudou šířit horizontálně,
+        &c pokud jsou umístěny mimo protekční zónu ostrova.
+    LOCK:
+      description: Přepnout zámek
+      name: Zamknout ostrov
+    MILKING:
+      description: Přepnout dojení krav
+      name: Dojení
+      hint: Dojení krav zakázáno
+    MINECART:
+      name: Vozíky
+      description: Přepnout interakce s vozíky
+      hint: Interakce s vozíky zakázány
+    MONSTER_SPAWN:
+      description: Přepnout spawnování
+      name: Spawnování příšer
+    MOUNT_INVENTORY:
+      description: |-
+        &a Přepnout přístup
+        &a k inventáři jezdců
+      name: Inventář jezdců
+      hint: Inventáře jezdců zakázány
+    NAME_TAG:
+      name: Jmenovky
+      description: Přepnout použití
+      hint: Interakce s jmenovkami zakázána
+    NATURAL_SPAWNING_OUTSIDE_RANGE:
+      name: Přirozené spawnování tvorů mimo prostor ostrova
+      description: |-
+        &a Přepnout, zda se mohou tvorové (zvířata
+        &a a příšery) přirozeně spawnovat mimo
+        &a chráněný prostor ostrova.
+
+        &c Měj na paměti, že to nezabrání spawnování
+        &c tvorů pomocí spawneru nebo spawnovacích
+        &c vajíček.
+    NOTE_BLOCK:
+      description: Přepnout použití
+      name: Notové bloky
+      hint: Interakce s notovými bloky zakázány
+    OBSIDIAN_SCOOPING:
+      name: Sběr obsidiánu
+      description: |
+        &a Přepnout sběr
+        &a Povolit sběr obsidiánu s prázdným kbelíkem
+        &a zpět do lávy. Chrání nováčky. Redukuje restarty.
+    OFFLINE_GROWTH:
+      description: |-
+        &a Je-li zakázáno, rostliny
+        &a nebudou růst na ostrovech, jejichž
+        &a členové jsou všichni offline.
+        &a Může pomoci snížit lagy.
+      name: Offline růst
+    OFFLINE_REDSTONE:
+      description: |-
+        &a Je-li zakázáno, rudit
+        &a nebude funkční na ostrovech, jejichž
+        &a členové jsou všichni offline.
+        &a Může pomoci snížit lagy.
+        &a Neplatí pro spawn ostrov.
+      name: Offline Rudit
+    PISTON_PUSH:
+      description: |-
+        &a Povolit pístům vytlačit
+        &a blok mimo ostrov
+      name: Vytlačení pístem
+    PLACE_BLOCKS:
+      description: Přepnout pokládání
+      name: Pokládat bloky
+      hint: Pokládání bloků zakázáno
+    POTION_THROWING:
+      name: Házení lektvarů
+      description: |-
+        &a Přepnout házení lektvarů.
+        &a To zahrnuje házecí a trvalé lektvary.
+      hint: Házení lektvarů zakázáno
+    NETHER_PORTAL:
+      description: Přepnout použití
+      name: Nether Portál
+      hint: Použití portálu zakázáno
+    END_PORTAL:
+      description: Přepnout použití
+      name: Endový Portál
+      hint: Použití portálu zakázáno
+    PRESSURE_PLATE:
+      description: Přepnout použití
+      name: Nášlapné desky
+      hint: Použití nášlapné desky zakázáno
+    PVP_END:
+      description: |-
+        &c Zapnout/Vypnout PVP
+        &c v Endu.
+      name: Endové PVP
+      hint: PVP v Endu zakázáno
+    PVP_NETHER:
+      description: |-
+        &c Zapnout/Vypnout PVP
+        &c v Netheru.
+      name: Nether PVP
+      hint: PVP v Netheru zakázáno
+    PVP_OVERWORLD:
+      description: |-
+        &c Zapnout/Vypnout PVP
+        &c na ostrově.
+      name: PVP na světě
+      hint: '&c PVP je na světě zakázáno'
+      active: '&c PVP je zde aktivní!'
+    REDSTONE:
+      description: Přepnout použití
+      name: Ruditové předměty
+      hint: Interakce s ruditem zakázány
+    REMOVE_END_EXIT_ISLAND:
+      description: |-
+        &a Zabraňuje vytváření výstupního
+        &a ostrova v Endu
+        &a na souřadnicích 0,0
+      name: Odstranit výstupní ostrov v Endu
+    REMOVE_MOBS:
+      description: |-
+        &a Odstranit příšery při
+        &a teleportu na ostrov
+      name: Odstranit příšery
+    RIDING:
+      description: Přepnout ježdění
+      name: Ježdění na zvířatech
+      hint: Ježdění na zvířatech zakázáno
+    SHEARING:
+      description: Přepnout stříhání
+      name: Stříhání
+      hint: Stříhání zakázáno
+    SPAWN_EGGS:
+      description: Přepnout použití
+      name: Spawnovací vajíčka
+      hint: Spawnovací vajíčka zakázány
+    SPAWNER_SPAWN_EGGS:
+      description: |-
+        &a Povoluje změnit typ entity spawneru
+        &a použitím spawnovacích vajíček.
+      name: Spawnovací vajíčka na spawneru
+      hint: Změna typu entity spawneru použitím spawnovacích vajíček není povolena
+    TNT_DAMAGE:
+      description: |-
+        &a Povolit TNT a TNT vozíkům
+        &a ničit bloky a entity.
+      name: TNT poškození
+    TNT_PRIMING:
+      description: |-
+        &a Zabraňuje zapálení TNT.
+        &a Nepřepisuje protekci Křesadla.
+      name: Zapalování TNT
+      hint: Zapalování TNT zakázáno
+    TRADING:
+      description: Přepnout obchodování
+      name: Obchodování s vesničany
+      hint: Obchodování s vesničany zakázáno
+    TRAPDOOR:
+      description: Přepnout přístup
+      name: Padající dveře
+      hint: Použití padajících dveří zakázáno
+    TREES_GROWING_OUTSIDE_RANGE:
+      name: Růst stromů mimo prostor ostrova
+      description: |-
+        &a Přepíná, zda mohou stromy růst mimo
+        &a chráněný prostor ostrova nebo ne.
+        &a Nejen, že to zabrání sazenicím položených
+        &a mimo protekční prostor ostrova v růstu,
+        &a ale také to zablokuje generování listů
+        &a nebo kmenů mimo ostrov, tedy ořízne strom.
+    TURTLE_EGGS:
+      description: Přepnout rozmačkání
+      name: Želví vejce
+      hint: Rozmačkání želvích vajec zakázáno
+    FROST_WALKER:
+      description: Přepnout kouzlo Mrazíka
+      name: Mrazík
+      hint: Mrazík zakázán
+    EXPERIENCE_PICKUP:
+      name: Sběr zkušeností
+      description: Přepnout sběr zkušenostních kuliček
+      hint: Sběr zkušeností zakázán
+    PREVENT_TELEPORT_WHEN_FALLING:
+      name: Zabránit teleportu při padání
+      description: |-
+        &a Zabránit hráčům v teleportaci zpět
+        &a na jejich ostrov použitím příkazu,
+        &a pokud padají.
+      hint: '&c Nemůžeš toto provést, když padáš.'
+    WITHER_DAMAGE:
+      name: Přepnout poškození witherem
+      description: |-
+        &a Je-li aktivní, withery mohou
+        &a ničit bloky a zraňovat hráče
+  locked: '&c Tento ostrov je zamčen!'
+  protected: '&c Ostrov chráněn: [description]'
+  world-protected: '&c Svět chráněn: [description]'
+  spawn-protected: '&c Spawn chráněn: [description]'
+  panel:
+    next: '&f Další stránka'
+    previous: '&f Předchozí stránka'
+    mode:
+      advanced:
+        name: '&6 Pokročilé nastavení'
+        description: '&a Ukáže nepřeberné množství nastavení.'
+      basic:
+        name: '&a Základní nastavení'
+        description: '&a Ukáže neužitečnější nastavení.'
+      expert:
+        name: '&c Nastavení pro experty'
+        description: '&a Ukáže všechna dostupná nastavení.'
+      click-to-switch: '&e Klikni &a pro přepnutí na &r [next]&r &a .'
+    reset-to-default:
+      name: '&c Obnovit výchozí'
+      description: |
+        &a Obnoví &c &l VŠECHNA &r &a nastavení
+        &a na výchozí hodnoty.
+    PROTECTION:
+      title: '&6 Protekce'
+      description: |-
+        &a Nastavení protekce
+        &a tohoto ostrova
+    SETTING:
+      title: '&6 Nastavení'
+      description: |-
+        &a Obecné nastavení
+        &a tohoto ostrova
+    WORLD_SETTING:
+      title: '&6 Nastavení &b [world_name]'
+      description: '&a Nastavení pro tento herní svět'
+    WORLD_DEFAULTS:
+      title: '&6 Protekce světa &b [world_name]'
+      description: |
+        &a Protekční nastavení, pokud je
+        &a hráč mimo svůj ostrov
+    flag-item:
+      name-layout: '&a [name]'
+      description-layout: |
+        &a [description]
+
+        &7 Povoleno pro:
+      allowed-rank: '&3 - &a '
+      blocked-rank: '&3 - &c '
+      minimal-rank: '&3 - &2 '
+      menu-layout: '&a [description]'
+      setting-cooldown: '&c Nastavení má cooldown'
+      setting-layout: |
+        &a [description]
+
+        &7 Nynější nastavení: [setting]
+      setting-active: '&a Povoleno'
+      setting-disabled: '&c Zakázáno'
+language:
+  panel-title: Zvol svůj jazyk
+  description:
+    selected: '&a Právě zvolen.'
+    click-to-select: '&e Klikni &a pro výběr.'
+    authors: '&a Autoři:'
+    author: '&3 - &b [name]'
+  edited: '&a Jazyk změněn na &e [lang]&a .'
+management:
+  panel:
+    title: Správa BentoBox
+    views:
+      gamemodes:
+        name: '&6 Herní módy'
+        description: '&e Klikni &a k zobrazení právě načtených herních módů'
+        blueprints:
+          name: '&6 Předlohy'
+          description: '&a Otevře administrátorské menu Předloh.'
+        gamemode:
+          name: '&f [name]'
+          description: |
+            &a Ostrovy: &b [islands]
+      addons:
+        name: '&6 Doplňky'
+        description: '&e Klikni &a k zobrazení právě načtených doplňků'
+      hooks:
+        name: '&6 Záchytné body'
+        description: '&e Klikni &a k zobrazení právě načtených záchytných bodů'
+    actions:
+      reload:
+        name: '&c Znovu načíst'
+        description: '&e Klikni &c &l dvakrát &r &a ke znovunačtení BentoBox'
+    buttons:
+      catalog:
+        name: '&6 Katalog doplňků'
+        description: '&a Otevře Katalog doplňků'
+      credits:
+        name: '&6 Autorství'
+        description: '&a Otevře autorství pluginu BentoBox'
+      empty-here:
+        name: '&b Tady to vypadá prázdně...'
+        description: '&a Co kdyby ses podíval do našeho katalogu?'
+    information:
+      state:
+        name: '&6 Kompatibilita'
+        description:
+          COMPATIBLE: |
+            &a Běžím na &e [name] [version]&a .
+
+            &a BentoBox právě běží na &a &l KOMPATIBILNÍM 
+            &r &a serverovém softwaru a verzi.
+
+            &a Jeho funkce jsou plně navrženy k běhu
+            &a v tomto prostředí.
+          SUPPORTED: |
+            &a Běžím na &e [name] [version]&a .
+
+            &a BentoBox právě běží na &a &l PODPOROVANÉM
+            &r &a serverovém softwaru a verzi.
+
+            &a Většina jeho funkcí poběží v tomto
+            &a prostředí hladce.
+          NOT_SUPPORTED: |
+            &a Běžím na &e [name] [version]&a .
+
+            &a BentoBox právě běží na &6 &l NEPODPOROVANÉM
+            &r &a serverovém softwaru nebo verzi.
+
+            &a I když většina jeho funkcí poběží správně,
+            &6 mohou se očekávat chyby nebo problémy
+            &6 specifické pro platformu &a .
+          INCOMPATIBLE: |+
+            &a Běžím na &e [name] [version]&a .
+
+            &a BentoBox právě běží na &c &l NEKOMPATIBILNÍM
+            &r &a serverovém softwaru nebo verzi.
+
+            &c Mohou být přítomny chyby a podivné chování
+            &c a většina funkcí může vykazovat nestabilitu.
+
+catalog:
+  panel:
+    GAMEMODES:
+      title: Katalog herních módů
+    ADDONS:
+      title: Katalog doplňků
+    views:
+      gamemodes:
+        name: '&6 Herní módy'
+        description: |
+          &e Klikni &a k procházení
+          &a oficiálních dostupných herních módů.
+      addons:
+        name: '&6 Doplňky'
+        description: |
+          &e Klikni &a k procházení
+          &a oficiálních dostupných doplňků.
+    icon:
+      description-template: |
+        &8 [topic]
+        &a [install]
+
+        &7 &o [description]
+
+        &e Klikni &a k získání odkazu
+        &a na nejnovější verzi.
+      already-installed: Již je nainstalováno!
+      install-now: Nainstalovat nyní!
+    empty-here:
+      name: '&b Tady to vypadá nějak prázdně...'
+      description: |+
+        &c BentoBox se nemohl připojit na GitHub.
+
+        &a Povol pluginu BentoBox v připojení na GitHub
+        &a v konfiguraci nebo to zkus později.
+
+panel:
+  credits:
+    title: '&8 [name] &2 Autoři'
+    contributor:
+      name: '&a [name]'
+      description: |
+        &a Příspěvky: &b [commits]
+    empty-here:
+      name: '&c Tady to vypadá nějak prázdně...'
+      description: |+
+        &c Pluginu BentoBox se nepodařilo najít přispěvatele
+        &c pro tento Doplňek.
+
+        &a Povol pluginu BentoBox v připojení na GitHub
+        &a v konfiguraci nebo to zkus později.
+
+successfully-loaded: |2
+
+  &6   ____             _        ____
+  &6  |  _ \           | |      |  _ \             &7 od &a tastybento &7 a &a Poslovitch
+  &6  | |_) | ___ _ __ | |_ ___ | |_) | _____  __  &7 2017 - 2019
+  &6  |  _ < / _ \ '_ \| __/ _ \|  _ < / _ \ \/ /
+  &6  | |_) |  __/ | | | || (_) | |_) | (_) >  <   &b v&e [version]
+  &6  |____/ \___|_| |_|\__\___/|____/ \___/_/\_\  &8 Načteno v &e [time]&8 ms.
