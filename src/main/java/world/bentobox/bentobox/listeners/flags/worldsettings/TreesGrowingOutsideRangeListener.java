@@ -16,7 +16,7 @@ import world.bentobox.bentobox.lists.Flags;
  */
 public class TreesGrowingOutsideRangeListener extends FlagListener {
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onTreeGrow(StructureGrowEvent e) {
         if (!getIWM().inWorld(e.getWorld()) || Flags.TREES_GROWING_OUTSIDE_RANGE.isSetForWorld(e.getWorld())) {
             // We do not want to run any check if this is not the right world or if it is allowed.
@@ -35,7 +35,7 @@ public class TreesGrowingOutsideRangeListener extends FlagListener {
         .forEach(blockState -> blockState.setType(Material.AIR));
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onChorusGrow(BlockSpreadEvent e) {
         if (!getIWM().inWorld(e.getSource().getWorld()) || Flags.TREES_GROWING_OUTSIDE_RANGE.isSetForWorld(e.getSource().getWorld())
                 || !e.getSource().getType().equals(Material.CHORUS_FLOWER)) {
