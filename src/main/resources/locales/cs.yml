@@ -7,9 +7,8 @@
 
 meta:
   authors:
-  - tastybento
-  - Poslovitch
-  banner: WHITE_BANNER:1:STRIPE_SMALL:RED:SQUARE_TOP_RIGHT:CYAN:SQUARE_TOP_RIGHT:BLUE
+  - CZghost
+  banner: RED_BANNER:1:HALF_VERTICAL:WHITE:TRIANGLE_TOP:BLUE
 general:
   success: '&a Povedlo se!'
   invalid: Neplatné
