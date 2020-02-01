@@ -50,8 +50,8 @@ public class IslandSetnameCommand extends CompositeCommand {
         String name = String.join(" ", args);
 
         // Check if the name isn't too short or too long
-        if (name.length() < getSettings().getNameMinLength()) {
-            user.sendMessage("commands.island.setname.name-too-short", TextVariables.NUMBER,  String.valueOf(getSettings().getNameMinLength()));
+        if (name.length() < getSettings().getNameMinLength() || ChatColor.stripColor(name).isEmpty()) {
+            user.sendMessage("commands.island.setname.name-too-short", TextVariables.NUMBER, String.valueOf(getSettings().getNameMinLength()));
             return false;
         }
         if (name.length() > getSettings().getNameMaxLength()) {
@@ -72,7 +72,7 @@ public class IslandSetnameCommand extends CompositeCommand {
 
         // Everything's good!
         getIslands().getIsland(getWorld(), playerUUID).setName(name);
-        user.sendMessage("general.success");
+        user.sendMessage("commands.island.setname.success", TextVariables.NAME, name);
         return true;
     }
 }

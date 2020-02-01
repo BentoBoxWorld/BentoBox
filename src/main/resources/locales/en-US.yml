@@ -497,8 +497,10 @@ commands:
       name-too-long: "&c Too long. Maximum size is [number] characters."
       name-already-exists: "&c There is already an island with that name in this gamemode."
       parameters: "<name>"
+      success: "&a Successfully set your island's name to &b [name]&a ."
     resetname:
       description: "reset your island name"
+      success: "&a Successfully reset your island name."
     team:
       description: "manage your team"
       info:
