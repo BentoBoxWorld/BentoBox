@@ -1,6 +1,7 @@
 package world.bentobox.bentobox.api.flags;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -204,10 +205,24 @@ public abstract class FlagListener implements Listener {
 
     private void report(@Nullable User user, @NonNull Event e, @NonNull Location loc, @NonNull Flag flag, @NonNull Why why) {
         // A quick way to debug flag listener unit tests is to add this line here: System.out.println(why.name()); NOSONAR
-        if (user != null && user.getPlayer().getMetadata(loc.getWorld().getName() + "_why_debug").stream()
+        if (user != null && user.isPlayer() && user.getPlayer().getMetadata(loc.getWorld().getName() + "_why_debug").stream()
                 .filter(p -> p.getOwningPlugin().equals(getPlugin())).findFirst().map(MetadataValue::asBoolean).orElse(false)) {
-            plugin.log("Why: " + e.getEventName() + " in world " + loc.getWorld().getName() + " at " + Util.xyz(loc.toVector()));
-            plugin.log("Why: " + user.getName() + " " + flag.getID() + " - " + why.name());
+            String whyEvent = "Why: " + e.getEventName() + " in world " + loc.getWorld().getName() + " at " + Util.xyz(loc.toVector());
+            String whyBypass = "Why: " + user.getName() + " " + flag.getID() + " - " + why.name();
+
+            plugin.log(whyEvent);
+            plugin.log(whyBypass);
+
+            // See if there is a player that issued the debug
+            String issuerUUID = user.getPlayer().getMetadata(loc.getWorld().getName() + "_why_debug_issuer").stream()
+                    .filter(p -> getPlugin().equals(p.getOwningPlugin())).findFirst().map(MetadataValue::asString).orElse("");
+            if (!issuerUUID.isEmpty()) {
+                User issuer = User.getInstance(UUID.fromString(issuerUUID));
+                if (issuer != null && issuer.isPlayer()) {
+                    user.sendRawMessage(whyEvent);
+                    user.sendRawMessage(whyBypass);
+                }
+            }
         }
     }
 

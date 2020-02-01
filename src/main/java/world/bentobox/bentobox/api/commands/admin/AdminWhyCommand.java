@@ -56,6 +56,9 @@ public class AdminWhyCommand extends ConfirmableCommand {
         }
         // Set the debug meta
         target.getPlayer().setMetadata(getWorld().getName() + "_why_debug", new FixedMetadataValue(getPlugin(), newValue));
+        if (user.isPlayer()) {
+            target.getPlayer().setMetadata(getWorld().getName() + "_why_debug_issuer", new FixedMetadataValue(getPlugin(), user.getUniqueId().toString()));
+        }
         return true;
     }
 
