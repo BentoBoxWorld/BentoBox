@@ -1,5 +1,4 @@
 The following is a list of all addons currently made for BentoBox:
-* [**Bank**](https://github.com/BentoBoxWorld/Bank/): Allow your players to deposit and withdraw money from the island's bank!
 * [**Biomes**](https://github.com/BentoBoxWorld/Biomes/): Enables players to change biomes on islands.
 * [**Border**](https://github.com/BentoBoxWorld/Border/): Adds a world border around islands.
 * [**Cauldron Witchery**](https://github.com/BentoBoxWorld/CauldronWitchery/): Allows summoning mobs using some magic! 
