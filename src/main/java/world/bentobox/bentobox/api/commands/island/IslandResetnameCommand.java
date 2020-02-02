@@ -39,7 +39,7 @@ public class IslandResetnameCommand extends CompositeCommand {
         // Resets the island name
         getIslands().getIsland(getWorld(), playerUUID).setName(null);
 
-        user.sendMessage("general.success");
+        user.sendMessage("commands.island.resetname.success");
         return true;
     }
 
