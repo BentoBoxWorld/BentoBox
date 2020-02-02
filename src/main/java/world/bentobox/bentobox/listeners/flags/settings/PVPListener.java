@@ -78,7 +78,7 @@ public class PVPListener extends FlagListener {
         if (damager instanceof Player) {
             User user = User.getInstance(damager);
             if (!checkIsland((Event)e, (Player)damager, damager.getLocation(), flag)) {
-                user.notify(Flags.PVP_OVERWORLD.getHintReference());
+                user.notify(getFlag(damager.getWorld()).getHintReference());
                 e.setCancelled(true);
             }
         } else if (damager instanceof Projectile) {
@@ -103,7 +103,7 @@ public class PVPListener extends FlagListener {
         if (!checkIsland((Event)e, shooter, damager.getLocation(), flag)) {
             damager.setFireTicks(0);
             hurtEntity.setFireTicks(0);
-            user.notify(Flags.PVP_OVERWORLD.getHintReference());
+            user.notify(getFlag(damager.getWorld()).getHintReference());
             e.setCancelled(true);
         }
 
@@ -122,7 +122,7 @@ public class PVPListener extends FlagListener {
                 e.setCancelled(true);
             } else if (!checkIsland(e, e.getPlayer(), e.getCaught().getLocation(), getFlag(e.getCaught().getWorld()))) {
                 e.getHook().remove();
-                User.getInstance(e.getPlayer()).notify(Flags.PVP_OVERWORLD.getHintReference());
+                User.getInstance(e.getPlayer()).notify(getFlag(e.getCaught().getWorld()).getHintReference());
                 e.setCancelled(true);
             }
         }
@@ -144,14 +144,14 @@ public class PVPListener extends FlagListener {
     /**
      * Check if PVP should be blocked or not
      * @param user - user who is initiating the action
-     * @param le - Living entity involed
+     * @param le - Living entity involved
      * @param e - event driving
      * @param flag - flag to check
      * @return true if PVP should be blocked otherwise false
      */
     private boolean blockPVP(User user, LivingEntity le, Event e, Flag flag) {
         // Check for self-inflicted damage
-        if (user.getPlayer().equals(le)) {
+        if (le.equals(user.getPlayer())) {
             return false;
         }
         if (le instanceof Player) {
@@ -162,7 +162,7 @@ public class PVPListener extends FlagListener {
             }
             // Check if PVP is allowed or not
             if (!checkIsland(e, user.getPlayer(), le.getLocation(), flag)) {
-                user.notify(Flags.PVP_OVERWORLD.getHintReference());
+                user.notify(getFlag(le.getWorld()).getHintReference());
                 return true;
             }
         }
