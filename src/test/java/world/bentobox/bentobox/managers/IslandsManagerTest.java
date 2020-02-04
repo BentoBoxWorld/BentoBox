@@ -55,6 +55,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
@@ -1111,4 +1112,207 @@ public class IslandsManagerTest {
         assertEquals(island, im.getIslandById(uuid).get());
     }
 
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#fixIslandCenter(Island)}.
+     */
+    @Test
+    public void testFixIslandCenter() {
+        Island island = mock(Island.class);
+        when(island.getWorld()).thenReturn(world);
+        // Island center
+        when(location.getBlockX()).thenReturn(0);
+        when(location.getBlockY()).thenReturn(120);
+        when(location.getBlockZ()).thenReturn(0);
+        when(island.getCenter()).thenReturn(location);
+        // Start x,z
+        when(iwm.getIslandStartX(eq(world))).thenReturn(0);
+        when(iwm.getIslandStartZ(eq(world))).thenReturn(0);
+        // Offset x,z
+        when(iwm.getIslandXOffset(eq(world))).thenReturn(0);
+        when(iwm.getIslandZOffset(eq(world))).thenReturn(0);
+        // World
+        when(iwm.inWorld(eq(world))).thenReturn(true);
+        // Island distance
+        when(iwm.getIslandDistance(eq(world))).thenReturn(100);
+        // Test
+        IslandsManager im = new IslandsManager(plugin);
+        assertFalse(im.fixIslandCenter(island));
+    }
+    
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#fixIslandCenter(Island)}.
+     */
+    @Test
+    public void testFixIslandCenterOff() {
+        Island island = mock(Island.class);
+        when(island.getWorld()).thenReturn(world);
+        // Island center
+        when(location.getBlockX()).thenReturn(10);
+        when(location.getBlockY()).thenReturn(120);
+        when(location.getBlockZ()).thenReturn(-10);
+        when(island.getCenter()).thenReturn(location);
+        // Start x,z
+        when(iwm.getIslandStartX(eq(world))).thenReturn(0);
+        when(iwm.getIslandStartZ(eq(world))).thenReturn(0);
+        // Offset x,z
+        when(iwm.getIslandXOffset(eq(world))).thenReturn(0);
+        when(iwm.getIslandZOffset(eq(world))).thenReturn(0);
+        // World
+        when(iwm.inWorld(eq(world))).thenReturn(true);
+        // Island distance
+        when(iwm.getIslandDistance(eq(world))).thenReturn(100);
+        // Test
+        ArgumentCaptor<Location> captor = ArgumentCaptor.forClass(Location.class);
+        IslandsManager im = new IslandsManager(plugin);
+        assertTrue(im.fixIslandCenter(island));
+        // Verify location
+        verify(island).setCenter(captor.capture());
+        assertEquals(world, captor.getValue().getWorld());
+        assertEquals(0, captor.getValue().getBlockX());
+        assertEquals(120, captor.getValue().getBlockY());
+        assertEquals(0, captor.getValue().getBlockZ());
+        
+    }
+    
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#fixIslandCenter(Island)}.
+     */
+    @Test
+    public void testFixIslandCenterOffStart() {
+        Island island = mock(Island.class);
+        when(island.getWorld()).thenReturn(world);
+        // Island center
+        when(location.getBlockX()).thenReturn(100010);
+        when(location.getBlockY()).thenReturn(120);
+        when(location.getBlockZ()).thenReturn(8755);
+        when(island.getCenter()).thenReturn(location);
+        // Start x,z
+        when(iwm.getIslandStartX(eq(world))).thenReturn(100000);
+        when(iwm.getIslandStartZ(eq(world))).thenReturn(8765);
+        // Offset x,z
+        when(iwm.getIslandXOffset(eq(world))).thenReturn(0);
+        when(iwm.getIslandZOffset(eq(world))).thenReturn(0);
+        // World
+        when(iwm.inWorld(eq(world))).thenReturn(true);
+        // Island distance
+        when(iwm.getIslandDistance(eq(world))).thenReturn(100);
+        // Test
+        ArgumentCaptor<Location> captor = ArgumentCaptor.forClass(Location.class);
+        IslandsManager im = new IslandsManager(plugin);
+        assertTrue(im.fixIslandCenter(island));
+        // Verify location
+        verify(island).setCenter(captor.capture());
+        assertEquals(world, captor.getValue().getWorld());
+        assertEquals(100000, captor.getValue().getBlockX());
+        assertEquals(120, captor.getValue().getBlockY());
+        assertEquals(8765, captor.getValue().getBlockZ());
+        
+    }
+    
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#fixIslandCenter(Island)}.
+     */
+    @Test
+    public void testFixIslandCenterStartOnGrid() {
+        Island island = mock(Island.class);
+        when(island.getWorld()).thenReturn(world);
+        // Island center
+        when(location.getBlockX()).thenReturn(10000);
+        when(location.getBlockY()).thenReturn(120);
+        when(location.getBlockZ()).thenReturn(8765);
+        when(island.getCenter()).thenReturn(location);
+        // Start x,z
+        when(iwm.getIslandStartX(eq(world))).thenReturn(100000);
+        when(iwm.getIslandStartZ(eq(world))).thenReturn(8765);
+        // Offset x,z
+        when(iwm.getIslandXOffset(eq(world))).thenReturn(0);
+        when(iwm.getIslandZOffset(eq(world))).thenReturn(0);
+        // World
+        when(iwm.inWorld(eq(world))).thenReturn(true);
+        // Island distance
+        when(iwm.getIslandDistance(eq(world))).thenReturn(100);
+        // Test
+        IslandsManager im = new IslandsManager(plugin);
+        assertFalse(im.fixIslandCenter(island));
+    }
+    
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#fixIslandCenter(Island)}.
+     */
+    @Test
+    public void testFixIslandCenterStartOnGridOffset() {
+        Island island = mock(Island.class);
+        when(island.getWorld()).thenReturn(world);
+        // Island center
+        when(location.getBlockX()).thenReturn(10050);
+        when(location.getBlockY()).thenReturn(120);
+        when(location.getBlockZ()).thenReturn(8815);
+        when(island.getCenter()).thenReturn(location);
+        // Start x,z
+        when(iwm.getIslandStartX(eq(world))).thenReturn(100000);
+        when(iwm.getIslandStartZ(eq(world))).thenReturn(8765);
+        // Offset x,z
+        when(iwm.getIslandXOffset(eq(world))).thenReturn(50);
+        when(iwm.getIslandZOffset(eq(world))).thenReturn(50);
+        // World
+        when(iwm.inWorld(eq(world))).thenReturn(true);
+        // Island distance
+        when(iwm.getIslandDistance(eq(world))).thenReturn(100);
+        // Test
+        IslandsManager im = new IslandsManager(plugin);
+        assertFalse(im.fixIslandCenter(island));
+    }
+    
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#fixIslandCenter(Island)}.
+     */
+    @Test
+    public void testFixIslandCenterOffStartOffOffset() {
+        Island island = mock(Island.class);
+        when(island.getWorld()).thenReturn(world);
+        // Island center
+        when(location.getBlockX()).thenReturn(100060);
+        when(location.getBlockY()).thenReturn(120);
+        when(location.getBlockZ()).thenReturn(8815);
+        when(island.getCenter()).thenReturn(location);
+        // Start x,z
+        when(iwm.getIslandStartX(eq(world))).thenReturn(100000);
+        when(iwm.getIslandStartZ(eq(world))).thenReturn(8765);
+        // Offset x,z
+        when(iwm.getIslandXOffset(eq(world))).thenReturn(50);
+        when(iwm.getIslandZOffset(eq(world))).thenReturn(50);
+        // World
+        when(iwm.inWorld(eq(world))).thenReturn(true);
+        // Island distance
+        when(iwm.getIslandDistance(eq(world))).thenReturn(100);
+        // Test
+        ArgumentCaptor<Location> captor = ArgumentCaptor.forClass(Location.class);
+        IslandsManager im = new IslandsManager(plugin);
+        assertTrue(im.fixIslandCenter(island));
+        // Verify location
+        verify(island).setCenter(captor.capture());
+        assertEquals(world, captor.getValue().getWorld());
+        assertEquals(100050, captor.getValue().getBlockX());
+        assertEquals(120, captor.getValue().getBlockY());
+        assertEquals(8815, captor.getValue().getBlockZ());
+        
+    }
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#fixIslandCenter(Island)}.
+     */
+    @Test
+    public void testFixIslandCenterNulls() {
+        Island island = mock(Island.class);
+        when(island.getWorld()).thenReturn(null);
+        // Test
+        IslandsManager im = new IslandsManager(plugin);
+        assertFalse(im.fixIslandCenter(island));
+        when(island.getWorld()).thenReturn(world);
+        when(island.getCenter()).thenReturn(null);
+        assertFalse(im.fixIslandCenter(island));
+        when(island.getCenter()).thenReturn(location);
+        when(iwm.inWorld(eq(world))).thenReturn(false);
+        assertFalse(im.fixIslandCenter(island));
+    }
+    
 }

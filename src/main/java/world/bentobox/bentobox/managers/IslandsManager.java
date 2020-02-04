@@ -896,22 +896,25 @@ public class IslandsManager {
      * Island coordinates should always be a multiple of the island distance x 2. If they are not, this method
      * realigns the grid coordinates.
      * @param island - island
+     * @return true if coordinate is altered
      * @since 1.3.0
      */
-    private void fixIslandCenter(Island island) {
+    boolean fixIslandCenter(Island island) {
         World world = island.getWorld();
         if (world == null || island.getCenter() == null || !plugin.getIWM().inWorld(world)) {
-            return;
+            return false;
         }
         int distance = plugin.getIWM().getIslandDistance(island.getWorld()) * 2;
-        long x = ((long) island.getCenter().getBlockX()) - plugin.getIWM().getIslandXOffset(world);
-        long z = ((long) island.getCenter().getBlockZ()) - plugin.getIWM().getIslandZOffset(world);
+        long x = ((long) island.getCenter().getBlockX()) - plugin.getIWM().getIslandXOffset(world) - plugin.getIWM().getIslandStartX(world);
+        long z = ((long) island.getCenter().getBlockZ()) - plugin.getIWM().getIslandZOffset(world) - plugin.getIWM().getIslandStartZ(world);
         if (x % distance != 0 || z % distance != 0) {
             // Island is off grid
-            x = Math.round((double) x / distance) * distance + plugin.getIWM().getIslandXOffset(world);
-            z = Math.round((double) z / distance) * distance + plugin.getIWM().getIslandZOffset(world);
+            x = Math.round((double) x / distance) * distance + plugin.getIWM().getIslandXOffset(world) + plugin.getIWM().getIslandStartX(world);
+            z = Math.round((double) z / distance) * distance + plugin.getIWM().getIslandZOffset(world) + plugin.getIWM().getIslandStartZ(world);
             island.setCenter(new Location(world, x, island.getCenter().getBlockY(), z));
+            return true;
         }
+        return false;
     }
 
     /**
