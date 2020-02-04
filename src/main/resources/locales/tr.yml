@@ -887,8 +887,8 @@ protection:
       name: "Kapalı Redstone"
     PISTON_PUSH: 
       description: |-
-          &aPistonun ada dışına
-          &açalışmasına izin verir.
+          &a Pistonların blokları adanın
+          &a dışına itmesini önleyin.
       name: "Piston itmesi"
     PLACE_BLOCKS: 
       description: "Blok koyma ayarı değişimi"

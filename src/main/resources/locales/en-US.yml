@@ -1028,9 +1028,10 @@ protection:
       name: "Offline Redstone"
     PISTON_PUSH: 
       description: |-
-          &a Allow pistons to push
+          &a Enable this to prevent
+          &a pistons from pushing
           &a blocks outside island
-      name: "Piston Push"
+      name: "Piston Push Protection"
     PLACE_BLOCKS: 
       description: "Toggle placing"
       name: "Place blocks"

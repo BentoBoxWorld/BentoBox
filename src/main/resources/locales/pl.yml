@@ -447,8 +447,8 @@ protection:
       hint: "Używanie szafy grającej wyłączone."
     PISTON_PUSH: 
       description: |-
-          &aPozwól tłokom przepychać
-          &abloki poza teren wyspy.
+        &aZapobiegaj tłokom wypychającym
+        &abloki z wyspy.
       name: "Przepychanie pistonem"
     PLACE_BLOCKS: 
       description: "Przełącz interakcje"

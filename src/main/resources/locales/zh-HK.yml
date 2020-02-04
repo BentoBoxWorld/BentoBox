@@ -689,7 +689,7 @@ protection:
       name: "離線紅石"
     PISTON_PUSH:
       description: |-
-          &a允許活塞
+          &a防止活塞
           &a將方塊推出島嶼
       name: "活塞推動"
     PLACE_BLOCKS:

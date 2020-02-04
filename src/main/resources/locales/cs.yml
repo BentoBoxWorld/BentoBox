@@ -1049,9 +1049,10 @@ protection:
       name: Offline Rudit
     PISTON_PUSH:
       description: |-
-        &a Povolit pístům vytlačit
-        &a blok mimo ostrov
-      name: Vytlačení pístem
+        &a Povolte toto, abyste 
+        &a zabránili pístům tlačit
+        &a bloky mimo ostrov.
+      name: Ochrana proti vytlačování pístů
     PLACE_BLOCKS:
       description: Přepnout pokládání
       name: Pokládat bloky

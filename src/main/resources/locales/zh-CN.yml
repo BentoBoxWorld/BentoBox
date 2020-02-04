@@ -894,7 +894,7 @@ protection:
         &a卡顿情况。
       name: 离线红石
     PISTON_PUSH:
-      description: '&a允许活塞将方块推出岛屿'
+      description: '&a防止活塞将方块推出岛屿'
       name: 活塞推动
     PLACE_BLOCKS:
       description: 切换放置

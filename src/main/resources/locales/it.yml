@@ -881,8 +881,8 @@ protection:
       name: "Redstone offline"
     PISTON_PUSH: 
       description: |-
-          &aPermette ai pistoni di spingere
-          &ablocchi fuori dall'isola
+          &aAttiva questa opzione per evitare che i
+          &apistoni spingano i blocchi fuori dall'isola
       name: "Spinta dei pistoni"
     PLACE_BLOCKS: 
       description: "Abilita/disabilita piazzamento"

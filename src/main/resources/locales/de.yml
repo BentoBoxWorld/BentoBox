@@ -986,7 +986,10 @@ protection:
         zu reduzieren. \n&a Hat keinen Einfluss auf die Spawn-Insel."
     PISTON_PUSH:
       name: Kolben schieben
-      description: "&aErlaubt es den Kolben, \n&a Blöcke von der Insel zu drücken."
+      description: |-
+        &a Aktivieren Sie diese Option, um zu 
+        &a verhindern, dass Kolben Blöcke außerhalb
+        &a der Insel drücken.
     PLACE_BLOCKS:
       description: Platzieren umschalten
       name: Blöcke platzieren

@@ -1052,8 +1052,8 @@ protection:
       name: Redstone Fuera de linea
     PISTON_PUSH:
       description: |-
-        &aPermitir que los pistones empujen
-        &abloques fuera de la isla.
+        &aActive esta opción para evitar que los
+        &apistones empujen bloques fuera de la isla.
       name: Empuje de Pistones
     PLACE_BLOCKS:
       description: Modificar construccion

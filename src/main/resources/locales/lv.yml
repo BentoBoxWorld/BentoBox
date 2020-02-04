@@ -1190,8 +1190,9 @@ protection:
       name: Bezsaistes Sarkanakmens
     PISTON_PUSH:
       description: |-
-        &aĻauj virzulim izstumt
-        &ablokus ārpus salas
+        &a Iespējojiet šo opciju,
+        &a lai novērstu virzuļu
+        &a pārvietošanos no blokiem no salas.
       name: Bloku izbīdīšana
     PLACE_BLOCKS:
       description: |-

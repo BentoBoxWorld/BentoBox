@@ -874,8 +874,9 @@ protection:
       name: オフラインレッドストーン
     PISTON_PUSH:
       description: |-
-        &aピストンが島の外に
-        &aブロックをプッシュできるようにする
+        &aこのオプションを有効にすると、
+        &aピストンがブロックを島から
+        &a押し出さないようにします。
       name: ピストンプッシュ
     PLACE_BLOCKS:
       description: トグル配置

@@ -1078,8 +1078,8 @@ protection:
       name: Offline Redstone
     PISTON_PUSH:
       description: |-
-        &a Allow pistons to push
-        &a blocks outside island
+        &a Activez cette option pour empêcher les
+        &a pistons de pousser des blocs hors de l'île
       name: Piston Push
     PLACE_BLOCKS:
       description: Toggle placing
