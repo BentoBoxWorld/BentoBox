@@ -224,6 +224,22 @@ public class PlaceBlocksListenerTest {
         pbl.onBlockPlace(e);
         assertFalse(e.isCancelled());
     }
+    
+    /**
+     * Test method for {@link PlaceBlocksListener#onBlockPlace(org.bukkit.event.block.BlockPlaceEvent)}.
+     */
+    @Test
+    public void testOnBlockPlaceNullItemInHand() {
+        Block placedBlock = mock(Block.class);
+        when(placedBlock.getType()).thenReturn(Material.STONE);
+        when(placedBlock.getLocation()).thenReturn(location);
+        BlockState replacedBlockState = mock(BlockState.class);
+        Block placedAgainst = mock(Block.class);
+        EquipmentSlot hand = EquipmentSlot.HAND;
+        BlockPlaceEvent e = new BlockPlaceEvent(placedBlock, replacedBlockState, placedAgainst, null, player, true, hand);
+        pbl.onBlockPlace(e);
+        assertFalse(e.isCancelled());
+    }
 
     /**
      * Test method for {@link PlaceBlocksListener#onBlockPlace(org.bukkit.event.block.BlockPlaceEvent)}.

@@ -27,6 +27,7 @@ public class PlaceBlocksListener extends FlagListener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onBlockPlace(final BlockPlaceEvent e) {
         if (e.getBlock().getType().equals(Material.FIRE)
+                || e.getItemInHand() == null // Note that this should never happen officially, but it's possible for other plugins to cause it to happen
                 || e.getItemInHand().getType().equals(Material.WRITABLE_BOOK)
                 || e.getItemInHand().getType().equals(Material.WRITTEN_BOOK)) {
             // Books can only be placed on lecterns and as such are protected by the LECTERN flag.
