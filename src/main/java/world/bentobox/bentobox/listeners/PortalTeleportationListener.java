@@ -55,7 +55,7 @@ public class PortalTeleportationListener implements Listener {
      * Handles end portals
      * @param e - event
      */
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public boolean onEndIslandPortal(PlayerPortalEvent e) {
         if (e.getCause() != TeleportCause.END_PORTAL) {
             return false;
@@ -142,10 +142,10 @@ public class PortalTeleportationListener implements Listener {
     }
 
     /**
-     * Handles nether portals
+     * Handles nether portals.
      * @param e - event
      */
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true) // Use HIGH to allow Multiverse first shot
     public boolean onNetherPortal(PlayerPortalEvent e) {
         if (e.getCause() != TeleportCause.NETHER_PORTAL) {
             return false;
