@@ -220,8 +220,18 @@ public class DelayedTeleportCommandTest {
      * Test method for {@link world.bentobox.bentobox.api.commands.DelayedTeleportCommand#delayCommand(world.bentobox.bentobox.api.user.User, java.lang.String, java.lang.Runnable)}.
      */
     @Test
-    public void testDelayCommandUserStringRunnablePerm() {
-        when(user.hasPermission(anyString())).thenReturn(true);
+    public void testDelayCommandUserStringRunnablePermBypassCooldowns() {
+        when(user.hasPermission(eq("nullmod.bypasscooldowns"))).thenReturn(true);
+        dtc.delayCommand(user, HELLO, command);
+        verify(sch).runTask(eq(plugin), eq(command));
+    }
+    
+    /**
+     * Test method for {@link world.bentobox.bentobox.api.commands.DelayedTeleportCommand#delayCommand(world.bentobox.bentobox.api.user.User, java.lang.String, java.lang.Runnable)}.
+     */
+    @Test
+    public void testDelayCommandUserStringRunnablePermBypassDelay() {
+        when(user.hasPermission(eq("nullmod.bypassdelays"))).thenReturn(true);
         dtc.delayCommand(user, HELLO, command);
         verify(sch).runTask(eq(plugin), eq(command));
     }
