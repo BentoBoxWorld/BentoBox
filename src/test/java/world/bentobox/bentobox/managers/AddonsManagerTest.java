@@ -31,6 +31,7 @@ import org.powermock.reflect.Whitebox;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.addons.Addon;
+import world.bentobox.bentobox.api.addons.AddonDescription;
 import world.bentobox.bentobox.database.DatabaseSetup.DatabaseType;
 import world.bentobox.bentobox.database.objects.DataObject;
 
@@ -234,5 +235,105 @@ public class AddonsManagerTest {
         assertFalse(am.getDataObjects().isEmpty());
         assertTrue(am.getDataObjects().size() == 1);
     }
+    
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#isAddonCompatibleWithBentoBox(Addon)}.
+     */
+    @Test
+    public void testIsAddonCompatibleWithBentoBoxSnapshotNoAPIVersion() {
+        Addon addon = mock(Addon.class);
+        AddonDescription addonDesc = new AddonDescription.Builder("main.class", "Addon-name", "1.0.1").build();
+        when(addon.getDescription()).thenReturn(addonDesc);
+        assertTrue(am.isAddonCompatibleWithBentoBox(addon, "1.0.1-SNAPSHOT-b1642"));
+    }
+    
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#isAddonCompatibleWithBentoBox(Addon)}.
+     */
+    @Test
+    public void testIsAddonCompatibleWithBentoBoxReleaseAPIVersion() {
+        Addon addon = mock(Addon.class);
+        AddonDescription addonDesc = new AddonDescription.Builder("main.class", "Addon-name", "1.0.1").apiVersion("1.0.1").build();
+        when(addon.getDescription()).thenReturn(addonDesc);
+        assertTrue(am.isAddonCompatibleWithBentoBox(addon, "1.0.1"));
+    }
+    
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#isAddonCompatibleWithBentoBox(Addon)}.
+     */
+    @Test
+    public void testIsAddonCompatibleWithBentoBoxSnapshotAPIVersion() {
+        Addon addon = mock(Addon.class);
+        AddonDescription addonDesc = new AddonDescription.Builder("main.class", "Addon-name", "1.0.1").apiVersion("1.0.1").build();
+        when(addon.getDescription()).thenReturn(addonDesc);
+        assertTrue(am.isAddonCompatibleWithBentoBox(addon, "1.0.1-SNAPSHOT-b1642"));
+    }
+    
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#isAddonCompatibleWithBentoBox(Addon)}.
+     */
+    @Test
+    public void testIsAddonCompatibleWithBentoBoxReleaseNoAPIVersion() {
+        Addon addon = mock(Addon.class);
+        AddonDescription addonDesc = new AddonDescription.Builder("main.class", "Addon-name", "1.0.1").build();
+        when(addon.getDescription()).thenReturn(addonDesc);
+        assertTrue(am.isAddonCompatibleWithBentoBox(addon, "1.0.1"));
+    }
+    
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#isAddonCompatibleWithBentoBox(Addon)}.
+     */
+    @Test
+    public void testIsAddonCompatibleWithBentoBoxSnapshotAPIVersionVariableDigits() {
+        Addon addon = mock(Addon.class);
+        AddonDescription addonDesc = new AddonDescription.Builder("main.class", "Addon-name", "1.0.1").apiVersion("1.2.1").build();
+        when(addon.getDescription()).thenReturn(addonDesc);
+        assertFalse(am.isAddonCompatibleWithBentoBox(addon, "1.2-SNAPSHOT-b1642"));
+    }
+    
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#isAddonCompatibleWithBentoBox(Addon)}.
+     */
+    @Test
+    public void testIsAddonCompatibleWithBentoBoxOldSnapshot() {
+        Addon addon = mock(Addon.class);
+        AddonDescription addonDesc = new AddonDescription.Builder("main.class", "Addon-name", "1.0.0").apiVersion("1.11.1").build();
+        when(addon.getDescription()).thenReturn(addonDesc);
+        assertFalse(am.isAddonCompatibleWithBentoBox(addon, "1.0.1-SNAPSHOT-b1642"));
+    }
+    
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#isAddonCompatibleWithBentoBox(Addon)}.
+     */
+    @Test
+    public void testIsAddonCompatibleWithBentoBoxOldRelease() {
+        Addon addon = mock(Addon.class);
+        AddonDescription addonDesc = new AddonDescription.Builder("main.class", "Addon-name", "1.0.0").apiVersion("1.11.1").build();
+        when(addon.getDescription()).thenReturn(addonDesc);
+        assertFalse(am.isAddonCompatibleWithBentoBox(addon, "1.0.1"));
+    }
+    
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#isAddonCompatibleWithBentoBox(Addon)}.
+     */
+    @Test
+    public void testIsAddonCompatibleWithBentoBoxOldReleaseLong() {
+        Addon addon = mock(Addon.class);
+        AddonDescription addonDesc = new AddonDescription.Builder("main.class", "Addon-name", "1.0.0").apiVersion("1.11.1").build();
+        when(addon.getDescription()).thenReturn(addonDesc);
+        assertTrue(am.isAddonCompatibleWithBentoBox(addon, "1.11.1.11.1.1"));
+    }
+    
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#isAddonCompatibleWithBentoBox(Addon)}.
+     */
+    @Test
+    public void testIsAddonCompatibleWithBentoBoxOldReleaseLongAPI() {
+        Addon addon = mock(Addon.class);
+        AddonDescription addonDesc = new AddonDescription.Builder("main.class", "Addon-name", "1.0.0").apiVersion("1.11.1.0.0.0.1").build();
+        when(addon.getDescription()).thenReturn(addonDesc);
+        assertFalse(am.isAddonCompatibleWithBentoBox(addon, "1.11.1"));
+    }
+
 
 }

@@ -27,6 +27,7 @@ import org.bukkit.generator.ChunkGenerator;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
+import be.maximvdw.placeholderapi.internal.utils.NumberUtils;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.addons.Addon.State;
@@ -213,24 +214,27 @@ public class AddonsManager {
         plugin.logWarning("NOTE: DO NOT report this as a bug from BentoBox.");
     }
 
+    private boolean isAddonCompatibleWithBentoBox(@NonNull Addon addon) {
+        return isAddonCompatibleWithBentoBox(addon, plugin.getDescription().getVersion());
+    }
+
     /**
      * Checks if the addon does not explicitly rely on API from a more recent BentoBox version.
      * @param addon instance of the Addon.
+     * @param plugin version string - used for testing
      * @return {@code true} if the addon relies on available BentoBox API, {@code false} otherwise.
      * @since 1.11.0
      */
-    private boolean isAddonCompatibleWithBentoBox(@NonNull Addon addon) {
-        // We have to use lists instead of arrays for dynamic changes and optimization (appending something to an array is O(n) whereas O(1) with lists).
-        List<String> apiVersion = Arrays.asList(addon.getDescription().getApiVersion().split("\\."));
-        List<String> bentoboxVersion = Arrays.asList(plugin.getDescription().getVersion().split("\\."));
+    boolean isAddonCompatibleWithBentoBox(@NonNull Addon addon, String pluginVersion) {
+        String[] apiVersion = addon.getDescription().getApiVersion().split("\\D");
+        String[] bentoboxVersion = pluginVersion.split("\\D");
 
-        while (bentoboxVersion.size() < apiVersion.size()) {
-            bentoboxVersion.add("0");
-        }
-
-        for (int i = 0; i < apiVersion.size(); i++) {
-            int apiNumber = Integer.parseInt(apiVersion.get(i));
-            int bentoboxNumber = Integer.parseInt(bentoboxVersion.get(i));
+        for (int i = 0; i < apiVersion.length; i++) {
+            int bentoboxNumber = 0;
+            if (i < bentoboxVersion.length && NumberUtils.isInteger(bentoboxVersion[i])) {
+                bentoboxNumber = Integer.parseInt(bentoboxVersion[i]);
+            }
+            int apiNumber = NumberUtils.isInteger(apiVersion[i]) ? Integer.parseInt(apiVersion[i]) : -1;
             if (bentoboxNumber < apiNumber) {
                 return false;
             }
