@@ -27,7 +27,6 @@ import org.bukkit.generator.ChunkGenerator;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
-import be.maximvdw.placeholderapi.internal.utils.NumberUtils;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.addons.Addon.State;
@@ -38,6 +37,7 @@ import world.bentobox.bentobox.api.configuration.ConfigObject;
 import world.bentobox.bentobox.api.events.addon.AddonEvent;
 import world.bentobox.bentobox.commands.BentoBoxCommand;
 import world.bentobox.bentobox.database.objects.DataObject;
+import world.bentobox.bentobox.util.Util;
 
 /**
  * @author tastybento, ComminQ
@@ -221,7 +221,7 @@ public class AddonsManager {
     /**
      * Checks if the addon does not explicitly rely on API from a more recent BentoBox version.
      * @param addon instance of the Addon.
-     * @param plugin version string - used for testing
+     * @param pluginVersion plugin version string.
      * @return {@code true} if the addon relies on available BentoBox API, {@code false} otherwise.
      * @since 1.11.0
      */
@@ -231,10 +231,10 @@ public class AddonsManager {
 
         for (int i = 0; i < apiVersion.length; i++) {
             int bentoboxNumber = 0;
-            if (i < bentoboxVersion.length && NumberUtils.isInteger(bentoboxVersion[i])) {
+            if (i < bentoboxVersion.length && Util.isInteger(bentoboxVersion[i], false)) {
                 bentoboxNumber = Integer.parseInt(bentoboxVersion[i]);
             }
-            int apiNumber = NumberUtils.isInteger(apiVersion[i]) ? Integer.parseInt(apiVersion[i]) : -1;
+            int apiNumber = Util.isInteger(apiVersion[i], false) ? Integer.parseInt(apiVersion[i]) : -1;
             if (bentoboxNumber < apiNumber) {
                 return false;
             }
