@@ -213,6 +213,7 @@ public class NewIsland {
                 .island(island)
                 .location(island.getCenter())
                 .blueprintBundle(plugin.getBlueprintsManager().getBlueprintBundles(addon).get(name))
+                .oldIsland(oldIsland)
                 .build();
         if (event.isCancelled()) {
             return;
@@ -275,6 +276,7 @@ public class NewIsland {
             .reason(reasonDone)
             .island(island)
             .location(island.getCenter())
+            .oldIsland(oldIsland)
             .build();
         };
         if (noPaste) {

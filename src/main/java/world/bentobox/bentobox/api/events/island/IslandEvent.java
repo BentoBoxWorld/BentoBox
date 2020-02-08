@@ -337,12 +337,23 @@ public class IslandEvent extends IslandBaseEvent {
      * May be cancelled.
      */
     public static class IslandResetEvent extends IslandBaseEvent {
+        private @NonNull Island oldIsland;
         private @NonNull BlueprintBundle blueprintBundle;
 
-        private IslandResetEvent(Island island, UUID player, boolean admin, Location location, @NonNull BlueprintBundle blueprintBundle) {
+        private IslandResetEvent(Island island, UUID player, boolean admin, Location location, @NonNull BlueprintBundle blueprintBundle, @NonNull Island oldIsland) {
             // Final variables have to be declared in the constructor
             super(island, player, admin, location);
             this.blueprintBundle = blueprintBundle;
+            this.oldIsland = oldIsland;
+        }
+
+        @NonNull
+        public Island getOldIsland() {
+            return oldIsland;
+        }
+
+        public void setOldIsland(Island oldIsland) {
+            this.oldIsland = oldIsland;
         }
 
         /**
@@ -365,9 +376,21 @@ public class IslandEvent extends IslandBaseEvent {
      *
      */
     public static class IslandResettedEvent extends IslandBaseEvent {
-        private IslandResettedEvent(Island island, UUID player, boolean admin, Location location) {
+        private @NonNull Island oldIsland;
+
+        private IslandResettedEvent(Island island, UUID player, boolean admin, Location location, Island oldIsland) {
             // Final variables have to be declared in the constructor
             super(island, player, admin, location);
+            this.oldIsland = oldIsland;
+        }
+
+        @NonNull
+        public Island getOldIsland() {
+            return oldIsland;
+        }
+
+        public void setOldIsland(Island oldIsland) {
+            this.oldIsland = oldIsland;
         }
     }
     /**
@@ -472,8 +495,22 @@ public class IslandEvent extends IslandBaseEvent {
          */
         private int oldRange;
 
+        /**
+         * Stores old island object
+         */
+        private Island oldIsland;
+
         public IslandEventBuilder island(Island island) {
             this.island = island;
+            return this;
+        }
+
+        /**
+         * @param oldIsland old island object
+         * @return IslandEventBuilder
+         */
+        public IslandEventBuilder oldIsland(Island oldIsland) {
+            this.oldIsland = oldIsland;
             return this;
         }
 
@@ -585,11 +622,11 @@ public class IslandEvent extends IslandBaseEvent {
                 Bukkit.getPluginManager().callEvent(lock);
                 return lock;
             case RESET:
-                IslandResetEvent reset = new IslandResetEvent(island, player, admin, location, blueprintBundle);
+                IslandResetEvent reset = new IslandResetEvent(island, player, admin, location, blueprintBundle, oldIsland);
                 Bukkit.getPluginManager().callEvent(reset);
                 return reset;
             case RESETTED:
-                IslandResettedEvent resetted = new IslandResettedEvent(island, player, admin, location);
+                IslandResettedEvent resetted = new IslandResettedEvent(island, player, admin, location, oldIsland);
                 Bukkit.getPluginManager().callEvent(resetted);
                 return resetted;
             case UNBAN:
