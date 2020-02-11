@@ -187,25 +187,19 @@ public class NewIsland {
                 throw new IOException("commands.island.create.unable-create-island");
             }
         }
-
         // Clear any old home locations (they should be clear, but just in case)
         plugin.getPlayers().clearHomeLocations(world, user.getUniqueId());
-
         // Set home location
         plugin.getPlayers().setHomeLocation(user, new Location(next.getWorld(), next.getX() + 0.5D, next.getY(), next.getZ() + 0.5D), 1);
-
         // Reset deaths
         if (plugin.getIWM().isDeathsResetOnNewIsland(world)) {
             plugin.getPlayers().setDeaths(world, user.getUniqueId(), 0);
         }
-
         // Check if owner has a different range permission than the island size
         island.setProtectionRange(user.getPermissionValue(plugin.getIWM().getAddon(island.getWorld())
                 .map(GameModeAddon::getPermissionPrefix).orElse("") + "island.range", island.getProtectionRange()));
-
         // Save the player so that if the server crashes weird things won't happen
         plugin.getPlayers().save(user.getUniqueId());
-
         // Fire event
         IslandBaseEvent event = IslandEvent.builder()
                 .involvedPlayer(user.getUniqueId())
@@ -217,7 +211,6 @@ public class NewIsland {
         if (event.isCancelled()) {
             return;
         }
-
         // Get the new BlueprintBundle if it was changed
         switch (reason) {
         case CREATE:
@@ -241,7 +234,6 @@ public class NewIsland {
                 if (reason.equals(Reason.RESET) || (reason.equals(Reason.CREATE) && plugin.getIWM().isTeleportPlayerToIslandUponIslandCreation(world))) {
                     user.getPlayer().setVelocity(new Vector(0, 0, 0));
                     user.getPlayer().setFallDistance(0F);
-
                     // Teleport player after this island is built
                     plugin.getIslands().homeTeleport(world, user.getPlayer(), true);
                 } else {

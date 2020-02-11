@@ -60,6 +60,8 @@ public class BlueprintsManager {
 
     public static final @NonNull String FOLDER_NAME = "blueprints";
     private static final String FOR = "' for ";
+    
+    public static long chunkLoadTime = 0;
 
     /**
      * Map of blueprint bundles to game mode addon.

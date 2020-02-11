@@ -41,6 +41,7 @@ import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBlock;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintCreatureSpawner;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintEntity;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.managers.BlueprintsManager;
 import world.bentobox.bentobox.util.Util;
 
 /**
@@ -51,6 +52,8 @@ import world.bentobox.bentobox.util.Util;
 public class BlueprintPaster {
 
     enum PasteState {
+        CHUNK_LOAD,
+        CHUNK_LOADING,
         BLOCKS,
         ATTACHMENTS,
         ENTITIES,
@@ -61,7 +64,7 @@ public class BlueprintPaster {
     private static final String MINECRAFT = "minecraft:";
 
     private static final Map<String, String> BLOCK_CONVERSION = ImmutableMap.of("sign", "oak_sign", "wall_sign", "oak_wall_sign");
-
+    
     private BentoBox plugin;
     // The minimum block position (x,y,z)
     private Location pos1;
@@ -150,7 +153,7 @@ public class BlueprintPaster {
         Iterator<Entry<Vector, List<BlueprintEntity>>> it3 = entities.entrySet().iterator();
 
         // Initial state & speed
-        pasteState = PasteState.BLOCKS;
+        pasteState = PasteState.CHUNK_LOAD;
         final int pasteSpeed = plugin.getSettings().getPasteSpeed();
 
         // If this is an island OVERWORLD paste, get the island owner.
@@ -161,14 +164,26 @@ public class BlueprintPaster {
         owner.ifPresent(user -> {
             // Estimated time:
             double total = (double) blocks.size() + attached.size() + entities.size();
-            BigDecimal time = BigDecimal.valueOf(total / (pasteSpeed * 20.0D)).setScale(1, RoundingMode.UP);
+            BigDecimal time = BigDecimal.valueOf(total / (pasteSpeed * 20.0D) + (BlueprintsManager.chunkLoadTime / 1000)).setScale(1, RoundingMode.UP);
             user.sendMessage("commands.island.create.pasting.estimated-time", TextVariables.NUMBER, String.valueOf(time.doubleValue()));
             // We're pasting blocks!
             user.sendMessage("commands.island.create.pasting.blocks", TextVariables.NUMBER, String.valueOf(blocks.size() + attached.size()));
         });
 
         pastingTask = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
+            long timer = System.currentTimeMillis();
             int count = 0;
+            if (pasteState.equals(PasteState.CHUNK_LOAD)) {
+                pasteState = PasteState.CHUNK_LOADING;                
+                // Load chunk
+                Util.getChunkAtAsync(location).thenRun(() -> {
+                    pasteState = PasteState.BLOCKS;
+                    long duration = System.currentTimeMillis() - timer;
+                    if (duration > BlueprintsManager.chunkLoadTime) {
+                        BlueprintsManager.chunkLoadTime = duration;
+                    }
+                }); 
+            }
             while (pasteState.equals(PasteState.BLOCKS) && count < pasteSpeed && it.hasNext()) {
                 pasteBlock(location, it.next());
                 count++;
@@ -221,6 +236,7 @@ public class BlueprintPaster {
         World world = location.getWorld();
         Location pasteTo = location.clone().add(entry.getKey());
         BlueprintBlock bpBlock = entry.getValue();
+
         Block block = pasteTo.getBlock();
         // Set the block data - default is AIR
         BlockData bd;
