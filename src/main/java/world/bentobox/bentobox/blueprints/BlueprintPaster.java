@@ -61,6 +61,11 @@ public class BlueprintPaster {
         CANCEL
     }
 
+    /**
+     * Longest chunk loading time experienced when pasting an island.
+     * It is used to fine-tune the estimated pasting time.
+     * @since 1.11.1
+     */
     private static long chunkLoadTime = 0;
 
     private static final String MINECRAFT = "minecraft:";
