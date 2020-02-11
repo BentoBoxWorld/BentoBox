@@ -35,7 +35,10 @@ public class DyeListener extends FlagListener {
 
 	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
 	public void onPlayerInteract(final PlayerInteractEntityEvent e) {
-		if (e.getRightClicked().getType().equals(EntityType.SHEEP)) {
+		// We cannot use SheepDyeWoolEvent since it doesn't provide who dyed the sheep
+		if (e.getRightClicked().getType().equals(EntityType.SHEEP)
+				&& (e.getPlayer().getInventory().getItemInMainHand().getType().name().contains("DYE")
+				|| e.getPlayer().getInventory().getItemInOffHand().getType().name().contains("DYE"))) {
 			checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.DYE);
 		}
 	}
