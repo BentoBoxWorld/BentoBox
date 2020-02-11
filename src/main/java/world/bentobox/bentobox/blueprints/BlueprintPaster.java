@@ -61,6 +61,8 @@ public class BlueprintPaster {
         CANCEL
     }
 
+    private static long chunkLoadTime = 0;
+
     private static final String MINECRAFT = "minecraft:";
 
     private static final Map<String, String> BLOCK_CONVERSION = ImmutableMap.of("sign", "oak_sign", "wall_sign", "oak_wall_sign");
@@ -164,7 +166,7 @@ public class BlueprintPaster {
         owner.ifPresent(user -> {
             // Estimated time:
             double total = (double) blocks.size() + attached.size() + entities.size();
-            BigDecimal time = BigDecimal.valueOf(total / (pasteSpeed * 20.0D) + (BlueprintsManager.chunkLoadTime / 1000)).setScale(1, RoundingMode.UP);
+            BigDecimal time = BigDecimal.valueOf(total / (pasteSpeed * 20.0D) + (chunkLoadTime / 1000.0D)).setScale(1, RoundingMode.UP);
             user.sendMessage("commands.island.create.pasting.estimated-time", TextVariables.NUMBER, String.valueOf(time.doubleValue()));
             // We're pasting blocks!
             user.sendMessage("commands.island.create.pasting.blocks", TextVariables.NUMBER, String.valueOf(blocks.size() + attached.size()));
@@ -179,8 +181,8 @@ public class BlueprintPaster {
                 Util.getChunkAtAsync(location).thenRun(() -> {
                     pasteState = PasteState.BLOCKS;
                     long duration = System.currentTimeMillis() - timer;
-                    if (duration > BlueprintsManager.chunkLoadTime) {
-                        BlueprintsManager.chunkLoadTime = duration;
+                    if (duration > chunkLoadTime) {
+                        chunkLoadTime = duration;
                     }
                 }); 
             }
