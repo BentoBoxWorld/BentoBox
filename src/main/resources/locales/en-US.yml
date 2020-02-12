@@ -871,8 +871,9 @@ protection:
     FLINT_AND_STEEL:
       name: "Flint and steel"
       description: |-
-        &a Allow players to ignite fires using
-        &a flint and steel or fire charges.
+        &a Allow players to ignite fires or
+        &a campfires using flint and steel
+        &a or fire charges.
       hint: "Flint and steel and fire charges disabled"
     FURNACE: 
       description: "Toggle use"

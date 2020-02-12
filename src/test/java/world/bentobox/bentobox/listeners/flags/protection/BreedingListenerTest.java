@@ -341,7 +341,7 @@ public class BreedingListenerTest {
         bl.onPlayerInteract(e);
         assertFalse("Animal, breeding item in main hand was prevented " + breedingMat, e.isCancelled());
 
-        // verify breeding was prevented
+        // verify breeding was not prevented
         Mockito.verify(clickedEntity, never()).setBreed(false);
     }
 }
