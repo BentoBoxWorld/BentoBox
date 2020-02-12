@@ -44,15 +44,12 @@ public class ObsidianScoopingListener extends FlagListener {
         if (getIslands().userIsOnIsland(user.getWorld(), user)) {
             // Look around to see if this is a lone obsidian block
             Block b = e.getClickedBlock();
-
-            for (Block testBlock : getBlocksAround(b)) {
-                if (testBlock.getType().equals(Material.OBSIDIAN)) {
-                    // Do nothing special
-                    return false;
-                }
+            if (getBlocksAround(b).stream().anyMatch(block -> block.getType().equals(Material.OBSIDIAN))) {
+                user.sendMessage("protection.flags.OBSIDIAN_SCOOPING.obsidian-nearby");
+                return false;
             }
 
-            user.sendMessage("general.tips.changing-obsidian-to-lava");
+            user.sendMessage("protection.flags.OBSIDIAN_SCOOPING.scooping");
             if (e.getItem().getAmount() == 1) {
                 // Needs some special handling when there is only 1 bucket in the stack
                 e.getItem().setType(Material.LAVA_BUCKET);
@@ -64,7 +61,6 @@ public class ObsidianScoopingListener extends FlagListener {
 
             e.getPlayer().getWorld().playSound(e.getPlayer().getLocation(), Sound.ITEM_BUCKET_FILL_LAVA, 1F, 1F);
             e.getClickedBlock().setType(Material.AIR);
-            e.setCancelled(true);
             return true;
         }
 

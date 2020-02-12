@@ -34,8 +34,6 @@ general:
     wrong-world: "&c You are not in the right world to do that!"
     you-must-wait: "&c You must wait [number]s before you can do that command again."
     must-be-positive-number: "&c [number] is not a valid positive number."
-  tips:
-    changing-obsidian-to-lava: "Changing obsidian back into lava. Be careful!"
   worlds:
     overworld: "Overworld"
     nether: "Nether"
@@ -1007,11 +1005,18 @@ protection:
       hint: "Noteblock interaction disabled"
     OBSIDIAN_SCOOPING:
       name: "Obsidian scooping"
-      description: | 
-        &a Toggle scooping
-        &a Allow obsidian to be scooped up
+      description: |-
+        &a Allow players to scoop up obsidian
         &a with an empty bucket back into lava.
-        &a Protects newbies. Reduces resets.
+
+        &a This helps the newbies that failed to
+        &a build their cobblestone generator.
+
+        &a Note: obsidian cannot be scooped up
+        &a if there are other obsidian blocks
+        &a within a 2-block radius.
+      scooping: "&a Changing obsidian back into lava. Be careful next time!"
+      obsidian-nearby: "&c There are obsidian blocks nearby, you cannot scoop up this block into lava."
     OFFLINE_GROWTH:
       description: |-
         &a When disabled, plants
