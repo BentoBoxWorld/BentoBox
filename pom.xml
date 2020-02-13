@@ -67,8 +67,8 @@
         <!-- Non-minecraft related dependencies -->
         <powermock.version>2.0.4</powermock.version>
         <mongodb.version>3.8.0</mongodb.version>
-        <!-- More visible way how to change dependency versions -->
-        <spigot.version>1.15-R0.1-SNAPSHOT</spigot.version>
+        <!-- More visible way to change dependency versions -->
+        <spigot.version>1.15.2-R0.1-SNAPSHOT</spigot.version>
         <bstats.version>1.5</bstats.version>
         <vault.version>1.7</vault.version>
         <placeholderapi.version>2.10.4</placeholderapi.version>
