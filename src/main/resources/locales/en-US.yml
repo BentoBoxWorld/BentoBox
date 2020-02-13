@@ -1066,19 +1066,24 @@ protection:
           &c in the End.
       name: "End PVP"
       hint: "PVP disabled in the End"
+      enabled: "&c The PVP in the End has been enabled."
+      disabled: "&a The PVP in the End has been disabled."
     PVP_NETHER: 
       description: |-
           &c Enable/Disable PVP
           &c in the Nether.
       name: "Nether PVP"
       hint: "PVP disabled in the Nether"
+      enabled: "&c The PVP in the Nether has been enabled."
+      disabled: "&a The PVP in the Nether has been disabled."
     PVP_OVERWORLD: 
       description: |-
           &c Enable/Disable PVP
           &c on island.
       name: "Overworld PVP"
       hint: "&c PVP disabled in the Overworld"
-      active: "&c PVP is active here!"
+      enabled: "&c The PVP in the Overworld has been enabled."
+      disabled: "&a The PVP in the Overworld has been disabled."
     REDSTONE: 
       description: "Toggle use"
       name: "Redstone items"

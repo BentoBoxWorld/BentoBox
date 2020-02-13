@@ -24,10 +24,12 @@ import org.bukkit.event.entity.LingeringPotionSplashEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.player.PlayerFishEvent;
 
+import world.bentobox.bentobox.api.events.flags.FlagSettingChangeEvent;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.lists.Flags;
+import world.bentobox.bentobox.managers.RanksManager;
 
 /**
  * Handles PVP
@@ -209,6 +211,19 @@ public class PVPListener extends FlagListener {
         // Only care about players shooting fireworks
         if (e.getEntity() instanceof Player && (e.getProjectile() instanceof Firework)) {
             firedFireworks.put(e.getProjectile(), (Player)e.getEntity());
+        }
+    }
+
+    @EventHandler(priority = EventPriority.NORMAL)
+    public void onPVPFlagToggle(final FlagSettingChangeEvent e) {
+        Flag flag = e.getEditedFlag();
+        // Only care about PVP Flags
+        if (Flags.PVP_OVERWORLD.equals(flag) || Flags.PVP_NETHER.equals(flag) || Flags.PVP_END.equals(flag)) {
+            String message = "protection.flags." + flag.getID() + "." + (e.isSetTo() ? "enabled" : "disabled");
+            // Send the message to visitors
+            e.getIsland().getVisitors().forEach(visitor -> User.getInstance(visitor).sendMessage(message));
+            // Send the message to island members (and coops and trusted)
+            e.getIsland().getMemberSet(RanksManager.COOP_RANK).forEach(member -> User.getInstance(member).sendMessage(message));
         }
     }
 }
