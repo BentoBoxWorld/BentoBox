@@ -358,11 +358,14 @@ public class AddonsManager {
     /**
      * Finds a class by name that has been loaded by this loader
      * @param name name of the class, not null
-     * @return Class the class
+     * @return Class the class or null if not found
      */
     @Nullable
     public Class<?> getClassByName(@NonNull final String name) {
-        return classes.getOrDefault(name, loaders.values().stream().map(l -> l.findClass(name, false)).filter(Objects::nonNull).findFirst().orElse(null));
+        try {
+            return classes.getOrDefault(name, loaders.values().stream().map(l -> l.findClass(name, false)).filter(Objects::nonNull).findFirst().orElse(null));
+        } catch (Exception e) {}
+        return null;
     }
 
     /**
