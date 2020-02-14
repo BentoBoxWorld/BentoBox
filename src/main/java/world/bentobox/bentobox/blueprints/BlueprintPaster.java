@@ -41,7 +41,6 @@ import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBlock;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintCreatureSpawner;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintEntity;
 import world.bentobox.bentobox.database.objects.Island;
-import world.bentobox.bentobox.managers.BlueprintsManager;
 import world.bentobox.bentobox.util.Util;
 
 /**
@@ -71,7 +70,7 @@ public class BlueprintPaster {
     private static final String MINECRAFT = "minecraft:";
 
     private static final Map<String, String> BLOCK_CONVERSION = ImmutableMap.of("sign", "oak_sign", "wall_sign", "oak_wall_sign");
-    
+
     private BentoBox plugin;
     // The minimum block position (x,y,z)
     private Location pos1;
@@ -181,7 +180,7 @@ public class BlueprintPaster {
             long timer = System.currentTimeMillis();
             int count = 0;
             if (pasteState.equals(PasteState.CHUNK_LOAD)) {
-                pasteState = PasteState.CHUNK_LOADING;                
+                pasteState = PasteState.CHUNK_LOADING;
                 // Load chunk
                 Util.getChunkAtAsync(location).thenRun(() -> {
                     pasteState = PasteState.BLOCKS;
@@ -189,7 +188,7 @@ public class BlueprintPaster {
                     if (duration > chunkLoadTime) {
                         chunkLoadTime = duration;
                     }
-                }); 
+                });
             }
             while (pasteState.equals(PasteState.BLOCKS) && count < pasteSpeed && it.hasNext()) {
                 pasteBlock(location, it.next());
