@@ -81,7 +81,7 @@
         <!-- Do not change unless you want different name for local builds. -->
         <build.number>-LOCAL</build.number>
         <!-- This allows to change between versions. -->
-        <build.version>1.11.1</build.version>
+        <build.version>1.12.0</build.version>
     </properties>
 
     <!-- Profiles will allow to automatically change build version. -->
