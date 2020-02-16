@@ -720,6 +720,16 @@ public class IslandWorldManager {
     public List<String> getGeoLimitSettings(@NonNull World world) {
         return gameModes.containsKey(world) ? gameModes.get(world).getWorldSettings().getGeoLimitSettings() : Collections.emptyList();
     }
+    
+    /**
+     * Check if a mob type should not spawn in this world
+     * @param world - world
+     * @return list of limited mobs
+     * @since 1.12.0
+     */
+    public List<String> getMobLimitSettings(@NonNull World world) {
+        return gameModes.containsKey(world) ? gameModes.get(world).getWorldSettings().getMobLimitSettings() : Collections.emptyList();
+    }
 
     /**
      * Get the reset limit for this world
