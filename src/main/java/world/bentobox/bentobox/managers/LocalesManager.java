@@ -19,6 +19,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
+import org.eclipse.jdt.annotation.Nullable;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.localization.BentoBoxLocale;
@@ -49,6 +50,7 @@ public class LocalesManager {
      * @param reference a reference that can be found in a locale file
      * @return the translated String from the User's locale or from the server's locale or from the en-US locale, or null.
      */
+    @Nullable
     public String get(User user, String reference) {
         // Make sure the user is not null
         if (user != null) {
@@ -85,6 +87,7 @@ public class LocalesManager {
      * @param reference a reference that can be found in a locale file
      * @return the translated String from the server's locale or from the en-US locale, or null.
      */
+    @Nullable
     public String get(String reference) {
         // Get the translation from the server's locale
         if (languages.get(Locale.forLanguageTag(plugin.getSettings().getDefaultLanguage())).contains(reference)) {
