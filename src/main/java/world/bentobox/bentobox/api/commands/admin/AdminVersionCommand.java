@@ -9,7 +9,7 @@ import world.bentobox.bentobox.api.user.User;
 public class AdminVersionCommand extends CompositeCommand {
 
     public AdminVersionCommand(CompositeCommand adminCommand) {
-        super(adminCommand, "version", "v");
+        super(adminCommand, "version", "v", "ver");
     }
 
     @Override

@@ -25,7 +25,7 @@ public class BentoBoxVersionCommand extends CompositeCommand {
      * @param parent - command parent
      */
     public BentoBoxVersionCommand(CompositeCommand parent) {
-        super(parent, "version", "v", "versions", "addons");
+        super(parent, "version", "v", "ver", "versions", "addons");
     }
 
     @Override
