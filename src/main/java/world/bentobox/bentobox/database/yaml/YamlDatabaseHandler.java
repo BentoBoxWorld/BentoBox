@@ -518,6 +518,10 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         if (configEntry.needsReset()) {
             setComment("/!\\ BentoBox currently does not support changing this value mid-game. If you do need to change it, do a full reset of your databases and worlds.", config, yamlComments, parent);
         }
+        // Tell if the configEntry needs the server to be restarted.
+        if (configEntry.needsRestart()) {
+            setComment("/!\\ In order to apply the changes made to this option, you must restart your server. Reloading BentoBox or the server won't work.", config, yamlComments, parent);
+        }
     }
 
     private void setComment(@NonNull String comment, @NonNull YamlConfiguration config, @NonNull Map<String, String> yamlComments, @NonNull String parent) {

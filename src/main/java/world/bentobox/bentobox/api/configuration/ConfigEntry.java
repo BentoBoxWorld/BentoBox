@@ -30,4 +30,11 @@ public @interface ConfigEntry {
      * @since 1.5.3
      */
     String video() default "";
+
+    /**
+     * Sets whether this config entry requires restarting the server in order to take changes into account.
+     * @return {@code true} if this config entry requires restarting the server in order to take changes into account, {@code false} otherwise.
+     * @since 1.12.0
+     */
+    boolean needsRestart() default false;
 }
