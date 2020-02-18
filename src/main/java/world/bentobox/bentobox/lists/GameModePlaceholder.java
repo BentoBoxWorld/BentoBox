@@ -298,7 +298,12 @@ public enum GameModePlaceholder {
      * {@code -1} is unlimited.
      * @since 1.5.0
      */
-    RESETS_LEFT("resets_left", (addon, user, island) -> String.valueOf(addon.getPlayers().getResetsLeft(addon.getOverWorld(), user.getUniqueId())));
+    RESETS_LEFT("resets_left", (addon, user, island) -> String.valueOf(addon.getPlayers().getResetsLeft(addon.getOverWorld(), user.getUniqueId()))),
+    /**
+     * Returns how many times this player died.
+     * @since 1.12.0
+     */
+    DEATHS("deaths", (addon, user, island) -> String.valueOf(addon.getPlayers().getDeaths(addon.getOverWorld(), user.getUniqueId())));
 
     private String placeholder;
     /**
