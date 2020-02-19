@@ -509,6 +509,7 @@ public class IslandEvent extends IslandBaseEvent {
 
         /**
          * Stores old island object
+         * @since 1.12.0
          */
         private Island oldIsland;
 
@@ -520,6 +521,7 @@ public class IslandEvent extends IslandBaseEvent {
         /**
          * @param oldIsland old island object
          * @return IslandEventBuilder
+         * @since 1.12.0
          */
         public IslandEventBuilder oldIsland(Island oldIsland) {
             this.oldIsland = oldIsland;
