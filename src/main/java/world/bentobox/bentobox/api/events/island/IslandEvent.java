@@ -347,11 +347,17 @@ public class IslandEvent extends IslandBaseEvent {
             this.oldIsland = oldIsland;
         }
 
+        /**
+         * @since 1.12.0
+         */
         @NonNull
         public Island getOldIsland() {
             return oldIsland;
         }
 
+        /**
+         * @since 1.12.0
+         */
         public void setOldIsland(Island oldIsland) {
             this.oldIsland = oldIsland;
         }
@@ -384,11 +390,17 @@ public class IslandEvent extends IslandBaseEvent {
             this.oldIsland = oldIsland;
         }
 
+        /**
+         * @since 1.12.0
+         */
         @NonNull
         public Island getOldIsland() {
             return oldIsland;
         }
 
+        /**
+         * @since 1.12.0
+         */
         public void setOldIsland(Island oldIsland) {
             this.oldIsland = oldIsland;
         }
