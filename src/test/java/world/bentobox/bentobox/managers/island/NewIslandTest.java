@@ -138,6 +138,7 @@ public class NewIslandTest {
         when(builder.island(any())).thenReturn(builder);
         when(builder.location(any())).thenReturn(builder);
         when(builder.reason(any())).thenReturn(builder);
+        when(builder.oldIsland(any())).thenReturn(builder);
         when(builder.build()).thenReturn(ice);
         when(ice.getBlueprintBundle()).thenReturn(bpb);
         when(ire.getBlueprintBundle()).thenReturn(bpb);
