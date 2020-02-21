@@ -10,6 +10,8 @@ import org.bukkit.util.Vector;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
+import world.bentobox.bentobox.api.events.island.IslandEvent;
+import world.bentobox.bentobox.api.events.island.IslandEvent.Reason;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
@@ -72,6 +74,14 @@ public class AdminDeleteCommand extends ConfirmableCommand {
         Island oldIsland = getIslands().getIsland(getWorld(), targetUUID);
         Vector vector = null;
         if (oldIsland != null) {
+            // Fire island preclear event
+            IslandEvent.builder()
+            .involvedPlayer(user.getUniqueId())
+            .reason(Reason.PRECLEAR)
+            .island(oldIsland)
+            .oldIsland(oldIsland)
+            .location(oldIsland.getCenter())
+            .build();
             // Check if player is online and on the island
             User target = User.getInstance(targetUUID);
             // Remove them from this island (it still exists and will be deleted later)

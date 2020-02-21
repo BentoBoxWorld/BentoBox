@@ -9,6 +9,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
+import world.bentobox.bentobox.api.events.island.IslandEvent;
 import world.bentobox.bentobox.api.events.island.IslandEvent.Reason;
 import world.bentobox.bentobox.api.events.team.TeamEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
@@ -115,10 +116,20 @@ public class IslandResetCommand extends ConfirmableCommand {
     }
 
     private boolean resetIsland(User user, String name) {
-        // Reset the island
-        user.sendMessage("commands.island.create.creating-island");
         // Get the player's old island
         Island oldIsland = getIslands().getIsland(getWorld(), user);
+
+        // Fire island preclear event
+        IslandEvent.builder()
+        .involvedPlayer(user.getUniqueId())
+        .reason(Reason.PRECLEAR)
+        .island(oldIsland)
+        .oldIsland(oldIsland)
+        .location(oldIsland.getCenter())
+        .build();
+        
+        // Reset the island
+        user.sendMessage("commands.island.create.creating-island");
 
         // Kick all island members (including the owner)
         kickMembers(oldIsland);
