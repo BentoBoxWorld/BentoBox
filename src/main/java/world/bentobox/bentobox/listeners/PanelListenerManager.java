@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.bukkit.ChatColor;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -37,8 +38,8 @@ public class PanelListenerManager implements Listener {
             // uncancel it. If gui was from our environment, then cancel event anyway.
             event.setCancelled(true);
 
-            // Check the name of the panel
-            if (view.getTitle().equals(openPanels.get(user.getUniqueId()).getName())) {
+            // Check the name of the panel - strip colors. Note that black is removed from titles automatically by the server.
+            if (ChatColor.stripColor(view.getTitle()).equals(ChatColor.stripColor(openPanels.get(user.getUniqueId()).getName()))) {
                 // Close inventory if clicked outside and if setting is true
                 if (BentoBox.getInstance().getSettings().isClosePanelOnClickOutside() && event.getSlotType().equals(SlotType.OUTSIDE)) {
                     event.getWhoClicked().closeInventory();
@@ -63,6 +64,8 @@ public class PanelListenerManager implements Listener {
             } else {
                 // Wrong name - delete this panel
                 openPanels.remove(user.getUniqueId());
+                // This avoids GUIs being left open so that items can be taken.
+                user.closeInventory();
             }
         }
     }
