@@ -15,7 +15,7 @@ public class MariaDBDatabaseConnector extends SQLDatabaseConnector {
      */
     MariaDBDatabaseConnector(DatabaseConnectionSettingsImpl dbSettings) {
         super(dbSettings, "jdbc:mysql://" + dbSettings.getHost() + ":" + dbSettings.getPort() + "/" + dbSettings.getDatabaseName()
-        + "?autoReconnect=true&useSSL=false&allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8");
+        + "?autoReconnect=true&useSSL=" + dbSettings.isUseSSL() + "&allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8");
     }
 
 }

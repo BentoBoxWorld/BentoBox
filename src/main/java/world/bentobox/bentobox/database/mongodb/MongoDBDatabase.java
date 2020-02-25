@@ -30,7 +30,8 @@ public class MongoDBDatabase implements DatabaseSetup {
                     plugin.getSettings().getDatabasePort(),
                     plugin.getSettings().getDatabaseName(),
                     plugin.getSettings().getDatabaseUsername(),
-                    plugin.getSettings().getDatabasePassword()
+                    plugin.getSettings().getDatabasePassword(),
+                    plugin.getSettings().isUseSSL()
                     ));
         }
         return new MongoDBDatabaseHandler<>(plugin, type, connector);

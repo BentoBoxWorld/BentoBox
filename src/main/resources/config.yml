@@ -58,6 +58,10 @@ general:
     # This helps prevent issues if the server crashes.
     # Data is also saved at important points in the game.
     backup-period: 5
+    # Allows to enable SSL protection to database connections for MongoDB,
+    # MariaDB, MySQL and PostgreSQL database servers.
+    # Added since 1.2.0.
+    useSSL: false
   # Allow FTB Autonomous Activator to work (will allow a pseudo player [CoFH] to place and break blocks and hang items)
   # Add other fake player names here if required
   # /!\ This feature is experimental and might not work as expected or might not work at all.

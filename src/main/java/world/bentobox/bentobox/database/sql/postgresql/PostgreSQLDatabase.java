@@ -22,7 +22,8 @@ public class PostgreSQLDatabase implements DatabaseSetup {
                     plugin.getSettings().getDatabasePort(),
                     plugin.getSettings().getDatabaseName(),
                     plugin.getSettings().getDatabaseUsername(),
-                    plugin.getSettings().getDatabasePassword()
+                    plugin.getSettings().getDatabasePassword(),
+                    plugin.getSettings().isUseSSL()
                     ));
         }
         return new PostgreSQLDatabaseHandler<>(plugin, dataObjectClass, connector);
