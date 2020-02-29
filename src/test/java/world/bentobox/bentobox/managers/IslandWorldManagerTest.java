@@ -83,6 +83,7 @@ public class IslandWorldManagerTest {
         // World
         when(world.getName()).thenReturn("test-world");
         when(world.getEnvironment()).thenReturn(World.Environment.NORMAL);
+        when(world.getMaxHeight()).thenReturn(256);
         when(location.getWorld()).thenReturn(world);
 
         // Scheduler
@@ -240,6 +241,24 @@ public class IslandWorldManagerTest {
      */
     @Test
     public void testGetIslandHeight() {
+        assertEquals(0, iwm.getIslandHeight(world));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getIslandHeight(org.bukkit.World)}.
+     */
+    @Test
+    public void testGetIslandHeightOverMax() {
+        when(ws.getIslandHeight()).thenReturn(500);
+        assertEquals(255, iwm.getIslandHeight(world));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getIslandHeight(org.bukkit.World)}.
+     */
+    @Test
+    public void testGetIslandHeightSubZero() {
+        when(ws.getIslandHeight()).thenReturn(-50);
         assertEquals(0, iwm.getIslandHeight(world));
     }
 

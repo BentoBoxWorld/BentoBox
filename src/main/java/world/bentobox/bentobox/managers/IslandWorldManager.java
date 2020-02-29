@@ -226,10 +226,15 @@ public class IslandWorldManager {
     }
 
     /**
+     * Value will always be greater than 0 and less than the world's max height.
      * @return the islandHeight
      */
     public int getIslandHeight(@NonNull World world) {
-        return gameModes.containsKey(world) ? gameModes.get(world).getWorldSettings().getIslandHeight() : 0;
+        if (gameModes.containsKey(world) && world.getMaxHeight() > 0) {
+            return Math.min(world.getMaxHeight() - 1,
+                    Math.max(0, gameModes.get(world).getWorldSettings().getIslandHeight()));
+        }
+        return 0;
     }
 
     /**
@@ -720,7 +725,7 @@ public class IslandWorldManager {
     public List<String> getGeoLimitSettings(@NonNull World world) {
         return gameModes.containsKey(world) ? gameModes.get(world).getWorldSettings().getGeoLimitSettings() : Collections.emptyList();
     }
-    
+
     /**
      * Check if a mob type should not spawn in this world
      * @param world - world
