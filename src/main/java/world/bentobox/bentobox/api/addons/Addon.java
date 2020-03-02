@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -270,7 +271,7 @@ public abstract class Addon {
                     // Make any dirs that need to be made
                     outFile.getParentFile().mkdirs();
                     if (!outFile.exists() || replace) {
-                        java.nio.file.Files.copy(in, outFile.toPath());
+                        java.nio.file.Files.copy(in, outFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
                     }
                     return outFile;
                 }
