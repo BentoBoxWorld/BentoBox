@@ -687,7 +687,7 @@ public class IslandEvent extends IslandBaseEvent {
                 Bukkit.getPluginManager().callEvent(change);
                 return change;
             case PRECLEAR:
-                IslandPreclearEvent preclear = new IslandPreclearEvent(island, player, admin, location, island);
+                IslandPreclearEvent preclear = new IslandPreclearEvent(island, player, admin, location, oldIsland);
                 Bukkit.getPluginManager().callEvent(preclear);
                 return preclear;
             default:
