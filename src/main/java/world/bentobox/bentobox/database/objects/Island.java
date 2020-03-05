@@ -193,28 +193,28 @@ public class Island implements DataObject {
      */
     public Island(Island island) {
         this.center = island.getCenter().clone();
-        this.createdDate = island.createdDate;
-        this.deleted = island.deleted;
-        this.doNotLoad = island.doNotLoad;
+        this.createdDate = island.getCreatedDate();
+        this.deleted = island.isDeleted();
+        this.doNotLoad = island.isDoNotLoad();
         this.flags.putAll(island.getFlags());
-        this.gameMode = island.gameMode;
-        this.history.addAll(island.history);
-        this.levelHandicap = island.levelHandicap;
-        this.maxEverProtectionRange = island.maxEverProtectionRange;
-        this.members.putAll(island.members);
-        this.name = island.name;
-        this.owner = island.owner;
-        this.protectionRange = island.protectionRange;
-        this.purgeProtected = island.purgeProtected;
-        this.range = island.range;
-        this.spawn = island.spawn;
-        island.spawnPoint.forEach((k,v) -> this.spawnPoint.put(k, v.clone()));
-        this.uniqueId = island.uniqueId;
-        this.updatedDate = island.updatedDate;
-        this.world = island.world;
-        this.cooldowns = island.cooldowns;
-        this.commandRanks = island.commandRanks;
-        this.reserved = island.reserved;
+        this.gameMode = island.getGameMode();
+        this.history.addAll(island.getHistory());
+        this.levelHandicap = island.getLevelHandicap();
+        this.maxEverProtectionRange = island.getMaxEverProtectionRange();
+        this.members.putAll(island.getMembers());
+        this.name = island.getName();
+        this.owner = island.getOwner();
+        this.protectionRange = island.getProtectionRange();
+        this.purgeProtected = island.getPurgeProtected();
+        this.range = island.getRange();
+        this.spawn = island.isSpawn();
+        island.getSpawnPoint().forEach((k,v) -> island.spawnPoint.put(k, v.clone()));
+        this.uniqueId = island.getUniqueId();
+        this.updatedDate = island.getUpdatedDate();
+        this.world = island.getWorld();
+        this.cooldowns = island.getCooldowns();
+        this.commandRanks = island.getCommandRanks();
+        this.reserved = island.isReserved();
     }
 
     /*
@@ -623,7 +623,7 @@ public class Island implements DataObject {
     public boolean hasVisitors() {
         return Bukkit.getOnlinePlayers().stream().anyMatch(player -> onIsland(player.getLocation()) && getRank(User.getInstance(player)) == RanksManager.VISITOR_RANK);
     }
-    
+
     /**
      * Returns a list of players that are physically inside the island's protection range
      * @return list of players
@@ -635,7 +635,7 @@ public class Island implements DataObject {
                 .filter(player -> onIsland(player.getLocation()))
                 .collect(Collectors.toList());
     }
-    
+
     /**
      * Returns whether this Island has players inside its protection range.
      * Note this is equivalent to {@code !island.getPlayersOnIsland().isEmpty()}.
@@ -647,7 +647,7 @@ public class Island implements DataObject {
     public boolean hasPlayersOnIsland() {
         return Bukkit.getOnlinePlayers().stream().anyMatch(player -> onIsland(player.getLocation()));
     }
-                        
+
     /**
      * Check if the flag is allowed or not
      * For flags that are for the island in general and not related to rank.
