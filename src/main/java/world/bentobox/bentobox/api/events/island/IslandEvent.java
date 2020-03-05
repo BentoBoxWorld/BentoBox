@@ -686,6 +686,10 @@ public class IslandEvent extends IslandBaseEvent {
                 change = new IslandProtectionRangeChangeEvent(island, player, admin, location, newRange, oldRange);
                 Bukkit.getPluginManager().callEvent(change);
                 return change;
+            case PRECLEAR:
+                IslandPreclearEvent preclear = new IslandPreclearEvent(island, player, admin, location, island);
+                Bukkit.getPluginManager().callEvent(preclear);
+                return preclear;
             default:
                 IslandGeneralEvent general = new IslandGeneralEvent(island, player, admin, location);
                 Bukkit.getPluginManager().callEvent(general);
