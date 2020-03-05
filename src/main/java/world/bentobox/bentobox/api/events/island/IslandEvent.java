@@ -300,6 +300,16 @@ public class IslandEvent extends IslandBaseEvent {
     }
 
     /**
+     * Fired when an island is reserved for a player
+     * @since 1.12.0
+     */
+    public static class IslandReservedEvent extends IslandBaseEvent {
+        private IslandReservedEvent(Island island, UUID player, boolean admin, Location location) {
+            super(island, player, admin, location);
+        }
+    }
+
+    /**
      * Fired when an a player enters an island.
      * Cancellation has no effect.
      */
@@ -690,6 +700,10 @@ public class IslandEvent extends IslandBaseEvent {
                 IslandPreclearEvent preclear = new IslandPreclearEvent(island, player, admin, location, oldIsland);
                 Bukkit.getPluginManager().callEvent(preclear);
                 return preclear;
+            case RESERVED:
+                IslandReservedEvent res = new IslandReservedEvent(island, player, admin, location);
+                Bukkit.getPluginManager().callEvent(res);
+                return res;
             default:
                 IslandGeneralEvent general = new IslandGeneralEvent(island, player, admin, location);
                 Bukkit.getPluginManager().callEvent(general);
