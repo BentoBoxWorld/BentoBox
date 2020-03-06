@@ -57,7 +57,7 @@ public class AdminTeamDisbandCommand extends CompositeCommand {
                 TeamEvent.builder()
                 .island(island)
                 .reason(TeamEvent.Reason.KICK)
-                .involvedPlayer(targetUUID)
+                .involvedPlayer(m)
                 .admin(true)
                 .build();
             }
