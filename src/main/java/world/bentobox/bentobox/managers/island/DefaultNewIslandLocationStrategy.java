@@ -46,12 +46,9 @@ public class DefaultNewIslandLocationStrategy implements NewIslandLocationStrate
         // Find a free spot
         Map<Result, Integer> result = new EnumMap<>(Result.class);
         // Check center
-        last = Util.getClosestIsland(last);
         Result r = isIsland(last);
-
         while (!r.equals(Result.FREE) && result.getOrDefault(Result.BLOCKS_IN_AREA, 0) < MAX_UNOWNED_ISLANDS) {
             nextGridLocation(last);
-            last = Util.getClosestIsland(last);
             result.put(r, result.getOrDefault(r, 0) + 1);
             r = isIsland(last);
         }
@@ -73,10 +70,12 @@ public class DefaultNewIslandLocationStrategy implements NewIslandLocationStrate
      * Checks if there is an island or blocks at this location
      *
      * @param location - the location
-     * @return true if island found, null if blocks found, false if nothing found
+     * @return Result enum if island found, null if blocks found, false if nothing found
      */
     protected Result isIsland(Location location) {
-
+        // Quick check
+        if (plugin.getIslands().getIslandAt(location).isPresent()) return Result.ISLAND_FOUND;
+        
         World world = location.getWorld();
 
         // Check 4 corners

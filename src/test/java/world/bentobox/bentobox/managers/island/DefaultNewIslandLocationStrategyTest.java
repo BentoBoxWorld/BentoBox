@@ -61,6 +61,8 @@ public class DefaultNewIslandLocationStrategyTest {
     @Mock
     private Block adjBlock;
 
+    private int count;
+
     /**
      * @throws java.lang.Exception
      */
@@ -145,6 +147,21 @@ public class DefaultNewIslandLocationStrategyTest {
         Optional<Island> emptyIsland = Optional.empty();
         when(im.getIslandAt(any())).thenReturn(opIsland, opIsland, opIsland, opIsland, emptyIsland);
         assertEquals(location,dnils.getNextLocation(world));
+        verify(im).setLast(location);
+    }
+    
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.island.DefaultNewIslandLocationStrategy#getNextLocation(org.bukkit.World)}.
+     */
+    @Test
+    public void testGetNextLocationSuccessSomeIslands10() {
+        Optional<Island> opIsland = Optional.of(new Island());
+        Optional<Island> emptyIsland = Optional.empty();
+        count = 0;
+        //long time = System.currentTimeMillis();
+        when(im.getIslandAt(any())).thenAnswer(i -> count++ > 10 ? emptyIsland :opIsland);
+        assertEquals(location,dnils.getNextLocation(world));
+        //System.out.println(System.currentTimeMillis() - time);
         verify(im).setLast(location);
     }
 
