@@ -37,7 +37,7 @@ public class MongoDBDatabaseConnector implements DatabaseConnector {
             MongoCredential credential = MongoCredential.createCredential(dbSettings.getUsername(),
                     dbSettings.getDatabaseName(),
                     dbSettings.getPassword().toCharArray());
-            MongoClientOptions options = MongoClientOptions.builder().sslEnabled(false).build();
+            MongoClientOptions options = MongoClientOptions.builder().sslEnabled(dbSettings.isUseSSL()).build();
             client = new MongoClient(new ServerAddress(dbSettings.getHost(), dbSettings.getPort()), credential,options);
         }
         return client.getDatabase(dbSettings.getDatabaseName());

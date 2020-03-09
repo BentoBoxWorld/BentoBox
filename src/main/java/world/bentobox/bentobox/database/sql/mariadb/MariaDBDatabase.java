@@ -24,7 +24,8 @@ public class MariaDBDatabase implements DatabaseSetup {
                     plugin.getSettings().getDatabasePort(),
                     plugin.getSettings().getDatabaseName(),
                     plugin.getSettings().getDatabaseUsername(),
-                    plugin.getSettings().getDatabasePassword()
+                    plugin.getSettings().getDatabasePassword(),
+                    plugin.getSettings().isUseSSL()
                     ));
         }
         return new MariaDBDatabaseHandler<>(plugin, type, connector);

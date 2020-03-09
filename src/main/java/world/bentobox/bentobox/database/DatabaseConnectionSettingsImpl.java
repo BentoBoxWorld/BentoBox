@@ -8,6 +8,13 @@ public class DatabaseConnectionSettingsImpl {
     private String password;
 
     /**
+     * Allows to enable SSL protection to databases that supports it, like mariaDB, MySQL,
+     * PostgreSQL and MongoDB.
+     * @since 1.12.0
+     */
+    private boolean useSSL;
+
+    /**
      * Hosts database settings
      * @param host - database host
      * @param port - port
@@ -15,12 +22,13 @@ public class DatabaseConnectionSettingsImpl {
      * @param username - username 
      * @param password - password
      */
-    public DatabaseConnectionSettingsImpl(String host, int port, String databaseName, String username, String password) {
+    public DatabaseConnectionSettingsImpl(String host, int port, String databaseName, String username, String password, boolean useSSL) {
         this.host = host;
         this.port = port;
         this.databaseName = databaseName;
         this.username = username;
         this.password = password;
+        this.useSSL = useSSL;
     }
 
     /**
@@ -93,4 +101,20 @@ public class DatabaseConnectionSettingsImpl {
         this.password = password;
     }
 
+    /**
+     * This method returns the ssl value.
+     * @return the value of ssl.
+     */
+    public boolean isUseSSL() {
+        return useSSL;
+    }
+
+    /**
+     * This method sets the ssl value.
+     * @param useSSL the ssl new value.
+     *
+     */
+    public void setUseSSL(boolean useSSL) {
+        this.useSSL = useSSL;
+    }
 }

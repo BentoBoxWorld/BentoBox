@@ -93,6 +93,11 @@ public class Settings implements ConfigObject {
     @ConfigEntry(path = "general.database.backup-period")
     private int databaseBackupPeriod = 5;
 
+    @ConfigComment("Allows to enable SSL protection to database connections for MongoDB,")
+    @ConfigComment("MariaDB, MySQL and PostgreSQL database servers.")
+    @ConfigEntry(path = "general.database.useSSL", since = "1.12.0")
+    private boolean useSSL = false;
+
     @ConfigComment("Allow FTB Autonomous Activator to work (will allow a pseudo player [CoFH] to place and break blocks and hang items)")
     @ConfigComment("Add other fake player names here if required")
     @ConfigEntry(path = "general.fakeplayers", experimental = true)
@@ -294,6 +299,24 @@ public class Settings implements ConfigObject {
 
     public int getDatabasePort() {
         return databasePort;
+    }
+
+    /**
+     * This method returns the useSSL value.
+     * @return the value of useSSL.
+     * @since 1.12.0
+     */
+    public boolean isUseSSL() {
+        return useSSL;
+    }
+
+    /**
+     * This method sets the useSSL value.
+     * @param useSSL the useSSL new value.
+     * @since 1.12.0
+     */
+    public void setUseSSL(boolean useSSL) {
+        this.useSSL = useSSL;
     }
 
     public void setDatabasePort(int databasePort) {
