@@ -50,40 +50,14 @@ public class JoinLeaveListener implements Listener {
         }
         UUID playerUUID = user.getUniqueId();
 
-        // Make sure the player is loaded into the cache or create the player if they don't exist
-        players.addPlayer(playerUUID);
 
         // Check if player hasn't joined before
         if (!players.isKnown(playerUUID)) {
-            plugin.getIWM().getOverWorlds().stream()
-            .filter(w -> plugin.getIWM().isCreateIslandOnFirstLoginEnabled(w))
-            .forEach(w -> {
-                // Even if that'd be extremely unlikely, it's better to check if the player doesn't have an island already.
-                if (!(plugin.getIslands().hasIsland(w, user) || plugin.getIslands().inTeam(w, user.getUniqueId()))) {
-                    int delay = plugin.getIWM().getCreateIslandOnFirstLoginDelay(w);
-                    user.sendMessage("commands.island.create.on-first-login",
-                            TextVariables.NUMBER, String.valueOf(delay));
-
-                    Runnable createIsland = () -> {
-                        // should only execute if:
-                        // - abort on logout is false
-                        // - abort on logout is true && user is online
-                        if (!plugin.getIWM().isCreateIslandOnFirstLoginAbortOnLogout(w) || user.isOnline()){
-                            plugin.getIWM().getAddon(w).ifPresent(addon -> addon.getPlayerCommand()
-                                    .map(command -> command.getSubCommand("create").orElse(null))
-                                    .ifPresent(command -> command.execute(user, "create", Collections.singletonList(BlueprintsManager.DEFAULT_BUNDLE_NAME))));
-                        }
-                    };
-
-                    if (delay <= 0) {
-                        createIsland.run();
-                    } else {
-                        Bukkit.getScheduler().runTaskLater(plugin, createIsland, delay * 20L);
-                    }
-                }
-            });
+            firstTime(user);
         }
-
+        
+        // Make sure the player is loaded into the cache or create the player if they don't exist
+        players.addPlayer(playerUUID);
 
         // Reset island resets if required
         plugin.getIWM().getOverWorlds().stream()
@@ -115,6 +89,40 @@ public class JoinLeaveListener implements Listener {
         clearPlayersInventory(Util.getWorld(event.getPlayer().getWorld()), user);
     }
 
+
+    private void firstTime(User user) {
+        // Make sure the player is loaded into the cache or create the player if they don't exist
+        players.addPlayer(user.getUniqueId());
+
+        plugin.getIWM().getOverWorlds().stream()
+        .filter(w -> plugin.getIWM().isCreateIslandOnFirstLoginEnabled(w))
+        .forEach(w -> {
+            // Even if that'd be extremely unlikely, it's better to check if the player doesn't have an island already.
+            if (!(plugin.getIslands().hasIsland(w, user) || plugin.getIslands().inTeam(w, user.getUniqueId()))) {
+                int delay = plugin.getIWM().getCreateIslandOnFirstLoginDelay(w);
+                user.sendMessage("commands.island.create.on-first-login",
+                        TextVariables.NUMBER, String.valueOf(delay));
+
+                Runnable createIsland = () -> {
+                    // should only execute if:
+                    // - abort on logout is false
+                    // - abort on logout is true && user is online
+                    if (!plugin.getIWM().isCreateIslandOnFirstLoginAbortOnLogout(w) || user.isOnline()){
+                        plugin.getIWM().getAddon(w).ifPresent(addon -> addon.getPlayerCommand()
+                                .map(command -> command.getSubCommand("create").orElse(null))
+                                .ifPresent(command -> command.execute(user, "create", Collections.singletonList(BlueprintsManager.DEFAULT_BUNDLE_NAME))));
+                    }
+                };
+
+                if (delay <= 0) {
+                    Bukkit.getScheduler().runTask(plugin, createIsland);
+                } else {
+                    Bukkit.getScheduler().runTaskLater(plugin, createIsland, delay * 20L);
+                }
+            }
+        });
+        
+    }
 
     /**
      * This event will clean players inventor

@@ -224,7 +224,7 @@ public class JoinLeaveListenerTest {
         PlayerJoinEvent event = new PlayerJoinEvent(player, "");
         jll.onPlayerJoin(event);
         // Verify
-        verify(pm).addPlayer(any());
+        verify(pm, times(2)).addPlayer(any());
         verify(pm, times(2)).save(any());
         verify(player, never()).sendMessage(anyString());
         // Verify resets
@@ -312,7 +312,7 @@ public class JoinLeaveListenerTest {
         PlayerJoinEvent event = new PlayerJoinEvent(player, "");
         jll.onPlayerJoin(event);
         // Verify
-        verify(pm).addPlayer(any());
+        verify(pm, times(2)).addPlayer(any());
         verify(pm, times(2)).save(any());
         verify(player).sendMessage(eq("commands.island.create.on-first-login"));
     }
