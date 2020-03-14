@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -13,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.logging.Level;
@@ -475,7 +477,10 @@ public class AddonsManager {
         }
         // Clear loaders
         if (loaders.containsKey(addon)) {
-            loaders.get(addon).getClasses().forEach(classes::remove);
+            Set<String> unmodifiableSet = Collections.unmodifiableSet(loaders.get(addon).getClasses());
+            for (String className : unmodifiableSet) {
+                classes.remove(className);
+            }
             addon.setState(State.DISABLED);
             loaders.remove(addon);
         }
