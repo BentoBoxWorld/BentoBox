@@ -19,7 +19,7 @@ import world.bentobox.bentobox.database.DatabaseSetup.DatabaseType;
 @ConfigComment("This configuration file contains settings that mainly apply to or manage the following elements:")
 @ConfigComment(" * Data storage")
 @ConfigComment(" * Gamemodes (commands, ...)")
-@ConfigComment(" * Internet connectivity (metrics, web-based content-enriched features, ...)")
+@ConfigComment(" * Internet connectivity (web-based content-enriched features, ...)")
 @ConfigComment("")
 @ConfigComment("Note that this configuration file is dynamic:")
 @ConfigComment(" * It gets updated with the newest settings and comments after BentoBox loaded its settings from it.")
@@ -228,11 +228,6 @@ public class Settings implements ConfigObject {
     private boolean autoOwnershipTransferIgnoreRanks = false;
 
     /* WEB */
-    @ConfigComment("BentoBox uses bStats.org to get global data about the plugin to help improving it.")
-    @ConfigComment("bStats has nearly no effect on your server's performance and the sent data is completely")
-    @ConfigComment("anonymous so please consider twice if you really want to disable it.")
-    @ConfigEntry(path = "web.metrics")
-    private boolean metrics = true;
 
     @ConfigComment("Toggle whether BentoBox can connect to GitHub to get data about updates and addons.")
     @ConfigComment("Disabling this will result in the deactivation of the update checker and of some other")
@@ -256,14 +251,6 @@ public class Settings implements ConfigObject {
 
     // ---------------------------------------------
     // Getters and setters
-
-    public boolean isMetrics() {
-        return metrics;
-    }
-
-    public void setMetrics(boolean metrics) {
-        this.metrics = metrics;
-    }
 
     public String getDefaultLanguage() {
         return defaultLanguage;
