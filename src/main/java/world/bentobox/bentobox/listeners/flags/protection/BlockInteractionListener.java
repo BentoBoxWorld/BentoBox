@@ -125,6 +125,8 @@ public class BlockInteractionListener extends FlagListener {
             checkIsland(e, player, loc, Flags.BREWING);
             break;
         case BARREL:
+        case BEEHIVE:
+        case BEE_NEST:
         case CHEST:
         case CHEST_MINECART:
         case TRAPPED_CHEST:
