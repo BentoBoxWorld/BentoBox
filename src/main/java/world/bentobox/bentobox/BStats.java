@@ -136,7 +136,7 @@ public class BStats {
             else if (players <= 50) return "31-50";
             else if (players <= 100) return "51-100";
             else if (players <= 150) return "101-150";
-            else if (players <= 200) return "150-200";
+            else if (players <= 200) return "151-200";
             else return "201+";
         }));
     }
