@@ -6,6 +6,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -21,6 +22,7 @@ import world.bentobox.bentobox.blueprints.Blueprint;
 import world.bentobox.bentobox.blueprints.BlueprintPaster;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.util.Util;
 import world.bentobox.bentobox.util.teleport.SafeSpotTeleport;
 
@@ -39,15 +41,18 @@ public class PortalTeleportationListener implements Listener {
 
     /**
      * Handles non-player portal use.
-     * Currently disables portal use by entities to prevent dupe glitching.
+     * Dropped items cannot teleport
      *
      * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onEntityPortal(EntityPortalEvent e) {
-        if (plugin.getIWM().inWorld(e.getFrom())) {
-            // Disable entity portal transfer due to dupe glitching
-            e.setCancelled(true);
+        plugin.logDebug(e.getEventName());
+        if (plugin.getIWM().inWorld(e.getFrom()) && !e.getEntityType().equals(EntityType.DROPPED_ITEM)) {
+            plugin.logDebug("In world and not a dropped item");
+            plugin.logDebug("Flag " + Flags.ENTITY_TELEPORT.isSetForWorld(Util.getWorld(e.getFrom().getWorld())));
+            // Disable dropped item due to dupe glitching
+            e.setCancelled(!Flags.ENTITY_TELEPORT.isSetForWorld(Util.getWorld(e.getFrom().getWorld())));
         }
     }
 
@@ -205,7 +210,7 @@ public class PortalTeleportationListener implements Listener {
                 && plugin.getIWM().isNetherIslands(overWorld)
                 && plugin.getIWM().getNetherWorld(overWorld) != null
                 && optionalIsland.filter(i -> !i.hasNetherIsland()).map(i -> {
-                 // No nether island present so paste the default one
+                    // No nether island present so paste the default one
                     pasteNewIsland(e.getPlayer(), to, i, Environment.NETHER);
                     return true;
                 }).orElse(false)) {

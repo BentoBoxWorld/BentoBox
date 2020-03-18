@@ -839,6 +839,11 @@ protection:
       now-entering-your-island: "&a Now entering your island."
       now-leaving: "&a Now leaving &b [name]&a ."
       now-leaving-your-island: "&a Now leaving your island."
+    ENTITY_TELEPORT:
+      description: |-
+        &a Enables non-player
+        &a entities to use portals
+      name: "Entity Portal Use"
     EXPERIENCE_BOTTLE_THROWING:
       name: "Experience bottle throwing"
       description: "Toggle throwing experience bottles."

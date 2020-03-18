@@ -355,7 +355,7 @@ public final class Flags {
 
     public static final Flag GEO_LIMIT_MOBS = new Flag.Builder("GEO_LIMIT_MOBS", Material.CHAINMAIL_CHESTPLATE).type(Type.WORLD_SETTING)
             .listener(new GeoLimitMobsListener()).clickHandler(new GeoLimitClickListener()).usePanel(true).build();
-    
+
     /**
      * @since 1.12.0
      */
@@ -457,6 +457,12 @@ public final class Flags {
      */
     public static final Flag SPAWNER_SPAWN_EGGS = new Flag.Builder("SPAWNER_SPAWN_EGGS", Material.SPAWNER).listener(new SpawnerSpawnEggsListener()).type(Type.WORLD_SETTING).defaultSetting(true).build();
 
+    /**
+     * Allows entities to teleport through a portal
+     * Disabled by default because there have been dupe glitches in the past with this.
+     * @since 1.12.0
+     */
+    public static final Flag ENTITY_TELEPORT = new Flag.Builder("ENTITY_TELEPORT", Material.NETHER_BRICK_FENCE).type(Type.WORLD_SETTING).defaultSetting(false).build();
     /**
      * Provides a list of all the Flag instances contained in this class using reflection.
      * @return List of all the flags in this class
