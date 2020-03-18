@@ -136,8 +136,12 @@ public class PVPListener extends FlagListener {
     public void onSplashPotionSplash(final PotionSplashEvent e) {
         if (e.getEntity().getShooter() instanceof Player && getPlugin().getIWM().inWorld(e.getEntity().getWorld())) {
             User user = User.getInstance((Player)e.getEntity().getShooter());
-            // Run through affected entities and cancel the splash if any are a protected player
-            e.setCancelled(e.getAffectedEntities().stream().anyMatch(le -> blockPVP(user, le, e, getFlag(e.getEntity().getWorld()))));
+            // Run through affected entities and cancel the splash for protected players
+            for (LivingEntity le : e.getAffectedEntities()) {
+                if (!le.getUniqueId().equals(user.getUniqueId()) && blockPVP(user, le, e, getFlag(e.getEntity().getWorld()))) {
+                    e.setIntensity(le, 0);
+                }
+            }
         }
     }
 
