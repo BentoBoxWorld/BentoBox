@@ -90,7 +90,8 @@ public class LocalesManager {
     @Nullable
     public String get(String reference) {
         // Get the translation from the server's locale
-        if (languages.get(Locale.forLanguageTag(plugin.getSettings().getDefaultLanguage())).contains(reference)) {
+        if (languages.containsKey(Locale.forLanguageTag(plugin.getSettings().getDefaultLanguage()))
+                && languages.get(Locale.forLanguageTag(plugin.getSettings().getDefaultLanguage())).contains(reference)) {
             return languages.get(Locale.forLanguageTag(plugin.getSettings().getDefaultLanguage())).get(reference);
         }
         // Get the translation from the en-US locale
