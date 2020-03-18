@@ -242,19 +242,20 @@ public class BlueprintPaster {
         World world = location.getWorld();
         Location pasteTo = location.clone().add(entry.getKey());
         BlueprintBlock bpBlock = entry.getValue();
-
-        Block block = pasteTo.getBlock();
-        // Set the block data - default is AIR
-        BlockData bd;
-        try {
-            bd = Bukkit.createBlockData(bpBlock.getBlockData());
-        } catch (Exception e) {
-            bd = convertBlockData(world, bpBlock);
-        }
-        block.setBlockData(bd, false);
-        setBlockState(block, bpBlock);
-        // pos1 and pos2 update
-        updatePos(block.getLocation());
+        Util.getChunkAtAsync(pasteTo).thenRun(() -> {
+            Block block = pasteTo.getBlock();
+            // Set the block data - default is AIR
+            BlockData bd;
+            try {
+                bd = Bukkit.createBlockData(bpBlock.getBlockData());
+            } catch (Exception e) {
+                bd = convertBlockData(world, bpBlock);
+            }
+            block.setBlockData(bd, false);
+            setBlockState(block, bpBlock);
+            // pos1 and pos2 update
+            updatePos(block.getLocation());
+        });
     }
 
     /**
@@ -337,22 +338,24 @@ public class BlueprintPaster {
         list.stream().filter(k -> k.getType() != null).forEach(k -> {
             // Center, and just a bit high
             Location center = location.add(new Vector(0.5, 0.5, 0.5));
-            LivingEntity e = (LivingEntity)location.getWorld().spawnEntity(center, k.getType());
-            if (k.getCustomName() != null) {
-                String customName = k.getCustomName();
+            Util.getChunkAtAsync(center).thenRun(() -> {
+                LivingEntity e = (LivingEntity)location.getWorld().spawnEntity(center, k.getType());
+                if (k.getCustomName() != null) {
+                    String customName = k.getCustomName();
 
-                if (island != null) {
-                    // Parse any placeholders in the entity's name, if the owner's connected (he should)
-                    Player owner = User.getInstance(island.getOwner()).getPlayer();
-                    if (owner != null) {
-                        customName = plugin.getPlaceholdersManager().replacePlaceholders(owner, customName);
+                    if (island != null) {
+                        // Parse any placeholders in the entity's name, if the owner's connected (he should)
+                        Player owner = User.getInstance(island.getOwner()).getPlayer();
+                        if (owner != null) {
+                            customName = plugin.getPlaceholdersManager().replacePlaceholders(owner, customName);
+                        }
                     }
-                }
 
-                // Actually set the custom name
-                e.setCustomName(customName);
-            }
-            k.configureEntity(e);
+                    // Actually set the custom name
+                    e.setCustomName(customName);
+                }
+                k.configureEntity(e);
+            });
         });
     }
 
