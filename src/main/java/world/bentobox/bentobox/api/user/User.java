@@ -306,6 +306,7 @@ public class User {
         final String permPrefix = permissionPrefix + ".";
 
         List<String> permissions = player.getEffectivePermissions().stream()
+                .filter(PermissionAttachmentInfo::getValue) // Must be a positive permission, not a negative one
                 .map(PermissionAttachmentInfo::getPermission)
                 .filter(permission -> permission.startsWith(permPrefix))
                 .collect(Collectors.toList());
