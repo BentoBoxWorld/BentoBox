@@ -31,7 +31,7 @@ public class HooksManager {
             if (hook.hook()) {
                 hooks.add(hook);
             } else {
-                plugin.log("Could not hook with " + hook.getPluginName() + ((hook.getFailureCause() != null) ? " because: " + hook.getFailureCause() : "") + ". Skipping...");
+                plugin.logError("Could not hook with " + hook.getPluginName() + ((hook.getFailureCause() != null) ? " because: " + hook.getFailureCause() : "") + ". Skipping...");
             }
         }
         // Do not tell the user if we couldn't hook with a plugin which is not available.
