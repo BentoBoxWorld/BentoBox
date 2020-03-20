@@ -95,7 +95,7 @@ public class Settings implements ConfigObject {
 
     @ConfigComment("Allows to enable SSL protection to database connections for MongoDB,")
     @ConfigComment("MariaDB, MySQL and PostgreSQL database servers.")
-    @ConfigEntry(path = "general.database.useSSL", since = "1.12.0")
+    @ConfigEntry(path = "general.database.use-ssl", since = "1.12.0")
     private boolean useSSL = false;
 
     @ConfigComment("Allow FTB Autonomous Activator to work (will allow a pseudo player [CoFH] to place and break blocks and hang items)")
