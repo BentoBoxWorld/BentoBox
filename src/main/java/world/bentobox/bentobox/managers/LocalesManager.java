@@ -7,11 +7,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.jar.JarFile;
 
 import org.bukkit.Bukkit;
@@ -19,6 +21,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
@@ -102,15 +105,39 @@ public class LocalesManager {
     }
 
     /**
-     * Gets the translated String corresponding to the reference from the server's or the en-US locale file
+     * Gets the translated String corresponding to the reference from the server's or the en-US locale file.
      * or if it cannot be found anywhere, use the default text supplied.
-     * @param reference a reference that can be found in a locale file
-     * @param defaultText text to return if the reference cannot be found anywhere
+     * @param reference a reference that can be found in a locale file.
+     * @param defaultText text to return if the reference cannot be found anywhere.
      * @return the translated String from the server's locale or from the en-US locale, or default.
      */
     public String getOrDefault(String reference, String defaultText) {
         String result = get(reference);
         return result == null ? defaultText : result;
+    }
+
+    /**
+     * Gets the list of prefixes from the user's locale, the server's locale and the en-US locale file.
+     * @param user the user to get the locale, not null.
+     * @return the list of prefixes from the user's locale, the server's locale and the en-US locale file.
+     * @since 1.12.0
+     */
+    public Set<String> getAvailablePrefixes(@NonNull User user) {
+        Set<String> prefixes = new HashSet<>();
+
+        // Get the player locale
+        BentoBoxLocale locale = languages.get(user.getLocale());
+        if (locale != null) {
+            prefixes.addAll(locale.getPrefixes());
+        }
+
+        // Get the prefixes from the server's locale
+        prefixes.addAll(languages.get(Locale.forLanguageTag(plugin.getSettings().getDefaultLanguage())).getPrefixes());
+
+        // Get the prefixes from the en-US locale
+        prefixes.addAll(languages.get(Locale.forLanguageTag("en-US")).getPrefixes());
+
+        return prefixes;
     }
 
     /**
@@ -152,7 +179,6 @@ public class LocalesManager {
             plugin.logError("Error updating locale file: " + lf + " : " + e.getMessage());
             plugin.logStacktrace(e);
         }
-
     }
 
     /**
@@ -332,7 +358,6 @@ public class LocalesManager {
      * @since 1.5.0
      */
     private void analyze(User user) {
-
         user.sendRawMessage(ChatColor.GREEN + "The following locales are supported:");
         languages.forEach((k,v) -> user.sendRawMessage(ChatColor.GOLD + k.toLanguageTag() + " " + k.getDisplayLanguage() + " " + k.getDisplayCountry()));
         // Start with US English

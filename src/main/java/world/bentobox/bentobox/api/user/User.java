@@ -377,19 +377,36 @@ public class User {
             }
         }
 
-        // Then replace variables
-        if (variables.length > 1) {
-            for (int i = 0; i < variables.length; i += 2) {
-                translation = translation.replace(variables[i], variables[i+1]);
+        // If this is a prefix, just gather and return the translation
+        if (reference.startsWith("prefixes.")) {
+            return translation;
+        } else {
+            // Replace the prefixes
+            for (String prefix : plugin.getLocalesManager().getAvailablePrefixes(this)) {
+                String prefixTranslation = getTranslation("prefixes." + prefix);
+                // Replace the [gamemode] text variable
+                prefixTranslation = prefixTranslation.replace("[gamemode]", addon != null ? addon.getDescription().getName() : "[gamemode]");
+                // Replace the [friendly_name] text variable
+                prefixTranslation = prefixTranslation.replace("[friendly_name]", getWorld() != null ? plugin.getIWM().getFriendlyName(getWorld()) : "[friendly_name]");
+
+                // Replace the prefix in the actual message
+                translation = translation.replace("[prefix_" + prefix + "]", prefixTranslation);
             }
-        }
 
-        // Then replace Placeholders, this will only work if this is a player
-        if (player != null) {
-            translation = plugin.getPlaceholdersManager().replacePlaceholders(player, translation);
-        }
+            // Then replace variables
+            if (variables.length > 1) {
+                for (int i = 0; i < variables.length; i += 2) {
+                    translation = translation.replace(variables[i], variables[i + 1]);
+                }
+            }
 
-        return Util.stripSpaceAfterColorCodes(ChatColor.translateAlternateColorCodes('&', translation));
+            // Then replace Placeholders, this will only work if this is a player
+            if (player != null) {
+                translation = plugin.getPlaceholdersManager().replacePlaceholders(player, translation);
+            }
+
+            return Util.stripSpaceAfterColorCodes(ChatColor.translateAlternateColorCodes('&', translation));
+        }
     }
 
     /**
@@ -604,5 +621,4 @@ public class User {
     public void setAddon(Addon addon) {
         this.addon = addon;
     }
-
 }

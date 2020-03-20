@@ -11,6 +11,8 @@ meta:
   - Poslovitch
   banner: "WHITE_BANNER:1:STRIPE_SMALL:RED:SQUARE_TOP_RIGHT:CYAN:SQUARE_TOP_RIGHT:BLUE"
 
+prefixes:
+  bentobox: '&6 BentoBox &7 &l > &r '
 general:
   success: "&a Success!"
   invalid: "Invalid"
@@ -386,13 +388,13 @@ commands:
       description: "displays copyright and license information"
     reload:
       description: "reloads BentoBox and all addons, settings and locales"
-      locales-reloaded: "&2 Languages reloaded."
-      addons-reloaded: "&2 Addons reloaded."
-      settings-reloaded: "&2 Settings reloaded."
-      addon: "&6 Reloading &b [name]&2 ."
-      addon-reloaded: "&b [name] &2 reloaded."
-      warning: "&c Warning: Reloading may cause instability, so if you see errors afterwards, restart the server."
-      unknown-addon: "&c Unknown addon!"
+      locales-reloaded: "[prefix_bentobox]&2 Languages reloaded."
+      addons-reloaded: "[prefix_bentobox]&2 Addons reloaded."
+      settings-reloaded: "[prefix_bentobox]&2 Settings reloaded."
+      addon: "[prefix_bentobox]&6 Reloading &b [name]&2 ."
+      addon-reloaded: "[prefix_bentobox]&b [name] &2 reloaded."
+      warning: "[prefix_bentobox]&c Warning: Reloading may cause instability, so if you see errors afterwards, restart the server."
+      unknown-addon: "[prefix_bentobox]&c Unknown addon!"
     version:
       plugin-version: "&2 BentoBox version: &3 [version]"
       description: "displays BentoBox and addons versions"
@@ -409,15 +411,15 @@ commands:
     locale:
       description: "performs localization files analysis"
       see-console: |-
-        &a Check the console to see the feedback.
-        &a This command is so spammy that the feedback cannot be read from chat...
+        [prefix_bentobox]&a Check the console to see the feedback.
+        [prefix_bentobox]&a This command is so spammy that the feedback cannot be read from chat...
     migrate:
       description: "migrates data from one database to another"
-      players: "&6 Migrating players"
-      names: "&6 Migrating names"
-      addons: "&6 Migrating addons"
-      class: "&6 Migrating [description]"
-      migrated: "&A Migrated"
+      players: "[prefix_bentobox]&6 Migrating players"
+      names: "[prefix_bentobox]&6 Migrating names"
+      addons: "[prefix_bentobox]&6 Migrating addons"
+      class: "[prefix_bentobox]&6 Migrating [description]"
+      migrated: "[prefix_bentobox]&a Migrated"
       
   confirmation:
     confirm: "&c Type command again within &b [seconds]s&c  to confirm."
