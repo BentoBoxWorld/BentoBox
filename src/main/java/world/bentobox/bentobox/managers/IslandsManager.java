@@ -30,6 +30,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.PufferFish;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
@@ -100,8 +101,6 @@ public class IslandsManager {
     private List<String> deletedIslands;
 
     private Set<String> toSave = new HashSet<>();
-
-    private Iterator<String> it;
 
     private BukkitTask task;
 
@@ -1018,7 +1017,7 @@ public class IslandsManager {
         if (!toSave.isEmpty()) return;
         // Get a list of ID's to save
         toSave = new HashSet<>(islandCache.getAllIslandIds());
-        it = toSave.iterator();
+        Iterator<String> it = toSave.iterator();
         task = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
             if (plugin.isEnabled() && it.hasNext()) {
                 getIslandById(it.next()).ifPresent(this::save);
@@ -1099,7 +1098,7 @@ public class IslandsManager {
             // Permission checks for range changes only work when the target is online
             if (target.isOnline() &&
                     target.getEffectivePermissions().parallelStream()
-                    .map(p -> p.getPermission())
+                    .map(PermissionAttachmentInfo::getPermission)
                     .anyMatch(p -> p.startsWith(addon.getPermissionPrefix() + "island.range"))) {
                 // Check if new owner has a different range permission than the island size
                 int range = target.getPermissionValue(

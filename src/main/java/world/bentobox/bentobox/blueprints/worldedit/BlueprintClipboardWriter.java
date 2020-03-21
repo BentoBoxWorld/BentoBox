@@ -19,12 +19,12 @@ public class BlueprintClipboardWriter implements ClipboardWriter {
     }
     @Override
     public void write(Clipboard clipboard) throws IOException {
-        // TODO
+        throw new UnsupportedOperationException(); // TODO
     }
 
     @Override
     public void close() throws IOException {
-
+        throw new UnsupportedOperationException(); // TODO
     }
 
     public OutputStream getOutputStream() {

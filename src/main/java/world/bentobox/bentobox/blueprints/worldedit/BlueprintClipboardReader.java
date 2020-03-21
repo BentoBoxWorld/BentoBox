@@ -20,12 +20,12 @@ public class BlueprintClipboardReader implements ClipboardReader {
 
     @Override
     public Clipboard read() throws IOException {
-        return null; //TODO
+        throw new UnsupportedOperationException(); // TODO
     }
 
     @Override
     public void close() throws IOException {
-
+        throw new UnsupportedOperationException(); // TODO
     }
 
     public InputStream getInputStream() {

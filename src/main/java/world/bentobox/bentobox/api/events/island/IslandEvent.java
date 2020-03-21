@@ -355,7 +355,7 @@ public class IslandEvent extends IslandBaseEvent {
      * @since 1.12.0
      */
     public static class IslandPreclearEvent extends IslandBaseEvent {
-        private @NonNull final Island oldIsland;
+        private final @NonNull Island oldIsland;
 
         private IslandPreclearEvent(Island island, UUID player, boolean admin, Location location, @NonNull Island oldIsland) {
             // Final variables have to be declared in the constructor
@@ -417,7 +417,7 @@ public class IslandEvent extends IslandBaseEvent {
      *
      */
     public static class IslandResettedEvent extends IslandBaseEvent {
-        private @NonNull final Island oldIsland;
+        private final @NonNull Island oldIsland;
 
         private IslandResettedEvent(Island island, UUID player, boolean admin, Location location, Island oldIsland) {
             // Final variables have to be declared in the constructor
@@ -433,7 +433,6 @@ public class IslandEvent extends IslandBaseEvent {
         public Island getOldIsland() {
             return oldIsland;
         }
-
     }
     /**
      * Fired when something happens to the island not covered by other events
