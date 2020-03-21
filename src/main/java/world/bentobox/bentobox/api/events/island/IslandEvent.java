@@ -351,12 +351,11 @@ public class IslandEvent extends IslandBaseEvent {
     }
 
     /**
-     * Fired before an island has its player data cleared, e.g., just beofre a reset
+     * Fired before an island has its player data cleared, e.g., just before a reset
      * @since 1.12.0
      */
     public static class IslandPreclearEvent extends IslandBaseEvent {
         private @NonNull final Island oldIsland;
-        private @NonNull BlueprintBundle blueprintBundle;
 
         private IslandPreclearEvent(Island island, UUID player, boolean admin, Location location, @NonNull Island oldIsland) {
             // Final variables have to be declared in the constructor
@@ -372,7 +371,6 @@ public class IslandEvent extends IslandBaseEvent {
         public Island getOldIsland() {
             return oldIsland;
         }
-
     }
 
     /**
