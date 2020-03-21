@@ -93,8 +93,7 @@ public class Settings implements ConfigObject {
     @ConfigEntry(path = "general.database.backup-period")
     private int databaseBackupPeriod = 5;
 
-    @ConfigComment("Allows to enable SSL protection to database connections for MongoDB,")
-    @ConfigComment("MariaDB, MySQL and PostgreSQL database servers.")
+    @ConfigComment("Enable SSL connection to MongoDB, MariaDB, MySQL and PostgreSQL databases.")
     @ConfigEntry(path = "general.database.use-ssl", since = "1.12.0")
     private boolean useSSL = false;
 
@@ -228,7 +227,6 @@ public class Settings implements ConfigObject {
     private boolean autoOwnershipTransferIgnoreRanks = false;
 
     /* WEB */
-
     @ConfigComment("Toggle whether BentoBox can connect to GitHub to get data about updates and addons.")
     @ConfigComment("Disabling this will result in the deactivation of the update checker and of some other")
     @ConfigComment("features that rely on the data downloaded from the GitHub API.")
