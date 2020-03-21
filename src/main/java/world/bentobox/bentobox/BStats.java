@@ -14,8 +14,9 @@ import world.bentobox.bentobox.api.flags.Flag;
  */
 public class BStats {
 
+    private static final int BSTATS_ID = 3555;
+
     private final BentoBox plugin;
-    private final int bstatsId;
     private Metrics metrics;
 
     /**
@@ -25,14 +26,13 @@ public class BStats {
      */
     private int islandsCreatedCount = 0;
 
-    BStats(BentoBox plugin, int bstatsId) {
+    BStats(BentoBox plugin) {
         this.plugin = plugin;
-        this.bstatsId = bstatsId;
     }
 
     void registerMetrics() {
         if (metrics == null) {
-            metrics = new Metrics(plugin, bstatsId);
+            metrics = new Metrics(plugin, BSTATS_ID);
             registerCustomMetrics();
         }
     }

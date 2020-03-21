@@ -87,7 +87,6 @@ public class BentoBox extends JavaPlugin {
     // Metrics
     @Nullable
     private BStats metrics;
-    private static final int BSTATS_ID = 3555;
 
     private Config<Settings> configObject;
 
@@ -196,7 +195,7 @@ public class BentoBox extends JavaPlugin {
             flagsManager.registerListeners();
 
             // Load metrics
-             metrics = new BStats(this, BSTATS_ID);
+             metrics = new BStats(this);
              metrics.registerMetrics();
 
             // Register Multiverse hook - MV loads AFTER BentoBox
