@@ -95,35 +95,35 @@ public class ServerCompatibility {
     public enum ServerVersion {
         V1_13(Compatibility.INCOMPATIBLE),
         V1_13_1(Compatibility.INCOMPATIBLE),
-        V1_13_2(Compatibility.NOT_SUPPORTED),
+        V1_13_2(Compatibility.INCOMPATIBLE),
         /**
          * @since 1.5.0
          */
-        V1_14(Compatibility.NOT_SUPPORTED),
+        V1_14(Compatibility.INCOMPATIBLE),
         /**
          * @since 1.5.0
          */
-        V1_14_1(Compatibility.NOT_SUPPORTED),
+        V1_14_1(Compatibility.INCOMPATIBLE),
         /**
          * @since 1.5.0
          */
-        V1_14_2(Compatibility.NOT_SUPPORTED),
+        V1_14_2(Compatibility.INCOMPATIBLE),
         /**
          * @since 1.6.0
          */
-        V1_14_3(Compatibility.NOT_SUPPORTED),
+        V1_14_3(Compatibility.INCOMPATIBLE),
         /**
          * @since 1.6.0
          */
-        V1_14_4(Compatibility.COMPATIBLE),
+        V1_14_4(Compatibility.NOT_SUPPORTED),
         /**
          * @since 1.9.2
          */
-        V1_15(Compatibility.COMPATIBLE),
+        V1_15(Compatibility.NOT_SUPPORTED),
         /**
          * @since 1.10.0
          */
-        V1_15_1(Compatibility.COMPATIBLE),
+        V1_15_1(Compatibility.NOT_SUPPORTED),
         /**
          * @since 1.11.0
          */
