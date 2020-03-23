@@ -593,8 +593,10 @@ commands:
         member-layout:
           online: "&a &l  o &r &f [name]"
           offline: "&c &l  o &r &f [name] &7 ([last_seen])"
-        header: "& f --- & a Detalles del equipo & f --- &aMiembros: &b[total] &7
-          / &b[max] &aMiembros en línea: & b [online]"
+        header: |-
+          &f --- &a Detalles del equipo &f ---
+          &a Miembros: &b[total] &7 / &b[ max]
+          &a Miembros en línea: &b [online]
         rank-layout:
           owner: "&6 [rank]:"
           generic: "&6 [rank] &7 (&b [number]&7 )&6 :"
