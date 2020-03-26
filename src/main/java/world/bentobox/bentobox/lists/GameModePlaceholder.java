@@ -4,6 +4,7 @@ import java.text.DateFormat;
 import java.time.Instant;
 import java.util.Date;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.placeholders.GameModePlaceholderReplacer;
@@ -82,6 +83,12 @@ public enum GameModePlaceholder {
      * @since 1.5.0
      */
     ISLAND_MEMBERS_COUNT("island_members_count", (addon, user, island) -> island == null ? "" : String.valueOf(island.getMemberSet().size())),
+    /**
+     * Returns a comma separated list of player names that are at least MEMBER on this island.
+     * @since 1.13.0
+     */
+    ISLAND_MEMBER_NAMES("island_members_list", (addon, user, island) -> island == null ? "" : island.getMemberSet(RanksManager.MEMBER_RANK).stream()
+            .map(addon.getPlayers()::getName).collect(Collectors.joining(","))),
     /**
      * Returns the amount of players that are TRUSTED on this island.
      * @since 1.5.0
