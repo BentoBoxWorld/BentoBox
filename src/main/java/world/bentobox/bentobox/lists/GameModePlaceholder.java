@@ -87,7 +87,7 @@ public enum GameModePlaceholder {
      * Returns a comma separated list of player names that are at least MEMBER on this island.
      * @since 1.13.0
      */
-    ISLAND_MEMBER_NAMES("island_members_list", (addon, user, island) -> island == null ? "" : island.getMemberSet(RanksManager.MEMBER_RANK).stream()
+    ISLAND_MEMBERS_LIST("island_members_list", (addon, user, island) -> island == null ? "" : island.getMemberSet(RanksManager.MEMBER_RANK).stream()
             .map(addon.getPlayers()::getName).collect(Collectors.joining(","))),
     /**
      * Returns the amount of players that are TRUSTED on this island.
