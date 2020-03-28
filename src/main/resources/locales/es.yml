@@ -349,14 +349,12 @@ commands:
     version:
       addon-syntax: "&2[name] &3[version] &7(&3[state]&7)"
       description: Mostrar versiones de BentoBox y complementos
-      game-worlds: "&2[name] &7(&3[addon]&7): &aOverworld&7, &r[nether_color]Nether&7,
-        &r[end_color]End"
       loaded-addons: 'Addons cargados:'
       loaded-game-worlds: 'Mundos de juego cargados:'
       plugin-version: "&2BentoBox version: &3[version]"
       server: "&2Corriendo &3[name] [version]&2."
-      game-world: "&2[name] &7(&3[addon]&7): &aMundo&7, &r[nether_color]Nether&7,
-        &r[end_color]End"
+      game-world: "&2[name] &7(&3[addon]&7): &aMundo&7, &r Nether&7,
+        &r End"
       database: "&Base de datos: &3[database]"
     locale:
       see-console: "&aCompruebe la consola para ver los comentarios. \n&aEste comando
