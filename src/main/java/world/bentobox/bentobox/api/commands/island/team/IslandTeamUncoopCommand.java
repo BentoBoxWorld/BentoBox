@@ -76,7 +76,7 @@ public class IslandTeamUncoopCommand extends CompositeCommand {
         User target = User.getInstance(targetUUID);
         int rank = getIslands().getIsland(getWorld(), user).getRank(target);
         if (rank != RanksManager.COOP_RANK) {
-            user.sendMessage("commands.island.team.uncoop.player-not-coop");
+            user.sendMessage("commands.island.team.uncoop.player-not-cooped");
             return false;
         }
         Island island = getIslands().getIsland(getWorld(), user.getUniqueId());
