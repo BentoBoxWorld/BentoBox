@@ -426,14 +426,14 @@ commands:
     moved-so-command-cancelled: "&c You moved. Teleport cancelled!"
   island:
     about:
-      description: "About this addon"
+      description: "display licence details"
     go:
       parameters: "[home number]"
       description: "teleport you to your island"
       teleport: "&a Teleporting you to your island."
       teleported: "&a Teleported you to home &e #[number]."
     help:
-      description: "The main island command"
+      description: "the main island command"
     spawn:
       description: "teleport you to the spawn"
       teleporting: "&a Teleporting you to the spawn."
@@ -453,7 +453,7 @@ commands:
       pick: "&2 Pick an island"
       unknown-blueprint: "&c That blueprint has not been loaded yet."
       on-first-login: "&a Welcome! We will start preparing your island in a few seconds."
-      you-can-teleport-to-your-island: "&a You can teleport to your island when you please."
+      you-can-teleport-to-your-island: "&a You can teleport to your island when you want."
     info:
       description: "display info about your island or the player's island"
       parameters: "<player>"
