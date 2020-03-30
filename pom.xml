@@ -71,7 +71,7 @@
         <spigot.version>1.15.2-R0.1-SNAPSHOT</spigot.version>
         <bstats.version>1.7</bstats.version>
         <vault.version>1.7</vault.version>
-        <placeholderapi.version>2.10.4</placeholderapi.version>
+        <placeholderapi.version>2.10.5</placeholderapi.version>
         <mvdwplaceholderapi.version>master-SNAPSHOT</mvdwplaceholderapi.version>
         <githubapi.version>d5f5e0bbd8</githubapi.version>
         <dynmap.version>3.0-SNAPSHOT</dynmap.version>
