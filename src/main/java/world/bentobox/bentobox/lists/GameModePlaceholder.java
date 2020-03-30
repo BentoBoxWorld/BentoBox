@@ -229,6 +229,18 @@ public enum GameModePlaceholder {
         return visitedIsland.map(value -> String.valueOf(user.getPermissionValue(addon.getPermissionPrefix() + "team.maxsize", addon.getPlugin().getIWM().getMaxTeamSize(addon.getOverWorld())))).orElse("");
     }),
     /**
+     * Returns a comma separated list of player names that are at least MEMBER on the island the player is standing on.
+     * @since 1.13.0
+     */
+    VISITED_ISLAND_MEMBERS_LIST("visited_island_members_list", (addon, user, island) -> {
+        if (user == null || !user.isPlayer() || user.getLocation() == null) {
+            return "";
+        }
+        Optional<Island> visitedIsland = addon.getIslands().getIslandAt(user.getLocation());
+        return visitedIsland.map(value -> value.getMemberSet(RanksManager.MEMBER_RANK).stream()
+            .map(addon.getPlayers()::getName).collect(Collectors.joining(","))).orElse("");
+    }),
+    /**
      * Returns the amount of players that are at least MEMBER on the island the player is standing on.
      * @since 1.5.2
      */
