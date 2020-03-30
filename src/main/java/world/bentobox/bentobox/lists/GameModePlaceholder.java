@@ -4,6 +4,7 @@ import java.text.DateFormat;
 import java.time.Instant;
 import java.util.Date;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.placeholders.GameModePlaceholderReplacer;
@@ -82,6 +83,12 @@ public enum GameModePlaceholder {
      * @since 1.5.0
      */
     ISLAND_MEMBERS_COUNT("island_members_count", (addon, user, island) -> island == null ? "" : String.valueOf(island.getMemberSet().size())),
+    /**
+     * Returns a comma separated list of player names that are at least MEMBER on this island.
+     * @since 1.13.0
+     */
+    ISLAND_MEMBERS_LIST("island_members_list", (addon, user, island) -> island == null ? "" : island.getMemberSet(RanksManager.MEMBER_RANK).stream()
+            .map(addon.getPlayers()::getName).collect(Collectors.joining(","))),
     /**
      * Returns the amount of players that are TRUSTED on this island.
      * @since 1.5.0
@@ -220,6 +227,18 @@ public enum GameModePlaceholder {
         }
         Optional<Island> visitedIsland = addon.getIslands().getIslandAt(user.getLocation());
         return visitedIsland.map(value -> String.valueOf(user.getPermissionValue(addon.getPermissionPrefix() + "team.maxsize", addon.getPlugin().getIWM().getMaxTeamSize(addon.getOverWorld())))).orElse("");
+    }),
+    /**
+     * Returns a comma separated list of player names that are at least MEMBER on the island the player is standing on.
+     * @since 1.13.0
+     */
+    VISITED_ISLAND_MEMBERS_LIST("visited_island_members_list", (addon, user, island) -> {
+        if (user == null || !user.isPlayer() || user.getLocation() == null) {
+            return "";
+        }
+        Optional<Island> visitedIsland = addon.getIslands().getIslandAt(user.getLocation());
+        return visitedIsland.map(value -> value.getMemberSet(RanksManager.MEMBER_RANK).stream()
+            .map(addon.getPlayers()::getName).collect(Collectors.joining(","))).orElse("");
     }),
     /**
      * Returns the amount of players that are at least MEMBER on the island the player is standing on.

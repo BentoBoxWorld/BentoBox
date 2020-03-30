@@ -2,7 +2,6 @@ package world.bentobox.bentobox.listeners;
 
 import java.util.Optional;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
@@ -129,14 +128,14 @@ public class PortalTeleportationListener implements Listener {
 
         // Else other worlds teleport to the end
         // Set player's velocity to zero one tick after cancellation
-        Bukkit.getScheduler().runTask(plugin, () -> {
-            e.getPlayer().setVelocity(new Vector(0,0,0));
-            e.getPlayer().setFallDistance(0);
-        });
         // Teleport
         new SafeSpotTeleport.Builder(plugin)
         .entity(e.getPlayer())
         .location(to)
+        .thenRun(() -> {
+            e.getPlayer().setVelocity(new Vector(0,0,0));
+            e.getPlayer().setFallDistance(0);
+        })
         .build();
         return true;
     }
@@ -205,7 +204,7 @@ public class PortalTeleportationListener implements Listener {
                 && plugin.getIWM().isNetherIslands(overWorld)
                 && plugin.getIWM().getNetherWorld(overWorld) != null
                 && optionalIsland.filter(i -> !i.hasNetherIsland()).map(i -> {
-                 // No nether island present so paste the default one
+                    // No nether island present so paste the default one
                     pasteNewIsland(e.getPlayer(), to, i, Environment.NETHER);
                     return true;
                 }).orElse(false)) {

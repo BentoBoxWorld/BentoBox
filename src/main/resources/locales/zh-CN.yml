@@ -321,13 +321,11 @@ commands:
       unknown-addon: '&c未知的扩展！'
     version:
       addon-syntax: '&2[name] &3[version] &7(&3[state]&7)'
-      game-worlds: '&2[name] &7(&3[addon]&7): &aOverworld&7, &r[nether_color]Nether&7,
-        &r[end_color]End'
       loaded-game-worlds: 已加载游戏世界：
       plugin-version: '&2Bentobox 版本：&3[version]'
       description: 显示 BentoBox 及扩展的版本
       loaded-addons: 已加载扩展：
-      game-world: '&2[name] &7(&3[addon]&7): &主世界&7, &r[nether_color]地狱&7, &r[end_color]末界 '
+      game-world: '&2[name] &7(&3[addon]&7): &主世界&7, &r 地狱&7, &r 末界 '
       server: ' &2正在运行 &3[name] [version]&2. '
       database: '&2数据库：&3[database]'
     locale:

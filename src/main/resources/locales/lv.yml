@@ -429,8 +429,8 @@ commands:
       addon-syntax: "&2[name] &3[version] &7(&3[state]&7)"
       database: "&2Databāze: &3[database]"
       description: parādīt BentoBox un papildinājumu versijas
-      game-world: "&2[name] &7(&3[addon]&7): &aOverworld&7, &r[nether_color]Nether&7,
-        &r[end_color]End"
+      game-world: "&2[name] &7(&3[addon]&7): &aOverworld&7, &r Nether&7,
+        &r End"
       loaded-addons: 'Ielādētie Papildinājumi:'
       loaded-game-worlds: 'Ielādētās spēles pasaules:'
       plugin-version: "&2BentoBox versija: &3[version]"

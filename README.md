@@ -35,9 +35,8 @@ There are also plenty of other official or community-made Addons you can try and
 
 ## Documentation
 
-* [Installation guide](https://github.com/BentoBoxWorld/bentobox/wiki/Install-Bentobox)
-* [Javadocs](https://bentoboxworld.github.io/BentoBox/)
-* [Wiki](https://github.com/BentoBoxWorld/BentoBox/wiki)
+* Start reading: [https://docs.bentobox.world](https://docs.bentobox.world)
+* For developers: [Javadocs](https://bentoboxworld.github.io/BentoBox/)
 
 ## Downloads
 
@@ -49,6 +48,7 @@ A [webtool](https://download.bentobox.world/) is currently being developed to al
 
 ### Developers
 * [Jenkins](https://ci.codemc.org/job/BentoBoxWorld/job/BentoBox/) (**untested and mostly unstable builds**)
+* [Javadocs](https://bentoboxworld.github.io/BentoBox/)
 
 ## What about contributing?
 

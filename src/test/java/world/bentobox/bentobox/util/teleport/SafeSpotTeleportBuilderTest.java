@@ -65,14 +65,6 @@ public class SafeSpotTeleportBuilderTest {
     }
 
     @Test
-    public void test() throws Exception {
-        sstb = new SafeSpotTeleport.Builder(plugin);
-        sstb.build();
-        SafeSpotTeleport ttt = new SafeSpotTeleport(plugin, player, loc, null, false, 0);
-        assertEquals(sst, ttt);
-    }
-
-    @Test
     public void testBuilder() {
         sstb = new SafeSpotTeleport.Builder(plugin);
         // Should fail because no data

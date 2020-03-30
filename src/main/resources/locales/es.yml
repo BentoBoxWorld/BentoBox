@@ -424,14 +424,24 @@ commands:
       addon-syntax: "&2[name] &3[version] &7(&3[state]&7)"
       database: "&Base de datos: &3[database]"
       description: Mostrar versiones de BentoBox y complementos
-      game-world: "&2[name] &7(&3[addon]&7): &aMundo&7, &r[nether_color]Nether&7,
-        &r[end_color]End"
-      game-worlds: "&2[name] &7(&3[addon]&7): &aOverworld&7, &r[nether_color]Nether&7,
-        &r[end_color]End"
       loaded-addons: 'Addons cargados:'
       loaded-game-worlds: 'Mundos de juego cargados:'
       plugin-version: "&2BentoBox version: &3[version]"
       server: "&2Corriendo &3[name] [version]&2."
+      game-world: "&2[name] &7(&3[addon]&7): &aMundo&7, &r Nether&7,
+        &r End"
+      database: "&Base de datos: &3[database]"
+    locale:
+      see-console: "&aCompruebe la consola para ver los comentarios. \n&aEste comando
+        es tan spam que los comentarios no se pueden leer desde el chat ..."
+      description: realiza análisis de archivos de localización
+    migrate:
+      players: "&6 Jugadores emigrantes"
+      names: "&6Migrando nombres"
+      addons: "&6Migrando complementos"
+      class: "&6Migrando[description]"
+      migrated: "&AMigrado"
+      description: migra datos de una base de datos a otra
   confirmation:
     confirm: "&cVuelva a escribir el comando antes de &b[seconds]s&c para confirmar."
     previous-request-cancelled: "&6Previa solicitud de confirmación cancelada."
