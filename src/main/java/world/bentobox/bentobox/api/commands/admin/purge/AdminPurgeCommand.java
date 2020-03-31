@@ -118,6 +118,7 @@ public class AdminPurgeCommand extends CompositeCommand implements Listener {
 
     Set<String> getOldIslands(int days) {
         return getPlugin().getIslands().getIslands().stream()
+                .filter(i -> !i.isSpawn())
                 .filter(i -> !i.getPurgeProtected())
                 .filter(i -> i.getWorld().equals(this.getWorld()))
                 .filter(Island::isOwned)

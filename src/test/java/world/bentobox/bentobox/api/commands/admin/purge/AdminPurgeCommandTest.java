@@ -99,9 +99,6 @@ public class AdminPurgeCommandTest {
         apc = new AdminPurgeCommand(ac);
     }
 
-    /**
-     * @throws java.lang.Exception
-     */
     @After
     public void tearDown() {
         Mockito.framework().clearInlineMocks();
@@ -133,7 +130,7 @@ public class AdminPurgeCommandTest {
      */
     @Test
     public void testCanExecuteUserStringListOfStringEmptyArgs() {
-        assertFalse(apc.canExecute(user, "protect", Collections.emptyList()));
+        assertFalse(apc.canExecute(user, "", Collections.emptyList()));
         verify(user).sendMessage("commands.help.header",
                 "[label]",
                 "BSkyBlock");
@@ -144,7 +141,7 @@ public class AdminPurgeCommandTest {
      */
     @Test
     public void testCanExecuteUserStringListOfStringWithArg() {
-        assertTrue(apc.canExecute(user, "protect", Collections.singletonList("23")));
+        assertTrue(apc.canExecute(user, "", Collections.singletonList("23")));
     }
 
     /**
@@ -152,7 +149,7 @@ public class AdminPurgeCommandTest {
      */
     @Test
     public void testExecuteUserStringListOfStringNotNumber() {
-        assertFalse(apc.execute(user, "protect", Collections.singletonList("abc")));
+        assertFalse(apc.execute(user, "", Collections.singletonList("abc")));
         verify(user).sendMessage(eq("commands.admin.purge.number-error"));
     }
 
@@ -161,7 +158,7 @@ public class AdminPurgeCommandTest {
      */
     @Test
     public void testExecuteUserStringListOfStringZero() {
-        assertFalse(apc.execute(user, "protect", Collections.singletonList("0")));
+        assertFalse(apc.execute(user, "", Collections.singletonList("0")));
         verify(user).sendMessage(eq("commands.admin.purge.days-one-or-more"));
     }
 
@@ -170,7 +167,7 @@ public class AdminPurgeCommandTest {
      */
     @Test
     public void testExecuteUserStringListOfStringNoIslands() {
-        assertTrue(apc.execute(user, "protect", Collections.singletonList("10")));
+        assertTrue(apc.execute(user, "", Collections.singletonList("10")));
         verify(user).sendMessage(eq("commands.admin.purge.purgable-islands"), eq("[number]"), eq("0"));
     }
 
@@ -181,7 +178,7 @@ public class AdminPurgeCommandTest {
     public void testExecuteUserStringListOfStringNoIslandsPurgeProtected() {
         when(island.getPurgeProtected()).thenReturn(true);
         when(im.getIslands()).thenReturn(Collections.singleton(island));
-        assertTrue(apc.execute(user, "protect", Collections.singletonList("10")));
+        assertTrue(apc.execute(user, "", Collections.singletonList("10")));
         verify(user).sendMessage(eq("commands.admin.purge.purgable-islands"), eq("[number]"), eq("0"));
     }
 
@@ -193,7 +190,7 @@ public class AdminPurgeCommandTest {
         when(island.getPurgeProtected()).thenReturn(false);
         when(island.getWorld()).thenReturn(mock(World.class));
         when(im.getIslands()).thenReturn(Collections.singleton(island));
-        assertTrue(apc.execute(user, "protect", Collections.singletonList("10")));
+        assertTrue(apc.execute(user, "", Collections.singletonList("10")));
         verify(user).sendMessage(eq("commands.admin.purge.purgable-islands"), eq("[number]"), eq("0"));
     }
 
@@ -208,7 +205,20 @@ public class AdminPurgeCommandTest {
         when(island.isUnowned()).thenReturn(true);
         when(island.isOwned()).thenReturn(false);
         when(im.getIslands()).thenReturn(Collections.singleton(island));
-        assertTrue(apc.execute(user, "protect", Collections.singletonList("10")));
+        assertTrue(apc.execute(user, "", Collections.singletonList("10")));
+        verify(user).sendMessage(eq("commands.admin.purge.purgable-islands"), eq("[number]"), eq("0"));
+    }
+
+    /**
+     * Makes sure that no spawn islands are deleted
+     */
+    @Test
+    public void testExecuteUserStringListOfStringOnlyIslandSpawn() {
+        when(island.getPurgeProtected()).thenReturn(false);
+        when(island.getWorld()).thenReturn(world);
+        when(island.isSpawn()).thenReturn(true);
+        when(im.getIslands()).thenReturn(Collections.singleton(island));
+        assertTrue(apc.execute(user, "", Collections.singletonList("10")));
         verify(user).sendMessage(eq("commands.admin.purge.purgable-islands"), eq("[number]"), eq("0"));
     }
 
@@ -225,7 +235,7 @@ public class AdminPurgeCommandTest {
         team.put(UUID.randomUUID(), RanksManager.MEMBER_RANK);
         when(island.getMembers()).thenReturn(team);
         when(im.getIslands()).thenReturn(Collections.singleton(island));
-        assertTrue(apc.execute(user, "protect", Collections.singletonList("10")));
+        assertTrue(apc.execute(user, "", Collections.singletonList("10")));
         verify(user).sendMessage(eq("commands.admin.purge.purgable-islands"), eq("[number]"), eq("0"));
     }
 
@@ -245,7 +255,7 @@ public class AdminPurgeCommandTest {
         OfflinePlayer op = mock(OfflinePlayer.class);
         when(op.getLastPlayed()).thenReturn(System.currentTimeMillis());
         when(Bukkit.getOfflinePlayer(any(UUID.class))).thenReturn(op);
-        assertTrue(apc.execute(user, "protect", Collections.singletonList("10")));
+        assertTrue(apc.execute(user, "", Collections.singletonList("10")));
         verify(user).sendMessage(eq("commands.admin.purge.purgable-islands"), eq("[number]"), eq("0"));
     }
 
@@ -266,7 +276,7 @@ public class AdminPurgeCommandTest {
         OfflinePlayer op = mock(OfflinePlayer.class);
         when(op.getLastPlayed()).thenReturn(0L);
         when(Bukkit.getOfflinePlayer(any(UUID.class))).thenReturn(op);
-        assertFalse(apc.execute(user, "protect", Collections.singletonList("10")));
+        assertFalse(apc.execute(user, "", Collections.singletonList("10")));
         verify(user).sendMessage(eq("commands.admin.purge.purgable-islands"), eq("[number]"), eq("1"));
         verify(user).sendMessage(eq("commands.admin.purge.confirm"), eq("[label]"), eq("bsb"));
     }
@@ -281,7 +291,7 @@ public class AdminPurgeCommandTest {
         Optional<Island> opIsland = Optional.of(island);
         when(im.getIslandById(any())).thenReturn(opIsland);
         testExecuteUserStringListOfStringIslandsFound();
-        assertTrue(apc.execute(user, "protect", Collections.singletonList("confirm")));
+        assertTrue(apc.execute(user, "", Collections.singletonList("confirm")));
         verify(im).deleteIsland(eq(island), eq(true), eq(null));
         verify(plugin).log(eq("1 islands purged"));
         verify(user).sendMessage(eq("commands.admin.purge.see-console-for-status"));
