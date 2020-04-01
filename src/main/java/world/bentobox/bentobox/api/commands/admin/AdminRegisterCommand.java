@@ -20,10 +20,6 @@ public class AdminRegisterCommand extends ConfirmableCommand {
 
     public AdminRegisterCommand(CompositeCommand parent) {
         super(parent, "register");
-    }
-
-    @Override
-    public void setup() {
         setPermission("admin.register");
         setOnlyPlayer(true);
         setParametersHelp("commands.admin.register.parameters");

@@ -24,10 +24,6 @@ public class IslandTeamUncoopCommand extends CompositeCommand {
 
     public IslandTeamUncoopCommand(CompositeCommand parentCommand) {
         super(parentCommand, "uncoop");
-    }
-
-    @Override
-    public void setup() {
         setPermission("island.team.coop");
         setOnlyPlayer(true);
         setParametersHelp("commands.island.team.uncoop.parameters");

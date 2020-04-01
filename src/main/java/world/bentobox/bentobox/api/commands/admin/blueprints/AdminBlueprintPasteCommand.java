@@ -11,10 +11,6 @@ public class AdminBlueprintPasteCommand extends CompositeCommand {
 
     public AdminBlueprintPasteCommand(AdminBlueprintCommand parent) {
         super(parent, "paste");
-    }
-
-    @Override
-    public void setup() {
         inheritPermission();
         setParametersHelp("commands.admin.blueprint.paste.parameters");
         setDescription("commands.admin.blueprint.paste.description");

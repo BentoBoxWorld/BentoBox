@@ -26,10 +26,6 @@ public class BentoBoxMigrateCommand extends ConfirmableCommand {
      */
     public BentoBoxMigrateCommand(CompositeCommand parent) {
         super(parent, "migrate");
-    }
-
-    @Override
-    public void setup() {
         setPermission("bentobox.admin.migrate");
         setDescription("commands.bentobox.migrate.description");
     }

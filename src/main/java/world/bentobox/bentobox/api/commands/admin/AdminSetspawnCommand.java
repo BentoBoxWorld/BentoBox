@@ -23,10 +23,6 @@ public class AdminSetspawnCommand extends ConfirmableCommand {
 
     public AdminSetspawnCommand(CompositeCommand parent) {
         super(parent, "setspawn");
-    }
-
-    @Override
-    public void setup() {
         setPermission("admin.setspawn");
         setOnlyPlayer(true);
         setDescription("commands.admin.setspawn.description");

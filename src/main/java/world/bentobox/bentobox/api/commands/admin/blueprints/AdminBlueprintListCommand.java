@@ -15,11 +15,6 @@ public class AdminBlueprintListCommand extends CompositeCommand {
 
     public AdminBlueprintListCommand(AdminBlueprintCommand parent) {
         super(parent, "list");
-    }
-
-
-    @Override
-    public void setup() {
         inheritPermission();
         setDescription("commands.admin.blueprint.list.description");
     }

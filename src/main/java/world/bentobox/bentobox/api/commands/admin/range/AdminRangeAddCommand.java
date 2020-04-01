@@ -20,10 +20,6 @@ public class AdminRangeAddCommand extends CompositeCommand {
 
     public AdminRangeAddCommand(AdminRangeCommand parent) {
         super(parent, "add");
-    }
-
-    @Override
-    public void setup() {
         inheritPermission();
         setDescription("commands.admin.range.add.description");
         setParametersHelp("commands.admin.range.add.parameters");

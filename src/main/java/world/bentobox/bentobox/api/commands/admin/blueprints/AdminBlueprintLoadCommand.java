@@ -13,10 +13,6 @@ public class AdminBlueprintLoadCommand extends CompositeCommand {
 
     public AdminBlueprintLoadCommand(AdminBlueprintCommand parent) {
         super(parent, "load");
-    }
-
-    @Override
-    public void setup() {
         inheritPermission();
         setParametersHelp("commands.admin.blueprint.load.parameters");
         setDescription("commands.admin.blueprint.load.description");

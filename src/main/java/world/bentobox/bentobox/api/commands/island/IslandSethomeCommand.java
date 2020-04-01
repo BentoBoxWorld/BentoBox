@@ -11,10 +11,6 @@ public class IslandSethomeCommand extends ConfirmableCommand {
 
     public IslandSethomeCommand(CompositeCommand islandCommand) {
         super(islandCommand, "sethome");
-    }
-
-    @Override
-    public void setup() {
         setPermission("island.sethome");
         setOnlyPlayer(true);
         setDescription("commands.island.sethome.description");

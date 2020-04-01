@@ -27,10 +27,6 @@ public class AdminRangeDisplayCommand extends CompositeCommand {
 
     public AdminRangeDisplayCommand(CompositeCommand parent) {
         super(parent, DISPLAY, SHOW, HIDE);
-    }
-
-    @Override
-    public void setup() {
         setPermission("admin.range.display");
         setDescription("commands.admin.range.display.description");
         setOnlyPlayer(true);

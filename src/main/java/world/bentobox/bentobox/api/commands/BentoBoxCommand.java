@@ -20,8 +20,10 @@ public interface BentoBoxCommand {
      *     <li>Define the permission required to use this command using {@link CompositeCommand#setPermission(String)};</li>
      *     <li>Define whether this command can only be run by players or not using {@link CompositeCommand#setOnlyPlayer(boolean)};</li>
      * </ul>
+     * @deprecated As of 1.13.0. The contents of this method can be safely moved to the command's constructor.
      */
-    void setup();
+    @Deprecated
+    default void setup() {}
 
     /**
      * Returns whether the command can be executed by this user or not.
