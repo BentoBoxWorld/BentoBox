@@ -7,6 +7,8 @@ import world.bentobox.bentobox.lists.Flags;
 
 /**
  * Handles the {@link Flags#EXPERIENCE_PICKUP} flag with a Paper specific pickup event.
+ * @since 1.13.0
+ * @author KennyTV
  */
 public class PaperExperiencePickupListener extends ExperiencePickupListener {
 
