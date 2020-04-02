@@ -3,6 +3,7 @@ package world.bentobox.bentobox.util;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
@@ -58,6 +59,9 @@ public class Util {
 
     private Util() {}
 
+    /**
+     * Used for testing only
+     */
     public static void setPlugin(BentoBox p) {
         plugin = p;
     }
@@ -515,7 +519,21 @@ public class Util {
      * @return True for Paper environments
      */
     public static boolean isPaper() {
-        return PaperLib.isPaper();
+        return isJUnitTest() ? false : PaperLib.isPaper();
+    }
+    
+    /**
+     * I don't like doing this, but otherwise we need to set a flag in every test
+     */
+    private static boolean isJUnitTest() {
+        StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+        List<StackTraceElement> list = Arrays.asList(stackTrace);
+        for (StackTraceElement element : list) {
+            if (element.getClassName().startsWith("org.junit.")) {
+                return true;
+            }           
+        }
+        return false;
     }
 
     /**
