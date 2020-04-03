@@ -43,7 +43,7 @@ public class IslandResetCommand extends ConfirmableCommand {
 
     @Override
     public void setup() {
-        setPermission("island.create");
+        setPermission("island.reset");
         setOnlyPlayer(true);
         setParametersHelp("commands.island.reset.parameters");
         setDescription("commands.island.reset.description");
