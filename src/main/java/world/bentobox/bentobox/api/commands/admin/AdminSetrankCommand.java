@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
+import world.bentobox.bentobox.api.events.island.IslandEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
@@ -98,6 +99,13 @@ public class AdminSetrankCommand extends CompositeCommand {
         }
         int currentRank = island.getRank(target);
         island.setRank(target, rankValue);
+        IslandEvent.builder()
+                .island(island)
+                .involvedPlayer(targetUUID)
+                .admin(true)
+                .reason(IslandEvent.Reason.RANK_CHANGE)
+                .rankChange(currentRank, rankValue)
+                .build();
 
         String ownerName;
         if (ownerUUID != null) {

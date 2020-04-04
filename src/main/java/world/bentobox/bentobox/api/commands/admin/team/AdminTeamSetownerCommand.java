@@ -4,10 +4,12 @@ import java.util.List;
 import java.util.UUID;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
+import world.bentobox.bentobox.api.events.island.IslandEvent;
 import world.bentobox.bentobox.api.events.team.TeamEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.managers.RanksManager;
 
 /**
  * Sets the owner of an island.
@@ -44,6 +46,7 @@ public class AdminTeamSetownerCommand extends CompositeCommand {
             return false;
         }
         // Make new owner
+        User target = User.getInstance(targetUUID);
         getIslands().setOwner(getWorld(), user, targetUUID);
         user.sendMessage("commands.admin.team.setowner.success", TextVariables.NAME, args.get(0));
         // Fire event so add-ons know
@@ -54,6 +57,13 @@ public class AdminTeamSetownerCommand extends CompositeCommand {
         .involvedPlayer(targetUUID)
         .admin(true)
         .build();
+        IslandEvent.builder()
+                .island(island)
+                .involvedPlayer(targetUUID)
+                .admin(true)
+                .reason(IslandEvent.Reason.RANK_CHANGE)
+                .rankChange(island.getRank(target), RanksManager.OWNER_RANK)
+                .build();
         return true;
     }
 }

@@ -14,6 +14,7 @@ import world.bentobox.bentobox.api.events.island.IslandEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
 
 public class AdminRegisterCommand extends ConfirmableCommand {
@@ -87,6 +88,13 @@ public class AdminRegisterCommand extends ConfirmableCommand {
             .involvedPlayer(targetUUID)
             .admin(true)
             .build();
+            IslandEvent.builder()
+                    .island(i)
+                    .involvedPlayer(targetUUID)
+                    .admin(true)
+                    .reason(IslandEvent.Reason.RANK_CHANGE)
+                    .rankChange(RanksManager.VISITOR_RANK, RanksManager.OWNER_RANK)
+                    .build();
             return true;
         }).orElse(false)) {
             // Island does not exist - this is a reservation

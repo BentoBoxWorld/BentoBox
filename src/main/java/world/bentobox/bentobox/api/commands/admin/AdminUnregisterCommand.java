@@ -11,6 +11,7 @@ import world.bentobox.bentobox.api.events.island.IslandEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
 
 public class AdminUnregisterCommand extends ConfirmableCommand {
@@ -62,6 +63,13 @@ public class AdminUnregisterCommand extends ConfirmableCommand {
         .involvedPlayer(targetUUID)
         .admin(true)
         .build();
+        IslandEvent.builder()
+                .island(oldIsland)
+                .involvedPlayer(targetUUID)
+                .admin(true)
+                .reason(IslandEvent.Reason.RANK_CHANGE)
+                .rankChange(RanksManager.OWNER_RANK, RanksManager.VISITOR_RANK)
+                .build();
         // Remove all island members
         oldIsland.getMemberSet().forEach(m -> {
             getIslands().removePlayer(getWorld(), m);

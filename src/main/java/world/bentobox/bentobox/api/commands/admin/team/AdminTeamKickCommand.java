@@ -6,10 +6,12 @@ import java.util.UUID;
 import org.eclipse.jdt.annotation.NonNull;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
+import world.bentobox.bentobox.api.events.island.IslandEvent;
 import world.bentobox.bentobox.api.events.team.TeamEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.managers.RanksManager;
 
 /**
  * Kicks the specified player from the island team.
@@ -71,6 +73,13 @@ public class AdminTeamKickCommand extends CompositeCommand {
         .involvedPlayer(targetUUID)
         .admin(true)
         .build();
+        IslandEvent.builder()
+                .island(island)
+                .involvedPlayer(targetUUID)
+                .admin(true)
+                .reason(IslandEvent.Reason.RANK_CHANGE)
+                .rankChange(island.getRank(target), RanksManager.VISITOR_RANK)
+                .build();
         return true;
     }
 }

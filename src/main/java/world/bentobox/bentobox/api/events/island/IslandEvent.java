@@ -141,11 +141,41 @@ public class IslandEvent extends IslandBaseEvent {
          * The island protection range was changed.
          * @since 1.11.0
          */
-        RANGE_CHANGE
+        RANGE_CHANGE,
+        /**
+         * Event that will fire any time a player's rank changes on an island.
+         * @since 1.13.0
+         */
+        RANK_CHANGE
     }
 
     public static IslandEventBuilder builder() {
         return new IslandEventBuilder();
+    }
+
+    /**
+     * Fired when a player's rank has changed on an island.
+     * Cancellation has no effect.
+     * @since 1.13.0
+     */
+    public static class IslandRankChangeEvent extends IslandBaseEvent {
+
+        private final int oldRank;
+        private final int newRank;
+
+        public IslandRankChangeEvent(Island island, UUID playerUUID, boolean admin, Location location, int oldRank, int newRank) {
+            super(island, playerUUID, admin, location);
+            this.oldRank = oldRank;
+            this.newRank = newRank;
+        }
+
+        public int getOldRank() {
+            return oldRank;
+        }
+
+        public int getNewRank(){
+            return newRank;
+        }
     }
 
     /**
@@ -542,6 +572,16 @@ public class IslandEvent extends IslandBaseEvent {
          */
         private Island oldIsland;
 
+        /**
+         * @since 1.13.0
+         */
+        private int oldRank;
+
+        /**
+         * @since 1.13.0
+         */
+        private int newRank;
+
         public IslandEventBuilder island(Island island) {
             this.island = island;
             return this;
@@ -618,6 +658,15 @@ public class IslandEvent extends IslandBaseEvent {
             return this;
         }
 
+        /**
+         * @since 1.13.0
+         */
+        @NonNull
+        public IslandEventBuilder rankChange(int oldRank, int newRank){
+            this.oldRank = oldRank;
+            this.newRank = newRank;
+            return this;
+        }
 
         public IslandBaseEvent build() {
             // Call the generic event for developers who just want one event and use the Reason enum
@@ -701,6 +750,10 @@ public class IslandEvent extends IslandBaseEvent {
                 IslandReservedEvent res = new IslandReservedEvent(island, player, admin, location);
                 Bukkit.getPluginManager().callEvent(res);
                 return res;
+            case RANK_CHANGE:
+                IslandRankChangeEvent rankChange = new IslandRankChangeEvent(island, player, admin, location, oldRank, newRank);
+                Bukkit.getPluginManager().callEvent(rankChange);
+                return rankChange;
             default:
                 IslandGeneralEvent general = new IslandGeneralEvent(island, player, admin, location);
                 Bukkit.getPluginManager().callEvent(general);

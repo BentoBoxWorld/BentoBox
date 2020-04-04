@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.commands.island.team.Invite.Type;
+import world.bentobox.bentobox.api.events.island.IslandEvent;
 import world.bentobox.bentobox.api.events.team.TeamEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
@@ -86,6 +87,13 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
             Island island = getIslands().getIsland(getWorld(), inviter);
             if (island != null) {
                 island.setRank(user, RanksManager.TRUSTED_RANK);
+                IslandEvent.builder()
+                        .island(island)
+                        .involvedPlayer(user.getUniqueId())
+                        .admin(false)
+                        .reason(IslandEvent.Reason.RANK_CHANGE)
+                        .rankChange(island.getRank(user), RanksManager.TRUSTED_RANK)
+                        .build();
                 inviter.sendMessage("commands.island.team.trust.success", TextVariables.NAME, user.getName());
                 user.sendMessage("commands.island.team.trust.you-are-trusted", TextVariables.NAME, inviter.getName());
             }
@@ -100,6 +108,13 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
             Island island = getIslands().getIsland(getWorld(), inviter);
             if (island != null) {
                 island.setRank(user, RanksManager.COOP_RANK);
+                IslandEvent.builder()
+                        .island(island)
+                        .involvedPlayer(user.getUniqueId())
+                        .admin(false)
+                        .reason(IslandEvent.Reason.RANK_CHANGE)
+                        .rankChange(island.getRank(user), RanksManager.COOP_RANK)
+                        .build();
                 inviter.sendMessage("commands.island.team.coop.success", TextVariables.NAME, user.getName());
                 user.sendMessage("commands.island.team.coop.you-are-a-coop-member", TextVariables.NAME, inviter.getName());
             }
@@ -145,6 +160,13 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
         .reason(TeamEvent.Reason.JOINED)
         .involvedPlayer(playerUUID)
         .build();
+        IslandEvent.builder()
+                .island(teamIsland)
+                .involvedPlayer(user.getUniqueId())
+                .admin(false)
+                .reason(IslandEvent.Reason.RANK_CHANGE)
+                .rankChange(teamIsland.getRank(user), RanksManager.MEMBER_RANK)
+                .build();
     }
 
     private void cleanPlayer(User user) {

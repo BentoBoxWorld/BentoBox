@@ -8,10 +8,12 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
+import world.bentobox.bentobox.api.events.island.IslandEvent;
 import world.bentobox.bentobox.api.events.team.TeamEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
 
 public class IslandTeamSetownerCommand extends CompositeCommand {
@@ -67,6 +69,13 @@ public class IslandTeamSetownerCommand extends CompositeCommand {
             return false;
         }
         getIslands().setOwner(getWorld(), user, targetUUID);
+        IslandEvent.builder()
+                .island(island)
+                .involvedPlayer(targetUUID)
+                .admin(false)
+                .reason(IslandEvent.Reason.RANK_CHANGE)
+                .rankChange(island.getRank(User.getInstance(targetUUID)), RanksManager.OWNER_RANK)
+                .build();
         getIslands().save(island);
         return true;
     }
