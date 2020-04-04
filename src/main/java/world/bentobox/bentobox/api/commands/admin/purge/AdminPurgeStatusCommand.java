@@ -1,11 +1,10 @@
 package world.bentobox.bentobox.api.commands.admin.purge;
 
-import org.bukkit.command.Command;
+import java.util.List;
+
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
-
-import java.util.List;
 
 /**
  * Displays the current status and progress of the purge.
