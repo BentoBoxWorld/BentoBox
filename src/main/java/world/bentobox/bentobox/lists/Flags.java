@@ -80,7 +80,12 @@ public final class Flags {
      * @see BreakBlocksListener
      */
     public static final Flag BREAK_BLOCKS = new Flag.Builder("BREAK_BLOCKS", Material.STONE_PICKAXE).listener(new BreakBlocksListener()).mode(Flag.Mode.BASIC).build();
-    public static final Flag BREAK_SPAWNERS = new Flag.Builder("BREAK_SPAWNERS", Material.SPAWNER).listener(new BreakBlocksListener()).mode(Flag.Mode.BASIC).build();
+    /**
+     * Prevents players from breaking spawners on one's island.
+     * @see BreakBlocksListener
+     * @since 1.13.0
+     */
+    public static final Flag BREAK_SPAWNERS = new Flag.Builder("BREAK_SPAWNERS", Material.SPAWNER).mode(Flag.Mode.EXPERT).build();
     /**
      * Prevents players from placing blocks on one's island.
      * @see PlaceBlocksListener
