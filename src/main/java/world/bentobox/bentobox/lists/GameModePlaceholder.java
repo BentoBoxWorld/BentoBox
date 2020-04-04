@@ -6,7 +6,6 @@ import java.util.Date;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import me.clip.placeholderapi.PlaceholderAPIPlugin;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.placeholders.GameModePlaceholderReplacer;
 import world.bentobox.bentobox.database.objects.Island;
@@ -328,7 +327,7 @@ public enum GameModePlaceholder {
      * Returns whether this player is on his island.
      * @since 1.13.0
      */
-    ON_ISLAND("on_island", (addon, user, island) -> addon.getIslands().userIsOnIsland(addon.getOverWorld(), user) ? PlaceholderAPIPlugin.booleanTrue() : PlaceholderAPIPlugin.booleanFalse());
+    ON_ISLAND("on_island", (addon, user, island) -> String.valueOf(addon.getIslands().userIsOnIsland(addon.getOverWorld(), user)));
 
     private String placeholder;
     /**
