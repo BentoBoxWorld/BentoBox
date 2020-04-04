@@ -12,17 +12,9 @@ import world.bentobox.bentobox.api.user.User;
 public interface BentoBoxCommand {
 
     /**
-     * Setups anything that is needed for this command.
-     * <br/><br/>
-     * It is recommended you do the following in this method:
-     * <ul>
-     *     <li>Register any of the sub-commands of this command;</li>
-     *     <li>Define the permission required to use this command using {@link CompositeCommand#setPermission(String)};</li>
-     *     <li>Define whether this command can only be run by players or not using {@link CompositeCommand#setOnlyPlayer(boolean)};</li>
-     * </ul>
-     * @deprecated As of 1.13.0. The contents of this method can be safely moved to the command's constructor.
+     * Setups anything that is needed for this command before it is entirely initialized.
+     * It is most notably recommended to specify in this method any custom help subcommand you might want to use for this command.
      */
-    @Deprecated
     default void setup() {}
 
     /**
