@@ -159,12 +159,12 @@ public class IslandEvent extends IslandBaseEvent {
      * Cancellation will result in the change being aborted.
      * @since 1.13.0
      */
-    public static class IslandRankChange extends IslandBaseEvent {
+    public static class IslandRankChangeEvent extends IslandBaseEvent {
 
         private final int oldRank;
         private final int newRank;
 
-        public IslandRankChange(Island island, UUID playerUUID, boolean admin, Location location, int oldRank, int newRank) {
+        public IslandRankChangeEvent(Island island, UUID playerUUID, boolean admin, Location location, int oldRank, int newRank) {
             super(island, playerUUID, admin, location);
             this.oldRank = oldRank;
             this.newRank = newRank;
@@ -752,7 +752,7 @@ public class IslandEvent extends IslandBaseEvent {
                 Bukkit.getPluginManager().callEvent(res);
                 return res;
             case RANK_CHANGE:
-                IslandRankChange rankChange = new IslandRankChange(island, player, admin, location, oldRank, newRank);
+                IslandRankChangeEvent rankChange = new IslandRankChangeEvent(island, player, admin, location, oldRank, newRank);
                 Bukkit.getPluginManager().callEvent(rankChange);
                 return rankChange;
             default:
