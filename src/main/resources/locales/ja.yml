@@ -318,8 +318,6 @@ commands:
     help:
       description: 管理者コマンド
   bentobox:
-    about:
-      description: 著作権とライセンス情報を表示する
     description: BentoBox管理コマンド
     reload:
       description: すべてのロケールファイルを再読み込み

@@ -400,8 +400,6 @@ commands:
       parameters: "[player]"
       description: apre le impostazioni di sistema o della isola di un giocatore
   bentobox:
-    about:
-      description: mostra le info riguardo copyright e licenza
     catalog:
       description: mostra il catalogo di addons
     description: BentoBox admin command

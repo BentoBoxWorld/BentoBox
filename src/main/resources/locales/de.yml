@@ -372,8 +372,6 @@ commands:
     end: "&7 ================================="
   bentobox:
     description: BentoBox Admin-Befehl
-    about:
-      description: zeigt Copyright- und Lizenzinformationen an
     reload:
       description: lädt BentoBox und alle Addons, Einstellungen und Locales neu
       locales-reloaded: "&2 Sprachen neu geladen."

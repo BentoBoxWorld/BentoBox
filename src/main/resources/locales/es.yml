@@ -391,8 +391,6 @@ commands:
     world:
       description: Administrar la configuración del mundo
   bentobox:
-    about:
-      description: Mostrar derechos de autor e información de licencia
     catalog:
       description: Mostrar el catálogo de addons
     description: BentoBox comandos de admin

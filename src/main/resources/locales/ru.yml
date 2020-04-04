@@ -231,8 +231,6 @@ commands:
         parameters: "<player> <deaths>"
   bentobox:
     description: "БентоБокс - команды для админов"
-    about:
-      description: "Показывает всякую инфу"
     reload:
       description: "перезагружает настройки (if supported) и локальные файлы"
       locales-reloaded: "&2Языки успешно обновлены."

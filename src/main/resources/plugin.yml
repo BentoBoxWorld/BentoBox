@@ -33,9 +33,6 @@ permissions:
       bentobox.admin.reload:
         description: Allows to use /bentobox reload
         default: op
-  bentobox.about:
-    description: Allows to use /bentobox about
-    default: true
   bentobox.version:
     description: Allows to use /bentobox version
     default: op

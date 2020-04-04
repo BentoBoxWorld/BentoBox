@@ -396,8 +396,6 @@ commands:
     world:
       description: Pārvaldīt pasaules iestatījumus
   bentobox:
-    about:
-      description: parādīt autortiesības un licenses informāciju
     catalog:
       description: parādīt papildinājumu katalogu
     description: BentoBox admina komandas

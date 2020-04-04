@@ -383,8 +383,6 @@ commands:
       parameters: "[oyuncu]"
       description: Sunucu dünya ayarları veya oyuncu ada ayarlarını aç.
   bentobox:
-    about:
-      description: Telif ve lisans bilgileri
     catalog:
       description: Eklenti kataloğunu gösterir.
     description: BentoBox admin komudu

@@ -382,8 +382,6 @@ commands:
         success: "&a Successfully removed &b [number] &a deaths to &b [name], decreasing the total to &b [total]&a  deaths."
   bentobox:
     description: "BentoBox admin command"
-    about:
-      description: "displays copyright and license information"
     reload:
       description: "reloads BentoBox and all addons, settings and locales"
       locales-reloaded: "&2 Languages reloaded."

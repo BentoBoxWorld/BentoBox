@@ -216,8 +216,6 @@ commands:
         parameters: "<player> <deaths>"
   bentobox:
     description: "BentoBox 管理員命令"
-    about:
-      description: "顯示版權和協議信息"
     reload:
       description: "重新載入所有語言文件"
       locales-reloaded: "&2語言文件已經重新載入"

@@ -405,8 +405,6 @@ commands:
     world:
       description: Gérer les paramètres du monde
   bentobox:
-    about:
-      description: affiche les informations sur les droits d''auteur et les licences
     catalog:
       description: affiche le catalogue
     description: Commande d''administration de BentoBox

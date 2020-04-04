@@ -395,8 +395,7 @@ commands:
           celkový počet na &b [total]&a  smrtí.'
   bentobox:
     description: BentoBox administrátorský příkaz
-    about:
-      description: ukáže copyright a informace o licenci
+
     reload:
       description: znovu načte BentoBox a všechny doplňky, nastavení a jazyky
       locales-reloaded: '&2 Jazyky znovu načteny.'

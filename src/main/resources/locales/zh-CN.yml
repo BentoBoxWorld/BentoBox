@@ -303,8 +303,6 @@ commands:
       description: 将所有岛屿重设至 config.yml 中的默认标志设定
       success: '&a已成功重设所有岛屿的标志到默认设定。'
   bentobox:
-    about:
-      description: 显示版权和协议信息
     catalog:
       description: 显示目录
     description: BentoBox 管理员命令
