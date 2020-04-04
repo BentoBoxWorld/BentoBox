@@ -21,6 +21,10 @@ public class IslandGoCommand extends DelayedTeleportCommand {
         setPermission("island.home");
         setOnlyPlayer(true);
         setDescription("commands.island.go.description");
+    }
+
+    @Override
+    public void setup() {
         new CustomIslandMultiHomeHelp(this);
     }
 

@@ -14,6 +14,10 @@ public class IslandSethomeCommand extends ConfirmableCommand {
         setPermission("island.sethome");
         setOnlyPlayer(true);
         setDescription("commands.island.sethome.description");
+    }
+
+    @Override
+    public void setup() {
         new CustomIslandMultiHomeHelp(this);
     }
 
