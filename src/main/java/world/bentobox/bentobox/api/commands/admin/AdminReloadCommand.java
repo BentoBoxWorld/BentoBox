@@ -14,10 +14,6 @@ public class AdminReloadCommand extends CompositeCommand {
 
     public AdminReloadCommand(CompositeCommand adminCommand) {
         super(adminCommand, "reload", "rl");
-    }
-
-    @Override
-    public void setup() {
         // Permission
         setPermission("admin.reload");
         setDescription("commands.admin.reload.description");

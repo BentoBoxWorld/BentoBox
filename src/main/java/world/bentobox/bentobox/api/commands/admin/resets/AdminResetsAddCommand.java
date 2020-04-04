@@ -18,10 +18,6 @@ public class AdminResetsAddCommand extends CompositeCommand {
 
     public AdminResetsAddCommand(AdminResetsCommand parent) {
         super(parent, "add");
-    }
-
-    @Override
-    public void setup() {
         inheritPermission();
         setDescription("commands.admin.resets.add.description");
         setParametersHelp("commands.admin.resets.add.parameters");

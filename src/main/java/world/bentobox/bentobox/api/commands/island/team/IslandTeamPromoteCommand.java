@@ -12,10 +12,6 @@ public class IslandTeamPromoteCommand extends CompositeCommand {
 
     public IslandTeamPromoteCommand(CompositeCommand islandTeamCommand, String string) {
         super(islandTeamCommand, string);
-    }
-
-    @Override
-    public void setup() {
         setPermission("island.team.promote");
         setOnlyPlayer(true);
         if (this.getLabel().equals("promote")) {

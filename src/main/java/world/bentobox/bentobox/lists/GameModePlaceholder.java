@@ -322,7 +322,12 @@ public enum GameModePlaceholder {
      * Returns how many times this player died.
      * @since 1.12.0
      */
-    DEATHS("deaths", (addon, user, island) -> String.valueOf(addon.getPlayers().getDeaths(addon.getOverWorld(), user.getUniqueId())));
+    DEATHS("deaths", (addon, user, island) -> String.valueOf(addon.getPlayers().getDeaths(addon.getOverWorld(), user.getUniqueId()))),
+    /**
+     * Returns whether this player is on his island.
+     * @since 1.13.0
+     */
+    ON_ISLAND("on_island", (addon, user, island) -> String.valueOf(addon.getIslands().userIsOnIsland(addon.getOverWorld(), user)));
 
     private String placeholder;
     /**

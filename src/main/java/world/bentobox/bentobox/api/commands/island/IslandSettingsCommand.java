@@ -17,10 +17,6 @@ public class IslandSettingsCommand extends CompositeCommand {
 
     public IslandSettingsCommand(CompositeCommand islandCommand) {
         super(islandCommand, "settings", "flags", "options");
-    }
-
-    @Override
-    public void setup() {
         setPermission("island.settings");
         setOnlyPlayer(true);
         setDescription("commands.island.settings.description");

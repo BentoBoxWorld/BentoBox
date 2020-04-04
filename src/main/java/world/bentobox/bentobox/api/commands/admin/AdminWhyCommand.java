@@ -18,10 +18,6 @@ public class AdminWhyCommand extends ConfirmableCommand {
 
     public AdminWhyCommand(CompositeCommand parent) {
         super(parent, "why");
-    }
-
-    @Override
-    public void setup() {
         setPermission("admin.why");
         setParametersHelp("commands.admin.why.parameters");
         setDescription("commands.admin.why.description");

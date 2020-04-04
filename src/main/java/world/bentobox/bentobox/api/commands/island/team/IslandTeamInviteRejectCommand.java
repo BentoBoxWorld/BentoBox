@@ -15,10 +15,6 @@ public class IslandTeamInviteRejectCommand extends CompositeCommand {
     public IslandTeamInviteRejectCommand(IslandTeamCommand islandTeamCommand) {
         super(islandTeamCommand, "reject");
         this.itc = islandTeamCommand;
-    }
-
-    @Override
-    public void setup() {
         setPermission("island.team.reject");
         setOnlyPlayer(true);
         setDescription("commands.island.team.invite.reject.description");

@@ -28,10 +28,6 @@ public class AdminSetrankCommand extends CompositeCommand {
 
     public AdminSetrankCommand(CompositeCommand adminCommand) {
         super(adminCommand, "setrank");
-    }
-
-    @Override
-    public void setup() {
         setPermission("admin.setrank");
         setOnlyPlayer(false);
         setParametersHelp("commands.admin.setrank.parameters");

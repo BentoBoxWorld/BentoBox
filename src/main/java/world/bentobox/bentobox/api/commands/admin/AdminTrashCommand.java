@@ -17,10 +17,6 @@ public class AdminTrashCommand extends CompositeCommand {
      */
     public AdminTrashCommand(CompositeCommand parent) {
         super(parent, "trash");
-    }
-
-    @Override
-    public void setup() {
         setPermission("admin.trash");
         setOnlyPlayer(false);
         setParametersHelp("commands.admin.trash.parameters");

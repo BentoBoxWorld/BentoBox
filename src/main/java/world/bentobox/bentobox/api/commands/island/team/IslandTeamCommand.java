@@ -34,10 +34,6 @@ public class IslandTeamCommand extends CompositeCommand {
     public IslandTeamCommand(CompositeCommand parent) {
         super(parent, "team");
         inviteMap = new HashMap<>();
-    }
-
-    @Override
-    public void setup() {
         setPermission("island.team");
         setOnlyPlayer(true);
         setDescription("commands.island.team.description");

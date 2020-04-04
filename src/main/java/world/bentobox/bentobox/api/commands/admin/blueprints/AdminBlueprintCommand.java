@@ -29,10 +29,6 @@ public class AdminBlueprintCommand extends ConfirmableCommand {
 
     public AdminBlueprintCommand(CompositeCommand parent) {
         super(parent, "blueprint", "bp", "blu");
-    }
-
-    @Override
-    public void setup() {
         setPermission("admin.blueprint");
         setParametersHelp("commands.admin.blueprint.parameters");
         setDescription("commands.admin.blueprint.description");

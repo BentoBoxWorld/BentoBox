@@ -20,10 +20,6 @@ public class BentoBoxLocaleCommand extends ConfirmableCommand {
      */
     public BentoBoxLocaleCommand(CompositeCommand parent) {
         super(parent, "locale");
-    }
-
-    @Override
-    public void setup() {
         setPermission("bentobox.admin.locale");
         setDescription("commands.bentobox.locale.description");
     }

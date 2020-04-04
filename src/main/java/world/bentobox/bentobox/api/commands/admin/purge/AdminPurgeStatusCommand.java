@@ -15,10 +15,6 @@ public class AdminPurgeStatusCommand extends CompositeCommand {
 
     public AdminPurgeStatusCommand(AdminPurgeCommand parent) {
         super(parent, "status");
-    }
-
-    @Override
-    public void setup() {
         inheritPermission();
         setOnlyPlayer(false);
         setParametersHelp("commands.admin.purge.status.parameters");
