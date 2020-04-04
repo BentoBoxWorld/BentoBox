@@ -45,7 +45,7 @@ public class AdminPurgeCommand extends CompositeCommand implements Listener {
     @Override
     public boolean canExecute(User user, String label, List<String> args) {
         if (inPurge) {
-            user.sendMessage("commands.admin.purge.purge-in-progress");
+            user.sendMessage("commands.admin.purge.purge-in-progress", TextVariables.LABEL, this.getTopLabel());
             return false;
         }
         if (args.isEmpty()) {
@@ -88,7 +88,7 @@ public class AdminPurgeCommand extends CompositeCommand implements Listener {
 
     void removeIslands() {
         inPurge = true;
-        user.sendMessage("commands.admin.purge.see-console-for-status");
+        user.sendMessage("commands.admin.purge.see-console-for-status", TextVariables.LABEL, this.getTopLabel());
         it = islands.iterator();
         count = 0;
         // Delete first island
