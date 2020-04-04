@@ -784,7 +784,7 @@ protection:
       description: "Toggle creeper damage"
       name: "Creeper damage"
     CREEPER_GRIEFING:
-      description: "Toggle creeper griefing"
+      description: "Toggle creeper griefing when ignited by island visitor"
       name: "Creeper griefing"
       hint: "Creeper griefing disabled"
     CROP_TRAMPLE: 
