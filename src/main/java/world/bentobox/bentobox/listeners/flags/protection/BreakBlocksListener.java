@@ -76,8 +76,10 @@ public class BreakBlocksListener extends FlagListener {
 
         switch (e.getClickedBlock().getType()) {
         case CAKE:
-        case SPAWNER:
             checkIsland(e, e.getPlayer(), e.getClickedBlock().getLocation(), Flags.BREAK_BLOCKS);
+            break;
+        case SPAWNER:
+            checkIsland(e, e.getPlayer(), e.getClickedBlock().getLocation(), Flags.BREAK_SPAWNERS);
             break;
         case DRAGON_EGG:
             checkIsland(e, e.getPlayer(), e.getClickedBlock().getLocation(), Flags.DRAGON_EGG);
