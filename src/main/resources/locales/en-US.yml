@@ -560,6 +560,7 @@ commands:
         removing-invite: "&c Removing invite"
         name-has-invited-you: "&a [name] has invited you to join their island."
         to-accept-or-reject: "&a Do /[label] team accept to accept, or /[label] team reject to reject"
+        is-full: "&c Maximum coop has been reached!"
         you-will-lose-your-island: "&c WARNING! You will lose your island if you accept!"
         errors:
           cannot-invite-self: "&c You cannot invite yourself!"
