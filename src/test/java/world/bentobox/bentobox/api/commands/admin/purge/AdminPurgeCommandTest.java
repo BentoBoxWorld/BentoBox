@@ -121,7 +121,7 @@ public class AdminPurgeCommandTest {
         assertFalse(apc.isOnlyPlayer());
         assertEquals("commands.admin.purge.parameters", apc.getParameters());
         assertEquals("commands.admin.purge.description", apc.getDescription());
-        assertEquals(4, apc.getSubCommands().size());
+        assertEquals(5, apc.getSubCommands().size());
     }
 
 
@@ -293,8 +293,8 @@ public class AdminPurgeCommandTest {
         testExecuteUserStringListOfStringIslandsFound();
         assertTrue(apc.execute(user, "", Collections.singletonList("confirm")));
         verify(im).deleteIsland(eq(island), eq(true), eq(null));
-        verify(plugin).log(eq("1 islands purged"));
-        verify(user).sendMessage(eq("commands.admin.purge.see-console-for-status"));
+        verify(plugin).log(any());
+        verify(user).sendMessage(eq("commands.admin.purge.see-console-for-status"), eq("[label]"), eq("bsb"));
     }
 
     /**
@@ -348,8 +348,7 @@ public class AdminPurgeCommandTest {
     public void testSetUser() {
         apc.setUser(user);
         apc.removeIslands();
-        verify(user, Mockito.times(2)).sendMessage(any());
+        verify(user, Mockito.times(1)).sendMessage(any());
     }
-
 
 }

@@ -127,6 +127,10 @@ public class BreakBlocksListenerTest {
         when(Bukkit.getItemFactory()).thenReturn(itemFactory);
         when(Bukkit.getLogger()).thenReturn(Logger.getAnonymousLogger());
 
+        // Util
+        PowerMockito.mockStatic(Util.class);
+        when(Util.getWorld(any())).thenReturn(mock(World.class));
+
         // Location
         when(location.getWorld()).thenReturn(world);
         when(location.getBlockX()).thenReturn(0);
@@ -177,9 +181,6 @@ public class BreakBlocksListenerTest {
 
         // Notifier
         when(plugin.getNotifier()).thenReturn(notifier);
-
-        PowerMockito.mockStatic(Util.class);
-        when(Util.getWorld(any())).thenReturn(mock(World.class));
 
         // Addon
         when(iwm.getAddon(any())).thenReturn(Optional.empty());

@@ -27,7 +27,7 @@ public class AdminPurgeStopCommand extends CompositeCommand {
             parentCommand.stop();
             return true;
         } else {
-            user.sendMessage("commands.admin.purge.stop.no-purge-in-progress");
+            user.sendMessage("commands.admin.purge.no-purge-in-progress");
             return false;
         }
     }

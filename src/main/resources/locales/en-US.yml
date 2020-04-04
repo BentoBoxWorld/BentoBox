@@ -75,24 +75,27 @@ commands:
       parameters: "[days]" 
       description: "purge islands abandoned for more than [days]"
       days-or-more: "Must be at least 1 day or more"
-      purgable-islands: "Found [number] purgable islands."
-      purge-in-progress: "&c Purging in progress. Use purge stop to cancel"
+      purgable-islands: "&a Found &b [number] &a purgable islands."
+      purge-in-progress: "&c Purging in progress. Use &b /[label] purge stop &c to cancel."
       number-error: "&c Argument must be a number of days"
-      confirm: "&d Type [label] purge confirm to start purging"
-      completed: "&a Purging stopped"
-      see-console-for-status: "Purge started. See console for status" 
+      confirm: "&d Type &b /[label] purge confirm &d to start purging"
+      completed: "&a Purging stopped."
+      see-console-for-status: "&a Purge started. See console for status or use &b /[label] purge status&a."
+      no-purge-in-progress: "&c There is currently no purge in progress."
       protect:
-        description: "Toggle island purge protection"
+        description: "toggle island purge protection"
         move-to-island: "&c Move to an island first!"
         protecting: "&a Purge-protecting island"
         unprotecting: "&a Removing purge protection"
       stop:
-        description: "Stop a purge in progress"
+        description: "stop a purge in progress"
         stopping: "Stopping the purge"
-        no-purge-in-progress: "&c No purge in progress!"
       unowned:
-        description: "Purge unowned islands - requires confirmation"
-        unowned-islands: "&d Found [number] islands"
+        description: "purge unowned islands"
+        unowned-islands: "&a Found &b [number] &a unowned islands."
+      status:
+        description: "displays the status of the purge"
+        status: "&b [purged] &a islands purged out of &b [purgeable] &7(&b[percentage] %&7)&a."
         
     team:
       add:
@@ -781,7 +784,7 @@ protection:
       description: "Toggle creeper damage"
       name: "Creeper damage"
     CREEPER_GRIEFING:
-      description: "Toggle creeper griefing"
+      description: "Toggle creeper griefing when ignited by island visitor"
       name: "Creeper griefing"
       hint: "Creeper griefing disabled"
     CROP_TRAMPLE: 
@@ -1382,7 +1385,7 @@ successfully-loaded: |
 
   &6   ____             _        ____
   &6  |  _ \           | |      |  _ \             &7 by &a tastybento &7 and &a Poslovitch
-  &6  | |_) | ___ _ __ | |_ ___ | |_) | _____  __  &7 2017 - 2019
+  &6  | |_) | ___ _ __ | |_ ___ | |_) | _____  __  &7 2017 - 2020
   &6  |  _ < / _ \ '_ \| __/ _ \|  _ < / _ \ \/ /
   &6  | |_) |  __/ | | | || (_) | |_) | (_) >  <   &b v&e [version]
   &6  |____/ \___|_| |_|\__\___/|____/ \___/_/\_\  &8 Loaded in &e [time]&8 ms.

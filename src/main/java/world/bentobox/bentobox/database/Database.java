@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
@@ -65,6 +66,7 @@ public class Database<T> {
      * @param uniqueId - unique id of the object
      * @return the object or null if it cannot be loaded
      */
+    @Nullable
     public T loadObject(String uniqueId) {
         T result = null;
         try {

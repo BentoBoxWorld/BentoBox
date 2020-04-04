@@ -29,6 +29,7 @@ import world.bentobox.bentobox.listeners.flags.protection.ItemDropPickUpListener
 import world.bentobox.bentobox.listeners.flags.protection.LeashListener;
 import world.bentobox.bentobox.listeners.flags.protection.LecternListener;
 import world.bentobox.bentobox.listeners.flags.protection.LockAndBanListener;
+import world.bentobox.bentobox.listeners.flags.protection.PaperExperiencePickupListener;
 import world.bentobox.bentobox.listeners.flags.protection.PhysicalInteractionListener;
 import world.bentobox.bentobox.listeners.flags.protection.PlaceBlocksListener;
 import world.bentobox.bentobox.listeners.flags.protection.PortalListener;
@@ -62,6 +63,7 @@ import world.bentobox.bentobox.listeners.flags.worldsettings.SpawnerSpawnEggsLis
 import world.bentobox.bentobox.listeners.flags.worldsettings.TreesGrowingOutsideRangeListener;
 import world.bentobox.bentobox.listeners.flags.worldsettings.WitherListener;
 import world.bentobox.bentobox.managers.RanksManager;
+import world.bentobox.bentobox.util.Util;
 
 /**
  * Contains built-in {@link Flag Flags} that are registered by default into the {@link world.bentobox.bentobox.managers.FlagsManager FlagsManager} at startup.
@@ -248,7 +250,8 @@ public final class Flags {
     public static final Flag ITEM_PICKUP = new Flag.Builder("ITEM_PICKUP", Material.SUGAR_CANE).mode(Flag.Mode.BASIC).build();
 
     // Experience
-    public static final Flag EXPERIENCE_PICKUP = new Flag.Builder("EXPERIENCE_PICKUP", Material.EXPERIENCE_BOTTLE).listener(new ExperiencePickupListener()).mode(Flag.Mode.ADVANCED).build();
+    public static final Flag EXPERIENCE_PICKUP = new Flag.Builder("EXPERIENCE_PICKUP", Material.EXPERIENCE_BOTTLE)
+            .listener(Util.isPaper() ? new PaperExperiencePickupListener() : new ExperiencePickupListener()).mode(Flag.Mode.ADVANCED).build();
 
     // Command ranks
     public static final Flag COMMAND_RANKS = new Flag.Builder("COMMAND_RANKS", Material.PLAYER_HEAD)
@@ -355,7 +358,7 @@ public final class Flags {
 
     public static final Flag GEO_LIMIT_MOBS = new Flag.Builder("GEO_LIMIT_MOBS", Material.CHAINMAIL_CHESTPLATE).type(Type.WORLD_SETTING)
             .listener(new GeoLimitMobsListener()).clickHandler(new GeoLimitClickListener()).usePanel(true).build();
-    
+
     /**
      * @since 1.12.0
      */
