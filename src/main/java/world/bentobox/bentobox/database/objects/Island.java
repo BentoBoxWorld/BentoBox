@@ -30,6 +30,8 @@ import com.google.gson.annotations.Expose;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
+import world.bentobox.bentobox.api.events.IslandBaseEvent;
+import world.bentobox.bentobox.api.events.island.IslandEvent;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.logs.LogEntry;
@@ -860,7 +862,17 @@ public class Island implements DataObject {
             return; // Defensive code
         }
 
-        members.put(uuid, rank);
+        IslandBaseEvent rankChangeEvent = IslandEvent.builder()
+                .island(this)
+                .involvedPlayer(uuid)
+                .admin(false)
+                .reason(IslandEvent.Reason.RANK_CHANGE)
+                .rankChange(members.getOrDefault(uuid, RanksManager.MEMBER_RANK), rank)
+                .build();
+
+        if(!rankChangeEvent.isCancelled()) {
+            members.put(uuid, rank);
+        }
     }
 
     /**
