@@ -11,7 +11,6 @@ import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.placeholders.PlaceholderReplacer;
-import world.bentobox.bentobox.hooks.placeholders.MVdWPlaceholderAPIHook;
 import world.bentobox.bentobox.hooks.placeholders.PlaceholderAPIHook;
 import world.bentobox.bentobox.lists.GameModePlaceholder;
 
@@ -37,8 +36,6 @@ public class PlaceholdersManager {
     public void registerPlaceholder(@NonNull String placeholder, @NonNull PlaceholderReplacer replacer) {
         // Register it in PlaceholderAPI
         getPlaceholderAPIHook().ifPresent(hook -> hook.registerPlaceholder(placeholder, replacer));
-        // Register it in MVdWPlaceholderAPI
-        getMVdWPlaceholderAPIHook().ifPresent(hook -> hook.registerPlaceholder(placeholder, replacer));
     }
 
     /**
@@ -56,8 +53,6 @@ public class PlaceholdersManager {
         }
         // Register it in PlaceholderAPI
         getPlaceholderAPIHook().ifPresent(hook -> hook.registerPlaceholder(addon, placeholder, replacer));
-        // Register it in MVdWPlaceholderAPI
-        getMVdWPlaceholderAPIHook().ifPresent(hook -> hook.registerPlaceholder(addon, placeholder, replacer));
     }
 
     /**
@@ -80,7 +75,6 @@ public class PlaceholdersManager {
     public void unregisterPlaceholder(@NonNull String placeholder) {
         // Unregister it from PlaceholderAPI
         getPlaceholderAPIHook().ifPresent(hook -> hook.unregisterPlaceholder(placeholder));
-        // Not supported by MVdW
     }
 
     /**
@@ -97,7 +91,6 @@ public class PlaceholdersManager {
         }
         // Unregister it from PlaceholderAPI
         getPlaceholderAPIHook().ifPresent(hook -> hook.unregisterPlaceholder(addon, placeholder));
-        // Not supported by MVdW
     }
 
     /**
@@ -111,16 +104,6 @@ public class PlaceholdersManager {
     }
 
     /**
-     * Returns an Optional containing the MVdWPlaceholderAPIHook instance, or an empty Optional otherwise.
-     * @return Optional containing the MVdWPlaceholderAPIHook instance or an empty Optional otherwise.
-     * @since 1.5.0
-     */
-    @NonNull
-    private Optional<MVdWPlaceholderAPIHook> getMVdWPlaceholderAPIHook() {
-        return plugin.getHooks().getHook("MVdWPlaceholderAPI").map(hook -> (MVdWPlaceholderAPIHook) hook);
-    }
-
-    /**
      * Checks if a placeholder with this name is already registered
      * @param addon the addon, not null
      * @param placeholder - name of placeholder
@@ -128,7 +111,6 @@ public class PlaceholdersManager {
      * @since 1.4.0
      */
     public boolean isPlaceholder(@NonNull Addon addon, @NonNull String placeholder) {
-        // MVdW will always return false
         return getPlaceholderAPIHook().map(h -> h.isPlaceholder(addon, placeholder)).orElse(false);
     }
 
@@ -144,12 +126,6 @@ public class PlaceholdersManager {
         if (papi.isPresent()) {
             string = papi.get().replacePlaceholders(player, string);
         }
-
-        Optional<MVdWPlaceholderAPIHook> mvdw = getMVdWPlaceholderAPIHook();
-        if (mvdw.isPresent()) {
-            string = mvdw.get().replacePlaceholders(player, string);
-        }
-
         return string;
     }
 }

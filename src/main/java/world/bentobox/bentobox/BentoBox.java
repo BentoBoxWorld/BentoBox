@@ -24,7 +24,6 @@ import world.bentobox.bentobox.hooks.DynmapHook;
 import world.bentobox.bentobox.hooks.MultiverseCoreHook;
 import world.bentobox.bentobox.hooks.VaultHook;
 import world.bentobox.bentobox.hooks.WorldEditHook;
-import world.bentobox.bentobox.hooks.placeholders.MVdWPlaceholderAPIHook;
 import world.bentobox.bentobox.hooks.placeholders.PlaceholderAPIHook;
 import world.bentobox.bentobox.listeners.BannedCommands;
 import world.bentobox.bentobox.listeners.BlockEndDragon;
@@ -169,7 +168,6 @@ public class BentoBox extends JavaPlugin {
         Bukkit.getScheduler().runTask(instance, () -> {
             final long enableStart = System.currentTimeMillis();
             hooksManager.registerHook(new PlaceholderAPIHook());
-            hooksManager.registerHook(new MVdWPlaceholderAPIHook());
             // Setup the Placeholders manager
             placeholdersManager = new PlaceholdersManager(this);
 
