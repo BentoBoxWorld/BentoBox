@@ -695,6 +695,10 @@ protection:
       description: "Toggle breaking"
       name: "Break blocks"
       hint: "Block breaking disabled"
+    BREAK_SPAWNERS:
+      description: "Toggle breaking"
+      name: "Break spawners"
+      hint: "Spawner breaking disabled"
     BREEDING: 
       description: "Toggle breeding"
       name: "Breed animals"
