@@ -104,7 +104,9 @@ public class AdminTeamAddCommandTest {
         BukkitScheduler sch = mock(BukkitScheduler.class);
         PowerMockito.mockStatic(Bukkit.class);
         when(Bukkit.getScheduler()).thenReturn(sch);
-        when(Bukkit.getPluginManager()).thenReturn(mock(PluginManager.class));
+        // Plugin Manager
+        PluginManager pim = mock(PluginManager.class);
+        when(Bukkit.getPluginManager()).thenReturn(pim);
 
         // Locales
         LocalesManager lm = mock(LocalesManager.class);
@@ -118,10 +120,6 @@ public class AdminTeamAddCommandTest {
 
         // Addon
         when(iwm.getAddon(Mockito.any())).thenReturn(Optional.empty());
-
-        // Plugin Manager
-        PluginManager pim = mock(PluginManager.class);
-        when(Bukkit.getPluginManager()).thenReturn(pim);
 
     }
 

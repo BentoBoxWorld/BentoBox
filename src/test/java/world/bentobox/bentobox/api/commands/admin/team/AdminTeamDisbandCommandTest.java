@@ -7,6 +7,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.framework;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -232,6 +233,6 @@ public class AdminTeamDisbandCommandTest {
         verify(user).sendMessage("commands.admin.team.disband.success", TextVariables.NAME, name[0]);
         verify(p).sendMessage("commands.admin.team.disband.disbanded");
         verify(p2).sendMessage("commands.admin.team.disband.disbanded");
-        verify(pim).callEvent(any());
+        verify(pim, times(3)).callEvent(any());
     }
 }

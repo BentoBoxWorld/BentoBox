@@ -18,6 +18,7 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.PluginManager;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -95,6 +96,11 @@ public class AdminSetrankCommandTest {
         
         // Command
         c = new AdminSetrankCommand(ac);
+
+        // Plugin Manager
+        PowerMockito.mockStatic(Bukkit.class);
+        PluginManager pim = mock(PluginManager.class);
+        when(Bukkit.getPluginManager()).thenReturn(pim);
     }
 
     /**
