@@ -37,6 +37,7 @@ public class AdminPurgeCommand extends CompositeCommand implements Listener {
         setOnlyPlayer(false);
         setParametersHelp("commands.admin.purge.parameters");
         setDescription("commands.admin.purge.description");
+        new AdminPurgeStatusCommand(this);
         new AdminPurgeStopCommand(this);
         new AdminPurgeUnownedCommand(this);
         new AdminPurgeProtectCommand(this);
@@ -100,7 +101,8 @@ public class AdminPurgeCommand extends CompositeCommand implements Listener {
             getIslands().getIslandById(it.next()).ifPresent(i -> {
                 getIslands().deleteIsland(i, true, null);
                 count++;
-                getPlugin().log(count + " islands purged");
+                String percentage = String.format("%.1f", (((float) count)/getPurgeableIslandsCount() * 100));
+                getPlugin().log(count + " islands purged out of " + getPurgeableIslandsCount() + " (" + percentage + " %)");
             });
         } else {
             user.sendMessage("commands.admin.purge.completed");
@@ -154,5 +156,23 @@ public class AdminPurgeCommand extends CompositeCommand implements Listener {
      */
     void setIslands(Set<String> islands) {
         this.islands = islands;
+    }
+
+    /**
+     * Returns the amount of purged islands.
+     * @return the amount of islands that have been purged.
+     * @since 1.13.0
+     */
+    int getPurgedIslandsCount() {
+        return this.count;
+    }
+
+    /**
+     * Returns the amount of islands that can be purged.
+     * @return the amount of islands that can be purged.
+     * @since 1.13.0
+     */
+    int getPurgeableIslandsCount() {
+        return this.islands.size();
     }
 }

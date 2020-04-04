@@ -81,18 +81,21 @@ commands:
       confirm: "&d Type &b /[label] purge confirm &d to start purging"
       completed: "&a Purging stopped."
       see-console-for-status: "&a Purge started. See console for status or use &b /[label] purge status&a."
+      no-purge-in-progress: "&c There is currently no purge in progress."
       protect:
-        description: "Toggle island purge protection"
+        description: "toggle island purge protection"
         move-to-island: "&c Move to an island first!"
         protecting: "&a Purge-protecting island"
         unprotecting: "&a Removing purge protection"
       stop:
-        description: "Stop a purge in progress"
+        description: "stop a purge in progress"
         stopping: "Stopping the purge"
-        no-purge-in-progress: "&c No purge in progress!"
       unowned:
-        description: "Purge unowned islands - requires confirmation"
-        unowned-islands: "&d Found [number] islands"
+        description: "purge unowned islands"
+        unowned-islands: "&a Found &b [number] &a unowned islands."
+      status:
+        description: "displays the status of the purge"
+        status: "&b [purged] &a islands purged out of &b [purgeable] &7(&b[percentage] %&7)&a."
         
     team:
       add:
