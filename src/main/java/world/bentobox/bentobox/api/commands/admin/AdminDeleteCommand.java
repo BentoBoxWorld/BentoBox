@@ -21,10 +21,6 @@ public class AdminDeleteCommand extends ConfirmableCommand {
 
     public AdminDeleteCommand(CompositeCommand parent) {
         super(parent, "delete");
-    }
-
-    @Override
-    public void setup() {
         setPermission("admin.delete");
         setParametersHelp("commands.admin.delete.parameters");
         setDescription("commands.admin.delete.description");

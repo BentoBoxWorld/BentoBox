@@ -15,10 +15,6 @@ public class AdminInfoCommand extends CompositeCommand {
 
     public AdminInfoCommand(CompositeCommand parent) {
         super(parent, "info");
-    }
-
-    @Override
-    public void setup() {
         setPermission("mod.info");
         setOnlyPlayer(false);
         setParametersHelp("commands.admin.info.parameters");

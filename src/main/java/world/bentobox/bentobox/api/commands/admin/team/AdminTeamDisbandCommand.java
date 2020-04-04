@@ -13,10 +13,6 @@ public class AdminTeamDisbandCommand extends CompositeCommand {
 
     public AdminTeamDisbandCommand(CompositeCommand parent) {
         super(parent, "disband");
-    }
-
-    @Override
-    public void setup() {
         setPermission("mod.team");
         setParametersHelp("commands.admin.team.disband.parameters");
         setDescription("commands.admin.team.disband.description");

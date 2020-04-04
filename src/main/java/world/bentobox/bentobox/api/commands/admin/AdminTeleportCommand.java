@@ -26,10 +26,6 @@ public class AdminTeleportCommand extends CompositeCommand {
      */
     public AdminTeleportCommand(CompositeCommand parent, String tpCommand) {
         super(parent, tpCommand);
-    }
-
-    @Override
-    public void setup() {
         // Permission
         setPermission("admin.tp");
         setParametersHelp("commands.admin.tp.parameters");

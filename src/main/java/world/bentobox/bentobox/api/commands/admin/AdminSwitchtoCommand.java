@@ -26,10 +26,6 @@ public class AdminSwitchtoCommand extends ConfirmableCommand {
     public AdminSwitchtoCommand(CompositeCommand parent) {
         super(parent, "switchto");
         islands = new ArrayList<>();
-    }
-
-    @Override
-    public void setup() {
         setPermission("admin.switchto");
         setOnlyPlayer(false);
         setParametersHelp("commands.admin.switchto.parameters");

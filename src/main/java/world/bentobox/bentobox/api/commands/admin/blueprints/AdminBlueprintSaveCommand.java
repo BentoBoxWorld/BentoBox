@@ -14,10 +14,6 @@ public class AdminBlueprintSaveCommand extends ConfirmableCommand {
 
     public AdminBlueprintSaveCommand(AdminBlueprintCommand parent) {
         super(parent, "save");
-    }
-
-    @Override
-    public void setup() {
         inheritPermission();
         setParametersHelp("commands.admin.blueprint.save.parameters");
         setDescription("commands.admin.blueprint.save.description");

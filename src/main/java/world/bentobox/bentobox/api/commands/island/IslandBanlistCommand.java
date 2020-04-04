@@ -15,10 +15,6 @@ public class IslandBanlistCommand extends CompositeCommand {
 
     public IslandBanlistCommand(CompositeCommand islandCommand) {
         super(islandCommand, "banlist", "banned", "bans");
-    }
-
-    @Override
-    public void setup() {
         setPermission("island.ban");
         setOnlyPlayer(true);
         setDescription("commands.island.banlist.description");

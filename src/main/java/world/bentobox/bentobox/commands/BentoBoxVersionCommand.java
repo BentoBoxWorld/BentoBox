@@ -26,10 +26,6 @@ public class BentoBoxVersionCommand extends CompositeCommand {
      */
     public BentoBoxVersionCommand(CompositeCommand parent) {
         super(parent, "version", "v", "ver", "versions", "addons");
-    }
-
-    @Override
-    public void setup() {
         setPermission("bentobox.version");
     }
 

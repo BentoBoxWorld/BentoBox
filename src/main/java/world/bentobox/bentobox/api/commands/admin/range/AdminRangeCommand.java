@@ -12,10 +12,6 @@ public class AdminRangeCommand extends CompositeCommand {
 
     public AdminRangeCommand(CompositeCommand parent) {
         super (parent, "range");
-    }
-
-    @Override
-    public void setup() {
         setPermission("admin.range");
         setDescription("commands.admin.range.description");
 

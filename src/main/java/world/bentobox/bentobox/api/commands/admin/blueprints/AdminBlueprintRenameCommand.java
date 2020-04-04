@@ -19,10 +19,6 @@ public class AdminBlueprintRenameCommand extends ConfirmableCommand {
 
     public AdminBlueprintRenameCommand(AdminBlueprintCommand parent) {
         super(parent, "rename");
-    }
-
-    @Override
-    public void setup() {
         inheritPermission();
         setParametersHelp("commands.admin.blueprint.rename.parameters");
         setDescription("commands.admin.blueprint.rename.description");

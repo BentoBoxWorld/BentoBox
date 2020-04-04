@@ -9,10 +9,6 @@ public class AdminResetsCommand extends CompositeCommand {
 
     public AdminResetsCommand(CompositeCommand parent) {
         super(parent, "resets");
-    }
-
-    @Override
-    public void setup() {
         setPermission("admin.resets");
         setDescription("commands.admin.resets.description");
 

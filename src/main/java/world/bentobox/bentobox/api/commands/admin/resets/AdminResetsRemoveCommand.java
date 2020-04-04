@@ -18,10 +18,6 @@ public class AdminResetsRemoveCommand extends CompositeCommand {
 
     public AdminResetsRemoveCommand(AdminResetsCommand parent) {
         super(parent, "remove");
-    }
-
-    @Override
-    public void setup() {
         inheritPermission();
         setDescription("commands.admin.resets.remove.description");
         setParametersHelp("commands.admin.resets.remove.parameters");

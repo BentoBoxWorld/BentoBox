@@ -13,10 +13,6 @@ public class IslandLanguageCommand extends CompositeCommand {
 
     public IslandLanguageCommand(CompositeCommand islandCommand) {
         super(islandCommand, "language", "lang");
-    }
-
-    @Override
-    public void setup() {
         setPermission("island.language");
         setOnlyPlayer(true);
         setDescription("commands.island.language.description");

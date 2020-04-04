@@ -18,13 +18,13 @@ public class IslandGoCommand extends DelayedTeleportCommand {
 
     public IslandGoCommand(CompositeCommand islandCommand) {
         super(islandCommand, "go", "home", "h");
+        setPermission("island.home");
+        setOnlyPlayer(true);
+        setDescription("commands.island.go.description");
     }
 
     @Override
     public void setup() {
-        setPermission("island.home");
-        setOnlyPlayer(true);
-        setDescription("commands.island.go.description");
         new CustomIslandMultiHomeHelp(this);
     }
 

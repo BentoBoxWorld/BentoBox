@@ -10,10 +10,6 @@ public class AdminBlueprintCopyCommand extends CompositeCommand {
 
     public AdminBlueprintCopyCommand(AdminBlueprintCommand parent) {
         super(parent, "copy");
-    }
-
-    @Override
-    public void setup() {
         inheritPermission();
         setParametersHelp("commands.admin.blueprint.copy.parameters");
         setDescription("commands.admin.blueprint.copy.description");
