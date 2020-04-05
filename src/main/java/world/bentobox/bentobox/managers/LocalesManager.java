@@ -120,7 +120,7 @@ public class LocalesManager {
      * Gets the list of prefixes from the user's locale, the server's locale and the en-US locale file.
      * @param user the user to get the locale, not null.
      * @return the list of prefixes from the user's locale, the server's locale and the en-US locale file.
-     * @since 1.12.0
+     * @since 1.13.0
      */
     public Set<String> getAvailablePrefixes(@NonNull User user) {
         Set<String> prefixes = new HashSet<>();
