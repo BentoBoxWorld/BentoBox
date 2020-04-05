@@ -93,7 +93,7 @@ public class IslandTeamCoopCommand extends CompositeCommand {
                 target.sendMessage("commands.island.team.coop.name-has-invited-you", TextVariables.NAME, user.getName());
                 target.sendMessage("commands.island.team.invite.to-accept-or-reject", TextVariables.LABEL, getTopLabel());
             } else {
-                if (getMaxCoopSize(user) <= island.getMemberSet(RanksManager.COOP_RANK, false).size()) {
+                if (island.getMemberSet(RanksManager.COOP_RANK, false).size() > getMaxCoopSize(user)) {
                     user.sendMessage("commands.island.team.coop.is-full");
                     return false;
                 }

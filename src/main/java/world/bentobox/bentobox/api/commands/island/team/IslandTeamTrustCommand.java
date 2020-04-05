@@ -95,7 +95,7 @@ public class IslandTeamTrustCommand extends CompositeCommand {
                 target.sendMessage("commands.island.team.trust.name-has-invited-you", TextVariables.NAME, user.getName());
                 target.sendMessage("commands.island.team.invite.to-accept-or-reject", TextVariables.LABEL, getTopLabel());
             } else {
-                if (getMaxTrustSize(user) <= island.getMemberSet(RanksManager.TRUSTED_RANK, false).size()) {
+                if (island.getMemberSet(RanksManager.TRUSTED_RANK, false).size() > getMaxTrustSize(user)) {
                     user.sendMessage("commands.island.team.trust.is-full");
                     return false;
                 }
