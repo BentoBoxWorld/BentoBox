@@ -109,13 +109,19 @@ public interface WorldSettings extends ConfigObject {
 
     /**
      * @return the max coop size for this world
+     * @since 1.13.0
      */
-    int getMaxCoopSize();
+    default int getMaxCoopSize() {
+        return 4;
+    }
 
     /**
      * @return the max trust size for this world
+     * @since 1.13.0
      */
-    int getMaxTrustSize();
+    default int getMaxTrustSize() {
+        return 4;
+    }
 
     /**
      * @return the netherSpawnRadius
