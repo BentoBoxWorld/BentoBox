@@ -540,6 +540,7 @@ commands:
         you-are-no-longer-a-coop-member: "&c You are no longer a coop member of [name]'s island"
         all-members-logged-off: "&c All island members logged off so you are no longer a coop member of [name]'s island"
         success: "&b [name] &a is no longer a coop member of your island."
+        is-full: "&c You cannot coop anyone else."
       trust:
         description: "give a player trusted rank on your island"
         parameters: "<player>"
@@ -548,6 +549,7 @@ commands:
         player-already-trusted: "&c Player is already trusted!"
         you-are-trusted: "&2 You are trusted by &b [name]&a !"
         success: "&a You trusted &b [name]&a ."
+        is-full: "&c You cannot trust anyone else."
       untrust:
         description: "remove trusted player rank from player"
         parameters: "<player>"

@@ -438,6 +438,26 @@ public class IslandWorldManager {
     }
 
     /**
+     * Get max coop size for this world
+     * @param world - world
+     * @return max coop size or zero if world is not a game world
+     * @since 1.13.0
+     */
+    public int getMaxCoopSize(@NonNull World world) {
+        return gameModes.containsKey(world) ? gameModes.get(world).getWorldSettings().getMaxCoopSize() : 0;
+    }
+
+    /**
+     * Get max trust size for this world
+     * @param world - world
+     * @return max trust size or zero if world is not a game world
+     * @since 1.13.0
+     */
+    public int getMaxTrustSize(@NonNull World world) {
+        return gameModes.containsKey(world) ? gameModes.get(world).getWorldSettings().getMaxTrustSize() : 0;
+    }
+
+    /**
      * Get max homes for world
      *
      * @param world - world
@@ -871,4 +891,5 @@ public class IslandWorldManager {
     public boolean isTeleportPlayerToIslandUponIslandCreation(@NonNull World world) {
         return gameModes.containsKey(world) && gameModes.get(world).getWorldSettings().isTeleportPlayerToIslandUponIslandCreation();
     }
+
 }
