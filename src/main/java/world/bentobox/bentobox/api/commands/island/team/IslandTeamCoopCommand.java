@@ -128,6 +128,7 @@ public class IslandTeamCoopCommand extends CompositeCommand {
      * Gets the maximum coop size for this player in this game based on the permission or the world's setting
      * @param user user
      * @return max coop size of user
+     * @since 1.13.0
      */
     public int getMaxCoopSize(User user) {
         return user.getPermissionValue(getPermissionPrefix() + "coop.maxsize", getIWM().getMaxCoopSize(getWorld()));

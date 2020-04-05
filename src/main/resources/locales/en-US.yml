@@ -546,6 +546,7 @@ commands:
         player-already-trusted: "&c Player is already trusted!"
         you-are-trusted: "&2 You are trusted by &b [name]&a !"
         success: "&a You trusted &b [name]&a ."
+        is-full: "&c Maximum trust has been reached!"
       untrust:
         description: "remove trusted player rank from player"
         parameters: "<player>"

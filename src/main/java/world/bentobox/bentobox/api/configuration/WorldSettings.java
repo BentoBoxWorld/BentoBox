@@ -113,6 +113,11 @@ public interface WorldSettings extends ConfigObject {
     int getMaxCoopSize();
 
     /**
+     * @return the max trust size for this world
+     */
+    int getMaxTrustSize();
+
+    /**
      * @return the netherSpawnRadius
      */
     int getNetherSpawnRadius();
