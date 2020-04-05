@@ -538,6 +538,7 @@ commands:
         you-are-no-longer-a-coop-member: "&c You are no longer a coop member of [name]'s island"
         all-members-logged-off: "&c All island members logged off so you are no longer a coop member of [name]'s island"
         success: "&b [name] &a is no longer a coop member of your island."
+        is-full: "&c You cannot coop anyone else."
       trust:
         description: "give a player trusted rank on your island"
         parameters: "<player>"
@@ -546,7 +547,7 @@ commands:
         player-already-trusted: "&c Player is already trusted!"
         you-are-trusted: "&2 You are trusted by &b [name]&a !"
         success: "&a You trusted &b [name]&a ."
-        is-full: "&c Maximum trust has been reached!"
+        is-full: "&c You cannot trust anyone else."
       untrust:
         description: "remove trusted player rank from player"
         parameters: "<player>"
@@ -560,8 +561,7 @@ commands:
         invitation-sent: "&a Invitation sent to [name]"
         removing-invite: "&c Removing invite"
         name-has-invited-you: "&a [name] has invited you to join their island."
-        to-accept-or-reject: "&a Do /[label] team accept to accept, or /[label] team reject to reject"
-        is-full: "&c Maximum coop has been reached!"
+        to-accept-or-reject: "&a Do /[label] team accept to accept, or /[label] team reject to reject
         you-will-lose-your-island: "&c WARNING! You will lose your island if you accept!"
         errors:
           cannot-invite-self: "&c You cannot invite yourself!"
