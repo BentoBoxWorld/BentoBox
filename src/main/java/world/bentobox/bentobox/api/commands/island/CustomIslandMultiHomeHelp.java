@@ -16,6 +16,10 @@ public class CustomIslandMultiHomeHelp extends CompositeCommand {
 
     public CustomIslandMultiHomeHelp(CompositeCommand parent) {
         super(parent, "help");
+    }
+
+    @Override
+    public void setup() {
         setOnlyPlayer(true);
         // Inherit parameters from the respective parent class - in this case, only /island go and /island sethome
         setParametersHelp(parent.getParameters());

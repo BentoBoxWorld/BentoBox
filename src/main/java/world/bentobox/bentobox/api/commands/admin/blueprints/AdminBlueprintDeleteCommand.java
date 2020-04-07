@@ -18,6 +18,10 @@ public class AdminBlueprintDeleteCommand extends ConfirmableCommand {
 
     public AdminBlueprintDeleteCommand(AdminBlueprintCommand parent) {
         super(parent, "delete", "remove");
+    }
+
+    @Override
+    public void setup() {
         inheritPermission();
         setParametersHelp("commands.admin.blueprint.delete.parameters");
         setDescription("commands.admin.blueprint.delete.description");

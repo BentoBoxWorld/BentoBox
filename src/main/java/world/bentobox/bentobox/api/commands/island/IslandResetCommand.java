@@ -39,6 +39,10 @@ public class IslandResetCommand extends ConfirmableCommand {
     public IslandResetCommand(CompositeCommand islandCommand, boolean noPaste) {
         super(islandCommand, "reset", "restart");
         this.noPaste = noPaste;
+    }
+
+    @Override
+    public void setup() {
         setPermission("island.reset");
         setOnlyPlayer(true);
         setParametersHelp("commands.island.reset.parameters");

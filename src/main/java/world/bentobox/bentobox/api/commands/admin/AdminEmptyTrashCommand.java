@@ -18,6 +18,10 @@ public class AdminEmptyTrashCommand extends ConfirmableCommand {
      */
     public AdminEmptyTrashCommand(CompositeCommand parent) {
         super(parent, "emptytrash");
+    }
+
+    @Override
+    public void setup() {
         setPermission("admin.trash");
         setOnlyPlayer(false);
         setParametersHelp("commands.admin.emptytrash.parameters");

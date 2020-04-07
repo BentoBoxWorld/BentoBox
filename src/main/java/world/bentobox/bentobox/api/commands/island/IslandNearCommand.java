@@ -22,6 +22,10 @@ public class IslandNearCommand extends CompositeCommand {
 
     public IslandNearCommand(CompositeCommand islandCommand) {
         super(islandCommand, "near");
+    }
+
+    @Override
+    public void setup() {
         setPermission("island.near");
         setOnlyPlayer(true);
         setParametersHelp("commands.island.near.parameters");

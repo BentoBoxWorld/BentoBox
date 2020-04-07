@@ -12,6 +12,10 @@ public class AdminDeathsCommand extends CompositeCommand {
 
     public AdminDeathsCommand(CompositeCommand parent) {
         super(parent, "deaths");
+    }
+
+    @Override
+    public void setup() {
         setPermission("admin.deaths");
         setDescription("commands.admin.deaths.description");
 

@@ -20,6 +20,10 @@ public class AdminRangeRemoveCommand extends CompositeCommand {
 
     public AdminRangeRemoveCommand(AdminRangeCommand parent) {
         super(parent, "remove");
+    }
+
+    @Override
+    public void setup() {
         inheritPermission();
         setDescription("commands.admin.range.remove.description");
         setParametersHelp("commands.admin.range.remove.parameters");

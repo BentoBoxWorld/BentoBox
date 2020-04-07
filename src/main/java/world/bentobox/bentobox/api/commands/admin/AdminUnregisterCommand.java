@@ -18,6 +18,10 @@ public class AdminUnregisterCommand extends ConfirmableCommand {
 
     public AdminUnregisterCommand(CompositeCommand parent) {
         super(parent, "unregister");
+    }
+
+    @Override
+    public void setup() {
         setPermission("admin.unregister");
         setParametersHelp("commands.admin.unregister.parameters");
         setDescription("commands.admin.unregister.description");

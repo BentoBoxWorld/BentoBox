@@ -25,6 +25,10 @@ public class IslandTeamUntrustCommand extends CompositeCommand {
 
     public IslandTeamUntrustCommand(CompositeCommand parentCommand) {
         super(parentCommand, "untrust");
+    }
+
+    @Override
+    public void setup() {
         setPermission("island.team.trust");
         setOnlyPlayer(true);
         setParametersHelp("commands.island.team.untrust.parameters");

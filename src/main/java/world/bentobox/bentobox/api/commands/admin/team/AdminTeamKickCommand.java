@@ -21,6 +21,10 @@ public class AdminTeamKickCommand extends CompositeCommand {
 
     public AdminTeamKickCommand(CompositeCommand parent) {
         super(parent, "kick");
+    }
+
+    @Override
+    public void setup() {
         setPermission("mod.team");
         setParametersHelp("commands.admin.team.kick.parameters");
         setDescription("commands.admin.team.kick.description");

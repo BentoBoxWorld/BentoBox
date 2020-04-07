@@ -27,6 +27,10 @@ public class IslandTeamCoopCommand extends CompositeCommand {
     public IslandTeamCoopCommand(IslandTeamCommand parentCommand) {
         super(parentCommand, "coop");
         this.itc = parentCommand;
+    }
+
+    @Override
+    public void setup() {
         setPermission("island.team.coop");
         setOnlyPlayer(true);
         setParametersHelp("commands.island.team.coop.parameters");

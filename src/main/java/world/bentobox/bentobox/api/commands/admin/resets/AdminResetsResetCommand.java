@@ -17,6 +17,10 @@ public class AdminResetsResetCommand extends ConfirmableCommand {
 
     public AdminResetsResetCommand(CompositeCommand parent) {
         super(parent, "reset");
+    }
+
+    @Override
+    public void setup() {
         inheritPermission();
         setDescription("commands.admin.resets.reset.description");
         setParametersHelp("commands.admin.resets.reset.parameters");

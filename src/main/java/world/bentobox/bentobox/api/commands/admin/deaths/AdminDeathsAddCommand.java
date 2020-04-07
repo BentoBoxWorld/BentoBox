@@ -18,6 +18,10 @@ public class AdminDeathsAddCommand extends CompositeCommand {
 
     public AdminDeathsAddCommand(AdminDeathsCommand parent) {
         super(parent, "add");
+    }
+
+    @Override
+    public void setup() {
         inheritPermission();
         setDescription("commands.admin.deaths.add.description");
         setParametersHelp("commands.admin.deaths.add.parameters");

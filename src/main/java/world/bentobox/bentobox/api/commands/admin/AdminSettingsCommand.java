@@ -24,6 +24,10 @@ public class AdminSettingsCommand extends CompositeCommand {
 
     public AdminSettingsCommand(CompositeCommand islandCommand) {
         super(islandCommand, "settings", "flags", "options");
+    }
+
+    @Override
+    public void setup() {
         setPermission("admin.settings");
         setOnlyPlayer(true);
         setParametersHelp("commands.admin.settings.parameters");

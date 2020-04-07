@@ -16,6 +16,10 @@ public class BentoBoxManageCommand extends CompositeCommand {
 
     public BentoBoxManageCommand(CompositeCommand parent) {
         super(parent, "manage", "overview");
+    }
+
+    @Override
+    public void setup() {
         setPermission("bentobox.admin.manage");
         setOnlyPlayer(true);
     }

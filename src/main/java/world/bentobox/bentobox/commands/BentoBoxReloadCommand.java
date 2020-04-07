@@ -25,6 +25,10 @@ public class BentoBoxReloadCommand extends ConfirmableCommand {
      */
     public BentoBoxReloadCommand(CompositeCommand parent) {
         super(parent, "reload", "rl");
+    }
+
+    @Override
+    public void setup() {
         setPermission("bentobox.admin.reload");
         setParametersHelp("commands.bentobox.reload.parameters");
         setDescription("commands.bentobox.reload.description");

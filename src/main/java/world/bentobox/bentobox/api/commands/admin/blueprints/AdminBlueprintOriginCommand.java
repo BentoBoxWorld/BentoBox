@@ -14,6 +14,10 @@ public class AdminBlueprintOriginCommand extends CompositeCommand {
 
     public AdminBlueprintOriginCommand(AdminBlueprintCommand parent) {
         super(parent, "origin");
+    }
+
+    @Override
+    public void setup() {
         inheritPermission();
         setParametersHelp("commands.admin.blueprint.origin.parameters");
         setDescription("commands.admin.blueprint.origin.description");

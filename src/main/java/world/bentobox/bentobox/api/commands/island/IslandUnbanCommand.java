@@ -22,6 +22,10 @@ public class IslandUnbanCommand extends CompositeCommand {
 
     public IslandUnbanCommand(CompositeCommand islandCommand) {
         super(islandCommand, "unban", "pardon");
+    }
+
+    @Override
+    public void setup() {
         setPermission("island.ban");
         setOnlyPlayer(true);
         setParametersHelp("commands.island.unban.parameters");

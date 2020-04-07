@@ -24,6 +24,10 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
     public IslandTeamInviteAcceptCommand(IslandTeamCommand islandTeamCommand) {
         super(islandTeamCommand, "accept");
         this.itc = islandTeamCommand;
+    }
+
+    @Override
+    public void setup() {
         setPermission("island.team.accept");
         setOnlyPlayer(true);
         setDescription("commands.island.team.invite.accept.description");

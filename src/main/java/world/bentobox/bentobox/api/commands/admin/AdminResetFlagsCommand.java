@@ -27,6 +27,10 @@ public class AdminResetFlagsCommand extends ConfirmableCommand {
         options = getPlugin().getFlagsManager().getFlags().stream()
                 .filter(f -> f.getType().equals(Type.PROTECTION) || f.getType().equals(Type.SETTING))
                 .map(Flag::getID).collect(Collectors.toList());
+    }
+
+    @Override
+    public void setup() {
         setPermission("admin.resetflags");
         setOnlyPlayer(false);
         setParametersHelp("commands.admin.resetflags.parameters");

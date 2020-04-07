@@ -15,6 +15,10 @@ public class IslandInfoCommand extends CompositeCommand {
 
     public IslandInfoCommand(CompositeCommand parent) {
         super(parent, "info", "who");
+    }
+
+    @Override
+    public void setup() {
         setPermission("island.info");
         setOnlyPlayer(false);
         setParametersHelp("commands.island.info.parameters");

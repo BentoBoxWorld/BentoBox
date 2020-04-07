@@ -26,6 +26,10 @@ public class IslandExpelCommand extends CompositeCommand {
 
     public IslandExpelCommand(CompositeCommand islandCommand) {
         super(islandCommand, "expel");
+    }
+
+    @Override
+    public void setup() {
         setOnlyPlayer(true);
         setPermission("island.expel");
         setParametersHelp("commands.island.expel.parameters");

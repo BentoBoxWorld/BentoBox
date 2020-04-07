@@ -16,6 +16,10 @@ public class BentoBoxCatalogCommand extends CompositeCommand {
 
     public BentoBoxCatalogCommand(CompositeCommand parent) {
         super(parent, "catalog");
+    }
+
+    @Override
+    public void setup() {
         setPermission("bentobox.admin.catalog");
         setOnlyPlayer(true);
     }

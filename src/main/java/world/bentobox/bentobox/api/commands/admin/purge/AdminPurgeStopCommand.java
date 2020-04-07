@@ -9,6 +9,10 @@ public class AdminPurgeStopCommand extends CompositeCommand {
 
     public AdminPurgeStopCommand(CompositeCommand parent) {
         super(parent, "stop", "cancel");
+    }
+
+    @Override
+    public void setup() {
         inheritPermission();
         setOnlyPlayer(false);
         setDescription("commands.admin.purge.stop.description");

@@ -22,6 +22,10 @@ public class AdminSwitchCommand extends ConfirmableCommand {
     public AdminSwitchCommand(CompositeCommand parent) {
         super(parent, "switch");
         bypassPerm = getPermissionPrefix() + "mod.bypassprotect";
+    }
+
+    @Override
+    public void setup() {
         setPermission("mod.switch");
         setOnlyPlayer(true);
         setParametersHelp("commands.admin.switch.parameters");

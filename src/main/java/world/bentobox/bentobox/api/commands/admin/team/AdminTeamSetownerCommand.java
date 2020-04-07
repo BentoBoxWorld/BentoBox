@@ -19,6 +19,10 @@ public class AdminTeamSetownerCommand extends CompositeCommand {
 
     public AdminTeamSetownerCommand(CompositeCommand parent) {
         super(parent, "setowner");
+    }
+
+    @Override
+    public void setup() {
         setPermission("mod.team");
         setParametersHelp("commands.admin.team.setowner.parameters");
         setDescription("commands.admin.team.setowner.description");

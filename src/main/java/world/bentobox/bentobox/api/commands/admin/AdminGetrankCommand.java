@@ -28,6 +28,10 @@ public class AdminGetrankCommand extends CompositeCommand {
 
     public AdminGetrankCommand(CompositeCommand adminCommand) {
         super(adminCommand, "getrank");
+    }
+
+    @Override
+    public void setup() {
         setPermission("admin.getrank");
         setOnlyPlayer(false);
         setParametersHelp("commands.admin.getrank.parameters");

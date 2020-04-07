@@ -18,6 +18,10 @@ public class BentoBoxAboutCommand extends CompositeCommand {
      */
     public BentoBoxAboutCommand(CompositeCommand parent) {
         super(parent, "about");
+    }
+
+    @Override
+    public void setup() {
         setPermission("bentobox.about");
     }
 

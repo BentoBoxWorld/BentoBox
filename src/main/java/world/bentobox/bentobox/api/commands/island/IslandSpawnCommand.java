@@ -16,6 +16,10 @@ public class IslandSpawnCommand extends DelayedTeleportCommand {
 
     public IslandSpawnCommand(CompositeCommand parent) {
         super(parent, "spawn");
+    }
+
+    @Override
+    public void setup() {
         setPermission("island.spawn");
         setOnlyPlayer(true);
         setDescription("commands.island.spawn.description");

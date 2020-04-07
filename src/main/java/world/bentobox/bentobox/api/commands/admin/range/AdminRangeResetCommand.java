@@ -16,6 +16,10 @@ public class AdminRangeResetCommand extends CompositeCommand {
 
     public AdminRangeResetCommand(CompositeCommand parent) {
         super(parent, "reset");
+    }
+
+    @Override
+    public void setup() {
         setPermission("admin.range.reset");
         setParametersHelp("commands.admin.range.reset.parameters");
         setDescription("commands.admin.range.reset.description");

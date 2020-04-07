@@ -29,6 +29,10 @@ public class AdminPurgeCommand extends CompositeCommand implements Listener {
     public AdminPurgeCommand(CompositeCommand parent) {
         super(parent, "purge");
         getAddon().registerListener(this);
+    }
+
+    @Override
+    public void setup() {
         setPermission("admin.purge");
         setOnlyPlayer(false);
         setParametersHelp("commands.admin.purge.parameters");

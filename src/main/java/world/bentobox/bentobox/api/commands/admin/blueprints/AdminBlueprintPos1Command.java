@@ -11,6 +11,10 @@ public class AdminBlueprintPos1Command extends CompositeCommand {
 
     public AdminBlueprintPos1Command(AdminBlueprintCommand parent) {
         super(parent, "pos1");
+    }
+
+    @Override
+    public void setup() {
         inheritPermission();
         setParametersHelp("commands.admin.blueprint.pos1.parameters");
         setDescription("commands.admin.blueprint.pos1.description");
