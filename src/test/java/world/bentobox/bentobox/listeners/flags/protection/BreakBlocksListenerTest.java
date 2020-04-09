@@ -9,6 +9,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.never;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -26,6 +27,7 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.EnderCrystal;
 import org.bukkit.entity.Entity;
@@ -271,6 +273,53 @@ public class BreakBlocksListenerTest {
         assertFalse(e.isCancelled());
     }
 
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onBreakHanging(org.bukkit.event.hanging.HangingBreakByEntityEvent)}.
+     */
+    @Test
+    public void testOnBreakHangingNotPlayerProjectile() {
+        Hanging hanging = mock(Hanging.class);
+        when(hanging.getLocation()).thenReturn(location);
+        RemoveCause cause = RemoveCause.PHYSICS;
+        Arrow arrow = mock(Arrow.class);
+        when(arrow.getShooter()).thenReturn(mock(Skeleton.class));
+        HangingBreakByEntityEvent e = new HangingBreakByEntityEvent(hanging, arrow, cause);
+        bbl.onBreakHanging(e);
+        assertFalse(e.isCancelled());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onBreakHanging(org.bukkit.event.hanging.HangingBreakByEntityEvent)}.
+     */
+    @Test
+    public void testOnBreakHangingPlayerProjectileNotAllowed() {
+        when(island.isAllowed(any(), any())).thenReturn(false);
+        Hanging hanging = mock(Hanging.class);
+        when(hanging.getLocation()).thenReturn(location);
+        RemoveCause cause = RemoveCause.PHYSICS;
+        Arrow arrow = mock(Arrow.class);
+        when(arrow.getShooter()).thenReturn(player);
+        HangingBreakByEntityEvent e = new HangingBreakByEntityEvent(hanging, arrow, cause);
+        bbl.onBreakHanging(e);
+        assertTrue(e.isCancelled());
+        verify(notifier).notify(any(), eq("protection.protected"));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onBreakHanging(org.bukkit.event.hanging.HangingBreakByEntityEvent)}.
+     */
+    @Test
+    public void testOnBreakHangingPlayerProjectileAllowed() {
+        Hanging hanging = mock(Hanging.class);
+        when(hanging.getLocation()).thenReturn(location);
+        RemoveCause cause = RemoveCause.PHYSICS;
+        Arrow arrow = mock(Arrow.class);
+        when(arrow.getShooter()).thenReturn(player);
+        HangingBreakByEntityEvent e = new HangingBreakByEntityEvent(hanging, arrow, cause);
+        bbl.onBreakHanging(e);
+        assertFalse(e.isCancelled());
+        verify(notifier, never()).notify(any(), eq("protection.protected"));
+    }
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractEvent)}.
      */

@@ -4,8 +4,11 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
@@ -27,11 +30,13 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Hanging;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Result;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.hanging.HangingPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
@@ -128,8 +133,8 @@ public class PlaceBlocksListenerTest {
 
         // Fake players
         Settings settings = mock(Settings.class);
-        Mockito.when(plugin.getSettings()).thenReturn(settings);
-        Mockito.when(settings.getFakePlayers()).thenReturn(new HashSet<>());
+        when(plugin.getSettings()).thenReturn(settings);
+        when(settings.getFakePlayers()).thenReturn(new HashSet<>());
 
         User.setPlugin(plugin);
 
@@ -146,7 +151,7 @@ public class PlaceBlocksListenerTest {
 
         // World Settings
         WorldSettings ws = mock(WorldSettings.class);
-        when(iwm.getWorldSettings(Mockito.any())).thenReturn(ws);
+        when(iwm.getWorldSettings(any())).thenReturn(ws);
         Map<String, Boolean> worldFlags = new HashMap<>();
         when(ws.getWorldFlags()).thenReturn(worldFlags);
 
@@ -155,19 +160,19 @@ public class PlaceBlocksListenerTest {
         when(plugin.getIslands()).thenReturn(im);
         island = mock(Island.class);
         Optional<Island> optional = Optional.of(island);
-        when(im.getProtectedIslandAt(Mockito.any())).thenReturn(optional);
+        when(im.getProtectedIslandAt(any())).thenReturn(optional);
         // Default is that everything is allowed
-        when(island.isAllowed(Mockito.any(), Mockito.any())).thenReturn(true);
+        when(island.isAllowed(any(), any())).thenReturn(true);
 
         // Notifier
         notifier = mock(Notifier.class);
         when(plugin.getNotifier()).thenReturn(notifier);
 
         PowerMockito.mockStatic(Util.class);
-        when(Util.getWorld(Mockito.any())).thenReturn(mock(World.class));
+        when(Util.getWorld(any())).thenReturn(mock(World.class));
 
         // Addon
-        when(iwm.getAddon(Mockito.any())).thenReturn(Optional.empty());
+        when(iwm.getAddon(any())).thenReturn(Optional.empty());
 
         // Player
         player = mock(Player.class);
@@ -224,7 +229,36 @@ public class PlaceBlocksListenerTest {
         pbl.onBlockPlace(e);
         assertFalse(e.isCancelled());
     }
-    
+
+    /**
+     * Test method for {@link PlaceBlocksListener#onHangingPlace(org.bukkit.event.hanging.HangingPlaceEvent)}.
+     */
+    @Test
+    public void testOnHangingPlaceAllowed() {
+        Hanging hanging = mock(Hanging.class);
+        Block block = mock(Block.class);
+        when(block.getLocation()).thenReturn(location);
+        HangingPlaceEvent e = new HangingPlaceEvent(hanging, player, block, BlockFace.EAST);
+        pbl.onHangingPlace(e);
+        assertFalse(e.isCancelled());
+        verify(notifier, never()).notify(any(), eq("protection.protected"));
+    }
+
+    /**
+     * Test method for {@link PlaceBlocksListener#onHangingPlace(org.bukkit.event.hanging.HangingPlaceEvent)}.
+     */
+    @Test
+    public void testOnHangingPlaceNotAllowed() {
+        when(island.isAllowed(any(), any())).thenReturn(false);
+        Hanging hanging = mock(Hanging.class);
+        Block block = mock(Block.class);
+        when(block.getLocation()).thenReturn(location);
+        HangingPlaceEvent e = new HangingPlaceEvent(hanging, player, block, BlockFace.EAST);
+        pbl.onHangingPlace(e);
+        assertTrue(e.isCancelled());
+        verify(notifier).notify(any(), eq("protection.protected"));
+    }
+
     /**
      * Test method for {@link PlaceBlocksListener#onBlockPlace(org.bukkit.event.block.BlockPlaceEvent)}.
      */
@@ -246,7 +280,7 @@ public class PlaceBlocksListenerTest {
      */
     @Test
     public void testOnBlockPlaceNotAllowed() {
-        when(island.isAllowed(Mockito.any(), Mockito.any())).thenReturn(false);
+        when(island.isAllowed(any(), any())).thenReturn(false);
         Block placedBlock = mock(Block.class);
         when(placedBlock.getType()).thenReturn(Material.STONE);
         when(placedBlock.getLocation()).thenReturn(location);
@@ -258,7 +292,7 @@ public class PlaceBlocksListenerTest {
         BlockPlaceEvent e = new BlockPlaceEvent(placedBlock, replacedBlockState, placedAgainst, itemInHand, player, true, hand);
         pbl.onBlockPlace(e);
         assertTrue(e.isCancelled());
-        Mockito.verify(notifier).notify(Mockito.any(), Mockito.eq("protection.protected"));
+        verify(notifier).notify(any(), eq("protection.protected"));
     }
 
     /**
@@ -267,7 +301,7 @@ public class PlaceBlocksListenerTest {
      */
     @Test
     public void testOnBlockPlaceBook() {
-        when(island.isAllowed(Mockito.any(), Mockito.any())).thenReturn(false);
+        when(island.isAllowed(any(), any())).thenReturn(false);
         Block placedBlock = mock(Block.class);
         when(placedBlock.getType()).thenReturn(Material.LECTERN);
         when(placedBlock.getLocation()).thenReturn(location);
@@ -279,13 +313,13 @@ public class PlaceBlocksListenerTest {
         BlockPlaceEvent e = new BlockPlaceEvent(placedBlock, replacedBlockState, placedAgainst, itemInHand, player, true, hand);
         pbl.onBlockPlace(e);
         assertFalse(e.isCancelled());
-        Mockito.verify(notifier, never()).notify(Mockito.any(), Mockito.eq("protection.protected"));
+        verify(notifier, never()).notify(any(), eq("protection.protected"));
 
         // With a WRITABLE BOOK now
         when(itemInHand.getType()).thenReturn(Material.WRITABLE_BOOK);
         pbl.onBlockPlace(e);
         assertFalse(e.isCancelled());
-        Mockito.verify(notifier, never()).notify(Mockito.any(), Mockito.eq("protection.protected"));
+        verify(notifier, never()).notify(any(), eq("protection.protected"));
     }
 
     /**
@@ -319,14 +353,14 @@ public class PlaceBlocksListenerTest {
      */
     @Test
     public void testOnPlayerHitItemFrameNotAllowed() {
-        when(island.isAllowed(Mockito.any(), Mockito.any())).thenReturn(false);
+        when(island.isAllowed(any(), any())).thenReturn(false);
         ItemFrame itemFrame = mock(ItemFrame.class);
         when(itemFrame.getType()).thenReturn(EntityType.ITEM_FRAME);
         when(itemFrame.getLocation()).thenReturn(location);
         PlayerInteractEntityEvent e = new PlayerInteractEntityEvent(player, itemFrame, EquipmentSlot.HAND);
         pbl.onPlayerHitItemFrame(e);
         assertTrue(e.isCancelled());
-        Mockito.verify(notifier).notify(Mockito.any(), Mockito.eq("protection.protected"));
+        verify(notifier).notify(any(), eq("protection.protected"));
     }
 
     /**
@@ -351,7 +385,7 @@ public class PlaceBlocksListenerTest {
      */
     @Test
     public void testOnPlayerInteractNotAllowed() {
-        when(island.isAllowed(Mockito.any(), Mockito.any())).thenReturn(false);
+        when(island.isAllowed(any(), any())).thenReturn(false);
         ItemStack item = mock(ItemStack.class);
         when(item.getType()).thenReturn(Material.ARMOR_STAND, Material.FIREWORK_ROCKET, Material.ITEM_FRAME, Material.END_CRYSTAL, Material.CHEST, Material.TRAPPED_CHEST, Material.DARK_OAK_BOAT);
         Block clickedBlock = mock(Block.class);
@@ -362,6 +396,6 @@ public class PlaceBlocksListenerTest {
             pbl.onPlayerInteract(e);
             assertTrue("Failed on " + item.getType().toString(), e.useInteractedBlock().equals(Result.DENY));
         }
-        Mockito.verify(notifier, Mockito.times(7)).notify(Mockito.any(), Mockito.eq("protection.protected"));
+        verify(notifier, times(7)).notify(any(), eq("protection.protected"));
     }
 }
