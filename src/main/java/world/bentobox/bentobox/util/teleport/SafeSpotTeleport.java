@@ -67,7 +67,6 @@ public class SafeSpotTeleport {
                 // If the desired location is safe, then that's where you'll go if there's no portal
                 bestSpot = location;
             } else {
-                plugin.logDebug("Insta teleport Player's velocity = " + entity.getVelocity());
                 // If this is not a portal teleport, then go to the safe location immediately
                 Util.teleportAsync(entity, location).thenRun(() -> {
                     if (runnable != null) Bukkit.getScheduler().runTask(plugin, runnable);
@@ -151,7 +150,6 @@ public class SafeSpotTeleport {
         location.getBlock().setType(Material.AIR, false);
         location.getBlock().getRelative(BlockFace.UP).setType(Material.AIR, false);
         location.getBlock().getRelative(BlockFace.UP).getRelative(BlockFace.UP).setType(m, false);
-        plugin.logDebug("Make and teleport Player's velocity = " + entity.getVelocity());
         Util.teleportAsync(entity, location.clone().add(new Vector(0.5D, 0D, 0.5D))).thenRun(() -> {
             if (runnable != null) Bukkit.getScheduler().runTask(plugin, runnable);
         });
@@ -234,9 +232,7 @@ public class SafeSpotTeleport {
             plugin.getPlayers().setHomeLocation(User.getInstance(entity), loc, homeNumber);
         }
         // Return to main thread and teleport the player
-        plugin.logDebug("Safe teleport spot Player's velocity = " + entity.getVelocity());
         Bukkit.getScheduler().runTask(plugin, () -> Util.teleportAsync(entity, loc).thenRun(() -> {
-            plugin.logDebug("Teleported. Player's velocity = " + entity.getVelocity());
             if (runnable != null) Bukkit.getScheduler().runTask(plugin, runnable);
         }));
     }

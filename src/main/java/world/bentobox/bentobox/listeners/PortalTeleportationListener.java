@@ -126,7 +126,6 @@ public class PortalTeleportationListener implements Listener {
             return true;
         }
         // Set player's velocity and fall distance to 0
-        plugin.logDebug("Setting player's velocity to 0 before teleport");
         e.getPlayer().setVelocity(new Vector(0,0,0));
         e.getPlayer().setFallDistance(0);
 
@@ -137,7 +136,6 @@ public class PortalTeleportationListener implements Listener {
         .entity(e.getPlayer())
         .location(to)
         .thenRun(() -> {
-            plugin.logDebug("Setting player's velocity to 0 after teleport");
             e.getPlayer().setVelocity(new Vector(0,0,0));
             e.getPlayer().setFallDistance(0);
         })
