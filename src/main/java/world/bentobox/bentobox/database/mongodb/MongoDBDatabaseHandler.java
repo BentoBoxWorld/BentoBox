@@ -58,7 +58,7 @@ public class MongoDBDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
                 plugin.logError("Could not connect to the database. Are the credentials in the config.yml file correct?");
                 connected = false;
             } else {
-                collection = database.getCollection(dataObject.getCanonicalName());
+                collection = database.getCollection(plugin.getSettings().getDatabasePrefix() + dataObject.getCanonicalName());
                 IndexOptions indexOptions = new IndexOptions().unique(true);
                 collection.createIndex(Indexes.text(UNIQUEID), indexOptions);
             }
@@ -140,7 +140,7 @@ public class MongoDBDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
         try {
             collection.findOneAndDelete(new Document(MONGO_ID, uniqueId));
         } catch (Exception e) {
-            plugin.logError("Could not delete object " + dataObject.getCanonicalName() + " " + uniqueId + " " + e.getMessage());
+            plugin.logError("Could not delete object " + plugin.getSettings().getDatabasePrefix() + dataObject.getCanonicalName() + " " + uniqueId + " " + e.getMessage());
         }
     }
 

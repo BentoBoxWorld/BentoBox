@@ -2,6 +2,7 @@ package world.bentobox.bentobox.commands;
 
 import java.util.List;
 
+import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
@@ -47,7 +48,7 @@ public class BentoBoxMigrateCommand extends ConfirmableCommand {
             // Migrate addons data
             user.sendMessage("commands.bentobox.migrate.addons");
             getPlugin().getAddonsManager().getDataObjects().forEach(t -> {
-                user.sendMessage("commands.bentobox.migrate.class", TextVariables.DESCRIPTION, t.getCanonicalName());
+                user.sendMessage("commands.bentobox.migrate.class", TextVariables.DESCRIPTION, BentoBox.getInstance().getSettings().getDatabasePrefix() + t.getCanonicalName());
                 new Database<>(getPlugin(), t).loadObjects();
                 user.sendMessage(MIGRATED);
             });

@@ -97,6 +97,12 @@ public class Settings implements ConfigObject {
     @ConfigEntry(path = "general.database.use-ssl", since = "1.12.0")
     private boolean useSSL = false;
 
+    @ConfigComment("Database table prefix character. Adds a prefix to the database tables. Not used by flatfile databases.")
+    @ConfigComment("Only the characters A-Z, a-z, 0-9 can be used. Invalid characters will become an underscore.")
+    @ConfigComment("Set this to a unique value if you are running multiple BentoBox instances that share a database.")
+    @ConfigEntry(path = "general.database.prefix-character", since = "1.13.0")
+    private String databasePrefix = "";
+
     @ConfigComment("Allow FTB Autonomous Activator to work (will allow a pseudo player [CoFH] to place and break blocks and hang items)")
     @ConfigComment("Add other fake player names here if required")
     @ConfigEntry(path = "general.fakeplayers", experimental = true)
@@ -609,5 +615,19 @@ public class Settings implements ConfigObject {
      */
     public void setInviteConfirmation(boolean inviteConfirmation) {
         this.inviteConfirmation = inviteConfirmation;
+    }
+
+    /**
+     * @return the databasePrefix
+     */
+    public String getDatabasePrefix() {
+        return databasePrefix == null ? "" : databasePrefix.replaceAll("[^a-zA-Z0-9]", "_").substring(0,1);
+    }
+
+    /**
+     * @param databasePrefix the databasePrefix to set
+     */
+    public void setDatabasePrefix(String databasePrefix) {
+        this.databasePrefix = databasePrefix;
     }
 }

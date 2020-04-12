@@ -61,6 +61,11 @@ general:
     # Enable SSL connection to MongoDB, MariaDB, MySQL and PostgreSQL databases.
     # Added since 1.12.0.
     use-ssl: false
+    # Database table prefix character. Adds a prefix to the database tables. Not used by flatfile databases.
+    # Only the characters A-Z, a-z, 0-9 can be used. Invalid characters will become an underscore.
+    # Set this to a unique value if you are running multiple BentoBox instances that share a database.
+    # Added since 1.13.0
+    prefix-character: ''
   # Allow FTB Autonomous Activator to work (will allow a pseudo player [CoFH] to place and break blocks and hang items)
   # Add other fake player names here if required
   # /!\ This feature is experimental and might not work as expected or might not work at all.
