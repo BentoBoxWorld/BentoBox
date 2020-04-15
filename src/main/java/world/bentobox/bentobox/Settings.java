@@ -621,7 +621,8 @@ public class Settings implements ConfigObject {
      * @return the databasePrefix
      */
     public String getDatabasePrefix() {
-        return databasePrefix == null ? "" : databasePrefix.replaceAll("[^a-zA-Z0-9]", "_").substring(0,1);
+        if (databasePrefix == null) databasePrefix = "";
+        return databasePrefix.isEmpty() ? "" : databasePrefix.replaceAll("[^a-zA-Z0-9]", "_").substring(0,1);
     }
 
     /**
