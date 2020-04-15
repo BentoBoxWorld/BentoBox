@@ -670,7 +670,10 @@ public class IslandsManager {
             plugin.getPlayers().setHomeLocation(player.getUniqueId(), home);
         }
         user.sendMessage("commands.island.go.teleport");
-        PaperLib.teleportAsync(player, home).thenAccept(b -> teleported(world, user, number, newIsland));
+        PaperLib.teleportAsync(player, home).thenAccept(b -> {
+            // Only run the commands if the player is successfully teleported
+            if (b) teleported(world, user, number, newIsland);
+        });
     }
 
     private void teleported(World world, User user, int number, boolean newIsland) {
