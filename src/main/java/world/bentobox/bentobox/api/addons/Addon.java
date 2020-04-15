@@ -209,7 +209,7 @@ public abstract class Addon {
         try {
             getConfig().save(new File(dataFolder, ADDON_CONFIG_FILENAME));
         } catch (IOException e) {
-            Bukkit.getLogger().severe("Could not save config!");
+            Bukkit.getLogger().severe("Could not save config! " + this.getDescription().getName() + " " + e.getMessage());
         }
     }
 
