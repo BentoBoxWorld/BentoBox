@@ -172,9 +172,9 @@ public class IslandTeamKickCommandTest {
         when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
         when(im.getIsland(any(), any(User.class))).thenReturn(island);
         when(island.getRankCommand(anyString())).thenReturn(RanksManager.VISITOR_RANK);
-        
+
     }
-    
+
     @After
     public void tearDown() {
         User.clearUsers();
@@ -231,7 +231,7 @@ public class IslandTeamKickCommandTest {
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
         when(pm.getUUID(any())).thenReturn(uuid);
         assertFalse(itl.execute(user, itl.getLabel(), Collections.singletonList("poslovitch")));
-        verify(user).sendMessage(eq("commands.island.kick.cannot-kick"));
+        verify(user).sendMessage(eq("commands.island.team.kick.cannot-kick"));
     }
 
     /**
