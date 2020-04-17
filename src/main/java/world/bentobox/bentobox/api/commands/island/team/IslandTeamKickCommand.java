@@ -58,7 +58,7 @@ public class IslandTeamKickCommand extends ConfirmableCommand {
             return false;
         }
         if (targetUUID.equals(user.getUniqueId())) {
-            user.sendMessage("commands.island.kick.cannot-kick");
+            user.sendMessage("commands.island.team.kick.cannot-kick");
             return false;
         }
         if (!getIslands().getMembers(getWorld(), user.getUniqueId()).contains(targetUUID)) {
