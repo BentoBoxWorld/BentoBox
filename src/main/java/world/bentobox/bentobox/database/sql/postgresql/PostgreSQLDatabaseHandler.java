@@ -29,21 +29,21 @@ public class PostgreSQLDatabaseHandler<T> extends SQLDatabaseHandler<T> {
      * @param databaseConnector Contains the settings to create a connection to the database
      */
     PostgreSQLDatabaseHandler(BentoBox plugin, Class<T> type, DatabaseConnector databaseConnector) {
-        super(plugin, type, databaseConnector, new SQLConfiguration(type.getCanonicalName())
+        super(plugin, type, databaseConnector, new SQLConfiguration(plugin.getSettings().getDatabasePrefix() + type.getCanonicalName())
                 // Set uniqueid as the primary key (index). Postgresql convention is to use lower case field names
                 // Postgresql also uses double quotes (") instead of (`) around tables names with dots.
-                .schema("CREATE TABLE IF NOT EXISTS \"" + type.getCanonicalName() + "\" (uniqueid VARCHAR PRIMARY KEY, json jsonb NOT NULL)")
-                .loadObject("SELECT * FROM \"" + type.getCanonicalName() + "\" WHERE uniqueid = ? LIMIT 1")
-                .deleteObject("DELETE FROM \"" + type.getCanonicalName() + "\" WHERE uniqueid = ?")
+                .schema("CREATE TABLE IF NOT EXISTS \"" + plugin.getSettings().getDatabasePrefix() + type.getCanonicalName() + "\" (uniqueid VARCHAR PRIMARY KEY, json jsonb NOT NULL)")
+                .loadObject("SELECT * FROM \"" + plugin.getSettings().getDatabasePrefix() + type.getCanonicalName() + "\" WHERE uniqueid = ? LIMIT 1")
+                .deleteObject("DELETE FROM \"" + plugin.getSettings().getDatabasePrefix() + type.getCanonicalName() + "\" WHERE uniqueid = ?")
                 // uniqueId has to be added into the row explicitly so we need to override the saveObject method
                 // The json value is a string but has to be cast to json when done in Java
-                .saveObject("INSERT INTO \"" + type.getCanonicalName() + "\" (uniqueid, json) VALUES (?, cast(? as json)) "
+                .saveObject("INSERT INTO \"" + plugin.getSettings().getDatabasePrefix() + type.getCanonicalName() + "\" (uniqueid, json) VALUES (?, cast(? as json)) "
                         // This is the Postgresql version of UPSERT.
                         + "ON CONFLICT (uniqueid) "
                         + "DO UPDATE SET json = cast(? as json)")
-                .loadObjects("SELECT json FROM \"" + type.getCanonicalName() + "\"")
+                .loadObjects("SELECT json FROM \"" + plugin.getSettings().getDatabasePrefix() + type.getCanonicalName() + "\"")
                 // Postgres exists function returns true or false natively
-                .objectExists("SELECT EXISTS(SELECT * FROM \"" + type.getCanonicalName() + "\" WHERE uniqueid = ?)")
+                .objectExists("SELECT EXISTS(SELECT * FROM \"" + plugin.getSettings().getDatabasePrefix() + type.getCanonicalName() + "\" WHERE uniqueid = ?)")
                 );
     }
 

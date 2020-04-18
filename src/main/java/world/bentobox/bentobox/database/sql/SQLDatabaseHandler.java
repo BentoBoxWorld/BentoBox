@@ -84,7 +84,7 @@ public class SQLDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
         try (PreparedStatement pstmt = connection.prepareStatement(sqlConfig.getSchemaSQL())) {
             pstmt.executeUpdate();
         } catch (SQLException e) {
-            plugin.logError("Problem trying to create schema for data object " + dataObject.getCanonicalName() + " " + e.getMessage());
+            plugin.logError("Problem trying to create schema for data object " + plugin.getSettings().getDatabasePrefix() + dataObject.getCanonicalName() + " " + e.getMessage());
         }
     }
 
@@ -184,7 +184,7 @@ public class SQLDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
             preparedStatement.setString(1, "\"" + uniqueId + "\"");
             preparedStatement.execute();
         } catch (Exception e) {
-            plugin.logError("Could not delete object " + dataObject.getCanonicalName() + " " + uniqueId + " " + e.getMessage());
+            plugin.logError("Could not delete object " + plugin.getSettings().getDatabasePrefix() + dataObject.getCanonicalName() + " " + uniqueId + " " + e.getMessage());
         }
     }
 

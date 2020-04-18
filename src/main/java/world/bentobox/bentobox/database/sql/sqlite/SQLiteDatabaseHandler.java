@@ -31,11 +31,11 @@ public class SQLiteDatabaseHandler<T> extends SQLDatabaseHandler<T> {
      * @param databaseConnector Contains the settings to create a connection to the database
      */
     protected SQLiteDatabaseHandler(BentoBox plugin, Class<T> type, DatabaseConnector databaseConnector) {
-        super(plugin, type, databaseConnector, new SQLConfiguration(type.getCanonicalName())
-                .schema("CREATE TABLE IF NOT EXISTS `" + type.getCanonicalName() + "` (json JSON, uniqueId VARCHAR(255) NOT NULL PRIMARY KEY)")
-                .saveObject("INSERT INTO `" + type.getCanonicalName()
+        super(plugin, type, databaseConnector, new SQLConfiguration(plugin.getSettings().getDatabasePrefix() + type.getCanonicalName())
+                .schema("CREATE TABLE IF NOT EXISTS `" + plugin.getSettings().getDatabasePrefix() + type.getCanonicalName() + "` (json JSON, uniqueId VARCHAR(255) NOT NULL PRIMARY KEY)")
+                .saveObject("INSERT INTO `" + plugin.getSettings().getDatabasePrefix() + type.getCanonicalName()
                 + "` (json, uniqueId) VALUES (?, ?) ON CONFLICT(uniqueId) DO UPDATE SET json = ?")
-                .objectExists("SELECT EXISTS (SELECT 1 FROM `" + type.getCanonicalName() + "` WHERE `uniqueId` = ?)"));
+                .objectExists("SELECT EXISTS (SELECT 1 FROM `" + plugin.getSettings().getDatabasePrefix() + type.getCanonicalName() + "` WHERE `uniqueId` = ?)"));
     }
 
     @Override
@@ -71,7 +71,7 @@ public class SQLiteDatabaseHandler<T> extends SQLDatabaseHandler<T> {
                 preparedStatement.setString(1, uniqueId);
                 preparedStatement.executeUpdate();
             } catch (Exception e) {
-                plugin.logError("Could not delete object " + dataObject.getCanonicalName() + " " + uniqueId + " " + e.getMessage());
+                plugin.logError("Could not delete object " + plugin.getSettings().getDatabasePrefix() + dataObject.getCanonicalName() + " " + uniqueId + " " + e.getMessage());
             }
         });
     }
