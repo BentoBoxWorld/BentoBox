@@ -204,7 +204,7 @@ public class BentoBox extends JavaPlugin {
             // Register additional hooks
             hooksManager.registerHook(new DynmapHook());
             hooksManager.registerHook(new WorldEditHook());
-            Integer.valueOf("xxx");
+
             webManager = new WebManager(this);
 
             final long enableTime = System.currentTimeMillis() - enableStart;
