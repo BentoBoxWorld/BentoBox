@@ -673,7 +673,7 @@ protection:
   command-is-banned: "Command is banned for visitors"
   flags:
     ANIMAL_SPAWN: 
-      description: "Toggle spawning"
+      description: "Toggle natural spawning"
       name: "Animal spawning"
     ANVIL: 
       description: "Toggle interaction"
@@ -998,7 +998,7 @@ protection:
       description: "Toggle minecart interactions"
       hint: "Minecart interaction disabled"
     MONSTER_SPAWN: 
-      description: "Toggle spawning"
+      description: "Toggle natural spawning"
       name: "Monster spawning"
     MOUNT_INVENTORY: 
       description: |-
