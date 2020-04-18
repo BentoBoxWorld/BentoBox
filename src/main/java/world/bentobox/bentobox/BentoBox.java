@@ -238,8 +238,8 @@ public class BentoBox extends JavaPlugin {
         Bukkit.getScheduler().runTaskLater(this, () -> {
             if (!isLoaded) {
                 logError("BentoBox could not load correctly. Disabling plugin! Check console for errors.");
-                instance.setEnabled(false);
                 this.onDisable();
+                instance.setEnabled(false);
             }
         }, 2L);
     }
