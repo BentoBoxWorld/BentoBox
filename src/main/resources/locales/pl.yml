@@ -1,6 +1,6 @@
 meta:
   authors:
-    - Buty935
+  - Buty935
   banner: WHITE_BANNER:1:HALF_VERTICAL:RED
 general:
   success: '&aSukces!'
@@ -20,11 +20,11 @@ general:
     offline-player: '&cTen gracz jest offline lub nie istnieje.'
     unknown-player: '&cNieznany gracz!'
     general: '&cTo polecenie nie jest jeszcze gotowe - skontaktuj się z administratorem'
-    unknown-command: '&cNieznane polecenie. Wpisz &b/[label] help &caby wyświetlić pomoc.'
+    unknown-command: '&cNieznane polecenie. Wpisz &b/[label] help &caby wyświetlić
+      pomoc.'
     wrong-world: '&cNie jesteś we właściwym świecie, aby to zrobić!'
-    you-must-wait: >-
-      &cMusisz poczekać [number]s, zanim będziesz mógł wykonać to polecenie
-      ponownie.
+    you-must-wait: '&cMusisz poczekać [number]s, zanim będziesz mógł wykonać to polecenie
+      ponownie.'
     must-be-positive-number: '&c [number] nie jest poprawną liczbą dodatnią.'
     player-is-not-owner: '&b [name] &c nie jest właścicielem wyspy!'
     you-need: '&cPotrzebujesz [permission]'
@@ -55,38 +55,36 @@ commands:
       set:
         description: ustawia wartość resetów wyspy gracza
         parameters: <gracz> <resety>
-        success: >-
-          &a Pomyślnie ustawiono liczbę resetów gracza &b [name]&a na &b
-          [number]&a .
+        success: '&a Pomyślnie ustawiono liczbę resetów gracza &b [name]&a na &b [number]&a
+          .'
       reset:
         description: ustawia liczbę resetów wyspy gracza
         parameters: <gracz>
-        success-everyone: '&a Pomyślnie ustawiono liczbę resetów wszystkich graczy &a na &b 0&a .'
-        success: '&a Pomyślnie ustawiono liczbę resetów gracza &b [name]&a na &b 0&a .'
+        success-everyone: '&a Pomyślnie ustawiono liczbę resetów wszystkich graczy
+          &a na &b 0&a .'
+        success: '&a Pomyślnie ustawiono liczbę resetów gracza &b [name]&a na &b 0&a
+          .'
       add:
         description: dodaje liczbę resetów wyspy gracza
         parameters: <gracz> <resety>
-        success: >-
-          &a Pomyślnie dodano liczbę &b [number] &a resetów graczowi &b [name],
-          zwiększając sumę resetów do &b [total]&a.
+        success: '&a Pomyślnie dodano liczbę &b [number] &a resetów graczowi &b [name],
+          zwiększając sumę resetów do &b [total]&a.'
       remove:
         description: odejmuje resety gracza
         parameters: <gracz> <resety>
-        success: >-
-          &a Pomyślnie odjęto liczbę &b [number] &a resetów graczowi &b [name],
-          zmniejszając sumę resetów do &b [total]&a.
+        success: '&a Pomyślnie odjęto liczbę &b [number] &a resetów graczowi &b [name],
+          zmniejszając sumę resetów do &b [total]&a.'
     purge:
       parameters: '[dni]'
-      description: 'usuwa wyspy opuszczone przez więcej niż [dni]'
+      description: usuwa wyspy opuszczone przez więcej niż [dni]
       days-or-more: Wartość to musi co najmniej jeden dzień.
-      purgable-islands: 'Znaleziono [number] usuwalnych wysp.'
+      purgable-islands: Znaleziono [number] usuwalnych wysp.
       purge-in-progress: '&c Usuwanie wysp... Użyj &bpurge stop&c, by przerwać'
       number-error: '&c Argument musi być liczbą dni'
       confirm: '&d Użyj [label] purge confirm, by rozpocząć proces usuwania wysp'
       completed: '&a Proces usuwania wysp został anulowany.'
-      see-console-for-status: >-
-        Rozpoczęto proces czyszczenia wysp. Uruchom konsolę w celu sprawdzenia
-        szczegółowego statusu.
+      see-console-for-status: Rozpoczęto proces czyszczenia wysp. Uruchom konsolę
+        w celu sprawdzenia szczegółowego statusu.
       protect:
         description: Przełącz ochronę przed usuwaniem opuszczonych wysp
         move-to-island: '&c Najpierw przenieś się na wyspę!'
@@ -114,7 +112,8 @@ commands:
       kick:
         parameters: <gracz z drużyny>
         description: wyrzuć gracza z drużyny
-        cannot-kick-owner: '&cNie możesz wyrzucić lidera drużyny. Najpierw wyrzuć członków.'
+        cannot-kick-owner: '&cNie możesz wyrzucić lidera drużyny. Najpierw wyrzuć
+          członków.'
         admin-kicked: '&cAdministrator wyrzucił cię z drużyny.'
       setowner:
         parameters: <gracz>
@@ -127,13 +126,10 @@ commands:
         already-on: '&c Wskaźniki są już włączone'
         description: pokaż/ukryj wskaźniki obszaru ochrony wyspy
         hiding: '&2 Ukrywanie wskaźników obszaru ochrony'
-        hint: >-
+        hint: |-
           &c Bloki barier &f pokazują aktualny limit obszaru ochrony wyspy.
-
           &7 Szare cząsteczki &f pokazują maksymalny obszar ochrony wyspy.
-
-          &a Zielone cząsteczki &f pokazują domyślny obszar ochrony, jeśli
-          obszar ochrony wyspy różni się od niego.
+          &a Zielone cząsteczki &f pokazują domyślny obszar ochrony, jeśli obszar ochrony wyspy różni się od niego.
         showing: '&2 Pokazywanie wskaźników obszaru ochrony'
       set:
         parameters: <gracz> <rozmiar>
@@ -166,22 +162,23 @@ commands:
           na &b [total] &7 (&b -[number]&7 )&a .'
     register:
       parameters: <gracz>
-      description: 'zarejestruj gracza na niezamieszkanej wyspie, na której jesteś'
+      description: zarejestruj gracza na niezamieszkanej wyspie, na której jesteś
       registered-island: '&aZarejestrowano gracza na wyspie na [xyz].'
       reserved-island: '&a Zarezerwowano wyspę na [xyz] dla gracza.'
       already-owned: '&cWyspa jest już własnością innego gracza!'
       no-island-here: '&cTu nie ma wyspy. Potwierdź, aby ją utworzyć.'
       in-deletion: '&c Ta wyspa jest w trakcie usuwania. Spróbuj później.'
-      cannot-make-island: >-
-        &c Niestety nie można tu umieścić wyspy. Zobacz konsolę dla możliwych błędów.
-      island-is-spawn: '&6 Ta wyspa jest wyspą spawnu. Jesteś pewny? Wpisz ponownie tę komendę.'
+      cannot-make-island: '&c Niestety nie można tu umieścić wyspy. Zobacz konsolę
+        dla możliwych błędów.'
+      island-is-spawn: '&6 Ta wyspa jest wyspą spawnu. Jesteś pewny? Wpisz ponownie
+        tę komendę.'
     unregister:
       parameters: <właściciel>
-      description: 'wyrejestruj właściciela z wyspy, ale zachowaj bloki wyspy'
+      description: wyrejestruj właściciela z wyspy, ale zachowaj bloki wyspy
       unregistered-island: '&aWyrejestrowano gracza z wyspy [xyz].'
     info:
       parameters: <gracz>
-      description: 'zdobądź informacje o tym, gdzie jesteś lub wyspie gracza'
+      description: zdobądź informacje o tym, gdzie jesteś lub wyspie gracza
       no-island: '&cNie jesteś teraz na wyspie...'
       title: ======= Informacje o wyspie =========
       island-uuid: 'UUID: [uuid]'
@@ -212,10 +209,10 @@ commands:
     switchto:
       parameters: <gracz> <numer>
       description: zmień wyspę gracza na jedną z numerowanych w koszu
-      out-of-range: >-
-        &c Liczba musi być liczbą pomiędzy 1 a [number]. Użyj &l [label] trash [player]
-        &r &c by zobaczyć numery wysp
-      cannot-switch: '&c Przełączanie nie powiodło się. Zobacz dziennik konsoli pod kątem błędu.'
+      out-of-range: '&c Liczba musi być liczbą pomiędzy 1 a [number]. Użyj &l [label]
+        trash [player] &r &c by zobaczyć numery wysp'
+      cannot-switch: '&c Przełączanie nie powiodło się. Zobacz dziennik konsoli pod
+        kątem błędu.'
       success: '&a Pomyślnie zmieniono wyspę gracza na wybraną.'
     trash:
       no-unowned-in-trash: '&c Nie ma żadnych niezamieszkanych wysp w koszu!'
@@ -224,29 +221,27 @@ commands:
       description: pokaż nieużywane wyspy lub wyspy gracza w koszu
       title: '&d =========== Wyspy w koszu ==========='
       count: '&l &d Wyspa [number]:'
-      use-switch: >-
-        &a Użyj &l [label] switchto <gracz> <numer>&r &a zmienić wyspę gracza na wyspę w koszu
-      use-emptytrash: >-
-        &a Użyj &l [label] emptytrash [player]&r &a by całkowicie usunąć rzeczy
-        z kosza
+      use-switch: '&a Użyj &l [label] switchto <gracz> <numer>&r &a zmienić wyspę
+        gracza na wyspę w koszu'
+      use-emptytrash: '&a Użyj &l [label] emptytrash [player]&r &a by całkowicie usunąć
+        rzeczy z kosza'
     emptytrash:
       parameters: '[gracz]'
-      description: 'Wyczyść kosz dla gracza lub wszystkie niezamieszkane wyspy w koszu'
+      description: Wyczyść kosz dla gracza lub wszystkie niezamieszkane wyspy w koszu
       success: '&a Kosz został pomyślnie opróżniony.'
     version:
       description: wyświetl wersję BentoBoxa i wersje dodatków
     setrange:
       parameters: <gracz> <zasięg>
       description: ustaw zasięg wyspy gracza
-      range-updated: 'Zaktualizowano zasięg wyspy do [number]'
+      range-updated: Zaktualizowano zasięg wyspy do [number]
     reload:
       description: ponownie załaduj
     tp:
       parameters: <gracz>
       description: teleportuj się na wyspę gracza
-      manual: >-
-        &cNie znaleziono bezpiecznego warpu. Teleportuj się ręcznie do
-        lokalizacji &b[location] &ci sprawdź go.
+      manual: '&cNie znaleziono bezpiecznego warpu. Teleportuj się ręcznie do lokalizacji
+        &b[location] &ci sprawdź go.'
     getrank:
       parameters: <gracz>
       description: zdobądź role gracza na jego wyspie
@@ -269,7 +264,8 @@ commands:
     blueprint:
       parameters: <load><copy><paste><pos1><pos2><save>
       description: manipuluj blueprintami
-      bedrock-required: '&c Co najmniej jeden blok skały macierzystej musi znajdować się w blueprincie!'
+      bedrock-required: '&c Co najmniej jeden blok skały macierzystej musi znajdować
+        się w blueprincie!'
       copy-first: '&cNajpierw skopiuj blueprint!'
       file-exists: '&cPlik już istnieje, nadpisać?'
       no-such-file: '&cNie ma takiego pliku!'
@@ -286,7 +282,8 @@ commands:
       copied-percent: '&6 Skopiowano [number]%'
       copy:
         parameters: '[air]'
-        description: skopiuj zawartość schowka ustawioną przez pos1 i pos2 i opcjonalnie bloki powietrza
+        description: skopiuj zawartość schowka ustawioną przez pos1 i pos2 i opcjonalnie
+          bloki powietrza
       delete:
         parameters: <nazwa>
         description: usuń blueprint
@@ -344,7 +341,7 @@ commands:
         new-bundle-instructions: Kliknij, aby utworzyć nowy pakiet
         name:
           quit: wyjdź
-          prompt: 'Wprowadź nazwę, lub wpisz ''wyjdź'', by wyjść'
+          prompt: Wprowadź nazwę, lub wpisz 'wyjdź', by wyjść
           too-long: '&cNazwa zbyt długa'
           pick-a-unique-name: Wybierz bardziej unikalną nazwę
           success: Sukces!
@@ -365,27 +362,27 @@ commands:
         parameters: <nazwa blueprintu> <nowa nazwa>
         description: zmień nazwę blueprintu
         success: '&a Zmieniono nazwę blueprintu &b [old] &a na &b [name]&a.'
-        pick-different-name: >-
-          &c Podaj nazwę inną niż bieżąca nazwa blueprintu.
+        pick-different-name: '&c Podaj nazwę inną niż bieżąca nazwa blueprintu.'
     resetflags:
       parameters: '[flaga]'
       description: Zresetuj wszystkie wyspy do domyślnych ustawień flag w config.yml
       confirm: '&4 Spowoduje to zresetowanie flag do domyślnych dla wszystkich wysp!'
       success: '&a Pomyślnie zresetowano flagi wszystkich wysp do ustawień domyślnych.'
-      success-one: '&a Flaga [name] została przywrócona do domyślnej wartości dla wszystkich wysp.'
+      success-one: '&a Flaga [name] została przywrócona do domyślnej wartości dla
+        wszystkich wysp.'
     world:
       description: Zarządzaj ustawieniami świata
     delete:
       parameters: <gracz>
       description: usuwa wyspę gracza
-      cannot-delete-owner: >-
-        &cWszyscy członkowie wyspy muszą zostać wyrzuceni z wyspy przed jej usunięciem.
+      cannot-delete-owner: '&cWszyscy członkowie wyspy muszą zostać wyrzuceni z wyspy
+        przed jej usunięciem.'
       deleted-island: '&aWyspa na &e[xyz] &azostała pomyślnie usunięta.'
     why:
       parameters: <gracz>
       description: przełącz raportowanie debugowania ochrony do konsoli
-      turning-on: 'Włączanie debugowania w konsoli dla [name].'
-      turning-off: 'Wyłączanie debugowania w konsoli dla [name].'
+      turning-on: Włączanie debugowania w konsoli dla [name].
+      turning-off: Wyłączanie debugowania w konsoli dla [name].
     deaths:
       description: edytuje wartość śmierci gracza
       reset:
@@ -395,33 +392,31 @@ commands:
       set:
         description: ustawia wartość śmierci gracza
         parameters: <gracz> <śmierci>
-        success: '&a Pomyślnie ustawiono wartość śmierci gracza &b [name]&a na &b [number]&a .'
+        success: '&a Pomyślnie ustawiono wartość śmierci gracza &b [name]&a na &b
+          [number]&a .'
       add:
         description: dodaje wartość śmierci dla gracza
         parameters: <gracz> <śmierci>
-        success: >-
-          &a Pomyślnie dodano &b [number] &a śmierci graczowi &b [name], zwiększając
-          ich sumę do &b [total]&a śmierci.
+        success: '&a Pomyślnie dodano &b [number] &a śmierci graczowi &b [name], zwiększając
+          ich sumę do &b [total]&a śmierci.'
       remove:
         description: usuwa wartość śmierci dla gracza
         parameters: <gracz> <śmierci>
-        success: >-
-          &a Pomyślnie usunięto &b [number] &a śmierci graczowi &b [name], zmniejszając
-          ich sumę do &b [total]&a śmierci.
+        success: '&a Pomyślnie usunięto &b [number] &a śmierci graczowi &b [name],
+          zmniejszając ich sumę do &b [total]&a śmierci.'
   bentobox:
     description: komenda administracyjna BentoBoxa
     about:
       description: pokazuje informacje o licencji i prawach autorskich
     reload:
-      description: 'przeładowuje BentoBoxa, wszystkie dodatki, ustawienia i pliki językowe'
+      description: przeładowuje BentoBoxa, wszystkie dodatki, ustawienia i pliki językowe
       locales-reloaded: '&2 Przeładowano pliki językowe.'
       addons-reloaded: '&2 Przeładowano dodatki.'
       settings-reloaded: '&2 Przeładowano ustawienia.'
       addon: '&6 Przeładowywanie &b [name]&2 .'
       addon-reloaded: '&b [name] &2 przeładowany.'
-      warning: >-
-        &c Ostrzeżenie: ponowne załadowanie może spowodować niestabilność, więc jeśli
-        później pojawią się błędy, uruchom ponownie serwer.
+      warning: '&c Ostrzeżenie: ponowne załadowanie może spowodować niestabilność,
+        więc jeśli później pojawią się błędy, uruchom ponownie serwer.'
       unknown-addon: '&c Nieznany dodatek!'
     version:
       plugin-version: '&2 Wersja BentoBoxa: &3 [version]'
@@ -429,9 +424,7 @@ commands:
       loaded-addons: 'Wczytane dodatki:'
       loaded-game-worlds: 'Wczytane światy gry:'
       addon-syntax: '&2 [name] &3 [version] &7 (&3 [state]&7 )'
-      game-world: >-
-        &2 [name] &7 (&3 [addon]&7 ): &a Świat wysp&7 , &4Nether&7
-        , &eEnd
+      game-world: '&2 [name] &7 (&3 [addon]&7 ): &a Świat wysp&7 , &4Nether&7 , &eEnd'
       server: '&2 Serwer działa na &3 [name] [version]&2 .'
       database: '&2 Baza danych: &3 [database]'
     manage:
@@ -440,11 +433,9 @@ commands:
       description: wyświetla katalog
     locale:
       description: wykonuje analizę plików językowych
-      see-console: >-
+      see-console: |-
         &a Sprawdź konsolę, aby zobaczyć wyniki.
-
-        &a Ta komenda jest tak spamerska, że wyników nie można odczytać z
-        czatu...
+        &a Ta komenda jest tak spamerska, że wyników nie można odczytać z czatu...
     migrate:
       description: migruje dane z jednej bazy danych do drugiej
       players: '&6 Migrowanie graczy...'
@@ -479,12 +470,10 @@ commands:
     create:
       description: stwórz wyspę
       parameters: <blueprint>
-      too-many-islands: >-
-        &c Na świecie jest zbyt wiele wysp: nie ma wystarczająco dużo miejsca,
-        aby stworzyć twoją.
-      unable-create-island: >-
-        Twoja wyspa nie mogła zostać wygenerowana, skontaktuj się z
-        administratorem.
+      too-many-islands: '&c Na świecie jest zbyt wiele wysp: nie ma wystarczająco
+        dużo miejsca, aby stworzyć twoją.'
+      unable-create-island: Twoja wyspa nie mogła zostać wygenerowana, skontaktuj
+        się z administratorem.
       creating-island: Tworzenie Twojej wyspy...
       pasting:
         estimated-time: '&a Szacowany pozostały czas: &b [number] &a sekund.'
@@ -494,8 +483,10 @@ commands:
       pick: '&2 Wybierz wyspę'
       unknown-blueprint: '&c Ten blueprint nie został jeszcze załadowany.'
       on-first-login: '&a Witamy! Zaczniemy przygotowywać twoją wyspę za kilka sekund.'
-      cannot-create-island: '&c Miejsca na wyspę nie udało się teraz znaleźć, spróbuj ponownie...'
-      you-can-teleport-to-your-island: '&aMożesz teleportować się na swoją wyspę, kiedy chcesz.'
+      cannot-create-island: '&c Miejsca na wyspę nie udało się teraz znaleźć, spróbuj
+        ponownie...'
+      you-can-teleport-to-your-island: '&aMożesz teleportować się na swoją wyspę,
+        kiedy chcesz.'
       pick-world: '&cWybierz świat z [worlds]'
     info:
       description: wyświetl informacje o swojej wyspie
@@ -515,24 +506,18 @@ commands:
       parameters: <blueprint>
       none-left: '&cNie pozostało więcej resetów wyspy!'
       resets-left: '&cPozostało ci [number] resetów wyspy.'
-      confirmation: >-
+      confirmation: |-
         &c Czy na pewno chcesz to zrobić?
-
-        &c Wszyscy członkowie wyspy zostaną wyrzuceni z wyspy, a
-        ty będziesz musiał ich ponownie zaprosić.
-
-        &c Nie ma powrotu - po usunięciu bieżącej wyspy &4&l&nnie będzie już
-        możliwości jej odzyskania&c.
-      kicked-from-island: >-
-        &c Zostałeś wyrzucony z wyspy w [gamemode], ponieważ właściciel
-        ją resetuje.
-      must-remove-members: >-
-        Musisz usunąć wszystkich członków ze swojej wyspy, zanim będzie można ją
-        zresetować (/island kick <gracz>).
+        &c Wszyscy członkowie wyspy zostaną wyrzuceni z wyspy, a ty będziesz musiał ich ponownie zaprosić.
+        &c Nie ma powrotu - po usunięciu bieżącej wyspy &4&l&nnie będzie już możliwości jej odzyskania&c.
+      kicked-from-island: '&c Zostałeś wyrzucony z wyspy w [gamemode], ponieważ właściciel
+        ją resetuje.'
+      must-remove-members: Musisz usunąć wszystkich członków ze swojej wyspy, zanim
+        będzie można ją zresetować (/island kick <gracz>).
     sethome:
       description: ustaw swój punkt teleportacji dla komendy /island
-      must-be-on-your-island: 'Musisz być na swojej wyspie, aby ustawić dom!'
-      num-homes: 'Domy mogą być od 1 do [number].'
+      must-be-on-your-island: Musisz być na swojej wyspie, aby ustawić dom!
+      num-homes: Domy mogą być od 1 do [number].
       home-set: Twój dom na wyspie został ustawiony w bieżącej lokalizacji.
       nether:
         not-allowed: '&c Nie możesz ustawić swojego domu w Netherze.'
@@ -584,10 +569,10 @@ commands:
         cannot-uncoop-yourself: '&c Nie możesz usunąć sobie tej rangi.'
         cannot-uncoop-member: '&c Nie możesz usunąć tej rangi członkowi drużyny.'
         player-not-cooped: '&c Gracz nie jest Pomocnikiem!'
-        you-are-no-longer-a-coop-member: '&c Nie jesteś już Pomocnikiem wyspy gracza [name]'
-        all-members-logged-off: >-
-          &c Wszyscy członkowie wyspy wylogowali się, więc nie jesteś już
-          Pomocnikiem wyspy gracza [name]
+        you-are-no-longer-a-coop-member: '&c Nie jesteś już Pomocnikiem wyspy gracza
+          [name]'
+        all-members-logged-off: '&c Wszyscy członkowie wyspy wylogowali się, więc
+          nie jesteś już Pomocnikiem wyspy gracza [name]'
         success: '&b [name] &anie jest już Pomocnikiem na twojej wyspie.'
       trust:
         description: nadaj rangę Zaufany graczowi na wyspie
@@ -595,7 +580,7 @@ commands:
         trust-in-yourself: '&cNie ufasz sobie..? :('
         name-has-invited-you: '&a [name] zaprosił cię do wyspy jako Zaufany'
         player-already-trusted: '&c Gracz jest już zaufany!'
-        you-are-trusted: '&2 Gracz&b [name]&a nadał ci rangę zaufany.!'
+        you-are-trusted: '&a Gracz &b[name] &anadał ci rangę zaufany!'
         success: '&a Zaufałeś graczowi &b [name]&a.'
       untrust:
         description: usuń rangę Zaufany graczowi na wyspie
@@ -603,17 +588,18 @@ commands:
         cannot-untrust-yourself: '&c Nie możesz usunąć sobie tej rangi.'
         cannot-untrust-member: '&c Nie możesz usunąć tej rangi członkowi drużyny.'
         player-not-trusted: '&c Gracz nie jest zaufany!'
-        you-are-no-longer-trusted: '&c Nie jesteś już zaufanym graczem na wyspie gracza &b [name]&a !'
+        you-are-no-longer-trusted: '&c Nie jesteś już zaufanym graczem na wyspie gracza
+          &b [name]&a !'
         success: '&b [name] &a nie jest już zaufany na twojej wyspie.'
       invite:
-        description: 'zaproś gracza, by dołączył do Twojej wyspy'
-        invitation-sent: 'Zaproszenie wysłane do [name]'
+        description: zaproś gracza, by dołączył do Twojej wyspy
+        invitation-sent: Zaproszenie wysłane do [name]
         removing-invite: Usuwanie zaproszenia
         name-has-invited-you: '[name] zaprosił cię do przyłączenia się do jego wyspy.'
-        to-accept-or-reject: >-
-          Wpisz /island team accept, aby zaakceptować zaproszenie lub /island
-          team reject aby odmówić.
-        you-will-lose-your-island: '&cUWAGA! Jeśli zaakceptujesz zaproszenie, stracisz swoją wyspę!'
+        to-accept-or-reject: Wpisz /island team accept, aby zaakceptować zaproszenie
+          lub /island team reject aby odmówić.
+        you-will-lose-your-island: '&cUWAGA! Jeśli zaakceptujesz zaproszenie, stracisz
+          swoją wyspę!'
         errors:
           cannot-invite-self: '&cNie możesz zaprosić samego siebie!'
           cooldown: '&cNie możesz zaprosić tej osoby przez [number] sekund.'
@@ -624,12 +610,11 @@ commands:
           invalid-invite: '&cTo zaproszenie nie jest już ważne.'
           you-have-already-invited: '&c Zaprosiłeś już tego gracza!'
         parameters: <gracz>
-        you-can-invite: 'Możesz zaprosić jeszcze [number] graczy.'
+        you-can-invite: Możesz zaprosić jeszcze [number] graczy.
         accept:
           description: akceptuj zaproszenie
-          you-joined-island: >-
-            &aDołączyłeś do wyspy! Wpisz /[label] team info, aby zobaczyć liste
-            innych graczy na wyspie.
+          you-joined-island: '&aDołączyłeś do wyspy! Wpisz /[label] team info, aby
+            zobaczyć liste innych graczy na wyspie.'
           name-joined-your-island: '&a[name] dołączył do Twojej wyspy!'
           confirmation: |-
             &c Czy na pewno chcesz zaakceptować to zaproszenie?
@@ -641,9 +626,8 @@ commands:
         cancel:
           description: anuluj oczekujące zaproszenie do dołączenia do Twojej wyspy
       leave:
-        cannot-leave: >-
-          &cLider drużyny nie może opuścić wyspy. Zostań jej członkiem, lub
-          wyrzuć wszystkich graczy z wyspy.
+        cannot-leave: '&cLider drużyny nie może opuścić wyspy. Zostań jej członkiem,
+          lub wyrzuć wszystkich graczy z wyspy.'
         description: opuść swoją wyspę
         left-your-island: '&c[name] opuścił Twoją wyspę.'
         success: '&a Opuściłeś tę wyspę.'
@@ -652,25 +636,25 @@ commands:
         parameters: <gracz>
         owner-kicked: '&cLider wyrzucił cię z jego wyspy.'
         cannot-kick: '&cNie możesz wyrzucić samego siebie.'
-        success: '&b [name] &a został wyrzucony z twojej wyspie.'
+        success: '&b [name] &a został wyrzucony z twojej wyspy.'
       demote:
         description: degraduj gracza na swojej wyspiei
         parameters: <gracz>
         errors:
           cant-demote-yourself: '&c Nie możesz zdegradować samego siebie!'
         failure: '&cGracza nie można zdegradować niżej.'
-        success: 'Zdegradowano [name] do rangi [rank]'
+        success: Zdegradowano [name] do rangi [rank]
       promote:
         description: awansuj gracza na swojej wyspie
         parameters: <gracz>
         failure: '&cGracza nie można awansować wyżej!'
-        success: 'Awansowano [name] na rangę [rank]'
+        success: Awansowano [name] na rangę [rank]
       setowner:
         description: przenieś własność wyspy na innego członka
         errors:
-          cant-transfer-to-yourself: >-
-            &cNie możesz przenieść własności na siebie! Cóż, w rzeczywistości,
-            możesz... Ale nie chcemy możemy na to pozwolić. Bo to jest złe.
+          cant-transfer-to-yourself: '&cNie możesz przenieść własności na siebie!
+            Cóż, w rzeczywistości, możesz... Ale nie chcemy możemy na to pozwolić.
+            Bo to jest złe.'
           target-is-not-member: '&cTen gracz nie jest częścią Twojej drużyny!'
         name-is-the-owner: '&a[name] jest teraz liderem wyspy!'
         parameters: <gracz>
@@ -681,9 +665,8 @@ commands:
       cannot-ban-yourself: '&cNie możesz się zbanować!'
       cannot-ban: '&cTego gracza nie można zbanować.'
       cannot-ban-member: '&cNajpierw wyrzuć członka drużyny, a następnie zablokuj.'
-      cannot-ban-more-players: >-
-        &c Osiągnąłeś limit banów, nie możesz zbanować więcej graczy na twojej
-        wyspie.
+      cannot-ban-more-players: '&c Osiągnąłeś limit banów, nie możesz zbanować więcej
+        graczy na twojej wyspie.'
       player-already-banned: '&cGracz jest już zbanowany.'
       player-banned: '&b [name]&c został zbanowany na twojej wyspie.'
       owner-banned-you: '&b[name]&c zbanował cię na swojej wyspie!'
@@ -897,8 +880,8 @@ protection:
       description: Wyświetlaj komunikaty wejścia i wyjścia
       island: '[name]'
       name: Wiadomości wejścia / wyjścia
-      now-entering: 'Wchodzisz na wyspę [name]'
-      now-leaving: 'Wychodzisz z wyspy [name]'
+      now-entering: Wchodzisz na wyspę [name]
+      now-leaving: Wychodzisz z wyspy [name]
       now-entering-your-island: '&a Wchodzisz na swoją wyspę.'
       now-leaving-your-island: '&a Opuszczasz swoją wyspę.'
     EXPERIENCE_BOTTLE_THROWING:
@@ -1062,9 +1045,8 @@ protection:
         &a Pozwala na przemianę Obsydianu
         &a pustym wiaderkiem z powrotem na lawę.
       scooping: '&a Zmieniam obsydian z powrotem w lawę. Następnym razem uważaj!'
-      obsidian-nearby: >-
-        &c W pobliżu znajdują się obsydianowe bloki, nie można zebrać tego bloku w
-        lawę.
+      obsidian-nearby: '&c W pobliżu znajdują się obsydianowe bloki, nie można zebrać
+        tego bloku w lawę.'
     OFFLINE_GROWTH:
       description: |-
         &a Kiedy wyłączone, rośliny
@@ -1091,8 +1073,7 @@ protection:
       hint: Stawianie bloków jest wyłączone.
     POTION_THROWING:
       name: Rzucanie mikstur
-      description: |-
-        &a Przełącz rzucanie mikstur trwałych i rzucanych.
+      description: '&a Przełącz rzucanie mikstur trwałych i rzucanych.'
       hint: Rzucanie mikstur jest jest wyłączone.
     NETHER_PORTAL:
       description: Przełącz użycie
@@ -1187,14 +1168,10 @@ protection:
       hint: Używanie klap jest wyłączone.
     TREES_GROWING_OUTSIDE_RANGE:
       name: Drzewa rosnące poza zasięgiem wyspy
-      description: |-
-        &a Wybierz, czy drzewa mogą rosnąć
-        &a poza zasięgiem ochrony wyspy, czy nie.
-        &a Nie tylko zapobiegnie to wzrostowi
-        &a sadzonek umieszczonych poza zasięgiem wyspy,
-        &a ale także zablokuje generowanie
-        &a liści / kłód poza wyspą, tym samym 
-        &a ścinając drzewo.
+      description: "&a Wybierz, czy drzewa mogą rosnąć\n&a poza zasięgiem ochrony\
+        \ wyspy, czy nie.\n&a Nie tylko zapobiegnie to wzrostowi\n&a sadzonek umieszczonych\
+        \ poza zasięgiem wyspy,\n&a ale także zablokuje generowanie\n&a liści / kł\
+        ód poza wyspą, tym samym \n&a ścinając drzewo."
     TURTLE_EGGS:
       description: Przełącz niszczenie
       name: Żółwie jaja
@@ -1241,7 +1218,7 @@ protection:
       name: Skrzynie
       hint: Otwieranie skrzyń jest wyłączone.
     FIRE:
-      description: 'Pozwól, by ogień istniał'
+      description: Pozwól, by ogień istniał
       name: Ogień
       hint: Ogień jest niedozwolony.
     LEVER_BUTTON:
@@ -1434,7 +1411,7 @@ catalog:
       description: |+
         &c BentoBox nie mógł połączyć się z GitHubem.
 
-        &a Pozwól BentoBox połączyć się z GitHubem
+        &a Pozwól BentoBoxowi połączyć się z GitHubem
         &a w konfiguracji lub spróbuj ponownie później.
 
 panel:
@@ -1450,7 +1427,7 @@ panel:
         &c BentoBox nie mógł zebrać współautorów
         &c tego dodatku.
 
-        &a Pozwól BentoBox połączyć się z GitHubem
+        &a Pozwól BentoBoxowi połączyć się z GitHubem
         &a w konfiguracji lub spróbuj ponownie później.
 
 successfully-loaded: |2
@@ -1458,6 +1435,6 @@ successfully-loaded: |2
   &6   ____             _        ____
   &6  |  _ \           | |      |  _ \             &7 by &a tastybento &7 i &a Poslovitch
   &6  | |_) | ___ _ __ | |_ ___ | |_) | _____  __  &7 2017 - 2020
-  &6  |  _ < / _ \ '_ \| __/ _ \|  _ < / _ \ \/ /  &b Przetłumaczono przez Buty935
+  &6  |  _ < / _ \ '_ \| __/ _ \|  _ < / _ \ \/ /  
   &6  | |_) |  __/ | | | || (_) | |_) | (_) >  <   &b v&e [version]
   &6  |____/ \___|_| |_|\__\___/|____/ \___/_/\_\  &8 Wczytano w &e [time]&8 ms.
