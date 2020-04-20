@@ -193,8 +193,8 @@ public class BentoBox extends JavaPlugin {
             flagsManager.registerListeners();
 
             // Load metrics
-            metrics = new BStats(this);
-            metrics.registerMetrics();
+             metrics = new BStats(this);
+             metrics.registerMetrics();
 
             // Register Multiverse hook - MV loads AFTER BentoBox
             // Make sure all worlds are already registered to Multiverse.
@@ -215,7 +215,7 @@ public class BentoBox extends JavaPlugin {
                     "[time]", String.valueOf(loadTime + enableTime));
 
             // Poll for blueprints loading to be finished - async so could be a completely variable time
-            blueprintLoadingTask = Bukkit.getScheduler().runTaskLater(instance, () -> {
+            blueprintLoadingTask = Bukkit.getScheduler().runTaskTimer(instance, () -> {
                 if (getBlueprintsManager().isBlueprintsLoaded()) {
                     blueprintLoadingTask.cancel();
                     // Tell all addons that everything is loaded
@@ -225,7 +225,7 @@ public class BentoBox extends JavaPlugin {
                     Bukkit.getPluginManager().callEvent(new BentoBoxReadyEvent());
                     instance.log("All blueprints loaded.");
                 }
-            }, 1L);
+            }, 0L, 1L);
 
             if (getSettings().getDatabaseType().equals(DatabaseSetup.DatabaseType.YAML)) {
                 logWarning("*** You're still using YAML database ! ***");
@@ -235,13 +235,6 @@ public class BentoBox extends JavaPlugin {
                 logWarning("*** *** *** *** *** *** *** *** *** *** ***");
             }
         });
-        Bukkit.getScheduler().runTaskLater(this, () -> {
-            if (!isLoaded) {
-                logError("BentoBox could not load correctly. Disabling plugin! Check console for errors.");
-                this.onDisable();
-                instance.setEnabled(false);
-            }
-        }, 2L);
     }
 
     /**
