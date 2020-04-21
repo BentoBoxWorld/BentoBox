@@ -91,6 +91,8 @@ public class BentoBox extends JavaPlugin {
 
     private BukkitTask blueprintLoadingTask;
 
+    private boolean shutdown;
+
     @Override
     public void onEnable(){
         if (!ServerCompatibility.getInstance().checkCompatibility().isCanLaunch()) {
@@ -193,8 +195,8 @@ public class BentoBox extends JavaPlugin {
             flagsManager.registerListeners();
 
             // Load metrics
-             metrics = new BStats(this);
-             metrics.registerMetrics();
+            metrics = new BStats(this);
+            metrics.registerMetrics();
 
             // Register Multiverse hook - MV loads AFTER BentoBox
             // Make sure all worlds are already registered to Multiverse.
@@ -273,6 +275,8 @@ public class BentoBox extends JavaPlugin {
         if (islandsManager != null) {
             islandsManager.shutdown();
         }
+        // Close all async database tasks
+        shutdown = true;
     }
 
     /**
@@ -494,5 +498,14 @@ public class BentoBox extends JavaPlugin {
     @Override
     public void reloadConfig() {
         loadSettings();
+    }
+
+    /**
+     * Check if plug has shutdown. Used to close databases that are running async.
+     * @return true if plugin has shutdown
+     * @since 1.13.0
+     */
+    public boolean isShutdown() {
+        return shutdown;
     }
 }

@@ -304,7 +304,7 @@ public class YamlDatabaseHandlerTest {
         Mockito.verify(scheduler).runTaskAsynchronously(Mockito.eq(plugin), registerLambdaCaptor.capture());
         Runnable lamda = registerLambdaCaptor.getValue();
         // Cannot run with true otherwise it'll infinite loop
-        when(plugin.isEnabled()).thenReturn(false);
+        when(plugin.isShutdown()).thenReturn(true);
         lamda.run();
         Mockito.verify(task).cancel();
 
