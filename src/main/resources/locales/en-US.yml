@@ -246,6 +246,12 @@ commands:
       no-island-here: "&c There is no island here."
       confirmation: "&c Are you sure you want to set this island as the spawn for this world?"
       success: "&a Successfully set this island as the spawn for this world."
+    setspawnpoint:
+      description: "set current location as spawn point for this island"
+      no-island-here: "&c There is no island here."
+      confirmation: "&c Are you sure you want to set this location as the spawn point for this island?"
+      success: "&a Successfully set this location as the spawn point for this island."
+      island-spawnpoint-changed: "&a [user] changed this island spawn point."
     settings:
       parameters: "[player]"
       description: "open system settings or island settings for player"
