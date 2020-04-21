@@ -467,4 +467,61 @@ public interface WorldSettings extends ConfigObject {
         return true;
     }
 
+
+    /**
+     * Returns all aliases for main admin command.
+     * It is assumed that all aliases are split with whitespace between them.
+     * String cannot be empty.
+     * Default value: {@code getFriendlyName() + "admin"} (to retain backward compatibility).
+     * @return String value
+     * @since 1.13.0
+     */
+    default String getAdminCommandAlias()
+    {
+        return this.getFriendlyName().toLowerCase() + "admin";
+    }
+
+
+    /**
+     * Returns all aliases for main user command.
+     * It is assumed that all aliases are split with whitespace between them.
+     * String cannot be empty.
+     * Default value: {@code getFriendlyName()} (to retain backward compatibility).
+     * @return String value
+     * @since 1.13.0
+     */
+    default String getUserCommandAlias()
+    {
+        return this.getFriendlyName().toLowerCase();
+    }
+
+
+    /**
+     * Returns sub-command for users when they execute main user command and they have an
+     * island.
+     * If defined sub-command does not exist in accessible user command list, then it will
+     * still call "go" sub-command.
+     * Default value: {@code "go"} (to retain backward compatibility)
+     * @return name of default sub-command for main command if user does have an island.
+     * @since 1.13.0
+     */
+    default String getDefaultHasIslandSubCommand()
+    {
+        return "go";
+    }
+
+
+    /**
+     * Returns default sub-command for users when they execute main user command and they
+     * does not have an island.
+     * If defined sub-command does not exist in accessible user command list, then it will
+     * still call "create" sub-command.
+     * Default value: {@code "create"} (to retain backward compatibility)
+     * @return name of default sub-command for main command if user does not have an island.
+     * @since 1.13.0
+     */
+    default String getDefaultUserSubCommand()
+    {
+        return "create";
+    }
 }
