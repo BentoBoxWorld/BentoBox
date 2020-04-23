@@ -611,6 +611,7 @@ public class Util {
      * Get a UUID from a string. The string can be a known player's name or a UUID
      * @param nameOrUUID - name or UUID
      * @return UUID or null if unknown
+     * @since 1.13.0
      */
     @Nullable
     public static UUID getUUID(@NonNull String nameOrUUID) {
