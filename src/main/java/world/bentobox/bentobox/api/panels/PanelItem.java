@@ -34,6 +34,7 @@ public class PanelItem {
 
     public PanelItem(PanelItemBuilder builtItem) {
         this.icon = builtItem.getIcon();
+        this.icon.setAmount(builtItem.getAmount());
         this.playerHeadName = builtItem.getPlayerHeadName();
         // Get the meta
         meta = icon.getItemMeta();
