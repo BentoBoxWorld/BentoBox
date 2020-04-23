@@ -245,46 +245,17 @@ public class SafeSpotTeleport {
      * @param z - z coordinate
      * @return true if this is a safe spot, false if this is a portal scan
      */
-    private boolean checkBlock(ChunkSnapshot chunk, int x, int y, int z) {
+    boolean checkBlock(ChunkSnapshot chunk, int x, int y, int z) {
         World world = location.getWorld();
         Material type = chunk.getBlockType(x, y, z);
-        if (!type.equals(Material.AIR)) { // AIR
-            Material space1 = chunk.getBlockType(x, Math.min(y + 1, SafeSpotTeleport.MAX_HEIGHT), z);
-            Material space2 = chunk.getBlockType(x, Math.min(y + 2, SafeSpotTeleport.MAX_HEIGHT), z);
-            if ((space1.equals(Material.AIR) && space2.equals(Material.AIR)) || (space1.equals(Material.NETHER_PORTAL) && space2.equals(Material.NETHER_PORTAL))
-                    && (!type.toString().contains("FENCE") && !type.toString().contains("DOOR") && !type.toString().contains("GATE") && !type.toString().contains("PLATE")
-                            && !type.toString().contains("SIGN"))) {
-                switch (type) {
-                // Unsafe
-                case ANVIL:
-                case BARRIER:
-                case CACTUS:
-                case END_PORTAL:
-                case FIRE:
-                case FLOWER_POT:
-                case LADDER:
-                case LAVA:
-                case LEVER:
-                case TALL_GRASS:
-                case PISTON_HEAD:
-                case MOVING_PISTON:
-                case STONE_BUTTON:
-                case TORCH:
-                case TRIPWIRE:
-                case WATER:
-                case COBWEB:
-                    //Block is dangerous
-                    break;
-                case NETHER_PORTAL:
-                    if (portal) {
-                        // A portal has been found, switch to non-portal mode now
-                        portal = false;
-                    }
-                    break;
-                default:
-                    return safe(chunk, x, y, z, world);
-                }
-            }
+        Material space1 = chunk.getBlockType(x, Math.min(y + 1, SafeSpotTeleport.MAX_HEIGHT), z);
+        Material space2 = chunk.getBlockType(x, Math.min(y + 2, SafeSpotTeleport.MAX_HEIGHT), z);
+        if (space1.equals(Material.NETHER_PORTAL) || space2.equals(Material.NETHER_PORTAL)) {
+            // A portal has been found, switch to non-portal mode now
+            portal = false;
+        }
+        if (plugin.getIslands().checkIfSafe(world, type, space1, space2)) {
+            return safe(chunk, x, y, z, world);
         }
         return false;
     }

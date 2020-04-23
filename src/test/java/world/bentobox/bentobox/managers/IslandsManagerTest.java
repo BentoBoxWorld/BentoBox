@@ -38,7 +38,6 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.data.BlockData;
-import org.bukkit.block.data.Openable;
 import org.bukkit.entity.Cow;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Entity;
@@ -202,6 +201,7 @@ public class IslandsManagerTest {
         when(location.getWorld()).thenReturn(world);
         when(location.getBlock()).thenReturn(space1);
         when(location.getWorld()).thenReturn(world);
+        when(location.clone()).thenReturn(location);
         Chunk chunk = mock(Chunk.class);
         when(location.getChunk()).thenReturn(chunk);
         when(space1.getRelative(BlockFace.DOWN)).thenReturn(ground);
@@ -360,8 +360,8 @@ public class IslandsManagerTest {
     @Test
     public void testIsSafeLocationSubmerged() {
         when(ground.getType()).thenReturn(Material.STONE);
-        when(space1.isLiquid()).thenReturn(true);
-        when(space2.isLiquid()).thenReturn(true);
+        when(space1.getType()).thenReturn(Material.WATER);
+        when(space2.getType()).thenReturn(Material.WATER);
         assertFalse(manager.isSafeLocation(location));
     }
 
@@ -373,19 +373,19 @@ public class IslandsManagerTest {
         when(ground.getType()).thenReturn(Material.STONE);
         when(space1.getType()).thenReturn(Material.AIR);
         when(space2.getType()).thenReturn(Material.NETHER_PORTAL);
-        assertFalse(manager.isSafeLocation(location));
+        assertTrue(manager.isSafeLocation(location));
         when(ground.getType()).thenReturn(Material.STONE);
         when(space1.getType()).thenReturn(Material.AIR);
         when(space2.getType()).thenReturn(Material.END_PORTAL);
-        assertFalse(manager.isSafeLocation(location));
+        assertTrue(manager.isSafeLocation(location));
         when(ground.getType()).thenReturn(Material.STONE);
         when(space1.getType()).thenReturn(Material.NETHER_PORTAL);
         when(space2.getType()).thenReturn(Material.AIR);
-        assertFalse(manager.isSafeLocation(location));
+        assertTrue(manager.isSafeLocation(location));
         when(ground.getType()).thenReturn(Material.STONE);
         when(space1.getType()).thenReturn(Material.END_PORTAL);
         when(space2.getType()).thenReturn(Material.AIR);
-        assertFalse(manager.isSafeLocation(location));
+        assertTrue(manager.isSafeLocation(location));
         when(ground.getType()).thenReturn(Material.NETHER_PORTAL);
         when(space1.getType()).thenReturn(Material.AIR);
         when(space2.getType()).thenReturn(Material.AIR);
@@ -421,20 +421,8 @@ public class IslandsManagerTest {
     @Test
     public void testTrapDoor() {
         when(ground.getType()).thenReturn(Material.OAK_TRAPDOOR);
-
-        // Open trapdoor
-        Openable trapDoor = mock(Openable.class);
-        when(trapDoor.isOpen()).thenReturn(true);
-        when(ground.getBlockData()).thenReturn(trapDoor);
-
         assertFalse("Open trapdoor", manager.isSafeLocation(location));
-
-        when(trapDoor.isOpen()).thenReturn(false);
-        assertTrue("Closed trapdoor", manager.isSafeLocation(location));
-
         when(ground.getType()).thenReturn(Material.IRON_TRAPDOOR);
-        assertTrue("Closed iron trapdoor", manager.isSafeLocation(location));
-        when(trapDoor.isOpen()).thenReturn(true);
         assertFalse("Open iron trapdoor", manager.isSafeLocation(location));
     }
 
@@ -1138,7 +1126,7 @@ public class IslandsManagerTest {
         IslandsManager im = new IslandsManager(plugin);
         assertFalse(im.fixIslandCenter(island));
     }
-    
+
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#fixIslandCenter(Island)}.
      */
@@ -1171,9 +1159,9 @@ public class IslandsManagerTest {
         assertEquals(0, captor.getValue().getBlockX());
         assertEquals(120, captor.getValue().getBlockY());
         assertEquals(0, captor.getValue().getBlockZ());
-        
+
     }
-    
+
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#fixIslandCenter(Island)}.
      */
@@ -1206,9 +1194,9 @@ public class IslandsManagerTest {
         assertEquals(100000, captor.getValue().getBlockX());
         assertEquals(120, captor.getValue().getBlockY());
         assertEquals(8765, captor.getValue().getBlockZ());
-        
+
     }
-    
+
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#fixIslandCenter(Island)}.
      */
@@ -1235,7 +1223,7 @@ public class IslandsManagerTest {
         IslandsManager im = new IslandsManager(plugin);
         assertFalse(im.fixIslandCenter(island));
     }
-    
+
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#fixIslandCenter(Island)}.
      */
@@ -1262,7 +1250,7 @@ public class IslandsManagerTest {
         IslandsManager im = new IslandsManager(plugin);
         assertFalse(im.fixIslandCenter(island));
     }
-    
+
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#fixIslandCenter(Island)}.
      */
@@ -1295,7 +1283,7 @@ public class IslandsManagerTest {
         assertEquals(100050, captor.getValue().getBlockX());
         assertEquals(120, captor.getValue().getBlockY());
         assertEquals(8815, captor.getValue().getBlockZ());
-        
+
     }
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#fixIslandCenter(Island)}.
@@ -1314,5 +1302,5 @@ public class IslandsManagerTest {
         when(iwm.inWorld(eq(world))).thenReturn(false);
         assertFalse(im.fixIslandCenter(island));
     }
-    
+
 }

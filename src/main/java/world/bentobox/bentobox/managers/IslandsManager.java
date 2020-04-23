@@ -23,8 +23,6 @@ import org.bukkit.World;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.data.BlockData;
-import org.bukkit.block.data.Openable;
 import org.bukkit.entity.Boat;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -212,47 +210,76 @@ public class IslandsManager {
      * @return true if safe, otherwise false
      */
     public boolean isSafeLocation(@NonNull Location l) {
-        if (l.getWorld() == null) {
-            return false;
-        }
         Block ground = l.getBlock().getRelative(BlockFace.DOWN);
         Block space1 = l.getBlock();
         Block space2 = l.getBlock().getRelative(BlockFace.UP);
+        return checkIfSafe(l.getWorld(), ground.getType(), space1.getType(), space2.getType());
+    }
 
-        // Ground must be solid
-        if (!ground.getType().isSolid()) {
+    /**
+     * Check if a location is safe for teleporting
+     * @param world - world
+     * @param material -
+     * @param material2
+     * @param material3
+     * @return
+     */
+    public boolean checkIfSafe(@Nullable World world, @NonNull Material ground, @NonNull Material space1, @NonNull Material space2) {
+        // Ground must be solid, space 1 and 2 must not be solid
+        if (world == null || !ground.isSolid()
+                || (space1.isSolid() && !space1.name().contains("SIGN"))
+                || (space2.isSolid() && !space2.name().contains("SIGN"))) {
             return false;
         }
         // Cannot be submerged or water cannot be dangerous
-        if (space1.isLiquid() && (space2.isLiquid() || plugin.getIWM().isWaterNotSafe(l.getWorld()))) {
+        if (space1.equals(Material.WATER) && (space2.equals(Material.WATER) || plugin.getIWM().isWaterNotSafe(world))) {
             return false;
         }
-
-        // Portals are not "safe"
-        if (space1.getType() == Material.NETHER_PORTAL || ground.getType() == Material.NETHER_PORTAL || space2.getType() == Material.NETHER_PORTAL
-                || space1.getType() == Material.END_PORTAL || ground.getType() == Material.END_PORTAL || space2.getType() == Material.END_PORTAL) {
+        // Lava
+        if (ground.equals(Material.LAVA)
+                || space1.equals(Material.LAVA)
+                || space2.equals(Material.LAVA)) {
             return false;
         }
-        if (ground.getType().equals(Material.LAVA)
-                || space1.getType().equals(Material.LAVA)
-                || space2.getType().equals(Material.LAVA)) {
+        // Unsafe types
+        if (((space1.equals(Material.AIR) && space2.equals(Material.AIR))
+                || (space1.equals(Material.NETHER_PORTAL) && space2.equals(Material.NETHER_PORTAL)))
+                && (ground.name().contains("FENCE")
+                        || ground.name().contains("DOOR")
+                        || ground.name().contains("GATE")
+                        || ground.name().contains("PLATE")
+                        || ground.name().contains("SIGN")
+                        || ground.name().contains("BANNER")
+                        || ground.name().contains("BUTTON")
+                        || ground.name().contains("BOAT"))) {
             return false;
         }
-
-        // Check for trapdoors
-        BlockData bd = ground.getBlockData();
-        if (bd instanceof Openable) {
-            return !((Openable)bd).isOpen();
-        }
-
-        if (ground.getType().equals(Material.CACTUS) || ground.getType().toString().contains("BOAT") || ground.getType().toString().contains("FENCE")
-                || ground.getType().toString().contains("SIGN")) {
+        // Known unsafe blocks
+        switch (ground) {
+        // Unsafe
+        case ANVIL:
+        case BARRIER:
+        case CACTUS:
+        case END_PORTAL:
+        case END_ROD:
+        case FIRE:
+        case FLOWER_POT:
+        case LADDER:
+        case LEVER:
+        case TALL_GRASS:
+        case PISTON_HEAD:
+        case MOVING_PISTON:
+        case TORCH:
+        case WALL_TORCH:
+        case TRIPWIRE:
+        case WATER:
+        case COBWEB:
+        case NETHER_PORTAL:
+        case MAGMA_BLOCK:
             return false;
+        default:
+            return true;
         }
-        // Check that the space is not solid
-        // The isSolid function is not fully accurate (yet) so we have to check a few other items
-        // isSolid thinks that PLATEs and SIGNS are solid, but they are not
-        return (!space1.getType().isSolid() || space1.getType().toString().contains("SIGN")) && (!space2.getType().isSolid() || space2.getType().toString().contains("SIGN"));
     }
 
     /**
