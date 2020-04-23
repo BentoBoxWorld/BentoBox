@@ -10,6 +10,7 @@ import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.RanksManager;
+import world.bentobox.bentobox.util.Util;
 
 public class AdminTeamDisbandCommand extends CompositeCommand {
 
@@ -32,7 +33,7 @@ public class AdminTeamDisbandCommand extends CompositeCommand {
             return false;
         }
         // Get target
-        UUID targetUUID = getPlayers().getUUID(args.get(0));
+        UUID targetUUID = Util.getUUID(args.get(0));
         if (targetUUID == null) {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
             return false;
@@ -64,12 +65,12 @@ public class AdminTeamDisbandCommand extends CompositeCommand {
                 .admin(true)
                 .build();
                 IslandEvent.builder()
-                        .island(island)
-                        .involvedPlayer(targetUUID)
-                        .admin(true)
-                        .reason(IslandEvent.Reason.RANK_CHANGE)
-                        .rankChange(island.getRank(mUser), RanksManager.VISITOR_RANK)
-                        .build();
+                .island(island)
+                .involvedPlayer(targetUUID)
+                .admin(true)
+                .reason(IslandEvent.Reason.RANK_CHANGE)
+                .rankChange(island.getRank(mUser), RanksManager.VISITOR_RANK)
+                .build();
             }
         });
         user.sendMessage("commands.admin.team.disband.success", TextVariables.NAME, args.get(0));

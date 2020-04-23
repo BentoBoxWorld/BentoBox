@@ -41,7 +41,7 @@ public class AdminInfoCommand extends CompositeCommand {
             return true;
         }
         // Get target player
-        UUID targetUUID = getPlayers().getUUID(args.get(0));
+        UUID targetUUID = Util.getUUID(args.get(0));
         if (targetUUID == null) {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
             return false;

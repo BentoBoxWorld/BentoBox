@@ -48,7 +48,7 @@ public class AdminTeleportCommand extends CompositeCommand {
             return false;
         }
         // Convert name to a UUID
-        targetUUID = getPlayers().getUUID(args.get(0));
+        targetUUID = Util.getUUID(args.get(0));
         if (targetUUID == null) {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
             return false;
@@ -61,7 +61,7 @@ public class AdminTeleportCommand extends CompositeCommand {
 
         if (args.size() == 2) {
             // We are trying to teleport another player
-            UUID playerToTeleportUUID = getPlayers().getUUID(args.get(1));
+            UUID playerToTeleportUUID = Util.getUUID(args.get(1));
             if (playerToTeleportUUID == null) {
                 user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(1));
                 return false;

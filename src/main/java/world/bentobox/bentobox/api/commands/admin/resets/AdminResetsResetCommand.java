@@ -12,6 +12,7 @@ import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.util.Util;
 
 public class AdminResetsResetCommand extends ConfirmableCommand {
 
@@ -45,12 +46,12 @@ public class AdminResetsResetCommand extends ConfirmableCommand {
             return true;
         } else {
             // Then, it may be a player
-            UUID target = getPlayers().getUUID(args.get(0));
-            if (target == null) {
+            UUID targetUUID = Util.getUUID(args.get(0));
+            if (targetUUID == null) {
                 user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
                 return false;
             } else {
-                getPlayers().setResets(getWorld(), target, 0);
+                getPlayers().setResets(getWorld(), targetUUID, 0);
                 user.sendMessage("commands.admin.resets.reset.success", TextVariables.NAME, args.get(0));
                 return true;
             }

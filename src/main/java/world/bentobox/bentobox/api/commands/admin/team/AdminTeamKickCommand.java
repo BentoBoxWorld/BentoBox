@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.events.island.IslandEvent;
@@ -12,12 +13,15 @@ import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.RanksManager;
+import world.bentobox.bentobox.util.Util;
 
 /**
  * Kicks the specified player from the island team.
  * @author tastybento
  */
 public class AdminTeamKickCommand extends CompositeCommand {
+
+    private @Nullable UUID targetUUID;
 
     public AdminTeamKickCommand(CompositeCommand parent) {
         super(parent, "kick");
@@ -39,7 +43,7 @@ public class AdminTeamKickCommand extends CompositeCommand {
         }
 
         // Get target
-        UUID targetUUID = getPlayers().getUUID(args.get(0));
+        targetUUID = Util.getUUID(args.get(0));
         if (targetUUID == null) {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
             return false;
@@ -54,8 +58,6 @@ public class AdminTeamKickCommand extends CompositeCommand {
 
     @Override
     public boolean execute(User user, String label, @NonNull List<String> args) {
-        UUID targetUUID = getPlayers().getUUID(args.get(0));
-
         Island island = getIslands().getIsland(getWorld(), targetUUID);
 
         if (targetUUID.equals(island.getOwner())) {
@@ -78,12 +80,12 @@ public class AdminTeamKickCommand extends CompositeCommand {
         .admin(true)
         .build();
         IslandEvent.builder()
-                .island(island)
-                .involvedPlayer(targetUUID)
-                .admin(true)
-                .reason(IslandEvent.Reason.RANK_CHANGE)
-                .rankChange(island.getRank(target), RanksManager.VISITOR_RANK)
-                .build();
+        .island(island)
+        .involvedPlayer(targetUUID)
+        .admin(true)
+        .reason(IslandEvent.Reason.RANK_CHANGE)
+        .rankChange(island.getRank(target), RanksManager.VISITOR_RANK)
+        .build();
         return true;
     }
 }

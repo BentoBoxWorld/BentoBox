@@ -39,7 +39,7 @@ public class AdminRegisterCommand extends ConfirmableCommand {
             return false;
         }
         // Get target
-        UUID targetUUID = getPlayers().getUUID(args.get(0));
+        UUID targetUUID = Util.getUUID(args.get(0));
         if (targetUUID == null) {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
             return false;
@@ -93,12 +93,12 @@ public class AdminRegisterCommand extends ConfirmableCommand {
             .admin(true)
             .build();
             IslandEvent.builder()
-                    .island(i)
-                    .involvedPlayer(targetUUID)
-                    .admin(true)
-                    .reason(IslandEvent.Reason.RANK_CHANGE)
-                    .rankChange(RanksManager.VISITOR_RANK, RanksManager.OWNER_RANK)
-                    .build();
+            .island(i)
+            .involvedPlayer(targetUUID)
+            .admin(true)
+            .reason(IslandEvent.Reason.RANK_CHANGE)
+            .rankChange(RanksManager.VISITOR_RANK, RanksManager.OWNER_RANK)
+            .build();
             return true;
         }).orElse(false)) {
             // Island does not exist - this is a reservation

@@ -34,7 +34,7 @@ public class AdminRangeResetCommand extends CompositeCommand {
         }
 
         // Get target player
-        UUID targetUUID = getPlayers().getUUID(args.get(0));
+        UUID targetUUID = Util.getUUID(args.get(0));
         if (targetUUID == null) {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
             return false;
@@ -57,13 +57,13 @@ public class AdminRangeResetCommand extends CompositeCommand {
         if (oldRange != range) {
             // Call Protection Range Change event. Does not support cancelling.
             IslandEvent.builder()
-                .island(island)
-                .location(island.getCenter())
-                .reason(IslandEvent.Reason.RANGE_CHANGE)
-                .involvedPlayer(targetUUID)
-                .admin(true)
-                .protectionRange(range, oldRange)
-                .build();
+            .island(island)
+            .location(island.getCenter())
+            .reason(IslandEvent.Reason.RANGE_CHANGE)
+            .involvedPlayer(targetUUID)
+            .admin(true)
+            .protectionRange(range, oldRange)
+            .build();
         }
 
         user.sendMessage("commands.admin.range.reset.success", TextVariables.NUMBER, String.valueOf(range));
