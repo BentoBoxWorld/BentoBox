@@ -784,6 +784,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     /**
      * Checks if a command is hidden
      * @return the hidden
+     * @since 1.13.0
      */
     public boolean isHidden() {
         return hidden;
@@ -792,6 +793,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     /**
      * Sets a command and all its help and tab complete as hidden
      * @param hidden whether command is hidden or not
+     * @since 1.13.0
      */
     public void setHidden(boolean hidden) {
         this.hidden = hidden;
