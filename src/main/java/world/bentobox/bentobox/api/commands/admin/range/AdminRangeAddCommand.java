@@ -36,13 +36,13 @@ public class AdminRangeAddCommand extends CompositeCommand {
             return false;
         }
 
-        UUID target = getPlayers().getUUID(args.get(0));
-        if (target == null) {
+        UUID targetUUID = Util.getUUID(args.get(0));
+        if (targetUUID == null) {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
             return false;
         }
 
-        if (!(getIslands().hasIsland(getWorld(), target) || getIslands().inTeam(getWorld(), target))) {
+        if (!(getIslands().hasIsland(getWorld(), targetUUID) || getIslands().inTeam(getWorld(), targetUUID))) {
             user.sendMessage("general.errors.player-has-no-island");
             return false;
         }
@@ -52,7 +52,7 @@ public class AdminRangeAddCommand extends CompositeCommand {
             return false;
         }
 
-        Island island = getIslands().getIsland(getWorld(), target);
+        Island island = getIslands().getIsland(getWorld(), targetUUID);
         int newRange = island.getProtectionRange() + Integer.valueOf(args.get(1));
 
         if (newRange > island.getRange()) {
@@ -71,13 +71,13 @@ public class AdminRangeAddCommand extends CompositeCommand {
 
         // Call Protection Range Change event. Does not support cancelling.
         IslandEvent.builder()
-            .island(island)
-            .location(island.getCenter())
-            .reason(IslandEvent.Reason.RANGE_CHANGE)
-            .involvedPlayer(target)
-            .admin(true)
-            .protectionRange(newRange, oldRange)
-            .build();
+        .island(island)
+        .location(island.getCenter())
+        .reason(IslandEvent.Reason.RANGE_CHANGE)
+        .involvedPlayer(targetUUID)
+        .admin(true)
+        .protectionRange(newRange, oldRange)
+        .build();
 
         user.sendMessage("commands.admin.range.add.success",
                 TextVariables.NAME, args.get(0), TextVariables.NUMBER, args.get(1),

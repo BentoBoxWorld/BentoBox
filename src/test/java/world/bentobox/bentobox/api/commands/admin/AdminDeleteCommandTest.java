@@ -5,8 +5,8 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -36,6 +36,7 @@ import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlayersManager;
+import world.bentobox.bentobox.util.Util;
 
 /**
  * @author tastybento
@@ -60,6 +61,9 @@ public class AdminDeleteCommandTest {
         // Set up plugin
         BentoBox plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+
+        // Util
+        Util.setPlugin(plugin);
 
         // Command manager
         CommandsManager cm = mock(CommandsManager.class);
@@ -129,17 +133,17 @@ public class AdminDeleteCommandTest {
     }
 
     /**
-     * Test method for {@link AdminDeleteCommand#execute(User, String, java.util.List)
+     * Test method for {@link AdminDeleteCommand#canExecute(User, String, java.util.List)
      */
     @Test
     public void testExecuteNoTarget() {
         AdminDeleteCommand itl = new AdminDeleteCommand(ac);
-        assertFalse(itl.execute(user, itl.getLabel(), new ArrayList<>()));
+        assertFalse(itl.canExecute(user, itl.getLabel(), Collections.emptyList()));
         // Show help
     }
 
     /**
-     * Test method for {@link AdminDeleteCommand#execute(User, String, java.util.List)
+     * Test method for {@link AdminDeleteCommand#canExecute(User, String, java.util.List)
      */
     @Test
     public void testExecuteUnknownPlayer() {
@@ -151,7 +155,7 @@ public class AdminDeleteCommandTest {
     }
 
     /**
-     * Test method for {@link AdminDeleteCommand#execute(User, String, java.util.List)
+     * Test method for {@link AdminDeleteCommand#canExecute(User, String, java.util.List)
      */
     @Test
     public void testExecutePlayerNoIsland() {
@@ -164,7 +168,7 @@ public class AdminDeleteCommandTest {
     }
 
     /**
-     * Test method for {@link AdminDeleteCommand#execute(User, String, java.util.List)
+     * Test method for {@link AdminDeleteCommand#canExecute(User, String, java.util.List)
      */
     @Test
     public void testExecuteOwner() {
@@ -178,10 +182,49 @@ public class AdminDeleteCommandTest {
     }
 
     /**
+     * Test method for {@link AdminDeleteCommand#canExecute(User, String, java.util.List)
+     */
+    @Test
+    public void testcanExecuteSuccessUUID() {
+        when(im.inTeam(Mockito.any(), Mockito.any())).thenReturn(false);
+        when(im.getOwner(Mockito.any(), Mockito.any())).thenReturn(uuid);
+        Island is = mock(Island.class);
+        Location loc = mock(Location.class);
+        when(loc.toVector()).thenReturn(new Vector(123,123,432));
+        when(is.getCenter()).thenReturn(loc);
+        when(im.getIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(is);
+        // No such name
+        when(pm.getUUID(Mockito.any())).thenReturn(null);
+
+        AdminDeleteCommand itl = new AdminDeleteCommand(ac);
+        // Success because it's a valid UUID
+        assertTrue(itl.canExecute(user, itl.getLabel(), Collections.singletonList(uuid.toString())));
+    }
+    /**
+     * Test method for {@link AdminDeleteCommand#canExecute(User, String, java.util.List)
+     */
+    @Test
+    public void testExecuteFailUUID() {
+        when(im.inTeam(Mockito.any(), Mockito.any())).thenReturn(false);
+        when(im.getOwner(Mockito.any(), Mockito.any())).thenReturn(uuid);
+        Island is = mock(Island.class);
+        Location loc = mock(Location.class);
+        when(loc.toVector()).thenReturn(new Vector(123,123,432));
+        when(is.getCenter()).thenReturn(loc);
+        when(im.getIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(is);
+        // No such name
+        when(pm.getUUID(Mockito.any())).thenReturn(null);
+
+        AdminDeleteCommand itl = new AdminDeleteCommand(ac);
+        // Fail because it's not a UUID
+        assertFalse(itl.canExecute(user, itl.getLabel(), Collections.singletonList("not-A-UUID")));
+    }
+
+    /**
      * Test method for {@link AdminDeleteCommand#execute(User, String, java.util.List)
      */
     @Test
-    public void testExecuteSuccess() {
+    public void testCanExecuteSuccess() {
         when(im.inTeam(Mockito.any(), Mockito.any())).thenReturn(false);
         when(im.getOwner(Mockito.any(), Mockito.any())).thenReturn(uuid);
         Island is = mock(Island.class);
@@ -193,11 +236,14 @@ public class AdminDeleteCommandTest {
         when(pm.getUUID(Mockito.any())).thenReturn(notUUID);
 
         AdminDeleteCommand itl = new AdminDeleteCommand(ac);
-        // First requires confirmation
-        assertTrue(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
-        Mockito.verify(user).sendMessage("commands.confirmation.confirm", "[seconds]", "0");
+        assertTrue(itl.canExecute(user, itl.getLabel(), Arrays.asList(name)));
         // Confirm
         itl.execute(user, itl.getLabel(), Arrays.asList(name));
+        Mockito.verify(user).sendMessage("commands.confirmation.confirm", "[seconds]", "0");
     }
+
+
+
+
 
 }
