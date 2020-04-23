@@ -54,6 +54,11 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     private boolean configurableRankCommand = false;
 
     /**
+     * True if command is hidden from help and tab complete
+     */
+    private boolean hidden = false;
+
+    /**
      * The parameters string for this command. It is the commands followed by a locale reference.
      */
     private String parameters = "";
@@ -616,7 +621,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     }
 
     /**
-     * Returns a list containing all the labels of the subcommands for the provided CompositeCommand.
+     * Returns a list containing all the labels of the subcommands for the provided CompositeCommand excluding any hidden commands
      * @param sender the CommandSender
      * @param command the CompositeCommand to get the subcommands from
      * @return a list of subcommands labels or an empty list.
@@ -624,6 +629,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     @NonNull
     private List<String> getSubCommandLabels(@NonNull CommandSender sender, @NonNull CompositeCommand command) {
         return command.getSubCommands().values().stream()
+                .filter(cmd -> !cmd.isHidden())
                 .filter(cmd -> !cmd.isOnlyPlayer() || sender.isOp() || (sender instanceof Player && cmd.getPermission() != null && (cmd.getPermission().isEmpty() || sender.hasPermission(cmd.getPermission()))) )
                 .map(CompositeCommand::getLabel).collect(Collectors.toList());
     }
@@ -773,6 +779,22 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      */
     public void setConfigurableRankCommand() {
         this.configurableRankCommand = true;
+    }
+
+    /**
+     * Checks if a command is hidden
+     * @return the hidden
+     */
+    public boolean isHidden() {
+        return hidden;
+    }
+
+    /**
+     * Sets a command and all its help and tab complete as hidden
+     * @param hidden whether command is hidden or not
+     */
+    public void setHidden(boolean hidden) {
+        this.hidden = hidden;
     }
 
 }
