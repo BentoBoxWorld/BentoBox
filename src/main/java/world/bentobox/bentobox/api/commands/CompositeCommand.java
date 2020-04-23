@@ -55,6 +55,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
 
     /**
      * True if command is hidden from help and tab complete
+     * @since 1.13.0
      */
     private boolean hidden = false;
 
