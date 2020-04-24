@@ -21,6 +21,8 @@ import world.bentobox.bentobox.api.user.User;
 /**
  * This is default Admin command for console and op. It contains all necessary parts that
  * for main command.
+ * @since 1.13.0
+ * @author BONNe
  */
 public abstract class DefaultAdminCommand extends CompositeCommand
 {

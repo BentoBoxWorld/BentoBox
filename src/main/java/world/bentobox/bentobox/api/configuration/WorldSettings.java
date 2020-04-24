@@ -476,7 +476,7 @@ public interface WorldSettings extends ConfigObject {
      * @return String value
      * @since 1.13.0
      */
-    default String getAdminCommandAlias()
+    default String getAdminCommandAliases()
     {
         return this.getFriendlyName().toLowerCase() + "admin";
     }
@@ -490,7 +490,7 @@ public interface WorldSettings extends ConfigObject {
      * @return String value
      * @since 1.13.0
      */
-    default String getUserCommandAlias()
+    default String getIslandCommandAliases()
     {
         return this.getFriendlyName().toLowerCase();
     }
@@ -520,7 +520,7 @@ public interface WorldSettings extends ConfigObject {
      * @return name of default sub-command for main command if user does not have an island.
      * @since 1.13.0
      */
-    default String getDefaultUserSubCommand()
+    default String getDefaultIslandSubCommand()
     {
         return "create";
     }

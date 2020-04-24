@@ -14,6 +14,8 @@ import world.bentobox.bentobox.api.user.User;
 /**
  * This is default Island command for users. It contains all necessary parts for main
  * command.
+ * @since 1.13.0
+ * @author BONNe
  */
 public abstract class DefaultIslandCommand extends CompositeCommand
 {
