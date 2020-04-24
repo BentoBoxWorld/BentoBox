@@ -26,93 +26,93 @@ import world.bentobox.bentobox.api.user.User;
  */
 public abstract class DefaultAdminCommand extends CompositeCommand
 {
-	/**
-	 * This is the top-level command constructor for commands that have no parent.
-	 *
-	 * @param addon   - GameMode addon
-	 */
-	public DefaultAdminCommand(GameModeAddon addon)
-	{
-		// Register command with alias from config.
-		super(addon,
-			addon.getWorldSettings().getAdminCommandAlias().split(" ")[0],
-			addon.getWorldSettings().getAdminCommandAlias().split(" "));
-	}
+    /**
+     * This is the top-level command constructor for commands that have no parent.
+     *
+     * @param addon   - GameMode addon
+     */
+    public DefaultAdminCommand(GameModeAddon addon)
+    {
+        // Register command with alias from config.
+        super(addon,
+            addon.getWorldSettings().getAdminCommandAliases().split(" ")[0],
+            addon.getWorldSettings().getAdminCommandAliases().split(" "));
+    }
 
 
-	/**
-	 * Setups anything that is necessary for default main admin command.
-	 * @see world.bentobox.bentobox.api.commands.BentoBoxCommand#setup()
-	 */
-	@Override
-	public void setup()
-	{
-		this.setPermission("admin.*");
-		this.setOnlyPlayer(false);
+    /**
+     * Setups anything that is necessary for default main admin command.
+     * @see world.bentobox.bentobox.api.commands.BentoBoxCommand#setup()
+     */
+    @Override
+    public void setup()
+    {
+        this.setPermission("admin.*");
+        this.setOnlyPlayer(false);
 
-		this.setParametersHelp("commands.admin.help.parameters");
-		this.setDescription("commands.admin.help.description");
+        this.setParametersHelp("commands.admin.help.parameters");
+        this.setDescription("commands.admin.help.description");
 
-		new AdminVersionCommand(this);
-		new AdminTeleportCommand(this, "tp");
-		new AdminTeleportCommand(this, "tpnether");
-		new AdminTeleportCommand(this, "tpend");
-		new AdminGetrankCommand(this);
-		new AdminSetrankCommand(this);
-		new AdminInfoCommand(this);
-		// Team commands
-		new AdminTeamAddCommand(this);
-		new AdminTeamKickCommand(this);
-		new AdminTeamDisbandCommand(this);
-		new AdminTeamSetownerCommand(this);
-		// Schems
-		new AdminBlueprintCommand(this);
-		// Register/unregister islands
-		new AdminRegisterCommand(this);
-		new AdminUnregisterCommand(this);
-		// Range
-		new AdminRangeCommand(this);
-		// Resets
-		new AdminResetsCommand(this);
-		// Delete
-		new AdminDeleteCommand(this);
-		// Why
-		new AdminWhyCommand(this);
-		// Deaths
-		new AdminDeathsCommand(this);
-		// Reload
-		new AdminReloadCommand(this);
-		// Spawn
-		new AdminSetspawnCommand(this);
-		// Reset flags
-		new AdminResetFlagsCommand(this);
-		// Trash
-		//new AdminTrashCommand(this);
-		//new AdminEmptyTrashCommand(this);
-		//new AdminSwitchtoCommand(this);
-		// Switch
-		new AdminSwitchCommand(this);
-		// Purge
-		new AdminPurgeCommand(this);
-		// Settings
-		new AdminSettingsCommand(this);
-	}
+        new AdminVersionCommand(this);
+        new AdminTeleportCommand(this, "tp");
+        new AdminTeleportCommand(this, "tpnether");
+        new AdminTeleportCommand(this, "tpend");
+        new AdminGetrankCommand(this);
+        new AdminSetrankCommand(this);
+        new AdminInfoCommand(this);
+        // Team commands
+        new AdminTeamAddCommand(this);
+        new AdminTeamKickCommand(this);
+        new AdminTeamDisbandCommand(this);
+        new AdminTeamSetownerCommand(this);
+        // Schems
+        new AdminBlueprintCommand(this);
+        // Register/unregister islands
+        new AdminRegisterCommand(this);
+        new AdminUnregisterCommand(this);
+        // Range
+        new AdminRangeCommand(this);
+        // Resets
+        new AdminResetsCommand(this);
+        // Delete
+        new AdminDeleteCommand(this);
+        // Why
+        new AdminWhyCommand(this);
+        // Deaths
+        new AdminDeathsCommand(this);
+        // Reload
+        new AdminReloadCommand(this);
+        // Spawn
+        new AdminSetspawnCommand(this);
+        // Reset flags
+        new AdminResetFlagsCommand(this);
+        // Trash
+        //new AdminTrashCommand(this);
+        //new AdminEmptyTrashCommand(this);
+        //new AdminSwitchtoCommand(this);
+        // Switch
+        new AdminSwitchCommand(this);
+        // Purge
+        new AdminPurgeCommand(this);
+        // Settings
+        new AdminSettingsCommand(this);
+    }
 
 
-	/**
-	 * Defines what will be executed when this command is run.
-	 * @see world.bentobox.bentobox.api.commands.BentoBoxCommand#execute(User, String, List<String>)
-	 */
-	@Override
-	public boolean execute(User user, String label, List<String> args)
-	{
-		if (user != null && !args.isEmpty())
-		{
-			user.sendMessage("general.errors.unknown-command", TextVariables.LABEL, getTopLabel());
-			return false;
-		}
+    /**
+     * Defines what will be executed when this command is run.
+     * @see world.bentobox.bentobox.api.commands.BentoBoxCommand#execute(User, String, List<String>)
+     */
+    @Override
+    public boolean execute(User user, String label, List<String> args)
+    {
+        if (user != null && !args.isEmpty())
+        {
+            user.sendMessage("general.errors.unknown-command", TextVariables.LABEL, getTopLabel());
+            return false;
+        }
 
-		// By default run the attached help command, if it exists (it should)
-		return this.showHelp(this, user);
-	}
+        // By default run the attached help command, if it exists (it should)
+        return this.showHelp(this, user);
+    }
 }
