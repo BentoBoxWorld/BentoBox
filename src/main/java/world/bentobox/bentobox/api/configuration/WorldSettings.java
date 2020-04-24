@@ -483,14 +483,14 @@ public interface WorldSettings extends ConfigObject {
 
 
     /**
-     * Returns all aliases for main user command.
+     * Returns all aliases for main player command.
      * It is assumed that all aliases are split with whitespace between them.
      * String cannot be empty.
      * Default value: {@code getFriendlyName()} (to retain backward compatibility).
      * @return String value
      * @since 1.13.0
      */
-    default String getIslandCommandAliases()
+    default String getPlayerCommandAliases()
     {
         return this.getFriendlyName().toLowerCase();
     }
@@ -505,7 +505,7 @@ public interface WorldSettings extends ConfigObject {
      * @return name of default sub-command for main command if user does have an island.
      * @since 1.13.0
      */
-    default String getDefaultHasIslandSubCommand()
+    default String getDefaultPlayerAction()
     {
         return "go";
     }
@@ -513,14 +513,14 @@ public interface WorldSettings extends ConfigObject {
 
     /**
      * Returns default sub-command for users when they execute main user command and they
-     * does not have an island.
+     * do not have an island.
      * If defined sub-command does not exist in accessible user command list, then it will
      * still call "create" sub-command.
      * Default value: {@code "create"} (to retain backward compatibility)
      * @return name of default sub-command for main command if user does not have an island.
      * @since 1.13.0
      */
-    default String getDefaultIslandSubCommand()
+    default String getDefaultNewPlayerAction()
     {
         return "create";
     }

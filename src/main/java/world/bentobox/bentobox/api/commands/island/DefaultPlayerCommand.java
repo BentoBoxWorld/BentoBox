@@ -12,24 +12,23 @@ import world.bentobox.bentobox.api.user.User;
 
 
 /**
- * This is default Island command for users. It contains all necessary parts for main
- * command.
+ * This is default player command class. It contains all necessary parts for main /[gamemode] command.
  * @since 1.13.0
  * @author BONNe
  */
-public abstract class DefaultIslandCommand extends CompositeCommand
+public abstract class DefaultPlayerCommand extends CompositeCommand
 {
     /**
      * This is the top-level command constructor for commands that have no parent.
      *
      * @param addon   - GameMode addon
      */
-    public DefaultIslandCommand(GameModeAddon addon)
+    public DefaultPlayerCommand(GameModeAddon addon)
     {
         // Register command with alias from config.
         super(addon,
-            addon.getWorldSettings().getIslandCommandAliases().split(" ")[0],
-            addon.getWorldSettings().getIslandCommandAliases().split(" "));
+            addon.getWorldSettings().getPlayerCommandAliases().split(" ")[0],
+            addon.getWorldSettings().getPlayerCommandAliases().split(" "));
     }
 
 
@@ -105,7 +104,7 @@ public abstract class DefaultIslandCommand extends CompositeCommand
         if (this.getIslands().getIsland(this.getWorld(), user.getUniqueId()) != null)
         {
             // Default command if user has an island.
-            String command = this.<GameModeAddon>getAddon().getWorldSettings().getDefaultHasIslandSubCommand();
+            String command = this.<GameModeAddon>getAddon().getWorldSettings().getDefaultPlayerAction();
 
             // If command exists, the call it.
             // Otherwise, just use "go" command.
@@ -123,10 +122,10 @@ public abstract class DefaultIslandCommand extends CompositeCommand
         else
         {
             // Default command if user does not have an island.
-            String command = this.<GameModeAddon>getAddon().getWorldSettings().getDefaultIslandSubCommand();
+            String command = this.<GameModeAddon>getAddon().getWorldSettings().getDefaultNewPlayerAction();
 
             // If command exists, the call it.
-            // Otherwise, just use "go" command.
+            // Otherwise, just use "create" command.
             if (command != null && this.getSubCommand(command).isPresent())
             {
                 return this.getSubCommand(command).get().call(user, label, Collections.emptyList());
