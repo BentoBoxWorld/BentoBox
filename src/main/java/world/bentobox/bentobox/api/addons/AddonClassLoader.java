@@ -8,15 +8,12 @@ import java.net.URLClassLoader;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.InvalidDescriptionException;
-import org.bukkit.util.permissions.DefaultPermissions;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
@@ -31,7 +28,6 @@ import world.bentobox.bentobox.managers.AddonsManager;
  */
 public class AddonClassLoader extends URLClassLoader {
 
-    private static final String DEFAULT = ".default";
     private final Map<String, Class<?>> classes = new HashMap<>();
     private Addon addon;
     private AddonsManager loader;
@@ -70,31 +66,16 @@ public class AddonClassLoader extends URLClassLoader {
 
         addon = addonClass.getDeclaredConstructor().newInstance();
         addon.setDescription(asDescription(data));
-        // Set permissions
-        if (data.isConfigurationSection("permissions")) {
-            ConfigurationSection perms = data.getConfigurationSection("permissions");
-            perms.getKeys(true).forEach(perm -> {
-                if (perms.contains(perm + DEFAULT) && perms.contains(perm + ".description")) {
-                    registerPermission(perms, perm);
-                }
-            });
-        }
     }
 
-    private void registerPermission(ConfigurationSection perms, String perm) {
-        if (perms.getString(perm + DEFAULT) == null) {
-            Bukkit.getLogger().severe("Permission default is invalid : " + perms.getName());
-            return;
-        }
-        PermissionDefault pd = PermissionDefault.getByName(perms.getString(perm + DEFAULT));
-        if (pd == null) {
-            Bukkit.getLogger().severe("Permission default is invalid : " + perms.getName());
-            return;
-        }
-        String desc = perms.getString(perm + ".description");
-        DefaultPermissions.registerPermission(perm, desc, pd);
-    }
 
+
+    /**
+     * Convers the addon.yml to an AddonDescription
+     * @param data - yaml config (addon.yml)
+     * @return Addon Description
+     * @throws InvalidAddonDescriptionException - if there's a bug in the addon.yml
+     */
     @NonNull
     private AddonDescription asDescription(YamlConfiguration data) throws InvalidAddonDescriptionException {
         AddonDescription.Builder builder = new AddonDescription.Builder(data.getString("main"), data.getString("name"), data.getString("version"))
@@ -118,6 +99,10 @@ public class AddonClassLoader extends URLClassLoader {
                 throw new InvalidAddonDescriptionException("Provided API version '" + apiVersion + "' is not valid. It must only contain digits and dots and not end with a dot.");
             }
             builder.apiVersion(apiVersion);
+        }
+        // Set permissions
+        if (data.isConfigurationSection("permissions")) {
+            builder.permissions(Objects.requireNonNull(data.getConfigurationSection("permissions")));
         }
 
         return builder.build();
