@@ -334,7 +334,7 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
         // Null check
         if (instance == null) {
-            plugin.logError("YAML database request to store a null. ");
+            plugin.logError("YAML database request to store a null.");
             completableFuture.complete(false);
             return completableFuture;
         }
