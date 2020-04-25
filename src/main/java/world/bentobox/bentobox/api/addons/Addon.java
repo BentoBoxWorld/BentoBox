@@ -212,6 +212,14 @@ public abstract class Addon {
             Bukkit.getLogger().severe("Could not save config! " + this.getDescription().getName() + " " + e.getMessage());
         }
     }
+    
+    /**
+     * Discards any data in getConfig() and reloads from disk.
+     * @since 1.13.0
+     */
+    public void reloadConfig() {
+        config = loadYamlFile();
+    }
 
     /**
      * Saves the addon's config.yml file to the addon's data folder and loads it. If
