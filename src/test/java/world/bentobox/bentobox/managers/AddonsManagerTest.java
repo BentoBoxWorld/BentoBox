@@ -15,7 +15,6 @@ import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.nio.file.Files;
-import java.util.Collections;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;

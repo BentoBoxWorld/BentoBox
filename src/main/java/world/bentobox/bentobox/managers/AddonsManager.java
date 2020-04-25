@@ -52,7 +52,7 @@ public class AddonsManager {
 
     private static final String DEFAULT = ".default";
 
-    private static final String GAMEMODE = "[gamemode]";
+    private static final String GAMEMODE = "[gamemode].";
 
     @NonNull
     private List<Addon> addons;
@@ -193,7 +193,7 @@ public class AddonsManager {
         String desc = perms.getString(perm + ".description");
         // Replace placeholders for Game Mode Addon names
         if (perm.contains(GAMEMODE)) {
-            getGameModeAddons().stream().map(g -> g.getDescription().getName().toLowerCase())
+            getGameModeAddons().stream().map(g -> g.getPermissionPrefix())
             .forEach(p -> DefaultPermissions.registerPermission(perm.replace(GAMEMODE, p), desc, pd));
         } else {
             // Single perm
