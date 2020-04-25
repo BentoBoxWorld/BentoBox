@@ -5,7 +5,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.bukkit.Material;
+import org.bukkit.configuration.ConfigurationSection;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 
 /**
  * @author tastybento, Poslovitch
@@ -19,6 +21,7 @@ public final class AddonDescription {
     private final @NonNull List<String> authors;
     private final @NonNull List<String> dependencies;
     private final @NonNull List<String> softDependencies;
+    private final @Nullable ConfigurationSection permissions;
     /**
      * Whether the addon should be included in Metrics or not.
      * @since 1.1
@@ -54,6 +57,7 @@ public final class AddonDescription {
         this.repository = builder.repository;
         this.icon = builder.icon;
         this.apiVersion = builder.apiVersion;
+        this.permissions = builder.permissions;
     }
 
     @NonNull
@@ -150,6 +154,13 @@ public final class AddonDescription {
         return apiVersion;
     }
 
+    /**
+     * @return the permissions
+     */
+    public ConfigurationSection getPermissions() {
+        return permissions;
+    }
+
     public static class Builder {
         private @NonNull String main;
         private @NonNull String name;
@@ -162,6 +173,7 @@ public final class AddonDescription {
         private @NonNull String repository = "";
         private @NonNull Material icon = Material.PAPER;
         private @NonNull String apiVersion = "1";
+        private @Nullable ConfigurationSection permissions;
 
         /**
          * @since 1.1
@@ -242,6 +254,18 @@ public final class AddonDescription {
         @NonNull
         public AddonDescription build() {
             return new AddonDescription(this);
+        }
+
+        /**
+         * Sets the permission config section. Taken from the addon.yml
+         * @param permissions - YAML configuration section
+         * @return Builder
+         * @since 1.13.0
+         */
+        @NonNull
+        public Builder permissions(ConfigurationSection permissions) {
+            this.permissions = permissions;
+            return this;
         }
     }
 }
