@@ -694,6 +694,17 @@ public class IslandsManagerTest {
     }
 
     /**
+     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#getSafeHomeLocation(World, User, int)}.
+     * Ensures that the method returns {@code null} if the world is not an island world.
+     */
+    @Test
+    public void testGetSafeHomeLocationWorldNotIslandWorld() {
+        IslandsManager im = new IslandsManager(plugin);
+        when(iwm.inWorld(world)).thenReturn(false);
+        assertNull(im.getSafeHomeLocation(world, user, 0));
+    }
+
+    /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#getSpawnPoint(World)}.
      */
     @Test

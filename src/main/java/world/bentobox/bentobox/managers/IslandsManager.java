@@ -494,12 +494,17 @@ public class IslandsManager {
      * Determines a safe teleport spot on player's island or the team island
      * they belong to.
      *
-     * @param world - world to check
-     * @param user - the player
-     * @param number - a number - starting home location e.g., 1
-     * @return Location of a safe teleport spot or null if one cannot be found
+     * @param world - world to check, not null
+     * @param user - the player, not null
+     * @param number - a number - starting home location, e.g. 1
+     * @return Location of a safe teleport spot or {@code null} if one cannot be found or if the world is not an island world.
      */
     public Location getSafeHomeLocation(@NonNull World world, @NonNull User user, int number) {
+        // Check if the world is a gamemode world
+        if (!plugin.getIWM().inWorld(world)) {
+            return null;
+        }
+
         // Try the numbered home location first
         Location l = plugin.getPlayers().getHomeLocation(world, user, number);
 
