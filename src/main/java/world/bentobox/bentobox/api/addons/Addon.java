@@ -214,7 +214,8 @@ public abstract class Addon {
     }
     
     /**
-     * Discards any data in getConfig() and reloads from disk
+     * Discards any data in getConfig() and reloads from disk.
+     * @since 1.13.0
      */
     public void reloadConfig() {
         config = loadYamlFile();
