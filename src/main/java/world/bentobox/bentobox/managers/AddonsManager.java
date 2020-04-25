@@ -184,16 +184,16 @@ public class AddonsManager {
 
     void registerPermission(ConfigurationSection perms, String perm) throws InvalidAddonDescriptionException {
         if (perms.getString(perm + DEFAULT) == null) {
-            throw new InvalidAddonDescriptionException("Permission default is invalid : " + perms.getName());
+            throw new InvalidAddonDescriptionException("Permission default is invalid : " + perm + DEFAULT);
         }
         PermissionDefault pd = PermissionDefault.getByName(perms.getString(perm + DEFAULT));
         if (pd == null) {
-            throw new InvalidAddonDescriptionException("Permission default is invalid : " + perms.getName());
+            throw new InvalidAddonDescriptionException("Permission default is invalid : " + perm + DEFAULT);
         }
         String desc = perms.getString(perm + ".description");
         // Replace placeholders for Game Mode Addon names
         if (perm.contains(GAMEMODE)) {
-            this.getGameModeAddons().stream().map(g -> g.getDescription().getName().toLowerCase())
+            getGameModeAddons().stream().map(g -> g.getDescription().getName().toLowerCase())
             .forEach(p -> DefaultPermissions.registerPermission(perm.replace(GAMEMODE, p), desc, pd));
         } else {
             // Single perm
