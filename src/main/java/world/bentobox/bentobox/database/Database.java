@@ -86,6 +86,7 @@ public class Database<T> {
      * Save object async. Saving may be done sync, depending on the underlying database.
      * @param instance to save
      * @return true if no immediate errors. If async, errors may occur later.
+     * @since 1.13.0
      */
     public CompletableFuture<Boolean> saveObjectAsync(T instance) {
         try {
@@ -95,14 +96,13 @@ public class Database<T> {
             logger.severe(() -> "Could not save object to database! Error: " + e.getMessage());
             return new CompletableFuture<>();
         }
-
     }
 
     /**
      * Save object. Saving may be done async or sync, depending on the underlying database.
      * @param instance to save
      * @return true - always.
-     * @deprecated Use {@link #saveObjectAsync(Object)}
+     * @deprecated As of 1.13.0. Use {@link #saveObjectAsync(Object)}.
      */
     @Deprecated
     public boolean saveObject(T instance) {
