@@ -2,6 +2,7 @@ package world.bentobox.bentobox.database.mongodb;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import org.bson.Document;
 import org.bson.conversions.Bson;
@@ -106,15 +107,18 @@ public class MongoDBDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
     }
 
     @Override
-    public void saveObject(T instance) {
+    public CompletableFuture<Boolean> saveObject(T instance) {
+        CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
         // Null check
         if (instance == null) {
             plugin.logError("MongoDB database request to store a null. ");
-            return;
+            completableFuture.complete(false);
+            return completableFuture;
         }
         if (!(instance instanceof DataObject)) {
             plugin.logError("This class is not a DataObject: " + instance.getClass().getName());
-            return;
+            completableFuture.complete(false);
+            return completableFuture;
         }
         DataObject dataObj = (DataObject)instance;
         try {
@@ -129,10 +133,12 @@ public class MongoDBDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
             // Set the options to upsert (update or insert if doc is not there)
             FindOneAndReplaceOptions options = new FindOneAndReplaceOptions().upsert(true);
             // Do the deed
-            collection.findOneAndReplace(filter, document, options);
+            completableFuture.complete(collection.findOneAndReplace(filter, document, options) != null);
         } catch (Exception e) {
             plugin.logError("Could not save object " + instance.getClass().getName() + " " + e.getMessage());
+            completableFuture.complete(false);
         }
+        return completableFuture;
     }
 
     @Override

@@ -22,6 +22,7 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -325,19 +326,22 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      * Inserts T into the corresponding database-table
      *
      * @param instance that should be inserted into the database
+     * @return
      */
     @SuppressWarnings("unchecked")
     @Override
-    public void saveObject(T instance) throws IllegalAccessException, InvocationTargetException, IntrospectionException {
+    public CompletableFuture<Boolean> saveObject(T instance) throws IllegalAccessException, InvocationTargetException, IntrospectionException {
+        CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
         // Null check
         if (instance == null) {
-            plugin.logError("YAML database request to store a null.");
-            return;
+            plugin.logError("YAML database request to store a null. ");
+            completableFuture.complete(false);
+            return completableFuture;
         }
-        // DataObject check
         if (!(instance instanceof DataObject)) {
             plugin.logError("This class is not a DataObject: " + instance.getClass().getName());
-            return;
+            completableFuture.complete(false);
+            return completableFuture;
         }
         // This is the Yaml Configuration that will be used and saved at the end
         YamlConfiguration config = new YamlConfiguration();
@@ -414,16 +418,19 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         }
 
         // Save
-        save(filename, config.saveToString(), path, yamlComments);
+        save(completableFuture, filename, config.saveToString(), path, yamlComments);
+        return completableFuture;
     }
 
-    private void save(String name, String data, String path, Map<String, String> yamlComments) {
+    private void save(CompletableFuture<Boolean> completableFuture, String name, String data, String path, Map<String, String> yamlComments) {
         if (plugin.isEnabled()) {
             // Async
-            processQueue.add(() -> ((YamlDatabaseConnector)databaseConnector).saveYamlFile(data, path, name, yamlComments));
+            processQueue.add(() -> completableFuture.complete(
+                    ((YamlDatabaseConnector)databaseConnector).saveYamlFile(data, path, name, yamlComments)));
         } else {
             // Sync for shutdown
-            ((YamlDatabaseConnector)databaseConnector).saveYamlFile(data, path, name, yamlComments);
+            completableFuture.complete(
+                    ((YamlDatabaseConnector)databaseConnector).saveYamlFile(data, path, name, yamlComments));
         }
     }
 

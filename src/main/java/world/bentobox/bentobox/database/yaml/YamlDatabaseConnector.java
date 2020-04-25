@@ -116,7 +116,7 @@ public class YamlDatabaseConnector implements DatabaseConnector {
         }
     }
 
-    public void saveYamlFile(String data, String tableName, String fileName, Map<String, String> commentMap) {
+    boolean saveYamlFile(String data, String tableName, String fileName, Map<String, String> commentMap) {
         String name = fileName.endsWith(YML) ? fileName : fileName + YML;
         File tableFolder = new File(plugin.getDataFolder(), tableName);
         File file = new File(tableFolder, name);
@@ -127,11 +127,12 @@ public class YamlDatabaseConnector implements DatabaseConnector {
             writer.write(data);
         } catch (IOException e) {
             plugin.logError("Could not save yml file: " + tableName + " " + fileName + " " + e.getMessage());
-            return;
+            return false;
         }
         if (commentMap != null && !commentMap.isEmpty()) {
             commentFile(new File(tableFolder, name), commentMap);
         }
+        return true;
     }
 
     /**

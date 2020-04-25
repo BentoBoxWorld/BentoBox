@@ -9,6 +9,7 @@ import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 
@@ -39,7 +40,8 @@ public class HeadGetter {
                     Entry<String, PanelItem> en = it.next();
                     ItemStack playerSkull = new ItemStack(Material.PLAYER_HEAD, en.getValue().getItem().getAmount());
                     SkullMeta meta = (SkullMeta) playerSkull.getItemMeta();
-                    meta.setOwner(en.getKey());
+                    OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(en.getKey());
+                    meta.setOwningPlayer(offlinePlayer);
                     playerSkull.setItemMeta(meta);
                     // Save in cache
                     cachedHeads.put(en.getKey(), playerSkull);
@@ -66,6 +68,9 @@ public class HeadGetter {
             panelItem.setHead(cachedHeads.get(panelItem.getPlayerHeadName()).clone());
             requester.setHead(panelItem);
         } else {
+            BentoBox.getInstance().logDebug("Not in cache");
+            // Show Steve's head for now
+            panelItem.setHead(new ItemStack(Material.CREEPER_HEAD));
             // Get the name
             headRequesters.putIfAbsent(panelItem.getPlayerHeadName(), new HashSet<>());
             Set<HeadRequester> requesters = headRequesters.get(panelItem.getPlayerHeadName());

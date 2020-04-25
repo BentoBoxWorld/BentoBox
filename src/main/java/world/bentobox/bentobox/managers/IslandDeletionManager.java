@@ -68,7 +68,7 @@ public class IslandDeletionManager implements Listener {
         // Store location
         inDeletion.add(e.getDeletedIslandInfo().getLocation());
         // Save to database
-        handler.saveObject(e.getDeletedIslandInfo());
+        handler.saveObjectAsync(e.getDeletedIslandInfo());
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)

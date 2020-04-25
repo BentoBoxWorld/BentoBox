@@ -9,6 +9,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import org.bukkit.Bukkit;
 import org.eclipse.jdt.annotation.NonNull;
@@ -144,29 +145,34 @@ public class SQLDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
     }
 
     @Override
-    public void saveObject(T instance) {
+    public CompletableFuture<Boolean> saveObject(T instance) {
+        CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
         // Null check
         if (instance == null) {
             plugin.logError("SQL database request to store a null. ");
-            return;
+            completableFuture.complete(false);
+            return completableFuture;
         }
         if (!(instance instanceof DataObject)) {
             plugin.logError("This class is not a DataObject: " + instance.getClass().getName());
-            return;
+            completableFuture.complete(false);
+            return completableFuture;
         }
         // This has to be on the main thread to avoid concurrent modification errors
         String toStore = getGson().toJson(instance);
         // Async
-        processQueue.add(() -> store(instance.getClass().getName(), toStore, sqlConfig.getSaveObjectSQL()));
+        processQueue.add(() -> store(completableFuture, instance.getClass().getName(), toStore, sqlConfig.getSaveObjectSQL()));
+        return completableFuture;
     }
 
-    private void store(String name, String toStore, String sb) {
+    private void store(CompletableFuture<Boolean> completableFuture, String name, String toStore, String sb) {
         try (PreparedStatement preparedStatement = connection.prepareStatement(sb)) {
             preparedStatement.setString(1, toStore);
             preparedStatement.setString(2, toStore);
-            preparedStatement.execute();
+            completableFuture.complete(preparedStatement.execute());
         } catch (SQLException e) {
             plugin.logError("Could not save object " + name + " " + e.getMessage());
+            completableFuture.complete(false);
         }
     }
 

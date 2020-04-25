@@ -2,6 +2,7 @@ package world.bentobox.bentobox.database.sql.postgresql;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.concurrent.CompletableFuture;
 
 import com.google.gson.Gson;
 
@@ -51,15 +52,18 @@ public class PostgreSQLDatabaseHandler<T> extends SQLDatabaseHandler<T> {
      * @see world.bentobox.bentobox.database.sql.SQLDatabaseHandler#saveObject(java.lang.Object)
      */
     @Override
-    public void saveObject(T instance) {
+    public CompletableFuture<Boolean> saveObject(T instance) {
+        CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
         // Null check
         if (instance == null) {
-            plugin.logError("Postgres database request to store a null. ");
-            return;
+            plugin.logError("PostgreSQL database request to store a null. ");
+            completableFuture.complete(false);
+            return completableFuture;
         }
         if (!(instance instanceof DataObject)) {
             plugin.logError("This class is not a DataObject: " + instance.getClass().getName());
-            return;
+            completableFuture.complete(false);
+            return completableFuture;
         }
         Gson gson = getGson();
         String toStore = gson.toJson(instance);
@@ -69,10 +73,12 @@ public class PostgreSQLDatabaseHandler<T> extends SQLDatabaseHandler<T> {
                 preparedStatement.setString(1, uniqueId); // INSERT
                 preparedStatement.setString(2, toStore); // INSERT
                 preparedStatement.setString(3, toStore); // ON CONFLICT
-                preparedStatement.execute();
+                completableFuture.complete(preparedStatement.execute());
             } catch (SQLException e) {
                 plugin.logError("Could not save object " + instance.getClass().getName() + " " + e.getMessage());
+                completableFuture.complete(false);
             }
         });
+        return completableFuture;
     }
 }
