@@ -3,7 +3,13 @@ package world.bentobox.bentobox.database;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.framework;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.beans.IntrospectionException;
@@ -11,6 +17,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
 
@@ -21,7 +28,6 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -66,17 +72,22 @@ public class DatabaseTest {
         PowerMockito.mockStatic(DatabaseSetup.class);
         dbSetup = mock(DatabaseSetup.class);
         handler = mock(AbstractDatabaseHandler.class);
-        when(dbSetup.getHandler(Mockito.any())).thenReturn(handler);
+        when(dbSetup.getHandler(any())).thenReturn(handler);
         // Set the internal state of the static database variable to null for each test
         Whitebox.setInternalState(Database.class, "databaseSetup", dbSetup);
 
-        when(handler.loadObject(Mockito.anyString())).thenReturn(island);
+        when(handler.loadObject(anyString())).thenReturn(island);
         objectList = new ArrayList<>();
         objectList.add(mock(Island.class));
         objectList.add(mock(Island.class));
         objectList.add(mock(Island.class));
         objectList.add(mock(Island.class));
         when(handler.loadObjects()).thenReturn(objectList);
+
+        CompletableFuture<Boolean> completetableFuture = new CompletableFuture<>();
+        // Complete immediately in a positive way
+        completetableFuture.complete(true);
+        when(handler.saveObject(any())).thenReturn(completetableFuture);
     }
 
     /**
@@ -85,7 +96,7 @@ public class DatabaseTest {
     @After
     public void tearDown() throws Exception {
         dbSetup = null;
-        Mockito.framework().clearInlineMocks();
+        framework().clearInlineMocks();
     }
 
     /**
@@ -94,7 +105,7 @@ public class DatabaseTest {
      */
     private void checkSevereLog(String stringToCheck) {
         // This magic obtains the lambda from an argument
-        Mockito.verify(logger).severe(registerMessageLambdaCaptor.capture());
+        verify(logger).severe(registerMessageLambdaCaptor.capture());
         Supplier<String> lambda = registerMessageLambdaCaptor.getValue();
         assertEquals(stringToCheck,lambda.get());
     }
@@ -104,8 +115,8 @@ public class DatabaseTest {
     @Test
     public void testDatabaseBentoBoxClassOfT() {
         new Database<Island>(plugin, Island.class);
-        Mockito.verify(plugin).getLogger();
-        Mockito.verify(dbSetup).getHandler(Mockito.any());
+        verify(plugin).getLogger();
+        verify(dbSetup).getHandler(any());
     }
 
     /**
@@ -114,8 +125,8 @@ public class DatabaseTest {
     @Test
     public void testDatabaseAddonClassOfT() {
         new Database<Island>(addon, Island.class);
-        Mockito.verify(addon).getLogger();
-        Mockito.verify(dbSetup).getHandler(Mockito.any());
+        verify(addon).getLogger();
+        verify(dbSetup).getHandler(any());
     }
 
     /**
@@ -131,7 +142,7 @@ public class DatabaseTest {
     public void testLoadObjects() throws InstantiationException, IllegalAccessException, InvocationTargetException, ClassNotFoundException, NoSuchMethodException, IntrospectionException {
         Database<Island> db = new Database<Island>(plugin, Island.class);
         assertEquals(objectList, db.loadObjects());
-        Mockito.verify(handler).loadObjects();
+        verify(handler).loadObjects();
     }
 
     /**
@@ -148,7 +159,7 @@ public class DatabaseTest {
         when(handler.loadObjects()).thenThrow(new IllegalAccessException("No bad dog! No biscuit!"));
         Database<Island> db = new Database<Island>(plugin, Island.class);
         db.loadObjects();
-        Mockito.verify(handler).loadObjects();
+        verify(handler).loadObjects();
         checkSevereLog("Could not load objects from database! Error: No bad dog! No biscuit!");
 
     }
@@ -167,7 +178,7 @@ public class DatabaseTest {
         Database<Island> db = new Database<Island>(plugin, Island.class);
         String uniqueId = UUID.randomUUID().toString();
         assertEquals(island, db.loadObject(uniqueId));
-        Mockito.verify(handler).loadObject(Mockito.eq(uniqueId));
+        verify(handler).loadObject(eq(uniqueId));
     }
 
     /**
@@ -179,8 +190,9 @@ public class DatabaseTest {
     @Test
     public void testSaveObject() throws IllegalAccessException, InvocationTargetException, IntrospectionException {
         Database<Island> db = new Database<Island>(plugin, Island.class);
-        assertTrue(db.saveObject(island));
-        Mockito.verify(handler).saveObject(Mockito.eq(island));
+        db.saveObjectAsync(island);
+        verify(handler).saveObject(eq(island));
+
     }
 
     /**
@@ -190,10 +202,10 @@ public class DatabaseTest {
      * @throws IllegalAccessException
      */
     @Test
-    public void testSaveObjectFail() throws IllegalAccessException, InvocationTargetException, IntrospectionException {
-        Mockito.doThrow(new IntrospectionException("No means no!")).when(handler).saveObject(Mockito.any(Island.class));
+    public void testSaveObjectException() throws IllegalAccessException, InvocationTargetException, IntrospectionException {
+        doThrow(new IntrospectionException("No means no!")).when(handler).saveObject(any(Island.class));
         Database<Island> db = new Database<Island>(plugin, Island.class);
-        assertFalse(db.saveObject(island));
+        db.saveObjectAsync(island);
         checkSevereLog("Could not save object to database! Error: No means no!");
     }
 
@@ -202,8 +214,8 @@ public class DatabaseTest {
      */
     @Test
     public void testObjectExists() {
-        when(handler.objectExists(Mockito.eq("test"))).thenReturn(false);
-        when(handler.objectExists(Mockito.eq("exists"))).thenReturn(true);
+        when(handler.objectExists(eq("test"))).thenReturn(false);
+        when(handler.objectExists(eq("exists"))).thenReturn(true);
         Database<Island> db = new Database<Island>(plugin, Island.class);
         assertFalse(db.objectExists("test"));
         assertTrue(db.objectExists("exists"));
@@ -216,7 +228,7 @@ public class DatabaseTest {
     public void testDeleteID() {
         Database<Island> db = new Database<Island>(plugin, Island.class);
         db.deleteID("test");
-        Mockito.verify(handler).deleteID(Mockito.eq("test"));
+        verify(handler).deleteID(eq("test"));
     }
 
     /**
@@ -229,7 +241,7 @@ public class DatabaseTest {
     public void testDeleteObject() throws IllegalAccessException, InvocationTargetException, IntrospectionException {
         Database<Island> db = new Database<Island>(plugin, Island.class);
         db.deleteObject(island);
-        Mockito.verify(handler).deleteObject(Mockito.eq(island));
+        verify(handler).deleteObject(eq(island));
     }
 
     /**
@@ -240,7 +252,7 @@ public class DatabaseTest {
      */
     @Test
     public void testDeleteObjectFail() throws IllegalAccessException, InvocationTargetException, IntrospectionException {
-        Mockito.doThrow(new IllegalArgumentException("Wot?!")).when(handler).deleteObject(Mockito.any());
+        doThrow(new IllegalArgumentException("Wot?!")).when(handler).deleteObject(any());
         Database<Island> db = new Database<Island>(plugin, Island.class);
         db.deleteObject(island);
         checkSevereLog("Could not delete object! Error: Wot?!");
@@ -254,7 +266,7 @@ public class DatabaseTest {
     public void testClose() {
         Database<Island> db = new Database<Island>(plugin, Island.class);
         db.close();
-        Mockito.verify(handler).close();
+        verify(handler).close();
     }
 
 }

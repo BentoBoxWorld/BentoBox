@@ -3,6 +3,7 @@ package world.bentobox.bentobox.database.sql.sqlite;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.concurrent.CompletableFuture;
 
 import org.eclipse.jdt.annotation.NonNull;
 
@@ -39,15 +40,18 @@ public class SQLiteDatabaseHandler<T> extends SQLDatabaseHandler<T> {
     }
 
     @Override
-    public void saveObject(T instance) {
+    public CompletableFuture<Boolean> saveObject(T instance) {
+        CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
         // Null check
         if (instance == null) {
-            plugin.logError("MySQL database request to store a null. ");
-            return;
+            plugin.logError("SQLite database request to store a null. ");
+            completableFuture.complete(false);
+            return completableFuture;
         }
         if (!(instance instanceof DataObject)) {
             plugin.logError("This class is not a DataObject: " + instance.getClass().getName());
-            return;
+            completableFuture.complete(false);
+            return completableFuture;
         }
         Gson gson = getGson();
         String toStore = gson.toJson(instance);
@@ -56,11 +60,13 @@ public class SQLiteDatabaseHandler<T> extends SQLDatabaseHandler<T> {
                 preparedStatement.setString(1, toStore);
                 preparedStatement.setString(2, ((DataObject)instance).getUniqueId());
                 preparedStatement.setString(3, toStore);
-                preparedStatement.execute();
+                completableFuture.complete(preparedStatement.execute());
             } catch (SQLException e) {
                 plugin.logError("Could not save object " + instance.getClass().getName() + " " + e.getMessage());
+                completableFuture.complete(false);
             }
         });
+        return completableFuture;
     }
 
     @Override

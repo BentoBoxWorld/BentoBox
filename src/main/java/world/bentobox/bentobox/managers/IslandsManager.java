@@ -340,7 +340,7 @@ public class IslandsManager {
             // Set the delete flag which will prevent it from being loaded even if database deletion fails
             island.setDeleted(true);
             // Save the island
-            handler.saveObject(island);
+            handler.saveObjectAsync(island);
             // Delete the island
             handler.deleteObject(island);
             // Remove players from island
@@ -900,7 +900,7 @@ public class IslandsManager {
             plugin.logError(toQuarantine.size() + " islands could not be loaded successfully; moving to trash bin.");
             plugin.logError(unowned + " are unowned, " + owned + " are owned.");
 
-            toQuarantine.forEach(handler::saveObject);
+            toQuarantine.forEach(handler::saveObjectAsync);
             // Check if there are any islands with duplicate islands
             Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
                 Set<UUID> duplicatedUUIDRemovedSet = new HashSet<>();
@@ -1004,7 +1004,7 @@ public class IslandsManager {
     public void removePlayer(World world, UUID uuid) {
         Island island = islandCache.removePlayer(world, uuid);
         if (island != null) {
-            handler.saveObject(island);
+            handler.saveObjectAsync(island);
         }
     }
 
@@ -1037,7 +1037,7 @@ public class IslandsManager {
         Collection<Island> collection = islandCache.getIslands();
         for(Island island : collection){
             try {
-                handler.saveObject(island);
+                handler.saveObjectAsync(island);
             } catch (Exception e) {
                 plugin.logError("Could not save island to database when running sync! " + e.getMessage());
             }
@@ -1072,7 +1072,7 @@ public class IslandsManager {
         teamIsland.addMember(playerUUID);
         islandCache.addPlayer(playerUUID, teamIsland);
         // Save the island
-        handler.saveObject(teamIsland);
+        handler.saveObjectAsync(teamIsland);
     }
 
     public void setLast(Location last) {
@@ -1198,7 +1198,7 @@ public class IslandsManager {
      * @param island - island
      */
     public void save(Island island) {
-        handler.saveObject(island);
+        handler.saveObjectAsync(island);
     }
 
     /**
@@ -1290,10 +1290,9 @@ public class IslandsManager {
             // Put old island into trash
             quarantineCache.computeIfAbsent(target, k -> new ArrayList<>()).add(oldIsland);
             // Save old island
-            if (!handler.saveObject(oldIsland)) {
-                plugin.logError("Could not save trashed island in database");
-                return false;
-            }
+            handler.saveObjectAsync(oldIsland).thenAccept(result -> {
+                if (!result)  plugin.logError("Could not save trashed island in database");
+            });
         }
         // Restore island from trash
         island.setDoNotLoad(false);
@@ -1303,10 +1302,9 @@ public class IslandsManager {
             return false;
         }
         // Save new island
-        if (!handler.saveObject(island)) {
-            plugin.logError("Could not save recovered island to database");
-            return false;
-        }
+        handler.saveObjectAsync(island).thenAccept(result -> {
+            if (!result)  plugin.logError("Could not save recovered island to database");
+        });
         return true;
     }
 

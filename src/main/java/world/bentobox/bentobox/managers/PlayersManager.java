@@ -72,7 +72,7 @@ public class PlayersManager {
      * Save all players
      */
     public void saveAll(){
-        Collections.unmodifiableCollection(playerCache.values()).forEach(handler::saveObject);
+        Collections.unmodifiableCollection(playerCache.values()).forEach(handler::saveObjectAsync);
     }
 
     /**
@@ -281,7 +281,7 @@ public class PlayersManager {
         playerCache.get(user.getUniqueId()).setPlayerName(user.getName());
         Names newName = new Names(user.getName(), user.getUniqueId());
         // Add to names database
-        names.saveObject(newName);
+        names.saveObjectAsync(newName);
     }
 
     /**
@@ -425,7 +425,7 @@ public class PlayersManager {
      */
     public void save(UUID playerUUID) {
         if (playerCache.containsKey(playerUUID)) {
-            handler.saveObject(playerCache.get(playerUUID));
+            handler.saveObjectAsync(playerCache.get(playerUUID));
         }
     }
 

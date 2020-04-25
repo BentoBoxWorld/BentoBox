@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 
 import org.eclipse.jdt.annotation.NonNull;
 
@@ -97,15 +98,18 @@ public class JSONDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
     }
 
     @Override
-    public void saveObject(T instance) throws IllegalAccessException, InvocationTargetException, IntrospectionException {
+    public CompletableFuture<Boolean> saveObject(T instance) throws IntrospectionException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+        CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
         // Null check
         if (instance == null) {
             plugin.logError("JSON database request to store a null. ");
-            return;
+            completableFuture.complete(false);
+            return completableFuture;
         }
         if (!(instance instanceof DataObject)) {
             plugin.logError("This class is not a DataObject: " + instance.getClass().getName());
-            return;
+            completableFuture.complete(false);
+            return completableFuture;
         }
         String path = DATABASE_FOLDER_NAME + File.separator + dataObject.getSimpleName();
 
@@ -123,14 +127,15 @@ public class JSONDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
         String toStore = getGson().toJson(instance);
         if (plugin.isEnabled()) {
             // Async
-            processQueue.add(() -> store(toStore, file, tableFolder, fileName));
+            processQueue.add(() -> store(completableFuture, toStore, file, tableFolder, fileName));
         } else {
             // Sync
-            store(toStore, file, tableFolder, fileName);
+            store(completableFuture, toStore, file, tableFolder, fileName);
         }
+        return completableFuture;
     }
 
-    private void store(String toStore, File file, File tableFolder, String fileName) {
+    private void store(CompletableFuture<Boolean> completableFuture, String toStore, File file, File tableFolder, String fileName) {
         try (FileWriter fileWriter = new FileWriter(file)) {
             File tmpFile = new File(tableFolder, fileName + ".bak");
             if (file.exists()) {
@@ -139,8 +144,10 @@ public class JSONDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
             }
             fileWriter.write(toStore);
             Files.deleteIfExists(tmpFile.toPath());
+            completableFuture.complete(true);
         } catch (IOException e) {
             plugin.logError("Could not save JSON file: " + tableFolder.getName() + " " + fileName + " " + e.getMessage());
+            completableFuture.complete(false);
         }
     }
 

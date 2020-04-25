@@ -3,6 +3,7 @@ package world.bentobox.bentobox.database.transition;
 import java.beans.IntrospectionException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import org.eclipse.jdt.annotation.Nullable;
 
@@ -83,9 +84,9 @@ public class TransitionDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      * @see world.bentobox.bentobox.database.AbstractDatabaseHandler#saveObject(java.lang.Object)
      */
     @Override
-    public void saveObject(T instance) throws IllegalAccessException, InvocationTargetException, IntrospectionException {
+    public CompletableFuture<Boolean> saveObject(T instance) throws IllegalAccessException, InvocationTargetException, IntrospectionException {
         // Save only in the destination database
-        toHandler.saveObject(instance);
+        return toHandler.saveObject(instance);
     }
 
     /* (non-Javadoc)

@@ -4,6 +4,7 @@ import java.beans.IntrospectionException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Queue;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.bukkit.Bukkit;
@@ -143,7 +144,7 @@ public abstract class AbstractDatabaseHandler<T> {
      *
      * @param instance that should be inserted into the database
      */
-    public abstract void saveObject(T instance) throws IllegalAccessException, InvocationTargetException, IntrospectionException ;
+    public abstract CompletableFuture<Boolean> saveObject(T instance) throws IllegalAccessException, InvocationTargetException, IntrospectionException ;
 
     /**
      * Deletes the object with the unique id from the database. If the object does not exist, it will fail silently.
