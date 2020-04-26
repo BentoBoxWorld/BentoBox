@@ -1392,6 +1392,14 @@ protection:
         Remplacez le drapeau Break Blocks.
       name: Briser les géniteurs
       hint: Rupture du géniteur désactivée
+    LIMIT_MOBS:
+      description: |-
+        &a Limiter les entités de
+        &a spawn dans ce mode
+        &a de jeu.
+      name: "&e Limiter le type d'entité qui peut spawn"
+      can: "&a Peut spawn"
+      cannot: "&c Ne peut pas spawn"
   locked: "& c Cette île est verrouillée!"
   panel:
     flag-item:
