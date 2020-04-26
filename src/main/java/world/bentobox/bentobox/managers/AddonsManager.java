@@ -172,7 +172,7 @@ public class AddonsManager {
 
     void setPerms(Addon addon) {
         ConfigurationSection perms = addon.getDescription().getPermissions();
-        perms.getKeys(true).parallelStream().filter(perm -> perms.contains(perm + DEFAULT) && perms.contains(perm + ".description"))
+        perms.getKeys(true).stream().filter(perm -> perms.contains(perm + DEFAULT) && perms.contains(perm + ".description"))
         .forEach(perm -> {
             try {
                 registerPermission(perms, perm);
