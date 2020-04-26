@@ -170,25 +170,26 @@ public class AddonsManager {
         plugin.log("Addons successfully enabled.");
     }
 
-    void setPerms(Addon addon) {
+    boolean setPerms(Addon addon) {
         ConfigurationSection perms = addon.getDescription().getPermissions();
-        perms.getKeys(true).stream().filter(perm -> perms.contains(perm + DEFAULT) && perms.contains(perm + ".description"))
-        .forEach(perm -> {
-            try {
-                registerPermission(perms, perm);
-            } catch (InvalidAddonDescriptionException e) {
-                plugin.logError("Addon " + addon.getDescription().getName() + ": " + e.getMessage());
+        if (perms == null) return false;
+        for (String perm : perms.getKeys(true)) {
+            // Only try to register perms for end nodes
+            if (perms.contains(perm + DEFAULT) && perms.contains(perm + ".description")) {
+                try {
+                    registerPermission(perms, perm);
+                } catch (InvalidAddonDescriptionException e) {
+                    plugin.logError("Addon " + addon.getDescription().getName() + ": " + e.getMessage());
+                }
             }
-        });
+        }
+        return true;
     }
 
     void registerPermission(ConfigurationSection perms, String perm) throws InvalidAddonDescriptionException {
-        if (perms.getString(perm + DEFAULT) == null) {
-            throw new InvalidAddonDescriptionException("Permission default is invalid : " + perm + DEFAULT);
-        }
         PermissionDefault pd = PermissionDefault.getByName(perms.getString(perm + DEFAULT));
         if (pd == null) {
-            throw new InvalidAddonDescriptionException("Permission default is invalid : " + perm + DEFAULT);
+            throw new InvalidAddonDescriptionException("Permission default is invalid in addon.yml: " + perm + DEFAULT);
         }
         String desc = perms.getString(perm + ".description");
         // Replace placeholders for Game Mode Addon names

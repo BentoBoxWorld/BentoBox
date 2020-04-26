@@ -350,6 +350,71 @@ public class AddonsManagerTest {
         assertFalse(am.isAddonCompatibleWithBentoBox(addon, "1.11.1"));
     }
 
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#setPerms(Addon)}
+     * @throws InvalidAddonDescriptionException
+     * @throws InvalidConfigurationException
+     */
+    @Test
+    public void testSetPermsNoPerms() {
+        Addon addon = mock(Addon.class);
+        AddonDescription addonDesc = new AddonDescription.Builder("main.class", "Addon-name", "1.0.0").apiVersion("1.11.1.0.0.0.1").build();
+        when(addon.getDescription()).thenReturn(addonDesc);
+        assertFalse(am.setPerms(addon));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#setPerms(Addon)}
+     * @throws InvalidAddonDescriptionException
+     * @throws InvalidConfigurationException
+     */
+    @Test
+    public void testSetPermsHasPerms() throws InvalidConfigurationException {
+        String perms =
+                "  '[gamemode].intopten':\n" +
+                        "    description: Player is in the top ten.\n" +
+                        "    default: true\n";
+        YamlConfiguration config = new YamlConfiguration();
+        config.loadFromString(perms);
+        GameModeAddon addon = new MyGameMode();
+        AddonDescription addonDesc = new AddonDescription.Builder("main.class", "mygame", "1.0.0").apiVersion("1.11.1.0.0.0.1")
+                .permissions(config)
+                .build();
+        addon.setDescription(addonDesc);
+        addon.setState(State.ENABLED);
+        am.getAddons().add(addon);
+
+        assertTrue(am.setPerms(addon));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#setPerms(Addon)}
+     * @throws InvalidAddonDescriptionException
+     * @throws InvalidConfigurationException
+     */
+    @Test
+    public void testSetPermsHasPermsError() throws InvalidConfigurationException {
+        String perms =
+                "  '[gamemode].intopten':\n" +
+                        "    description: Player is in the top ten.\n" +
+                        "    default: trudsfgsde\n";
+        YamlConfiguration config = new YamlConfiguration();
+        config.loadFromString(perms);
+        GameModeAddon addon = new MyGameMode();
+        AddonDescription addonDesc = new AddonDescription.Builder("main.class", "mygame", "1.0.0").apiVersion("1.11.1.0.0.0.1")
+                .permissions(config)
+                .build();
+        addon.setDescription(addonDesc);
+        addon.setState(State.ENABLED);
+        am.getAddons().add(addon);
+
+        assertTrue(am.setPerms(addon));
+        verify(plugin).logError(eq("Addon mygame: AddonException : Permission default is invalid in addon.yml: [gamemode].intopten.default"));
+    }
+
+
+
     /**
      * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#registerPermission(org.bukkit.configuration.ConfigurationSection, String)}
      * @throws InvalidAddonDescriptionException
