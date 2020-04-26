@@ -156,16 +156,4 @@ public class BentoBoxReloadCommandTest {
                 "commands.help.console"
                 );
     }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.commands.BentoBoxReloadCommand#tabComplete(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
-     */
-    @Test
-    public void testTabCompleteUserStringListOfString() {
-        List<String> tabs = reload.tabComplete(user, "", Collections.emptyList()).get();
-        assertTrue(tabs.size() == 2);
-        assertTrue(tabs.contains("BSkyBlock"));
-        assertTrue(tabs.contains("AcidIsland"));
-    }
-
 }
