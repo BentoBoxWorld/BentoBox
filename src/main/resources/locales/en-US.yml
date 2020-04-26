@@ -401,6 +401,8 @@ commands:
       addon-reloaded: "[prefix_bentobox]&b [name] &2 reloaded."
       warning: "[prefix_bentobox]&c Warning: Reloading may cause instability, so if you see errors afterwards, restart the server."
       unknown-addon: "[prefix_bentobox]&c Unknown addon!"
+      locales:
+        description: "reloads locales"
     version:
       plugin-version: "&2 BentoBox version: &3 [version]"
       description: "displays BentoBox and addons versions"

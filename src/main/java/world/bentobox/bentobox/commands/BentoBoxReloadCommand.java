@@ -10,6 +10,7 @@ import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.events.BentoBoxReadyEvent;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.commands.reload.BentoBoxReloadLocalesCommand;
 import world.bentobox.bentobox.listeners.PanelListenerManager;
 
 /**
@@ -32,6 +33,8 @@ public class BentoBoxReloadCommand extends ConfirmableCommand {
         setPermission("bentobox.admin.reload");
         setParametersHelp("commands.bentobox.reload.parameters");
         setDescription("commands.bentobox.reload.description");
+
+        new BentoBoxReloadLocalesCommand(this);
     }
 
     @Override
