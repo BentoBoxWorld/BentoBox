@@ -34,7 +34,6 @@ public class BentoBoxReloadCommand extends ConfirmableCommand {
         setDescription("commands.bentobox.reload.description");
     }
 
-
     @Override
     public boolean execute(User user, String label, List<String> args) {
         if (args.isEmpty()) {
@@ -61,10 +60,5 @@ public class BentoBoxReloadCommand extends ConfirmableCommand {
             showHelp(this, user);
         }
         return true;
-    }
-
-    @Override
-    public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
-        return Optional.of(getPlugin().getAddonsManager().getAddons().stream().map(a -> a.getDescription().getName()).collect(Collectors.toList()));
     }
 }
