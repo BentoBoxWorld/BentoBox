@@ -52,11 +52,11 @@ public class AdminUnregisterCommand extends ConfirmableCommand {
         // Get target
         UUID targetUUID = getPlayers().getUUID(args.get(0));
         // Everything's fine, we can set the island as spawn :)
-        askConfirmation(user,  () -> unregisterPlayer(user, targetUUID));
+        askConfirmation(user,  () -> unregisterPlayer(user, args.get(0), targetUUID));
         return true;
     }
 
-    void unregisterPlayer(User user, UUID targetUUID) {
+    void unregisterPlayer(User user, String targetName, UUID targetUUID) {
         // Unregister island
         Island oldIsland = getIslands().getIsland(getWorld(), targetUUID);
         if (oldIsland == null) return;
@@ -82,7 +82,8 @@ public class AdminUnregisterCommand extends ConfirmableCommand {
         // Remove all island players that reference this island
         oldIsland.getMembers().clear();
         getIslands().save(oldIsland);
-        user.sendMessage("commands.admin.unregister.unregistered-island", "[xyz]", Util.xyz(oldIsland.getCenter().toVector()));
+        user.sendMessage("commands.admin.unregister.unregistered-island", "[xyz]", Util.xyz(oldIsland.getCenter().toVector()),
+                TextVariables.NAME, targetName);
     }
 
     @Override

@@ -87,8 +87,8 @@ commands:
       protect:
         description: "toggle island purge protection"
         move-to-island: "&c Move to an island first!"
-        protecting: "&a Purge-protecting island"
-        unprotecting: "&a Removing purge protection"
+        protecting: "&a Protecting island from purge."
+        unprotecting: "&a Removing purge protection."
       stop:
         description: "stop a purge in progress"
         stopping: "Stopping the purge"
@@ -125,7 +125,7 @@ commands:
         already-owner: "&c [name] is already the owner of this island!"
         success: "&b [name]&a  is now the owner of this island."
     range:
-      description: "Admin island range command"
+      description: "admin island range command"
       invalid-value:
         too-low: "&c The protection range must be greater than &b 1&c !"
         too-high: "&c The protection range should be equal or less than &b [number]&c !"
@@ -159,8 +159,8 @@ commands:
     register:
       parameters: "<player>"
       description: "register player to unowned island you are on"
-      registered-island: "&a Registered player to island at [xyz]."
-      reserved-island: "&a Reserved island at [xyz] for player."
+      registered-island: "&a Registered [name] to island at [xyz]."
+      reserved-island: "&a Reserved island at [xyz] for [name]."
       already-owned: "&c Island is already owned by another player!"
       no-island-here: "&c There is no island here. Confirm to make one."
       in-deletion: "&c This island space is currently being deleted. Try later."
@@ -169,7 +169,7 @@ commands:
     unregister:
       parameters: "<owner>"
       description: "unregister owner from island, but keep island blocks"
-      unregistered-island: "&a Unregistered player from island at [xyz]."
+      unregistered-island: "&a Unregistered [name] from island at [xyz]."
     info:
       parameters: "<player>"
       description: "get info on where you are or player's island"
@@ -241,7 +241,7 @@ commands:
       not-possible: "&c Rank must be higher than visitor."
       rank-set: "&a Rank set from &b [from] &a to &b [to] &a on &b [name]&a 's island."
     setspawn:
-      description: "set an island as spawn for this world"
+      description: "set an island as spawn for this gamemode"
       already-spawn: "&c This island is already a spawn!"
       no-island-here: "&c There is no island here."
       confirmation: "&c Are you sure you want to set this island as the spawn for this world?"
@@ -450,7 +450,7 @@ commands:
     spawn:
       description: "teleport you to the spawn"
       teleporting: "&a Teleporting you to the spawn."
-      no-spawn: "&c There is no spawn in this world."
+      no-spawn: "&c There is no spawn in this gamemode."
     create:
       description: "create an island, using optional blueprint (requires permission)"
       parameters: "<blueprint>"
@@ -568,14 +568,14 @@ commands:
         success: "&b [name] &a is no longer trusted on your island."
       invite:
         description: "invite a player to join your island"
-        invitation-sent: "&a Invitation sent to [name]"
-        removing-invite: "&c Removing invite"
+        invitation-sent: "&a Invitation sent to &b[name]&a."
+        removing-invite: "&c Removing invite."
         name-has-invited-you: "&a [name] has invited you to join their island."
         to-accept-or-reject: "&a Do /[label] team accept to accept, or /[label] team reject to reject"
         you-will-lose-your-island: "&c WARNING! You will lose your island if you accept!"
         errors:
           cannot-invite-self: "&c You cannot invite yourself!"
-          cooldown: "&c You cannot invite that person for another [number] seconds"
+          cooldown: "&c You cannot invite that person for another [number] seconds."
           island-is-full: "&c Your island is full, you can't invite anyone else."
           none-invited-you: "&c No one invited you :c."
           you-already-are-in-team: "&c You are already on a team!"

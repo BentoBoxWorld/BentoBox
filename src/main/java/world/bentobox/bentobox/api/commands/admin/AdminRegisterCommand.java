@@ -67,14 +67,13 @@ public class AdminRegisterCommand extends ConfirmableCommand {
         }
         // Check if island is spawn
         if (island.map(Island::isSpawn).orElse(false)) {
-            askConfirmation(user, user.getTranslation("commands.admin.register.island-is-spawn"), () -> register(user, targetUUID, island, closestIsland));
+            askConfirmation(user, user.getTranslation("commands.admin.register.island-is-spawn"), () -> register(user, args.get(0), targetUUID, island, closestIsland));
             return false;
         }
-        return register(user, targetUUID, island, closestIsland);
-
+        return register(user, args.get(0),targetUUID, island, closestIsland);
     }
 
-    private boolean register(User user, UUID targetUUID, Optional<Island> island, Location closestIsland) {
+    private boolean register(User user, String targetName, UUID targetUUID, Optional<Island> island, Location closestIsland) {
         // Register island if it exists
         if (!island.map(i -> {
             // Island exists
@@ -82,7 +81,8 @@ public class AdminRegisterCommand extends ConfirmableCommand {
             if (i.isSpawn()) {
                 getIslands().clearSpawn(i.getWorld());
             }
-            user.sendMessage("commands.admin.register.registered-island", "[xyz]", Util.xyz(i.getCenter().toVector()));
+            user.sendMessage("commands.admin.register.registered-island", "[xyz]", Util.xyz(i.getCenter().toVector()),
+                    TextVariables.NAME, targetName);
             user.sendMessage("general.success");
             // Build and call event
             IslandEvent.builder()
@@ -113,7 +113,8 @@ public class AdminRegisterCommand extends ConfirmableCommand {
                 getIslands().setOwner(user, targetUUID, i);
                 i.setReserved(true);
                 i.getCenter().getBlock().setType(Material.BEDROCK);
-                user.sendMessage("commands.admin.register.reserved-island", "[xyz]", Util.xyz(i.getCenter().toVector()));
+                user.sendMessage("commands.admin.register.reserved-island", "[xyz]", Util.xyz(i.getCenter().toVector()),
+                        TextVariables.NAME, targetName);
                 // Build and fire event
                 IslandEvent.builder()
                 .island(i)
@@ -126,7 +127,6 @@ public class AdminRegisterCommand extends ConfirmableCommand {
             return false;
         }
         return true;
-
     }
 
     @Override
