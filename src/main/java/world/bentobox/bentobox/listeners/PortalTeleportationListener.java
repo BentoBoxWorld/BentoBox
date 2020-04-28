@@ -6,8 +6,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -16,6 +18,7 @@ import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.blueprints.Blueprint;
@@ -46,14 +49,45 @@ public class PortalTeleportationListener implements Listener {
      * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void onEntityPortal(EntityPortalEvent e) {
-        plugin.logDebug(e.getEventName());
+    public boolean onEntityNetherPortal(EntityPortalEvent e) {
+        if (e.getFrom().getWorld() == null
+                || !plugin.getIWM().inWorld(e.getFrom().getWorld())) {
+            return false;
+        }
+        /*
+        // Check flag
+        if (!Flags.ENTITY_TELEPORT.isSetForWorld(Util.getWorld(e.getFrom().getWorld()))) {
+            e.setCancelled(true);
+            return false;
+        }
         if (plugin.getIWM().inWorld(e.getFrom()) && !e.getEntityType().equals(EntityType.DROPPED_ITEM)) {
             plugin.logDebug("In world and not a dropped item");
             plugin.logDebug("Flag " + Flags.ENTITY_TELEPORT.isSetForWorld(Util.getWorld(e.getFrom().getWorld())));
             // Disable dropped item due to dupe glitching
             e.setCancelled(!Flags.ENTITY_TELEPORT.isSetForWorld(Util.getWorld(e.getFrom().getWorld())));
+        }*/
+        Location from = e.getFrom();
+        World overWorld = Util.getWorld(from.getWorld());
+
+        // Standard nether check
+        // STANDARD Environment
+        if (plugin.getIWM().isNetherGenerate(overWorld) && !plugin.getIWM().isNetherIslands(overWorld)) {
+            if (from.getWorld().getEnvironment() != Environment.NETHER) {
+                // To nether
+                e.setTo(plugin.getIWM().getNetherWorld(overWorld).getSpawnLocation());
+                return true;
+            }
+            return false;
         }
+
+        // We will handle this event
+        e.setCancelled(true);
+
+        return portalCheck(from, overWorld, e.getEntity(),
+                plugin.getIWM().isNetherGenerate(overWorld),
+                plugin.getIWM().getNetherWorld(overWorld));
+
+
     }
 
     /**
@@ -62,88 +96,25 @@ public class PortalTeleportationListener implements Listener {
      */
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public boolean onEndIslandPortal(PlayerPortalEvent e) {
-        if (e.getCause() != TeleportCause.END_PORTAL) {
+        if (e.getCause() != TeleportCause.END_PORTAL || e.getFrom().getWorld() == null
+                || !plugin.getIWM().inWorld(e.getFrom().getWorld())) {
             return false;
         }
-        World fromWorld = e.getFrom().getWorld();
-        World overWorld = Util.getWorld(fromWorld);
+        Location from = e.getFrom();
+        World overWorld = Util.getWorld(from.getWorld());
 
-        if (fromWorld == null || !plugin.getIWM().inWorld(overWorld)) {
-            // Do nothing special
-            return false;
+        // Standard end check
+        if (plugin.getIWM().isEndGenerate(overWorld) && !plugin.getIWM().isEndIslands(overWorld)) {
+            Location to = from.getWorld().getEnvironment() != Environment.THE_END ? plugin.getIWM().getNetherWorld(overWorld).getSpawnLocation() : null;
+            return standardTeleport(e, from.getWorld(), overWorld, to);
         }
 
-        // 1.14.4 requires explicit cancellation to prevent teleporting to the normal nether
-        if (!plugin.getIWM().isEndGenerate(overWorld)) {
-            e.setCancelled(true);
-            return false;
-        }
-
-        // STANDARD END
-        if (!plugin.getIWM().isEndIslands(overWorld)) {
-            if (fromWorld.getEnvironment() != Environment.THE_END) {
-                // To Standard end
-                e.setTo(plugin.getIWM().getEndWorld(overWorld).getSpawnLocation());
-            }
-            // From standard end - check if player has an island to go to
-            else if (plugin.getIslands().hasIsland(overWorld, e.getPlayer().getUniqueId())
-                    || plugin.getIslands().inTeam(overWorld, e.getPlayer().getUniqueId())) {
-                e.setCancelled(true);
-                plugin.getIslands().homeTeleport(overWorld, e.getPlayer());
-            }
-            // No island, so just do nothing
-            return false;
-        }
-
-        // FROM END
-        // If entering an ender portal in the End.
-        if (fromWorld.getEnvironment() == Environment.THE_END) {
-            // If this is from the island nether, then go to the same vector, otherwise try island home location
-            Location to = plugin.getIslands().getIslandAt(e.getFrom()).map(i -> i.getSpawnPoint(Environment.NORMAL)).orElse(e.getFrom().toVector().toLocation(overWorld));
-            e.setCancelled(true);
-            // Else other worlds teleport to the overworld
-            new SafeSpotTeleport.Builder(plugin)
-            .entity(e.getPlayer())
-            .location(to)
-            .portal()
-            .build();
-            return true;
-        }
-        // TO END
-
-        World endWorld = plugin.getIWM().getEndWorld(overWorld);
-        // If this is to island End, then go to the same vector, otherwise try spawn
-        Optional<Island> optionalIsland = plugin.getIslands().getIslandAt(e.getFrom());
-        Location to = optionalIsland.map(i -> i.getSpawnPoint(Environment.THE_END)).orElse(e.getFrom().toVector().toLocation(endWorld));
+        // We will handle this event
         e.setCancelled(true);
-        // Check if there is a missing end island
-        if (plugin.getIWM().isPasteMissingIslands(overWorld)
-                && !plugin.getIWM().isUseOwnGenerator(overWorld)
-                && plugin.getIWM().isEndGenerate(overWorld)
-                && plugin.getIWM().isEndIslands(overWorld)
-                && plugin.getIWM().getEndWorld(overWorld) != null
-                && optionalIsland.filter(i -> !i.hasEndIsland())
-                .map(i -> {
-                    // No end island present so paste the default one
-                    pasteNewIsland(e.getPlayer(), to, i, Environment.THE_END);
-                    return true;
-                }).orElse(false)) {
-            // We are done here
-            return true;
-        }
 
-        // Else other worlds teleport to the end
-        // Set player's velocity to zero one tick after cancellation
-        Bukkit.getScheduler().runTask(plugin, () -> {
-            e.getPlayer().setVelocity(new Vector(0,0,0));
-            e.getPlayer().setFallDistance(0);
-        });
-        // Teleport
-        new SafeSpotTeleport.Builder(plugin)
-        .entity(e.getPlayer())
-        .location(to)
-        .build();
-        return true;
+        return portalCheck(from, overWorld, e.getPlayer(),
+                plugin.getIWM().isEndGenerate(overWorld),
+                plugin.getIWM().getEndWorld(overWorld));
     }
 
     /**
@@ -152,79 +123,113 @@ public class PortalTeleportationListener implements Listener {
      */
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true) // Use HIGH to allow Multiverse first shot
     public boolean onNetherPortal(PlayerPortalEvent e) {
-        if (e.getCause() != TeleportCause.NETHER_PORTAL) {
+        if (e.getCause() != TeleportCause.NETHER_PORTAL || e.getFrom().getWorld() == null
+                || !plugin.getIWM().inWorld(e.getFrom().getWorld())) {
             return false;
         }
-        World fromWorld = e.getFrom().getWorld();
-        World overWorld = Util.getWorld(fromWorld);
+        Location from = e.getFrom();
+        World overWorld = Util.getWorld(from.getWorld());
 
-        if (fromWorld == null || !plugin.getIWM().inWorld(overWorld)) {
-            // Do nothing special
+        // Standard nether check
+        // STANDARD Environment
+        if (plugin.getIWM().isNetherGenerate(overWorld) && !plugin.getIWM().isNetherIslands(overWorld)) {
+            Location to = from.getWorld().getEnvironment() != Environment.NETHER ? plugin.getIWM().getNetherWorld(overWorld).getSpawnLocation() : null;
+            return standardTeleport(e, from.getWorld(), overWorld, to);
+        }
+
+        // We will handle this event
+        e.setCancelled(true);
+
+        return portalCheck(from, overWorld, e.getPlayer(),
+                plugin.getIWM().isNetherGenerate(overWorld),
+                plugin.getIWM().getNetherWorld(overWorld));
+    }
+
+    private boolean portalCheck(Location from, World overWorld, Entity entity, boolean generated, World toWorld) {
+        Environment env = toWorld.getEnvironment();
+        // If there is no nether or end, then do not teleport.
+        if (!generated) {
             return false;
         }
 
-        // 1.14.4 requires explicit cancellation to prevent teleporting to the normal nether
-        if (!plugin.getIWM().isNetherGenerate(overWorld)) {
-            e.setCancelled(true);
-            return false;
+        // FROM nether or end
+        // If entering a portal in the nether or end, teleport to portal in overworld if there is one
+        if (from.getWorld().getEnvironment() == env) {
+            teleportToOverworld(overWorld, from, entity);
+        } else {
+            // TO NETHER OR END
+            teleportToIslandEnv(overWorld, from, entity, env, toWorld);
         }
+        return true;
+    }
 
-        // STANDARD NETHER
-        if (!plugin.getIWM().isNetherIslands(overWorld)) {
-            if (fromWorld.getEnvironment() != Environment.NETHER) {
-                // To Standard Nether
-                e.setTo(plugin.getIWM().getNetherWorld(overWorld).getSpawnLocation());
-            }
-            // From standard nether
-            else {
+    private boolean standardTeleport(PlayerPortalEvent e, World fromWorld, World overWorld, Location to) {
+        if (to != null) {
+            // To Standard environment
+            e.setTo(to);
+            return true;
+        } else {
+            if (plugin.getIslands().hasIsland(overWorld, e.getPlayer().getUniqueId())
+                    || plugin.getIslands().inTeam(overWorld, e.getPlayer().getUniqueId())) {
                 e.setCancelled(true);
                 plugin.getIslands().homeTeleport(overWorld, e.getPlayer());
+                return true;
             }
+            // No island, so just do nothing
             return false;
         }
+    }
 
-        // FROM NETHER
-        // If entering a nether portal in the nether, teleport to portal in overworld if there is one
-        if (fromWorld.getEnvironment() == Environment.NETHER) {
-            // If this is from the island nether, then go to the same vector, otherwise try island home location
-            Location to = plugin.getIslands().getIslandAt(e.getFrom()).map(i -> i.getSpawnPoint(Environment.NORMAL)).orElse(e.getFrom().toVector().toLocation(overWorld));
-            e.setCancelled(true);
-            // Else other worlds teleport to the nether
-            new SafeSpotTeleport.Builder(plugin)
-            .entity(e.getPlayer())
-            .location(to)
-            .portal()
-            .build();
-            return true;
-        }
-        // TO NETHER
-        World nether = plugin.getIWM().getNetherWorld(overWorld);
+    /**
+     * Teleport to an island environment
+     * @param overWorld - overworld world
+     * @param from - location
+     * @param entity - entity teleporting
+     * @param env - environment involved NETHER or THE_END
+     * @param toWorld - to world
+     */
+    private void teleportToIslandEnv(World overWorld, @NonNull Location from, @NonNull Entity entity, Environment env, @Nullable World toWorld) {
+        if (toWorld == null) return;
         // If this is to island nether, then go to the same vector, otherwise try spawn
-        Optional<Island> optionalIsland = plugin.getIslands().getIslandAt(e.getFrom());
-        Location to = optionalIsland.map(i -> i.getSpawnPoint(Environment.NETHER)).orElse(e.getFrom().toVector().toLocation(nether));
-        e.setCancelled(true);
+        Optional<Island> optionalIsland = plugin.getIslands().getIslandAt(from);
+        Location to = optionalIsland.map(i -> i.getSpawnPoint(env)).orElse(from.toVector().toLocation(toWorld));
         // Check if there is an island there or not
-        if (plugin.getIWM().isPasteMissingIslands(overWorld) &&
+        if (entity instanceof Player &&
+                plugin.getIWM().isPasteMissingIslands(overWorld) &&
                 !plugin.getIWM().isUseOwnGenerator(overWorld)
-                && plugin.getIWM().isNetherGenerate(overWorld)
-                && plugin.getIWM().isNetherIslands(overWorld)
-                && plugin.getIWM().getNetherWorld(overWorld) != null
-                && optionalIsland.filter(i -> !i.hasNetherIsland()).map(i -> {
-                    // No nether island present so paste the default one
-                    pasteNewIsland(e.getPlayer(), to, i, Environment.NETHER);
-                    return true;
-                }).orElse(false)) {
+                //&& plugin.getIWM().isNetherGenerate(overWorld)
+                //&& plugin.getIWM().isNetherIslands(overWorld)
+                && toWorld != null
+                && optionalIsland.filter(i -> (env.equals(Environment.NETHER) && !i.hasNetherIsland())
+                        || (env.equals(Environment.THE_END) && !i.hasEndIsland())).map(i -> {
+                            // No island present so paste the default one
+                            pasteNewIsland((Player)entity, to, i, env);
+                            return true;
+                        }).orElse(false)) {
             // All done here
-            return true;
+            return;
         }
-        // Else other worlds teleport to the nether
+        // Else other worlds teleport to the
         new SafeSpotTeleport.Builder(plugin)
-        .entity(e.getPlayer())
+        .entity(entity)
         .location(to)
         .portal()
         .build();
-        return true;
+
     }
+
+    private void teleportToOverworld(World overWorld, @NonNull Location from, @NonNull Entity entity) {
+        // If this is from the island env, then go to the same vector, otherwise try island home location
+        Location to = plugin.getIslands().getIslandAt(from).map(i -> i.getSpawnPoint(Environment.NORMAL)).orElse(from.toVector().toLocation(overWorld));
+        // Else other worlds teleport to the nether
+        new SafeSpotTeleport.Builder(plugin)
+        .entity(entity)
+        .location(to)
+        .portal()
+        .build();
+
+    }
+
 
     /**
      * Pastes the default nether or end island and teleports the player to the island's spawn point
