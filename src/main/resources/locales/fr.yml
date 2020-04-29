@@ -3,11 +3,17 @@ catalog:
   panel:
     ADDONS:
       title: Catalogue d'addons
+    empty-here:
+      description: |-
+        &c BentoBox n'a pas pu se connecter à GitHub.
+
+        &a Autoriser BentoBox à se connecter à GitHub dans
+        &a la configuration ou réessayez plus tard.
+      name: "&b Cela semble vide ici ..."
     GAMEMODES:
       title: Catalogue de modes de jeu
     icon:
       already-installed: Déjà installé!
-      install-now: Installez maintenant!
       description-template: |-
         &8 [topic]
         &a [install]
@@ -16,24 +22,18 @@ catalog:
 
         &e Cliquez sur &a pour obtenir le lien vers la
         &a dernière version.
+      install-now: Installez maintenant!
     views:
-      gamemodes:
-        name: "&6 modes de jeu"
-        description: |-
-          &e Cliquez sur &a pour parcourir les
-          &a Gamemodes officiels disponibles.
       addons:
-        name: "&6 Addons"
         description: |-
           &e Cliquez sur &a pour parcourir les
           &a add-on officiels disponibles.
-    empty-here:
-      name: "&b Cela semble vide ici ..."
-      description: |-
-        &c BentoBox n'a pas pu se connecter à GitHub.
-
-        &a Autoriser BentoBox à se connecter à GitHub dans
-        &a la configuration ou réessayez plus tard.
+        name: "&6 Addons"
+      gamemodes:
+        description: |-
+          &e Cliquez sur &a pour parcourir les
+          &a Gamemodes officiels disponibles.
+        name: "&6 modes de jeu"
 commands:
   admin:
     blueprint:
@@ -125,9 +125,9 @@ commands:
       rename:
         description: renommer un plan
         parameters: "<blueprint name> <new name>"
-        success: "&a Blueprint &b [old] &a has been successfully renamed to &b [name]&a."
         pick-different-name: "&c Veuillez préciser un nom différent que celui du Blueprint
           actuel."
+        success: "&a Blueprint &b [old] &a has been successfully renamed to &b [name]&a."
       save:
         description: enregistrer le presse-papiers copié
         parameters: "<blueprint name>"
@@ -201,6 +201,8 @@ commands:
       completed: "& Purge stoppée."
       confirm: "&d Tapez &b /[label] purge confirmez &d pour commencer la purge"
       days-or-more: Veuillez spécifier une durée supérieure à 1 jour.
+      description: supprime les îles inactives depuis plus de [jours] jours
+      no-purge-in-progress: "&c Il n'y a actuellement aucune purge en cours."
       number-error: "&c L'argument doit être un nombre de jours"
       parameters: "[jours]"
       protect:
@@ -224,8 +226,6 @@ commands:
       unowned:
         description: supprimer les îles sans propriétaire
         unowned-islands: "&a Trouvé &b [number] &a îles sans propriétaire."
-      description: supprime les îles inactives depuis plus de [jours] jours
-      no-purge-in-progress: "&c Il n'y a actuellement aucune purge en cours."
     range:
       add:
         description: augmente l''aire de protection de l'île
@@ -276,21 +276,21 @@ commands:
         console pour les erreurs possibles."
       description: enregistrer le joueur sur l'île sans propriétaire où vous êtes
       in-deletion: "&c Cette île est en cours de suppression. Essayer plus tard."
+      island-is-spawn: "&6 L'île est un spawn. Êtes-vous sûr? Entrez à nouveau la
+        commande pour confirmer."
       no-island-here: "&c Il n'y a pas d'île ici. Confirmez pour en faire une."
       parameters: "<player>"
       registered-island: "&b [name] &a possède maintenant l'île aux coordonnées [xyz]."
       reserved-island: "&a l'île à [xyz] est réservée pour le joueur &b [name] &a
         ."
-      island-is-spawn: "&6 L'île est un spawn. Êtes-vous sûr? Entrez à nouveau la
-        commande pour confirmer."
     reload:
       description: recharger
     resetflags:
+      confirm: "&4 Cela réinitialisera les flag par défaut pour toutes les îles!"
       description: Réinitialiser toutes les îles aux flags par défaut dans le fichier
         config.yml
       parameters: "[flag]"
       success: "&a Réinitialisation des flags de toutes les îles aux valeurs par défaut."
-      confirm: "&4 Cela réinitialisera les flag par défaut pour toutes les îles!"
       success-one: "&a flag[name] défini par défaut pour toutes les îles."
     resets:
       add:
@@ -298,6 +298,7 @@ commands:
         parameters: "<player> <resets>"
         success: "&a Ajouté avec succès &b [number] &a resets à & b [name], augmentant
           le total de resets à &b [total] &a."
+      description: éditer le nombre de réinitialisations des joueurs
       remove:
         description: supprime le nombre de fois où ce joueur a réinitialisé son île
         parameters: "<player> <resets>"
@@ -310,7 +311,6 @@ commands:
         success: "&a Remis avec succès le compteur de Reset de &b [name] &a à 0."
         success-everyone: "&a Remis avec succès le compteur de Reset de &b Tout le
           Monde &a à 0."
-      description: éditer le nombre de réinitialisations des joueurs
       set:
         description: définit le nombre de réinitialisations du joueur
         parameters: "<joueur> <nombre de réinitialisations>"
@@ -333,6 +333,13 @@ commands:
       description: définir une île comme spawn pour ce mode de jeu
       no-island-here: "&c Il n'y a pas d'île ici."
       success: "&a Cette île est le spawn de ce mode de jeu."
+    setspawnpoint:
+      confirmation: "&c Voulez-vous vraiment définir cet emplacement comme point d'apparition
+        pour cette île?"
+      description: définir l'emplacement actuel comme spawn pour cette île
+      island-spawnpoint-changed: "&a [user] a modifié ce spawn de l'île."
+      no-island-here: "&c Il n'y a pas d'île ici."
+      success: "&a Spawn de l'île défini avec succès."
     settings:
       description: ouvrir les réglages du système ou les réglages de l'île pour le
         joueur
@@ -408,13 +415,6 @@ commands:
       turning-on: Débogage de protection activé pour [name].
     world:
       description: Gérer les paramètres du monde
-    setspawnpoint:
-      description: définir l'emplacement actuel comme spawn pour cette île
-      no-island-here: "&c Il n'y a pas d'île ici."
-      confirmation: "&c Voulez-vous vraiment définir cet emplacement comme point d'apparition
-        pour cette île?"
-      success: "&a Spawn de l'île défini avec succès."
-      island-spawnpoint-changed: "&a [user] a modifié ce spawn de l'île."
   bentobox:
     about:
       description: affiche les informations sur la licence
@@ -440,13 +440,13 @@ commands:
       addon-reloaded: "[prefix_bentobox] &b [nom] &2 rechargé."
       addons-reloaded: "[prefix_bentobox] &2 Addons rechargés."
       description: recharge BentoBox et tous les addons, paramètres et traductions
+      locales:
+        description: recharger les locales
       locales-reloaded: "[prefix_bentobox] &2 Traductions rechargées."
       settings-reloaded: "[prefix_bentobox] &2 Paramètres rechargés."
       unknown-addon: "[prefix_bentobox] &c Addon inconnu !"
       warning: "[prefix_bentobox] &c Attention : le rechargement peut provoquer une
         instabilité. Si vous rencontrez des erreurs par la suite, redémarrez le serveur."
-      locales:
-        description: recharger les locales
     version:
       addon-syntax: "&2 [name] &3 [version] &7 (&3[state]&7)"
       database: "&2 Base de données : &3 [database]"
@@ -469,10 +469,10 @@ commands:
     console: Console
     description: commande d'aide
     end: "&7 ================================="
-    parameters: "[command]"
-    syntax-no-parameters: "&b [usage] &7: &e [description]"
     header: "&7 =========== &c Aide de [label] &7 ==========="
+    parameters: "[command]"
     syntax: "&b [usage] &a [parameters] &7: &e [description]"
+    syntax-no-parameters: "&b [usage] &7: &e [description]"
   island:
     about:
       description: affiche des informations sur cet addon
@@ -502,6 +502,13 @@ commands:
       on-first-login: "& bienvenue! Nous commencerons à préparer votre île dans quelques
         secondes."
       parameters: "<blueprint>"
+      pasting:
+        blocks: "&a Construire bloc par bloc: &b [number] &a blocs en tout ..."
+        done: "&a C'est fait! Votre île est prête et vous attend!"
+        entities: "&a Remplissage avec des entités : &b [number] &a entités en tout
+          ..."
+        estimated-time: "&a Durée estimée : &b [number] &a secondes."
+      pick: "&2 Choisissez une île"
       too-many-islands: "&c Il y a trop d'îles dans ce monde : il n'y a pas assez
         de place pour que la vôtre soit créée."
       unable-create-island: "&c Votre île n'a pas pu être générée, veuillez contacter
@@ -509,13 +516,6 @@ commands:
       unknown-blueprint: "&c Ce blueprint n'existe pas."
       you-can-teleport-to-your-island: "&a You can teleport to your island when you
         please."
-      pasting:
-        blocks: "&a Construire bloc par bloc: &b [number] &a blocs en tout ..."
-        entities: "&a Remplissage avec des entités : &b [number] &a entités en tout
-          ..."
-        estimated-time: "&a Durée estimée : &b [number] &a secondes."
-        done: "&a C'est fait! Votre île est prête et vous attend!"
-      pick: "&2 Choisissez une île"
     expel:
       cannot-expel: "& c Ce joueur ne peut pas être expulsé."
       cannot-expel-member: "& c Vous ne pouvez pas expulser un membre de l'équipe!"
@@ -552,11 +552,11 @@ commands:
         &c Tous les membres de l'île seront expulsés de l'île, vous devrez les réinviter par la suite.
         &c Il n'y a pas de retour possible: une fois votre île actuelle supprimée, il n'y aura &l aucun &r &c moyen de la récupérer plus tard.
       description: réinitialisez votre île
+      kicked-from-island: "&c Vous êtes exclu de votre île en [gamemode] car le propriétaire
+        la réinitialise."
       none-left: "&c Il ne vous reste plus de réinitialisations."
       parameters: "<blueprint>"
       resets-left: "&c Il vous reste &b [number] &c resets restants"
-      kicked-from-island: "&c Vous êtes exclu de votre île en [gamemode] car le propriétaire
-        la réinitialise."
     resetname:
       description: réinitialiser le nom de votre île
       success: "&a Le nom de votre île a été réinitialisé."
@@ -575,12 +575,12 @@ commands:
         not-allowed: "&c Vous n'êtes pas autorisé à placer votre home dans l'End."
     setname:
       description: donnez un nom à votre île
+      name-already-exists: "&c Il existe déjà une île portant ce nom dans ce mode
+        de jeu."
       name-too-long: "&c Trop long. La taille maximale est de [number] caractères."
       name-too-short: "&c Trop court. La taille minimale est de [number] caractères."
       parameters: "<nom>"
       success: "&a Le nom de votre île est désormais &b [name]&a ."
-      name-already-exists: "&c Il existe déjà une île portant ce nom dans ce mode
-        de jeu."
     settings:
       description: paramètres de l'île d'affichage
     spawn:
@@ -592,11 +592,11 @@ commands:
         already-has-rank: "&c Ce joueur est membre de votre île."
         cannot-coop-yourself: "&c Vous ne pouvez pas vous coop vous-même"
         description: coop un joueur sur votre île
+        name-has-invited-you: "&a [name] vous a invité(e) à devenir membre Coop de
+          leur île."
         parameters: "<joueur>"
         success: "&a Vous avez coop &b [name]."
         you-are-a-coop-member: "&2 Vous avez été coop par [name]"
-        name-has-invited-you: "&a [name] vous a invité(e) à devenir membre Coop de
-          leur île."
       demote:
         description: rétrograder un joueur de votre île d''un rang inférieur
         errors:
@@ -689,14 +689,14 @@ commands:
         you-are-the-owner: "& a Vous êtes maintenant le propriétaire de l'île!"
       trust:
         description: trust un joueur sur votre île
+        is-full: "&c Vous ne pouvez Trust d'avantage de joueurs."
+        name-has-invited-you: "&a [name] vous a invité(e) à devenir membre Trust de
+          leur île."
         parameters: "<joueur>"
         player-already-trusted: "&c Ce joueur est déjà trust."
         success: "&a Vous avez trust &b [name] &a."
         trust-in-yourself: "&c Croyez en vous !"
         you-are-trusted: "&b [name] &2 vous a trust sur son île."
-        name-has-invited-you: "&a [name] vous a invité(e) à devenir membre Trust de
-          leur île."
-        is-full: "&c Vous ne pouvez Trust d'avantage de joueurs."
       uncoop:
         all-members-logged-off: "&c Tous les membres de l'île de [name] se sont déconnectés,
           vous n'êtes donc plus coop."
@@ -704,11 +704,11 @@ commands:
           l'île."
         cannot-uncoop-yourself: "&c Vous ne pouvez pas vous retirer le coop."
         description: retirer le coop du joueur
+        is-full: "&c Vous ne pouvez ajouter personne d'autre dans votre coop."
         parameters: "<joueur>"
         player-not-cooped: "&c Ce joueur n'est pas coop."
         success: "&b [name] &a n'est plus coop sur votre île."
         you-are-no-longer-a-coop-member: "&c Vous n'êtes plus coop sur l'île de [name]"
-        is-full: "&c Vous ne pouvez ajouter personne d'autre dans votre coop."
       untrust:
         cannot-untrust-member: "&c Vous ne pouvez pas retirer le trust à un membre
           de l'île."
@@ -727,28 +727,28 @@ commands:
       you-are-unbanned: "& b [nom] & a vous a banni de leur île!"
 general:
   errors:
+    already-have-island: "&c Vous avez déjà une île !"
     command-cancelled: "&c Commande annulée."
     general: "&c Cette commande n'est pas encore prête - contactez l'administrateur."
     must-be-positive-number: "&c [number] n'est pas un nombre positif valide."
+    no-island: "&c Vous n'avez pas d'île !"
+    no-permission: "&c Vous n'êtes pas autorisé à exécuter cette commande (&7 [permission]&c)."
     no-safe-location-found: "&c Impossible de trouver un endroit sûr pour vous téléporter
       sur l'île."
-    offline-player: "&c Ce joueur est hors ligne ou n'existe pas."
-    player-is-not-owner: "&b [name] &c n'est pas le propriétaire d'une île."
-    use-in-game: "&c Cette commande est uniquement disponible dans le jeu."
-    no-permission: "&c Vous n'êtes pas autorisé à exécuter cette commande (&7 [permission]&c)."
     no-team: "&c Vous n'avez pas d'équipe !"
-    no-island: "&c Vous n'avez pas d'île !"
+    not-in-team: "&c Ce joueur n'est pas dans votre équipe !"
+    not-owner: "&c Vous n'êtes pas le propriétaire de l'île!"
+    offline-player: "&c Ce joueur est hors ligne ou n'existe pas."
     player-has-island: "&c Ce joueur a déjà une île !"
     player-has-no-island: "&c Ce joueur n'a pas d'île !"
-    already-have-island: "&c Vous avez déjà une île !"
-    not-in-team: "&c Ce joueur n'est pas dans votre équipe !"
-    unknown-player: "&c [name] est un joueur inconnu !"
+    player-is-not-owner: "&b [name] &c n'est pas le propriétaire d'une île."
     unknown-command: "&c Commande inconnue. Faites &b /[label] help &c pour obtenir
       de l'aide."
+    unknown-player: "&c [name] est un joueur inconnu !"
+    use-in-game: "&c Cette commande est uniquement disponible dans le jeu."
     wrong-world: "&c Vous n'êtes pas dans le bon monde pour faire ça !"
     you-must-wait: "&c Vous devez attendre [number] secondes avant de pouvoir utiliser
       à nouveau cette commande."
-    not-owner: "&c Vous n'êtes pas le propriétaire de l'île!"
   invalid: Invalide
   success: "&a Succès !"
   tips:
@@ -759,13 +759,13 @@ general:
     overworld: Overworld
     the-end: End
 language:
-  panel-title: Sélectionnez votre langue
   description:
-    selected: "&a Actuellement sélectionné."
-    click-to-select: "&e Cliquez sur &a pour sélectionner."
-    authors: "&a Auteurs :"
     author: "&3 - &b [name]"
+    authors: "&a Auteurs :"
+    click-to-select: "&e Cliquez sur &a pour sélectionner."
+    selected: "&a Actuellement sélectionné."
   edited: "&a Langage changé en &e [lang] &a."
+  panel-title: Sélectionnez votre langue
 management:
   panel:
     actions:
@@ -773,58 +773,58 @@ management:
         description: "&eCliquez &apour lancer une vérification des mises à jour."
         name: "&6Vérifiez les mises à jour"
       reload:
-        name: "&c Recharger"
         description: "&e Cliquez &c &l deux fois &r &a pour recharger BentoBox"
-    title: Gestion de BentoBox
-    views:
-      gamemodes:
-        name: "&6 modes de jeu"
-        description: "&e Cliquez sur &a pour afficher les modes de jeu actuellement
-          chargés"
-        blueprints:
-          name: "&6 Blueprints"
-          description: "&a Ouvre le menu Admin Blueprint."
-        gamemode:
-          name: "&f [name]"
-          description: "&a Îles : &b [islands]"
-      addons:
-        name: "&6 extensions"
-        description: "&e Cliquez sur &a pour afficher les modules complémentaires
-          actuellement chargés"
-      hooks:
-        name: "&6 crochets"
-        description: "&e Cliquez sur &a pour afficher les crochets actuellement chargés"
+        name: "&c Recharger"
     buttons:
       catalog:
-        name: "&6 Catalogue d'Addons "
         description: "&a ouvre le catalogue des Addons"
-      empty-here:
-        name: "&b Cela semble vide ici ..."
-        description: "&a Et si vous jetiez un œil à notre catalogue?"
+        name: "&6 Catalogue d'Addons "
       credits:
-        name: "&6 crédits"
         description: "&a ouvre la page des Crédits pour BentoBox"
+        name: "&6 crédits"
+      empty-here:
+        description: "&a Et si vous jetiez un œil à notre catalogue?"
+        name: "&b Cela semble vide ici ..."
     information:
       state:
-        name: "&6 Compatibilité"
         description:
           COMPATIBLE: "&a Running &e [name] [version] &a.\n\n&a BentoBox fonctionne
             actuellement sur une\n&a version logicielle serveur \n&a &l COMPATIBLE
             &r &a.\n\n&a Ses fonctionnalités sont entièrement conçues pour\n&a cet
             environnement."
-          SUPPORTED: "&a Running &e [name] [version] &a.\n\n&a BentoBox fonctionne
-            actuellement sur une\n&a version logicielle serveur \n&a &l SUPPORTÉE
-            &r &a.\n\n&a La plupart de ses fonctionnalités fonctionneront sans problème\n&a
-            dans cet environnement."
+          INCOMPATIBLE: "&a Running &e [name] [version] &a.\n\n&a BentoBox fonctionne
+            actuellement sur une\n&a version logicielle serveur \n&c &l INCOMPATIBLE
+            &r &a.\n\n&c Des comportements étranges et des bugs peuvent survenir\n&c
+            et la plupart des fonctionnalités peuvent être instables."
           NOT_SUPPORTED: "&a Running &e [name] [version] &a.\n\n&a BentoBox fonctionne
             actuellement sur une\n&a version logicielle serveur \n&6 &l NON SUPPORTÉE&r
             &a.\n\n&a Bien que la plupart de ses fonctionnalités fonctionnent\n&a
             correctement, &6 bogues spécifiques à la plate-forme ou\n&6 problèmes
             sont à prévoir &a."
-          INCOMPATIBLE: "&a Running &e [name] [version] &a.\n\n&a BentoBox fonctionne
-            actuellement sur une\n&a version logicielle serveur \n&c &l INCOMPATIBLE
-            &r &a.\n\n&c Des comportements étranges et des bugs peuvent survenir\n&c
-            et la plupart des fonctionnalités peuvent être instables."
+          SUPPORTED: "&a Running &e [name] [version] &a.\n\n&a BentoBox fonctionne
+            actuellement sur une\n&a version logicielle serveur \n&a &l SUPPORTÉE
+            &r &a.\n\n&a La plupart de ses fonctionnalités fonctionneront sans problème\n&a
+            dans cet environnement."
+        name: "&6 Compatibilité"
+    title: Gestion de BentoBox
+    views:
+      addons:
+        description: "&e Cliquez sur &a pour afficher les modules complémentaires
+          actuellement chargés"
+        name: "&6 extensions"
+      gamemodes:
+        blueprints:
+          description: "&a Ouvre le menu Admin Blueprint."
+          name: "&6 Blueprints"
+        description: "&e Cliquez sur &a pour afficher les modes de jeu actuellement
+          chargés"
+        gamemode:
+          description: "&a Îles : &b [islands]"
+          name: "&f [name]"
+        name: "&6 modes de jeu"
+      hooks:
+        description: "&e Cliquez sur &a pour afficher les crochets actuellement chargés"
+        name: "&6 crochets"
 meta:
   authors:
   - Poslovitch
@@ -832,6 +832,9 @@ meta:
   banner: WHITE_BANNER:1:STRIPE_TOP:BLUE:STRIPE_BOTTOM:RED
 panel:
   credits:
+    contributor:
+      description: "&a Valide : &b [commits]"
+      name: "&a [name]"
     empty-here:
       description: |+
         & c BentoBox n'a pas pu rassembler les contributeurs
@@ -842,9 +845,8 @@ panel:
 
       name: "&c Cela semble vide ici ..."
     title: "&8 [name] &2 Crédits"
-    contributor:
-      name: "&a [name]"
-      description: "&a Valide : &b [commits]"
+prefixes:
+  bentobox: "&6 BentoBox &7 &l> &r"
 protection:
   command-is-banned: Le commandement est interdit aux visiteurs
   flags:
@@ -875,6 +877,11 @@ protection:
       description: Bris des bascules
       hint: Rupture de bloc désactivée
       name: Blocs de rupture
+    BREAK_SPAWNERS:
+      description: est-ce que les joueurs peuvent détruire les spawners? Remplace
+        le flag.
+      hint: Casse spawners désactivée
+      name: Casser les Spawners
     BREEDING:
       description: Élevage à bascule
       hint: Protection de l''élevage
@@ -892,9 +899,9 @@ protection:
       hint: Utilisation des boutons désactivée
       name: Buttons
     CAKE:
-      name: Cakes
       description: changer l'interaction avec le Cake
       hint: Manger du Cake désactivé
+      name: Cakes
     CHEST_DAMAGE:
       description: Toggle chest damage from explosions
       name: Chest Damage
@@ -1319,6 +1326,12 @@ protection:
       description: Toggle use
       hint: Oeufs de ponte désactivés
       name: Spawn eggs
+    SPAWNER_SPAWN_EGGS:
+      description: "&a Permet de modifier le type d'entité d'un spawner en utilisant
+        des œufs d'entité."
+      hint: changer l'entité spawnable des spawners avec un oeuf d'entité n'est pas
+        autorisé.
+      name: Oeufs d'entité sur spawners
     TNT_DAMAGE:
       description: |-
         & a Autoriser les minecarts TNT et TNT
@@ -1359,19 +1372,25 @@ protection:
         & a S'il est actif, le garrot peut
         & un bloc de dégâts et les joueurs
       name: Toggle wither damage
-    SPAWNER_SPAWN_EGGS:
-      description: "&a Permet de modifier le type d'entité d'un spawner en utilisant
-        des œufs d'entité."
-      name: Oeufs d'entité sur spawners
-      hint: changer l'entité spawnable des spawners avec un oeuf d'entité n'est pas
-        autorisé.
-    BREAK_SPAWNERS:
-      description: est-ce que les joueurs peuvent détruire les spawners? Remplace
-        le flag.
-      name: Casser les Spawners
-      hint: Casse spawners désactivée
   locked: "& c Cette île est verrouillée!"
   panel:
+    flag-item:
+      allowed-rank: "&3 - &a"
+      blocked-rank: "&3 - &c"
+      description-layout: |-
+        &a [description]
+
+        &7 Autorisé pour :
+      menu-layout: "&a [description]"
+      minimal-rank: "&3 - &2"
+      name-layout: "&a [name]"
+      setting-active: "&a actif"
+      setting-cooldown: "&c Le paramètre est en attente..."
+      setting-disabled: "&c désactivé"
+      setting-layout: |-
+        &a [description]
+
+        &7 Réglage actuel : [setting]
     mode:
       advanced:
         description: "& a Affiche une quantité raisonnable de paramètres."
@@ -1379,52 +1398,35 @@ protection:
       basic:
         description: "& a Affiche les paramètres les plus utiles."
         name: "& a Paramètres de base"
-      expert:
-        name: "& c Paramètres experts"
-        description: "&a Affiche tous les paramètres disponibles."
       click-to-switch: "&e Cliquez sur &a pour passer à &r [next] &r &a."
+      expert:
+        description: "&a Affiche tous les paramètres disponibles."
+        name: "& c Paramètres experts"
     next: "& f Page suivante"
     previous: "& f Page précédente"
+    PROTECTION:
+      description: |-
+        &a Paramètres de protection
+        &a pour cette île
+      title: "&6 Protection"
     reset-to-default:
       description: |
         & a Réinitialise & c & l ALL & r & a les paramètres à leur
         & une valeur par défaut.
       name: "& c Rétablir les valeurs par défaut"
-    PROTECTION:
-      title: "&6 Protection"
-      description: |-
-        &a Paramètres de protection
-        &a pour cette île
     SETTING:
-      title: "&6 paramètres"
       description: |-
         &a Paramètres généraux
         &a pour cette île
-    WORLD_SETTING:
-      title: "&b [world_name] &6 Paramètres"
-      description: "&a Paramètres pour ce monde de jeu"
+      title: "&6 paramètres"
     WORLD_DEFAULTS:
-      title: "&b [world_name] &6 protections maps"
       description: |-
         &a Paramètres de protection lorsque
         &a le joueur est en dehors de son île
-    flag-item:
-      name-layout: "&a [name]"
-      description-layout: |-
-        &a [description]
-
-        &7 Autorisé pour :
-      allowed-rank: "&3 - &a"
-      blocked-rank: "&3 - &c"
-      minimal-rank: "&3 - &2"
-      menu-layout: "&a [description]"
-      setting-cooldown: "&c Le paramètre est en attente..."
-      setting-layout: |-
-        &a [description]
-
-        &7 Réglage actuel : [setting]
-      setting-active: "&a actif"
-      setting-disabled: "&c désactivé"
+      title: "&b [world_name] &6 protections maps"
+    WORLD_SETTING:
+      description: "&a Paramètres pour ce monde de jeu"
+      title: "&b [world_name] &6 Paramètres"
   protected: "& c Île protégée: [description]"
   spawn-protected: "& c Spawn protégé: [description]"
   world-protected: "& c Monde protégé: [description]"
@@ -1445,5 +1447,3 @@ successfully-loaded: |-
   &6  |  _ < / _ \ '_ \| __/ _ \|  _ < / _ \ \/ /
   &6  | |_) |  __/ | | | || (_) | |_) | (_) >  <   &b v&e [version]
   &6  |____/ \___|_| |_|\__\___/|____/ \___/_/\_\  &8 Chargé en &e [time]&8 ms.
-prefixes:
-  bentobox: "&6 BentoBox &7 &l> &r"
