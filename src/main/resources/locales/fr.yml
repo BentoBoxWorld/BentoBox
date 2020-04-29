@@ -15,7 +15,7 @@ catalog:
       title: Catalogue de modes de jeu
     icon:
       already-installed: Déjà installé!
-      description-template: |-
+      description-template: |
         &8 [topic]
         &a [install]
 
@@ -31,10 +31,10 @@ catalog:
           &e Cliquez &a pour parcourir les
           &a addons officiels disponibles.
       gamemodes:
-        description: |-
+        description: |
           &e Cliquez sur &a pour parcourir les
           &a Gamemodes officiels disponibles.
-        name: "&6 modes de jeu"
+        name: "&6 Gamemodes"
 commands:
   admin:
     blueprint:
@@ -760,10 +760,10 @@ general:
 language:
   description:
     author: "&3 - &b [name]"
-    authors: "&a Auteurs :"
-    click-to-select: "&e Cliquez sur &a pour sélectionner."
+    authors: "&a Auteurs:"
+    click-to-select: "&e Cliquez &a pour sélectionner."
     selected: "&a Actuellement sélectionné."
-  edited: "&a Langage changé en &e [lang] &a."
+  edited: "&a Changez votre langue en &e [lang] &a."
   panel-title: Sélectionnez votre langue
 management:
   panel:
@@ -772,12 +772,12 @@ management:
         description: "&eCliquez &apour lancer une vérification des mises à jour."
         name: "&6Vérifiez les mises à jour"
       reload:
-        description: "&e Cliquez &c &l deux fois &r &a pour recharger BentoBox"
+        description: "&e Clicquez &c &l deux fois &r &a pour recharger BentoBox"
         name: "&c Recharger"
     buttons:
       catalog:
         description: "&a ouvre le catalogue des Addons"
-        name: "&6 Catalogue d'Addons "
+        name: "&6 Catalogue des Addons "
       credits:
         description: "&a Ouvre les crédits de BentoBox"
         name: "&6 Crédits"
@@ -787,19 +787,23 @@ management:
     information:
       state:
         description:
-          COMPATIBLE: "&a Running &e [name] [version] &a.\n\n&a BentoBox fonctionne
+          COMPATIBLE: "&a Tourne sous &e [name] [version] &a.\n\n&a BentoBox fonctionne
             actuellement sur une\n&a version logicielle serveur \n&a &l COMPATIBLE
-            &r &a.\n\n&a Ses fonctionnalités sont entièrement conçues pour\n&a cet
-            environnement."
-          NOT_SUPPORTED: "&a Running &e [name] [version] &a.\n\n&a BentoBox fonctionne
-            actuellement sur une\n&a version logicielle serveur \n&6 &l NON SUPPORTÉE&r
-            &a.\n\n&a Bien que la plupart de ses fonctionnalités fonctionnent\n&a
+            &r &a.\n\n&a Ses fonctionnalités sont entièrement conçues pour\n&a course
+            dans cet environnement.\n"
+          NOT_SUPPORTED: "&a Tourne sous &e [name] [version] &a.\n\n&a BentoBox fonctionne
+            actuellement sur une\n&a version logicielle serveur \n&6 &l NON SUPPORTÉE
+            &r &a.\n\n&a Bien que la plupart de ses fonctionnalités fonctionnent\n&a
             correctement, &6 bogues spécifiques à la plate-forme ou\n&6 problèmes
-            sont à prévoir &a."
-          SUPPORTED: "&a Running &e [name] [version] &a.\n\n&a BentoBox fonctionne
+            sont à prévoir &a.\n"
+          SUPPORTED: "&a Tourne sous &e [name] [version] &a.\n\n&a BentoBox fonctionne
             actuellement sur une\n&a version logicielle serveur \n&a &l SUPPORTÉE
             &r &a.\n\n&a La plupart de ses fonctionnalités fonctionneront sans problème\n&a
-            dans cet environnement."
+            dans cet environnement.\n"
+          INCOMPATIBLE: "&a Tourne sous &e [name] [version] &a.\n\n&a BentoBox fonctionne
+            actuellement sur une\n&a version logicielle serveur \n&c &l INCOMPATIBLE
+            &r &a.\n\n&c Des comportements étranges et des bugs peuvent survenir\n&c
+            et la plupart des fonctionnalités peuvent être instables."
         name: "&6 Compatibilité"
     title: Gestion de BentoBox
     views:
@@ -813,10 +817,10 @@ management:
         gamemode:
           description: "&a Îles : &b [islands]"
           name: "&f [name]"
-        name: "&6 modes de jeu"
+        name: "&6 Gamemodes"
         description: "&e Cliquez &a pour afficher les modes de jeu actuellement chargés"
       hooks:
-        description: "&e Cliquez sur &a pour afficher les crochets actuellement chargés"
+        description: "&e Cliquez &a pour afficher le Hook actuellement chargé"
         name: "&6 Hooks"
 meta:
   authors:
@@ -1191,6 +1195,16 @@ protection:
         pouvez pas transformer ce bloc en lave."
       scooping: "&a Retour de l'obsidienne en lave. Soyez plus prudent la prochaine
         fois !"
+      description: |-
+        &a Autoriser les joueurs à récupérer la lave
+        &a avec un seau vide dans l'obsidienne.
+
+        &a Cela aide les débutants qui n'ont pas réussi à
+        &a construire leur générateur de cobble.
+
+        &a note: l'obsidienne ne peut pas être récupérée
+        &a s'il y a d'autres blocs d'obsidienne
+        &a dans un rayon de 2 blocs.
     OFFLINE_GROWTH:
       description: |-
         & a Lorsque désactivé, les plantes
@@ -1200,11 +1214,11 @@ protection:
       name: Offline Growth
     OFFLINE_REDSTONE:
       description: |-
-        & a Lorsque désactivé, redstone
-        & a ne fonctionnera pas sur les îles
-        & a où tous les membres sont hors ligne.
-        & a Peut aider à réduire le décalage.
-        & a N'affecte pas l'île de réapparition.
+        &a Lorsque désactivé, la redstone
+        &a ne fonctionnera pas sur les îles
+        &a où tous les membres sont hors ligne.
+        &a Peut aider à réduire le lag.
+        &a N'affecte pas l'île Spawn.
       name: Offline Redstone
     PISTON_PUSH:
       description: |-
@@ -1217,8 +1231,8 @@ protection:
       name: Place blocks
     POTION_THROWING:
       description: |-
-        & un Toggle jetant des potions.
-        & a Cela inclut les éclaboussures et les potions persistantes.
+        &a actier/désactiver le jet des potions.
+        &a Cela inclut les éclaboussures et les potions persistantes.
       hint: Lancer des potions désactivé
       name: Potion throwing
     PRESSURE_PLATE:
@@ -1227,23 +1241,23 @@ protection:
       name: Pressure Plates
     PREVENT_TELEPORT_WHEN_FALLING:
       description: |-
-        & a Empêcher les joueurs de se téléporter
-        & un retour sur leur île en utilisant les commandes
-        & a s'ils tombent.
-      hint: "& c Vous ne pouvez pas faire cela en tombant."
+        &a Empêcher les joueurs de se téléporter
+        &a retour sur leur île en utilisant les commandes
+        &a s'ils tombent.
+      hint: "&c Vous ne pouvez pas faire cela en tombant."
       name: Prevent teleport when falling
     PVP_END:
       description: |-
-        & c Activer / désactiver PVP
-        & c à la fin.
+        &c Activer / désactiver PVP
+        &c à The_End.
       disabled: "&a Le PVP dans l'End a été désactivé."
       enabled: "&c Le PVP dans l'End a été activé."
       hint: PVP désactivé à la fin
       name: End PVP
     PVP_NETHER:
       description: |-
-        & c Activer / désactiver PVP
-        & c dans le Nether.
+        &c Activer / désactiver PVP
+        &c dans le Nether.
       disabled: "&a Le PVP dans le Nether a été désactivé."
       enabled: "&c Le PVP dans le Nether a été activé."
       hint: PVP désactivé dans le Nether
@@ -1253,16 +1267,24 @@ protection:
       disabled: "&a Le PVP dans l'Overworld a été désactivé."
       enabled: "&c Le PVP dans l'Overworld a été activé."
       name: Overworld PVP
+      description: |-
+        &c Activer / désactiver PVP
+        &c sur l'île.
+      hint: "&c PVP désactivé dans l'Overworld"
     REDSTONE:
       description: Toggle use
       hint: Interaction Redstone désactivée
       name: Redstone items
     REMOVE_END_EXIT_ISLAND:
       name: Remove end exit island
+      description: |-
+        &a Empêche la sortie de The_End
+        &a de se générer
+        &a aux coordonnées 0,0
     REMOVE_MOBS:
       description: |-
-        & a Supprimer des monstres lorsque
-        et une téléportation vers l'île
+        &a Supprimer des monstres lorsque
+        &a on se  téléporte vers l'île
       name: Remove monsters
     RIDING:
       description: Toggle riding
@@ -1283,14 +1305,16 @@ protection:
         autorisé.
       name: Oeufs d'entité sur spawners
     TNT_DAMAGE:
-      description: |-
-        & a Autoriser les minecarts TNT et TNT
-        & a pour briser les blocs et endommager
-        & a entités.
+      description: "&a Autoriser les minecarts TNT et la TNT\n&a à détruire les blocs
+        et faire des dégats \n&a aux entités."
       name: TNT damage
     TNT_PRIMING:
       hint: Amorçage TNT désactivé
       name: TNT priming
+      description: |-
+        &a Empêche l'allumage de la TNT.
+        &a Il ne remplace pas la
+        &a protection de l'utilisation du briquet.
     TRADING:
       description: Toggle trading
       hint: Commerce de villageois désactivé
@@ -1301,13 +1325,13 @@ protection:
       name: Trap doors
     TREES_GROWING_OUTSIDE_RANGE:
       description: |-
-        & a Activer / désactiver la croissance des arbres en dehors d'un
-        & la plage de protection d'une île ou non.
-        & a Non seulement cela empêchera les jeunes arbres de
-        & une plage de protection en dehors d'une île de
-        & une croissance, mais il va également bloquer la génération
-        & a de feuilles / bûches en dehors de l'île, donc
-        & une coupe de l'arbre.
+        &a Activer / désactiver la croissance des arbres en dehors d'une
+        &a plage de protection d'une île ou non.
+        &a Non seulement cela empêchera les jeunes arbres plcés hors de la
+        &a plage de protection d'une île de
+        &a grandir, mais il va également bloquer la génération
+        &a de feuilles / bûches en dehors de l'île, donc cela
+        &a coupe de l'arbre.
       name: Trees growing outside range
     TURTLE_EGGS:
       description: Toggle crushing
@@ -1315,8 +1339,8 @@ protection:
       name: Turtle Eggs
     WITHER_DAMAGE:
       description: |-
-        & a S'il est actif, le garrot peut
-        & un bloc de dégâts et les joueurs
+        &a S'il est actif, le Wither peut
+        &a faire des dégâts aux blocs et aux joueurs
       name: Toggle wither damage
     ANIMAL_SPAWN:
       description: Autoriser l'apparition naturelle des animaux
@@ -1341,7 +1365,7 @@ protection:
       name: Entonnoirs
       description: Autoriser l'interaction avec les entonnoirs
       hint: vous ne pouvez pas interagir avec les entonnoirs
-  locked: "& c Cette île est verrouillée!"
+  locked: "&c Cette île est verrouillée!"
   panel:
     flag-item:
       allowed-rank: "&3 - &a"
@@ -1354,20 +1378,23 @@ protection:
       minimal-rank: "&3 - &2"
       name-layout: "&a [name]"
       setting-active: "&a actif"
-      setting-cooldown: "&c Le paramètre est en attente..."
-      setting-disabled: "&c désactivé"
+      setting-cooldown: "&c Le paramètre est en cours de recharge"
+      setting-disabled: "&c Désactivé"
       setting-layout: |-
         &a [description]
 
         &7 Réglage actuel : [setting]
     mode:
       advanced:
-        description: "& a Affiche une quantité raisonnable de paramètres."
+        description: "&a Affiche une quantité raisonnable de paramètres."
+        name: "&6 Paramètres avancés"
       basic:
-        name: "& a Paramètres de base"
-      click-to-switch: "&e Cliquez sur &a pour passer à &r [next] &r &a."
+        name: "&a Paramètres de base"
+        description: "&a Affiche les paramètres les plus utiles."
+      click-to-switch: "&e Cliquez &a pour aller vers le &r [next]&r &a ."
       expert:
         description: "&a Affiche tous les paramètres disponibles."
+        name: "&c Paramètres experts"
     previous: "& f Page précédente"
     PROTECTION:
       description: |-
@@ -1375,25 +1402,28 @@ protection:
         &a pour cette île
       title: "&6 Protection"
     reset-to-default:
-      description: |
-        & a Réinitialise & c & l ALL & r & a les paramètres à leur
-        & une valeur par défaut.
-      name: "& c Rétablir les valeurs par défaut"
+      description: |-
+        &a Réinitialise &c &l TOUT &r &a les paramètres à leur
+        &a valeur par défaut.
+      name: "&c Rétablir les valeurs par défaut"
     SETTING:
       description: |-
         &a Paramètres généraux
         &a pour cette île
-      title: "&6 paramètres"
+      title: "&6 Paramètres"
     WORLD_DEFAULTS:
-      description: |-
+      description: |
         &a Paramètres de protection lorsque
-        &a le joueur est en dehors de son île
-      title: "&b [world_name] &6 protections maps"
+        &a le joueur est en dehors de leur île
+      title: "&b [world_name] &6 Protections des worlds"
     WORLD_SETTING:
       description: "&a Paramètres pour ce monde de jeu"
       title: "&b [world_name] &6 Paramètres"
-  world-protected: "& c Monde protégé: [description]"
+    next: "&f Page suivante"
+  world-protected: "&c Monde protégé: [description]"
   command-is-banned: Cette commande est interdite aux visiteurs.
+  protected: "&c Île protégée: [description]"
+  spawn-protected: "&c Spawn protégé: [description]"
 ranks:
   admin: Administrateur
   banned: Banni
