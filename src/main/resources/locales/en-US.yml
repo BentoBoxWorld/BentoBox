@@ -536,8 +536,8 @@ commands:
         parameters: "<player>"
         cannot-coop-yourself: "&c You cannot coop yourself!"
         already-has-rank: "&c Player already has a rank!"
-        you-are-a-coop-member: "&2 You were cooped by [name]"
-        success: "&a You cooped &b [name]."
+        you-are-a-coop-member: "&2 You were cooped by &b[name]&a."
+        success: "&a You cooped &b [name]&a."
         name-has-invited-you: "&a [name] has invited you to join be a coop member of their island."
       uncoop:
         description: "remove a coop rank from player"
@@ -545,8 +545,8 @@ commands:
         cannot-uncoop-yourself: "&c You cannot uncoop yourself!"
         cannot-uncoop-member: "&c You cannot uncoop a team member!"
         player-not-cooped: "&c Player is not cooped!"
-        you-are-no-longer-a-coop-member: "&c You are no longer a coop member of [name]'s island"
-        all-members-logged-off: "&c All island members logged off so you are no longer a coop member of [name]'s island"
+        you-are-no-longer-a-coop-member: "&c You are no longer a coop member of [name]'s island."
+        all-members-logged-off: "&c All island members logged off so you are no longer a coop member of [name]'s island."
         success: "&b [name] &a is no longer a coop member of your island."
         is-full: "&c You cannot coop anyone else."
       trust:
@@ -586,7 +586,7 @@ commands:
         you-can-invite: "&a You can invite [number] more players."
         accept:
           description: "accept an invitation"
-          you-joined-island: "&a You joined an island! Use /[label] team info to see the other members."
+          you-joined-island: "&a You joined an island! Use &b/[label] team &a to see the other members."
           name-joined-your-island: "&a [name] joined your island!"
           confirmation: |-
             &c Are you sure you want to accept this invite?
@@ -1202,9 +1202,9 @@ protection:
         &a If active, withers can
         &a damage blocks and players
   locked: "&c This island is locked!"
-  protected: "&c Island protected: [description]"
-  world-protected: "&c World protected: [description]"
-  spawn-protected: "&c Spawn protected: [description]"
+  protected: "&c Island protected: [description]."
+  world-protected: "&c World protected: [description]."
+  spawn-protected: "&c Spawn protected: [description]."
 
   panel:
     next: "&f Next Page"
