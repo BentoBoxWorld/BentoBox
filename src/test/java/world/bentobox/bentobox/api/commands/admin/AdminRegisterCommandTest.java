@@ -252,7 +252,7 @@ public class AdminRegisterCommandTest {
         AdminRegisterCommand itl = new AdminRegisterCommand(ac);
         assertTrue(itl.execute(user, itl.getLabel(), Collections.singletonList("tastybento")));
         // Add other verifications
-        verify(user).sendMessage(eq("commands.admin.register.registered-island"), eq("[xyz]"), eq("123,123,432"));
+        verify(user).sendMessage(eq("commands.admin.register.registered-island"), eq("[xyz]"), eq("123,123,432"), eq("[name]"), eq("tastybento"));
         verify(user).sendMessage(eq("general.success"));
     }
 
