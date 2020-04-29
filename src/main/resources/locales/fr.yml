@@ -10,7 +10,7 @@ catalog:
         &a Autorisez BentoBox à se connecter à son GitHub dans
         &a la configuration ou réessayez plus tard.
 
-      name: "&b Cela semble vide ici ..."
+      name: "&b C'est vide ici..."
     GAMEMODES:
       title: Catalogue de modes de jeu
     icon:
@@ -26,10 +26,10 @@ catalog:
       install-now: Installez maintenant!
     views:
       addons:
-        description: |-
-          &e Cliquez sur &a pour parcourir les
-          &a add-on officiels disponibles.
         name: "&6 Addons"
+        description: |-
+          &e Cliquez &a pour parcourir les
+          &a addons officiels disponibles.
       gamemodes:
         description: |-
           &e Cliquez sur &a pour parcourir les
@@ -56,8 +56,8 @@ commands:
           &c Une fois effacé, il n''y a aucun moyen de le récupérer.
         description: supprimer le blueprint
         no-blueprint: "&b [name] &c n'existe pas."
-        parameters: "<name>"
         success: "&a Blueprint supprimé avec succès &b [name]&a ."
+        parameters: "<nom>"
       description: manipuler des blueprints
       file-exists: "&c Le fichier existe déjà, écraser?"
       list:
@@ -452,7 +452,7 @@ commands:
       addon-syntax: "&2 [name] &3 [version] &7 (&3[state]&7)"
       database: "&2 Base de données : &3 [database]"
       description: affiche les versions de BentoBox et des addons
-      game-world: "& 2 [nom] & 7 (& 3 [addon] & 7): & 3 [mondes]"
+      game-world: "&2 [name] &7 (&3 [addon]&7 ) : &3 [worlds]"
       loaded-addons: 'Addons chargés :'
       loaded-game-worlds: 'Mondes de jeu chargés :'
       plugin-version: "&2 Version de BentoBox : &3 [version]"
@@ -485,16 +485,16 @@ commands:
       cannot-ban-yourself: "& c Vous ne pouvez pas vous interdire!"
       description: bannir un joueur de votre île
       owner-banned-you: "& b [nom] & c vous a banni de leur île!"
-      parameters: "<player>"
       player-already-banned: "& c Player est déjà banni."
       player-banned: "& b [nom] & c est désormais banni de votre île."
       you-are-banned: "& b Vous êtes banni de cette île!"
+      parameters: "<joueur>"
     banlist:
-      description: liste des joueurs interdits
       names: "& c [ligne]"
       noone: "& a Personne n'est interdit sur cette île."
       the-following: "& b Les joueurs suivants sont bannis:"
       you-can-ban: "& b Vous pouvez bannir jusqu'à & e [nombre] & b joueurs supplémentaires."
+      description: lister les joueurs bannis
     create:
       cannot-create-island: "&c Une place n'a pas pu être trouvée à temps, veuillez
         réessayer..."
@@ -523,9 +523,9 @@ commands:
       cannot-expel-yourself: "& c Vous ne pouvez pas vous expulser!"
       description: expulser un joueur de votre île
       not-on-island: "& c Ce joueur n'est pas sur votre île!"
-      parameters: "<player>"
       player-expelled-you: "& b [nom] & c vous a expulsé de l'île!"
       success: "& a Vous avez expulsé & b [nom] & a de l'île."
+      parameters: "<joueur>"
     go:
       description: vous téléporter sur votre île
       parameters: "[numéro de l'home]"
@@ -536,8 +536,6 @@ commands:
     info:
       description: afficher des informations sur votre île ou celle du joueur
       parameters: "<joueur>"
-    language:
-      description: langue sélectionnée
     near:
       description: montrer le nom des îles voisines autour de vous
       east: Est
@@ -564,26 +562,23 @@ commands:
     sethome:
       description: définir votre home
       home-set: "&6 Votre home a été placé à votre position actuelle."
-      must-be-on-your-island: "&c Vous devez être sur votre île pour définir un home."
+      must-be-on-your-island: "&c Vous devez être sur votre île pour placer un home."
       nether:
         confirmation: "&c Êtes-vous sûr de vouloir placer votre home dans le Nether
           ?"
-        not-allowed: "&c Vous n'êtes pas autorisé à placer votre home dans le Nether."
-      num-homes: "&c Les homes sont compris entre 1 et [number]."
+        not-allowed: "&c Vous n'êtes pas autorisé sur placer votre home dans le Nether."
+      num-homes: "&c Les homes vont de 1 à [number]."
       parameters: "[numéro de l'home]"
       the-end:
         confirmation: "&c Êtes-vous sûr de vouloir placer votre home dans l'End ?"
         not-allowed: "&c Vous n'êtes pas autorisé à placer votre home dans l'End."
     setname:
       description: donnez un nom à votre île
-      name-already-exists: "&c Il existe déjà une île portant ce nom dans ce mode
-        de jeu."
+      name-already-exists: "&c Il y a déjà une île avec ce nom dans ce mode de jeu."
       name-too-long: "&c Trop long. La taille maximale est de [number] caractères."
       name-too-short: "&c Trop court. La taille minimale est de [number] caractères."
       parameters: "<nom>"
       success: "&a Le nom de votre île est désormais &b [name]&a ."
-    settings:
-      description: paramètres de l'île d'affichage
     spawn:
       description: vous téléporter au spawn
       no-spawn: "&c Il n'y a pas de spawn dans ce mode de jeu."
@@ -593,59 +588,56 @@ commands:
         already-has-rank: "&c Ce joueur est membre de votre île."
         cannot-coop-yourself: "&c Vous ne pouvez pas vous coop vous-même"
         description: coop un joueur sur votre île
-        name-has-invited-you: "&a [name] vous a invité(e) à devenir membre Coop de
-          leur île."
+        name-has-invited-you: "&a [name] vous a invité(e) à devenir coop sur son île."
         parameters: "<joueur>"
-        success: "&a Vous avez coop &b [name]."
-        you-are-a-coop-member: "&2 Vous avez été coop par [name]"
+        success: "&a Vous avez coop &b [name]&a."
+        you-are-a-coop-member: "&2 Vous avez été coop par [name]."
       demote:
-        description: rétrograder un joueur de votre île d''un rang inférieur
         errors:
           cant-demote-yourself: "& c Vous ne pouvez pas vous rétrograder!"
         failure: "& c Le joueur ne peut plus être rétrogradé!"
-        parameters: "<player>"
         success: "& un [nom] rétrogradé à [rang]"
+        description: rétrograder un joueur de votre île à un rang inférieur
+        parameters: "<joueur>"
       description: gérer votre équipe
       info:
         description: afficher des informations détaillées sur votre équipe
-        header: |
-          & f --- & a Détails de l'équipe & f ---
-          & a Membres: & b [total] & 7 / & b [max]
-          & a Membres en ligne: & b [en ligne]
         last-seen:
           days: jours
           hours: heures
-          layout: "& b [nombre] & 7 [unité] il y a"
           minutes: minutes
+          layout: "&7 il y a &b [number] &7 [unit]"
         member-layout:
-          offline: "& c & l o & r & f [nom] & 7 ([last_seen])"
-          online: "& a & l o & r & f [nom]"
+          offline: "&a &l o &r &f [name] &7 ([last_seen])"
+          online: "&a &l o &r &f [name]"
+        header: |-
+          &f --- &a Détails de l'équipe &f ---
+          &a Membres : &b [total] &7 / &b [max]
+          &a Membres en ligne : &b [online]
         rank-layout:
-          generic: "& 6 [rang] & 7 (& b [nombre] & 7) & 6:"
-          owner: "& 6 [rang]:"
+          owner: "&6 [rank] :"
+          generic: "&6 [rank] &7 (&b [number]&7) &6 :"
       invite:
         accept:
           confirmation: |-
             & c Voulez-vous vraiment accepter cette invitation?
             & c & l Vous allez & n PERDRE & r & c & l votre île actuelle!
           description: accepter une invitation
-          name-joined-your-island: "& un [nom] a rejoint votre île!"
-          you-joined-island: "& a Vous avez rejoint une île! Utilisez / [label] info
-            équipe pour voir les autres membres."
-        cancel:
-          description: annuler l''invitation en attente pour rejoindre votre île
+          name-joined-your-island: "&a [name] a rejoint votre île !"
+          you-joined-island: "&a Vous avez rejoint une île ! Utilisez &b/ [label]
+            team &a pour voir les autres membres."
         description: inviter un joueur à rejoindre votre île
         errors:
-          already-on-team: "& c Ce joueur fait déjà partie d'une équipe!"
           cannot-invite-self: "&c Vous ne pouvez pas vous inviter vous-même !"
           cooldown: "&c Vous ne pouvez pas inviter cette personne pendant encore [number]
             secondes."
-          invalid-invite: "& c Cette invitation n'est plus valide, désolé."
-          island-is-full: "& c Votre île est pleine, vous ne pouvez inviter personne
+          invalid-invite: "&c Cette invitation n'est plus valide, désolé."
+          island-is-full: "&c Votre île est pleine, vous ne pouvez inviter personne
             d'autre."
-          none-invited-you: "& c Personne ne vous a invité: c."
-          you-already-are-in-team: "& c Vous faites déjà partie d'une équipe!"
-          you-have-already-invited: "&c Vous avez déjà invité ce joueur!"
+          none-invited-you: "&c Personne ne vous a invité. :c"
+          you-already-are-in-team: "&c Vous faites déjà partie d'une équipe !"
+          already-on-team: "&c Ce joueur fait déjà partie d'une équipe !"
+          you-have-already-invited: "&c Vous avez déjà invité ce joueur !"
         invitation-sent: "&a Invitation envoyée à &b[name]&a."
         name-has-invited-you: "&b [name] &a vous a invité à rejoindre son île."
         parameters: "<player>"
@@ -657,15 +649,17 @@ commands:
         removing-invite: "&c Suppression de l'invitation."
         to-accept-or-reject: "&a Faites &b/[label] team accept &a pour accepter ou
           &b/[label] team reject] &a pour refuser."
-        you-can-invite: "& a Vous pouvez inviter [nombre] d'autres joueurs."
-        you-will-lose-your-island: "&c ATTENTION ! Vous perdrez votre île si vous
-          acceptez."
+        you-will-lose-your-island: "&c ATTENTION ! Vous perdrez votre île actuelle
+          si vous acceptez !"
+        cancel:
+          description: annuler l'invitation en attente
+        you-can-invite: "&a Vous pouvez inviter [number] joueurs supplémentaires."
       kick:
         cannot-kick: "& c Vous ne pouvez pas vous botter!"
         description: supprimer un membre de votre île
         owner-kicked: "& c Le propriétaire vous a viré de l'île en [mode de jeu]!"
-        parameters: "<player>"
         success: "& b [nom] & a a été exclu de votre île."
+        parameters: "<joueur>"
       leave:
         cannot-leave: "& c Les propriétaires ne peuvent pas partir! Devenez d'abord
           un membre ou limitez tous les membres."
@@ -675,8 +669,8 @@ commands:
       promote:
         description: promouvoir un joueur de votre île à un rang supérieur
         failure: "& c Le joueur ne peut plus être promu!"
-        parameters: "<player>"
         success: "& un [nom] promu au [rang]"
+        parameters: "<joueur>"
       setowner:
         description: transférer la propriété de votre île à un membre
         errors:
@@ -686,18 +680,18 @@ commands:
           target-is-not-member: "& c Ce joueur ne fait pas partie de votre équipe
             insulaire!"
         name-is-the-owner: "& a [nom] est maintenant le propriétaire de l'île!"
-        parameters: "<player>"
         you-are-the-owner: "& a Vous êtes maintenant le propriétaire de l'île!"
+        parameters: "<joueur>"
       trust:
         description: trust un joueur sur votre île
         is-full: "&c Vous ne pouvez Trust d'avantage de joueurs."
-        name-has-invited-you: "&a [name] vous a invité(e) à devenir membre Trust de
-          leur île."
         parameters: "<joueur>"
-        player-already-trusted: "&c Ce joueur est déjà trust."
-        success: "&a Vous avez trust &b [name] &a."
+        player-already-trusted: "&c Ce joueur est déjà trust !"
+        success: "&a Vous avez trust &b [name]&a."
         trust-in-yourself: "&c Croyez en vous !"
         you-are-trusted: "&b [name] &2 vous a trust sur son île."
+        name-has-invited-you: "&a [name] vous a invité(e) à devenir trust sur son
+          île."
       uncoop:
         all-members-logged-off: "&c Tous les membres de l'île de [name] se sont déconnectés,
           vous n'êtes donc plus coop."
@@ -707,25 +701,29 @@ commands:
         description: retirer le coop du joueur
         is-full: "&c Vous ne pouvez ajouter personne d'autre dans votre coop."
         parameters: "<joueur>"
-        player-not-cooped: "&c Ce joueur n'est pas coop."
+        player-not-cooped: "&c Ce joueur n'est pas coop !"
         success: "&b [name] &a n'est plus coop sur votre île."
-        you-are-no-longer-a-coop-member: "&c Vous n'êtes plus coop sur l'île de [name]"
+        you-are-no-longer-a-coop-member: "&c Vous n'êtes plus coop sur l'île de [name]."
       untrust:
         cannot-untrust-member: "&c Vous ne pouvez pas retirer le trust à un membre
           de l'île."
         cannot-untrust-yourself: "&c Vous ne pouvez pas vous retirer le trust."
         description: retirer le trust du joueur
         parameters: "<joueur>"
-        player-not-trusted: "&c Ce joueur n'est pas trust."
-        success: "&b[name]&a n'est plus trust sur votre île."
+        player-not-trusted: "&c Ce joueur n'est pas trust !"
         you-are-no-longer-trusted: "&c Vous n'êtes plus trust sur l'île de &b[name]&a."
+        success: "&b[name] &a n'est plus trust sur votre île."
     unban:
       cannot-unban-yourself: "& c Vous ne pouvez pas vous défaire!"
-      description: unban un joueur de votre île
-      parameters: "<player>"
       player-not-banned: "& c Le lecteur n'est pas interdit."
       player-unbanned: "& b [nom] & a est désormais interdit sur votre île."
       you-are-unbanned: "& b [nom] & a vous a banni de leur île!"
+      description: débannir un joueur de votre île
+      parameters: "<joueur>"
+    settings:
+      description: ouvrir les paramètres de l'île
+    language:
+      description: sélectionner la langue
 general:
   errors:
     already-have-island: "&c Vous avez déjà une île !"
@@ -781,11 +779,11 @@ management:
         description: "&a ouvre le catalogue des Addons"
         name: "&6 Catalogue d'Addons "
       credits:
-        description: "&a ouvre la page des Crédits pour BentoBox"
-        name: "&6 crédits"
+        description: "&a Ouvre les crédits de BentoBox"
+        name: "&6 Crédits"
       empty-here:
-        description: "&a Et si vous jetiez un œil à notre catalogue?"
-        name: "&b Cela semble vide ici ..."
+        description: "&a Et si vous jetiez un œil à notre catalogue ?"
+        name: "&b C'est vide ici..."
     information:
       state:
         description:
@@ -793,10 +791,6 @@ management:
             actuellement sur une\n&a version logicielle serveur \n&a &l COMPATIBLE
             &r &a.\n\n&a Ses fonctionnalités sont entièrement conçues pour\n&a cet
             environnement."
-          INCOMPATIBLE: "&a Running &e [name] [version] &a.\n\n&a BentoBox fonctionne
-            actuellement sur une\n&a version logicielle serveur \n&c &l INCOMPATIBLE
-            &r &a.\n\n&c Des comportements étranges et des bugs peuvent survenir\n&c
-            et la plupart des fonctionnalités peuvent être instables."
           NOT_SUPPORTED: "&a Running &e [name] [version] &a.\n\n&a BentoBox fonctionne
             actuellement sur une\n&a version logicielle serveur \n&6 &l NON SUPPORTÉE&r
             &a.\n\n&a Bien que la plupart de ses fonctionnalités fonctionnent\n&a
@@ -810,22 +804,20 @@ management:
     title: Gestion de BentoBox
     views:
       addons:
-        description: "&e Cliquez sur &a pour afficher les modules complémentaires
-          actuellement chargés"
-        name: "&6 extensions"
+        description: "&e Cliquez &a pour afficher les addons actuellement chargés"
+        name: "&6 Addons"
       gamemodes:
         blueprints:
           description: "&a Ouvre le menu Admin Blueprint."
           name: "&6 Blueprints"
-        description: "&e Cliquez sur &a pour afficher les modes de jeu actuellement
-          chargés"
         gamemode:
           description: "&a Îles : &b [islands]"
           name: "&f [name]"
         name: "&6 modes de jeu"
+        description: "&e Cliquez &a pour afficher les modes de jeu actuellement chargés"
       hooks:
         description: "&e Cliquez sur &a pour afficher les crochets actuellement chargés"
-        name: "&6 crochets"
+        name: "&6 Hooks"
 meta:
   authors:
   - Poslovitch
@@ -834,71 +826,54 @@ meta:
 panel:
   credits:
     contributor:
-      description: "&a Commits: &b [commits]"
       name: "&a [name]"
+      description: "&a Commits : &b [commits]"
     empty-here:
-      description: |+
-        & c BentoBox n'a pas pu rassembler les contributeurs
-        & c pour cet addon.
+      description: |-
+        &c BentoBox n'a pas pu rassembler les contributeurs
+        &c pour cet addon.
 
-        & a Autoriser BentoBox à se connecter à GitHub dans
-        & a la configuration ou réessayez plus tard.
-
-      name: "&c Cela semble vide ici ..."
-    title: "&8 [name] &2 Crédits"
+        &a Autorisez BentoBox à se connecter à GitHub dans
+        &a la configuration ou réessayez plus tard.
+      name: "&c C'est vide ici..."
+    title: "&2 Crédits de &8 [name]"
 prefixes:
   bentobox: "&6 BentoBox &7 &l> &r"
 protection:
-  command-is-banned: Le commandement est interdit aux visiteurs
   flags:
-    ANIMAL_SPAWN:
-      description: Frai à bascule
-      name: Reproduction d''animaux
     ANVIL:
-      description: Interaction à bascule
-      hint: Utilisation de l''enclume désactivée
       name: Enclumes
-    ARMOR_STAND:
-      description: Interaction à bascule
-      hint: Utilisation du support d''armure désactivée
-      name: Supports d''armure
+      description: Autoriser l'utilisation des enclumes
+      hint: vous ne pouvez pas utiliser les enclumes
     BEACON:
-      description: Interaction à bascule
-      hint: Utilisation de la balise désactivée
       name: Balises
+      description: Autoriser l'interaction avec les balises
+      hint: vous ne pouvez pas interagir avec les balises
     BED:
-      description: Interaction à bascule
-      hint: L''utilisation du lit est désactivée
       name: Lits
+      description: Autoriser l'utilisation des lits
+      hint: vous ne pouvez pas utiliser les lits
     BOAT:
-      description: Interactions avec les bateaux à bascule
-      hint: Aucune interaction avec le bateau n''est autorisée
       name: Bateaux
-    BREAK_BLOCKS:
-      description: Bris des bascules
-      hint: Rupture de bloc désactivée
-      name: Blocs de rupture
+      description: Autoriser l'interaction avec les bateaux
+      hint: vous ne pouvez pas interagir avec les bateaux
     BREAK_SPAWNERS:
       description: est-ce que les joueurs peuvent détruire les spawners? Remplace
         le flag.
       hint: Casse spawners désactivée
       name: Casser les Spawners
-    BREEDING:
-      description: Élevage à bascule
-      hint: Protection de l''élevage
-      name: Animaux de race
     BREWING:
-      description: Interaction à bascule
       hint: Brassage désactivé
-      name: Brewing stands
+      description: Autoriser l'utilisation des alambics
+      name: Alambics
     BUCKET:
-      description: Toggle interaction
       hint: Utilisation du godet désactivée
-      name: Buckets
+      description: vous ne pouvez pas utiliser les alambics
+      name: Seaux
     BUTTON:
-      description: Toggle button use
       hint: Utilisation des boutons désactivée
-      name: Buttons
+      description: Autoriser l'interaction avec les boutons
+      name: Boutons
     CAKE:
       description: changer l'interaction avec le Cake
       hint: Manger du Cake désactivé
@@ -946,8 +921,8 @@ protection:
 
         & 7 D'autres conteneurs sont manipulés
         & 7 par des drapeaux dédiés.
-      hint: Container access disabled
-      name: Containers
+      name: Conteneurs
+      hint: vous ne pouvez pas ouvrir les conteneurs
     CRAFTING:
       description: Toggle use
       hint: Accès au plan de travail désactivé
@@ -963,10 +938,6 @@ protection:
       description: Toggle crop trampling
       hint: Piétinement des cultures désactivé
       name: Trample crops
-    DISPENSER:
-      description: Toggle dispenser interaction
-      hint: Dispenser interaction disabled
-      name: Dispensers
     DOOR:
       description: Toggle door usage
       hint: Interaction de porte désactivée
@@ -980,9 +951,9 @@ protection:
       hint: Interaction œuf de dragon désactivée
       name: Dragon Egg
     DROPPER:
-      description: Toggle dropper interaction
-      hint: Dropper interaction disabled
       name: Droppers
+      description: Autoriser l'interaction avec les droppers
+      hint: vous ne pouvez pas interagir avec les droppers
     DYE:
       description: Prevent dye use
       hint: Teinture désactivée
@@ -992,9 +963,9 @@ protection:
       hint: Lancer d'œufs désactivé
       name: Egg throwing
     ELYTRA:
-      description: Toggle elytra allowed or not
       hint: "& c AVERTISSEMENT: Elytra ne peut pas être utilisé ici!"
-      name: Elytra
+      name: Élytres
+      description: Autoriser l'utilisation des élytres
     ENCHANTING:
       description: Toggle use
       hint: Tables d'enchantement désactivées
@@ -1086,10 +1057,6 @@ protection:
         & un extérieur protégé
         & un espace insulaire
       name: "& e Limiter les foules à l'île"
-    HOPPER:
-      description: Toggle hopper interaction
-      hint: Hopper interaction disabled
-      name: Hoppers
     HURT_ANIMALS:
       description: Toggle hurting
       hint: Animal blessé handicapé
@@ -1219,16 +1186,6 @@ protection:
       hint: Interaction bloc-notes désactivée
       name: Note block
     OBSIDIAN_SCOOPING:
-      description: |-
-        & a Autoriser les joueurs à récupérer l'obsidienne
-        et un avec un seau vide dans la lave.
-
-        & a Cela aide les débutants qui n'ont pas réussi à
-        & a construire leur générateur de pavés.
-
-        & une note: l'obsidienne ne peut pas être récupérée
-        & a s'il y a d'autres blocs d'obsidienne
-        & a dans un rayon de 2 blocs.
       name: Obsidian scooping
       obsidian-nearby: "&c Il y a d'autres blocs d'obsidienne à proximité, vous ne
         pouvez pas transformer ce bloc en lave."
@@ -1293,22 +1250,14 @@ protection:
       name: Nether PVP
     PVP_OVERWORLD:
       active: "&c PVP is active here!"
-      description: |-
-        & c Activer / désactiver PVP
-        & c sur l'île.
       disabled: "&a Le PVP dans l'Overworld a été désactivé."
       enabled: "&c Le PVP dans l'Overworld a été activé."
-      hint: "& c PVP désactivé dans l'Overworld"
       name: Overworld PVP
     REDSTONE:
       description: Toggle use
       hint: Interaction Redstone désactivée
       name: Redstone items
     REMOVE_END_EXIT_ISLAND:
-      description: |-
-        & a Empêche la sortie finale
-        & une île de générer
-        & a aux coordonnées 0,0
       name: Remove end exit island
     REMOVE_MOBS:
       description: |-
@@ -1340,10 +1289,6 @@ protection:
         & a entités.
       name: TNT damage
     TNT_PRIMING:
-      description: |-
-        & a Empêche l'amorçage du TNT.
-        & a Il ne remplace pas le
-        & une protection en silex et acier.
       hint: Amorçage TNT désactivé
       name: TNT priming
     TRADING:
@@ -1373,6 +1318,29 @@ protection:
         & a S'il est actif, le garrot peut
         & un bloc de dégâts et les joueurs
       name: Toggle wither damage
+    ANIMAL_SPAWN:
+      description: Autoriser l'apparition naturelle des animaux
+      name: Apparition des animaux
+    ARMOR_STAND:
+      description: Autoriser l'interaction avec les portes-armures
+      name: Portes-armures
+      hint: vous ne pouvez pas interagir avec les portes-armures
+    BREAK_BLOCKS:
+      description: Autoriser à casser des blocs
+      name: Casser les blocs
+      hint: vous ne pouvez pas casser des blocs
+    BREEDING:
+      description: Autoriser la reproduction des animaux
+      name: Reproduction des animaux
+      hint: vous ne pouvez pas reproduire les animaux
+    DISPENSER:
+      name: Dispensers
+      description: Autoriser l'interaction avec dispensers
+      hint: vous ne pouvez pas interagir avec les dispensers
+    HOPPER:
+      name: Entonnoirs
+      description: Autoriser l'interaction avec les entonnoirs
+      hint: vous ne pouvez pas interagir avec les entonnoirs
   locked: "& c Cette île est verrouillée!"
   panel:
     flag-item:
@@ -1395,15 +1363,11 @@ protection:
     mode:
       advanced:
         description: "& a Affiche une quantité raisonnable de paramètres."
-        name: "& 6 Paramètres avancés"
       basic:
-        description: "& a Affiche les paramètres les plus utiles."
         name: "& a Paramètres de base"
       click-to-switch: "&e Cliquez sur &a pour passer à &r [next] &r &a."
       expert:
         description: "&a Affiche tous les paramètres disponibles."
-        name: "& c Paramètres experts"
-    next: "& f Page suivante"
     previous: "& f Page précédente"
     PROTECTION:
       description: |-
@@ -1428,9 +1392,8 @@ protection:
     WORLD_SETTING:
       description: "&a Paramètres pour ce monde de jeu"
       title: "&b [world_name] &6 Paramètres"
-  protected: "& c Île protégée: [description]"
-  spawn-protected: "& c Spawn protégé: [description]"
   world-protected: "& c Monde protégé: [description]"
+  command-is-banned: Cette commande est interdite aux visiteurs.
 ranks:
   admin: Administrateur
   banned: Banni
@@ -1439,8 +1402,8 @@ ranks:
   mod: Modérateur
   owner: Propriétaire
   sub-owner: Sous-propriétaire
-  trusted: Joueur de confiance
   visitor: Visiteur
+  trusted: Trust
 successfully-loaded: |-
   &6   ____             _        ____
   &6  |  _ \           | |      |  _ \             &7 par &a tastybento &7 et &a Poslovitch
