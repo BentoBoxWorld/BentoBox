@@ -4,11 +4,12 @@ catalog:
     ADDONS:
       title: Catalogue d'addons
     empty-here:
-      description: |-
-        &c BentoBox n'a pas pu se connecter à GitHub.
+      description: |+
+        &c BentoBox n'a pas pu se connecter à son GitHub.
 
-        &a Autoriser BentoBox à se connecter à GitHub dans
+        &a Autorisez BentoBox à se connecter à son GitHub dans
         &a la configuration ou réessayez plus tard.
+
       name: "&b Cela semble vide ici ..."
     GAMEMODES:
       title: Catalogue de modes de jeu
@@ -833,7 +834,7 @@ meta:
 panel:
   credits:
     contributor:
-      description: "&a Valide : &b [commits]"
+      description: "&a Commits: &b [commits]"
       name: "&a [name]"
     empty-here:
       description: |+
