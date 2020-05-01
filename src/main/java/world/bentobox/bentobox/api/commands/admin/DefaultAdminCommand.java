@@ -1,6 +1,5 @@
 package world.bentobox.bentobox.api.commands.admin;
 
-
 import java.util.List;
 
 import world.bentobox.bentobox.api.addons.GameModeAddon;
@@ -17,36 +16,31 @@ import world.bentobox.bentobox.api.commands.admin.team.AdminTeamSetownerCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 
-
 /**
  * This is default Admin command for console and op. It contains all necessary parts that
  * for main command.
  * @since 1.13.0
  * @author BONNe
  */
-public abstract class DefaultAdminCommand extends CompositeCommand
-{
+public abstract class DefaultAdminCommand extends CompositeCommand {
     /**
      * This is the top-level command constructor for commands that have no parent.
      *
      * @param addon   - GameMode addon
      */
-    public DefaultAdminCommand(GameModeAddon addon)
-    {
+    public DefaultAdminCommand(GameModeAddon addon) {
         // Register command with alias from config.
         super(addon,
             addon.getWorldSettings().getAdminCommandAliases().split(" ")[0],
             addon.getWorldSettings().getAdminCommandAliases().split(" "));
     }
 
-
     /**
      * Setups anything that is necessary for default main admin command.
      * @see world.bentobox.bentobox.api.commands.BentoBoxCommand#setup()
      */
     @Override
-    public void setup()
-    {
+    public void setup() {
         this.setPermission("admin.*");
         this.setOnlyPlayer(false);
 
@@ -88,10 +82,6 @@ public abstract class DefaultAdminCommand extends CompositeCommand
         new AdminSetSpawnPointCommand(this);
         // Reset flags
         new AdminResetFlagsCommand(this);
-        // Trash
-        //new AdminTrashCommand(this);
-        //new AdminEmptyTrashCommand(this);
-        //new AdminSwitchtoCommand(this);
         // Switch
         new AdminSwitchCommand(this);
         // Purge
@@ -100,16 +90,13 @@ public abstract class DefaultAdminCommand extends CompositeCommand
         new AdminSettingsCommand(this);
     }
 
-
     /**
      * Defines what will be executed when this command is run.
      * @see world.bentobox.bentobox.api.commands.BentoBoxCommand#execute(User, String, List<String>)
      */
     @Override
-    public boolean execute(User user, String label, List<String> args)
-    {
-        if (user != null && !args.isEmpty())
-        {
+    public boolean execute(User user, String label, List<String> args) {
+        if (user != null && !args.isEmpty()) {
             user.sendMessage("general.errors.unknown-command", TextVariables.LABEL, getTopLabel());
             return false;
         }

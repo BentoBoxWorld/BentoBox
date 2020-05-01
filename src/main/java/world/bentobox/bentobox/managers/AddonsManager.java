@@ -194,7 +194,7 @@ public class AddonsManager {
         String desc = perms.getString(perm + ".description");
         // Replace placeholders for Game Mode Addon names
         if (perm.contains(GAMEMODE)) {
-            getGameModeAddons().stream().map(g -> g.getPermissionPrefix())
+            getGameModeAddons().stream().map(Addon::getPermissionPrefix)
             .forEach(p -> DefaultPermissions.registerPermission(perm.replace(GAMEMODE, p), desc, pd));
         } else {
             // Single perm

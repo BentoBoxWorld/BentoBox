@@ -98,7 +98,7 @@ public class JSONDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
     }
 
     @Override
-    public CompletableFuture<Boolean> saveObject(T instance) throws IntrospectionException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+    public CompletableFuture<Boolean> saveObject(T instance) throws IntrospectionException, IllegalAccessException, InvocationTargetException {
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
         // Null check
         if (instance == null) {
