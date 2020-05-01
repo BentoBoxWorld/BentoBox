@@ -39,6 +39,9 @@ public class DefaultHelpCommand extends CompositeCommand {
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
+        // If command is hidden, do not show anything
+        if (parent.isHidden()) return true;
+        // Show default help
         int depth = 0;
         if (args.size() == 1) {
             if (NumberUtils.isDigits(args.get(0))) {

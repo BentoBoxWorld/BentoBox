@@ -32,7 +32,7 @@ public class AdminPurgeUnownedCommand extends ConfirmableCommand {
         }
         AdminPurgeCommand parentCommand = ((AdminPurgeCommand)getParent());
         if (parentCommand.isInPurge()) {
-            user.sendMessage("commands.admin.purge.purge-in-progress");
+            user.sendMessage("commands.admin.purge.purge-in-progress", TextVariables.LABEL, this.getTopLabel());
             return false;
         }
         Set<String> unowned = getUnownedIslands();
@@ -49,6 +49,7 @@ public class AdminPurgeUnownedCommand extends ConfirmableCommand {
 
     Set<String> getUnownedIslands() {
         return getPlugin().getIslands().getIslands().stream()
+                .filter(i -> !i.isSpawn())
                 .filter(i -> !i.getPurgeProtected())
                 .filter(i -> i.getWorld().equals(this.getWorld()))
                 .filter(Island::isUnowned)

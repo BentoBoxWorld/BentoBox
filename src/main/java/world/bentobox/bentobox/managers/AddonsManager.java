@@ -21,11 +21,14 @@ import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.generator.ChunkGenerator;
+import org.bukkit.permissions.PermissionDefault;
+import org.bukkit.util.permissions.DefaultPermissions;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
@@ -34,6 +37,7 @@ import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.addons.Addon.State;
 import world.bentobox.bentobox.api.addons.AddonClassLoader;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
+import world.bentobox.bentobox.api.addons.exceptions.InvalidAddonDescriptionException;
 import world.bentobox.bentobox.api.addons.exceptions.InvalidAddonFormatException;
 import world.bentobox.bentobox.api.configuration.ConfigObject;
 import world.bentobox.bentobox.api.events.addon.AddonEvent;
@@ -45,6 +49,10 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento, ComminQ
  */
 public class AddonsManager {
+
+    private static final String DEFAULT = ".default";
+
+    private static final String GAMEMODE = "[gamemode].";
 
     @NonNull
     private List<Addon> addons;
@@ -154,10 +162,43 @@ public class AddonsManager {
      * Enables all the addons
      */
     public void enableAddons() {
-        if (!getLoadedAddons().isEmpty()) {
-            plugin.log("Enabling addons...");
-            getLoadedAddons().forEach(this::enableAddon);
-            plugin.log("Addons successfully enabled.");
+        if (getLoadedAddons().isEmpty()) return;
+        plugin.log("Enabling addons...");
+        getLoadedAddons().forEach(this::enableAddon);
+        // Set perms for enabled addons
+        this.getEnabledAddons().forEach(this::setPerms);
+        plugin.log("Addons successfully enabled.");
+    }
+
+    boolean setPerms(Addon addon) {
+        ConfigurationSection perms = addon.getDescription().getPermissions();
+        if (perms == null) return false;
+        for (String perm : perms.getKeys(true)) {
+            // Only try to register perms for end nodes
+            if (perms.contains(perm + DEFAULT) && perms.contains(perm + ".description")) {
+                try {
+                    registerPermission(perms, perm);
+                } catch (InvalidAddonDescriptionException e) {
+                    plugin.logError("Addon " + addon.getDescription().getName() + ": " + e.getMessage());
+                }
+            }
+        }
+        return true;
+    }
+
+    void registerPermission(ConfigurationSection perms, String perm) throws InvalidAddonDescriptionException {
+        PermissionDefault pd = PermissionDefault.getByName(perms.getString(perm + DEFAULT));
+        if (pd == null) {
+            throw new InvalidAddonDescriptionException("Permission default is invalid in addon.yml: " + perm + DEFAULT);
+        }
+        String desc = perms.getString(perm + ".description");
+        // Replace placeholders for Game Mode Addon names
+        if (perm.contains(GAMEMODE)) {
+            getGameModeAddons().stream().map(g -> g.getPermissionPrefix())
+            .forEach(p -> DefaultPermissions.registerPermission(perm.replace(GAMEMODE, p), desc, pd));
+        } else {
+            // Single perm
+            DefaultPermissions.registerPermission(perm, desc, pd);
         }
     }
 
@@ -380,6 +421,9 @@ public class AddonsManager {
         classes.putIfAbsent(name, clazz);
     }
 
+    /**
+     * Sorts the addons into loading order taking into account dependencies
+     */
     private void sortAddons() {
         // Lists all available addons as names.
         List<String> names = addons.stream().map(a -> a.getDescription().getName()).collect(Collectors.toList());

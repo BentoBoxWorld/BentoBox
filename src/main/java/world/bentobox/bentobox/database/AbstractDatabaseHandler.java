@@ -4,6 +4,7 @@ import java.beans.IntrospectionException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Queue;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.bukkit.Bukkit;
@@ -95,32 +96,30 @@ public abstract class AbstractDatabaseHandler<T> {
         this.databaseConnector = databaseConnector;
         this.dataObject = type;
 
+        // Return if plugin disabled
+        if (!plugin.isEnabled()) return;
         // Run async queue
         processQueue = new ConcurrentLinkedQueue<>();
-        if (plugin.isEnabled()) {
-            asyncSaveTask = Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-                // Loop continuously
-                while (!shutdown || !processQueue.isEmpty()) {
-                    // This catches any databases that are not explicitly closed
-                    if (!plugin.isEnabled()) {
-                        shutdown = true;
-                    }
-                    while (!processQueue.isEmpty()) {
-                        processQueue.poll().run();
-                    }
-                    // Clear the queue and then sleep
-                    try {
-                        Thread.sleep(25);
-                    } catch (InterruptedException e) {
-                        plugin.logError("Thread sleep error " + e.getMessage());
-                        Thread.currentThread().interrupt();
-                    }
+        asyncSaveTask = Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            // Loop continuously
+            while (!shutdown || !processQueue.isEmpty()) {
+                while (!processQueue.isEmpty()) {
+                    processQueue.poll().run();
                 }
-                // Cancel
-                asyncSaveTask.cancel();
-                databaseConnector.closeConnection(dataObject);
-            });
-        }
+                // Shutdown flag
+                shutdown = plugin.isShutdown();
+                // Clear the queue and then sleep
+                try {
+                    Thread.sleep(25);
+                } catch (InterruptedException e) {
+                    plugin.logError("Thread sleep error " + e.getMessage());
+                    Thread.currentThread().interrupt();
+                }
+            }
+            // Cancel
+            asyncSaveTask.cancel();
+            databaseConnector.closeConnection(dataObject);
+        });
     }
 
     protected AbstractDatabaseHandler() {}
@@ -145,7 +144,7 @@ public abstract class AbstractDatabaseHandler<T> {
      *
      * @param instance that should be inserted into the database
      */
-    public abstract void saveObject(T instance) throws IllegalAccessException, InvocationTargetException, IntrospectionException ;
+    public abstract CompletableFuture<Boolean> saveObject(T instance) throws IllegalAccessException, InvocationTargetException, IntrospectionException ;
 
     /**
      * Deletes the object with the unique id from the database. If the object does not exist, it will fail silently.
@@ -173,4 +172,5 @@ public abstract class AbstractDatabaseHandler<T> {
      * @since 1.1
      */
     public abstract void deleteID(String uniqueId);
+
 }

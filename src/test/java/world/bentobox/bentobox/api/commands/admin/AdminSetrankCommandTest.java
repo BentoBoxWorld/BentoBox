@@ -18,6 +18,7 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.PluginManager;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -69,6 +70,7 @@ public class AdminSetrankCommandTest {
         // Set up plugin
         BentoBox plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        Util.setPlugin(plugin);
 
         // Ranks Manager
         rm = new RanksManager();
@@ -85,16 +87,22 @@ public class AdminSetrankCommandTest {
         Player p = mock(Player.class);
         when(p.getUniqueId()).thenReturn(targetUUID);
         User.getInstance(p);
-        
+
         // Online players
         PowerMockito.mockStatic(Util.class);
         when(Util.getOnlinePlayerList(any())).thenReturn(Collections.singletonList("tastybento"));
-        
+        when(Util.getUUID(anyString())).thenCallRealMethod();
+
         // Translations
         when(user.getTranslation(anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
-        
+
         // Command
         c = new AdminSetrankCommand(ac);
+
+        // Plugin Manager
+        PowerMockito.mockStatic(Bukkit.class);
+        PluginManager pim = mock(PluginManager.class);
+        when(Bukkit.getPluginManager()).thenReturn(pim);
     }
 
     /**

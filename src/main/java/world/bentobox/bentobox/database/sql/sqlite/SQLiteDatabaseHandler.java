@@ -3,6 +3,7 @@ package world.bentobox.bentobox.database.sql.sqlite;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.concurrent.CompletableFuture;
 
 import org.eclipse.jdt.annotation.NonNull;
 
@@ -31,23 +32,26 @@ public class SQLiteDatabaseHandler<T> extends SQLDatabaseHandler<T> {
      * @param databaseConnector Contains the settings to create a connection to the database
      */
     protected SQLiteDatabaseHandler(BentoBox plugin, Class<T> type, DatabaseConnector databaseConnector) {
-        super(plugin, type, databaseConnector, new SQLConfiguration(type.getCanonicalName())
-                .schema("CREATE TABLE IF NOT EXISTS `" + type.getCanonicalName() + "` (json JSON, uniqueId VARCHAR(255) NOT NULL PRIMARY KEY)")
-                .saveObject("INSERT INTO `" + type.getCanonicalName()
+        super(plugin, type, databaseConnector, new SQLConfiguration(plugin.getSettings().getDatabasePrefix() + type.getCanonicalName())
+                .schema("CREATE TABLE IF NOT EXISTS `" + plugin.getSettings().getDatabasePrefix() + type.getCanonicalName() + "` (json JSON, uniqueId VARCHAR(255) NOT NULL PRIMARY KEY)")
+                .saveObject("INSERT INTO `" + plugin.getSettings().getDatabasePrefix() + type.getCanonicalName()
                 + "` (json, uniqueId) VALUES (?, ?) ON CONFLICT(uniqueId) DO UPDATE SET json = ?")
-                .objectExists("SELECT EXISTS (SELECT 1 FROM `" + type.getCanonicalName() + "` WHERE `uniqueId` = ?)"));
+                .objectExists("SELECT EXISTS (SELECT 1 FROM `" + plugin.getSettings().getDatabasePrefix() + type.getCanonicalName() + "` WHERE `uniqueId` = ?)"));
     }
 
     @Override
-    public void saveObject(T instance) {
+    public CompletableFuture<Boolean> saveObject(T instance) {
+        CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
         // Null check
         if (instance == null) {
-            plugin.logError("MySQL database request to store a null. ");
-            return;
+            plugin.logError("SQLite database request to store a null. ");
+            completableFuture.complete(false);
+            return completableFuture;
         }
         if (!(instance instanceof DataObject)) {
             plugin.logError("This class is not a DataObject: " + instance.getClass().getName());
-            return;
+            completableFuture.complete(false);
+            return completableFuture;
         }
         Gson gson = getGson();
         String toStore = gson.toJson(instance);
@@ -56,11 +60,13 @@ public class SQLiteDatabaseHandler<T> extends SQLDatabaseHandler<T> {
                 preparedStatement.setString(1, toStore);
                 preparedStatement.setString(2, ((DataObject)instance).getUniqueId());
                 preparedStatement.setString(3, toStore);
-                preparedStatement.execute();
+                completableFuture.complete(preparedStatement.execute());
             } catch (SQLException e) {
                 plugin.logError("Could not save object " + instance.getClass().getName() + " " + e.getMessage());
+                completableFuture.complete(false);
             }
         });
+        return completableFuture;
     }
 
     @Override
@@ -71,7 +77,7 @@ public class SQLiteDatabaseHandler<T> extends SQLDatabaseHandler<T> {
                 preparedStatement.setString(1, uniqueId);
                 preparedStatement.executeUpdate();
             } catch (Exception e) {
-                plugin.logError("Could not delete object " + dataObject.getCanonicalName() + " " + uniqueId + " " + e.getMessage());
+                plugin.logError("Could not delete object " + plugin.getSettings().getDatabasePrefix() + dataObject.getCanonicalName() + " " + uniqueId + " " + e.getMessage());
             }
         });
     }

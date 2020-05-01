@@ -38,6 +38,7 @@ import com.google.common.collect.ImmutableSet;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
+import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.CommandsManager;
@@ -46,6 +47,7 @@ import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.RanksManager;
+import world.bentobox.bentobox.util.Util;
 
 
 /**
@@ -71,6 +73,7 @@ public class AdminUnregisterCommandTest {
         BentoBox plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
 
+        Util.setPlugin(plugin);
         // Command manager
         CommandsManager cm = mock(CommandsManager.class);
         when(plugin.getCommandsManager()).thenReturn(cm);
@@ -222,8 +225,8 @@ public class AdminUnregisterCommandTest {
         when(im.getIsland(any(), any(UUID.class))).thenReturn(oldIsland);
         AdminUnregisterCommand itl = new AdminUnregisterCommand(ac);
         UUID targetUUID = UUID.randomUUID();
-        itl.unregisterPlayer(user, targetUUID);
-        verify(user).sendMessage("commands.admin.unregister.unregistered-island", "[xyz]", "1,2,3");
+        itl.unregisterPlayer(user, "name", targetUUID);
+        verify(user).sendMessage("commands.admin.unregister.unregistered-island", "[xyz]", "1,2,3", TextVariables.NAME, "name");
         assertTrue(map.isEmpty());
         verify(im).removePlayer(any(), eq(uuid1));
         verify(im).removePlayer(any(), eq(uuid2));

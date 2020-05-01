@@ -9,6 +9,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
+import world.bentobox.bentobox.api.events.island.IslandEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
@@ -76,7 +77,7 @@ public class IslandTeamUncoopCommand extends CompositeCommand {
         User target = User.getInstance(targetUUID);
         int rank = getIslands().getIsland(getWorld(), user).getRank(target);
         if (rank != RanksManager.COOP_RANK) {
-            user.sendMessage("commands.island.team.uncoop.player-not-coop");
+            user.sendMessage("commands.island.team.uncoop.player-not-cooped");
             return false;
         }
         Island island = getIslands().getIsland(getWorld(), user.getUniqueId());
@@ -89,6 +90,13 @@ public class IslandTeamUncoopCommand extends CompositeCommand {
                 getParent().getSubCommand("coop").ifPresent(subCommand ->
                 subCommand.setCooldown(island.getUniqueId(), targetUUID.toString(), getSettings().getCoopCooldown() * 60));
             }
+            IslandEvent.builder()
+                    .island(island)
+                    .involvedPlayer(targetUUID)
+                    .admin(false)
+                    .reason(IslandEvent.Reason.RANK_CHANGE)
+                    .rankChange(RanksManager.COOP_RANK, RanksManager.VISITOR_RANK)
+                    .build();
             return true;
         } else {
             // Should not happen

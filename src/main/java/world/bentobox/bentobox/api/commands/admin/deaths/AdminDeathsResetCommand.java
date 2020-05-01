@@ -8,6 +8,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.util.Util;
 
 /**
  * @author Poslovitch
@@ -32,12 +33,12 @@ public class AdminDeathsResetCommand extends CompositeCommand {
             return false;
         }
 
-        UUID target = getPlayers().getUUID(args.get(0));
-        if (target == null) {
+        UUID targetUUID = Util.getUUID(args.get(0));
+        if (targetUUID == null) {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
             return false;
         } else {
-            getPlayers().setDeaths(getWorld(), target, 0);
+            getPlayers().setDeaths(getWorld(), targetUUID, 0);
             user.sendMessage("commands.admin.deaths.reset.success", TextVariables.NAME, args.get(0));
             return true;
         }

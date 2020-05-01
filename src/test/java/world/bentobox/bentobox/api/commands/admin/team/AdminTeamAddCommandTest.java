@@ -36,6 +36,7 @@ import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlayersManager;
+import world.bentobox.bentobox.util.Util;
 
 /**
  * @author tastybento
@@ -61,6 +62,7 @@ public class AdminTeamAddCommandTest {
         // Set up plugin
         plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        Util.setPlugin(plugin);
 
         // Command manager
         CommandsManager cm = mock(CommandsManager.class);
@@ -104,7 +106,9 @@ public class AdminTeamAddCommandTest {
         BukkitScheduler sch = mock(BukkitScheduler.class);
         PowerMockito.mockStatic(Bukkit.class);
         when(Bukkit.getScheduler()).thenReturn(sch);
-        when(Bukkit.getPluginManager()).thenReturn(mock(PluginManager.class));
+        // Plugin Manager
+        PluginManager pim = mock(PluginManager.class);
+        when(Bukkit.getPluginManager()).thenReturn(pim);
 
         // Locales
         LocalesManager lm = mock(LocalesManager.class);
@@ -118,10 +122,6 @@ public class AdminTeamAddCommandTest {
 
         // Addon
         when(iwm.getAddon(Mockito.any())).thenReturn(Optional.empty());
-
-        // Plugin Manager
-        PluginManager pim = mock(PluginManager.class);
-        when(Bukkit.getPluginManager()).thenReturn(pim);
 
     }
 

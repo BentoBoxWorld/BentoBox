@@ -246,7 +246,7 @@ public class NewIsland {
                 User.removePlayer(user.getPlayer());
             }
             // Delete old island
-            if (oldIsland != null) {
+            if (oldIsland != null && !plugin.getSettings().isKeepPreviousIslandOnReset()) {
                 // Delete the old island
                 plugin.getIslands().deleteIsland(oldIsland, true, user.getUniqueId());
             }

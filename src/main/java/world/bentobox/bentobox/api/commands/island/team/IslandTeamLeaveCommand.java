@@ -7,10 +7,12 @@ import org.bukkit.Bukkit;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
+import world.bentobox.bentobox.api.events.island.IslandEvent;
 import world.bentobox.bentobox.api.events.team.TeamEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.managers.RanksManager;
 
 public class IslandTeamLeaveCommand extends ConfirmableCommand {
 
@@ -125,5 +127,12 @@ public class IslandTeamLeaveCommand extends ConfirmableCommand {
         .reason(TeamEvent.Reason.LEAVE)
         .involvedPlayer(user.getUniqueId())
         .build();
+        IslandEvent.builder()
+                .island(island)
+                .involvedPlayer(user.getUniqueId())
+                .admin(false)
+                .reason(IslandEvent.Reason.RANK_CHANGE)
+                .rankChange(island.getRank(user), RanksManager.VISITOR_RANK)
+                .build();
     }
 }

@@ -1,12 +1,15 @@
-/**
- *
- */
 package world.bentobox.bentobox.database.yaml;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isA;
+import static org.mockito.Mockito.framework;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.beans.IntrospectionException;
@@ -35,7 +38,6 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -91,11 +93,11 @@ public class YamlDatabaseHandlerTest {
         PowerMockito.mockStatic(Bukkit.class);
         when(Bukkit.getScheduler()).thenReturn(scheduler);
 
-        when(scheduler.runTaskAsynchronously(Mockito.any(), Mockito.any(Runnable.class))).thenReturn(task);
+        when(scheduler.runTaskAsynchronously(any(), any(Runnable.class))).thenReturn(task);
         Server server = mock(Server.class);
         World world = mock(World.class);
         when(world.getName()).thenReturn("cleanroom");
-        when(server.getWorld(Mockito.anyString())).thenReturn(world);
+        when(server.getWorld(anyString())).thenReturn(world);
         when(Bukkit.getServer()).thenReturn(server);
 
         // A YAML file representing island
@@ -105,11 +107,11 @@ public class YamlDatabaseHandlerTest {
         config.loadFromString(getYaml(uuid));
         YamlConfiguration config2 = new YamlConfiguration();
         config2.loadFromString(getYaml2(uuid2));
-        when(dbConnector.loadYamlFile(Mockito.anyString(), Mockito.anyString())).thenReturn(config, config2);
+        when(dbConnector.loadYamlFile(anyString(), anyString())).thenReturn(config, config2);
 
         // Flags Manager
         FlagsManager fm = mock(FlagsManager.class);
-        when(fm.getFlag(Mockito.anyString())).thenReturn(Optional.empty());
+        when(fm.getFlag(anyString())).thenReturn(Optional.empty());
         when(plugin.getFlagsManager()).thenReturn(fm);
 
         // Island
@@ -138,7 +140,7 @@ public class YamlDatabaseHandlerTest {
         .sorted(Comparator.reverseOrder())
         .map(Path::toFile)
         .forEach(File::delete);
-        Mockito.framework().clearInlineMocks();
+        framework().clearInlineMocks();
     }
 
     /**
@@ -189,7 +191,7 @@ public class YamlDatabaseHandlerTest {
         Location center = mock(Location.class);
         is.setCenter(center);
         handler.saveObject(is);
-        Mockito.verify(dbConnector).saveYamlFile(Mockito.anyString(), Mockito.eq("database/Island"), Mockito.eq("unique"), Mockito.isA(Map.class));
+        verify(dbConnector).saveYamlFile(anyString(), eq("database/Island"), eq("unique"), isA(Map.class));
     }
 
     /**
@@ -201,7 +203,7 @@ public class YamlDatabaseHandlerTest {
     @Test
     public void testSaveObjectNull() throws IllegalAccessException, InvocationTargetException, IntrospectionException {
         handler.saveObject(null);
-        Mockito.verify(plugin).logError("YAML database request to store a null.");
+        verify(plugin).logError("YAML database request to store a null.");
     }
 
     /**
@@ -215,7 +217,7 @@ public class YamlDatabaseHandlerTest {
         YamlDatabaseHandler<String> h = new YamlDatabaseHandler<String>(plugin, String.class, dbConnector);
         String test = "";
         h.saveObject(test);
-        Mockito.verify(plugin).logError("This class is not a DataObject: java.lang.String");
+        verify(plugin).logError("This class is not a DataObject: java.lang.String");
     }
 
     /**
@@ -238,7 +240,7 @@ public class YamlDatabaseHandlerTest {
     @Test
     public void testDeleteObjectNull() throws IllegalAccessException, InvocationTargetException, IntrospectionException {
         handler.deleteObject(null);
-        Mockito.verify(plugin).logError("YAML database request to delete a null.");
+        verify(plugin).logError("YAML database request to delete a null.");
     }
 
     /**
@@ -252,7 +254,7 @@ public class YamlDatabaseHandlerTest {
         YamlDatabaseHandler<String> h = new YamlDatabaseHandler<String>(plugin, String.class, dbConnector);
         String test = "";
         h.deleteObject(test);
-        Mockito.verify(plugin).logError("This class is not a DataObject: java.lang.String");
+        verify(plugin).logError("This class is not a DataObject: java.lang.String");
 
     }
 
@@ -261,7 +263,7 @@ public class YamlDatabaseHandlerTest {
      */
     @Test
     public void testObjectExists() {
-        when(dbConnector.uniqueIdExists(Mockito.eq(Island.class.getSimpleName()), Mockito.eq(uuid.toString()))).thenReturn(true);
+        when(dbConnector.uniqueIdExists(eq(Island.class.getSimpleName()), eq(uuid.toString()))).thenReturn(true);
         assertTrue(handler.objectExists(uuid.toString()));
         assertFalse(handler.objectExists("nope"));
     }
@@ -301,12 +303,12 @@ public class YamlDatabaseHandlerTest {
      */
     @Test
     public void testYamlDatabaseHandler() {
-        Mockito.verify(scheduler).runTaskAsynchronously(Mockito.eq(plugin), registerLambdaCaptor.capture());
+        verify(scheduler).runTaskAsynchronously(eq(plugin), registerLambdaCaptor.capture());
         Runnable lamda = registerLambdaCaptor.getValue();
         // Cannot run with true otherwise it'll infinite loop
-        when(plugin.isEnabled()).thenReturn(false);
+        when(plugin.isShutdown()).thenReturn(true);
         lamda.run();
-        Mockito.verify(task).cancel();
+        verify(task).cancel();
 
     }
 

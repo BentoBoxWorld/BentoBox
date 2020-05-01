@@ -4,6 +4,7 @@ import world.bentobox.bentobox.BentoBox;
 
 /**
  * Contains fields that must be in any data object
+ * DataObject's canonical name must be no more than 62 characters long otherwise it may not fit in a database table name
  * @author tastybento
  *
  */

@@ -1,9 +1,9 @@
-# BentoBox v1.11.1 configuration file.
+# BentoBox v1.12.0 configuration file.
 #
 # This configuration file contains settings that mainly apply to or manage the following elements:
 #  * Data storage
 #  * Gamemodes (commands, ...)
-#  * Internet connectivity (metrics, web-based content-enriched features, ...)
+#  * Internet connectivity (web-based content-enriched features, ...)
 #
 # Note that this configuration file is dynamic:
 #  * It gets updated with the newest settings and comments after BentoBox loaded its settings from it.
@@ -58,10 +58,14 @@ general:
     # This helps prevent issues if the server crashes.
     # Data is also saved at important points in the game.
     backup-period: 5
-    # Allows to enable SSL protection to database connections for MongoDB,
-    # MariaDB, MySQL and PostgreSQL database servers.
-    # Added since 1.2.0.
-    useSSL: false
+    # Enable SSL connection to MongoDB, MariaDB, MySQL and PostgreSQL databases.
+    # Added since 1.12.0.
+    use-ssl: false
+    # Database table prefix character. Adds a prefix to the database tables. Not used by flatfile databases.
+    # Only the characters A-Z, a-z, 0-9 can be used. Invalid characters will become an underscore.
+    # Set this to a unique value if you are running multiple BentoBox instances that share a database.
+    # Added since 1.13.0
+    prefix-character: ''
   # Allow FTB Autonomous Activator to work (will allow a pseudo player [CoFH] to place and break blocks and hang items)
   # Add other fake player names here if required
   # /!\ This feature is experimental and might not work as expected or might not work at all.
@@ -141,10 +145,6 @@ island:
   # Added since 1.7.0.
   delete-speed: 1
 web:
-  # BentoBox uses bStats.org to get global data about the plugin to help improving it.
-  # bStats has nearly no effect on your server's performance and the sent data is completely
-  # anonymous so please consider twice if you really want to disable it.
-  metrics: true
   github:
     # Toggle whether BentoBox can connect to GitHub to get data about updates and addons.
     # Disabling this will result in the deactivation of the update checker and of some other
@@ -157,4 +157,4 @@ web:
     # However, as the GitHub API data does not get updated instantly, this value cannot be set to less than 60 minutes.
     # Setting this to 0 will make BentoBox download data only at startup.
     # Added since 1.5.0.
-    connection-interval: 60
+    connection-interval: 120

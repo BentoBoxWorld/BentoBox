@@ -4,9 +4,11 @@ import java.beans.IntrospectionException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.logging.Logger;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
@@ -65,6 +67,7 @@ public class Database<T> {
      * @param uniqueId - unique id of the object
      * @return the object or null if it cannot be loaded
      */
+    @Nullable
     public T loadObject(String uniqueId) {
         T result = null;
         try {
@@ -80,18 +83,32 @@ public class Database<T> {
     }
 
     /**
-     * Save config object. Saving may be done async.
+     * Save object async. Saving may be done sync, depending on the underlying database.
      * @param instance to save
      * @return true if no immediate errors. If async, errors may occur later.
+     * @since 1.13.0
      */
-    public boolean saveObject(T instance) {
+    public CompletableFuture<Boolean> saveObjectAsync(T instance) {
         try {
-            handler.saveObject(instance);
+            return handler.saveObject(instance);
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | SecurityException
                 | IntrospectionException e) {
             logger.severe(() -> "Could not save object to database! Error: " + e.getMessage());
-            return false;
+            return new CompletableFuture<>();
         }
+    }
+
+    /**
+     * Save object. Saving may be done async or sync, depending on the underlying database.
+     * @param instance to save
+     * @return true - always.
+     * @deprecated As of 1.13.0. Use {@link #saveObjectAsync(Object)}.
+     */
+    @Deprecated
+    public boolean saveObject(T instance) {
+        saveObjectAsync(instance).thenAccept(r -> {
+            if (!r) logger.severe(() -> "Could not save object to database!");
+        });
         return true;
     }
 

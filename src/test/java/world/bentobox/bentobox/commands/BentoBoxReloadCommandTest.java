@@ -2,14 +2,12 @@ package world.bentobox.bentobox.commands;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Optional;
 
 import org.bukkit.Bukkit;
@@ -156,16 +154,4 @@ public class BentoBoxReloadCommandTest {
                 "commands.help.console"
                 );
     }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.commands.BentoBoxReloadCommand#tabComplete(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
-     */
-    @Test
-    public void testTabCompleteUserStringListOfString() {
-        List<String> tabs = reload.tabComplete(user, "", Collections.emptyList()).get();
-        assertTrue(tabs.size() == 2);
-        assertTrue(tabs.contains("BSkyBlock"));
-        assertTrue(tabs.contains("AcidIsland"));
-    }
-
 }

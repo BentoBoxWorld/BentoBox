@@ -4,10 +4,13 @@ import java.util.List;
 import java.util.UUID;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
+import world.bentobox.bentobox.api.events.island.IslandEvent;
 import world.bentobox.bentobox.api.events.team.TeamEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.managers.RanksManager;
+import world.bentobox.bentobox.util.Util;
 
 public class AdminTeamAddCommand extends CompositeCommand {
 
@@ -30,12 +33,12 @@ public class AdminTeamAddCommand extends CompositeCommand {
             return false;
         }
         // Get owner and target
-        UUID ownerUUID = getPlayers().getUUID(args.get(0));
+        UUID ownerUUID = Util.getUUID(args.get(0));
         if (ownerUUID == null) {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
             return false;
         }
-        UUID targetUUID = getPlayers().getUUID(args.get(1));
+        UUID targetUUID = Util.getUUID(args.get(1));
         if (targetUUID == null) {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(1));
             return false;
@@ -71,6 +74,13 @@ public class AdminTeamAddCommand extends CompositeCommand {
             .reason(TeamEvent.Reason.JOINED)
             .involvedPlayer(targetUUID)
             .admin(true)
+            .build();
+            IslandEvent.builder()
+            .island(teamIsland)
+            .involvedPlayer(targetUUID)
+            .admin(true)
+            .reason(IslandEvent.Reason.RANK_CHANGE)
+            .rankChange(teamIsland.getRank(target), RanksManager.MEMBER_RANK)
             .build();
             return true;
         } else {

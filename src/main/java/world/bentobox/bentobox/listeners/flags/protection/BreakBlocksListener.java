@@ -46,6 +46,14 @@ public class BreakBlocksListener extends FlagListener {
         if (e.getRemover() instanceof Player) {
             checkIsland(e, (Player)e.getRemover(), e.getEntity().getLocation(), Flags.BREAK_BLOCKS);
         }
+        // Check for projectiles
+        if (e.getRemover() instanceof Projectile) {
+            // Find out who fired it
+            Projectile p = (Projectile)e.getRemover();
+            if (p.getShooter() instanceof Player) {
+                checkIsland(e, (Player)p.getShooter(), e.getEntity().getLocation(), Flags.BREAK_BLOCKS);
+            }
+        }
     }
 
     /**
@@ -76,8 +84,10 @@ public class BreakBlocksListener extends FlagListener {
 
         switch (e.getClickedBlock().getType()) {
         case CAKE:
-        case SPAWNER:
             checkIsland(e, e.getPlayer(), e.getClickedBlock().getLocation(), Flags.BREAK_BLOCKS);
+            break;
+        case SPAWNER:
+            checkIsland(e, e.getPlayer(), e.getClickedBlock().getLocation(), Flags.BREAK_SPAWNERS);
             break;
         case DRAGON_EGG:
             checkIsland(e, e.getPlayer(), e.getClickedBlock().getLocation(), Flags.DRAGON_EGG);
@@ -131,7 +141,7 @@ public class BreakBlocksListener extends FlagListener {
         } else if (e.getEntity() instanceof ArmorStand) {
             return !checkIsland(e, player, location, Flags.ARMOR_STAND);
         }
-        return false;        
+        return false;
     }
 
     /**

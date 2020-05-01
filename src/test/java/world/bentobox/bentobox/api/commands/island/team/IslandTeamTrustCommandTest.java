@@ -3,6 +3,7 @@ package world.bentobox.bentobox.api.commands.island.team;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -15,6 +16,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.UUID;
 
+import com.google.common.collect.ImmutableSet;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitScheduler;
@@ -88,6 +90,8 @@ public class IslandTeamTrustCommandTest {
         Player p = mock(Player.class);
         // Sometimes use Mockito.withSettings().verboseLogging()
         when(user.isOp()).thenReturn(false);
+		when(user.getPermissionValue(anyString(), anyInt())).thenReturn(4);
+
         uuid = UUID.randomUUID();
         notUUID = UUID.randomUUID();
         while(notUUID.equals(uuid)) {
@@ -112,6 +116,7 @@ public class IslandTeamTrustCommandTest {
         when(im.getOwner(any(), any())).thenReturn(uuid);
         // Island
         when(island.getRank(any())).thenReturn(RanksManager.OWNER_RANK);
+		when(island.getMemberSet(anyInt(), any(Boolean.class))).thenReturn(ImmutableSet.of(uuid));
         when(im.getIsland(any(), Mockito.any(User.class))).thenReturn(island);
         when(im.getIsland(any(), Mockito.any(UUID.class))).thenReturn(island);
         when(plugin.getIslands()).thenReturn(im);

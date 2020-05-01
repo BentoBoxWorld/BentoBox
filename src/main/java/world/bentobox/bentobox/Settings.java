@@ -19,7 +19,7 @@ import world.bentobox.bentobox.database.DatabaseSetup.DatabaseType;
 @ConfigComment("This configuration file contains settings that mainly apply to or manage the following elements:")
 @ConfigComment(" * Data storage")
 @ConfigComment(" * Gamemodes (commands, ...)")
-@ConfigComment(" * Internet connectivity (metrics, web-based content-enriched features, ...)")
+@ConfigComment(" * Internet connectivity (web-based content-enriched features, ...)")
 @ConfigComment("")
 @ConfigComment("Note that this configuration file is dynamic:")
 @ConfigComment(" * It gets updated with the newest settings and comments after BentoBox loaded its settings from it.")
@@ -93,10 +93,15 @@ public class Settings implements ConfigObject {
     @ConfigEntry(path = "general.database.backup-period")
     private int databaseBackupPeriod = 5;
 
-    @ConfigComment("Allows to enable SSL protection to database connections for MongoDB,")
-    @ConfigComment("MariaDB, MySQL and PostgreSQL database servers.")
-    @ConfigEntry(path = "general.database.useSSL", since = "1.12.0")
+    @ConfigComment("Enable SSL connection to MongoDB, MariaDB, MySQL and PostgreSQL databases.")
+    @ConfigEntry(path = "general.database.use-ssl", since = "1.12.0")
     private boolean useSSL = false;
+
+    @ConfigComment("Database table prefix character. Adds a prefix to the database tables. Not used by flatfile databases.")
+    @ConfigComment("Only the characters A-Z, a-z, 0-9 can be used. Invalid characters will become an underscore.")
+    @ConfigComment("Set this to a unique value if you are running multiple BentoBox instances that share a database.")
+    @ConfigEntry(path = "general.database.prefix-character", since = "1.13.0")
+    private String databasePrefix = "";
 
     @ConfigComment("Allow FTB Autonomous Activator to work (will allow a pseudo player [CoFH] to place and break blocks and hang items)")
     @ConfigComment("Add other fake player names here if required")
@@ -227,13 +232,19 @@ public class Settings implements ConfigObject {
     @ConfigEntry(path = "island.automated-ownership-transfer.ignore-ranks", hidden = true)
     private boolean autoOwnershipTransferIgnoreRanks = false;
 
-    /* WEB */
-    @ConfigComment("BentoBox uses bStats.org to get global data about the plugin to help improving it.")
-    @ConfigComment("bStats has nearly no effect on your server's performance and the sent data is completely")
-    @ConfigComment("anonymous so please consider twice if you really want to disable it.")
-    @ConfigEntry(path = "web.metrics")
-    private boolean metrics = true;
+    // Island deletion related settings
+	@ConfigComment("Toggles whether islands, when players are resetting them, should be kept in the world or deleted.")
+	@ConfigComment("* If set to 'true', whenever a player resets his island, his previous island will become unowned and won't be deleted from the world.")
+	@ConfigComment("  You can, however, still delete those unowned islands through purging.")
+	@ConfigComment("  On bigger servers, this can lead to an increasing world size.")
+	@ConfigComment("  Yet, this allows admins to retrieve a player's old island in case of an improper use of the reset command.")
+	@ConfigComment("  Admins can indeed re-add the player to his old island by registering him to it.")
+	@ConfigComment("* If set to 'false', whenever a player resets his island, his previous island will be deleted from the world.")
+	@ConfigComment("  This is the default behaviour.")
+	@ConfigEntry(path = "island.deletion.keep-previous-island-on-reset", since = "1.13.0")
+	private boolean keepPreviousIslandOnReset = false;
 
+    /* WEB */
     @ConfigComment("Toggle whether BentoBox can connect to GitHub to get data about updates and addons.")
     @ConfigComment("Disabling this will result in the deactivation of the update checker and of some other")
     @ConfigComment("features that rely on the data downloaded from the GitHub API.")
@@ -256,14 +267,6 @@ public class Settings implements ConfigObject {
 
     // ---------------------------------------------
     // Getters and setters
-
-    public boolean isMetrics() {
-        return metrics;
-    }
-
-    public void setMetrics(boolean metrics) {
-        this.metrics = metrics;
-    }
 
     public String getDefaultLanguage() {
         return defaultLanguage;
@@ -625,4 +628,37 @@ public class Settings implements ConfigObject {
     public void setInviteConfirmation(boolean inviteConfirmation) {
         this.inviteConfirmation = inviteConfirmation;
     }
+
+    /**
+     * @return the databasePrefix
+     */
+    public String getDatabasePrefix() {
+        if (databasePrefix == null) databasePrefix = "";
+        return databasePrefix.isEmpty() ? "" : databasePrefix.replaceAll("[^a-zA-Z0-9]", "_").substring(0,1);
+    }
+
+    /**
+     * @param databasePrefix the databasePrefix to set
+     */
+    public void setDatabasePrefix(String databasePrefix) {
+        this.databasePrefix = databasePrefix;
+    }
+
+	/**
+	 * Returns whether islands, when reset, should be kept or deleted.
+	 * @return {@code true} if islands, when reset, should be kept; {@code false} otherwise.
+	 * @since 1.13.0
+	 */
+	public boolean isKeepPreviousIslandOnReset() {
+		return keepPreviousIslandOnReset;
+	}
+
+	/**
+	 * Sets whether islands, when reset, should be kept or deleted.
+	 * @param keepPreviousIslandOnReset {@code true} if islands, when reset, should be kept; {@code false} otherwise.
+	 * @since 1.13.0
+	 */
+	public void setKeepPreviousIslandOnReset(boolean keepPreviousIslandOnReset) {
+		this.keepPreviousIslandOnReset = keepPreviousIslandOnReset;
+	}
 }

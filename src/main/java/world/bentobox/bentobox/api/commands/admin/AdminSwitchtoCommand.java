@@ -12,6 +12,7 @@ import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.util.Util;
 
 public class AdminSwitchtoCommand extends ConfirmableCommand {
 
@@ -44,7 +45,7 @@ public class AdminSwitchtoCommand extends ConfirmableCommand {
             return false;
         }
         // Get target player
-        targetUUID = getPlayers().getUUID(args.get(0));
+        targetUUID = Util.getUUID(args.get(0));
         if (targetUUID == null) {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
             return false;

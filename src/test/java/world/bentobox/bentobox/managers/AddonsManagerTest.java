@@ -5,6 +5,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -14,9 +17,15 @@ import java.io.File;
 import java.nio.file.Files;
 
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.Listener;
+import org.bukkit.generator.ChunkGenerator;
+import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.PluginManager;
+import org.bukkit.util.permissions.DefaultPermissions;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,12 +40,16 @@ import org.powermock.reflect.Whitebox;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.addons.Addon;
+import world.bentobox.bentobox.api.addons.Addon.State;
 import world.bentobox.bentobox.api.addons.AddonDescription;
+import world.bentobox.bentobox.api.addons.GameModeAddon;
+import world.bentobox.bentobox.api.addons.exceptions.InvalidAddonDescriptionException;
+import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.database.DatabaseSetup.DatabaseType;
 import world.bentobox.bentobox.database.objects.DataObject;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( {Bukkit.class, BentoBox.class} )
+@PrepareForTest( {Bukkit.class, BentoBox.class, DefaultPermissions.class} )
 public class AddonsManagerTest {
 
     private BentoBox plugin;
@@ -67,6 +80,8 @@ public class AddonsManagerTest {
         when(s.getDatabaseType()).thenReturn(DatabaseType.MYSQL);
         // settings
         when(plugin.getSettings()).thenReturn(s);
+
+        PowerMockito.mockStatic(DefaultPermissions.class);
     }
 
     /**
@@ -235,7 +250,7 @@ public class AddonsManagerTest {
         assertFalse(am.getDataObjects().isEmpty());
         assertTrue(am.getDataObjects().size() == 1);
     }
-    
+
     /**
      * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#isAddonCompatibleWithBentoBox(Addon)}.
      */
@@ -246,7 +261,7 @@ public class AddonsManagerTest {
         when(addon.getDescription()).thenReturn(addonDesc);
         assertTrue(am.isAddonCompatibleWithBentoBox(addon, "1.0.1-SNAPSHOT-b1642"));
     }
-    
+
     /**
      * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#isAddonCompatibleWithBentoBox(Addon)}.
      */
@@ -257,7 +272,7 @@ public class AddonsManagerTest {
         when(addon.getDescription()).thenReturn(addonDesc);
         assertTrue(am.isAddonCompatibleWithBentoBox(addon, "1.0.1"));
     }
-    
+
     /**
      * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#isAddonCompatibleWithBentoBox(Addon)}.
      */
@@ -268,7 +283,7 @@ public class AddonsManagerTest {
         when(addon.getDescription()).thenReturn(addonDesc);
         assertTrue(am.isAddonCompatibleWithBentoBox(addon, "1.0.1-SNAPSHOT-b1642"));
     }
-    
+
     /**
      * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#isAddonCompatibleWithBentoBox(Addon)}.
      */
@@ -279,7 +294,7 @@ public class AddonsManagerTest {
         when(addon.getDescription()).thenReturn(addonDesc);
         assertTrue(am.isAddonCompatibleWithBentoBox(addon, "1.0.1"));
     }
-    
+
     /**
      * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#isAddonCompatibleWithBentoBox(Addon)}.
      */
@@ -290,7 +305,7 @@ public class AddonsManagerTest {
         when(addon.getDescription()).thenReturn(addonDesc);
         assertFalse(am.isAddonCompatibleWithBentoBox(addon, "1.2-SNAPSHOT-b1642"));
     }
-    
+
     /**
      * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#isAddonCompatibleWithBentoBox(Addon)}.
      */
@@ -301,7 +316,7 @@ public class AddonsManagerTest {
         when(addon.getDescription()).thenReturn(addonDesc);
         assertFalse(am.isAddonCompatibleWithBentoBox(addon, "1.0.1-SNAPSHOT-b1642"));
     }
-    
+
     /**
      * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#isAddonCompatibleWithBentoBox(Addon)}.
      */
@@ -312,7 +327,7 @@ public class AddonsManagerTest {
         when(addon.getDescription()).thenReturn(addonDesc);
         assertFalse(am.isAddonCompatibleWithBentoBox(addon, "1.0.1"));
     }
-    
+
     /**
      * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#isAddonCompatibleWithBentoBox(Addon)}.
      */
@@ -323,7 +338,7 @@ public class AddonsManagerTest {
         when(addon.getDescription()).thenReturn(addonDesc);
         assertTrue(am.isAddonCompatibleWithBentoBox(addon, "1.11.1.11.1.1"));
     }
-    
+
     /**
      * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#isAddonCompatibleWithBentoBox(Addon)}.
      */
@@ -336,4 +351,142 @@ public class AddonsManagerTest {
     }
 
 
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#setPerms(Addon)}
+     * @throws InvalidAddonDescriptionException
+     * @throws InvalidConfigurationException
+     */
+    @Test
+    public void testSetPermsNoPerms() {
+        Addon addon = mock(Addon.class);
+        AddonDescription addonDesc = new AddonDescription.Builder("main.class", "Addon-name", "1.0.0").apiVersion("1.11.1.0.0.0.1").build();
+        when(addon.getDescription()).thenReturn(addonDesc);
+        assertFalse(am.setPerms(addon));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#setPerms(Addon)}
+     * @throws InvalidAddonDescriptionException
+     * @throws InvalidConfigurationException
+     */
+    @Test
+    public void testSetPermsHasPerms() throws InvalidConfigurationException {
+        String perms =
+                "  '[gamemode].intopten':\n" +
+                        "    description: Player is in the top ten.\n" +
+                        "    default: true\n";
+        YamlConfiguration config = new YamlConfiguration();
+        config.loadFromString(perms);
+        GameModeAddon addon = new MyGameMode();
+        AddonDescription addonDesc = new AddonDescription.Builder("main.class", "mygame", "1.0.0").apiVersion("1.11.1.0.0.0.1")
+                .permissions(config)
+                .build();
+        addon.setDescription(addonDesc);
+        addon.setState(State.ENABLED);
+        am.getAddons().add(addon);
+
+        assertTrue(am.setPerms(addon));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#setPerms(Addon)}
+     * @throws InvalidAddonDescriptionException
+     * @throws InvalidConfigurationException
+     */
+    @Test
+    public void testSetPermsHasPermsError() throws InvalidConfigurationException {
+        String perms =
+                "  '[gamemode].intopten':\n" +
+                        "    description: Player is in the top ten.\n" +
+                        "    default: trudsfgsde\n";
+        YamlConfiguration config = new YamlConfiguration();
+        config.loadFromString(perms);
+        GameModeAddon addon = new MyGameMode();
+        AddonDescription addonDesc = new AddonDescription.Builder("main.class", "mygame", "1.0.0").apiVersion("1.11.1.0.0.0.1")
+                .permissions(config)
+                .build();
+        addon.setDescription(addonDesc);
+        addon.setState(State.ENABLED);
+        am.getAddons().add(addon);
+
+        assertTrue(am.setPerms(addon));
+        verify(plugin).logError(eq("Addon mygame: AddonException : Permission default is invalid in addon.yml: [gamemode].intopten.default"));
+    }
+
+
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#registerPermission(org.bukkit.configuration.ConfigurationSection, String)}
+     * @throws InvalidAddonDescriptionException
+     * @throws InvalidConfigurationException
+     */
+    @Test
+    public void testRegisterPermissionStandardPerm() throws InvalidAddonDescriptionException, InvalidConfigurationException {
+        String perms =
+                "  'bskyblock.intopten':\n" +
+                        "    description: Player is in the top ten.\n" +
+                        "    default: true\n";
+        YamlConfiguration config = new YamlConfiguration();
+        config.loadFromString(perms);
+        am.registerPermission(config, "bskyblock.intopten");
+        PowerMockito.verifyStatic(DefaultPermissions.class);
+        DefaultPermissions.registerPermission(eq("bskyblock.intopten"), anyString(), any(PermissionDefault.class));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#registerPermission(org.bukkit.configuration.ConfigurationSection, String)}
+     * @throws InvalidAddonDescriptionException
+     * @throws InvalidConfigurationException
+     */
+    @Test
+    public void testRegisterPermissionGameModePerm() throws InvalidAddonDescriptionException, InvalidConfigurationException {
+        String perms =
+                "  '[gamemode].intopten':\n" +
+                        "    description: Player is in the top ten.\n" +
+                        "    default: true\n";
+        YamlConfiguration config = new YamlConfiguration();
+        config.loadFromString(perms);
+        GameModeAddon addon = new MyGameMode();
+        AddonDescription addonDesc = new AddonDescription.Builder("main.class", "mygame", "1.0.0").apiVersion("1.11.1.0.0.0.1")
+                .permissions(config)
+                .build();
+        addon.setDescription(addonDesc);
+        addon.setState(State.ENABLED);
+        am.getAddons().add(addon);
+        am.registerPermission(config, "[gamemode].intopten");
+        PowerMockito.verifyStatic(DefaultPermissions.class);
+        DefaultPermissions.registerPermission(eq("mygame.intopten"), anyString(), any(PermissionDefault.class));
+    }
+
+
+
+    class MyGameMode extends GameModeAddon {
+
+        @Override
+        public void createWorlds() {
+        }
+
+        @Override
+        public WorldSettings getWorldSettings() {
+            return null;
+        }
+
+        @Override
+        public @Nullable ChunkGenerator getDefaultWorldGenerator(String worldName, String id) {
+            return null;
+        }
+
+        @Override
+        public void saveWorldSettings() {
+        }
+
+        @Override
+        public void onEnable() {
+        }
+
+        @Override
+        public void onDisable() {
+        }
+
+    }
 }

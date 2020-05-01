@@ -12,7 +12,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -46,6 +45,7 @@ import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlayersManager;
+import world.bentobox.bentobox.util.Util;
 
 /**
  * @author tastybento
@@ -78,6 +78,7 @@ public class AdminTeamKickCommandTest {
         // Set up plugin
         BentoBox plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        Util.setPlugin(plugin);
 
         // Command manager
         CommandsManager cm = mock(CommandsManager.class);
@@ -156,10 +157,9 @@ public class AdminTeamKickCommandTest {
     @Test
     public void testCanExecuteUnknownPlayer() {
         AdminTeamKickCommand itl = new AdminTeamKickCommand(ac);
-        String[] name = {"tastybento"};
         when(pm.getUUID(any())).thenReturn(null);
-        assertFalse(itl.canExecute(user, itl.getLabel(), Arrays.asList(name)));
-        verify(user).sendMessage("general.errors.unknown-player", "[name]", name[0]);
+        assertFalse(itl.canExecute(user, itl.getLabel(), Collections.singletonList("tastybento")));
+        verify(user).sendMessage("general.errors.unknown-player", "[name]", "tastybento");
     }
 
     /**
@@ -168,10 +168,9 @@ public class AdminTeamKickCommandTest {
     @Test
     public void testCanExecutePlayerNotInTeam() {
         AdminTeamKickCommand itl = new AdminTeamKickCommand(ac);
-        String[] name = {"tastybento"};
         when(pm.getUUID(any())).thenReturn(notUUID);
         when(im.getMembers(any(), any())).thenReturn(new HashSet<>());
-        assertFalse(itl.canExecute(user, itl.getLabel(), Arrays.asList(name)));
+        assertFalse(itl.canExecute(user, itl.getLabel(), Collections.singletonList("tastybento")));
         verify(user).sendMessage(eq("commands.admin.team.kick.not-in-team"));
     }
 
@@ -183,13 +182,13 @@ public class AdminTeamKickCommandTest {
         when(im.inTeam(any(), any())).thenReturn(true);
         Island is = mock(Island.class);
         when(im.getIsland(any(), any(UUID.class))).thenReturn(is);
-        String[] name = {"tastybento"};
         when(pm.getUUID(any())).thenReturn(notUUID);
 
         when(is.getOwner()).thenReturn(notUUID);
 
         AdminTeamKickCommand itl = new AdminTeamKickCommand(ac);
-        assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
+        assertTrue(itl.canExecute(user, itl.getLabel(), Collections.singletonList("tastybento")));
+        assertFalse(itl.execute(user, itl.getLabel(), Collections.singletonList("tastybento")));
         verify(user).sendMessage(eq("commands.admin.team.kick.cannot-kick-owner"));
         verify(is).showMembers(any());
         verify(im, never()).removePlayer(eq(world), eq(notUUID));
@@ -213,12 +212,13 @@ public class AdminTeamKickCommandTest {
         when(is.getOwner()).thenReturn(uuid);
 
         AdminTeamKickCommand itl = new AdminTeamKickCommand(ac);
+        assertTrue(itl.canExecute(user, itl.getLabel(), Collections.singletonList(name)));
         assertTrue(itl.execute(user, itl.getLabel(), Collections.singletonList(name)));
         verify(im).removePlayer(eq(world), eq(notUUID));
         verify(pm).clearHomeLocations(eq(world), eq(notUUID));
         verify(user).sendMessage(eq("commands.admin.team.kick.success"), eq(TextVariables.NAME), eq(name), eq("[owner]"), anyString());
-        // Offline so event will be called twice
-        verify(pim, times(2)).callEvent(any());
+        // Offline so event will be called four time
+        verify(pim, times(4)).callEvent(any());
     }
 
 }

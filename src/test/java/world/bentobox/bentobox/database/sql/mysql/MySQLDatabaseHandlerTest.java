@@ -34,6 +34,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.util.Util;
 
@@ -78,7 +79,8 @@ public class MySQLDatabaseHandlerTest {
     private Connection connection;
     @Mock
     private PreparedStatement ps;
-
+    @Mock
+    private Settings settings;
     /**
      * @throws java.lang.Exception
      */
@@ -87,6 +89,10 @@ public class MySQLDatabaseHandlerTest {
         // Setup plugin
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
         when(plugin.isEnabled()).thenReturn(true);
+
+        // Settings
+        when(plugin.getSettings()).thenReturn(settings);
+        when(settings.getDatabasePrefix()).thenReturn(""); // No prefix
 
         // Bukkit
         PowerMockito.mockStatic(Bukkit.class);
@@ -142,6 +148,25 @@ public class MySQLDatabaseHandlerTest {
         when(ps.executeQuery(Mockito.anyString())).thenReturn(resultSet);
         List<Island> objects = handler.loadObjects();
         verify(ps).executeQuery("SELECT `json` FROM `world.bentobox.bentobox.database.objects.Island`");
+        assertTrue(objects.size() == 3);
+        assertEquals("xyz", objects.get(2).getUniqueId());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#loadObjects()}.
+     * @throws SQLException
+     */
+    @Test
+    @Ignore
+    public void testLoadObjectsPrefix() throws SQLException {
+        when(settings.getDatabasePrefix()).thenReturn("a");
+        ResultSet resultSet = mock(ResultSet.class);
+        when(resultSet.getString(any())).thenReturn(JSON);
+        // Three islands
+        when(resultSet.next()).thenReturn(true, true, true, false);
+        when(ps.executeQuery(Mockito.anyString())).thenReturn(resultSet);
+        List<Island> objects = handler.loadObjects();
+        verify(ps).executeQuery("SELECT `json` FROM `aworld.bentobox.bentobox.database.objects.Island`");
         assertTrue(objects.size() == 3);
         assertEquals("xyz", objects.get(2).getUniqueId());
     }
@@ -392,6 +417,24 @@ public class MySQLDatabaseHandlerTest {
      * @throws SQLException
      */
     @Test
+    @Ignore
+    public void testObjectExistsPrefix() throws SQLException {
+        when(settings.getDatabasePrefix()).thenReturn("a");
+        ResultSet resultSet = mock(ResultSet.class);
+        when(ps.executeQuery()).thenReturn(resultSet);
+        when(resultSet.next()).thenReturn(true);
+        when(resultSet.getBoolean(eq(1))).thenReturn(true);
+        assertTrue(handler.objectExists("hello"));
+        verify(connection).prepareStatement("CREATE TABLE IF NOT EXISTS `aworld.bentobox.bentobox.database.objects.Island` (json JSON, uniqueId VARCHAR(255) GENERATED ALWAYS AS (json->\"$.uniqueId\"), UNIQUE INDEX i (uniqueId) ) ENGINE = INNODB");
+        verify(ps).executeQuery();
+        verify(ps).setString(1, "\"hello\"");
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#objectExists(java.lang.String)}.
+     * @throws SQLException
+     */
+    @Test
     public void testObjectExistsError() throws SQLException {
         ResultSet resultSet = mock(ResultSet.class);
         when(ps.executeQuery()).thenReturn(resultSet);
@@ -449,6 +492,17 @@ public class MySQLDatabaseHandlerTest {
         verify(connection).prepareStatement("CREATE TABLE IF NOT EXISTS `world.bentobox.bentobox.database.objects.Island` (json JSON, uniqueId VARCHAR(255) GENERATED ALWAYS AS (json->\"$.uniqueId\"), UNIQUE INDEX i (uniqueId) ) ENGINE = INNODB");
     }
 
+    /**
+     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#MySQLDatabaseHandler(world.bentobox.bentobox.BentoBox, java.lang.Class, world.bentobox.bentobox.database.DatabaseConnector)}.
+     * @throws SQLException
+     */
+    @Test
+    @Ignore
+    public void testMySQLDatabaseHandlerCreateSchemaPrefix() throws SQLException {
+        when(settings.getDatabasePrefix()).thenReturn("a");
+        verify(dbConn).createConnection(any());
+        verify(connection).prepareStatement("CREATE TABLE IF NOT EXISTS `aworld.bentobox.bentobox.database.objects.Island` (json JSON, uniqueId VARCHAR(255) GENERATED ALWAYS AS (json->\"$.uniqueId\"), UNIQUE INDEX i (uniqueId) ) ENGINE = INNODB");
+    }
     /**
      * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#MySQLDatabaseHandler(world.bentobox.bentobox.BentoBox, java.lang.Class, world.bentobox.bentobox.database.DatabaseConnector)}.
      * @throws SQLException

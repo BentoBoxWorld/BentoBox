@@ -24,7 +24,6 @@ import world.bentobox.bentobox.hooks.DynmapHook;
 import world.bentobox.bentobox.hooks.MultiverseCoreHook;
 import world.bentobox.bentobox.hooks.VaultHook;
 import world.bentobox.bentobox.hooks.WorldEditHook;
-import world.bentobox.bentobox.hooks.placeholders.MVdWPlaceholderAPIHook;
 import world.bentobox.bentobox.hooks.placeholders.PlaceholderAPIHook;
 import world.bentobox.bentobox.listeners.BannedCommands;
 import world.bentobox.bentobox.listeners.BlockEndDragon;
@@ -91,6 +90,8 @@ public class BentoBox extends JavaPlugin {
     private Config<Settings> configObject;
 
     private BukkitTask blueprintLoadingTask;
+
+    private boolean shutdown;
 
     @Override
     public void onEnable(){
@@ -169,7 +170,6 @@ public class BentoBox extends JavaPlugin {
         Bukkit.getScheduler().runTask(instance, () -> {
             final long enableStart = System.currentTimeMillis();
             hooksManager.registerHook(new PlaceholderAPIHook());
-            hooksManager.registerHook(new MVdWPlaceholderAPIHook());
             // Setup the Placeholders manager
             placeholdersManager = new PlaceholdersManager(this);
 
@@ -195,10 +195,8 @@ public class BentoBox extends JavaPlugin {
             flagsManager.registerListeners();
 
             // Load metrics
-            if (settings.isMetrics()) {
-                metrics = new BStats(this);
-                metrics.registerMetrics();
-            }
+            metrics = new BStats(this);
+            metrics.registerMetrics();
 
             // Register Multiverse hook - MV loads AFTER BentoBox
             // Make sure all worlds are already registered to Multiverse.
@@ -277,6 +275,8 @@ public class BentoBox extends JavaPlugin {
         if (islandsManager != null) {
             islandsManager.shutdown();
         }
+        // Close all async database tasks
+        shutdown = true;
     }
 
     /**
@@ -498,5 +498,14 @@ public class BentoBox extends JavaPlugin {
     @Override
     public void reloadConfig() {
         loadSettings();
+    }
+
+    /**
+     * Check if plug has shutdown. Used to close databases that are running async.
+     * @return true if plugin has shutdown
+     * @since 1.13.0
+     */
+    public boolean isShutdown() {
+        return shutdown;
     }
 }

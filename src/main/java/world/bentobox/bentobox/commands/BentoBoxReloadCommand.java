@@ -1,8 +1,6 @@
 package world.bentobox.bentobox.commands;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 
@@ -10,6 +8,7 @@ import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.events.BentoBoxReadyEvent;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.commands.reload.BentoBoxReloadLocalesCommand;
 import world.bentobox.bentobox.listeners.PanelListenerManager;
 
 /**
@@ -32,8 +31,9 @@ public class BentoBoxReloadCommand extends ConfirmableCommand {
         setPermission("bentobox.admin.reload");
         setParametersHelp("commands.bentobox.reload.parameters");
         setDescription("commands.bentobox.reload.description");
-    }
 
+        new BentoBoxReloadLocalesCommand(this);
+    }
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
@@ -61,10 +61,5 @@ public class BentoBoxReloadCommand extends ConfirmableCommand {
             showHelp(this, user);
         }
         return true;
-    }
-
-    @Override
-    public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
-        return Optional.of(getPlugin().getAddonsManager().getAddons().stream().map(a -> a.getDescription().getName()).collect(Collectors.toList()));
     }
 }

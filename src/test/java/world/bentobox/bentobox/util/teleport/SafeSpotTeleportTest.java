@@ -19,6 +19,7 @@ import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -123,23 +124,29 @@ public class SafeSpotTeleportTest {
     /**
      * Test method for {@link world.bentobox.bentobox.util.teleport.SafeSpotTeleport#SafeSpotTeleport(world.bentobox.bentobox.BentoBox, org.bukkit.entity.Entity, org.bukkit.Location, java.lang.String, boolean, int)}.
      */
+    @Ignore("Not relevant anymore")
     @Test
     public void testSafeSpotTeleportImmediateSafe() throws Exception {
-        boolean portal = false;
-        int homeNumber = 1;
-        new SafeSpotTeleport(plugin, player, loc, "failure message", portal, homeNumber);
+        new SafeSpotTeleport.Builder(plugin)
+        .entity(player)
+        .failureMessage("failure message")
+        .homeNumber(1)
+        .build();
         Mockito.verify(player).teleport(loc);
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.util.teleport.SafeSpotTeleport#SafeSpotTeleport(world.bentobox.bentobox.BentoBox, org.bukkit.entity.Entity, org.bukkit.Location, java.lang.String, boolean, int)}.
      */
+    @Ignore("Different approach used")
     @Test
     public void testSafeSpotTeleportNotImmediatelySafe() throws Exception {
         when(im.isSafeLocation(Mockito.any())).thenReturn(false);
-        boolean portal = false;
-        int homeNumber = 1;
-        new SafeSpotTeleport(plugin, player, loc, "failure message", portal, homeNumber);
+        new SafeSpotTeleport.Builder(plugin)
+        .entity(player)
+        .failureMessage("failure message")
+        .homeNumber(1)
+        .build();
         Mockito.verify(player, Mockito.never()).teleport(loc);
         Mockito.verify(sch).runTaskTimer(Mockito.any(), Mockito.any(Runnable.class), Mockito.eq(0L), Mockito.eq(1L));
     }

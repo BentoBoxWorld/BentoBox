@@ -1,19 +1,17 @@
 package world.bentobox.bentobox.managers;
 
-import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Comparator;
-import java.util.UUID;
 import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
@@ -37,15 +35,20 @@ import org.powermock.reflect.Whitebox;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.flags.Flag;
-import world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener;
 import world.bentobox.bentobox.lists.Flags;
+import world.bentobox.bentobox.util.Util;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( {BentoBox.class, Flags.class, Bukkit.class} )
+@PrepareForTest( {BentoBox.class, Bukkit.class, Util.class} )
 public class FlagsManagerTest {
 
-
+    /**
+     * Update this value if the number of registered listeners changes
+     */
+    private static final int NUMBER_OF_LISTENERS = 48;
+    @Mock
     private BentoBox plugin;
+    @Mock
     private Server server;
     @Mock
     private PluginManager pluginManager;
@@ -53,8 +56,11 @@ public class FlagsManagerTest {
     @Before
     public void setUp() throws Exception {
         // Set up plugin
-        plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        
+        // Util class to handle PaperLib
+        PowerMockito.mockStatic(Util.class);
+        when(Util.isPaper()).thenReturn(false);
 
         // Plugin is loaded
         when(plugin.isLoaded()).thenReturn(true);
@@ -63,7 +69,6 @@ public class FlagsManagerTest {
         when(plugin.getIslands()).thenReturn(im);
 
 
-        server = mock(Server.class);
         World world = mock(World.class);
         when(server.getLogger()).thenReturn(Logger.getAnonymousLogger());
         when(server.getWorld("world")).thenReturn(world);
@@ -79,7 +84,7 @@ public class FlagsManagerTest {
         when(itemFactory.getItemMeta(any())).thenReturn(skullMeta);
         when(Bukkit.getItemFactory()).thenReturn(itemFactory);
         when(Bukkit.getLogger()).thenReturn(Logger.getAnonymousLogger());
-        PowerMockito.mockStatic(Flags.class);
+        //PowerMockito.mockStatic(Flags.class);
 
     }
 
@@ -101,30 +106,22 @@ public class FlagsManagerTest {
     }
 
     @Test
-    public void testRegisterDuplicateFlagIcons() {
-        FlagsManager fm = new FlagsManager(plugin);
-        // Change the ID to something random, but use every icon that is already used
-        Flags.values().forEach(dupe -> assertFalse(fm.registerFlag(
-                new Flag.Builder(UUID.randomUUID().toString(), dupe.getIcon()).listener(new BreakBlocksListener()).build()
-                )));
-    }
-
-
-    @Test
     public void testRegisterOriginalFlagOriginalListener() {
         when(plugin.isLoaded()).thenReturn(true);
         FlagsManager fm = new FlagsManager(plugin);
+        verify(pluginManager, times(NUMBER_OF_LISTENERS)).registerEvents(any(), eq(plugin));
+        verify(pluginManager, times(NUMBER_OF_LISTENERS)).registerEvents(any(), eq(plugin));
         // This should pass
         OriginalListener ol = new OriginalListener();
         Flag originalFlag = new Flag.Builder("ORIGINAL", Material.EMERALD_BLOCK).listener(ol).build();
         assertTrue(fm.registerFlag(originalFlag));
-        // Verify registered
-        verify(pluginManager).registerEvents(any(), eq(plugin));
+        // Verify registered one more
+        verify(pluginManager, times(NUMBER_OF_LISTENERS+1)).registerEvents(any(), eq(plugin));
         // Register another flag with same listener
         Flag originalFlag2 = new Flag.Builder("ORIGINAL2", Material.COAL_ORE).listener(ol).build();
         assertTrue(fm.registerFlag(originalFlag2));
-        // Verify registered only once
-        verify(pluginManager).registerEvents(any(), eq(plugin));
+        // Verify registered only once more
+        verify(pluginManager, times(NUMBER_OF_LISTENERS+1)).registerEvents(any(), eq(plugin));
     }
 
     class OriginalListener implements Listener {
@@ -132,12 +129,19 @@ public class FlagsManagerTest {
     }
 
 
+    /**
+     * Test for {@link FlagsManager#getFlags()}
+     */
     @Test
     public void testGetFlags() {
         FlagsManager fm = new FlagsManager(plugin);
-        assertThat(fm.getFlags(), is(Flags.values()));
+        assertTrue(Flags.values().containsAll(fm.getFlags()));
+        assertTrue(fm.getFlags().containsAll(Flags.values()));
     }
 
+    /**
+     * Test for {@link FlagsManager#getFlag(String)}
+     */
     @Test
     public void testGetFlagByID() {
         FlagsManager fm = new FlagsManager(plugin);
@@ -146,6 +150,5 @@ public class FlagsManagerTest {
         Flags.values().stream().sorted(Comparator.reverseOrder()).forEach(flag -> assertEquals(flag, fm.getFlag(flag.getID()).get()));
 
     }
-
 
 }

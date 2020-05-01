@@ -7,6 +7,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.framework;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -45,6 +46,7 @@ import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.managers.PlayersManager;
+import world.bentobox.bentobox.util.Util;
 
 /**
  * @author tastybento
@@ -79,6 +81,7 @@ public class AdminTeamDisbandCommandTest {
         // Set up plugin
         BentoBox plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        Util.setPlugin(plugin);
 
         // Command manager
         CommandsManager cm = mock(CommandsManager.class);
@@ -232,6 +235,6 @@ public class AdminTeamDisbandCommandTest {
         verify(user).sendMessage("commands.admin.team.disband.success", TextVariables.NAME, name[0]);
         verify(p).sendMessage("commands.admin.team.disband.disbanded");
         verify(p2).sendMessage("commands.admin.team.disband.disbanded");
-        verify(pim).callEvent(any());
+        verify(pim, times(3)).callEvent(any());
     }
 }

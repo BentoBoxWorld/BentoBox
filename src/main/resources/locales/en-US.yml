@@ -11,6 +11,8 @@ meta:
   - Poslovitch
   banner: "WHITE_BANNER:1:STRIPE_SMALL:RED:SQUARE_TOP_RIGHT:CYAN:SQUARE_TOP_RIGHT:BLUE"
 
+prefixes:
+  bentobox: '&6 BentoBox &7 &l > &r '
 general:
   success: "&a Success!"
   invalid: "Invalid"
@@ -75,24 +77,27 @@ commands:
       parameters: "[days]" 
       description: "purge islands abandoned for more than [days]"
       days-or-more: "Must be at least 1 day or more"
-      purgable-islands: "Found [number] purgable islands."
-      purge-in-progress: "&c Purging in progress. Use purge stop to cancel"
+      purgable-islands: "&a Found &b [number] &a purgable islands."
+      purge-in-progress: "&c Purging in progress. Use &b /[label] purge stop &c to cancel."
       number-error: "&c Argument must be a number of days"
-      confirm: "&d Type [label] purge confirm to start purging"
-      completed: "&a Purging stopped"
-      see-console-for-status: "Purge started. See console for status" 
+      confirm: "&d Type &b /[label] purge confirm &d to start purging"
+      completed: "&a Purging stopped."
+      see-console-for-status: "&a Purge started. See console for status or use &b /[label] purge status&a."
+      no-purge-in-progress: "&c There is currently no purge in progress."
       protect:
-        description: "Toggle island purge protection"
+        description: "toggle island purge protection"
         move-to-island: "&c Move to an island first!"
-        protecting: "&a Purge-protecting island"
-        unprotecting: "&a Removing purge protection"
+        protecting: "&a Protecting island from purge."
+        unprotecting: "&a Removing purge protection."
       stop:
-        description: "Stop a purge in progress"
+        description: "stop a purge in progress"
         stopping: "Stopping the purge"
-        no-purge-in-progress: "&c No purge in progress!"
       unowned:
-        description: "Purge unowned islands - requires confirmation"
-        unowned-islands: "&d Found [number] islands"
+        description: "purge unowned islands"
+        unowned-islands: "&a Found &b [number] &a unowned islands."
+      status:
+        description: "displays the status of the purge"
+        status: "&b [purged] &a islands purged out of &b [purgeable] &7(&b[percentage] %&7)&a."
         
     team:
       add:
@@ -120,7 +125,7 @@ commands:
         already-owner: "&c [name] is already the owner of this island!"
         success: "&b [name]&a  is now the owner of this island."
     range:
-      description: "Admin island range command"
+      description: "admin island range command"
       invalid-value:
         too-low: "&c The protection range must be greater than &b 1&c !"
         too-high: "&c The protection range should be equal or less than &b [number]&c !"
@@ -154,8 +159,8 @@ commands:
     register:
       parameters: "<player>"
       description: "register player to unowned island you are on"
-      registered-island: "&a Registered player to island at [xyz]."
-      reserved-island: "&a Reserved island at [xyz] for player."
+      registered-island: "&a Registered [name] to island at [xyz]."
+      reserved-island: "&a Reserved island at [xyz] for [name]."
       already-owned: "&c Island is already owned by another player!"
       no-island-here: "&c There is no island here. Confirm to make one."
       in-deletion: "&c This island space is currently being deleted. Try later."
@@ -164,7 +169,7 @@ commands:
     unregister:
       parameters: "<owner>"
       description: "unregister owner from island, but keep island blocks"
-      unregistered-island: "&a Unregistered player from island at [xyz]."
+      unregistered-island: "&a Unregistered [name] from island at [xyz]."
     info:
       parameters: "<player>"
       description: "get info on where you are or player's island"
@@ -236,11 +241,17 @@ commands:
       not-possible: "&c Rank must be higher than visitor."
       rank-set: "&a Rank set from &b [from] &a to &b [to] &a on &b [name]&a 's island."
     setspawn:
-      description: "set an island as spawn for this world"
+      description: "set an island as spawn for this gamemode"
       already-spawn: "&c This island is already a spawn!"
       no-island-here: "&c There is no island here."
       confirmation: "&c Are you sure you want to set this island as the spawn for this world?"
       success: "&a Successfully set this island as the spawn for this world."
+    setspawnpoint:
+      description: "set current location as spawn point for this island"
+      no-island-here: "&c There is no island here."
+      confirmation: "&c Are you sure you want to set this location as the spawn point for this island?"
+      success: "&a Successfully set this location as the spawn point for this island."
+      island-spawnpoint-changed: "&a [user] changed this island spawn point."
     settings:
       parameters: "[player]"
       description: "open system settings or island settings for player"
@@ -383,13 +394,15 @@ commands:
       description: "displays copyright and license information"
     reload:
       description: "reloads BentoBox and all addons, settings and locales"
-      locales-reloaded: "&2 Languages reloaded."
-      addons-reloaded: "&2 Addons reloaded."
-      settings-reloaded: "&2 Settings reloaded."
-      addon: "&6 Reloading &b [name]&2 ."
-      addon-reloaded: "&b [name] &2 reloaded."
-      warning: "&c Warning: Reloading may cause instability, so if you see errors afterwards, restart the server."
-      unknown-addon: "&c Unknown addon!"
+      locales-reloaded: "[prefix_bentobox]&2 Languages reloaded."
+      addons-reloaded: "[prefix_bentobox]&2 Addons reloaded."
+      settings-reloaded: "[prefix_bentobox]&2 Settings reloaded."
+      addon: "[prefix_bentobox]&6 Reloading &b [name]&2 ."
+      addon-reloaded: "[prefix_bentobox]&b [name] &2 reloaded."
+      warning: "[prefix_bentobox]&c Warning: Reloading may cause instability, so if you see errors afterwards, restart the server."
+      unknown-addon: "[prefix_bentobox]&c Unknown addon!"
+      locales:
+        description: "reloads locales"
     version:
       plugin-version: "&2 BentoBox version: &3 [version]"
       description: "displays BentoBox and addons versions"
@@ -406,15 +419,15 @@ commands:
     locale:
       description: "performs localization files analysis"
       see-console: |-
-        &a Check the console to see the feedback.
-        &a This command is so spammy that the feedback cannot be read from chat...
+        [prefix_bentobox]&a Check the console to see the feedback.
+        [prefix_bentobox]&a This command is so spammy that the feedback cannot be read from chat...
     migrate:
       description: "migrates data from one database to another"
-      players: "&6 Migrating players"
-      names: "&6 Migrating names"
-      addons: "&6 Migrating addons"
-      class: "&6 Migrating [description]"
-      migrated: "&A Migrated"
+      players: "[prefix_bentobox]&6 Migrating players"
+      names: "[prefix_bentobox]&6 Migrating names"
+      addons: "[prefix_bentobox]&6 Migrating addons"
+      class: "[prefix_bentobox]&6 Migrating [description]"
+      migrated: "[prefix_bentobox]&a Migrated"
       
   confirmation:
     confirm: "&c Type command again within &b [seconds]s&c  to confirm."
@@ -426,18 +439,18 @@ commands:
     moved-so-command-cancelled: "&c You moved. Teleport cancelled!"
   island:
     about:
-      description: "About this addon"
+      description: "display licence details"
     go:
       parameters: "[home number]"
       description: "teleport you to your island"
       teleport: "&a Teleporting you to your island."
       teleported: "&a Teleported you to home &e #[number]."
     help:
-      description: "The main island command"
+      description: "the main island command"
     spawn:
       description: "teleport you to the spawn"
       teleporting: "&a Teleporting you to the spawn."
-      no-spawn: "&c There is no spawn in this world."
+      no-spawn: "&c There is no spawn in this gamemode."
     create:
       description: "create an island, using optional blueprint (requires permission)"
       parameters: "<blueprint>"
@@ -453,7 +466,7 @@ commands:
       pick: "&2 Pick an island"
       unknown-blueprint: "&c That blueprint has not been loaded yet."
       on-first-login: "&a Welcome! We will start preparing your island in a few seconds."
-      you-can-teleport-to-your-island: "&a You can teleport to your island when you please."
+      you-can-teleport-to-your-island: "&a You can teleport to your island when you want."
     info:
       description: "display info about your island or the player's island"
       parameters: "<player>"
@@ -523,8 +536,8 @@ commands:
         parameters: "<player>"
         cannot-coop-yourself: "&c You cannot coop yourself!"
         already-has-rank: "&c Player already has a rank!"
-        you-are-a-coop-member: "&2 You were cooped by [name]"
-        success: "&a You cooped &b [name]."
+        you-are-a-coop-member: "&2 You were cooped by &b[name]&a."
+        success: "&a You cooped &b [name]&a."
         name-has-invited-you: "&a [name] has invited you to join be a coop member of their island."
       uncoop:
         description: "remove a coop rank from player"
@@ -532,9 +545,10 @@ commands:
         cannot-uncoop-yourself: "&c You cannot uncoop yourself!"
         cannot-uncoop-member: "&c You cannot uncoop a team member!"
         player-not-cooped: "&c Player is not cooped!"
-        you-are-no-longer-a-coop-member: "&c You are no longer a coop member of [name]'s island"
-        all-members-logged-off: "&c All island members logged off so you are no longer a coop member of [name]'s island"
+        you-are-no-longer-a-coop-member: "&c You are no longer a coop member of [name]'s island."
+        all-members-logged-off: "&c All island members logged off so you are no longer a coop member of [name]'s island."
         success: "&b [name] &a is no longer a coop member of your island."
+        is-full: "&c You cannot coop anyone else."
       trust:
         description: "give a player trusted rank on your island"
         parameters: "<player>"
@@ -543,6 +557,7 @@ commands:
         player-already-trusted: "&c Player is already trusted!"
         you-are-trusted: "&2 You are trusted by &b [name]&a !"
         success: "&a You trusted &b [name]&a ."
+        is-full: "&c You cannot trust anyone else."
       untrust:
         description: "remove trusted player rank from player"
         parameters: "<player>"
@@ -553,14 +568,14 @@ commands:
         success: "&b [name] &a is no longer trusted on your island."
       invite:
         description: "invite a player to join your island"
-        invitation-sent: "&a Invitation sent to [name]"
-        removing-invite: "&c Removing invite"
+        invitation-sent: "&a Invitation sent to &b[name]&a."
+        removing-invite: "&c Removing invite."
         name-has-invited-you: "&a [name] has invited you to join their island."
         to-accept-or-reject: "&a Do /[label] team accept to accept, or /[label] team reject to reject"
         you-will-lose-your-island: "&c WARNING! You will lose your island if you accept!"
         errors:
           cannot-invite-self: "&c You cannot invite yourself!"
-          cooldown: "&c You cannot invite that person for another [number] seconds"
+          cooldown: "&c You cannot invite that person for another [number] seconds."
           island-is-full: "&c Your island is full, you can't invite anyone else."
           none-invited-you: "&c No one invited you :c."
           you-already-are-in-team: "&c You are already on a team!"
@@ -571,7 +586,7 @@ commands:
         you-can-invite: "&a You can invite [number] more players."
         accept:
           description: "accept an invitation"
-          you-joined-island: "&a You joined an island! Use /[label] team info to see the other members."
+          you-joined-island: "&a You joined an island! Use &b/[label] team &a to see the other members."
           name-joined-your-island: "&a [name] joined your island!"
           confirmation: |-
             &c Are you sure you want to accept this invite?
@@ -666,7 +681,7 @@ protection:
   command-is-banned: "Command is banned for visitors"
   flags:
     ANIMAL_SPAWN: 
-      description: "Toggle spawning"
+      description: "Toggle natural spawning"
       name: "Animal spawning"
     ANVIL: 
       description: "Toggle interaction"
@@ -692,6 +707,12 @@ protection:
       description: "Toggle breaking"
       name: "Break blocks"
       hint: "Block breaking disabled"
+    BREAK_SPAWNERS:
+      description: |-
+        Toggle spawners breaking.
+        Override the Break Blocks flag.
+      name: "Break spawners"
+      hint: "Spawner breaking disabled"
     BREEDING: 
       description: "Toggle breeding"
       name: "Breed animals"
@@ -781,7 +802,7 @@ protection:
       description: "Toggle creeper damage"
       name: "Creeper damage"
     CREEPER_GRIEFING:
-      description: "Toggle creeper griefing"
+      description: "Toggle creeper griefing when ignited by island visitor"
       name: "Creeper griefing"
       hint: "Creeper griefing disabled"
     CROP_TRAMPLE: 
@@ -990,7 +1011,7 @@ protection:
       description: "Toggle minecart interactions"
       hint: "Minecart interaction disabled"
     MONSTER_SPAWN: 
-      description: "Toggle spawning"
+      description: "Toggle natural spawning"
       name: "Monster spawning"
     MOUNT_INVENTORY: 
       description: |-
@@ -1186,9 +1207,9 @@ protection:
         &a If active, withers can
         &a damage blocks and players
   locked: "&c This island is locked!"
-  protected: "&c Island protected: [description]"
-  world-protected: "&c World protected: [description]"
-  spawn-protected: "&c Spawn protected: [description]"
+  protected: "&c Island protected: [description]."
+  world-protected: "&c World protected: [description]."
+  spawn-protected: "&c Spawn protected: [description]."
 
   panel:
     next: "&f Next Page"
@@ -1387,9 +1408,8 @@ successfully-loaded: |
 
   &6   ____             _        ____
   &6  |  _ \           | |      |  _ \             &7 by &a tastybento &7 and &a Poslovitch
-  &6  | |_) | ___ _ __ | |_ ___ | |_) | _____  __  &7 2017 - 2019
+  &6  | |_) | ___ _ __ | |_ ___ | |_) | _____  __  &7 2017 - 2020
   &6  |  _ < / _ \ '_ \| __/ _ \|  _ < / _ \ \/ /
   &6  | |_) |  __/ | | | || (_) | |_) | (_) >  <   &b v&e [version]
   &6  |____/ \___|_| |_|\__\___/|____/ \___/_/\_\  &8 Loaded in &e [time]&8 ms.
-
 

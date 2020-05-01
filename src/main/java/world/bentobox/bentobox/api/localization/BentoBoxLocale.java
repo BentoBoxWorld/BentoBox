@@ -1,9 +1,12 @@
 package world.bentobox.bentobox.api.localization;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.eclipse.jdt.annotation.NonNull;
@@ -22,6 +25,12 @@ public class BentoBoxLocale {
     private ItemStack banner;
     private List<String> authors;
 
+    /**
+     * List of available prefixes in this locale.
+     * @since 1.12.0
+     */
+    private Set<String> prefixes;
+
     public BentoBoxLocale(Locale locale, YamlConfiguration config) {
         this.locale = locale;
         this.config = config;
@@ -32,6 +41,10 @@ public class BentoBoxLocale {
         // Load authors from the configuration
         authors = new LinkedList<>();
         updateAuthors(config);
+
+        // Load prefixes from the configuration
+        prefixes = new HashSet<>();
+        updatePrefixes(config);
     }
 
     /**
@@ -104,6 +117,7 @@ public class BentoBoxLocale {
             }
         }
         updateAuthors(toBeMerged);
+        updatePrefixes(toBeMerged);
     }
 
     /**
@@ -132,10 +146,27 @@ public class BentoBoxLocale {
         }
     }
 
+    private void updatePrefixes(YamlConfiguration yamlConfiguration) {
+        ConfigurationSection prefixesConfigSection = yamlConfiguration.getConfigurationSection("prefixes");
+        if (prefixesConfigSection != null) {
+            prefixes.addAll(prefixesConfigSection.getKeys(false));
+        }
+    }
+
     /**
      * @return the config
      */
     public YamlConfiguration getConfig() {
         return config;
+    }
+
+    /**
+     * Returns the list of prefixes available in this locale.
+     * @return list of prefixes available in this locale.
+     * @since 1.13.0
+     */
+    @NonNull
+    public Set<String> getPrefixes() {
+        return prefixes;
     }
 }

@@ -189,7 +189,7 @@ public abstract class FlagListener implements Listener {
                 return true;
             }
             report(user, e, loc, flag,  Why.NOT_ALLOWED_ON_ISLAND);
-            noGo(e, flag, silent, "protection.protected");
+            noGo(e, flag, silent, island.get().isSpawn() ? "protection.spawn-protected" : "protection.protected");
             return false;
         }
         // The player is in the world, but not on an island, so general world settings apply

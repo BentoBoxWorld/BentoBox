@@ -14,6 +14,7 @@ import world.bentobox.bentobox.api.events.island.IslandEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
 
 public class AdminRegisterCommand extends ConfirmableCommand {
@@ -38,7 +39,7 @@ public class AdminRegisterCommand extends ConfirmableCommand {
             return false;
         }
         // Get target
-        UUID targetUUID = getPlayers().getUUID(args.get(0));
+        UUID targetUUID = Util.getUUID(args.get(0));
         if (targetUUID == null) {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
             return false;
@@ -66,14 +67,13 @@ public class AdminRegisterCommand extends ConfirmableCommand {
         }
         // Check if island is spawn
         if (island.map(Island::isSpawn).orElse(false)) {
-            askConfirmation(user, user.getTranslation("commands.admin.register.island-is-spawn"), () -> register(user, targetUUID, island, closestIsland));
+            askConfirmation(user, user.getTranslation("commands.admin.register.island-is-spawn"), () -> register(user, args.get(0), targetUUID, island, closestIsland));
             return false;
         }
-        return register(user, targetUUID, island, closestIsland);
-
+        return register(user, args.get(0),targetUUID, island, closestIsland);
     }
 
-    private boolean register(User user, UUID targetUUID, Optional<Island> island, Location closestIsland) {
+    private boolean register(User user, String targetName, UUID targetUUID, Optional<Island> island, Location closestIsland) {
         // Register island if it exists
         if (!island.map(i -> {
             // Island exists
@@ -81,7 +81,8 @@ public class AdminRegisterCommand extends ConfirmableCommand {
             if (i.isSpawn()) {
                 getIslands().clearSpawn(i.getWorld());
             }
-            user.sendMessage("commands.admin.register.registered-island", "[xyz]", Util.xyz(i.getCenter().toVector()));
+            user.sendMessage("commands.admin.register.registered-island", "[xyz]", Util.xyz(i.getCenter().toVector()),
+                    TextVariables.NAME, targetName);
             user.sendMessage("general.success");
             // Build and call event
             IslandEvent.builder()
@@ -90,6 +91,13 @@ public class AdminRegisterCommand extends ConfirmableCommand {
             .reason(IslandEvent.Reason.REGISTERED)
             .involvedPlayer(targetUUID)
             .admin(true)
+            .build();
+            IslandEvent.builder()
+            .island(i)
+            .involvedPlayer(targetUUID)
+            .admin(true)
+            .reason(IslandEvent.Reason.RANK_CHANGE)
+            .rankChange(RanksManager.VISITOR_RANK, RanksManager.OWNER_RANK)
             .build();
             return true;
         }).orElse(false)) {
@@ -105,7 +113,8 @@ public class AdminRegisterCommand extends ConfirmableCommand {
                 getIslands().setOwner(user, targetUUID, i);
                 i.setReserved(true);
                 i.getCenter().getBlock().setType(Material.BEDROCK);
-                user.sendMessage("commands.admin.register.reserved-island", "[xyz]", Util.xyz(i.getCenter().toVector()));
+                user.sendMessage("commands.admin.register.reserved-island", "[xyz]", Util.xyz(i.getCenter().toVector()),
+                        TextVariables.NAME, targetName);
                 // Build and fire event
                 IslandEvent.builder()
                 .island(i)
@@ -118,7 +127,6 @@ public class AdminRegisterCommand extends ConfirmableCommand {
             return false;
         }
         return true;
-
     }
 
     @Override

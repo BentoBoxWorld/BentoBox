@@ -7,10 +7,12 @@ import org.bukkit.Bukkit;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
+import world.bentobox.bentobox.api.events.island.IslandEvent;
 import world.bentobox.bentobox.api.events.team.TeamEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.managers.RanksManager;
 
 
 public class IslandTeamKickCommand extends ConfirmableCommand {
@@ -56,7 +58,7 @@ public class IslandTeamKickCommand extends ConfirmableCommand {
             return false;
         }
         if (targetUUID.equals(user.getUniqueId())) {
-            user.sendMessage("commands.island.kick.cannot-kick");
+            user.sendMessage("commands.island.team.kick.cannot-kick");
             return false;
         }
         if (!getIslands().getMembers(getWorld(), user.getUniqueId()).contains(targetUUID)) {
@@ -130,6 +132,13 @@ public class IslandTeamKickCommand extends ConfirmableCommand {
         .reason(TeamEvent.Reason.KICK)
         .involvedPlayer(targetUUID)
         .build();
+        IslandEvent.builder()
+                .island(oldIsland)
+                .involvedPlayer(user.getUniqueId())
+                .admin(false)
+                .reason(IslandEvent.Reason.RANK_CHANGE)
+                .rankChange(oldIsland.getRank(user), RanksManager.VISITOR_RANK)
+                .build();
 
         // Add cooldown for this player and target
         if (getSettings().getInviteCooldown() > 0 && getParent() != null) {

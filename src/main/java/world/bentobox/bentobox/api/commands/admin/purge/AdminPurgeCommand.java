@@ -37,6 +37,7 @@ public class AdminPurgeCommand extends CompositeCommand implements Listener {
         setOnlyPlayer(false);
         setParametersHelp("commands.admin.purge.parameters");
         setDescription("commands.admin.purge.description");
+        new AdminPurgeStatusCommand(this);
         new AdminPurgeStopCommand(this);
         new AdminPurgeUnownedCommand(this);
         new AdminPurgeProtectCommand(this);
@@ -45,7 +46,7 @@ public class AdminPurgeCommand extends CompositeCommand implements Listener {
     @Override
     public boolean canExecute(User user, String label, List<String> args) {
         if (inPurge) {
-            user.sendMessage("commands.admin.purge.purge-in-progress");
+            user.sendMessage("commands.admin.purge.purge-in-progress", TextVariables.LABEL, this.getTopLabel());
             return false;
         }
         if (args.isEmpty()) {
@@ -88,7 +89,7 @@ public class AdminPurgeCommand extends CompositeCommand implements Listener {
 
     void removeIslands() {
         inPurge = true;
-        user.sendMessage("commands.admin.purge.see-console-for-status");
+        user.sendMessage("commands.admin.purge.see-console-for-status", TextVariables.LABEL, this.getTopLabel());
         it = islands.iterator();
         count = 0;
         // Delete first island
@@ -100,7 +101,8 @@ public class AdminPurgeCommand extends CompositeCommand implements Listener {
             getIslands().getIslandById(it.next()).ifPresent(i -> {
                 getIslands().deleteIsland(i, true, null);
                 count++;
-                getPlugin().log(count + " islands purged");
+                String percentage = String.format("%.1f", (((float) count)/getPurgeableIslandsCount() * 100));
+                getPlugin().log(count + " islands purged out of " + getPurgeableIslandsCount() + " (" + percentage + " %)");
             });
         } else {
             user.sendMessage("commands.admin.purge.completed");
@@ -118,6 +120,7 @@ public class AdminPurgeCommand extends CompositeCommand implements Listener {
 
     Set<String> getOldIslands(int days) {
         return getPlugin().getIslands().getIslands().stream()
+                .filter(i -> !i.isSpawn())
                 .filter(i -> !i.getPurgeProtected())
                 .filter(i -> i.getWorld().equals(this.getWorld()))
                 .filter(Island::isOwned)
@@ -153,5 +156,23 @@ public class AdminPurgeCommand extends CompositeCommand implements Listener {
      */
     void setIslands(Set<String> islands) {
         this.islands = islands;
+    }
+
+    /**
+     * Returns the amount of purged islands.
+     * @return the amount of islands that have been purged.
+     * @since 1.13.0
+     */
+    int getPurgedIslandsCount() {
+        return this.count;
+    }
+
+    /**
+     * Returns the amount of islands that can be purged.
+     * @return the amount of islands that can be purged.
+     * @since 1.13.0
+     */
+    int getPurgeableIslandsCount() {
+        return this.islands.size();
     }
 }

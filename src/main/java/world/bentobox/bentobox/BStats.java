@@ -14,6 +14,8 @@ import world.bentobox.bentobox.api.flags.Flag;
  */
 public class BStats {
 
+    private static final int BSTATS_ID = 3555;
+
     private final BentoBox plugin;
     private Metrics metrics;
 
@@ -30,7 +32,7 @@ public class BStats {
 
     void registerMetrics() {
         if (metrics == null) {
-            metrics = new Metrics(plugin);
+            metrics = new Metrics(plugin, BSTATS_ID);
             registerCustomMetrics();
         }
     }
@@ -133,7 +135,8 @@ public class BStats {
             else if (players <= 30) return "11-30";
             else if (players <= 50) return "31-50";
             else if (players <= 100) return "51-100";
-            else if (players <= 200) return "101-200";
+            else if (players <= 150) return "101-150";
+            else if (players <= 200) return "151-200";
             else return "201+";
         }));
     }

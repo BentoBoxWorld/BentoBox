@@ -4,10 +4,13 @@ import java.util.List;
 import java.util.UUID;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
+import world.bentobox.bentobox.api.events.island.IslandEvent;
 import world.bentobox.bentobox.api.events.team.TeamEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.managers.RanksManager;
+import world.bentobox.bentobox.util.Util;
 
 public class AdminTeamDisbandCommand extends CompositeCommand {
 
@@ -30,7 +33,7 @@ public class AdminTeamDisbandCommand extends CompositeCommand {
             return false;
         }
         // Get target
-        UUID targetUUID = getPlayers().getUUID(args.get(0));
+        UUID targetUUID = Util.getUUID(args.get(0));
         if (targetUUID == null) {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
             return false;
@@ -50,7 +53,8 @@ public class AdminTeamDisbandCommand extends CompositeCommand {
         // Disband team
         Island island = getIslands().getIsland(getWorld(), targetUUID);
         getIslands().getMembers(getWorld(), targetUUID).forEach(m -> {
-            User.getInstance(m).sendMessage("commands.admin.team.disband.disbanded");
+            User mUser = User.getInstance(m);
+            mUser.sendMessage("commands.admin.team.disband.disbanded");
             // The owner gets to keep the island
             if (!m.equals(targetUUID)) {
                 getIslands().setLeaveTeam(getWorld(), m);
@@ -59,6 +63,13 @@ public class AdminTeamDisbandCommand extends CompositeCommand {
                 .reason(TeamEvent.Reason.KICK)
                 .involvedPlayer(m)
                 .admin(true)
+                .build();
+                IslandEvent.builder()
+                .island(island)
+                .involvedPlayer(targetUUID)
+                .admin(true)
+                .reason(IslandEvent.Reason.RANK_CHANGE)
+                .rankChange(island.getRank(mUser), RanksManager.VISITOR_RANK)
                 .build();
             }
         });

@@ -784,7 +784,9 @@ public class PVPListenerTest {
         map.put(creeper, 10D);
         PotionSplashEvent e = new PotionSplashEvent(tp, map);
         new PVPListener().onSplashPotionSplash(e);
-        assertTrue(e.isCancelled());
+        assertFalse(e.getAffectedEntities().contains(player2));
+        assertTrue(e.getAffectedEntities().contains(zombie));
+        assertTrue(e.getAffectedEntities().contains(creeper));
         verify(notifier).notify(any(), eq(Flags.PVP_OVERWORLD.getHintReference()));
 
         // Wrong world
@@ -839,7 +841,9 @@ public class PVPListenerTest {
         map.put(creeper, 10D);
         PotionSplashEvent e = new PotionSplashEvent(tp, map);
         new PVPListener().onSplashPotionSplash(e);
-        assertFalse(e.isCancelled());
+        assertTrue(e.getAffectedEntities().contains(player2));
+        assertTrue(e.getAffectedEntities().contains(zombie));
+        assertTrue(e.getAffectedEntities().contains(creeper));
         verify(player, never()).sendMessage(Flags.PVP_OVERWORLD.getHintReference());
     }
 
@@ -867,7 +871,9 @@ public class PVPListenerTest {
         when(iwm.getIvSettings(any())).thenReturn(Collections.singletonList("ENTITY_ATTACK"));
         new PVPListener().onSplashPotionSplash(e);
         // visitor should be protected
-        assertTrue(e.isCancelled());
+        assertFalse(e.getAffectedEntities().contains(player2));
+        assertTrue(e.getAffectedEntities().contains(zombie));
+        assertTrue(e.getAffectedEntities().contains(creeper));
         verify(notifier).notify(any(), eq(Flags.INVINCIBLE_VISITORS.getHintReference()));
 
         // Wrong world

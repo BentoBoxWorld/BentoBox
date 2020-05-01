@@ -3,9 +3,11 @@ package world.bentobox.bentobox.util;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -58,6 +60,9 @@ public class Util {
 
     private Util() {}
 
+    /**
+     * Used for testing only
+     */
     public static void setPlugin(BentoBox p) {
         plugin = p;
     }
@@ -515,7 +520,21 @@ public class Util {
      * @return True for Paper environments
      */
     public static boolean isPaper() {
-        return PaperLib.isPaper();
+        return isJUnitTest() ? false : PaperLib.isPaper();
+    }
+
+    /**
+     * I don't like doing this, but otherwise we need to set a flag in every test
+     */
+    private static boolean isJUnitTest() {
+        StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+        List<StackTraceElement> list = Arrays.asList(stackTrace);
+        for (StackTraceElement element : list) {
+            if (element.getClassName().startsWith("org.junit.")) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -586,5 +605,24 @@ public class Util {
 
         // Everything's green!
         return true;
+    }
+
+    /**
+     * Get a UUID from a string. The string can be a known player's name or a UUID
+     * @param nameOrUUID - name or UUID
+     * @return UUID or null if unknown
+     * @since 1.13.0
+     */
+    @Nullable
+    public static UUID getUUID(@NonNull String nameOrUUID) {
+        UUID targetUUID = plugin.getPlayers().getUUID(nameOrUUID);
+        if (targetUUID != null) return targetUUID;
+        // Check if UUID is being used
+        try {
+            return UUID.fromString(nameOrUUID);
+        } catch (Exception e) {
+            // Do nothing
+        }
+        return null;
     }
 }

@@ -2,21 +2,17 @@ package world.bentobox.bentobox.listeners;
 
 import java.util.Optional;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityPortalEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
-import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
@@ -25,7 +21,6 @@ import world.bentobox.bentobox.blueprints.Blueprint;
 import world.bentobox.bentobox.blueprints.BlueprintPaster;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle;
 import world.bentobox.bentobox.database.objects.Island;
-import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.util.Util;
 import world.bentobox.bentobox.util.teleport.SafeSpotTeleport;
 
@@ -136,7 +131,6 @@ public class PortalTeleportationListener implements Listener {
             Location to = from.getWorld().getEnvironment() != Environment.NETHER ? plugin.getIWM().getNetherWorld(overWorld).getSpawnLocation() : null;
             return standardTeleport(e, from.getWorld(), overWorld, to);
         }
-
         // We will handle this event
         e.setCancelled(true);
 
@@ -145,12 +139,12 @@ public class PortalTeleportationListener implements Listener {
                 plugin.getIWM().getNetherWorld(overWorld));
     }
 
-    private boolean portalCheck(Location from, World overWorld, Entity entity, boolean generated, World toWorld) {
-        Environment env = toWorld.getEnvironment();
+    private boolean portalCheck(Location from, World overWorld, @NonNull Entity entity, boolean generated, @Nullable World toWorld) {
         // If there is no nether or end, then do not teleport.
         if (!generated) {
             return false;
         }
+        Environment env = toWorld.getEnvironment();
 
         // FROM nether or end
         // If entering a portal in the nether or end, teleport to portal in overworld if there is one

@@ -23,18 +23,27 @@ public class PanelItemBuilder {
     private boolean invisible;
 
     /**
+     * Allows to define amount of elements in stack.
+     * Note: it uses item.setAmount, so it cannot overwrite minimal and maximal values.
+     * f.e. Eggs will never be more than 16, and 0 will mean empty icon.
+     */
+    private int amount = 1;
+
+    /**
      * Default icon if someone gives invalid material or item stack.
      */
     private static final ItemStack DEFAULT_ICON = new ItemStack(Material.PAPER);
 
 
     public PanelItemBuilder icon(@Nullable Material icon) {
-        this.icon = icon == null ? DEFAULT_ICON : new ItemStack(icon);
+        this.icon = icon == null ? DEFAULT_ICON.clone() : new ItemStack(icon);
         return this;
     }
 
     public PanelItemBuilder icon(@Nullable ItemStack icon) {
-        this.icon = icon == null ? DEFAULT_ICON : icon;
+        this.icon = icon == null ? DEFAULT_ICON.clone() : icon;
+        // use icon stack amount.
+        this.amount = this.icon.getAmount();
         return this;
     }
 
@@ -51,6 +60,16 @@ public class PanelItemBuilder {
 
     public PanelItemBuilder name(@Nullable String name) {
         this.name = name != null ? ChatColor.translateAlternateColorCodes('&', name) : null;
+        return this;
+    }
+
+    /**
+     * Sets amount of items in stack.
+     * @param amount new amount of items.
+     * @return PanelItemBuilder
+     */
+    public PanelItemBuilder amount(int amount) {
+        this.amount = amount;
         return this;
     }
 
@@ -162,5 +181,15 @@ public class PanelItemBuilder {
      */
     public boolean isInvisible() {
         return invisible;
+    }
+
+
+    /**
+     * @return amount of items in stack.
+     * @since 1.13.0
+     */
+    public int getAmount()
+    {
+        return this.amount;
     }
 }

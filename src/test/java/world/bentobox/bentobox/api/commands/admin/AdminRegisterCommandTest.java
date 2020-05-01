@@ -41,6 +41,7 @@ import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlayersManager;
+import world.bentobox.bentobox.util.Util;
 
 
 /**
@@ -73,6 +74,7 @@ public class AdminRegisterCommandTest {
         // Set up plugin
         BentoBox plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        Util.setPlugin(plugin);
 
         // Command manager
         CommandsManager cm = mock(CommandsManager.class);
@@ -250,7 +252,7 @@ public class AdminRegisterCommandTest {
         AdminRegisterCommand itl = new AdminRegisterCommand(ac);
         assertTrue(itl.execute(user, itl.getLabel(), Collections.singletonList("tastybento")));
         // Add other verifications
-        verify(user).sendMessage(eq("commands.admin.register.registered-island"), eq("[xyz]"), eq("123,123,432"));
+        verify(user).sendMessage(eq("commands.admin.register.registered-island"), eq("[xyz]"), eq("123,123,432"), eq("[name]"), eq("tastybento"));
         verify(user).sendMessage(eq("general.success"));
     }
 

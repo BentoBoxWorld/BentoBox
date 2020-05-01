@@ -238,6 +238,7 @@ public class JoinLeaveListenerTest {
     public void testOnPlayerJoinRangeChangeTooLargePerm() {
         PermissionAttachmentInfo pa = mock(PermissionAttachmentInfo.class);
         when(pa.getPermission()).thenReturn("acidisland.island.range.1000");
+        when(pa.getValue()).thenReturn(true);
         when(player.getEffectivePermissions()).thenReturn(Collections.singleton(pa));
         PlayerJoinEvent event = new PlayerJoinEvent(player, "");
         jll.onPlayerJoin(event);
@@ -256,6 +257,7 @@ public class JoinLeaveListenerTest {
     public void testOnPlayerJoinRangeChangeSmallerPerm() {
         PermissionAttachmentInfo pa = mock(PermissionAttachmentInfo.class);
         when(pa.getPermission()).thenReturn("acidisland.island.range.10");
+        when(pa.getValue()).thenReturn(true);
         when(player.getEffectivePermissions()).thenReturn(Collections.singleton(pa));
         PlayerJoinEvent event = new PlayerJoinEvent(player, "");
         jll.onPlayerJoin(event);
@@ -274,6 +276,7 @@ public class JoinLeaveListenerTest {
     public void testOnPlayerJoinRangeChangeSmallIncreasePerm() {
         PermissionAttachmentInfo pa = mock(PermissionAttachmentInfo.class);
         when(pa.getPermission()).thenReturn("acidisland.island.range.55");
+        when(pa.getValue()).thenReturn(true);
         when(player.getEffectivePermissions()).thenReturn(Collections.singleton(pa));
         PlayerJoinEvent event = new PlayerJoinEvent(player, "");
         jll.onPlayerJoin(event);
@@ -292,6 +295,7 @@ public class JoinLeaveListenerTest {
     public void testOnPlayerJoinRangeChangeSamePerm() {
         PermissionAttachmentInfo pa = mock(PermissionAttachmentInfo.class);
         when(pa.getPermission()).thenReturn("acidisland.island.range.50");
+        when(pa.getValue()).thenReturn(true);
         when(player.getEffectivePermissions()).thenReturn(Collections.singleton(pa));
         PlayerJoinEvent event = new PlayerJoinEvent(player, "");
         jll.onPlayerJoin(event);
