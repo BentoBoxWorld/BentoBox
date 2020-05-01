@@ -32,7 +32,7 @@ public class MongoDBDatabase implements DatabaseSetup {
                     plugin.getSettings().getDatabaseUsername(),
                     plugin.getSettings().getDatabasePassword(),
                     plugin.getSettings().isUseSSL()
-                    ));
+            ), plugin.getSettings().getMongodbConnectionUri());
         }
         return new MongoDBDatabaseHandler<>(plugin, type, connector);
     }
