@@ -103,6 +103,11 @@ public class Settings implements ConfigObject {
     @ConfigEntry(path = "general.database.prefix-character", since = "1.13.0")
     private String databasePrefix = "";
 
+    @ConfigComment("MongoDB client connection URI to override default connection options.")
+    @ConfigComment("See: https://docs.mongodb.com/manual/reference/connection-string/")
+    @ConfigEntry(path = "general.database.mongodb-connection-uri", since = "1.14.0")
+    private String mongodbConnectionUri = "";
+
     @ConfigComment("Allow FTB Autonomous Activator to work (will allow a pseudo player [CoFH] to place and break blocks and hang items)")
     @ConfigComment("Add other fake player names here if required")
     @ConfigEntry(path = "general.fakeplayers", experimental = true)
@@ -661,4 +666,23 @@ public class Settings implements ConfigObject {
 	public void setKeepPreviousIslandOnReset(boolean keepPreviousIslandOnReset) {
 		this.keepPreviousIslandOnReset = keepPreviousIslandOnReset;
 	}
+
+    /**
+     * Returns a MongoDB client connection URI to override default connection options.
+     *
+     * @return mongodb client connection.
+     * @see <a href="https://docs.mongodb.com/manual/reference/connection-string/">MongoDB Documentation</a>
+     * @since 1.14.0
+     */
+    public String getMongodbConnectionUri() {
+        return mongodbConnectionUri;
+    }
+
+    /**
+     * Set the MongoDB client connection URI.
+     * @param mongodbConnectionUri connection URI.
+     */
+    public void setMongodbConnectionUri(String mongodbConnectionUri) {
+        this.mongodbConnectionUri = mongodbConnectionUri;
+    }
 }
