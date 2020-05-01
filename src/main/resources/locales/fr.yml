@@ -135,12 +135,12 @@ commands:
       set-different-pos: "&c Définissez un emplacement différent - cette position
         est déjà définie!"
       set-pos1: "&a Position 1 définie sur [vector]"
-      set-pos2: "& Position 2 définie sur [vector]"
+      set-pos2: "&a Position 2 définie sur [vector]"
     deaths:
       add:
         description: ajoute des morts au joueur
         parameters: "<player> <deaths>"
-        success: "&a Ajouté avec succès &b [number] &a morts à & b [name], augmentant
+        success: "&a Ajouté avec succès &b [number] &a morts à &b [name], augmentant
           le total de morts à &b [total] &a."
       description: édite le nombre de morts du joueur
       remove:
@@ -170,7 +170,7 @@ commands:
     getrank:
       description: obtenir le rang d'un joueur sur son île ou sur l'île du propriétaire
       parameters: "<player> [propriétaire de l'île]"
-      rank-is: "& a Rank est & b [rank] & a sur & b [name] & a 's island."
+      rank-is: "&a Le rang du joueur est &b [rank] &a sur l'île de &b[name]&a."
     help:
       description: commande admin
     info:
@@ -199,7 +199,7 @@ commands:
       title: "========== Informations sur l'île ============"
       unowned: "&c Sans propriétaire"
     purge:
-      completed: "& Purge stoppée."
+      completed: "&a Purge complétée."
       confirm: "&d Tapez &b /[label] purge confirmez &d pour commencer la purge"
       days-or-more: Veuillez spécifier une durée supérieure à 1 jour.
       description: supprime les îles inactives depuis plus de [jours] jours
@@ -297,7 +297,7 @@ commands:
       add:
         description: ajoute au nombre de fois où ce joueur a réinitialisé son île
         parameters: "<player> <resets>"
-        success: "&a Ajouté avec succès &b [number] &a resets à & b [name], augmentant
+        success: "&a Ajouté avec succès &b [number] &a resets à &b [name], augmentant
           le total de resets à &b [total] &a."
       description: éditer le nombre de réinitialisations des joueurs
       remove:
@@ -315,7 +315,7 @@ commands:
       set:
         description: définit le nombre de réinitialisations du joueur
         parameters: "<joueur> <nombre de réinitialisations>"
-        success: "& a Défini avec succès &b [number] &a  de resets à &b [name] &a."
+        success: "&a Défini avec succès &b [number] &a  de resets à &b [name] &a."
     setrange:
       description: définir le rayon de protection de l'île du joueur
       parameters: "<player> <range>"
@@ -325,7 +325,7 @@ commands:
       description: définir le rang d'un joueur sur son île ou sur l'île du propriétaire
       not-possible: "&c Le classement doit être supérieur à celui du visiteur."
       parameters: "<player> <rank> [propriétaire de l'île]"
-      rank-set: "& a Rang défini de & b [de] & a à & b [à] & a sur & b [nom] & a 's."
+      rank-set: "&a Rang défini de &b [from] &a à &b [to] &&a sur l'île de &b[name]&a."
       unknown-rank: "&c Rang inconnu!"
     setspawn:
       already-spawn: "&c Cette île est déjà un spawn!"
@@ -478,29 +478,29 @@ commands:
     about:
       description: affiche des informations sur cet addon
     ban:
-      cannot-ban: "& c Ce joueur ne peut pas être banni."
-      cannot-ban-member: "& c Frappez d'abord le membre de l'équipe, puis bannissez."
-      cannot-ban-more-players: "& c Vous avez atteint la limite d'interdiction, vous
+      cannot-ban: "&c Ce joueur ne peut pas être banni."
+      cannot-ban-member: "&c Frappez d'abord le membre de l'équipe, puis bannissez."
+      cannot-ban-more-players: "&c Vous avez atteint la limite d'interdiction, vous
         ne pouvez plus interdire d'autres joueurs de votre île."
-      cannot-ban-yourself: "& c Vous ne pouvez pas vous interdire!"
+      cannot-ban-yourself: "&c Vous ne pouvez pas vous interdire!"
       description: bannir un joueur de votre île
-      owner-banned-you: "& b [nom] & c vous a banni de leur île!"
-      player-already-banned: "& c Player est déjà banni."
-      player-banned: "& b [nom] & c est désormais banni de votre île."
-      you-are-banned: "& b Vous êtes banni de cette île!"
+      owner-banned-you: "&b [name] &c vous a banni de leur île!"
+      player-already-banned: "&c Player est déjà banni."
+      player-banned: "&b [name] &c est désormais banni de votre île."
+      you-are-banned: "&b Vous êtes banni de cette île!"
       parameters: "<joueur>"
     banlist:
-      names: "& c [ligne]"
-      noone: "& a Personne n'est interdit sur cette île."
-      the-following: "& b Les joueurs suivants sont bannis:"
-      you-can-ban: "& b Vous pouvez bannir jusqu'à & e [nombre] & b joueurs supplémentaires."
+      names: "&c [line]"
+      noone: "&a Personne n'est interdit sur cette île."
+      the-following: "&b Les joueurs suivants sont bannis:"
+      you-can-ban: "&b Vous pouvez bannir jusqu'à &e [number] &b joueurs supplémentaires."
       description: lister les joueurs bannis
     create:
       cannot-create-island: "&c Une place n'a pas pu être trouvée à temps, veuillez
         réessayer..."
-      creating-island: "& a Trouver un endroit pour votre île ..."
+      creating-island: "&a Trouver un endroit pour votre île ..."
       description: créer une île
-      on-first-login: "& bienvenue! Nous commencerons à préparer votre île dans quelques
+      on-first-login: "&bienvenue! Nous commencerons à préparer votre île dans quelques
         secondes."
       parameters: "<blueprint>"
       pasting:
@@ -515,16 +515,15 @@ commands:
       unable-create-island: "&c Votre île n'a pas pu être générée, veuillez contacter
         un administrateur."
       unknown-blueprint: "&c Ce blueprint n'existe pas."
-      you-can-teleport-to-your-island: "&a You can teleport to your island when you
-        please."
+      you-can-teleport-to-your-island: "&a Vous pouvez vous téléporter sur votre île quand vous le désirez."
     expel:
-      cannot-expel: "& c Ce joueur ne peut pas être expulsé."
-      cannot-expel-member: "& c Vous ne pouvez pas expulser un membre de l'équipe!"
-      cannot-expel-yourself: "& c Vous ne pouvez pas vous expulser!"
+      cannot-expel: "&c Ce joueur ne peut pas être expulsé."
+      cannot-expel-member: "&c Vous ne pouvez pas expulser un membre de l'équipe!"
+      cannot-expel-yourself: "&c Vous ne pouvez pas vous expulser!"
       description: expulser un joueur de votre île
-      not-on-island: "& c Ce joueur n'est pas sur votre île!"
-      player-expelled-you: "& b [nom] & c vous a expulsé de l'île!"
-      success: "& a Vous avez expulsé & b [nom] & a de l'île."
+      not-on-island: "&c Ce joueur n'est pas sur votre île!"
+      player-expelled-you: "&b [nom] &c vous a expulsé de l'île!"
+      success: "&a Vous avez expulsé &b [nom] &a de l'île."
       parameters: "<joueur>"
     go:
       description: vous téléporter sur votre île
@@ -594,9 +593,9 @@ commands:
         you-are-a-coop-member: "&2 Vous avez été coop par [name]."
       demote:
         errors:
-          cant-demote-yourself: "& c Vous ne pouvez pas vous rétrograder!"
-        failure: "& c Le joueur ne peut plus être rétrogradé!"
-        success: "& un [nom] rétrogradé à [rang]"
+          cant-demote-yourself: "&c Vous ne pouvez pas vous rétrograder!"
+        failure: "&c Le joueur ne peut plus être rétrogradé!"
+        success: "&un [nom] rétrogradé à [rang]"
         description: rétrograder un joueur de votre île à un rang inférieur
         parameters: "<joueur>"
       description: gérer votre équipe
@@ -620,8 +619,8 @@ commands:
       invite:
         accept:
           confirmation: |-
-            & c Voulez-vous vraiment accepter cette invitation?
-            & c & l Vous allez & n PERDRE & r & c & l votre île actuelle!
+            &c Voulez-vous vraiment accepter cette invitation?
+            &c &l Vous allez &n PERDRE &r &c &l votre île actuelle!
           description: accepter une invitation
           name-joined-your-island: "&a [name] a rejoint votre île !"
           you-joined-island: "&a Vous avez rejoint une île ! Utilisez &b/ [label]
@@ -643,8 +642,8 @@ commands:
         parameters: "<player>"
         reject:
           description: refuser une invitation
-          name-rejected-your-invite: "& c [nom] a rejeté votre invitation sur l'île!"
-          you-rejected-invite: "& a Vous avez rejeté l'invitation à rejoindre une
+          name-rejected-your-invite: "&c [nom] a rejeté votre invitation sur l'île!"
+          you-rejected-invite: "&a Vous avez rejeté l'invitation à rejoindre une
             île."
         removing-invite: "&c Suppression de l'invitation."
         to-accept-or-reject: "&a Faites &b/[label] team accept &a pour accepter ou
@@ -655,32 +654,32 @@ commands:
           description: annuler l'invitation en attente
         you-can-invite: "&a Vous pouvez inviter [number] joueurs supplémentaires."
       kick:
-        cannot-kick: "& c Vous ne pouvez pas vous botter!"
+        cannot-kick: "&c Vous ne pouvez pas vous botter!"
         description: supprimer un membre de votre île
-        owner-kicked: "& c Le propriétaire vous a viré de l'île en [mode de jeu]!"
-        success: "& b [nom] & a a été exclu de votre île."
+        owner-kicked: "&c Le propriétaire vous a viré de l'île en [mode de jeu]!"
+        success: "&b [nom] &a a été exclu de votre île."
         parameters: "<joueur>"
       leave:
-        cannot-leave: "& c Les propriétaires ne peuvent pas partir! Devenez d'abord
+        cannot-leave: "&c Les propriétaires ne peuvent pas partir! Devenez d'abord
           un membre ou limitez tous les membres."
         description: quitter votre île
-        left-your-island: "& c [nom] & c a quitté votre île"
-        success: "& a Vous avez quitté cette île."
+        left-your-island: "&c [nom] &c a quitté votre île"
+        success: "&a Vous avez quitté cette île."
       promote:
         description: promouvoir un joueur de votre île à un rang supérieur
-        failure: "& c Le joueur ne peut plus être promu!"
-        success: "& un [nom] promu au [rang]"
+        failure: "&c Le joueur ne peut plus être promu!"
+        success: "&un [nom] promu au [rang]"
         parameters: "<joueur>"
       setowner:
         description: transférer la propriété de votre île à un membre
         errors:
-          cant-transfer-to-yourself: "& c Vous ne pouvez pas vous transférer la propriété!
-            & 7 (& o Eh bien, en fait, vous pourriez ... Mais nous ne voulons pas
-            de vous. Parce que c'est inutile. & R & 7)"
-          target-is-not-member: "& c Ce joueur ne fait pas partie de votre équipe
+          cant-transfer-to-yourself: "&c Vous ne pouvez pas vous transférer la propriété!
+            &7 (&o Eh bien, en fait, vous pourriez ... Mais nous ne voulons pas
+            de vous. Parce que c'est inutile. &R &7)"
+          target-is-not-member: "&c Ce joueur ne fait pas partie de votre équipe
             insulaire!"
-        name-is-the-owner: "& a [nom] est maintenant le propriétaire de l'île!"
-        you-are-the-owner: "& a Vous êtes maintenant le propriétaire de l'île!"
+        name-is-the-owner: "&a [nom] est maintenant le propriétaire de l'île!"
+        you-are-the-owner: "&a Vous êtes maintenant le propriétaire de l'île!"
         parameters: "<joueur>"
       trust:
         description: trust un joueur sur votre île
@@ -714,10 +713,10 @@ commands:
         you-are-no-longer-trusted: "&c Vous n'êtes plus trust sur l'île de &b[name]&a."
         success: "&b[name] &a n'est plus trust sur votre île."
     unban:
-      cannot-unban-yourself: "& c Vous ne pouvez pas vous défaire!"
-      player-not-banned: "& c Le lecteur n'est pas interdit."
-      player-unbanned: "& b [nom] & a est désormais interdit sur votre île."
-      you-are-unbanned: "& b [nom] & a vous a banni de leur île!"
+      cannot-unban-yourself: "&c Vous ne pouvez pas vous défaire!"
+      player-not-banned: "&c Le lecteur n'est pas interdit."
+      player-unbanned: "&b [nom] &a est désormais interdit sur votre île."
+      you-are-unbanned: "&b [nom] &a vous a banni de leur île!"
       description: débannir un joueur de votre île
       parameters: "<joueur>"
     settings:
@@ -891,40 +890,40 @@ protection:
       name: Chorus fruits
     CLEAN_SUPER_FLAT:
       description: |-
-        & a Activer pour nettoyer tout
-        & des morceaux super plats dans
-        & un monde insulaire
+        &a Activer pour nettoyer tout
+        &des morceaux super plats dans
+        &un monde insulaire
       name: Clean Super Flat
     COARSE_DIRT_TILLING:
       description: |-
-        & Un basculement grossier du labour
-        & un podzol sale et cassant
-        & a pour obtenir la saleté
+        &Un basculement grossier du labour
+        &un podzol sale et cassant
+        &a pour obtenir la saleté
       hint: No coarse dirt tilling
       name: Coarse dirt tilling
     COLLECT_LAVA:
       description: |-
-        & un Toggle collecte de lave
-        & a (remplacer les compartiments)
+        &un Toggle collecte de lave
+        &a (remplacer les compartiments)
       hint: No lava collection
       name: Collect lava
     COLLECT_WATER:
       description: |-
-        & un Toggle collectant l'eau
-        & a (remplacer les compartiments)
+        &un Toggle collectant l'eau
+        &a (remplacer les compartiments)
       hint: Seaux d'eau désactivés
       name: Collect water
     COMMAND_RANKS:
-      description: "& a Configurer les rangs des commandes"
-      name: "& e Rangs de commandement"
+      description: "&a Configurer les rangs des commandes"
+      name: "&e Rangs de commandement"
     CONTAINER:
       description: |-
         et une interaction Toggle avec les coffres,
-        & un shulker boîtes et pots de fleurs,
-        & un composteurs et des barils.
+        &un shulker boîtes et pots de fleurs,
+        &un composteurs et des barils.
 
-        & 7 D'autres conteneurs sont manipulés
-        & 7 par des drapeaux dédiés.
+        &7 D'autres conteneurs sont manipulés
+        &7 par des drapeaux dédiés.
       name: Conteneurs
       hint: vous ne pouvez pas ouvrir les conteneurs
     CRAFTING:
@@ -948,10 +947,10 @@ protection:
       name: Use doors
     DRAGON_EGG:
       description: |-
-        & a Empêche l'interaction avec les œufs de dragon.
+        &a Empêche l'interaction avec les œufs de dragon.
 
-        & c Cela ne le protège pas d'être
-        & c placé ou cassé.
+        &c Cela ne le protège pas d'être
+        &c placé ou cassé.
       hint: Interaction œuf de dragon désactivée
       name: Dragon Egg
     DROPPER:
@@ -967,7 +966,7 @@ protection:
       hint: Lancer d'œufs désactivé
       name: Egg throwing
     ELYTRA:
-      hint: "& c AVERTISSEMENT: Elytra ne peut pas être utilisé ici!"
+      hint: "&c AVERTISSEMENT: Elytra ne peut pas être utilisé ici!"
       name: Élytres
       description: Autoriser l'utilisation des élytres
     ENCHANTING:
@@ -980,14 +979,14 @@ protection:
       name: Ender Chests
     ENDERMAN_DEATH_DROP:
       description: |-
-        & un Endermen tombera
+        &un Endermen tombera
         et un bloc qu'ils sont
-        & un holding s'il est tué.
+        &un holding s'il est tué.
       name: Enderman Death Drop
     ENDERMAN_GRIEFING:
       description: |-
-        & un Endermen peut supprimer
-        & un pâté de maisons des îles
+        &un Endermen peut supprimer
+        &un pâté de maisons des îles
       name: Enderman griefing
     ENDER_PEARL:
       description: Toggle use
@@ -1001,9 +1000,9 @@ protection:
       description: Display entry and exit messages
       island: "[name]"
       name: Enter/Exit messages
-      now-entering: "& a Entrer maintenant & b [nom] & a."
+      now-entering: "&a Entrer maintenant &b [nom] &a."
       now-entering-your-island: "&a Vous venez d'entrer sur votre île."
-      now-leaving: "& a Quittant maintenant & b [nom] & a."
+      now-leaving: "&a Quittant maintenant &b [nom] &a."
       now-leaving-your-island: "&a Vous venez de quitter votre île."
     EXPERIENCE_BOTTLE_THROWING:
       description: Toggle throwing experience bottles.
@@ -1015,8 +1014,8 @@ protection:
       name: Experience pickup
     FIRE_BURNING:
       description: |-
-        & a bascule si le feu peut brûler
-        & un bloc ou non.
+        &a bascule si le feu peut brûler
+        &un bloc ou non.
       name: Fire burning
     FIRE_EXTINGUISH:
       description: Toggle extinguishing fires
@@ -1024,13 +1023,13 @@ protection:
       name: Fire extinguish
     FIRE_IGNITE:
       description: |-
-        & a Toggle si le feu peut être allumé
-        & a par des moyens non-joueurs ou non.
+        &a Toggle si le feu peut être allumé
+        &a par des moyens non-joueurs ou non.
       name: Fire ignition
     FIRE_SPREAD:
       description: |-
-        & a Basculer si le feu peut se propager
-        & a aux blocs voisins ou non.
+        &a Basculer si le feu peut se propager
+        &a aux blocs voisins ou non.
       name: Fire spread
     FISH_SCOOPING:
       description: Allow scooping of fishes using a bucket
@@ -1057,10 +1056,10 @@ protection:
       name: Gates
     GEO_LIMIT_MOBS:
       description: |-
-        & a Supprimer les mobs qui partent
-        & un extérieur protégé
-        & un espace insulaire
-      name: "& e Limiter les foules à l'île"
+        &a Supprimer les mobs qui partent
+        &un extérieur protégé
+        &un espace insulaire
+      name: "&e Limiter les foules à l'île"
     HURT_ANIMALS:
       description: Toggle hurting
       hint: Animal blessé handicapé
@@ -1075,14 +1074,14 @@ protection:
       name: Hurt villagers
     INVINCIBLE_VISITORS:
       description: |-
-        & Configurer un visiteur invincible
-        & un paramètres.
-      hint: "& c Visiteurs protégés"
-      name: "& e Visiteurs invincibles"
+        &Configurer un visiteur invincible
+        &un paramètres.
+      hint: "&c Visiteurs protégés"
+      name: "&e Visiteurs invincibles"
     ISLAND_RESPAWN:
       description: |-
-        & a Joueurs réapparaissent
-        & un sur l'île
+        &a Joueurs réapparaissent
+        &un sur l'île
       name: Island respawn
     ITEM_DROP:
       description: Toggle dropping
@@ -1090,13 +1089,13 @@ protection:
       name: Item drop
     ITEM_FRAME_DAMAGE:
       description: |-
-        & un Mobs peut endommager
-        & un élément cadres
+        &a un Mobs peut endommager
+        &a un élément cadres
       name: Item Frame Damage
     ITEM_FRAME:
       description: |-
-        & une interaction Toggle.
-        & a Remplace le lieu ou brise les blocs
+        &a une interaction Toggle.
+        &a Remplace le lieu ou brise les blocs
       hint: Item Frame use disabled
       name: Item Frame
     ITEM_PICKUP:
@@ -1136,16 +1135,16 @@ protection:
       name: "&e Limiter le type d'entité qui peut spawn"
     LIQUIDS_FLOWING_OUT:
       description: |-
-        & a Basculez si les liquides peuvent s'écouler à l'extérieur
-        & a de la gamme de protection de l'île.
-        & a Le désactiver permet d'éviter la lave et l'eau
-        & un pavé générateur dans la zone entre
-        & deux îles.
+        &a Basculez si les liquides peuvent s'écouler à l'extérieur
+        &a de la gamme de protection de l'île.
+        &a Le désactiver permet d'éviter la lave et l'eau
+        &a pavé générateur dans la zone entre
+        &deux îles.
 
-        & c Notez que les liquides continueront de couler verticalement.
-        & c Ils ne se répandront pas non plus horizontalement si
-        & c ils sont placés à l'extérieur d'une île
-        & c plage de protection.
+        &c Notez que les liquides continueront de couler verticalement.
+        &c Ils ne se répandront pas non plus horizontalement si
+        &c ils sont placés à l'extérieur d'une île
+        &c plage de protection.
       name: Liquids flowing outside islands
     LOCK:
       description: Toggle lock
@@ -1163,8 +1162,8 @@ protection:
       name: Monster spawning
     MOUNT_INVENTORY:
       description: |-
-        & un accès Toggle
-        & a pour monter l'inventaire
+        &un accès Toggle
+        &a pour monter l'inventaire
       hint: Inventaire de montage désactivé
       name: Mount inventory
     NAME_TAG:
@@ -1173,13 +1172,13 @@ protection:
       name: Name tags
     NATURAL_SPAWNING_OUTSIDE_RANGE:
       description: |-
-        & a Basculez si les créatures (animaux et
+        &a Basculez si les créatures (animaux et
         et un monstre) peuvent apparaître naturellement à l'extérieur
-        & la plage de protection d'une île.
+        &la plage de protection d'une île.
 
-        & c Notez que cela n'empêche pas les créatures
-        & c pour se reproduire via un générateur de mob ou un spawn
-        & c oeuf.
+        &c Notez que cela n'empêche pas les créatures
+        &c pour se reproduire via un générateur de mob ou un spawn
+        &c oeuf.
       name: Natural creature spawning outside range
     NETHER_PORTAL:
       description: Toggle use
@@ -1207,10 +1206,10 @@ protection:
         &a dans un rayon de 2 blocs.
     OFFLINE_GROWTH:
       description: |-
-        & a Lorsque désactivé, les plantes
-        & a ne poussera pas sur les îles
-        & a où tous les membres sont hors ligne.
-        & a Peut aider à réduire le décalage.
+        &a Lorsque désactivé, les plantes
+        &a ne poussera pas sur les îles
+        &a où tous les membres sont hors ligne.
+        &a Peut aider à réduire le décalage.
       name: Offline Growth
     OFFLINE_REDSTONE:
       description: |-
@@ -1395,7 +1394,7 @@ protection:
       expert:
         description: "&a Affiche tous les paramètres disponibles."
         name: "&c Paramètres experts"
-    previous: "& f Page précédente"
+    previous: "&f Page précédente"
     PROTECTION:
       description: |-
         &a Paramètres de protection
