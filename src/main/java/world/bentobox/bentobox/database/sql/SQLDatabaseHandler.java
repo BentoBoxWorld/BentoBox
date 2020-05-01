@@ -169,7 +169,8 @@ public class SQLDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
         try (PreparedStatement preparedStatement = connection.prepareStatement(sb)) {
             preparedStatement.setString(1, toStore);
             preparedStatement.setString(2, toStore);
-            completableFuture.complete(preparedStatement.execute());
+            preparedStatement.execute();
+            completableFuture.complete(true);
         } catch (SQLException e) {
             plugin.logError("Could not save object " + name + " " + e.getMessage());
             completableFuture.complete(false);

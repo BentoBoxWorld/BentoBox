@@ -73,7 +73,8 @@ public class PostgreSQLDatabaseHandler<T> extends SQLDatabaseHandler<T> {
                 preparedStatement.setString(1, uniqueId); // INSERT
                 preparedStatement.setString(2, toStore); // INSERT
                 preparedStatement.setString(3, toStore); // ON CONFLICT
-                completableFuture.complete(preparedStatement.execute());
+                preparedStatement.execute();
+                completableFuture.complete(true);
             } catch (SQLException e) {
                 plugin.logError("Could not save object " + instance.getClass().getName() + " " + e.getMessage());
                 completableFuture.complete(false);

@@ -133,7 +133,8 @@ public class MongoDBDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
             // Set the options to upsert (update or insert if doc is not there)
             FindOneAndReplaceOptions options = new FindOneAndReplaceOptions().upsert(true);
             // Do the deed
-            completableFuture.complete(collection.findOneAndReplace(filter, document, options) != null);
+            collection.findOneAndReplace(filter, document, options);
+            completableFuture.complete(true);
         } catch (Exception e) {
             plugin.logError("Could not save object " + instance.getClass().getName() + " " + e.getMessage());
             completableFuture.complete(false);
