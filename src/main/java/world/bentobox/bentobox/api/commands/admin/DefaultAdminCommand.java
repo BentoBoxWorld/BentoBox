@@ -84,6 +84,8 @@ public abstract class DefaultAdminCommand extends CompositeCommand
         new AdminReloadCommand(this);
         // Spawn
         new AdminSetspawnCommand(this);
+        // Spawn Point command
+        new AdminSetSpawnPointCommand(this);
         // Reset flags
         new AdminResetFlagsCommand(this);
         // Trash
