@@ -60,7 +60,8 @@ public class SQLiteDatabaseHandler<T> extends SQLDatabaseHandler<T> {
                 preparedStatement.setString(1, toStore);
                 preparedStatement.setString(2, ((DataObject)instance).getUniqueId());
                 preparedStatement.setString(3, toStore);
-                completableFuture.complete(preparedStatement.execute());
+                preparedStatement.execute();
+                completableFuture.complete(true);
             } catch (SQLException e) {
                 plugin.logError("Could not save object " + instance.getClass().getName() + " " + e.getMessage());
                 completableFuture.complete(false);
