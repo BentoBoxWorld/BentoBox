@@ -102,8 +102,7 @@ public class AdminRegisterCommand extends ConfirmableCommand {
             return true;
         }).orElse(false)) {
             // Island does not exist - this is a reservation
-            user.sendMessage("commands.admin.register.no-island-here");
-            this.askConfirmation(user, () -> {
+            this.askConfirmation(user, user.getTranslation("commands.admin.register.no-island-here"), () -> {
                 // Make island here
                 Island i = getIslands().createIsland(closestIsland, targetUUID);
                 if (i == null) {
