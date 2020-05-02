@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -39,6 +40,7 @@ import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
+import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.RanksManager;
 
 /**
@@ -65,6 +67,8 @@ public class AdminPurgeCommandTest {
     private Island island;
     @Mock
     private World world;
+    @Mock
+    private PlayersManager pm;
 
     /**
      * @throws java.lang.Exception
@@ -94,6 +98,10 @@ public class AdminPurgeCommandTest {
 
         // Island
         when(island.isOwned()).thenReturn(true); // Default owned
+
+        // Player manager
+        when(plugin.getPlayers()).thenReturn(pm);
+        when(pm.getName(any())).thenReturn("name");
 
         // Command
         apc = new AdminPurgeCommand(ac);
@@ -293,7 +301,7 @@ public class AdminPurgeCommandTest {
         testExecuteUserStringListOfStringIslandsFound();
         assertTrue(apc.execute(user, "", Collections.singletonList("confirm")));
         verify(im).deleteIsland(eq(island), eq(true), eq(null));
-        verify(plugin).log(any());
+        verify(plugin, times(2)).log(any());
         verify(user).sendMessage(eq("commands.admin.purge.see-console-for-status"), eq("[label]"), eq("bsb"));
     }
 
