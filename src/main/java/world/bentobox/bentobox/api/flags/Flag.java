@@ -42,7 +42,7 @@ public class Flag implements Comparable<Flag> {
          * It can be modified by the players (island owner).
          * This is usually an on/off setting.
          */
-        SETTING(Material.COMMAND_BLOCK),
+        SETTING(Material.COMPARATOR),
         /**
          * Flag applying to the world.
          * It can only be modified by administrators (permission or operator).
