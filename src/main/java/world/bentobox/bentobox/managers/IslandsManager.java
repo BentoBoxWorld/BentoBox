@@ -718,12 +718,16 @@ public class IslandsManager {
             // Execute commands
             plugin.getIWM().getOnJoinCommands(world).forEach(command -> {
                 command = command.replace("[player]", user.getName());
-                if (command.startsWith("[SUDO]")) {
+                if (command.startsWith("[SUDO]") && user.isOnline()) {
                     // Execute the command by the player
-                    user.performCommand(command.substring(6));
+                    if (!user.performCommand(command.substring(6))) {
+                        plugin.logError("Could not execute join command for " + user.getName() + ": " + command.substring(6));
+                    }
                 } else {
                     // Otherwise execute as the server console
-                    plugin.getServer().dispatchCommand(Bukkit.getConsoleSender(), command);
+                    if (!plugin.getServer().dispatchCommand(Bukkit.getConsoleSender(), command)) {
+                        plugin.logError("Could not execute join command as console: " + command);
+                    }
                 }
             });
 
