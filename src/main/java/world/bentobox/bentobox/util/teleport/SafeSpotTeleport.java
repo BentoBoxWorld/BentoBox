@@ -61,6 +61,7 @@ public class SafeSpotTeleport {
         this.portal = builder.isPortal();
         this.homeNumber = builder.getHomeNumber();
         this.runnable = builder.getRunnable();
+
         // If there is no portal scan required, try the desired location immediately
         if (plugin.getIslands().isSafeLocation(location)) {
             if (portal) {
@@ -74,7 +75,6 @@ public class SafeSpotTeleport {
                 return;
             }
         }
-
         // Get chunks to scan
         chunksToScan = getChunksToScan();
 
@@ -114,6 +114,7 @@ public class SafeSpotTeleport {
     }
 
     private void tidyUp(Entity entity, String failureMessage) {
+        // Still Async!
         // Nothing left to check and still not canceled
         task.cancel();
         // Check portal
@@ -121,27 +122,26 @@ public class SafeSpotTeleport {
             // Portals found, teleport to the best spot we found
             teleportEntity(bestSpot);
         } else if (entity instanceof Player) {
-            // Failed, no safe spot
-            if (!failureMessage.isEmpty()) {
-                User.getInstance(entity).notify(failureMessage);
-            }
-            if (!plugin.getIWM().inWorld(entity.getLocation())) {
-                // Last resort
-                if (Bukkit.getServer().isPrimaryThread()) {
+            // Return to main thread and teleport the player
+            Bukkit.getScheduler().runTask(plugin, () -> {
+                // Failed, no safe spot
+                if (!failureMessage.isEmpty()) {
+                    User.getInstance(entity).notify(failureMessage);
+                }
+                if (!plugin.getIWM().inWorld(entity.getLocation())) {
+                    // Last resort
                     ((Player)entity).performCommand("spawn");
                 } else {
-                    Bukkit.getScheduler().runTask(plugin, () -> ((Player)entity).performCommand("spawn"));
+                    // Create a spot for the player to be
+                    if (location.getWorld().getEnvironment().equals(Environment.NETHER)) {
+                        makeAndTelport(Material.NETHERRACK);
+                    } else if (location.getWorld().getEnvironment().equals(Environment.THE_END)) {
+                        makeAndTelport(Material.END_STONE);
+                    } else {
+                        makeAndTelport(Material.COBBLESTONE);
+                    }
                 }
-            } else {
-                // Create a spot for the player to be
-                if (location.getWorld().getEnvironment().equals(Environment.NETHER)) {
-                    makeAndTelport(Material.NETHERRACK);
-                } else if (location.getWorld().getEnvironment().equals(Environment.THE_END)) {
-                    makeAndTelport(Material.END_STONE);
-                } else {
-                    makeAndTelport(Material.COBBLESTONE);
-                }
-            }
+            });
         }
     }
 
@@ -227,14 +227,16 @@ public class SafeSpotTeleport {
      */
     private void teleportEntity(final Location loc) {
         task.cancel();
-        if (!portal && entity instanceof Player && homeNumber > 0) {
-            // Set home if so marked
-            plugin.getPlayers().setHomeLocation(User.getInstance(entity), loc, homeNumber);
-        }
         // Return to main thread and teleport the player
-        Bukkit.getScheduler().runTask(plugin, () -> Util.teleportAsync(entity, loc).thenRun(() -> {
-            if (runnable != null) Bukkit.getScheduler().runTask(plugin, runnable);
-        }));
+        Bukkit.getScheduler().runTask(plugin, () -> {
+            if (!portal && entity instanceof Player && homeNumber > 0) {
+                // Set home if so marked
+                plugin.getPlayers().setHomeLocation(User.getInstance(entity), loc, homeNumber);
+            }
+            Util.teleportAsync(entity, loc).thenRun(() -> {
+                if (runnable != null) Bukkit.getScheduler().runTask(plugin, runnable);
+            });
+        });
     }
 
     /**

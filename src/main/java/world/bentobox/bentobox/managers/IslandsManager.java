@@ -674,6 +674,7 @@ public class IslandsManager {
      */
     public void homeTeleport(@NonNull World world, @NonNull Player player, int number, boolean newIsland) {
         User user = User.getInstance(player);
+        user.sendMessage("commands.island.go.teleport");
         Location home = getSafeHomeLocation(world, user, number);
         // Stop any gliding
         player.setGliding(false);
@@ -694,6 +695,7 @@ public class IslandsManager {
             .entity(player)
             .island(plugin.getIslands().getIsland(world, user))
             .homeNumber(number)
+            .thenRun(() -> teleported(world, user, number, newIsland))
             .build();
             return;
         }
@@ -701,7 +703,6 @@ public class IslandsManager {
         if (plugin.getPlayers().getHomeLocations(world, player.getUniqueId()).isEmpty()) {
             plugin.getPlayers().setHomeLocation(player.getUniqueId(), home);
         }
-        user.sendMessage("commands.island.go.teleport");
         PaperLib.teleportAsync(player, home).thenAccept(b -> {
             // Only run the commands if the player is successfully teleported
             if (b) teleported(world, user, number, newIsland);
