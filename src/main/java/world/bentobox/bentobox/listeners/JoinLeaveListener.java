@@ -55,7 +55,7 @@ public class JoinLeaveListener implements Listener {
         if (!players.isKnown(playerUUID)) {
             firstTime(user);
         }
-        
+
         // Make sure the player is loaded into the cache or create the player if they don't exist
         players.addPlayer(playerUUID);
 
@@ -121,7 +121,7 @@ public class JoinLeaveListener implements Listener {
                 }
             }
         });
-        
+
     }
 
     /**
@@ -142,10 +142,11 @@ public class JoinLeaveListener implements Listener {
      * @param user Targeted user.
      */
     private void clearPlayersInventory(World world, @NonNull User user) {
+        if (user.getUniqueId() == null) return;
         // Clear inventory if required
         Players playerData = players.getPlayer(user.getUniqueId());
 
-        if (playerData.getPendingKicks().contains(world.getName())) {
+        if (playerData != null && playerData.getPendingKicks().contains(world.getName())) {
             if (plugin.getIWM().isOnLeaveResetEnderChest(world)) {
                 user.getPlayer().getEnderChest().clear();
             }
@@ -214,13 +215,13 @@ public class JoinLeaveListener implements Listener {
 
                     // Call Protection Range Change event. Does not support cancelling.
                     IslandEvent.builder()
-                        .island(island)
-                        .location(island.getCenter())
-                        .reason(IslandEvent.Reason.RANGE_CHANGE)
-                        .involvedPlayer(user.getUniqueId())
-                        .admin(true)
-                        .protectionRange(range, oldRange)
-                        .build();
+                    .island(island)
+                    .location(island.getCenter())
+                    .reason(IslandEvent.Reason.RANGE_CHANGE)
+                    .involvedPlayer(user.getUniqueId())
+                    .admin(true)
+                    .protectionRange(range, oldRange)
+                    .build();
                 }
             }
         });

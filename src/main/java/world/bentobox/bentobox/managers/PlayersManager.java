@@ -103,8 +103,9 @@ public class PlayersManager {
     /**
      * Get player by UUID. Adds player to cache if not in there already
      * @param uuid of player
-     * @return player object or null if it does not exist
+     * @return player object or null if it does not exist, for example the UUID is null
      */
+    @Nullable
     public Players getPlayer(UUID uuid){
         if (!playerCache.containsKey(uuid)) {
             addPlayer(uuid);
