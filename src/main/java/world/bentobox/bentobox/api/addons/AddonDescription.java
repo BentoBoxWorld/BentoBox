@@ -269,4 +269,13 @@ public final class AddonDescription {
             return this;
         }
     }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "AddonDescription [" + (name != null ? "name=" + name + ", " : "")
+                + (version != null ? "version=" + version : "") + "]";
+    }
 }

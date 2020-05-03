@@ -98,7 +98,17 @@ public class AddonsManager {
             // try loading the addon
             // Get description in the addon.yml file
             YamlConfiguration data = addonDescription(jar);
-
+            // Check if the addon is already loaded (duplicate version?)
+            String main = data.getString("main");
+            if (main != null) {
+                if (this.getAddonByMainClassName(main).isPresent()) {
+                    getAddonByMainClassName(main).ifPresent(a -> {
+                        plugin.logError("Duplicate addon! Addon " + a.getDescription().getName() + " " + a.getDescription().getVersion() + " has already been loaded!");
+                        plugin.logError("Remove the duplicate and restart!");
+                    });
+                    return;
+                }
+            }
             // Load the addon
             addonClassLoader = new AddonClassLoader(this, data, f, this.getClass().getClassLoader());
 
@@ -339,6 +349,17 @@ public class AddonsManager {
     @SuppressWarnings("unchecked")
     public <T extends Addon> Optional<T> getAddonByName(@NonNull String name){
         return addons.stream().filter(a -> a.getDescription().getName().equalsIgnoreCase(name)).map(a -> (T) a).findFirst();
+    }
+
+    /**
+     * Gets the addon by main class name
+     * @param name - main class name
+     * @return Optional addon object
+     */
+    @NonNull
+    @SuppressWarnings("unchecked")
+    public <T extends Addon> Optional<T> getAddonByMainClassName(@NonNull String name){
+        return addons.stream().filter(a -> a.getDescription().getMain().equalsIgnoreCase(name)).map(a -> (T) a).findFirst();
     }
 
     @NonNull
