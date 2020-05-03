@@ -55,7 +55,7 @@ public class JoinLeaveListener implements Listener {
         if (!players.isKnown(playerUUID)) {
             firstTime(user);
         }
-
+        
         // Make sure the player is loaded into the cache or create the player if they don't exist
         players.addPlayer(playerUUID);
 
@@ -121,7 +121,7 @@ public class JoinLeaveListener implements Listener {
                 }
             }
         });
-
+        
     }
 
     /**
@@ -130,11 +130,8 @@ public class JoinLeaveListener implements Listener {
      */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlayerSwitchWorld(final PlayerChangedWorldEvent event) {
-        World world = Util.getWorld(event.getPlayer().getWorld());
         // Clear inventory if required
-        if (world != null) {
-            clearPlayersInventory(world, User.getInstance(event.getPlayer()));
-        }
+        clearPlayersInventory(Util.getWorld(event.getPlayer().getWorld()), User.getInstance(event.getPlayer()));
     }
 
 
@@ -217,13 +214,13 @@ public class JoinLeaveListener implements Listener {
 
                     // Call Protection Range Change event. Does not support cancelling.
                     IslandEvent.builder()
-                    .island(island)
-                    .location(island.getCenter())
-                    .reason(IslandEvent.Reason.RANGE_CHANGE)
-                    .involvedPlayer(user.getUniqueId())
-                    .admin(true)
-                    .protectionRange(range, oldRange)
-                    .build();
+                        .island(island)
+                        .location(island.getCenter())
+                        .reason(IslandEvent.Reason.RANGE_CHANGE)
+                        .involvedPlayer(user.getUniqueId())
+                        .admin(true)
+                        .protectionRange(range, oldRange)
+                        .build();
                 }
             }
         });
