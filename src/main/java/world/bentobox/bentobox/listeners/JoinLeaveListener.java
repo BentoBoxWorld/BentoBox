@@ -130,8 +130,11 @@ public class JoinLeaveListener implements Listener {
      */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlayerSwitchWorld(final PlayerChangedWorldEvent event) {
+        World world = Util.getWorld(event.getPlayer().getWorld());
         // Clear inventory if required
-        clearPlayersInventory(Util.getWorld(event.getPlayer().getWorld()), User.getInstance(event.getPlayer()));
+        if (world != null) {
+            clearPlayersInventory(world, User.getInstance(event.getPlayer()));
+        }
     }
 
 
