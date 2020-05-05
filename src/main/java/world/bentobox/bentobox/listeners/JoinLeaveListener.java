@@ -44,12 +44,14 @@ public class JoinLeaveListener implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerJoin(final PlayerJoinEvent event) {
+        // Remove them from the cache, just in case they were not removed for some reason
+        User.removePlayer(event.getPlayer());
+
         User user = User.getInstance(event.getPlayer());
         if (user == null || user.getUniqueId() == null) {
             return;
         }
         UUID playerUUID = user.getUniqueId();
-
 
         // Check if player hasn't joined before
         if (!players.isKnown(playerUUID)) {
