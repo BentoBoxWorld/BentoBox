@@ -28,6 +28,7 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import net.md_5.bungee.api.ChatColor;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.util.heads.HeadGetter;
 
@@ -314,7 +315,7 @@ public class PanelTest {
         ItemStack itemStack2 = mock(ItemStack.class);
         when(itemStack2.getType()).thenReturn(Material.PLAYER_HEAD);
         ItemMeta im2 = mock(ItemMeta.class);
-        when(im2.getLocalizedName()).thenReturn("tastybento");
+        when(im2.getLocalizedName()).thenReturn(ChatColor.WHITE + "" + ChatColor.BOLD + "tastybento");
         when(itemStack2.getItemMeta()).thenReturn(im2);
 
         PanelItem newItem = mock(PanelItem.class);
