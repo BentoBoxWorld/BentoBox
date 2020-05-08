@@ -53,6 +53,7 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  * @author Poslovitch
  */
+@Table(name = "Islands")
 public class Island implements DataObject {
 
     // True if this island is deleted and pending deletion from the database

@@ -2,6 +2,7 @@ package world.bentobox.bentobox.database.sql.mysql;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.database.DatabaseConnector;
+import world.bentobox.bentobox.database.objects.Table;
 import world.bentobox.bentobox.database.sql.SQLConfiguration;
 import world.bentobox.bentobox.database.sql.SQLDatabaseHandler;
 
@@ -23,8 +24,17 @@ public class MySQLDatabaseHandler<T> extends SQLDatabaseHandler<T> {
      * @param dbConnecter - authentication details for the database
      */
     MySQLDatabaseHandler(BentoBox plugin, Class<T> type, DatabaseConnector dbConnecter) {
-        super(plugin, type, dbConnecter, new SQLConfiguration(plugin.getSettings().getDatabasePrefix() + type.getCanonicalName())
-                .schema("CREATE TABLE IF NOT EXISTS `" + plugin.getSettings().getDatabasePrefix() + type.getCanonicalName() +
+        super(plugin, type, dbConnecter, new SQLConfiguration(
+                plugin.getSettings().getDatabasePrefix() +
+                (type.getAnnotation(Table.class) == null ?
+                        type.getCanonicalName()
+                        : type.getAnnotation(Table.class)
+                        .name()))
+                .schema("CREATE TABLE IF NOT EXISTS `" + plugin.getSettings().getDatabasePrefix() +
+                        (type.getAnnotation(Table.class) == null ?
+                                type.getCanonicalName()
+                                : type.getAnnotation(Table.class)
+                                .name()) +
                         "` (json JSON, uniqueId VARCHAR(255) GENERATED ALWAYS AS (json->\"$.uniqueId\"), UNIQUE INDEX i (uniqueId) ) ENGINE = INNODB"));
     }
 }
