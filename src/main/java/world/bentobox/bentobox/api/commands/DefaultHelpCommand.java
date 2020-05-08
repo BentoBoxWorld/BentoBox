@@ -17,13 +17,13 @@ import world.bentobox.bentobox.api.user.User;
  */
 public class DefaultHelpCommand extends CompositeCommand {
 
-    private static final int MAX_DEPTH = 2;
-    private static final String USAGE_PLACEHOLDER = "[usage]";
-    private static final String PARAMS_PLACEHOLDER = "[parameters]";
-    private static final String DESC_PLACEHOLDER = "[description]";
-    private static final String HELP_SYNTAX_REF = "commands.help.syntax";
-    private static final String HELP_SYNTAX_NO_PARAMETERS_REF = "commands.help.syntax-no-parameters";
-    private static final String HELP = "help";
+    protected static final int MAX_DEPTH = 2;
+    protected static final String USAGE_PLACEHOLDER = "[usage]";
+    protected static final String PARAMS_PLACEHOLDER = "[parameters]";
+    protected static final String DESC_PLACEHOLDER = "[description]";
+    protected static final String HELP_SYNTAX_REF = "commands.help.syntax";
+    protected static final String HELP_SYNTAX_NO_PARAMETERS_REF = "commands.help.syntax-no-parameters";
+    protected static final String HELP = "help";
 
     public DefaultHelpCommand(CompositeCommand parent) {
         super(parent, HELP);
@@ -81,7 +81,7 @@ public class DefaultHelpCommand extends CompositeCommand {
         return true;
     }
 
-    private void runSubCommandHelp(User user, int newDepth) {
+    protected void runSubCommandHelp(User user, int newDepth) {
         for (CompositeCommand subCommand : parent.getSubCommands().values()) {
             // Ignore the help command
             if (!subCommand.getLabel().equals(HELP)) {
@@ -92,7 +92,7 @@ public class DefaultHelpCommand extends CompositeCommand {
         }
     }
 
-    private boolean showPrettyHelp(User user, String usage, String params, String desc) {
+    protected boolean showPrettyHelp(User user, String usage, String params, String desc) {
         // Show the help
         if (user.isPlayer()) {
             // Player. Check perms
