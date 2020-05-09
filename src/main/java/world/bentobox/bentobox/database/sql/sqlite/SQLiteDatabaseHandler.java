@@ -32,11 +32,42 @@ public class SQLiteDatabaseHandler<T> extends SQLDatabaseHandler<T> {
      * @param databaseConnector Contains the settings to create a connection to the database
      */
     protected SQLiteDatabaseHandler(BentoBox plugin, Class<T> type, DatabaseConnector databaseConnector) {
-        super(plugin, type, databaseConnector, new SQLConfiguration(plugin.getSettings().getDatabasePrefix() + type.getCanonicalName())
-                .schema("CREATE TABLE IF NOT EXISTS `" + plugin.getSettings().getDatabasePrefix() + type.getCanonicalName() + "` (json JSON, uniqueId VARCHAR(255) NOT NULL PRIMARY KEY)")
-                .saveObject("INSERT INTO `" + plugin.getSettings().getDatabasePrefix() + type.getCanonicalName()
-                + "` (json, uniqueId) VALUES (?, ?) ON CONFLICT(uniqueId) DO UPDATE SET json = ?")
-                .objectExists("SELECT EXISTS (SELECT 1 FROM `" + plugin.getSettings().getDatabasePrefix() + type.getCanonicalName() + "` WHERE `uniqueId` = ?)"));
+        super(plugin, type, databaseConnector, new SQLConfiguration(plugin, type)
+                .schema("CREATE TABLE IF NOT EXISTS `[tableName]` (json JSON, uniqueId VARCHAR(255) NOT NULL PRIMARY KEY)")
+                .saveObject("INSERT INTO `[tableName]` (json, uniqueId) VALUES (?, ?) ON CONFLICT(uniqueId) DO UPDATE SET json = ?")
+                .objectExists("SELECT EXISTS (SELECT 1 FROM `[tableName]` WHERE `uniqueId` = ?)")
+                .renameTable("ALTER TABLE `[oldTableName]` RENAME TO `[tableName]`"));
+    }
+
+    @Override
+    /**
+     * Creates the table in the database if it doesn't exist already
+     */
+    protected void createSchema() {
+        if (getSqlConfig().renameRequired()) {
+            // SQLite does not have a rename if exists command so we have to manually check if the old table exists
+            String sql = "SELECT EXISTS (SELECT 1 FROM sqlite_master WHERE type='table' AND name='" + getSqlConfig().getOldTableName() + "' COLLATE NOCASE)";
+            try (PreparedStatement pstmt = getConnection().prepareStatement(sql)) {
+                ResultSet resultSet = pstmt.executeQuery();
+                if (resultSet.next() && resultSet.getBoolean(1)) {
+                    // Transition from the old table name
+                    try (PreparedStatement pstmt2 = getConnection().prepareStatement(getSqlConfig().getRenameTableSQL())) {
+                        pstmt2.execute();
+                    } catch (SQLException e) {
+                        plugin.logError("Could not rename " + getSqlConfig().getOldTableName() + " for data object " + dataObject.getCanonicalName() + " " + e.getMessage());
+                    }
+                }
+            } catch (SQLException e) {
+                plugin.logError("Could not check if " + getSqlConfig().getOldTableName() + " exists for data object " + dataObject.getCanonicalName() + " " + e.getMessage());
+            }
+
+        }
+        // Prepare and execute the database statements
+        try (PreparedStatement pstmt = getConnection().prepareStatement(getSqlConfig().getSchemaSQL())) {
+            pstmt.execute();
+        } catch (SQLException e) {
+            plugin.logError("Problem trying to create schema for data object " + dataObject.getCanonicalName() + " " + e.getMessage());
+        }
     }
 
     @Override

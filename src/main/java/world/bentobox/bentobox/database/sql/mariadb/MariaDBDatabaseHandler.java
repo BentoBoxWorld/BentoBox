@@ -2,7 +2,6 @@ package world.bentobox.bentobox.database.sql.mariadb;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.database.DatabaseConnector;
-import world.bentobox.bentobox.database.objects.Table;
 import world.bentobox.bentobox.database.sql.SQLConfiguration;
 import world.bentobox.bentobox.database.sql.SQLDatabaseHandler;
 
@@ -25,17 +24,8 @@ public class MariaDBDatabaseHandler<T> extends SQLDatabaseHandler<T> {
      */
     MariaDBDatabaseHandler(BentoBox plugin, Class<T> type, DatabaseConnector databaseConnector) {
         super(plugin, type, databaseConnector,
-                new SQLConfiguration(plugin.getSettings().getDatabasePrefix() +
-                        (type.getAnnotation(Table.class) == null ?
-                                type.getCanonicalName()
-                                : type.getAnnotation(Table.class)
-                                .name()))
-                .schema("CREATE TABLE IF NOT EXISTS `" +
-                        plugin.getSettings().getDatabasePrefix() +
-                        (type.getAnnotation(Table.class) == null ?
-                                type.getCanonicalName()
-                                : type.getAnnotation(Table.class)
-                                .name()) +
-                        "` (json JSON, uniqueId VARCHAR(255) GENERATED ALWAYS AS (JSON_EXTRACT(json, \"$.uniqueId\")), UNIQUE INDEX i (uniqueId))"));
+                new SQLConfiguration(plugin, type)
+                .schema("CREATE TABLE IF NOT EXISTS `[tableName]` (json JSON, uniqueId VARCHAR(255) GENERATED ALWAYS AS (JSON_EXTRACT(json, \"$.uniqueId\")), UNIQUE INDEX i (uniqueId))")
+                .renameTable("RENAME TABLE IF EXISTS `[oldTableName]` TO `[tableName]`"));
     }
 }

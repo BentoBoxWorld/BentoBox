@@ -81,11 +81,19 @@ public class SQLDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
      * Creates the table in the database if it doesn't exist already
      */
     protected void createSchema() {
+        if (sqlConfig.renameRequired()) {
+            // Transition from the old table name
+            try (PreparedStatement pstmt = connection.prepareStatement(sqlConfig.getRenameTableSQL())) {
+                pstmt.execute();
+            } catch (SQLException e) {
+                plugin.logError("Could not rename " + sqlConfig.getOldTableName() + " for data object " + dataObject.getCanonicalName() + " " + e.getMessage());
+            }
+        }
         // Prepare and execute the database statements
         try (PreparedStatement pstmt = connection.prepareStatement(sqlConfig.getSchemaSQL())) {
-            pstmt.executeUpdate();
+            pstmt.execute();
         } catch (SQLException e) {
-            plugin.logError("Problem trying to create schema for data object " + plugin.getSettings().getDatabasePrefix() + dataObject.getCanonicalName() + " " + e.getMessage());
+            plugin.logError("Problem trying to create schema for data object " + dataObject.getCanonicalName() + " " + e.getMessage());
         }
     }
 

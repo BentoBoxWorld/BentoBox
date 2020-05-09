@@ -24,6 +24,7 @@ import world.bentobox.bentobox.util.Util;
  *
  * @author tastybento
  */
+@Table(name = "Players")
 public class Players implements DataObject {
     @Expose
     private Map<Location, Integer> homeLocations = new HashMap<>();

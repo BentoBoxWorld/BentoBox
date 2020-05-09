@@ -15,7 +15,7 @@ import java.lang.annotation.Target;
  */
 public @interface Table {
     /**
-     * @return name of the table to be used, if any
+     * @return name of the table to be used in the database
      */
     String name();
 

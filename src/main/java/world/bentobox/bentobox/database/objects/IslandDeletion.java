@@ -16,6 +16,7 @@ import world.bentobox.bentobox.BentoBox;
  * @author tastybento
  * @since 1.1
  */
+@Table(name = "IslandDeletion")
 public class IslandDeletion implements DataObject {
 
     @Expose

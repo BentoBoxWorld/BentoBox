@@ -9,20 +9,21 @@ import com.google.gson.annotations.Expose;
  * @author tastybento
  *
  */
+@Table(name = "Names")
 public class Names implements DataObject {
 
     @Expose
     private String uniqueId = ""; // name
     @Expose
     private UUID uuid;
-    
+
     public Names() {}
-    
+
     public Names(String name, UUID uuid) {
         this.uniqueId = name;
         this.uuid = uuid;
     }
-    
+
     @Override
     public String getUniqueId() {
         return uniqueId;
@@ -30,7 +31,7 @@ public class Names implements DataObject {
 
     @Override
     public void setUniqueId(String uniqueId) {
-        this.uniqueId = uniqueId;        
+        this.uniqueId = uniqueId;
     }
 
     /**
