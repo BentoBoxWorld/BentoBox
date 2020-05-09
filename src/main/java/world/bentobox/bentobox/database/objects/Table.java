@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
 /**
  * Annotation to explicitly name tables
  * @author tastybento
- *
+ * @since 1.14.0
  */
 public @interface Table {
     /**
