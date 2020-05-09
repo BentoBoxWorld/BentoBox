@@ -147,7 +147,7 @@ public class MySQLDatabaseHandlerTest {
         when(resultSet.next()).thenReturn(true, true, true, false);
         when(ps.executeQuery(Mockito.anyString())).thenReturn(resultSet);
         List<Island> objects = handler.loadObjects();
-        verify(ps).executeQuery("SELECT `json` FROM `world.bentobox.bentobox.database.objects.Island`");
+        verify(ps).executeQuery("SELECT `json` FROM `Islands`");
         assertTrue(objects.size() == 3);
         assertEquals("xyz", objects.get(2).getUniqueId());
     }
@@ -166,7 +166,7 @@ public class MySQLDatabaseHandlerTest {
         when(resultSet.next()).thenReturn(true, true, true, false);
         when(ps.executeQuery(Mockito.anyString())).thenReturn(resultSet);
         List<Island> objects = handler.loadObjects();
-        verify(ps).executeQuery("SELECT `json` FROM `aworld.bentobox.bentobox.database.objects.Island`");
+        verify(ps).executeQuery("SELECT `json` FROM `aIslands`");
         assertTrue(objects.size() == 3);
         assertEquals("xyz", objects.get(2).getUniqueId());
     }
@@ -183,7 +183,7 @@ public class MySQLDatabaseHandlerTest {
         when(resultSet.next()).thenReturn(true, true, true, false);
         when(ps.executeQuery(Mockito.anyString())).thenReturn(resultSet);
         List<Island> objects = handler.loadObjects();
-        verify(ps).executeQuery("SELECT `json` FROM `world.bentobox.bentobox.database.objects.Island`");
+        verify(ps).executeQuery("SELECT `json` FROM `Islands`");
         assertTrue(objects.isEmpty());
         verify(plugin, Mockito.times(3)).logError("Could not load object java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING at line 1 column 1 path $");
     }
@@ -200,7 +200,7 @@ public class MySQLDatabaseHandlerTest {
         when(resultSet.next()).thenReturn(true, true, true, false);
         when(ps.executeQuery(Mockito.anyString())).thenReturn(resultSet);
         List<Island> objects = handler.loadObjects();
-        verify(ps).executeQuery("SELECT `json` FROM `world.bentobox.bentobox.database.objects.Island`");
+        verify(ps).executeQuery("SELECT `json` FROM `Islands`");
         assertTrue(objects.isEmpty());
         verify(plugin).logError("Could not load objects SQL error");
 
@@ -327,7 +327,7 @@ public class MySQLDatabaseHandlerTest {
         when(plugin.isEnabled()).thenReturn(false);
         when(ps.execute()).thenThrow(new SQLException("fail!"));
         handler.saveObject(instance);
-        verify(plugin).logError(eq("Could not save object world.bentobox.bentobox.database.objects.Island fail!"));
+        verify(plugin).logError(eq("Could not save object Islands fail!"));
 
     }
 
@@ -375,7 +375,7 @@ public class MySQLDatabaseHandlerTest {
         when(ps.executeQuery()).thenReturn(resultSet);
         when(resultSet.next()).thenReturn(false);
         assertFalse(handler.objectExists("hello"));
-        verify(connection).prepareStatement("CREATE TABLE IF NOT EXISTS `world.bentobox.bentobox.database.objects.Island` (json JSON, uniqueId VARCHAR(255) GENERATED ALWAYS AS (json->\"$.uniqueId\"), UNIQUE INDEX i (uniqueId) ) ENGINE = INNODB");
+        verify(connection).prepareStatement("CREATE TABLE IF NOT EXISTS `Islands` (json JSON, uniqueId VARCHAR(255) GENERATED ALWAYS AS (json->\"$.uniqueId\"), UNIQUE INDEX i (uniqueId) ) ENGINE = INNODB");
         verify(ps).executeQuery();
         verify(ps).setString(1, "\"hello\"");
     }
@@ -391,7 +391,7 @@ public class MySQLDatabaseHandlerTest {
         when(resultSet.next()).thenReturn(true);
         when(resultSet.getBoolean(eq(1))).thenReturn(false);
         assertFalse(handler.objectExists("hello"));
-        verify(connection).prepareStatement("CREATE TABLE IF NOT EXISTS `world.bentobox.bentobox.database.objects.Island` (json JSON, uniqueId VARCHAR(255) GENERATED ALWAYS AS (json->\"$.uniqueId\"), UNIQUE INDEX i (uniqueId) ) ENGINE = INNODB");
+        verify(connection).prepareStatement("CREATE TABLE IF NOT EXISTS `Islands` (json JSON, uniqueId VARCHAR(255) GENERATED ALWAYS AS (json->\"$.uniqueId\"), UNIQUE INDEX i (uniqueId) ) ENGINE = INNODB");
         verify(ps).executeQuery();
         verify(ps).setString(1, "\"hello\"");
     }
@@ -407,7 +407,7 @@ public class MySQLDatabaseHandlerTest {
         when(resultSet.next()).thenReturn(true);
         when(resultSet.getBoolean(eq(1))).thenReturn(true);
         assertTrue(handler.objectExists("hello"));
-        verify(connection).prepareStatement("CREATE TABLE IF NOT EXISTS `world.bentobox.bentobox.database.objects.Island` (json JSON, uniqueId VARCHAR(255) GENERATED ALWAYS AS (json->\"$.uniqueId\"), UNIQUE INDEX i (uniqueId) ) ENGINE = INNODB");
+        verify(connection).prepareStatement("CREATE TABLE IF NOT EXISTS `Islands` (json JSON, uniqueId VARCHAR(255) GENERATED ALWAYS AS (json->\"$.uniqueId\"), UNIQUE INDEX i (uniqueId) ) ENGINE = INNODB");
         verify(ps).executeQuery();
         verify(ps).setString(1, "\"hello\"");
     }
@@ -425,7 +425,7 @@ public class MySQLDatabaseHandlerTest {
         when(resultSet.next()).thenReturn(true);
         when(resultSet.getBoolean(eq(1))).thenReturn(true);
         assertTrue(handler.objectExists("hello"));
-        verify(connection).prepareStatement("CREATE TABLE IF NOT EXISTS `aworld.bentobox.bentobox.database.objects.Island` (json JSON, uniqueId VARCHAR(255) GENERATED ALWAYS AS (json->\"$.uniqueId\"), UNIQUE INDEX i (uniqueId) ) ENGINE = INNODB");
+        verify(connection).prepareStatement("CREATE TABLE IF NOT EXISTS `aIslands` (json JSON, uniqueId VARCHAR(255) GENERATED ALWAYS AS (json->\"$.uniqueId\"), UNIQUE INDEX i (uniqueId) ) ENGINE = INNODB");
         verify(ps).executeQuery();
         verify(ps).setString(1, "\"hello\"");
     }
@@ -468,7 +468,7 @@ public class MySQLDatabaseHandlerTest {
         when(plugin.isEnabled()).thenReturn(false);
         when(ps.execute()).thenThrow(new SQLException("fail!"));
         handler.deleteID("abc123");
-        verify(plugin).logError(eq("Could not delete object world.bentobox.bentobox.database.objects.Island abc123 fail!"));
+        verify(plugin).logError(eq("Could not delete object Islands abc123 fail!"));
     }
 
     /**
@@ -489,7 +489,7 @@ public class MySQLDatabaseHandlerTest {
     @Test
     public void testMySQLDatabaseHandlerCreateSchema() throws SQLException {
         verify(dbConn).createConnection(any());
-        verify(connection).prepareStatement("CREATE TABLE IF NOT EXISTS `world.bentobox.bentobox.database.objects.Island` (json JSON, uniqueId VARCHAR(255) GENERATED ALWAYS AS (json->\"$.uniqueId\"), UNIQUE INDEX i (uniqueId) ) ENGINE = INNODB");
+        verify(connection).prepareStatement("CREATE TABLE IF NOT EXISTS `Islands` (json JSON, uniqueId VARCHAR(255) GENERATED ALWAYS AS (json->\"$.uniqueId\"), UNIQUE INDEX i (uniqueId) ) ENGINE = INNODB");
     }
 
     /**
@@ -501,7 +501,7 @@ public class MySQLDatabaseHandlerTest {
     public void testMySQLDatabaseHandlerCreateSchemaPrefix() throws SQLException {
         when(settings.getDatabasePrefix()).thenReturn("a");
         verify(dbConn).createConnection(any());
-        verify(connection).prepareStatement("CREATE TABLE IF NOT EXISTS `aworld.bentobox.bentobox.database.objects.Island` (json JSON, uniqueId VARCHAR(255) GENERATED ALWAYS AS (json->\"$.uniqueId\"), UNIQUE INDEX i (uniqueId) ) ENGINE = INNODB");
+        verify(connection).prepareStatement("CREATE TABLE IF NOT EXISTS `aIslands` (json JSON, uniqueId VARCHAR(255) GENERATED ALWAYS AS (json->\"$.uniqueId\"), UNIQUE INDEX i (uniqueId) ) ENGINE = INNODB");
     }
     /**
      * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#MySQLDatabaseHandler(world.bentobox.bentobox.BentoBox, java.lang.Class, world.bentobox.bentobox.database.DatabaseConnector)}.
@@ -509,7 +509,7 @@ public class MySQLDatabaseHandlerTest {
      */
     @Test
     public void testMySQLDatabaseHandlerSchemaFail() throws SQLException {
-        when(ps.executeUpdate()).thenThrow(new SQLException("oh no!"));
+        when(ps.execute()).thenThrow(new SQLException("oh no!"));
         handler = new MySQLDatabaseHandler<>(plugin, Island.class, dbConn);
         verify(plugin).logError("Problem trying to create schema for data object world.bentobox.bentobox.database.objects.Island oh no!");
 
