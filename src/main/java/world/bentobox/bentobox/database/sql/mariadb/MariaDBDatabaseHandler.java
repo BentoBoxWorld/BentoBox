@@ -25,7 +25,6 @@ public class MariaDBDatabaseHandler<T> extends SQLDatabaseHandler<T> {
     MariaDBDatabaseHandler(BentoBox plugin, Class<T> type, DatabaseConnector databaseConnector) {
         super(plugin, type, databaseConnector,
                 new SQLConfiguration(plugin, type)
-                .schema("CREATE TABLE IF NOT EXISTS `[tableName]` (json JSON, uniqueId VARCHAR(255) GENERATED ALWAYS AS (JSON_EXTRACT(json, \"$.uniqueId\")), UNIQUE INDEX i (uniqueId))")
-                .renameTable("RENAME TABLE IF EXISTS `[oldTableName]` TO `[tableName]`"));
+                .schema("CREATE TABLE IF NOT EXISTS `[tableName]` (json JSON, uniqueId VARCHAR(255) GENERATED ALWAYS AS (JSON_EXTRACT(json, \"$.uniqueId\")), UNIQUE INDEX i (uniqueId))"));
     }
 }
