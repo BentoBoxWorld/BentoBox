@@ -45,7 +45,7 @@ public class PostgreSQLDatabaseHandler<T> extends SQLDatabaseHandler<T> {
                 .loadObjects("SELECT json FROM \"[tableName]\"")
                 // Postgres exists function returns true or false natively
                 .objectExists("SELECT EXISTS(SELECT * FROM \"[tableName]\" WHERE uniqueid = ?)")
-                .renameTable("ALTER TABLE IF EXISTS \"[oldTableName]\"  RENAME TO \"[tableName]\"")
+                .renameTable("ALTER TABLE IF EXISTS \"[oldTableName]\" RENAME TO \"[tableName]\"")
                 );
     }
 

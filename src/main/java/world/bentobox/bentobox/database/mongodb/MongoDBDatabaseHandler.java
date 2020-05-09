@@ -17,6 +17,7 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.FindOneAndReplaceOptions;
 import com.mongodb.client.model.IndexOptions;
 import com.mongodb.client.model.Indexes;
+import com.mongodb.client.model.RenameCollectionOptions;
 import com.mongodb.util.JSON;
 
 import world.bentobox.bentobox.BentoBox;
@@ -66,7 +67,7 @@ public class MongoDBDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
                 String newName = getName(plugin, dataObject);
                 if (!oldName.equals((newName)) && collectionExists(database, oldName) && !collectionExists(database, newName)){
                     collection = database.getCollection(oldName);
-                    collection.renameCollection(new MongoNamespace(newName));
+                    collection.renameCollection(new MongoNamespace(database.getName(), newName));
                 } else {
                     collection = database.getCollection(newName);
                 }
