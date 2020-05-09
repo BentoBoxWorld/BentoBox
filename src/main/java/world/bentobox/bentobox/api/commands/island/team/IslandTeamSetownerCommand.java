@@ -73,6 +73,7 @@ public class IslandTeamSetownerCommand extends CompositeCommand {
             return false;
         }
         getIslands().setOwner(getWorld(), user, targetUUID);
+        // Call the event for the new owner
         IslandEvent.builder()
                 .island(island)
                 .involvedPlayer(targetUUID)
@@ -80,10 +81,17 @@ public class IslandTeamSetownerCommand extends CompositeCommand {
                 .reason(IslandEvent.Reason.RANK_CHANGE)
                 .rankChange(island.getRank(User.getInstance(targetUUID)), RanksManager.OWNER_RANK)
                 .build();
+        // Call the event for the previous owner
+        IslandEvent.builder()
+                .island(island)
+                .involvedPlayer(playerUUID)
+                .admin(false)
+                .reason(IslandEvent.Reason.RANK_CHANGE)
+                .rankChange(RanksManager.OWNER_RANK, island.getRank(user))
+                .build();
         getIslands().save(island);
         return true;
     }
-
 
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
