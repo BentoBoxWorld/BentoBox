@@ -252,7 +252,7 @@ public class AddonsManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#isAddonCompatibleWithBentoBox(Addon)}.
+     * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#isAddonCompatibleWithBentoBox(Addon, String)}.
      */
     @Test
     public void testIsAddonCompatibleWithBentoBoxSnapshotNoAPIVersion() {
@@ -263,7 +263,7 @@ public class AddonsManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#isAddonCompatibleWithBentoBox(Addon)}.
+     * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#isAddonCompatibleWithBentoBox(Addon, String)}.
      */
     @Test
     public void testIsAddonCompatibleWithBentoBoxReleaseAPIVersion() {
@@ -274,7 +274,7 @@ public class AddonsManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#isAddonCompatibleWithBentoBox(Addon)}.
+     * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#isAddonCompatibleWithBentoBox(Addon, String)}.
      */
     @Test
     public void testIsAddonCompatibleWithBentoBoxSnapshotAPIVersion() {
@@ -285,7 +285,7 @@ public class AddonsManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#isAddonCompatibleWithBentoBox(Addon)}.
+     * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#isAddonCompatibleWithBentoBox(Addon, String)}.
      */
     @Test
     public void testIsAddonCompatibleWithBentoBoxReleaseNoAPIVersion() {
@@ -296,7 +296,7 @@ public class AddonsManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#isAddonCompatibleWithBentoBox(Addon)}.
+     * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#isAddonCompatibleWithBentoBox(Addon, String)}.
      */
     @Test
     public void testIsAddonCompatibleWithBentoBoxSnapshotAPIVersionVariableDigits() {
@@ -307,7 +307,7 @@ public class AddonsManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#isAddonCompatibleWithBentoBox(Addon)}.
+     * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#isAddonCompatibleWithBentoBox(Addon, String)}.
      */
     @Test
     public void testIsAddonCompatibleWithBentoBoxOldSnapshot() {
@@ -318,7 +318,7 @@ public class AddonsManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#isAddonCompatibleWithBentoBox(Addon)}.
+     * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#isAddonCompatibleWithBentoBox(Addon, String)}.
      */
     @Test
     public void testIsAddonCompatibleWithBentoBoxOldRelease() {
@@ -329,7 +329,7 @@ public class AddonsManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#isAddonCompatibleWithBentoBox(Addon)}.
+     * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#isAddonCompatibleWithBentoBox(Addon, String)}.
      */
     @Test
     public void testIsAddonCompatibleWithBentoBoxOldReleaseLong() {
@@ -340,7 +340,7 @@ public class AddonsManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#isAddonCompatibleWithBentoBox(Addon)}.
+     * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#isAddonCompatibleWithBentoBox(Addon, String)}.
      */
     @Test
     public void testIsAddonCompatibleWithBentoBoxOldReleaseLongAPI() {
@@ -350,6 +350,17 @@ public class AddonsManagerTest {
         assertFalse(am.isAddonCompatibleWithBentoBox(addon, "1.11.1"));
     }
 
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#isAddonCompatibleWithBentoBox(Addon, String)}.
+     * Prevents regression on https://github.com/BentoBoxWorld/BentoBox/issues/1346.
+     */
+    @Test
+    public void testIsAddonCompatibleWithBentoBoxNewRelease() {
+        Addon addon = mock(Addon.class);
+        AddonDescription addonDesc = new AddonDescription.Builder("main.class", "Addon-name", "1.0.0").apiVersion("1.13.1").build();
+        when(addon.getDescription()).thenReturn(addonDesc);
+        assertTrue(am.isAddonCompatibleWithBentoBox(addon, "1.14.0-SNAPSHOT-b1777"));
+    }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#setPerms(Addon)}

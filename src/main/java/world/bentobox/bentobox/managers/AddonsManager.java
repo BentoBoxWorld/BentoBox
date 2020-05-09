@@ -288,12 +288,17 @@ public class AddonsManager {
                 bentoboxNumber = Integer.parseInt(bentoboxVersion[i]);
             }
             int apiNumber = Util.isInteger(apiVersion[i], false) ? Integer.parseInt(apiVersion[i]) : -1;
-            if (bentoboxNumber < apiNumber) {
-                return false;
+
+            if (bentoboxNumber > apiNumber) {
+                return true; // BentoBox version is greater than the required version -> compatible
             }
+            if (bentoboxNumber < apiNumber) {
+                return false; // BentoBox is definitely outdated
+            }
+            // If it is equal, go to the next number
         }
 
-        return true;
+        return true; // Everything is equal, so return true
     }
 
     /**
