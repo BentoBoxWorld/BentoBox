@@ -201,7 +201,7 @@ public class LocalesManager {
                 // We cannot use Bukkit's saveResource, because we want it to go into a specific folder, so...
                 // Get the last part of the name
                 int lastIndex = name.lastIndexOf('/');
-                File targetFile = new File(localeDir, name.substring(lastIndex >= 0 ? lastIndex : 0));
+                File targetFile = new File(localeDir, name.substring(Math.max(lastIndex, 0)));
                 copyFile(name, targetFile);
                 // Update the locale file if it exists already
                 try (InputStreamReader in = new InputStreamReader(plugin.getResource(name))) {
