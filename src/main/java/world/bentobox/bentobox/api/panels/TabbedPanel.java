@@ -127,7 +127,7 @@ public class TabbedPanel extends Panel implements PanelListener {
     private void setupHeader(Tab tab, TreeMap<Integer, PanelItem> items) {
         // Set up top
         for (int i = 0; i < 9; i++) {
-            items.put(i, new PanelItemBuilder().icon(Material.LIGHT_BLUE_STAINED_GLASS_PANE).name("").build());
+            items.put(i, new PanelItemBuilder().icon(Material.LIGHT_BLUE_STAINED_GLASS_PANE).name(" ").build());
         }
         // Add icons
         for (Entry<Integer, Tab> tabPanel : tpb.getTabs().entrySet()) {
@@ -143,7 +143,6 @@ public class TabbedPanel extends Panel implements PanelListener {
         }
         // Add any subsidiary icons
         tab.getTabIcons().forEach(items::put);
-
     }
 
     @Override
@@ -198,5 +197,4 @@ public class TabbedPanel extends Panel implements PanelListener {
     public void setActiveTab(int activeTab) {
         this.activeTab = activeTab;
     }
-
 }
