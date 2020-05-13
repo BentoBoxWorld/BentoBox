@@ -114,6 +114,9 @@ public class Settings implements ConfigObject {
     @ConfigEntry(path = "general.fakeplayers", experimental = true)
     private Set<String> fakePlayers = new HashSet<>();
 
+    /* PANELS */
+    
+    @ConfigComment("Toggle whether panels should be closed or not when the player clicks anywhere outside of the inventory view.")
     @ConfigEntry(path = "panel.close-on-click-outside")
     private boolean closePanelOnClickOutside = true;
 
