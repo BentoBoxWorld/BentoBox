@@ -3,6 +3,7 @@ package world.bentobox.bentobox;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.bukkit.Material;
 import world.bentobox.bentobox.api.configuration.ConfigComment;
 import world.bentobox.bentobox.api.configuration.ConfigEntry;
 import world.bentobox.bentobox.api.configuration.ConfigObject;
@@ -115,10 +116,14 @@ public class Settings implements ConfigObject {
     private Set<String> fakePlayers = new HashSet<>();
 
     /* PANELS */
-    
+
     @ConfigComment("Toggle whether panels should be closed or not when the player clicks anywhere outside of the inventory view.")
     @ConfigEntry(path = "panel.close-on-click-outside")
     private boolean closePanelOnClickOutside = true;
+
+    @ConfigComment("Defines the Material of the item that fills the gaps (in the header, etc.) of most panels.")
+    @ConfigEntry(path = "panel.filler-material", since = "1.14.0")
+    private Material panelFillerMaterial = Material.LIGHT_BLUE_STAINED_GLASS_PANE;
 
     /*
      * Logs
@@ -685,8 +690,27 @@ public class Settings implements ConfigObject {
     /**
      * Set the MongoDB client connection URI.
      * @param mongodbConnectionUri connection URI.
+     * @since 1.14.0
      */
     public void setMongodbConnectionUri(String mongodbConnectionUri) {
         this.mongodbConnectionUri = mongodbConnectionUri;
+    }
+
+    /**
+     * Returns the Material of the item to preferably use when one needs to fill gaps in Panels.
+     * @return the Material of the item to preferably use when one needs to fill gaps in Panels.
+     * @since 1.14.0
+     */
+    public Material getPanelFillerMaterial() {
+        return panelFillerMaterial;
+    }
+
+    /**
+     * Sets the Material of the item to preferably use when one needs to fill gaps in Panels.
+     * @param panelFillerMaterial the Material of the item to preferably use when one needs to fill gaps in Panels.
+     * @since 1.14.0
+     */
+    public void setPanelFillerMaterial(Material panelFillerMaterial) {
+        this.panelFillerMaterial = panelFillerMaterial;
     }
 }

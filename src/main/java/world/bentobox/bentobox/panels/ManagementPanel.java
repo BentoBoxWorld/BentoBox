@@ -44,7 +44,7 @@ public class ManagementPanel {
         // Setup header and corner
         setupHeader(builder, user, view);
         for (int i : PANES) {
-            builder.item(i, new PanelItemBuilder().icon(Material.LIGHT_BLUE_STAINED_GLASS_PANE).name(" ").build());
+            builder.item(i, new PanelItemBuilder().icon(plugin.getSettings().getPanelFillerMaterial()).name(" ").build());
         }
 
         // Setup the views

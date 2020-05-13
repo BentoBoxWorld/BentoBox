@@ -35,7 +35,7 @@ public class CatalogPanel {
 
         // Setup header and corners
         for (int i : PANES) {
-            builder.item(i, new PanelItemBuilder().icon(Material.LIGHT_BLUE_STAINED_GLASS_PANE).name(" ").build());
+            builder.item(i, new PanelItemBuilder().icon(plugin.getSettings().getPanelFillerMaterial()).name(" ").build());
         }
 
         PanelItemBuilder gamemodesButton = new PanelItemBuilder()
