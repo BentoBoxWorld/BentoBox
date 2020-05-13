@@ -23,8 +23,7 @@ public class MySQLDatabaseHandler<T> extends SQLDatabaseHandler<T> {
      * @param dbConnecter - authentication details for the database
      */
     MySQLDatabaseHandler(BentoBox plugin, Class<T> type, DatabaseConnector dbConnecter) {
-        super(plugin, type, dbConnecter, new SQLConfiguration(plugin.getSettings().getDatabasePrefix() + type.getCanonicalName())
-                .schema("CREATE TABLE IF NOT EXISTS `" + plugin.getSettings().getDatabasePrefix() + type.getCanonicalName() +
-                        "` (json JSON, uniqueId VARCHAR(255) GENERATED ALWAYS AS (json->\"$.uniqueId\"), UNIQUE INDEX i (uniqueId) ) ENGINE = INNODB"));
+        super(plugin, type, dbConnecter, new SQLConfiguration(plugin, type)
+                .schema("CREATE TABLE IF NOT EXISTS `[tableName]` (json JSON, uniqueId VARCHAR(255) GENERATED ALWAYS AS (json->\"$.uniqueId\"), UNIQUE INDEX i (uniqueId) ) ENGINE = INNODB"));
     }
 }

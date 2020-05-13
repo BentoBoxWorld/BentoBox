@@ -23,8 +23,8 @@ public class MariaDBDatabaseHandler<T> extends SQLDatabaseHandler<T> {
      * @param databaseConnector - authentication details for the database
      */
     MariaDBDatabaseHandler(BentoBox plugin, Class<T> type, DatabaseConnector databaseConnector) {
-        super(plugin, type, databaseConnector, new SQLConfiguration(plugin.getSettings().getDatabasePrefix() + type.getCanonicalName())
-                .schema("CREATE TABLE IF NOT EXISTS `" + plugin.getSettings().getDatabasePrefix() + type.getCanonicalName() +
-                        "` (json JSON, uniqueId VARCHAR(255) GENERATED ALWAYS AS (JSON_EXTRACT(json, \"$.uniqueId\")), UNIQUE INDEX i (uniqueId))"));
+        super(plugin, type, databaseConnector,
+                new SQLConfiguration(plugin, type)
+                .schema("CREATE TABLE IF NOT EXISTS `[tableName]` (json JSON, uniqueId VARCHAR(255) GENERATED ALWAYS AS (JSON_EXTRACT(json, \"$.uniqueId\")), UNIQUE INDEX i (uniqueId))"));
     }
 }
