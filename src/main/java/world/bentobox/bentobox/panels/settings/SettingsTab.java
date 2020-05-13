@@ -169,6 +169,7 @@ public class SettingsTab implements Tab, ClickHandler {
                     .description(user.getTranslation(PROTECTION_PANEL + "reset-to-default.description"))
                     .clickHandler((panel, user1, clickType, slot) -> {
                         island.setFlagsDefaults();
+                        user.getPlayer().playSound(user.getLocation(), Sound.ENTITY_TNT_PRIMED, 1F, 1F);
                         return true;
                     })
                     .build());
