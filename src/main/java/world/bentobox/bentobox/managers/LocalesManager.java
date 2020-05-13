@@ -175,8 +175,10 @@ public class LocalesManager {
             jarLocale.getKeys(true).stream().filter(k -> !fileLocale.contains(k, false)).forEach(k -> fileLocale.set(k, jarLocale.get(k)));
             // Save file
             fileLocale.save(fileLocaleFile);
+        } catch (InvalidConfigurationException e) {
+            plugin.logError("Could not update locale file '" + lf + "' due to it being malformed: " + e.getMessage());
         } catch (Exception e) {
-            plugin.logError("Error updating locale file: " + lf + " : " + e.getMessage());
+            plugin.logError("Error updating locale file '" + lf + "': " + e.getMessage());
             plugin.logStacktrace(e);
         }
     }
