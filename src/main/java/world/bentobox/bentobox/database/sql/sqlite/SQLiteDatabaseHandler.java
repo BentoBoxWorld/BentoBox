@@ -48,25 +48,31 @@ public class SQLiteDatabaseHandler<T> extends SQLDatabaseHandler<T> {
             // SQLite does not have a rename if exists command so we have to manually check if the old table exists
             String sql = "SELECT EXISTS (SELECT 1 FROM sqlite_master WHERE type='table' AND name='" + getSqlConfig().getOldTableName() + "' COLLATE NOCASE)";
             try (PreparedStatement pstmt = getConnection().prepareStatement(sql)) {
-                ResultSet resultSet = pstmt.executeQuery();
-                if (resultSet.next() && resultSet.getBoolean(1)) {
-                    // Transition from the old table name
-                    try (PreparedStatement pstmt2 = getConnection().prepareStatement(getSqlConfig().getRenameTableSQL())) {
-                        pstmt2.execute();
-                    } catch (SQLException e) {
-                        plugin.logError("Could not rename " + getSqlConfig().getOldTableName() + " for data object " + dataObject.getCanonicalName() + " " + e.getMessage());
-                    }
-                }
+                rename(pstmt);
             } catch (SQLException e) {
                 plugin.logError("Could not check if " + getSqlConfig().getOldTableName() + " exists for data object " + dataObject.getCanonicalName() + " " + e.getMessage());
             }
-
         }
         // Prepare and execute the database statements
         try (PreparedStatement pstmt = getConnection().prepareStatement(getSqlConfig().getSchemaSQL())) {
             pstmt.execute();
         } catch (SQLException e) {
             plugin.logError("Problem trying to create schema for data object " + dataObject.getCanonicalName() + " " + e.getMessage());
+        }
+    }
+
+    private void rename(PreparedStatement pstmt) {
+        try (ResultSet resultSet = pstmt.executeQuery()) {
+            if (resultSet.next() && resultSet.getBoolean(1)) {
+                // Transition from the old table name
+                try (PreparedStatement pstmt2 = getConnection().prepareStatement(getSqlConfig().getRenameTableSQL())) {
+                    pstmt2.execute();
+                } catch (SQLException e) {
+                    plugin.logError("Could not rename " + getSqlConfig().getOldTableName() + " for data object " + dataObject.getCanonicalName() + " " + e.getMessage());
+                }
+            }
+        } catch (Exception ex) {
+            plugin.logError("Could not check if " + getSqlConfig().getOldTableName() + " exists for data object " + dataObject.getCanonicalName() + " " + ex.getMessage());
         }
     }
 
