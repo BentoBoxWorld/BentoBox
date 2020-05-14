@@ -17,7 +17,6 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.FindOneAndReplaceOptions;
 import com.mongodb.client.model.IndexOptions;
 import com.mongodb.client.model.Indexes;
-import com.mongodb.client.model.RenameCollectionOptions;
 import com.mongodb.util.JSON;
 
 import world.bentobox.bentobox.BentoBox;
