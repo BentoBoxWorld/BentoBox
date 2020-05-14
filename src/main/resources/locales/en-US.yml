@@ -799,11 +799,16 @@ protection:
       name: "Workbenches"
       hint: "Workbench access disabled"
     CREEPER_DAMAGE:
-      description: "Toggle creeper damage"
-      name: "Creeper damage"
+      description: |
+        &a Toggle creeper
+        &a damage protection
+      name: "Creeper damage protection"
     CREEPER_GRIEFING:
-      description: "Toggle creeper griefing when ignited by island visitor"
-      name: "Creeper griefing"
+      description: |
+        &a Toggle creeper griefing
+        &a protection when ignited
+        &a by island visitor.
+      name: "Creeper griefing protection"
       hint: "Creeper griefing disabled"
     CROP_TRAMPLE: 
       description: "Toggle crop trampling"
