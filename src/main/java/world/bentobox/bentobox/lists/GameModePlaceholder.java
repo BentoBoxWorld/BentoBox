@@ -238,7 +238,7 @@ public enum GameModePlaceholder {
         }
         Optional<Island> visitedIsland = addon.getIslands().getIslandAt(user.getLocation());
         return visitedIsland.map(value -> value.getMemberSet(RanksManager.MEMBER_RANK).stream()
-            .map(addon.getPlayers()::getName).collect(Collectors.joining(","))).orElse("");
+                .map(addon.getPlayers()::getName).collect(Collectors.joining(","))).orElse("");
     }),
     /**
      * Returns the amount of players that are at least MEMBER on the island the player is standing on.
@@ -324,10 +324,15 @@ public enum GameModePlaceholder {
      */
     DEATHS("deaths", (addon, user, island) -> String.valueOf(addon.getPlayers().getDeaths(addon.getOverWorld(), user.getUniqueId()))),
     /**
-     * Returns whether this player is on his island.
+     * Returns whether this player is on his island and has a rank greater than VISITOR_RANK
      * @since 1.13.0
      */
-    ON_ISLAND("on_island", (addon, user, island) -> String.valueOf(addon.getIslands().userIsOnIsland(addon.getOverWorld(), user)));
+    ON_ISLAND("on_island", (addon, user, island) -> String.valueOf(addon.getIslands().userIsOnIsland(addon.getOverWorld(), user))),
+    /**
+     * Returns whether this player is an owner of their island
+     * @since 1.14.0
+     */
+    OWNS_ISLAND("owns_island", (addon, user, island) -> String.valueOf(island != null && user.getUniqueId().equals(island.getOwner())));
 
     private String placeholder;
     /**
