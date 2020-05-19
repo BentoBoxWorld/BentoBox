@@ -94,19 +94,23 @@ public class TabbedPanel extends Panel implements PanelListener {
         // Show the active tab
         if (tpb.getTabs().containsKey(activeTab)) {
             List<PanelItem> panelItems = tab.getPanelItems();
-            panelItems.stream().filter(Objects::nonNull).skip(page * 43L).limit(page * 43L + 43L).forEach(i -> items.put(items.lastKey() + 1, i));
+            // Adds the flag items
+            panelItems.stream().filter(Objects::nonNull).skip(page * 45L).limit(page * 45L + 45L).forEach(i -> items.put(items.lastKey() + 1, i));
+
+            // set up the footer
+            setupFooter(tab, items);
             // Add forward and backward icons
             if (page > 0) {
                 // Previous page icon
-                items.put(items.lastKey() + 1, new PanelItemBuilder().icon(Material.ARROW).name(tpb.getUser().getTranslation(PROTECTION_PANEL + "previous")).clickHandler((panel, user1, clickType, slot1) -> {
+                items.put(46, new PanelItemBuilder().icon(Material.ARROW).name(tpb.getUser().getTranslation(PROTECTION_PANEL + "previous")).clickHandler((panel, user1, clickType, slot1) -> {
                     this.activePage--;
                     this.refreshPanel();
                     return true;
                 }).build());
             }
-            if ((page + 1) * 43L < panelItems.stream().filter(Objects::nonNull).count()) {
+            if ((page + 1) * 45L < panelItems.stream().filter(Objects::nonNull).count()) {
                 // Next page icon
-                items.put(items.lastKey() + 1, new PanelItemBuilder().icon(Material.ARROW).name(tpb.getUser().getTranslation(PROTECTION_PANEL + "next")).clickHandler((panel, user1, clickType, slot1) -> {
+                items.put(52, new PanelItemBuilder().icon(Material.ARROW).name(tpb.getUser().getTranslation(PROTECTION_PANEL + "next")).clickHandler((panel, user1, clickType, slot1) -> {
                     this.activePage++;
                     this.refreshPanel();
                     return true;
@@ -143,6 +147,12 @@ public class TabbedPanel extends Panel implements PanelListener {
         }
         // Add any subsidiary icons
         tab.getTabIcons().forEach(items::put);
+    }
+
+    private void setupFooter(Tab tab, TreeMap<Integer, PanelItem> items) {
+        for (int i = 45; i < 54; i++) {
+            items.put(i, new PanelItemBuilder().icon(plugin.getSettings().getPanelFillerMaterial()).name(" ").build());
+        }
     }
 
     @Override
