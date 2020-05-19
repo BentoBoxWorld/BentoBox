@@ -113,18 +113,18 @@ public class WebManager {
             }
 
             for (String repository : repositories) {
-                GitHubRepository addonRepo;
+                GitHubRepository repo;
                 try {
-                    addonRepo = new GitHubRepository(gh, repository);
+                    repo = new GitHubRepository(gh, repository);
                 } catch (Exception e) {
                     if (plugin.getSettings().isLogGithubDownloadData()) {
                         plugin.logError("An unhandled exception occurred when gathering contributors data from the '" + repository + "' repository...");
                         plugin.logStacktrace(e);
                     }
-                    addonRepo = null;
+                    repo = null;
                 }
-                if (addonRepo != null) {
-                    gatherContributors(addonRepo);
+                if (repo != null) {
+                    gatherContributors(repo);
                 }
             }
 
