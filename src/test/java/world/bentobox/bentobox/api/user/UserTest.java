@@ -25,6 +25,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -75,6 +76,8 @@ public class UserTest {
     private PluginManager pim;
     @Mock
     private CommandSender sender;
+    @Mock
+    private Server server;
 
     @Before
     public void setUp() throws Exception {
@@ -91,6 +94,10 @@ public class UserTest {
         when(Bukkit.getPlayer(any(UUID.class))).thenReturn(player);
         when(Bukkit.getPluginManager()).thenReturn(pim);
         when(Bukkit.getItemFactory()).thenReturn(itemFactory);
+
+        // Player
+        when(player.getServer()).thenReturn(server);
+        when(server.getOnlinePlayers()).thenReturn(Collections.emptySet());
 
         // IWM
         when(plugin.getIWM()).thenReturn(iwm);
@@ -487,7 +494,7 @@ public class UserTest {
         User u = User.getInstance(player);
         assertEquals(33, u.getPermissionValue("bskyblock.max", 2));
     }
-    
+
     /**
      * Test for {@link User#getPermissionValue(String, int)}
      */
