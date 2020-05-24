@@ -1,13 +1,14 @@
-/**
- *
- */
 package world.bentobox.bentobox.api.commands.island;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
@@ -18,6 +19,7 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
@@ -77,6 +79,8 @@ public class IslandExpelCommandTest {
     private Addon addon;
 
     private IslandExpelCommand iec;
+    @Mock
+    private Server server;
 
     @Before
     public void setUp() throws Exception {
@@ -100,6 +104,8 @@ public class IslandExpelCommandTest {
         when(user.isOp()).thenReturn(false);
         uuid = UUID.randomUUID();
         when(user.getUniqueId()).thenReturn(uuid);
+        when(server.getOnlinePlayers()).thenReturn(Collections.emptySet());
+        when(p.getServer()).thenReturn(server);
         when(user.getPlayer()).thenReturn(p);
         when(user.getName()).thenReturn("tastybento");
 
@@ -110,11 +116,11 @@ public class IslandExpelCommandTest {
         when(ic.getAddon()).thenReturn(addon);
 
         // No island for player to begin with (set it later in the tests)
-        when(im.hasIsland(Mockito.any(), Mockito.any(User.class))).thenReturn(false);
+        when(im.hasIsland(any(), any(User.class))).thenReturn(false);
         when(plugin.getIslands()).thenReturn(im);
 
         // No team to start
-        when(im.inTeam(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
+        when(im.inTeam(any(), eq(uuid))).thenReturn(false);
         when(plugin.getPlayers()).thenReturn(pm);
 
         // Server & Scheduler
@@ -123,12 +129,12 @@ public class IslandExpelCommandTest {
         when(Bukkit.getScheduler()).thenReturn(sch);
 
         // Island Banned list initialization
-        when(island.getRank(Mockito.any())).thenReturn(RanksManager.OWNER_RANK);
-        when(im.getIsland(Mockito.any(), Mockito.any(User.class))).thenReturn(island);
-        when(im.getIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(island);
+        when(island.getRank(any())).thenReturn(RanksManager.OWNER_RANK);
+        when(im.getIsland(any(), any(User.class))).thenReturn(island);
+        when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
 
         // IWM friendly name
-        when(iwm.getFriendlyName(Mockito.any())).thenReturn("BSkyBlock");
+        when(iwm.getFriendlyName(any())).thenReturn("BSkyBlock");
         when(plugin.getIWM()).thenReturn(iwm);
 
         // Server and Plugin Manager for events
@@ -139,13 +145,13 @@ public class IslandExpelCommandTest {
 
         // Locales
         Answer<String> answer = invocation -> invocation.getArgument(1, String.class);
-        when(lm.get(Mockito.any(User.class), Mockito.anyString())).thenAnswer(answer);
+        when(lm.get(any(User.class), anyString())).thenAnswer(answer);
         when(plugin.getLocalesManager()).thenReturn(lm);
 
         // Placeholders
         PlaceholdersManager placeholdersManager = mock(PlaceholdersManager.class);
         when(plugin.getPlaceholdersManager()).thenReturn(placeholdersManager);
-        when(placeholdersManager.replacePlaceholders(Mockito.any(), Mockito.any())).thenAnswer(answer);
+        when(placeholdersManager.replacePlaceholders(any(), any())).thenAnswer(answer);
 
         // Class
         iec = new IslandExpelCommand(ic);
@@ -186,7 +192,7 @@ public class IslandExpelCommandTest {
     @Test
     public void testCanExecuteNoArgs() {
         assertFalse(iec.canExecute(user, "", Collections.emptyList()));
-        Mockito.verify(user).sendMessage("commands.help.header", "[label]", null);
+        verify(user).sendMessage("commands.help.header", "[label]", null);
     }
 
     /**
@@ -195,7 +201,7 @@ public class IslandExpelCommandTest {
     @Test
     public void testCanExecuteTooManyArgs() {
         assertFalse(iec.canExecute(user, "", Arrays.asList("Hello", "there")));
-        Mockito.verify(user).sendMessage("commands.help.header", "[label]", null);
+        verify(user).sendMessage("commands.help.header", "[label]", null);
     }
 
     /**
@@ -205,7 +211,7 @@ public class IslandExpelCommandTest {
     public void testCanExecuteNoTeamNoIsland() {
 
         assertFalse(iec.canExecute(user, "", Collections.singletonList("tasty")));
-        Mockito.verify(user).sendMessage("general.errors.no-island");
+        verify(user).sendMessage("general.errors.no-island");
     }
 
     /**
@@ -213,9 +219,9 @@ public class IslandExpelCommandTest {
      */
     @Test
     public void testCanExecuteUnknownTargetUserInTeam() {
-        when(im.inTeam(Mockito.any(), Mockito.any())).thenReturn(true);
+        when(im.inTeam(any(), any())).thenReturn(true);
         assertFalse(iec.canExecute(user, "", Collections.singletonList("tasty")));
-        Mockito.verify(user).sendMessage("general.errors.unknown-player", TextVariables.NAME, "tasty");
+        verify(user).sendMessage("general.errors.unknown-player", TextVariables.NAME, "tasty");
     }
 
     /**
@@ -223,9 +229,9 @@ public class IslandExpelCommandTest {
      */
     @Test
     public void testCanExecuteUnknownTargetUserHasIsland() {
-        when(im.hasIsland(Mockito.any(), Mockito.any(User.class))).thenReturn(true);
+        when(im.hasIsland(any(), any(User.class))).thenReturn(true);
         assertFalse(iec.canExecute(user, "", Collections.singletonList("tasty")));
-        Mockito.verify(user).sendMessage("general.errors.unknown-player", TextVariables.NAME, "tasty");
+        verify(user).sendMessage("general.errors.unknown-player", TextVariables.NAME, "tasty");
     }
 
     /**
@@ -233,11 +239,11 @@ public class IslandExpelCommandTest {
      */
     @Test
     public void testCanExecuteLowRank() {
-        when(im.hasIsland(Mockito.any(), Mockito.any(User.class))).thenReturn(true);
-        when(island.getRank(Mockito.any())).thenReturn(RanksManager.VISITOR_RANK);
+        when(im.hasIsland(any(), any(User.class))).thenReturn(true);
+        when(island.getRank(any())).thenReturn(RanksManager.VISITOR_RANK);
         when(island.getRankCommand(anyString())).thenReturn(RanksManager.OWNER_RANK);
         assertFalse(iec.canExecute(user, "", Collections.singletonList("tasty")));
-        Mockito.verify(user).sendMessage("general.errors.no-permission");
+        verify(user).sendMessage("general.errors.no-permission");
     }
 
     /**
@@ -245,11 +251,11 @@ public class IslandExpelCommandTest {
      */
     @Test
     public void testCanExecuteSelf() {
-        when(im.hasIsland(Mockito.any(), Mockito.any(User.class))).thenReturn(true);
-        when(pm.getUUID(Mockito.anyString())).thenReturn(uuid);
-        when(im.getMembers(Mockito.any(), Mockito.any())).thenReturn(Collections.singleton(uuid));
+        when(im.hasIsland(any(), any(User.class))).thenReturn(true);
+        when(pm.getUUID(anyString())).thenReturn(uuid);
+        when(im.getMembers(any(), any())).thenReturn(Collections.singleton(uuid));
         assertFalse(iec.canExecute(user, "", Collections.singletonList("tasty")));
-        Mockito.verify(user).sendMessage("commands.island.expel.cannot-expel-yourself");
+        verify(user).sendMessage("commands.island.expel.cannot-expel-yourself");
     }
 
     /**
@@ -257,12 +263,12 @@ public class IslandExpelCommandTest {
      */
     @Test
     public void testCanExecuteTeamMember() {
-        when(im.hasIsland(Mockito.any(), Mockito.any(User.class))).thenReturn(true);
+        when(im.hasIsland(any(), any(User.class))).thenReturn(true);
         UUID target = UUID.randomUUID();
-        when(pm.getUUID(Mockito.anyString())).thenReturn(target);
-        when(im.getMembers(Mockito.any(), Mockito.any())).thenReturn(Collections.singleton(target));
+        when(pm.getUUID(anyString())).thenReturn(target);
+        when(im.getMembers(any(), any())).thenReturn(Collections.singleton(target));
         assertFalse(iec.canExecute(user, "", Collections.singletonList("tasty")));
-        Mockito.verify(user).sendMessage("commands.island.expel.cannot-expel-member");
+        verify(user).sendMessage("commands.island.expel.cannot-expel-member");
     }
 
     /**
@@ -270,12 +276,12 @@ public class IslandExpelCommandTest {
      */
     @Test
     public void testCanExecuteOfflinePlayer() {
-        when(im.hasIsland(Mockito.any(), Mockito.any(User.class))).thenReturn(true);
+        when(im.hasIsland(any(), any(User.class))).thenReturn(true);
         UUID target = UUID.randomUUID();
-        when(pm.getUUID(Mockito.anyString())).thenReturn(target);
-        when(im.getMembers(Mockito.any(), Mockito.any())).thenReturn(Collections.emptySet());
+        when(pm.getUUID(anyString())).thenReturn(target);
+        when(im.getMembers(any(), any())).thenReturn(Collections.emptySet());
         assertFalse(iec.canExecute(user, "", Collections.singletonList("tasty")));
-        Mockito.verify(user).sendMessage("general.errors.offline-player");
+        verify(user).sendMessage("general.errors.offline-player");
     }
 
     /**
@@ -283,16 +289,16 @@ public class IslandExpelCommandTest {
      */
     @Test
     public void testCanExecuteNotOnIsland() {
-        when(im.hasIsland(Mockito.any(), Mockito.any(User.class))).thenReturn(true);
+        when(im.hasIsland(any(), any(User.class))).thenReturn(true);
         UUID target = UUID.randomUUID();
         Player p = mock(Player.class);
         when(p.isOnline()).thenReturn(true);
         when(p.getUniqueId()).thenReturn(target);
         User.getInstance(p);
-        when(pm.getUUID(Mockito.anyString())).thenReturn(target);
-        when(im.getMembers(Mockito.any(), Mockito.any())).thenReturn(Collections.emptySet());
+        when(pm.getUUID(anyString())).thenReturn(target);
+        when(im.getMembers(any(), any())).thenReturn(Collections.emptySet());
         assertFalse(iec.canExecute(user, "", Collections.singletonList("tasty")));
-        Mockito.verify(user).sendMessage("commands.island.expel.not-on-island");
+        verify(user).sendMessage("commands.island.expel.not-on-island");
     }
 
     /**
@@ -300,18 +306,18 @@ public class IslandExpelCommandTest {
      */
     @Test
     public void testCanExecuteOp() {
-        when(im.locationIsOnIsland(Mockito.any(), Mockito.any())).thenReturn(true);
-        when(im.hasIsland(Mockito.any(), Mockito.any(User.class))).thenReturn(true);
+        when(im.locationIsOnIsland(any(), any())).thenReturn(true);
+        when(im.hasIsland(any(), any(User.class))).thenReturn(true);
         UUID target = UUID.randomUUID();
         Player p = mock(Player.class);
         when(p.isOnline()).thenReturn(true);
         when(p.getUniqueId()).thenReturn(target);
         when(p.isOp()).thenReturn(true);
         User.getInstance(p);
-        when(pm.getUUID(Mockito.anyString())).thenReturn(target);
-        when(im.getMembers(Mockito.any(), Mockito.any())).thenReturn(Collections.emptySet());
+        when(pm.getUUID(anyString())).thenReturn(target);
+        when(im.getMembers(any(), any())).thenReturn(Collections.emptySet());
         assertFalse(iec.canExecute(user, "", Collections.singletonList("tasty")));
-        Mockito.verify(user).sendMessage("commands.island.expel.cannot-expel");
+        verify(user).sendMessage("commands.island.expel.cannot-expel");
     }
 
     /**
@@ -319,18 +325,18 @@ public class IslandExpelCommandTest {
      */
     @Test
     public void testCanExecuteBypassPerm() {
-        when(im.locationIsOnIsland(Mockito.any(), Mockito.any())).thenReturn(true);
-        when(im.hasIsland(Mockito.any(), Mockito.any(User.class))).thenReturn(true);
+        when(im.locationIsOnIsland(any(), any())).thenReturn(true);
+        when(im.hasIsland(any(), any(User.class))).thenReturn(true);
         UUID target = UUID.randomUUID();
         Player p = mock(Player.class);
         when(p.isOnline()).thenReturn(true);
         when(p.getUniqueId()).thenReturn(target);
-        when(p.hasPermission(Mockito.anyString())).thenReturn(true);
+        when(p.hasPermission(anyString())).thenReturn(true);
         User.getInstance(p);
-        when(pm.getUUID(Mockito.anyString())).thenReturn(target);
-        when(im.getMembers(Mockito.any(), Mockito.any())).thenReturn(Collections.emptySet());
+        when(pm.getUUID(anyString())).thenReturn(target);
+        when(im.getMembers(any(), any())).thenReturn(Collections.emptySet());
         assertFalse(iec.canExecute(user, "", Collections.singletonList("tasty")));
-        Mockito.verify(user).sendMessage("commands.island.expel.cannot-expel");
+        verify(user).sendMessage("commands.island.expel.cannot-expel");
     }
 
     /**
@@ -338,12 +344,12 @@ public class IslandExpelCommandTest {
      */
     @Test
     public void testCanExecute() {
-        when(im.locationIsOnIsland(Mockito.any(), Mockito.any())).thenReturn(true);
-        when(im.hasIsland(Mockito.any(), Mockito.any(User.class))).thenReturn(true);
+        when(im.locationIsOnIsland(any(), any())).thenReturn(true);
+        when(im.hasIsland(any(), any(User.class))).thenReturn(true);
         setUpTarget();
-        when(im.getMembers(Mockito.any(), Mockito.any())).thenReturn(Collections.emptySet());
+        when(im.getMembers(any(), any())).thenReturn(Collections.emptySet());
         assertTrue(iec.canExecute(user, "", Collections.singletonList("tasty")));
-        Mockito.verify(user, Mockito.never()).sendMessage(Mockito.anyString());
+        verify(user, never()).sendMessage(anyString());
     }
 
     private Player setUpTarget() {
@@ -352,10 +358,12 @@ public class IslandExpelCommandTest {
         when(p.isOnline()).thenReturn(true);
         when(p.getUniqueId()).thenReturn(target);
         when(p.getLocation()).thenReturn(mock(Location.class));
-        when(p.performCommand(Mockito.anyString())).thenReturn(true);
+        when(p.performCommand(anyString())).thenReturn(true);
         when(p.getName()).thenReturn("target");
+        when(p.getServer()).thenReturn(server);
+        when(server.getOnlinePlayers()).thenReturn(Collections.emptySet());
         User.getInstance(p);
-        when(pm.getUUID(Mockito.anyString())).thenReturn(target);
+        when(pm.getUUID(anyString())).thenReturn(target);
         return p;
     }
 
@@ -366,8 +374,8 @@ public class IslandExpelCommandTest {
     public void testExecuteUserStringListOfStringHasIsland() {
         testCanExecute();
         assertTrue(iec.execute(user, "", Collections.singletonList("tasty")));
-        Mockito.verify(user).sendMessage("commands.island.expel.success", TextVariables.NAME, "target");
-        Mockito.verify(im).homeTeleport(Mockito.any(), Mockito.any());
+        verify(user).sendMessage("commands.island.expel.success", TextVariables.NAME, "target");
+        verify(im).homeTeleport(any(), any());
     }
 
     /**
@@ -376,12 +384,12 @@ public class IslandExpelCommandTest {
     @Test
     public void testExecuteUserStringListOfStringNoIslandSendToSpawn() {
         Optional<Island> optionalIsland = Optional.of(island);
-        when(im.getSpawn(Mockito.any())).thenReturn(optionalIsland);
+        when(im.getSpawn(any())).thenReturn(optionalIsland);
         testCanExecute();
-        when(im.hasIsland(Mockito.any(), Mockito.any(User.class))).thenReturn(false);
+        when(im.hasIsland(any(), any(User.class))).thenReturn(false);
         assertTrue(iec.execute(user, "", Collections.singletonList("tasty")));
-        Mockito.verify(user).sendMessage("commands.island.expel.success", TextVariables.NAME, "target");
-        Mockito.verify(im).spawnTeleport(Mockito.any(), Mockito.any());
+        verify(user).sendMessage("commands.island.expel.success", TextVariables.NAME, "target");
+        verify(im).spawnTeleport(any(), any());
     }
 
     /**
@@ -392,16 +400,16 @@ public class IslandExpelCommandTest {
         GameModeAddon gma = mock(GameModeAddon.class);
         CompositeCommand pc = mock(CompositeCommand.class);
         Optional<CompositeCommand> optionalPlayerCommand = Optional.of(pc);
-        when(pc.getSubCommand(Mockito.anyString())).thenReturn(optionalPlayerCommand);
+        when(pc.getSubCommand(anyString())).thenReturn(optionalPlayerCommand);
         when(gma.getPlayerCommand()).thenReturn(optionalPlayerCommand);
         Optional<GameModeAddon> optionalAddon = Optional.of(gma);
-        when(iwm.getAddon(Mockito.any())).thenReturn(optionalAddon);
-        when(im.getSpawn(Mockito.any())).thenReturn(Optional.empty());
+        when(iwm.getAddon(any())).thenReturn(optionalAddon);
+        when(im.getSpawn(any())).thenReturn(Optional.empty());
         testCanExecute();
-        when(im.hasIsland(Mockito.any(), Mockito.any(User.class))).thenReturn(false);
+        when(im.hasIsland(any(), any(User.class))).thenReturn(false);
         assertTrue(iec.execute(user, "", Collections.singletonList("tasty")));
-        Mockito.verify(user).sendMessage("commands.island.expel.success", TextVariables.NAME, "target");
-        Mockito.verify(addon).logWarning(Mockito.eq("Expel: target had no island, so one was created"));
+        verify(user).sendMessage("commands.island.expel.success", TextVariables.NAME, "target");
+        verify(addon).logWarning(eq("Expel: target had no island, so one was created"));
     }
 
     /**
@@ -412,16 +420,16 @@ public class IslandExpelCommandTest {
         GameModeAddon gma = mock(GameModeAddon.class);
         CompositeCommand pc = mock(CompositeCommand.class);
         Optional<CompositeCommand> optionalPlayerCommand = Optional.empty();
-        when(pc.getSubCommand(Mockito.anyString())).thenReturn(optionalPlayerCommand);
+        when(pc.getSubCommand(anyString())).thenReturn(optionalPlayerCommand);
         when(gma.getPlayerCommand()).thenReturn(optionalPlayerCommand);
         Optional<GameModeAddon> optionalAddon = Optional.of(gma);
-        when(iwm.getAddon(Mockito.any())).thenReturn(optionalAddon);
-        when(im.getSpawn(Mockito.any())).thenReturn(Optional.empty());
+        when(iwm.getAddon(any())).thenReturn(optionalAddon);
+        when(im.getSpawn(any())).thenReturn(Optional.empty());
         testCanExecute();
-        when(im.hasIsland(Mockito.any(), Mockito.any(User.class))).thenReturn(false);
+        when(im.hasIsland(any(), any(User.class))).thenReturn(false);
         assertFalse(iec.execute(user, "", Collections.singletonList("tasty")));
-        Mockito.verify(addon).logError(Mockito.eq("Expel: target had no island, and one could not be created"));
-        Mockito.verify(user).sendMessage("commands.island.expel.cannot-expel");
+        verify(addon).logError(eq("Expel: target had no island, and one could not be created"));
+        verify(user).sendMessage("commands.island.expel.cannot-expel");
     }
 
 }

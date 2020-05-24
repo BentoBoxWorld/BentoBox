@@ -18,6 +18,7 @@ import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.permissions.PermissionAttachmentInfo;
@@ -532,7 +533,15 @@ public class User {
      * @return true if the command was successful, otherwise false
      */
     public boolean performCommand(String command) {
-        return player.performCommand(command);
+        PlayerCommandPreprocessEvent event = new PlayerCommandPreprocessEvent(getPlayer(), command);
+        Bukkit.getPluginManager().callEvent(event);
+         
+        // only perform the command, if the event wasn't cancelled by an other plugin:
+        if (!event.isCancelled()) {
+            return getPlayer().performCommand(event.getMessage());
+        }
+        // Cancelled, but it was recognized, so return true
+        return true;
     }
 
     /**
