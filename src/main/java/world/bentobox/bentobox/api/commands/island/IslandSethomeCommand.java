@@ -59,7 +59,7 @@ public class IslandSethomeCommand extends ConfirmableCommand {
                     return false;
                 }
             } else {
-                user.sendMessage("general.errors.no-permission");
+                user.sendMessage("general.errors.no-permission", TextVariables.PERMISSION, this.getPermissionPrefix() + "island.maxhomes.[number]");
                 return false;
             }
         }
