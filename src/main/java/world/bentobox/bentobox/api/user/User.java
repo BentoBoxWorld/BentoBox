@@ -535,7 +535,7 @@ public class User {
     public boolean performCommand(String command) {
         PlayerCommandPreprocessEvent event = new PlayerCommandPreprocessEvent(getPlayer(), command);
         Bukkit.getPluginManager().callEvent(event);
-         
+
         // only perform the command, if the event wasn't cancelled by an other plugin:
         if (!event.isCancelled()) {
             return getPlayer().performCommand(event.getMessage());

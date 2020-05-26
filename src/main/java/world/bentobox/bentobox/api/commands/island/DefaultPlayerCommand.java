@@ -107,7 +107,7 @@ public abstract class DefaultPlayerCommand extends CompositeCommand
             String command = this.<GameModeAddon>getAddon().getWorldSettings().getDefaultPlayerAction();
 
             // Perform command or use "go" command.
-            if (command != null && user.performCommand("/" + label + " " + command))
+            if (command != null && user.performCommand(label + " " + command))
             {
                 return true;
             }
@@ -124,7 +124,7 @@ public abstract class DefaultPlayerCommand extends CompositeCommand
             String command = this.<GameModeAddon>getAddon().getWorldSettings().getDefaultNewPlayerAction();
 
             // Perform command or use "create" command.
-            if (command != null && user.performCommand("/" + label + " " + command))
+            if (command != null && user.performCommand(label + " " + command))
             {
                 return true;
             }
