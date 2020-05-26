@@ -173,8 +173,11 @@ public class AddonsManager {
      */
     public void enableAddons() {
         if (getLoadedAddons().isEmpty()) return;
-        plugin.log("Enabling addons...");
-        getLoadedAddons().forEach(this::enableAddon);
+        plugin.log("Enabling game mode addons...");
+        // Enable GameModes first, then other addons
+        getLoadedAddons().stream().filter(GameModeAddon.class::isInstance).forEach(this::enableAddon);
+        plugin.log("Enabling other addons...");
+        getLoadedAddons().stream().filter(g -> !(g instanceof GameModeAddon)).forEach(this::enableAddon);
         // Set perms for enabled addons
         this.getEnabledAddons().forEach(this::setPerms);
         plugin.log("Addons successfully enabled.");
@@ -217,6 +220,7 @@ public class AddonsManager {
      * @param addon addon
      */
     private void enableAddon(Addon addon) {
+        plugin.log("Enabling " + addon.getDescription().getName() + "...");
         try {
             // If this is a GameModeAddon create the worlds, register it and load the blueprints
             if (addon instanceof GameModeAddon) {
@@ -241,7 +245,6 @@ public class AddonsManager {
             }
             new AddonEvent().builder().addon(addon).reason(AddonEvent.Reason.ENABLE).build();
             addon.setState(Addon.State.ENABLED);
-            plugin.log("Enabling " + addon.getDescription().getName() + "...");
         } catch (NoClassDefFoundError | NoSuchMethodError | NoSuchFieldError e) {
             // Looks like the addon is incompatible, because it tries to refer to missing classes...
             handleAddonIncompatibility(addon);
