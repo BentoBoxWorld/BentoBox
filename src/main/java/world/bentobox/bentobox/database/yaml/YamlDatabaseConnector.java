@@ -144,7 +144,7 @@ public class YamlDatabaseConnector implements DatabaseConnector {
         // Run through the file and add in the comments
         File commentedFile = new File(file.getPath() + ".tmp");
         List<String> newFile = new ArrayList<>();
-        try (Scanner scanner = new Scanner(file)) {
+        try (Scanner scanner = new Scanner(file, "UTF-8")) {
             while (scanner.hasNextLine()) {
                 String nextLine = scanner.nextLine();
                 // See if there are any comments in this line
