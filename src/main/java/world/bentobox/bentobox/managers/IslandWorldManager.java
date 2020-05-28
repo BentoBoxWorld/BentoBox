@@ -24,6 +24,7 @@ import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.hooks.MultiverseCoreHook;
+import world.bentobox.bentobox.lists.Flags;
 
 /**
  * Handles registration and management of worlds
@@ -656,6 +657,18 @@ public class IslandWorldManager {
     @NonNull
     public List<String> getOnLeaveCommands(@NonNull World world) {
         return gameModes.containsKey(world) ? gameModes.get(world).getWorldSettings().getOnLeaveCommands() : Collections.emptyList();
+    }
+    
+    /**
+     * Returns a list of commands to execute when the player respawns and {@link Flags#ISLAND_RESPAWN} is true.
+     * @param world the World
+     * @return a list of commands
+     * @since 1.14.0
+     * @see #getOnJoinCommands(World)
+     */
+    @NonNull
+    public List<String> getOnRespawnCommands(@NonNull World world) {
+        return gameModes.containsKey(world) ? gameModes.get(world).getWorldSettings().getOnRespawnCommands() : Collections.emptyList();
     }
 
     /**

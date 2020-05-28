@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.util.Vector;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
@@ -88,16 +87,7 @@ public class AdminDeleteCommand extends ConfirmableCommand {
             getIslands().removePlayer(getWorld(), targetUUID);
             if (target.isOnline()) {
                 // Execute commands when leaving
-                getIWM().getOnLeaveCommands(getWorld()).forEach(command -> {
-                    command = command.replace("[player]", target.getName());
-                    if (command.startsWith("[SUDO]")) {
-                        // Execute the command by the player
-                        target.performCommand(command.substring(6));
-                    } else {
-                        // Otherwise execute as the server console
-                        getPlugin().getServer().dispatchCommand(Bukkit.getConsoleSender(), command);
-                    }
-                });
+                Util.runCommands(user, getIWM().getOnLeaveCommands(getWorld()), "leave");
                 // Remove money inventory etc.
                 if (getIWM().isOnLeaveResetEnderChest(getWorld())) {
                     target.getPlayer().getEnderChest().clear();

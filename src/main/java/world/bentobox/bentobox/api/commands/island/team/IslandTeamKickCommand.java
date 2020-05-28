@@ -3,8 +3,6 @@ package world.bentobox.bentobox.api.commands.island.team;
 import java.util.List;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
-
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.events.island.IslandEvent;
@@ -13,6 +11,7 @@ import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.RanksManager;
+import world.bentobox.bentobox.util.Util;
 
 
 public class IslandTeamKickCommand extends ConfirmableCommand {
@@ -80,16 +79,7 @@ public class IslandTeamKickCommand extends ConfirmableCommand {
         Island oldIsland = getIslands().getIsland(getWorld(), targetUUID);
         getIslands().removePlayer(getWorld(), targetUUID);
         // Execute commands when leaving
-        getIWM().getOnLeaveCommands(oldIsland.getWorld()).forEach(command -> {
-            command = command.replace("[player]", target.getName());
-            if (command.startsWith("[SUDO]") && target.isOnline()) {
-                // Execute the command by the player
-                target.performCommand(command.substring(6));
-            } else {
-                // Otherwise execute as the server console
-                getPlugin().getServer().dispatchCommand(Bukkit.getConsoleSender(), command);
-            }
-        });
+        Util.runCommands(target, getIWM().getOnLeaveCommands(oldIsland.getWorld()), "leave");
         // Remove money inventory etc.
         if (getIWM().isOnLeaveResetEnderChest(getWorld())) {
             if (target.isOnline()) {

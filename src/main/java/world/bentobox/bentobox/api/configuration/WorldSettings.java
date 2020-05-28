@@ -12,6 +12,7 @@ import org.bukkit.entity.EntityType;
 import org.eclipse.jdt.annotation.NonNull;
 
 import world.bentobox.bentobox.api.flags.Flag;
+import world.bentobox.bentobox.lists.Flags;
 
 /**
  * Contains world-specific settings that must be provided by the {@link world.bentobox.bentobox.api.addons.GameModeAddon} in order to register its Worlds.
@@ -314,6 +315,17 @@ public interface WorldSettings extends ConfigObject {
      */
     @NonNull
     List<String> getOnLeaveCommands();
+    
+    /**
+     * Returns a list of commands that should be executed when the player respawns after death if {@link Flags#ISLAND_RESPAWN} is true.<br/>
+     * @return a list of commands.
+     * @since 1.14.0
+     * @see #getOnJoinCommands()
+     */
+    @NonNull
+    default List<String> getOnRespawnCommands() {
+        return Collections.emptyList();
+    }
 
     /**
      * @return true if the default world generator should not operate in this world

@@ -716,20 +716,7 @@ public class IslandsManager {
         // If this is a new island, then run commands and do resets
         if (newIsland) {
             // Execute commands
-            plugin.getIWM().getOnJoinCommands(world).forEach(command -> {
-                command = command.replace("[player]", user.getName());
-                if (command.startsWith("[SUDO]") && user.isOnline()) {
-                    // Execute the command by the player
-                    if (!user.performCommand(command.substring(6))) {
-                        plugin.logError("Could not execute join command for " + user.getName() + ": " + command.substring(6));
-                    }
-                } else {
-                    // Otherwise execute as the server console
-                    if (!plugin.getServer().dispatchCommand(Bukkit.getConsoleSender(), command)) {
-                        plugin.logError("Could not execute join command as console: " + command);
-                    }
-                }
-            });
+            Util.runCommands(user, plugin.getIWM().getOnJoinCommands(world), "join");
 
             // Remove money inventory etc.
             if (plugin.getIWM().isOnJoinResetEnderChest(world)) {
