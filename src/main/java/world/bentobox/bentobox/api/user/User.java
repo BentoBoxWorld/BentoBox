@@ -349,7 +349,7 @@ public class User {
     public String getTranslation(World world, String reference, String... variables) {
         // Get translation.
         String addonPrefix = plugin.getIWM()
-                .getAddon(world).map(a -> a.getDescription().getName().toLowerCase() + ".").orElse("");
+                .getAddon(world).map(a -> a.getDescription().getName().toLowerCase(Locale.ENGLISH) + ".").orElse("");
         return translate(addonPrefix, reference, variables);
     }
 
@@ -363,7 +363,7 @@ public class User {
      */
     public String getTranslation(String reference, String... variables) {
         // Get addonPrefix
-        String addonPrefix = addon == null ? "" : addon.getDescription().getName().toLowerCase() + ".";
+        String addonPrefix = addon == null ? "" : addon.getDescription().getName().toLowerCase(Locale.ENGLISH) + ".";
         return translate(addonPrefix, reference, variables);
     }
 

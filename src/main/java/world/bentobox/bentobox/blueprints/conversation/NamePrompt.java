@@ -1,5 +1,7 @@
 package world.bentobox.bentobox.blueprints.conversation;
 
+import java.util.Locale;
+
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.StringPrompt;
@@ -44,7 +46,7 @@ public class NamePrompt extends StringPrompt {
             return this;
         }
         // Make a uniqueid
-        StringBuilder uniqueId = new StringBuilder(ChatColor.stripColor(input).toLowerCase().replace(" ", "_"));
+        StringBuilder uniqueId = new StringBuilder(ChatColor.stripColor(input).toLowerCase(Locale.ENGLISH).replace(" ", "_"));
         // Check if this name is unique
         int max = 0;
         while (max++ < 32 && addon.getPlugin().getBlueprintsManager().getBlueprintBundles(addon).containsKey(uniqueId.toString())) {

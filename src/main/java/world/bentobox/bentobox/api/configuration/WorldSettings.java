@@ -3,6 +3,7 @@ package world.bentobox.bentobox.api.configuration;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -478,7 +479,7 @@ public interface WorldSettings extends ConfigObject {
      */
     default String getAdminCommandAliases()
     {
-        return this.getFriendlyName().toLowerCase() + "admin";
+        return this.getFriendlyName().toLowerCase(Locale.ENGLISH) + "admin";
     }
 
 
@@ -492,7 +493,7 @@ public interface WorldSettings extends ConfigObject {
      */
     default String getPlayerCommandAliases()
     {
-        return this.getFriendlyName().toLowerCase();
+        return this.getFriendlyName().toLowerCase(Locale.ENGLISH);
     }
 
 

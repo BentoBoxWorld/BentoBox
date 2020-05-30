@@ -2,6 +2,7 @@ package world.bentobox.bentobox.commands;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
@@ -12,6 +13,7 @@ import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.versions.ServerCompatibility;
+import world.bentobox.bentobox.versions.ServerCompatibility.ServerSoftware;
 
 /**
  * Displays information about Gamemodes, Addons and versioning.
@@ -39,7 +41,7 @@ public class BentoBoxVersionCommand extends CompositeCommand {
         ServerCompatibility.ServerVersion serverVersion = ServerCompatibility.getInstance().getServerVersion();
 
         user.sendMessage("commands.bentobox.version.server",
-                TextVariables.NAME, serverSoftware != null ? serverSoftware.toString() : user.getTranslation("general.invalid"),
+                TextVariables.NAME, serverSoftware.equals(ServerSoftware.UNKNOWN) ? user.getTranslation("general.invalid") + " (" + serverSoftware.getName() + ")" : serverSoftware.toString(),
                         TextVariables.VERSION, serverVersion != null ? serverVersion.toString() : user.getTranslation("general.invalid"));
         user.sendMessage("commands.bentobox.version.plugin-version", TextVariables.VERSION, getPlugin().getDescription().getVersion());
         user.sendMessage("commands.bentobox.version.database", "[database]", getSettings().getDatabaseType().toString());
@@ -79,7 +81,7 @@ public class BentoBoxVersionCommand extends CompositeCommand {
         });
 
         user.sendMessage("commands.bentobox.version.loaded-addons");
-        getPlugin().getAddonsManager().getAddons().stream().sorted(Comparator.comparing(o -> o.getDescription().getName().toLowerCase()))
+        getPlugin().getAddonsManager().getAddons().stream().sorted(Comparator.comparing(o -> o.getDescription().getName().toLowerCase(Locale.ENGLISH)))
         .forEach(a -> user.sendMessage("commands.bentobox.version.addon-syntax", TextVariables.NAME, a.getDescription().getName(),
                 TextVariables.VERSION, a.getDescription().getVersion(), "[state]", a.getState().toString()));
 

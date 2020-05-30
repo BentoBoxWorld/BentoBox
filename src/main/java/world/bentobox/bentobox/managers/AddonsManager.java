@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -154,7 +155,7 @@ public class AddonsManager {
             if (addon instanceof GameModeAddon) {
                 GameModeAddon gameMode = (GameModeAddon) addon;
                 if (!gameMode.getWorldSettings().getWorldName().isEmpty()) {
-                    worldNames.put(gameMode.getWorldSettings().getWorldName().toLowerCase(), gameMode);
+                    worldNames.put(gameMode.getWorldSettings().getWorldName().toLowerCase(Locale.ENGLISH), gameMode);
                 }
             }
             // Addon successfully loaded
@@ -506,7 +507,7 @@ public class AddonsManager {
     @Nullable
     public ChunkGenerator getDefaultWorldGenerator(String worldName, String id) {
         // Clean up world name
-        String w = worldName.replace("_nether", "").replace("_the_end", "").toLowerCase();
+        String w = worldName.replace("_nether", "").replace("_the_end", "").toLowerCase(Locale.ENGLISH);
         if (worldNames.containsKey(w)) {
             return worldNames.get(w).getDefaultWorldGenerator(worldName, id);
         }

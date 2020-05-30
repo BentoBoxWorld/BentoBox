@@ -2,6 +2,7 @@ package world.bentobox.bentobox.api.commands.island;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 import org.bukkit.block.BlockFace;
@@ -66,7 +67,7 @@ public class IslandNearCommand extends CompositeCommand {
             if (!name.isEmpty()) {
                 noNeighbors = false;
                 user.sendMessage("commands.island.near.syntax",
-                        "[direction]", user.getTranslation("commands.island.near." + face.name().toLowerCase()),
+                        "[direction]", user.getTranslation("commands.island.near." + face.name().toLowerCase(Locale.ENGLISH)),
                         TextVariables.NAME, name);
             }
         }
