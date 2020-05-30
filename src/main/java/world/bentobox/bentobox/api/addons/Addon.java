@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.jar.JarEntry;
@@ -212,7 +213,7 @@ public abstract class Addon {
             Bukkit.getLogger().severe("Could not save config! " + this.getDescription().getName() + " " + e.getMessage());
         }
     }
-    
+
     /**
      * Discards any data in getConfig() and reloads from disk.
      * @since 1.13.0
@@ -419,7 +420,7 @@ public abstract class Addon {
      * @return Permission prefix string
      */
     public String getPermissionPrefix() {
-        return this.getDescription().getName().toLowerCase() + ".";
+        return this.getDescription().getName().toLowerCase(Locale.ENGLISH) + ".";
     }
 
     /**
@@ -437,7 +438,7 @@ public abstract class Addon {
      * @return request response, null if no response.
      */
     public Object request(String label, Map<String, Object> metaData) {
-        label = label.toLowerCase();
+        label = label.toLowerCase(Locale.ENGLISH);
         AddonRequestHandler handler = requestHandlers.get(label);
         if(handler != null) {
             return handler.handle(metaData);

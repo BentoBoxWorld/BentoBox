@@ -5,6 +5,7 @@ import java.math.RoundingMode;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
@@ -418,7 +419,7 @@ public class BlueprintPaster {
         // Sign text must be stored under the addon's name.sign.line0,1,2,3 in the yaml file
         if (island != null && !lines.isEmpty() && lines.get(0).equalsIgnoreCase(TextVariables.START_TEXT)) {
             // Get the addon that is operating in this world
-            String addonName = plugin.getIWM().getAddon(island.getWorld()).map(addon -> addon.getDescription().getName().toLowerCase()).orElse("");
+            String addonName = plugin.getIWM().getAddon(island.getWorld()).map(addon -> addon.getDescription().getName().toLowerCase(Locale.ENGLISH)).orElse("");
             for (int i = 0; i < 4; i++) {
                 s.setLine(i, ChatColor.translateAlternateColorCodes('&', plugin.getLocalesManager().getOrDefault(User.getInstance(island.getOwner()),
                         addonName + ".sign.line" + i,"").replace(TextVariables.NAME, name)));

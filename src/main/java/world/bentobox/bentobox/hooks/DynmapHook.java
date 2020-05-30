@@ -1,6 +1,7 @@
 package world.bentobox.bentobox.hooks;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import org.bukkit.Material;
@@ -54,7 +55,7 @@ public class DynmapHook extends Hook {
         String name = addon.getDescription().getName();
         if (getMarkerSet(addon) == null) {
             // From the javadoc: createMarkerSet(String id, String label, Set<MarkerIcon> allowedIcons, boolean persistent)
-            MarkerSet set = markerAPI.createMarkerSet(name.toLowerCase() + ".markers", name, null, true);
+            MarkerSet set = markerAPI.createMarkerSet(name.toLowerCase(Locale.ENGLISH) + ".markers", name, null, true);
             markerSets.put(addon, set);
         }
     }
@@ -69,7 +70,7 @@ public class DynmapHook extends Hook {
         if (markerSets.containsKey(addon)) {
             return markerSets.get(addon);
         } else {
-            return markerAPI.getMarkerSet(addon.getDescription().getName().toLowerCase() + ".markers");
+            return markerAPI.getMarkerSet(addon.getDescription().getName().toLowerCase(Locale.ENGLISH) + ".markers");
         }
     }
 
