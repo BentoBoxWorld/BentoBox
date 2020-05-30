@@ -155,7 +155,7 @@ public class IslandBanlistCommandTest {
      */
     @Test
     public void testTooLowRank() {
-        when(island.getRank(any())).thenReturn(RanksManager.MEMBER_RANK);
+        when(island.getRank(any(User.class))).thenReturn(RanksManager.MEMBER_RANK);
         when(island.getRankCommand(anyString())).thenReturn(RanksManager.OWNER_RANK);
         IslandBanlistCommand iubc = new IslandBanlistCommand(ic);
         assertFalse(iubc.canExecute(user, iubc.getLabel(), Collections.emptyList()));

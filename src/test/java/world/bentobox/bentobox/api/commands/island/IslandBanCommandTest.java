@@ -124,7 +124,7 @@ public class IslandBanCommandTest {
         // Island Banned list initialization
         when(island.getBanned()).thenReturn(new HashSet<>());
         when(island.isBanned(any())).thenReturn(false);
-        when(island.getRank(any())).thenReturn(RanksManager.OWNER_RANK);
+        when(island.getRank(any(User.class))).thenReturn(RanksManager.OWNER_RANK);
         when(im.getIsland(any(), any(User.class))).thenReturn(island);
         when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
 
@@ -205,7 +205,7 @@ public class IslandBanCommandTest {
 
     @Test
     public void testTooLowRank() {
-        when(island.getRank(any())).thenReturn(RanksManager.MEMBER_RANK);
+        when(island.getRank(any(User.class))).thenReturn(RanksManager.MEMBER_RANK);
         when(island.getRankCommand(anyString())).thenReturn(RanksManager.OWNER_RANK);
         assertFalse(ibc.canExecute(user, ibc.getLabel(), Collections.singletonList("bill")));
         verify(user).sendMessage("general.errors.no-permission");

@@ -3,6 +3,7 @@ package world.bentobox.bentobox.api.commands.island.team;
 import java.util.List;
 import java.util.UUID;
 
+import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.commands.island.team.Invite.Type;
 import world.bentobox.bentobox.api.events.island.IslandEvent;
@@ -43,7 +44,14 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
         }
         // Get the island owner
         prospectiveOwnerUUID = itc.getInviter(playerUUID);
-        if (prospectiveOwnerUUID == null || !getIslands().hasIsland(getWorld(), prospectiveOwnerUUID)) {
+        if (prospectiveOwnerUUID == null) {
+            user.sendMessage("commands.island.team.invite.errors.invalid-invite");
+            return false;
+        }
+        // Check rank to of inviter
+        Island island = getIslands().getIsland(getWorld(), prospectiveOwnerUUID);
+        String inviteUsage = getParent().getSubCommand("invite").map(CompositeCommand::getUsage).orElse("");
+        if (island == null || island.getRank(prospectiveOwnerUUID) < island.getRankCommand(inviteUsage)) {
             user.sendMessage("commands.island.team.invite.errors.invalid-invite");
             itc.removeInvite(playerUUID);
             return false;
@@ -92,12 +100,12 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
             if (island != null) {
                 island.setRank(user, RanksManager.TRUSTED_RANK);
                 IslandEvent.builder()
-                        .island(island)
-                        .involvedPlayer(user.getUniqueId())
-                        .admin(false)
-                        .reason(IslandEvent.Reason.RANK_CHANGE)
-                        .rankChange(island.getRank(user), RanksManager.TRUSTED_RANK)
-                        .build();
+                .island(island)
+                .involvedPlayer(user.getUniqueId())
+                .admin(false)
+                .reason(IslandEvent.Reason.RANK_CHANGE)
+                .rankChange(island.getRank(user), RanksManager.TRUSTED_RANK)
+                .build();
                 inviter.sendMessage("commands.island.team.trust.success", TextVariables.NAME, user.getName());
                 user.sendMessage("commands.island.team.trust.you-are-trusted", TextVariables.NAME, inviter.getName());
             }
@@ -113,12 +121,12 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
             if (island != null) {
                 island.setRank(user, RanksManager.COOP_RANK);
                 IslandEvent.builder()
-                        .island(island)
-                        .involvedPlayer(user.getUniqueId())
-                        .admin(false)
-                        .reason(IslandEvent.Reason.RANK_CHANGE)
-                        .rankChange(island.getRank(user), RanksManager.COOP_RANK)
-                        .build();
+                .island(island)
+                .involvedPlayer(user.getUniqueId())
+                .admin(false)
+                .reason(IslandEvent.Reason.RANK_CHANGE)
+                .rankChange(island.getRank(user), RanksManager.COOP_RANK)
+                .build();
                 inviter.sendMessage("commands.island.team.coop.success", TextVariables.NAME, user.getName());
                 user.sendMessage("commands.island.team.coop.you-are-a-coop-member", TextVariables.NAME, inviter.getName());
             }
@@ -165,12 +173,12 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
         .involvedPlayer(playerUUID)
         .build();
         IslandEvent.builder()
-                .island(teamIsland)
-                .involvedPlayer(user.getUniqueId())
-                .admin(false)
-                .reason(IslandEvent.Reason.RANK_CHANGE)
-                .rankChange(teamIsland.getRank(user), RanksManager.MEMBER_RANK)
-                .build();
+        .island(teamIsland)
+        .involvedPlayer(user.getUniqueId())
+        .admin(false)
+        .reason(IslandEvent.Reason.RANK_CHANGE)
+        .rankChange(teamIsland.getRank(user), RanksManager.MEMBER_RANK)
+        .build();
     }
 
     private void cleanPlayer(User user) {

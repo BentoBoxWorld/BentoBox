@@ -107,7 +107,7 @@ public class IslandTeamCoopCommandTest {
         when(im.isOwner(any(), any())).thenReturn(true);
         when(im.getOwner(any(), any())).thenReturn(uuid);
         // Island
-        when(island.getRank(any())).thenReturn(RanksManager.OWNER_RANK);
+        when(island.getRank(any(User.class))).thenReturn(RanksManager.OWNER_RANK);
         when(island.getMemberSet(anyInt(), any(Boolean.class))).thenReturn(ImmutableSet.of(uuid));
         when(im.getIsland(any(), Mockito.any(User.class))).thenReturn(island);
         when(im.getIsland(any(), Mockito.any(UUID.class))).thenReturn(island);
@@ -163,7 +163,7 @@ public class IslandTeamCoopCommandTest {
      */
     @Test
     public void testCanExecuteLowRank() {
-        when(island.getRank(any())).thenReturn(RanksManager.MEMBER_RANK);
+        when(island.getRank(any(User.class))).thenReturn(RanksManager.MEMBER_RANK);
         when(island.getRankCommand(anyString())).thenReturn(RanksManager.OWNER_RANK);
         IslandTeamCoopCommand itl = new IslandTeamCoopCommand(ic);
         assertFalse(itl.canExecute(user, itl.getLabel(), Collections.singletonList("bill")));

@@ -1,12 +1,12 @@
-/**
- *
- */
 package world.bentobox.bentobox.api.commands.island.team;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -27,7 +27,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -84,7 +83,7 @@ public class IslandTeamUncoopCommandTest {
 
         // Player
         Player p = mock(Player.class);
-        // Sometimes use Mockito.withSettings().verboseLogging()
+        // Sometimes use withSettings().verboseLogging()
         user = mock(User.class);
         when(user.isOp()).thenReturn(false);
         uuid = UUID.randomUUID();
@@ -103,18 +102,18 @@ public class IslandTeamUncoopCommandTest {
 
         // Player has island to begin with
         im = mock(IslandsManager.class);
-        when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(true);
-        when(im.inTeam(Mockito.any(), Mockito.any(UUID.class))).thenReturn(true);
-        when(im.isOwner(Mockito.any(), Mockito.any())).thenReturn(true);
-        when(im.getOwner(Mockito.any(), Mockito.any())).thenReturn(uuid);
+        when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
+        when(im.inTeam(any(), any(UUID.class))).thenReturn(true);
+        when(im.isOwner(any(), any())).thenReturn(true);
+        when(im.getOwner(any(), any())).thenReturn(uuid);
         island = mock(Island.class);
-        when(island.getRank(Mockito.any())).thenReturn(RanksManager.OWNER_RANK);
-        when(im.getIsland(Mockito.any(), Mockito.any(User.class))).thenReturn(island);
-        when(im.getIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(island);
+        when(island.getRank(any(User.class))).thenReturn(RanksManager.OWNER_RANK);
+        when(im.getIsland(any(), any(User.class))).thenReturn(island);
+        when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
         when(plugin.getIslands()).thenReturn(im);
 
         // Has team
-        when(im.inTeam(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
+        when(im.inTeam(any(), eq(uuid))).thenReturn(true);
 
         // Player Manager
         pm = mock(PlayersManager.class);
@@ -128,12 +127,12 @@ public class IslandTeamUncoopCommandTest {
 
         // Locales
         LocalesManager lm = mock(LocalesManager.class);
-        when(lm.get(Mockito.any(), Mockito.any())).thenReturn("mock translation");
+        when(lm.get(any(), any())).thenReturn("mock translation");
         when(plugin.getLocalesManager()).thenReturn(lm);
 
         // IWM friendly name
         IslandWorldManager iwm = mock(IslandWorldManager.class);
-        when(iwm.getFriendlyName(Mockito.any())).thenReturn("BSkyBlock");
+        when(iwm.getFriendlyName(any())).thenReturn("BSkyBlock");
         when(plugin.getIWM()).thenReturn(iwm);
     }
 
@@ -142,11 +141,11 @@ public class IslandTeamUncoopCommandTest {
      */
     @Test
     public void testExecuteNoisland() {
-        when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(false);
-        when(im.inTeam(Mockito.any(), Mockito.any(UUID.class))).thenReturn(false);
+        when(im.hasIsland(any(), any(UUID.class))).thenReturn(false);
+        when(im.inTeam(any(), any(UUID.class))).thenReturn(false);
         IslandTeamUncoopCommand itl = new IslandTeamUncoopCommand(ic);
         assertFalse(itl.execute(user, itl.getLabel(), Collections.singletonList("bill")));
-        Mockito.verify(user).sendMessage(Mockito.eq("general.errors.no-island"));
+        verify(user).sendMessage(eq("general.errors.no-island"));
     }
 
     /**
@@ -154,11 +153,11 @@ public class IslandTeamUncoopCommandTest {
      */
     @Test
     public void testExecuteLowRank() {
-        when(island.getRank(Mockito.any())).thenReturn(RanksManager.MEMBER_RANK);
+        when(island.getRank(any(User.class))).thenReturn(RanksManager.MEMBER_RANK);
         when(island.getRankCommand(anyString())).thenReturn(RanksManager.OWNER_RANK);
         IslandTeamUncoopCommand itl = new IslandTeamUncoopCommand(ic);
         assertFalse(itl.execute(user, itl.getLabel(), Collections.singletonList("bill")));
-        Mockito.verify(user).sendMessage(Mockito.eq("general.errors.no-permission"));
+        verify(user).sendMessage(eq("general.errors.no-permission"));
     }
 
     /**
@@ -177,9 +176,9 @@ public class IslandTeamUncoopCommandTest {
     @Test
     public void testExecuteUnknownPlayer() {
         IslandTeamUncoopCommand itl = new IslandTeamUncoopCommand(ic);
-        when(pm.getUUID(Mockito.any())).thenReturn(null);
+        when(pm.getUUID(any())).thenReturn(null);
         assertFalse(itl.execute(user, itl.getLabel(), Collections.singletonList("tastybento")));
-        Mockito.verify(user).sendMessage("general.errors.unknown-player", "[name]", "tastybento");
+        verify(user).sendMessage("general.errors.unknown-player", "[name]", "tastybento");
     }
 
     /**
@@ -188,12 +187,12 @@ public class IslandTeamUncoopCommandTest {
     @Test
     public void testExecuteSamePlayer() {
         PowerMockito.mockStatic(User.class);
-        when(User.getInstance(Mockito.any(UUID.class))).thenReturn(user);
+        when(User.getInstance(any(UUID.class))).thenReturn(user);
         when(user.isOnline()).thenReturn(true);
         IslandTeamUncoopCommand itl = new IslandTeamUncoopCommand(ic);
-        when(pm.getUUID(Mockito.any())).thenReturn(uuid);
+        when(pm.getUUID(any())).thenReturn(uuid);
         assertFalse(itl.execute(user, itl.getLabel(), Collections.singletonList("tastybento")));
-        Mockito.verify(user).sendMessage(Mockito.eq("commands.island.team.uncoop.cannot-uncoop-yourself"));
+        verify(user).sendMessage(eq("commands.island.team.uncoop.cannot-uncoop-yourself"));
     }
 
 
@@ -203,14 +202,14 @@ public class IslandTeamUncoopCommandTest {
     @Test
     public void testExecutePlayerHasRank() {
         PowerMockito.mockStatic(User.class);
-        when(User.getInstance(Mockito.any(UUID.class))).thenReturn(user);
+        when(User.getInstance(any(UUID.class))).thenReturn(user);
         when(user.isOnline()).thenReturn(true);
         IslandTeamUncoopCommand itl = new IslandTeamUncoopCommand(ic);
-        when(pm.getUUID(Mockito.any())).thenReturn(notUUID);
-        when(im.inTeam(Mockito.any(), Mockito.any())).thenReturn(true);
-        when(im.getMembers(Mockito.any(), Mockito.any())).thenReturn(Collections.singleton(notUUID));
+        when(pm.getUUID(any())).thenReturn(notUUID);
+        when(im.inTeam(any(), any())).thenReturn(true);
+        when(im.getMembers(any(), any())).thenReturn(Collections.singleton(notUUID));
         assertFalse(itl.execute(user, itl.getLabel(), Collections.singletonList("bento")));
-        Mockito.verify(user).sendMessage(Mockito.eq("commands.island.team.uncoop.cannot-uncoop-member"));
+        verify(user).sendMessage(eq("commands.island.team.uncoop.cannot-uncoop-member"));
     }
 
     /**
@@ -228,7 +227,7 @@ public class IslandTeamUncoopCommandTest {
     @Test
     public void testTabCompleteNoIsland() {
         // No island
-        when(im.getIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(null);
+        when(im.getIsland(any(), any(UUID.class))).thenReturn(null);
         IslandTeamUncoopCommand ibc = new IslandTeamUncoopCommand(ic);
         // Set up the user
         User user = mock(User.class);
@@ -264,9 +263,9 @@ public class IslandTeamUncoopCommandTest {
         // Return a set of players
         PowerMockito.mockStatic(Bukkit.class);
         OfflinePlayer offlinePlayer = mock(OfflinePlayer.class);
-        when(Bukkit.getOfflinePlayer(Mockito.any(UUID.class))).thenReturn(offlinePlayer);
+        when(Bukkit.getOfflinePlayer(any(UUID.class))).thenReturn(offlinePlayer);
         when(offlinePlayer.getName()).thenReturn("adam", "ben", "cara", "dave", "ed", "frank", "freddy", "george", "harry", "ian", "joe");
-        when(island.getRank(Mockito.any())).thenReturn(
+        when(island.getRank(any(User.class))).thenReturn(
                 RanksManager.COOP_RANK,
                 RanksManager.COOP_RANK,
                 RanksManager.COOP_RANK,

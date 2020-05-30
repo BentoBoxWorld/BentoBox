@@ -193,7 +193,7 @@ public class AdminGetrankCommandTest {
     public void testExecuteUserStringListOfString() {
         // Set the target
         testCanExecuteKnownPlayerHasIslandSuccess();
-        when(island.getRank(any())).thenReturn(RanksManager.SUB_OWNER_RANK);
+        when(island.getRank(any(User.class))).thenReturn(RanksManager.SUB_OWNER_RANK);
         when(user.getTranslation(any())).thenReturn("sub-owner", "sub-owner");
         when(island.getOwner()).thenReturn(targetUUID);
         when(pm.getName(targetUUID)).thenReturn("tastybento");

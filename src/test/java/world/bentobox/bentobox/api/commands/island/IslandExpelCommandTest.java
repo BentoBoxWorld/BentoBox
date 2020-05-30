@@ -129,7 +129,7 @@ public class IslandExpelCommandTest {
         when(Bukkit.getScheduler()).thenReturn(sch);
 
         // Island Banned list initialization
-        when(island.getRank(any())).thenReturn(RanksManager.OWNER_RANK);
+        when(island.getRank(any(User.class))).thenReturn(RanksManager.OWNER_RANK);
         when(im.getIsland(any(), any(User.class))).thenReturn(island);
         when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
 
@@ -240,7 +240,7 @@ public class IslandExpelCommandTest {
     @Test
     public void testCanExecuteLowRank() {
         when(im.hasIsland(any(), any(User.class))).thenReturn(true);
-        when(island.getRank(any())).thenReturn(RanksManager.VISITOR_RANK);
+        when(island.getRank(any(User.class))).thenReturn(RanksManager.VISITOR_RANK);
         when(island.getRankCommand(anyString())).thenReturn(RanksManager.OWNER_RANK);
         assertFalse(iec.canExecute(user, "", Collections.singletonList("tasty")));
         verify(user).sendMessage("general.errors.no-permission");

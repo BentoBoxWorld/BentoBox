@@ -114,8 +114,11 @@ public class IslandTeamInviteAcceptCommandTest {
         when(im.inTeam(any(), any(UUID.class))).thenReturn(true);
         when(im.isOwner(any(), any())).thenReturn(true);
         when(im.getOwner(any(), any())).thenReturn(uuid);
+        when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
         // Island
-        when(island.getRank(any())).thenReturn(RanksManager.OWNER_RANK);
+        when(island.getRank(any(User.class))).thenReturn(RanksManager.OWNER_RANK);
+        when(island.getRank(any(UUID.class))).thenReturn(RanksManager.OWNER_RANK);
+        when(island.getRankCommand(anyString())).thenReturn(RanksManager.OWNER_RANK);
         when(im.getIsland(any(), any(User.class))).thenReturn(island);
         when(plugin.getIslands()).thenReturn(im);
 
@@ -201,9 +204,25 @@ public class IslandTeamInviteAcceptCommandTest {
     public void testCanExecuteInvalidInvite() {
         when(itc.isInvited(any())).thenReturn(true);
         when(im.inTeam(any(), any())).thenReturn(false);
-        when(im.hasIsland(any(), any(UUID.class))).thenReturn(false);
+        when(island.getRank(any(UUID.class))).thenReturn(RanksManager.VISITOR_RANK);
         assertFalse(c.canExecute(user, "accept", Collections.emptyList()));
+        verify(user, never()).sendMessage("commands.island.team.invite.errors.you-already-are-in-team");
         verify(user).sendMessage("commands.island.team.invite.errors.invalid-invite");
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteAcceptCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     */
+    @Test
+    public void testCanExecuteSubOwnerRankInvite() {
+        when(itc.isInvited(any())).thenReturn(true);
+        when(im.inTeam(any(), any())).thenReturn(false);
+        when(island.getRank(any(UUID.class))).thenReturn(RanksManager.SUB_OWNER_RANK);
+        when(island.getRankCommand(anyString())).thenReturn(RanksManager.SUB_OWNER_RANK);
+        assertTrue(c.canExecute(user, "accept", Collections.emptyList()));
+        verify(user, never()).sendMessage("commands.island.team.invite.errors.you-already-are-in-team");
+        verify(user, never()).sendMessage("commands.island.team.invite.errors.invalid-invite");
+        verify(pim).callEvent(any());
     }
 
     /**
@@ -213,9 +232,8 @@ public class IslandTeamInviteAcceptCommandTest {
     public void testCanExecuteInvalidInviteNull() {
         when(itc.getInviter(any())).thenReturn(null);
         when(itc.isInvited(any())).thenReturn(true);
-        when(im.inTeam(any(), any())).thenReturn(false);
-        when(im.hasIsland(any(), any(UUID.class))).thenReturn(false);
         assertFalse(c.canExecute(user, "accept", Collections.emptyList()));
+        verify(user, never()).sendMessage("commands.island.team.invite.errors.you-already-are-in-team");
         verify(user).sendMessage("commands.island.team.invite.errors.invalid-invite");
     }
 
@@ -228,8 +246,9 @@ public class IslandTeamInviteAcceptCommandTest {
         when(itc.getInviter(any())).thenReturn(notUUID);
         when(itc.getInvite(any())).thenReturn(invite);
         when(im.inTeam(any(), any())).thenReturn(false);
-        when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
         assertTrue(c.canExecute(user, "accept", Collections.emptyList()));
+        verify(user, never()).sendMessage("commands.island.team.invite.errors.you-already-are-in-team");
+        verify(user, never()).sendMessage("commands.island.team.invite.errors.invalid-invite");
         verify(pim).callEvent(any());
     }
 
@@ -243,8 +262,9 @@ public class IslandTeamInviteAcceptCommandTest {
         when(itc.getInvite(any())).thenReturn(invite);
         when(invite.getType()).thenReturn(Type.TRUST);
         when(im.inTeam(any(), any())).thenReturn(false);
-        when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
         assertTrue(c.canExecute(user, "accept", Collections.emptyList()));
+        verify(user, never()).sendMessage("commands.island.team.invite.errors.you-already-are-in-team");
+        verify(user, never()).sendMessage("commands.island.team.invite.errors.invalid-invite");
         // No event
         verify(pim, never()).callEvent(any());
     }
@@ -259,8 +279,9 @@ public class IslandTeamInviteAcceptCommandTest {
         when(itc.getInvite(any())).thenReturn(invite);
         when(invite.getType()).thenReturn(Invite.Type.COOP);
         when(im.inTeam(any(), any())).thenReturn(false);
-        when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
         assertTrue(c.canExecute(user, "accept", Collections.emptyList()));
+        verify(user, never()).sendMessage("commands.island.team.invite.errors.you-already-are-in-team");
+        verify(user, never()).sendMessage("commands.island.team.invite.errors.invalid-invite");
         // No event
         verify(pim, never()).callEvent(any());
     }
@@ -286,6 +307,8 @@ public class IslandTeamInviteAcceptCommandTest {
         when(teb.build()).thenReturn(ibe);
         when(TeamEvent.builder()).thenReturn(teb);
         assertFalse(c.canExecute(user, "accept", Collections.emptyList()));
+        verify(user, never()).sendMessage("commands.island.team.invite.errors.you-already-are-in-team");
+        verify(user, never()).sendMessage("commands.island.team.invite.errors.invalid-invite");
     }
 
     /**
