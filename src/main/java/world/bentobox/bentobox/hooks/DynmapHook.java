@@ -70,7 +70,7 @@ public class DynmapHook extends Hook {
         if (markerSets.containsKey(addon)) {
             return markerSets.get(addon);
         } else {
-            return markerAPI.getMarkerSet(addon.getDescription().getName().toLowerCase() + ".markers");
+            return markerAPI.getMarkerSet(addon.getDescription().getName().toLowerCase(Locale.ENGLISH) + ".markers");
         }
     }
 
