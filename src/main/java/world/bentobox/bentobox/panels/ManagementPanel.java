@@ -18,6 +18,7 @@ import world.bentobox.bentobox.api.panels.builders.PanelBuilder;
 import world.bentobox.bentobox.api.panels.builders.PanelItemBuilder;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.versions.ServerCompatibility;
+import world.bentobox.bentobox.versions.ServerCompatibility.ServerSoftware;
 
 /**
  * @author Poslovitch
@@ -230,7 +231,7 @@ public class ManagementPanel {
         PanelItemBuilder compatibilityItemBuilder = new PanelItemBuilder()
                 .name(user.getTranslation(LOCALE_REF + "information.state.name"))
                 .description(user.getTranslation(LOCALE_REF + "information.state.description." + compatibility,
-                        TextVariables.NAME, serverSoftware != null ? serverSoftware.toString() : user.getTranslation("general.invalid"),
+                        TextVariables.NAME, serverSoftware.equals(ServerSoftware.UNKNOWN) ? serverSoftware.getName() : serverSoftware.toString(),
                                 TextVariables.VERSION, serverVersion != null ? serverVersion.toString() : user.getTranslation("general.invalid")));
 
         switch (compatibility) {

@@ -76,12 +76,37 @@ public class ServerCompatibility {
         SPIGOT(Compatibility.COMPATIBLE),
         PAPER(Compatibility.SUPPORTED),
         TACOSPIGOT(Compatibility.NOT_SUPPORTED),
-        AKARIN(Compatibility.NOT_SUPPORTED);
+        AKARIN(Compatibility.NOT_SUPPORTED),
+        /**
+         * @since 1.14.0
+         */
+        UNKNOWN(Compatibility.INCOMPATIBLE);
 
         private Compatibility compatibility;
+        /**
+         * @since 1.14.0
+         */
+        private String name;
 
         ServerSoftware(Compatibility compatibility) {
             this.compatibility = compatibility;
+        }
+
+        /**
+         * @return the name
+         * @since 1.14.0
+         */
+        public String getName() {
+            return name;
+        }
+
+        /**
+         * @param name the name to set
+         * @since 1.14.0
+         */
+        public ServerSoftware setName(String name) {
+            this.name = name;
+            return this;
         }
 
         public Compatibility getCompatibility() {
@@ -182,8 +207,7 @@ public class ServerCompatibility {
             // Now, check the server software
             ServerSoftware software = getServerSoftware();
 
-            if (software == null || software.getCompatibility().equals(Compatibility.INCOMPATIBLE)) {
-                // 'software = null' means that it's not listed. And therefore, it's implicitly incompatible.
+            if (software.getCompatibility().equals(Compatibility.INCOMPATIBLE)) {
                 result = Compatibility.INCOMPATIBLE;
                 return result;
             }
@@ -211,13 +235,13 @@ public class ServerCompatibility {
      * @return the {@link ServerSoftware} run by this server or null.
      * @since 1.3.0
      */
-    @Nullable
+    @NonNull
     public ServerSoftware getServerSoftware() {
         String serverSoftware = Bukkit.getServer().getVersion().substring(4).split("-")[0];
         try {
             return ServerSoftware.valueOf(serverSoftware.toUpperCase(Locale.ENGLISH));
         } catch (IllegalArgumentException e) {
-            return null;
+            return ServerSoftware.UNKNOWN.setName(serverSoftware.toUpperCase(Locale.ENGLISH));
         }
     }
 
