@@ -125,7 +125,7 @@ public class IslandTeamInviteCommandTest {
         when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
         when(im.isOwner(any(), eq(uuid))).thenReturn(true);
         when(im.getOwner(any(), eq(uuid))).thenReturn(uuid);
-        when(island.getRank(any())).thenReturn(RanksManager.OWNER_RANK);
+        when(island.getRank(any(User.class))).thenReturn(RanksManager.OWNER_RANK);
         when(im.getIsland(any(), eq(user))).thenReturn(island);
         when(plugin.getIslands()).thenReturn(im);
 
@@ -188,7 +188,7 @@ public class IslandTeamInviteCommandTest {
      */
     @Test
     public void testCanExecuteLowRank() {
-        when(island.getRank(any())).thenReturn(RanksManager.MEMBER_RANK);
+        when(island.getRank(any(User.class))).thenReturn(RanksManager.MEMBER_RANK);
         when(island.getRankCommand(anyString())).thenReturn(RanksManager.OWNER_RANK);
         assertFalse(itl.canExecute(user, itl.getLabel(), Collections.singletonList("target")));
         verify(user).sendMessage(eq("general.errors.no-permission"));

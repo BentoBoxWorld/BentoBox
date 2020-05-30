@@ -1,6 +1,3 @@
-/**
- *
- */
 package world.bentobox.bentobox.api.commands.island.team;
 
 import static org.junit.Assert.assertFalse;
@@ -108,7 +105,7 @@ public class IslandTeamUntrustCommandTest {
         when(im.isOwner(any(), any())).thenReturn(true);
         when(im.getOwner(any(), any())).thenReturn(uuid);
         island = mock(Island.class);
-        when(island.getRank(any())).thenReturn(RanksManager.OWNER_RANK);
+        when(island.getRank(any(User.class))).thenReturn(RanksManager.OWNER_RANK);
         when(im.getIsland(any(), any(User.class))).thenReturn(island);
         when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
         when(plugin.getIslands()).thenReturn(im);
@@ -154,7 +151,7 @@ public class IslandTeamUntrustCommandTest {
      */
     @Test
     public void testExecuteLowRank() {
-        when(island.getRank(any())).thenReturn(RanksManager.MEMBER_RANK);
+        when(island.getRank(any(User.class))).thenReturn(RanksManager.MEMBER_RANK);
         when(island.getRankCommand(any())).thenReturn(RanksManager.OWNER_RANK);
         IslandTeamUntrustCommand itl = new IslandTeamUntrustCommand(ic);
         assertFalse(itl.execute(user, itl.getLabel(), Collections.singletonList("bill")));
@@ -266,7 +263,7 @@ public class IslandTeamUntrustCommandTest {
         OfflinePlayer offlinePlayer = mock(OfflinePlayer.class);
         when(Bukkit.getOfflinePlayer(any(UUID.class))).thenReturn(offlinePlayer);
         when(offlinePlayer.getName()).thenReturn("adam", "ben", "cara", "dave", "ed", "frank", "freddy", "george", "harry", "ian", "joe");
-        when(island.getRank(any())).thenReturn(
+        when(island.getRank(any(User.class))).thenReturn(
                 RanksManager.TRUSTED_RANK,
                 RanksManager.TRUSTED_RANK,
                 RanksManager.TRUSTED_RANK,

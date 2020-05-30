@@ -254,7 +254,7 @@ public class IslandTeamKickCommandTest {
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
         when(pm.getUUID(any())).thenReturn(notUUID);
         when(island.getRankCommand(anyString())).thenReturn(RanksManager.OWNER_RANK);
-        when(island.getRank(any())).thenReturn(RanksManager.VISITOR_RANK);
+        when(island.getRank(any(User.class))).thenReturn(RanksManager.VISITOR_RANK);
         assertFalse(itl.execute(user, itl.getLabel(), Collections.singletonList("poslovitch")));
         verify(user).sendMessage(eq("general.errors.no-permission"));
     }

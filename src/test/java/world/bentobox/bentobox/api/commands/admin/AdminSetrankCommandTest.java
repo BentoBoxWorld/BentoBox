@@ -214,7 +214,7 @@ public class AdminSetrankCommandTest {
         // Set the target
         testCanExecuteKnownPlayerHasIslandSuccess();
         Island island = mock(Island.class);
-        when(island.getRank(any())).thenReturn(RanksManager.SUB_OWNER_RANK);
+        when(island.getRank(any(User.class))).thenReturn(RanksManager.SUB_OWNER_RANK);
         when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
         assertTrue(c.execute(user, "", Arrays.asList("tastybento", "member")));
         verify(user).sendMessage(eq("commands.admin.setrank.rank-set"),

@@ -525,6 +525,16 @@ public class Island implements DataObject {
         return members.getOrDefault(user.getUniqueId(), RanksManager.VISITOR_RANK);
     }
 
+    /**
+     * Get the rank of user for this island
+     * @param userUUID - the User's UUID
+     * @return rank integer
+     * @since 1.14.0
+     */
+    public int getRank(UUID userUUID) {
+        return members.getOrDefault(userUUID, RanksManager.VISITOR_RANK);
+    }
+
     @Override
     public String getUniqueId() {
         return uniqueId;
