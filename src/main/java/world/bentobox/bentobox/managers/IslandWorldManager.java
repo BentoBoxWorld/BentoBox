@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -297,7 +298,7 @@ public class IslandWorldManager {
      * @return the worldName
      */
     public String getWorldName(@NonNull World world) {
-        return gameModes.containsKey(world) ? gameModes.get(world).getWorldSettings().getWorldName().toLowerCase() : world.getName();
+        return gameModes.containsKey(world) ? gameModes.get(world).getWorldSettings().getWorldName().toLowerCase(Locale.ENGLISH) : world.getName();
     }
 
     /**

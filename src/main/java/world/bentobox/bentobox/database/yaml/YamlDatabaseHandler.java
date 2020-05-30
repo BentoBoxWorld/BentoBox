@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
@@ -621,7 +622,7 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             // Find out the value
             Class<Enum> enumClass = (Class<Enum>)clazz;
             try {
-                value = Enum.valueOf(enumClass, ((String)value).toUpperCase());
+                value = Enum.valueOf(enumClass, ((String)value).toUpperCase(Locale.ENGLISH));
             } catch (Exception e) {
                 // This value does not exist - probably admin typed it wrongly
                 // Show what is available and pick one at random

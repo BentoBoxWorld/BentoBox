@@ -2,6 +2,7 @@ package world.bentobox.bentobox.commands;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
@@ -79,7 +80,7 @@ public class BentoBoxVersionCommand extends CompositeCommand {
         });
 
         user.sendMessage("commands.bentobox.version.loaded-addons");
-        getPlugin().getAddonsManager().getAddons().stream().sorted(Comparator.comparing(o -> o.getDescription().getName().toLowerCase()))
+        getPlugin().getAddonsManager().getAddons().stream().sorted(Comparator.comparing(o -> o.getDescription().getName().toLowerCase(Locale.ENGLISH)))
         .forEach(a -> user.sendMessage("commands.bentobox.version.addon-syntax", TextVariables.NAME, a.getDescription().getName(),
                 TextVariables.VERSION, a.getDescription().getVersion(), "[state]", a.getState().toString()));
 

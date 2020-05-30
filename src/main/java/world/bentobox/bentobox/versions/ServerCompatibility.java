@@ -3,6 +3,7 @@ package world.bentobox.bentobox.versions;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
 import org.bukkit.Bukkit;
 import org.eclipse.jdt.annotation.NonNull;
@@ -74,7 +75,7 @@ public class ServerCompatibility {
         GLOWSTONE(Compatibility.INCOMPATIBLE),
         SPIGOT(Compatibility.COMPATIBLE),
         PAPER(Compatibility.SUPPORTED),
-        TACOSPIGOT(Compatibility.NOT_SUPPORTED),        
+        TACOSPIGOT(Compatibility.NOT_SUPPORTED),
         AKARIN(Compatibility.NOT_SUPPORTED);
 
         private Compatibility compatibility;
@@ -129,7 +130,7 @@ public class ServerCompatibility {
          */
         V1_15_2(Compatibility.COMPATIBLE)
         ;
-        
+
 
         private Compatibility compatibility;
 
@@ -214,7 +215,7 @@ public class ServerCompatibility {
     public ServerSoftware getServerSoftware() {
         String serverSoftware = Bukkit.getServer().getVersion().substring(4).split("-")[0];
         try {
-            return ServerSoftware.valueOf(serverSoftware.toUpperCase());
+            return ServerSoftware.valueOf(serverSoftware.toUpperCase(Locale.ENGLISH));
         } catch (IllegalArgumentException e) {
             return null;
         }
@@ -229,7 +230,7 @@ public class ServerCompatibility {
     public ServerVersion getServerVersion() {
         String serverVersion = Bukkit.getServer().getBukkitVersion().split("-")[0].replace(".", "_");
         try {
-            return ServerVersion.valueOf("V" + serverVersion.toUpperCase());
+            return ServerVersion.valueOf("V" + serverVersion.toUpperCase(Locale.ENGLISH));
         } catch (IllegalArgumentException e) {
             return null;
         }
