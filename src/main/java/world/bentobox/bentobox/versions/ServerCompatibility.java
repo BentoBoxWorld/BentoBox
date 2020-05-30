@@ -77,9 +77,15 @@ public class ServerCompatibility {
         PAPER(Compatibility.SUPPORTED),
         TACOSPIGOT(Compatibility.NOT_SUPPORTED),
         AKARIN(Compatibility.NOT_SUPPORTED),
+        /**
+         * @since 1.14.0
+         */
         UNKNOWN(Compatibility.INCOMPATIBLE);
 
         private Compatibility compatibility;
+        /**
+         * @since 1.14.0
+         */
         private String name;
 
         ServerSoftware(Compatibility compatibility) {
