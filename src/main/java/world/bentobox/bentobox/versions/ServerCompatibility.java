@@ -88,6 +88,7 @@ public class ServerCompatibility {
 
         /**
          * @return the name
+         * @since 1.14.0
          */
         public String getName() {
             return name;
@@ -95,6 +96,7 @@ public class ServerCompatibility {
 
         /**
          * @param name the name to set
+         * @since 1.14.0
          */
         public ServerSoftware setName(String name) {
             this.name = name;
