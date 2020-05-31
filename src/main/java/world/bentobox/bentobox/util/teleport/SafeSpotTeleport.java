@@ -3,6 +3,7 @@ package world.bentobox.bentobox.util.teleport;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChunkSnapshot;
@@ -49,6 +50,7 @@ public class SafeSpotTeleport {
     private final BentoBox plugin;
     private List<Pair<Integer, Integer>> chunksToScan;
     private final Runnable runnable;
+    private final CompletableFuture<Boolean> result;
 
     /**
      * Teleports and entity to a safe spot on island
@@ -61,6 +63,7 @@ public class SafeSpotTeleport {
         this.portal = builder.isPortal();
         this.homeNumber = builder.getHomeNumber();
         this.runnable = builder.getRunnable();
+        this.result = builder.getResult();
 
         // If there is no portal scan required, try the desired location immediately
         if (plugin.getIslands().isSafeLocation(location)) {
@@ -71,6 +74,7 @@ public class SafeSpotTeleport {
                 // If this is not a portal teleport, then go to the safe location immediately
                 Util.teleportAsync(entity, location).thenRun(() -> {
                     if (runnable != null) Bukkit.getScheduler().runTask(plugin, runnable);
+                    result.complete(true);
                 });
                 return;
             }
@@ -141,7 +145,10 @@ public class SafeSpotTeleport {
                         makeAndTelport(Material.COBBLESTONE);
                     }
                 }
+                result.complete(false);
             });
+        } else {
+            result.complete(false);
         }
     }
 
@@ -152,6 +159,7 @@ public class SafeSpotTeleport {
         location.getBlock().getRelative(BlockFace.UP).getRelative(BlockFace.UP).setType(m, false);
         Util.teleportAsync(entity, location.clone().add(new Vector(0.5D, 0D, 0.5D))).thenRun(() -> {
             if (runnable != null) Bukkit.getScheduler().runTask(plugin, runnable);
+            result.complete(true);
         });
     }
 
@@ -235,6 +243,7 @@ public class SafeSpotTeleport {
             }
             Util.teleportAsync(entity, loc).thenRun(() -> {
                 if (runnable != null) Bukkit.getScheduler().runTask(plugin, runnable);
+                result.complete(true);
             });
         });
     }
@@ -284,6 +293,7 @@ public class SafeSpotTeleport {
         private String failureMessage = "";
         private Location location;
         private Runnable runnable;
+        private CompletableFuture<Boolean> result = new CompletableFuture<>();
 
         public Builder(BentoBox plugin) {
             this.plugin = plugin;
@@ -361,6 +371,15 @@ public class SafeSpotTeleport {
 
         /**
          * Try to teleport the player
+         * @return CompletableFuture that will become true if successfull and false if not
+         */
+        @Nullable
+        public CompletableFuture<Boolean> buildFuture() {
+            build();
+            return result;
+        }
+        /**
+         * Try to teleport the player
          * @return SafeSpotTeleport
          */
         @Nullable
@@ -368,10 +387,12 @@ public class SafeSpotTeleport {
             // Error checking
             if (entity == null) {
                 plugin.logError("Attempt to safe teleport a null entity!");
+                result.complete(null);
                 return null;
             }
             if (location == null) {
                 plugin.logError("Attempt to safe teleport to a null location!");
+                result.complete(null);
                 return null;
             }
             if (failureMessage.isEmpty() && entity instanceof Player) {
@@ -438,6 +459,13 @@ public class SafeSpotTeleport {
          */
         public Runnable getRunnable() {
             return runnable;
+        }
+
+        /**
+         * @return the result
+         */
+        public CompletableFuture<Boolean> getResult() {
+            return result;
         }
     }
 }

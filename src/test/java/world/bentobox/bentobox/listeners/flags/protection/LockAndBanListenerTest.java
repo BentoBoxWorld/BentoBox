@@ -241,7 +241,7 @@ public class LockAndBanListenerTest {
         // User should see a message
         Mockito.verify(notifier).notify(Mockito.any(), Mockito.anyString());
         // User should be teleported somewhere
-        Mockito.verify(im).homeTeleport(Mockito.any(), Mockito.eq(player));
+        Mockito.verify(im).homeTeleportAsync(Mockito.any(), Mockito.eq(player));
         // Call teleport event
         PlayerTeleportEvent e = new PlayerTeleportEvent(player, inside, outside);
         // Pass to event listener
@@ -316,7 +316,7 @@ public class LockAndBanListenerTest {
         // Player should see a message
         Mockito.verify(notifier).notify(Mockito.any(), Mockito.anyString());
         // User should NOT be teleported somewhere
-        Mockito.verify(im, Mockito.never()).homeTeleport(Mockito.any(), Mockito.eq(player));
+        Mockito.verify(im, Mockito.never()).homeTeleportAsync(Mockito.any(), Mockito.eq(player));
     }
 
     @Test
@@ -374,9 +374,9 @@ public class LockAndBanListenerTest {
         // Player should see a message and nothing should be sent to Player 2
         Mockito.verify(notifier).notify(Mockito.any(), Mockito.anyString());
         // User should be teleported somewhere
-        Mockito.verify(im).homeTeleport(Mockito.any(), Mockito.eq(player));
+        Mockito.verify(im).homeTeleportAsync(Mockito.any(), Mockito.eq(player));
         // Player 2 should not be teleported
-        Mockito.verify(im, Mockito.never()).homeTeleport(Mockito.any(), Mockito.eq(player2));
+        Mockito.verify(im, Mockito.never()).homeTeleportAsync(Mockito.any(), Mockito.eq(player2));
         // Call teleport event
         PlayerTeleportEvent ev = new PlayerTeleportEvent(player, inside, outside);
         // Pass to event listener
@@ -440,7 +440,7 @@ public class LockAndBanListenerTest {
         // User should see a message
         Mockito.verify(notifier).notify(Mockito.any(), Mockito.anyString());
         // User should be teleported somewhere
-        Mockito.verify(im).homeTeleport(Mockito.any(), Mockito.eq(player));
+        Mockito.verify(im).homeTeleportAsync(Mockito.any(), Mockito.eq(player));
         // Call teleport event
         PlayerTeleportEvent e = new PlayerTeleportEvent(player, inside, outside);
         // Pass to event listener
@@ -469,7 +469,7 @@ public class LockAndBanListenerTest {
         // User should not see a message
         Mockito.verify(notifier, Mockito.never()).notify(Mockito.any(), Mockito.anyString());
         // User should not be teleported somewhere
-        Mockito.verify(im, Mockito.never()).homeTeleport(Mockito.any(), Mockito.eq(player));
+        Mockito.verify(im, Mockito.never()).homeTeleportAsync(Mockito.any(), Mockito.eq(player));
     }
 
     @Test
@@ -493,7 +493,7 @@ public class LockAndBanListenerTest {
         // User should not see a message
         Mockito.verify(notifier, Mockito.never()).notify(Mockito.any(), Mockito.anyString());
         // User should not be teleported somewhere
-        Mockito.verify(im, Mockito.never()).homeTeleport(Mockito.any(), Mockito.eq(player));
+        Mockito.verify(im, Mockito.never()).homeTeleportAsync(Mockito.any(), Mockito.eq(player));
     }
 
     @Test
@@ -510,7 +510,7 @@ public class LockAndBanListenerTest {
         // User should not see a message
         Mockito.verify(notifier, Mockito.never()).notify(Mockito.any(), Mockito.anyString());
         // User should not be teleported somewhere
-        Mockito.verify(im, Mockito.never()).homeTeleport(Mockito.any(), Mockito.eq(player));
+        Mockito.verify(im, Mockito.never()).homeTeleportAsync(Mockito.any(), Mockito.eq(player));
     }
 
     @Test
@@ -533,7 +533,7 @@ public class LockAndBanListenerTest {
         // Player should see a message
         Mockito.verify(notifier).notify(Mockito.any(), Mockito.anyString());
         // User should NOT be teleported somewhere
-        Mockito.verify(im, Mockito.never()).homeTeleport(Mockito.any(), Mockito.eq(player));
+        Mockito.verify(im, Mockito.never()).homeTeleportAsync(Mockito.any(), Mockito.eq(player));
     }
 
     @Test
@@ -597,7 +597,7 @@ public class LockAndBanListenerTest {
         // Player should not see a message
         Mockito.verify(notifier, Mockito.never()).notify(Mockito.any(), Mockito.anyString());
         // User should NOT be teleported somewhere
-        Mockito.verify(im, Mockito.never()).homeTeleport(Mockito.any(), Mockito.eq(player));
+        Mockito.verify(im, Mockito.never()).homeTeleportAsync(Mockito.any(), Mockito.eq(player));
     }
 
     @Test
@@ -687,7 +687,7 @@ public class LockAndBanListenerTest {
         // Player should not see a message
         Mockito.verify(notifier, Mockito.never()).notify(Mockito.any(), Mockito.anyString());
         // User should not be teleported somewhere
-        Mockito.verify(im, Mockito.never()).homeTeleport(Mockito.any(), Mockito.eq(player));
+        Mockito.verify(im, Mockito.never()).homeTeleportAsync(Mockito.any(), Mockito.eq(player));
     }
 
     @Test
@@ -716,9 +716,9 @@ public class LockAndBanListenerTest {
         // Player should see a message and nothing should be sent to Player 2
         Mockito.verify(notifier).notify(Mockito.any(), Mockito.anyString());
         // User should be teleported somewhere
-        Mockito.verify(im).homeTeleport(Mockito.any(), Mockito.eq(player));
+        Mockito.verify(im).homeTeleportAsync(Mockito.any(), Mockito.eq(player));
         // Player 2 should not be teleported
-        Mockito.verify(im, Mockito.never()).homeTeleport(Mockito.any(), Mockito.eq(player2));
+        Mockito.verify(im, Mockito.never()).homeTeleportAsync(Mockito.any(), Mockito.eq(player2));
         // Call teleport event
         PlayerTeleportEvent ev = new PlayerTeleportEvent(player, inside, outside);
         // Pass to event listener

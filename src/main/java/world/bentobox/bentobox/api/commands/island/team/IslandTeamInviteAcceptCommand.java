@@ -148,18 +148,19 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
         getIslands().setJoinTeam(teamIsland, playerUUID);
         //Move player to team's island
         getPlayers().clearHomeLocations(getWorld(), playerUUID);
-        getIslands().homeTeleport(getWorld(), user.getPlayer());
-        // Delete the old island
-        if (island != null) {
-            getIslands().deleteIsland(island, true, user.getUniqueId());
-        }
+        getIslands().homeTeleportAsync(getWorld(), user.getPlayer()).thenRun(() -> {
+            // Delete the old island
+            if (island != null) {
+                getIslands().deleteIsland(island, true, user.getUniqueId());
+            }
+            // Put player back into normal mode
+            user.setGameMode(getIWM().getDefaultGameMode(getWorld()));
+
+        });
         // Reset deaths
         if (getIWM().isTeamJoinDeathReset(getWorld())) {
             getPlayers().setDeaths(getWorld(), playerUUID, 0);
         }
-        // Put player back into normal mode
-        user.setGameMode(getIWM().getDefaultGameMode(getWorld()));
-
         user.sendMessage("commands.island.team.invite.accept.you-joined-island", TextVariables.LABEL, getTopLabel());
         User inviter = User.getInstance(invite.getInviter());
         if (inviter != null) {

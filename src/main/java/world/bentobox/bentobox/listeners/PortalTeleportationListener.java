@@ -83,7 +83,7 @@ public class PortalTeleportationListener implements Listener {
             else if (plugin.getIslands().hasIsland(overWorld, e.getPlayer().getUniqueId())
                     || plugin.getIslands().inTeam(overWorld, e.getPlayer().getUniqueId())) {
                 e.setCancelled(true);
-                plugin.getIslands().homeTeleport(overWorld, e.getPlayer());
+                plugin.getIslands().homeTeleportAsync(overWorld, e.getPlayer());
             }
             // No island, so just do nothing
             return false;
@@ -175,7 +175,7 @@ public class PortalTeleportationListener implements Listener {
             // From standard nether
             else {
                 e.setCancelled(true);
-                plugin.getIslands().homeTeleport(overWorld, e.getPlayer());
+                plugin.getIslands().homeTeleportAsync(overWorld, e.getPlayer());
             }
             return false;
         }

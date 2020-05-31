@@ -85,8 +85,8 @@ public class IslandExpelCommand extends CompositeCommand {
         }
         // Cannot ban ops
         if (target.isOp() ||
-            target.hasPermission(this.getPermissionPrefix() + "admin.noexpel") ||
-            target.hasPermission(this.getPermissionPrefix() + "mod.bypassexpel")) {
+                target.hasPermission(this.getPermissionPrefix() + "admin.noexpel") ||
+                target.hasPermission(this.getPermissionPrefix() + "mod.bypassexpel")) {
             user.sendMessage(CANNOT_EXPEL);
             return false;
         }
@@ -116,7 +116,7 @@ public class IslandExpelCommand extends CompositeCommand {
             // Success
             user.sendMessage(SUCCESS, TextVariables.NAME, target.getName());
             // Teleport home
-            getIslands().homeTeleport(getWorld(), target.getPlayer());
+            getIslands().homeTeleportAsync(getWorld(), target.getPlayer());
             return true;
         } else if (getIslands().getSpawn(getWorld()).isPresent()){
             // Success
