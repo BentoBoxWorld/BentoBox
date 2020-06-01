@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -407,18 +408,22 @@ public class BlueprintsManager {
      */
     public void deleteBlueprint(GameModeAddon addon, String name) {
         List<Blueprint> addonBlueprints = blueprints.get(addon);
-        addonBlueprints.stream().filter(b -> b.getName().equals(name)).forEach(b -> {
-            addonBlueprints.remove(b);
-            blueprints.put(addon, addonBlueprints);
+        Iterator<Blueprint> it = addonBlueprints.iterator();
+        while (it.hasNext()) {
+            Blueprint b = it.next();
+           if (b.getName().equalsIgnoreCase(name)) {
+               it.remove();
+               blueprints.put(addon, addonBlueprints);
 
-            File file = new File(getBlueprintsFolder(addon), name + BLUEPRINT_SUFFIX);
-            // Delete the file
-            try {
-                Files.deleteIfExists(file.toPath());
-            } catch (IOException e) {
-                plugin.logError("Could not delete Blueprint " + e.getLocalizedMessage());
-            }
-        });
+               File file = new File(getBlueprintsFolder(addon), b.getName() + BLUEPRINT_SUFFIX);
+               // Delete the file
+               try {
+                   Files.deleteIfExists(file.toPath());
+               } catch (IOException e) {
+                   plugin.logError("Could not delete Blueprint " + e.getLocalizedMessage());
+               }
+           }
+        }
     }
 
     /**

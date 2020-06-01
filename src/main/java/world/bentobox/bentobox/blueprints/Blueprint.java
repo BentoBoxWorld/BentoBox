@@ -49,7 +49,9 @@ public class Blueprint {
     /**
      * @return the name
      */
+    @NonNull
     public String getName() {
+        if (name == null) name = "unnamed";
         // Force lower case
         return name.toLowerCase(Locale.ENGLISH);
     }
