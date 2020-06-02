@@ -359,17 +359,6 @@ public class SafeSpotTeleport {
         }
 
         /**
-         * Sets whether the player's gamemode should be overridden. Default is <tt>true</tt>
-         * @param overrideGamemode whether the player's gamemode should be overridden.
-         * @return Builder
-         * @deprecated As of 1.6.0, for removal. No longer in use as the player's gamemode is no longer changed upon teleporting.
-         */
-        @Deprecated
-        public Builder overrideGamemode(boolean overrideGamemode) {
-            return this;
-        }
-
-        /**
          * Try to teleport the player
          * @return CompletableFuture that will become true if successfull and false if not
          * @since 1.14.0
