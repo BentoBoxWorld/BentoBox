@@ -222,6 +222,7 @@ public class IslandsManager {
      *
      * @param l Location to be checked, not null.
      * @return a completable future that will be true if safe, otherwise false
+     * @since 1.14.0
      */
     public CompletableFuture<Boolean> isSafeLocationAsync(@NonNull Location l) {
         CompletableFuture<Boolean> result = new CompletableFuture<>();
@@ -503,7 +504,6 @@ public class IslandsManager {
      * @param location - the location
      * @return Optional Island object
      */
-
     public Optional<Island> getProtectedIslandAt(@NonNull Location location) {
         return getIslandAt(location).filter(i -> i.onIsland(location));
     }
@@ -514,6 +514,7 @@ public class IslandsManager {
      * @param user - user
      * @param number - number number
      * @return CompletableFuture with the location found, or null
+     * @since 1.14.0
      */
     public CompletableFuture<Location> getAsyncSafeHomeLocation(@NonNull World world, @NonNull User user, int number) {
         CompletableFuture<Location> result = new CompletableFuture<>();
@@ -734,7 +735,7 @@ public class IslandsManager {
      *
      * @param world - world to check
      * @param player - the player
-     * @deprecated Use homeTeleportAsync instead
+     * @deprecated as of 1.14.0. Use homeTeleportAsync instead.
      */
     @Deprecated
     public void homeTeleport(@NonNull World world, @NonNull Player player) {
@@ -748,7 +749,7 @@ public class IslandsManager {
      * @param world - world to check
      * @param player - the player
      * @param number - a number - home location to do to
-     * @deprecated Use homeTeleportAsync instead
+     * @deprecated as of 1.14.0. Use homeTeleportAsync instead.
      */
     @Deprecated
     public void homeTeleport(@NonNull World world, @NonNull Player player, int number) {
@@ -762,7 +763,7 @@ public class IslandsManager {
      * @param world - world to check
      * @param player - the player
      * @param newIsland - true if this is a new island teleport
-     * @deprecated Use homeTeleportAsync instead
+     * @deprecated as of 1.14.0. Use homeTeleportAsync instead.
      */
     @Deprecated
     public void homeTeleport(@NonNull World world, @NonNull Player player, boolean newIsland) {
@@ -776,6 +777,7 @@ public class IslandsManager {
      * @param world - world to check
      * @param player - the player
      * @return CompletableFuture true if successful, false if not
+     * @since 1.14.0
      */
     public CompletableFuture<Boolean> homeTeleportAsync(@NonNull World world, @NonNull Player player) {
         return homeTeleportAsync(world, player, 1, false);
@@ -789,6 +791,7 @@ public class IslandsManager {
      * @param player - the player
      * @param number - a number - home location to do to
      * @return CompletableFuture true if successful, false if not
+     * @since 1.14.0
      */
     public CompletableFuture<Boolean> homeTeleportAsync(@NonNull World world, @NonNull Player player, int number) {
         return homeTeleportAsync(world, player, number, false);
@@ -802,6 +805,7 @@ public class IslandsManager {
      * @param player - the player
      * @param newIsland - true if this is a new island teleport
      * @return CompletableFuture true if successful, false if not
+     * @since 1.14.0
      */
     public CompletableFuture<Boolean> homeTeleportAsync(@NonNull World world, @NonNull Player player, boolean newIsland) {
         return homeTeleportAsync(world, player, 1, newIsland);
