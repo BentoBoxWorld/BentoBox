@@ -44,7 +44,6 @@ import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBlock;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle;
 import world.bentobox.bentobox.database.json.BentoboxTypeAdapterFactory;
 import world.bentobox.bentobox.database.objects.Island;
-import world.bentobox.bentobox.schems.SchemToBlueprint;
 import world.bentobox.bentobox.util.Util;
 
 /**
@@ -186,8 +185,6 @@ public class BlueprintsManager {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             // Load bundles
             blueprintBundles.put(addon, new ArrayList<>());
-            // See if there are any schems that need converting
-            new SchemToBlueprint(plugin).convertSchems(addon);
             if (!loadBundles(addon)) {
                 makeDefaults(addon);
                 loadBundles(addon);
