@@ -372,12 +372,14 @@ public class SafeSpotTeleport {
         /**
          * Try to teleport the player
          * @return CompletableFuture that will become true if successfull and false if not
+         * @since 1.14.0
          */
         @Nullable
         public CompletableFuture<Boolean> buildFuture() {
             build();
             return result;
         }
+        
         /**
          * Try to teleport the player
          * @return SafeSpotTeleport
@@ -463,6 +465,7 @@ public class SafeSpotTeleport {
 
         /**
          * @return the result
+         * @since 1.14.0
          */
         public CompletableFuture<Boolean> getResult() {
             return result;
