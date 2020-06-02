@@ -168,7 +168,7 @@ public class SafeSpotTeleport {
      * @return - list of chunk coords to be scanned
      */
     private List<Pair<Integer, Integer>> getChunksToScan() {
-        List<Pair<Integer, Integer>> result = new ArrayList<>();
+        List<Pair<Integer, Integer>> chunksToScan = new ArrayList<>();
         int maxRadius = plugin.getIslands().getIslandAt(location).map(Island::getProtectionRange).orElse(plugin.getIWM().getIslandProtectionRange(location.getWorld()));
         maxRadius = Math.min(MAX_RADIUS, maxRadius);
         int x = location.getBlockX();
@@ -178,17 +178,17 @@ public class SafeSpotTeleport {
         do {
             for (int i = x - radius; i <= x + radius; i+=16) {
                 for (int j = z - radius; j <= z + radius; j+=16) {
-                    addChunk(result, new Pair<>(i,j), new Pair<>(i >> 4, j >> 4));
+                    addChunk(chunksToScan, new Pair<>(i,j), new Pair<>(i >> 4, j >> 4));
                 }
             }
             radius++;
         } while (radius < maxRadius);
-        return result;
+        return chunksToScan;
     }
 
-    private void addChunk(List<Pair<Integer, Integer>> result, Pair<Integer, Integer> blockCoord, Pair<Integer, Integer> chunkCoord) {
-        if (!result.contains(chunkCoord) && plugin.getIslands().getIslandAt(location).map(is -> is.inIslandSpace(blockCoord)).orElse(true)) {
-            result.add(chunkCoord);
+    private void addChunk(List<Pair<Integer, Integer>> chunksToScan, Pair<Integer, Integer> blockCoord, Pair<Integer, Integer> chunkCoord) {
+        if (!chunksToScan.contains(chunkCoord) && plugin.getIslands().getIslandAt(location).map(is -> is.inIslandSpace(blockCoord)).orElse(true)) {
+            chunksToScan.add(chunkCoord);
         }
     }
 

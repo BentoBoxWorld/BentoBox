@@ -26,19 +26,19 @@ import world.bentobox.bentobox.util.Util;
  */
 public class IslandCache {
     @NonNull
-    private Map<@NonNull Location, @NonNull Island> islandsByLocation;
+    private final Map<@NonNull Location, @NonNull Island> islandsByLocation;
     /**
      * Map of all islands with island uniqueId as key
      */
     @NonNull
-    private Map<@NonNull String, @NonNull Island> islandsById;
+    private final Map<@NonNull String, @NonNull Island> islandsById;
     /**
      * Every player who is associated with an island is in this map.
      */
     @NonNull
-    private Map<@NonNull World, @NonNull Map<@NonNull UUID, @NonNull Island>> islandsByUUID;
+    private final Map<@NonNull World, @NonNull Map<@NonNull UUID, @NonNull Island>> islandsByUUID;
     @NonNull
-    private Map<@NonNull World, @NonNull IslandGrid> grids;
+    private final Map<@NonNull World, @NonNull IslandGrid> grids;
 
     public IslandCache() {
         islandsByLocation = new HashMap<>();

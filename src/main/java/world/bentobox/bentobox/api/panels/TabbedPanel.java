@@ -98,7 +98,7 @@ public class TabbedPanel extends Panel implements PanelListener {
             panelItems.stream().filter(Objects::nonNull).skip(page * 45L).limit(page * 45L + 45L).forEach(i -> items.put(items.lastKey() + 1, i));
 
             // set up the footer
-            setupFooter(tab, items);
+            setupFooter(items);
             // Add forward and backward icons
             if (page > 0) {
                 // Previous page icon
@@ -149,7 +149,7 @@ public class TabbedPanel extends Panel implements PanelListener {
         tab.getTabIcons().forEach(items::put);
     }
 
-    private void setupFooter(Tab tab, TreeMap<Integer, PanelItem> items) {
+    private void setupFooter(TreeMap<Integer, PanelItem> items) {
         for (int i = 45; i < 54; i++) {
             items.put(i, new PanelItemBuilder().icon(plugin.getSettings().getPanelFillerMaterial()).name(" ").build());
         }

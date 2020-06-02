@@ -46,38 +46,40 @@ public class SQLConfiguration {
                 "EXECUTE stmt;");
     }
 
+    private final String TABLE_NAME = "\\[tableName\\]";
+
     public SQLConfiguration loadObject(String string) {
-        this.loadObjectSQL = string.replaceFirst("\\[tableName\\]", tableName);
+        this.loadObjectSQL = string.replaceFirst(TABLE_NAME, tableName);
         return this;
     }
 
     public SQLConfiguration saveObject(String string) {
-        this.saveObjectSQL = string.replaceFirst("\\[tableName\\]", tableName);
+        this.saveObjectSQL = string.replaceFirst(TABLE_NAME, tableName);
         return this;
     }
 
     public SQLConfiguration deleteObject(String string) {
-        this.deleteObjectSQL = string.replaceFirst("\\[tableName\\]", tableName);
+        this.deleteObjectSQL = string.replaceFirst(TABLE_NAME, tableName);
         return this;
     }
 
     public SQLConfiguration objectExists(String string) {
-        this.objectExistsSQL = string.replaceFirst("\\[tableName\\]", tableName);
+        this.objectExistsSQL = string.replaceFirst(TABLE_NAME, tableName);
         return this;
     }
 
     public SQLConfiguration schema(String string) {
-        this.schemaSQL = string.replaceFirst("\\[tableName\\]", tableName);
+        this.schemaSQL = string.replaceFirst(TABLE_NAME, tableName);
         return this;
     }
 
     public SQLConfiguration loadObjects(String string) {
-        this.loadObjectsSQL = string.replaceFirst("\\[tableName\\]", tableName);
+        this.loadObjectsSQL = string.replaceFirst(TABLE_NAME, tableName);
         return this;
     }
 
     public SQLConfiguration renameTable(String string) {
-        this.renameTableSQL = string.replaceAll("\\[tableName\\]", tableName).replaceAll("\\[oldTableName\\]", oldTableName);
+        this.renameTableSQL = string.replaceAll(TABLE_NAME, tableName).replaceAll("\\[oldTableName\\]", oldTableName);
         return this;
     }
 

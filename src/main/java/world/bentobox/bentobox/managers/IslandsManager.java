@@ -238,10 +238,10 @@ public class IslandsManager {
     /**
      * Check if a location is safe for teleporting
      * @param world - world
-     * @param material -
-     * @param material2
-     * @param material3
-     * @return
+     * @param ground Material of the block that is going to be the ground
+     * @param space1 Material of the block above the ground
+     * @param space2 Material of the block that is two blocks above the ground
+     * @return {@code true} if the location is considered safe, {@code false} otherwise.
      */
     public boolean checkIfSafe(@Nullable World world, @NonNull Material ground, @NonNull Material space1, @NonNull Material space2) {
         // Ground must be solid, space 1 and 2 must not be solid
@@ -838,7 +838,7 @@ public class IslandsManager {
                 .homeNumber(number)
                 .thenRun(() -> teleported(world, user, number, newIsland))
                 .buildFuture()
-                .thenAccept(r -> result.complete(r));
+                .thenAccept(result::complete);
                 return;
             }
             // Add home
@@ -847,7 +847,7 @@ public class IslandsManager {
             }
             PaperLib.teleportAsync(player, home).thenAccept(b -> {
                 // Only run the commands if the player is successfully teleported
-                if (b) {
+                if (Boolean.TRUE.equals(b)) {
                     teleported(world, user, number, newIsland);
                     result.complete(true);
                 } else {
@@ -902,7 +902,7 @@ public class IslandsManager {
         }
         PaperLib.teleportAsync(player, home).thenAccept(b -> {
             // Only run the commands if the player is successfully teleported
-            if (b) teleported(world, user, number, newIsland);
+            if (Boolean.TRUE.equals(b)) teleported(world, user, number, newIsland);
         });
     }
 
@@ -1493,7 +1493,7 @@ public class IslandsManager {
             quarantineCache.computeIfAbsent(target, k -> new ArrayList<>()).add(oldIsland);
             // Save old island
             handler.saveObjectAsync(oldIsland).thenAccept(result -> {
-                if (!result)  plugin.logError("Could not save trashed island in database");
+                if (Boolean.FALSE.equals(result))  plugin.logError("Could not save trashed island in database");
             });
         }
         // Restore island from trash
@@ -1505,7 +1505,7 @@ public class IslandsManager {
         }
         // Save new island
         handler.saveObjectAsync(island).thenAccept(result -> {
-            if (!result)  plugin.logError("Could not save recovered island to database");
+            if (Boolean.FALSE.equals(result))  plugin.logError("Could not save recovered island to database");
         });
         return true;
     }

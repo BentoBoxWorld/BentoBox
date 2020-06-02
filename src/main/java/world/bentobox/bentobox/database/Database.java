@@ -107,7 +107,7 @@ public class Database<T> {
     @Deprecated
     public boolean saveObject(T instance) {
         saveObjectAsync(instance).thenAccept(r -> {
-            if (!r) logger.severe(() -> "Could not save object to database!");
+            if (Boolean.FALSE.equals(r)) logger.severe(() -> "Could not save object to database!");
         });
         return true;
     }

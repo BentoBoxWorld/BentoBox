@@ -234,7 +234,10 @@ public class Util {
      */
     @Nullable
     public static World getWorld(@Nullable World world) {
-        return world == null ? null : world.getEnvironment().equals(Environment.NORMAL) ? world : Bukkit.getWorld(world.getName().replace(NETHER, "").replace(THE_END, ""));
+        if (world == null) {
+            return null;
+        }
+        return world.getEnvironment().equals(Environment.NORMAL) ? world : Bukkit.getWorld(world.getName().replace(NETHER, "").replace(THE_END, ""));
     }
 
     /**
@@ -520,7 +523,7 @@ public class Util {
      * @return True for Paper environments
      */
     public static boolean isPaper() {
-        return isJUnitTest() ? false : PaperLib.isPaper();
+        return !isJUnitTest() && PaperLib.isPaper();
     }
 
     /**
