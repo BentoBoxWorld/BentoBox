@@ -80,7 +80,7 @@ public class BlueprintsManager {
      */
     private final Gson gson;
 
-    private @NonNull BentoBox plugin;
+    private final @NonNull BentoBox plugin;
 
     private @NonNull Set<GameModeAddon> blueprintsLoaded;
 
@@ -307,9 +307,7 @@ public class BlueprintsManager {
             String fileName = file.getName().substring(0, file.getName().length() - BLUEPRINT_SUFFIX.length());
             try {
                 Blueprint bp = new BlueprintClipboardManager(plugin, bpf).loadBlueprint(fileName);
-                if (bp.getName() == null) {
-                    bp.setName(fileName);
-                }
+                bp.setName(fileName);
                 blueprints.get(addon).add(bp);
                 plugin.log("Loaded blueprint '" + bp.getName() + FOR + addon.getDescription().getName());
             } catch (Exception e) {
