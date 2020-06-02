@@ -286,6 +286,6 @@ public class InvincibleVisitorsListenerTest {
         // Player should be teleported to their island
         listener.onVisitorGetDamage(e);
         assertTrue(e.isCancelled());
-        verify(im).homeTeleport(any(), eq(player));
+        verify(im).homeTeleportAsync(any(), eq(player));
     }
 }

@@ -121,7 +121,7 @@ public class InvincibleVisitorsListener extends FlagListener implements ClickHan
                 .build());
             } else if (getIslands().hasIsland(p.getWorld(), p.getUniqueId())) {
                 // No island in this location - if the player has an island try to teleport them back
-                getIslands().homeTeleport(p.getWorld(), p);
+                getIslands().homeTeleportAsync(p.getWorld(), p);
             } else {
                 // Else die, sorry.
                 e.setCancelled(false);

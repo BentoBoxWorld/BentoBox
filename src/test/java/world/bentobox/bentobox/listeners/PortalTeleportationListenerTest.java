@@ -154,7 +154,7 @@ public class PortalTeleportationListenerTest {
         // Addon
         Optional<GameModeAddon> opAddon = Optional.of(gameModeAddon);
         when(iwm.getAddon(any())).thenReturn(opAddon);
-        
+
         // Blueprints
         when(plugin.getBlueprintsManager()).thenReturn(bpm);
         @Nullable
@@ -163,7 +163,7 @@ public class PortalTeleportationListenerTest {
         bp.setName("blueprintname");
         defaultBB.setBlueprint(World.Environment.NETHER, bp);
         defaultBB.setBlueprint(World.Environment.THE_END, bp);
-        when(bpm.getDefaultBlueprintBundle(any())).thenReturn(defaultBB);        
+        when(bpm.getDefaultBlueprintBundle(any())).thenReturn(defaultBB);
         when(bpm.getBlueprints(any())).thenReturn(Collections.singletonMap("blueprintname", bp));
         // Paster
 
@@ -266,7 +266,7 @@ public class PortalTeleportationListenerTest {
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
         np.onEndIslandPortal(e);
         assertTrue(e.isCancelled());
-        verify(im).homeTeleport(any(), eq(player));
+        verify(im).homeTeleportAsync(any(), eq(player));
     }
 
     /**
@@ -353,7 +353,7 @@ public class PortalTeleportationListenerTest {
         // Do not go to spawn
         verify(nether, never()).getSpawnLocation();
     }
-    
+
     /**
      * Test method for {@link PortalTeleportationListener#onNetherPortal(org.bukkit.event.player.PlayerPortalEvent)}.
      */
@@ -382,7 +382,7 @@ public class PortalTeleportationListenerTest {
         // Error
         verify(plugin).logError(eq("Could not paste default island in nether or end. Is there a nether-island or end-island blueprint?"));
     }
-    
+
     /**
      * Test method for {@link PortalTeleportationListener#onNetherPortal(org.bukkit.event.player.PlayerPortalEvent)}.
      */

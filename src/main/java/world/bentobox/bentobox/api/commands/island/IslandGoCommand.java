@@ -56,11 +56,11 @@ public class IslandGoCommand extends DelayedTeleportCommand {
             int homeValue = Integer.parseInt(args.get(0));
             int maxHomes = user.getPermissionValue(getPermissionPrefix() + "island.maxhomes", getIWM().getMaxHomes(getWorld()));
             if (homeValue > 1 && homeValue <= maxHomes) {
-                this.delayCommand(user, () -> getIslands().homeTeleport(getWorld(), user.getPlayer(), homeValue));
+                this.delayCommand(user, () -> getIslands().homeTeleportAsync(getWorld(), user.getPlayer(), homeValue));
                 return true;
             }
         }
-        this.delayCommand(user, () -> getIslands().homeTeleport(getWorld(), user.getPlayer()));
+        this.delayCommand(user, () -> getIslands().homeTeleportAsync(getWorld(), user.getPlayer()));
         return true;
     }
 

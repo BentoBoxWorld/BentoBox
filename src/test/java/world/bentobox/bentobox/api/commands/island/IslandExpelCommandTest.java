@@ -375,7 +375,7 @@ public class IslandExpelCommandTest {
         testCanExecute();
         assertTrue(iec.execute(user, "", Collections.singletonList("tasty")));
         verify(user).sendMessage("commands.island.expel.success", TextVariables.NAME, "target");
-        verify(im).homeTeleport(any(), any());
+        verify(im).homeTeleportAsync(any(), any());
     }
 
     /**

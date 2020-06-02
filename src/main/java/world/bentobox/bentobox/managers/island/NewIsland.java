@@ -236,7 +236,8 @@ public class NewIsland {
                     user.getPlayer().setVelocity(new Vector(0, 0, 0));
                     user.getPlayer().setFallDistance(0F);
                     // Teleport player after this island is built
-                    plugin.getIslands().homeTeleport(world, user.getPlayer(), true);
+                    plugin.getIslands().homeTeleportAsync(world, user.getPlayer(), true).thenRun(() -> tidyUp(oldIsland));
+                    return;
                 } else {
                     // let's send him a message so that he knows he can teleport to his island!
                     user.sendMessage("commands.island.create.you-can-teleport-to-your-island");
@@ -245,31 +246,7 @@ public class NewIsland {
                 // Remove the player again to completely clear the data
                 User.removePlayer(user.getPlayer());
             }
-            // Delete old island
-            if (oldIsland != null && !plugin.getSettings().isKeepPreviousIslandOnReset()) {
-                // Delete the old island
-                plugin.getIslands().deleteIsland(oldIsland, true, user.getUniqueId());
-            }
-
-            // Fire exit event
-            Reason reasonDone = Reason.CREATED;
-            switch (reason) {
-            case CREATE:
-                reasonDone = Reason.CREATED;
-                break;
-            case RESET:
-                reasonDone = Reason.RESETTED;
-                break;
-            default:
-                break;
-            }
-            IslandEvent.builder()
-            .involvedPlayer(user.getUniqueId())
-            .reason(reasonDone)
-            .island(island)
-            .location(island.getCenter())
-            .oldIsland(oldIsland)
-            .build();
+            tidyUp(oldIsland);
         };
         if (noPaste) {
             Bukkit.getScheduler().runTask(plugin, task);
@@ -282,5 +259,34 @@ public class NewIsland {
         plugin.getMetrics().ifPresent(BStats::increaseIslandsCreatedCount);
         // Save island
         plugin.getIslands().save(island);
+    }
+
+    private void tidyUp(Island oldIsland) {
+        // Delete old island
+        if (oldIsland != null && !plugin.getSettings().isKeepPreviousIslandOnReset()) {
+            // Delete the old island
+            plugin.getIslands().deleteIsland(oldIsland, true, user.getUniqueId());
+        }
+
+        // Fire exit event
+        Reason reasonDone = Reason.CREATED;
+        switch (reason) {
+        case CREATE:
+            reasonDone = Reason.CREATED;
+            break;
+        case RESET:
+            reasonDone = Reason.RESETTED;
+            break;
+        default:
+            break;
+        }
+        IslandEvent.builder()
+        .involvedPlayer(user.getUniqueId())
+        .reason(reasonDone)
+        .island(island)
+        .location(island.getCenter())
+        .oldIsland(oldIsland)
+        .build();
+
     }
 }
