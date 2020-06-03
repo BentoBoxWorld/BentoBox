@@ -11,6 +11,7 @@ import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.weather.LightningStrikeEvent;
 import org.bukkit.util.BlockIterator;
 
 import world.bentobox.bentobox.api.flags.Flag;
@@ -92,5 +93,10 @@ public class FireListener extends FlagListener {
         } catch (Exception ex) {
             // To catch at block iterator exceptions that can happen in the void or at the very top of blocks
         }
+    }
+
+    @EventHandler
+    public void onLightningStrikeEvent(LightningStrikeEvent e) {
+        checkFire(e, e.getLightning().getLocation(), Flags.FIRE_IGNITE);
     }
 }
