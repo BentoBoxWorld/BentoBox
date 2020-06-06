@@ -590,7 +590,7 @@ commands:
           name-joined-your-island: "&a [name] joined your island!"
           confirmation: |-
             &c Are you sure you want to accept this invite?
-            &c&l You will &n LOSE&r&c&l your current island!
+            &c&l You will &n LOSE &r&c&l your current island!
         reject:
           description: "reject an invitation"
           you-rejected-invite: "&a You rejected the invitation to join an island."
