@@ -62,6 +62,11 @@ public class IslandTeamCoopCommand extends CompositeCommand {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
             return false;
         }
+        User targetPlayer = User.getInstance(targetUUID);
+        if (!targetPlayer.isOnline()) {
+            user.sendMessage("general.errors.offline-player");
+            return false;
+        }
         // Check cooldown
         if (getSettings().getCoopCooldown() > 0 && checkCooldown(user, island.getUniqueId(), targetUUID.toString())) {
             return false;
