@@ -1,6 +1,7 @@
 package world.bentobox.bentobox.api.commands.island.team;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -42,8 +43,9 @@ public class IslandTeamKickCommand extends ConfirmableCommand {
         }
         // Check rank to use command
         Island island = getIslands().getIsland(getWorld(), user);
-        if (island.getRank(user) < island.getRankCommand(getUsage())) {
-            user.sendMessage("general.errors.no-permission");
+        int rank = Objects.requireNonNull(island).getRank(user);
+        if (rank < island.getRankCommand(getUsage())) {
+            user.sendMessage("general.errors.insufficient-rank", TextVariables.RANK, user.getTranslation(getPlugin().getRanksManager().getRank(rank)));
             return false;
         }
         // If args are not right, show help
@@ -133,12 +135,12 @@ public class IslandTeamKickCommand extends ConfirmableCommand {
         .involvedPlayer(targetUUID)
         .build();
         IslandEvent.builder()
-                .island(oldIsland)
-                .involvedPlayer(user.getUniqueId())
-                .admin(false)
-                .reason(IslandEvent.Reason.RANK_CHANGE)
-                .rankChange(oldIsland.getRank(user), RanksManager.VISITOR_RANK)
-                .build();
+        .island(oldIsland)
+        .involvedPlayer(user.getUniqueId())
+        .admin(false)
+        .reason(IslandEvent.Reason.RANK_CHANGE)
+        .rankChange(oldIsland.getRank(user), RanksManager.VISITOR_RANK)
+        .build();
 
         // Add cooldown for this player and target
         if (getSettings().getInviteCooldown() > 0 && getParent() != null) {

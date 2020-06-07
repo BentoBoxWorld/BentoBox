@@ -1,6 +1,7 @@
 package world.bentobox.bentobox.api.commands.island.team;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -50,8 +51,9 @@ public class IslandTeamUntrustCommand extends CompositeCommand {
         }
         // Check rank to use command
         Island island = getIslands().getIsland(getWorld(), user);
-        if (island.getRank(user) < island.getRankCommand(getUsage())) {
-            user.sendMessage("general.errors.no-permission");
+        int rank = Objects.requireNonNull(island).getRank(user);
+        if (rank < island.getRankCommand(getUsage())) {
+            user.sendMessage("general.errors.insufficient-rank", TextVariables.RANK, user.getTranslation(getPlugin().getRanksManager().getRank(rank)));
             return false;
         }
         // Get target player
@@ -91,12 +93,12 @@ public class IslandTeamUntrustCommand extends CompositeCommand {
                 subCommand.setCooldown(island.getUniqueId(), targetUUID.toString(), getSettings().getTrustCooldown() * 60));
             }
             IslandEvent.builder()
-                    .island(island)
-                    .involvedPlayer(targetUUID)
-                    .admin(false)
-                    .reason(IslandEvent.Reason.RANK_CHANGE)
-                    .rankChange(RanksManager.TRUSTED_RANK, RanksManager.VISITOR_RANK)
-                    .build();
+            .island(island)
+            .involvedPlayer(targetUUID)
+            .admin(false)
+            .reason(IslandEvent.Reason.RANK_CHANGE)
+            .rankChange(RanksManager.TRUSTED_RANK, RanksManager.VISITOR_RANK)
+            .build();
             return true;
         } else {
             // Should not happen

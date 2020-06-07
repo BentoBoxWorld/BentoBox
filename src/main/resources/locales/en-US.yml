@@ -19,6 +19,7 @@ general:
   errors:
     command-cancelled: "&c Command cancelled."
     no-permission: "&c You don't have the permission to execute this command (&7 [permission]&c )."
+    insufficient-rank: "&c Your rank is not high enough to do that! (&7 [rank]&c )"
     use-in-game: "&c This command is only available in game."
     no-team: "&c You do not have a team!"
     no-island: "&c You do not have an island!"

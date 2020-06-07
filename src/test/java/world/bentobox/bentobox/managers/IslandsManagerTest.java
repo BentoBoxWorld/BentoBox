@@ -724,6 +724,7 @@ public class IslandsManagerTest {
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#homeTeleport(World, Player, int)}.
      */
+    @SuppressWarnings("deprecation")
     @Test
     public void testHomeTeleportPlayerInt() {
         when(iwm.getDefaultGameMode(world)).thenReturn(GameMode.SURVIVAL);

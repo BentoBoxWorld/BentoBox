@@ -91,6 +91,7 @@ public class IslandBanlistCommandTest {
         when(user.getPlayer()).thenReturn(p);
         when(user.getName()).thenReturn("tastybento");
         when(user.getPermissionValue(anyString(), anyInt())).thenReturn(-1); // Unlimited bans
+        when(user.getTranslation(any())).thenAnswer(invocation -> invocation.getArgument(0, String.class));
 
         // Parent command has no aliases
         when(ic.getSubCommandAliases()).thenReturn(new HashMap<>());
@@ -120,6 +121,10 @@ public class IslandBanlistCommandTest {
         when(iwm.getFriendlyName(any())).thenReturn("BSkyBlock");
         when(plugin.getIWM()).thenReturn(iwm);
 
+        // Ranks Manager
+        RanksManager rm = new RanksManager();
+        when(plugin.getRanksManager()).thenReturn(rm);
+
     }
 
     @After
@@ -135,7 +140,7 @@ public class IslandBanlistCommandTest {
         IslandBanlistCommand iubc = new IslandBanlistCommand(ic);
         assertFalse(iubc.canExecute(user, iubc.getLabel(), Collections.singletonList("bill")));
         // Verify show help
-        verify(user).sendMessage("commands.help.header", "[label]", null);
+        verify(user).sendMessage("commands.help.header", "[label]", "commands.help.console");
     }
 
     /**
@@ -159,7 +164,7 @@ public class IslandBanlistCommandTest {
         when(island.getRankCommand(anyString())).thenReturn(RanksManager.OWNER_RANK);
         IslandBanlistCommand iubc = new IslandBanlistCommand(ic);
         assertFalse(iubc.canExecute(user, iubc.getLabel(), Collections.emptyList()));
-        verify(user).sendMessage("general.errors.no-permission");
+        verify(user).sendMessage(eq("general.errors.insufficient-rank"), eq(TextVariables.RANK), eq("ranks.member"));
     }
 
     /**

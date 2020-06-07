@@ -2,6 +2,7 @@ package world.bentobox.bentobox.api.commands.island;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
@@ -38,8 +39,9 @@ public class IslandBanlistCommand extends CompositeCommand {
         }
         // Check rank to use command
         island = getIslands().getIsland(getWorld(), user.getUniqueId());
-        if (island.getRank(user) < island.getRankCommand("ban")) {
-            user.sendMessage("general.errors.no-permission");
+        int rank = Objects.requireNonNull(island).getRank(user);
+        if (rank < island.getRankCommand(getUsage())) {
+            user.sendMessage("general.errors.insufficient-rank", TextVariables.RANK, user.getTranslation(getPlugin().getRanksManager().getRank(rank)));
             return false;
         }
         return true;

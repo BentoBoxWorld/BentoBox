@@ -94,6 +94,7 @@ public class IslandUnbanCommandTest {
         when(user.getUniqueId()).thenReturn(uuid);
         when(user.getPlayer()).thenReturn(p);
         when(user.getName()).thenReturn("tastybento");
+        when(user.getTranslation(any())).thenAnswer(invocation -> invocation.getArgument(0, String.class));
 
         // Parent command has no aliases
         when(ic.getSubCommandAliases()).thenReturn(new HashMap<>());
@@ -127,6 +128,11 @@ public class IslandUnbanCommandTest {
         // Server and Plugin Manager for events
         PluginManager pim = mock(PluginManager.class);
         when(Bukkit.getPluginManager()).thenReturn(pim);
+
+        // Ranks Manager
+        RanksManager rm = new RanksManager();
+        when(plugin.getRanksManager()).thenReturn(rm);
+
 
     }
 
@@ -177,7 +183,7 @@ public class IslandUnbanCommandTest {
         when(island.getRank(any(User.class))).thenReturn(RanksManager.MEMBER_RANK);
         when(island.getRankCommand(anyString())).thenReturn(RanksManager.OWNER_RANK);
         assertFalse(iubc.canExecute(user, iubc.getLabel(), Collections.singletonList("bill")));
-        verify(user).sendMessage("general.errors.no-permission");
+        verify(user).sendMessage(eq("general.errors.insufficient-rank"), eq(TextVariables.RANK), eq("ranks.member"));
     }
 
     /**

@@ -108,6 +108,7 @@ public class IslandExpelCommandTest {
         when(p.getServer()).thenReturn(server);
         when(user.getPlayer()).thenReturn(p);
         when(user.getName()).thenReturn("tastybento");
+        when(user.getTranslation(any())).thenAnswer(invocation -> invocation.getArgument(0, String.class));
 
         // Parent command has no aliases
         when(ic.getSubCommandAliases()).thenReturn(new HashMap<>());
@@ -153,6 +154,10 @@ public class IslandExpelCommandTest {
         when(plugin.getPlaceholdersManager()).thenReturn(placeholdersManager);
         when(placeholdersManager.replacePlaceholders(any(), any())).thenAnswer(answer);
 
+        // Ranks Manager
+        RanksManager rm = new RanksManager();
+        when(plugin.getRanksManager()).thenReturn(rm);
+
         // Class
         iec = new IslandExpelCommand(ic);
     }
@@ -192,7 +197,7 @@ public class IslandExpelCommandTest {
     @Test
     public void testCanExecuteNoArgs() {
         assertFalse(iec.canExecute(user, "", Collections.emptyList()));
-        verify(user).sendMessage("commands.help.header", "[label]", null);
+        verify(user).sendMessage("commands.help.header", "[label]", "commands.help.console");
     }
 
     /**
@@ -201,7 +206,7 @@ public class IslandExpelCommandTest {
     @Test
     public void testCanExecuteTooManyArgs() {
         assertFalse(iec.canExecute(user, "", Arrays.asList("Hello", "there")));
-        verify(user).sendMessage("commands.help.header", "[label]", null);
+        verify(user).sendMessage("commands.help.header", "[label]", "commands.help.console");
     }
 
     /**
@@ -243,7 +248,7 @@ public class IslandExpelCommandTest {
         when(island.getRank(any(User.class))).thenReturn(RanksManager.VISITOR_RANK);
         when(island.getRankCommand(anyString())).thenReturn(RanksManager.OWNER_RANK);
         assertFalse(iec.canExecute(user, "", Collections.singletonList("tasty")));
-        verify(user).sendMessage("general.errors.no-permission");
+        verify(user).sendMessage(eq("general.errors.insufficient-rank"), eq(TextVariables.RANK), eq("ranks.visitor"));
     }
 
     /**

@@ -1,6 +1,7 @@
 package world.bentobox.bentobox.api.commands.island.team;
 
 import java.util.List;
+import java.util.Objects;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.events.island.IslandEvent;
@@ -37,8 +38,9 @@ public class IslandTeamPromoteCommand extends CompositeCommand {
         }
         // Check rank to use command
         Island island = getIslands().getIsland(getWorld(), user);
-        if (island.getRank(user) < island.getRankCommand(getUsage())) {
-            user.sendMessage("general.errors.no-permission");
+        int rank = Objects.requireNonNull(island).getRank(user);
+        if (rank < island.getRankCommand(getUsage())) {
+            user.sendMessage("general.errors.insufficient-rank", TextVariables.RANK, user.getTranslation(getPlugin().getRanksManager().getRank(rank)));
             return false;
         }
 
@@ -77,12 +79,12 @@ public class IslandTeamPromoteCommand extends CompositeCommand {
                 String rankName = user.getTranslation(getPlugin().getRanksManager().getRank(nextRank));
                 user.sendMessage("commands.island.team.promote.success", TextVariables.NAME, target.getName(), TextVariables.RANK, rankName);
                 IslandEvent.builder()
-                        .island(island)
-                        .involvedPlayer(user.getUniqueId())
-                        .admin(false)
-                        .reason(IslandEvent.Reason.RANK_CHANGE)
-                        .rankChange(currentRank, nextRank)
-                        .build();
+                .island(island)
+                .involvedPlayer(user.getUniqueId())
+                .admin(false)
+                .reason(IslandEvent.Reason.RANK_CHANGE)
+                .rankChange(currentRank, nextRank)
+                .build();
                 return true;
             } else {
                 user.sendMessage("commands.island.team.promote.failure");
@@ -97,12 +99,12 @@ public class IslandTeamPromoteCommand extends CompositeCommand {
                 String rankName = user.getTranslation(getPlugin().getRanksManager().getRank(prevRank));
                 user.sendMessage("commands.island.team.demote.success", TextVariables.NAME, target.getName(), TextVariables.RANK, rankName);
                 IslandEvent.builder()
-                        .island(island)
-                        .involvedPlayer(user.getUniqueId())
-                        .admin(false)
-                        .reason(IslandEvent.Reason.RANK_CHANGE)
-                        .rankChange(currentRank, prevRank)
-                        .build();
+                .island(island)
+                .involvedPlayer(user.getUniqueId())
+                .admin(false)
+                .reason(IslandEvent.Reason.RANK_CHANGE)
+                .rankChange(currentRank, prevRank)
+                .build();
                 return true;
             } else {
                 user.sendMessage("commands.island.team.demote.failure");

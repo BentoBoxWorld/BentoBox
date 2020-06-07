@@ -9,6 +9,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.never;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -79,6 +80,8 @@ public class IslandBanCommandTest {
     @Mock
     private Player targetPlayer;
 
+    private RanksManager rm;
+
     @Before
     public void setUp() throws Exception {
         // Set up plugin
@@ -103,6 +106,7 @@ public class IslandBanCommandTest {
         when(user.getPlayer()).thenReturn(p);
         when(user.getName()).thenReturn("tastybento");
         when(user.getPermissionValue(anyString(), anyInt())).thenReturn(-1);
+        when(user.getTranslation(any())).thenAnswer(invocation -> invocation.getArgument(0, String.class));
 
         // Parent command has no aliases
         when(ic.getSubCommandAliases()).thenReturn(new HashMap<>());
@@ -143,7 +147,7 @@ public class IslandBanCommandTest {
 
         // Locales
         LocalesManager lm = mock(LocalesManager.class);
-        when(lm.get(Mockito.any(), Mockito.any())).thenAnswer(invocation -> invocation.getArgument(1, String.class));
+        when(lm.get(any(), any())).thenAnswer(invocation -> invocation.getArgument(1, String.class));
         when(plugin.getLocalesManager()).thenReturn(lm);
         PlaceholdersManager phm = mock(PlaceholdersManager.class);
         when(phm.replacePlaceholders(any(), any())).thenAnswer(invocation -> invocation.getArgument(1, String.class));
@@ -152,13 +156,17 @@ public class IslandBanCommandTest {
 
         // Target bill - default target. Non Op, online, no ban prevention permission
         UUID uuid = UUID.randomUUID();
-        when(pm.getUUID(Mockito.anyString())).thenReturn(uuid);
+        when(pm.getUUID(anyString())).thenReturn(uuid);
         when(targetPlayer.getName()).thenReturn("bill");
         when(targetPlayer.getUniqueId()).thenReturn(uuid);
         when(targetPlayer.isOp()).thenReturn(false);
         when(targetPlayer.isOnline()).thenReturn(true);
-        when(targetPlayer.hasPermission(Mockito.anyString())).thenReturn(false);
+        when(targetPlayer.hasPermission(anyString())).thenReturn(false);
         User.getInstance(targetPlayer);
+
+        // Ranks Manager
+        rm = new RanksManager();
+        when(plugin.getRanksManager()).thenReturn(rm);
 
         // Island Ban Command
         ibc = new IslandBanCommand(ic);
@@ -208,7 +216,7 @@ public class IslandBanCommandTest {
         when(island.getRank(any(User.class))).thenReturn(RanksManager.MEMBER_RANK);
         when(island.getRankCommand(anyString())).thenReturn(RanksManager.OWNER_RANK);
         assertFalse(ibc.canExecute(user, ibc.getLabel(), Collections.singletonList("bill")));
-        verify(user).sendMessage("general.errors.no-permission");
+        verify(user).sendMessage(eq("general.errors.insufficient-rank"), eq(TextVariables.RANK), eq("ranks.member"));
     }
 
     @Test
@@ -220,7 +228,7 @@ public class IslandBanCommandTest {
 
     @Test
     public void testBanSelf() {
-        when(pm.getUUID(Mockito.anyString())).thenReturn(uuid);
+        when(pm.getUUID(anyString())).thenReturn(uuid);
         assertFalse(ibc.canExecute(user, ibc.getLabel(), Collections.singletonList("bill")));
         verify(user).sendMessage("commands.island.ban.cannot-ban-yourself");
     }
@@ -228,7 +236,7 @@ public class IslandBanCommandTest {
     @Test
     public void testBanTeamMate() {
         UUID teamMate = UUID.randomUUID();
-        when(pm.getUUID(Mockito.anyString())).thenReturn(teamMate);
+        when(pm.getUUID(anyString())).thenReturn(teamMate);
         Set<UUID> members = new HashSet<>();
         members.add(uuid);
         members.add(teamMate);
@@ -240,7 +248,7 @@ public class IslandBanCommandTest {
     @Test
     public void testBanAlreadyBanned() {
         UUID bannedUser = UUID.randomUUID();
-        when(pm.getUUID(Mockito.anyString())).thenReturn(bannedUser);
+        when(pm.getUUID(anyString())).thenReturn(bannedUser);
         when(island.isBanned(eq(bannedUser))).thenReturn(true);
         assertFalse(ibc.canExecute(user, ibc.getLabel(), Collections.singletonList("bill")));
         verify(user).sendMessage("commands.island.ban.player-already-banned");
@@ -255,7 +263,7 @@ public class IslandBanCommandTest {
 
     @Test
     public void testBanOnlineNoBanPermission() {
-        when(targetPlayer.hasPermission(Mockito.anyString())).thenReturn(true);
+        when(targetPlayer.hasPermission(anyString())).thenReturn(true);
         User.getInstance(targetPlayer);
 
         assertFalse(ibc.canExecute(user, ibc.getLabel(), Collections.singletonList("billy")));
@@ -295,8 +303,8 @@ public class IslandBanCommandTest {
         when(island.ban(any(), any())).thenReturn(false);
 
         assertFalse(ibc.execute(user, ibc.getLabel(), Collections.singletonList("bill")));
-        verify(user, Mockito.never()).sendMessage("commands.island.ban.player-banned", TextVariables.NAME, targetPlayer.getName());
-        verify(targetPlayer, Mockito.never()).sendMessage("commands.island.ban.owner-banned-you");
+        verify(user, never()).sendMessage("commands.island.ban.player-banned", TextVariables.NAME, targetPlayer.getName());
+        verify(targetPlayer, never()).sendMessage("commands.island.ban.owner-banned-you");
     }
 
     @Test

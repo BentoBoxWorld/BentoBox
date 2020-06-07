@@ -114,6 +114,7 @@ public class IslandTeamKickCommandTest {
         when(user.getUniqueId()).thenReturn(uuid);
         when(user.getPlayer()).thenReturn(player);
         when(user.getName()).thenReturn("tastybento");
+        when(user.getTranslation(any())).thenAnswer(invocation -> invocation.getArgument(0, String.class));
         User.setPlugin(plugin);
 
         // Parent command has no aliases
@@ -172,6 +173,10 @@ public class IslandTeamKickCommandTest {
         when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
         when(im.getIsland(any(), any(User.class))).thenReturn(island);
         when(island.getRankCommand(anyString())).thenReturn(RanksManager.VISITOR_RANK);
+
+        // Ranks Manager
+        RanksManager rm = new RanksManager();
+        when(plugin.getRanksManager()).thenReturn(rm);
 
     }
 
@@ -256,7 +261,7 @@ public class IslandTeamKickCommandTest {
         when(island.getRankCommand(anyString())).thenReturn(RanksManager.OWNER_RANK);
         when(island.getRank(any(User.class))).thenReturn(RanksManager.VISITOR_RANK);
         assertFalse(itl.execute(user, itl.getLabel(), Collections.singletonList("poslovitch")));
-        verify(user).sendMessage(eq("general.errors.no-permission"));
+        verify(user).sendMessage(eq("general.errors.insufficient-rank"), eq(TextVariables.RANK), eq("ranks.visitor"));
     }
 
     /**
