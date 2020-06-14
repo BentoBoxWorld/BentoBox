@@ -273,11 +273,16 @@ public class Settings implements ConfigObject {
     @ConfigEntry(path = "web.github.connection-interval", since = "1.5.0")
     private int githubConnectionInterval = 120;
 
-    @ConfigEntry(path = "web.updater.check-updates.bentobox", since = "1.3.0", hidden = true)
+    @ConfigComment("Checks for BentoBox updates.")
+    @ConfigEntry(path = "web.updater.check-updates.bentobox", since = "1.14.0")
     private boolean checkBentoBoxUpdates = true;
 
-    @ConfigEntry(path = "web.updater.check-updates.addons", since = "1.3.0", hidden = true)
+    @ConfigComment("Checks for addons updates.")
+    @ConfigEntry(path = "web.updater.check-updates.addons", since = "1.14.0")
     private boolean checkAddonsUpdates = true;
+
+    @ConfigEntry(path = "web.updater.check-updates.include-prereleases", since = "1.14.0")
+    private boolean checkPreReleasesUpdates = false;
 
     // ---------------------------------------------
     // Getters and setters
@@ -712,5 +717,13 @@ public class Settings implements ConfigObject {
      */
     public void setPanelFillerMaterial(Material panelFillerMaterial) {
         this.panelFillerMaterial = panelFillerMaterial;
+    }
+
+    public boolean isCheckPreReleasesUpdates() {
+        return checkPreReleasesUpdates;
+    }
+
+    public void setCheckPreReleasesUpdates(boolean checkPreReleasesUpdates) {
+        this.checkPreReleasesUpdates = checkPreReleasesUpdates;
     }
 }

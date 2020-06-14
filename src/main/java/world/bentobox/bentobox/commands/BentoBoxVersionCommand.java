@@ -6,6 +6,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
+import javafx.scene.text.Text;
 import org.bukkit.Bukkit;
 
 import world.bentobox.bentobox.api.addons.GameModeAddon;
@@ -14,6 +15,7 @@ import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.versions.ServerCompatibility;
 import world.bentobox.bentobox.versions.ServerCompatibility.ServerSoftware;
+import world.bentobox.bentobox.versions.UpdateChecker;
 
 /**
  * Displays information about Gamemodes, Addons and versioning.
@@ -84,6 +86,22 @@ public class BentoBoxVersionCommand extends CompositeCommand {
         getPlugin().getAddonsManager().getAddons().stream().sorted(Comparator.comparing(o -> o.getDescription().getName().toLowerCase(Locale.ENGLISH)))
         .forEach(a -> user.sendMessage("commands.bentobox.version.addon-syntax", TextVariables.NAME, a.getDescription().getName(),
                 TextVariables.VERSION, a.getDescription().getVersion(), "[state]", a.getState().toString()));
+
+        long availableUpdates = getPlugin().getWebManager().getUpdateCheckers().stream()
+                .filter(updateChecker -> updateChecker.getResult() != null)
+                .count();
+
+        if (availableUpdates > 0) {
+            user.sendMessage("commands.bentobox.version.available-updates", TextVariables.NUMBER, String.valueOf(availableUpdates));
+            for (UpdateChecker updateChecker : getPlugin().getWebManager().getUpdateCheckers()) {
+                UpdateChecker.Result result = updateChecker.getResult();
+                if (result != null) {
+                    user.sendMessage("commands.bentobox.version.update", "[repo]", updateChecker.getRepository(),
+                            TextVariables.VERSION, result.getVersion(),
+                            "[link]", "https://github.com/" + updateChecker.getRepository() + "/releases/tag/" + result.getVersion());
+                }
+            }
+        }
 
         return true;
     }

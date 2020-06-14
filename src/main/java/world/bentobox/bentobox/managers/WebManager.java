@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import io.github.TheBusyBiscuit.GitHubWebAPI4Java.objects.users.GitHubOrganization;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
@@ -23,6 +24,7 @@ import io.github.TheBusyBiscuit.GitHubWebAPI4Java.objects.repositories.GitHubCon
 import io.github.TheBusyBiscuit.GitHubWebAPI4Java.objects.repositories.GitHubRepository;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
+import world.bentobox.bentobox.versions.UpdateChecker;
 import world.bentobox.bentobox.web.catalog.CatalogEntry;
 import world.bentobox.bentobox.web.credits.Contributor;
 
@@ -34,17 +36,21 @@ import world.bentobox.bentobox.web.credits.Contributor;
  */
 public class WebManager {
 
-    private @NonNull BentoBox plugin;
+    private @NonNull final BentoBox plugin;
     private @Nullable GitHubWebAPI gitHub;
-    private @NonNull List<CatalogEntry> addonsCatalog;
-    private @NonNull List<CatalogEntry> gamemodesCatalog;
-    private @NonNull Map<String, List<Contributor>> contributors;
+    private @NonNull final List<CatalogEntry> addonsCatalog;
+    private @NonNull final List<CatalogEntry> gamemodesCatalog;
+    private @NonNull final Map<String, List<Contributor>> contributors;
+
+    @NonNull
+    private final List<UpdateChecker> updateCheckers;
 
     public WebManager(@NonNull BentoBox plugin) {
         this.plugin = plugin;
         this.addonsCatalog = new ArrayList<>();
         this.gamemodesCatalog = new ArrayList<>();
         this.contributors = new HashMap<>();
+        this.updateCheckers = new ArrayList<>();
 
         // Setup the GitHub connection
         if (plugin.getSettings().isGithubDownloadData()) {
@@ -100,12 +106,14 @@ public class WebManager {
                     .stream().map(addon -> addon.getDescription().getRepository())
                     .filter(repo -> !repo.isEmpty())
                     .collect(Collectors.toList()));
+            /*
             repositories.addAll(addonsCatalog.stream().map(CatalogEntry::getRepository)
                     .filter(repo -> !repositories.contains(repo))
                     .collect(Collectors.toList()));
             repositories.addAll(gamemodesCatalog.stream().map(CatalogEntry::getRepository)
                     .filter(repo -> !repositories.contains(repo))
                     .collect(Collectors.toList()));
+            */
 
             /* Download the contributors */
             if (plugin.getSettings().isLogGithubDownloadData()) {
@@ -127,6 +135,13 @@ public class WebManager {
                     gatherContributors(repo);
                 }
             }
+
+            /* Check for updates */
+            if (plugin.getSettings().isLogGithubDownloadData()) {
+                plugin.log("Checking for updates...");
+            }
+
+            checkUpdates(gh);
 
             // People were concerned that the download took ages, so we need to tell them it's over now.
             if (plugin.getSettings().isLogGithubDownloadData()) {
@@ -223,6 +238,36 @@ public class WebManager {
         }
     }
 
+    private void checkUpdates(@NonNull GitHubWebAPI gh) {
+        if (updateCheckers.isEmpty()) {
+            // Grab the repositories we will have to go through
+            Map<String, String> repositories = new HashMap<>();
+
+            if (plugin.getSettings().isCheckBentoBoxUpdates()) {
+                repositories.put("BentoBoxWorld/BentoBox", plugin.getDescription().getVersion());
+            }
+            if (plugin.getSettings().isCheckAddonsUpdates()) {
+                repositories.putAll(plugin.getAddonsManager().getEnabledAddons()
+                        .stream()
+                        .filter(addon -> !addon.getDescription().getRepository().isEmpty())
+                        .collect(Collectors.toMap(addon -> addon.getDescription().getRepository(), addon -> addon.getDescription().getVersion())));
+            }
+
+            for (Map.Entry<String, String> repo : repositories.entrySet()) {
+                UpdateChecker updateChecker = new UpdateChecker(gh, repo.getKey(), repo.getValue());
+                updateCheckers.add(updateChecker);
+            }
+        }
+
+        for (UpdateChecker updateChecker : updateCheckers) {
+            try {
+                updateChecker.checkUpdates();
+            } catch (IllegalAccessException e) {
+                // Fail silently
+            }
+        }
+    }
+
     /**
      * Returns the contents of the addons catalog (may be an empty list).
      * @return the contents of the addons catalog.
@@ -262,5 +307,14 @@ public class WebManager {
     @NonNull
     public Optional<GitHubWebAPI> getGitHub() {
         return Optional.ofNullable(gitHub);
+    }
+
+    /**
+     * Returns the list of update checkers.
+     * @return the list of update checkers.
+     * @since 1.14.0
+     */
+    public List<UpdateChecker> getUpdateCheckers() {
+        return updateCheckers;
     }
 }

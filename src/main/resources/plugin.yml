@@ -39,3 +39,6 @@ permissions:
   bentobox.version:
     description: Allows to use /bentobox version
     default: op
+  bentobox.notify-updates:
+    description: Sends players a message about available updates when they join the server
+    default: op

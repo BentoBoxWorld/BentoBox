@@ -89,8 +89,22 @@ public class JoinLeaveListener implements Listener {
 
         // Clear inventory if required
         clearPlayersInventory(Util.getWorld(event.getPlayer().getWorld()), user);
+
+        // Notify player about updates
+        notifyUpdates(user);
     }
 
+    private void notifyUpdates(User user) {
+        if (user.hasPermission("bentobox.notify-updates")) {
+            long availableUpdates = plugin.getWebManager().getUpdateCheckers().stream()
+                    .filter(updateChecker -> updateChecker.getResult() != null)
+                    .count();
+
+            if (availableUpdates > 0) {
+                user.sendMessage("updates-available");
+            }
+        }
+    }
 
     private void firstTime(User user) {
         // Make sure the player is loaded into the cache or create the player if they don't exist
