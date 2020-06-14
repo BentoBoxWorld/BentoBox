@@ -4,23 +4,32 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import java.util.Collections;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.World;
+import org.bukkit.command.ConsoleCommandSender;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 
 /**
@@ -31,10 +40,18 @@ import world.bentobox.bentobox.managers.IslandWorldManager;
 @PrepareForTest( { Bukkit.class })
 public class UtilTest {
 
+    @Mock
     private BentoBox plugin;
+    @Mock
     private World world;
+    @Mock
     private IslandWorldManager iwm;
+    @Mock
     private Location location;
+    @Mock
+    private User user;
+    @Mock
+    private ConsoleCommandSender sender;
 
     /**
      * @throws java.lang.Exception
@@ -42,15 +59,11 @@ public class UtilTest {
     @Before
     public void setUp() throws Exception {
         // Set up plugin
-        plugin = mock(BentoBox.class);
         Util.setPlugin(plugin);
         // World
-        world = mock(World.class);
         when(world.getName()).thenReturn("world_name");
         // Worlds
-        iwm = mock(IslandWorldManager.class);
         when(plugin.getIWM()).thenReturn(iwm);
-        location = mock(Location.class);
         when(location.getWorld()).thenReturn(world);
         when(location.getX()).thenReturn(500D);
         when(location.getY()).thenReturn(600D);
@@ -65,6 +78,7 @@ public class UtilTest {
         Server server = mock(Server.class);
         when(Bukkit.getServer()).thenReturn(server);
         when(server.getWorld(Mockito.anyString())).thenReturn(world);
+        when(Bukkit.getConsoleSender()).thenReturn(sender);
     }
 
     @After
@@ -252,4 +266,65 @@ public class UtilTest {
         // For some reason, Integer#parseInt() does not support this...
     }
 
+    /**
+     * Test for {@link Util#runCommands(world.bentobox.bentobox.api.user.User, java.util.List, String)}
+     */
+    @Test
+    public void testRunCommandsSudoUserOnlinePerformCommand() {
+        when(user.getName()).thenReturn("tastybento");
+        when(user.isOnline()).thenReturn(true);
+        when(user.performCommand(anyString())).thenReturn(true);
+        Util.runCommands(user, Collections.singletonList("[SUDO]help"), "test");
+        verify(plugin, never()).logError(anyString());
+    }
+    
+    /**
+     * Test for {@link Util#runCommands(world.bentobox.bentobox.api.user.User, java.util.List, String)}
+     */
+    @Test
+    public void testRunCommandsSudoUserOnlineFailCommand() {
+        when(user.getName()).thenReturn("tastybento");
+        when(user.isOnline()).thenReturn(true);
+        when(user.performCommand(anyString())).thenReturn(false);
+        Util.runCommands(user, Collections.singletonList("[SUDO]help"), "test");
+        verify(plugin).logError(eq("Could not execute test command for tastybento: help"));
+    }
+    
+    /**
+     * Test for {@link Util#runCommands(world.bentobox.bentobox.api.user.User, java.util.List, String)}
+     */
+    @Test
+    public void testRunCommandsSudoUserOfflineCommand() {
+        when(user.getName()).thenReturn("tastybento");
+        when(user.isOnline()).thenReturn(false);
+        when(user.performCommand(anyString())).thenReturn(true);
+        Util.runCommands(user, Collections.singletonList("[SUDO]help"), "test");
+        verify(plugin).logError(eq("Could not execute test command for tastybento: help"));
+    }
+    
+    /**
+     * Test for {@link Util#runCommands(world.bentobox.bentobox.api.user.User, java.util.List, String)}
+     */
+    @Test
+    public void testRunCommandsConsoleCommand() {
+        when(user.getName()).thenReturn("tastybento");
+        when(Bukkit.dispatchCommand(eq(sender), anyString())).thenReturn(true);
+        Util.runCommands(user, Collections.singletonList("replace [player]"), "test");
+        PowerMockito.verifyStatic(Bukkit.class);
+        Bukkit.dispatchCommand(sender, "replace tastybento");
+        verify(plugin, never()).logError(anyString());
+    }
+    
+    /**
+     * Test for {@link Util#runCommands(world.bentobox.bentobox.api.user.User, java.util.List, String)}
+     */
+    @Test
+    public void testRunCommandsConsoleCommandFail() {
+        when(user.getName()).thenReturn("tastybento");
+        when(Bukkit.dispatchCommand(eq(sender), anyString())).thenReturn(false);
+        Util.runCommands(user, Collections.singletonList("replace [player]"), "test");
+        PowerMockito.verifyStatic(Bukkit.class);
+        Bukkit.dispatchCommand(sender, "replace tastybento");
+        verify(plugin).logError("Could not execute test command as console: replace tastybento");
+    }
 }

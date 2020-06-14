@@ -628,4 +628,28 @@ public class Util {
         }
         return null;
     }
+
+    /**
+     * Run a list of commands for a user
+     * @param user - user affected by the commands
+     * @param commands - a list of commands
+     * @param commandType - the type of command being run - used in the console error message
+     */
+    public static void runCommands(User user, @NonNull List<String> commands, String commandType) {
+        commands.forEach(command -> {
+            command = command.replace("[player]", user.getName());
+            if (command.startsWith("[SUDO]")) {
+                // Execute the command by the player
+                if (!user.isOnline() || !user.performCommand(command.substring(6))) {
+                    plugin.logError("Could not execute " + commandType + " command for " + user.getName() + ": " + command.substring(6));
+                }
+            } else {
+                // Otherwise execute as the server console
+                if (!Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command)) {
+                    plugin.logError("Could not execute " + commandType + " command as console: " + command);
+                }
+            }
+        });
+        
+    }
 }

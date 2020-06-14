@@ -3,7 +3,6 @@ package world.bentobox.bentobox.api.commands.island;
 import java.io.IOException;
 import java.util.List;
 
-import org.bukkit.Bukkit;
 import org.eclipse.jdt.annotation.NonNull;
 
 import world.bentobox.bentobox.api.addons.GameModeAddon;
@@ -19,6 +18,7 @@ import world.bentobox.bentobox.managers.BlueprintsManager;
 import world.bentobox.bentobox.managers.island.NewIsland;
 import world.bentobox.bentobox.managers.island.NewIsland.Builder;
 import world.bentobox.bentobox.panels.IslandCreationPanel;
+import world.bentobox.bentobox.util.Util;
 
 /**
  * @author tastybento
@@ -180,20 +180,7 @@ public class IslandResetCommand extends ConfirmableCommand {
             getIslands().removePlayer(getWorld(), memberUUID);
 
             // Execute commands when leaving
-            getIWM().getOnLeaveCommands(island.getWorld()).forEach(command -> {
-                command = command.replace("[player]", member.getName());
-                if (command.startsWith("[SUDO]") && member.isOnline()) {
-                    // Execute the command by the player
-                    if (!member.performCommand(command.substring(6))) {
-                        getPlugin().logError("Could not execute leave command for " + member.getName() + ": " + command.substring(6));
-                    }
-                } else {
-                    // Otherwise execute as the server console
-                    if (!getPlugin().getServer().dispatchCommand(Bukkit.getConsoleSender(), command)) {
-                        getPlugin().logError("Could not execute leave command as console: " + command);
-                    }
-                }
-            });
+            Util.runCommands(member, getIWM().getOnLeaveCommands(island.getWorld()), "leave");
 
             // Remove money inventory etc.
             if (getIWM().isOnLeaveResetEnderChest(getWorld())) {

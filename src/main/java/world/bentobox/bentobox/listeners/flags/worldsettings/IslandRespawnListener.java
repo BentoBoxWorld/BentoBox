@@ -65,6 +65,8 @@ public class IslandRespawnListener extends FlagListener {
         if (respawnLocation != null) {
             e.setRespawnLocation(respawnLocation);
         }
+        // Run respawn commands, if any
+        Util.runCommands(User.getInstance(e.getPlayer()), getIWM().getOnRespawnCommands(world), "respawn");
     }
     
 }
