@@ -162,7 +162,7 @@ public class AddonsManager {
             addon.setState(Addon.State.LOADED);
         } catch (NoClassDefFoundError | NoSuchMethodError | NoSuchFieldError e) {
             // Looks like the addon is incompatible, because it tries to refer to missing classes...
-            handleAddonIncompatibility(addon);
+            handleAddonIncompatibility(addon, e);
         } catch (Exception e) {
             // Unhandled exception. We'll give a bit of debug here.
             handleAddonError(addon, e);
@@ -248,10 +248,7 @@ public class AddonsManager {
             addon.setState(Addon.State.ENABLED);
         } catch (NoClassDefFoundError | NoSuchMethodError | NoSuchFieldError e) {
             // Looks like the addon is incompatible, because it tries to refer to missing classes...
-            handleAddonIncompatibility(addon);
-            StringBuilder a = new StringBuilder();
-            addon.getDescription().getAuthors().forEach(author -> a.append(author).append(" "));
-            plugin.getLogger().log(Level.SEVERE, "Please report this stack trace to the addon's author(s): " + a.toString(), e);
+            handleAddonIncompatibility(addon, e);
         } catch (Exception e) {
             // Unhandled exception. We'll give a bit of debug here.
             handleAddonError(addon, e);
@@ -261,14 +258,19 @@ public class AddonsManager {
     /**
      * Handles an addon which failed to load due to an incompatibility (missing class, missing method).
      * @param addon instance of the Addon.
+     * @param e
      * @since 1.1
      */
-    private void handleAddonIncompatibility(@NonNull Addon addon) {
+    private void handleAddonIncompatibility(@NonNull Addon addon, LinkageError e) {
         // Set the AddonState as "INCOMPATIBLE".
         addon.setState(Addon.State.INCOMPATIBLE);
         plugin.logWarning("Skipping " + addon.getDescription().getName() + " as it is incompatible with the current version of BentoBox or of server software...");
         plugin.logWarning("NOTE: The addon is referring to no longer existing classes.");
         plugin.logWarning("NOTE: DO NOT report this as a bug from BentoBox.");
+        StringBuilder a = new StringBuilder();
+        addon.getDescription().getAuthors().forEach(author -> a.append(author).append(" "));
+        plugin.getLogger().log(Level.SEVERE, "Please report this stack trace to the addon's author(s): " + a.toString(), e);
+
     }
 
     private boolean isAddonCompatibleWithBentoBox(@NonNull Addon addon) {

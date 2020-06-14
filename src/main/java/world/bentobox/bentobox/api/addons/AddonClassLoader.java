@@ -71,7 +71,7 @@ public class AddonClassLoader extends URLClassLoader {
 
 
     /**
-     * Convers the addon.yml to an AddonDescription
+     * Converts the addon.yml to an AddonDescription
      * @param data - yaml config (addon.yml)
      * @return Addon Description
      * @throws InvalidAddonDescriptionException - if there's a bug in the addon.yml
