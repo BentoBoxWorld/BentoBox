@@ -348,6 +348,9 @@ public class BlueprintPaster {
                         // Parse any placeholders in the entity's name, if the owner's connected (he should)
                         Player owner = User.getInstance(island.getOwner()).getPlayer();
                         if (owner != null) {
+                            // Parse for the player's name first (in case placeholders might need it)
+                            customName = customName.replace(TextVariables.NAME, owner.getName());
+                            // Now parse the placeholders
                             customName = plugin.getPlaceholdersManager().replacePlaceholders(owner, customName);
                         }
                     }
