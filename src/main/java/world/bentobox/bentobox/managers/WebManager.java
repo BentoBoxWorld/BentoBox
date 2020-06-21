@@ -94,17 +94,11 @@ public class WebManager {
             }
 
             List<String> repositories = new ArrayList<>();
-            // Gather all the repositories of installed addons and or catalog entries.
+            // Gather all the repositories of installed addons.
             repositories.add("BentoBoxWorld/BentoBox");
             repositories.addAll(plugin.getAddonsManager().getEnabledAddons()
                     .stream().map(addon -> addon.getDescription().getRepository())
                     .filter(repo -> !repo.isEmpty())
-                    .collect(Collectors.toList()));
-            repositories.addAll(addonsCatalog.stream().map(CatalogEntry::getRepository)
-                    .filter(repo -> !repositories.contains(repo))
-                    .collect(Collectors.toList()));
-            repositories.addAll(gamemodesCatalog.stream().map(CatalogEntry::getRepository)
-                    .filter(repo -> !repositories.contains(repo))
                     .collect(Collectors.toList()));
 
             /* Download the contributors */

@@ -102,11 +102,7 @@ public class CatalogPanel {
 
                 // Send the link to the releases tab on click
                 itemBuilder.clickHandler((panel, user1, clickType, slot) -> {
-                    if (clickType.equals(ClickType.MIDDLE)) {
-                        CreditsPanel.openPanel(user1, addon.getRepository());
-                    } else {
-                        user1.sendRawMessage(ChatColor.GRAY + "" + ChatColor.ITALIC + "https://github.com/" + addon.getRepository() + "/releases");
-                    }
+                    user1.sendRawMessage(ChatColor.GRAY + "" + ChatColor.ITALIC + "https://github.com/" + addon.getRepository() + "/releases");
                     return true;
                 });
 
