@@ -681,9 +681,12 @@ ranks:
 protection:
   command-is-banned: "Command is banned for visitors"
   flags:
-    ANIMAL_SPAWN: 
-      description: "Toggle natural spawning"
-      name: "Animal spawning"
+    ANIMAL_NATURAL_SPAWN:
+      description: "Toggle natural animal spawning"
+      name: "Animal natural spawn"
+    ANIMAL_SPAWNERS_SPAWN:
+      description: "Toggle animal spawning with spawners"
+      name: "Animal spawners"
     ANVIL: 
       description: "Toggle interaction"
       name: "Anvils"
@@ -1011,9 +1014,12 @@ protection:
       name: "Minecarts"
       description: "Toggle minecart interactions"
       hint: "Minecart interaction disabled"
-    MONSTER_SPAWN: 
-      description: "Toggle natural spawning"
-      name: "Monster spawning"
+    MONSTER_NATURAL_SPAWN:
+      description: "Toggle natural monster spawning"
+      name: "Monster natural spawn"
+    MONSTER_SPAWNERS_SPAWN:
+      description: "Toggle monster spawning with spawners"
+      name: "Monster spawners"
     MOUNT_INVENTORY: 
       description: |-
         &a Toggle access

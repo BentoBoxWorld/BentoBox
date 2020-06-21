@@ -143,7 +143,7 @@ public class MobSpawnListenerTest {
         when(plugin.isLoaded()).thenReturn(false);
         CreatureSpawnEvent e = new CreatureSpawnEvent(livingEntity, SpawnReason.NATURAL);
         MobSpawnListener l = new MobSpawnListener();
-        assertFalse(l.onNaturalMobSpawn(e));
+        assertFalse(l.onMobSpawn(e));
         assertFalse(e.isCancelled());
     }
 
@@ -171,7 +171,7 @@ public class MobSpawnListenerTest {
         when(e.getEntity()).thenReturn(entity);
 
         // Should not be canceled
-        assertFalse(l.onNaturalMobSpawn(e));
+        assertFalse(l.onMobSpawn(e));
     }
 
     @Test
@@ -225,9 +225,13 @@ public class MobSpawnListenerTest {
             case VILLAGE_DEFENSE:
             case VILLAGE_INVASION:
                 // These should be blocked
-                assertTrue("Should be blocked: " + reason.toString(), l.onNaturalMobSpawn(e));
+                assertTrue("Natural spawn should be blocked: " + reason.toString(), l.onMobSpawn(e));
                 break;
-                // Unnatural - player involved
+            // Spawners
+            case SPAWNER:
+                assertTrue("Spawners spawn should be blocked: " + reason.toString(), l.onMobSpawn(e));
+                break;
+            // Unnatural - player involved
             case BREEDING:
             case BUILD_IRONGOLEM:
             case BUILD_SNOWMAN:
@@ -241,9 +245,8 @@ public class MobSpawnListenerTest {
             case INFECTION:
             case SHEARED:
             case SHOULDER_ENTITY:
-            case SPAWNER:
             case SPAWNER_EGG:
-                assertFalse("Should be not blocked: " + reason.toString(), l.onNaturalMobSpawn(e));
+                assertFalse("Should be not blocked: " + reason.toString(), l.onMobSpawn(e));
                 break;
             default:
                 break;
@@ -285,9 +288,8 @@ public class MobSpawnListenerTest {
     private void checkUnBlocked(CreatureSpawnEvent e, MobSpawnListener l) {
         for (SpawnReason reason: SpawnReason.values()) {
             when(e.getSpawnReason()).thenReturn(reason);
-            assertFalse(l.onNaturalMobSpawn(e));
+            assertFalse(l.onMobSpawn(e));
         }
-
     }
 
     @Test
@@ -297,8 +299,10 @@ public class MobSpawnListenerTest {
         when(im.getIslandAt(any())).thenReturn(Optional.empty());
 
         // Block mobs
-        Flags.MONSTER_SPAWN.setDefaultSetting(false);
-        Flags.ANIMAL_SPAWN.setDefaultSetting(false);
+        Flags.MONSTER_NATURAL_SPAWN.setDefaultSetting(false);
+        Flags.ANIMAL_NATURAL_SPAWN.setDefaultSetting(false);
+        Flags.MONSTER_SPAWNERS_SPAWN.setDefaultSetting(false);
+        Flags.ANIMAL_SPAWNERS_SPAWN.setDefaultSetting(false);
         // Setup event
         CreatureSpawnEvent e = mock(CreatureSpawnEvent.class);
         when(e.getLocation()).thenReturn(location);
@@ -325,8 +329,10 @@ public class MobSpawnListenerTest {
         when(im.getIslandAt(any())).thenReturn(Optional.empty());
 
         // Block mobs
-        Flags.MONSTER_SPAWN.setDefaultSetting(true);
-        Flags.ANIMAL_SPAWN.setDefaultSetting(true);
+        Flags.MONSTER_NATURAL_SPAWN.setDefaultSetting(true);
+        Flags.ANIMAL_NATURAL_SPAWN.setDefaultSetting(true);
+        Flags.MONSTER_SPAWNERS_SPAWN.setDefaultSetting(true);
+        Flags.ANIMAL_SPAWNERS_SPAWN.setDefaultSetting(true);
 
         // Setup event
         CreatureSpawnEvent e = mock(CreatureSpawnEvent.class);
@@ -344,7 +350,6 @@ public class MobSpawnListenerTest {
         // Check animal
         when(e.getEntity()).thenReturn(cow);
         checkUnBlocked(e,l);
-
     }
 
 }

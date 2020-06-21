@@ -2,21 +2,22 @@ package world.bentobox.bentobox.listeners.flags.settings;
 
 import java.util.Optional;
 
+import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.PufferFish;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 
+import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.util.Util;
 
-
 /**
  * Handles natural mob spawning.
  * @author tastybento
- *
  */
 public class MobSpawnListener extends FlagListener {
 
@@ -27,7 +28,7 @@ public class MobSpawnListener extends FlagListener {
      * @return true if cancelled
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public boolean onNaturalMobSpawn(CreatureSpawnEvent e) {
+    public boolean onMobSpawn(CreatureSpawnEvent e) {
         // If not in the right world, or spawning is not natural return
         if (!getIWM().inWorld(e.getEntity().getLocation())) {
             return false;
@@ -50,22 +51,27 @@ public class MobSpawnListener extends FlagListener {
         case TRAP:
         case VILLAGE_DEFENSE:
         case VILLAGE_INVASION:
-            // Deal with natural spawning
-            Optional<Island> island = getIslands().getIslandAt(e.getLocation());
-            // Cancel the event if these are true
-            if (Util.isHostileEntity(e.getEntity()) && !(e.getEntity() instanceof PufferFish)) {
-                boolean cancel = island.map(i -> !i.isAllowed(Flags.MONSTER_SPAWN)).orElse(!Flags.MONSTER_SPAWN.isSetForWorld(e.getEntity().getWorld()));
-                e.setCancelled(cancel);
-                return cancel;
-            } else if (Util.isPassiveEntity(e.getEntity()) || e.getEntity() instanceof PufferFish) {
-                boolean cancel = island.map(i -> !i.isAllowed(Flags.ANIMAL_SPAWN)).orElse(!Flags.ANIMAL_SPAWN.isSetForWorld(e.getEntity().getWorld()));
-                e.setCancelled(cancel);
-                return cancel;
-            }
-            return false;
+            boolean cancelNatural = shouldCancel(e.getEntity(), e.getLocation(), Flags.ANIMAL_NATURAL_SPAWN, Flags.MONSTER_NATURAL_SPAWN);
+            e.setCancelled(cancelNatural);
+            return cancelNatural;
+        // Spawners
+        case SPAWNER:
+            boolean cancelSpawners = shouldCancel(e.getEntity(), e.getLocation(), Flags.ANIMAL_SPAWNERS_SPAWN, Flags.MONSTER_SPAWNERS_SPAWN);
+            e.setCancelled(cancelSpawners);
+            return cancelSpawners;
         default:
             return false;
         }
+    }
+
+    private boolean shouldCancel(Entity entity, Location loc, Flag animalSpawnFlag, Flag monsterSpawnFlag) {
+        Optional<Island> island = getIslands().getIslandAt(loc);
+        if (Util.isHostileEntity(entity) && !(entity instanceof PufferFish)) {
+            return island.map(i -> !i.isAllowed(monsterSpawnFlag)).orElse(!monsterSpawnFlag.isSetForWorld(entity.getWorld()));
+        } else if (Util.isPassiveEntity(entity) || entity instanceof PufferFish) {
+            return island.map(i -> !i.isAllowed(animalSpawnFlag)).orElse(!animalSpawnFlag.isSetForWorld(entity.getWorld()));
+        }
+        return false;
     }
 
 }

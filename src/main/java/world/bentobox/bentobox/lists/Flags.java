@@ -468,6 +468,7 @@ public final class Flags {
 
     /**
      * Provides a list of all the Flag instances contained in this class using reflection.
+     * Deprecated Flags are
      * @return List of all the flags in this class
      */
     public static List<Flag> values() {
