@@ -317,11 +317,46 @@ public final class Flags {
     public static final Flag FIRE_SPREAD = new Flag.Builder("FIRE_SPREAD", Material.FIREWORK_STAR).defaultSetting(true).type(Type.SETTING)
             .mode(Flag.Mode.ADVANCED).build();
 
-    // Others
-    public static final Flag ANIMAL_SPAWN = new Flag.Builder("ANIMAL_SPAWN", Material.APPLE).defaultSetting(true).type(Type.SETTING)
-            .listener(new MobSpawnListener()).build();
+    // Mob spawning
+    /**
+     * @deprecated as of 1.14.0, see {@link #ANIMAL_NATURAL_SPAWN} and {@link #ANIMAL_SPAWNERS_SPAWN}.
+     */
+    @Deprecated
+    public static final Flag ANIMAL_SPAWN = new Flag.Builder("ANIMAL_SPAWN", Material.APPLE).defaultSetting(true).type(Type.SETTING).build();
+    /**
+     * @deprecated as of 1.14.0, see {@link #MONSTER_NATURAL_SPAWN} and {@link #MONSTER_SPAWNERS_SPAWN}.
+     */
+    @Deprecated
     public static final Flag MONSTER_SPAWN = new Flag.Builder("MONSTER_SPAWN", Material.SPAWNER).defaultSetting(true).type(Type.SETTING).build();
 
+    /**
+     * Toggles animal natural spawning.
+     * @since 1.14.0
+     * @see MobSpawnListener
+     */
+    public static final Flag ANIMAL_NATURAL_SPAWN = new Flag.Builder("ANIMAL_NATURAL_SPAWN", Material.APPLE).defaultSetting(true).type(Type.SETTING)
+            .listener(new MobSpawnListener()).build();
+    /**
+     * Toggles animal spawning with spawners.
+     * @since 1.14.0
+     * @see MobSpawnListener
+     */
+    public static final Flag ANIMAL_SPAWNERS_SPAWN = new Flag.Builder("ANIMAL_SPAWNERS_SPAWN", Material.SPAWNER).defaultSetting(true).type(Type.SETTING).build();
+
+    /**
+     * Toggles monster natural spawning.
+     * @since 1.14.0
+     * @see MobSpawnListener
+     */
+    public static final Flag MONSTER_NATURAL_SPAWN = new Flag.Builder("MONSTER_NATURAL_SPAWN", Material.ZOMBIE_HEAD).defaultSetting(true).type(Type.SETTING).build();
+    /**
+     * Toggles monster spawning with spawners.
+     * @since 1.14.0
+     * @see MobSpawnListener
+     */
+    public static final Flag MONSTER_SPAWNERS_SPAWN = new Flag.Builder("MONSTER_SPAWNERS_SPAWN", Material.SPAWNER).defaultSetting(true).type(Type.SETTING).build();
+
+    // Others
     /**
      * If {@code false}, prevents leaves from disappearing.
      * @since 1.3.1
@@ -468,7 +503,7 @@ public final class Flags {
 
     /**
      * Provides a list of all the Flag instances contained in this class using reflection.
-     * Deprecated Flags are
+     * Deprecated Flags are ignored.
      * @return List of all the flags in this class
      */
     public static List<Flag> values() {
