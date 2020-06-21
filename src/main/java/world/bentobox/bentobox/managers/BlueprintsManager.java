@@ -464,14 +464,8 @@ public class BlueprintsManager {
         // Paste
         if (bp != null) {
             new BlueprintPaster(plugin, bp, addon.getOverWorld(), island).paste().thenAccept(b -> {
-                plugin.logDebug("Pasted overworld island");
-                pasteNether(addon, bb, island).thenAccept(b2 -> {
-                    plugin.logDebug("Pasted nether island");
-                    pasteEnd(addon, bb, island).thenAccept(b3 -> {
-                        plugin.logDebug("Pasted end island");
-                        Bukkit.getScheduler().runTask(plugin, task);
-                    });
-                });
+                pasteNether(addon, bb, island).thenAccept(b2 ->
+                pasteEnd(addon, bb, island).thenAccept(b3 -> Bukkit.getScheduler().runTask(plugin, task)));
             });
         }
         return true;
