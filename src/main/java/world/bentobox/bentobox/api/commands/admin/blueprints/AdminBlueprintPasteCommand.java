@@ -25,7 +25,7 @@ public class AdminBlueprintPasteCommand extends CompositeCommand {
         AdminBlueprintCommand parent = (AdminBlueprintCommand) getParent();
         BlueprintClipboard clipboard = parent.getClipboards().computeIfAbsent(user.getUniqueId(), v -> new BlueprintClipboard());
         if (clipboard.isFull()) {
-            new BlueprintPaster(getPlugin(), clipboard, user.getLocation(), () -> {
+            new BlueprintPaster(getPlugin(), clipboard, user.getLocation()).paste().thenAccept(b -> {
                 user.sendMessage("general.success");
                 parent.showClipboard(user);
             });

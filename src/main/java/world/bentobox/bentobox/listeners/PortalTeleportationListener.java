@@ -240,11 +240,11 @@ public class PortalTeleportationListener implements Listener {
                 if (bp != null) {
                     new BlueprintPaster(plugin, bp,
                             to.getWorld(),
-                            island, () -> new SafeSpotTeleport.Builder(plugin)
-                            .entity(player)
-                            .location(island.getSpawnPoint(env) == null ? to : island.getSpawnPoint(env))
-                            // No need to use portal because there will be no portal on the other end
-                            .build());
+                            island).paste().thenAccept(b -> new SafeSpotTeleport.Builder(plugin)
+                                    .entity(player)
+                                    .location(island.getSpawnPoint(env) == null ? to : island.getSpawnPoint(env))
+                                    // No need to use portal because there will be no portal on the other end
+                                    .build());
                 } else {
                     plugin.logError("Could not paste default island in nether or end. Is there a nether-island or end-island blueprint?");
                 }
