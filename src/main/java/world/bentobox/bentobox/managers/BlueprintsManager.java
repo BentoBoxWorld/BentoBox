@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
@@ -406,18 +407,18 @@ public class BlueprintsManager {
         Iterator<Blueprint> it = addonBlueprints.iterator();
         while (it.hasNext()) {
             Blueprint b = it.next();
-           if (b.getName().equalsIgnoreCase(name)) {
-               it.remove();
-               blueprints.put(addon, addonBlueprints);
+            if (b.getName().equalsIgnoreCase(name)) {
+                it.remove();
+                blueprints.put(addon, addonBlueprints);
 
-               File file = new File(getBlueprintsFolder(addon), b.getName() + BLUEPRINT_SUFFIX);
-               // Delete the file
-               try {
-                   Files.deleteIfExists(file.toPath());
-               } catch (IOException e) {
-                   plugin.logError("Could not delete Blueprint " + e.getLocalizedMessage());
-               }
-           }
+                File file = new File(getBlueprintsFolder(addon), b.getName() + BLUEPRINT_SUFFIX);
+                // Delete the file
+                try {
+                    Files.deleteIfExists(file.toPath());
+                } catch (IOException e) {
+                    plugin.logError("Could not delete Blueprint " + e.getLocalizedMessage());
+                }
+            }
         }
     }
 
@@ -460,32 +461,48 @@ public class BlueprintsManager {
                 plugin.logError("NO DEFAULT BLUEPRINT FOUND! Make sure 'island.blu' exists!");
             }
         }
-        // Paste overworld
+        // Paste
         if (bp != null) {
-            new BlueprintPaster(plugin, bp, addon.getOverWorld(), island, task);
+            new BlueprintPaster(plugin, bp, addon.getOverWorld(), island).paste().thenAccept(b -> {
+                plugin.logDebug("Pasted overworld island");
+                pasteNether(addon, bb, island).thenAccept(b2 -> {
+                    plugin.logDebug("Pasted nether island");
+                    pasteEnd(addon, bb, island).thenAccept(b3 -> {
+                        plugin.logDebug("Pasted end island");
+                        Bukkit.getScheduler().runTask(plugin, task);
+                    });
+                });
+            });
         }
-        // Make nether island
+        return true;
+
+    }
+
+    private CompletableFuture<Boolean> pasteNether(GameModeAddon addon, BlueprintBundle bb, Island island) {
         if (bb.getBlueprint(World.Environment.NETHER) != null
                 && addon.getWorldSettings().isNetherGenerate()
                 && addon.getWorldSettings().isNetherIslands()
                 && addon.getNetherWorld() != null) {
-            bp = getBlueprints(addon).get(bb.getBlueprint(World.Environment.NETHER));
+            Blueprint bp = getBlueprints(addon).get(bb.getBlueprint(World.Environment.NETHER));
             if (bp != null) {
-                new BlueprintPaster(plugin, bp, addon.getNetherWorld(), island, null);
+                return new BlueprintPaster(plugin, bp, addon.getNetherWorld(), island).paste();
             }
         }
+        return CompletableFuture.completedFuture(false);
+    }
+
+    private CompletableFuture<Boolean> pasteEnd(GameModeAddon addon, BlueprintBundle bb, Island island) {
         // Make end island
         if (bb.getBlueprint(World.Environment.THE_END) != null
                 && addon.getWorldSettings().isEndGenerate()
                 && addon.getWorldSettings().isEndIslands()
                 && addon.getEndWorld() != null) {
-            bp = getBlueprints(addon).get(bb.getBlueprint(World.Environment.THE_END));
+            Blueprint bp = getBlueprints(addon).get(bb.getBlueprint(World.Environment.THE_END));
             if (bp != null) {
-                new BlueprintPaster(plugin, bp, addon.getEndWorld(), island, null);
+                return new BlueprintPaster(plugin, bp, addon.getEndWorld(), island).paste();
             }
         }
-        return true;
-
+        return CompletableFuture.completedFuture(false);
     }
 
     /**
