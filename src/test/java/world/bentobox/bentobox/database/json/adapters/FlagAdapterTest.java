@@ -75,9 +75,9 @@ public class FlagAdapterTest {
     public void testWriteJsonWriterFlag() throws IOException {
         FlagTypeAdapter fa = new FlagTypeAdapter(plugin);
         JsonWriter out = mock(JsonWriter.class);
-        Flag value = Flags.ANIMAL_SPAWN;
+        Flag value = Flags.ANVIL;
         fa.write(out, value);
-        Mockito.verify(out).value("ANIMAL_SPAWN");
+        Mockito.verify(out).value("ANVIL");
     }
 
     @Test
@@ -104,10 +104,10 @@ public class FlagAdapterTest {
         FlagTypeAdapter fa = new FlagTypeAdapter(plugin);
         JsonReader reader = mock(JsonReader.class);
         Mockito.when(reader.peek()).thenReturn(JsonToken.STRING);
-        Mockito.when(reader.nextString()).thenReturn("ANIMAL_SPAWN");
+        Mockito.when(reader.nextString()).thenReturn("ANVIL");
         Flag flag = fa.read(reader);
         Mockito.verify(reader).nextString();
-        assertEquals(Flags.ANIMAL_SPAWN, flag);
+        assertEquals(Flags.ANVIL, flag);
     }
 
     @Test
