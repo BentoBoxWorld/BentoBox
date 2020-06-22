@@ -35,7 +35,7 @@ catalog:
 commands:
   admin:
     blueprint:
-      bedrock-required: "&c ¡Al menos un bloque de roca de base debe estar en un plano!"
+      bedrock-required: "&c ¡Al menos un bloque de bedrock debe estar en un plano!"
       copied-blocks: "&bHan sido Copiados [number] bloques al portapapeles"
       copied-percent: "&6Copiado [number]%"
       copy:
