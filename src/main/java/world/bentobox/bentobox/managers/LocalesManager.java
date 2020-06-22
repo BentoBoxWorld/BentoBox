@@ -297,6 +297,16 @@ public class LocalesManager {
     }
 
     /**
+     * Returns {@code true} if this locale is available, {@code false} otherwise.
+     * @param locale the locale, not null. Consider using {@link Locale#forLanguageTag(String)} if needed.
+     * @return {@code true} if this locale is available, {@code false} otherwise.
+     * @since 1.14.0
+     */
+    public boolean isLocaleAvailable(@NonNull Locale locale) {
+        return languages.containsKey(locale);
+    }
+
+    /**
      * @return raw map of system locales to BentoBox locales
      */
     public Map<Locale, BentoBoxLocale> getLanguages() {

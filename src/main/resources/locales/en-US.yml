@@ -657,6 +657,9 @@ commands:
       description: "display island settings"
     language:
       description: "select language"
+      parameters: "[language]"
+      not-available: "&c This language is not available."
+      already-selected: "&c You are already using this language."
     expel:
       description: "expel a player from your island"
       parameters: "<player>"
