@@ -68,9 +68,9 @@
         <powermock.version>2.0.4</powermock.version>
         <mongodb.version>3.8.0</mongodb.version>
         <!-- More visible way to change dependency versions -->
-        <spigot.version>1.15.2-R0.1-SNAPSHOT</spigot.version>
+        <spigot.version>1.16.1-R0.1-SNAPSHOT</spigot.version>
         <!-- Might differ from the last Spigot release for short periods of time -->
-        <paper.version>1.15.2-R0.1-SNAPSHOT</paper.version>
+        <paper.version>1.16.1-R0.1-SNAPSHOT</paper.version>
         <bstats.version>1.7</bstats.version>
         <vault.version>1.7</vault.version>
         <placeholderapi.version>2.10.5</placeholderapi.version>

@@ -19,7 +19,13 @@ public class MyBiomeGrid implements BiomeGrid {
     public MyBiomeGrid(Environment environment) {
         switch(environment) {
         case NETHER:
-            defaultBiome = Biome.NETHER;
+            try {
+                // 1.16 onwards
+                defaultBiome = Biome.valueOf("NETHER_WASTES");
+            } catch (Exception e) {
+                // Before 1.16
+                defaultBiome = Biome.valueOf("NETHER");
+            }
             break;
         case THE_END:
             defaultBiome = Biome.THE_END;
