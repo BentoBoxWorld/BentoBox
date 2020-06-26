@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -58,7 +59,7 @@ import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.util.Util;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({BentoBox.class, Util.class })
+@PrepareForTest( {BentoBox.class, Util.class, Bukkit.class })
 public class EnderChestListenerTest {
 
     @Mock
@@ -80,6 +81,8 @@ public class EnderChestListenerTest {
         // Set up plugin
         BentoBox plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+
+        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
 
         // Owner
         UUID uuid1 = UUID.randomUUID();

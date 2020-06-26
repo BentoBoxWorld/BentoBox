@@ -1,5 +1,6 @@
 package world.bentobox.bentobox.listeners.flags.protection;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -22,6 +23,7 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Tag;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -113,74 +115,29 @@ public class BlockInteractionListenerTest {
     private void setFlags() {
         inHandItems.put(Material.ENDER_PEARL, Flags.ENDER_PEARL);
         inHandItems.put(Material.BONE_MEAL, Flags.PLACE_BLOCKS);
-        clickedBlocks.put(Material.ANVIL, Flags.ANVIL);
-        clickedBlocks.put(Material.CHIPPED_ANVIL, Flags.ANVIL);
         clickedBlocks.put(Material.DAMAGED_ANVIL, Flags.ANVIL);
+        when(Tag.ANVIL.isTagged(Material.DAMAGED_ANVIL)).thenReturn(true);
         clickedBlocks.put(Material.BEACON, Flags.BEACON);
-        clickedBlocks.put(Material.BLACK_BED, Flags.BED);
-        clickedBlocks.put(Material.BLUE_BED, Flags.BED);
-        clickedBlocks.put(Material.BROWN_BED, Flags.BED);
-        clickedBlocks.put(Material.CYAN_BED, Flags.BED);
-        clickedBlocks.put(Material.GRAY_BED, Flags.BED);
-        clickedBlocks.put(Material.GREEN_BED, Flags.BED);
-        clickedBlocks.put(Material.LIGHT_BLUE_BED, Flags.BED);
-        clickedBlocks.put(Material.LIGHT_GRAY_BED, Flags.BED);
-        clickedBlocks.put(Material.LIME_BED, Flags.BED);
-        clickedBlocks.put(Material.MAGENTA_BED, Flags.BED);
-        clickedBlocks.put(Material.ORANGE_BED, Flags.BED);
-        clickedBlocks.put(Material.PINK_BED, Flags.BED);
-        clickedBlocks.put(Material.PURPLE_BED, Flags.BED);
-        clickedBlocks.put(Material.RED_BED, Flags.BED);
         clickedBlocks.put(Material.WHITE_BED, Flags.BED);
-        clickedBlocks.put(Material.YELLOW_BED, Flags.BED);
+        when(Tag.BEDS.isTagged(Material.WHITE_BED)).thenReturn(true);
         clickedBlocks.put(Material.BREWING_STAND, Flags.BREWING);
         clickedBlocks.put(Material.CAULDRON, Flags.BREWING);
         clickedBlocks.put(Material.BARREL, Flags.CONTAINER);
         clickedBlocks.put(Material.CHEST, Flags.CONTAINER);
         clickedBlocks.put(Material.CHEST_MINECART, Flags.CONTAINER);
         clickedBlocks.put(Material.TRAPPED_CHEST, Flags.CONTAINER);
-        clickedBlocks.put(Material.BLACK_SHULKER_BOX, Flags.CONTAINER);
-        clickedBlocks.put(Material.BLUE_SHULKER_BOX, Flags.CONTAINER);
-        clickedBlocks.put(Material.BROWN_SHULKER_BOX, Flags.CONTAINER);
-        clickedBlocks.put(Material.CYAN_SHULKER_BOX, Flags.CONTAINER);
-        clickedBlocks.put(Material.GRAY_SHULKER_BOX, Flags.CONTAINER);
-        clickedBlocks.put(Material.GREEN_SHULKER_BOX, Flags.CONTAINER);
-        clickedBlocks.put(Material.LIGHT_BLUE_SHULKER_BOX, Flags.CONTAINER);
-        clickedBlocks.put(Material.LIME_SHULKER_BOX, Flags.CONTAINER);
-        clickedBlocks.put(Material.PINK_SHULKER_BOX, Flags.CONTAINER);
-        clickedBlocks.put(Material.MAGENTA_SHULKER_BOX, Flags.CONTAINER);
-        clickedBlocks.put(Material.ORANGE_SHULKER_BOX, Flags.CONTAINER);
-        clickedBlocks.put(Material.PURPLE_SHULKER_BOX, Flags.CONTAINER);
-        clickedBlocks.put(Material.RED_SHULKER_BOX, Flags.CONTAINER);
-        clickedBlocks.put(Material.LIGHT_GRAY_SHULKER_BOX, Flags.CONTAINER);
-        clickedBlocks.put(Material.WHITE_SHULKER_BOX, Flags.CONTAINER);
-        clickedBlocks.put(Material.YELLOW_SHULKER_BOX, Flags.CONTAINER);
         clickedBlocks.put(Material.SHULKER_BOX, Flags.CONTAINER);
+        when(Tag.SHULKER_BOXES.isTagged(Material.SHULKER_BOX)).thenReturn(true);
         clickedBlocks.put(Material.FLOWER_POT, Flags.CONTAINER);
         clickedBlocks.put(Material.COMPOSTER, Flags.CONTAINER);
         clickedBlocks.put(Material.DISPENSER, Flags.DISPENSER);
         clickedBlocks.put(Material.DROPPER, Flags.DROPPER);
         clickedBlocks.put(Material.HOPPER, Flags.HOPPER);
         clickedBlocks.put(Material.HOPPER_MINECART, Flags.HOPPER);
-        clickedBlocks.put(Material.ACACIA_DOOR, Flags.DOOR);
-        clickedBlocks.put(Material.BIRCH_DOOR, Flags.DOOR);
-        clickedBlocks.put(Material.DARK_OAK_DOOR, Flags.DOOR);
-        clickedBlocks.put(Material.IRON_DOOR, Flags.DOOR);
-        clickedBlocks.put(Material.JUNGLE_DOOR, Flags.DOOR);
-        clickedBlocks.put(Material.SPRUCE_DOOR, Flags.DOOR);
         clickedBlocks.put(Material.OAK_DOOR, Flags.DOOR);
-        clickedBlocks.put(Material.ACACIA_TRAPDOOR, Flags.TRAPDOOR);
-        clickedBlocks.put(Material.BIRCH_TRAPDOOR, Flags.TRAPDOOR);
-        clickedBlocks.put(Material.DARK_OAK_TRAPDOOR, Flags.TRAPDOOR);
-        clickedBlocks.put(Material.OAK_TRAPDOOR, Flags.TRAPDOOR);
-        clickedBlocks.put(Material.JUNGLE_TRAPDOOR, Flags.TRAPDOOR);
-        clickedBlocks.put(Material.SPRUCE_TRAPDOOR, Flags.TRAPDOOR);
+        when(Tag.DOORS.isTagged(Material.OAK_DOOR)).thenReturn(true);
         clickedBlocks.put(Material.IRON_TRAPDOOR, Flags.TRAPDOOR);
-        clickedBlocks.put(Material.ACACIA_FENCE_GATE, Flags.GATE);
-        clickedBlocks.put(Material.BIRCH_FENCE_GATE, Flags.GATE);
-        clickedBlocks.put(Material.DARK_OAK_FENCE_GATE, Flags.GATE);
-        clickedBlocks.put(Material.OAK_FENCE_GATE, Flags.GATE);
-        clickedBlocks.put(Material.JUNGLE_FENCE_GATE, Flags.GATE);
+        when(Tag.TRAPDOORS.isTagged(Material.IRON_TRAPDOOR)).thenReturn(true);
         clickedBlocks.put(Material.SPRUCE_FENCE_GATE, Flags.GATE);
         clickedBlocks.put(Material.BLAST_FURNACE, Flags.FURNACE);
         clickedBlocks.put(Material.CAMPFIRE, Flags.FURNACE);
@@ -197,12 +154,7 @@ public class BlockInteractionListenerTest {
         clickedBlocks.put(Material.STONECUTTER, Flags.CRAFTING);
         clickedBlocks.put(Material.LOOM, Flags.CRAFTING);
         clickedBlocks.put(Material.STONE_BUTTON, Flags.BUTTON);
-        clickedBlocks.put(Material.ACACIA_BUTTON, Flags.BUTTON);
-        clickedBlocks.put(Material.BIRCH_BUTTON, Flags.BUTTON);
-        clickedBlocks.put(Material.DARK_OAK_BUTTON, Flags.BUTTON);
-        clickedBlocks.put(Material.JUNGLE_BUTTON, Flags.BUTTON);
-        clickedBlocks.put(Material.OAK_BUTTON, Flags.BUTTON);
-        clickedBlocks.put(Material.SPRUCE_BUTTON, Flags.BUTTON);
+        when(Tag.BUTTONS.isTagged(Material.STONE_BUTTON)).thenReturn(true);
         clickedBlocks.put(Material.LEVER, Flags.LEVER);
         clickedBlocks.put(Material.REPEATER, Flags.REDSTONE);
         clickedBlocks.put(Material.COMPARATOR, Flags.REDSTONE);
@@ -223,7 +175,7 @@ public class BlockInteractionListenerTest {
         // Set up plugin
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
         // Bukkit
-        PowerMockito.mockStatic(Bukkit.class);
+        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         when(Bukkit.getPluginManager()).thenReturn(pim);
         when(Bukkit.getItemFactory()).thenReturn(itemFactory);
 
@@ -348,7 +300,7 @@ public class BlockInteractionListenerTest {
             when(clickedBlock.getType()).thenReturn(bm);
             PlayerInteractEvent e = new PlayerInteractEvent(player, Action.RIGHT_CLICK_BLOCK, item, clickedBlock, BlockFace.EAST, hand);
             bil.onPlayerInteract(e);
-            assertTrue("Failure " + bm, e.useInteractedBlock().equals(Event.Result.DENY));
+            assertEquals("Failure " + bm, Event.Result.DENY, e.useInteractedBlock());
             if (clickedBlocks.get(bm).getType().equals(Type.PROTECTION)) {
                 count++;
             } else if (clickedBlocks.get(bm).getType().equals(Type.WORLD_SETTING)) {
