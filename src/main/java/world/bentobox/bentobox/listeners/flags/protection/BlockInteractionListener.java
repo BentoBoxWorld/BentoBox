@@ -94,16 +94,24 @@ public class BlockInteractionListener extends FlagListener {
             checkIsland(e, player, loc, Flags.CONTAINER);
             return;
         }
+        if (Tag.ANVIL.isTagged(type)) {
+            checkIsland(e, player, loc, Flags.ANVIL);
+            return;
+        }
         if (Tag.BUTTONS.isTagged(type)) {
             checkIsland(e, player, loc, Flags.BUTTON);
+            return;
+        }
+        if (Tag.BEDS.isTagged(type)) {
+            checkIsland(e, player, loc, Flags.BED);
             return;
         }
         if (Tag.DOORS.isTagged(type)) {
             checkIsland(e, player, loc, Flags.DOOR);
             return;
         }
-        if (Tag.FENCE_GATES.isTagged(type)) {
-            checkIsland(e, player, loc, Flags.GATE);
+        if (Tag.SHULKER_BOXES.isTagged(type)) {
+            checkIsland(e, player, loc, Flags.CONTAINER);
             return;
         }
         if (Tag.TRAPDOORS.isTagged(type)) {
@@ -112,31 +120,8 @@ public class BlockInteractionListener extends FlagListener {
         }
 
         switch (type) {
-        case ANVIL:
-        case CHIPPED_ANVIL:
-        case DAMAGED_ANVIL:
-            checkIsland(e, player, loc, Flags.ANVIL);
-            break;
         case BEACON:
             checkIsland(e, player, loc, Flags.BEACON);
-            break;
-        case BLACK_BED:
-        case BLUE_BED:
-        case BROWN_BED:
-        case CYAN_BED:
-        case GRAY_BED:
-        case GREEN_BED:
-        case LIGHT_BLUE_BED:
-        case LIGHT_GRAY_BED:
-        case LIME_BED:
-        case MAGENTA_BED:
-        case ORANGE_BED:
-        case PINK_BED:
-        case PURPLE_BED:
-        case RED_BED:
-        case WHITE_BED:
-        case YELLOW_BED:
-            checkIsland(e, player, loc, Flags.BED);
             break;
         case BREWING_STAND:
         case CAULDRON:
@@ -148,23 +133,6 @@ public class BlockInteractionListener extends FlagListener {
         case CHEST:
         case CHEST_MINECART:
         case TRAPPED_CHEST:
-        case BLACK_SHULKER_BOX:
-        case BLUE_SHULKER_BOX:
-        case BROWN_SHULKER_BOX:
-        case CYAN_SHULKER_BOX:
-        case GRAY_SHULKER_BOX:
-        case GREEN_SHULKER_BOX:
-        case LIGHT_BLUE_SHULKER_BOX:
-        case LIME_SHULKER_BOX:
-        case PINK_SHULKER_BOX:
-        case MAGENTA_SHULKER_BOX:
-        case ORANGE_SHULKER_BOX:
-        case PURPLE_SHULKER_BOX:
-        case RED_SHULKER_BOX:
-        case LIGHT_GRAY_SHULKER_BOX:
-        case WHITE_SHULKER_BOX:
-        case YELLOW_SHULKER_BOX:
-        case SHULKER_BOX:
         case FLOWER_POT:
         case COMPOSTER:
             checkIsland(e, player, loc, Flags.CONTAINER);
@@ -228,6 +196,16 @@ public class BlockInteractionListener extends FlagListener {
             break;
         case CAKE:
             checkIsland(e, player, loc, Flags.CAKE);
+            break;
+        case OAK_FENCE_GATE:
+        case SPRUCE_FENCE_GATE:
+        case BIRCH_FENCE_GATE:
+        case JUNGLE_FENCE_GATE:
+        case DARK_OAK_FENCE_GATE:
+        case ACACIA_FENCE_GATE:
+        case CRIMSON_FENCE_GATE:
+        case WARPED_FENCE_GATE:
+            checkIsland(e, player, loc, Flags.GATE);
             break;
         default:
             if (stringFlags.containsKey(type.name())) {
