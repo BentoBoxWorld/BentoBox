@@ -208,6 +208,7 @@ public class BlockInteractionListener extends FlagListener {
         case LEVER:
             checkIsland(e, player, loc, Flags.LEVER);
             break;
+        case REDSTONE_WIRE:
         case REPEATER:
         case COMPARATOR:
         case DAYLIGHT_DETECTOR:
