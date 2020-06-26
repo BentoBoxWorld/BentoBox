@@ -28,6 +28,11 @@ public class PhysicalInteractionListener extends FlagListener {
         if (!e.getAction().equals(Action.PHYSICAL)) {
             return;
         }
+        if (Tag.PRESSURE_PLATES.isTagged(e.getClickedBlock().getType())) {
+            // Pressure plates
+            checkIsland(e, e.getPlayer(), e.getPlayer().getLocation(), Flags.PRESSURE_PLATE);
+            return;
+        }
         switch (e.getClickedBlock().getType()) {
         case FARMLAND:
             // Crop trample
@@ -38,10 +43,6 @@ public class PhysicalInteractionListener extends FlagListener {
             break;
         default:
             break;
-        }
-        if (Tag.PRESSURE_PLATES.isTagged(e.getMaterial())) {
-            // Pressure plates
-            checkIsland(e, e.getPlayer(), e.getPlayer().getLocation(), Flags.PRESSURE_PLATE);
         }
     }
 

@@ -224,6 +224,7 @@ public class PhysicalInteractionListenerTest {
     @Test
     public void testOnPlayerInteractWrongMaterial() {
         when(clickedBlock.getType()).thenReturn(Material.STONE);
+        when(Tag.PRESSURE_PLATES.isTagged(clickedBlock.getType())).thenReturn(false);
         PlayerInteractEvent e  = new PlayerInteractEvent(player, Action.PHYSICAL, item, clickedBlock, BlockFace.UP);
         new PhysicalInteractionListener().onPlayerInteract(e);
         assertEquals(e.useInteractedBlock(), Result.ALLOW);
@@ -293,8 +294,8 @@ public class PhysicalInteractionListenerTest {
             PlayerInteractEvent e  = new PlayerInteractEvent(player, Action.PHYSICAL, item, clickedBlock, BlockFace.UP);
             PhysicalInteractionListener i = new PhysicalInteractionListener();
             i.onPlayerInteract(e);
-            assertEquals(e.useInteractedBlock(), Result.ALLOW);
-            assertEquals(e.useItemInHand(), Result.DEFAULT);
+            assertEquals(e.useInteractedBlock(), Result.DENY);
+            assertEquals(e.useItemInHand(), Result.DENY);
         });
     }
 
