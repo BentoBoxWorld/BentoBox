@@ -1,5 +1,6 @@
 package world.bentobox.bentobox.listeners.flags.protection;
 
+import org.bukkit.Material;
 import org.bukkit.Tag;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -28,7 +29,7 @@ public class PhysicalInteractionListener extends FlagListener {
         if (!e.getAction().equals(Action.PHYSICAL)) {
             return;
         }
-        if (Tag.PRESSURE_PLATES.isTagged(e.getClickedBlock().getType())) {
+        if (isPressurePlate(e.getClickedBlock().getType())) {
             // Pressure plates
             checkIsland(e, e.getPlayer(), e.getPlayer().getLocation(), Flags.PRESSURE_PLATE);
             return;
@@ -62,10 +63,30 @@ public class PhysicalInteractionListener extends FlagListener {
                 return;
             }
 
-            if (Tag.PRESSURE_PLATES.isTagged(e.getBlock().getType())) {
+            if (isPressurePlate(e.getBlock().getType())) {
                 // Pressure plates
                 checkIsland(e, (Player)p.getShooter(), e.getBlock().getLocation(), Flags.PRESSURE_PLATE);
             }
+        }
+    }
+
+    private boolean isPressurePlate(Material material) {
+        switch(material) {
+            case STONE_PRESSURE_PLATE:
+            case POLISHED_BLACKSTONE_PRESSURE_PLATE:
+            case ACACIA_PRESSURE_PLATE:
+            case BIRCH_PRESSURE_PLATE:
+            case CRIMSON_PRESSURE_PLATE:
+            case DARK_OAK_PRESSURE_PLATE:
+            case HEAVY_WEIGHTED_PRESSURE_PLATE:
+            case JUNGLE_PRESSURE_PLATE:
+            case LIGHT_WEIGHTED_PRESSURE_PLATE:
+            case OAK_PRESSURE_PLATE:
+            case SPRUCE_PRESSURE_PLATE:
+            case WARPED_PRESSURE_PLATE:
+                return true;
+            default:
+                return false;
         }
     }
 

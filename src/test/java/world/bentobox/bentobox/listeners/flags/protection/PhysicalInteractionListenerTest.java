@@ -362,5 +362,4 @@ public class PhysicalInteractionListenerTest {
             assertTrue(p.name() +" failed", e.isCancelled());
         });
     }
-
 }
