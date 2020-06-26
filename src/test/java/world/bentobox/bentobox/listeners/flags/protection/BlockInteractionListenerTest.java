@@ -1,5 +1,6 @@
 package world.bentobox.bentobox.listeners.flags.protection;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -22,6 +23,7 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Tag;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -162,26 +164,12 @@ public class BlockInteractionListenerTest {
         clickedBlocks.put(Material.DROPPER, Flags.DROPPER);
         clickedBlocks.put(Material.HOPPER, Flags.HOPPER);
         clickedBlocks.put(Material.HOPPER_MINECART, Flags.HOPPER);
-        clickedBlocks.put(Material.ACACIA_DOOR, Flags.DOOR);
-        clickedBlocks.put(Material.BIRCH_DOOR, Flags.DOOR);
-        clickedBlocks.put(Material.DARK_OAK_DOOR, Flags.DOOR);
-        clickedBlocks.put(Material.IRON_DOOR, Flags.DOOR);
-        clickedBlocks.put(Material.JUNGLE_DOOR, Flags.DOOR);
-        clickedBlocks.put(Material.SPRUCE_DOOR, Flags.DOOR);
         clickedBlocks.put(Material.OAK_DOOR, Flags.DOOR);
-        clickedBlocks.put(Material.ACACIA_TRAPDOOR, Flags.TRAPDOOR);
-        clickedBlocks.put(Material.BIRCH_TRAPDOOR, Flags.TRAPDOOR);
-        clickedBlocks.put(Material.DARK_OAK_TRAPDOOR, Flags.TRAPDOOR);
-        clickedBlocks.put(Material.OAK_TRAPDOOR, Flags.TRAPDOOR);
-        clickedBlocks.put(Material.JUNGLE_TRAPDOOR, Flags.TRAPDOOR);
-        clickedBlocks.put(Material.SPRUCE_TRAPDOOR, Flags.TRAPDOOR);
+        when(Tag.DOORS.isTagged(Material.OAK_DOOR)).thenReturn(true);
         clickedBlocks.put(Material.IRON_TRAPDOOR, Flags.TRAPDOOR);
-        clickedBlocks.put(Material.ACACIA_FENCE_GATE, Flags.GATE);
-        clickedBlocks.put(Material.BIRCH_FENCE_GATE, Flags.GATE);
-        clickedBlocks.put(Material.DARK_OAK_FENCE_GATE, Flags.GATE);
-        clickedBlocks.put(Material.OAK_FENCE_GATE, Flags.GATE);
-        clickedBlocks.put(Material.JUNGLE_FENCE_GATE, Flags.GATE);
+        when(Tag.TRAPDOORS.isTagged(Material.IRON_TRAPDOOR)).thenReturn(true);
         clickedBlocks.put(Material.SPRUCE_FENCE_GATE, Flags.GATE);
+        when(Tag.FENCE_GATES.isTagged(Material.SPRUCE_FENCE_GATE)).thenReturn(true);
         clickedBlocks.put(Material.BLAST_FURNACE, Flags.FURNACE);
         clickedBlocks.put(Material.CAMPFIRE, Flags.FURNACE);
         clickedBlocks.put(Material.FURNACE_MINECART, Flags.FURNACE);
@@ -197,12 +185,7 @@ public class BlockInteractionListenerTest {
         clickedBlocks.put(Material.STONECUTTER, Flags.CRAFTING);
         clickedBlocks.put(Material.LOOM, Flags.CRAFTING);
         clickedBlocks.put(Material.STONE_BUTTON, Flags.BUTTON);
-        clickedBlocks.put(Material.ACACIA_BUTTON, Flags.BUTTON);
-        clickedBlocks.put(Material.BIRCH_BUTTON, Flags.BUTTON);
-        clickedBlocks.put(Material.DARK_OAK_BUTTON, Flags.BUTTON);
-        clickedBlocks.put(Material.JUNGLE_BUTTON, Flags.BUTTON);
-        clickedBlocks.put(Material.OAK_BUTTON, Flags.BUTTON);
-        clickedBlocks.put(Material.SPRUCE_BUTTON, Flags.BUTTON);
+        when(Tag.BUTTONS.isTagged(Material.STONE_BUTTON)).thenReturn(true);
         clickedBlocks.put(Material.LEVER, Flags.LEVER);
         clickedBlocks.put(Material.REPEATER, Flags.REDSTONE);
         clickedBlocks.put(Material.COMPARATOR, Flags.REDSTONE);
@@ -348,7 +331,7 @@ public class BlockInteractionListenerTest {
             when(clickedBlock.getType()).thenReturn(bm);
             PlayerInteractEvent e = new PlayerInteractEvent(player, Action.RIGHT_CLICK_BLOCK, item, clickedBlock, BlockFace.EAST, hand);
             bil.onPlayerInteract(e);
-            assertTrue("Failure " + bm, e.useInteractedBlock().equals(Event.Result.DENY));
+            assertEquals("Failure " + bm, Event.Result.DENY, e.useInteractedBlock());
             if (clickedBlocks.get(bm).getType().equals(Type.PROTECTION)) {
                 count++;
             } else if (clickedBlocks.get(bm).getType().equals(Type.WORLD_SETTING)) {
