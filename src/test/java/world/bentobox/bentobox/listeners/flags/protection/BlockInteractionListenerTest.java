@@ -223,7 +223,7 @@ public class BlockInteractionListenerTest {
         // Set up plugin
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
         // Bukkit
-        PowerMockito.mockStatic(Bukkit.class);
+        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         when(Bukkit.getPluginManager()).thenReturn(pim);
         when(Bukkit.getItemFactory()).thenReturn(itemFactory);
 
