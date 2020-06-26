@@ -1,5 +1,6 @@
 package world.bentobox.bentobox.listeners.flags.protection;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -21,6 +22,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Server;
+import org.bukkit.Tag;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -98,7 +100,7 @@ public class PhysicalInteractionListenerTest {
         ItemFactory itemFactory = mock(ItemFactory.class);
         when(server.getItemFactory()).thenReturn(itemFactory);
 
-        PowerMockito.mockStatic(Bukkit.class);
+        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         when(Bukkit.getServer()).thenReturn(server);
         when(Bukkit.getPluginManager()).thenReturn(pim);
 
@@ -193,6 +195,10 @@ public class PhysicalInteractionListenerTest {
 
         // Util strip spaces
         when(Util.stripSpaceAfterColorCodes(anyString())).thenCallRealMethod();
+
+        // Tags
+        when(Tag.PRESSURE_PLATES.isTagged(any(Material.class))).thenReturn(true);
+        when(Tag.WOODEN_BUTTONS.isTagged(any(Material.class))).thenReturn(true);
     }
 
     @After
@@ -209,7 +215,7 @@ public class PhysicalInteractionListenerTest {
         when(clickedBlock.getType()).thenReturn(Material.STONE);
         PlayerInteractEvent e  = new PlayerInteractEvent(player, Action.RIGHT_CLICK_AIR, item, clickedBlock, BlockFace.UP);
         new PhysicalInteractionListener().onPlayerInteract(e);
-        assertTrue(e.useInteractedBlock().equals(Result.ALLOW));
+        assertEquals(e.useInteractedBlock(), Result.ALLOW);
     }
 
     /**
@@ -220,7 +226,7 @@ public class PhysicalInteractionListenerTest {
         when(clickedBlock.getType()).thenReturn(Material.STONE);
         PlayerInteractEvent e  = new PlayerInteractEvent(player, Action.PHYSICAL, item, clickedBlock, BlockFace.UP);
         new PhysicalInteractionListener().onPlayerInteract(e);
-        assertTrue(e.useInteractedBlock().equals(Result.ALLOW));
+        assertEquals(e.useInteractedBlock(), Result.ALLOW);
     }
 
     /**
@@ -232,8 +238,8 @@ public class PhysicalInteractionListenerTest {
         PlayerInteractEvent e  = new PlayerInteractEvent(player, Action.PHYSICAL, item, clickedBlock, BlockFace.UP);
         PhysicalInteractionListener i = new PhysicalInteractionListener();
         i.onPlayerInteract(e);
-        assertTrue(e.useInteractedBlock().equals(Result.DENY));
-        assertTrue(e.useItemInHand().equals(Result.DENY));
+        assertEquals(e.useInteractedBlock(), Result.DENY);
+        assertEquals(e.useItemInHand(), Result.DENY);
         verify(notifier).notify(any(), eq("protection.protected"));
     }
 
@@ -247,7 +253,7 @@ public class PhysicalInteractionListenerTest {
         PlayerInteractEvent e  = new PlayerInteractEvent(player, Action.PHYSICAL, item, clickedBlock, BlockFace.UP);
         PhysicalInteractionListener i = new PhysicalInteractionListener();
         i.onPlayerInteract(e);
-        assertTrue(e.useInteractedBlock().equals(Result.ALLOW));
+        assertEquals(e.useInteractedBlock(), Result.ALLOW);
     }
 
     /**
@@ -260,7 +266,7 @@ public class PhysicalInteractionListenerTest {
         PlayerInteractEvent e  = new PlayerInteractEvent(player, Action.PHYSICAL, item, clickedBlock, BlockFace.UP);
         PhysicalInteractionListener i = new PhysicalInteractionListener();
         i.onPlayerInteract(e);
-        assertTrue(e.useInteractedBlock().equals(Result.ALLOW));
+        assertEquals(e.useInteractedBlock(), Result.ALLOW);
     }
 
     /**
@@ -272,8 +278,8 @@ public class PhysicalInteractionListenerTest {
         PlayerInteractEvent e  = new PlayerInteractEvent(player, Action.PHYSICAL, item, clickedBlock, BlockFace.UP);
         PhysicalInteractionListener i = new PhysicalInteractionListener();
         i.onPlayerInteract(e);
-        assertTrue(e.useInteractedBlock().equals(Result.DENY));
-        assertTrue(e.useItemInHand().equals(Result.DENY));
+        assertEquals(e.useInteractedBlock(), Result.DENY);
+        assertEquals(e.useItemInHand(), Result.DENY);
         verify(notifier).notify(any(), eq("protection.protected"));
     }
 
@@ -287,9 +293,8 @@ public class PhysicalInteractionListenerTest {
             PlayerInteractEvent e  = new PlayerInteractEvent(player, Action.PHYSICAL, item, clickedBlock, BlockFace.UP);
             PhysicalInteractionListener i = new PhysicalInteractionListener();
             i.onPlayerInteract(e);
-            assertTrue(e.useInteractedBlock().equals(Result.DENY));
-            assertTrue(e.useItemInHand().equals(Result.DENY));
-
+            assertEquals(e.useInteractedBlock(), Result.ALLOW);
+            assertEquals(e.useItemInHand(), Result.DEFAULT);
         });
     }
 

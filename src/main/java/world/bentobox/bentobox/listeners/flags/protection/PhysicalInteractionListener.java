@@ -1,5 +1,6 @@
 package world.bentobox.bentobox.listeners.flags.protection;
 
+import org.bukkit.Tag;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
@@ -32,27 +33,15 @@ public class PhysicalInteractionListener extends FlagListener {
             // Crop trample
             checkIsland(e, e.getPlayer(), e.getPlayer().getLocation(), Flags.CROP_TRAMPLE);
             break;
-
-        case ACACIA_PRESSURE_PLATE:
-        case BIRCH_PRESSURE_PLATE:
-        case DARK_OAK_PRESSURE_PLATE:
-        case HEAVY_WEIGHTED_PRESSURE_PLATE:
-        case JUNGLE_PRESSURE_PLATE:
-        case LIGHT_WEIGHTED_PRESSURE_PLATE:
-        case OAK_PRESSURE_PLATE:
-        case SPRUCE_PRESSURE_PLATE:
-        case STONE_PRESSURE_PLATE:
-            // Pressure plates
-            checkIsland(e, e.getPlayer(), e.getPlayer().getLocation(), Flags.PRESSURE_PLATE);
-            break;
-
         case TURTLE_EGG:
             checkIsland(e, e.getPlayer(), e.getPlayer().getLocation(), Flags.TURTLE_EGGS);
             break;
-
         default:
             break;
-
+        }
+        if (Tag.PRESSURE_PLATES.isTagged(e.getMaterial())) {
+            // Pressure plates
+            checkIsland(e, e.getPlayer(), e.getPlayer().getLocation(), Flags.PRESSURE_PLATE);
         }
     }
 
@@ -67,30 +56,14 @@ public class PhysicalInteractionListener extends FlagListener {
         }
         Projectile p = (Projectile)e.getEntity();
         if (p.getShooter() instanceof Player) {
-            switch(e.getBlock().getType()) {
-            case ACACIA_BUTTON:
-            case BIRCH_BUTTON:
-            case JUNGLE_BUTTON:
-            case OAK_BUTTON:
-            case SPRUCE_BUTTON:
-            case STONE_BUTTON:
-            case DARK_OAK_BUTTON:
+            if (Tag.WOODEN_BUTTONS.isTagged(e.getBlock().getType())) {
                 checkIsland(e, (Player)p.getShooter(), e.getBlock().getLocation(), Flags.BUTTON);
-                break;
-            case ACACIA_PRESSURE_PLATE:
-            case BIRCH_PRESSURE_PLATE:
-            case DARK_OAK_PRESSURE_PLATE:
-            case HEAVY_WEIGHTED_PRESSURE_PLATE:
-            case JUNGLE_PRESSURE_PLATE:
-            case LIGHT_WEIGHTED_PRESSURE_PLATE:
-            case OAK_PRESSURE_PLATE:
-            case SPRUCE_PRESSURE_PLATE:
-            case STONE_PRESSURE_PLATE:
+                return;
+            }
+
+            if (Tag.PRESSURE_PLATES.isTagged(e.getBlock().getType())) {
                 // Pressure plates
                 checkIsland(e, (Player)p.getShooter(), e.getBlock().getLocation(), Flags.PRESSURE_PLATE);
-                break;
-            default:
-                break;
             }
         }
     }
