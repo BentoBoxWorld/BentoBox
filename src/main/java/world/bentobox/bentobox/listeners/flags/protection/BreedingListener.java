@@ -50,6 +50,8 @@ public class BreedingListener extends FlagListener {
             .put(EntityType.TURTLE, Collections.singletonList(Material.SEAGRASS))
             .put(EntityType.PANDA, Collections.singletonList(Material.BAMBOO))
             .put(EntityType.FOX, Collections.singletonList(Material.SWEET_BERRIES))
+            .put(EntityType.HOGLIN, Collections.singletonList(Material.CRIMSON_FUNGUS)) // 1.16.1
+            .put(EntityType.STRIDER, Collections.singletonList(Material.WARPED_FUNGUS)) // 1.16.1
             .build();
 
     //TODO: add bees when switching to 1.15.x only
