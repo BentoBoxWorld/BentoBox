@@ -301,8 +301,7 @@ public class Island implements DataObject {
      * @return flag value
      */
     public int getFlag(@NonNull Flag flag) {
-        flags.putIfAbsent(flag, flag.getDefaultRank());
-        return flags.get(flag);
+        return flags.computeIfAbsent(flag, k -> flag.getDefaultRank());
     }
 
     /**

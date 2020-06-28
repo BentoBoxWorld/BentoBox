@@ -85,8 +85,7 @@ public class FlagsManager {
      * @param l - listener
      */
     private void registerListener(@NonNull Listener l) {
-        registeredListeners.putIfAbsent(l, false);
-        if (!registeredListeners.get(l)) {
+        if (!registeredListeners.computeIfAbsent(l, k -> false)) {
             Bukkit.getPluginManager().registerEvents(l, plugin);
             registeredListeners.put(l, true);
         }
@@ -119,7 +118,7 @@ public class FlagsManager {
     public void unregister(@NonNull Addon addon) {
         // Unregister listeners
         flags.entrySet().stream().filter(e -> addon.equals(e.getValue())).map(Map.Entry::getKey)
-                .forEach(f -> f.getListener().ifPresent(HandlerList::unregisterAll));
+        .forEach(f -> f.getListener().ifPresent(HandlerList::unregisterAll));
         // Remove flags
         flags.values().removeIf(addon::equals);
     }
