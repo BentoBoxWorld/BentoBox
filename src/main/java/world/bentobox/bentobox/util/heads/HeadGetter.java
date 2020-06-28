@@ -70,10 +70,7 @@ public class HeadGetter {
             requester.setHead(panelItem);
         } else {
             // Get the name
-            headRequesters.putIfAbsent(panelItem.getPlayerHeadName(), new HashSet<>());
-            Set<HeadRequester> requesters = headRequesters.get(panelItem.getPlayerHeadName());
-            requesters.add(requester);
-            headRequesters.put(panelItem.getPlayerHeadName(), requesters);
+            headRequesters.computeIfAbsent(panelItem.getPlayerHeadName(), k -> new HashSet<>()).add(requester);
             names.put(panelItem.getPlayerHeadName(), panelItem);
         }
     }

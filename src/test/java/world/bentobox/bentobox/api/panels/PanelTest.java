@@ -1,8 +1,15 @@
 package world.bentobox.bentobox.api.panels;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.never;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -60,7 +67,7 @@ public class PanelTest {
         Server server = mock(Server.class);
         PowerMockito.mockStatic(Bukkit.class);
         when(Bukkit.getServer()).thenReturn(server);
-        when(Bukkit.createInventory(Mockito.any(), Mockito.anyInt(), Mockito.anyString())).thenReturn(inv);
+        when(Bukkit.createInventory(any(), anyInt(), anyString())).thenReturn(inv);
 
         name = "panel";
         items = Collections.emptyMap();
@@ -90,10 +97,10 @@ public class PanelTest {
 
         // The next two lines have to be paired together to verify the static call
         PowerMockito.verifyStatic(Bukkit.class, VerificationModeFactory.times(1));
-        Bukkit.createInventory(Mockito.eq(null), Mockito.eq(18), Mockito.eq(name));
+        Bukkit.createInventory(eq(null), eq(18), eq(name));
 
-        Mockito.verify(listener).setup();
-        Mockito.verify(player).openInventory(Mockito.any(Inventory.class));
+        verify(listener).setup();
+        verify(player).openInventory(any(Inventory.class));
     }
 
     /**
@@ -106,7 +113,7 @@ public class PanelTest {
 
         // The next two lines have to be paired together to verify the static call
         PowerMockito.verifyStatic(Bukkit.class, VerificationModeFactory.times(1));
-        Bukkit.createInventory(Mockito.eq(null), Mockito.eq(9), Mockito.eq(name));
+        Bukkit.createInventory(eq(null), eq(9), eq(name));
     }
 
     /**
@@ -119,7 +126,7 @@ public class PanelTest {
 
         // The next two lines have to be paired together to verify the static call
         PowerMockito.verifyStatic(Bukkit.class, VerificationModeFactory.times(1));
-        Bukkit.createInventory(Mockito.eq(null), Mockito.eq(54), Mockito.eq(name));
+        Bukkit.createInventory(eq(null), eq(54), eq(name));
     }
 
     /**
@@ -129,7 +136,7 @@ public class PanelTest {
     public void testPanelNullUser() {
         // Panel
         new Panel(name, items, 10, null, listener);
-        Mockito.verify(player, Mockito.never()).openInventory(Mockito.any(Inventory.class));
+        verify(player, never()).openInventory(any(Inventory.class));
     }
 
     /**
@@ -151,10 +158,10 @@ public class PanelTest {
 
         // The next two lines have to be paired together to verify the static call
         PowerMockito.verifyStatic(Bukkit.class, VerificationModeFactory.times(1));
-        Bukkit.createInventory(Mockito.eq(null), Mockito.eq(54), Mockito.eq(name));
+        Bukkit.createInventory(eq(null), eq(54), eq(name));
 
-        Mockito.verify(inv, Mockito.times(54)).setItem(Mockito.anyInt(), Mockito.eq(itemStack));
-        Mockito.verify(player).openInventory(Mockito.any(Inventory.class));
+        verify(inv, times(54)).setItem(anyInt(), eq(itemStack));
+        verify(player).openInventory(any(Inventory.class));
 
     }
 
@@ -178,7 +185,7 @@ public class PanelTest {
 
         // The next two lines have to be paired together to verify the static call
         PowerMockito.verifyStatic(HeadGetter.class, VerificationModeFactory.times(54));
-        HeadGetter.getHead(Mockito.eq(item), Mockito.eq(p));
+        HeadGetter.getHead(eq(item), eq(p));
     }
 
     /**
@@ -227,7 +234,7 @@ public class PanelTest {
     public void testOpenPlayerArray() {
         Panel p = new Panel(name, items, 10, user, listener);
         p.open(player, player, player);
-        Mockito.verify(player, Mockito.times(4)).openInventory(inv);
+        verify(player, times(4)).openInventory(inv);
     }
 
     /**
@@ -237,7 +244,7 @@ public class PanelTest {
     public void testOpenUserArray() {
         Panel p = new Panel(name, items, 10, user, listener);
         p.open(user, user, user);
-        Mockito.verify(player, Mockito.times(4)).openInventory(inv);
+        verify(player, times(4)).openInventory(inv);
     }
 
     /**
@@ -307,7 +314,7 @@ public class PanelTest {
         }
         // Inv
         when(inv.getSize()).thenReturn(18);
-        when(inv.getItem(Mockito.anyInt())).thenReturn(itemStack);
+        when(inv.getItem(anyInt())).thenReturn(itemStack);
 
         // Panel
         Panel p = new Panel(name, items, 0, user, listener);
@@ -327,7 +334,7 @@ public class PanelTest {
         p.setHead(newItem);
 
         assertEquals(newItem, p.getItems().get(0));
-        Mockito.verify(inv).setItem(Mockito.anyInt(), Mockito.eq(itemStack2));
+        verify(inv, times(18)).setItem(anyInt(), eq(itemStack2));
     }
 
     /**

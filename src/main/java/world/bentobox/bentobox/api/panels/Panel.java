@@ -57,7 +57,7 @@ public class Panel implements HeadRequester, InventoryHolder {
     }
 
     protected void makePanel(String name, Map<Integer, PanelItem> items, int size, User user,
-        PanelListener listener) {
+            PanelListener listener) {
         this.makePanel(name, items, size, user, listener, Type.INVENTORY);
     }
 
@@ -71,15 +71,15 @@ public class Panel implements HeadRequester, InventoryHolder {
 
         // Create panel
         switch (type) {
-            case INVENTORY:
-                inventory = Bukkit.createInventory(null, fixSize(size), name);
-                break;
-            case HOPPER:
-                inventory = Bukkit.createInventory(null, InventoryType.HOPPER, name);
-                break;
-            case DROPPER:
-                inventory = Bukkit.createInventory(null, InventoryType.DROPPER, name);
-                break;
+        case INVENTORY:
+            inventory = Bukkit.createInventory(null, fixSize(size), name);
+            break;
+        case HOPPER:
+            inventory = Bukkit.createInventory(null, InventoryType.HOPPER, name);
+            break;
+        case DROPPER:
+            inventory = Bukkit.createInventory(null, InventoryType.DROPPER, name);
+            break;
         }
 
         // Fill the inventory and return
@@ -200,8 +200,6 @@ public class Panel implements HeadRequester, InventoryHolder {
                 ItemMeta meta = it.getItemMeta();
                 if (meta != null && ChatColor.stripColor(item.getName()).equals(ChatColor.stripColor(meta.getLocalizedName()))) {
                     inventory.setItem(i, item.getItem());
-                    // If one is found, we are done
-                    return;
                 }
             }
         }
