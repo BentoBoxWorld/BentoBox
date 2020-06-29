@@ -92,6 +92,9 @@ public class BreakBlocksListener extends FlagListener {
         case DRAGON_EGG:
             checkIsland(e, e.getPlayer(), e.getClickedBlock().getLocation(), Flags.DRAGON_EGG);
             break;
+        case HOPPER:
+            checkIsland(e, e.getPlayer(), e.getClickedBlock().getLocation(), Flags.BREAK_HOPPERS);
+            break;
         default:
             break;
         }

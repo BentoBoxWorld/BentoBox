@@ -717,9 +717,15 @@ protection:
     BREAK_SPAWNERS:
       description: |-
         Toggle spawners breaking.
-        Override the Break Blocks flag.
+        Overrides the Break Blocks flag.
       name: "Break spawners"
       hint: "Spawner breaking disabled"
+    BREAK_HOPPERS:
+      description: |-
+        Toggle hoppers breaking.
+        Overrides the Break Blocks flag.
+      name: "Break hoppers"
+      hint: "Hoppers breaking disabled"
     BREEDING: 
       description: "Toggle breeding"
       name: "Breed animals"

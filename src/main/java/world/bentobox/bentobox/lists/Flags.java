@@ -87,6 +87,12 @@ public final class Flags {
      */
     public static final Flag BREAK_SPAWNERS = new Flag.Builder("BREAK_SPAWNERS", Material.SPAWNER).mode(Flag.Mode.EXPERT).build();
     /**
+     * Prevents players from breaking hoppers on one's island.
+     * @see BreakBlocksListener
+     * @since 1.14.0
+     */
+    public static final Flag BREAK_HOPPERS = new Flag.Builder("BREAK_HOPPERS", Material.HOPPER).mode(Flag.Mode.EXPERT).build();
+    /**
      * Prevents players from placing blocks on one's island.
      * @see PlaceBlocksListener
      */
