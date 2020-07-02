@@ -122,4 +122,16 @@ public class FlagsManager {
         // Remove flags
         flags.values().removeIf(addon::equals);
     }
+
+    /**
+     * Unregister a specific flag
+     * @param Flag - flag
+     * @since 1.14.0
+     */
+    public void unregister(@NonNull Flag flag) {
+        // Unregister any listener
+        flag.getListener().ifPresent(HandlerList::unregisterAll);
+        // Remove flag
+        flags.remove(flag);
+    }
 }
