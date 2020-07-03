@@ -30,8 +30,11 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.EntityType;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+
+import com.google.common.base.Enums;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.configuration.ConfigComment;
@@ -622,7 +625,13 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             // Find out the value
             Class<Enum> enumClass = (Class<Enum>)clazz;
             try {
-                value = Enum.valueOf(enumClass, ((String)value).toUpperCase(Locale.ENGLISH));
+                String name = ((String)value).toUpperCase(Locale.ENGLISH);
+                // Backwards compatibility for upgrade to 1.16.1
+                if (name.equals("PIG_ZOMBIE") || name.equals("ZOMBIFIED_PIGLIN")) {
+                    return Enums.getIfPresent(EntityType.class, "ZOMBIFIED_PIGLIN")
+                            .or(Enums.getIfPresent(EntityType.class, "PIG_ZOMBIE").or(EntityType.PIG));
+                }
+                value = Enum.valueOf(enumClass, name);
             } catch (Exception e) {
                 // This value does not exist - probably admin typed it wrongly
                 // Show what is available and pick one at random
