@@ -7,6 +7,7 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.AbstractArrow;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EnderCrystal;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -107,7 +108,14 @@ public class BreakBlocksListener extends FlagListener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onVehicleDamageEvent(VehicleDamageEvent e) {
         if (getIWM().inWorld(e.getVehicle().getLocation()) && e.getAttacker() instanceof Player) {
-            checkIsland(e, (Player)e.getAttacker(), e.getVehicle().getLocation(), Flags.BREAK_BLOCKS);
+            String vehicleType = e.getVehicle().getType().toString();
+            if (e.getVehicle().getType().equals(EntityType.BOAT)) {
+                checkIsland(e, (Player) e.getAttacker(), e.getVehicle().getLocation(), Flags.BOAT);
+            } else if (vehicleType.contains("MINECART")) {
+                checkIsland(e, (Player) e.getAttacker(), e.getVehicle().getLocation(), Flags.MINECART);
+            } else {
+                checkIsland(e, (Player) e.getAttacker(), e.getVehicle().getLocation(), Flags.BREAK_BLOCKS);
+            }
         }
     }
 

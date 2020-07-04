@@ -708,7 +708,9 @@ protection:
       hint: "Bed use disabled"
     BOAT:
       name: "Boats"
-      description: "Toggle boats interactions"
+      description: |-
+        Toggle placing, breaking and
+        entering into boats.
       hint: "No boat interaction allowed"
     BREAK_BLOCKS: 
       description: "Toggle breaking"
@@ -1021,7 +1023,9 @@ protection:
       hint: "Milking cows disabled"
     MINECART:
       name: "Minecarts"
-      description: "Toggle minecart interactions"
+      description: |-
+        Toggle placing, breaking and
+        entering into minecarts.
       hint: "Minecart interaction disabled"
     MONSTER_NATURAL_SPAWN:
       description: "Toggle natural monster spawning"
