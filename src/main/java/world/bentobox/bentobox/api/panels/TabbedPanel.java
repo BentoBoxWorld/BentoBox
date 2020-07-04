@@ -29,6 +29,7 @@ import world.bentobox.bentobox.api.user.User;
 public class TabbedPanel extends Panel implements PanelListener {
 
     private static final String PROTECTION_PANEL = "protection.panel.";
+    private static final long ITEMS_PER_PAGE = 36;
     private final TabbedPanelBuilder tpb;
     private @NonNull BentoBox plugin = BentoBox.getInstance();
     private int activeTab;
@@ -95,7 +96,7 @@ public class TabbedPanel extends Panel implements PanelListener {
         if (tpb.getTabs().containsKey(activeTab)) {
             List<PanelItem> panelItems = tab.getPanelItems();
             // Adds the flag items
-            panelItems.stream().filter(Objects::nonNull).skip(page * 45L).limit(page * 45L + 45L).forEach(i -> items.put(items.lastKey() + 1, i));
+            panelItems.stream().filter(Objects::nonNull).skip(page * ITEMS_PER_PAGE).limit(page * ITEMS_PER_PAGE + ITEMS_PER_PAGE).forEach(i -> items.put(items.lastKey() + 1, i));
 
             // set up the footer
             setupFooter(items);
@@ -108,7 +109,7 @@ public class TabbedPanel extends Panel implements PanelListener {
                     return true;
                 }).build());
             }
-            if ((page + 1) * 45L < panelItems.stream().filter(Objects::nonNull).count()) {
+            if ((page + 1) * ITEMS_PER_PAGE < panelItems.stream().filter(Objects::nonNull).count()) {
                 // Next page icon
                 items.put(52, new PanelItemBuilder().icon(Material.ARROW).name(tpb.getUser().getTranslation(PROTECTION_PANEL + "next")).clickHandler((panel, user1, clickType, slot1) -> {
                     this.activePage++;
