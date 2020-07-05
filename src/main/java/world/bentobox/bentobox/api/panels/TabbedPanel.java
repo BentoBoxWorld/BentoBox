@@ -137,9 +137,7 @@ public class TabbedPanel extends Panel implements PanelListener {
         // Add icons
         for (Entry<Integer, Tab> tabPanel : tpb.getTabs().entrySet()) {
             // Add the icon to the top row
-            if (tabPanel.getValue().getPermission().isEmpty()
-                    || tpb.getUser().hasPermission(tabPanel.getValue().getPermission())
-                    || tpb.getUser().isOp()) {
+            if (tpb.getUser().hasPermission(tabPanel.getValue().getPermission())) {
                 PanelItem activeIcon = tabPanel.getValue().getIcon();
                 // Set the glow of the active tab
                 activeIcon.setGlow(tabPanel.getValue().equals(tab));
