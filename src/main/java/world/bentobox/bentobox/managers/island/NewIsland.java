@@ -142,7 +142,7 @@ public class NewIsland {
 
         /**
          * @return Island
-         * @throws Exception
+         * @throws IOException - if there are insufficient parameters, i.e., no user
          */
         public Island build() throws IOException {
             if (user2 != null) {

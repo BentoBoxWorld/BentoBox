@@ -92,7 +92,7 @@ public abstract class DefaultAdminCommand extends CompositeCommand {
 
     /**
      * Defines what will be executed when this command is run.
-     * @see world.bentobox.bentobox.api.commands.BentoBoxCommand#execute(User, String, List<String>)
+     * @see world.bentobox.bentobox.api.commands.BentoBoxCommand#execute(User, String, List(String))
      */
     @Override
     public boolean execute(User user, String label, List<String> args) {

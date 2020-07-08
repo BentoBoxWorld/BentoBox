@@ -40,8 +40,8 @@ public class SQLiteDatabaseHandler<T> extends SQLDatabaseHandler<T> {
     }
 
     @Override
-    /**
-     * Creates the table in the database if it doesn't exist already
+    /*
+      Creates the table in the database if it doesn't exist already
      */
     protected void createSchema() {
         if (getSqlConfig().renameRequired()) {

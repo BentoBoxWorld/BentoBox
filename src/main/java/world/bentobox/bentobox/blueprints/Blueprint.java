@@ -25,11 +25,11 @@ public class Blueprint {
      * Unique name for this blueprint. The filename will be this plus the blueprint suffix
      */
     @Expose
-    private @NonNull String name;
+    private @NonNull String name = "";
     @Expose
     private String displayName;
     @Expose
-    private @NonNull Material icon;
+    private @NonNull Material icon = Material.PAPER;
     @Expose
     private List<String> description;
     @Expose

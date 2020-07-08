@@ -603,16 +603,14 @@ public class Flag implements Comparable<Flag> {
             // If no clickHandler has been set, then apply default ones
             if (clickHandler == null) {
                 switch (type){
-                case PROTECTION:
-                    clickHandler = new CycleClick(id);
-                    break;
-                case SETTING:
+                    case SETTING:
                     clickHandler = new IslandToggleClick(id);
                     break;
                 case WORLD_SETTING:
                     clickHandler = new WorldToggleClick(id);
                     break;
-                default:
+                    case PROTECTION:
+                    default:
                     clickHandler = new CycleClick(id);
                     break;
                 }

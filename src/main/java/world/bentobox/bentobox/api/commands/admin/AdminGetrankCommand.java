@@ -24,7 +24,6 @@ public class AdminGetrankCommand extends CompositeCommand {
 
     private Island island;
     private @Nullable UUID targetUUID;
-    private @Nullable UUID ownerUUID;
 
     public AdminGetrankCommand(CompositeCommand adminCommand) {
         super(adminCommand, "getrank");
@@ -64,7 +63,7 @@ public class AdminGetrankCommand extends CompositeCommand {
         } else {
             // We want to get the rank of the player on the island of the owner we specify.
             // So we have to make sure that the island owner actually owns an island
-            ownerUUID = getPlayers().getUUID(args.get(1));
+            @Nullable UUID ownerUUID = getPlayers().getUUID(args.get(1));
             if (ownerUUID == null) {
                 user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(1));
                 return false;

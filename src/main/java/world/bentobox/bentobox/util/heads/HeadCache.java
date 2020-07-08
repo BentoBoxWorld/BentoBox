@@ -10,8 +10,8 @@ public class HeadCache {
     private final ItemStack head;
     private final long timestamp;
     /**
-     * @param head
-     * @param timestamp
+     * @param head - head ItemStack
+     * @param timestamp - timestamp when made
      */
     public HeadCache(ItemStack head, long timestamp) {
         super();

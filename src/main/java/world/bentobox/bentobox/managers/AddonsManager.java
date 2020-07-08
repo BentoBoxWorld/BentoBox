@@ -258,7 +258,7 @@ public class AddonsManager {
     /**
      * Handles an addon which failed to load due to an incompatibility (missing class, missing method).
      * @param addon instance of the Addon.
-     * @param e
+     * @param e - linkage exception
      * @since 1.1
      */
     private void handleAddonIncompatibility(@NonNull Addon addon, LinkageError e) {
@@ -439,7 +439,7 @@ public class AddonsManager {
     public Class<?> getClassByName(@NonNull final String name) {
         try {
             return classes.getOrDefault(name, loaders.values().stream().map(l -> l.findClass(name, false)).filter(Objects::nonNull).findFirst().orElse(null));
-        } catch (Exception e) {}
+        } catch (Exception ignored) {}
         return null;
     }
 
