@@ -125,6 +125,11 @@ public class Settings implements ConfigObject {
     @ConfigEntry(path = "panel.filler-material", since = "1.14.0")
     private Material panelFillerMaterial = Material.LIGHT_BLUE_STAINED_GLASS_PANE;
 
+    @ConfigComment("Defines how long player heads are stored into local cache before skin is required again.")
+    @ConfigComment("Value 0 will not clear cache until server restart.")
+    @ConfigEntry(path = "panel.head-cache-time", since = "1.14.1")
+    private long playerHeadCacheTime = 36000;
+
     /*
      * Logs
      */
@@ -713,4 +718,27 @@ public class Settings implements ConfigObject {
     public void setPanelFillerMaterial(Material panelFillerMaterial) {
         this.panelFillerMaterial = panelFillerMaterial;
     }
+
+
+	/**
+     * Method Settings#getPlayerHeadCacheTime returns the playerHeadCacheTime of this object.
+     *
+     * @return the playerHeadCacheTime (type long) of this object.
+     * @since 1.14.1
+     */
+    public long getPlayerHeadCacheTime()
+	{
+		return playerHeadCacheTime;
+	}
+
+
+	/**
+     * Method Settings#setPlayerHeadCacheTime sets new value for the playerHeadCacheTime of this object.
+     * @param playerHeadCacheTime new value for this object.
+     * @since 1.14.1
+     */
+    public void setPlayerHeadCacheTime(long playerHeadCacheTime)
+	{
+		this.playerHeadCacheTime = playerHeadCacheTime;
+	}
 }
