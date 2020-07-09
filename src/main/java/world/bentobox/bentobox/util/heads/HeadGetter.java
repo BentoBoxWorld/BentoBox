@@ -72,8 +72,9 @@ public class HeadGetter
 
         HeadCache cache = cachedHeads.get(panelItem.getPlayerHeadName());
 
-        // Get value from config.
-        long CACHE_TIME = BentoBox.getInstance().getSettings().getPlayerHeadCacheTime();
+        // Get value from config. Multiply value to 60 000 as internally it uses miliseconds.
+        // Config value stores minutes.
+        long cacheTimeout = BentoBox.getInstance().getSettings().getPlayerHeadCacheTime() * 60 * 1000;
 
         // to avoid every time clearing stored heads (as they may become very large)
         // just check if requested cache exists and compare it with value from plugin settings.
@@ -81,8 +82,8 @@ public class HeadGetter
         // If settings time is set to 0, then always use cache.
         if (cache != null &&
             cache.getTimestamp() != 0 &&
-            CACHE_TIME > 0 &&
-            System.currentTimeMillis() - cache.getTimestamp() <= CACHE_TIME)
+            cacheTimeout > 0 &&
+            System.currentTimeMillis() - cache.getTimestamp() <= cacheTimeout)
         {
             panelItem.setHead(cachedHeads.get(panelItem.getPlayerHeadName()).getPlayerHead());
             requester.setHead(panelItem);
@@ -190,6 +191,8 @@ public class HeadGetter
               */
 
             // Mojang returns ID without `-`. So it is necessary to insert them back.
+            // Well technically it is not necessary and can use just a string instead of UUID.
+            // UUID just looks more fancy :)
             String userIdString = jsonObject.get("id").toString().
                 replace("\"", "").
                 replaceFirst("([0-9a-fA-F]{8})([0-9a-fA-F]{4})([0-9a-fA-F]{4})([0-9a-fA-F]{4})([0-9a-fA-F]+)",
@@ -208,7 +211,8 @@ public class HeadGetter
 
 
     /**
-     * This method gets and returns encoded player skin texture, based on given player UUID.
+     * This method gets and returns base64 encoded link to player skin texture, based on
+     * given player UUID.
      *
      * @param userId UUID value for the user.
      * @return Encoded player skin texture or null.

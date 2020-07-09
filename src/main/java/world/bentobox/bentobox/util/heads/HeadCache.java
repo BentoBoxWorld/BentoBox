@@ -33,13 +33,13 @@ public class HeadCache
     private final UUID userId;
 
     /**
-     * Encoded texture for given player head.
+     * Base64 Encoded texture link to given player skin.
      */
-    public final String encodedTexture;
+    public final String encodedTextureLink;
 
     /**
-     * Time when head was created.
-     * Setting it to 0 will result in keeping head in cache for ever.
+     * Time when head was created. Setting it to 0 will result in keeping head in cache
+     * for ever.
      */
     private final long timestamp;
 
@@ -52,29 +52,31 @@ public class HeadCache
     /**
      * Constructor HeadCache creates a new HeadCache instance.
      *
-     * @param userName of type String
-     * @param userId of type String
-     * @param encodedTexture of type String
+     * @param userName           of type String
+     * @param userId             of type String
+     * @param encodedTextureLink of type String
      */
-    public HeadCache(String userName, UUID userId, String encodedTexture)
+    public HeadCache(String userName, UUID userId, String encodedTextureLink)
     {
-        this(userName, userId, encodedTexture, System.currentTimeMillis());
+        this(userName, userId, encodedTextureLink, System.currentTimeMillis());
     }
-
 
 
     /**
      * Constructor HeadCache creates a new HeadCache instance.
      *
-     * @param userName of type String
-     * @param userId of type UUID
-     * @param encodedTexture of type String
-     * @param timestamp of type long
+     * @param userName           of type String
+     * @param userId             of type UUID
+     * @param encodedTextureLink of type String
+     * @param timestamp          of type long
      */
-    public HeadCache(String userName, UUID userId, String encodedTexture, long timestamp)
+    public HeadCache(String userName,
+        UUID userId,
+        String encodedTextureLink,
+        long timestamp)
     {
         this.userName = userName;
-        this.encodedTexture = encodedTexture;
+        this.encodedTextureLink = encodedTextureLink;
         this.userId = userId;
         this.timestamp = timestamp;
     }
@@ -86,9 +88,10 @@ public class HeadCache
 
 
     /**
-     * Returns a new Player head with a cached texture.
-     * Be AWARE, usage does not use clone method. If for some reason item stack is stored directly,
-     * then use clone in return :)
+     * Returns a new Player head with a cached texture. Be AWARE, usage does not use clone
+     * method. If for some reason item stack is stored directly, then use clone in return
+     * :)
+     *
      * @return an ItemStack of the custom head.
      */
     public ItemStack getPlayerHead()
@@ -97,10 +100,11 @@ public class HeadCache
         ItemMeta meta = item.getItemMeta();
 
         // Set correct Skull texture
-        if (meta != null && this.encodedTexture != null && !this.encodedTexture.isEmpty())
+        if (meta != null && this.encodedTextureLink != null && !this.encodedTextureLink.isEmpty())
         {
             GameProfile profile = new GameProfile(this.userId, this.userName);
-            profile.getProperties().put("textures", new Property("textures", this.encodedTexture));
+            profile.getProperties().put("textures",
+                new Property("textures", this.encodedTextureLink));
 
             try
             {

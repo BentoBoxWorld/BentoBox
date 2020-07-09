@@ -82,10 +82,11 @@ panel:
   # Defines the Material of the item that fills the gaps (in the header, etc.) of most panels.
   # Added since 1.14.0.
   filler-material: LIGHT_BLUE_STAINED_GLASS_PANE
-  # Defines how long player heads are stored into local cache before skin is required again.
+  # Defines how long player skin texture link is stored into local cache before it is requested again.
+  # Defined value is in the minutes.
   # Value 0 will not clear cache until server restart.
   # Added since 1.14.1.
-  head-cache-time: 36000
+  head-cache-time: 60
 logs:
   # Toggle whether superflat chunks regeneration should be logged in the server logs or not.
   # It can be spammy if there are a lot of superflat chunks to regenerate.
