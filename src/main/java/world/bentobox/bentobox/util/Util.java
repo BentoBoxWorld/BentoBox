@@ -3,7 +3,6 @@ package world.bentobox.bentobox.util;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
@@ -531,8 +530,7 @@ public class Util {
      */
     private static boolean isJUnitTest() {
         StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-        List<StackTraceElement> list = Arrays.asList(stackTrace);
-        for (StackTraceElement element : list) {
+        for (StackTraceElement element : stackTrace) {
             if (element.getClassName().startsWith("org.junit.")) {
                 return true;
             }

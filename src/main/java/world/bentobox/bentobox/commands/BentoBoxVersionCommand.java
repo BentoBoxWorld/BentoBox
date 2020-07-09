@@ -47,7 +47,7 @@ public class BentoBoxVersionCommand extends CompositeCommand {
         user.sendMessage("commands.bentobox.version.database", "[database]", getSettings().getDatabaseType().toString());
         user.sendMessage("commands.bentobox.version.loaded-game-worlds");
 
-        getIWM().getOverWorldNames().entrySet().stream().sorted(Comparator.comparing(Map.Entry::getKey))
+        getIWM().getOverWorldNames().entrySet().stream().sorted(Map.Entry.comparingByKey())
         .forEach(e -> {
             String worlds = user.getTranslation("general.worlds.overworld");
 

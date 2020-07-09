@@ -39,10 +39,11 @@ public class SQLiteDatabaseHandler<T> extends SQLDatabaseHandler<T> {
                 .renameTable("ALTER TABLE `[oldTableName]` RENAME TO `[tableName]`"));
     }
 
-    @Override
+
     /**
      * Creates the table in the database if it doesn't exist already
      */
+    @Override
     protected void createSchema() {
         if (getSqlConfig().renameRequired()) {
             // SQLite does not have a rename if exists command so we have to manually check if the old table exists

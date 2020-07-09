@@ -125,7 +125,7 @@ public class FlagsManager {
 
     /**
      * Unregister a specific flag
-     * @param Flag - flag
+     * @param flag - flag
      * @since 1.14.0
      */
     public void unregister(@NonNull Flag flag) {

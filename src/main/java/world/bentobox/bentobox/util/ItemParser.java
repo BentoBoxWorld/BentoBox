@@ -65,9 +65,6 @@ public class ItemParser {
         // Rearrange
         String[] twoer = {part[0], part[2]};
         ItemStack result = two(twoer);
-        if (result == null) {
-            return null;
-        }
         return result;
     }
 

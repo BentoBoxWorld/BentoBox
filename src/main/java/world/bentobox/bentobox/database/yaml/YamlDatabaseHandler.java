@@ -330,7 +330,7 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      * Inserts T into the corresponding database-table
      *
      * @param instance that should be inserted into the database
-     * @return
+     * @return CompletableFuture that will be true if object is saved successfully
      */
     @SuppressWarnings("unchecked")
     @Override

@@ -1,14 +1,14 @@
 package world.bentobox.bentobox.api.commands.admin.blueprints;
 
+import java.io.File;
+import java.util.List;
+import java.util.Locale;
+
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.blueprints.Blueprint;
 import world.bentobox.bentobox.managers.BlueprintsManager;
-
-import java.io.File;
-import java.util.List;
-import java.util.Locale;
 
 /**
  * Renames an existing blueprint.

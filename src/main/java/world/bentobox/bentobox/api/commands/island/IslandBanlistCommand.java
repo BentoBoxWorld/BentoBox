@@ -62,13 +62,11 @@ public class IslandBanlistCommand extends CompositeCommand {
         StringBuilder line = new StringBuilder();
         // Put the names into lines of no more than 40 characters long, separated by commas
         names.forEach(n -> {
-            if (line.length() + n.length() < 41) {
-                line.append(n);
-            } else {
+            if (line.length() + n.length() >= 41) {
                 lines.add(line.toString().trim());
                 line.setLength(0);
-                line.append(n);
             }
+            line.append(n);
             line.append(", ");
         });
         // Remove trailing comma
