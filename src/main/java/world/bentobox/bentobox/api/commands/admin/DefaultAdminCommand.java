@@ -31,8 +31,8 @@ public abstract class DefaultAdminCommand extends CompositeCommand {
     public DefaultAdminCommand(GameModeAddon addon) {
         // Register command with alias from config.
         super(addon,
-            addon.getWorldSettings().getAdminCommandAliases().split(" ")[0],
-            addon.getWorldSettings().getAdminCommandAliases().split(" "));
+                addon.getWorldSettings().getAdminCommandAliases().split(" ")[0],
+                addon.getWorldSettings().getAdminCommandAliases().split(" "));
     }
 
     /**
@@ -92,7 +92,7 @@ public abstract class DefaultAdminCommand extends CompositeCommand {
 
     /**
      * Defines what will be executed when this command is run.
-     * @see world.bentobox.bentobox.api.commands.BentoBoxCommand#execute(User, String, List(String))
+     * @see world.bentobox.bentobox.api.commands.BentoBoxCommand#execute(User, String, List&lt;String&gt;)
      */
     @Override
     public boolean execute(User user, String label, List<String> args) {
