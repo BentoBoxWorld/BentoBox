@@ -10,7 +10,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Particle;
 
-import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.user.User;
@@ -55,7 +54,7 @@ public class AdminBlueprintCommand extends ConfirmableCommand {
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        new BlueprintManagementPanel(getPlugin(), user, (GameModeAddon)getAddon()).openPanel();
+        new BlueprintManagementPanel(getPlugin(), user, getAddon()).openPanel();
         return true;
     }
 

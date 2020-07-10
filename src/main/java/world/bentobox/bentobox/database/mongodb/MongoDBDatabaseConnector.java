@@ -3,10 +3,14 @@ package world.bentobox.bentobox.database.mongodb;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.mongodb.*;
 import org.bukkit.Bukkit;
 import org.eclipse.jdt.annotation.NonNull;
 
+import com.mongodb.MongoClient;
+import com.mongodb.MongoClientOptions;
+import com.mongodb.MongoClientURI;
+import com.mongodb.MongoCredential;
+import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoDatabase;
 
 import world.bentobox.bentobox.database.DatabaseConnectionSettingsImpl;

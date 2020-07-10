@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.eclipse.jdt.annotation.NonNull;
 
-import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.events.island.IslandEvent;
@@ -80,7 +79,7 @@ public class IslandResetCommand extends ConfirmableCommand {
     public boolean execute(User user, String label, List<String> args) {
         // Permission check if the name is not the default one
         if (!args.isEmpty()) {
-            String name = getPlugin().getBlueprintsManager().validate((GameModeAddon)getAddon(), args.get(0).toLowerCase(java.util.Locale.ENGLISH));
+            String name = getPlugin().getBlueprintsManager().validate(getAddon(), args.get(0).toLowerCase(java.util.Locale.ENGLISH));
             if (name == null || name.isEmpty()) {
                 // The blueprint name is not valid.
                 user.sendMessage("commands.island.create.unknown-blueprint");
@@ -107,7 +106,7 @@ public class IslandResetCommand extends ConfirmableCommand {
      */
     private void selectBundle(@NonNull User user, @NonNull String label) {
         // Show panel only if there are multiple bundles available
-        if (getPlugin().getBlueprintsManager().getBlueprintBundles((GameModeAddon)getAddon()).size() > 1) {
+        if (getPlugin().getBlueprintsManager().getBlueprintBundles(getAddon()).size() > 1) {
             // Show panel - once the player selected a bundle, this will re-run this command
             IslandCreationPanel.openPanel(this, user, label);
         } else {

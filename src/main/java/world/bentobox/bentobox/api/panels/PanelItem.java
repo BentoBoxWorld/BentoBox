@@ -97,12 +97,11 @@ public class PanelItem {
             if (invisible) {
                 meta.addEnchant(Enchantment.VANISHING_CURSE, 1, true);
                 meta.removeItemFlags(ItemFlag.HIDE_ENCHANTS);
-                icon.setItemMeta(meta);
             } else {
                 meta.removeEnchant(Enchantment.VANISHING_CURSE);
                 meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-                icon.setItemMeta(meta);
             }
+            icon.setItemMeta(meta);
         }
     }
 
