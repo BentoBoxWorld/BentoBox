@@ -161,7 +161,10 @@ public class PanelItem {
     }
 
     public void setHead(ItemStack itemStack) {
+        // update amount before replacing.
+        itemStack.setAmount(this.icon.getAmount());
         this.icon = itemStack;
+
         // Get the meta
         meta = icon.getItemMeta();
         if (meta != null) {
