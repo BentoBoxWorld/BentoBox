@@ -46,6 +46,7 @@ public class PostgreSQLDatabaseHandler<T> extends SQLDatabaseHandler<T> {
                 // Postgres exists function returns true or false natively
                 .objectExists("SELECT EXISTS(SELECT * FROM \"[tableName]\" WHERE uniqueid = ?)")
                 .renameTable("ALTER TABLE IF EXISTS \"[oldTableName]\" RENAME TO \"[tableName]\"")
+                .setUseQuotes(false)
                 );
     }
 
@@ -83,4 +84,5 @@ public class PostgreSQLDatabaseHandler<T> extends SQLDatabaseHandler<T> {
         });
         return completableFuture;
     }
+
 }

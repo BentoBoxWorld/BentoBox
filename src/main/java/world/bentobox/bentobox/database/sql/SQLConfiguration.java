@@ -47,6 +47,10 @@ public class SQLConfiguration {
     }
 
     private final String TABLE_NAME = "\\[tableName\\]";
+    /**
+     * By default, use quotes around the unique ID in the SQL statement
+     */
+    private boolean useQuotes = true;
 
     public SQLConfiguration loadObject(String string) {
         this.loadObjectSQL = string.replaceFirst(TABLE_NAME, tableName);
@@ -82,6 +86,12 @@ public class SQLConfiguration {
         this.renameTableSQL = string.replaceAll(TABLE_NAME, tableName).replaceAll("\\[oldTableName\\]", oldTableName);
         return this;
     }
+
+    public SQLConfiguration setUseQuotes(boolean b) {
+        this.useQuotes = b;
+        return this;
+    }
+
 
     /**
      * @return the loadObjectSQL
@@ -144,5 +154,13 @@ public class SQLConfiguration {
     public boolean renameRequired() {
         return renameRequired;
     }
+
+    /**
+     * @return the useQuotes
+     */
+    public boolean isUseQuotes() {
+        return useQuotes;
+    }
+
 
 }
