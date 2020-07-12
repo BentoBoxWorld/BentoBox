@@ -1244,7 +1244,7 @@ protection:
       expert:
         name: "&c Expert Settings"
         description: "&a Displays all the available settings."
-      click-to-switch: "&e Click &a to switch to the &r [next]&r &a ."
+      click-to-switch: "&e Click &7 to switch to the &r [next]&r &7 ."
     reset-to-default:
       name: "&c Reset to default"
       description: |+
@@ -1273,15 +1273,23 @@ protection:
       description-layout: |
         &a [description]
 
+        &e Left Click &7 to cycle downwards.
+        &e Right Click &7 to cycle upwards.
+
         &7 Allowed for:
       allowed-rank: "&3 - &a "
       blocked-rank: "&3 - &c "
       minimal-rank: "&3 - &2 "
-      menu-layout: "&a [description]"
+      menu-layout: |
+        &a [description]
+
+        &e Click &7 to open.
       setting-cooldown: "&c Setting is on cooldown"
       setting-layout: |
         &a [description]
-        
+
+        &e Click &7 to toggle.
+
         &7 Current setting: [setting]
       setting-active: "&a Active"
       setting-disabled: "&c Disabled"
