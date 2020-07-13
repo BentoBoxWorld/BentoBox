@@ -27,8 +27,7 @@ import world.bentobox.bentobox.api.panels.PanelItem;
  * This class manages getting player heads for requester.
  * @author tastybento, BONNe1704
  */
-public class HeadGetter
-{
+public class HeadGetter {
     /**
      * Local cache for storing player heads.
      */
@@ -53,19 +52,17 @@ public class HeadGetter
     /**
      * @param plugin - plugin
      */
-    public HeadGetter(BentoBox plugin)
-    {
+    public HeadGetter(BentoBox plugin) {
         this.plugin = plugin;
         this.runPlayerHeadGetter();
     }
 
-
     /**
      * @param panelItem - head to update
      * @param requester - callback class
+     * @since 1.14.1
      */
-    public static void getHead(PanelItem panelItem, HeadRequester requester)
-    {
+    public static void getHead(PanelItem panelItem, HeadRequester requester) {
         // Freshen cache
         // If memory is an issue we sacrifice performance?
         // cachedHeads.values().removeIf(cache -> System.currentTimeMillis() - cache.getTimestamp() > TOO_LONG);
@@ -117,9 +114,9 @@ public class HeadGetter
 
     /**
      * This is main task that runs once every 20 ticks and tries to get a player head.
+     * @since 1.14.1
      */
-    private void runPlayerHeadGetter()
-    {
+    private void runPlayerHeadGetter() {
         Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {
             synchronized (names)
             {
@@ -169,9 +166,9 @@ public class HeadGetter
      * This method gets and returns userId from mojang web API based on user name.
      * @param name user which Id must be returned.
      * @return String value for user Id.
+     * @since 1.14.1
      */
-    private static UUID getUserIdFromName(String name)
-    {
+    private static UUID getUserIdFromName(String name) {
         UUID userId;
 
         try
@@ -216,9 +213,9 @@ public class HeadGetter
      *
      * @param userId UUID value for the user.
      * @return Encoded player skin texture or null.
+     * @since 1.14.1
      */
-    private static @Nullable String getTextureFromUUID(UUID userId)
-    {
+    private static @Nullable String getTextureFromUUID(UUID userId) {
         try
         {
             Gson gsonReader = new Gson();
@@ -271,9 +268,9 @@ public class HeadGetter
      *
      * @param requestedUrl Url which content must be returned.
      * @return Content of a page or empty string.
+     * @since 1.14.1
      */
-    private static String getURLContent(String requestedUrl)
-    {
+    private static String getURLContent(String requestedUrl) {
         String returnValue;
 
         try (BufferedReader reader = new BufferedReader(
