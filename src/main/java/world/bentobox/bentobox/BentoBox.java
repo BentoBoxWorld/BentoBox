@@ -1,6 +1,5 @@
 package world.bentobox.bentobox;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -188,7 +187,8 @@ public class BentoBox extends JavaPlugin {
                 islandsManager.load();
             } catch (Exception e) {
                 logError("*****************CRITIAL ERROR!******************");
-                Arrays.stream(e.getMessage().split("[\n\r]+")).forEach(this::logError);
+                logError(e.getMessage());
+                //Arrays.stream(e.getMessage().split("[\n\r]+")).forEach(this::logError);
                 logError("Could not load islands! Disabling BentoBox...");
                 logError("*************************************************");
                 // Stop all addons
