@@ -82,8 +82,7 @@ public class IslandCache {
      * @param island island to associate with this uuid. Only one island can be associated per world.
      */
     public void addPlayer(@NonNull UUID uuid, @NonNull Island island) {
-        islandsByUUID.putIfAbsent(island.getWorld(), new HashMap<>());
-        islandsByUUID.get(island.getWorld()).put(uuid, island);
+        islandsByUUID.computeIfAbsent(island.getWorld(), k -> new HashMap<>()).put(uuid, island);
     }
 
     /**
@@ -92,8 +91,7 @@ public class IslandCache {
      * @return true if successfully added, false if not
      */
     private boolean addToGrid(@NonNull Island newIsland) {
-        grids.putIfAbsent(newIsland.getWorld(), new IslandGrid());
-        return grids.get(newIsland.getWorld()).addToGrid(newIsland);
+        return grids.computeIfAbsent(newIsland.getWorld(), k -> new IslandGrid()).addToGrid(newIsland);
     }
 
     public void clear() {
@@ -188,12 +186,8 @@ public class IslandCache {
      */
     @NonNull
     public Set<UUID> getMembers(@NonNull World world, @NonNull UUID uuid, int minimumRank) {
-        islandsByUUID.putIfAbsent(Util.getWorld(world), new HashMap<>());
-        Island island = islandsByUUID.get(Util.getWorld(world)).get(uuid);
-        if (island != null) {
-            return island.getMemberSet(minimumRank);
-        }
-        return new HashSet<>(0);
+        Island island = islandsByUUID.computeIfAbsent(Util.getWorld(world), k -> new HashMap<>()).get(uuid);
+        return island != null ? island.getMemberSet(minimumRank) : new HashSet<>();
     }
 
     /**
@@ -203,12 +197,9 @@ public class IslandCache {
      */
     @Nullable
     public UUID getOwner(@NonNull World world, @NonNull UUID uuid) {
-        islandsByUUID.putIfAbsent(Util.getWorld(world), new HashMap<>());
-        Island island = islandsByUUID.get(Util.getWorld(world)).get(uuid);
-        if (island != null) {
-            return island.getOwner();
-        }
-        return null;
+        Island island = islandsByUUID.computeIfAbsent(Util.getWorld(world), k -> new HashMap<>()).get(uuid);
+        return island != null ? island.getOwner() : null;
+
     }
 
     /**
@@ -217,8 +208,7 @@ public class IslandCache {
      * @return true if player has island and owns it
      */
     public boolean hasIsland(@NonNull World world, @NonNull UUID uuid) {
-        islandsByUUID.putIfAbsent(Util.getWorld(world), new HashMap<>());
-        Island island = islandsByUUID.get(Util.getWorld(world)).get(uuid);
+        Island island = islandsByUUID.computeIfAbsent(Util.getWorld(world), k -> new HashMap<>()).get(uuid);
         return island != null && uuid.equals(island.getOwner());
     }
 
@@ -231,9 +221,7 @@ public class IslandCache {
      */
     @Nullable
     public Island removePlayer(@NonNull World world, @NonNull UUID uuid) {
-        world = Util.getWorld(world);
-        islandsByUUID.putIfAbsent(world, new HashMap<>());
-        Island island = islandsByUUID.get(world).get(uuid);
+        Island island = islandsByUUID.computeIfAbsent(Util.getWorld(world), k -> new HashMap<>()).get(uuid);
         if (island != null) {
             if (uuid.equals(island.getOwner())) {
                 // Clear ownership and members
@@ -328,7 +316,7 @@ public class IslandCache {
         int setting = BentoBox.getInstance().getIWM().getDefaultIslandFlags(w).getOrDefault(flag, flag.getDefaultRank());
         islandsById.values().stream().filter(i -> i.getWorld().equals(w)).forEach(i -> i.setFlag(flag, setting));
     }
-    
+
     /**
      * Get all the island ids
      * @return set of ids

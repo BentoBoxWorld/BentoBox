@@ -51,7 +51,7 @@ public class IslandTeamInviteCommand extends CompositeCommand {
             return false;
         }
         UUID playerUUID = user.getUniqueId();
-        if (args.isEmpty() || args.size() > 1) {
+        if (args.size() != 1) {
             // Invite label with no name, i.e., /island invite - tells the player who has invited them so far and why
             if (itc.isInvited(playerUUID)) {
                 Invite invite = itc.getInvite(playerUUID);

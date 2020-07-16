@@ -1,8 +1,10 @@
 package world.bentobox.bentobox.listeners.flags.protection;
 
-import com.destroystokyo.paper.event.player.PlayerPickupExperienceEvent;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+
+import com.destroystokyo.paper.event.player.PlayerPickupExperienceEvent;
+
 import world.bentobox.bentobox.lists.Flags;
 
 /**

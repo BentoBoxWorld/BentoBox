@@ -6,10 +6,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.never;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -31,6 +31,7 @@ import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.EnderCrystal;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Hanging;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
@@ -401,6 +402,7 @@ public class BreakBlocksListenerTest {
     public void testOnVehicleDamageEventAllowed() {
         Vehicle vehicle = mock(Vehicle.class);
         when(vehicle.getLocation()).thenReturn(location);
+        when(vehicle.getType()).thenReturn(EntityType.MINECART);
         VehicleDamageEvent e = new VehicleDamageEvent(vehicle, player, 10);
         bbl.onVehicleDamageEvent(e);
         assertFalse(e.isCancelled());
@@ -410,10 +412,41 @@ public class BreakBlocksListenerTest {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onVehicleDamageEvent(org.bukkit.event.vehicle.VehicleDamageEvent)}.
      */
     @Test
-    public void testOnVehicleDamageEventNotAllowed() {
+    public void testOnVehicleDamageEventNotAllowedMinecart() {
         when(island.isAllowed(any(), any())).thenReturn(false);
         Vehicle vehicle = mock(Vehicle.class);
         when(vehicle.getLocation()).thenReturn(location);
+        when(vehicle.getType()).thenReturn(EntityType.MINECART);
+        VehicleDamageEvent e = new VehicleDamageEvent(vehicle, player, 10);
+        bbl.onVehicleDamageEvent(e);
+        assertTrue(e.isCancelled());
+        verify(notifier).notify(any(), eq("protection.protected"));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onVehicleDamageEvent(org.bukkit.event.vehicle.VehicleDamageEvent)}.
+     */
+    @Test
+    public void testOnVehicleDamageEventNotAllowedBoat() {
+        when(island.isAllowed(any(), any())).thenReturn(false);
+        Vehicle vehicle = mock(Vehicle.class);
+        when(vehicle.getLocation()).thenReturn(location);
+        when(vehicle.getType()).thenReturn(EntityType.BOAT);
+        VehicleDamageEvent e = new VehicleDamageEvent(vehicle, player, 10);
+        bbl.onVehicleDamageEvent(e);
+        assertTrue(e.isCancelled());
+        verify(notifier).notify(any(), eq("protection.protected"));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onVehicleDamageEvent(org.bukkit.event.vehicle.VehicleDamageEvent)}.
+     */
+    @Test
+    public void testOnVehicleDamageEventNotAllowedElse() {
+        when(island.isAllowed(any(), any())).thenReturn(false);
+        Vehicle vehicle = mock(Vehicle.class);
+        when(vehicle.getLocation()).thenReturn(location);
+        when(vehicle.getType()).thenReturn(EntityType.TRIDENT);
         VehicleDamageEvent e = new VehicleDamageEvent(vehicle, player, 10);
         bbl.onVehicleDamageEvent(e);
         assertTrue(e.isCancelled());

@@ -239,7 +239,7 @@ public class WebManager {
 
     /**
      *
-     * @param repository
+     * @param repository - name of the repo
      * @return list of contributors
      * @since 1.9.0
      */

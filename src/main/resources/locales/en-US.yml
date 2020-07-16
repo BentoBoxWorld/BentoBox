@@ -708,7 +708,9 @@ protection:
       hint: "Bed use disabled"
     BOAT:
       name: "Boats"
-      description: "Toggle boats interactions"
+      description: |-
+        Toggle placing, breaking and
+        entering into boats.
       hint: "No boat interaction allowed"
     BREAK_BLOCKS: 
       description: "Toggle breaking"
@@ -717,9 +719,15 @@ protection:
     BREAK_SPAWNERS:
       description: |-
         Toggle spawners breaking.
-        Override the Break Blocks flag.
+        Overrides the Break Blocks flag.
       name: "Break spawners"
       hint: "Spawner breaking disabled"
+    BREAK_HOPPERS:
+      description: |-
+        Toggle hoppers breaking.
+        Overrides the Break Blocks flag.
+      name: "Break hoppers"
+      hint: "Hoppers breaking disabled"
     BREEDING: 
       description: "Toggle breeding"
       name: "Breed animals"
@@ -1015,7 +1023,9 @@ protection:
       hint: "Milking cows disabled"
     MINECART:
       name: "Minecarts"
-      description: "Toggle minecart interactions"
+      description: |-
+        Toggle placing, breaking and
+        entering into minecarts.
       hint: "Minecart interaction disabled"
     MONSTER_NATURAL_SPAWN:
       description: "Toggle natural monster spawning"
@@ -1234,7 +1244,7 @@ protection:
       expert:
         name: "&c Expert Settings"
         description: "&a Displays all the available settings."
-      click-to-switch: "&e Click &a to switch to the &r [next]&r &a ."
+      click-to-switch: "&e Click &7 to switch to the &r [next]&r &7 ."
     reset-to-default:
       name: "&c Reset to default"
       description: |+
@@ -1263,15 +1273,23 @@ protection:
       description-layout: |
         &a [description]
 
+        &e Left Click &7 to cycle downwards.
+        &e Right Click &7 to cycle upwards.
+
         &7 Allowed for:
       allowed-rank: "&3 - &a "
       blocked-rank: "&3 - &c "
       minimal-rank: "&3 - &2 "
-      menu-layout: "&a [description]"
+      menu-layout: |
+        &a [description]
+
+        &e Click &7 to open.
       setting-cooldown: "&c Setting is on cooldown"
       setting-layout: |
         &a [description]
-        
+
+        &e Click &7 to toggle.
+
         &7 Current setting: [setting]
       setting-active: "&a Active"
       setting-disabled: "&c Disabled"

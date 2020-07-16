@@ -105,7 +105,6 @@ public class BlueprintPaster {
      * @param plugin - BentoBox
      * @param clipboard - clipboard to paste
      * @param location - location to paste to
-     * @param task - task to run after pasting, null if none
      */
     public BlueprintPaster(@NonNull BentoBox plugin, @NonNull BlueprintClipboard clipboard, @NonNull Location location) {
         this.plugin = plugin;
@@ -125,7 +124,6 @@ public class BlueprintPaster {
      * @param bp - blueprint to paste
      * @param world - world to paste to
      * @param island - island related to this paste
-     * @param task - task to run after pasting
      */
     public BlueprintPaster(@NonNull BentoBox plugin, @NonNull Blueprint bp, World world, @NonNull Island island) {
         this.plugin = plugin;

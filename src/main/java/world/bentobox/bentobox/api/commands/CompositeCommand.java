@@ -700,8 +700,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * @since 1.5.0
      */
     public void setCooldown(String uniqueId, String targetUUID, int timeInSeconds) {
-        cooldowns.putIfAbsent(uniqueId, new HashMap<>());
-        cooldowns.get(uniqueId).put(targetUUID, System.currentTimeMillis() + timeInSeconds * 1000);
+        cooldowns.computeIfAbsent(uniqueId, k -> new HashMap<>()).put(targetUUID, System.currentTimeMillis() + timeInSeconds * 1000);
     }
 
     /**
@@ -711,8 +710,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * @param timeInSeconds - time in seconds to cool down
      */
     public void setCooldown(UUID uniqueId, UUID targetUUID, int timeInSeconds) {
-        cooldowns.putIfAbsent(uniqueId.toString(), new HashMap<>());
-        cooldowns.get(uniqueId.toString()).put(targetUUID == null ? null : targetUUID.toString(), System.currentTimeMillis() + timeInSeconds * 1000);
+        cooldowns.computeIfAbsent(uniqueId.toString(), k -> new HashMap<>()).put(targetUUID == null ? null : targetUUID.toString(), System.currentTimeMillis() + timeInSeconds * 1000);
     }
 
     /**

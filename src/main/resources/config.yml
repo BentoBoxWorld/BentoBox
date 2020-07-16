@@ -1,4 +1,4 @@
-# BentoBox v1.13.1 configuration file.
+# BentoBox v1.14.1-SNAPSHOT-LOCAL configuration file.
 #
 # This configuration file contains settings that mainly apply to or manage the following elements:
 #  * Data storage
@@ -54,9 +54,6 @@ general:
     name: bentobox
     username: username
     password: password
-    # MongoDB client connection URI to override default connection options.
-    # See: https://docs.mongodb.com/manual/reference/connection-string/
-    mongodb-connection-uri: ''
     # How often the data will be saved to file in mins. Default is 5 minutes.
     # This helps prevent issues if the server crashes.
     # Data is also saved at important points in the game.
@@ -64,18 +61,32 @@ general:
     # Enable SSL connection to MongoDB, MariaDB, MySQL and PostgreSQL databases.
     # Added since 1.12.0.
     use-ssl: false
-    # Database table prefix character. Adds a prefix to the database tables. Not used by flatfile databases.
+    # Database table prefix. Adds a prefix to the database tables. Not used by flatfile databases.
     # Only the characters A-Z, a-z, 0-9 can be used. Invalid characters will become an underscore.
     # Set this to a unique value if you are running multiple BentoBox instances that share a database.
+    # Be careful about length - databases usually have a limit of 63 characters for table lengths
     # Added since 1.13.0.
     prefix-character: ''
+    # MongoDB client connection URI to override default connection options.
+    # See: https://docs.mongodb.com/manual/reference/connection-string/
+    # Added since 1.14.0.
+    mongodb-connection-uri: ''
   # Allow FTB Autonomous Activator to work (will allow a pseudo player [CoFH] to place and break blocks and hang items)
   # Add other fake player names here if required
   # /!\ This feature is experimental and might not work as expected or might not work at all.
   fakeplayers:
     - '[CoFH]'
 panel:
+  # Toggle whether panels should be closed or not when the player clicks anywhere outside of the inventory view.
   close-on-click-outside: true
+  # Defines the Material of the item that fills the gaps (in the header, etc.) of most panels.
+  # Added since 1.14.0.
+  filler-material: LIGHT_BLUE_STAINED_GLASS_PANE
+  # Defines how long player skin texture link is stored into local cache before it is requested again.
+  # Defined value is in the minutes.
+  # Value 0 will not clear cache until server restart.
+  # Added since 1.14.1.
+  head-cache-time: 60
 logs:
   # Toggle whether superflat chunks regeneration should be logged in the server logs or not.
   # It can be spammy if there are a lot of superflat chunks to regenerate.

@@ -5,8 +5,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.concurrent.CompletableFuture;
 
-import org.eclipse.jdt.annotation.NonNull;
-
 import com.google.gson.Gson;
 
 import world.bentobox.bentobox.BentoBox;
@@ -21,8 +19,6 @@ import world.bentobox.bentobox.database.sql.SQLDatabaseHandler;
  */
 public class SQLiteDatabaseHandler<T> extends SQLDatabaseHandler<T> {
 
-    private static final String COULD_NOT_LOAD_OBJECT = "Could not load object ";
-
     /**
      * Constructor
      *
@@ -36,13 +32,16 @@ public class SQLiteDatabaseHandler<T> extends SQLDatabaseHandler<T> {
                 .schema("CREATE TABLE IF NOT EXISTS `[tableName]` (json JSON, uniqueId VARCHAR(255) NOT NULL PRIMARY KEY)")
                 .saveObject("INSERT INTO `[tableName]` (json, uniqueId) VALUES (?, ?) ON CONFLICT(uniqueId) DO UPDATE SET json = ?")
                 .objectExists("SELECT EXISTS (SELECT 1 FROM `[tableName]` WHERE `uniqueId` = ?)")
-                .renameTable("ALTER TABLE `[oldTableName]` RENAME TO `[tableName]`"));
+                .renameTable("ALTER TABLE `[oldTableName]` RENAME TO `[tableName]`")
+                .setUseQuotes(false)
+                );
     }
 
-    @Override
+
     /**
      * Creates the table in the database if it doesn't exist already
      */
+    @Override
     protected void createSchema() {
         if (getSqlConfig().renameRequired()) {
             // SQLite does not have a rename if exists command so we have to manually check if the old table exists
@@ -107,54 +106,5 @@ public class SQLiteDatabaseHandler<T> extends SQLDatabaseHandler<T> {
         return completableFuture;
     }
 
-    @Override
-    public void deleteID(String uniqueId) {
-        processQueue.add(() -> {
-            try (PreparedStatement preparedStatement = getConnection().prepareStatement(getSqlConfig().getDeleteObjectSQL())) {
-                // UniqueId must *not* be placed in quotes
-                preparedStatement.setString(1, uniqueId);
-                preparedStatement.executeUpdate();
-            } catch (Exception e) {
-                plugin.logError("Could not delete object " + plugin.getSettings().getDatabasePrefix() + dataObject.getCanonicalName() + " " + uniqueId + " " + e.getMessage());
-            }
-        });
-    }
-
-    @Override
-    public boolean objectExists(String uniqueId) {
-        // Query to see if this key exists
-        try (PreparedStatement preparedStatement = getConnection().prepareStatement(getSqlConfig().getObjectExistsSQL())) {
-            // UniqueId needs to be placed in quotes
-            preparedStatement.setString(1, uniqueId);
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                if (resultSet.next()) {
-                    return resultSet.getBoolean(1);
-                }
-            }
-        } catch (SQLException e) {
-            plugin.logError("Could not check if key exists in database! " + uniqueId + " " + e.getMessage());
-        }
-        return false;
-    }
-
-    @Override
-    public T loadObject(@NonNull String uniqueId) {
-        try (PreparedStatement preparedStatement = getConnection().prepareStatement(getSqlConfig().getLoadObjectSQL())) {
-            // UniqueId needs to be placed in quotes
-            preparedStatement.setString(1, uniqueId);
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                if (resultSet.next()) {
-                    // If there is a result, we only want/need the first one
-                    Gson gson = getGson();
-                    return gson.fromJson(resultSet.getString("json"), dataObject);
-                }
-            } catch (Exception e) {
-                plugin.logError(COULD_NOT_LOAD_OBJECT + uniqueId + " " + e.getMessage());
-            }
-        } catch (SQLException e) {
-            plugin.logError(COULD_NOT_LOAD_OBJECT + uniqueId + " " + e.getMessage());
-        }
-        return null;
-    }
 
 }

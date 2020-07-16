@@ -18,6 +18,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Server;
 import org.bukkit.World;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -39,7 +40,7 @@ import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.util.Util;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( {BentoBox.class, Bukkit.class, Util.class} )
+@PrepareForTest( {BentoBox.class, Bukkit.class, Util.class, HandlerList.class} )
 public class FlagsManagerTest {
 
     /**
@@ -57,7 +58,7 @@ public class FlagsManagerTest {
     public void setUp() throws Exception {
         // Set up plugin
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
-        
+
         // Util class to handle PaperLib
         PowerMockito.mockStatic(Util.class);
         when(Util.isPaper()).thenReturn(false);
@@ -149,6 +150,27 @@ public class FlagsManagerTest {
         Flags.values().stream().sorted().forEach(flag -> assertEquals(flag, fm.getFlag(flag.getID()).get()));
         Flags.values().stream().sorted(Comparator.reverseOrder()).forEach(flag -> assertEquals(flag, fm.getFlag(flag.getID()).get()));
 
+    }
+
+    /**
+     * Test for {@link FlagsManager#unregister(Flag)}
+     */
+    @Test
+    public void testUnregisterFlag() {
+        PowerMockito.mockStatic(HandlerList.class);
+        when(plugin.isLoaded()).thenReturn(true);
+        FlagsManager fm = new FlagsManager(plugin);
+        // Listener
+        OriginalListener ol = new OriginalListener();
+        Flag originalFlag = new Flag.Builder("ORIGINAL", Material.EMERALD_BLOCK).listener(ol).build();
+        assertTrue(fm.registerFlag(originalFlag));
+        assertEquals(originalFlag, fm.getFlag("ORIGINAL").get());
+        // Remove
+        fm.unregister(originalFlag);
+        assertFalse(fm.getFlag("ORIGINAL").isPresent());
+        // Verify the listener was removed
+        PowerMockito.verifyStatic(HandlerList.class);
+        HandlerList.unregisterAll(ol);
     }
 
 }

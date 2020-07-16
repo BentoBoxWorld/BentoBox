@@ -34,9 +34,6 @@ public class ConfigHandler<T> extends YamlDatabaseHandler<T> {
     }
 
     public T loadSettings(String uniqueId, T dbConfig) throws InstantiationException, IllegalAccessException, InvocationTargetException, ClassNotFoundException, IntrospectionException, NoSuchMethodException {
-        if (dbConfig == null) {
-            return loadObject(uniqueId);
-        }
 
         // TODO: compare the loaded with the database copy
 

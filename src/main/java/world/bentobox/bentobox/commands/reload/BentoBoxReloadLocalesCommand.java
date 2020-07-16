@@ -1,11 +1,11 @@
 package world.bentobox.bentobox.commands.reload;
 
+import java.util.List;
+
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.commands.BentoBoxReloadCommand;
 import world.bentobox.bentobox.listeners.PanelListenerManager;
-
-import java.util.List;
 
 /**
  * Reloads locales files.

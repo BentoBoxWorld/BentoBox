@@ -4,8 +4,10 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.framework;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
@@ -39,7 +41,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -135,8 +136,8 @@ public class BreedingListenerTest {
 
         // Fake players
         Settings settings = mock(Settings.class);
-        Mockito.when(plugin.getSettings()).thenReturn(settings);
-        Mockito.when(settings.getFakePlayers()).thenReturn(new HashSet<>());
+        when(plugin.getSettings()).thenReturn(settings);
+        when(settings.getFakePlayers()).thenReturn(new HashSet<>());
 
         // Player and player inventory. Start with nothing in hands
         player = mock(Player.class);
@@ -163,12 +164,12 @@ public class BreedingListenerTest {
 
         // Player name
         PlayersManager pm = mock(PlayersManager.class);
-        when(pm.getName(Mockito.any())).thenReturn("tastybento");
+        when(pm.getName(any())).thenReturn("tastybento");
         when(plugin.getPlayers()).thenReturn(pm);
 
         // World Settings
         WorldSettings ws = mock(WorldSettings.class);
-        when(iwm.getWorldSettings(Mockito.any())).thenReturn(ws);
+        when(iwm.getWorldSettings(any())).thenReturn(ws);
         Map<String, Boolean> worldFlags = new HashMap<>();
         when(ws.getWorldFlags()).thenReturn(worldFlags);
 
@@ -177,26 +178,26 @@ public class BreedingListenerTest {
         when(plugin.getIslands()).thenReturn(im);
         Island island = mock(Island.class);
         Optional<Island> optional = Optional.of(island);
-        when(im.getProtectedIslandAt(Mockito.any())).thenReturn(optional);
+        when(im.getProtectedIslandAt(any())).thenReturn(optional);
 
         // Notifier
         notifier = mock(Notifier.class);
         when(plugin.getNotifier()).thenReturn(notifier);
 
         PowerMockito.mockStatic(Util.class);
-        when(Util.getWorld(Mockito.any())).thenReturn(mock(World.class));
+        when(Util.getWorld(any())).thenReturn(mock(World.class));
         // Util strip spaces
         when(Util.stripSpaceAfterColorCodes(anyString())).thenCallRealMethod();
 
         // Addon
-        when(iwm.getAddon(Mockito.any())).thenReturn(Optional.empty());
+        when(iwm.getAddon(any())).thenReturn(Optional.empty());
 
     }
 
     @After
     public void tearDown() {
         User.clearUsers();
-        Mockito.framework().clearInlineMocks();
+        framework().clearInlineMocks();
     }
 
     /**
@@ -257,7 +258,7 @@ public class BreedingListenerTest {
         assertFalse("Animal, breeding item in main hand, wrong world failed " + breedingMat, e.isCancelled());
 
         // verify breeding was prevented
-        Mockito.verify(clickedEntity, Mockito.never()).setBreed(false);
+        verify(clickedEntity, never()).setBreed(false);
     }
 
     /**
@@ -279,7 +280,7 @@ public class BreedingListenerTest {
         assertTrue("Animal, breeding item in main hand failed " + breedingMat, e.isCancelled());
 
         // verify breeding was prevented
-        Mockito.verify(clickedEntity).setBreed(false);
+        verify(clickedEntity).setBreed(false);
     }
 
     /**
@@ -302,7 +303,7 @@ public class BreedingListenerTest {
         assertFalse("Animal, breeding item in off hand, wrong world failed " + breedingMat, e.isCancelled());
 
         // verify breeding was not prevented
-        Mockito.verify(clickedEntity, Mockito.never()).setBreed(false);
+        verify(clickedEntity, never()).setBreed(false);
     }
 
     /**
@@ -323,7 +324,7 @@ public class BreedingListenerTest {
         assertTrue("Animal, breeding item in off hand failed " + breedingMat, e.isCancelled());
 
         // verify breeding was prevented
-        Mockito.verify(clickedEntity).setBreed(false);
+        verify(clickedEntity).setBreed(false);
     }
 
     @Test
@@ -342,6 +343,6 @@ public class BreedingListenerTest {
         assertFalse("Animal, breeding item in main hand was prevented " + breedingMat, e.isCancelled());
 
         // verify breeding was not prevented
-        Mockito.verify(clickedEntity, never()).setBreed(false);
+        verify(clickedEntity, never()).setBreed(false);
     }
 }

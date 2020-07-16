@@ -82,7 +82,7 @@
         <!-- Do not change unless you want different name for local builds. -->
         <build.number>-LOCAL</build.number>
         <!-- This allows to change between versions. -->
-        <build.version>1.14.0</build.version>
+        <build.version>1.15.0</build.version>
     </properties>
 
     <!-- Profiles will allow to automatically change build version. -->
@@ -184,6 +184,13 @@
     </repositories>
 
     <dependencies>
+        <!-- Spigot NMS. Used for Head Getter. -->
+        <dependency>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot</artifactId>
+            <version>${spigot.version}</version>
+            <scope>provided</scope>
+        </dependency>
         <!-- Spigot API -->
         <dependency>
             <groupId>org.spigotmc</groupId>
