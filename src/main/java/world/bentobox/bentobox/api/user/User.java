@@ -589,7 +589,7 @@ public class User {
      * @param z Z coordinate of the particle to display.
      */
     public void spawnParticle(Particle particle, Particle.DustOptions dustOptions, int x, int y, int z) {
-        spawnParticle(particle, dustOptions, x, y, z);
+        spawnParticle(particle, dustOptions, (double) x, (double) y, (double) z);
     }
 
     /* (non-Javadoc)
