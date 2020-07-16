@@ -1,5 +1,6 @@
 package world.bentobox.bentobox.managers;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -1037,8 +1038,9 @@ public class IslandsManager {
 
     /**
      * Clear and reload all islands from database
+     * @throws IOException  - if a loaded island distance does not match the expected distance in config.yml
      */
-    public void load() {
+    public void load() throws IOException {
         islandCache.clear();
         quarantineCache.clear();
         List<Island> toQuarantine = new ArrayList<>();
@@ -1050,12 +1052,19 @@ public class IslandsManager {
                 plugin.logWarning("Null island when loading...");
                 continue;
             }
+
             if (island.isDeleted()) {
                 // These will be deleted later
                 deletedIslands.add(island.getUniqueId());
             } else if (island.isDoNotLoad() && island.getWorld() != null && island.getCenter() != null) {
                 // Add to quarantine cache
                 quarantineCache.computeIfAbsent(island.getOwner(), k -> new ArrayList<>()).add(island);
+            } // Check island distance and if incorrect stop BentoBox
+            else if (island.getRange() != plugin.getIWM().getIslandDistance(island.getWorld())) {
+                throw new IOException("Island distance mismatch!\n"
+                        + "World '" + island.getWorld().getName() + "' distance " + plugin.getIWM().getIslandDistance(island.getWorld()) + " != island range " + island.getRange() + "!\n"
+                        + "Island ID in database is " + island.getUniqueId() + ".\n"
+                        + "Island distance in config.yml cannot be changed mid-game! Fix config.yml or clean database.");
             } else {
                 // Fix island center if it is off
                 fixIslandCenter(island);

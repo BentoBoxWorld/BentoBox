@@ -1,5 +1,6 @@
 package world.bentobox.bentobox;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -183,7 +184,22 @@ public class BentoBox extends JavaPlugin {
             registerListeners();
 
             // Load islands from database - need to wait until all the worlds are loaded
-            islandsManager.load();
+            try {
+                islandsManager.load();
+            } catch (Exception e) {
+                logError("*****************CRITIAL ERROR!******************");
+                Arrays.stream(e.getMessage().split("[\n\r]+")).forEach(this::logError);
+                logError("Could not load islands! Disabling BentoBox...");
+                logError("*************************************************");
+                // Stop all addons
+                if (addonsManager != null) {
+                    addonsManager.disableAddons();
+                }
+                // Do not save players or islands, just shutdown
+                shutdown = true;
+                instance.setEnabled(false);
+                return;
+            }
 
             // Save islands & players data every X minutes
             Bukkit.getScheduler().runTaskTimer(instance, () -> {
