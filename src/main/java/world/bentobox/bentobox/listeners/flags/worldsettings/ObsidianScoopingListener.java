@@ -50,6 +50,7 @@ public class ObsidianScoopingListener extends FlagListener {
             }
 
             user.sendMessage("protection.flags.OBSIDIAN_SCOOPING.scooping");
+            e.setCancelled(true);
             if (e.getItem().getAmount() == 1) {
                 // Needs some special handling when there is only 1 bucket in the stack
                 e.getItem().setType(Material.LAVA_BUCKET);

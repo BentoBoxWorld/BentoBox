@@ -1,5 +1,6 @@
 package world.bentobox.bentobox.listeners.flags.worldsettings;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -20,6 +21,7 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event.Result;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -278,6 +280,7 @@ public class ObsidianScoopingListenerTest {
             // Test where the area is free of obby
             when(world.getBlockAt(Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt())).thenReturn(airBlock);
             assertTrue(listener.onPlayerInteract(event));
+            assertEquals(Result.DENY, event.useInteractedBlock());
         }
     }
 }
