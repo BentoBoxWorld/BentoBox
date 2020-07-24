@@ -53,7 +53,7 @@ public class AdminRangeRemoveCommand extends CompositeCommand {
         }
 
         Island island = getIslands().getIsland(getWorld(), targetUUID);
-        int newRange = island.getProtectionRange() + Integer.valueOf(args.get(1));
+        int newRange = island.getProtectionRange() - Integer.valueOf(args.get(1));
 
         if (newRange <= 1) {
             user.sendMessage("commands.admin.range.invalid-value.too-low", TextVariables.NUMBER, String.valueOf(island.getRange()));
