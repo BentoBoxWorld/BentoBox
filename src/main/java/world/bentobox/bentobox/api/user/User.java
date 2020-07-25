@@ -118,12 +118,13 @@ public class User {
     }
 
     /**
-     * Removes this player from the User cache
+     * Removes this player from the User cache and player manager cache
      * @param player the player
      */
     public static void removePlayer(Player player) {
         if (player != null) {
             users.remove(player.getUniqueId());
+            BentoBox.getInstance().getPlayers().removePlayer(player);
         }
     }
 

@@ -78,6 +78,8 @@ public class UserTest {
     private CommandSender sender;
     @Mock
     private Server server;
+    @Mock
+    private PlayersManager pm;
 
     @Before
     public void setUp() throws Exception {
@@ -117,6 +119,7 @@ public class UserTest {
         // This will just return the value of the second argument of replacePlaceholders. i.e., it won't change anything
         when(placeholdersManager.replacePlaceholders(any(), any())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
 
+        when(plugin.getPlayers()).thenReturn(pm);
     }
 
     @After
@@ -154,6 +157,7 @@ public class UserTest {
         // Return null and check if instance is null will show that the player is not in the cache
         when(Bukkit.getPlayer(any(UUID.class))).thenReturn(null);
         assertNull(User.getInstance(uuid).getPlayer());
+        verify(pm).removePlayer(player);
     }
 
     @Test

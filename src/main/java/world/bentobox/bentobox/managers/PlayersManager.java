@@ -12,6 +12,7 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -479,4 +480,17 @@ public class PlayersManager {
         addPlayer(playerUUID);
         return playerCache.get(playerUUID).getFlagsDisplayMode();
     }
+
+    /**
+     * Remove player from cache. Clears players with the same name or UUID
+     * @param player player to remove
+     */
+    public void removePlayer(Player player) {
+        // Clear any players with the same name
+        playerCache.values().removeIf(p -> p.getPlayerName().equalsIgnoreCase(player.getName()));
+        // Remove if the player's UUID is the same
+        playerCache.values().removeIf(p -> p.getUniqueId().equals(player.getUniqueId().toString()));
+
+    }
+
 }
