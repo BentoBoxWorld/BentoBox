@@ -24,6 +24,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.addons.Addon;
+import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.events.command.CommandEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
@@ -262,6 +263,10 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         }
         // Set the user's addon context
         user.setAddon(addon);
+        // Set the world
+        if (addon instanceof GameModeAddon) {
+            world = plugin.getPlayers().getWorld(user.getUniqueId(), (GameModeAddon)addon);
+        }
         // Execute and trim args
         return canExecute(user, cmdLabel, cmdArgs) && execute(user, cmdLabel, cmdArgs);
     }

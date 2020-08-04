@@ -69,7 +69,8 @@
         <mongodb.version>3.8.0</mongodb.version>
         <!-- More visible way to change dependency versions -->
         <spigot.version>1.16.1-R0.1-SNAPSHOT</spigot.version>
-        <!-- Might differ from the last Spigot release for short periods of time -->
+        <!-- Might differ from the last Spigot release for short periods 
+            of time -->
         <paper.version>1.16.1-R0.1-SNAPSHOT</paper.version>
         <bstats.version>1.7</bstats.version>
         <vault.version>1.7</vault.version>
@@ -181,6 +182,10 @@
             <id>papermc</id>
             <url>https://papermc.io/repo/repository/maven-public/</url>
         </repository>
+        <repository>
+            <id>glaremasters</id>
+            <url>https://repo.glaremasters.me/repository/concuncan/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -290,6 +295,12 @@
             <artifactId>paperlib</artifactId>
             <version>1.0.2</version>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.grinderwolf</groupId>
+            <artifactId>slimeworldmanager-api</artifactId>
+            <version>2.2.1</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 

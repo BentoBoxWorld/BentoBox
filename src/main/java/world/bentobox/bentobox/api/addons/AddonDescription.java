@@ -3,6 +3,7 @@ package world.bentobox.bentobox.api.addons;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
@@ -277,5 +278,23 @@ public final class AddonDescription {
     public String toString() {
         return "AddonDescription [" + (name != null ? "name=" + name + ", " : "")
                 + (version != null ? "version=" + version : "") + "]";
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(authors, description, name, version);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof AddonDescription)) {
+            return false;
+        }
+        AddonDescription other = (AddonDescription) obj;
+        return Objects.equals(authors, other.authors) && Objects.equals(description, other.description)
+                && Objects.equals(name, other.name) && Objects.equals(version, other.version);
     }
 }

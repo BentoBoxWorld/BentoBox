@@ -18,6 +18,8 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.addons.Addon;
+import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.Database;
@@ -491,6 +493,41 @@ public class PlayersManager {
         // Remove if the player's UUID is the same
         playerCache.values().removeIf(p -> p.getUniqueId().equals(player.getUniqueId().toString()));
 
+    }
+
+    /**
+     * Add a world for a player's game mode
+     * @param playerUUID - player's uuid
+     * @param worldName - world name - must be unique
+     * @param addon - game mode addon
+     */
+    public void addWorld(UUID playerUUID, String worldName, Addon addon) {
+        addPlayer(playerUUID);
+        playerCache.get(playerUUID).getWorlds().computeIfAbsent(addon.getDescription().getName(), k -> worldName);
+
+    }
+
+    /**
+     * Remove a game mode world from this player's entry
+     * @param playerUUID - player's UUID
+     * @param addon - game mode addon
+     */
+    public void removeWorld(UUID playerUUID, Addon addon) {
+        addPlayer(playerUUID);
+        playerCache.get(playerUUID).getWorlds().remove(addon.getDescription().getName());
+    }
+
+    /**
+     * Get the player's world for this game mode
+     * @param playerUUID - player's UUID
+     * @param addon - game mode addon
+     * @return world or default game mode's world if none known
+     */
+    @Nullable
+    public World getWorld(@NonNull UUID playerUUID, @NonNull GameModeAddon addon) {
+        addPlayer(playerUUID);
+        String worldName = playerCache.get(playerUUID).getWorlds().get(addon.getDescription().getName());
+        return worldName != null ? Bukkit.getWorld(worldName) : addon.getOverWorld();
     }
 
 }

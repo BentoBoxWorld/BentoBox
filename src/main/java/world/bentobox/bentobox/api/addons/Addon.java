@@ -8,6 +8,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -463,4 +464,21 @@ public abstract class Addon {
      * @since 1.8.0
      */
     public void allLoaded() {}
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(description);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof Addon)) {
+            return false;
+        }
+        Addon other = (Addon) obj;
+        return Objects.equals(description, other.description);
+    }
 }

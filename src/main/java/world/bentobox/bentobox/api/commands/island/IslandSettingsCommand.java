@@ -39,7 +39,7 @@ public class IslandSettingsCommand extends CompositeCommand {
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        Island island = getIslands().getIslandAt(user.getLocation()).orElse(getIslands().getIsland(user.getWorld(), user.getUniqueId()));
+        Island island = getIslands().getIslandAt(user.getLocation()).orElse(getIslands().getIsland(getWorld(), user.getUniqueId()));
         new TabbedPanelBuilder()
         .user(user)
         .world(getWorld())

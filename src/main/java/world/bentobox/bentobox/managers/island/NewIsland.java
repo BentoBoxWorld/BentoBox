@@ -28,7 +28,8 @@ public class NewIsland {
     private Island island;
     private final User user;
     private final Reason reason;
-    private final World world;
+    private final World oldWorld;
+    private final World newWorld;
     private String name;
     private final boolean noPaste;
     private GameModeAddon addon;
@@ -39,7 +40,8 @@ public class NewIsland {
         plugin = BentoBox.getInstance();
         this.user = builder.user2;
         this.reason = builder.reason2;
-        this.world = builder.world2;
+        this.oldWorld = builder.world2;
+        this.newWorld = builder.newWorld;
         this.name = builder.name2;
         this.noPaste = builder.noPaste2;
         this.addon = builder.addon2;
@@ -76,6 +78,7 @@ public class NewIsland {
         private User user2;
         private Reason reason2;
         private World world2;
+        private World newWorld;
         private String name2 = BlueprintsManager.DEFAULT_BUNDLE_NAME;
         private boolean noPaste2;
         private GameModeAddon addon2;
@@ -111,7 +114,7 @@ public class NewIsland {
          */
         public Builder addon(GameModeAddon addon) {
             this.addon2 = addon;
-            this.world2 = addon.getOverWorld();
+            this.newWorld = addon.getOverWorld();
             return this;
         }
 
@@ -141,6 +144,18 @@ public class NewIsland {
         }
 
         /**
+         * Set the world of the new island. This overwrites the game mode addon's default world
+         * if set after addon.
+         * @param world - new world for island
+         * @return Builder
+         * @since 1.15.0
+         */
+        public Builder world(World world) {
+            this.newWorld = world;
+            return this;
+        }
+
+        /**
          * @return Island
          * @throws IOException - if there are insufficient parameters, i.e., no user
          */
@@ -160,9 +175,9 @@ public class NewIsland {
      */
     public void newIsland(Island oldIsland) throws IOException {
         Location next = null;
-        if (plugin.getIslands().hasIsland(world, user)) {
+        if (plugin.getIslands().hasIsland(newWorld, user)) {
             // Island exists, it just needs pasting
-            island = plugin.getIslands().getIsland(world, user);
+            island = plugin.getIslands().getIsland(newWorld, user);
             if (island != null && island.isReserved()) {
                 next = island.getCenter();
                 // Clear the reservation
@@ -174,7 +189,7 @@ public class NewIsland {
         }
         // If the reservation fails, then we need to make a new island anyway
         if (next == null) {
-            next = this.locationStrategy.getNextLocation(world);
+            next = this.locationStrategy.getNextLocation(newWorld);
             if (next == null) {
                 plugin.logError("Failed to make island - no unoccupied spot found.");
                 plugin.logError("If the world was imported, try multiple times until all unowned islands are known.");
@@ -188,12 +203,14 @@ public class NewIsland {
             }
         }
         // Clear any old home locations (they should be clear, but just in case)
-        plugin.getPlayers().clearHomeLocations(world, user.getUniqueId());
+        if (oldWorld != null) {
+            plugin.getPlayers().clearHomeLocations(oldWorld, user.getUniqueId());
+        }
         // Set home location
         plugin.getPlayers().setHomeLocation(user, new Location(next.getWorld(), next.getX() + 0.5D, next.getY(), next.getZ() + 0.5D), 1);
         // Reset deaths
-        if (plugin.getIWM().isDeathsResetOnNewIsland(world)) {
-            plugin.getPlayers().setDeaths(world, user.getUniqueId(), 0);
+        if (oldWorld != null && plugin.getIWM().isDeathsResetOnNewIsland(oldWorld)) {
+            plugin.getPlayers().setDeaths(newWorld, user.getUniqueId(), 0);
         }
         // Check if owner has a different range permission than the island size
         island.setProtectionRange(user.getPermissionValue(plugin.getIWM().getAddon(island.getWorld())
@@ -232,11 +249,11 @@ public class NewIsland {
             }
             // Stop the player from falling or moving if they are
             if (user.isOnline()) {
-                if (reason.equals(Reason.RESET) || (reason.equals(Reason.CREATE) && plugin.getIWM().isTeleportPlayerToIslandUponIslandCreation(world))) {
+                if (reason.equals(Reason.RESET) || (reason.equals(Reason.CREATE) && plugin.getIWM().isTeleportPlayerToIslandUponIslandCreation(newWorld))) {
                     user.getPlayer().setVelocity(new Vector(0, 0, 0));
                     user.getPlayer().setFallDistance(0F);
                     // Teleport player after this island is built
-                    plugin.getIslands().homeTeleportAsync(world, user.getPlayer(), true).thenRun(() -> tidyUp(oldIsland));
+                    plugin.getIslands().homeTeleportAsync(newWorld, user.getPlayer(), true).thenRun(() -> tidyUp(oldIsland));
                     return;
                 } else {
                     // let's send him a message so that he knows he can teleport to his island!

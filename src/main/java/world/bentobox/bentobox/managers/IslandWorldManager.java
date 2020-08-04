@@ -139,6 +139,11 @@ public class IslandWorldManager {
                 .anyMatch(gm -> gm.getWorldSettings().getFriendlyName().equalsIgnoreCase(name));
     }
 
+    public void addWorld(World world, GameModeAddon gameMode) {
+        // Add world to map
+        gameModes.put(world, gameMode);
+        plugin.log("Added world " + world.getName() + " (" + world.getDifficulty() + ")");
+    }
 
     /**
      * Adds a GameMode to island world manager
@@ -659,7 +664,7 @@ public class IslandWorldManager {
     public List<String> getOnLeaveCommands(@NonNull World world) {
         return gameModes.containsKey(world) ? gameModes.get(world).getWorldSettings().getOnLeaveCommands() : Collections.emptyList();
     }
-    
+
     /**
      * Returns a list of commands to execute when the player respawns and {@link Flags#ISLAND_RESPAWN} is true.
      * @param world the World
@@ -904,6 +909,13 @@ public class IslandWorldManager {
      */
     public boolean isTeleportPlayerToIslandUponIslandCreation(@NonNull World world) {
         return gameModes.containsKey(world) && gameModes.get(world).getWorldSettings().isTeleportPlayerToIslandUponIslandCreation();
+    }
+
+    /**
+     * @return the gameModes
+     */
+    public Map<World, GameModeAddon> getGameModes() {
+        return gameModes;
     }
 
 }

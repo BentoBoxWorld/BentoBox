@@ -38,6 +38,8 @@ public class Players implements DataObject {
     private String locale = "";
     @Expose
     private Map<String, Integer> deaths = new HashMap<>();
+    @Expose
+    private Map<String, String> worlds = new HashMap<>();
 
     /**
      * This variable stores set of worlds where user inventory must be cleared.
@@ -337,5 +339,19 @@ public class Players implements DataObject {
      */
     public void setFlagsDisplayMode(Flag.Mode flagsDisplayMode) {
         this.flagsDisplayMode = flagsDisplayMode;
+    }
+
+    /**
+     * @return the worlds
+     */
+    public Map<String, String> getWorlds() {
+        return worlds;
+    }
+
+    /**
+     * @param worlds the worlds to set
+     */
+    public void setWorlds(Map<String, String> worlds) {
+        this.worlds = worlds;
     }
 }

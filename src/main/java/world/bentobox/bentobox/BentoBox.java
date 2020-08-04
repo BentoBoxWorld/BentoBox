@@ -13,6 +13,9 @@ import org.bukkit.scheduler.BukkitTask;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
+import com.grinderwolf.swm.api.SlimePlugin;
+import com.grinderwolf.swm.api.loaders.SlimeLoader;
+
 import world.bentobox.bentobox.api.configuration.Config;
 import world.bentobox.bentobox.api.events.BentoBoxReadyEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
@@ -92,6 +95,9 @@ public class BentoBox extends JavaPlugin {
     private BukkitTask blueprintLoadingTask;
 
     private boolean shutdown;
+
+    // Slime World Manager
+    private SlimePlugin swm;
 
     @Override
     public void onEnable(){
@@ -188,6 +194,7 @@ public class BentoBox extends JavaPlugin {
             } catch (Exception e) {
                 logError("*****************CRITIAL ERROR!******************");
                 logError(e.getMessage());
+                e.printStackTrace();
                 //Arrays.stream(e.getMessage().split("[\n\r]+")).forEach(this::logError);
                 logError("Could not load islands! Disabling BentoBox...");
                 logError("*************************************************");
@@ -225,6 +232,11 @@ public class BentoBox extends JavaPlugin {
 
             webManager = new WebManager(this);
 
+            // Slime World
+            swm = (SlimePlugin) Bukkit.getPluginManager().getPlugin("SlimeWorldManager");
+            if (swm != null) {
+                log("Hooked into Slime World Manager");
+            }
             final long enableTime = System.currentTimeMillis() - enableStart;
 
             // Show banner
@@ -523,5 +535,19 @@ public class BentoBox extends JavaPlugin {
      */
     public boolean isShutdown() {
         return shutdown;
+    }
+
+    /**
+     * Get Slime World Manager
+     * @return the swm or null if it doesn't exist
+     */
+    @Nullable
+    public SlimePlugin getSwm() {
+        return swm;
+    }
+
+    @Nullable
+    public SlimeLoader getSlimeLoader() {
+        return  swm != null ? swm.getLoader("file") : null;
     }
 }

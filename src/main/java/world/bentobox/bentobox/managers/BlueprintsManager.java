@@ -463,7 +463,7 @@ public class BlueprintsManager {
         }
         // Paste
         if (bp != null) {
-            new BlueprintPaster(plugin, bp, addon.getOverWorld(), island).paste().thenAccept(b -> {
+            new BlueprintPaster(plugin, bp, island.getWorld(), island).paste().thenAccept(b -> {
                 pasteNether(addon, bb, island).thenAccept(b2 ->
                 pasteEnd(addon, bb, island).thenAccept(b3 -> Bukkit.getScheduler().runTask(plugin, task)));
             });
@@ -479,6 +479,7 @@ public class BlueprintsManager {
                 && addon.getNetherWorld() != null) {
             Blueprint bp = getBlueprints(addon).get(bb.getBlueprint(World.Environment.NETHER));
             if (bp != null) {
+                // TODO fix slime world
                 return new BlueprintPaster(plugin, bp, addon.getNetherWorld(), island).paste();
             }
         }
@@ -493,6 +494,7 @@ public class BlueprintsManager {
                 && addon.getEndWorld() != null) {
             Blueprint bp = getBlueprints(addon).get(bb.getBlueprint(World.Environment.THE_END));
             if (bp != null) {
+                // TODO fix slime world
                 return new BlueprintPaster(plugin, bp, addon.getEndWorld(), island).paste();
             }
         }

@@ -101,7 +101,7 @@ public abstract class DefaultPlayerCommand extends CompositeCommand
         }
 
         // Check if user has an island.
-        if (this.getIslands().getIsland(this.getWorld(), user.getUniqueId()) != null)
+        if (this.getIslands().getIsland(getWorld(), user.getUniqueId()) != null)
         {
             // Default command if user has an island.
             String command = this.<GameModeAddon>getAddon().getWorldSettings().getDefaultPlayerAction();
