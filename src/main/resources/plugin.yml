@@ -4,6 +4,7 @@ version: ${project.version}${build.number}
 api-version: "1.15"
 
 authors: [tastybento, Poslovitch]
+contributors: ["The BentoBoxWorld Community"]
 website: https://bentobox.world
 description: ${project.description}
 
