@@ -10,6 +10,44 @@
 
 ## About BentoBox
 
+### Slimeworld Edition
+
+This version is a Proof Of Concept (POC) that uses the Slimeworld Manager.
+
+*How it works*
+
+* Each island exists in its own world
+* The world is stored in a database via the SlimeWorldManager plugin
+* Worlds are loaded when the player joins the server
+* When a player resets, a new world is created
+* In theory, a load-balancing system of multiple servers could use one world-storage database (not tested)
+
+*Limitations*
+
+* SlimeWorldManager only supports up to 1.15.2 so far, so use that server and client.
+* Only supports BSkyBlock game mode, i.e., void world
+* Does not support addons yet, e.g., Level, because they are not multi-world aware
+* Worlds are not unloaded once they are loaded
+* Old Slimeworlds are not deleted
+* A default world (a hub or lobby world) is required for players to appear in after a server restart.
+* Islands are always at 0,0 in any particular world (shouldn't be an issue).
+
+#### Installation
+
+1. Place the BentoBox jar into the plugins folder. Remove any addons except for BSkyBlock.
+2. Download the latest version from the Spigot [resource page](https://www.spigotmc.org/resources/slimeworldmanager.69974/). 
+3. Place the downloaded `slimeworldmanager-plugin-<version>.jar` file inside your server's plugin folder.
+4. Place the `slimeworldmanager-classmodifier-<version>.jar` file inside your server's main directory **(not the plugins folder)**.
+5. Modify your server startup command and at this argument before '-jar':
+```
+-javaagent:slimeworldmanager-classmodifier-<version>.jar
+```
+6. Run the server.
+7. Stop the server
+8. Edit the SlimeWorldManager sources.yml to use the database you want. The default is flat-file.
+9. Run the server again, log in and make an island with `/island`
+10. Have fun!
+
 ### Description
 
 BentoBox is a powerful Bukkit library plugin that provides core features for island-style games like SkyBlock, AcidIsland, SkyGrid and others. 
