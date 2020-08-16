@@ -40,6 +40,7 @@ import com.google.common.collect.ImmutableMap;
 
 import io.papermc.lib.PaperLib;
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.island.IslandEvent;
 import world.bentobox.bentobox.api.events.island.IslandEvent.Reason;
@@ -104,6 +105,8 @@ public class IslandsManager {
 
     private BukkitTask task;
 
+    private Map<UUID, CompletableFuture<Island>> loadingIslands;
+
     /**
      * Islands Manager
      * @param plugin - plugin
@@ -119,6 +122,7 @@ public class IslandsManager {
         // This list should always be empty unless database deletion failed
         // In that case a purge utility may be required in the future
         deletedIslands = new ArrayList<>();
+        loadingIslands = new HashMap<>();
     }
 
     /**
@@ -324,7 +328,8 @@ public class IslandsManager {
         // Game the gamemode name and prefix the uniqueId
         String gmName = plugin.getIWM().getAddon(location.getWorld()).map(gm -> gm.getDescription().getName()).orElse("");
         island.setGameMode(gmName);
-        island.setUniqueId(gmName + island.getUniqueId());
+        // Slimeworld - name of island is gm + world name
+        island.setUniqueId(gmName + location.getWorld().getName());
         while (handler.objectExists(island.getUniqueId())) {
             // This should never happen, so although this is a potential infinite loop I'm going to leave it here because
             // it will be bad if this does occur and the server should crash.
@@ -1034,6 +1039,32 @@ public class IslandsManager {
      */
     public boolean isOwner(@NonNull World world, @NonNull UUID uniqueId) {
         return hasIsland(world, uniqueId) && uniqueId.equals(getIsland(world, uniqueId).getOwner());
+    }
+
+    /**
+     * Load a user's island and associated world from the database
+
+     */
+    public CompletableFuture<Island> loadIsland(UUID uuid, GameModeAddon gm) {
+        plugin.logDebug("Loading SlimeWorld island");
+        if (loadingIslands.containsKey(uuid)) {
+            return loadingIslands.get(uuid);
+        }
+        CompletableFuture<Island> result = new CompletableFuture<>();
+        loadingIslands.put(uuid, result);
+        plugin.getIWM().loadWorld(uuid, gm).thenAccept(w -> {
+            plugin.logDebug("Loading island from DB");
+            // Load island from database
+            Island island = handler.loadObject(gm.getDescription().getName() + w.getName());
+            if (islandCache.addIsland(island)) {
+                result.complete(island);
+                plugin.logDebug("Success");
+            } else {
+                result.complete(null);
+                plugin.logDebug("Fail");
+            }
+        });
+        return result;
     }
 
     /**

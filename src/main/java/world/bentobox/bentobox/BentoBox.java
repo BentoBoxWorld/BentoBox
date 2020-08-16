@@ -189,6 +189,7 @@ public class BentoBox extends JavaPlugin {
             registerListeners();
 
             // Load islands from database - need to wait until all the worlds are loaded
+            /*
             try {
                 islandsManager.load();
             } catch (Exception e) {
@@ -207,7 +208,7 @@ public class BentoBox extends JavaPlugin {
                 instance.setEnabled(false);
                 return;
             }
-
+             */
             // Save islands & players data every X minutes
             Bukkit.getScheduler().runTaskTimer(instance, () -> {
                 playersManager.asyncSaveAll();

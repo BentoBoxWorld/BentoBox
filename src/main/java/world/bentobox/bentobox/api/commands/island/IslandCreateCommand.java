@@ -2,16 +2,9 @@ package world.bentobox.bentobox.api.commands.island;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.eclipse.jdt.annotation.Nullable;
-
-import com.grinderwolf.swm.api.world.SlimeWorld;
-import com.grinderwolf.swm.api.world.properties.SlimeProperties;
-import com.grinderwolf.swm.api.world.properties.SlimePropertyMap;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.events.island.IslandEvent.Reason;
@@ -95,63 +88,26 @@ public class IslandCreateCommand extends CompositeCommand {
 
     private boolean makeIsland(User user, String name) {
         user.sendMessage("commands.island.create.creating-island");
-        // Make the slime world
-        if (getPlugin().getSwm() != null) {
-            System.out.println("Got slimeworld");
-            Bukkit.getScheduler().runTaskAsynchronously(getPlugin(), () -> {
-                try {
-                    // Create a new and empty property map
-                    SlimePropertyMap properties = new SlimePropertyMap();
-                    properties.setString(SlimeProperties.DIFFICULTY, "normal");
-                    properties.setInt(SlimeProperties.SPAWN_X, 0);
-                    properties.setInt(SlimeProperties.SPAWN_Y, 125);
-                    properties.setInt(SlimeProperties.SPAWN_Z, 0);
-                    // Note that this method should be called asynchronously
-                    System.out.println("Making slime world");
-                    // Get name
-                    String worldName = makeName();
-                    SlimeWorld world = getPlugin().getSwm().createEmptyWorld(getPlugin().getSlimeLoader(),
-                            worldName, false,  properties);
-                    System.out.println("Made world");
-                    // This method must be called synchronously
-                    Bukkit.getScheduler().runTask(getPlugin(), () -> {
-                        getPlugin().getSwm().generateWorld(world);
-                        Bukkit.getScheduler().runTask(getPlugin(), () -> {
-                            try {
-                                World newWorld = Bukkit.getWorld(worldName);
-                                getPlugin().getIWM().addWorld(newWorld, getAddon());
-                                getPlayers().addWorld(user.getUniqueId(), worldName, getAddon());
-                                System.out.println("Building island");
-                                NewIsland.builder()
-                                .player(user)
-                                .addon(getAddon())
-                                .reason(Reason.CREATE)
-                                .name(name)
-                                .world(newWorld)
-                                .locationStrategy(w -> new Location(w, 0,120,0)) // TODO fix locs
-                                .build();
-                            } catch (IOException e) {
-                                getPlugin().logError("Could not create island for player. " + e.getMessage());
-                                user.sendMessage(e.getMessage());
-                            }
-                            if (getSettings().isResetCooldownOnCreate()) {
-                                getParent().getSubCommand("reset").ifPresent(resetCommand -> resetCommand.setCooldown(user.getUniqueId(), getSettings().getResetCooldown()));
-                            }
-                        });
-
-                    });
-                } catch (Exception ex) {
-                    /* Exception handling */
-                }
-            });
-        }
-
+        getIWM().createWorld(user.getUniqueId(), this.getAddon()).thenAccept(newWorld -> {
+            try {
+                System.out.println("Building island");
+                NewIsland.builder()
+                .player(user)
+                .addon(getAddon())
+                .reason(Reason.CREATE)
+                .name(name)
+                .world(newWorld)
+                .locationStrategy(w -> new Location(w, 0,120,0)) // TODO fix locs
+                .build();
+            } catch (IOException e) {
+                getPlugin().logError("Could not create island for player. " + e.getMessage());
+                user.sendMessage(e.getMessage());
+            }
+            if (getSettings().isResetCooldownOnCreate()) {
+                getParent().getSubCommand("reset").ifPresent(resetCommand -> resetCommand.setCooldown(user.getUniqueId(), getSettings().getResetCooldown()));
+            }
+        });
         return true;
     }
 
-    private String makeName() {
-        String name = UUID.randomUUID().toString().replace("-", "").substring(0,16);
-        if (Bukkit.getWorld(name) != null) return makeName();
-        return name;
-    }
 }

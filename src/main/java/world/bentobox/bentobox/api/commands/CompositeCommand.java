@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -265,7 +266,13 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         user.setAddon(addon);
         // Set the world
         if (addon instanceof GameModeAddon) {
-            world = plugin.getPlayers().getWorld(user.getUniqueId(), (GameModeAddon)addon);
+            try {
+                // This should come back immediately
+                world = plugin.getIWM().loadWorld(user.getUniqueId(), (GameModeAddon)addon).get();
+            } catch (InterruptedException | ExecutionException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         }
         // Execute and trim args
         return canExecute(user, cmdLabel, cmdArgs) && execute(user, cmdLabel, cmdArgs);

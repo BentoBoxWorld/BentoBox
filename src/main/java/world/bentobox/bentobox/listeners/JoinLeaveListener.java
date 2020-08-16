@@ -46,20 +46,33 @@ public class JoinLeaveListener implements Listener {
     public void onPlayerJoin(final PlayerJoinEvent event) {
         // Remove them from the cache, just in case they were not removed for some reason
         User.removePlayer(event.getPlayer());
-
+        UUID playerUUID = event.getPlayer().getUniqueId();
         User user = User.getInstance(event.getPlayer());
         if (user == null || user.getUniqueId() == null) {
             return;
         }
-        UUID playerUUID = user.getUniqueId();
 
+        // Load worlds and islands associated with this player
+        plugin.getIWM().getGameModes().values().forEach(gm ->
+        plugin.getIslands().loadIsland(playerUUID, gm).thenAccept(i -> finishLogin(event, user, playerUUID)));
+    }
+
+
+    private void finishLogin(PlayerJoinEvent event, User user, UUID playerUUID) {
         // Check if player hasn't joined before
         if (!players.isKnown(playerUUID)) {
             firstTime(user);
         }
-
         // Make sure the player is loaded into the cache or create the player if they don't exist
         players.addPlayer(playerUUID);
+
+        // Set the player's name (it may have changed), but only if it isn't empty
+        if (!user.getName().isEmpty()) {
+            players.setPlayerName(user);
+            players.save(playerUUID);
+        } else {
+            plugin.logWarning("Player that just logged in has no name! " + playerUUID.toString());
+        }
 
         // Reset island resets if required
         plugin.getIWM().getOverWorlds().stream()
@@ -74,14 +87,6 @@ public class JoinLeaveListener implements Listener {
         // Update the island range of the islands the player owns
         updateIslandRange(user);
 
-        // Set the player's name (it may have changed), but only if it isn't empty
-        if (!user.getName().isEmpty()) {
-            players.setPlayerName(user);
-            players.save(playerUUID);
-        } else {
-            plugin.logWarning("Player that just logged in has no name! " + playerUUID.toString());
-        }
-
         // If mobs have to be removed when a player joins, then wipe all the mobs on his island.
         if (plugin.getIslands().locationIsOnIsland(event.getPlayer(), user.getLocation()) && Flags.REMOVE_MOBS.isSetForWorld(user.getWorld())) {
             Bukkit.getScheduler().runTask(plugin, () -> plugin.getIslands().clearArea(user.getLocation()));
@@ -90,7 +95,6 @@ public class JoinLeaveListener implements Listener {
         // Clear inventory if required
         clearPlayersInventory(Util.getWorld(event.getPlayer().getWorld()), user);
     }
-
 
     private void firstTime(User user) {
         // Make sure the player is loaded into the cache or create the player if they don't exist

@@ -1,6 +1,7 @@
 package world.bentobox.bentobox.managers;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -8,6 +9,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
@@ -20,10 +23,21 @@ import org.bukkit.entity.EntityType;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
+import com.grinderwolf.swm.api.exceptions.CorruptedWorldException;
+import com.grinderwolf.swm.api.exceptions.NewerFormatException;
+import com.grinderwolf.swm.api.exceptions.UnknownWorldException;
+import com.grinderwolf.swm.api.exceptions.WorldAlreadyExistsException;
+import com.grinderwolf.swm.api.exceptions.WorldInUseException;
+import com.grinderwolf.swm.api.world.SlimeWorld;
+import com.grinderwolf.swm.api.world.properties.SlimeProperties;
+import com.grinderwolf.swm.api.world.properties.SlimePropertyMap;
+
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.flags.Flag;
+import world.bentobox.bentobox.database.Database;
+import world.bentobox.bentobox.database.objects.Worlds;
 import world.bentobox.bentobox.hooks.MultiverseCoreHook;
 import world.bentobox.bentobox.lists.Flags;
 
@@ -34,11 +48,23 @@ import world.bentobox.bentobox.lists.Flags;
  */
 public class IslandWorldManager {
 
+    private static final SlimePropertyMap properties;
+    static {
+        // Create a new and empty property map
+        properties = new SlimePropertyMap();
+        properties.setString(SlimeProperties.DIFFICULTY, "normal");
+        properties.setInt(SlimeProperties.SPAWN_X, 0);
+        properties.setInt(SlimeProperties.SPAWN_Y, 125);
+        properties.setInt(SlimeProperties.SPAWN_Z, 0);
+    }
+
     private BentoBox plugin;
+    private final Database<Worlds> handler;
     /**
      * Map associating Worlds (Overworld, Nether and End) with the GameModeAddon that creates them.
      */
     private Map<@NonNull World, @NonNull GameModeAddon> gameModes;
+    private final Map<UUID, CompletableFuture<World>> loadingWorlds;
 
     /**
      * Manages worlds registered with BentoBox
@@ -46,6 +72,8 @@ public class IslandWorldManager {
     public IslandWorldManager(BentoBox plugin) {
         this.plugin = plugin;
         gameModes = new HashMap<>();
+        handler = new Database<>(plugin, Worlds.class);
+        loadingWorlds = new HashMap<>();
     }
 
     public void registerWorldsToMultiverse() {
@@ -916,6 +944,100 @@ public class IslandWorldManager {
      */
     public Map<World, GameModeAddon> getGameModes() {
         return gameModes;
+    }
+
+    /**
+     * Load a user's island and associated world from the database
+     * @param uuid - player's UUID
+     * @param gm - game mode
+     * @return CompletableFuture containing the Bukkit world, or null if it doesn't exist
+     */
+    public CompletableFuture<World> loadWorld(UUID uuid, GameModeAddon gm) {
+        if (loadingWorlds.containsKey(uuid)) {
+            return loadingWorlds.get(uuid);
+        }
+        CompletableFuture<World> result = new CompletableFuture<>();
+        // Check if the database has this player's world
+        if (!handler.objectExists(uuid.toString())) {
+            return CompletableFuture.completedFuture(null);
+        }
+        // Save to cache
+        loadingWorlds.put(uuid, result);
+        Worlds worlds = handler.loadObject(uuid.toString());
+        if (worlds == null || !worlds.getWorlds().containsKey(gm.getDescription().getName())) {
+            return CompletableFuture.completedFuture(null);
+        }
+        String worldName = worlds.getWorlds().get(gm.getDescription().getName());
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            try {
+                SlimeWorld world = plugin.getSwm().loadWorld(plugin.getSlimeLoader(), worldName, false, properties);
+                // Slimeworld loaded
+                Bukkit.getScheduler().runTask(plugin, () -> {
+                    // Load bukkit world and next tick, the world will be available
+                    plugin.getSwm().generateWorld(world);
+                    World newWorld = Bukkit.getWorld(worldName);
+                    addWorld(newWorld, gm);
+                    Bukkit.getScheduler().runTask(plugin, () -> result.complete(newWorld));
+                });
+            } catch (UnknownWorldException | CorruptedWorldException | NewerFormatException | WorldInUseException
+                    | IOException e) {
+                e.printStackTrace();
+                result.complete(null);
+            }
+
+        });
+        return result;
+    }
+
+    /**
+     * Create a world for player in game mode
+     * @param uuid - uuid of player
+     * @param gm - game mode
+     * @return CompletableFuture containing the world, or null if failed
+     */
+    public CompletableFuture<World> createWorld(UUID uuid, GameModeAddon gm) {
+        CompletableFuture<World> result = new CompletableFuture<>();
+        // Save to cache
+        loadingWorlds.put(uuid, result);
+        // Prepare
+        Worlds worlds = handler.objectExists(uuid.toString()) ? handler.loadObject(uuid.toString()) : new Worlds(uuid);
+        String worldName = makeName();
+        SlimeWorld world;
+        try {
+            world = plugin.getSwm().createEmptyWorld(plugin.getSlimeLoader(), worldName, false,  properties);
+            // This method must be called synchronously
+            Bukkit.getScheduler().runTask(plugin, () -> {
+                plugin.getSwm().generateWorld(world);
+                Bukkit.getScheduler().runTask(plugin, () -> {
+                    World newWorld = Bukkit.getWorld(worldName);
+                    addWorld(newWorld, gm);
+                    // Save the world name
+                    if (worlds != null) {
+                        worlds.getWorlds().put(gm.getDescription().getName(), worldName);
+                        handler.saveObjectAsync(worlds);
+                    } else {
+                        handler.saveObjectAsync(new Worlds(uuid, gm.getDescription().getName(), worldName));
+                    }
+                    result.complete(newWorld);
+                });
+
+            });
+        } catch (WorldAlreadyExistsException e) {
+            result.complete(null);
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            result.complete(null);
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    private String makeName() {
+        String name = UUID.randomUUID().toString().replace("-", "").substring(0,16);
+        if (Bukkit.getWorld(name) != null) return makeName();
+        return name;
     }
 
 }
