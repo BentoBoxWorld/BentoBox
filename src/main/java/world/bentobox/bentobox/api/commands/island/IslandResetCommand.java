@@ -3,6 +3,7 @@ package world.bentobox.bentobox.api.commands.island;
 import java.io.IOException;
 import java.util.List;
 
+import org.bukkit.Location;
 import org.eclipse.jdt.annotation.NonNull;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
@@ -126,7 +127,7 @@ public class IslandResetCommand extends ConfirmableCommand {
         .oldIsland(oldIsland)
         .location(oldIsland.getCenter())
         .build();
-        
+
         // Reset the island
         user.sendMessage("commands.island.create.creating-island");
 
@@ -139,21 +140,26 @@ public class IslandResetCommand extends ConfirmableCommand {
         // Reset the homes of the player
         getPlayers().clearHomeLocations(getWorld(), user.getUniqueId());
 
-        // Create new island and then delete the old one
-        try {
-            Builder builder = NewIsland.builder()
-                    .player(user)
-                    .reason(Reason.RESET)
-                    .addon(getAddon())
-                    .oldIsland(oldIsland)
-                    .name(name);
-            if (noPaste) builder.noPaste();
-            builder.build();
-        } catch (IOException e) {
-            getPlugin().logError("Could not create island for player. " + e.getMessage());
-            user.sendMessage(e.getMessage());
-            return false;
-        }
+        // Get the old world name
+        getIWM().createWorld(user.getUniqueId(), this.getAddon()).thenAccept(newWorld -> {
+            // Create new island and then delete the old one
+            try {
+                Builder builder = NewIsland.builder()
+                        .player(user)
+                        .reason(Reason.RESET)
+                        .addon(getAddon())
+                        .oldIsland(oldIsland)
+                        .world(newWorld)
+                        .locationStrategy(w -> new Location(w, 0,120,0)) // TODO fix locs
+                        .name(name);
+                if (noPaste) builder.noPaste();
+                builder.build();
+            } catch (IOException e) {
+                getPlugin().logError("Could not create island for player. " + e.getMessage());
+                user.sendMessage(e.getMessage());
+            }
+        });
+
         setCooldown(user.getUniqueId(), getSettings().getResetCooldown());
         return true;
     }
