@@ -15,7 +15,9 @@ The following is a list of all addons currently made for BentoBox:
 * [**Limits**](https://github.com/BentoBoxWorld/Limits/): Limits blocks and entities that your players can place on their islands.
 * [**MagicCobblestoneGenerator**](https://github.com/BentoBoxWorld/MagicCobblestoneGenerator/): Generates any blocks in a cobblestone generator.
 * [**TwerkingForTrees**](https://github.com/BentoBoxWorld/TwerkingForTrees/): Twerk to make trees grow faster on your island.
-* [**VoidPortals**](https://github.com/BentoBoxWorld/VoidPortals/): Teleports to the dimensions by falling into the Void:
+* [**Upgrades**](https://github.com/BentoBoxWorld/Upgrades/): Upgrades to an island of any GameMode.
+* [**Visit**](https://github.com/BentoBoxWorld/Visit/): Lets your players visit other islands with a command.
+* [**VoidPortals**](https://github.com/BentoBoxWorld/VoidPortals/): Teleports to the dimensions by falling into the Void.
 * [**Warps**](https://github.com/BentoBoxWorld/Warps/): Enables players to plant a warp sign and visit other player's islands.
 
 With more to come :D
