@@ -8,6 +8,7 @@ import world.bentobox.bentobox.api.panels.Panel;
 import world.bentobox.bentobox.api.panels.PanelItem.ClickHandler;
 import world.bentobox.bentobox.api.panels.builders.TabbedPanelBuilder;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.listeners.flags.clicklisteners.GeoMobLimitTab.EntityLimitTabType;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.util.Util;
 
@@ -46,7 +47,7 @@ public class MobLimitClickListener implements ClickHandler {
         new TabbedPanelBuilder()
         .user(user)
         .world(user.getWorld())
-        .tab(1, new MobLimitTab(user))
+        .tab(1, new GeoMobLimitTab(user, EntityLimitTabType.MOB_LIMIT))
         .startingSlot(1)
         .size(54)
         .build().openPanel();

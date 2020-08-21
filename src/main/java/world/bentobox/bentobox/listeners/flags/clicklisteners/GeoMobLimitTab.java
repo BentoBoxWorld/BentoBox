@@ -29,18 +29,7 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-public class MobLimitTab implements Tab, ClickHandler {
-
-    private BentoBox plugin = BentoBox.getInstance();
-    private User user;
-
-    /**
-     * @param user
-     */
-    public MobLimitTab(User user) {
-        super();
-        this.user = user;
-    }
+public class GeoMobLimitTab implements Tab, ClickHandler {
 
     /**
      * A list of all living entity types, minus some
@@ -51,18 +40,45 @@ public class MobLimitTab implements Tab, ClickHandler {
             .sorted(Comparator.comparing(EntityType::name))
             .collect(Collectors.toList()));
 
+    public enum EntityLimitTabType {
+        GEO_LIMIT,
+        MOB_LIMIT
+    }
+
+    private final BentoBox plugin = BentoBox.getInstance();
+    private final User user;
+    private final EntityLimitTabType type;
+
+    /**
+     * @param user
+     */
+    public GeoMobLimitTab(User user, EntityLimitTabType type) {
+        super();
+        this.user = user;
+        this.type = type;
+    }
+
+
     @Override
     public boolean onClick(Panel panel, User user, ClickType clickType, int slot) {
         // This is a click on the mob limit panel
         // Case panel to Tabbed Panel to get the active page
         TabbedPanel tp = (TabbedPanel)panel;
-        // Conver the slot and active page to an index
+        // Convert the slot and active page to an index
         int index = tp.getActivePage() * 36 + slot - 9;
         EntityType c = LIVING_ENTITY_TYPES.get(index);
-        if (plugin.getIWM().getMobLimitSettings(user.getWorld()).contains(c.name())) {
-            plugin.getIWM().getMobLimitSettings(user.getWorld()).remove(c.name());
+        if (type == EntityLimitTabType.MOB_LIMIT) {
+            if (plugin.getIWM().getMobLimitSettings(user.getWorld()).contains(c.name())) {
+                plugin.getIWM().getMobLimitSettings(user.getWorld()).remove(c.name());
+            } else {
+                plugin.getIWM().getMobLimitSettings(user.getWorld()).add(c.name());
+            }
         } else {
-            plugin.getIWM().getMobLimitSettings(user.getWorld()).add(c.name());
+            if (plugin.getIWM().getGeoLimitSettings(user.getWorld()).contains(c.name())) {
+                plugin.getIWM().getGeoLimitSettings(user.getWorld()).remove(c.name());
+            } else {
+                plugin.getIWM().getGeoLimitSettings(user.getWorld()).add(c.name());
+            }
         }
         // Apply change to panel
         panel.getInventory().setItem(slot, getPanelItem(c, user).getItem());
@@ -73,13 +89,18 @@ public class MobLimitTab implements Tab, ClickHandler {
 
     @Override
     public PanelItem getIcon() {
-        return new PanelItemBuilder().icon(Material.IRON_BOOTS).name(user.getTranslation("protection.flags.LIMIT_MOBS.name")).build();
+        if (type == EntityLimitTabType.MOB_LIMIT) {
+            return new PanelItemBuilder().icon(Material.IRON_BOOTS).name(user.getTranslation("protection.flags.LIMIT_MOBS.name")).build();
+        } else {
+            return new PanelItemBuilder().icon(Material.CHAINMAIL_CHESTPLATE).name(user.getTranslation("protection.flags.GEO_LIMIT_MOBS.name")).build();
 
+        }
     }
 
     @Override
     public String getName() {
-        return user.getTranslation("protection.flags.LIMIT_MOBS.name");
+        return type == EntityLimitTabType.MOB_LIMIT ? user.getTranslation("protection.flags.LIMIT_MOBS.name")
+                : user.getTranslation("protection.flags.GEO_LIMIT_MOBS.name");
     }
 
     @Override
@@ -97,12 +118,22 @@ public class MobLimitTab implements Tab, ClickHandler {
         PanelItemBuilder pib = new PanelItemBuilder();
         pib.name(Util.prettifyText(c.toString()));
         pib.clickHandler(this);
-        if (!BentoBox.getInstance().getIWM().getMobLimitSettings(user.getWorld()).contains(c.name())) {
-            pib.icon(Material.GREEN_SHULKER_BOX);
-            pib.description(user.getTranslation("protection.flags.LIMIT_MOBS.can"));
+        if (type == EntityLimitTabType.MOB_LIMIT) {
+            if (!BentoBox.getInstance().getIWM().getMobLimitSettings(user.getWorld()).contains(c.name())) {
+                pib.icon(Material.GREEN_SHULKER_BOX);
+                pib.description(user.getTranslation("protection.flags.LIMIT_MOBS.can"));
+            } else {
+                pib.icon(Material.RED_SHULKER_BOX);
+                pib.description(user.getTranslation("protection.flags.LIMIT_MOBS.cannot"));
+            }
         } else {
-            pib.icon(Material.RED_SHULKER_BOX);
-            pib.description(user.getTranslation("protection.flags.LIMIT_MOBS.cannot"));
+            if (BentoBox.getInstance().getIWM().getGeoLimitSettings(user.getWorld()).contains(c.name())) {
+                pib.icon(Material.GREEN_SHULKER_BOX);
+                pib.description(user.getTranslation("protection.panel.flag-item.setting-active"));
+            } else {
+                pib.icon(Material.RED_SHULKER_BOX);
+                pib.description(user.getTranslation("protection.panel.flag-item.setting-disabled"));
+            }
         }
         return pib.build();
     }
