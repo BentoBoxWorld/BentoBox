@@ -153,7 +153,7 @@ public class IslandTeamCommand extends CompositeCommand {
                                     TextVariables.NAME, offlineMember.getName(),
                                     "[last_seen]", lastSeen);
                         }else{
-                            user.sendMessage("commands.island.team.info.member-layout.offline",
+                            user.sendMessage("commands.island.team.info.trusted-layout.offline",
                                     TextVariables.NAME, offlineMember.getName());
                         }
                     }
