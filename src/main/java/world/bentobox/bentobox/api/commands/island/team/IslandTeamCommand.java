@@ -152,6 +152,10 @@ public class IslandTeamCommand extends CompositeCommand {
                             user.sendMessage("commands.island.team.info.member-layout.offline",
                                     TextVariables.NAME, offlineMember.getName(),
                                     "[last_seen]", lastSeen);
+                        }else if(!island.getMemberSet(RanksManager.COOP_RANK, false).contains(member)) {
+                            user.sendMessage("commands.island.team.info.coop-layout.offline",
+                                    TextVariables.NAME, offlineMember.getName(),
+                                    "[last_seen]", lastSeen);
                         }else{
                             user.sendMessage("commands.island.team.info.trusted-layout.offline",
                                     TextVariables.NAME, offlineMember.getName());
