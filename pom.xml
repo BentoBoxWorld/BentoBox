@@ -211,7 +211,7 @@
             <artifactId>bstats-bukkit</artifactId>
             <version>${bstats.version}</version>
         </dependency>
-         Mockito (Unit testing)
+<!--         Mockito (Unit testing)-->
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
@@ -230,7 +230,7 @@
             <version>${powermock.version}</version>
             <scope>test</scope>
         </dependency>
-         Database
+<!--         Database-->
         <dependency>
             <groupId>org.mongodb</groupId>
             <artifactId>mongodb-driver</artifactId>
