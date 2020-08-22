@@ -104,7 +104,7 @@ public class IslandTeamCommand extends CompositeCommand {
                 "[online]", String.valueOf(onlineMembers.size()));
 
         // We now need to get all online "members" of the island - incl. Trusted and coop
-        onlineMembers = island.getMemberSet(RanksManager.COOP_RANK).stream().filter(uuid -> Bukkit.getOfflinePlayer(uuid).isOnline() ? user.getPlayer().canSee(Bukkit.getOfflinePlayer(uuid).getPlayer()) : false).collect(Collectors.toList());Collectors.toList();
+        onlineMembers = island.getMemberSet(RanksManager.COOP_RANK).stream().filter(uuid -> Bukkit.getOfflinePlayer(uuid).isOnline() ? user.getPlayer().canSee(Bukkit.getOfflinePlayer(uuid).getPlayer()) : false).collect(Collectors.toList());
 //        onlineMembers = island.getMemberSet(RanksManager.COOP_RANK).stream()
 //                .filter(uuid -> Bukkit.getOfflinePlayer(uuid).isOnline()).collect(Collectors.toList());
 
@@ -148,9 +148,11 @@ public class IslandTeamCommand extends CompositeCommand {
                                     TextVariables.UNIT, user.getTranslation("commands.island.team.info.last-seen.days"));
                         }
 
-                        user.sendMessage("commands.island.team.info.member-layout.offline",
-                                TextVariables.NAME, offlineMember.getName(),
-                                "[last_seen]", lastSeen);
+                        if(!island.getMemberSet(RanksManager.TRUSTED_RANK, false).contains(member)) {
+                            user.sendMessage("commands.island.team.info.member-layout.offline",
+                                    TextVariables.NAME, offlineMember.getName(),
+                                    "[last_seen]", lastSeen);
+                        }
                     }
                 }
             }
