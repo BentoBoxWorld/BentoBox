@@ -861,7 +861,7 @@ protection:
       description: Ukázat hlášení o návštěvě a opuštění ostrova
       island: 'Ostrov [name]'
       name: Hlášení o návštěvě/opuštění
-      now-entering: '&a Právě vcházíš l &b [name]&a .'
+      now-entering: '&a Právě vcházíš na &b [name]&a .'
       now-entering-your-island: '&a Právě vcházíš na svůj ostrov.'
       now-leaving: '&a Právě odcházíš od &b [name]&a .'
       now-leaving-your-island: '&a Právě odcházíš ze svého ostrova.'
