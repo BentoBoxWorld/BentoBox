@@ -148,16 +148,13 @@ public class IslandTeamCommand extends CompositeCommand {
                                     TextVariables.UNIT, user.getTranslation("commands.island.team.info.last-seen.days"));
                         }
 
-                        if(!island.getMemberSet(RanksManager.TRUSTED_RANK, false).contains(member)) {
+                        if(island.getMemberSet(RanksManager.MEMBER_RANK, true).contains(member)) {
                             user.sendMessage("commands.island.team.info.member-layout.offline",
                                     TextVariables.NAME, offlineMember.getName(),
                                     "[last_seen]", lastSeen);
-                        }else if(!island.getMemberSet(RanksManager.COOP_RANK, false).contains(member)) {
-                            user.sendMessage("commands.island.team.info.coop-layout.offline",
-                                    TextVariables.NAME, offlineMember.getName(),
-                                    "[last_seen]", lastSeen);
                         }else{
-                            user.sendMessage("commands.island.team.info.trusted-layout.offline",
+                            // This will prevent anyone that is trusted or below to not have a last-seen status
+                            user.sendMessage("commands.island.team.info.member-layout.offline-not-last-seen",
                                     TextVariables.NAME, offlineMember.getName());
                         }
                     }
