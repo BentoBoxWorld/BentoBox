@@ -20,6 +20,7 @@ import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.RanksManager;
+import world.bentobox.bentobox.util.Util;
 
 public class IslandTeamCommand extends CompositeCommand {
 
@@ -105,7 +106,7 @@ public class IslandTeamCommand extends CompositeCommand {
 
         // We now need to get all online "members" of the island - incl. Trusted and coop
         onlineMembers = island.getMemberSet(RanksManager.COOP_RANK).stream()
-                .filter(uuid -> Bukkit.getOfflinePlayer(uuid).isOnline()).collect(Collectors.toList());
+                .filter(uuid -> Util.getOnlinePlayerList(user).contains(Bukkit.getOfflinePlayer(uuid).getName())).collect(Collectors.toList());
 
         for (int rank : ranks) {
             Set<UUID> players = island.getMemberSet(rank, false);
@@ -147,9 +148,15 @@ public class IslandTeamCommand extends CompositeCommand {
                                     TextVariables.UNIT, user.getTranslation("commands.island.team.info.last-seen.days"));
                         }
 
-                        user.sendMessage("commands.island.team.info.member-layout.offline",
-                                TextVariables.NAME, offlineMember.getName(),
-                                "[last_seen]", lastSeen);
+                        if(island.getMemberSet(RanksManager.MEMBER_RANK, true).contains(member)) {
+                            user.sendMessage("commands.island.team.info.member-layout.offline",
+                                    TextVariables.NAME, offlineMember.getName(),
+                                    "[last_seen]", lastSeen);
+                        }else{
+                            // This will prevent anyone that is trusted or below to not have a last-seen status
+                            user.sendMessage("commands.island.team.info.member-layout.offline-not-last-seen",
+                                    TextVariables.NAME, offlineMember.getName());
+                        }
                     }
                 }
             }

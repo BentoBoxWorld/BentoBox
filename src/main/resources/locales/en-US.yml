@@ -520,6 +520,7 @@ commands:
         member-layout:
           online: "&a &l  o &r &f [name]"
           offline: "&c &l  o &r &f [name] &7 ([last_seen])"
+          offline-not-last-seen: "&c &l  o &r &f [name]"
         last-seen:
           layout: "&b [number] &7 [unit] ago"
           days: "days"
