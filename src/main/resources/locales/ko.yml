@@ -1,0 +1,1364 @@
+---
+meta:
+  authors:
+  - tastybento
+  - Poslovitch
+  banner: WHITE_BANNER:1:STRIPE_SMALL:RED:SQUARE_TOP_RIGHT:CYAN:SQUARE_TOP_RIGHT:BLUE
+prefixes:
+  bentobox: "&6 BentoBox &7 &l > &r "
+general:
+  success: "&a 성공!"
+  invalid: 올바르지 않음
+  errors:
+    command-cancelled: "& c 명령이 취소되었습니다."
+    no-permission: "&c  당신은 이 명령어를 실행하기 위한 권한을 가지고있지 않습니다. 필요 권한 : (&7 [permission]&c
+      )."
+    insufficient-rank: "& c 당신의 랭크는 그렇게하기에 충분히 높지 않습니다! (& 7 [rank] & c)"
+    use-in-game: "&c 이 명령어는 인게임에서만 사용할 수 있습니다."
+    no-team: "&c 당신은 다른 사람의 섬에 소속되어있지 않습니다!"
+    no-island: "&c 당신은 섬을 소유하고 있지 않습니다!"
+    player-has-island: "&c 플레이어는 이미 섬을 가지고 있습니다!"
+    player-has-no-island: "&c 그 플레이어는 섬을 가지고 있지 않습니다!"
+    already-have-island: "&c 당신은 이미 섬을 소유중입니다!"
+    no-safe-location-found: "&c 섬으로 순간 이동하기에 안전한 장소를 찾을 수 없습니다."
+    not-owner: "&c 당신은 섬의 주인이 아닙니다!"
+    player-is-not-owner: "&b [name] &c 은 섬의 주인이 아닙니다!"
+    not-in-team: "&c 그 플레이어는 당신의 섬에 소속되어있지 않습니다!"
+    offline-player: "&c 그 플레이어는 오프라인이거나 존재하지 않습니다."
+    unknown-player: "&c [name] 은(는) 알수없는 플레이어입니다!"
+    general: "&c 그 명령어는 준비되어있지 않습니다 - 서버 소유주에게 연락하세요"
+    unknown-command: "&c 알수 없는 명령어입니다. &b /[label] help &c 를 입력하여 명령어를 확인하세요."
+    wrong-world: "&c 그것을 하기위해선 올바른 월드로 이동해야합니다!"
+    you-must-wait: "&c 그 커맨드를 다시 이용하기 위해서는 [number]를 기다려야합니다."
+    must-be-positive-number: "&c [number] 는 올바를 양수가 아닙니다. (음수는 입력할 수 없습니다.)"
+  worlds:
+    overworld: 오버월드
+    nether: 지옥
+    the-end: 엔더월드
+commands:
+  help:
+    header: "&7 =========== &c [label] 도움말 &7 ==========="
+    syntax: "&b [usage] &a [parameters]&7 : &e [description]"
+    syntax-no-parameters: "&b [usage]&7 : &e [description]"
+    end: "&7 ================================="
+    parameters: "[명령어]"
+    description: 도움말
+    console: 콘솔
+  admin:
+    help:
+      description: 관리자 명령어
+    resets:
+      description: 플레이어들의 섬 초기화 횟수를 설정합니다
+      set:
+        description: 이 플레이어의 섬 초기화 횟수를 설정합니다
+        parameters: "<닉네임> <설정할 횟수>"
+        success: "&a 성공적으로 &b[name]&a의 섬 초기화 횟수를 &b[number]회로 설정했습니다"
+      reset:
+        description: 플레이어의 섬 초기화 횟수를 0회로 설정합니다
+        parameters: "<닉네임>"
+        success-everyone: "&a성공적으로 &b모두의 &a섬 초기화 횟수를 0회로 설정했습니다."
+        success: "&a 성공적으로 &b[name]&a의 섬 초기화 횟수를 0회로 설정했습니다"
+      add:
+        description: 이 플레이어의 섬 초기화 횟수를 추가합니다.
+        parameters: "<닉네임> <추가할 횟수>"
+        success: "&a 성공적으로 &b[name]&a의 초기화 횟수에 &b[number]&a를 추가했으며 총 &b[total]회로 설정하였습니다."
+      remove:
+        description: 이 플레이어의 섬 초기화 횟수를 삭제합니다
+        parameters: "<닉네임> <삭제할 횟수>"
+        success: "&a 성공적으로 &b[name]&a의 초기화 횟수에서 &b[number]&a를 삭제했으며 총 &b[total]회로
+          설정하였습니다."
+    purge:
+      parameters: "[days]"
+      description: "[days] 이상 버려진 섬 청소"
+      days-or-more: 1일 이상이어야합니다
+      purgable-islands: "&b [number]&a개의 청소 가능한 섬을 찾았습니다."
+      purge-in-progress: "&c 청소가 진행중입니다.&b /[label] purge stop &c 를 사용해 취소할수 있습니다."
+      number-error: "&c 인자는 숫자여야만합니다"
+      confirm: " &b /[label] purge confirm &d 를 입력하여 버려진 섬 청소를 시작합니다"
+      completed: "&a 청소 중단됨"
+      see-console-for-status: "&a 청소가 시작되었습니다 상태를 보려면 콘솔을 보거나 &b/[label] purge status&a를
+        입력하세요"
+      no-purge-in-progress: "&c 청소가 진행되고 있지 않습니다."
+      protect:
+        description: 섬 청소 보호 여부를 설정합니다
+        move-to-island: "&c 섬으로 먼저 이동하세요!"
+        protecting: "&a 섬 청소로부터 보호하는 중입니다."
+        unprotecting: "&a 섬 청소 보호를 취소했습니다."
+      stop:
+        description: 진행중인 섬 청소를 중단합니다
+        stopping: 섬 청소를 중단중입니다
+      unowned:
+        description: 소유주가 없는 섬들을 청소합니다
+        unowned-islands: "&b [number]개의 &a소유주가 없는 섬을 찾았습니다"
+      status:
+        description: 청소 상태를 보여줍니다
+        status: "&b [purged] &a 개의 섬이 청소됬으며 &b [purgeable]&a개의 섬이 청소 대기중입니다 &7(&b[percentage]
+          %&7)&a."
+    team:
+      add:
+        parameters: "<주인> <닉네임>"
+        description: 플레이어를 소유주의 섬원으로 추가합니다
+        name-not-owner: "&c [name] 은 섬의 주인이 아닙니다"
+        name-has-island: "&c [name] 은 섬을 가지고있습니다. 섬원에서 이탈하거나 섬을 삭제해야합니다!"
+        success: "&b [name]&a  은 &b [owner]&a의 섬원이 되었습니다."
+      disband:
+        parameters: "<주인>"
+        description: 소유주의 섬원들을 해산시킵니다.
+        use-disband-owner: "&c 섬의 주인이 아닙니다! disband [owner]을 사용해주세요!"
+        disbanded: "&c 관리자가 당신의 섬원들을 해산시켰습니다"
+        success: "&b [name]&a 의 섬원들을 해산시켰습니다"
+      kick:
+        parameters: "<섬원>"
+        description: 플레이어를 섬원에서 추방합니다
+        cannot-kick-owner: "&c 당신은 섬의 주인을 추방할 수 없습니다. 먼저 섬원들을 추방하십시오."
+        not-in-team: "&c 이 플레이어는 섬에 소속되어있지 않습니다."
+        admin-kicked: "&c 관리자가 당신을 소속되있던 섬에서 추방시켰습니다."
+        success: "&b [name] &a 이가 &b [owner]&a의 섬에서 추방당했습니다."
+      setowner:
+        parameters: "<닉네임>"
+        description: 섬의 주인권한을 플레이어에게 넘깁니다
+        already-owner: "&c [name] 은 이미 이 섬의 주인입니다!"
+        success: "&b [name]&a  은 이제 이 섬의 주인입니다."
+    range:
+      description: 어드민 섬 범위 명령어
+      invalid-value:
+        too-low: "&c 보호범위는 &b 1&c 보다 커야합니다!"
+        too-high: "&c 보호범위는 같거나 &b [number]&c보다 작아야합니다 !"
+        same-as-before: "&c 이미 보호범위가 &b [number]&c 로 설정되어있습니다!"
+      display:
+        already-off: "&c 표시기가 이미 꺼져 있습니다"
+        already-on: "&c 표시기가 이미 켜져 있습니다"
+        description: 범위 표시기를 보이거나 숨깁니다
+        hiding: "&2 범위 표시기를 숨기는중입니다"
+        hint: |-
+          &c 빨간색 장벽 아이콘 &f은 현재 섬 보호 범위 제한을 보여줍니다.
+          &7 회색 입자 &f는 최대 섬 한계를 보여줍니다.
+          &a 녹색 입자 &f는 섬 보호 범위가 다른 경우 기본 보호 범위를 표시합니다.
+        showing: "&2 범위 표시기를 표시하는중입니다"
+      set:
+        parameters: "<플레이어> <범위>"
+        description: 섬 보호범위를 설정합니다
+        success: "&a 섬위 보호범위를 &b [number]&a로 설정하였습니다."
+      reset:
+        parameters: "<플레이어>"
+        description: 보호범위를 기본으로 되돌립니다
+        success: "&a 섬 보호범위를 &b [number]&a로 되돌렸습니다 ."
+      add:
+        description: 섬의 보호범위를 추가합니다
+        parameters: "<플레이어> <범위>"
+        success: "&a 성공적으로 &b [name]&a의 섬의 보호범위를 늘렸습니다 &b토탈 : [total] &7 (&b +[number]&7
+          )&a ."
+      remove:
+        description: 섬의 보호범위를 뺍니다
+        parameters: "<플레이어> <범위>"
+        success: "&a 성공적으로 &b [name]&a의 섬의 보호범위를 줄였습니다 &b토탈 : [total] &7 (&b -[number]&7
+          )&a ."
+    register:
+      parameters: "<플레이어>"
+      description: 플레이어를 당신이 서있는 주인없는섬의 일원으로 추가합니다
+      registered-island: "&a [name]님을 [xyz]에 있는 섬의 일원으로 추가했습니다."
+      reserved-island: "&a[xyz] 에 있는섬을 [name]에게 예약걸었습니다."
+      already-owned: "&c 이섬은 이미 주인이 있습니다!"
+      no-island-here: "&c 그곳에는 섬이 없습니다. 명령어를 한번더 입력하여 하나 만듭니다."
+      in-deletion: "&c 섬 공간이 삭제되었습니다 잠시후 다시 시도해보세요"
+      cannot-make-island: "&c 섬은 이곳에 만들수 없습니다. 죄송합니다. 콘솔을 참고해주세요."
+      island-is-spawn: "&6 섬이 생성되었습니다. 정말로 하시겠습니까? 명령어를 한번더 입력해주세요."
+    unregister:
+      parameters: "<주인>"
+      description: 섬을 주인없는 섬으로 만들지만 섬은 유지됩니다
+      unregistered-island: "&a [xyz]에 있는 [name]의 섬을 주인 없는 섬으로 만들었습니다."
+    info:
+      parameters: "<플레이어>"
+      description: 현재 위치에 있는 섬이나 플레이어의 섬의 정보를 봅니다
+      no-island: "&c 당신은 섬에 있지 않습니다..."
+      title: "========== 섬 정보 ============"
+      island-uuid: 'UUID: [uuid]'
+      owner: '주인: [owner] ([uuid])'
+      last-login: '마지막 로그인: [date]'
+      deaths: '사망 횟수: [number]'
+      resets-left: '초기화 횟수: [number] (Max: [total])'
+      team-members-title: '섬원 목록:'
+      team-owner-format: "&a [name] [rank]"
+      team-member-format: "&b [name] [rank]"
+      island-location: '섬 위치: [xyz]'
+      island-coords: '섬 좌표: [xz1] 에서 [xz2] 까지'
+      islands-in-trash: "&d 플레이어는 쓰레기 안에있는 섬을 가지고 있습니다"
+      protection-range: '보호 범위: [range]'
+      purge-protected: 섬은 청소로부터 보호됩니다
+      max-protection-range: '가장 컷던 보호범위: [range]'
+      protection-coords: '보호 좌표: [xz1] 에서 [xz2] 까지'
+      is-spawn: 섬은 스폰섬입니다
+      banned-players: '접근금지 플레이어:'
+      banned-format: "&c [name]"
+      unowned: "&c 알수없음"
+    switch:
+      description: 보호 무시여부를 온/오프 합니다
+      op: "&c 오피는 항상 보호를 무시합니다. 이명령어를 사용하려면 오피를 빼세요"
+      removing: 보호 무시를 종료합니다...
+      adding: 보호 무시를 실행합니다...
+    switchto:
+      parameters: "<플레이어> <숫자>"
+      description: 플레이어의 섬을 기록된 휴지통에있는 섬으로 전환합니다
+      out-of-range: "&c 번호는 1 에서 [number]사이여만 합니다.  &l [label] trash [player] &r &c
+        를 입력하여 섬번호를 봅니다"
+      cannot-switch: "&c 변경을 실패했습니다 콘솔을 참고해주세요"
+      success: "&a 플레이어의 섬을 지정된 섬으로 성공적으로 전환했습니다."
+    trash:
+      no-unowned-in-trash: "&c 주인없는섬이 쓰레기통에 없습니다"
+      no-islands-in-trash: "&c 플레이어는 쓰레기통에 섬이 없습니다"
+      parameters: "[player]"
+      description: 주인 없는 섬이나 플레이어의 쓰레기통에있는 섬을 보여줍니다
+      title: "&d =========== 쓰레기통에 있는 섬 ==========="
+      count: "&l &d 섬 [number]:"
+      use-switch: "&a &l [label] switchto <player> <number>&r &a 를 사용하여 쓰레기통에 있는 섬으로
+        교체합니다."
+      use-emptytrash: "&a&l [label] emptytrash [player]&r &a를 사용하여 쓰레기통의 섬들을 삭제합니다"
+    emptytrash:
+      parameters: "[player]"
+      description: 쓰레기통에 있는 섬을 청소하거나, or 쓰레기통에 있는 모든 주인없는 섬을 청소합니다
+      success: "&a 쓰레기통을 비웠습니다"
+    version:
+      description: BentoBox와 애드온들의 버전을 보여줍니다
+    setrange:
+      parameters: "<플레이어> <범위>"
+      description: 플레이어의 섬의 크기를 지정합니다
+      range-updated: "&a섬의 크기가 &b [number]&a로 설정되었습니다 ."
+    reload:
+      description: 리로드
+    tp:
+      parameters: "<player> [player to teleport]"
+      description: 플레이어의 섬으로 티피합니다
+      manual: "&c 안전한 워프를 찾지 못햇습니다! 직접 이 좌표 &b [location] &c주위로 티피해야합니다 그뒤 워프위치를 확인하세요"
+    getrank:
+      parameters: "<플레이어> [island owner]"
+      description: 자신이나 소유자의 섬의 랭크를 가져옵니다
+      rank-is: "&a &b[name]의 &a섬에서의 순위는 &b[rank]&a입니다"
+    setrank:
+      parameters: "<player> <rank> [island owner]"
+      description: 섬의 플레이어의 랭크를 설정합니다
+      unknown-rank: "&c 알수없는 랭크입니다"
+      not-possible: "&c 랭크는 방문자보다 높아야합니다."
+      rank-set: "&a 랭크를 &b [from] &a 에서 &b [to] &a 로 &b [name]&a의 섬에서 설정했습니다"
+    setspawn:
+      description: 이 게임 모드에서 섬을 스폰으로 설정
+      already-spawn: "&c 이섬은 이미 스폰입니다!"
+      no-island-here: "&c 그곳에는 섬이 없습니다"
+      confirmation: "&c 이 섬을 이 월드의 스폰으로 설정하시겠습니까?"
+      success: "&a 성공적으로 이 섬을 이월드에서의 스폰지역으로 지정했습니다"
+    setspawnpoint:
+      description: 현재 서있는 위치를 섬 스폰지역으로 설정합니다
+      no-island-here: "&c 그곳에는 섬이 없습니다"
+      confirmation: "&c 정말 이 위치를 섬의 스폰포인트로 지정하실건가요?"
+      success: "&a 성공적으로 이 위치를 섬의 스폰포인트로 설정했습니다"
+      island-spawnpoint-changed: "&a [user] 가 섬의 스폰포인트를 변경했습니다."
+    settings:
+      parameters: "[player]"
+      description: 시스템 설정을 열거나 섬의 설정을 엽니다
+    blueprint:
+      parameters: "<load/copy/paste/pos1/pos2/save>"
+      description: 설계도 조작
+      bedrock-required: "&c 적어도 하나의 기반암 블록은 반드시 설계도에 있어야합니다!"
+      copy-first: "&c 복사를 먼저하세요!"
+      file-exists: "&c 파일이 이미 존재합니다. 덮어씌우시겠습니까?"
+      no-such-file: "&c 그런 파일이 없습니다!"
+      could-not-load: "&c 그 파일을 불러올수 없습니다!"
+      could-not-save: "&c 흠.... 먼가가 잘못되었네요 파일을 저장합니다: [message]"
+      set-pos1: "&a 지점1을 [vector]로 지정했습니다"
+      set-pos2: "&a 지점2를 [vector]로 지정했습니다"
+      set-different-pos: "&c 다른 위치 설정하세요 - 이 위치는 이미 설정되어있습니다!"
+      need-pos1-pos2: "&c 지점1과 지점2를 먼저 설정하세요!"
+      copying: "&b 블럭 복사중..."
+      copied-blocks: "&b [number] 블럭을 복사했습니다"
+      look-at-a-block: "&c  20 개 블록 내의 블록을 보십시오"
+      mid-copy: "&c 복사 중입니다. 복사가 끝날 때까지 기다리십시오."
+      copied-percent: "&6 복사됨 [number]%"
+      copy:
+        parameters: "[air]"
+        description: 지점1과 지점2가 지정된 부분을 복사하며 공기블럭을 옵션으로 지정할 수 있습니다
+      delete:
+        parameters: "<name>"
+        description: 설계도를 삭제합니다
+        no-blueprint: "&b [name] &c 은 존재하지 않습니다"
+        confirmation: |-
+          &c 정말 이 설계도를 삭제하시겠습니까?
+          &c 한번 지우면 복구할수 없습니다!!
+        success: "&a 성공적으로 설계도 &b [name]&a를 삭제했습니다 ."
+      load:
+        parameters: "<name>"
+        description: 설계도를 클립보드로 불러옵니다
+      list:
+        description: 사용 가능한 설계도 목록
+        no-blueprints: "&c 설계도 폴더에 아무런 설계도가 없습니다 .json과 .blu파일이 각각 하나씩 세트입니다"
+        available-blueprints: "&a 다음 설계도들을 불러올수 있습니다. : "
+      origin:
+        description: 설계도의 원점을 내 위치로 설정
+      paste:
+        description: 클립보드를 내위치에 붙여넣기합니다
+        pasting: "&a 붙여넣기중...(랙을 유발할수 있습니다.)"
+      pos1:
+        description: 직육면체 클립 보드의 첫 번째 모서리 설정
+      pos2:
+        description: 직육면체 클립 보드의 두 번째 모서리 설정
+      save:
+        parameters: "<설계도 이름>"
+        description: 복사된 클립보드를 저장합니다
+      rename:
+        parameters: "<설계도 이름> <새 이름>"
+        description: 설계도이름을 다시 설정합니다
+        success: "&a 설계도의 이름을 &b [old] &a  에서 &b [name]&a로 바꿨습니다."
+        pick-different-name: "&c 현재 설계도의 이름과 다른 이름을 입력해주세요"
+      management:
+        back: 돌아가기
+        instruction: 설계도를 클릭 한 후 여기를 클릭하십시오
+        title: 설계도 번들 매니져
+        edit: 클릭하여 수정
+        rename: 우클릭하여 이름바꾸기
+        edit-description: 클릭하여 설명 수정하기
+        world-name-syntax: "[name] 월드"
+        world-instructions: '설계도를 오른쪽에 맞추다?
+
+'
+        trash: 쓰레기통
+        trash-instructions: 이곳을 우클릭하여 삭제합니다
+        permission: 권한(퍼미션)
+        perm-required: 요구되는(필요한)
+        perm-not-required: 요구되지 않는(필요하지 않은)
+        perm-format: "&e "
+        remove: 우클릭하여 삭제
+        blueprint-instruction: |
+          클릭하여 선택
+          그런 다음 번들에 추가합니다..
+          우클릭하여 이름바꾸기.
+        select-first: 설계도를 먼저 선택하세요
+        new-bundle: 새 번들
+        new-bundle-instructions: 클릭하여 새 번들을 만듭니다
+        name:
+          quit: 나가기
+          prompt: 이름을 입력하세요, quit를 입력하여 종료할수 있습니다
+          too-long: "&c 너무 깁니다"
+          pick-a-unique-name: 더 독특한 이름을 선택하십시오
+          success: 완료!
+          conversation-prefix: ">"
+        description:
+          quit: 나가기
+          instructions: |
+            [name] 의 설명을 작성합니다. 작성후 엔터로 줄을 내릴수있습니다.
+            작성을 모두 완료했다면 필히 quit를 눌러 종료해야합니다
+          success: 완료!
+          cancelling: 취소중
+        slot: "&f 선호 슬롯 [번호]"
+        slot-instructions: |
+          &a 좌클릭으로 증가
+          &a 우클릭으로 감소
+    resetflags:
+      parameters: "[flag]"
+      description: 컨피그의 모든 플래그를 초기화 합니다
+      confirm: "&4 모든 섬에 대해 플래그를 기본값으로 재설정합니다!"
+      success: "&a 모든섬의 플래그를 기본값으로 초기화 하였습니다"
+      success-one: "&a [name] 플래그가 모든 섬에 대해 기본값으로 설정되었습니다."
+    world:
+      description: 월드 설정
+    delete:
+      parameters: "<player>"
+      description: 플레이어의 섬을 삭제합니다
+      cannot-delete-owner: "&c 섬을 삭제하기 전에 모든 섬원을 추방해야합니다."
+      deleted-island: "&e [xyz] &a 에 있던 섬을 삭제했습니다"
+    why:
+      parameters: "<player>"
+      description: 콘솔 보호 디버그 보고를 전환합니다.
+      turning-on: 콘솔디버그를 [name]가 켰습니다.
+      turning-off: 콘솔 디버그를 [name]가 껏습니다.
+    deaths:
+      description: 플레이어의 사망횟수를 수정합니다
+      reset:
+        description: 플레이어의 사망횟수를 초기화 합니다
+        parameters: "<player>"
+        success: "&a 성공적으로 &b [name]&a의 사망횟수를 &b 0&a회로 초기화 했습니다 ."
+      set:
+        description: 플레이어의 사망횟수를 설정합니다
+        parameters: "<player> <deaths>"
+        success: "&a 성공적으로 &b [name]&a의 사망횟수를 &b [number]&a회로 설정했습니다 ."
+      add:
+        description: 플레이어의 사망횟수를 추가합니다
+        parameters: "<player> <deaths>"
+        success: "&a성공적으로 &b [name] &a의 사망횟수에 &b [number]회를,&a 추가했으며 총 &b [total]&a회로
+          설정되었습니다."
+      remove:
+        description: 플레이어의 사망횟수를 줄입니다
+        parameters: "<player> <deaths>"
+        success: "&a 성공적으로 &b [name] &a 의 사망횟수에서 &b [number]회를,&a 줄였으며 총 &b [total]&a회로
+          설정되었습니다."
+  bentobox:
+    description: BentoBox 관리자 명령어
+    about:
+      description: 저작권 및 라이센스 정보를 표시합니다
+    reload:
+      description: BentoBox 및 모든 애드온, 설정 및 번역 리로드
+      locales-reloaded: "[prefix_bentobox]&2 번역 리로드 완료"
+      addons-reloaded: "[prefix_bentobox]&2 애드온 리로드완료"
+      settings-reloaded: "[prefix_bentobox]&2 설정 리로드 완료"
+      addon: "[prefix_bentobox] &b [name]&6을(를) 리로드 하는 중입니다 ."
+      addon-reloaded: "[prefix_bentobox]&b [name] &2 이(가) 리로드되었습니다"
+      warning: "[prefix_bentobox] & c 경고 : 리로드하면 불안정 해질수 있으므로 나중에 오류가 발생하면 서버를 다시
+        시작하십시오."
+      unknown-addon: "[prefix_bentobox]&c 알수없는 애드온 입니다!"
+      locales:
+        description: 번역 리로드
+    version:
+      plugin-version: "&2 BentoBox 버전: &3 [version]"
+      description: BentoBox와 애드온들의 버전을 보여줍니다
+      loaded-addons: '불러온 애드온:'
+      loaded-game-worlds: '불러온 게임 월드:'
+      addon-syntax: "&2 [name] &3 [version] &7 (&3 [state]&7 )"
+      game-world: "&2 [name] &7 (&3 [addon]&7 ): &3 [worlds]"
+      server: "&2 작동중 &3 [name] [version]&2 ."
+      database: "&2 데이터베이스: &3 [database]"
+    manage:
+      description: 관리 패널을 표시합니다
+    catalog:
+      description: 카탈로그를 표시합니다
+    locale:
+      description: 번역 파일 분석
+      see-console: |-
+        [prefix_bentobox]&a 피드백을 보려면 콘솔을 확인하십시오.
+        [prefix_bentobox]&a 이 명령은 스팸이 너무 많아 채팅에서 피드백을 읽을 수 없음...
+    migrate:
+      description: 한 데이터베이스에서 다른 데이터베이스로 데이터를 이동합니다
+      players: "[prefix_bentobox]&6플레이어 이동중.."
+      names: "[prefix_bentobox]&6 이름 이동중.."
+      addons: "[prefix_bentobox]&6 애드온 이동중.."
+      class: "[prefix_bentobox]&6 이동중.. [description]"
+      migrated: "[prefix_bentobox]&a 이동완료"
+  confirmation:
+    confirm: "&c 계속하려면 &b [seconds]초안에&c  명령어를 다시 사용하세요."
+    previous-request-cancelled: "&6 이전 확인 요청이 취소되었습니다."
+    request-cancelled: "&c 확인 시간 종료 - &b 요청이 취소되었습니다."
+  delay:
+    previous-command-cancelled: "&c 전에 사용한 커맨드가 취소되어습니다"
+    stand-still: "&6 움직이지마세요! [seconds] 초후 이동됩니다!"
+    moved-so-command-cancelled: "&c 움직여서 이동이 취소되었습니다!"
+  island:
+    about:
+      description: 라이센스 세부 사항 표시
+    go:
+      parameters: "[home number]"
+      description: 섬으로 이동하기
+      teleport: "&a 섬으로 이동하는중입니다.."
+      teleported: "&a집 &e # [번호] (으)로 이동했습니다."
+    help:
+      description: 섬의 명령어보기
+    spawn:
+      description: 섬월드의 스폰으로 이동합니다
+      teleporting: "&a 스폰으로 이동하는중입니다"
+      no-spawn: "&c 스폰으로 지정된 섬이 없습니다."
+    create:
+      description: 설계도를 사용하여 섬 만들기 (권한 필요)
+      parameters: "<설계도>"
+      too-many-islands: "&c 이 월드에는 섬이 너무 많습니다: 더 이상 섬을 생성할수 없습니다"
+      cannot-create-island: "&c 생성 가능한 스팟을 시간내에 찾을수 없었습니다. 다시시도해보세요"
+      unable-create-island: "&c 섬이 생성되지 않았습니다, 서버 관리자에게 문의하세요."
+      creating-island: "&a 섬을 생성하기위한 스팟을 찾는중입니다..."
+      pasting:
+        estimated-time: "&a 걸린시간: &b [number] &a 초"
+        blocks: "&a 건설중입니다. : 총 &b[number]&a블럭입니다"
+        entities: "&a 엔티티로 채우는 중: &b [number] &a 엔티티가 있습니다..."
+        done: "&a 완료! 섬이 준비되었습니다! 그리고 당신을 기다리고 있네요!"
+      pick: "&2 섬을 고르세요"
+      unknown-blueprint: "&c 이 섬은 로드되지 않았습니다"
+      on-first-login: "&a 환영합니다! 몇 초 후에 섬 준비를 시작할 것입니다."
+      you-can-teleport-to-your-island: "&a 섬으로 이동하고플때 이동할수 있습니다"
+    info:
+      description: 현재있는섬이나 소유중 섬의 정보를 표시합니다
+      parameters: "<플레이어>"
+    near:
+      description: 주변 섬들의 이름을 보여줍니다
+      the-following-islands: "&a 다음 섬들이 근처에 있습니다 :"
+      syntax: "&6 [direction]: &a [name]"
+      north: 북
+      south: 남
+      east: 동
+      west: 서
+      no-neighbors: "&c 근처에 인접한 섬이 없습니다!"
+    reset:
+      description: 섬을 초기화 합니다( !! 섬이 제거되고 새롭게 만들어 집니다 !! )
+      parameters: "<설계도>"
+      none-left: "&c 리셋 가능 횟수를 초과 하셨습니다! 서버 관리자에게 문의하세요!"
+      resets-left: "&b [number] &c회의 리셋 가능 횟수가 남았습니다."
+      confirmation: |-
+        &c 정말로 이 작업을 수행 하시겠습니까?
+        &c 모든 섬원이 섬에서 추방됩니다. 나중에 다시 초대해야합니다.
+        &c 초기화 하면 돌아갈 방법은 없습니다. 일단 현재 섬이 삭제되면 나중에 &l복구할 방법이 없습니다.
+      kicked-from-island: "&c 당신의 섬 주인이 섬 초기화를 결정하여 당신은 [gamemode] 섬에서 추방되었습니다! "
+    sethome:
+      description: 집으로 설정합니다
+      must-be-on-your-island: "&c 먼저 섬으로 이동해야합니다!"
+      num-homes: "&c 집은 1 번부터 [number] 번까지 설정 할수 있습니다."
+      home-set: "&6 현재 서있는 위치를 집으로 설정했습니다"
+      nether:
+        not-allowed: "&c 지옥에서는 집으로 설정할수 없습니다. (허용되어 있지 않습니다.)"
+        confirmation: "&c 정말 집을 지옥에 설정하시겠어요?"
+      the-end:
+        not-allowed: "&c 엔더에서는 집으로 설정할 수 없습니다. (허용되어 있지 않습니다.)"
+        confirmation: "&c 정말 집을 엔더에 설정하시겠어요?"
+      parameters: "[home number]"
+    setname:
+      description: 섬의 이름을 설정합니다
+      name-too-short: "&c 이름이 너무 짧습니다. 최소 [number] 글자 이상이어야 합니다"
+      name-too-long: "&c 이름이 너무 깁니다. 최대 [number]글자 입니다"
+      name-already-exists: "&c 이미 이 이름을 가지고있는 섬이 있습니다"
+      parameters: "<이름>"
+      success: "&a 성공적으로 섬의 이름을 &b [name]&a로 설정하였습니다 ."
+    resetname:
+      description: 섬의 이름을 초기화 합니다
+      success: "&a 섬의 이름을 초기화 했습니다"
+    team:
+      description: 섬원들을 관리합니다
+      info:
+        description: 섬원 목록을 보여줍니다
+        member-layout:
+          online: "&a &l  온라인 &r &f [name]"
+          offline: "&c &l  오프라인 &r &f [name] &7 ([last_seen])"
+        last-seen:
+          layout: "&b [number] &7 [unit] 전에 마지막 접속"
+          days: 일
+          hours: 시간
+          minutes: 분
+        header: |
+          &f --- &a 섬원 상세 &f ---
+          &a 섬원 수 : &b [total]&7 /&b [max]
+          &a 온라인 섬원수: &b [online]
+        rank-layout:
+          owner: "&6 [rank]:"
+          generic: "&6 [rank] &7 (&b [number]&7 )&6 :"
+      coop:
+        description: 플레이어를 섬의 알바생으로 등록합니다
+        parameters: "<플레이어>"
+        cannot-coop-yourself: "&c 자기 자신을 알바생으론 등록하지 못합니다!"
+        already-has-rank: "&c 이 플레이어는 이미 당신의 섬에 소속되어 있습니다!"
+        you-are-a-coop-member: "&2 당신은 &b[name]&a의 섬의 알바생으로 등록되었습니다."
+        success: "&a 당신은 &b[name]을 알바생으로 등록했습니다"
+        name-has-invited-you: "&a [name] 이 당신을 자신의 섬에서 알바생으로 등록하고자 합니다."
+      uncoop:
+        description: 플레이어를 알바생에서 짜릅니다
+        parameters: "<플레이어>"
+        cannot-uncoop-yourself: "&c 자기자신을 알바생에서 짜를수 없습니다!"
+        cannot-uncoop-member: "&c 섬원을 알바생에서 짜를수 없습니다!"
+        player-not-cooped: "&c 그 플레이어는 알바생이 아닙니다!"
+        you-are-no-longer-a-coop-member: "&c 당신은 더이상 [name]의 섬의 알바생이 아닙니다"
+        all-members-logged-off: "&c 당신이 알바생으로 등록된 섬의 섬원들이 모두 오프라인이 되어 당신은 더이상 알바생이
+          아닙니다"
+        success: "&b [name] &a 은 더이상 당신의 섬의 알바생이 아닙니다"
+        is-full: "&c 당신은 더이상 알바생을 등록할수 없습니다"
+      trust:
+        description: 플레이어를 당신의 섬에서 "신뢰되는 유저"등급으로 등록합니다
+        parameters: "<플레이어>"
+        trust-in-yourself: '&c 자신을 "신뢰받는 유저"등급으로 등록할 수 없습니다.'
+        name-has-invited-you: '&a [name] 이 당신을 자신의 섬의 "신뢰받는 유저" 등급으로 초대하고 있습니다'
+        player-already-trusted: "&c 이 플레이어는 이미 당신의 섬에서 신뢰받고 있습니다!"
+        you-are-trusted: "&2 당신은 &b[name]을 &a신뢰 받는 유저 등급으로 등록했습니다 !"
+        success: "&2 당신은 &b[name]을 &a신뢰 받는 유저 등급으로 등록했습니다 !"
+        is-full: "&c 더이상 신뢰받는 유저로 등록할수 없습니다."
+      untrust:
+        description: 플레이어를 신뢰받는 유저 등급에서 해임합니다.
+        parameters: "<플레이어>"
+        cannot-untrust-yourself: "&c 자기 자신을 신뢰하지 않을순 없습니다!"
+        cannot-untrust-member: "&c 당신의 섬원을 신뢰하지 않을순 없습니다!"
+        player-not-trusted: "&c 이 프레이어는 이미 신뢰하고있지 않습니다!"
+        you-are-no-longer-trusted: "&c 당신은 더이상 &b [name]&a에서 신뢰받지 않습니다 !"
+        success: "&b [name] &a 은 더이상 섬에서 신뢰받지 않습니다"
+      invite:
+        description: 플레이어를 섬원으로 초대합니다
+        invitation-sent: "&b[name]&a에게 초대를 보냈습니다."
+        removing-invite: "&c 보낸 초대를 취소했습니다."
+        name-has-invited-you: "&a [name] 이(가) 당신을 섬원으로 초대하고 있습니다"
+        to-accept-or-reject: "&a /[label] team accept 를 사용하여 초대 수락하거나 /[label] team
+          reject 를 사용하여 초대를 거절합니다"
+        you-will-lose-your-island: "&c 경고! 이 요청을 수락하면 당신은 섬을 잃게 됩니다!"
+        errors:
+          cannot-invite-self: "&c 자기 자신을 초대할순 없습니다!"
+          cooldown: "&c 사람을 다시 초대하려면 [number] 초를 기다려야합니다"
+          island-is-full: "&c 섬원이 꽉 찼습니다 더이상 초대할수 없습니다"
+          none-invited-you: "&c 아무도 당신을 초대하지 않았네요 :c."
+          you-already-are-in-team: "&c 당신은 이미 섬에 소속되어있습니다!"
+          already-on-team: "&c 그 플레이어는 이미 다른 섬에 소속되어있습니다!"
+          invalid-invite: "&c 그 초대는 유효하지 않습니다. 초대를 다시 보내달라 해보십시오."
+          you-have-already-invited: "&c 이미 그 플레이어를 초대했습니다!"
+        parameters: "<플레이어>"
+        you-can-invite: "&a 당신은 [number] 명을 더 섬원으로 초대할수 있습니다"
+        accept:
+          description: 초대를 수락합니다
+          you-joined-island: "&a섬에 가입했습니다! &b/[label] team &a 을 사용하여 섬원목록을 볼 수 있습니다!"
+          name-joined-your-island: "&a [name] 이(가) 당신의 섬에 섬원으로 가입했습니다!"
+          confirmation: |-
+            &c 정말 이 초대를 수락하시겠습니까?
+            &c&l 가지고 있는 섬을 잃게 될것입니다!!!
+        reject:
+          description: 초대를 거절합니다
+          you-rejected-invite: "&a 섬원 초대를 거절했습니다"
+          name-rejected-your-invite: "&c [name] 이(가) 섬원 초대를 거절했습니다!"
+        cancel:
+          description: 보류중인 초대를 취소하여 섬에 갈수 있습니다!
+      leave:
+        cannot-leave: "&c 주인은 섬을 버리고 떠날수 없습니다! 섬원이 되거나 모든 섬원을 추방하세요!"
+        description: 섬을 떠납니다
+        left-your-island: "&c [name] &c이(가) 당신의 섬을 떠났습니다..(더이상 섬원이 아닙니다)"
+        success: "&a 당신은 이섬을 떠났습니다. 이제 더이상 어느 섬에도 소속되지 않습니다."
+      kick:
+        description: 섬원을 추방합니다
+        parameters: "<플레이어>"
+        owner-kicked: "&c 당신의 섬 주인이 당신을 섬 [gamemode]에서 추방했습니다!"
+        cannot-kick: "&c 자기 자신을 추방할순 없습니다!"
+        success: "&b [name] &a 를 섬에서 추방했습니다."
+      demote:
+        description: 등급을 낮은 등급으로 강등시킵니다
+        parameters: "<플레이어>"
+        errors:
+          cant-demote-yourself: "&c 자기 자신을 강등시킬순 없습니다!"
+        failure: "&c 이 플레이어는 강등시킬수 없습니다!"
+        success: "&a  [name] 을 [rank] 등급으로 강등시켰습니다!"
+      promote:
+        description: 등급을 높은 등급으로 승급시킵니다
+        parameters: "<플레이어>"
+        failure: "&c 이 플레이어는 승급시킬수 없습니다!"
+        success: "&a [name] 을 [rank] 등급으로 승급시켰습니다!"
+      setowner:
+        description: 섬을 섬원에게 넘깁니다! (더이상 섬의 주인이 아니게 됩니다.)
+        errors:
+          cant-transfer-to-yourself: "&c 섬을 자신에겐 넘길순 없습니다!! &7 (&o 음.., 사실은, 할수 있겠지만...
+            하지만 우리는 너가 그러는거를 원하지 않아. 왜냐하면.. &e&l쓸모없거든....ㅋ....&r &7 )"
+          target-is-not-member: "&c 그 플레이어는 당신의 섬원이 아닙니다!"
+        name-is-the-owner: "&a [name] 은 이제 섬의 주인입니다!"
+        parameters: "<플레이어>"
+        you-are-the-owner: "&a 당신은 이제 섬의 주인입니다! "
+    ban:
+      description: 플레이어를 섬에서 차단(밴 처리)합니다
+      parameters: "<플레이어>"
+      cannot-ban-yourself: "&c 자기 자신을 차단(밴 처리)할순 없습니다!"
+      cannot-ban: "&c 이 플레이어는 차단(밴 처리)할수 없습니다."
+      cannot-ban-member: "&c 먼저 섬에서 추방하고 차단해야합니다"
+      cannot-ban-more-players: "&c 차단(밴) 최대치에 도달했습니다. 더이상 누구도 차단(밴) 할수 없습니다."
+      player-already-banned: "&c 플레이어는 이미 차단(밴)되어 있습니다."
+      player-banned: "&b [name]&c  을 섬에서 차단(밴)했습니다."
+      owner-banned-you: "&b [name]&c  이 당신을 섬에서 차단(밴)했습니다!"
+      you-are-banned: "&b 당신은 이 섬에서 차단(밴 처리)되어있습니다"
+    unban:
+      description: 섬에서 언밴합니다(출입할수 있게 합니다.)
+      parameters: "<플레이어>"
+      cannot-unban-yourself: "&c 자기 자신을 언밴(차단 헤제)할순 없습니다!"
+      player-not-banned: "&c 이 플레이어는 섬에서 차단(밴)되어 있지 않습니다."
+      player-unbanned: "&b [name]&a 을(를) 섬에서 차단헤제(언밴) 하였습니다."
+      you-are-unbanned: "&b [name]&a 이 당신을 섬에서 차단 헤제(언밴)하였습니다!"
+    banlist:
+      description: 차단된(밴된) 플레이어 목록
+      noone: "&a 아무도 차단(밴)되지 않았습니다"
+      the-following: "&b 밴된 플레이어들은 다음과 같습니다. :"
+      names: "&c [line]"
+      you-can-ban: "&b 당신은 &e [number] &b 명을 더 차단(밴)할 수 있습니다."
+    settings:
+      description: 섬 설정을 보여줍니다
+    language:
+      description: 언어 선택
+      parameters: "[language]"
+      not-available: "&c 이 언어는 사용할 수 없습니다."
+      already-selected: "&c 당신은 이미 이 언어를 사용중 입니다."
+    expel:
+      description: 플레이어를 섬에서 쫓아냅니다.
+      parameters: "<플레이어>"
+      cannot-expel-yourself: "&c 자기 자신은 쫓아낼수 없습니다!"
+      cannot-expel: "&c 그 플레이어는 쫓아낼수 없습니다."
+      cannot-expel-member: "&c 당신은 당신의 섬원을 쫓아낼수 없습니다!"
+      not-on-island: "&c 그 플레이어는 당신의 섬에 있지 않습니다!"
+      player-expelled-you: "&b [name]&c  이 당신을 섬에서 쫓아냈습니다!"
+      success: "&a 당신은 &b [name] &a 을 섬에서 쫓아냈습니다."
+ranks:
+  owner: 섬장
+  sub-owner: 부 섬장
+  member: 섬원
+  trusted: 신뢰받는 유저
+  coop: 알바생
+  visitor: 방문자
+  banned: 차단된(밴된)자
+  admin: 관리자
+  mod: 수정자
+protection:
+  command-is-banned: 방문자는 이명령어를 사용할 수 없습니다
+  flags:
+    ANIMAL_NATURAL_SPAWN:
+      description: 자연적 동물생성 여부설정
+      name: 자연적 동물 생성
+    ANIMAL_SPAWNERS_SPAWN:
+      description: 스포너 동물 생성 여부 설정
+      name: 스포너 동물 생성
+    ANVIL:
+      description: 상호작용 여부 설정
+      name: 모루
+      hint: 모루사용이 비활성화 되어있습니다
+    ARMOR_STAND:
+      description: 상호작용 여부 설정
+      name: 갑옷 거치대
+      hint: 갑옷 거치대 사용이 비활성화 되어있습니다
+    BEACON:
+      description: 상호작용 여부 설정
+      name: 신호기
+      hint: 신호기 사용이 비활성화 되어있습니다
+    BED:
+      description: 상호작용 여부 설정
+      name: 침대
+      hint: 침대 사용이 비활성화 되어있습니다
+    BOAT:
+      name: 보트
+      description: 보트를 설치하거나,부수거나,타는 여부를 설정합니다
+      hint: 보트 상호작용이 비활성화 되어있습니다
+    BREAK_BLOCKS:
+      description: 파괴가능여부 설정
+      name: 블럭 파괴
+      hint: 블럭 파괴를 할수 없습니다
+    BREAK_SPAWNERS:
+      description: |-
+        스포너를 파괴할수 있는지 설정합니다.
+        이 설정은 블럭 파괴 설정을 덮어 씁니다.
+      name: 스포너 파괴
+      hint: 스포너를 파괴할수 없습니다
+    BREAK_HOPPERS:
+      description: |-
+        깔대기를 파괴할수 있는지 설정합니다.
+        이 설정은 블럭 파괴 설정을 덮어 씁니다.
+      name: 깔대기 파괴
+      hint: 깔대기를 파괴할수 없습니다
+    BREEDING:
+      description: 교배여부를 설정합니다
+      name: 동물 교배
+      hint: 동물 교배가 보호되어있습니다
+    BREWING:
+      description: 양조대 상호작용 여부
+      name: 양조대
+      hint: 양조대를 사용할수 없습니다
+    BUCKET:
+      description: 양동이 상호작용 여부
+      name: 양동이
+      hint: 양동이 상호작용이 비활성화 되어있습니다
+    BUTTON:
+      description: 버튼 사용 여부
+      name: 버튼
+      hint: 버튼을 사용할 수 없습니다
+    CAKE:
+      description: 케이크를 먹을수 있는지 여부 설정
+      name: 케이크
+      hint: 케이크를 먹을수 없습니다
+    CONTAINER:
+      name: 용기들
+      description: |-
+        &a 상자의 상호 작용을 설정합니다.
+        &a 셜커 상자와 화분,
+        &a 퇴비와 통.
+
+        &7 기타 용기도 취급됩니다
+        &7 전용 플래그로.
+      hint: 용기 접근이 금지되어있습니다
+    DISPENSER:
+      name: 발사기
+      description: 발사기 상호작용 여부를 설정합니다
+      hint: 발사기 상호작용이 비활성화 되어있습니다
+    DROPPER:
+      name: 공급기
+      description: 공급기 상호작용 여부를 설정합니다
+      hint: 공급기 상호작용이 비활성화 되어있습니다
+    ELYTRA:
+      name: 겉날개
+      description: 겉날개 사용가능 여부를 설정합니다
+      hint: "&c 주의! 여기선 겉날개를 사용할수 없습니다!"
+    HOPPER:
+      name: 깔대기
+      description: 깔대기 상호작용 여부를 설정합니다
+      hint: 깔대기 상호작용이 비활성화 되어있습니다
+    CHEST_DAMAGE:
+      description: 상자가 폭파에 파괴될것인지 설정합니다
+      name: 상자 데미지
+    CHORUS_FRUIT:
+      description: 텔레포트 가능여부를 설정합니다
+      name: 후렴과
+      hint: 후렴과를 먹어도 텔레포트 할수 없습니다
+    CLEAN_SUPER_FLAT:
+      description: |-
+        &a 모든것을 청소하려면 활성화
+        &a 슈퍼 평지청크가
+        &a 섬 월드에
+      name: 슈퍼 평지 청소
+    COARSE_DIRT_TILLING:
+      description: "&a 거친 흙 경작 가능여부 설정"
+      name: 거친 흙 경작
+      hint: 거친 흙 경작이 금지되어 있습니다
+    COLLECT_LAVA:
+      description: |-
+        &a 용암을 플수 있는지 여부설정
+        &a 양동이 사용 설정을 덮어씁니다
+      name: 용암 프기
+      hint: 용암을 플수 없습니다
+    COLLECT_WATER:
+      description: |-
+        &a 물을 플수 있는지 여부설정
+        &a 양동이 사용 설정을 덮어씁니다
+      name: 물 프기
+      hint: 물을 플수 없습니다
+    COMMAND_RANKS:
+      name: "&e 명령 순위"
+      description: "&a 명령 순위 구성"
+    CRAFTING:
+      description: 사용 가능 여부 설정
+      name: 작업대
+      hint: 작업대 접근이 금지되어있습니다
+    CREEPER_DAMAGE:
+      description: "&a 크리퍼의 대미지로부터 보호 할것인지 여부 설정\n"
+      name: 크리퍼 대미지 보호
+    CREEPER_GRIEFING:
+      description: |
+        &a 크리퍼 폭파 여부를 설정
+        &a 폭파 될 때의 보호
+        &a섬 방문객을 위한.
+      name: 크리퍼 폭파 보호
+      hint: 크리퍼 폭파 보호가 비활성화 되어있습니다
+    CROP_TRAMPLE:
+      description: 농작물을 밟어 파괴할것인지 여부 설정
+      name: 농작물 밟기
+      hint: 농작물이 밟는거로부터 보호됩니다
+    DOOR:
+      description: 문 사용 가능여부 설정
+      name: 문 사용
+      hint: 문을 사용할수 없게 설정되어있습니다
+    DRAGON_EGG:
+      name: 드래곤알
+      description: |-
+        &a 드래곤 알과의 상호 작용을 방지합니다.
+
+        &c 이것은 보호되지 않습니다
+        &c 설치 또는 파괴
+      hint: 드래곤 알 상호 작용 비활성화
+    DYE:
+      description: 염료 사용 방지
+      name: 염료 사용
+      hint: 염료 사용 비활성화
+    EGGS:
+      description: 계란을 던질수 있는지 여부 설정
+      name: 계란 던지기
+      hint: 계란 던지기 비활성화
+    ENCHANTING:
+      description: 사용할수 있는지 설정합니다
+      name: 마법 부여대
+      hint: 마법부여대 사용이 금지되어있습니다
+    ENDER_CHEST:
+      description: 사용/제작 가능여부 설정
+      name: 엔더 상자
+      hint: 이 월드에서 엔더상자를 사용하지 못하게 금지되어있습니다
+    ENDERMAN_DEATH_DROP:
+      description: |-
+        &a 엔더멘이
+        &a 죽을때 들고있던 아이템이있다면
+        &a 떨굴것인지 설정
+      name: 엔더맨 데스 드롭
+    ENDERMAN_GRIEFING:
+      description: |-
+        &a 엔더멘이 섬에서
+        &a 블럭을 가져갈수 있는지
+      name: 엔더맨 블럭 가져감
+    ENDER_PEARL:
+      description: 사용가능  여부 설정
+      name: 엔더진주
+      hint: 엔더진주 사용이 비활성화 되어있습니다
+    ENTER_EXIT_MESSAGES:
+      description: 섬에 올때와 나갈때의 메시지를 보여줍니다
+      island: "[name]의 섬"
+      name: 출입 메시지
+      now-entering: "&b [name]&a으로 진입했습니다 ."
+      now-entering-your-island: "&a 자신의 섬으로 왔습니다."
+      now-leaving: "&b [name]&a에서 떠나는 중입니다 ."
+      now-leaving-your-island: "&a 자신의 섬에서 떠나는 중입니다"
+    EXPERIENCE_BOTTLE_THROWING:
+      name: 경험치병 던지기
+      description: 경험치병을 던질수 있는지여부를 설정합니다
+      hint: 경험치 병을 던질수 없습니다
+    FIRE_BURNING:
+      name: 불에 탐
+      description: |-
+        &a 블록이 불에 탈것인지
+        &a 여부를 설정합니다
+    FIRE_EXTINGUISH:
+      description: 화재 진화 여부 설정
+      name: 화재진화
+      hint: 화재진화 비활성화
+    FIRE_IGNITE:
+      name: 불 점화
+      description: |-
+        &a 불을 붙일 수 있는지 설정
+        &a 플레이어 이외의 수단으로.
+    FIRE_SPREAD:
+      name: 불번짐
+      description: |-
+        &a 불이 가까운 블럭으로
+        &a 번질것인지 설정.
+    FISH_SCOOPING:
+      name: 물고기 양동이
+      description: 양동이를 사용하여 물고기를 떠 다닐 수 있습니다
+      hint: 물고기 양동이 비활성화
+    FLINT_AND_STEEL:
+      name: 라이터
+      description: "&a 라이터 사용가능 여부"
+      hint: 라이터를 사용할수 없습니다
+    FURNACE:
+      description: 사용가능 여부설정
+      name: 화로
+      hint: 화로를 사용할수 없습니다
+    GATE:
+      description: 사용가능 여부설정
+      name: 포탈
+      hint: 포탈 사용불가
+    GEO_LIMIT_MOBS:
+      description: "&a 보호된 섬 공간 \n&a 외부로 이동하는 \n&a 몹들 제거"
+      name: "&e 몹을 섬으로 제한"
+    HURT_ANIMALS:
+      description: 데미지 설정
+      name: 동물에 데미지 입히기
+      hint: 동물에 데미지를 입힐수 없습니다
+    HURT_MONSTERS:
+      description: 데미지 설정
+      name: 몬스터를 공격
+      hint: 몬스터를 공격할수 없습니다
+    HURT_VILLAGERS:
+      description: 데미지 설정
+      name: '주민들을 공격 '
+      hint: 주민들을 공격할수 없습니다
+    ITEM_FRAME:
+      name: 아이템 액자
+      description: |-
+        &a 상호작용 설정.
+        &a 설치, 파괴설정을 덮어씁니다
+      hint: 아이템 액자를 이용할수 없습니다
+    ITEM_FRAME_DAMAGE:
+      description: "&a 몹이 아이템 액자를 \n&a 부술수 있는지"
+      name: 아이템 프레임 데미지
+    INVINCIBLE_VISITORS:
+      description: |-
+        &a 무적 방문자 구성
+        &a 설정.
+      name: "&e 무적 방문자"
+      hint: "&c 방문자 보호됨"
+    ISLAND_RESPAWN:
+      description: "&a 플레이어 리스폰"
+      name: 리스폰
+    ITEM_DROP:
+      description: 아이템 드롭 설정
+      name: 아이템 드롭
+      hint: 아이템을 버릴수 없습니다
+    ITEM_PICKUP:
+      description: 아이템 줍기
+      name: 아이템 줍기
+      hint: 아이템을 주울수 없습니다
+    JUKEBOX:
+      description: 사용가능여부 설정
+      name: 주크박스 사용
+      hint: 주크박스를 사용할수 없습니다
+    LEAF_DECAY:
+      name: 나뭇잎 소멸
+      description: 자연적으로 나뭇잎이 소멸되게 합니다
+    LEASH:
+      description: 사용가능 여부 설정
+      name: 끈 사용
+    LECTERN:
+      name: 독서대
+      description: |-
+        &a 책을 독서대에 배치하거나
+        &a 가져갈수 있는지 여부를 설정합니다
+
+        &c 책을 읽는거는
+        &c 막을수 없습니다
+      hint: 책을 독서대에 배치하거나 가져갈수 없습니다
+    LEVER:
+      description: 사용 가능 여부 설정
+      name: 레버 사용
+      hint: 레버를 사용할수 없습니다
+    LIMIT_MOBS:
+      description: |-
+        &a 엔티티 제한
+        &a 이 게임모드에서 생성되는
+      name: "&e 생성되는 엔티티 타입에 제한"
+      can: "&a 소환 가능"
+      cannot: "&c 소환 불가능"
+    LIQUIDS_FLOWING_OUT:
+      name: 섬 외부로 흐르는 액체
+      description: |-
+        &a 액체류가 섬 외부로 흐르게 합니다
+        &a 그것을 비활성화시키는 것은 용암과 물을 피하는 것을 돕는다.
+        &a 조약돌이 섬과 섬사이에서 생성 될수 있습니다
+
+        &c 액체는 여전히 수직으로 흐른다는 점에 유의하십시오.
+        &c 또한 다음과 같은 경우 수평으로 퍼지지 않는다.
+        &c 섬의 보호범위 밖에 설치된 경우
+    LOCK:
+      description: 잠금 여부설정
+      name: 섬을 잠굽니다
+    MILKING:
+      description: 젖 짜기 여부설정
+      name: 젖 짜기
+      hint: 젖을 짤수 없습니다
+    MINECART:
+      name: 마인카트
+      description: 설치,파괴,탑승 할수 있는지 설정합니다
+      hint: 마인카트와 상호작용할수 없습니다
+    MONSTER_NATURAL_SPAWN:
+      description: 몬스터들이 자연적으로 생성되게 합니다
+      name: 자연적 몬스터 생성
+    MONSTER_SPAWNERS_SPAWN:
+      description: 몬스터들이 스포너에서 생성되게 합니다
+      name: 스포너에의한 몬스터 생성
+    MOUNT_INVENTORY:
+      description: "&a 말갑옷 인벤토리에 접근 허용 여부"
+      name: 말갑옷 인벤토리
+      hint: 말갑옷 인벤토리를 사용할수 없습니다
+    NAME_TAG:
+      name: 이름표
+      description: 사용가능 여부 설정
+      hint: 이름표를 사용할 수 없습니다
+    NATURAL_SPAWNING_OUTSIDE_RANGE:
+      name: 범위 밖에서 생성되는 자연 생물
+      description: |-
+        &a 생물 (동물과
+        &a 몬스터) 자연스럽게 외부에서 스폰 할 수 있습니다
+        & 섬의 보호 범위밖에
+
+        &c 생물을 방해하지는 않습니다.
+        &c 몹 스폰 또는 계란을 통해 스폰
+    NOTE_BLOCK:
+      description: 사용가능 여부 설정
+      name: 소리블록
+      hint: 소리블록 상호작용이 금지되어있습니다
+    OBSIDIAN_SCOOPING:
+      name: 흑요석 프기
+      description: |-
+        &a 플레이어가 흑요석을 퍼 내도록 허용
+        &a 용암으로 다시 빈 양동이와 함께.
+
+        &a 이것은 조약돌 생성기를
+        &a 실패한 초보자를 돕는다
+
+        &a 참고 : 흑요석을 퍼낼 수 없습니다
+        다른 흑요석 블록이있는 경우
+        &2 블록 반경 내에서
+      scooping: "&a 혹요석을 다시 용암으로 바꿨습니다! 다음번엔 주의하세요!"
+      obsidian-nearby: "&c옵시디언이 근처에 있지만 용암으론 다시 바꿀수 없습니다"
+    OFFLINE_GROWTH:
+      description: |-
+        &a 비활성화되면 식물은
+        &a 모든 섬원이 오프라인 상태일때
+        &a 섬에서 자라지 않습니다
+        &a 지연을 줄이는 데 도움이 될 수 있습니다.
+      name: 오프라인 식물성장
+    OFFLINE_REDSTONE:
+      description: |-
+        &a 비활성화되면 레드스톤은
+        &a 모든 섬원이 오프라인 상태일때 작동하지 않습니다
+        &a 지연을 줄이는 데 도움이 될 수 있습니다.
+        &a 스폰 섬에 영향을 미치지 않습니다.
+      name: 오프라인 레드스톤 작동
+    PISTON_PUSH:
+      description: |-
+        &a 다음을 방지하려면 이 옵션을 사용하도록 설정하십시오.
+        &a 피스톤이 블럭을 섬 밖으로 밀음
+      name: 피스톤 푸시 보호
+    PLACE_BLOCKS:
+      description: 설치 가능여부 설정
+      name: 블록 설치
+      hint: 블록을 설치 할수 없습니다
+    POTION_THROWING:
+      name: 물약 던지기
+      description: |-
+        &a 던지는 물약을 설정합니다.
+        &a 투척용과 잔류형 포션이 포함됩니다.
+      hint: 포션을 던질수 없습니다
+    NETHER_PORTAL:
+      description: 사용 가능 설정
+      name: 지옥 포털
+      hint: 포탈을 사용할수 없습니다
+    END_PORTAL:
+      description: 사용가능 설정
+      name: 엔더 포탈
+      hint: 포탈을 이용할수 없습니다!
+    PRESSURE_PLATE:
+      description: 사용가능 설정
+      name: 발판
+      hint: 발판을 사용할수 없습니다
+    PVP_END:
+      description: |-
+        &c 엔더월드에서의 pvp
+        &c 를 허용하거나 금지합니다
+      name: 엔더월드 pvp
+      hint: 엔더월드에서 PVP를 할수 없습니다
+      enabled: "&c 엔더월드 PVP가 허용되었습니다."
+      disabled: "&a 엔더월드 PVP가 금지되었습니다"
+    PVP_NETHER:
+      description: |-
+        &c 지옥에서의 pvp
+        &c 를 허용하거나 금지합니다
+      name: 지옥 PVP
+      hint: 지옥에서 PVP를 할수 없습니다
+      enabled: "&c 지옥 PVP가 허용되었습니다"
+      disabled: "&a 지옥  PVP가 금지되었습니다"
+    PVP_OVERWORLD:
+      description: |-
+        &c 섬에서의 pvp
+        &c 를 허용하거나 금지합니다
+      name: 섬 PVP
+      hint: "&c 섬에서 PVP를 할수 없습니다"
+      enabled: "&c 섬 PVP가 허용되었습니다"
+      disabled: "&a 섬 PVP가 금지되었습니다"
+    REDSTONE:
+      description: 사용설정
+      name: 레드스톤 아이템
+      hint: 레드스톤 상호 작용 비활성화
+    REMOVE_END_EXIT_ISLAND:
+      description: |-
+        &a 좌표 0.0에
+        &a 엔드 섬 생성 방지
+      name: 엔더섬 생성 방지
+    REMOVE_MOBS:
+      description: |-
+        &a 섬으로 이동할때
+        &a 섬에있는 몬스터를 죽입니다
+      name: 몬스터를 없앰
+    RIDING:
+      description: 탑승 가능 여부
+      name: 동물 답승
+      hint: 동물 탑승이 허용되어있지 않습니다
+    SHEARING:
+      description: 양털 깎기 가능여부 설정
+      name: 양털 깎기
+      hint: 양털을 깎을수 없습니다
+    SPAWN_EGGS:
+      description: 사용 설정
+      name: 스폰알
+      hint: 스폰알을 사용할 수 없습니다
+    SPAWNER_SPAWN_EGGS:
+      description: |-
+        &a 스폰알로 스포너의 소환 종류
+        &a 를 바꿀수 있게 합니다
+      name: 스폰알을 스포너에 사용
+      hint: 스폰알로 스포너의 소환종류를 바꿀수 없습니다!
+    TNT_DAMAGE:
+      description: |-
+        &a TNT폭파로 블럭파괴
+        &a 나 엔티티가 데미지를
+        &a 받도록 허용합니다
+      name: TNT 대미지
+    TNT_PRIMING:
+      description: "&a TNT 폭파방지"
+      name: TNT 폭파방지
+      hint: TNT 폭파방지 비활성화
+    TRADING:
+      description: 거래 가능 설정
+      name: 주민 거래
+      hint: 주민거래가 금지되어있습니다
+    TRAPDOOR:
+      description: 사용 설정
+      name: 다락문
+      hint: 다락문을 사용할수 없습니다
+    TREES_GROWING_OUTSIDE_RANGE:
+      name: 나무가 섬밖으로 자라지 않게 합니다
+      description: |-
+        &a 나무가 섬의외부에서 자랄 수 있는지 여부를 설정합니다.
+        &a 묘목 배치를 방지 할뿐만 아니라
+        &a 섬 보호 범위 밖의 나뭇잎과 줄기가 삭제되것입니다
+    TURTLE_EGGS:
+      description: 부서짐 설정
+      name: 거북알
+      hint: 거북알을 부술수 없습니다
+    FROST_WALKER:
+      description: 차가운 걸음 인첸트 사용설정
+      name: 차가운 걸음
+      hint: 차가운 걸음 인첸트를 사용할수 없습니다
+    EXPERIENCE_PICKUP:
+      name: 경험치 흭득
+      description: 경험치를 흭득할수 있는지 설정합니다
+      hint: 경험치를 흭득할수 없습니다
+    PREVENT_TELEPORT_WHEN_FALLING:
+      name: 떨어질때 tp를 할수 없게 합니다
+      description: |-
+        &a 플레이어가 떨어질때
+        &a 명령어를 사용하여 섬을 갈수
+        & a 없게 합니다
+      hint: "&c 떨어지고 있을땐 그것을 할수 없습니다"
+    WITHER_DAMAGE:
+      name: 위더 데미지 설정
+      description: |-
+        &a 이 옵션이 활성화되면
+        &a 위더는 플레이어에게 피해를 주거나
+        &a 블럭을 파괴할수 있습니다
+  locked: "&c 이 섬은 잠겨있습니다!"
+  protected: "&c 섬 보호: [description]."
+  world-protected: "&c 월드 보호: [description]."
+  spawn-protected: "&c 스폰 보호: [description]."
+  panel:
+    next: "&f 다음 페이지"
+    previous: "&f 이전 페이지"
+    mode:
+      advanced:
+        name: "&6 고급 설정"
+        description: "&a 상당한 양의 설정을 표시합니다."
+      basic:
+        name: "&a 기본 설정"
+        description: "&a 가장 유용한 설정을 표시합니다."
+      expert:
+        name: "&c 전문가 설정"
+        description: "&a 모든 설정을 보여줍니다"
+      click-to-switch: "&e클릭하여 &7 &r [next]&r &7로 바꿉니다 ."
+    reset-to-default:
+      name: "&c 기본 설정으로 되돌립니다"
+      description: "&a 모든 설정은 기본상태로 초기화 합니다"
+    PROTECTION:
+      title: "&6 보호"
+      description: "&a 섬 보호"
+    SETTING:
+      title: "&6 설정"
+      description: "&a 섬의 일반설정"
+    WORLD_SETTING:
+      title: "&b [world_name] &6 설정"
+      description: "&a 이 게임 세계에 대한 설정"
+    WORLD_DEFAULTS:
+      title: "&b [world_name] &6 월드 보호"
+      description: "&a 플레이어가 자신의 섬 밖에 있을 때 보호 설정\n"
+    flag-item:
+      name-layout: "&a [name]"
+      description-layout: |
+        &a [description]
+
+        &e 좌클릭으로 &7 아래쪽으로 순환합니다.
+        &e 우클릭으로 &7 위쪽으로 순환합니다.
+
+        &7 아래 초록계열 역할에게 허용됩니다:
+      allowed-rank: "&3 - &a "
+      blocked-rank: "&3 - &c "
+      minimal-rank: "&3 - &2 "
+      menu-layout: |
+        &a [description]
+
+        &e 클릭하여 &7 엽니다.
+      setting-cooldown: "&c 설정이 재사용 대기 중임"
+      setting-layout: |
+        &a [description]
+
+        &e 클릭하여 &7 설정합니다.
+
+        &7 현재 설정: [setting]
+      setting-active: "&a 활성화"
+      setting-disabled: "&c 비활성화"
+language:
+  panel-title: 당신의 언어를 선택하세요!
+  description:
+    selected: "&a 현재 선택되어 있습니다."
+    click-to-select: "&e 클릭하여 &a 선택합니다."
+    authors: "&a 번역자 :"
+    author: "&3 - &b [name]"
+  edited: "&a 언어를 &e [lang]&a로 변경했습니다 ."
+management:
+  panel:
+    title: BentoBox 관리
+    views:
+      gamemodes:
+        name: "&6 게임모드"
+        description: "&e 클릭하여 &a 현재 불러와져있는 게임모드를 보여줍니다"
+        blueprints:
+          name: "&6 설계도"
+          description: "&a 설계도 관리 메뉴를 엽니다."
+        gamemode:
+          name: "&f [name]"
+          description: "&a 섬: &b [islands]\n"
+      addons:
+        name: "&6 애드온"
+        description: "&e 클릭하여 &a 현재 불러온 애드온들을 보여줍니다"
+      hooks:
+        name: "&6 연결된사항"
+        description: "&e 클릭하여 &a 현재 연결된 사항을 보여줍니다"
+    actions:
+      reload:
+        name: "&c 리로드"
+        description: "&c &l 두번 클릭하여 &r &a BentoBox 를 다시 불러옵니다"
+    buttons:
+      catalog:
+        name: "&6 애드온 목록"
+        description: "&a 애드온 목록을 엽니다"
+      credits:
+        name: "&6 제작자들"
+        description: "&a BentoBox의 제작자들을 봅니다"
+      empty-here:
+        name: "&b 이곳엔 아무것도 없습니다..."
+        description: "&a 우리 카탈로그를 보면 어떨까?"
+    information:
+      state:
+        name: "&6 호환성"
+        description:
+          COMPATIBLE: |-
+            &e [name] [version]&a 에서 구동중입니다.
+
+            &a BentoBox는 현재 호환 서버 소프트웨어 및 버전에서 실행 중입니다
+
+            &a 이 제품의 기능은 이 환경에서 실행되도록 완전히 설계되었습니다.
+          SUPPORTED: |-
+            &e [name] [version]&a에서 구동중 입니다.
+
+            &a BentoBox는 현재 지원하는 서버 소프트웨어 및 버전에서 실행 중입니다.
+
+            &a 이 환경에서는 대부분의 기능이 원활하게 실행됩니다.
+          NOT_SUPPORTED: |-
+            &e [name] [version]&a에서 구동중 입니다.
+
+            &a BentoBox는 현재 지원하지 않는 서버 소프트웨어 및 버전에서 실행 중입니다.
+
+            &a 이 환경에서는 대부분의 기능이 원활하게 작동되지 않고 오류가 발생할수 있습니다
+          INCOMPATIBLE: |-
+            &e [name] [version]&a에서 구동중 입니다.
+
+            &a BentoBox는 현재 지원하지 않는 서버 소프트웨어 및 버전에서 실행 중입니다.
+
+            &a 이 환경에서는 대부분의 기능이 원활하게 작동되지 않고 오류가 발생할수 있습니다
+catalog:
+  panel:
+    GAMEMODES:
+      title: 게임모드 목록
+    ADDONS:
+      title: 애드온 목록
+    views:
+      gamemodes:
+        name: "&6 게임 모드들"
+        description: "&e 클릭해서 &a 사용 가능한 \n&a공식 게임모드를 살펴봅니다."
+      addons:
+        name: "&6 애드온들"
+        description: "&e 클릭해서 &a 사용 가능한 공식 \n&a 애드온을 살펴봅니다."
+    icon:
+      description-template: "&8 [topic]\n&a [install]\n\n&7 &o [description]\n\n&e
+        클릭 &a하면 최신 릴리스에 \n&a 대한 링크가 표시됩니다.\n"
+      already-installed: 이미 설치되어있습니다!
+      install-now: 지금 설치해보세요!
+    empty-here:
+      name: "&b 이곳엔 아무것도 없네요..."
+      description: |+
+        &c BentoBox 가 깃헙에 연결할수 없습니다
+
+        &a BentoBox가 구성에서 GitHub에 연결하도록 허용하거나 나중에 다시 시도하십시오.
+
+panel:
+  credits:
+    title: "&8 [name] &2 제작자들"
+    contributor:
+      name: "&a [name]"
+      description: "&a 수정 횟수 : &b [commits]\n"
+    empty-here:
+      name: "&c 이 곳은 비어있습니다..."
+      description: |-
+        &c BentoBox는 이 애드온의 기여자를 가져올수 없었습니다
+
+        &a 구성에서 BentoBox가 GitHub에 연결하도록 허용하거나 나중에 다시 시도하십시오.
+successfully-loaded: |2
+
+  &6   ____             _        ____
+  &6  |  _ \           | |      |  _ \             &7 by &a tastybento &7 and &a Poslovitch
+  &6  | |_) | ___ _ __ | |_ ___ | |_) | _____  __  &7 2017 - 2020
+  &6  |  _ < / _ \ '_ \| __/ _ \|  _ < / _ \ \/ /
+  &6  | |_) |  __/ | | | || (_) | |_) | (_) >  <   &b v&e [version]
+  &6  |____/ \___|_| |_|\__\___/|____/ \___/_/\_\  &8 Loaded in &e [time]&8 ms.
