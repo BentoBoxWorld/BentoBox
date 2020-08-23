@@ -20,6 +20,7 @@ import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.RanksManager;
+import world.bentobox.bentobox.util.Util;
 
 public class IslandTeamCommand extends CompositeCommand {
 
@@ -105,9 +106,7 @@ public class IslandTeamCommand extends CompositeCommand {
 
         // We now need to get all online "members" of the island - incl. Trusted and coop
         onlineMembers = island.getMemberSet(RanksManager.COOP_RANK).stream()
-                .filter(uuid -> Bukkit.getOfflinePlayer(uuid).isOnline() ? user.getPlayer().canSee(Bukkit.getOfflinePlayer(uuid).getPlayer()) : false).collect(Collectors.toList());
-//        onlineMembers = island.getMemberSet(RanksManager.COOP_RANK).stream()
-//                .filter(uuid -> Bukkit.getOfflinePlayer(uuid).isOnline()).collect(Collectors.toList());
+                .filter(uuid -> Util.getOnlinePlayerList(user).contains(Bukkit.getOfflinePlayer(uuid))).collect(Collectors.toList());
 
         for (int rank : ranks) {
             Set<UUID> players = island.getMemberSet(rank, false);
