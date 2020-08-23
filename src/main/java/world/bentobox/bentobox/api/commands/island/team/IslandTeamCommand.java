@@ -106,7 +106,7 @@ public class IslandTeamCommand extends CompositeCommand {
 
         // We now need to get all online "members" of the island - incl. Trusted and coop
         onlineMembers = island.getMemberSet(RanksManager.COOP_RANK).stream()
-                .filter(uuid -> Util.getOnlinePlayerList(user).contains(Bukkit.getOfflinePlayer(uuid))).collect(Collectors.toList());
+                .filter(uuid -> Util.getOnlinePlayerList(user).contains(Bukkit.getOfflinePlayer(uuid).isOnline() ? Bukkit.getPlayer(uuid) : Bukkit.getOfflinePlayer(uuid))).collect(Collectors.toList());
 
         for (int rank : ranks) {
             Set<UUID> players = island.getMemberSet(rank, false);
