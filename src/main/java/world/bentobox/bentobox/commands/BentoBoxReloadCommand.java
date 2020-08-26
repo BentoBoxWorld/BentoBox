@@ -39,6 +39,10 @@ public class BentoBoxReloadCommand extends ConfirmableCommand {
     public boolean execute(User user, String label, List<String> args) {
         if (args.isEmpty()) {
             this.askConfirmation(user, user.getTranslation("commands.bentobox.reload.warning"), () -> {
+                
+                // Unregister all placeholders
+                getPlugin().getPlaceholdersManager().unregisterAll();
+
                 // Close all open panels
                 PanelListenerManager.closeAllPanels();
 
@@ -53,6 +57,9 @@ public class BentoBoxReloadCommand extends ConfirmableCommand {
                 // Reload locales
                 getPlugin().getLocalesManager().reloadLanguages();
                 user.sendMessage("commands.bentobox.reload.locales-reloaded");
+                
+                // Register new default gamemode placeholders
+                getPlugin().getAddonsManager().getGameModeAddons().forEach(getPlugin().getPlaceholdersManager()::registerDefaultPlaceholders);
 
                 // Fire ready event
                 Bukkit.getPluginManager().callEvent(new BentoBoxReadyEvent());

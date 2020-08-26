@@ -1,7 +1,9 @@
 package world.bentobox.bentobox.hooks.placeholders;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.bukkit.entity.Player;
 import org.eclipse.jdt.annotation.NonNull;
@@ -22,10 +24,15 @@ public class PlaceholderAPIHook extends PlaceholderHook {
 
     private BentoBoxPlaceholderExpansion bentoboxExpansion;
     private Map<Addon, AddonPlaceholderExpansion> addonsExpansions;
+    private final Set<String> bentoBoxPlaceholders;
+    private final Map<Addon, Set<String>> addonPlaceholders;
+    
 
     public PlaceholderAPIHook() {
         super("PlaceholderAPI");
         this.addonsExpansions = new HashMap<>();
+        this.bentoBoxPlaceholders = new HashSet<>();
+        this.addonPlaceholders = new HashMap<>();
     }
 
     @Override
@@ -50,6 +57,7 @@ public class PlaceholderAPIHook extends PlaceholderHook {
     @Override
     public void registerPlaceholder(@NonNull String placeholder, @NonNull PlaceholderReplacer replacer) {
         bentoboxExpansion.registerPlaceholder(placeholder, replacer);
+        this.bentoBoxPlaceholders.add(placeholder);
     }
 
     /**
@@ -62,6 +70,7 @@ public class PlaceholderAPIHook extends PlaceholderHook {
             AddonPlaceholderExpansion addonPlaceholderExpansion = new AddonPlaceholderExpansion(addon);
             addonPlaceholderExpansion.register();
             addonsExpansions.put(addon, addonPlaceholderExpansion);
+            this.addonPlaceholders.computeIfAbsent(addon, k -> new HashSet<>()).add(placeholder);
         }
 
         addonsExpansions.get(addon).registerPlaceholder(placeholder, replacer);
@@ -94,11 +103,20 @@ public class PlaceholderAPIHook extends PlaceholderHook {
     }
 
     /**
-     * {@inheritDoc}
+     * 
      */
     @Override
     @NonNull
     public String replacePlaceholders(@NonNull Player player, @NonNull String string) {
         return PlaceholderAPI.setPlaceholders(player, string);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void unregisterAll() {
+        this.bentoBoxPlaceholders.forEach(this::unregisterPlaceholder);
+        this.addonPlaceholders.forEach((addon,list) -> list.forEach(placeholder -> this.unregisterPlaceholder(addon, placeholder)));
     }
 }
