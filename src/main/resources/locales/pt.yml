@@ -485,7 +485,7 @@ commands:
         estimated-time: '&a Tempo estimado: &b [number] &a segundos.'
         blocks: '&a Construindo bloco por bloco: &b [number] &a blocos no total...'
         entities: '&a Colocando as criaturas: &b [number] &a criaturas no total...'
-        done: '&a Feito! Sua está pronta e esperando por você!'
+        done: '&a Feito! Sua ilha está pronta e esperando por você!'
       pick: '&2 Escolha uma ilha'
       unknown-blueprint: '&c Esse esquema ainda não foi carregado.'
       on-first-login: '&a Boas vindas! Vamos começar a preparar sua ilha em alguns
