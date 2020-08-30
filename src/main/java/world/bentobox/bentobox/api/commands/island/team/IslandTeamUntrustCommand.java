@@ -109,14 +109,10 @@ public class IslandTeamUntrustCommand extends CompositeCommand {
 
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
-        if (args.isEmpty()) {
-            // Don't show every player on the server. Require at least the first letter
-            return Optional.empty();
-        }
         Island island = getIslands().getIsland(getWorld(), user.getUniqueId());
         if (island != null) {
             List<String> options = island.getMemberSet().stream()
-                    .filter(uuid -> island.getRank(User.getInstance(uuid)) == RanksManager.TRUSTED_RANK)
+                    .filter(uuid -> island.getRank(uuid) == RanksManager.TRUSTED_RANK)
                     .map(Bukkit::getOfflinePlayer)
                     .map(OfflinePlayer::getName).collect(Collectors.toList());
 

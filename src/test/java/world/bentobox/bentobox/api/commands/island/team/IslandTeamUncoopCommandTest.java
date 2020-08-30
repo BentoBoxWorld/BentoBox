@@ -96,7 +96,6 @@ public class IslandTeamUncoopCommandTest {
         when(user.getPlayer()).thenReturn(p);
         when(user.getName()).thenReturn("tastybento");
         when(user.getTranslation(any())).thenAnswer(invocation -> invocation.getArgument(0, String.class));
-
         User.setPlugin(plugin);
 
         // Parent command has no aliases
@@ -260,7 +259,7 @@ public class IslandTeamUncoopCommandTest {
     }
 
     @Test
-    public void testTabComplete() {
+    public void testTabCompleteNoArgument() {
 
         Builder<UUID> memberSet = new ImmutableSet.Builder<>();
         for (int j = 0; j < 11; j++) {
@@ -273,7 +272,7 @@ public class IslandTeamUncoopCommandTest {
         OfflinePlayer offlinePlayer = mock(OfflinePlayer.class);
         when(Bukkit.getOfflinePlayer(any(UUID.class))).thenReturn(offlinePlayer);
         when(offlinePlayer.getName()).thenReturn("adam", "ben", "cara", "dave", "ed", "frank", "freddy", "george", "harry", "ian", "joe");
-        when(island.getRank(any(User.class))).thenReturn(
+        when(island.getRank(any(UUID.class))).thenReturn(
                 RanksManager.COOP_RANK,
                 RanksManager.COOP_RANK,
                 RanksManager.COOP_RANK,
@@ -290,12 +289,6 @@ public class IslandTeamUncoopCommandTest {
         IslandTeamUncoopCommand ibc = new IslandTeamUncoopCommand(ic);
         // Get the tab-complete list with no argument
         Optional<List<String>> result = ibc.tabComplete(user, "", new LinkedList<>());
-        assertFalse(result.isPresent());
-
-        // Get the tab-complete list with no argument
-        LinkedList<String> args = new LinkedList<>();
-        args.add("");
-        result = ibc.tabComplete(user, "", args);
         assertTrue(result.isPresent());
         List<String> r = result.get().stream().sorted().collect(Collectors.toList());
         // Compare the expected with the actual
@@ -305,4 +298,45 @@ public class IslandTeamUncoopCommandTest {
 
     }
 
+    @Test
+    public void testTabCompleteWithArgument() {
+
+        Builder<UUID> memberSet = new ImmutableSet.Builder<>();
+        for (int j = 0; j < 11; j++) {
+            memberSet.add(UUID.randomUUID());
+        }
+
+        when(island.getMemberSet()).thenReturn(memberSet.build());
+        // Return a set of players
+        PowerMockito.mockStatic(Bukkit.class);
+        OfflinePlayer offlinePlayer = mock(OfflinePlayer.class);
+        when(Bukkit.getOfflinePlayer(any(UUID.class))).thenReturn(offlinePlayer);
+        when(offlinePlayer.getName()).thenReturn("adam", "ben", "cara", "dave", "ed", "frank", "freddy", "george", "harry", "ian", "joe");
+        when(island.getRank(any(UUID.class))).thenReturn(
+                RanksManager.COOP_RANK,
+                RanksManager.COOP_RANK,
+                RanksManager.COOP_RANK,
+                RanksManager.MEMBER_RANK,
+                RanksManager.MEMBER_RANK,
+                RanksManager.MEMBER_RANK,
+                RanksManager.MEMBER_RANK,
+                RanksManager.MEMBER_RANK,
+                RanksManager.MEMBER_RANK,
+                RanksManager.MEMBER_RANK,
+                RanksManager.MEMBER_RANK
+                );
+
+        IslandTeamUncoopCommand ibc = new IslandTeamUncoopCommand(ic);
+        // Get the tab-complete list with argument
+        LinkedList<String> args = new LinkedList<>();
+        args.add("c");
+        Optional<List<String>> result = ibc.tabComplete(user, "", args);
+        assertTrue(result.isPresent());
+        List<String> r = result.get().stream().sorted().collect(Collectors.toList());
+        // Compare the expected with the actual
+        String[] expectedNames = {"cara"};
+
+        assertTrue(Arrays.equals(expectedNames, r.toArray()));
+
+    }
 }

@@ -1,5 +1,6 @@
 package world.bentobox.bentobox.api.commands.island.team;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -12,11 +13,15 @@ import static org.mockito.Mockito.when;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.PlayerInventory;
@@ -32,6 +37,9 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
+
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSet.Builder;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
@@ -404,5 +412,130 @@ public class IslandTeamKickCommandTest {
         when(s.getInviteCooldown()).thenReturn(10);
         testExecuteNoConfirmation();
         verify(subCommand).setCooldown("uniqueid", notUUID.toString(), 600);
+    }
+
+    @Test
+    public void testTabCompleteNoArgument() {
+
+        Builder<UUID> memberSet = new ImmutableSet.Builder<>();
+        for (int j = 0; j < 11; j++) {
+            memberSet.add(UUID.randomUUID());
+        }
+
+        when(island.getMemberSet()).thenReturn(memberSet.build());
+        // Return a set of players
+        PowerMockito.mockStatic(Bukkit.class);
+        OfflinePlayer offlinePlayer = mock(OfflinePlayer.class);
+        when(Bukkit.getOfflinePlayer(any(UUID.class))).thenReturn(offlinePlayer);
+        when(offlinePlayer.getName()).thenReturn("adam", "ben", "cara", "dave", "ed", "frank", "freddy", "george", "harry", "ian", "joe");
+        when(island.getRank(any(UUID.class))).thenReturn(
+                RanksManager.COOP_RANK,
+                RanksManager.COOP_RANK,
+                RanksManager.COOP_RANK,
+                RanksManager.MEMBER_RANK,
+                RanksManager.MEMBER_RANK,
+                RanksManager.MEMBER_RANK,
+                RanksManager.MEMBER_RANK,
+                RanksManager.MEMBER_RANK,
+                RanksManager.MEMBER_RANK,
+                RanksManager.MEMBER_RANK,
+                RanksManager.MEMBER_RANK
+                );
+
+        IslandTeamKickCommand ibc = new IslandTeamKickCommand(ic);
+        // Get the tab-complete list with no argument
+        Optional<List<String>> result = ibc.tabComplete(user, "", new LinkedList<>());
+        assertTrue(result.isPresent());
+        List<String> r = result.get().stream().sorted().collect(Collectors.toList());
+        // Compare the expected with the actual - first names in the list
+        String[] expectedNames = {"adam", "ben", "cara", "dave", "ed", "frank", "freddy", "george"};
+        int i = 0;
+        for (String name : r) {
+            assertEquals("Rank " + i, expectedNames[i++], name);
+        }
+        // assertTrue(Arrays.equals(expectedNames, r.toArray()));
+
+    }
+
+    @Test
+    public void testTabCompleteWithArgument() {
+
+        Builder<UUID> memberSet = new ImmutableSet.Builder<>();
+        for (int j = 0; j < 11; j++) {
+            memberSet.add(UUID.randomUUID());
+        }
+
+        when(island.getMemberSet()).thenReturn(memberSet.build());
+        // Return a set of players
+        PowerMockito.mockStatic(Bukkit.class);
+        OfflinePlayer offlinePlayer = mock(OfflinePlayer.class);
+        when(Bukkit.getOfflinePlayer(any(UUID.class))).thenReturn(offlinePlayer);
+        when(offlinePlayer.getName()).thenReturn("adam", "ben", "cara", "dave", "ed", "frank", "freddy", "george", "harry", "ian", "joe");
+        when(island.getRank(any(UUID.class))).thenReturn(
+                RanksManager.COOP_RANK,
+                RanksManager.COOP_RANK,
+                RanksManager.COOP_RANK,
+                RanksManager.MEMBER_RANK,
+                RanksManager.MEMBER_RANK,
+                RanksManager.MEMBER_RANK,
+                RanksManager.MEMBER_RANK,
+                RanksManager.MEMBER_RANK,
+                RanksManager.MEMBER_RANK,
+                RanksManager.MEMBER_RANK,
+                RanksManager.MEMBER_RANK
+                );
+
+        IslandTeamKickCommand ibc = new IslandTeamKickCommand(ic);
+        // Get the tab-complete list with argument
+        Optional<List<String>> result = ibc.tabComplete(user, "", Collections.singletonList("g"));
+        assertTrue(result.isPresent());
+        List<String> r = result.get().stream().sorted().collect(Collectors.toList());
+        assertFalse(r.isEmpty());
+        // Compare the expected with the actual
+        String[] expectedNames = {"george"};
+        int i = 0;
+        for (String name : r) {
+            assertEquals("Rank " + i, expectedNames[i++], name);
+        }
+
+        //assertTrue(Arrays.equals(expectedNames, r.toArray()));
+
+    }
+
+    @Test
+    public void testTabCompleteWithWrongArgument() {
+
+        Builder<UUID> memberSet = new ImmutableSet.Builder<>();
+        for (int j = 0; j < 11; j++) {
+            memberSet.add(UUID.randomUUID());
+        }
+
+        when(island.getMemberSet()).thenReturn(memberSet.build());
+        // Return a set of players
+        PowerMockito.mockStatic(Bukkit.class);
+        OfflinePlayer offlinePlayer = mock(OfflinePlayer.class);
+        when(Bukkit.getOfflinePlayer(any(UUID.class))).thenReturn(offlinePlayer);
+        when(offlinePlayer.getName()).thenReturn("adam", "ben", "cara", "dave", "ed", "frank", "freddy", "george", "harry", "ian", "joe");
+        when(island.getRank(any(User.class))).thenReturn(
+                RanksManager.COOP_RANK,
+                RanksManager.COOP_RANK,
+                RanksManager.COOP_RANK,
+                RanksManager.MEMBER_RANK,
+                RanksManager.MEMBER_RANK,
+                RanksManager.MEMBER_RANK,
+                RanksManager.MEMBER_RANK,
+                RanksManager.MEMBER_RANK,
+                RanksManager.MEMBER_RANK,
+                RanksManager.MEMBER_RANK,
+                RanksManager.MEMBER_RANK
+                );
+
+        IslandTeamKickCommand ibc = new IslandTeamKickCommand(ic);
+        // Get the tab-complete list with argument
+        LinkedList<String> args = new LinkedList<>();
+        args.add("c");
+        Optional<List<String>> result = ibc.tabComplete(user, "", args);
+        assertTrue(result.isPresent());
+
     }
 }

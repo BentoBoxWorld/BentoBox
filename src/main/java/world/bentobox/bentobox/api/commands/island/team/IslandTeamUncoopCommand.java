@@ -109,14 +109,10 @@ public class IslandTeamUncoopCommand extends CompositeCommand {
 
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
-        if (args.isEmpty()) {
-            // Don't show every player on the server. Require at least the first letter
-            return Optional.empty();
-        }
         Island island = getIslands().getIsland(getWorld(), user.getUniqueId());
         if (island != null) {
             List<String> options = island.getMemberSet().stream()
-                    .filter(uuid -> island.getRank(User.getInstance(uuid)) == RanksManager.COOP_RANK)
+                    .filter(uuid -> island.getRank(uuid) == RanksManager.COOP_RANK)
                     .map(Bukkit::getOfflinePlayer)
                     .map(OfflinePlayer::getName).collect(Collectors.toList());
 
