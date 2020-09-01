@@ -96,13 +96,16 @@ public class DeleteIslandChunks {
             int baseZ = chunk.getZ() << 4;
             for (int x = 0; x < 16; x++) {
                 for (int z = 0; z < 16; z++) {
-                    if (di.inBounds(baseX + x, baseZ + z)) {
-                        chunk.getBlock(x, 0, z).setBiome(grid.getBiome(x, z));
+                    if (di.inBounds(baseX + x, baseZ + z)) {                        
                         for (int y = 0; y < chunk.getWorld().getMaxHeight(); y++) {
                             // Note: setting block to air before setting it to something else stops a bug in the server
                             // where it reports a "
                             chunk.getBlock(x, y, z).setType(Material.AIR, false);
                             chunk.getBlock(x, y, z).setBlockData(cd.getBlockData(x, y, z), false);
+                            // 3D biomes, 4 blocks separated
+                            if (x%4 == 0 && y%4 == 0 && z%4 == 0) {
+                                chunk.getBlock(x, y, z).setBiome(grid.getBiome(x, y, z));
+                            }
                         }
                     }
                 }
