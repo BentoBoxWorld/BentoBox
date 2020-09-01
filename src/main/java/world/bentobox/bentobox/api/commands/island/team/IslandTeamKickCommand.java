@@ -82,7 +82,7 @@ public class IslandTeamKickCommand extends ConfirmableCommand {
 
     private void kick(User user, UUID targetUUID) {
         User target = User.getInstance(targetUUID);
-        target.sendMessage("commands.island.team.kick.owner-kicked", "[gamemode]", getAddon().getDescription().getName());
+        target.sendMessage("commands.island.team.kick.owner-kicked", TextVariables.GAMEMODE, getAddon().getDescription().getName());
         Island oldIsland = getIslands().getIsland(getWorld(), targetUUID);
         getIslands().removePlayer(getWorld(), targetUUID);
         // Execute commands when leaving

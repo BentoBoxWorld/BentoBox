@@ -173,7 +173,7 @@ public class IslandResetCommand extends ConfirmableCommand {
             User member = User.getInstance(memberUUID);
             // Send a "you're kicked" message if the member is not the island owner (send before removing!)
             if (!memberUUID.equals(island.getOwner())) {
-                member.sendMessage("commands.island.reset.kicked-from-island", "[gamemode]", getAddon().getDescription().getName());
+                member.sendMessage("commands.island.reset.kicked-from-island", TextVariables.GAMEMODE, getAddon().getDescription().getName());
             }
             // Remove player
             getIslands().removePlayer(getWorld(), memberUUID);

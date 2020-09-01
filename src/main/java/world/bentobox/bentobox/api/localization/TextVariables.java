@@ -25,4 +25,8 @@ public class TextVariables {
      * @since 1.10.0
      */
     public static final String UNIT = "[unit]";
+    /**
+     * @since 1.15.0
+     */
+    public static final String GAMEMODE = "[gamemode]";
 }

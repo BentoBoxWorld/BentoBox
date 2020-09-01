@@ -45,6 +45,7 @@ import world.bentobox.bentobox.api.addons.AddonDescription;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
+import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.BlueprintsManager;
@@ -260,7 +261,7 @@ public class IslandResetCommandTest {
         verify(pim, times(14)).callEvent(any(IslandBaseEvent.class));
         // Verify messaging
         verify(user).sendMessage("commands.island.create.creating-island");
-        verify(user, never()).sendMessage(eq("commands.island.reset.kicked-from-island"), eq("[gamemode]"), anyString());
+        verify(user, never()).sendMessage(eq("commands.island.reset.kicked-from-island"), eq(TextVariables.GAMEMODE), anyString());
         // Only 11 because the leader should not see this
         verify(pp, times(11)).sendMessage("commands.island.reset.kicked-from-island");
     }
