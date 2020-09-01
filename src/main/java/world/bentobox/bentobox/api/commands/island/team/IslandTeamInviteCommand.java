@@ -81,7 +81,7 @@ public class IslandTeamInviteCommand extends CompositeCommand {
             return false;
         }
         invitedPlayer = User.getInstance(invitedPlayerUUID);
-        if (!invitedPlayer.isOnline()) {
+        if (!invitedPlayer.isOnline() || !user.getPlayer().canSee(invitedPlayer.getPlayer())) {
             user.sendMessage("general.errors.offline-player");
             return false;
         }

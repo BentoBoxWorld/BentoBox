@@ -71,6 +71,8 @@ public class IslandTeamInviteCommandTest {
     private UUID islandUUID;
     private IslandTeamInviteCommand itl;
     private UUID notUUID;
+    @Mock
+    private Player p;
 
 
     /**
@@ -92,7 +94,6 @@ public class IslandTeamInviteCommandTest {
         // Player & users
         PowerMockito.mockStatic(User.class);
 
-        Player p = mock(Player.class);
         // Sometimes use Mockito.withSettings().verboseLogging()
         when(user.isOp()).thenReturn(false);
         uuid = UUID.randomUUID();
@@ -104,6 +105,8 @@ public class IslandTeamInviteCommandTest {
         when(user.getPermissionValue(anyString(), anyInt())).thenReturn(3);
         when(User.getInstance(eq(uuid))).thenReturn(user);
         when(user.getTranslation(any())).thenAnswer(invocation -> invocation.getArgument(0, String.class));
+        // Vanished players
+        when(p.canSee(any())).thenReturn(true);
 
         User.setPlugin(plugin);
         // Target
@@ -227,6 +230,16 @@ public class IslandTeamInviteCommandTest {
     @Test
     public void testCanExecuteOfflinePlayer() {
         when(target.isOnline()).thenReturn(false);
+        assertFalse(itl.canExecute(user, itl.getLabel(), Collections.singletonList("target")));
+        verify(user).sendMessage(eq("general.errors.offline-player"));
+    }
+    
+    /**
+     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteCommand#canExecute(User, String, java.util.List)}.
+     */
+    @Test
+    public void testCanExecuteVanishedPlayer() {
+        when(p.canSee(any())).thenReturn(false);
         assertFalse(itl.canExecute(user, itl.getLabel(), Collections.singletonList("target")));
         verify(user).sendMessage(eq("general.errors.offline-player"));
     }
