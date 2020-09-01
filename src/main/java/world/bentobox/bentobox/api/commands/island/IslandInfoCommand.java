@@ -1,12 +1,15 @@
 package world.bentobox.bentobox.api.commands.island;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.util.Util;
 
 /**
  * @author Poslovitch
@@ -55,5 +58,16 @@ public class IslandInfoCommand extends CompositeCommand {
         // Show info for this player
         island.showInfo(user);
         return true;
+    }
+    
+    @Override
+    public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
+        String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
+        if (lastArg.isEmpty()) {
+            // Don't show every player on the server. Require at least the first letter
+            return Optional.empty();
+        }
+        List<String> options = new ArrayList<>(Util.getOnlinePlayerList(user));
+        return Optional.of(Util.tabLimit(options, lastArg));
     }
 }

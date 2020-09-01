@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -31,9 +32,6 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
-
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSet.Builder;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
@@ -261,30 +259,24 @@ public class IslandTeamUncoopCommandTest {
     @Test
     public void testTabCompleteNoArgument() {
 
-        Builder<UUID> memberSet = new ImmutableSet.Builder<>();
-        for (int j = 0; j < 11; j++) {
-            memberSet.add(UUID.randomUUID());
-        }
+       Map<UUID, Integer> map = new HashMap<>();
+       map.put(UUID.randomUUID(),RanksManager.COOP_RANK);
+       map.put(UUID.randomUUID(),RanksManager.COOP_RANK);
+       map.put(UUID.randomUUID(),RanksManager.COOP_RANK);
+       map.put(UUID.randomUUID(),RanksManager.MEMBER_RANK);
+       map.put(UUID.randomUUID(),RanksManager.MEMBER_RANK);
+       map.put(UUID.randomUUID(),RanksManager.MEMBER_RANK);
+       map.put(UUID.randomUUID(),RanksManager.MEMBER_RANK);
+       map.put(UUID.randomUUID(),RanksManager.MEMBER_RANK);
+       map.put(UUID.randomUUID(),RanksManager.MEMBER_RANK);
+       map.put(UUID.randomUUID(),RanksManager.MEMBER_RANK);
 
-        when(island.getMemberSet()).thenReturn(memberSet.build());
+       when(island.getMembers()).thenReturn(map);
         // Return a set of players
         PowerMockito.mockStatic(Bukkit.class);
         OfflinePlayer offlinePlayer = mock(OfflinePlayer.class);
         when(Bukkit.getOfflinePlayer(any(UUID.class))).thenReturn(offlinePlayer);
         when(offlinePlayer.getName()).thenReturn("adam", "ben", "cara", "dave", "ed", "frank", "freddy", "george", "harry", "ian", "joe");
-        when(island.getRank(any(UUID.class))).thenReturn(
-                RanksManager.COOP_RANK,
-                RanksManager.COOP_RANK,
-                RanksManager.COOP_RANK,
-                RanksManager.MEMBER_RANK,
-                RanksManager.MEMBER_RANK,
-                RanksManager.MEMBER_RANK,
-                RanksManager.MEMBER_RANK,
-                RanksManager.MEMBER_RANK,
-                RanksManager.MEMBER_RANK,
-                RanksManager.MEMBER_RANK,
-                RanksManager.MEMBER_RANK
-                );
 
         IslandTeamUncoopCommand ibc = new IslandTeamUncoopCommand(ic);
         // Get the tab-complete list with no argument
@@ -301,30 +293,25 @@ public class IslandTeamUncoopCommandTest {
     @Test
     public void testTabCompleteWithArgument() {
 
-        Builder<UUID> memberSet = new ImmutableSet.Builder<>();
-        for (int j = 0; j < 11; j++) {
-            memberSet.add(UUID.randomUUID());
-        }
+        Map<UUID, Integer> map = new HashMap<>();
+        map.put(UUID.randomUUID(),RanksManager.COOP_RANK);
+        map.put(UUID.randomUUID(),RanksManager.COOP_RANK);
+        map.put(UUID.randomUUID(),RanksManager.COOP_RANK);
+        map.put(UUID.randomUUID(),RanksManager.MEMBER_RANK);
+        map.put(UUID.randomUUID(),RanksManager.MEMBER_RANK);
+        map.put(UUID.randomUUID(),RanksManager.MEMBER_RANK);
+        map.put(UUID.randomUUID(),RanksManager.MEMBER_RANK);
+        map.put(UUID.randomUUID(),RanksManager.MEMBER_RANK);
+        map.put(UUID.randomUUID(),RanksManager.MEMBER_RANK);
+        map.put(UUID.randomUUID(),RanksManager.MEMBER_RANK);
 
-        when(island.getMemberSet()).thenReturn(memberSet.build());
+        when(island.getMembers()).thenReturn(map);
         // Return a set of players
         PowerMockito.mockStatic(Bukkit.class);
         OfflinePlayer offlinePlayer = mock(OfflinePlayer.class);
         when(Bukkit.getOfflinePlayer(any(UUID.class))).thenReturn(offlinePlayer);
         when(offlinePlayer.getName()).thenReturn("adam", "ben", "cara", "dave", "ed", "frank", "freddy", "george", "harry", "ian", "joe");
-        when(island.getRank(any(UUID.class))).thenReturn(
-                RanksManager.COOP_RANK,
-                RanksManager.COOP_RANK,
-                RanksManager.COOP_RANK,
-                RanksManager.MEMBER_RANK,
-                RanksManager.MEMBER_RANK,
-                RanksManager.MEMBER_RANK,
-                RanksManager.MEMBER_RANK,
-                RanksManager.MEMBER_RANK,
-                RanksManager.MEMBER_RANK,
-                RanksManager.MEMBER_RANK,
-                RanksManager.MEMBER_RANK
-                );
+
 
         IslandTeamUncoopCommand ibc = new IslandTeamUncoopCommand(ic);
         // Get the tab-complete list with argument

@@ -118,11 +118,11 @@ public class IslandTeamCoopCommand extends CompositeCommand {
 
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
-        if (args.isEmpty()) {
+        String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
+        if (lastArg.isEmpty()) {
             // Don't show every player on the server. Require at least the first letter
             return Optional.empty();
         }
-        String lastArg = args.get(args.size()-1);
         return Optional.of(Util.tabLimit(Util.getOnlinePlayerList(user), lastArg));
     }
 

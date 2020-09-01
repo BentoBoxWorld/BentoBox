@@ -2,6 +2,11 @@ package world.bentobox.bentobox.api.commands.island.team;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.events.island.IslandEvent;
@@ -9,6 +14,7 @@ import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.RanksManager;
+import world.bentobox.bentobox.util.Util;
 
 public class IslandTeamPromoteCommand extends CompositeCommand {
 
@@ -113,4 +119,18 @@ public class IslandTeamPromoteCommand extends CompositeCommand {
         }
     }
 
+    @Override
+    public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
+        Island island = getIslands().getIsland(getWorld(), user.getUniqueId());
+        if (island != null) {
+            List<String> options = island.getMemberSet().stream()
+                    .map(Bukkit::getOfflinePlayer)
+                    .map(OfflinePlayer::getName).collect(Collectors.toList());
+
+            String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
+            return Optional.of(Util.tabLimit(options, lastArg));
+        } else {
+            return Optional.empty();
+        }
+    }
 }

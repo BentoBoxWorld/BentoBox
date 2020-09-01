@@ -381,18 +381,14 @@ public class IslandBanCommandTest {
         LinkedList<String> args = new LinkedList<>();
         args.add("");
         result = ibc.tabComplete(user, "", args);
-        assertTrue(result.isPresent());
-        List<String> r = result.get().stream().sorted().collect(Collectors.toList());
-        // Compare the expected with the actual
-        String[] expectedNames = {"dave", "ed", "frank", "freddy", "george", "harry", "joe"};
-        assertTrue(Arrays.equals(expectedNames, r.toArray()));
+        assertFalse(result.isPresent());
 
         // Get the tab-complete list with one letter argument
         args = new LinkedList<>();
         args.add("d");
         result = ibc.tabComplete(user, "", args);
         assertTrue(result.isPresent());
-        r = result.get().stream().sorted().collect(Collectors.toList());
+        List<String> r = result.get().stream().sorted().collect(Collectors.toList());
         // Compare the expected with the actual
         String[] expectedName = {"dave"};
         assertTrue(Arrays.equals(expectedName, r.toArray()));
