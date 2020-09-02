@@ -6,6 +6,7 @@ public class BentoBoxPlaceholderExpansion extends BasicPlaceholderExpansion {
     private BentoBox plugin;
 
     public BentoBoxPlaceholderExpansion(BentoBox plugin) {
+        super();
         this.plugin = plugin;
     }
 
