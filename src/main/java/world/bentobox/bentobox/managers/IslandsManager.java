@@ -245,7 +245,6 @@ public class IslandsManager {
      * @return {@code true} if the location is considered safe, {@code false} otherwise.
      */
     public boolean checkIfSafe(@Nullable World world, @NonNull Material ground, @NonNull Material space1, @NonNull Material space2) {
-        plugin.logDebug(ground + " " + space1 + " " + space2);
         // Ground must be solid, space 1 and 2 must not be solid
         if (world == null || !ground.isSolid()
                 || (space1.isSolid() && !space1.name().contains("SIGN"))
@@ -256,27 +255,18 @@ public class IslandsManager {
         if (space1.equals(Material.WATER) && (space2.equals(Material.WATER) || plugin.getIWM().isWaterNotSafe(world))) {
             return false;
         }
-        // Lava
+        // Unsafe
         if (ground.equals(Material.LAVA)
                 || space1.equals(Material.LAVA)
-                || space2.equals(Material.LAVA)) {
-            return false;
-        }
-        // Unsafe types
-        if (((space1.equals(Material.AIR) && space2.equals(Material.AIR))
-                || (space1.equals(Material.NETHER_PORTAL) && space2.equals(Material.NETHER_PORTAL)))
-                && (ground.name().contains("FENCE")
-                        || ground.name().contains("DOOR")
-                        || ground.name().contains("GATE")
-                        || ground.name().contains("PLATE")
-                        || ground.name().contains("SIGN")
-                        || ground.name().contains("BANNER")
-                        || ground.name().contains("BUTTON")
-                        || ground.name().contains("BOAT"))) {
-            return false;
-        }
-        // Signs on doors
-        if (ground.name().contains("DOOR")) {
+                || space2.equals(Material.LAVA)
+                || ground.name().contains("FENCE")
+                || ground.name().contains("DOOR")
+                || ground.name().contains("GATE")
+                || ground.name().contains("PLATE")
+                || ground.name().contains("SIGN")
+                || ground.name().contains("BANNER")
+                || ground.name().contains("BUTTON")
+                || ground.name().contains("BOAT")) {
             return false;
         }
         // Known unsafe blocks
