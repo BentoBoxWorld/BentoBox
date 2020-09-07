@@ -48,6 +48,7 @@ import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.LingeringPotionSplashEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.player.PlayerFishEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.projectiles.BlockProjectileSource;
@@ -1079,7 +1080,7 @@ public class PVPListenerTest {
         ItemStack bow = new ItemStack(Material.CROSSBOW);
         Firework firework = mock(Firework.class);
         when(firework.getEntityId()).thenReturn(123);
-        EntityShootBowEvent e = new EntityShootBowEvent(creeper, bow, firework, 0);
+        EntityShootBowEvent e = new EntityShootBowEvent(creeper, bow, null, firework, EquipmentSlot.HAND, 1F, false);
         listener.onPlayerShootFireworkEvent(e);
 
         // Now damage
@@ -1096,7 +1097,7 @@ public class PVPListenerTest {
         PVPListener listener = new PVPListener();
         ItemStack bow = new ItemStack(Material.CROSSBOW);
         Arrow arrow = mock(Arrow.class);
-        EntityShootBowEvent e = new EntityShootBowEvent(creeper, bow, arrow, 0);
+        EntityShootBowEvent e = new EntityShootBowEvent(player, bow, null, arrow, EquipmentSlot.HAND, 1F, false);
         listener.onPlayerShootFireworkEvent(e);
         // Now damage
         EntityDamageByEntityEvent en = new EntityDamageByEntityEvent(arrow, player, DamageCause.ENTITY_ATTACK, 0);
@@ -1116,7 +1117,7 @@ public class PVPListenerTest {
         Firework firework = mock(Firework.class);
         when(firework.getEntityId()).thenReturn(123);
         when(firework.getLocation()).thenReturn(loc);
-        EntityShootBowEvent e = new EntityShootBowEvent(player, bow, firework, 0);
+        EntityShootBowEvent e = new EntityShootBowEvent(player, bow, null, firework, EquipmentSlot.HAND, 1F, false);
         listener.onPlayerShootFireworkEvent(e);
 
         // Now damage
@@ -1138,7 +1139,7 @@ public class PVPListenerTest {
         when(firework.getEntityId()).thenReturn(123);
         when(firework.getLocation()).thenReturn(loc);
         when(firework.getWorld()).thenReturn(world);
-        EntityShootBowEvent e = new EntityShootBowEvent(player, bow, firework, 0);
+        EntityShootBowEvent e = new EntityShootBowEvent(player, bow, null, firework, EquipmentSlot.HAND, 1F, false);
         listener.onPlayerShootFireworkEvent(e);
 
         // Now damage
@@ -1159,7 +1160,7 @@ public class PVPListenerTest {
         Firework firework = mock(Firework.class);
         when(firework.getEntityId()).thenReturn(123);
         when(firework.getLocation()).thenReturn(loc);
-        EntityShootBowEvent e = new EntityShootBowEvent(player, bow, firework, 0);
+        EntityShootBowEvent e = new EntityShootBowEvent(player, bow, null, firework, EquipmentSlot.HAND, 1F, false);
         listener.onPlayerShootFireworkEvent(e);
 
         // Now damage
