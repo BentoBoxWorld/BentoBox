@@ -40,6 +40,7 @@ public class LocalesManager {
     private static final String LOCALE_FOLDER = "locales";
     private static final String BENTOBOX = "BentoBox";
     private static final String SPACER = "*************************************************";
+    private static final String EN_US_TAG = "en-US";
 
     public LocalesManager(BentoBox plugin) {
         this.plugin = plugin;
@@ -98,8 +99,8 @@ public class LocalesManager {
             return languages.get(Locale.forLanguageTag(plugin.getSettings().getDefaultLanguage())).get(reference);
         }
         // Get the translation from the en-US locale
-        if (languages.get(Locale.forLanguageTag("en-US")).contains(reference)) {
-            return languages.get(Locale.forLanguageTag("en-US")).get(reference);
+        if (languages.get(Locale.forLanguageTag(EN_US_TAG)).contains(reference)) {
+            return languages.get(Locale.forLanguageTag(EN_US_TAG)).get(reference);
         }
         return null;
     }
@@ -135,7 +136,7 @@ public class LocalesManager {
         prefixes.addAll(languages.get(Locale.forLanguageTag(plugin.getSettings().getDefaultLanguage())).getPrefixes());
 
         // Get the prefixes from the en-US locale
-        prefixes.addAll(languages.get(Locale.forLanguageTag("en-US")).getPrefixes());
+        prefixes.addAll(languages.get(Locale.forLanguageTag(EN_US_TAG)).getPrefixes());
 
         return prefixes;
     }
