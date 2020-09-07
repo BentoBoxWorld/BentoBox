@@ -24,6 +24,7 @@ import world.bentobox.bentobox.lists.Flags;
 public class EnterExitListener extends FlagListener {
 
     private static final Vector XZ = new Vector(1,0,1);
+    private static final String ISLAND_MESSAGE = "protection.flags.ENTER_EXIT_MESSAGES.island";
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onMove(PlayerMoveEvent e) {
@@ -104,10 +105,10 @@ public class EnterExitListener extends FlagListener {
             // Send specific message if the player is member of this island
             if (island.getMemberSet().contains(user.getUniqueId())) {
                 user.notify(island.getWorld(), "protection.flags.ENTER_EXIT_MESSAGES.now-leaving-your-island", TextVariables.NAME, (island.getName() != null) ? island.getName() :
-                        user.getTranslation(island.getWorld(), "protection.flags.ENTER_EXIT_MESSAGES.island", TextVariables.NAME, getPlugin().getPlayers().getName(island.getOwner())));
+                    user.getTranslation(island.getWorld(), ISLAND_MESSAGE, TextVariables.NAME, getPlugin().getPlayers().getName(island.getOwner())));
             } else {
                 user.notify(island.getWorld(), "protection.flags.ENTER_EXIT_MESSAGES.now-leaving", TextVariables.NAME, (island.getName() != null) ? island.getName() :
-                        user.getTranslation(island.getWorld(), "protection.flags.ENTER_EXIT_MESSAGES.island", TextVariables.NAME, getPlugin().getPlayers().getName(island.getOwner())));
+                    user.getTranslation(island.getWorld(), ISLAND_MESSAGE, TextVariables.NAME, getPlugin().getPlayers().getName(island.getOwner())));
             }
         }
         // Send message if island is unowned, but has a name
@@ -134,10 +135,10 @@ public class EnterExitListener extends FlagListener {
             // Send specific message if the player is member of this island
             if (island.getMemberSet().contains(user.getUniqueId())) {
                 user.notify(island.getWorld(), "protection.flags.ENTER_EXIT_MESSAGES.now-entering-your-island", TextVariables.NAME, (island.getName() != null) ? island.getName() :
-                        user.getTranslation(island.getWorld(), "protection.flags.ENTER_EXIT_MESSAGES.island", TextVariables.NAME, getPlugin().getPlayers().getName(island.getOwner())));
+                    user.getTranslation(island.getWorld(), ISLAND_MESSAGE, TextVariables.NAME, getPlugin().getPlayers().getName(island.getOwner())));
             } else {
                 user.notify(island.getWorld(), "protection.flags.ENTER_EXIT_MESSAGES.now-entering", TextVariables.NAME, (island.getName() != null) ? island.getName() :
-                        user.getTranslation(island.getWorld(), "protection.flags.ENTER_EXIT_MESSAGES.island", TextVariables.NAME, getPlugin().getPlayers().getName(island.getOwner())));
+                    user.getTranslation(island.getWorld(), ISLAND_MESSAGE, TextVariables.NAME, getPlugin().getPlayers().getName(island.getOwner())));
             }
         }
         // Send message if island is unowned, but has a name
