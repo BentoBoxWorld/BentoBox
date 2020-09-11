@@ -122,10 +122,15 @@ public class PlaceholdersManager {
      * @since 1.5.0
      */
     public String replacePlaceholders(@NonNull Player player, @NonNull String string) {
-        Optional<PlaceholderAPIHook> papi = getPlaceholderAPIHook();
-        if (papi.isPresent()) {
-            string = papi.get().replacePlaceholders(player, string);
-        }
-        return string;
+        return getPlaceholderAPIHook().map(papi -> papi.replacePlaceholders(player, string)).orElse(string);
+    }
+
+    /**
+     * Unregisters all the placeholders.
+     * @since 1.15.0
+     */
+    public void unregisterAll() {
+        getPlaceholderAPIHook().ifPresent(hook -> hook.unregisterAll());
+        
     }
 }
