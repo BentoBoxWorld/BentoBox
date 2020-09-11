@@ -161,7 +161,11 @@ public class ServerCompatibility {
         /**
          * @since 1.15.0
          */
-        V1_16_2(Compatibility.COMPATIBLE)
+        V1_16_2(Compatibility.COMPATIBLE),
+        /**
+         * @since 1.15.1
+         */
+        V1_16_3(Compatibility.COMPATIBLE)
         ;
 
         private Compatibility compatibility;
