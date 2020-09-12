@@ -1,6 +1,3 @@
-/**
- *
- */
 package world.bentobox.bentobox.listeners.flags.clicklisteners;
 
 import java.util.Arrays;
@@ -12,6 +9,7 @@ import java.util.stream.Collectors;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.inventory.ClickType;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.BentoBox;
@@ -26,6 +24,7 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.util.Util;
 
 /**
+ * Provides a tab GUI for viewing geo-limited mobs
  * @author tastybento
  *
  */
@@ -50,9 +49,10 @@ public class GeoMobLimitTab implements Tab, ClickHandler {
     private final EntityLimitTabType type;
 
     /**
-     * @param user
+     * @param user - user viewing the tab
+     * @param type - type of tab to show - Geo limit or Mob limit
      */
-    public GeoMobLimitTab(User user, EntityLimitTabType type) {
+    public GeoMobLimitTab(@NonNull User user, @NonNull EntityLimitTabType type) {
         super();
         this.user = user;
         this.type = type;
@@ -90,9 +90,9 @@ public class GeoMobLimitTab implements Tab, ClickHandler {
     @Override
     public PanelItem getIcon() {
         if (type == EntityLimitTabType.MOB_LIMIT) {
-            return new PanelItemBuilder().icon(Material.IRON_BOOTS).name(user.getTranslation("protection.flags.LIMIT_MOBS.name")).build();
+            return new PanelItemBuilder().icon(Material.IRON_BOOTS).name(getName()).build();
         } else {
-            return new PanelItemBuilder().icon(Material.CHAINMAIL_CHESTPLATE).name(user.getTranslation("protection.flags.GEO_LIMIT_MOBS.name")).build();
+            return new PanelItemBuilder().icon(Material.CHAINMAIL_CHESTPLATE).name(getName()).build();
 
         }
     }
