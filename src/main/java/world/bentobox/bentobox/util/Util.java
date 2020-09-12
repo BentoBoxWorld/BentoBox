@@ -279,11 +279,7 @@ public class Util {
             return 90F;
         case EAST_NORTH_EAST:
             return 67.5F;
-        case EAST_SOUTH_EAST:
-            return 0F;
-        case NORTH:
-            return 0F;
-        case NORTH_EAST:
+            case NORTH_EAST:
             return 45F;
         case NORTH_NORTH_EAST:
             return 22.5F;

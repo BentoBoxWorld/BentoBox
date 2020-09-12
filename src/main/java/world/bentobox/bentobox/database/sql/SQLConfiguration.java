@@ -46,7 +46,7 @@ public class SQLConfiguration {
                 "EXECUTE stmt;");
     }
 
-    private final String TABLE_NAME = "\\[tableName\\]";
+    private final String TABLE_NAME = "\\[tableName]";
     /**
      * By default, use quotes around the unique ID in the SQL statement
      */

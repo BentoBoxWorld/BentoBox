@@ -130,7 +130,7 @@ public class PlaceholdersManager {
      * @since 1.15.0
      */
     public void unregisterAll() {
-        getPlaceholderAPIHook().ifPresent(hook -> hook.unregisterAll());
+        getPlaceholderAPIHook().ifPresent(PlaceholderAPIHook::unregisterAll);
         
     }
 }
