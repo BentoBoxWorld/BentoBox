@@ -212,7 +212,7 @@ public class IslandRespawnListenerTest {
         // Has island
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
         // Respawn
-        PlayerRespawnEvent ev = new PlayerRespawnEvent(player, location, false);
+        PlayerRespawnEvent ev = new PlayerRespawnEvent(player, location, false, false);
         l.onPlayerRespawn(ev);
         assertEquals(safeLocation, ev.getRespawnLocation());
         // Verify commands
@@ -231,7 +231,7 @@ public class IslandRespawnListenerTest {
         // Has island
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
         // Respawn
-        PlayerRespawnEvent ev = new PlayerRespawnEvent(player, location, false);
+        PlayerRespawnEvent ev = new PlayerRespawnEvent(player, location, false, false);
         l.onPlayerRespawn(ev);
         assertEquals(location, ev.getRespawnLocation());
     }
@@ -254,7 +254,7 @@ public class IslandRespawnListenerTest {
         // Has island
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
         // Respawn
-        PlayerRespawnEvent ev = new PlayerRespawnEvent(player, location, false);
+        PlayerRespawnEvent ev = new PlayerRespawnEvent(player, location, false, false);
         l.onPlayerRespawn(ev);
         assertEquals(location, ev.getRespawnLocation());
     }
@@ -275,7 +275,7 @@ public class IslandRespawnListenerTest {
         // Has island
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
         // Respawn
-        PlayerRespawnEvent ev = new PlayerRespawnEvent(player, location, false);
+        PlayerRespawnEvent ev = new PlayerRespawnEvent(player, location, false, false);
         l.onPlayerRespawn(ev);
         assertEquals(location, ev.getRespawnLocation());
     }
