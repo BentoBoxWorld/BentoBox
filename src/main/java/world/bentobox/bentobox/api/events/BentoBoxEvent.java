@@ -12,6 +12,8 @@ import java.util.Objects;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
+import world.bentobox.bentobox.BentoBox;
+
 /**
  * Provides the default methods expected when extending {@link Event}.
  * @author tastybento
@@ -88,7 +90,7 @@ public abstract class BentoBoxEvent extends Event {
                     try {
                         pd.getWriteMethod().invoke(this, map.get(pd.getName()));
                     } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-                        e.printStackTrace();
+                        BentoBox.getInstance().logStacktrace(e);
                     }
                 }
             });
