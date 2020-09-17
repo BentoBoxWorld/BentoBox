@@ -277,6 +277,25 @@ public class PVPListenerTest {
      * Test method for {@link PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
     @Test
+    public void testOnEntityDamageNPC() {
+        // Player 2 is an NPC
+        when(player2.hasMetadata(eq("NPC"))).thenReturn(true);
+        // PVP is not allowed
+        when(island.isAllowed(any())).thenReturn(false);
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(player, player2, EntityDamageEvent.DamageCause.ENTITY_ATTACK,
+                new EnumMap<>(ImmutableMap.of(DamageModifier.BASE, 0D)),
+                new EnumMap<DamageModifier, Function<? super Double, Double>>(ImmutableMap.of(DamageModifier.BASE, Functions.constant(-0.0))));
+        new PVPListener().onEntityDamage(e);
+        // PVP should be allowed for NPC
+        assertFalse(e.isCancelled());
+        verify(player, never()).sendMessage(Flags.PVP_OVERWORLD.getHintReference());
+
+    }
+
+    /**
+     * Test method for {@link PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
+     */
+    @Test
     public void testOnEntityDamageOnPlayerByZombie() {
         Entity damager = mock(Zombie.class);
         Entity damagee = mock(Player.class);
@@ -670,6 +689,14 @@ public class PVPListenerTest {
         pfe = new PlayerFishEvent(player, player2, hook, null);
         new PVPListener().onFishing(pfe);
         assertFalse(pfe.isCancelled());
+
+        // Disallow PVP , attack on NPC
+        when(player2.hasMetadata(eq("NPC"))).thenReturn(true);
+        when(island.isAllowed(any())).thenReturn(false);
+        pfe = new PlayerFishEvent(player, player2, hook, null);
+        new PVPListener().onFishing(pfe);
+        assertFalse(pfe.isCancelled());
+
 
         // Wrong world
         wrongWorld();

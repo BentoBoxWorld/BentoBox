@@ -50,8 +50,8 @@ public class PVPListener extends FlagListener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onEntityDamage(EntityDamageByEntityEvent e) {
         if (e.getEntity() instanceof Player && getPlugin().getIWM().inWorld(e.getEntity().getWorld())) {
-            // Allow self damage
-            if (e.getEntity().equals(e.getDamager())) {
+            // Allow self damage or NPC attack because Citizens handles its own PVP
+            if (e.getEntity().equals(e.getDamager()) || e.getEntity().hasMetadata("NPC")) {
                 return;
             }
             // Protect visitors
@@ -112,8 +112,8 @@ public class PVPListener extends FlagListener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onFishing(PlayerFishEvent e) {
         if (e.getCaught() instanceof Player && getPlugin().getIWM().inWorld(e.getCaught().getLocation())) {
-            // Allow self-inflicted damage
-            if (e.getCaught().equals(e.getPlayer())) {
+            // Allow self-inflicted damage or NPC damage
+            if (e.getCaught().equals(e.getPlayer()) || e.getCaught().hasMetadata("NPC")) {
                 return;
             }
             // Protect visitors
@@ -154,8 +154,8 @@ public class PVPListener extends FlagListener {
      * @return true if PVP should be blocked otherwise false
      */
     private boolean blockPVP(User user, LivingEntity le, Event e, Flag flag) {
-        // Check for self-inflicted damage
-        if (le.equals(user.getPlayer())) {
+        // Check for self-inflicted damage or Citizen NPCs
+        if (le.equals(user.getPlayer()) || le.hasMetadata("NPC")) {
             return false;
         }
         if (le instanceof Player) {
