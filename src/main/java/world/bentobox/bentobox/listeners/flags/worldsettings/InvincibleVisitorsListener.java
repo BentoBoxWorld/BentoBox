@@ -103,6 +103,7 @@ public class InvincibleVisitorsListener extends FlagListener implements ClickHan
         World world = e.getEntity().getWorld();
         if (!(e.getEntity() instanceof Player)
                 || !getIWM().inWorld(world)
+                || e.getEntity().hasMetadata("NPC")
                 || !getIWM().getIvSettings(world).contains(e.getCause().name())
                 || getIslands().userIsOnIsland(world, User.getInstance(e.getEntity()))) {
             return;
