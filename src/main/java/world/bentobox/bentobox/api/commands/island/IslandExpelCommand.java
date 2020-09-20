@@ -144,13 +144,17 @@ public class IslandExpelCommand extends CompositeCommand {
         user.sendMessage(CANNOT_EXPEL);
         return false;
     }
-    
+
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
-        Island island = getIslands().getIsland(getWorld(), user.getUniqueId());
+        Island island = getIslands().getIsland(getWorld(), user);
         if (island != null) {
             List<String> options = island.getPlayersOnIsland().stream()
-                    .filter(p -> !p.equals(user.getPlayer()))
+                    .filter(p -> !p.equals(user.getPlayer())) // Not self
+                    .filter(p -> user.getPlayer().canSee(p)) // Not invisible
+                    .filter(p -> !p.isOp()) // Not op
+                    .filter(p -> !p.hasPermission(this.getPermissionPrefix() + "admin.noexpel"))
+                    .filter(p -> !p.hasPermission(this.getPermissionPrefix() + "mod.bypassexpel"))
                     .map(Player::getName).collect(Collectors.toList());
 
             String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";

@@ -47,7 +47,7 @@ public class IslandSethomeCommand extends ConfirmableCommand {
                 // Check the number given is a number
                 int number;
                 try {
-                    number = Integer.valueOf(args.get(0));
+                    number = Integer.parseInt(args.get(0));
                     if (number < 1 || number > maxHomes) {
                         user.sendMessage("commands.island.sethome.num-homes", TextVariables.NUMBER, String.valueOf(maxHomes));
                         return false;

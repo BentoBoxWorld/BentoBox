@@ -365,6 +365,19 @@ public class IslandsManagerTest {
         assertFalse(manager.isSafeLocation(location));
     }
 
+    @Test
+    public void testCheckIfSafeTrapdoor() {
+        for (Material d : Material.values()) {
+            if (d.name().contains("DOOR")) {
+                for (Material s : Material.values()) {
+                    if (s.name().contains("_SIGN")) {
+                        assertFalse("Fail " + d.name() + " " + s.name(), manager.checkIfSafe(world, d, s, Material.AIR));
+                    }
+                }
+            }
+        }
+    }
+
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#isSafeLocation(org.bukkit.Location)}.
      */
@@ -508,7 +521,7 @@ public class IslandsManagerTest {
         when(ground.getState()).thenReturn(blockState);
 
         // Negative value = full island scan
-        // No island here yet
+                // No island here yet
         assertNull(manager.bigScan(location, -1));
     }
 

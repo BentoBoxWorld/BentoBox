@@ -48,6 +48,7 @@ import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.LingeringPotionSplashEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.player.PlayerFishEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.projectiles.BlockProjectileSource;
@@ -270,6 +271,25 @@ public class PVPListenerTest {
                 new EnumMap<DamageModifier, Function<? super Double, Double>>(ImmutableMap.of(DamageModifier.BASE, Functions.constant(-0.0))));
         new PVPListener().onEntityDamage(e);
         assertFalse(e.isCancelled());
+    }
+
+    /**
+     * Test method for {@link PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
+     */
+    @Test
+    public void testOnEntityDamageNPC() {
+        // Player 2 is an NPC
+        when(player2.hasMetadata(eq("NPC"))).thenReturn(true);
+        // PVP is not allowed
+        when(island.isAllowed(any())).thenReturn(false);
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(player, player2, EntityDamageEvent.DamageCause.ENTITY_ATTACK,
+                new EnumMap<>(ImmutableMap.of(DamageModifier.BASE, 0D)),
+                new EnumMap<DamageModifier, Function<? super Double, Double>>(ImmutableMap.of(DamageModifier.BASE, Functions.constant(-0.0))));
+        new PVPListener().onEntityDamage(e);
+        // PVP should be allowed for NPC
+        assertFalse(e.isCancelled());
+        verify(player, never()).sendMessage(Flags.PVP_OVERWORLD.getHintReference());
+
     }
 
     /**
@@ -669,6 +689,14 @@ public class PVPListenerTest {
         pfe = new PlayerFishEvent(player, player2, hook, null);
         new PVPListener().onFishing(pfe);
         assertFalse(pfe.isCancelled());
+
+        // Disallow PVP , attack on NPC
+        when(player2.hasMetadata(eq("NPC"))).thenReturn(true);
+        when(island.isAllowed(any())).thenReturn(false);
+        pfe = new PlayerFishEvent(player, player2, hook, null);
+        new PVPListener().onFishing(pfe);
+        assertFalse(pfe.isCancelled());
+
 
         // Wrong world
         wrongWorld();
@@ -1079,7 +1107,7 @@ public class PVPListenerTest {
         ItemStack bow = new ItemStack(Material.CROSSBOW);
         Firework firework = mock(Firework.class);
         when(firework.getEntityId()).thenReturn(123);
-        EntityShootBowEvent e = new EntityShootBowEvent(creeper, bow, firework, 0);
+        EntityShootBowEvent e = new EntityShootBowEvent(creeper, bow, null, firework, EquipmentSlot.HAND, 1F, false);
         listener.onPlayerShootFireworkEvent(e);
 
         // Now damage
@@ -1096,7 +1124,7 @@ public class PVPListenerTest {
         PVPListener listener = new PVPListener();
         ItemStack bow = new ItemStack(Material.CROSSBOW);
         Arrow arrow = mock(Arrow.class);
-        EntityShootBowEvent e = new EntityShootBowEvent(creeper, bow, arrow, 0);
+        EntityShootBowEvent e = new EntityShootBowEvent(player, bow, null, arrow, EquipmentSlot.HAND, 1F, false);
         listener.onPlayerShootFireworkEvent(e);
         // Now damage
         EntityDamageByEntityEvent en = new EntityDamageByEntityEvent(arrow, player, DamageCause.ENTITY_ATTACK, 0);
@@ -1116,7 +1144,7 @@ public class PVPListenerTest {
         Firework firework = mock(Firework.class);
         when(firework.getEntityId()).thenReturn(123);
         when(firework.getLocation()).thenReturn(loc);
-        EntityShootBowEvent e = new EntityShootBowEvent(player, bow, firework, 0);
+        EntityShootBowEvent e = new EntityShootBowEvent(player, bow, null, firework, EquipmentSlot.HAND, 1F, false);
         listener.onPlayerShootFireworkEvent(e);
 
         // Now damage
@@ -1138,7 +1166,7 @@ public class PVPListenerTest {
         when(firework.getEntityId()).thenReturn(123);
         when(firework.getLocation()).thenReturn(loc);
         when(firework.getWorld()).thenReturn(world);
-        EntityShootBowEvent e = new EntityShootBowEvent(player, bow, firework, 0);
+        EntityShootBowEvent e = new EntityShootBowEvent(player, bow, null, firework, EquipmentSlot.HAND, 1F, false);
         listener.onPlayerShootFireworkEvent(e);
 
         // Now damage
@@ -1159,7 +1187,7 @@ public class PVPListenerTest {
         Firework firework = mock(Firework.class);
         when(firework.getEntityId()).thenReturn(123);
         when(firework.getLocation()).thenReturn(loc);
-        EntityShootBowEvent e = new EntityShootBowEvent(player, bow, firework, 0);
+        EntityShootBowEvent e = new EntityShootBowEvent(player, bow, null, firework, EquipmentSlot.HAND, 1F, false);
         listener.onPlayerShootFireworkEvent(e);
 
         // Now damage

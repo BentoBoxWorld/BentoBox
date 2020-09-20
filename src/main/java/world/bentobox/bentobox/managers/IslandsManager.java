@@ -255,23 +255,18 @@ public class IslandsManager {
         if (space1.equals(Material.WATER) && (space2.equals(Material.WATER) || plugin.getIWM().isWaterNotSafe(world))) {
             return false;
         }
-        // Lava
+        // Unsafe
         if (ground.equals(Material.LAVA)
                 || space1.equals(Material.LAVA)
-                || space2.equals(Material.LAVA)) {
-            return false;
-        }
-        // Unsafe types
-        if (((space1.equals(Material.AIR) && space2.equals(Material.AIR))
-                || (space1.equals(Material.NETHER_PORTAL) && space2.equals(Material.NETHER_PORTAL)))
-                && (ground.name().contains("FENCE")
-                        || ground.name().contains("DOOR")
-                        || ground.name().contains("GATE")
-                        || ground.name().contains("PLATE")
-                        || ground.name().contains("SIGN")
-                        || ground.name().contains("BANNER")
-                        || ground.name().contains("BUTTON")
-                        || ground.name().contains("BOAT"))) {
+                || space2.equals(Material.LAVA)
+                || ground.name().contains("FENCE")
+                || ground.name().contains("DOOR")
+                || ground.name().contains("GATE")
+                || ground.name().contains("PLATE")
+                || ground.name().contains("SIGN")
+                || ground.name().contains("BANNER")
+                || ground.name().contains("BUTTON")
+                || ground.name().contains("BOAT")) {
             return false;
         }
         // Known unsafe blocks
@@ -1060,7 +1055,9 @@ public class IslandsManager {
                 // Add to quarantine cache
                 quarantineCache.computeIfAbsent(island.getOwner(), k -> new ArrayList<>()).add(island);
             } // Check island distance and if incorrect stop BentoBox
-            else if (island.getRange() != plugin.getIWM().getIslandDistance(island.getWorld())) {
+            else if (island.getWorld() != null
+                    && plugin.getIWM().inWorld(island.getWorld())
+                    && island.getRange() != plugin.getIWM().getIslandDistance(island.getWorld())) {
                 throw new IOException("Island distance mismatch!\n"
                         + "World '" + island.getWorld().getName() + "' distance " + plugin.getIWM().getIslandDistance(island.getWorld()) + " != island range " + island.getRange() + "!\n"
                         + "Island ID in database is " + island.getUniqueId() + ".\n"

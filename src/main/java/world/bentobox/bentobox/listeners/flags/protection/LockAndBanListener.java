@@ -104,8 +104,8 @@ public class LockAndBanListener extends FlagListener {
      * @return CheckResult LOCKED, BANNED or OPEN. If an island is locked, that will take priority over banned
      */
     private CheckResult check(Player player, Location loc) {
-        // Ops are allowed everywhere
-        if (player.isOp()) {
+        // Ops or NPC's are allowed everywhere
+        if (player.isOp() || player.hasMetadata("NPC")) {
             return CheckResult.OPEN;
         }
         // See if the island is locked to non-members or player is banned

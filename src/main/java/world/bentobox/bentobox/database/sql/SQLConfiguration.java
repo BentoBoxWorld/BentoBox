@@ -46,7 +46,7 @@ public class SQLConfiguration {
                 "EXECUTE stmt;");
     }
 
-    private final String TABLE_NAME = "\\[tableName\\]";
+    private final String TABLE_NAME = "\\[tableName]";
     /**
      * By default, use quotes around the unique ID in the SQL statement
      */
@@ -83,7 +83,7 @@ public class SQLConfiguration {
     }
 
     public SQLConfiguration renameTable(String string) {
-        this.renameTableSQL = string.replaceAll(TABLE_NAME, tableName).replaceAll("\\[oldTableName\\]", oldTableName);
+        this.renameTableSQL = string.replace(TABLE_NAME, tableName).replace("\\[oldTableName\\]", oldTableName);
         return this;
     }
 

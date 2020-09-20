@@ -37,10 +37,10 @@ public class AdminDeathsAddCommand extends CompositeCommand {
         UUID targetUUID = Util.getUUID(args.get(0));
         if (targetUUID == null) {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
-        } else if (!Util.isInteger(args.get(1), true) || Integer.valueOf(args.get(1)) < 0) {
+        } else if (!Util.isInteger(args.get(1), true) || Integer.parseInt(args.get(1)) < 0) {
             user.sendMessage("general.errors.must-be-positive-number", TextVariables.NUMBER, args.get(1));
         } else {
-            getPlayers().setDeaths(getWorld(), targetUUID, getPlayers().getDeaths(getWorld(), targetUUID) + Integer.valueOf(args.get(1)));
+            getPlayers().setDeaths(getWorld(), targetUUID, getPlayers().getDeaths(getWorld(), targetUUID) + Integer.parseInt(args.get(1)));
             user.sendMessage("commands.admin.deaths.add.success",
                     TextVariables.NAME, args.get(0), TextVariables.NUMBER, args.get(1),
                     "[total]", String.valueOf(getPlayers().getDeaths(getWorld(), targetUUID)));

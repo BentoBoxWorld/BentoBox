@@ -11,9 +11,11 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -81,6 +83,8 @@ public class IslandExpelCommandTest {
     private IslandExpelCommand iec;
     @Mock
     private Server server;
+    @Mock
+    private Player p;
 
     @Before
     public void setUp() throws Exception {
@@ -98,7 +102,6 @@ public class IslandExpelCommandTest {
         when(plugin.getSettings()).thenReturn(s);
 
         // Player
-        Player p = mock(Player.class);
         // Sometimes use Mockito.withSettings().verboseLogging()
         // User
         when(user.isOp()).thenReturn(false);
@@ -437,4 +440,57 @@ public class IslandExpelCommandTest {
         verify(user).sendMessage("commands.island.expel.cannot-expel");
     }
 
+    /**
+     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandExpelCommand#tabComplete(User, String, java.util.List)}
+     */
+    @Test
+    public void testTabCompleteUserStringListNoIsland() {
+       when(im.getIsland(any(), any(User.class))).thenReturn(null);
+       assertFalse(iec.tabComplete(user, "", Collections.emptyList()).isPresent()); 
+    }
+    
+    /**
+     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandExpelCommand#tabComplete(User, String, java.util.List)}
+     */
+    @Test
+    public void testTabCompleteUserStringListNoPlayersOnIsland() {
+        assertTrue(iec.tabComplete(user, "", Collections.emptyList()).get().isEmpty()); 
+    }
+    
+    /**
+     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandExpelCommand#tabComplete(User, String, java.util.List)}
+     */
+    @Test
+    public void testTabCompleteUserStringListPlayersOnIsland() {
+        List<Player> list = new ArrayList<>();
+        Player p1 = mock(Player.class);
+        when(p1.getName()).thenReturn("normal");
+        when(p.canSee(p1)).thenReturn(true);
+        Player p2 = mock(Player.class);
+        when(p2.getName()).thenReturn("op");
+        when(p.canSee(p2)).thenReturn(true);
+        when(p2.isOp()).thenReturn(true);
+        Player p3 = mock(Player.class);
+        when(p3.getName()).thenReturn("invisible");
+        Player p4 = mock(Player.class);
+        when(p4.getName()).thenReturn("adminPerm");
+        when(p.canSee(p4)).thenReturn(true);
+        when(p4.hasPermission(eq("bskyblock.admin.noexpel"))).thenReturn(true);
+        Player p5 = mock(Player.class);
+        when(p5.getName()).thenReturn("modPerm");
+        when(p.canSee(p5)).thenReturn(true);
+        when(p5.hasPermission(eq("bskyblock.mod.bypassexpel"))).thenReturn(true);       
+        list.add(p1);
+        list.add(p2);
+        list.add(p3);
+        list.add(p4);
+        list.add(p5);
+        list.add(p1);
+        when(island.getPlayersOnIsland()).thenReturn(list);
+        List<String> result = iec.tabComplete(user, "", Collections.emptyList()).get();
+        assertFalse(result.isEmpty()); 
+        assertEquals(2, result.size());
+        assertEquals("normal", result.get(0));
+        assertEquals("normal", result.get(1));
+    }
 }

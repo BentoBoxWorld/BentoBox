@@ -255,6 +255,14 @@ public class InvincibleVisitorsListenerTest {
         assertTrue(e.isCancelled());
         verify(player, never()).setGameMode(eq(GameMode.SPECTATOR));
     }
+    
+    @Test
+    public void testOnVisitorGetDamageNPC() {
+        when(player.hasMetadata(eq("NPC"))).thenReturn(true);
+        EntityDamageEvent e = new EntityDamageEvent(player, EntityDamageEvent.DamageCause.CRAMMING, 0D);
+        listener.onVisitorGetDamage(e);
+        assertFalse(e.isCancelled());
+    }
 
 
     @Test

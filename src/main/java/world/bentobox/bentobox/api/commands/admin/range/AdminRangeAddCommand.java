@@ -47,13 +47,13 @@ public class AdminRangeAddCommand extends CompositeCommand {
             return false;
         }
 
-        if (!Util.isInteger(args.get(1), true) || Integer.valueOf(args.get(1)) < 0) {
+        if (!Util.isInteger(args.get(1), true) || Integer.parseInt(args.get(1)) < 0) {
             user.sendMessage("general.errors.must-be-positive-number", TextVariables.NUMBER, args.get(1));
             return false;
         }
 
         Island island = getIslands().getIsland(getWorld(), targetUUID);
-        int newRange = island.getProtectionRange() + Integer.valueOf(args.get(1));
+        int newRange = island.getProtectionRange() + Integer.parseInt(args.get(1));
 
         if (newRange > island.getRange()) {
             user.sendMessage("commands.admin.range.invalid-value.too-high", TextVariables.NUMBER, String.valueOf(island.getRange()));

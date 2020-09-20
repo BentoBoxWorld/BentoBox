@@ -68,4 +68,10 @@ public abstract class PlaceholderHook extends Hook {
      */
     @NonNull
     public abstract String replacePlaceholders(@NonNull Player player, @NonNull String string);
+    
+    /**
+     * Unregister all previously registered placeholders
+     * @since 1.15.0
+     */
+    public abstract void unregisterAll();
 }
