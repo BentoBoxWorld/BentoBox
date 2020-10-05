@@ -13,10 +13,9 @@ matrix:
     - jdk: openjdk11
         
 script:
-    #- sonar-scanner
+    - jdk_switcher use openjdk11
     - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=BentoBoxWorld_BentoBox
-    #- mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent package -P sonar sonar:sonar -B
-    #- echo "${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH}"
+
 cache:
     directories:
         - '$HOME/.m2/repository'
