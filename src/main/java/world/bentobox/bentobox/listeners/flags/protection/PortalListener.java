@@ -22,4 +22,5 @@ public class PortalListener extends FlagListener {
             checkIsland(e, e.getPlayer(), e.getFrom(), Flags.END_PORTAL);
         }
     }
+
 }
