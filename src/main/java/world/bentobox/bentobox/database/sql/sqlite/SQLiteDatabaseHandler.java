@@ -64,7 +64,8 @@ public class SQLiteDatabaseHandler<T> extends SQLDatabaseHandler<T> {
         try (ResultSet resultSet = pstmt.executeQuery()) {
             if (resultSet.next() && resultSet.getBoolean(1)) {
                 // Transition from the old table name
-                try (PreparedStatement pstmt2 = getConnection().prepareStatement(getSqlConfig().getRenameTableSQL())) {
+                String sql = getSqlConfig().getRenameTableSQL().replace("[oldTableName]", getSqlConfig().getOldTableName().replace("[tableName]", getSqlConfig().getTableName()));
+                try (PreparedStatement pstmt2 = getConnection().prepareStatement(sql)) {
                     pstmt2.execute();
                 } catch (SQLException e) {
                     plugin.logError("Could not rename " + getSqlConfig().getOldTableName() + " for data object " + dataObject.getCanonicalName() + " " + e.getMessage());
