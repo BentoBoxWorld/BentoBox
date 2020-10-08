@@ -1,5 +1,7 @@
 package world.bentobox.bentobox.listeners.flags.protection;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -15,8 +17,6 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-
-import com.google.common.collect.ImmutableMap;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.flags.Flag;
@@ -34,8 +34,12 @@ public class BlockInteractionListener extends FlagListener {
      * These cover materials in another server version.
      * This avoids run time errors due to unknown enum values, at the expense of a string comparison
      */
-    private final Map<String, String> stringFlags = ImmutableMap.<String, String>builder()
-            .build();
+    private final static Map<String, String> stringFlags;
+    static {
+        Map<String, String> f = new HashMap<>();
+        f.put("RESPAWN_ANCHOR", "PLACE_BLOCKS");
+        stringFlags = Collections.unmodifiableMap(f);
+    }
 
     /**
      * Handle interaction with blocks

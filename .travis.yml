@@ -6,12 +6,18 @@ addons:
 
 jdk:
     - openjdk8
+    - openjdk11
+    
+matrix:
+  allow_failures:
+    - jdk: openjdk11
         
 script:
-    #- sonar-scanner
-    - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=BentoBoxWorld_BentoBox
-    #- mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent package -P sonar sonar:sonar -B
-    #- echo "${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH}"
+    - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install
+    - export JAVA_HOME=$HOME/openjdk11
+    - $TRAVIS_BUILD_DIR/install-jdk.sh --install openjdk11 --target $JAVA_HOME
+    - mvn sonar:sonar -Dsonar.projectKey=BentoBoxWorld_BentoBox
+
 cache:
     directories:
         - '$HOME/.m2/repository'
