@@ -3,6 +3,8 @@ package world.bentobox.bentobox.hooks.placeholders;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.Set;
 
 import org.bukkit.entity.Player;
@@ -11,6 +13,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import me.clip.placeholderapi.PlaceholderAPI;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
+import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.placeholders.PlaceholderReplacer;
 import world.bentobox.bentobox.api.placeholders.placeholderapi.AddonPlaceholderExpansion;
 import world.bentobox.bentobox.api.placeholders.placeholderapi.BentoBoxPlaceholderExpansion;
@@ -72,7 +75,6 @@ public class PlaceholderAPIHook extends PlaceholderHook {
             addonsExpansions.put(addon, addonPlaceholderExpansion);
             this.addonPlaceholders.computeIfAbsent(addon, k -> new HashSet<>()).add(placeholder);
         }
-
         addonsExpansions.get(addon).registerPlaceholder(placeholder, replacer);
     }
 
@@ -108,7 +110,30 @@ public class PlaceholderAPIHook extends PlaceholderHook {
     @Override
     @NonNull
     public String replacePlaceholders(@NonNull Player player, @NonNull String string) {
-        return PlaceholderAPI.setPlaceholders(player, string);
+        // Transform [gamemode] in string to the game mode description name, or remove it for the default replacement
+        String newString = BentoBox.getInstance().getIWM().getAddon(player.getWorld()).map(gm -> 
+            string.replace(TextVariables.GAMEMODE, gm.getDescription().getName())
+        ).orElse(removeGMPlaceholder(string));
+        return PlaceholderAPI.setPlaceholders(player, newString);
+    }
+
+    private String removeGMPlaceholder(@NonNull String string) {
+        String newString = string;
+        // Get placeholders - TODO: my regex moh=jo isn't good enough to grab only placeholders with [gamemode] in yet!
+        Matcher m = Pattern.compile("(%)(.*?)(%)").matcher(string);
+            while (m.find()) {
+                String ph = m.group();
+                if (ph.contains(TextVariables.GAMEMODE)) newString = newString.replace(ph,"");
+            }
+        return newString;
+    }
+
+    /**
+     * Used for unit testing only
+     * @param bentoboxExpansion the bentoboxExpansion to set
+     */
+    protected void setBentoboxExpansion(BentoBoxPlaceholderExpansion bentoboxExpansion) {
+        this.bentoboxExpansion = bentoboxExpansion;
     }
 
     /**

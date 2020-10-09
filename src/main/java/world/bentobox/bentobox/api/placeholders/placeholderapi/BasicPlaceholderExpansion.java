@@ -19,6 +19,7 @@ abstract class BasicPlaceholderExpansion extends PlaceholderExpansion {
     private Map<@NonNull String, @NonNull PlaceholderReplacer> placeholders;
 
     BasicPlaceholderExpansion() {
+        super();
         this.placeholders = new HashMap<>();
     }
 
