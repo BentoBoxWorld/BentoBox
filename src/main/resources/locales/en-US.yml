@@ -321,9 +321,13 @@ commands:
           Place blueprint
           to right to set
         trash: "Trash"
+        no-trash: "Cannot Trash"
         trash-instructions: "Right click here to delete"
+        no-trash-instructions: "Cannot trash default bundle"
         permission: "Permission"
+        no-permission: "No Permission"
         perm-required: "Required"
+        no-perm-required: "Cannot set perm for default bundle"
         perm-not-required: "Not Required"
         perm-format: "&e "
         remove: "Right click to remove"
