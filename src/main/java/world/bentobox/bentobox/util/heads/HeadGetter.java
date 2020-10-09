@@ -78,9 +78,8 @@ public class HeadGetter {
         // If timestamp is set to 0, then it must be kept forever.
         // If settings time is set to 0, then always use cache.
         if (cache != null &&
-            cache.getTimestamp() != 0 &&
-            cacheTimeout > 0 &&
-            System.currentTimeMillis() - cache.getTimestamp() <= cacheTimeout)
+            (cache.getTimestamp() == 0 || cacheTimeout == 0 || 
+                 System.currentTimeMillis() - cache.getTimestamp() <= cacheTimeout))
         {
             panelItem.setHead(cachedHeads.get(panelItem.getPlayerHeadName()).getPlayerHead());
             requester.setHead(panelItem);
