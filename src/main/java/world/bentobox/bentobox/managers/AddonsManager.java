@@ -221,7 +221,7 @@ public class AddonsManager {
      * @param addon addon
      */
     private void enableAddon(Addon addon) {
-        plugin.log("Enabling " + addon.getDescription().getName() + "...");
+        plugin.log("Enabling " + addon.getDescription().getName() + " (" + addon.getDescription().getVersion() + ")...");
         try {
             // If this is a GameModeAddon create the worlds, register it and load the blueprints
             if (addon instanceof GameModeAddon) {
