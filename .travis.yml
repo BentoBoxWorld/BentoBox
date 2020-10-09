@@ -14,8 +14,7 @@ matrix:
         
 script:
     - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install
-    - export JAVA_HOME=$HOME/openjdk11
-    - $TRAVIS_BUILD_DIR/install-jdk.sh --install openjdk11 --target $JAVA_HOME
+    - wget https://github.com/sormuras/bach/raw/master/install-jdk.sh && . ./install-jdk.sh -F 11 -L GPL
     - mvn sonar:sonar -Dsonar.projectKey=BentoBoxWorld_BentoBox
 
 cache:
