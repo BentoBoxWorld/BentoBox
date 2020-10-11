@@ -86,7 +86,7 @@ public class IslandTeamLeaveCommand extends ConfirmableCommand {
         }
         // Reset the health
         if (getIWM().isOnLeaveResetHealth(getWorld())) {
-            user.getPlayer().setHealth(20.0D);
+            Util.resetHealth(user.getPlayer());
         }
 
         // Reset the hunger
@@ -118,11 +118,11 @@ public class IslandTeamLeaveCommand extends ConfirmableCommand {
         .involvedPlayer(user.getUniqueId())
         .build();
         IslandEvent.builder()
-                .island(island)
-                .involvedPlayer(user.getUniqueId())
-                .admin(false)
-                .reason(IslandEvent.Reason.RANK_CHANGE)
-                .rankChange(island.getRank(user), RanksManager.VISITOR_RANK)
-                .build();
+        .island(island)
+        .involvedPlayer(user.getUniqueId())
+        .admin(false)
+        .reason(IslandEvent.Reason.RANK_CHANGE)
+        .rankChange(island.getRank(user), RanksManager.VISITOR_RANK)
+        .build();
     }
 }

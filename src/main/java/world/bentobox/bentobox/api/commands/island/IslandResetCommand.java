@@ -126,7 +126,7 @@ public class IslandResetCommand extends ConfirmableCommand {
         .oldIsland(oldIsland)
         .location(oldIsland.getCenter())
         .build();
-        
+
         // Reset the island
         user.sendMessage("commands.island.create.creating-island");
 
@@ -205,7 +205,7 @@ public class IslandResetCommand extends ConfirmableCommand {
 
             // Reset the health
             if (getIWM().isOnLeaveResetHealth(getWorld())) {
-                member.getPlayer().setHealth(20.0D);
+                Util.resetHealth(member.getPlayer());
             }
 
             // Reset the hunger

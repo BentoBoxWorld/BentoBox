@@ -22,7 +22,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.TreeSpecies;
 import org.bukkit.World;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Boat;
@@ -924,7 +923,7 @@ public class IslandsManager {
 
             // Reset the health
             if (plugin.getIWM().isOnJoinResetHealth(world)) {
-                user.getPlayer().setHealth(user.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getDefaultValue());
+                Util.resetHealth(user.getPlayer());
             }
 
             // Reset the hunger
