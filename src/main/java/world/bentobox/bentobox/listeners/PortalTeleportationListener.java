@@ -62,7 +62,7 @@ public class PortalTeleportationListener implements Listener {
         if (inPortal.contains(uuid) || !plugin.getIWM().inWorld(Util.getWorld(e.getFrom().getWorld()))) {
             return;
         }
-        if (!Bukkit.getServer().getAllowNether() && e.getPlayer().getLocation().getBlock().getType().equals(Material.NETHER_PORTAL)) {
+        if (!Bukkit.getAllowNether() && e.getPlayer().getLocation().getBlock().getType().equals(Material.NETHER_PORTAL)) {
             inPortal.add(uuid);
             // Schedule a time
             Bukkit.getScheduler().runTaskLater(plugin, () -> {
@@ -79,7 +79,7 @@ public class PortalTeleportationListener implements Listener {
             }, 40);
             return;
         }
-        if (!Bukkit.getServer().getAllowEnd() && e.getPlayer().getLocation().getBlock().getType().equals(Material.END_PORTAL)) {
+        if (!Bukkit.getAllowEnd() && e.getPlayer().getLocation().getBlock().getType().equals(Material.END_PORTAL)) {
             PlayerPortalEvent en = new PlayerPortalEvent(e.getPlayer(), e.getPlayer().getLocation(), null, TeleportCause.END_PORTAL, 0, false, 0);
             this.onEndIslandPortal(en);
             return;
@@ -225,11 +225,12 @@ public class PortalTeleportationListener implements Listener {
         // STANDARD NETHER
         if (!plugin.getIWM().isNetherIslands(overWorld)) {
             if (fromWorld.getEnvironment() != Environment.NETHER) {
-                if (Bukkit.getServer().getAllowNether()) {
+                if (Bukkit.getAllowNether()) {
                     // To Standard Nether
                     e.setTo(plugin.getIWM().getNetherWorld(overWorld).getSpawnLocation());
                 } else {
-                    // TODO - teleport player
+                    // Teleport to standard nether
+                    plugin.logDebug("Standard nether spawn = " + plugin.getIWM().getNetherWorld(fromWorld).getSpawnLocation());
                     new SafeSpotTeleport.Builder(plugin)
                     .entity(e.getPlayer())
                     .location(plugin.getIWM().getNetherWorld(fromWorld).getSpawnLocation())
