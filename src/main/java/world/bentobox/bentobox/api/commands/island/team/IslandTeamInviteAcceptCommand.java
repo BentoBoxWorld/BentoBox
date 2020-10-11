@@ -3,6 +3,8 @@ package world.bentobox.bentobox.api.commands.island.team;
 import java.util.List;
 import java.util.UUID;
 
+import org.bukkit.attribute.Attribute;
+
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.commands.island.team.Invite.Type;
@@ -195,7 +197,8 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
 
         // Reset the health
         if (getIWM().isOnJoinResetHealth(getWorld())) {
-            user.getPlayer().setHealth(20.0D);
+            double maxHealth = user.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue();
+            user.getPlayer().setHealth(maxHealth);
         }
 
         // Reset the hunger
