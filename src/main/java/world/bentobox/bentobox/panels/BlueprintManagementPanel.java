@@ -57,6 +57,12 @@ public class BlueprintManagementPanel {
     private final User user;
     private final GameModeAddon addon;
 
+    /**
+     * Class to display the Blueprint Management Panel
+     * @param plugin - BentoBox
+     * @param user - user to see the panel
+     * @param addon - game mode addon requesting the panel
+     */
     public BlueprintManagementPanel(@NonNull BentoBox plugin, @NonNull User user, @NonNull GameModeAddon addon) {
         this.plugin = plugin;
         this.user = user;
@@ -100,13 +106,12 @@ public class BlueprintManagementPanel {
             // Make item
             PanelItem item = new PanelItemBuilder()
                     .name(bb.getDisplayName())
-                    .description(t("edit"),
-                            !bb.getUniqueId().equals(BlueprintsManager.DEFAULT_BUNDLE_NAME) ? t("rename") : "")
+                    .description(t("edit"), t("rename"))
                     .icon(bb.getIcon())
                     .clickHandler((panel, u, clickType, slot) -> {
 
                         u.closeInventory();
-                        if (clickType.equals(ClickType.RIGHT) && !bb.getUniqueId().equals(BlueprintsManager.DEFAULT_BUNDLE_NAME)) {
+                        if (clickType.equals(ClickType.RIGHT)) {
                             // Rename
                             askForName(u.getPlayer(), addon, bb);
                         } else {
@@ -173,8 +178,13 @@ public class BlueprintManagementPanel {
         }
         blueprints.entrySet().stream().limit(18).forEach(b -> pb.item(getBlueprintItem(addon, b.getKey(), bb, b.getValue())));
         // Buttons for non-default bundle
-        if (!bb.getUniqueId().equals(BlueprintsManager.DEFAULT_BUNDLE_NAME)) {
-            // Panel has a Trash icon. If right clicked it is discarded
+        if (bb.getUniqueId().equals(BlueprintsManager.DEFAULT_BUNDLE_NAME)) {
+            // Panel has a No Trash icon. If right clicked it is discarded
+            pb.item(36, getNoTrashIcon(addon, bb));
+            // Toggle permission - default is always allowed
+            pb.item(39, getNoPermissionIcon(addon, bb));
+        } else {
+         // Panel has a Trash icon. If right clicked it is discarded
             pb.item(36, getTrashIcon(addon, bb));
             // Toggle permission - default is always allowed
             pb.item(39, getPermissionIcon(addon, bb));
@@ -272,6 +282,15 @@ public class BlueprintManagementPanel {
                 })
                 .build();
     }
+    
+    private PanelItem getNoTrashIcon(@NonNull GameModeAddon addon, BlueprintBundle bb) {
+        return new PanelItemBuilder()
+                .name(t("no-trash"))
+                .description(t("no-trash-instructions"))
+                .icon(Material.TNT)
+                .build();
+    }
+
 
     private PanelItem getPermissionIcon(@NonNull GameModeAddon addon, BlueprintBundle bb) {
         return new PanelItemBuilder().icon(Material.PAINTING).name(t("permission"))
@@ -286,6 +305,12 @@ public class BlueprintManagementPanel {
                     panel.getInventory().setItem(39, getPermissionIcon(addon, bb).getItem());
                     return true;
                 }).build();
+    }
+    
+    private PanelItem getNoPermissionIcon(@NonNull GameModeAddon addon, BlueprintBundle bb) {
+        return new PanelItemBuilder().icon(Material.PAINTING).name(t("no-permission"))
+                .description(t("no-perm-required"))
+                .build();
     }
 
     /**

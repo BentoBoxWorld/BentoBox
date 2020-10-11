@@ -1,5 +1,6 @@
 package world.bentobox.bentobox.api.events.command;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.Cancellable;
@@ -60,7 +61,9 @@ public class CommandEvent extends BentoBoxEvent implements Cancellable {
         }
 
         public CommandEvent build() {
-            return new CommandEvent(sender, command, label, args);
+            CommandEvent event =  new CommandEvent(sender, command, label, args);
+            Bukkit.getPluginManager().callEvent(event);
+            return event;
         }
 
     }

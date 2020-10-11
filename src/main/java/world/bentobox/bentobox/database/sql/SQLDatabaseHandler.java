@@ -83,7 +83,8 @@ public class SQLDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
     protected void createSchema() {
         if (sqlConfig.renameRequired()) {
             // Transition from the old table name
-            try (PreparedStatement pstmt = connection.prepareStatement(sqlConfig.getRenameTableSQL())) {
+            String sql = sqlConfig.getRenameTableSQL().replace("[oldTableName]", sqlConfig.getOldTableName()).replace("[tableName]", sqlConfig.getTableName());
+            try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
                 pstmt.execute();
             } catch (SQLException e) {
                 plugin.logError("Could not rename " + sqlConfig.getOldTableName() + " for data object " + dataObject.getCanonicalName() + " " + e.getMessage());
