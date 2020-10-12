@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -197,7 +198,7 @@ public class NewIslandTest {
         verify(im).save(eq(island));
         verify(island).setFlagsDefaults();
         verify(scheduler).runTask(any(BentoBox.class), any(Runnable.class));
-        verify(builder).build();
+        verify(builder, times(2)).build();
         verify(bpb).getUniqueId();
         verify(ice).getBlueprintBundle();
         verify(pm).setDeaths(eq(world), eq(uuid), eq(0));
@@ -205,7 +206,7 @@ public class NewIslandTest {
         verify(pm).clearHomeLocations(eq(world), any(UUID.class));
         verify(island).setProtectionRange(eq(20));
     }
-
+    
     /**
      * Test method for {@link world.bentobox.bentobox.managers.island.NewIsland#builder()}.
      * @throws Exception
@@ -218,7 +219,7 @@ public class NewIslandTest {
         verify(im).save(eq(island));
         verify(island).setFlagsDefaults();
         verify(scheduler).runTask(any(BentoBox.class), any(Runnable.class));
-        verify(builder).build();
+        verify(builder, times(2)).build();
         verify(bpb).getUniqueId();
         verify(ice, never()).getBlueprintBundle();
         verify(ire).getBlueprintBundle();
@@ -238,7 +239,7 @@ public class NewIslandTest {
         verify(im).save(eq(island));
         verify(island).setFlagsDefaults();
         verify(scheduler).runTask(any(BentoBox.class), any(Runnable.class));
-        verify(builder).build();
+        verify(builder, times(2)).build();
         verify(bpb).getUniqueId();
         verify(ice).getBlueprintBundle();
         verify(pm).setDeaths(eq(world), eq(uuid), eq(0));
@@ -257,7 +258,7 @@ public class NewIslandTest {
         verify(im).save(eq(island));
         verify(island).setFlagsDefaults();
         verify(bpm).paste(eq(addon), eq(island), eq(NAME), any(Runnable.class));
-        verify(builder).build();
+        verify(builder, times(2)).build();
         verify(bpb).getUniqueId();
         verify(ice).getBlueprintBundle();
         verify(pm).setDeaths(eq(world), eq(uuid), eq(0));
@@ -277,7 +278,7 @@ public class NewIslandTest {
         verify(im).save(eq(island));
         verify(island).setFlagsDefaults();
         verify(scheduler).runTask(any(BentoBox.class), any(Runnable.class));
-        verify(builder).build();
+        verify(builder, times(2)).build();
         verify(bpb).getUniqueId();
         verify(ice).getBlueprintBundle();
         verify(pm).setDeaths(eq(world), eq(uuid), eq(0));
@@ -300,7 +301,7 @@ public class NewIslandTest {
         verify(im).save(eq(island));
         verify(island).setFlagsDefaults();
         verify(scheduler).runTask(any(BentoBox.class), any(Runnable.class));
-        verify(builder).build();
+        verify(builder, times(2)).build();
         verify(bpb).getUniqueId();
         verify(ice).getBlueprintBundle();
         verify(pm).setDeaths(eq(world), eq(uuid), eq(0));
@@ -323,7 +324,7 @@ public class NewIslandTest {
         verify(im).save(eq(island));
         verify(island).setFlagsDefaults();
         verify(scheduler).runTask(any(BentoBox.class), any(Runnable.class));
-        verify(builder).build();
+        verify(builder, times(2)).build();
         verify(bpb).getUniqueId();
         verify(ice).getBlueprintBundle();
         verify(pm).setDeaths(eq(world), eq(uuid), eq(0));

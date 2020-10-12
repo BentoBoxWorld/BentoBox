@@ -51,6 +51,12 @@ public class IslandEvent extends IslandBaseEvent {
          */
         BAN,
         /**
+         * Fired when a player tries to create a new island. If canceled will
+         * proceed no further.
+         * @since 1.15.1
+         */
+        PRECREATE,
+        /**
          * Called when a player has been allocated a new island spot
          * but before the island itself has been pasted or the player teleported.
          */
@@ -220,6 +226,18 @@ public class IslandEvent extends IslandBaseEvent {
         }
     }
 
+    /**
+     * Fired when attempting to make a new island.
+     * May be cancelled. No island object exists at this point.
+     * @since 1.15.1
+     */
+    public static class IslandPreCreateEvent extends IslandBaseEvent {
+        private IslandPreCreateEvent(UUID player) {
+            // Final variables have to be declared in the constructor
+            super(null, player, false, null);
+        }
+    }
+    
     /**
      * Fired when an island is going to be created.
      * May be cancelled.
@@ -681,6 +699,10 @@ public class IslandEvent extends IslandBaseEvent {
                 IslandBanEvent ban = new IslandBanEvent(island, player, admin, location);
                 Bukkit.getPluginManager().callEvent(ban);
                 return ban;
+            case PRECREATE:
+                IslandPreCreateEvent precreate = new IslandPreCreateEvent(player);
+                Bukkit.getPluginManager().callEvent(precreate);
+                return precreate;
             case CREATE:
                 IslandCreateEvent create = new IslandCreateEvent(island, player, admin, location, blueprintBundle);
                 Bukkit.getPluginManager().callEvent(create);

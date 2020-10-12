@@ -48,7 +48,15 @@ public class NewIsland {
         if (this.locationStrategy == null) {
             this.locationStrategy = new DefaultNewIslandLocationStrategy();
         }
-
+        // Fire pre-create event
+        IslandBaseEvent event = IslandEvent.builder()
+                .involvedPlayer(user.getUniqueId())
+                .reason(Reason.PRECREATE)
+                .build();
+        if (event.isCancelled()) {
+            // Do nothing
+            return;
+        }
         newIsland(builder.oldIsland2);
     }
 
