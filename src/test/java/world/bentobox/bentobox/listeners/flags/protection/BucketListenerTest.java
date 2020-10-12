@@ -283,6 +283,42 @@ public class BucketListenerTest {
 
         verify(notifier, times(4)).notify(any(), eq("protection.protected"));
     }
+    
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BucketListener#onBucketFill(org.bukkit.event.player.PlayerBucketFillEvent)}.
+     */
+    @Test
+    public void testOnBucketFillMixedAllowed() {
+        when(island.isAllowed(any(), eq(Flags.BUCKET))).thenReturn(false);
+        when(island.isAllowed(any(), eq(Flags.COLLECT_WATER))).thenReturn(true);
+        when(island.isAllowed(any(), eq(Flags.COLLECT_LAVA))).thenReturn(true);
+        when(island.isAllowed(any(), eq(Flags.MILKING))).thenReturn(true);
+        Block block = mock(Block.class);
+        when(block.getLocation()).thenReturn(location);
+        when(block.getRelative(any())).thenReturn(block);
+        ItemStack item = mock(ItemStack.class);
+        when(item.getType()).thenReturn(Material.WATER_BUCKET);
+        PlayerBucketFillEvent e = new PlayerBucketFillEvent(player, block, block, BlockFace.UP, Material.WATER_BUCKET, item);
+        l.onBucketFill(e);
+        assertFalse(e.isCancelled());
+
+        when(item.getType()).thenReturn(Material.BUCKET);
+        e = new PlayerBucketFillEvent(player, block, block, BlockFace.UP, Material.WATER_BUCKET, item);
+        l.onBucketFill(e);
+        assertTrue(e.isCancelled());
+
+        when(item.getType()).thenReturn(Material.LAVA_BUCKET);
+        e = new PlayerBucketFillEvent(player, block, block, BlockFace.UP, Material.WATER_BUCKET, item);
+        l.onBucketFill(e);
+        assertFalse(e.isCancelled());
+
+        when(item.getType()).thenReturn(Material.MILK_BUCKET);
+        e = new PlayerBucketFillEvent(player, block, block, BlockFace.UP, Material.WATER_BUCKET, item);
+        l.onBucketFill(e);
+        assertFalse(e.isCancelled());
+
+        verify(notifier).notify(any(), eq("protection.protected"));
+    }
 
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BucketListener#onTropicalFishScooping(org.bukkit.event.player.PlayerInteractEntityEvent)}.

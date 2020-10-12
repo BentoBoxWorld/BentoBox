@@ -39,17 +39,20 @@ public class BucketListener extends FlagListener {
     @EventHandler(priority = EventPriority.LOW)
     public void onBucketFill(final PlayerBucketFillEvent e) {
         // Check filling of various liquids
-        if (e.getItemStack().getType().equals(Material.LAVA_BUCKET) && (!checkIsland(e, e.getPlayer(), e.getBlockClicked().getLocation(), Flags.COLLECT_LAVA))) {
+        switch (e.getItemStack().getType()) {
+        case LAVA_BUCKET:
+            checkIsland(e, e.getPlayer(), e.getBlockClicked().getLocation(), Flags.COLLECT_LAVA);
             return;
-        }
-        if (e.getItemStack().getType().equals(Material.WATER_BUCKET) && (!checkIsland(e, e.getPlayer(), e.getBlockClicked().getLocation(), Flags.COLLECT_WATER))) {
+        case WATER_BUCKET:
+            checkIsland(e, e.getPlayer(), e.getBlockClicked().getLocation(), Flags.COLLECT_WATER);
             return;
-        }
-        if (e.getItemStack().getType().equals(Material.MILK_BUCKET) && (!checkIsland(e, e.getPlayer(), e.getBlockClicked().getLocation(), Flags.MILKING))) {
+        case MILK_BUCKET:
+            checkIsland(e, e.getPlayer(), e.getBlockClicked().getLocation(), Flags.MILKING);
             return;
+        default:
+            // Check general bucket use
+            checkIsland(e, e.getPlayer(), e.getBlockClicked().getLocation(), Flags.BUCKET);  
         }
-        // Check general bucket use
-        checkIsland(e, e.getPlayer(), e.getBlockClicked().getLocation(), Flags.BUCKET);
     }
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
