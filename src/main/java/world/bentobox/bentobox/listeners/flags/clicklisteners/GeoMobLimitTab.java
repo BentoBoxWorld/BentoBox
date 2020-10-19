@@ -116,7 +116,7 @@ public class GeoMobLimitTab implements Tab, ClickHandler {
 
     private PanelItem getPanelItem(EntityType c, User user) {
         PanelItemBuilder pib = new PanelItemBuilder();
-        pib.name(Util.prettifyText(c.toString()));
+        pib.name(Util.prettifyText(c, user.getPlayer().getLocale()));
         pib.clickHandler(this);
         if (type == EntityLimitTabType.MOB_LIMIT) {
             if (!BentoBox.getInstance().getIWM().getMobLimitSettings(user.getWorld()).contains(c.name())) {

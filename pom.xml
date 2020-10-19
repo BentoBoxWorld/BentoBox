@@ -69,7 +69,8 @@
         <mongodb.version>3.8.0</mongodb.version>
         <!-- More visible way to change dependency versions -->
         <spigot.version>1.16.2-R0.1-SNAPSHOT</spigot.version>
-        <!-- Might differ from the last Spigot release for short periods of time -->
+        <!-- Might differ from the last Spigot release for short periods 
+            of time -->
         <paper.version>1.16.2-R0.1-SNAPSHOT</paper.version>
         <bstats.version>1.7</bstats.version>
         <vault.version>1.7</vault.version>
@@ -181,6 +182,10 @@
             <id>papermc</id>
             <url>https://papermc.io/repo/repository/maven-public/</url>
         </repository>
+        <repository>
+            <id>lang-utils-repo</id>
+            <url>https://ci.nyaacat.com/maven/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -290,6 +295,14 @@
             <artifactId>paperlib</artifactId>
             <version>1.0.2</version>
             <scope>compile</scope>
+        </dependency>
+        <!-- LangUtils -->
+        <dependency>
+            <groupId>com.meowj</groupId>
+            <artifactId>LangUtils</artifactId>
+            <!--Please check the latest version -->
+            <version>2.4-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
@@ -445,7 +458,7 @@
                 <configuration>
                     <append>true</append>
                     <excludes>
-                        <!-- This is required to prevent Jacoco from adding
+                        <!-- This is required to prevent Jacoco from adding 
                             synthetic fields to a JavaBean class (causes errors in testing) -->
                         <exclude>**/*Names*</exclude>
                     </excludes>

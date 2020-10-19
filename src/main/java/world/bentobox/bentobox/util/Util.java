@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.jar.JarEntry;
@@ -26,6 +27,7 @@ import org.bukkit.entity.Animals;
 import org.bukkit.entity.Bat;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Flying;
 import org.bukkit.entity.IronGolem;
 import org.bukkit.entity.Monster;
@@ -39,6 +41,8 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+
+import com.meowj.langutils.lang.LanguageHelper;
 
 import io.papermc.lib.PaperLib;
 import io.papermc.lib.features.blockstatesnapshot.BlockStateSnapshotResult;
@@ -655,5 +659,19 @@ public class Util {
     public static void resetHealth(Player player) {
         double maxHealth = player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue();
         player.setHealth(maxHealth);
+    }
+
+    /**
+     * Prettify and try to localize an entity type
+     * @param entityType - entity type
+     * @param string - locale to localize to, if possible
+     * @return string
+     */
+    public static String prettifyText(EntityType entityType, String string) {
+        if (Bukkit.getPluginManager().getPlugin("LangUtils") != null) {
+            return LanguageHelper.getEntityName(entityType, string);
+        } else {
+            return prettifyText(entityType.name());
+        }
     }
 }
