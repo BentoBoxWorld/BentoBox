@@ -487,10 +487,9 @@ public class PlayersManager {
      */
     public void removePlayer(Player player) {
         // Clear any players with the same name
-        playerCache.values().removeIf(p -> p.getPlayerName().equalsIgnoreCase(player.getName()));
+        playerCache.values().removeIf(p -> player.getName().equalsIgnoreCase(p.getPlayerName()));
         // Remove if the player's UUID is the same
-        playerCache.values().removeIf(p -> p.getUniqueId().equals(player.getUniqueId().toString()));
-
+        playerCache.values().removeIf(p -> player.getUniqueId().toString().equals(p.getUniqueId()));
     }
 
 }
