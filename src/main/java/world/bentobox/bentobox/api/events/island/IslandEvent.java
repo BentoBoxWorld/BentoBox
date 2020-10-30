@@ -5,6 +5,7 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle;
@@ -362,9 +363,18 @@ public class IslandEvent extends IslandBaseEvent {
      * Cancellation has no effect.
      */
     public static class IslandEnterEvent extends IslandBaseEvent {
-        private IslandEnterEvent(Island island, UUID player, boolean admin, Location location) {
+        
+        private final @Nullable Island fromIsland;
+        
+        private IslandEnterEvent(Island island, UUID player, boolean admin, Location location, Island fromIsland) {
             // Final variables have to be declared in the constructor
             super(island, player, admin, location);
+            this.fromIsland = fromIsland;
+        }
+        
+        @Nullable
+        public Island getFromIsland() {
+            return fromIsland;
         }
     }
     /**
@@ -372,10 +382,22 @@ public class IslandEvent extends IslandBaseEvent {
      * Cancellation has no effect.
      */
     public static class IslandExitEvent extends IslandBaseEvent {
-        private IslandExitEvent(Island island, UUID player, boolean admin, Location location) {
+        
+        private final @Nullable Island toIsland;
+
+        
+        private IslandExitEvent(Island island, UUID player, boolean admin, Location location, Island toIsland) {
             // Final variables have to be declared in the constructor
             super(island, player, admin, location);
+            this.toIsland = toIsland;
         }
+        
+        @Nullable
+        public Island getToIsland() {
+            return toIsland;
+        }
+     
+        
     }
     /**
      * Fired when an island is locked
@@ -724,11 +746,11 @@ public class IslandEvent extends IslandBaseEvent {
                 Bukkit.getPluginManager().callEvent(deleted);
                 return deleted;
             case ENTER:
-                IslandEnterEvent enter = new IslandEnterEvent(island, player, admin, location);
+                IslandEnterEvent enter = new IslandEnterEvent(island, player, admin, location, oldIsland);
                 Bukkit.getPluginManager().callEvent(enter);
                 return enter;
             case EXIT:
-                IslandExitEvent exit = new IslandExitEvent(island, player, admin, location);
+                IslandExitEvent exit = new IslandExitEvent(island, player, admin, location, oldIsland);
                 Bukkit.getPluginManager().callEvent(exit);
                 return exit;
             case LOCK:
