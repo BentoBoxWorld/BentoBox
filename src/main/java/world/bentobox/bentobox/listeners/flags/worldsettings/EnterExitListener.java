@@ -28,15 +28,15 @@ public class EnterExitListener extends FlagListener {
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onMove(PlayerMoveEvent e) {
-        handleEnterExit(User.getInstance(e.getPlayer()), e.getFrom(), e.getTo());
+        handleEnterExit(User.getInstance(e.getPlayer()), e.getFrom(), e.getTo(), e);
     }
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onTeleport(PlayerTeleportEvent e) {
-        handleEnterExit(User.getInstance(e.getPlayer()), e.getFrom(), e.getTo());
+        handleEnterExit(User.getInstance(e.getPlayer()), e.getFrom(), e.getTo(), e);
     }
 
-    private void handleEnterExit(@NonNull User user, @NonNull Location from, @NonNull Location to) {
+    private void handleEnterExit(@NonNull User user, @NonNull Location from, @NonNull Location to, @NonNull PlayerMoveEvent e) {
         // Only process if there is a change in X or Z coords
         if (from.getWorld() != null && from.getWorld().equals(to.getWorld())
                 && from.toVector().multiply(XZ).equals(to.toVector().multiply(XZ))) {
@@ -68,6 +68,7 @@ public class EnterExitListener extends FlagListener {
             .reason(IslandEvent.Reason.EXIT)
             .admin(false)
             .location(user.getLocation())
+            .rawEvent(e)
             .build();
 
             sendExitNotification(user, i);
@@ -82,6 +83,7 @@ public class EnterExitListener extends FlagListener {
             .reason(IslandEvent.Reason.ENTER)
             .admin(false)
             .location(user.getLocation())
+            .rawEvent(e)
             .build();
 
             sendEnterNotification(user, i);

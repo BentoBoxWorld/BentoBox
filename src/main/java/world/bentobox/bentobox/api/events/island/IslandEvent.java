@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
@@ -366,9 +367,9 @@ public class IslandEvent extends IslandBaseEvent {
         
         private final @Nullable Island fromIsland;
         
-        private IslandEnterEvent(Island island, UUID player, boolean admin, Location location, Island fromIsland) {
+        private IslandEnterEvent(Island island, UUID player, boolean admin, Location location, Island fromIsland, Event rawEvent) {
             // Final variables have to be declared in the constructor
-            super(island, player, admin, location);
+            super(island, player, admin, location, rawEvent);
             this.fromIsland = fromIsland;
         }
         
@@ -386,9 +387,9 @@ public class IslandEvent extends IslandBaseEvent {
         private final @Nullable Island toIsland;
 
         
-        private IslandExitEvent(Island island, UUID player, boolean admin, Location location, Island toIsland) {
+        private IslandExitEvent(Island island, UUID player, boolean admin, Location location, Island toIsland, Event rawEvent) {
             // Final variables have to be declared in the constructor
-            super(island, player, admin, location);
+            super(island, player, admin, location, rawEvent);
             this.toIsland = toIsland;
         }
         
@@ -595,6 +596,7 @@ public class IslandEvent extends IslandBaseEvent {
         private Location location;
         private IslandDeletion deletedIslandInfo;
         private BlueprintBundle blueprintBundle;
+        private Event rawEvent;
 
         /**
          * Stores new protection range for island.
@@ -667,6 +669,11 @@ public class IslandEvent extends IslandBaseEvent {
 
         public IslandEventBuilder location(Location center) {
             location = center;
+            return this;
+        }
+        
+        public IslandEventBuilder rawEvent(Event event) {
+            rawEvent = event;
             return this;
         }
 
@@ -746,11 +753,11 @@ public class IslandEvent extends IslandBaseEvent {
                 Bukkit.getPluginManager().callEvent(deleted);
                 return deleted;
             case ENTER:
-                IslandEnterEvent enter = new IslandEnterEvent(island, player, admin, location, oldIsland);
+                IslandEnterEvent enter = new IslandEnterEvent(island, player, admin, location, oldIsland, rawEvent);
                 Bukkit.getPluginManager().callEvent(enter);
                 return enter;
             case EXIT:
-                IslandExitEvent exit = new IslandExitEvent(island, player, admin, location, oldIsland);
+                IslandExitEvent exit = new IslandExitEvent(island, player, admin, location, oldIsland, rawEvent);
                 Bukkit.getPluginManager().callEvent(exit);
                 return exit;
             case LOCK:
