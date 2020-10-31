@@ -230,7 +230,6 @@ public class PortalTeleportationListener implements Listener {
                     e.setTo(plugin.getIWM().getNetherWorld(overWorld).getSpawnLocation());
                 } else {
                     // Teleport to standard nether
-                    plugin.logDebug("Standard nether spawn = " + plugin.getIWM().getNetherWorld(fromWorld).getSpawnLocation());
                     new SafeSpotTeleport.Builder(plugin)
                     .entity(e.getPlayer())
                     .location(plugin.getIWM().getNetherWorld(fromWorld).getSpawnLocation())

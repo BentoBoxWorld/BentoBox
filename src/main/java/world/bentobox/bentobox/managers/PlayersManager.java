@@ -4,16 +4,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitTask;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
@@ -32,8 +29,6 @@ public class PlayersManager {
 
     private Map<UUID, Players> playerCache;
     private Set<UUID> inTeleport;
-    private Set<UUID> toSave = new HashSet<>();
-    private BukkitTask task;
 
     /**
      * Provides a memory cache of online player information
@@ -74,25 +69,6 @@ public class PlayersManager {
      */
     public void saveAll(){
         Collections.unmodifiableCollection(playerCache.values()).forEach(handler::saveObjectAsync);
-    }
-
-    /**
-     * Saves all the players at a rate of 1 per tick. Used as a backup.
-     * @since 1.8.0
-     */
-    public void asyncSaveAll() {
-        if (!toSave.isEmpty()) return;
-        // Get a list of ID's to save
-        toSave = new HashSet<>(playerCache.keySet());
-        Iterator<UUID> it = toSave.iterator();
-        task = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
-            if (plugin.isEnabled() && it.hasNext()) {
-                this.save(it.next());
-            } else {
-                toSave.clear();
-                task.cancel();
-            }
-        }, 0L, 1L);
     }
 
     public void shutdown(){
