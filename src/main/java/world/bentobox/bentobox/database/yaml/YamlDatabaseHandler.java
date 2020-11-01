@@ -617,7 +617,7 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         }
         if (clazz.equals(World.class)) {
             // Get world by name - may be null...
-            value = Bukkit.getServer().getWorld((String)value);
+            value = Bukkit.getWorld((String)value);
         }
         // Enums
         if (Enum.class.isAssignableFrom(clazz)) {
