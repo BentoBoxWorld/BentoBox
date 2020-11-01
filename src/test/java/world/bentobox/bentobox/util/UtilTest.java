@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -11,19 +12,31 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.World;
+import org.bukkit.World.Environment;
+import org.bukkit.block.BlockFace;
 import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -39,6 +52,8 @@ import world.bentobox.bentobox.managers.IslandWorldManager;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( { Bukkit.class })
 public class UtilTest {
+
+    private static final String[] NAMES = {"adam", "ben", "cara", "dave", "ed", "frank", "freddy", "george", "harry", "ian", "joe"};
 
     @Mock
     private BentoBox plugin;
@@ -74,11 +89,27 @@ public class UtilTest {
         when(location.getYaw()).thenReturn(10F);
         when(location.getPitch()).thenReturn(20F);
 
-        PowerMockito.mockStatic(Bukkit.class);
+        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         Server server = mock(Server.class);
         when(Bukkit.getServer()).thenReturn(server);
-        when(server.getWorld(Mockito.anyString())).thenReturn(world);
+        when(Bukkit.getWorld(anyString())).thenReturn(world);
         when(Bukkit.getConsoleSender()).thenReturn(sender);
+
+        // Bukkit - online players
+        Map<UUID, String> online = new HashMap<>();
+
+        Set<Player> onlinePlayers = new HashSet<>();
+        for (int j = 0; j < NAMES.length; j++) {
+            Player p1 = mock(Player.class);
+            UUID uuid = UUID.randomUUID();
+            when(p1.getUniqueId()).thenReturn(uuid);
+            when(p1.getName()).thenReturn(NAMES[j]);
+            online.put(uuid, NAMES[j]);
+            onlinePlayers.add(p1);
+        }
+        when(Bukkit.getOnlinePlayers()).then((Answer<Set<Player>>) invocation -> onlinePlayers);
+
+        when(user.isPlayer()).thenReturn(true);
     }
 
     @After
@@ -91,7 +122,7 @@ public class UtilTest {
      */
     @Test
     public void testGetServerVersion() {
-        assertEquals("bukkit",Util.getServerVersion());
+        assertEquals("bukkit", Util.getServerVersion());
     }
 
     /**
@@ -156,7 +187,17 @@ public class UtilTest {
      */
     @Test
     public void testGetOnlinePlayerList() {
-        //fail("Not yet implemented"); // TODO
+        assertEquals("Online players, null", 11, Util.getOnlinePlayerList(null).size());
+        assertEquals("Online players, not user", 11, Util.getOnlinePlayerList(mock(User.class)).size());
+        Player p = mock(Player.class);
+        // Can't see (default)
+        when(p.canSee(any(Player.class))).thenReturn(false);
+        when(user.getPlayer()).thenReturn(p);
+        assertEquals("Online players, cannot see", 0, Util.getOnlinePlayerList(user).size());
+        // Can see
+        when(p.canSee(any(Player.class))).thenReturn(true);
+        assertEquals("Online players, cannot see", 11, Util.getOnlinePlayerList(user).size());
+
     }
 
     /**
@@ -164,7 +205,19 @@ public class UtilTest {
      */
     @Test
     public void testTabLimit() {
-        //fail("Not yet implemented"); // TODO
+        List<String> list = new ArrayList<>();
+        assertTrue(Util.tabLimit(list, "").isEmpty());
+        list.add("alpha");
+        list.add("bravo");
+        list.add("charlie");
+        list.add("delta");
+        list.add("epsilon");
+        assertEquals(5, Util.tabLimit(list, "").size());
+        assertEquals(1, Util.tabLimit(list, "a").size());
+        assertEquals(1, Util.tabLimit(list, "b").size());
+        assertEquals(1, Util.tabLimit(list, "c").size());
+        assertEquals(1, Util.tabLimit(list, "d").size());
+        assertEquals(1, Util.tabLimit(list, "e").size());
     }
 
     /**
@@ -172,7 +225,7 @@ public class UtilTest {
      */
     @Test
     public void testXyz() {
-        //fail("Not yet implemented"); // TODO
+        assertEquals("34,67,54", Util.xyz(new Vector(34, 67, 54)));
     }
 
     /**
@@ -215,7 +268,21 @@ public class UtilTest {
      */
     @Test
     public void testGetWorld() {
-        //fail("Not yet implemented"); // TODO
+        assertNull(Util.getWorld(null));
+        when(world.getEnvironment()).thenReturn(Environment.NORMAL);
+        when(world.getName()).thenReturn("world_name");
+        when(Bukkit.getWorld(eq("world_name"))).thenReturn(world);
+        assertEquals(world, Util.getWorld(world));
+        // Nether
+        World nether = mock(World.class);
+        when(nether.getEnvironment()).thenReturn(Environment.NETHER);
+        when(nether.getName()).thenReturn("world_name_nether");
+        assertEquals("Nether", world, Util.getWorld(nether));
+        // End
+        World end = mock(World.class);
+        when(end.getEnvironment()).thenReturn(Environment.THE_END);
+        when(end.getName()).thenReturn("world_name_the_end");
+        assertEquals("End", world, Util.getWorld(end));
     }
 
     /**
@@ -223,7 +290,55 @@ public class UtilTest {
      */
     @Test
     public void testBlockFaceToFloat() {
-        //fail("Not yet implemented"); // TODO
+        for (BlockFace bf : BlockFace.values()) {
+            float r = Util.blockFaceToFloat(bf);
+            switch (bf) {
+            case EAST:
+                assertEquals(90F, r, 0);
+                break;
+            case EAST_NORTH_EAST:
+                assertEquals(67.5F, r, 0);
+                break;
+            case NORTH_EAST:
+                assertEquals(45F, r, 0);
+                break;
+            case NORTH_NORTH_EAST:
+                assertEquals(22.5F, r, 0);
+                break;
+            case NORTH_NORTH_WEST:
+                assertEquals(337.5F, r, 0);
+                break;
+            case NORTH_WEST:
+                assertEquals(315F, r, 0);
+                break;
+            case SOUTH:
+                assertEquals(180F, r, 0);
+                break;
+            case SOUTH_EAST:
+                assertEquals(135F, r, 0);
+                break;
+            case SOUTH_SOUTH_EAST:
+                assertEquals(157.5F, r, 0);
+                break;
+            case SOUTH_SOUTH_WEST:
+                assertEquals(202.5F, r, 0);
+                break;
+            case SOUTH_WEST:
+                assertEquals(225F, r, 0);
+                break;
+            case WEST:
+                assertEquals(270F, r, 0);
+                break;
+            case WEST_NORTH_WEST:
+                assertEquals(292.5F, r, 0);
+                break;
+            case WEST_SOUTH_WEST:
+                assertEquals(247.5F, r, 0);
+                break;
+            default:
+                assertEquals(0F, r, 0);
+            }
+        }
     }
 
     @Test
@@ -277,7 +392,7 @@ public class UtilTest {
         Util.runCommands(user, Collections.singletonList("[SUDO]help"), "test");
         verify(plugin, never()).logError(anyString());
     }
-    
+
     /**
      * Test for {@link Util#runCommands(world.bentobox.bentobox.api.user.User, java.util.List, String)}
      */
@@ -289,7 +404,7 @@ public class UtilTest {
         Util.runCommands(user, Collections.singletonList("[SUDO]help"), "test");
         verify(plugin).logError(eq("Could not execute test command for tastybento: help"));
     }
-    
+
     /**
      * Test for {@link Util#runCommands(world.bentobox.bentobox.api.user.User, java.util.List, String)}
      */
@@ -301,7 +416,7 @@ public class UtilTest {
         Util.runCommands(user, Collections.singletonList("[SUDO]help"), "test");
         verify(plugin).logError(eq("Could not execute test command for tastybento: help"));
     }
-    
+
     /**
      * Test for {@link Util#runCommands(world.bentobox.bentobox.api.user.User, java.util.List, String)}
      */
@@ -314,7 +429,7 @@ public class UtilTest {
         Bukkit.dispatchCommand(sender, "replace tastybento");
         verify(plugin, never()).logError(anyString());
     }
-    
+
     /**
      * Test for {@link Util#runCommands(world.bentobox.bentobox.api.user.User, java.util.List, String)}
      */
