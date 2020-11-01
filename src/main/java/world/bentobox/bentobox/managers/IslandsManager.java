@@ -1511,4 +1511,50 @@ public class IslandsManager {
                 .anyMatch(n -> ChatColor.stripColor(n).equals(ChatColor.stripColor(name)));
     }
 
+    public CompletableFuture<Boolean> checkTeams(User user, World world) {
+        CompletableFuture<Boolean> r = new CompletableFuture<>();
+        user.sendMessage("commands.admin.team.fix.scanning");
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            Map<UUID, Island> owners = new HashMap<>();
+            Map<UUID, Integer> freq = new HashMap<>();
+            handler.loadObjects()
+            .stream().filter(i -> i.getOwner() != null)
+            .filter(i -> i.getWorld().equals(world))
+            .forEach(i -> {
+                int count = freq.containsKey(i.getOwner()) ? freq.get(i.getOwner()) : 0;
+                freq.put(i.getOwner(), count + 1);
+                if (owners.containsKey(i.getOwner())) {
+                    user.sendMessage("commands.admin.team.fix.duplicate-owner" , TextVariables.NAME, plugin.getPlayers().getName(i.getOwner()));
+                } else {
+                    owners.put(i.getOwner(), i);
+                }
+            });
+            freq.entrySet().stream().filter(en -> en.getValue() > 1).forEach(en -> {
+                user.sendMessage("commands.admin.team.fix.player-has", TextVariables.NAME, plugin.getPlayers().getName(en.getKey()), TextVariables.NUMBER, String.valueOf(en.getValue()));
+            });
+            owners.entrySet().stream().forEach(en -> {
+                en.getValue().getMemberSet().stream()
+                // Filter out owners
+                .filter(u-> owners.containsKey(u) && !owners.get(u).equals(en.getValue()))
+                .forEach(u -> {
+                    user.sendMessage("commands.admin.team.fix.member-and-owner", TextVariables.NAME, plugin.getPlayers().getName(u));
+                    user.sendMessage("commands.admin.team.fix.member-of", "[xyz]", Util.xyz(en.getValue().getCenter().toVector()));
+                    user.sendMessage("commands.admin.team.fix.owner-of", "[xyz]", Util.xyz(owners.get(u).getCenter().toVector()));
+                    // Remove membership of this island
+                    Island i = islandCache.getIslandById(en.getValue().getUniqueId());
+                    i.removeMember(u);
+                    // Correct island cache
+                    islandCache.setOwner(islandCache.getIslandById(owners.get(u).getUniqueId()), u);
+                    // Save to database
+                    handler.saveObjectAsync(i).thenRun(() -> user.sendMessage("commands.admin.team.fix.fixed"));
+
+                });
+            });
+            user.sendMessage("commands.admin.team.fix.done");
+            r.complete(true);
+        });
+
+
+        return r;
+    }
 }

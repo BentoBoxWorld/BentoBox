@@ -113,6 +113,16 @@ commands:
         use-disband-owner: "&c Not owner! Use disband [owner]."
         disbanded: "&c Admin disbanded your team!"
         success: "&b [name]&a 's team has been disbanded."
+      fix:
+        description: "scans and fixes cross island membership in database"
+        scanning: "Scanning database..."
+        duplicate-owner: "&c Player owns more than one island in database: [name]"
+        player-has: "&c Player [name] has [number] islands"
+        member-and-owner: "&c Cross-membership found: Player [name] is an island owner and member"
+        owner-of: "&c Owner of island at [xyz]"
+        member-of: "&c Member of island at [xyz]"
+        fixed: "&a Fixed"
+        done: "&a Scan completed"
       kick:
         parameters: "<team player>"
         description: "kick a player from a team"
