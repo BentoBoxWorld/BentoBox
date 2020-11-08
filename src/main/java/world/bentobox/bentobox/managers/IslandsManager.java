@@ -1521,11 +1521,24 @@ public class IslandsManager {
             handler.loadObjects()
             .stream().filter(i -> i.getOwner() != null)
             .filter(i -> i.getWorld().equals(world))
+            .filter(i -> !i.isDoNotLoad())
             .forEach(i -> {
                 int count = freq.containsKey(i.getOwner()) ? freq.get(i.getOwner()) : 0;
                 freq.put(i.getOwner(), count + 1);
                 if (owners.containsKey(i.getOwner())) {
+                    // Player already has an island in the database
                     user.sendMessage("commands.admin.team.fix.duplicate-owner" , TextVariables.NAME, plugin.getPlayers().getName(i.getOwner()));
+                    Island prev = owners.get(i.getOwner());
+                    // Find out if this island is in the cache
+                    Island cachedIsland = this.getIsland(i.getWorld(), i.getOwner());
+                    if (cachedIsland != null && !cachedIsland.getUniqueId().equals(i.getUniqueId())) {
+                        islandCache.deleteIslandFromCache(i.getUniqueId());
+                        handler.deleteID(i.getUniqueId());
+                    }
+                    if (cachedIsland != null && !cachedIsland.getUniqueId().equals(prev.getUniqueId())) {
+                        islandCache.deleteIslandFromCache(prev.getUniqueId());
+                        handler.deleteID(prev.getUniqueId());
+                    }
                 } else {
                     owners.put(i.getOwner(), i);
                     i.getMemberSet().forEach(u ->
@@ -1554,21 +1567,30 @@ public class IslandsManager {
                     }
                     String xyz = Util.xyz(i.getCenter().toVector());
                     user.sendMessage("commands.admin.team.fix.rank-on-island", TextVariables.RANK, user.getTranslation(rank), "[xyz]", xyz);
+                    user.sendRawMessage(i.getUniqueId());
                 }
                 // Fix island ownership in cache
                 // Correct island cache
                 if (highestRank == RanksManager.OWNER_RANK) {
-                    islandCache.setOwner(islandCache.getIslandById(highestIsland.getUniqueId()), en.getKey());
+                    if (islandCache.getIslandById(highestIsland.getUniqueId()) != null) {
+                        islandCache.setOwner(islandCache.getIslandById(highestIsland.getUniqueId()), en.getKey());
+                    }
                 }
                 // Fix all the entries that are not the highest
                 for (Island island : en.getValue()) {
                     if (!island.equals(highestIsland)) {
                         // Get the actual island being used in the cache
                         Island i = islandCache.getIslandById(island.getUniqueId());
-                        // Remove membership of this island
-                        i.removeMember(en.getKey());
+                        if (i != null) {
+                            // Remove membership of this island
+                            i.removeMember(en.getKey());
+                        }
+                        // Remove from database island
+                        island.removeMember(en.getKey());
                         // Save to database
-                        handler.saveObjectAsync(i).thenRun(() -> user.sendMessage("commands.admin.team.fix.fixed"));
+                        handler.saveObjectAsync(island).thenRun(() -> user.sendMessage("commands.admin.team.fix.fixed"));
+                    } else {
+                        // Special check for when a player is an owner and member
                     }
                 }
 
