@@ -115,7 +115,7 @@ public class IslandCache {
         grids.putIfAbsent(island.getWorld(), new IslandGrid());
         return grids.get(island.getWorld()).removeFromGrid(island);
     }
-
+    
     /**
      * Delete island from the cache by ID. Does not remove blocks.
      * @param uniqueId - island unique ID
