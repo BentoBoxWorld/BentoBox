@@ -1241,6 +1241,12 @@ protection:
       description: |-
         &a If active, withers can
         &a damage blocks and players
+    WORLD_TNT_DAMAGE:
+      description: |-
+        &a Allow TNT and TNT minecarts
+        &a to break blocks and damage
+        &a entities outside of island limits.
+      name: "World TNT damage"
   locked: "&c This island is locked!"
   protected: "&c Island protected: [description]."
   world-protected: "&c World protected: [description]."
