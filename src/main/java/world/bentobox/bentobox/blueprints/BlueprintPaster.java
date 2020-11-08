@@ -243,6 +243,10 @@ public class BlueprintPaster {
             }
             block.setBlockData(bd, false);
             setBlockState(block, bpBlock);
+            // Set biome
+            if (bpBlock.getBiome() != null) {
+                block.setBiome(bpBlock.getBiome());
+            }
             // pos1 and pos2 update
             updatePos(block.getLocation());
         });
