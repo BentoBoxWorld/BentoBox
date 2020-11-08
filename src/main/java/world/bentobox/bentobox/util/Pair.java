@@ -17,6 +17,25 @@ public class Pair<X, Z> {
         this.z = z;
     }
 
+
+    /**
+     * Returns X element as key.
+     * @return X element
+     */
+    public X getKey() {
+        return x;
+    }
+
+
+    /**
+     * Returns Z element as value.
+     * @return Z element
+     */
+    public Z getValue() {
+        return z;
+    }
+
+
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
