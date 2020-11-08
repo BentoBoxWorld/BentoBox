@@ -24,6 +24,7 @@ Start now to create the server you've dreamed of!
 ## Addons
 These are some popular Gamemodes:
 * [**AcidIsland**](https://github.com/BentoBoxWorld/AcidIsland): You are marooned in a sea of acid!
+* [**AOneBlock**](https://github.com/BentoBoxWorld/AOneBlock): Start to play with only 1 magical block.
 * [**BSkyBlock**](https://github.com/BentoBoxWorld/BSkyBlock): The successor to the popular ASkyBlock.
 * [**CaveBlock**](https://github.com/BentoBoxWorld/CaveBlock): Try to live underground!
 * [**SkyGrid**](https://github.com/BentoBoxWorld/SkyGrid): Survive in world made up of scattered blocks - what an adventure!
