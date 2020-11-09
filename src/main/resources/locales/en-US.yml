@@ -119,7 +119,6 @@ commands:
         duplicate-owner: "&c Player owns more than one island in database: [name]"
         player-has: "&c Player [name] has [number] islands"
         duplicate-member: "&c Player [name] is a member of more than one island in the database"
-        player-has: "&c Player [name] has [number] islands"
         rank-on-island: "&c [rank] on island at [xyz]"
         fixed: "&a Fixed"
         done: "&a Scan"

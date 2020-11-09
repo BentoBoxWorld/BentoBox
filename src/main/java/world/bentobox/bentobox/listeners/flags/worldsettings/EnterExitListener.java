@@ -63,7 +63,7 @@ public class EnterExitListener extends FlagListener {
             // Fire the IslandExitEvent
             new IslandEvent.IslandEventBuilder()
             .island(i)
-            .oldIsland(islandTo.isPresent() ? islandTo.get() : null)
+            .oldIsland(islandTo.orElse(null))
             .involvedPlayer(user.getUniqueId())
             .reason(IslandEvent.Reason.EXIT)
             .admin(false)
@@ -78,7 +78,7 @@ public class EnterExitListener extends FlagListener {
             // Fire the IslandEnterEvent
             new IslandEvent.IslandEventBuilder()
             .island(i)
-            .oldIsland(islandFrom.isPresent() ? islandFrom.get() : null)
+            .oldIsland(islandFrom.orElse(null))
             .involvedPlayer(user.getUniqueId())
             .reason(IslandEvent.Reason.ENTER)
             .admin(false)

@@ -2,7 +2,6 @@ package world.bentobox.bentobox.api.panels;
 
 import java.util.Map;
 import java.util.Optional;
-import java.util.OptionalInt;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -187,15 +186,12 @@ public class Panel implements HeadRequester, InventoryHolder {
     public void setHead(PanelItem item) {
         // Update the panel item
         // Find panel item index in items and replace it once more in inventory to update it.
-
-        OptionalInt index = this.items.entrySet().stream().
-            filter(entry -> entry.getValue() == item).
-            mapToInt(Map.Entry::getKey).findFirst();
-
-        if (index.isPresent()) {
-            // Update item inside inventory to change icon only if item is inside panel.
-            this.inventory.setItem(index.getAsInt(), item.getItem());
-        }
+        this.items.entrySet().stream().
+        filter(entry -> entry.getValue() == item).
+        mapToInt(Map.Entry::getKey).findFirst()
+        .ifPresent(index ->
+        // Update item inside inventory to change icon only if item is inside panel.
+        this.inventory.setItem(index, item.getItem()));
     }
 
     /**

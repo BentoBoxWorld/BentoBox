@@ -82,7 +82,6 @@ public class PortalTeleportationListener implements Listener {
         if (!Bukkit.getAllowEnd() && e.getPlayer().getLocation().getBlock().getType().equals(Material.END_PORTAL)) {
             PlayerPortalEvent en = new PlayerPortalEvent(e.getPlayer(), e.getPlayer().getLocation(), null, TeleportCause.END_PORTAL, 0, false, 0);
             this.onEndIslandPortal(en);
-            return;
         }
     }
 

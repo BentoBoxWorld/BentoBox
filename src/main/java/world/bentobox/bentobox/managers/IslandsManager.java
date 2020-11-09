@@ -1523,7 +1523,7 @@ public class IslandsManager {
             .filter(i -> i.getWorld().equals(world))
             .filter(i -> !i.isDoNotLoad())
             .forEach(i -> {
-                int count = freq.containsKey(i.getOwner()) ? freq.get(i.getOwner()) : 0;
+                int count = freq.getOrDefault(i.getOwner(), 0);
                 freq.put(i.getOwner(), count + 1);
                 if (owners.containsKey(i.getOwner())) {
                     // Player already has an island in the database
@@ -1546,9 +1546,7 @@ public class IslandsManager {
                     memberships.computeIfAbsent(u, k -> new ArrayList<>()).add(i));
                 }
             });
-            freq.entrySet().stream().filter(en -> en.getValue() > 1).forEach(en -> {
-                user.sendMessage("commands.admin.team.fix.player-has", TextVariables.NAME, plugin.getPlayers().getName(en.getKey()), TextVariables.NUMBER, String.valueOf(en.getValue()));
-            });
+            freq.entrySet().stream().filter(en -> en.getValue() > 1).forEach(en -> user.sendMessage("commands.admin.team.fix.player-has", TextVariables.NAME, plugin.getPlayers().getName(en.getKey()), TextVariables.NUMBER, String.valueOf(en.getValue())));
             // Check for players in multiple teams
             memberships.entrySet().stream()
             .filter(en -> en.getValue().size() > 1)
