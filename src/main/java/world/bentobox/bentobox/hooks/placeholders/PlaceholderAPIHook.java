@@ -112,7 +112,7 @@ public class PlaceholderAPIHook extends PlaceholderHook {
     public String replacePlaceholders(@NonNull Player player, @NonNull String string) {
         // Transform [gamemode] in string to the game mode description name, or remove it for the default replacement
         String newString = BentoBox.getInstance().getIWM().getAddon(player.getWorld()).map(gm -> 
-            string.replace(TextVariables.GAMEMODE, gm.getDescription().getName())
+            string.replace(TextVariables.GAMEMODE, gm.getDescription().getName()..toLowerCase())
         ).orElse(removeGMPlaceholder(string));
         return PlaceholderAPI.setPlaceholders(player, newString);
     }
