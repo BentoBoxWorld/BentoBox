@@ -109,7 +109,7 @@ public class Util {
         }
         final String[] parts = s.split(":");
         if (parts.length == 6) {
-            final World w = Bukkit.getServer().getWorld(parts[0]);
+            final World w = Bukkit.getWorld(parts[0]);
             if (w == null) {
                 return null;
             }

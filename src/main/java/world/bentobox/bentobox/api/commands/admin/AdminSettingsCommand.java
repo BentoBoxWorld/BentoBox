@@ -7,6 +7,7 @@ import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.flags.Flag;
+import world.bentobox.bentobox.api.flags.Flag.Mode;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.panels.builders.TabbedPanelBuilder;
 import world.bentobox.bentobox.api.user.User;
@@ -62,6 +63,7 @@ public class AdminSettingsCommand extends CompositeCommand {
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
+        getPlayers().setFlagsDisplayMode(user.getUniqueId(), Mode.EXPERT);
         if (args.isEmpty()) {
             new TabbedPanelBuilder()
             .user(user)

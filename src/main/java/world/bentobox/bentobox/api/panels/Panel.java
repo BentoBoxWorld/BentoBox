@@ -2,17 +2,12 @@ package world.bentobox.bentobox.api.panels;
 
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.eclipse.jdt.annotation.NonNull;
 
 import world.bentobox.bentobox.api.user.User;
@@ -190,19 +185,13 @@ public class Panel implements HeadRequester, InventoryHolder {
     @Override
     public void setHead(PanelItem item) {
         // Update the panel item
-        // Replace the item in the item list if the name is the same
-        items = items.entrySet().stream()
-                .collect(Collectors.toMap(Map.Entry::getKey, e -> (item.getName().equals(e.getValue().getName()) ? item : e.getValue())));
-        // Replace the inventory slot item
-        for (int i = 0; i < inventory.getSize(); i++) {
-            ItemStack it = inventory.getItem(i);
-            if (it != null && it.getType().equals(Material.PLAYER_HEAD)) {
-                ItemMeta meta = it.getItemMeta();
-                if (meta != null && ChatColor.stripColor(item.getName()).equals(ChatColor.stripColor(meta.getLocalizedName()))) {
-                    inventory.setItem(i, item.getItem());
-                }
-            }
-        }
+        // Find panel item index in items and replace it once more in inventory to update it.
+        this.items.entrySet().stream().
+        filter(entry -> entry.getValue() == item).
+        mapToInt(Map.Entry::getKey).findFirst()
+        .ifPresent(index ->
+        // Update item inside inventory to change icon only if item is inside panel.
+        this.inventory.setItem(index, item.getItem()));
     }
 
     /**

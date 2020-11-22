@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.eclipse.jdt.annotation.Nullable;
@@ -78,9 +79,9 @@ public class IslandExpelCommand extends CompositeCommand {
             user.sendMessage("commands.island.expel.cannot-expel-member");
             return false;
         }
-        // Cannot expel offline players
+        // Cannot expel offline players or invisible players
         target = User.getInstance(targetUUID);
-        if (!target.isOnline()) {
+        if (!target.isOnline() || !user.getPlayer().canSee(Bukkit.getPlayer(targetUUID))) {
             user.sendMessage("general.errors.offline-player");
             return false;
         }

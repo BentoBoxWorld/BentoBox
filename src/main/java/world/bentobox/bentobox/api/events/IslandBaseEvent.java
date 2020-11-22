@@ -4,6 +4,8 @@ import java.util.UUID;
 
 import org.bukkit.Location;
 import org.bukkit.event.Cancellable;
+import org.bukkit.event.Event;
+import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.database.objects.Island;
 
@@ -17,6 +19,7 @@ public class IslandBaseEvent extends BentoBoxEvent implements Cancellable {
     protected final UUID playerUUID;
     protected final boolean admin;
     protected final Location location;
+    protected final Event rawEvent;
 
     public IslandBaseEvent(Island island) {
         super();
@@ -24,6 +27,7 @@ public class IslandBaseEvent extends BentoBoxEvent implements Cancellable {
         playerUUID = island == null ? null : island.getOwner();
         admin = false;
         location = island == null ? null : island.getCenter();
+        rawEvent = null;
     }
 
     /**
@@ -38,6 +42,23 @@ public class IslandBaseEvent extends BentoBoxEvent implements Cancellable {
         this.playerUUID = playerUUID;
         this.admin = admin;
         this.location = location;
+        rawEvent = null;
+    }
+    
+   /**
+     * @param island - island
+     * @param playerUUID - the player's UUID
+     * @param admin - true if ths is due to an admin event
+     * @param location - the location
+     * @param rawEvent - the raw event
+     */
+    public IslandBaseEvent(Island island, UUID playerUUID, boolean admin, Location location, Event rawEvent) {
+        super();
+        this.island = island;
+        this.playerUUID = playerUUID;
+        this.admin = admin;
+        this.location = location;
+        this.rawEvent = rawEvent;
     }
 
     /**
@@ -73,6 +94,14 @@ public class IslandBaseEvent extends BentoBoxEvent implements Cancellable {
      */
     public Location getLocation() {
         return location;
+    }
+    
+    /**
+     * @return the raw event
+     */
+    @Nullable
+    public Event getRawEvent() {
+        return rawEvent;
     }
 
     @Override

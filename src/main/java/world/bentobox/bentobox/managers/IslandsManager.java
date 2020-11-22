@@ -6,7 +6,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -30,7 +29,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.PufferFish;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.PermissionAttachmentInfo;
-import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -98,10 +96,6 @@ public class IslandsManager {
     // Deleted islands
     @NonNull
     private List<String> deletedIslands;
-
-    private Set<String> toSave = new HashSet<>();
-
-    private BukkitTask task;
 
     /**
      * Islands Manager
@@ -1239,24 +1233,6 @@ public class IslandsManager {
     }
 
     /**
-     * Saves all the players at a rate of 1 per tick. Used as a backup.
-     * @since 1.8.0
-     */
-    public void asyncSaveAll() {
-        if (!toSave.isEmpty()) return;
-        // Get a list of ID's to save
-        toSave = new HashSet<>(islandCache.getAllIslandIds());
-        Iterator<String> it = toSave.iterator();
-        task = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
-            if (plugin.isEnabled() && it.hasNext()) {
-                getIslandById(it.next()).ifPresent(this::save);
-            } else {
-                toSave.clear();
-                task.cancel();
-            }
-        }, 0L, 1L);
-    }
-    /**
      * Puts a player in a team. Removes them from their old island if required.
      * @param teamIsland - team island
      * @param playerUUID - the player's UUID
@@ -1535,4 +1511,93 @@ public class IslandsManager {
                 .anyMatch(n -> ChatColor.stripColor(n).equals(ChatColor.stripColor(name)));
     }
 
+    public CompletableFuture<Boolean> checkTeams(User user, World world) {
+        CompletableFuture<Boolean> r = new CompletableFuture<>();
+        user.sendMessage("commands.admin.team.fix.scanning");
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            Map<UUID, Island> owners = new HashMap<>();
+            Map<UUID, Integer> freq = new HashMap<>();
+            Map<UUID, List<Island>> memberships = new HashMap<>();
+            handler.loadObjects()
+            .stream().filter(i -> i.getOwner() != null)
+            .filter(i -> i.getWorld().equals(world))
+            .filter(i -> !i.isDoNotLoad())
+            .forEach(i -> {
+                int count = freq.getOrDefault(i.getOwner(), 0);
+                freq.put(i.getOwner(), count + 1);
+                if (owners.containsKey(i.getOwner())) {
+                    // Player already has an island in the database
+                    user.sendMessage("commands.admin.team.fix.duplicate-owner" , TextVariables.NAME, plugin.getPlayers().getName(i.getOwner()));
+                    Island prev = owners.get(i.getOwner());
+                    // Find out if this island is in the cache
+                    Island cachedIsland = this.getIsland(i.getWorld(), i.getOwner());
+                    if (cachedIsland != null && !cachedIsland.getUniqueId().equals(i.getUniqueId())) {
+                        islandCache.deleteIslandFromCache(i.getUniqueId());
+                        handler.deleteID(i.getUniqueId());
+                    }
+                    if (cachedIsland != null && !cachedIsland.getUniqueId().equals(prev.getUniqueId())) {
+                        islandCache.deleteIslandFromCache(prev.getUniqueId());
+                        handler.deleteID(prev.getUniqueId());
+                    }
+                } else {
+                    owners.put(i.getOwner(), i);
+                    i.getMemberSet().forEach(u ->
+                    // Place into membership
+                    memberships.computeIfAbsent(u, k -> new ArrayList<>()).add(i));
+                }
+            });
+            freq.entrySet().stream().filter(en -> en.getValue() > 1).forEach(en -> user.sendMessage("commands.admin.team.fix.player-has", TextVariables.NAME, plugin.getPlayers().getName(en.getKey()), TextVariables.NUMBER, String.valueOf(en.getValue())));
+            // Check for players in multiple teams
+            memberships.entrySet().stream()
+            .filter(en -> en.getValue().size() > 1)
+            .forEach(en -> {
+                // Get the islands
+                String ownerName = plugin.getPlayers().getName(en.getKey());
+                user.sendMessage("commands.admin.team.fix.duplicate-member", TextVariables.NAME, ownerName);
+                int highestRank = 0;
+                Island highestIsland = null;
+                for (Island i : en.getValue()) {
+                    int rankValue = i.getRank(en.getKey());
+                    String rank = plugin.getRanksManager().getRank(rankValue);
+                    if (rankValue > highestRank || highestIsland == null) {
+                        highestRank = rankValue;
+                        highestIsland = i;
+                    }
+                    String xyz = Util.xyz(i.getCenter().toVector());
+                    user.sendMessage("commands.admin.team.fix.rank-on-island", TextVariables.RANK, user.getTranslation(rank), "[xyz]", xyz);
+                    user.sendRawMessage(i.getUniqueId());
+                }
+                // Fix island ownership in cache
+                // Correct island cache
+                if (highestRank == RanksManager.OWNER_RANK) {
+                    if (islandCache.getIslandById(highestIsland.getUniqueId()) != null) {
+                        islandCache.setOwner(islandCache.getIslandById(highestIsland.getUniqueId()), en.getKey());
+                    }
+                }
+                // Fix all the entries that are not the highest
+                for (Island island : en.getValue()) {
+                    if (!island.equals(highestIsland)) {
+                        // Get the actual island being used in the cache
+                        Island i = islandCache.getIslandById(island.getUniqueId());
+                        if (i != null) {
+                            // Remove membership of this island
+                            i.removeMember(en.getKey());
+                        }
+                        // Remove from database island
+                        island.removeMember(en.getKey());
+                        // Save to database
+                        handler.saveObjectAsync(island).thenRun(() -> user.sendMessage("commands.admin.team.fix.fixed"));
+                    } else {
+                        // Special check for when a player is an owner and member
+                    }
+                }
+
+            });
+            user.sendMessage("commands.admin.team.fix.done");
+            r.complete(true);
+        });
+
+
+        return r;
+    }
 }
