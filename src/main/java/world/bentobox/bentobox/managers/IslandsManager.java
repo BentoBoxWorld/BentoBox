@@ -1,17 +1,7 @@
 package world.bentobox.bentobox.managers;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
@@ -29,6 +19,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.PufferFish;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.PermissionAttachmentInfo;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -1221,15 +1212,44 @@ public class IslandsManager {
     /**
      * Save the all the islands to the database
      */
-    public void saveAll(){
-        Collection<Island> collection = islandCache.getIslands();
-        for(Island island : collection){
-            try {
-                handler.saveObjectAsync(island);
-            } catch (Exception e) {
-                plugin.logError("Could not save island to database when running sync! " + e.getMessage());
+    public void saveAll() {
+        saveAll(false);
+    }
+
+    /**
+     * Save the all the islands to the database
+     * @param schedule true if we should let the task run over multiple ticks to reduce lag spikes
+     */
+    public void saveAll(boolean schedule){
+        if (!schedule) {
+            for(Island island : islandCache.getIslands()){
+                try {
+                    handler.saveObjectAsync(island);
+                } catch (Exception e) {
+                    plugin.logError("Could not save island to database when running sync! " + e.getMessage());
+                }
             }
+            return;
         }
+
+        Queue<Island> queue = new LinkedList<>(islandCache.getIslands());
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                for (int i = 0; i < plugin.getSettings().getMaxSavedIslandsPerTick(); i++) {
+                    Island island = queue.poll();
+                    if (island == null) {
+                        cancel();
+                        return;
+                    }
+                    try {
+                        handler.saveObjectAsync(island);
+                    } catch (Exception e) {
+                        plugin.logError("Could not save island to database when running sync! " + e.getMessage());
+                    }
+                }
+            }
+        }.runTaskTimer(plugin, 0, 1);
     }
 
     /**
