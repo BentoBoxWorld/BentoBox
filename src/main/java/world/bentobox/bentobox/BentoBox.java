@@ -203,8 +203,8 @@ public class BentoBox extends JavaPlugin {
 
             // Save islands & players data every X minutes
             Bukkit.getScheduler().runTaskTimer(instance, () -> {
-                playersManager.saveAll();
-                islandsManager.saveAll();
+                playersManager.saveAll(true);
+                islandsManager.saveAll(true);
             }, getSettings().getDatabaseBackupPeriod() * 20 * 60L, getSettings().getDatabaseBackupPeriod() * 20 * 60L);
 
             // Make sure all flag listeners are registered.
