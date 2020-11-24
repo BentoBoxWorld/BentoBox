@@ -99,13 +99,13 @@ public class Settings implements ConfigObject {
     @ConfigComment("Reduce if you experience lag while saving.")
     @ConfigComment("Do not set this too low or data might get lost!")
     @ConfigEntry(path = "general.database.max-saved-players-per-tick")
-    private int maxSavedPlayersPerTick = 200;
+    private int maxSavedPlayersPerTick = 20;
 
     @ConfigComment("How many islands will be saved in one tick. Default is 200")
     @ConfigComment("Reduce if you experience lag while saving.")
     @ConfigComment("Do not set this too low or data might get lost!")
     @ConfigEntry(path = "general.database.max-saved-islands-per-tick")
-    private int maxSavedIslandsPerTick = 200;
+    private int maxSavedIslandsPerTick = 20;
 
     @ConfigComment("Enable SSL connection to MongoDB, MariaDB, MySQL and PostgreSQL databases.")
     @ConfigEntry(path = "general.database.use-ssl", since = "1.12.0")
