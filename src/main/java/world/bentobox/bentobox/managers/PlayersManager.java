@@ -1,16 +1,11 @@
 package world.bentobox.bentobox.managers;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
@@ -67,8 +62,44 @@ public class PlayersManager {
     /**
      * Save all players
      */
-    public void saveAll(){
-        Collections.unmodifiableCollection(playerCache.values()).forEach(handler::saveObjectAsync);
+    public void saveAll() {
+        saveAll(false);
+    }
+
+    /**
+     * Save all players
+     * @param schedule true if we should let the task run over multiple ticks to reduce lag spikes
+     */
+    public void saveAll(boolean schedule){
+        if (!schedule) {
+            for (Players player : playerCache.values()) {
+                try {
+                    handler.saveObjectAsync(player);
+                } catch (Exception e) {
+                    plugin.logError("Could not save player to database when running sync! " + e.getMessage());
+                }
+            }
+            return;
+        }
+
+        Queue<Players> queue = new LinkedList<>(playerCache.values());
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                for (int i = 0; i < plugin.getSettings().getMaxSavedPlayersPerTick(); i++) {
+                    Players player = queue.poll();
+                    if (player == null) {
+                        cancel();
+                        return;
+                    }
+                    try {
+                        handler.saveObjectAsync(player);
+                    } catch (Exception e) {
+                        plugin.logError("Could not save player to database when running sync! " + e.getMessage());
+                    }
+                }
+            }
+        }.runTaskTimer(plugin, 0, 1);
     }
 
     public void shutdown(){
