@@ -18,7 +18,6 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.lists.Flags;
 
@@ -85,11 +84,11 @@ public class TNTListener extends FlagListener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onExplosion(final EntityExplodeEvent e) {
-        if (TNT_TYPES.contains(e.getEntityType())) {
+        // Check world and types
+        if (getIWM().inWorld(e.getLocation()) && TNT_TYPES.contains(e.getEntityType())) {
             // Remove any blocks from the explosion list if required
             e.blockList().removeIf(b -> protect(b.getLocation()));
             e.setCancelled(protect(e.getLocation()));
-            BentoBox.getInstance().logDebug(e.getEventName() + " " + e.isCancelled());
         }
 
     }
@@ -105,13 +104,12 @@ public class TNTListener extends FlagListener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onExplosion(final EntityDamageByEntityEvent e) {
-        // Check if this a TNT exploding
-        if (!e.getCause().equals(EntityDamageEvent.DamageCause.ENTITY_EXPLOSION) || !TNT_TYPES.contains(e.getDamager().getType())) {
-            return;
+        // Check if this in world, an explosion, and TNT exploding
+        if (getIWM().inWorld(e.getEntity().getLocation())
+                && e.getCause().equals(EntityDamageEvent.DamageCause.ENTITY_EXPLOSION)
+                && TNT_TYPES.contains(e.getDamager().getType())) {
+            // Check if it is disallowed, then cancel it.
+            e.setCancelled(protect(e.getEntity().getLocation()));
         }
-        // Check if it is disallowed, then cancel it.
-        e.setCancelled(protect(e.getEntity().getLocation()));
-
-        BentoBox.getInstance().logDebug(e.getEventName() + " " + e.isCancelled());
     }
 }

@@ -35,6 +35,8 @@ import org.bukkit.entity.Zombie;
 import org.bukkit.event.Event.Result;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
@@ -176,6 +178,13 @@ public class TNTListenerTest {
         // Entity
         when(entity.getType()).thenReturn(EntityType.PRIMED_TNT);
         when(entity.getWorld()).thenReturn(world);
+        when(entity.getLocation()).thenReturn(location);
+
+        // Player
+        when(player.getLocation()).thenReturn(location);
+
+        // In world
+        when(iwm.inWorld(any(Location.class))).thenReturn(true);
 
 
         listener = new TNTListener();
@@ -231,6 +240,16 @@ public class TNTListenerTest {
         Flags.WORLD_TNT_DAMAGE.setDefaultSetting(true);
         assertTrue(Flags.WORLD_TNT_DAMAGE.isSetForWorld(world));
         when(im.getProtectedIslandAt(any())).thenReturn(Optional.empty());
+        List<Block> list = new ArrayList<>();
+        list.add(block);
+        EntityExplodeEvent e = new EntityExplodeEvent(entity, location, list, 0);
+        listener.onExplosion(e);
+        assertFalse(list.isEmpty());
+    }
+
+    @Test
+    public void testOnExplosionWrongWorld() {
+        when(iwm.inWorld(any(Location.class))).thenReturn(false);
         List<Block> list = new ArrayList<>();
         list.add(block);
         EntityExplodeEvent e = new EntityExplodeEvent(entity, location, list, 0);
@@ -389,5 +408,40 @@ public class TNTListenerTest {
 
     }
 
+    @Test
+    public void testOnEntityExplosion() {
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(entity, player, DamageCause.ENTITY_EXPLOSION, 20D);
+        listener.onExplosion(e);
+        assertTrue(e.isCancelled());
+    }
+
+    @Test
+    public void testOnEntityExplosionOutsideIsland() {
+        Flags.WORLD_TNT_DAMAGE.setDefaultSetting(false);
+        assertFalse(Flags.WORLD_TNT_DAMAGE.isSetForWorld(world));
+        when(im.getProtectedIslandAt(any())).thenReturn(Optional.empty());
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(entity, player, DamageCause.ENTITY_EXPLOSION, 20D);
+        listener.onExplosion(e);
+        assertTrue(e.isCancelled());
+    }
+
+    @Test
+    public void testOnEntityExplosionOutsideIslandAllowed() {
+        Flags.WORLD_TNT_DAMAGE.setDefaultSetting(true);
+        assertTrue(Flags.WORLD_TNT_DAMAGE.isSetForWorld(world));
+        when(im.getProtectedIslandAt(any())).thenReturn(Optional.empty());
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(entity, player, DamageCause.ENTITY_EXPLOSION, 20D);
+        listener.onExplosion(e);
+        assertFalse(e.isCancelled());
+    }
+
+    @Test
+    public void testOnEntityExplosionWrongWorld() {
+        when(iwm.inWorld(any(Location.class))).thenReturn(false);
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(entity, player, DamageCause.ENTITY_EXPLOSION, 20D);
+        listener.onExplosion(e);
+        assertFalse(e.isCancelled());
+
+    }
 
 }
