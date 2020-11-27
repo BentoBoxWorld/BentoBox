@@ -25,6 +25,8 @@ public class PlayersManager {
     private Map<UUID, Players> playerCache;
     private Set<UUID> inTeleport;
 
+    private boolean isSaveTaskRunning;
+
     /**
      * Provides a memory cache of online player information
      * This is the one-stop-shop of player info
@@ -59,6 +61,10 @@ public class PlayersManager {
         handler.loadObjects().forEach(p -> playerCache.put(p.getPlayerUUID(), p));
     }
 
+    public boolean isSaveTaskRunning() {
+        return isSaveTaskRunning;
+    }
+
     /**
      * Save all players
      */
@@ -82,6 +88,7 @@ public class PlayersManager {
             return;
         }
 
+        isSaveTaskRunning = true;
         Queue<Players> queue = new LinkedList<>(playerCache.values());
         new BukkitRunnable() {
             @Override
@@ -89,6 +96,7 @@ public class PlayersManager {
                 for (int i = 0; i < plugin.getSettings().getMaxSavedPlayersPerTick(); i++) {
                     Players player = queue.poll();
                     if (player == null) {
+                        isSaveTaskRunning = false;
                         cancel();
                         return;
                     }

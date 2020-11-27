@@ -203,8 +203,16 @@ public class BentoBox extends JavaPlugin {
 
             // Save islands & players data every X minutes
             Bukkit.getScheduler().runTaskTimer(instance, () -> {
-                playersManager.saveAll(true);
-                islandsManager.saveAll(true);
+                if (!playersManager.isSaveTaskRunning()) {
+                    playersManager.saveAll(true);
+                } else {
+                    getLogger().warning("Tried to start a player data save task while the previous auto save was still running!");
+                }
+                if (!islandsManager.isSaveTaskRunning()) {
+                    islandsManager.saveAll(true);
+                } else {
+                    getLogger().warning("Tried to start a island data save task while the previous auto save was still running!");
+                }
             }, getSettings().getDatabaseBackupPeriod() * 20 * 60L, getSettings().getDatabaseBackupPeriod() * 20 * 60L);
 
             // Make sure all flag listeners are registered.
