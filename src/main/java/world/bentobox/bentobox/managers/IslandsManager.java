@@ -88,6 +88,8 @@ public class IslandsManager {
     @NonNull
     private List<String> deletedIslands;
 
+    private boolean isSaveTaskRunning;
+
     /**
      * Islands Manager
      * @param plugin - plugin
@@ -1209,6 +1211,10 @@ public class IslandsManager {
         });
     }
 
+    public boolean isSaveTaskRunning() {
+        return isSaveTaskRunning;
+    }
+
     /**
      * Save the all the islands to the database
      */
@@ -1232,6 +1238,8 @@ public class IslandsManager {
             return;
         }
 
+
+        isSaveTaskRunning = true;
         Queue<Island> queue = new LinkedList<>(islandCache.getIslands());
         new BukkitRunnable() {
             @Override
@@ -1239,6 +1247,7 @@ public class IslandsManager {
                 for (int i = 0; i < plugin.getSettings().getMaxSavedIslandsPerTick(); i++) {
                     Island island = queue.poll();
                     if (island == null) {
+                        isSaveTaskRunning = false;
                         cancel();
                         return;
                     }
