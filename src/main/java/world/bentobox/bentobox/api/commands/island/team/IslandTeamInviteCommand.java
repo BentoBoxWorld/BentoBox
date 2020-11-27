@@ -43,13 +43,6 @@ public class IslandTeamInviteCommand extends CompositeCommand {
             user.sendMessage("general.errors.no-island");
             return false;
         }
-        // Check rank to use command
-        Island island = getIslands().getIsland(getWorld(), user);
-        int rank = Objects.requireNonNull(island).getRank(user);
-        if (rank < island.getRankCommand(getUsage())) {
-            user.sendMessage("general.errors.insufficient-rank", TextVariables.RANK, user.getTranslation(getPlugin().getRanksManager().getRank(rank)));
-            return false;
-        }
         UUID playerUUID = user.getUniqueId();
         if (args.size() != 1) {
             // Invite label with no name, i.e., /island invite - tells the player who has invited them so far and why
@@ -73,13 +66,21 @@ public class IslandTeamInviteCommand extends CompositeCommand {
             showHelp(this, user);
             return false;
         }
+        // Check rank to use command
+        Island island = getIslands().getIsland(getWorld(), user);
+        int rank = Objects.requireNonNull(island).getRank(user);
+        if (rank < island.getRankCommand(getUsage())) {
+            user.sendMessage("general.errors.insufficient-rank", TextVariables.RANK, user.getTranslation(getPlugin().getRanksManager().getRank(rank)));
+            return false;
+        }
 
-        // Only online players can be invited
+
         UUID invitedPlayerUUID = getPlayers().getUUID(args.get(0));
         if (invitedPlayerUUID == null) {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
             return false;
         }
+        // Only online players can be invited
         invitedPlayer = User.getInstance(invitedPlayerUUID);
         if (!invitedPlayer.isOnline() || !user.getPlayer().canSee(invitedPlayer.getPlayer())) {
             user.sendMessage("general.errors.offline-player");

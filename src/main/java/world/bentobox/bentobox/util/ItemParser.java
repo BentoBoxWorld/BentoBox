@@ -64,8 +64,7 @@ public class ItemParser {
     private static ItemStack three(String[] part) {
         // Rearrange
         String[] twoer = {part[0], part[2]};
-        ItemStack result = two(twoer);
-        return result;
+        return two(twoer);
     }
 
     private static ItemStack potion(String[] part) {

@@ -203,8 +203,8 @@ public class BentoBox extends JavaPlugin {
 
             // Save islands & players data every X minutes
             Bukkit.getScheduler().runTaskTimer(instance, () -> {
-                playersManager.asyncSaveAll();
-                islandsManager.asyncSaveAll();
+                playersManager.saveAll(true);
+                islandsManager.saveAll(true);
             }, getSettings().getDatabaseBackupPeriod() * 20 * 60L, getSettings().getDatabaseBackupPeriod() * 20 * 60L);
 
             // Make sure all flag listeners are registered.
@@ -281,6 +281,9 @@ public class BentoBox extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        // Stop all async database tasks
+        shutdown = true;
+
         if (addonsManager != null) {
             addonsManager.disableAddons();
         }
@@ -291,8 +294,6 @@ public class BentoBox extends JavaPlugin {
         if (islandsManager != null) {
             islandsManager.shutdown();
         }
-        // Close all async database tasks
-        shutdown = true;
     }
 
     /**

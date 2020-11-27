@@ -9,11 +9,11 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
+import java.util.Queue;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
@@ -21,6 +21,7 @@ import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.panels.PanelItem;
+import world.bentobox.bentobox.util.Pair;
 
 
 /**
@@ -36,7 +37,7 @@ public class HeadGetter {
     /**
      * Local cache for storing requested names and items which must be updated.
      */
-    private static final Map<String, PanelItem> names = new HashMap<>();
+    private static final Queue<Pair<String, PanelItem>> names = new LinkedBlockingQueue<>();
 
     /**
      * Requesters of player heads.
@@ -89,7 +90,7 @@ public class HeadGetter {
             // Get the name
             headRequesters.computeIfAbsent(panelItem.getPlayerHeadName(), k -> new HashSet<>()).
                 add(requester);
-            names.put(panelItem.getPlayerHeadName(), panelItem);
+            names.add(new Pair<>(panelItem.getPlayerHeadName(), panelItem));
         }
     }
 
@@ -117,21 +118,19 @@ public class HeadGetter {
      */
     private void runPlayerHeadGetter() {
         Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {
-            synchronized (names)
+            synchronized (HeadGetter.names)
             {
-                Iterator<Entry<String, PanelItem>> it = names.entrySet().iterator();
-
-                if (it.hasNext())
+                if (!HeadGetter.names.isEmpty())
                 {
-                    Entry<String, PanelItem> elementEntry = it.next();
+                    Pair<String, PanelItem> elementEntry = HeadGetter.names.poll();
 
                     // TODO: In theory BentoBox could use User instance to find existing user UUID's.
                     // It would avoid one API call.
                     final String userName = elementEntry.getKey();
 
                     // Use cached userId as userId will not change :)
-                    UUID userId = cachedHeads.containsKey(userName) ?
-                        cachedHeads.get(userName).getUserId() :
+                    UUID userId = HeadGetter.cachedHeads.containsKey(userName) ?
+                        HeadGetter.cachedHeads.get(userName).getUserId() :
                         HeadGetter.getUserIdFromName(userName);
 
                     // Create new cache object.
@@ -140,24 +139,22 @@ public class HeadGetter {
                         HeadGetter.getTextureFromUUID(userId));
 
                     // Save in cache
-                    cachedHeads.put(userName, cache);
+                    HeadGetter.cachedHeads.put(userName, cache);
 
                     // Tell requesters the head came in
-                    if (headRequesters.containsKey(userName))
+                    if (HeadGetter.headRequesters.containsKey(userName))
                     {
-                        for (HeadRequester req : headRequesters.get(userName))
+                        for (HeadRequester req : HeadGetter.headRequesters.get(userName))
                         {
                             elementEntry.getValue().setHead(cache.getPlayerHead());
 
-                            Bukkit.getServer().getScheduler().runTaskAsynchronously(plugin,
+                            Bukkit.getServer().getScheduler().runTaskAsynchronously(this.plugin,
                                 () -> req.setHead(elementEntry.getValue()));
                         }
                     }
-
-                    it.remove();
                 }
             }
-        }, 0L, 20L);
+        }, 0L, 10L);
     }
 
 

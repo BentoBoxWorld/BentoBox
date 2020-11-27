@@ -129,7 +129,7 @@ public class IslandExpelCommandTest {
 
         // Server & Scheduler
         BukkitScheduler sch = mock(BukkitScheduler.class);
-        PowerMockito.mockStatic(Bukkit.class);
+        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         when(Bukkit.getScheduler()).thenReturn(sch);
 
         // Island Banned list initialization
@@ -296,14 +296,22 @@ public class IslandExpelCommandTest {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandExpelCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
+    public void testCanExecuteInvisiblePlayer() {
+        when(im.hasIsland(any(), any(User.class))).thenReturn(true);
+        Player t = setUpTarget();
+        when(p.canSee(t)).thenReturn(false);
+        when(im.getMembers(any(), any())).thenReturn(Collections.emptySet());
+        assertFalse(iec.canExecute(user, "", Collections.singletonList("tasty")));
+        verify(user).sendMessage("general.errors.offline-player");
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandExpelCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     */
+    @Test
     public void testCanExecuteNotOnIsland() {
         when(im.hasIsland(any(), any(User.class))).thenReturn(true);
-        UUID target = UUID.randomUUID();
-        Player p = mock(Player.class);
-        when(p.isOnline()).thenReturn(true);
-        when(p.getUniqueId()).thenReturn(target);
-        User.getInstance(p);
-        when(pm.getUUID(anyString())).thenReturn(target);
+        setUpTarget();
         when(im.getMembers(any(), any())).thenReturn(Collections.emptySet());
         assertFalse(iec.canExecute(user, "", Collections.singletonList("tasty")));
         verify(user).sendMessage("commands.island.expel.not-on-island");
@@ -316,13 +324,8 @@ public class IslandExpelCommandTest {
     public void testCanExecuteOp() {
         when(im.locationIsOnIsland(any(), any())).thenReturn(true);
         when(im.hasIsland(any(), any(User.class))).thenReturn(true);
-        UUID target = UUID.randomUUID();
-        Player p = mock(Player.class);
-        when(p.isOnline()).thenReturn(true);
-        when(p.getUniqueId()).thenReturn(target);
-        when(p.isOp()).thenReturn(true);
-        User.getInstance(p);
-        when(pm.getUUID(anyString())).thenReturn(target);
+        Player t = setUpTarget();
+        when(t.isOp()).thenReturn(true);
         when(im.getMembers(any(), any())).thenReturn(Collections.emptySet());
         assertFalse(iec.canExecute(user, "", Collections.singletonList("tasty")));
         verify(user).sendMessage("commands.island.expel.cannot-expel");
@@ -335,13 +338,8 @@ public class IslandExpelCommandTest {
     public void testCanExecuteBypassPerm() {
         when(im.locationIsOnIsland(any(), any())).thenReturn(true);
         when(im.hasIsland(any(), any(User.class))).thenReturn(true);
-        UUID target = UUID.randomUUID();
-        Player p = mock(Player.class);
-        when(p.isOnline()).thenReturn(true);
-        when(p.getUniqueId()).thenReturn(target);
-        when(p.hasPermission(anyString())).thenReturn(true);
-        User.getInstance(p);
-        when(pm.getUUID(anyString())).thenReturn(target);
+        Player t = setUpTarget();
+        when(t.hasPermission(anyString())).thenReturn(true);
         when(im.getMembers(any(), any())).thenReturn(Collections.emptySet());
         assertFalse(iec.canExecute(user, "", Collections.singletonList("tasty")));
         verify(user).sendMessage("commands.island.expel.cannot-expel");
@@ -362,17 +360,19 @@ public class IslandExpelCommandTest {
 
     private Player setUpTarget() {
         UUID target = UUID.randomUUID();
-        Player p = mock(Player.class);
-        when(p.isOnline()).thenReturn(true);
-        when(p.getUniqueId()).thenReturn(target);
-        when(p.getLocation()).thenReturn(mock(Location.class));
-        when(p.performCommand(anyString())).thenReturn(true);
-        when(p.getName()).thenReturn("target");
-        when(p.getServer()).thenReturn(server);
+        Player t = mock(Player.class);
+        when(t.isOnline()).thenReturn(true);
+        when(t.getUniqueId()).thenReturn(target);
+        when(t.getLocation()).thenReturn(mock(Location.class));
+        when(t.performCommand(anyString())).thenReturn(true);
+        when(t.getName()).thenReturn("target");
+        when(t.getServer()).thenReturn(server);
         when(server.getOnlinePlayers()).thenReturn(Collections.emptySet());
-        User.getInstance(p);
+        User.getInstance(t);
         when(pm.getUUID(anyString())).thenReturn(target);
-        return p;
+        when(p.canSee(t)).thenReturn(true);
+        when(Bukkit.getPlayer(target)).thenReturn(t);
+        return t;
     }
 
     /**
@@ -445,18 +445,18 @@ public class IslandExpelCommandTest {
      */
     @Test
     public void testTabCompleteUserStringListNoIsland() {
-       when(im.getIsland(any(), any(User.class))).thenReturn(null);
-       assertFalse(iec.tabComplete(user, "", Collections.emptyList()).isPresent()); 
+        when(im.getIsland(any(), any(User.class))).thenReturn(null);
+        assertFalse(iec.tabComplete(user, "", Collections.emptyList()).isPresent());
     }
-    
+
     /**
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandExpelCommand#tabComplete(User, String, java.util.List)}
      */
     @Test
     public void testTabCompleteUserStringListNoPlayersOnIsland() {
-        assertTrue(iec.tabComplete(user, "", Collections.emptyList()).get().isEmpty()); 
+        assertTrue(iec.tabComplete(user, "", Collections.emptyList()).get().isEmpty());
     }
-    
+
     /**
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandExpelCommand#tabComplete(User, String, java.util.List)}
      */
@@ -479,7 +479,7 @@ public class IslandExpelCommandTest {
         Player p5 = mock(Player.class);
         when(p5.getName()).thenReturn("modPerm");
         when(p.canSee(p5)).thenReturn(true);
-        when(p5.hasPermission(eq("bskyblock.mod.bypassexpel"))).thenReturn(true);       
+        when(p5.hasPermission(eq("bskyblock.mod.bypassexpel"))).thenReturn(true);
         list.add(p1);
         list.add(p2);
         list.add(p3);
@@ -488,7 +488,7 @@ public class IslandExpelCommandTest {
         list.add(p1);
         when(island.getPlayersOnIsland()).thenReturn(list);
         List<String> result = iec.tabComplete(user, "", Collections.emptyList()).get();
-        assertFalse(result.isEmpty()); 
+        assertFalse(result.isEmpty());
         assertEquals(2, result.size());
         assertEquals("normal", result.get(0));
         assertEquals("normal", result.get(1));

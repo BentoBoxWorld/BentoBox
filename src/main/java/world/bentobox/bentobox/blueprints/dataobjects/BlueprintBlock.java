@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.bukkit.block.Biome;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.inventory.ItemStack;
 
@@ -23,6 +24,11 @@ public class BlueprintBlock {
     private Map<Integer, ItemStack> inventory;
     @Expose
     private BlueprintCreatureSpawner creatureSpawner;
+    /**
+     * Since 1.15.2
+     */
+    @Expose
+    private Biome biome;
     /**
      * @since 1.8.0
      */
@@ -103,5 +109,19 @@ public class BlueprintBlock {
      */
     public void setBannerPatterns(List<Pattern> bannerPatterns) {
         this.bannerPatterns = bannerPatterns;
+    }
+
+    /**
+     * @return the biome
+     */
+    public Biome getBiome() {
+        return biome;
+    }
+
+    /**
+     * @param biome the biome to set
+     */
+    public void setBiome(Biome biome) {
+        this.biome = biome;
     }
 }

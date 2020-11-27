@@ -95,6 +95,18 @@ public class Settings implements ConfigObject {
     @ConfigEntry(path = "general.database.backup-period")
     private int databaseBackupPeriod = 5;
 
+    @ConfigComment("How many players will be saved in one tick. Default is 200")
+    @ConfigComment("Reduce if you experience lag while saving.")
+    @ConfigComment("Do not set this too low or data might get lost!")
+    @ConfigEntry(path = "general.database.max-saved-players-per-tick")
+    private int maxSavedPlayersPerTick = 20;
+
+    @ConfigComment("How many islands will be saved in one tick. Default is 200")
+    @ConfigComment("Reduce if you experience lag while saving.")
+    @ConfigComment("Do not set this too low or data might get lost!")
+    @ConfigEntry(path = "general.database.max-saved-islands-per-tick")
+    private int maxSavedIslandsPerTick = 20;
+
     @ConfigComment("Enable SSL connection to MongoDB, MariaDB, MySQL and PostgreSQL databases.")
     @ConfigEntry(path = "general.database.use-ssl", since = "1.12.0")
     private boolean useSSL = false;
@@ -377,6 +389,34 @@ public class Settings implements ConfigObject {
 
     public void setDatabaseBackupPeriod(int databaseBackupPeriod) {
         this.databaseBackupPeriod = databaseBackupPeriod;
+    }
+
+    /**
+     * @since 1.15.3
+     */
+    public int getMaxSavedPlayersPerTick() {
+        return maxSavedPlayersPerTick;
+    }
+
+    /**
+     * @since 1.15.3
+     */
+    public void setMaxSavedPlayersPerTick(int maxSavedPlayersPerTick) {
+        this.maxSavedPlayersPerTick = maxSavedPlayersPerTick;
+    }
+
+    /**
+     * @since 1.15.3
+     */
+    public int getMaxSavedIslandsPerTick() {
+        return maxSavedIslandsPerTick;
+    }
+
+    /**
+     * @since 1.15.3
+     */
+    public void setMaxSavedIslandsPerTick(int maxSavedIslandsPerTick) {
+        this.maxSavedIslandsPerTick = maxSavedIslandsPerTick;
     }
 
     public Set<String> getFakePlayers() {
