@@ -6,9 +6,9 @@ import java.util.concurrent.CompletableFuture;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
-import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
+import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.generator.ChunkGenerator;
@@ -17,6 +17,8 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.scheduler.BukkitTask;
 
 import io.papermc.lib.PaperLib;
+import net.minecraft.server.v1_16_R3.BlockPosition;
+import net.minecraft.server.v1_16_R3.IBlockData;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.events.island.IslandEvent;
@@ -99,33 +101,14 @@ public class DeleteIslandChunks {
             break;
         }
         if (PaperLib.isChunkGenerated(world, x, z)) {
-            // Load adjacent chunks
-            loadSurrounding(gm, world, x - 1, z - 1, x, z);
+            PaperLib.getChunkAtAsync(world, x, z).thenAccept(chunk ->regenerateChunk(gm, chunk));
+
             return CompletableFuture.completedFuture(true);
         }
         return CompletableFuture.completedFuture(false);
     }
 
-    private void loadSurrounding(GameModeAddon gm, World world, int x, int z, int centerX, int centerZ) {
-        PaperLib.getChunkAtAsync(world, x, z).thenAccept(chunk -> {
-            if (x < centerX + 1) {
-                int xx = x + 1;
-                if (x == centerX && z == centerZ) xx++;
-                loadSurrounding(gm, world, xx, z, centerX, centerZ);
-                return;
-            }
-            if (z < centerZ + 1) {
-                int xx = centerX - 1 ;
-                int zz = z + 1;
-                loadSurrounding(gm, world, xx, zz, centerX, centerZ);
-                return;
-            }
-            regenerateChunk(gm, chunk);
-        });
-    }
-
     private void regenerateChunk(GameModeAddon gm, Chunk chunk) {
-        boolean isLoaded = chunk.isLoaded();
         // Clear all inventories
         Arrays.stream(chunk.getTileEntities()).filter(te -> (te instanceof InventoryHolder))
         .filter(te -> di.inBounds(te.getLocation().getBlockX(), te.getLocation().getBlockZ()))
@@ -137,34 +120,41 @@ public class DeleteIslandChunks {
         if (cg != null) {
             Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
                 ChunkData cd = cg.generateChunkData(chunk.getWorld(), new Random(), chunk.getX(), chunk.getZ(), grid);
-                Bukkit.getScheduler().runTask(plugin, () -> {
-                    int baseX = chunk.getX() << 4;
-                    int baseZ = chunk.getZ() << 4;
-                    for (int x = 0; x < 16; x++) {
-                        for (int z = 0; z < 16; z++) {
-                            if (di.inBounds(baseX + x, baseZ + z)) {
-                                for (int y = 0; y < chunk.getWorld().getMaxHeight(); y++) {
-                                    // Note: setting block to air before setting it to something else stops a bug in the server
-                                    // where it reports a "
-                                    chunk.getBlock(x, y, z).setType(Material.AIR, false);
-                                    chunk.getBlock(x, y, z).setBlockData(cd.getBlockData(x, y, z), false);
-                                    // 3D biomes, 4 blocks separated
-                                    if (x%4 == 0 && y%4 == 0 && z%4 == 0) {
-                                        chunk.getBlock(x, y, z).setBiome(grid.getBiome(x, y, z));
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    // Remove all entities in chunk, including any dropped items as a result of clearing the blocks above
-                    Arrays.stream(chunk.getEntities()).filter(e -> !(e instanceof Player) && di.inBounds(e.getLocation().getBlockX(), e.getLocation().getBlockZ())).forEach(Entity::remove);
-                    if (!isLoaded) {
-                        chunk.unload(true);
-                    }
-                    inDelete = false;
-                });
+                Bukkit.getScheduler().runTask(plugin, () -> createChunk(cd, chunk, grid));
             });
         }
 
+    }
+
+    private void createChunk(ChunkData cd, Chunk chunk, MyBiomeGrid grid) {
+        int baseX = chunk.getX() << 4;
+        int baseZ = chunk.getZ() << 4;
+        for (int x = 0; x < 16; x++) {
+            for (int z = 0; z < 16; z++) {
+                if (di.inBounds(baseX + x, baseZ + z)) {
+                    for (int y = 0; y < chunk.getWorld().getMaxHeight(); y++) {
+                        setBlockInNativeChunk(chunk, x, y, z, 0, (byte)0, false);
+                        /*
+                        // 3D biomes, 4 blocks separated
+                        if (x%4 == 0 && y%4 == 0 && z%4 == 0) {
+                            chunk.getBlock(x, y, z).setBiome(grid.getBiome(x, y, z));
+                        }
+                         */
+                    }
+                }
+            }
+        }
+        // Remove all entities in chunk, including any dropped items as a result of clearing the blocks above
+        Arrays.stream(chunk.getEntities()).filter(e -> !(e instanceof Player) && di.inBounds(e.getLocation().getBlockX(), e.getLocation().getBlockZ())).forEach(Entity::remove);
+        inDelete = false;
+    }
+
+    public void setBlockInNativeChunk(Chunk chunk, int x, int y, int z, int blockId, byte data, boolean applyPhysics) {
+
+        net.minecraft.server.v1_16_R3.World nmsWorld = ((CraftWorld) chunk.getWorld()).getHandle();
+        net.minecraft.server.v1_16_R3.Chunk nmsChunk = nmsWorld.getChunkAt(chunk.getX(), chunk.getZ());
+        BlockPosition bp = new BlockPosition((chunk.getX() << 4) + x, y, (chunk.getZ() << 4) + z);
+        IBlockData ibd = net.minecraft.server.v1_16_R3.Block.getByCombinedId(blockId + (data << 12));
+        nmsChunk.setType(bp, ibd, applyPhysics, true);
     }
 }
