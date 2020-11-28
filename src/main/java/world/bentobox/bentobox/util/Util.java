@@ -44,6 +44,7 @@ import io.papermc.lib.PaperLib;
 import io.papermc.lib.features.blockstatesnapshot.BlockStateSnapshotResult;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.nms.NMSAbstraction;
 
 /**
  * A set of utility methods
@@ -656,4 +657,29 @@ public class Util {
         double maxHealth = player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue();
         player.setHealth(maxHealth);
     }
+
+    /**
+     * Checks what version the server is running and picks the appropriate NMS handler, or fallback
+     * @return an NMS accelerated class for this server, or a fallback Bukkit API based one
+     * @throws Exception - thrown if the coding is wrong and there's no fallback
+     */
+    public static NMSAbstraction getNMS() throws Exception {
+        String serverPackageName = Bukkit.getServer().getClass().getPackage().getName();
+        String pluginPackageName = plugin.getClass().getPackage().getName();
+        String version = serverPackageName.substring(serverPackageName.lastIndexOf('.') + 1);
+        Class<?> clazz;
+        try {
+            clazz = Class.forName(pluginPackageName + ".nms." + version + ".NMSHandler");
+        } catch (Exception e) {
+            plugin.logWarning("No NMS Handler found for " + version + ", falling back to Bukkit API.");
+            clazz = Class.forName(pluginPackageName + ".nms.fallback.NMSHandler");
+        }
+        // Check if we have a NMSAbstraction implementing class at that location.
+        if (NMSAbstraction.class.isAssignableFrom(clazz)) {
+            return (NMSAbstraction) clazz.getConstructor().newInstance();
+        } else {
+            throw new IllegalStateException("Class " + clazz.getName() + " does not implement NMSAbstraction");
+        }
+    }
+
 }

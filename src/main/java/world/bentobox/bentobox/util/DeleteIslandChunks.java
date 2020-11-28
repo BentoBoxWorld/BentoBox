@@ -6,12 +6,8 @@ import java.util.concurrent.CompletableFuture;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
-import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
-import org.bukkit.block.data.BlockData;
-import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
-import org.bukkit.craftbukkit.v1_16_R3.block.data.CraftBlockData;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.generator.ChunkGenerator;
@@ -20,13 +16,12 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.scheduler.BukkitTask;
 
 import io.papermc.lib.PaperLib;
-import net.minecraft.server.v1_16_R3.BlockPosition;
-import net.minecraft.server.v1_16_R3.IBlockData;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.events.island.IslandEvent;
 import world.bentobox.bentobox.api.events.island.IslandEvent.Reason;
 import world.bentobox.bentobox.database.objects.IslandDeletion;
+import world.bentobox.bentobox.nms.NMSAbstraction;
 
 /**
  * Deletes islands chunk by chunk
@@ -35,22 +30,32 @@ import world.bentobox.bentobox.database.objects.IslandDeletion;
  */
 public class DeleteIslandChunks {
 
-    private static final IBlockData AIR = ((CraftBlockData) Bukkit.createBlockData(Material.AIR)).getState();
     private int chunkX;
     private int chunkZ;
     private BukkitTask task;
     private IslandDeletion di;
     private boolean inDelete;
     private BentoBox plugin;
+    private NMSAbstraction nms;
 
     public DeleteIslandChunks(BentoBox plugin, IslandDeletion di) {
         this.plugin = plugin;
-        // Fire event
-        IslandEvent.builder().deletedIslandInfo(di).reason(Reason.DELETE_CHUNKS).build();
-
         this.chunkX = di.getMinXChunk();
         this.chunkZ = di.getMinZChunk();
         this.di = di;
+        try {
+            this.nms = Util.getNMS();
+        } catch (Exception e) {
+            plugin.logError("Could not delete chunks because of NMS error");
+            return;
+        }
+        // Fire event
+        IslandEvent.builder().deletedIslandInfo(di).reason(Reason.DELETE_CHUNKS).build();
+        regenerateChunks();
+
+    }
+
+    private void regenerateChunks() {
         // Run through all chunks of the islands and regenerate them.
         task = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
             if (inDelete) return;
@@ -80,6 +85,7 @@ public class DeleteIslandChunks {
                 });
             }
         }, 0L, 20L);
+
     }
 
     private CompletableFuture<Boolean> processChunk(GameModeAddon gm, Environment env, int x, int z) {
@@ -137,13 +143,11 @@ public class DeleteIslandChunks {
             for (int z = 0; z < 16; z++) {
                 if (di.inBounds(baseX + x, baseZ + z)) {
                     for (int y = 0; y < chunk.getWorld().getMaxHeight(); y++) {
-                        setBlockInNativeChunk(chunk, x, y, z, cd.getBlockData(x, y, z), false);
-                        /*
+                        nms.setBlockInNativeChunk(chunk, x, y, z, cd.getBlockData(x, y, z), false);
                         // 3D biomes, 4 blocks separated
                         if (x%4 == 0 && y%4 == 0 && z%4 == 0) {
                             chunk.getBlock(x, y, z).setBiome(grid.getBiome(x, y, z));
                         }
-                         */
                     }
                 }
             }
@@ -151,15 +155,5 @@ public class DeleteIslandChunks {
         // Remove all entities in chunk, including any dropped items as a result of clearing the blocks above
         Arrays.stream(chunk.getEntities()).filter(e -> !(e instanceof Player) && di.inBounds(e.getLocation().getBlockX(), e.getLocation().getBlockZ())).forEach(Entity::remove);
         inDelete = false;
-    }
-
-    public void setBlockInNativeChunk(Chunk chunk, int x, int y, int z, BlockData blockData, boolean applyPhysics) {
-        CraftBlockData craft = (CraftBlockData) blockData;
-        net.minecraft.server.v1_16_R3.World nmsWorld = ((CraftWorld) chunk.getWorld()).getHandle();
-        net.minecraft.server.v1_16_R3.Chunk nmsChunk = nmsWorld.getChunkAt(chunk.getX(), chunk.getZ());
-        BlockPosition bp = new BlockPosition((chunk.getX() << 4) + x, y, (chunk.getZ() << 4) + z);
-        //IBlockData ibd = net.minecraft.server.v1_16_R3.Block.getByCombinedId(blockId + (data << 12));
-        nmsChunk.setType(bp, AIR, applyPhysics, true);
-        nmsChunk.setType(bp, craft.getState(), applyPhysics, true);
     }
 }
