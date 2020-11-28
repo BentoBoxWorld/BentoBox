@@ -112,6 +112,7 @@ public class JSONDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
             return completableFuture;
         }
         String path = DATABASE_FOLDER_NAME + File.separator + dataObject.getSimpleName();
+        String backupPath = DATABASE_FOLDER_NAME + "_backup" + File.separator + dataObject.getSimpleName();
 
         // Obtain the value of uniqueId within the instance (which must be a DataObject)
         PropertyDescriptor propertyDescriptor = new PropertyDescriptor("uniqueId", dataObject);
@@ -124,26 +125,37 @@ public class JSONDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
             tableFolder.mkdirs();
         }
 
+        File backupTableFolder = new File(plugin.getDataFolder(), backupPath);
+        if (!backupTableFolder.exists()) {
+            backupTableFolder.mkdirs();
+        }
+
         String toStore = getGson().toJson(instance);
         if (plugin.isEnabled()) {
             // Async
-            processQueue.add(() -> store(completableFuture, toStore, file, tableFolder, fileName));
+            processQueue.add(() -> store(completableFuture, toStore, file, tableFolder, backupTableFolder, fileName, true));
         } else {
             // Sync
-            store(completableFuture, toStore, file, tableFolder, fileName);
+            store(completableFuture, toStore, file, tableFolder, backupTableFolder, fileName, false);
         }
         return completableFuture;
     }
 
-    private void store(CompletableFuture<Boolean> completableFuture, String toStore, File file, File tableFolder, String fileName) {
-        try (FileWriter fileWriter = new FileWriter(file)) {
-            File tmpFile = new File(tableFolder, fileName + ".bak");
-            if (file.exists()) {
-                // Make a backup of file
+    private void store(CompletableFuture<Boolean> completableFuture, String toStore, File file, File tableFolder, File backupTableFolder, String fileName, boolean async) {
+        // Do not save anything if plug is disabled and this was an async request
+        if (async && !plugin.isEnabled()) return;
+        File tmpFile = new File(backupTableFolder, fileName);
+        if (file.exists()) {
+            // Make a backup of file
+            try {
                 Files.copy(file.toPath(), tmpFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException e) {
+                plugin.logError("Could not backup JSON file: " + tableFolder.getName() + " " + fileName + " " + e.getMessage());
             }
+        }
+
+        try (FileWriter fileWriter = new FileWriter(file)) {
             fileWriter.write(toStore);
-            Files.deleteIfExists(tmpFile.toPath());
             completableFuture.complete(true);
         } catch (IOException e) {
             plugin.logError("Could not save JSON file: " + tableFolder.getName() + " " + fileName + " " + e.getMessage());

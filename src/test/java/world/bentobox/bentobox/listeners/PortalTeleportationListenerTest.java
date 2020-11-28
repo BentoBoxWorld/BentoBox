@@ -12,6 +12,7 @@ import static org.mockito.Mockito.when;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -134,6 +135,7 @@ public class PortalTeleportationListenerTest {
         when(im.getOwner(any(), any())).thenReturn(uuid);
         Optional<Island> optionalIsland = Optional.empty();
         when(im.getIslandAt(any())).thenReturn(optionalIsland);
+        when(im.homeTeleportAsync(any(), any())).thenReturn(CompletableFuture.completedFuture(true));
         when(plugin.getIslands()).thenReturn(im);
 
         when(plugin.getPlayers()).thenReturn(pm);
@@ -488,7 +490,7 @@ public class PortalTeleportationListenerTest {
         // Nether islands inactive
         when(iwm.isNetherIslands(any())).thenReturn(false);
         when(iwm.isNetherGenerate(any())).thenReturn(true);
-        assertFalse(np.onNetherPortal(e));
+        assertTrue(np.onNetherPortal(e));
         // Verify
         assertFalse(e.isCancelled());
     }
@@ -513,7 +515,7 @@ public class PortalTeleportationListenerTest {
         when(iwm.isNetherGenerate(any())).thenReturn(true);
 
         // Player should be teleported to their island
-        assertFalse(np.onNetherPortal(e));
+        assertTrue(np.onNetherPortal(e));
         // Verify
         assertTrue(e.isCancelled());
     }

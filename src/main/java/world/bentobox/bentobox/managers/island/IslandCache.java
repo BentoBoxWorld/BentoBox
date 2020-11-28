@@ -101,7 +101,7 @@ public class IslandCache {
     }
 
     /**
-     * Deletes an island from the database. Does not remove blocks
+     * Deletes an island from the cache.. Does not remove blocks
      * @param island island to delete
      * @return true if successful, false if not
      */
@@ -114,6 +114,16 @@ public class IslandCache {
         // Remove from grid
         grids.putIfAbsent(island.getWorld(), new IslandGrid());
         return grids.get(island.getWorld()).removeFromGrid(island);
+    }
+    
+    /**
+     * Delete island from the cache by ID. Does not remove blocks.
+     * @param uniqueId - island unique ID
+     */
+    public void deleteIslandFromCache(@NonNull String uniqueId) {
+        islandsById.remove(uniqueId);
+        islandsByLocation.values().removeIf(i -> i.getUniqueId().equals(uniqueId));
+        islandsByUUID.values().forEach(m -> m.values().removeIf(i -> i.getUniqueId().equals(uniqueId)));
     }
 
     /**
@@ -325,4 +335,6 @@ public class IslandCache {
     public Set<String> getAllIslandIds() {
         return islandsById.keySet();
     }
+
+
 }

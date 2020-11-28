@@ -6,9 +6,12 @@ import java.util.concurrent.CompletableFuture;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
+import org.bukkit.craftbukkit.v1_16_R3.block.data.CraftBlockData;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.generator.ChunkGenerator;
@@ -32,6 +35,7 @@ import world.bentobox.bentobox.database.objects.IslandDeletion;
  */
 public class DeleteIslandChunks {
 
+    private static final IBlockData AIR = ((CraftBlockData) Bukkit.createBlockData(Material.AIR)).getState();
     private int chunkX;
     private int chunkZ;
     private BukkitTask task;
@@ -133,7 +137,7 @@ public class DeleteIslandChunks {
             for (int z = 0; z < 16; z++) {
                 if (di.inBounds(baseX + x, baseZ + z)) {
                     for (int y = 0; y < chunk.getWorld().getMaxHeight(); y++) {
-                        setBlockInNativeChunk(chunk, x, y, z, 0, (byte)0, false);
+                        setBlockInNativeChunk(chunk, x, y, z, cd.getBlockData(x, y, z), false);
                         /*
                         // 3D biomes, 4 blocks separated
                         if (x%4 == 0 && y%4 == 0 && z%4 == 0) {
@@ -149,12 +153,13 @@ public class DeleteIslandChunks {
         inDelete = false;
     }
 
-    public void setBlockInNativeChunk(Chunk chunk, int x, int y, int z, int blockId, byte data, boolean applyPhysics) {
-
+    public void setBlockInNativeChunk(Chunk chunk, int x, int y, int z, BlockData blockData, boolean applyPhysics) {
+        CraftBlockData craft = (CraftBlockData) blockData;
         net.minecraft.server.v1_16_R3.World nmsWorld = ((CraftWorld) chunk.getWorld()).getHandle();
         net.minecraft.server.v1_16_R3.Chunk nmsChunk = nmsWorld.getChunkAt(chunk.getX(), chunk.getZ());
         BlockPosition bp = new BlockPosition((chunk.getX() << 4) + x, y, (chunk.getZ() << 4) + z);
-        IBlockData ibd = net.minecraft.server.v1_16_R3.Block.getByCombinedId(blockId + (data << 12));
-        nmsChunk.setType(bp, ibd, applyPhysics, true);
+        //IBlockData ibd = net.minecraft.server.v1_16_R3.Block.getByCombinedId(blockId + (data << 12));
+        nmsChunk.setType(bp, AIR, applyPhysics, true);
+        nmsChunk.setType(bp, craft.getState(), applyPhysics, true);
     }
 }

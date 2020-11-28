@@ -4,7 +4,9 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.event.Event;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle;
@@ -50,6 +52,12 @@ public class IslandEvent extends IslandBaseEvent {
          * @since 1.1
          */
         BAN,
+        /**
+         * Fired when a player tries to create a new island. If canceled will
+         * proceed no further.
+         * @since 1.15.1
+         */
+        PRECREATE,
         /**
          * Called when a player has been allocated a new island spot
          * but before the island itself has been pasted or the player teleported.
@@ -221,6 +229,18 @@ public class IslandEvent extends IslandBaseEvent {
     }
 
     /**
+     * Fired when attempting to make a new island.
+     * May be cancelled. No island object exists at this point.
+     * @since 1.15.1
+     */
+    public static class IslandPreCreateEvent extends IslandBaseEvent {
+        private IslandPreCreateEvent(UUID player) {
+            // Final variables have to be declared in the constructor
+            super(null, player, false, null);
+        }
+    }
+    
+    /**
      * Fired when an island is going to be created.
      * May be cancelled.
      *
@@ -344,9 +364,18 @@ public class IslandEvent extends IslandBaseEvent {
      * Cancellation has no effect.
      */
     public static class IslandEnterEvent extends IslandBaseEvent {
-        private IslandEnterEvent(Island island, UUID player, boolean admin, Location location) {
+        
+        private final @Nullable Island fromIsland;
+        
+        private IslandEnterEvent(Island island, UUID player, boolean admin, Location location, Island fromIsland, Event rawEvent) {
             // Final variables have to be declared in the constructor
-            super(island, player, admin, location);
+            super(island, player, admin, location, rawEvent);
+            this.fromIsland = fromIsland;
+        }
+        
+        @Nullable
+        public Island getFromIsland() {
+            return fromIsland;
         }
     }
     /**
@@ -354,10 +383,22 @@ public class IslandEvent extends IslandBaseEvent {
      * Cancellation has no effect.
      */
     public static class IslandExitEvent extends IslandBaseEvent {
-        private IslandExitEvent(Island island, UUID player, boolean admin, Location location) {
+        
+        private final @Nullable Island toIsland;
+
+        
+        private IslandExitEvent(Island island, UUID player, boolean admin, Location location, Island toIsland, Event rawEvent) {
             // Final variables have to be declared in the constructor
-            super(island, player, admin, location);
+            super(island, player, admin, location, rawEvent);
+            this.toIsland = toIsland;
         }
+        
+        @Nullable
+        public Island getToIsland() {
+            return toIsland;
+        }
+     
+        
     }
     /**
      * Fired when an island is locked
@@ -555,6 +596,7 @@ public class IslandEvent extends IslandBaseEvent {
         private Location location;
         private IslandDeletion deletedIslandInfo;
         private BlueprintBundle blueprintBundle;
+        private Event rawEvent;
 
         /**
          * Stores new protection range for island.
@@ -629,6 +671,11 @@ public class IslandEvent extends IslandBaseEvent {
             location = center;
             return this;
         }
+        
+        public IslandEventBuilder rawEvent(Event event) {
+            rawEvent = event;
+            return this;
+        }
 
         public IslandEventBuilder deletedIslandInfo(IslandDeletion deletedIslandInfo) {
             this.deletedIslandInfo = deletedIslandInfo;
@@ -681,6 +728,10 @@ public class IslandEvent extends IslandBaseEvent {
                 IslandBanEvent ban = new IslandBanEvent(island, player, admin, location);
                 Bukkit.getPluginManager().callEvent(ban);
                 return ban;
+            case PRECREATE:
+                IslandPreCreateEvent precreate = new IslandPreCreateEvent(player);
+                Bukkit.getPluginManager().callEvent(precreate);
+                return precreate;
             case CREATE:
                 IslandCreateEvent create = new IslandCreateEvent(island, player, admin, location, blueprintBundle);
                 Bukkit.getPluginManager().callEvent(create);
@@ -702,11 +753,11 @@ public class IslandEvent extends IslandBaseEvent {
                 Bukkit.getPluginManager().callEvent(deleted);
                 return deleted;
             case ENTER:
-                IslandEnterEvent enter = new IslandEnterEvent(island, player, admin, location);
+                IslandEnterEvent enter = new IslandEnterEvent(island, player, admin, location, oldIsland, rawEvent);
                 Bukkit.getPluginManager().callEvent(enter);
                 return enter;
             case EXIT:
-                IslandExitEvent exit = new IslandExitEvent(island, player, admin, location);
+                IslandExitEvent exit = new IslandExitEvent(island, player, admin, location, oldIsland, rawEvent);
                 Bukkit.getPluginManager().callEvent(exit);
                 return exit;
             case LOCK:

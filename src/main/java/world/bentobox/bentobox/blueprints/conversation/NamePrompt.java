@@ -6,25 +6,30 @@ import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.StringPrompt;
 import org.bukkit.entity.Player;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 
 import net.md_5.bungee.api.ChatColor;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.blueprints.Blueprint;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle;
+import world.bentobox.bentobox.managers.BlueprintsManager;
 
 public class NamePrompt extends StringPrompt {
 
     private GameModeAddon addon;
+    @Nullable
     private BlueprintBundle bb;
+    @Nullable
     private Blueprint bp;
 
-    public NamePrompt(GameModeAddon addon, BlueprintBundle bb) {
+    public NamePrompt(@NonNull GameModeAddon addon, @Nullable BlueprintBundle bb) {
         this.addon = addon;
         this.bb = bb;
     }
 
-    public NamePrompt(GameModeAddon addon, Blueprint bp, BlueprintBundle bb) {
+    public NamePrompt(@NonNull GameModeAddon addon, @Nullable Blueprint bp, @Nullable BlueprintBundle bb) {
         this.addon = addon;
         this.bp = bp;
         this.bb = bb;
@@ -45,18 +50,23 @@ public class NamePrompt extends StringPrompt {
             context.getForWhom().sendRawMessage("Too long");
             return this;
         }
-        // Make a uniqueid
-        StringBuilder uniqueId = new StringBuilder(ChatColor.stripColor(input).toLowerCase(Locale.ENGLISH).replace(" ", "_"));
-        // Check if this name is unique
-        int max = 0;
-        while (max++ < 32 && addon.getPlugin().getBlueprintsManager().getBlueprintBundles(addon).containsKey(uniqueId.toString())) {
-            uniqueId.append("x");
+        if (bb == null || !bb.getUniqueId().equals(BlueprintsManager.DEFAULT_BUNDLE_NAME)) {
+            // Make a uniqueid
+            StringBuilder uniqueId = new StringBuilder(ChatColor.stripColor(input).toLowerCase(Locale.ENGLISH).replace(" ", "_"));
+            // Check if this name is unique
+            int max = 0;
+            while (max++ < 32 && addon.getPlugin().getBlueprintsManager().getBlueprintBundles(addon).containsKey(uniqueId.toString())) {
+                uniqueId.append("x");
+            }
+            if (max == 32) {
+                context.getForWhom().sendRawMessage(user.getTranslation("commands.admin.blueprint.management.name.pick-a-unique-name"));
+                return this;
+            }
+            context.setSessionData("uniqueId", uniqueId.toString());
+        } else {
+            // Default stays as default
+            context.setSessionData("uniqueId", bb.getUniqueId());
         }
-        if (max == 32) {
-            context.getForWhom().sendRawMessage(user.getTranslation("commands.admin.blueprint.management.name.pick-a-unique-name"));
-            return this;
-        }
-        context.setSessionData("uniqueId", uniqueId.toString());
         context.setSessionData("name", input);
         return new NameSuccessPrompt(addon, bb, bp);
     }

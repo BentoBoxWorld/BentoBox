@@ -12,6 +12,7 @@ import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.RanksManager;
+import world.bentobox.bentobox.util.Util;
 
 /**
  * @author tastybento
@@ -195,7 +196,7 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
 
         // Reset the health
         if (getIWM().isOnJoinResetHealth(getWorld())) {
-            user.getPlayer().setHealth(20.0D);
+            Util.resetHealth(user.getPlayer());
         }
 
         // Reset the hunger

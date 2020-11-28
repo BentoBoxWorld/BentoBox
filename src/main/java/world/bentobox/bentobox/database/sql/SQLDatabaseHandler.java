@@ -83,7 +83,8 @@ public class SQLDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
     protected void createSchema() {
         if (sqlConfig.renameRequired()) {
             // Transition from the old table name
-            try (PreparedStatement pstmt = connection.prepareStatement(sqlConfig.getRenameTableSQL())) {
+            String sql = sqlConfig.getRenameTableSQL().replace("[oldTableName]", sqlConfig.getOldTableName()).replace("[tableName]", sqlConfig.getTableName());
+            try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
                 pstmt.execute();
             } catch (SQLException e) {
                 plugin.logError("Could not rename " + sqlConfig.getOldTableName() + " for data object " + dataObject.getCanonicalName() + " " + e.getMessage());
@@ -168,12 +169,19 @@ public class SQLDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
         }
         // This has to be on the main thread to avoid concurrent modification errors
         String toStore = getGson().toJson(instance);
-        // Async
-        processQueue.add(() -> store(completableFuture, instance.getClass().getName(), toStore, sqlConfig.getSaveObjectSQL()));
+        if (plugin.isEnabled()) {
+            // Async
+            processQueue.add(() -> store(completableFuture, instance.getClass().getName(), toStore, sqlConfig.getSaveObjectSQL(), true));
+        } else {
+            // Sync
+            store(completableFuture, instance.getClass().getName(), toStore, sqlConfig.getSaveObjectSQL(), false);
+        }
         return completableFuture;
     }
 
-    private void store(CompletableFuture<Boolean> completableFuture, String name, String toStore, String sb) {
+    private void store(CompletableFuture<Boolean> completableFuture, String name, String toStore, String sb, boolean async) {
+        // Do not save anything if plug is disabled and this was an async request
+        if (async && !plugin.isEnabled()) return;
         try (PreparedStatement preparedStatement = connection.prepareStatement(sb)) {
             preparedStatement.setString(1, toStore);
             preparedStatement.setString(2, toStore);

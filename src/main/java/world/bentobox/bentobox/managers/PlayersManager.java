@@ -1,19 +1,11 @@
 package world.bentobox.bentobox.managers;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitTask;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
@@ -32,8 +24,8 @@ public class PlayersManager {
 
     private Map<UUID, Players> playerCache;
     private Set<UUID> inTeleport;
-    private Set<UUID> toSave = new HashSet<>();
-    private BukkitTask task;
+
+    private boolean isSaveTaskRunning;
 
     /**
      * Provides a memory cache of online player information
@@ -69,30 +61,53 @@ public class PlayersManager {
         handler.loadObjects().forEach(p -> playerCache.put(p.getPlayerUUID(), p));
     }
 
-    /**
-     * Save all players
-     */
-    public void saveAll(){
-        Collections.unmodifiableCollection(playerCache.values()).forEach(handler::saveObjectAsync);
+    public boolean isSaveTaskRunning() {
+        return isSaveTaskRunning;
     }
 
     /**
-     * Saves all the players at a rate of 1 per tick. Used as a backup.
-     * @since 1.8.0
+     * Save all players
      */
-    public void asyncSaveAll() {
-        if (!toSave.isEmpty()) return;
-        // Get a list of ID's to save
-        toSave = new HashSet<>(playerCache.keySet());
-        Iterator<UUID> it = toSave.iterator();
-        task = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
-            if (plugin.isEnabled() && it.hasNext()) {
-                this.save(it.next());
-            } else {
-                toSave.clear();
-                task.cancel();
+    public void saveAll() {
+        saveAll(false);
+    }
+
+    /**
+     * Save all players
+     * @param schedule true if we should let the task run over multiple ticks to reduce lag spikes
+     */
+    public void saveAll(boolean schedule){
+        if (!schedule) {
+            for (Players player : playerCache.values()) {
+                try {
+                    handler.saveObjectAsync(player);
+                } catch (Exception e) {
+                    plugin.logError("Could not save player to database when running sync! " + e.getMessage());
+                }
             }
-        }, 0L, 1L);
+            return;
+        }
+
+        isSaveTaskRunning = true;
+        Queue<Players> queue = new LinkedList<>(playerCache.values());
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                for (int i = 0; i < plugin.getSettings().getMaxSavedPlayersPerTick(); i++) {
+                    Players player = queue.poll();
+                    if (player == null) {
+                        isSaveTaskRunning = false;
+                        cancel();
+                        return;
+                    }
+                    try {
+                        handler.saveObjectAsync(player);
+                    } catch (Exception e) {
+                        plugin.logError("Could not save player to database when running sync! " + e.getMessage());
+                    }
+                }
+            }
+        }.runTaskTimer(plugin, 0, 1);
     }
 
     public void shutdown(){
@@ -487,10 +502,9 @@ public class PlayersManager {
      */
     public void removePlayer(Player player) {
         // Clear any players with the same name
-        playerCache.values().removeIf(p -> p.getPlayerName().equalsIgnoreCase(player.getName()));
+        playerCache.values().removeIf(p -> player.getName().equalsIgnoreCase(p.getPlayerName()));
         // Remove if the player's UUID is the same
-        playerCache.values().removeIf(p -> p.getUniqueId().equals(player.getUniqueId().toString()));
-
+        playerCache.values().removeIf(p -> player.getUniqueId().toString().equals(p.getUniqueId()));
     }
 
 }

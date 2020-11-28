@@ -88,26 +88,26 @@ public class AdminBlueprintCommand extends ConfirmableCommand {
 
         // Drawing x-axes
         for (int x = minX; x <= maxX; x++) {
-            user.spawnParticle(PARTICLE, PARTICLE_DUST_OPTIONS, x, minY, minZ);
-            user.spawnParticle(PARTICLE, PARTICLE_DUST_OPTIONS, x, maxY, minZ);
-            user.spawnParticle(PARTICLE, PARTICLE_DUST_OPTIONS, x, minY, maxZ);
-            user.spawnParticle(PARTICLE, PARTICLE_DUST_OPTIONS, x, maxY, maxZ);
+            user.spawnParticle(PARTICLE, PARTICLE_DUST_OPTIONS, x + 0.5, minY + 0.5, minZ + 0.5);
+            user.spawnParticle(PARTICLE, PARTICLE_DUST_OPTIONS, x + 0.5, maxY + 0.5, minZ + 0.5);
+            user.spawnParticle(PARTICLE, PARTICLE_DUST_OPTIONS, x + 0.5, minY + 0.5, maxZ + 0.5);
+            user.spawnParticle(PARTICLE, PARTICLE_DUST_OPTIONS, x + 0.5, maxY + 0.5, maxZ + 0.5);
         }
 
         // Drawing y-axes
         for (int y = minY; y <= maxY; y++) {
-            user.spawnParticle(PARTICLE, PARTICLE_DUST_OPTIONS, minX, y, minZ);
-            user.spawnParticle(PARTICLE, PARTICLE_DUST_OPTIONS, maxX, y, minZ);
-            user.spawnParticle(PARTICLE, PARTICLE_DUST_OPTIONS, minX, y, maxZ);
-            user.spawnParticle(PARTICLE, PARTICLE_DUST_OPTIONS, maxX, y, maxZ);
+            user.spawnParticle(PARTICLE, PARTICLE_DUST_OPTIONS, minX + 0.5, y + 0.5, minZ + 0.5);
+            user.spawnParticle(PARTICLE, PARTICLE_DUST_OPTIONS, maxX + 0.5, y + 0.5, minZ + 0.5);
+            user.spawnParticle(PARTICLE, PARTICLE_DUST_OPTIONS, minX + 0.5, y + 0.5, maxZ + 0.5);
+            user.spawnParticle(PARTICLE, PARTICLE_DUST_OPTIONS, maxX + 0.5, y + 0.5, maxZ + 0.5);
         }
 
         // Drawing z-axes
         for (int z = minZ; z <= maxZ; z++) {
-            user.spawnParticle(PARTICLE, PARTICLE_DUST_OPTIONS, minX, minY, z);
-            user.spawnParticle(PARTICLE, PARTICLE_DUST_OPTIONS, maxX, minY, z);
-            user.spawnParticle(PARTICLE, PARTICLE_DUST_OPTIONS, minX, maxY, z);
-            user.spawnParticle(PARTICLE, PARTICLE_DUST_OPTIONS, maxX, maxY, z);
+            user.spawnParticle(PARTICLE, PARTICLE_DUST_OPTIONS, minX + 0.5, minY + 0.5, z + 0.5);
+            user.spawnParticle(PARTICLE, PARTICLE_DUST_OPTIONS, maxX + 0.5, minY + 0.5, z + 0.5);
+            user.spawnParticle(PARTICLE, PARTICLE_DUST_OPTIONS, minX + 0.5, maxY + 0.5, z + 0.5);
+            user.spawnParticle(PARTICLE, PARTICLE_DUST_OPTIONS, maxX + 0.5, maxY + 0.5, z + 0.5);
         }
 
         // Drawing origin

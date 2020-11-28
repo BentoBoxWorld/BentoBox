@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -45,7 +46,7 @@ import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.util.Util;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, User.class})
+@PrepareForTest({Bukkit.class, BentoBox.class, User.class, Util.class})
 public class AdminTeleportCommandTest {
 
     private CompositeCommand ac;
@@ -137,6 +138,10 @@ public class AdminTeleportCommandTest {
         // We do no actually want to teleport in this test, so return no island
         Optional<Island> nothing = Optional.empty();
         when(im.getIslandAt(any())).thenReturn(nothing );
+
+        // Util
+        PowerMockito.mockStatic(Util.class, Mockito.RETURNS_MOCKS);
+        when(Util.getUUID(anyString())).thenCallRealMethod();
     }
 
     @After

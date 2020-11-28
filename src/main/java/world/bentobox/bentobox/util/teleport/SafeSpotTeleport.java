@@ -66,6 +66,10 @@ public class SafeSpotTeleport {
         this.result = builder.getResult();
 
         // If there is no portal scan required, try the desired location immediately
+        Util.getChunkAtAsync(location).thenRun(()-> tryTogo(builder.getFailureMessage()));
+    }
+
+    private void tryTogo(String failureMessage) {
         if (plugin.getIslands().isSafeLocation(location)) {
             if (portal) {
                 // If the desired location is safe, then that's where you'll go if there's no portal
@@ -86,7 +90,7 @@ public class SafeSpotTeleport {
         notChecking = true;
 
         // Start a recurring task until done or cancelled
-        task = Bukkit.getScheduler().runTaskTimer(plugin, () -> gatherChunks(builder.getFailureMessage()), 0L, SPEED);
+        task = Bukkit.getScheduler().runTaskTimer(plugin, () -> gatherChunks(failureMessage), 0L, SPEED);
     }
 
     private void gatherChunks(String failureMessage) {
@@ -368,7 +372,7 @@ public class SafeSpotTeleport {
             build();
             return result;
         }
-        
+
         /**
          * Try to teleport the player
          * @return SafeSpotTeleport

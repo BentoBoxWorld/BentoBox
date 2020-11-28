@@ -5,6 +5,8 @@ import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.MessagePrompt;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.entity.Player;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
@@ -25,7 +27,7 @@ public class NameSuccessPrompt extends MessagePrompt {
      * @param bb - Blueprint Bundle
      * @param bp - blueprint
      */
-    public NameSuccessPrompt(GameModeAddon addon, BlueprintBundle bb, Blueprint bp) {
+    public NameSuccessPrompt(@NonNull GameModeAddon addon, @Nullable BlueprintBundle bb, @Nullable Blueprint bp) {
         this.addon = addon;
         this.bb = bb;
         this.bp = bp;

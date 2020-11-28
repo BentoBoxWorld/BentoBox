@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
@@ -26,8 +27,6 @@ import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Server;
-import org.bukkit.World;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
@@ -93,12 +92,7 @@ public class YamlDatabaseHandlerTest {
         PowerMockito.mockStatic(Bukkit.class);
         when(Bukkit.getScheduler()).thenReturn(scheduler);
 
-        when(scheduler.runTaskAsynchronously(any(), any(Runnable.class))).thenReturn(task);
-        Server server = mock(Server.class);
-        World world = mock(World.class);
-        when(world.getName()).thenReturn("cleanroom");
-        when(server.getWorld(anyString())).thenReturn(world);
-        when(Bukkit.getServer()).thenReturn(server);
+        when(scheduler.runTaskTimerAsynchronously(any(), any(Runnable.class), anyLong(), anyLong())).thenReturn(task);
 
         // A YAML file representing island
         uuid = UUID.randomUUID();
@@ -303,7 +297,7 @@ public class YamlDatabaseHandlerTest {
      */
     @Test
     public void testYamlDatabaseHandler() {
-        verify(scheduler).runTaskAsynchronously(eq(plugin), registerLambdaCaptor.capture());
+        verify(scheduler).runTaskTimerAsynchronously(eq(plugin), registerLambdaCaptor.capture(), eq(0L), eq(1L));
         Runnable lamda = registerLambdaCaptor.getValue();
         // Cannot run with true otherwise it'll infinite loop
         when(plugin.isShutdown()).thenReturn(true);

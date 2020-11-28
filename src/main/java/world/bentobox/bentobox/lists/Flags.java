@@ -378,6 +378,15 @@ public final class Flags {
     public static final Flag TNT_DAMAGE = new Flag.Builder("TNT_DAMAGE", Material.TNT).type(Type.SETTING)
             .mode(Flag.Mode.ADVANCED).build();
 
+    /**
+     * If {@code false}, prevents TNT from breaking blocks and damaging nearby entities outside of island boundaries.
+     * @since 1.15.3
+     * @see TNTListener
+     */
+    public static final Flag WORLD_TNT_DAMAGE = new Flag.Builder("WORLD_TNT_DAMAGE", Material.TNT)
+            .type(Type.WORLD_SETTING)
+            .build();
+
     /*
      * World Settings - they apply to every island in the game worlds.
      */

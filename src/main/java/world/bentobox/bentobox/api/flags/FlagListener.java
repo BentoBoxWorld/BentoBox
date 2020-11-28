@@ -94,11 +94,8 @@ public abstract class FlagListener implements Listener {
         if (e instanceof Cancellable) {
             ((Cancellable)e).setCancelled(true);
         }
-        if (user != null) {
-            if (!silent) {
-                user.notify(string, TextVariables.DESCRIPTION, user.getTranslation(flag.getHintReference()));
-            }
-            user.updateInventory();
+        if (user != null && !silent) {
+            user.notify(string, TextVariables.DESCRIPTION, user.getTranslation(flag.getHintReference()));
         }
     }
 

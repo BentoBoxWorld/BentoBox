@@ -110,7 +110,7 @@ public class IslandTeamKickCommand extends ConfirmableCommand {
         }
         // Reset the health
         if (getIWM().isOnLeaveResetHealth(getWorld())) {
-            target.getPlayer().setHealth(20.0D);
+            Util.resetHealth(target.getPlayer());
         }
 
         // Reset the hunger

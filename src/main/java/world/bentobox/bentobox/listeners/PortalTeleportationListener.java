@@ -1,8 +1,13 @@
 package world.bentobox.bentobox.listeners;
 
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.entity.Player;
@@ -10,7 +15,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityPortalEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
@@ -31,9 +38,51 @@ import world.bentobox.bentobox.util.teleport.SafeSpotTeleport;
 public class PortalTeleportationListener implements Listener {
 
     private final BentoBox plugin;
+    private Set<UUID> inPortal;
 
     public PortalTeleportationListener(@NonNull BentoBox plugin) {
         this.plugin = plugin;
+        inPortal = new HashSet<>();
+    }
+
+
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    public void onPlayerTeleport(PlayerTeleportEvent e) {
+        // Remove player from inPortal after a teleport
+        inPortal.remove(e.getPlayer().getUniqueId());
+    }
+
+    /**
+     * Fires the event if nether or end is disabled at the system level
+     * @param e
+     */
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    public void onPlayerPortal(PlayerMoveEvent e) {
+        UUID uuid = e.getPlayer().getUniqueId();
+        if (inPortal.contains(uuid) || !plugin.getIWM().inWorld(Util.getWorld(e.getFrom().getWorld()))) {
+            return;
+        }
+        if (!Bukkit.getAllowNether() && e.getPlayer().getLocation().getBlock().getType().equals(Material.NETHER_PORTAL)) {
+            inPortal.add(uuid);
+            // Schedule a time
+            Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                // Check again if still in portal
+                if (e.getPlayer().getLocation().getBlock().getType().equals(Material.NETHER_PORTAL)) {
+                    PlayerPortalEvent en = new PlayerPortalEvent(e.getPlayer(), e.getPlayer().getLocation(), null, TeleportCause.NETHER_PORTAL, 0, false, 0);
+                    if (!this.onNetherPortal(en)) {
+                        // Failed
+                        inPortal.remove(uuid);
+                    }
+                } else {
+                    inPortal.remove(uuid);
+                }
+            }, 40);
+            return;
+        }
+        if (!Bukkit.getAllowEnd() && e.getPlayer().getLocation().getBlock().getType().equals(Material.END_PORTAL)) {
+            PlayerPortalEvent en = new PlayerPortalEvent(e.getPlayer(), e.getPlayer().getLocation(), null, TeleportCause.END_PORTAL, 0, false, 0);
+            this.onEndIslandPortal(en);
+        }
     }
 
     /**
@@ -76,8 +125,16 @@ public class PortalTeleportationListener implements Listener {
         // STANDARD END
         if (!plugin.getIWM().isEndIslands(overWorld)) {
             if (fromWorld.getEnvironment() != Environment.THE_END) {
-                // To Standard end
-                e.setTo(plugin.getIWM().getEndWorld(overWorld).getSpawnLocation());
+                if (Bukkit.getAllowEnd()) {
+                    // To Standard end
+                    e.setTo(plugin.getIWM().getEndWorld(overWorld).getSpawnLocation());
+                } else {
+                    new SafeSpotTeleport.Builder(plugin)
+                    .entity(e.getPlayer())
+                    .location(plugin.getIWM().getEndWorld(overWorld).getSpawnLocation())
+                    .thenRun(() -> inPortal.remove(e.getPlayer().getUniqueId()))
+                    .build();
+                }
             }
             // From standard end - check if player has an island to go to
             else if (plugin.getIslands().hasIsland(overWorld, e.getPlayer().getUniqueId())
@@ -146,6 +203,7 @@ public class PortalTeleportationListener implements Listener {
     /**
      * Handles nether portals.
      * @param e - event
+     * @return false if teleport does not happen, true if it does
      */
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true) // Use HIGH to allow Multiverse first shot
     public boolean onNetherPortal(PlayerPortalEvent e) {
@@ -154,32 +212,37 @@ public class PortalTeleportationListener implements Listener {
         }
         World fromWorld = e.getFrom().getWorld();
         World overWorld = Util.getWorld(fromWorld);
-
         if (fromWorld == null || !plugin.getIWM().inWorld(overWorld)) {
             // Do nothing special
             return false;
         }
-
         // 1.14.4 requires explicit cancellation to prevent teleporting to the normal nether
         if (!plugin.getIWM().isNetherGenerate(overWorld)) {
             e.setCancelled(true);
             return false;
         }
-
         // STANDARD NETHER
         if (!plugin.getIWM().isNetherIslands(overWorld)) {
             if (fromWorld.getEnvironment() != Environment.NETHER) {
-                // To Standard Nether
-                e.setTo(plugin.getIWM().getNetherWorld(overWorld).getSpawnLocation());
+                if (Bukkit.getAllowNether()) {
+                    // To Standard Nether
+                    e.setTo(plugin.getIWM().getNetherWorld(overWorld).getSpawnLocation());
+                } else {
+                    // Teleport to standard nether
+                    new SafeSpotTeleport.Builder(plugin)
+                    .entity(e.getPlayer())
+                    .location(plugin.getIWM().getNetherWorld(fromWorld).getSpawnLocation())
+                    .portal()
+                    .build();
+                }
             }
             // From standard nether
             else {
                 e.setCancelled(true);
-                plugin.getIslands().homeTeleportAsync(overWorld, e.getPlayer());
+                plugin.getIslands().homeTeleportAsync(overWorld, e.getPlayer()).thenAccept(b -> inPortal.remove(e.getPlayer().getUniqueId()));
             }
-            return false;
+            return true;
         }
-
         // FROM NETHER
         // If entering a nether portal in the nether, teleport to portal in overworld if there is one
         if (fromWorld.getEnvironment() == Environment.NETHER) {
@@ -191,6 +254,7 @@ public class PortalTeleportationListener implements Listener {
             .entity(e.getPlayer())
             .location(to)
             .portal()
+            .thenRun(() -> inPortal.remove(e.getPlayer().getUniqueId()))
             .build();
             return true;
         }
@@ -219,6 +283,7 @@ public class PortalTeleportationListener implements Listener {
         .entity(e.getPlayer())
         .location(to)
         .portal()
+        .thenRun(() -> inPortal.remove(e.getPlayer().getUniqueId()))
         .build();
         return true;
     }

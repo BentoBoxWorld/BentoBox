@@ -241,6 +241,8 @@ public class BlueprintClipboard {
         // Block state
         BlockState blockState = block.getState();
         BlueprintBlock b = new BlueprintBlock(block.getBlockData().getAsString());
+        // Biome
+        b.setBiome(block.getBiome());
         // Signs
         if (blockState instanceof Sign) {
             Sign sign = (Sign)blockState;

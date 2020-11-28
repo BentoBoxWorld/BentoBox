@@ -36,6 +36,7 @@ public abstract class AbstractDatabaseHandler<T> {
      * Async save task that runs repeatedly
      */
     private BukkitTask asyncSaveTask;
+    private boolean inSave;
 
     protected boolean shutdown;
 
@@ -100,26 +101,20 @@ public abstract class AbstractDatabaseHandler<T> {
         if (!plugin.isEnabled()) return;
         // Run async queue
         processQueue = new ConcurrentLinkedQueue<>();
-        asyncSaveTask = Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-            // Loop continuously
-            while (!shutdown || !processQueue.isEmpty()) {
-                while (!processQueue.isEmpty()) {
+        asyncSaveTask = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {
+            // Check shutdown
+            if(shutdown || plugin.isShutdown()) {
+                // Cancel - this will only get called if the plugin is shutdown separately to the server
+                databaseConnector.closeConnection(dataObject);
+                asyncSaveTask.cancel();
+            } else if (!inSave && !processQueue.isEmpty()) {
+                inSave = true;
+                while(!processQueue.isEmpty()) {
                     processQueue.poll().run();
                 }
-                // Shutdown flag
-                shutdown = plugin.isShutdown();
-                // Clear the queue and then sleep
-                try {
-                    Thread.sleep(25);
-                } catch (InterruptedException e) {
-                    plugin.logError("Thread sleep error " + e.getMessage());
-                    Thread.currentThread().interrupt();
-                }
+                inSave = false;
             }
-            // Cancel
-            asyncSaveTask.cancel();
-            databaseConnector.closeConnection(dataObject);
-        });
+        }, 0L, 1L);
     }
 
     protected AbstractDatabaseHandler() {}
