@@ -61,11 +61,11 @@ public class IslandDeletion implements DataObject {
         uniqueId = UUID.randomUUID().toString();
         location = island.getCenter();
         minX = location.getBlockX() - range;
-        minXChunk =  (minX >> 4) - 1;
+        minXChunk =  minX >> 4;
         maxX = range + location.getBlockX();
         maxXChunk = maxX >> 4;
         minZ = location.getBlockZ() - range;
-        minZChunk = (minZ >> 4) - 1;
+        minZChunk = minZ >> 4;
         maxZ = range + location.getBlockZ();
         maxZChunk = maxZ >> 4;
         box = BoundingBox.of(new Vector(minX, 0, minZ), new Vector(maxX, 255, maxZ));
