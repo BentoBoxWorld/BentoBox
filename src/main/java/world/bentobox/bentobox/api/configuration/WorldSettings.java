@@ -316,7 +316,7 @@ public interface WorldSettings extends ConfigObject {
      */
     @NonNull
     List<String> getOnLeaveCommands();
-    
+
     /**
      * Returns a list of commands that should be executed when the player respawns after death if {@link Flags#ISLAND_RESPAWN} is true.<br/>
      * @return a list of commands.
@@ -536,5 +536,23 @@ public interface WorldSettings extends ConfigObject {
     default String getDefaultNewPlayerAction()
     {
         return "create";
+    }
+
+    /**
+     * Make a nether portal when teleporting to the nether through an overworld portal
+     * @return true if a portal should be made
+     * @since 1.15.4
+     */
+    default boolean isMakeNetherPortals() {
+        return false;
+    }
+
+    /**
+     * Make an end portal when teleporting to the end through an end portal
+     * @return true if a portal should be made
+     * @since 1.15.4
+     */
+    default boolean isMakeEndPortals() {
+        return false;
     }
 }
