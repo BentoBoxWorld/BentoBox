@@ -166,6 +166,11 @@ public class PortalTeleportationListener implements Listener {
         // If this is to island End, then go to the same vector, otherwise try spawn
         Optional<Island> optionalIsland = plugin.getIslands().getIslandAt(e.getFrom());
         Location to = optionalIsland.map(i -> i.getSpawnPoint(Environment.THE_END)).orElse(e.getFrom().toVector().toLocation(endWorld));
+        e.setTo(to);
+        if (plugin.getIWM().getAddon(overWorld).map(gm -> gm.getWorldSettings().isMakeEndPortals()).orElse(false)) {
+            inPortal.remove(e.getPlayer().getUniqueId());
+            return true;
+        }
         e.setCancelled(true);
         // Check if there is a missing end island
         if (plugin.getIWM().isPasteMissingIslands(overWorld)
@@ -248,6 +253,11 @@ public class PortalTeleportationListener implements Listener {
         if (fromWorld.getEnvironment() == Environment.NETHER) {
             // If this is from the island nether, then go to the same vector, otherwise try island home location
             Location to = plugin.getIslands().getIslandAt(e.getFrom()).map(i -> i.getSpawnPoint(Environment.NORMAL)).orElse(e.getFrom().toVector().toLocation(overWorld));
+            e.setTo(to);
+            if (plugin.getIWM().getAddon(overWorld).map(gm -> gm.getWorldSettings().isMakeNetherPortals()).orElse(false)) {
+                inPortal.remove(e.getPlayer().getUniqueId());
+                return true;
+            }
             e.setCancelled(true);
             // Else other worlds teleport to the nether
             new SafeSpotTeleport.Builder(plugin)
@@ -263,7 +273,13 @@ public class PortalTeleportationListener implements Listener {
         // If this is to island nether, then go to the same vector, otherwise try spawn
         Optional<Island> optionalIsland = plugin.getIslands().getIslandAt(e.getFrom());
         Location to = optionalIsland.map(i -> i.getSpawnPoint(Environment.NETHER)).orElse(e.getFrom().toVector().toLocation(nether));
+        e.setTo(to);
+        if (plugin.getIWM().getAddon(overWorld).map(gm -> gm.getWorldSettings().isMakeNetherPortals()).orElse(false)) {
+            inPortal.remove(e.getPlayer().getUniqueId());
+            return true;
+        }
         e.setCancelled(true);
+
         // Check if there is an island there or not
         if (plugin.getIWM().isPasteMissingIslands(overWorld) &&
                 !plugin.getIWM().isUseOwnGenerator(overWorld)
@@ -278,6 +294,7 @@ public class PortalTeleportationListener implements Listener {
             // All done here
             return true;
         }
+
         // Else other worlds teleport to the nether
         new SafeSpotTeleport.Builder(plugin)
         .entity(e.getPlayer())

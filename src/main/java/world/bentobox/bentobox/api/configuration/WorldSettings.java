@@ -544,7 +544,7 @@ public interface WorldSettings extends ConfigObject {
      * @since 1.15.4
      */
     default boolean isMakeNetherPortals() {
-        return false;
+        return true;
     }
 
     /**
@@ -553,6 +553,6 @@ public interface WorldSettings extends ConfigObject {
      * @since 1.15.4
      */
     default boolean isMakeEndPortals() {
-        return false;
+        return true;
     }
 }
