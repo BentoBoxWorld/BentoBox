@@ -16,7 +16,7 @@ public class NMSHandler implements NMSAbstraction {
         net.minecraft.server.v1_16_R3.World nmsWorld = ((CraftWorld) chunk.getWorld()).getHandle();
         net.minecraft.server.v1_16_R3.Chunk nmsChunk = nmsWorld.getChunkAt(chunk.getX(), chunk.getZ());
         BlockPosition bp = new BlockPosition((chunk.getX() << 4) + x, y, (chunk.getZ() << 4) + z);
-        //IBlockData ibd = net.minecraft.server.v1_16_R3.Block.getByCombinedId(blockId + (data << 12));
+        // Setting the block to air before setting to another state prevents some console errors
         nmsChunk.setType(bp, AIR, applyPhysics, true);
         nmsChunk.setType(bp, craft.getState(), applyPhysics, true);
     }
