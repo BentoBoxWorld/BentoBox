@@ -61,31 +61,30 @@ public class DeleteIslandChunks {
             if (inDelete) return;
             inDelete = true;
             for (int i = 0; i < plugin.getSettings().getDeleteSpeed(); i++) {
-                plugin.getIWM().getAddon(di.getWorld()).ifPresent(gm -> {
-                    // Overworld
-                    processChunk(gm, Environment.NORMAL, chunkX, chunkZ).thenAccept(b -> {
-                        // Nether
-                        processChunk(gm, Environment.NETHER, chunkX, chunkZ).thenAccept(n -> {
-                            // End
-                            processChunk(gm, Environment.NETHER, chunkX, chunkZ).thenAccept(e -> {
-                                chunkZ++;
-                                if (chunkZ > di.getMaxZChunk()) {
-                                    chunkZ = di.getMinZChunk();
-                                    chunkX++;
-                                    if (chunkX > di.getMaxXChunk()) {
-                                        // We're done
-                                        task.cancel();
-                                        // Fire event
-                                        IslandEvent.builder().deletedIslandInfo(di).reason(Reason.DELETED).build();
-                                    }
-                                }
-                            });
-                        });
-                    });
-                });
+                plugin.getIWM().getAddon(di.getWorld()).ifPresent(gm ->
+                // Overworld
+                processChunk(gm, Environment.NORMAL, chunkX, chunkZ).thenRun(() ->
+                // Nether
+                processChunk(gm, Environment.NETHER, chunkX, chunkZ).thenRun(() ->
+                // End
+                processChunk(gm, Environment.NETHER, chunkX, chunkZ).thenRun(() -> finish()))));
             }
         }, 0L, 20L);
 
+    }
+
+    private void finish() {
+        chunkZ++;
+        if (chunkZ > di.getMaxZChunk()) {
+            chunkZ = di.getMinZChunk();
+            chunkX++;
+            if (chunkX > di.getMaxXChunk()) {
+                // We're done
+                task.cancel();
+                // Fire event
+                IslandEvent.builder().deletedIslandInfo(di).reason(Reason.DELETED).build();
+            }
+        }
     }
 
     private CompletableFuture<Boolean> processChunk(GameModeAddon gm, Environment env, int x, int z) {
