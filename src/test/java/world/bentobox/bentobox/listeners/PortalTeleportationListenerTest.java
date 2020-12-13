@@ -1,5 +1,6 @@
 package world.bentobox.bentobox.listeners;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -40,6 +41,7 @@ import org.powermock.reflect.Whitebox;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
+import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.blueprints.Blueprint;
 import world.bentobox.bentobox.blueprints.BlueprintPaster;
@@ -79,6 +81,8 @@ public class PortalTeleportationListenerTest {
     private BlueprintsManager bpm;
     @Mock
     private GameModeAddon gameModeAddon;
+    @Mock
+    private WorldSettings ws;
 
     @Before
     public void setUp() throws Exception {
@@ -167,7 +171,8 @@ public class PortalTeleportationListenerTest {
         defaultBB.setBlueprint(World.Environment.THE_END, bp);
         when(bpm.getDefaultBlueprintBundle(any())).thenReturn(defaultBB);
         when(bpm.getBlueprints(any())).thenReturn(Collections.singletonMap("blueprintname", bp));
-        // Paster
+        // World Settings
+        when(gameModeAddon.getWorldSettings()).thenReturn(ws);
 
     }
 
@@ -420,16 +425,20 @@ public class PortalTeleportationListenerTest {
     public void testOnNetherPortalFromWorldToNetherIslandWithSpawnDefined() {
         PortalTeleportationListener np = new PortalTeleportationListener(plugin);
         Location from = mock(Location.class);
+        Location to = mock(Location.class);
+        when(to.getWorld()).thenReturn(world);
         // Teleport from world to nether
         when(from.getWorld()).thenReturn(world);
         when(from.toVector()).thenReturn(new Vector(1,2,3));
-        PlayerPortalEvent e = new PlayerPortalEvent(null, from, null, TeleportCause.NETHER_PORTAL);
+        PlayerPortalEvent e = new PlayerPortalEvent(null, from, to, TeleportCause.NETHER_PORTAL);
         // Nether islands active
         when(iwm.isNetherIslands(any())).thenReturn(true);
         when(iwm.isNetherGenerate(any())).thenReturn(true);
+        when(iwm.getNetherWorld(any())).thenReturn(nether);
 
         Island island = mock(Island.class);
         Location spawnLoc = mock(Location.class);
+        when(spawnLoc.getWorld()).thenReturn(world);
         when(island.getSpawnPoint(any())).thenReturn(spawnLoc);
         Optional<Island> optionalIsland = Optional.of(island);
         // Island exists at location
@@ -587,4 +596,49 @@ public class PortalTeleportationListenerTest {
     }
 
 
+    /**
+     * Test method for {@link PortalTeleportationListener#setSeachRadius(PlayerPortalEvent, Island)
+     */
+    @Test
+    public void testSetSeachRadius() {
+        Location from = mock(Location.class);
+        Location to = mock(Location.class);
+        PlayerPortalEvent e = new PlayerPortalEvent(p, from, to);
+        Island island = mock(Island.class);
+        when(island.onIsland(any())).thenReturn(true);
+        Location center = mock(Location.class);
+        when(center.getBlockX()).thenReturn(200);
+        when(center.getBlockZ()).thenReturn(200);
+        when(island.getCenter()).thenReturn(center);
+        when(island.getProtectionRange()).thenReturn(200);
+        PortalTeleportationListener np = new PortalTeleportationListener(plugin);
+        when(from.getBlockZ()).thenReturn(205);
+        assertEquals(128, e.getSearchRadius());
+
+        for (int x = 200; x < 410; x++) {
+            when(from.getBlockX()).thenReturn(x);
+            np.setSeachRadius(e, island);
+            if (x >= 400) {
+                assertEquals(1, e.getSearchRadius());
+            } else if (x < 273) {
+                assertEquals(128, e.getSearchRadius());
+            } else if (x < 400) {
+                assertEquals(400 - x, e.getSearchRadius());
+            }
+        }
+    }
+
+    /**
+     * Test method for {@link PortalTeleportationListener#setSeachRadius(PlayerPortalEvent, Island)
+     */
+    @Test
+    public void testSetSeachRadiusNotOnIsland() {
+        Location from = mock(Location.class);
+        PlayerPortalEvent e = new PlayerPortalEvent(p, from, null);
+        Island island = mock(Island.class);
+        when(island.onIsland(any())).thenReturn(false);
+        PortalTeleportationListener np = new PortalTeleportationListener(plugin);
+        np.setSeachRadius(e, island);
+        assertEquals(128, e.getSearchRadius());
+    }
 }
