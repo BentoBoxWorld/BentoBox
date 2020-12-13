@@ -276,6 +276,8 @@ public class PortalTeleportationListener implements Listener {
         e.setTo(to);
         if (plugin.getIWM().getAddon(overWorld).map(gm -> gm.getWorldSettings().isMakeNetherPortals()).orElse(false)) {
             inPortal.remove(e.getPlayer().getUniqueId());
+            // Find distance from edge of island's protection
+            optionalIsland.ifPresent(i -> setSeachRadius(e, i));
             return true;
         }
         e.setCancelled(true);
@@ -304,6 +306,18 @@ public class PortalTeleportationListener implements Listener {
         .build();
         return true;
     }
+
+    void setSeachRadius(PlayerPortalEvent e, Island i) {
+        if (!i.onIsland(e.getFrom())) return;
+        // Find max x or max z
+        int x = Math.abs(i.getCenter().getBlockX() - e.getFrom().getBlockX());
+        int z = Math.abs(i.getCenter().getBlockZ() - e.getFrom().getBlockZ());
+        int diff = i.getProtectionRange() - Math.max(x, z);
+        if (diff > 0 && diff < 128) {
+            e.setSearchRadius(diff);
+        }
+    }
+
 
     /**
      * Pastes the default nether or end island and teleports the player to the island's spawn point
