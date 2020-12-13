@@ -1,5 +1,6 @@
 package world.bentobox.bentobox.util;
 
+import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -661,9 +662,15 @@ public class Util {
     /**
      * Checks what version the server is running and picks the appropriate NMS handler, or fallback
      * @return an NMS accelerated class for this server, or a fallback Bukkit API based one
-     * @throws Exception - thrown if the coding is wrong and there's no fallback
+     * @throws ClassNotFoundException - thrown if there is no fallback class - should never be thrown
+     * @throws SecurityException - thrown if security violation - should never be thrown
+     * @throws NoSuchMethodException - thrown if no constructor for NMS package
+     * @throws InvocationTargetException - should never be thrown
+     * @throws IllegalArgumentException - should never be thrown
+     * @throws IllegalAccessException - should never be thrown
+     * @throws InstantiationException - should never be thrown
      */
-    public static NMSAbstraction getNMS() throws Exception {
+    public static NMSAbstraction getNMS() throws ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
         String serverPackageName = Bukkit.getServer().getClass().getPackage().getName();
         String pluginPackageName = plugin.getClass().getPackage().getName();
         String version = serverPackageName.substring(serverPackageName.lastIndexOf('.') + 1);
