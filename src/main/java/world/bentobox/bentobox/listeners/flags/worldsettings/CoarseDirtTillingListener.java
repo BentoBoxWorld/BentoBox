@@ -14,32 +14,24 @@ import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.lists.Flags;
 
+/**
+ * Handles coarse dirt creation and exploitation
+ * @author tastybento
+ *
+ */
 public class CoarseDirtTillingListener extends FlagListener {
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onTillingCoarseDirt(PlayerInteractEvent e) {
-        if (!e.getAction().equals(Action.RIGHT_CLICK_BLOCK) || e.getItem() == null) {
-            return;
-        }
-
-        if (e.getClickedBlock().getType().equals(Material.COARSE_DIRT)) {
-            switch (e.getItem().getType()) {
-            case WOODEN_HOE:
-            case STONE_HOE:
-            case IRON_HOE:
-            case GOLDEN_HOE:
-            case DIAMOND_HOE:
-                if (e.getClickedBlock().getType().equals(Material.COARSE_DIRT)
-                        && getIWM().inWorld(e.getClickedBlock().getWorld())
-                        && !Flags.COARSE_DIRT_TILLING.isSetForWorld(e.getClickedBlock().getWorld())) {
-                    e.setCancelled(true);
-                    User user = User.getInstance(e.getPlayer());
-                    user.notify("protection.protected", TextVariables.DESCRIPTION, user.getTranslation(Flags.COARSE_DIRT_TILLING.getHintReference()));
-                }
-                break;
-            default:
-                break;
-            }
+        if (e.getAction().equals(Action.RIGHT_CLICK_BLOCK)
+                && e.getItem() != null
+                && getIWM().inWorld(e.getClickedBlock().getWorld())
+                && e.getClickedBlock().getType().equals(Material.COARSE_DIRT)
+                && e.getItem().getType().name().endsWith("_HOE")
+                && !Flags.COARSE_DIRT_TILLING.isSetForWorld(e.getClickedBlock().getWorld())) {
+            e.setCancelled(true);
+            User user = User.getInstance(e.getPlayer());
+            user.notify("protection.protected", TextVariables.DESCRIPTION, user.getTranslation(Flags.COARSE_DIRT_TILLING.getHintReference()));
         }
     }
 
