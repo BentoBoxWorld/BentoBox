@@ -168,99 +168,110 @@ public class BentoBox extends JavaPlugin {
         final long loadTime = System.currentTimeMillis() - loadStart;
 
         Bukkit.getScheduler().runTask(instance, () -> {
-            final long enableStart = System.currentTimeMillis();
-            hooksManager.registerHook(new PlaceholderAPIHook());
-            // Setup the Placeholders manager
-            placeholdersManager = new PlaceholdersManager(this);
-
-            // Enable addons
-            addonsManager.enableAddons();
-
-            // Register default gamemode placeholders
-            addonsManager.getGameModeAddons().forEach(placeholdersManager::registerDefaultPlaceholders);
-
-            // Register Listeners
-            registerListeners();
-
-            // Load islands from database - need to wait until all the worlds are loaded
             try {
-                islandsManager.load();
+                completeSetup(loadTime);  
             } catch (Exception e) {
-                logError("*****************CRITIAL ERROR!******************");
-                logError(e.getMessage());
-                //Arrays.stream(e.getMessage().split("[\n\r]+")).forEach(this::logError);
-                logError("Could not load islands! Disabling BentoBox...");
-                logError("*************************************************");
-                // Stop all addons
-                if (addonsManager != null) {
-                    addonsManager.disableAddons();
-                }
-                // Do not save players or islands, just shutdown
-                shutdown = true;
-                instance.setEnabled(false);
-                return;
-            }
-
-            // Save islands & players data every X minutes
-            Bukkit.getScheduler().runTaskTimer(instance, () -> {
-                if (!playersManager.isSaveTaskRunning()) {
-                    playersManager.saveAll(true);
-                } else {
-                    getLogger().warning("Tried to start a player data save task while the previous auto save was still running!");
-                }
-                if (!islandsManager.isSaveTaskRunning()) {
-                    islandsManager.saveAll(true);
-                } else {
-                    getLogger().warning("Tried to start a island data save task while the previous auto save was still running!");
-                }
-            }, getSettings().getDatabaseBackupPeriod() * 20 * 60L, getSettings().getDatabaseBackupPeriod() * 20 * 60L);
-
-            // Make sure all flag listeners are registered.
-            flagsManager.registerListeners();
-
-            // Load metrics
-            metrics = new BStats(this);
-            metrics.registerMetrics();
-
-            // Register Multiverse hook - MV loads AFTER BentoBox
-            // Make sure all worlds are already registered to Multiverse.
-            hooksManager.registerHook(new MultiverseCoreHook());
-            islandWorldManager.registerWorldsToMultiverse();
-
-            // Register additional hooks
-            hooksManager.registerHook(new DynmapHook());
-            hooksManager.registerHook(new WorldEditHook());
-
-            webManager = new WebManager(this);
-
-            final long enableTime = System.currentTimeMillis() - enableStart;
-
-            // Show banner
-            User.getInstance(Bukkit.getConsoleSender()).sendMessage("successfully-loaded",
-                    TextVariables.VERSION, instance.getDescription().getVersion(),
-                    "[time]", String.valueOf(loadTime + enableTime));
-
-            // Poll for blueprints loading to be finished - async so could be a completely variable time
-            blueprintLoadingTask = Bukkit.getScheduler().runTaskTimer(instance, () -> {
-                if (getBlueprintsManager().isBlueprintsLoaded()) {
-                    blueprintLoadingTask.cancel();
-                    // Tell all addons that everything is loaded
-                    isLoaded = true;
-                    this.addonsManager.allLoaded();
-                    // Fire plugin ready event - this should go last after everything else
-                    Bukkit.getPluginManager().callEvent(new BentoBoxReadyEvent());
-                    instance.log("All blueprints loaded.");
-                }
-            }, 0L, 1L);
-
-            if (getSettings().getDatabaseType().equals(DatabaseSetup.DatabaseType.YAML)) {
-                logWarning("*** You're still using YAML database ! ***");
-                logWarning("This database type is being deprecated from BentoBox as some official addons encountered difficulties supporting it correctly.");
-                logWarning("You should switch ASAP to an alternative database type. Please refer to the comments in BentoBox's config.yml.");
-                logWarning("There is NO guarantee YAML database will remain properly supported in the following updates, and its usage should as such be considered a non-viable situation.");
-                logWarning("*** *** *** *** *** *** *** *** *** *** ***");
+                fireCriticalError(e.getMessage(), "");
             }
         });
+    }
+
+    private void completeSetup(long loadTime) {
+        final long enableStart = System.currentTimeMillis();
+        hooksManager.registerHook(new PlaceholderAPIHook());
+        // Setup the Placeholders manager
+        placeholdersManager = new PlaceholdersManager(this);
+
+        // Enable addons
+        addonsManager.enableAddons();
+
+        // Register default gamemode placeholders
+        addonsManager.getGameModeAddons().forEach(placeholdersManager::registerDefaultPlaceholders);
+
+        // Register Listeners
+        registerListeners();
+
+        // Load islands from database - need to wait until all the worlds are loaded
+        try {
+            islandsManager.load();
+        } catch (Exception e) {
+            fireCriticalError(e.getMessage(), "Could not load islands!");
+            return;
+        }
+
+        // Save islands & players data every X minutes
+        Bukkit.getScheduler().runTaskTimer(instance, () -> {
+            if (!playersManager.isSaveTaskRunning()) {
+                playersManager.saveAll(true);
+            } else {
+                getLogger().warning("Tried to start a player data save task while the previous auto save was still running!");
+            }
+            if (!islandsManager.isSaveTaskRunning()) {
+                islandsManager.saveAll(true);
+            } else {
+                getLogger().warning("Tried to start a island data save task while the previous auto save was still running!");
+            }
+        }, getSettings().getDatabaseBackupPeriod() * 20 * 60L, getSettings().getDatabaseBackupPeriod() * 20 * 60L);
+
+        // Make sure all flag listeners are registered.
+        flagsManager.registerListeners();
+
+        // Load metrics
+        metrics = new BStats(this);
+        metrics.registerMetrics();
+
+        // Register Multiverse hook - MV loads AFTER BentoBox
+        // Make sure all worlds are already registered to Multiverse.
+        hooksManager.registerHook(new MultiverseCoreHook());
+        islandWorldManager.registerWorldsToMultiverse();
+
+        // Register additional hooks
+        hooksManager.registerHook(new DynmapHook());
+        hooksManager.registerHook(new WorldEditHook());
+
+        webManager = new WebManager(this);
+
+        final long enableTime = System.currentTimeMillis() - enableStart;
+
+        // Show banner
+        User.getInstance(Bukkit.getConsoleSender()).sendMessage("successfully-loaded",
+                TextVariables.VERSION, instance.getDescription().getVersion(),
+                "[time]", String.valueOf(loadTime + enableTime));
+
+        // Poll for blueprints loading to be finished - async so could be a completely variable time
+        blueprintLoadingTask = Bukkit.getScheduler().runTaskTimer(instance, () -> {
+            if (getBlueprintsManager().isBlueprintsLoaded()) {
+                blueprintLoadingTask.cancel();
+                // Tell all addons that everything is loaded
+                isLoaded = true;
+                this.addonsManager.allLoaded();
+                // Fire plugin ready event - this should go last after everything else
+                Bukkit.getPluginManager().callEvent(new BentoBoxReadyEvent());
+                instance.log("All blueprints loaded.");
+            }
+        }, 0L, 1L);
+
+        if (getSettings().getDatabaseType().equals(DatabaseSetup.DatabaseType.YAML)) {
+            logWarning("*** You're still using YAML database ! ***");
+            logWarning("This database type is being deprecated from BentoBox as some official addons encountered difficulties supporting it correctly.");
+            logWarning("You should switch ASAP to an alternative database type. Please refer to the comments in BentoBox's config.yml.");
+            logWarning("There is NO guarantee YAML database will remain properly supported in the following updates, and its usage should as such be considered a non-viable situation.");
+            logWarning("*** *** *** *** *** *** *** *** *** *** ***");
+        }
+    }
+
+    private void fireCriticalError(String message, String error) {
+        logError("*****************CRITIAL ERROR!******************");
+        logError(message);
+        logError(error + " Disabling BentoBox...");
+        logError("*************************************************");
+        // Stop all addons
+        if (addonsManager != null) {
+            addonsManager.disableAddons();
+        }
+        // Do not save players or islands, just shutdown
+        shutdown = true;
+        instance.setEnabled(false);
     }
 
     /**
