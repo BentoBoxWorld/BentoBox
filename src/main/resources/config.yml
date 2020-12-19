@@ -157,7 +157,7 @@ island:
   # Smaller values will help reduce noticeable lag but will make deleting take longer.
   # A setting of 0 will leave island blocks (not recommended).
   # Added since 1.7.0.
-  delete-speed: 1
+  delete-speed: 100
   deletion:
     # Toggles whether islands, when players are resetting them, should be kept in the world or deleted.
     # * If set to 'true', whenever a player resets his island, his previous island will become unowned and won't be deleted from the world.
