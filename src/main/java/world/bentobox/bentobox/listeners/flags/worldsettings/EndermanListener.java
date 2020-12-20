@@ -4,7 +4,6 @@ import org.bukkit.entity.Enderman;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
-
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.lists.Flags;
 
@@ -16,17 +15,20 @@ import world.bentobox.bentobox.lists.Flags;
  *
  */
 public class EndermanListener extends FlagListener {
-    /**
-     * Allows or prevents enderman griefing
-     */
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void onEndermanGrief(final EntityChangeBlockEvent e) {
-        if (!(e.getEntity() instanceof Enderman) || !getIWM().inWorld(e.getEntity().getLocation())) {
-            return;
-        }
-        if (!Flags.ENDERMAN_GRIEFING.isSetForWorld(e.getEntity().getWorld())) {
-            e.setCancelled(true);
-        }
-    }
 
+  /**
+   * Allows or prevents enderman griefing
+   */
+  @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+  public void onEndermanGrief(final EntityChangeBlockEvent e) {
+    if (
+      !(e.getEntity() instanceof Enderman) ||
+      !getIWM().inWorld(e.getEntity().getLocation())
+    ) {
+      return;
+    }
+    if (!Flags.ENDERMAN_GRIEFING.isSetForWorld(e.getEntity().getWorld())) {
+      e.setCancelled(true);
+    }
+  }
 }

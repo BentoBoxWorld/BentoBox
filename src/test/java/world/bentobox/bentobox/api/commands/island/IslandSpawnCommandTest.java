@@ -16,7 +16,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -35,7 +34,6 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
-
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
@@ -53,182 +51,198 @@ import world.bentobox.bentobox.managers.PlaceholdersManager;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class})
+@PrepareForTest({ Bukkit.class, BentoBox.class })
 public class IslandSpawnCommandTest {
+  @Mock
+  private BentoBox plugin;
 
-    @Mock
-    private BentoBox plugin;
-    @Mock
-    private IslandsManager im;
-    @Mock
-    private CompositeCommand ic;
-    private IslandSpawnCommand isc;
-    @Mock
-    private IslandWorldManager iwm;
-    private @Nullable User user;
-    @Mock
-    private World world;
-    @Mock
-    private @Nullable WorldSettings ws;
-    private Map<String, Boolean> map;
-    @Mock
-    private Player player;
-    @Mock
-    private BukkitTask task;
-    @Mock
-    private PluginManager pim;
-    @Mock
-    private Settings s;
+  @Mock
+  private IslandsManager im;
 
-    /**
-     * @throws java.lang.Exception
-     */
-    @Before
-    public void setUp() throws Exception {
-        // Set up plugin
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+  @Mock
+  private CompositeCommand ic;
 
-        // Command manager
-        CommandsManager cm = mock(CommandsManager.class);
-        when(plugin.getCommandsManager()).thenReturn(cm);
+  private IslandSpawnCommand isc;
 
-        // Player
-        when(player.isOp()).thenReturn(false);
-        UUID uuid = UUID.randomUUID();
-        when(player.getUniqueId()).thenReturn(uuid);
-        when(player.hasPermission(anyString())).thenReturn(true);
-        when(player.getWorld()).thenReturn(world);
-        User.setPlugin(plugin);
-        // Set up user already
-        user = User.getInstance(player);
+  @Mock
+  private IslandWorldManager iwm;
 
-        // Addon
-        GameModeAddon addon = mock(GameModeAddon.class);
+  @Nullable
+  private User user;
 
+  @Mock
+  private World world;
 
-        // Parent command has no aliases
-        when(ic.getSubCommandAliases()).thenReturn(new HashMap<>());
-        when(ic.getParameters()).thenReturn("parameters");
-        when(ic.getDescription()).thenReturn("description");
-        when(ic.getPermissionPrefix()).thenReturn("permission.");
-        when(ic.getUsage()).thenReturn("");
-        when(ic.getSubCommand(Mockito.anyString())).thenReturn(Optional.empty());
-        when(ic.getAddon()).thenReturn(addon);
+  @Mock
+  @Nullable
+  private WorldSettings ws;
 
-        // Server & Scheduler
-        BukkitScheduler sch = mock(BukkitScheduler.class);
-        PowerMockito.mockStatic(Bukkit.class);
-        when(Bukkit.getScheduler()).thenReturn(sch);
-        when(sch.runTaskLater(any(), any(Runnable.class), any(Long.class))).thenReturn(task);
+  private Map<String, Boolean> map;
 
-        // Event register
-        when(Bukkit.getPluginManager()).thenReturn(pim);
+  @Mock
+  private Player player;
 
-        // Settings
-        when(plugin.getSettings()).thenReturn(s);
+  @Mock
+  private BukkitTask task;
 
-        // IWM
-        when(plugin.getIWM()).thenReturn(iwm);
-        when(iwm.getWorldSettings(any())).thenReturn(ws);
-        map = new HashMap<>();
-        when(ws.getWorldFlags()).thenReturn(map);
+  @Mock
+  private PluginManager pim;
 
-        // Island Manager
-        when(plugin.getIslands()).thenReturn(im);
+  @Mock
+  private Settings s;
 
-        LocalesManager lm = mock(LocalesManager.class);
-        // Locales
-        when(plugin.getLocalesManager()).thenReturn(lm);
-        when(lm.get(any(), any())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
-        PlaceholdersManager phm = mock(PlaceholdersManager.class);
-        when(plugin.getPlaceholdersManager()).thenReturn(phm);
-        when(phm.replacePlaceholders(any(), any())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
+  /**
+   * @throws java.lang.Exception
+   */
+  @Before
+  public void setUp() throws Exception {
+    // Set up plugin
+    Whitebox.setInternalState(BentoBox.class, "instance", plugin);
 
-        // Command
-        isc = new IslandSpawnCommand(ic);
-    }
+    // Command manager
+    CommandsManager cm = mock(CommandsManager.class);
+    when(plugin.getCommandsManager()).thenReturn(cm);
 
-    /**
-     * @throws java.lang.Exception
-     */
-    @After
-    public void tearDown() {
-        User.clearUsers();
-        Mockito.framework().clearInlineMocks();
-    }
+    // Player
+    when(player.isOp()).thenReturn(false);
+    UUID uuid = UUID.randomUUID();
+    when(player.getUniqueId()).thenReturn(uuid);
+    when(player.hasPermission(anyString())).thenReturn(true);
+    when(player.getWorld()).thenReturn(world);
+    User.setPlugin(plugin);
+    // Set up user already
+    user = User.getInstance(player);
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandSpawnCommand#IslandSpawnCommand(world.bentobox.bentobox.api.commands.CompositeCommand)}.
-     */
-    @Test
-    public void testIslandSpawnCommand() {
-        assertEquals("spawn", isc.getLabel());
-    }
+    // Addon
+    GameModeAddon addon = mock(GameModeAddon.class);
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandSpawnCommand#setup()}.
-     */
-    @Test
-    public void testSetup() {
-        assertEquals("permission.island.spawn", isc.getPermission());
-        assertTrue(isc.isOnlyPlayer());
-        assertEquals("commands.island.spawn.description", isc.getDescription());
-    }
+    // Parent command has no aliases
+    when(ic.getSubCommandAliases()).thenReturn(new HashMap<>());
+    when(ic.getParameters()).thenReturn("parameters");
+    when(ic.getDescription()).thenReturn("description");
+    when(ic.getPermissionPrefix()).thenReturn("permission.");
+    when(ic.getUsage()).thenReturn("");
+    when(ic.getSubCommand(Mockito.anyString())).thenReturn(Optional.empty());
+    when(ic.getAddon()).thenReturn(addon);
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandSpawnCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
-     */
-    @Test
-    public void testExecuteUserStringListOfString() {
-        assertTrue(isc.execute(user, "spawn", Collections.emptyList()));
-    }
+    // Server & Scheduler
+    BukkitScheduler sch = mock(BukkitScheduler.class);
+    PowerMockito.mockStatic(Bukkit.class);
+    when(Bukkit.getScheduler()).thenReturn(sch);
+    when(sch.runTaskLater(any(), any(Runnable.class), any(Long.class))).thenReturn(task);
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandSpawnCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
-     */
-    @Test
-    public void testExecuteUserStringListOfStringInWorldNoTeleportFalling() {
-        when(player.getFallDistance()).thenReturn(10F);
-        map.put("PREVENT_TELEPORT_WHEN_FALLING", true);
-        when(iwm.inWorld(any(World.class))).thenReturn(true);
-        assertFalse(isc.execute(user, "spawn", Collections.emptyList()));
-        verify(player).sendMessage(eq("protection.flags.PREVENT_TELEPORT_WHEN_FALLING.hint"));
-    }
+    // Event register
+    when(Bukkit.getPluginManager()).thenReturn(pim);
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandSpawnCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
-     */
-    @Test
-    public void testExecuteUserStringListOfStringInWorldTeleportOkFalling() {
-        when(player.getFallDistance()).thenReturn(10F);
-        map.put("PREVENT_TELEPORT_WHEN_FALLING", false);
-        when(iwm.inWorld(any(World.class))).thenReturn(true);
-        assertTrue(isc.execute(user, "spawn", Collections.emptyList()));
-        verify(player, never()).sendMessage(eq("protection.flags.PREVENT_TELEPORT_WHEN_FALLING.hint"));
-    }
+    // Settings
+    when(plugin.getSettings()).thenReturn(s);
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandSpawnCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
-     */
-    @Test
-    public void testExecuteUserStringListOfStringWrongWorldTeleportOkFalling() {
-        when(player.getFallDistance()).thenReturn(10F);
-        map.put("PREVENT_TELEPORT_WHEN_FALLING", true);
-        when(iwm.inWorld(any(World.class))).thenReturn(false);
-        assertTrue(isc.execute(user, "spawn", Collections.emptyList()));
-        verify(player, never()).sendMessage(eq("protection.flags.PREVENT_TELEPORT_WHEN_FALLING.hint"));
-    }
+    // IWM
+    when(plugin.getIWM()).thenReturn(iwm);
+    when(iwm.getWorldSettings(any())).thenReturn(ws);
+    map = new HashMap<>();
+    when(ws.getWorldFlags()).thenReturn(map);
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandSpawnCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
-     */
-    @Test
-    public void testExecuteUserStringListOfStringInWorldTeleportNotFalling() {
-        when(player.getFallDistance()).thenReturn(0F);
-        map.put("PREVENT_TELEPORT_WHEN_FALLING", true);
-        when(iwm.inWorld(any(World.class))).thenReturn(true);
-        assertTrue(isc.execute(user, "spawn", Collections.emptyList()));
-        verify(player, never()).sendMessage(eq("protection.flags.PREVENT_TELEPORT_WHEN_FALLING.hint"));
-    }
+    // Island Manager
+    when(plugin.getIslands()).thenReturn(im);
 
+    LocalesManager lm = mock(LocalesManager.class);
+    // Locales
+    when(plugin.getLocalesManager()).thenReturn(lm);
+    when(lm.get(any(), any()))
+      .thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
+    PlaceholdersManager phm = mock(PlaceholdersManager.class);
+    when(plugin.getPlaceholdersManager()).thenReturn(phm);
+    when(phm.replacePlaceholders(any(), any()))
+      .thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
+
+    // Command
+    isc = new IslandSpawnCommand(ic);
+  }
+
+  /**
+   * @throws java.lang.Exception
+   */
+  @After
+  public void tearDown() {
+    User.clearUsers();
+    Mockito.framework().clearInlineMocks();
+  }
+
+  /**
+   * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandSpawnCommand#IslandSpawnCommand(world.bentobox.bentobox.api.commands.CompositeCommand)}.
+   */
+  @Test
+  public void testIslandSpawnCommand() {
+    assertEquals("spawn", isc.getLabel());
+  }
+
+  /**
+   * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandSpawnCommand#setup()}.
+   */
+  @Test
+  public void testSetup() {
+    assertEquals("permission.island.spawn", isc.getPermission());
+    assertTrue(isc.isOnlyPlayer());
+    assertEquals("commands.island.spawn.description", isc.getDescription());
+  }
+
+  /**
+   * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandSpawnCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+   */
+  @Test
+  public void testExecuteUserStringListOfString() {
+    assertTrue(isc.execute(user, "spawn", Collections.emptyList()));
+  }
+
+  /**
+   * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandSpawnCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+   */
+  @Test
+  public void testExecuteUserStringListOfStringInWorldNoTeleportFalling() {
+    when(player.getFallDistance()).thenReturn(10F);
+    map.put("PREVENT_TELEPORT_WHEN_FALLING", true);
+    when(iwm.inWorld(any(World.class))).thenReturn(true);
+    assertFalse(isc.execute(user, "spawn", Collections.emptyList()));
+    verify(player).sendMessage(eq("protection.flags.PREVENT_TELEPORT_WHEN_FALLING.hint"));
+  }
+
+  /**
+   * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandSpawnCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+   */
+  @Test
+  public void testExecuteUserStringListOfStringInWorldTeleportOkFalling() {
+    when(player.getFallDistance()).thenReturn(10F);
+    map.put("PREVENT_TELEPORT_WHEN_FALLING", false);
+    when(iwm.inWorld(any(World.class))).thenReturn(true);
+    assertTrue(isc.execute(user, "spawn", Collections.emptyList()));
+    verify(player, never())
+      .sendMessage(eq("protection.flags.PREVENT_TELEPORT_WHEN_FALLING.hint"));
+  }
+
+  /**
+   * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandSpawnCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+   */
+  @Test
+  public void testExecuteUserStringListOfStringWrongWorldTeleportOkFalling() {
+    when(player.getFallDistance()).thenReturn(10F);
+    map.put("PREVENT_TELEPORT_WHEN_FALLING", true);
+    when(iwm.inWorld(any(World.class))).thenReturn(false);
+    assertTrue(isc.execute(user, "spawn", Collections.emptyList()));
+    verify(player, never())
+      .sendMessage(eq("protection.flags.PREVENT_TELEPORT_WHEN_FALLING.hint"));
+  }
+
+  /**
+   * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandSpawnCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+   */
+  @Test
+  public void testExecuteUserStringListOfStringInWorldTeleportNotFalling() {
+    when(player.getFallDistance()).thenReturn(0F);
+    map.put("PREVENT_TELEPORT_WHEN_FALLING", true);
+    when(iwm.inWorld(any(World.class))).thenReturn(true);
+    assertTrue(isc.execute(user, "spawn", Collections.emptyList()));
+    verify(player, never())
+      .sendMessage(eq("protection.flags.PREVENT_TELEPORT_WHEN_FALLING.hint"));
+  }
 }

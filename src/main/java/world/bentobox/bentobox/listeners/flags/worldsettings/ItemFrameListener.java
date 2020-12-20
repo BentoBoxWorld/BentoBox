@@ -9,7 +9,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
-
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.lists.Flags;
 
@@ -20,29 +19,30 @@ import world.bentobox.bentobox.lists.Flags;
  */
 public class ItemFrameListener extends FlagListener {
 
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void onItemFrameDamage(final EntityDamageByEntityEvent e) {
-        check(e, e.getEntity(), e.getDamager());
-    }
+  @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+  public void onItemFrameDamage(final EntityDamageByEntityEvent e) {
+    check(e, e.getEntity(), e.getDamager());
+  }
 
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void onItemFrameDamage(final HangingBreakByEntityEvent e) {
-        check(e, e.getEntity(), e.getRemover());
-    }
+  @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+  public void onItemFrameDamage(final HangingBreakByEntityEvent e) {
+    check(e, e.getEntity(), e.getRemover());
+  }
 
-    private void check(Cancellable e, Entity entity, Entity damager) {
-        if (entity instanceof ItemFrame
-                && getIWM().inWorld(entity.getLocation())
-                && !Flags.ITEM_FRAME_DAMAGE.isSetForWorld(entity.getWorld())
-                && !(damager instanceof Player)) {
-            if (damager instanceof Projectile) {
-                if (!(((Projectile) damager).getShooter() instanceof Player)) {
-                    e.setCancelled(true);
-                }
-            } else {
-                e.setCancelled(true);
-            }
+  private void check(Cancellable e, Entity entity, Entity damager) {
+    if (
+      entity instanceof ItemFrame &&
+      getIWM().inWorld(entity.getLocation()) &&
+      !Flags.ITEM_FRAME_DAMAGE.isSetForWorld(entity.getWorld()) &&
+      !(damager instanceof Player)
+    ) {
+      if (damager instanceof Projectile) {
+        if (!(((Projectile) damager).getShooter() instanceof Player)) {
+          e.setCancelled(true);
         }
+      } else {
+        e.setCancelled(true);
+      }
     }
-
+  }
 }

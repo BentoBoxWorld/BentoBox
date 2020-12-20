@@ -13,15 +13,13 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface StoreAt {
+  /**
+   * Path where this will be stored. If blank, it will be the database folder.
+   */
+  String path() default "";
 
-    /**
-     * Path where this will be stored. If blank, it will be the database folder.
-     */
-    String path() default "";
-
-    /**
-     * Filename
-     */
-    String filename() default "";
-
+  /**
+   * Filename
+   */
+  String filename() default "";
 }

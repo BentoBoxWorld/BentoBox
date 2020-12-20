@@ -6,27 +6,27 @@ package world.bentobox.bentobox.api.localization;
  */
 public class TextVariables {
 
-    private TextVariables() {}
+  private TextVariables() {}
 
-    public static final String NAME = "[name]";
-    public static final String DESCRIPTION = "[description]";
-    public static final String NUMBER = "[number]";
-    public static final String RANK = "[rank]";
-    public static final String LABEL = "[label]";
-    public static final String PERMISSION = "[permission]";
-    public static final String SPAWN_HERE = "[spawn_here]";
-    public static final String VERSION = "[version]";
-    public static final String START_TEXT = "[start]";
-    /**
-     * @since 1.6.0
-     */
-    public static final String NEXT = "[next]";
-    /**
-     * @since 1.10.0
-     */
-    public static final String UNIT = "[unit]";
-    /**
-     * @since 1.15.0
-     */
-    public static final String GAMEMODE = "[gamemode]";
+  public static final String NAME = "[name]";
+  public static final String DESCRIPTION = "[description]";
+  public static final String NUMBER = "[number]";
+  public static final String RANK = "[rank]";
+  public static final String LABEL = "[label]";
+  public static final String PERMISSION = "[permission]";
+  public static final String SPAWN_HERE = "[spawn_here]";
+  public static final String VERSION = "[version]";
+  public static final String START_TEXT = "[start]";
+  /**
+   * @since 1.6.0
+   */
+  public static final String NEXT = "[next]";
+  /**
+   * @since 1.10.0
+   */
+  public static final String UNIT = "[unit]";
+  /**
+   * @since 1.15.0
+   */
+  public static final String GAMEMODE = "[gamemode]";
 }

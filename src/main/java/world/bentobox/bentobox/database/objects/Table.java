@@ -14,9 +14,8 @@ import java.lang.annotation.Target;
 @Retention(RUNTIME)
 @Target(TYPE)
 public @interface Table {
-    /**
-     * @return name of the table to be used in the database
-     */
-    String name();
-
+  /**
+   * @return name of the table to be used in the database
+   */
+  String name();
 }

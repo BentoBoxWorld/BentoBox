@@ -14,13 +14,11 @@ import java.lang.annotation.Target;
 @Repeatable(ConfigComment.Line.class)
 @Target({ FIELD, METHOD, TYPE })
 public @interface ConfigComment {
+  String value();
 
-    String value();
-
-    @Retention(RetentionPolicy.RUNTIME)
-    @Target({ FIELD, METHOD, TYPE })
-    @interface Line {
-        ConfigComment[] value();
-    }
-
+  @Retention(RetentionPolicy.RUNTIME)
+  @Target({ FIELD, METHOD, TYPE })
+  @interface Line {
+    ConfigComment[] value();
+  }
 }

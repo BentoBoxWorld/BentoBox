@@ -9,19 +9,17 @@ import world.bentobox.bentobox.BentoBox;
  *
  */
 public interface DataObject {
+  default BentoBox getPlugin() {
+    return BentoBox.getInstance();
+  }
 
-    default BentoBox getPlugin() {
-        return BentoBox.getInstance();
-    }
+  /**
+   * @return the uniqueId
+   */
+  String getUniqueId();
 
-    /**
-     * @return the uniqueId
-     */
-    String getUniqueId();
-
-    /**
-     * @param uniqueId - unique ID the uniqueId to set
-     */
-    void setUniqueId(String uniqueId);
-
+  /**
+   * @param uniqueId - unique ID the uniqueId to set
+   */
+  void setUniqueId(String uniqueId);
 }

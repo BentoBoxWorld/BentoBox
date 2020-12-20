@@ -2,7 +2,6 @@ package world.bentobox.bentobox.api.commands.island;
 
 import java.util.List;
 import java.util.UUID;
-
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.user.User;
 
@@ -12,35 +11,34 @@ import world.bentobox.bentobox.api.user.User;
  */
 public class IslandResetnameCommand extends CompositeCommand {
 
-    public IslandResetnameCommand(CompositeCommand islandCommand) {
-        super(islandCommand, "resetname");
+  public IslandResetnameCommand(CompositeCommand islandCommand) {
+    super(islandCommand, "resetname");
+  }
+
+  @Override
+  public void setup() {
+    setPermission("island.name");
+    setOnlyPlayer(true);
+    setDescription("commands.island.resetname.description");
+  }
+
+  @Override
+  public boolean execute(User user, String label, List<String> args) {
+    UUID playerUUID = user.getUniqueId();
+
+    if (!getIslands().hasIsland(getWorld(), playerUUID)) {
+      user.sendMessage("general.errors.no-island");
+      return false;
     }
 
-    @Override
-    public void setup() {
-        setPermission("island.name");
-        setOnlyPlayer(true);
-        setDescription("commands.island.resetname.description");
+    if (!getIslands().isOwner(getWorld(), playerUUID)) {
+      user.sendMessage("general.errors.not-owner");
+      return false;
     }
+    // Resets the island name
+    getIslands().getIsland(getWorld(), playerUUID).setName(null);
 
-    @Override
-    public boolean execute(User user, String label, List<String> args) {
-        UUID playerUUID = user.getUniqueId();
-
-        if (!getIslands().hasIsland(getWorld(), playerUUID)) {
-            user.sendMessage("general.errors.no-island");
-            return false;
-        }
-
-        if (!getIslands().isOwner(getWorld(), playerUUID)) {
-            user.sendMessage("general.errors.not-owner");
-            return false;
-        }
-        // Resets the island name
-        getIslands().getIsland(getWorld(), playerUUID).setName(null);
-
-        user.sendMessage("commands.island.resetname.success");
-        return true;
-    }
-
+    user.sendMessage("commands.island.resetname.success");
+    return true;
+  }
 }

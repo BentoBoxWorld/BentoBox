@@ -11,9 +11,12 @@ import world.bentobox.bentobox.database.yaml.YamlDatabase;
  */
 public class Yaml2MySQLDatabase implements DatabaseSetup {
 
-    @Override
-    public <T> AbstractDatabaseHandler<T> getHandler(Class<T> type) {
-        return new TransitionDatabaseHandler<>(type, new YamlDatabase().getHandler(type), new MySQLDatabase().getHandler(type));
-    }
-
+  @Override
+  public <T> AbstractDatabaseHandler<T> getHandler(Class<T> type) {
+    return new TransitionDatabaseHandler<>(
+      type,
+      new YamlDatabase().getHandler(type),
+      new MySQLDatabase().getHandler(type)
+    );
+  }
 }

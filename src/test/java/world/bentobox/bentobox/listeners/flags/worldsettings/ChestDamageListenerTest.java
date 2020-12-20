@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Logger;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -44,7 +43,6 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
-
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
@@ -63,176 +61,171 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( {Bukkit.class, BentoBox.class, Flags.class, Util.class} )
+@PrepareForTest({ Bukkit.class, BentoBox.class, Flags.class, Util.class })
 public class ChestDamageListenerTest {
+  private Location location;
+  private BentoBox plugin;
+  private World world;
 
-    private Location location;
-    private BentoBox plugin;
-    private World world;
+  @Before
+  public void setUp() {
+    // Set up plugin
+    plugin = mock(BentoBox.class);
+    Whitebox.setInternalState(BentoBox.class, "instance", plugin);
 
-    @Before
-    public void setUp() {
-        // Set up plugin
-        plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+    Server server = mock(Server.class);
+    world = mock(World.class);
+    when(server.getLogger()).thenReturn(Logger.getAnonymousLogger());
+    when(server.getWorld("world")).thenReturn(world);
+    when(server.getVersion()).thenReturn("BSB_Mocking");
 
-        Server server = mock(Server.class);
-        world = mock(World.class);
-        when(server.getLogger()).thenReturn(Logger.getAnonymousLogger());
-        when(server.getWorld("world")).thenReturn(world);
-        when(server.getVersion()).thenReturn("BSB_Mocking");
+    PluginManager pim = mock(PluginManager.class);
 
-        PluginManager pim = mock(PluginManager.class);
+    ItemFactory itemFactory = mock(ItemFactory.class);
+    when(server.getItemFactory()).thenReturn(itemFactory);
 
-        ItemFactory itemFactory = mock(ItemFactory.class);
-        when(server.getItemFactory()).thenReturn(itemFactory);
+    // Bukkit
+    PowerMockito.mockStatic(Bukkit.class);
+    when(Bukkit.getServer()).thenReturn(server);
+    when(Bukkit.getPluginManager()).thenReturn(pim);
 
-        // Bukkit
-        PowerMockito.mockStatic(Bukkit.class);
-        when(Bukkit.getServer()).thenReturn(server);
-        when(Bukkit.getPluginManager()).thenReturn(pim);
+    SkullMeta skullMeta = mock(SkullMeta.class);
+    when(itemFactory.getItemMeta(any())).thenReturn(skullMeta);
+    when(Bukkit.getItemFactory()).thenReturn(itemFactory);
+    when(Bukkit.getLogger()).thenReturn(Logger.getAnonymousLogger());
+    location = mock(Location.class);
+    when(location.getWorld()).thenReturn(world);
+    when(location.getBlockX()).thenReturn(0);
+    when(location.getBlockY()).thenReturn(0);
+    when(location.getBlockZ()).thenReturn(0);
+    PowerMockito.mockStatic(Flags.class);
 
-        SkullMeta skullMeta = mock(SkullMeta.class);
-        when(itemFactory.getItemMeta(any())).thenReturn(skullMeta);
-        when(Bukkit.getItemFactory()).thenReturn(itemFactory);
-        when(Bukkit.getLogger()).thenReturn(Logger.getAnonymousLogger());
-        location = mock(Location.class);
-        when(location.getWorld()).thenReturn(world);
-        when(location.getBlockX()).thenReturn(0);
-        when(location.getBlockY()).thenReturn(0);
-        when(location.getBlockZ()).thenReturn(0);
-        PowerMockito.mockStatic(Flags.class);
+    FlagsManager flagsManager = new FlagsManager(plugin);
+    when(plugin.getFlagsManager()).thenReturn(flagsManager);
 
-        FlagsManager flagsManager = new FlagsManager(plugin);
-        when(plugin.getFlagsManager()).thenReturn(flagsManager);
+    // Worlds
+    IslandWorldManager iwm = mock(IslandWorldManager.class);
+    when(iwm.inWorld(any(World.class))).thenReturn(true);
+    when(iwm.inWorld(any(Location.class))).thenReturn(true);
+    when(iwm.getAddon(any())).thenReturn(Optional.empty());
+    when(plugin.getIWM()).thenReturn(iwm);
 
+    // Monsters and animals
+    Zombie zombie = mock(Zombie.class);
+    when(zombie.getLocation()).thenReturn(location);
+    Slime slime = mock(Slime.class);
+    when(slime.getLocation()).thenReturn(location);
+    Cow cow = mock(Cow.class);
+    when(cow.getLocation()).thenReturn(location);
 
-        // Worlds
-        IslandWorldManager iwm = mock(IslandWorldManager.class);
-        when(iwm.inWorld(any(World.class))).thenReturn(true);
-        when(iwm.inWorld(any(Location.class))).thenReturn(true);
-        when(iwm.getAddon(any())).thenReturn(Optional.empty());
-        when(plugin.getIWM()).thenReturn(iwm);
+    // Fake players
+    Settings settings = mock(Settings.class);
+    Mockito.when(plugin.getSettings()).thenReturn(settings);
+    Mockito.when(settings.getFakePlayers()).thenReturn(new HashSet<>());
 
-        // Monsters and animals
-        Zombie zombie = mock(Zombie.class);
-        when(zombie.getLocation()).thenReturn(location);
-        Slime slime = mock(Slime.class);
-        when(slime.getLocation()).thenReturn(location);
-        Cow cow = mock(Cow.class);
-        when(cow.getLocation()).thenReturn(location);
+    // Users
+    //User user = mock(User.class);
+    ///user.setPlugin(plugin);
+    User.setPlugin(plugin);
 
-        // Fake players
-        Settings settings = mock(Settings.class);
-        Mockito.when(plugin.getSettings()).thenReturn(settings);
-        Mockito.when(settings.getFakePlayers()).thenReturn(new HashSet<>());
+    // Locales - final
 
-        // Users
-        //User user = mock(User.class);
-        ///user.setPlugin(plugin);
-        User.setPlugin(plugin);
+    LocalesManager lm = mock(LocalesManager.class);
+    when(plugin.getLocalesManager()).thenReturn(lm);
+    Answer<String> answer = invocation ->
+      (String) Arrays.asList(invocation.getArguments()).get(1);
+    when(lm.get(any(), any())).thenAnswer(answer);
 
+    // Player name
+    PlayersManager pm = mock(PlayersManager.class);
+    when(pm.getName(Mockito.any())).thenReturn("tastybento");
+    when(plugin.getPlayers()).thenReturn(pm);
 
-        // Locales - final
+    // World Settings
+    WorldSettings ws = mock(WorldSettings.class);
+    when(iwm.getWorldSettings(Mockito.any())).thenReturn(ws);
+    Map<String, Boolean> worldFlags = new HashMap<>();
+    when(ws.getWorldFlags()).thenReturn(worldFlags);
 
-        LocalesManager lm = mock(LocalesManager.class);
-        when(plugin.getLocalesManager()).thenReturn(lm);
-        Answer<String> answer = invocation -> (String)Arrays.asList(invocation.getArguments()).get(1);
-        when(lm.get(any(), any())).thenAnswer(answer);
+    // Island manager
+    IslandsManager im = mock(IslandsManager.class);
+    when(plugin.getIslands()).thenReturn(im);
+    Island island = mock(Island.class);
+    Optional<Island> optional = Optional.of(island);
+    when(im.getProtectedIslandAt(Mockito.any())).thenReturn(optional);
 
-        // Player name
-        PlayersManager pm = mock(PlayersManager.class);
-        when(pm.getName(Mockito.any())).thenReturn("tastybento");
-        when(plugin.getPlayers()).thenReturn(pm);
+    // Util
+    PowerMockito.mockStatic(Util.class);
+    when(Util.getWorld(Mockito.any())).thenReturn(mock(World.class));
+  }
 
-        // World Settings
-        WorldSettings ws = mock(WorldSettings.class);
-        when(iwm.getWorldSettings(Mockito.any())).thenReturn(ws);
-        Map<String, Boolean> worldFlags = new HashMap<>();
-        when(ws.getWorldFlags()).thenReturn(worldFlags);
+  @After
+  public void tearDown() {
+    User.clearUsers();
+    Mockito.framework().clearInlineMocks();
+  }
 
-        // Island manager
-        IslandsManager im = mock(IslandsManager.class);
-        when(plugin.getIslands()).thenReturn(im);
-        Island island = mock(Island.class);
-        Optional<Island> optional = Optional.of(island);
-        when(im.getProtectedIslandAt(Mockito.any())).thenReturn(optional);
+  /**
+   * Test method for {@link ChestDamageListener#onExplosion(org.bukkit.event.entity.EntityExplodeEvent)}.
+   */
+  @Test
+  public void testOnExplosionChestDamageNotAllowed() {
+    Flags.CHEST_DAMAGE.setSetting(world, false);
+    Entity entity = mock(Entity.class);
+    when(entity.getType()).thenReturn(EntityType.PRIMED_TNT);
+    List<Block> list = new ArrayList<>();
+    Block chest = mock(Block.class);
+    when(chest.getType()).thenReturn(Material.CHEST);
+    when(chest.getLocation()).thenReturn(location);
+    Block trappedChest = mock(Block.class);
+    when(trappedChest.getType()).thenReturn(Material.TRAPPED_CHEST);
+    when(trappedChest.getLocation()).thenReturn(location);
+    Block stone = mock(Block.class);
+    when(stone.getType()).thenReturn(Material.STONE);
+    when(stone.getLocation()).thenReturn(location);
+    list.add(chest);
+    list.add(trappedChest);
+    list.add(stone);
+    EntityExplodeEvent e = new EntityExplodeEvent(entity, location, list, 0);
+    ChestDamageListener listener = new ChestDamageListener();
+    listener.setPlugin(plugin);
+    listener.onExplosion(e);
+    assertFalse(e.isCancelled());
+    assertEquals(1, e.blockList().size());
+    assertFalse(e.blockList().contains(chest));
+    assertFalse(e.blockList().contains(trappedChest));
+    assertTrue(e.blockList().contains(stone));
+  }
 
-        // Util
-        PowerMockito.mockStatic(Util.class);
-        when(Util.getWorld(Mockito.any())).thenReturn(mock(World.class));
-
-
-    }
-
-    @After
-    public void tearDown() {
-        User.clearUsers();
-        Mockito.framework().clearInlineMocks();
-    }
-
-    /**
-     * Test method for {@link ChestDamageListener#onExplosion(org.bukkit.event.entity.EntityExplodeEvent)}.
-     */
-    @Test
-    public void testOnExplosionChestDamageNotAllowed() {
-        Flags.CHEST_DAMAGE.setSetting(world, false);
-        Entity entity = mock(Entity.class);
-        when(entity.getType()).thenReturn(EntityType.PRIMED_TNT);
-        List<Block> list = new ArrayList<>();
-        Block chest = mock(Block.class);
-        when(chest.getType()).thenReturn(Material.CHEST);
-        when(chest.getLocation()).thenReturn(location);
-        Block trappedChest = mock(Block.class);
-        when(trappedChest.getType()).thenReturn(Material.TRAPPED_CHEST);
-        when(trappedChest.getLocation()).thenReturn(location);
-        Block stone = mock(Block.class);
-        when(stone.getType()).thenReturn(Material.STONE);
-        when(stone.getLocation()).thenReturn(location);
-        list.add(chest);
-        list.add(trappedChest);
-        list.add(stone);
-        EntityExplodeEvent e = new EntityExplodeEvent(entity, location, list, 0);
-        ChestDamageListener listener = new ChestDamageListener();
-        listener.setPlugin(plugin);
-        listener.onExplosion(e);
-        assertFalse(e.isCancelled());
-        assertEquals(1, e.blockList().size());
-        assertFalse(e.blockList().contains(chest));
-        assertFalse(e.blockList().contains(trappedChest));
-        assertTrue(e.blockList().contains(stone));
-    }
-
-    /**
-     * Test method for {@link ChestDamageListener#onExplosion(org.bukkit.event.entity.EntityExplodeEvent)}.
-     */
-    @Test
-    public void testOnExplosionChestDamageAllowed() {
-        Flags.CHEST_DAMAGE.setSetting(world, true);
-        Entity entity = mock(Entity.class);
-        when(entity.getType()).thenReturn(EntityType.PRIMED_TNT);
-        List<Block> list = new ArrayList<>();
-        Block chest = mock(Block.class);
-        when(chest.getType()).thenReturn(Material.CHEST);
-        when(chest.getLocation()).thenReturn(location);
-        Block trappedChest = mock(Block.class);
-        when(trappedChest.getType()).thenReturn(Material.TRAPPED_CHEST);
-        when(trappedChest.getLocation()).thenReturn(location);
-        Block stone = mock(Block.class);
-        when(stone.getType()).thenReturn(Material.STONE);
-        when(stone.getLocation()).thenReturn(location);
-        list.add(chest);
-        list.add(trappedChest);
-        list.add(stone);
-        EntityExplodeEvent e = new EntityExplodeEvent(entity, location, list, 0);
-        ChestDamageListener listener = new ChestDamageListener();
-        listener.setPlugin(plugin);
-        listener.onExplosion(e);
-        assertFalse(e.isCancelled());
-        assertEquals(3, e.blockList().size());
-        assertTrue(e.blockList().contains(chest));
-        assertTrue(e.blockList().contains(trappedChest));
-        assertTrue(e.blockList().contains(stone));
-    }
-
+  /**
+   * Test method for {@link ChestDamageListener#onExplosion(org.bukkit.event.entity.EntityExplodeEvent)}.
+   */
+  @Test
+  public void testOnExplosionChestDamageAllowed() {
+    Flags.CHEST_DAMAGE.setSetting(world, true);
+    Entity entity = mock(Entity.class);
+    when(entity.getType()).thenReturn(EntityType.PRIMED_TNT);
+    List<Block> list = new ArrayList<>();
+    Block chest = mock(Block.class);
+    when(chest.getType()).thenReturn(Material.CHEST);
+    when(chest.getLocation()).thenReturn(location);
+    Block trappedChest = mock(Block.class);
+    when(trappedChest.getType()).thenReturn(Material.TRAPPED_CHEST);
+    when(trappedChest.getLocation()).thenReturn(location);
+    Block stone = mock(Block.class);
+    when(stone.getType()).thenReturn(Material.STONE);
+    when(stone.getLocation()).thenReturn(location);
+    list.add(chest);
+    list.add(trappedChest);
+    list.add(stone);
+    EntityExplodeEvent e = new EntityExplodeEvent(entity, location, list, 0);
+    ChestDamageListener listener = new ChestDamageListener();
+    listener.setPlugin(plugin);
+    listener.onExplosion(e);
+    assertFalse(e.isCancelled());
+    assertEquals(3, e.blockList().size());
+    assertTrue(e.blockList().contains(chest));
+    assertTrue(e.blockList().contains(trappedChest));
+    assertTrue(e.blockList().contains(stone));
+  }
 }

@@ -8,26 +8,27 @@ import org.eclipse.jdt.annotation.NonNull;
  * @author Poslovitch
  */
 public class Contributor {
+  @NonNull
+  private String name;
 
-    private @NonNull String name;
-    private int commits;
+  private int commits;
 
-    public Contributor(@NonNull String name, int commits) {
-        this.name = name;
-        this.commits = commits;
-    }
+  public Contributor(@NonNull String name, int commits) {
+    this.name = name;
+    this.commits = commits;
+  }
 
-    @NonNull
-    public String getName() {
-        return name;
-    }
+  @NonNull
+  public String getName() {
+    return name;
+  }
 
-    public int getCommits() {
-        return commits;
-    }
+  public int getCommits() {
+    return commits;
+  }
 
-    @NonNull
-    public String getURL() {
-        return "https://github.com/" + name;
-    }
+  @NonNull
+  public String getURL() {
+    return "https://github.com/" + name;
+  }
 }

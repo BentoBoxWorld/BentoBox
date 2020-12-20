@@ -11,9 +11,12 @@ import world.bentobox.bentobox.database.sql.mysql.MySQLDatabase;
  */
 public class MySQL2JsonDatabase implements DatabaseSetup {
 
-    @Override
-    public <T> AbstractDatabaseHandler<T> getHandler(Class<T> type) {
-        return new TransitionDatabaseHandler<>(type, new MySQLDatabase().getHandler(type), new JSONDatabase().getHandler(type));
-    }
-
+  @Override
+  public <T> AbstractDatabaseHandler<T> getHandler(Class<T> type) {
+    return new TransitionDatabaseHandler<>(
+      type,
+      new MySQLDatabase().getHandler(type),
+      new JSONDatabase().getHandler(type)
+    );
+  }
 }

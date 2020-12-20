@@ -6,7 +6,6 @@ import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 import java.util.logging.Logger;
-
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -28,7 +27,6 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
-
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
@@ -41,113 +39,131 @@ import world.bentobox.bentobox.managers.LocalesManager;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( { BentoBox.class, Bukkit.class })
+@PrepareForTest({ BentoBox.class, Bukkit.class })
 public class SafeSpotTeleportTest {
+  @Mock
+  private BentoBox plugin;
 
-    @Mock
-    private BentoBox plugin;
-    @Mock
-    private World world;
-    @Mock
-    private BukkitScheduler sch;
-    @Mock
-    private IslandsManager im;
-    @Mock
-    private Player player;
-    @Mock
-    private Location loc;
+  @Mock
+  private World world;
 
+  @Mock
+  private BukkitScheduler sch;
 
-    @Before
-    public void setUp() throws Exception {
-        // Bukkit and scheduler
-        PowerMockito.mockStatic(Bukkit.class);
-        when(Bukkit.getScheduler()).thenReturn(sch);
-        BukkitTask task = mock(BukkitTask.class);
-        when(sch.runTaskTimer(Mockito.any(), Mockito.any(Runnable.class), Mockito.any(Long.class),Mockito.any(Long.class))).thenReturn(task);
+  @Mock
+  private IslandsManager im;
 
-        Server server = mock(Server.class);
-        when(server.getLogger()).thenReturn(Logger.getAnonymousLogger());
-        when(server.getWorld("world")).thenReturn(world);
-        when(server.getVersion()).thenReturn("BSB_Mocking");
+  @Mock
+  private Player player;
 
-        PluginManager pluginManager = mock(PluginManager.class);
-        when(Bukkit.getPluginManager()).thenReturn(pluginManager);
+  @Mock
+  private Location loc;
 
-        when(Bukkit.getLogger()).thenReturn(Logger.getAnonymousLogger());
+  @Before
+  public void setUp() throws Exception {
+    // Bukkit and scheduler
+    PowerMockito.mockStatic(Bukkit.class);
+    when(Bukkit.getScheduler()).thenReturn(sch);
+    BukkitTask task = mock(BukkitTask.class);
+    when(
+        sch.runTaskTimer(
+          Mockito.any(),
+          Mockito.any(Runnable.class),
+          Mockito.any(Long.class),
+          Mockito.any(Long.class)
+        )
+      )
+      .thenReturn(task);
 
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+    Server server = mock(Server.class);
+    when(server.getLogger()).thenReturn(Logger.getAnonymousLogger());
+    when(server.getWorld("world")).thenReturn(world);
+    when(server.getVersion()).thenReturn("BSB_Mocking");
 
-        // Users
-        User.setPlugin(plugin);
-        // Locales - final
-        LocalesManager lm = mock(LocalesManager.class);
-        when(plugin.getLocalesManager()).thenReturn(lm);
-        when(lm.get(any(), any())).thenReturn("mock translation");
+    PluginManager pluginManager = mock(PluginManager.class);
+    when(Bukkit.getPluginManager()).thenReturn(pluginManager);
 
-        // Island Manager
-        when(plugin.getIslands()).thenReturn(im);
-        // Safe location
-        when(im.isSafeLocation(Mockito.any())).thenReturn(true);
+    when(Bukkit.getLogger()).thenReturn(Logger.getAnonymousLogger());
 
-        Island island = mock(Island.class);
-        when(island.getCenter()).thenReturn(mock(Location.class));
+    Whitebox.setInternalState(BentoBox.class, "instance", plugin);
 
-        // Default is that there is no island around here
-        Optional<Island> oi = Optional.empty();
-        when(im.getIslandAt(Mockito.any())).thenReturn(oi);
+    // Users
+    User.setPlugin(plugin);
+    // Locales - final
+    LocalesManager lm = mock(LocalesManager.class);
+    when(plugin.getLocalesManager()).thenReturn(lm);
+    when(lm.get(any(), any())).thenReturn("mock translation");
 
-        // Island world manager
-        IslandWorldManager iwm = mock(IslandWorldManager.class);
-        when(iwm.getIslandProtectionRange(Mockito.any())).thenReturn(1);
-        when(iwm.getDefaultGameMode(Mockito.any())).thenReturn(GameMode.SURVIVAL);
-        when(plugin.getIWM()).thenReturn(iwm);
+    // Island Manager
+    when(plugin.getIslands()).thenReturn(im);
+    // Safe location
+    when(im.isSafeLocation(Mockito.any())).thenReturn(true);
 
-        // Addon
-        when(iwm.getAddon(Mockito.any())).thenReturn(Optional.empty());
+    Island island = mock(Island.class);
+    when(island.getCenter()).thenReturn(mock(Location.class));
 
-        // Player
-        when(player.getGameMode()).thenReturn(GameMode.SURVIVAL);
-        when(loc.getWorld()).thenReturn(world);
-        when(loc.getBlockX()).thenReturn(0);
-        when(loc.getBlockY()).thenReturn(120);
-        when(loc.getBlockZ()).thenReturn(0);
-        Block block = mock(Block.class);
-        when(loc.getBlock()).thenReturn(block);
-    }
+    // Default is that there is no island around here
+    Optional<Island> oi = Optional.empty();
+    when(im.getIslandAt(Mockito.any())).thenReturn(oi);
 
-    @After
-    public void tearDown() {
-        Mockito.framework().clearInlineMocks();
-    }
+    // Island world manager
+    IslandWorldManager iwm = mock(IslandWorldManager.class);
+    when(iwm.getIslandProtectionRange(Mockito.any())).thenReturn(1);
+    when(iwm.getDefaultGameMode(Mockito.any())).thenReturn(GameMode.SURVIVAL);
+    when(plugin.getIWM()).thenReturn(iwm);
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.util.teleport.SafeSpotTeleport#SafeSpotTeleport(world.bentobox.bentobox.BentoBox, org.bukkit.entity.Entity, org.bukkit.Location, java.lang.String, boolean, int)}.
-     */
-    @Ignore("Not relevant anymore")
-    @Test
-    public void testSafeSpotTeleportImmediateSafe() throws Exception {
-        new SafeSpotTeleport.Builder(plugin)
-        .entity(player)
-        .failureMessage("failure message")
-        .homeNumber(1)
-        .build();
-        Mockito.verify(player).teleport(loc);
-    }
+    // Addon
+    when(iwm.getAddon(Mockito.any())).thenReturn(Optional.empty());
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.util.teleport.SafeSpotTeleport#SafeSpotTeleport(world.bentobox.bentobox.BentoBox, org.bukkit.entity.Entity, org.bukkit.Location, java.lang.String, boolean, int)}.
-     */
-    @Ignore("Different approach used")
-    @Test
-    public void testSafeSpotTeleportNotImmediatelySafe() throws Exception {
-        when(im.isSafeLocation(Mockito.any())).thenReturn(false);
-        new SafeSpotTeleport.Builder(plugin)
-        .entity(player)
-        .failureMessage("failure message")
-        .homeNumber(1)
-        .build();
-        Mockito.verify(player, Mockito.never()).teleport(loc);
-        Mockito.verify(sch).runTaskTimer(Mockito.any(), Mockito.any(Runnable.class), Mockito.eq(0L), Mockito.eq(1L));
-    }
+    // Player
+    when(player.getGameMode()).thenReturn(GameMode.SURVIVAL);
+    when(loc.getWorld()).thenReturn(world);
+    when(loc.getBlockX()).thenReturn(0);
+    when(loc.getBlockY()).thenReturn(120);
+    when(loc.getBlockZ()).thenReturn(0);
+    Block block = mock(Block.class);
+    when(loc.getBlock()).thenReturn(block);
+  }
+
+  @After
+  public void tearDown() {
+    Mockito.framework().clearInlineMocks();
+  }
+
+  /**
+   * Test method for {@link world.bentobox.bentobox.util.teleport.SafeSpotTeleport#SafeSpotTeleport(world.bentobox.bentobox.BentoBox, org.bukkit.entity.Entity, org.bukkit.Location, java.lang.String, boolean, int)}.
+   */
+  @Ignore("Not relevant anymore")
+  @Test
+  public void testSafeSpotTeleportImmediateSafe() throws Exception {
+    new SafeSpotTeleport.Builder(plugin)
+      .entity(player)
+      .failureMessage("failure message")
+      .homeNumber(1)
+      .build();
+    Mockito.verify(player).teleport(loc);
+  }
+
+  /**
+   * Test method for {@link world.bentobox.bentobox.util.teleport.SafeSpotTeleport#SafeSpotTeleport(world.bentobox.bentobox.BentoBox, org.bukkit.entity.Entity, org.bukkit.Location, java.lang.String, boolean, int)}.
+   */
+  @Ignore("Different approach used")
+  @Test
+  public void testSafeSpotTeleportNotImmediatelySafe() throws Exception {
+    when(im.isSafeLocation(Mockito.any())).thenReturn(false);
+    new SafeSpotTeleport.Builder(plugin)
+      .entity(player)
+      .failureMessage("failure message")
+      .homeNumber(1)
+      .build();
+    Mockito.verify(player, Mockito.never()).teleport(loc);
+    Mockito
+      .verify(sch)
+      .runTaskTimer(
+        Mockito.any(),
+        Mockito.any(Runnable.class),
+        Mockito.eq(0L),
+        Mockito.eq(1L)
+      );
+  }
 }

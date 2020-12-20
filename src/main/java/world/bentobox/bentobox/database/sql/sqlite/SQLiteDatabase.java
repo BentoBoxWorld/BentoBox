@@ -9,11 +9,16 @@ import world.bentobox.bentobox.database.DatabaseSetup;
  * @author Poslovitch
  */
 public class SQLiteDatabase implements DatabaseSetup {
+  private SQLiteDatabaseConnector connector = new SQLiteDatabaseConnector(
+    BentoBox.getInstance()
+  );
 
-    private SQLiteDatabaseConnector connector = new SQLiteDatabaseConnector(BentoBox.getInstance());
-
-    @Override
-    public <T> AbstractDatabaseHandler<T> getHandler(Class<T> dataObjectClass) {
-        return new SQLiteDatabaseHandler<>(BentoBox.getInstance(), dataObjectClass, connector);
-    }
+  @Override
+  public <T> AbstractDatabaseHandler<T> getHandler(Class<T> dataObjectClass) {
+    return new SQLiteDatabaseHandler<>(
+      BentoBox.getInstance(),
+      dataObjectClass,
+      connector
+    );
+  }
 }

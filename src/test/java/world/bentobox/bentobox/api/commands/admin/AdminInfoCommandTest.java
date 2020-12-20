@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
@@ -26,7 +25,6 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
-
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.user.User;
@@ -43,180 +41,176 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, User.class })
+@PrepareForTest({ Bukkit.class, BentoBox.class, User.class })
 public class AdminInfoCommandTest {
+  private BentoBox plugin;
+  private CompositeCommand ac;
+  private UUID uuid;
+  private User user;
+  private IslandsManager im;
+  private PlayersManager pm;
+  private UUID notUUID;
 
-    private BentoBox plugin;
-    private CompositeCommand ac;
-    private UUID uuid;
-    private User user;
-    private IslandsManager im;
-    private PlayersManager pm;
-    private UUID notUUID;
+  /**
+   * @throws java.lang.Exception
+   */
+  @Before
+  public void setUp() throws Exception {
+    // Set up plugin
+    plugin = mock(BentoBox.class);
+    Whitebox.setInternalState(BentoBox.class, "instance", plugin);
 
-    /**
-     * @throws java.lang.Exception
-     */
-    @Before
-    public void setUp() throws Exception {
-        // Set up plugin
-        plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+    Util.setPlugin(plugin);
 
-        Util.setPlugin(plugin);
+    // Command manager
+    CommandsManager cm = mock(CommandsManager.class);
+    when(plugin.getCommandsManager()).thenReturn(cm);
 
-        // Command manager
-        CommandsManager cm = mock(CommandsManager.class);
-        when(plugin.getCommandsManager()).thenReturn(cm);
-
-        // Player
-        Player p = mock(Player.class);
-        // Sometimes use Mockito.withSettings().verboseLogging()
-        user = mock(User.class);
-        when(user.isOp()).thenReturn(false);
-        uuid = UUID.randomUUID();
-        notUUID = UUID.randomUUID();
-        while(notUUID.equals(uuid)) {
-            notUUID = UUID.randomUUID();
-        }
-        when(user.getUniqueId()).thenReturn(uuid);
-        when(user.getPlayer()).thenReturn(p);
-        when(user.getName()).thenReturn("tastybento");
-        User.setPlugin(plugin);
-
-        // Parent command has no aliases
-        ac = mock(CompositeCommand.class);
-        when(ac.getSubCommandAliases()).thenReturn(new HashMap<>());
-
-        // Island World Manager
-        IslandWorldManager iwm = mock(IslandWorldManager.class);
-        when(iwm.getFriendlyName(Mockito.any())).thenReturn("BSkyBlock");
-        when(plugin.getIWM()).thenReturn(iwm);
-
-
-        // Player has island to begin with
-        im = mock(IslandsManager.class);
-        when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(true);
-        when(im.hasIsland(Mockito.any(), Mockito.any(User.class))).thenReturn(true);
-        when(im.isOwner(Mockito.any(),Mockito.any())).thenReturn(true);
-        when(im.getOwner(Mockito.any(),Mockito.any())).thenReturn(uuid);
-        when(plugin.getIslands()).thenReturn(im);
-
-        // Has team
-        pm = mock(PlayersManager.class);
-        when(im.inTeam(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
-
-        when(plugin.getPlayers()).thenReturn(pm);
-
-        // Server & Scheduler
-        BukkitScheduler sch = mock(BukkitScheduler.class);
-        PowerMockito.mockStatic(Bukkit.class);
-        when(Bukkit.getScheduler()).thenReturn(sch);
-
-        // Locales
-        LocalesManager lm = mock(LocalesManager.class);
-        when(lm.get(Mockito.any(), Mockito.any())).thenReturn("mock translation");
-        when(plugin.getLocalesManager()).thenReturn(lm);
-
-        // Addon
-        when(iwm.getAddon(Mockito.any())).thenReturn(Optional.empty());
-
+    // Player
+    Player p = mock(Player.class);
+    // Sometimes use Mockito.withSettings().verboseLogging()
+    user = mock(User.class);
+    when(user.isOp()).thenReturn(false);
+    uuid = UUID.randomUUID();
+    notUUID = UUID.randomUUID();
+    while (notUUID.equals(uuid)) {
+      notUUID = UUID.randomUUID();
     }
+    when(user.getUniqueId()).thenReturn(uuid);
+    when(user.getPlayer()).thenReturn(p);
+    when(user.getName()).thenReturn("tastybento");
+    User.setPlugin(plugin);
 
-    @After
-    public void tearDown() {
-        User.clearUsers();
-        Mockito.framework().clearInlineMocks();
-    }
+    // Parent command has no aliases
+    ac = mock(CompositeCommand.class);
+    when(ac.getSubCommandAliases()).thenReturn(new HashMap<>());
 
-    /**
-     * Test method for {@link AdminInfoCommand#execute(User, String, List)}.
-     */
-    @Test
-    public void testExecuteNoTargetConsole() {
-        AdminInfoCommand itl = new AdminInfoCommand(ac);
-        CommandSender sender = mock(CommandSender.class);
-        User console = User.getInstance(sender);
-        assertFalse(itl.execute(console, itl.getLabel(), new ArrayList<>()));
-        // Show help
-    }
+    // Island World Manager
+    IslandWorldManager iwm = mock(IslandWorldManager.class);
+    when(iwm.getFriendlyName(Mockito.any())).thenReturn("BSkyBlock");
+    when(plugin.getIWM()).thenReturn(iwm);
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminInfoCommand#execute(User, String, List)} .
-     */
-    @Test
-    public void testExecuteUnknownPlayer() {
-        AdminInfoCommand itl = new AdminInfoCommand(ac);
-        String[] name = {"tastybento"};
-        when(pm.getUUID(Mockito.any())).thenReturn(null);
-        assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
-        Mockito.verify(user).sendMessage("general.errors.unknown-player", "[name]", name[0]);
-    }
+    // Player has island to begin with
+    im = mock(IslandsManager.class);
+    when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(true);
+    when(im.hasIsland(Mockito.any(), Mockito.any(User.class))).thenReturn(true);
+    when(im.isOwner(Mockito.any(), Mockito.any())).thenReturn(true);
+    when(im.getOwner(Mockito.any(), Mockito.any())).thenReturn(uuid);
+    when(plugin.getIslands()).thenReturn(im);
 
-    /**
-     * Test method for .
-     */
-    @Test
-    public void testExecutePlayerHasNoIsland() {
-        AdminInfoCommand itl = new AdminInfoCommand(ac);
-        String[] name = {"tastybento"};
-        when(pm.getUUID(Mockito.any())).thenReturn(notUUID);
-        when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(false);
-        when(im.inTeam(Mockito.any(), Mockito.any())).thenReturn(false);
-        when(im.getIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(null);
-        assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
-        Mockito.verify(user).sendMessage(Mockito.eq("general.errors.player-has-no-island"));
-    }
+    // Has team
+    pm = mock(PlayersManager.class);
+    when(im.inTeam(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminInfoCommand#execute(User, String, List)}.
-     */
-    @Test
-    public void testExecuteSuccess() {
-        AdminInfoCommand itl = new AdminInfoCommand(ac);
-        String[] name = {"tastybento"};
-        when(pm.getUUID(Mockito.any())).thenReturn(notUUID);
-        when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(true);
-        Island is = mock(Island.class);
-        when(im.getIsland(Mockito.any(), Mockito.eq(notUUID))).thenReturn(is);
-        assertTrue(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
-        Mockito.verify(is).showInfo(Mockito.eq(user));
-    }
+    when(plugin.getPlayers()).thenReturn(pm);
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminInfoCommand#execute(User, String, List)}.
-     */
-    @Test
-    public void testExecuteUserNotOnIsland() {
-        when(user.isPlayer()).thenReturn(true);
-        AdminInfoCommand itl = new AdminInfoCommand(ac);
-        // No island here
-        when(im.getIslandAt(Mockito.any())).thenReturn(Optional.empty());
-        assertFalse(itl.execute(user, itl.getLabel(), new ArrayList<>()));
-        // Confirm other verifications
-        Mockito.verify(user).sendMessage("commands.admin.info.no-island");
-    }
+    // Server & Scheduler
+    BukkitScheduler sch = mock(BukkitScheduler.class);
+    PowerMockito.mockStatic(Bukkit.class);
+    when(Bukkit.getScheduler()).thenReturn(sch);
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminInfoCommand#execute(User, String, List)}.
-     */
-    @Test
-    public void testExecuteSuccessUserOnIsland() {
-        when(user.isPlayer()).thenReturn(true);
-        AdminInfoCommand itl = new AdminInfoCommand(ac);
-        Location loc = mock(Location.class);
+    // Locales
+    LocalesManager lm = mock(LocalesManager.class);
+    when(lm.get(Mockito.any(), Mockito.any())).thenReturn("mock translation");
+    when(plugin.getLocalesManager()).thenReturn(lm);
 
-        // Island has owner
-        Island is = mock(Island.class);
-        when(is.getOwner()).thenReturn(uuid);
-        when(is.showInfo(Mockito.any())).thenReturn(true);
-        Optional<Island> opi = Optional.of(is);
-        when(im.getIslandAt(Mockito.any())).thenReturn(opi);
-        when(user.getLocation()).thenReturn(loc);
+    // Addon
+    when(iwm.getAddon(Mockito.any())).thenReturn(Optional.empty());
+  }
 
+  @After
+  public void tearDown() {
+    User.clearUsers();
+    Mockito.framework().clearInlineMocks();
+  }
 
-        assertTrue(itl.execute(user, itl.getLabel(), new ArrayList<>()));
-        // Confirm other verifications
-        Mockito.verify(is).showInfo(Mockito.eq(user));
-    }
+  /**
+   * Test method for {@link AdminInfoCommand#execute(User, String, List)}.
+   */
+  @Test
+  public void testExecuteNoTargetConsole() {
+    AdminInfoCommand itl = new AdminInfoCommand(ac);
+    CommandSender sender = mock(CommandSender.class);
+    User console = User.getInstance(sender);
+    assertFalse(itl.execute(console, itl.getLabel(), new ArrayList<>()));
+    // Show help
+  }
+
+  /**
+   * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminInfoCommand#execute(User, String, List)} .
+   */
+  @Test
+  public void testExecuteUnknownPlayer() {
+    AdminInfoCommand itl = new AdminInfoCommand(ac);
+    String[] name = { "tastybento" };
+    when(pm.getUUID(Mockito.any())).thenReturn(null);
+    assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
+    Mockito.verify(user).sendMessage("general.errors.unknown-player", "[name]", name[0]);
+  }
+
+  /**
+   * Test method for .
+   */
+  @Test
+  public void testExecutePlayerHasNoIsland() {
+    AdminInfoCommand itl = new AdminInfoCommand(ac);
+    String[] name = { "tastybento" };
+    when(pm.getUUID(Mockito.any())).thenReturn(notUUID);
+    when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(false);
+    when(im.inTeam(Mockito.any(), Mockito.any())).thenReturn(false);
+    when(im.getIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(null);
+    assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
+    Mockito.verify(user).sendMessage(Mockito.eq("general.errors.player-has-no-island"));
+  }
+
+  /**
+   * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminInfoCommand#execute(User, String, List)}.
+   */
+  @Test
+  public void testExecuteSuccess() {
+    AdminInfoCommand itl = new AdminInfoCommand(ac);
+    String[] name = { "tastybento" };
+    when(pm.getUUID(Mockito.any())).thenReturn(notUUID);
+    when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(true);
+    Island is = mock(Island.class);
+    when(im.getIsland(Mockito.any(), Mockito.eq(notUUID))).thenReturn(is);
+    assertTrue(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
+    Mockito.verify(is).showInfo(Mockito.eq(user));
+  }
+
+  /**
+   * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminInfoCommand#execute(User, String, List)}.
+   */
+  @Test
+  public void testExecuteUserNotOnIsland() {
+    when(user.isPlayer()).thenReturn(true);
+    AdminInfoCommand itl = new AdminInfoCommand(ac);
+    // No island here
+    when(im.getIslandAt(Mockito.any())).thenReturn(Optional.empty());
+    assertFalse(itl.execute(user, itl.getLabel(), new ArrayList<>()));
+    // Confirm other verifications
+    Mockito.verify(user).sendMessage("commands.admin.info.no-island");
+  }
+
+  /**
+   * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminInfoCommand#execute(User, String, List)}.
+   */
+  @Test
+  public void testExecuteSuccessUserOnIsland() {
+    when(user.isPlayer()).thenReturn(true);
+    AdminInfoCommand itl = new AdminInfoCommand(ac);
+    Location loc = mock(Location.class);
+
+    // Island has owner
+    Island is = mock(Island.class);
+    when(is.getOwner()).thenReturn(uuid);
+    when(is.showInfo(Mockito.any())).thenReturn(true);
+    Optional<Island> opi = Optional.of(is);
+    when(im.getIslandAt(Mockito.any())).thenReturn(opi);
+    when(user.getLocation()).thenReturn(loc);
+
+    assertTrue(itl.execute(user, itl.getLabel(), new ArrayList<>()));
+    // Confirm other verifications
+    Mockito.verify(is).showInfo(Mockito.eq(user));
+  }
 }

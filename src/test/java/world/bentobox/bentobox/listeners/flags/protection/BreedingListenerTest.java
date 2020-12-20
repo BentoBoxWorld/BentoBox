@@ -16,7 +16,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Logger;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -46,7 +45,6 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
-
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
@@ -67,282 +65,328 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( {Bukkit.class, BentoBox.class, Flags.class, Util.class} )
+@PrepareForTest({ Bukkit.class, BentoBox.class, Flags.class, Util.class })
 public class BreedingListenerTest {
+  private Location location;
+  private BentoBox plugin;
+  private Notifier notifier;
+  private Player player;
+  private PlayerInventory inventory;
+  private ItemStack itemInMainHand;
+  private ItemStack itemInOffHand;
+  private IslandWorldManager iwm;
 
-    private Location location;
-    private BentoBox plugin;
-    private Notifier notifier;
-    private Player player;
-    private PlayerInventory inventory;
-    private ItemStack itemInMainHand;
-    private ItemStack itemInOffHand;
-    private IslandWorldManager iwm;
+  private static final EntityType ENTITY_TYPE = EntityType.COW;
+  private static final Material BREEDABLE_WITH = Material.WHEAT;
+  private static final Material NOT_BREEDABLE_WITH = Material.SEAGRASS;
 
-    private static final EntityType ENTITY_TYPE = EntityType.COW;
-    private static final Material BREEDABLE_WITH = Material.WHEAT;
-    private static final Material NOT_BREEDABLE_WITH = Material.SEAGRASS;
+  @Before
+  public void setUp() {
+    // Set up plugin
+    plugin = mock(BentoBox.class);
+    Whitebox.setInternalState(BentoBox.class, "instance", plugin);
 
-    @Before
-    public void setUp() {
-        // Set up plugin
-        plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+    Server server = mock(Server.class);
+    World world = mock(World.class);
+    when(server.getLogger()).thenReturn(Logger.getAnonymousLogger());
+    when(server.getWorld("world")).thenReturn(world);
+    when(server.getVersion()).thenReturn("BSB_Mocking");
 
-        Server server = mock(Server.class);
-        World world = mock(World.class);
-        when(server.getLogger()).thenReturn(Logger.getAnonymousLogger());
-        when(server.getWorld("world")).thenReturn(world);
-        when(server.getVersion()).thenReturn("BSB_Mocking");
+    PluginManager pim = mock(PluginManager.class);
 
-        PluginManager pim = mock(PluginManager.class);
+    ItemFactory itemFactory = mock(ItemFactory.class);
+    when(server.getItemFactory()).thenReturn(itemFactory);
 
-        ItemFactory itemFactory = mock(ItemFactory.class);
-        when(server.getItemFactory()).thenReturn(itemFactory);
+    PowerMockito.mockStatic(Bukkit.class);
+    when(Bukkit.getServer()).thenReturn(server);
+    when(Bukkit.getPluginManager()).thenReturn(pim);
 
-        PowerMockito.mockStatic(Bukkit.class);
-        when(Bukkit.getServer()).thenReturn(server);
-        when(Bukkit.getPluginManager()).thenReturn(pim);
+    SkullMeta skullMeta = mock(SkullMeta.class);
+    when(itemFactory.getItemMeta(any())).thenReturn(skullMeta);
+    when(Bukkit.getItemFactory()).thenReturn(itemFactory);
+    when(Bukkit.getLogger()).thenReturn(Logger.getAnonymousLogger());
+    location = mock(Location.class);
+    when(location.getWorld()).thenReturn(world);
+    when(location.getBlockX()).thenReturn(0);
+    when(location.getBlockY()).thenReturn(0);
+    when(location.getBlockZ()).thenReturn(0);
+    PowerMockito.mockStatic(Flags.class);
 
+    FlagsManager flagsManager = new FlagsManager(plugin);
+    when(plugin.getFlagsManager()).thenReturn(flagsManager);
 
-        SkullMeta skullMeta = mock(SkullMeta.class);
-        when(itemFactory.getItemMeta(any())).thenReturn(skullMeta);
-        when(Bukkit.getItemFactory()).thenReturn(itemFactory);
-        when(Bukkit.getLogger()).thenReturn(Logger.getAnonymousLogger());
-        location = mock(Location.class);
-        when(location.getWorld()).thenReturn(world);
-        when(location.getBlockX()).thenReturn(0);
-        when(location.getBlockY()).thenReturn(0);
-        when(location.getBlockZ()).thenReturn(0);
-        PowerMockito.mockStatic(Flags.class);
+    // Worlds
+    iwm = mock(IslandWorldManager.class);
+    when(iwm.inWorld(any(World.class))).thenReturn(true);
+    when(iwm.inWorld(any(Location.class))).thenReturn(true);
+    when(plugin.getIWM()).thenReturn(iwm);
 
-        FlagsManager flagsManager = new FlagsManager(plugin);
-        when(plugin.getFlagsManager()).thenReturn(flagsManager);
+    // Monsters and animals
+    Zombie zombie = mock(Zombie.class);
+    when(zombie.getLocation()).thenReturn(location);
+    Slime slime = mock(Slime.class);
+    when(slime.getLocation()).thenReturn(location);
+    Cow cow = mock(Cow.class);
+    when(cow.getLocation()).thenReturn(location);
 
+    // Fake players
+    Settings settings = mock(Settings.class);
+    when(plugin.getSettings()).thenReturn(settings);
+    when(settings.getFakePlayers()).thenReturn(new HashSet<>());
 
-        // Worlds
-        iwm = mock(IslandWorldManager.class);
-        when(iwm.inWorld(any(World.class))).thenReturn(true);
-        when(iwm.inWorld(any(Location.class))).thenReturn(true);
-        when(plugin.getIWM()).thenReturn(iwm);
+    // Player and player inventory. Start with nothing in hands
+    player = mock(Player.class);
+    inventory = mock(PlayerInventory.class);
+    itemInMainHand = mock(ItemStack.class);
+    when(itemInMainHand.getType()).thenReturn(Material.AIR);
+    itemInOffHand = mock(ItemStack.class);
+    when(itemInOffHand.getType()).thenReturn(Material.AIR);
+    when(inventory.getItemInMainHand()).thenReturn(itemInMainHand);
+    when(inventory.getItemInOffHand()).thenReturn(itemInOffHand);
+    when(player.getInventory()).thenReturn(inventory);
+    User.setPlugin(plugin);
 
-        // Monsters and animals
-        Zombie zombie = mock(Zombie.class);
-        when(zombie.getLocation()).thenReturn(location);
-        Slime slime = mock(Slime.class);
-        when(slime.getLocation()).thenReturn(location);
-        Cow cow = mock(Cow.class);
-        when(cow.getLocation()).thenReturn(location);
+    // Locales
+    LocalesManager lm = mock(LocalesManager.class);
+    when(plugin.getLocalesManager()).thenReturn(lm);
+    Answer<String> answer = invocation ->
+      (String) Arrays.asList(invocation.getArguments()).get(1);
+    when(lm.get(any(), any())).thenAnswer(answer);
 
-        // Fake players
-        Settings settings = mock(Settings.class);
-        when(plugin.getSettings()).thenReturn(settings);
-        when(settings.getFakePlayers()).thenReturn(new HashSet<>());
+    // Placeholders
+    PlaceholdersManager placeholdersManager = mock(PlaceholdersManager.class);
+    when(plugin.getPlaceholdersManager()).thenReturn(placeholdersManager);
+    when(placeholdersManager.replacePlaceholders(any(), any())).thenAnswer(answer);
 
-        // Player and player inventory. Start with nothing in hands
-        player = mock(Player.class);
-        inventory = mock(PlayerInventory.class);
-        itemInMainHand = mock(ItemStack.class);
-        when(itemInMainHand.getType()).thenReturn(Material.AIR);
-        itemInOffHand = mock(ItemStack.class);
-        when(itemInOffHand.getType()).thenReturn(Material.AIR);
-        when(inventory.getItemInMainHand()).thenReturn(itemInMainHand);
-        when(inventory.getItemInOffHand()).thenReturn(itemInOffHand);
-        when(player.getInventory()).thenReturn(inventory);
-        User.setPlugin(plugin);
+    // Player name
+    PlayersManager pm = mock(PlayersManager.class);
+    when(pm.getName(any())).thenReturn("tastybento");
+    when(plugin.getPlayers()).thenReturn(pm);
 
-        // Locales
-        LocalesManager lm = mock(LocalesManager.class);
-        when(plugin.getLocalesManager()).thenReturn(lm);
-        Answer<String> answer = invocation -> (String)Arrays.asList(invocation.getArguments()).get(1);
-        when(lm.get(any(), any())).thenAnswer(answer);
+    // World Settings
+    WorldSettings ws = mock(WorldSettings.class);
+    when(iwm.getWorldSettings(any())).thenReturn(ws);
+    Map<String, Boolean> worldFlags = new HashMap<>();
+    when(ws.getWorldFlags()).thenReturn(worldFlags);
 
-        // Placeholders
-        PlaceholdersManager placeholdersManager = mock(PlaceholdersManager.class);
-        when(plugin.getPlaceholdersManager()).thenReturn(placeholdersManager);
-        when(placeholdersManager.replacePlaceholders(any(), any())).thenAnswer(answer);
+    // Island manager
+    IslandsManager im = mock(IslandsManager.class);
+    when(plugin.getIslands()).thenReturn(im);
+    Island island = mock(Island.class);
+    Optional<Island> optional = Optional.of(island);
+    when(im.getProtectedIslandAt(any())).thenReturn(optional);
 
-        // Player name
-        PlayersManager pm = mock(PlayersManager.class);
-        when(pm.getName(any())).thenReturn("tastybento");
-        when(plugin.getPlayers()).thenReturn(pm);
+    // Notifier
+    notifier = mock(Notifier.class);
+    when(plugin.getNotifier()).thenReturn(notifier);
 
-        // World Settings
-        WorldSettings ws = mock(WorldSettings.class);
-        when(iwm.getWorldSettings(any())).thenReturn(ws);
-        Map<String, Boolean> worldFlags = new HashMap<>();
-        when(ws.getWorldFlags()).thenReturn(worldFlags);
+    PowerMockito.mockStatic(Util.class);
+    when(Util.getWorld(any())).thenReturn(mock(World.class));
+    // Util strip spaces
+    when(Util.stripSpaceAfterColorCodes(anyString())).thenCallRealMethod();
 
-        // Island manager
-        IslandsManager im = mock(IslandsManager.class);
-        when(plugin.getIslands()).thenReturn(im);
-        Island island = mock(Island.class);
-        Optional<Island> optional = Optional.of(island);
-        when(im.getProtectedIslandAt(any())).thenReturn(optional);
+    // Addon
+    when(iwm.getAddon(any())).thenReturn(Optional.empty());
+  }
 
-        // Notifier
-        notifier = mock(Notifier.class);
-        when(plugin.getNotifier()).thenReturn(notifier);
+  @After
+  public void tearDown() {
+    User.clearUsers();
+    framework().clearInlineMocks();
+  }
 
-        PowerMockito.mockStatic(Util.class);
-        when(Util.getWorld(any())).thenReturn(mock(World.class));
-        // Util strip spaces
-        when(Util.stripSpaceAfterColorCodes(anyString())).thenCallRealMethod();
+  /**
+   * Test method for {@link BreedingListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractAtEntityEvent)}.
+   */
+  @Test
+  public void testOnPlayerInteractNotAnimal() {
+    Entity clickedEntity = mock(Entity.class);
+    Vector position = new Vector(0, 0, 0);
+    PlayerInteractAtEntityEvent e = new PlayerInteractAtEntityEvent(
+      player,
+      clickedEntity,
+      position
+    );
+    new BreedingListener().onPlayerInteract(e);
+    assertFalse("Not animal failed", e.isCancelled());
+  }
 
-        // Addon
-        when(iwm.getAddon(any())).thenReturn(Optional.empty());
+  /**
+   * Test method for {@link BreedingListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractAtEntityEvent)}.
+   */
+  @Test
+  public void testOnPlayerInteractAnimalNothingInMainHand() {
+    Animals clickedEntity = mock(Animals.class);
+    Vector position = new Vector(0, 0, 0);
+    PlayerInteractAtEntityEvent e = new PlayerInteractAtEntityEvent(
+      player,
+      clickedEntity,
+      position
+    );
+    new BreedingListener().onPlayerInteract(e);
+    assertFalse("Animal, nothing in main hand failed", e.isCancelled());
+  }
 
-    }
+  /**
+   * Test method for {@link BreedingListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractAtEntityEvent)}.
+   */
+  @Test
+  public void testOnPlayerInteractAnimalNothingInOffHand() {
+    Animals clickedEntity = mock(Animals.class);
+    Vector position = new Vector(0, 0, 0);
+    PlayerInteractAtEntityEvent e = new PlayerInteractAtEntityEvent(
+      player,
+      clickedEntity,
+      position,
+      EquipmentSlot.OFF_HAND
+    );
+    new BreedingListener().onPlayerInteract(e);
+    assertFalse("Animal, nothing in off hand failed", e.isCancelled());
+  }
 
-    @After
-    public void tearDown() {
-        User.clearUsers();
-        framework().clearInlineMocks();
-    }
+  /**
+   * Test method for {@link BreedingListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractAtEntityEvent)}.
+   */
+  @Test
+  public void testOnPlayerInteractAnimalBreedingFoodInMainHandNotRightWorld() {
+    Animals clickedEntity = mock(Animals.class);
+    when(clickedEntity.getLocation()).thenReturn(location);
+    when(clickedEntity.getType()).thenReturn(ENTITY_TYPE);
+    when(iwm.inWorld(any(World.class))).thenReturn(false);
+    when(iwm.inWorld(any(Location.class))).thenReturn(false);
+    Vector position = new Vector(0, 0, 0);
+    PlayerInteractAtEntityEvent e = new PlayerInteractAtEntityEvent(
+      player,
+      clickedEntity,
+      position
+    );
+    BreedingListener bl = new BreedingListener();
 
-    /**
-     * Test method for {@link BreedingListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractAtEntityEvent)}.
-     */
-    @Test
-    public void testOnPlayerInteractNotAnimal() {
-        Entity clickedEntity = mock(Entity.class);
-        Vector position = new Vector(0,0,0);
-        PlayerInteractAtEntityEvent e = new PlayerInteractAtEntityEvent(player, clickedEntity, position);
-        new BreedingListener().onPlayerInteract(e);
-        assertFalse("Not animal failed", e.isCancelled());
-    }
+    Material breedingMat = BREEDABLE_WITH;
 
-    /**
-     * Test method for {@link BreedingListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractAtEntityEvent)}.
-     */
-    @Test
-    public void testOnPlayerInteractAnimalNothingInMainHand() {
-        Animals clickedEntity = mock(Animals.class);
-        Vector position = new Vector(0,0,0);
-        PlayerInteractAtEntityEvent e = new PlayerInteractAtEntityEvent(player, clickedEntity, position);
-        new BreedingListener().onPlayerInteract(e);
-        assertFalse("Animal, nothing in main hand failed", e.isCancelled());
-    }
+    when(itemInMainHand.getType()).thenReturn(breedingMat);
+    bl.onPlayerInteract(e);
+    assertFalse(
+      "Animal, breeding item in main hand, wrong world failed " + breedingMat,
+      e.isCancelled()
+    );
 
-    /**
-     * Test method for {@link BreedingListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractAtEntityEvent)}.
-     */
-    @Test
-    public void testOnPlayerInteractAnimalNothingInOffHand() {
-        Animals clickedEntity = mock(Animals.class);
-        Vector position = new Vector(0,0,0);
-        PlayerInteractAtEntityEvent e = new PlayerInteractAtEntityEvent(player, clickedEntity, position, EquipmentSlot.OFF_HAND);
-        new BreedingListener().onPlayerInteract(e);
-        assertFalse("Animal, nothing in off hand failed", e.isCancelled());
-    }
+    // verify breeding was prevented
+    verify(clickedEntity, never()).setBreed(false);
+  }
 
+  /**
+   * Test method for {@link BreedingListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractAtEntityEvent)}.
+   */
+  @Test
+  public void testOnPlayerInteractAnimalBreedingFoodInMainHand() {
+    Animals clickedEntity = mock(Animals.class);
+    when(clickedEntity.getLocation()).thenReturn(location);
+    when(clickedEntity.getType()).thenReturn(EntityType.COW);
+    Vector position = new Vector(0, 0, 0);
+    PlayerInteractAtEntityEvent e = new PlayerInteractAtEntityEvent(
+      player,
+      clickedEntity,
+      position
+    );
+    BreedingListener bl = new BreedingListener();
 
-    /**
-     * Test method for {@link BreedingListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractAtEntityEvent)}.
-     */
-    @Test
-    public void testOnPlayerInteractAnimalBreedingFoodInMainHandNotRightWorld() {
-        Animals clickedEntity = mock(Animals.class);
-        when(clickedEntity.getLocation()).thenReturn(location);
-        when(clickedEntity.getType()).thenReturn(ENTITY_TYPE);
-        when(iwm.inWorld(any(World.class))).thenReturn(false);
-        when(iwm.inWorld(any(Location.class))).thenReturn(false);
-        Vector position = new Vector(0,0,0);
-        PlayerInteractAtEntityEvent e = new PlayerInteractAtEntityEvent(player, clickedEntity, position);
-        BreedingListener bl = new BreedingListener();
+    Material breedingMat = BREEDABLE_WITH;
 
-        Material breedingMat = BREEDABLE_WITH;
+    when(itemInMainHand.getType()).thenReturn(breedingMat);
+    bl.onPlayerInteract(e);
+    assertTrue(
+      "Animal, breeding item in main hand failed " + breedingMat,
+      e.isCancelled()
+    );
 
-        when(itemInMainHand.getType()).thenReturn(breedingMat);
-        bl.onPlayerInteract(e);
-        assertFalse("Animal, breeding item in main hand, wrong world failed " + breedingMat, e.isCancelled());
+    // verify breeding was prevented
+    verify(clickedEntity).setBreed(false);
+  }
 
-        // verify breeding was prevented
-        verify(clickedEntity, never()).setBreed(false);
-    }
+  /**
+   * Test method for {@link BreedingListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractAtEntityEvent)}.
+   */
+  @Test
+  public void testOnPlayerInteractAnimalBreedingFoodInOffHandNotRightWorld() {
+    Animals clickedEntity = mock(Animals.class);
+    when(clickedEntity.getLocation()).thenReturn(location);
+    when(iwm.inWorld(any(World.class))).thenReturn(false);
+    when(iwm.inWorld(any(Location.class))).thenReturn(false);
+    Vector position = new Vector(0, 0, 0);
+    PlayerInteractAtEntityEvent e = new PlayerInteractAtEntityEvent(
+      player,
+      clickedEntity,
+      position,
+      EquipmentSlot.OFF_HAND
+    );
+    BreedingListener bl = new BreedingListener();
 
-    /**
-     * Test method for {@link BreedingListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractAtEntityEvent)}.
-     */
-    @Test
-    public void testOnPlayerInteractAnimalBreedingFoodInMainHand() {
-        Animals clickedEntity = mock(Animals.class);
-        when(clickedEntity.getLocation()).thenReturn(location);
-        when(clickedEntity.getType()).thenReturn(EntityType.COW);
-        Vector position = new Vector(0,0,0);
-        PlayerInteractAtEntityEvent e = new PlayerInteractAtEntityEvent(player, clickedEntity, position);
-        BreedingListener bl = new BreedingListener();
+    Material breedingMat = BREEDABLE_WITH;
 
-        Material breedingMat = BREEDABLE_WITH;
+    when(itemInOffHand.getType()).thenReturn(breedingMat);
+    bl.onPlayerInteract(e);
+    assertFalse(
+      "Animal, breeding item in off hand, wrong world failed " + breedingMat,
+      e.isCancelled()
+    );
 
-        when(itemInMainHand.getType()).thenReturn(breedingMat);
-        bl.onPlayerInteract(e);
-        assertTrue("Animal, breeding item in main hand failed " + breedingMat, e.isCancelled());
+    // verify breeding was not prevented
+    verify(clickedEntity, never()).setBreed(false);
+  }
 
-        // verify breeding was prevented
-        verify(clickedEntity).setBreed(false);
-    }
+  /**
+   * Test method for {@link BreedingListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractAtEntityEvent)}.
+   */
+  @Test
+  public void testOnPlayerInteractAnimalBreedingFoodInOffHand() {
+    Animals clickedEntity = mock(Animals.class);
+    when(clickedEntity.getLocation()).thenReturn(location);
+    when(clickedEntity.getType()).thenReturn(ENTITY_TYPE);
+    Vector position = new Vector(0, 0, 0);
+    PlayerInteractAtEntityEvent e = new PlayerInteractAtEntityEvent(
+      player,
+      clickedEntity,
+      position,
+      EquipmentSlot.OFF_HAND
+    );
+    BreedingListener bl = new BreedingListener();
 
-    /**
-     * Test method for {@link BreedingListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractAtEntityEvent)}.
-     */
-    @Test
-    public void testOnPlayerInteractAnimalBreedingFoodInOffHandNotRightWorld() {
-        Animals clickedEntity = mock(Animals.class);
-        when(clickedEntity.getLocation()).thenReturn(location);
-        when(iwm.inWorld(any(World.class))).thenReturn(false);
-        when(iwm.inWorld(any(Location.class))).thenReturn(false);
-        Vector position = new Vector(0,0,0);
-        PlayerInteractAtEntityEvent e = new PlayerInteractAtEntityEvent(player, clickedEntity, position, EquipmentSlot.OFF_HAND);
-        BreedingListener bl = new BreedingListener();
+    Material breedingMat = BREEDABLE_WITH;
+    when(itemInOffHand.getType()).thenReturn(breedingMat);
+    bl.onPlayerInteract(e);
+    assertTrue(
+      "Animal, breeding item in off hand failed " + breedingMat,
+      e.isCancelled()
+    );
 
-        Material breedingMat = BREEDABLE_WITH;
+    // verify breeding was prevented
+    verify(clickedEntity).setBreed(false);
+  }
 
-        when(itemInOffHand.getType()).thenReturn(breedingMat);
-        bl.onPlayerInteract(e);
-        assertFalse("Animal, breeding item in off hand, wrong world failed " + breedingMat, e.isCancelled());
+  @Test
+  public void testOnPlayerIntereactAnimalBreedingWrongFood() {
+    Animals clickedEntity = mock(Animals.class);
+    when(clickedEntity.getLocation()).thenReturn(location);
+    when(clickedEntity.getType()).thenReturn(EntityType.COW);
+    Vector position = new Vector(0, 0, 0);
+    PlayerInteractAtEntityEvent e = new PlayerInteractAtEntityEvent(
+      player,
+      clickedEntity,
+      position
+    );
+    BreedingListener bl = new BreedingListener();
 
-        // verify breeding was not prevented
-        verify(clickedEntity, never()).setBreed(false);
-    }
+    Material breedingMat = NOT_BREEDABLE_WITH;
 
-    /**
-     * Test method for {@link BreedingListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractAtEntityEvent)}.
-     */
-    @Test
-    public void testOnPlayerInteractAnimalBreedingFoodInOffHand() {
-        Animals clickedEntity = mock(Animals.class);
-        when(clickedEntity.getLocation()).thenReturn(location);
-        when(clickedEntity.getType()).thenReturn(ENTITY_TYPE);
-        Vector position = new Vector(0,0,0);
-        PlayerInteractAtEntityEvent e = new PlayerInteractAtEntityEvent(player, clickedEntity, position, EquipmentSlot.OFF_HAND);
-        BreedingListener bl = new BreedingListener();
+    when(itemInMainHand.getType()).thenReturn(breedingMat);
+    bl.onPlayerInteract(e);
+    assertFalse(
+      "Animal, breeding item in main hand was prevented " + breedingMat,
+      e.isCancelled()
+    );
 
-        Material breedingMat = BREEDABLE_WITH;
-        when(itemInOffHand.getType()).thenReturn(breedingMat);
-        bl.onPlayerInteract(e);
-        assertTrue("Animal, breeding item in off hand failed " + breedingMat, e.isCancelled());
-
-        // verify breeding was prevented
-        verify(clickedEntity).setBreed(false);
-    }
-
-    @Test
-    public void testOnPlayerIntereactAnimalBreedingWrongFood() {
-        Animals clickedEntity = mock(Animals.class);
-        when(clickedEntity.getLocation()).thenReturn(location);
-        when(clickedEntity.getType()).thenReturn(EntityType.COW);
-        Vector position = new Vector(0,0,0);
-        PlayerInteractAtEntityEvent e = new PlayerInteractAtEntityEvent(player, clickedEntity, position);
-        BreedingListener bl = new BreedingListener();
-
-        Material breedingMat = NOT_BREEDABLE_WITH;
-
-        when(itemInMainHand.getType()).thenReturn(breedingMat);
-        bl.onPlayerInteract(e);
-        assertFalse("Animal, breeding item in main hand was prevented " + breedingMat, e.isCancelled());
-
-        // verify breeding was not prevented
-        verify(clickedEntity, never()).setBreed(false);
-    }
+    // verify breeding was not prevented
+    verify(clickedEntity, never()).setBreed(false);
+  }
 }

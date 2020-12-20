@@ -11,9 +11,12 @@ import world.bentobox.bentobox.database.sql.mariadb.MariaDBDatabase;
  */
 public class Json2MariaDBDatabase implements DatabaseSetup {
 
-    @Override
-    public <T> AbstractDatabaseHandler<T> getHandler(Class<T> type) {
-        return new TransitionDatabaseHandler<>(type, new JSONDatabase().getHandler(type), new MariaDBDatabase().getHandler(type));
-    }
-
+  @Override
+  public <T> AbstractDatabaseHandler<T> getHandler(Class<T> type) {
+    return new TransitionDatabaseHandler<>(
+      type,
+      new JSONDatabase().getHandler(type),
+      new MariaDBDatabase().getHandler(type)
+    );
+  }
 }

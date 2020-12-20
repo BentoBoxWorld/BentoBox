@@ -9,30 +9,29 @@ import java.util.UUID;
  * @since 1.5.0
  */
 public class OfflineMessageEvent extends BentoBoxEvent {
-    private final UUID offlinePlayer;
-    private final String message;
+  private final UUID offlinePlayer;
+  private final String message;
 
-    /**
-     * @param offlinePlayer - offline player
-     * @param message message to send offline player
-     */
-    public OfflineMessageEvent(UUID offlinePlayer, String message) {
-        this.offlinePlayer = offlinePlayer;
-        this.message = message;
-    }
+  /**
+   * @param offlinePlayer - offline player
+   * @param message message to send offline player
+   */
+  public OfflineMessageEvent(UUID offlinePlayer, String message) {
+    this.offlinePlayer = offlinePlayer;
+    this.message = message;
+  }
 
-    /**
-     * @return the offlinePlayer
-     */
-    public UUID getOfflinePlayer() {
-        return offlinePlayer;
-    }
+  /**
+   * @return the offlinePlayer
+   */
+  public UUID getOfflinePlayer() {
+    return offlinePlayer;
+  }
 
-    /**
-     * @return the message
-     */
-    public String getMessage() {
-        return message;
-    }
-
+  /**
+   * @return the message
+   */
+  public String getMessage() {
+    return message;
+  }
 }

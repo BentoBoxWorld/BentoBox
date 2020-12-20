@@ -11,7 +11,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
-
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.lists.Flags;
 
@@ -23,40 +22,52 @@ import world.bentobox.bentobox.lists.Flags;
  */
 public class EntityInteractListener extends FlagListener {
 
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
-    public void onPlayerInteractAtEntity(final PlayerInteractAtEntityEvent e) {
-        if (e.getRightClicked() instanceof ArmorStand) {
-            checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.ARMOR_STAND);
-        }
+  @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+  public void onPlayerInteractAtEntity(final PlayerInteractAtEntityEvent e) {
+    if (e.getRightClicked() instanceof ArmorStand) {
+      checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.ARMOR_STAND);
     }
+  }
 
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void onPlayerInteractEntity(PlayerInteractEntityEvent e) {
-        if (e.getRightClicked() instanceof Vehicle) {
-            // Animal riding
-            if (e.getRightClicked() instanceof Animals) {
-                checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.RIDING);
-            }
-            // Minecart riding
-            else if (e.getRightClicked() instanceof RideableMinecart) {
-                checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.MINECART);
-            }
-            // Boat riding
-            else if (e.getRightClicked() instanceof Boat) {
-                checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.BOAT);
-            }
-        }
-        // Villager trading
-        else if (e.getRightClicked() instanceof Villager || e.getRightClicked().getType().name().equals("WANDERING_TRADER")) { // TODO: Simplify when 1.13.2 support is dropped
-            // Check naming and check trading
-            checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.TRADING);
-            if (e.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.NAME_TAG)) {
-                checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.NAME_TAG);
-            }
-        }
-        // Name tags
-        else if (e.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.NAME_TAG)) {
-            checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.NAME_TAG);
-        }
+  @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+  public void onPlayerInteractEntity(PlayerInteractEntityEvent e) {
+    if (e.getRightClicked() instanceof Vehicle) {
+      // Animal riding
+      if (e.getRightClicked() instanceof Animals) {
+        checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.RIDING);
+      }
+      // Minecart riding
+      else if (e.getRightClicked() instanceof RideableMinecart) {
+        checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.MINECART);
+      }
+      // Boat riding
+      else if (e.getRightClicked() instanceof Boat) {
+        checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.BOAT);
+      }
     }
+    // Villager trading
+    else if (
+      e.getRightClicked() instanceof Villager ||
+      e.getRightClicked().getType().name().equals("WANDERING_TRADER")
+    ) { // TODO: Simplify when 1.13.2 support is dropped
+      // Check naming and check trading
+      checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.TRADING);
+      if (
+        e
+          .getPlayer()
+          .getInventory()
+          .getItemInMainHand()
+          .getType()
+          .equals(Material.NAME_TAG)
+      ) {
+        checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.NAME_TAG);
+      }
+    }
+    // Name tags
+    else if (
+      e.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.NAME_TAG)
+    ) {
+      checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.NAME_TAG);
+    }
+  }
 }

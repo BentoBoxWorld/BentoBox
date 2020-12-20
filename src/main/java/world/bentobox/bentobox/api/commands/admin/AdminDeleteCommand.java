@@ -4,9 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
 import org.bukkit.util.Vector;
-
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.events.island.IslandEvent;
@@ -18,120 +16,126 @@ import world.bentobox.bentobox.util.Util;
 
 public class AdminDeleteCommand extends ConfirmableCommand {
 
-    public AdminDeleteCommand(CompositeCommand parent) {
-        super(parent, "delete");
+  public AdminDeleteCommand(CompositeCommand parent) {
+    super(parent, "delete");
+  }
+
+  @Override
+  public void setup() {
+    setPermission("admin.delete");
+    setParametersHelp("commands.admin.delete.parameters");
+    setDescription("commands.admin.delete.description");
+  }
+
+  @Override
+  public boolean canExecute(User user, String label, List<String> args) {
+    if (args.size() != 1) {
+      showHelp(this, user);
+      return false;
     }
-
-    @Override
-    public void setup() {
-        setPermission("admin.delete");
-        setParametersHelp("commands.admin.delete.parameters");
-        setDescription("commands.admin.delete.description");
+    // Get target
+    UUID targetUUID = Util.getUUID(args.get(0));
+    if (targetUUID == null) {
+      user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
+      return false;
     }
-
-    @Override
-    public boolean canExecute(User user, String label, List<String> args) {
-        if (args.size() != 1) {
-            showHelp(this, user);
-            return false;
-        }
-        // Get target
-        UUID targetUUID = Util.getUUID(args.get(0));
-        if (targetUUID == null) {
-            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
-            return false;
-        }
-        if (!getIslands().hasIsland(getWorld(), targetUUID)) {
-            user.sendMessage("general.errors.player-has-no-island");
-            return false;
-        }
-        // Team members should be kicked before deleting otherwise the whole team will become weird
-        if (getIslands().inTeam(getWorld(), targetUUID) && getIslands().getOwner(getWorld(), targetUUID).equals(targetUUID)) {
-            user.sendMessage("commands.admin.delete.cannot-delete-owner");
-            return false;
-        }
-        return true;
+    if (!getIslands().hasIsland(getWorld(), targetUUID)) {
+      user.sendMessage("general.errors.player-has-no-island");
+      return false;
     }
-
-    @Override
-    public boolean execute(User user, String label, List<String> args) {
-        // If args are not right, show help
-        if (args.size() != 1) {
-            showHelp(this, user);
-            return false;
-        }
-        // Get target
-        UUID targetUUID = getPlayers().getUUID(args.get(0));
-        // Confirm
-        askConfirmation(user, () -> deletePlayer(user, targetUUID));
-        return true;
+    // Team members should be kicked before deleting otherwise the whole team will become weird
+    if (
+      getIslands().inTeam(getWorld(), targetUUID) &&
+      getIslands().getOwner(getWorld(), targetUUID).equals(targetUUID)
+    ) {
+      user.sendMessage("commands.admin.delete.cannot-delete-owner");
+      return false;
     }
+    return true;
+  }
 
-    private void deletePlayer(User user, UUID targetUUID) {
-        // Delete player and island
-        // Get the target's island
-        Island oldIsland = getIslands().getIsland(getWorld(), targetUUID);
-        Vector vector = null;
-        if (oldIsland != null) {
-            // Fire island preclear event
-            IslandEvent.builder()
-            .involvedPlayer(user.getUniqueId())
-            .reason(Reason.PRECLEAR)
-            .island(oldIsland)
-            .oldIsland(oldIsland)
-            .location(oldIsland.getCenter())
-            .build();
-            // Check if player is online and on the island
-            User target = User.getInstance(targetUUID);
-            // Remove them from this island (it still exists and will be deleted later)
-            getIslands().removePlayer(getWorld(), targetUUID);
-            if (target.isOnline()) {
-                // Execute commands when leaving
-                Util.runCommands(user, getIWM().getOnLeaveCommands(getWorld()), "leave");
-                // Remove money inventory etc.
-                if (getIWM().isOnLeaveResetEnderChest(getWorld())) {
-                    target.getPlayer().getEnderChest().clear();
-                }
-                if (getIWM().isOnLeaveResetInventory(getWorld())) {
-                    target.getPlayer().getInventory().clear();
-                }
-                if (getSettings().isUseEconomy() && getIWM().isOnLeaveResetMoney(getWorld())) {
-                    getPlugin().getVault().ifPresent(vault -> vault.withdraw(target, vault.getBalance(target)));
-                }
-                // Reset the health
-                if (getIWM().isOnLeaveResetHealth(getWorld())) {
-                    Util.resetHealth(target.getPlayer());
-                }
-
-                // Reset the hunger
-                if (getIWM().isOnLeaveResetHunger(getWorld())) {
-                    target.getPlayer().setFoodLevel(20);
-                }
-
-                // Reset the XP
-                if (getIWM().isOnLeaveResetXP(getWorld())) {
-                    target.getPlayer().setTotalExperience(0);
-                }
-            }
-            vector = oldIsland.getCenter().toVector();
-            getIslands().deleteIsland(oldIsland, true, targetUUID);
-        }
-        getPlayers().clearHomeLocations(getWorld(), targetUUID);
-        if (vector == null) {
-            user.sendMessage("general.success");
-        } else {
-            user.sendMessage("commands.admin.delete.deleted-island", "[xyz]", Util.xyz(vector));
-        }
+  @Override
+  public boolean execute(User user, String label, List<String> args) {
+    // If args are not right, show help
+    if (args.size() != 1) {
+      showHelp(this, user);
+      return false;
     }
+    // Get target
+    UUID targetUUID = getPlayers().getUUID(args.get(0));
+    // Confirm
+    askConfirmation(user, () -> deletePlayer(user, targetUUID));
+    return true;
+  }
 
-    @Override
-    public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
-        String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
-        if (args.isEmpty()) {
-            // Don't show every player on the server. Require at least the first letter
-            return Optional.empty();
+  private void deletePlayer(User user, UUID targetUUID) {
+    // Delete player and island
+    // Get the target's island
+    Island oldIsland = getIslands().getIsland(getWorld(), targetUUID);
+    Vector vector = null;
+    if (oldIsland != null) {
+      // Fire island preclear event
+      IslandEvent
+        .builder()
+        .involvedPlayer(user.getUniqueId())
+        .reason(Reason.PRECLEAR)
+        .island(oldIsland)
+        .oldIsland(oldIsland)
+        .location(oldIsland.getCenter())
+        .build();
+      // Check if player is online and on the island
+      User target = User.getInstance(targetUUID);
+      // Remove them from this island (it still exists and will be deleted later)
+      getIslands().removePlayer(getWorld(), targetUUID);
+      if (target.isOnline()) {
+        // Execute commands when leaving
+        Util.runCommands(user, getIWM().getOnLeaveCommands(getWorld()), "leave");
+        // Remove money inventory etc.
+        if (getIWM().isOnLeaveResetEnderChest(getWorld())) {
+          target.getPlayer().getEnderChest().clear();
         }
-        List<String> options = new ArrayList<>(Util.getOnlinePlayerList(user));
-        return Optional.of(Util.tabLimit(options, lastArg));
+        if (getIWM().isOnLeaveResetInventory(getWorld())) {
+          target.getPlayer().getInventory().clear();
+        }
+        if (getSettings().isUseEconomy() && getIWM().isOnLeaveResetMoney(getWorld())) {
+          getPlugin()
+            .getVault()
+            .ifPresent(vault -> vault.withdraw(target, vault.getBalance(target)));
+        }
+        // Reset the health
+        if (getIWM().isOnLeaveResetHealth(getWorld())) {
+          Util.resetHealth(target.getPlayer());
+        }
+
+        // Reset the hunger
+        if (getIWM().isOnLeaveResetHunger(getWorld())) {
+          target.getPlayer().setFoodLevel(20);
+        }
+
+        // Reset the XP
+        if (getIWM().isOnLeaveResetXP(getWorld())) {
+          target.getPlayer().setTotalExperience(0);
+        }
+      }
+      vector = oldIsland.getCenter().toVector();
+      getIslands().deleteIsland(oldIsland, true, targetUUID);
     }
+    getPlayers().clearHomeLocations(getWorld(), targetUUID);
+    if (vector == null) {
+      user.sendMessage("general.success");
+    } else {
+      user.sendMessage("commands.admin.delete.deleted-island", "[xyz]", Util.xyz(vector));
+    }
+  }
+
+  @Override
+  public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
+    String lastArg = !args.isEmpty() ? args.get(args.size() - 1) : "";
+    if (args.isEmpty()) {
+      // Don't show every player on the server. Require at least the first letter
+      return Optional.empty();
+    }
+    List<String> options = new ArrayList<>(Util.getOnlinePlayerList(user));
+    return Optional.of(Util.tabLimit(options, lastArg));
+  }
 }

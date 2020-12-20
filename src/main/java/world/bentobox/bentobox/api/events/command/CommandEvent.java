@@ -4,7 +4,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.Cancellable;
-
 import world.bentobox.bentobox.api.events.BentoBoxEvent;
 
 /**
@@ -13,84 +12,87 @@ import world.bentobox.bentobox.api.events.BentoBoxEvent;
  * @author tastybento
  */
 public class CommandEvent extends BentoBoxEvent implements Cancellable {
+  private boolean cancelled;
 
-    private boolean cancelled;
+  private final CommandSender sender;
+  private final Command command;
+  private final String label;
+  private final String[] args;
 
-    private final CommandSender sender;
-    private final Command command;
-    private final String label;
-    private final String[] args;
+  private CommandEvent(
+    CommandSender sender,
+    Command command,
+    String label,
+    String[] args
+  ) {
+    super();
+    this.sender = sender;
+    this.command = command;
+    this.label = label;
+    this.args = args;
+  }
 
-    private CommandEvent(CommandSender sender, Command command, String label, String[] args) {
-        super();
-        this.sender = sender;
-        this.command = command;
-        this.label = label;
-        this.args = args;
+  public static CommandEventBuilder builder() {
+    return new CommandEventBuilder();
+  }
+
+  public static class CommandEventBuilder {
+    // Here field are NOT final. They are just used for the building.
+    private CommandSender sender;
+    private Command command;
+    private String label;
+    private String[] args;
+
+    public CommandEventBuilder setSender(CommandSender sender) {
+      this.sender = sender;
+      return this;
     }
 
-    public static CommandEventBuilder builder() {
-        return new CommandEventBuilder();
+    public CommandEventBuilder setCommand(Command command) {
+      this.command = command;
+      return this;
     }
 
-    public static class CommandEventBuilder {
-        // Here field are NOT final. They are just used for the building.
-        private CommandSender sender;
-        private Command command;
-        private String label;
-        private String[] args;
-
-        public CommandEventBuilder setSender(CommandSender sender) {
-            this.sender = sender;
-            return this;
-        }
-
-        public CommandEventBuilder setCommand(Command command) {
-            this.command = command;
-            return this;
-        }
-
-        public CommandEventBuilder setLabel(String label) {
-            this.label = label;
-            return this;
-        }
-
-        public CommandEventBuilder setArgs(String[] args) {
-            this.args = args;
-            return this;
-        }
-
-        public CommandEvent build() {
-            CommandEvent event =  new CommandEvent(sender, command, label, args);
-            Bukkit.getPluginManager().callEvent(event);
-            return event;
-        }
-
+    public CommandEventBuilder setLabel(String label) {
+      this.label = label;
+      return this;
     }
 
-    public CommandSender getSender() {
-        return sender;
+    public CommandEventBuilder setArgs(String[] args) {
+      this.args = args;
+      return this;
     }
 
-    public Command getCommand() {
-        return command;
+    public CommandEvent build() {
+      CommandEvent event = new CommandEvent(sender, command, label, args);
+      Bukkit.getPluginManager().callEvent(event);
+      return event;
     }
+  }
 
-    public String getLabel() {
-        return label;
-    }
+  public CommandSender getSender() {
+    return sender;
+  }
 
-    public String[] getArgs() {
-        return args;
-    }
+  public Command getCommand() {
+    return command;
+  }
 
-    @Override
-    public boolean isCancelled() {
-        return cancelled;
-    }
+  public String getLabel() {
+    return label;
+  }
 
-    @Override
-    public void setCancelled(boolean arg0) {
-        cancelled = arg0;
-    }
+  public String[] getArgs() {
+    return args;
+  }
+
+  @Override
+  public boolean isCancelled() {
+    return cancelled;
+  }
+
+  @Override
+  public void setCancelled(boolean arg0) {
+    cancelled = arg0;
+  }
 }

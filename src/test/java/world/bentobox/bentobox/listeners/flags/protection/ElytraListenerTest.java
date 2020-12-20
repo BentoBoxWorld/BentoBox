@@ -13,7 +13,6 @@ import static org.mockito.Mockito.when;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.UUID;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -34,7 +33,6 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
-
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.user.Notifier;
 import world.bentobox.bentobox.api.user.User;
@@ -50,157 +48,166 @@ import world.bentobox.bentobox.managers.PlaceholdersManager;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class})
+@PrepareForTest({ Bukkit.class, BentoBox.class })
 public class ElytraListenerTest {
-    @Mock
-    private BentoBox plugin;
-    @Mock
-    private Player player;
-    @Mock
-    private Location location;
-    @Mock
-    private World world;
-    private UUID uuid = UUID.randomUUID();
+  @Mock
+  private BentoBox plugin;
 
-    private ElytraListener el;
-    @Mock
-    private IslandWorldManager iwm;
-    @Mock
-    private IslandsManager im;
-    private Island island;
-    @Mock
-    private PluginManager pim;
-    @Mock
-    private ItemFactory itemFactory;
-    @Mock
-    private Notifier notifier;
-    @Mock
-    private PlayerInventory inv;
+  @Mock
+  private Player player;
 
+  @Mock
+  private Location location;
 
-    /**
-     * @throws java.lang.Exception
-     */
-    @Before
-    public void setUp() throws Exception {
-        // Set up plugin
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
-        // Bukkit
-        PowerMockito.mockStatic(Bukkit.class);
-        when(Bukkit.getPluginManager()).thenReturn(pim);
-        when(Bukkit.getItemFactory()).thenReturn(itemFactory);
+  @Mock
+  private World world;
 
-        // Location
-        when(location.getWorld()).thenReturn(world);
-        when(location.getBlockX()).thenReturn(0);
-        when(location.getBlockY()).thenReturn(0);
-        when(location.getBlockZ()).thenReturn(0);
+  private UUID uuid = UUID.randomUUID();
 
-        // Player
-        when(player.getUniqueId()).thenReturn(uuid);
-        when(player.getLocation()).thenReturn(location);
-        when(player.getWorld()).thenReturn(world);
-        when(player.isGliding()).thenReturn(true);
-        User.setPlugin(plugin);
-        User.getInstance(player);
-        
-        FlagsManager flagsManager = new FlagsManager(plugin);
-        when(plugin.getFlagsManager()).thenReturn(flagsManager);
-        // Worlds
-        when(iwm.inWorld(any(World.class))).thenReturn(true);
-        when(iwm.inWorld(any(Location.class))).thenReturn(true);
-        when(plugin.getIWM()).thenReturn(iwm);
-        // Island manager
-        when(plugin.getIslands()).thenReturn(im);
-        island = mock(Island.class);
-        Optional<Island> optional = Optional.of(island);
-        when(im.getProtectedIslandAt(any())).thenReturn(optional);
-        // Default is that everything is allowed
-        when(island.isAllowed(any(), any())).thenReturn(true);
-        // Locales
-        LocalesManager lm = mock(LocalesManager.class);
-        when(plugin.getLocalesManager()).thenReturn(lm);
-        Answer<String> answer = invocation -> (String)Arrays.asList(invocation.getArguments()).get(1);
-        when(lm.get(any(), any())).thenAnswer(answer);
+  private ElytraListener el;
 
-        // Placeholders
-        PlaceholdersManager placeholdersManager = mock(PlaceholdersManager.class);
-        when(plugin.getPlaceholdersManager()).thenReturn(placeholdersManager);
-        when(placeholdersManager.replacePlaceholders(any(), any())).thenAnswer(answer);
-        // Notifier
-        when(plugin.getNotifier()).thenReturn(notifier);
+  @Mock
+  private IslandWorldManager iwm;
 
+  @Mock
+  private IslandsManager im;
 
-        // Class under test
-        el = new ElytraListener();
-    }
+  private Island island;
 
-    /**
-     * @throws java.lang.Exception
-     */
-    @After
-    public void tearDown() throws Exception {
-        User.clearUsers();
-        Mockito.framework().clearInlineMocks();
+  @Mock
+  private PluginManager pim;
 
-    }
+  @Mock
+  private ItemFactory itemFactory;
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.ElytraListener#onGlide(org.bukkit.event.entity.EntityToggleGlideEvent)}.
-     */
-    @Test
-    public void testOnGlideAllowed() {
-        EntityToggleGlideEvent e = new EntityToggleGlideEvent(player, false);
-        el.onGlide(e);
-        assertFalse(e.isCancelled());
-        verify(notifier, never()).notify(any(), anyString());
-    }
-    
-    /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.ElytraListener#onGlide(org.bukkit.event.entity.EntityToggleGlideEvent)}.
-     */
-    @Test
-    public void testOnGlideNotAllowed() {
-        when(island.isAllowed(any(), any())).thenReturn(false);
-        EntityToggleGlideEvent e = new EntityToggleGlideEvent(player, false);
-        el.onGlide(e);
-        assertTrue(e.isCancelled());
-        verify(notifier).notify(any(), eq("protection.protected"));
-    }
+  @Mock
+  private Notifier notifier;
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.ElytraListener#onGliding(org.bukkit.event.player.PlayerTeleportEvent)}.
-     */
-    @Test
-    public void testGlidingAllowed() {
-        PlayerTeleportEvent e = new PlayerTeleportEvent(player, location, location);
-        el.onGliding(e);
-        verify(notifier, never()).notify(any(), anyString());
-        assertFalse(e.isCancelled());
-    }
-    
-    /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.ElytraListener#onGliding(org.bukkit.event.player.PlayerTeleportEvent)}.
-     */
-    @Test
-    public void testGlidingNotAllowed() {
-        when(island.isAllowed(any(), any())).thenReturn(false);
-        PlayerTeleportEvent e = new PlayerTeleportEvent(player, location, location);
-        el.onGliding(e);
-        verify(notifier).notify(any(), eq("protection.protected"));
-        assertTrue(e.isCancelled());
-    }
-    /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.ElytraListener#onGliding(org.bukkit.event.player.PlayerTeleportEvent)}.
-     */
-    @Test
-    public void testGlidingNotGliding() {
-        when(island.isAllowed(any(), any())).thenReturn(false);
-        when(player.isGliding()).thenReturn(false);
-        PlayerTeleportEvent e = new PlayerTeleportEvent(player, location, location);
-        el.onGliding(e);
-        verify(notifier, never()).notify(any(), anyString());
-        assertFalse(e.isCancelled());
-    }
+  @Mock
+  private PlayerInventory inv;
 
+  /**
+   * @throws java.lang.Exception
+   */
+  @Before
+  public void setUp() throws Exception {
+    // Set up plugin
+    Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+    // Bukkit
+    PowerMockito.mockStatic(Bukkit.class);
+    when(Bukkit.getPluginManager()).thenReturn(pim);
+    when(Bukkit.getItemFactory()).thenReturn(itemFactory);
+
+    // Location
+    when(location.getWorld()).thenReturn(world);
+    when(location.getBlockX()).thenReturn(0);
+    when(location.getBlockY()).thenReturn(0);
+    when(location.getBlockZ()).thenReturn(0);
+
+    // Player
+    when(player.getUniqueId()).thenReturn(uuid);
+    when(player.getLocation()).thenReturn(location);
+    when(player.getWorld()).thenReturn(world);
+    when(player.isGliding()).thenReturn(true);
+    User.setPlugin(plugin);
+    User.getInstance(player);
+
+    FlagsManager flagsManager = new FlagsManager(plugin);
+    when(plugin.getFlagsManager()).thenReturn(flagsManager);
+    // Worlds
+    when(iwm.inWorld(any(World.class))).thenReturn(true);
+    when(iwm.inWorld(any(Location.class))).thenReturn(true);
+    when(plugin.getIWM()).thenReturn(iwm);
+    // Island manager
+    when(plugin.getIslands()).thenReturn(im);
+    island = mock(Island.class);
+    Optional<Island> optional = Optional.of(island);
+    when(im.getProtectedIslandAt(any())).thenReturn(optional);
+    // Default is that everything is allowed
+    when(island.isAllowed(any(), any())).thenReturn(true);
+    // Locales
+    LocalesManager lm = mock(LocalesManager.class);
+    when(plugin.getLocalesManager()).thenReturn(lm);
+    Answer<String> answer = invocation ->
+      (String) Arrays.asList(invocation.getArguments()).get(1);
+    when(lm.get(any(), any())).thenAnswer(answer);
+
+    // Placeholders
+    PlaceholdersManager placeholdersManager = mock(PlaceholdersManager.class);
+    when(plugin.getPlaceholdersManager()).thenReturn(placeholdersManager);
+    when(placeholdersManager.replacePlaceholders(any(), any())).thenAnswer(answer);
+    // Notifier
+    when(plugin.getNotifier()).thenReturn(notifier);
+
+    // Class under test
+    el = new ElytraListener();
+  }
+
+  /**
+   * @throws java.lang.Exception
+   */
+  @After
+  public void tearDown() throws Exception {
+    User.clearUsers();
+    Mockito.framework().clearInlineMocks();
+  }
+
+  /**
+   * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.ElytraListener#onGlide(org.bukkit.event.entity.EntityToggleGlideEvent)}.
+   */
+  @Test
+  public void testOnGlideAllowed() {
+    EntityToggleGlideEvent e = new EntityToggleGlideEvent(player, false);
+    el.onGlide(e);
+    assertFalse(e.isCancelled());
+    verify(notifier, never()).notify(any(), anyString());
+  }
+
+  /**
+   * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.ElytraListener#onGlide(org.bukkit.event.entity.EntityToggleGlideEvent)}.
+   */
+  @Test
+  public void testOnGlideNotAllowed() {
+    when(island.isAllowed(any(), any())).thenReturn(false);
+    EntityToggleGlideEvent e = new EntityToggleGlideEvent(player, false);
+    el.onGlide(e);
+    assertTrue(e.isCancelled());
+    verify(notifier).notify(any(), eq("protection.protected"));
+  }
+
+  /**
+   * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.ElytraListener#onGliding(org.bukkit.event.player.PlayerTeleportEvent)}.
+   */
+  @Test
+  public void testGlidingAllowed() {
+    PlayerTeleportEvent e = new PlayerTeleportEvent(player, location, location);
+    el.onGliding(e);
+    verify(notifier, never()).notify(any(), anyString());
+    assertFalse(e.isCancelled());
+  }
+
+  /**
+   * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.ElytraListener#onGliding(org.bukkit.event.player.PlayerTeleportEvent)}.
+   */
+  @Test
+  public void testGlidingNotAllowed() {
+    when(island.isAllowed(any(), any())).thenReturn(false);
+    PlayerTeleportEvent e = new PlayerTeleportEvent(player, location, location);
+    el.onGliding(e);
+    verify(notifier).notify(any(), eq("protection.protected"));
+    assertTrue(e.isCancelled());
+  }
+
+  /**
+   * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.ElytraListener#onGliding(org.bukkit.event.player.PlayerTeleportEvent)}.
+   */
+  @Test
+  public void testGlidingNotGliding() {
+    when(island.isAllowed(any(), any())).thenReturn(false);
+    when(player.isGliding()).thenReturn(false);
+    PlayerTeleportEvent e = new PlayerTeleportEvent(player, location, location);
+    el.onGliding(e);
+    verify(notifier, never()).notify(any(), anyString());
+    assertFalse(e.isCancelled());
+  }
 }

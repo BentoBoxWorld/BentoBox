@@ -3,7 +3,6 @@ package world.bentobox.bentobox.api.logs;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
-
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
@@ -16,64 +15,64 @@ import org.eclipse.jdt.annotation.Nullable;
  * @author Poslovitch
  */
 public class LogEntry {
-    private final long timestamp;
-    private final String type;
-    private final Map<String, String> data;
+  private final long timestamp;
+  private final String type;
+  private final Map<String, String> data;
 
-    private LogEntry(@NonNull Builder builder) {
-        this.timestamp = builder.timestamp;
-        this.type = builder.type;
-        this.data = builder.data;
+  private LogEntry(@NonNull Builder builder) {
+    this.timestamp = builder.timestamp;
+    this.type = builder.type;
+    this.data = builder.data;
+  }
+
+  public long getTimestamp() {
+    return timestamp;
+  }
+
+  @NonNull
+  public String getType() {
+    return type;
+  }
+
+  @Nullable
+  public Map<String, String> getData() {
+    return data;
+  }
+
+  public static class Builder {
+    private long timestamp;
+    private String type;
+    private Map<String, String> data;
+
+    public Builder(@NonNull String type) {
+      this.timestamp = System.currentTimeMillis();
+      this.type = type.toUpperCase(Locale.ENGLISH);
+      this.data = new LinkedHashMap<>();
     }
 
-    public long getTimestamp() {
-        return timestamp;
+    public Builder timestamp(long timestamp) {
+      this.timestamp = timestamp;
+      return this;
     }
 
-    @NonNull
-    public String getType() {
-        return type;
+    public Builder data(Map<String, String> data2) {
+      this.data = data2;
+      return this;
     }
 
-    @Nullable
-    public Map<String, String> getData() {
-        return data;
+    /**
+     * Puts this key and this value in the currently existing data map.
+     * @param key key to set
+     * @param value value to set
+     * @return the Builder instance
+     */
+    public Builder data(@NonNull String key, @Nullable String value) {
+      this.data.put(key, value);
+      return this;
     }
 
-    public static class Builder {
-        private long timestamp;
-        private String type;
-        private Map<String, String> data;
-
-        public Builder(@NonNull String type) {
-            this.timestamp = System.currentTimeMillis();
-            this.type = type.toUpperCase(Locale.ENGLISH);
-            this.data = new LinkedHashMap<>();
-        }
-
-        public Builder timestamp(long timestamp) {
-            this.timestamp = timestamp;
-            return this;
-        }
-
-        public Builder data(Map<String, String> data2) {
-            this.data = data2;
-            return this;
-        }
-
-        /**
-         * Puts this key and this value in the currently existing data map.
-         * @param key key to set
-         * @param value value to set
-         * @return the Builder instance
-         */
-        public Builder data(@NonNull String key, @Nullable String value) {
-            this.data.put(key, value);
-            return this;
-        }
-
-        public LogEntry build() {
-            return new LogEntry(this);
-        }
+    public LogEntry build() {
+      return new LogEntry(this);
     }
+  }
 }

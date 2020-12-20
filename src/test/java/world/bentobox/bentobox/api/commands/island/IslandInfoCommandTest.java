@@ -13,7 +13,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.UUID;
-
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
@@ -28,7 +27,6 @@ import org.mockito.stubbing.Answer;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
-
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.user.User;
@@ -45,173 +43,177 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, Util.class})
+@PrepareForTest({ Bukkit.class, BentoBox.class, Util.class })
 public class IslandInfoCommandTest {
+  @Mock
+  private CompositeCommand ic;
 
-    @Mock
-    private CompositeCommand ic;
-    private User user;
-    @Mock
-    private IslandsManager im;
-    @Mock
-    private PlayersManager pm;
+  private User user;
 
-    @Mock
-    private Island island;
+  @Mock
+  private IslandsManager im;
 
-    private IslandInfoCommand iic;
+  @Mock
+  private PlayersManager pm;
 
-    @Mock
-    private Player player;
-    @Mock
-    private World world;
-    @Mock
-    private PlaceholdersManager phm;
+  @Mock
+  private Island island;
 
-    /**
-     * @throws java.lang.Exception
-     */
-    @Before
-    public void setUp() throws Exception {
-        // Set up plugin
-        BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+  private IslandInfoCommand iic;
 
-        // Command manager
-        CommandsManager cm = mock(CommandsManager.class);
-        when(plugin.getCommandsManager()).thenReturn(cm);
+  @Mock
+  private Player player;
 
-        // Player
-        when(player.isOp()).thenReturn(false);
-        UUID uuid = UUID.randomUUID();
-        when(player.getUniqueId()).thenReturn(uuid);
-        when(player.getName()).thenReturn("tastybento");
-        when(player.getWorld()).thenReturn(world);
-        user = User.getInstance(player);
-        // Set the User class plugin as this one
-        User.setPlugin(plugin);
+  @Mock
+  private World world;
 
-        // Locales
-        LocalesManager lm = mock(LocalesManager.class);
-        when(lm.get(Mockito.any(), Mockito.any())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
-        when(plugin.getLocalesManager()).thenReturn(lm);
-        // Return the same string
-        when(phm.replacePlaceholders(any(), anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
-        when(plugin.getPlaceholdersManager()).thenReturn(phm);
+  @Mock
+  private PlaceholdersManager phm;
 
-        // Island manager
-        when(plugin.getIslands()).thenReturn(im);
-        Optional<Island> optionalIsland = Optional.of(island);
-        when(im.getIslandAt(any())).thenReturn(optionalIsland);
-        when(island.showInfo(any())).thenReturn(true);
-        when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
+  /**
+   * @throws java.lang.Exception
+   */
+  @Before
+  public void setUp() throws Exception {
+    // Set up plugin
+    BentoBox plugin = mock(BentoBox.class);
+    Whitebox.setInternalState(BentoBox.class, "instance", plugin);
 
-        // Players manager
-        when(plugin.getPlayers()).thenReturn(pm);
-        when(pm.getUUID(any())).thenReturn(uuid);
+    // Command manager
+    CommandsManager cm = mock(CommandsManager.class);
+    when(plugin.getCommandsManager()).thenReturn(cm);
 
+    // Player
+    when(player.isOp()).thenReturn(false);
+    UUID uuid = UUID.randomUUID();
+    when(player.getUniqueId()).thenReturn(uuid);
+    when(player.getName()).thenReturn("tastybento");
+    when(player.getWorld()).thenReturn(world);
+    user = User.getInstance(player);
+    // Set the User class plugin as this one
+    User.setPlugin(plugin);
 
-        // Command
-        iic = new IslandInfoCommand(ic);
-    }
+    // Locales
+    LocalesManager lm = mock(LocalesManager.class);
+    when(lm.get(Mockito.any(), Mockito.any()))
+      .thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
+    when(plugin.getLocalesManager()).thenReturn(lm);
+    // Return the same string
+    when(phm.replacePlaceholders(any(), anyString()))
+      .thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
+    when(plugin.getPlaceholdersManager()).thenReturn(phm);
 
-    /**
-     * @throws java.lang.Exception
-     */
-    @After
-    public void tearDown() {
-        User.clearUsers();
-        Mockito.framework().clearInlineMocks();
-    }
+    // Island manager
+    when(plugin.getIslands()).thenReturn(im);
+    Optional<Island> optionalIsland = Optional.of(island);
+    when(im.getIslandAt(any())).thenReturn(optionalIsland);
+    when(island.showInfo(any())).thenReturn(true);
+    when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandInfoCommand#setup()}.
-     */
-    @Test
-    public void testSetup() {
-        assertEquals("island.info", iic.getPermission());
-        assertFalse(iic.isOnlyPlayer());
-        assertEquals("commands.island.info.parameters", iic.getParameters());
-        assertEquals("commands.island.info.description", iic.getDescription());
-    }
+    // Players manager
+    when(plugin.getPlayers()).thenReturn(pm);
+    when(pm.getUUID(any())).thenReturn(uuid);
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandInfoCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
-     */
-    @Test
-    public void testExecuteUserStringListOfStringTooManyArgs() {
-        assertFalse(iic.execute(user, "", Arrays.asList("hdhh", "hdhdhd")));
-        verify(player).sendMessage("commands.help.header");
-    }
+    // Command
+    iic = new IslandInfoCommand(ic);
+  }
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandInfoCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
-     */
-    @Test
-    public void testExecuteUserStringListOfStringNoArgsConsole() {
-        CommandSender console = mock(CommandSender.class);
-        User sender = User.getInstance(console);
-        assertFalse(iic.execute(sender, "", Collections.emptyList()));
-        verify(console).sendMessage("commands.help.header");
-    }
+  /**
+   * @throws java.lang.Exception
+   */
+  @After
+  public void tearDown() {
+    User.clearUsers();
+    Mockito.framework().clearInlineMocks();
+  }
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandInfoCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
-     */
-    @Test
-    public void testExecuteUserStringListOfStringNoArgsNoIslandFalseInfo() {
-        when(island.showInfo(any())).thenReturn(false);
-        assertFalse(iic.execute(user, "", Collections.emptyList()));
-        verify(player).sendMessage("commands.admin.info.no-island");
-    }
+  /**
+   * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandInfoCommand#setup()}.
+   */
+  @Test
+  public void testSetup() {
+    assertEquals("island.info", iic.getPermission());
+    assertFalse(iic.isOnlyPlayer());
+    assertEquals("commands.island.info.parameters", iic.getParameters());
+    assertEquals("commands.island.info.description", iic.getDescription());
+  }
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandInfoCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
-     */
-    @Test
-    public void testExecuteUserStringListOfStringNoArgsNoIsland() {
-        when(im.getIslandAt(any())).thenReturn(Optional.empty());
-        assertFalse(iic.execute(user, "", Collections.emptyList()));
-        verify(player).sendMessage("commands.admin.info.no-island");
-    }
+  /**
+   * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandInfoCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+   */
+  @Test
+  public void testExecuteUserStringListOfStringTooManyArgs() {
+    assertFalse(iic.execute(user, "", Arrays.asList("hdhh", "hdhdhd")));
+    verify(player).sendMessage("commands.help.header");
+  }
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandInfoCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
-     */
-    @Test
-    public void testExecuteUserStringListOfStringNoArgsSuccess() {
-        assertTrue(iic.execute(user, "", Collections.emptyList()));
-        verify(island).showInfo(any());
-    }
+  /**
+   * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandInfoCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+   */
+  @Test
+  public void testExecuteUserStringListOfStringNoArgsConsole() {
+    CommandSender console = mock(CommandSender.class);
+    User sender = User.getInstance(console);
+    assertFalse(iic.execute(sender, "", Collections.emptyList()));
+    verify(console).sendMessage("commands.help.header");
+  }
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandInfoCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
-     */
-    @Test
-    public void testExecuteUserStringListOfStringArgsSuccess() {
-        assertTrue(iic.execute(user, "", Collections.singletonList("tastybento")));
-        verify(island).showInfo(any());
-    }
+  /**
+   * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandInfoCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+   */
+  @Test
+  public void testExecuteUserStringListOfStringNoArgsNoIslandFalseInfo() {
+    when(island.showInfo(any())).thenReturn(false);
+    assertFalse(iic.execute(user, "", Collections.emptyList()));
+    verify(player).sendMessage("commands.admin.info.no-island");
+  }
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandInfoCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
-     */
-    @Test
-    public void testExecuteUserStringListOfStringArgsNoIsland() {
-        when(im.getIsland(any(), any(UUID.class))).thenReturn(null);
-        assertFalse(iic.execute(user, "", Collections.singletonList("tastybento")));
-        verify(player).sendMessage("general.errors.player-has-no-island");
-    }
+  /**
+   * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandInfoCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+   */
+  @Test
+  public void testExecuteUserStringListOfStringNoArgsNoIsland() {
+    when(im.getIslandAt(any())).thenReturn(Optional.empty());
+    assertFalse(iic.execute(user, "", Collections.emptyList()));
+    verify(player).sendMessage("commands.admin.info.no-island");
+  }
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandInfoCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
-     */
-    @Test
-    public void testExecuteUserStringListOfStringArgsUnknownPlayer() {
-        when(pm.getUUID(any())).thenReturn(null);
-        assertFalse(iic.execute(user, "", Collections.singletonList("tastybento")));
-        verify(player).sendMessage("general.errors.unknown-player");
-        verify(phm).replacePlaceholders(player, "general.errors.unknown-player");
-    }
+  /**
+   * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandInfoCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+   */
+  @Test
+  public void testExecuteUserStringListOfStringNoArgsSuccess() {
+    assertTrue(iic.execute(user, "", Collections.emptyList()));
+    verify(island).showInfo(any());
+  }
 
+  /**
+   * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandInfoCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+   */
+  @Test
+  public void testExecuteUserStringListOfStringArgsSuccess() {
+    assertTrue(iic.execute(user, "", Collections.singletonList("tastybento")));
+    verify(island).showInfo(any());
+  }
+
+  /**
+   * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandInfoCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+   */
+  @Test
+  public void testExecuteUserStringListOfStringArgsNoIsland() {
+    when(im.getIsland(any(), any(UUID.class))).thenReturn(null);
+    assertFalse(iic.execute(user, "", Collections.singletonList("tastybento")));
+    verify(player).sendMessage("general.errors.player-has-no-island");
+  }
+
+  /**
+   * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandInfoCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+   */
+  @Test
+  public void testExecuteUserStringListOfStringArgsUnknownPlayer() {
+    when(pm.getUUID(any())).thenReturn(null);
+    assertFalse(iic.execute(user, "", Collections.singletonList("tastybento")));
+    verify(player).sendMessage("general.errors.unknown-player");
+    verify(phm).replacePlaceholders(player, "general.errors.unknown-player");
+  }
 }

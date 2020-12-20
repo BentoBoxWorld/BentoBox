@@ -11,7 +11,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Logger;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Server;
@@ -38,7 +37,6 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
-
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
@@ -55,163 +53,173 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( {BentoBox.class, Flags.class, Util.class, Bukkit.class} )
+@PrepareForTest({ BentoBox.class, Flags.class, Util.class, Bukkit.class })
 public class ItemFrameListenerTest {
+  @Mock
+  private Enderman enderman;
 
-    @Mock
-    private Enderman enderman;
-    @Mock
-    private World world;
-    @Mock
-    private ItemFrame entity;
-    @Mock
-    private Location location;
+  @Mock
+  private World world;
 
-    @Before
-    public void setUp() {
-        // Set up plugin
-        BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+  @Mock
+  private ItemFrame entity;
 
-        Server server = mock(Server.class);
-        when(server.getLogger()).thenReturn(Logger.getAnonymousLogger());
-        when(server.getWorld("world")).thenReturn(world);
-        when(server.getVersion()).thenReturn("BSB_Mocking");
+  @Mock
+  private Location location;
 
-        PowerMockito.mockStatic(Bukkit.class);
-        when(Bukkit.getServer()).thenReturn(server);
-        PluginManager pim = mock(PluginManager.class);
-        when(Bukkit.getPluginManager()).thenReturn(pim);
+  @Before
+  public void setUp() {
+    // Set up plugin
+    BentoBox plugin = mock(BentoBox.class);
+    Whitebox.setInternalState(BentoBox.class, "instance", plugin);
 
-        ItemFactory itemFactory = mock(ItemFactory.class);
-        when(server.getItemFactory()).thenReturn(itemFactory);
+    Server server = mock(Server.class);
+    when(server.getLogger()).thenReturn(Logger.getAnonymousLogger());
+    when(server.getWorld("world")).thenReturn(world);
+    when(server.getVersion()).thenReturn("BSB_Mocking");
 
-        SkullMeta skullMeta = mock(SkullMeta.class);
-        when(itemFactory.getItemMeta(any())).thenReturn(skullMeta);
-        when(Bukkit.getItemFactory()).thenReturn(itemFactory);
-        // Location
-        when(location.getWorld()).thenReturn(world);
-        when(location.getBlockX()).thenReturn(0);
-        when(location.getBlockY()).thenReturn(0);
-        when(location.getBlockZ()).thenReturn(0);
-        PowerMockito.mockStatic(Flags.class);
+    PowerMockito.mockStatic(Bukkit.class);
+    when(Bukkit.getServer()).thenReturn(server);
+    PluginManager pim = mock(PluginManager.class);
+    when(Bukkit.getPluginManager()).thenReturn(pim);
 
-        FlagsManager flagsManager = new FlagsManager(plugin);
-        when(plugin.getFlagsManager()).thenReturn(flagsManager);
+    ItemFactory itemFactory = mock(ItemFactory.class);
+    when(server.getItemFactory()).thenReturn(itemFactory);
 
-        // Worlds
-        IslandWorldManager iwm = mock(IslandWorldManager.class);
-        when(iwm.inWorld(any(World.class))).thenReturn(true);
-        when(iwm.inWorld(any(Location.class))).thenReturn(true);
-        when(plugin.getIWM()).thenReturn(iwm);
-        when(iwm.getAddon(any())).thenReturn(Optional.empty());
+    SkullMeta skullMeta = mock(SkullMeta.class);
+    when(itemFactory.getItemMeta(any())).thenReturn(skullMeta);
+    when(Bukkit.getItemFactory()).thenReturn(itemFactory);
+    // Location
+    when(location.getWorld()).thenReturn(world);
+    when(location.getBlockX()).thenReturn(0);
+    when(location.getBlockY()).thenReturn(0);
+    when(location.getBlockZ()).thenReturn(0);
+    PowerMockito.mockStatic(Flags.class);
 
-        // Monsters and animals
-        when(enderman.getLocation()).thenReturn(location);
-        when(enderman.getWorld()).thenReturn(world);
-        Slime slime = mock(Slime.class);
-        when(slime.getLocation()).thenReturn(location);
+    FlagsManager flagsManager = new FlagsManager(plugin);
+    when(plugin.getFlagsManager()).thenReturn(flagsManager);
 
-        // Fake players
-        Settings settings = mock(Settings.class);
-        Mockito.when(plugin.getSettings()).thenReturn(settings);
-        Mockito.when(settings.getFakePlayers()).thenReturn(new HashSet<>());
+    // Worlds
+    IslandWorldManager iwm = mock(IslandWorldManager.class);
+    when(iwm.inWorld(any(World.class))).thenReturn(true);
+    when(iwm.inWorld(any(Location.class))).thenReturn(true);
+    when(plugin.getIWM()).thenReturn(iwm);
+    when(iwm.getAddon(any())).thenReturn(Optional.empty());
 
-        // World Settings
-        WorldSettings ws = mock(WorldSettings.class);
-        when(iwm.getWorldSettings(Mockito.any())).thenReturn(ws);
-        Map<String, Boolean> worldFlags = new HashMap<>();
-        when(ws.getWorldFlags()).thenReturn(worldFlags);
+    // Monsters and animals
+    when(enderman.getLocation()).thenReturn(location);
+    when(enderman.getWorld()).thenReturn(world);
+    Slime slime = mock(Slime.class);
+    when(slime.getLocation()).thenReturn(location);
 
-        // Island manager
-        IslandsManager im = mock(IslandsManager.class);
-        when(plugin.getIslands()).thenReturn(im);
-        Island island = mock(Island.class);
-        Optional<Island> optional = Optional.of(island);
-        when(im.getProtectedIslandAt(Mockito.any())).thenReturn(optional);
+    // Fake players
+    Settings settings = mock(Settings.class);
+    Mockito.when(plugin.getSettings()).thenReturn(settings);
+    Mockito.when(settings.getFakePlayers()).thenReturn(new HashSet<>());
 
-        PowerMockito.mockStatic(Util.class);
-        when(Util.getWorld(Mockito.any())).thenReturn(mock(World.class));
+    // World Settings
+    WorldSettings ws = mock(WorldSettings.class);
+    when(iwm.getWorldSettings(Mockito.any())).thenReturn(ws);
+    Map<String, Boolean> worldFlags = new HashMap<>();
+    when(ws.getWorldFlags()).thenReturn(worldFlags);
 
-        // Item Frame
-        when(entity.getWorld()).thenReturn(world);
-        when(entity.getLocation()).thenReturn(location);
+    // Island manager
+    IslandsManager im = mock(IslandsManager.class);
+    when(plugin.getIslands()).thenReturn(im);
+    Island island = mock(Island.class);
+    Optional<Island> optional = Optional.of(island);
+    when(im.getProtectedIslandAt(Mockito.any())).thenReturn(optional);
 
-        // Not allowed to start
-        Flags.ITEM_FRAME_DAMAGE.setSetting(world, false);
+    PowerMockito.mockStatic(Util.class);
+    when(Util.getWorld(Mockito.any())).thenReturn(mock(World.class));
 
-    }
+    // Item Frame
+    when(entity.getWorld()).thenReturn(world);
+    when(entity.getLocation()).thenReturn(location);
 
-    @After
-    public void tearDown() {
-        User.clearUsers();
-        Mockito.framework().clearInlineMocks();
-    }
+    // Not allowed to start
+    Flags.ITEM_FRAME_DAMAGE.setSetting(world, false);
+  }
 
-    /**
-     * Test method for {@link ItemFrameListener#onItemFrameDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
-     */
-    @Test
-    public void testOnItemFrameDamageEntityDamageByEntityEvent() {
-        ItemFrameListener ifl = new ItemFrameListener();
-        DamageCause cause = DamageCause.ENTITY_ATTACK;
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(enderman, entity, cause , 0);
-        ifl.onItemFrameDamage(e);
-        assertTrue(e.isCancelled());
-    }
+  @After
+  public void tearDown() {
+    User.clearUsers();
+    Mockito.framework().clearInlineMocks();
+  }
 
-    /**
-     * Test method for {@link ItemFrameListener#onItemFrameDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
-     */
-    @Test
-    public void testNotItemFrame() {
-        ItemFrameListener ifl = new ItemFrameListener();
-        Creeper creeper = mock(Creeper.class);
-        when(creeper.getLocation()).thenReturn(location);
-        DamageCause cause = DamageCause.ENTITY_ATTACK;
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(enderman, creeper, cause , 0);
-        ifl.onItemFrameDamage(e);
-        assertFalse(e.isCancelled());
-    }
+  /**
+   * Test method for {@link ItemFrameListener#onItemFrameDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
+   */
+  @Test
+  public void testOnItemFrameDamageEntityDamageByEntityEvent() {
+    ItemFrameListener ifl = new ItemFrameListener();
+    DamageCause cause = DamageCause.ENTITY_ATTACK;
+    EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(
+      enderman,
+      entity,
+      cause,
+      0
+    );
+    ifl.onItemFrameDamage(e);
+    assertTrue(e.isCancelled());
+  }
 
-    /**
-     * Test method for {@link ItemFrameListener#onItemFrameDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
-     */
-    @Test
-    public void testProjectile() {
-        ItemFrameListener ifl = new ItemFrameListener();
-        DamageCause cause = DamageCause.ENTITY_ATTACK;
-        Projectile p = mock(Projectile.class);
-        when(p.getShooter()).thenReturn(enderman);
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(p, entity, cause , 0);
-        ifl.onItemFrameDamage(e);
-        assertTrue(e.isCancelled());
-    }
+  /**
+   * Test method for {@link ItemFrameListener#onItemFrameDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
+   */
+  @Test
+  public void testNotItemFrame() {
+    ItemFrameListener ifl = new ItemFrameListener();
+    Creeper creeper = mock(Creeper.class);
+    when(creeper.getLocation()).thenReturn(location);
+    DamageCause cause = DamageCause.ENTITY_ATTACK;
+    EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(
+      enderman,
+      creeper,
+      cause,
+      0
+    );
+    ifl.onItemFrameDamage(e);
+    assertFalse(e.isCancelled());
+  }
 
-    /**
-     * Test method for {@link ItemFrameListener#onItemFrameDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
-     */
-    @Test
-    public void testPlayerProjectile() {
-        ItemFrameListener ifl = new ItemFrameListener();
-        DamageCause cause = DamageCause.ENTITY_ATTACK;
-        Projectile p = mock(Projectile.class);
-        Player player = mock(Player.class);
-        when(p.getShooter()).thenReturn(player);
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(p, entity, cause , 0);
-        ifl.onItemFrameDamage(e);
-        assertFalse(e.isCancelled());
-    }
+  /**
+   * Test method for {@link ItemFrameListener#onItemFrameDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
+   */
+  @Test
+  public void testProjectile() {
+    ItemFrameListener ifl = new ItemFrameListener();
+    DamageCause cause = DamageCause.ENTITY_ATTACK;
+    Projectile p = mock(Projectile.class);
+    when(p.getShooter()).thenReturn(enderman);
+    EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(p, entity, cause, 0);
+    ifl.onItemFrameDamage(e);
+    assertTrue(e.isCancelled());
+  }
 
-    /**
-     * Test method for {@link ItemFrameListener#onItemFrameDamage(org.bukkit.event.hanging.HangingBreakByEntityEvent)}.
-     */
-    @Test
-    public void testOnItemFrameDamageHangingBreakByEntityEvent() {
-        ItemFrameListener ifl = new ItemFrameListener();
-        HangingBreakByEntityEvent e = new HangingBreakByEntityEvent(entity, enderman);
-        ifl.onItemFrameDamage(e);
-        assertTrue(e.isCancelled());
-    }
+  /**
+   * Test method for {@link ItemFrameListener#onItemFrameDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
+   */
+  @Test
+  public void testPlayerProjectile() {
+    ItemFrameListener ifl = new ItemFrameListener();
+    DamageCause cause = DamageCause.ENTITY_ATTACK;
+    Projectile p = mock(Projectile.class);
+    Player player = mock(Player.class);
+    when(p.getShooter()).thenReturn(player);
+    EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(p, entity, cause, 0);
+    ifl.onItemFrameDamage(e);
+    assertFalse(e.isCancelled());
+  }
 
+  /**
+   * Test method for {@link ItemFrameListener#onItemFrameDamage(org.bukkit.event.hanging.HangingBreakByEntityEvent)}.
+   */
+  @Test
+  public void testOnItemFrameDamageHangingBreakByEntityEvent() {
+    ItemFrameListener ifl = new ItemFrameListener();
+    HangingBreakByEntityEvent e = new HangingBreakByEntityEvent(entity, enderman);
+    ifl.onItemFrameDamage(e);
+    assertTrue(e.isCancelled());
+  }
 }

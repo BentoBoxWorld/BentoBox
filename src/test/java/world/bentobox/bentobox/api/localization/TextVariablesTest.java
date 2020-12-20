@@ -10,16 +10,16 @@ import org.junit.Test;
  */
 public class TextVariablesTest {
 
-    @Test
-    public void test() {
-        assertEquals(TextVariables.NAME, "[name]");
-        assertEquals(TextVariables.DESCRIPTION, "[description]");
-        assertEquals(TextVariables.NUMBER, "[number]");
-        assertEquals(TextVariables.RANK, "[rank]");
-        assertEquals(TextVariables.LABEL, "[label]");
-        assertEquals(TextVariables.PERMISSION, "[permission]");
-        assertEquals(TextVariables.SPAWN_HERE, "[spawn_here]");
-        assertEquals(TextVariables.VERSION, "[version]");
-        assertEquals(TextVariables.START_TEXT, "[start]");
-    }
+  @Test
+  public void test() {
+    assertEquals(TextVariables.NAME, "[name]");
+    assertEquals(TextVariables.DESCRIPTION, "[description]");
+    assertEquals(TextVariables.NUMBER, "[number]");
+    assertEquals(TextVariables.RANK, "[rank]");
+    assertEquals(TextVariables.LABEL, "[label]");
+    assertEquals(TextVariables.PERMISSION, "[permission]");
+    assertEquals(TextVariables.SPAWN_HERE, "[spawn_here]");
+    assertEquals(TextVariables.VERSION, "[version]");
+    assertEquals(TextVariables.START_TEXT, "[start]");
+  }
 }

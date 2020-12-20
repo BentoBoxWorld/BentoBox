@@ -84,6 +84,8 @@
         <build.number>-LOCAL</build.number>
         <!-- This allows to change between versions. -->
         <build.version>1.15.4</build.version>
+        <!-- By default just re-write code with prettier -->
+        <plugin.prettier.goal>write</plugin.prettier.goal>
     </properties>
 
     <!-- Profiles will allow to automatically change build version. -->
@@ -468,6 +470,26 @@
                         <id>post-unit-test</id>
                         <goals>
                             <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.hubspot.maven.plugins</groupId>
+                <artifactId>prettier-maven-plugin</artifactId>
+                <version>0.10</version>
+                <configuration>
+                    <printWidth>90</printWidth>
+                    <tabWidth>2</tabWidth>
+                    <useTabs>false</useTabs>
+                    <ignoreConfigFile>true</ignoreConfigFile>
+                    <ignoreEditorConfig>true</ignoreEditorConfig>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>${plugin.prettier.goal}</goal>
                         </goals>
                     </execution>
                 </executions>

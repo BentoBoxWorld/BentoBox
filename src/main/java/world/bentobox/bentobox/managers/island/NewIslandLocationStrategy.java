@@ -10,5 +10,5 @@ import org.bukkit.World;
  *
  */
 public interface NewIslandLocationStrategy {
-    Location getNextLocation(World world);
+  Location getNextLocation(World world);
 }

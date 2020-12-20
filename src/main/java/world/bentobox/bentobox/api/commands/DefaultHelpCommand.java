@@ -3,9 +3,7 @@ package world.bentobox.bentobox.api.commands;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-
 import org.apache.commons.lang.math.NumberUtils;
-
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 
@@ -16,105 +14,149 @@ import world.bentobox.bentobox.api.user.User;
  *
  */
 public class DefaultHelpCommand extends CompositeCommand {
+  protected static final int MAX_DEPTH = 2;
+  protected static final String USAGE_PLACEHOLDER = "[usage]";
+  protected static final String PARAMS_PLACEHOLDER = "[parameters]";
+  protected static final String DESC_PLACEHOLDER = "[description]";
+  protected static final String HELP_SYNTAX_REF = "commands.help.syntax";
+  protected static final String HELP_SYNTAX_NO_PARAMETERS_REF =
+    "commands.help.syntax-no-parameters";
+  protected static final String HELP = "help";
 
-    protected static final int MAX_DEPTH = 2;
-    protected static final String USAGE_PLACEHOLDER = "[usage]";
-    protected static final String PARAMS_PLACEHOLDER = "[parameters]";
-    protected static final String DESC_PLACEHOLDER = "[description]";
-    protected static final String HELP_SYNTAX_REF = "commands.help.syntax";
-    protected static final String HELP_SYNTAX_NO_PARAMETERS_REF = "commands.help.syntax-no-parameters";
-    protected static final String HELP = "help";
+  public DefaultHelpCommand(CompositeCommand parent) {
+    super(parent, HELP);
+  }
 
-    public DefaultHelpCommand(CompositeCommand parent) {
-        super(parent, HELP);
-    }
+  @Override
+  public void setup() {
+    // Set the usage to what the parent's command is
+    setParametersHelp(parent.getParameters());
+    setDescription(parent.getDescription());
+    inheritPermission();
+  }
 
-    @Override
-    public void setup() {
-        // Set the usage to what the parent's command is
-        setParametersHelp(parent.getParameters());
-        setDescription(parent.getDescription());
-        inheritPermission();
-    }
-
-    @Override
-    public boolean execute(User user, String label, List<String> args) {
-        // If command is hidden, do not show anything
-        if (parent.isHidden()) return true;
-        // Show default help
-        int depth = 0;
-        if (args.size() == 1) {
-            if (NumberUtils.isDigits(args.get(0))) {
-                // Converts first argument into an int, or returns -1 if it cannot. Avoids exceptions.
-                depth = Optional.ofNullable(args.get(0)).map(NumberUtils::toInt).orElse(-1);
-            } else {
-                String usage = parent.getUsage();
-                String params = user.getTranslation("commands.help.parameters");
-                String desc = user.getTranslation("commands.help.description");
-                user.sendMessage(HELP_SYNTAX_REF, USAGE_PLACEHOLDER, usage, PARAMS_PLACEHOLDER, params, DESC_PLACEHOLDER, desc);
-                return true;
-            }
-        }
-        if (depth == 0) {
-            // Get the name of the world for the help header, or console if there is no world association
-            String labelText = getWorld() != null ? getIWM().getFriendlyName(getWorld()) : user.getTranslation("commands.help.console");
-            user.sendMessage("commands.help.header", TextVariables.LABEL, labelText);
-        }
-        if (depth < MAX_DEPTH) {
-            if (!parent.getLabel().equals(HELP)) {
-                // Get elements
-                String usage = parent.getUsage();
-                String params = user.getTranslationOrNothing(getParameters());
-                String desc = user.getTranslation(getDescription());
-
-                if (showPrettyHelp(user, usage, params, desc)) {
-                    // No more to show
-                    return true;
-                }
-            }
-            // Increment the depth and run through any subcommands and get their help too
-            runSubCommandHelp(user, depth + 1);
-        }
-        if (depth == 0) {
-            user.sendMessage("commands.help.end");
-        }
+  @Override
+  public boolean execute(User user, String label, List<String> args) {
+    // If command is hidden, do not show anything
+    if (parent.isHidden()) return true;
+    // Show default help
+    int depth = 0;
+    if (args.size() == 1) {
+      if (NumberUtils.isDigits(args.get(0))) {
+        // Converts first argument into an int, or returns -1 if it cannot. Avoids exceptions.
+        depth = Optional.ofNullable(args.get(0)).map(NumberUtils::toInt).orElse(-1);
+      } else {
+        String usage = parent.getUsage();
+        String params = user.getTranslation("commands.help.parameters");
+        String desc = user.getTranslation("commands.help.description");
+        user.sendMessage(
+          HELP_SYNTAX_REF,
+          USAGE_PLACEHOLDER,
+          usage,
+          PARAMS_PLACEHOLDER,
+          params,
+          DESC_PLACEHOLDER,
+          desc
+        );
         return true;
+      }
     }
+    if (depth == 0) {
+      // Get the name of the world for the help header, or console if there is no world association
+      String labelText = getWorld() != null
+        ? getIWM().getFriendlyName(getWorld())
+        : user.getTranslation("commands.help.console");
+      user.sendMessage("commands.help.header", TextVariables.LABEL, labelText);
+    }
+    if (depth < MAX_DEPTH) {
+      if (!parent.getLabel().equals(HELP)) {
+        // Get elements
+        String usage = parent.getUsage();
+        String params = user.getTranslationOrNothing(getParameters());
+        String desc = user.getTranslation(getDescription());
 
-    protected void runSubCommandHelp(User user, int newDepth) {
-        for (CompositeCommand subCommand : parent.getSubCommands().values()) {
-            // Ignore the help command
-            if (!subCommand.getLabel().equals(HELP)) {
-                // Every command should have help because every command has a default help
-                Optional<CompositeCommand> sub = subCommand.getSubCommand(HELP);
-                sub.ifPresent(compositeCommand -> compositeCommand.execute(user, HELP, Collections.singletonList(String.valueOf(newDepth))));
-            }
+        if (showPrettyHelp(user, usage, params, desc)) {
+          // No more to show
+          return true;
         }
+      }
+      // Increment the depth and run through any subcommands and get their help too
+      runSubCommandHelp(user, depth + 1);
     }
+    if (depth == 0) {
+      user.sendMessage("commands.help.end");
+    }
+    return true;
+  }
 
-    protected boolean showPrettyHelp(User user, String usage, String params, String desc) {
-        // Show the help
-        if (user.isPlayer()) {
-            // Player. Check perms
-            if (user.hasPermission(parent.getPermission())) {
-                if (params == null || params.isEmpty()) {
-                    user.sendMessage(HELP_SYNTAX_NO_PARAMETERS_REF, USAGE_PLACEHOLDER, usage, DESC_PLACEHOLDER, desc);
-                } else {
-                    user.sendMessage(HELP_SYNTAX_REF, USAGE_PLACEHOLDER, usage, PARAMS_PLACEHOLDER, params, DESC_PLACEHOLDER, desc);
-                }
-            } else {
-                // No permission, nothing to see here. If you don't have permission, you cannot see any sub commands
-                return true;
-            }
-        } else if (!parent.isOnlyPlayer()) {
-            // Console. Only show if it is a console command
-            if (params == null || params.isEmpty()) {
-                user.sendMessage(HELP_SYNTAX_NO_PARAMETERS_REF, USAGE_PLACEHOLDER, usage, DESC_PLACEHOLDER, desc);
-            } else {
-                user.sendMessage(HELP_SYNTAX_REF, USAGE_PLACEHOLDER, usage, PARAMS_PLACEHOLDER, params, DESC_PLACEHOLDER, desc);
-            }
+  protected void runSubCommandHelp(User user, int newDepth) {
+    for (CompositeCommand subCommand : parent.getSubCommands().values()) {
+      // Ignore the help command
+      if (!subCommand.getLabel().equals(HELP)) {
+        // Every command should have help because every command has a default help
+        Optional<CompositeCommand> sub = subCommand.getSubCommand(HELP);
+        sub.ifPresent(
+          compositeCommand ->
+            compositeCommand.execute(
+              user,
+              HELP,
+              Collections.singletonList(String.valueOf(newDepth))
+            )
+        );
+      }
+    }
+  }
+
+  protected boolean showPrettyHelp(User user, String usage, String params, String desc) {
+    // Show the help
+    if (user.isPlayer()) {
+      // Player. Check perms
+      if (user.hasPermission(parent.getPermission())) {
+        if (params == null || params.isEmpty()) {
+          user.sendMessage(
+            HELP_SYNTAX_NO_PARAMETERS_REF,
+            USAGE_PLACEHOLDER,
+            usage,
+            DESC_PLACEHOLDER,
+            desc
+          );
+        } else {
+          user.sendMessage(
+            HELP_SYNTAX_REF,
+            USAGE_PLACEHOLDER,
+            usage,
+            PARAMS_PLACEHOLDER,
+            params,
+            DESC_PLACEHOLDER,
+            desc
+          );
         }
-        return false;
+      } else {
+        // No permission, nothing to see here. If you don't have permission, you cannot see any sub commands
+        return true;
+      }
+    } else if (!parent.isOnlyPlayer()) {
+      // Console. Only show if it is a console command
+      if (params == null || params.isEmpty()) {
+        user.sendMessage(
+          HELP_SYNTAX_NO_PARAMETERS_REF,
+          USAGE_PLACEHOLDER,
+          usage,
+          DESC_PLACEHOLDER,
+          desc
+        );
+      } else {
+        user.sendMessage(
+          HELP_SYNTAX_REF,
+          USAGE_PLACEHOLDER,
+          usage,
+          PARAMS_PLACEHOLDER,
+          params,
+          DESC_PLACEHOLDER,
+          desc
+        );
+      }
     }
-
+    return false;
+  }
 }

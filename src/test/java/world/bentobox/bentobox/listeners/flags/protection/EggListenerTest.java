@@ -16,7 +16,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.logging.Logger;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Server;
@@ -39,7 +38,6 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
-
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
@@ -59,156 +57,172 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( {BentoBox.class, Flags.class, Util.class, Bukkit.class} )
+@PrepareForTest({ BentoBox.class, Flags.class, Util.class, Bukkit.class })
 public class EggListenerTest {
+  @Mock
+  private Location location;
 
-    @Mock
-    private Location location;
-    @Mock
-    private BentoBox plugin;
-    @Mock
-    private Notifier notifier;
+  @Mock
+  private BentoBox plugin;
 
-    private EggListener el;
-    @Mock
-    private Player player;
-    @Mock
-    private World world;
-    @Mock
-    private Island island;
-    @Mock
-    private IslandWorldManager iwm;
+  @Mock
+  private Notifier notifier;
 
-    /**
-     * @throws java.lang.Exception
-     */
-    @Before
-    public void setUp() throws Exception {
-        // Set up plugin
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+  private EggListener el;
 
-        Server server = mock(Server.class);
-        when(server.getLogger()).thenReturn(Logger.getAnonymousLogger());
-        when(server.getWorld("world")).thenReturn(world);
-        when(server.getVersion()).thenReturn("BSB_Mocking");
+  @Mock
+  private Player player;
 
-        PluginManager pim = mock(PluginManager.class);
+  @Mock
+  private World world;
 
-        ItemFactory itemFactory = mock(ItemFactory.class);
-        when(server.getItemFactory()).thenReturn(itemFactory);
+  @Mock
+  private Island island;
 
-        PowerMockito.mockStatic(Bukkit.class);
-        when(Bukkit.getServer()).thenReturn(server);
-        when(Bukkit.getPluginManager()).thenReturn(pim);
+  @Mock
+  private IslandWorldManager iwm;
 
-        ItemMeta meta = mock(ItemMeta.class);
-        when(itemFactory.getItemMeta(any())).thenReturn(meta);
-        when(Bukkit.getItemFactory()).thenReturn(itemFactory);
-        when(Bukkit.getLogger()).thenReturn(Logger.getAnonymousLogger());
-        location = mock(Location.class);
-        when(location.getWorld()).thenReturn(world);
-        when(location.getBlockX()).thenReturn(0);
-        when(location.getBlockY()).thenReturn(0);
-        when(location.getBlockZ()).thenReturn(0);
-        PowerMockito.mockStatic(Flags.class);
+  /**
+   * @throws java.lang.Exception
+   */
+  @Before
+  public void setUp() throws Exception {
+    // Set up plugin
+    Whitebox.setInternalState(BentoBox.class, "instance", plugin);
 
-        FlagsManager flagsManager = new FlagsManager(plugin);
-        when(plugin.getFlagsManager()).thenReturn(flagsManager);
+    Server server = mock(Server.class);
+    when(server.getLogger()).thenReturn(Logger.getAnonymousLogger());
+    when(server.getWorld("world")).thenReturn(world);
+    when(server.getVersion()).thenReturn("BSB_Mocking");
 
-        // Worlds
-        when(iwm.inWorld(any(World.class))).thenReturn(true);
-        when(iwm.inWorld(any(Location.class))).thenReturn(true);
-        when(plugin.getIWM()).thenReturn(iwm);
+    PluginManager pim = mock(PluginManager.class);
 
-        // Fake players
-        Settings settings = mock(Settings.class);
-        when(plugin.getSettings()).thenReturn(settings);
-        when(settings.getFakePlayers()).thenReturn(new HashSet<>());
+    ItemFactory itemFactory = mock(ItemFactory.class);
+    when(server.getItemFactory()).thenReturn(itemFactory);
 
-        User.setPlugin(plugin);
+    PowerMockito.mockStatic(Bukkit.class);
+    when(Bukkit.getServer()).thenReturn(server);
+    when(Bukkit.getPluginManager()).thenReturn(pim);
 
-        // Locales
-        LocalesManager lm = mock(LocalesManager.class);
-        when(plugin.getLocalesManager()).thenReturn(lm);
-        Answer<String> answer = invocation -> (String)Arrays.asList(invocation.getArguments()).get(1);
-        when(lm.get(any(), any())).thenAnswer(answer);
+    ItemMeta meta = mock(ItemMeta.class);
+    when(itemFactory.getItemMeta(any())).thenReturn(meta);
+    when(Bukkit.getItemFactory()).thenReturn(itemFactory);
+    when(Bukkit.getLogger()).thenReturn(Logger.getAnonymousLogger());
+    location = mock(Location.class);
+    when(location.getWorld()).thenReturn(world);
+    when(location.getBlockX()).thenReturn(0);
+    when(location.getBlockY()).thenReturn(0);
+    when(location.getBlockZ()).thenReturn(0);
+    PowerMockito.mockStatic(Flags.class);
 
-        // Placeholders
-        PlaceholdersManager placeholdersManager = mock(PlaceholdersManager.class);
-        when(plugin.getPlaceholdersManager()).thenReturn(placeholdersManager);
-        when(placeholdersManager.replacePlaceholders(any(), any())).thenAnswer(answer);
+    FlagsManager flagsManager = new FlagsManager(plugin);
+    when(plugin.getFlagsManager()).thenReturn(flagsManager);
 
-        // World Settings
-        WorldSettings ws = mock(WorldSettings.class);
-        when(iwm.getWorldSettings(any())).thenReturn(ws);
-        Map<String, Boolean> worldFlags = new HashMap<>();
-        when(ws.getWorldFlags()).thenReturn(worldFlags);
+    // Worlds
+    when(iwm.inWorld(any(World.class))).thenReturn(true);
+    when(iwm.inWorld(any(Location.class))).thenReturn(true);
+    when(plugin.getIWM()).thenReturn(iwm);
 
-        // Island manager
-        IslandsManager im = mock(IslandsManager.class);
-        when(plugin.getIslands()).thenReturn(im);
-        island = mock(Island.class);
-        Optional<Island> optional = Optional.of(island);
-        when(im.getProtectedIslandAt(any())).thenReturn(optional);
-        // Default is that everything is allowed
-        when(island.isAllowed(any(), any())).thenReturn(true);
+    // Fake players
+    Settings settings = mock(Settings.class);
+    when(plugin.getSettings()).thenReturn(settings);
+    when(settings.getFakePlayers()).thenReturn(new HashSet<>());
 
-        // Notifier
-        when(plugin.getNotifier()).thenReturn(notifier);
+    User.setPlugin(plugin);
 
-        PowerMockito.mockStatic(Util.class);
-        when(Util.getWorld(any())).thenReturn(mock(World.class));
+    // Locales
+    LocalesManager lm = mock(LocalesManager.class);
+    when(plugin.getLocalesManager()).thenReturn(lm);
+    Answer<String> answer = invocation ->
+      (String) Arrays.asList(invocation.getArguments()).get(1);
+    when(lm.get(any(), any())).thenAnswer(answer);
 
-        // Addon
-        when(iwm.getAddon(any())).thenReturn(Optional.empty());
+    // Placeholders
+    PlaceholdersManager placeholdersManager = mock(PlaceholdersManager.class);
+    when(plugin.getPlaceholdersManager()).thenReturn(placeholdersManager);
+    when(placeholdersManager.replacePlaceholders(any(), any())).thenAnswer(answer);
 
-        // Player
-        when(player.getLocation()).thenReturn(location);
-        when(player.getUniqueId()).thenReturn(UUID.randomUUID());
-        when(player.getName()).thenReturn("tastybento");
-        when(player.getWorld()).thenReturn(world);
+    // World Settings
+    WorldSettings ws = mock(WorldSettings.class);
+    when(iwm.getWorldSettings(any())).thenReturn(ws);
+    Map<String, Boolean> worldFlags = new HashMap<>();
+    when(ws.getWorldFlags()).thenReturn(worldFlags);
 
-        // Util strip spaces
-        when(Util.stripSpaceAfterColorCodes(anyString())).thenCallRealMethod();
+    // Island manager
+    IslandsManager im = mock(IslandsManager.class);
+    when(plugin.getIslands()).thenReturn(im);
+    island = mock(Island.class);
+    Optional<Island> optional = Optional.of(island);
+    when(im.getProtectedIslandAt(any())).thenReturn(optional);
+    // Default is that everything is allowed
+    when(island.isAllowed(any(), any())).thenReturn(true);
 
-        // Listener
-        el = new EggListener();
-    }
+    // Notifier
+    when(plugin.getNotifier()).thenReturn(notifier);
 
+    PowerMockito.mockStatic(Util.class);
+    when(Util.getWorld(any())).thenReturn(mock(World.class));
 
-    /**
-     * @throws java.lang.Exception
-     */
-    @After
-    public void tearDown() {
-        User.clearUsers();
-        Mockito.framework().clearInlineMocks();
-    }
+    // Addon
+    when(iwm.getAddon(any())).thenReturn(Optional.empty());
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.EggListener#onEggThrow(org.bukkit.event.player.PlayerEggThrowEvent)}.
-     */
-    @Test
-    public void testOnEggThrowAllowed() {
-        Egg egg = mock(Egg.class);
-        when(egg.getLocation()).thenReturn(location);
-        PlayerEggThrowEvent e = new PlayerEggThrowEvent(player, egg, false, (byte) 0, EntityType.CHICKEN);
-        el.onEggThrow(e);
-        verify(notifier, never()).notify(any(), anyString());
-    }
+    // Player
+    when(player.getLocation()).thenReturn(location);
+    when(player.getUniqueId()).thenReturn(UUID.randomUUID());
+    when(player.getName()).thenReturn("tastybento");
+    when(player.getWorld()).thenReturn(world);
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.EggListener#onEggThrow(org.bukkit.event.player.PlayerEggThrowEvent)}.
-     */
-    @Test
-    public void testOnEggThrowNotAllowed() {
-        when(island.isAllowed(any(), any())).thenReturn(false);
-        Egg egg = mock(Egg.class);
-        when(egg.getLocation()).thenReturn(location);
-        PlayerEggThrowEvent e = new PlayerEggThrowEvent(player, egg, false, (byte) 0, EntityType.CHICKEN);
-        el.onEggThrow(e);
-        assertFalse(e.isHatching());
-        verify(notifier).notify(any(), eq("protection.protected"));
-    }
+    // Util strip spaces
+    when(Util.stripSpaceAfterColorCodes(anyString())).thenCallRealMethod();
 
+    // Listener
+    el = new EggListener();
+  }
+
+  /**
+   * @throws java.lang.Exception
+   */
+  @After
+  public void tearDown() {
+    User.clearUsers();
+    Mockito.framework().clearInlineMocks();
+  }
+
+  /**
+   * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.EggListener#onEggThrow(org.bukkit.event.player.PlayerEggThrowEvent)}.
+   */
+  @Test
+  public void testOnEggThrowAllowed() {
+    Egg egg = mock(Egg.class);
+    when(egg.getLocation()).thenReturn(location);
+    PlayerEggThrowEvent e = new PlayerEggThrowEvent(
+      player,
+      egg,
+      false,
+      (byte) 0,
+      EntityType.CHICKEN
+    );
+    el.onEggThrow(e);
+    verify(notifier, never()).notify(any(), anyString());
+  }
+
+  /**
+   * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.EggListener#onEggThrow(org.bukkit.event.player.PlayerEggThrowEvent)}.
+   */
+  @Test
+  public void testOnEggThrowNotAllowed() {
+    when(island.isAllowed(any(), any())).thenReturn(false);
+    Egg egg = mock(Egg.class);
+    when(egg.getLocation()).thenReturn(location);
+    PlayerEggThrowEvent e = new PlayerEggThrowEvent(
+      player,
+      egg,
+      false,
+      (byte) 0,
+      EntityType.CHICKEN
+    );
+    el.onEggThrow(e);
+    assertFalse(e.isHatching());
+    verify(notifier).notify(any(), eq("protection.protected"));
+  }
 }

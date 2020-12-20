@@ -13,7 +13,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -43,7 +42,6 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
-
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
@@ -59,212 +57,252 @@ import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.util.Util;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( {BentoBox.class, Util.class, Bukkit.class })
+@PrepareForTest({ BentoBox.class, Util.class, Bukkit.class })
 public class EnderChestListenerTest {
+  @Mock
+  private World world;
 
-    @Mock
-    private World world;
-    @Mock
-    private Player player;
-    @Mock
-    private IslandWorldManager iwm;
-    @Mock
-    private Notifier notifier;
-    @Mock
-    private ItemStack item;
-    @Mock
-    private Block clickedBlock;
-    private Action action;
+  @Mock
+  private Player player;
 
-    @Before
-    public void setUp() throws Exception {
-        // Set up plugin
-        BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+  @Mock
+  private IslandWorldManager iwm;
 
-        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+  @Mock
+  private Notifier notifier;
 
-        // Owner
-        UUID uuid1 = UUID.randomUUID();
+  @Mock
+  private ItemStack item;
 
-        // Island initialization
-        Island island = mock(Island.class);
-        when(island.getOwner()).thenReturn(uuid1);
+  @Mock
+  private Block clickedBlock;
 
-        IslandsManager im = mock(IslandsManager.class);
-        when(plugin.getIslands()).thenReturn(im);
-        when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
+  private Action action;
 
-        Location inside = mock(Location.class);
-        when(inside.getWorld()).thenReturn(world);
+  @Before
+  public void setUp() throws Exception {
+    // Set up plugin
+    BentoBox plugin = mock(BentoBox.class);
+    Whitebox.setInternalState(BentoBox.class, "instance", plugin);
 
-        Optional<Island> opIsland = Optional.ofNullable(island);
-        when(im.getProtectedIslandAt(eq(inside))).thenReturn(opIsland);
-        // On island
-        when(im.locationIsOnIsland(any(), any())).thenReturn(true);
+    PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
 
-        PowerMockito.mockStatic(Util.class);
-        when(Util.getWorld(any())).thenReturn(world);
+    // Owner
+    UUID uuid1 = UUID.randomUUID();
 
-        // World Settings
-        when(plugin.getIWM()).thenReturn(iwm);
-        WorldSettings ws = mock(WorldSettings.class);
-        when(iwm.getWorldSettings(any())).thenReturn(ws);
-        Map<String, Boolean> worldFlags = new HashMap<>();
-        when(ws.getWorldFlags()).thenReturn(worldFlags);
-        // By default everything is in world
-        when(iwm.inWorld(any(World.class))).thenReturn(true);
-        when(iwm.inWorld(any(Location.class))).thenReturn(true);
-        when(iwm.getAddon(any())).thenReturn(Optional.empty());
+    // Island initialization
+    Island island = mock(Island.class);
+    when(island.getOwner()).thenReturn(uuid1);
 
-        // Ender chest use is not allowed by default
-        Flags.ENDER_CHEST.setSetting(world, false);
+    IslandsManager im = mock(IslandsManager.class);
+    when(plugin.getIslands()).thenReturn(im);
+    when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
 
-        // Sometimes use Mockito.withSettings().verboseLogging()
-        UUID uuid = UUID.randomUUID();
-        when(player.getUniqueId()).thenReturn(uuid);
-        when(player.isOp()).thenReturn(false);
-        // No special perms
-        when(player.hasPermission(anyString())).thenReturn(false);
-        when(player.getWorld()).thenReturn(world);
-        User.setPlugin(plugin);
-        User.getInstance(player);
+    Location inside = mock(Location.class);
+    when(inside.getWorld()).thenReturn(world);
 
-        // Locales - this returns the string that was requested for translation
-        LocalesManager lm = mock(LocalesManager.class);
-        when(plugin.getLocalesManager()).thenReturn(lm);
-        Answer<String> answer = invocation -> invocation.getArgument(1, String.class);
-        when(lm.get(any(), any())).thenAnswer(answer);
+    Optional<Island> opIsland = Optional.ofNullable(island);
+    when(im.getProtectedIslandAt(eq(inside))).thenReturn(opIsland);
+    // On island
+    when(im.locationIsOnIsland(any(), any())).thenReturn(true);
 
-        // Placeholders
-        PlaceholdersManager placeholdersManager = mock(PlaceholdersManager.class);
-        when(plugin.getPlaceholdersManager()).thenReturn(placeholdersManager);
-        when(placeholdersManager.replacePlaceholders(any(), any())).thenAnswer(answer);
+    PowerMockito.mockStatic(Util.class);
+    when(Util.getWorld(any())).thenReturn(world);
 
-        // Notifier
-        when(plugin.getNotifier()).thenReturn(notifier);
+    // World Settings
+    when(plugin.getIWM()).thenReturn(iwm);
+    WorldSettings ws = mock(WorldSettings.class);
+    when(iwm.getWorldSettings(any())).thenReturn(ws);
+    Map<String, Boolean> worldFlags = new HashMap<>();
+    when(ws.getWorldFlags()).thenReturn(worldFlags);
+    // By default everything is in world
+    when(iwm.inWorld(any(World.class))).thenReturn(true);
+    when(iwm.inWorld(any(Location.class))).thenReturn(true);
+    when(iwm.getAddon(any())).thenReturn(Optional.empty());
 
-        // Action, Item and clicked block
-        action = Action.RIGHT_CLICK_BLOCK;
-        when(item.getType()).thenReturn(Material.ENDER_CHEST);
-        when(clickedBlock.getLocation()).thenReturn(inside);
-        when(clickedBlock.getType()).thenReturn(Material.ENDER_CHEST);
-        // Addon
-        when(iwm.getAddon(any())).thenReturn(Optional.empty());
+    // Ender chest use is not allowed by default
+    Flags.ENDER_CHEST.setSetting(world, false);
 
-        Settings settings = mock(Settings.class);
-        // Fake players
-        when(plugin.getSettings()).thenReturn(settings);
+    // Sometimes use Mockito.withSettings().verboseLogging()
+    UUID uuid = UUID.randomUUID();
+    when(player.getUniqueId()).thenReturn(uuid);
+    when(player.isOp()).thenReturn(false);
+    // No special perms
+    when(player.hasPermission(anyString())).thenReturn(false);
+    when(player.getWorld()).thenReturn(world);
+    User.setPlugin(plugin);
+    User.getInstance(player);
 
-        // Util strip spaces
-        when(Util.stripSpaceAfterColorCodes(anyString())).thenCallRealMethod();
-    }
+    // Locales - this returns the string that was requested for translation
+    LocalesManager lm = mock(LocalesManager.class);
+    when(plugin.getLocalesManager()).thenReturn(lm);
+    Answer<String> answer = invocation -> invocation.getArgument(1, String.class);
+    when(lm.get(any(), any())).thenAnswer(answer);
 
-    @After
-    public void tearDown() {
-        User.clearUsers();
-        Mockito.framework().clearInlineMocks();
-    }
+    // Placeholders
+    PlaceholdersManager placeholdersManager = mock(PlaceholdersManager.class);
+    when(plugin.getPlaceholdersManager()).thenReturn(placeholdersManager);
+    when(placeholdersManager.replacePlaceholders(any(), any())).thenAnswer(answer);
 
-    @Test
-    public void testOnEnderChestOpenNotRightClick() {
-        action = Action.LEFT_CLICK_AIR;
-        BlockFace clickedBlockFace = BlockFace.EAST;
-        PlayerInteractEvent e = new PlayerInteractEvent(player, action, item, clickedBlock, clickedBlockFace);
-        new BlockInteractionListener().onPlayerInteract(e);
-        assertTrue(e.useInteractedBlock().equals(Result.ALLOW));
-    }
+    // Notifier
+    when(plugin.getNotifier()).thenReturn(notifier);
 
-    @Test
-    public void testOnEnderChestOpenEnderChestNotInWorld() {
-        BlockFace clickedBlockFace = BlockFace.EAST;
-        PlayerInteractEvent e = new PlayerInteractEvent(player, action, item, clickedBlock, clickedBlockFace);
-        // Not in world
-        when(iwm.inWorld(any(World.class))).thenReturn(false);
-        when(iwm.inWorld(any(Location.class))).thenReturn(false);
-        new BlockInteractionListener().onPlayerInteract(e);
-        assertTrue(e.useInteractedBlock().equals(Result.ALLOW));
-    }
+    // Action, Item and clicked block
+    action = Action.RIGHT_CLICK_BLOCK;
+    when(item.getType()).thenReturn(Material.ENDER_CHEST);
+    when(clickedBlock.getLocation()).thenReturn(inside);
+    when(clickedBlock.getType()).thenReturn(Material.ENDER_CHEST);
+    // Addon
+    when(iwm.getAddon(any())).thenReturn(Optional.empty());
 
-    @Test
-    public void testOnEnderChestOpenEnderChestOpPlayer() {
-        BlockFace clickedBlockFace = BlockFace.EAST;
-        PlayerInteractEvent e = new PlayerInteractEvent(player, action, item, clickedBlock, clickedBlockFace);
-        // Op player
-        when(player.isOp()).thenReturn(true);
-        new BlockInteractionListener().onPlayerInteract(e);
-        assertTrue(e.useInteractedBlock().equals(Result.ALLOW));
-    }
+    Settings settings = mock(Settings.class);
+    // Fake players
+    when(plugin.getSettings()).thenReturn(settings);
 
-    @Test
-    public void testOnEnderChestOpenEnderChestHasBypassPerm() {
-        BlockFace clickedBlockFace = BlockFace.EAST;
-        PlayerInteractEvent e = new PlayerInteractEvent(player, action, item, clickedBlock, clickedBlockFace);
-        // Has bypass perm
-        when(player.hasPermission(anyString())).thenReturn(true);
-        new BlockInteractionListener().onPlayerInteract(e);
-        assertTrue(e.useInteractedBlock().equals(Result.ALLOW));
-    }
+    // Util strip spaces
+    when(Util.stripSpaceAfterColorCodes(anyString())).thenCallRealMethod();
+  }
 
-    @Test
-    public void testOnEnderChestOpenEnderChestOkay() {
-        BlockFace clickedBlockFace = BlockFace.EAST;
-        PlayerInteractEvent e = new PlayerInteractEvent(player, action, item, clickedBlock, clickedBlockFace);
-        // Enderchest use is okay
-        Flags.ENDER_CHEST.setSetting(world, true);
-        BlockInteractionListener bil = new BlockInteractionListener();
-        bil.onPlayerInteract(e);
-        assertTrue(e.useInteractedBlock().equals(Result.ALLOW));
-        verify(notifier, Mockito.never()).notify(any(), anyString());
-    }
+  @After
+  public void tearDown() {
+    User.clearUsers();
+    Mockito.framework().clearInlineMocks();
+  }
 
-    @Test
-    public void testOnEnderChestOpenEnderChestBlocked() {
-        BlockFace clickedBlockFace = BlockFace.EAST;
-        PlayerInteractEvent e = new PlayerInteractEvent(player, action, item, clickedBlock, clickedBlockFace);
-        // Enderchest use is blocked
-        Flags.ENDER_CHEST.setSetting(world, false);
-        new BlockInteractionListener().onPlayerInteract(e);
-        assertTrue(e.useInteractedBlock().equals(Result.DENY));
-        verify(notifier).notify(any(User.class), eq("protection.world-protected"));
-    }
+  @Test
+  public void testOnEnderChestOpenNotRightClick() {
+    action = Action.LEFT_CLICK_AIR;
+    BlockFace clickedBlockFace = BlockFace.EAST;
+    PlayerInteractEvent e = new PlayerInteractEvent(
+      player,
+      action,
+      item,
+      clickedBlock,
+      clickedBlockFace
+    );
+    new BlockInteractionListener().onPlayerInteract(e);
+    assertTrue(e.useInteractedBlock().equals(Result.ALLOW));
+  }
 
-    @Test
-    public void testOnCraftNotEnderChest() {
-        Recipe recipe = mock(Recipe.class);
-        ItemStack item = mock(ItemStack.class);
-        when(item.getType()).thenReturn(Material.STONE);
-        when(recipe.getResult()).thenReturn(item);
-        InventoryView view = mock(InventoryView.class);
-        when(view.getPlayer()).thenReturn(player);
-        Inventory top = mock(Inventory.class);
-        when(top.getSize()).thenReturn(9);
-        when(view.getTopInventory()).thenReturn(top);
-        SlotType type = SlotType.RESULT;
-        ClickType click = ClickType.LEFT;
-        InventoryAction action = InventoryAction.PICKUP_ONE;
-        CraftItemEvent e = new CraftItemEvent(recipe, view, type, 0, click, action);
-        new EnderChestListener().onCraft(e);
-        assertFalse(e.isCancelled());
-    }
+  @Test
+  public void testOnEnderChestOpenEnderChestNotInWorld() {
+    BlockFace clickedBlockFace = BlockFace.EAST;
+    PlayerInteractEvent e = new PlayerInteractEvent(
+      player,
+      action,
+      item,
+      clickedBlock,
+      clickedBlockFace
+    );
+    // Not in world
+    when(iwm.inWorld(any(World.class))).thenReturn(false);
+    when(iwm.inWorld(any(Location.class))).thenReturn(false);
+    new BlockInteractionListener().onPlayerInteract(e);
+    assertTrue(e.useInteractedBlock().equals(Result.ALLOW));
+  }
 
-    @Test
-    public void testOnCraftEnderChest() {
-        Recipe recipe = mock(Recipe.class);
-        ItemStack item = mock(ItemStack.class);
-        when(item.getType()).thenReturn(Material.ENDER_CHEST);
-        when(recipe.getResult()).thenReturn(item);
-        InventoryView view = mock(InventoryView.class);
-        when(view.getPlayer()).thenReturn(player);
-        Inventory top = mock(Inventory.class);
-        when(top.getSize()).thenReturn(9);
-        when(view.getTopInventory()).thenReturn(top);
-        SlotType type = SlotType.RESULT;
-        ClickType click = ClickType.LEFT;
-        InventoryAction action = InventoryAction.PICKUP_ONE;
-        CraftItemEvent e = new CraftItemEvent(recipe, view, type, 0, click, action);
-        new EnderChestListener().onCraft(e);
-        assertTrue(e.isCancelled());
-    }
+  @Test
+  public void testOnEnderChestOpenEnderChestOpPlayer() {
+    BlockFace clickedBlockFace = BlockFace.EAST;
+    PlayerInteractEvent e = new PlayerInteractEvent(
+      player,
+      action,
+      item,
+      clickedBlock,
+      clickedBlockFace
+    );
+    // Op player
+    when(player.isOp()).thenReturn(true);
+    new BlockInteractionListener().onPlayerInteract(e);
+    assertTrue(e.useInteractedBlock().equals(Result.ALLOW));
+  }
 
+  @Test
+  public void testOnEnderChestOpenEnderChestHasBypassPerm() {
+    BlockFace clickedBlockFace = BlockFace.EAST;
+    PlayerInteractEvent e = new PlayerInteractEvent(
+      player,
+      action,
+      item,
+      clickedBlock,
+      clickedBlockFace
+    );
+    // Has bypass perm
+    when(player.hasPermission(anyString())).thenReturn(true);
+    new BlockInteractionListener().onPlayerInteract(e);
+    assertTrue(e.useInteractedBlock().equals(Result.ALLOW));
+  }
+
+  @Test
+  public void testOnEnderChestOpenEnderChestOkay() {
+    BlockFace clickedBlockFace = BlockFace.EAST;
+    PlayerInteractEvent e = new PlayerInteractEvent(
+      player,
+      action,
+      item,
+      clickedBlock,
+      clickedBlockFace
+    );
+    // Enderchest use is okay
+    Flags.ENDER_CHEST.setSetting(world, true);
+    BlockInteractionListener bil = new BlockInteractionListener();
+    bil.onPlayerInteract(e);
+    assertTrue(e.useInteractedBlock().equals(Result.ALLOW));
+    verify(notifier, Mockito.never()).notify(any(), anyString());
+  }
+
+  @Test
+  public void testOnEnderChestOpenEnderChestBlocked() {
+    BlockFace clickedBlockFace = BlockFace.EAST;
+    PlayerInteractEvent e = new PlayerInteractEvent(
+      player,
+      action,
+      item,
+      clickedBlock,
+      clickedBlockFace
+    );
+    // Enderchest use is blocked
+    Flags.ENDER_CHEST.setSetting(world, false);
+    new BlockInteractionListener().onPlayerInteract(e);
+    assertTrue(e.useInteractedBlock().equals(Result.DENY));
+    verify(notifier).notify(any(User.class), eq("protection.world-protected"));
+  }
+
+  @Test
+  public void testOnCraftNotEnderChest() {
+    Recipe recipe = mock(Recipe.class);
+    ItemStack item = mock(ItemStack.class);
+    when(item.getType()).thenReturn(Material.STONE);
+    when(recipe.getResult()).thenReturn(item);
+    InventoryView view = mock(InventoryView.class);
+    when(view.getPlayer()).thenReturn(player);
+    Inventory top = mock(Inventory.class);
+    when(top.getSize()).thenReturn(9);
+    when(view.getTopInventory()).thenReturn(top);
+    SlotType type = SlotType.RESULT;
+    ClickType click = ClickType.LEFT;
+    InventoryAction action = InventoryAction.PICKUP_ONE;
+    CraftItemEvent e = new CraftItemEvent(recipe, view, type, 0, click, action);
+    new EnderChestListener().onCraft(e);
+    assertFalse(e.isCancelled());
+  }
+
+  @Test
+  public void testOnCraftEnderChest() {
+    Recipe recipe = mock(Recipe.class);
+    ItemStack item = mock(ItemStack.class);
+    when(item.getType()).thenReturn(Material.ENDER_CHEST);
+    when(recipe.getResult()).thenReturn(item);
+    InventoryView view = mock(InventoryView.class);
+    when(view.getPlayer()).thenReturn(player);
+    Inventory top = mock(Inventory.class);
+    when(top.getSize()).thenReturn(9);
+    when(view.getTopInventory()).thenReturn(top);
+    SlotType type = SlotType.RESULT;
+    ClickType click = ClickType.LEFT;
+    InventoryAction action = InventoryAction.PICKUP_ONE;
+    CraftItemEvent e = new CraftItemEvent(recipe, view, type, 0, click, action);
+    new EnderChestListener().onCraft(e);
+    assertTrue(e.isCancelled());
+  }
 }
