@@ -114,105 +114,6 @@ public class PortalTeleportationListener implements Listener {
         }
         return this.processPortal(e, Environment.THE_END);
     }
-    /*
-        World fromWorld = e.getFrom().getWorld();
-        World overWorld = Util.getWorld(fromWorld);
-
-        if (fromWorld == null || !plugin.getIWM().inWorld(overWorld)) {
-            // Do nothing special
-            return false;
-        }
-
-        // 1.14.4 requires explicit cancellation to prevent teleporting to the normal end
-        if (!plugin.getIWM().isEndGenerate(overWorld)) {
-            e.setCancelled(true);
-            return false;
-        }
-
-        // STANDARD END
-        if (!plugin.getIWM().isEndIslands(overWorld)) {
-            if (fromWorld.getEnvironment() != Environment.THE_END) {
-                if (Bukkit.getAllowEnd()) {
-                    // To Standard end
-                    e.setTo(plugin.getIWM().getEndWorld(overWorld).getSpawnLocation());
-                } else {
-                    new SafeSpotTeleport.Builder(plugin)
-                    .entity(e.getPlayer())
-                    .location(plugin.getIWM().getEndWorld(overWorld).getSpawnLocation())
-                    .thenRun(() -> inPortal.remove(e.getPlayer().getUniqueId()))
-                    .build();
-                }
-            }
-            // From standard end - check if player has an island to go to
-            else if (plugin.getIslands().hasIsland(overWorld, e.getPlayer().getUniqueId())
-                    || plugin.getIslands().inTeam(overWorld, e.getPlayer().getUniqueId())) {
-                e.setCancelled(true);
-                plugin.getIslands().homeTeleportAsync(overWorld, e.getPlayer());
-            }
-            // No island, so just do nothing
-            return false;
-        }
-
-        // FROM END
-        // If entering an end portal in the End.
-        if (fromWorld.getEnvironment() == Environment.THE_END) {
-            // If this is from the island nether, then go to the same vector, otherwise try island home location
-            Location to = plugin.getIslands().getIslandAt(e.getFrom()).map(i -> i.getSpawnPoint(Environment.NORMAL)).orElse(e.getFrom().toVector().toLocation(overWorld));
-            e.setCancelled(true);
-            // Else other worlds teleport to the overworld
-            new SafeSpotTeleport.Builder(plugin)
-            .entity(e.getPlayer())
-            .location(to)
-            .portal()
-            .build();
-            return true;
-        }
-
-        // TO END
-        World endWorld = plugin.getIWM().getEndWorld(overWorld);
-        if (plugin.getIWM().getAddon(overWorld).map(gm -> gm.getWorldSettings().isMakeEndPortals()).orElse(false)) {
-            // Use native end portal - will generate an obsidan platform in the end
-            e.setTo(e.getFrom().toVector().toLocation(endWorld));
-            inPortal.remove(e.getPlayer().getUniqueId());
-            return true;
-        }
-        e.setCancelled(true);
-        // If this is to island End, then go to the spawn point otherwise use same vector
-        Optional<Island> optionalIsland = plugin.getIslands().getIslandAt(e.getFrom());
-        Location to = optionalIsland.map(i -> i.getSpawnPoint(Environment.THE_END)).orElse(e.getFrom().toVector().toLocation(endWorld));
-        e.setTo(to);
-        // Check if there is a missing end island
-        if (plugin.getIWM().isPasteMissingIslands(overWorld)
-                && !plugin.getIWM().isUseOwnGenerator(overWorld)
-                && plugin.getIWM().isEndGenerate(overWorld)
-                && plugin.getIWM().isEndIslands(overWorld)
-                && plugin.getIWM().getEndWorld(overWorld) != null
-                && optionalIsland.filter(i -> !i.hasEndIsland())
-                .map(i -> {
-                    // No end island present so paste the default one
-                    pasteNewIsland(e.getPlayer(), to, i, Environment.THE_END);
-                    return true;
-                }).orElse(false)) {
-            // We are done here
-            return true;
-        }
-        // Set player's velocity and fall distance to 0
-        e.getPlayer().setVelocity(new Vector(0,0,0));
-        e.getPlayer().setFallDistance(0);
-
-        // Else other worlds teleport to the end
-        // Set player's velocity to zero one tick after cancellation
-        // Teleport
-        new SafeSpotTeleport.Builder(plugin)
-        .entity(e.getPlayer())
-        .location(to)
-        .thenRun(() -> {
-            e.getPlayer().setVelocity(new Vector(0,0,0));
-            e.getPlayer().setFallDistance(0);
-        })
-        .build();
-        return true;
-    }*/
 
     /**
      * Handles nether portals.
@@ -260,6 +161,7 @@ public class PortalTeleportationListener implements Listener {
         Optional<Island> optionalIsland = plugin.getIslands().getIslandAt(e.getFrom());
         World toWorld = getNetherEndWorld(overWorld, env);
         if (plugin.getIWM().getAddon(overWorld).map(gm -> isMakePortals(gm, env)).orElse(false)) {
+            e.setTo(e.getFrom().toVector().toLocation(toWorld));
             inPortal.remove(e.getPlayer().getUniqueId());
             // Find distance from edge of island's protection
             optionalIsland.ifPresent(i -> setSeachRadius(e, i));
@@ -301,29 +203,72 @@ public class PortalTeleportationListener implements Listener {
     }
 
 
+    /**
+     * Check if vanilla portals should be used
+     * @param gm - game mode
+     * @param env - environment
+     * @return true or false
+     */
     private boolean isMakePortals(GameModeAddon gm, Environment env) {
         return env.equals(Environment.NETHER) ? gm.getWorldSettings().isMakeNetherPortals() : gm.getWorldSettings().isMakeEndPortals();
     }
+
+    /**
+     * Check if nether or end are generated
+     * @param gm - game mode
+     * @param env - environment
+     * @return true or false
+     */
     private boolean isGenerate(World overWorld, Environment env) {
         return env.equals(Environment.NETHER) ? plugin.getIWM().isNetherGenerate(overWorld) : plugin.getIWM().isEndGenerate(overWorld);
     }
 
+    /**
+     * Check if nether or end islands are generated
+     * @param gm - game mode
+     * @param env - environment
+     * @return true or false
+     */
     private boolean isIslands(World overWorld, Environment env) {
         return env.equals(Environment.NETHER) ? plugin.getIWM().isNetherIslands(overWorld) : plugin.getIWM().isEndIslands(overWorld);
     }
 
+    /**
+     * Get the nether or end world
+     * @param gm - game mode
+     * @param env - environment
+     * @return nether or end world
+     */
     private World getNetherEndWorld(World overWorld, Environment env) {
         return env.equals(Environment.NETHER) ? plugin.getIWM().getNetherWorld(overWorld) : plugin.getIWM().getEndWorld(overWorld);
     }
 
+    /**
+     * Check if the island has a nether or end island already
+     * @param gm - game mode
+     * @param env - environment
+     * @return true or false
+     */
     private boolean hasPartnerIsland(Island i, Environment env) {
         return env.equals(Environment.NETHER) ? i.hasNetherIsland() : i.hasEndIsland();
     }
 
+    /**
+     * Check if the default nether or end are allowed by the server settings
+     * @param gm - game mode
+     * @param env - environment
+     * @return true or false
+     */
     private boolean isAllowedOnServer(Environment env) {
         return env.equals(Environment.NETHER) ? Bukkit.getAllowNether() : Bukkit.getAllowEnd();
     }
 
+    /**
+     * Handle teleport from nether or end to overworld
+     * @param e - event
+     * @param overWorld - over world
+     * @param env - environment
+     */
     private void handleFromNetherOrEnd(PlayerPortalEvent e, World overWorld, Environment env) {
         // Standard portals
         if (plugin.getIWM().getAddon(overWorld).map(gm -> isMakePortals(gm, env)).orElse(false)) {
@@ -349,6 +294,13 @@ public class PortalTeleportationListener implements Listener {
     }
 
 
+    /**
+     * Handle teleport from or to standard nether or end
+     * @param e
+     * @param fromWorld
+     * @param overWorld
+     * @param env
+     */
     private void handleStandardNetherOrEnd(PlayerPortalEvent e, World fromWorld, World overWorld, Environment env) {
         if (fromWorld.getEnvironment() != env) {
             if (isAllowedOnServer(env)) {
