@@ -9,6 +9,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.times;
 
 import java.util.Collections;
 import java.util.Optional;
@@ -267,13 +268,15 @@ public class PortalTeleportationListenerTest {
         // Right cause, end exists, right world
         PlayerPortalEvent e = new PlayerPortalEvent(player, from, null, TeleportCause.END_PORTAL);
         when(iwm.isEndGenerate(world)).thenReturn(true);
+        // No island for player
+        when(im.hasIsland(any(), any(UUID.class))).thenReturn(false);
         np.onEndIslandPortal(e);
-        assertFalse(e.isCancelled());
+        assertTrue(e.isCancelled());
         // Give player an island
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
         np.onEndIslandPortal(e);
         assertTrue(e.isCancelled());
-        verify(im).homeTeleportAsync(any(), eq(player));
+        verify(im, times(2)).homeTeleportAsync(any(), eq(player));
     }
 
     /**
