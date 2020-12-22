@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.WeakHashMap;
 
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Animals;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
@@ -34,6 +35,10 @@ public class GeoLimitMobsListener extends FlagListener {
         // Kick off the task to remove entities that go outside island boundaries
         Bukkit.getScheduler().runTaskTimer(getPlugin(), () -> {
             mobSpawnTracker.entrySet().stream()
+            // Renamed entities should never be removed. Even if they moved 2k blocks away.
+            .filter(e -> e.getKey().getCustomName() == null)
+            // Persistent entities should never be removed, unless they are animals.
+            .filter(e -> !e.getKey().isPersistent() || e.getKey() instanceof Animals)
             .filter(e -> !e.getValue().onIsland(e.getKey().getLocation()))
             .map(Map.Entry::getKey)
             .forEach(Entity::remove);
