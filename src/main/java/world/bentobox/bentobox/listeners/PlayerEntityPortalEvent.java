@@ -1,11 +1,17 @@
 package world.bentobox.bentobox.listeners;
 
+import java.util.Optional;
+
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.entity.EntityPortalEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+
+import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.database.objects.Island;
 
 /**
  * Abstracts PlayerPortalEvent and EntityPortalEvent
@@ -135,5 +141,20 @@ public class PlayerEntityPortalEvent {
         }
     }
 
+    /**
+     * Get island at the from location
+     * @return optional island at from location
+     */
+    public Optional<Island> getIsland() {
+        return BentoBox.getInstance().getIslands().getProtectedIslandAt(getFrom());
+    }
 
+    /**
+     * Get the from world
+     * @return from world
+     */
+    @Nullable
+    public World getWorld() {
+        return getFrom().getWorld();
+    }
 }

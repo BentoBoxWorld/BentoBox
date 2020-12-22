@@ -1,7 +1,6 @@
 package world.bentobox.bentobox.listeners;
 
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -161,18 +160,15 @@ public class PortalTeleportationListener implements Listener {
             return true;
         }
         // TO NETHER OR END
-        Optional<Island> optionalIsland = plugin.getIslands().getIslandAt(e.getFrom());
         World toWorld = getNetherEndWorld(overWorld, env);
         // Set whether portals should be created or not
         e.setCanCreatePortal(plugin.getIWM().getAddon(overWorld).map(gm -> isMakePortals(gm, env)).orElse(false));
         // Set the destination location
         // If portals cannot be created, then destination is the spawn point, otherwise it's the vector
-        e.setTo(e.getCanCreatePortal() ?
-                e.getFrom().toVector().toLocation(toWorld)
-                : optionalIsland.map(i -> i.getSpawnPoint(env)).orElse(e.getFrom().toVector().toLocation(toWorld)));
+        e.setTo(getTo(e, env, toWorld));
 
         // Find the distance from edge of island's protection and set the search radius
-        optionalIsland.ifPresent(i -> setSeachRadius(e, i));
+        e.getIsland().ifPresent(i -> setSeachRadius(e, i));
 
         // Check if there is an island there or not
         if (e.getEntity() instanceof Player
@@ -181,7 +177,7 @@ public class PortalTeleportationListener implements Listener {
                 && isGenerate(overWorld, env)
                 && isIslands(overWorld, env)
                 && getNetherEndWorld(overWorld, env) != null
-                && optionalIsland.filter(i -> !hasPartnerIsland(i, env)).map(i -> {
+                && e.getIsland().filter(i -> !hasPartnerIsland(i, env)).map(i -> {
                     // No nether island present so paste the default one
                     e.setCancelled(true);
                     inPortal.remove(e.getEntity().getUniqueId());
@@ -219,6 +215,46 @@ public class PortalTeleportationListener implements Listener {
             }
         });
         return true;
+    }
+
+
+    /**
+     * Set the destination of this portal action
+     * @param e - event
+     * @param env - environment
+     * @param toWorld - to world
+     */
+    Location getTo(PlayerEntityPortalEvent e, Environment env, World toWorld) {
+        // Null check - not that useful
+        if (e.getFrom().getWorld() == null || toWorld == null) {
+            return null;
+        }
+        if (!e.getCanCreatePortal()) {
+            // Legacy portaling
+            return e.getIsland().map(i -> i.getSpawnPoint(env)).orElse(e.getFrom().toVector().toLocation(toWorld));
+        }
+        // Make portals
+        // For anywhere other than the end - it is the player's location that is used
+        if (!env.equals(Environment.THE_END)) {
+            return e.getFrom().toVector().toLocation(toWorld);
+        }
+        // If the-end then we want the platform to always be generated in the same place no matter where
+        // they enter the portal
+        final int x = e.getFrom().getBlockX();
+        final int z = e.getFrom().getBlockZ();
+        final int y = e.getFrom().getBlockY();
+        int i = x;
+        int j = z;
+        int k = y;
+        // If the from is not a portal, then we have to find it
+        if (!e.getFrom().getBlock().getType().equals(Material.END_PORTAL)) {
+            // Find the portal - due to speed, it is possible that the player will be below or above the portal
+            for (k = 0; (k < e.getWorld().getMaxHeight()) && !e.getWorld().getBlockAt(x, k, z).getType().equals(Material.END_PORTAL); k++);
+        }
+        // Find the maximum x and z corner
+        for (; (i < x + 5) && e.getWorld().getBlockAt(i, k, z).getType().equals(Material.END_PORTAL); i++);
+        for (; (j < z + 5) && e.getWorld().getBlockAt(x, k, j).getType().equals(Material.END_PORTAL); j++);
+        return new Location(toWorld, i, k, j);
     }
 
 
