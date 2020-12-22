@@ -1,6 +1,8 @@
 package world.bentobox.bentobox.listeners;
 
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -9,7 +11,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
-import org.bukkit.entity.EntityType;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -105,8 +107,21 @@ public class PortalTeleportationListener implements Listener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public boolean onEntityPortal(EntityPortalEvent e) {
-        if (plugin.getIWM().inWorld(e.getFrom()) && !e.getEntityType().equals(EntityType.DROPPED_ITEM)) {
-            processPortal(new PlayerEntityPortalEvent(e), Environment.NETHER);
+        if (plugin.getIWM().inWorld(e.getFrom())) {
+            Optional<Material> mat = Arrays.stream(BlockFace.values())
+                    .map(bf -> e.getFrom().getBlock().getRelative(bf).getType())
+                    .filter(m -> m.equals(Material.NETHER_PORTAL)
+                            || m.equals(Material.END_PORTAL)
+                            || m.equals(Material.END_GATEWAY))
+                    .findFirst();
+            if (!mat.isPresent()) {
+                e.setCancelled(true);
+                return false;
+            } else if (mat.get().equals(Material.NETHER_PORTAL)){
+                return processPortal(new PlayerEntityPortalEvent(e), Environment.NETHER);
+            } else {
+                return processPortal(new PlayerEntityPortalEvent(e), Environment.THE_END);
+            }
         }
         return false;
     }
@@ -201,7 +216,6 @@ public class PortalTeleportationListener implements Listener {
         Bukkit.getScheduler().runTask(plugin, () -> {
             if (!e.getEntity().getWorld().equals(toWorld)) {
                 // Else manually teleport entity
-                plugin.logDebug("Teleporting...");
                 new SafeSpotTeleport.Builder(plugin)
                 .entity(e.getEntity())
                 .location(e.getTo())
