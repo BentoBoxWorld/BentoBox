@@ -1541,6 +1541,15 @@ public class IslandsManager {
                 .anyMatch(n -> ChatColor.stripColor(n).equals(ChatColor.stripColor(name)));
     }
 
+    /**
+     * Called by the admin team fix command. Attempts to fix the database for teams.
+     * It will identify and correct situations where a player is listed in multiple
+     * teams, or is the owner of multiple teams. It will also try to fix the current
+     * cache. It is recommended to restart the server after this command is run.
+     * @param user - admin calling
+     * @param world - game world to check
+     * @return CompletableFuture boolean - true when done
+     */
     public CompletableFuture<Boolean> checkTeams(User user, World world) {
         CompletableFuture<Boolean> r = new CompletableFuture<>();
         user.sendMessage("commands.admin.team.fix.scanning");
