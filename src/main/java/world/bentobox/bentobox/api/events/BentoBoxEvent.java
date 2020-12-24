@@ -18,6 +18,7 @@ import world.bentobox.bentobox.BentoBox;
  * Provides the default methods expected when extending {@link Event}.
  * @author tastybento
  * @since 1.5.3
+ *
  */
 public abstract class BentoBoxEvent extends Event {
 
@@ -40,11 +41,25 @@ public abstract class BentoBoxEvent extends Event {
         super(async);
     }
 
+    /**
+     * @return HandlerList
+     * @deprecated this method will no longer be in future versions of the BentoBoxEvent.
+     * Each event must declare its own static handler and handler methods.
+     * Will be removed by https://github.com/BentoBoxWorld/BentoBox/pull/1615
+     */
     @Override
+    @Deprecated
     public HandlerList getHandlers() {
         return getHandlerList();
     }
 
+    /**
+     * @return HandlerList
+     * @deprecated this method will no longer be in future versions of the BentoBoxEvent.
+     * Each event must declare its own static handler and handler methods.
+     * Will be removed by https://github.com/BentoBoxWorld/BentoBox/pull/1615
+     */
+    @Deprecated
     public static HandlerList getHandlerList() {
         return handlers;
     }
