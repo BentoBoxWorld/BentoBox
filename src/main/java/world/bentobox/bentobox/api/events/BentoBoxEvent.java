@@ -17,6 +17,7 @@ import world.bentobox.bentobox.BentoBox;
  * Provides the default methods expected when extending {@link Event}.
  * @author tastybento
  * @since 1.5.3
+ *
  */
 public abstract class BentoBoxEvent extends Event {
 
