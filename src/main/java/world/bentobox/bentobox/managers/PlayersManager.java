@@ -15,6 +15,7 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.Database;
 import world.bentobox.bentobox.database.objects.Names;
 import world.bentobox.bentobox.database.objects.Players;
+import world.bentobox.bentobox.util.Util;
 
 public class PlayersManager {
 
@@ -505,6 +506,51 @@ public class PlayersManager {
         playerCache.values().removeIf(p -> player.getName().equalsIgnoreCase(p.getPlayerName()));
         // Remove if the player's UUID is the same
         playerCache.values().removeIf(p -> player.getUniqueId().toString().equals(p.getUniqueId()));
+    }
+
+    /**
+     * Cleans the player when leaving an island
+     * @param world - island world
+     * @param target - target user
+     * @since 1.15.4
+     */
+    public void cleanLeavingPlayer(World world, User target) {
+        // Execute commands when leaving
+        Util.runCommands(target, plugin.getIWM().getOnLeaveCommands(world), "leave");
+        // Remove money inventory etc.
+        if (plugin.getIWM().isOnLeaveResetEnderChest(world)) {
+            if (target.isOnline()) {
+                target.getPlayer().getEnderChest().clear();
+            } else {
+                getPlayer(target.getUniqueId()).addToPendingKick(world);
+            }
+        }
+        if (plugin.getIWM().isOnLeaveResetInventory(world) && !plugin.getIWM().isKickedKeepInventory(world)) {
+            if (target.isOnline()) {
+                target.getPlayer().getInventory().clear();
+            } else {
+                getPlayer(target.getUniqueId()).addToPendingKick(world);
+            }
+        }
+        if (plugin.getSettings().isUseEconomy() && plugin.getIWM().isOnLeaveResetMoney(world)) {
+            plugin.getVault().ifPresent(vault -> vault.withdraw(target, vault.getBalance(target)));
+        }
+        // Reset the health
+        if (plugin.getIWM().isOnLeaveResetHealth(world)) {
+            Util.resetHealth(target.getPlayer());
+        }
+
+        // Reset the hunger
+        if (plugin.getIWM().isOnLeaveResetHunger(world)) {
+            target.getPlayer().setFoodLevel(20);
+        }
+
+        // Reset the XP
+        if (plugin.getIWM().isOnLeaveResetXP(world)) {
+            target.getPlayer().setTotalExperience(0);
+        }
+        // Save player
+        save(target.getUniqueId());
     }
 
 }
