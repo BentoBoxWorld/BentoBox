@@ -72,7 +72,7 @@ public class IslandTeamLeaveCommand extends ConfirmableCommand {
         }
         getIslands().setLeaveTeam(getWorld(), user.getUniqueId());
         // Clean the player
-        getPlayers().cleanLeavingPlayer(getWorld(), user);
+        getPlayers().cleanLeavingPlayer(getWorld(), user, false);
 
         // Add cooldown for this player and target
         if (getSettings().getInviteCooldown() > 0 && getParent() != null) {

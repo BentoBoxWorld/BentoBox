@@ -17,7 +17,6 @@ import world.bentobox.bentobox.managers.BlueprintsManager;
 import world.bentobox.bentobox.managers.island.NewIsland;
 import world.bentobox.bentobox.managers.island.NewIsland.Builder;
 import world.bentobox.bentobox.panels.IslandCreationPanel;
-import world.bentobox.bentobox.util.Util;
 
 /**
  * @author tastybento
@@ -178,45 +177,8 @@ public class IslandResetCommand extends ConfirmableCommand {
             // Remove player
             getIslands().removePlayer(getWorld(), memberUUID);
 
-            // Execute commands when leaving
-            Util.runCommands(member, getIWM().getOnLeaveCommands(island.getWorld()), "leave");
-
-            // Remove money inventory etc.
-            if (getIWM().isOnLeaveResetEnderChest(getWorld())) {
-                if (member.isOnline()) {
-                    member.getPlayer().getEnderChest().clear();
-                }
-                else {
-                    getPlayers().getPlayer(memberUUID).addToPendingKick(getWorld());
-                    getPlayers().save(memberUUID);
-                }
-            }
-            if (getIWM().isOnLeaveResetInventory(getWorld()) && !getIWM().isKickedKeepInventory(getWorld())) {
-                if (member.isOnline()) {
-                    member.getPlayer().getInventory().clear();
-                } else {
-                    getPlayers().getPlayer(memberUUID).addToPendingKick(getWorld());
-                    getPlayers().save(memberUUID);
-                }
-            }
-            if (getSettings().isUseEconomy() && getIWM().isOnLeaveResetMoney(getWorld())) {
-                getPlugin().getVault().ifPresent(vault -> vault.withdraw(member, vault.getBalance(member)));
-            }
-
-            // Reset the health
-            if (getIWM().isOnLeaveResetHealth(getWorld())) {
-                Util.resetHealth(member.getPlayer());
-            }
-
-            // Reset the hunger
-            if (getIWM().isOnLeaveResetHunger(getWorld())) {
-                member.getPlayer().setFoodLevel(20);
-            }
-
-            // Reset the XP
-            if (getIWM().isOnLeaveResetXP(getWorld())) {
-                member.getPlayer().setTotalExperience(0);
-            }
+            // Clean player
+            getPlayers().cleanLeavingPlayer(getWorld(), member, false);
 
             // Fire event
             TeamEvent.builder()

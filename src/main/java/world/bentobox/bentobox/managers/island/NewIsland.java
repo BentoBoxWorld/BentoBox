@@ -7,7 +7,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
-import org.bukkit.entity.Tameable;
 import org.bukkit.util.Vector;
 
 import world.bentobox.bentobox.BStats;
@@ -247,11 +246,6 @@ public class NewIsland {
      * @param loc - the new island location
      */
     private void cleanUpUser(Location loc) {
-        // Remove any tamed animals
-        world.getEntitiesByClass(Tameable.class).stream()
-        .filter(Tameable::isTamed)
-        .filter(t -> t.getOwner() != null && t.getOwner().equals(user.getPlayer()))
-        .forEach(t -> t.setOwner(null));
         // Clear any old home locations (they should be clear, but just in case)
         plugin.getPlayers().clearHomeLocations(world, user.getUniqueId());
         // Set home location

@@ -5,6 +5,7 @@ import java.util.*;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Tameable;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -512,11 +513,19 @@ public class PlayersManager {
      * Cleans the player when leaving an island
      * @param world - island world
      * @param target - target user
+     * @param kicked - true if player is being kicked
      * @since 1.15.4
      */
-    public void cleanLeavingPlayer(World world, User target) {
+    public void cleanLeavingPlayer(World world, User target, boolean kicked) {
         // Execute commands when leaving
         Util.runCommands(target, plugin.getIWM().getOnLeaveCommands(world), "leave");
+
+        // Remove any tamed animals
+        world.getEntitiesByClass(Tameable.class).stream()
+        .filter(Tameable::isTamed)
+        .filter(t -> t.getOwner() != null && t.getOwner().equals(target.getPlayer()))
+        .forEach(t -> t.setOwner(null));
+
         // Remove money inventory etc.
         if (plugin.getIWM().isOnLeaveResetEnderChest(world)) {
             if (target.isOnline()) {
@@ -525,7 +534,8 @@ public class PlayersManager {
                 getPlayer(target.getUniqueId()).addToPendingKick(world);
             }
         }
-        if (plugin.getIWM().isOnLeaveResetInventory(world) && !plugin.getIWM().isKickedKeepInventory(world)) {
+        if ((!kicked && plugin.getIWM().isOnLeaveResetInventory(world))
+                || (kicked && !plugin.getIWM().isKickedKeepInventory(world))) {
             if (target.isOnline()) {
                 target.getPlayer().getInventory().clear();
             } else {
@@ -533,7 +543,7 @@ public class PlayersManager {
             }
         }
         if (plugin.getSettings().isUseEconomy() && plugin.getIWM().isOnLeaveResetMoney(world)) {
-            plugin.getVault().ifPresent(vault -> vault.withdraw(target, vault.getBalance(target)));
+            plugin.getVault().ifPresent(vault -> vault.withdraw(target, vault.getBalance(target), world));
         }
         // Reset the health
         if (plugin.getIWM().isOnLeaveResetHealth(world)) {
