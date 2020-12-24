@@ -372,14 +372,24 @@ public class PortalTeleportationListener implements Listener {
      */
     private void handleStandardNetherOrEnd(PlayerEntityPortalEvent e, World fromWorld, World overWorld, Environment env) {
         if (fromWorld.getEnvironment() != env) {
+            World toWorld = getNetherEndWorld(overWorld, env);
+            Location spawnPoint = toWorld.getSpawnLocation();
+            // If spawn is set as 0,63,0 in the End then move it to 100, 50 ,0.
+            if (env.equals(Environment.THE_END) && spawnPoint.toVector().equals(new Vector(0,63,0))) {
+                // Set to the default end spawn
+                spawnPoint = new Location(toWorld, 100, 50, 0);
+                toWorld.setSpawnLocation(100, 50, 0);
+            }
             if (isAllowedOnServer(env)) {
                 // To Standard Nether or end
-                e.setTo(getNetherEndWorld(overWorld, env).getSpawnLocation());
+                plugin.logDebug("Spawn = " + spawnPoint);
+                e.setTo(spawnPoint);
             } else {
-                // Teleport to standard nether
+                plugin.logDebug("Spawn = " + spawnPoint);
+                // Teleport to standard nether or end
                 new SafeSpotTeleport.Builder(plugin)
                 .entity(e.getEntity())
-                .location(getNetherEndWorld(overWorld, env).getSpawnLocation())
+                .location(spawnPoint)
                 .portal()
                 .build();
             }
