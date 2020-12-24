@@ -8,7 +8,7 @@ import org.bukkit.event.Cancellable;
 import world.bentobox.bentobox.api.events.BentoBoxEvent;
 
 /**
- * Fired when a team event happens.
+ * Fired when a command event happens.
  *
  * @author tastybento
  */
