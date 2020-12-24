@@ -263,7 +263,7 @@ public class Island implements DataObject {
     /**
      * Unbans the target player from this Island.
      * <br/>
-     * Calling this method won't call the {@link world.bentobox.bentobox.api.events.island.IslandEvent.IslandUnbanEvent}.
+     * Calling this method won't call the {@link world.bentobox.bentobox.api.events.island.IslandUnbanEvent}.
      * @param issuer UUID of the issuer, may be null.
      *               Whenever possible, one should be provided.
      * @param target UUID of the target, must be provided.

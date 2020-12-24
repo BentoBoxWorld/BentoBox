@@ -2,6 +2,8 @@ package world.bentobox.bentobox.api.events;
 
 import java.util.UUID;
 
+import org.bukkit.event.HandlerList;
+
 /**
  * Fired when a message is going to an offline player
  *
@@ -11,6 +13,16 @@ import java.util.UUID;
 public class OfflineMessageEvent extends BentoBoxEvent {
     private final UUID offlinePlayer;
     private final String message;
+    private static final HandlerList handlers = new HandlerList();
+
+    @Override
+    public HandlerList getHandlers() {
+        return getHandlerList();
+    }
+
+    public static HandlerList getHandlerList() {
+        return handlers;
+    }
 
     /**
      * @param offlinePlayer - offline player

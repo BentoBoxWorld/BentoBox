@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.Objects;
 
 import org.bukkit.event.Event;
-import org.bukkit.event.HandlerList;
 
 import world.bentobox.bentobox.BentoBox;
 
@@ -20,8 +19,6 @@ import world.bentobox.bentobox.BentoBox;
  * @since 1.5.3
  */
 public abstract class BentoBoxEvent extends Event {
-
-    private static final HandlerList handlers = new HandlerList();
 
     /**
      * The default constructor is defined for cleaner code.
@@ -38,15 +35,6 @@ public abstract class BentoBoxEvent extends Event {
      */
     public BentoBoxEvent(boolean async) {
         super(async);
-    }
-
-    @Override
-    public HandlerList getHandlers() {
-        return getHandlerList();
-    }
-
-    public static HandlerList getHandlerList() {
-        return handlers;
     }
 
     /**

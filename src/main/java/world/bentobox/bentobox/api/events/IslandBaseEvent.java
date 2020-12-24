@@ -12,7 +12,7 @@ import world.bentobox.bentobox.database.objects.Island;
 /**
  * @author Poslovitch
  */
-public class IslandBaseEvent extends BentoBoxEvent implements Cancellable {
+public abstract class IslandBaseEvent extends BentoBoxEvent implements Cancellable {
     private boolean cancelled;
 
     protected final Island island;
@@ -44,8 +44,8 @@ public class IslandBaseEvent extends BentoBoxEvent implements Cancellable {
         this.location = location;
         rawEvent = null;
     }
-    
-   /**
+
+    /**
      * @param island - island
      * @param playerUUID - the player's UUID
      * @param admin - true if ths is due to an admin event
@@ -95,7 +95,7 @@ public class IslandBaseEvent extends BentoBoxEvent implements Cancellable {
     public Location getLocation() {
         return location;
     }
-    
+
     /**
      * @return the raw event
      */

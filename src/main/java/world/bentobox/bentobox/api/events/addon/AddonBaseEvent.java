@@ -8,7 +8,7 @@ import world.bentobox.bentobox.api.events.BentoBoxEvent;
 /**
  * @author Poslovitch
  */
-public class AddonBaseEvent extends BentoBoxEvent {
+public abstract class AddonBaseEvent extends BentoBoxEvent {
 
     private final Addon addon;
     private final Map<String, Object> keyValues;

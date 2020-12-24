@@ -14,8 +14,10 @@ import world.bentobox.bentobox.BStats;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
+import world.bentobox.bentobox.api.events.island.IslandCreateEvent;
 import world.bentobox.bentobox.api.events.island.IslandEvent;
 import world.bentobox.bentobox.api.events.island.IslandEvent.Reason;
+import world.bentobox.bentobox.api.events.island.IslandResetEvent;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.BlueprintsManager;
@@ -188,10 +190,10 @@ public class NewIsland {
         // Get the new BlueprintBundle if it was changed
         switch (reason) {
         case CREATE:
-            name = ((IslandEvent.IslandCreateEvent) event).getBlueprintBundle().getUniqueId();
+            name = ((IslandCreateEvent) event).getBlueprintBundle().getUniqueId();
             break;
         case RESET:
-            name = ((IslandEvent.IslandResetEvent) event).getBlueprintBundle().getUniqueId();
+            name = ((IslandResetEvent) event).getBlueprintBundle().getUniqueId();
             break;
         default:
             break;
