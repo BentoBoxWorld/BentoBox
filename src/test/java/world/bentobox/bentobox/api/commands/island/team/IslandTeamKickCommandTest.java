@@ -23,8 +23,6 @@ import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.junit.After;
@@ -341,10 +339,7 @@ public class IslandTeamKickCommandTest {
         verify(im).removePlayer(any(), eq(notUUID));
         verify(user).sendMessage("commands.island.team.kick.success", TextVariables.NAME, "poslovitch");
         verify(target, Mockito.never()).getInventory();
-        verify(pm).getPlayer(notUUID);
-        verify(targetPlayer).addToPendingKick(any());
-
-
+        verify(pm).cleanLeavingPlayer(any(), any(User.class), eq(true));
     }
 
     /**
@@ -364,43 +359,6 @@ public class IslandTeamKickCommandTest {
         assertFalse(itl.execute(user, itl.getLabel(), Collections.singletonList("poslovitch")));
         // Confirmation required
         verify(user).sendMessage(eq("commands.confirmation.confirm"), eq("[seconds]"), eq("0"));
-    }
-
-    /**
-     * Test method for {@link IslandTeamKickCommand#execute(User, String, java.util.List)}
-     */
-    @Test
-    public void testExecuteTestResets() {
-        when(s.isKickConfirmation()).thenReturn(false);
-        // Create the target user
-        when(pm.getUUID(any())).thenReturn(notUUID);
-        when(target.getName()).thenReturn("poslovitch");
-        // Target's inventory
-        PlayerInventory inv = mock(PlayerInventory.class);
-        when(target.getInventory()).thenReturn(inv);
-        Inventory enderChest = mock(Inventory.class);
-        when(target.getEnderChest()).thenReturn(enderChest);
-
-        // Set the user in Users
-        Set<UUID> members = new HashSet<>();
-        // Add the team members
-        members.add(notUUID);
-        when(im.getMembers(any(), any())).thenReturn(members);
-
-        // Require resets
-        when(iwm.isOnLeaveResetEnderChest(any())).thenReturn(true);
-        when(iwm.isOnLeaveResetInventory(any())).thenReturn(true);
-        when(iwm.isOnLeaveResetMoney(any())).thenReturn(true);
-
-        IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
-        // Kick the team member
-        assertTrue(itl.execute(user, itl.getLabel(), Collections.singletonList("poslovitch")));
-
-        // Verify
-        verify(im).removePlayer(any(), eq(notUUID));
-        verify(user).sendMessage("commands.island.team.kick.success", TextVariables.NAME, "poslovitch");
-        verify(enderChest).clear();
-        verify(inv).clear();
     }
 
     /**
