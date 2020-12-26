@@ -10,8 +10,8 @@ general:
   errors:
     command-cancelled: "&4Komut iptal edildi!"
     no-permission: "&4Bu izne sahip degilsin! Ada açamıyorsan &e/ada"
-    use-in-game: "&4Bunu sadece oyundayken kullanabilirsin!"
-    no-team: "&4Senin bir takımın yok!"
+    use-in-game: "&4Bu komutu sadece oyundayken kullanabilirsin!"
+    no-team: "&4Bir takımda değilsin!"
     no-island: "&4Bir adaya sahip degilsin!"
     player-has-island: "&4Oyuncunun zaten adası var!"
     player-has-no-island: "&4Oyuncunun adası yok!"
@@ -28,6 +28,8 @@ general:
     you-must-wait: "&4Komut yazabilmek için &e[number] &4saniye beklemelisin!"
     must-be-positive-number: "&e[number] &4bu pozitif bir sayı değil!"
     no-safe-location: "&4Adanda korumalı bölge bulunamadı!"
+    insufficient-rank: "&c Rankınız bunu yapacak kadar yüksek değil! (& 7 [rank] &
+      c)"
   worlds:
     overworld: Overworld
     nether: Nether
@@ -47,13 +49,13 @@ commands:
     help:
       description: Admin komutları
     resets:
-      description: Oyuncunun ada sıfırlamasını ayarla.
+      description: Oyuncunun ada sıfırlamasını sıfırla.
       set:
         description: Oyuncunun ada sıfırlamasını ayarla.
         parameters: "<player> <resets>"
         success: "&d[name] &5oyuncusunun sıfırlama hakkı &e[number] &5yapıldı."
       reset:
-        description: Oyuncunun ada sıfırlamasını sıfırla.
+        description: Oyuncunun ada sıfırlama sayısını 0 yap.
         parameters: "<player>"
         success-everyone: Herkesin ada sıfırlama hakkı &e0 &ayapıldı.
         success: "&d[name] &9oyuncusunun sıfırlama hakkı &e0 &9yapıldı."
@@ -75,7 +77,7 @@ commands:
       purge-in-progress: "&cTemizleme devam ediyor. Durdurmak için durdurma komutunu
         kullanın."
       number-error: "&cGün sayısını yazmalısınız."
-      confirm: "&6Ada temizlemesini başlatmak için onaylayın: &5[label]"
+      confirm: "&6Ada temizlemesini başlatmak için onaylayın: &5[label] purge confirm"
       completed: "&cTemizleme durduruldu."
       see-console-for-status: |-
         Temizleme başlatıldı. İlerlemeyi
@@ -95,6 +97,8 @@ commands:
       status:
         status: "&b [purgeable] &a adadan &b [purged]'si temizlendi &7(&b[percentage]
           %&7)&a."
+        description: temizlemenin durumunu gösterir
+      no-purge-in-progress: "&c Şu anda devam eden bir temizleme işlemi yok."
     team:
       add:
         parameters: "<owner> <player>"
