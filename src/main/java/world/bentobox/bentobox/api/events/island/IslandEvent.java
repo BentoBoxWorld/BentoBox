@@ -192,7 +192,9 @@ public class IslandEvent extends IslandBaseEvent {
      * Cancellation will result in the expel being aborted.
      *
      * @since 1.4.0
+     * @deprecated This event is moving to its own class in 1.16.0
      */
+    @Deprecated
     public static class IslandExpelEvent extends IslandBaseEvent {
         private IslandExpelEvent(Island island, UUID player, boolean admin, Location location) {
             // Final variables have to be declared in the constructor
@@ -206,7 +208,9 @@ public class IslandEvent extends IslandBaseEvent {
      * Cancellation will result in the ban being aborted.
      *
      * @since 1.1
+     * @deprecated This event is moving to its own class in 1.16.0
      */
+    @Deprecated
     public static class IslandBanEvent extends IslandBaseEvent {
         private IslandBanEvent(Island island, UUID player, boolean admin, Location location) {
             // Final variables have to be declared in the constructor
@@ -220,7 +224,9 @@ public class IslandEvent extends IslandBaseEvent {
      * Cancellation will result in the unban being aborted.
      *
      * @since 1.1
+     * @deprecated This event is moving to its own class in 1.16.0
      */
+    @Deprecated
     public static class IslandUnbanEvent extends IslandBaseEvent {
         public IslandUnbanEvent(Island island, UUID player, boolean admin, Location location) {
             // Final variables have to be declared in the constructor
@@ -232,19 +238,23 @@ public class IslandEvent extends IslandBaseEvent {
      * Fired when attempting to make a new island.
      * May be cancelled. No island object exists at this point.
      * @since 1.15.1
+     * @deprecated This event is moving to its own class in 1.16.0
      */
+    @Deprecated
     public static class IslandPreCreateEvent extends IslandBaseEvent {
         private IslandPreCreateEvent(UUID player) {
             // Final variables have to be declared in the constructor
             super(null, player, false, null);
         }
     }
-    
+
     /**
      * Fired when an island is going to be created.
      * May be cancelled.
      *
+     * @deprecated This event is moving to its own class in 1.16.0
      */
+    @Deprecated
     public static class IslandCreateEvent extends IslandBaseEvent {
         private @NonNull BlueprintBundle blueprintBundle;
 
@@ -272,7 +282,9 @@ public class IslandEvent extends IslandBaseEvent {
     /**
      * Fired when an island is created.
      *
+     * @deprecated This event is moving to its own class in 1.16.0
      */
+    @Deprecated
     public static class IslandCreatedEvent extends IslandBaseEvent {
         private IslandCreatedEvent(Island island, UUID player, boolean admin, Location location) {
             // Final variables have to be declared in the constructor
@@ -283,7 +295,9 @@ public class IslandEvent extends IslandBaseEvent {
      * Fired when an island is going to be deleted.
      * May be cancelled.
      *
+     * @deprecated This event is moving to its own class in 1.16.0
      */
+    @Deprecated
     public static class IslandDeleteEvent extends IslandBaseEvent {
         private IslandDeleteEvent(Island island, UUID player, boolean admin, Location location) {
             // Final variables have to be declared in the constructor
@@ -294,7 +308,9 @@ public class IslandEvent extends IslandBaseEvent {
      * Fired when an island chunks are going to be deleted.
      * May be cancelled.
      *
+     * @deprecated This event is moving to its own class in 1.16.0
      */
+    @Deprecated
     public static class IslandDeleteChunksEvent extends IslandBaseEvent {
         private final IslandDeletion deletedIslandInfo;
 
@@ -332,7 +348,9 @@ public class IslandEvent extends IslandBaseEvent {
     /**
      * Fired when a player is unregistered from an island.
      * @since 1.3.0
+     * @deprecated This event is moving to its own class in 1.16.0
      */
+    @Deprecated
     public static class IslandUnregisteredEvent extends IslandBaseEvent {
         private IslandUnregisteredEvent(Island island, UUID player, boolean admin, Location location) {
             super(island, player, admin, location);
@@ -342,7 +360,9 @@ public class IslandEvent extends IslandBaseEvent {
     /**
      * Fired when a player is registered from an island.
      * @since 1.3.0
+     * @deprecated This event is moving to its own class in 1.16.0
      */
+    @Deprecated
     public static class IslandRegisteredEvent extends IslandBaseEvent {
         private IslandRegisteredEvent(Island island, UUID player, boolean admin, Location location) {
             super(island, player, admin, location);
@@ -352,7 +372,9 @@ public class IslandEvent extends IslandBaseEvent {
     /**
      * Fired when an island is reserved for a player
      * @since 1.12.0
+     * @deprecated This event is moving to its own class in 1.16.0
      */
+    @Deprecated
     public static class IslandReservedEvent extends IslandBaseEvent {
         private IslandReservedEvent(Island island, UUID player, boolean admin, Location location) {
             super(island, player, admin, location);
@@ -362,17 +384,19 @@ public class IslandEvent extends IslandBaseEvent {
     /**
      * Fired when an a player enters an island.
      * Cancellation has no effect.
+     * @deprecated This event is moving to its own class in 1.16.0
      */
+    @Deprecated
     public static class IslandEnterEvent extends IslandBaseEvent {
-        
+
         private final @Nullable Island fromIsland;
-        
+
         private IslandEnterEvent(Island island, UUID player, boolean admin, Location location, Island fromIsland, Event rawEvent) {
             // Final variables have to be declared in the constructor
             super(island, player, admin, location, rawEvent);
             this.fromIsland = fromIsland;
         }
-        
+
         @Nullable
         public Island getFromIsland() {
             return fromIsland;
@@ -381,29 +405,33 @@ public class IslandEvent extends IslandBaseEvent {
     /**
      * Fired when a player exits an island.
      * Cancellation has no effect.
+     * @deprecated This event is moving to its own class in 1.16.0
      */
+    @Deprecated
     public static class IslandExitEvent extends IslandBaseEvent {
-        
+
         private final @Nullable Island toIsland;
 
-        
+
         private IslandExitEvent(Island island, UUID player, boolean admin, Location location, Island toIsland, Event rawEvent) {
             // Final variables have to be declared in the constructor
             super(island, player, admin, location, rawEvent);
             this.toIsland = toIsland;
         }
-        
+
         @Nullable
         public Island getToIsland() {
             return toIsland;
         }
-     
-        
+
+
     }
     /**
      * Fired when an island is locked
      *
+     * @deprecated This event is moving to its own class in 1.16.0
      */
+    @Deprecated
     public static class IslandLockEvent extends IslandBaseEvent {
         private IslandLockEvent(Island island, UUID player, boolean admin, Location location) {
             // Final variables have to be declared in the constructor
@@ -413,7 +441,9 @@ public class IslandEvent extends IslandBaseEvent {
     /**
      * Fired when an island is unlocked
      *
+     * @deprecated This event is moving to its own class in 1.16.0
      */
+    @Deprecated
     public static class IslandUnlockEvent extends IslandBaseEvent {
         private IslandUnlockEvent(Island island, UUID player, boolean admin, Location location) {
             // Final variables have to be declared in the constructor
@@ -424,7 +454,9 @@ public class IslandEvent extends IslandBaseEvent {
     /**
      * Fired before an island has its player data cleared, e.g., just before a reset
      * @since 1.12.0
+     * @deprecated This event is moving to its own class in 1.16.0
      */
+    @Deprecated
     public static class IslandPreclearEvent extends IslandBaseEvent {
         private final @NonNull Island oldIsland;
 
@@ -447,7 +479,9 @@ public class IslandEvent extends IslandBaseEvent {
     /**
      * Fired when an island is going to be reset.
      * May be cancelled.
+     * @deprecated This event is moving to its own class in 1.16.0
      */
+    @Deprecated
     public static class IslandResetEvent extends IslandBaseEvent {
         private final @NonNull Island oldIsland;
         private @NonNull BlueprintBundle blueprintBundle;
@@ -486,7 +520,9 @@ public class IslandEvent extends IslandBaseEvent {
     /**
      * Fired after an island is reset
      *
+     * @deprecated This event is moving to its own class in 1.16.0
      */
+    @Deprecated
     public static class IslandResettedEvent extends IslandBaseEvent {
         private final @NonNull Island oldIsland;
 
@@ -508,7 +544,9 @@ public class IslandEvent extends IslandBaseEvent {
     /**
      * Fired when something happens to the island not covered by other events
      *
+     * @deprecated This event is moving to its own class in 1.16.0
      */
+    @Deprecated
     public static class IslandGeneralEvent extends IslandBaseEvent {
         private IslandGeneralEvent(Island island, UUID player, boolean admin, Location location) {
             // Final variables have to be declared in the constructor
@@ -520,7 +558,9 @@ public class IslandEvent extends IslandBaseEvent {
     /**
      * Fired when island protection range is changed.
      * @since 1.11.0
+     * @deprecated This event is moving to its own class in 1.16.0
      */
+    @Deprecated
     public static class IslandProtectionRangeChangeEvent extends IslandBaseEvent {
         /**
          * New protection range value.
@@ -671,7 +711,7 @@ public class IslandEvent extends IslandBaseEvent {
             location = center;
             return this;
         }
-        
+
         public IslandEventBuilder rawEvent(Event event) {
             rawEvent = event;
             return this;

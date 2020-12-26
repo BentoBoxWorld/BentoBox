@@ -25,24 +25,43 @@ public class AddonEvent {
         return new AddonEventBuilder();
     }
 
+    /**
+     * @deprecated This event is moving to its own class in 1.16.0
+     */
+    @Deprecated
     public class AddonEnableEvent extends AddonBaseEvent {
         private AddonEnableEvent(Addon addon, Map<String, Object> keyValues) {
             // Final variables have to be declared in the constructor
             super(addon, keyValues);
         }
     }
+
+    /**
+     * @deprecated This event is moving to its own class in 1.16.0
+     */
+    @Deprecated
     public class AddonDisableEvent extends AddonBaseEvent {
         private AddonDisableEvent(Addon addon, Map<String, Object> keyValues) {
             // Final variables have to be declared in the constructor
             super(addon, keyValues);
         }
     }
+
+    /**
+     * @deprecated This event is moving to its own class in 1.16.0
+     */
+    @Deprecated
     public class AddonLoadEvent extends AddonBaseEvent {
         private AddonLoadEvent(Addon addon, Map<String, Object> keyValues) {
             // Final variables have to be declared in the constructor
             super(addon, keyValues);
         }
     }
+
+    /**
+     * @deprecated This event is moving to its own class in 1.16.0
+     */
+    @Deprecated
     public class AddonGeneralEvent extends AddonBaseEvent {
         private AddonGeneralEvent(Addon addon, Map<String, Object> keyValues) {
             // Final variables have to be declared in the constructor
