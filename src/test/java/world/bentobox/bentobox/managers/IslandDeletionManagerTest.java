@@ -36,7 +36,7 @@ import org.powermock.reflect.Whitebox;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.events.BentoBoxReadyEvent;
-import world.bentobox.bentobox.api.events.island.IslandEvent.IslandDeleteChunksEvent;
+import world.bentobox.bentobox.api.events.island.IslandDeleteChunksEvent;
 import world.bentobox.bentobox.database.DatabaseSetup.DatabaseType;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.database.objects.IslandDeletion;

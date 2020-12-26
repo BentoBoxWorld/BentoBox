@@ -18,7 +18,7 @@ import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.Flags;
 
 /**
- * Handles {@link Flags#ENTER_EXIT_MESSAGES} flag and {@link world.bentobox.bentobox.api.events.island.IslandEvent.IslandExitEvent} and {@link world.bentobox.bentobox.api.events.island.IslandEvent.IslandEnterEvent}.
+ * Handles {@link Flags#ENTER_EXIT_MESSAGES} flag and {@link world.bentobox.bentobox.api.events.island.IslandExitEvent} and {@link world.bentobox.bentobox.api.events.island.IslandEnterEvent}.
  * @author tastybento
  */
 public class EnterExitListener extends FlagListener {

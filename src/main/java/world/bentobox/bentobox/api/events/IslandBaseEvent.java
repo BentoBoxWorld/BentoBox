@@ -1,5 +1,6 @@
 package world.bentobox.bentobox.api.events;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import org.bukkit.Location;
@@ -10,9 +11,9 @@ import org.eclipse.jdt.annotation.Nullable;
 import world.bentobox.bentobox.database.objects.Island;
 
 /**
- * @author Poslovitch
+ * @author Poslovitch, tastybento
  */
-public class IslandBaseEvent extends BentoBoxEvent implements Cancellable {
+public abstract class IslandBaseEvent extends BentoBoxEvent implements Cancellable {
     private boolean cancelled;
 
     protected final Island island;
@@ -20,6 +21,7 @@ public class IslandBaseEvent extends BentoBoxEvent implements Cancellable {
     protected final boolean admin;
     protected final Location location;
     protected final Event rawEvent;
+    protected IslandBaseEvent newEvent;
 
     public IslandBaseEvent(Island island) {
         super();
@@ -44,8 +46,8 @@ public class IslandBaseEvent extends BentoBoxEvent implements Cancellable {
         this.location = location;
         rawEvent = null;
     }
-    
-   /**
+
+    /**
      * @param island - island
      * @param playerUUID - the player's UUID
      * @param admin - true if ths is due to an admin event
@@ -95,7 +97,7 @@ public class IslandBaseEvent extends BentoBoxEvent implements Cancellable {
     public Location getLocation() {
         return location;
     }
-    
+
     /**
      * @return the raw event
      */
@@ -112,5 +114,21 @@ public class IslandBaseEvent extends BentoBoxEvent implements Cancellable {
     @Override
     public void setCancelled(boolean cancel) {
         cancelled = cancel;
+    }
+
+    /**
+     * Get new event if this event is deprecated
+     * @return optional newEvent or empty if there is none
+     */
+    public Optional<IslandBaseEvent> getNewEvent() {
+        return Optional.ofNullable(newEvent);
+    }
+
+    /**
+     * Set the newer event so it can be obtained if this event is deprecated
+     * @param newEvent the newEvent to set
+     */
+    public void setNewEvent(IslandBaseEvent newEvent) {
+        this.newEvent = newEvent;
     }
 }

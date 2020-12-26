@@ -12,8 +12,8 @@ import org.bukkit.event.Listener;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.events.BentoBoxReadyEvent;
-import world.bentobox.bentobox.api.events.island.IslandEvent.IslandDeleteChunksEvent;
-import world.bentobox.bentobox.api.events.island.IslandEvent.IslandDeletedEvent;
+import world.bentobox.bentobox.api.events.island.IslandDeleteChunksEvent;
+import world.bentobox.bentobox.api.events.island.IslandDeletedEvent;
 import world.bentobox.bentobox.database.Database;
 import world.bentobox.bentobox.database.objects.IslandDeletion;
 import world.bentobox.bentobox.util.DeleteIslandChunks;

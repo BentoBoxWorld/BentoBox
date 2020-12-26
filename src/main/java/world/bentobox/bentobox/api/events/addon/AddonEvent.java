@@ -26,7 +26,8 @@ public class AddonEvent {
     }
 
     /**
-     * @deprecated This event is moving to its own class in 1.16.0
+     * @deprecated This event is moving to its own class.
+     * Use {@link world.bentobox.bentobox.api.events.addon.AddonEnableEvent}
      */
     @Deprecated
     public class AddonEnableEvent extends AddonBaseEvent {
@@ -37,7 +38,8 @@ public class AddonEvent {
     }
 
     /**
-     * @deprecated This event is moving to its own class in 1.16.0
+     * @deprecated This event is moving to its own class.
+     * Use {@link world.bentobox.bentobox.api.events.addon.AddonDisableEvent}
      */
     @Deprecated
     public class AddonDisableEvent extends AddonBaseEvent {
@@ -48,7 +50,8 @@ public class AddonEvent {
     }
 
     /**
-     * @deprecated This event is moving to its own class in 1.16.0
+     * @deprecated This event is moving to its own class.
+     * Use {@link world.bentobox.bentobox.api.events.addon.AddonLoadEvent}
      */
     @Deprecated
     public class AddonLoadEvent extends AddonBaseEvent {
@@ -59,7 +62,8 @@ public class AddonEvent {
     }
 
     /**
-     * @deprecated This event is moving to its own class in 1.16.0
+     * @deprecated This event is moving to its own class.
+     * Use {@link world.bentobox.bentobox.api.events.addon.AddonGeneralEvent}
      */
     @Deprecated
     public class AddonGeneralEvent extends AddonBaseEvent {
@@ -95,7 +99,7 @@ public class AddonEvent {
             return this;
         }
 
-        private AddonBaseEvent getEvent() {
+        private AddonBaseEvent getDeprecatedEvent() {
             switch (reason) {
             case ENABLE:
                 return new AddonEnableEvent(addon, keyValues);
@@ -108,12 +112,31 @@ public class AddonEvent {
             }
         }
 
+        private AddonBaseEvent getEvent() {
+            switch (reason) {
+            case ENABLE:
+                return new world.bentobox.bentobox.api.events.addon.AddonEnableEvent(addon, keyValues);
+            case DISABLE:
+                return new world.bentobox.bentobox.api.events.addon.AddonDisableEvent(addon, keyValues);
+            case LOAD:
+                return new world.bentobox.bentobox.api.events.addon.AddonLoadEvent(addon, keyValues);
+            default:
+                return new world.bentobox.bentobox.api.events.addon.AddonGeneralEvent(addon, keyValues);
+            }
+        }
+
         /**
          * Build and fire event
-         * @return event
+         * @return event - deprecated event. To obtain the new event use {@link AddonBaseEvent#getNewEvent()}
          */
         public AddonBaseEvent build() {
-            AddonBaseEvent e = getEvent();
+            // Call new event
+            AddonBaseEvent newEvent = getEvent();
+            Bukkit.getPluginManager().callEvent(newEvent);
+            // Get the old event
+            AddonBaseEvent e = getDeprecatedEvent();
+            e.setNewEvent(newEvent);
+            // Call deprecated event
             Bukkit.getPluginManager().callEvent(e);
             return e;
         }

@@ -112,7 +112,7 @@ public class IslandExpelCommand extends CompositeCommand {
                 .admin(false)
                 .reason(IslandEvent.Reason.EXPEL)
                 .build();
-        if (expelEvent.isCancelled()) {
+        if (expelEvent.getNewEvent().map(IslandBaseEvent::isCancelled).orElse(expelEvent.isCancelled())) {
             user.sendMessage(CANNOT_EXPEL);
             return false;
         }

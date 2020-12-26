@@ -2,6 +2,8 @@ package world.bentobox.bentobox.api.events.flags;
 
 import java.util.UUID;
 
+import org.bukkit.event.HandlerList;
+
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.database.objects.Island;
 
@@ -13,6 +15,16 @@ public class FlagSettingChangeEvent extends FlagChangeEvent {
 
     private final Island island;
     private final boolean setTo;
+    private static final HandlerList handlers = new HandlerList();
+
+    @Override
+    public HandlerList getHandlers() {
+        return getHandlerList();
+    }
+
+    public static HandlerList getHandlerList() {
+        return handlers;
+    }
 
     /**
      * Event that fires when an island setting flag is changed

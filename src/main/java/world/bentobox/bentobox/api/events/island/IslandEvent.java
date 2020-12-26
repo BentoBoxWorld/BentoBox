@@ -5,6 +5,7 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.event.Event;
+import org.bukkit.event.HandlerList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
@@ -22,6 +23,16 @@ import world.bentobox.bentobox.lists.Flags;
 public class IslandEvent extends IslandBaseEvent {
 
     private final Reason reason;
+    private static final HandlerList handlers = new HandlerList();
+
+    @Override
+    public HandlerList getHandlers() {
+        return getHandlerList();
+    }
+
+    public static HandlerList getHandlerList() {
+        return handlers;
+    }
 
     /**
      * Fired every time an island event occurs. For developers who just want one event and will use an enum to track the reason
@@ -164,8 +175,11 @@ public class IslandEvent extends IslandBaseEvent {
     /**
      * Fired when a player's rank has changed on an island.
      * Cancellation has no effect.
+     * @deprecated This event is moving to its own class.
+     * Use {@link world.bentobox.bentobox.api.events.island.IslandRankChangeEvent}
      * @since 1.13.0
      */
+    @Deprecated
     public static class IslandRankChangeEvent extends IslandBaseEvent {
 
         private final int oldRank;
@@ -192,7 +206,8 @@ public class IslandEvent extends IslandBaseEvent {
      * Cancellation will result in the expel being aborted.
      *
      * @since 1.4.0
-     * @deprecated This event is moving to its own class in 1.16.0
+     * @deprecated This event is moving to its own class.
+     * Use {@link world.bentobox.bentobox.api.events.island.IslandExpelEvent}
      */
     @Deprecated
     public static class IslandExpelEvent extends IslandBaseEvent {
@@ -208,7 +223,8 @@ public class IslandEvent extends IslandBaseEvent {
      * Cancellation will result in the ban being aborted.
      *
      * @since 1.1
-     * @deprecated This event is moving to its own class in 1.16.0
+     * @deprecated This event is moving to its own class.
+     * Use {@link world.bentobox.bentobox.api.events.island.IslandBanEvent}
      */
     @Deprecated
     public static class IslandBanEvent extends IslandBaseEvent {
@@ -224,7 +240,8 @@ public class IslandEvent extends IslandBaseEvent {
      * Cancellation will result in the unban being aborted.
      *
      * @since 1.1
-     * @deprecated This event is moving to its own class in 1.16.0
+     * @deprecated This event is moving to its own class.
+     * Use {@link world.bentobox.bentobox.api.events.island.IslandUnbanEvent}
      */
     @Deprecated
     public static class IslandUnbanEvent extends IslandBaseEvent {
@@ -238,7 +255,8 @@ public class IslandEvent extends IslandBaseEvent {
      * Fired when attempting to make a new island.
      * May be cancelled. No island object exists at this point.
      * @since 1.15.1
-     * @deprecated This event is moving to its own class in 1.16.0
+     * @deprecated This event is moving to its own class.
+     * Use {@link world.bentobox.bentobox.api.events.island.IslandPreCreateEvent}
      */
     @Deprecated
     public static class IslandPreCreateEvent extends IslandBaseEvent {
@@ -252,7 +270,8 @@ public class IslandEvent extends IslandBaseEvent {
      * Fired when an island is going to be created.
      * May be cancelled.
      *
-     * @deprecated This event is moving to its own class in 1.16.0
+     * @deprecated This event is moving to its own class.
+     * Use {@link world.bentobox.bentobox.api.events.island.IslandCreateEvent}
      */
     @Deprecated
     public static class IslandCreateEvent extends IslandBaseEvent {
@@ -282,7 +301,8 @@ public class IslandEvent extends IslandBaseEvent {
     /**
      * Fired when an island is created.
      *
-     * @deprecated This event is moving to its own class in 1.16.0
+     * @deprecated This event is moving to its own class.
+     * Use {@link world.bentobox.bentobox.api.events.island.IslandCreatedEvent}
      */
     @Deprecated
     public static class IslandCreatedEvent extends IslandBaseEvent {
@@ -295,7 +315,8 @@ public class IslandEvent extends IslandBaseEvent {
      * Fired when an island is going to be deleted.
      * May be cancelled.
      *
-     * @deprecated This event is moving to its own class in 1.16.0
+     * @deprecated This event is moving to its own class.
+     * Use {@link world.bentobox.bentobox.api.events.island.IslandDeleteEvent}
      */
     @Deprecated
     public static class IslandDeleteEvent extends IslandBaseEvent {
@@ -308,7 +329,8 @@ public class IslandEvent extends IslandBaseEvent {
      * Fired when an island chunks are going to be deleted.
      * May be cancelled.
      *
-     * @deprecated This event is moving to its own class in 1.16.0
+     * @deprecated This event is moving to its own class.
+     * Use {@link world.bentobox.bentobox.api.events.island.IslandDeleteChunksEvent}
      */
     @Deprecated
     public static class IslandDeleteChunksEvent extends IslandBaseEvent {
@@ -330,7 +352,11 @@ public class IslandEvent extends IslandBaseEvent {
      * the ownership of the island may have been removed. This event is just for detecting
      * that the island blocks are going to be removed.
      *
+     * @deprecated This event is moving to its own class.
+     * Use {@link world.bentobox.bentobox.api.events.island.
+     *
      */
+    @Deprecated
     public static class IslandDeletedEvent extends IslandBaseEvent {
         private final IslandDeletion deletedIslandInfo;
 
@@ -348,7 +374,8 @@ public class IslandEvent extends IslandBaseEvent {
     /**
      * Fired when a player is unregistered from an island.
      * @since 1.3.0
-     * @deprecated This event is moving to its own class in 1.16.0
+     * @deprecated This event is moving to its own class.
+     * Use {@link world.bentobox.bentobox.api.events.island.IslandUnregisteredEvent}
      */
     @Deprecated
     public static class IslandUnregisteredEvent extends IslandBaseEvent {
@@ -360,7 +387,8 @@ public class IslandEvent extends IslandBaseEvent {
     /**
      * Fired when a player is registered from an island.
      * @since 1.3.0
-     * @deprecated This event is moving to its own class in 1.16.0
+     * @deprecated This event is moving to its own class.
+     * Use {@link world.bentobox.bentobox.api.events.island.IslandRegisteredEvent}
      */
     @Deprecated
     public static class IslandRegisteredEvent extends IslandBaseEvent {
@@ -372,7 +400,8 @@ public class IslandEvent extends IslandBaseEvent {
     /**
      * Fired when an island is reserved for a player
      * @since 1.12.0
-     * @deprecated This event is moving to its own class in 1.16.0
+     * @deprecated This event is moving to its own class.
+     * Use {@link world.bentobox.bentobox.api.events.island.IslandReservedEvent}
      */
     @Deprecated
     public static class IslandReservedEvent extends IslandBaseEvent {
@@ -384,7 +413,8 @@ public class IslandEvent extends IslandBaseEvent {
     /**
      * Fired when an a player enters an island.
      * Cancellation has no effect.
-     * @deprecated This event is moving to its own class in 1.16.0
+     * @deprecated This event is moving to its own class.
+     * Use {@link world.bentobox.bentobox.api.events.island.IslandEnterEvent}
      */
     @Deprecated
     public static class IslandEnterEvent extends IslandBaseEvent {
@@ -405,7 +435,8 @@ public class IslandEvent extends IslandBaseEvent {
     /**
      * Fired when a player exits an island.
      * Cancellation has no effect.
-     * @deprecated This event is moving to its own class in 1.16.0
+     * @deprecated This event is moving to its own class.
+     * Use {@link world.bentobox.bentobox.api.events.island.IslandExitEvent}
      */
     @Deprecated
     public static class IslandExitEvent extends IslandBaseEvent {
@@ -429,7 +460,8 @@ public class IslandEvent extends IslandBaseEvent {
     /**
      * Fired when an island is locked
      *
-     * @deprecated This event is moving to its own class in 1.16.0
+     * @deprecated This event is moving to its own class.
+     * Use {@link world.bentobox.bentobox.api.events.island.IslandLockEvent}
      */
     @Deprecated
     public static class IslandLockEvent extends IslandBaseEvent {
@@ -441,7 +473,8 @@ public class IslandEvent extends IslandBaseEvent {
     /**
      * Fired when an island is unlocked
      *
-     * @deprecated This event is moving to its own class in 1.16.0
+     * @deprecated This event is moving to its own class.
+     * Use {@link world.bentobox.bentobox.api.events.island.IslandUnlockEvent}
      */
     @Deprecated
     public static class IslandUnlockEvent extends IslandBaseEvent {
@@ -454,7 +487,8 @@ public class IslandEvent extends IslandBaseEvent {
     /**
      * Fired before an island has its player data cleared, e.g., just before a reset
      * @since 1.12.0
-     * @deprecated This event is moving to its own class in 1.16.0
+     * @deprecated This event is moving to its own class.
+     * Use {@link world.bentobox.bentobox.api.events.island.IslandPreclearEvent}
      */
     @Deprecated
     public static class IslandPreclearEvent extends IslandBaseEvent {
@@ -479,7 +513,8 @@ public class IslandEvent extends IslandBaseEvent {
     /**
      * Fired when an island is going to be reset.
      * May be cancelled.
-     * @deprecated This event is moving to its own class in 1.16.0
+     * @deprecated This event is moving to its own class.
+     * Use {@link world.bentobox.bentobox.api.events.island.IslandResetEvent}
      */
     @Deprecated
     public static class IslandResetEvent extends IslandBaseEvent {
@@ -520,7 +555,8 @@ public class IslandEvent extends IslandBaseEvent {
     /**
      * Fired after an island is reset
      *
-     * @deprecated This event is moving to its own class in 1.16.0
+     * @deprecated This event is moving to its own class.
+     * Use {@link world.bentobox.bentobox.api.events.island.IslandResettedEvent}
      */
     @Deprecated
     public static class IslandResettedEvent extends IslandBaseEvent {
@@ -544,7 +580,8 @@ public class IslandEvent extends IslandBaseEvent {
     /**
      * Fired when something happens to the island not covered by other events
      *
-     * @deprecated This event is moving to its own class in 1.16.0
+     * @deprecated This event is moving to its own class.
+     * Use {@link world.bentobox.bentobox.api.events.island.IslandGeneralEvent}
      */
     @Deprecated
     public static class IslandGeneralEvent extends IslandBaseEvent {
@@ -558,7 +595,8 @@ public class IslandEvent extends IslandBaseEvent {
     /**
      * Fired when island protection range is changed.
      * @since 1.11.0
-     * @deprecated This event is moving to its own class in 1.16.0
+     * @deprecated This event is moving to its own class.
+     * Use {@link world.bentobox.bentobox.api.events.island.IslandProtectionRangeChangeEvent}
      */
     @Deprecated
     public static class IslandProtectionRangeChangeEvent extends IslandBaseEvent {
@@ -624,7 +662,6 @@ public class IslandEvent extends IslandBaseEvent {
             this.oldRange = oldRange;
         }
     }
-
 
 
     public static class IslandEventBuilder {
@@ -755,101 +792,123 @@ public class IslandEvent extends IslandBaseEvent {
             return this;
         }
 
+        /**
+         * Get the deprecated IslandEvent
+         * @return deprecated event
+         */
+        private IslandBaseEvent getDeprecatedEvent() {
+            switch (reason) {
+            case EXPEL:
+                return new IslandExpelEvent(island, player, admin, location);
+            case BAN:
+                return new IslandBanEvent(island, player, admin, location);
+            case PRECREATE:
+                return new IslandPreCreateEvent(player);
+            case CREATE:
+                return new IslandCreateEvent(island, player, admin, location, blueprintBundle);
+            case CREATED:
+                return new IslandCreatedEvent(island, player, admin, location);
+            case DELETE:
+                return new IslandDeleteEvent(island, player, admin, location);
+            case DELETE_CHUNKS:
+                return new IslandDeleteChunksEvent(island, player, admin, location, deletedIslandInfo);
+            case DELETED:
+                return new IslandDeletedEvent(island, player, admin, location, deletedIslandInfo);
+            case ENTER:
+                return new IslandEnterEvent(island, player, admin, location, oldIsland, rawEvent);
+            case EXIT:
+                return new IslandExitEvent(island, player, admin, location, oldIsland, rawEvent);
+            case LOCK:
+                return new IslandLockEvent(island, player, admin, location);
+            case RESET:
+                return new IslandResetEvent(island, player, admin, location, blueprintBundle, oldIsland);
+            case RESETTED:
+                return new IslandResettedEvent(island, player, admin, location, oldIsland);
+            case UNBAN:
+                return new IslandUnbanEvent(island, player, admin, location);
+            case UNLOCK:
+                return new IslandUnlockEvent(island, player, admin, location);
+            case REGISTERED:
+                return new IslandRegisteredEvent(island, player, admin, location);
+            case UNREGISTERED:
+                return new IslandUnregisteredEvent(island, player, admin, location);
+            case RANGE_CHANGE:
+                return new IslandProtectionRangeChangeEvent(island, player, admin, location, newRange, oldRange);
+            case PRECLEAR:
+                return new IslandPreclearEvent(island, player, admin, location, oldIsland);
+            case RESERVED:
+                return new IslandReservedEvent(island, player, admin, location);
+            case RANK_CHANGE:
+                return new IslandRankChangeEvent(island, player, admin, location, oldRank, newRank);
+            default:
+                return new IslandGeneralEvent(island, player, admin, location);
+            }
+        }
+
+        private IslandBaseEvent getEvent() {
+            switch (reason) {
+            case EXPEL:
+                return new world.bentobox.bentobox.api.events.island.IslandExpelEvent(island, player, admin, location);
+            case BAN:
+                return new world.bentobox.bentobox.api.events.island.IslandBanEvent(island, player, admin, location);
+            case PRECREATE:
+                return new world.bentobox.bentobox.api.events.island.IslandPreCreateEvent(player);
+            case CREATE:
+                return new world.bentobox.bentobox.api.events.island.IslandCreateEvent(island, player, admin, location, blueprintBundle);
+            case CREATED:
+                return new world.bentobox.bentobox.api.events.island.IslandCreatedEvent(island, player, admin, location);
+            case DELETE:
+                return new world.bentobox.bentobox.api.events.island.IslandDeleteEvent(island, player, admin, location);
+            case DELETE_CHUNKS:
+                return new world.bentobox.bentobox.api.events.island.IslandDeleteChunksEvent(island, player, admin, location, deletedIslandInfo);
+            case DELETED:
+                return new world.bentobox.bentobox.api.events.island.IslandDeletedEvent(island, player, admin, location, deletedIslandInfo);
+            case ENTER:
+                return new world.bentobox.bentobox.api.events.island.IslandEnterEvent(island, player, admin, location, oldIsland, rawEvent);
+            case EXIT:
+                return new world.bentobox.bentobox.api.events.island.IslandExitEvent(island, player, admin, location, oldIsland, rawEvent);
+            case LOCK:
+                return new world.bentobox.bentobox.api.events.island.IslandLockEvent(island, player, admin, location);
+            case RESET:
+                return new world.bentobox.bentobox.api.events.island.IslandResetEvent(island, player, admin, location, blueprintBundle, oldIsland);
+            case RESETTED:
+                return new world.bentobox.bentobox.api.events.island.IslandResettedEvent(island, player, admin, location, oldIsland);
+            case UNBAN:
+                return new world.bentobox.bentobox.api.events.island.IslandUnbanEvent(island, player, admin, location);
+            case UNLOCK:
+                return new world.bentobox.bentobox.api.events.island.IslandUnlockEvent(island, player, admin, location);
+            case REGISTERED:
+                return new world.bentobox.bentobox.api.events.island.IslandRegisteredEvent(island, player, admin, location);
+            case UNREGISTERED:
+                return new world.bentobox.bentobox.api.events.island.IslandUnregisteredEvent(island, player, admin, location);
+            case RANGE_CHANGE:
+                return new world.bentobox.bentobox.api.events.island.IslandProtectionRangeChangeEvent(island, player, admin, location, newRange, oldRange);
+            case PRECLEAR:
+                return new world.bentobox.bentobox.api.events.island.IslandPreclearEvent(island, player, admin, location, oldIsland);
+            case RESERVED:
+                return new world.bentobox.bentobox.api.events.island.IslandReservedEvent(island, player, admin, location);
+            case RANK_CHANGE:
+                return new world.bentobox.bentobox.api.events.island.IslandRankChangeEvent(island, player, admin, location, oldRank, newRank);
+            default:
+                return new world.bentobox.bentobox.api.events.island.IslandGeneralEvent(island, player, admin, location);
+            }
+        }
+
+        /**
+         * Builds and fires the deprecated and new IslandEvent.
+         * @return deprecated event. To obtain the new event use {@link IslandBaseEvent#getNewEvent()}
+         */
         public IslandBaseEvent build() {
             // Call the generic event for developers who just want one event and use the Reason enum
             Bukkit.getPluginManager().callEvent(new IslandEvent(island, player, admin, location, reason));
-            // Generate explicit events
-            switch (reason) {
-            case EXPEL:
-                IslandExpelEvent expel = new IslandExpelEvent(island, player, admin, location);
-                Bukkit.getPluginManager().callEvent(expel);
-                return expel;
-            case BAN:
-                IslandBanEvent ban = new IslandBanEvent(island, player, admin, location);
-                Bukkit.getPluginManager().callEvent(ban);
-                return ban;
-            case PRECREATE:
-                IslandPreCreateEvent precreate = new IslandPreCreateEvent(player);
-                Bukkit.getPluginManager().callEvent(precreate);
-                return precreate;
-            case CREATE:
-                IslandCreateEvent create = new IslandCreateEvent(island, player, admin, location, blueprintBundle);
-                Bukkit.getPluginManager().callEvent(create);
-                return create;
-            case CREATED:
-                IslandCreatedEvent created = new IslandCreatedEvent(island, player, admin, location);
-                Bukkit.getPluginManager().callEvent(created);
-                return created;
-            case DELETE:
-                IslandDeleteEvent delete = new IslandDeleteEvent(island, player, admin, location);
-                Bukkit.getPluginManager().callEvent(delete);
-                return delete;
-            case DELETE_CHUNKS:
-                IslandDeleteChunksEvent deleteChunks = new IslandDeleteChunksEvent(island, player, admin, location, deletedIslandInfo);
-                Bukkit.getPluginManager().callEvent(deleteChunks);
-                return deleteChunks;
-            case DELETED:
-                IslandDeletedEvent deleted = new IslandDeletedEvent(island, player, admin, location, deletedIslandInfo);
-                Bukkit.getPluginManager().callEvent(deleted);
-                return deleted;
-            case ENTER:
-                IslandEnterEvent enter = new IslandEnterEvent(island, player, admin, location, oldIsland, rawEvent);
-                Bukkit.getPluginManager().callEvent(enter);
-                return enter;
-            case EXIT:
-                IslandExitEvent exit = new IslandExitEvent(island, player, admin, location, oldIsland, rawEvent);
-                Bukkit.getPluginManager().callEvent(exit);
-                return exit;
-            case LOCK:
-                IslandLockEvent lock = new IslandLockEvent(island, player, admin, location);
-                Bukkit.getPluginManager().callEvent(lock);
-                return lock;
-            case RESET:
-                IslandResetEvent reset = new IslandResetEvent(island, player, admin, location, blueprintBundle, oldIsland);
-                Bukkit.getPluginManager().callEvent(reset);
-                return reset;
-            case RESETTED:
-                IslandResettedEvent resetted = new IslandResettedEvent(island, player, admin, location, oldIsland);
-                Bukkit.getPluginManager().callEvent(resetted);
-                return resetted;
-            case UNBAN:
-                IslandUnbanEvent unban = new IslandUnbanEvent(island, player, admin, location);
-                Bukkit.getPluginManager().callEvent(unban);
-                return unban;
-            case UNLOCK:
-                IslandUnlockEvent unlock = new IslandUnlockEvent(island, player, admin, location);
-                Bukkit.getPluginManager().callEvent(unlock);
-                return unlock;
-            case REGISTERED:
-                IslandRegisteredEvent reg = new IslandRegisteredEvent(island, player, admin, location);
-                Bukkit.getPluginManager().callEvent(reg);
-                return reg;
-            case UNREGISTERED:
-                IslandUnregisteredEvent unreg = new IslandUnregisteredEvent(island, player, admin, location);
-                Bukkit.getPluginManager().callEvent(unreg);
-                return unreg;
-            case RANGE_CHANGE:
-                IslandProtectionRangeChangeEvent
-                change = new IslandProtectionRangeChangeEvent(island, player, admin, location, newRange, oldRange);
-                Bukkit.getPluginManager().callEvent(change);
-                return change;
-            case PRECLEAR:
-                IslandPreclearEvent preclear = new IslandPreclearEvent(island, player, admin, location, oldIsland);
-                Bukkit.getPluginManager().callEvent(preclear);
-                return preclear;
-            case RESERVED:
-                IslandReservedEvent res = new IslandReservedEvent(island, player, admin, location);
-                Bukkit.getPluginManager().callEvent(res);
-                return res;
-            case RANK_CHANGE:
-                IslandRankChangeEvent rankChange = new IslandRankChangeEvent(island, player, admin, location, oldRank, newRank);
-                Bukkit.getPluginManager().callEvent(rankChange);
-                return rankChange;
-            default:
-                IslandGeneralEvent general = new IslandGeneralEvent(island, player, admin, location);
-                Bukkit.getPluginManager().callEvent(general);
-                return general;
-            }
+            // Generate new event
+            IslandBaseEvent newEvent = getEvent();
+            Bukkit.getPluginManager().callEvent(newEvent);
+            // Generate deprecated events
+            IslandBaseEvent e = getDeprecatedEvent();
+            e.setNewEvent(newEvent);
+            Bukkit.getPluginManager().callEvent(e);
+            return e;
         }
     }
 }

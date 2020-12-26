@@ -24,26 +24,6 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
-import world.bentobox.bentobox.api.events.island.IslandEvent.IslandBanEvent;
-import world.bentobox.bentobox.api.events.island.IslandEvent.IslandCreateEvent;
-import world.bentobox.bentobox.api.events.island.IslandEvent.IslandCreatedEvent;
-import world.bentobox.bentobox.api.events.island.IslandEvent.IslandDeleteChunksEvent;
-import world.bentobox.bentobox.api.events.island.IslandEvent.IslandDeleteEvent;
-import world.bentobox.bentobox.api.events.island.IslandEvent.IslandDeletedEvent;
-import world.bentobox.bentobox.api.events.island.IslandEvent.IslandEnterEvent;
-import world.bentobox.bentobox.api.events.island.IslandEvent.IslandExitEvent;
-import world.bentobox.bentobox.api.events.island.IslandEvent.IslandExpelEvent;
-import world.bentobox.bentobox.api.events.island.IslandEvent.IslandGeneralEvent;
-import world.bentobox.bentobox.api.events.island.IslandEvent.IslandLockEvent;
-import world.bentobox.bentobox.api.events.island.IslandEvent.IslandPreclearEvent;
-import world.bentobox.bentobox.api.events.island.IslandEvent.IslandProtectionRangeChangeEvent;
-import world.bentobox.bentobox.api.events.island.IslandEvent.IslandRegisteredEvent;
-import world.bentobox.bentobox.api.events.island.IslandEvent.IslandReservedEvent;
-import world.bentobox.bentobox.api.events.island.IslandEvent.IslandResetEvent;
-import world.bentobox.bentobox.api.events.island.IslandEvent.IslandResettedEvent;
-import world.bentobox.bentobox.api.events.island.IslandEvent.IslandUnbanEvent;
-import world.bentobox.bentobox.api.events.island.IslandEvent.IslandUnlockEvent;
-import world.bentobox.bentobox.api.events.island.IslandEvent.IslandUnregisteredEvent;
 import world.bentobox.bentobox.api.events.island.IslandEvent.Reason;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle;
 import world.bentobox.bentobox.database.objects.Island;
@@ -121,6 +101,7 @@ public class IslandEventTest {
                     .protectionRange(120, 100)
                     .reason(reason)
                     .build();
+            e = e.getNewEvent().orElse(e);
             switch (reason) {
             case BAN:
                 assertTrue(e instanceof IslandBanEvent);
@@ -187,7 +168,7 @@ public class IslandEventTest {
 
             }
         }
-        verify(pim, Mockito.times(Reason.values().length * 2)).callEvent(any());
+        verify(pim, Mockito.times(Reason.values().length * 3)).callEvent(any());
     }
 
 }
