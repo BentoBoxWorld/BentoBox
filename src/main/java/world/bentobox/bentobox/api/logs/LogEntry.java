@@ -7,6 +7,8 @@ import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
+import com.google.gson.annotations.Expose;
+
 /**
  * Represents an event that occurred and that is logged.
  * <br/>
@@ -16,8 +18,11 @@ import org.eclipse.jdt.annotation.Nullable;
  * @author Poslovitch
  */
 public class LogEntry {
+    @Expose
     private final long timestamp;
+    @Expose
     private final String type;
+    @Expose
     private final Map<String, String> data;
 
     private LogEntry(@NonNull Builder builder) {
