@@ -187,6 +187,7 @@ public class NewIsland {
             // Do nothing
             return;
         }
+        event = event.getNewEvent().orElse(event);
         // Get the new BlueprintBundle if it was changed
         switch (reason) {
         case CREATE:
