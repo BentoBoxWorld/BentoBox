@@ -199,7 +199,7 @@
             <version>${paper.version}</version>
             <scope>provided</scope>
         </dependency>
-        <!-- Spigot NMS. Used for Head Getter. -->
+        <!-- Spigot NMS. Used for Head Getter and chunk deletion. -->
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot</artifactId>
@@ -291,12 +291,6 @@
             <artifactId>paperlib</artifactId>
             <version>1.0.2</version>
             <scope>compile</scope>
-        </dependency>
-        <dependency> <!-- Spigot (this includes Spigot API, Bukkit API, Craftbukkit and NMS) -->
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot</artifactId>
-            <version>1.16.4-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
         </dependency>
     </dependencies>
 
