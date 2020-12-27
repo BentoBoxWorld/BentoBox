@@ -22,6 +22,12 @@ import world.bentobox.bentobox.BentoBox;
  */
 public abstract class BentoBoxEvent extends Event {
 
+    /**
+     * Event handler list
+     * @deprecated This field will be removed from BentoBoxEvent.
+     * Events must provide their own handlers.
+     */
+    @Deprecated
     private static final HandlerList handlers = new HandlerList();
 
     /**
@@ -111,4 +117,5 @@ public abstract class BentoBoxEvent extends Event {
             });
         } catch (IntrospectionException ignore) {}
     }
+
 }

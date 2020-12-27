@@ -85,9 +85,12 @@ public class IslandUnbanCommand extends CompositeCommand {
                 .admin(false)
                 .reason(IslandEvent.Reason.UNBAN)
                 .build();
-
+        if (unbanEvent.getNewEvent().map(IslandBaseEvent::isCancelled).orElse(unbanEvent.isCancelled())) {
+            // Unbanning was blocked due to an event cancellation.
+            return false;
+        }
         // Event is not cancelled
-        if (!unbanEvent.isCancelled() && island.unban(user.getUniqueId(), target.getUniqueId())) {
+        if (island.unban(user.getUniqueId(), target.getUniqueId())) {
             user.sendMessage("commands.island.unban.player-unbanned", TextVariables.NAME, target.getName());
             target.sendMessage("commands.island.unban.you-are-unbanned", TextVariables.NAME, user.getName());
             // Set cooldown
@@ -97,7 +100,7 @@ public class IslandUnbanCommand extends CompositeCommand {
             }
             return true;
         }
-        // Unbanning was blocked, maybe due to an event cancellation. Fail silently.
+        // Unbanning was blocked, fail silently.
         return false;
     }
 

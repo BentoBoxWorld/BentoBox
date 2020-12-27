@@ -3,6 +3,7 @@ package world.bentobox.bentobox.api.events.flags;
 import java.util.UUID;
 
 import org.bukkit.World;
+import org.bukkit.event.HandlerList;
 
 import world.bentobox.bentobox.api.flags.Flag;
 
@@ -14,6 +15,16 @@ public class FlagWorldSettingChangeEvent extends FlagChangeEvent {
 
     private final World world;
     private final boolean setTo;
+    private static final HandlerList handlers = new HandlerList();
+
+    @Override
+    public HandlerList getHandlers() {
+        return getHandlerList();
+    }
+
+    public static HandlerList getHandlerList() {
+        return handlers;
+    }
 
     /**
      * Event that fires when a world setting is changed

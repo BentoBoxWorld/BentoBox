@@ -3,9 +3,9 @@ package world.bentobox.bentobox.hooks.placeholders;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.Set;
 
 import org.bukkit.entity.Player;
 import org.eclipse.jdt.annotation.NonNull;

@@ -107,9 +107,12 @@ public class IslandBanCommand extends CompositeCommand {
                     .admin(false)
                     .reason(IslandEvent.Reason.BAN)
                     .build();
-
+            if (banEvent.getNewEvent().map(IslandBaseEvent::isCancelled).orElse(banEvent.isCancelled()) ) {
+                // Banning was blocked due to an event cancellation. Fail silently.
+                return false;
+            }
             // Event is not cancelled
-            if (!banEvent.isCancelled() && island.ban(issuer.getUniqueId(), target.getUniqueId())) {
+            if (island.ban(issuer.getUniqueId(), target.getUniqueId())) {
                 issuer.sendMessage("commands.island.ban.player-banned", TextVariables.NAME, target.getName());
                 target.sendMessage("commands.island.ban.owner-banned-you", TextVariables.NAME, issuer.getName());
                 // If the player is online, has an island and on the banned island, move them home immediately
@@ -122,7 +125,7 @@ public class IslandBanCommand extends CompositeCommand {
         } else {
             issuer.sendMessage("commands.island.ban.cannot-ban-more-players");
         }
-        // Banning was blocked, maybe due to an event cancellation. Fail silently.
+        // Fail silently.
         return false;
     }
 

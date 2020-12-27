@@ -6,6 +6,7 @@ import java.util.UUID;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.commands.island.team.Invite.Type;
+import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.island.IslandEvent;
 import world.bentobox.bentobox.api.events.team.TeamEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
@@ -65,12 +66,13 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
                 return false;
             }
             // Fire event so add-ons can run commands, etc.
-            return !TeamEvent.builder()
+            IslandBaseEvent e = TeamEvent.builder()
                     .island(getIslands().getIsland(getWorld(), prospectiveOwnerUUID))
                     .reason(TeamEvent.Reason.JOIN)
                     .involvedPlayer(playerUUID)
-                    .build()
-                    .isCancelled();
+                    .build();
+            return !e.getNewEvent().map(IslandBaseEvent::isCancelled).orElse(e.isCancelled());
+
         }
         return true;
     }

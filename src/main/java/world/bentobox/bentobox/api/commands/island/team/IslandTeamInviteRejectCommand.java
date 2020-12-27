@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
+import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.team.TeamEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
@@ -30,13 +31,12 @@ public class IslandTeamInviteRejectCommand extends CompositeCommand {
         // Reject /island reject
         if (itc.isInvited(playerUUID)) {
             // Fire event so add-ons can run commands, etc.
-            if (TeamEvent.builder()
-                    .island(getIslands()
-                            .getIsland(getWorld(), itc.getInviter(playerUUID)))
+            IslandBaseEvent e = TeamEvent.builder()
+                    .island(getIslands().getIsland(getWorld(), user.getUniqueId()))
                     .reason(TeamEvent.Reason.REJECT)
                     .involvedPlayer(playerUUID)
-                    .build()
-                    .isCancelled()) {
+                    .build();
+            if (e.getNewEvent().map(IslandBaseEvent::isCancelled).orElse(e.isCancelled())) {
                 return false;
             }
 
