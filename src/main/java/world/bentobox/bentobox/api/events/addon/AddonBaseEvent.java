@@ -16,7 +16,7 @@ public abstract class AddonBaseEvent extends BentoBoxEvent {
     private final Map<String, Object> keyValues;
     private AddonBaseEvent newEvent;
 
-    public AddonBaseEvent(Addon addon, Map<String, Object> keyValues) {
+    protected AddonBaseEvent(Addon addon, Map<String, Object> keyValues) {
         super();
         this.addon = addon;
         this.keyValues = keyValues;
