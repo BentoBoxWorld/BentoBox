@@ -54,6 +54,11 @@ public enum GameModePlaceholder {
         return island.getName();
     }),
     /**
+     * Return island unique ID
+     * @since 1.15.4
+     */
+    ISLAND_UUID("island_uuid", (addon, user, island) -> island == null ? "" : island.getUniqueId()),
+    /**
      * Returns the coordinates of the island's center.
      * @since 1.5.0
      */
