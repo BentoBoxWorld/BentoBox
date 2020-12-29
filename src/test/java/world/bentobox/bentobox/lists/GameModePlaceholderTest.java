@@ -1,6 +1,7 @@
 package world.bentobox.bentobox.lists;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -83,6 +84,7 @@ public class GameModePlaceholderTest {
         when(island.getMemberSet(anyInt())).thenReturn(ImmutableSet.of(uuid));
         when(island.getName()).thenReturn("island");
         when(island.getRank(any(User.class))).thenReturn(RanksManager.OWNER_RANK);
+        when(island.getCreatedDate()).thenReturn(123456789455L);
         WorldSettings ws = new TestWorldSettings();
         when(addon.getWorldSettings()).thenReturn(ws);
         when(pm.getName(any())).thenReturn("tastybento");
@@ -105,7 +107,8 @@ public class GameModePlaceholderTest {
         assertEquals("456", GameModePlaceholder.ISLAND_CENTER_Y.getReplacer().onReplace(addon, user, island));
         assertEquals("789", GameModePlaceholder.ISLAND_CENTER_Z.getReplacer().onReplace(addon, user, island));
         assertEquals("1", GameModePlaceholder.ISLAND_COOPS_COUNT.getReplacer().onReplace(addon, user, island));
-        assertEquals("12/31/69 4:00 PM", GameModePlaceholder.ISLAND_CREATION_DATE.getReplacer().onReplace(addon, user, island));
+        // As the local time zone of the compiling machine can vary, the exact value cannot be checked.
+        assertFalse(GameModePlaceholder.ISLAND_CREATION_DATE.getReplacer().onReplace(addon, user, island).isEmpty());
         assertEquals("1", GameModePlaceholder.ISLAND_MEMBERS_COUNT.getReplacer().onReplace(addon, user, island));
         assertEquals("tastybento", GameModePlaceholder.ISLAND_MEMBERS_LIST.getReplacer().onReplace(addon, user, island));
         assertEquals("10", GameModePlaceholder.ISLAND_MEMBERS_MAX.getReplacer().onReplace(addon, user, island));
@@ -184,7 +187,8 @@ public class GameModePlaceholderTest {
         assertEquals("456", GameModePlaceholder.VISITED_ISLAND_CENTER_Y.getReplacer().onReplace(addon, user, island));
         assertEquals("789", GameModePlaceholder.VISITED_ISLAND_CENTER_Z.getReplacer().onReplace(addon, user, island));
         assertEquals("1", GameModePlaceholder.VISITED_ISLAND_COOPS_COUNT.getReplacer().onReplace(addon, user, island));
-        assertEquals("12/31/69 4:00 PM", GameModePlaceholder.VISITED_ISLAND_CREATION_DATE.getReplacer().onReplace(addon, user, island));
+        // As the local time zone of the compiling machine can vary, the exact value cannot be checked.
+        assertFalse(GameModePlaceholder.VISITED_ISLAND_CREATION_DATE.getReplacer().onReplace(addon, user, island).isEmpty());
         assertEquals("1", GameModePlaceholder.VISITED_ISLAND_MEMBERS_COUNT.getReplacer().onReplace(addon, user, island));
         assertEquals("tastybento", GameModePlaceholder.VISITED_ISLAND_MEMBERS_LIST.getReplacer().onReplace(addon, user, island));
         assertEquals("10", GameModePlaceholder.VISITED_ISLAND_MEMBERS_MAX.getReplacer().onReplace(addon, user, island));
