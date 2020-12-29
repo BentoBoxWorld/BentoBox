@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -29,6 +30,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.events.OfflineMessageEvent;
+import world.bentobox.bentobox.api.metadata.MetaDataValue;
 import world.bentobox.bentobox.util.Util;
 
 /**
@@ -630,5 +632,54 @@ public class User {
      */
     public void setAddon(Addon addon) {
         this.addon = addon;
+    }
+
+    /**
+     * Get all the meta data for this user
+     * @return the metaData
+     * @since 1.15.4
+     */
+    @NonNull
+    public Map<String, MetaDataValue> getMetaData() {
+        return plugin.getPlayers().getPlayer(playerUUID).getMetaData();
+    }
+
+    /**
+     * Get meta data by key
+     * @param key - key
+     * @return optional value to which the specified key is mapped, or empty if there is no mapping for the key
+     * @since 1.15.4
+     */
+    public Optional<MetaDataValue> getMetaData(String key) {
+        return Optional.ofNullable(plugin.getPlayers().getPlayer(playerUUID).getMetaData().get(key));
+    }
+
+    /**
+     * @param metaData the metaData to set
+     * @since 1.15.4
+     */
+    public void setMetaData(Map<String, MetaDataValue> metaData) {
+        plugin.getPlayers().getPlayer(playerUUID).setMetaData(metaData);
+    }
+
+    /**
+     * Put a key, value string pair into the user's meta data
+     * @param key - key
+     * @param value - value
+     * @return the previous value associated with key, or empty if there was no mapping for key.
+     * @since 1.15.4
+     */
+    public Optional<MetaDataValue> putMetaData(String key, MetaDataValue value) {
+        return Optional.ofNullable(plugin.getPlayers().getPlayer(playerUUID).getMetaData().put(key, value));
+    }
+
+    /**
+     * Remove meta data
+     * @param key - key to remove
+     * @return the previous value associated with key, or empty if there was no mapping for key.
+     * @since 1.15.4
+     */
+    public Optional<MetaDataValue> removeMetaData(String key) {
+        return Optional.ofNullable(plugin.getPlayers().getPlayer(playerUUID).getMetaData().remove(key));
     }
 }

@@ -15,6 +15,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Optional;
@@ -33,6 +34,7 @@ import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.PluginManager;
+import org.eclipse.jdt.annotation.Nullable;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -49,6 +51,8 @@ import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.addons.AddonDescription;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
+import world.bentobox.bentobox.api.metadata.MetaDataValue;
+import world.bentobox.bentobox.database.objects.Players;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlaceholdersManager;
@@ -80,6 +84,7 @@ public class UserTest {
     private Server server;
     @Mock
     private PlayersManager pm;
+    private @Nullable Players players;
 
     @Before
     public void setUp() throws Exception {
@@ -120,6 +125,8 @@ public class UserTest {
         when(placeholdersManager.replacePlaceholders(any(), any())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
 
         when(plugin.getPlayers()).thenReturn(pm);
+        players = new Players();
+        when(pm.getPlayer(any())).thenReturn(players);
     }
 
     @After
@@ -592,4 +599,30 @@ public class UserTest {
         User u = User.getInstance(player);
         assertEquals(3, u.getPermissionValue("bskyblock.max", 22));
     }
+
+    @Test
+    public void testMetaData() {
+        User u = User.getInstance(player);
+        assertTrue(u.getMetaData().isEmpty());
+        // Store a string in a new key
+        assertFalse(u.putMetaData("string", new MetaDataValue("a string")).isPresent());
+        // Store an int in a new key
+        assertFalse(u.putMetaData("int", new MetaDataValue(1234)).isPresent());
+        // Overwrite the string with the same key
+        assertEquals("a string", u.putMetaData("string", new MetaDataValue("a new string")).get().asString());
+        // Get the new string with the same key
+        assertEquals("a new string", u.getMetaData("string").get().asString());
+        // Try to get a non-existent key
+        assertFalse(u.getMetaData("boogie").isPresent());
+        // Remove existing key
+        assertEquals(1234, u.removeMetaData("int").get().asInt());
+        assertFalse(u.getMetaData("int").isPresent());
+        // Try to remove non-existent key
+        assertFalse(u.removeMetaData("ggogg").isPresent());
+        // Set the meta data as blank
+        assertFalse(u.getMetaData().isEmpty());
+        u.setMetaData(new HashMap<>());
+        assertTrue(u.getMetaData().isEmpty());
+    }
+
 }

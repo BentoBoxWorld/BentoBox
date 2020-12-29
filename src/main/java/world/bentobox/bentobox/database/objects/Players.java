@@ -11,12 +11,15 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 import com.google.gson.annotations.Expose;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.flags.Flag;
+import world.bentobox.bentobox.api.metadata.MetaDataAble;
+import world.bentobox.bentobox.api.metadata.MetaDataValue;
 import world.bentobox.bentobox.util.Util;
 
 /**
@@ -25,7 +28,7 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  */
 @Table(name = "Players")
-public class Players implements DataObject {
+public class Players implements DataObject, MetaDataAble {
     @Expose
     private Map<Location, Integer> homeLocations = new HashMap<>();
     @Expose
@@ -52,6 +55,13 @@ public class Players implements DataObject {
      */
     @Expose
     private Flag.Mode flagsDisplayMode = Flag.Mode.BASIC;
+
+    /**
+     * A place to store meta data for this player.
+     * @since 1.15.4
+     */
+    @Expose
+    private Map<String, MetaDataValue> metaData;
 
     /**
      * This is required for database storage
@@ -338,4 +348,59 @@ public class Players implements DataObject {
     public void setFlagsDisplayMode(Flag.Mode flagsDisplayMode) {
         this.flagsDisplayMode = flagsDisplayMode;
     }
+
+    /**
+     * @return the metaData
+     */
+    @Override
+    public Map<String, MetaDataValue> getMetaData() {
+        if (metaData == null) {
+            metaData = new HashMap<>();
+        }
+        return metaData;
+    }
+
+    /**
+     * Get meta data by key
+     * @param key - key
+     * @return the value to which the specified key is mapped, or null if there is no mapping for the key
+     * @since 1.15.4
+     */
+    @Override
+    public MetaDataValue getMetaData(@NonNull String key) {
+        return getMetaData().get(key);
+    }
+
+    /**
+     * @param metaData the metaData to set
+     * @since 1.15.4
+     */
+    @Override
+    public void setMetaData(Map<String, MetaDataValue> metaData) {
+        this.metaData = metaData;
+    }
+
+    /**
+     * Put a key, value string pair into the player's meta data
+     * @param key - key
+     * @param value - value
+     * @return the previous value associated with key, or null if there was no mapping for key.
+     * @since 1.15.4
+     */
+    @Override
+    public MetaDataValue putMetaData(@NonNull String key, @NonNull MetaDataValue value) {
+        return getMetaData().put(key, value);
+    }
+
+    /**
+     * Remove meta data
+     * @param key - key to remove
+     * @return the previous value associated with key, or null if there was no mapping for key.
+     * @since 1.15.4
+     */
+    @Override
+    public MetaDataValue removeMetaData(@NonNull String key) {
+        return getMetaData().remove(key);
+    }
+
 }

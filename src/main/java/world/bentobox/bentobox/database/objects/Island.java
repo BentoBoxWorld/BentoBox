@@ -34,6 +34,8 @@ import world.bentobox.bentobox.api.events.island.IslandEvent;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.logs.LogEntry;
+import world.bentobox.bentobox.api.metadata.MetaDataAble;
+import world.bentobox.bentobox.api.metadata.MetaDataValue;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.adapters.Adapter;
 import world.bentobox.bentobox.database.objects.adapters.FlagSerializer;
@@ -54,7 +56,7 @@ import world.bentobox.bentobox.util.Util;
  * @author Poslovitch
  */
 @Table(name = "Islands")
-public class Island implements DataObject {
+public class Island implements DataObject, MetaDataAble {
 
     // True if this island is deleted and pending deletion from the database
     @Expose
@@ -170,6 +172,13 @@ public class Island implements DataObject {
     @Expose
     @Nullable
     private Boolean reserved = null;
+
+    /**
+     * A place to store meta data for this island.
+     * @since 1.15.4
+     */
+    @Expose
+    private Map<String, MetaDataValue> metaData;
 
     /*
      * *************************** Constructors ******************************
@@ -956,14 +965,14 @@ public class Island implements DataObject {
             // Fixes #getLastPlayed() returning 0 when it is the owner's first connection.
             long lastPlayed = (Bukkit.getServer().getOfflinePlayer(owner).getLastPlayed() != 0) ?
                     Bukkit.getServer().getOfflinePlayer(owner).getLastPlayed() : Bukkit.getServer().getOfflinePlayer(owner).getFirstPlayed();
-                    user.sendMessage("commands.admin.info.last-login","[date]", new Date(lastPlayed).toString());
+            user.sendMessage("commands.admin.info.last-login","[date]", new Date(lastPlayed).toString());
 
-                    user.sendMessage("commands.admin.info.deaths", "[number]", String.valueOf(plugin.getPlayers().getDeaths(world, owner)));
-                    String resets = String.valueOf(plugin.getPlayers().getResets(world, owner));
-                    String total = plugin.getIWM().getResetLimit(world) < 0 ? "Unlimited" : String.valueOf(plugin.getIWM().getResetLimit(world));
-                    user.sendMessage("commands.admin.info.resets-left", "[number]", resets, "[total]", total);
-                    // Show team members
-                    showMembers(user);
+            user.sendMessage("commands.admin.info.deaths", "[number]", String.valueOf(plugin.getPlayers().getDeaths(world, owner)));
+            String resets = String.valueOf(plugin.getPlayers().getResets(world, owner));
+            String total = plugin.getIWM().getResetLimit(world) < 0 ? "Unlimited" : String.valueOf(plugin.getIWM().getResetLimit(world));
+            user.sendMessage("commands.admin.info.resets-left", "[number]", resets, "[total]", total);
+            // Show team members
+            showMembers(user);
         }
         Vector location = center.toVector();
         user.sendMessage("commands.admin.info.island-location", "[xyz]", Util.xyz(location));
@@ -1251,4 +1260,55 @@ public class Island implements DataObject {
                 + ", levelHandicap=" + levelHandicap + ", spawnPoint=" + spawnPoint + ", doNotLoad=" + doNotLoad + "]";
     }
 
+    /**
+     * @return the metaData
+     * @since 1.15.4
+     */
+    @Override
+    public Map<String, MetaDataValue> getMetaData() {
+        return metaData;
+    }
+
+    /**
+     * Get meta data by key
+     * @param key - key
+     * @return the value to which the specified key is mapped, or null if there is no mapping for the key
+     * @since 1.15.4
+     */
+    @Override
+    public MetaDataValue getMetaData(String key) {
+        return this.metaData.get(key);
+    }
+
+    /**
+     * @param metaData the metaData to set
+     * @since 1.15.4
+     */
+    @Override
+    public void setMetaData(Map<String, MetaDataValue> metaData) {
+        this.metaData = metaData;
+    }
+
+    /**
+     * Put a key, value string pair into the island's meta data
+     * @param key - key
+     * @param value - value
+     * @return the previous value associated with key, or null if there was no mapping for key.
+     * @since 1.15.4
+     */
+    @Override
+    public MetaDataValue putMetaData(String key, MetaDataValue value) {
+        return this.metaData.put(key, value);
+    }
+
+    /**
+     * Remove meta data
+     * @param key - key to remove
+     * @return the previous value associated with key, or null if there was no mapping for key.
+     * @since 1.15.4
+     */
+    @Override
+    public MetaDataValue removeMetaData(String key) {
+        return this.metaData.remove(key);
+    }
 }
