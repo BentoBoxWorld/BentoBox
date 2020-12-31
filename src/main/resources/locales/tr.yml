@@ -2,14 +2,18 @@
 meta:
   authors:
   - Over_Brave
-  - ZyXpe
+  - None
   banner: RED_BANNER:1:RHOMBUS_MIDDLE:WHITE:CIRCLE_MIDDLE:RED:HALF_HORIZONTAL_MIRROR:RED:TRIANGLE_BOTTOM:WHITE:STRIPE_BOTTOM:RED
+prefixes:
+  bentobox: "&6 BentoBox &7 &l > &r "
 general:
   success: "&9Başarılı!"
   invalid: "&4Geçersiz!"
   errors:
     command-cancelled: "&4Komut iptal edildi!"
     no-permission: "&4Bu izne sahip degilsin! Ada açamıyorsan &e/ada"
+    insufficient-rank: "&c Rankınız bunu yapacak kadar yüksek değil! (& 7 [rank] &
+      c)"
     use-in-game: "&4Bu komutu sadece oyundayken kullanabilirsin!"
     no-team: "&4Bir takımda değilsin!"
     no-island: "&4Bir adaya sahip degilsin!"
@@ -28,8 +32,6 @@ general:
     you-must-wait: "&4Komut yazabilmek için &e[number] &4saniye beklemelisin!"
     must-be-positive-number: "&e[number] &4bu pozitif bir sayı değil!"
     no-safe-location: "&4Adanda korumalı bölge bulunamadı!"
-    insufficient-rank: "&c Rankınız bunu yapacak kadar yüksek değil! (& 7 [rank] &
-      c)"
   worlds:
     overworld: Overworld
     nether: Nether
@@ -82,6 +84,7 @@ commands:
       see-console-for-status: |-
         Temizleme başlatıldı. İlerlemeyi
                 görmek için konsola bakınız.
+      no-purge-in-progress: "&c Şu anda devam eden bir temizleme işlemi yok."
       protect:
         description: Adanın anti-silinmesini kapat/aç.
         move-to-island: "&cİlk önce adaya git!"
@@ -95,10 +98,9 @@ commands:
         description: Sahipsiz adaları temizler.
         unowned-islands: "&a[number] &5silinebilecek ada bulundu!"
       status:
+        description: temizlemenin durumunu gösterir
         status: "&b [purgeable] &a adadan &b [purged]'si temizlendi &7(&b[percentage]
           %&7)&a."
-        description: temizlemenin durumunu gösterir
-      no-purge-in-progress: "&c Şu anda devam eden bir temizleme işlemi yok."
     team:
       add:
         parameters: "<owner> <player>"
@@ -155,10 +157,10 @@ commands:
         description: Adanın koruma bölgesini ayarla.
         success: "&2Adanın koruma menzili &e[number] &2olarak ayarlandı!"
         invalid-value:
-          same-as-before: "&4Koruma aralığı zaten &e[number] &4olarak ayarlandı!"
-          too-high: "&4Koruma aralığı &e[number] &4büyük ya da küçük olmalıdır!"
           too-low: "&4Koruma aralığı 1'den büyük olmalıdır!"
           not-numeric: "&e[number] &4tam bir sayı değil!"
+          too-high: "&4Koruma aralığı &e[number] &4büyük ya da küçük olmalıdır!"
+          same-as-before: "&4Koruma aralığı zaten &e[number] &4olarak ayarlandı!"
       reset:
         parameters: "<player>"
         description: Adayı dünyanın varsayılan koruma bölgesine göre sıfırla.
@@ -268,6 +270,13 @@ commands:
       no-island-here: "&cBurada bir ada yok."
       confirmation: "&cAdayı dünyanın spawn noktası olarak ayarlıcaksın. Emin misin?"
       success: "&aBaşarıyla bu ada dünyanın spawn bölgesi oldu."
+    setspawnpoint:
+      description: mevcut konumu bu ada için doğma noktası olarak ayarla
+      no-island-here: "&c Burada ada yok."
+      confirmation: "&c Bu konumu bu adanın yumurtlama noktası olarak ayarlamak istediğinizden
+        emin misiniz?"
+      success: "&a Bu konumu, bu adanın doğma noktası olarak başarıyla ayarlayın."
+      island-spawnpoint-changed: "&a [user] bu adanın doğma noktasını değiştirdi."
     settings:
       parameters: "[oyuncu]"
       description: Sunucu dünya ayarları veya oyuncu ada ayarlarını aç.
@@ -368,13 +377,13 @@ commands:
         slot-instructions: |
           &aArtırmak için sol
           &aAzaltmak için sağ tıklayın.
-        end: The End
-        nether: Nether
-        normal: Normal
         no-trash: Çöp Kutusu olamaz
         no-trash-instructions: Varsayılan grup çöp kutusuna atılamaz
         no-permission: İzin yok
         no-perm-required: Varsayılan paket için izin ayarlanamaz
+        normal: Normal
+        nether: Nether
+        end: The End
     resetflags:
       parameters: "[flag]"
       description: Config.yml'deki tüm adaları varsayılan etiket ayarlarına sıfırla
@@ -413,13 +422,6 @@ commands:
         parameters: "<oyuncu> <ölme sayısı>"
         success: "&d[name] &5oyuncusunun ölme sayısından &a[number] &5silindi. Toplam
           ölme sayısı: &5[total]'"
-    setspawnpoint:
-      description: mevcut konumu bu ada için doğma noktası olarak ayarla
-      no-island-here: "&c Burada ada yok."
-      confirmation: "&c Bu konumu bu adanın yumurtlama noktası olarak ayarlamak istediğinizden
-        emin misiniz?"
-      success: "&a Bu konumu, bu adanın doğma noktası olarak başarıyla ayarlayın."
-      island-spawnpoint-changed: "&a [user] bu adanın doğma noktasını değiştirdi."
   bentobox:
     description: BentoBox admin komudu
     about:
@@ -434,9 +436,9 @@ commands:
       warning: "&cDikkat bu tüm eklentileri güncellemektedir. Eğer konsolda bir hata
         alırsanız restart atmalısınız."
       unknown-addon: "&4Bilinmeyen eklenti!"
-      parameters: "[addon]"
       locales:
         description: yerel ayarları yeniden yükler
+      parameters: "[addon]"
     version:
       plugin-version: "&bBentoBox sürümü: &3[version]"
       description: Bilgi verir.
@@ -598,8 +600,8 @@ commands:
         player-already-trusted: "&4Oyuncu zaten arkadaş!"
         you-are-trusted: "&e[name] &bseni arkadaş olarak ekledi!"
         success: "&d[name] &9arkadaş olarak eklendin!"
-        members-trusted: "&4Uye arkadas olarak eklendi!"
         is-full: "&c Başkasına güvenemezsiniz."
+        members-trusted: "&4Uye arkadas olarak eklendi!"
       untrust:
         description: Arkadaslık yetkisini kaldır!
         parameters: "<player>"
@@ -726,6 +728,12 @@ ranks:
 protection:
   command-is-banned: Ziyaretçileri banlar.
   flags:
+    ANIMAL_NATURAL_SPAWN:
+      description: Doğal hayvan yumurtlamasını aç / kapat
+      name: Hayvan doğal yumurtlama
+    ANIMAL_SPAWNERS_SPAWN:
+      description: Hayvan yumurtlamasını yumurtlayanlarla aç / kapat
+      name: Hayvan yumurtlayanlar
     ANVIL:
       description: Örs kullanımı değiş.
       name: Anvils
@@ -750,6 +758,18 @@ protection:
       description: Kırmayı değiş
       name: Blok kırma
       hint: Blok kırma kapalı.
+    BREAK_SPAWNERS:
+      description: |-
+        Yumurtlayanların kırılmasını aç / kapat.
+        Blokları Kırma bayrağını geçersiz kılar.
+      name: Yumurtlayanları kır
+      hint: Çıkma yeri kırma devre dışı
+    BREAK_HOPPERS:
+      description: |-
+        Hazneleri kırmayı aç / kapat.
+        Blokları Kırma bayrağını geçersiz kılar.
+      name: Hazneleri kır
+      hint: Hoppers kırma devre dışı
     BREEDING:
       description: Çiftleştirme değiş
       name: Hayvan çiftleştirme
@@ -1022,6 +1042,12 @@ protection:
       name: Vagonlar
       description: Vagon etkileşimini değiş.
       hint: Vagon etkileşimi yok
+    MONSTER_NATURAL_SPAWN:
+      description: Doğal canavar yumurtlamasını aç / kapat
+      name: Canavar doğal yumurtlama
+    MONSTER_SPAWNERS_SPAWN:
+      description: Yumurtlayıcılarla canavar yumurtlamasını aç / kapat
+      name: Canavar yumurtlayanlar
     MOUNT_INVENTORY:
       description: |-
         &aHayvanın envanterini
@@ -1180,42 +1206,18 @@ protection:
       description: |-
         &aEğer etkin olursa oyunculara
         &ave adalara hasar verebilir.
-    MONSTER_SPAWN:
-      description: Doğuşu değiş.
-      name: Canavar doğuşu
-    ANIMAL_SPAWN:
-      name: Hayvan doğuşu
-      description: Doğmayı değiş
-    ANIMAL_NATURAL_SPAWN:
-      description: Doğal hayvan yumurtlamasını aç / kapat
-      name: Hayvan doğal yumurtlama
-    ANIMAL_SPAWNERS_SPAWN:
-      description: Hayvan yumurtlamasını yumurtlayanlarla aç / kapat
-      name: Hayvan yumurtlayanlar
-    BREAK_SPAWNERS:
-      description: |-
-        Yumurtlayanların kırılmasını aç / kapat.
-        Blokları Kırma bayrağını geçersiz kılar.
-      name: Yumurtlayanları kır
-      hint: Çıkma yeri kırma devre dışı
-    BREAK_HOPPERS:
-      description: |-
-        Hazneleri kırmayı aç / kapat.
-        Blokları Kırma bayrağını geçersiz kılar.
-      name: Hazneleri kır
-      hint: Hoppers kırma devre dışı
-    MONSTER_NATURAL_SPAWN:
-      description: Doğal canavar yumurtlamasını aç / kapat
-      name: Canavar doğal yumurtlama
-    MONSTER_SPAWNERS_SPAWN:
-      description: Yumurtlayıcılarla canavar yumurtlamasını aç / kapat
-      name: Canavar yumurtlayanlar
     WORLD_TNT_DAMAGE:
       description: |-
         &a TNT ve TNT minecarts'ın blokları
         &a kırmasına ve ada sınırları dışındaki
         &a varlıklara zarar vermesine izin verin.
       name: Dünya TNT hasarı
+    ANIMAL_SPAWN:
+      description: Doğmayı değiş
+      name: Hayvan doğuşu
+    MONSTER_SPAWN:
+      description: Doğuşu değiş.
+      name: Canavar doğuşu
   locked: "&4Bu ada kilitli!"
   protected: "&4Ada korunuyor: [description]"
   world-protected: "&cDünya korunuyor: [description]"
@@ -1378,5 +1380,3 @@ successfully-loaded: |2
   &6 |  _ < / _ \ '_ \| __/ _ \|  _ < / _ \ \/ /  &bYapımcısı : &atastybento &band &ePoslovitch
   &6 | |_) |  __/ | | | || (_) | |_) | (_) >  <   &bVersiyon &e[version]
   &6 |____/ \___|_| |_|\__\___/|____/ \___/_/\_\  &e[time] &bsaniyede yüklendi!
-prefixes:
-  bentobox: "&6 BentoBox &7 &l > &r "
