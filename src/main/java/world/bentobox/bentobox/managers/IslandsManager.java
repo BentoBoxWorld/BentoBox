@@ -1386,8 +1386,7 @@ public class IslandsManager {
         loc.getWorld().getNearbyEntities(loc, plugin.getSettings().getClearRadius(),
                 plugin.getSettings().getClearRadius(),
                 plugin.getSettings().getClearRadius()).stream()
-        .filter(en -> !en.isPersistent()
-                && Util.isHostileEntity(en)
+        .filter(en -> Util.isHostileEntity(en)
                 && !plugin.getIWM().getRemoveMobsWhitelist(loc.getWorld()).contains(en.getType())
                 && !(en instanceof PufferFish))
         .filter(en -> en.getCustomName() == null)
