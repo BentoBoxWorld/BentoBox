@@ -3,6 +3,7 @@ package world.bentobox.bentobox.database.objects;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -11,7 +12,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 import com.google.gson.annotations.Expose;
@@ -20,6 +20,7 @@ import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.metadata.MetaDataAble;
 import world.bentobox.bentobox.api.metadata.MetaDataValue;
+import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.util.Util;
 
 /**
@@ -351,56 +352,26 @@ public class Players implements DataObject, MetaDataAble {
 
     /**
      * @return the metaData
+     * @since 1.15.5
+     * @see User#getMetaData()
      */
     @Override
-    public Map<String, MetaDataValue> getMetaData() {
+    public Optional<Map<String, MetaDataValue>> getMetaData() {
         if (metaData == null) {
             metaData = new HashMap<>();
         }
-        return metaData;
-    }
-
-    /**
-     * Get meta data by key
-     * @param key - key
-     * @return the value to which the specified key is mapped, or null if there is no mapping for the key
-     * @since 1.15.4
-     */
-    @Override
-    public MetaDataValue getMetaData(@NonNull String key) {
-        return getMetaData().get(key);
+        return Optional.of(metaData);
     }
 
     /**
      * @param metaData the metaData to set
      * @since 1.15.4
+     * @see User#setMetaData(Map)
      */
     @Override
     public void setMetaData(Map<String, MetaDataValue> metaData) {
         this.metaData = metaData;
     }
 
-    /**
-     * Put a key, value string pair into the player's meta data
-     * @param key - key
-     * @param value - value
-     * @return the previous value associated with key, or null if there was no mapping for key.
-     * @since 1.15.4
-     */
-    @Override
-    public MetaDataValue putMetaData(@NonNull String key, @NonNull MetaDataValue value) {
-        return getMetaData().put(key, value);
-    }
-
-    /**
-     * Remove meta data
-     * @param key - key to remove
-     * @return the previous value associated with key, or null if there was no mapping for key.
-     * @since 1.15.4
-     */
-    @Override
-    public MetaDataValue removeMetaData(@NonNull String key) {
-        return getMetaData().remove(key);
-    }
 
 }

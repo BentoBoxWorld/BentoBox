@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -1247,37 +1248,16 @@ public class Island implements DataObject, MetaDataAble {
         this.reserved = reserved;
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
-    @Override
-    public String toString() {
-        return "Island [deleted=" + deleted + ", uniqueId=" + uniqueId + ", center=" + center + ", range=" + range
-                + ", protectionRange=" + protectionRange + ", maxEverProtectionRange=" + maxEverProtectionRange
-                + ", world=" + world + ", gameMode=" + gameMode + ", name=" + name + ", createdDate=" + createdDate
-                + ", updatedDate=" + updatedDate + ", owner=" + owner + ", members=" + members + ", spawn=" + spawn
-                + ", purgeProtected=" + purgeProtected + ", flags=" + flags + ", history=" + history
-                + ", levelHandicap=" + levelHandicap + ", spawnPoint=" + spawnPoint + ", doNotLoad=" + doNotLoad + "]";
-    }
-
     /**
      * @return the metaData
-     * @since 1.15.4
+     * @since 1.15.5
      */
     @Override
-    public Map<String, MetaDataValue> getMetaData() {
-        return metaData;
-    }
-
-    /**
-     * Get meta data by key
-     * @param key - key
-     * @return the value to which the specified key is mapped, or null if there is no mapping for the key
-     * @since 1.15.4
-     */
-    @Override
-    public MetaDataValue getMetaData(String key) {
-        return this.metaData.get(key);
+    public Optional<Map<String, MetaDataValue>> getMetaData() {
+        if (metaData == null) {
+            metaData = new HashMap<>();
+        }
+        return Optional.of(metaData);
     }
 
     /**
@@ -1289,26 +1269,24 @@ public class Island implements DataObject, MetaDataAble {
         this.metaData = metaData;
     }
 
-    /**
-     * Put a key, value string pair into the island's meta data
-     * @param key - key
-     * @param value - value
-     * @return the previous value associated with key, or null if there was no mapping for key.
-     * @since 1.15.4
-     */
     @Override
-    public MetaDataValue putMetaData(String key, MetaDataValue value) {
-        return this.metaData.put(key, value);
+    public String toString() {
+        return "Island [deleted=" + deleted + ", " + (uniqueId != null ? "uniqueId=" + uniqueId + ", " : "")
+                + (center != null ? "center=" + center + ", " : "") + "range=" + range + ", protectionRange="
+                + protectionRange + ", maxEverProtectionRange=" + maxEverProtectionRange + ", "
+                + (world != null ? "world=" + world + ", " : "")
+                + (gameMode != null ? "gameMode=" + gameMode + ", " : "") + (name != null ? "name=" + name + ", " : "")
+                + "createdDate=" + createdDate + ", updatedDate=" + updatedDate + ", "
+                + (owner != null ? "owner=" + owner + ", " : "") + (members != null ? "members=" + members + ", " : "")
+                + "spawn=" + spawn + ", purgeProtected=" + purgeProtected + ", "
+                + (flags != null ? "flags=" + flags + ", " : "") + (history != null ? "history=" + history + ", " : "")
+                + "levelHandicap=" + levelHandicap + ", "
+                + (spawnPoint != null ? "spawnPoint=" + spawnPoint + ", " : "") + "doNotLoad=" + doNotLoad + ", "
+                + (cooldowns != null ? "cooldowns=" + cooldowns + ", " : "")
+                + (commandRanks != null ? "commandRanks=" + commandRanks + ", " : "")
+                + (reserved != null ? "reserved=" + reserved + ", " : "")
+                + (metaData != null ? "metaData=" + metaData : "") + "]";
     }
 
-    /**
-     * Remove meta data
-     * @param key - key to remove
-     * @return the previous value associated with key, or null if there was no mapping for key.
-     * @since 1.15.4
-     */
-    @Override
-    public MetaDataValue removeMetaData(String key) {
-        return this.metaData.remove(key);
-    }
+
 }
