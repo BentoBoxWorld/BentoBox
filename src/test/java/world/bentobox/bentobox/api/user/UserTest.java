@@ -603,7 +603,7 @@ public class UserTest {
     @Test
     public void testMetaData() {
         User u = User.getInstance(player);
-        assertTrue(u.getMetaData().isEmpty());
+        assertTrue(u.getMetaData().get().isEmpty());
         // Store a string in a new key
         assertFalse(u.putMetaData("string", new MetaDataValue("a string")).isPresent());
         // Store an int in a new key
@@ -620,9 +620,9 @@ public class UserTest {
         // Try to remove non-existent key
         assertFalse(u.removeMetaData("ggogg").isPresent());
         // Set the meta data as blank
-        assertFalse(u.getMetaData().isEmpty());
+        assertFalse(u.getMetaData().get().isEmpty());
         u.setMetaData(new HashMap<>());
-        assertTrue(u.getMetaData().isEmpty());
+        assertTrue(u.getMetaData().get().isEmpty());
     }
 
 }

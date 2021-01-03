@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -1249,26 +1250,14 @@ public class Island implements DataObject, MetaDataAble {
 
     /**
      * @return the metaData
-     * @since 1.15.4
+     * @since 1.15.5
      */
     @Override
-    public Map<String, MetaDataValue> getMetaData() {
+    public Optional<Map<String, MetaDataValue>> getMetaData() {
         if (metaData == null) {
             metaData = new HashMap<>();
         }
-        return metaData;
-    }
-
-    /**
-     * Get meta data by key
-     * @param key - key
-     * @return the value to which the specified key is mapped, or null if there is no mapping for the key
-     * @since 1.15.4
-     */
-    @Override
-    @Nullable
-    public MetaDataValue getMetaData(String key) {
-        return getMetaData().get(key);
+        return Optional.of(metaData);
     }
 
     /**
@@ -1278,31 +1267,6 @@ public class Island implements DataObject, MetaDataAble {
     @Override
     public void setMetaData(Map<String, MetaDataValue> metaData) {
         this.metaData = metaData;
-    }
-
-    /**
-     * Put a key, value string pair into the island's meta data
-     * @param key - key
-     * @param value - value
-     * @return the previous value associated with key, or null if there was no mapping for key.
-     * @since 1.15.4
-     */
-    @Override
-    @Nullable
-    public MetaDataValue putMetaData(String key, MetaDataValue value) {
-        return getMetaData().put(key, value);
-    }
-
-    /**
-     * Remove meta data
-     * @param key - key to remove
-     * @return the previous value associated with key, or null if there was no mapping for key.
-     * @since 1.15.4
-     */
-    @Override
-    @Nullable
-    public MetaDataValue removeMetaData(String key) {
-        return getMetaData().remove(key);
     }
 
     @Override
