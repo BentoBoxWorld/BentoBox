@@ -6,7 +6,7 @@ import java.util.Optional;
 /**
  * This interface is for all BentoBox objects that have meta data
  * @author tastybento
- * @since 1.15.5
+ * @since 1.15.6
  */
 public interface MetaDataAble {
 
@@ -25,7 +25,7 @@ public interface MetaDataAble {
      * Get meta data by key
      * @param key - key
      * @return the value to which the specified key is mapped, or null if there is no mapping for the key
-     * @since 1.15.5
+     * @since 1.15.6
      */
     default Optional<MetaDataValue> getMetaData(String key) {
         return getMetaData().map(m -> m.get(key));
@@ -36,7 +36,7 @@ public interface MetaDataAble {
      * @param key - key
      * @param value - value
      * @return the previous value associated with key, or empty if there was no mapping for key.
-     * @since 1.15.5
+     * @since 1.15.6
      */
     default Optional<MetaDataValue> putMetaData(String key, MetaDataValue value) {
         return getMetaData().map(m -> m.put(key, value));
@@ -46,7 +46,7 @@ public interface MetaDataAble {
      * Remove meta data
      * @param key - key to remove
      * @return the previous value associated with key, or empty if there was no mapping for key.
-     * @since 1.15.5
+     * @since 1.15.6
      */
     default Optional<MetaDataValue> removeMetaData(String key) {
         return getMetaData().map(m -> m.remove(key));
