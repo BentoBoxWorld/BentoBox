@@ -20,6 +20,7 @@ import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.metadata.MetaDataAble;
 import world.bentobox.bentobox.api.metadata.MetaDataValue;
+import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.util.Util;
 
 /**
@@ -351,6 +352,7 @@ public class Players implements DataObject, MetaDataAble {
 
     /**
      * @return the metaData
+     * @since 1.15.4
      */
     @Override
     public Map<String, MetaDataValue> getMetaData() {
@@ -367,6 +369,7 @@ public class Players implements DataObject, MetaDataAble {
      * @since 1.15.4
      */
     @Override
+    @Nullable
     public MetaDataValue getMetaData(@NonNull String key) {
         return getMetaData().get(key);
     }
@@ -381,24 +384,30 @@ public class Players implements DataObject, MetaDataAble {
     }
 
     /**
-     * Put a key, value string pair into the player's meta data
+     * Put a key, value string pair into the player's meta data. For API usage, it is best
+     * to use the methods in the User class.
      * @param key - key
      * @param value - value
      * @return the previous value associated with key, or null if there was no mapping for key.
      * @since 1.15.4
+     * @see User#putMetaData(String, MetaDataValue)
      */
     @Override
+    @Nullable
     public MetaDataValue putMetaData(@NonNull String key, @NonNull MetaDataValue value) {
         return getMetaData().put(key, value);
     }
 
     /**
-     * Remove meta data
+     * Remove meta data.For API usage, it is best
+     * to use the methods in the User class.
      * @param key - key to remove
      * @return the previous value associated with key, or null if there was no mapping for key.
      * @since 1.15.4
+     * @see User#removeMetaData(String)
      */
     @Override
+    @Nullable
     public MetaDataValue removeMetaData(@NonNull String key) {
         return getMetaData().remove(key);
     }

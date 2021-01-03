@@ -3,6 +3,7 @@ package world.bentobox.bentobox.api.metadata;
 import java.util.Map;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 
 /**
  * This interface is for all BentoBox objects that have meta data
@@ -11,8 +12,9 @@ import org.eclipse.jdt.annotation.NonNull;
  */
 public interface MetaDataAble {
     /**
-     * @return the metaData
+     * @return the metaData, may be null
      */
+    @Nullable
     public Map<String, MetaDataValue> getMetaData();
 
     /**
@@ -21,6 +23,7 @@ public interface MetaDataAble {
      * @return the value to which the specified key is mapped, or null if there is no mapping for the key
      * @since 1.15.4
      */
+    @Nullable
     public MetaDataValue getMetaData(@NonNull String key);
 
     /**
@@ -36,6 +39,7 @@ public interface MetaDataAble {
      * @return the previous value associated with key, or null if there was no mapping for key.
      * @since 1.15.4
      */
+    @Nullable
     public MetaDataValue putMetaData(@NonNull String key, @NonNull MetaDataValue value);
 
     /**
@@ -44,5 +48,6 @@ public interface MetaDataAble {
      * @return the previous value associated with key, or null if there was no mapping for key.
      * @since 1.15.4
      */
+    @Nullable
     public MetaDataValue removeMetaData(@NonNull String key);
 }

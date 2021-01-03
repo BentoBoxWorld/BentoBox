@@ -1247,25 +1247,15 @@ public class Island implements DataObject, MetaDataAble {
         this.reserved = reserved;
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
-    @Override
-    public String toString() {
-        return "Island [deleted=" + deleted + ", uniqueId=" + uniqueId + ", center=" + center + ", range=" + range
-                + ", protectionRange=" + protectionRange + ", maxEverProtectionRange=" + maxEverProtectionRange
-                + ", world=" + world + ", gameMode=" + gameMode + ", name=" + name + ", createdDate=" + createdDate
-                + ", updatedDate=" + updatedDate + ", owner=" + owner + ", members=" + members + ", spawn=" + spawn
-                + ", purgeProtected=" + purgeProtected + ", flags=" + flags + ", history=" + history
-                + ", levelHandicap=" + levelHandicap + ", spawnPoint=" + spawnPoint + ", doNotLoad=" + doNotLoad + "]";
-    }
-
     /**
      * @return the metaData
      * @since 1.15.4
      */
     @Override
     public Map<String, MetaDataValue> getMetaData() {
+        if (metaData == null) {
+            metaData = new HashMap<>();
+        }
         return metaData;
     }
 
@@ -1276,8 +1266,9 @@ public class Island implements DataObject, MetaDataAble {
      * @since 1.15.4
      */
     @Override
+    @Nullable
     public MetaDataValue getMetaData(String key) {
-        return this.metaData.get(key);
+        return getMetaData().get(key);
     }
 
     /**
@@ -1297,8 +1288,9 @@ public class Island implements DataObject, MetaDataAble {
      * @since 1.15.4
      */
     @Override
+    @Nullable
     public MetaDataValue putMetaData(String key, MetaDataValue value) {
-        return this.metaData.put(key, value);
+        return getMetaData().put(key, value);
     }
 
     /**
@@ -1308,7 +1300,29 @@ public class Island implements DataObject, MetaDataAble {
      * @since 1.15.4
      */
     @Override
+    @Nullable
     public MetaDataValue removeMetaData(String key) {
-        return this.metaData.remove(key);
+        return getMetaData().remove(key);
     }
+
+    @Override
+    public String toString() {
+        return "Island [deleted=" + deleted + ", " + (uniqueId != null ? "uniqueId=" + uniqueId + ", " : "")
+                + (center != null ? "center=" + center + ", " : "") + "range=" + range + ", protectionRange="
+                + protectionRange + ", maxEverProtectionRange=" + maxEverProtectionRange + ", "
+                + (world != null ? "world=" + world + ", " : "")
+                + (gameMode != null ? "gameMode=" + gameMode + ", " : "") + (name != null ? "name=" + name + ", " : "")
+                + "createdDate=" + createdDate + ", updatedDate=" + updatedDate + ", "
+                + (owner != null ? "owner=" + owner + ", " : "") + (members != null ? "members=" + members + ", " : "")
+                + "spawn=" + spawn + ", purgeProtected=" + purgeProtected + ", "
+                + (flags != null ? "flags=" + flags + ", " : "") + (history != null ? "history=" + history + ", " : "")
+                + "levelHandicap=" + levelHandicap + ", "
+                + (spawnPoint != null ? "spawnPoint=" + spawnPoint + ", " : "") + "doNotLoad=" + doNotLoad + ", "
+                + (cooldowns != null ? "cooldowns=" + cooldowns + ", " : "")
+                + (commandRanks != null ? "commandRanks=" + commandRanks + ", " : "")
+                + (reserved != null ? "reserved=" + reserved + ", " : "")
+                + (metaData != null ? "metaData=" + metaData : "") + "]";
+    }
+
+
 }
