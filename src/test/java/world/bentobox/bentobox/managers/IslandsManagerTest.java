@@ -265,16 +265,21 @@ public class IslandsManagerTest {
         // Monsters and animals
         when(zombie.getLocation()).thenReturn(location);
         when(zombie.getType()).thenReturn(EntityType.ZOMBIE);
+        when(zombie.getRemoveWhenFarAway()).thenReturn(true);
         when(slime.getLocation()).thenReturn(location);
         when(slime.getType()).thenReturn(EntityType.SLIME);
+        when(slime.getRemoveWhenFarAway()).thenReturn(true);
         when(cow.getLocation()).thenReturn(location);
         when(cow.getType()).thenReturn(EntityType.COW);
         when(wither.getType()).thenReturn(EntityType.WITHER);
+        when(wither.getRemoveWhenFarAway()).thenReturn(true);
         when(creeper.getType()).thenReturn(EntityType.CREEPER);
+        when(creeper.getRemoveWhenFarAway()).thenReturn(true);
         when(pufferfish.getType()).thenReturn(EntityType.PUFFERFISH);
         // Named monster
         when(skelly.getType()).thenReturn(EntityType.SKELETON);
         when(skelly.getCustomName()).thenReturn("Skelly");
+        when(skelly.getRemoveWhenFarAway()).thenReturn(true);
 
         Collection<Entity> collection = new ArrayList<>();
         collection.add(player);
@@ -521,7 +526,7 @@ public class IslandsManagerTest {
         when(ground.getState()).thenReturn(blockState);
 
         // Negative value = full island scan
-                // No island here yet
+        // No island here yet
         assertNull(manager.bigScan(location, -1));
     }
 
