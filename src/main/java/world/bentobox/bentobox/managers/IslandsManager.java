@@ -27,6 +27,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Boat;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.PufferFish;
 import org.bukkit.inventory.ItemStack;
@@ -1386,9 +1387,11 @@ public class IslandsManager {
         loc.getWorld().getNearbyEntities(loc, plugin.getSettings().getClearRadius(),
                 plugin.getSettings().getClearRadius(),
                 plugin.getSettings().getClearRadius()).stream()
+        .filter(LivingEntity.class::isInstance)
         .filter(en -> Util.isHostileEntity(en)
                 && !plugin.getIWM().getRemoveMobsWhitelist(loc.getWorld()).contains(en.getType())
-                && !(en instanceof PufferFish))
+                && !(en instanceof PufferFish)
+                && ((LivingEntity)en).getRemoveWhenFarAway())
         .filter(en -> en.getCustomName() == null)
         .forEach(Entity::remove);
     }
