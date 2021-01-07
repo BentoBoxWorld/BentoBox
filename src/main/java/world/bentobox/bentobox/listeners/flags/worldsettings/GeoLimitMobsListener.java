@@ -8,7 +8,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.entity.ExplosionPrimeEvent;
@@ -48,7 +47,7 @@ public class GeoLimitMobsListener extends FlagListener {
      * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void onMobSpawn(CreatureSpawnEvent e) {
+    public void onMobSpawn(EntitySpawnEvent e) {
         if (getIWM().inWorld(e.getLocation())
                 && getIWM().getGeoLimitSettings(e.getLocation().getWorld()).contains(e.getEntityType().name())) {
             getIslands().getIslandAt(e.getLocation()).ifPresent(i -> mobSpawnTracker.put(e.getEntity(), i));
