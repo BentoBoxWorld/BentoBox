@@ -59,6 +59,11 @@ import world.bentobox.bentobox.util.Util;
 @Table(name = "Islands")
 public class Island implements DataObject, MetaDataAble {
 
+    /**
+     * Set to true if this data object has been changed since being loaded from the database
+     */
+    private boolean changed;
+
     // True if this island is deleted and pending deletion from the database
     @Expose
     private boolean deleted = false;
@@ -197,6 +202,7 @@ public class Island implements DataObject, MetaDataAble {
         range = BentoBox.getInstance().getIWM().getIslandDistance(world);
         this.protectionRange = protectionRange;
         this.maxEverProtectionRange = protectionRange;
+        this.setChanged();
     }
 
     /**
@@ -206,6 +212,15 @@ public class Island implements DataObject, MetaDataAble {
     public Island(Island island) {
         this.center = island.getCenter().clone();
         this.createdDate = island.getCreatedDate();
+        Optional.ofNullable(island.getCommandRanks()).ifPresent(cr -> {
+            this.commandRanks = new HashMap<>();
+            this.commandRanks.putAll(cr);
+        });
+        Optional.ofNullable(island.getCooldowns()).ifPresent(c -> {
+            this.cooldowns = new HashMap<>();
+            this.cooldowns.putAll(c);
+        });
+        this.createdDate = island.getCreatedDate();
         this.deleted = island.isDeleted();
         this.doNotLoad = island.isDoNotLoad();
         this.flags.putAll(island.getFlags());
@@ -214,19 +229,22 @@ public class Island implements DataObject, MetaDataAble {
         this.levelHandicap = island.getLevelHandicap();
         this.maxEverProtectionRange = island.getMaxEverProtectionRange();
         this.members.putAll(island.getMembers());
+        island.getMetaData().ifPresent(m -> {
+            this.metaData = new HashMap<>();
+            this.metaData.putAll(m);
+        });
         this.name = island.getName();
         this.owner = island.getOwner();
         this.protectionRange = island.getProtectionRange();
         this.purgeProtected = island.getPurgeProtected();
         this.range = island.getRange();
+        this.reserved = island.isReserved();
         this.spawn = island.isSpawn();
         island.getSpawnPoint().forEach((k,v) -> island.spawnPoint.put(k, v.clone()));
         this.uniqueId = island.getUniqueId();
         this.updatedDate = island.getUpdatedDate();
         this.world = island.getWorld();
-        this.cooldowns = island.getCooldowns();
-        this.commandRanks = island.getCommandRanks();
-        this.reserved = island.isReserved();
+        this.setChanged();
     }
 
     /*
@@ -239,6 +257,7 @@ public class Island implements DataObject, MetaDataAble {
      */
     public void addMember(@NonNull UUID playerUUID) {
         setRank(playerUUID, RanksManager.MEMBER_RANK);
+        setChanged();
     }
 
     /**
@@ -254,6 +273,7 @@ public class Island implements DataObject, MetaDataAble {
     public boolean ban(@NonNull UUID issuer, @NonNull UUID target) {
         setRank(target, RanksManager.BANNED_RANK);
         log(new LogEntry.Builder("BAN").data("player", target.toString()).data("issuer", issuer.toString()).build());
+        setChanged();
         return true;
     }
 
@@ -506,6 +526,7 @@ public class Island implements DataObject, MetaDataAble {
      */
     public void setMaxEverProtectionRange(int maxEverProtectionRange) {
         this.maxEverProtectionRange = maxEverProtectionRange;
+        setChanged();
     }
 
     /**
@@ -733,6 +754,7 @@ public class Island implements DataObject, MetaDataAble {
      */
     public void removeMember(UUID playerUUID) {
         members.remove(playerUUID);
+        setChanged();
     }
 
     /**
@@ -743,6 +765,7 @@ public class Island implements DataObject, MetaDataAble {
             this.world = center.getWorld();
         }
         this.center = center;
+        setChanged();
     }
 
     /**
@@ -750,6 +773,7 @@ public class Island implements DataObject, MetaDataAble {
      */
     public void setCreatedDate(long createdDate){
         this.createdDate = createdDate;
+        setChanged();
     }
 
     /**
@@ -759,6 +783,7 @@ public class Island implements DataObject, MetaDataAble {
      */
     public void setFlag(Flag flag, int value){
         flags.put(flag, value);
+        setChanged();
     }
 
     /**
@@ -766,6 +791,7 @@ public class Island implements DataObject, MetaDataAble {
      */
     public void setFlags(Map<Flag, Integer> flags) {
         this.flags = flags;
+        setChanged();
     }
 
     /**
@@ -780,6 +806,7 @@ public class Island implements DataObject, MetaDataAble {
         plugin.getFlagsManager().getFlags().stream().filter(f -> f.getType().equals(Flag.Type.SETTING))
         .forEach(f -> result.put(f, plugin.getIWM().getDefaultIslandSettings(world).getOrDefault(f, f.getDefaultRank())));
         this.setFlags(result);
+        setChanged();
     }
 
     /**
@@ -787,6 +814,7 @@ public class Island implements DataObject, MetaDataAble {
      */
     public void setLevelHandicap(int levelHandicap) {
         this.levelHandicap = levelHandicap;
+        setChanged();
     }
 
     /**
@@ -794,6 +822,7 @@ public class Island implements DataObject, MetaDataAble {
      */
     public void setMembers(Map<UUID, Integer> members) {
         this.members = members;
+        setChanged();
     }
 
     /**
@@ -804,6 +833,7 @@ public class Island implements DataObject, MetaDataAble {
      */
     public void setName(String name){
         this.name = (name != null && !name.equals("")) ? name : null;
+        setChanged();
     }
 
     /**
@@ -827,6 +857,7 @@ public class Island implements DataObject, MetaDataAble {
             }
         }
         setRank(owner, RanksManager.OWNER_RANK);
+        setChanged();
     }
 
     /**
@@ -838,6 +869,7 @@ public class Island implements DataObject, MetaDataAble {
         if (protectionRange > this.maxEverProtectionRange) {
             this.maxEverProtectionRange = protectionRange;
         }
+        setChanged();
     }
 
     /**
@@ -845,6 +877,7 @@ public class Island implements DataObject, MetaDataAble {
      */
     public void setPurgeProtected(boolean purgeProtected){
         this.purgeProtected = purgeProtected;
+        setChanged();
     }
 
     /**
@@ -859,6 +892,7 @@ public class Island implements DataObject, MetaDataAble {
      */
     public void setRange(int range){
         this.range = range;
+        setChanged();
     }
 
     /**
@@ -868,6 +902,7 @@ public class Island implements DataObject, MetaDataAble {
      */
     public void setRank(User user, int rank) {
         setRank(user.getUniqueId(), rank);
+        setChanged();
     }
 
     /**
@@ -877,11 +912,12 @@ public class Island implements DataObject, MetaDataAble {
      * @param rank rank value
      * @since 1.1
      */
-    public void setRank(UUID uuid, int rank) {
+    public void setRank(@Nullable UUID uuid, int rank) {
         if (uuid == null) {
             return; // Defensive code
         }
         members.put(uuid, rank);
+        setChanged();
     }
 
     /**
@@ -889,6 +925,7 @@ public class Island implements DataObject, MetaDataAble {
      */
     public void setRanks(Map<UUID, Integer> ranks) {
         members = ranks;
+        setChanged();
     }
 
     /**
@@ -911,6 +948,7 @@ public class Island implements DataObject, MetaDataAble {
             setFlag(Flags.LOCK, RanksManager.VISITOR_RANK);
         }
         log(new LogEntry.Builder("SPAWN").data("value", String.valueOf(isSpawn)).build());
+        setChanged();
     }
 
     /**
@@ -928,11 +966,13 @@ public class Island implements DataObject, MetaDataAble {
      */
     public void setSpawnPoint(Map<Environment, Location> spawnPoint) {
         this.spawnPoint = spawnPoint;
+        setChanged();
     }
 
     @Override
     public void setUniqueId(String uniqueId) {
         this.uniqueId = uniqueId;
+        setChanged();
     }
 
     /**
@@ -940,6 +980,7 @@ public class Island implements DataObject, MetaDataAble {
      */
     public void setUpdatedDate(long updatedDate){
         this.updatedDate = updatedDate;
+        setChanged();
     }
 
     /**
@@ -947,6 +988,7 @@ public class Island implements DataObject, MetaDataAble {
      */
     public void setWorld(World world) {
         this.world = world;
+        setChanged();
     }
 
     /**
@@ -957,43 +999,42 @@ public class Island implements DataObject, MetaDataAble {
     public boolean showInfo(User user) {
         BentoBox plugin = BentoBox.getInstance();
         user.sendMessage("commands.admin.info.title");
-        user.sendMessage("commands.admin.info.island-uuid", "[uuid]", uniqueId);
-        if (owner == null) {
+        user.sendMessage("commands.admin.info.island-uuid", "[uuid]", this.getUniqueId());
+        if (getOwner() == null) {
             user.sendMessage("commands.admin.info.unowned");
         } else {
-            user.sendMessage("commands.admin.info.owner", "[owner]", plugin.getPlayers().getName(owner), "[uuid]", owner.toString());
+            user.sendMessage("commands.admin.info.owner", "[owner]", plugin.getPlayers().getName(getOwner()), "[uuid]", getOwner().toString());
 
             // Fixes #getLastPlayed() returning 0 when it is the owner's first connection.
-            long lastPlayed = (Bukkit.getServer().getOfflinePlayer(owner).getLastPlayed() != 0) ?
-                    Bukkit.getServer().getOfflinePlayer(owner).getLastPlayed() : Bukkit.getServer().getOfflinePlayer(owner).getFirstPlayed();
+            long lastPlayed = (Bukkit.getServer().getOfflinePlayer(getOwner()).getLastPlayed() != 0) ?
+                    Bukkit.getServer().getOfflinePlayer(getOwner()).getLastPlayed() : Bukkit.getServer().getOfflinePlayer(getOwner()).getFirstPlayed();
             user.sendMessage("commands.admin.info.last-login","[date]", new Date(lastPlayed).toString());
 
-            user.sendMessage("commands.admin.info.deaths", "[number]", String.valueOf(plugin.getPlayers().getDeaths(world, owner)));
-            String resets = String.valueOf(plugin.getPlayers().getResets(world, owner));
-            String total = plugin.getIWM().getResetLimit(world) < 0 ? "Unlimited" : String.valueOf(plugin.getIWM().getResetLimit(world));
+            user.sendMessage("commands.admin.info.deaths", "[number]", String.valueOf(plugin.getPlayers().getDeaths(getWorld(), getOwner())));
+            String resets = String.valueOf(plugin.getPlayers().getResets(getWorld(), getOwner()));
+            String total = plugin.getIWM().getResetLimit(getWorld()) < 0 ? "Unlimited" : String.valueOf(plugin.getIWM().getResetLimit(getWorld()));
             user.sendMessage("commands.admin.info.resets-left", "[number]", resets, "[total]", total);
             // Show team members
             showMembers(user);
         }
-        Vector location = center.toVector();
+        Vector location = getCenter().toVector();
         user.sendMessage("commands.admin.info.island-location", "[xyz]", Util.xyz(location));
-        Vector from = center.toVector().subtract(new Vector(range, 0, range)).setY(0);
-        Vector to = center.toVector().add(new Vector(range-1, 0, range-1)).setY(center.getWorld().getMaxHeight());
+        Vector from = getCenter().toVector().subtract(new Vector(getRange(), 0, getRange())).setY(0);
+        Vector to = getCenter().toVector().add(new Vector(getRange()-1, 0, getRange()-1)).setY(getCenter().getWorld().getMaxHeight());
         user.sendMessage("commands.admin.info.island-coords", "[xz1]", Util.xyz(from), "[xz2]", Util.xyz(to));
-        user.sendMessage("commands.admin.info.protection-range", "[range]", String.valueOf(protectionRange));
-        user.sendMessage("commands.admin.info.max-protection-range", "[range]", String.valueOf(maxEverProtectionRange));
-        Vector pfrom = center.toVector().subtract(new Vector(protectionRange, 0, protectionRange)).setY(0);
-        Vector pto = center.toVector().add(new Vector(protectionRange-1, 0, protectionRange-1)).setY(center.getWorld().getMaxHeight());
+        user.sendMessage("commands.admin.info.protection-range", "[range]", String.valueOf(getProtectionRange()));
+        user.sendMessage("commands.admin.info.max-protection-range", "[range]", String.valueOf(getMaxEverProtectionRange()));
+        Vector pfrom = getCenter().toVector().subtract(new Vector(getProtectionRange(), 0, getProtectionRange())).setY(0);
+        Vector pto = getCenter().toVector().add(new Vector(getProtectionRange()-1, 0, getProtectionRange()-1)).setY(getCenter().getWorld().getMaxHeight());
         user.sendMessage("commands.admin.info.protection-coords", "[xz1]", Util.xyz(pfrom), "[xz2]", Util.xyz(pto));
         if (spawn) {
             user.sendMessage("commands.admin.info.is-spawn");
         }
-        Set<UUID> banned = getBanned();
-        if (!banned.isEmpty()) {
+        if (!getBanned().isEmpty()) {
             user.sendMessage("commands.admin.info.banned-players");
-            banned.forEach(u -> user.sendMessage("commands.admin.info.banned-format", TextVariables.NAME, plugin.getPlayers().getName(u)));
+            getBanned().forEach(u -> user.sendMessage("commands.admin.info.banned-format", TextVariables.NAME, plugin.getPlayers().getName(u)));
         }
-        if (purgeProtected) {
+        if (getPurgeProtected()) {
             user.sendMessage("commands.admin.info.purge-protected");
         }
         return true;
@@ -1025,6 +1066,7 @@ public class Island implements DataObject, MetaDataAble {
         if (flag.getType().equals(Flag.Type.SETTING) || flag.getType().equals(Flag.Type.WORLD_SETTING)) {
             setSettingsFlag(flag, !isAllowed(flag));
         }
+        setChanged();
     }
 
     /**
@@ -1036,6 +1078,7 @@ public class Island implements DataObject, MetaDataAble {
         if (flag.getType().equals(Flag.Type.SETTING) || flag.getType().equals(Flag.Type.WORLD_SETTING)) {
             flags.put(flag, state ? 1 : -1);
         }
+        setChanged();
     }
 
     /**
@@ -1045,6 +1088,7 @@ public class Island implements DataObject, MetaDataAble {
      */
     public void setSpawnPoint(Environment islandType, Location l) {
         spawnPoint.put(islandType, l);
+        setChanged();
     }
 
     /**
@@ -1063,6 +1107,7 @@ public class Island implements DataObject, MetaDataAble {
      */
     public void removeRank(Integer rank) {
         members.values().removeIf(rank::equals);
+        setChanged();
     }
 
     /**
@@ -1079,6 +1124,7 @@ public class Island implements DataObject, MetaDataAble {
      */
     public void log(LogEntry logEntry) {
         history.add(logEntry);
+        setChanged();
     }
 
     /**
@@ -1087,6 +1133,7 @@ public class Island implements DataObject, MetaDataAble {
      */
     public void setHistory(List<LogEntry> history) {
         this.history = history;
+        setChanged();
     }
 
     /**
@@ -1101,6 +1148,7 @@ public class Island implements DataObject, MetaDataAble {
      */
     public void setDoNotLoad(boolean doNotLoad) {
         this.doNotLoad = doNotLoad;
+        setChanged();
     }
 
     /**
@@ -1115,6 +1163,7 @@ public class Island implements DataObject, MetaDataAble {
      */
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+        setChanged();
     }
 
     /**
@@ -1133,6 +1182,7 @@ public class Island implements DataObject, MetaDataAble {
      */
     public void setGameMode(String gameMode) {
         this.gameMode = gameMode;
+        setChanged();
     }
 
     /**
@@ -1171,6 +1221,7 @@ public class Island implements DataObject, MetaDataAble {
             return true;
         }
         cooldowns.remove(flag);
+        setChanged();
         return false;
     }
 
@@ -1180,6 +1231,7 @@ public class Island implements DataObject, MetaDataAble {
      */
     public void setCooldown(Flag flag) {
         cooldowns.put(flag, flag.getCooldown() * 1000 + System.currentTimeMillis());
+        setChanged();
     }
 
     /**
@@ -1194,6 +1246,7 @@ public class Island implements DataObject, MetaDataAble {
      */
     public void setCooldowns(Map<Flag, Long> cooldowns) {
         this.cooldowns = cooldowns;
+        setChanged();
     }
 
     /**
@@ -1208,6 +1261,7 @@ public class Island implements DataObject, MetaDataAble {
      */
     public void setCommandRanks(Map<String, Integer> commandRanks) {
         this.commandRanks = commandRanks;
+        setChanged();
     }
 
     /**
@@ -1228,6 +1282,7 @@ public class Island implements DataObject, MetaDataAble {
     public void setRankCommand(String command, int rank) {
         if (this.commandRanks == null) this.commandRanks = new HashMap<>();
         this.commandRanks.put(command, rank);
+        setChanged();
     }
 
     /**
@@ -1246,6 +1301,7 @@ public class Island implements DataObject, MetaDataAble {
      */
     public void setReserved(boolean reserved) {
         this.reserved = reserved;
+        setChanged();
     }
 
     /**
@@ -1267,6 +1323,7 @@ public class Island implements DataObject, MetaDataAble {
     @Override
     public void setMetaData(Map<String, MetaDataValue> metaData) {
         this.metaData = metaData;
+        setChanged();
     }
 
     @Override
@@ -1287,6 +1344,21 @@ public class Island implements DataObject, MetaDataAble {
                 + (reserved != null ? "reserved=" + reserved + ", " : "")
                 + (metaData != null ? "metaData=" + metaData : "") + "]";
     }
+
+    /**
+     * @return changed state
+     */
+    public boolean isChanged() {
+        return changed;
+    }
+
+    /**
+     * Indicates the class has been changed
+     */
+    public void setChanged() {
+        this.changed = true;
+    }
+
 
 
 }

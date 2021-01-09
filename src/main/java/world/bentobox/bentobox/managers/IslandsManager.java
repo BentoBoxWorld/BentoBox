@@ -1241,11 +1241,13 @@ public class IslandsManager {
      */
     public void saveAll(boolean schedule){
         if (!schedule) {
-            for(Island island : islandCache.getIslands()){
-                try {
-                    handler.saveObjectAsync(island);
-                } catch (Exception e) {
-                    plugin.logError("Could not save island to database when running sync! " + e.getMessage());
+            for(Island island : islandCache.getIslands()) {
+                if (island.isChanged()) {
+                    try {
+                        handler.saveObjectAsync(island);
+                    } catch (Exception e) {
+                        plugin.logError("Could not save island to database when running sync! " + e.getMessage());
+                    }
                 }
             }
             return;
@@ -1264,10 +1266,12 @@ public class IslandsManager {
                         cancel();
                         return;
                     }
-                    try {
-                        handler.saveObjectAsync(island);
-                    } catch (Exception e) {
-                        plugin.logError("Could not save island to database when running sync! " + e.getMessage());
+                    if (island.isChanged()) {
+                        try {
+                            handler.saveObjectAsync(island);
+                        } catch (Exception e) {
+                            plugin.logError("Could not save island to database when running sync! " + e.getMessage());
+                        }
                     }
                 }
             }
@@ -1302,10 +1306,14 @@ public class IslandsManager {
     }
 
     public void shutdown(){
+        plugin.log("Removing coops from islands...");
         // Remove all coop associations
         islandCache.getIslands().forEach(i -> i.getMembers().values().removeIf(p -> p == RanksManager.COOP_RANK));
+        plugin.log("Saving islands - this has to be done sync so it may take a while with a lot of islands...");
         saveAll();
+        plugin.log("Islands saved.");
         islandCache.clear();
+        plugin.log("Closing database.");
         handler.close();
     }
 
