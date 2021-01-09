@@ -29,7 +29,7 @@ public class PlaceholderAPIHook extends PlaceholderHook {
     private Map<Addon, AddonPlaceholderExpansion> addonsExpansions;
     private final Set<String> bentoBoxPlaceholders;
     private final Map<Addon, Set<String>> addonPlaceholders;
-    
+
 
     public PlaceholderAPIHook() {
         super("PlaceholderAPI");
@@ -105,15 +105,15 @@ public class PlaceholderAPIHook extends PlaceholderHook {
     }
 
     /**
-     * 
+     *
      */
     @Override
     @NonNull
     public String replacePlaceholders(@NonNull Player player, @NonNull String string) {
         // Transform [gamemode] in string to the game mode description name, or remove it for the default replacement
-        String newString = BentoBox.getInstance().getIWM().getAddon(player.getWorld()).map(gm -> 
-            string.replace(TextVariables.GAMEMODE, gm.getDescription().getName().toLowerCase())
-        ).orElse(removeGMPlaceholder(string));
+        String newString = BentoBox.getInstance().getIWM().getAddon(player.getWorld()).map(gm ->
+        string.replace(TextVariables.GAMEMODE, gm.getDescription().getName().toLowerCase())
+                ).orElseGet(() -> removeGMPlaceholder(string));
         return PlaceholderAPI.setPlaceholders(player, newString);
     }
 
@@ -121,10 +121,10 @@ public class PlaceholderAPIHook extends PlaceholderHook {
         String newString = string;
         // Get placeholders - TODO: my regex moh=jo isn't good enough to grab only placeholders with [gamemode] in yet!
         Matcher m = Pattern.compile("(%)(.*?)(%)").matcher(string);
-            while (m.find()) {
-                String ph = m.group();
-                if (ph.contains(TextVariables.GAMEMODE)) newString = newString.replace(ph,"");
-            }
+        while (m.find()) {
+            String ph = m.group();
+            if (ph.contains(TextVariables.GAMEMODE)) newString = newString.replace(ph,"");
+        }
         return newString;
     }
 

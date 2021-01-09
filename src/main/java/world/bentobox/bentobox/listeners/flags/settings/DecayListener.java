@@ -29,6 +29,6 @@ public class DecayListener extends FlagListener {
 
         Optional<Island> island = getIslands().getIslandAt(e.getBlock().getLocation());
         // Cancel the event if needed - this means if this is not allowed on the island or in the world.
-        e.setCancelled(island.map(i -> !i.isAllowed(Flags.LEAF_DECAY)).orElse(!Flags.LEAF_DECAY.isSetForWorld(e.getBlock().getWorld())));
+        e.setCancelled(island.map(i -> !i.isAllowed(Flags.LEAF_DECAY)).orElseGet(() -> !Flags.LEAF_DECAY.isSetForWorld(e.getBlock().getWorld())));
     }
 }

@@ -296,7 +296,7 @@ public class PlayersManager {
         return playerCache.values().stream()
                 .filter(p -> p.getPlayerName().equalsIgnoreCase(name)).findFirst()
                 .map(p -> UUID.fromString(p.getUniqueId()))
-                .orElse(names.objectExists(name) ? names.loadObject(name).getUuid() : null);
+                .orElseGet(() -> names.objectExists(name) ? names.loadObject(name).getUuid() : null);
     }
 
     /**
@@ -548,7 +548,7 @@ public class PlayersManager {
                 target.getPlayer().getInventory().clear();
             } else {
                 getPlayer(target.getUniqueId()).addToPendingKick(world);
-            } 
+            }
         }
 
         if (plugin.getSettings().isUseEconomy() && plugin.getIWM().isOnLeaveResetMoney(world)) {

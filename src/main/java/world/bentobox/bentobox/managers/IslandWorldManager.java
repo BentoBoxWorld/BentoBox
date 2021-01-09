@@ -659,7 +659,7 @@ public class IslandWorldManager {
     public List<String> getOnLeaveCommands(@NonNull World world) {
         return gameModes.containsKey(world) ? gameModes.get(world).getWorldSettings().getOnLeaveCommands() : Collections.emptyList();
     }
-    
+
     /**
      * Returns a list of commands to execute when the player respawns and {@link Flags#ISLAND_RESPAWN} is true.
      * @param world the World
@@ -678,7 +678,7 @@ public class IslandWorldManager {
      * @return data folder file object or the plugin's data folder if none found
      */
     public File getDataFolder(@NonNull World world) {
-        return getAddon(world).map(GameModeAddon::getDataFolder).orElse(plugin.getDataFolder());
+        return getAddon(world).map(GameModeAddon::getDataFolder).orElseGet(() -> plugin.getDataFolder());
     }
 
     /**

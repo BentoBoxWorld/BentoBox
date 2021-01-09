@@ -439,10 +439,10 @@ public class PortalTeleportationListenerTest {
         assertTrue(np.onNetherPortal(e));
         // Verify
         assertTrue(e.isCancelled());
-        // If nether islands, then to = from but in nether
-        verify(from).toVector();
-        // Do not go to spawn
-        verify(nether, never()).getSpawnLocation();
+        // If nether islands, then to spawn location
+        verify(island).getSpawnPoint(eq(Environment.NETHER));
+        // Do not go to from
+        verify(from, never()).toVector();
     }
 
     /**

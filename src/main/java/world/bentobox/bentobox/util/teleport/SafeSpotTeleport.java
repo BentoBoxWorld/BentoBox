@@ -173,7 +173,7 @@ public class SafeSpotTeleport {
      */
     private List<Pair<Integer, Integer>> getChunksToScan() {
         List<Pair<Integer, Integer>> chunksToScan = new ArrayList<>();
-        int maxRadius = plugin.getIslands().getIslandAt(location).map(Island::getProtectionRange).orElse(plugin.getIWM().getIslandProtectionRange(location.getWorld()));
+        int maxRadius = plugin.getIslands().getIslandAt(location).map(Island::getProtectionRange).orElseGet(() -> plugin.getIWM().getIslandProtectionRange(location.getWorld()));
         maxRadius = Math.min(MAX_RADIUS, maxRadius);
         int x = location.getBlockX();
         int z = location.getBlockZ();

@@ -61,7 +61,9 @@ public class AdminRegisterCommand extends ConfirmableCommand {
         }
         // Check if island is owned
         Optional<Island> island = getIslands().getIslandAt(user.getLocation());
-        if (island.map(Island::isOwned).orElse(false)) {
+        if (island.filter(Island::isOwned)
+                .filter(i -> !i.getOwner().equals(targetUUID))
+                .isPresent()) {
             user.sendMessage("commands.admin.register.already-owned");
             return false;
         }

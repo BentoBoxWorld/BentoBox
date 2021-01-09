@@ -146,7 +146,7 @@ public abstract class FlagListener implements Listener {
             } else {
                 report(user, e, loc, flag,  flag.isSetForWorld(loc.getWorld()) ? Why.SETTING_ALLOWED_IN_WORLD : Why.SETTING_NOT_ALLOWED_IN_WORLD);
             }
-            return island.map(x -> x.isAllowed(flag)).orElse(flag.isSetForWorld(loc.getWorld()));
+            return island.map(x -> x.isAllowed(flag)).orElseGet(() -> flag.isSetForWorld(loc.getWorld()));
         }
 
         // Protection flag
