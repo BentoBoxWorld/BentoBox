@@ -1326,6 +1326,27 @@ public class Island implements DataObject, MetaDataAble {
         setChanged();
     }
 
+    /**
+     * @return changed state
+     */
+    public boolean isChanged() {
+        return changed;
+    }
+
+    /**
+     * Indicates the class has been changed
+     */
+    public void setChanged() {
+        this.changed = true;
+    }
+
+    /**
+     * @param changed the changed to set
+     */
+    public void setChanged(boolean changed) {
+        this.changed = changed;
+    }
+
     @Override
     public String toString() {
         return "Island [deleted=" + deleted + ", " + (uniqueId != null ? "uniqueId=" + uniqueId + ", " : "")
@@ -1344,21 +1365,6 @@ public class Island implements DataObject, MetaDataAble {
                 + (reserved != null ? "reserved=" + reserved + ", " : "")
                 + (metaData != null ? "metaData=" + metaData : "") + "]";
     }
-
-    /**
-     * @return changed state
-     */
-    public boolean isChanged() {
-        return changed;
-    }
-
-    /**
-     * Indicates the class has been changed
-     */
-    public void setChanged() {
-        this.changed = true;
-    }
-
 
 
 }
