@@ -1,7 +1,6 @@
 package world.bentobox.bentobox.managers.island;
 
 import java.io.IOException;
-import java.util.Optional;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -171,7 +170,10 @@ public class NewIsland {
      */
     public void newIsland(Island oldIsland) throws IOException {
         // Find the new island location
-        Location next = checkReservedIsland().orElse(makeNextIsland());
+        Location next = checkReservedIsland();
+        if (next == null) {
+            next = this.makeNextIsland();
+        }
         // Clean up the user
         cleanUpUser(next);
         // Fire event
@@ -289,23 +291,23 @@ public class NewIsland {
 
     /**
      * Get the reserved island location
-     * @return reserved island location, or Optional empty if none found
+     * @return reserved island location, or null if none found
      */
-    private Optional<Location> checkReservedIsland() {
-        Location next = null;
+    private Location checkReservedIsland() {
         if (plugin.getIslands().hasIsland(world, user)) {
             // Island exists, it just needs pasting
             island = plugin.getIslands().getIsland(world, user);
             if (island != null && island.isReserved()) {
-                next = island.getCenter();
+                Location l = island.getCenter();
                 // Clear the reservation
                 island.setReserved(false);
+                return l;
             } else {
                 // This should never happen unless we allow another way to paste over islands without reserving
                 plugin.logError("New island for user " + user.getName() + " was not reserved!");
             }
         }
-        return Optional.ofNullable(next);
+        return null;
     }
 
     private void tidyUp(Island oldIsland) {
