@@ -2,6 +2,7 @@ package world.bentobox.bentobox.api.user;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -456,15 +457,15 @@ public class UserTest {
     public void testEqualsObject() {
         User user1 = User.getInstance(UUID.randomUUID());
         User user2 = User.getInstance(UUID.randomUUID());
-        assertTrue(user1.equals(user1));
-        assertFalse(user1.equals(user2));
-        assertFalse(user1.equals(null));
-        assertFalse(user2.equals(user1));
-        assertFalse(user2.equals(null));
-        assertFalse(user2.equals("a string"));
+        assertEquals(user1, user1);
+        assertNotEquals(user1, user2);
+        assertNotEquals(null, user1);
+        assertNotEquals(user2, user1);
+        assertNotEquals(null, user2);
+        assertNotEquals("a string", user2);
 
         user1 = User.getInstance((UUID)null);
-        assertFalse(user2.equals(user1));
+        assertNotEquals(user2, user1);
     }
 
     @Test

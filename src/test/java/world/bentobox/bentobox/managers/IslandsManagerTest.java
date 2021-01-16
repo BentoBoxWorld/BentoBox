@@ -587,9 +587,9 @@ public class IslandsManagerTest {
     @Test
     public void testGetCount() {
         IslandsManager im = new IslandsManager(plugin);
-        assertTrue(im.getIslandCount() == 0);
+        assertEquals(0, im.getIslandCount());
         im.createIsland(location, UUID.randomUUID());
-        assertTrue(im.getIslandCount() == 1);
+        assertEquals(1, im.getIslandCount());
     }
 
     /**

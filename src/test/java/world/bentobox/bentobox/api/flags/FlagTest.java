@@ -2,6 +2,7 @@ package world.bentobox.bentobox.api.flags;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -121,7 +122,7 @@ public class FlagTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.flags.Flag#Flag(java.lang.String, org.bukkit.Material, org.bukkit.event.Listener, world.bentobox.bentobox.api.flags.Flag.Type, int, world.bentobox.bentobox.api.panels.PanelItem.ClickHandler, boolean, world.bentobox.bentobox.api.addons.GameModeAddon)}.
+     * Test method for .
      */
     @Test
     public void testFlag() {
@@ -261,15 +262,15 @@ public class FlagTest {
     public void testEqualsObject() {
         Flag flag1 = null;
 
-        assertFalse(f.equals(null));
+        assertNotEquals(null, f);
         int i = 45;
-        assertFalse(f.equals(i));
+        assertNotEquals(f, i);
 
-        assertTrue(f.equals(f));
+        assertEquals(f, f);
 
         Flag f2 = new Flag.Builder("flagID2", Material.ACACIA_PLANKS).type(Flag.Type.WORLD_SETTING).usePanel(true).build();
-        assertFalse(f.equals(f2));
-        assertFalse(f2.equals(flag1));
+        assertNotEquals(f, f2);
+        assertNotEquals(f2, flag1);
     }
 
     /**
@@ -339,7 +340,7 @@ public class FlagTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.flags.Flag#toPanelItem(world.bentobox.bentobox.BentoBox, world.bentobox.bentobox.api.user.User)}.
+     * Test method for {@link world.bentobox.bentobox.api.flags.Flag#toPanelItem(BentoBox, User, Island, boolean)}.
      */
     @Test
     public void testToPanelItem() {
@@ -379,7 +380,6 @@ public class FlagTest {
         verify(user).getTranslation(Mockito.eq("protection.panel.flag-item.name-layout"), any());
 
         assertEquals(Material.ACACIA_PLANKS, pi.getItem().getType());
-
     }
 
     /**
@@ -398,8 +398,6 @@ public class FlagTest {
         Flag aaa = new Flag.Builder("AAA", Material.ACACIA_DOOR).type(Flag.Type.PROTECTION).build();
         Flag bbb = new Flag.Builder("BBB", Material.ACACIA_DOOR).type(Flag.Type.PROTECTION).build();
         assertTrue(aaa.compareTo(bbb) < bbb.compareTo(aaa));
-        assertTrue(aaa.compareTo(aaa) == 0);
+        assertEquals(0, aaa.compareTo(aaa));
     }
-
-
 }

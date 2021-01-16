@@ -224,9 +224,9 @@ public class IslandTeamCommandTest {
         tc.addInvite(Invite.Type.TEAM, uuid, invitee);
         @Nullable
         Invite invite = tc.getInvite(invitee);
-        assertEquals(invite.getInvitee(), invitee);
-        assertEquals(invite.getType(), Type.TEAM);
-        assertEquals(invite.getInviter(), uuid);
+        assertEquals(invitee, invite.getInvitee());
+        assertEquals(Type.TEAM, invite.getType());
+        assertEquals(uuid, invite.getInviter());
     }
 
     /**

@@ -220,7 +220,7 @@ public class AdminResetFlagsCommandTest {
     public void testTabCompleteUserStringListOfString() {
         Optional<List<String>> list = arf.tabComplete(user, "", Collections.emptyList());
         assertTrue(list.isPresent());
-        assertTrue(list.get().size() == 2);
+        assertEquals(2, list.get().size());
         assertTrue(list.get().contains("FLAG1"));
         assertTrue(list.get().contains("FLAG2"));
         assertFalse(list.get().contains("FLAG3"));

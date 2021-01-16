@@ -1,8 +1,7 @@
 package world.bentobox.bentobox.listeners.flags.protection;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -257,7 +256,7 @@ public class BlockInteractionListenerTest {
         when(clickedBlock.getType()).thenReturn(Material.ITEM_FRAME);
         PlayerInteractEvent e = new PlayerInteractEvent(player, Action.RIGHT_CLICK_BLOCK, item, clickedBlock, BlockFace.EAST, hand);
         bil.onPlayerInteract(e);
-        assertTrue(e.useInteractedBlock().equals(Event.Result.DENY));
+        assertEquals(Event.Result.DENY, e.useInteractedBlock());
         verify(notifier).notify(any(), eq("protection.protected"));
     }
 
@@ -271,7 +270,7 @@ public class BlockInteractionListenerTest {
         when(clickedBlock.getType()).thenReturn(Material.ITEM_FRAME);
         PlayerInteractEvent e = new PlayerInteractEvent(player, Action.RIGHT_CLICK_BLOCK, item, clickedBlock, BlockFace.EAST, hand);
         bil.onPlayerInteract(e);
-        assertTrue(e.useInteractedBlock().equals(Event.Result.DENY));
+        assertEquals(Event.Result.DENY, e.useInteractedBlock());
         verify(notifier).notify(any(), eq("protection.protected"));
     }
 
@@ -284,7 +283,7 @@ public class BlockInteractionListenerTest {
             when(clickedBlock.getType()).thenReturn(bm);
             PlayerInteractEvent e = new PlayerInteractEvent(player, Action.RIGHT_CLICK_BLOCK, item, clickedBlock, BlockFace.EAST, hand);
             bil.onPlayerInteract(e);
-            assertTrue("Failure " + bm, e.useInteractedBlock().equals(Event.Result.DENY));
+            assertEquals("Failure " + bm, Event.Result.DENY, e.useInteractedBlock());
         });
         verify(notifier, times((int)Arrays.stream(Material.values()).filter(m -> m.name().startsWith("POTTED")).count())).notify(any(), eq("protection.protected"));
     }
@@ -327,7 +326,7 @@ public class BlockInteractionListenerTest {
             when(clickedBlock.getType()).thenReturn(bm);
             PlayerInteractEvent e = new PlayerInteractEvent(player, Action.RIGHT_CLICK_BLOCK, item, clickedBlock, BlockFace.EAST, hand);
             bil.onPlayerInteract(e);
-            assertFalse("Failure " + bm, e.useInteractedBlock().equals(Event.Result.DENY));
+            assertNotEquals("Failure " + bm, Event.Result.DENY, e.useInteractedBlock());
             verify(notifier, never()).notify(any(), eq("protection.protected"));
             verify(notifier, never()).notify(any(), eq("protection.world-protected"));
         }
@@ -342,8 +341,8 @@ public class BlockInteractionListenerTest {
         when(item.getType()).thenReturn(Material.BLAZE_SPAWN_EGG);
         PlayerInteractEvent e = new PlayerInteractEvent(player, Action.RIGHT_CLICK_BLOCK, item, clickedBlock, BlockFace.EAST, hand);
         bil.onPlayerInteract(e);
-        assertTrue(e.useInteractedBlock().equals(Event.Result.DENY));
-        assertTrue(e.useItemInHand().equals(Event.Result.DENY));
+        assertEquals(Event.Result.DENY, e.useInteractedBlock());
+        assertEquals(Event.Result.DENY, e.useItemInHand());
         verify(notifier).notify(any(), eq("protection.protected"));
     }
 
@@ -357,8 +356,8 @@ public class BlockInteractionListenerTest {
         when(item.getType()).thenReturn(Material.BLAZE_SPAWN_EGG);
         PlayerInteractEvent e = new PlayerInteractEvent(player, Action.RIGHT_CLICK_BLOCK, item, clickedBlock, BlockFace.EAST, hand);
         bil.onPlayerInteract(e);
-        assertFalse(e.useInteractedBlock().equals(Event.Result.DENY));
-        assertFalse(e.useItemInHand().equals(Event.Result.DENY));
+        assertEquals(Event.Result.DENY, e.useInteractedBlock());
+        assertEquals(Event.Result.DENY, e.useItemInHand());
         verify(notifier, never()).notify(any(), eq("protection.protected"));
     }
 
@@ -373,8 +372,8 @@ public class BlockInteractionListenerTest {
         when(item.getType()).thenReturn(Material.BLAZE_SPAWN_EGG);
         PlayerInteractEvent e = new PlayerInteractEvent(player, Action.RIGHT_CLICK_BLOCK, item, clickedBlock, BlockFace.EAST, hand);
         bil.onPlayerInteract(e);
-        assertTrue(e.useInteractedBlock().equals(Event.Result.DENY));
-        assertTrue(e.useItemInHand().equals(Event.Result.DENY));
+        assertEquals(Event.Result.DENY, e.useInteractedBlock());
+        assertEquals(Event.Result.DENY, e.useItemInHand());
         verify(notifier, times(2)).notify(any(), eq("protection.protected"));
     }
 

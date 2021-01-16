@@ -286,7 +286,7 @@ public class PanelListenerManagerTest {
         // No panels for this player
         InventoryCloseEvent event = new InventoryCloseEvent(view);
         plm.onInventoryClose(event);
-        assertTrue(PanelListenerManager.getOpenPanels().size() == 1);
+        assertEquals(1, PanelListenerManager.getOpenPanels().size());
     }
 
     /**

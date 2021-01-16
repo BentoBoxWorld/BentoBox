@@ -99,12 +99,12 @@ public class UtilTest {
         Map<UUID, String> online = new HashMap<>();
 
         Set<Player> onlinePlayers = new HashSet<>();
-        for (int j = 0; j < NAMES.length; j++) {
+        for (String name : NAMES) {
             Player p1 = mock(Player.class);
             UUID uuid = UUID.randomUUID();
             when(p1.getUniqueId()).thenReturn(uuid);
-            when(p1.getName()).thenReturn(NAMES[j]);
-            online.put(uuid, NAMES[j]);
+            when(p1.getName()).thenReturn(name);
+            online.put(uuid, name);
             onlinePlayers.add(p1);
         }
         when(Bukkit.getOnlinePlayers()).then((Answer<Set<Player>>) invocation -> onlinePlayers);
@@ -153,11 +153,11 @@ public class UtilTest {
         assertNull(Util.getLocationString("     "));
         Location result = Util.getLocationString("world_name:500:600:700.0:1092616192:1101004800");
         assertEquals(world, result.getWorld());
-        assertTrue(result.getX() == 500.5D);
-        assertTrue(result.getY() == 600D);
-        assertTrue(result.getZ() == 700.5D);
-        assertTrue(result.getYaw() == 10F);
-        assertTrue(result.getPitch() == 20F);
+        assertEquals(500.5D, result.getX(), 0.0);
+        assertEquals(600D, result.getY(), 0.0);
+        assertEquals(700.5D, result.getZ(), 0.0);
+        assertEquals(10F, result.getYaw(), 0.0);
+        assertEquals(20F, result.getPitch(), 0.0);
     }
 
     /**

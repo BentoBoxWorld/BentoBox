@@ -1,5 +1,6 @@
 package world.bentobox.bentobox.listeners.flags.protection;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -331,7 +332,7 @@ public class BreakBlocksListenerTest {
         when(block.getLocation()).thenReturn(location);
         PlayerInteractEvent e = new PlayerInteractEvent(player, Action.LEFT_CLICK_AIR, item, block, BlockFace.EAST);
         bbl.onPlayerInteract(e);
-        assertTrue(e.useInteractedBlock().equals(Result.ALLOW));
+        assertEquals(e.useInteractedBlock(), Result.ALLOW);
     }
 
     /**
@@ -345,7 +346,7 @@ public class BreakBlocksListenerTest {
         when(block.getType()).thenReturn(Material.STONE);
         PlayerInteractEvent e = new PlayerInteractEvent(player, Action.LEFT_CLICK_BLOCK, item, block, BlockFace.EAST);
         bbl.onPlayerInteract(e);
-        assertTrue(e.useInteractedBlock().equals(Result.ALLOW));
+        assertEquals(Result.ALLOW, e.useInteractedBlock());
     }
 
     /**
@@ -383,15 +384,15 @@ public class BreakBlocksListenerTest {
         when(block.getType()).thenReturn(Material.CAKE);
         PlayerInteractEvent e = new PlayerInteractEvent(player, Action.LEFT_CLICK_BLOCK, item, block, BlockFace.EAST);
         bbl.onPlayerInteract(e);
-        assertTrue(e.useInteractedBlock().equals(Result.DENY));
+        assertEquals(Result.DENY, e.useInteractedBlock());
         when(block.getType()).thenReturn(Material.SPAWNER);
         e = new PlayerInteractEvent(player, Action.LEFT_CLICK_BLOCK, item, block, BlockFace.EAST);
         bbl.onPlayerInteract(e);
-        assertTrue(e.useInteractedBlock().equals(Result.DENY));
+        assertEquals(Result.DENY, e.useInteractedBlock());
         when(block.getType()).thenReturn(Material.DRAGON_EGG);
         e = new PlayerInteractEvent(player, Action.LEFT_CLICK_BLOCK, item, block, BlockFace.EAST);
         bbl.onPlayerInteract(e);
-        assertTrue(e.useInteractedBlock().equals(Result.DENY));
+        assertEquals(Result.DENY, e.useInteractedBlock());
         verify(notifier, times(3)).notify(any(), eq("protection.protected"));
     }
 
