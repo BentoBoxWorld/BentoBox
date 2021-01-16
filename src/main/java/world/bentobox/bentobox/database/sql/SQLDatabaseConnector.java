@@ -19,7 +19,7 @@ public abstract class SQLDatabaseConnector implements DatabaseConnector {
     protected static Connection connection = null;
     protected static Set<Class<?>> types = new HashSet<>();
 
-    public SQLDatabaseConnector(DatabaseConnectionSettingsImpl dbSettings, String connectionUrl) {
+    protected SQLDatabaseConnector(DatabaseConnectionSettingsImpl dbSettings, String connectionUrl) {
         this.dbSettings = dbSettings;
         this.connectionUrl = connectionUrl;
     }

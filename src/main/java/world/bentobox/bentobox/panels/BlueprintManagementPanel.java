@@ -180,9 +180,9 @@ public class BlueprintManagementPanel {
         // Buttons for non-default bundle
         if (bb.getUniqueId().equals(BlueprintsManager.DEFAULT_BUNDLE_NAME)) {
             // Panel has a No Trash icon. If right clicked it is discarded
-            pb.item(36, getNoTrashIcon(addon, bb));
+            pb.item(36, getNoTrashIcon());
             // Toggle permission - default is always allowed
-            pb.item(39, getNoPermissionIcon(addon, bb));
+            pb.item(39, getNoPermissionIcon());
         } else {
          // Panel has a Trash icon. If right clicked it is discarded
             pb.item(36, getTrashIcon(addon, bb));
@@ -283,7 +283,7 @@ public class BlueprintManagementPanel {
                 .build();
     }
     
-    private PanelItem getNoTrashIcon(@NonNull GameModeAddon addon, BlueprintBundle bb) {
+    private PanelItem getNoTrashIcon() {
         return new PanelItemBuilder()
                 .name(t("no-trash"))
                 .description(t("no-trash-instructions"))
@@ -307,7 +307,7 @@ public class BlueprintManagementPanel {
                 }).build();
     }
     
-    private PanelItem getNoPermissionIcon(@NonNull GameModeAddon addon, BlueprintBundle bb) {
+    private PanelItem getNoPermissionIcon() {
         return new PanelItemBuilder().icon(Material.PAINTING).name(t("no-permission"))
                 .description(t("no-perm-required"))
                 .build();

@@ -1630,10 +1630,8 @@ public class IslandsManager {
                 }
                 // Fix island ownership in cache
                 // Correct island cache
-                if (highestRank == RanksManager.OWNER_RANK) {
-                    if (islandCache.getIslandById(highestIsland.getUniqueId()) != null) {
-                        islandCache.setOwner(islandCache.getIslandById(highestIsland.getUniqueId()), en.getKey());
-                    }
+                if (highestRank == RanksManager.OWNER_RANK && islandCache.getIslandById(highestIsland.getUniqueId()) != null) {
+                    islandCache.setOwner(islandCache.getIslandById(highestIsland.getUniqueId()), en.getKey());
                 }
                 // Fix all the entries that are not the highest
                 for (Island island : en.getValue()) {

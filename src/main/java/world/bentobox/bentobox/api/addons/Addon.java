@@ -42,7 +42,7 @@ public abstract class Addon {
     private File file;
     private Map<String, AddonRequestHandler> requestHandlers = new HashMap<>();
 
-    public Addon() {
+    protected Addon() {
         state = State.DISABLED;
     }
 

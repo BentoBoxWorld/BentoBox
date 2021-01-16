@@ -34,7 +34,7 @@ public abstract class BentoBoxEvent extends Event {
      * The default constructor is defined for cleaner code.
      * This constructor assumes the BentoBoxEvent is synchronous.
      */
-    public BentoBoxEvent() {
+    protected BentoBoxEvent() {
         this(false);
     }
 
@@ -43,7 +43,7 @@ public abstract class BentoBoxEvent extends Event {
      * @param async - true indicates the event will fire asynchronously, false
      *    by default from default constructor
      */
-    public BentoBoxEvent(boolean async) {
+    protected BentoBoxEvent(boolean async) {
         super(async);
     }
 
@@ -87,7 +87,9 @@ public abstract class BentoBoxEvent extends Event {
                     if (value != null) {
                         map.put(pd.getName(), value);
                     }
-                } catch (Exception ignore) {}
+                } catch (Exception ignore) {
+                    // Ignored.
+                }
             });
             return map;
         } catch (IntrospectionException e) {
@@ -115,7 +117,9 @@ public abstract class BentoBoxEvent extends Event {
                     }
                 }
             });
-        } catch (IntrospectionException ignore) {}
+        } catch (IntrospectionException ignore) {
+            // Ignored.
+        }
     }
 
 }

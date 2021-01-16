@@ -122,7 +122,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * @param label - string for this command
      * @param aliases - aliases
      */
-    public CompositeCommand(Addon addon, String label, String... aliases) {
+    protected CompositeCommand(Addon addon, String label, String... aliases) {
         super(label, "", "", Arrays.asList(aliases));
         this.addon = addon;
         this.topLabel = label;
@@ -154,7 +154,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * @param label - string for this command
      * @param aliases - aliases for this command
      */
-    public CompositeCommand(String label, String... aliases) {
+    protected CompositeCommand(String label, String... aliases) {
         this((Addon)null, label, aliases);
     }
 
@@ -164,7 +164,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * @param label - string label for this subcommand
      * @param aliases - aliases for this subcommand
      */
-    public CompositeCommand(CompositeCommand parent, String label, String... aliases) {
+    protected CompositeCommand(CompositeCommand parent, String label, String... aliases) {
         this(parent.getAddon(), parent, label, aliases);
     }
 
@@ -174,7 +174,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * @param parent - parent command
      * @param aliases - aliases for this command
      */
-    public CompositeCommand(Addon addon, CompositeCommand parent, String label, String... aliases ) {
+    protected CompositeCommand(Addon addon, CompositeCommand parent, String label, String... aliases ) {
         super(label, "", "", Arrays.asList(aliases));
         this.topLabel = parent.getTopLabel();
         this.plugin = BentoBox.getInstance();
@@ -213,7 +213,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         }
     }
 
-    /*
+    /**
      * This method deals with the command execution. It traverses the tree of
      * subcommands until it finds the right object and then runs execute on it.
      */
