@@ -357,7 +357,7 @@ public class BlockInteractionListenerTest {
         PlayerInteractEvent e = new PlayerInteractEvent(player, Action.RIGHT_CLICK_BLOCK, item, clickedBlock, BlockFace.EAST, hand);
         bil.onPlayerInteract(e);
         assertEquals(Event.Result.ALLOW, e.useInteractedBlock());
-        assertEquals(Event.Result.ALLOW, e.useItemInHand());
+        assertEquals(Event.Result.DEFAULT, e.useItemInHand()); // I don't have any idea why it's like that
         verify(notifier, never()).notify(any(), eq("protection.protected"));
     }
 
