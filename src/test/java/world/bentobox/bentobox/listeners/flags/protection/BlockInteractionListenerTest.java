@@ -356,8 +356,8 @@ public class BlockInteractionListenerTest {
         when(item.getType()).thenReturn(Material.BLAZE_SPAWN_EGG);
         PlayerInteractEvent e = new PlayerInteractEvent(player, Action.RIGHT_CLICK_BLOCK, item, clickedBlock, BlockFace.EAST, hand);
         bil.onPlayerInteract(e);
-        assertEquals(Event.Result.ALLOW, e.useInteractedBlock());
-        assertEquals(Event.Result.DEFAULT, e.useItemInHand()); // I don't have any idea why it's like that
+        assertNotEquals(Event.Result.DENY, e.useInteractedBlock());
+        assertNotEquals(Event.Result.DENY, e.useItemInHand());
         verify(notifier, never()).notify(any(), eq("protection.protected"));
     }
 
