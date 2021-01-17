@@ -257,7 +257,6 @@ public class FlagTest {
     /**
      * Test method for {@link world.bentobox.bentobox.api.flags.Flag#equals(java.lang.Object)}.
      */
-    @SuppressWarnings("unlikely-arg-type")
     @Test
     public void testEqualsObject() {
         Flag flag1 = null;

@@ -452,7 +452,6 @@ public class UserTest {
         verify(player).performCommand("test");
     }
 
-    @SuppressWarnings("unlikely-arg-type")
     @Test
     public void testEqualsObject() {
         User user1 = User.getInstance(UUID.randomUUID());
