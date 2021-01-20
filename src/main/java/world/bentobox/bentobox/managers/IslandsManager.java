@@ -627,7 +627,7 @@ public class IslandsManager {
         // location
         if (plugin.getIslands().inTeam(world, user.getUniqueId())) {
             l = plugin.getIslands().getIslandLocation(world, user.getUniqueId());
-            if (isSafeLocation(l)) {
+            if (l != null && isSafeLocation(l)) {
                 plugin.getPlayers().setHomeLocation(user, l, number);
                 return l;
             } else {
@@ -640,7 +640,7 @@ public class IslandsManager {
             }
         } else {
             l = plugin.getIslands().getIslandLocation(world, user.getUniqueId());
-            if (isSafeLocation(l)) {
+            if (l != null && isSafeLocation(l)) {
                 plugin.getPlayers().setHomeLocation(user, l, number);
                 return l.clone().add(new Vector(0.5D,0,0.5D));
             }
