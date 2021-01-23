@@ -12,6 +12,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -186,7 +187,7 @@ public class PortalTeleportationListener implements Listener {
         e.getIsland().ifPresent(i -> setSeachRadius(e, i));
 
         // Check if there is an island there or not
-        if (e.getEntity() instanceof Player
+        if (e.getEntity().getType().equals(EntityType.PLAYER)
                 && plugin.getIWM().isPasteMissingIslands(overWorld)
                 && !plugin.getIWM().isUseOwnGenerator(overWorld)
                 && isGenerate(overWorld, env)
