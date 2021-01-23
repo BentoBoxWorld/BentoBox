@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -29,6 +30,8 @@ import org.eclipse.jdt.annotation.Nullable;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.events.OfflineMessageEvent;
+import world.bentobox.bentobox.api.metadata.MetaDataAble;
+import world.bentobox.bentobox.api.metadata.MetaDataValue;
 import world.bentobox.bentobox.util.Util;
 
 /**
@@ -42,7 +45,7 @@ import world.bentobox.bentobox.util.Util;
  *
  * @author tastybento
  */
-public class User {
+public class User implements MetaDataAble {
 
     private static Map<UUID, User> users = new HashMap<>();
 
@@ -631,4 +634,24 @@ public class User {
     public void setAddon(Addon addon) {
         this.addon = addon;
     }
+
+    /**
+     * Get all the meta data for this user
+     * @return the metaData
+     * @since 1.15.4
+     */
+    @Override
+    public Optional<Map<String, MetaDataValue>> getMetaData() {
+        return plugin.getPlayers().getPlayer(playerUUID).getMetaData();
+    }
+
+    /**
+     * @param metaData the metaData to set
+     * @since 1.15.4
+     */
+    @Override
+    public void setMetaData(Map<String, MetaDataValue> metaData) {
+        plugin.getPlayers().getPlayer(playerUUID).setMetaData(metaData);
+    }
+
 }

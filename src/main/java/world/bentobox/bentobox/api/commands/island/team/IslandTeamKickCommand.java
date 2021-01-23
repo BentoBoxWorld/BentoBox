@@ -85,43 +85,9 @@ public class IslandTeamKickCommand extends ConfirmableCommand {
         target.sendMessage("commands.island.team.kick.owner-kicked", TextVariables.GAMEMODE, getAddon().getDescription().getName());
         Island oldIsland = getIslands().getIsland(getWorld(), targetUUID);
         getIslands().removePlayer(getWorld(), targetUUID);
-        // Execute commands when leaving
-        Util.runCommands(target, getIWM().getOnLeaveCommands(oldIsland.getWorld()), "leave");
-        // Remove money inventory etc.
-        if (getIWM().isOnLeaveResetEnderChest(getWorld())) {
-            if (target.isOnline()) {
-                target.getPlayer().getEnderChest().clear();
-            }
-            else {
-                getPlayers().getPlayer(targetUUID).addToPendingKick(getWorld());
-                getPlayers().save(targetUUID);
-            }
-        }
-        if (getIWM().isOnLeaveResetInventory(getWorld()) && !getIWM().isKickedKeepInventory(getWorld())) {
-            if (target.isOnline()) {
-                target.getPlayer().getInventory().clear();
-            } else {
-                getPlayers().getPlayer(targetUUID).addToPendingKick(getWorld());
-                getPlayers().save(targetUUID);
-            }
-        }
-        if (getSettings().isUseEconomy() && getIWM().isOnLeaveResetMoney(getWorld())) {
-            getPlugin().getVault().ifPresent(vault -> vault.withdraw(target, vault.getBalance(target)));
-        }
-        // Reset the health
-        if (getIWM().isOnLeaveResetHealth(getWorld())) {
-            Util.resetHealth(target.getPlayer());
-        }
+        // Clean the target player
+        getPlayers().cleanLeavingPlayer(getWorld(), target, true);
 
-        // Reset the hunger
-        if (getIWM().isOnLeaveResetHunger(getWorld())) {
-            target.getPlayer().setFoodLevel(20);
-        }
-
-        // Reset the XP
-        if (getIWM().isOnLeaveResetXP(getWorld())) {
-            target.getPlayer().setTotalExperience(0);
-        }
         user.sendMessage("commands.island.team.kick.success", TextVariables.NAME, target.getName());
         // Fire event
         TeamEvent.builder()

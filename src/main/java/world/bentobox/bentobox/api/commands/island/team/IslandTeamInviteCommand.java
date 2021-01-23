@@ -11,6 +11,7 @@ import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.island.team.Invite.Type;
+import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.team.TeamEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
@@ -121,12 +122,12 @@ public class IslandTeamInviteCommand extends CompositeCommand {
                 user.sendMessage("commands.island.team.invite.removing-invite");
             }
             // Fire event so add-ons can run commands, etc.
-            if (TeamEvent.builder()
+            IslandBaseEvent e = TeamEvent.builder()
                     .island(getIslands().getIsland(getWorld(), user.getUniqueId()))
                     .reason(TeamEvent.Reason.INVITE)
                     .involvedPlayer(invitedPlayer.getUniqueId())
-                    .build()
-                    .isCancelled()) {
+                    .build();
+            if (e.getNewEvent().map(IslandBaseEvent::isCancelled).orElse(e.isCancelled())) {
                 return false;
             }
             // Put the invited player (key) onto the list with inviter (value)

@@ -66,9 +66,9 @@ You can contribute by:
 * Fixing bugs and submitting Pull Requests for the fixes
 
 If you contribute code it **must be in agreement** with:
-* our license
-* our [code of conduct](https://github.com/BentoBoxWorld/BentoBox/tree/master/.github/CODE_OF_CONDUCT.md)
-* our [contribution guidelines](https://github.com/BentoBoxWorld/BentoBox/tree/master/.github/CONTRIBUTING.md)
+* our [license](https://github.com/BentoBoxWorld/BentoBox/blob/develop/LICENSE)
+* our [code of conduct](https://github.com/BentoBoxWorld/.github/blob/master/CODE_OF_CONDUCT.md)
+* our contribution guidelines
 
 ### Report bugs and suggest features
 Bugs and feature requests must be filed on our [issue tracker](https://github.com/BentoBoxWorld/BentoBox/issues).

@@ -1,5 +1,6 @@
 package world.bentobox.bentobox.listeners.flags.protection;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -376,7 +377,7 @@ public class PlaceBlocksListenerTest {
         for (int i = 0; i < 7; i++) {
             PlayerInteractEvent e = new PlayerInteractEvent(player, Action.RIGHT_CLICK_BLOCK, item, clickedBlock, BlockFace.UP, EquipmentSlot.HAND);
             pbl.onPlayerInteract(e);
-            assertTrue("Failed on " + item.getType().toString(), e.useInteractedBlock().equals(Result.ALLOW));
+            assertEquals("Failed on " + item.getType().toString(), Result.ALLOW, e.useInteractedBlock());
         }
     }
 
@@ -394,7 +395,7 @@ public class PlaceBlocksListenerTest {
         for (int i = 0; i < 7; i++) {
             PlayerInteractEvent e = new PlayerInteractEvent(player, Action.RIGHT_CLICK_BLOCK, item, clickedBlock, BlockFace.UP, EquipmentSlot.HAND);
             pbl.onPlayerInteract(e);
-            assertTrue("Failed on " + item.getType().toString(), e.useInteractedBlock().equals(Result.DENY));
+            assertEquals("Failed on " + item.getType().toString(), Result.DENY, e.useInteractedBlock());
         }
         verify(notifier, times(7)).notify(any(), eq("protection.protected"));
     }

@@ -4,11 +4,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.Cancellable;
+import org.bukkit.event.HandlerList;
 
 import world.bentobox.bentobox.api.events.BentoBoxEvent;
 
 /**
- * Fired when a team event happens.
+ * Fired when a command event happens.
  *
  * @author tastybento
  */
@@ -20,6 +21,16 @@ public class CommandEvent extends BentoBoxEvent implements Cancellable {
     private final Command command;
     private final String label;
     private final String[] args;
+    private static final HandlerList handlers = new HandlerList();
+
+    @Override
+    public HandlerList getHandlers() {
+        return getHandlerList();
+    }
+
+    public static HandlerList getHandlerList() {
+        return handlers;
+    }
 
     private CommandEvent(CommandSender sender, Command command, String label, String[] args) {
         super();

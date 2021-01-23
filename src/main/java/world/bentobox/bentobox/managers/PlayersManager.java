@@ -1,10 +1,19 @@
 package world.bentobox.bentobox.managers;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Queue;
+import java.util.Set;
+import java.util.UUID;
 
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Tameable;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -15,6 +24,7 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.Database;
 import world.bentobox.bentobox.database.objects.Names;
 import world.bentobox.bentobox.database.objects.Players;
+import world.bentobox.bentobox.util.Util;
 
 public class PlayersManager {
 
@@ -286,7 +296,7 @@ public class PlayersManager {
         return playerCache.values().stream()
                 .filter(p -> p.getPlayerName().equalsIgnoreCase(name)).findFirst()
                 .map(p -> UUID.fromString(p.getUniqueId()))
-                .orElse(names.objectExists(name) ? names.loadObject(name).getUuid() : null);
+                .orElseGet(() -> names.objectExists(name) ? names.loadObject(name).getUuid() : null);
     }
 
     /**
@@ -505,6 +515,61 @@ public class PlayersManager {
         playerCache.values().removeIf(p -> player.getName().equalsIgnoreCase(p.getPlayerName()));
         // Remove if the player's UUID is the same
         playerCache.values().removeIf(p -> player.getUniqueId().toString().equals(p.getUniqueId()));
+    }
+
+    /**
+     * Cleans the player when leaving an island
+     * @param world - island world
+     * @param target - target user
+     * @param kicked - true if player is being kicked
+     * @since 1.15.4
+     */
+    public void cleanLeavingPlayer(World world, User target, boolean kicked) {
+        // Execute commands when leaving
+        Util.runCommands(target, plugin.getIWM().getOnLeaveCommands(world), "leave");
+
+        // Remove any tamed animals
+        world.getEntitiesByClass(Tameable.class).stream()
+        .filter(Tameable::isTamed)
+        .filter(t -> t.getOwner() != null && t.getOwner().equals(target.getPlayer()))
+        .forEach(t -> t.setOwner(null));
+
+        // Remove money inventory etc.
+        if (plugin.getIWM().isOnLeaveResetEnderChest(world)) {
+            if (target.isOnline()) {
+                target.getPlayer().getEnderChest().clear();
+            } else {
+                getPlayer(target.getUniqueId()).addToPendingKick(world);
+            }
+        }
+        if ((kicked && plugin.getIWM().isOnLeaveResetInventory(world) && !plugin.getIWM().isKickedKeepInventory(world))
+                || (!kicked && plugin.getIWM().isOnLeaveResetInventory(world))) {
+            if (target.isOnline()) {
+                target.getPlayer().getInventory().clear();
+            } else {
+                getPlayer(target.getUniqueId()).addToPendingKick(world);
+            }
+        }
+
+        if (plugin.getSettings().isUseEconomy() && plugin.getIWM().isOnLeaveResetMoney(world)) {
+            plugin.getVault().ifPresent(vault -> vault.withdraw(target, vault.getBalance(target), world));
+        }
+        // Reset the health
+        if (plugin.getIWM().isOnLeaveResetHealth(world)) {
+            Util.resetHealth(target.getPlayer());
+        }
+
+        // Reset the hunger
+        if (plugin.getIWM().isOnLeaveResetHunger(world)) {
+            target.getPlayer().setFoodLevel(20);
+        }
+
+        // Reset the XP
+        if (plugin.getIWM().isOnLeaveResetXP(world)) {
+            target.getPlayer().setTotalExperience(0);
+        }
+        // Save player
+        save(target.getUniqueId());
     }
 
 }

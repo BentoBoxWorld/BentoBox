@@ -16,8 +16,6 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.junit.Before;
@@ -227,35 +225,6 @@ public class IslandTeamLeaveCommandTest {
         verify(user).sendMessage(eq("commands.island.team.leave.success"));
         verify(pm).addReset(eq(world), eq(uuid));
         verify(user).sendMessage(eq("commands.island.reset.resets-left"), eq(TextVariables.NUMBER), eq("100"));
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamLeaveCommand#execute(User, String, java.util.List)}
-     */
-    @Test
-    public void testExecuteTestResets() {
-        when(s.isLeaveConfirmation()).thenReturn(false);
-        when(im.hasIsland(any(), eq(uuid))).thenReturn(false);
-        when(im.isOwner(any(), eq(uuid))).thenReturn(false);
-        // Add a team owner - null
-        when(im.getOwner(any(), any())).thenReturn(null);
-
-        // Require resets
-        when(iwm.isOnLeaveResetEnderChest(any())).thenReturn(true);
-        Inventory enderChest = mock(Inventory.class);
-        when(player.getEnderChest()).thenReturn(enderChest);
-        when(iwm.isOnLeaveResetInventory(any())).thenReturn(true);
-        PlayerInventory inv = mock(PlayerInventory.class);
-        when(player.getInventory()).thenReturn(inv);
-        when(iwm.isOnLeaveResetMoney(any())).thenReturn(true);
-
-        IslandTeamLeaveCommand itl = new IslandTeamLeaveCommand(ic);
-        assertTrue(itl.execute(user, itl.getLabel(), new ArrayList<>()));
-        verify(im).setLeaveTeam(any(), eq(uuid));
-        verify(user).sendMessage(eq("commands.island.team.leave.success"));
-
-        verify(enderChest).clear();
-        verify(inv).clear();
     }
 
     /**

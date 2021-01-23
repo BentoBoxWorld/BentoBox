@@ -6,8 +6,13 @@ import java.util.Date;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
+
+import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.placeholders.GameModePlaceholderReplacer;
+import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
@@ -15,6 +20,9 @@ import world.bentobox.bentobox.util.Util;
 public enum GameModePlaceholder {
 
     /* World-related */
+    /**
+     * World friendly name
+     */
     WORLD_FRIENDLY_NAME("world_friendly_name", (addon, user, island) -> addon.getWorldSettings().getFriendlyName()),
     /**
      * Returns the amount of islands in the world.
@@ -53,6 +61,11 @@ public enum GameModePlaceholder {
         }
         return island.getName();
     }),
+    /**
+     * Return island unique ID
+     * @since 1.15.4
+     */
+    ISLAND_UUID("island_uuid", (addon, user, island) -> island == null ? "" : island.getUniqueId()),
     /**
      * Returns the coordinates of the island's center.
      * @since 1.5.0
@@ -115,57 +128,32 @@ public enum GameModePlaceholder {
      * Returns the protection range of the island the player is standing on.
      * @since 1.5.2
      */
-    VISITED_ISLAND_PROTECTION_RANGE("visited_island_protection_range", (addon, user, island) -> {
-        if (user == null || !user.isPlayer() || user.getLocation() == null) {
-            return "";
-        }
-        Optional<Island> visitedIsland = addon.getIslands().getIslandAt(user.getLocation());
-        return visitedIsland.map(value -> String.valueOf(value.getProtectionRange())).orElse("");
-    }),
+    VISITED_ISLAND_PROTECTION_RANGE("visited_island_protection_range", (addon, user, island) ->
+    getVisitedIsland(addon, user).map(value -> String.valueOf(value.getProtectionRange())).orElse("")),
     /**
      * Returns the protection range of the island the player is standing on as a diameter.
      * @since 1.5.2
      */
-    VISITED_ISLAND_PROTECTION_RANGE_DIAMETER("visited_island_protection_range_diameter", (addon, user, island) -> {
-        if (user == null || !user.isPlayer() || user.getLocation() == null) {
-            return "";
-        }
-        Optional<Island> visitedIsland = addon.getIslands().getIslandAt(user.getLocation());
-        return visitedIsland.map(value -> String.valueOf(2*value.getProtectionRange())).orElse("");
-    }),
+    VISITED_ISLAND_PROTECTION_RANGE_DIAMETER("visited_island_protection_range_diameter", (addon, user, island) ->
+    getVisitedIsland(addon, user).map(value -> String.valueOf(2*value.getProtectionRange())).orElse("")),
     /**
      * Returns the name of the owner of the island the player is standing on.
      * @since 1.5.2
      */
-    VISITED_ISLAND_OWNER("visited_island_owner", (addon, user, island) -> {
-        if (user == null || !user.isPlayer() || user.getLocation() == null) {
-            return "";
-        }
-        Optional<Island> visitedIsland = addon.getIslands().getIslandAt(user.getLocation());
-        return visitedIsland.map(value -> addon.getPlayers().getName(value.getOwner())).orElse("");
-    }),
+    VISITED_ISLAND_OWNER("visited_island_owner", (addon, user, island) ->
+    getVisitedIsland(addon, user).map(value -> addon.getPlayers().getName(value.getOwner())).orElse("")),
     /**
      * Returns the formatted creation date of the island the player is standing on.
      * @since 1.5.2
      */
-    VISITED_ISLAND_CREATION_DATE("visited_island_creation_date", (addon, user, island) -> {
-        if (user == null || !user.isPlayer() || user.getLocation() == null) {
-            return "";
-        }
-        Optional<Island> visitedIsland = addon.getIslands().getIslandAt(user.getLocation());
-        return visitedIsland.map(value -> DateFormat.getInstance().format(Date.from(Instant.ofEpochMilli(value.getCreatedDate())))).orElse("");
-    }),
+    VISITED_ISLAND_CREATION_DATE("visited_island_creation_date", (addon, user, island) ->
+    getVisitedIsland(addon, user).map(value -> DateFormat.getInstance().format(Date.from(Instant.ofEpochMilli(value.getCreatedDate())))).orElse("")),
     /**
      * Returns the name of the island the player is standing on.
      * @since 1.5.2
      */
     VISITED_ISLAND_NAME("visited_island_name", (addon, user, island) -> {
-        if (user == null || !user.isPlayer() || user.getLocation() == null) {
-            return "";
-        }
-        Optional<Island> visitedIsland = addon.getIslands().getIslandAt(user.getLocation());
-
-        return visitedIsland.map(is -> {
+        return getVisitedIsland(addon, user).map(is -> {
             if (is.getName() != null) {
                 return is.getName();
             } else {
@@ -177,131 +165,83 @@ public enum GameModePlaceholder {
      * Returns the coordinates of the center of the island the player is standing on.
      * @since 1.5.2
      */
-    VISITED_ISLAND_CENTER("visited_island_center", (addon, user, island) -> {
-        if (user == null || !user.isPlayer() || user.getLocation() == null) {
-            return "";
-        }
-        Optional<Island> visitedIsland = addon.getIslands().getIslandAt(user.getLocation());
-        return visitedIsland.map(value -> Util.xyz(value.getCenter().toVector())).orElse("");
-    }),
+    VISITED_ISLAND_CENTER("visited_island_center", (addon, user, island) ->
+    getVisitedIsland(addon, user).map(value -> Util.xyz(value.getCenter().toVector())).orElse("")),
     /**
      * Returns the X coordinate of the center of the island the player is standing on.
      * @since 1.5.2
      */
-    VISITED_ISLAND_CENTER_X("visited_island_center_x", (addon, user, island) -> {
-        if (user == null || !user.isPlayer() || user.getLocation() == null) {
-            return "";
-        }
-        Optional<Island> visitedIsland = addon.getIslands().getIslandAt(user.getLocation());
-        return visitedIsland.map(value -> String.valueOf(value.getCenter().getBlockX())).orElse("");
-    }),
+    VISITED_ISLAND_CENTER_X("visited_island_center_x", (addon, user, island) ->
+    getVisitedIsland(addon, user).map(value -> String.valueOf(value.getCenter().getBlockX())).orElse("")),
     /**
      * Returns the Y coordinate of the center of the island the player is standing on.
      * @since 1.5.2
      */
-    VISITED_ISLAND_CENTER_Y("visited_island_center_y", (addon, user, island) -> {
-        if (user == null || !user.isPlayer() || user.getLocation() == null) {
-            return "";
-        }
-        Optional<Island> visitedIsland = addon.getIslands().getIslandAt(user.getLocation());
-        return visitedIsland.map(value -> String.valueOf(value.getCenter().getBlockY())).orElse("");
-    }),
+    VISITED_ISLAND_CENTER_Y("visited_island_center_y", (addon, user, island) ->
+    getVisitedIsland(addon, user).map(value -> String.valueOf(value.getCenter().getBlockY())).orElse("")),
     /**
      * Returns the Z coordinate of the center of the island the player is standing on.
      * @since 1.5.2
      */
-    VISITED_ISLAND_CENTER_Z("visited_island_center_z", (addon, user, island) -> {
-        if (user == null || !user.isPlayer() || user.getLocation() == null) {
-            return "";
-        }
-        Optional<Island> visitedIsland = addon.getIslands().getIslandAt(user.getLocation());
-        return visitedIsland.map(value -> String.valueOf(value.getCenter().getBlockZ())).orElse("");
-    }),
+    VISITED_ISLAND_CENTER_Z("visited_island_center_z", (addon, user, island) ->
+    getVisitedIsland(addon, user).map(value -> String.valueOf(value.getCenter().getBlockZ())).orElse("")),
     /**
      * Returns the maximum number of members the island the player is standing on can have.
      * @since 1.5.2
      */
-    VISITED_ISLAND_MEMBERS_MAX("visited_island_members_max", (addon, user, island) -> {
-        if (user == null || !user.isPlayer() || user.getLocation() == null) {
-            return "";
-        }
-        Optional<Island> visitedIsland = addon.getIslands().getIslandAt(user.getLocation());
-        return visitedIsland.map(value -> String.valueOf(user.getPermissionValue(addon.getPermissionPrefix() + "team.maxsize", addon.getPlugin().getIWM().getMaxTeamSize(addon.getOverWorld())))).orElse("");
-    }),
+    VISITED_ISLAND_MEMBERS_MAX("visited_island_members_max", (addon, user, island) ->
+    getVisitedIsland(addon, user).map(value -> String.valueOf(user.getPermissionValue(addon.getPermissionPrefix() + "team.maxsize", addon.getPlugin().getIWM().getMaxTeamSize(addon.getOverWorld())))).orElse("")),
     /**
      * Returns a comma separated list of player names that are at least MEMBER on the island the player is standing on.
      * @since 1.13.0
      */
-    VISITED_ISLAND_MEMBERS_LIST("visited_island_members_list", (addon, user, island) -> {
-        if (user == null || !user.isPlayer() || user.getLocation() == null) {
-            return "";
-        }
-        Optional<Island> visitedIsland = addon.getIslands().getIslandAt(user.getLocation());
-        return visitedIsland.map(value -> value.getMemberSet(RanksManager.MEMBER_RANK).stream()
-                .map(addon.getPlayers()::getName).collect(Collectors.joining(","))).orElse("");
-    }),
+    VISITED_ISLAND_MEMBERS_LIST("visited_island_members_list", (addon, user, island) ->
+    getVisitedIsland(addon, user).map(value -> value.getMemberSet(RanksManager.MEMBER_RANK).stream()
+            .map(addon.getPlayers()::getName).collect(Collectors.joining(","))).orElse("")),
     /**
      * Returns the amount of players that are at least MEMBER on the island the player is standing on.
      * @since 1.5.2
      */
-    VISITED_ISLAND_MEMBERS_COUNT("visited_island_members_count", (addon, user, island) -> {
-        if (user == null || !user.isPlayer() || user.getLocation() == null) {
-            return "";
-        }
-        Optional<Island> visitedIsland = addon.getIslands().getIslandAt(user.getLocation());
-        return visitedIsland.map(value -> String.valueOf(value.getMemberSet().size())).orElse("");
-    }),
+    VISITED_ISLAND_MEMBERS_COUNT("visited_island_members_count", (addon, user, island) ->
+    getVisitedIsland(addon, user).map(value -> String.valueOf(value.getMemberSet().size())).orElse("")),
     /**
      * Returns the amount of players that are TRUSTED on the island the player is standing on.
      * @since 1.5.2
      */
-    VISITED_ISLAND_TRUSTEES_COUNT("visited_island_trustees_count", (addon, user, island) -> {
-        if (user == null || !user.isPlayer() || user.getLocation() == null) {
-            return "";
-        }
-        Optional<Island> visitedIsland = addon.getIslands().getIslandAt(user.getLocation());
-        return visitedIsland.map(value -> String.valueOf(value.getMemberSet(RanksManager.TRUSTED_RANK, false).size())).orElse("");
-    }),
+    VISITED_ISLAND_TRUSTEES_COUNT("visited_island_trustees_count", (addon, user, island) ->
+    getVisitedIsland(addon, user).map(value -> String.valueOf(value.getMemberSet(RanksManager.TRUSTED_RANK, false).size())).orElse("")),
     /**
      * Returns the amount of players that are TRUSTED on the island the player is standing on.
      * @since 1.5.2
      */
-    VISITED_ISLAND_COOPS_COUNT("visited_island_coops_count", (addon, user, island) -> {
-        if (user == null || !user.isPlayer() || user.getLocation() == null) {
-            return "";
-        }
-        Optional<Island> visitedIsland = addon.getIslands().getIslandAt(user.getLocation());
-        return visitedIsland.map(value -> String.valueOf(value.getMemberSet(RanksManager.COOP_RANK, false).size())).orElse("");
-    }),
+    VISITED_ISLAND_COOPS_COUNT("visited_island_coops_count", (addon, user, island) ->
+    getVisitedIsland(addon, user).map(value -> String.valueOf(value.getMemberSet(RanksManager.COOP_RANK, false).size())).orElse("")),
     /**
      * Returns the amount of players that are currently visiting the island the player is standing on.
      * @since 1.5.2
      */
-    VISITED_ISLAND_VISITORS_COUNT("visited_island_visitors_count", (addon, user, island) -> {
-        if (user == null || !user.isPlayer() || user.getLocation() == null) {
-            return "";
-        }
-        Optional<Island> visitedIsland = addon.getIslands().getIslandAt(user.getLocation());
-        return visitedIsland.map(value -> String.valueOf(value.getVisitors().size())).orElse("");
-    }),
+    VISITED_ISLAND_VISITORS_COUNT("visited_island_visitors_count", (addon, user, island) ->
+    getVisitedIsland(addon, user).map(value -> String.valueOf(value.getVisitors().size())).orElse("")),
     /**
      * Returns the amount of players banned from the island the player is standing on.
      * @since 1.5.2
      */
-    VISITED_ISLAND_BANS_COUNT("visited_island_bans_count", (addon, user, island) -> {
-        if (user == null || !user.isPlayer() || user.getLocation() == null) {
-            return "";
-        }
-        Optional<Island> visitedIsland = addon.getIslands().getIslandAt(user.getLocation());
-        return visitedIsland.map(value -> String.valueOf(value.getBanned().size())).orElse("");
-    }),
+    VISITED_ISLAND_BANS_COUNT("visited_island_bans_count", (addon, user, island) ->
+    getVisitedIsland(addon, user).map(value -> String.valueOf(value.getBanned().size())).orElse("")),
+
+    /**
+     * Get the visited island unique ID
+     * @since 1.15.4
+     */
+    VISITED_ISLAND_UUID("visited_island_uuid", (addon, user, island) ->
+    getVisitedIsland(addon, user).map(Island::getUniqueId).orElse("")),
 
     /* Player-related */
     /**
      * Returns whether this player has an island or not.
      * @since 1.5.0
      */
-    HAS_ISLAND("has_island", (addon, user, island) -> String.valueOf(island != null)),
+    HAS_ISLAND("has_island", (addon, user, island) -> String.valueOf(user != null && island != null)),
     /**
      * Returns the rank this player has on his island.
      * @since 1.5.0
@@ -311,18 +251,18 @@ public enum GameModePlaceholder {
      * Returns how many times this player reset his island.
      * @since 1.5.0
      */
-    RESETS("resets", (addon, user, island) -> String.valueOf(addon.getPlayers().getResets(addon.getOverWorld(), user.getUniqueId()))),
+    RESETS("resets", (addon, user, island) -> user == null ? "" : String.valueOf(addon.getPlayers().getResets(addon.getOverWorld(), user.getUniqueId()))),
     /**
      * Returns how many times this player can reset his island.
      * {@code -1} is unlimited.
      * @since 1.5.0
      */
-    RESETS_LEFT("resets_left", (addon, user, island) -> String.valueOf(addon.getPlayers().getResetsLeft(addon.getOverWorld(), user.getUniqueId()))),
+    RESETS_LEFT("resets_left", (addon, user, island) -> user == null ? "" : String.valueOf(addon.getPlayers().getResetsLeft(addon.getOverWorld(), user.getUniqueId()))),
     /**
      * Returns how many times this player died.
      * @since 1.12.0
      */
-    DEATHS("deaths", (addon, user, island) -> String.valueOf(addon.getPlayers().getDeaths(addon.getOverWorld(), user.getUniqueId()))),
+    DEATHS("deaths", (addon, user, island) -> user == null ? "" : String.valueOf(addon.getPlayers().getDeaths(addon.getOverWorld(), user.getUniqueId()))),
     /**
      * Returns whether this player is on his island and has a rank greater than VISITOR_RANK
      * @since 1.13.0
@@ -332,7 +272,7 @@ public enum GameModePlaceholder {
      * Returns whether this player is an owner of their island
      * @since 1.14.0
      */
-    OWNS_ISLAND("owns_island", (addon, user, island) -> String.valueOf(island != null && user.getUniqueId().equals(island.getOwner())));
+    OWNS_ISLAND("owns_island", (addon, user, island) -> String.valueOf(island != null && user != null && user.getUniqueId().equals(island.getOwner())));
 
     private String placeholder;
     /**
@@ -343,6 +283,19 @@ public enum GameModePlaceholder {
     GameModePlaceholder(String placeholder, GameModePlaceholderReplacer replacer) {
         this.placeholder = placeholder;
         this.replacer = replacer;
+    }
+
+    /**
+     * Get the visited island
+     * @param addon - game mode addon
+     * @param user - user visiting
+     * @return optional island
+     */
+    private static Optional<Island> getVisitedIsland(@NonNull GameModeAddon addon, @Nullable User user) {
+        if (user == null || !user.isPlayer() || user.getLocation() == null) {
+            return Optional.empty();
+        }
+        return addon.getIslands().getIslandAt(user.getLocation());
     }
 
     public String getPlaceholder() {

@@ -234,7 +234,7 @@ public class AdminSetrankCommandTest {
         Optional<List<String>> result = c.tabComplete(user, "", Arrays.asList("setrank", ""));
         assertTrue(result.isPresent());
         result.ifPresent(list -> {
-            assertTrue(list.size() == 1);
+            assertEquals(1, list.size());
             assertEquals("tastybento", list.get(0));
         });
     }

@@ -148,7 +148,7 @@ public class MySQLDatabaseHandlerTest {
         when(ps.executeQuery(Mockito.anyString())).thenReturn(resultSet);
         List<Island> objects = handler.loadObjects();
         verify(ps).executeQuery("SELECT `json` FROM `Islands`");
-        assertTrue(objects.size() == 3);
+        assertEquals(3, objects.size());
         assertEquals("xyz", objects.get(2).getUniqueId());
     }
 
@@ -167,7 +167,7 @@ public class MySQLDatabaseHandlerTest {
         when(ps.executeQuery(Mockito.anyString())).thenReturn(resultSet);
         List<Island> objects = handler.loadObjects();
         verify(ps).executeQuery("SELECT `json` FROM `aIslands`");
-        assertTrue(objects.size() == 3);
+        assertEquals(3, objects.size());
         assertEquals("xyz", objects.get(2).getUniqueId());
     }
 

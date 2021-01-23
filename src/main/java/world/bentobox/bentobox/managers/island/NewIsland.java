@@ -12,8 +12,10 @@ import world.bentobox.bentobox.BStats;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
+import world.bentobox.bentobox.api.events.island.IslandCreateEvent;
 import world.bentobox.bentobox.api.events.island.IslandEvent;
 import world.bentobox.bentobox.api.events.island.IslandEvent.Reason;
+import world.bentobox.bentobox.api.events.island.IslandResetEvent;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.BlueprintsManager;
@@ -53,7 +55,7 @@ public class NewIsland {
                 .involvedPlayer(user.getUniqueId())
                 .reason(Reason.PRECREATE)
                 .build();
-        if (event.isCancelled()) {
+        if (event.getNewEvent().map(IslandBaseEvent::isCancelled).orElse(event.isCancelled())) {
             // Do nothing
             return;
         }
@@ -167,47 +169,13 @@ public class NewIsland {
      * @throws IOException - if an island cannot be made. Message is the tag to show the user.
      */
     public void newIsland(Island oldIsland) throws IOException {
-        Location next = null;
-        if (plugin.getIslands().hasIsland(world, user)) {
-            // Island exists, it just needs pasting
-            island = plugin.getIslands().getIsland(world, user);
-            if (island != null && island.isReserved()) {
-                next = island.getCenter();
-                // Clear the reservation
-                island.setReserved(false);
-            } else {
-                // This should never happen unless we allow another way to paste over islands without reserving
-                plugin.logError("New island for user " + user.getName() + " was not reserved!");
-            }
-        }
-        // If the reservation fails, then we need to make a new island anyway
+        // Find the new island location
+        Location next = checkReservedIsland();
         if (next == null) {
-            next = this.locationStrategy.getNextLocation(world);
-            if (next == null) {
-                plugin.logError("Failed to make island - no unoccupied spot found.");
-                plugin.logError("If the world was imported, try multiple times until all unowned islands are known.");
-                throw new IOException("commands.island.create.cannot-create-island");
-            }
-            // Add to the grid
-            island = plugin.getIslands().createIsland(next, user.getUniqueId());
-            if (island == null) {
-                plugin.logError("Failed to make island! Island could not be added to the grid.");
-                throw new IOException("commands.island.create.unable-create-island");
-            }
+            next = this.makeNextIsland();
         }
-        // Clear any old home locations (they should be clear, but just in case)
-        plugin.getPlayers().clearHomeLocations(world, user.getUniqueId());
-        // Set home location
-        plugin.getPlayers().setHomeLocation(user, new Location(next.getWorld(), next.getX() + 0.5D, next.getY(), next.getZ() + 0.5D), 1);
-        // Reset deaths
-        if (plugin.getIWM().isDeathsResetOnNewIsland(world)) {
-            plugin.getPlayers().setDeaths(world, user.getUniqueId(), 0);
-        }
-        // Check if owner has a different range permission than the island size
-        island.setProtectionRange(user.getPermissionValue(plugin.getIWM().getAddon(island.getWorld())
-                .map(GameModeAddon::getPermissionPrefix).orElse("") + "island.range", island.getProtectionRange()));
-        // Save the player so that if the server crashes weird things won't happen
-        plugin.getPlayers().save(user.getUniqueId());
+        // Clean up the user
+        cleanUpUser(next);
         // Fire event
         IslandBaseEvent event = IslandEvent.builder()
                 .involvedPlayer(user.getUniqueId())
@@ -217,56 +185,129 @@ public class NewIsland {
                 .blueprintBundle(plugin.getBlueprintsManager().getBlueprintBundles(addon).get(name))
                 .oldIsland(oldIsland)
                 .build();
-        if (event.isCancelled()) {
+        if (event.getNewEvent().map(IslandBaseEvent::isCancelled).orElse(event.isCancelled())) {
+            // Do nothing
             return;
         }
+        event = event.getNewEvent().orElse(event);
         // Get the new BlueprintBundle if it was changed
         switch (reason) {
         case CREATE:
-            name = ((IslandEvent.IslandCreateEvent) event).getBlueprintBundle().getUniqueId();
+            name = ((IslandCreateEvent) event).getBlueprintBundle().getUniqueId();
             break;
         case RESET:
-            name = ((IslandEvent.IslandResetEvent) event).getBlueprintBundle().getUniqueId();
+            name = ((IslandResetEvent) event).getBlueprintBundle().getUniqueId();
             break;
         default:
             break;
         }
 
-        // Task to run after creating the island
-        Runnable task = () -> {
-            // Set initial spawn point if one exists
-            if (island.getSpawnPoint(Environment.NORMAL) != null) {
-                plugin.getPlayers().setHomeLocation(user, island.getSpawnPoint(Environment.NORMAL), 1);
-            }
-            // Stop the player from falling or moving if they are
-            if (user.isOnline()) {
-                if (reason.equals(Reason.RESET) || (reason.equals(Reason.CREATE) && plugin.getIWM().isTeleportPlayerToIslandUponIslandCreation(world))) {
-                    user.getPlayer().setVelocity(new Vector(0, 0, 0));
-                    user.getPlayer().setFallDistance(0F);
-                    // Teleport player after this island is built
-                    plugin.getIslands().homeTeleportAsync(world, user.getPlayer(), true).thenRun(() -> tidyUp(oldIsland));
-                    return;
-                } else {
-                    // let's send him a message so that he knows he can teleport to his island!
-                    user.sendMessage("commands.island.create.you-can-teleport-to-your-island");
-                }
-            } else {
-                // Remove the player again to completely clear the data
-                User.removePlayer(user.getPlayer());
-            }
-            tidyUp(oldIsland);
-        };
+        // Run task to run after creating the island in one tick if island is not being pasted
         if (noPaste) {
-            Bukkit.getScheduler().runTask(plugin, task);
+            Bukkit.getScheduler().runTask(plugin, () -> postCreationTask(oldIsland));
         } else {
-            // Create islands
-            plugin.getBlueprintsManager().paste(addon, island, name, task);
+            // Create islands, then run task
+            plugin.getBlueprintsManager().paste(addon, island, name, () -> postCreationTask(oldIsland));
         }
         // Set default settings
         island.setFlagsDefaults();
+        // Register metrics
         plugin.getMetrics().ifPresent(BStats::increaseIslandsCreatedCount);
         // Save island
         plugin.getIslands().save(island);
+    }
+
+    /**
+     * Tasks to run after the new island has been created
+     * @param oldIsland - old island that will be deleted
+     */
+    private void postCreationTask(Island oldIsland) {
+        // Set initial spawn point if one exists
+        if (island.getSpawnPoint(Environment.NORMAL) != null) {
+            plugin.getPlayers().setHomeLocation(user, island.getSpawnPoint(Environment.NORMAL), 1);
+        }
+        // Stop the player from falling or moving if they are
+        if (user.isOnline()) {
+            if (reason.equals(Reason.RESET) || (reason.equals(Reason.CREATE) && plugin.getIWM().isTeleportPlayerToIslandUponIslandCreation(world))) {
+                user.getPlayer().setVelocity(new Vector(0, 0, 0));
+                user.getPlayer().setFallDistance(0F);
+                // Teleport player after this island is built
+                plugin.getIslands().homeTeleportAsync(world, user.getPlayer(), true).thenRun(() -> tidyUp(oldIsland));
+                return;
+            } else {
+                // let's send him a message so that he knows he can teleport to his island!
+                user.sendMessage("commands.island.create.you-can-teleport-to-your-island");
+            }
+        } else {
+            // Remove the player again to completely clear the data
+            User.removePlayer(user.getPlayer());
+        }
+        tidyUp(oldIsland);
+    }
+
+    /**
+     * Cleans up a user before moving them to a new island.
+     * Removes any old home locations. Sets the next home location. Resets deaths.
+     * Checks range permissions and saves the player to the database.
+     * @param loc - the new island location
+     */
+    private void cleanUpUser(Location loc) {
+        // Clear any old home locations (they should be clear, but just in case)
+        plugin.getPlayers().clearHomeLocations(world, user.getUniqueId());
+        // Set home location
+        plugin.getPlayers().setHomeLocation(user, new Location(loc.getWorld(), loc.getX() + 0.5D, loc.getY(), loc.getZ() + 0.5D), 1);
+        // Reset deaths
+        if (plugin.getIWM().isDeathsResetOnNewIsland(world)) {
+            plugin.getPlayers().setDeaths(world, user.getUniqueId(), 0);
+        }
+        // Check if owner has a different range permission than the island size
+        island.setProtectionRange(user.getPermissionValue(plugin.getIWM().getAddon(island.getWorld())
+                .map(GameModeAddon::getPermissionPrefix).orElse("") + "island.range", island.getProtectionRange()));
+        // Save the player so that if the server crashes weird things won't happen
+        plugin.getPlayers().save(user.getUniqueId());
+    }
+
+    /**
+     * Get the next island location and add it to the island grid
+     * @return location of new island
+     * @throws IOException - if there are no unoccupied spots or the island could not be added to the grid
+     */
+    private Location makeNextIsland() throws IOException {
+        // If the reservation fails, then we need to make a new island anyway
+        Location next = this.locationStrategy.getNextLocation(world);
+        if (next == null) {
+            plugin.logError("Failed to make island - no unoccupied spot found.");
+            plugin.logError("If the world was imported, try multiple times until all unowned islands are known.");
+            throw new IOException("commands.island.create.cannot-create-island");
+        }
+        // Add to the grid
+        island = plugin.getIslands().createIsland(next, user.getUniqueId());
+        if (island == null) {
+            plugin.logError("Failed to make island! Island could not be added to the grid.");
+            throw new IOException("commands.island.create.unable-create-island");
+        }
+        return next;
+    }
+
+    /**
+     * Get the reserved island location
+     * @return reserved island location, or null if none found
+     */
+    private Location checkReservedIsland() {
+        if (plugin.getIslands().hasIsland(world, user)) {
+            // Island exists, it just needs pasting
+            island = plugin.getIslands().getIsland(world, user);
+            if (island != null && island.isReserved()) {
+                Location l = island.getCenter();
+                // Clear the reservation
+                island.setReserved(false);
+                return l;
+            } else {
+                // This should never happen unless we allow another way to paste over islands without reserving
+                plugin.logError("New island for user " + user.getName() + " was not reserved!");
+            }
+        }
+        return null;
     }
 
     private void tidyUp(Island oldIsland) {

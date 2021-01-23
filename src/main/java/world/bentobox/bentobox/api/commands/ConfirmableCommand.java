@@ -28,7 +28,7 @@ public abstract class ConfirmableCommand extends CompositeCommand {
      * @param label - string for this command
      * @param aliases - aliases
      */
-    public ConfirmableCommand(Addon addon, String label, String... aliases) {
+    protected ConfirmableCommand(Addon addon, String label, String... aliases) {
         super(addon, label, aliases);
     }
 
@@ -38,12 +38,17 @@ public abstract class ConfirmableCommand extends CompositeCommand {
      * @param parent - parent command
      * @param aliases - aliases for this command
      */
-    public ConfirmableCommand(Addon addon, CompositeCommand parent, String label, String... aliases ) {
+    protected ConfirmableCommand(Addon addon, CompositeCommand parent, String label, String... aliases ) {
         super(addon, parent, label, aliases);
     }
 
-
-    public ConfirmableCommand(CompositeCommand parent, String label, String... aliases) {
+    /**
+     *
+     * @param parent
+     * @param label
+     * @param aliases
+     */
+    protected ConfirmableCommand(CompositeCommand parent, String label, String... aliases) {
         super(parent, label, aliases);
     }
 

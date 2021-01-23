@@ -200,7 +200,7 @@ public class BlueprintsManagerTest {
         BlueprintsManager bpm = new BlueprintsManager(plugin);
         bpm.extractDefaultBlueprints(addon);
         // Nothing should happen
-        assertTrue(bpFile.listFiles().length == 0);
+        assertEquals(0, bpFile.listFiles().length);
         // Clean up
         Files.deleteIfExists(bpFile.toPath());
     }
@@ -333,7 +333,7 @@ public class BlueprintsManagerTest {
         verify(plugin).log(eq("Added blueprint 'bedrock' for name"));
         // Add it again, it should replace the previous one
         bpm.addBlueprint(addon, defaultBp);
-        assertTrue(bpm.getBlueprints(addon).size() == 1);
+        assertEquals(1, bpm.getBlueprints(addon).size());
     }
 
     /**
@@ -376,7 +376,6 @@ public class BlueprintsManagerTest {
 
         BlueprintsManager bpm = new BlueprintsManager(plugin);
         bpm.saveBlueprintBundle(addon, bb);
-
     }
 
     /**

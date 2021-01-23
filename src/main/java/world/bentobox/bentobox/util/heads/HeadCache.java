@@ -1,10 +1,12 @@
 package world.bentobox.bentobox.util.heads;
 
+import java.lang.reflect.Field;
+import java.util.UUID;
+
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import java.lang.reflect.Field;
-import java.util.UUID;
+
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 

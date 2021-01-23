@@ -19,7 +19,7 @@ public abstract class FlagChangeEvent extends BentoBoxEvent {
      * @param player - player changing the flag
      * @param editedFlag - flag that has changed
      */
-    public FlagChangeEvent(UUID player, Flag editedFlag) {
+    protected FlagChangeEvent(UUID player, Flag editedFlag) {
         this.player = player;
         this.editedFlag = editedFlag;
     }

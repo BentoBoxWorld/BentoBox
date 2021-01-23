@@ -11,10 +11,12 @@ import org.eclipse.jdt.annotation.Nullable;
  */
 public abstract class Hook {
 
-    private @NonNull String pluginName;
-    private @NonNull Material icon;
+    @NonNull
+    private final String pluginName;
+    @NonNull
+    private final Material icon;
 
-    public Hook(@NonNull String pluginName, @NonNull Material icon) {
+    protected Hook(@NonNull String pluginName, @NonNull Material icon) {
         if (pluginName.isEmpty()) {
             throw new IllegalArgumentException("Plugin name cannot be empty.");
         }

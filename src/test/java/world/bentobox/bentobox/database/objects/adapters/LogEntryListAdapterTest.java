@@ -1,10 +1,6 @@
-/**
- *
- */
 package world.bentobox.bentobox.database.objects.adapters;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -63,7 +59,7 @@ public class LogEntryListAdapterTest {
         config.set("test.history", a.serialize(history));
         // Verify
         List<LogEntry> historyCheck = a.deserialize(config.get("test.history"));
-        assertTrue(historyCheck.size() == 3);
+        assertEquals(3, historyCheck.size());
         for (int i = 0; i < historyCheck.size(); i++) {
             assertEquals(toLog.get(i).getTimestamp(), historyCheck.get(i).getTimestamp());
             assertEquals(toLog.get(i).getType(), historyCheck.get(i).getType());

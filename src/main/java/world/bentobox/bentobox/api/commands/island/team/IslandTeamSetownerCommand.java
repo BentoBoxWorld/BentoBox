@@ -8,6 +8,7 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
+import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.island.IslandEvent;
 import world.bentobox.bentobox.api.events.team.TeamEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
@@ -64,31 +65,32 @@ public class IslandTeamSetownerCommand extends CompositeCommand {
         }
         // Fire event so add-ons can run commands, etc.
         Island island = getIslands().getIsland(getWorld(), playerUUID);
-        if (TeamEvent.builder()
-                .island(island)
+        // Fire event so add-ons can run commands, etc.
+        IslandBaseEvent e = TeamEvent.builder()
+                .island(getIslands().getIsland(getWorld(), user.getUniqueId()))
                 .reason(TeamEvent.Reason.SETOWNER)
                 .involvedPlayer(targetUUID)
-                .build()
-                .isCancelled()) {
+                .build();
+        if (e.getNewEvent().map(IslandBaseEvent::isCancelled).orElse(e.isCancelled())) {
             return false;
         }
         getIslands().setOwner(getWorld(), user, targetUUID);
         // Call the event for the new owner
         IslandEvent.builder()
-                .island(island)
-                .involvedPlayer(targetUUID)
-                .admin(false)
-                .reason(IslandEvent.Reason.RANK_CHANGE)
-                .rankChange(island.getRank(User.getInstance(targetUUID)), RanksManager.OWNER_RANK)
-                .build();
+        .island(island)
+        .involvedPlayer(targetUUID)
+        .admin(false)
+        .reason(IslandEvent.Reason.RANK_CHANGE)
+        .rankChange(island.getRank(User.getInstance(targetUUID)), RanksManager.OWNER_RANK)
+        .build();
         // Call the event for the previous owner
         IslandEvent.builder()
-                .island(island)
-                .involvedPlayer(playerUUID)
-                .admin(false)
-                .reason(IslandEvent.Reason.RANK_CHANGE)
-                .rankChange(RanksManager.OWNER_RANK, island.getRank(user))
-                .build();
+        .island(island)
+        .involvedPlayer(playerUUID)
+        .admin(false)
+        .reason(IslandEvent.Reason.RANK_CHANGE)
+        .rankChange(RanksManager.OWNER_RANK, island.getRank(user))
+        .build();
         getIslands().save(island);
         return true;
     }

@@ -248,7 +248,7 @@ public class AddonsManagerTest {
     public void testGetDataObjects() {
         am.setClass("dataobj", DataObject.class);
         assertFalse(am.getDataObjects().isEmpty());
-        assertTrue(am.getDataObjects().size() == 1);
+        assertEquals(1, am.getDataObjects().size());
     }
 
     /**

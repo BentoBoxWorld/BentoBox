@@ -1,7 +1,19 @@
 package world.bentobox.bentobox.managers;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Queue;
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
@@ -15,6 +27,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Boat;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.PufferFish;
 import org.bukkit.inventory.ItemStack;
@@ -327,7 +340,7 @@ public class IslandsManager {
     public void deleteIsland(@NonNull Island island, boolean removeBlocks, @Nullable UUID involvedPlayer) {
         // Fire event
         IslandBaseEvent event = IslandEvent.builder().island(island).involvedPlayer(involvedPlayer).reason(Reason.DELETE).build();
-        if (event.isCancelled()) {
+        if (event.getNewEvent().map(IslandBaseEvent::isCancelled).orElse(event.isCancelled())) {
             return;
         }
         // Set the owner of the island to no one.
@@ -612,9 +625,9 @@ public class IslandsManager {
         }
         // Home location either isn't safe, or does not exist so try the island
         // location
-        if (plugin.getIslands().inTeam(world, user.getUniqueId())) {
-            l = plugin.getIslands().getIslandLocation(world, user.getUniqueId());
-            if (isSafeLocation(l)) {
+        if (inTeam(world, user.getUniqueId())) {
+            l = getIslandLocation(world, user.getUniqueId());
+            if (l != null && isSafeLocation(l)) {
                 plugin.getPlayers().setHomeLocation(user, l, number);
                 return l;
             } else {
@@ -626,8 +639,8 @@ public class IslandsManager {
                 }
             }
         } else {
-            l = plugin.getIslands().getIslandLocation(world, user.getUniqueId());
-            if (isSafeLocation(l)) {
+            l = getIslandLocation(world, user.getUniqueId());
+            if (l != null && isSafeLocation(l)) {
                 plugin.getPlayers().setHomeLocation(user, l, number);
                 return l.clone().add(new Vector(0.5D,0,0.5D));
             }
@@ -1228,11 +1241,13 @@ public class IslandsManager {
      */
     public void saveAll(boolean schedule){
         if (!schedule) {
-            for(Island island : islandCache.getIslands()){
-                try {
-                    handler.saveObjectAsync(island);
-                } catch (Exception e) {
-                    plugin.logError("Could not save island to database when running sync! " + e.getMessage());
+            for(Island island : islandCache.getIslands()) {
+                if (island.isChanged()) {
+                    try {
+                        handler.saveObjectAsync(island);
+                    } catch (Exception e) {
+                        plugin.logError("Could not save island to database when running sync! " + e.getMessage());
+                    }
                 }
             }
             return;
@@ -1251,10 +1266,12 @@ public class IslandsManager {
                         cancel();
                         return;
                     }
-                    try {
-                        handler.saveObjectAsync(island);
-                    } catch (Exception e) {
-                        plugin.logError("Could not save island to database when running sync! " + e.getMessage());
+                    if (island.isChanged()) {
+                        try {
+                            handler.saveObjectAsync(island);
+                        } catch (Exception e) {
+                            plugin.logError("Could not save island to database when running sync! " + e.getMessage());
+                        }
                     }
                 }
             }
@@ -1289,10 +1306,14 @@ public class IslandsManager {
     }
 
     public void shutdown(){
+        plugin.log("Removing coops from islands...");
         // Remove all coop associations
         islandCache.getIslands().forEach(i -> i.getMembers().values().removeIf(p -> p == RanksManager.COOP_RANK));
+        plugin.log("Saving islands - this has to be done sync so it may take a while with a lot of islands...");
         saveAll();
+        plugin.log("Islands saved.");
         islandCache.clear();
+        plugin.log("Closing database.");
         handler.close();
     }
 
@@ -1374,10 +1395,11 @@ public class IslandsManager {
         loc.getWorld().getNearbyEntities(loc, plugin.getSettings().getClearRadius(),
                 plugin.getSettings().getClearRadius(),
                 plugin.getSettings().getClearRadius()).stream()
-        .filter(en -> !en.isPersistent()
-                && Util.isHostileEntity(en)
+        .filter(LivingEntity.class::isInstance)
+        .filter(en -> Util.isHostileEntity(en)
                 && !plugin.getIWM().getRemoveMobsWhitelist(loc.getWorld()).contains(en.getType())
-                && !(en instanceof PufferFish))
+                && !(en instanceof PufferFish)
+                && ((LivingEntity)en).getRemoveWhenFarAway())
         .filter(en -> en.getCustomName() == null)
         .forEach(Entity::remove);
     }
@@ -1541,6 +1563,15 @@ public class IslandsManager {
                 .anyMatch(n -> ChatColor.stripColor(n).equals(ChatColor.stripColor(name)));
     }
 
+    /**
+     * Called by the admin team fix command. Attempts to fix the database for teams.
+     * It will identify and correct situations where a player is listed in multiple
+     * teams, or is the owner of multiple teams. It will also try to fix the current
+     * cache. It is recommended to restart the server after this command is run.
+     * @param user - admin calling
+     * @param world - game world to check
+     * @return CompletableFuture boolean - true when done
+     */
     public CompletableFuture<Boolean> checkTeams(User user, World world) {
         CompletableFuture<Boolean> r = new CompletableFuture<>();
         user.sendMessage("commands.admin.team.fix.scanning");
@@ -1599,10 +1630,8 @@ public class IslandsManager {
                 }
                 // Fix island ownership in cache
                 // Correct island cache
-                if (highestRank == RanksManager.OWNER_RANK) {
-                    if (islandCache.getIslandById(highestIsland.getUniqueId()) != null) {
-                        islandCache.setOwner(islandCache.getIslandById(highestIsland.getUniqueId()), en.getKey());
-                    }
+                if (highestRank == RanksManager.OWNER_RANK && islandCache.getIslandById(highestIsland.getUniqueId()) != null) {
+                    islandCache.setOwner(islandCache.getIslandById(highestIsland.getUniqueId()), en.getKey());
                 }
                 // Fix all the entries that are not the highest
                 for (Island island : en.getValue()) {
@@ -1630,4 +1659,5 @@ public class IslandsManager {
 
         return r;
     }
+
 }
