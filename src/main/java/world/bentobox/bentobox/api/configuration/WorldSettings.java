@@ -541,7 +541,7 @@ public interface WorldSettings extends ConfigObject {
     /**
      * Make a nether portal when teleporting to the nether through an overworld portal
      * @return true if a portal should be made
-     * @since 1.15.4
+     * @since 1.16.0
      */
     default boolean isMakeNetherPortals() {
         return false;
@@ -550,7 +550,7 @@ public interface WorldSettings extends ConfigObject {
     /**
      * Make an end portal when teleporting to the end through an end portal
      * @return true if a portal should be made
-     * @since 1.15.4
+     * @since 1.16.0
      */
     default boolean isMakeEndPortals() {
         return false;
