@@ -60,7 +60,7 @@ public class AdminRangeSetCommand extends CompositeCommand {
             return false;
         }
         if (range > island.getRange() * 2) {
-            user.sendMessage("commands.admin.range.invalid-value.too-high", TextVariables.NUMBER, String.valueOf(island.getRange()));
+            user.sendMessage("commands.admin.range.invalid-value.too-high", TextVariables.NUMBER, String.valueOf(2 * island.getRange()));
             return false;
         }
         if (range == island.getProtectionRange()) {
