@@ -72,9 +72,9 @@
         <!-- Might differ from the last Spigot release for short periods 
             of time -->
         <paper.version>1.16.4-R0.1-SNAPSHOT</paper.version>
-        <bstats.version>1.7</bstats.version>
+        <bstats.version>1.8</bstats.version>
         <vault.version>1.7</vault.version>
-        <placeholderapi.version>2.10.5</placeholderapi.version>
+        <placeholderapi.version>2.10.9</placeholderapi.version>
         <githubapi.version>d5f5e0bbd8</githubapi.version>
         <dynmap.version>3.0-SNAPSHOT</dynmap.version>
         <worldedit.version>7.0.0</worldedit.version>
@@ -83,7 +83,7 @@
         <!-- Do not change unless you want different name for local builds. -->
         <build.number>-LOCAL</build.number>
         <!-- This allows to change between versions. -->
-        <build.version>1.15.4</build.version>
+        <build.version>1.16.0</build.version>
     </properties>
 
     <!-- Profiles will allow to automatically change build version. -->
@@ -199,7 +199,7 @@
             <version>${paper.version}</version>
             <scope>provided</scope>
         </dependency>
-        <!-- Spigot NMS. Used for Head Getter. -->
+        <!-- Spigot NMS. Used for Head Getter and chunk deletion. -->
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot</artifactId>
@@ -291,12 +291,6 @@
             <artifactId>paperlib</artifactId>
             <version>1.0.2</version>
             <scope>compile</scope>
-        </dependency>
-        <dependency> <!-- Spigot (this includes Spigot API, Bukkit API, Craftbukkit and NMS) -->
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot</artifactId>
-            <version>1.16.4-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
         </dependency>
     </dependencies>
 

@@ -34,11 +34,11 @@ import org.powermock.reflect.Whitebox;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
+import world.bentobox.bentobox.api.events.island.IslandCreateEvent;
 import world.bentobox.bentobox.api.events.island.IslandEvent;
-import world.bentobox.bentobox.api.events.island.IslandEvent.IslandCreateEvent;
 import world.bentobox.bentobox.api.events.island.IslandEvent.IslandEventBuilder;
-import world.bentobox.bentobox.api.events.island.IslandEvent.IslandResetEvent;
 import world.bentobox.bentobox.api.events.island.IslandEvent.Reason;
+import world.bentobox.bentobox.api.events.island.IslandResetEvent;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle;
 import world.bentobox.bentobox.database.objects.Island;
@@ -206,7 +206,7 @@ public class NewIslandTest {
         verify(pm).clearHomeLocations(eq(world), any(UUID.class));
         verify(island).setProtectionRange(eq(20));
     }
-    
+
     /**
      * Test method for {@link world.bentobox.bentobox.managers.island.NewIsland#builder()}.
      * @throws Exception

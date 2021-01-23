@@ -15,6 +15,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
+import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.team.TeamEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
@@ -164,13 +165,14 @@ public class IslandTeamCommand extends CompositeCommand {
     }
 
     private boolean fireEvent(User user) {
-        return TeamEvent.builder()
+        IslandBaseEvent e = TeamEvent.builder()
                 .island(getIslands()
                         .getIsland(getWorld(), user.getUniqueId()))
                 .reason(TeamEvent.Reason.INFO)
                 .involvedPlayer(user.getUniqueId())
-                .build()
-                .isCancelled();
+                .build();
+        return e.getNewEvent().map(IslandBaseEvent::isCancelled)
+                .orElse(e.isCancelled());
     }
 
     /**

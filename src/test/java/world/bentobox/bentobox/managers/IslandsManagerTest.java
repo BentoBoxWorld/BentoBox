@@ -72,7 +72,7 @@ import io.papermc.lib.environments.Environment;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
-import world.bentobox.bentobox.api.events.island.IslandEvent.IslandDeleteEvent;
+import world.bentobox.bentobox.api.events.island.IslandDeleteEvent;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.Database;
 import world.bentobox.bentobox.database.DatabaseSetup.DatabaseType;
@@ -265,16 +265,21 @@ public class IslandsManagerTest {
         // Monsters and animals
         when(zombie.getLocation()).thenReturn(location);
         when(zombie.getType()).thenReturn(EntityType.ZOMBIE);
+        when(zombie.getRemoveWhenFarAway()).thenReturn(true);
         when(slime.getLocation()).thenReturn(location);
         when(slime.getType()).thenReturn(EntityType.SLIME);
+        when(slime.getRemoveWhenFarAway()).thenReturn(true);
         when(cow.getLocation()).thenReturn(location);
         when(cow.getType()).thenReturn(EntityType.COW);
         when(wither.getType()).thenReturn(EntityType.WITHER);
+        when(wither.getRemoveWhenFarAway()).thenReturn(true);
         when(creeper.getType()).thenReturn(EntityType.CREEPER);
+        when(creeper.getRemoveWhenFarAway()).thenReturn(true);
         when(pufferfish.getType()).thenReturn(EntityType.PUFFERFISH);
         // Named monster
         when(skelly.getType()).thenReturn(EntityType.SKELETON);
         when(skelly.getCustomName()).thenReturn("Skelly");
+        when(skelly.getRemoveWhenFarAway()).thenReturn(true);
 
         Collection<Entity> collection = new ArrayList<>();
         collection.add(player);
@@ -521,7 +526,7 @@ public class IslandsManagerTest {
         when(ground.getState()).thenReturn(blockState);
 
         // Negative value = full island scan
-                // No island here yet
+        // No island here yet
         assertNull(manager.bigScan(location, -1));
     }
 
@@ -582,9 +587,9 @@ public class IslandsManagerTest {
     @Test
     public void testGetCount() {
         IslandsManager im = new IslandsManager(plugin);
-        assertTrue(im.getIslandCount() == 0);
+        assertEquals(0, im.getIslandCount());
         im.createIsland(location, UUID.randomUUID());
-        assertTrue(im.getIslandCount() == 1);
+        assertEquals(1, im.getIslandCount());
     }
 
     /**
@@ -715,6 +720,17 @@ public class IslandsManagerTest {
         IslandsManager im = new IslandsManager(plugin);
         when(iwm.inWorld(world)).thenReturn(false);
         assertNull(im.getSafeHomeLocation(world, user, 0));
+    }
+    
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#getSafeHomeLocation(World, User, int)}.
+     */
+    @Test
+    public void testGetSafeHomeLocationNoIsland() {
+        IslandsManager im = new IslandsManager(plugin);
+        when(pm.getHomeLocation(eq(world), eq(user), eq(0))).thenReturn(null);
+        assertNull(im.getSafeHomeLocation(world, user, 0));
+        verify(plugin).logWarning(eq("null player has no island in world world!"));
     }
 
     /**

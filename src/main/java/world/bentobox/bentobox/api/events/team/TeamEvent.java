@@ -36,16 +36,25 @@ public class TeamEvent {
         return new TeamEventBuilder();
     }
 
+    /**
+     * @deprecated This event is moving to its own class.
+     * Use {@link world.bentobox.bentobox.api.events.team.TeamJoinEvent}
+     */
+    @Deprecated
     public static class TeamJoinEvent extends IslandBaseEvent {
         private TeamJoinEvent(Island island, UUID player, boolean admin, Location location) {
             // Final variables have to be declared in the constructor
             super(island, player, admin, location);
         }
     }
+
     /**
      * Called after a player has joined an island
      * @since 1.3.0
+     * @deprecated This event is moving to its own class.
+     * Use {@link world.bentobox.bentobox.api.events.team.TeamJoinedEvent}
      */
+    @Deprecated
     public static class TeamJoinedEvent extends IslandBaseEvent {
         /**
          * Called after a player has joined an island
@@ -60,24 +69,44 @@ public class TeamEvent {
             super(island, player, admin, location);
         }
     }
+    /**
+     * @deprecated This event is moving to its own class.
+     * Use {@link world.bentobox.bentobox.api.events.team.TeamInviteEvent}
+     */
+    @Deprecated
     public static class TeamInviteEvent extends IslandBaseEvent {
         private TeamInviteEvent(Island island, UUID player, boolean admin, Location location) {
             // Final variables have to be declared in the constructor
             super(island, player, admin, location);
         }
     }
+    /**
+     * @deprecated This event is moving to its own class.
+     * Use {@link world.bentobox.bentobox.api.events.team.TeamLeaveEvent}
+     */
+    @Deprecated
     public static class TeamLeaveEvent extends IslandBaseEvent {
         private TeamLeaveEvent(Island island, UUID player, boolean admin, Location location) {
             // Final variables have to be declared in the constructor
             super(island, player, admin, location);
         }
     }
+    /**
+     * @deprecated This event is moving to its own class.
+     * Use {@link world.bentobox.bentobox.api.events.team.TeamRejectEvent}
+     */
+    @Deprecated
     public static class TeamRejectEvent extends IslandBaseEvent {
         private TeamRejectEvent(Island island, UUID player, boolean admin, Location location) {
             // Final variables have to be declared in the constructor
             super(island, player, admin, location);
         }
     }
+    /**
+     * @deprecated This event is moving to its own class.
+     * Use {@link world.bentobox.bentobox.api.events.team.TeamKickEvent}
+     */
+    @Deprecated
     public static class TeamKickEvent extends IslandBaseEvent {
         private TeamKickEvent(Island island, UUID player, boolean admin, Location location) {
             // Final variables have to be declared in the constructor
@@ -89,7 +118,10 @@ public class TeamEvent {
      * To get the old owner, get from the island object. The new owner is the player's UUID.
      * @author tastybento
      *
+     * @deprecated This event is moving to its own class.
+     * Use {@link world.bentobox.bentobox.api.events.team.TeamSetownerEvent}
      */
+    @Deprecated
     public static class TeamSetownerEvent extends IslandBaseEvent {
         private TeamSetownerEvent(Island island, UUID player, boolean admin, Location location) {
             // Final variables have to be declared in the constructor
@@ -110,24 +142,48 @@ public class TeamEvent {
             return playerUUID;
         }
     }
+
+    /**
+     * @deprecated This event is moving to its own class.
+     * Use {@link world.bentobox.bentobox.api.events.team.TeamInfoEvent}
+     */
+    @Deprecated
     public static class TeamInfoEvent extends IslandBaseEvent {
         private TeamInfoEvent(Island island, UUID player, boolean admin, Location location) {
             // Final variables have to be declared in the constructor
             super(island, player, admin, location);
         }
     }
+
+    /**
+     * @deprecated This event is moving to its own class.
+     * Use {@link world.bentobox.bentobox.api.events.team.TeamDeleteEvent}
+     */
+    @Deprecated
     public static class TeamDeleteEvent extends IslandBaseEvent {
         private TeamDeleteEvent(Island island, UUID player, boolean admin, Location location) {
             // Final variables have to be declared in the constructor
             super(island, player, admin, location);
         }
     }
+
+    /**
+     * @deprecated This event is moving to its own class.
+     * Use {@link world.bentobox.bentobox.api.events.team.TeamUninviteEvent}
+     */
+    @Deprecated
     public static class TeamUninviteEvent extends IslandBaseEvent {
         private TeamUninviteEvent(Island island, UUID player, boolean admin, Location location) {
             // Final variables have to be declared in the constructor
             super(island, player, admin, location);
         }
     }
+
+    /**
+     * @deprecated This event is moving to its own class.
+     * Use {@link world.bentobox.bentobox.api.events.team.TeamGeneralEvent}
+     */
+    @Deprecated
     public static class TeamGeneralEvent extends IslandBaseEvent {
         private TeamGeneralEvent(Island island, UUID player, boolean admin, Location location) {
             // Final variables have to be declared in the constructor
@@ -180,7 +236,7 @@ public class TeamEvent {
             return this;
         }
 
-        private IslandBaseEvent getEvent() {
+        private IslandBaseEvent getDeprecatedEvent() {
             switch (reason) {
             case JOIN:
                 return new TeamJoinEvent(island, player, admin, location);
@@ -206,13 +262,45 @@ public class TeamEvent {
                 return new TeamGeneralEvent(island, player, admin, location);
             }
         }
-        
+
+        private IslandBaseEvent getEvent() {
+            switch (reason) {
+            case JOIN:
+                return new world.bentobox.bentobox.api.events.team.TeamJoinEvent(island, player, admin, location);
+            case JOINED:
+                return new world.bentobox.bentobox.api.events.team.TeamJoinedEvent(island, player, admin, location);
+            case INVITE:
+                return new world.bentobox.bentobox.api.events.team.TeamInviteEvent(island, player, admin, location);
+            case LEAVE:
+                return new world.bentobox.bentobox.api.events.team.TeamLeaveEvent(island, player, admin, location);
+            case REJECT:
+                return new world.bentobox.bentobox.api.events.team.TeamRejectEvent(island, player, admin, location);
+            case KICK:
+                return new world.bentobox.bentobox.api.events.team.TeamKickEvent(island, player, admin, location);
+            case SETOWNER:
+                return new world.bentobox.bentobox.api.events.team.TeamSetownerEvent(island, player, admin, location);
+            case INFO:
+                return new world.bentobox.bentobox.api.events.team.TeamInfoEvent(island, player, admin, location);
+            case DELETE:
+                return new world.bentobox.bentobox.api.events.team.TeamDeleteEvent(island, player, admin, location);
+            case UNINVITE:
+                return new world.bentobox.bentobox.api.events.team.TeamUninviteEvent(island, player, admin, location);
+            default:
+                return new world.bentobox.bentobox.api.events.team.TeamGeneralEvent(island, player, admin, location);
+            }
+        }
+
         /**
          * Build the event and call it
          * @return event
          */
         public IslandBaseEvent build() {
-            IslandBaseEvent e = getEvent();
+            // Generate new event
+            IslandBaseEvent newEvent = getEvent();
+            Bukkit.getPluginManager().callEvent(newEvent);
+            // Generate deprecated events
+            IslandBaseEvent e = getDeprecatedEvent();
+            e.setNewEvent(newEvent);
             Bukkit.getPluginManager().callEvent(e);
             return e;
         }

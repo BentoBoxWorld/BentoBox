@@ -3,6 +3,7 @@ package world.bentobox.bentobox.database.objects;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -17,6 +18,9 @@ import com.google.gson.annotations.Expose;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.flags.Flag;
+import world.bentobox.bentobox.api.metadata.MetaDataAble;
+import world.bentobox.bentobox.api.metadata.MetaDataValue;
+import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.util.Util;
 
 /**
@@ -25,7 +29,7 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  */
 @Table(name = "Players")
-public class Players implements DataObject {
+public class Players implements DataObject, MetaDataAble {
     @Expose
     private Map<Location, Integer> homeLocations = new HashMap<>();
     @Expose
@@ -52,6 +56,13 @@ public class Players implements DataObject {
      */
     @Expose
     private Flag.Mode flagsDisplayMode = Flag.Mode.BASIC;
+
+    /**
+     * A place to store meta data for this player.
+     * @since 1.15.4
+     */
+    @Expose
+    private Map<String, MetaDataValue> metaData;
 
     /**
      * This is required for database storage
@@ -338,4 +349,29 @@ public class Players implements DataObject {
     public void setFlagsDisplayMode(Flag.Mode flagsDisplayMode) {
         this.flagsDisplayMode = flagsDisplayMode;
     }
+
+    /**
+     * @return the metaData
+     * @since 1.15.5
+     * @see User#getMetaData()
+     */
+    @Override
+    public Optional<Map<String, MetaDataValue>> getMetaData() {
+        if (metaData == null) {
+            metaData = new HashMap<>();
+        }
+        return Optional.of(metaData);
+    }
+
+    /**
+     * @param metaData the metaData to set
+     * @since 1.15.4
+     * @see User#setMetaData(Map)
+     */
+    @Override
+    public void setMetaData(Map<String, MetaDataValue> metaData) {
+        this.metaData = metaData;
+    }
+
+
 }

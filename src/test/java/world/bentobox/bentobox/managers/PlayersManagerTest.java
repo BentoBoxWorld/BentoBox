@@ -7,28 +7,45 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.never;
 
+import java.beans.IntrospectionException;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Tameable;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.util.Vector;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -38,9 +55,12 @@ import org.powermock.reflect.Whitebox;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.database.AbstractDatabaseHandler;
 import world.bentobox.bentobox.database.Database;
+import world.bentobox.bentobox.database.DatabaseSetup;
 import world.bentobox.bentobox.database.DatabaseSetup.DatabaseType;
 import world.bentobox.bentobox.database.objects.Players;
+import world.bentobox.bentobox.hooks.VaultHook;
 import world.bentobox.bentobox.util.Util;
 
 /**
@@ -48,17 +68,48 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, User.class, Util.class, Logger.class, Database.class})
+@PrepareForTest({Bukkit.class, BentoBox.class, User.class, Util.class, Logger.class, DatabaseSetup.class,})
 public class PlayersManagerTest {
 
+    @Mock
     private BentoBox plugin;
+    @Mock
+    private World world;
+    @Mock
+    private IslandWorldManager iwm;
+    @Mock
+    private World nether;
+    @Mock
+    private World end;
     private UUID uuid;
     private User user;
     private UUID notUUID;
-    private World world;
-    private World nether;
-    private World end;
     private Database<Players> db;
+    private PlayersManager pm;
+    @Mock
+    private Tameable tamed;
+    @Mock
+    private Player p;
+    @Mock
+    private Inventory inv;
+    @Mock
+    private VaultHook vault;
+    @Mock
+    private PlayerInventory playerInv;
+    private static AbstractDatabaseHandler<Object> h;
+
+    @SuppressWarnings("unchecked")
+    @BeforeClass
+    public static void beforeClass() throws IllegalAccessException, InvocationTargetException, IntrospectionException {
+        // This has to be done beforeClass otherwise the tests will interfere with each other
+        h = mock(AbstractDatabaseHandler.class);
+        // Database
+        PowerMockito.mockStatic(DatabaseSetup.class);
+        DatabaseSetup dbSetup = mock(DatabaseSetup.class);
+        when(DatabaseSetup.getDatabase()).thenReturn(dbSetup);
+        when(dbSetup.getHandler(any())).thenReturn(h);
+        when(h.saveObject(any())).thenReturn(CompletableFuture.completedFuture(true));
+    }
 
     /**
      * @throws java.lang.Exception
@@ -67,30 +118,29 @@ public class PlayersManagerTest {
     @Before
     public void setUp() throws Exception {
         // Clear any lingering database
-        clear();
+        tearDown();
         // Set up plugin
-        plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        when(plugin.getVault()).thenReturn(Optional.of(vault));
+        // Settings
+        Settings s = mock(Settings.class);
+        // The database type has to be created one line before the thenReturn() to work!
+        DatabaseType value = DatabaseType.JSON;
+        when(plugin.getSettings()).thenReturn(s);
+        when(s.getDatabaseType()).thenReturn(value);
+        when(s.isUseEconomy()).thenReturn(true);
 
         // island world mgr
-        IslandWorldManager iwm = mock(IslandWorldManager.class);
-        world = mock(World.class);
         when(world.getName()).thenReturn("world");
         when(world.getEnvironment()).thenReturn(World.Environment.NORMAL);
-        nether = mock(World.class);
         when(nether.getName()).thenReturn("world_nether");
         when(nether.getEnvironment()).thenReturn(World.Environment.NETHER);
-        end = mock(World.class);
         when(end.getName()).thenReturn("world_the_end");
         when(end.getEnvironment()).thenReturn(World.Environment.THE_END);
         when(iwm.inWorld(any(World.class))).thenReturn(true);
         when(iwm.inWorld(any(Location.class))).thenReturn(true);
         when(plugin.getIWM()).thenReturn(iwm);
 
-        // Settings
-        Settings s = mock(Settings.class);
-        when(plugin.getSettings()).thenReturn(s);
-        when(s.getDatabaseType()).thenReturn(DatabaseType.JSON);
 
         // Set up spawn
         Location netherSpawn = mock(Location.class);
@@ -99,7 +149,12 @@ public class PlayersManagerTest {
         when(iwm.getNetherSpawnRadius(Mockito.any())).thenReturn(100);
 
         // Player
-        Player p = mock(Player.class);
+        when(p.getEnderChest()).thenReturn(inv);
+        when(p.getInventory()).thenReturn(playerInv);
+        AttributeInstance at = mock(AttributeInstance.class);
+        when(at.getValue()).thenReturn(20D);
+        when(p.getAttribute(Attribute.GENERIC_MAX_HEALTH)).thenReturn(at);
+
         // Sometimes use Mockito.withSettings().verboseLogging()
         user = mock(User.class);
         when(user.isOp()).thenReturn(false);
@@ -111,6 +166,7 @@ public class PlayersManagerTest {
         when(user.getUniqueId()).thenReturn(uuid);
         when(user.getPlayer()).thenReturn(p);
         when(user.getName()).thenReturn("tastybento");
+        when(user.isOnline()).thenReturn(true);
         User.setPlugin(plugin);
 
 
@@ -138,25 +194,54 @@ public class PlayersManagerTest {
         when(lm.get(Mockito.any(), Mockito.any())).thenReturn("mock translation");
         when(plugin.getLocalesManager()).thenReturn(lm);
 
-        // Normally in world
-        Util.setPlugin(plugin);
+        // Util
+        PowerMockito.mockStatic(Util.class, Mockito.RETURNS_MOCKS);
+        when(Util.sameWorld(any(), any())).thenCallRealMethod();
 
         // Database
         db = mock(Database.class);
+
+        // Leave commands
+        when(iwm.getOnLeaveCommands(any())).thenReturn(Collections.emptyList());
+
+
+        // Leave settings
+        when(iwm.isOnLeaveResetEnderChest(any())).thenReturn(true);
+        when(iwm.isOnLeaveResetInventory(any())).thenReturn(true);
+        when(iwm.isKickedKeepInventory(any())).thenReturn(true);
+        when(iwm.isOnLeaveResetMoney(any())).thenReturn(true);
+        when(iwm.isOnLeaveResetHealth(any())).thenReturn(true);
+        when(iwm.isOnLeaveResetHunger(any())).thenReturn(true);
+        when(iwm.isOnLeaveResetXP(any())).thenReturn(true);
+
+        // Tamed animals
+        List<Tameable> list = new ArrayList<>();
+        list.add(tamed);
+        when(tamed.isTamed()).thenReturn(true);
+        when(tamed.getOwner()).thenReturn(p);
+        when(world.getEntitiesByClass(Tameable.class)).thenReturn(list);
+
+        // Class under test
+        pm = new PlayersManager(plugin);
     }
 
+    /**
+     * @throws java.lang.Exception - exception
+     */
     @After
-    public void clear() throws IOException{
-        //remove any database data
-        File file = new File("database");
-        Path pathToBeDeleted = file.toPath();
+    public void tearDown() throws Exception {
+        deleteAll(new File("database"));
+        User.clearUsers();
+        Mockito.framework().clearInlineMocks();
+    }
+
+    private static void deleteAll(File file) throws IOException {
         if (file.exists()) {
-            Files.walk(pathToBeDeleted)
+            Files.walk(file.toPath())
             .sorted(Comparator.reverseOrder())
             .map(Path::toFile)
             .forEach(File::delete);
         }
-        Mockito.framework().clearInlineMocks();
     }
 
     /**
@@ -164,7 +249,6 @@ public class PlayersManagerTest {
      */
     @Test
     public void testPlayersManager() {
-        PlayersManager pm = new PlayersManager(plugin);
         assertNotNull(pm);
     }
 
@@ -173,7 +257,6 @@ public class PlayersManagerTest {
      */
     @Test
     public void testLoad() {
-        PlayersManager pm = new PlayersManager(plugin);
         pm.setHandler(db);
         pm.load();
     }
@@ -183,7 +266,6 @@ public class PlayersManagerTest {
      */
     @Test
     public void testSaveBoolean() {
-        PlayersManager pm = new PlayersManager(plugin);
         pm.saveAll();
     }
 
@@ -192,7 +274,6 @@ public class PlayersManagerTest {
      */
     @Test
     public void testShutdown() {
-        PlayersManager pm = new PlayersManager(plugin);
         pm.shutdown();
     }
 
@@ -201,7 +282,6 @@ public class PlayersManagerTest {
      */
     @Test
     public void testGetPlayer() {
-        PlayersManager pm = new PlayersManager(plugin);
         Players player = pm.getPlayer(uuid);
         assertEquals("tastybento", player.getPlayerName());
         assertEquals(uuid.toString(), player.getUniqueId());
@@ -212,7 +292,6 @@ public class PlayersManagerTest {
      */
     @Test
     public void testAddPlayer() {
-        PlayersManager pm = new PlayersManager(plugin);
 
         pm.addPlayer(null);
         // Add twice
@@ -227,7 +306,6 @@ public class PlayersManagerTest {
      */
     @Test
     public void testIsKnown() {
-        PlayersManager pm = new PlayersManager(plugin);
 
         pm.addPlayer(uuid);
         pm.addPlayer(notUUID);
@@ -242,8 +320,6 @@ public class PlayersManagerTest {
      */
     @Test
     public void testSetAndGetHomeLocationUserLocationInt() {
-        PlayersManager pm = new PlayersManager(plugin);
-
         Location l = mock(Location.class);
         when(l.getWorld()).thenReturn(world);
         Location l2 = mock(Location.class);
@@ -262,8 +338,6 @@ public class PlayersManagerTest {
 
     @Test
     public void testClearHomeLocations() {
-        PlayersManager pm = new PlayersManager(plugin);
-
         Location l = mock(Location.class);
         when(l.getWorld()).thenReturn(world);
         Location l2 = mock(Location.class);
@@ -283,7 +357,6 @@ public class PlayersManagerTest {
      */
     @Test
     public void testGetUUIDwithUUID() {
-        PlayersManager pm = new PlayersManager(plugin);
         assertEquals(uuid,pm.getUUID(uuid.toString()));
     }
 
@@ -292,7 +365,6 @@ public class PlayersManagerTest {
      */
     @Test
     public void testGetUUIDOfflinePlayer() {
-        PlayersManager pm = new PlayersManager(plugin);
         pm.setHandler(db);
         // Add a player to the cache
         pm.addPlayer(uuid);
@@ -305,7 +377,6 @@ public class PlayersManagerTest {
      */
     @Test
     public void testSetandGetPlayerName() {
-        PlayersManager pm = new PlayersManager(plugin);
         pm.setHandler(db);
         // Add a player
         pm.addPlayer(uuid);
@@ -319,7 +390,6 @@ public class PlayersManagerTest {
      */
     @Test
     public void testGetUUIDUnknownPlayer() {
-        PlayersManager pm = new PlayersManager(plugin);
         pm.setHandler(db);
         // Add a player to the cache
         pm.addPlayer(uuid);
@@ -328,12 +398,10 @@ public class PlayersManagerTest {
     }
 
     /**
-     * Test method for .
+     * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#setResets(World, UUID, int)}.
      */
     @Test
     public void testGetSetResetsLeft() {
-        PlayersManager pm = new PlayersManager(plugin);
-
         // Add a player
         pm.addPlayer(uuid);
         assertEquals(0, pm.getResets(world, uuid));
@@ -346,10 +414,80 @@ public class PlayersManagerTest {
      */
     @Test
     public void testSaveUUID() {
-        PlayersManager pm = new PlayersManager(plugin);
         // Add a player
         pm.addPlayer(uuid);
         //pm.save(uuid);
     }
 
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#cleanLeavingPlayer(World, User, boolean)}.
+     */
+    @Test
+    public void testCleanLeavingPlayerLeave() {
+        pm.cleanLeavingPlayer(world, user, false);
+        // Tamed animals
+        verify(tamed).setOwner(eq(null));
+        // Economy
+        verify(vault).withdraw(eq(user), eq(0D), eq(world));
+        // Enderchest
+        verify(inv).clear();
+        // Player inventory
+        verify(playerInv).clear();
+        // Health
+        PowerMockito.verifyStatic(Util.class);
+        Util.resetHealth(eq(p));
+        // Food
+        verify(p).setFoodLevel(eq(20));
+        // XP
+        verify(p).setTotalExperience(eq(0));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#cleanLeavingPlayer(World, User, boolean)}.
+     */
+    @Test
+    public void testCleanLeavingPlayerKicked() {
+        // Player is kicked
+        pm.cleanLeavingPlayer(world, user, true);
+        // Tamed animals
+        verify(tamed).setOwner(eq(null));
+        // Economy
+        verify(vault).withdraw(eq(user), eq(0D), eq(world));
+        // Enderchest
+        verify(inv).clear();
+        // Player inventory should NOT be cleared by default when kicked
+        verify(playerInv, never()).clear();
+        // Health
+        PowerMockito.verifyStatic(Util.class);
+        Util.resetHealth(eq(p));
+        // Food
+        verify(p).setFoodLevel(eq(20));
+        // XP
+        verify(p).setTotalExperience(eq(0));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#cleanLeavingPlayer(World, User, boolean)}.
+     */
+    @Test
+    public void testCleanLeavingPlayerKickedOffline() {
+        when(user.isOnline()).thenReturn(false);
+        // Player is kicked
+        pm.cleanLeavingPlayer(world, user, true);
+        // Tamed animals
+        verify(tamed).setOwner(eq(null));
+        // Economy
+        verify(vault).withdraw(eq(user), eq(0D), eq(world));
+        // Enderchest
+        verify(inv, never()).clear();
+        // Player inventory should NOT be cleared by default when kicked
+        verify(playerInv, never()).clear();
+        // Health
+        PowerMockito.verifyStatic(Util.class);
+        Util.resetHealth(eq(p));
+        // Food
+        verify(p).setFoodLevel(eq(20));
+        // XP
+        verify(p).setTotalExperience(eq(0));
+    }
 }

@@ -45,7 +45,7 @@ public abstract class DelayedTeleportCommand extends CompositeCommand implements
      * @param label - string for this command
      * @param aliases - aliases
      */
-    public DelayedTeleportCommand(Addon addon, String label, String... aliases) {
+    protected DelayedTeleportCommand(Addon addon, String label, String... aliases) {
         super(addon, label, aliases);
         Bukkit.getPluginManager().registerEvents(this, getPlugin());
     }
@@ -56,13 +56,18 @@ public abstract class DelayedTeleportCommand extends CompositeCommand implements
      * @param parent - parent command
      * @param aliases - aliases for this command
      */
-    public DelayedTeleportCommand(Addon addon, CompositeCommand parent, String label, String... aliases ) {
+    protected DelayedTeleportCommand(Addon addon, CompositeCommand parent, String label, String... aliases ) {
         super(addon, parent, label, aliases);
         Bukkit.getPluginManager().registerEvents(this, getPlugin());
     }
 
-
-    public DelayedTeleportCommand(CompositeCommand parent, String label, String... aliases) {
+    /**
+     *
+     * @param parent
+     * @param label
+     * @param aliases
+     */
+    protected DelayedTeleportCommand(CompositeCommand parent, String label, String... aliases) {
         super(parent, label, aliases);
         Bukkit.getPluginManager().registerEvents(this, getPlugin());
     }

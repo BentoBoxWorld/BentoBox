@@ -114,21 +114,21 @@ public class PlayersTest {
 
     @Test
     public void testDeaths() {
-        assertTrue(p.getDeaths(world) == 0);
+        assertEquals(0, p.getDeaths(world));
         p.addDeath(world);
-        assertTrue(p.getDeaths(world) == 1);
+        assertEquals(1, p.getDeaths(world));
         p.addDeath(world);
-        assertTrue(p.getDeaths(world) == 2);
+        assertEquals(2, p.getDeaths(world));
         p.addDeath(world);
-        assertTrue(p.getDeaths(world) == 3);
+        assertEquals(3, p.getDeaths(world));
         p.addDeath(world);
-        assertTrue(p.getDeaths(world) == 3);
+        assertEquals(3, p.getDeaths(world));
         p.addDeath(world);
-        assertTrue(p.getDeaths(world) == 3);
+        assertEquals(3, p.getDeaths(world));
         p.setDeaths(world, 10);
-        assertTrue(p.getDeaths(world) == 3);
+        assertEquals(3, p.getDeaths(world));
         p.setDeaths(world, 0);
-        assertTrue(p.getDeaths(world) == 0);
+        assertEquals(0, p.getDeaths(world));
     }
 
     /**

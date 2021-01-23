@@ -43,9 +43,8 @@ abstract class BasicPlaceholderExpansion extends PlaceholderExpansion {
 
     @Override
     public String onPlaceholderRequest(Player p, String placeholder) {
-        User user = User.getInstance(p);
-        if (user != null && placeholders.containsKey(placeholder)) {
-            return placeholders.get(placeholder).onReplace(user);
+        if (placeholders.containsKey(placeholder)) {
+            return placeholders.get(placeholder).onReplace(User.getInstance(p));
         }
         return null;
     }

@@ -18,16 +18,23 @@ import world.bentobox.bentobox.BentoBox;
  * Provides the default methods expected when extending {@link Event}.
  * @author tastybento
  * @since 1.5.3
+ *
  */
 public abstract class BentoBoxEvent extends Event {
 
+    /**
+     * Event handler list
+     * @deprecated This field will be removed from BentoBoxEvent.
+     * Events must provide their own handlers.
+     */
+    @Deprecated
     private static final HandlerList handlers = new HandlerList();
 
     /**
      * The default constructor is defined for cleaner code.
      * This constructor assumes the BentoBoxEvent is synchronous.
      */
-    public BentoBoxEvent() {
+    protected BentoBoxEvent() {
         this(false);
     }
 
@@ -36,15 +43,29 @@ public abstract class BentoBoxEvent extends Event {
      * @param async - true indicates the event will fire asynchronously, false
      *    by default from default constructor
      */
-    public BentoBoxEvent(boolean async) {
+    protected BentoBoxEvent(boolean async) {
         super(async);
     }
 
+    /**
+     * @return HandlerList
+     * @deprecated this method will no longer be in future versions of the BentoBoxEvent.
+     * Each event must declare its own static handler and handler methods.
+     * Will be removed by https://github.com/BentoBoxWorld/BentoBox/pull/1615
+     */
     @Override
+    @Deprecated
     public HandlerList getHandlers() {
         return getHandlerList();
     }
 
+    /**
+     * @return HandlerList
+     * @deprecated this method will no longer be in future versions of the BentoBoxEvent.
+     * Each event must declare its own static handler and handler methods.
+     * Will be removed by https://github.com/BentoBoxWorld/BentoBox/pull/1615
+     */
+    @Deprecated
     public static HandlerList getHandlerList() {
         return handlers;
     }
@@ -66,7 +87,9 @@ public abstract class BentoBoxEvent extends Event {
                     if (value != null) {
                         map.put(pd.getName(), value);
                     }
-                } catch (Exception ignore) {}
+                } catch (Exception ignore) {
+                    // Ignored.
+                }
             });
             return map;
         } catch (IntrospectionException e) {
@@ -94,6 +117,9 @@ public abstract class BentoBoxEvent extends Event {
                     }
                 }
             });
-        } catch (IntrospectionException ignore) {}
+        } catch (IntrospectionException ignore) {
+            // Ignored.
+        }
     }
+
 }

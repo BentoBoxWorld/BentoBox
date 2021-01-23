@@ -43,7 +43,7 @@ public interface DatabaseSetup {
                 .filter(plugin.getSettings().getDatabaseType()::equals)
                 .findFirst()
                 .map(t -> t.database)
-                .orElse(DatabaseType.JSON.database);
+                .orElseGet(() -> DatabaseType.JSON.database);
     }
 
     /**

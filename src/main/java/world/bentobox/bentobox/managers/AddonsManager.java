@@ -101,14 +101,12 @@ public class AddonsManager {
             YamlConfiguration data = addonDescription(jar);
             // Check if the addon is already loaded (duplicate version?)
             String main = data.getString("main");
-            if (main != null) {
-                if (this.getAddonByMainClassName(main).isPresent()) {
-                    getAddonByMainClassName(main).ifPresent(a -> {
-                        plugin.logError("Duplicate addon! Addon " + a.getDescription().getName() + " " + a.getDescription().getVersion() + " has already been loaded!");
-                        plugin.logError("Remove the duplicate and restart!");
-                    });
-                    return;
-                }
+            if (main != null && this.getAddonByMainClassName(main).isPresent()) {
+                getAddonByMainClassName(main).ifPresent(a -> {
+                    plugin.logError("Duplicate addon! Addon " + a.getDescription().getName() + " " + a.getDescription().getVersion() + " has already been loaded!");
+                    plugin.logError("Remove the duplicate and restart!");
+                });
+                return;
             }
             // Load the addon
             addonClassLoader = new AddonClassLoader(this, data, f, this.getClass().getClassLoader());
@@ -439,7 +437,9 @@ public class AddonsManager {
     public Class<?> getClassByName(@NonNull final String name) {
         try {
             return classes.getOrDefault(name, loaders.values().stream().map(l -> l.findClass(name, false)).filter(Objects::nonNull).findFirst().orElse(null));
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+            // Ignored.
+        }
         return null;
     }
 

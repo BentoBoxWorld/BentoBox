@@ -95,7 +95,7 @@ public class TNTListener extends FlagListener {
 
     protected boolean protect(Location location) {
         return getIslands().getProtectedIslandAt(location).map(i -> !i.isAllowed(Flags.TNT_DAMAGE))
-                .orElse(!Flags.WORLD_TNT_DAMAGE.isSetForWorld(location.getWorld()));
+                .orElseGet(() -> !Flags.WORLD_TNT_DAMAGE.isSetForWorld(location.getWorld()));
     }
 
     /**

@@ -1,5 +1,6 @@
 package world.bentobox.bentobox.listeners.flags.protection;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -210,7 +211,7 @@ public class TNTListenerTest {
         PlayerInteractEvent e = new PlayerInteractEvent(player , action, item, clickedBlock, clickedFace);
 
         listener.onTNTPriming(e);
-        assertTrue(e.useInteractedBlock().equals(Result.DENY));
+        assertEquals(Result.DENY, e.useInteractedBlock());
         Mockito.verify(notifier).notify(Mockito.any(), Mockito.eq("protection.protected"));
     }
 
@@ -441,7 +442,6 @@ public class TNTListenerTest {
         EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(entity, player, DamageCause.ENTITY_EXPLOSION, 20D);
         listener.onExplosion(e);
         assertFalse(e.isCancelled());
-
     }
 
 }

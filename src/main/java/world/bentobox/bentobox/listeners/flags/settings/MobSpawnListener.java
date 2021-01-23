@@ -54,7 +54,7 @@ public class MobSpawnListener extends FlagListener {
             boolean cancelNatural = shouldCancel(e.getEntity(), e.getLocation(), Flags.ANIMAL_NATURAL_SPAWN, Flags.MONSTER_NATURAL_SPAWN);
             e.setCancelled(cancelNatural);
             return cancelNatural;
-        // Spawners
+            // Spawners
         case SPAWNER:
             boolean cancelSpawners = shouldCancel(e.getEntity(), e.getLocation(), Flags.ANIMAL_SPAWNERS_SPAWN, Flags.MONSTER_SPAWNERS_SPAWN);
             e.setCancelled(cancelSpawners);
@@ -67,9 +67,9 @@ public class MobSpawnListener extends FlagListener {
     private boolean shouldCancel(Entity entity, Location loc, Flag animalSpawnFlag, Flag monsterSpawnFlag) {
         Optional<Island> island = getIslands().getIslandAt(loc);
         if (Util.isHostileEntity(entity) && !(entity instanceof PufferFish)) {
-            return island.map(i -> !i.isAllowed(monsterSpawnFlag)).orElse(!monsterSpawnFlag.isSetForWorld(entity.getWorld()));
+            return island.map(i -> !i.isAllowed(monsterSpawnFlag)).orElseGet(() -> !monsterSpawnFlag.isSetForWorld(entity.getWorld()));
         } else if (Util.isPassiveEntity(entity) || entity instanceof PufferFish) {
-            return island.map(i -> !i.isAllowed(animalSpawnFlag)).orElse(!animalSpawnFlag.isSetForWorld(entity.getWorld()));
+            return island.map(i -> !i.isAllowed(animalSpawnFlag)).orElseGet(() -> !animalSpawnFlag.isSetForWorld(entity.getWorld()));
         }
         return false;
     }

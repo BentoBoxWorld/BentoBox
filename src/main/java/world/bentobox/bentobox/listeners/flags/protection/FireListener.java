@@ -38,7 +38,7 @@ public class FireListener extends FlagListener {
             return false;
         }
         // Check if the island exists and if fire is allowed
-        boolean cancel = getIslands().getIslandAt(l).map(i -> !i.isAllowed(flag)).orElse(!flag.isSetForWorld(l.getWorld()));
+        boolean cancel = getIslands().getIslandAt(l).map(i -> !i.isAllowed(flag)).orElseGet(() -> !flag.isSetForWorld(l.getWorld()));
         e.setCancelled(cancel);
         return cancel;
     }
