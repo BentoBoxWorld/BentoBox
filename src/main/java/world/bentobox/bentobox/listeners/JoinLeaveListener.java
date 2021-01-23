@@ -218,10 +218,10 @@ public class JoinLeaveListener implements Listener {
 
                     island.setProtectionRange(range);
 
-                    // Call Protection Range Change event. Does not support cancelling.
+                    // Call Protection Range Change event. Does not support canceling.
                     IslandEvent.builder()
                     .island(island)
-                    .location(island.getCenter())
+                    .location(island.getLocation())
                     .reason(IslandEvent.Reason.RANGE_CHANGE)
                     .involvedPlayer(user.getUniqueId())
                     .admin(true)
