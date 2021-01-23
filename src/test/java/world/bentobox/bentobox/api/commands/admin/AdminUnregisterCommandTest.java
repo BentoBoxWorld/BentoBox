@@ -226,7 +226,7 @@ public class AdminUnregisterCommandTest {
         AdminUnregisterCommand itl = new AdminUnregisterCommand(ac);
         UUID targetUUID = UUID.randomUUID();
         itl.unregisterPlayer(user, "name", targetUUID);
-        verify(user).sendMessage("commands.admin.unregister.unregistered-island", "[xyz]", "1,2,3", TextVariables.NAME, "name");
+        verify(user).sendMessage("commands.admin.unregister.unregistered-island", TextVariables.XYZ, "1,2,3", TextVariables.NAME, "name");
         assertTrue(map.isEmpty());
         verify(im).removePlayer(any(), eq(uuid1));
         verify(im).removePlayer(any(), eq(uuid2));

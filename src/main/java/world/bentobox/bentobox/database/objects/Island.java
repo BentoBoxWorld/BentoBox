@@ -1,5 +1,6 @@
 package world.bentobox.bentobox.database.objects;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -73,10 +74,15 @@ public class Island implements DataObject, MetaDataAble {
     private String uniqueId = UUID.randomUUID().toString();
 
     //// Island ////
-    // The center of the island itself
+    // The center of the island space
     @Expose
     @Nullable
     private Location center;
+
+    @Expose
+    @Nullable
+    private Location location;
+
 
     // Island range
     @Expose
@@ -227,6 +233,7 @@ public class Island implements DataObject, MetaDataAble {
         this.gameMode = island.getGameMode();
         this.history.addAll(island.getHistory());
         this.levelHandicap = island.getLevelHandicap();
+        this.location = island.getLocation();
         this.maxEverProtectionRange = island.getMaxEverProtectionRange();
         this.members.putAll(island.getMembers());
         island.getMetaData().ifPresent(m -> {
@@ -404,33 +411,41 @@ public class Island implements DataObject, MetaDataAble {
     }
 
     /**
+     * Get the minimum protected X block coord based on the island location.
+     * It will never be less than {@link #getMinX()}
      * @return the minProtectedX
      */
     public int getMinProtectedX() {
-        return center.getBlockX() - protectionRange;
+        return getLocation() == null ? 0 : Math.max(getMinX(), getLocation().getBlockX() - protectionRange);
     }
 
     /**
+     * Get the maximum protected X block coord based on the island location.
+     * It will never be more than {@link #getMaxX()}
      * @return the maxProtectedX
      * @since 1.5.2
      */
     public int getMaxProtectedX() {
-        return center.getBlockX() + protectionRange;
+        return getLocation() == null ? 0 : Math.min(getMaxX(), getLocation().getBlockX() + protectionRange);
     }
 
     /**
+     * Get the minimum protected Z block coord based on the island location.
+     * It will never be less than {@link #getMinZ()}
      * @return the minProtectedZ
      */
     public int getMinProtectedZ() {
-        return center.getBlockZ() - protectionRange;
+        return getLocation() == null ? 0 : Math.max(getMinZ(), getLocation().getBlockZ() - protectionRange);
     }
 
     /**
+     * Get the maximum protected Z block coord based on the island location.
+     * It will never be more than {@link #getMinZ()}
      * @return the maxProtectedZ
      * @since 1.5.2
      */
     public int getMaxProtectedZ() {
-        return center.getBlockZ() + protectionRange;
+        return getLocation() == null ? 0 : Math.min(getMaxZ(), getLocation().getBlockZ() + protectionRange);
     }
 
     /**
@@ -760,7 +775,7 @@ public class Island implements DataObject, MetaDataAble {
     /**
      * @param center the center to set
      */
-    public void setCenter(Location center) {
+    public void setCenter(@Nullable Location center) {
         if (center != null) {
             this.world = center.getWorld();
         }
@@ -1017,16 +1032,13 @@ public class Island implements DataObject, MetaDataAble {
             // Show team members
             showMembers(user);
         }
-        Vector location = getCenter().toVector();
-        user.sendMessage("commands.admin.info.island-location", "[xyz]", Util.xyz(location));
-        Vector from = getCenter().toVector().subtract(new Vector(getRange(), 0, getRange())).setY(0);
-        Vector to = getCenter().toVector().add(new Vector(getRange()-1, 0, getRange()-1)).setY(getCenter().getWorld().getMaxHeight());
-        user.sendMessage("commands.admin.info.island-coords", "[xz1]", Util.xyz(from), "[xz2]", Util.xyz(to));
+        Vector location = getLocation().toVector();
+        user.sendMessage("commands.admin.info.island-location", TextVariables.XYZ, Util.xyz(location));
+        user.sendMessage("commands.admin.info.island-center", TextVariables.XYZ, Util.xyz(getCenter().toVector()));
+        user.sendMessage("commands.admin.info.island-coords", "[xz1]", Util.xyz(new Vector(this.getMinX(), 0, getMinZ())), "[xz2]", Util.xyz(new Vector(this.getMaxX(), 0, getMaxZ())));
         user.sendMessage("commands.admin.info.protection-range", "[range]", String.valueOf(getProtectionRange()));
         user.sendMessage("commands.admin.info.max-protection-range", "[range]", String.valueOf(getMaxEverProtectionRange()));
-        Vector pfrom = getCenter().toVector().subtract(new Vector(getProtectionRange(), 0, getProtectionRange())).setY(0);
-        Vector pto = getCenter().toVector().add(new Vector(getProtectionRange()-1, 0, getProtectionRange()-1)).setY(getCenter().getWorld().getMaxHeight());
-        user.sendMessage("commands.admin.info.protection-coords", "[xz1]", Util.xyz(pfrom), "[xz2]", Util.xyz(pto));
+        user.sendMessage("commands.admin.info.protection-coords", "[xz1]", Util.xyz(new Vector(this.getMinProtectedX(), 0, getMinProtectedZ())), "[xz2]", Util.xyz(new Vector(this.getMaxProtectedX(), 0, getMaxProtectedZ())));
         if (spawn) {
             user.sendMessage("commands.admin.info.is-spawn");
         }
@@ -1347,10 +1359,38 @@ public class Island implements DataObject, MetaDataAble {
         this.changed = changed;
     }
 
+    /**
+     * Get the location of the island. This can be anywhere within the island
+     * space and can move. It is used to calculate the protected area. Unless
+     * explicitly set, it will return the same as {@link #getCenter()}.
+     * @return a clone of the location
+     * @since 1.16.0
+     */
+    @Nullable
+    public Location getLocation() {
+        return location == null ? getCenter() : location.clone();
+    }
+
+    /**
+     * Sets the location of the island within the island space.
+     * @param location the location to set
+     * @throws IOException if the location is not in island space
+     * @since 1.16.0
+     */
+    public void setLocation(Location location) throws IOException {
+        if (!this.inIslandSpace(location)) {
+            throw new IOException("Location must be in island space");
+        }
+        this.location = location;
+        setChanged();
+    }
+
     @Override
     public String toString() {
-        return "Island [deleted=" + deleted + ", " + (uniqueId != null ? "uniqueId=" + uniqueId + ", " : "")
-                + (center != null ? "center=" + center + ", " : "") + "range=" + range + ", protectionRange="
+        return "Island [changed=" + changed + ", deleted=" + deleted + ", "
+                + (uniqueId != null ? "uniqueId=" + uniqueId + ", " : "")
+                + (center != null ? "center=" + center + ", " : "")
+                + (location != null ? "location=" + location + ", " : "") + "range=" + range + ", protectionRange="
                 + protectionRange + ", maxEverProtectionRange=" + maxEverProtectionRange + ", "
                 + (world != null ? "world=" + world + ", " : "")
                 + (gameMode != null ? "gameMode=" + gameMode + ", " : "") + (name != null ? "name=" + name + ", " : "")

@@ -66,7 +66,6 @@ public class IslandDeletionTest {
         when(iwm.getWorldSettings(any())).thenReturn(ws);
 
         // Island
-        when(island.getMaxEverProtectionRange()).thenReturn(1000);
         when(island.getWorld()).thenReturn(world);
         when(island.getCenter()).thenReturn(location);
 

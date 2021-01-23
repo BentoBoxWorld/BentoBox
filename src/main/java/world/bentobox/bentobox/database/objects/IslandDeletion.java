@@ -56,8 +56,7 @@ public class IslandDeletion implements DataObject {
 
     public IslandDeletion(Island island) {
         // Get the world's island distance
-        int islandDistance = BentoBox.getInstance().getIWM().getIslandDistance(island.getWorld());
-        int range = Math.min(island.getMaxEverProtectionRange(), islandDistance);
+        int range = BentoBox.getInstance().getIWM().getIslandDistance(island.getWorld());
         uniqueId = UUID.randomUUID().toString();
         location = island.getCenter();
         minX = location.getBlockX() - range;

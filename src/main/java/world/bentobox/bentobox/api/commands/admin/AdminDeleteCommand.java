@@ -120,7 +120,7 @@ public class AdminDeleteCommand extends ConfirmableCommand {
         if (vector == null) {
             user.sendMessage("general.success");
         } else {
-            user.sendMessage("commands.admin.delete.deleted-island", "[xyz]", Util.xyz(vector));
+            user.sendMessage("commands.admin.delete.deleted-island", TextVariables.XYZ, Util.xyz(vector));
         }
     }
 

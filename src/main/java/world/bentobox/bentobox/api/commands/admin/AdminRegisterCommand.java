@@ -83,7 +83,7 @@ public class AdminRegisterCommand extends ConfirmableCommand {
             if (i.isSpawn()) {
                 getIslands().clearSpawn(i.getWorld());
             }
-            user.sendMessage("commands.admin.register.registered-island", "[xyz]", Util.xyz(i.getCenter().toVector()),
+            user.sendMessage("commands.admin.register.registered-island", TextVariables.XYZ, Util.xyz(i.getCenter().toVector()),
                     TextVariables.NAME, targetName);
             user.sendMessage("general.success");
             // Build and call event
@@ -114,7 +114,7 @@ public class AdminRegisterCommand extends ConfirmableCommand {
                 getIslands().setOwner(user, targetUUID, i);
                 i.setReserved(true);
                 i.getCenter().getBlock().setType(Material.BEDROCK);
-                user.sendMessage("commands.admin.register.reserved-island", "[xyz]", Util.xyz(i.getCenter().toVector()),
+                user.sendMessage("commands.admin.register.reserved-island", TextVariables.XYZ, Util.xyz(i.getCenter().toVector()),
                         TextVariables.NAME, targetName);
                 // Build and fire event
                 IslandEvent.builder()
