@@ -169,7 +169,7 @@ public class BentoBox extends JavaPlugin {
 
         Bukkit.getScheduler().runTask(instance, () -> {
             try {
-                completeSetup(loadTime);  
+                completeSetup(loadTime);
             } catch (Exception e) {
                 fireCriticalError(e.getMessage(), "");
             }
@@ -316,18 +316,38 @@ public class BentoBox extends JavaPlugin {
     }
 
     /**
-     * Returns the player database
-     * @return the player database
+     * Returns the player manager
+     * @return the player manager
+     * @see #getPlayersManager()
      */
-    public PlayersManager getPlayers(){
+    public PlayersManager getPlayers() {
         return playersManager;
     }
 
     /**
-     * Returns the island database
-     * @return the island database
+     * Returns the player manager
+     * @return the player manager
+     * @see #getPlayers()
      */
-    public IslandsManager getIslands(){
+    public PlayersManager getPlayersManager() {
+        return playersManager;
+    }
+
+    /**
+     * Returns the island manager
+     * @return the island manager
+     * @see #getIslandsManager()
+     */
+    public IslandsManager getIslands() {
+        return islandsManager;
+    }
+
+    /**
+     * Returns the island manager
+     * @return the island manager
+     * @see #getIslands()
+     */
+    public IslandsManager getIslandsManager() {
         return islandsManager;
     }
 
