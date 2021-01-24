@@ -55,7 +55,7 @@ public class AdminRangeSetCommand extends CompositeCommand {
         Island island = getIslands().getIsland(getWorld(), targetUUID);
 
         // Do some sanity checks to make sure the new protection range won't cause problems
-        if (range <= 1) {
+        if (range < 0) {
             user.sendMessage("commands.admin.range.invalid-value.too-low", TextVariables.NUMBER, args.get(1));
             return false;
         }
