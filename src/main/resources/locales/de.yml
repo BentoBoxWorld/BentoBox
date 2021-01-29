@@ -887,7 +887,7 @@ protection:
       hint: Nutzung der Tore deaktiviert
     HURT_ANIMALS:
       description: Umschalten des Verletzens
-      name: Tire verletzen
+      name: Tiere verletzen
       hint: Tiere verletzen deaktiviert
     HURT_MONSTERS:
       description: Umschalten des Verletzens
