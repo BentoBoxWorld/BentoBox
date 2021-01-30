@@ -67,7 +67,7 @@ public class DeleteIslandChunks {
                 // Nether
                 processChunk(gm, Environment.NETHER, chunkX, chunkZ).thenRun(() ->
                 // End
-                processChunk(gm, Environment.NETHER, chunkX, chunkZ).thenRun(() -> finish()))));
+                processChunk(gm, Environment.THE_END, chunkX, chunkZ).thenRun(() -> finish()))));
             }
         }, 0L, 20L);
 
