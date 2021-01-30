@@ -4,6 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.bstats.bukkit.Metrics;
+import org.bstats.charts.AdvancedPie;
+import org.bstats.charts.SimplePie;
+import org.bstats.charts.SingleLineChart;
 import org.bukkit.Bukkit;
 
 import world.bentobox.bentobox.api.addons.GameModeAddon;
@@ -53,22 +56,22 @@ public class BStats {
     }
 
     private void registerDefaultLanguageChart() {
-        metrics.addCustomChart(new Metrics.SimplePie("default_language", () -> plugin.getSettings().getDefaultLanguage()));
+        metrics.addCustomChart(new SimplePie("default_language", () -> plugin.getSettings().getDefaultLanguage()));
     }
 
     private void registerDatabaseTypeChart() {
-        metrics.addCustomChart(new Metrics.SimplePie("database_type", () -> plugin.getSettings().getDatabaseType().toString()));
+        metrics.addCustomChart(new SimplePie("database_type", () -> plugin.getSettings().getDatabaseType().toString()));
     }
 
     private void registerIslandsCountChart() {
-        metrics.addCustomChart(new Metrics.SingleLineChart("islands", () -> plugin.getIslands().getIslandCount()));
+        metrics.addCustomChart(new SingleLineChart("islands", () -> plugin.getIslands().getIslandCount()));
     }
 
     /**
      * @since 1.1
      */
     private void registerIslandsCreatedChart() {
-        metrics.addCustomChart(new Metrics.SingleLineChart("islandsCreated", () -> {
+        metrics.addCustomChart(new SingleLineChart("islandsCreated", () -> {
             int value = islandsCreatedCount;
             islandsCreatedCount = 0;
             return value;
@@ -88,7 +91,7 @@ public class BStats {
      * @since 1.1
      */
     private void registerAddonsChart() {
-        metrics.addCustomChart(new Metrics.AdvancedPie("addons", () -> {
+        metrics.addCustomChart(new AdvancedPie("addons", () -> {
             Map<String, Integer> values = new HashMap<>();
             plugin.getAddonsManager().getEnabledAddons().stream()
                     .filter(addon -> !(addon instanceof GameModeAddon) && addon.getDescription().isMetrics())
@@ -102,7 +105,7 @@ public class BStats {
      * @since 1.4.0
      */
     private void registerGameModeAddonsChart() {
-        metrics.addCustomChart(new Metrics.AdvancedPie("gameModeAddons", () -> {
+        metrics.addCustomChart(new AdvancedPie("gameModeAddons", () -> {
             Map<String, Integer> values = new HashMap<>();
             plugin.getAddonsManager().getGameModeAddons().stream()
                     .filter(gameModeAddon -> gameModeAddon.getDescription().isMetrics())
@@ -116,7 +119,7 @@ public class BStats {
      * @since 1.6.0
      */
     private void registerHooksChart() {
-        metrics.addCustomChart(new Metrics.AdvancedPie("hooks", () -> {
+        metrics.addCustomChart(new AdvancedPie("hooks", () -> {
             Map<String, Integer> values = new HashMap<>();
             plugin.getHooks().getHooks().forEach(hook -> values.put(hook.getPluginName(), 1));
             return values;
@@ -128,7 +131,7 @@ public class BStats {
      * @since 1.6.0
      */
     private void registerPlayersPerServerChart() {
-        metrics.addCustomChart(new Metrics.SimplePie("playersPerServer", () -> {
+        metrics.addCustomChart(new SimplePie("playersPerServer", () -> {
             int players = Bukkit.getOnlinePlayers().size();
             if (players <= 0) return "0";
             else if (players <= 10) return "1-10";
@@ -146,7 +149,7 @@ public class BStats {
      * @since 1.6.0
      */
     private void registerFlagsDisplayModeChart() {
-        metrics.addCustomChart(new Metrics.AdvancedPie("flagsDisplayMode", () -> {
+        metrics.addCustomChart(new AdvancedPie("flagsDisplayMode", () -> {
             Map<String, Integer> values = new HashMap<>();
 
             Bukkit.getOnlinePlayers().forEach(player -> {
