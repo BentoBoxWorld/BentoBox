@@ -119,7 +119,7 @@ public class IslandExpelCommand extends CompositeCommand {
 
         target.sendMessage("commands.island.expel.player-expelled-you", TextVariables.NAME, user.getName());
         island.getWorld().playSound(target.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 1F, 1F);
-        if (getIslands().hasIsland(getWorld(), target)) {
+        if (getIslands().hasIsland(getWorld(), target) || getIslands().inTeam(getWorld(), target)) {
             // Success
             user.sendMessage(SUCCESS, TextVariables.NAME, target.getName());
             // Teleport home
