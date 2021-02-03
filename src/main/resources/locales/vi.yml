@@ -36,10 +36,6 @@ general:
     overworld: Thế Giới Thường
     nether: Địa Ngục
     the-end: Thế Giới Kết Thúc
-  deaths: Chết
-  unlimited: Vô hạn
-  tips:
-    changing-ob-to-lava: Đang chuyển Hắc Diện Thạch về Dung Nham, hãy cẩn thận
 commands:
   help:
     header: '&7 =========== &c [label] help &7 ==========='
@@ -48,7 +44,7 @@ commands:
     end: '&7 ================================='
     parameters: '[lệnh]'
     description: xem hướng dẫn
-    console: Console
+    console: Bảng điều khiển
   admin:
     help:
       description: lệnh cho quản trị viên
@@ -527,7 +523,7 @@ commands:
       kicked-from-island: '&c Bạn đã bị đuổi khỏi đảo trong [gamemode] vì chủ đảo
         đang tạo lại đảo.'
       must-remove-members: Hãy đuổi toàn bộ thành viên trước khi khởi tạo lại đảo
-        (/island kick <người chơi>).
+        (/[label] kick <người chơi>).
     sethome:
       description: chọn điểm nhà của bạn
       must-be-on-your-island: '&c Bạn phải ở đảo của bạn để chọn điểm nhà!'
@@ -612,7 +608,7 @@ commands:
         invitation-sent: '&a Lời mời đã gửi tới &b[name]&a.'
         removing-invite: '&c Đang xóa lời mồi.'
         name-has-invited-you: '&a [name] đã mời bạn vào đảo họ.'
-        to-accept-or-reject: '&a Dùng /[label] team accept để chấp nhận, or /[label]
+        to-accept-or-reject: '&a Dùng /[label] team accept để chấp nhận, hoặc /[label]
           team reject để từ chối'
         you-will-lose-your-island: '&c CHÚ Ý! Bạn sẽ mất đảo của bạn nếu chấp nhận
           lời mời!'
@@ -647,14 +643,12 @@ commands:
         description: rời đảo
         left-your-island: '&c [name] &c đã rời đảo của bạn'
         success: '&a Bạn đã rời đảo này.'
-        type-again: '&cGõ lệnh rời đảo 1 lần nữa để xác nhận'
       kick:
         description: xóa thành viên từ đảo của bạn
         parameters: <người chơi>
         owner-kicked: '&c Chủ đảo đã đuổi bạn khỏi đảo trong [gamemode]!'
         cannot-kick: '&c Bạn không thể đuổi chính bạn!'
         success: '&b [name] &a đã bị đuổi khỏi đảo bạn.'
-        type-again: '&cHãy đánh lệnh loại bỏ 1 lần nữa để xác nhận'
       demote:
         description: giáng cấp người chơi xuống một rank
         parameters: <người chơi>
@@ -719,8 +713,6 @@ commands:
       not-on-island: '&c Người chơi đó không có ở đảo bạn!'
       player-expelled-you: '&b [name]&c  đã trục xuất bạn khỏi đảo của họ!'
       success: '&a Bạn đã trục xuất &b [name] &a khỏi đảo bạn.'
-    lock:
-      description: khóa/bỏ khóa khả năng truy cập đảo của bạn
 ranks:
   owner: Chủ Đảo
   sub-owner: Đồng Chủ Đảo
@@ -1283,12 +1275,6 @@ protection:
         &a to break blocks and damage
         &a entities outside of island limits.
       name: World TNT damage
-    FIRE: FIRE
-    MOB_SPAWN: MOB_SPAWN
-    MONSTER_SPAWN: MONSTER_SPAWN
-    MUSIC: MUSIC
-    CHEST: CHEST
-    PORTAL: PORTAL
   locked: '&c This island is locked!'
   protected: '&c Island protected: [description].'
   world-protected: '&c World protected: [description].'
@@ -1355,11 +1341,6 @@ protection:
         &7 Current setting: [setting]
       setting-active: '&a Active'
       setting-disabled: '&c Disabled'
-    title: Island flags
-    help-item:
-      name: '&aNeed some help?'
-  island:
-    locked: '&cThis island is locked!'
 language:
   panel-title: Chọn ngôn ngữ
   description:
