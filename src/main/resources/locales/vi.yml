@@ -4,7 +4,7 @@
 meta:
   authors:
   - HSGamer
-  banner: "RED_BANNER:1:CREEPER:YELLOW:RHOMBUS_MIDDLE:YELLOW:TRIANGLES_BOTTOM:RED:SQUARE_BOTTOM_LEFT:RED:SQUARE_BOTTOM_RIGHT:RED"
+  banner: RED_BANNER:1:CREEPER:YELLOW:RHOMBUS_MIDDLE:YELLOW:TRIANGLES_BOTTOM:RED:SQUARE_BOTTOM_LEFT:RED:SQUARE_BOTTOM_RIGHT:RED
 prefixes:
   bentobox: '&6 BentoBox &7 &l > &r '
 general:
@@ -27,7 +27,8 @@ general:
     offline-player: '&c Người chơi ngoại tuyến hoặc không tồn tại.'
     unknown-player: '&c [name] là người chơi không xác định!'
     general: '&c Lệnh chưa sẵn sàng. Hãy thông báo với quản trị viên'
-    unknown-command: '&c Lệnh không xác định. Dùng &b /[label] help &c để xem hướng dẫn.'
+    unknown-command: '&c Lệnh không xác định. Dùng &b /[label] help &c để xem hướng
+      dẫn.'
     wrong-world: '&c Bạn không ở đúng thế giới để dùng lệnh đó!'
     you-must-wait: '&c Bạn phải chờ [number] giây trước khi dùng lại lệnh đó.'
     must-be-positive-number: '&c [number] không phải là số dương hợp lệ.'
@@ -35,6 +36,10 @@ general:
     overworld: Thế Giới Thường
     nether: Địa Ngục
     the-end: Thế Giới Kết Thúc
+  deaths: Chết
+  unlimited: Vô hạn
+  tips:
+    changing-ob-to-lava: Đang chuyển Hắc Diện Thạch về Dung Nham, hãy cẩn thận
 commands:
   help:
     header: '&7 =========== &c [label] help &7 ==========='
@@ -47,6 +52,7 @@ commands:
   admin:
     help:
       description: lệnh cho quản trị viên
+      parameters: ''
     resets:
       description: edit resets of the players
       set:
@@ -481,9 +487,11 @@ commands:
     create:
       description: tạo đảo bằng bản vẽ (cần quyền)
       parameters: <bản vẽ>
-      too-many-islands: '&c Quá nhiều đảo trong thế giới này. Không có đủ chỗ cho bạn.'
+      too-many-islands: '&c Quá nhiều đảo trong thế giới này. Không có đủ chỗ cho
+        bạn.'
       cannot-create-island: '&c Chưa tìm thấy vị trí. Thử lại...'
-      unable-create-island: '&c Không thể tạo đảo của bạn. Hãy báo cáo với quản trị viên.'
+      unable-create-island: '&c Không thể tạo đảo của bạn. Hãy báo cáo với quản trị
+        viên.'
       creating-island: '&a Đang tìm vị trí cho đảo của bạn...'
       pasting:
         estimated-time: '&a Thời gian dự kiến: &b [number] &a giây.'
@@ -516,7 +524,10 @@ commands:
         &c Bạn chắc là bạn muốn chứ?
         &c Các thành viên trong đảo sẽ bị đuổi. Bạn phải mời bọn họ lại
         &c Sẽ không có đường lui. Nếu bạn đã tạo lại đảo, sẽ &l không có &r &c cách để lấy lại.
-      kicked-from-island: '&c Bạn đã bị đuổi khỏi đảo trong [gamemode] vì chủ đảo đang tạo lại đảo.'
+      kicked-from-island: '&c Bạn đã bị đuổi khỏi đảo trong [gamemode] vì chủ đảo
+        đang tạo lại đảo.'
+      must-remove-members: Hãy đuổi toàn bộ thành viên trước khi khởi tạo lại đảo
+        (/island kick <người chơi>).
     sethome:
       description: chọn điểm nhà của bạn
       must-be-on-your-island: '&c Bạn phải ở đảo của bạn để chọn điểm nhà!'
@@ -574,14 +585,16 @@ commands:
         cannot-uncoop-member: '&c Bạn không thể xóa thành viên đội!'
         player-not-cooped: '&c Người chơi đó không chơi cùng!'
         you-are-no-longer-a-coop-member: '&c Bạn không còn chơi cùng với đảo của [name].'
-        all-members-logged-off: '&c Người chơi trên đảo đã thoát hết nên bạn không còn chơi cùng trên đảo của [name].'
+        all-members-logged-off: '&c Người chơi trên đảo đã thoát hết nên bạn không
+          còn chơi cùng trên đảo của [name].'
         success: '&b [name] &a không còn chơi cùng với đảo của bạn.'
         is-full: '&c Bạn không thể chơi cùng ai nữa.'
       trust:
         description: cho người chơi rank tin tưởng với đảo bạn
         parameters: <người chơi>
         trust-in-yourself: '&c Tin tưởng vào bản thân bạn!'
-        name-has-invited-you: '&a [name] mời bạn làm người được tin tưởng cho đảo của họ.'
+        name-has-invited-you: '&a [name] mời bạn làm người được tin tưởng cho đảo
+          của họ.'
         player-already-trusted: '&c Người chơi đã được tin tưởng!'
         you-are-trusted: '&2 Bạn được tin tưởng bởi &b [name]&a !'
         success: '&a Bạn tin tưởng &b [name]&a .'
@@ -599,8 +612,10 @@ commands:
         invitation-sent: '&a Lời mời đã gửi tới &b[name]&a.'
         removing-invite: '&c Đang xóa lời mồi.'
         name-has-invited-you: '&a [name] đã mời bạn vào đảo họ.'
-        to-accept-or-reject: '&a Dùng /[label] team accept để chấp nhận, or /[label] team reject để từ chối'
-        you-will-lose-your-island: '&c CHÚ Ý! Bạn sẽ mất đảo của bạn nếu chấp nhận lời mời!'
+        to-accept-or-reject: '&a Dùng /[label] team accept để chấp nhận, or /[label]
+          team reject để từ chối'
+        you-will-lose-your-island: '&c CHÚ Ý! Bạn sẽ mất đảo của bạn nếu chấp nhận
+          lời mời!'
         errors:
           cannot-invite-self: '&c Bạn không thể mời chính bạn!'
           cooldown: '&c Bạn không thể mời người đó trong [number] giây.'
@@ -614,7 +629,8 @@ commands:
         you-can-invite: '&a Bạn có thể mời [number] người nữa.'
         accept:
           description: đồng ý lời mời
-          you-joined-island: '&a Bạn đã tham gia đảo! Dùng &b/[label] team &a để xem thành viên khác.'
+          you-joined-island: '&a Bạn đã tham gia đảo! Dùng &b/[label] team &a để xem
+            thành viên khác.'
           name-joined-your-island: '&a [name] đã tham gia đảo ạn!'
           confirmation: |-
             &c Bạn có chắc đồng ý lời mời này chứ?
@@ -626,16 +642,19 @@ commands:
         cancel:
           description: hủy lời mời đang chờ của bạn
       leave:
-        cannot-leave: '&c Chủ không thể rời. Trở thành thành viên hoặc đuổi tất cả thành viên.'
+        cannot-leave: '&c Chủ không thể rời. Trở thành thành viên hoặc đuổi tất cả
+          thành viên.'
         description: rời đảo
         left-your-island: '&c [name] &c đã rời đảo của bạn'
         success: '&a Bạn đã rời đảo này.'
+        type-again: '&cGõ lệnh rời đảo 1 lần nữa để xác nhận'
       kick:
         description: xóa thành viên từ đảo của bạn
         parameters: <người chơi>
         owner-kicked: '&c Chủ đảo đã đuổi bạn khỏi đảo trong [gamemode]!'
         cannot-kick: '&c Bạn không thể đuổi chính bạn!'
         success: '&b [name] &a đã bị đuổi khỏi đảo bạn.'
+        type-again: '&cHãy đánh lệnh loại bỏ 1 lần nữa để xác nhận'
       demote:
         description: giáng cấp người chơi xuống một rank
         parameters: <người chơi>
@@ -651,8 +670,11 @@ commands:
       setowner:
         description: chuyển quyền chủ đảo sang thành viên khác
         errors:
-          cant-transfer-to-yourself: '&c Bạn không thể chuyển cho chính bạn! &7 (&o Thật ra bạn có thể... Nhưng chúng tôi không muốn bạn làm thế, vì nó vô dụng.&r &7 )'
-          target-is-not-member: '&c Người chơi đó không phải là thành viên của đảo bạn!'
+          cant-transfer-to-yourself: '&c Bạn không thể chuyển cho chính bạn! &7 (&o
+            Thật ra bạn có thể... Nhưng chúng tôi không muốn bạn làm thế, vì nó vô
+            dụng.&r &7 )'
+          target-is-not-member: '&c Người chơi đó không phải là thành viên của đảo
+            bạn!'
         name-is-the-owner: '&a [name] giờ là chủ đảo!'
         parameters: <người chơi>
         you-are-the-owner: '&a Bạn giờ là chủ đảo!'
@@ -662,7 +684,8 @@ commands:
       cannot-ban-yourself: '&c Bạn không thể cấm chính bạn!'
       cannot-ban: '&c Người chơi đó không thể bị cấm.'
       cannot-ban-member: '&c Đuổi nó trước, rồi cấm.'
-      cannot-ban-more-players: '&c Bạn đã đạt lượt cấm tối đa, bạn không thể cấm ai nữa.'
+      cannot-ban-more-players: '&c Bạn đã đạt lượt cấm tối đa, bạn không thể cấm ai
+        nữa.'
       player-already-banned: '&c Người chơi đã bị cấm.'
       player-banned: '&b [name]&c  giờ bị cấm ở đảo bạn.'
       owner-banned-you: '&b [name]&c  cấm bạn ở đảo họ!'
@@ -696,6 +719,8 @@ commands:
       not-on-island: '&c Người chơi đó không có ở đảo bạn!'
       player-expelled-you: '&b [name]&c  đã trục xuất bạn khỏi đảo của họ!'
       success: '&a Bạn đã trục xuất &b [name] &a khỏi đảo bạn.'
+    lock:
+      description: khóa/bỏ khóa khả năng truy cập đảo của bạn
 ranks:
   owner: Chủ Đảo
   sub-owner: Đồng Chủ Đảo
@@ -1258,6 +1283,12 @@ protection:
         &a to break blocks and damage
         &a entities outside of island limits.
       name: World TNT damage
+    FIRE: FIRE
+    MOB_SPAWN: MOB_SPAWN
+    MONSTER_SPAWN: MONSTER_SPAWN
+    MUSIC: MUSIC
+    CHEST: CHEST
+    PORTAL: PORTAL
   locked: '&c This island is locked!'
   protected: '&c Island protected: [description].'
   world-protected: '&c World protected: [description].'
@@ -1324,107 +1355,108 @@ protection:
         &7 Current setting: [setting]
       setting-active: '&a Active'
       setting-disabled: '&c Disabled'
+    title: Island flags
+    help-item:
+      name: '&aNeed some help?'
+  island:
+    locked: '&cThis island is locked!'
 language:
-  panel-title: Select your language
+  panel-title: Chọn ngôn ngữ
   description:
-    selected: '&a Currently selected.'
-    click-to-select: '&e Click &a to select.'
-    authors: '&a Authors:'
+    selected: '&a Đang được chọn.'
+    click-to-select: '&e Nhấp &a để chọn.'
+    authors: '&a Tác giả:'
     author: '&3 - &b [name]'
-  edited: '&a Changed your language to &e [lang]&a .'
+  edited: '&a Đã chuyển ngôn ngữ thành &e [lang]&a .'
 management:
   panel:
-    title: BentoBox Management
+    title: Quản lí BentoBox
     views:
       gamemodes:
-        name: '&6 Gamemodes'
-        description: '&e Click &a to display currently loaded Gamemodes'
+        name: '&6 Chế độ'
+        description: '&e Nhấp &a để xem các chế độ đã được nạp'
         blueprints:
-          name: '&6 Blueprints'
-          description: '&a Opens the Admin Blueprint menu.'
+          name: '&6 Bản vẽ'
+          description: '&a Mở menu bản vẽ.'
         gamemode:
           name: '&f [name]'
           description: |
-            &a Islands: &b [islands]
+            &a Số đảo: &b [islands]
       addons:
-        name: '&6 Addons'
-        description: '&e Click &a to display currently loaded Addons'
+        name: '&6 Tiện ích'
+        description: '&e Nhấp &a để xem các tiện ích đã được nạp'
       hooks:
-        name: '&6 Hooks'
-        description: '&e Click &a to display currently loaded Hooks'
+        name: '&6 Kết nối'
+        description: '&e Nhấp &a để xem các kết nối đã được nạp'
     actions:
       reload:
-        name: '&c Reload'
-        description: '&e Click &c &l twice &r &a to reload BentoBox'
+        name: '&c Nạp lại'
+        description: '&e Nhấp &c &l hai lần &r &a để nạp lại BentoBox'
     buttons:
       catalog:
-        name: '&6 Addons Catalog'
-        description: '&a Opens the Addons Catalog'
+        name: '&6 Mục lục tiện ích'
+        description: '&a Mở mục lục tiện ích'
       credits:
-        name: '&6 Credits'
-        description: '&a Opens the Credits for BentoBox'
+        name: '&6 Đống góp'
+        description: '&a Mở menu đóng góp cho BentoBox'
       empty-here:
-        name: '&b This looks empty here...'
+        name: '&b Hơi trống ở đây...'
         description: '&a What if you take a look at our catalog?'
     information:
       state:
-        name: '&6 Compatibility'
+        name: '&6 Tương thích'
         description:
           COMPATIBLE: |
-            &a Running &e [name] [version]&a .
+            &a Đang chạy &e [name] [version]&a .
 
-            &a BentoBox is currently running on a
-            &a &l COMPATIBLE &r &a server software and
-            &a version.
+            &a BentoBox đang chạy trên một máy chủ có
+            &a phần mềm và phiên bản &l TƯƠNG THÍCH &r.
 
-            &a Its features are fully designed to
-            &a run in this environment.
+            &a Tất cả tính năng được tạo
+            &a đệ chạy trên môi trường này.
           SUPPORTED: |
-            &a Running &e [name] [version]&a .
+            &a Đang chạy &e [name] [version]&a .
 
-            &a BentoBox is currently running on a
-            &a &l SUPPORTED &r &a server software and
-            &a version.
+            &a BentoBox đang chạy trên một máy chủ có
+            &a phần mềm và phiên bản &l HỖ TRỢ &r.
 
-            &a Most of its features will run smoothly
-            &a in this environment.
+            &a Phần lớn tính năng vẫn chạy mượt
+            &a trên môi trường này.
           NOT_SUPPORTED: |
-            &a Running &e [name] [version]&a .
+            &a Đang chạy &e [name] [version]&a .
 
-            &a BentoBox is currently running on a
-            &6 &l NOT SUPPORTED &r &a server software or
-            &a version.
+            &a BentoBox đang chạy trên một máy chủ có
+            &a phần mềm và phiên bản &6 &l KHÔNG HỖ TRỢ &r.
 
-            &a While most of its features will run
-            &a correctly, &6 platform-specific bugs or
-            &6 issues are to be expected&a .
+            &a Phần lớn tính năng vẫn sẽ chạy
+            &a bình thường, nhưng &6 lỗi nền tảng
+            &6 có thể xảy ra&a .
           INCOMPATIBLE: |+
-            &a Running &e [name] [version]&a .
+            &a Đang chạy &e [name] [version]&a .
 
-            &a BentoBox is currently running on an
-            &c &l INCOMPATIBLE &r &a server software or
-            &a version.
+            &a BentoBox đang chạy trên một máy chủ có
+            &a phần mềm và phiên bản &c &l KHÔNG TƯƠNG THÍCH &r.
 
-            &c Weird behaviour and bugs can occur
-            &c and most features may be unstable.
+            &c Hành vi kỳ lạ và lỗi có thể xảy ra
+            &c và phần lớn tính năng sẽ không ổn định.
 
 catalog:
   panel:
     GAMEMODES:
-      title: Gamemodes Catalog
+      title: Mục lục chế độ
     ADDONS:
-      title: Addons Catalog
+      title: Mục lục tiện ích
     views:
       gamemodes:
-        name: '&6 Gamemodes'
+        name: '&6 Chế độ'
         description: |
-          &e Click &a to browse through the
-          &a available official Gamemodes.
+          &e Nhấp &a để xem các
+          &a chế độ có sẵn.
       addons:
-        name: '&6 Addons'
+        name: '&6 Tiện ích'
         description: |
-          &e Click &a to browse through the
-          &a available official Addons.
+          &e Nhấp &a để xem các
+          &a tiện ích có sẵn.
     icon:
       description-template: |
         &8 [topic]
@@ -1432,33 +1464,33 @@ catalog:
 
         &7 &o [description]
 
-        &e Click &a to get the link to the
-        &a latest release.
-      already-installed: Already installed!
-      install-now: Install now!
+        &e Nhấp &a để lấy đường dẫn
+        &a đến phiên bản mới nhất.
+      already-installed: Đã cài đặt!
+      install-now: Cài đặt ngay!
     empty-here:
-      name: '&b This looks empty here...'
+      name: '&c Hơi trống ở đây...'
       description: |+
-        &c BentoBox could not connect to GitHub.
+        &c Bentobox không thể kết nối Github.
 
-        &a Allow BentoBox to connect to GitHub in
-        &a the configuration or try again later.
+        &a Cho phép BentoBox kết nối GitHub trong
+        &a tệp tùy chỉnh và thử lại sau.
 
 panel:
   credits:
-    title: '&8 [name] &2 Credits'
+    title: '&8 [name] &2 Đống góp'
     contributor:
       name: '&a [name]'
       description: |
         &a Commits: &b [commits]
     empty-here:
-      name: '&c This looks empty here...'
+      name: '&c Hơi trống ở đây...'
       description: |+
-        &c BentoBox could not gather the Contributors
-        &c for this Addon.
+        &c BentoBox không thể lấy người đống góp
+        &c cho tiện ích này.
 
-        &a Allow BentoBox to connect to GitHub in
-        &a the configuration or try again later.
+        &a Cho phép BentoBox kết nối GitHub trong
+        &a tệp tùy chỉnh và thử lại sau.
 
 successfully-loaded: |2
 
