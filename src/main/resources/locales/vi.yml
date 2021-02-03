@@ -522,8 +522,6 @@ commands:
         &c Sẽ không có đường lui. Nếu bạn đã tạo lại đảo, sẽ &l không có &r &c cách để lấy lại.
       kicked-from-island: '&c Bạn đã bị đuổi khỏi đảo trong [gamemode] vì chủ đảo
         đang tạo lại đảo.'
-      must-remove-members: Hãy đuổi toàn bộ thành viên trước khi khởi tạo lại đảo
-        (/[label] kick <người chơi>).
     sethome:
       description: chọn điểm nhà của bạn
       must-be-on-your-island: '&c Bạn phải ở đảo của bạn để chọn điểm nhà!'
