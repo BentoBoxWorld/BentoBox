@@ -4,6 +4,7 @@ import java.util.List;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
+import world.bentobox.bentobox.api.metadata.MetaDataValue;
 import world.bentobox.bentobox.api.user.User;
 
 /**
@@ -12,8 +13,6 @@ import world.bentobox.bentobox.api.user.User;
  */
 public class AdminSwitchCommand extends ConfirmableCommand {
 
-    private final String bypassPerm;
-
     /**
      * Switches bypass on and off
      * @param parent - admin command
@@ -21,7 +20,6 @@ public class AdminSwitchCommand extends ConfirmableCommand {
      */
     public AdminSwitchCommand(CompositeCommand parent) {
         super(parent, "switch");
-        bypassPerm = getPermissionPrefix() + "mod.bypassprotect";
     }
 
     @Override
@@ -39,30 +37,22 @@ public class AdminSwitchCommand extends ConfirmableCommand {
             showHelp(this, user);
             return false;
         }
-        if (user.isOp()) {
-            user.sendMessage("commands.admin.switch.op");
-            return false;
-        }
         return true;
     }
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        if (user.hasPermission(getPermissionPrefix() + "mod.switch")) {
-            if (user.hasPermission(bypassPerm)) {
-                user.sendMessage("commands.admin.switch.removing");
-                // Remove positive perm
-                if (user.removePerm(bypassPerm)) {
-                    user.sendMessage("general.success");
-                }
-            } else {
-                user.sendMessage("commands.admin.switch.adding");
-                // Add positive permission
-                user.addPerm(bypassPerm);
-                if (user.hasPermission(bypassPerm)) {
-                    user.sendMessage("general.success");
-                }
-            }
+        boolean switchState = user.getMetaData("AdminCommandSwitch").map(MetaDataValue::asBoolean).orElse(false);
+        if (switchState) {
+            // Turn off
+            user.putMetaData("AdminCommandSwitch", new MetaDataValue(false));
+            user.sendMessage("commands.admin.switch.adding"); // Adding protection bypass
+            user.sendMessage("general.success");
+        } else {
+            // Turn on
+            user.putMetaData("AdminCommandSwitch", new MetaDataValue(true));
+            user.sendMessage("commands.admin.switch.removing"); // Removing protection bypass
+            user.sendMessage("general.success");
         }
         return true;
     }
