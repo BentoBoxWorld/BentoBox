@@ -721,6 +721,17 @@ public class IslandsManagerTest {
         when(iwm.inWorld(world)).thenReturn(false);
         assertNull(im.getSafeHomeLocation(world, user, 0));
     }
+    
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#getSafeHomeLocation(World, User, int)}.
+     */
+    @Test
+    public void testGetSafeHomeLocationNoIsland() {
+        IslandsManager im = new IslandsManager(plugin);
+        when(pm.getHomeLocation(eq(world), eq(user), eq(0))).thenReturn(null);
+        assertNull(im.getSafeHomeLocation(world, user, 0));
+        verify(plugin).logWarning(eq("null player has no island in world world!"));
+    }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#getSpawnPoint(World)}.
