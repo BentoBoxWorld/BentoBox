@@ -104,6 +104,7 @@ public abstract class AbstractCommonSetup {
         when(player.getWorld()).thenReturn(world);
         when(player.getName()).thenReturn("tastybento");
         when(player.getInventory()).thenReturn(inv);
+
         User.setPlugin(plugin);
         User.getInstance(player);
 
