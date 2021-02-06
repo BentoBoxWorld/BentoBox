@@ -60,40 +60,39 @@ public class DeleteIslandChunks {
         task = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
             if (inDelete) return;
             inDelete = true;
-            BentoBox.getInstance().logDebug("Regenerste chunks");
             for (int i = 0; i < plugin.getSettings().getDeleteSpeed(); i++) {
+                boolean last = i == plugin.getSettings().getDeleteSpeed() -1;
                 plugin.getIWM().getAddon(di.getWorld()).ifPresent(gm ->
                 // Overworld
                 processChunk(gm, Environment.NORMAL, chunkX, chunkZ).thenRun(() ->
                 // Nether
                 processChunk(gm, Environment.NETHER, chunkX, chunkZ).thenRun(() ->
                 // End
-                processChunk(gm, Environment.THE_END, chunkX, chunkZ).thenRun(() -> finish()))));
+                processChunk(gm, Environment.THE_END, chunkX, chunkZ).thenRun(() -> finish(last)))));
+                chunkZ++;
+                if (chunkZ > di.getMaxZChunk()) {
+                    chunkZ = di.getMinZChunk();
+                    chunkX++;
+                }
             }
         }, 0L, 20L);
 
     }
 
-    private void finish() {
-        BentoBox.getInstance().logDebug("Finish!");
-        chunkZ++;
-        if (chunkZ > di.getMaxZChunk()) {
-            chunkZ = di.getMinZChunk();
-            chunkX++;
-            if (chunkX > di.getMaxXChunk()) {
-                // We're done
-                task.cancel();
-                // Fire event
-                IslandEvent.builder().deletedIslandInfo(di).reason(Reason.DELETED).build();
-            }
+    private void finish(boolean last) {
+        if (chunkX > di.getMaxXChunk()) {
+            // Fire event
+            IslandEvent.builder().deletedIslandInfo(di).reason(Reason.DELETED).build();
+            // We're done
+            task.cancel();
+        }
+        if (last) {
+            inDelete = false;
         }
     }
 
     private CompletableFuture<Boolean> processChunk(GameModeAddon gm, Environment env, int x, int z) {
-        BentoBox.getInstance().logDebug("Game mode " + gm.getDescription().getName());
-
         World world = di.getWorld();
-        BentoBox.getInstance().logDebug("process chunk " + env);
         switch (env) {
         case NETHER:
             // Nether
@@ -114,33 +113,29 @@ public class DeleteIslandChunks {
         default:
             break;
         }
-        BentoBox.getInstance().logDebug("Check if chunk is generated");
         if (PaperLib.isChunkGenerated(world, x, z)) {
-            BentoBox.getInstance().logDebug("Chunk generated");
-            PaperLib.getChunkAtAsync(world, x, z).thenAccept(chunk ->regenerateChunk(gm, chunk));
-
-            return CompletableFuture.completedFuture(true);
+            CompletableFuture<Boolean> r = new CompletableFuture<>();
+            PaperLib.getChunkAtAsync(world, x, z).thenAccept(chunk -> regenerateChunk(r, gm, chunk));
+            return r;
         }
-        BentoBox.getInstance().logDebug("Chunk not generated");
         return CompletableFuture.completedFuture(false);
     }
 
-    private void regenerateChunk(GameModeAddon gm, Chunk chunk) {
-        BentoBox.getInstance().logDebug("Regenerating chunk " + chunk.getX() + " " + chunk.getZ());
+    private void regenerateChunk(CompletableFuture<Boolean> r, GameModeAddon gm, Chunk chunk) {
         // Clear all inventories
         Arrays.stream(chunk.getTileEntities()).filter(te -> (te instanceof InventoryHolder))
         .filter(te -> di.inBounds(te.getLocation().getBlockX(), te.getLocation().getBlockZ()))
         .forEach(te -> ((InventoryHolder)te).getInventory().clear());
         // Reset blocks
         MyBiomeGrid grid = new MyBiomeGrid(chunk.getWorld().getEnvironment());
-        ChunkGenerator cg = gm.getDefaultWorldGenerator(chunk.getWorld().getName(), "");
+        ChunkGenerator cg = gm.getDefaultWorldGenerator(chunk.getWorld().getName(), "delete");
         // Will be null if use-own-generator is set to true
         if (cg != null) {
 
             ChunkData cd = cg.generateChunkData(chunk.getWorld(), new Random(), chunk.getX(), chunk.getZ(), grid);
             createChunk(cd, chunk, grid);
         }
-
+        r.complete(true);
     }
 
     private void createChunk(ChunkData cd, Chunk chunk, MyBiomeGrid grid) {
@@ -161,6 +156,5 @@ public class DeleteIslandChunks {
         }
         // Remove all entities in chunk, including any dropped items as a result of clearing the blocks above
         Arrays.stream(chunk.getEntities()).filter(e -> !(e instanceof Player) && di.inBounds(e.getLocation().getBlockX(), e.getLocation().getBlockZ())).forEach(Entity::remove);
-        inDelete = false;
     }
 }
