@@ -90,22 +90,22 @@ public enum GameModePlaceholder {
      * Returns the coordinates of the island's location, which may be different to the center.
      * @since 1.16.0
      */
-    ISLAND_LOCATION("island_location", (addon, user, island) -> island == null ? "" : Util.xyz(island.getLocation().toVector())),
+    ISLAND_LOCATION("island_location", (addon, user, island) -> island == null ? "" : Util.xyz(island.getProtectionCenter().toVector())),
     /**
      * Returns the X coordinate of the island's location.
      * @since 1.16.0
      */
-    ISLAND_LOCATION_X("island_location_x", (addon, user, island) -> island == null ? "" : String.valueOf(island.getLocation().getBlockX())),
+    ISLAND_LOCATION_X("island_location_x", (addon, user, island) -> island == null ? "" : String.valueOf(island.getProtectionCenter().getBlockX())),
     /**
      * Returns the Y coordinate of the island's location.
      * @since 1.16.0
      */
-    ISLAND_LOCATION_Y("island_location_y", (addon, user, island) -> island == null ? "" : String.valueOf(island.getLocation().getBlockY())),
+    ISLAND_LOCATION_Y("island_location_y", (addon, user, island) -> island == null ? "" : String.valueOf(island.getProtectionCenter().getBlockY())),
     /**
      * Returns the Z coordinate of the island's location.
      * @since 1.16.0
      */
-    ISLAND_LOCATION_Z("island_location_z", (addon, user, island) -> island == null ? "" : String.valueOf(island.getLocation().getBlockZ())),
+    ISLAND_LOCATION_Z("island_location_z", (addon, user, island) -> island == null ? "" : String.valueOf(island.getProtectionCenter().getBlockZ())),
     /**
      * Returns the maximum number of members the island can have
      * @since 1.5.0
@@ -210,25 +210,25 @@ public enum GameModePlaceholder {
      * @since 1.16.0
      */
     VISITED_ISLAND_LOCATION("visited_island_location", (addon, user, island) ->
-    getVisitedIsland(addon, user).map(value -> Util.xyz(value.getLocation().toVector())).orElse("")),
+    getVisitedIsland(addon, user).map(value -> Util.xyz(value.getProtectionCenter().toVector())).orElse("")),
     /**
      * Returns the X coordinate of the location of the island the player is standing on.
      * @since 1.16.0
      */
     VISITED_ISLAND_LOCATION_X("visited_island_location_x", (addon, user, island) ->
-    getVisitedIsland(addon, user).map(value -> String.valueOf(value.getLocation().getBlockX())).orElse("")),
+    getVisitedIsland(addon, user).map(value -> String.valueOf(value.getProtectionCenter().getBlockX())).orElse("")),
     /**
      * Returns the Y coordinate of the location of the island the player is standing on.
      * @since 1.16.0
      */
     VISITED_ISLAND_LOCATION_Y("visited_island_location_y", (addon, user, island) ->
-    getVisitedIsland(addon, user).map(value -> String.valueOf(value.getLocation().getBlockY())).orElse("")),
+    getVisitedIsland(addon, user).map(value -> String.valueOf(value.getProtectionCenter().getBlockY())).orElse("")),
     /**
      * Returns the Z coordinate of the location of the island the player is standing on.
      * @since 1.16.0
      */
     VISITED_ISLAND_LOCATION_Z("visited_island_location_z", (addon, user, island) ->
-    getVisitedIsland(addon, user).map(value -> String.valueOf(value.getLocation().getBlockZ())).orElse("")),
+    getVisitedIsland(addon, user).map(value -> String.valueOf(value.getProtectionCenter().getBlockZ())).orElse("")),
     /**
      * Returns the maximum number of members the island the player is standing on can have.
      * @since 1.5.2

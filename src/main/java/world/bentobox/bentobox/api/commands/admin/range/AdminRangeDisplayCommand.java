@@ -105,7 +105,7 @@ public class AdminRangeDisplayCommand extends CompositeCommand {
     }
 
     private void drawZone(User user, Particle particle, Particle.DustOptions dustOptions, Island island, int range) {
-        Location center = island.getLocation();
+        Location center = island.getProtectionCenter();
         // Get player Y coordinate
         int playerY = user.getPlayer().getLocation().getBlockY() + 1;
 

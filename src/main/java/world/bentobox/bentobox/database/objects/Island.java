@@ -79,6 +79,9 @@ public class Island implements DataObject, MetaDataAble {
     @Nullable
     private Location center;
 
+    /**
+     * The center location of the protection area
+     */
     @Expose
     @Nullable
     private Location location;
@@ -233,7 +236,7 @@ public class Island implements DataObject, MetaDataAble {
         this.gameMode = island.getGameMode();
         this.history.addAll(island.getHistory());
         this.levelHandicap = island.getLevelHandicap();
-        this.location = island.getLocation();
+        this.location = island.getProtectionCenter();
         this.maxEverProtectionRange = island.getMaxEverProtectionRange();
         this.members.putAll(island.getMembers());
         island.getMetaData().ifPresent(m -> {
@@ -416,7 +419,7 @@ public class Island implements DataObject, MetaDataAble {
      * @return the minProtectedX
      */
     public int getMinProtectedX() {
-        return getLocation() == null ? 0 : Math.max(getMinX(), getLocation().getBlockX() - protectionRange);
+        return getProtectionCenter() == null ? 0 : Math.max(getMinX(), getProtectionCenter().getBlockX() - protectionRange);
     }
 
     /**
@@ -426,7 +429,7 @@ public class Island implements DataObject, MetaDataAble {
      * @since 1.5.2
      */
     public int getMaxProtectedX() {
-        return getLocation() == null ? 0 : Math.min(getMaxX(), getLocation().getBlockX() + protectionRange);
+        return getProtectionCenter() == null ? 0 : Math.min(getMaxX(), getProtectionCenter().getBlockX() + protectionRange);
     }
 
     /**
@@ -435,7 +438,7 @@ public class Island implements DataObject, MetaDataAble {
      * @return the minProtectedZ
      */
     public int getMinProtectedZ() {
-        return getLocation() == null ? 0 : Math.max(getMinZ(), getLocation().getBlockZ() - protectionRange);
+        return getProtectionCenter() == null ? 0 : Math.max(getMinZ(), getProtectionCenter().getBlockZ() - protectionRange);
     }
 
     /**
@@ -445,7 +448,7 @@ public class Island implements DataObject, MetaDataAble {
      * @since 1.5.2
      */
     public int getMaxProtectedZ() {
-        return getLocation() == null ? 0 : Math.min(getMaxZ(), getLocation().getBlockZ() + protectionRange);
+        return getProtectionCenter() == null ? 0 : Math.min(getMaxZ(), getProtectionCenter().getBlockZ() + protectionRange);
     }
 
     /**
@@ -880,11 +883,33 @@ public class Island implements DataObject, MetaDataAble {
      */
     public void setProtectionRange(int protectionRange) {
         this.protectionRange = protectionRange;
-        // Ratchet up the maximum protection range
-        if (protectionRange > this.maxEverProtectionRange) {
-            this.maxEverProtectionRange = protectionRange;
-        }
+        this.updateMaxEverProtectionRange();
         setChanged();
+    }
+
+    /**
+     * Updates the maxEverProtectionRange based on the current protectionRange
+     */
+    public void updateMaxEverProtectionRange() {
+        // Ratchet up the maximum protection range
+        // Distance from maxes
+        int diffMinX = Math.abs(getCenter().getBlockX() - this.getMinProtectedX());
+        int diffMaxX = Math.abs(getCenter().getBlockX() - this.getMaxProtectedX());
+        int diffMinZ = Math.abs(getCenter().getBlockZ() - this.getMinProtectedZ());
+        int diffMaxZ = Math.abs(getCenter().getBlockZ() - this.getMaxProtectedZ());
+        if (diffMinX > this.maxEverProtectionRange) {
+            this.maxEverProtectionRange = diffMinX;
+        }
+        if (diffMaxX > this.maxEverProtectionRange) {
+            this.maxEverProtectionRange = diffMaxX;
+        }
+        if (diffMinZ > this.maxEverProtectionRange) {
+            this.maxEverProtectionRange = diffMinZ;
+        }
+        if (diffMaxZ > this.maxEverProtectionRange) {
+            this.maxEverProtectionRange = diffMaxZ;
+        }
+
     }
 
     /**
@@ -1032,8 +1057,8 @@ public class Island implements DataObject, MetaDataAble {
             // Show team members
             showMembers(user);
         }
-        Vector location = getLocation().toVector();
-        user.sendMessage("commands.admin.info.island-location", TextVariables.XYZ, Util.xyz(location));
+        Vector location = getProtectionCenter().toVector();
+        user.sendMessage("commands.admin.info.island-protection-center", TextVariables.XYZ, Util.xyz(location));
         user.sendMessage("commands.admin.info.island-center", TextVariables.XYZ, Util.xyz(getCenter().toVector()));
         user.sendMessage("commands.admin.info.island-coords", "[xz1]", Util.xyz(new Vector(this.getMinX(), 0, getMinZ())), "[xz2]", Util.xyz(new Vector(this.getMaxX(), 0, getMaxZ())));
         user.sendMessage("commands.admin.info.protection-range", "[range]", String.valueOf(getProtectionRange()));
@@ -1360,28 +1385,29 @@ public class Island implements DataObject, MetaDataAble {
     }
 
     /**
-     * Get the location of the island. This can be anywhere within the island
-     * space and can move. It is used to calculate the protected area. Unless
-     * explicitly set, it will return the same as {@link #getCenter()}.
-     * @return a clone of the location
+     * Get the center location of the protection zone.
+     * This can be anywhere within the island space and can move.
+     * Unless explicitly set, it will return the same as {@link #getCenter()}.
+     * @return a clone of the protection center location
      * @since 1.16.0
      */
     @Nullable
-    public Location getLocation() {
+    public Location getProtectionCenter() {
         return location == null ? getCenter() : location.clone();
     }
 
     /**
-     * Sets the location of the island within the island space.
+     * Sets the protection center location of the island within the island space.
      * @param location the location to set
      * @throws IOException if the location is not in island space
      * @since 1.16.0
      */
-    public void setLocation(Location location) throws IOException {
+    public void setProtectionCenter(Location location) throws IOException {
         if (!this.inIslandSpace(location)) {
             throw new IOException("Location must be in island space");
         }
         this.location = location;
+        this.updateMaxEverProtectionRange();
         setChanged();
     }
 

@@ -403,7 +403,7 @@ public class PortalTeleportationListenerTest {
         when(iwm.isPasteMissingIslands(any())).thenReturn(true);
         Island isle = mock(Island.class);
         when(isle.getWorld()).thenReturn(world);
-        when(isle.getLocation()).thenReturn(from);
+        when(isle.getProtectionCenter()).thenReturn(from);
         when(isle.hasEndIsland()).thenReturn(false);
         Optional<Island> island = Optional.of(isle );
         when(im.getIslandAt(any())).thenReturn(island);

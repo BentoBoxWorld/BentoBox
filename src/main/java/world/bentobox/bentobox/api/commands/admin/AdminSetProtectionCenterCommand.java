@@ -15,14 +15,14 @@ import world.bentobox.bentobox.util.Util;
 
 
 /**
- * This command sets the island location. This defines the center of the protected area.
- * The island location can be anywhere inside the island range area. Therefore the protected
+ * This command sets the center of the protected area.
+ * The location can be anywhere inside the island range area. Therefore the protected
  * range can be up to 2x the island range.
- * The island location will change for all environments.
+ * The location will change for all environments.
  * @author tastybento
  * @since 1.16.0
  */
-public class AdminSetLocationCommand extends ConfirmableCommand
+public class AdminSetProtectionCenterCommand extends ConfirmableCommand
 {
     private Location targetLoc;
     private Island island;
@@ -33,17 +33,17 @@ public class AdminSetLocationCommand extends ConfirmableCommand
      *
      * @param parent - the parent composite command
      */
-    public AdminSetLocationCommand(CompositeCommand parent) {
-        super(parent, "setlocation");
+    public AdminSetProtectionCenterCommand(CompositeCommand parent) {
+        super(parent, "setprotectionlocation");
     }
 
 
     @Override
     public void setup()
     {
-        this.setPermission("admin.setlocation");
-        this.setParametersHelp("commands.admin.setlocation.parameters");
-        this.setDescription("commands.admin.setlocation.description");
+        this.setPermission("admin.setprotectionlocation");
+        this.setParametersHelp("commands.admin.setprotectionlocation.parameters");
+        this.setDescription("commands.admin.setprotectionlocation.description");
     }
 
     @Override
@@ -55,7 +55,7 @@ public class AdminSetLocationCommand extends ConfirmableCommand
             targetLoc = new Location(getWorld(), user.getLocation().getBlockX(), user.getLocation().getBlockY(), user.getLocation().getBlockZ());
         }
         if (targetLoc == null) {
-            user.sendMessage("commands.admin.setlocation.xyz-error");
+            user.sendMessage("commands.admin.setprotectionlocation.xyz-error");
             return false;
         }
         Optional<Island> optionalIsland = getIslands().getIslandAt(targetLoc);
@@ -81,9 +81,9 @@ public class AdminSetLocationCommand extends ConfirmableCommand
     @Override
     public boolean execute(User user, String label, List<String> args) {
         String name = getPlayers().getName(island.getOwner());
-        user.sendMessage("commands.admin.setlocation.island", TextVariables.XYZ, Util.xyz(island.getCenter().toVector()), TextVariables.NAME, name);
+        user.sendMessage("commands.admin.setprotectionlocation.island", TextVariables.XYZ, Util.xyz(island.getCenter().toVector()), TextVariables.NAME, name);
         // Confirm
-        this.askConfirmation(user, user.getTranslation("commands.admin.setlocation.confirmation", TextVariables.XYZ, Util.xyz(targetLoc.toVector())),
+        this.askConfirmation(user, user.getTranslation("commands.admin.setprotectionlocation.confirmation", TextVariables.XYZ, Util.xyz(targetLoc.toVector())),
                 () -> this.setLocation(user));
         return true;
     }
@@ -96,11 +96,11 @@ public class AdminSetLocationCommand extends ConfirmableCommand
     private void setLocation(User user) {
         try {
             // Set
-            island.setLocation(targetLoc);
-            user.sendMessage("commands.admin.setlocation.success", TextVariables.XYZ, Util.xyz(targetLoc.toVector()));
+            island.setProtectionCenter(targetLoc);
+            user.sendMessage("commands.admin.setprotectionlocation.success", TextVariables.XYZ, Util.xyz(targetLoc.toVector()));
         } catch (Exception e) {
-            user.sendMessage("commands.admin.setlocation.failure", TextVariables.XYZ, Util.xyz(targetLoc.toVector()));
-            getAddon().logError("Island location could not be changed because the island does not exist");
+            user.sendMessage("commands.admin.setprotectionlocation.failure", TextVariables.XYZ, Util.xyz(targetLoc.toVector()));
+            getAddon().logError("Protection location could not be changed because the island does not exist");
         }
 
     }

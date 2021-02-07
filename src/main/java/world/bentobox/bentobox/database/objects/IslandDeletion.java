@@ -53,16 +53,17 @@ public class IslandDeletion implements DataObject {
     public IslandDeletion() {}
 
     public IslandDeletion(Island island) {
-        // Get the world's island distance
+        // Calculate the minimum required range to delete the island
+        int range = Math.min(island.getMaxEverProtectionRange(), island.getRange());
         uniqueId = UUID.randomUUID().toString();
         location = island.getCenter();
-        minX = island.getMinX();
+        minX = location.getBlockX() - range;
         minXChunk =  minX >> 4;
-        maxX = island.getMaxX();
+        maxX = range + location.getBlockX();
         maxXChunk = maxX >> 4;
-        minZ = island.getMinZ();
+        minZ = location.getBlockZ() - range;
         minZChunk = minZ >> 4;
-        maxZ = island.getMaxZ();
+        maxZ = range + location.getBlockZ();
         maxZChunk = maxZ >> 4;
         box = island.getBoundingBox();
     }

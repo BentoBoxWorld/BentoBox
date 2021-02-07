@@ -221,7 +221,7 @@ public class JoinLeaveListener implements Listener {
                     // Call Protection Range Change event. Does not support canceling.
                     IslandEvent.builder()
                     .island(island)
-                    .location(island.getLocation())
+                    .location(island.getProtectionCenter())
                     .reason(IslandEvent.Reason.RANGE_CHANGE)
                     .involvedPlayer(user.getUniqueId())
                     .admin(true)

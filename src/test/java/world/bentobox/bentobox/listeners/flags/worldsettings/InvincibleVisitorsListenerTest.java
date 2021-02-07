@@ -128,7 +128,7 @@ public class InvincibleVisitorsListenerTest {
         Location location = mock(Location.class);
         Vector vector = mock(Vector.class);
         when(location.toVector()).thenReturn(vector);
-        when(island.getLocation()).thenReturn(location);
+        when(island.getProtectionCenter()).thenReturn(location);
         when(im.getIsland(any(World.class), any(User.class))).thenReturn(island);
         optionalIsland = Optional.of(island);
         // Visitor
