@@ -13,6 +13,8 @@ import world.bentobox.bentobox.api.user.User;
  */
 public class AdminSwitchCommand extends ConfirmableCommand {
 
+    public static final String META_TAG = "AdminCommandSwitch";
+
     /**
      * Switches bypass on and off
      * @param parent - admin command

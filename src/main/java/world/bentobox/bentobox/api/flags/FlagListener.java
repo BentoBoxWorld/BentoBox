@@ -13,6 +13,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.commands.admin.AdminSwitchCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.metadata.MetaDataValue;
 import world.bentobox.bentobox.api.user.User;
@@ -153,7 +154,7 @@ public abstract class FlagListener implements Listener {
         // Protection flag
 
         // Ops or "bypass everywhere" moderators can do anything unless they have switched it off
-        if (!user.getMetaData("AdminCommandSwitch").map(MetaDataValue::asBoolean).orElse(false)
+        if (!user.getMetaData(AdminSwitchCommand.META_TAG).map(MetaDataValue::asBoolean).orElse(false)
                 && (user.hasPermission(getIWM().getPermissionPrefix(loc.getWorld()) + "mod.bypassprotect")
                         || user.hasPermission(getIWM().getPermissionPrefix(loc.getWorld()) + "mod.bypass." + flag.getID() + ".everywhere"))) {
             if (user.isOp()) {
@@ -183,7 +184,8 @@ public abstract class FlagListener implements Listener {
             if (island.get().isAllowed(user, flag)) {
                 report(user, e, loc, flag,  Why.RANK_ALLOWED);
                 return true;
-            } else if (user.hasPermission(getIWM().getPermissionPrefix(loc.getWorld()) + "mod.bypass." + flag.getID() + ".island")) {
+            } else if (!user.getMetaData(AdminSwitchCommand.META_TAG).map(MetaDataValue::asBoolean).orElse(false)
+                    && (user.hasPermission(getIWM().getPermissionPrefix(loc.getWorld()) + "mod.bypass." + flag.getID() + ".island"))) {
                 report(user, e, loc, flag,  Why.BYPASS_ISLAND);
                 return true;
             }
