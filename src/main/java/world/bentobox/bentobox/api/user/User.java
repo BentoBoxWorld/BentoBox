@@ -642,7 +642,10 @@ public class User implements MetaDataAble {
      */
     @Override
     public Optional<Map<String, MetaDataValue>> getMetaData() {
-        return plugin.getPlayers().getPlayer(playerUUID).getMetaData();
+        return plugin
+                .getPlayers()
+                .getPlayer(playerUUID)
+                .getMetaData();
     }
 
     /**

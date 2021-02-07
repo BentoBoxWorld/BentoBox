@@ -53,8 +53,9 @@ public class BentoBoxLocale {
      * @return Text for this locale reference or the reference if nothing has been found
      */
     public String get(String reference) {
-        if (config.contains(reference)) {
-            return config.getString(reference);
+        Object obj = config.get(reference);
+        if (obj instanceof String) {
+            return obj.toString();
         }
         return reference; // return reference in case nothing has been found
     }

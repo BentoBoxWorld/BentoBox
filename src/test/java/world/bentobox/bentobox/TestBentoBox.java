@@ -15,38 +15,29 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.Server;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.meta.SkullMeta;
-import org.bukkit.plugin.PluginManager;
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
@@ -55,52 +46,35 @@ import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.listeners.flags.AbstractCommonSetup;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.FlagsManager;
-import world.bentobox.bentobox.managers.IslandWorldManager;
-import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ BentoBox.class, Flags.class, Util.class, Bukkit.class})
-public class TestBentoBox {
+public class TestBentoBox extends AbstractCommonSetup {
     private static final UUID MEMBER_UUID = UUID.randomUUID();
-    private static final UUID OWNER_UUID = UUID.randomUUID();
     private static final UUID VISITOR_UUID = UUID.randomUUID();
-    private final UUID playerUUID = UUID.randomUUID();
-    private static CommandSender sender;
-    private static Player player;
-    private static Location location;
-    private static BentoBox plugin;
-    private static FlagsManager flagsManager;
-    private static Block block;
-    private static Player ownerOfIsland;
-    private static Player visitorToIsland;
+    @Mock
+    private CommandSender sender;
+    @Mock
+    private Block block;
+    @Mock
+    private Player ownerOfIsland;
+    @Mock
+    private Player visitorToIsland;
+    @Mock
+    private CommandsManager cm;
 
+    @Override
     @Before
-    public void setUp() {
-        // Set up plugin
-        plugin = mock(BentoBox.class);
-        when(plugin.getCommandsManager()).thenReturn(mock(CommandsManager.class));
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+    public void setUp() throws Exception {
+        super.setUp();
 
-        Server server = mock(Server.class);
-        World world = mock(World.class);
-        Mockito.when(server.getLogger()).thenReturn(Logger.getAnonymousLogger());
-        Mockito.when(server.getWorld("world")).thenReturn(world);
-        Mockito.when(server.getVersion()).thenReturn("BentoBox_Mocking");
-
-        PluginManager pluginManager = mock(PluginManager.class);
-
-
-        ItemFactory itemFactory = mock(ItemFactory.class);
-        when(server.getItemFactory()).thenReturn(itemFactory);
-
-        PowerMockito.mockStatic(Bukkit.class);
-        when(Bukkit.getServer()).thenReturn(server);
-        when(Bukkit.getPluginManager()).thenReturn(pluginManager);
+        when(plugin.getCommandsManager()).thenReturn(cm);
 
         SkullMeta skullMeta = mock(SkullMeta.class);
         when(itemFactory.getItemMeta(any())).thenReturn(skullMeta);
@@ -109,72 +83,22 @@ public class TestBentoBox {
         when(Bukkit.getOfflinePlayer(any(UUID.class))).thenReturn(offlinePlayer);
         when(offlinePlayer.getName()).thenReturn("tastybento");
 
-        when(Bukkit.getItemFactory()).thenReturn(itemFactory);
-        when(Bukkit.getLogger()).thenReturn(Logger.getAnonymousLogger());
-
-        sender = mock(CommandSender.class);
-        player = mock(Player.class);
-        ownerOfIsland = mock(Player.class);
-        visitorToIsland = mock(Player.class);
         Mockito.when(player.hasPermission(Mockito.anyString())).thenReturn(true);
-        User.getInstance(player);
-        when(Bukkit.getPlayer(any(UUID.class))).thenReturn(player);
 
-        location = mock(Location.class);
-        Mockito.when(location.getWorld()).thenReturn(world);
-        Mockito.when(location.getBlockX()).thenReturn(0);
-        Mockito.when(location.getBlockY()).thenReturn(0);
-        Mockito.when(location.getBlockZ()).thenReturn(0);
-
-        Mockito.when(player.getLocation()).thenReturn(location);
         Mockito.when(ownerOfIsland.getLocation()).thenReturn(location);
         Mockito.when(visitorToIsland.getLocation()).thenReturn(location);
 
         Mockito.when(player.getUniqueId()).thenReturn(MEMBER_UUID);
-        Mockito.when(ownerOfIsland.getUniqueId()).thenReturn(OWNER_UUID);
+        Mockito.when(ownerOfIsland.getUniqueId()).thenReturn(uuid);
         Mockito.when(visitorToIsland.getUniqueId()).thenReturn(VISITOR_UUID);
 
-        PowerMockito.mockStatic(Flags.class);
-
-        flagsManager = new FlagsManager(plugin);
-        Mockito.when(plugin.getFlagsManager()).thenReturn(flagsManager);
-
-        block = Mockito.mock(Block.class);
-
-        // Worlds
-        IslandWorldManager iwm = mock(IslandWorldManager.class);
-        Mockito.when(plugin.getIWM()).thenReturn(iwm);
-        when(iwm.inWorld(any(World.class))).thenReturn(true);
-        when(iwm.inWorld(any(Location.class))).thenReturn(true);
-        PowerMockito.mockStatic(Util.class);
-        when(Util.getWorld(any())).thenReturn(world);
-        // We want the read tabLimit call here
-        when(Util.tabLimit(any(), Mockito.anyString())).thenCallRealMethod();
-
-        // Islands
-        IslandsManager im = mock(IslandsManager.class);
-        Mockito.when(plugin.getIslands()).thenReturn(im);
-
-        Island island = new Island();
-        island.setOwner(OWNER_UUID);
-        island.setCenter(location);
+        island.setOwner(uuid);
         island.setProtectionRange(100);
         HashMap<UUID, Integer> members = new HashMap<>();
-        members.put(OWNER_UUID, RanksManager.OWNER_RANK);
+        members.put(uuid, RanksManager.OWNER_RANK);
         members.put(MEMBER_UUID, RanksManager.MEMBER_RANK);
         island.setMembers(members);
-        Mockito.when(im.getIslandAt(any())).thenReturn(Optional.of(island));
-        when(im.getProtectedIslandAt(any())).thenReturn(Optional.of(island));
 
-        Settings settings = mock(Settings.class);
-        Mockito.when(plugin.getSettings()).thenReturn(settings);
-        Mockito.when(settings.getFakePlayers()).thenReturn(new HashSet<>());
-    }
-
-    @After
-    public void tearDown() {
-        User.clearUsers();
-        Mockito.framework().clearInlineMocks();
     }
 
     @Test
@@ -183,15 +107,15 @@ public class TestBentoBox {
         IslandBaseEvent event = TeamEvent.builder()
                 //.island(getIslands().getIsland(playerUUID))
                 .reason(TeamEvent.Reason.INFO)
-                .involvedPlayer(playerUUID)
+                .involvedPlayer(uuid)
                 .build();
-        assertEquals(playerUUID, event.getPlayerUUID());
+        assertEquals(uuid, event.getPlayerUUID());
     }
 
     @Test
     public void testCommandAPI() {
         // Test command
-        User user = User.getInstance(playerUUID);
+        User user = User.getInstance(uuid);
         CompositeCommand testCommand = new TestCommand();
         testCommand.setOnlyPlayer(true);
         testCommand.setPermission("default.permission");
@@ -213,6 +137,7 @@ public class TestBentoBox {
         }
         String[] args = {""};
         // Results are alphabetically sorted
+        when(Util.tabLimit(any(), any())).thenCallRealMethod();
         assertEquals(Arrays.asList("help", "sub1","sub2"), testCommand.tabComplete(player, "test", args));
         assertNotSame(Arrays.asList("help", "sub1","sub2"), testCommand.tabComplete(sender, "test", args));
         args[0] = "su";
@@ -372,9 +297,9 @@ public class TestBentoBox {
     // Protection tests
     @Test
     public void testProtection() {
-        User owner = User.getInstance(playerUUID);
+        User owner = User.getInstance(uuid);
         Island island = new Island();
-        island.setOwner(playerUUID);
+        island.setOwner(uuid);
         island.setCenter(location);
         island.setProtectionRange(100);
 
@@ -395,7 +320,7 @@ public class TestBentoBox {
         island.addMember(member3);
 
         Set<UUID> members = island.getMemberSet();
-        assertTrue(members.contains(playerUUID));
+        assertTrue(members.contains(uuid));
         assertTrue(members.contains(member1));
         assertTrue(members.contains(member2));
         assertTrue(members.contains(member3));
@@ -403,7 +328,7 @@ public class TestBentoBox {
         // Remove members
         island.removeMember(member3);
         members = island.getMemberSet();
-        assertTrue(members.contains(playerUUID));
+        assertTrue(members.contains(uuid));
         assertTrue(members.contains(member1));
         assertTrue(members.contains(member2));
         assertFalse(members.contains(member3));
@@ -411,7 +336,7 @@ public class TestBentoBox {
         // Ban member
         island.ban(UUID.randomUUID(), member1);
         members = island.getMemberSet();
-        assertTrue(members.contains(playerUUID));
+        assertTrue(members.contains(uuid));
         assertFalse(members.contains(member1));
         assertTrue(members.contains(member2));
         assertFalse(members.contains(member3));
@@ -511,8 +436,9 @@ public class TestBentoBox {
         assertEquals(Material.DIAMOND, customFlag.getIcon());
         assertEquals(fl, customFlag.getListener().get());
         // Add it to the Flag Manager
-        flagsManager.registerFlag(customFlag);
-        assertEquals(customFlag, flagsManager.getFlag("CUSTOM_FLAG").get());
+        FlagsManager flagManager = new FlagsManager(plugin);
+        flagManager.registerFlag(customFlag);
+        assertEquals(customFlag, flagManager.getFlag("CUSTOM_FLAG").get());
     }
 
     /**
