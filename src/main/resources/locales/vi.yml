@@ -721,62 +721,62 @@ ranks:
   admin: Quản trị viên
   mod: Kiểm duyệt viên
 protection:
-  command-is-banned: Command is banned for visitors
+  command-is-banned: Lệnh này bị cấm cho người tham quan
   flags:
     ANIMAL_NATURAL_SPAWN:
-      description: Toggle natural animal spawning
-      name: Animal natural spawn
+      description: Bật/Tắt sinh thú tự nhiên
+      name: Sinh thú tự nhiên
     ANIMAL_SPAWNERS_SPAWN:
-      description: Toggle animal spawning with spawners
-      name: Animal spawners
+      description: Bật/Tắt sinh thú từ lồng sinh thú
+      name: Lồng sinh thú
     ANVIL:
-      description: Toggle interaction
-      name: Anvils
-      hint: Anvil use disabled
+      description: Bật/Tắt tương tác
+      name: Cái đe
+      hint: Đã tắt dùng đe
     ARMOR_STAND:
-      description: Toggle interaction
-      name: Armor stands
-      hint: Armor stand use disabled
+      description: Bật/Tắt tương tác
+      name: Giá treo giáp
+      hint: Đã tắt dùng giá treo giáp
     BEACON:
-      description: Toggle interaction
-      name: Beacons
-      hint: Beacon use disabled
+      description: Bật/Tắt tương tác
+      name: Đèn hiệu
+      hint: Đã tắt dùng đèn hiệu
     BED:
-      description: Toggle interaction
-      name: Beds
-      hint: Bed use disabled
+      description: Bật/Tắt tương tác
+      name: Giường
+      hint: Đã tắt dùng giường
     BOAT:
-      name: Boats
+      name: Thuyền
       description: |-
-        Toggle placing, breaking and
-        entering into boats.
-      hint: No boat interaction allowed
+        Bật/Tắt đặt, đập
+        và vào thuyền.
+      hint: Không cho phép tương tác với thuyền
     BREAK_BLOCKS:
-      description: Toggle breaking
-      name: Break blocks
-      hint: Block breaking disabled
+      description: Bật/Tắt đập khối
+      name: Đập khối
+      hint: Đã tắt đập khối
     BREAK_SPAWNERS:
       description: |-
-        Toggle spawners breaking.
-        Overrides the Break Blocks flag.
-      name: Break spawners
-      hint: Spawner breaking disabled
+        Bật/Tắt đập lồng sinh quái.
+        Gia đè lên cờ Đập Khối.
+      name: Đập lồng sinh quái
+      hint: Đã tắt đập lồng sinh quái
     BREAK_HOPPERS:
       description: |-
-        Toggle hoppers breaking.
-        Overrides the Break Blocks flag.
-      name: Break hoppers
-      hint: Hoppers breaking disabled
+        Bật/Tắt đập phễu.
+        Gia đè lên cờ Đập Khối.
+      name: Đập phễu
+      hint: Đã tắt đập phễu
     BREEDING:
       description: Toggle breeding
       name: Breed animals
       hint: Animal breeding protected
     BREWING:
-      description: Toggle interaction
+      description: Bật/Tắt tương tác
       name: Brewing stands
       hint: Brewing disabled
     BUCKET:
-      description: Toggle interaction
+      description: Bật/Tắt tương tác
       name: Buckets
       hint: Bucket use disabled
     BUTTON:
@@ -790,7 +790,7 @@ protection:
     CONTAINER:
       name: Containers
       description: |-
-        &a Toggle interaction with chests,
+        &a Bật/Tắt tương tác with chests,
         &a shulker boxes and flower pots,
         &a composters and barrels.
 
@@ -982,7 +982,7 @@ protection:
     ITEM_FRAME:
       name: Item Frame
       description: |-
-        &a Toggle interaction.
+        &a Bật/Tắt tương tác.
         &a Overrides place or break blocks
       hint: Item Frame use disabled
     ITEM_FRAME_DAMAGE:
