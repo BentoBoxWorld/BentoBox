@@ -420,44 +420,43 @@ commands:
   bentobox:
     description: Lệnh cho BentoBox
     about:
-      description: displays copyright and license information
+      description: xem thông tin về giấy phép và bản quyền
     reload:
-      description: reloads BentoBox and all addons, settings and locales
-      locales-reloaded: '[prefix_bentobox]&2 Languages reloaded.'
-      addons-reloaded: '[prefix_bentobox]&2 Addons reloaded.'
-      settings-reloaded: '[prefix_bentobox]&2 Settings reloaded.'
-      addon: '[prefix_bentobox]&6 Reloading &b [name]&2 .'
-      addon-reloaded: '[prefix_bentobox]&b [name] &2 reloaded.'
-      warning: '[prefix_bentobox]&c Warning: Reloading may cause instability, so if
-        you see errors afterwards, restart the server.'
-      unknown-addon: '[prefix_bentobox]&c Unknown addon!'
+      description: Nạp lại BentoBox và tất cả tiện ích, tùy chỉnh và ngôn ngữ
+      locales-reloaded: '[prefix_bentobox]&2 Đã nạp lại ngôn ngữ.'
+      addons-reloaded: '[prefix_bentobox]&2 Đã nạp lại tiện ích.'
+      settings-reloaded: '[prefix_bentobox]&2 Đã nạp lại tùy chỉnh.'
+      addon: '[prefix_bentobox]&6 Đang nạp lại &b [name]&2 .'
+      addon-reloaded: '[prefix_bentobox]&2 Đã nạp lại &b [name].'
+      warning: '[prefix_bentobox]&c Cảnh báo: Quá trình nạp lại có thể gây mất ổn định, nếu có lỗi sau quá trình này, vui lòng khởi động lại máy chủ.'
+      unknown-addon: '[prefix_bentobox]&c Tiện ích không tồn tại!'
       locales:
-        description: reloads locales
+        description: nạp lại ngôn ngữ
     version:
-      plugin-version: '&2 BentoBox version: &3 [version]'
-      description: displays BentoBox and addons versions
-      loaded-addons: 'Loaded Addons:'
-      loaded-game-worlds: 'Loaded Game Worlds:'
+      plugin-version: '&2 Phiên bản BentoBox: &3 [version]'
+      description: Xem phiên bản BentoBox và các tiện ích
+      loaded-addons: 'Tiện ích:'
+      loaded-game-worlds: 'Thế giới chơi:'
       addon-syntax: '&2 [name] &3 [version] &7 (&3 [state]&7 )'
       game-world: '&2 [name] &7 (&3 [addon]&7 ): &3 [worlds]'
-      server: '&2 Running &3 [name] [version]&2 .'
-      database: '&2 Database: &3 [database]'
+      server: '&2 Đang chạy &3 [name] [version]&2 .'
+      database: '&2 Cơ sở dữ liệu: &3 [database]'
     manage:
-      description: displays the Management Panel
+      description: Xem bảng quản lí
     catalog:
-      description: displays the Catalog
+      description: Xem mục lục
     locale:
-      description: performs localization files analysis
+      description: Thực hiện phân tích tệp ngôn ngữ
       see-console: |-
-        [prefix_bentobox]&a Check the console to see the feedback.
-        [prefix_bentobox]&a This command is so spammy that the feedback cannot be read from chat...
+        [prefix_bentobox]&a Xem thông báo bảng điều khiển.
+        [prefix_bentobox]&a Thông báo từ lệnh này quá dài nên không thể xem ở chat...
     migrate:
-      description: migrates data from one database to another
-      players: '[prefix_bentobox]&6 Migrating players'
-      names: '[prefix_bentobox]&6 Migrating names'
-      addons: '[prefix_bentobox]&6 Migrating addons'
-      class: '[prefix_bentobox]&6 Migrating [description]'
-      migrated: '[prefix_bentobox]&a Migrated'
+      description: Chuyển dữ liệu từ cơ sở dữ liệu này sang cái khác
+      players: '[prefix_bentobox]&6 Đang chuyển người chơi'
+      names: '[prefix_bentobox]&6 Đang chuyển tên'
+      addons: '[prefix_bentobox]&6 Đang chuyển tiện ích'
+      class: '[prefix_bentobox]&6 Đang chuyển [description]'
+      migrated: '[prefix_bentobox]&a Đã chuyển'
   confirmation:
     confirm: '&c Nhập lệnh đó lại trong &b [seconds] giây&c  để xác nhận.'
     previous-request-cancelled: '&6 Lần xác nhận trước đã bị hủy.'
