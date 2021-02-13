@@ -7,6 +7,7 @@ import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -35,7 +36,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
@@ -83,14 +83,15 @@ public class TestBentoBox extends AbstractCommonSetup {
         when(Bukkit.getOfflinePlayer(any(UUID.class))).thenReturn(offlinePlayer);
         when(offlinePlayer.getName()).thenReturn("tastybento");
 
-        Mockito.when(player.hasPermission(Mockito.anyString())).thenReturn(true);
+        when(player.hasPermission(anyString())).thenReturn(true);
 
-        Mockito.when(ownerOfIsland.getLocation()).thenReturn(location);
-        Mockito.when(visitorToIsland.getLocation()).thenReturn(location);
+        when(ownerOfIsland.getLocation()).thenReturn(location);
+        when(visitorToIsland.getLocation()).thenReturn(location);
+        when(location.clone()).thenReturn(location);
 
-        Mockito.when(player.getUniqueId()).thenReturn(MEMBER_UUID);
-        Mockito.when(ownerOfIsland.getUniqueId()).thenReturn(uuid);
-        Mockito.when(visitorToIsland.getUniqueId()).thenReturn(VISITOR_UUID);
+        when(player.getUniqueId()).thenReturn(MEMBER_UUID);
+        when(ownerOfIsland.getUniqueId()).thenReturn(uuid);
+        when(visitorToIsland.getUniqueId()).thenReturn(VISITOR_UUID);
 
         island.setOwner(uuid);
         island.setProtectionRange(100);

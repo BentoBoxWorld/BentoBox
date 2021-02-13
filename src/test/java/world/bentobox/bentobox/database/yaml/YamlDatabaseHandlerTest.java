@@ -32,6 +32,7 @@ import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
 import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -140,6 +141,7 @@ public class YamlDatabaseHandlerTest {
     /**
      * Test method for {@link world.bentobox.bentobox.database.yaml.YamlDatabaseHandler#loadObjects()}.
      */
+    @Ignore("YAML database is no longer supported")
     @Test
     public void testLoadObjects() throws InstantiationException, IllegalAccessException, InvocationTargetException, ClassNotFoundException, NoSuchMethodException, IntrospectionException {
         List<Island> list = handler.loadObjects();
@@ -160,6 +162,7 @@ public class YamlDatabaseHandlerTest {
      * @throws IllegalAccessException
      * @throws InstantiationException
      */
+    @Ignore("YAML database is no longer supported")
     @Test
     public void testLoadObject() throws InstantiationException, IllegalAccessException, InvocationTargetException, ClassNotFoundException, NoSuchMethodException, IntrospectionException {
         String name = UUID.randomUUID().toString();
@@ -176,6 +179,7 @@ public class YamlDatabaseHandlerTest {
      * @throws InvocationTargetException
      * @throws IllegalAccessException
      */
+    @Ignore("YAML database is no longer supported")
     @SuppressWarnings("unchecked")
     @Test
     public void testSaveObject() throws IllegalAccessException, InvocationTargetException, IntrospectionException {
