@@ -128,7 +128,7 @@ public class InvincibleVisitorsListenerTest {
         Location location = mock(Location.class);
         Vector vector = mock(Vector.class);
         when(location.toVector()).thenReturn(vector);
-        when(island.getCenter()).thenReturn(location);
+        when(island.getProtectionCenter()).thenReturn(location);
         when(im.getIsland(any(World.class), any(User.class))).thenReturn(island);
         optionalIsland = Optional.of(island);
         // Visitor
@@ -255,7 +255,7 @@ public class InvincibleVisitorsListenerTest {
         assertTrue(e.isCancelled());
         verify(player, never()).setGameMode(eq(GameMode.SPECTATOR));
     }
-    
+
     @Test
     public void testOnVisitorGetDamageNPC() {
         when(player.hasMetadata(eq("NPC"))).thenReturn(true);

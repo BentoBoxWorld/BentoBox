@@ -29,4 +29,9 @@ public class TextVariables {
      * @since 1.15.0
      */
     public static final String GAMEMODE = "[gamemode]";
+    /**
+     * Used for coordinates
+     * @since 1.16.0
+     */
+    public static final String XYZ = "[xyz]";
 }

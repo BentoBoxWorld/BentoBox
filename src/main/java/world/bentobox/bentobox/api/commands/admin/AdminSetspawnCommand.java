@@ -73,7 +73,7 @@ public class AdminSetspawnCommand extends ConfirmableCommand {
         getIslands().setSpawn(i);
         i.setSpawnPoint(World.Environment.NORMAL, user.getLocation());
         // Set the island's range to the full island space because it is spawn
-        i.setProtectionRange(i.getRange());
+        i.setProtectionRange(i.getRange() * 2);
         user.sendMessage("commands.admin.setspawn.success");
     }
 }

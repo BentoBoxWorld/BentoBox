@@ -90,6 +90,8 @@ public abstract class DefaultAdminCommand extends CompositeCommand {
         new AdminPurgeCommand(this);
         // Settings
         new AdminSettingsCommand(this);
+        // Location
+        new AdminSetProtectionCenterCommand(this);
     }
 
     /**

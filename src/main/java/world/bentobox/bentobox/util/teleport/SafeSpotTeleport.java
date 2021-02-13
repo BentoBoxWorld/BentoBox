@@ -319,7 +319,7 @@ public class SafeSpotTeleport {
          * @return Builder
          */
         public Builder island(Island island) {
-            this.location = island.getCenter();
+            this.location = island.getProtectionCenter();
             return this;
         }
 

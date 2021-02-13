@@ -11,6 +11,7 @@ import org.bukkit.Particle;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.database.objects.Island;
 
 /**
  * @author Poslovitch
@@ -84,15 +85,15 @@ public class AdminRangeDisplayCommand extends CompositeCommand {
 
             getIslands().getIslandAt(user.getLocation()).ifPresent(island -> {
                 // Draw the island protected area
-                drawZone(user, Particle.BARRIER, null, island.getCenter(), island.getProtectionRange());
+                drawZone(user, Particle.BARRIER, null, island, island.getProtectionRange());
 
                 // Draw the default protected area if island protected zone is different
                 if (island.getProtectionRange() != getPlugin().getIWM().getIslandProtectionRange(getWorld())) {
-                    drawZone(user, Particle.VILLAGER_HAPPY, null, island.getCenter(), getPlugin().getIWM().getIslandProtectionRange(getWorld()));
+                    drawZone(user, Particle.VILLAGER_HAPPY, null, island, getPlugin().getIWM().getIslandProtectionRange(getWorld()));
                 }
 
                 // Draw the island area
-                drawZone(user, Particle.REDSTONE, new Particle.DustOptions(Color.GRAY, 1.0F), island.getCenter(), island.getRange());
+                drawZone(user, Particle.REDSTONE, new Particle.DustOptions(Color.GRAY, 1.0F), island, island.getRange());
             });
         }, 20, 30));
     }
@@ -103,7 +104,8 @@ public class AdminRangeDisplayCommand extends CompositeCommand {
         displayRanges.remove(user);
     }
 
-    private void drawZone(User user, Particle particle, Particle.DustOptions dustOptions, Location center, int range) {
+    private void drawZone(User user, Particle particle, Particle.DustOptions dustOptions, Island island, int range) {
+        Location center = island.getProtectionCenter();
         // Get player Y coordinate
         int playerY = user.getPlayer().getLocation().getBlockY() + 1;
 

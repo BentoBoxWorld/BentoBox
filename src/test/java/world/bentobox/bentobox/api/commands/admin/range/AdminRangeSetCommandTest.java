@@ -214,9 +214,9 @@ public class AdminRangeSetCommandTest {
         AdminRangeSetCommand arc = new AdminRangeSetCommand(ac);
         List<String> args = new ArrayList<>();
         args.add("tastybento");
-        args.add("100");
+        args.add("1000");
         arc.execute(user, "", args);
-        Mockito.verify(user).sendMessage("commands.admin.range.invalid-value.too-high", TextVariables.NUMBER, "50");
+        Mockito.verify(user).sendMessage("commands.admin.range.invalid-value.too-high", TextVariables.NUMBER, "100");
     }
 
     /**

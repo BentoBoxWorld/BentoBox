@@ -1370,7 +1370,7 @@ public class IslandsManager {
                     int oldRange = island.getProtectionRange();
                     island.setProtectionRange(range);
 
-                    // Call Protection Range Change event. Does not support cancelling.
+                    // Call Protection Range Change event. Does not support canceling.
                     IslandEvent.builder()
                     .island(island)
                     .location(island.getCenter())
@@ -1625,7 +1625,7 @@ public class IslandsManager {
                         highestIsland = i;
                     }
                     String xyz = Util.xyz(i.getCenter().toVector());
-                    user.sendMessage("commands.admin.team.fix.rank-on-island", TextVariables.RANK, user.getTranslation(rank), "[xyz]", xyz);
+                    user.sendMessage("commands.admin.team.fix.rank-on-island", TextVariables.RANK, user.getTranslation(rank), TextVariables.XYZ, xyz);
                     user.sendRawMessage(i.getUniqueId());
                 }
                 // Fix island ownership in cache

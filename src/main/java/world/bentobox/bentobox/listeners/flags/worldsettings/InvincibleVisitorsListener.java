@@ -118,7 +118,7 @@ public class InvincibleVisitorsListener extends FlagListener implements ClickHan
                 // Teleport
                 new SafeSpotTeleport.Builder(getPlugin())
                 .entity(p)
-                .location(island.getCenter().toVector().toLocation(p.getWorld()))
+                .location(island.getProtectionCenter().toVector().toLocation(p.getWorld()))
                 .build());
             } else if (getIslands().hasIsland(p.getWorld(), p.getUniqueId())) {
                 // No island in this location - if the player has an island try to teleport them back

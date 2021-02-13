@@ -3,6 +3,7 @@ package world.bentobox.bentobox.database.objects;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -66,7 +67,6 @@ public class IslandDeletionTest {
         when(iwm.getWorldSettings(any())).thenReturn(ws);
 
         // Island
-        when(island.getMaxEverProtectionRange()).thenReturn(1000);
         when(island.getWorld()).thenReturn(world);
         when(island.getCenter()).thenReturn(location);
 
@@ -112,7 +112,7 @@ public class IslandDeletionTest {
      */
     @Test
     public void testGetMaxXChunk() {
-        assertEquals(84, id.getMaxXChunk());
+        assertEquals(77, id.getMaxXChunk());
     }
 
     /**
@@ -120,7 +120,7 @@ public class IslandDeletionTest {
      */
     @Test
     public void testGetMaxZChunk() {
-        assertEquals(-322, id.getMaxZChunk());
+        assertEquals(-328, id.getMaxZChunk());
     }
 
     /**
@@ -128,7 +128,7 @@ public class IslandDeletionTest {
      */
     @Test
     public void testGetMinXChunk() {
-        assertEquals(71, id.getMinXChunk());
+        assertEquals(77, id.getMinXChunk());
     }
 
     /**
@@ -136,7 +136,7 @@ public class IslandDeletionTest {
      */
     @Test
     public void testGetMinZChunk() {
-        assertEquals(-335, id.getMinZChunk());
+        assertEquals(-328, id.getMinZChunk());
     }
 
     /**
@@ -157,15 +157,21 @@ public class IslandDeletionTest {
     }
 
     /**
+     * Test method for {@link world.bentobox.bentobox.database.objects.IslandDeletion#getBox()}.
+     */
+    @Test
+    public void testBox() {
+        assertNull(id.getBox());
+    }
+
+    /**
      * Test method for {@link world.bentobox.bentobox.database.objects.IslandDeletion#toString()}.
      */
     @Test
     public void testToString() {
         assertTrue(id.toString().endsWith(
-                ", minXChunk=71,"
-                        + " maxXChunk=84, minZChunk=-335, maxZChunk=-322, minX=1145, minZ=-5345,"
-                        + " maxX=1345, maxZ=-5145, box=BoundingBox [minX=1145.0, minY=0.0, minZ=-5345.0,"
-                        + " maxX=1345.0, maxY=255.0, maxZ=-5145.0]]"));
+                "minXChunk=77, maxXChunk=77, minZChunk=-328,"
+                        + " maxZChunk=-328, minX=1245, minZ=-5245, maxX=1245, maxZ=-5245, box=null]"));
     }
 
 }

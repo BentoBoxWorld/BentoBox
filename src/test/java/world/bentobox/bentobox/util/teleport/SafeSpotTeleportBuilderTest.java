@@ -94,7 +94,7 @@ public class SafeSpotTeleportBuilderTest {
         sstb.entity(player);
         // Add island
         Island island = mock(Island.class);
-        when(island.getCenter()).thenReturn(loc);
+        when(island.getProtectionCenter()).thenReturn(loc);
         sstb.island(island);
         // Build - expect success
         SafeSpotTeleport result = sstb.build();

@@ -205,8 +205,8 @@ public class JoinLeaveListener implements Listener {
             if (island != null) {
                 // Check if new owner has a different range permission than the island size
                 int range = user.getPermissionValue(plugin.getIWM().getAddon(island.getWorld()).map(GameModeAddon::getPermissionPrefix).orElse("") + "island.range", island.getProtectionRange());
-                // Range cannot be greater than the island distance
-                range = Math.min(range, plugin.getIWM().getIslandDistance(island.getWorld()));
+                // Range cannot be greater than the island distance * 2
+                range = Math.min(range, 2 * plugin.getIWM().getIslandDistance(island.getWorld()));
                 // Range can go up or down
                 if (range != island.getProtectionRange()) {
                     user.sendMessage("commands.admin.setrange.range-updated", TextVariables.NUMBER, String.valueOf(range));
@@ -218,10 +218,10 @@ public class JoinLeaveListener implements Listener {
 
                     island.setProtectionRange(range);
 
-                    // Call Protection Range Change event. Does not support cancelling.
+                    // Call Protection Range Change event. Does not support canceling.
                     IslandEvent.builder()
                     .island(island)
-                    .location(island.getCenter())
+                    .location(island.getProtectionCenter())
                     .reason(IslandEvent.Reason.RANGE_CHANGE)
                     .involvedPlayer(user.getUniqueId())
                     .admin(true)

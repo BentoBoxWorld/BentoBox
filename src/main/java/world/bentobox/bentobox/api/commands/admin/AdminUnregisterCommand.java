@@ -82,7 +82,7 @@ public class AdminUnregisterCommand extends ConfirmableCommand {
         // Remove all island players that reference this island
         oldIsland.getMembers().clear();
         getIslands().save(oldIsland);
-        user.sendMessage("commands.admin.unregister.unregistered-island", "[xyz]", Util.xyz(oldIsland.getCenter().toVector()),
+        user.sendMessage("commands.admin.unregister.unregistered-island", TextVariables.XYZ, Util.xyz(oldIsland.getCenter().toVector()),
                 TextVariables.NAME, targetName);
     }
 

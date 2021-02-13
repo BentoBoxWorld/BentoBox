@@ -33,6 +33,7 @@ import org.powermock.reflect.Whitebox;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
+import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.CommandsManager;
@@ -252,7 +253,7 @@ public class AdminRegisterCommandTest {
         AdminRegisterCommand itl = new AdminRegisterCommand(ac);
         assertTrue(itl.execute(user, itl.getLabel(), Collections.singletonList("tastybento")));
         // Add other verifications
-        verify(user).sendMessage(eq("commands.admin.register.registered-island"), eq("[xyz]"), eq("123,123,432"), eq("[name]"), eq("tastybento"));
+        verify(user).sendMessage(eq("commands.admin.register.registered-island"), eq(TextVariables.XYZ), eq("123,123,432"), eq("[name]"), eq("tastybento"));
         verify(user).sendMessage(eq("general.success"));
     }
 
