@@ -138,11 +138,27 @@ public class Settings implements ConfigObject {
     @ConfigEntry(path = "panel.filler-material", since = "1.14.0")
     private Material panelFillerMaterial = Material.LIGHT_BLUE_STAINED_GLASS_PANE;
 
+    @ConfigComment("Toggle whether player head texture should be gathered from Mojang API or mc-heads.net cache server.")
+    @ConfigComment("Mojang API sometime may be slow and may limit requests to the player data, so this will allow to")
+    @ConfigComment("get player heads a bit faster then Mojang API.")
+    @ConfigEntry(path = "panel.use-cache-server", since = "1.16.0")
+    private boolean useCacheServer = false;
+
     @ConfigComment("Defines how long player skin texture link is stored into local cache before it is requested again.")
     @ConfigComment("Defined value is in the minutes.")
     @ConfigComment("Value 0 will not clear cache until server restart.")
     @ConfigEntry(path = "panel.head-cache-time", since = "1.14.1")
     private long playerHeadCacheTime = 60;
+
+    @ConfigComment("Defines a number of player heads requested per tasks.")
+    @ConfigComment("Setting it too large may lead to temporarily being blocked from head gatherer API.")
+    @ConfigEntry(path = "panel.heads-per-call", since = "1.16.0")
+    private int headsPerCall = 9;
+
+    @ConfigComment("Defines a number of ticks between each player head request task.")
+    @ConfigComment("Setting it too large may lead to temporarily being blocked from head gatherer API.")
+    @ConfigEntry(path = "panel.ticks-between-calls", since = "1.16.0", needsRestart = true)
+    private long ticksBetweenCalls = 10;
 
     /*
      * Logs
@@ -783,4 +799,76 @@ public class Settings implements ConfigObject {
 	{
 		this.playerHeadCacheTime = playerHeadCacheTime;
 	}
+
+
+    /**
+     * Is use cache server boolean.
+     *
+     * @return the boolean
+     * @since 1.16.0
+     */
+    public boolean isUseCacheServer()
+    {
+        return useCacheServer;
+    }
+
+
+    /**
+     * Sets use cache server.
+     *
+     * @param useCacheServer the use cache server
+     * @since 1.16.0
+     */
+    public void setUseCacheServer(boolean useCacheServer)
+    {
+        this.useCacheServer = useCacheServer;
+    }
+
+
+    /**
+     * Gets heads per call.
+     *
+     * @return the heads per call
+     * @since 1.16.0
+     */
+    public int getHeadsPerCall()
+    {
+        return headsPerCall;
+    }
+
+
+    /**
+     * Sets heads per call.
+     *
+     * @param headsPerCall the heads per call
+     * @since 1.16.0
+     */
+    public void setHeadsPerCall(int headsPerCall)
+    {
+        this.headsPerCall = headsPerCall;
+    }
+
+
+    /**
+     * Gets ticks between calls.
+     *
+     * @return the ticks between calls
+     * @since 1.16.0
+     */
+    public long getTicksBetweenCalls()
+    {
+        return ticksBetweenCalls;
+    }
+
+
+    /**
+     * Sets ticks between calls.
+     *
+     * @param ticksBetweenCalls the ticks between calls
+     * @since 1.16.0
+     */
+    public void setTicksBetweenCalls(long ticksBetweenCalls)
+    {
+        this.ticksBetweenCalls = ticksBetweenCalls;
+    }
 }
