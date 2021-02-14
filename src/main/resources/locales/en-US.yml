@@ -1110,6 +1110,13 @@ protection:
           &a May help reduce lag.
           &a Does not affect spawn island.
       name: "Offline Redstone"
+    PETS_STAY_AT_HOME:
+      description: |-
+        &a When active, tamed pets
+        &a can only go to and
+        &a cannot leave the owner's
+        &a home island.
+      name: "Pets Stay At Home"
     PISTON_PUSH: 
       description: |-
           &a Enable this to prevent

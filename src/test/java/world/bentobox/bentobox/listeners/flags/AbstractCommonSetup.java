@@ -27,6 +27,8 @@ import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.reflect.Whitebox;
 
+import com.google.common.collect.ImmutableSet;
+
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
@@ -44,6 +46,14 @@ import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.util.Util;
 
 /**
+ * Common items for testing. Don't forget to use super.setUp()!
+ *
+ * Sets up BentoBox plugin, pluginManager and ItemFactory.
+ * Location, world, playersManager and player.
+ * IWM, Addon and WorldSettings. IslandManager with one
+ * island with protection and nothing allowed by default.
+ * Owner of island is player with same UUID.
+ * Locales, placeholders.
  * @author tastybento
  *
  */
@@ -128,7 +138,7 @@ public abstract class AbstractCommonSetup {
         when(island.isAllowed(any())).thenReturn(false);
         when(island.isAllowed(any(), any())).thenReturn(false);
         when(island.getOwner()).thenReturn(uuid);
-
+        when(island.getMemberSet()).thenReturn(ImmutableSet.of(uuid));
 
         // Enable reporting from Flags class
         MetadataValue mdv = new FixedMetadataValue(plugin, "_why_debug");

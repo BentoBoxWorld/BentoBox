@@ -57,6 +57,7 @@ import world.bentobox.bentobox.listeners.flags.worldsettings.NaturalSpawningOuts
 import world.bentobox.bentobox.listeners.flags.worldsettings.ObsidianScoopingListener;
 import world.bentobox.bentobox.listeners.flags.worldsettings.OfflineGrowthListener;
 import world.bentobox.bentobox.listeners.flags.worldsettings.OfflineRedstoneListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.PetTeleportListener;
 import world.bentobox.bentobox.listeners.flags.worldsettings.PistonPushListener;
 import world.bentobox.bentobox.listeners.flags.worldsettings.RemoveMobsListener;
 import world.bentobox.bentobox.listeners.flags.worldsettings.SpawnerSpawnEggsListener;
@@ -515,6 +516,13 @@ public final class Flags {
      * @see SpawnerSpawnEggsListener
      */
     public static final Flag SPAWNER_SPAWN_EGGS = new Flag.Builder("SPAWNER_SPAWN_EGGS", Material.SPAWNER).listener(new SpawnerSpawnEggsListener()).type(Type.WORLD_SETTING).defaultSetting(true).build();
+
+    /**
+     * Keeps pets on the player's island.
+     * @since 1.16.0
+     * @see PetTeleportListener
+     */
+    public static final Flag PETS_STAY_AT_HOME = new Flag.Builder("PETS_STAY_AT_HOME", Material.TROPICAL_FISH).listener(new PetTeleportListener()).type(Type.WORLD_SETTING).defaultSetting(true).build();
 
     /**
      * Provides a list of all the Flag instances contained in this class using reflection.
