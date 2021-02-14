@@ -1,5 +1,108 @@
-# 
-# This is a YML file. Be careful when editing. Check your edits in a YAML checker like    #
-# the one at http://yaml-online-parser.appspot.com                                        #
+---
 meta:
   banner: YELLOW_BANNER:1:STRIPE_TOP:BLUE:STRIPE_BOTTOM:RED
+prefixes:
+  bentobox: "&6 BentoBox &7 &l > &r"
+general:
+  success: "&a Succes!"
+  errors:
+    command-cancelled: "&c Comanda anulată."
+    no-permission: "&c Nu aveți permisiunea de a executa această comandă (&7 [permission]
+      &c)."
+    insufficient-rank: "&c Rangul dvs. nu este suficient de ridicat pentru a face
+      acest lucru! (&7 [rank] &c)"
+    use-in-game: "&c Această comandă este disponibilă numai în joc."
+    no-team: "&c Nu aveți o echipă!"
+    player-has-island: "&c Player are deja o insulă!"
+    player-has-no-island: "&c Acel jucător nu are insulă!"
+    already-have-island: "&c Ai deja o insulă!"
+    no-safe-location-found: "&c Nu am putut găsi un loc sigur pentru a vă teleporta
+      pe insulă."
+    not-owner: "&c Nu sunteți proprietarul insulei!"
+    player-is-not-owner: "&b [name] &c nu este proprietarul unei insule!"
+    not-in-team: "&c Jucătorul respectiv nu se află în echipa ta!"
+    offline-player: "&c Playerul respectiv este offline sau nu există."
+    unknown-player: "& c [name] este un jucător necunoscut"
+    general: "&c Această comandă nu este încă pregătită - contactați administratorul"
+    unknown-command: "&c Comandă necunoscută. Faceți &b /[label] ajutor &c pentru
+      ajutor."
+    wrong-world: "&c Nu ești în lumea potrivită pentru a face asta!"
+    you-must-wait: "&c Trebuie să așteptați [number] s înainte de a putea efectua
+      comanda din nou."
+    must-be-positive-number: "&c [number] nu este un număr pozitiv valid."
+  worlds:
+    overworld: Overworld
+    nether: Nether
+    the-end: The End
+commands:
+  help:
+    syntax: "&b [usage] &a [parameters]&7 : &e [description]"
+    syntax-no-parameters: "&b [usage] &7: &e [description]"
+    end: "&7 =================================="
+  admin:
+    resets:
+      set:
+        success: "&a Setați cu succes resetările lui &b[name]&a la &b[number]&a. "
+      reset:
+        success-everyone: "&a Resetați cu succes &b resetați toți &a la &b 0  &a."
+        success: "&a Resetați cu succes &b [number] &a se resetează la &b 0 &a."
+      add:
+        success: "&a Adăugat cu succes &b [number] &a se resetează la &b [name], crescând
+          totalul la &b [total] &a se resetează."
+      remove:
+        success: "&a Eliminat cu succes &b [number] &a se resetează la &b [name],
+          scăzând totalul la &b [total] &a se resetează."
+    purge:
+      description: insulele de epurare abandonate mai mult de [days]
+      purgable-islands: "&a S-au găsit [number] insule purificabile."
+      purge-in-progress: "&c Purjare în curs. Utilizați &b /[label] oprire de purjare
+        &c pentru a anula."
+      number-error: "&c Argumentul trebuie să fie un număr de zile"
+      confirm: "&d Tastați &b /[label] purge confirm &d pentru a începe purjarea"
+      completed: "&o Purjarea sa oprit."
+      see-console-for-status: "&a început o purjare. Consultați consola pentru stare
+        sau utilizați &b /[label] starea de purjare &a."
+      no-purge-in-progress: "&c În prezent nu există nicio purjare în curs."
+      protect:
+        move-to-island: "&c Mutați-vă mai întâi pe o insulă!"
+        protecting: "&o Insulă de protecție împotriva purjării."
+        unprotecting: "&a Îndepărtarea protecției de purjare."
+      unowned:
+        unowned-islands: "&a S-au găsit [number] insule neproprietate. "
+      status:
+        status: "&b [purged] &a insule purjate din &b [purgeable] &7 (&b [percentage]%
+          &7) &a."
+    team:
+      add:
+        name-not-owner: "&c [name] nu este proprietarul."
+        name-has-island: "&c [name] are o insulă. Anulați înregistrarea sau ștergeți-le
+          mai întâi!"
+        success: "&b [name] &a a fost adăugat pe insula lui &b [owner] &a."
+      disband:
+        use-disband-owner: "&c Nu este proprietar! Folosiți disband [owner]."
+        disbanded: "&c Administratorul v-a desființat echipa!"
+        success: Echipa &b [name] & a a fost desființată.
+      kick:
+        cannot-kick-owner: "&c Nu poți da lovitura cu proprietarul. Lovi mai întâi
+          membrii."
+        not-in-team: "&c Acest jucător nu face parte dintr-o echipă."
+        admin-kicked: "&c Administratorul te-a dat afară din echipă."
+        success: "&b [name] &a a fost dat afară de pe insula lui &b [owner] &a."
+      setowner:
+        already-owner: "&c [name] este deja proprietarul acestei insule!"
+        success: "&b [name] &a este acum proprietarul acestei insule."
+    range:
+      invalid-value:
+        too-low: "&c Gama de protecție trebuie să fie mai mare decât &b 1 &c!"
+        too-high: "&c Gama de protecție trebuie să fie egală sau mai mică decât &b
+          [number] &c!"
+        same-as-before: "&c Gama de protecție este deja setată la &b [number] &c!"
+      display:
+        already-off: "&c Indicatorii sunt deja opriți"
+        already-on: "&c Indicatorii sunt deja aprinși"
+        hiding: "&2 Indicatori de ascundere"
+        hint: |-
+          &c Pictogramele Red Barrier &f arată limita curentă a zonei protejate de insulă.
+          &7 particule gri și f arată limita maximă a insulei.
+          &a Particule verzi &f arată intervalul protejat implicit dacă intervalul de protecție al insulei diferă de acesta
+        showing: "&2 Afișarea indicatorilor de gamă"
