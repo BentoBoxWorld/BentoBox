@@ -952,6 +952,12 @@ protection:
          &a outside protected
          &a island space
       name: "&e Limit mobs to island"
+    HARVEST:
+      description: |-
+        &a Toggle harvesting, e.g.
+        &a honey harvesting
+      name: "Harvesting"
+      hint: "Harvesting disabled"
     HURT_ANIMALS: 
       description: "Toggle hurting"
       name: "Hurt animals"
