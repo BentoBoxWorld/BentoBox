@@ -43,7 +43,7 @@ public class CommandRankClickListener implements ClickHandler {
         }
 
         // Check if has permission
-        String prefix = plugin.getIWM().getPermissionPrefix(Util.getWorld(user.getWorld()));
+        String prefix = plugin.getIWM().getPermissionPrefix(Util.getWorld(panel.getWorld().orElse(user.getWorld())));
         String reqPerm = prefix + "settings." + Flags.COMMAND_RANKS.getID();
         String allPerms = prefix + "settings.*";
         if (!user.hasPermission(reqPerm) && !user.hasPermission(allPerms)
@@ -54,7 +54,7 @@ public class CommandRankClickListener implements ClickHandler {
         }
 
         // Get the user's island
-        Island island = plugin.getIslands().getIsland(user.getWorld(), user.getUniqueId());
+        Island island = plugin.getIslands().getIsland(panel.getWorld().orElse(user.getWorld()), user.getUniqueId());
         if (island == null || !island.getOwner().equals(user.getUniqueId())) {
             user.sendMessage("general.errors.not-owner");
             user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_METAL_HIT, 1F, 1F);
@@ -65,24 +65,24 @@ public class CommandRankClickListener implements ClickHandler {
         if (panel.getName().equals(panelName)) {
             // This is a click on the panel
             // Slot relates to the command
-            String c = getCommands(user.getWorld()).get(slot);
+            String c = getCommands(panel.getWorld().orElse(user.getWorld())).get(slot);
             // Apply change to panel
-            panel.getInventory().setItem(slot, getPanelItem(c, user).getItem());
+            panel.getInventory().setItem(slot, getPanelItem(c, user, panel.getWorld().orElse(user.getWorld())).getItem());
         } else {
             // Open the Sub Settings panel
-            openPanel(user, panelName);
+            openPanel(user, panelName, panel.getWorld().orElse(user.getWorld()));
         }
         return true;
     }
 
-    private void openPanel(User user, String panelName) {
+    private void openPanel(User user, String panelName, World world) {
         // Close the current panel
         user.closeInventory();
         // Open a new panel
         PanelBuilder pb = new PanelBuilder();
-        pb.user(user).name(panelName);
+        pb.user(user).name(panelName).world(world);
         // Make panel items
-        getCommands(user.getWorld()).forEach(c -> pb.item(getPanelItem(c, user)));
+        getCommands(world).forEach(c -> pb.item(getPanelItem(c, user, world)));
         pb.build();
 
     }
@@ -91,10 +91,11 @@ public class CommandRankClickListener implements ClickHandler {
      * Gets the rank command panel item
      * @param c - rank string
      * @param user - user
+     * @param world - world for this panel
      * @return panel item for this command
      */
-    public PanelItem getPanelItem(String c, User user) {
-        Island island = plugin.getIslands().getIsland(user.getWorld(), user);
+    public PanelItem getPanelItem(String c, User user, World world) {
+        Island island = plugin.getIslands().getIsland(world, user);
         PanelItemBuilder pib = new PanelItemBuilder();
         pib.name(c);
         pib.clickHandler(new CommandCycleClick(this, c));

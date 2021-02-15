@@ -1,6 +1,7 @@
 package world.bentobox.bentobox.listeners.flags.clicklisteners;
 
 import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.event.inventory.ClickType;
 
 import world.bentobox.bentobox.BentoBox;
@@ -26,8 +27,9 @@ public class GeoLimitClickListener implements ClickHandler {
             user.sendMessage("general.errors.wrong-world");
             return true;
         }
+        World world = panel.getWorld().orElse(user.getWorld());
         IslandWorldManager iwm = BentoBox.getInstance().getIWM();
-        String reqPerm = iwm.getPermissionPrefix(Util.getWorld(user.getWorld())) + "admin.settings.GEO_LIMIT_MOBS";
+        String reqPerm = iwm.getPermissionPrefix(Util.getWorld(world)) + "admin.settings.GEO_LIMIT_MOBS";
         if (!user.hasPermission(reqPerm)) {
             user.sendMessage("general.errors.no-permission", "[permission]", reqPerm);
             user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_METAL_HIT, 1F, 1F);
@@ -35,19 +37,19 @@ public class GeoLimitClickListener implements ClickHandler {
         }
 
         // Open the Sub Settings panel
-        openPanel(user);
+        openPanel(user, world);
 
         return true;
     }
 
-    private void openPanel(User user) {
+    private void openPanel(User user, World world) {
         // Close the current panel
         user.closeInventory();
         // Open a new panel
         new TabbedPanelBuilder()
         .user(user)
-        .world(user.getWorld())
-        .tab(1, new GeoMobLimitTab(user, EntityLimitTabType.GEO_LIMIT))
+        .world(world)
+        .tab(1, new GeoMobLimitTab(user, EntityLimitTabType.GEO_LIMIT, world))
         .startingSlot(1)
         .size(54)
         .build().openPanel();

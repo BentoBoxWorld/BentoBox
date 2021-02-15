@@ -15,6 +15,7 @@ import java.util.Optional;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.Inventory;
 import org.eclipse.jdt.annotation.NonNull;
@@ -38,17 +39,20 @@ import world.bentobox.bentobox.api.panels.TabbedPanel;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.listeners.flags.clicklisteners.GeoMobLimitTab.EntityLimitTabType;
 import world.bentobox.bentobox.managers.IslandWorldManager;
+import world.bentobox.bentobox.util.Util;
 
 /**
  * @author tastybento
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class})
+@PrepareForTest({Bukkit.class, BentoBox.class, Util.class})
 public class GeoMobLimitTabTest {
 
     @Mock
     private User user;
+    @Mock
+    private World world;
     @Mock
     private TabbedPanel panel;
     @Mock
@@ -82,6 +86,9 @@ public class GeoMobLimitTabTest {
         when(panel.getInventory()).thenReturn(inv);
         // User
         when(user.getTranslation(anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
+        // Util
+        PowerMockito.mockStatic(Util.class, Mockito.CALLS_REAL_METHODS);
+        when(Util.getWorld(any())).thenReturn(world);
     }
 
     @After
@@ -94,7 +101,7 @@ public class GeoMobLimitTabTest {
      */
     @Test
     public void testOnClick() {
-        GeoMobLimitTab tab = new GeoMobLimitTab(user, EntityLimitTabType.GEO_LIMIT);
+        GeoMobLimitTab tab = new GeoMobLimitTab(user, EntityLimitTabType.GEO_LIMIT, world);
         // BAT and COW in list
         assertEquals(2, list.size());
         assertEquals("COW", list.get(1));
@@ -116,7 +123,7 @@ public class GeoMobLimitTabTest {
      */
     @Test
     public void testOnClickMobLimit() {
-        GeoMobLimitTab tab = new GeoMobLimitTab(user, EntityLimitTabType.MOB_LIMIT);
+        GeoMobLimitTab tab = new GeoMobLimitTab(user, EntityLimitTabType.MOB_LIMIT, world);
         // BAT and COW in list
         assertEquals(2, list.size());
         assertEquals("COW", list.get(1));
@@ -138,7 +145,7 @@ public class GeoMobLimitTabTest {
      */
     @Test
     public void testGetIcon() {
-        GeoMobLimitTab tab = new GeoMobLimitTab(user, EntityLimitTabType.MOB_LIMIT);
+        GeoMobLimitTab tab = new GeoMobLimitTab(user, EntityLimitTabType.MOB_LIMIT, world);
         PanelItem icon = tab.getIcon();
         assertEquals("protection.flags.LIMIT_MOBS.name", icon.getName());
         assertEquals(Material.IRON_BOOTS, icon.getItem().getType());
@@ -149,7 +156,7 @@ public class GeoMobLimitTabTest {
      */
     @Test
     public void testGetIconGeoLimit() {
-        GeoMobLimitTab tab = new GeoMobLimitTab(user, EntityLimitTabType.GEO_LIMIT);
+        GeoMobLimitTab tab = new GeoMobLimitTab(user, EntityLimitTabType.GEO_LIMIT, world);
         PanelItem icon = tab.getIcon();
         assertEquals("protection.flags.GEO_LIMIT_MOBS.name", icon.getName());
         assertEquals(Material.CHAINMAIL_CHESTPLATE, icon.getItem().getType());
@@ -160,9 +167,9 @@ public class GeoMobLimitTabTest {
      */
     @Test
     public void testGetName() {
-        GeoMobLimitTab tab = new GeoMobLimitTab(user, EntityLimitTabType.MOB_LIMIT);
+        GeoMobLimitTab tab = new GeoMobLimitTab(user, EntityLimitTabType.MOB_LIMIT, world);
         assertEquals("protection.flags.LIMIT_MOBS.name", tab.getName());
-        tab = new GeoMobLimitTab(user, EntityLimitTabType.GEO_LIMIT);
+        tab = new GeoMobLimitTab(user, EntityLimitTabType.GEO_LIMIT, world);
         assertEquals("protection.flags.GEO_LIMIT_MOBS.name", tab.getName());
     }
 
@@ -171,14 +178,14 @@ public class GeoMobLimitTabTest {
      */
     @Test
     public void testGetPanelItemsMobLimit() {
-        GeoMobLimitTab tab = new GeoMobLimitTab(user, EntityLimitTabType.MOB_LIMIT);
+        GeoMobLimitTab tab = new GeoMobLimitTab(user, EntityLimitTabType.MOB_LIMIT, world);
         List<@Nullable PanelItem> items = tab.getPanelItems();
         assertFalse(items.isEmpty());
         items.forEach(i -> {
             if (i.getName().equals("Cow") || i.getName().equals("Bat")) {
-                assertEquals(Material.RED_SHULKER_BOX, i.getItem().getType());
+                assertEquals("Name : " + i.getName(), Material.RED_SHULKER_BOX, i.getItem().getType());
             } else {
-                assertEquals(Material.GREEN_SHULKER_BOX, i.getItem().getType());
+                assertEquals("Name : " + i.getName(), Material.GREEN_SHULKER_BOX, i.getItem().getType());
             }
         });
     }
@@ -188,14 +195,14 @@ public class GeoMobLimitTabTest {
      */
     @Test
     public void testGetPanelItemsGeoLimit() {
-        GeoMobLimitTab tab = new GeoMobLimitTab(user, EntityLimitTabType.GEO_LIMIT);
+        GeoMobLimitTab tab = new GeoMobLimitTab(user, EntityLimitTabType.GEO_LIMIT, world);
         List<@Nullable PanelItem> items = tab.getPanelItems();
         assertFalse(items.isEmpty());
         items.forEach(i -> {
             if (i.getName().equals("Cow") || i.getName().equals("Bat")) {
-                assertEquals(Material.GREEN_SHULKER_BOX, i.getItem().getType());
+                assertEquals("Name : " + i.getName(), Material.GREEN_SHULKER_BOX, i.getItem().getType());
             } else {
-                assertEquals(Material.RED_SHULKER_BOX, i.getItem().getType());
+                assertEquals("Name : " + i.getName(), Material.RED_SHULKER_BOX, i.getItem().getType());
             }
         });
     }
@@ -205,7 +212,7 @@ public class GeoMobLimitTabTest {
      */
     @Test
     public void testGetPermission() {
-        GeoMobLimitTab tab = new GeoMobLimitTab(user, EntityLimitTabType.GEO_LIMIT);
+        GeoMobLimitTab tab = new GeoMobLimitTab(user, EntityLimitTabType.GEO_LIMIT, world);
         assertTrue(tab.getPermission().isEmpty());
     }
 

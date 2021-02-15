@@ -1,6 +1,7 @@
 package world.bentobox.bentobox.listeners.flags.clicklisteners;
 
 import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.event.inventory.ClickType;
 
 import world.bentobox.bentobox.BentoBox;
@@ -32,8 +33,9 @@ public class CommandCycleClick implements ClickHandler {
     public boolean onClick(Panel panel, User user, ClickType click, int slot) {
         // Left clicking increases the rank required
         // Right clicking decreases the rank required
-        // Get the user's island
-        Island island = plugin.getIslands().getIsland(user.getWorld(), user.getUniqueId());
+        // Get the user's island for the game world
+        World world = panel.getWorld().orElse(user.getWorld());
+        Island island = plugin.getIslands().getIsland(world, user.getUniqueId());
         if (island != null && island.getOwner().equals(user.getUniqueId())) {
             RanksManager rm = plugin.getRanksManager();
             int currentRank = island.getRankCommand(command);
@@ -53,7 +55,7 @@ public class CommandCycleClick implements ClickHandler {
                 user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 1F, 1F);
             }
             // Apply change to panel
-            panel.getInventory().setItem(slot, commandRankClickListener.getPanelItem(command, user).getItem());
+            panel.getInventory().setItem(slot, commandRankClickListener.getPanelItem(command, user, world).getItem());
             // Save island
             plugin.getIslands().save(island);
 
