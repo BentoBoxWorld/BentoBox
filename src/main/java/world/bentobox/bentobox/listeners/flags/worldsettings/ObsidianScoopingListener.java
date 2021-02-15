@@ -1,8 +1,10 @@
 package world.bentobox.bentobox.listeners.flags.worldsettings;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -30,7 +32,7 @@ public class ObsidianScoopingListener extends FlagListener {
      * @param e event
      * @return false if obsidian not scooped, true if scooped
      */
-    @EventHandler(priority = EventPriority.NORMAL)
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public boolean onPlayerInteract(final PlayerInteractEvent e) {
         if (!getIWM().inWorld(e.getPlayer().getLocation())
                 || !Flags.OBSIDIAN_SCOOPING.isSetForWorld(e.getPlayer().getWorld())
@@ -50,14 +52,16 @@ public class ObsidianScoopingListener extends FlagListener {
             }
 
             user.sendMessage("protection.flags.OBSIDIAN_SCOOPING.scooping");
-            e.setCancelled(true);
             if (e.getItem().getAmount() == 1) {
                 // Needs some special handling when there is only 1 bucket in the stack
-                e.getItem().setType(Material.LAVA_BUCKET);
+                Bukkit.getScheduler().runTask(getPlugin(), () -> e.getItem().setType(Material.LAVA_BUCKET));
             } else {
                 // Remove one empty bucket and add a lava bucket to the player's inventory
                 e.getItem().setAmount(e.getItem().getAmount() - 1);
-                e.getPlayer().getInventory().addItem(new ItemStack(Material.LAVA_BUCKET));
+                HashMap<Integer, ItemStack> map = e.getPlayer().getInventory().addItem(new ItemStack(Material.LAVA_BUCKET));
+                if (!map.isEmpty()) {
+                    map.values().forEach(i -> e.getPlayer().getWorld().dropItem(e.getPlayer().getLocation(), i));
+                }
             }
 
             e.getPlayer().getWorld().playSound(e.getPlayer().getLocation(), Sound.ITEM_BUCKET_FILL_LAVA, 1F, 1F);
