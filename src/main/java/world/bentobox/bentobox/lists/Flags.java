@@ -23,7 +23,6 @@ import world.bentobox.bentobox.listeners.flags.protection.ElytraListener;
 import world.bentobox.bentobox.listeners.flags.protection.EntityInteractListener;
 import world.bentobox.bentobox.listeners.flags.protection.ExperiencePickupListener;
 import world.bentobox.bentobox.listeners.flags.protection.FireListener;
-import world.bentobox.bentobox.listeners.flags.protection.HarvestListener;
 import world.bentobox.bentobox.listeners.flags.protection.HurtingListener;
 import world.bentobox.bentobox.listeners.flags.protection.InventoryListener;
 import world.bentobox.bentobox.listeners.flags.protection.ItemDropPickUpListener;
@@ -129,6 +128,8 @@ public final class Flags {
     public static final Flag SPAWN_EGGS = new Flag.Builder("SPAWN_EGGS", Material.COW_SPAWN_EGG).build();
     public static final Flag ITEM_FRAME = new Flag.Builder("ITEM_FRAME", Material.ITEM_FRAME).mode(Flag.Mode.ADVANCED).build();
     public static final Flag CAKE = new Flag.Builder("CAKE", Material.CAKE).build();
+    public static final Flag HIVE = new Flag.Builder("HIVE", Material.HONEY_BOTTLE).type(Type.PROTECTION).build();
+
     /**
      * Prevents players from interacting with the Dragon Egg.
      * @since 1.3.1
@@ -525,12 +526,6 @@ public final class Flags {
      */
     public static final Flag PETS_STAY_AT_HOME = new Flag.Builder("PETS_STAY_AT_HOME", Material.TROPICAL_FISH).listener(new PetTeleportListener()).type(Type.WORLD_SETTING).defaultSetting(true).build();
 
-    /**
-     * Protects against harvesting, e.g. honey
-     * @since 1.16.0
-     * @see HarvestListener
-     */
-    public static final Flag HARVEST = new Flag.Builder("HARVEST", Material.HONEY_BOTTLE).listener(new HarvestListener()).type(Type.PROTECTION).build();
     /**
      * Provides a list of all the Flag instances contained in this class using reflection.
      * Deprecated Flags are ignored.

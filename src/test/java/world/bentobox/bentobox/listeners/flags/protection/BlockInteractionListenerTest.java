@@ -112,6 +112,8 @@ public class BlockInteractionListenerTest extends AbstractCommonSetup {
         clickedBlocks.put(Material.ITEM_FRAME, Flags.ITEM_FRAME);
         clickedBlocks.put(Material.SWEET_BERRY_BUSH, Flags.BREAK_BLOCKS);
         clickedBlocks.put(Material.CAKE, Flags.CAKE);
+        clickedBlocks.put(Material.BEEHIVE, Flags.HIVE);
+        clickedBlocks.put(Material.BEE_NEST, Flags.HIVE);
     }
 
 
