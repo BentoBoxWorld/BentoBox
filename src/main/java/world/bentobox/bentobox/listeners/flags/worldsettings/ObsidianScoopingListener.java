@@ -9,12 +9,14 @@ import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
+import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.lists.Flags;
@@ -39,37 +41,45 @@ public class ObsidianScoopingListener extends FlagListener {
                 || !e.getPlayer().getGameMode().equals(GameMode.SURVIVAL)
                 || !e.getAction().equals(Action.RIGHT_CLICK_BLOCK)
                 || !(e.getItem() != null && e.getItem().getType().equals(Material.BUCKET))
-                || !(e.getClickedBlock() != null && e.getClickedBlock().getType().equals(Material.OBSIDIAN))) {
+                || !(e.getClickedBlock() != null && e.getClickedBlock().getType().equals(Material.OBSIDIAN))
+                || e.getClickedBlock().getRelative(e.getBlockFace()).getType().equals(Material.WATER)) {
             return false;
         }
-        User user = User.getInstance(e.getPlayer());
+        return lookForLava(e);
+    }
+
+    private boolean lookForLava(PlayerInteractEvent e) {
+        Player player = e.getPlayer();
+        ItemStack bucket = e.getItem();
+        Block b = e.getClickedBlock();
+        User user = User.getInstance(player);
         if (getIslands().userIsOnIsland(user.getWorld(), user)) {
             // Look around to see if this is a lone obsidian block
-            Block b = e.getClickedBlock();
             if (getBlocksAround(b).stream().anyMatch(block -> block.getType().equals(Material.OBSIDIAN))) {
                 user.sendMessage("protection.flags.OBSIDIAN_SCOOPING.obsidian-nearby");
                 return false;
             }
-
             user.sendMessage("protection.flags.OBSIDIAN_SCOOPING.scooping");
-            if (e.getItem().getAmount() == 1) {
-                // Needs some special handling when there is only 1 bucket in the stack
-                Bukkit.getScheduler().runTask(getPlugin(), () -> e.getItem().setType(Material.LAVA_BUCKET));
-            } else {
-                // Remove one empty bucket and add a lava bucket to the player's inventory
-                e.getItem().setAmount(e.getItem().getAmount() - 1);
-                HashMap<Integer, ItemStack> map = e.getPlayer().getInventory().addItem(new ItemStack(Material.LAVA_BUCKET));
-                if (!map.isEmpty()) {
-                    map.values().forEach(i -> e.getPlayer().getWorld().dropItem(e.getPlayer().getLocation(), i));
-                }
-            }
-
-            e.getPlayer().getWorld().playSound(e.getPlayer().getLocation(), Sound.ITEM_BUCKET_FILL_LAVA, 1F, 1F);
-            e.getClickedBlock().setType(Material.AIR);
+            player.getWorld().playSound(player.getLocation(), Sound.ITEM_BUCKET_FILL_LAVA, 1F, 1F);
+            b.setType(Material.AIR);
+            Bukkit.getScheduler().runTask(BentoBox.getInstance(), () -> givePlayerLava(player, bucket));
             return true;
         }
-
         return false;
+
+    }
+    private void givePlayerLava(Player player, ItemStack bucket) {
+        if (bucket.getAmount() == 1) {
+            // Needs some special handling when there is only 1 bucket in the stack
+            bucket.setType(Material.LAVA_BUCKET);
+        } else {
+            // Remove one empty bucket and add a lava bucket to the player's inventory
+            bucket.setAmount(bucket.getAmount() - 1);
+            HashMap<Integer, ItemStack> map = player.getInventory().addItem(new ItemStack(Material.LAVA_BUCKET));
+            if (!map.isEmpty()) {
+                map.values().forEach(i -> player.getWorld().dropItem(player.getLocation(), i));
+            }
+        }
     }
 
     private List<Block> getBlocksAround(Block b) {

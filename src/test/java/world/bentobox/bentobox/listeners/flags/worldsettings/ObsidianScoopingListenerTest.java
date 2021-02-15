@@ -118,6 +118,7 @@ public class ObsidianScoopingListenerTest {
         when(clickedBlock.getY()).thenReturn(0);
         when(clickedBlock.getZ()).thenReturn(0);
         when(clickedBlock.getWorld()).thenReturn(world);
+        when(clickedBlock.getRelative(any())).thenReturn(clickedBlock);
         when(item.getAmount()).thenReturn(1);
 
         // Users
