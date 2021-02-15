@@ -17,6 +17,7 @@ import org.bukkit.plugin.InvalidDescriptionException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
+import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.exceptions.InvalidAddonDescriptionException;
 import world.bentobox.bentobox.api.addons.exceptions.InvalidAddonFormatException;
 import world.bentobox.bentobox.api.addons.exceptions.InvalidAddonInheritException;
@@ -95,8 +96,11 @@ public class AddonClassLoader extends URLClassLoader {
 
         String apiVersion = data.getString("api-version");
         if (apiVersion != null) {
-            if (!apiVersion.matches("^(\\d+\\.)?(\\d+\\.)?(\\*|\\d+)$")) {
+            if (!apiVersion.replace("-SNAPSHOT", "").matches("^(\\d+\\.)?(\\d+\\.)?(\\*|\\d+)$")) {
                 throw new InvalidAddonDescriptionException("Provided API version '" + apiVersion + "' is not valid. It must only contain digits and dots and not end with a dot.");
+            }
+            if (apiVersion.contains("-SNAPSHOT")) {
+                BentoBox.getInstance().logWarning(data.getString("name") + " addon depends on development version of BentoBox plugin. Some functions may be not implemented.");
             }
             builder.apiVersion(apiVersion);
         }
@@ -162,5 +166,4 @@ public class AddonClassLoader extends URLClassLoader {
     public Set<String> getClasses() {
         return classes.keySet();
     }
-
 }
