@@ -768,576 +768,571 @@ protection:
       name: Đập phễu
       hint: Đã tắt đập phễu
     BREEDING:
-      description: Toggle breeding
-      name: Breed animals
-      hint: Animal breeding protected
+      description: Bật/Tắt thuần hóa
+      name: Thuần hóa động vật
+      hint: Đã bảo vệ thuần hóa động vật
     BREWING:
       description: Bật/Tắt tương tác
-      name: Brewing stands
-      hint: Brewing disabled
+      name: Giàn pha thuốc
+      hint: Đã tắt giàn pha thuốc
     BUCKET:
       description: Bật/Tắt tương tác
-      name: Buckets
-      hint: Bucket use disabled
+      name: Cái xô
+      hint: Đã tắt dùng xô
     BUTTON:
-      description: Toggle button use
-      name: Buttons
-      hint: Button use disabled
+      description: Bật/Tắt dùng nút
+      name: Nút
+      hint: Đã tắt dùng nút
     CAKE:
-      description: Toggle cake interaction
-      name: Cakes
-      hint: Cake eating disabled
+      description: Bật/Tắt tương tác với bánh kem
+      name: Bánh kem
+      hint: Đã tắt tương tác với bánh kem
     CONTAINER:
-      name: Containers
+      name: Kho chứa
       description: |-
-        &a Bật/Tắt tương tác with chests,
-        &a shulker boxes and flower pots,
-        &a composters and barrels.
+        &a Bật/Tắt tương tác với rương,
+        &a hộp shulker và binh hoa,
+        &a thùng ủ phân và thùng.
 
-        &7 Other containers are handled
-        &7 by dedicated flags.
-      hint: Container access disabled
+        &7 Các kho chứa khác được quản lí
+        &7 bởi các cờ tương đương.
+      hint: Đã tắt tương tác với kho chứa
     DISPENSER:
-      name: Dispensers
-      description: Toggle dispenser interaction
-      hint: Dispenser interaction disabled
+      name: Máy phân phát
+      description: Bật/Tắt tương tác với máy phân phát
+      hint: Đã tắt tương tác với máy phân phát
     DROPPER:
-      name: Droppers
-      description: Toggle dropper interaction
-      hint: Dropper interaction disabled
+      name: Máy thả
+      description: Bật/Tắt tương tác với máy thả
+      hint: Đã tắt tương tác với máy thả
     ELYTRA:
-      name: Elytra
-      description: Toggle elytra allowed or not
-      hint: '&c WARNING: Elytra cannot be used here!'
+      name: Cánh cứng
+      description: Bật/Tắt sử dụng cánh cứng
+      hint: '&c CẢNH BÁO: Không thể sử dụng cánh cứng ở đây!'
     HOPPER:
-      name: Hoppers
-      description: Toggle hopper interaction
-      hint: Hopper interaction disabled
+      name: Cái phễu
+      description: Bật/Tắt tương tác với cái phễu
+      hint: Đã tắt tương tác với cái phễu
     CHEST_DAMAGE:
-      description: Toggle chest damage from explosions
-      name: Chest Damage
+      description: Bật/Tắt gây sát thương nổ lên rương
+      name: Sát thương lên rương
     CHORUS_FRUIT:
-      description: Toggle teleportation
-      name: Chorus fruits
-      hint: Chorus fruit teleporting disabled
+      description: Bật/Tắt dịch chuyển
+      name: Quả Chorus
+      hint: Đã tắt dịch chuyển bằng quả Chorus
     CLEAN_SUPER_FLAT:
       description: |-
-        &a Enable to clean any
-        &a super-flat chunks in
-        &a island worlds
-      name: Clean Super Flat
+        &a Bật để dọn bất kì
+        &a vùng siêu phẳng
+        &a trong thế giới đảo
+      name: Dọn vùng siêu phẳng
     COARSE_DIRT_TILLING:
       description: |-
-        &a Toggle tilling coarse
-        &a dirt and breaking podzol
-        &a to obtain dirt
-      name: Coarse dirt tilling
-      hint: No coarse dirt tilling
+        &a Bật/Tắt xới đất thô
+        &a và đập đất podzol
+        &a để lấy đất
+      name: Xới đất thô
+      hint: Không xới đất thô
     COLLECT_LAVA:
       description: |-
-        &a Toggle collecting lava
-        &a (override Buckets)
-      name: Collect lava
-      hint: No lava collection
+        &a Bật/Tắt thu thập nham thạch
+        &a (ghi đè lên cờ Cái xô)
+      name: Thu thập nham thạch
+      hint: Không thu thập nham thạch
     COLLECT_WATER:
       description: |-
-        &a Toggle collecting water
-        &a (override Buckets)
-      name: Collect water
-      hint: Water buckets disabled
+        &a Bật/Tắt thu thập nước
+        &a (ghi đè lên cờ Cái xô)
+      name: Thu thập nước
+      hint: Đã tắt dùng xô nước
     COMMAND_RANKS:
-      name: '&e Command Ranks'
-      description: '&a Configure command ranks'
+      name: '&e Cấp độ lệnh'
+      description: '&a Chỉnh cấp độ lệnh'
     CRAFTING:
-      description: Toggle use
-      name: Workbenches
-      hint: Workbench access disabled
+      description: Bật/Tắt sử dụng
+      name: Bàn chế tạo
+      hint: Đã tắt tương tác với bàn chế tạo
     CREEPER_DAMAGE:
       description: |
-        &a Toggle creeper
-        &a damage protection
-      name: Creeper damage protection
+        &a Bật/Tắt bảo vệ khỏi
+        &a sát thương từ Creeper
+      name: Bảo vệ khỏi sát thương từ Creeper
     CREEPER_GRIEFING:
       description: |
-        &a Toggle creeper griefing
-        &a protection when ignited
-        &a by island visitor.
-      name: Creeper griefing protection
-      hint: Creeper griefing disabled
+        &a Bật/Tắt bảo vệ khỏi việc
+        &a các khối bị phá bởi Creeper
+        &a khi bị đốt bởi Người tham quan.
+      name: Bảo vệ khối từ Creeper
+      hint: Đã chặn khối bị phá bởi Creeper
     CROP_TRAMPLE:
-      description: Toggle crop trampling
-      name: Trample crops
-      hint: Crop trampling disabled
+      description: Bật/Tắt giẫm lên cây trồng
+      name: Giẫm lên cây trồng
+      hint: Đã tắt giẫm lên cây trồng
     DOOR:
-      description: Toggle door usage
-      name: Use doors
-      hint: Door interaction disabled
+      description: Bật/Tắt dùng cửa
+      name: Dùng cửa
+      hint: Đã tắt dùng cửa
     DRAGON_EGG:
-      name: Dragon Egg
+      name: Trứng rồng
       description: |-
-        &a Prevents interaction with Dragon Eggs.
+        &a Chặn tương tác với trứng rồng.
 
-        &c This does not protect it from being
-        &c placed or broken.
-      hint: Dragon egg interaction disabled
+        &c Đây không thể bảo vệ nó khỏi việc
+        &c được đặt hay bị phá.
+      hint: Đã tắt tương tác với trứng rồng
     DYE:
-      description: Prevent dye use
-      name: Dye use
-      hint: Dyeing disabled
+      description: Chặn sử dụng bột nhộm
+      name: Sử dụng bột nhộm
+      hint: Đã tắt sử dụng bột nhộm
     EGGS:
-      description: Toggle egg throwing
-      name: Egg throwing
-      hint: Egg throwing disabled
+      description: Bật/Tắt chọi trứng
+      name: Chọi trứng
+      hint: Đã tắt chọi trứng
     ENCHANTING:
-      description: Toggle use
-      name: Enchanting table
-      hint: Enchantment tables disabled
+      description: Bật/Tắt sử dụng
+      name: Bàn phù phép
+      hint: Đã tắt sử dụng bàn phù phép
     ENDER_CHEST:
-      description: Toggle use/crafting
-      name: Ender Chests
-      hint: Ender chests are disabled in this world
+      description: Bật/Tắt sử dụng/chế tạo rương Ender
+      name: Rương Ender
+      hint: Đã tắt rương Ender khỏi thế giới này
     ENDERMAN_DEATH_DROP:
       description: |-
-        &a Endermen will drop
-        &a any block they are
-        &a holding if killed.
-      name: Enderman Death Drop
+        &a Người Ender sẽ rớt
+        &a khối bất kì mà nó
+        &a mang theo khi chết.
+      name: Rớt khối bởi Người Ender
     ENDERMAN_GRIEFING:
       description: |-
-        &a Endermen can remove
-        &a blocks from islands
-      name: Enderman griefing
+        &a Người Ender có thể cướp
+        &a khối bất kì từ đảo
+      name: Trộm bởi Người Ender
     ENDER_PEARL:
-      description: Toggle use
-      name: EnderPearls
-      hint: Enderpearl use disabled
+      description: Bật/Tắt sử dụng
+      name: Ngọc Ender
+      hint: Đã tắt sử dụng ngọc Ender
     ENTER_EXIT_MESSAGES:
-      description: Display entry and exit messages
-      island: '[name]''s island'
-      name: Enter/Exit messages
-      now-entering: '&a Now entering &b [name]&a .'
-      now-entering-your-island: '&a Now entering your island.'
-      now-leaving: '&a Now leaving &b [name]&a .'
-      now-leaving-your-island: '&a Now leaving your island.'
+      description: Xem thông báo vào/ra
+      island: 'đảo của [name]'
+      name: Thông báo Vào/Ra
+      now-entering: '&a Đang vào &b [name]&a .'
+      now-entering-your-island: '&a Đang vào đảo của bạn.'
+      now-leaving: '&a Đang rời &b [name]&a .'
+      now-leaving-your-island: '&a Đang rời đảo của bạn.'
     EXPERIENCE_BOTTLE_THROWING:
-      name: Experience bottle throwing
-      description: Toggle throwing experience bottles.
-      hint: Experience bottles disabled
+      name: Quăng bình kinh nghiệm
+      description: Bật/Tắt quăng bình kinh nghiệm.
+      hint: Đã tắt bình kinh nghiệm
     FIRE_BURNING:
-      name: Fire burning
+      name: Cháy lửa
       description: |-
-        &a Toggle whether fire can burn
-        &a blocks or not.
+        &a Bật/Tắt việc lửa có thể
+        &a cháy trên khối.
     FIRE_EXTINGUISH:
-      description: Toggle extinguishing fires
-      name: Fire extinguish
-      hint: Extinguishing fire disabled
+      description: Bật/Tắt dập lửa
+      name: Dập lửa
+      hint: Đã tắt dập lửa
     FIRE_IGNITE:
-      name: Fire ignition
+      name: Đốt lửa
       description: |-
-        &a Toggle whether fire can be ignited
-        &a by non-player means or not.
+        &a Bật/Tắt việc lửa có thể
+        &a cháy bởi vật thể không phải người chơi.
     FIRE_SPREAD:
-      name: Fire spread
+      name: Lửa lan tỏa
       description: |-
-        &a Toggle whether fire can spread
-        &a to nearby blocks or not.
+        &a Bật/Tắt việc lửa có thể
+        &a lan ra các khối bên cạnh.
     FISH_SCOOPING:
-      name: Fish Scooping
-      description: Allow scooping of fishes using a bucket
-      hint: Fish scooping disabled
+      name: Bắt cá
+      description: Cho phép bắt cá bằng xô
+      hint: Đã tắt bắt cá
     FLINT_AND_STEEL:
-      name: Flint and steel
+      name: Dụng cụ đánh lửa
       description: |-
-        &a Allow players to ignite fires or
-        &a campfires using flint and steel
-        &a or fire charges.
-      hint: Flint and steel and fire charges disabled
+        &a Cho phép người chơi đốt lửa hoặc
+        &a lửa trại bằng dụng cụ đánh cửa
+        &a hoặc cầu lửa.
+      hint: Đã tắt dụng cụ đánh lửa và cầu lửa
     FURNACE:
-      description: Toggle use
-      name: Furnace
-      hint: Furnace use disabled
+      description: Bật/Tắt sử dụng
+      name: Lò nung
+      hint: Đã tắt sử dụng lò nung
     GATE:
-      description: Toggle use
-      name: Gates
-      hint: Gate use disabled
+      description: Bật/Tắt sử dụng
+      name: Cổng rào
+      hint: Đã tắt sử dụng cổng rào
     GEO_LIMIT_MOBS:
       description: |-
-        &a Remove mobs that go
-        &a outside protected
-        &a island space
-      name: '&e Limit mobs to island'
+        &a Xóa các quái đã rời khỏi
+        &a khu vực bảo vệ trong đảo
+      name: '&e Giới hạn quái trong đảo'
+    HIVE:
+      description: |-
+        &a Bật/Tắt thu hoạch tổ ong.
+      name: Thu hoạch tủ ong
+      hint: Đã tắt thu hoạch tổ ong
     HURT_ANIMALS:
-      description: Toggle hurting
-      name: Hurt animals
-      hint: Animal hurting disabled
+      description: Bật/Tắt làm đau
+      name: Làm đau động vật
+      hint: Đã tắt làm đau động vật
     HURT_MONSTERS:
-      description: Toggle hurting
-      name: Hurt monsters
-      hint: Monster hurting disabled
+      description: Bật/Tắt làm đau
+      name: Làm đau quái vật
+      hint: Đã tắt làm đau quái vật
     HURT_VILLAGERS:
-      description: Toggle hurting
-      name: Hurt villagers
-      hint: Villager hurting disabled
+      description: Bật/Tắt làm đau
+      name: Làm đau dân làng
+      hint: Đã tắt làm đau dân làng
     ITEM_FRAME:
-      name: Item Frame
+      name: Khung vật phẩm
       description: |-
         &a Bật/Tắt tương tác.
-        &a Overrides place or break blocks
-      hint: Item Frame use disabled
+        &a Ghi đè lên cờ Đặt và Đập Khối
+      hint: Đã tắt sử dụng khung vật phẩm
     ITEM_FRAME_DAMAGE:
       description: |-
-        &a Mobs can damage
-        &a item frames
-      name: Item Frame Damage
+        &a Quái có thể gây sát thương
+        &a lên khung vật phẩm
+      name: Sát thương lên khung vật phẩm
     INVINCIBLE_VISITORS:
       description: |-
-        &a Configure invincible visitor
-        &a settings.
-      name: '&e Invincible Visitors'
-      hint: '&c Visitors protected'
+        &a Chỉnh các tùy chỉnh
+        &a bất tử cho Người Tham Quan.
+      name: '&e Người Tham Quan Bất Tử'
+      hint: '&c Đã bảo vệ Người Tham Quan'
     ISLAND_RESPAWN:
       description: |-
-        &a Players respawn
-        &a on island
-      name: Island respawn
+        &a Người chơi hồi sinh
+        &a tại đảo
+      name: Hồi sinh tại đảo
     ITEM_DROP:
-      description: Toggle dropping
-      name: Item drop
-      hint: Item dropping disabled
+      description: Bật/Tắt rớt đồ
+      name: Rớt vật phẩm
+      hint: Đã tắt rớt vật phẩm
     ITEM_PICKUP:
-      description: Toggle pickup
-      name: Item pickup
-      hint: Item pickup disabled
+      description: Bật/Tắt nhặt đồ
+      name: Nhặt vật phẩm
+      hint: Đã tắt nhặt vật phẩm
     JUKEBOX:
-      description: Toggle usage
-      name: Jukebox use
-      hint: Jukebox use disabled
+      description: Bật/Tắt sử dụng
+      name: Sử dụng hộp chơi nhạc
+      hint: Đã tắt sử dụng hộp chơi nhạc
     LEAF_DECAY:
-      name: Leaf decay
-      description: Allow leaves to naturally decay
+      name: Rụng lá
+      description: Cho phép rụng lá tự nhiên
     LEASH:
-      description: Toggle use
-      name: Leash use
+      description: Bật/Tắt sử dụng
+      name: Sử dụng dây buộc
     LECTERN:
-      name: Lecterns
+      name: Bục để sách
       description: |-
-        &a Allow to place books on a lectern
-        &a or to take books from it.
+        &a Cho phép đặt sách lên bục
+        &a hoặc lấy sách từ nó.
 
-        &c It does not prevent players from
-        &c reading the books.
-      hint: cannot place a book on a lectern or take a book from it.
+        &c Nó không chặn người chơi khỏi
+        &c việc đọc sách.
+      hint: Không thể đặt sách lên bục hay lấy sách từ bục.
     LEVER:
-      description: Toggle use
-      name: Lever use
-      hint: Lever use disabled
+      description: Bật/Tắt sử dụng
+      name: Sử dụng cần gạt
+      hint: Đã tắt sử dụng cần gạt
     LIMIT_MOBS:
       description: |-
-        &a Limit entities from
-        &a spawning in this game
-        &a mode.
-      name: '&e Limit entity type spawning'
-      can: '&a Can spawn'
-      cannot: '&c Cannot spawn'
+        &a Giới hạn thực thể khỏi
+        &a việc sinh ra ở chế độ này
+      name: '&e Giới hạn loại thực thể sinh ra'
+      can: '&a Có thể sinh ra'
+      cannot: '&c Không thể sinh ra'
     LIQUIDS_FLOWING_OUT:
-      name: Liquids flowing outside islands
+      name: Chất lỏng tràn ra khỏi đảo
       description: |-
-        &a Toggle whether liquids can flow outside
-        &a of the island's protection range.
-        &a Disabling it helps avoiding lava and water
-        &a generating cobblestone in the area between
-        &a two islands.
+        &a Bật/Tắt việc chất lỏng có thể
+        &a tràn ra khỏi khu vực bảo vệ của đảo.
+        &a Tắt nó sẽ giúp chặn việc nước và nham thạch
+        &a tạo đá cuội ở không gian giữa hai đảo.
 
-        &c Note that liquids will still flow vertically.
-        &c They will also not spread horizontally if
-        &c they are placed outside an island's
-        &c protection range.
+        &c Lưu ý là chất lỏng vẫn tràn xuống dưới.
+        &c Nó cũng sẽ không tràn ra nếu được đặt
+        &c ở ngoài khu vực bảo vệ của một đảo.
     LOCK:
-      description: Toggle lock
-      name: Lock island
+      description: Bật/Tắt khóa
+      name: Khóa đảo
     MILKING:
-      description: Toggle cow milking
-      name: Milking
-      hint: Milking cows disabled
+      description: Bật/Tắt vắt sữa bò
+      name: Vắt sữa
+      hint: Đã tắt vắt sữa bò
     MINECART:
-      name: Minecarts
+      name: Xe mỏ
       description: |-
-        Toggle placing, breaking and
-        entering into minecarts.
-      hint: Minecart interaction disabled
+        Bật/Tắt đặt, đập và
+        vào xe mỏ.
+      hint: Đã tắt tương tác với xe mỏ
     MONSTER_NATURAL_SPAWN:
-      description: Toggle natural monster spawning
-      name: Monster natural spawn
+      description: Bật/Tắt sinh quái tự nhiên
+      name: Sinh quái tự nhiên
     MONSTER_SPAWNERS_SPAWN:
-      description: Toggle monster spawning with spawners
-      name: Monster spawners
+      description: Bật/Tắt Sinh quái bằng lồng triệu hồi
+      name: Lồng triệu hồi quái
     MOUNT_INVENTORY:
       description: |-
-        &a Toggle access
-        &a to mount inventory
-      name: Mount inventory
-      hint: Mounting inventories disabled
+        &a Bật/Tắt cho phép
+        &a kết nối kho đồ
+      name: Kết nối kho đồ
+      hint: Đã tắt kết nối kho đồ
     NAME_TAG:
-      name: Name tags
-      description: Toggle use
-      hint: Name tag interaction disabled
+      name: Nhãn ghi tên
+      description: Bật/Tắt sử dụng
+      hint: Đã tắt tương tác với nhãn ghi tên
     NATURAL_SPAWNING_OUTSIDE_RANGE:
-      name: Natural creature spawning outside range
+      name: Sinh quái tự nhiên ngoài đảo
       description: |-
-        &a Toggle whether creatures (animals and
-        &a monsters) can spawn naturally outside
-        &a an island's protection range.
+        &a Bật/Tắt cho phép con vật (động vật và
+        &a quái vật) có thể sinh tự nhiên ngoài
+        &a khu vực bảo vệ của đảo.
 
-        &c Note that it doesn't prevent creatures
-        &c to spawn via a mob spawner or a spawn
-        &c egg.
+        &c Lưu ý là nó không chặn việc sinh quái
+        &c bằng lồng triệu hồi hoặc trứng.
     NOTE_BLOCK:
-      description: Toggle use
-      name: Note block
-      hint: Noteblock interaction disabled
+      description: Bật/Tắt sử dụng
+      name: Khối nốt nhạc
+      hint: Đã tắt tương tắt với khối nốt nhạc
     OBSIDIAN_SCOOPING:
-      name: Obsidian scooping
+      name: Xúc hắc diệm thạch
       description: |-
-        &a Allow players to scoop up obsidian
-        &a with an empty bucket back into lava.
+        &a Cho phép người chơi xúc hắc diệm thạch
+        &a với một cái xô để thành nham thạch.
 
-        &a This helps the newbies that failed to
-        &a build their cobblestone generator.
+        &a Nó giúp những người chơi mới mà thất bại
+        &a trong việc xây máy sinh đá.
 
-        &a Note: obsidian cannot be scooped up
-        &a if there are other obsidian blocks
-        &a within a 2-block radius.
-      scooping: '&a Changing obsidian back into lava. Be careful next time!'
-      obsidian-nearby: '&c There are obsidian blocks nearby, you cannot scoop up this
-        block into lava.'
+        &a Lưu ý: hắc diệm thạch không thể bị xúc
+        &a nếu xung quanh có khối hắc diệm thạch
+        &a trong bán kính 2 khối.
+      scooping: '&a Đang chuyển hắc diệm thạch thành nham thạch. Lần sau hãy cẩn thận!'
+      obsidian-nearby: '&c Có hắc diệm thạch xung quanh. Bạn không thể xúc thành nham thạch.'
     OFFLINE_GROWTH:
       description: |-
-        &a When disabled, plants
-        &a will not grow on islands
-        &a where all members are offline.
-        &a May help reduce lag.
-      name: Offline Growth
+        &a Khi tắt, cây trồng
+        &a sẽ không mọc lớn trong đảo
+        &a nếu tất cả thành viên đều ngoại tuyến.
+        &a Có thể giúp giảm lag.
+      name: Mọc cây khi ngoại tuyến
     OFFLINE_REDSTONE:
       description: |-
-        &a When disabled, redstone
-        &a will not operate on islands
-        &a where all members are offline.
-        &a May help reduce lag.
-        &a Does not affect spawn island.
-      name: Offline Redstone
+        &a Khi tắt, đá đỏ
+        &a sẽ không hoạt động trong đảo
+        &a nếu tất cả thành viên đều ngoại tuyến.
+        &a Có thể giúp giảm lag.
+        &a Không ảnh hưởng đảo triệu hồi.
+      name: Đá đỏ khi ngoại tuyến
     PISTON_PUSH:
       description: |-
-        &a Enable this to prevent
-        &a pistons from pushing
-        &a blocks outside island
-      name: Piston Push Protection
+        &a Bật để bảo vệ khối
+        &a khỏi bị đẩy ra ngoài đảo
+        &a bởi pít tông
+      name: Bảo vệ khỏi bị đẩy bởi pít tông
     PLACE_BLOCKS:
-      description: Toggle placing
-      name: Place blocks
-      hint: Block placing disabled
+      description: Bật/Tắt đặt khối
+      name: Đặt khối
+      hint: Đã tắt đặt khối
     POTION_THROWING:
-      name: Potion throwing
+      name: Quăng bình thuốc
       description: |-
-        &a Toggle throwing potions.
-        &a This include splash and lingering potions.
-      hint: Throwing potions disabled
+        &a Bật/Tắt quăng bình thuốc.
+        &a Bao gồm thuốc ném được và thuốc kéo dài.
+      hint: Đã tắt quăng bình thuốc
     NETHER_PORTAL:
-      description: Toggle use
-      name: Nether Portal
-      hint: Portal use disabled
+      description: Bật/Tắt sử dụng
+      name: Cổng địa ngục
+      hint: Đã tắt sử dụng cổng địa ngục
     END_PORTAL:
-      description: Toggle use
-      name: End Portal
-      hint: Portal use disabled
+      description: Bật/Tắt sử dụng
+      name: Cổng kết thúc
+      hint: Đã tắt sử dụng cổng kết thúc
     PRESSURE_PLATE:
-      description: Toggle usage
-      name: Pressure Plates
-      hint: Pressure plate use disabled
+      description: Bật/Tắt sử dụng
+      name: Đĩa cảm biến ám lực
+      hint: Đã tắt sử dụng đĩa cảm biến ám lực
     PVP_END:
       description: |-
-        &c Enable/Disable PVP
-        &c in the End.
-      name: End PVP
-      hint: PVP disabled in the End
-      enabled: '&c The PVP in the End has been enabled.'
-      disabled: '&a The PVP in the End has been disabled.'
+        &c Bật/Tắt PVP
+        &c ở Thế giới kết thúc.
+      name: PVP ở Thế giới kết thúc
+      hint: PVP đã tắt ở Thế giới kết thúc
+      enabled: '&c Đã bật PVP ở Thế giới kết thúc.'
+      disabled: '&a Đã tắt PVP ở Thế giới kết thúc.'
     PVP_NETHER:
       description: |-
-        &c Enable/Disable PVP
-        &c in the Nether.
-      name: Nether PVP
-      hint: PVP disabled in the Nether
-      enabled: '&c The PVP in the Nether has been enabled.'
-      disabled: '&a The PVP in the Nether has been disabled.'
+        &c Bật/Tắt PVP
+        &c ở Địa ngục.
+      name: PVP ở Địa ngục
+      hint: PVP đã tắt ở Địa ngục
+      enabled: '&c Đã bật PVP ở Địa ngục.'
+      disabled: '&a Đã tắt PVP ở Địa ngục.'
     PVP_OVERWORLD:
       description: |-
-        &c Enable/Disable PVP
-        &c on island.
-      name: Overworld PVP
-      hint: '&c PVP disabled in the Overworld'
-      enabled: '&c The PVP in the Overworld has been enabled.'
-      disabled: '&a The PVP in the Overworld has been disabled.'
+        &c Bật/Tắt PVP
+        &c ở Thế giới thường.
+      name: PVP ở Thế giới thường
+      hint: PVP đã tắt ở Thế giới thường
+      enabled: '&c Đã bật PVP ở Thế giới thường.'
+      disabled: '&a Đã tắt PVP ở Thế giới thường.'
     REDSTONE:
-      description: Toggle use
-      name: Redstone items
-      hint: Redstone interaction disabled
+      description: Bật/Tắt sử dụng
+      name: Vật phẩm đá đỏ
+      hint: Đã tắt sử dụng vật phẩm đá đỏ
     REMOVE_END_EXIT_ISLAND:
       description: |-
-        &a Prevents the end exit
-        &a island from generating
-        &a at coordinates 0,0
-      name: Remove end exit island
+        &a Chặn việc đảo rời thế giới kết thúc
+        &a được tạo ở vị trí 0,0
+      name: Xóa đảo rời thế giới kết thúc
     REMOVE_MOBS:
       description: |-
-        &a Remove monsters when
-        &a teleporting to island
-      name: Remove monsters
+        &a Xóa quái khi dịch chuyển
+        &a vào đảo
+      name: Xóa quái
     RIDING:
-      description: Toggle riding
-      name: Animal riding
-      hint: Animal riding disabled
+      description: Bật/Tắt cưỡi thú
+      name: Cưỡi thú
+      hint: Đã tắt cưỡi thú
     SHEARING:
-      description: Toggle shearing
-      name: Shearing
-      hint: Shearing disabled
+      description: Bật/Tắt kéo tỉa
+      name: Kéo tỉa
+      hint: Đã tắt kéo tỉa
     SPAWN_EGGS:
-      description: Toggle use
-      name: Spawn eggs
-      hint: Spawn eggs disabled
+      description: Bật/Tắt sử dụng
+      name: Trứng triệu hồi
+      hint: Đã tắt trứng triệu hồi
     SPAWNER_SPAWN_EGGS:
       description: |-
-        &a Allows to change a spawner's entity type
-        &a using spawn eggs.
-      name: Spawn eggs on spawners
-      hint: changing a spawner's entity type using spawn eggs is not allowed
+        &a Cho phép thay thế loại quái ở lồng triệu hồi
+        &a sử dụng trứng triệu hồi.
+      name: Trứng ở lồng triệu hồi
+      hint: Không cho phép thay thế loại quái ở lồng triệu hồi sử dụng trứng triệu hồi.
     TNT_DAMAGE:
       description: |-
-        &a Allow TNT and TNT minecarts
-        &a to break blocks and damage
-        &a entities.
-      name: TNT damage
+        &a Cho phép TNT và xe mỏ có TNT
+        &a phá khối gây sát thương lên thực thể.
+      name: Sát thương từ TNT
     TNT_PRIMING:
       description: |-
-        &a Prevents priming TNT.
-        &a It does not override the
-        &a Flint and steel protection.
-      name: TNT priming
-      hint: TNT priming disabled
+        &a Chặn ngòi nổ TNT.
+        &a Nó không ghi đè lên cờ
+        &a Dụng cụ đánh lửa.
+      name: Ngòi nổ TNT
+      hint: Đã tắt ngòi nổ TNT
     TRADING:
-      description: Toggle trading
-      name: Villager trading
-      hint: Villager trading disabled
+      description: Bật/Tắt trao đổi
+      name: Trao đổi với dân làng
+      hint: Đã tắt trao đổi với dân làng 
     TRAPDOOR:
-      description: Toggle access
-      name: Trap doors
-      hint: Trapdoor use disabled
+      description: Bật/Tắt sử dụng
+      name: Cửa sập
+      hint: Đã tắt sử dụng cửa sập
     TREES_GROWING_OUTSIDE_RANGE:
-      name: Trees growing outside range
+      name: Cây mọc ngoài đảo
       description: |-
-        &a Toggle whether trees can grow outside an
-        &a island's protection range or not.
-        &a Not only will it prevent saplings placed
-        &a outside an island's protection range from
-        &a growing, but it will also block generation
-        &a of leaves/logs outside of the island, thus
-        &a cutting the tree.
+        &a Bật/Tắt việc cây có thể mọc ngoài
+        &a khu vực bảo vệ trong đảo.
+        &a Nó không chỉ chặn việc mọc chồi cây
+        &a ngoài khu vực bảo vệ, mà nó cũng chặn
+        &a việc tạo khối lá và gỗ ở ngoài khu vực,
+        &a dẫn đến việc cái cây bị mất một phần.
     TURTLE_EGGS:
-      description: Toggle crushing
-      name: Turtle Eggs
-      hint: Turtle egg crushing disabled
+      description: Bật/Tắt làm vỡ
+      name: Trứng rùa
+      hint: Đã tắt làm vỡ trứng rùa
     FROST_WALKER:
-      description: Toggle Frost Walker enchantment
-      name: Frost Walker
-      hint: Frost Walker disabled
+      description: Bật/Tắt phù phép Chân Lạnh
+      name: Chân Lạnh
+      hint: Đã tắt Chân Lạnh
     EXPERIENCE_PICKUP:
-      name: Experience pickup
-      description: Toggle experience orb pickup
-      hint: Experience pickup disabled
+      name: Nhặt kinh nghiệm
+      description: Bật/Tắt nhặt cục kinh nghiệm
+      hint: Đã tắt nhặt kinh nghiệm
     PREVENT_TELEPORT_WHEN_FALLING:
-      name: Prevent teleport when falling
+      name: Chặn dịch chuyển khi đang rời
       description: |-
-        &a Prevent players from teleporting
-        &a back to their island using commands
-        &a if they are falling.
-      hint: '&c You cannot do that while falling.'
+        &a Chặn người chơi khỏi việc dịch chuyển
+        &a về đảo của họ bằng lệnh khi đang rơi.
+      hint: '&c Bạn không thể làm điều đó khi đang rơi.'
     WITHER_DAMAGE:
-      name: Toggle wither damage
+      name: Bật/Tắt sát thương khô héo
       description: |-
-        &a If active, withers can
-        &a damage blocks and players
+        &a Khi bật, Khô Héo có thể
+        &a gây sát thương lên khối và người chơi
     WORLD_TNT_DAMAGE:
       description: |-
-        &a Allow TNT and TNT minecarts
-        &a to break blocks and damage
-        &a entities outside of island limits.
-      name: World TNT damage
-  locked: '&c This island is locked!'
-  protected: '&c Island protected: [description].'
-  world-protected: '&c World protected: [description].'
-  spawn-protected: '&c Spawn protected: [description].'
+        &a Cho phép TNT và xe mỏ có TNT
+        &a phá khối gây sát thương lên khối và thực thể
+        &a ở ngoài đảo.
+      name: Sát thường từ TNT ngoài đảo
+  locked: '&c Đảo đã khóa!'
+  protected: '&c Đảo đã bảo vệ: [description].'
+  world-protected: '&c Thế giới đã bảo vệ: [description].'
+  spawn-protected: '&c Điểm triệu hồi đã bảo vệ: [description].'
   panel:
-    next: '&f Next Page'
-    previous: '&f Previous Page'
+    next: '&f Trang kế'
+    previous: '&f Trang trước'
     mode:
       advanced:
-        name: '&6 Advanced Settings'
-        description: '&a Displays a sensible amount of settings.'
+        name: '&6 Tùy chỉnh nâng cao'
+        description: '&a Xem khá nhiều tùy chỉnh.'
       basic:
-        name: '&a Basic Settings'
-        description: '&a Displays the most useful settings.'
+        name: '&a Tùy chỉnh cơ bản'
+        description: '&a Xem các tùy chỉnh có ích nhất.'
       expert:
-        name: '&c Expert Settings'
-        description: '&a Displays all the available settings.'
-      click-to-switch: '&e Click &7 to switch to the &r [next]&r &7 .'
+        name: '&c Tùy chỉnh chuyên môn'
+        description: '&a Xem tất cả tùy chỉnh.'
+      click-to-switch: '&e Nhấp &7 để chuyển sang &r [next]&r &7 .'
     reset-to-default:
-      name: '&c Reset to default'
+      name: '&c Trở về mặc định'
       description: |
-        &a Resets &c &l ALL &r &a the settings to their
-        &a default value.
+        &a Chỉnh &c &l TOÀN BỘ &r &a tùy chỉnh về
+        &a giá trị mặc định.
     PROTECTION:
-      title: '&6 Protection'
+      title: '&6 Bảo vệ'
       description: |-
-        &a Protection settings
-        &a for this island
+        &a Tùy chỉnh bảo vệ
+        &a cho đảo này
     SETTING:
-      title: '&6 Settings'
+      title: '&6 Tùy chỉnh'
       description: |-
-        &a General settings
-        &a for this island
+        &a Tùy chỉnh cơ bản
+        &a cho đảo này
     WORLD_SETTING:
-      title: '&b [world_name] &6 Settings'
-      description: '&a Settings for this game world'
+      title: '&6 Tùy chỉnh &b [world_name]'
+      description: '&a Tùy chỉnh cho thế giới này'
     WORLD_DEFAULTS:
-      title: '&b [world_name] &6 World Protections'
+      title: '&6 Bảo vệ &b [world_name]'
       description: |
-        &a Protection settings when
-        &a player is outside their island
+        &a Tùy chỉnh bảo vệ khi
+        &a người chơi ở ngoài đảo
     flag-item:
       name-layout: '&a [name]'
       description-layout: |
         &a [description]
 
-        &e Left Click &7 to cycle downwards.
-        &e Right Click &7 to cycle upwards.
+        &e Chuột trái &7 để cuộn xuống.
+        &e Chuột phải &7 để cuộn lên.
 
-        &7 Allowed for:
+        &7 Cho phép cho:
       allowed-rank: '&3 - &a '
       blocked-rank: '&3 - &c '
       minimal-rank: '&3 - &2 '
       menu-layout: |
         &a [description]
 
-        &e Click &7 to open.
-      setting-cooldown: '&c Setting is on cooldown'
+        &e Nhấp &7 để mở.
+      setting-cooldown: '&c Tùy chỉnh đang trong thời gian chờ'
       setting-layout: |
         &a [description]
 
-        &e Click &7 to toggle.
+        &e Nhấp &7 để chỉnh.
 
-        &7 Current setting: [setting]
-      setting-active: '&a Active'
-      setting-disabled: '&c Disabled'
+        &7 Tùy chỉnh hiện tại: [setting]
+      setting-active: '&a Đã kích hoạt'
+      setting-disabled: '&c Đã tắt'
 language:
   panel-title: Chọn ngôn ngữ
   description:
