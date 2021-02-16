@@ -4,6 +4,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.bukkit.ChatColor;
+import org.bukkit.World;
 
 import world.bentobox.bentobox.api.panels.Panel;
 import world.bentobox.bentobox.api.panels.PanelItem;
@@ -22,6 +23,7 @@ public class PanelBuilder {
     private User user;
     private PanelListener listener;
     private Panel.Type type = Panel.Type.INVENTORY;
+    private World world;
 
     public PanelBuilder name(String name) {
         this.name = ChatColor.translateAlternateColorCodes('&', name);
@@ -116,12 +118,21 @@ public class PanelBuilder {
     }
 
     /**
+     * Set the game world that applies this panel
+     * @param world
+     * @return PanelBuilder
+     */
+    public PanelBuilder world(World world) {
+        this.world = world;
+        return this;
+    }
+
+    /**
      * Build the panel
      * @return Panel
      */
     public Panel build() {
-        // items.lastKey() is a slot position, so the panel size is this value + 1
-        return new Panel(name, items, Math.max(size, items.isEmpty() ? size : items.lastKey() + 1), user, listener, type);
+        return new Panel(this);
     }
 
     /**
@@ -167,4 +178,14 @@ public class PanelBuilder {
     public Panel.Type getPanelType() {
         return type;
     }
+
+    /**
+     * @return the world
+     * @since 1.16.0
+     */
+    public World getWorld() {
+        return world;
+    }
+
+
 }

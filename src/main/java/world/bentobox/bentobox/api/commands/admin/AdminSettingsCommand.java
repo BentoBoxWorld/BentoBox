@@ -78,9 +78,9 @@ public class AdminSettingsCommand extends CompositeCommand {
         // Player settings
         new TabbedPanelBuilder()
         .user(user)
-        .world(getWorld())
-        .tab(1, new SettingsTab(getWorld(), user, island, Flag.Type.PROTECTION))
-        .tab(2, new SettingsTab(getWorld(), user, island, Flag.Type.SETTING))
+        .world(island.getWorld())
+        .tab(1, new SettingsTab(user, island, Flag.Type.PROTECTION))
+        .tab(2, new SettingsTab(user, island, Flag.Type.SETTING))
         .startingSlot(1)
         .size(54)
         .build().openPanel();
