@@ -748,8 +748,8 @@ protection:
     BOAT:
       name: Thuyền
       description: |-
-        Bật/Tắt đặt, đập
-        và vào thuyền.
+        &a Bật/Tắt đặt, đập
+        &a và vào thuyền.
       hint: Không cho phép tương tác với thuyền
     BREAK_BLOCKS:
       description: Bật/Tắt đập khối
@@ -757,14 +757,14 @@ protection:
       hint: Đã tắt đập khối
     BREAK_SPAWNERS:
       description: |-
-        Bật/Tắt đập lồng sinh quái.
-        Gia đè lên cờ Đập Khối.
+        &a Bật/Tắt đập lồng sinh quái.
+        &7 Gia đè lên cờ Đập Khối.
       name: Đập lồng sinh quái
       hint: Đã tắt đập lồng sinh quái
     BREAK_HOPPERS:
       description: |-
-        Bật/Tắt đập phễu.
-        Gia đè lên cờ Đập Khối.
+        &a Bật/Tắt đập phễu.
+        &7 Gia đè lên cờ Đập Khối.
       name: Đập phễu
       hint: Đã tắt đập phễu
     BREEDING:
