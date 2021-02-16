@@ -2,8 +2,8 @@ package world.bentobox.bentobox.util.heads;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -14,6 +14,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 import com.google.gson.Gson;
@@ -114,48 +115,96 @@ public class HeadGetter {
 
 
     /**
-     * This is main task that runs once every 20 ticks and tries to get a player head.
+     * This is main task that runs once every Settings#ticksBetweenCalls ticks and tries to get
+     * Settings#headsPerCall player heads at once.
+     *
      * @since 1.14.1
      */
     private void runPlayerHeadGetter() {
         Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {
             synchronized (HeadGetter.names)
             {
-                if (!HeadGetter.names.isEmpty())
+                int counter = 0;
+
+                while (!HeadGetter.names.isEmpty() && counter < plugin.getSettings().getHeadsPerCall())
                 {
                     Pair<String, PanelItem> elementEntry = HeadGetter.names.poll();
-
-                    // TODO: In theory BentoBox could use User instance to find existing user UUID's.
-                    // It would avoid one API call.
                     final String userName = elementEntry.getKey();
 
-                    // Use cached userId as userId will not change :)
-                    UUID userId = HeadGetter.cachedHeads.containsKey(userName) ?
-                        HeadGetter.cachedHeads.get(userName).getUserId() :
-                        HeadGetter.getUserIdFromName(userName);
+                    // Hmm, task in task in task. That is a weird structure.
+                    Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+                        // Check if we can get user Id.
+                        UUID userId;
 
-                    // Create new cache object.
-                    HeadCache cache = new HeadCache(userName,
-                        userId,
-                        HeadGetter.getTextureFromUUID(userId));
-
-                    // Save in cache
-                    HeadGetter.cachedHeads.put(userName, cache);
-
-                    // Tell requesters the head came in
-                    if (HeadGetter.headRequesters.containsKey(userName))
-                    {
-                        for (HeadRequester req : HeadGetter.headRequesters.get(userName))
+                        if (HeadGetter.cachedHeads.containsKey(userName))
                         {
-                            elementEntry.getValue().setHead(cache.getPlayerHead());
-
-                            Bukkit.getServer().getScheduler().runTaskAsynchronously(this.plugin,
-                                () -> req.setHead(elementEntry.getValue()));
+                            // If cache contains userName, it means that it was already stored.
+                            // We can reuse stored data, as they should not be changed.
+                            userId = HeadGetter.cachedHeads.get(userName).getUserId();
                         }
-                    }
+                        else if (Bukkit.getServer().getOnlineMode())
+                        {
+                            // If server is in online mode we can relay that UUID is correct.
+                            // So we use thing that is stored in BentoBox players data.
+                            userId = plugin.getPlayers().getUUID(userName);
+                        }
+                        else
+                        {
+                            // Assign null for later check, as I do not want to write ifs inside
+                            // previous 2 checks.
+                            userId = null;
+                        }
+
+                        HeadCache cache;
+
+                        if (plugin.getSettings().isUseCacheServer())
+                        {
+                            // Cache server has an implementation to get a skin just from player name.
+                            Pair<UUID, String> playerSkin = HeadGetter.getTextureFromName(userName, userId);
+
+                            // Create new cache object.
+                            cache = new HeadCache(userName,
+                                playerSkin.getKey(),
+                                playerSkin.getValue());
+                        }
+                        else
+                        {
+                            if (userId == null)
+                            {
+                                // Use MojangAPI to get userId from userName.
+                                userId = HeadGetter.getUserIdFromName(userName);
+                            }
+
+                            // Create new cache object.
+                            cache = new HeadCache(userName,
+                                userId,
+                                HeadGetter.getTextureFromUUID(userId));
+                        }
+
+                        // Save in cache
+                        HeadGetter.cachedHeads.put(userName, cache);
+
+                        // Tell requesters the head came in, but only if the texture is usable.
+                        if (cache.encodedTextureLink != null && HeadGetter.headRequesters.containsKey(userName))
+                        {
+                            for (HeadRequester req : HeadGetter.headRequesters.get(userName))
+                            {
+                                elementEntry.getValue().setHead(cache.getPlayerHead());
+
+                                if (!plugin.isShutdown())
+                                {
+                                    // Do not run task if plugin is shutting down.
+                                    Bukkit.getScheduler().runTaskAsynchronously(this.plugin,
+                                        () -> req.setHead(elementEntry.getValue()));
+                                }
+                            }
+                        }
+                    });
+
+                    counter++;
                 }
             }
-        }, 0L, 10L);
+        }, 0, plugin.getSettings().getTicksBetweenCalls());
     }
 
 
@@ -189,8 +238,7 @@ public class HeadGetter {
             // UUID just looks more fancy :)
             String userIdString = jsonObject.get("id").toString().
                 replace("\"", "").
-                replaceFirst("([0-9a-fA-F]{8})([0-9a-fA-F]{4})([0-9a-fA-F]{4})([0-9a-fA-F]{4})([0-9a-fA-F]+)",
-                    "$1-$2-$3-$4-$5");
+                replaceFirst("(\\w{8})(\\w{4})(\\w{4})(\\w{4})(\\w{12})", "$1-$2-$3-$4-$5");
 
             userId = UUID.fromString(userIdString);
         }
@@ -261,6 +309,70 @@ public class HeadGetter {
 
 
     /**
+     * This method gets and returns base64 encoded link to player skin texture from mc-heads.net.
+     * It tries to use UUID if it is a valid, otherwise it uses given username.
+     *
+     * @param userName userName
+     * @param userId UUID for the user.
+     * @return Encoded player skin texture or null.
+     * @since 1.16.0
+     */
+    private static @NonNull Pair<UUID, String> getTextureFromName(String userName, @Nullable UUID userId) {
+        try
+        {
+            Gson gsonReader = new Gson();
+
+            // Get user encoded texture value.
+            // mc-heads returns correct skin with providing just a name, unlike mojang api, which
+            // requires UUID.
+            JsonObject jsonObject = gsonReader.fromJson(
+                HeadGetter.getURLContent("https://mc-heads.net/minecraft/profile/" + (userId == null ? userName : userId.toString())),
+                JsonObject.class);
+
+            /*
+             * Returned Json Object:
+              {
+                id: USER_ID,
+                name: USER_NAME,
+                properties: [
+                    {
+                        name: "textures",
+                        value: ENCODED_BASE64_TEXTURE
+                    }
+                 ]
+               }
+              */
+
+            String decodedTexture = "";
+
+            String userIdString = jsonObject.get("id").toString().
+                replace("\"", "").
+                replaceFirst("(\\w{8})(\\w{4})(\\w{4})(\\w{4})(\\w{12})", "$1-$2-$3-$4-$5");
+
+            for (JsonElement element : jsonObject.getAsJsonArray("properties"))
+            {
+                JsonObject object = element.getAsJsonObject();
+
+                if (object.has("name") &&
+                    object.get("name").getAsString().equals("textures"))
+                {
+                    decodedTexture = object.get("value").getAsString();
+                    break;
+                }
+            }
+
+            return new Pair<>(UUID.fromString(userIdString), decodedTexture);
+        }
+        catch (Exception ignored)
+        {
+        }
+
+        // return random uuid and null, to assign some values for cache.
+        return new Pair<>(userId, null);
+    }
+
+
+    /**
      * This method gets page content of requested url
      *
      * @param requestedUrl Url which content must be returned.
@@ -270,12 +382,15 @@ public class HeadGetter {
     private static String getURLContent(String requestedUrl) {
         String returnValue;
 
-        try (BufferedReader reader = new BufferedReader(
-            new InputStreamReader(new URL(requestedUrl).openStream(), StandardCharsets.UTF_8)))
+        try
         {
-            returnValue = reader.lines().collect(Collectors.joining());
+            URL url = new URL(requestedUrl);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            returnValue = br.lines().collect(Collectors.joining());
+            br.close();
         }
-        catch (Exception ignored)
+        catch (Exception e)
         {
             returnValue = "";
         }

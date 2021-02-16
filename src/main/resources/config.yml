@@ -82,11 +82,25 @@ panel:
   # Defines the Material of the item that fills the gaps (in the header, etc.) of most panels.
   # Added since 1.14.0.
   filler-material: LIGHT_BLUE_STAINED_GLASS_PANE
+  # Toggle whether player head texture should be gathered from Mojang API or mc-heads.net cache server.
+  # Mojang API sometime may be slow and may limit requests to the player data, so this will allow to
+  # get player heads a bit faster then Mojang API.
+  # Added since 1.16.0.
+  use-cache-server: true
   # Defines how long player skin texture link is stored into local cache before it is requested again.
   # Defined value is in the minutes.
   # Value 0 will not clear cache until server restart.
   # Added since 1.14.1.
   head-cache-time: 60
+  # Defines a number of player heads requested per tasks.
+  # Setting it too large may lead to temporarily being blocked from head gatherer API.
+  # Added since 1.16.0.
+  heads-per-call: 9
+  # Defines a number of ticks between each player head request task.
+  # Setting it too large may lead to temporarily being blocked from head gatherer API.
+  # Added since 1.16.0.
+  # /!\ In order to apply the changes made to this option, you must restart your server. Reloading BentoBox or the server won't work.
+  ticks-between-calls: 10
 logs:
   # Toggle whether superflat chunks regeneration should be logged in the server logs or not.
   # It can be spammy if there are a lot of superflat chunks to regenerate.
