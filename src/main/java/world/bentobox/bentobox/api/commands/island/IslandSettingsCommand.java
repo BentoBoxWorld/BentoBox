@@ -15,6 +15,8 @@ import world.bentobox.bentobox.util.Util;
  */
 public class IslandSettingsCommand extends CompositeCommand {
 
+    private Island island;
+
     public IslandSettingsCommand(CompositeCommand islandCommand) {
         super(islandCommand, "settings", "flags", "options");
     }
@@ -28,23 +30,26 @@ public class IslandSettingsCommand extends CompositeCommand {
 
     @Override
     public boolean canExecute(User user, String label, List<String> args) {
-        // Settings are only shown if you are in the right world
         if (Util.getWorld(user.getWorld()).equals(getWorld())) {
-            return true;
+            // Player is in same world
+            island = getIslands().getIslandAt(user.getLocation()).orElseGet(() -> getIslands().getIsland(user.getWorld(), user.getUniqueId()));
         } else {
-            user.sendMessage("general.errors.wrong-world");
+            island = getIslands().getIsland(getWorld(), user);
+        }
+        if (island == null) {
+            user.sendMessage("general.errors.no-island");
             return false;
         }
+        return true;
     }
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        Island island = getIslands().getIslandAt(user.getLocation()).orElseGet(() -> getIslands().getIsland(user.getWorld(), user.getUniqueId()));
         new TabbedPanelBuilder()
         .user(user)
-        .world(getWorld())
-        .tab(1, new SettingsTab(getWorld(), user, island, Flag.Type.PROTECTION))
-        .tab(2, new SettingsTab(getWorld(), user, island, Flag.Type.SETTING))
+        .world(island.getWorld())
+        .tab(1, new SettingsTab(user, island, Flag.Type.PROTECTION))
+        .tab(2, new SettingsTab(user, island, Flag.Type.SETTING))
         .startingSlot(1)
         .size(54)
         .hideIfEmpty()

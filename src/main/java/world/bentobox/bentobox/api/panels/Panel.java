@@ -4,12 +4,14 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.eclipse.jdt.annotation.NonNull;
 
+import world.bentobox.bentobox.api.panels.builders.PanelBuilder;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.listeners.PanelListenerManager;
 import world.bentobox.bentobox.util.heads.HeadGetter;
@@ -27,6 +29,7 @@ public class Panel implements HeadRequester, InventoryHolder {
     private PanelListener listener;
     private User user;
     private String name;
+    private World world;
 
     /**
      * Various types of Panel that can be created.
@@ -49,6 +52,17 @@ public class Panel implements HeadRequester, InventoryHolder {
      */
     public Panel(String name, Map<Integer, PanelItem> items, int size, User user, PanelListener listener, Type type) {
         makePanel(name, items, size, user, listener, type);
+    }
+
+    /**
+     * @param pb - PanelBuilder
+     * @since 1.16.0
+     */
+    public Panel(PanelBuilder pb) {
+        this.world = pb.getWorld();
+        this.makePanel(pb.getName(), pb.getItems(),
+                Math.max(pb.getSize(), pb.getItems().isEmpty() ? pb.getSize() : pb.getItems().lastKey() + 1),
+                pb.getUser(), pb.getListener(), pb.getPanelType());
     }
 
     protected void makePanel(String name, Map<Integer, PanelItem> items, int size, User user,
@@ -200,4 +214,23 @@ public class Panel implements HeadRequester, InventoryHolder {
     public String getName() {
         return name;
     }
+
+    /**
+     * Get the world that applies to this panel
+     * @return the optional world
+     * @since 1.16.0
+     */
+    public Optional<World> getWorld() {
+        return Optional.ofNullable(world);
+    }
+
+    /**
+     * @param world the world to set
+     * @since 1.16.0
+     */
+    public void setWorld(World world) {
+        this.world = world;
+    }
+
+
 }

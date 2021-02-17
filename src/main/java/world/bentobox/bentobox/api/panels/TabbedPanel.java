@@ -42,6 +42,7 @@ public class TabbedPanel extends Panel implements PanelListener {
      */
     public TabbedPanel(TabbedPanelBuilder tpb) {
         this.tpb = tpb;
+        this.setWorld(tpb.getWorld());
     }
 
     /* (non-Javadoc)

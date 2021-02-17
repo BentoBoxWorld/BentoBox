@@ -47,16 +47,15 @@ public class SettingsTab implements Tab, ClickHandler {
 
     /**
      * Show a tab of settings
-     * @param world - world
      * @param user - user who is viewing the tab
      * @param island - the island
      * @param type - flag type
      */
-    public SettingsTab(World world, User user, Island island, Type type) {
-        this.world = world;
+    public SettingsTab(User user, Island island, Type type) {
         this.user = user;
         this.island = island;
         this.type = type;
+        this.world = island.getWorld();
     }
 
     /**

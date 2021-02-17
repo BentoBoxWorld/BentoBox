@@ -7,10 +7,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.inventory.ClickType;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
@@ -47,43 +49,45 @@ public class GeoMobLimitTab implements Tab, ClickHandler {
     private final BentoBox plugin = BentoBox.getInstance();
     private final User user;
     private final EntityLimitTabType type;
+    private final World world;
 
     /**
      * @param user - user viewing the tab
      * @param type - type of tab to show - Geo limit or Mob limit
+     * @param world - world where this tab is being used
      */
-    public GeoMobLimitTab(@NonNull User user, @NonNull EntityLimitTabType type) {
+    public GeoMobLimitTab(@NonNull User user, @NonNull EntityLimitTabType type, World world) {
         super();
         this.user = user;
         this.type = type;
+        this.world = world;
     }
 
 
     @Override
     public boolean onClick(Panel panel, User user, ClickType clickType, int slot) {
-        // This is a click on the mob limit panel
         // Case panel to Tabbed Panel to get the active page
         TabbedPanel tp = (TabbedPanel)panel;
         // Convert the slot and active page to an index
         int index = tp.getActivePage() * 36 + slot - 9;
         EntityType c = LIVING_ENTITY_TYPES.get(index);
         if (type == EntityLimitTabType.MOB_LIMIT) {
-            if (plugin.getIWM().getMobLimitSettings(user.getWorld()).contains(c.name())) {
-                plugin.getIWM().getMobLimitSettings(user.getWorld()).remove(c.name());
+            if (plugin.getIWM().getMobLimitSettings(world).contains(c.name())) {
+                plugin.getIWM().getMobLimitSettings(world).remove(c.name());
             } else {
-                plugin.getIWM().getMobLimitSettings(user.getWorld()).add(c.name());
+                plugin.getIWM().getMobLimitSettings(world).add(c.name());
             }
         } else {
-            if (plugin.getIWM().getGeoLimitSettings(user.getWorld()).contains(c.name())) {
-                plugin.getIWM().getGeoLimitSettings(user.getWorld()).remove(c.name());
+            if (plugin.getIWM().getGeoLimitSettings(world).contains(c.name())) {
+                plugin.getIWM().getGeoLimitSettings(world).remove(c.name());
             } else {
-                plugin.getIWM().getGeoLimitSettings(user.getWorld()).add(c.name());
+                plugin.getIWM().getGeoLimitSettings(world).add(c.name());
             }
         }
         // Apply change to panel
         panel.getInventory().setItem(slot, getPanelItem(c, user).getItem());
         // Save settings
-        plugin.getIWM().getAddon(Util.getWorld(user.getWorld())).ifPresent(GameModeAddon::saveWorldSettings);
+        plugin.getIWM().getAddon(Util.getWorld(world)).ifPresent(GameModeAddon::saveWorldSettings);
         return true;
     }
 
@@ -119,7 +123,7 @@ public class GeoMobLimitTab implements Tab, ClickHandler {
         pib.name(Util.prettifyText(c.toString()));
         pib.clickHandler(this);
         if (type == EntityLimitTabType.MOB_LIMIT) {
-            if (!BentoBox.getInstance().getIWM().getMobLimitSettings(user.getWorld()).contains(c.name())) {
+            if (!BentoBox.getInstance().getIWM().getMobLimitSettings(world).contains(c.name())) {
                 pib.icon(Material.GREEN_SHULKER_BOX);
                 pib.description(user.getTranslation("protection.flags.LIMIT_MOBS.can"));
             } else {
@@ -127,7 +131,7 @@ public class GeoMobLimitTab implements Tab, ClickHandler {
                 pib.description(user.getTranslation("protection.flags.LIMIT_MOBS.cannot"));
             }
         } else {
-            if (BentoBox.getInstance().getIWM().getGeoLimitSettings(user.getWorld()).contains(c.name())) {
+            if (BentoBox.getInstance().getIWM().getGeoLimitSettings(world).contains(c.name())) {
                 pib.icon(Material.GREEN_SHULKER_BOX);
                 pib.description(user.getTranslation("protection.panel.flag-item.setting-active"));
             } else {
