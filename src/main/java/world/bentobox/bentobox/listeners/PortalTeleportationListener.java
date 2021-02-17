@@ -65,8 +65,9 @@ public class PortalTeleportationListener implements Listener {
         if (!(e.getEntity() instanceof Player)) {
             return;
         }
+        Entity entity = e.getEntity();
         Material type = e.getLocation().getBlock().getType();
-        UUID uuid = e.getEntity().getUniqueId();
+        UUID uuid = entity.getUniqueId();
         if (inPortal.contains(uuid) || !plugin.getIWM().inWorld(Util.getWorld(e.getLocation().getWorld()))) {
             return;
         }
@@ -75,8 +76,8 @@ public class PortalTeleportationListener implements Listener {
             // Schedule a time
             Bukkit.getScheduler().runTaskLater(plugin, () -> {
                 // Check again if still in portal
-                if (type.equals(Material.NETHER_PORTAL)) {
-                    PlayerPortalEvent en = new PlayerPortalEvent((Player)e.getEntity(), e.getLocation(), null, TeleportCause.NETHER_PORTAL, 0, false, 0);
+                if (entity.getLocation().getBlock().getType().equals(Material.NETHER_PORTAL)) {
+                    PlayerPortalEvent en = new PlayerPortalEvent((Player)entity, e.getLocation(), null, TeleportCause.NETHER_PORTAL, 0, false, 0);
                     if (!this.onIslandPortal(en)) {
                         // Failed
                         inPortal.remove(uuid);
@@ -89,7 +90,7 @@ public class PortalTeleportationListener implements Listener {
         }
         // End portals are instant transfer
         if (!Bukkit.getAllowEnd() && (type.equals(Material.END_PORTAL) || type.equals(Material.END_GATEWAY))) {
-            PlayerPortalEvent en = new PlayerPortalEvent((Player)e.getEntity(),
+            PlayerPortalEvent en = new PlayerPortalEvent((Player)entity,
                     e.getLocation(),
                     null,
                     type.equals(Material.END_PORTAL) ? TeleportCause.END_PORTAL : TeleportCause.END_GATEWAY,
