@@ -377,11 +377,11 @@ public class IslandsManager {
      * If they are in a team, the team island is returned.
      * @param world world to check
      * @param user user
-     * @return Island or null
+     * @return Island or null if not found or null user
      */
     @Nullable
-    public Island getIsland(@NonNull World world, @NonNull User user){
-        return islandCache.get(world, user.getUniqueId());
+    public Island getIsland(@NonNull World world, @Nullable User user){
+        return user == null || user.getUniqueId() == null ? null : getIsland(world, user.getUniqueId());
     }
 
     /**

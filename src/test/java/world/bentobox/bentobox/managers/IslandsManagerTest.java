@@ -593,6 +593,17 @@ public class IslandsManagerTest {
     }
 
     /**
+     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#getIsland(World, User)}
+     */
+    @Test
+    public void testGetIslandWorldUser() {
+        IslandsManager im = new IslandsManager(plugin);
+        Island island = im.createIsland(location, user.getUniqueId());
+        assertEquals(island, im.getIsland(world, user));
+        assertNull(im.getIsland(world, (User)null));
+    }
+
+    /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#getIsland(World, UUID)}.
      */
     @Test
@@ -721,7 +732,7 @@ public class IslandsManagerTest {
         when(iwm.inWorld(world)).thenReturn(false);
         assertNull(im.getSafeHomeLocation(world, user, 0));
     }
-    
+
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#getSafeHomeLocation(World, User, int)}.
      */
