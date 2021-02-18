@@ -88,7 +88,7 @@ public class Util {
      * @return Location of closest island
      */
     public static Location getClosestIsland(Location location) {
-        int dist = plugin.getIWM().getIslandDistance(location.getWorld());
+        int dist = plugin.getIWM().getIslandDistance(location.getWorld()) * 2;
         long x = Math.round((double) location.getBlockX() / dist) * dist + plugin.getIWM().getIslandXOffset(location.getWorld());
         long z = Math.round((double) location.getBlockZ() / dist) * dist + plugin.getIWM().getIslandZOffset(location.getWorld());
         if (location.getBlockX() == x && location.getBlockZ() == z) {

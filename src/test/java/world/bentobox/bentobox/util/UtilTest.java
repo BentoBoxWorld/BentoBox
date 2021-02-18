@@ -139,8 +139,8 @@ public class UtilTest {
         when(location.getBlockX()).thenReturn(456);
         when(location.getBlockZ()).thenReturn(456);
         Location l = Util.getClosestIsland(location);
-        assertEquals(500, l.getBlockX());
-        assertEquals(500, l.getBlockZ());
+        assertEquals(400, l.getBlockX());
+        assertEquals(400, l.getBlockZ());
     }
 
     /**

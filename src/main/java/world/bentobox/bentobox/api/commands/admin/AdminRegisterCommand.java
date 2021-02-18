@@ -54,7 +54,7 @@ public class AdminRegisterCommand extends ConfirmableCommand {
         }
 
         // Check if this spot is still being deleted
-        Location closestIsland = getClosestIsland(user.getLocation());
+        Location closestIsland = Util.getClosestIsland(user.getLocation());
         if (getPlugin().getIslandDeletionManager().inDeletion(closestIsland)) {
             user.sendMessage("commands.admin.register.in-deletion");
             return false;
@@ -139,20 +139,6 @@ public class AdminRegisterCommand extends ConfirmableCommand {
         }
         List<String> options = new ArrayList<>(Util.getOnlinePlayerList(user));
         return Optional.of(Util.tabLimit(options, lastArg));
-    }
-
-    /**
-     * This returns the coordinate of where an island should be on the grid.
-     *
-     * @param location - location to check
-     * @return Location of where an island should be on a grid in this world
-     */
-    public Location getClosestIsland(Location location) {
-        int dist = getIWM().getIslandDistance(getWorld()) * 2;
-        long x = Math.round((double) location.getBlockX() / dist) * dist + getIWM().getIslandXOffset(getWorld());
-        long z = Math.round((double) location.getBlockZ() / dist) * dist + getIWM().getIslandZOffset(getWorld());
-        long y = getIWM().getIslandHeight(getWorld());
-        return new Location(location.getWorld(), x, y, z);
     }
 
 }
