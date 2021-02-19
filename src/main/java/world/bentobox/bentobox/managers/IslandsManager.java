@@ -1581,6 +1581,7 @@ public class IslandsManager {
             Map<UUID, List<Island>> memberships = new HashMap<>();
             handler.loadObjects()
             .stream().filter(i -> i.getOwner() != null)
+            .filter(i -> i.getWorld() != null)
             .filter(i -> i.getWorld().equals(world))
             .filter(i -> !i.isDoNotLoad())
             .forEach(i -> {
