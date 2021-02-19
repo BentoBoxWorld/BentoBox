@@ -258,7 +258,11 @@ public class ServerCompatibility {
      */
     @NonNull
     public ServerSoftware getServerSoftware() {
-        String serverSoftware = Bukkit.getServer().getVersion().substring(4).split("-")[0];
+        String[] parts = Bukkit.getServer().getVersion().split("-");
+        if (parts.length < 2) {
+            return ServerSoftware.UNKNOWN.setName(Bukkit.getServer().getVersion().toUpperCase(Locale.ENGLISH));
+        }
+        String serverSoftware = Bukkit.getServer().getVersion().split("-")[1];
         try {
             return ServerSoftware.valueOf(serverSoftware.toUpperCase(Locale.ENGLISH));
         } catch (IllegalArgumentException e) {
