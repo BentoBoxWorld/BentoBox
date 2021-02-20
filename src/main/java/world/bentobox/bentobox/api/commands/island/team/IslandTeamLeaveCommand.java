@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
+import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.island.IslandEvent;
 import world.bentobox.bentobox.api.events.team.TeamEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
@@ -66,6 +67,15 @@ public class IslandTeamLeaveCommand extends ConfirmableCommand {
 
     private void leave(User user) {
         Island island = getIslands().getIsland(getWorld(), user);
+        // Fire event
+        IslandBaseEvent event = TeamEvent.builder()
+                .island(island)
+                .reason(TeamEvent.Reason.LEAVE)
+                .involvedPlayer(user.getUniqueId())
+                .build();
+        if (event.isCancelled()) {
+            return;
+        }
         UUID ownerUUID = getIslands().getOwner(getWorld(), user.getUniqueId());
         if (ownerUUID != null) {
             User.getInstance(ownerUUID).sendMessage("commands.island.team.leave.left-your-island", TextVariables.NAME, user.getName());
@@ -87,12 +97,6 @@ public class IslandTeamLeaveCommand extends ConfirmableCommand {
             showResets(user);
         }
         user.sendMessage("commands.island.team.leave.success");
-        // Fire event
-        TeamEvent.builder()
-        .island(island)
-        .reason(TeamEvent.Reason.LEAVE)
-        .involvedPlayer(user.getUniqueId())
-        .build();
         IslandEvent.builder()
         .island(island)
         .involvedPlayer(user.getUniqueId())

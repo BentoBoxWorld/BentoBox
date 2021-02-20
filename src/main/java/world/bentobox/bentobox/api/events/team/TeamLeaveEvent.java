@@ -8,6 +8,11 @@ import org.bukkit.event.HandlerList;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.database.objects.Island;
 
+/**
+ * Fired when player leaves an island.
+ * @author tastybento
+ *
+ */
 public class TeamLeaveEvent extends IslandBaseEvent {
 
     private static final HandlerList handlers = new HandlerList();

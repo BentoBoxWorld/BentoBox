@@ -11,6 +11,7 @@ import org.bukkit.OfflinePlayer;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
+import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.island.IslandEvent;
 import world.bentobox.bentobox.api.events.team.TeamEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
@@ -82,19 +83,23 @@ public class IslandTeamKickCommand extends ConfirmableCommand {
 
     private void kick(User user, UUID targetUUID) {
         User target = User.getInstance(targetUUID);
-        target.sendMessage("commands.island.team.kick.owner-kicked", TextVariables.GAMEMODE, getAddon().getDescription().getName());
         Island oldIsland = getIslands().getIsland(getWorld(), targetUUID);
+        // Fire event
+        IslandBaseEvent event = TeamEvent.builder()
+                .island(oldIsland)
+                .reason(TeamEvent.Reason.KICK)
+                .involvedPlayer(targetUUID)
+                .build();
+        if (event.isCancelled()) {
+            return;
+        }
+        target.sendMessage("commands.island.team.kick.owner-kicked", TextVariables.GAMEMODE, getAddon().getDescription().getName());
+
         getIslands().removePlayer(getWorld(), targetUUID);
         // Clean the target player
         getPlayers().cleanLeavingPlayer(getWorld(), target, true);
 
         user.sendMessage("commands.island.team.kick.success", TextVariables.NAME, target.getName());
-        // Fire event
-        TeamEvent.builder()
-        .island(oldIsland)
-        .reason(TeamEvent.Reason.KICK)
-        .involvedPlayer(targetUUID)
-        .build();
         IslandEvent.builder()
         .island(oldIsland)
         .involvedPlayer(user.getUniqueId())
