@@ -115,7 +115,8 @@ public class AddonsManager {
             addon = addonClassLoader.getAddon();
         } catch (Exception e) {
             // We couldn't load the addon, aborting.
-            plugin.logError(e.getMessage());
+            plugin.logError("Could not load addon! " + e.getMessage());
+            plugin.logStacktrace(e);
             return;
         }
 
