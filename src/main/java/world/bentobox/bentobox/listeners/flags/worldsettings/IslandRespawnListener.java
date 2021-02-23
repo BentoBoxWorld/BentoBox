@@ -22,7 +22,7 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 public class IslandRespawnListener extends FlagListener {
-    
+
     private final Map<UUID, UUID> respawn = new HashMap<>();
 
     /**
@@ -41,10 +41,10 @@ public class IslandRespawnListener extends FlagListener {
         if (!getIslands().hasIsland(world, e.getEntity().getUniqueId()) && !getIslands().inTeam(world, e.getEntity().getUniqueId())) {
             return; // doesn't have an island in this world
         }
-        
+
         respawn.put(e.getEntity().getUniqueId(), world.getUID());
     }
-    
+
     /**
      * Place players back on their island if respawn on island is true and active
      * @param e - event
@@ -55,18 +55,18 @@ public class IslandRespawnListener extends FlagListener {
         if (worldUUID == null) {
             return; // no respawn world set
         }
-        
+
         final World world = e.getPlayer().getServer().getWorld(worldUUID);
         if (world == null) {
             return; // world no longer available
         }
-        
-        final Location respawnLocation = getIslands().getSafeHomeLocation(Util.getWorld(world), User.getInstance(e.getPlayer().getUniqueId()), 1);
+
+        final Location respawnLocation = getIslands().getSafeHomeLocation(Util.getWorld(world), User.getInstance(e.getPlayer().getUniqueId()), "");
         if (respawnLocation != null) {
             e.setRespawnLocation(respawnLocation);
         }
         // Run respawn commands, if any
         Util.runCommands(User.getInstance(e.getPlayer()), getIWM().getOnRespawnCommands(world), "respawn");
     }
-    
+
 }

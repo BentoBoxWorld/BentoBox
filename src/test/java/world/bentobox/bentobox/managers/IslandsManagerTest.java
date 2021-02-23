@@ -30,7 +30,6 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
-import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -717,7 +716,7 @@ public class IslandsManagerTest {
         IslandsManager im = new IslandsManager(plugin);
         when(pm.getHomeLocation(any(), any(User.class), eq(0))).thenReturn(null);
         when(pm.getHomeLocation(any(), any(User.class), eq(1))).thenReturn(location);
-        assertEquals(location, im.getSafeHomeLocation(world, user, 0));
+        assertEquals(location, im.getSafeHomeLocation(world, user, ""));
         // Change location so that it is not safe
         // TODO
     }
@@ -730,7 +729,7 @@ public class IslandsManagerTest {
     public void testGetSafeHomeLocationWorldNotIslandWorld() {
         IslandsManager im = new IslandsManager(plugin);
         when(iwm.inWorld(world)).thenReturn(false);
-        assertNull(im.getSafeHomeLocation(world, user, 0));
+        assertNull(im.getSafeHomeLocation(world, user, ""));
     }
 
     /**
@@ -740,7 +739,7 @@ public class IslandsManagerTest {
     public void testGetSafeHomeLocationNoIsland() {
         IslandsManager im = new IslandsManager(plugin);
         when(pm.getHomeLocation(eq(world), eq(user), eq(0))).thenReturn(null);
-        assertNull(im.getSafeHomeLocation(world, user, 0));
+        assertNull(im.getSafeHomeLocation(world, user, ""));
         verify(plugin).logWarning(eq("null player has no island in world world!"));
     }
 
@@ -759,21 +758,6 @@ public class IslandsManagerTest {
         // Set the spawn island
         im.setSpawn(island);
         assertEquals(location,im.getSpawnPoint(world));
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#homeTeleport(World, Player, int)}.
-     */
-    @SuppressWarnings("deprecation")
-    @Test
-    public void testHomeTeleportPlayerInt() {
-        when(iwm.getDefaultGameMode(world)).thenReturn(GameMode.SURVIVAL);
-        IslandsManager im = new IslandsManager(plugin);
-        when(pm.getHomeLocation(any(), any(User.class), eq(0))).thenReturn(null);
-        when(pm.getHomeLocation(any(), any(User.class), eq(1))).thenReturn(location);
-        im.homeTeleport(world, player, 0);
-        verify(player).teleport(eq(location), any());
-
     }
 
     /**

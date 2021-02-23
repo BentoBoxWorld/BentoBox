@@ -110,7 +110,7 @@ public class IslandRespawnListenerTest {
         when(plugin.getIslands()).thenReturn(im);
         safeLocation = mock(Location.class);
         when(safeLocation.getWorld()).thenReturn(world);
-        when(im.getSafeHomeLocation(any(), any(), Mockito.anyInt())).thenReturn(safeLocation);
+        when(im.getSafeHomeLocation(any(), any(), Mockito.anyString())).thenReturn(safeLocation);
 
         // Sometimes use Mockito.withSettings().verboseLogging()
         User.setPlugin(plugin);

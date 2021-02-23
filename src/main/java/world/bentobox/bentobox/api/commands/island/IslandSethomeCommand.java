@@ -2,12 +2,19 @@ package world.bentobox.bentobox.api.commands.island;
 
 import java.util.List;
 
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.eclipse.jdt.annotation.Nullable;
+
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.database.objects.Island;
 
 public class IslandSethomeCommand extends ConfirmableCommand {
+
+    private @Nullable Island island;
 
     public IslandSethomeCommand(CompositeCommand islandCommand) {
         super(islandCommand, "sethome");
@@ -18,18 +25,32 @@ public class IslandSethomeCommand extends ConfirmableCommand {
         setPermission("island.sethome");
         setOnlyPlayer(true);
         setDescription("commands.island.sethome.description");
-        new CustomIslandMultiHomeHelp(this);
     }
 
     @Override
     public boolean canExecute(User user, String label, List<String> args) {
+        island = getIslands().getIsland(getWorld(), user);
         // Check island
-        if (!getPlugin().getIslands().hasIsland(getWorld(), user) && !getPlugin().getIslands().inTeam(getWorld(), user.getUniqueId())) {
+        if (island == null || island.getOwner() == null) {
             user.sendMessage("general.errors.no-island");
             return false;
         }
-        if (!getPlugin().getIslands().locationIsOnIsland(user.getPlayer(), user.getLocation())) {
+        if (!island.onIsland(user.getLocation())) {
             user.sendMessage("commands.island.sethome.must-be-on-your-island");
+            return false;
+        }
+        // Check number of homes
+        int maxHomes = Math.max(island.getMaxHomes(), getIWM().getMaxHomes(getWorld()));
+        // Check is island owner is online
+        Player owner = Bukkit.getPlayer(island.getOwner());
+        if (owner != null && owner.isOnline()) {
+            maxHomes = User.getInstance(owner).getPermissionValue(getPermissionPrefix() + "island.maxhomes", maxHomes);
+        }
+        island.setMaxHomes(maxHomes);
+        if (getIslands().getNumberOfHomesIfAdded(island, String.join(" ", args)) > maxHomes) {
+            user.sendMessage("commands.island.sethome.too-many-homes", TextVariables.NUMBER, String.valueOf(island.getMaxHomes()));
+            user.sendMessage("commands.island.sethome.homes-are");
+            island.getHomes().keySet().stream().filter(s -> !s.isEmpty()).forEach(s -> user.sendMessage("home-list-syntax", TextVariables.NAME, s));
             return false;
         }
         return true;
@@ -37,35 +58,7 @@ public class IslandSethomeCommand extends ConfirmableCommand {
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        if (args.isEmpty()) {
-            // island sethome
-            return setHome(user, 1);
-        } else {
-            // Dynamic home sizes with permissions
-            int maxHomes = user.getPermissionValue(getPermissionPrefix() + "island.maxhomes", getIWM().getMaxHomes(getWorld()));
-            if (maxHomes > 1) {
-                // Check the number given is a number
-                int number;
-                try {
-                    number = Integer.parseInt(args.get(0));
-                    if (number < 1 || number > maxHomes) {
-                        user.sendMessage("commands.island.sethome.num-homes", TextVariables.NUMBER, String.valueOf(maxHomes));
-                        return false;
-                    } else {
-                        return setHome(user, number);
-                    }
-                } catch (Exception e) {
-                    user.sendMessage("commands.island.sethome.num-homes", TextVariables.NUMBER, String.valueOf(maxHomes));
-                    return false;
-                }
-            } else {
-                user.sendMessage("general.errors.no-permission", TextVariables.PERMISSION, this.getPermissionPrefix() + "island.maxhomes.[number]");
-                return false;
-            }
-        }
-    }
-
-    private boolean setHome(User user, int number) {
+        String number = String.join(" ", args);
         // Check if the player is in the Nether
         if (getIWM().isNether(user.getWorld())) {
             // Check if he is (not) allowed to set his home here
@@ -99,10 +92,11 @@ public class IslandSethomeCommand extends ConfirmableCommand {
         return true;
     }
 
-    private void doSetHome(User user, int number) {
+    private void doSetHome(User user, String name) {
         // Define a runnable as we will be using it often in the code below.
-        getPlugin().getPlayers().setHomeLocation(user, user.getLocation(), number);
+        getIslands().setHomeLocation(user, user.getLocation(), name);
         user.sendMessage("commands.island.sethome.home-set");
-
+        user.sendMessage("commands.island.sethome.homes-are");
+        island.getHomes().keySet().stream().filter(s -> !s.isEmpty()).forEach(s -> user.sendMessage("home-list-syntax", TextVariables.NAME, s));
     }
 }

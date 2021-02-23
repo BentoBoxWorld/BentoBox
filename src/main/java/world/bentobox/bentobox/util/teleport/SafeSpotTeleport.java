@@ -51,6 +51,7 @@ public class SafeSpotTeleport {
     private List<Pair<Integer, Integer>> chunksToScan;
     private final Runnable runnable;
     private final CompletableFuture<Boolean> result;
+    private final String homeName;
 
     /**
      * Teleports and entity to a safe spot on island
@@ -62,6 +63,7 @@ public class SafeSpotTeleport {
         this.location = builder.getLocation();
         this.portal = builder.isPortal();
         this.homeNumber = builder.getHomeNumber();
+        this.homeName = builder.getHomeName();
         this.runnable = builder.getRunnable();
         this.result = builder.getResult();
 
@@ -241,9 +243,9 @@ public class SafeSpotTeleport {
         task.cancel();
         // Return to main thread and teleport the player
         Bukkit.getScheduler().runTask(plugin, () -> {
-            if (!portal && entity instanceof Player && homeNumber > 0) {
+            if (!portal && entity instanceof Player && (homeNumber > 0 || !homeName.isEmpty())) {
                 // Set home if so marked
-                plugin.getPlayers().setHomeLocation(User.getInstance(entity), loc, homeNumber);
+                plugin.getIslands().setHomeLocation(User.getInstance(entity), loc, homeName);
             }
             Util.teleportAsync(entity, loc).thenRun(() -> {
                 if (runnable != null) Bukkit.getScheduler().runTask(plugin, runnable);
@@ -293,6 +295,7 @@ public class SafeSpotTeleport {
         private final BentoBox plugin;
         private Entity entity;
         private int homeNumber = 0;
+        private String homeName;
         private boolean portal = false;
         private String failureMessage = "";
         private Location location;
@@ -327,9 +330,22 @@ public class SafeSpotTeleport {
          * Set the home number to this number
          * @param homeNumber home number
          * @return Builder
+         * @deprecated use {@link #homeName}
          */
+        @Deprecated
         public Builder homeNumber(int homeNumber) {
             this.homeNumber = homeNumber;
+            return this;
+        }
+
+        /**
+         * Set the home name
+         * @param homeName - home name
+         * @return Builder
+         * @Since 1.16.0
+         */
+        public Builder homeName(String homeName) {
+            this.homeName = homeName;
             return this;
         }
 
@@ -429,6 +445,13 @@ public class SafeSpotTeleport {
         }
 
         /**
+         * @return the homeName
+         */
+        public String getHomeName() {
+            return homeName;
+        }
+
+        /**
          * @return the portal
          */
         public boolean isPortal() {
@@ -463,5 +486,7 @@ public class SafeSpotTeleport {
         public CompletableFuture<Boolean> getResult() {
             return result;
         }
+
+
     }
 }

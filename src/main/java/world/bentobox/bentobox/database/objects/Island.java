@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -24,6 +25,7 @@ import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
@@ -194,6 +196,19 @@ public class Island implements DataObject, MetaDataAble {
      */
     @Expose
     private Map<String, MetaDataValue> metaData;
+
+    /**
+     * Island homes. Replaces player homes
+     * @since 1.16.0
+     */
+    @Expose
+    private Map<String, Location> homes;
+
+    /**
+     * The maximum number of homes allowed on this island
+     */
+    @Expose
+    private int maxHomes = 1;
 
     /*
      * *************************** Constructors ******************************
@@ -1411,6 +1426,80 @@ public class Island implements DataObject, MetaDataAble {
         setChanged();
     }
 
+    /**
+     * @return the homes
+     * @since 1.16.0
+     */
+    @NotNull
+    public Map<String, Location> getHomes() {
+        return homes == null ? new TreeMap<>(String.CASE_INSENSITIVE_ORDER) : homes;
+    }
+
+    /**
+     * @return the homes
+     * @since 1.16.0
+     */
+    @Nullable
+    public Location getHome(String name) {
+        return getHomes().get(name);
+    }
+
+    /**
+     * @param homes the homes to set
+     * @since 1.16.0
+     */
+    public void setHomes(Map<String, Location> homes) {
+        this.homes = homes;
+    }
+
+    /**
+     * @param homes the homes to set
+     * @since 1.16.0
+     */
+    public void addHome(String name, Location location) {
+        getHomes().put(name, location);
+    }
+
+    /**
+     * Remove a named home from this island
+     * @param name - home name to remove
+     * @return true if home removed successfully
+     * @since 1.16.0
+     */
+    public boolean removeHome(String name) {
+        return getHomes().remove(name) != null;
+    }
+
+    /**
+     * Rename a home
+     * @param oldName - old name of home
+     * @param newName - new name of home
+     * @return true if successful, false if oldName does not exist, already exists
+     * @since 1.16.0
+     */
+    public boolean renameHome(String oldName, String newName) {
+        if (getHomes().containsKey(oldName) && !getHomes().containsKey(newName)) {
+            this.addHome(newName, this.getHome(oldName));
+            removeHome(oldName);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * @return the maxHomes
+     */
+    public int getMaxHomes() {
+        return maxHomes;
+    }
+
+    /**
+     * @param maxHomes the maxHomes to set
+     */
+    public void setMaxHomes(int maxHomes) {
+        this.maxHomes = maxHomes;
+    }
+
     @Override
     public String toString() {
         return "Island [changed=" + changed + ", deleted=" + deleted + ", "
@@ -1429,8 +1518,8 @@ public class Island implements DataObject, MetaDataAble {
                 + (cooldowns != null ? "cooldowns=" + cooldowns + ", " : "")
                 + (commandRanks != null ? "commandRanks=" + commandRanks + ", " : "")
                 + (reserved != null ? "reserved=" + reserved + ", " : "")
-                + (metaData != null ? "metaData=" + metaData : "") + "]";
+                + (metaData != null ? "metaData=" + metaData : "")
+                + (homes != null ? "homes=" + homes : "")+ "]";
     }
-
 
 }
