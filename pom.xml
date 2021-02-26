@@ -182,6 +182,10 @@
             <id>papermc</id>
             <url>https://papermc.io/repo/repository/maven-public/</url>
         </repository>
+        <repository>
+            <id>langutils-api-repo</id>
+            <url>https://raw.githubusercontent.com/apachezy/LangUtils-API/master/repo/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -291,6 +295,13 @@
             <artifactId>paperlib</artifactId>
             <version>1.0.6</version>
             <scope>compile</scope>
+        </dependency>
+        <!-- LangUtils -->
+        <dependency>
+            <groupId>com.meowj</groupId>
+            <artifactId>LangUtils-API</artifactId>
+            <version>3.0.0</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
