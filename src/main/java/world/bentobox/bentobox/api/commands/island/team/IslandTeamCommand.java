@@ -31,8 +31,6 @@ public class IslandTeamCommand extends CompositeCommand {
      */
     private Map<UUID, Invite> inviteMap;
 
-    private IslandTeamInviteCommand inviteCommand;
-
     public IslandTeamCommand(CompositeCommand parent) {
         super(parent, "team");
         inviteMap = new HashMap<>();
@@ -44,7 +42,7 @@ public class IslandTeamCommand extends CompositeCommand {
         setOnlyPlayer(true);
         setDescription("commands.island.team.description");
         // Register commands
-        inviteCommand = new IslandTeamInviteCommand(this);
+        new IslandTeamInviteCommand(this);
         new IslandTeamLeaveCommand(this);
         new IslandTeamSetownerCommand(this);
         new IslandTeamKickCommand(this);
@@ -73,9 +71,13 @@ public class IslandTeamCommand extends CompositeCommand {
             // Cancelled
             return false;
         }
+        Island island = getIslands().getIsland(getWorld(), playerUUID);
+        if (island == null) {
+            return false;
+        }
         Set<UUID> teamMembers = getMembers(getWorld(), user);
         if (ownerUUID.equals(playerUUID)) {
-            int maxSize = inviteCommand.getMaxTeamSize(user);
+            int maxSize = getIslands().getMaxMembers(island, RanksManager.MEMBER_RANK);
             if (teamMembers.size() < maxSize) {
                 user.sendMessage("commands.island.team.invite.you-can-invite", TextVariables.NUMBER, String.valueOf(maxSize - teamMembers.size()));
             } else {
@@ -83,7 +85,7 @@ public class IslandTeamCommand extends CompositeCommand {
             }
         }
         // Show members of island
-        showMembers(getIslands().getIsland(getWorld(), playerUUID), user);
+        showMembers(island, user);
         return true;
     }
 
@@ -101,7 +103,7 @@ public class IslandTeamCommand extends CompositeCommand {
 
         // Show header:
         user.sendMessage("commands.island.team.info.header",
-                "[max]", String.valueOf(inviteCommand.getMaxTeamSize(user)),
+                "[max]", String.valueOf(getIslands().getMaxMembers(island, RanksManager.MEMBER_RANK)),
                 "[total]", String.valueOf(island.getMemberSet().size()),
                 "[online]", String.valueOf(onlineMembers.size()));
 

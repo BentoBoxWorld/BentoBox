@@ -20,6 +20,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -48,6 +49,7 @@ import org.bukkit.entity.Skeleton;
 import org.bukkit.entity.Slime;
 import org.bukkit.entity.Wither;
 import org.bukkit.entity.Zombie;
+import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.junit.After;
@@ -174,6 +176,7 @@ public class IslandsManagerTest {
         when(user.getPlayer()).thenReturn(player);
         User.setPlugin(plugin);
         // Set up user already
+        when(player.getUniqueId()).thenReturn(uuid);
         User.getInstance(player);
 
         // Locales
@@ -1355,4 +1358,148 @@ public class IslandsManagerTest {
         assertFalse(im.fixIslandCenter(island));
     }
 
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#getMaxMembers(Island)}.
+     */
+    @Test
+    public void testGetMaxMembersNoOwner() {
+        Island island = mock(Island.class);
+        when(island.getOwner()).thenReturn(null);
+        // Test
+        IslandsManager im = new IslandsManager(plugin);
+        assertEquals(0, im.getMaxMembers(island, RanksManager.MEMBER_RANK));
+        verify(island).setMaxMembers(eq(null));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#getMaxMembers(Island)}.
+     */
+    @Test
+    public void testGetMaxMembersOfflineOwner() {
+        Island island = mock(Island.class);
+        when(island.getOwner()).thenReturn(uuid);
+        when(island.getWorld()).thenReturn(world);
+        when(island.getMaxMembers()).thenReturn(null);
+        when(iwm.getMaxTeamSize(eq(world))).thenReturn(4);
+        // Offline owner
+        when(Bukkit.getPlayer(any(UUID.class))).thenReturn(null);
+        // Test
+        IslandsManager im = new IslandsManager(plugin);
+        assertEquals(4, im.getMaxMembers(island, RanksManager.MEMBER_RANK));
+        verify(island).setMaxMembers(eq(RanksManager.MEMBER_RANK), eq(null));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#getMaxMembers(Island)}.
+     */
+    @Test
+    public void testGetMaxMembersOnlineOwnerNoPerms() {
+        Island island = mock(Island.class);
+        when(island.getOwner()).thenReturn(uuid);
+        when(island.getWorld()).thenReturn(world);
+        when(island.getMaxMembers()).thenReturn(null);
+        when(iwm.getMaxTeamSize(eq(world))).thenReturn(4);
+        // Online owner
+        when(Bukkit.getPlayer(any(UUID.class))).thenReturn(player);
+        // Test
+        IslandsManager im = new IslandsManager(plugin);
+        assertEquals(4, im.getMaxMembers(island, RanksManager.MEMBER_RANK));
+        verify(island).setMaxMembers(eq(RanksManager.MEMBER_RANK), eq(null));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#getMaxMembers(Island)}.
+     */
+    @Test
+    public void testGetMaxMembersOnlineOwnerNoPermsCoopTrust() {
+        Island island = mock(Island.class);
+        when(island.getOwner()).thenReturn(uuid);
+        when(island.getWorld()).thenReturn(world);
+        when(island.getMaxMembers()).thenReturn(null);
+        when(iwm.getMaxTeamSize(eq(world))).thenReturn(4);
+        when(iwm.getMaxCoopSize(eq(world))).thenReturn(2);
+        when(iwm.getMaxTrustSize(eq(world))).thenReturn(3);
+        // Online owner
+        when(Bukkit.getPlayer(any(UUID.class))).thenReturn(player);
+        // Test
+        IslandsManager im = new IslandsManager(plugin);
+        assertEquals(2, im.getMaxMembers(island, RanksManager.COOP_RANK));
+        verify(island).setMaxMembers(eq(RanksManager.COOP_RANK), eq(null));
+        assertEquals(3, im.getMaxMembers(island, RanksManager.TRUSTED_RANK));
+        verify(island).setMaxMembers(eq(RanksManager.TRUSTED_RANK), eq(null));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#getMaxMembers(Island)}.
+     */
+    @Test
+    public void testGetMaxMembersOnlineOwnerNoPermsPreset() {
+        Island island = mock(Island.class);
+        when(island.getOwner()).thenReturn(uuid);
+        when(island.getWorld()).thenReturn(world);
+        when(island.getMaxMembers(eq(RanksManager.MEMBER_RANK))).thenReturn(10);
+        when(iwm.getMaxTeamSize(eq(world))).thenReturn(4);
+        // Online owner
+        when(Bukkit.getPlayer(any(UUID.class))).thenReturn(player);
+        // Test
+        IslandsManager im = new IslandsManager(plugin);
+        assertEquals(10, im.getMaxMembers(island, RanksManager.MEMBER_RANK));
+        verify(island).setMaxMembers(eq(RanksManager.MEMBER_RANK), eq(10));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#getMaxMembers(Island)}.
+     */
+    @Test
+    public void testGetMaxMembersOnlineOwnerNoPermsPresetLessThanDefault() {
+        Island island = mock(Island.class);
+        when(island.getOwner()).thenReturn(uuid);
+        when(island.getWorld()).thenReturn(world);
+        when(island.getMaxMembers(eq(RanksManager.MEMBER_RANK))).thenReturn(10);
+        when(iwm.getMaxTeamSize(eq(world))).thenReturn(40);
+        // Online owner
+        when(Bukkit.getPlayer(any(UUID.class))).thenReturn(player);
+        // Test
+        IslandsManager im = new IslandsManager(plugin);
+        assertEquals(10, im.getMaxMembers(island, RanksManager.MEMBER_RANK));
+        verify(island).setMaxMembers(eq(RanksManager.MEMBER_RANK), eq(10));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#getMaxMembers(Island)}.
+     */
+    @Test
+    public void testGetMaxMembersOnlineOwnerHasPerm() {
+        Island island = mock(Island.class);
+        when(island.getOwner()).thenReturn(uuid);
+        when(island.getWorld()).thenReturn(world);
+        when(island.getMaxMembers()).thenReturn(null);
+        when(iwm.getMaxTeamSize(eq(world))).thenReturn(4);
+        // Permission
+        when(iwm.getPermissionPrefix(any())).thenReturn("bskyblock.");
+        PermissionAttachmentInfo pai = mock(PermissionAttachmentInfo.class);
+        when(pai.getValue()).thenReturn(true);
+        when(pai.getPermission()).thenReturn("bskyblock.team.maxsize.8");
+        Set<PermissionAttachmentInfo> set = Collections.singleton(pai);
+        when(player.getEffectivePermissions()).thenReturn(set);
+        // Online owner
+        when(Bukkit.getPlayer(any(UUID.class))).thenReturn(player);
+        // Test
+        IslandsManager im = new IslandsManager(plugin);
+        assertEquals(8, im.getMaxMembers(island, RanksManager.MEMBER_RANK));
+        verify(island).setMaxMembers(eq(RanksManager.MEMBER_RANK), eq(8));
+    }
+
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#setMaxMembers(Island, Integer)}.
+     */
+    @Test
+    public void testsetMaxMembers() {
+        Island island = mock(Island.class);
+        // Test
+        IslandsManager im = new IslandsManager(plugin);
+        im.setMaxMembers(island, RanksManager.MEMBER_RANK, 40);
+        verify(island).setMaxMembers(eq(RanksManager.MEMBER_RANK), eq(40));
+    }
 }
