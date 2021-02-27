@@ -142,10 +142,11 @@ public class Island implements DataObject, MetaDataAble {
 
     /**
      * Maximum number of members allowed in this island.
+     * Key is rank, value is number
      * @since 1.16.0
      */
     @Expose
-    private Integer maxMembers;
+    private Map<Integer, Integer> maxMembers;
 
     //// State ////
     @Expose
@@ -1419,22 +1420,41 @@ public class Island implements DataObject, MetaDataAble {
     }
 
     /**
-     * Get the maximum number of island members
-     * @return the maxMembers - if null then the world default should be used. Negative values = unlimited.
+     * @return the maxMembers
      * @since 1.16.0
      */
-    @Nullable
-    public Integer getMaxMembers() {
-        return maxMembers;
+    public Map<Integer, Integer> getMaxMembers() {
+        return maxMembers == null ? new HashMap<>() : maxMembers;
     }
 
     /**
+     * @param maxMembers the maxMembers to set
+     * @since 1.16.0
+     */
+    public void setMaxMembers(Map<Integer, Integer> maxMembers) {
+        this.maxMembers = maxMembers;
+    }
+
+    /**
+     * Get the maximum number of island members
+     * @param rank island rank value from {@link RanksManager}
+     * @return the maxMembers for the rank given - if null then the world default should be used. Negative values = unlimited.
+     * @since 1.16.0
+     */
+    @Nullable
+    public Integer getMaxMembers(int rank) {
+        return getMaxMembers().get(rank);
+    }
+
+
+    /**
      * Set the maximum number of island members
+     * @param rank island rank value from {@link RanksManager}
      * @param maxMembers the maxMembers to set. If null then the world default applies. Negative values = unlimited.
      * @since 1.16.0
      */
-    public void setMaxMembers(@Nullable Integer maxMembers) {
-        this.maxMembers = maxMembers;
+    public void setMaxMembers(int rank, Integer maxMembers) {
+        getMaxMembers().put(rank, maxMembers);
     }
 
     @Override

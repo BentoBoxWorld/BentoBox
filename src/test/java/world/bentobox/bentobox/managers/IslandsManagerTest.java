@@ -1367,7 +1367,7 @@ public class IslandsManagerTest {
         when(island.getOwner()).thenReturn(null);
         // Test
         IslandsManager im = new IslandsManager(plugin);
-        assertEquals(0, im.getMaxMembers(island));
+        assertEquals(0, im.getMaxMembers(island, RanksManager.MEMBER_RANK));
         verify(island).setMaxMembers(eq(null));
     }
 
@@ -1385,8 +1385,8 @@ public class IslandsManagerTest {
         when(Bukkit.getPlayer(any(UUID.class))).thenReturn(null);
         // Test
         IslandsManager im = new IslandsManager(plugin);
-        assertEquals(4, im.getMaxMembers(island));
-        verify(island).setMaxMembers(eq(null));
+        assertEquals(4, im.getMaxMembers(island, RanksManager.MEMBER_RANK));
+        verify(island).setMaxMembers(eq(RanksManager.MEMBER_RANK), eq(null));
     }
 
     /**
@@ -1403,8 +1403,30 @@ public class IslandsManagerTest {
         when(Bukkit.getPlayer(any(UUID.class))).thenReturn(player);
         // Test
         IslandsManager im = new IslandsManager(plugin);
-        assertEquals(4, im.getMaxMembers(island));
-        verify(island).setMaxMembers(eq(null));
+        assertEquals(4, im.getMaxMembers(island, RanksManager.MEMBER_RANK));
+        verify(island).setMaxMembers(eq(RanksManager.MEMBER_RANK), eq(null));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#getMaxMembers(Island)}.
+     */
+    @Test
+    public void testGetMaxMembersOnlineOwnerNoPermsCoopTrust() {
+        Island island = mock(Island.class);
+        when(island.getOwner()).thenReturn(uuid);
+        when(island.getWorld()).thenReturn(world);
+        when(island.getMaxMembers()).thenReturn(null);
+        when(iwm.getMaxTeamSize(eq(world))).thenReturn(4);
+        when(iwm.getMaxCoopSize(eq(world))).thenReturn(2);
+        when(iwm.getMaxTrustSize(eq(world))).thenReturn(3);
+        // Online owner
+        when(Bukkit.getPlayer(any(UUID.class))).thenReturn(player);
+        // Test
+        IslandsManager im = new IslandsManager(plugin);
+        assertEquals(2, im.getMaxMembers(island, RanksManager.COOP_RANK));
+        verify(island).setMaxMembers(eq(RanksManager.COOP_RANK), eq(null));
+        assertEquals(3, im.getMaxMembers(island, RanksManager.TRUSTED_RANK));
+        verify(island).setMaxMembers(eq(RanksManager.TRUSTED_RANK), eq(null));
     }
 
     /**
@@ -1415,14 +1437,14 @@ public class IslandsManagerTest {
         Island island = mock(Island.class);
         when(island.getOwner()).thenReturn(uuid);
         when(island.getWorld()).thenReturn(world);
-        when(island.getMaxMembers()).thenReturn(10);
+        when(island.getMaxMembers(eq(RanksManager.MEMBER_RANK))).thenReturn(10);
         when(iwm.getMaxTeamSize(eq(world))).thenReturn(4);
         // Online owner
         when(Bukkit.getPlayer(any(UUID.class))).thenReturn(player);
         // Test
         IslandsManager im = new IslandsManager(plugin);
-        assertEquals(10, im.getMaxMembers(island));
-        verify(island).setMaxMembers(eq(10));
+        assertEquals(10, im.getMaxMembers(island, RanksManager.MEMBER_RANK));
+        verify(island).setMaxMembers(eq(RanksManager.MEMBER_RANK), eq(10));
     }
 
     /**
@@ -1433,14 +1455,14 @@ public class IslandsManagerTest {
         Island island = mock(Island.class);
         when(island.getOwner()).thenReturn(uuid);
         when(island.getWorld()).thenReturn(world);
-        when(island.getMaxMembers()).thenReturn(10);
+        when(island.getMaxMembers(eq(RanksManager.MEMBER_RANK))).thenReturn(10);
         when(iwm.getMaxTeamSize(eq(world))).thenReturn(40);
         // Online owner
         when(Bukkit.getPlayer(any(UUID.class))).thenReturn(player);
         // Test
         IslandsManager im = new IslandsManager(plugin);
-        assertEquals(10, im.getMaxMembers(island));
-        verify(island).setMaxMembers(eq(10));
+        assertEquals(10, im.getMaxMembers(island, RanksManager.MEMBER_RANK));
+        verify(island).setMaxMembers(eq(RanksManager.MEMBER_RANK), eq(10));
     }
 
     /**
@@ -1464,8 +1486,8 @@ public class IslandsManagerTest {
         when(Bukkit.getPlayer(any(UUID.class))).thenReturn(player);
         // Test
         IslandsManager im = new IslandsManager(plugin);
-        assertEquals(8, im.getMaxMembers(island));
-        verify(island).setMaxMembers(eq(8));
+        assertEquals(8, im.getMaxMembers(island, RanksManager.MEMBER_RANK));
+        verify(island).setMaxMembers(eq(RanksManager.MEMBER_RANK), eq(8));
     }
 
 
@@ -1477,7 +1499,7 @@ public class IslandsManagerTest {
         Island island = mock(Island.class);
         // Test
         IslandsManager im = new IslandsManager(plugin);
-        im.setMaxMembers(island, 40);
-        verify(island).setMaxMembers(eq(40));
+        im.setMaxMembers(island, RanksManager.MEMBER_RANK, 40);
+        verify(island).setMaxMembers(eq(RanksManager.MEMBER_RANK), eq(40));
     }
 }

@@ -496,24 +496,32 @@ public class IslandsManager {
      * Will update the value based on world settings or island owner permissions (if online).
      * If the island is unowned, then this value will be 0.
      * @param island - island
+     * @param rank {@link RanksManager.MEMBER_RANK}, {@link RanksManager.COOP_RANK}, or {@link RanksManager.TRUSTED_RANK}
      * @return max number of members. If negative, then this means unlimited.
      */
-    public int getMaxMembers(@NonNull Island island) {
+    public int getMaxMembers(@NonNull Island island, int rank) {
         if (island.getOwner() == null) {
+            // No owner, no rank settings
             island.setMaxMembers(null);
             this.save(island);
             return 0;
         }
         // Island max is either the world default or specified amount for this island
         int worldDefault = plugin.getIWM().getMaxTeamSize(island.getWorld());
-        int islandMax = island.getMaxMembers() == null ? worldDefault : island.getMaxMembers();
+        if (rank == RanksManager.COOP_RANK) {
+            worldDefault = plugin.getIWM().getMaxCoopSize(island.getWorld());
+        } else if (rank == RanksManager.TRUSTED_RANK) {
+            worldDefault = plugin.getIWM().getMaxTrustSize(island.getWorld());
+        }
+
+        int islandMax = island.getMaxMembers() == null ? worldDefault : island.getMaxMembers(rank);
         // Update based on owner permissions if online
         if (Bukkit.getPlayer(island.getOwner()) != null) {
             User owner = User.getInstance(island.getOwner());
             islandMax = owner.getPermissionValue(plugin.getIWM().getPermissionPrefix(island.getWorld())
                     + "team.maxsize", islandMax);
         }
-        island.setMaxMembers(islandMax == worldDefault ? null : islandMax);
+        island.setMaxMembers(rank, islandMax == worldDefault ? null : islandMax);
         this.save(island);
         return islandMax;
     }
@@ -521,11 +529,12 @@ public class IslandsManager {
     /**
      * Sets the island max member size.
      * @param island - island
+     * @param rank {@link RanksManager.MEMBER_RANK}, {@link RanksManager.COOP_RANK}, or {@link RanksManager.TRUSTED_RANK}
      * @param maxMembers - max number of members. If negative, then this means unlimited. Null means the world
      * default will be used.
      */
-    public void setMaxMembers(@NonNull Island island, Integer maxMembers) {
-        island.setMaxMembers(maxMembers);
+    public void setMaxMembers(@NonNull Island island, int rank, Integer maxMembers) {
+        island.setMaxMembers(rank, maxMembers);
     }
 
     /**
