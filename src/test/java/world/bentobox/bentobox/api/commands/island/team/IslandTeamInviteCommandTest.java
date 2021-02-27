@@ -29,6 +29,8 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
+import com.google.common.collect.ImmutableSet;
+
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.commands.island.team.Invite.Type;
@@ -125,6 +127,7 @@ public class IslandTeamInviteCommandTest {
         // Island
         islandUUID = UUID.randomUUID();
         when(island.getUniqueId()).thenReturn(islandUUID.toString());
+        when(island.getMemberSet()).thenReturn(ImmutableSet.of(uuid));
 
         // Player has island to begin with
         when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
@@ -132,6 +135,7 @@ public class IslandTeamInviteCommandTest {
         when(im.getOwner(any(), eq(uuid))).thenReturn(uuid);
         when(island.getRank(any(User.class))).thenReturn(RanksManager.OWNER_RANK);
         when(im.getIsland(any(), eq(user))).thenReturn(island);
+        when(im.getMaxMembers(eq(island), anyInt())).thenReturn(4);
         when(plugin.getIslands()).thenReturn(im);
 
         // Has team
@@ -275,15 +279,13 @@ public class IslandTeamInviteCommandTest {
 
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteCommand#execute(User, String, java.util.List)}.
+     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteCommand#canExecute(User, String, java.util.List)}.
      */
     @Test
-    public void testExecuteFullIsland() {
-        when(user.getPermissionValue(anyString(), anyInt())).thenReturn(0);
-        testCanExecuteSuccess();
-        assertFalse(itl.execute(user, itl.getLabel(), Collections.singletonList("target")));
+    public void testCanExecuteFullIsland() {
+        when(im.getMaxMembers(eq(island), anyInt())).thenReturn(0);
+        assertFalse(itl.canExecute(user, itl.getLabel(), Collections.singletonList("target")));
         verify(user).sendMessage(eq("commands.island.team.invite.errors.island-is-full"));
-        verify(user).getPermissionValue(eq("nullteam.maxsize"), eq(0));
     }
 
     /**

@@ -101,6 +101,10 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
         if (inviter != null) {
             Island island = getIslands().getIsland(getWorld(), inviter);
             if (island != null) {
+                if (island.getMemberSet(RanksManager.TRUSTED_RANK, false).size() > getIslands().getMaxMembers(island, RanksManager.TRUSTED_RANK)) {
+                    user.sendMessage("commands.island.team.trust.is-full");
+                    return;
+                }
                 island.setRank(user, RanksManager.TRUSTED_RANK);
                 IslandEvent.builder()
                 .island(island)
@@ -122,6 +126,10 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
         if (inviter != null) {
             Island island = getIslands().getIsland(getWorld(), inviter);
             if (island != null) {
+                if (island.getMemberSet(RanksManager.COOP_RANK, false).size() > getIslands().getMaxMembers(island, RanksManager.COOP_RANK)) {
+                    user.sendMessage("commands.island.team.coop.is-full");
+                    return;
+                }
                 island.setRank(user, RanksManager.COOP_RANK);
                 IslandEvent.builder()
                 .island(island)
@@ -143,6 +151,10 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
         Island island = getIslands().getIsland(getWorld(), playerUUID);
         // Get the team's island
         Island teamIsland = getIslands().getIsland(getWorld(), prospectiveOwnerUUID);
+        if (teamIsland.getMemberSet(RanksManager.MEMBER_RANK, true).size() > getIslands().getMaxMembers(teamIsland, RanksManager.MEMBER_RANK)) {
+            user.sendMessage("commands.island.team.invite.errors.island-is-full");
+            return;
+        }
         // Remove player as owner of the old island
         getIslands().removePlayer(getWorld(), playerUUID);
         // Remove money inventory etc. for leaving
