@@ -281,6 +281,24 @@ public class IslandTeamTrustCommandTest {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamTrustCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
+    public void testExecuteSuccessNoConfirmationTooMany() {
+        // Can execute
+        when(pm.getUUID(any())).thenReturn(notUUID);
+        when(im.getMembers(any(), any())).thenReturn(Collections.emptySet());
+        when(island.getRank(any(User.class))).thenReturn(RanksManager.VISITOR_RANK);
+        IslandTeamTrustCommand itl = new IslandTeamTrustCommand(ic);
+        assertTrue(itl.canExecute(user, itl.getLabel(), Collections.singletonList("target")));
+
+        // Execute
+        when(im.getIsland(any(), Mockito.any(UUID.class))).thenReturn(island);
+        assertFalse(itl.execute(user, itl.getLabel(), Collections.singletonList("target")));
+        verify(user).sendMessage(eq("commands.island.team.trust.is-full"));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamTrustCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     */
+    @Test
     public void testExecuteSuccessNoConfirmation() {
         User target = User.getInstance(targetPlayer);
         // Can execute
@@ -289,7 +307,8 @@ public class IslandTeamTrustCommandTest {
         when(island.getRank(any(User.class))).thenReturn(RanksManager.VISITOR_RANK);
         IslandTeamTrustCommand itl = new IslandTeamTrustCommand(ic);
         assertTrue(itl.canExecute(user, itl.getLabel(), Collections.singletonList("target")));
-
+        // Allow 3
+        when(im.getMaxMembers(eq(island), eq(RanksManager.TRUSTED_RANK))).thenReturn(3);
         // Execute
         when(im.getIsland(any(), Mockito.any(UUID.class))).thenReturn(island);
         assertTrue(itl.execute(user, itl.getLabel(), Collections.singletonList("target")));

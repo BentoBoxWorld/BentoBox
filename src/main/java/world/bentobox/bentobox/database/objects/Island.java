@@ -140,6 +140,14 @@ public class Island implements DataObject, MetaDataAble {
     @Expose
     private Map<UUID, Integer> members = new HashMap<>();
 
+    /**
+     * Maximum number of members allowed in this island.
+     * Key is rank, value is number
+     * @since 1.16.0
+     */
+    @Expose
+    private Map<Integer, Integer> maxMembers;
+
     //// State ////
     @Expose
     private boolean spawn = false;
@@ -1411,6 +1419,44 @@ public class Island implements DataObject, MetaDataAble {
         setChanged();
     }
 
+    /**
+     * @return the maxMembers
+     * @since 1.16.0
+     */
+    public Map<Integer, Integer> getMaxMembers() {
+        return maxMembers == null ? new HashMap<>() : maxMembers;
+    }
+
+    /**
+     * @param maxMembers the maxMembers to set
+     * @since 1.16.0
+     */
+    public void setMaxMembers(Map<Integer, Integer> maxMembers) {
+        this.maxMembers = maxMembers;
+    }
+
+    /**
+     * Get the maximum number of island members
+     * @param rank island rank value from {@link RanksManager}
+     * @return the maxMembers for the rank given - if null then the world default should be used. Negative values = unlimited.
+     * @since 1.16.0
+     */
+    @Nullable
+    public Integer getMaxMembers(int rank) {
+        return getMaxMembers().get(rank);
+    }
+
+
+    /**
+     * Set the maximum number of island members
+     * @param rank island rank value from {@link RanksManager}
+     * @param maxMembers the maxMembers to set. If null then the world default applies. Negative values = unlimited.
+     * @since 1.16.0
+     */
+    public void setMaxMembers(int rank, Integer maxMembers) {
+        getMaxMembers().put(rank, maxMembers);
+    }
+
     @Override
     public String toString() {
         return "Island [changed=" + changed + ", deleted=" + deleted + ", "
@@ -1422,9 +1468,9 @@ public class Island implements DataObject, MetaDataAble {
                 + (gameMode != null ? "gameMode=" + gameMode + ", " : "") + (name != null ? "name=" + name + ", " : "")
                 + "createdDate=" + createdDate + ", updatedDate=" + updatedDate + ", "
                 + (owner != null ? "owner=" + owner + ", " : "") + (members != null ? "members=" + members + ", " : "")
-                + "spawn=" + spawn + ", purgeProtected=" + purgeProtected + ", "
-                + (flags != null ? "flags=" + flags + ", " : "") + (history != null ? "history=" + history + ", " : "")
-                + "levelHandicap=" + levelHandicap + ", "
+                + (maxMembers != null ? "maxMembers=" + maxMembers + ", " : "") + "spawn=" + spawn + ", purgeProtected="
+                + purgeProtected + ", " + (flags != null ? "flags=" + flags + ", " : "")
+                + (history != null ? "history=" + history + ", " : "") + "levelHandicap=" + levelHandicap + ", "
                 + (spawnPoint != null ? "spawnPoint=" + spawnPoint + ", " : "") + "doNotLoad=" + doNotLoad + ", "
                 + (cooldowns != null ? "cooldowns=" + cooldowns + ", " : "")
                 + (commandRanks != null ? "commandRanks=" + commandRanks + ", " : "")

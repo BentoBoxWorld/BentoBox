@@ -275,9 +275,27 @@ public class IslandTeamCoopCommandTest {
         IslandTeamCoopCommand itl = new IslandTeamCoopCommand(ic);
         assertTrue(itl.canExecute(user, itl.getLabel(), Collections.singletonList("tastybento")));
         // Execute
-        when(im.getIsland(any(), Mockito.any(UUID.class))).thenReturn(null);
+        when(im.getIsland(any(), any(UUID.class))).thenReturn(null);
         assertFalse(itl.execute(user, itl.getLabel(), Collections.singletonList("tastybento")));
         verify(user).sendMessage(eq("general.errors.general"));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamCoopCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     */
+    @Test
+    public void testExecuteTooManyCoops() {
+        Player p = mock(Player.class);
+        when(p.getUniqueId()).thenReturn(notUUID);
+        // Can execute
+        when(pm.getUUID(any())).thenReturn(notUUID);
+        when(im.getMembers(any(), any())).thenReturn(Collections.emptySet());
+        IslandTeamCoopCommand itl = new IslandTeamCoopCommand(ic);
+        assertTrue(itl.canExecute(user, itl.getLabel(), Collections.singletonList("tastybento")));
+        // Execute
+        when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
+        assertFalse(itl.execute(user, itl.getLabel(), Collections.singletonList("tastybento")));
+        verify(user).sendMessage("commands.island.team.coop.is-full");
     }
 
     /**
@@ -293,8 +311,10 @@ public class IslandTeamCoopCommandTest {
         when(im.getMembers(any(), any())).thenReturn(Collections.emptySet());
         IslandTeamCoopCommand itl = new IslandTeamCoopCommand(ic);
         assertTrue(itl.canExecute(user, itl.getLabel(), Collections.singletonList("tastybento")));
+        // Up to 3
+        when(im.getMaxMembers(eq(island), eq(RanksManager.COOP_RANK))).thenReturn(3);
         // Execute
-        when(im.getIsland(any(), Mockito.any(UUID.class))).thenReturn(island);
+        when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
         assertTrue(itl.execute(user, itl.getLabel(), Collections.singletonList("tastybento")));
         verify(user).sendMessage("commands.island.team.coop.success",  TextVariables.NAME, null);
         verify(island).setRank(target, RanksManager.COOP_RANK);

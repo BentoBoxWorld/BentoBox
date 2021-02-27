@@ -101,7 +101,7 @@ public class IslandTeamTrustCommand extends CompositeCommand {
                 target.sendMessage("commands.island.team.trust.name-has-invited-you", TextVariables.NAME, user.getName());
                 target.sendMessage("commands.island.team.invite.to-accept-or-reject", TextVariables.LABEL, getTopLabel());
             } else {
-                if (island.getMemberSet(RanksManager.TRUSTED_RANK, false).size() > getMaxTrustSize(user)) {
+                if (island.getMemberSet(RanksManager.TRUSTED_RANK, false).size() >= getIslands().getMaxMembers(island, RanksManager.TRUSTED_RANK)) {
                     user.sendMessage("commands.island.team.trust.is-full");
                     return false;
                 }
@@ -128,13 +128,4 @@ public class IslandTeamTrustCommand extends CompositeCommand {
         return Optional.of(Util.tabLimit(Util.getOnlinePlayerList(user), lastArg));
     }
 
-    /**
-     * Gets the maximum trust size for this player in this game based on the permission or the world's setting
-     * @param user user
-     * @return max trust size of user
-     * @since 1.13.0
-     */
-    public int getMaxTrustSize(User user) {
-        return user.getPermissionValue(getPermissionPrefix() + "trust.maxsize", getIWM().getMaxTrustSize(getWorld()));
-    }
 }

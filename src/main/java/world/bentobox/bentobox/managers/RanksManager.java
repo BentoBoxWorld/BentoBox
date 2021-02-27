@@ -5,6 +5,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
+/**
+ * Ranks Manager
+ * Handles ranks and holds constants for various island ranks
+ * @author tastybento
+ *
+ */
 public class RanksManager {
 
     // Constants that define the hard coded rank values
