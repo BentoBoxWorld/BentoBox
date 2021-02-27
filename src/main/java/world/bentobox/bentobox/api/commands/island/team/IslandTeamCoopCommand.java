@@ -99,7 +99,7 @@ public class IslandTeamCoopCommand extends CompositeCommand {
                 target.sendMessage("commands.island.team.coop.name-has-invited-you", TextVariables.NAME, user.getName());
                 target.sendMessage("commands.island.team.invite.to-accept-or-reject", TextVariables.LABEL, getTopLabel());
             } else {
-                if (island.getMemberSet(RanksManager.COOP_RANK, false).size() > getMaxCoopSize(user)) {
+                if (island.getMemberSet(RanksManager.COOP_RANK, false).size() >= getIslands().getMaxMembers(island, RanksManager.COOP_RANK)) {
                     user.sendMessage("commands.island.team.coop.is-full");
                     return false;
                 }
@@ -126,13 +126,4 @@ public class IslandTeamCoopCommand extends CompositeCommand {
         return Optional.of(Util.tabLimit(Util.getOnlinePlayerList(user), lastArg));
     }
 
-    /**
-     * Gets the maximum coop size for this player in this game based on the permission or the world's setting
-     * @param user user
-     * @return max coop size of user
-     * @since 1.13.0
-     */
-    public int getMaxCoopSize(User user) {
-        return user.getPermissionValue(getPermissionPrefix() + "coop.maxsize", getIWM().getMaxCoopSize(getWorld()));
-    }
 }

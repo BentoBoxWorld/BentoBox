@@ -153,6 +153,7 @@ public class JoinLeaveListenerTest {
 
         // Island
         when(im.getIsland(any(), any(User.class))).thenReturn(island);
+        when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
         when(island.getWorld()).thenReturn(world);
         when(island.getProtectionRange()).thenReturn(50);
         when(island.getOwner()).thenReturn(uuid);

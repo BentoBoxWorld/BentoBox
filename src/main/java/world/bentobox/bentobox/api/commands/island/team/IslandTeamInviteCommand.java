@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 
 import org.eclipse.jdt.annotation.Nullable;
@@ -16,6 +15,7 @@ import world.bentobox.bentobox.api.events.team.TeamEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
 
 public class IslandTeamInviteCommand extends CompositeCommand {
@@ -74,7 +74,11 @@ public class IslandTeamInviteCommand extends CompositeCommand {
             user.sendMessage("general.errors.insufficient-rank", TextVariables.RANK, user.getTranslation(getPlugin().getRanksManager().getRank(rank)));
             return false;
         }
-
+        // Check for space on team
+        if (island.getMemberSet().size() > getIslands().getMaxMembers(island, RanksManager.MEMBER_RANK)) {
+            user.sendMessage("commands.island.team.invite.errors.island-is-full");
+            return false;
+        }
 
         UUID invitedPlayerUUID = getPlayers().getUUID(args.get(0));
         if (invitedPlayerUUID == null) {
@@ -111,40 +115,32 @@ public class IslandTeamInviteCommand extends CompositeCommand {
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        Set<UUID> teamMembers = getMembers(getWorld(), user);
-        // Check if player has space on their team
-        int maxSize = getMaxTeamSize(user);
-        if (teamMembers.size() < maxSize) {
-            // If that player already has an invite out then retract it.
-            // Players can only have one invite one at a time - interesting
-            if (itc.isInvited(invitedPlayer.getUniqueId())) {
-                itc.removeInvite(invitedPlayer.getUniqueId());
-                user.sendMessage("commands.island.team.invite.removing-invite");
-            }
-            // Fire event so add-ons can run commands, etc.
-            IslandBaseEvent e = TeamEvent.builder()
-                    .island(getIslands().getIsland(getWorld(), user.getUniqueId()))
-                    .reason(TeamEvent.Reason.INVITE)
-                    .involvedPlayer(invitedPlayer.getUniqueId())
-                    .build();
-            if (e.getNewEvent().map(IslandBaseEvent::isCancelled).orElse(e.isCancelled())) {
-                return false;
-            }
-            // Put the invited player (key) onto the list with inviter (value)
-            // If someone else has invited a player, then this invite will overwrite the previous invite!
-            itc.addInvite(Invite.Type.TEAM, user.getUniqueId(), invitedPlayer.getUniqueId());
-            user.sendMessage("commands.island.team.invite.invitation-sent", TextVariables.NAME, invitedPlayer.getName());
-            // Send message to online player
-            invitedPlayer.sendMessage("commands.island.team.invite.name-has-invited-you", TextVariables.NAME, user.getName());
-            invitedPlayer.sendMessage("commands.island.team.invite.to-accept-or-reject", TextVariables.LABEL, getTopLabel());
-            if (getIslands().hasIsland(getWorld(), invitedPlayer.getUniqueId())) {
-                invitedPlayer.sendMessage("commands.island.team.invite.you-will-lose-your-island");
-            }
-            return true;
-        } else {
-            user.sendMessage("commands.island.team.invite.errors.island-is-full");
+        // If that player already has an invite out then retract it.
+        // Players can only have one invite one at a time - interesting
+        if (itc.isInvited(invitedPlayer.getUniqueId())) {
+            itc.removeInvite(invitedPlayer.getUniqueId());
+            user.sendMessage("commands.island.team.invite.removing-invite");
+        }
+        // Fire event so add-ons can run commands, etc.
+        IslandBaseEvent e = TeamEvent.builder()
+                .island(getIslands().getIsland(getWorld(), user.getUniqueId()))
+                .reason(TeamEvent.Reason.INVITE)
+                .involvedPlayer(invitedPlayer.getUniqueId())
+                .build();
+        if (e.getNewEvent().map(IslandBaseEvent::isCancelled).orElse(e.isCancelled())) {
             return false;
         }
+        // Put the invited player (key) onto the list with inviter (value)
+        // If someone else has invited a player, then this invite will overwrite the previous invite!
+        itc.addInvite(Invite.Type.TEAM, user.getUniqueId(), invitedPlayer.getUniqueId());
+        user.sendMessage("commands.island.team.invite.invitation-sent", TextVariables.NAME, invitedPlayer.getName());
+        // Send message to online player
+        invitedPlayer.sendMessage("commands.island.team.invite.name-has-invited-you", TextVariables.NAME, user.getName());
+        invitedPlayer.sendMessage("commands.island.team.invite.to-accept-or-reject", TextVariables.LABEL, getTopLabel());
+        if (getIslands().hasIsland(getWorld(), invitedPlayer.getUniqueId())) {
+            invitedPlayer.sendMessage("commands.island.team.invite.you-will-lose-your-island");
+        }
+        return true;
     }
 
     @Override
@@ -158,12 +154,4 @@ public class IslandTeamInviteCommand extends CompositeCommand {
         return Optional.of(Util.tabLimit(options, lastArg));
     }
 
-    /**
-     * Gets the maximum team size for this player in this game based on the permission or the world's setting
-     * @param user user
-     * @return max team size of user
-     */
-    public int getMaxTeamSize(User user) {
-        return user.getPermissionValue(getPermissionPrefix() + "team.maxsize", getIWM().getMaxTeamSize(getWorld()));
-    }
 }

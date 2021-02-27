@@ -39,6 +39,7 @@ import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
+import world.bentobox.bentobox.managers.RanksManager;
 
 /**
  * @author tastybento
@@ -103,6 +104,8 @@ public class IslandTeamCommandTest {
         when(plugin.getIslands()).thenReturn(im);
         // is owner of island
         when(im.getOwner(any(), any())).thenReturn(uuid);
+        // Max members
+        when(im.getMaxMembers(eq(island), eq(RanksManager.MEMBER_RANK))).thenReturn(3);
         // No team members
         when(im.getMembers(any(), any(UUID.class))).thenReturn(Collections.emptySet());
         // Add members
@@ -111,6 +114,7 @@ public class IslandTeamCommandTest {
         when(island.getMemberSet(anyInt(), any(Boolean.class))).thenReturn(set);
         when(island.getMemberSet(anyInt())).thenReturn(set);
         when(island.getMemberSet()).thenReturn(set);
+        when(island.getOwner()).thenReturn(uuid);
         // island
         when(im.getIsland(any(), eq(uuid))).thenReturn(island);
 
@@ -121,6 +125,7 @@ public class IslandTeamCommandTest {
         // IWM
         when(plugin.getIWM()).thenReturn(iwm);
         when(iwm.getPermissionPrefix(any())).thenReturn("bskyblock.");
+
 
         // Command under test
         tc = new IslandTeamCommand(ic);
@@ -176,7 +181,8 @@ public class IslandTeamCommandTest {
      */
     @Test
     public void testExecuteUserStringListOfStringIslandIsFull() {
-        when(user.getPermissionValue(eq("bskyblock.team.maxsize"), anyInt())).thenReturn(0);
+        // Max members
+        when(im.getMaxMembers(eq(island), eq(RanksManager.MEMBER_RANK))).thenReturn(0);
         assertTrue(tc.execute(user, "team", Collections.emptyList()));
         verify(user).sendMessage(eq("commands.island.team.invite.errors.island-is-full"));
     }
