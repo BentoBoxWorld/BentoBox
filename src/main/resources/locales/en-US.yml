@@ -273,8 +273,9 @@ commands:
       success: "&a Successfully set this location as the spawn point for this island."
       island-spawnpoint-changed: "&a [user] changed this island spawn point."
     settings:
-      parameters: "[player]"
-      description: "open system settings or island settings for player"
+      parameters: "[player]/[world flag] [flag/active/disable] [rank/active/disable]"
+      description: "open settings GUI or set settings"
+      unknown-setting: "&c Unknown setting"
     blueprint:
       parameters: "<load/copy/paste/pos1/pos2/save>"
       description: "manipulate blueprints"
