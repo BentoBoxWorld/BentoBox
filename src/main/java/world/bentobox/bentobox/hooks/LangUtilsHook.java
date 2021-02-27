@@ -11,14 +11,17 @@ import org.bukkit.entity.TropicalFish;
 import org.bukkit.entity.Villager;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.TropicalFishBucketMeta;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
+import org.jetbrains.annotations.Nullable;
 import world.bentobox.bentobox.api.hooks.Hook;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.util.Util;
 
+import java.lang.reflect.Field;
 import java.util.Map.Entry;
 
 /**
@@ -73,6 +76,7 @@ public class LangUtilsHook extends Hook {
      * @param user the User's locale will be used for translation.
      * @return The Display-Name of the item.
      */
+    @SuppressWarnings("unused")
     public static String getItemDisplayName(ItemStack item, User user) {
         if (hooked) {
             return LanguageHelper.getItemDisplayName(item, getUserLocale(user));
@@ -97,6 +101,7 @@ public class LangUtilsHook extends Hook {
      * @param user      the User's locale will be used for translation.
      * @return The translated item name.
      */
+    @SuppressWarnings("unused")
     public static String getItemName(ItemStack itemStack, User user) {
         return hooked
                 ? LanguageHelper.getItemName(itemStack, getUserLocale(user))
@@ -168,6 +173,7 @@ public class LangUtilsHook extends Hook {
      * @param user  the User's locale will be used for translation.
      * @return The translated Biome name.
      */
+    @SuppressWarnings("unused")
     public static String getBiomeName(Biome biome, User user) {
         return hooked
                 ? LanguageHelper.getBiomeName(biome, getUserLocale(user))
@@ -182,6 +188,7 @@ public class LangUtilsHook extends Hook {
      * @param user  The User's locale will be used for translation.
      * @return Translated enchanted name with level.
      */
+    @SuppressWarnings("unused")
     public static String getEnchantDisplayName(Enchantment ench, int level, User user) {
         return hooked
                 ? LanguageHelper.getEnchantmentDisplayName(ench, level, getUserLocale(user))
@@ -196,6 +203,7 @@ public class LangUtilsHook extends Hook {
      * @param user  The User's locale will be used for translation.
      * @return Translated enchanted name with level.
      */
+    @SuppressWarnings("unused")
     public static String getEnchantDisplayName(Entry<Enchantment, Integer> entry, User user) {
         return hooked
                 ? LanguageHelper.getEnchantmentDisplayName(entry, getUserLocale(user))
@@ -209,6 +217,7 @@ public class LangUtilsHook extends Hook {
      * @param user    The User's locale will be used for translation.
      * @return The translated enchant name.
      */
+    @SuppressWarnings("unused")
     public static String getEnchantName(Enchantment enchant, User user) {
         return hooked
                 ? LanguageHelper.getEnchantmentName(enchant, getUserLocale(user))
@@ -223,6 +232,7 @@ public class LangUtilsHook extends Hook {
      * @param user  The user's language will be used for translation.
      * @return The converted enchantment level.
      */
+    @SuppressWarnings("unused")
     public static String getEnchantLevelName(int level, User user) {
         return hooked
                 ? LanguageHelper.getEnchantmentLevelName(level, getUserLocale(user))
@@ -236,6 +246,7 @@ public class LangUtilsHook extends Hook {
      * @param user       The user's language will be used for translation.
      * @return Translated potion name.
      */
+    @SuppressWarnings("unused")
     public static String getPotionTypeName(PotionType potionType, User user) {
         if (hooked) {
             return LanguageHelper.getPotionName(potionType, getUserLocale(user));
@@ -275,6 +286,7 @@ public class LangUtilsHook extends Hook {
      * @param user       The user's language will be used for translation.
      * @return Translated splash potion name.
      */
+    @SuppressWarnings("unused")
     public static String getSplashPotionName(PotionType potionType, User user) {
         if (hooked) {
             return LanguageHelper.getSplashPotionName(potionType, getUserLocale(user));
@@ -313,6 +325,7 @@ public class LangUtilsHook extends Hook {
      * @param user       The user's language will be used for translation.
      * @return Translated lingering potion name.
      */
+    @SuppressWarnings("unused")
     public static String getLingeringPotionName(PotionType potionType, User user) {
         if (hooked) {
             return LanguageHelper.getLingeringPotionName(potionType, getUserLocale(user));
@@ -351,6 +364,7 @@ public class LangUtilsHook extends Hook {
      * @param user       The user's language will be used for translation.
      * @return Translated tipped arrow name.
      */
+    @SuppressWarnings("unused")
     public static String getTippedArrowName(PotionType potionType, User user) {
         if (hooked) {
             return  LanguageHelper.getTippedArrowName(potionType, getUserLocale(user));
@@ -416,6 +430,7 @@ public class LangUtilsHook extends Hook {
      * @param user   The user's language will be used for translation.
      * @return The translated and formatted potion effect name, level, and duration.
      */
+    @SuppressWarnings("unused")
     public static String getPotionEffectDisplay(PotionEffect effect, User user) {
         if (hooked) {
             return LanguageHelper.getPotionEffectDisplay(effect, getUserLocale(user));
@@ -446,10 +461,65 @@ public class LangUtilsHook extends Hook {
      * @param user        The user's language will be used for translation.
      * @return The translated name of the tropical fish type.
      */
+    @SuppressWarnings("unused")
     public static String getTropicalFishTypeName(TropicalFish.Pattern fishPattern, User user) {
         return hooked
                 ? LanguageHelper.getTropicalFishTypeName(fishPattern, getUserLocale(user))
                 : Util.prettifyText(fishPattern.name());
+    }
+
+    /**
+     * Get the names of 22 predefined tropical fish according to the
+     * 'variant' tag of TropicalFish.
+     *
+     * @param meta Metadata carrying information about tropical fish.
+     * @param user The return value is localized according to the
+     *             user's locale.
+     * @return If variant is predefined, return the name of the
+     *         tropical fish, otherwise return null.
+     */
+    @SuppressWarnings("unused")
+    @Nullable
+    public static String getPredefinedTropicalFishName(TropicalFishBucketMeta meta, User user) {
+        if (hooked) {
+            return LanguageHelper.getPredefinedTropicalFishName(meta, getUserLocale(user));
+        }
+
+        if (meta.hasVariant()) {
+            try {
+                Field variantField = meta.getClass().getDeclaredField("variant");
+                variantField.setAccessible(true);
+                Integer variant = (Integer) variantField.get(meta);
+
+                switch (variant) {
+                    case 117506305: return "Anemone";
+                    case 117899265: return "Black Tang";
+                    case 185008129: return "Blue Tang";
+                    case 117441793: return "Butterflyfish";
+                    case 118161664: return "Cichlid";
+                    case 65536    : return "Clownfish";
+                    case 50726144 : return "Cotton Candy Betta";
+                    case 67764993 : return "Dottyback";
+                    case 234882305: return "Emperor Red Snapper";
+                    case 67110144 : return "Goatfish";
+                    case 117441025: return "Moorish Idol";
+                    case 16778497 : return "Ornate Butterflyfish";
+                    case 101253888: return "Parrotfish";
+                    case 50660352 : return "Queen Angelfish";
+                    case 918529   : return "Red Cichlid";
+                    case 235340288: return "Red Lipped Blenny";
+                    case 918273   : return "Red Snapper";
+                    case 67108865 : return "Threadfin";
+                    case 917504   : return "Tomato Clownfish";
+                    case 459008   : return "Triggerfish";
+                    case 67699456 : return "Yellowtail Parrotfish";
+                    case 67371009 : return "Yellow Tang";
+                }
+            } catch (NoSuchFieldException | IllegalAccessException ignored) {
+                // nothing
+            }
+        }
+        return null;
     }
 
     /**
@@ -459,6 +529,7 @@ public class LangUtilsHook extends Hook {
      * @param user  The user's language will be used for translation.
      * @return The name of the dye color that has been translated.
      */
+    @SuppressWarnings("unused")
     public static String getDyeColorName(DyeColor color, User user) {
         return hooked
                 ? LanguageHelper.getDyeColorName(color, getUserLocale(user))
@@ -472,6 +543,7 @@ public class LangUtilsHook extends Hook {
      * @param user  The user's language will be used for translation.
      * @return Translated name of merchant's level.
      */
+    @SuppressWarnings("unused")
     public static String getVillagerLevelName(int level, User user) {
         return hooked
                 ? LanguageHelper.getVillagerLevelName(level, getUserLocale(user))
@@ -485,6 +557,7 @@ public class LangUtilsHook extends Hook {
      * @param user       The user's language will be used for translation.
      * @return The translated profession name of the villager.
      */
+    @SuppressWarnings("unused")
     public static String getVillagerProfessionName(Villager.Profession profession, User user) {
         return hooked
                 ? LanguageHelper.getVillagerProfessionName(profession, getUserLocale(user))

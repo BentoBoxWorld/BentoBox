@@ -183,8 +183,12 @@
             <url>https://papermc.io/repo/repository/maven-public/</url>
         </repository>
         <repository>
-            <id>langutils-api-repo</id>
-            <url>https://raw.githubusercontent.com/apachezy/LangUtils-API/master/repo/</url>
+            <id>langutils-github-repo</id>
+            <url>https://raw.githubusercontent.com/apachezy/LangUtils/master/repo/</url>
+        </repository>
+        <repository>
+            <id>langutils-gitee-repo</id>
+            <url>https://gitee.com/apachezy/LangUtils/raw/master/repo/</url>
         </repository>
     </repositories>
 
@@ -299,8 +303,8 @@
         <!-- LangUtils -->
         <dependency>
             <groupId>com.meowj</groupId>
-            <artifactId>LangUtils-API</artifactId>
-            <version>3.0.0</version>
+            <artifactId>LangUtils</artifactId>
+            <version>3.0.0-mc1.16.5-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
