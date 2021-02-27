@@ -51,7 +51,7 @@ public class JoinLeaveListener implements Listener {
         if (user == null || user.getUniqueId() == null) {
             return;
         }
-        UUID playerUUID = user.getUniqueId();
+        UUID playerUUID = event.getPlayer().getUniqueId();
 
         // Check if player hasn't joined before
         if (!players.isKnown(playerUUID)) {
@@ -89,6 +89,16 @@ public class JoinLeaveListener implements Listener {
 
         // Clear inventory if required
         clearPlayersInventory(Util.getWorld(event.getPlayer().getWorld()), user);
+
+        // Set island max members based on permissions if this player is the owner of an island
+        plugin.getIWM().getOverWorlds().stream()
+        .map(w -> plugin.getIslands().getIsland(w, playerUUID))
+        .filter(i -> playerUUID.equals(i.getOwner()))
+        .forEach(i -> {
+            plugin.getIslands().getMaxMembers(i, RanksManager.MEMBER_RANK);
+            plugin.getIslands().getMaxMembers(i, RanksManager.COOP_RANK);
+            plugin.getIslands().getMaxMembers(i, RanksManager.TRUSTED_RANK);
+        });
     }
 
 

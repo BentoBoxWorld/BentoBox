@@ -498,6 +498,7 @@ public class IslandsManager {
      * @param island - island
      * @param rank {@link RanksManager.MEMBER_RANK}, {@link RanksManager.COOP_RANK}, or {@link RanksManager.TRUSTED_RANK}
      * @return max number of members. If negative, then this means unlimited.
+     * @since 1.16.0
      */
     public int getMaxMembers(@NonNull Island island, int rank) {
         if (island.getOwner() == null) {
@@ -508,10 +509,13 @@ public class IslandsManager {
         }
         // Island max is either the world default or specified amount for this island
         int worldDefault = plugin.getIWM().getMaxTeamSize(island.getWorld());
+        String perm = "team.maxsize";
         if (rank == RanksManager.COOP_RANK) {
             worldDefault = plugin.getIWM().getMaxCoopSize(island.getWorld());
+            perm = "coop.maxsize";
         } else if (rank == RanksManager.TRUSTED_RANK) {
             worldDefault = plugin.getIWM().getMaxTrustSize(island.getWorld());
+            perm = "trust.maxsize";
         }
 
         int islandMax = island.getMaxMembers() == null ? worldDefault : island.getMaxMembers(rank);
@@ -519,7 +523,7 @@ public class IslandsManager {
         if (Bukkit.getPlayer(island.getOwner()) != null) {
             User owner = User.getInstance(island.getOwner());
             islandMax = owner.getPermissionValue(plugin.getIWM().getPermissionPrefix(island.getWorld())
-                    + "team.maxsize", islandMax);
+                    + perm, islandMax);
         }
         island.setMaxMembers(rank, islandMax == worldDefault ? null : islandMax);
         this.save(island);
@@ -532,6 +536,7 @@ public class IslandsManager {
      * @param rank {@link RanksManager.MEMBER_RANK}, {@link RanksManager.COOP_RANK}, or {@link RanksManager.TRUSTED_RANK}
      * @param maxMembers - max number of members. If negative, then this means unlimited. Null means the world
      * default will be used.
+     * @since 1.16.0
      */
     public void setMaxMembers(@NonNull Island island, int rank, Integer maxMembers) {
         island.setMaxMembers(rank, maxMembers);
