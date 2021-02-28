@@ -518,7 +518,7 @@ public class IslandsManager {
             perm = "trust.maxsize";
         }
 
-        int islandMax = island.getMaxMembers() == null ? worldDefault : island.getMaxMembers(rank);
+        int islandMax = island.getMaxMembers(rank) == null ? worldDefault : island.getMaxMembers(rank);
         // Update based on owner permissions if online
         if (Bukkit.getPlayer(island.getOwner()) != null) {
             User owner = User.getInstance(island.getOwner());
