@@ -91,6 +91,7 @@ public class DefaultNewIslandLocationStrategyTest {
         when(iwm.getIslandZOffset(eq(world))).thenReturn(0);
         when(iwm.getIslandStartX(eq(world))).thenReturn(1000);
         when(iwm.getIslandStartZ(eq(world))).thenReturn(11000);
+        when(iwm.isCheckForBlocks(eq(world))).thenReturn(true);
         // Island deletion manager
         when(plugin.getIslandDeletionManager()).thenReturn(idm);
         when(idm.inDeletion(any())).thenReturn(false);
