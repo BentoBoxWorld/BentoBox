@@ -98,7 +98,6 @@ public class IslandsManagerTest {
     private Player player;
     @Mock
     private World world;
-    private IslandsManager manager;
     @Mock
     private Block space1;
     @Mock
@@ -113,7 +112,7 @@ public class IslandsManagerTest {
     private IslandCache islandCache;
     private Optional<Island> optionalIsland;
     @Mock
-    private Island is;
+    private Island island;
     @Mock
     private PluginManager pim;
     // Database
@@ -138,6 +137,8 @@ public class IslandsManagerTest {
 
     private Environment env;
 
+    // Class under test
+    IslandsManager im;
 
     /**
      * @throws java.lang.Exception
@@ -200,7 +201,6 @@ public class IslandsManagerTest {
         when(Bukkit.getVersion()).thenReturn("Paper version git-Paper-225 (MC: 1.14.4) (Implementing API version 1.14.4-R0.1-SNAPSHOT)");
 
         // Standard location
-        manager = new IslandsManager(plugin);
         when(location.getWorld()).thenReturn(world);
         when(location.getBlock()).thenReturn(space1);
         when(location.getWorld()).thenReturn(world);
@@ -233,9 +233,15 @@ public class IslandsManagerTest {
         PowerMockito.mockStatic(Util.class);
         when(Util.getWorld(any())).thenReturn(world);
 
+        // Island
+        when(island.getOwner()).thenReturn(uuid);
+        when(island.getWorld()).thenReturn(world);
+        when(island.getMaxMembers()).thenReturn(null); // default
+        when(island.getMaxMembers(Mockito.anyInt())).thenReturn(null); // default
+
         // Mock island cache
-        when(islandCache.getIslandAt(any(Location.class))).thenReturn(is);
-        optionalIsland = Optional.ofNullable(is);
+        when(islandCache.getIslandAt(any(Location.class))).thenReturn(island);
+        optionalIsland = Optional.ofNullable(island);
 
         // User location
         when(user.getLocation()).thenReturn(location);
@@ -318,6 +324,11 @@ public class IslandsManagerTest {
 
         // Util strip spaces
         when(Util.stripSpaceAfterColorCodes(anyString())).thenCallRealMethod();
+
+        // Class under test
+        im = new IslandsManager(plugin);
+        // Set cache
+        //im.setIslandCache(islandCache);
     }
 
     @After
@@ -339,8 +350,7 @@ public class IslandsManagerTest {
      */
     @Test
     public void testIsSafeLocationSafe() {
-        IslandsManager manager = new IslandsManager(plugin);
-        assertTrue(manager.isSafeLocation(location));
+        assertTrue(im.isSafeLocation(location));
     }
 
     /**
@@ -349,8 +359,7 @@ public class IslandsManagerTest {
     @Test
     public void testIsSafeLocationNullWorld() {
         when(location.getWorld()).thenReturn(null);
-        IslandsManager manager = new IslandsManager(plugin);
-        assertFalse(manager.isSafeLocation(location));
+        assertFalse(im.isSafeLocation(location));
     }
 
     /**
@@ -359,7 +368,7 @@ public class IslandsManagerTest {
     @Test
     public void testIsSafeLocationNonSolidGround() {
         when(ground.getType()).thenReturn(Material.WATER);
-        assertFalse(manager.isSafeLocation(location));
+        assertFalse(im.isSafeLocation(location));
     }
 
     /**
@@ -370,7 +379,7 @@ public class IslandsManagerTest {
         when(ground.getType()).thenReturn(Material.STONE);
         when(space1.getType()).thenReturn(Material.WATER);
         when(space2.getType()).thenReturn(Material.WATER);
-        assertFalse(manager.isSafeLocation(location));
+        assertFalse(im.isSafeLocation(location));
     }
 
     @Test
@@ -379,7 +388,7 @@ public class IslandsManagerTest {
             if (d.name().contains("DOOR")) {
                 for (Material s : Material.values()) {
                     if (s.name().contains("_SIGN")) {
-                        assertFalse("Fail " + d.name() + " " + s.name(), manager.checkIfSafe(world, d, s, Material.AIR));
+                        assertFalse("Fail " + d.name() + " " + s.name(), im.checkIfSafe(world, d, s, Material.AIR));
                     }
                 }
             }
@@ -394,27 +403,27 @@ public class IslandsManagerTest {
         when(ground.getType()).thenReturn(Material.STONE);
         when(space1.getType()).thenReturn(Material.AIR);
         when(space2.getType()).thenReturn(Material.NETHER_PORTAL);
-        assertTrue(manager.isSafeLocation(location));
+        assertTrue(im.isSafeLocation(location));
         when(ground.getType()).thenReturn(Material.STONE);
         when(space1.getType()).thenReturn(Material.AIR);
         when(space2.getType()).thenReturn(Material.END_PORTAL);
-        assertTrue(manager.isSafeLocation(location));
+        assertTrue(im.isSafeLocation(location));
         when(ground.getType()).thenReturn(Material.STONE);
         when(space1.getType()).thenReturn(Material.NETHER_PORTAL);
         when(space2.getType()).thenReturn(Material.AIR);
-        assertTrue(manager.isSafeLocation(location));
+        assertTrue(im.isSafeLocation(location));
         when(ground.getType()).thenReturn(Material.STONE);
         when(space1.getType()).thenReturn(Material.END_PORTAL);
         when(space2.getType()).thenReturn(Material.AIR);
-        assertTrue(manager.isSafeLocation(location));
+        assertTrue(im.isSafeLocation(location));
         when(ground.getType()).thenReturn(Material.NETHER_PORTAL);
         when(space1.getType()).thenReturn(Material.AIR);
         when(space2.getType()).thenReturn(Material.AIR);
-        assertFalse(manager.isSafeLocation(location));
+        assertFalse(im.isSafeLocation(location));
         when(ground.getType()).thenReturn(Material.END_PORTAL);
         when(space1.getType()).thenReturn(Material.AIR);
         when(space2.getType()).thenReturn(Material.AIR);
-        assertFalse(manager.isSafeLocation(location));
+        assertFalse(im.isSafeLocation(location));
     }
 
     /**
@@ -425,15 +434,15 @@ public class IslandsManagerTest {
         when(ground.getType()).thenReturn(Material.LAVA);
         when(space1.getType()).thenReturn(Material.AIR);
         when(space2.getType()).thenReturn(Material.AIR);
-        assertFalse("In lava", manager.isSafeLocation(location));
+        assertFalse("In lava", im.isSafeLocation(location));
         when(ground.getType()).thenReturn(Material.AIR);
         when(space1.getType()).thenReturn(Material.LAVA);
         when(space2.getType()).thenReturn(Material.AIR);
-        assertFalse("In lava", manager.isSafeLocation(location));
+        assertFalse("In lava", im.isSafeLocation(location));
         when(ground.getType()).thenReturn(Material.AIR);
         when(space1.getType()).thenReturn(Material.AIR);
         when(space2.getType()).thenReturn(Material.LAVA);
-        assertFalse("In lava", manager.isSafeLocation(location));
+        assertFalse("In lava", im.isSafeLocation(location));
     }
 
     /**
@@ -442,9 +451,9 @@ public class IslandsManagerTest {
     @Test
     public void testTrapDoor() {
         when(ground.getType()).thenReturn(Material.OAK_TRAPDOOR);
-        assertFalse("Open trapdoor", manager.isSafeLocation(location));
+        assertFalse("Open trapdoor", im.isSafeLocation(location));
         when(ground.getType()).thenReturn(Material.IRON_TRAPDOOR);
-        assertFalse("Open iron trapdoor", manager.isSafeLocation(location));
+        assertFalse("Open iron trapdoor", im.isSafeLocation(location));
     }
 
     /**
@@ -455,18 +464,18 @@ public class IslandsManagerTest {
         // Fences
         Arrays.stream(Material.values()).filter(m -> m.toString().contains("FENCE")).forEach(m -> {
             when(ground.getType()).thenReturn(m);
-            assertFalse("Fence :" + m.toString(), manager.isSafeLocation(location));
+            assertFalse("Fence :" + m.toString(), im.isSafeLocation(location));
         });
         // Signs
         when(ground.getType()).thenReturn(sign);
-        assertFalse("Sign", manager.isSafeLocation(location));
+        assertFalse("Sign", im.isSafeLocation(location));
         when(ground.getType()).thenReturn(wallSign);
-        assertFalse("Sign", manager.isSafeLocation(location));
+        assertFalse("Sign", im.isSafeLocation(location));
         // Bad Blocks
         Material[] badMats = {Material.CACTUS, Material.OAK_BOAT};
         Arrays.asList(badMats).forEach(m -> {
             when(ground.getType()).thenReturn(m);
-            assertFalse("Bad mat :" + m.toString(), manager.isSafeLocation(location));
+            assertFalse("Bad mat :" + m.toString(), im.isSafeLocation(location));
         });
 
     }
@@ -477,27 +486,27 @@ public class IslandsManagerTest {
     @Test
     public void testSolidBlocks() {
         when(space1.getType()).thenReturn(Material.STONE);
-        assertFalse("Solid", manager.isSafeLocation(location));
+        assertFalse("Solid", im.isSafeLocation(location));
 
         when(space1.getType()).thenReturn(Material.AIR);
         when(space2.getType()).thenReturn(Material.STONE);
-        assertFalse("Solid", manager.isSafeLocation(location));
+        assertFalse("Solid", im.isSafeLocation(location));
 
         when(space1.getType()).thenReturn(wallSign);
         when(space2.getType()).thenReturn(Material.AIR);
-        assertTrue("Wall sign 1", manager.isSafeLocation(location));
+        assertTrue("Wall sign 1", im.isSafeLocation(location));
 
         when(space1.getType()).thenReturn(Material.AIR);
         when(space2.getType()).thenReturn(wallSign);
-        assertTrue("Wall sign 2", manager.isSafeLocation(location));
+        assertTrue("Wall sign 2", im.isSafeLocation(location));
 
         when(space1.getType()).thenReturn(sign);
         when(space2.getType()).thenReturn(Material.AIR);
-        assertTrue("Wall sign 1", manager.isSafeLocation(location));
+        assertTrue("Wall sign 1", im.isSafeLocation(location));
 
         when(space1.getType()).thenReturn(Material.AIR);
         when(space2.getType()).thenReturn(sign);
-        assertTrue("Wall sign 2", manager.isSafeLocation(location));
+        assertTrue("Wall sign 2", im.isSafeLocation(location));
     }
 
     /**
@@ -505,32 +514,9 @@ public class IslandsManagerTest {
      */
     @Test
     public void testBigScan() {
-        IslandsManager manager = new IslandsManager(plugin);
-
-        Location location = mock(Location.class);
-        when(location.getWorld()).thenReturn(world);
-        when(location.getBlockX()).thenReturn(0);
-        when(location.getBlockY()).thenReturn(0);
-        when(location.getBlockZ()).thenReturn(0);
-
-        Block space1 = mock(Block.class);
-        Block ground = mock(Block.class);
-        Block space2 = mock(Block.class);
-
-        when(location.getBlock()).thenReturn(space1);
-
-        when(ground.getType()).thenReturn(Material.GRASS);
-        when(space1.getType()).thenReturn(Material.AIR);
-        when(space2.getType()).thenReturn(Material.AIR);
-        when(space1.getRelative(BlockFace.DOWN)).thenReturn(ground);
-        when(space1.getRelative(BlockFace.UP)).thenReturn(space2);
-
-        BlockState blockState = mock(BlockState.class);
-        when(ground.getState()).thenReturn(blockState);
-
         // Negative value = full island scan
         // No island here yet
-        assertNull(manager.bigScan(location, -1));
+        assertNull(im.bigScan(location, -1));
     }
 
     /**
@@ -538,7 +524,6 @@ public class IslandsManagerTest {
      */
     @Test
     public void testCreateIslandLocation() {
-        IslandsManager im = new IslandsManager(plugin);
         Island island = im.createIsland(location);
         assertNotNull(island);
         assertEquals(island.getCenter().getWorld(), location.getWorld());
@@ -550,7 +535,6 @@ public class IslandsManagerTest {
     @Test
     public void testCreateIslandLocationUUID() {
         UUID owner = UUID.randomUUID();
-        IslandsManager im = new IslandsManager(plugin);
         Island island = im.createIsland(location, owner);
         assertNotNull(island);
         assertEquals(island.getCenter().getWorld(), location.getWorld());
@@ -562,7 +546,6 @@ public class IslandsManagerTest {
      */
     @Test
     public void testDeleteIslandIslandBooleanNoBlockRemoval() {
-        IslandsManager im = new IslandsManager(plugin);
         UUID owner = UUID.randomUUID();
         Island island = im.createIsland(location, owner);
         im.deleteIsland(island, false, owner);
@@ -576,7 +559,6 @@ public class IslandsManagerTest {
     @Test
     public void testDeleteIslandIslandBooleanRemoveBlocks() {
         verify(pim, never()).callEvent(any());
-        IslandsManager im = new IslandsManager(plugin);
         UUID owner = UUID.randomUUID();
         Island island = im.createIsland(location, owner);
         im.deleteIsland(island, true, owner);
@@ -589,7 +571,6 @@ public class IslandsManagerTest {
      */
     @Test
     public void testGetCount() {
-        IslandsManager im = new IslandsManager(plugin);
         assertEquals(0, im.getIslandCount());
         im.createIsland(location, UUID.randomUUID());
         assertEquals(1, im.getIslandCount());
@@ -600,7 +581,6 @@ public class IslandsManagerTest {
      */
     @Test
     public void testGetIslandWorldUser() {
-        IslandsManager im = new IslandsManager(plugin);
         Island island = im.createIsland(location, user.getUniqueId());
         assertEquals(island, im.getIsland(world, user));
         assertNull(im.getIsland(world, (User)null));
@@ -612,7 +592,6 @@ public class IslandsManagerTest {
     @Test
     public void testGetIsland() {
         UUID owner = UUID.randomUUID();
-        IslandsManager im = new IslandsManager(plugin);
         Island island = im.createIsland(location, owner);
         assertEquals(island, im.getIsland(world, owner));
         assertNull(im.getIsland(world, UUID.randomUUID()));
@@ -624,9 +603,7 @@ public class IslandsManagerTest {
      */
     @Test
     public void testGetIslandAtLocation() throws Exception {
-        IslandsManager im = new IslandsManager(plugin);
         im.setIslandCache(islandCache);
-
         // In world, correct island
         assertEquals(optionalIsland, im.getIslandAt(location));
 
@@ -646,7 +623,6 @@ public class IslandsManagerTest {
      */
     @Test
     public void testGetIslandLocation() {
-        IslandsManager im = new IslandsManager(plugin);
         im.createIsland(location, uuid);
         assertEquals(world, im.getIslandLocation(world, uuid).getWorld());
         assertNull(im.getIslandLocation(world, UUID.randomUUID()));
@@ -657,7 +633,6 @@ public class IslandsManagerTest {
      */
     @Test
     public void testGetLast() {
-        IslandsManager im = new IslandsManager(plugin);
         im.setLast(location);
         assertEquals(location, im.getLast(world));
         assertNull(im.getLast(null));
@@ -674,7 +649,6 @@ public class IslandsManagerTest {
         members.add(UUID.randomUUID());
         members.add(UUID.randomUUID());
         when(islandCache.getMembers(any(), any(), Mockito.anyInt())).thenReturn(members);
-        IslandsManager im = new IslandsManager(plugin);
         im.setIslandCache(islandCache);
         assertEquals(members, im.getMembers(world, UUID.randomUUID()));
     }
@@ -690,7 +664,7 @@ public class IslandsManagerTest {
         when(islandCache.getIslandAt(any(Location.class))).thenReturn(is);
 
         // In world
-        IslandsManager im = new IslandsManager(plugin);
+
         im.setIslandCache(islandCache);
 
         Optional<Island> optionalIsland = Optional.ofNullable(is);
@@ -717,7 +691,6 @@ public class IslandsManagerTest {
      */
     @Test
     public void testGetSafeHomeLocation() {
-        IslandsManager im = new IslandsManager(plugin);
         when(pm.getHomeLocation(any(), any(User.class), eq(0))).thenReturn(null);
         when(pm.getHomeLocation(any(), any(User.class), eq(1))).thenReturn(location);
         assertEquals(location, im.getSafeHomeLocation(world, user, 0));
@@ -731,7 +704,6 @@ public class IslandsManagerTest {
      */
     @Test
     public void testGetSafeHomeLocationWorldNotIslandWorld() {
-        IslandsManager im = new IslandsManager(plugin);
         when(iwm.inWorld(world)).thenReturn(false);
         assertNull(im.getSafeHomeLocation(world, user, 0));
     }
@@ -741,7 +713,6 @@ public class IslandsManagerTest {
      */
     @Test
     public void testGetSafeHomeLocationNoIsland() {
-        IslandsManager im = new IslandsManager(plugin);
         when(pm.getHomeLocation(eq(world), eq(user), eq(0))).thenReturn(null);
         assertNull(im.getSafeHomeLocation(world, user, 0));
         verify(plugin).logWarning(eq("null player has no island in world world!"));
@@ -752,7 +723,6 @@ public class IslandsManagerTest {
      */
     @Test
     public void testGetSpawnPoint() {
-        IslandsManager im = new IslandsManager(plugin);
         assertNull(im.getSpawnPoint(world));
         // Create a spawn island for this world
         Island island = mock(Island.class);
@@ -771,7 +741,6 @@ public class IslandsManagerTest {
     @Test
     public void testHomeTeleportPlayerInt() {
         when(iwm.getDefaultGameMode(world)).thenReturn(GameMode.SURVIVAL);
-        IslandsManager im = new IslandsManager(plugin);
         when(pm.getHomeLocation(any(), any(User.class), eq(0))).thenReturn(null);
         when(pm.getHomeLocation(any(), any(User.class), eq(1))).thenReturn(location);
         im.homeTeleport(world, player, 0);
@@ -784,7 +753,6 @@ public class IslandsManagerTest {
      */
     @Test
     public void testIsAtSpawn() {
-        IslandsManager im = new IslandsManager(plugin);
         assertFalse(im.isAtSpawn(location));
         Island island = mock(Island.class);
         when(island.getWorld()).thenReturn(world);
@@ -803,7 +771,7 @@ public class IslandsManagerTest {
 
         when(islandCache.getIslandAt(any())).thenReturn(is);
 
-        IslandsManager im = new IslandsManager(plugin);
+
         im.setIslandCache(islandCache);
 
         assertFalse(im.isOwner(world, null));
@@ -828,7 +796,7 @@ public class IslandsManagerTest {
      */
     @Test
     public void testLoad() {
-        //IslandsManager im = new IslandsManager(plugin);
+        //
         //im.load();
 
     }
@@ -852,7 +820,7 @@ public class IslandsManagerTest {
 
         when(player.getUniqueId()).thenReturn(uuid);
 
-        IslandsManager im = new IslandsManager(plugin);
+
         im.setIslandCache(islandCache);
 
         assertFalse(im.locationIsOnIsland(null, null));
@@ -875,7 +843,6 @@ public class IslandsManagerTest {
      */
     @Test
     public void testUserIsOnIsland() {
-        IslandsManager im = new IslandsManager(plugin);
         im.setIslandCache(islandCache);
 
         // ----- CHECK INVALID ARGUMENTS -----
@@ -899,9 +866,9 @@ public class IslandsManagerTest {
         when(user.isPlayer()).thenReturn(true);
 
         // The method returns true if the user's location is on an island that has them as member (rank >= MEMBER)
-        when(is.onIsland(any())).thenReturn(true);
+        when(island.onIsland(any())).thenReturn(true);
         Map<UUID, Integer> members = new HashMap<>();
-        when(is.getMembers()).thenReturn(members);
+        when(island.getMembers()).thenReturn(members);
 
         // -- The user is not part of the island --
         assertFalse(im.userIsOnIsland(world, user));
@@ -968,7 +935,7 @@ public class IslandsManagerTest {
      */
     @Test
     public void testRemovePlayer() {
-        IslandsManager im = new IslandsManager(plugin);
+
         im.removePlayer(world, uuid);
     }
 
@@ -977,7 +944,7 @@ public class IslandsManagerTest {
      */
     @Test
     public void testRemovePlayersFromIsland() {
-        IslandsManager im = new IslandsManager(plugin);
+
         Island is = mock(Island.class);
         im.removePlayersFromIsland(is);
     }
@@ -1033,7 +1000,7 @@ public class IslandsManagerTest {
         Collection<Island> collection = new ArrayList<>();
         collection.add(is);
         when(islandCache.getIslands()).thenReturn(collection);
-        IslandsManager im = new IslandsManager(plugin);
+
         im.setIslandCache(islandCache);
         Map<UUID, Integer> members = new HashMap<>();
         when(is.getMembers()).thenReturn(members);
@@ -1072,7 +1039,7 @@ public class IslandsManagerTest {
         Collection<Island> collection = new ArrayList<>();
         collection.add(is);
         when(islandCache.getIslands()).thenReturn(collection);
-        IslandsManager im = new IslandsManager(plugin);
+
         im.setIslandCache(islandCache);
         Map<UUID, Integer> members = new HashMap<>();
         when(is.getMembers()).thenReturn(members);
@@ -1109,7 +1076,6 @@ public class IslandsManagerTest {
     @Test
     public void testClearAreaWrongWorld() {
         when(iwm.inWorld(any(Location.class))).thenReturn(false);
-        IslandsManager im = new IslandsManager(plugin);
         im.clearArea(location);
         // No entities should be cleared
         verify(zombie, never()).remove();
@@ -1128,7 +1094,6 @@ public class IslandsManagerTest {
      */
     @Test
     public void testClearArea() {
-        IslandsManager im = new IslandsManager(plugin);
         im.clearArea(location);
         // Only the correct entities should be cleared
         verify(zombie).remove();
@@ -1150,7 +1115,6 @@ public class IslandsManagerTest {
         String uuid = UUID.randomUUID().toString();
         when(islandCache.getIslandById(anyString())).thenReturn(island);
         // Test
-        IslandsManager im = new IslandsManager(plugin);
         im.setIslandCache(islandCache);
         assertEquals(island, im.getIslandById(uuid).get());
     }
@@ -1178,7 +1142,6 @@ public class IslandsManagerTest {
         // Island distance
         when(iwm.getIslandDistance(eq(world))).thenReturn(100);
         // Test
-        IslandsManager im = new IslandsManager(plugin);
         assertFalse(im.fixIslandCenter(island));
     }
 
@@ -1206,7 +1169,6 @@ public class IslandsManagerTest {
         when(iwm.getIslandDistance(eq(world))).thenReturn(100);
         // Test
         ArgumentCaptor<Location> captor = ArgumentCaptor.forClass(Location.class);
-        IslandsManager im = new IslandsManager(plugin);
         assertTrue(im.fixIslandCenter(island));
         // Verify location
         verify(island).setCenter(captor.capture());
@@ -1241,7 +1203,6 @@ public class IslandsManagerTest {
         when(iwm.getIslandDistance(eq(world))).thenReturn(100);
         // Test
         ArgumentCaptor<Location> captor = ArgumentCaptor.forClass(Location.class);
-        IslandsManager im = new IslandsManager(plugin);
         assertTrue(im.fixIslandCenter(island));
         // Verify location
         verify(island).setCenter(captor.capture());
@@ -1275,7 +1236,6 @@ public class IslandsManagerTest {
         // Island distance
         when(iwm.getIslandDistance(eq(world))).thenReturn(100);
         // Test
-        IslandsManager im = new IslandsManager(plugin);
         assertFalse(im.fixIslandCenter(island));
     }
 
@@ -1302,7 +1262,6 @@ public class IslandsManagerTest {
         // Island distance
         when(iwm.getIslandDistance(eq(world))).thenReturn(100);
         // Test
-        IslandsManager im = new IslandsManager(plugin);
         assertFalse(im.fixIslandCenter(island));
     }
 
@@ -1330,7 +1289,6 @@ public class IslandsManagerTest {
         when(iwm.getIslandDistance(eq(world))).thenReturn(100);
         // Test
         ArgumentCaptor<Location> captor = ArgumentCaptor.forClass(Location.class);
-        IslandsManager im = new IslandsManager(plugin);
         assertTrue(im.fixIslandCenter(island));
         // Verify location
         verify(island).setCenter(captor.capture());
@@ -1348,7 +1306,6 @@ public class IslandsManagerTest {
         Island island = mock(Island.class);
         when(island.getWorld()).thenReturn(null);
         // Test
-        IslandsManager im = new IslandsManager(plugin);
         assertFalse(im.fixIslandCenter(island));
         when(island.getWorld()).thenReturn(world);
         when(island.getCenter()).thenReturn(null);
@@ -1366,7 +1323,6 @@ public class IslandsManagerTest {
         Island island = mock(Island.class);
         when(island.getOwner()).thenReturn(null);
         // Test
-        IslandsManager im = new IslandsManager(plugin);
         assertEquals(0, im.getMaxMembers(island, RanksManager.MEMBER_RANK));
         verify(island).setMaxMembers(eq(null));
     }
@@ -1385,7 +1341,6 @@ public class IslandsManagerTest {
         // Offline owner
         when(Bukkit.getPlayer(any(UUID.class))).thenReturn(null);
         // Test
-        IslandsManager im = new IslandsManager(plugin);
         assertEquals(4, im.getMaxMembers(island, RanksManager.MEMBER_RANK));
         verify(island).setMaxMembers(eq(RanksManager.MEMBER_RANK), eq(null));
     }
@@ -1404,7 +1359,6 @@ public class IslandsManagerTest {
         // Online owner
         when(Bukkit.getPlayer(any(UUID.class))).thenReturn(player);
         // Test
-        IslandsManager im = new IslandsManager(plugin);
         assertEquals(4, im.getMaxMembers(island, RanksManager.MEMBER_RANK));
         verify(island).setMaxMembers(eq(RanksManager.MEMBER_RANK), eq(null));
     }
@@ -1425,7 +1379,6 @@ public class IslandsManagerTest {
         // Online owner
         when(Bukkit.getPlayer(any(UUID.class))).thenReturn(player);
         // Test
-        IslandsManager im = new IslandsManager(plugin);
         assertEquals(2, im.getMaxMembers(island, RanksManager.COOP_RANK));
         verify(island).setMaxMembers(eq(RanksManager.COOP_RANK), eq(null));
         assertEquals(3, im.getMaxMembers(island, RanksManager.TRUSTED_RANK));
@@ -1445,7 +1398,6 @@ public class IslandsManagerTest {
         // Online owner
         when(Bukkit.getPlayer(any(UUID.class))).thenReturn(player);
         // Test
-        IslandsManager im = new IslandsManager(plugin);
         assertEquals(10, im.getMaxMembers(island, RanksManager.MEMBER_RANK));
         verify(island).setMaxMembers(eq(RanksManager.MEMBER_RANK), eq(10));
     }
@@ -1463,7 +1415,6 @@ public class IslandsManagerTest {
         // Online owner
         when(Bukkit.getPlayer(any(UUID.class))).thenReturn(player);
         // Test
-        IslandsManager im = new IslandsManager(plugin);
         assertEquals(10, im.getMaxMembers(island, RanksManager.MEMBER_RANK));
         verify(island).setMaxMembers(eq(RanksManager.MEMBER_RANK), eq(10));
     }
@@ -1488,7 +1439,6 @@ public class IslandsManagerTest {
         // Online owner
         when(Bukkit.getPlayer(any(UUID.class))).thenReturn(player);
         // Test
-        IslandsManager im = new IslandsManager(plugin);
         assertEquals(8, im.getMaxMembers(island, RanksManager.MEMBER_RANK));
         verify(island).setMaxMembers(eq(RanksManager.MEMBER_RANK), eq(8));
     }
@@ -1501,7 +1451,6 @@ public class IslandsManagerTest {
     public void testsetMaxMembers() {
         Island island = mock(Island.class);
         // Test
-        IslandsManager im = new IslandsManager(plugin);
         im.setMaxMembers(island, RanksManager.MEMBER_RANK, 40);
         verify(island).setMaxMembers(eq(RanksManager.MEMBER_RANK), eq(40));
     }
