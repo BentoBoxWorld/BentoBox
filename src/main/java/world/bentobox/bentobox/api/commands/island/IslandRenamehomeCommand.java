@@ -53,7 +53,8 @@ public class IslandRenamehomeCommand extends ConfirmableCommand {
         if (!getIslands().isHomeLocation(island, String.join(" ", args))) {
             user.sendMessage("commands.island.go.unknown-home");
             user.sendMessage("commands.island.sethome.homes-are");
-            island.getHomes().keySet().stream().filter(s -> !s.isEmpty()).forEach(s -> user.sendMessage("home-list-syntax", TextVariables.NAME, s));
+            island.getHomes().keySet().stream().filter(s -> !s.isEmpty()).forEach(s -> user.sendMessage("commands.island.sethome.home-list-syntax", TextVariables.NAME, s));
+            this.showHelp(this, user);
             return false;
         }
         return true;
@@ -65,7 +66,7 @@ public class IslandRenamehomeCommand extends ConfirmableCommand {
         .withModality(true)
         .withLocalEcho(false)
         .withTimeout(90)
-        .withFirstPrompt(new NamePrompt(island, user, String.join(" ", args)))
+        .withFirstPrompt(new NamePrompt(getPlugin(), island, user, String.join(" ", args)))
         .buildConversation(user.getPlayer()).begin();
         return true;
     }

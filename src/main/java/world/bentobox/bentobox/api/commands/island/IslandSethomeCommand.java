@@ -88,10 +88,12 @@ public class IslandSethomeCommand extends ConfirmableCommand {
         // Define a runnable as we will be using it often in the code below.
         getIslands().setHomeLocation(user, user.getLocation(), name);
         user.sendMessage("commands.island.sethome.home-set");
-        user.sendMessage("commands.island.sethome.homes-are");
-        island
-        .getHomes()
-        .keySet()
-        .stream().filter(s -> !s.isEmpty()).forEach(s -> user.sendMessage("home-list-syntax", TextVariables.NAME, s));
+        if (island.getHomes().size() > 1) {
+            user.sendMessage("commands.island.sethome.homes-are");
+            island
+            .getHomes()
+            .keySet()
+            .stream().filter(s -> !s.isEmpty()).forEach(s -> user.sendMessage("commands.island.sethome.home-list-syntax", TextVariables.NAME, s));
+        }
     }
 }

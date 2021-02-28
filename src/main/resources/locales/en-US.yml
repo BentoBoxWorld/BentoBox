@@ -469,7 +469,7 @@ commands:
       parameters: "[home name]"
       description: "teleport you to your island"
       teleport: "&a Teleporting you to your island."
-      teleported: "&a Teleported you to home &e #[number]."
+      teleported: "&a Teleported you to home &e [number]."
       unknown-home: "&c Unknown home name!"
     help:
       description: "the main island command"

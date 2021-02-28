@@ -945,7 +945,7 @@ public class IslandsManager {
      * @return true if it exists or not
      */
     public boolean isHomeLocation(@NonNull Island island, String name) {
-        return island.getHomes().containsKey(name);
+        return island.getHomes().containsKey(name.toLowerCase());
     }
 
     /**

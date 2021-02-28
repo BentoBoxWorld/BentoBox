@@ -1,11 +1,12 @@
 package world.bentobox.bentobox.api.commands.admin.conversations;
 
+import org.bukkit.Bukkit;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.StringPrompt;
 import org.eclipse.jdt.annotation.NonNull;
 
-import world.bentobox.bentobox.api.localization.TextVariables;
+import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 
@@ -19,8 +20,10 @@ public class NamePrompt extends StringPrompt {
     private @NonNull final Island island;
     private @NonNull final User user;
     private final String oldName;
+    private final BentoBox plugin;
 
-    public NamePrompt(@NonNull Island island, User user, String oldName) {
+    public NamePrompt(BentoBox plugin, @NonNull Island island, User user, String oldName) {
+        this.plugin = plugin;
         this.island = island;
         this.user = user;
         this.oldName = oldName;
@@ -34,11 +37,10 @@ public class NamePrompt extends StringPrompt {
     @Override
     public Prompt acceptInput(ConversationContext context, String input) {
         if (island.renameHome(oldName, input)) {
-            user.getTranslation("general.success");
+            plugin.getIslands().save(island);
+            Bukkit.getScheduler().runTask(plugin, () -> user.sendMessage("general.success"));
         } else {
-            user.getTranslation("commands.island.renamehome.already-exists");
-            user.sendMessage("commands.island.sethome.homes-are");
-            island.getHomes().keySet().stream().filter(s -> !s.isEmpty()).forEach(s -> user.sendMessage("home-list-syntax", TextVariables.NAME, s));
+            Bukkit.getScheduler().runTask(plugin, () -> user.sendMessage("commands.island.renamehome.already-exists"));
         }
         return Prompt.END_OF_CONVERSATION;
     }

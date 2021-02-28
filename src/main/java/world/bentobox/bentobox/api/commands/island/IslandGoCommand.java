@@ -53,7 +53,7 @@ public class IslandGoCommand extends DelayedTeleportCommand {
             if (!getIslands().isHomeLocation(island, String.join(" ", args))) {
                 user.sendMessage("commands.island.go.unknown-home");
                 user.sendMessage("commands.island.sethome.homes-are");
-                island.getHomes().keySet().stream().filter(s -> !s.isEmpty()).forEach(s -> user.sendMessage("home-list-syntax", TextVariables.NAME, s));
+                island.getHomes().keySet().stream().filter(s -> !s.isEmpty()).forEach(s -> user.sendMessage("commands.island.sethome.home-list-syntax", TextVariables.NAME, s));
                 return false;
             }
         }

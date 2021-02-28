@@ -11,7 +11,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -1440,7 +1439,10 @@ public class Island implements DataObject, MetaDataAble {
      */
     @NotNull
     public Map<String, Location> getHomes() {
-        return homes == null ? new TreeMap<>(String.CASE_INSENSITIVE_ORDER) : homes;
+        if (homes == null) {
+            homes = new HashMap<>();
+        }
+        return homes;
     }
 
     /**
@@ -1449,7 +1451,7 @@ public class Island implements DataObject, MetaDataAble {
      */
     @Nullable
     public Location getHome(String name) {
-        return getHomes().get(name);
+        return getHomes().get(name.toLowerCase());
     }
 
     /**
@@ -1458,6 +1460,7 @@ public class Island implements DataObject, MetaDataAble {
      */
     public void setHomes(Map<String, Location> homes) {
         this.homes = homes;
+        setChanged();
     }
 
     /**
@@ -1465,7 +1468,8 @@ public class Island implements DataObject, MetaDataAble {
      * @since 1.16.0
      */
     public void addHome(String name, Location location) {
-        getHomes().put(name, location);
+        getHomes().put(name.toLowerCase(), location);
+        setChanged();
     }
 
     /**
@@ -1475,7 +1479,8 @@ public class Island implements DataObject, MetaDataAble {
      * @since 1.16.0
      */
     public boolean removeHome(String name) {
-        return getHomes().remove(name) != null;
+        setChanged();
+        return getHomes().remove(name.toLowerCase()) != null;
     }
 
     /**
@@ -1486,9 +1491,9 @@ public class Island implements DataObject, MetaDataAble {
      * @since 1.16.0
      */
     public boolean renameHome(String oldName, String newName) {
-        if (getHomes().containsKey(oldName) && !getHomes().containsKey(newName)) {
+        if (getHomes().containsKey(oldName.toLowerCase()) && !getHomes().containsKey(newName.toLowerCase())) {
             this.addHome(newName, this.getHome(oldName));
-            removeHome(oldName);
+            this.removeHome(oldName);
             return true;
         }
         return false;
@@ -1509,6 +1514,7 @@ public class Island implements DataObject, MetaDataAble {
      */
     public void setMaxHomes(@Nullable Integer maxHomes) {
         this.maxHomes = maxHomes;
+        setChanged();
     }
     
     /**
@@ -1516,7 +1522,10 @@ public class Island implements DataObject, MetaDataAble {
      * @since 1.16.0
      */
     public Map<Integer, Integer> getMaxMembers() {
-        return maxMembers == null ? new HashMap<>() : maxMembers;
+        if (maxMembers == null) {
+            maxMembers = new HashMap<>();
+        }
+        return maxMembers;
     }
 
     /**
@@ -1525,6 +1534,7 @@ public class Island implements DataObject, MetaDataAble {
      */
     public void setMaxMembers(Map<Integer, Integer> maxMembers) {
         this.maxMembers = maxMembers;
+        setChanged();
     }
 
     /**
@@ -1549,26 +1559,22 @@ public class Island implements DataObject, MetaDataAble {
         getMaxMembers().put(rank, maxMembers);
     }
 
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
     @Override
     public String toString() {
-        return "Island [changed=" + changed + ", deleted=" + deleted + ", "
-                + (uniqueId != null ? "uniqueId=" + uniqueId + ", " : "")
-                + (center != null ? "center=" + center + ", " : "")
-                + (location != null ? "location=" + location + ", " : "") + "range=" + range + ", protectionRange="
-                + protectionRange + ", maxEverProtectionRange=" + maxEverProtectionRange + ", "
-                + (world != null ? "world=" + world + ", " : "")
-                + (gameMode != null ? "gameMode=" + gameMode + ", " : "") + (name != null ? "name=" + name + ", " : "")
-                + "createdDate=" + createdDate + ", updatedDate=" + updatedDate + ", "
-                + (owner != null ? "owner=" + owner + ", " : "") + (members != null ? "members=" + members + ", " : "")
-                + (maxMembers != null ? "maxMembers=" + maxMembers + ", " : "") + "spawn=" + spawn + ", purgeProtected="
-                + purgeProtected + ", " + (flags != null ? "flags=" + flags + ", " : "")
-                + (history != null ? "history=" + history + ", " : "") + "levelHandicap=" + levelHandicap + ", "
-                + (spawnPoint != null ? "spawnPoint=" + spawnPoint + ", " : "") + "doNotLoad=" + doNotLoad + ", "
-                + (cooldowns != null ? "cooldowns=" + cooldowns + ", " : "")
-                + (commandRanks != null ? "commandRanks=" + commandRanks + ", " : "")
-                + (reserved != null ? "reserved=" + reserved + ", " : "")
-                + (metaData != null ? "metaData=" + metaData : "")
-                + (homes != null ? "homes=" + homes : "")+ "]";
+        return "Island [changed=" + changed + ", deleted=" + deleted + ", uniqueId=" + uniqueId + ", center=" + center
+                + ", location=" + location + ", range=" + range + ", protectionRange=" + protectionRange
+                + ", maxEverProtectionRange=" + maxEverProtectionRange + ", world=" + world + ", gameMode=" + gameMode
+                + ", name=" + name + ", createdDate=" + createdDate + ", updatedDate=" + updatedDate + ", owner="
+                + owner + ", members=" + members + ", maxMembers=" + maxMembers + ", spawn=" + spawn
+                + ", purgeProtected=" + purgeProtected + ", flags=" + flags + ", history=" + history
+                + ", levelHandicap=" + levelHandicap + ", spawnPoint=" + spawnPoint + ", doNotLoad=" + doNotLoad
+                + ", cooldowns=" + cooldowns + ", commandRanks=" + commandRanks + ", reserved=" + reserved
+                + ", metaData=" + metaData + ", homes=" + homes + ", maxHomes=" + maxHomes + "]";
     }
+
+
 
 }
