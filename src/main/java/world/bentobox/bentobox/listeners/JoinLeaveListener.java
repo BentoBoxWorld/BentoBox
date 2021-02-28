@@ -3,6 +3,7 @@ package world.bentobox.bentobox.listeners;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -93,6 +94,7 @@ public class JoinLeaveListener implements Listener {
         // Set island max members and homes based on permissions if this player is the owner of an island
         plugin.getIWM().getOverWorlds().stream()
         .map(w -> plugin.getIslands().getIsland(w, playerUUID))
+        .filter(Objects::nonNull)
         .filter(i -> playerUUID.equals(i.getOwner()))
         .forEach(i -> {
             plugin.getIslands().getMaxMembers(i, RanksManager.MEMBER_RANK);
