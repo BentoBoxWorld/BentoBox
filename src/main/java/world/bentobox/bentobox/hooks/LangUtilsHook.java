@@ -21,7 +21,6 @@ import world.bentobox.bentobox.api.hooks.Hook;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.util.Util;
 
-import java.lang.reflect.Field;
 import java.util.Map.Entry;
 
 /**
@@ -274,7 +273,7 @@ public class LangUtilsHook extends Hook {
             case TURTLE_MASTER:   return "Potion of the Turtle Master";
             case SLOW_FALLING:    return "Potion of Slow Falling";
             default:
-                throw new IllegalStateException("Unexpected value: getPotionTypeName " + potionType);
+                return Util.prettifyText(potionType.name());
         }
 
     }
@@ -314,7 +313,7 @@ public class LangUtilsHook extends Hook {
             case TURTLE_MASTER:   return "Splash Potion of the Turtle Master";
             case SLOW_FALLING:    return "Splash Potion of Slow Falling";
             default:
-                throw new IllegalStateException("Unexpected value: getSplashPotionName " + potionType);
+                return Util.prettifyText(potionType.name());
         }
     }
 
@@ -353,7 +352,7 @@ public class LangUtilsHook extends Hook {
             case TURTLE_MASTER:   return "Lingering Potion of the Turtle Master";
             case SLOW_FALLING:    return "Lingering Potion of Slow Falling";
             default:
-                throw new IllegalStateException("Unexpected value: getLingeringPotionName " + potionType);
+                return Util.prettifyText(potionType.name());
         }
     }
 
@@ -392,7 +391,7 @@ public class LangUtilsHook extends Hook {
             case TURTLE_MASTER:   return "Arrow of the Turtle Master";
             case SLOW_FALLING:    return "Arrow of Slow Falling";
             default:
-                throw new IllegalStateException("Unexpected value: " + potionType);
+                return Util.prettifyText(potionType.name());
         }
     }
 
@@ -486,37 +485,41 @@ public class LangUtilsHook extends Hook {
         }
 
         if (meta.hasVariant()) {
-            try {
-                Field variantField = meta.getClass().getDeclaredField("variant");
-                variantField.setAccessible(true);
-                Integer variant = (Integer) variantField.get(meta);
+            TropicalFish.Pattern pattern = meta.getPattern();
 
-                switch (variant) {
-                    case 117506305: return "Anemone";
-                    case 117899265: return "Black Tang";
-                    case 185008129: return "Blue Tang";
-                    case 117441793: return "Butterflyfish";
-                    case 118161664: return "Cichlid";
-                    case 65536    : return "Clownfish";
-                    case 50726144 : return "Cotton Candy Betta";
-                    case 67764993 : return "Dottyback";
-                    case 234882305: return "Emperor Red Snapper";
-                    case 67110144 : return "Goatfish";
-                    case 117441025: return "Moorish Idol";
-                    case 16778497 : return "Ornate Butterflyfish";
-                    case 101253888: return "Parrotfish";
-                    case 50660352 : return "Queen Angelfish";
-                    case 918529   : return "Red Cichlid";
-                    case 235340288: return "Red Lipped Blenny";
-                    case 918273   : return "Red Snapper";
-                    case 67108865 : return "Threadfin";
-                    case 917504   : return "Tomato Clownfish";
-                    case 459008   : return "Triggerfish";
-                    case 67699456 : return "Yellowtail Parrotfish";
-                    case 67371009 : return "Yellow Tang";
-                }
-            } catch (NoSuchFieldException | IllegalAccessException ignored) {
-                // nothing
+            // https://minecraft.gamepedia.com/Tropical_Fish#Entity_data
+
+            int type = pattern.ordinal() > 5 ? 1 : 0;
+            int patt = pattern.ordinal() % 6;
+            int bcol = meta.getBodyColor().ordinal();
+            int pcol = meta.getPatternColor().ordinal();
+
+            int variant = (pcol & 255) << 24 | (bcol & 255) << 16 | (patt & 255) << 8 | type;
+
+            switch (variant) {
+                case 117506305: return "Anemone";
+                case 117899265: return "Black Tang";
+                case 185008129: return "Blue Tang";
+                case 117441793: return "Butterflyfish";
+                case 118161664: return "Cichlid";
+                case 65536    : return "Clownfish";
+                case 50726144 : return "Cotton Candy Betta";
+                case 67764993 : return "Dottyback";
+                case 234882305: return "Emperor Red Snapper";
+                case 67110144 : return "Goatfish";
+                case 117441025: return "Moorish Idol";
+                case 16778497 : return "Ornate Butterflyfish";
+                case 101253888: return "Parrotfish";
+                case 50660352 : return "Queen Angelfish";
+                case 918529   : return "Red Cichlid";
+                case 235340288: return "Red Lipped Blenny";
+                case 918273   : return "Red Snapper";
+                case 67108865 : return "Threadfin";
+                case 917504   : return "Tomato Clownfish";
+                case 459008   : return "Triggerfish";
+                case 67699456 : return "Yellowtail Parrotfish";
+                case 67371009 : return "Yellow Tang";
+                default       : return null;
             }
         }
         return null;
