@@ -213,10 +213,10 @@ public class Island implements DataObject, MetaDataAble {
     private Map<String, Location> homes;
 
     /**
-     * The maximum number of homes allowed on this island
+     * The maximum number of homes allowed on this island. If null, then the world default is used.
      */
     @Expose
-    private int maxHomes = 1;
+    private Integer maxHomes;
 
     /*
      * *************************** Constructors ******************************
@@ -1495,18 +1495,19 @@ public class Island implements DataObject, MetaDataAble {
     }
 
     /**
-     * @return the maxHomes
+     * @return the maxHomes. If null, then the world default should be used.
      * @since 1.16.0
      */
-    public int getMaxHomes() {
+    @Nullable
+    public Integer getMaxHomes() {
         return maxHomes;
     }
 
     /**
-     * @param maxHomes the maxHomes to set
+     * @param maxHomes the maxHomes to set. If null then the world default will be used.
      * @since 1.16.0
      */
-    public void setMaxHomes(int maxHomes) {
+    public void setMaxHomes(@Nullable Integer maxHomes) {
         this.maxHomes = maxHomes;
     }
     

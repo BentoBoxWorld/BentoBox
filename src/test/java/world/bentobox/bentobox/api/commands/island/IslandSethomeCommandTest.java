@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -25,6 +24,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -35,7 +35,6 @@ import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
-import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.CommandsManager;
@@ -52,11 +51,16 @@ import world.bentobox.bentobox.util.Util;
 @PrepareForTest({Bukkit.class, BentoBox.class, Util.class})
 public class IslandSethomeCommandTest {
 
+    @Mock
     private CompositeCommand ic;
+    @Mock
     private User user;
     private UUID uuid;
+    @Mock
     private IslandsManager im;
+    @Mock
     private Island island;
+    @Mock
     private IslandWorldManager iwm;
 
     /**
@@ -78,8 +82,6 @@ public class IslandSethomeCommandTest {
 
         // Player
         Player player = mock(Player.class);
-        // Sometimes use withSettings().verboseLogging()
-        user = mock(User.class);
         when(user.isOp()).thenReturn(false);
         uuid = UUID.randomUUID();
         when(user.getUniqueId()).thenReturn(uuid);
@@ -89,13 +91,11 @@ public class IslandSethomeCommandTest {
         when(user.getTranslation(anyString())).thenAnswer(i -> i.getArgument(0, String.class));
 
         // Parent command has no aliases
-        ic = mock(CompositeCommand.class);
         when(ic.getSubCommandAliases()).thenReturn(new HashMap<>());
         when(ic.getTopLabel()).thenReturn("island");
         when(ic.getPermissionPrefix()).thenReturn("bskyblock.");
 
         // No island for player to begin with (set it later in the tests)
-        im = mock(IslandsManager.class);
         when(im.hasIsland(any(), any(User.class))).thenReturn(false);
         when(im.isOwner(any(), eq(uuid))).thenReturn(false);
         when(plugin.getIslands()).thenReturn(im);
@@ -111,13 +111,15 @@ public class IslandSethomeCommandTest {
         when(Bukkit.getScheduler()).thenReturn(sch);
 
         // Island Banned list initialization
-        island = mock(Island.class);
         when(island.getBanned()).thenReturn(new HashSet<>());
         when(island.isBanned(any())).thenReturn(false);
+        when(island.getOwner()).thenReturn(uuid);
+        when(island.onIsland(any())).thenReturn(true);
+        when(im.getMaxHomes(eq(island))).thenReturn(1);
         when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
+        when(im.getIsland(any(), any(User.class))).thenReturn(island);
 
         // IWM friendly name
-        iwm = mock(IslandWorldManager.class);
         when(iwm.getFriendlyName(any())).thenReturn("BSkyBlock");
         // Not in nether
         when(iwm.isNether(any())).thenReturn(false);
@@ -129,8 +131,7 @@ public class IslandSethomeCommandTest {
 
         // Number of homes
         PowerMockito.mockStatic(Util.class);
-        // 1 home for now
-        when(user.getPermissionValue(anyString(), anyInt())).thenReturn(1);
+
     }
 
     @After
@@ -163,8 +164,8 @@ public class IslandSethomeCommandTest {
      */
     @Test
     public void testCanExecuteNoIsland() {
-        // Player doesn't have an island and doesn't have a team.
-        when(im.inTeam(any(), eq(uuid))).thenReturn(false);
+        // Player doesn't have an island
+        when(im.getIsland(any(), eq(user))).thenReturn(null);
 
         IslandSethomeCommand isc = new IslandSethomeCommand(ic);
         assertFalse(isc.canExecute(user, "island", Collections.emptyList()));
@@ -176,8 +177,7 @@ public class IslandSethomeCommandTest {
      */
     @Test
     public void testCanExecuteNotOnIsland() {
-        when(im.hasIsland(any(), any(User.class))).thenReturn(true);
-        when(im.locationIsOnIsland(any(), any())).thenReturn(false);
+        when(island.onIsland(any())).thenReturn(false);
         IslandSethomeCommand isc = new IslandSethomeCommand(ic);
         assertFalse(isc.canExecute(user, "island", Collections.emptyList()));
         verify(user, never()).sendMessage("general.errors.no-island");
@@ -189,8 +189,6 @@ public class IslandSethomeCommandTest {
      */
     @Test
     public void testCanExecute() {
-        when(im.hasIsland(any(), any(User.class))).thenReturn(true);
-        when(im.locationIsOnIsland(any(), any())).thenReturn(true);
         IslandSethomeCommand isc = new IslandSethomeCommand(ic);
         assertTrue(isc.canExecute(user, "island", Collections.emptyList()));
         verify(user, never()).sendMessage("general.errors.no-island");
@@ -203,63 +201,33 @@ public class IslandSethomeCommandTest {
     @Test
     public void testExecuteUserStringListOfString() {
         IslandSethomeCommand isc = new IslandSethomeCommand(ic);
+        assertTrue(isc.canExecute(user, "island", Collections.emptyList()));
         assertTrue(isc.execute(user, "island", Collections.emptyList()));
         verify(user).sendMessage("commands.island.sethome.home-set");
     }
 
-
     /**
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandSethomeCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringNoMultiHome() {
+    public void testExecuteUserStringListOfStringHomeSuccess() {
+        when(island.getMaxHomes()).thenReturn(5);
         IslandSethomeCommand isc = new IslandSethomeCommand(ic);
-        assertFalse(isc.execute(user, "island", Collections.singletonList("3")));
-        verify(user).sendMessage("general.errors.no-permission", TextVariables.PERMISSION, "bskyblock.island.maxhomes.[number]");
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandSethomeCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
-     */
-    @Test
-    public void testExecuteUserStringListOfStringMultiHomeSuccess() {
-        when(user.getPermissionValue(anyString(), anyInt())).thenReturn(5);
-        IslandSethomeCommand isc = new IslandSethomeCommand(ic);
-        assertTrue(isc.execute(user, "island", Collections.singletonList("3")));
+        assertTrue(isc.canExecute(user, "island", Collections.singletonList("home")));
+        assertTrue(isc.execute(user, "island", Collections.singletonList("home")));
         verify(user).sendMessage("commands.island.sethome.home-set");
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandSethomeCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandSethomeCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringMultiHomeTooHigh() {
-        when(user.getPermissionValue(anyString(), anyInt())).thenReturn(5);
+    public void testExecuteUserStringListOfStringMultiHomeTooMany() {
+        when(island.getMaxHomes()).thenReturn(3);
+        when(im.getNumberOfHomesIfAdded(eq(island), anyString())).thenReturn(4);
         IslandSethomeCommand isc = new IslandSethomeCommand(ic);
-        assertFalse(isc.execute(user, "island", Collections.singletonList("13")));
-        verify(user).sendMessage(eq("commands.island.sethome.num-homes"), eq("[number]"), eq("5"));
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandSethomeCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
-     */
-    @Test
-    public void testExecuteUserStringListOfStringMultiHomeTooLow() {
-        when(user.getPermissionValue(anyString(), anyInt())).thenReturn(5);
-        IslandSethomeCommand isc = new IslandSethomeCommand(ic);
-        assertFalse(isc.execute(user, "island", Collections.singletonList("-3")));
-        verify(user).sendMessage(eq("commands.island.sethome.num-homes"), eq("[number]"), eq("5"));
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandSethomeCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
-     */
-    @Test
-    public void testExecuteUserStringListOfStringMultiHomeNAN() {
-        when(user.getPermissionValue(anyString(), anyInt())).thenReturn(5);
-        IslandSethomeCommand isc = new IslandSethomeCommand(ic);
-        assertFalse(isc.execute(user, "island", Collections.singletonList("six")));
-        verify(user).sendMessage(eq("commands.island.sethome.num-homes"), eq("[number]"), eq("5"));
+        assertFalse(isc.canExecute(user, "island", Collections.singletonList("13")));
+        verify(user).sendMessage(eq("commands.island.sethome.too-many-homes"), eq("[number]"), eq("3"));
     }
 
     /**
@@ -273,6 +241,7 @@ public class IslandSethomeCommandTest {
         when(ws.isRequireConfirmationToSetHomeInNether()).thenReturn(false);
         when(iwm.getWorldSettings(any())).thenReturn(ws);
         IslandSethomeCommand isc = new IslandSethomeCommand(ic);
+        assertTrue(isc.canExecute(user, "island", Collections.emptyList()));
         assertTrue(isc.execute(user, "island", Collections.emptyList()));
         verify(user).sendMessage("commands.island.sethome.home-set");
     }
@@ -319,6 +288,7 @@ public class IslandSethomeCommandTest {
         when(ws.isRequireConfirmationToSetHomeInNether()).thenReturn(false);
         when(iwm.getWorldSettings(any())).thenReturn(ws);
         IslandSethomeCommand isc = new IslandSethomeCommand(ic);
+        assertTrue(isc.canExecute(user, "island", Collections.emptyList()));
         assertTrue(isc.execute(user, "island", Collections.emptyList()));
         verify(user).sendMessage("commands.island.sethome.home-set");
     }

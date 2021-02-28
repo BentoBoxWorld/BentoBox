@@ -2,8 +2,6 @@ package world.bentobox.bentobox.api.commands.island;
 
 import java.util.List;
 
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
@@ -40,13 +38,7 @@ public class IslandSethomeCommand extends ConfirmableCommand {
             return false;
         }
         // Check number of homes
-        int maxHomes = Math.max(island.getMaxHomes(), getIWM().getMaxHomes(getWorld()));
-        // Check is island owner is online
-        Player owner = Bukkit.getPlayer(island.getOwner());
-        if (owner != null && owner.isOnline()) {
-            maxHomes = User.getInstance(owner).getPermissionValue(getPermissionPrefix() + "island.maxhomes", maxHomes);
-        }
-        island.setMaxHomes(maxHomes);
+        int maxHomes = getIslands().getMaxHomes(island);
         if (getIslands().getNumberOfHomesIfAdded(island, String.join(" ", args)) > maxHomes) {
             user.sendMessage("commands.island.sethome.too-many-homes", TextVariables.NUMBER, String.valueOf(island.getMaxHomes()));
             user.sendMessage("commands.island.sethome.homes-are");
@@ -97,6 +89,9 @@ public class IslandSethomeCommand extends ConfirmableCommand {
         getIslands().setHomeLocation(user, user.getLocation(), name);
         user.sendMessage("commands.island.sethome.home-set");
         user.sendMessage("commands.island.sethome.homes-are");
-        island.getHomes().keySet().stream().filter(s -> !s.isEmpty()).forEach(s -> user.sendMessage("home-list-syntax", TextVariables.NAME, s));
+        island
+        .getHomes()
+        .keySet()
+        .stream().filter(s -> !s.isEmpty()).forEach(s -> user.sendMessage("home-list-syntax", TextVariables.NAME, s));
     }
 }

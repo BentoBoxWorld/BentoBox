@@ -90,7 +90,7 @@ public class JoinLeaveListener implements Listener {
         // Clear inventory if required
         clearPlayersInventory(Util.getWorld(event.getPlayer().getWorld()), user);
 
-        // Set island max members based on permissions if this player is the owner of an island
+        // Set island max members and homes based on permissions if this player is the owner of an island
         plugin.getIWM().getOverWorlds().stream()
         .map(w -> plugin.getIslands().getIsland(w, playerUUID))
         .filter(i -> playerUUID.equals(i.getOwner()))
@@ -98,6 +98,7 @@ public class JoinLeaveListener implements Listener {
             plugin.getIslands().getMaxMembers(i, RanksManager.MEMBER_RANK);
             plugin.getIslands().getMaxMembers(i, RanksManager.COOP_RANK);
             plugin.getIslands().getMaxMembers(i, RanksManager.TRUSTED_RANK);
+            plugin.getIslands().getMaxHomes(i);
         });
     }
 

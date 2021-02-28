@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Queue;
@@ -391,7 +392,7 @@ public class IslandsManager {
      * @return Island or null
      */
     @Nullable
-    public Island getIsland(@NonNull World world, @NonNull UUID uuid){
+    public Island getIsland(@NonNull World world, @NonNull UUID uuid) {
         return islandCache.get(world, uuid);
     }
 
@@ -541,6 +542,36 @@ public class IslandsManager {
     public void setMaxMembers(@NonNull Island island, int rank, Integer maxMembers) {
         island.setMaxMembers(rank, maxMembers);
     }
+    
+    /**
+     * Get the maximum number of homes allowed on this island. Will be updated with the owner's permission settings if
+     * they exist and the owner is online
+     * @param island - island
+     * @return maximum number of homes
+     * @since 1.16.0
+     */
+    public int getMaxHomes(@NonNull Island island) {
+        int islandMax = island.getMaxHomes() == null ? plugin.getIWM().getMaxHomes(island.getWorld()) : island.getMaxHomes();
+        // Update based on owner permissions if online
+        if (Bukkit.getPlayer(island.getOwner()) != null) {
+            User owner = User.getInstance(island.getOwner());
+            islandMax = owner.getPermissionValue(plugin.getIWM().getPermissionPrefix(island.getWorld())
+                    + "island.maxhomes", islandMax);
+        }
+        island.setMaxHomes(islandMax == plugin.getIWM().getMaxHomes(island.getWorld()) ? null : islandMax);
+        this.save(island);
+        return islandMax;
+    }
+    
+    /**
+     * Set the maximum numbber of homes allowed on this island
+     * @param island - island
+     * @param maxHomes - max number of homes allowed, or null if the world default should be used
+     * @since 1.16.0
+     */
+    public void setMaxHomes(@NonNull Island island, @Nullable Integer maxHomes) {
+        island.setMaxHomes(maxHomes);
+    }
 
     /**
      * Returns the island at the location or Optional empty if there is none.
@@ -558,11 +589,11 @@ public class IslandsManager {
      * Get a safe home location using async chunk loading and set the home location
      * @param world - world
      * @param user - user
-     * @param number - number number
+     * @param name - home name
      * @return CompletableFuture with the location found, or null
      * @since 1.14.0
      */
-    private CompletableFuture<Location> getAsyncSafeHomeLocation(@NonNull World world, @NonNull User user, String number) {
+    private CompletableFuture<Location> getAsyncSafeHomeLocation(@NonNull World world, @NonNull User user, String name) {
         CompletableFuture<Location> result = new CompletableFuture<>();
         // Check if the world is a gamemode world and the player has an island
         Location islandLoc = getIslandLocation(world, user.getUniqueId());
@@ -570,10 +601,10 @@ public class IslandsManager {
             result.complete(null);
             return result;
         }
-        // Try the numbered home location first
+        // Try the home location first
         Location defaultHome = getHomeLocation(world, user);
-        Location numberedHome = getHomeLocation(world, user, number);
-        Location l = numberedHome != null ? numberedHome : defaultHome;
+        Location namedHome = getHomeLocation(world, user, name);
+        Location l = namedHome != null ? namedHome : defaultHome;
         if (l != null) {
             Util.getChunkAtAsync(l).thenRun(() -> {
                 // Check if it is safe
@@ -585,17 +616,17 @@ public class IslandsManager {
                 Location lPlusOne = l.clone().add(new Vector(0, 1, 0));
                 if (isSafeLocation(lPlusOne)) {
                     // Adjust the home location accordingly
-                    setHomeLocation(user, lPlusOne, number);
+                    setHomeLocation(user, lPlusOne, name);
                     result.complete(lPlusOne);
                     return;
                 }
                 // Try island
-                tryIsland(result, islandLoc, user, number);
+                tryIsland(result, islandLoc, user, name);
             });
             return result;
         }
         // Try island
-        tryIsland(result, islandLoc, user, number);
+        tryIsland(result, islandLoc, user, name);
         return result;
     }
 
@@ -651,10 +682,8 @@ public class IslandsManager {
         if (!plugin.getIWM().inWorld(world)) {
             return null;
         }
-
-        // Try the numbered home location first
+        // Try the named home location first
         Location l = getHomeLocation(world, user, name);
-
         if (l == null) {
             // Get the default home, which may be null too, but that's okay
             name = "";
@@ -824,7 +853,33 @@ public class IslandsManager {
      */
     @NonNull
     public Location getHomeLocation(@NonNull World world, @NonNull UUID uuid, String name) {
-        return getHomeLocation(this.getIsland(world, uuid), name);
+        // Migrate from player homes to island homes
+        Island island = this.getIsland(world, uuid);
+        migrateHomes(world, uuid, name, island);
+        return getHomeLocation(island, name);
+    }
+
+    private void migrateHomes(@NonNull World world, @NonNull UUID uuid, String name, Island island) {
+        Map<Location, Integer> homes = plugin
+                .getPlayers()
+                .getHomeLocations(world, uuid);
+        if (homes.isEmpty()) {
+            // No migration required
+            return;
+        }
+        if (island.getOwner().equals(uuid)) {
+            // Owner
+            island.setHomes(homes.entrySet().stream().collect(Collectors.toMap(this::getHomeName, Map.Entry::getKey)));           
+            plugin.getPlayers().clearHomeLocations(world, uuid);
+        }
+    }
+    
+    private String getHomeName(Entry<Location, Integer> e) {
+        // Home 1 has an empty name
+        if (e.getValue() == 1) {
+            return "";
+        }
+        return String.valueOf(e.getValue());
     }
 
     /**
