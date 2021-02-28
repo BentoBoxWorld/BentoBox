@@ -1380,6 +1380,7 @@ public class IslandsManagerTest {
         when(island.getOwner()).thenReturn(uuid);
         when(island.getWorld()).thenReturn(world);
         when(island.getMaxMembers()).thenReturn(null);
+        when(island.getMaxMembers(Mockito.anyInt())).thenReturn(null);
         when(iwm.getMaxTeamSize(eq(world))).thenReturn(4);
         // Offline owner
         when(Bukkit.getPlayer(any(UUID.class))).thenReturn(null);
@@ -1398,6 +1399,7 @@ public class IslandsManagerTest {
         when(island.getOwner()).thenReturn(uuid);
         when(island.getWorld()).thenReturn(world);
         when(island.getMaxMembers()).thenReturn(null);
+        when(island.getMaxMembers(Mockito.anyInt())).thenReturn(null);
         when(iwm.getMaxTeamSize(eq(world))).thenReturn(4);
         // Online owner
         when(Bukkit.getPlayer(any(UUID.class))).thenReturn(player);
@@ -1416,6 +1418,7 @@ public class IslandsManagerTest {
         when(island.getOwner()).thenReturn(uuid);
         when(island.getWorld()).thenReturn(world);
         when(island.getMaxMembers()).thenReturn(null);
+        when(island.getMaxMembers(Mockito.anyInt())).thenReturn(null);
         when(iwm.getMaxTeamSize(eq(world))).thenReturn(4);
         when(iwm.getMaxCoopSize(eq(world))).thenReturn(2);
         when(iwm.getMaxTrustSize(eq(world))).thenReturn(3);
