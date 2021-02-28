@@ -725,6 +725,20 @@ public class IslandWorldManager {
     public boolean isUseOwnGenerator(@NonNull World world) {
         return gameModes.containsKey(world) && gameModes.get(world).getWorldSettings().isUseOwnGenerator();
     }
+    
+    /**
+     * Check for blocks when searching for a new island. This is a safety net check that does a look
+     * around the new island location (3x3x3 block check). If any non-air or non-water blocks are found
+     * then the island is marked as being used. It is mainly for migration handling from worlds that
+     * do not register island properly. It is incompatible with CaveBlock or other gamemodes that will
+     * have blocks there.
+     * @param world - world
+     * @return true if a check for blocks should happen
+     * @since 1.16.0
+     */
+    public boolean isCheckForBlocks(@NonNull World world) {
+        return gameModes.containsKey(world) && gameModes.get(world).getWorldSettings().isCheckForBlocks();
+    }
 
     /**
      * Return banned commands for visitors

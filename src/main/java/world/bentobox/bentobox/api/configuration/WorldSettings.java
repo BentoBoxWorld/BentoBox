@@ -555,4 +555,17 @@ public interface WorldSettings extends ConfigObject {
     default boolean isMakeEndPortals() {
         return false;
     }
+    
+    /**
+     * Check for blocks when searching for a new island. This is a safety net check that does a look
+     * around the new island location (3x3x3 block check). If any non-air or non-water blocks are found
+     * then the island is marked as being used. It is mainly for migration handling from worlds that
+     * do not register island properly. It is incompatible with CaveBlock or other gamemodes that will
+     * have blocks there.
+     * @return true if a check for blocks should happen
+     * @since 1.16.0
+     */
+    default boolean isCheckForBlocks() {
+        return true;
+    }
 }
