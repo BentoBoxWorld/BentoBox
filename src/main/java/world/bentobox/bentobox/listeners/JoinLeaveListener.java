@@ -100,6 +100,7 @@ public class JoinLeaveListener implements Listener {
             plugin.getIslands().getMaxMembers(i, RanksManager.MEMBER_RANK);
             plugin.getIslands().getMaxMembers(i, RanksManager.COOP_RANK);
             plugin.getIslands().getMaxMembers(i, RanksManager.TRUSTED_RANK);
+            plugin.getIslands().getMaxHomes(i);
         });
     }
 

@@ -31,7 +31,6 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
-import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -190,8 +189,9 @@ public class IslandsManagerTest {
         when(plugin.getPlaceholdersManager()).thenReturn(placeholdersManager);
         when(placeholdersManager.replacePlaceholders(any(), any())).thenReturn("mock translation");
 
-        // Has team
+        // Player's manager
         when(plugin.getPlayers()).thenReturn(pm);
+        when(pm.getHomeLocations(any(), any())).thenReturn(Collections.emptyMap());
 
         // Scheduler
         BukkitScheduler sch = mock(BukkitScheduler.class);
@@ -241,6 +241,7 @@ public class IslandsManagerTest {
 
         // Mock island cache
         when(islandCache.getIslandAt(any(Location.class))).thenReturn(island);
+        when(islandCache.get(any(), any())).thenReturn(island);
         optionalIsland = Optional.ofNullable(island);
 
         // User location
@@ -691,9 +692,12 @@ public class IslandsManagerTest {
      */
     @Test
     public void testGetSafeHomeLocation() {
-        when(pm.getHomeLocation(any(), any(User.class), eq(0))).thenReturn(null);
-        when(pm.getHomeLocation(any(), any(User.class), eq(1))).thenReturn(location);
-        assertEquals(location, im.getSafeHomeLocation(world, user, 0));
+        im.setIslandCache(islandCache);
+        when(island.getHome(any())).thenReturn(location);
+        when(iwm.inWorld(eq(world))).thenReturn(true);
+
+        assertEquals(location, im.getSafeHomeLocation(world, user, ""));
+
         // Change location so that it is not safe
         // TODO
     }
@@ -705,7 +709,7 @@ public class IslandsManagerTest {
     @Test
     public void testGetSafeHomeLocationWorldNotIslandWorld() {
         when(iwm.inWorld(world)).thenReturn(false);
-        assertNull(im.getSafeHomeLocation(world, user, 0));
+        assertNull(im.getSafeHomeLocation(world, user, ""));
     }
 
     /**
@@ -714,7 +718,7 @@ public class IslandsManagerTest {
     @Test
     public void testGetSafeHomeLocationNoIsland() {
         when(pm.getHomeLocation(eq(world), eq(user), eq(0))).thenReturn(null);
-        assertNull(im.getSafeHomeLocation(world, user, 0));
+        assertNull(im.getSafeHomeLocation(world, user, ""));
         verify(plugin).logWarning(eq("null player has no island in world world!"));
     }
 
@@ -732,20 +736,6 @@ public class IslandsManagerTest {
         // Set the spawn island
         im.setSpawn(island);
         assertEquals(location,im.getSpawnPoint(world));
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#homeTeleport(World, Player, int)}.
-     */
-    @SuppressWarnings("deprecation")
-    @Test
-    public void testHomeTeleportPlayerInt() {
-        when(iwm.getDefaultGameMode(world)).thenReturn(GameMode.SURVIVAL);
-        when(pm.getHomeLocation(any(), any(User.class), eq(0))).thenReturn(null);
-        when(pm.getHomeLocation(any(), any(User.class), eq(1))).thenReturn(location);
-        im.homeTeleport(world, player, 0);
-        verify(player).teleport(eq(location), any());
-
     }
 
     /**
@@ -1316,7 +1306,7 @@ public class IslandsManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#getMaxMembers(Island)}.
+     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#getMaxMembers(Island, Integer)}.
      */
     @Test
     public void testGetMaxMembersNoOwner() {
@@ -1328,7 +1318,7 @@ public class IslandsManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#getMaxMembers(Island)}.
+     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#getMaxMembers(Island, Integer)}.
      */
     @Test
     public void testGetMaxMembersOfflineOwner() {
@@ -1346,7 +1336,7 @@ public class IslandsManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#getMaxMembers(Island)}.
+     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#getMaxMembers(Island, Integer)}.
      */
     @Test
     public void testGetMaxMembersOnlineOwnerNoPerms() {
@@ -1364,7 +1354,7 @@ public class IslandsManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#getMaxMembers(Island)}.
+     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#getMaxMembers(Island, Integer)}.
      */
     @Test
     public void testGetMaxMembersOnlineOwnerNoPermsCoopTrust() {
@@ -1386,7 +1376,7 @@ public class IslandsManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#getMaxMembers(Island)}.
+     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#getMaxMembers(Island, Integer)}.
      */
     @Test
     public void testGetMaxMembersOnlineOwnerNoPermsPreset() {
@@ -1403,7 +1393,7 @@ public class IslandsManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#getMaxMembers(Island)}.
+     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#getMaxMembers(Island, Integer)}.
      */
     @Test
     public void testGetMaxMembersOnlineOwnerNoPermsPresetLessThanDefault() {
@@ -1420,7 +1410,7 @@ public class IslandsManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#getMaxMembers(Island)}.
+     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#getMaxMembers(Island, Integer)}.
      */
     @Test
     public void testGetMaxMembersOnlineOwnerHasPerm() {
@@ -1445,7 +1435,7 @@ public class IslandsManagerTest {
 
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#setMaxMembers(Island, Integer)}.
+     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#setMaxMembers(Island, Integer, Integer)}.
      */
     @Test
     public void testsetMaxMembers() {
@@ -1453,5 +1443,117 @@ public class IslandsManagerTest {
         // Test
         im.setMaxMembers(island, RanksManager.MEMBER_RANK, 40);
         verify(island).setMaxMembers(eq(RanksManager.MEMBER_RANK), eq(40));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#getMaxHomes(Island)}.
+     */
+    @Test
+    public void testGetMaxHomesOnlineOwnerHasPerm() {
+        Island island = mock(Island.class);
+        when(island.getOwner()).thenReturn(uuid);
+        when(island.getWorld()).thenReturn(world);
+        when(island.getMaxHomes()).thenReturn(null);
+        when(iwm.getMaxHomes(eq(world))).thenReturn(4);
+        // Permission
+        when(iwm.getPermissionPrefix(any())).thenReturn("bskyblock.");
+        PermissionAttachmentInfo pai = mock(PermissionAttachmentInfo.class);
+        when(pai.getValue()).thenReturn(true);
+        when(pai.getPermission()).thenReturn("bskyblock.island.maxhomes.8");
+        Set<PermissionAttachmentInfo> set = Collections.singleton(pai);
+        when(player.getEffectivePermissions()).thenReturn(set);
+        // Online owner
+        when(Bukkit.getPlayer(any(UUID.class))).thenReturn(player);
+        // Test
+        IslandsManager im = new IslandsManager(plugin);
+        assertEquals(8, im.getMaxHomes(island));
+        verify(island).setMaxHomes(eq(8));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#getMaxHomes(Island)}.
+     */
+    @Test
+    public void testGetMaxHomesOnlineOwnerHasNoPerm() {
+        Island island = mock(Island.class);
+        when(island.getOwner()).thenReturn(uuid);
+        when(island.getWorld()).thenReturn(world);
+        when(island.getMaxHomes()).thenReturn(null);
+        when(iwm.getMaxHomes(eq(world))).thenReturn(4);
+        // Permission
+        when(iwm.getPermissionPrefix(any())).thenReturn("bskyblock.");
+        PermissionAttachmentInfo pai = mock(PermissionAttachmentInfo.class);
+        when(pai.getValue()).thenReturn(true);
+        when(pai.getPermission()).thenReturn("bskyblock.island.something.else");
+        Set<PermissionAttachmentInfo> set = Collections.singleton(pai);
+        when(player.getEffectivePermissions()).thenReturn(set);
+        // Online owner
+        when(Bukkit.getPlayer(any(UUID.class))).thenReturn(player);
+        // Test
+        IslandsManager im = new IslandsManager(plugin);
+        assertEquals(4, im.getMaxHomes(island));
+        verify(island).setMaxHomes(eq(null));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#getMaxHomes(Island)}.
+     */
+    @Test
+    public void testGetMaxHomesIslandSetOnlineOwner() {
+        Island island = mock(Island.class);
+        when(island.getOwner()).thenReturn(uuid);
+        when(island.getWorld()).thenReturn(world);
+        when(island.getMaxHomes()).thenReturn(20);
+        when(iwm.getMaxHomes(eq(world))).thenReturn(4);
+        // Permission
+        when(iwm.getPermissionPrefix(any())).thenReturn("bskyblock.");
+        PermissionAttachmentInfo pai = mock(PermissionAttachmentInfo.class);
+        when(pai.getValue()).thenReturn(true);
+        when(pai.getPermission()).thenReturn("bskyblock.island.something.else");
+        Set<PermissionAttachmentInfo> set = Collections.singleton(pai);
+        when(player.getEffectivePermissions()).thenReturn(set);
+        // Online owner
+        when(Bukkit.getPlayer(any(UUID.class))).thenReturn(player);
+        // Test
+        IslandsManager im = new IslandsManager(plugin);
+        assertEquals(20, im.getMaxHomes(island));
+        verify(island).setMaxHomes(eq(20));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#getMaxHomes(Island)}.
+     */
+    @Test
+    public void testGetMaxHomesIslandSetOnlineOwnerLowerPerm() {
+        Island island = mock(Island.class);
+        when(island.getOwner()).thenReturn(uuid);
+        when(island.getWorld()).thenReturn(world);
+        when(island.getMaxHomes()).thenReturn(20);
+        when(iwm.getMaxHomes(eq(world))).thenReturn(4);
+        // Permission
+        when(iwm.getPermissionPrefix(any())).thenReturn("bskyblock.");
+        PermissionAttachmentInfo pai = mock(PermissionAttachmentInfo.class);
+        when(pai.getValue()).thenReturn(true);
+        when(pai.getPermission()).thenReturn("bskyblock.island.maxhomes.8");
+        Set<PermissionAttachmentInfo> set = Collections.singleton(pai);
+        when(player.getEffectivePermissions()).thenReturn(set);
+        // Online owner
+        when(Bukkit.getPlayer(any(UUID.class))).thenReturn(player);
+        // Test
+        IslandsManager im = new IslandsManager(plugin);
+        assertEquals(8, im.getMaxHomes(island));
+        verify(island).setMaxHomes(eq(8));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#setMaxHomes(Island, Integer)}.
+     */
+    @Test
+    public void testsetMaxHomes() {
+        Island island = mock(Island.class);
+        // Test
+        IslandsManager im = new IslandsManager(plugin);
+        im.setMaxHomes(island, 40);
+        verify(island).setMaxHomes(eq(40));
     }
 }

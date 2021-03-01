@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Queue;
@@ -391,7 +392,7 @@ public class IslandsManager {
      * @return Island or null
      */
     @Nullable
-    public Island getIsland(@NonNull World world, @NonNull UUID uuid){
+    public Island getIsland(@NonNull World world, @NonNull UUID uuid) {
         return islandCache.get(world, uuid);
     }
 
@@ -541,6 +542,36 @@ public class IslandsManager {
     public void setMaxMembers(@NonNull Island island, int rank, Integer maxMembers) {
         island.setMaxMembers(rank, maxMembers);
     }
+    
+    /**
+     * Get the maximum number of homes allowed on this island. Will be updated with the owner's permission settings if
+     * they exist and the owner is online
+     * @param island - island
+     * @return maximum number of homes
+     * @since 1.16.0
+     */
+    public int getMaxHomes(@NonNull Island island) {
+        int islandMax = island.getMaxHomes() == null ? plugin.getIWM().getMaxHomes(island.getWorld()) : island.getMaxHomes();
+        // Update based on owner permissions if online
+        if (Bukkit.getPlayer(island.getOwner()) != null) {
+            User owner = User.getInstance(island.getOwner());
+            islandMax = owner.getPermissionValue(plugin.getIWM().getPermissionPrefix(island.getWorld())
+                    + "island.maxhomes", islandMax);
+        }
+        island.setMaxHomes(islandMax == plugin.getIWM().getMaxHomes(island.getWorld()) ? null : islandMax);
+        this.save(island);
+        return islandMax;
+    }
+    
+    /**
+     * Set the maximum numbber of homes allowed on this island
+     * @param island - island
+     * @param maxHomes - max number of homes allowed, or null if the world default should be used
+     * @since 1.16.0
+     */
+    public void setMaxHomes(@NonNull Island island, @Nullable Integer maxHomes) {
+        island.setMaxHomes(maxHomes);
+    }
 
     /**
      * Returns the island at the location or Optional empty if there is none.
@@ -558,11 +589,11 @@ public class IslandsManager {
      * Get a safe home location using async chunk loading and set the home location
      * @param world - world
      * @param user - user
-     * @param number - number number
+     * @param name - home name
      * @return CompletableFuture with the location found, or null
      * @since 1.14.0
      */
-    public CompletableFuture<Location> getAsyncSafeHomeLocation(@NonNull World world, @NonNull User user, int number) {
+    private CompletableFuture<Location> getAsyncSafeHomeLocation(@NonNull World world, @NonNull User user, String name) {
         CompletableFuture<Location> result = new CompletableFuture<>();
         // Check if the world is a gamemode world and the player has an island
         Location islandLoc = getIslandLocation(world, user.getUniqueId());
@@ -570,10 +601,10 @@ public class IslandsManager {
             result.complete(null);
             return result;
         }
-        // Try the numbered home location first
-        Location defaultHome = plugin.getPlayers().getHomeLocation(world, user, 1);
-        Location numberedHome = plugin.getPlayers().getHomeLocation(world, user, number);
-        Location l = numberedHome != null ? numberedHome : defaultHome;
+        // Try the home location first
+        Location defaultHome = getHomeLocation(world, user);
+        Location namedHome = getHomeLocation(world, user, name);
+        Location l = namedHome != null ? namedHome : defaultHome;
         if (l != null) {
             Util.getChunkAtAsync(l).thenRun(() -> {
                 // Check if it is safe
@@ -585,25 +616,25 @@ public class IslandsManager {
                 Location lPlusOne = l.clone().add(new Vector(0, 1, 0));
                 if (isSafeLocation(lPlusOne)) {
                     // Adjust the home location accordingly
-                    plugin.getPlayers().setHomeLocation(user, lPlusOne, number);
+                    setHomeLocation(user, lPlusOne, name);
                     result.complete(lPlusOne);
                     return;
                 }
                 // Try island
-                tryIsland(result, islandLoc, user, number);
+                tryIsland(result, islandLoc, user, name);
             });
             return result;
         }
         // Try island
-        tryIsland(result, islandLoc, user, number);
+        tryIsland(result, islandLoc, user, name);
         return result;
     }
 
-    private void tryIsland(CompletableFuture<Location> result, Location islandLoc, @NonNull User user, int number) {
+    private void tryIsland(CompletableFuture<Location> result, Location islandLoc, @NonNull User user, String number) {
         Util.getChunkAtAsync(islandLoc).thenRun(() -> {
             World w = islandLoc.getWorld();
             if (isSafeLocation(islandLoc)) {
-                plugin.getPlayers().setHomeLocation(user, islandLoc, number);
+                setHomeLocation(user, islandLoc, number);
                 result.complete(islandLoc.clone().add(new Vector(0.5D,0,0.5D)));
                 return;
             } else {
@@ -611,14 +642,14 @@ public class IslandsManager {
                 // Try the default location
                 Location dl = islandLoc.clone().add(new Vector(0.5D, 5D, 2.5D));
                 if (isSafeLocation(dl)) {
-                    plugin.getPlayers().setHomeLocation(user, dl, number);
+                    setHomeLocation(user, dl, number);
                     result.complete(dl);
                     return;
                 }
                 // Try just above the bedrock
                 dl = islandLoc.clone().add(new Vector(0.5D, 5D, 0.5D));
                 if (isSafeLocation(dl)) {
-                    plugin.getPlayers().setHomeLocation(user, dl, number);
+                    setHomeLocation(user, dl, number);
                     result.complete(dl);
                     return;
                 }
@@ -626,7 +657,7 @@ public class IslandsManager {
                 for (int y = islandLoc.getBlockY(); y < w.getMaxHeight(); y++) {
                     dl = new Location(w, islandLoc.getX() + 0.5D, y, islandLoc.getZ() + 0.5D);
                     if (isSafeLocation(dl)) {
-                        plugin.getPlayers().setHomeLocation(user, dl, number);
+                        setHomeLocation(user, dl, number);
                         result.complete(dl);
                         return;
                     }
@@ -643,22 +674,20 @@ public class IslandsManager {
      *
      * @param world - world to check, not null
      * @param user - the player, not null
-     * @param number - a number - starting home location, e.g. 1
+     * @param name - named home location. Blank means default.
      * @return Location of a safe teleport spot or {@code null} if one cannot be found or if the world is not an island world.
      */
-    public Location getSafeHomeLocation(@NonNull World world, @NonNull User user, int number) {
+    public Location getSafeHomeLocation(@NonNull World world, @NonNull User user, String name) {
         // Check if the world is a gamemode world
         if (!plugin.getIWM().inWorld(world)) {
             return null;
         }
-
-        // Try the numbered home location first
-        Location l = plugin.getPlayers().getHomeLocation(world, user, number);
-
+        // Try the named home location first
+        Location l = getHomeLocation(world, user, name);
         if (l == null) {
             // Get the default home, which may be null too, but that's okay
-            number = 1;
-            l = plugin.getPlayers().getHomeLocation(world, user, number);
+            name = "";
+            l = getHomeLocation(world, user, name);
         }
         // Check if it is safe
         if (l != null) {
@@ -670,7 +699,7 @@ public class IslandsManager {
             lPlusOne.add(new Vector(0, 1, 0));
             if (isSafeLocation(lPlusOne)) {
                 // Adjust the home location accordingly
-                plugin.getPlayers().setHomeLocation(user, lPlusOne, number);
+                setHomeLocation(user, lPlusOne, name);
                 return lPlusOne;
             }
         }
@@ -679,20 +708,20 @@ public class IslandsManager {
         if (inTeam(world, user.getUniqueId())) {
             l = getIslandLocation(world, user.getUniqueId());
             if (l != null && isSafeLocation(l)) {
-                plugin.getPlayers().setHomeLocation(user, l, number);
+                setHomeLocation(user, l, name);
                 return l;
             } else {
                 // try owner's home
-                Location tlh = plugin.getPlayers().getHomeLocation(world, plugin.getIslands().getOwner(world, user.getUniqueId()));
+                Location tlh = getHomeLocation(world, getOwner(world, user.getUniqueId()));
                 if (tlh != null && isSafeLocation(tlh)) {
-                    plugin.getPlayers().setHomeLocation(user, tlh, number);
+                    setHomeLocation(user, tlh, name);
                     return tlh;
                 }
             }
         } else {
             l = getIslandLocation(world, user.getUniqueId());
             if (l != null && isSafeLocation(l)) {
-                plugin.getPlayers().setHomeLocation(user, l, number);
+                setHomeLocation(user, l, name);
                 return l.clone().add(new Vector(0.5D,0,0.5D));
             }
         }
@@ -704,25 +733,229 @@ public class IslandsManager {
         // Try the default location
         Location dl = new Location(l.getWorld(), l.getX() + 0.5D, l.getY() + 5D, l.getZ() + 2.5D, 0F, 30F);
         if (isSafeLocation(dl)) {
-            plugin.getPlayers().setHomeLocation(user, dl, number);
+            setHomeLocation(user, dl, name);
             return dl;
         }
         // Try just above the bedrock
         dl = new Location(l.getWorld(), l.getX() + 0.5D, l.getY() + 5D, l.getZ() + 0.5D, 0F, 30F);
         if (isSafeLocation(dl)) {
-            plugin.getPlayers().setHomeLocation(user, dl, number);
+            setHomeLocation(user, dl, name);
             return dl;
         }
         // Try all the way up to the sky
         for (int y = l.getBlockY(); y < 255; y++) {
             final Location n = new Location(l.getWorld(), l.getX() + 0.5D, y, l.getZ() + 0.5D);
             if (isSafeLocation(n)) {
-                plugin.getPlayers().setHomeLocation(user, n, number);
+                setHomeLocation(user, n, name);
                 return n;
             }
         }
         // Unsuccessful
         return null;
+    }
+
+    /**
+     * Sets a home location on user's island. Replaces previous location if the same name is used
+     * @param user - user
+     * @param location - location on island
+     * @param name - name of home, or blank for default home
+     * @return true if home location was set. False if this location is not on the island.
+     * @since 1.16.0
+     */
+    public boolean setHomeLocation(@NonNull User user, Location location, String name) {
+        return setHomeLocation(user.getUniqueId(), location, name);
+    }
+
+    /**
+     * Sets a home location on user's island. Replaces previous location if the same name is used
+     * @param uuid - user uuid
+     * @param location - location on island
+     * @param name - name of home, or blank for default home
+     * @return true if home location was set. False if this location is not on the island.
+     * @since 1.16.0
+     */
+    public boolean setHomeLocation(@NonNull UUID uuid, Location location, String name) {
+        return setHomeLocation(this.getIsland(location.getWorld(), uuid), location, name);
+    }
+
+    /**
+     * Set a default home location for user on their island
+     * @param uuid - user uuid
+     * @param location - location on island
+     * @return true if home location was set. False if this location is not on the island.
+     * @since 1.16.0
+     */
+    public boolean setHomeLocation(@NonNull UUID uuid, Location location) {
+        return setHomeLocation(uuid, location, "");
+    }
+
+    /**
+     * Set a home location for island
+     * @param island - island
+     * @param location - location
+     * @param name - name of home, or blank for default home
+     * @return true if home location was set. False if this location is not on the island.
+     * @since 1.16.0
+     */
+    public boolean setHomeLocation(@Nullable Island island, Location location, String name) {
+        if (island != null) {
+            island.addHome(name, location);
+            this.save(island);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Get the home location for user in world
+     * @param world - world
+     * @param user - user
+     * @return home location
+     * @since 1.16.0
+     */
+    @NonNull
+    public Location getHomeLocation(@NonNull World world, @NonNull User user) {
+        return getHomeLocation(world, user, "");
+    }
+
+    /**
+     * Get the home location for player's UUID in world
+     * @param world - world
+     * @param uuid - uuid of player
+     * @return home location
+     * @since 1.16.0
+     */
+    @NonNull
+    public Location getHomeLocation(@NonNull World world, @NonNull UUID uuid) {
+        return getHomeLocation(world, uuid, "");
+    }
+
+    /**
+     * Get the named home location for user in world
+     * @param world - world
+     * @param user - user
+     * @param name - name of home, or blank for default
+     * @return home location
+     * @since 1.16.0
+     */
+    @NonNull
+    public Location getHomeLocation(@NonNull World world, @NonNull User user, String name) {
+        return getHomeLocation(world, user.getUniqueId(), name);
+    }
+
+    /**
+     * Get the named home location for user in world
+     * @param world - world
+     * @param uuid - uuid of player
+     * @param name - name of home, or blank for default
+     * @return home location
+     * @since 1.16.0
+     */
+    @NonNull
+    public Location getHomeLocation(@NonNull World world, @NonNull UUID uuid, String name) {
+        // Migrate from player homes to island homes
+        Island island = this.getIsland(world, uuid);
+        migrateHomes(world, uuid, name, island);
+        return getHomeLocation(island, name);
+    }
+
+    private void migrateHomes(@NonNull World world, @NonNull UUID uuid, String name, Island island) {
+        Map<Location, Integer> homes = plugin
+                .getPlayers()
+                .getHomeLocations(world, uuid);
+        if (homes.isEmpty()) {
+            // No migration required
+            return;
+        }
+        if (island.getOwner().equals(uuid)) {
+            // Owner
+            island.setHomes(homes.entrySet().stream().collect(Collectors.toMap(this::getHomeName, Map.Entry::getKey)));           
+            plugin.getPlayers().clearHomeLocations(world, uuid);
+        }
+    }
+    
+    private String getHomeName(Entry<Location, Integer> e) {
+        // Home 1 has an empty name
+        if (e.getValue() == 1) {
+            return "";
+        }
+        return String.valueOf(e.getValue());
+    }
+
+    /**
+     * Get the default home location for this island
+     * @param island - island
+     * @return home location
+     * @since 1.16.0
+     */
+    @NonNull
+    public Location getHomeLocation(@Nullable Island island) {
+        return getHomeLocation(island, "");
+    }
+
+    /**
+     * Get the named home location for this island
+     * @param island - island
+     * @param name - name of home, or blank for default
+     * @return home location
+     * @since 1.16.0
+     */
+    @NonNull
+    public Location getHomeLocation(@Nullable Island island, String name) {
+        return island == null ? null : island.getHome(name);
+    }
+
+    /**
+     * Remove the named home location from this island
+     * @param island - island
+     * @param name - name of home, or blank for default
+     * @return true if successful, false if not
+     * @since 1.16.0
+     */
+    public boolean removeHomeLocation(@Nullable Island island, String name) {
+        return island == null ? false : island.removeHome(name);
+    }
+
+    /**
+     * Rename a home
+     * @param island - island
+     * @param oldName - old name
+     * @param newName - new name
+     * @return true if successful, false if not
+     */
+    public boolean renameHomeLocation(@Nullable Island island, String oldName, String newName) {
+        return island == null ? false : island.renameHome(oldName, newName);
+    }
+
+    /**
+     * Get the all the home locations for this island
+     * @param island - island
+     * @return map of home locations with the name as the key
+     * @since 1.16.0
+     */
+    @NonNull
+    public Map<String, Location> getHomeLocations(@NonNull Island island) {
+        return island.getHomes();
+    }
+
+    /**
+     * Check if a home name exists or not
+     * @param island - island
+     * @param name - name being checked
+     * @return true if it exists or not
+     */
+    public boolean isHomeLocation(@NonNull Island island, String name) {
+        return island.getHomes().containsKey(name.toLowerCase());
+    }
+
+    /**
+     * Get the number of homes on this island if this home were added
+     * @param island - island
+     * @param name - name
+     * @return number of homes after adding this one
+     */
+    public int getNumberOfHomesIfAdded(@NonNull Island island, String name) {
+        return isHomeLocation(island, name) ? getHomeLocations(island).size() : getHomeLocations(island).size() + 1;
     }
 
     /**
@@ -781,52 +1014,11 @@ public class IslandsManager {
      *
      * @param world - world to check
      * @param player - the player
-     * @deprecated as of 1.14.0. Use homeTeleportAsync instead.
-     */
-    @Deprecated
-    public void homeTeleport(@NonNull World world, @NonNull Player player) {
-        homeTeleport(world, player, 1, false);
-    }
-
-    /**
-     * Teleport player to a home location. If one cannot be found a search is done to
-     * find a safe place.
-     *
-     * @param world - world to check
-     * @param player - the player
-     * @param number - a number - home location to do to
-     * @deprecated as of 1.14.0. Use homeTeleportAsync instead.
-     */
-    @Deprecated
-    public void homeTeleport(@NonNull World world, @NonNull Player player, int number) {
-        homeTeleport(world, player, number, false);
-    }
-
-    /**
-     * This teleports player to their island. If not safe place can be found
-     * then the player is sent to spawn via /spawn command
-     *
-     * @param world - world to check
-     * @param player - the player
-     * @param newIsland - true if this is a new island teleport
-     * @deprecated as of 1.14.0. Use homeTeleportAsync instead.
-     */
-    @Deprecated
-    public void homeTeleport(@NonNull World world, @NonNull Player player, boolean newIsland) {
-        homeTeleport(world, player, 1, newIsland);
-    }
-
-    /**
-     * This teleports player to their island. If not safe place can be found
-     * then the player is sent to spawn via /spawn command
-     *
-     * @param world - world to check
-     * @param player - the player
      * @return CompletableFuture true if successful, false if not
      * @since 1.14.0
      */
     public CompletableFuture<Boolean> homeTeleportAsync(@NonNull World world, @NonNull Player player) {
-        return homeTeleportAsync(world, player, 1, false);
+        return homeTeleportAsync(world, player, "", false);
     }
 
     /**
@@ -838,13 +1030,29 @@ public class IslandsManager {
      * @param number - a number - home location to do to
      * @return CompletableFuture true if successful, false if not
      * @since 1.14.0
+     * @deprecated Use {@link #homeTeleportAsync(World, Player, String)}
      */
+    @Deprecated
     public CompletableFuture<Boolean> homeTeleportAsync(@NonNull World world, @NonNull Player player, int number) {
-        return homeTeleportAsync(world, player, number, false);
+        return homeTeleportAsync(world, player, String.valueOf(number), false);
     }
 
     /**
-     * This teleports player to their island. If not safe place can be found
+     * Teleport player to a home location. If one cannot be found a search is done to
+     * find a safe place.
+     *
+     * @param world - world to check
+     * @param player - the player
+     * @param name - a named home location. Blank means default.
+     * @return CompletableFuture true if successful, false if not
+     * @since 1.16.0
+     */
+    public CompletableFuture<Boolean> homeTeleportAsync(@NonNull World world, @NonNull Player player, String name) {
+        return homeTeleportAsync(world, player, name, false);
+    }
+
+    /**
+     * This teleports player to their island. If no safe place can be found
      * then the player is sent to spawn via /spawn command
      *
      * @param world - world to check
@@ -854,11 +1062,11 @@ public class IslandsManager {
      * @since 1.14.0
      */
     public CompletableFuture<Boolean> homeTeleportAsync(@NonNull World world, @NonNull Player player, boolean newIsland) {
-        return homeTeleportAsync(world, player, 1, newIsland);
+        return homeTeleportAsync(world, player, "", newIsland);
     }
 
 
-    private CompletableFuture<Boolean> homeTeleportAsync(@NonNull World world, @NonNull Player player, int number, boolean newIsland) {
+    private CompletableFuture<Boolean> homeTeleportAsync(@NonNull World world, @NonNull Player player, String name, boolean newIsland) {
         CompletableFuture<Boolean> result = new CompletableFuture<>();
         User user = User.getInstance(player);
         user.sendMessage("commands.island.go.teleport");
@@ -875,26 +1083,27 @@ public class IslandsManager {
                 player.updateInventory();
             }
         }
-        this.getAsyncSafeHomeLocation(world, user, number).thenAccept(home -> {
+        this.getAsyncSafeHomeLocation(world, user, name).thenAccept(home -> {
+            Island island = getIsland(world, user);
             if (home == null) {
                 // Try to fix this teleport location and teleport the player if possible
                 new SafeSpotTeleport.Builder(plugin)
                 .entity(player)
-                .island(plugin.getIslands().getIsland(world, user))
-                .homeNumber(number)
-                .thenRun(() -> teleported(world, user, number, newIsland))
+                .island(island)
+                .homeName(name)
+                .thenRun(() -> teleported(world, user, name, newIsland))
                 .buildFuture()
                 .thenAccept(result::complete);
                 return;
             }
             // Add home
-            if (plugin.getPlayers().getHomeLocations(world, player.getUniqueId()).isEmpty()) {
-                plugin.getPlayers().setHomeLocation(player.getUniqueId(), home);
+            if (getHomeLocations(island).isEmpty()) {
+                setHomeLocation(player.getUniqueId(), home);
             }
             PaperLib.teleportAsync(player, home).thenAccept(b -> {
                 // Only run the commands if the player is successfully teleported
                 if (Boolean.TRUE.equals(b)) {
-                    teleported(world, user, number, newIsland);
+                    teleported(world, user, name, newIsland);
                     result.complete(true);
                 } else {
                     result.complete(false);
@@ -905,56 +1114,9 @@ public class IslandsManager {
         return result;
     }
 
-
-    /**
-     * Teleport player to a home location. If one cannot be found a search is done to
-     * find a safe place.
-     *
-     * @param world - world to check
-     * @param player - the player
-     * @param number - a number - home location to do to
-     * @param newIsland - true if this is a new island teleport
-     */
-    private void homeTeleport(@NonNull World world, @NonNull Player player, int number, boolean newIsland) {
-        User user = User.getInstance(player);
-        user.sendMessage("commands.island.go.teleport");
-        Location home = getSafeHomeLocation(world, user, number);
-        // Stop any gliding
-        player.setGliding(false);
-        // Check if the player is a passenger in a boat
-        if (player.isInsideVehicle()) {
-            Entity boat = player.getVehicle();
-            if (boat instanceof Boat) {
-                player.leaveVehicle();
-                // Remove the boat so they don't lie around everywhere
-                boat.remove();
-                player.getInventory().addItem(new ItemStack(TREE_TO_BOAT.getOrDefault(((Boat) boat).getWoodType(), Material.OAK_BOAT)));
-                player.updateInventory();
-            }
-        }
-        if (home == null) {
-            // Try to fix this teleport location and teleport the player if possible
-            new SafeSpotTeleport.Builder(plugin)
-            .entity(player)
-            .island(plugin.getIslands().getIsland(world, user))
-            .homeNumber(number)
-            .thenRun(() -> teleported(world, user, number, newIsland))
-            .build();
-            return;
-        }
-        // Add home
-        if (plugin.getPlayers().getHomeLocations(world, player.getUniqueId()).isEmpty()) {
-            plugin.getPlayers().setHomeLocation(player.getUniqueId(), home);
-        }
-        PaperLib.teleportAsync(player, home).thenAccept(b -> {
-            // Only run the commands if the player is successfully teleported
-            if (Boolean.TRUE.equals(b)) teleported(world, user, number, newIsland);
-        });
-    }
-
-    private void teleported(World world, User user, int number, boolean newIsland) {
-        if (number > 1) {
-            user.sendMessage("commands.island.go.teleported", TextVariables.NUMBER, String.valueOf(number));
+    private void teleported(World world, User user, String name, boolean newIsland) {
+        if (!name.isEmpty()) {
+            user.sendMessage("commands.island.go.teleported", TextVariables.NUMBER, name);
         }
         // If this is a new island, then run commands and do resets
         if (newIsland) {
