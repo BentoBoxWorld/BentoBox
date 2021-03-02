@@ -91,6 +91,7 @@ public class DefaultNewIslandLocationStrategyTest {
         when(iwm.getIslandZOffset(eq(world))).thenReturn(0);
         when(iwm.getIslandStartX(eq(world))).thenReturn(1000);
         when(iwm.getIslandStartZ(eq(world))).thenReturn(11000);
+        when(iwm.isCheckForBlocks(eq(world))).thenReturn(true);
         // Island deletion manager
         when(plugin.getIslandDeletionManager()).thenReturn(idm);
         when(idm.inDeletion(any())).thenReturn(false);
@@ -228,6 +229,17 @@ public class DefaultNewIslandLocationStrategyTest {
         when(adjBlock.getType()).thenReturn(Material.STONE);
         when(adjBlock.isEmpty()).thenReturn(false);
         assertEquals(Result.BLOCKS_IN_AREA, dnils.isIsland(location));
+    }
+    
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.island.DefaultNewIslandLocationStrategy#isIsland(org.bukkit.Location)}.
+     */
+    @Test
+    public void testIsIslandBlocksInAreaNoCheck() {
+        when(iwm.isCheckForBlocks(any())).thenReturn(false);
+        when(adjBlock.getType()).thenReturn(Material.STONE);
+        when(adjBlock.isEmpty()).thenReturn(false);
+        assertEquals(Result.FREE, dnils.isIsland(location));
     }
 
 }

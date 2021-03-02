@@ -466,10 +466,11 @@ commands:
     about:
       description: "display licence details"
     go:
-      parameters: "[home number]"
+      parameters: "[home name]"
       description: "teleport you to your island"
       teleport: "&a Teleporting you to your island."
-      teleported: "&a Teleported you to home &e #[number]."
+      teleported: "&a Teleported you to home &e [number]."
+      unknown-home: "&c Unknown home name!"
     help:
       description: "the main island command"
     spawn:
@@ -492,6 +493,9 @@ commands:
       unknown-blueprint: "&c That blueprint has not been loaded yet."
       on-first-login: "&a Welcome! We will start preparing your island in a few seconds."
       you-can-teleport-to-your-island: "&a You can teleport to your island when you want."
+    deletehome:
+      description: "delete a home location"
+      parameters: "[home name]"
     info:
       description: "display info about your island or the player's island"
       parameters: "<player>"
@@ -518,8 +522,10 @@ commands:
     sethome:
       description: "set your home teleport point"
       must-be-on-your-island: "&c You must be on your island to set home!"
-      num-homes: "&c Homes can be 1 to [number]."
+      too-many-homes: "&c Cannot set - your island is at the maximum of [number] homes."
       home-set: "&6 Your island home has been set to your current location."
+      homes-are: "&6 Island homes are:"
+      home-list-syntax: "&6 [name]"
       nether:
         not-allowed: "&c You are not allowed to set your home in the Nether."
         confirmation: "&c Are you sure you want to set your home in the Nether?"
@@ -534,6 +540,11 @@ commands:
       name-already-exists: "&c There is already an island with that name in this gamemode."
       parameters: "<name>"
       success: "&a Successfully set your island's name to &b [name]&a ."
+    renamehome:
+      description: "rename a home location"
+      parameters: "[home name]"
+      enter-new-name: "&6 Enter the new name"
+      already-exists: "&c That name already exists, try another name."
     resetname:
       description: "reset your island name"
       success: "&a Successfully reset your island name."

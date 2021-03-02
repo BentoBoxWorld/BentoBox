@@ -24,6 +24,7 @@ import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
@@ -202,6 +203,19 @@ public class Island implements DataObject, MetaDataAble {
      */
     @Expose
     private Map<String, MetaDataValue> metaData;
+
+    /**
+     * Island homes. Replaces player homes
+     * @since 1.16.0
+     */
+    @Expose
+    private Map<String, Location> homes;
+
+    /**
+     * The maximum number of homes allowed on this island. If null, then the world default is used.
+     */
+    @Expose
+    private Integer maxHomes;
 
     /*
      * *************************** Constructors ******************************
@@ -1420,11 +1434,98 @@ public class Island implements DataObject, MetaDataAble {
     }
 
     /**
+     * @return the homes
+     * @since 1.16.0
+     */
+    @NotNull
+    public Map<String, Location> getHomes() {
+        if (homes == null) {
+            homes = new HashMap<>();
+        }
+        return homes;
+    }
+
+    /**
+     * @return the homes
+     * @since 1.16.0
+     */
+    @Nullable
+    public Location getHome(String name) {
+        return getHomes().get(name.toLowerCase());
+    }
+
+    /**
+     * @param homes the homes to set
+     * @since 1.16.0
+     */
+    public void setHomes(Map<String, Location> homes) {
+        this.homes = homes;
+        setChanged();
+    }
+
+    /**
+     * @param homes the homes to set
+     * @since 1.16.0
+     */
+    public void addHome(String name, Location location) {
+        getHomes().put(name.toLowerCase(), location);
+        setChanged();
+    }
+
+    /**
+     * Remove a named home from this island
+     * @param name - home name to remove
+     * @return true if home removed successfully
+     * @since 1.16.0
+     */
+    public boolean removeHome(String name) {
+        setChanged();
+        return getHomes().remove(name.toLowerCase()) != null;
+    }
+
+    /**
+     * Rename a home
+     * @param oldName - old name of home
+     * @param newName - new name of home
+     * @return true if successful, false if oldName does not exist, already exists
+     * @since 1.16.0
+     */
+    public boolean renameHome(String oldName, String newName) {
+        if (getHomes().containsKey(oldName.toLowerCase()) && !getHomes().containsKey(newName.toLowerCase())) {
+            this.addHome(newName, this.getHome(oldName));
+            this.removeHome(oldName);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * @return the maxHomes. If null, then the world default should be used.
+     * @since 1.16.0
+     */
+    @Nullable
+    public Integer getMaxHomes() {
+        return maxHomes;
+    }
+
+    /**
+     * @param maxHomes the maxHomes to set. If null then the world default will be used.
+     * @since 1.16.0
+     */
+    public void setMaxHomes(@Nullable Integer maxHomes) {
+        this.maxHomes = maxHomes;
+        setChanged();
+    }
+    
+    /**
      * @return the maxMembers
      * @since 1.16.0
      */
     public Map<Integer, Integer> getMaxMembers() {
-        return maxMembers == null ? new HashMap<>() : maxMembers;
+        if (maxMembers == null) {
+            maxMembers = new HashMap<>();
+        }
+        return maxMembers;
     }
 
     /**
@@ -1433,6 +1534,7 @@ public class Island implements DataObject, MetaDataAble {
      */
     public void setMaxMembers(Map<Integer, Integer> maxMembers) {
         this.maxMembers = maxMembers;
+        setChanged();
     }
 
     /**
@@ -1457,26 +1559,22 @@ public class Island implements DataObject, MetaDataAble {
         getMaxMembers().put(rank, maxMembers);
     }
 
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
     @Override
     public String toString() {
-        return "Island [changed=" + changed + ", deleted=" + deleted + ", "
-                + (uniqueId != null ? "uniqueId=" + uniqueId + ", " : "")
-                + (center != null ? "center=" + center + ", " : "")
-                + (location != null ? "location=" + location + ", " : "") + "range=" + range + ", protectionRange="
-                + protectionRange + ", maxEverProtectionRange=" + maxEverProtectionRange + ", "
-                + (world != null ? "world=" + world + ", " : "")
-                + (gameMode != null ? "gameMode=" + gameMode + ", " : "") + (name != null ? "name=" + name + ", " : "")
-                + "createdDate=" + createdDate + ", updatedDate=" + updatedDate + ", "
-                + (owner != null ? "owner=" + owner + ", " : "") + (members != null ? "members=" + members + ", " : "")
-                + (maxMembers != null ? "maxMembers=" + maxMembers + ", " : "") + "spawn=" + spawn + ", purgeProtected="
-                + purgeProtected + ", " + (flags != null ? "flags=" + flags + ", " : "")
-                + (history != null ? "history=" + history + ", " : "") + "levelHandicap=" + levelHandicap + ", "
-                + (spawnPoint != null ? "spawnPoint=" + spawnPoint + ", " : "") + "doNotLoad=" + doNotLoad + ", "
-                + (cooldowns != null ? "cooldowns=" + cooldowns + ", " : "")
-                + (commandRanks != null ? "commandRanks=" + commandRanks + ", " : "")
-                + (reserved != null ? "reserved=" + reserved + ", " : "")
-                + (metaData != null ? "metaData=" + metaData : "") + "]";
+        return "Island [changed=" + changed + ", deleted=" + deleted + ", uniqueId=" + uniqueId + ", center=" + center
+                + ", location=" + location + ", range=" + range + ", protectionRange=" + protectionRange
+                + ", maxEverProtectionRange=" + maxEverProtectionRange + ", world=" + world + ", gameMode=" + gameMode
+                + ", name=" + name + ", createdDate=" + createdDate + ", updatedDate=" + updatedDate + ", owner="
+                + owner + ", members=" + members + ", maxMembers=" + maxMembers + ", spawn=" + spawn
+                + ", purgeProtected=" + purgeProtected + ", flags=" + flags + ", history=" + history
+                + ", levelHandicap=" + levelHandicap + ", spawnPoint=" + spawnPoint + ", doNotLoad=" + doNotLoad
+                + ", cooldowns=" + cooldowns + ", commandRanks=" + commandRanks + ", reserved=" + reserved
+                + ", metaData=" + metaData + ", homes=" + homes + ", maxHomes=" + maxHomes + "]";
     }
+
 
 
 }
