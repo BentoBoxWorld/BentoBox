@@ -56,7 +56,6 @@ public abstract class DefaultPlayerCommand extends CompositeCommand {
 
         // Settings related commands
         new IslandSettingsCommand(this);
-        new IslandSethomeCommand(this);
         new IslandSetnameCommand(this);
         new IslandResetnameCommand(this);
         new IslandLanguageCommand(this);
@@ -74,6 +73,11 @@ public abstract class DefaultPlayerCommand extends CompositeCommand {
 
         // Team commands
         new IslandTeamCommand(this);
+
+        // Home commands
+        new IslandSethomeCommand(this);
+        new IslandDeletehomeCommand(this);
+        new IslandRenamehomeCommand(this);
     }
 
 
