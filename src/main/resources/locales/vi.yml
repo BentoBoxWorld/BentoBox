@@ -50,164 +50,153 @@ commands:
       description: lệnh cho quản trị viên
       parameters: ''
     resets:
-      description: edit resets of the players
+      description: chỉnh số lần làm lại đảo cho người chơi
       set:
-        description: sets how many time this player reset his island
-        parameters: <player> <resets>
-        success: '&a Successfully set &b [name]&a ''s resets to &b [number]&a .'
+        description: chỉnh số lần làm lại đảo của người chơi
+        parameters: <người chơi> <số lần>
+        success: '&a Đã chỉnh số lần làm lại đảo của &b [name]&a thành &b [number]&a .'
       reset:
-        description: resets how many time this player reset his island to 0
-        parameters: <player>
-        success-everyone: '&a Successfully reset &b everyone&a ''s resets to &b 0&a
-          .'
-        success: '&a Successfully reset &b [name]&a ''s resets to &b 0&a .'
+        description: chỉnh số lần làm lại đảo của người chơi về 0
+        parameters: <người chơi>
+        success-everyone: '&a Đã chỉnh số lần làm lại đảo của &b mọi người&a ''s về &b 0&a .'
+        success: '&a Đã chỉnh số lần làm lại đảo của &b [name]&a ''s về &b 0&a .'
       add:
-        description: adds to how many times this player reset his island
-        parameters: <player> <resets>
-        success: '&a Successfully added &b [number] &a resets to &b [name], increasing
-          the total to &b [total]&a  resets.'
+        description: tăng số lần làm lại đảo cho người chơi
+        parameters: <người chơi> <số lần>
+        success: '&a Đã thêm &b [number] &a lần làm lại đảo cho &b [name], tăng tổng số lên &b [total]&a lần làm lại đảo.'
       remove:
-        description: removes from how many times this player reset his island
-        parameters: <player> <resets>
-        success: '&a Successfully removed &b [number] &a resets to &b [name], decreasing
-          the total to &b [total]&a  resets.'
+        description: tăng số lần làm lại đảo cho người chơi
+        parameters: <người chơi> <số lần>
+        success: '&a Đã trừ &b [number] &a lần làm lại đảo cho &b [name], giảm tổng số xuống &b [total]&a lần làm lại đảo.'
     purge:
-      parameters: '[days]'
-      description: purge islands abandoned for more than [days]
-      days-or-more: Must be at least 1 day or more
-      purgable-islands: '&a Found &b [number] &a purgable islands.'
-      purge-in-progress: '&c Purging in progress. Use &b /[label] purge stop &c to
-        cancel.'
-      number-error: '&c Argument must be a number of days'
-      confirm: '&d Type &b /[label] purge confirm &d to start purging'
-      completed: '&a Purging stopped.'
-      see-console-for-status: '&a Purge started. See console for status or use &b
-        /[label] purge status&a.'
-      no-purge-in-progress: '&c There is currently no purge in progress.'
+      parameters: '[ngày]'
+      description: xóa đảo đã bị bỏ hoang quá [ngày]
+      days-or-more: Phải ít nhất 1 ngày hoặc hơn
+      purgable-islands: '&a Đã tìm thấy &b [number] &a đảo có thể xóa.'
+      purge-in-progress: '&c Quá trình xóa đang được thực thi. Dùng &b /[label] purge stop &c để hủy.'
+      number-error: '&c Tham số phải là số ngày'
+      confirm: '&d Nhập &b /[label] purge confirm &d để bắt đầu xóa'
+      completed: '&a Quá trình xóa đã ngừng.'
+      see-console-for-status: '&a Quá trình xóa đã bắt đầu. Xem bảng điều khiển cho trạng thái hoặc dùng &b /[label] purge status&a.'
+      no-purge-in-progress: '&c Không có quá trình xóa đang thực thi.'
       protect:
-        description: toggle island purge protection
-        move-to-island: '&c Move to an island first!'
-        protecting: '&a Protecting island from purge.'
-        unprotecting: '&a Removing purge protection.'
+        description: bật bảo vệ đảo khỏi bị xóa
+        move-to-island: '&c Di chuyển về đảo trước!'
+        protecting: '&a Đang bảo vệ đảo khỏi bị xóa.'
+        unprotecting: '&a Đang tắt bảo vệ.'
       stop:
-        description: stop a purge in progress
-        stopping: Stopping the purge
+        description: dừng một quá trình xóa đang thực thi
+        stopping: Đang dừng quá trình xóa
       unowned:
-        description: purge unowned islands
-        unowned-islands: '&a Found &b [number] &a unowned islands.'
+        description: xóa đảo không chủ
+        unowned-islands: '&a Đã tìm thấy &b [number] &a đảo không chủ.'
       status:
-        description: displays the status of the purge
-        status: '&b [purged] &a islands purged out of &b [purgeable] &7(&b[percentage]
-          %&7)&a.'
+        description: xem trạng thái của quá trình xóa
+        status: '&b [purged] &a đảo đã xóa trong &b [purgeable] &7(&b[percentage]%&7)&a.'
     team:
       add:
-        parameters: <owner> <player>
-        description: add player to owner's team
-        name-not-owner: '&c [name] is not the owner.'
-        name-has-island: '&c [name] has an island. Unregister or delete them first!'
-        success: '&b [name]&a  has been added to &b [owner]&a ''s island.'
+        parameters: <chủ> <người chơi>
+        description: thêm người chơi vào đội của chủ
+        name-not-owner: '&c [name] không phải chủ.'
+        name-has-island: '&c [name] có đảo. Xóa hoặc hủy đăng kí trước!'
+        success: '&b [name]&a  đã được thêm vào đảo của &b [owner]&a .'
       disband:
-        parameters: <owner>
-        description: disband owner's team
-        use-disband-owner: '&c Not owner! Use disband [owner].'
-        disbanded: '&c Admin disbanded your team!'
-        success: '&b [name]&a ''s team has been disbanded.'
+        parameters: <chủ>
+        description: giải tán đội của chủ
+        use-disband-owner: '&c Không phải chủ! Dùng disband [owner].'
+        disbanded: '&c Quản trị viên đã giải tán đội của bạn!'
+        success: '&a Đội của&b [name]&a đã bị giải tán.'
       fix:
-        description: scans and fixes cross island membership in database
-        scanning: Scanning database...
-        duplicate-owner: '&c Player owns more than one island in database: [name]'
-        player-has: '&c Player [name] has [number] islands'
-        duplicate-member: '&c Player [name] is a member of more than one island in
-          the database'
-        rank-on-island: '&c [rank] on island at [xyz]'
-        fixed: '&a Fixed'
-        done: '&a Scan'
+        description: Quét và sửa thành viên chéo đảo trong cơ sở dữ liệu
+        scanning: Đang quét cơ sở dữ liệu...
+        duplicate-owner: '&c Người chơi có nhiều hơn một đảo trong cơ sở dữ liệu: [name]'
+        player-has: '&c Người chơi [name] có [number] đảo'
+        duplicate-member: '&c Người chơi [name] là thành viên của nhiều hơn một đảo trong cơ sở dữ liệu'
+        rank-on-island: '&c [rank] trên đảo tại [xyz]'
+        fixed: '&a Đã sửa'
+        done: '&a Quét'
       kick:
-        parameters: <team player>
-        description: kick a player from a team
-        cannot-kick-owner: '&c You cannot kick the owner. Kick members first.'
-        not-in-team: '&c This player is not in a team.'
-        admin-kicked: '&c The admin kicked you from the team.'
-        success: '&b [name] &a has been kicked from &b [owner]&a ''s island.'
+        parameters: <người chơi>
+        description: đuổi người chơi khỏi đội
+        cannot-kick-owner: '&c Bạn không thể đuổi chủ. Hãy đuổi thành viên trước.'
+        not-in-team: '&c Người chơi này không có trong đội.'
+        admin-kicked: '&c Quản trị viên đã đuổi bạn khỏi đội.'
+        success: '&b [name] &a đã bị đuổi khỏi đội của &b [owner]&a .'
       setowner:
-        parameters: <player>
-        description: transfers island ownership to the player
-        already-owner: '&c [name] is already the owner of this island!'
-        success: '&b [name]&a  is now the owner of this island.'
+        parameters: <người chơi>
+        description: Chuyển quyền chủ đảo cho người chơi
+        already-owner: '&c [name] đã là chủ đảo này!'
+        success: '&b [name]&a  thành chủ đảo này.'
     range:
-      description: admin island range command
+      description: lệnh độ dài cho quản trị viên
       invalid-value:
-        too-low: '&c The protection range must be greater than &b 1&c !'
-        too-high: '&c The protection range should be equal or less than &b [number]&c
-          !'
-        same-as-before: '&c The protection range is already set to &b [number]&c !'
+        too-low: '&c Khu vực bảo vệ phải lớn hơn &b 1&c !'
+        too-high: '&c Khu vực bảo vệ phải bằng hoặc nhỏ hơn &b [number]&c !'
+        same-as-before: '&c Khu vực bảo vệ đã được chỉnh là &b [number]&c !'
       display:
-        already-off: '&c Indicators are already off'
-        already-on: '&c Indicators are already on'
-        description: show/hide island range indicators
-        hiding: '&2 Hiding range indicators'
+        already-off: '&c Các dấu đã tắt'
+        already-on: '&c Các dấu đã bật'
+        description: Xem/ẩn các dấu chỉ dẫn khu vực đảo
+        hiding: '&2 Đang ẩn chỉ dẫn khu vực'
         hint: |-
-          &c Red Barrier icons &f show the current island protected range limit.
-          &7 Gray Particles &f show the max island limit.
-          &a Green Particles &f show the default protected range if the island protection range differs from it.
-        showing: '&2 Showing range indicators'
+          &c Barrier &f cho thấy khu vực giới hạn bảo vệ đảo.
+          &7 Hạt Xám &f cho thấy giới hạn tối đa của đảo.
+          &a Hạt Xanh &f cho thấy khu vực bảo vệ mặc định nếu khu vực của đảo khác so với mặc định.
+        showing: '&2 Đang hiện các chỉ dẫn khu vực'
       set:
-        parameters: <player> <range>
-        description: sets the island protected range
-        success: '&a Set island protection range to &b [number]&a .'
+        parameters: <người chơi> <độ dài>
+        description: chỉnh độ dài bảo vệ đảo
+        success: '&a Đã chỉnh độ dài bảo vệ đảo thành &b [number]&a .'
       reset:
-        parameters: <player>
-        description: resets the island protected range to the world default
-        success: '&a Reset island protection range to &b [number]&a .'
+        parameters: <người chơi>
+        description: chỉnh độ dài bảo vệ đảo về mặc định
+        success: '&a Đã chỉnh độ dài bảo vệ đảo thành &b [number]&a .'
       add:
-        description: increases the island protected range
-        parameters: <player> <range>
-        success: '&a Successfully increased &b [name]&a ''s island protected range
-          to &b [total] &7 (&b +[number]&7 )&a .'
+        description: tăng độ dài bảo vệ đảo
+        parameters: <người chơi> <độ dài>
+        success: '&a Đã tăng khu vực bảo vệ đảo của &b [name]&a lên &b [total] &7 (&b +[number]&7 )&a .'
       remove:
-        description: decreases the island protected range
-        parameters: <player> <range>
-        success: '&a Successfully decreased &b [name]&a ''s island protected range
-          to &b [total] &7 (&b -[number]&7 )&a .'
+        description: giảm độ dài bảo vệ đảo
+        parameters: <người chơi> <độ dài>
+        success: '&a Đã giảm khu vực bảo vệ đảo của &b [name]&a xuống &b [total] &7 (&b -[number]&7 )&a .'
     register:
-      parameters: <player>
-      description: register player to unowned island you are on
-      registered-island: '&a Registered [name] to island at [xyz].'
-      reserved-island: '&a Reserved island at [xyz] for [name].'
-      already-owned: '&c Island is already owned by another player!'
-      no-island-here: '&c There is no island here. Confirm to make one.'
-      in-deletion: '&c This island space is currently being deleted. Try later.'
-      cannot-make-island: '&c An island cannot be placed here, sorry. See console
-        for possible errors.'
-      island-is-spawn: '&6 Island is spawn. Are you sure? Enter command again to confirm.'
+      parameters: <người chơi>
+      description: đăng kí người chơi vào đảo không chủ này
+      registered-island: '&a Đã đăng kí [name] vào đảo tại [xyz].'
+      reserved-island: '&a Để dành đảo ở [xyz] cho [name].'
+      already-owned: '&c Đảo đã có chủ!'
+      no-island-here: '&c Không có đảo ở đây. Xác nhận để tạo.'
+      in-deletion: '&c Không gian đảo này đang được xóa. Thử lại.'
+      cannot-make-island: '&c Đảo không thể đặt ở đây. Xem bảng điều khiển để xem lỗi tiềm ẩn.'
+      island-is-spawn: '&6 Đảo là điểm triệu hồi. Bạn chắc chứ? Nhập lần nữa để xác nhận.'
     unregister:
-      parameters: <owner>
-      description: unregister owner from island, but keep island blocks
-      unregistered-island: '&a Unregistered [name] from island at [xyz].'
+      parameters: <chủ>
+      description: hủy đăng kí chủ đảo khỏi đảo này. nhưng giữ lại tài nguyên đảo
+      unregistered-island: '&a Đã hủy đăng kí [name] khỏi đảo tại [xyz].'
     info:
-      parameters: <player>
-      description: get info on where you are or player's island
-      no-island: '&c You are not in an island right now...'
-      title: ========== Island Info ============
+      parameters: <người chơi>
+      description: xem thông tin đảo bạn đang đứng
+      no-island: '&c Bạn không có ở đảo nào...'
+      title: ========== Thông Tin Đảo ============
       island-uuid: 'UUID: [uuid]'
-      owner: 'Owner: [owner] ([uuid])'
-      last-login: 'Last login: [date]'
-      deaths: 'Deaths: [number]'
-      resets-left: 'Resets: [number] (Max: [total])'
-      team-members-title: 'Team members:'
+      owner: 'Chủ: [owner] ([uuid])'
+      last-login: 'Lần đăng nhập cuối: [date]'
+      deaths: 'Chết: [number]'
+      resets-left: 'Lần làm lại: [number] (Tối đa: [total])'
+      team-members-title: 'Thành viên đảo:'
       team-owner-format: '&a [name] [rank]'
       team-member-format: '&b [name] [rank]'
-      island-location: 'Island location: [xyz]'
-      island-coords: 'Island coordinates: [xz1] to [xz2]'
-      islands-in-trash: '&d Player has islands in trash.'
-      protection-range: 'Protection range: [range]'
-      purge-protected: Island is purge protected
-      max-protection-range: 'Largest historical protection range: [range]'
-      protection-coords: 'Protection coordinates: [xz1] to [xz2]'
-      is-spawn: Island is a spawn island
-      banned-players: 'Banned players:'
+      island-location: 'Vị trí đảo: [xyz]'
+      island-coords: 'Tọa độ đảo: [xz1] đến [xz2]'
+      islands-in-trash: '&d Người chơi có đảo rác.'
+      protection-range: 'Độ dài bảo vệ: [range]'
+      purge-protected: Đảo đang được bảo vệ khỏi bị xóa
+      max-protection-range: 'Độ dài bảo vệ lớn nhất: [range]'
+      protection-coords: 'Tọa độ bảo vệ: [xz1] to [xz2]'
+      is-spawn: Đảo là điểm triệu hồi
+      banned-players: 'Người chơi bị cấm:'
       banned-format: '&c [name]'
-      unowned: '&c Unowned'
+      unowned: '&c Không có chủ'
     switch:
       description: switch on/off protection bypass
       op: '&c Ops can always bypass protection. Deop to use command.'
