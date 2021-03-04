@@ -110,7 +110,7 @@ public class SafeSpotTeleportBuilderTest {
         // Add location
         sstb.location(loc);
         // Add home
-        sstb.homeNumber(10);
+        sstb.homeName("my name");
         // Build - expect success
         SafeSpotTeleport result = sstb.build();
         assertEquals(sst, result);
