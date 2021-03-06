@@ -61,6 +61,9 @@ public class BentoBoxReloadCommand extends ConfirmableCommand {
                 // Register new default gamemode placeholders
                 getPlugin().getAddonsManager().getGameModeAddons().forEach(getPlugin().getPlaceholdersManager()::registerDefaultPlaceholders);
 
+                // Call the all Loaded method for addons
+                getPlugin().getAddonsManager().allLoaded();
+                
                 // Fire ready event
                 Bukkit.getPluginManager().callEvent(new BentoBoxReadyEvent());
             });
