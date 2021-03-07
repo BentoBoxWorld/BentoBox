@@ -11,6 +11,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Comparator;
@@ -83,7 +84,8 @@ public class IslandDeletionManagerTest {
         when(Bukkit.getScheduler()).thenReturn(scheduler);
 
         // Clear any remaining database
-        clearDatabase();
+        deleteAll(new File("database"));
+        deleteAll(new File("database_backup"));
         // Set up plugin
         plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
@@ -109,17 +111,14 @@ public class IslandDeletionManagerTest {
      */
     @After
     public void tearDown() throws Exception {
-        clearDatabase();
         Mockito.framework().clearInlineMocks();
+        deleteAll(new File("database"));
+        deleteAll(new File("database_backup"));
     }
 
-
-    private void clearDatabase() throws Exception {
-        //remove any database data
-        File file = new File("database");
-        Path pathToBeDeleted = file.toPath();
+    private void deleteAll(File file) throws IOException {
         if (file.exists()) {
-            Files.walk(pathToBeDeleted)
+            Files.walk(file.toPath())
             .sorted(Comparator.reverseOrder())
             .map(Path::toFile)
             .forEach(File::delete);

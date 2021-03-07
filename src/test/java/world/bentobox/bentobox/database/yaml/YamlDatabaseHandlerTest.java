@@ -8,13 +8,13 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
-import static org.mockito.Mockito.framework;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.beans.IntrospectionException;
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -30,7 +30,7 @@ import org.bukkit.Location;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
-import org.junit.AfterClass;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -128,14 +128,20 @@ public class YamlDatabaseHandlerTest {
     /**
      * @throws java.lang.Exception
      */
-    @AfterClass
-    public static void tearDown() throws Exception {
-        // Clean up file system
-        Files.walk(database.toPath())
-        .sorted(Comparator.reverseOrder())
-        .map(Path::toFile)
-        .forEach(File::delete);
-        framework().clearInlineMocks();
+    @After
+    public void tearDown() throws Exception {
+        deleteAll(new File("database"));
+        deleteAll(new File("database_backup"));
+    }
+
+    private void deleteAll(File file) throws IOException {
+        if (file.exists()) {
+            Files.walk(file.toPath())
+            .sorted(Comparator.reverseOrder())
+            .map(Path::toFile)
+            .forEach(File::delete);
+        }
+
     }
 
     /**
