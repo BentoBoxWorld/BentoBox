@@ -17,11 +17,13 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 import org.jetbrains.annotations.Nullable;
+import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.hooks.Hook;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.util.Util;
 
 import java.util.Map.Entry;
+import java.util.logging.Logger;
 
 /**
  * @author ApacheZy
@@ -37,18 +39,53 @@ public class LangUtilsHook extends Hook {
     }
 
     private static boolean doHook(Plugin plugin) {
+
         // Because there are other plugins with the same name,
         // we should check here whether it is the plugin we need.
-        boolean classExists;
-        try {
-            Class.forName("com.meowj.langutils.lang.LanguageHelper");
-            classExists = true;
-        } catch (ClassNotFoundException e) {
-            classExists = false;
+
+        if (plugin != null && plugin.isEnabled()) {
+
+            Class<?> langHelperClass;
+            try {
+                langHelperClass = Class.forName("com.meowj.langutils.lang.LanguageHelper");
+            } catch (ClassNotFoundException e) {
+                langHelperClass = null;
+            }
+
+            if (langHelperClass != null && checkMethods(langHelperClass)) {
+                hooked = true;
+                return true;
+            }
+
+            Logger logger = BentoBox.getInstance().getLogger();
+            logger.warning("The LangUtils version is too old to be applicable to BentoBox.");
+            logger.warning("Please go here to download the latest version:");
+            logger.warning("https://github.com/apachezy/LangUtils/releases");
         }
 
-        hooked = plugin != null && plugin.isEnabled() && classExists;
-        return hooked;
+        hooked = false;
+        return false;
+    }
+
+    private static boolean checkMethods(Class<?> clazz) {
+        try {
+            clazz.getMethod("getMaterialName",               Material              .class, String.class);
+            clazz.getMethod("getPotionName",                 PotionType            .class, String.class);
+            clazz.getMethod("getSplashPotionName",           PotionType            .class, String.class);
+            clazz.getMethod("getLingeringPotionName",        PotionType            .class, String.class);
+            clazz.getMethod("getTippedArrowName",            PotionType            .class, String.class);
+            clazz.getMethod("getPotionEffectName",           PotionEffectType      .class, String.class);
+            clazz.getMethod("getEffectAmplifierName",        int                   .class, String.class);
+            clazz.getMethod("getPotionEffectDisplay",        PotionEffect          .class, String.class);
+            clazz.getMethod("getTropicalFishTypeName",       TropicalFish.Pattern  .class, String.class);
+            clazz.getMethod("getPredefinedTropicalFishName", TropicalFishBucketMeta.class, String.class);
+            clazz.getMethod("getDyeColorName",               DyeColor              .class, String.class);
+            clazz.getMethod("getVillagerLevelName",          int                   .class, String.class);
+            clazz.getMethod("getVillagerProfessionName",     Villager.Profession   .class, String.class);
+            return true;
+        } catch (NoSuchMethodException e) {
+            return false;
+        }
     }
 
     @Override
@@ -58,7 +95,7 @@ public class LangUtilsHook extends Hook {
 
     @Override
     public String getFailureCause() {
-        return null;
+        return "The LangUtils version does not apply to BentoBox.";
     }
 
     /**
@@ -157,7 +194,6 @@ public class LangUtilsHook extends Hook {
                 ? LanguageHelper.getEntityName(entityType, getUserLocale(user))
                 : Util.prettifyText(entityType.toString());
     }
-
 
     /**
      * Translate the name of the entity type.
@@ -364,7 +400,7 @@ public class LangUtilsHook extends Hook {
      */
     public static String getTippedArrowName(PotionType potionType, User user) {
         if (hooked) {
-            return  LanguageHelper.getTippedArrowName(potionType, getUserLocale(user));
+            return LanguageHelper.getTippedArrowName(potionType, getUserLocale(user));
         }
         switch (potionType) {
             case UNCRAFTABLE:     return "Uncraftable Tipped Arrow";
