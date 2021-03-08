@@ -4,6 +4,7 @@ import com.meowj.langutils.lang.LanguageHelper;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.block.Biome;
+import org.bukkit.block.banner.Pattern;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -22,6 +23,7 @@ import world.bentobox.bentobox.api.hooks.Hook;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.util.Util;
 
+import java.util.Locale;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
 
@@ -593,6 +595,25 @@ public class LangUtilsHook extends Hook {
         return hooked
                 ? LanguageHelper.getVillagerProfessionName(profession, getUserLocale(user))
                 : Util.prettifyText(profession.name());
+    }
+
+    /**
+     * Translate the name of the banner pattern.
+     *
+     * @param pattern Contains the color banner pattern.
+     * @param user    The user's language will be used for translation.
+     * @return The translated name of banner pattern.
+     */
+    public static String getBannerPatternName(Pattern pattern, User user) {
+        String patName;
+        if (hooked) {
+            patName = LanguageHelper.getBannerPatternName(pattern, getUserLocale(user));
+        } else {
+            patName = pattern.getColor().name().toLowerCase(Locale.ROOT)
+                    + "_"
+                    + pattern.getPattern().name().toLowerCase(Locale.ROOT);
+        }
+        return patName;
     }
 
 }
