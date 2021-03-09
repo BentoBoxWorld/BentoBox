@@ -1,6 +1,7 @@
 package world.bentobox.bentobox.database.objects;
 
 import java.io.IOException;
+import java.text.DateFormat;
 import java.util.Date;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -1070,7 +1071,7 @@ public class Island implements DataObject, MetaDataAble {
             // Fixes #getLastPlayed() returning 0 when it is the owner's first connection.
             long lastPlayed = (Bukkit.getServer().getOfflinePlayer(getOwner()).getLastPlayed() != 0) ?
                     Bukkit.getServer().getOfflinePlayer(getOwner()).getLastPlayed() : Bukkit.getServer().getOfflinePlayer(getOwner()).getFirstPlayed();
-            user.sendMessage("commands.admin.info.last-login","[date]", new Date(lastPlayed).toString());
+            user.sendMessage("commands.admin.info.last-login","[date]", DateFormat.getDateTimeInstance().format(new Date(lastPlayed)));
 
             user.sendMessage("commands.admin.info.deaths", "[number]", String.valueOf(plugin.getPlayers().getDeaths(getWorld(), getOwner())));
             String resets = String.valueOf(plugin.getPlayers().getResets(getWorld(), getOwner()));
