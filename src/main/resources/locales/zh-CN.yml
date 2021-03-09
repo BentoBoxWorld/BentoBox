@@ -24,7 +24,7 @@ general:
         use-in-game: "&c这个命令只能在游戏中使用。"
         no-team: "&c您目前没有团队！"
         no-island: "&c您现在没有岛屿！"
-        player-has-island: "&c该玩家本身已经有岛屿了！"
+        player-has-island: "&c该玩家原本已经有岛屿了！"
         player-has-no-island: "&c该玩家没有岛屿！"
         already-have-island: "&c您已经有岛屿了， 不能重复创建！"
         no-safe-location-found: "&c试图将您传送到岛屿上时找不到安全的落脚点。"
@@ -89,7 +89,7 @@ commands:
             completed: "&a清理工作已完成。"
             see-console-for-status: |-
                 &a清理已开始。
-                &a请参阅控制台或使用 &b/[label] purge status &a以查看清理状态。
+                &a请参阅控制台或使用 &b/[label] purge status &a来查看清理状态。
             no-purge-in-progress: "&c没有正在进行的清理工作。"
             protect:
                 description: "开/关 岛屿清理保护， 开启清理保护的岛屿不会被清理。"
@@ -99,7 +99,7 @@ commands:
             stop:
                 description: "停止正在进行的清理工作"
                 stopping: "&e正在停止清理。"
-            # 没有主人的岛屿才应该叫做 “被遗弃的岛屿”
+            # todo: 需要进一步确认，是否应该把没有主人的岛屿称作 “被遗弃的岛屿”
             unowned:
                 description: "清理被遗弃（无主）的岛屿"
                 unowned-islands: "&a找到 &b[number] &a个被遗弃（无主）的岛屿。"
@@ -121,7 +121,7 @@ commands:
                 success: "&b[name] &a的岛屿成员已被解散。"
             fix:
                 description: "扫描数据库，并修复跨岛屿成员（某些玩家错误地拥有或归属于多个岛屿）。"
-                scanning: "&e正在扫描数据库……"
+                scanning: "&e正在扫描数据库..."
                 duplicate-owner: "&c玩家 &b[name] &c拥有多个岛屿。"
                 player-has: "&c玩家 &b[name] &c拥有 &b[number] 个岛屿。"
                 duplicate-member: "&c玩家 &b[name] &c是多个岛屿的成员。"
@@ -152,9 +152,9 @@ commands:
                 description: "开/关 岛屿范围指示器"
                 hiding: "&2正在隐藏岛屿范围指示器。"
                 hint: |-
-                    &c红色屏障 &f显示所处岛屿当前保护范围。
-                    &7灰色粒子 &f显示所处岛屿最大保护范围。
-                    &a绿色粒子 &f显示所处岛屿默认保护范围 （如果当前保护范围与默认保护范围不同）。
+                    &c红色屏障 &f显示所处岛屿的当前保护范围。
+                    &7灰色粒子 &f显示所处岛屿的最大保护范围。
+                    &a绿色粒子 &f显示所处岛屿的默认保护范围。
                 showing: "&2正在显示岛屿范围指示器。"
             set:
                 parameters: "<player> <range>"
@@ -180,7 +180,7 @@ commands:
             already-owned: "&c所处位置为另一位玩家的岛屿范围！"
             no-island-here: "&c这里没有岛屿， 确定要创建一个吗？"
             in-deletion: "&c所处位置正在执行清理工作， 请稍后再试。"
-            cannot-make-island: "&c抱歉，不能在这里创建岛屿。 请参阅控制台以获取可能发生的错误。"
+            cannot-make-island: "&c抱歉，不能在这里创建岛屿。 请参阅控制台以获取详细信息。"
             island-is-spawn: |-
                 &c所处位置为出生点岛屿， 你确定要将玩家注册到这个岛屿上？
                 &6请再次输入命令以确认。
@@ -188,6 +188,7 @@ commands:
             parameters: "<owner>"
             description: "注销岛主身份， 但保留岛屿资源。"
             unregistered-island: "&a已将岛主 &b[name] &a从位于 &b[xyz] &a的岛屿注销。"
+        # todo: 需要调整格式，以便呈现最佳显示效果
         info:
             parameters: "[player]"
             description: "获取所在位置或给定玩家的岛屿信息"
@@ -204,7 +205,7 @@ commands:
             island-protection-center: "&3保护中心： [xyz]"
             island-center:            "&3岛屿中心： [xyz]"
             island-coords:            "&3岛屿界线： [xz1] 到 [xz2]"
-            islands-in-trash:         "&d Player has islands in trash."
+            islands-in-trash:         "&d这个岛屿在垃圾桶中。"
             protection-range:         "&3保护范围: [range]"
             purge-protected:          "&3清理保护： &2已开启"
             max-protection-range:     "&3历史最大保护范围： [range]"
@@ -212,233 +213,244 @@ commands:
             is-spawn:                 "&3岛屿类别： &a出生点"
             banned-players:           "&3封禁玩家："
             banned-format:            "&7  - &c[name]"
-            unowned:                  "&3岛屿主人： &7无 （&c无人岛&7）"
-        # 尚待分析此命令功能，以便理解词义。
+            unowned:                  "&c无人岛"
+        # todo: 尚待分析此命令功能，以便理解词义。
         switch:
-            description: "switch on/off protection bypass"
-            op: "&c Ops can always bypass protection. Deop to use command."
-            removing: "Removing protection bypass..."
-            adding: "Adding protection bypass..."
+            description: "开/关 保护规避机制"
+            op: "&c运维人员始终可以规避岛屿保护。 除非将他们开除。"
+            removing: "&c正在删除保护规避..."
+            adding: "&a正在添加保护规避..."
+        # todo: 尚待分析此命令功能，以便理解词义。
         switchto:
             parameters: "<player> <number>"
-            description: "switch player's island to the numbered one in trash"
-            out-of-range: "&c Number must be between 1 and [number]. Use &l [label] trash [player] &r &c to see island numbers"
-            cannot-switch: "&c Switch failed. See console log for error."
-            success: "&a Successfully switched the player's island to the specified one."
+            description: "将玩家的岛屿扔到垃圾桶指定的位置"
+            out-of-range: |-
+                &c数字必须介于 &b1 &c到 &b[number] &c之间。
+                &c使用 &b[label] trash [player] &c来查看岛屿在垃圾桶中的位置。"
+            cannot-switch: "&c切换失败。请参阅控制台以获取详细信息。"
+            success: "&a成功将玩家的岛屿切换到垃圾桶指定的位置。"
         trash:
-            no-unowned-in-trash: "&c No unowned islands in trash"
-            no-islands-in-trash: "&c Player has no islands in trash"
+            no-unowned-in-trash: "&c垃圾桶中没有无人岛。"
+            no-islands-in-trash: "&c垃圾桶中没有玩家岛屿。"
             parameters: "[player]"
-            description: "show unowned islands or player's islands in trash"
-            title: "&d =========== Islands in Trash ==========="
-            count: "&l &d Island [number]:"
-            use-switch: "&a Use &l [label] switchto <player> <number>&r &a  to switch player to island in trash"
-            use-emptytrash: "&a Use &l [label] emptytrash [player]&r &a  to permanently remove trash items"
+            description: "显示垃圾桶中的无人岛或玩家岛屿"
+            title: "&d =========== 岛屿垃圾桶 ==========="
+            count: "&d&l岛屿： [number]"
+            use-switch: "&a使用 &b[label] switchto <player> <number> &a将玩家岛屿扔到垃圾桶中指定的位置。"
+            use-emptytrash: "&a使用 &b[label] emptytrash [player] &a来永久删除岛屿。"
         emptytrash:
             parameters: "[player]"
-            description: "Clear trash for player, or all unowned islands in trash"
-            success: "&a Trash successfully emptied."
+            description: "永久删除垃圾桶中的岛屿"
+            success: "&a垃圾桶已清空。"
         version:
-            description: "display BentoBox and addons versions"
+            description: "显示 BentoBox 和附加组件的版本"
         setrange:
             parameters: "<player> <range>"
-            description: "set the range of player's island"
-            range-updated: "&a Island range updated to &b [number]&a ."
+            description: "设置玩家岛屿的范围"
+            range-updated: "&a岛屿范围已更新为 &b[number] &a。"
         reload:
-            description: "reload"
+            description: "重载本附加组件"
         tp:
             parameters: "<player> [player to teleport]"
-            description: "teleport to a player's island"
-            manual: "&c No safe warp found! Manually tp near to &b [location] &c and check it out"
+            description: "传送到玩家的岛屿上"
+            manual: "&c没有找到安全落脚点！ 请手动传送到 &b[location] &c附近检查原因。"
         getrank:
             parameters: "<player> [island owner]"
-            description: "get a player's rank on their island or the island of the owner"
-            rank-is: "&a Rank is &b [rank] &a on &b [name]&a 's island."
+            description: "获取玩家在岛屿上的阶衔"
+            rank-is: "&a玩家 &b[name] &a在岛屿上的阶衔是 &b[rank] &a。"
         setrank:
             parameters: "<player> <rank> [island owner]"
-            description: "set a player's rank on their island or the island of the owner"
-            unknown-rank: "&c Unknown rank!"
-            not-possible: "&c Rank must be higher than visitor."
-            rank-set: "&a Rank set from &b [from] &a to &b [to] &a on &b [name]&a 's island."
+            description: "设置岛屿玩家的阶衔"
+            unknown-rank: "&c未知阶衔！"
+            not-possible: "&c要设置的阶衔必须比 “访客” 高。"
+            rank-set: "&a已将玩家 &b[name] &a的阶衔从 &b[from] &a设置为 &b[to] &a。"
         setprotectionlocation:
-            parameters: "[x y z coords]"
-            description: "set current location or [x y z] as center of island's protection area"
-            island: "&c This will affect the island at [xyz] owned by '[name]'."
-            confirmation: "&c Are you sure you want to set [xyz] as the protection center?"
-            success: "&a Successfully set [xyz] as the protection center."
-            fail: "&a Successfully set [xyz] as the protection center."
-            island-location-changed: "&a [user] changed island's protection center to [xyz]."
-            xyz-error: "&c Specify three integer coordinates: e.g, 100 120 100"
+            parameters: "[x y z]"
+            description: "将所处位置或给定坐标设置为岛屿保护区的中心点"
+            island: "&c这将影响玩家 &b[name] &c位于 &b[xyz] &c的岛屿。"
+            confirmation: "&c你确定将 &b[xyz] &c设置为该岛屿的保护区中心点吗？"
+            success: "&a成功将 &b[xyz] &a设置为该岛屿的保护区中心点。"
+            fail: |-
+                &c未能将 &b[xyz] &c设置为该岛屿的保护区中心点！
+                &c请参阅控制台以获得详细错误信息。
+            island-location-changed: "&a[user] 将岛屿保护区中心点更改为 [xyz]。"
+            xyz-error: "&c坐标应该为三个整数， 例如： “&b100 120 100&c”。"
         setspawn:
-            description: "set an island as spawn for this gamemode"
-            already-spawn: "&c This island is already a spawn!"
-            no-island-here: "&c There is no island here."
-            confirmation: "&c Are you sure you want to set this island as the spawn for this world?"
-            success: "&a Successfully set this island as the spawn for this world."
+            description: "将一个岛屿设置为该游戏模式的出生岛屿（主城）"
+            already-spawn: "&c这个岛屿本来就是出生岛屿（主城）！"
+            no-island-here: "&c这里没有岛屿。"
+            confirmation: "&c你确定要将这个岛屿设置为出生岛屿（主城）吗？"
+            success: "&a已成功将该岛屿设置为出生岛屿（主城）。"
         setspawnpoint:
-            description: "set current location as spawn point for this island"
-            no-island-here: "&c There is no island here."
-            confirmation: "&c Are you sure you want to set this location as the spawn point for this island?"
-            success: "&a Successfully set this location as the spawn point for this island."
-            island-spawnpoint-changed: "&a [user] changed this island spawn point."
+            description: "将当前位置设置为岛屿出生点"
+            no-island-here: "&c这里没有岛屿。"
+            confirmation: "&c你确定要把所处位置设置为该岛屿的出生点？"
+            success: "&a成功将所处位置设置为该岛屿的出生点。"
+            island-spawnpoint-changed: "&b[user] &a更改了岛屿出生点。"
         settings:
             parameters: "[player]/[world flag] [flag/active/disable] [rank/active/disable]"
-            description: "open settings GUI or set settings"
-            unknown-setting: "&c Unknown setting"
+            description: "打开设置面板或使用命令调整岛屿设置"
+            unknown-setting: "&c未知设置项"
         blueprint:
             parameters: "<load/copy/paste/pos1/pos2/save>"
-            description: "manipulate blueprints"
-            bedrock-required: "&c At least one bedrock block must be in a blueprint!"
-            copy-first: "&c Copy first!"
-            file-exists: "&c File already exists, overwrite?"
-            no-such-file: "&c No such file!"
-            could-not-load: "&c Could not load that file!"
-            could-not-save: "&c Hmm, something went wrong saving that file: [message]"
-            set-pos1: "&a Position 1 set at [vector]"
-            set-pos2: "&a Position 2 set at [vector]"
-            set-different-pos: "&c Set a different location - this pos is already set!"
-            need-pos1-pos2: "&c Set pos1 and pos2 first!"
-            copying: "&b Copying blocks..."
-            copied-blocks: "&b Copied [number] blocks to clipboard"
-            look-at-a-block: "&c Look at block within 20 blocks to set"
-            mid-copy: "&c You are mid-copy. Wait until the copy is done."
-            copied-percent: "&6 Copied [number]%"
+            description: "管理蓝图"
+            bedrock-required: "&c蓝图中必须有至少一块基岩！"
+            copy-first: "&c请先使用 &bcopy &c命令将所选区域复制到剪贴板！"
+            file-exists: "&c文件已经存在， 是否要将其覆盖？"
+            no-such-file: "&c没有这个文件！"
+            could-not-load: "&c无法加载该文件！"
+            could-not-save: "&c保存文件时出现错误： [message]"
+            set-pos1: "&a对角点 1 已设置为 &f[vector]"
+            set-pos2: "&a对角点 2 已设置为 &f[vector]"
+            set-different-pos: "&c这个位置已设置为对角点， 请选择其他位置！"
+            need-pos1-pos2: "&c请先设置两个对角点！"
+            copying: "&b正在复制方块..."
+            copied-blocks: "&b复制了 &f[number] &b个方块到剪贴板中。"
+            look-at-a-block: "&c要设置的位置必须位于视线所指方向 20 格以内！"
+            mid-copy: "&c已有一个复制动作正在进行， 请稍等。"
+            copied-percent: "&6复制了 &b[number]%"
             copy:
                 parameters: "[air]"
-                description: "copy the clipboard set by pos1 and pos2 and optionally the air blocks"
+                description: "复制两个对角点所示区域内的所有方块到剪贴板中"
             delete:
                 parameters: "<name>"
-                description: "delete the blueprint"
-                no-blueprint: "&b [name] &c does not exist."
-                confirmation: |
-                    &c Are you sure you want to delete this blueprint?
-                    &c Once deleted, there is no way to recover it.
-                success: "&a Successfully deleted blueprint &b [name]&a ."
+                description: "删除蓝图"
+                no-blueprint: "&c蓝图 &b[name] &c不存在！"
+                confirmation: "&c请注意， 蓝图删除后将无法恢复！ 您确定要删除吗？"
+                success: "&a成功删除了蓝图 &b[name] &a。"
             load:
                 parameters: "<name>"
-                description: "load blueprint into the clipboard"
+                description: "把蓝图文件载入到剪贴板中"
             list:
-                description: "list available blueprints"
-                no-blueprints: "&c No blueprints in blueprints folder!"
-                available-blueprints: "&a These blueprints are available for loading:"
+                description: "列出可用的蓝图"
+                no-blueprints: "&c蓝图文件夹中没有蓝图文件！"
+                available-blueprints: "&a这些蓝图可以加载："
             origin:
-                description: "set the blueprint's origin to your position"
+                description: "将蓝图的原点设置为您所处的位置"
             paste:
-                description: "paste the clipboard to your location"
-                pasting: "&a Pasting..."
+                description: "将剪贴板中的方块粘贴到您的位置"
+                pasting: "&a正在粘贴..."
             pos1:
-                description: "set 1st corner of cuboid clipboard"
+                description: "设置剪贴板的第 1 个对角点"
             pos2:
-                description: "set 2nd corner of cuboid clipboard"
+                description: "设置剪贴板的第 2 个对角点"
             save:
                 parameters: "<blueprint name>"
-                description: "save the copied clipboard"
+                description: "将剪贴板中的内容保存为蓝图文件"
             rename:
                 parameters: "<blueprint name> <new name>"
-                description: "rename a blueprint"
-                success: "&a Blueprint &b [old] &a has been successfully renamed to &b [name]&a."
-                pick-different-name: "&c Please specify a name that is different from the blueprint's current name."
+                description: "重命名蓝图文件"
+                success: "&a蓝图文件 &b[old] &a已被重命名为 &b[name] &a。"
+                pick-different-name: "&c该蓝图名称已存在， 请指定一个不同的名称。"
             management:
-                back: "Back"
-                instruction: "Click on blueprint then click here"
-                title: "Blueprint Bundle Manager"
-                edit: "Click to edit"
-                rename: "Right-click to rename"
-                edit-description: "Click to edit description"
-                world-name-syntax: "[name] world"
-                world-instructions: |
-                    Place blueprint
-                    to right to set
-                trash: "Trash"
-                no-trash: "Cannot Trash"
-                trash-instructions: "Right click here to delete"
-                no-trash-instructions: "Cannot trash default bundle"
-                permission: "Permission"
-                no-permission: "No Permission"
-                perm-required: "Required"
-                no-perm-required: "Cannot set perm for default bundle"
-                perm-not-required: "Not Required"
-                perm-format: "&e "
-                remove: "Right click to remove"
-                blueprint-instruction: |
-                    Click to select,
-                    then add to bundle.
-                    Right-click to rename.
-                select-first: "Select Blueprint first"
-                new-bundle: "New Bundle"
-                new-bundle-instructions: "Click to make a new bundle"
+                back: "&f返回"
+                instruction: "&7单击蓝图，然后单击此处"
+                title: "&9&l蓝图方案管理器"
+                edit: "&7左键点击 - 编辑蓝图方案"
+                rename: "&7右键点击 - 重命名蓝图方案"
+                edit-description: "&7&l编辑描述"
+                world-name-syntax: "&b&l[name]"
+                world-instructions: |-
+                    &7请从以下列表中选择一个
+                    &7蓝图并放置在右边一格里
+                    &7以将蓝图应用到这个世界
+                trash: "&c&l回收站"
+                no-trash: "&8&l回收站"
+                trash-instructions: "&e右键点击删除此蓝图方案"
+                no-trash-instructions: "&c不能删除预置蓝图方案"
+                permission: "&f&l权限"
+                no-permission: "&f&l不需要权限"
+                perm-required: "&c需要："
+                no-perm-required: "&c不能为预置的蓝图方案设置权限"
+                perm-not-required: "&7不需要"
+                perm-format: "&e"
+                remove: "&7右键点击来删除"
+                blueprint-instruction: |-
+                    &7左键点击 - 选择蓝图
+                    &7右键点击 - 重命名蓝图
+                select-first: "&c请先选择蓝图！"
+                new-bundle: "&f&l新建蓝图方案"
+                new-bundle-instructions: |-
+                    &7右键点击来创建一个新的蓝图方案。
+                    &7蓝图方案是指包含适用于主世界、下界、末地
+                    &7三个世界的蓝图的捆绑包。
+                    &7它将出现在玩家创建岛屿界面中。
                 name:
                     quit: "quit"
-                    prompt: "Enter a name, or 'quit' to quit"
-                    too-long: "&c Too long"
-                    pick-a-unique-name: "Please pick a more unique name"
-                    success: "Success!"
-                    conversation-prefix: ">"
+                    prompt: "&e请输入新名称， 或 “&b quit&e” 来退出编辑。"
+                    too-long: "&c新名称太长了！"
+                    pick-a-unique-name: "&c这个名称已存在， 请另选一个不同的名称！"
+                    success: "&a成功！"
+                    conversation-prefix: "&3> &r"
                 description:
                     quit: "quit"
-                    instructions: |
-                        Enter a multi line description for [name]
-                        and 'quit' on a line by itself to finish.
-                    default-color: ""
-                    success: "Success!"
-                    cancelling: "Cancelling"
-                slot: "&f Preferred Slot [number]"
-                slot-instructions: |
-                    &a Left click to increment
-                    &a Right click to decrement
+                    instructions: |-
+                        &e请为 &b[name] &e输入描述， 每输入一次为一行。
+                        &e最后输入 “&bquit&e” 退出编辑。
+                    default-color: "&7"
+                    success: "&a成功！"
+                    cancelling: "&c已取消！"
+                slot: "&f&l显示槽位： [number]"
+                slot-instructions: |-
+                    &a左键点击 - 增加 （往后移）
+                    &a右键点击 - 减少 （往前移）
         resetflags:
             parameters: "[flag]"
-            description: "Reset all islands to default flag settings in config.yml"
-            confirm: "&4 This will reset the flag(s) to default for all islands!"
-            success: "&a Successfully reset all islands' flags to the default settings."
-            success-one: "&a [name] flag set to default for all islands."
+            description: "将所有岛屿的保护标志设置为 config.yml 中默认的状态"
+            confirm: "&4这将把所有岛屿的保护标志重置为默认值！"
+            success: "&a已成功将所有岛屿的保护标志重置为默认设置。"
+            success-one: "&a所有岛屿的 “&b[name]&a” 保护标志已重置为默认值。"
         world:
-            description: "Manage world settings"
+            description: "管理世界设置"
         delete:
             parameters: "<player>"
-            description: "deletes a player's island"
-            cannot-delete-owner: "&c All island members have to be kicked from the island before deleting it."
-            deleted-island: "&a Island at &e [xyz] &a has been successfully deleted."
+            description: "删除玩家的岛屿"
+            cannot-delete-owner: "&c删除岛屿之前，必须将所有岛屿成员踢出该岛。"
+            deleted-island: "&a位于 &e[xyz] &a的岛屿已成功删除。"
         why:
             parameters: "<player>"
-            description: "toggle console protection debug reporting"
-            turning-on: "Turning on console debug for [name]."
-            turning-off: "Turning off console debug for [name]."
+            description: "为玩家 打开/关闭 控制台调试报告"
+            turning-on: "&a已为 &b[name] &a打开控制台调试报告。"
+            turning-off: "&e已为 &b[name] &e关闭控制台调试报告。"
         deaths:
-            description: "edit deaths of players"
+            description: "调整玩家的死亡次数"
             reset:
-                description: "resets deaths of the player"
+                description: "重置玩家的死亡次数"
                 parameters: "<player>"
-                success: "&a Successfully reset &b [name]&a 's deaths to &b 0&a ."
+                success: "&a成功重置玩家 &b[name] &a的死亡次数。"
             set:
-                description: "sets deaths of the player"
+                description: "设置玩家的死亡次数"
                 parameters: "<player> <deaths>"
-                success: "&a Successfully set &b [name]&a 's deaths to &b [number]&a ."
+                success: "&a成功将玩家 &b[name] &a的死亡次数设置为 &b[number] &a次。"
             add:
-                description: "adds deaths to the player"
+                description: "增加玩家的死亡次数"
                 parameters: "<player> <deaths>"
-                success: "&a Successfully added &b [number] &a deaths to &b [name], increasing the total to &b [total]&a  deaths."
+                success: |-
+                    &a成功将玩家 &b[name] &a的死亡次数增加 &b[number] 次。
+                    &a他现在的死亡次数为： &b[total] &a次。"
             remove:
-                description: "removes deaths to the player"
+                description: "减少玩家的死亡次数"
                 parameters: "<player> <deaths>"
-                success: "&a Successfully removed &b [number] &a deaths to &b [name], decreasing the total to &b [total]&a  deaths."
+                success: |-
+                    &a成功将玩家 &b[name] &a的死亡次数减少 &b[number] 次。
+                    &a他现在的死亡次数为： &b[total] &a次。"
     bentobox:
-        description: "BentoBox admin command"
+        description: "BentoBox 管理员命令"
         about:
-            description: "displays copyright and license information"
+            description: "显示版权和许可信息"
         reload:
-            description: "reloads BentoBox and all addons, settings and locales"
-            locales-reloaded: "[prefix_bentobox]&2 Languages reloaded."
-            addons-reloaded: "[prefix_bentobox]&2 Addons reloaded."
-            settings-reloaded: "[prefix_bentobox]&2 Settings reloaded."
-            addon: "[prefix_bentobox]&6 Reloading &b [name]&2 ."
-            addon-reloaded: "[prefix_bentobox]&b [name] &2 reloaded."
-            warning: "[prefix_bentobox]&c Warning: Reloading may cause instability, so if you see errors afterwards, restart the server."
-            unknown-addon: "[prefix_bentobox]&c Unknown addon!"
+            description: "重载 BentoBox 和所有附加组件、设置和语言"
+            locales-reloaded: "[prefix_bentobox] &2语言资源已重载。"
+            addons-reloaded: "[prefix_bentobox]&2附加组件已重载。"
+            settings-reloaded: "[prefix_bentobox]&2设置已重载。"
+            addon: "[prefix_bentobox]&6正在重载 &b[name] &2。"
+            addon-reloaded: "[prefix_bentobox]&b[name] &2已重载。"
+            warning: "[prefix_bentobox]&c警告： 重载可能导致不稳定， 如果发生错误， 请重启服务器。"
+            unknown-addon: "[prefix_bentobox]&c未知组件！"
             locales:
-                description: "reloads locales"
+                description: "重载语言资源"
         version:
-            plugin-version: "&2 BentoBox version: &3 [version]"
+            plugin-version: "&2 BentoBox 版本： &3[version]"
             description: "displays BentoBox and addons versions"
             loaded-addons: "Loaded Addons:"
             loaded-game-worlds: "Loaded Game Worlds:"
@@ -452,7 +464,7 @@ commands:
             description: "displays the Catalog"
         locale:
             description: "performs localization files analysis"
-            see-console: |-
+            see-console: |
                 [prefix_bentobox]&a Check the console to see the feedback.
                 [prefix_bentobox]&a This command is so spammy that the feedback cannot be read from chat...
         migrate:
@@ -464,141 +476,145 @@ commands:
             migrated: "[prefix_bentobox]&a Migrated"
 
     confirmation:
-        confirm: "&c Type command again within &b [seconds]s&c  to confirm."
-        previous-request-cancelled: "&6 Previous confirmation request cancelled."
-        request-cancelled: "&c Confirmation timeout - &b request cancelled."
+        confirm: "&c请在 &b[seconds] &c秒内再次输入命令以确认。"
+        previous-request-cancelled: "&6先前的确认请求已取消。"
+        request-cancelled: "&c确认超时 &7- &b请求已取消。"
     delay:
-        previous-command-cancelled: "&c Previous command cancelled"
-        stand-still: "&6 Do not move! Teleporting in [seconds] seconds"
-        moved-so-command-cancelled: "&c You moved. Teleport cancelled!"
+        previous-command-cancelled: "&c上一个命令已取消。"
+        stand-still: "&6请不要移动！ 将在 &b[seconds] &6秒后传送。"
+        moved-so-command-cancelled: "&c您移动了， 传送已取消。"
     island:
         about:
-            description: "display licence details"
+            description: "显示许可信息"
         go:
             parameters: "[home name]"
-            description: "teleport you to your island"
-            teleport: "&a Teleporting you to your island."
-            teleported: "&a Teleported you to home &e [number]."
-            unknown-home: "&c Unknown home name!"
+            description: "传送到岛屿上"
+            teleport: "&a正在传送到岛屿。"
+            teleported: "&a正在传送到岛屿传送点 &e[number] &a。"
+            unknown-home: "&c未知岛屿传送点。"
         help:
-            description: "the main island command"
+            description: "岛屿主命令"
         spawn:
-            description: "teleport you to the spawn"
-            teleporting: "&a Teleporting you to the spawn."
-            no-spawn: "&c There is no spawn in this gamemode."
+            description: "传送到出生岛屿（主城）"
+            teleporting: "&a正在传送到出生岛屿（主城）"
+            no-spawn: "&c这个游戏模式里没有出生岛屿！"
         create:
-            description: "create an island, using optional blueprint (requires permission)"
+            description: "使用可选的蓝图方案创建岛屿 （有些蓝图可能需要权限）"
             parameters: "<blueprint>"
-            too-many-islands: "&c There are too many islands in this world: there isn't enough room for yours to be created."
-            cannot-create-island: "&c A spot could not be found in time, please try again..."
-            unable-create-island: "&c Your island could not be generated, please contact an administrator."
-            creating-island: "&a Finding a spot for your island..."
+            too-many-islands: "&c这个世界太拥挤了， 已经没有空余空间为您创建岛屿。"
+            cannot-create-island: "&c找不到合适的地点为您创建岛屿， 请稍后重试..."
+            unable-create-island: "&c无法生成您的岛屿， 请联系管理员。"
+            creating-island: "&a正在为您的岛屿寻找合适的地点..."
             pasting:
-                estimated-time: "&a Estimated time: &b [number] &a seconds."
-                blocks: "&a Building it block by block: &b [number] &a blocks in all..."
-                entities: "&a Filling it with entities: &b [number] &a entities in all..."
-                done: "&a Done! Your island is ready and waiting for you!"
-            pick: "&2 Pick an island"
-            unknown-blueprint: "&c That blueprint has not been loaded yet."
-            on-first-login: "&a Welcome! We will start preparing your island in a few seconds."
-            you-can-teleport-to-your-island: "&a You can teleport to your island when you want."
+                estimated-time: "&b预计用时： &e[number] &a秒。"
+                blocks:         "&b正在构建： &a总共需要构建 &e[number] &a个方块..."
+                entities:       "&b填充实体： &a总共需要填充 &e[number] &a个实体..."
+                done: "&a完成！ 您的岛屿已准备就绪！"
+            pick: "&9&l选择岛屿方案"
+            unknown-blueprint: "&c该蓝图方案尚未加载。"
+            on-first-login: "&a欢迎！我们将在几秒钟内开始创建您的岛屿！"
+            you-can-teleport-to-your-island: "&a您可以在任何时传送到您的岛屿。"
         deletehome:
-            description: "delete a home location"
+            description: "删除岛屿传送点"
             parameters: "[home name]"
         info:
-            description: "display info about your island or the player's island"
+            description: "显示所处岛屿或给定玩家的岛屿信息"
             parameters: "<player>"
         near:
-            description: "show the name of neighboring islands around you"
+            description: "显示您附近的岛屿的名称"
             parameters: ""
-            the-following-islands: "&a The following islands are nearby:"
-            syntax: "&6 [direction]: &a [name]"
-            north: North
-            south: South
-            east: East
-            west: West
-            no-neighbors: "&c You have no immediate neighboring islands!"
+            the-following-islands: "&a这些岛屿在您附近："
+            syntax: "&6  - [direction]： &a[name]"
+            north: 北方
+            south: 南方
+            east: 东方
+            west: 西方
+            no-neighbors: "&c您附近没有岛屿！"
         reset:
-            description: "restart your island and remove the old one"
+            description: "重新开始您的岛屿生涯"
             parameters: "<blueprint>"
-            none-left: "&c You have no more resets left!"
-            resets-left: "&c You have &b [number] &c resets left"
+            none-left: "&c您没有重置机会了！"
+            resets-left: "&c您还有 &b[number] &c次重置机会。"
             confirmation: |-
-                &c Are you sure you want to do this?
-                &c All island members will be kicked from the island, you will have to reinvite them afterwards.
-                &c There is no going back: once your current island is deleted, there will be &l no &r &c way to retrieve it later on.
-            kicked-from-island: "&c You are kicked from your island in [gamemode] because the owner is resetting it."
+                &c您确定要重新开始吗？
+                &c岛上所有成员都会被踢出岛屿， 之后如果您需要他们， 必须重新邀请他们。
+                &c没有回头路：一旦删除了岛屿就再也不能恢复了。
+            kicked-from-island: "&c您被踢出了 &b[gamemode] &c的岛屿， 因为岛主正在重置岛屿。"
         sethome:
-            description: "set your home teleport point"
-            must-be-on-your-island: "&c You must be on your island to set home!"
-            too-many-homes: "&c Cannot set - your island is at the maximum of [number] homes."
-            home-set: "&6 Your island home has been set to your current location."
-            homes-are: "&6 Island homes are:"
-            home-list-syntax: "&6 [name]"
+            description: "设置您的岛屿传送点"
+            must-be-on-your-island: "&c您必须在自己的岛上才能设置传送点！"
+            too-many-homes: "&c无法设置 - 您的岛屿最多只能有 &b[number] &c个传送点。"
+            home-set: "&6您已在所处位置设置了岛屿传送点。"
+            homes-are: "&6您的岛屿传送点有："
+            home-list-syntax: "&6  - [name]"
             nether:
-                not-allowed: "&c You are not allowed to set your home in the Nether."
-                confirmation: "&c Are you sure you want to set your home in the Nether?"
+                not-allowed: "&c不允许在下界设置岛屿传送点。"
+                confirmation: "&c您确定要在下界设置岛屿传送点吗？"
             the-end:
-                not-allowed: "&c You are not allowed to set your home in the End."
-                confirmation: "&c Are you sure you want to set your home in the End?"
+                not-allowed: "&c不允许在末地设置岛屿传送点。"
+                confirmation: "&c您确定要在末地设置岛屿传送点吗？"
             parameters: "[home number]"
         setname:
-            description: "set a name for your island"
-            name-too-short: "&c Too short. Minimum size is [number] characters."
-            name-too-long: "&c Too long. Maximum size is [number] characters."
-            name-already-exists: "&c There is already an island with that name in this gamemode."
+            description: "为您的岛屿取一个好听的名字"
+            name-too-short: "&c太短了， 名字至少应该有 &b[number] &c个字符。"
+            name-too-long: "&c太长了， 名字最多只能有 &b[number] &c个字符。"
+            name-already-exists: "&c已经有一个该名称的岛屿了。"
             parameters: "<name>"
-            success: "&a Successfully set your island's name to &b [name]&a ."
+            success: "&a成功为您的岛屿取名为 &b[name] &a。"
         renamehome:
-            description: "rename a home location"
+            description: "重命名岛屿传送点"
             parameters: "[home name]"
-            enter-new-name: "&6 Enter the new name"
-            already-exists: "&c That name already exists, try another name."
+            enter-new-name: "&6输入新名称"
+            already-exists: "&c该名称已存在， 请输入一个不同的名称。"
         resetname:
-            description: "reset your island name"
-            success: "&a Successfully reset your island name."
+            description: "重置岛屿名称"
+            success: "&a已成功重置岛屿名称。"
         team:
-            description: "manage your team"
+            description: "管理您的岛屿团队"
+            # 需要调整格式
             info:
-                description: "display detailed info about your team"
+                description: "显示您的岛屿团队详细信息"
                 member-layout:
-                    online: "&a &l  o &r &f [name]"
-                    offline: "&c &l  o &r &f [name] &7 ([last_seen])"
-                    offline-not-last-seen: "&c &l  o &r &f [name]"
+                    online:                "&a&l  o &f[name]"
+                    offline:               "&7&l  o &7[name] ([last_seen])"
+                    offline-not-last-seen: "&7&l  o &7[name]"
                 last-seen:
-                    layout: "&b [number] &7 [unit] ago"
-                    days: "days"
-                    hours: "hours"
-                    minutes: "minutes"
+                    layout: "&b[number] &7[unit] 前"
+                    days: "天"
+                    hours: "小时"
+                    minutes: "分钟"
                 header: |+
-                    &f --- &a Team details &f ---
-                    &a Members: &b [total]&7 /&b [max]
-                    &a Online members: &b [online]
+                    &f--- &a团队信息 &f---
+                    &a成员： &b[total]&7/&b[max]
+                    &a在线： &b[online]
                 rank-layout:
-                    owner: "&6 [rank]:"
-                    generic: "&6 [rank] &7 (&b [number]&7 )&6 :"
+                    owner:   "&6[rank]:"
+                    generic: "&6[rank] &7(&b[number]&7)&6："
+            # todo：应该仔细考量 协作 协助 合作
             coop:
-                description: "make a player coop rank on your island"
+                description: "请求玩家与您建立协作关系"
                 parameters: "<player>"
-                cannot-coop-yourself: "&c You cannot coop yourself!"
-                already-has-rank: "&c Player already has a rank!"
-                you-are-a-coop-member: "&2 You were cooped by &b[name]&a."
-                success: "&a You cooped &b [name]&a."
-                name-has-invited-you: "&a [name] has invited you to join be a coop member of their island."
+                cannot-coop-yourself: "&c您不能与自己建立协作关系。"
+                already-has-rank: "&c该玩家已经与您建立了协作关系。"
+                you-are-a-coop-member: "&2您成为了 &b[name] &a的协作者。"
+                success: "&a成功！ &b[name] &a成为了您的协作者。"
+                name-has-invited-you: "&a[name] 邀请您与他建立协作关系。"
             uncoop:
-                description: "remove a coop rank from player"
+                description: "解除与玩家的协作关系"
                 parameters: "<player>"
-                cannot-uncoop-yourself: "&c You cannot uncoop yourself!"
-                cannot-uncoop-member: "&c You cannot uncoop a team member!"
-                player-not-cooped: "&c Player is not cooped!"
-                you-are-no-longer-a-coop-member: "&c You are no longer a coop member of [name]'s island."
-                all-members-logged-off: "&c All island members logged off so you are no longer a coop member of [name]'s island."
-                success: "&b [name] &a is no longer a coop member of your island."
-                is-full: "&c You cannot coop anyone else."
+                cannot-uncoop-yourself: "&c您不能对自己解除协作关系。"
+                cannot-uncoop-member: "&c您不能对岛屿成员解除协作关系。"
+                player-not-cooped: "&c该玩家不是您的协作者。"
+                you-are-no-longer-a-coop-member: "&c您不再是 &b[name] &c的协作者了。"
+                all-members-logged-off: |-
+                    &c玩家 &b[name] &c的所有岛屿成员都已下线，
+                    &c因此您与他自动解除了协作关系。"
+                success: "&c玩家 &b[name] &a不再是您的协作者了。"
+                is-full: "&c您的岛屿成员数已经满额了，无法邀请其他人来岛上进行协作。"
             trust:
-                description: "give a player trusted rank on your island"
+                description: "授权玩家成为您岛屿的可信设为岛屿可信者"
                 parameters: "<player>"
-                trust-in-yourself: "&c Trust in yourself!"
+                trust-in-yourself: "&c不能对自己设置信任"
                 name-has-invited-you: "&a [name] has invited you to join be a trusted member of their island."
                 player-already-trusted: "&c Player is already trusted!"
                 you-are-trusted: "&2 You are trusted by &b [name]&a !"
@@ -613,274 +629,275 @@ commands:
                 you-are-no-longer-trusted: "&c You are no longer trusted by &b [name]&a !"
                 success: "&b [name] &a is no longer trusted on your island."
             invite:
-                description: "invite a player to join your island"
-                invitation-sent: "&a Invitation sent to &b[name]&a."
-                removing-invite: "&c Removing invite."
-                name-has-invited-you: "&a [name] has invited you to join their island."
-                to-accept-or-reject: "&a Do /[label] team accept to accept, or /[label] team reject to reject"
-                you-will-lose-your-island: "&c WARNING! You will lose your island if you accept!"
+                description: "邀请玩家加入您的岛屿"
+                invitation-sent: "&a邀请已发送给 &b[name] &a。"
+                removing-invite: "&c邀请已取消。"
+                name-has-invited-you: "&b[name] &a邀请您加入他的岛屿。"
+                to-accept-or-reject: "&a输入 &b/[label] team accept &a接受邀请， 输入 &b/[label] team reject &a拒绝邀请。"
+                you-will-lose-your-island: "&c注意， 接受邀请后您将失去自己的岛屿。"
                 errors:
-                    cannot-invite-self: "&c You cannot invite yourself!"
-                    cooldown: "&c You cannot invite that person for another [number] seconds."
-                    island-is-full: "&c Your island is full, you can't invite anyone else."
-                    none-invited-you: "&c No one invited you :c."
-                    you-already-are-in-team: "&c You are already on a team!"
-                    already-on-team: "&c That player is already on a team!"
-                    invalid-invite: "&c That invite is no longer valid, sorry."
-                    you-have-already-invited: "&c You have already invited that player!"
+                    cannot-invite-self: "&c您不能邀请自己！"
+                    cooldown: "&c邀请冷却中， &b[number] &c秒后才能再次发出邀请。"
+                    island-is-full: "&c您的岛屿成员数量已满， 无法再发起邀请。"
+                    none-invited-you: "&c现在没有人邀请您。"
+                    you-already-are-in-team: "&c您已经有岛屿了， 无法接受邀请。"
+                    already-on-team: "&c该玩家本身已经有岛屿了， 不能接受您的邀请。"
+                    invalid-invite: "&c抱歉， 该邀请已失效。"
+                    you-have-already-invited: "&c您刚刚已经邀请过该玩家！"
                 parameters: "<player>"
-                you-can-invite: "&a You can invite [number] more players."
+                you-can-invite: "&a您可以再邀请 &b[number] &a个玩家。"
                 accept:
-                    description: "accept an invitation"
-                    you-joined-island: "&a You joined an island! Use &b/[label] team &a to see the other members."
-                    name-joined-your-island: "&a [name] joined your island!"
-                    confirmation: |-
-                        &c Are you sure you want to accept this invite?
-                        &c&l You will &n LOSE &r&c&l your current island!
+                    description: "接受邀请"
+                    you-joined-island: "&a您加入了岛屿！ 使用 &b/[label] team &a查看岛屿其他成员。"
+                    name-joined-your-island: "&a[name] 加入了您的岛屿！"
+                    confirmation: |
+                        &c您确定要接受邀请吗？
+                        &c&l您将 &n失去&c&l 自己的岛屿！
                 reject:
-                    description: "reject an invitation"
-                    you-rejected-invite: "&a You rejected the invitation to join an island."
-                    name-rejected-your-invite: "&c [name] rejected your island invite!"
+                    description: "拒绝邀请"
+                    you-rejected-invite: "&a您拒绝了加入岛屿的邀请。"
+                    name-rejected-your-invite: "&b[name] &c拒绝了您的邀请。"
                 cancel:
-                    description: "cancel the pending invite to join your island"
+                    description: "取消尚未得到回应的邀请"
             leave:
-                cannot-leave: "&c Owners cannot leave! Become a member first, or kick all members."
-                description: "leave your island"
-                left-your-island: "&c [name] &c left your island"
-                success: "&a You left this island."
+                cannot-leave: "&c岛主要退出岛屿， 请先转让岛屿， 或解散所有成员。"
+                description: "退出岛屿"
+                left-your-island: "&c[name] &c退出了岛屿。"
+                success: "&a您退出了这个岛屿。"
             kick:
-                description: "remove a member from your island"
+                description: "将成员从您的岛屿中踢出"
                 parameters: "<player>"
-                owner-kicked: "&c The owner kicked you from the island in [gamemode]!"
-                cannot-kick: "&c You cannot kick yourself!"
-                success: "&b [name] &a has been kicked from your island."
+                owner-kicked: "&b[gamemode] &c中的岛主将您踢出了岛屿！"
+                cannot-kick: "&c您不能踢您自己！"
+                success: "&a已将 &b[name] &a踢出了岛屿。"
             demote:
-                description: "demote a player on your island down a rank"
+                description: "将您的岛屿成员降级"
                 parameters: "<player>"
                 errors:
-                    cant-demote-yourself: "&c You can't demote yourself!"
-                failure: "&c Player cannot be demoted any further!"
-                success: "&a Demoted [name] to [rank]"
+                    cant-demote-yourself: "&c您不能将自己降级！"
+                failure: "&c该玩家已经不能再降级了！"
+                success: "&a已将玩家 &b[name] &a降级为 &b[rank]。"
             promote:
-                description: "promote a player on your island up a rank"
+                description: "将您的岛屿成员升级"
                 parameters: "<player>"
-                failure: "&c Player cannot be promoted any further!"
-                success: "&a Promoted [name] to [rank]"
+                failure: "&c该玩家已经不能再升级了！"
+                success: "&a已将玩家 &b[name] &a升级为 &b[rank]"
             setowner:
-                description: "transfer your island ownership to a member"
+                description: "将您的岛屿所有权转让给成员"
                 errors:
-                    cant-transfer-to-yourself: "&c You can't transfer ownership to yourself! &7 (&o Well, in fact, you could... But we don't want you to. Because it's useless.&r &7 )"
-                    target-is-not-member: "&c That player is not part of your island team!"
-                name-is-the-owner: "&a [name] is now the island owner!"
+                    cant-transfer-to-yourself: "&c没有必要把所有权转让给自己！"
+                    target-is-not-member: "&c该玩家不是您的岛屿成员！"
+                name-is-the-owner: "&b[name] &a现在是岛主了！"
                 parameters: "<player>"
-                you-are-the-owner: "&a You are now the island owner!"
+                you-are-the-owner: "&a您现在是岛主了！"
+        # todo 封禁这个词可以理解为 把玩家封禁在岛上不能出去。也可以理解为禁止进入岛屿，所以考虑使用其他合适的词语
         ban:
-            description: "ban a player from your island"
+            description: "把玩家列入您的岛屿黑名单"
             parameters: "<player>"
-            cannot-ban-yourself: "&c You cannot ban yourself!"
-            cannot-ban: "&c That player cannot be banned."
-            cannot-ban-member: "&c Kick the team member first, then ban."
-            cannot-ban-more-players: "&c You reached the ban limit, you cannot ban any more players from your island."
-            player-already-banned: "&c Player is already banned."
-            player-banned: "&b [name]&c  is now banned from your island."
-            owner-banned-you: "&b [name]&c  banned you from their island!"
-            you-are-banned: "&b You are banned from this island!"
+            cannot-ban-yourself: "&c您不能对自己进行黑名单操作！"
+            cannot-ban: "&c该玩家不能被列入岛屿黑名单。"
+            cannot-ban-member: "&c如果要拉黑岛屿成员， 请先从岛屿上把他踢出去。"
+            cannot-ban-more-players: "&c您的岛屿黑名单已达到上限， 无法再列入玩家了。"
+            player-already-banned: "&c该玩家之前已被您列入黑名单。"
+            player-banned: "&b[name] &c已被您列入黑名单， 从现在开始他不能再进入您的岛屿。"
+            owner-banned-you: "&c您已被 &b[name] &c列入黑名单， 从现在开始您不能再进入他的岛屿！"
+            you-are-banned: "&b您已被禁止进入这个岛屿！"
         unban:
-            description: "unban a player from your island"
+            description: "把玩家从您的岛屿黑名单中删除"
             parameters: "<player>"
-            cannot-unban-yourself: "&c You cannot unban yourself!"
-            player-not-banned: "&c Player is not banned."
-            player-unbanned: "&b [name]&a  is now unbanned from your island."
-            you-are-unbanned: "&b [name]&a  unbanned you from their island!"
+            cannot-unban-yourself: "&c您不能对自己进行黑名单操作！"
+            player-not-banned: "&c该玩家没有被列入岛屿黑名单。"
+            player-unbanned: "&b[name] &a已从您的岛屿黑名单中删除。"
+            you-are-unbanned: "&a您已被 &b[name] &a从他的岛屿黑名单中删除。"
         banlist:
-            description: "list banned players"
-            noone: "&a No one is banned on this island."
-            the-following: "&b The following players are banned:"
-            names: "&c [line]"
-            you-can-ban: "&b You can ban up to &e [number] &b more players."
+            description: "列出岛屿黑名单中的玩家"
+            noone: "&a岛屿黑名单中没有玩家。"
+            the-following: "&b下列玩家在您的岛屿黑名单中："
+            names: "&c  - [line]"
+            you-can-ban: "&b您的岛屿黑名单能够容纳 &e[number] &b个玩家。"
         settings:
-            description: "display island settings"
+            description: "显示岛屿设置"
         language:
-            description: "select language"
+            description: "选择语言"
             parameters: "[language]"
-            not-available: "&c This language is not available."
-            already-selected: "&c You are already using this language."
+            not-available: "&c这不是可用的语言。"
+            already-selected: "&c您原本已经在使用这种语言了。"
         expel:
-            description: "expel a player from your island"
+            description: "将玩家驱逐出您的岛屿"
             parameters: "<player>"
-            cannot-expel-yourself: "&c You cannot expel yourself!"
-            cannot-expel: "&c That player cannot be expelled."
-            cannot-expel-member: "&c You cannot expel a team member!"
-            not-on-island: "&c That player is not on your island!"
-            player-expelled-you: "&b [name]&c  expelled you from the island!"
-            success: "&a You expelled &b [name] &a from the island."
+            cannot-expel-yourself: "&c您不能驱逐自己！"
+            cannot-expel: "&c该玩家不能被驱逐！"
+            cannot-expel-member: "&c您不能驱逐岛屿成员！"
+            not-on-island: "&c该玩家不在您的岛上！"
+            player-expelled-you: "&c您被 &b[name] &c驱逐出他的岛屿！"
+            success: "&a已把 &b[name] &a从您的岛上驱逐出去。"
 
 ranks:
-    owner: "Owner"
-    sub-owner: "Sub-Owner"
-    member: "Member"
-    trusted: "Trusted"
-    coop: "Coop"
-    visitor: "Visitor"
-    banned: "Banned"
-    admin: "Admin"
-    mod: "Mod"
+    owner: "岛主"
+    sub-owner: "副岛主"
+    member: "成员"
+    trusted: "可信者"
+    coop: "协作者"
+    visitor: "访客"
+    banned: "黑名单"
+    admin: "管理员"
+    mod: "模组"
 
 protection:
-    command-is-banned: "Command is banned for visitors"
+    command-is-banned: "禁止访客使用命令"
     flags:
         ANIMAL_NATURAL_SPAWN:
-            description: "Toggle natural animal spawning"
-            name: "Animal natural spawn"
+            description: "允许/禁止 动物自然生成"
+            name: "&a&l动物自然生成"
         ANIMAL_SPAWNERS_SPAWN:
-            description: "Toggle animal spawning with spawners"
-            name: "Animal spawners"
+            description: "允许/禁止 刷怪笼生成动物"
+            name: "&a&l动物刷怪笼"
         ANVIL:
-            description: "Toggle interaction"
-            name: "Anvils"
-            hint: "Anvil use disabled"
+            description: "选择谁可以使用铁砧"
+            name: "&a&l铁砧"
+            hint: "&c已被禁止使用铁砧"
         ARMOR_STAND:
-            description: "Toggle interaction"
-            name: "Armor stands"
-            hint: "Armor stand use disabled"
+            description: "选择谁可以与盔甲架互动"
+            name: "&a&l盔甲架"
+            hint: "&c已被禁止与盔甲架互动"
         BEACON:
-            description: "Toggle interaction"
-            name: "Beacons"
-            hint: "Beacon use disabled"
+            description: "选择谁可以使用信标"
+            name: "&a&l信标"
+            hint: "&c已被禁止使用信标"
         BED:
-            description: "Toggle interaction"
-            name: "Beds"
-            hint: "Bed use disabled"
+            description: "选择谁可以使用床"
+            name: "&a&l床"
+            hint: "&c已被禁止使用床"
         BOAT:
-            name: "Boats"
-            description: |-
-                Toggle placing, breaking and
-                entering into boats.
-            hint: "No boat interaction allowed"
+            name: "&a&l船"
+            description: "选择谁可以放置、摧毁和进入船"
+            hint: "&c已被禁止与船只互动"
         BREAK_BLOCKS:
-            description: "Toggle breaking"
-            name: "Break blocks"
-            hint: "Block breaking disabled"
+            description: "选择谁可以破坏方块"
+            name: "&a&l破坏方块"
+            hint: "&c已被禁止破坏方块"
         BREAK_SPAWNERS:
-            description: |-
-                Toggle spawners breaking.
-                Overrides the Break Blocks flag.
-            name: "Break spawners"
-            hint: "Spawner breaking disabled"
+            description: |
+                &7选择谁可以破坏刷怪笼
+                &7可以超越 “&a破坏方块&7” 设定
+            name: "&a&l破坏刷怪笼"
+            hint: "&c已被禁止破坏刷怪笼"
         BREAK_HOPPERS:
-            description: |-
-                Toggle hoppers breaking.
-                Overrides the Break Blocks flag.
-            name: "Break hoppers"
-            hint: "Hoppers breaking disabled"
+            description: |
+                &7选择谁可以破坏漏斗
+                &7可以超越 “&a破坏方块&7” 设定
+            name: "&a&l破坏漏斗"
+            hint: "&c已禁止破坏漏斗"
         BREEDING:
-            description: "Toggle breeding"
-            name: "Breed animals"
-            hint: "Animal breeding protected"
+            description: "选择谁可以喂食动物进行繁殖"
+            name: "&a&l繁殖动物"
+            hint: "&c已被禁止繁殖动物"
         BREWING:
-            description: "Toggle interaction"
-            name: "Brewing stands"
-            hint: "Brewing disabled"
+            description: "选择谁可以使用酿造台"
+            name: "&a&l酿造台"
+            hint: "&c已被禁止使用酿造台"
         BUCKET:
-            description: "Toggle interaction"
-            name: "Buckets"
-            hint: "Bucket use disabled"
+            description: "选择谁可以使用桶"
+            name: "&a&l使用桶"
+            hint: "&c已被禁止使用桶"
         BUTTON:
-            description: "Toggle button use"
-            name: "Buttons"
-            hint: "Button use disabled"
+            description: "切换谁可以使用按钮"
+            name: "&a&l按钮"
+            hint: "&c已被禁止使用按钮"
         CAKE:
-            description: "Toggle cake interaction"
-            name: "Cakes"
-            hint: "Cake eating disabled"
+            description: "选择谁可以食用蛋糕"
+            name: "&a&l蛋糕"
+            hint: "&c已被禁止食用蛋糕"
         CONTAINER:
-            name: "Containers"
-            description: |-
-                &a Toggle interaction with chests,
-                &a shulker boxes and flower pots,
-                &a composters and barrels.
+            name: "&a&l容器"
+            description: |
+                &7选择谁可以与箱子、潜影盒、花盆、
+                &7堆肥桶和木桶等容器进行交互。
 
-                &7 Other containers are handled
-                &7 by dedicated flags.
-            hint: "Container access disabled"
+                &8其他容器由专门的设定项设置。
+            hint: "&c已被禁止使用容器"
         DISPENSER:
-            name: "Dispensers"
-            description: "Toggle dispenser interaction"
-            hint: "Dispenser interaction disabled"
+            name: "&a&l发射器"
+            description: "选择谁可以与发射器交互"
+            hint: "&c已被禁止与发射器交互"
         DROPPER:
-            name: "Droppers"
-            description: "Toggle dropper interaction"
-            hint: "Dropper interaction disabled"
+            name: "&a&l投掷器"
+            description: "选择谁可以与投掷器交互"
+            hint: "&c已被禁止与投掷器交互"
         ELYTRA:
-            name: "Elytra"
-            description: "Toggle elytra allowed or not"
-            hint: "&c WARNING: Elytra cannot be used here!"
+            name: "&a&l鞘翅"
+            description: "选择谁可以使用鞘翅"
+            hint: "&c警告： 不允许在这里使用鞘翅！"
         HOPPER:
-            name: "Hoppers"
-            description: "Toggle hopper interaction"
-            hint: "Hopper interaction disabled"
+            name: "&a&l漏斗"
+            description: "选择谁可以与漏斗交互"
+            hint: "&c已被禁止与漏斗交互"
         CHEST_DAMAGE:
-            description: "Toggle chest damage from explosions"
-            name: "Chest Damage"
+            description: "允许/禁止 爆炸可以炸毁箱子"
+            name: "&a&l炸毁箱子"
         CHORUS_FRUIT:
-            description: "Toggle teleportation"
-            name: "Chorus fruits"
-            hint: "Chorus fruit teleporting disabled"
+            description: "选择谁可以使用紫颂果进行传送"
+            name: "&a&l紫颂果"
+            hint: "&c已被禁止使用紫颂果进行传送"
         CLEAN_SUPER_FLAT:
-            description: |-
-                &a Enable to clean any
-                &a super-flat chunks in
-                &a island worlds
-            name: "Clean Super Flat"
+            description: |
+                &7是否允许清理岛屿世界的超平坦地形。
+                &7超平坦地形一般是由于世界生成器发
+                &7生错误导致的。
+            name: "&a&l清理超平坦地形"
         COARSE_DIRT_TILLING:
-            description: |-
-                &a Toggle tilling coarse
-                &a dirt and breaking podzol
-                &a to obtain dirt
-            name: "Coarse dirt tilling"
-            hint: "No coarse dirt tilling"
+            description: "允许/禁止 用锄头耕耘砂土以获得泥土"
+            name: "&a&l砂土变泥土"
+            hint: "&c已被禁止将砂土耕耘为泥土"
         COLLECT_LAVA:
-            description: |-
-                &a Toggle collecting lava
-                &a (override Buckets)
-            name: "Collect lava"
-            hint: "No lava collection"
+            description: |
+                &7选择谁可以用桶收集熔岩
+                &7可以超越 “&a使用桶&7” 设定
+            name: "&a&l收集熔岩"
+            hint: "&c已被禁止收集熔岩"
         COLLECT_WATER:
-            description: |-
-                &a Toggle collecting water
-                &a (override Buckets)
-            name: "Collect water"
-            hint: "Water buckets disabled"
+            description: |
+                &a选择谁可以用桶收集水
+                &7可以超越 “&a使用桶&7” 设定
+            name: "&a&l收集水"
+            hint: "&c已被禁止收集水"
+        # todo：待考察，该设置项的作用
         COMMAND_RANKS:
-            name: "&e Command Ranks"
-            description: "&a Configure command ranks"
+            name: "&e&l命令阶衔"
+            description: "&a配置命令阶衔"
         CRAFTING:
-            description: "Toggle use"
-            name: "Workbenches"
-            hint: "Workbench access disabled"
+            description: "选择谁可以使用工作台"
+            name: "&a&l工作台"
+            hint: "&c已被禁止使用工作台"
+        # todo：此设置没有描述清楚
         CREEPER_DAMAGE:
-            description: |
-                &a Toggle creeper
-                &a damage protection
-            name: "Creeper damage protection"
+            # description: |
+            #     &a Toggle creeper
+            #     &a damage protection
+            # name: "Creeper damage protection"
+            description: "允许/禁止 苦力怕炸毁方块"
+            name: "&a&l苦力怕炸毁方块"
         CREEPER_GRIEFING:
+            # description: |
+            #     &a Toggle creeper griefing protection when ignited by island visitor.
+            # name: "&a&lCreeper griefing protection"
+            # hint: "Creeper griefing disabled"
             description: |
-                &a Toggle creeper griefing
-                &a protection when ignited
-                &a by island visitor.
-            name: "Creeper griefing protection"
-            hint: "Creeper griefing disabled"
+                &7当访客引燃苦力怕时，是否允许爆炸
+                &7效果生效（炸毁方块、伤害实体）。
+            name: "&a&l苦力怕访客保护"
+            hint: "&c已禁止访客引燃的苦力怕爆炸"
         CROP_TRAMPLE:
-            description: "Toggle crop trampling"
-            name: "Trample crops"
-            hint: "Crop trampling disabled"
+            description: "选择谁可以踩坏农作物"
+            name: "&a&l践踏农作物"
+            hint: "&c已被禁止践踏农作物"
         DOOR:
             description: "Toggle door usage"
-            name: "Use doors"
+            name: "&a&l Use doors"
             hint: "Door interaction disabled"
         DRAGON_EGG:
-            name: "Dragon Egg"
-            description: |-
+            name: "&a&l Dragon Egg"
+            description: |
                 &a Prevents interaction with Dragon Eggs.
 
                 &c This does not protect it from being
@@ -888,151 +905,151 @@ protection:
             hint: "Dragon egg interaction disabled"
         DYE:
             description: "Prevent dye use"
-            name: "Dye use"
+            name: "&a&l Dye use"
             hint: "Dyeing disabled"
         EGGS:
             description: "Toggle egg throwing"
-            name: "Egg throwing"
+            name: "&a&l Egg throwing"
             hint: "Egg throwing disabled"
         ENCHANTING:
             description: "Toggle use"
-            name: "Enchanting table"
+            name: "&a&l Enchanting table"
             hint: "Enchantment tables disabled"
         ENDER_CHEST:
             description: "Toggle use/crafting"
-            name: "Ender Chests"
+            name: "&a&l Ender Chests"
             hint: "Ender chests are disabled in this world"
         ENDERMAN_DEATH_DROP:
-            description: |-
+            description: |
                 &a Endermen will drop
                 &a any block they are
                 &a holding if killed.
-            name: "Enderman Death Drop"
+            name: "&a&l Enderman Death Drop"
         ENDERMAN_GRIEFING:
-            description: |-
+            description: |
                 &a Endermen can remove
                 &a blocks from islands
-            name: "Enderman griefing"
+            name: "&a&l Enderman griefing"
         ENDER_PEARL:
             description: "Toggle use"
-            name: "EnderPearls"
+            name: "&a&l EnderPearls"
             hint: "Enderpearl use disabled"
         ENTER_EXIT_MESSAGES:
             description: "Display entry and exit messages"
             island: "[name]'s island"
-            name: "Enter/Exit messages"
+            name: "&a&l Enter/Exit messages"
             now-entering: "&a Now entering &b [name]&a ."
             now-entering-your-island: "&a Now entering your island."
             now-leaving: "&a Now leaving &b [name]&a ."
             now-leaving-your-island: "&a Now leaving your island."
         EXPERIENCE_BOTTLE_THROWING:
-            name: "Experience bottle throwing"
+            name: "&a&l Experience bottle throwing"
             description: "Toggle throwing experience bottles."
             hint: "Experience bottles disabled"
         FIRE_BURNING:
-            name: "Fire burning"
-            description: |-
+            name: "&a&l Fire burning"
+            description: |
                 &a Toggle whether fire can burn
                 &a blocks or not.
         FIRE_EXTINGUISH:
             description: "Toggle extinguishing fires"
-            name: "Fire extinguish"
+            name: "&a&l Fire extinguish"
             hint: "Extinguishing fire disabled"
         FIRE_IGNITE:
-            name: "Fire ignition"
-            description: |-
+            name: "&a&l Fire ignition"
+            description: |
                 &a Toggle whether fire can be ignited
                 &a by non-player means or not.
         FIRE_SPREAD:
-            name: "Fire spread"
-            description: |-
+            name: "&a&l Fire spread"
+            description: |
                 &a Toggle whether fire can spread
                 &a to nearby blocks or not.
         FISH_SCOOPING:
-            name: "Fish Scooping"
+            name: "&a&l Fish Scooping"
             description: "Allow scooping of fishes using a bucket"
             hint: "Fish scooping disabled"
         FLINT_AND_STEEL:
-            name: "Flint and steel"
-            description: |-
+            name: "&a&l Flint and steel"
+            description: |
                 &a Allow players to ignite fires or
                 &a campfires using flint and steel
                 &a or fire charges.
             hint: "Flint and steel and fire charges disabled"
         FURNACE:
             description: "Toggle use"
-            name: "Furnace"
+            name: "&a&l Furnace"
             hint: "Furnace use disabled"
         GATE:
             description: "Toggle use"
-            name: "Gates"
+            name: "&a&l Gates"
             hint: "Gate use disabled"
         GEO_LIMIT_MOBS:
-            description: |-
+            description: |
                 &a Remove mobs that go
                 &a outside protected
                 &a island space
-            name: "&e Limit mobs to island"
+            name: "&e&l Limit mobs to island"
         HIVE:
-            description: |-
+            description: |
                 &a Toggle hive harvesting.
-            name: "Hive harvesting"
+            name: "&a&l Hive harvesting"
             hint: "Harvesting disabled"
         HURT_ANIMALS:
             description: "Toggle hurting"
-            name: "Hurt animals"
+            name: "&a&l Hurt animals"
             hint: "Animal hurting disabled"
         HURT_MONSTERS:
             description: "Toggle hurting"
-            name: "Hurt monsters"
+            name: "&a&l Hurt monsters"
             hint: "Monster hurting disabled"
         HURT_VILLAGERS:
             description: "Toggle hurting"
-            name: "Hurt villagers"
+            name: "&a&l Hurt villagers"
             hint: "Villager hurting disabled"
         ITEM_FRAME:
-            name: "Item Frame"
-            description: |-
+            name: "&a&l Item Frame"
+            description: |
                 &a Toggle interaction.
                 &a Overrides place or break blocks
             hint: "Item Frame use disabled"
         ITEM_FRAME_DAMAGE:
-            description: |-
+            description: |
                 &a Mobs can damage
                 &a item frames
-            name: "Item Frame Damage"
+            name: "&a&l Item Frame Damage"
         INVINCIBLE_VISITORS:
-            description: |-
+            description: |
                 &a Configure invincible visitor
                 &a settings.
-            name: "&e Invincible Visitors"
+            name: "&e&l Invincible Visitors"
             hint: "&c Visitors protected"
         ISLAND_RESPAWN:
-            description: |-
+            description: |
                 &a Players respawn
                 &a on island
-            name: "Island respawn"
+            name: "&a&l Island respawn"
         ITEM_DROP:
             description: "Toggle dropping"
-            name: "Item drop"
+            name: "&a&l Item drop"
             hint: "Item dropping disabled"
         ITEM_PICKUP:
             description: "Toggle pickup"
-            name: "Item pickup"
+            name: "&a&l Item pickup"
             hint: "Item pickup disabled"
         JUKEBOX:
             description: "Toggle usage"
-            name: "Jukebox use"
+            name: "&a&l Jukebox use"
             hint: "Jukebox use disabled"
         LEAF_DECAY:
-            name: "Leaf decay"
+            name: "&a&l Leaf decay"
             description: "Allow leaves to naturally decay"
         LEASH:
             description: "Toggle use"
-            name: "Leash use"
+            name: "&a&l Leash use"
         LECTERN:
-            name: "Lecterns"
-            description: |-
+            name: "&a&l Lecterns"
+            description: |
                 &a Allow to place books on a lectern
                 &a or to take books from it.
 
@@ -1041,19 +1058,19 @@ protection:
             hint: "cannot place a book on a lectern or take a book from it."
         LEVER:
             description: "Toggle use"
-            name: "Lever use"
+            name: "&a&l Lever use"
             hint: "Lever use disabled"
         LIMIT_MOBS:
-            description: |-
+            description: |
                 &a Limit entities from
                 &a spawning in this game
                 &a mode.
-            name: "&e Limit entity type spawning"
+            name: "&e&l Limit entity type spawning"
             can: "&a Can spawn"
             cannot: "&c Cannot spawn"
         LIQUIDS_FLOWING_OUT:
-            name: "Liquids flowing outside islands"
-            description: |-
+            name: "&a&l Liquids flowing outside islands"
+            description: |
                 &a Toggle whether liquids can flow outside
                 &a of the island's protection range.
                 &a Disabling it helps avoiding lava and water
@@ -1066,36 +1083,36 @@ protection:
                 &c protection range.
         LOCK:
             description: "Toggle lock"
-            name: "Lock island"
+            name: "&a&l Lock island"
         MILKING:
             description: "Toggle cow milking"
-            name: "Milking"
+            name: "&a&l Milking"
             hint: "Milking cows disabled"
         MINECART:
-            name: "Minecarts"
-            description: |-
+            name: "&a&l Minecarts"
+            description: |
                 Toggle placing, breaking and
                 entering into minecarts.
             hint: "Minecart interaction disabled"
         MONSTER_NATURAL_SPAWN:
             description: "Toggle natural monster spawning"
-            name: "Monster natural spawn"
+            name: "&a&l Monster natural spawn"
         MONSTER_SPAWNERS_SPAWN:
             description: "Toggle monster spawning with spawners"
-            name: "Monster spawners"
+            name: "&a&l Monster spawners"
         MOUNT_INVENTORY:
-            description: |-
+            description: |
                 &a Toggle access
                 &a to mount inventory
-            name: "Mount inventory"
+            name: "&a&l Mount inventory"
             hint: "Mounting inventories disabled"
         NAME_TAG:
-            name: "Name tags"
+            name: "&a&l Name tags"
             description: "Toggle use"
             hint: "Name tag interaction disabled"
         NATURAL_SPAWNING_OUTSIDE_RANGE:
-            name: "Natural creature spawning outside range"
-            description: |-
+            name: "&a&l Natural creature spawning outside range"
+            description: |
                 &a Toggle whether creatures (animals and
                 &a monsters) can spawn naturally outside
                 &a an island's protection range.
@@ -1105,11 +1122,11 @@ protection:
                 &c egg.
         NOTE_BLOCK:
             description: "Toggle use"
-            name: "Note block"
+            name: "&a&l Note block"
             hint: "Noteblock interaction disabled"
         OBSIDIAN_SCOOPING:
-            name: "Obsidian scooping"
-            description: |-
+            name: "&a&l Obsidian scooping"
+            description: |
                 &a Allow players to scoop up obsidian
                 &a with an empty bucket back into lava.
 
@@ -1122,73 +1139,73 @@ protection:
             scooping: "&a Changing obsidian back into lava. Be careful next time!"
             obsidian-nearby: "&c There are obsidian blocks nearby, you cannot scoop up this block into lava."
         OFFLINE_GROWTH:
-            description: |-
+            description: |
                 &a When disabled, plants
                 &a will not grow on islands
                 &a where all members are offline.
                 &a May help reduce lag.
-            name: "Offline Growth"
+            name: "&a&l Offline Growth"
         OFFLINE_REDSTONE:
-            description: |-
+            description: |
                 &a When disabled, redstone
                 &a will not operate on islands
                 &a where all members are offline.
                 &a May help reduce lag.
                 &a Does not affect spawn island.
-            name: "Offline Redstone"
+            name: "&a&l Offline Redstone"
         PETS_STAY_AT_HOME:
-            description: |-
+            description: |
                 &a When active, tamed pets
                 &a can only go to and
                 &a cannot leave the owner's
                 &a home island.
-            name: "Pets Stay At Home"
+            name: "&a&l Pets Stay At Home"
         PISTON_PUSH:
-            description: |-
+            description: |
                 &a Enable this to prevent
                 &a pistons from pushing
                 &a blocks outside island
-            name: "Piston Push Protection"
+            name: "&a&l Piston Push Protection"
         PLACE_BLOCKS:
             description: "Toggle placing"
             name: "Place blocks"
             hint: "Block placing disabled"
         POTION_THROWING:
-            name: "Potion throwing"
-            description: |-
+            name: "&a&l Potion throwing"
+            description: |
                 &a Toggle throwing potions.
                 &a This include splash and lingering potions.
             hint: "Throwing potions disabled"
         NETHER_PORTAL:
             description: "Toggle use"
-            name: "Nether Portal"
+            name: "&a&l Nether Portal"
             hint: "Portal use disabled"
         END_PORTAL:
             description: "Toggle use"
-            name: "End Portal"
+            name: "&a&l End Portal"
             hint: "Portal use disabled"
         PRESSURE_PLATE:
             description: "Toggle usage"
-            name: "Pressure Plates"
+            name: "&a&l Pressure Plates"
             hint: "Pressure plate use disabled"
         PVP_END:
-            description: |-
+            description: |
                 &c Enable/Disable PVP
                 &c in the End.
-            name: "End PVP"
+            name: "&a&l End PVP"
             hint: "PVP disabled in the End"
             enabled: "&c The PVP in the End has been enabled."
             disabled: "&a The PVP in the End has been disabled."
         PVP_NETHER:
-            description: |-
+            description: |
                 &c Enable/Disable PVP
                 &c in the Nether.
-            name: "Nether PVP"
+            name: "&a&l Nether PVP"
             hint: "PVP disabled in the Nether"
             enabled: "&c The PVP in the Nether has been enabled."
             disabled: "&a The PVP in the Nether has been disabled."
         PVP_OVERWORLD:
-            description: |-
+            description: |
                 &c Enable/Disable PVP
                 &c on island.
             name: "Overworld PVP"
@@ -1200,13 +1217,13 @@ protection:
             name: "Redstone items"
             hint: "Redstone interaction disabled"
         REMOVE_END_EXIT_ISLAND:
-            description: |-
+            description: |
                 &a Prevents the end exit
                 &a island from generating
                 &a at coordinates 0,0
             name: "Remove end exit island"
         REMOVE_MOBS:
-            description: |-
+            description: |
                 &a Remove monsters when
                 &a teleporting to island
             name: "Remove monsters"
@@ -1223,19 +1240,19 @@ protection:
             name: "Spawn eggs"
             hint: "Spawn eggs disabled"
         SPAWNER_SPAWN_EGGS:
-            description: |-
+            description: |
                 &a Allows to change a spawner's entity type
                 &a using spawn eggs.
             name: "Spawn eggs on spawners"
             hint: "changing a spawner's entity type using spawn eggs is not allowed"
         TNT_DAMAGE:
-            description: |-
+            description: |
                 &a Allow TNT and TNT minecarts
                 &a to break blocks and damage
                 &a entities.
             name: "TNT damage"
         TNT_PRIMING:
-            description: |-
+            description: |
                 &a Prevents priming TNT.
                 &a It does not override the
                 &a Flint and steel protection.
@@ -1251,7 +1268,7 @@ protection:
             hint: "Trapdoor use disabled"
         TREES_GROWING_OUTSIDE_RANGE:
             name: "Trees growing outside range"
-            description: |-
+            description: |
                 &a Toggle whether trees can grow outside an
                 &a island's protection range or not.
                 &a Not only will it prevent saplings placed
@@ -1273,18 +1290,18 @@ protection:
             hint: "Experience pickup disabled"
         PREVENT_TELEPORT_WHEN_FALLING:
             name: "Prevent teleport when falling"
-            description: |-
+            description: |
                 &a Prevent players from teleporting
                 &a back to their island using commands
                 &a if they are falling.
             hint: "&c You cannot do that while falling."
         WITHER_DAMAGE:
             name: "Toggle wither damage"
-            description: |-
+            description: |
                 &a If active, withers can
                 &a damage blocks and players
         WORLD_TNT_DAMAGE:
-            description: |-
+            description: |
                 &a Allow TNT and TNT minecarts
                 &a to break blocks and damage
                 &a entities outside of island limits.
@@ -1315,12 +1332,12 @@ protection:
                 &a default value.
         PROTECTION:
             title: "&6 Protection"
-            description: |-
+            description: |
                 &a Protection settings
                 &a for this island
         SETTING:
             title: "&6 Settings"
-            description: |-
+            description: |
                 &a General settings
                 &a for this island
         WORLD_SETTING:
@@ -1334,28 +1351,28 @@ protection:
         flag-item:
             name-layout: "&a [name]"
             description-layout: |
-                &a [description]
+                &7[description]
 
-                &e Left Click &7 to cycle downwards.
-                &e Right Click &7 to cycle upwards.
+                &e左键点击 &7向下循环选择
+                &e右键点击 &7向上循环选择
 
-                &7 Allowed for:
+                &7允许给：
             allowed-rank: "&3 - &a "
             blocked-rank: "&3 - &c "
             minimal-rank: "&3 - &2 "
             menu-layout: |
-                &a [description]
+                &7[description]
 
-                &e Click &7 to open.
+                &e点击 &7打开
             setting-cooldown: "&c Setting is on cooldown"
             setting-layout: |
-                &a [description]
+                &7[description]
 
-                &e Click &7 to toggle.
+                &e点击 &7切换 开/关
 
-                &7 Current setting: [setting]
-            setting-active: "&a Active"
-            setting-disabled: "&c Disabled"
+                &7当前设置： [setting]
+            setting-active: "&a开启"
+            setting-disabled: "&c关闭"
 
 language:
     panel-title: "Select your language"

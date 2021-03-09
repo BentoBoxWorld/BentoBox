@@ -257,7 +257,7 @@ commands:
       island: "&c This will affect the island at [xyz] owned by '[name]'."
       confirmation: "&c Are you sure you want to set [xyz] as the protection center?"
       success: "&a Successfully set [xyz] as the protection center."
-      fail: "&a Successfully set [xyz] as the protection center."
+      fail: "&c Failed to set [xyz] as the protection center!"
       island-location-changed: "&a [user] changed island's protection center to [xyz]."
       xyz-error: "&c Specify three integer coordinates: e.g, 100 120 100"
     setspawn:
