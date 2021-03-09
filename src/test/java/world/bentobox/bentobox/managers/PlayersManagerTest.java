@@ -9,9 +9,9 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.never;
 
 import java.beans.IntrospectionException;
 import java.io.File;
@@ -226,24 +226,25 @@ public class PlayersManagerTest {
     }
 
     /**
-     * @throws java.lang.Exception - exception
+     * @throws java.lang.Exception
      */
     @After
     public void tearDown() throws Exception {
-        deleteAll(new File("database"));
         User.clearUsers();
         Mockito.framework().clearInlineMocks();
+        deleteAll(new File("database"));
+        deleteAll(new File("database_backup"));
     }
 
-    private static void deleteAll(File file) throws IOException {
+    private void deleteAll(File file) throws IOException {
         if (file.exists()) {
             Files.walk(file.toPath())
             .sorted(Comparator.reverseOrder())
             .map(Path::toFile)
             .forEach(File::delete);
         }
-    }
 
+    }
     /**
      * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#PlayersManager(world.bentobox.bentobox.BentoBox)}.
      */

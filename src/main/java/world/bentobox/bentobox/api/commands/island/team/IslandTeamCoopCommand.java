@@ -73,7 +73,7 @@ public class IslandTeamCoopCommand extends CompositeCommand {
             user.sendMessage("commands.island.team.coop.cannot-coop-yourself");
             return false;
         }
-        if (getIslands().getMembers(getWorld(), user.getUniqueId()).contains(targetUUID)) {
+        if (getIslands().getMembers(getWorld(), user.getUniqueId(), RanksManager.COOP_RANK).contains(targetUUID)) {
             user.sendMessage("commands.island.team.coop.already-has-rank");
             return false;
         }

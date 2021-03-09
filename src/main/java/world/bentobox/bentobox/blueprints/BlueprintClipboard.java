@@ -26,6 +26,7 @@ import org.bukkit.entity.Horse;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Tameable;
+import org.bukkit.entity.Villager;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Attachable;
@@ -194,6 +195,9 @@ public class BlueprintClipboard {
             BlueprintEntity bpe = new BlueprintEntity();
             bpe.setType(entity.getType());
             bpe.setCustomName(entity.getCustomName());
+            if (entity instanceof Villager) {
+                setVillager(entity, bpe);
+            }
             if (entity instanceof Colorable) {
                 Colorable c = (Colorable)entity;
                 if (c.getColor() != null) {
@@ -299,6 +303,19 @@ public class BlueprintClipboard {
 
         this.bpBlocks.put(pos, b);
         return true;
+    }
+
+    /**
+     * Set the villager stats
+     * @param entity - villager
+     * @param bpe - Blueprint Entity
+     */
+    private void setVillager(LivingEntity entity, BlueprintEntity bpe) {
+        Villager v = (Villager)entity;
+        bpe.setExperience(v.getVillagerExperience());
+        bpe.setLevel(v.getVillagerLevel());
+        bpe.setProfession(v.getProfession());
+        bpe.setVillagerType(v.getVillagerType());
     }
 
     /**

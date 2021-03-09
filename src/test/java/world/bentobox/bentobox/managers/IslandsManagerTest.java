@@ -332,18 +332,24 @@ public class IslandsManagerTest {
         //im.setIslandCache(islandCache);
     }
 
+    /**
+     * @throws java.lang.Exception
+     */
     @After
-    public void tearDown() throws IOException{
-        //remove any database data
-        File file = new File("database");
-        Path pathToBeDeleted = file.toPath();
+    public void tearDown() throws Exception {
+        Mockito.framework().clearInlineMocks();
+        deleteAll(new File("database"));
+        deleteAll(new File("database_backup"));
+    }
+
+    private void deleteAll(File file) throws IOException {
         if (file.exists()) {
-            Files.walk(pathToBeDeleted)
+            Files.walk(file.toPath())
             .sorted(Comparator.reverseOrder())
             .map(Path::toFile)
             .forEach(File::delete);
         }
-        Mockito.framework().clearInlineMocks();
+
     }
 
     /**

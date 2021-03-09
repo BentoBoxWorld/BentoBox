@@ -295,7 +295,7 @@ public class SafeSpotTeleport {
         private final BentoBox plugin;
         private Entity entity;
         private int homeNumber = 0;
-        private String homeName;
+        private String homeName = "";
         private boolean portal = false;
         private String failureMessage = "";
         private Location location;
