@@ -678,6 +678,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     }
 
     /**
+     * Get the parental addon
      * @return the addon
      */
     @SuppressWarnings("unchecked")

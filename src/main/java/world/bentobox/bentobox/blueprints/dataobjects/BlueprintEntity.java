@@ -11,6 +11,8 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.Horse.Style;
 import org.bukkit.entity.Tameable;
+import org.bukkit.entity.Villager;
+import org.bukkit.entity.Villager.Profession;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Colorable;
 
@@ -40,11 +42,23 @@ public class BlueprintEntity {
     private Map<Integer, ItemStack> inventory;
     @Expose
     private Style style;
+    @Expose
+    private Integer level;
+    @Expose
+    private Profession profession;
+    @Expose
+    private Integer experience;
+    @Expose
+    private Villager.Type villagerType;
+    
 
     /**
      * @since 1.8.0
      */
     public void configureEntity(Entity e) {
+        if (e instanceof Villager) {
+            setVillager(e);
+        }
         if (e instanceof Colorable) {
             ((Colorable) e).setColor(color);
         }
@@ -73,6 +87,19 @@ public class BlueprintEntity {
         }
 
     }
+    
+    /**
+     * @param e - villager
+     * @since 1.16.0
+     */
+    private void setVillager(Entity e) {
+       Villager v = (Villager)e;
+       v.setProfession(profession == null ? Profession.NONE : profession);
+       v.setVillagerExperience(experience == null ? 0 : experience);
+       v.setVillagerLevel(level == null ? 0 : level);
+       v.setVillagerType(villagerType == null ? Villager.Type.PLAINS : villagerType);
+    }
+    
     /**
      * @return the color
      */
@@ -181,4 +208,68 @@ public class BlueprintEntity {
     public void setStyle(Style style) {
         this.style = style;
     }
+
+    /**
+     * @return the level
+     */
+    public Integer getLevel() {
+        return level;
+    }
+
+    /**
+     * @param level the level to set
+     */
+    public void setLevel(Integer level) {
+        this.level = level;
+    }
+
+    /**
+     * @return the profession
+     */
+    public Profession getProfession() {
+        return profession;
+    }
+
+    /**
+     * @param profession the profession to set
+     */
+    public void setProfession(Profession profession) {
+        this.profession = profession;
+    }
+
+    /**
+     * @return the experience
+     */
+    public Integer getExperience() {
+        return experience;
+    }
+
+    /**
+     * @param experience the experience to set
+     */
+    public void setExperience(Integer experience) {
+        this.experience = experience;
+    }
+
+    /**
+     * @return the villagerType
+     */
+    public Villager.Type getVillagerType() {
+        return villagerType;
+    }
+
+    /**
+     * @param villagerType the villagerType to set
+     */
+    public void setVillagerType(Villager.Type villagerType) {
+        this.villagerType = villagerType;
+    }
+
+    /**
+     * @param domestication the domestication to set
+     */
+    public void setDomestication(Integer domestication) {
+        this.domestication = domestication;
+    }
+    
 }

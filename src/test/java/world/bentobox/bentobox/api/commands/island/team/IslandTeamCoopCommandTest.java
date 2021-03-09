@@ -223,7 +223,7 @@ public class IslandTeamCoopCommandTest {
         IslandTeamCoopCommand itl = new IslandTeamCoopCommand(ic);
         when(pm.getUUID(any())).thenReturn(notUUID);
         when(im.inTeam(any(), any())).thenReturn(true);
-        when(im.getMembers(any(), any())).thenReturn(Collections.singleton(notUUID));
+        when(im.getMembers(any(), any(), anyInt())).thenReturn(Collections.singleton(notUUID));
         assertFalse(itl.canExecute(user, itl.getLabel(), Collections.singletonList("bento")));
         verify(user).sendMessage(eq("commands.island.team.coop.already-has-rank"));
     }
@@ -246,7 +246,7 @@ public class IslandTeamCoopCommandTest {
     public void testCanExecuteCannotAlreadyHasRank() {
         UUID other = UUID.randomUUID();
         when(pm.getUUID(any())).thenReturn(other);
-        when(im.getMembers(any(), any())).thenReturn(Collections.singleton(other));
+        when(im.getMembers(any(), any(), anyInt())).thenReturn(Collections.singleton(other));
         IslandTeamCoopCommand itl = new IslandTeamCoopCommand(ic);
         assertFalse(itl.canExecute(user, itl.getLabel(), Collections.singletonList("tastybento")));
         verify(user).sendMessage(eq("commands.island.team.coop.already-has-rank"));
