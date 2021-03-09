@@ -70,9 +70,9 @@ public class AdminPurgeCommand extends CompositeCommand implements Listener {
         islands.clear();
         this.user = user;
         try {
-            Integer days = Integer.parseInt(args.get(0));
+            int days = Integer.parseInt(args.get(0));
             if (days < 1) {
-                user.sendMessage("commands.admin.purge.days-one-or-more");
+                user.sendMessage("commands.admin.purge.days-or-more");
                 return false;
             }
             islands = getOldIslands(days);
