@@ -432,6 +432,26 @@ public class LangUtilsHook extends Hook {
     }
 
     /**
+     * Translate the name of the base effect of the potion. If the PotionType
+     * has no base effect, the translation of "No Effects" is returned. e.g.
+     * Water Bottle, Mundane Potion.
+     *
+     * @param potionType The basic effect of PotionType.
+     * @param user       The user's language will be used for translation.
+     * @return Return the translation result.
+     */
+    public static String getPotionBaseEffectName(PotionType potionType, User user) {
+        if (hooked) {
+            return LanguageHelper.getPotionBaseEffectName(potionType, getUserLocale(user));
+        }
+        PotionEffectType effectType = potionType.getEffectType();
+        if (effectType == null) {
+            return "No Effects";
+        }
+        return Util.prettifyText(effectType.getName());
+    }
+
+    /**
      * Translate the name of the potion effect.
      *
      * @param effectType The potion effect.
