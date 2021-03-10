@@ -34,6 +34,7 @@ import world.bentobox.bentobox.util.Util;
  */
 public class AdminSettingsCommand extends CompositeCommand {
 
+    private static final String SPAWN_ISLAND = "spawn-island";
     private final List<String> PROTECTION_FLAG_NAMES;
     private Island island;
     private final List<String> SETTING_FLAG_NAMES;
@@ -84,6 +85,12 @@ public class AdminSettingsCommand extends CompositeCommand {
     }
 
     private boolean getIsland(User user, List<String> args) {
+        if (args.get(0).equalsIgnoreCase(SPAWN_ISLAND)) {
+            if (getIslands().getSpawn(getWorld()).isPresent()) {
+                island = getIslands().getSpawn(getWorld()).get();
+                return true;
+            }
+        }
         // Get target player
         @Nullable UUID targetUUID = Util.getUUID(args.get(0));
         if (targetUUID == null) {
@@ -200,8 +207,8 @@ public class AdminSettingsCommand extends CompositeCommand {
         }
         // GUI requires in-game
         if (!user.isPlayer()) {
-          user.sendMessage("general.errors.use-in-game");
-          return false;
+            user.sendMessage("general.errors.use-in-game");
+            return false;
         }
         getPlayers().setFlagsDisplayMode(user.getUniqueId(), Mode.EXPERT);
         if (args.isEmpty()) {
@@ -234,9 +241,12 @@ public class AdminSettingsCommand extends CompositeCommand {
         List<String> options = new ArrayList<>();
         String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
         if (args.size() == 2) {
-            // Player names or world settings         
+            // Player names or world settings  
             options = Util.tabLimit(Util.getOnlinePlayerList(user), lastArg);
             options.addAll(WORLD_SETTING_FLAG_NAMES);
+            if (getIslands().getSpawn(getWorld()).isPresent()) {
+                options.add(SPAWN_ISLAND);
+            }
         } else if (args.size() == 3) {
             // If world settings, then active/disabled, otherwise player flags
             if (WORLD_SETTING_FLAG_NAMES.contains(args.get(1).toUpperCase(Locale.ENGLISH))) {
