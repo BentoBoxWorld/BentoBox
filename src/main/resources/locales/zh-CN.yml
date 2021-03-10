@@ -652,7 +652,7 @@ commands:
                     name-joined-your-island: "&a[name] 加入了您的岛屿！"
                     confirmation: |
                         &c您确定要接受邀请吗？
-                        &c&l您将 &n失去&c&l 自己的岛屿！
+                        &c&l您将 &n失去&r &c&l自己的岛屿！
                 reject:
                     description: "拒绝邀请"
                     you-rejected-invite: "&a您拒绝了加入岛屿的邀请。"
@@ -1043,7 +1043,7 @@ protection:
             can: "&a允许生成"
             cannot: "&c禁止生成"
         LIQUIDS_FLOWING_OUT:
-            name: "&a&l流体溢出"
+            name: "&a&l液体溢出"
             description: |-
                 &7允许/禁止 液体流到岛屿保护范围外
                 &c注意，该选项仅能控制水平流动的液体
@@ -1051,177 +1051,151 @@ protection:
             description: "选择岛屿对哪些对象开放"
             name: "&6&l锁定岛屿"
         MILKING:
-            description: "Toggle cow milking"
-            name: "&a&l Milking"
-            hint: "Milking cows disabled"
+            description: "允许/禁止 挤牛奶"
+            name: "&a&l挤牛奶"
+            hint: "&c已被禁止挤牛奶"
         MINECART:
             name: "&a&l Minecarts"
-            description: |
-                Toggle placing, breaking and
-                entering into minecarts.
-            hint: "Minecart interaction disabled"
+            description: "允许/禁止 放置、摧毁和进入矿车"
+            hint: "&c已被禁止与矿车交互"
         MONSTER_NATURAL_SPAWN:
-            description: "Toggle natural monster spawning"
-            name: "&a&l Monster natural spawn"
+            description: "允许/禁止 怪物自然生成"
+            name: "&a&l怪物自然生成"
         MONSTER_SPAWNERS_SPAWN:
-            description: "Toggle monster spawning with spawners"
-            name: "&a&l Monster spawners"
+            description: "允许/禁止 刷怪笼生成怪物"
+            name: "&a&l怪物刷怪笼"
         MOUNT_INVENTORY:
-            description: |
-                &a Toggle access
-                &a to mount inventory
-            name: "&a&l Mount inventory"
-            hint: "Mounting inventories disabled"
+            description: "允许/禁止 使用坐骑物品栏"
+            name: "&a&l坐骑物品栏"
+            hint: "&c已被禁止使用坐骑物品栏"
         NAME_TAG:
-            name: "&a&l Name tags"
-            description: "Toggle use"
-            hint: "Name tag interaction disabled"
+            name: "&a&l使用命名牌"
+            description: "允许/禁止 使用命名牌"
+            hint: "&c已被禁止使用命名牌"
         NATURAL_SPAWNING_OUTSIDE_RANGE:
-            name: "&a&l Natural creature spawning outside range"
-            description: |
-                &a Toggle whether creatures (animals and
-                &a monsters) can spawn naturally outside
-                &a an island's protection range.
-
-                &c Note that it doesn't prevent creatures
-                &c to spawn via a mob spawner or a spawn
-                &c egg.
+            name: "&a&l岛外自然生成生物"
+            description: |-
+                &7允许/禁止 生物（动物和怪物）在岛屿
+                &7保护范围外自然生成
+                &c这不会阻止刷怪笼和生成蛋生成生物
         NOTE_BLOCK:
-            description: "Toggle use"
-            name: "&a&l Note block"
-            hint: "Noteblock interaction disabled"
+            description: "允许/禁止 使用音符盒"
+            name: "&a&l使用音符盒"
+            hint: "&c已被禁止使用音符盒"
         OBSIDIAN_SCOOPING:
-            name: "&a&l Obsidian scooping"
-            description: |
-                &a Allow players to scoop up obsidian
-                &a with an empty bucket back into lava.
-
-                &a This helps the newbies that failed to
-                &a build their cobblestone generator.
-
-                &a Note: obsidian cannot be scooped up
-                &a if there are other obsidian blocks
-                &a within a 2-block radius.
-            scooping: "&a Changing obsidian back into lava. Be careful next time!"
-            obsidian-nearby: "&c There are obsidian blocks nearby, you cannot scoop up this block into lava."
+            name: "&a&l黑曜石变熔岩"
+            description: |-
+                &7允许/禁止 玩家用桶把黑曜石变回熔岩
+                &7这可以帮助新手找回熔岩
+                &c注意： 如果黑曜石附近2格范围内还有
+                &c其它黑曜石，则不能把黑曜石变回熔岩
+            scooping: "&a已将黑曜石变回熔岩。 下次请小心！"
+            obsidian-nearby: "&c附近有其它黑曜石， 这个黑曜石不能变回熔岩。"
         OFFLINE_GROWTH:
-            description: |
-                &a When disabled, plants
-                &a will not grow on islands
-                &a where all members are offline.
-                &a May help reduce lag.
-            name: "&a&l Offline Growth"
+            description: |-
+                &7允许/禁止 所有成员都已离线的岛屿上
+                &7的植物继续生长
+                &a这可以帮助减少性能开销
+            name: "&a&l离线生长"
         OFFLINE_REDSTONE:
-            description: |
-                &a When disabled, redstone
-                &a will not operate on islands
-                &a where all members are offline.
-                &a May help reduce lag.
-                &a Does not affect spawn island.
-            name: "&a&l Offline Redstone"
+            description: |-
+                &7允许/禁止 所有成员都已离线的岛屿上
+                &7的红石设备继续运行
+                &a这可以帮助减少性能开销
+                &a这个设置不会影响出生岛屿（主城）
+            name: "&a&l离线红石"
         PETS_STAY_AT_HOME:
-            description: |
-                &a When active, tamed pets
-                &a can only go to and
-                &a cannot leave the owner's
-                &a home island.
-            name: "&a&l Pets Stay At Home"
+            description: |-
+                &a允许/禁止 驯服的宠物永远待在自己的
+                &7岛上， 不会到别人的倒上去。
+            name: "&a&l宠物不离开岛屿"
         PISTON_PUSH:
-            description: |
-                &a Enable this to prevent
-                &a pistons from pushing
-                &a blocks outside island
-            name: "&a&l Piston Push Protection"
+            description: "允许/禁止 活塞将方块推出岛屿范围"
+            name: "&a&l活塞推动保护"
         PLACE_BLOCKS:
-            description: "Toggle placing"
-            name: "Place blocks"
-            hint: "Block placing disabled"
+            description: "允许/禁止 在岛上放置方块"
+            name: "&a&l放置方块"
+            hint: "&c已被禁止在岛上放置方块"
         POTION_THROWING:
-            name: "&a&l Potion throwing"
-            description: |
-                &a Toggle throwing potions.
-                &a This include splash and lingering potions.
-            hint: "Throwing potions disabled"
+            name: "&a&l投掷药水瓶"
+            description: |-
+                &7允许/禁止 在岛上投掷药水瓶
+                &7这包括喷溅型药水和滞留型药水
+            hint: "&c已被禁止投掷药水瓶"
         NETHER_PORTAL:
-            description: "Toggle use"
-            name: "&a&l Nether Portal"
-            hint: "Portal use disabled"
+            description: "允许/禁止 使用下界传送门"
+            name: "&a&l使用下界传送门"
+            hint: "&c已被禁止使用下界传送门"
         END_PORTAL:
-            description: "Toggle use"
-            name: "&a&l End Portal"
-            hint: "Portal use disabled"
+            description: "允许/禁止 使用末地传送门"
+            name: "&a&l使用末地传送门"
+            hint: "&c已被禁止使用末地传送门"
         PRESSURE_PLATE:
-            description: "Toggle usage"
-            name: "&a&l Pressure Plates"
-            hint: "Pressure plate use disabled"
+            description: "允许/禁止 激活压力板"
+            name: "&a&l使用压力板"
+            hint: "&c已被禁止使用压力板"
         PVP_END:
-            description: |
-                &c Enable/Disable PVP
-                &c in the End.
-            name: "&a&l End PVP"
-            hint: "PVP disabled in the End"
-            enabled: "&c The PVP in the End has been enabled."
-            disabled: "&a The PVP in the End has been disabled."
+            description: "&c允许/禁止 在末地 PVP"
+            name: "&a&l末地 PVP"
+            hint: "&c已被禁止在末地 PVP"
+            enabled: "&e已允许在末地 PVP！"
+            disabled: "&a已禁止在末地 PVP。"
         PVP_NETHER:
-            description: |
-                &c Enable/Disable PVP
-                &c in the Nether.
-            name: "&a&l Nether PVP"
-            hint: "PVP disabled in the Nether"
-            enabled: "&c The PVP in the Nether has been enabled."
-            disabled: "&a The PVP in the Nether has been disabled."
+            description: "&c允许/禁止 在下界 PVP"
+            name: "&a&l下界 PVP"
+            hint: "&c已被禁止在下界 PVP"
+            enabled: "&e已允许在下界 PVP！"
+            disabled: "&a已禁止在下界 PVP。"
         PVP_OVERWORLD:
-            description: |
-                &c Enable/Disable PVP
-                &c on island.
-            name: "Overworld PVP"
-            hint: "&c PVP disabled in the Overworld"
-            enabled: "&c The PVP in the Overworld has been enabled."
-            disabled: "&a The PVP in the Overworld has been disabled."
+            description: "&c允许/禁止 在主世界 PVP"
+            name: "&a&l主世界 PVP"
+            hint: "&c已被禁止在主世界 PVP"
+            enabled: "&e已允许在主世界 PVP！"
+            disabled: "&a已禁止在主世界 PVP。"
         REDSTONE:
-            description: "Toggle use"
-            name: "Redstone items"
-            hint: "Redstone interaction disabled"
+            description: |-
+                &7允许/禁止 使用红石设备
+                &7包括红石线、中继器、比较器和阳光感应器
+            name: "&a&l使用红石设备"
+            hint: "&c已被禁止使用红石设备"
+        # 英文原版只字未提末影龙，这让人很费解
+        # 代码里的功能确实是为了防止末影龙的生成
         REMOVE_END_EXIT_ISLAND:
-            description: |
-                &a Prevents the end exit
-                &a island from generating
-                &a at coordinates 0,0
-            name: "Remove end exit island"
+            description: |-
+                &7允许/禁止 移除末地世界的末影龙
+
+                &7如果允许移除末影龙， 则末影龙不
+                &7会在末地世界坐标 0,0 处生成。
+            name: "&a&l移除末影龙"
         REMOVE_MOBS:
-            description: |
-                &a Remove monsters when
-                &a teleporting to island
-            name: "Remove monsters"
+            description: |-
+                &7允许/禁止 玩家回到岛屿时移除怪物
+                &7这有助于玩家安全回到岛上
+            name: "&a&l移除怪物"
         RIDING:
-            description: "Toggle riding"
-            name: "Animal riding"
-            hint: "Animal riding disabled"
+            description: "允许/禁止 乘骑动物"
+            name: "&a&l乘骑动物"
+            hint: "&c已被禁止乘骑动物"
         SHEARING:
-            description: "Toggle shearing"
-            name: "Shearing"
-            hint: "Shearing disabled"
+            description: "允许/禁止 使用剪刀"
+            name: "&a&l使用剪刀"
+            hint: "&c已被禁止使用剪刀"
         SPAWN_EGGS:
-            description: "Toggle use"
-            name: "Spawn eggs"
-            hint: "Spawn eggs disabled"
+            description: "允许/禁止 使用生成蛋"
+            name: "&a&l使用生成蛋"
+            hint: "&c已被禁止使用生成蛋"
         SPAWNER_SPAWN_EGGS:
-            description: |
-                &a Allows to change a spawner's entity type
-                &a using spawn eggs.
-            name: "Spawn eggs on spawners"
-            hint: "changing a spawner's entity type using spawn eggs is not allowed"
+            description: "允许/禁止 使用生成蛋更改刷怪笼类型"
+            name: "&a&l更改刷怪笼类型"
+            hint: "&c已被禁止使用生成蛋更改刷怪笼实体类型"
         TNT_DAMAGE:
-            description: |
-                &a Allow TNT and TNT minecarts
-                &a to break blocks and damage
-                &a entities.
-            name: "TNT damage"
+            description: "允许/禁止 TNT和TNT矿车破坏方块和实体"
+            name: "&a&lTNT伤害"
         TNT_PRIMING:
-            description: |
-                &a Prevents priming TNT.
-                &a It does not override the
-                &a Flint and steel protection.
+            # todo： 打火石保护尚未
+            description: |-
+                &7允许/禁止 阻止 TNT 被点燃
+                &aIt does not override the Flint and steel protection.
             name: "TNT priming"
             hint: "TNT priming disabled"
         TRADING:
@@ -1256,23 +1230,22 @@ protection:
             hint: "Experience pickup disabled"
         PREVENT_TELEPORT_WHEN_FALLING:
             name: "Prevent teleport when falling"
-            description: |
+            description: |-
                 &a Prevent players from teleporting
                 &a back to their island using commands
                 &a if they are falling.
             hint: "&c You cannot do that while falling."
         WITHER_DAMAGE:
             name: "Toggle wither damage"
-            description: |
+            description: |-
                 &a If active, withers can
                 &a damage blocks and players
         WORLD_TNT_DAMAGE:
-            description: |
-                &a Allow TNT and TNT minecarts
-                &a to break blocks and damage
-                &a entities outside of island limits.
-            name: "World TNT damage"
-    locked: "&c This island is locked!"
+            description: |-
+                &7允许/禁止 岛屿保护范围外的TNT
+                &7和TNT矿车破坏方块和实体
+            name: "&a&l世界TNT伤害"
+    locked: "&c这个岛屿已被锁定！"
     protected: "&c Island protected: [description]."
     world-protected: "&c World protected: [description]."
     spawn-protected: "&c Spawn protected: [description]."
@@ -1464,11 +1437,11 @@ catalog:
 
 panel:
     credits:
-        title: "&8 [name] &2 Credits"
+        title: "&8[name] &2贡献"
         contributor:
-            name: "&a [name]"
+            name: "&a[name]"
             description: |
-                &a Commits: &b [commits]
+                &a提交: &b[commits] &a个
         empty-here:
             name: "&c This looks empty here..."
             description: |+
@@ -1481,9 +1454,9 @@ panel:
 successfully-loaded: |
 
     &6   ____             _        ____
-    &6  |  _ \           | |      |  _ \             &7 by &a tastybento &7 and &a Poslovitch
-    &6  | |_) | ___ _ __ | |_ ___ | |_) | _____  __  &7 2017 - 2020
+    &6  |  _ \           | |      |  _ \             &7由 &atastybento &7和 &aPoslovitch &7构建
+    &6  | |_) | ___ _ __ | |_ ___ | |_) | _____  __  &72017 - 2021
     &6  |  _ < / _ \ '_ \| __/ _ \|  _ < / _ \ \/ /
-    &6  | |_) |  __/ | | | || (_) | |_) | (_) >  <   &b v&e [version]
-    &6  |____/ \___|_| |_|\__\___/|____/ \___/_/\_\  &8 Loaded in &e [time]&8 ms.
+    &6  | |_) |  __/ | | | || (_) | |_) | (_) >  <   &bv&e [version]
+    &6  |____/ \___|_| |_|\__\___/|____/ \___/_/\_\  &8加载用时 &e[time] &8毫秒
 
