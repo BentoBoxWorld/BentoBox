@@ -753,94 +753,94 @@ protection:
             description: "允许/禁止 刷怪笼生成动物"
             name: "&a&l动物刷怪笼"
         ANVIL:
-            description: "选择谁可以使用铁砧"
-            name: "&a&l铁砧"
+            description: "允许/禁止 使用铁砧"
+            name: "&a&l使用铁砧"
             hint: "&c已被禁止使用铁砧"
         ARMOR_STAND:
-            description: "选择谁可以与盔甲架互动"
-            name: "&a&l盔甲架"
+            description: "允许/禁止 与盔甲架互动"
+            name: "&a&l使用盔甲架"
             hint: "&c已被禁止与盔甲架互动"
         BEACON:
-            description: "选择谁可以使用信标"
-            name: "&a&l信标"
-            hint: "&c已被禁止使用信标"
+            description: "允许/禁止 使用信标"
+            name: "&a&l使用信标"
+            hint: "&c已被禁止使用新表"
         BED:
-            description: "选择谁可以使用床"
-            name: "&a&l床"
+            description: "允许/禁止 使用床"
+            name: "&a&l使用床"
             hint: "&c已被禁止使用床"
         BOAT:
-            name: "&a&l船"
-            description: "选择谁可以放置、摧毁和进入船"
+            name: "&a&l船只互动"
+            description: "允许/禁止 放置、摧毁和进入船"
             hint: "&c已被禁止与船只互动"
         BREAK_BLOCKS:
-            description: "选择谁可以破坏方块"
+            description: "允许/禁止 破坏方块"
             name: "&a&l破坏方块"
             hint: "&c已被禁止破坏方块"
         BREAK_SPAWNERS:
-            description: |
-                &7选择谁可以破坏刷怪笼
+            description: |-
+                &7允许/禁止 破坏刷怪笼
                 &7可以超越 “&a破坏方块&7” 设定
             name: "&a&l破坏刷怪笼"
             hint: "&c已被禁止破坏刷怪笼"
         BREAK_HOPPERS:
-            description: |
-                &7选择谁可以破坏漏斗
+            description: |-
+                &7允许/禁止 破坏漏斗
                 &7可以超越 “&a破坏方块&7” 设定
             name: "&a&l破坏漏斗"
             hint: "&c已禁止破坏漏斗"
         BREEDING:
-            description: "选择谁可以喂食动物进行繁殖"
+            description: "允许/禁止 喂食动物进行繁殖"
             name: "&a&l繁殖动物"
             hint: "&c已被禁止繁殖动物"
         BREWING:
-            description: "选择谁可以使用酿造台"
-            name: "&a&l酿造台"
+            description: "允许/禁止 使用酿造台"
+            name: "&a&l使用酿造台"
             hint: "&c已被禁止使用酿造台"
         BUCKET:
-            description: "选择谁可以使用桶"
+            description: "允许/禁止 使用桶"
             name: "&a&l使用桶"
             hint: "&c已被禁止使用桶"
         BUTTON:
-            description: "切换谁可以使用按钮"
-            name: "&a&l按钮"
+            description: "允许/禁止 使用按钮"
+            name: "&a&l使用按钮"
             hint: "&c已被禁止使用按钮"
         CAKE:
-            description: "选择谁可以食用蛋糕"
-            name: "&a&l蛋糕"
+            description: "允许/禁止 食用蛋糕"
+            name: "&a&l食用蛋糕"
             hint: "&c已被禁止食用蛋糕"
         CONTAINER:
-            name: "&a&l容器"
-            description: |
-                &7选择谁可以与箱子、潜影盒、花盆、
+            name: "&a&l使用容器"
+            description: |-
+                &7允许/禁止 与箱子、潜影盒、花盆、
                 &7堆肥桶和木桶等容器进行交互。
 
                 &8其他容器由专门的设定项设置。
             hint: "&c已被禁止使用容器"
         DISPENSER:
-            name: "&a&l发射器"
-            description: "选择谁可以与发射器交互"
+            name: "&a&l使用发射器"
+            description: "允许/禁止 与发射器交互"
             hint: "&c已被禁止与发射器交互"
         DROPPER:
-            name: "&a&l投掷器"
-            description: "选择谁可以与投掷器交互"
+            name: "&a&l使用投掷器"
+            description: "允许/禁止 与投掷器交互"
             hint: "&c已被禁止与投掷器交互"
         ELYTRA:
-            name: "&a&l鞘翅"
-            description: "选择谁可以使用鞘翅"
+            name: "&a&l使用鞘翅"
+            description: "允许/禁止 使用鞘翅"
             hint: "&c警告： 不允许在这里使用鞘翅！"
         HOPPER:
-            name: "&a&l漏斗"
-            description: "选择谁可以与漏斗交互"
+            name: "&a&l使用漏斗"
+            description: "允许/禁止 与漏斗交互"
             hint: "&c已被禁止与漏斗交互"
         CHEST_DAMAGE:
-            description: "允许/禁止 爆炸可以炸毁箱子"
+            description: "允许/禁止 炸毁箱子"
             name: "&a&l炸毁箱子"
         CHORUS_FRUIT:
-            description: "选择谁可以使用紫颂果进行传送"
-            name: "&a&l紫颂果"
+            description: "允许/禁止 使用紫颂果进行传送"
+            name: "&a&l使用紫颂果"
             hint: "&c已被禁止使用紫颂果进行传送"
         CLEAN_SUPER_FLAT:
-            description: |
+            description: |-
                 &7是否允许清理岛屿世界的超平坦地形。
                 &7超平坦地形一般是由于世界生成器发
                 &7生错误导致的。
@@ -850,240 +850,206 @@ protection:
             name: "&a&l砂土变泥土"
             hint: "&c已被禁止将砂土耕耘为泥土"
         COLLECT_LAVA:
-            description: |
-                &7选择谁可以用桶收集熔岩
+            description: |-
+                &7允许/禁止 用桶收集熔岩
                 &7可以超越 “&a使用桶&7” 设定
             name: "&a&l收集熔岩"
             hint: "&c已被禁止收集熔岩"
         COLLECT_WATER:
-            description: |
-                &a选择谁可以用桶收集水
+            description: |-
+                &7允许/禁止 用桶收集水
                 &7可以超越 “&a使用桶&7” 设定
             name: "&a&l收集水"
             hint: "&c已被禁止收集水"
         # todo：待考察，该设置项的作用
         COMMAND_RANKS:
-            name: "&e&l命令阶衔"
-            description: "&a配置命令阶衔"
+            name: "&e&l命令授权"
+            description: |-
+                &7打开 &b阶衔 - 命令 &7配置面板
+                &7设置每种阶衔的玩家可以使用的命令
         CRAFTING:
-            description: "选择谁可以使用工作台"
-            name: "&a&l工作台"
+            description: "允许/禁止 使用工作台"
+            name: "&a&l使用工作台"
             hint: "&c已被禁止使用工作台"
-        # todo：此设置没有描述清楚
         CREEPER_DAMAGE:
-            # description: |
-            #     &a Toggle creeper
-            #     &a damage protection
-            # name: "Creeper damage protection"
-            description: "允许/禁止 苦力怕炸毁方块"
-            name: "&a&l苦力怕炸毁方块"
+            description: "允许/禁止 苦力怕的爆炸生效"
+            name: "&a&l苦力怕爆炸"
         CREEPER_GRIEFING:
-            # description: |
-            #     &a Toggle creeper griefing protection when ignited by island visitor.
-            # name: "&a&lCreeper griefing protection"
-            # hint: "Creeper griefing disabled"
-            description: |
+            description: |-
                 &7当访客引燃苦力怕时，是否允许爆炸
-                &7效果生效（炸毁方块、伤害实体）。
+                &7效果生效（炸毁方块、伤害实体）
             name: "&a&l苦力怕访客保护"
             hint: "&c已禁止访客引燃的苦力怕爆炸"
         CROP_TRAMPLE:
-            description: "选择谁可以踩坏农作物"
+            description: "允许/禁止 踩坏农作物"
             name: "&a&l践踏农作物"
             hint: "&c已被禁止践踏农作物"
         DOOR:
-            description: "Toggle door usage"
-            name: "&a&l Use doors"
-            hint: "Door interaction disabled"
+            description: "允许/禁止 使用门"
+            name: "&a&l使用门"
+            hint: "&c已被禁止使用门"
         DRAGON_EGG:
-            name: "&a&l Dragon Egg"
-            description: |
-                &a Prevents interaction with Dragon Eggs.
-
-                &c This does not protect it from being
-                &c placed or broken.
-            hint: "Dragon egg interaction disabled"
+            name: "&a&l龙蛋交互"
+            description: |-
+                &7允许/禁止 与龙蛋交互
+                &c这不能防止放置或破坏龙蛋
+            hint: "&c已被禁止与龙蛋交互"
         DYE:
-            description: "Prevent dye use"
-            name: "&a&l Dye use"
-            hint: "Dyeing disabled"
+            description: "允许/禁止 使用染料染色"
+            name: "&a&l使用染料"
+            hint: "&c已被禁止使用染料染色"
         EGGS:
-            description: "Toggle egg throwing"
-            name: "&a&l Egg throwing"
-            hint: "Egg throwing disabled"
+            description: "允许/禁止 投掷鸡蛋"
+            name: "&a&l投掷鸡蛋"
+            hint: "&c已被禁止投掷鸡蛋"
         ENCHANTING:
-            description: "Toggle use"
-            name: "&a&l Enchanting table"
-            hint: "Enchantment tables disabled"
+            description: "允许/禁止 使用附魔台"
+            name: "&a&l使用附魔台"
+            hint: "&c已被禁止使用附魔台"
         ENDER_CHEST:
-            description: "Toggle use/crafting"
-            name: "&a&l Ender Chests"
-            hint: "Ender chests are disabled in this world"
+            description: "允许/禁止 使用末影箱"
+            name: "&a&l使用末影箱"
+            hint: "&c已被禁止使用末影箱"
+        # fixme 这个设置没有生效（源码中没有对其有任何引用）
         ENDERMAN_DEATH_DROP:
-            description: |
-                &a Endermen will drop
-                &a any block they are
-                &a holding if killed.
-            name: "&a&l Enderman Death Drop"
+            description: "允许/禁止 末影人死亡后掉落手中的物品"
+            name: "&d&l末影人死亡掉落"
         ENDERMAN_GRIEFING:
-            description: |
-                &a Endermen can remove
-                &a blocks from islands
-            name: "&a&l Enderman griefing"
+            description: "允许/禁止 末影人从岛上拿起方块"
+            name: "&a&l末影人破坏"
         ENDER_PEARL:
-            description: "Toggle use"
-            name: "&a&l EnderPearls"
-            hint: "Enderpearl use disabled"
+            description: "允许/禁止 使用末影珍珠进行传送"
+            name: "&a&l使用末影珍珠"
+            hint: "&c已被禁止使用末影珍珠"
         ENTER_EXIT_MESSAGES:
-            description: "Display entry and exit messages"
-            island: "[name]'s island"
-            name: "&a&l Enter/Exit messages"
-            now-entering: "&a Now entering &b [name]&a ."
-            now-entering-your-island: "&a Now entering your island."
-            now-leaving: "&a Now leaving &b [name]&a ."
-            now-leaving-your-island: "&a Now leaving your island."
+            description: "允许/禁止 显示进出岛屿的提示"
+            island: "[name] 的岛屿"
+            name: "&a&l进出岛屿提示"
+            now-entering: "&a您已进入 &b[name] &a。"
+            now-entering-your-island: "&a您已进入自己的岛屿。"
+            now-leaving: "&6您已离开 &b[name] &a。"
+            now-leaving-your-island: "&6您已离开自己的岛屿。"
         EXPERIENCE_BOTTLE_THROWING:
-            name: "&a&l Experience bottle throwing"
-            description: "Toggle throwing experience bottles."
-            hint: "Experience bottles disabled"
+            name: "&a&l投掷经验瓶"
+            description: "允许/禁止 在岛上扔经验瓶"
+            hint: "&c已被禁止投掷经验瓶"
         FIRE_BURNING:
-            name: "&a&l Fire burning"
-            description: |
-                &a Toggle whether fire can burn
-                &a blocks or not.
+            name: "&a&l烧毁方块"
+            description: |-
+                &7允许/禁止 方块被火烧毁
+                &7这不能防止火势蔓延！
         FIRE_EXTINGUISH:
-            description: "Toggle extinguishing fires"
-            name: "&a&l Fire extinguish"
-            hint: "Extinguishing fire disabled"
+            description: "允许/禁止 熄灭火焰"
+            name: "&a&l灭火"
+            hint: "&c已被禁止灭火"
         FIRE_IGNITE:
-            name: "&a&l Fire ignition"
-            description: |
-                &a Toggle whether fire can be ignited
-                &a by non-player means or not.
+            name: "&a&l方块燃烧"
+            description: |-
+                &7允许/禁止 方块被非玩家方式点燃
+                &7例如被雷电击中
         FIRE_SPREAD:
-            name: "&a&l Fire spread"
-            description: |
-                &a Toggle whether fire can spread
-                &a to nearby blocks or not.
+            name: "&a&l火势蔓延"
+            description: "&a允许/禁止 火焰传播到附近的方块"
         FISH_SCOOPING:
-            name: "&a&l Fish Scooping"
-            description: "Allow scooping of fishes using a bucket"
-            hint: "Fish scooping disabled"
+            name: "&a&l捕鱼"
+            description: "允许/禁止 用水桶捕鱼"
+            hint: "&c已被禁止捕鱼"
         FLINT_AND_STEEL:
-            name: "&a&l Flint and steel"
-            description: |
-                &a Allow players to ignite fires or
-                &a campfires using flint and steel
-                &a or fire charges.
-            hint: "Flint and steel and fire charges disabled"
+            name: "&a&l点火"
+            description: |-
+                &7允许/禁止 玩家使用打火石
+                &7或火焰弹点燃方块或篝火
+            hint: "&c已被禁止点火"
         FURNACE:
-            description: "Toggle use"
-            name: "&a&l Furnace"
-            hint: "Furnace use disabled"
+            description: "允许/禁止 使用熔炉"
+            name: "&a&l使用熔炉"
+            hint: "&c已被禁止使用熔炉"
         GATE:
-            description: "Toggle use"
-            name: "&a&l Gates"
-            hint: "Gate use disabled"
+            description: "允许/禁止 使用栅栏门"
+            name: "&a&l使用栅栏门"
+            hint: "&c已被禁止使用栅栏门"
+        # 锁链胸甲
         GEO_LIMIT_MOBS:
-            description: |
-                &a Remove mobs that go
-                &a outside protected
-                &a island space
-            name: "&e&l Limit mobs to island"
+            description: |-
+                &7允许/禁止 移除岛屿范围外的生物
+                &7以及将生物生成限制在岛屿范围内
+            name: "&e&l生物分布限制"
         HIVE:
-            description: |
-                &a Toggle hive harvesting.
-            name: "&a&l Hive harvesting"
-            hint: "Harvesting disabled"
+            description: "允许/禁止 收集蜂蜜"
+            name: "&a&l收集蜂蜜"
+            hint: "&c已被禁止收集蜂蜜"
         HURT_ANIMALS:
-            description: "Toggle hurting"
-            name: "&a&l Hurt animals"
-            hint: "Animal hurting disabled"
+            description: "允许/禁止 伤害动物"
+            name: "&a&l伤害动物"
+            hint: "&c已被禁止伤害动物"
         HURT_MONSTERS:
-            description: "Toggle hurting"
-            name: "&a&l Hurt monsters"
-            hint: "Monster hurting disabled"
+            description: "允许/禁止 杀伤怪物"
+            name: "&a&l杀伤怪物"
+            hint: "&c已被禁止杀伤怪物"
         HURT_VILLAGERS:
-            description: "Toggle hurting"
-            name: "&a&l Hurt villagers"
-            hint: "Villager hurting disabled"
+            description: "允许/禁止 伤害村民"
+            name: "&a&l伤害村民"
+            hint: "&c已被禁止伤害村民"
         ITEM_FRAME:
-            name: "&a&l Item Frame"
-            description: |
-                &a Toggle interaction.
-                &a Overrides place or break blocks
-            hint: "Item Frame use disabled"
+            name: "&a&l取放物品框"
+            description: |-
+                &7允许/禁止 放置和取下物品框
+                &7可以超越 “&a放置方块&7/&a破坏方块&7” 设定
+            hint: "&c已被禁止使用物品框"
         ITEM_FRAME_DAMAGE:
-            description: |
-                &a Mobs can damage
-                &a item frames
-            name: "&a&l Item Frame Damage"
+            description: "允许/禁止 （非玩家）生物破坏物品框"
+            name: "&a&l生物破坏物品框"
+        # TODO：考察无敌的访客会不会受到怪物伤害
         INVINCIBLE_VISITORS:
-            description: |
-                &a Configure invincible visitor
-                &a settings.
-            name: "&e&l Invincible Visitors"
-            hint: "&c Visitors protected"
+            description: "允许/禁止 访客在岛屿上无敌"
+            name: "&e&l访客无敌"
+            hint: "&c已禁止伤害访客"
         ISLAND_RESPAWN:
-            description: |
-                &a Players respawn
-                &a on island
-            name: "&a&l Island respawn"
+            description: "允许/禁止 玩家死亡后在自己的岛屿上重生"
+            name: "&a&l在岛屿上重生"
         ITEM_DROP:
-            description: "Toggle dropping"
-            name: "&a&l Item drop"
-            hint: "Item dropping disabled"
+            description: "允许/禁止 丢弃物品"
+            name: "&a&l丢弃物品"
+            hint: "&c已被禁止丢弃物品"
         ITEM_PICKUP:
-            description: "Toggle pickup"
-            name: "&a&l Item pickup"
-            hint: "Item pickup disabled"
+            description: "允许/禁止 拾取物品"
+            name: "&a&l拾取物品"
+            hint: "&c已被禁止拾取物品"
         JUKEBOX:
-            description: "Toggle usage"
-            name: "&a&l Jukebox use"
-            hint: "Jukebox use disabled"
+            description: "允许/禁止 使用唱片机"
+            name: "&a&l使用唱片机"
+            hint: "&c已被禁止使用唱片机"
         LEAF_DECAY:
-            name: "&a&l Leaf decay"
-            description: "Allow leaves to naturally decay"
+            name: "&a&l树叶枯萎"
+            description: "允许/禁止 树叶自然枯萎"
         LEASH:
-            description: "Toggle use"
-            name: "&a&l Leash use"
+            description: "允许/禁止 使用栓绳"
+            name: "&a&l使用栓绳"
         LECTERN:
-            name: "&a&l Lecterns"
-            description: |
-                &a Allow to place books on a lectern
-                &a or to take books from it.
-
-                &c It does not prevent players from
-                &c reading the books.
-            hint: "cannot place a book on a lectern or take a book from it."
+            name: "&a&l讲台上的书"
+            description: |-
+                &7允许/禁止 取放讲台上的书
+                &c不会阻止阅读讲台上的书
+            hint: "&c已被禁止从讲台上取放书籍"
         LEVER:
-            description: "Toggle use"
-            name: "&a&l Lever use"
-            hint: "Lever use disabled"
+            description: "允许/禁止 使用拉杆"
+            name: "&a&l使用拉杆"
+            hint: "&c已被禁止使用拉杆"
         LIMIT_MOBS:
-            description: |
-                &a Limit entities from
-                &a spawning in this game
-                &a mode.
-            name: "&e&l Limit entity type spawning"
-            can: "&a Can spawn"
-            cannot: "&c Cannot spawn"
+            description: |-
+                &7打开 &b实体类型限 面板
+                &7配置哪些实体可以被生成
+            name: "&3&l实体生成限制"
+            can: "&a允许生成"
+            cannot: "&c禁止生成"
         LIQUIDS_FLOWING_OUT:
-            name: "&a&l Liquids flowing outside islands"
-            description: |
-                &a Toggle whether liquids can flow outside
-                &a of the island's protection range.
-                &a Disabling it helps avoiding lava and water
-                &a generating cobblestone in the area between
-                &a two islands.
-
-                &c Note that liquids will still flow vertically.
-                &c They will also not spread horizontally if
-                &c they are placed outside an island's
-                &c protection range.
+            name: "&a&l流体溢出"
+            description: |-
+                &7允许/禁止 液体流到岛屿保护范围外
+                &c注意，该选项仅能控制水平流动的液体
         LOCK:
-            description: "Toggle lock"
-            name: "&a&l Lock island"
+            description: "选择岛屿对哪些对象开放"
+            name: "&6&l锁定岛屿"
         MILKING:
             description: "Toggle cow milking"
             name: "&a&l Milking"
@@ -1368,11 +1334,11 @@ protection:
             setting-layout: |
                 &7[description]
 
-                &e点击 &7切换 开/关
+                &e点击 &7切换 允许/禁止
 
                 &7当前设置： [setting]
-            setting-active: "&a开启"
-            setting-disabled: "&c关闭"
+            setting-active: "&a允许"
+            setting-disabled: "&c禁止"
 
 language:
     panel-title: "Select your language"
