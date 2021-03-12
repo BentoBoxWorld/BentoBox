@@ -74,7 +74,7 @@ commands:
     purge:
       parameters: "[gün]"
       description: Belirlediğiniz süreden uzun olan adaları siler.
-      days-or-more: Gün sayısı 1 veya daha uzun olmalıdır.
+      days-one-or-more: Gün sayısı 1 veya daha uzun olmalıdır.
       purgable-islands: "&e[number] &5silinebilecek ada bulundu!"
       purge-in-progress: "&cTemizleme devam ediyor. Durdurmak için durdurma komutunu
         kullanın."

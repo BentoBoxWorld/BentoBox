@@ -201,7 +201,7 @@ commands:
     purge:
       completed: "&a Purge complétée."
       confirm: "&d Tapez &b /[label] purge confirmez &d pour commencer la purge"
-      days-or-more: Veuillez spécifier une durée supérieure à 1 jour.
+      days-one-or-more: Veuillez spécifier une durée supérieure à 1 jour.
       description: supprime les îles inactives depuis plus de [jours] jours
       no-purge-in-progress: "&c Il n'y a actuellement aucune purge en cours."
       number-error: "&c L'argument doit être un nombre de jours"

@@ -43,7 +43,7 @@ commands:
     purge:
       parameters: "[days]"
       description: löschen von Inseln, die seit mehr als [days] verlassen sind
-      days-or-more: Muss mindestens 1 Tag oder mehr betragen
+      days-one-or-more: Muss mindestens 1 Tag oder mehr betragen
       purgable-islands: Es wurden [number] löschbare Inseln gefunden.
       see-console-for-status: Löschung gestartet. Für den Status siehe Konsole
       protect:

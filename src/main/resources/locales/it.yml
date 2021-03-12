@@ -377,7 +377,7 @@ commands:
     purge:
       parameters: "[days]"
       description: elimina le isole abbandonate da più di [days]
-      days-or-more: Deve essere almeno 1 giorno o più
+      days-one-or-more: Deve essere almeno 1 giorno o più
       purgable-islands: Trovate  [number] isole purgabili.
       see-console-for-status: Purga iniziata. Controlla la console per maggiori informazioni
       protect:

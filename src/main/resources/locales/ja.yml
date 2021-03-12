@@ -249,7 +249,7 @@ commands:
         description: 未所有の島を削除-確認が必要
         unowned-islands: "＆d[number]島を見つけました。"
       parameters: "[日]"
-      days-or-more: 1日以上必要です
+      days-one-or-more: 1日以上必要です
       purgable-islands: "[number]個のパーガブル島が見つかりました。"
     switch:
       description: 保護バイパスのオン/オフを切り替えます

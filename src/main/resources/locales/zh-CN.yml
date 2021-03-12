@@ -155,7 +155,7 @@ commands:
         no-purge-in-progress: '&c没有正在进行的清除操作！'
       parameters: '[days]'
       description: 清除废弃超过 [days] 天的岛屿
-      days-or-more: 至少为 1 天或更长
+      days-one-or-more: 至少为 1 天或更长
       purgable-islands: 发现 [number] 个可清除的岛屿。
       purge-in-progress: '&c清除正在进行中。使用 purge stop 命令取消操作'
       number-error: '&c参数必须为数字格式的天数'

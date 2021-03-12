@@ -78,7 +78,7 @@ commands:
     purge:
       parameters: '[dni]'
       description: usuwa wyspy opuszczone przez więcej niż [dni]
-      days-or-more: Wartość to musi co najmniej jeden dzień.
+      days-one-or-more: Wartość to musi co najmniej jeden dzień.
       purgable-islands: Znaleziono [number] usuwalnych wysp.
       purge-in-progress: '&c Usuwanie wysp... Użyj &bpurge stop&c, by przerwać'
       number-error: '&c Argument musi być liczbą dni'
