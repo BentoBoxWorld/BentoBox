@@ -526,10 +526,10 @@ commands:
       parameters: ""
       the-following-islands: "&a这些岛屿在您附近："
       syntax: "&6  - [direction]： &a[name]"
-      north: 北方
-      south: 南方
-      east: 东方
-      west: 西方
+      north: "北方"
+      south: "南方"
+      east: "东方"
+      west: "西方"
       no-neighbors: "&c您附近没有岛屿！"
     reset:
       description: "重新开始您的岛屿生涯"
@@ -740,7 +740,7 @@ ranks:
   visitor: "访客"
   banned: "黑名单"
   admin: "管理员"
-  mod: "模组"
+  mod: "主持人"
 
 protection:
   command-is-banned: "禁止访客使用命令"
@@ -1003,11 +1003,13 @@ protection:
       description: "允许/禁止 （非玩家）生物破坏物品框"
       name: "&a&l生物破坏物品框"
     INVINCIBLE_VISITORS:
-      description: "允许/禁止 访客在岛屿上无敌"
-      name: "&e&l访客无敌"
+      description: "选择访客在岛上可以免疫哪些伤害"
+      name: "&5&l访客无敌"
       hint: "&c已禁止伤害访客"
     ISLAND_RESPAWN:
-      description: "允许/禁止 玩家死亡后在自己的岛屿上重生"
+      description: |-
+        &7允许/禁止 玩家死亡后在自己
+        &7的岛屿上重生
       name: "&a&l在岛屿上重生"
     ITEM_DROP:
       description: "允许/禁止 丢弃物品"
@@ -1216,9 +1218,10 @@ protection:
     TREES_GROWING_OUTSIDE_RANGE:
       name: "&a&l岛外的树木"
       description: |-
-        &7允许/禁止 树木生长到岛屿保护范围外
-        &7这不仅可以防止岛保护范围之外的树苗生长，
-        &7还能防止岛外的树木砍伐后生成枯萎的树叶。
+        &7允许/禁止 树木生长到岛屿保护
+        &7范围外这不仅可以防止岛保护范
+        &7围之外的树苗生长，还能防止岛
+        &7外的树木被砍伐后树叶变枯萎。
     TURTLE_EGGS:
       description: "允许/禁止 踩碎海龟蛋"
       name: "&a&l踩碎海龟蛋"
@@ -1236,6 +1239,7 @@ protection:
       description: |-
         &7允许/禁止 阻止玩家在下坠时传送
         &7例如用 /is go 传送到岛屿上
+        &c允许即为阻止传送
       hint: "&c已禁止在下坠时进行传送"
     WITHER_DAMAGE:
       name: "&a&l凋零伤害"
