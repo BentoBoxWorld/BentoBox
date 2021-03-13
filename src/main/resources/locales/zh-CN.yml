@@ -1040,9 +1040,7 @@ protection:
       name: "&a&l使用拉杆"
       hint: "&c已被禁止使用拉杆"
     LIMIT_MOBS:
-      description: |-
-        &7打开 &b实体类型限 面板
-        &7配置哪些实体可以被生成
+      description: "&7选择哪些实体可以被生成"
       name: "&3&l实体生成限制"
       can: "&a允许生成"
       cannot: "&c禁止生成"
@@ -1099,14 +1097,14 @@ protection:
       obsidian-nearby: "&c附近有其它黑曜石， 这个黑曜石不能变回熔岩。"
     OFFLINE_GROWTH:
       description: |-
-        &7允许/禁止 所有成员都已离线的岛屿上
-        &7的植物继续生长
+        &7允许/禁止 所有成员都已离线
+        &7的岛屿上的植物继续生长
         &a这可以帮助减少性能开销
       name: "&a&l离线生长"
     OFFLINE_REDSTONE:
       description: |-
-        &7允许/禁止 所有成员都已离线的岛屿上
-        &7的红石设备继续运行
+        &7允许/禁止 所有成员都已离线
+        &7的岛屿上的红石设备继续运行
         &a这可以帮助减少性能开销
         &a这个设置不会影响出生岛屿（主城）
       name: "&a&l离线红石"
@@ -1176,8 +1174,9 @@ protection:
       name: "&a&l移除末影龙"
     REMOVE_MOBS:
       description: |-
-        &7允许/禁止 玩家回到岛屿时移除怪物
-        &7这有助于玩家安全回到岛上
+        &7允许/禁止 玩家回到岛屿时
+        &7移除怪物
+        &a这有助于玩家安全回到岛上
       name: "&a&l移除怪物"
     RIDING:
       description: "允许/禁止 乘骑动物"
