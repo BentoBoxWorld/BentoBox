@@ -81,7 +81,7 @@ commands:
       # 不应该是 “被遗弃多少天”，它仅仅是玩家多少天没上线而已，
       # 并不表示玩家已放弃了岛屿，说是 “不活动” 更确切一些。
       description: "清理不活动超过 [days] 天的岛屿"
-      days-or-more: "&c天数必需为至少 1 或 1 以上。"
+      days-one-or-more: "&c天数必需为至少 1 或 1 以上。"
       purgable-islands: "&a找到 &b[number] &a个不活动可以被清理的岛屿。"
       purge-in-progress: |-
         &c清理正在进行中。
