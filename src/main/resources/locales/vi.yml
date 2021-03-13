@@ -71,7 +71,7 @@ commands:
     purge:
       parameters: '[ngày]'
       description: xóa đảo đã bị bỏ hoang quá [ngày]
-      days-or-more: Phải ít nhất 1 ngày hoặc hơn
+      days-one-or-more: Phải ít nhất 1 ngày hoặc hơn
       purgable-islands: '&a Đã tìm thấy &b [number] &a đảo có thể xóa.'
       purge-in-progress: '&c Quá trình xóa đang được thực thi. Dùng &b /[label] purge stop &c để hủy.'
       number-error: '&c Tham số phải là số ngày'

@@ -255,12 +255,27 @@ public class BlueprintManagementPanel {
 
     private PanelItem getWorldInstrTile(Environment env) {
         Material icon;
-        if (env.equals(Environment.NORMAL)) icon = Material.GRASS_BLOCK;
-        else if (env.equals(Environment.NETHER)) icon = Material.NETHERRACK;
-        else icon = Material.END_STONE;
+        String worldName;
+        switch (env) {
+            case NORMAL:
+                icon = Material.GRASS_BLOCK;
+                worldName = normalBlueprint.getName();
+                break;
+            case NETHER:
+                icon = Material.NETHERRACK;
+                worldName = netherBlueprint.getName();
+                break;
+            case THE_END:
+                icon = Material.END_STONE;
+                worldName = endBlueprint.getName();
+                break;
+            default:
+                icon = Material.STONE;
+                worldName = Util.prettifyText(env.name());
+        }
 
         return new PanelItemBuilder()
-                .name(t("world-name-syntax", TextVariables.NAME, Util.prettifyText(env.name())))
+                .name(t("world-name-syntax", TextVariables.NAME, worldName))
                 .description(t("world-instructions"))
                 .glow(true)
                 .icon(icon)

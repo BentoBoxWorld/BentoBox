@@ -77,7 +77,7 @@ commands:
     purge:
       parameters: '[days]'
       description: pročistit ostrovy opuštěné více než [days]
-      days-or-more: Musí být alespoň 1 den nebo více
+      days-one-or-more: Musí být alespoň 1 den nebo více
       purgable-islands: Nalezeno [number] pročistitelných ostrovů.
       purge-in-progress: '&c Probíhá čištění. Použij &e purge stop &c k zastavení'
       number-error: '&c Argument musí být číslo vyjadřující počet dní'

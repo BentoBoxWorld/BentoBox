@@ -94,7 +94,7 @@ commands:
           &7) &a."
         description: afișează starea purjării
       parameters: "[zile]"
-      days-or-more: Trebuie să aibă cel puțin o zi sau mai mult
+      days-one-or-more: Trebuie să aibă cel puțin o zi sau mai mult
       stop:
         description: opriți o purjare în curs
         stopping: Oprirea purjării

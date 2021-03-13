@@ -76,7 +76,7 @@ commands:
     purge:
       parameters: '[dias]'
       description: excluir ilhas abandonadas por mais de [dias]
-      days-or-more: Deve ser 1 dia ou mais
+      days-one-or-more: Deve ser 1 dia ou mais
       purgable-islands: '&a Foram encontradas &b [number] &a ilhas excluíveis.'
       purge-in-progress: '&c Exclusão em progresso. Use &b /[label] purge stop &c
         para cancelar.'

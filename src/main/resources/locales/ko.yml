@@ -70,7 +70,7 @@ commands:
     purge:
       parameters: "[days]"
       description: "[days] 이상 버려진 섬 청소"
-      days-or-more: 1일 이상이어야합니다
+      days-one-or-more: 1일 이상이어야합니다
       purgable-islands: "&b [number]&a개의 청소 가능한 섬을 찾았습니다."
       purge-in-progress: "&c 청소가 진행중입니다.&b /[label] purge stop &c 를 사용해 취소할수 있습니다."
       number-error: "&c 인자는 숫자여야만합니다"

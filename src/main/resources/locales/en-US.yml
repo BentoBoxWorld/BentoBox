@@ -77,7 +77,7 @@ commands:
     purge:
       parameters: "[days]" 
       description: "purge islands abandoned for more than [days]"
-      days-or-more: "Must be at least 1 day or more"
+      days-one-or-more: "Must be at least 1 day or more"
       purgable-islands: "&a Found &b [number] &a purgable islands."
       purge-in-progress: "&c Purging in progress. Use &b /[label] purge stop &c to cancel."
       number-error: "&c Argument must be a number of days"

@@ -202,7 +202,7 @@ commands:
     purge:
       completed: "&aDzēšana pabeigta."
       confirm: "&dRaksti &e[label] purge confirm&d, lai sāktu dzēšanu"
-      days-or-more: Nevar būt mazāks par 1 dienu
+      days-one-or-more: Nevar būt mazāks par 1 dienu
       description: nodzēst salas kas nav aktīvas vairāk par [days] dienām
       number-error: "&cParametram ir jābūt dienu skatitam."
       parameters: "[days]"
