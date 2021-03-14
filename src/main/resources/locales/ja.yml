@@ -8,7 +8,7 @@ general:
   success: "&a成否"
   invalid: 無効
   errors:
-    command-cancelled: "＆cCommandはキャンセルされました。"
+    command-cancelled: "&cCommandはキャンセルされました。"
     no-permission: "&cこのコマンドを実行する権限がありません ([permission])。"
     use-in-game: "&cこのコマンドは、ゲームでのみ利用可能です。"
     no-team: "&cあなたはチームを持っていない!"
@@ -16,16 +16,16 @@ general:
     player-has-island: "&cこのプレイヤーはすでに島を持っている!"
     player-has-no-island: "&cこのプレイヤーには島を持っていない!"
     already-have-island: "&cあなたはすでに島を持っている!"
-    no-safe-location-found: "＆c島にテレポートする安全な場所が見つかりませんでした。"
-    not-owner: "＆cあなたは島の所有者ではありません！"
+    no-safe-location-found: "&c島にテレポートする安全な場所が見つかりませんでした。"
+    not-owner: "&cあなたは島の所有者ではありません！"
     not-in-team: "&cそのプレイヤーはあなたのチームにはいない!"
     offline-player: "&cそのプレイヤーはオフラインまたは存在しません。"
     unknown-player: "&c[name]というプレイヤーは存在しません!"
     general: "&cそのコマンドはまだ準備ができていません。サーバー管理者にお問い合わせ下さい。"
-    unknown-command: "&c不明なコマンドです。＆b/[label] help ＆cはヘルプを表示します。"
-    wrong-world: "＆cあなたは正しい世界にいません！"
+    unknown-command: "&c不明なコマンドです。&b/[label] help &cはヘルプを表示します。"
+    wrong-world: "&cあなたは正しい世界にいません！"
     you-must-wait: "&cそのコマンドを再度実行するには、[number]秒を待つ必要があります。"
-    must-be-positive-number: "＆c [number]は有効な正数ではありません。"
+    must-be-positive-number: "&c [number]は有効な正数ではありません。"
     insufficient-rank: "&c ランクは十分に高くありません！ (&7 [rank]&c )"
     player-is-not-owner: "&b [name] &c は島の所有者ではありません！"
   tips:
@@ -51,41 +51,41 @@ commands:
       set:
         description: このプレーヤーのリセットを設定します
         parameters: "<プレーヤー> <リセット>"
-        success: "＆a＆b [name]＆aのリセットを＆b [number]＆aに正常に設定します。"
+        success: "&a&b [name]&aのリセットを&b [number]&aに正常に設定します。"
       reset:
         description: このプレーヤーのリセットを0にリセットします
         parameters: "<プレーヤー>"
-        success-everyone: "＆a＆beveryone＆aのリセットを＆b0＆aに正常にリセットします。"
-        success: "＆a＆b [name]＆aのリセットを＆b0＆aに正常にリセットします。"
+        success-everyone: "&a&beveryone&aのリセットを&b0&aに正常にリセットします。"
+        success: "&a&b [name]&aのリセットを&b0&aに正常にリセットします。"
       add:
         description: プレーヤーにリセットを追加します
         parameters: "<プレーヤー> <リセット>"
-        success: "＆a＆b [number]＆aresetsを＆b [name]に追加し、合計を＆b [total]＆a resetsに増やしました。"
+        success: "&a&b [number]&aresetsを&b [name]に追加し、合計を&b [total]&a resetsに増やしました。"
       remove:
         description: プレーヤーのリセットを削除します
         parameters: "<プレーヤー> <リセット>"
-        success: "＆a＆b [number]＆aresetsを＆b [name]に削除し、合計を＆b [total]＆a resetsに減らしました。"
+        success: "&a&b [number]&aresetsを&b [name]に削除し、合計を&b [total]&a resetsに減らしました。"
     purge:
       parameters: "[日]"
       description: "[日]以上放棄された島をパージする"
       purgable-islands: "[number]個のパーガブル島が見つかりました。"
-      purge-in-progress: "＆cパージ中です。キャンセルするにはパージ停止を使用します"
-      number-error: "＆cArgumentは日数でなければなりません"
-      confirm: "＆dType [label] purge confirmでパージを開始します"
-      completed: "＆aパージを停止しました"
+      purge-in-progress: "&cパージ中です。キャンセルするにはパージ停止を使用します"
+      number-error: "&cArgumentは日数でなければなりません"
+      confirm: "&dType [label] purge confirmでパージを開始します"
+      completed: "&aパージを停止しました"
       see-console-for-status: パージが開始されました。ステータスについてはコンソールをご覧ください
       protect:
         description: アイランドパージ保護の切り替え
         move-to-island: "&c最初に島に移動してください！"
-        protecting: "＆aパージ保護島"
-        unprotecting: "＆aパージ保護の削除"
+        protecting: "&aパージ保護島"
+        unprotecting: "&aパージ保護の削除"
       stop:
         description: 進行中のパージを停止する
         stopping: パージの停止
-        no-purge-in-progress: "＆cパージは進行中です！"
+        no-purge-in-progress: "&cパージは進行中です！"
       unowned:
         description: 未所有の島を削除-確認が必要
-        unowned-islands: "＆d[number]島を見つけました。"
+        unowned-islands: "&d[number]島を見つけました。"
       days-one-or-more: 1日以上必要です
       no-purge-in-progress: "&c現在進行中のパージはありません。"
       status:
@@ -97,25 +97,25 @@ commands:
         description: リーダーのチームにプレイヤーを追加する
         name-not-owner: "&c[name]はリーダーではありません"
         name-has-island: "&c[name]には島があります。登録を解除するか、最初に削除してください。"
-        success: "＆b [name]＆aが＆b [owner]＆aの島に追加されました。"
+        success: "&b [name]&aが&b [owner]&aの島に追加されました。"
       disband:
         parameters: "<所有者>"
         description: チームリーダーのチームを解散
         use-disband-owner: リーダーじゃない！解散を使用 [owner]
         disbanded: 管理者はあなたのチームを解散!
-        success: "＆b [name]＆aのチームは解散しました。"
+        success: "&b [name]&aのチームは解散しました。"
       kick:
         parameters: "<チームのプレーヤー>"
         description: チームからプレーヤーを外す。
         cannot-kick-owner: "&cチームリーダーを外すことはできません。まずはメンバーを外してください。"
-        not-in-team: "＆cこのプレーヤーはチームに所属していません。"
+        not-in-team: "&cこのプレーヤーはチームに所属していません。"
         admin-kicked: 管理者は、あなたをチームから外しました。
-        success: "＆b [name]＆aは＆b [owner]＆aの島から追い出されました。"
+        success: "&b [name]&aは&b [owner]&aの島から追い出されました。"
       setowner:
         parameters: "<プレーヤー>"
         description: プレーヤーをチームのリーダーにする％
         already-owner: "&cプレイヤーはすでにリーダーです!"
-        success: "＆b [name]＆aがこの島の所有者になりました。"
+        success: "&b [name]&aがこの島の所有者になりました。"
       fix:
         description: データベース内のクロスアイランドメンバーシップをスキャンして修正
         scanning: データベースをスキャンしています...
@@ -123,7 +123,7 @@ commands:
         player-has: "&cプレイヤー[name]には[number]の島があります"
         fixed: "&a修正済み"
         done: "&aスキャン"
-        duplicate-member: "&cプレーヤー[名前]はデータベース内の複数の島のメンバーです"
+        duplicate-member: "&cプレーヤー[name]はデータベース内の複数の島のメンバーです"
         rank-on-island: "&c [rank]島の[xyz]"
     range:
       description: 管理島の範囲コマンド
@@ -166,12 +166,12 @@ commands:
       parameters: "<プレーヤー>"
       description: あなたがいる未所有の島にプレーヤーを登録する。
       registered-island: "[xyz] で島に登録されたプレーヤー。"
-      reserved-island: "＆aプレイヤー用に[xyz]に島を予約しました。"
+      reserved-island: "&aプレイヤー用に[xyz]に島を予約しました。"
       already-owned: "&c島はすでに他のプレイヤーが所有している!"
       no-island-here: "&cここには島はない1つを確認します。"
-      in-deletion: "＆cこの島のスペースは現在削除中です。後で試してください。"
+      in-deletion: "&cこの島のスペースは現在削除中です。後で試してください。"
       cannot-make-island: "&c島はここに配置できません。申し訳ありません。考えられるエラーについては、コンソールをご覧ください。"
-      island-is-spawn: "＆6島が生成されます。本気ですか？もう一度コマンドを入力して確認します。"
+      island-is-spawn: "&6島が生成されます。本気ですか？もう一度コマンドを入力して確認します。"
     unregister:
       parameters: "<所有者>"
       description: 島から所有者を登録解除するが、島のブロックを維持する
@@ -204,28 +204,28 @@ commands:
       island-center: 島の中心：[xyz]
     switch:
       description: 保護バイパスのオン/オフを切り替えます
-      op: "＆cオップは常に保護をバイパスできます。コマンドを使用しないようにします。"
+      op: "&cオップは常に保護をバイパスできます。コマンドを使用しないようにします。"
       removing: 保護バイパスを削除しています...
       adding: 保護バイパスを追加しています...
     switchto:
       parameters: "<プレイヤー> <番号>"
       description: プレイヤーの島をゴミ箱にある番号付きの島に切り替える
-      out-of-range: "＆c数は1から[number]の間でなければなりません。島番号を見るには＆l [label] trash [player]＆r＆cを使用してください"
-      cannot-switch: "＆c変換が失敗しました。エラーについては、コンソールログを参照してください。"
-      success: "＆aプレイヤーの島を指定された島に切り替えました。"
+      out-of-range: "&c数は1から[number]の間でなければなりません。島番号を見るには&l [label] trash [player]&r&cを使用してください"
+      cannot-switch: "&c変換が失敗しました。エラーについては、コンソールログを参照してください。"
+      success: "&aプレイヤーの島を指定された島に切り替えました。"
     trash:
       no-unowned-in-trash: "&cゴミ箱に所有されていない島はありません"
-      no-islands-in-trash: "＆cプレイヤーにはゴミの島がありません"
+      no-islands-in-trash: "&cプレイヤーにはゴミの島がありません"
       parameters: "[プレイヤー]"
       description: 所有していない島またはプレイヤーの島をゴミ箱に表示する
-      title: "＆d ===========ゴミ箱の島==========="
+      title: "&d ===========ゴミ箱の島==========="
       count: "&l&d島[number]："
-      use-switch: "＆a＆l [label] switchto <player> <number> を使用＆r＆aでプレイヤーをゴミ箱の島に切り替える"
-      use-emptytrash: "＆a＆l [label] emptytrash [player]＆r＆aを使用して、ゴミ箱のアイテムを完全に削除します"
+      use-switch: "&a&l [label] switchto <player> <number> を使用&r&aでプレイヤーをゴミ箱の島に切り替える"
+      use-emptytrash: "&a&l [label] emptytrash [player]&r&aを使用して、ゴミ箱のアイテムを完全に削除します"
     emptytrash:
       parameters: "[プレイヤー]"
       description: プレイヤーのゴミ箱、またはゴミ箱にあるすべての未所有の島をクリアする
-      success: "＆aTrashは正常に空になりました。"
+      success: "&aTrashは正常に空になりました。"
     version:
       description: 表示BentoBoxとアドオンのバージョン
     setrange:
@@ -246,13 +246,13 @@ commands:
       parameters: "＜プレーヤー＞　＜ランク＞"
       description: プレイヤーのランクを設定する
       unknown-rank: "&c不明ランク!"
-      not-possible: "＆cランクは訪問者より高くなければなりません"
+      not-possible: "&cランクは訪問者より高くなければなりません"
       rank-set: "&2[from] から [to] に設定されたランク。"
     setspawn:
       description: この世界のスポーンとして島を設定します
-      already-spawn: "＆cこの島はすでに出現しています！"
-      no-island-here: "＆cここには島はありません。"
-      confirmation: "＆cこの島をこの世界のスポーンとして設定してもよろしいですか？"
+      already-spawn: "&cこの島はすでに出現しています！"
+      no-island-here: "&cここには島はありません。"
+      confirmation: "&cこの島をこの世界のスポーンとして設定してもよろしいですか？"
       success: "&aこの島をこの世界のスポーンに設定しました。"
     settings:
       parameters: "[プレーヤー]"
@@ -261,7 +261,7 @@ commands:
     blueprint:
       parameters: "<load><copy><paste><pos1><pos2><save>"
       description: 青写真の操作
-      bedrock-required: "＆c少なくとも1つの岩盤ブロックを設計図に含める必要があります！"
+      bedrock-required: "&c少なくとも1つの岩盤ブロックを設計図に含める必要があります！"
       copy-first: "&c最初に青写真をコピー!"
       file-exists: "&cファイルは既に存在し、上書きしますか?"
       no-such-file: "&cそのようなファイルはありません!"
@@ -271,11 +271,11 @@ commands:
       set-pos2: "&2位置2は [vector] で設定"
       set-different-pos: "&c別の場所を設定する-この pos は既に設定されています!"
       need-pos1-pos2: "&cpos1 と pos2 を最初に設定!"
-      copying: "＆bブロックをコピーしています..."
+      copying: "&bブロックをコピーしています..."
       copied-blocks: "&2[number]ブロックをクリップボードにコピー"
       look-at-a-block: 20ブロック以内にブロックを見て設定する
-      mid-copy: "＆cコピー中です。コピーが完了するまで待ちます。"
-      copied-percent: "＆6コピー済み[number]％"
+      mid-copy: "&cコピー中です。コピーが完了するまで待ちます。"
+      copied-percent: "&6コピー済み[number]％"
       copy:
         parameters: "[air]"
         description: pos1とpos2で設定されたクリップボードと、オプションでエアブロックをコピーします
@@ -284,13 +284,13 @@ commands:
         description: 設計図をクリップボードに読み込みます
       list:
         description: 利用可能な設計図を一覧表示する
-        no-blueprints: "＆c フォルダーにブループリントはありません！"
-        available-blueprints: "＆aこれらの設計図はロードできます："
+        no-blueprints: "&c フォルダーにブループリントはありません！"
+        available-blueprints: "&aこれらの設計図はロードできます："
       origin:
         description: ブループリントの原点を自分の位置に設定します
       paste:
         description: あなたの場所にクリップボードを貼り付けます
-        pasting: "＆a貼り付け..."
+        pasting: "&a貼り付け..."
       pos1:
         description: 立方体クリップボードの最初の角を設定します
       pos2:
@@ -326,14 +326,14 @@ commands:
         name:
           quit: quit
           prompt: 名前を入力するか、「quit」で終了します
-          too-long: "＆c長すぎる"
+          too-long: "&c長すぎる"
           pick-a-unique-name: よりユニークな名前を選んでください
           success: 成功！
           conversation-prefix: ">"
         description:
           quit: quit
           instructions: |
-            [名前]に複数行の説明を入力してください
+            [name]に複数行の説明を入力してください
             そして、終了するためにそれ自体で行を「quit」します。
           success: 成功！
           cancelling: キャンセル中
@@ -364,9 +364,9 @@ commands:
     resetflags:
       parameters: "[flag]"
       description: すべての島をconfig.ymlのデフォルトのフラグ設定にリセットします
-      confirm: "＆4これにより、すべての島のフラグがデフォルトにリセットされます！"
+      confirm: "&4これにより、すべての島のフラグがデフォルトにリセットされます！"
       success: "&aすべての島のフラグをデフォルト設定に正常にリセットします。"
-      success-one: "＆a [name]フラグはすべての島でデフォルトに設定されています。"
+      success-one: "&a [name]フラグはすべての島でデフォルトに設定されています。"
     world:
       description: 世界の設定を管理する
     delete:
@@ -384,11 +384,11 @@ commands:
       reset:
         description: プレイヤーの死亡をリセットします
         parameters: "<プレイヤー>"
-        success: "＆a＆b [name]＆aの死亡を＆b0＆aに正常にリセットします。"
+        success: "&a&b [name]&aの死亡を&b0&aに正常にリセットします。"
       set:
         description: プレイヤーの死を設定します
         parameters: "<プレイヤー> <死ぬの数>"
-        success: "＆a＆b [name]＆aの死亡を＆b [number]＆aに正常に設定します。"
+        success: "&a&b [name]&aの死亡を&b [number]&aに正常に設定します。"
       add:
         description: プレイヤーに死を追加します
         parameters: "<プレイヤー> <死>"
@@ -398,7 +398,7 @@ commands:
       remove:
         description: プレイヤーの死を取り除く
         parameters: "<プレイヤー> <死>"
-        success: "＆a＆b [number]＆adeathsを＆b [name]に正常に削除し、合計を＆b [total]＆a deathsに減らしました。"
+        success: "&a&b [number]&adeathsを&b [name]に正常に削除し、合計を&b [total]&a deathsに減らしました。"
     clearresets:
       parameters: "<プレーヤー>"
       description: この世界のプレーヤーリセットカウントをクリアします。
@@ -427,12 +427,12 @@ commands:
     reload:
       description: すべてのロケールファイルを再読み込み
       locales-reloaded: "&2言語がリロードされた"
-      addons-reloaded: "＆2アドオンがリロードされました。"
-      settings-reloaded: "＆2Settingsがリロードされました。"
-      addon: "＆6＆b [name]＆2。をリロードしています。"
+      addons-reloaded: "&2アドオンがリロードされました。"
+      settings-reloaded: "&2Settingsがリロードされました。"
+      addon: "&6&b [name]&2。をリロードしています。"
       addon-reloaded: "&b[name] &2がリロードされました"
-      warning: "＆c警告：再ロードすると不安定になる可能性があるため、その後エラーが発生した場合は、サーバーを再起動してください。"
-      unknown-addon: "＆c不明なアドオン"
+      warning: "&c警告：再ロードすると不安定になる可能性があるため、その後エラーが発生した場合は、サーバーを再起動してください。"
+      unknown-addon: "&c不明なアドオン"
       locales:
         description: ロケールをリロードします
     version:
@@ -443,7 +443,7 @@ commands:
       addon-syntax: "&2[name] &3[version] &7(&3[state]&7)"
       game-world: "&2[name] &7(&3[addon]&7): &aOverworld&7, &r Nether&7, &r End"
       server: "&2Running &3[name] [version]&2."
-      database: "＆2データベース：＆3 [database]"
+      database: "&2データベース：&3 [database]"
     manage:
       description: 管理パネルを表示します
     catalog:
@@ -452,22 +452,22 @@ commands:
       description: ローカライズファイル分析を実行します
       see-console: |-
         コンソールでフィードバックを確認してください。
-        ＆aこのコマンドはスパムであるため、チャットからフィードバックを読み取ることができません...
+        &aこのコマンドはスパムであるため、チャットからフィードバックを読み取ることができません...
     migrate:
       description: あるデータベースから別のデータベースにデータを移行します
-      players: "＆6プレイヤーの移行"
-      names: "＆6名前の移行"
-      addons: "＆6アドオンの移行"
-      class: "＆6移行[description]"
+      players: "&6プレイヤーの移行"
+      names: "&6名前の移行"
+      addons: "&6アドオンの移行"
+      class: "&6移行[description]"
       migrated: "&a移行済み"
   confirmation:
     confirm: "&c[seconds]秒でコマンドをもう一度入力して確認します。"
     previous-request-cancelled: "&c前の確認要求が取り消されました"
     request-cancelled: "&c確認のタイムアウト-要求が取り消されました"
   delay:
-    previous-command-cancelled: "＆c前のコマンドがキャンセルされました"
-    stand-still: "＆6移動しないでください！ [seconds]秒でのテレポート"
-    moved-so-command-cancelled: "＆c移動しました。テレポートがキャンセルされました！"
+    previous-command-cancelled: "&c前のコマンドがキャンセルされました"
+    stand-still: "&6移動しないでください！ [seconds]秒でのテレポート"
+    moved-so-command-cancelled: "&c移動しました。テレポートがキャンセルされました！"
   island:
     about:
       description: 情報について
@@ -483,22 +483,22 @@ commands:
       pick-world: "&c[worlds]からワールドを指定する"
     spawn:
       description: スポーンにテレポート
-      teleporting: "＆aスポーンに移動します。"
-      no-spawn: "＆cこの世界にはスポーンはありません。"
+      teleporting: "&aスポーンに移動します。"
+      no-spawn: "&cこの世界にはスポーンはありません。"
     create:
       description: 島を作成する
       parameters: "<青写真>"
-      too-many-islands: "＆cこの世界には島が多すぎます。あなたの島を作成するのに十分なスペースがありません。"
+      too-many-islands: "&cこの世界には島が多すぎます。あなたの島を作成するのに十分なスペースがありません。"
       unable-create-island: 島を生成することができませんでした, 管理者に連絡してください.
-      creating-island: "＆aあなたの島の場所を見つけました。あなたのために準備しましょう。"
+      creating-island: "&aあなたの島の場所を見つけました。あなたのために準備しましょう。"
       pasting:
-        estimated-time: "＆a推定時間：＆b [number]s。"
+        estimated-time: "&a推定時間：&b [number]s。"
         blocks: "&a ブロックごとに構築します。 合計&b[numbber]&aブロック。"
         entities: "&aそれを生き物で満たす。 合計&b[number]&a体のクリーチャー。"
-        done: "＆a完了しました。あなたの島の準備が整い、あなたを待っています！"
-      pick: "＆2島を選ぶ"
-      unknown-blueprint: "＆cそのブループリントはまだロードされていません。"
-      on-first-login: "＆aWelcome！数秒で島の準備を開始します。"
+        done: "&a完了しました。あなたの島の準備が整い、あなたを待っています！"
+      pick: "&2島を選ぶ"
+      unknown-blueprint: "&cそのブループリントはまだロードされていません。"
+      on-first-login: "&aWelcome！数秒で島の準備を開始します。"
       pick-world: 世界から選ぶ [worlds]
       cannot-create-island: "&c時間内にスポットが見つかりませんでした。もう一度お試しください..."
       you-can-teleport-to-your-island: "&a必要なときに島にテレポートできます。"
@@ -507,18 +507,18 @@ commands:
       parameters: "<プレイヤー>"
     near:
       description: あなたの周りの近隣の島の名前を表示します
-      the-following-islands: "＆a次の島が近くにあります。"
+      the-following-islands: "&a次の島が近くにあります。"
       syntax: "&6[direction]: &a[name]"
       north: 北
       south: 南
       east: 東
       west: 西
-      no-neighbors: "＆cすぐ隣の島はありません！"
+      no-neighbors: "&cすぐ隣の島はありません！"
     reset:
       description: 島を再起動し、古いものを削除する
       parameters: "<青写真>"
       none-left: あなたはもうリセットが残っている!
-      resets-left: "＆c残りには＆b [number]個の＆cresetsがあります"
+      resets-left: "&c残りには&b [number]個の&cresetsがあります"
       confirmation: |-
         &cこれを実行してもよろしいですか？
         &cすべての島のメンバーは島から追い
@@ -527,27 +527,27 @@ commands:
         &c戻ることはできません。
         &c現在の島が削除されると、
         &c後でそれを取得する方法はありません。
-      kicked-from-island: "＆c所有者がリセットしているため、[gamemode]で島から追い出されます。"
+      kicked-from-island: "&c所有者がリセットしているため、[gamemode]で島から追い出されます。"
       must-remove-members: あなたはそれを (/island team kick <player>) を再起動する前に、あなたの島からすべてのメンバーを削除する必要があります。
     sethome:
       description: ホームテレポートポイントを設定する
       must-be-on-your-island: あなたの島に家を設定する必要があります!
       home-set: あなたの島の家はあなたの現在の場所に設定されています。
       nether:
-        not-allowed: "＆cあなたはネザーにあなたの家を設定することはできません。"
-        confirmation: "＆cネザーにあなたの家を設定しますか？"
+        not-allowed: "&cあなたはネザーにあなたの家を設定することはできません。"
+        confirmation: "&cネザーにあなたの家を設定しますか？"
       the-end:
-        not-allowed: "＆c最後に家を設定することはできません。"
-        confirmation: "＆c最後に家を設定してもよろしいですか？"
+        not-allowed: "&c最後に家を設定することはできません。"
+        confirmation: "&c最後に家を設定してもよろしいですか？"
       parameters: "[数]"
       too-many-homes: "&c設定できません-あなたの島は最大[number]の家にあります。"
-      homes-are: "＆6島の家は次のとおりです:"
+      homes-are: "&6島の家は次のとおりです:"
       home-list-syntax: "&6 [name]"
     setname:
       description: 島の名前を設定します
       name-too-short: 短すぎる。最小サイズは [number] 文字です。
       name-too-long: 長すぎます。最大サイズは [number] 文字です。
-      name-already-exists: "＆cこのゲームモードでは、その名前の島がすでに存在します。"
+      name-already-exists: "&cこのゲームモードでは、その名前の島がすでに存在します。"
       parameters: "<名前>"
       success: "&a島の名前を&b [name]&aに正常に設定しました。"
     resetname:
@@ -558,21 +558,21 @@ commands:
       info:
         description: チームに関する詳細情報を表示する
         member-layout:
-          online: "＆a＆l o＆r＆f [name]"
-          offline: "＆c＆l o＆r＆f [name]＆7（[last_seen]）"
+          online: "&a&l o&r&f [name]"
+          offline: "&c&l o&r&f [name]&7（[last_seen]）"
           offline-not-last-seen: "&c &l  o &r &f [name]"
         last-seen:
-          layout: "＆b [number]＆7 [unit]前"
+          layout: "&b [number]&7 [unit]前"
           days: 日々
           hours: 営業時間
           minutes: 数分
         header: |
-          ＆f ---＆aTeamの詳細＆f ---
-          ＆aMembers：＆b [total]＆7 /＆b [max]
-          ＆aOnlineメンバー：＆b [online]
+          &f ---&aTeamの詳細&f ---
+          &aMembers：&b [total]&7 /&b [max]
+          &aOnlineメンバー：&b [online]
         rank-layout:
           owner: "&6 [rank]："
-          generic: "＆6 [rank]＆7（＆b [number]＆7）＆6："
+          generic: "&6 [rank]&7（&b [number]&7）&6："
       coop:
         description: 島でプレイヤーコープランクを確認
         parameters: "<プレイヤー>"
@@ -580,7 +580,7 @@ commands:
         already-has-rank: プレイヤーはすでにランクを持っている!
         you-are-a-coop-member: あなたは [name]に閉じこもっれた
         success: "&b[name]&aを協力メンバーにしました"
-        name-has-invited-you: "＆a [name]はあなたを彼らの島の協同組合員になるよう招待しました。"
+        name-has-invited-you: "&a [name]はあなたを彼らの島の協同組合員になるよう招待しました。"
         paramters: "<プレーヤー>"
       uncoop:
         description: プレイヤーから生協のランクを削除する
@@ -589,18 +589,18 @@ commands:
         cannot-uncoop-member: チームメンバーを uncoop ことはできません!
         player-not-cooped: プレイヤーは閉じこもっではありません!
         you-are-no-longer-a-coop-member: あなたはもはや[name]の島の生協のメンバーではない
-        all-members-logged-off: "＆cすべての島のメンバーがログオフしたため、あなたはもはや[name]の島の協同組合員ではありません"
-        success: "＆b [name]＆aisはもはやあなたの島の協同組合員ではありません。"
+        all-members-logged-off: "&cすべての島のメンバーがログオフしたため、あなたはもはや[name]の島の協同組合員ではありません"
+        success: "&b [name]&aisはもはやあなたの島の協同組合員ではありません。"
         paramters: "<プレーヤー>"
         is-full: "&cこれ以上生協メンバーを追加することはできません"
       trust:
         description: 島でプレイヤーに信頼できるランクを与える
         parameters: "<プレイヤー>"
         trust-in-yourself: 自分を信頼して!
-        name-has-invited-you: "＆a [name]は、あなたを彼らの島の信頼できるメンバーになるよう招待しています。"
+        name-has-invited-you: "&a [name]は、あなたを彼らの島の信頼できるメンバーになるよう招待しています。"
         player-already-trusted: プレイヤーはすでに信頼されている!
         you-are-trusted: "[name]はあなたを信頼!"
-        success: "＆a信頼済み＆b [name]＆a。"
+        success: "&a信頼済み&b [name]&a。"
         paramters: "<プレーヤー>"
         members-trusted: メンバは既に信頼されています
         is-full: "&c他の人を信頼することはできません。"
@@ -611,7 +611,7 @@ commands:
         cannot-untrust-member: チームメンバーを untrust ことはできません!
         player-not-trusted: プレイヤーは信頼されていません!
         you-are-no-longer-trusted: "[name]はもはやあなたを信頼していない!"
-        success: "＆b [name]＆aはあなたの島ではもはや信頼されていません。"
+        success: "&b [name]&aはあなたの島ではもはや信頼されていません。"
         paramters: "<プレーヤー>"
       invite:
         description: 島に参加するプレーヤーを招待
@@ -628,14 +628,14 @@ commands:
           you-already-are-in-team: あなたはすでにチームにいます!
           already-on-team: そのプレイヤーはすでにチームにいます!
           invalid-invite: その招待はもはや有効ではない、申し訳ありません。
-          you-have-already-invited: "＆cそのプレイヤーは既に招待されています！"
+          you-have-already-invited: "&cそのプレイヤーは既に招待されています！"
         parameters: "<プレーヤー>"
         you-can-invite: あなたは[number]より多くのプレイヤーを招待することができます。
         accept:
           description: 招待を承諾する
           you-joined-island: あなたは島に参加しました!チーム情報を使用/[label] team して他のメンバーを表示します。
           name-joined-your-island: "[name]あなたの島に参加しました!"
-          confirmation: "＆cこの招待を受け入れてもよろしいですか？"
+          confirmation: "&cこの招待を受け入れてもよろしいですか？"
         reject:
           description: 招待を却下する
           you-rejected-invite: 島への招待を拒絶した
@@ -646,7 +646,7 @@ commands:
         cannot-leave: チームリーダーは去ることができない!最初にメンバーになるか、すべてのメンバーを蹴る。
         description: 島を残す
         left-your-island: "[name]は島を去っ"
-        success: "＆aこの島を離れました。"
+        success: "&aこの島を離れました。"
       kick:
         description: 島からメンバーを削除する
         parameters: "<プレーヤー>"
@@ -657,7 +657,7 @@ commands:
         description: ランクダウンあなたの島のプレーヤーを降格
         parameters: "<プレーヤー>"
         errors:
-          cant-demote-yourself: "＆c自分を降格することはできません！"
+          cant-demote-yourself: "&c自分を降格することはできません！"
         failure: プレイヤーはこれ以上降格することはできません!
         success: "[name]を[rank]に降格"
       promote:
@@ -679,9 +679,9 @@ commands:
       cannot-ban-yourself: あなた自身を禁止することはできません!
       cannot-ban: そのプレイヤーは禁止することはできません。
       cannot-ban-member: まずはチームメンバーを蹴り、次に解禁。
-      cannot-ban-more-players: "＆c禁止制限に達したため、これ以上島からプレイヤーを禁止することはできません。"
+      cannot-ban-more-players: "&c禁止制限に達したため、これ以上島からプレイヤーを禁止することはできません。"
       player-already-banned: プレイヤーはすでに禁止されて
-      player-banned: これで、＆b [name]＆cはあなたの島から禁止されました。
+      player-banned: これで、&b [name]&cはあなたの島から禁止されました。
       owner-banned-you: "[name]は、彼らの島からあなたを禁止!"
       you-are-banned: あなたはこの島から禁止されています!
     unban:
@@ -689,14 +689,14 @@ commands:
       parameters: "<プレーヤー>"
       cannot-unban-yourself: 自分を同時ことはできない!
       player-not-banned: プレイヤーは禁止されていません
-      player-unbanned: "＆b [name]＆aは現在、あなたの島から禁止されていません。"
+      player-unbanned: "&b [name]&aは現在、あなたの島から禁止されていません。"
       you-are-unbanned: "[name]は島からあなたをブロックを解除!"
     banlist:
       description: リスト禁止選手
       noone: この島では誰も禁止されていない
       the-following: 以下の選手は禁止されている
       names: "&c[line]"
-      you-can-ban: "＆b＆e [number]人までのプレイヤーを禁止できます。"
+      you-can-ban: "&b&e [number]人までのプレイヤーを禁止できます。"
     settings:
       description: 島の設定を表示
     language:
@@ -707,12 +707,12 @@ commands:
     expel:
       description: プレイヤーを島から追放する
       parameters: "<プレイヤー>"
-      cannot-expel-yourself: "＆c自分を追放することはできません！"
-      cannot-expel: "＆cそのプレイヤーは追放できません。"
-      cannot-expel-member: "＆cチームメンバーを追放することはできません！"
-      not-on-island: "＆cそのプレイヤーはあなたの島にいません！"
-      player-expelled-you: "＆b [name]＆cはあなたを島から追放しました！"
-      success: "＆a島から＆b [name]＆aを追放した。"
+      cannot-expel-yourself: "&c自分を追放することはできません！"
+      cannot-expel: "&cそのプレイヤーは追放できません。"
+      cannot-expel-member: "&cチームメンバーを追放することはできません！"
+      not-on-island: "&cそのプレイヤーはあなたの島にいません！"
+      player-expelled-you: "&b [name]&cはあなたを島から追放しました！"
+      success: "&a島から&b [name]&aを追放した。"
     deletehome:
       description: 自宅の場所を削除する
       parameters: "[家名]"
@@ -932,8 +932,8 @@ protection:
     FLINT_AND_STEEL:
       name: フリントとスチール
       description: |-
-        ＆aを使用してプレイヤーに火を点ける
-        ＆アフリントと鉄鋼または火災料。
+        &aを使用してプレイヤーに火を点ける
+        &アフリントと鉄鋼または火災料。
       hint: フリントとスチールと火のチャージは無効です
     FURNACE:
       description: トグル使用
@@ -964,7 +964,7 @@ protection:
     ITEM_FRAME:
       name: アイテムフレーム
       description: |-
-        ＆aToggleインタラクション。
+        &aToggleインタラクション。
         ブロックの配置または分割をオーバーライドします
       hint: アイテムフレームの使用は無効です
     ITEM_FRAME_DAMAGE:
@@ -1067,10 +1067,10 @@ protection:
       name: オフライン成長
     OFFLINE_REDSTONE:
       description: |-
-        ＆a無効にすると、レッドストーン
-        ＆awillは島では機能しません
+        &a無効にすると、レッドストーン
+        &awillは島では機能しません
         すべてのメンバーがオフラインです。
-        ＆aMayは遅延の削減に役立ちます。
+        &aMayは遅延の削減に役立ちます。
         スポーン島には影響しません。
       name: オフラインレッドストーン
     PISTON_PUSH:
@@ -1117,7 +1117,7 @@ protection:
     PVP_OVERWORLD:
       description: PVP を有効/無効にする
       name: PVP
-      hint: "＆cPVPはオーバーワールドで無効になっています"
+      hint: "&cPVPはオーバーワールドで無効になっています"
       active: PVP はここでアクティブです!
       enabled: "&cオーバーワールドのPVPが有効になりました。"
       disabled: "&aオーバーワールドのPVPが無効になりました。"
@@ -1199,7 +1199,7 @@ protection:
         &aプレイヤーのテレポートを防ぐ
         &aコマンドを使用して島に戻る
         &a落下している場合。
-      hint: "＆c落下中はできません。"
+      hint: "&c落下中はできません。"
     WITHER_DAMAGE:
       name: 許可/禁止
       description: |-
@@ -1247,11 +1247,11 @@ protection:
     LECTERN:
       name: 演台
       description: |-
-        ＆a書見台に本を置くことを許可する
-        ＆aまたはそれから本を取ります。
+        &a書見台に本を置くことを許可する
+        &aまたはそれから本を取ります。
 
-        ＆cそれはプレイヤーが
-        ＆c本を読んでいます。
+        &cそれはプレイヤーが
+        &c本を読んでいます。
       hint: 書見台に本を置いたり、書見台から本を取り出したりすることはできません。
     LIMIT_MOBS:
       description: |-
@@ -1276,10 +1276,10 @@ protection:
       name: 世界のTNTダメージ
     PETS_STAY_AT_HOME:
       description: |-
-        ＆aアクティブなとき、飼いならされたペット
-        ＆aはとにのみ行くことができます
-        ＆aは所有者を離れることはできません
-        ＆aホームアイランド。
+        &aアクティブなとき、飼いならされたペット
+        &aはとにのみ行くことができます
+        &aは所有者を離れることはできません
+        &aホームアイランド。
       name: ペットは家にいる
     HIVE:
       description: "&aハイブの収穫を切り替えます。"
@@ -1290,8 +1290,8 @@ protection:
   world-protected: "&c世界保護: [description]"
   spawn-protected: "&c保護されたスポーン: [description]"
   panel:
-    next: "＆f次のページ"
-    previous: "＆f前のページ"
+    next: "&f次のページ"
+    previous: "&f前のページ"
     mode:
       advanced:
         name: "&6詳細設定"
@@ -1304,9 +1304,9 @@ protection:
         description: "&a使用可能なすべての設定を表示します。"
       click-to-switch: "&eクリックして[next]に切り替えます。"
     reset-to-default:
-      name: "＆cReset to default"
+      name: "&cReset to default"
       description: |
-        ＆aResets＆c＆lALL＆r＆athe settings to their
+        &aResets&c&lALL&r&athe settings to their
         デフォルト値。
     PROTECTION:
       title: "&6保護"
@@ -1332,7 +1332,7 @@ protection:
       blocked-rank: "&3- &c"
       minimal-rank: "&3- &2"
       menu-layout: "&a[description]"
-      setting-cooldown: "＆cクールダウン中です"
+      setting-cooldown: "&cクールダウン中です"
       setting-layout: |
         &a[description]
 
@@ -1342,7 +1342,7 @@ protection:
 language:
   panel-title: 言語の選択
   description:
-    selected: "＆a現在選択されています。"
+    selected: "&a現在選択されています。"
     click-to-select: "&eクリックして&a選択"
     authors: "&a著者:"
     author: "&3- &b[name]"
@@ -1356,34 +1356,34 @@ management:
         name: "&6ゲームモード"
         description: "&eクリックして&a現在ロードされているゲームモードを表示します"
         blueprints:
-          name: "＆6ブループリント"
-          description: "＆a管理者ブループリントメニューを開きます。"
+          name: "&6ブループリント"
+          description: "&a管理者ブループリントメニューを開きます。"
         gamemode:
           name: "&f[name]"
           description: "&a島: &b[islands]"
       addons:
-        name: "＆6アドオン"
-        description: "&eクリックして、＆a現在ロードされているアドオンを表示します"
+        name: "&6アドオン"
+        description: "&eクリックして、&a現在ロードされているアドオンを表示します"
       hooks:
-        name: "＆6フック"
-        description: "&eクリックして、＆a現在ロードされているフックを表示します"
+        name: "&6フック"
+        description: "&eクリックして、&a現在ロードされているフックを表示します"
     actions:
       reload:
-        name: "＆cリロード"
+        name: "&cリロード"
         description: "&c&l2回クリックして&r&aBentoBoxをリロードします"
     buttons:
       catalog:
         name: "&6アドオンカタログ"
         description: "&aアドオンカタログを開きます"
       credits:
-        name: "＆6クレジット"
-        description: "＆aはBentoBoxのクレジットを開きます"
+        name: "&6クレジット"
+        description: "&aはBentoBoxのクレジットを開きます"
       empty-here:
-        name: "＆bこれはここでは空に見えます..."
-        description: "＆aカタログをご覧になったらどうしますか？"
+        name: "&bこれはここでは空に見えます..."
+        description: "&aカタログをご覧になったらどうしますか？"
     information:
       state:
-        name: "＆6互換性"
+        name: "&6互換性"
         description:
           COMPATIBLE: |-
             &aRunning &e[name] [version]&a.
@@ -1430,12 +1430,12 @@ catalog:
       title: アドオンカタログ
     views:
       gamemodes:
-        name: "＆6ゲームモード"
+        name: "&6ゲームモード"
         description: |-
           &eクリックして、利用可能な公式
           &eゲームモードを参照します。
       addons:
-        name: "＆6アドオン"
+        name: "&6アドオン"
         description: |-
           &eクリックして、利用可能な公式
           &eアドオンを参照します。
@@ -1451,26 +1451,26 @@ catalog:
       already-installed: すでにインストールされています！
       install-now: 今すぐインストール！
     empty-here:
-      name: "＆bこれはここでは空に見えます..."
+      name: "&bこれはここでは空に見えます..."
       description: |+
-        ＆cBentoBoxはGitHubに接続できませんでした。
+        &cBentoBoxはGitHubに接続できませんでした。
 
-        ＆aBentoBoxでGitHubに接続できるようにする
+        &aBentoBoxでGitHubに接続できるようにする
         設定を変更するか、後で再試行してください。
 
 panel:
   credits:
-    title: "＆8 [名前]＆2クレジット"
+    title: "&8 [name]&2クレジット"
     contributor:
-      name: "＆名前]"
-      description: "＆aCommits：＆b [commits]\n"
+      name: "&a[name]"
+      description: "&aCommits：&b [commits]\n"
     empty-here:
-      name: "＆cこれはここでは空に見えます..."
+      name: "&cこれはここでは空に見えます..."
       description: |+
-        ＆cBentoBoxは貢献者を収集できませんでした
+        &cBentoBoxは貢献者を収集できませんでした
         このアドオン用。
 
-        ＆aBentoBoxでGitHubに接続できるようにする
+        &aBentoBoxでGitHubに接続できるようにする
         設定を変更するか、後で再試行してください。
 
 successfully-loaded: |-
@@ -1483,31 +1483,32 @@ successfully-loaded: |-
 prefixes:
   bentobox: "&6 BentoBox &7 &l > &r "
 enums:
-  CONTACT: 衝突
-  ENTITY_ATTACK: エンティティ攻撃
-  ENTITY_SWEEP_ATTACK: エンティティスイープ攻撃
-  PROJECTILE: 発射物
-  SUFFOCATION: 窒息
-  FALL: 落下ダメージ
-  FIRE: 火
-  FIRE_TICK: 燃焼
-  MELTING: 溶融
-  LAVA: 溶岩
-  DROWNING: 溺死
-  BLOCK_EXPLOSION: ブロック爆発
-  ENTITY_EXPLOSION: エンティティの爆発
-  VOID: 無効
-  LIGHTNING: ライトニング
-  SUICIDE: 自殺
-  STARVATION: 飢餓
-  POISON: 毒
-  MAGIC: マジック
-  WITHER: 枯れる
-  FALLING_BLOCK: フォーリングブロック
-  THORNS: とげ
-  DRAGON_BREATH: ドラゴンブレス
-  CUSTOM: カスタム
-  FLY_INTO_WALL: 壁に飛ぶ
-  HOT_FLOOR: ホットフロア
-  CRAMMING: 一夜漬け
-  DRYOUT: 完全に乾く
+  DamageCause:
+    CONTACT: 衝突
+    ENTITY_ATTACK: エンティティ攻撃
+    ENTITY_SWEEP_ATTACK: エンティティスイープ攻撃
+    PROJECTILE: 発射物
+    SUFFOCATION: 窒息
+    FALL: 落下ダメージ
+    FIRE: 火
+    FIRE_TICK: 燃焼
+    MELTING: 溶融
+    LAVA: 溶岩
+    DROWNING: 溺死
+    BLOCK_EXPLOSION: ブロック爆発
+    ENTITY_EXPLOSION: エンティティの爆発
+    VOID: 無効
+    LIGHTNING: ライトニング
+    SUICIDE: 自殺
+    STARVATION: 飢餓
+    POISON: 毒
+    MAGIC: マジック
+    WITHER: 枯れる
+    FALLING_BLOCK: フォーリングブロック
+    THORNS: とげ
+    DRAGON_BREATH: ドラゴンブレス
+    CUSTOM: カスタム
+    FLY_INTO_WALL: 壁に飛ぶ
+    HOT_FLOOR: ホットフロア
+    CRAMMING: 一夜漬け
+    DRYOUT: 完全に乾く

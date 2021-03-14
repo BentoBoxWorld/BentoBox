@@ -76,7 +76,8 @@ public class InvincibleVisitorsListener extends FlagListener implements ClickHan
         pb.user(user).name(ivPanelName);
 
         // Make panel items - sort alphabetically.
-        Arrays.stream(EntityDamageEvent.DamageCause.values()).sorted(Comparator.comparing(DamageCause::name)).forEach(c -> pb.item(getPanelItem(c, user)));
+        Arrays.stream(EntityDamageEvent.DamageCause.values())
+        .map(c -> getPanelItem(c, user)).sorted(Comparator.comparing(PanelItem::getName)).forEach(pb::item);
         pb.build();
     }
 
