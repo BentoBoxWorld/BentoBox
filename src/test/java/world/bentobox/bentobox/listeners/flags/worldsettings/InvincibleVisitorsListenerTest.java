@@ -114,7 +114,7 @@ public class InvincibleVisitorsListenerTest {
         when(player.getUniqueId()).thenReturn(uuid);
         PowerMockito.mockStatic(Util.class);
         when(Util.getWorld(any())).thenReturn(mock(World.class));
-
+        when(Util.prettifyText(anyString())).thenCallRealMethod();
         FlagsManager fm = mock(FlagsManager.class);
         Flag flag = mock(Flag.class);
         when(flag.isSetForWorld(any())).thenReturn(false);
