@@ -3,7 +3,10 @@ package world.bentobox.bentobox.listeners.flags.worldsettings;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.framework;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -38,7 +41,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -88,7 +90,7 @@ public class InvincibleVisitorsListenerTest {
         // Island World Manager
         when(iwm.inWorld(any(World.class))).thenReturn(true);
         when(iwm.inWorld(any(Location.class))).thenReturn(true);
-        when(iwm.getPermissionPrefix(Mockito.any())).thenReturn("bskyblock.");
+        when(iwm.getPermissionPrefix(any())).thenReturn("bskyblock.");
         Optional<GameModeAddon> optionalAddon = Optional.of(addon);
         when(iwm.getAddon(any())).thenReturn(optionalAddon);
         when(plugin.getIWM()).thenReturn(iwm);
@@ -104,8 +106,9 @@ public class InvincibleVisitorsListenerTest {
         when(user.getLocation()).thenReturn(mock(Location.class));
         when(player.getLocation()).thenReturn(mock(Location.class));
         when(user.getPlayer()).thenReturn(player);
-        when(user.hasPermission(Mockito.anyString())).thenReturn(true);
-        when(user.getTranslation(Mockito.anyString())).thenReturn("panel");
+        when(user.hasPermission(anyString())).thenReturn(true);
+        when(user.getTranslation(anyString())).thenReturn("panel");
+        when(user.getTranslationOrNothing(anyString())).thenReturn("");
         UUID uuid = UUID.randomUUID();
         when(user.getUniqueId()).thenReturn(uuid);
         when(player.getUniqueId()).thenReturn(uuid);
@@ -118,7 +121,7 @@ public class InvincibleVisitorsListenerTest {
         PanelItem item = mock(PanelItem.class);
         when(item.getItem()).thenReturn(mock(ItemStack.class));
         when(flag.toPanelItem(any(), eq(user), any(), eq(false))).thenReturn(item);
-        when(fm.getFlag(Mockito.anyString())).thenReturn(Optional.of(flag));
+        when(fm.getFlag(anyString())).thenReturn(Optional.of(flag));
         when(plugin.getFlagsManager()).thenReturn(fm);
 
         // Island Manager
@@ -151,13 +154,13 @@ public class InvincibleVisitorsListenerTest {
         when(top.getSize()).thenReturn(9);
         when(panel.getInventory()).thenReturn(top);
 
-        when(Bukkit.createInventory(any(), Mockito.anyInt(), any())).thenReturn(top);
+        when(Bukkit.createInventory(any(), anyInt(), any())).thenReturn(top);
     }
 
     @After
     public void tearDown() {
         User.clearUsers();
-        Mockito.framework().clearInlineMocks();
+        framework().clearInlineMocks();
     }
 
     @Test
@@ -169,7 +172,7 @@ public class InvincibleVisitorsListenerTest {
 
     @Test
     public void testOnClickNoPermission() {
-        when(user.hasPermission(Mockito.anyString())).thenReturn(false);
+        when(user.hasPermission(anyString())).thenReturn(false);
         listener.onClick(panel, user, ClickType.LEFT, 0);
         verify(user).sendMessage("general.errors.no-permission", "[permission]", "bskyblock.admin.settings.INVINCIBLE_VISITORS");
     }

@@ -82,9 +82,8 @@ public class InvincibleVisitorsListener extends FlagListener implements ClickHan
 
     private PanelItem getPanelItem(DamageCause c, User user) {
         PanelItemBuilder pib = new PanelItemBuilder();
-        // todo: Please consider adding translation fields for each entry
-        //       of "DamageCause" in the language file in the future.
-        pib.name(Util.prettifyText(c.toString()));
+        String translation = user.getTranslationOrNothing("enums.DamageCause." + c.name());
+        pib.name(translation.isEmpty() ? Util.prettifyText(c.toString()) : translation);
         pib.clickHandler(this);
         if (getIWM().getIvSettings(user.getWorld()).contains(c.name())) {
             pib.icon(Material.GREEN_SHULKER_BOX);

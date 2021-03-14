@@ -1470,6 +1470,93 @@ catalog:
         &a Allow BentoBox to connect to GitHub in
         &a the configuration or try again later.
 
+enums:
+  DamageCause:
+  CONTACT: Contact
+  ENTITY_ATTACK: Entity Attack
+  ENTITY_SWEEP_ATTACK: Entity Sweep Attack
+  PROJECTILE: Projectile
+  SUFFOCATION: Suffocation
+  FALL: Fall
+  FIRE: Fire
+  FIRE_TICK: Fire Tick
+  MELTING: Melting
+  LAVA: Lava
+  DROWNING: Drowning
+  BLOCK_EXPLOSION: Block Explosion
+  ENTITY_EXPLOSION: Entity Explosion
+  VOID: Void
+  LIGHTNING: Lightning
+  SUICIDE: Suicide
+  STARVATION: Starvation
+  POISON: Poison
+  MAGIC: Magic
+  WITHER: Wither
+  FALLING_BLOCK: Falling Block
+  THORNS: Thorns
+  DRAGON_BREATH: Dragon Breath
+  CUSTOM: Custom
+  FLY_INTO_WALL: Fly Into Wall
+  HOT_FLOOR: Hot Floor
+  CRAMMING: Cramming
+  DRYOUT: Dryout
+  CONTACT: Contact
+  ENTITY_ATTACK: Entity Attack
+  ENTITY_SWEEP_ATTACK: Entity Sweep Attack
+  PROJECTILE: Projectile
+  SUFFOCATION: Suffocation
+  FALL: Fall
+  FIRE: Fire
+  FIRE_TICK: Fire Tick
+  MELTING: Melting
+  LAVA: Lava
+  DROWNING: Drowning
+  BLOCK_EXPLOSION: Block Explosion
+  ENTITY_EXPLOSION: Entity Explosion
+  VOID: Void
+  LIGHTNING: Lightning
+  SUICIDE: Suicide
+  STARVATION: Starvation
+  POISON: Poison
+  MAGIC: Magic
+  WITHER: Wither
+  FALLING_BLOCK: Falling Block
+  THORNS: Thorns
+  DRAGON_BREATH: Dragon Breath
+  CUSTOM: Custom
+  FLY_INTO_WALL: Fly Into Wall
+  HOT_FLOOR: Hot Floor
+  CRAMMING: Cramming
+  DRYOUT: Dryout
+  CONTACT: Contact
+  ENTITY_ATTACK: Entity Attack
+  ENTITY_SWEEP_ATTACK: Entity Sweep Attack
+  PROJECTILE: Projectile
+  SUFFOCATION: Suffocation
+  FALL: Fall
+  FIRE: Fire
+  FIRE_TICK: Fire Tick
+  MELTING: Melting
+  LAVA: Lava
+  DROWNING: Drowning
+  BLOCK_EXPLOSION: Block Explosion
+  ENTITY_EXPLOSION: Entity Explosion
+  VOID: Void
+  LIGHTNING: Lightning
+  SUICIDE: Suicide
+  STARVATION: Starvation
+  POISON: Poison
+  MAGIC: Magic
+  WITHER: Wither
+  FALLING_BLOCK: Falling Block
+  THORNS: Thorns
+  DRAGON_BREATH: Dragon Breath
+  CUSTOM: Custom
+  FLY_INTO_WALL: Fly Into Wall
+  HOT_FLOOR: Hot Floor
+  CRAMMING: Cramming
+  DRYOUT: Dryout
+ 
 panel:
   credits:
     title: "&8 [name] &2 Credits"
