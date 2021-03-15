@@ -106,6 +106,11 @@ public class IslandEvent extends IslandBaseEvent {
          */
         LOCK,
         /**
+         * Called when a player goes to their new island for the first time
+         * @since 1.16.1
+         */
+        NEW_ISLAND,
+        /**
          * Called before an island is going to be cleared of island members.
          * This event occurs before resets or other island clearing activities.
          * Cannot be cancelled.
@@ -889,6 +894,8 @@ public class IslandEvent extends IslandBaseEvent {
                 return new world.bentobox.bentobox.api.events.island.IslandReservedEvent(island, player, admin, location);
             case RANK_CHANGE:
                 return new world.bentobox.bentobox.api.events.island.IslandRankChangeEvent(island, player, admin, location, oldRank, newRank);
+            case NEW_ISLAND:
+                return new IslandNewIslandEvent(island, player, admin, location);
             default:
                 return new world.bentobox.bentobox.api.events.island.IslandGeneralEvent(island, player, admin, location);
             }

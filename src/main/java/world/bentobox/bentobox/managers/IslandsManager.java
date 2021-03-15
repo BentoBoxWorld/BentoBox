@@ -542,7 +542,7 @@ public class IslandsManager {
     public void setMaxMembers(@NonNull Island island, int rank, Integer maxMembers) {
         island.setMaxMembers(rank, maxMembers);
     }
-    
+
     /**
      * Get the maximum number of homes allowed on this island. Will be updated with the owner's permission settings if
      * they exist and the owner is online
@@ -562,7 +562,7 @@ public class IslandsManager {
         this.save(island);
         return islandMax;
     }
-    
+
     /**
      * Set the maximum numbber of homes allowed on this island
      * @param island - island
@@ -873,7 +873,7 @@ public class IslandsManager {
             plugin.getPlayers().clearHomeLocations(world, uuid);
         }
     }
-    
+
     private String getHomeName(Entry<Location, Integer> e) {
         // Home 1 has an empty name
         if (e.getValue() == 1) {
@@ -1091,7 +1091,7 @@ public class IslandsManager {
                 .entity(player)
                 .island(island)
                 .homeName(name)
-                .thenRun(() -> teleported(world, user, name, newIsland))
+                .thenRun(() -> teleported(world, user, name, newIsland, island))
                 .buildFuture()
                 .thenAccept(result::complete);
                 return;
@@ -1103,7 +1103,7 @@ public class IslandsManager {
             PaperLib.teleportAsync(player, home).thenAccept(b -> {
                 // Only run the commands if the player is successfully teleported
                 if (Boolean.TRUE.equals(b)) {
-                    teleported(world, user, name, newIsland);
+                    teleported(world, user, name, newIsland, island);
                     result.complete(true);
                 } else {
                     result.complete(false);
@@ -1114,12 +1114,30 @@ public class IslandsManager {
         return result;
     }
 
-    private void teleported(World world, User user, String name, boolean newIsland) {
+    /**
+     * Called when a player is teleported to their island
+     * @param world - world
+     * @param user - user
+     * @param name - name of home
+     * @param newIsland - true if this is a new island
+     * @param island - island
+     */
+    private void teleported(World world, User user, String name, boolean newIsland, Island island) {
         if (!name.isEmpty()) {
             user.sendMessage("commands.island.go.teleported", TextVariables.NUMBER, name);
         }
         // If this is a new island, then run commands and do resets
         if (newIsland) {
+            // Fire event
+            if (IslandEvent.builder()
+                    .involvedPlayer(user.getUniqueId())
+                    .reason(Reason.NEW_ISLAND)
+                    .island(island)
+                    .location(island.getCenter())
+                    .build().isCancelled()) {
+                // Do nothing
+                return;
+            }
             // Execute commands
             Util.runCommands(user, plugin.getIWM().getOnJoinCommands(world), "join");
 

@@ -385,10 +385,8 @@ public class PortalTeleportationListener implements Listener {
             }
             if (isAllowedOnServer(env)) {
                 // To Standard Nether or end
-                plugin.logDebug("Spawn = " + spawnPoint);
                 e.setTo(spawnPoint);
             } else {
-                plugin.logDebug("Spawn = " + spawnPoint);
                 // Teleport to standard nether or end
                 new SafeSpotTeleport.Builder(plugin)
                 .entity(e.getEntity())

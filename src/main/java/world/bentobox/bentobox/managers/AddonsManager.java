@@ -148,17 +148,16 @@ public class AddonsManager {
         }
 
         try {
+            addon.setState(Addon.State.LOADED);
             // Run the onLoad.
             addon.onLoad();
             // if game mode, get the world name and generate
-            if (addon instanceof GameModeAddon) {
+            if (addon instanceof GameModeAddon && !addon.getState().equals(State.DISABLED)) {
                 GameModeAddon gameMode = (GameModeAddon) addon;
                 if (!gameMode.getWorldSettings().getWorldName().isEmpty()) {
                     worldNames.put(gameMode.getWorldSettings().getWorldName().toLowerCase(Locale.ENGLISH), gameMode);
                 }
             }
-            // Addon successfully loaded
-            addon.setState(Addon.State.LOADED);
         } catch (NoClassDefFoundError | NoSuchMethodError | NoSuchFieldError e) {
             // Looks like the addon is incompatible, because it tries to refer to missing classes...
             handleAddonIncompatibility(addon, e);
@@ -175,9 +174,9 @@ public class AddonsManager {
         if (getLoadedAddons().isEmpty()) return;
         plugin.log("Enabling game mode addons...");
         // Enable GameModes first, then other addons
-        getLoadedAddons().stream().filter(GameModeAddon.class::isInstance).forEach(this::enableAddon);
+        getLoadedAddons().stream().filter(a -> !a.getState().equals(State.DISABLED)).filter(GameModeAddon.class::isInstance).forEach(this::enableAddon);
         plugin.log("Enabling other addons...");
-        getLoadedAddons().stream().filter(g -> !(g instanceof GameModeAddon)).forEach(this::enableAddon);
+        getLoadedAddons().stream().filter(a -> !a.getState().equals(State.DISABLED)).filter(g -> !(g instanceof GameModeAddon)).forEach(this::enableAddon);
         // Set perms for enabled addons
         this.getEnabledAddons().forEach(this::setPerms);
         plugin.log("Addons successfully enabled.");
