@@ -271,7 +271,14 @@ public class PortalTeleportationListener implements Listener {
         // Find the maximum x and z corner
         for (; (i < x + 5) && e.getWorld().getBlockAt(i, k, z).getType().equals(Material.END_PORTAL); i++);
         for (; (j < z + 5) && e.getWorld().getBlockAt(x, k, j).getType().equals(Material.END_PORTAL); j++);
-        return new Location(toWorld, i, k, j);
+        
+        // Mojang end platform generation is:
+        // AIR
+        // AIR
+        // OBSIDIAN
+        // and player is placed on second air block above obsidian.
+        // If Y coordinate is below 2, then obsidian platform is not generated and player falls in void.
+        return new Location(toWorld, i, Math.max(2, k), j);
     }
 
 
