@@ -474,8 +474,8 @@ public class LangUtilsHook extends Hook {
         if (duration > 20) {
             int m = duration / 20 / 60;
             int s = duration / 20 % 60;
-            String time = String.format("%d:%02d", m, s);
-            effecName = String.format("%s (%s)", effecName, time);
+            String ts = String.format("%d:%02d", m, s);
+            effecName = String.format("%s (%s)", effecName, ts);
         }
 
         return effecName;
@@ -545,7 +545,7 @@ public class LangUtilsHook extends Hook {
                 case 459008   : return "Triggerfish";
                 case 67699456 : return "Yellowtail Parrotfish";
                 case 67371009 : return "Yellow Tang";
-                default       : return null;
+                default       : break;
             }
         }
         return null;
@@ -598,15 +598,44 @@ public class LangUtilsHook extends Hook {
      * @return The translated name of banner pattern.
      */
     public static String getBannerPatternName(Pattern pattern, User user) {
-        String patName;
-        if (hooked) {
-            patName = LanguageHelper.getBannerPatternName(pattern, getUserLocale(user));
-        } else {
-            patName = pattern.getColor().name().toLowerCase(Locale.ROOT)
-                    + "_"
-                    + pattern.getPattern().name().toLowerCase(Locale.ROOT);
+        return hooked
+                ? LanguageHelper.getBannerPatternName(pattern, getUserLocale(user))
+                : pattern.getColor().name().toLowerCase(Locale.ROOT)
+                + "_"
+                + pattern.getPattern().name().toLowerCase(Locale.ROOT);
+    }
+
+    /**
+     * Get the description of the music disk.
+     *
+     * @param material Material for music records.
+     * @param user     This parameter is temporarily useless and is reserved for
+     *                 possible future changes.
+     * @return If the given material is a music disk, the description of the
+     *         music disk is returned. Otherwise, return NULL.
+     */
+    @Nullable
+    public static String getMusicDiskDesc(Material material, User user) {
+
+        // The description of the music record is the same in any language,
+        // so directly output it here.
+
+        switch (material) {
+            case MUSIC_DISC_13      : return "C418 - 13";
+            case MUSIC_DISC_CAT     : return "C418 - cat";
+            case MUSIC_DISC_BLOCKS  : return "C418 - blocks";
+            case MUSIC_DISC_CHIRP   : return "C418 - chirp";
+            case MUSIC_DISC_FAR     : return "C418 - far";
+            case MUSIC_DISC_MALL    : return "C418 - mall";
+            case MUSIC_DISC_MELLOHI : return "C418 - mellohi";
+            case MUSIC_DISC_STAL    : return "C418 - stal";
+            case MUSIC_DISC_STRAD   : return "C418 - strad";
+            case MUSIC_DISC_WARD    : return "C418 - ward";
+            case MUSIC_DISC_11      : return "C418 - 11";
+            case MUSIC_DISC_WAIT    : return "C418 - wait";
+            case MUSIC_DISC_PIGSTEP : return "Lena Raine - Pigstep";
+            default                 : return null;
         }
-        return patName;
     }
 
 }
