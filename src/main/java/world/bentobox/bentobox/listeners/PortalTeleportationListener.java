@@ -215,6 +215,14 @@ public class PortalTeleportationListener implements Listener {
             e.getEntity().setVelocity(new Vector(0,0,0));
             e.getEntity().setFallDistance(0);
         }
+
+        // If we do not generate portals, teleporation should happen manually with safe spot builder.
+        // Otherwise, we could end up with situations when player is placed in mid air, if teleporation
+        // is done instantly.
+        // Our safe spot task is triggered in next tick, however, end teleporation happens in the same tick.
+        // It is placed outside THE_END check, as technically it could happen with the nether portal too.
+        e.setCancelled(true);
+
         // If there is a portal to go to already, then the player will go there
         Bukkit.getScheduler().runTask(plugin, () -> {
             if (!e.getEntity().getWorld().equals(toWorld)) {
