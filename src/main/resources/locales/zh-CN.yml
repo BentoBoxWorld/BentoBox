@@ -1040,9 +1040,7 @@ protection:
       name: "&a&l使用拉杆"
       hint: "&c已被禁止使用拉杆"
     LIMIT_MOBS:
-      description: |-
-        &7打开 &b实体类型限 面板
-        &7配置哪些实体可以被生成
+      description: "&7选择哪些实体可以被生成"
       name: "&3&l实体生成限制"
       can: "&a允许生成"
       cannot: "&c禁止生成"
@@ -1099,14 +1097,14 @@ protection:
       obsidian-nearby: "&c附近有其它黑曜石， 这个黑曜石不能变回熔岩。"
     OFFLINE_GROWTH:
       description: |-
-        &7允许/禁止 所有成员都已离线的岛屿上
-        &7的植物继续生长
+        &7允许/禁止 所有成员都已离线
+        &7的岛屿上的植物继续生长
         &a这可以帮助减少性能开销
       name: "&a&l离线生长"
     OFFLINE_REDSTONE:
       description: |-
-        &7允许/禁止 所有成员都已离线的岛屿上
-        &7的红石设备继续运行
+        &7允许/禁止 所有成员都已离线
+        &7的岛屿上的红石设备继续运行
         &a这可以帮助减少性能开销
         &a这个设置不会影响出生岛屿（主城）
       name: "&a&l离线红石"
@@ -1176,8 +1174,9 @@ protection:
       name: "&a&l移除末影龙"
     REMOVE_MOBS:
       description: |-
-        &7允许/禁止 玩家回到岛屿时移除怪物
-        &7这有助于玩家安全回到岛上
+        &7允许/禁止 玩家回到岛屿时
+        &7移除怪物
+        &a这有助于玩家安全回到岛上
       name: "&a&l移除怪物"
     RIDING:
       description: "允许/禁止 乘骑动物"
@@ -1426,6 +1425,38 @@ catalog:
 
         &a请修改配置允许&b&lBentoBox&a连接
         &a到互联网， 或稍后再试。
+
+enums:
+  DamageCause:
+    CONTACT: 接触（如仙人掌）
+    ENTITY_ATTACK: 直接攻击
+    ENTITY_SWEEP_ATTACK: 范围攻击
+    PROJECTILE: 弹射物
+    SUFFOCATION: 窒息
+    FALL: 坠落
+    FIRE: 火焰
+    FIRE_TICK: 点燃
+    MELTING: 融化
+    LAVA: 熔岩高温
+    DROWNING: 溺水
+    BLOCK_EXPLOSION: 方块爆炸
+    ENTITY_EXPLOSION: 实体爆炸
+    VOID: 坠入虚空
+    LIGHTNING: 雷击
+    SUICIDE: 自杀（如/kill）
+    STARVATION: 饥饿
+    POISON: 中毒
+    MAGIC: 魔法
+    WITHER: 凋零
+    FALLING_BLOCK: 砸伤
+    THORNS: 荆棘
+    DRAGON_BREATH: 龙息
+    CUSTOM: 自定义
+    FLY_INTO_WALL: 撞墙
+    HOT_FLOOR: 岩浆块
+    CRAMMING: 拥挤
+    DRYOUT: 缺氧（鱼类暴露在空气中）
+
 panel:
   credits:
     title: "&8[name] &3贡献者名录"

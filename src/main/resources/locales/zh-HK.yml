@@ -789,6 +789,37 @@ protection:
   protected: "&c島嶼保護：[description]"
   spawn-protected: "&c生成保護：[description]"
 
+enums:
+  DamageCause:
+    CONTACT: 接觸（如仙人掌）
+    ENTITY_ATTACK: 直接攻擊
+    ENTITY_SWEEP_ATTACK: 範圍攻擊
+    PROJECTILE: 彈射物
+    SUFFOCATION: 窒息
+    FALL: 跌落
+    FIRE: 火焰
+    FIRE_TICK: 點燃
+    MELTING: 融化
+    LAVA: 熔岩
+    DROWNING: 溺水
+    BLOCK_EXPLOSION: 方塊爆炸
+    ENTITY_EXPLOSION: 實體爆炸
+    VOID: 墜入虛空
+    LIGHTNING: 雷劈
+    SUICIDE: 自殺
+    STARVATION: 飢餓
+    POISON: 中毒
+    MAGIC: 魔法
+    WITHER: 凋零
+    FALLING_BLOCK: 砸傷
+    THORNS: 荊棘
+    DRAGON_BREATH: 龍息
+    CUSTOM: 自定
+    FLY_INTO_WALL: 撞牆
+    HOT_FLOOR: 熔岩塊
+    CRAMMING: 擁擠
+    DRYOUT: 乾燥（魚類暴露在空氣中）
+
   panel:
     next: "下一頁"
     previous: "上一頁"
