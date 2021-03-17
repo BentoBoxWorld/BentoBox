@@ -1425,6 +1425,38 @@ catalog:
 
         &a请修改配置允许&b&lBentoBox&a连接
         &a到互联网， 或稍后再试。
+
+enums:
+  DamageCause:
+    CONTACT: 接触（如仙人掌）
+    ENTITY_ATTACK: 直接攻击
+    ENTITY_SWEEP_ATTACK: 范围攻击
+    PROJECTILE: 弹射物
+    SUFFOCATION: 窒息
+    FALL: 坠落
+    FIRE: 火焰
+    FIRE_TICK: 点燃
+    MELTING: 融化
+    LAVA: 熔岩高温
+    DROWNING: 溺水
+    BLOCK_EXPLOSION: 方块爆炸
+    ENTITY_EXPLOSION: 实体爆炸
+    VOID: 坠入虚空
+    LIGHTNING: 雷击
+    SUICIDE: 自杀（如/kill）
+    STARVATION: 饥饿
+    POISON: 中毒
+    MAGIC: 魔法
+    WITHER: 凋零
+    FALLING_BLOCK: 砸伤
+    THORNS: 荆棘
+    DRAGON_BREATH: 龙息
+    CUSTOM: 自定义
+    FLY_INTO_WALL: 撞墙
+    HOT_FLOOR: 岩浆块
+    CRAMMING: 拥挤
+    DRYOUT: 缺氧（鱼类暴露在空气中）
+
 panel:
   credits:
     title: "&8[name] &3贡献者名录"
