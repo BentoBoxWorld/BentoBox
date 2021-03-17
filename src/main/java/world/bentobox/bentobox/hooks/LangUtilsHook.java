@@ -609,17 +609,19 @@ public class LangUtilsHook extends Hook {
      * Get the description of the music disk.
      *
      * @param material Material for music records.
-     * @param user     This parameter is temporarily useless and is reserved for
-     *                 possible future changes.
+     * @param user     The user's language will be used for translation.
      * @return If the given material is a music disk, the description of the
      *         music disk is returned. Otherwise, return NULL.
      */
     @Nullable
     public static String getMusicDiskDesc(Material material, User user) {
+        if (hooked) {
+            // After careful reading, I found that the description in some
+            // languages is different from the description in English......
+            return LanguageHelper.getMusicDiskDesc(material, getUserLocale(user));
+        }
 
-        // The description of the music record is the same in any language,
-        // so directly output it here.
-
+        // Without LangUtils, English is returned.
         switch (material) {
             case MUSIC_DISC_13      : return "C418 - 13";
             case MUSIC_DISC_CAT     : return "C418 - cat";
@@ -635,6 +637,32 @@ public class LangUtilsHook extends Hook {
             case MUSIC_DISC_WAIT    : return "C418 - wait";
             case MUSIC_DISC_PIGSTEP : return "Lena Raine - Pigstep";
             default                 : return null;
+        }
+    }
+
+    /**
+     * Get the description of the Banner-Pattern added in Minecraft 1.14 and
+     * above.
+     *
+     * @param material Material for banner pattern items.
+     * @param user     The user's language will be used for translation.
+     * @return The description of the Banner-Pattern item.
+     */
+    @Nullable
+    public static String getNewBannerPatternDesc(Material material, User user) {
+        if (hooked) {
+            return LanguageHelper.getNewBannerPatternDesc(material, getUserLocale(user));
+        }
+
+        // Without LangUtils, English is returned.
+        switch (material) {
+            case FLOWER_BANNER_PATTERN  : return "Flower Charge";
+            case CREEPER_BANNER_PATTERN : return "Creeper Charge";
+            case SKULL_BANNER_PATTERN   : return "Skull Charge";
+            case MOJANG_BANNER_PATTERN  : return "Thing";
+            case GLOBE_BANNER_PATTERN   : return "Globe";
+            case PIGLIN_BANNER_PATTERN  : return "Snout";
+            default                     : return null;
         }
     }
 
