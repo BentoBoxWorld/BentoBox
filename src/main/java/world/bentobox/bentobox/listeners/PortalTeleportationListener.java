@@ -385,7 +385,7 @@ public class PortalTeleportationListener implements Listener {
             World toWorld = getNetherEndWorld(overWorld, env);
             Location spawnPoint = toWorld.getSpawnLocation();
             // If spawn is set as 0,63,0 in the End then move it to 100, 50 ,0.
-            if (env.equals(Environment.THE_END) && spawnPoint.toVector().equals(new Vector(0,63,0))) {
+            if (env.equals(Environment.THE_END) && spawnPoint.getBlockX() == 0 && spawnPoint.getBlockZ() == 0) {
                 // Set to the default end spawn
                 spawnPoint = new Location(toWorld, 100, 50, 0);
                 toWorld.setSpawnLocation(100, 50, 0);
