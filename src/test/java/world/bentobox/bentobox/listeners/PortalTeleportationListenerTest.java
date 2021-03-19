@@ -370,8 +370,8 @@ public class PortalTeleportationListenerTest {
         when(iwm.isNetherIslands(any())).thenReturn(true);
         when(iwm.isNetherGenerate(any())).thenReturn(true);
         assertTrue(np.onIslandPortal(e));
-        // Event is not canceled
-        assertFalse(e.isCancelled());
+        // Event is canceled
+        assertTrue(e.isCancelled());
         // If nether islands, then to = from but in nether
         verify(from).toVector();
         // Do not go to spawn
@@ -407,7 +407,7 @@ public class PortalTeleportationListenerTest {
 
         assertTrue(np.onIslandPortal(e));
         // Verify
-        assertFalse(e.isCancelled());
+        assertTrue(e.isCancelled());
         // If nether islands, then to = from but in nether
         verify(from).toVector();
         // Do not go to spawn
@@ -438,7 +438,7 @@ public class PortalTeleportationListenerTest {
 
         assertTrue(np.onIslandPortal(e));
         // Verify
-        assertFalse(e.isCancelled());
+        assertTrue(e.isCancelled());
         // If nether islands, then to = from but in nether
         verify(from).toVector();
         // Do not go to spawn
