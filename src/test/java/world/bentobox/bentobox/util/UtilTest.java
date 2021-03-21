@@ -42,8 +42,11 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.managers.IslandWorldManager;
+import world.bentobox.bentobox.managers.LocalesManager;
+import world.bentobox.bentobox.managers.PlaceholdersManager;
 
 /**
  * @author tastybento
@@ -96,6 +99,7 @@ public class UtilTest {
         when(Bukkit.getConsoleSender()).thenReturn(sender);
 
         // Bukkit - online players
+        User.setPlugin(plugin);
         Map<UUID, String> online = new HashMap<>();
 
         Set<Player> onlinePlayers = new HashSet<>();
@@ -104,12 +108,24 @@ public class UtilTest {
             UUID uuid = UUID.randomUUID();
             when(p1.getUniqueId()).thenReturn(uuid);
             when(p1.getName()).thenReturn(name);
+            when(p1.hasPermission(anyString())).thenReturn(true);
             online.put(uuid, name);
             onlinePlayers.add(p1);
+            // Add to User cache
+            User.getInstance(p1);
         }
         when(Bukkit.getOnlinePlayers()).then((Answer<Set<Player>>) invocation -> onlinePlayers);
 
         when(user.isPlayer()).thenReturn(true);
+        // Locales & Placeholders
+        LocalesManager lm = mock(LocalesManager.class);
+        when(lm.get(any(), any())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
+        PlaceholdersManager phm = mock(PlaceholdersManager.class);
+        when(plugin.getPlaceholdersManager()).thenReturn(phm);
+        when(phm.replacePlaceholders(any(), any())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
+
+        when(plugin.getLocalesManager()).thenReturn(lm);
+        
     }
 
     @After
@@ -441,5 +457,25 @@ public class UtilTest {
         PowerMockito.verifyStatic(Bukkit.class);
         Bukkit.dispatchCommand(sender, "replace tastybento");
         verify(plugin).logError("Could not execute test command as console: replace tastybento");
+    }
+    
+    /**
+     * Test for {@link Util#broadcast(String, String...)}
+     */
+    @Test
+    public void testBroadcastStringStringNoPlayers() {
+        when(Bukkit.getOnlinePlayers()).thenReturn(Collections.emptySet());
+        int result = Util.broadcast("test.key", TextVariables.DESCRIPTION, "hello");
+        assertEquals(0, result);
+    }
+    
+    /**
+     * Test for {@link Util#broadcast(String, String...)}
+     */
+    @Test
+    public void testBroadcastStringStringHasPerm() {
+        int result = Util.broadcast("test.key", TextVariables.DESCRIPTION, "hello");
+        assertEquals(11, result);
+        
     }
 }
