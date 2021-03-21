@@ -330,6 +330,7 @@ public class BentoBox extends JavaPlugin {
      * Returns the player manager
      * @return the player manager
      * @see #getPlayers()
+     * @since 1.16.0
      */
     public PlayersManager getPlayersManager() {
         return playersManager;
@@ -348,6 +349,7 @@ public class BentoBox extends JavaPlugin {
      * Returns the island manager
      * @return the island manager
      * @see #getIslands()
+     * @since 1.16.0
      */
     public IslandsManager getIslandsManager() {
         return islandsManager;
