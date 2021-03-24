@@ -716,8 +716,8 @@ protection:
       hint: Rüstungsstandnutzung deaktiviert
     BEACON:
       description: Interaktion umschalten
-      name: Beacons
-      hint: Beacon-Nutzung deaktiviert
+      name: Leuchtfeuer
+      hint: Leuchtfeuer-Nutzung deaktiviert
     BED:
       description: Interaktion umschalten
       name: Betten
@@ -850,7 +850,7 @@ protection:
       now-entering: "&b Du betrittst jetzt [name]"
       now-leaving: "&b Du verlässt jetzt [name]"
     EXPERIENCE_BOTTLE_THROWING:
-      name: Erfahrungsflache werfen
+      name: Erfahrungsflasche werfen
       description: Umschalten des Werfens von Erfahrungsflaschen.
       hint: Erfahrungsflaschen deaktiviert
     FIRE_BURNING:
