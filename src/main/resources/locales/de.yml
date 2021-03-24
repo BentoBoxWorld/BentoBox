@@ -727,7 +727,7 @@ protection:
       description: Umschalten der Boots-Interaktionen
       hint: Keine Bootsinteraktion erlaubt
     BREAK_BLOCKS:
-      description: abbauen umschalten
+      description: Abbauen umschalten
       name: Blöcke abbauen
       hint: Blockabbau deaktiviert
     BREEDING:
@@ -804,9 +804,9 @@ protection:
       name: Creeper-Beschädigung
       hint: Beschädigung durch Creeper deaktiviert
     CROP_TRAMPLE:
-      description: Umschalten des Getreidetrampels
-      name: Getreide zertrampeln
-      hint: Getreidetrampeln deaktiviert
+      description: Umschalten des Felder zertrampelns
+      name: Felder zertrampeln
+      hint: Felder zertrampeln deaktiviert
     DOOR:
       description: Nutzung von Türen umschalten
       name: Türen benutzen
@@ -854,7 +854,7 @@ protection:
       description: Umschalten des Werfens von Erfahrungsflaschen.
       hint: Erfahrungsflaschen deaktiviert
     FIRE_BURNING:
-      name: Das Brennen von Feuer
+      name: Brennen von Feuer
       description: "&a Umschalten, ob Feuer Blöcke verbrennen \n&a kann oder nicht."
     FIRE_EXTINGUISH:
       description: Umschalten der Feuerlöschung
@@ -947,7 +947,7 @@ protection:
       hint: Kühe melken deaktiviert
     MINECART:
       name: Minecarts
-      description: Umschalten von Minencart-Interaktionen
+      description: Umschalten von Minecart-Interaktionen
       hint: Minecart-Interaktion deaktiviert
     MONSTER_SPAWN:
       description: Umschalten des Spawnings
@@ -1042,7 +1042,7 @@ protection:
       description: "&a Entferne Monster, wenn \n&a sie sich auf die Insel teleportieren"
     RIDING:
       description: Umschalten des Reitens
-      name: Animal riding
+      name: Reiten von Tieren
       hint: Reiten von Tieren deaktiviert
     SHEARING:
       description: Scheren umschalten
