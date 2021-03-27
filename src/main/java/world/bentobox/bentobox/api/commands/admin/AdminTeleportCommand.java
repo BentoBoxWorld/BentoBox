@@ -6,12 +6,14 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.util.Util;
 import world.bentobox.bentobox.util.teleport.SafeSpotTeleport;
 
@@ -78,12 +80,14 @@ public class AdminTeleportCommand extends CompositeCommand {
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        Location warpSpot = getIslands().getIslandLocation(getWorld(), targetUUID).toVector().toLocation(getWorld());
+        World world = getWorld();
         if (getLabel().equals("tpnether")) {
-            warpSpot = getIslands().getIslandLocation(getWorld(), targetUUID).toVector().toLocation(getPlugin().getIWM().getNetherWorld(getWorld()));
+            world = getPlugin().getIWM().getNetherWorld(getWorld());
         } else if (getLabel().equals("tpend")) {
-            warpSpot = getIslands().getIslandLocation(getWorld(), targetUUID).toVector().toLocation(getPlugin().getIWM().getEndWorld(getWorld()));
+            world = getPlugin().getIWM().getEndWorld(getWorld());
         }
+        Location warpSpot = getSpot(world);
+
         // Otherwise, ask the admin to go to a safe spot
         String failureMessage = user.getTranslation("commands.admin.tp.manual", "[location]", warpSpot.getBlockX() + " " + warpSpot.getBlockY() + " "
                 + warpSpot.getBlockZ());
@@ -101,6 +105,16 @@ public class AdminTeleportCommand extends CompositeCommand {
         .failureMessage(failureMessage)
         .build();
         return true;
+    }
+
+    private Location getSpot(World world) {
+        Island island = getIslands().getIsland(world, targetUUID);
+        if (island != null && island.getSpawnPoint(world.getEnvironment()) != null) {
+            // Return the defined spawn point
+            return island.getSpawnPoint(world.getEnvironment());
+        }
+        // Return the default island protection center
+        return getIslands().getIslandLocation(getWorld(), targetUUID).toVector().toLocation(world);
     }
 
     @Override

@@ -18,6 +18,8 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.World.Environment;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.util.Vector;
@@ -25,6 +27,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -49,13 +52,29 @@ import world.bentobox.bentobox.util.Util;
 @PrepareForTest({Bukkit.class, BentoBox.class, User.class, Util.class})
 public class AdminTeleportCommandTest {
 
+    @Mock
     private CompositeCommand ac;
+    @Mock
     private User user;
+    @Mock
     private IslandsManager im;
+    @Mock
     private PlayersManager pm;
     private UUID notUUID;
+    @Mock
     private Player p;
+    @Mock
     private IslandWorldManager iwm;
+    @Mock
+    private Island island;
+    @Mock
+    private Location spawnPoint;
+    @Mock
+    private World world;
+    @Mock
+    private World netherWorld;
+    @Mock
+    private World endWorld;
 
 
     /**
@@ -73,9 +92,6 @@ public class AdminTeleportCommandTest {
         when(plugin.getCommandsManager()).thenReturn(cm);
 
         // Player
-        p = mock(Player.class);
-        // Sometimes use Mockito.withSettings().verboseLogging()
-        user = mock(User.class);
         when(user.isOp()).thenReturn(false);
         UUID uuid = UUID.randomUUID();
         notUUID = UUID.randomUUID();
@@ -89,17 +105,22 @@ public class AdminTeleportCommandTest {
         User.setPlugin(plugin);
 
         // Parent command has no aliases
-        ac = mock(CompositeCommand.class);
         when(ac.getSubCommandAliases()).thenReturn(new HashMap<>());
         when(ac.getTopLabel()).thenReturn("bskyblock");
+        when(ac.getWorld()).thenReturn(world);
+
+        // World
+        when(world.getEnvironment()).thenReturn(Environment.NORMAL);
+        when(netherWorld.getEnvironment()).thenReturn(Environment.NETHER);
+        when(endWorld.getEnvironment()).thenReturn(Environment.THE_END);
+
 
         // Island World Manager
-        iwm = mock(IslandWorldManager.class);
         when(plugin.getIWM()).thenReturn(iwm);
-
+        when(iwm.getNetherWorld(any())).thenReturn(netherWorld);
+        when(iwm.getEndWorld(any())).thenReturn(endWorld);
 
         // Player has island to begin with
-        im = mock(IslandsManager.class);
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
         when(im.hasIsland(any(), any(User.class))).thenReturn(true);
         when(im.isOwner(any(),any())).thenReturn(true);
@@ -107,7 +128,6 @@ public class AdminTeleportCommandTest {
         when(plugin.getIslands()).thenReturn(im);
 
         // Has team
-        pm = mock(PlayersManager.class);
         when(im.inTeam(any(), eq(uuid))).thenReturn(true);
 
         when(plugin.getPlayers()).thenReturn(pm);
@@ -137,8 +157,10 @@ public class AdminTeleportCommandTest {
         when(im.getIslandLocation(any(), any())).thenReturn(location);
         // We do no actually want to teleport in this test, so return no island
         Optional<Island> nothing = Optional.empty();
-        when(im.getIslandAt(any())).thenReturn(nothing );
+        when(im.getIslandAt(any())).thenReturn(nothing);
 
+        // Return an island for spawn checking
+        when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
         // Util
         PowerMockito.mockStatic(Util.class, Mockito.RETURNS_MOCKS);
         when(Util.getUUID(anyString())).thenCallRealMethod();
@@ -189,11 +211,29 @@ public class AdminTeleportCommandTest {
         verify(user).sendMessage(eq("general.errors.player-has-no-island"));
     }
 
+    /**
+     * Test for {@link AdminTeleportCommand#execute(User, String, java.util.List)}
+     */
     @Test
     public void testExecuteUserStringListOfStringKnownTargetHasIsland() {
         when(pm.getUUID(eq("tastybento"))).thenReturn(notUUID);
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
         AdminTeleportCommand atc = new AdminTeleportCommand(ac,"tp");
+        assertTrue(atc.canExecute(user, "tp", Collections.singletonList("tastybento")));
+        assertTrue(atc.execute(user, "tp", Collections.singletonList("tastybento")));
+        verify(user).getTranslation(eq("commands.admin.tp.manual"), eq("[location]"), eq("0 0 0"));
+    }
+
+    /**
+     * Test for {@link AdminTeleportCommand#execute(User, String, java.util.List)}
+     */
+    @Test
+    public void testExecuteUserStringListOfStringKnownTargetHasIslandSpawnPoint() {
+        when(island.getSpawnPoint(any())).thenReturn(spawnPoint);
+        when(pm.getUUID(eq("tastybento"))).thenReturn(notUUID);
+        when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
+        AdminTeleportCommand atc = new AdminTeleportCommand(ac,"tp");
+        assertTrue(atc.canExecute(user, "tp", Collections.singletonList("tastybento")));
         assertTrue(atc.execute(user, "tp", Collections.singletonList("tastybento")));
         verify(user).getTranslation(eq("commands.admin.tp.manual"), eq("[location]"), eq("0 0 0"));
     }
@@ -204,6 +244,7 @@ public class AdminTeleportCommandTest {
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(false);
         when(im.inTeam(any(), any(UUID.class))).thenReturn(true);
         AdminTeleportCommand atc = new AdminTeleportCommand(ac,"tp");
+        assertTrue(atc.canExecute(user, "tp", Collections.singletonList("tastybento")));
         assertTrue(atc.execute(user, "tp", Collections.singletonList("tastybento")));
         verify(iwm, Mockito.never()).getNetherWorld(any());
         verify(iwm, Mockito.never()).getEndWorld(any());
@@ -215,6 +256,7 @@ public class AdminTeleportCommandTest {
         when(pm.getUUID(eq("tastybento"))).thenReturn(notUUID);
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
         AdminTeleportCommand atc = new AdminTeleportCommand(ac,"tpnether");
+        assertTrue(atc.canExecute(user, "tpnether", Collections.singletonList("tastybento")));
         assertTrue(atc.execute(user, "tpnether", Collections.singletonList("tastybento")));
         verify(iwm).getNetherWorld(any());
         verify(iwm, Mockito.never()).getEndWorld(any());
@@ -226,6 +268,7 @@ public class AdminTeleportCommandTest {
         when(pm.getUUID(eq("tastybento"))).thenReturn(notUUID);
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
         AdminTeleportCommand atc = new AdminTeleportCommand(ac,"tpend");
+        assertTrue(atc.canExecute(user, "tpend", Collections.singletonList("tastybento")));
         assertTrue(atc.execute(user, "tpend", Collections.singletonList("tastybento")));
         verify(iwm, Mockito.never()).getNetherWorld(any());
         verify(iwm).getEndWorld(any());
