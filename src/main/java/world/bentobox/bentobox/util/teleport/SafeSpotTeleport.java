@@ -67,7 +67,6 @@ public class SafeSpotTeleport {
         this.runnable = builder.getRunnable();
         this.result = builder.getResult();
         this.maxHeight = location.getWorld().getMaxHeight() - 20;
-        BentoBox.getInstance().logDebug("World = " + location.getWorld().getName() + " " + maxHeight);
         // Try to go
         Util.getChunkAtAsync(location).thenRun(()-> tryToGo(builder.getFailureMessage()));
     }
