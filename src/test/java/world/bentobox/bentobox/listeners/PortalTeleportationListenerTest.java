@@ -557,7 +557,7 @@ public class PortalTeleportationListenerTest {
         Location center = mock(Location.class);
         when(center.getBlockX()).thenReturn(200);
         when(center.getBlockZ()).thenReturn(200);
-        when(island.getCenter()).thenReturn(center);
+        when(island.getProtectionCenter()).thenReturn(center);
         when(island.getProtectionRange()).thenReturn(200);
         PortalTeleportationListener np = new PortalTeleportationListener(plugin);
         when(from.getBlockZ()).thenReturn(205);
