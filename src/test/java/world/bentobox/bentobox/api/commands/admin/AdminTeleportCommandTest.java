@@ -154,6 +154,9 @@ public class AdminTeleportCommandTest {
         Vector vector = mock(Vector.class);
         when(vector.toLocation(any())).thenReturn(location);
         when(location.toVector()).thenReturn(vector);
+        when(location.getWorld()).thenReturn(world);
+        when(spawnPoint.getWorld()).thenReturn(world);
+        when(world.getMaxHeight()).thenReturn(255);
         when(im.getIslandLocation(any(), any())).thenReturn(location);
         // We do no actually want to teleport in this test, so return no island
         Optional<Island> nothing = Optional.empty();
