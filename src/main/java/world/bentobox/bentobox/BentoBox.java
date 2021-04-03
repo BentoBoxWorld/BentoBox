@@ -46,6 +46,7 @@ import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.managers.WebManager;
+import world.bentobox.bentobox.util.LangUtils;
 import world.bentobox.bentobox.util.heads.HeadGetter;
 import world.bentobox.bentobox.versions.ServerCompatibility;
 
@@ -231,6 +232,7 @@ public class BentoBox extends JavaPlugin {
         hooksManager.registerHook(new WorldEditHook());
         // LangUtils
         hooksManager.registerHook(new LangUtilsHook());
+        LangUtils.setHook();
 
         webManager = new WebManager(this);
 
