@@ -38,7 +38,9 @@ import world.bentobox.bentobox.api.panels.PanelItem;
 import world.bentobox.bentobox.api.panels.TabbedPanel;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.listeners.flags.clicklisteners.GeoMobLimitTab.EntityLimitTabType;
+import world.bentobox.bentobox.managers.HooksManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
+import world.bentobox.bentobox.util.LangUtils;
 import world.bentobox.bentobox.util.Util;
 
 /**
@@ -64,6 +66,8 @@ public class GeoMobLimitTabTest {
     private List<String> list;
     @Mock
     private GameModeAddon gma;
+    @Mock
+    private HooksManager hm;
 
     /**
      * @throws java.lang.Exception
@@ -89,6 +93,11 @@ public class GeoMobLimitTabTest {
         // Util
         PowerMockito.mockStatic(Util.class, Mockito.CALLS_REAL_METHODS);
         when(Util.getWorld(any())).thenReturn(world);
+        // LangUtils
+        when(plugin.getHooks()).thenReturn(hm);
+        // No plugin hook
+        when(hm.getHook(anyString())).thenReturn(Optional.empty());
+        LangUtils.setHook();
     }
 
     @After
