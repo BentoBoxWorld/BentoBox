@@ -7,8 +7,10 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.scheduler.BukkitTask;
 
 import world.bentobox.bentobox.api.addons.Addon;
@@ -26,18 +28,31 @@ public abstract class DelayedTeleportCommand extends CompositeCommand implements
      */
     private static Map<UUID, DelayedCommand> toBeMonitored = new HashMap<>();
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerMove(PlayerMoveEvent e) {
         UUID uuid = e.getPlayer().getUniqueId();
         // Only check x,y,z
         if (toBeMonitored.containsKey(uuid) && !e.getTo().toVector().equals(toBeMonitored.get(uuid).getLocation().toVector())) {
-            // Player moved
-            toBeMonitored.get(uuid).getTask().cancel();
-            toBeMonitored.remove(uuid);
-            // Player has another outstanding confirmation request that will now be cancelled
-            User.getInstance(e.getPlayer()).notify("commands.delay.moved-so-command-cancelled");
+            moved(uuid);
         }
     }
+
+    private void moved(UUID uuid) {
+        // Player moved
+        toBeMonitored.get(uuid).getTask().cancel();
+        toBeMonitored.remove(uuid);
+        // Player has another outstanding confirmation request that will now be cancelled
+        User.getInstance(uuid).notify("commands.delay.moved-so-command-cancelled");
+    }
+
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    public void onPlayerTeleport(PlayerTeleportEvent e) {
+        UUID uuid = e.getPlayer().getUniqueId();
+        if (toBeMonitored.containsKey(uuid)) {
+            moved(uuid);
+        }
+    }
+
 
     /**
      * Top level command

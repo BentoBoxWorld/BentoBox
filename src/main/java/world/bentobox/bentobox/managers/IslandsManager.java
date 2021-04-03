@@ -448,19 +448,25 @@ public class IslandsManager {
     }
 
     /**
-     * Returns the player's island location in World
-     * Returns an island location OR a team island location
+     * Returns the player's island location in World based on the island protection center.
+     * If you need the actual island center location for some reason use {@link Island#getCenter()}<p>
      *
      * @param world - world to check
      * @param uuid - the player's UUID
-     * @return Location of player's island or null if one does not exist
+     * @return Location of the center of the player's protection area or null if an island does not exist. 
+     * Returns an island location OR a team island location
      */
     @Nullable
     public Location getIslandLocation(@NonNull World world, @NonNull UUID uuid) {
         Island island = getIsland(world, uuid);
-        return island != null ? island.getCenter() : null;
+        return island != null ? island.getProtectionCenter() : null;
     }
 
+    /**
+     * Get the last location where an island was created
+     * @param world - world
+     * @return location
+     */
     public Location getLast(@NonNull World world) {
         return last.get(world);
     }
