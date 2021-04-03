@@ -18,6 +18,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
+import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.attribute.Attribute;
@@ -688,5 +689,22 @@ public class Util {
             throw new IllegalStateException("Class " + clazz.getName() + " does not implement NMSAbstraction");
         }
     }
-
+    
+    /**
+     * Broadcast a localized message to all players with the permission {@link Server#BROADCAST_CHANNEL_USERS}
+     *
+     * @param localeKey locale key for the message to broadcast
+     * @param variables any variables for the message
+     * @return number of message recipients
+     */
+    public static int broadcast(String localeKey, String... variables) {
+        int count = 0;
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            if (p.hasPermission(Server.BROADCAST_CHANNEL_USERS)) {
+                User.getInstance(p).sendMessage(localeKey, variables);
+                count++;
+            }
+        }
+        return count;
+    }
 }

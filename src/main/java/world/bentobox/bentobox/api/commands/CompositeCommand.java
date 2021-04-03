@@ -182,13 +182,13 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         this.parent = parent;
         subCommandLevel = parent.getLevel() + 1;
         // Add this sub-command to the parent
-        parent.getSubCommands().put(label, this);
+        parent.getSubCommands().put(label.toLowerCase(java.util.Locale.ENGLISH), this);
         setAliases(new ArrayList<>(Arrays.asList(aliases)));
         subCommands = new LinkedHashMap<>();
         subCommandAliases = new LinkedHashMap<>();
         // Add aliases to the parent for this command
         for (String alias : aliases) {
-            parent.getSubCommandAliases().put(alias, this);
+            parent.getSubCommandAliases().put(alias.toLowerCase(java.util.Locale.ENGLISH), this);
         }
         setUsage("");
         // Inherit permission prefix

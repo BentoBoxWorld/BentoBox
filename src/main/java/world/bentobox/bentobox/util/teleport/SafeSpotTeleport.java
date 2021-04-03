@@ -34,7 +34,6 @@ public class SafeSpotTeleport {
     private static final int MAX_CHUNKS = 6;
     private static final long SPEED = 1;
     private static final int MAX_RADIUS = 50;
-    private static final int MAX_HEIGHT = 235;
     private boolean notChecking;
     private BukkitTask task;
 
@@ -52,6 +51,7 @@ public class SafeSpotTeleport {
     private final Runnable runnable;
     private final CompletableFuture<Boolean> result;
     private final String homeName;
+    private final int maxHeight;
 
     /**
      * Teleports and entity to a safe spot on island
@@ -66,12 +66,12 @@ public class SafeSpotTeleport {
         this.homeName = builder.getHomeName();
         this.runnable = builder.getRunnable();
         this.result = builder.getResult();
-
-        // If there is no portal scan required, try the desired location immediately
-        Util.getChunkAtAsync(location).thenRun(()-> tryTogo(builder.getFailureMessage()));
+        this.maxHeight = location.getWorld().getMaxHeight() - 20;
+        // Try to go
+        Util.getChunkAtAsync(location).thenRun(()-> tryToGo(builder.getFailureMessage()));
     }
 
-    private void tryTogo(String failureMessage) {
+    private void tryToGo(String failureMessage) {
         if (plugin.getIslands().isSafeLocation(location)) {
             if (portal) {
                 // If the desired location is safe, then that's where you'll go if there's no portal
@@ -226,7 +226,7 @@ public class SafeSpotTeleport {
         for (int x = 0; x< 16; x++) {
             for (int z = 0; z < 16; z++) {
                 // Work down from the entry point up
-                for (int y = Math.min(chunk.getHighestBlockYAt(x, z), MAX_HEIGHT); y >= 0; y--) {
+                for (int y = Math.min(chunk.getHighestBlockYAt(x, z), maxHeight); y >= 0; y--) {
                     if (checkBlock(chunk, x,y,z)) {
                         return true;
                     }
@@ -265,8 +265,8 @@ public class SafeSpotTeleport {
     boolean checkBlock(ChunkSnapshot chunk, int x, int y, int z) {
         World world = location.getWorld();
         Material type = chunk.getBlockType(x, y, z);
-        Material space1 = chunk.getBlockType(x, Math.min(y + 1, SafeSpotTeleport.MAX_HEIGHT), z);
-        Material space2 = chunk.getBlockType(x, Math.min(y + 2, SafeSpotTeleport.MAX_HEIGHT), z);
+        Material space1 = chunk.getBlockType(x, Math.min(y + 1, maxHeight), z);
+        Material space2 = chunk.getBlockType(x, Math.min(y + 2, maxHeight), z);
         if (space1.equals(Material.NETHER_PORTAL) || space2.equals(Material.NETHER_PORTAL)) {
             // A portal has been found, switch to non-portal mode now
             portal = false;

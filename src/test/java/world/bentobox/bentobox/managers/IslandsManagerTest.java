@@ -238,6 +238,8 @@ public class IslandsManagerTest {
         when(island.getWorld()).thenReturn(world);
         when(island.getMaxMembers()).thenReturn(null); // default
         when(island.getMaxMembers(Mockito.anyInt())).thenReturn(null); // default
+        when(island.getCenter()).thenReturn(location);
+        when(island.getProtectionCenter()).thenReturn(location);
 
         // Mock island cache
         when(islandCache.getIslandAt(any(Location.class))).thenReturn(island);
@@ -630,8 +632,9 @@ public class IslandsManagerTest {
      */
     @Test
     public void testGetIslandLocation() {
-        im.createIsland(location, uuid);
+        Island i = im.createIsland(location, uuid);
         assertEquals(world, im.getIslandLocation(world, uuid).getWorld());
+        assertEquals(i.getProtectionCenter(), im.getIslandLocation(world, uuid));
         assertNull(im.getIslandLocation(world, UUID.randomUUID()));
     }
 

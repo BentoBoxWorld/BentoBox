@@ -16,6 +16,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
@@ -105,6 +106,7 @@ public class DelayedTeleportCommandTest {
         when(user.getUniqueId()).thenReturn(uuid);
         when(user.getLocation()).thenReturn(from);
         when(player.getUniqueId()).thenReturn(uuid);
+        User.getInstance(player);
         // Locations
         when(to.toVector()).thenReturn(new Vector(1,2,3));
         when(from.toVector()).thenReturn(new Vector(1,2,4)); // Player moved
@@ -189,6 +191,17 @@ public class DelayedTeleportCommandTest {
     }
 
     /**
+     * Test method for {@link world.bentobox.bentobox.api.commands.DelayedTeleportCommand#onPlayerMove(org.bukkit.event.player.PlayerMoveEvent)}.
+     */
+    @Test
+    public void testOnPlayerTeleport() {
+        testDelayCommandUserStringRunnableStandStill();
+        PlayerTeleportEvent e = new PlayerTeleportEvent(player, from, to);
+        dtc.onPlayerTeleport(e);
+        verify(notifier).notify(any(), eq("commands.delay.moved-so-command-cancelled"));
+    }
+
+    /**
      * Test method for {@link world.bentobox.bentobox.api.commands.DelayedTeleportCommand#DelayedTeleportCommand(world.bentobox.bentobox.api.addons.Addon, java.lang.String, java.lang.String[])}.
      */
     @Test
@@ -225,7 +238,7 @@ public class DelayedTeleportCommandTest {
         dtc.delayCommand(user, HELLO, command);
         verify(sch).runTask(eq(plugin), eq(command));
     }
-    
+
     /**
      * Test method for {@link world.bentobox.bentobox.api.commands.DelayedTeleportCommand#delayCommand(world.bentobox.bentobox.api.user.User, java.lang.String, java.lang.Runnable)}.
      */
