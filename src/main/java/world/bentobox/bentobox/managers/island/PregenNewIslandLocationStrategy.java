@@ -1,12 +1,15 @@
 package world.bentobox.bentobox.managers.island;
 
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.scheduler.BukkitTask;
+import org.bukkit.block.BlockFace;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.util.Util;
@@ -19,12 +22,10 @@ import world.bentobox.bentobox.util.Util;
  */
 public class PregenNewIslandLocationStrategy implements NewIslandLocationStrategy {
 
-    private static final long TIME = 40;
     private static final int VD = 16 * Bukkit.getServer().getViewDistance();
     protected BentoBox plugin = BentoBox.getInstance();
     protected Queue<Location> queue = new LinkedList<>();
-    protected boolean loading;
-    private BukkitTask task;
+    private int i;
 
     @Override
     public Location getNextLocation(World world) {
@@ -36,12 +37,27 @@ public class PregenNewIslandLocationStrategy implements NewIslandLocationStrateg
                     (double) plugin.getIWM().getIslandZOffset(world) + plugin.getIWM().getIslandStartZ(world));
         }
         // Find a free spot
-        while (isIsland(last)) {
-            nextGridLocation(last);
-        }        
+        try {
+            while (isIsland(last)) {
+                nextGridLocation(last);
+            }
+        } catch (IOException e) {
+            // We could not find a free spot within the limit required. It's likely this
+            // world is not empty
+            plugin.logError("Could not find a free spot for islands! Is this world empty?");
+            return null;
+        }
+        // Save the last spot
         plugin.getIslands().setLast(last);
+        // Load chunks if Paper
+        if (Util.isPaper()) {
+            preloadChunks(last.clone());
+        }
+        return last;
+    }
+
+    private void preloadChunks(Location loc) {
         // Make a queue to load
-        Location loc = last.clone();
         for (int i = 0; i < 5; i++) {
             nextGridLocation(loc);
             if (!Util.isChunkGenerated(loc)) {
@@ -53,33 +69,55 @@ public class PregenNewIslandLocationStrategy implements NewIslandLocationStrateg
                 queue.add(loc.clone());
             }
         }
-        // Load chunks
-        task = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
-            if (!loading && !queue.isEmpty()) {
-                Location l = queue.poll();
-                if (Util.isChunkGenerated(l)) {
-                    loading = true;
-                    BentoBox.getInstance().logDebug("Generating chunk at " + l);
-                    Util.getChunkAtAsync(l).thenRun(() -> loading = false);
-                }
-            }
-            if (queue.isEmpty()) {
-                task.cancel();
-            }
-        }, TIME, TIME);
-        return last;
+        // Run it 10 seconds later
+        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            plugin.log("Chunk preloading started. " + queue.size() + " chunks to preload.");
+            asyncLoadChunks();
+            }, 200L);
+        
     }
 
 
+
+    private void asyncLoadChunks() {
+        if (!queue.isEmpty()) {
+            Location l = queue.poll();
+            if (!Util.isChunkGenerated(l)) {
+                Util.getChunkAtAsync(l).thenRun(() -> asyncLoadChunks());
+            } else {
+                asyncLoadChunks();
+            }
+        } else {
+            plugin.log("Chunk preloading complete.");
+        }
+    }
 
     /**
      * Checks if there is an island or blocks at this location
      *
      * @param location - the location
-     * @return true if island known
+     * @return true if island present or if in deletion
+     * @throws IOException 
      */
-    protected boolean isIsland(Location location) {
-        return plugin.getIslands().getIslandAt(location).isPresent();
+    private boolean isIsland(Location location) throws IOException {
+        if (plugin.getIslands().getIslandAt(location).isPresent() || plugin.getIslandDeletionManager().inDeletion(location)) {
+            return true;
+        }
+        // Block check
+        World world = Util.getWorld(location.getWorld());
+        if (plugin.getIWM().isCheckForBlocks(world) 
+                && !plugin.getIWM().isUseOwnGenerator(world) 
+                && Arrays.asList(BlockFace.values()).stream().anyMatch(bf -> !location.getBlock().getRelative(bf).isEmpty() 
+                        && !location.getBlock().getRelative(bf).getType().equals(Material.WATER))) {
+            // Block found
+            i++;
+            if (i > 1000) {
+                throw new IOException("Could not find a free spot of island. Is the generator broken?");
+            }
+            plugin.getIslands().createIsland(location);
+            return true;
+        }
+        return false;
     }
 
     /**
