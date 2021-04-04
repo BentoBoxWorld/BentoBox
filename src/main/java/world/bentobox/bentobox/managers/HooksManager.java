@@ -40,7 +40,7 @@ public class HooksManager {
         if (hook.isPluginAvailable()) {
             plugin.log("Hooking with " + hook.getPluginName() + "...");
             if (alreadyHooked(hook)) {
-                plugin.logError("The hook (" + hook.getPluginName() + ") already hooked.");
+                plugin.logError("The hook (" + hook.getPluginName() + ") already exist.");
                 return;
             }
             if (hook.hook()) {
