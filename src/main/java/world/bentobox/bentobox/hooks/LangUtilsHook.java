@@ -21,7 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import world.bentobox.bentobox.api.hooks.Hook;
 import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.util.LangUtil;
 
 import java.util.Map.Entry;
 
@@ -43,11 +42,7 @@ public class LangUtilsHook extends Hook {
         Plugin plugin = getPlugin();
 
         if (plugin != null && plugin.isEnabled()) {
-            String tag = plugin.getConfig().getString("Extra-TAG");
-            if ("tag_r72EhIAL".equals(tag)) {
-                LangUtil.setHook();
-                return true;
-            }
+            return "tag_r72EhIAL".equals(plugin.getConfig().getString("Extra-TAG"));
         }
 
         return false;

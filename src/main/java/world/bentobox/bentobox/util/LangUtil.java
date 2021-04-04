@@ -29,8 +29,14 @@ public class LangUtil {
 
     private static LangUtilsHook hook;
 
-    public static void setHook() {
-        hook = BentoBox.getInstance().getHooks().getHook(LangUtilsHook.class);
+    private LangUtil() {
+    }
+
+    private static LangUtilsHook getHook() {
+        if (hook == null) {
+            hook = BentoBox.getInstance().getHooks().getHook(LangUtilsHook.class);
+        }
+        return hook;
     }
 
     /**
@@ -65,8 +71,8 @@ public class LangUtil {
      */
     @NotNull
     public static String getItemName(@NotNull ItemStack itemStack, @NotNull User user) {
-        return hook != null
-            ? hook.getItemName(itemStack, user)
+        return getHook() != null
+            ? getHook().getItemName(itemStack, user)
             : Util.prettifyText(itemStack.getType().name());
     }
 
@@ -82,8 +88,8 @@ public class LangUtil {
      */
     @NotNull
     public static String getMaterialName(@NotNull Material material, @NotNull User user) {
-        return hook != null
-            ? hook.getMaterialName(material, user)
+        return getHook() != null
+            ? getHook().getMaterialName(material, user)
             : Util.prettifyText(material.name());
     }
 
@@ -110,8 +116,8 @@ public class LangUtil {
      */
     @NotNull
     public static String getEntityName(@NotNull EntityType entityType, @NotNull User user) {
-        return hook != null
-            ? hook.getEntityName(entityType, user)
+        return getHook() != null
+            ? getHook().getEntityName(entityType, user)
             : Util.prettifyText(entityType.toString());
     }
 
@@ -124,8 +130,8 @@ public class LangUtil {
      */
     @NotNull
     public static String getEntityName(@NotNull Entity entity, @NotNull User user) {
-        return hook != null
-            ? hook.getEntityName(entity, user)
+        return getHook() != null
+            ? getHook().getEntityName(entity, user)
             : Util.prettifyText(entity.getType().toString());
     }
 
@@ -138,8 +144,8 @@ public class LangUtil {
      */
     @NotNull
     public static String getBiomeName(@NotNull Biome biome, @NotNull User user) {
-        return hook != null
-            ? hook.getBiomeName(biome, user)
+        return getHook() != null
+            ? getHook().getBiomeName(biome, user)
             : Util.prettifyText(biome.name());
     }
 
@@ -153,8 +159,8 @@ public class LangUtil {
      */
     @NotNull
     public static String getEnchantDisplayName(@NotNull Enchantment enchant, int level, @NotNull User user) {
-        return hook != null
-            ? hook.getEnchantDisplayName(enchant, level, user)
+        return getHook() != null
+            ? getHook().getEnchantDisplayName(enchant, level, user)
             : enchant.getKey().getKey() + " " + level;
     }
 
@@ -168,8 +174,8 @@ public class LangUtil {
      */
     @NotNull
     public static String getEnchantDisplayName(@NotNull Map.Entry<Enchantment, Integer> entry, @NotNull User user) {
-        return hook != null
-            ? hook.getEnchantDisplayName(entry, user)
+        return getHook() != null
+            ? getHook().getEnchantDisplayName(entry, user)
             : entry.getKey().getKey().getKey() + " " + entry.getValue();
     }
 
@@ -182,8 +188,8 @@ public class LangUtil {
      */
     @NotNull
     public static String getEnchantName(@NotNull Enchantment enchant, @NotNull User user) {
-        return hook != null
-            ? hook.getEnchantName(enchant, user)
+        return getHook() != null
+            ? getHook().getEnchantName(enchant, user)
             : enchant.getKey().getKey();
     }
 
@@ -197,8 +203,8 @@ public class LangUtil {
      */
     @NotNull
     public static String getEnchantLevelName(int level, @NotNull User user) {
-        return hook != null
-            ? hook.getEnchantLevelName(level, user)
+        return getHook() != null
+            ? getHook().getEnchantLevelName(level, user)
             : String.valueOf(level);
     }
 
@@ -211,8 +217,8 @@ public class LangUtil {
      */
     @NotNull
     public static String getPotionTypeName(@NotNull PotionType potionType, @NotNull User user) {
-        if (hook != null) {
-            return hook.getPotionTypeName(potionType, user);
+        if (getHook() != null) {
+            return getHook().getPotionTypeName(potionType, user);
         }
         switch (potionType) {
             case UNCRAFTABLE:     return "Uncraftable Potion";
@@ -250,8 +256,8 @@ public class LangUtil {
      */
     @NotNull
     public static String getSplashPotionName(@NotNull PotionType potionType, @NotNull User user) {
-        if (hook != null) {
-            return hook.getSplashPotionName(potionType, user);
+        if (getHook() != null) {
+            return getHook().getSplashPotionName(potionType, user);
         }
         switch (potionType) {
             case UNCRAFTABLE:     return "Splash Uncraftable Potion";
@@ -289,8 +295,8 @@ public class LangUtil {
      */
     @NotNull
     public static String getLingeringPotionName(@NotNull PotionType potionType, @NotNull User user) {
-        if (hook != null) {
-            return hook.getLingeringPotionName(potionType, user);
+        if (getHook() != null) {
+            return getHook().getLingeringPotionName(potionType, user);
         }
         switch (potionType) {
             case UNCRAFTABLE:     return "Lingering Uncraftable Potion";
@@ -328,8 +334,8 @@ public class LangUtil {
      */
     @NotNull
     public static String getTippedArrowName(@NotNull PotionType potionType, @NotNull User user) {
-        if (hook != null) {
-            return hook.getTippedArrowName(potionType, user);
+        if (getHook() != null) {
+            return getHook().getTippedArrowName(potionType, user);
         }
         switch (potionType) {
             case UNCRAFTABLE:     return "Uncraftable Tipped Arrow";
@@ -369,8 +375,8 @@ public class LangUtil {
      */
     @NotNull
     public static String getPotionBaseEffectName(@NotNull PotionType potionType, @NotNull User user) {
-        if (hook != null) {
-            return hook.getPotionBaseEffectName(potionType, user);
+        if (getHook() != null) {
+            return getHook().getPotionBaseEffectName(potionType, user);
         }
         PotionEffectType effectType = potionType.getEffectType();
         if (effectType == null) {
@@ -388,8 +394,8 @@ public class LangUtil {
      */
     @NotNull
     public static String getPotionEffectName(@NotNull PotionEffectType effectType, @NotNull User user) {
-        return hook != null
-            ? hook.getPotionEffectName(effectType, user)
+        return getHook() != null
+            ? getHook().getPotionEffectName(effectType, user)
             : Util.prettifyText(effectType.getName());
     }
 
@@ -402,8 +408,8 @@ public class LangUtil {
      */
     @NotNull
     public static String getEffectAmplifierName(int amplifier, @NotNull User user) {
-        if (hook != null) {
-            return hook.getEffectAmplifierName(amplifier, user);
+        if (getHook() != null) {
+            return getHook().getEffectAmplifierName(amplifier, user);
         }
         return amplifier > 0 ? Integer.toString(amplifier) : "";
     }
@@ -417,8 +423,8 @@ public class LangUtil {
      */
     @NotNull
     public static String getPotionEffectDisplay(@NotNull PotionEffect effect, @NotNull User user) {
-        if (hook != null) {
-            return hook.getPotionEffectDisplay(effect, user);
+        if (getHook() != null) {
+            return getHook().getPotionEffectDisplay(effect, user);
         }
 
         String name = getPotionEffectName(effect.getType(), user);
@@ -448,8 +454,8 @@ public class LangUtil {
      */
     @NotNull
     public static String getTropicalFishTypeName(@NotNull TropicalFish.Pattern fishPattern, @NotNull User user) {
-        return hook != null
-            ? hook.getTropicalFishTypeName(fishPattern, user)
+        return getHook() != null
+            ? getHook().getTropicalFishTypeName(fishPattern, user)
             : Util.prettifyText(fishPattern.name());
     }
 
@@ -465,8 +471,8 @@ public class LangUtil {
      */
     @Nullable
     public static String getPredefinedTropicalFishName(@NotNull TropicalFishBucketMeta meta, @NotNull User user) {
-        if (hook != null) {
-            return hook.getPredefinedTropicalFishName(meta, user);
+        if (getHook() != null) {
+            return getHook().getPredefinedTropicalFishName(meta, user);
         }
 
         if (meta.hasVariant()) {
@@ -519,8 +525,8 @@ public class LangUtil {
      */
     @NotNull
     public static String getDyeColorName(@NotNull DyeColor color, @NotNull User user) {
-        return hook != null
-            ? hook.getDyeColorName(color, user)
+        return getHook() != null
+            ? getHook().getDyeColorName(color, user)
             : Util.prettifyText(color.name());
     }
 
@@ -533,8 +539,8 @@ public class LangUtil {
      */
     @NotNull
     public static String getVillagerLevelName(int level, @NotNull User user) {
-        return hook != null
-            ? hook.getVillagerLevelName(level, user)
+        return getHook() != null
+            ? getHook().getVillagerLevelName(level, user)
             : Integer.toString(level);
     }
 
@@ -547,8 +553,8 @@ public class LangUtil {
      */
     @NotNull
     public static String getVillagerProfessionName(@NotNull Villager.Profession profession, @NotNull User user) {
-        return hook != null
-            ? hook.getVillagerProfessionName(profession, user)
+        return getHook() != null
+            ? getHook().getVillagerProfessionName(profession, user)
             : Util.prettifyText(profession.name());
     }
 
@@ -561,8 +567,8 @@ public class LangUtil {
      */
     @NotNull
     public static String getBannerPatternName(@NotNull Pattern pattern, @NotNull User user) {
-        return hook != null
-            ? hook.getBannerPatternName(pattern, user)
+        return getHook() != null
+            ? getHook().getBannerPatternName(pattern, user)
             : pattern.getColor().name().toLowerCase(Locale.ROOT)
             + "_"
             + pattern.getPattern().name().toLowerCase(Locale.ROOT);
@@ -578,8 +584,8 @@ public class LangUtil {
      */
     @Nullable
     public static String getMusicDiskDesc(@NotNull Material material, @NotNull User user) {
-        if (hook != null) {
-            return hook.getMusicDiskDesc(material, user);
+        if (getHook() != null) {
+            return getHook().getMusicDiskDesc(material, user);
         }
         // Without LangUtils, English is returned.
         switch (material) {
@@ -610,8 +616,8 @@ public class LangUtil {
      */
     @Nullable
     public static String getNewBannerPatternDesc(@NotNull Material material, @NotNull User user) {
-        if (hook != null) {
-            return hook.getNewBannerPatternDesc(material, user);
+        if (getHook() != null) {
+            return getHook().getNewBannerPatternDesc(material, user);
         }
         // Without LangUtils, English is returned.
         switch (material) {
