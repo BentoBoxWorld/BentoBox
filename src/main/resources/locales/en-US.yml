@@ -496,6 +496,8 @@ commands:
     deletehome:
       description: "delete a home location"
       parameters: "[home name]"
+    homes:
+      description: "list your homes"
     info:
       description: "display info about your island or the player's island"
       parameters: "<player>"
