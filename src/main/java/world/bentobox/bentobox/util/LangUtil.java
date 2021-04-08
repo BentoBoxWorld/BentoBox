@@ -570,8 +570,8 @@ public class LangUtil {
         return getHook() != null
             ? getHook().getBannerPatternName(pattern, user)
             : pattern.getColor().name().toLowerCase(Locale.ROOT)
-            + "_"
-            + pattern.getPattern().name().toLowerCase(Locale.ROOT);
+                + "_"
+                + pattern.getPattern().name().toLowerCase(Locale.ROOT);
     }
 
     /**
