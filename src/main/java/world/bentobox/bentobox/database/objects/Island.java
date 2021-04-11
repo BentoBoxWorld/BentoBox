@@ -235,6 +235,7 @@ public class Island implements DataObject, MetaDataAble {
         this.setChanged();
     }
 
+
     /**
      * Clones an island object
      * @param island - island to clone
@@ -255,10 +256,13 @@ public class Island implements DataObject, MetaDataAble {
         this.doNotLoad = island.isDoNotLoad();
         this.flags.putAll(island.getFlags());
         this.gameMode = island.getGameMode();
+        this.homes = new HashMap<>(island.getHomes());
         this.history.addAll(island.getHistory());
         this.levelHandicap = island.getLevelHandicap();
         this.location = island.getProtectionCenter();
         this.maxEverProtectionRange = island.getMaxEverProtectionRange();
+        this.maxHomes = island.getMaxHomes();
+        this.maxMembers = new HashMap<>(island.getMaxMembers());
         this.members.putAll(island.getMembers());
         island.getMetaData().ifPresent(m -> {
             this.metaData = new HashMap<>();
@@ -1515,7 +1519,7 @@ public class Island implements DataObject, MetaDataAble {
         this.maxHomes = maxHomes;
         setChanged();
     }
-    
+
     /**
      * @return the maxMembers
      * @since 1.16.0
