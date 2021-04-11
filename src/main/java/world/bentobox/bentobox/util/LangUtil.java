@@ -15,8 +15,8 @@ import org.bukkit.inventory.meta.TropicalFishBucketMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.hooks.LangUtilsHook;
@@ -50,8 +50,8 @@ public class LangUtil {
      * @param user the User's locale will be used for translation.
      * @return The Display-Name of the item.
      */
-    @NotNull
-    public static String getItemDisplayName(@NotNull ItemStack item, @NotNull User user) {
+    @NonNull
+    public static String getItemDisplayName(@NonNull ItemStack item, @NonNull User user) {
         ItemMeta meta = item.getItemMeta();
         if (meta != null && meta.hasDisplayName()) {
             return meta.getDisplayName();
@@ -69,8 +69,8 @@ public class LangUtil {
      * @param user      the User's locale will be used for translation.
      * @return The translated item name.
      */
-    @NotNull
-    public static String getItemName(@NotNull ItemStack itemStack, @NotNull User user) {
+    @NonNull
+    public static String getItemName(@NonNull ItemStack itemStack, @NonNull User user) {
         return getHook() != null
             ? getHook().getItemName(itemStack, user)
             : Util.prettifyText(itemStack.getType().name());
@@ -86,8 +86,8 @@ public class LangUtil {
      * @param user     the User's locale will be used for translation.
      * @return The translated material name.
      */
-    @NotNull
-    public static String getMaterialName(@NotNull Material material, @NotNull User user) {
+    @NonNull
+    public static String getMaterialName(@NonNull Material material, @NonNull User user) {
         return getHook() != null
             ? getHook().getMaterialName(material, user)
             : Util.prettifyText(material.name());
@@ -100,8 +100,8 @@ public class LangUtil {
      * @param user   the User's locale will be used for translation.
      * @return The name of the entity
      */
-    @NotNull
-    public static String getEntityDisplayName(@NotNull Entity entity, @NotNull User user) {
+    @NonNull
+    public static String getEntityDisplayName(@NonNull Entity entity, @NonNull User user) {
         return entity.getCustomName() != null
             ? entity.getCustomName()
             : getEntityName(entity, user);
@@ -114,8 +114,8 @@ public class LangUtil {
      * @param user       the User's locale will be used for translation.
      * @return The translated EntityType name.
      */
-    @NotNull
-    public static String getEntityName(@NotNull EntityType entityType, @NotNull User user) {
+    @NonNull
+    public static String getEntityName(@NonNull EntityType entityType, @NonNull User user) {
         return getHook() != null
             ? getHook().getEntityName(entityType, user)
             : Util.prettifyText(entityType.toString());
@@ -128,8 +128,8 @@ public class LangUtil {
      * @param user   the User's locale will be used for translation.
      * @return The translated EntityType name.
      */
-    @NotNull
-    public static String getEntityName(@NotNull Entity entity, @NotNull User user) {
+    @NonNull
+    public static String getEntityName(@NonNull Entity entity, @NonNull User user) {
         return getHook() != null
             ? getHook().getEntityName(entity, user)
             : Util.prettifyText(entity.getType().toString());
@@ -142,8 +142,8 @@ public class LangUtil {
      * @param user  the User's locale will be used for translation.
      * @return The translated Biome name.
      */
-    @NotNull
-    public static String getBiomeName(@NotNull Biome biome, @NotNull User user) {
+    @NonNull
+    public static String getBiomeName(@NonNull Biome biome, @NonNull User user) {
         return getHook() != null
             ? getHook().getBiomeName(biome, user)
             : Util.prettifyText(biome.name());
@@ -157,8 +157,8 @@ public class LangUtil {
      * @param user    The User's locale will be used for translation.
      * @return Translated enchanted name with level.
      */
-    @NotNull
-    public static String getEnchantDisplayName(@NotNull Enchantment enchant, int level, @NotNull User user) {
+    @NonNull
+    public static String getEnchantDisplayName(@NonNull Enchantment enchant, int level, @NonNull User user) {
         return getHook() != null
             ? getHook().getEnchantDisplayName(enchant, level, user)
             : enchant.getKey().getKey() + " " + level;
@@ -172,8 +172,8 @@ public class LangUtil {
      * @param user  The User's locale will be used for translation.
      * @return Translated enchanted name with level.
      */
-    @NotNull
-    public static String getEnchantDisplayName(@NotNull Map.Entry<Enchantment, Integer> entry, @NotNull User user) {
+    @NonNull
+    public static String getEnchantDisplayName(Map.@NonNull Entry<Enchantment, Integer> entry, @NonNull User user) {
         return getHook() != null
             ? getHook().getEnchantDisplayName(entry, user)
             : entry.getKey().getKey().getKey() + " " + entry.getValue();
@@ -186,8 +186,8 @@ public class LangUtil {
      * @param user    The User's locale will be used for translation.
      * @return The translated enchant name.
      */
-    @NotNull
-    public static String getEnchantName(@NotNull Enchantment enchant, @NotNull User user) {
+    @NonNull
+    public static String getEnchantName(@NonNull Enchantment enchant, @NonNull User user) {
         return getHook() != null
             ? getHook().getEnchantName(enchant, user)
             : enchant.getKey().getKey();
@@ -201,8 +201,8 @@ public class LangUtil {
      * @param user  The user's language will be used for translation.
      * @return The converted enchantment level.
      */
-    @NotNull
-    public static String getEnchantLevelName(int level, @NotNull User user) {
+    @NonNull
+    public static String getEnchantLevelName(int level, @NonNull User user) {
         return getHook() != null
             ? getHook().getEnchantLevelName(level, user)
             : String.valueOf(level);
@@ -215,8 +215,8 @@ public class LangUtil {
      * @param user       The user's language will be used for translation.
      * @return Translated potion name.
      */
-    @NotNull
-    public static String getPotionTypeName(@NotNull PotionType potionType, @NotNull User user) {
+    @NonNull
+    public static String getPotionTypeName(@NonNull PotionType potionType, @NonNull User user) {
         if (getHook() != null) {
             return getHook().getPotionTypeName(potionType, user);
         }
@@ -254,8 +254,8 @@ public class LangUtil {
      * @param user       The user's language will be used for translation.
      * @return Translated splash potion name.
      */
-    @NotNull
-    public static String getSplashPotionName(@NotNull PotionType potionType, @NotNull User user) {
+    @NonNull
+    public static String getSplashPotionName(@NonNull PotionType potionType, @NonNull User user) {
         if (getHook() != null) {
             return getHook().getSplashPotionName(potionType, user);
         }
@@ -293,8 +293,8 @@ public class LangUtil {
      * @param user       The user's language will be used for translation.
      * @return Translated lingering potion name.
      */
-    @NotNull
-    public static String getLingeringPotionName(@NotNull PotionType potionType, @NotNull User user) {
+    @NonNull
+    public static String getLingeringPotionName(@NonNull PotionType potionType, @NonNull User user) {
         if (getHook() != null) {
             return getHook().getLingeringPotionName(potionType, user);
         }
@@ -332,8 +332,8 @@ public class LangUtil {
      * @param user       The user's language will be used for translation.
      * @return Translated tipped arrow name.
      */
-    @NotNull
-    public static String getTippedArrowName(@NotNull PotionType potionType, @NotNull User user) {
+    @NonNull
+    public static String getTippedArrowName(@NonNull PotionType potionType, @NonNull User user) {
         if (getHook() != null) {
             return getHook().getTippedArrowName(potionType, user);
         }
@@ -373,8 +373,8 @@ public class LangUtil {
      * @param user       The user's language will be used for translation.
      * @return Return the translation result.
      */
-    @NotNull
-    public static String getPotionBaseEffectName(@NotNull PotionType potionType, @NotNull User user) {
+    @NonNull
+    public static String getPotionBaseEffectName(@NonNull PotionType potionType, @NonNull User user) {
         if (getHook() != null) {
             return getHook().getPotionBaseEffectName(potionType, user);
         }
@@ -392,8 +392,8 @@ public class LangUtil {
      * @param user       The user's language will be used for translation.
      * @return Translated name of potion effect.
      */
-    @NotNull
-    public static String getPotionEffectName(@NotNull PotionEffectType effectType, @NotNull User user) {
+    @NonNull
+    public static String getPotionEffectName(@NonNull PotionEffectType effectType, @NonNull User user) {
         return getHook() != null
             ? getHook().getPotionEffectName(effectType, user)
             : Util.prettifyText(effectType.getName());
@@ -406,8 +406,8 @@ public class LangUtil {
      * @param user      The user's language will be used for translation.
      * @return The translated name of the potion level.
      */
-    @NotNull
-    public static String getEffectAmplifierName(int amplifier, @NotNull User user) {
+    @NonNull
+    public static String getEffectAmplifierName(int amplifier, @NonNull User user) {
         if (getHook() != null) {
             return getHook().getEffectAmplifierName(amplifier, user);
         }
@@ -421,8 +421,8 @@ public class LangUtil {
      * @param user   The user's language will be used for translation.
      * @return The translated and formatted potion effect name, level, and duration.
      */
-    @NotNull
-    public static String getPotionEffectDisplay(@NotNull PotionEffect effect, @NotNull User user) {
+    @NonNull
+    public static String getPotionEffectDisplay(@NonNull PotionEffect effect, @NonNull User user) {
         if (getHook() != null) {
             return getHook().getPotionEffectDisplay(effect, user);
         }
@@ -452,8 +452,8 @@ public class LangUtil {
      * @param user        The user's language will be used for translation.
      * @return The translated name of the tropical fish type.
      */
-    @NotNull
-    public static String getTropicalFishTypeName(@NotNull TropicalFish.Pattern fishPattern, @NotNull User user) {
+    @NonNull
+    public static String getTropicalFishTypeName(TropicalFish.@NonNull Pattern fishPattern, @NonNull User user) {
         return getHook() != null
             ? getHook().getTropicalFishTypeName(fishPattern, user)
             : Util.prettifyText(fishPattern.name());
@@ -470,7 +470,7 @@ public class LangUtil {
      *         tropical fish, otherwise return null.
      */
     @Nullable
-    public static String getPredefinedTropicalFishName(@NotNull TropicalFishBucketMeta meta, @NotNull User user) {
+    public static String getPredefinedTropicalFishName(@NonNull TropicalFishBucketMeta meta, @NonNull User user) {
         if (getHook() != null) {
             return getHook().getPredefinedTropicalFishName(meta, user);
         }
@@ -523,8 +523,8 @@ public class LangUtil {
      * @param user  The user's language will be used for translation.
      * @return The name of the dye color that has been translated.
      */
-    @NotNull
-    public static String getDyeColorName(@NotNull DyeColor color, @NotNull User user) {
+    @NonNull
+    public static String getDyeColorName(@NonNull DyeColor color, @NonNull User user) {
         return getHook() != null
             ? getHook().getDyeColorName(color, user)
             : Util.prettifyText(color.name());
@@ -537,8 +537,8 @@ public class LangUtil {
      * @param user  The user's language will be used for translation.
      * @return Translated name of merchant's level.
      */
-    @NotNull
-    public static String getVillagerLevelName(int level, @NotNull User user) {
+    @NonNull
+    public static String getVillagerLevelName(int level, @NonNull User user) {
         return getHook() != null
             ? getHook().getVillagerLevelName(level, user)
             : Integer.toString(level);
@@ -551,8 +551,8 @@ public class LangUtil {
      * @param user       The user's language will be used for translation.
      * @return The translated profession name of the villager.
      */
-    @NotNull
-    public static String getVillagerProfessionName(@NotNull Villager.Profession profession, @NotNull User user) {
+    @NonNull
+    public static String getVillagerProfessionName(Villager.@NonNull Profession profession, @NonNull User user) {
         return getHook() != null
             ? getHook().getVillagerProfessionName(profession, user)
             : Util.prettifyText(profession.name());
@@ -565,8 +565,8 @@ public class LangUtil {
      * @param user    The user's language will be used for translation.
      * @return The translated name of banner pattern.
      */
-    @NotNull
-    public static String getBannerPatternName(@NotNull Pattern pattern, @NotNull User user) {
+    @NonNull
+    public static String getBannerPatternName(@NonNull Pattern pattern, @NonNull User user) {
         return getHook() != null
             ? getHook().getBannerPatternName(pattern, user)
             : pattern.getColor().name().toLowerCase(Locale.ROOT)
@@ -583,7 +583,7 @@ public class LangUtil {
      *         music disk is returned. Otherwise, return NULL.
      */
     @Nullable
-    public static String getMusicDiskDesc(@NotNull Material material, @NotNull User user) {
+    public static String getMusicDiskDesc(@NonNull Material material, @NonNull User user) {
         if (getHook() != null) {
             return getHook().getMusicDiskDesc(material, user);
         }
@@ -615,7 +615,7 @@ public class LangUtil {
      * @return The description of the Banner-Pattern item.
      */
     @Nullable
-    public static String getNewBannerPatternDesc(@NotNull Material material, @NotNull User user) {
+    public static String getNewBannerPatternDesc(@NonNull Material material, @NonNull User user) {
         if (getHook() != null) {
             return getHook().getNewBannerPatternDesc(material, user);
         }

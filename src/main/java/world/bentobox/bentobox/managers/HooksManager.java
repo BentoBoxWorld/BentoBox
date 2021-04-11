@@ -1,8 +1,7 @@
 package world.bentobox.bentobox.managers;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.eclipse.jdt.annotation.Nullable;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.hooks.Hook;
 
@@ -53,11 +52,11 @@ public class HooksManager {
         // We may have in the near future almost ~25 hooks, which would basically spam the console and make users nervous.
     }
 
-    public boolean isHooked(@NotNull String pluginName) {
+    public boolean isHooked(@NonNull String pluginName) {
         return names.containsKey(pluginName);
     }
 
-    public boolean isHooked(@NotNull Class<? extends Hook> hookType) {
+    public boolean isHooked(@NonNull Class<? extends Hook> hookType) {
         return types.containsKey(hookType);
     }
 
@@ -65,7 +64,7 @@ public class HooksManager {
      * Returns the list of successfully registered hooks.
      * @return list of successfully registered hooks.
      */
-    @NotNull
+    @NonNull
     public List<Hook> getHooks() {
         return new ArrayList<>(types.values());
     }

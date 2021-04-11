@@ -17,8 +17,8 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import world.bentobox.bentobox.api.hooks.Hook;
 import world.bentobox.bentobox.api.user.User;
 
@@ -68,8 +68,8 @@ public class LangUtilsHook extends Hook {
      * @param user the User's locale will be used for translation.
      * @return The Display-Name of the item.
      */
-    @NotNull
-    public String getItemDisplayName(@NotNull ItemStack item, @NotNull User user) {
+    @NonNull
+    public String getItemDisplayName(@NonNull ItemStack item, @NonNull User user) {
         ItemMeta meta = item.getItemMeta();
         if (meta != null && meta.hasDisplayName()) {
             return meta.getDisplayName();
@@ -87,8 +87,8 @@ public class LangUtilsHook extends Hook {
      * @param user      the User's locale will be used for translation.
      * @return The translated item name.
      */
-    @NotNull
-    public String getItemName(@NotNull ItemStack itemStack, @NotNull User user) {
+    @NonNull
+    public String getItemName(@NonNull ItemStack itemStack, @NonNull User user) {
         return LanguageHelper.getItemName(itemStack, getUserLocale(user));
     }
 
@@ -102,8 +102,8 @@ public class LangUtilsHook extends Hook {
      * @param user     the User's locale will be used for translation.
      * @return The translated material name.
      */
-    @NotNull
-    public String getMaterialName(@NotNull Material material, @NotNull User user) {
+    @NonNull
+    public String getMaterialName(@NonNull Material material, @NonNull User user) {
         return LanguageHelper.getMaterialName(material, getUserLocale(user));
     }
 
@@ -114,8 +114,8 @@ public class LangUtilsHook extends Hook {
      * @param user   the User's locale will be used for translation.
      * @return The name of the entity
      */
-    @NotNull
-    public String getEntityDisplayName(@NotNull Entity entity, @NotNull User user) {
+    @NonNull
+    public String getEntityDisplayName(@NonNull Entity entity, @NonNull User user) {
         return entity.getCustomName() != null
             ? entity.getCustomName()
             : getEntityName(entity, user);
@@ -128,8 +128,8 @@ public class LangUtilsHook extends Hook {
      * @param user   the User's locale will be used for translation.
      * @return The translated EntityType name.
      */
-    @NotNull
-    public String getEntityName(@NotNull Entity entity, @NotNull User user) {
+    @NonNull
+    public String getEntityName(@NonNull Entity entity, @NonNull User user) {
         return LanguageHelper.getEntityName(entity, getUserLocale(user));
     }
 
@@ -140,8 +140,8 @@ public class LangUtilsHook extends Hook {
      * @param user       the User's locale will be used for translation.
      * @return The translated EntityType name.
      */
-    @NotNull
-    public String getEntityName(@NotNull EntityType entityType, @NotNull User user) {
+    @NonNull
+    public String getEntityName(@NonNull EntityType entityType, @NonNull User user) {
         return LanguageHelper.getEntityName(entityType, getUserLocale(user));
     }
 
@@ -152,8 +152,8 @@ public class LangUtilsHook extends Hook {
      * @param user  the User's locale will be used for translation.
      * @return The translated Biome name.
      */
-    @NotNull
-    public String getBiomeName(@NotNull Biome biome, @NotNull User user) {
+    @NonNull
+    public String getBiomeName(@NonNull Biome biome, @NonNull User user) {
         return LanguageHelper.getBiomeName(biome, getUserLocale(user));
     }
 
@@ -165,8 +165,8 @@ public class LangUtilsHook extends Hook {
      * @param user    The User's locale will be used for translation.
      * @return Translated enchanted name with level.
      */
-    @NotNull
-    public String getEnchantDisplayName(@NotNull Enchantment enchant, int level, @NotNull User user) {
+    @NonNull
+    public String getEnchantDisplayName(@NonNull Enchantment enchant, int level, @NonNull User user) {
         return LanguageHelper.getEnchantmentDisplayName(enchant, level, getUserLocale(user));
     }
 
@@ -178,8 +178,8 @@ public class LangUtilsHook extends Hook {
      * @param user  The User's locale will be used for translation.
      * @return Translated enchanted name with level.
      */
-    @NotNull
-    public String getEnchantDisplayName(@NotNull Entry<Enchantment, Integer> entry, @NotNull User user) {
+    @NonNull
+    public String getEnchantDisplayName(@NonNull Entry<Enchantment, Integer> entry, @NonNull User user) {
         return LanguageHelper.getEnchantmentDisplayName(entry, getUserLocale(user));
     }
 
@@ -190,8 +190,8 @@ public class LangUtilsHook extends Hook {
      * @param user    The User's locale will be used for translation.
      * @return The translated enchant name.
      */
-    @NotNull
-    public String getEnchantName(@NotNull Enchantment enchant, @NotNull User user) {
+    @NonNull
+    public String getEnchantName(@NonNull Enchantment enchant, @NonNull User user) {
         return LanguageHelper.getEnchantmentName(enchant, getUserLocale(user));
     }
 
@@ -203,8 +203,8 @@ public class LangUtilsHook extends Hook {
      * @param user  The user's language will be used for translation.
      * @return The converted enchantment level.
      */
-    @NotNull
-    public String getEnchantLevelName(int level, @NotNull User user) {
+    @NonNull
+    public String getEnchantLevelName(int level, @NonNull User user) {
         return LanguageHelper.getEnchantmentLevelName(level, getUserLocale(user));
     }
 
@@ -215,8 +215,8 @@ public class LangUtilsHook extends Hook {
      * @param user       The user's language will be used for translation.
      * @return Translated potion name.
      */
-    @NotNull
-    public String getPotionTypeName(@NotNull PotionType potionType, @NotNull User user) {
+    @NonNull
+    public String getPotionTypeName(@NonNull PotionType potionType, @NonNull User user) {
         return LanguageHelper.getPotionName(potionType, getUserLocale(user));
     }
 
@@ -227,8 +227,8 @@ public class LangUtilsHook extends Hook {
      * @param user       The user's language will be used for translation.
      * @return Translated splash potion name.
      */
-    @NotNull
-    public String getSplashPotionName(@NotNull PotionType potionType, @NotNull User user) {
+    @NonNull
+    public String getSplashPotionName(@NonNull PotionType potionType, @NonNull User user) {
         return LanguageHelper.getSplashPotionName(potionType, getUserLocale(user));
     }
 
@@ -239,8 +239,8 @@ public class LangUtilsHook extends Hook {
      * @param user       The user's language will be used for translation.
      * @return Translated lingering potion name.
      */
-    @NotNull
-    public String getLingeringPotionName(@NotNull PotionType potionType, @NotNull User user) {
+    @NonNull
+    public String getLingeringPotionName(@NonNull PotionType potionType, @NonNull User user) {
         return LanguageHelper.getLingeringPotionName(potionType, getUserLocale(user));
     }
 
@@ -251,8 +251,8 @@ public class LangUtilsHook extends Hook {
      * @param user       The user's language will be used for translation.
      * @return Translated tipped arrow name.
      */
-    @NotNull
-    public String getTippedArrowName(@NotNull PotionType potionType, @NotNull User user) {
+    @NonNull
+    public String getTippedArrowName(@NonNull PotionType potionType, @NonNull User user) {
         return LanguageHelper.getTippedArrowName(potionType, getUserLocale(user));
     }
 
@@ -265,8 +265,8 @@ public class LangUtilsHook extends Hook {
      * @param user       The user's language will be used for translation.
      * @return Return the translation result.
      */
-    @NotNull
-    public String getPotionBaseEffectName(@NotNull PotionType potionType, @NotNull User user) {
+    @NonNull
+    public String getPotionBaseEffectName(@NonNull PotionType potionType, @NonNull User user) {
         return LanguageHelper.getPotionBaseEffectName(potionType, getUserLocale(user));
     }
 
@@ -277,8 +277,8 @@ public class LangUtilsHook extends Hook {
      * @param user       The user's language will be used for translation.
      * @return Translated name of potion effect.
      */
-    @NotNull
-    public String getPotionEffectName(@NotNull PotionEffectType effectType, @NotNull User user) {
+    @NonNull
+    public String getPotionEffectName(@NonNull PotionEffectType effectType, @NonNull User user) {
         return LanguageHelper.getPotionEffectName(effectType, getUserLocale(user));
     }
 
@@ -289,8 +289,8 @@ public class LangUtilsHook extends Hook {
      * @param user      The user's language will be used for translation.
      * @return The translated name of the potion level.
      */
-    @NotNull
-    public String getEffectAmplifierName(int amplifier, @NotNull User user) {
+    @NonNull
+    public String getEffectAmplifierName(int amplifier, @NonNull User user) {
         return LanguageHelper.getEffectAmplifierName(amplifier, getUserLocale(user));
     }
 
@@ -301,8 +301,8 @@ public class LangUtilsHook extends Hook {
      * @param user   The user's language will be used for translation.
      * @return The translated and formatted potion effect name, level, and duration.
      */
-    @NotNull
-    public String getPotionEffectDisplay(@NotNull PotionEffect effect, @NotNull User user) {
+    @NonNull
+    public String getPotionEffectDisplay(@NonNull PotionEffect effect, @NonNull User user) {
         return LanguageHelper.getPotionEffectDisplay(effect, getUserLocale(user));
     }
 
@@ -313,8 +313,8 @@ public class LangUtilsHook extends Hook {
      * @param user        The user's language will be used for translation.
      * @return The translated name of the tropical fish type.
      */
-    @NotNull
-    public String getTropicalFishTypeName(@NotNull TropicalFish.Pattern fishPattern, @NotNull User user) {
+    @NonNull
+    public String getTropicalFishTypeName(TropicalFish.@NonNull Pattern fishPattern, @NonNull User user) {
         return LanguageHelper.getTropicalFishTypeName(fishPattern, getUserLocale(user));
     }
 
@@ -329,7 +329,7 @@ public class LangUtilsHook extends Hook {
      *     tropical fish, otherwise return null.
      */
     @Nullable
-    public String getPredefinedTropicalFishName(@NotNull TropicalFishBucketMeta meta, @NotNull User user) {
+    public String getPredefinedTropicalFishName(@NonNull TropicalFishBucketMeta meta, @NonNull User user) {
         return LanguageHelper.getPredefinedTropicalFishName(meta, getUserLocale(user));
     }
 
@@ -340,8 +340,8 @@ public class LangUtilsHook extends Hook {
      * @param user  The user's language will be used for translation.
      * @return The name of the dye color that has been translated.
      */
-    @NotNull
-    public String getDyeColorName(@NotNull DyeColor color, @NotNull User user) {
+    @NonNull
+    public String getDyeColorName(@NonNull DyeColor color, @NonNull User user) {
         return LanguageHelper.getDyeColorName(color, getUserLocale(user));
     }
 
@@ -352,8 +352,8 @@ public class LangUtilsHook extends Hook {
      * @param user  The user's language will be used for translation.
      * @return Translated name of merchant's level.
      */
-    @NotNull
-    public String getVillagerLevelName(int level, @NotNull User user) {
+    @NonNull
+    public String getVillagerLevelName(int level, @NonNull User user) {
         return LanguageHelper.getVillagerLevelName(level, getUserLocale(user));
     }
 
@@ -364,8 +364,8 @@ public class LangUtilsHook extends Hook {
      * @param user       The user's language will be used for translation.
      * @return The translated profession name of the villager.
      */
-    @NotNull
-    public String getVillagerProfessionName(@NotNull Villager.Profession profession, @NotNull User user) {
+    @NonNull
+    public String getVillagerProfessionName(Villager.@NonNull Profession profession, @NonNull User user) {
         return LanguageHelper.getVillagerProfessionName(profession, getUserLocale(user));
     }
 
@@ -376,8 +376,8 @@ public class LangUtilsHook extends Hook {
      * @param user    The user's language will be used for translation.
      * @return The translated name of banner pattern.
      */
-    @NotNull
-    public String getBannerPatternName(@NotNull Pattern pattern, @NotNull User user) {
+    @NonNull
+    public String getBannerPatternName(@NonNull Pattern pattern, @NonNull User user) {
         return LanguageHelper.getBannerPatternName(pattern, getUserLocale(user));
     }
 
@@ -390,7 +390,7 @@ public class LangUtilsHook extends Hook {
      *     music disk is returned. Otherwise, return NULL.
      */
     @Nullable
-    public String getMusicDiskDesc(@NotNull Material material, @NotNull User user) {
+    public String getMusicDiskDesc(@NonNull Material material, @NonNull User user) {
         return LanguageHelper.getMusicDiskDesc(material, getUserLocale(user));
     }
 
@@ -403,7 +403,7 @@ public class LangUtilsHook extends Hook {
      * @return The description of the Banner-Pattern item.
      */
     @Nullable
-    public String getNewBannerPatternDesc(@NotNull Material material, @NotNull User user) {
+    public String getNewBannerPatternDesc(@NonNull Material material, @NonNull User user) {
         return LanguageHelper.getNewBannerPatternDesc(material, getUserLocale(user));
     }
 
