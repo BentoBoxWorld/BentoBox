@@ -26,7 +26,7 @@ import java.util.Map.Entry;
 
 /**
  * @author ApacheZy
- * @since 1.17
+ * @since 1.7 todo: please check this.
  */
 @SuppressWarnings("unused")
 public class LangUtilsHook extends Hook {
