@@ -554,6 +554,28 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         if (object == null) {
             return "null";
         }
+        
+        // Allows to go deeper in the Collections and serialize them as well!
+        if (object instanceof List) {
+            List<?> objectList = (List<?>) object;
+            List<Object> toReturn = new ArrayList<>();
+            objectList.forEach(obj -> toReturn.add(serialize(obj)));
+            return toReturn;
+        }
+
+        // Allows to go deeper in the Maps and serialize them as well!
+        if (object instanceof Map) {
+            Map<Object, Object> result = new HashMap<>();
+            for (Entry<Object, Object> object1 : ((Map<Object, Object>) object).entrySet()) {
+                // Serialize all key and values
+                String key = (String) serialize(object1.getKey());
+                key = key.replaceAll("\\.", ":dot:");
+                result.put(key, serialize(object1.getValue()));
+            }
+            return result;
+        }
+
+        
         // UUID has it's own serialization, that is not picked up automatically
         if (object instanceof UUID) {
             return ((UUID)object).toString();
