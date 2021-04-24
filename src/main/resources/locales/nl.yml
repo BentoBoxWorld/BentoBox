@@ -573,7 +573,7 @@ commands:
       the-end:
         not-allowed: "&c Je mag je huis niet op het einde zetten."
         confirmation: "&c Weet u zeker dat u uw huis op het einde wilt zetten?"
-      parameters: "[huis nummer]"
+      parameters: "[naam huis]"
       too-many-homes: "&c Kan niet instellen - je eiland heeft maximaal [number]
         huizen."
       homes-are: "&6 eilandwoningen zijn:"

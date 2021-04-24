@@ -534,7 +534,7 @@ commands:
       the-end:
         not-allowed: "&c You are not allowed to set your home in the End."
         confirmation: "&c Are you sure you want to set your home in the End?"
-      parameters: "[home number]"
+      parameters: "[home name]"
     setname:
       description: "set a name for your island"
       name-too-short: "&c Too short. Minimum size is [number] characters."
