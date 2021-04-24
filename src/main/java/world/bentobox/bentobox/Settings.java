@@ -250,7 +250,7 @@ public class Settings implements ConfigObject {
 
     @ConfigComment("Minimum nether portal search radius. This should not be less that 8 otherwise duplicate")
     @ConfigComment("portals can occur")
-    @ConfigEntry(path = "island.portal-search-radius", since = "1.17.0")
+    @ConfigEntry(path = "island.portal-search-radius", since = "1.16.2")
     private int minPortalSearchRadius = 8;
 
     @ConfigComment("Number of blocks to paste per tick when pasting blueprints.")

@@ -425,7 +425,6 @@ public class PortalTeleportationListener implements Listener {
         int x = Math.abs(i.getProtectionCenter().getBlockX() - e.getFrom().getBlockX());
         int z = Math.abs(i.getProtectionCenter().getBlockZ() - e.getFrom().getBlockZ());
         int diff = Math.max(plugin.getSettings().getMinPortalSearchRadius(), i.getProtectionRange() - Math.max(x, z));
-        BentoBox.getInstance().logDebug("Search radius = " + diff);
         if (diff > 0 && diff < 128) {
             e.setSearchRadius(diff);
         }
