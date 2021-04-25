@@ -169,10 +169,10 @@ island:
   # Be careful not to make this too big. Does not cover standard nether or end teleports.
   # Added since 1.6.0.
   clear-radius: 5
-  # Minimum nether portal search radius. This should not be less that 8 otherwise duplicate
-  # can occur.
-  # Added since 1.17.0.
-  portal-search-radius: 8
+  # Minimum nether portal search radius. If this is too low, duplicate portals may appear.
+  # Vanilla default is 128.
+  # Added since 1.16.2.
+  portal-search-radius: 64
   # Number of blocks to paste per tick when pasting blueprints.
   # Smaller values will help reduce noticeable lag but will make pasting take slightly longer.
   # On the contrary, greater values will make pasting take less time, but this benefit is quickly severely impacted by the

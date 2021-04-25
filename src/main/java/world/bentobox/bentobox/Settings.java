@@ -248,10 +248,10 @@ public class Settings implements ConfigObject {
     @ConfigEntry(path = "island.clear-radius", since = "1.6.0")
     private int clearRadius = 5;
 
-    @ConfigComment("Minimum nether portal search radius. This should not be less that 8 otherwise duplicate")
-    @ConfigComment("portals can occur")
+    @ConfigComment("Minimum nether portal search radius. If this is too low, duplicate portals may appear.")
+    @ConfigComment("Vanilla default is 128.")
     @ConfigEntry(path = "island.portal-search-radius", since = "1.16.2")
-    private int minPortalSearchRadius = 8;
+    private int minPortalSearchRadius = 64;
 
     @ConfigComment("Number of blocks to paste per tick when pasting blueprints.")
     @ConfigComment("Smaller values will help reduce noticeable lag but will make pasting take slightly longer.")
