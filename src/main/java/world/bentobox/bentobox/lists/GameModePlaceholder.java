@@ -110,7 +110,7 @@ public enum GameModePlaceholder {
      * Returns the maximum number of members the island can have
      * @since 1.5.0
      */
-    ISLAND_MEMBERS_MAX("island_members_max", (addon, user, island) -> island == null ? "" : String.valueOf(user.getPermissionValue(addon.getPermissionPrefix() + "team.maxsize", addon.getPlugin().getIWM().getMaxTeamSize(addon.getOverWorld())))),
+    ISLAND_MEMBERS_MAX("island_members_max", (addon, user, island) -> island == null ? "" : String.valueOf(addon.getIslands().getMaxMembers(island, RanksManager.MEMBER_RANK))),
     /**
      * Returns the amount of players that are at least MEMBER on this island.
      * @since 1.5.0
@@ -234,7 +234,8 @@ public enum GameModePlaceholder {
      * @since 1.5.2
      */
     VISITED_ISLAND_MEMBERS_MAX("visited_island_members_max", (addon, user, island) ->
-    getVisitedIsland(addon, user).map(value -> String.valueOf(user.getPermissionValue(addon.getPermissionPrefix() + "team.maxsize", addon.getPlugin().getIWM().getMaxTeamSize(addon.getOverWorld())))).orElse("")),
+    getVisitedIsland(addon, user).map(value -> String.valueOf(addon.getIslands().getMaxMembers(value, RanksManager.MEMBER_RANK)))
+    .orElse("")),
     /**
      * Returns a comma separated list of player names that are at least MEMBER on the island the player is standing on.
      * @since 1.13.0
