@@ -94,6 +94,8 @@ public class GameModePlaceholderTest {
         when(user.getLocation()).thenReturn(location);
         when(im.getIslandAt(any())).thenReturn(Optional.of(island));
         when(user.isPlayer()).thenReturn(true);
+        // Max members
+        when(im.getMaxMembers(island, RanksManager.MEMBER_RANK)).thenReturn(10);
     }
 
     /**
