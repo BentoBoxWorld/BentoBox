@@ -99,31 +99,25 @@ public abstract class DefaultPlayerCommand extends CompositeCommand {
         // Check if user has an island.
         if (this.getIslands().getIsland(this.getWorld(), user.getUniqueId()) != null) {
             // Default command if user has an island.
-            String command = this.<GameModeAddon>getAddon().getWorldSettings().getDefaultPlayerAction();
-
-            // Perform command or use "go" command.
-            if (command != null && user.performCommand(label + " " + command)) {
-                return true;
-            }
-            else {
-                return this.getSubCommand("go").
-                        map(goCmd -> goCmd.call(user, goCmd.getLabel(), Collections.emptyList())).
-                        orElse(false);
-            }
-        }
-        else {
+            return runCommand(user, label, this.<GameModeAddon>getAddon().getWorldSettings().getDefaultPlayerAction(), "go");
+        } else {
             // Default command if user does not have an island.
-            String command = this.<GameModeAddon>getAddon().getWorldSettings().getDefaultNewPlayerAction();
+            return runCommand(user, label, this.<GameModeAddon>getAddon().getWorldSettings().getDefaultNewPlayerAction(), "create");
+        }
+    }
 
-            // Perform command or use "create" command.
-            if (command != null && user.performCommand(label + " " + command)) {
-                return true;
-            }
-            else {
-                return this.getSubCommand("create").
-                        map(createCmd -> createCmd.call(user, createCmd.getLabel(), Collections.emptyList())).
-                        orElse(false);
-            }
+    private boolean runCommand(User user, String label, String command, String defaultSubCommand) {
+        if (command == null || command.isEmpty()) {
+            command = defaultSubCommand;
+        }
+        // Call sub command or perform command if it does not exist
+        if (this.getSubCommand(command).isPresent()) {
+            return this.getSubCommand(command).
+                    map(c -> c.call(user, c.getLabel(), Collections.emptyList())).
+                    orElse(false);
+        } else {
+            // Command is not a sub command - perform it directly
+            return user.performCommand(command);
         }
     }
 }
