@@ -116,8 +116,8 @@ public abstract class DefaultPlayerCommand extends CompositeCommand {
                     map(c -> c.call(user, c.getLabel(), Collections.emptyList())).
                     orElse(false);
         } else {
-            // Command is not a sub command - perform it directly
-            return user.performCommand(command);
+            // Command is not a known sub command - try to perform it directly - some plugins trap these commands, like Deluxe menus
+            return user.performCommand(label + " " + command);
         }
     }
 }
