@@ -117,7 +117,12 @@ public abstract class DefaultPlayerCommand extends CompositeCommand {
                     orElse(false);
         } else {
             // Command is not a known sub command - try to perform it directly - some plugins trap these commands, like Deluxe menus
-            return user.performCommand(label + " " + command);
+            if (command.startsWith("/")) {
+                // If commands starts with Slash, don't append the prefix
+                return user.performCommand(command.substring(1));
+            } else {
+                return user.performCommand(label + " " + command);
+            }
         }
     }
 }
