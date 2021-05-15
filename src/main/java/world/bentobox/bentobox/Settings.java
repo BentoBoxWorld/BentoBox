@@ -248,6 +248,11 @@ public class Settings implements ConfigObject {
     @ConfigEntry(path = "island.clear-radius", since = "1.6.0")
     private int clearRadius = 5;
 
+    @ConfigComment("Minimum nether portal search radius. If this is too low, duplicate portals may appear.")
+    @ConfigComment("Vanilla default is 128.")
+    @ConfigEntry(path = "island.portal-search-radius", since = "1.16.2")
+    private int minPortalSearchRadius = 64;
+
     @ConfigComment("Number of blocks to paste per tick when pasting blueprints.")
     @ConfigComment("Smaller values will help reduce noticeable lag but will make pasting take slightly longer.")
     @ConfigComment("On the contrary, greater values will make pasting take less time, but this benefit is quickly severely impacted by the")
@@ -778,27 +783,27 @@ public class Settings implements ConfigObject {
     }
 
 
-	/**
+    /**
      * Method Settings#getPlayerHeadCacheTime returns the playerHeadCacheTime of this object.
      *
      * @return the playerHeadCacheTime (type long) of this object.
      * @since 1.14.1
      */
     public long getPlayerHeadCacheTime()
-	{
-		return playerHeadCacheTime;
-	}
+    {
+        return playerHeadCacheTime;
+    }
 
 
-	/**
+    /**
      * Method Settings#setPlayerHeadCacheTime sets new value for the playerHeadCacheTime of this object.
      * @param playerHeadCacheTime new value for this object.
      * @since 1.14.1
      */
     public void setPlayerHeadCacheTime(long playerHeadCacheTime)
-	{
-		this.playerHeadCacheTime = playerHeadCacheTime;
-	}
+    {
+        this.playerHeadCacheTime = playerHeadCacheTime;
+    }
 
 
     /**
@@ -870,5 +875,19 @@ public class Settings implements ConfigObject {
     public void setTicksBetweenCalls(long ticksBetweenCalls)
     {
         this.ticksBetweenCalls = ticksBetweenCalls;
+    }
+
+    /**
+     * @return the minPortalSearchRadius
+     */
+    public int getMinPortalSearchRadius() {
+        return minPortalSearchRadius;
+    }
+
+    /**
+     * @param minPortalSearchRadius the minPortalSearchRadius to set
+     */
+    public void setMinPortalSearchRadius(int minPortalSearchRadius) {
+        this.minPortalSearchRadius = minPortalSearchRadius;
     }
 }

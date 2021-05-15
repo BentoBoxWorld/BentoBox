@@ -424,7 +424,7 @@ public class PortalTeleportationListener implements Listener {
         // Find max x or max z
         int x = Math.abs(i.getProtectionCenter().getBlockX() - e.getFrom().getBlockX());
         int z = Math.abs(i.getProtectionCenter().getBlockZ() - e.getFrom().getBlockZ());
-        int diff = i.getProtectionRange() - Math.max(x, z);
+        int diff = Math.max(plugin.getSettings().getMinPortalSearchRadius(), i.getProtectionRange() - Math.max(x, z));
         if (diff > 0 && diff < 128) {
             e.setSearchRadius(diff);
         }

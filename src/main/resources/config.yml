@@ -1,10 +1,10 @@
-# BentoBox v1.14.1-SNAPSHOT-LOCAL configuration file.
-#
+# BentoBox {$version} configuration file.
+# 
 # This configuration file contains settings that mainly apply to or manage the following elements:
 #  * Data storage
 #  * Gamemodes (commands, ...)
 #  * Internet connectivity (web-based content-enriched features, ...)
-#
+# 
 # Note that this configuration file is dynamic:
 #  * It gets updated with the newest settings and comments after BentoBox loaded its settings from it.
 #  * Upon updating BentoBox, new settings will be automatically added into this configuration file.
@@ -13,7 +13,7 @@
 #     * They are provided with default values that should not cause issues on live production servers.
 #  * You can however edit this file while the server is online.
 #    You will therefore need to run the following command in order to take the changes into account: /bentobox reload.
-#
+# 
 # Here are a few pieces of advice before you get started:
 #  * You should check out our Wiki, which may provide you useful tips or insights about BentoBox's features.
 #     Link: https://github.com/BentoBoxWorld/BentoBox/wiki
@@ -58,6 +58,14 @@ general:
     # This helps prevent issues if the server crashes.
     # Data is also saved at important points in the game.
     backup-period: 5
+    # How many players will be saved in one tick. Default is 200
+    # Reduce if you experience lag while saving.
+    # Do not set this too low or data might get lost!
+    max-saved-players-per-tick: 20
+    # How many islands will be saved in one tick. Default is 200
+    # Reduce if you experience lag while saving.
+    # Do not set this too low or data might get lost!
+    max-saved-islands-per-tick: 20
     # Enable SSL connection to MongoDB, MariaDB, MySQL and PostgreSQL databases.
     # Added since 1.12.0.
     use-ssl: false
@@ -75,7 +83,7 @@ general:
   # Add other fake player names here if required
   # /!\ This feature is experimental and might not work as expected or might not work at all.
   fakeplayers:
-    - '[CoFH]'
+  - '[CoFH]'
 panel:
   # Toggle whether panels should be closed or not when the player clicks anywhere outside of the inventory view.
   close-on-click-outside: true
@@ -161,6 +169,10 @@ island:
   # Be careful not to make this too big. Does not cover standard nether or end teleports.
   # Added since 1.6.0.
   clear-radius: 5
+  # Minimum nether portal search radius. If this is too low, duplicate portals may appear.
+  # Vanilla default is 128.
+  # Added since 1.16.2.
+  portal-search-radius: 64
   # Number of blocks to paste per tick when pasting blueprints.
   # Smaller values will help reduce noticeable lag but will make pasting take slightly longer.
   # On the contrary, greater values will make pasting take less time, but this benefit is quickly severely impacted by the

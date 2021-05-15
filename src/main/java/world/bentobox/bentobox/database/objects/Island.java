@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -919,7 +920,7 @@ public class Island implements DataObject, MetaDataAble {
     public void updateMaxEverProtectionRange() {
         // Ratchet up the maximum protection range
         // Distance from maxes
-        int diffMinX = Math.abs(getCenter().getBlockX() - this.getMinProtectedX());
+        int diffMinX = Math.abs(Objects.requireNonNull(getCenter()).getBlockX() - this.getMinProtectedX());
         int diffMaxX = Math.abs(getCenter().getBlockX() - this.getMaxProtectedX());
         int diffMinZ = Math.abs(getCenter().getBlockZ() - this.getMinProtectedZ());
         int diffMaxZ = Math.abs(getCenter().getBlockZ() - this.getMaxProtectedZ());
