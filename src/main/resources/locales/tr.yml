@@ -1,9 +1,9 @@
 ---
 meta:
+  banner: RED_BANNER:1:RHOMBUS_MIDDLE:WHITE:CIRCLE_MIDDLE:RED:HALF_HORIZONTAL_MIRROR:RED:TRIANGLE_BOTTOM:WHITE:STRIPE_BOTTOM:RED
   authors:
   - Over_Brave
   - None
-  banner: RED_BANNER:1:RHOMBUS_MIDDLE:WHITE:CIRCLE_MIDDLE:RED:HALF_HORIZONTAL_MIRROR:RED:TRIANGLE_BOTTOM:WHITE:STRIPE_BOTTOM:RED
 prefixes:
   bentobox: "&6 BentoBox &7 &l > &r "
 general:
@@ -74,7 +74,6 @@ commands:
     purge:
       parameters: "[gün]"
       description: Belirlediğiniz süreden uzun olan adaları siler.
-      days-one-or-more: Gün sayısı 1 veya daha uzun olmalıdır.
       purgable-islands: "&e[number] &5silinebilecek ada bulundu!"
       purge-in-progress: "&cTemizleme devam ediyor. Durdurmak için durdurma komutunu
         kullanın."
@@ -101,6 +100,7 @@ commands:
         description: temizlemenin durumunu gösterir
         status: "&b [purgeable] &a adadan &b [purged]'si temizlendi &7(&b[percentage]
           %&7)&a."
+      days-one-or-more: Gün sayısı 1 veya daha uzun olmalıdır.
     team:
       add:
         parameters: "<owner> <player>"
@@ -157,10 +157,10 @@ commands:
         description: Adanın koruma bölgesini ayarla.
         success: "&2Adanın koruma menzili &e[number] &2olarak ayarlandı!"
         invalid-value:
-          too-low: "&4Koruma aralığı 1'den büyük olmalıdır!"
-          not-numeric: "&e[number] &4tam bir sayı değil!"
           too-high: "&4Koruma aralığı &e[number] &4büyük ya da küçük olmalıdır!"
           same-as-before: "&4Koruma aralığı zaten &e[number] &4olarak ayarlandı!"
+          too-low: "&4Koruma aralığı 1'den büyük olmalıdır!"
+          not-numeric: "&e[number] &4tam bir sayı değil!"
       reset:
         parameters: "<player>"
         description: Adayı dünyanın varsayılan koruma bölgesine göre sıfırla.
@@ -203,7 +203,6 @@ commands:
       team-members-title: "&bTakım üyeleri:"
       team-owner-format: "&d[name] [rank]"
       team-member-format: "&d[name] [rank]"
-      island-location: "&bAda lokasyonu: [xyz]"
       island-coords: "&bAda kordinatları: [xz1] ile [xz2] arasında"
       islands-in-trash: "&bOyuncun adası çöp kutusunda!"
       protection-range: "&bKoruma alanı: [range]"
@@ -214,6 +213,9 @@ commands:
       banned-players: "&b Banlanan oyuncular:"
       banned-format: "&4[name]"
       unowned: "&eBilinmiyor"
+      island-location: "&bAda lokasyonu: [xyz]"
+      island-protection-center: 'Korumalı alan merkezi: [xyz]'
+      island-center: 'Ada merkezi: [xyz]'
     switch:
       description: Koruma izinlerine açma/kapama
       op: "&cSen zaten tüm korumalardan izinlisin. Yetkini aldıktan sonra tekrar dene."
@@ -280,6 +282,7 @@ commands:
     settings:
       parameters: "[oyuncu]"
       description: Sunucu dünya ayarları veya oyuncu ada ayarlarını aç.
+      unknown-setting: "&c Bilinmeyen ayar"
     blueprint:
       parameters: "<load/copy/paste/pos1/pos2/save>"
       description: Ada şekillerini değişir.
@@ -381,9 +384,9 @@ commands:
         no-trash-instructions: Varsayılan grup çöp kutusuna atılamaz
         no-permission: İzin yok
         no-perm-required: Varsayılan paket için izin ayarlanamaz
-        normal: Normal
-        nether: Nether
         end: The End
+        nether: Nether
+        normal: Normal
     resetflags:
       parameters: "[flag]"
       description: Config.yml'deki tüm adaları varsayılan etiket ayarlarına sıfırla
@@ -422,6 +425,18 @@ commands:
         parameters: "<oyuncu> <ölme sayısı>"
         success: "&d[name] &5oyuncusunun ölme sayısından &a[number] &5silindi. Toplam
           ölme sayısı: &5[total]'"
+    setprotectionlocation:
+      parameters: "[x y z coords]"
+      description: Şu anki konumu veya [x y z] konumunu adanın koruma bölgesinin merkezi
+        olarak ayarla
+      island: "&c Bu [xyz] konumundaki '[name]' adlı kullanıcının adasını etkileyecek."
+      confirmation: "&c Koruma bölgesinin merkezi olarak [xyz] konumunu ayarlamak
+        istediğine emin misin?"
+      success: "&a [xyz] konumu başarıyla koruma bölgesinin merkezi olarak ayarlandı."
+      fail: "&a [xyz] noktası koruma bölgesinin merkezi olarak ayarlanamadı."
+      island-location-changed: "&a [user] adlı kullanıcı adanın koruma alanı merkezini
+        [xyz] konumuna değiştirdi."
+      xyz-error: "&c Üç adet tam sayı koordinat girin: örn, 100 120 100"
   bentobox:
     description: BentoBox admin komudu
     about:
@@ -482,6 +497,7 @@ commands:
       teleport: "&9Adana ışınlanıyorsun!"
       teleported: "&e#[number] &bnumaralı evine gidiyorsun."
       tip: "&9Yardım için &e/is help"
+      unknown-home: "&c Bilinmeyen ev adı!"
     help:
       description: Ana ada komudu
       pick-world: "&4Specify world from [worlds]"
@@ -533,7 +549,6 @@ commands:
     sethome:
       description: Oldugun noktaya ev olarak kaydeder
       must-be-on-your-island: "&4Önce adanda olmalısın!"
-      num-homes: "&4Evlerini [number] olarak kaydet."
       home-set: "&9Oldugun lokasyon ev olarak kaydedildi!"
       nether:
         not-allowed: "&4Netherde ev kaydetmek icin yetkin yok!."
@@ -542,6 +557,9 @@ commands:
         not-allowed: "&4Ende ev kaydetmek icin yetin yok!"
         confirmation: "&4Ende ev kaydetmek istedigine emin misin?"
       parameters: "[home number]"
+      too-many-homes: "&c Ayarlanamadı - adanızda maksimum sayıda [number] ev var."
+      homes-are: "&6 Adadaki evler:"
+      home-list-syntax: "&6 [name]"
     setname:
       description: Ada ismini degistir.
       name-too-short: "&4Cok kısa. En az &e[number] &4karakter olabilir!."
@@ -715,6 +733,16 @@ commands:
       player-expelled-you: "&d[name] &4seni adadan attı!"
       success: "&d[name] &9oyuncusunu adadan attın!"
       cannot-ban-member: "&9Takımdan birisini adadan atamazsın!"
+    deletehome:
+      description: bir ev noktasını sil
+      parameters: "[home name]"
+    renamehome:
+      description: bir evi yeniden adlandır
+      parameters: "[home name]"
+      enter-new-name: "&6 Yeni bir isim gir"
+      already-exists: "&c Bu isim mevcut, lütfen farklı bir isim dene."
+    homes:
+      description: evlerini listele
 ranks:
   owner: Ada-Sahibi
   sub-owner: Yardımcı
@@ -1212,12 +1240,23 @@ protection:
         &a kırmasına ve ada sınırları dışındaki
         &a varlıklara zarar vermesine izin verin.
       name: Dünya TNT hasarı
-    ANIMAL_SPAWN:
-      description: Doğmayı değiş
-      name: Hayvan doğuşu
     MONSTER_SPAWN:
-      description: Doğuşu değiş.
       name: Canavar doğuşu
+      description: Doğuşu değiş.
+    ANIMAL_SPAWN:
+      name: Hayvan doğuşu
+      description: Doğmayı değiş
+    PETS_STAY_AT_HOME:
+      description: |-
+        &a Aktif iken, eğitilmiş
+        &a hayvanlar sadece sahibin
+        &a adasına gidebilir ve
+        &a ana adadan ayrılamaz.
+      name: Evcil hayvanlar evde kalır.
+    HIVE:
+      description: "&a Kovan hasatını değiştir."
+      name: Kovan hasatı
+      hint: Hasat kapalı
   locked: "&4Bu ada kilitli!"
   protected: "&4Ada korunuyor: [description]"
   world-protected: "&cDünya korunuyor: [description]"
@@ -1380,3 +1419,33 @@ successfully-loaded: |2
   &6 |  _ < / _ \ '_ \| __/ _ \|  _ < / _ \ \/ /  &bYapımcısı : &atastybento &band &ePoslovitch
   &6 | |_) |  __/ | | | || (_) | |_) | (_) >  <   &bVersiyon &e[version]
   &6 |____/ \___|_| |_|\__\___/|____/ \___/_/\_\  &e[time] &bsaniyede yüklendi!
+enums:
+  DamageCause:
+    CONTACT: Temas
+    ENTITY_ATTACK: Canavar Saldırısı
+    ENTITY_SWEEP_ATTACK: Savurma Saldırısı
+    PROJECTILE: Mermi
+    SUFFOCATION: Sıkışma
+    FALL: Düşme
+    FIRE: Ateş
+    FIRE_TICK: Yanma
+    MELTING: Erime
+    LAVA: Lav
+    DROWNING: Boğulma
+    BLOCK_EXPLOSION: Blok Patlaması
+    ENTITY_EXPLOSION: Varlık Patlaması
+    VOID: Hiçlik
+    LIGHTNING: Yıldırım
+    SUICIDE: İntihar
+    STARVATION: Açlık
+    POISON: Zehir
+    MAGIC: Büyü
+    WITHER: Wither
+    FALLING_BLOCK: Düşen Blok
+    THORNS: Dikenler
+    DRAGON_BREATH: Ejderha Nefesi
+    CUSTOM: Özel
+    FLY_INTO_WALL: Duvara Yapışma
+    HOT_FLOOR: Sıcak Zemin
+    CRAMMING: Sıkışma
+    DRYOUT: Kuruma
