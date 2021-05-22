@@ -83,7 +83,7 @@
         <!-- Do not change unless you want different name for local builds. -->
         <build.number>-LOCAL</build.number>
         <!-- This allows to change between versions. -->
-        <build.version>1.16.2</build.version>
+        <build.version>1.16.3</build.version>
     </properties>
 
     <!-- Profiles will allow to automatically change build version. -->
