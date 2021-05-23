@@ -2,7 +2,6 @@ package world.bentobox.bentobox.listeners.flags.worldsettings;
 
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.stream.Collectors;
 
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -50,8 +49,14 @@ public class InvincibleVisitorsListener extends FlagListener implements ClickHan
         String ivPanelName = user.getTranslation("protection.flags.INVINCIBLE_VISITORS.name");
         if (panel.getName().equals(ivPanelName)) {
             // This is a click on the IV panel
-            // Slot relates to the sorted enum
-            DamageCause c = Arrays.stream(EntityDamageEvent.DamageCause.values()).sorted(Comparator.comparing(DamageCause::name)).collect(Collectors.toList()).get(slot);
+            String itemName = panel.getItems().get(slot).getName();
+            DamageCause c = getEnum(user, itemName);
+            if (c == null) {
+                user.sendMessage("general.errors.general");
+                user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_METAL_HIT, 1F, 1F);
+                BentoBox.getInstance().logError("Inv Visitor click did not match translated name: " + itemName);
+                return true;
+            }
             if (getIWM().getIvSettings(user.getWorld()).contains(c.name())) {
                 getIWM().getIvSettings(user.getWorld()).remove(c.name());
             } else {
@@ -68,6 +73,10 @@ public class InvincibleVisitorsListener extends FlagListener implements ClickHan
         return true;
     }
 
+    private DamageCause getEnum(User user, String itemName) {
+        return Arrays.stream(EntityDamageEvent.DamageCause.values()).filter(dc -> getTranslation(user, dc.name()).equals(itemName)).findFirst().orElse(null);
+    }
+
     private void openPanel(User user, String ivPanelName) {
         // Close the current panel
         user.closeInventory();
@@ -81,10 +90,11 @@ public class InvincibleVisitorsListener extends FlagListener implements ClickHan
         pb.build();
     }
 
+
+
     private PanelItem getPanelItem(DamageCause c, User user) {
         PanelItemBuilder pib = new PanelItemBuilder();
-        String translation = user.getTranslationOrNothing("enums.DamageCause." + c.name());
-        pib.name(translation.isEmpty() ? Util.prettifyText(c.toString()) : translation);
+        pib.name(getTranslation(user, c.name()));
         pib.clickHandler(this);
         if (getIWM().getIvSettings(user.getWorld()).contains(c.name())) {
             pib.icon(Material.GREEN_SHULKER_BOX);
@@ -94,6 +104,17 @@ public class InvincibleVisitorsListener extends FlagListener implements ClickHan
             pib.description(user.getTranslation("protection.panel.flag-item.setting-disabled"));
         }
         return pib.build();
+    }
+
+    /**
+     * Get the translation of the DamageCause enum
+     * @param user user seeing text
+     * @param name enum name
+     * @return translation or a prettified version of name
+     */
+    private String getTranslation(User user, String name) {
+        String translation = user.getTranslationOrNothing("enums.DamageCause." + name);
+        return translation.isEmpty() ? Util.prettifyText(name) : translation;
     }
 
     /**

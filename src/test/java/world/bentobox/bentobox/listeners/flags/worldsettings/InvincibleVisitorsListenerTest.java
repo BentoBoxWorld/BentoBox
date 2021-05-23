@@ -16,7 +16,9 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -99,6 +101,16 @@ public class InvincibleVisitorsListenerTest {
 
         when(panel.getInventory()).thenReturn(mock(Inventory.class));
         when(panel.getName()).thenReturn("panel");
+        Map<Integer, PanelItem> map = new HashMap<>();
+        List<String> sortedNames = Arrays.stream(EntityDamageEvent.DamageCause.values()).map(DamageCause::name)
+                .map(Util::prettifyText).sorted().collect(Collectors.toList());
+        int i = 0;
+        for (String name : sortedNames) {
+            PanelItem pi = mock(PanelItem.class);
+            when(pi.getName()).thenReturn(name);
+            map.put(i++, pi);
+        }
+        when(panel.getItems()).thenReturn(map);
         // Sometimes use Mockito.withSettings().verboseLogging()
         when(user.inWorld()).thenReturn(true);
         when(user.getWorld()).thenReturn(mock(World.class));
@@ -193,8 +205,10 @@ public class InvincibleVisitorsListenerTest {
         ClickType clickType = ClickType.LEFT;
         ivSettings.clear();
         when(panel.getName()).thenReturn("panel");
+        // Make the panel
+
         // Test all damage causes to make sure they can be clicked on and off
-        for (int slot = 0; slot < DamageCause.values().length; slot ++) {
+        for (int slot = 0; slot < DamageCause.values().length; slot++) {
             // Get the damage type
             DamageCause dc = Arrays.stream(EntityDamageEvent.DamageCause.values()).sorted(Comparator.comparing(DamageCause::name)).collect(Collectors.toList()).get(slot);
             // IV settings should be empty
