@@ -17,6 +17,7 @@ import com.google.gson.reflect.TypeToken;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.database.json.adapters.BukkitObjectTypeAdapter;
+import world.bentobox.bentobox.database.json.adapters.EnumTypeAdapter;
 import world.bentobox.bentobox.database.json.adapters.FlagTypeAdapter;
 import world.bentobox.bentobox.database.json.adapters.ItemStackTypeAdapter;
 import world.bentobox.bentobox.database.json.adapters.LocationTypeAdapter;
@@ -44,13 +45,15 @@ public class BentoboxTypeAdapterFactory implements TypeAdapterFactory {
     /* (non-Javadoc)
      * @see com.google.gson.TypeAdapterFactory#create(com.google.gson.Gson, com.google.gson.reflect.TypeToken)
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> type) {
         Class<?> rawType = type.getRawType();
         if (Location.class.isAssignableFrom(rawType)) {
             // Use our current location adapter for backward compatibility
             return (TypeAdapter<T>) new LocationTypeAdapter();
+        } else if (Enum.class.isAssignableFrom(rawType)) {
+            return new EnumTypeAdapter(rawType);
         } else if (ItemStack.class.isAssignableFrom(rawType)) {
             // Use our current location adapter for backward compatibility
             return (TypeAdapter<T>) new ItemStackTypeAdapter();
