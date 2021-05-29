@@ -157,10 +157,10 @@ commands:
         description: Adanın koruma bölgesini ayarla.
         success: "&2Adanın koruma menzili &e[number] &2olarak ayarlandı!"
         invalid-value:
+          not-numeric: "&e[number] &4tam bir sayı değil!"
+          too-low: "&4Koruma aralığı 1'den büyük olmalıdır!"
           too-high: "&4Koruma aralığı &e[number] &4büyük ya da küçük olmalıdır!"
           same-as-before: "&4Koruma aralığı zaten &e[number] &4olarak ayarlandı!"
-          too-low: "&4Koruma aralığı 1'den büyük olmalıdır!"
-          not-numeric: "&e[number] &4tam bir sayı değil!"
       reset:
         parameters: "<player>"
         description: Adayı dünyanın varsayılan koruma bölgesine göre sıfırla.
@@ -213,9 +213,9 @@ commands:
       banned-players: "&b Banlanan oyuncular:"
       banned-format: "&4[name]"
       unowned: "&eBilinmiyor"
-      island-location: "&bAda lokasyonu: [xyz]"
       island-protection-center: 'Korumalı alan merkezi: [xyz]'
       island-center: 'Ada merkezi: [xyz]'
+      island-location: "&bAda lokasyonu: [xyz]"
     switch:
       description: Koruma izinlerine açma/kapama
       op: "&cSen zaten tüm korumalardan izinlisin. Yetkini aldıktan sonra tekrar dene."
@@ -496,8 +496,8 @@ commands:
       description: Adana ışınlar.
       teleport: "&9Adana ışınlanıyorsun!"
       teleported: "&e#[number] &bnumaralı evine gidiyorsun."
-      tip: "&9Yardım için &e/is help"
       unknown-home: "&c Bilinmeyen ev adı!"
+      tip: "&9Yardım için &e/is help"
     help:
       description: Ana ada komudu
       pick-world: "&4Specify world from [worlds]"
@@ -1240,12 +1240,6 @@ protection:
         &a kırmasına ve ada sınırları dışındaki
         &a varlıklara zarar vermesine izin verin.
       name: Dünya TNT hasarı
-    MONSTER_SPAWN:
-      name: Canavar doğuşu
-      description: Doğuşu değiş.
-    ANIMAL_SPAWN:
-      name: Hayvan doğuşu
-      description: Doğmayı değiş
     PETS_STAY_AT_HOME:
       description: |-
         &a Aktif iken, eğitilmiş
@@ -1257,6 +1251,12 @@ protection:
       description: "&a Kovan hasatını değiştir."
       name: Kovan hasatı
       hint: Hasat kapalı
+    ANIMAL_SPAWN:
+      description: Doğmayı değiş
+      name: Hayvan doğuşu
+    MONSTER_SPAWN:
+      description: Doğuşu değiş.
+      name: Canavar doğuşu
   locked: "&4Bu ada kilitli!"
   protected: "&4Ada korunuyor: [description]"
   world-protected: "&cDünya korunuyor: [description]"
