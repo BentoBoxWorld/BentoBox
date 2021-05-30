@@ -78,7 +78,7 @@ public class AddonClassLoader extends URLClassLoader {
      * @throws InvalidAddonDescriptionException - if there's a bug in the addon.yml
      */
     @NonNull
-    private AddonDescription asDescription(YamlConfiguration data) throws InvalidAddonDescriptionException {
+    public static AddonDescription asDescription(YamlConfiguration data) throws InvalidAddonDescriptionException {
         AddonDescription.Builder builder = new AddonDescription.Builder(data.getString("main"), data.getString("name"), data.getString("version"))
                 .authors(data.getString("authors"))
                 .metrics(data.getBoolean("metrics", true))
