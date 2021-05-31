@@ -8,6 +8,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.google.common.io.Files;
 
 /**
+ * Provides a shell for addons to become Plugins so that other Plugins
+ * can tap into their API more easily. Plugin + addon = Pladdon
  * @author tastybento
  *
  */
@@ -15,6 +17,10 @@ public abstract class Pladdon extends JavaPlugin {
 
     private static final String ADDONS_FOLDER = "BentoBox/addons";
 
+    /**
+     * This must return a new instance of the addon. It is called when the Pladdon is loaded.
+     * @return new instance of the addon
+     */
     public abstract Addon getAddon();
 
     @Override
@@ -26,7 +32,7 @@ public abstract class Pladdon extends JavaPlugin {
         }
     }
 
-    public void moveJar() {
+    protected void moveJar() {
         getLogger().severe(getFile().getName() + " must be in the BentoBox/addons folder! Trying to move it there...");
         File addons = new File(getFile().getParent(), ADDONS_FOLDER);
         if (addons.exists() || addons.mkdirs()) {
