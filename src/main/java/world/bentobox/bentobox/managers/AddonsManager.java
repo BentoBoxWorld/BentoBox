@@ -154,6 +154,7 @@ public class AddonsManager {
             }
             // Load the addon
             try {
+
                 Plugin pladdon = pluginLoader.loadPlugin(f);
                 if (pladdon instanceof Pladdon) {
                     addon = ((Pladdon) pladdon).getAddon();
