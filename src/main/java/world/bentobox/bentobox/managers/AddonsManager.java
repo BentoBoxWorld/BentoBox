@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -29,6 +31,9 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.permissions.PermissionDefault;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginLoader;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.permissions.DefaultPermissions;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -38,6 +43,7 @@ import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.addons.Addon.State;
 import world.bentobox.bentobox.api.addons.AddonClassLoader;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
+import world.bentobox.bentobox.api.addons.Pladdon;
 import world.bentobox.bentobox.api.addons.exceptions.InvalidAddonDescriptionException;
 import world.bentobox.bentobox.api.addons.exceptions.InvalidAddonFormatException;
 import world.bentobox.bentobox.api.configuration.ConfigObject;
@@ -65,6 +71,8 @@ public class AddonsManager {
     private @NonNull Map<@NonNull String, @Nullable GameModeAddon> worldNames;
     private @NonNull Map<@NonNull Addon, @NonNull List<Listener>> listeners;
 
+    private final PluginLoader pluginLoader;
+
     public AddonsManager(@NonNull BentoBox plugin) {
         this.plugin = plugin;
         addons = new ArrayList<>();
@@ -72,6 +80,42 @@ public class AddonsManager {
         classes = new HashMap<>();
         listeners = new HashMap<>();
         worldNames = new HashMap<>();
+        pluginLoader = plugin.getPluginLoader();
+    }
+
+    /**
+     * Register a plugin as an addon
+     * @param parent - parent plugin
+     * @param addon - addon class
+     */
+    public void registerAddon(Plugin parent, Addon addon) {
+        plugin.log("Registering " + parent.getDescription().getName());
+
+        // Get description in the addon.yml file
+        // Open a reader to the jar
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(parent.getResource("addon.yml")))) {
+            setAddonFile(parent, addon);
+            // Grab the description in the addon.yml file
+            YamlConfiguration data = new YamlConfiguration();
+            data.load(reader);
+            // Description
+            addon.setDescription(AddonClassLoader.asDescription(data));
+            // Set various files
+            addon.setDataFolder(parent.getDataFolder());
+            // Initialize
+            initializeAddon(addon);
+            sortAddons();
+
+        } catch (Exception e) {
+            plugin.logError("Failed to register addon: " + e);
+        }
+
+    }
+
+    private void setAddonFile(Plugin parent, Addon addon) throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+        Method getFileMethod = JavaPlugin.class.getDeclaredMethod("getFile");
+        getFileMethod.setAccessible(true);
+        addon.setFile((File) getFileMethod.invoke(parent));
     }
 
     /**
@@ -109,10 +153,24 @@ public class AddonsManager {
                 return;
             }
             // Load the addon
-            addonClassLoader = new AddonClassLoader(this, data, f, this.getClass().getClassLoader());
+            try {
 
-            // Get the addon itself
-            addon = addonClassLoader.getAddon();
+                Plugin pladdon = pluginLoader.loadPlugin(f);
+                if (pladdon instanceof Pladdon) {
+                    addon = ((Pladdon) pladdon).getAddon();
+                    addon.setDescription(AddonClassLoader.asDescription(data));
+                } else {
+                    plugin.logError("Could not load pladdon!");
+                    return;
+                }
+            } catch (Exception ex) {
+                // Addon not pladdon
+                addonClassLoader = new AddonClassLoader(this, data, f, this.getClass().getClassLoader());
+                // Get the addon itself
+                addon = addonClassLoader.getAddon();
+                // Add to the list of loaders
+                loaders.put(addon, addonClassLoader);
+            }
         } catch (Exception e) {
             // We couldn't load the addon, aborting.
             plugin.logError("Could not load addon! " + e.getMessage());
@@ -123,7 +181,12 @@ public class AddonsManager {
         // Initialize some settings
         addon.setDataFolder(new File(f.getParent(), addon.getDescription().getName()));
         addon.setFile(f);
+        // Initialize addon
+        initializeAddon(addon);
 
+    }
+
+    private void initializeAddon(Addon addon) {
         // Locales
         plugin.getLocalesManager().copyLocalesFromAddonJar(addon);
         plugin.getLocalesManager().loadLocalesFromFile(addon.getDescription().getName());
@@ -134,10 +197,6 @@ public class AddonsManager {
         // Add it to the list of addons
         addons.remove(addon);
         addons.add(addon);
-
-        // Add to the list of loaders
-        loaders.put(addon, addonClassLoader);
-
         // Checks if this addon is compatible with the current BentoBox version.
         if (!isAddonCompatibleWithBentoBox(addon)) {
             // It is not, abort.
@@ -165,6 +224,7 @@ public class AddonsManager {
             // Unhandled exception. We'll give a bit of debug here.
             handleAddonError(addon, e);
         }
+
     }
 
     /**
@@ -383,6 +443,7 @@ public class AddonsManager {
         // Grab the description in the addon.yml file
         YamlConfiguration data = new YamlConfiguration();
         data.load(reader);
+        reader.close();
         return data;
     }
 

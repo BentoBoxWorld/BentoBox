@@ -12,11 +12,22 @@ load: STARTUP
 
 loadbefore: [Multiverse-Core, Residence]
 
-softdepend: [Vault, PlaceholderAPI, dynmap, WorldEdit, WorldBorderAPI, BsbMongo, WorldGeneratorApi, AdvancedChests, LangUtils, WildStacker, LuckPerms]
+softdepend:
+  - Vault
+  - PlaceholderAPI
+  - dynmap
+  - WorldEdit
+  - WorldBorderAPI
+  - BsbMongo
+  - WorldGeneratorApi
+  - AdvancedChests
+  - LangUtils
+  - WildStacker
+  - LuckPerms
 
 permissions:
   bentobox.admin:
-    description: Allows most of bentobox commands usage
+    description: Allows admin command usage
     default: op
     children:
       bentobox.admin.catalog:
