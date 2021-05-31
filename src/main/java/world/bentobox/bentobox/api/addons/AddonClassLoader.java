@@ -33,14 +33,14 @@ public class AddonClassLoader extends URLClassLoader {
     private Addon addon;
     private AddonsManager loader;
 
-    public AddonClassLoader(AddonsManager addonsManager, YamlConfiguration data, File path, ClassLoader parent)
+    public AddonClassLoader(AddonsManager addonsManager, YamlConfiguration data, File jarFile, ClassLoader parent)
             throws InvalidAddonInheritException,
             MalformedURLException,
             InvalidDescriptionException,
             InvalidAddonDescriptionException,
             InstantiationException,
             IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        super(new URL[]{path.toURI().toURL()}, parent);
+        super(new URL[]{jarFile.toURI().toURL()}, parent);
 
         loader = addonsManager;
 
@@ -55,7 +55,7 @@ public class AddonClassLoader extends URLClassLoader {
                 throw new InvalidAddonFormatException("Package declaration cannot start with 'world.bentobox.bentobox'");
             }
         } catch (Exception e) {
-            throw new InvalidDescriptionException("Could not load '" + path.getName() + "' in folder '" + path.getParent() + "' - " + e.getMessage());
+            throw new InvalidDescriptionException("Could not load '" + jarFile.getName() + "' in folder '" + jarFile.getParent() + "' - " + e.getMessage());
         }
 
         Class<? extends Addon> addonClass;

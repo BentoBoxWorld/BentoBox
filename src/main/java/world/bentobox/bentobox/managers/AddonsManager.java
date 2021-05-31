@@ -32,6 +32,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginLoader;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.permissions.DefaultPermissions;
 import org.eclipse.jdt.annotation.NonNull;
@@ -42,6 +43,7 @@ import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.addons.Addon.State;
 import world.bentobox.bentobox.api.addons.AddonClassLoader;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
+import world.bentobox.bentobox.api.addons.Pladdon;
 import world.bentobox.bentobox.api.addons.exceptions.InvalidAddonDescriptionException;
 import world.bentobox.bentobox.api.addons.exceptions.InvalidAddonFormatException;
 import world.bentobox.bentobox.api.configuration.ConfigObject;
@@ -69,6 +71,8 @@ public class AddonsManager {
     private @NonNull Map<@NonNull String, @Nullable GameModeAddon> worldNames;
     private @NonNull Map<@NonNull Addon, @NonNull List<Listener>> listeners;
 
+    private final PluginLoader pluginLoader;
+
     public AddonsManager(@NonNull BentoBox plugin) {
         this.plugin = plugin;
         addons = new ArrayList<>();
@@ -76,6 +80,7 @@ public class AddonsManager {
         classes = new HashMap<>();
         listeners = new HashMap<>();
         worldNames = new HashMap<>();
+        pluginLoader = plugin.getPluginLoader();
     }
 
     /**
@@ -148,19 +153,29 @@ public class AddonsManager {
                 return;
             }
             // Load the addon
-            addonClassLoader = new AddonClassLoader(this, data, f, this.getClass().getClassLoader());
-
-            // Get the addon itself
-            addon = addonClassLoader.getAddon();
+            try {
+                Plugin pladdon = pluginLoader.loadPlugin(f);
+                if (pladdon instanceof Pladdon) {
+                    addon = ((Pladdon) pladdon).getAddon();
+                    addon.setDescription(AddonClassLoader.asDescription(data));
+                } else {
+                    plugin.logError("Could not load pladdon!");
+                    return;
+                }
+            } catch (Exception ex) {
+                // Addon not pladdon
+                addonClassLoader = new AddonClassLoader(this, data, f, this.getClass().getClassLoader());
+                // Get the addon itself
+                addon = addonClassLoader.getAddon();
+                // Add to the list of loaders
+                loaders.put(addon, addonClassLoader);
+            }
         } catch (Exception e) {
             // We couldn't load the addon, aborting.
             plugin.logError("Could not load addon! " + e.getMessage());
             plugin.logStacktrace(e);
             return;
         }
-
-        // Add to the list of loaders
-        loaders.put(addon, addonClassLoader);
 
         // Initialize some settings
         addon.setDataFolder(new File(f.getParent(), addon.getDescription().getName()));
