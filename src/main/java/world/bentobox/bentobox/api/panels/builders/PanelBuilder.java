@@ -119,7 +119,7 @@ public class PanelBuilder {
 
     /**
      * Set the game world that applies this panel
-     * @param world
+     * @param world - world where this panel will be shown
      * @return PanelBuilder
      */
     public PanelBuilder world(World world) {

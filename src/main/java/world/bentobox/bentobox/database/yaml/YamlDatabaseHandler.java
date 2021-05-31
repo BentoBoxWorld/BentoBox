@@ -158,7 +158,6 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                 continue;
             }
             // Get the getter and setters for this field using the JavaBeans system
-            //noinspection RedundantCast
             PropertyDescriptor propertyDescriptor = new PropertyDescriptor(field.getName(), dataObject);
             // Get the write method
             Method method = propertyDescriptor.getWriteMethod();
@@ -367,7 +366,6 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                 continue;
             }
             // Get the property descriptor for this field
-            //noinspection RedundantCast
             PropertyDescriptor propertyDescriptor = new PropertyDescriptor(field.getName(), dataObject);
             // Get the read method
             Method method = propertyDescriptor.getReadMethod();

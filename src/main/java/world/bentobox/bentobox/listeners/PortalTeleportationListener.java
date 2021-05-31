@@ -59,7 +59,7 @@ public class PortalTeleportationListener implements Listener {
 
     /**
      * Fires the event if nether or end is disabled at the system level
-     * @param e
+     * @param e - EntityPortalEnterEvent
      */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerPortal(EntityPortalEnterEvent e) {
@@ -302,7 +302,7 @@ public class PortalTeleportationListener implements Listener {
 
     /**
      * Check if nether or end are generated
-     * @param gm - game mode
+     * @param overWorld - game world
      * @param env - environment
      * @return true or false
      */
@@ -312,7 +312,7 @@ public class PortalTeleportationListener implements Listener {
 
     /**
      * Check if nether or end islands are generated
-     * @param gm - game mode
+     * @param overWorld - over world
      * @param env - environment
      * @return true or false
      */
@@ -322,7 +322,7 @@ public class PortalTeleportationListener implements Listener {
 
     /**
      * Get the nether or end world
-     * @param gm - game mode
+     * @param overWorld - over world
      * @param env - environment
      * @return nether or end world
      */
@@ -332,7 +332,7 @@ public class PortalTeleportationListener implements Listener {
 
     /**
      * Check if the island has a nether or end island already
-     * @param gm - game mode
+     * @param i - island
      * @param env - environment
      * @return true or false
      */
@@ -342,7 +342,6 @@ public class PortalTeleportationListener implements Listener {
 
     /**
      * Check if the default nether or end are allowed by the server settings
-     * @param gm - game mode
      * @param env - environment
      * @return true or false
      */
@@ -383,10 +382,10 @@ public class PortalTeleportationListener implements Listener {
 
     /**
      * Handle teleport from or to standard nether or end
-     * @param e
-     * @param fromWorld
-     * @param overWorld
-     * @param env
+     * @param e - PlayerEntityPortalEvent
+     * @param fromWorld - from world
+     * @param overWorld - over world
+     * @param env - environment involved
      */
     private void handleStandardNetherOrEnd(PlayerEntityPortalEvent e, World fromWorld, World overWorld, Environment env) {
         if (fromWorld.getEnvironment() != env) {

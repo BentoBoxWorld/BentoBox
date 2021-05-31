@@ -78,9 +78,9 @@ public abstract class DelayedTeleportCommand extends CompositeCommand implements
 
     /**
      *
-     * @param parent
-     * @param label
-     * @param aliases
+     * @param parent - parent command
+     * @param label - command label
+     * @param aliases - command aliases
      */
     protected DelayedTeleportCommand(CompositeCommand parent, String label, String... aliases) {
         super(parent, label, aliases);

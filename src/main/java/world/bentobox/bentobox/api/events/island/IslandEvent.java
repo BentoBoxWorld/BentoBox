@@ -358,7 +358,6 @@ public class IslandEvent extends IslandBaseEvent {
      * that the island blocks are going to be removed.
      *
      * @deprecated This event is moving to its own class.
-     * Use {@link world.bentobox.bentobox.api.events.island.
      *
      */
     @Deprecated

@@ -342,7 +342,7 @@ public class SafeSpotTeleport {
          * Set the home name
          * @param homeName - home name
          * @return Builder
-         * @Since 1.16.0
+         * @since 1.16.0
          */
         public Builder homeName(String homeName) {
             this.homeName = homeName;

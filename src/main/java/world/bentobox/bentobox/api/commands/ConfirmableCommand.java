@@ -44,9 +44,9 @@ public abstract class ConfirmableCommand extends CompositeCommand {
 
     /**
      *
-     * @param parent
-     * @param label
-     * @param aliases
+     * @param parent - parent command
+     * @param label - command label
+     * @param aliases - command aliases
      */
     protected ConfirmableCommand(CompositeCommand parent, String label, String... aliases) {
         super(parent, label, aliases);
