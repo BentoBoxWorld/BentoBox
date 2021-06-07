@@ -472,7 +472,7 @@ commands:
       class: "&6Migrando[description]"
       migrated: "&AMigrado"
   confirmation:
-    confirm: "&cVuelva a escribir el comando antes de &b[seconds]s&c para confirmar."
+    confirm: "&cVuelva a escribir el comando antes de &b[seconds]s &cpara confirmar."
     previous-request-cancelled: "&6Previa solicitud de confirmación cancelada."
     request-cancelled: "&cTiempo de espera de confirmación - &bsolicitud cancelada."
   delay:
