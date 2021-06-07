@@ -6,9 +6,9 @@ meta:
   banner: YELLOW_BANNER:1:TRIANGLE_BOTTOM:WHITE:TRIANGLE_TOP:WHITE:STRIPE_BOTTOM:YELLOW:STRIPE_TOP:YELLOW:STRIPE_LEFT:RED:STRIPE_RIGHT:RED
 general:
   success: "&aÉxito!"
-  invalid: Invalido
+  invalid: Inválido
   errors:
-    command-cancelled: "&cComando Cancelado."
+    command-cancelled: "&cComando cancelado."
     no-permission: "&cNo tienes permiso para ejecutar ese comando (&7[permission]&c)."
     use-in-game: "&cEste comando solo esta disponible en juego."
     no-team: "&cNo tienes un equipo!"
@@ -23,7 +23,7 @@ general:
     not-in-team: "&cEse jugador no está en tu equipo!"
     offline-player: "&cEse jugador está desconectado o no existe."
     unknown-player: "&c[name] es un jugador desconocido!"
-    general: "&cEse comando aún no está listo - contacte a un admin"
+    general: "&cEse comando aún no está listo - contacte a un administrador"
     unknown-command: "&cComando desconocido. Usa &b/[label] help &cpara obtener ayuda."
     wrong-world: "&cNo estás en el mundo correcto para hacer eso!"
     you-must-wait: "&cDebe esperar [number]s antes de poder volver a ejecutar ese
@@ -126,7 +126,7 @@ commands:
         success: "&b[name]&a ahora es el dueño de esta isla."
       fix:
         description: escanea y corrige la membresía entre islas en la base de datos
-        scanning: Escaneando la base de datos ...
+        scanning: Escaneando la base de datos...
         duplicate-owner: "&c El jugador posee más de una isla en la base de datos:
           [name]"
         player-has: "&c El jugador [name] tiene [number] islas"
@@ -220,8 +220,8 @@ commands:
     switch:
       description: activar / desactivar bypass de protección
       op: "&cOps siempre puede evitar la protección. Deop para usar el comando."
-      removing: Retirar la derivación de protección ...
-      adding: Adición de derivación de protección ...
+      removing: Retirar la derivación de protección...
+      adding: Adición de derivación de protección...
     switchto:
       parameters: "<player> <number>"
       description: cambiar la isla del jugador al número uno en la basura
@@ -282,9 +282,9 @@ commands:
     blueprint:
       parameters: "<load/copy/paste/pos1/pos2/save>"
       description: manipular esquemas
-      bedrock-required: "&c ¡Al menos un bloque de bedrock debe estar en un plano!"
+      bedrock-required: "&c ¡En el plano debe haber al menos un bloque de bedrock!"
       copy-first: "&cCopia un esquema primero!"
-      file-exists: "&cEl archivo ya existe, sobrescribir?"
+      file-exists: "&cEl archivo ya existe, deseas sobreescribir?"
       no-such-file: "&cNo existe el archivo!"
       could-not-load: "&cNo se pudo cargar ese archivo!"
       could-not-save: "&cHmm, algo salió mal al guardar ese archivo: [message]"
@@ -293,18 +293,18 @@ commands:
       set-different-pos: "&cEstablecer una ubicación diferente - esta posición ya
         está establecida!"
       need-pos1-pos2: "&cPonga Posición 1 y Posición 2 primero!"
-      copying: "&bCopiando bloques ..."
+      copying: "&bCopiando bloques..."
       copied-blocks: "&bHan sido Copiados [number] bloques al portapapeles"
       look-at-a-block: "&cMira al bloque alejado 20 bloques para establecer"
       mid-copy: "&c Estás a mitad de la copia. Espere hasta que termine la copia."
       copied-percent: "&6Copiado [number]%"
       copy:
         parameters: "[air]"
-        description: Copie el conjunto de portapapeles por Posición 1 y Posición 2
+        description: Copia el conjunto de portapapeles por Posición 1 y Posición 2
           y, opcionalmente, los bloques de aire.
       delete:
         parameters: "<name>"
-        description: eliminar el plano
+        description: Elimina el plano
         no-blueprint: "&b [name] &c no existe."
         confirmation: |
           &c ¿Está seguro de que desea eliminar este plano?
@@ -463,7 +463,7 @@ commands:
     locale:
       description: realiza análisis de archivos de localización
       see-console: "&aCompruebe la consola para ver los comentarios. \n&aEste comando
-        es tan spam que los comentarios no se pueden leer desde el chat ..."
+        es tan spam que los comentarios no se pueden leer desde el chat..."
     migrate:
       description: migra datos de una base de datos a otra
       players: "&6 Jugadores emigrantes"
@@ -484,7 +484,7 @@ commands:
       description: Acerca de este addon
     go:
       parameters: "[home number]"
-      description: teletransportarte a tu isla
+      description: Teletransportarte a tu isla
       teleport: "&aTeletransportandote a tu isla."
       teleported: "&aTeletransportandote a casa &e#[number]."
       tip: "&bEscribe /[label] help &apara ayuda."
@@ -492,30 +492,27 @@ commands:
       description: El comando principal de la isla.
       pick-world: "&cEspecificar mundo desde [worlds]"
     spawn:
-      description: teletransportandote al spawn
-      teleporting: "&bteletransportandote al spawn."
+      description: Teletransportandote al spawn
+      teleporting: "&bTeletransportandote al spawn."
       no-spawn: "&cNo hay un spawn en este mundo."
     create:
       description: crear una isla, usando un esquema opcional (requiere permiso)
       parameters: "<blueprint>"
       too-many-islands: "&cHay demasiadas islas en este mundo: no hay suficiente espacio
         para que las tuyas sean creadas."
-      cannot-create-island: "&c No se pudo encontrar un lugar a tiempo, intente nuevamente
-        ..."
-      unable-create-island: "&cSu isla no se pudo generar, póngase en contacto con
+      cannot-create-island: "&c No se pudo encontrar un lugar a tiempo, intente nuevamente..."
+      unable-create-island: "&cTu isla no se pudo generar, póngase en contacto con
         un administrador."
       creating-island: "&aCreando tu isla, espera un momento..."
       pasting:
         estimated-time: "&a Tiempo estimado: &b [number] &asegundos."
-        blocks: "&aConstruyendola bloque por bloque: & b [number] &a bloques totales
-          ..."
-        entities: "&a Llenándolo con entidades: &b [number] &aentidades en todo ..."
+        blocks: "&aConstruyendola bloque por bloque: &b[number] &abloques en total..."
+        entities: "&a Llenándolo con entidades: &b[number] &aentidades en total..."
         done: "&aYa esta hecho! ¡Tu isla está lista y esperándote!"
       pick: "&aElige una isla"
       unknown-blueprint: "&cEse esquema no se ha cargado todavía."
-      on-first-login: "&aBienvenida! Comenzaremos a preparar su isla en unos segundos."
-      you-can-teleport-to-your-island: "&a Puede teletransportarse a su isla cuando
-        lo desee."
+      on-first-login: "&aBienvenido! Comenzaremos a preparar su isla en unos segundos."
+      you-can-teleport-to-your-island: "&aPuedes teletransportarte a tu isla cuando lo desees."
       pick-world: "&cElige un mundo: [worlds]."
     info:
       description: Muestra información sobre tu isla o la isla del jugador.
@@ -538,7 +535,7 @@ commands:
         &c¿Estás seguro de que quieres hacer esto?
         &cTodos los miembros de la isla serán expulsados de la isla, luego tendrás que reinvitarlos.
         &cNo hay vuelta atrás: una vez que se elimine su isla actual, habrá &lno &r&c forma de recuperarla más adelante.
-      kicked-from-island: "&cTe expulsan de tu isla en [gamemode] porque el propietario
+      kicked-from-island: "&cSe te ha explusado de tu isla en [gamemode] porque el propietario
         la está reiniciando."
       must-remove-members: "&cDebes eliminar todos los miembros de tu isla antes de
         poder reiniciarla (/island team kick <player>)."
@@ -685,7 +682,7 @@ commands:
         description: transfiere la propiedad de tu isla a un miembro
         errors:
           cant-transfer-to-yourself: "&cNo puedes transferirte la propiedad a ti mismo!
-            &7(&oBueno, de hecho, podrías ... Pero no queremos que lo hagas. Porque
+            &7(&oBueno, de hecho, podrías... Pero no queremos que lo hagas. Porque
             es inútil.&r&7)"
           target-is-not-member: "&cEse jugador no es parte de tu equipo de la isla!"
         name-is-the-owner: "&a[name] ahora es el dueño de la isla!"
@@ -1452,7 +1449,7 @@ panel:
       name: "&a [name]"
       description: "&aCommits: &b[commits]\n"
     empty-here:
-      name: "&cEsto parece vacío aquí ..."
+      name: "&cEsto parece vacío aquí..."
       description: |+
         &cBentoBox no pudo reunir a los contribuyentes
         &cpara este complemento.
