@@ -47,7 +47,7 @@ public class MobSpawnListener extends FlagListener {
         case RAID:
         case REINFORCEMENTS:
         case SILVERFISH_BLOCK:
-        case SLIME_SPLIT:
+        //case SLIME_SPLIT: messes with slimes from spawners, slime must have previously existed to create another
         case TRAP:
         case VILLAGE_DEFENSE:
         case VILLAGE_INVASION:
