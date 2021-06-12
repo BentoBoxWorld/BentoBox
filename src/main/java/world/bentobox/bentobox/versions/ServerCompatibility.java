@@ -160,25 +160,30 @@ public class ServerCompatibility {
         /**
          * @since 1.14.0
          */
-        V1_16_1(Compatibility.NOT_SUPPORTED),
+        V1_16_1(Compatibility.INCOMPATIBLE),
         /**
          * @since 1.15.0
          */
-        V1_16_2(Compatibility.NOT_SUPPORTED),
+        V1_16_2(Compatibility.INCOMPATIBLE),
         /**
          * @since 1.15.1
          */
-        V1_16_3(Compatibility.NOT_SUPPORTED),
+        V1_16_3(Compatibility.INCOMPATIBLE),
 
         /**
          * @since 1.15.3
          */
-        V1_16_4(Compatibility.COMPATIBLE),
+        V1_16_4(Compatibility.INCOMPATIBLE),
 
         /**
          * @since 1.16.0
          */
-        V1_16_5(Compatibility.COMPATIBLE)
+        V1_16_5(Compatibility.INCOMPATIBLE),
+
+        /**
+         * @since 1.17.0
+         */
+        V1_17(Compatibility.COMPATIBLE)
         ;
 
         private Compatibility compatibility;
