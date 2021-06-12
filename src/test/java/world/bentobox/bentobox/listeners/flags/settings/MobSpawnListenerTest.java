@@ -220,18 +220,17 @@ public class MobSpawnListenerTest {
             case RAID:
             case REINFORCEMENTS:
             case SILVERFISH_BLOCK:
-            case SLIME_SPLIT:
             case TRAP:
             case VILLAGE_DEFENSE:
             case VILLAGE_INVASION:
                 // These should be blocked
                 assertTrue("Natural spawn should be blocked: " + reason.toString(), l.onMobSpawn(e));
                 break;
-            // Spawners
+                // Spawners
             case SPAWNER:
                 assertTrue("Spawners spawn should be blocked: " + reason.toString(), l.onMobSpawn(e));
                 break;
-            // Unnatural - player involved
+                // Unnatural - player involved or allowed
             case BREEDING:
             case BUILD_IRONGOLEM:
             case BUILD_SNOWMAN:
@@ -246,6 +245,7 @@ public class MobSpawnListenerTest {
             case SHEARED:
             case SHOULDER_ENTITY:
             case SPAWNER_EGG:
+            case SLIME_SPLIT:
                 assertFalse("Should be not blocked: " + reason.toString(), l.onMobSpawn(e));
                 break;
             default:
