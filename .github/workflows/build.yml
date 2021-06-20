@@ -13,10 +13,10 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
-      - name: Set up JDK 8
+      - name: Set up JDK 16
         uses: actions/setup-java@v1
         with:
-          java-version: 8
+          java-version: 16
       - name: Cache SonarCloud packages
         uses: actions/cache@v1
         with:
@@ -30,7 +30,7 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
       - name: Build
-        run: mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install
+        run: mvn --batch-mode clean org.jacoco:jacoco-maven-plugin:prepare-agent install
       - run: mkdir staging && cp target/*.jar staging
       - name: Save artifacts
         uses: actions/upload-artifact@v2
