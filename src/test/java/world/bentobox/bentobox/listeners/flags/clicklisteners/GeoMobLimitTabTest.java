@@ -78,6 +78,7 @@ public class GeoMobLimitTabTest {
         when(plugin.getIWM()).thenReturn(iwm);
         when(iwm.getAddon(any())).thenReturn(Optional.of(gma));
         list = new ArrayList<>();
+        list.add("AXOLOTL");
         list.add("BAT");
         list.add("COW");
         when(iwm.getMobLimitSettings(any())).thenReturn(list);
@@ -102,42 +103,24 @@ public class GeoMobLimitTabTest {
     @Test
     public void testOnClick() {
         GeoMobLimitTab tab = new GeoMobLimitTab(user, EntityLimitTabType.GEO_LIMIT, world);
-        // BAT and COW in list
-        assertEquals(2, list.size());
-        assertEquals("COW", list.get(1));
-        assertEquals("BAT", list.get(0));
-        // Click on BAT
+        // AXOLOTL, BAT, and COW in list
+        assertEquals(3, list.size());
+        assertEquals("COW", list.get(2));
+        assertEquals("BAT", list.get(1));
+        assertEquals("AXOLOTL", list.get(0));
+
+        // Click on AXOLOTL
         tab.onClick(panel, user, ClickType.LEFT, 9);
         list.forEach(System.out::println);
-        assertEquals(1, list.size());
-        assertEquals("COW", list.get(0));
-        // Click on BAT again to have it added
-        tab.onClick(panel, user, ClickType.LEFT, 9);
-        assertEquals(2, list.size());
-        assertEquals("COW", list.get(0));
-        assertEquals("BAT", list.get(1));
-        verify(gma, times(2)).saveWorldSettings();
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.clicklisteners.GeoMobLimitTab#onClick(world.bentobox.bentobox.api.panels.Panel, world.bentobox.bentobox.api.user.User, org.bukkit.event.inventory.ClickType, int)}.
-     */
-    @Test
-    public void testOnClickMobLimit() {
-        GeoMobLimitTab tab = new GeoMobLimitTab(user, EntityLimitTabType.MOB_LIMIT, world);
-        // BAT and COW in list
         assertEquals(2, list.size());
         assertEquals("COW", list.get(1));
         assertEquals("BAT", list.get(0));
-        // Click on BAT
+        // Click on AXOLOTL again to have it added
         tab.onClick(panel, user, ClickType.LEFT, 9);
-        assertEquals(1, list.size());
-        assertEquals("COW", list.get(0));
-        // Click on BAT again to have it added
-        tab.onClick(panel, user, ClickType.LEFT, 9);
-        assertEquals(2, list.size());
-        assertEquals("COW", list.get(0));
-        assertEquals("BAT", list.get(1));
+        assertEquals(3, list.size());
+        assertEquals("BAT", list.get(0));
+        assertEquals("COW", list.get(1));
+        assertEquals("AXOLOTL", list.get(2));
         verify(gma, times(2)).saveWorldSettings();
     }
 
@@ -183,7 +166,7 @@ public class GeoMobLimitTabTest {
         List<@Nullable PanelItem> items = tab.getPanelItems();
         assertFalse(items.isEmpty());
         items.forEach(i -> {
-            if (i.getName().equals("Cow") || i.getName().equals("Bat")) {
+            if (i.getName().equals("Axolotl") || i.getName().equals("Cow") || i.getName().equals("Bat")) {
                 assertEquals("Name : " + i.getName(), Material.RED_SHULKER_BOX, i.getItem().getType());
             } else {
                 assertEquals("Name : " + i.getName(), Material.GREEN_SHULKER_BOX, i.getItem().getType());
@@ -200,7 +183,7 @@ public class GeoMobLimitTabTest {
         List<@Nullable PanelItem> items = tab.getPanelItems();
         assertFalse(items.isEmpty());
         items.forEach(i -> {
-            if (i.getName().equals("Cow") || i.getName().equals("Bat")) {
+            if (i.getName().equals("Axolotl") || i.getName().equals("Cow") || i.getName().equals("Bat")) {
                 assertEquals("Name : " + i.getName(), Material.GREEN_SHULKER_BOX, i.getItem().getType());
             } else {
                 assertEquals("Name : " + i.getName(), Material.RED_SHULKER_BOX, i.getItem().getType());
