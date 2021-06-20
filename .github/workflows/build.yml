@@ -30,7 +30,7 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
       - name: Build
-        run: mvn --batch-mode -Dmaven.repo.remote=https://repository.apache.org/content/repositories/snapshots/ clean org.jacoco:jacoco-maven-plugin:prepare-agent install
+        run: mvn --batch-mode clean org.jacoco:jacoco-maven-plugin:prepare-agent install
       - run: mkdir staging && cp target/*.jar staging
       - name: Save artifacts
         uses: actions/upload-artifact@v2
