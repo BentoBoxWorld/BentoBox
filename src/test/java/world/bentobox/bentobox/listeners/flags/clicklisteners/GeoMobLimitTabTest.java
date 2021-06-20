@@ -108,6 +108,7 @@ public class GeoMobLimitTabTest {
         assertEquals("BAT", list.get(0));
         // Click on BAT
         tab.onClick(panel, user, ClickType.LEFT, 9);
+        list.forEach(System.out::println);
         assertEquals(1, list.size());
         assertEquals("COW", list.get(0));
         // Click on BAT again to have it added

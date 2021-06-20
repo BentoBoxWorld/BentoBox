@@ -1,16 +1,10 @@
 package world.bentobox.bentobox.nms;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
-import org.bukkit.Material;
 import org.bukkit.block.data.BlockData;
-import org.bukkit.craftbukkit.v1_16_R3.block.data.CraftBlockData;
-
-import net.minecraft.server.v1_16_R3.IBlockData;
 
 public interface NMSAbstraction {
 
-    static final IBlockData AIR = ((CraftBlockData) Bukkit.createBlockData(Material.AIR)).getState();
 
     /**
      * Update the low-level chunk information for the given block to the new block ID and data.  This
