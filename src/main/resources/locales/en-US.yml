@@ -795,6 +795,7 @@ protection:
         &a flower pot, furnace, hopper, item frame,
         &a jukebox, minecart chest, shulker box,
         &a trapped chest.
+
         &7 Changing individual settings overrides
         &7 this flag.
       hint: "Container access disabled"
@@ -804,9 +805,6 @@ protection:
         &a Toggle interaction with chests
         &a and chest minecarts.
         &a (does not include trapped chests)
-
-        &7 Other containers are handled
-        &7 by dedicated flags.
       hint: "Chest access disabled"
     BARREL:
       name: "Barrels"
