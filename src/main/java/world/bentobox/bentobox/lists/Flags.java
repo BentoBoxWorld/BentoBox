@@ -62,6 +62,7 @@ import world.bentobox.bentobox.listeners.flags.worldsettings.PistonPushListener;
 import world.bentobox.bentobox.listeners.flags.worldsettings.RemoveMobsListener;
 import world.bentobox.bentobox.listeners.flags.worldsettings.SpawnerSpawnEggsListener;
 import world.bentobox.bentobox.listeners.flags.worldsettings.TreesGrowingOutsideRangeListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.VisitorKeepInventoryListener;
 import world.bentobox.bentobox.listeners.flags.worldsettings.WitherListener;
 import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
@@ -526,6 +527,13 @@ public final class Flags {
      */
     public static final Flag PETS_STAY_AT_HOME = new Flag.Builder("PETS_STAY_AT_HOME", Material.TROPICAL_FISH).listener(new PetTeleportListener()).type(Type.WORLD_SETTING).defaultSetting(true).build();
 
+    /**
+     * Toggles whether island visitors keep their items if they die on another player's island.
+     * @since 1.17.0
+     * @see VisitorKeepInventoryListener
+     */
+    public static final Flag VISITOR_KEEP_INVENTORY = new Flag.Builder("VISITOR_KEEP_INVENTORY", Material.TOTEM_OF_UNDYING).listener(new VisitorKeepInventoryListener()).type(Type.WORLD_SETTING).defaultSetting(false).build();
+    
     /**
      * Provides a list of all the Flag instances contained in this class using reflection.
      * Deprecated Flags are ignored.
