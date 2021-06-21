@@ -787,15 +787,35 @@ protection:
       name: "Cakes"
       hint: "Cake eating disabled"
     CONTAINER:
-      name: "Containers"
+      name: "Chests and minecart chests"
       description: |-
-        &a Toggle interaction with chests,
-        &a shulker boxes and flower pots,
-        &a composters and barrels.
+        &a Toggle interaction with chests
+        &a and chest minecarts.
+        &a (does not include trapped chests)
 
         &7 Other containers are handled
         &7 by dedicated flags.
-      hint: "Container access disabled"
+      hint: "Chest access disabled"
+    BARREL:
+      name: "Barrels"
+      description: "Toggle barrel interaction"
+      hint: "Barrel access disabled"
+    COMPOSTER:
+      name: "Composters"
+      description: "Toggle composter interaction"
+      hint: "Composter interaction disabled"
+    FLOWER_POT:
+      name: "Flower pots"
+      description: "Toggle flower pot interaction"
+      hint: "Flower pot interaction disabled"
+    SHULKER_BOX:
+      name: "Shulker boxes"
+      description: "Toggle shulker box interaction"
+      hint: "Shulker box access disabled"
+    TRAPPED_CHEST:
+      name: "Trapped chests"
+      description: "Toggle trapped chest interaction"
+      hint: "Trapped chest access disabled"
     DISPENSER:
       name: "Dispensers"
       description: "Toggle dispenser interaction"

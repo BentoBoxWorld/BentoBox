@@ -95,7 +95,7 @@ public class BlockInteractionListener extends FlagListener {
     private void checkClickedBlock(Event e, Player player, Location loc, Material type) {
         // Handle pots
         if (type.name().startsWith("POTTED")) {
-            checkIsland(e, player, loc, Flags.CONTAINER);
+            checkIsland(e, player, loc, Flags.FLOWER_POT);
             return;
         }
         if (Tag.ANVIL.isTagged(type)) {
@@ -115,7 +115,7 @@ public class BlockInteractionListener extends FlagListener {
             return;
         }
         if (Tag.SHULKER_BOXES.isTagged(type)) {
-            checkIsland(e, player, loc, Flags.CONTAINER);
+            checkIsland(e, player, loc, Flags.SHULKER_BOX);
             return;
         }
         if (Tag.TRAPDOORS.isTagged(type)) {
@@ -136,12 +136,20 @@ public class BlockInteractionListener extends FlagListener {
             checkIsland(e, player, loc, Flags.HIVE);
             break;
         case BARREL:
+            checkIsland(e, player, loc, Flags.BARREL);
+            break;
         case CHEST:
         case CHEST_MINECART:
-        case TRAPPED_CHEST:
-        case FLOWER_POT:
-        case COMPOSTER:
             checkIsland(e, player, loc, Flags.CONTAINER);
+            break;
+        case TRAPPED_CHEST:
+            checkIsland(e, player, loc, Flags.TRAPPED_CHEST);
+            break;
+        case FLOWER_POT:
+            checkIsland(e, player, loc, Flags.FLOWER_POT);
+            break;
+        case COMPOSTER:
+            checkIsland(e, player, loc, Flags.COMPOSTER);
             break;
         case DISPENSER:
             checkIsland(e, player, loc, Flags.DISPENSER);
