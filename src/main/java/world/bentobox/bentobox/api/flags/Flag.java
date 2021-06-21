@@ -1,5 +1,6 @@
 package world.bentobox.bentobox.api.flags;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -131,6 +132,7 @@ public class Flag implements Comparable<Flag> {
     private final Addon addon;
     private final int cooldown;
     private final Mode mode;
+    private final Set<Flag> subflags;
 
     private Flag(Builder builder) {
         this.id = builder.id;
@@ -147,6 +149,7 @@ public class Flag implements Comparable<Flag> {
         this.cooldown = builder.cooldown;
         this.addon = builder.addon;
         this.mode = builder.mode;
+        this.subflags = builder.subflags;
     }
 
     public String getID() {
@@ -200,6 +203,18 @@ public class Flag implements Comparable<Flag> {
             .getWorldSettings(world)
             .getWorldFlags()
             .put(getID(), setting);
+
+            // Subflag support
+            if (hasSubflags()) {
+                subflags.stream()
+                        .filter(subflag -> subflag.getType().equals(Type.WORLD_SETTING) || subflag.getType().equals(Type.PROTECTION))
+                        .forEach(subflag -> BentoBox.getInstance()
+                                            .getIWM()
+                                            .getWorldSettings(world)
+                                            .getWorldFlags()
+                                            .put(subflag.getID(), setting));
+            }
+
             // Save config file
             BentoBox.getInstance().getIWM().getAddon(world).ifPresent(GameModeAddon::saveWorldSettings);
         }
@@ -208,6 +223,7 @@ public class Flag implements Comparable<Flag> {
     /**
      * Set the original status of this flag for locations outside of island spaces.
      * May be overriden by the the setting for this world.
+     * Does not affect subflags.
      * @param defaultSetting - true means it is allowed. false means it is not allowed
      */
     public void setDefaultSetting(boolean defaultSetting) {
@@ -217,6 +233,7 @@ public class Flag implements Comparable<Flag> {
     /**
      * Set the status of this flag for locations outside of island spaces for a specific world.
      * World must exist and be registered before this method can be called.
+     * Does not affect subflags.
      * @param defaultSetting - true means it is allowed. false means it is not allowed
      */
     public void setDefaultSetting(World world, boolean defaultSetting) {
@@ -435,6 +452,22 @@ public class Flag implements Comparable<Flag> {
         return mode;
     }
 
+    /**
+     * @return whether the flag has subflags (and therefore is a parent flag)
+     * @since 1.17.0
+     */
+    public boolean hasSubflags() {
+        return !subflags.isEmpty();
+    }
+
+    /**
+     * @return the subflags, an empty Set if none
+     * @since 1.17.0
+     */
+    public Set<Flag> getSubflags() {
+        return subflags;
+    }
+
     @Override
     public String toString() {
         return "Flag [id=" + id + "]";
@@ -480,6 +513,9 @@ public class Flag implements Comparable<Flag> {
         // Mode
         private Mode mode = Mode.EXPERT;
 
+        // Subflags
+        private Set<Flag> subflags;
+
         /**
          * Builder for making flags
          * @param id - a unique id that MUST be the same as the enum of the flag
@@ -488,6 +524,7 @@ public class Flag implements Comparable<Flag> {
         public Builder(String id, Material icon) {
             this.id = id;
             this.icon = icon;
+            this.subflags = new HashSet<>();
         }
 
         /**
@@ -592,6 +629,19 @@ public class Flag implements Comparable<Flag> {
          */
         public Builder mode(Mode mode) {
             this.mode = mode;
+            return this;
+        }
+
+        /**
+         * Add subflags and designate this flag as a parent flag.
+         * Subflags have their state simultaneously changed with the parent flag.
+         * Take extra care to ensure that subflags have the same number of possible values as the parent flag.
+         * @param flags all Flags that are subflags
+         * @return Builder - flag builder
+         * @since 1.17.0
+         */
+        public Builder subflags(Flag... flags) {
+            this.subflags.addAll(Arrays.asList(flags));
             return this;
         }
 

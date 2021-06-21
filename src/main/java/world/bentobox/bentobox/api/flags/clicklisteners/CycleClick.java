@@ -90,6 +90,12 @@ public class CycleClick implements PanelItem.ClickHandler {
                     user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_OFF, 1F, 1F);
                     // Fire event
                     Bukkit.getPluginManager().callEvent(new FlagProtectionChangeEvent(island, user.getUniqueId(), flag, island.getFlag(flag)));
+
+                    // Subflag support
+                    if (flag.hasSubflags()) {
+                        // Fire events for all subflags as well
+                        flag.getSubflags().forEach(subflag -> Bukkit.getPluginManager().callEvent(new FlagProtectionChangeEvent(island, user.getUniqueId(), subflag, island.getFlag(subflag))));
+                    }
                 } else if (click.equals(ClickType.RIGHT)) {
                     if (currentRank <= minRank) {
                         island.setFlag(flag, maxRank);
@@ -99,6 +105,12 @@ public class CycleClick implements PanelItem.ClickHandler {
                     user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 1F, 1F);
                     // Fire event
                     Bukkit.getPluginManager().callEvent(new FlagProtectionChangeEvent(island, user.getUniqueId(), flag, island.getFlag(flag)));
+
+                    // Subflag support
+                    if (flag.hasSubflags()) {
+                        // Fire events for all subflags as well
+                        flag.getSubflags().forEach(subflag -> Bukkit.getPluginManager().callEvent(new FlagProtectionChangeEvent(island, user.getUniqueId(), subflag, island.getFlag(subflag))));
+                    }
                 } else if (click.equals(ClickType.SHIFT_LEFT) && user.isOp()) {
                     if (!plugin.getIWM().getHiddenFlags(user.getWorld()).contains(flag.getID())) {
                         plugin.getIWM().getHiddenFlags(user.getWorld()).add(flag.getID());
