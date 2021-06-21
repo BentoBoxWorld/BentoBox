@@ -71,8 +71,8 @@ public class BlockInteractionListenerTest extends AbstractCommonSetup {
         clickedBlocks.put(Material.BREWING_STAND, Flags.BREWING);
         clickedBlocks.put(Material.CAULDRON, Flags.BREWING);
         clickedBlocks.put(Material.BARREL, Flags.BARREL);
-        clickedBlocks.put(Material.CHEST, Flags.CONTAINER);
-        clickedBlocks.put(Material.CHEST_MINECART, Flags.CONTAINER);
+        clickedBlocks.put(Material.CHEST, Flags.CHEST);
+        clickedBlocks.put(Material.CHEST_MINECART, Flags.CHEST);
         clickedBlocks.put(Material.TRAPPED_CHEST, Flags.TRAPPED_CHEST);
         clickedBlocks.put(Material.SHULKER_BOX, Flags.SHULKER_BOX);
         when(Tag.SHULKER_BOXES.isTagged(Material.SHULKER_BOX)).thenReturn(true);

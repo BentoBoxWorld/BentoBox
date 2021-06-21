@@ -14,6 +14,7 @@ import org.bukkit.entity.Animals;
 import org.bukkit.entity.NPC;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.minecart.HopperMinecart;
+import org.bukkit.entity.minecart.StorageMinecart;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -78,12 +79,15 @@ public class InventoryListener extends FlagListener {
                 if (chestInventoryHolder.getBlock().getType() == Material.TRAPPED_CHEST) {
                     checkIsland(e, player, e.getInventory().getLocation(), Flags.TRAPPED_CHEST);
                 } else {
-                    checkIsland(e, player, e.getInventory().getLocation(), Flags.CONTAINER);
+                    checkIsland(e, player, e.getInventory().getLocation(), Flags.CHEST);
                 }
             } catch (IllegalStateException ignored) {
                 // Thrown if the Chest corresponds to a block that isn't placed (how did we get here?)
-                checkIsland(e, player, e.getInventory().getLocation(), Flags.CONTAINER);
+                checkIsland(e, player, e.getInventory().getLocation(), Flags.CHEST);
             }
+        }
+        else if (inventoryHolder instanceof StorageMinecart) {
+            checkIsland(e, player, e.getInventory().getLocation(), Flags.CHEST);
         }
         else if (!(inventoryHolder instanceof Player)) {
             // All other containers

@@ -787,6 +787,18 @@ protection:
       name: "Cakes"
       hint: "Cake eating disabled"
     CONTAINER:
+      name: "All containers"
+      description: |-
+        &a Toggle interaction with all containers.
+        &a Includes: Barrel, bee hive, brewing stand,
+        &a chest, composter, dispenser, dropper,
+        &a flower pot, furnace, hopper, item frame,
+        &a jukebox, minecart chest, shulker box,
+        &a trapped chest.
+        &7 Changing individual settings overrides
+        &7 this flag.
+      hint: "Container access disabled"
+    CHEST:
       name: "Chests and minecart chests"
       description: |-
         &a Toggle interaction with chests

@@ -140,7 +140,7 @@ public class BlockInteractionListener extends FlagListener {
             break;
         case CHEST:
         case CHEST_MINECART:
-            checkIsland(e, player, loc, Flags.CONTAINER);
+            checkIsland(e, player, loc, Flags.CHEST);
             break;
         case TRAPPED_CHEST:
             checkIsland(e, player, loc, Flags.TRAPPED_CHEST);
