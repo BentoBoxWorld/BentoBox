@@ -6,6 +6,7 @@ import org.bukkit.event.inventory.ClickType;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
+import world.bentobox.bentobox.api.events.flags.FlagSettingChangeEvent;
 import world.bentobox.bentobox.api.events.flags.FlagWorldSettingChangeEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.panels.Panel;
@@ -61,6 +62,12 @@ public class WorldToggleClick implements ClickHandler {
                 user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 1F, 1F);
                 // Fire event
                 Bukkit.getPluginManager().callEvent(new FlagWorldSettingChangeEvent(user.getWorld(), user.getUniqueId(), flag, flag.isSetForWorld(user.getWorld())));
+
+                // Subflag support
+                if (flag.hasSubflags()) {
+                    // Fire events for all subflags as well
+                    flag.getSubflags().forEach(subflag -> Bukkit.getPluginManager().callEvent(new FlagWorldSettingChangeEvent(user.getWorld(), user.getUniqueId(), subflag, subflag.isSetForWorld(user.getWorld()))));
+                }
             }
 
             // Save world settings
