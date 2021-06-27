@@ -20,8 +20,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityPortalEnterEvent;
 import org.bukkit.event.entity.EntityPortalEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
@@ -50,17 +50,11 @@ public class PortalTeleportationListener implements Listener {
         inPortal = new HashSet<>();
     }
 
-    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
-    public void onPlayerMove(PlayerMoveEvent e) {
-        if (inPortal.removeIf(u -> u.equals(e.getPlayer().getUniqueId())
-                && e.getTo().getBlockX() != e.getFrom().getBlockX()
-                && e.getTo().getBlockZ() != e.getFrom().getBlockZ()
-                && !e.getPlayer().getLocation().getBlock().getType().equals(Material.NETHER_PORTAL)
-                && !e.getPlayer().getLocation().getBlock().getType().equals(Material.NETHER_PORTAL))) {
-            plugin.logDebug(e.getTo().getBlockX() + "!=" + e.getFrom().getBlockX() + "  " + e.getTo().getBlockZ() + "!=" +  e.getFrom().getBlockZ());
-            plugin.logDebug(e.getPlayer().getName() + " removed from inPortal " + e.getPlayer().getLocation().getBlock().getType());
-        }
 
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    public void onPlayerTeleport(PlayerTeleportEvent e) {
+        // Remove player from inPortal after a teleport
+        inPortal.remove(e.getPlayer().getUniqueId());
     }
 
     /**
@@ -76,18 +70,21 @@ public class PortalTeleportationListener implements Listener {
         Material type = e.getLocation().getBlock().getType();
         UUID uuid = entity.getUniqueId();
         if (inPortal.contains(uuid) || !plugin.getIWM().inWorld(Util.getWorld(e.getLocation().getWorld()))) {
-            plugin.logDebug(e.getEntity().getName() + " is inPortal");
             return;
         }
         if (!Bukkit.getAllowNether() && type.equals(Material.NETHER_PORTAL)) {
-            plugin.logDebug(e.getEntity().getName() + " is added to inPortal");
             inPortal.add(uuid);
             // Schedule a time
             Bukkit.getScheduler().runTaskLater(plugin, () -> {
                 // Check again if still in portal
                 if (entity.getLocation().getBlock().getType().equals(Material.NETHER_PORTAL)) {
                     PlayerPortalEvent en = new PlayerPortalEvent((Player)entity, e.getLocation(), null, TeleportCause.NETHER_PORTAL, 0, false, 0);
-                    onIslandPortal(en);
+                    if (!this.onIslandPortal(en)) {
+                        // Failed
+                        inPortal.remove(uuid);
+                    }
+                } else {
+                    inPortal.remove(uuid);
                 }
             }, 40);
             return;
@@ -135,7 +132,6 @@ public class PortalTeleportationListener implements Listener {
     /**
      * Handles nether or end portals
      * @param e - event
-     * @return true if portal happened, false if not
      */
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public boolean onIslandPortal(PlayerPortalEvent e) {
@@ -202,6 +198,7 @@ public class PortalTeleportationListener implements Listener {
                 && e.getIsland().filter(i -> !hasPartnerIsland(i, env)).map(i -> {
                     // No nether island present so paste the default one
                     e.setCancelled(true);
+                    inPortal.remove(e.getEntity().getUniqueId());
                     pasteNewIsland((Player)e.getEntity(), e.getTo(), i, env);
                     return true;
                 }).orElse(false)) {
@@ -210,6 +207,7 @@ public class PortalTeleportationListener implements Listener {
         }
         if (e.getCanCreatePortal()) {
             // Let the server teleport
+            inPortal.remove(e.getEntity().getUniqueId());
             return true;
         }
         if (env.equals(Environment.THE_END)) {
@@ -234,6 +232,7 @@ public class PortalTeleportationListener implements Listener {
                 .location(e.getTo())
                 .portal()
                 .thenRun(() -> {
+                    inPortal.remove(e.getEntity().getUniqueId());
                     e.getEntity().setVelocity(new Vector(0,0,0));
                     e.getEntity().setFallDistance(0);
                 })
@@ -362,6 +361,7 @@ public class PortalTeleportationListener implements Listener {
             e.setTo(e.getFrom().toVector().toLocation(overWorld));
             // Find distance from edge of island's protection
             plugin.getIslands().getIslandAt(e.getFrom()).ifPresent(i -> setSeachRadius(e, i));
+            inPortal.remove(e.getEntity().getUniqueId());
             return;
         }
         // Custom portals
@@ -374,6 +374,7 @@ public class PortalTeleportationListener implements Listener {
         .entity(e.getEntity())
         .location(to)
         .portal()
+        .thenRun(() -> inPortal.remove(e.getEntity().getUniqueId()))
         .build();
 
     }
@@ -411,7 +412,7 @@ public class PortalTeleportationListener implements Listener {
         // From standard nether or end
         else if (e.getEntity() instanceof Player){
             e.setCancelled(true);
-            plugin.getIslands().homeTeleportAsync(overWorld, (Player)e.getEntity());
+            plugin.getIslands().homeTeleportAsync(overWorld, (Player)e.getEntity()).thenAccept(b -> inPortal.remove(e.getEntity().getUniqueId()));
         }
 
     }
