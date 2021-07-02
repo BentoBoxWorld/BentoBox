@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.AdvancedPie;
+import org.bstats.charts.SimpleBarChart;
 import org.bstats.charts.SimplePie;
 import org.bstats.charts.SingleLineChart;
 import org.bukkit.Bukkit;
@@ -53,6 +54,11 @@ public class BStats {
         // Single Line charts
         registerIslandsCountChart();
         registerIslandsCreatedChart();
+
+        // Bar Charts
+        registerAddonsBarChart();
+        registerGameModeAddonsBarChart();
+        registerHooksBarChart();
     }
 
     private void registerDefaultLanguageChart() {
@@ -161,6 +167,46 @@ public class BStats {
                 }
             });
 
+            return values;
+        }));
+    }
+
+    /**
+     * Sends the enabled addons (except GameModeAddons) of this server as bar chart.
+     * @since 1.17.1
+     */
+    private void registerAddonsBarChart() {
+        metrics.addCustomChart(new SimpleBarChart("addonsBar", () -> {
+            Map<String, Integer> values = new HashMap<>();
+            plugin.getAddonsManager().getEnabledAddons().stream()
+                .filter(addon -> !(addon instanceof GameModeAddon) && addon.getDescription().isMetrics())
+                .forEach(addon -> values.put(addon.getDescription().getName(), 1));
+            return values;
+        }));
+    }
+
+    /**
+     * Sends the enabled GameModeAddons of this server as a bar chart.
+     * @since 1.17.1
+     */
+    private void registerGameModeAddonsBarChart() {
+        metrics.addCustomChart(new SimpleBarChart("gameModeAddonsBar", () -> {
+            Map<String, Integer> values = new HashMap<>();
+            plugin.getAddonsManager().getGameModeAddons().stream()
+                .filter(gameModeAddon -> gameModeAddon.getDescription().isMetrics())
+                .forEach(gameModeAddon -> values.put(gameModeAddon.getDescription().getName(), 1));
+            return values;
+        }));
+    }
+
+    /**
+     * Sends the enabled Hooks of this server as a bar chart.
+     * @since 1.17.1
+     */
+    private void registerHooksBarChart() {
+        metrics.addCustomChart(new SimpleBarChart("hooksBar", () -> {
+            Map<String, Integer> values = new HashMap<>();
+            plugin.getHooks().getHooks().forEach(hook -> values.put(hook.getPluginName(), 1));
             return values;
         }));
     }
