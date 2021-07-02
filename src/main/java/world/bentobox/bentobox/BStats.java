@@ -1,7 +1,10 @@
 package world.bentobox.bentobox;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.AdvancedPie;
@@ -28,6 +31,13 @@ public class BStats {
      * @since 1.1
      */
     private int islandsCreatedCount = 0;
+
+    /**
+     * Contains the amount of connected players since last data send.
+     * @since 1.17.1
+     */
+    private final Set<UUID> connectedPlayerSet = new HashSet<>();
+
 
     BStats(BentoBox plugin) {
         this.plugin = plugin;
@@ -87,6 +97,15 @@ public class BStats {
     }
 
     /**
+     * Adds given UUID to the connected player set.
+     * @param uuid UUID of a player who logins.
+     * @since 1.17.1
+     */
+    public void addPlayer(UUID uuid) {
+        this.connectedPlayerSet.add(uuid);
+    }
+
+    /**
      * Sends the enabled addons (except GameModeAddons) of this server.
      * @since 1.1
      */
@@ -132,7 +151,9 @@ public class BStats {
      */
     private void registerPlayersPerServerChart() {
         metrics.addCustomChart(new SimplePie("playersPerServer", () -> {
-            int players = Bukkit.getOnlinePlayers().size();
+            int players = this.connectedPlayerSet.size();
+            this.connectedPlayerSet.clear();
+
             if (players <= 0) return "0";
             else if (players <= 10) return "1-10";
             else if (players <= 30) return "11-30";
