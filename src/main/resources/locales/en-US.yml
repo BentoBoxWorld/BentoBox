@@ -1302,6 +1302,15 @@ protection:
         &a back to their island using commands
         &a if they are falling.
       hint: "&c You cannot do that while falling."
+    VISITOR_KEEP_INVENTORY:
+      name: "Visitors keep inventory on death"
+      description: |-
+        &a Prevent players from losing their
+        &a items and experience if they die on
+        &a an island in which they are a visitor.
+        &a
+        &a Island members still lose their items
+        &a if they die on their own island!
     WITHER_DAMAGE:
       name: "Toggle wither damage"
       description: |-
