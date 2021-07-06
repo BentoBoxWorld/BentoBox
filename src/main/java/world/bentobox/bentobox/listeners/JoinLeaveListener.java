@@ -102,6 +102,9 @@ public class JoinLeaveListener implements Listener {
             plugin.getIslands().getMaxMembers(i, RanksManager.TRUSTED_RANK);
             plugin.getIslands().getMaxHomes(i);
         });
+
+        // Add a player to the bStats cache.
+        plugin.getMetrics().ifPresent(bStats -> bStats.addPlayer(playerUUID));
     }
 
 
