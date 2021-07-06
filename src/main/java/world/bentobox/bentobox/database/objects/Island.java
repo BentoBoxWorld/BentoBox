@@ -824,11 +824,28 @@ public class Island implements DataObject, MetaDataAble {
 
     /**
      * Set the Island Guard flag rank
+     * This method affects subflags (if the given flag is a parent flag)
      * @param flag - flag
      * @param value - Use RanksManager settings, e.g. RanksManager.MEMBER
      */
-    public void setFlag(Flag flag, int value){
+    public void setFlag(Flag flag, int value) {
+        setFlag(flag, value, true);
+    }
+
+    /**
+     * Set the Island Guard flag rank
+     * Also specify whether subflags are affected by this method call
+     * @param flag - flag
+     * @param value - Use RanksManager settings, e.g. RanksManager.MEMBER
+     * @param doSubflags - whether to set subflags
+     */
+    public void setFlag(Flag flag, int value, boolean doSubflags) {
         flags.put(flag, value);
+        // Subflag support
+        if (doSubflags && flag.hasSubflags()) {
+            // Ensure that a subflag isn't a subflag of itself or else we're in trouble!
+            flag.getSubflags().forEach(subflag -> setFlag(subflag, value, true));
+        }
         setChanged();
     }
 
@@ -1132,23 +1149,50 @@ public class Island implements DataObject, MetaDataAble {
 
     /**
      * Toggles a settings flag
+     * This method affects subflags (if the given flag is a parent flag)
      * @param flag - flag
      */
     public void toggleFlag(Flag flag) {
+        toggleFlag(flag, true);
+    }
+
+    /**
+     * Toggles a settings flag
+     * Also specify whether subflags are affected by this method call
+     * @param flag - flag
+     */
+    public void toggleFlag(Flag flag, boolean doSubflags) {
+        boolean newToggleValue = !isAllowed(flag); // Use for subflags
         if (flag.getType().equals(Flag.Type.SETTING) || flag.getType().equals(Flag.Type.WORLD_SETTING)) {
-            setSettingsFlag(flag, !isAllowed(flag));
+            setSettingsFlag(flag, newToggleValue, doSubflags);
         }
         setChanged();
     }
 
     /**
      * Sets the state of a settings flag
+     * This method affects subflags (if the given flag is a parent flag)
      * @param flag - flag
      * @param state - true or false
      */
     public void setSettingsFlag(Flag flag, boolean state) {
+        setSettingsFlag(flag, state, true);
+    }
+
+    /**
+     * Sets the state of a settings flag
+     * Also specify whether subflags are affected by this method call
+     * @param flag - flag
+     * @param state - true or false
+     */
+    public void setSettingsFlag(Flag flag, boolean state, boolean doSubflags) {
+        int newState = state ? 1 : -1;
         if (flag.getType().equals(Flag.Type.SETTING) || flag.getType().equals(Flag.Type.WORLD_SETTING)) {
-            flags.put(flag, state ? 1 : -1);
+            flags.put(flag, newState);
+            if (doSubflags && flag.hasSubflags()) {
+                // If we have circular subflags or a flag is a subflag of itself we are in trouble!
+                flag.getSubflags().forEach(subflag -> setSettingsFlag(subflag, state, true));
+            }
         }
         setChanged();
     }

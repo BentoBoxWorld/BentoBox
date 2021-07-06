@@ -110,7 +110,14 @@ public final class Flags {
     public static final Flag BEACON = new Flag.Builder("BEACON", Material.BEACON).build();
     public static final Flag BED = new Flag.Builder("BED", Material.RED_BED).build();
     public static final Flag BREWING = new Flag.Builder("BREWING", Material.BREWING_STAND).mode(Flag.Mode.ADVANCED).build();
-    public static final Flag CONTAINER = new Flag.Builder("CONTAINER", Material.CHEST).mode(Flag.Mode.BASIC).build();
+    // START CONTAINER split
+    public static final Flag CHEST = new Flag.Builder("CHEST", Material.CHEST).mode(Flag.Mode.ADVANCED).build();
+    public static final Flag BARREL = new Flag.Builder("BARREL", Material.BARREL).mode(Flag.Mode.ADVANCED).build();
+    public static final Flag COMPOSTER = new Flag.Builder("COMPOSTER", Material.COMPOSTER).mode(Flag.Mode.ADVANCED).build();
+    public static final Flag FLOWER_POT = new Flag.Builder("FLOWER_POT", Material.FLOWER_POT).mode(Flag.Mode.ADVANCED).build();
+    public static final Flag SHULKER_BOX = new Flag.Builder("SHULKER_BOX", Material.SHULKER_BOX).mode(Flag.Mode.ADVANCED).build();
+    public static final Flag TRAPPED_CHEST = new Flag.Builder("TRAPPED_CHEST", Material.TRAPPED_CHEST).mode(Flag.Mode.ADVANCED).build();
+    // END CONTAINER split
     public static final Flag DISPENSER = new Flag.Builder("DISPENSER", Material.DISPENSER).mode(Flag.Mode.ADVANCED).build();
     public static final Flag DROPPER = new Flag.Builder("DROPPER", Material.DROPPER).mode(Flag.Mode.ADVANCED).build();
     public static final Flag HOPPER = new Flag.Builder("HOPPER", Material.HOPPER).mode(Flag.Mode.ADVANCED).build();
@@ -129,6 +136,9 @@ public final class Flags {
     public static final Flag ITEM_FRAME = new Flag.Builder("ITEM_FRAME", Material.ITEM_FRAME).mode(Flag.Mode.ADVANCED).build();
     public static final Flag CAKE = new Flag.Builder("CAKE", Material.CAKE).build();
     public static final Flag HIVE = new Flag.Builder("HIVE", Material.HONEY_BOTTLE).type(Type.PROTECTION).build();
+    public static final Flag CONTAINER = new Flag.Builder("CONTAINER", Material.CHEST).mode(Flag.Mode.BASIC)
+            .subflags(BREWING, BARREL, CHEST, COMPOSTER, FLOWER_POT, SHULKER_BOX, TRAPPED_CHEST, FURNACE, JUKEBOX, DISPENSER, DROPPER, HOPPER, ITEM_FRAME, HIVE)
+            .build();
 
     /**
      * Prevents players from interacting with the Dragon Egg.

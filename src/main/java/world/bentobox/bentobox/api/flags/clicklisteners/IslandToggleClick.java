@@ -77,6 +77,11 @@ public class IslandToggleClick implements ClickHandler {
                     island.setCooldown(flag);
                     // Fire event
                     Bukkit.getPluginManager().callEvent(new FlagSettingChangeEvent(island, user.getUniqueId(), flag, island.isAllowed(flag)));
+
+                    if (flag.hasSubflags()) {
+                        // Fire events for all subflags as well
+                        flag.getSubflags().forEach(subflag -> Bukkit.getPluginManager().callEvent(new FlagSettingChangeEvent(island, user.getUniqueId(), subflag, island.isAllowed(subflag))));
+                    }
                 }
             });
         } else {
