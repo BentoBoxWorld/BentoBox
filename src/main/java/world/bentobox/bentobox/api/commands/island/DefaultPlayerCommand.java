@@ -78,6 +78,7 @@ public abstract class DefaultPlayerCommand extends CompositeCommand {
         new IslandSethomeCommand(this);
         new IslandDeletehomeCommand(this);
         new IslandRenamehomeCommand(this);
+        new IslandHomesCommand(this);
     }
 
 
