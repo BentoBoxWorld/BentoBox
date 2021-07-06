@@ -188,6 +188,7 @@ commands:
       island-uuid: "UUID: [uuid]"
       owner: "Owner: [owner] ([uuid])"
       last-login: "Last login: [date]"
+      last-login-date-time-format: "EEE MMM dd HH:mm:ss zzz yyyy"
       deaths: "Deaths: [number]"
       resets-left: "Resets: [number] (Max: [total])"
       team-members-title: "Team members:"
