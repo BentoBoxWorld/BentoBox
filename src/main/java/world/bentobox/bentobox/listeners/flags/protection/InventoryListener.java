@@ -76,7 +76,7 @@ public class InventoryListener extends FlagListener {
             // To differentiate between a Chest and a Trapped Chest we need to get the Block corresponding to the inventory
             Chest chestInventoryHolder = (Chest) inventoryHolder;
             try {
-                if (chestInventoryHolder.getBlock().getType() == Material.TRAPPED_CHEST) {
+                if (chestInventoryHolder.getType() == Material.TRAPPED_CHEST) {
                     checkIsland(e, player, e.getInventory().getLocation(), Flags.TRAPPED_CHEST);
                 } else {
                     checkIsland(e, player, e.getInventory().getLocation(), Flags.CHEST);
