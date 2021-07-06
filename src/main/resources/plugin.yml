@@ -24,6 +24,7 @@ softdepend:
   - LangUtils
   - WildStacker
   - LuckPerms
+  - HolographicDisplays
 
 permissions:
   bentobox.admin:
