@@ -155,12 +155,6 @@
 
     <repositories>
         <repository>
-            <!-- This is a temporary reference as the Maven Shade plugin 
-                that supports Java 16 is not released yet -->
-            <id>maven-snapshots</id>
-            <url>https://repository.apache.org/content/repositories/snapshots/</url>
-        </repository>
-        <repository>
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots</url>
         </repository>
@@ -188,6 +182,13 @@
             <id>papermc</id>
             <url>https://papermc.io/repo/repository/maven-public/</url>
         </repository>
+        <repository>
+            <!-- This is a temporary reference as the Maven Shade plugin 
+                that supports Java 16 is not released yet -->
+            <id>maven-snapshots</id>
+            <url>https://repository.apache.org/content/repositories/snapshots/</url>
+        </repository>
+
     </repositories>
 
     <dependencies>
