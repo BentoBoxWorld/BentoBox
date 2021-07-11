@@ -1,10 +1,14 @@
 package world.bentobox.bentobox;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.AdvancedPie;
+import org.bstats.charts.SimpleBarChart;
 import org.bstats.charts.SimplePie;
 import org.bstats.charts.SingleLineChart;
 import org.bukkit.Bukkit;
@@ -28,6 +32,13 @@ public class BStats {
      * @since 1.1
      */
     private int islandsCreatedCount = 0;
+
+    /**
+     * Contains the amount of connected players since last data send.
+     * @since 1.17.1
+     */
+    private final Set<UUID> connectedPlayerSet = new HashSet<>();
+
 
     BStats(BentoBox plugin) {
         this.plugin = plugin;
@@ -53,6 +64,11 @@ public class BStats {
         // Single Line charts
         registerIslandsCountChart();
         registerIslandsCreatedChart();
+
+        // Bar Charts
+        registerAddonsBarChart();
+        registerGameModeAddonsBarChart();
+        registerHooksBarChart();
     }
 
     private void registerDefaultLanguageChart() {
@@ -84,6 +100,15 @@ public class BStats {
      */
     public void increaseIslandsCreatedCount() {
         islandsCreatedCount++;
+    }
+
+    /**
+     * Adds given UUID to the connected player set.
+     * @param uuid UUID of a player who logins.
+     * @since 1.17.1
+     */
+    public void addPlayer(UUID uuid) {
+        this.connectedPlayerSet.add(uuid);
     }
 
     /**
@@ -132,7 +157,9 @@ public class BStats {
      */
     private void registerPlayersPerServerChart() {
         metrics.addCustomChart(new SimplePie("playersPerServer", () -> {
-            int players = Bukkit.getOnlinePlayers().size();
+            int players = this.connectedPlayerSet.size();
+            this.connectedPlayerSet.clear();
+
             if (players <= 0) return "0";
             else if (players <= 10) return "1-10";
             else if (players <= 30) return "11-30";
@@ -161,6 +188,46 @@ public class BStats {
                 }
             });
 
+            return values;
+        }));
+    }
+
+    /**
+     * Sends the enabled addons (except GameModeAddons) of this server as bar chart.
+     * @since 1.17.1
+     */
+    private void registerAddonsBarChart() {
+        metrics.addCustomChart(new SimpleBarChart("addonsBar", () -> {
+            Map<String, Integer> values = new HashMap<>();
+            plugin.getAddonsManager().getEnabledAddons().stream()
+                .filter(addon -> !(addon instanceof GameModeAddon) && addon.getDescription().isMetrics())
+                .forEach(addon -> values.put(addon.getDescription().getName(), 1));
+            return values;
+        }));
+    }
+
+    /**
+     * Sends the enabled GameModeAddons of this server as a bar chart.
+     * @since 1.17.1
+     */
+    private void registerGameModeAddonsBarChart() {
+        metrics.addCustomChart(new SimpleBarChart("gameModeAddonsBar", () -> {
+            Map<String, Integer> values = new HashMap<>();
+            plugin.getAddonsManager().getGameModeAddons().stream()
+                .filter(gameModeAddon -> gameModeAddon.getDescription().isMetrics())
+                .forEach(gameModeAddon -> values.put(gameModeAddon.getDescription().getName(), 1));
+            return values;
+        }));
+    }
+
+    /**
+     * Sends the enabled Hooks of this server as a bar chart.
+     * @since 1.17.1
+     */
+    private void registerHooksBarChart() {
+        metrics.addCustomChart(new SimpleBarChart("hooksBar", () -> {
+            Map<String, Integer> values = new HashMap<>();
+            plugin.getHooks().getHooks().forEach(hook -> values.put(hook.getPluginName(), 1));
             return values;
         }));
     }

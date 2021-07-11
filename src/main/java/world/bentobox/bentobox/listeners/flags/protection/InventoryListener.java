@@ -1,15 +1,20 @@
 package world.bentobox.bentobox.listeners.flags.protection;
 
+import org.bukkit.Material;
+import org.bukkit.block.Barrel;
 import org.bukkit.block.Beacon;
 import org.bukkit.block.BrewingStand;
+import org.bukkit.block.Chest;
 import org.bukkit.block.Dispenser;
 import org.bukkit.block.Dropper;
 import org.bukkit.block.Furnace;
 import org.bukkit.block.Hopper;
+import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.NPC;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.minecart.HopperMinecart;
+import org.bukkit.entity.minecart.StorageMinecart;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -60,6 +65,29 @@ public class InventoryListener extends FlagListener {
         }
         else if (inventoryHolder instanceof NPC) {
             checkIsland(e, player, e.getInventory().getLocation(), Flags.TRADING);
+        }
+        else if (inventoryHolder instanceof Barrel) {
+            checkIsland(e, player, e.getInventory().getLocation(), Flags.BARREL);
+        }
+        else if (inventoryHolder instanceof ShulkerBox) {
+            checkIsland(e, player, e.getInventory().getLocation(), Flags.SHULKER_BOX);
+        }
+        else if (inventoryHolder instanceof Chest) {
+            // To differentiate between a Chest and a Trapped Chest we need to get the Block corresponding to the inventory
+            Chest chestInventoryHolder = (Chest) inventoryHolder;
+            try {
+                if (chestInventoryHolder.getType() == Material.TRAPPED_CHEST) {
+                    checkIsland(e, player, e.getInventory().getLocation(), Flags.TRAPPED_CHEST);
+                } else {
+                    checkIsland(e, player, e.getInventory().getLocation(), Flags.CHEST);
+                }
+            } catch (IllegalStateException ignored) {
+                // Thrown if the Chest corresponds to a block that isn't placed (how did we get here?)
+                checkIsland(e, player, e.getInventory().getLocation(), Flags.CHEST);
+            }
+        }
+        else if (inventoryHolder instanceof StorageMinecart) {
+            checkIsland(e, player, e.getInventory().getLocation(), Flags.CHEST);
         }
         else if (!(inventoryHolder instanceof Player)) {
             // All other containers

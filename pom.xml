@@ -83,7 +83,7 @@
         <!-- Do not change unless you want different name for local builds. -->
         <build.number>-LOCAL</build.number>
         <!-- This allows to change between versions. -->
-        <build.version>1.17.0</build.version>
+        <build.version>1.17.1</build.version>
     </properties>
 
     <!-- Profiles will allow to automatically change build version. -->
@@ -126,40 +126,16 @@
                 <build.number></build.number>
             </properties>
         </profile>
-        <profile>
-            <id>sonar</id>
-            <properties>
-                <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-                <sonar.organization>bentobox-world</sonar.organization>
-            </properties>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.sonarsource.scanner.maven</groupId>
-                        <artifactId>sonar-maven-plugin</artifactId>
-                        <!-- was <version>3.4.1.1168</version> -->
-                        <version>3.6.0.1398</version>
-                        <executions>
-                            <execution>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>sonar</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
     </profiles>
 
+    <pluginRepositories>
+        <pluginRepository>
+            <id>apache.snapshots</id>
+            <url>https://repository.apache.org/snapshots/</url>
+        </pluginRepository>
+    </pluginRepositories>
+
     <repositories>
-        <repository>
-            <!-- This is a temporary reference as the Maven Shade plugin 
-                that supports Java 16 is not released yet -->
-            <id>maven-snapshots</id>
-            <url>https://repository.apache.org/content/repositories/snapshots/</url>
-        </repository>
         <repository>
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots</url>
@@ -188,6 +164,13 @@
             <id>papermc</id>
             <url>https://papermc.io/repo/repository/maven-public/</url>
         </repository>
+        <repository>
+            <!-- This is a temporary reference as the Maven Shade plugin 
+                that supports Java 16 is not released yet -->
+            <id>maven-snapshots</id>
+            <url>https://repository.apache.org/content/repositories/snapshots/</url>
+        </repository>
+
     </repositories>
 
     <dependencies>
@@ -209,7 +192,7 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot</artifactId>
-            <version>1.17-R0.1-SNAPSHOT</version>
+            <version>${spigot.version}</version>
             <scope>provided</scope>
         </dependency>
         <!-- Metrics -->

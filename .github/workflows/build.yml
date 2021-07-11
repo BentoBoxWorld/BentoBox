@@ -14,21 +14,23 @@ jobs:
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
       - name: Set up JDK 16
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v2
         with:
-          java-version: 16
+          distribution: 'adopt'
+          java-version: '16'
       - name: Cache SonarCloud packages
-        uses: actions/cache@v1
+        uses: actions/cache@v2
         with:
           path: ~/.sonar/cache
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
-      - name: Cache Maven packages
-        uses: actions/cache@v1
+      - name: Cache local Maven repository
+        uses: actions/cache@v2
         with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
       - name: Build
         run: mvn --batch-mode clean org.jacoco:jacoco-maven-plugin:prepare-agent install
       - run: mkdir staging && cp target/*.jar staging
