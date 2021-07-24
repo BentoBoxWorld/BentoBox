@@ -62,6 +62,7 @@ public class ObsidianScoopingListener extends FlagListener {
             user.sendMessage("protection.flags.OBSIDIAN_SCOOPING.scooping");
             player.getWorld().playSound(player.getLocation(), Sound.ITEM_BUCKET_FILL_LAVA, 1F, 1F);
             b.setType(Material.AIR);
+            e.setCancelled(true);
             Bukkit.getScheduler().runTask(BentoBox.getInstance(), () -> givePlayerLava(player, bucket));
             return true;
         }
