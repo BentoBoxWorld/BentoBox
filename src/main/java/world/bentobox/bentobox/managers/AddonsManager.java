@@ -173,7 +173,7 @@ public class AddonsManager {
             }
         } catch (Exception e) {
             // We couldn't load the addon, aborting.
-            plugin.logError("Could not load addon! " + e.getMessage());
+            plugin.logError("Could not load addon '" + f.getName() + "'. Error is: " + e.getMessage());
             plugin.logStacktrace(e);
             return;
         }
