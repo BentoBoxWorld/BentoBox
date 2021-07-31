@@ -144,7 +144,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
 
         // Run setup
         setup();
-        if (!getSubCommand("help").isPresent() && !label.equals("help")) {
+        if (getSubCommand("help").isEmpty() && !label.equals("help")) {
             new DefaultHelpCommand(this);
         }
     }
@@ -208,7 +208,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         setParametersHelp(COMMANDS + reference + ".parameters");
         setup();
         // If this command does not define its own help class, then use the default help command
-        if (!getSubCommand("help").isPresent() && !label.equals("help")) {
+        if (getSubCommand("help").isEmpty() && !label.equals("help")) {
             new DefaultHelpCommand(this);
         }
     }
@@ -278,7 +278,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
             // get the subcommand corresponding to the arg
             if (subCommand.hasSubCommands()) {
                 Optional<CompositeCommand> sub = subCommand.getSubCommand(arg);
-                if (!sub.isPresent()) {
+                if (sub.isEmpty()) {
                     return subCommand;
                 }
                 // Step down one

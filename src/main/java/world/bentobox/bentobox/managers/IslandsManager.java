@@ -144,7 +144,7 @@ public class IslandsManager {
             depth = i;
         } else {
             Optional<Island> island = getIslandAt(l);
-            if (!island.isPresent()) {
+            if (island.isEmpty()) {
                 return null;
             }
             i = island.get().getProtectionRange();

@@ -117,7 +117,7 @@ public class PortalTeleportationListener implements Listener {
                             || m.equals(Material.END_PORTAL)
                             || m.equals(Material.END_GATEWAY))
                     .findFirst();
-            if (!mat.isPresent()) {
+            if (mat.isEmpty()) {
                 e.setCancelled(true);
                 return false;
             } else if (mat.get().equals(Material.NETHER_PORTAL)){
