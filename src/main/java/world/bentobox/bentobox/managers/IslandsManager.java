@@ -1777,7 +1777,7 @@ public class IslandsManager {
      * @since 1.7.0
      */
     public boolean nameExists(@NonNull World world, @NonNull String name) {
-        return getIslands(world).stream().filter(island -> island.getName() != null).map(Island::getName)
+        return getIslands(world).stream().map(Island::getName).filter(Objects::nonNull)
                 .anyMatch(n -> ChatColor.stripColor(n).equals(ChatColor.stripColor(name)));
     }
 
