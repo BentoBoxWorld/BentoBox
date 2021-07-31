@@ -258,16 +258,14 @@ public class AdminSettingsCommand extends CompositeCommand {
             }
         } else if (args.size() == 4) {
             // Get flag in previous argument
-            options = getPlugin().getFlagsManager().getFlag(args.get(2).toUpperCase(Locale.ENGLISH)).map(f -> {
-                return switch (f.getType()) {
-                    case PROTECTION -> getPlugin().getRanksManager()
-                            .getRanks().entrySet().stream()
-                            .filter(en -> en.getValue() > RanksManager.BANNED_RANK && en.getValue() <= RanksManager.OWNER_RANK)
-                            .map(Entry::getKey)
-                            .map(user::getTranslation).collect(Collectors.toList());
-                    case SETTING -> Arrays.asList(active, disabled);
-                    default -> Collections.<String>emptyList();
-                };
+            options = getPlugin().getFlagsManager().getFlag(args.get(2).toUpperCase(Locale.ENGLISH)).map(f -> switch (f.getType()) {
+                case PROTECTION -> getPlugin().getRanksManager()
+                        .getRanks().entrySet().stream()
+                        .filter(en -> en.getValue() > RanksManager.BANNED_RANK && en.getValue() <= RanksManager.OWNER_RANK)
+                        .map(Entry::getKey)
+                        .map(user::getTranslation).collect(Collectors.toList());
+                case SETTING -> Arrays.asList(active, disabled);
+                default -> Collections.<String>emptyList();
             }).orElse(Collections.emptyList());
         }
         return Optional.of(Util.tabLimit(options, lastArg));
