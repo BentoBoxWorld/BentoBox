@@ -63,7 +63,7 @@ public class AdminSwitchtoCommand extends ConfirmableCommand {
     public boolean execute(User user, String label, List<String> args) {
         if (NumberUtils.isDigits(args.get(1))) {
             try {
-                Integer n = Integer.valueOf(args.get(1));
+                int n = Integer.parseInt(args.get(1));
                 if (n < 1 || n > islands.size()) {
                     user.sendMessage("commands.admin.switchto.out-of-range", TextVariables.NUMBER, String.valueOf(islands.size()), TextVariables.LABEL, getTopLabel());
                     return false;
