@@ -23,8 +23,7 @@ public class FlagSerializer2 implements AdapterInterface<Map<Flag, Integer>, Map
             return result;
         }
         // For YAML
-        if (object instanceof MemorySection) {
-            MemorySection section = (MemorySection) object;
+        if (object instanceof MemorySection section) {
             for (String key : section.getKeys(false)) {
                 BentoBox.getInstance().getFlagsManager().getFlag(key).ifPresent(flag -> result.put(flag, section.getBoolean(key) ? 0 : -1));
             }

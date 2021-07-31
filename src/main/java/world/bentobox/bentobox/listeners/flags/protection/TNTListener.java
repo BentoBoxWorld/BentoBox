@@ -48,8 +48,7 @@ public class TNTListener extends FlagListener {
             return false;
         }
         // Stop TNT from being damaged if it is being caused by a visitor with a flaming arrow
-        if (e.getEntity() instanceof Projectile) {
-            Projectile projectile = (Projectile) e.getEntity();
+        if (e.getEntity() instanceof Projectile projectile) {
             // Find out who fired it
             if (projectile.getShooter() instanceof Player && projectile.getFireTicks() > 0
                     && !checkIsland(e, (Player)projectile.getShooter(), e.getBlock().getLocation(), Flags.TNT_PRIMING)) {

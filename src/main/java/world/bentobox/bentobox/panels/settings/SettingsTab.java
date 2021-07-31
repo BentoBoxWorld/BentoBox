@@ -214,8 +214,7 @@ public class SettingsTab implements Tab, ClickHandler {
     public boolean onClick(Panel panel, User user, ClickType clickType, int slot) {
         // Cycle the mode
         plugin.getPlayers().setFlagsDisplayMode(user.getUniqueId(), plugin.getPlayers().getFlagsDisplayMode(user.getUniqueId()).getNext());
-        if (panel instanceof TabbedPanel) {
-            TabbedPanel tp = ((TabbedPanel)panel);
+        if (panel instanceof TabbedPanel tp) {
             tp.setActivePage(0);
             tp.refreshPanel();
             user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_OFF, 1F, 1F);

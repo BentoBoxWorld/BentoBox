@@ -211,8 +211,7 @@ public class AddonsManager {
             // Run the onLoad.
             addon.onLoad();
             // if game mode, get the world name and generate
-            if (addon instanceof GameModeAddon && !addon.getState().equals(State.DISABLED)) {
-                GameModeAddon gameMode = (GameModeAddon) addon;
+            if (addon instanceof GameModeAddon gameMode && !addon.getState().equals(State.DISABLED)) {
                 if (!gameMode.getWorldSettings().getWorldName().isEmpty()) {
                     worldNames.put(gameMode.getWorldSettings().getWorldName().toLowerCase(Locale.ENGLISH), gameMode);
                 }
@@ -282,8 +281,7 @@ public class AddonsManager {
         plugin.log("Enabling " + addon.getDescription().getName() + " (" + addon.getDescription().getVersion() + ")...");
         try {
             // If this is a GameModeAddon create the worlds, register it and load the blueprints
-            if (addon instanceof GameModeAddon) {
-                GameModeAddon gameMode = (GameModeAddon) addon;
+            if (addon instanceof GameModeAddon gameMode) {
                 // Create the gameWorlds
                 gameMode.createWorlds();
                 plugin.getIWM().addGameMode(gameMode);
@@ -296,8 +294,7 @@ public class AddonsManager {
                 plugin.log(addon.getDescription().getName() + " is disabled.");
                 return;
             }
-            if (addon instanceof GameModeAddon) {
-                GameModeAddon gameMode = (GameModeAddon) addon;
+            if (addon instanceof GameModeAddon gameMode) {
                 // Set the worlds for the commands
                 gameMode.getPlayerCommand().ifPresent(c -> c.setWorld(gameMode.getOverWorld()));
                 gameMode.getAdminCommand().ifPresent(c -> c.setWorld(gameMode.getOverWorld()));

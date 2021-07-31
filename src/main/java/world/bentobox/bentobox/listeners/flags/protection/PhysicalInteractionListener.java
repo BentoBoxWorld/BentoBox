@@ -53,10 +53,9 @@ public class PhysicalInteractionListener extends FlagListener {
      */
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onProjectileHit(EntityInteractEvent e) {
-        if (!(e.getEntity() instanceof Projectile)) {
+        if (!(e.getEntity() instanceof Projectile p)) {
             return;
         }
-        Projectile p = (Projectile)e.getEntity();
         if (p.getShooter() instanceof Player) {
             if (Tag.WOODEN_BUTTONS.isTagged(e.getBlock().getType())) {
                 checkIsland(e, (Player)p.getShooter(), e.getBlock().getLocation(), Flags.BUTTON);

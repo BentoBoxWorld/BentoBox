@@ -301,8 +301,7 @@ public class BlueprintPaster {
             bpBlock.getInventory().forEach(ih::setItem);
         }
         // Mob spawners
-        if (bs instanceof CreatureSpawner) {
-            CreatureSpawner spawner = ((CreatureSpawner) bs);
+        if (bs instanceof CreatureSpawner spawner) {
             BlueprintCreatureSpawner s = bpBlock.getCreatureSpawner();
             spawner.setSpawnedType(s.getSpawnedType());
             spawner.setMaxNearbyEntities(s.getMaxNearbyEntities());
@@ -314,8 +313,7 @@ public class BlueprintPaster {
             bs.update(true, false);
         }
         // Banners
-        if (bs instanceof Banner && bpBlock.getBannerPatterns() != null) {
-            Banner banner = (Banner) bs;
+        if (bs instanceof Banner banner && bpBlock.getBannerPatterns() != null) {
             bpBlock.getBannerPatterns().removeIf(Objects::isNull);
             banner.setPatterns(bpBlock.getBannerPatterns());
             banner.update(true, false);

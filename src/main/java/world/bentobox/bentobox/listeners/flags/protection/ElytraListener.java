@@ -18,8 +18,7 @@ public class ElytraListener extends FlagListener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onGlide(EntityToggleGlideEvent e) {
-        if (e.getEntity() instanceof Player) {
-            Player player = (Player) e.getEntity();
+        if (e.getEntity() instanceof Player player) {
             if (!checkIsland(e, player, player.getLocation(), Flags.ELYTRA)) {
                 player.setGliding(false);
             }

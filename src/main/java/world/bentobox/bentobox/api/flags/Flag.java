@@ -294,10 +294,9 @@ public class Flag implements Comparable<Flag> {
         if (obj == null) {
             return false;
         }
-        if (!(obj instanceof Flag)) {
+        if (!(obj instanceof Flag other)) {
             return false;
         }
-        Flag other = (Flag) obj;
         if (id == null) {
             if (other.id != null) {
                 return false;
