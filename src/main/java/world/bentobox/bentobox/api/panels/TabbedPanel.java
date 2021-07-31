@@ -146,7 +146,7 @@ public class TabbedPanel extends Panel implements PanelListener {
             }
         }
         // Add any subsidiary icons
-        tab.getTabIcons().forEach(items::put);
+        items.putAll(tab.getTabIcons());
     }
 
     private void setupFooter(TreeMap<Integer, PanelItem> items) {
