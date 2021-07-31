@@ -602,7 +602,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
             return options;
         }
         // Add any tab completion from the subcommand
-        options.addAll(command.tabComplete(User.getInstance(sender), alias, new LinkedList<>(Arrays.asList(args))).orElseGet(() -> new ArrayList<>()));
+        options.addAll(command.tabComplete(User.getInstance(sender), alias, new LinkedList<>(Arrays.asList(args))).orElseGet(ArrayList::new));
         if (command.hasSubCommands()) {
             options.addAll(getSubCommandLabels(sender, command));
         }
