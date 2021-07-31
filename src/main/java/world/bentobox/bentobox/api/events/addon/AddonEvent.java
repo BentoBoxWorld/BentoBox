@@ -100,29 +100,21 @@ public class AddonEvent {
         }
 
         private AddonBaseEvent getDeprecatedEvent() {
-            switch (reason) {
-            case ENABLE:
-                return new AddonEnableEvent(addon, keyValues);
-            case DISABLE:
-                return new AddonDisableEvent(addon, keyValues);
-            case LOAD:
-                return new AddonLoadEvent(addon, keyValues);
-            default:
-                return new AddonGeneralEvent(addon, keyValues);
-            }
+            return switch (reason) {
+                case ENABLE -> new AddonEnableEvent(addon, keyValues);
+                case DISABLE -> new AddonDisableEvent(addon, keyValues);
+                case LOAD -> new AddonLoadEvent(addon, keyValues);
+                default -> new AddonGeneralEvent(addon, keyValues);
+            };
         }
 
         private AddonBaseEvent getEvent() {
-            switch (reason) {
-            case ENABLE:
-                return new world.bentobox.bentobox.api.events.addon.AddonEnableEvent(addon, keyValues);
-            case DISABLE:
-                return new world.bentobox.bentobox.api.events.addon.AddonDisableEvent(addon, keyValues);
-            case LOAD:
-                return new world.bentobox.bentobox.api.events.addon.AddonLoadEvent(addon, keyValues);
-            default:
-                return new world.bentobox.bentobox.api.events.addon.AddonGeneralEvent(addon, keyValues);
-            }
+            return switch (reason) {
+                case ENABLE -> new world.bentobox.bentobox.api.events.addon.AddonEnableEvent(addon, keyValues);
+                case DISABLE -> new world.bentobox.bentobox.api.events.addon.AddonDisableEvent(addon, keyValues);
+                case LOAD -> new world.bentobox.bentobox.api.events.addon.AddonLoadEvent(addon, keyValues);
+                default -> new world.bentobox.bentobox.api.events.addon.AddonGeneralEvent(addon, keyValues);
+            };
         }
 
         /**

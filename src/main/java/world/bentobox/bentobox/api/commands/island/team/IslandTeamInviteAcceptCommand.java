@@ -82,14 +82,10 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
         // Get the invite
         Invite invite = itc.getInvite(playerUUID);
         switch (invite.getType()) {
-        case COOP:
-            askConfirmation(user, () -> acceptCoopInvite(user, invite));
-            break;
-        case TRUST:
-            askConfirmation(user, () -> acceptTrustInvite(user, invite));
-            break;
-        default:
-            askConfirmation(user, user.getTranslation("commands.island.team.invite.accept.confirmation"), () -> acceptTeamInvite(user, invite));
+            case COOP -> askConfirmation(user, () -> acceptCoopInvite(user, invite));
+            case TRUST -> askConfirmation(user, () -> acceptTrustInvite(user, invite));
+            default -> askConfirmation(user, user.getTranslation("commands.island.team.invite.accept.confirmation"),
+                    () -> acceptTeamInvite(user, invite));
         }
         return true;
     }

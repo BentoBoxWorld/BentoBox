@@ -270,31 +270,12 @@ public class IslandsManager {
             return false;
         }
         // Known unsafe blocks
-        switch (ground) {
-        // Unsafe
-        case ANVIL:
-        case BARRIER:
-        case CACTUS:
-        case END_PORTAL:
-        case END_ROD:
-        case FIRE:
-        case FLOWER_POT:
-        case LADDER:
-        case LEVER:
-        case TALL_GRASS:
-        case PISTON_HEAD:
-        case MOVING_PISTON:
-        case TORCH:
-        case WALL_TORCH:
-        case TRIPWIRE:
-        case WATER:
-        case COBWEB:
-        case NETHER_PORTAL:
-        case MAGMA_BLOCK:
-            return false;
-        default:
-            return true;
-        }
+        return switch (ground) {
+            // Unsafe
+            case ANVIL, BARRIER, CACTUS, END_PORTAL, END_ROD, FIRE, FLOWER_POT, LADDER, LEVER, TALL_GRASS, PISTON_HEAD,
+                    MOVING_PISTON, TORCH, WALL_TORCH, TRIPWIRE, WATER, COBWEB, NETHER_PORTAL, MAGMA_BLOCK -> false;
+            default -> true;
+        };
     }
 
     /**

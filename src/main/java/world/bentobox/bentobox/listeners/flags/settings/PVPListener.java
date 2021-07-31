@@ -198,14 +198,11 @@ public class PVPListener extends FlagListener {
     }
 
     private Flag getFlag(World w) {
-        switch (w.getEnvironment()) {
-        case NETHER:
-            return Flags.PVP_NETHER;
-        case THE_END:
-            return Flags.PVP_END;
-        default:
-            return Flags.PVP_OVERWORLD;
-        }
+        return switch (w.getEnvironment()) {
+            case NETHER -> Flags.PVP_NETHER;
+            case THE_END -> Flags.PVP_END;
+            default -> Flags.PVP_OVERWORLD;
+        };
     }
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled=true)
