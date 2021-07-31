@@ -16,6 +16,6 @@ public interface NMSAbstraction {
      * @param blockData - block data to set the block
      * @param applyPhysics - apply physics or not
      */
-    public void setBlockInNativeChunk(Chunk chunk, int x, int y, int z, BlockData blockData, boolean applyPhysics);
+    void setBlockInNativeChunk(Chunk chunk, int x, int y, int z, BlockData blockData, boolean applyPhysics);
 
 }
