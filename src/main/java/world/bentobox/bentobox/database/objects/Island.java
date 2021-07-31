@@ -1346,7 +1346,7 @@ public class Island implements DataObject, MetaDataAble {
      * @param flag - Flag to cooldown
      */
     public void setCooldown(Flag flag) {
-        cooldowns.put(flag, flag.getCooldown() * 1000 + System.currentTimeMillis());
+        cooldowns.put(flag, flag.getCooldown() * 1000L + System.currentTimeMillis());
         setChanged();
     }
 
