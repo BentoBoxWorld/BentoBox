@@ -39,7 +39,7 @@ public class AdminSettingsCommand extends CompositeCommand {
     private Island island;
     private final List<String> SETTING_FLAG_NAMES;
     private List<String> WORLD_SETTING_FLAG_NAMES;
-    private @NonNull Optional<Flag> flag;
+    private @NonNull Optional<Flag> flag = Optional.empty();
     private boolean activeState;
     private int rank;
 
