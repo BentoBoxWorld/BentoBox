@@ -22,7 +22,7 @@ public class Notifier {
             .expireAfterAccess(NOTIFICATION_DELAY, TimeUnit.SECONDS)
             .maximumSize(500)
             .build(
-                    new CacheLoader<User, Notification>() {
+                    new CacheLoader<>() {
                         @Override
                         public Notification load(User user) {
                             return new Notification(null, 0);
