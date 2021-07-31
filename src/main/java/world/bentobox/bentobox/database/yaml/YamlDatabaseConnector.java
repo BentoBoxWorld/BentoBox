@@ -189,11 +189,11 @@ public class YamlDatabaseConnector implements DatabaseConnector {
     @NonNull
     public String getUniqueId(String tableName) {
         UUID uuid = UUID.randomUUID();
-        File file = new File(dataFolder, tableName + File.separator + uuid.toString() + YML);
+        File file = new File(dataFolder, tableName + File.separator + uuid + YML);
         int limit = 0;
         while (file.exists() && limit++ < MAX_LOOPS) {
             uuid = UUID.randomUUID();
-            file = new File(dataFolder, tableName + File.separator + uuid.toString() + YML);
+            file = new File(dataFolder, tableName + File.separator + uuid + YML);
         }
         return uuid.toString();
     }

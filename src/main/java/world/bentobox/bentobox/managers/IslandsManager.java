@@ -305,7 +305,7 @@ public class IslandsManager {
             // This should never happen, so although this is a potential infinite loop I'm going to leave it here because
             // it will be bad if this does occur and the server should crash.
             plugin.logWarning("Duplicate island UUID occurred");
-            island.setUniqueId(gmName + UUID.randomUUID().toString());
+            island.setUniqueId(gmName + UUID.randomUUID());
         }
         if (islandCache.addIsland(island)) {
             return island;
@@ -1181,7 +1181,7 @@ public class IslandsManager {
                     player.leaveVehicle();
                     // Remove the boat so they don't lie around everywhere
                     boat.remove();
-                    Material boatMat = Material.getMaterial(((Boat) boat).getWoodType().toString() + "_BOAT");
+                    Material boatMat = Material.getMaterial(((Boat) boat).getWoodType() + "_BOAT");
                     if (boatMat == null) {
                         boatMat = Material.OAK_BOAT;
                     }

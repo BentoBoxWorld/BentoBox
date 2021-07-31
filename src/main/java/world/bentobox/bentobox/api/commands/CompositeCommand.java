@@ -204,8 +204,8 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
             p = p.getParent();
             index++;
         }
-        setDescription(COMMANDS + reference.toString() + ".description");
-        setParametersHelp(COMMANDS + reference.toString() + ".parameters");
+        setDescription(COMMANDS + reference + ".description");
+        setParametersHelp(COMMANDS + reference + ".parameters");
         setup();
         // If this command does not define its own help class, then use the default help command
         if (!getSubCommand("help").isPresent() && !label.equals("help")) {

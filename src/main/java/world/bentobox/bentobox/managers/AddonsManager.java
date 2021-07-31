@@ -324,7 +324,7 @@ public class AddonsManager {
         plugin.logWarning("NOTE: DO NOT report this as a bug from BentoBox.");
         StringBuilder a = new StringBuilder();
         addon.getDescription().getAuthors().forEach(author -> a.append(author).append(" "));
-        plugin.getLogger().log(Level.SEVERE, "Please report this stack trace to the addon's author(s): " + a.toString(), e);
+        plugin.getLogger().log(Level.SEVERE, "Please report this stack trace to the addon's author(s): " + a, e);
 
     }
 
