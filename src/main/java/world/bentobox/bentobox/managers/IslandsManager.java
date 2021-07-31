@@ -900,7 +900,7 @@ public class IslandsManager {
      * @since 1.16.0
      */
     public boolean removeHomeLocation(@Nullable Island island, String name) {
-        return island == null ? false : island.removeHome(name);
+        return island != null && island.removeHome(name);
     }
 
     /**
@@ -911,7 +911,7 @@ public class IslandsManager {
      * @return true if successful, false if not
      */
     public boolean renameHomeLocation(@Nullable Island island, String oldName, String newName) {
-        return island == null ? false : island.renameHome(oldName, newName);
+        return island != null && island.renameHome(oldName, newName);
     }
 
     /**
