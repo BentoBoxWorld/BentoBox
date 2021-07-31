@@ -142,12 +142,11 @@ public class MongoDBDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
             completableFuture.complete(false);
             return completableFuture;
         }
-        if (!(instance instanceof DataObject)) {
+        if (!(instance instanceof DataObject dataObj)) {
             plugin.logError("This class is not a DataObject: " + instance.getClass().getName());
             completableFuture.complete(false);
             return completableFuture;
         }
-        DataObject dataObj = (DataObject)instance;
         try {
             Gson gson = getGson();
             String toStore = gson.toJson(instance);

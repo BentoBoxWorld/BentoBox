@@ -29,7 +29,7 @@ public class MetaDataValue {
     @Expose
     private Boolean booleanValue;
     @Expose
-    private @NonNull String stringValue;
+    private String stringValue;
 
     /**
      * Initialize this meta data value
@@ -85,6 +85,6 @@ public class MetaDataValue {
 
     @NonNull
     public String asString() {
-        return stringValue;
+        return stringValue == null ? "" : stringValue;
     }
 }

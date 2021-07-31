@@ -47,7 +47,7 @@ public class PlayerEntityPortalEvent {
      * @return whether there should create be a destination portal created
      */
     public boolean getCanCreatePortal() {
-        return epe == null ? ppe.getCanCreatePortal() : false;
+        return epe == null && ppe.getCanCreatePortal();
     }
 
     /**

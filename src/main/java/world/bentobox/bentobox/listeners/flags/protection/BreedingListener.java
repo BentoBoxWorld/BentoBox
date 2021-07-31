@@ -73,8 +73,7 @@ public class BreedingListener extends FlagListener {
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled=true)
     public void onPlayerInteract(final PlayerInteractAtEntityEvent e) {
         Player p = e.getPlayer();
-        if (e.getRightClicked() instanceof Animals && BREEDING_ITEMS.containsKey(e.getRightClicked().getType())) {
-            Animals animal = (Animals) e.getRightClicked();
+        if (e.getRightClicked() instanceof Animals animal && BREEDING_ITEMS.containsKey(e.getRightClicked().getType())) {
             ItemStack inHand = p.getInventory().getItemInMainHand();
             if (e.getHand().equals(EquipmentSlot.OFF_HAND)) {
                 inHand = p.getInventory().getItemInOffHand();
