@@ -91,14 +91,11 @@ public class Flag implements Comparable<Flag> {
          * @return next ranking mode
          */
         public Mode getNext() {
-            switch(this) {
-            case ADVANCED:
-                return EXPERT;
-            case BASIC:
-                return ADVANCED;
-            default:
-                return BASIC;
-            }
+            return switch (this) {
+                case ADVANCED -> EXPERT;
+                case BASIC -> ADVANCED;
+                default -> BASIC;
+            };
         }
 
         /**
@@ -107,14 +104,11 @@ public class Flag implements Comparable<Flag> {
          * @return true if ranked greater
          */
         public boolean isGreaterThan(Mode rank) {
-            switch(this) {
-            case EXPERT:
-                return rank.equals(BASIC) || rank.equals(ADVANCED);
-            case ADVANCED:
-                return rank.equals(BASIC);
-            default:
-                return false;
-            }
+            return switch (this) {
+                case EXPERT -> rank.equals(BASIC) || rank.equals(ADVANCED);
+                case ADVANCED -> rank.equals(BASIC);
+                default -> false;
+            };
         }
     }
 
@@ -300,10 +294,9 @@ public class Flag implements Comparable<Flag> {
         if (obj == null) {
             return false;
         }
-        if (!(obj instanceof Flag)) {
+        if (!(obj instanceof Flag other)) {
             return false;
         }
-        Flag other = (Flag) obj;
         if (id == null) {
             if (other.id != null) {
                 return false;
@@ -392,16 +385,12 @@ public class Flag implements Comparable<Flag> {
             pib.description(user.getTranslation("protection.panel.flag-item.menu-layout", TextVariables.DESCRIPTION, user.getTranslation(getDescriptionReference())));
             return pib.build();
         }
-        switch(getType()) {
-        case PROTECTION:
-            return createProtectionFlag(plugin, user, island, pib).build();
-        case SETTING:
-            return createSettingFlag(user, island, pib).build();
-        case WORLD_SETTING:
-            return createWorldSettingFlag(user, pib).build();
-        default:
-            return pib.build();
-        }
+        return switch (getType()) {
+            case PROTECTION -> createProtectionFlag(plugin, user, island, pib).build();
+            case SETTING -> createSettingFlag(user, island, pib).build();
+            case WORLD_SETTING -> createWorldSettingFlag(user, pib).build();
+            default -> pib.build();
+        };
     }
 
     private PanelItemBuilder createWorldSettingFlag(User user, PanelItemBuilder pib) {
@@ -653,17 +642,9 @@ public class Flag implements Comparable<Flag> {
             // If no clickHandler has been set, then apply default ones
             if (clickHandler == null) {
                 switch (type) {
-                case SETTING:
-                    clickHandler = new IslandToggleClick(id);
-                    break;
-                case WORLD_SETTING:
-                    clickHandler = new WorldToggleClick(id);
-                    break;
-                case PROTECTION:
-                    // Default option
-                default:
-                    clickHandler = new CycleClick(id);
-                    break;
+                    case SETTING -> clickHandler = new IslandToggleClick(id);
+                    case WORLD_SETTING -> clickHandler = new WorldToggleClick(id);
+                    default -> clickHandler = new CycleClick(id);
                 }
             }
 

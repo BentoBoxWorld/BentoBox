@@ -618,10 +618,9 @@ public class User implements MetaDataAble {
         if (obj == null) {
             return false;
         }
-        if (!(obj instanceof User)) {
+        if (!(obj instanceof User other)) {
             return false;
         }
-        User other = (User) obj;
         if (playerUUID == null) {
             return other.playerUUID == null;
         } else return playerUUID.equals(other.playerUUID);

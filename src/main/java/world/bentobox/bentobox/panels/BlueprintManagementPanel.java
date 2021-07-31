@@ -257,21 +257,22 @@ public class BlueprintManagementPanel {
         Material icon;
         String worldName;
         switch (env) {
-            case NORMAL:
+            case NORMAL -> {
                 icon = Material.GRASS_BLOCK;
                 worldName = normalBlueprint.getName();
-                break;
-            case NETHER:
+            }
+            case NETHER -> {
                 icon = Material.NETHERRACK;
                 worldName = netherBlueprint.getName();
-                break;
-            case THE_END:
+            }
+            case THE_END -> {
                 icon = Material.END_STONE;
                 worldName = endBlueprint.getName();
-                break;
-            default:
+            }
+            default -> {
                 icon = Material.STONE;
                 worldName = Util.prettifyText(env.name());
+            }
         }
 
         return new PanelItemBuilder()

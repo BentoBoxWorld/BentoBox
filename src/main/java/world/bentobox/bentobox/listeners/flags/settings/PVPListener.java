@@ -83,9 +83,8 @@ public class PVPListener extends FlagListener {
                 user.notify(getFlag(damager.getWorld()).getHintReference());
                 e.setCancelled(true);
             }
-        } else if (damager instanceof Projectile && ((Projectile)damager).getShooter() instanceof Player) {
+        } else if (damager instanceof Projectile p && ((Projectile)damager).getShooter() instanceof Player) {
             // Find out who fired the arrow
-            Projectile p = (Projectile) damager;
             Player shooter =(Player)p.getShooter();
             processDamage(e, damager, shooter, hurtEntity, flag);
         } else if (damager instanceof Firework && firedFireworks.containsKey(damager)) {
@@ -198,14 +197,11 @@ public class PVPListener extends FlagListener {
     }
 
     private Flag getFlag(World w) {
-        switch (w.getEnvironment()) {
-        case NETHER:
-            return Flags.PVP_NETHER;
-        case THE_END:
-            return Flags.PVP_END;
-        default:
-            return Flags.PVP_OVERWORLD;
-        }
+        return switch (w.getEnvironment()) {
+            case NETHER -> Flags.PVP_NETHER;
+            case THE_END -> Flags.PVP_END;
+            default -> Flags.PVP_OVERWORLD;
+        };
     }
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled=true)

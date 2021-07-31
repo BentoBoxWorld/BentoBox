@@ -237,57 +237,35 @@ public class TeamEvent {
         }
 
         private IslandBaseEvent getDeprecatedEvent() {
-            switch (reason) {
-            case JOIN:
-                return new TeamJoinEvent(island, player, admin, location);
-            case JOINED:
-                return new TeamJoinedEvent(island, player, admin, location);
-            case INVITE:
-                return new TeamInviteEvent(island, player, admin, location);
-            case LEAVE:
-                return new TeamLeaveEvent(island, player, admin, location);
-            case REJECT:
-                return new TeamRejectEvent(island, player, admin, location);
-            case KICK:
-                return new TeamKickEvent(island, player, admin, location);
-            case SETOWNER:
-                return new TeamSetownerEvent(island, player, admin, location);
-            case INFO:
-                return new TeamInfoEvent(island, player, admin, location);
-            case DELETE:
-                return new TeamDeleteEvent(island, player, admin, location);
-            case UNINVITE:
-                return new TeamUninviteEvent(island, player, admin, location);
-            default:
-                return new TeamGeneralEvent(island, player, admin, location);
-            }
+            return switch (reason) {
+                case JOIN -> new TeamJoinEvent(island, player, admin, location);
+                case JOINED -> new TeamJoinedEvent(island, player, admin, location);
+                case INVITE -> new TeamInviteEvent(island, player, admin, location);
+                case LEAVE -> new TeamLeaveEvent(island, player, admin, location);
+                case REJECT -> new TeamRejectEvent(island, player, admin, location);
+                case KICK -> new TeamKickEvent(island, player, admin, location);
+                case SETOWNER -> new TeamSetownerEvent(island, player, admin, location);
+                case INFO -> new TeamInfoEvent(island, player, admin, location);
+                case DELETE -> new TeamDeleteEvent(island, player, admin, location);
+                case UNINVITE -> new TeamUninviteEvent(island, player, admin, location);
+                default -> new TeamGeneralEvent(island, player, admin, location);
+            };
         }
 
         private IslandBaseEvent getEvent() {
-            switch (reason) {
-            case JOIN:
-                return new world.bentobox.bentobox.api.events.team.TeamJoinEvent(island, player, admin, location);
-            case JOINED:
-                return new world.bentobox.bentobox.api.events.team.TeamJoinedEvent(island, player, admin, location);
-            case INVITE:
-                return new world.bentobox.bentobox.api.events.team.TeamInviteEvent(island, player, admin, location);
-            case LEAVE:
-                return new world.bentobox.bentobox.api.events.team.TeamLeaveEvent(island, player, admin, location);
-            case REJECT:
-                return new world.bentobox.bentobox.api.events.team.TeamRejectEvent(island, player, admin, location);
-            case KICK:
-                return new world.bentobox.bentobox.api.events.team.TeamKickEvent(island, player, admin, location);
-            case SETOWNER:
-                return new world.bentobox.bentobox.api.events.team.TeamSetownerEvent(island, player, admin, location);
-            case INFO:
-                return new world.bentobox.bentobox.api.events.team.TeamInfoEvent(island, player, admin, location);
-            case DELETE:
-                return new world.bentobox.bentobox.api.events.team.TeamDeleteEvent(island, player, admin, location);
-            case UNINVITE:
-                return new world.bentobox.bentobox.api.events.team.TeamUninviteEvent(island, player, admin, location);
-            default:
-                return new world.bentobox.bentobox.api.events.team.TeamGeneralEvent(island, player, admin, location);
-            }
+            return switch (reason) {
+                case JOIN -> new world.bentobox.bentobox.api.events.team.TeamJoinEvent(island, player, admin, location);
+                case JOINED -> new world.bentobox.bentobox.api.events.team.TeamJoinedEvent(island, player, admin, location);
+                case INVITE -> new world.bentobox.bentobox.api.events.team.TeamInviteEvent(island, player, admin, location);
+                case LEAVE -> new world.bentobox.bentobox.api.events.team.TeamLeaveEvent(island, player, admin, location);
+                case REJECT -> new world.bentobox.bentobox.api.events.team.TeamRejectEvent(island, player, admin, location);
+                case KICK -> new world.bentobox.bentobox.api.events.team.TeamKickEvent(island, player, admin, location);
+                case SETOWNER -> new world.bentobox.bentobox.api.events.team.TeamSetownerEvent(island, player, admin, location);
+                case INFO -> new world.bentobox.bentobox.api.events.team.TeamInfoEvent(island, player, admin, location);
+                case DELETE -> new world.bentobox.bentobox.api.events.team.TeamDeleteEvent(island, player, admin, location);
+                case UNINVITE -> new world.bentobox.bentobox.api.events.team.TeamUninviteEvent(island, player, admin, location);
+                default -> new world.bentobox.bentobox.api.events.team.TeamGeneralEvent(island, player, admin, location);
+            };
         }
 
         /**

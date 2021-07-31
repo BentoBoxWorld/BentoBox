@@ -117,7 +117,7 @@ public class PortalTeleportationListener implements Listener {
                             || m.equals(Material.END_PORTAL)
                             || m.equals(Material.END_GATEWAY))
                     .findFirst();
-            if (!mat.isPresent()) {
+            if (mat.isEmpty()) {
                 e.setCancelled(true);
                 return false;
             } else if (mat.get().equals(Material.NETHER_PORTAL)){
@@ -135,15 +135,11 @@ public class PortalTeleportationListener implements Listener {
      */
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public boolean onIslandPortal(PlayerPortalEvent e) {
-        switch (e.getCause()) {
-        case END_GATEWAY:
-        case END_PORTAL:
-            return processPortal(new PlayerEntityPortalEvent(e), Environment.THE_END);
-        case NETHER_PORTAL:
-            return processPortal(new PlayerEntityPortalEvent(e), Environment.NETHER);
-        default:
-            return false;
-        }
+        return switch (e.getCause()) {
+            case END_GATEWAY, END_PORTAL -> processPortal(new PlayerEntityPortalEvent(e), Environment.THE_END);
+            case NETHER_PORTAL -> processPortal(new PlayerEntityPortalEvent(e), Environment.NETHER);
+            default -> false;
+        };
 
     }
 
