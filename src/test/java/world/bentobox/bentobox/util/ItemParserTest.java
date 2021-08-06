@@ -27,8 +27,11 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import world.bentobox.bentobox.BentoBox;
+
+
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class})
+@PrepareForTest({BentoBox.class, Bukkit.class})
 public class ItemParserTest {
 
     private PotionMeta potionMeta;
@@ -37,8 +40,10 @@ public class ItemParserTest {
     @Before
     public void setUp() throws Exception {
         PowerMockito.mockStatic(Bukkit.class);
+        PowerMockito.mockStatic(BentoBox.class);
         ItemFactory itemFactory = mock(ItemFactory.class);
         when(Bukkit.getItemFactory()).thenReturn(itemFactory);
+        when(BentoBox.getInstance()).thenReturn(mock(BentoBox.class));
         potionMeta = mock(PotionMeta.class);
         /*
         when(itemFactory.getItemMeta(Mockito.eq(Material.POTION))).thenReturn(potionMeta);
