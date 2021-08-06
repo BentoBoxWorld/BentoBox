@@ -13,7 +13,6 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -416,7 +415,7 @@ public class BlueprintPaster {
             // Get the addon that is operating in this world
             String addonName = plugin.getIWM().getAddon(island.getWorld()).map(addon -> addon.getDescription().getName().toLowerCase(Locale.ENGLISH)).orElse("");
             for (int i = 0; i < 4; i++) {
-                s.setLine(i, ChatColor.translateAlternateColorCodes('&', plugin.getLocalesManager().getOrDefault(User.getInstance(island.getOwner()),
+                s.setLine(i, Util.translateColorCodes(plugin.getLocalesManager().getOrDefault(User.getInstance(island.getOwner()),
                         addonName + ".sign.line" + i,"").replace(TextVariables.NAME, name)));
             }
         } else {

@@ -410,7 +410,7 @@ public class User implements MetaDataAble {
                 translation = plugin.getPlaceholdersManager().replacePlaceholders(player, translation);
             }
 
-            return Util.stripSpaceAfterColorCodes(ChatColor.translateAlternateColorCodes('&', translation));
+            return Util.translateColorCodes(translation);
         }
     }
 

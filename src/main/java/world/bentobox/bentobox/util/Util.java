@@ -11,6 +11,8 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.Validate;
@@ -55,7 +57,10 @@ import world.bentobox.bentobox.nms.NMSAbstraction;
  * @author Poslovitch
  */
 public class Util {
-
+    /**
+     * Use standard color code definition: &<hex>.
+     */
+    private static final Pattern hexPattern = Pattern.compile("&#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})");
     private static final String NETHER = "_nether";
     private static final String THE_END = "_the_end";
     private static String serverVersion = null;
@@ -537,6 +542,44 @@ public class Util {
         }
         return false;
     }
+
+
+    /**
+     * This method translates color codes in given string and strips whitespace after them.
+     * This code parses both: hex and old color codes.
+     * @param textToColor Text which color codes must be parsed.
+     * @return String text with parsed colors and stripped whitespaces after them.
+     */
+    @NonNull
+    public static String translateColorCodes(@NonNull String textToColor) {
+        // Use matcher to find hex patterns in given text.
+        Matcher matcher = hexPattern.matcher(textToColor);
+        // Increase buffer size by 32 like it is in bungee cord api. Use buffer because it is sync.
+        StringBuffer buffer = new StringBuffer(textToColor.length() + 32);
+
+        while (matcher.find()) {
+            String group = matcher.group(1);
+
+            if (group.length() == 6) {
+                // Parses #ffffff to a color text.
+                matcher.appendReplacement(buffer, ChatColor.COLOR_CHAR + "x"
+                    + ChatColor.COLOR_CHAR + group.charAt(0) + ChatColor.COLOR_CHAR + group.charAt(1)
+                    + ChatColor.COLOR_CHAR + group.charAt(2) + ChatColor.COLOR_CHAR + group.charAt(3)
+                    + ChatColor.COLOR_CHAR + group.charAt(4) + ChatColor.COLOR_CHAR + group.charAt(5));
+            } else {
+                // Parses #fff to a color text.
+                matcher.appendReplacement(buffer, ChatColor.COLOR_CHAR + "x"
+                    + ChatColor.COLOR_CHAR + group.charAt(0) + ChatColor.COLOR_CHAR + group.charAt(0)
+                    + ChatColor.COLOR_CHAR + group.charAt(1) + ChatColor.COLOR_CHAR + group.charAt(1)
+                    + ChatColor.COLOR_CHAR + group.charAt(2) + ChatColor.COLOR_CHAR + group.charAt(2));
+            }
+        }
+
+        // transform normal codes and strip spaces after color code.
+        return Util.stripSpaceAfterColorCodes(
+            ChatColor.translateAlternateColorCodes('&', matcher.appendTail(buffer).toString()));
+    }
+
 
     /**
      * Strips spaces immediately after color codes. Used by {@link User#getTranslation(String, String...)}.

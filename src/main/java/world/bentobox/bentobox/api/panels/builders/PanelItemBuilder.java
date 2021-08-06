@@ -5,13 +5,14 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.api.panels.PanelItem;
 import world.bentobox.bentobox.api.panels.PanelItem.ClickHandler;
+import world.bentobox.bentobox.util.Util;
+
 
 public class PanelItemBuilder {
     private ItemStack icon = new ItemStack(Material.AIR);
@@ -59,7 +60,7 @@ public class PanelItemBuilder {
     }
 
     public PanelItemBuilder name(@Nullable String name) {
-        this.name = name != null ? ChatColor.translateAlternateColorCodes('&', name) : null;
+        this.name = name != null ? Util.translateColorCodes(name) : null;
         return this;
     }
 
