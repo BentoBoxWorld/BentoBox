@@ -3,7 +3,6 @@ package world.bentobox.bentobox.api.panels.builders;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import org.bukkit.ChatColor;
 import org.bukkit.World;
 
 import world.bentobox.bentobox.api.panels.Panel;

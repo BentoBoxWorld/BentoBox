@@ -60,7 +60,7 @@ public class Util {
     /**
      * Use standard color code definition: &<hex>.
      */
-    private static final Pattern hexPattern = Pattern.compile("&#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})");
+    private static final Pattern HEX_PATTERN = Pattern.compile("&#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})");
     private static final String NETHER = "_nether";
     private static final String THE_END = "_the_end";
     private static String serverVersion = null;
@@ -553,7 +553,7 @@ public class Util {
     @NonNull
     public static String translateColorCodes(@NonNull String textToColor) {
         // Use matcher to find hex patterns in given text.
-        Matcher matcher = hexPattern.matcher(textToColor);
+        Matcher matcher = HEX_PATTERN.matcher(textToColor);
         // Increase buffer size by 32 like it is in bungee cord api. Use buffer because it is sync.
         StringBuffer buffer = new StringBuffer(textToColor.length() + 32);
 
