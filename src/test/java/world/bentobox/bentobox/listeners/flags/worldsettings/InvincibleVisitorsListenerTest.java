@@ -43,6 +43,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -127,6 +128,8 @@ public class InvincibleVisitorsListenerTest {
         PowerMockito.mockStatic(Util.class);
         when(Util.getWorld(any())).thenReturn(mock(World.class));
         when(Util.prettifyText(anyString())).thenCallRealMethod();
+        // Util translate color codes (used in user translate methods)
+        when(Util.translateColorCodes(anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
         FlagsManager fm = mock(FlagsManager.class);
         Flag flag = mock(Flag.class);
         when(flag.isSetForWorld(any())).thenReturn(false);

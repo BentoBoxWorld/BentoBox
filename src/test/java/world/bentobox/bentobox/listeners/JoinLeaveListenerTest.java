@@ -194,10 +194,10 @@ public class JoinLeaveListenerTest {
         // Util
         PowerMockito.mockStatic(Util.class);
         when(Util.getWorld(any())).thenReturn(world);
-        when(Util.stripSpaceAfterColorCodes(anyString())).thenCallRealMethod();
+        // Util translate color codes (used in user translate methods)
+        when(Util.translateColorCodes(anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
 
         // user text
-
         LocalesManager lm = mock(LocalesManager.class);
         when(plugin.getLocalesManager()).thenReturn(lm);
         when(lm.get(any(), anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
