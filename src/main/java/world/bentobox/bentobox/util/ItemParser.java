@@ -212,6 +212,7 @@ public class ItemParser {
      * @param part String array that contains at least 2 elements.
      * @return Player head with given properties.
      */
+    @SuppressWarnings("deprecation")
     private static ItemStack parsePlayerHead(String[] part) {
         ItemStack playerHead;
 
@@ -242,7 +243,7 @@ public class ItemParser {
             } else if (part[1].length() == 32) {
                 // trimmed UUID length are 32 chars.
                 meta.setOwningPlayer(Bukkit.getOfflinePlayer(
-                    UUID.fromString(part[1].replaceAll("(\\w{8})(\\w{4})(\\w{4})(\\w{4})(\\w{12})", "$1-$2-$3-$4-$5"))));
+                        UUID.fromString(part[1].replaceAll("(\\w{8})(\\w{4})(\\w{4})(\\w{4})(\\w{12})", "$1-$2-$3-$4-$5"))));
             } else if (part[1].length() == 36) {
                 // full UUID length are 36 chars.
                 meta.setOwningPlayer(Bukkit.getOfflinePlayer(UUID.fromString(part[1])));
