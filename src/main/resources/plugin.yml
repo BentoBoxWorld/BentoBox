@@ -10,7 +10,7 @@ description: ${project.description}
 
 load: STARTUP
 
-loadbefore: [Multiverse-Core, Residence]
+loadbefore: [Pladdon, Multiverse-Core, Residence]
 
 softdepend:
   - Vault
