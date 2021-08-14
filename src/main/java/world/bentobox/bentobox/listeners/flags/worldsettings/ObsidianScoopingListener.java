@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.bukkit.Bukkit;
+import org.bukkit.FluidCollisionMode;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -51,7 +52,13 @@ public class ObsidianScoopingListener extends FlagListener {
     private boolean lookForLava(PlayerInteractEvent e) {
         Player player = e.getPlayer();
         ItemStack bucket = e.getItem();
-        Block b = e.getClickedBlock();
+
+        // Get block player is looking at
+        Block b = e.getPlayer().rayTraceBlocks(5, FluidCollisionMode.ALWAYS).getHitBlock();
+        if (!b.getType().equals(Material.OBSIDIAN)) {
+            // This should not be needed but might catch some attempts
+            return false;
+        }
         User user = User.getInstance(player);
         if (getIslands().userIsOnIsland(user.getWorld(), user)) {
             // Look around to see if this is a lone obsidian block
@@ -61,15 +68,16 @@ public class ObsidianScoopingListener extends FlagListener {
             }
             user.sendMessage("protection.flags.OBSIDIAN_SCOOPING.scooping");
             player.getWorld().playSound(player.getLocation(), Sound.ITEM_BUCKET_FILL_LAVA, 1F, 1F);
-            b.setType(Material.AIR);
+
             e.setCancelled(true);
-            Bukkit.getScheduler().runTask(BentoBox.getInstance(), () -> givePlayerLava(player, bucket));
+
+            Bukkit.getScheduler().runTask(BentoBox.getInstance(), () -> givePlayerLava(player, b, bucket));
             return true;
         }
         return false;
 
     }
-    private void givePlayerLava(Player player, ItemStack bucket) {
+    private void givePlayerLava(Player player, Block b, ItemStack bucket) {
         if (bucket.getAmount() == 1) {
             // Needs some special handling when there is only 1 bucket in the stack
             bucket.setType(Material.LAVA_BUCKET);
@@ -81,6 +89,8 @@ public class ObsidianScoopingListener extends FlagListener {
                 map.values().forEach(i -> player.getWorld().dropItem(player.getLocation(), i));
             }
         }
+        // Set block to air only after giving bucket
+        b.setType(Material.AIR);
     }
 
     private List<Block> getBlocksAround(Block b) {
