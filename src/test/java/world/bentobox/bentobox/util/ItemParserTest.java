@@ -36,6 +36,7 @@ public class ItemParserTest {
 
     private PotionMeta potionMeta;
     private BannerMeta bannerMeta;
+    private ItemStack defaultItem;
 
     @Before
     public void setUp() throws Exception {
@@ -67,6 +68,7 @@ public class ItemParserTest {
             }
         });
 
+        defaultItem = new ItemStack(Material.STONE);
     }
 
     @After
@@ -77,16 +79,19 @@ public class ItemParserTest {
     @Test
     public void testParseNull() {
         assertNull(ItemParser.parse(null));
+        assertEquals(defaultItem, ItemParser.parse(null, defaultItem));
     }
 
     @Test
     public void testParseBlank() {
         assertNull(ItemParser.parse(""));
+        assertEquals(defaultItem, ItemParser.parse("", defaultItem));
     }
 
     @Test
     public void testParseNoColons() {
         assertNull(ItemParser.parse("NOCOLONS"));
+        assertEquals(defaultItem, ItemParser.parse("NOCOLONS", defaultItem));
     }
 
     /*
@@ -258,6 +263,8 @@ public class ItemParserTest {
     @Test
     public void testParseBadTwoItem() {
         assertNull(ItemParser.parse("STNE:5"));
+        assertEquals(defaultItem, ItemParser.parse("STNE:3", defaultItem));
+        assertEquals(defaultItem, ItemParser.parse("STNE:Z", defaultItem));
     }
 
     @Test
@@ -270,5 +277,8 @@ public class ItemParserTest {
     @Test
     public void testParseBadThreeItem() {
         assertNull(ItemParser.parse("STNE:5:5"));
+        assertEquals(defaultItem, ItemParser.parse("STNE:5:5", defaultItem));
+        assertEquals(defaultItem, ItemParser.parse("STNE:AA:5", defaultItem));
+        assertEquals(defaultItem, ItemParser.parse("WOODEN_SWORD:4:AA", defaultItem));
     }
 }
