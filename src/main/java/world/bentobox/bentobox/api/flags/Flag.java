@@ -627,7 +627,7 @@ public class Flag implements Comparable<Flag> {
          * Take extra care to ensure that subflags have the same number of possible values as the parent flag.
          * @param flags all Flags that are subflags
          * @return Builder - flag builder
-         * @since 1.17.0
+         * @since 1.17.1
          */
         public Builder subflags(Flag... flags) {
             this.subflags.addAll(Arrays.asList(flags));
