@@ -125,7 +125,7 @@ public class UtilTest {
         when(phm.replacePlaceholders(any(), any())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
 
         when(plugin.getLocalesManager()).thenReturn(lm);
-        
+
     }
 
     @After
@@ -458,7 +458,7 @@ public class UtilTest {
         Bukkit.dispatchCommand(sender, "replace tastybento");
         verify(plugin).logError("Could not execute test command as console: replace tastybento");
     }
-    
+
     /**
      * Test for {@link Util#broadcast(String, String...)}
      */
@@ -468,7 +468,7 @@ public class UtilTest {
         int result = Util.broadcast("test.key", TextVariables.DESCRIPTION, "hello");
         assertEquals(0, result);
     }
-    
+
     /**
      * Test for {@link Util#broadcast(String, String...)}
      */
@@ -476,6 +476,28 @@ public class UtilTest {
     public void testBroadcastStringStringHasPerm() {
         int result = Util.broadcast("test.key", TextVariables.DESCRIPTION, "hello");
         assertEquals(11, result);
-        
+
+    }
+
+    /**
+     * Test for {@link Util#translateColorCodes(String)}
+     */
+    @Test
+    public void testTranslateColorCodesAmpersand() {
+        assertEquals("", Util.translateColorCodes(""));
+        assertEquals("abcdef ABCDEF", Util.translateColorCodes("abcdef ABCDEF"));
+        assertEquals("white space after   ", Util.translateColorCodes("white space after   "));
+        assertEquals("§ared color", Util.translateColorCodes("&a red color"));
+        assertEquals("§a   big space", Util.translateColorCodes("&a    big space"));
+        assertEquals("§ared color", Util.translateColorCodes("&ared color"));
+        assertEquals("§ared §bcolor §cgreen §fheheh", Util.translateColorCodes("&ared &bcolor &c green &f heheh"));
+    }
+
+    /**
+     * Test for {@link Util#translateColorCodes(String)}
+     */
+    @Test
+    public void testTranslateColorCodesHex() {
+        assertEquals("§ared color", Util.translateColorCodes("&#ff0000 red color"));
     }
 }

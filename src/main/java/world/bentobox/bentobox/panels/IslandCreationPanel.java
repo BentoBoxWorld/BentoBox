@@ -5,7 +5,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.bukkit.ChatColor;
 import org.eclipse.jdt.annotation.NonNull;
 
 import world.bentobox.bentobox.BentoBox;
@@ -16,6 +15,8 @@ import world.bentobox.bentobox.api.panels.builders.PanelItemBuilder;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle;
 import world.bentobox.bentobox.managers.BlueprintsManager;
+import world.bentobox.bentobox.util.Util;
+
 
 /**
  * Displays the available BlueprintBundles to pick up as the island.
@@ -49,7 +50,7 @@ public class IslandCreationPanel {
                 // Add an item
                 PanelItem item = new PanelItemBuilder()
                         .name(bb.getDisplayName())
-                        .description(bb.getDescription().stream().map(l -> ChatColor.translateAlternateColorCodes('&', l)).collect(Collectors.toList()))
+                        .description(bb.getDescription().stream().map(Util::translateColorCodes).collect(Collectors.toList()))
                         .icon(bb.getIcon()).clickHandler((panel, user1, clickType, slot1) -> {
                             user1.closeInventory();
                             command.execute(user1, label, Collections.singletonList(bb.getUniqueId()));

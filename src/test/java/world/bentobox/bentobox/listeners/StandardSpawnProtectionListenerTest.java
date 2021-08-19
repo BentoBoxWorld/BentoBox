@@ -129,8 +129,8 @@ public class StandardSpawnProtectionListenerTest {
         // Block
         when(block.getLocation()).thenReturn(location);
 
-        // Util strip spaces
-        when(Util.stripSpaceAfterColorCodes(anyString())).thenCallRealMethod();
+        // Util translate color codes (used in user translate methods)
+        when(Util.translateColorCodes(anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
 
         // Set up class
         ssp = new StandardSpawnProtectionListener(plugin);
