@@ -41,6 +41,7 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import net.md_5.bungee.api.ChatColor;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
@@ -498,6 +499,16 @@ public class UtilTest {
      */
     @Test
     public void testTranslateColorCodesHex() {
-        assertEquals("§ared color", Util.translateColorCodes("&#ff0000 red color"));
+        // Use Bungee Chat parsing for single color test to validate correct parsing
+        assertEquals(ChatColor.of("#ff0000").toString(), Util.translateColorCodes("&#ff0000"));
+        assertEquals(ChatColor.of("#ff2200").toString(), Util.translateColorCodes("&#f20"));
+
+        assertEquals("&#f single char", Util.translateColorCodes("&#f single char"));
+        assertEquals("&#f0 two chars", Util.translateColorCodes("&#f0 two chars"));
+        assertEquals("§x§f§f§0§0§0§0shorten hex", Util.translateColorCodes("&#f00 shorten hex"));
+        assertEquals("§x§f§f§0§0§0§01 four chars", Util.translateColorCodes("&#f001 four chars"));
+        assertEquals("§x§f§f§0§0§0§01f five chars", Util.translateColorCodes("&#f001f five chars"));
+        assertEquals("§x§f§f§0§0§0§0full hex", Util.translateColorCodes("&#ff0000 full hex"));
+        assertEquals("&#ggg outside hex range", Util.translateColorCodes("&#ggg outside hex range"));
     }
 }
