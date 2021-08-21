@@ -13,6 +13,7 @@ load: STARTUP
 loadbefore: [Pladdon, Multiverse-Core, Residence]
 
 softdepend:
+  - Citizens
   - Vault
   - PlaceholderAPI
   - dynmap
