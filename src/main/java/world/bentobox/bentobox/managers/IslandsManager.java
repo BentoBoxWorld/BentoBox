@@ -271,10 +271,10 @@ public class IslandsManager {
         }
         // Known unsafe blocks
         return switch (ground) {
-            // Unsafe
-            case ANVIL, BARRIER, CACTUS, END_PORTAL, END_ROD, FIRE, FLOWER_POT, LADDER, LEVER, TALL_GRASS, PISTON_HEAD,
-                    MOVING_PISTON, TORCH, WALL_TORCH, TRIPWIRE, WATER, COBWEB, NETHER_PORTAL, MAGMA_BLOCK -> false;
-            default -> true;
+        // Unsafe
+        case ANVIL, BARRIER, CACTUS, END_PORTAL, END_ROD, FIRE, FLOWER_POT, LADDER, LEVER, TALL_GRASS, PISTON_HEAD,
+        MOVING_PISTON, TORCH, WALL_TORCH, TRIPWIRE, WATER, COBWEB, NETHER_PORTAL, MAGMA_BLOCK -> false;
+        default -> true;
         };
     }
 
@@ -434,7 +434,7 @@ public class IslandsManager {
      *
      * @param world - world to check
      * @param uuid - the player's UUID
-     * @return Location of the center of the player's protection area or null if an island does not exist. 
+     * @return Location of the center of the player's protection area or null if an island does not exist.
      * Returns an island location OR a team island location
      */
     @Nullable
@@ -856,7 +856,7 @@ public class IslandsManager {
         }
         if (island.getOwner().equals(uuid)) {
             // Owner
-            island.setHomes(homes.entrySet().stream().collect(Collectors.toMap(this::getHomeName, Map.Entry::getKey)));           
+            island.setHomes(homes.entrySet().stream().collect(Collectors.toMap(this::getHomeName, Map.Entry::getKey)));
             plugin.getPlayers().clearHomeLocations(world, uuid);
         }
     }
@@ -1153,6 +1153,9 @@ public class IslandsManager {
             if (plugin.getIWM().isOnJoinResetXP(world)) {
                 user.getPlayer().setTotalExperience(0);
             }
+
+            // Set the game mode
+            user.setGameMode(plugin.getIWM().getDefaultGameMode(world));
         }
     }
 
