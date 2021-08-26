@@ -80,15 +80,9 @@ public class Panel implements HeadRequester, InventoryHolder {
 
         // Create panel
         switch (type) {
-        case INVENTORY:
-            inventory = Bukkit.createInventory(null, fixSize(size), name);
-            break;
-        case HOPPER:
-            inventory = Bukkit.createInventory(null, InventoryType.HOPPER, name);
-            break;
-        case DROPPER:
-            inventory = Bukkit.createInventory(null, InventoryType.DROPPER, name);
-            break;
+            case INVENTORY -> inventory = Bukkit.createInventory(null, fixSize(size), name);
+            case HOPPER -> inventory = Bukkit.createInventory(null, InventoryType.HOPPER, name);
+            case DROPPER -> inventory = Bukkit.createInventory(null, InventoryType.DROPPER, name);
         }
 
         // Fill the inventory and return

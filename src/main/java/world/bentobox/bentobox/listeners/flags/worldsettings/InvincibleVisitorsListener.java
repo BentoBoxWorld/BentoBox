@@ -124,7 +124,7 @@ public class InvincibleVisitorsListener extends FlagListener implements ClickHan
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onVisitorGetDamage(EntityDamageEvent e) {
         World world = e.getEntity().getWorld();
-        if (!(e.getEntity() instanceof Player)
+        if (!(e.getEntity() instanceof Player p)
                 || !getIWM().inWorld(world)
                 || e.getEntity().hasMetadata("NPC")
                 || !getIWM().getIvSettings(world).contains(e.getCause().name())
@@ -133,7 +133,6 @@ public class InvincibleVisitorsListener extends FlagListener implements ClickHan
         }
         // Player is a visitor and should be protected from damage
         e.setCancelled(true);
-        Player p = (Player) e.getEntity();
         // Handle the void - teleport player back to island in a safe spot
         if(e.getCause().equals(DamageCause.VOID)) {
             if (getIslands().getIslandAt(p.getLocation()).isPresent()) {

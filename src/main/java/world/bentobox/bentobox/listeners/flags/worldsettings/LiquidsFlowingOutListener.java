@@ -38,7 +38,7 @@ public class LiquidsFlowingOutListener extends FlagListener {
         // Only prevent if it is flowing into the area between islands or into another island.
         Optional<Island> fromIsland = getIslands().getProtectedIslandAt(from.getLocation());
         Optional<Island> toIsland = getIslands().getProtectedIslandAt(to.getLocation());
-        if (!toIsland.isPresent() || (fromIsland.isPresent() && !fromIsland.equals(toIsland))) {
+        if (toIsland.isEmpty() || (fromIsland.isPresent() && !fromIsland.equals(toIsland))) {
             e.setCancelled(true);
         }
     }

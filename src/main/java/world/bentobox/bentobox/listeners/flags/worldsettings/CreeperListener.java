@@ -41,8 +41,7 @@ public class CreeperListener extends FlagListener {
         }
         // Check for griefing
         Creeper creeper = (Creeper)e.getEntity();
-        if (!Flags.CREEPER_GRIEFING.isSetForWorld(e.getLocation().getWorld()) && creeper.getTarget() instanceof Player) {
-            Player target = (Player)creeper.getTarget();
+        if (!Flags.CREEPER_GRIEFING.isSetForWorld(e.getLocation().getWorld()) && creeper.getTarget() instanceof Player target) {
             if (!getIslands().locationIsOnIsland(target, e.getLocation())) {
                 User user = User.getInstance(target);
                 user.notify("protection.protected", TextVariables.DESCRIPTION, user.getTranslation(Flags.CREEPER_GRIEFING.getHintReference()));

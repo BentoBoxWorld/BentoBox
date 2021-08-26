@@ -59,7 +59,7 @@ public class AdminSetProtectionCenterCommand extends ConfirmableCommand
             return false;
         }
         Optional<Island> optionalIsland = getIslands().getIslandAt(targetLoc);
-        if (!optionalIsland.isPresent()) {
+        if (optionalIsland.isEmpty()) {
             user.sendMessage("commands.admin.setspawnpoint.no-island-here");
             return false;
         }

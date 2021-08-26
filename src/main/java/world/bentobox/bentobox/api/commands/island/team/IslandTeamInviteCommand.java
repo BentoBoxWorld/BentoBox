@@ -51,15 +51,9 @@ public class IslandTeamInviteCommand extends CompositeCommand {
                 Invite invite = itc.getInvite(playerUUID);
                 String name = getPlayers().getName(playerUUID);
                 switch (invite.getType()) {
-                case COOP:
-                    user.sendMessage("commands.island.team.invite.name-has-invited-you.coop", TextVariables.NAME, name);
-                    break;
-                case TRUST:
-                    user.sendMessage("commands.island.team.invite.name-has-invited-you.trust", TextVariables.NAME, name);
-                    break;
-                default:
-                    user.sendMessage("commands.island.team.invite.name-has-invited-you", TextVariables.NAME, name);
-                    break;
+                    case COOP -> user.sendMessage("commands.island.team.invite.name-has-invited-you.coop", TextVariables.NAME, name);
+                    case TRUST -> user.sendMessage("commands.island.team.invite.name-has-invited-you.trust", TextVariables.NAME, name);
+                    default -> user.sendMessage("commands.island.team.invite.name-has-invited-you", TextVariables.NAME, name);
                 }
                 return true;
             }

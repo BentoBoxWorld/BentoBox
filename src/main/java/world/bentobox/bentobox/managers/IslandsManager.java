@@ -144,7 +144,7 @@ public class IslandsManager {
             depth = i;
         } else {
             Optional<Island> island = getIslandAt(l);
-            if (!island.isPresent()) {
+            if (island.isEmpty()) {
                 return null;
             }
             i = island.get().getProtectionRange();
@@ -270,31 +270,12 @@ public class IslandsManager {
             return false;
         }
         // Known unsafe blocks
-        switch (ground) {
+        return switch (ground) {
         // Unsafe
-        case ANVIL:
-        case BARRIER:
-        case CACTUS:
-        case END_PORTAL:
-        case END_ROD:
-        case FIRE:
-        case FLOWER_POT:
-        case LADDER:
-        case LEVER:
-        case TALL_GRASS:
-        case PISTON_HEAD:
-        case MOVING_PISTON:
-        case TORCH:
-        case WALL_TORCH:
-        case TRIPWIRE:
-        case WATER:
-        case COBWEB:
-        case NETHER_PORTAL:
-        case MAGMA_BLOCK:
-            return false;
-        default:
-            return true;
-        }
+        case ANVIL, BARRIER, CACTUS, END_PORTAL, END_ROD, FIRE, FLOWER_POT, LADDER, LEVER, TALL_GRASS, PISTON_HEAD,
+        MOVING_PISTON, TORCH, WALL_TORCH, TRIPWIRE, WATER, COBWEB, NETHER_PORTAL, MAGMA_BLOCK -> false;
+        default -> true;
+        };
     }
 
     /**
@@ -324,7 +305,7 @@ public class IslandsManager {
             // This should never happen, so although this is a potential infinite loop I'm going to leave it here because
             // it will be bad if this does occur and the server should crash.
             plugin.logWarning("Duplicate island UUID occurred");
-            island.setUniqueId(gmName + UUID.randomUUID().toString());
+            island.setUniqueId(gmName + UUID.randomUUID());
         }
         if (islandCache.addIsland(island)) {
             return island;
@@ -453,7 +434,7 @@ public class IslandsManager {
      *
      * @param world - world to check
      * @param uuid - the player's UUID
-     * @return Location of the center of the player's protection area or null if an island does not exist. 
+     * @return Location of the center of the player's protection area or null if an island does not exist.
      * Returns an island location OR a team island location
      */
     @Nullable
@@ -875,7 +856,7 @@ public class IslandsManager {
         }
         if (island.getOwner().equals(uuid)) {
             // Owner
-            island.setHomes(homes.entrySet().stream().collect(Collectors.toMap(this::getHomeName, Map.Entry::getKey)));           
+            island.setHomes(homes.entrySet().stream().collect(Collectors.toMap(this::getHomeName, Map.Entry::getKey)));
             plugin.getPlayers().clearHomeLocations(world, uuid);
         }
     }
@@ -919,7 +900,7 @@ public class IslandsManager {
      * @since 1.16.0
      */
     public boolean removeHomeLocation(@Nullable Island island, String name) {
-        return island == null ? false : island.removeHome(name);
+        return island != null && island.removeHome(name);
     }
 
     /**
@@ -930,7 +911,7 @@ public class IslandsManager {
      * @return true if successful, false if not
      */
     public boolean renameHomeLocation(@Nullable Island island, String oldName, String newName) {
-        return island == null ? false : island.renameHome(oldName, newName);
+        return island != null && island.renameHome(oldName, newName);
     }
 
     /**
@@ -1172,6 +1153,9 @@ public class IslandsManager {
             if (plugin.getIWM().isOnJoinResetXP(world)) {
                 user.getPlayer().setTotalExperience(0);
             }
+
+            // Set the game mode
+            user.setGameMode(plugin.getIWM().getDefaultGameMode(world));
         }
     }
 
@@ -1200,7 +1184,7 @@ public class IslandsManager {
                     player.leaveVehicle();
                     // Remove the boat so they don't lie around everywhere
                     boat.remove();
-                    Material boatMat = Material.getMaterial(((Boat) boat).getWoodType().toString() + "_BOAT");
+                    Material boatMat = Material.getMaterial(((Boat) boat).getWoodType() + "_BOAT");
                     if (boatMat == null) {
                         boatMat = Material.OAK_BOAT;
                     }
@@ -1796,7 +1780,7 @@ public class IslandsManager {
      * @since 1.7.0
      */
     public boolean nameExists(@NonNull World world, @NonNull String name) {
-        return getIslands(world).stream().filter(island -> island.getName() != null).map(Island::getName)
+        return getIslands(world).stream().map(Island::getName).filter(Objects::nonNull)
                 .anyMatch(n -> ChatColor.stripColor(n).equals(ChatColor.stripColor(name)));
     }
 

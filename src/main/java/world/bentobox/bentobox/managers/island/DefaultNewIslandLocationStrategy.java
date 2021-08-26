@@ -102,7 +102,7 @@ public class DefaultNewIslandLocationStrategy implements NewIslandLocationStrate
         // Block check
         if (plugin.getIWM().isCheckForBlocks(world) 
                 && !plugin.getIWM().isUseOwnGenerator(world) 
-                && Arrays.asList(BlockFace.values()).stream().anyMatch(bf -> 
+                && Arrays.stream(BlockFace.values()).anyMatch(bf ->
                 !location.getBlock().getRelative(bf).isEmpty() 
                 && !location.getBlock().getRelative(bf).getType().equals(Material.WATER))) {
             // Block found

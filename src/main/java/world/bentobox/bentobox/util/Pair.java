@@ -67,10 +67,9 @@ public class Pair<X, Z> {
         if (obj == null) {
             return false;
         }
-        if (!(obj instanceof Pair)) {
+        if (!(obj instanceof Pair<?, ?> other)) {
             return false;
         }
-        Pair<?, ?> other = (Pair<?, ?>) obj;
         if (x == null) {
             if (other.x != null) {
                 return false;

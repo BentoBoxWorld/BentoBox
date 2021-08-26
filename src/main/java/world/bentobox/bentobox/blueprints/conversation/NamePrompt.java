@@ -15,6 +15,8 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.blueprints.Blueprint;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle;
 import world.bentobox.bentobox.managers.BlueprintsManager;
+import world.bentobox.bentobox.util.Util;
+
 
 public class NamePrompt extends StringPrompt {
 
@@ -45,7 +47,7 @@ public class NamePrompt extends StringPrompt {
     public Prompt acceptInput(ConversationContext context, String input) {
         User user = User.getInstance((Player)context.getForWhom());
         // Convert color codes
-        input = ChatColor.translateAlternateColorCodes('&', input);
+        input = Util.translateColorCodes(input);
         if (ChatColor.stripColor(input).length() > 32) {
             context.getForWhom().sendRawMessage("Too long");
             return this;

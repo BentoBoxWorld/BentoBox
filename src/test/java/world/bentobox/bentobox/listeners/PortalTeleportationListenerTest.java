@@ -7,7 +7,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -19,6 +18,7 @@ import java.util.concurrent.CompletableFuture;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
@@ -154,6 +154,9 @@ public class PortalTeleportationListenerTest {
         BukkitScheduler sch = mock(BukkitScheduler.class);
         PowerMockito.mockStatic(Bukkit.class);
         when(Bukkit.getScheduler()).thenReturn(sch);
+        Server server = mock(Server.class);
+        when(server.getAllowNether()).thenReturn(true);
+        when(Bukkit.getServer()).thenReturn(server);
 
         // Locales
         LocalesManager lm = mock(LocalesManager.class);
@@ -284,7 +287,7 @@ public class PortalTeleportationListenerTest {
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
         np.onIslandPortal(e);
         assertTrue(e.isCancelled());
-        verify(im, times(2)).homeTeleportAsync(any(), eq(player));
+        verify(im).homeTeleportAsync(any(), eq(player));
     }
 
     /**

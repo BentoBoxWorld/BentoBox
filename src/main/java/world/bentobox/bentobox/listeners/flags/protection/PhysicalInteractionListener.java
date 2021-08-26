@@ -53,10 +53,9 @@ public class PhysicalInteractionListener extends FlagListener {
      */
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onProjectileHit(EntityInteractEvent e) {
-        if (!(e.getEntity() instanceof Projectile)) {
+        if (!(e.getEntity() instanceof Projectile p)) {
             return;
         }
-        Projectile p = (Projectile)e.getEntity();
         if (p.getShooter() instanceof Player) {
             if (Tag.WOODEN_BUTTONS.isTagged(e.getBlock().getType())) {
                 checkIsland(e, (Player)p.getShooter(), e.getBlock().getLocation(), Flags.BUTTON);
@@ -71,23 +70,10 @@ public class PhysicalInteractionListener extends FlagListener {
     }
 
     private boolean isPressurePlate(Material material) {
-        switch(material) {
-            case STONE_PRESSURE_PLATE:
-            case POLISHED_BLACKSTONE_PRESSURE_PLATE:
-            case ACACIA_PRESSURE_PLATE:
-            case BIRCH_PRESSURE_PLATE:
-            case CRIMSON_PRESSURE_PLATE:
-            case DARK_OAK_PRESSURE_PLATE:
-            case HEAVY_WEIGHTED_PRESSURE_PLATE:
-            case JUNGLE_PRESSURE_PLATE:
-            case LIGHT_WEIGHTED_PRESSURE_PLATE:
-            case OAK_PRESSURE_PLATE:
-            case SPRUCE_PRESSURE_PLATE:
-            case WARPED_PRESSURE_PLATE:
-                return true;
-            default:
-                return false;
-        }
+        return switch (material) {
+            case STONE_PRESSURE_PLATE, POLISHED_BLACKSTONE_PRESSURE_PLATE, ACACIA_PRESSURE_PLATE, BIRCH_PRESSURE_PLATE, CRIMSON_PRESSURE_PLATE, DARK_OAK_PRESSURE_PLATE, HEAVY_WEIGHTED_PRESSURE_PLATE, JUNGLE_PRESSURE_PLATE, LIGHT_WEIGHTED_PRESSURE_PLATE, OAK_PRESSURE_PLATE, SPRUCE_PRESSURE_PLATE, WARPED_PRESSURE_PLATE -> true;
+            default -> false;
+        };
     }
 
 }

@@ -75,8 +75,7 @@ public class BlueprintEntity {
                 ((Ageable)e).setBaby();
             }
         }
-        if (e instanceof AbstractHorse) {
-            AbstractHorse horse = (AbstractHorse)e;
+        if (e instanceof AbstractHorse horse) {
             if (domestication != null) horse.setDomestication(domestication);
             if (inventory != null) {
                 inventory.forEach(horse.getInventory()::setItem);

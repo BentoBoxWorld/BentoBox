@@ -46,29 +46,15 @@ public class AdminRangeDisplayCommand extends CompositeCommand {
 
         if (!displayRanges.containsKey(user)) {
             switch (label) {
-            case DISPLAY:
-            case SHOW:
-                showZones(user);
-                break;
-            case HIDE:
-                user.sendMessage("commands.admin.range.display.already-off");
-                break;
-            default:
-                showHelp(this, user);
-                break;
+                case DISPLAY, SHOW -> showZones(user);
+                case HIDE -> user.sendMessage("commands.admin.range.display.already-off");
+                default -> showHelp(this, user);
             }
         } else {
             switch (label) {
-            case DISPLAY:
-            case HIDE:
-                hideZones(user);
-                break;
-            case SHOW:
-                user.sendMessage("commands.admin.range.display.already-on");
-                break;
-            default:
-                showHelp(this, user);
-                break;
+                case DISPLAY, HIDE -> hideZones(user);
+                case SHOW -> user.sendMessage("commands.admin.range.display.already-on");
+                default -> showHelp(this, user);
             }
         }
 

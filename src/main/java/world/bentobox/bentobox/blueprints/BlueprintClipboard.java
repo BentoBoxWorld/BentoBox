@@ -198,8 +198,7 @@ public class BlueprintClipboard {
             if (entity instanceof Villager) {
                 setVillager(entity, bpe);
             }
-            if (entity instanceof Colorable) {
-                Colorable c = (Colorable)entity;
+            if (entity instanceof Colorable c) {
                 if (c.getColor() != null) {
                     bpe.setColor(c.getColor());
                 }
@@ -214,8 +213,7 @@ public class BlueprintClipboard {
             if (entity instanceof Ageable && !((Ageable)entity).isAdult()) {
                 bpe.setAdult(false);
             }
-            if (entity instanceof AbstractHorse) {
-                AbstractHorse horse = (AbstractHorse)entity;
+            if (entity instanceof AbstractHorse horse) {
                 bpe.setDomestication(horse.getDomestication());
                 bpe.setInventory(new HashMap<>());
                 for (int i = 0; i < horse.getInventory().getSize(); i++) {
@@ -226,8 +224,7 @@ public class BlueprintClipboard {
                 }
             }
 
-            if (entity instanceof Horse) {
-                Horse horse = (Horse)entity;
+            if (entity instanceof Horse horse) {
                 bpe.setStyle(horse.getStyle());
             }
             bpEnts.add(bpe);
@@ -248,8 +245,7 @@ public class BlueprintClipboard {
         // Biome
         b.setBiome(block.getBiome());
         // Signs
-        if (blockState instanceof Sign) {
-            Sign sign = (Sign)blockState;
+        if (blockState instanceof Sign sign) {
             b.setSignLines(Arrays.asList(sign.getLines()));
         }
         // Set block data
@@ -272,9 +268,8 @@ public class BlueprintClipboard {
         }
 
         // Chests
-        if (blockState instanceof InventoryHolder) {
+        if (blockState instanceof InventoryHolder ih) {
             b.setInventory(new HashMap<>());
-            InventoryHolder ih = (InventoryHolder)blockState;
             for (int i = 0; i < ih.getInventory().getSize(); i++) {
                 ItemStack item = ih.getInventory().getItem(i);
                 if (item != null) {
@@ -283,8 +278,7 @@ public class BlueprintClipboard {
             }
         }
 
-        if (blockState instanceof CreatureSpawner) {
-            CreatureSpawner spawner = (CreatureSpawner)blockState;
+        if (blockState instanceof CreatureSpawner spawner) {
             BlueprintCreatureSpawner cs = new BlueprintCreatureSpawner();
             cs.setSpawnedType(spawner.getSpawnedType());
             cs.setDelay(spawner.getDelay());

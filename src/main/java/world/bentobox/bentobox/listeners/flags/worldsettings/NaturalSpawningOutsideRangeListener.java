@@ -23,7 +23,7 @@ public class NaturalSpawningOutsideRangeListener extends FlagListener {
         }
 
         // If it is a natural spawn and there is no protected island at the location, block the spawn.
-        if (e.getSpawnReason() == CreatureSpawnEvent.SpawnReason.NATURAL && !getIslands().getProtectedIslandAt(e.getLocation()).isPresent()) {
+        if (e.getSpawnReason() == CreatureSpawnEvent.SpawnReason.NATURAL && getIslands().getProtectedIslandAt(e.getLocation()).isEmpty()) {
             e.setCancelled(true);
         }
     }

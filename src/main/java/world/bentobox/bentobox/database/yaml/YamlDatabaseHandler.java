@@ -534,7 +534,7 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
     }
 
     private void setComment(@NonNull String comment, @NonNull YamlConfiguration config, @NonNull Map<String, String> yamlComments, @NonNull String parent) {
-        String random = "comment-" + UUID.randomUUID().toString();
+        String random = "comment-" + UUID.randomUUID();
         // Store placeholder
         config.set(parent + random, " ");
         // Create comment

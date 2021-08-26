@@ -23,11 +23,11 @@ public class JSONDatabaseConnector implements DatabaseConnector {
     @NonNull
     public String getUniqueId(String tableName) {
         UUID uuid = UUID.randomUUID();
-        File file = new File(dataFolder, tableName + File.separator + uuid.toString() + JSON);
+        File file = new File(dataFolder, tableName + File.separator + uuid + JSON);
         int limit = 0;
         while (file.exists() && limit++ < MAX_LOOPS) {
             uuid = UUID.randomUUID();
-            file = new File(dataFolder, tableName + File.separator + uuid.toString() + JSON);
+            file = new File(dataFolder, tableName + File.separator + uuid + JSON);
         }
         return uuid.toString();
     }

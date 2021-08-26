@@ -49,12 +49,12 @@ public class BlueprintClipboardFormat implements ClipboardFormat {
     }
 
     @Override
-    public ClipboardReader getReader(InputStream inputStream) throws IOException {
+    public ClipboardReader getReader(InputStream inputStream) {
         return new BlueprintClipboardReader(inputStream);
     }
 
     @Override
-    public ClipboardWriter getWriter(OutputStream outputStream) throws IOException {
+    public ClipboardWriter getWriter(OutputStream outputStream) {
         return new BlueprintClipboardWriter(outputStream);
     }
 

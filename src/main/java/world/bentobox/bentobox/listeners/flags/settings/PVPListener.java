@@ -2,6 +2,7 @@ package world.bentobox.bentobox.listeners.flags.settings;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.WeakHashMap;
 
@@ -23,6 +24,7 @@ import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.LingeringPotionSplashEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.player.PlayerFishEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 
 import world.bentobox.bentobox.api.events.flags.FlagSettingChangeEvent;
 import world.bentobox.bentobox.api.flags.Flag;
@@ -83,9 +85,8 @@ public class PVPListener extends FlagListener {
                 user.notify(getFlag(damager.getWorld()).getHintReference());
                 e.setCancelled(true);
             }
-        } else if (damager instanceof Projectile && ((Projectile)damager).getShooter() instanceof Player) {
+        } else if (damager instanceof Projectile p && ((Projectile)damager).getShooter() instanceof Player) {
             // Find out who fired the arrow
-            Projectile p = (Projectile) damager;
             Player shooter =(Player)p.getShooter();
             processDamage(e, damager, shooter, hurtEntity, flag);
         } else if (damager instanceof Firework && firedFireworks.containsKey(damager)) {
@@ -198,14 +199,11 @@ public class PVPListener extends FlagListener {
     }
 
     private Flag getFlag(World w) {
-        switch (w.getEnvironment()) {
-        case NETHER:
-            return Flags.PVP_NETHER;
-        case THE_END:
-            return Flags.PVP_END;
-        default:
-            return Flags.PVP_OVERWORLD;
-        }
+        return switch (w.getEnvironment()) {
+        case NETHER -> Flags.PVP_NETHER;
+        case THE_END -> Flags.PVP_END;
+        default -> Flags.PVP_OVERWORLD;
+        };
     }
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled=true)
@@ -227,5 +225,35 @@ public class PVPListener extends FlagListener {
             // Send the message to island members (and coops and trusted)
             e.getIsland().getMemberSet(RanksManager.COOP_RANK).forEach(member -> User.getInstance(member).sendMessage(message));
         }
+    }
+
+    /**
+     * Warn visitors if the island they are teleporting to has PVP on
+     * @param e teleport event
+     */
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled=true)
+    public void onPlayerTeleport(PlayerTeleportEvent e) {
+        if (e.getTo() == null) {
+            return;
+        }
+        getIslands().getIslandAt(e.getTo()).ifPresent(island -> {
+            if (island.getMemberSet(RanksManager.COOP_RANK).contains(e.getPlayer().getUniqueId())) {
+                return;
+            }
+            if (island.isAllowed(Flags.PVP_OVERWORLD)) {
+                alertUser(e.getPlayer(), Flags.PVP_OVERWORLD);
+            }
+            if (island.isAllowed(Flags.PVP_NETHER)) {
+                alertUser(e.getPlayer(), Flags.PVP_NETHER);
+            }
+            if (island.isAllowed(Flags.PVP_END)) {
+                alertUser(e.getPlayer(), Flags.PVP_END);
+            }
+        });
+    }
+
+    private void alertUser(Player player, Flag flag) {
+        String message = "protection.flags." + flag.getID() + ".enabled";
+        Objects.requireNonNull(User.getInstance(player)).sendMessage(message);
     }
 }

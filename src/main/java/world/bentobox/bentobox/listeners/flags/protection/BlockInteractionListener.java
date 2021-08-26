@@ -1,7 +1,5 @@
 package world.bentobox.bentobox.listeners.flags.protection;
 
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -36,9 +34,7 @@ public class BlockInteractionListener extends FlagListener {
      */
     private final static Map<String, String> stringFlags;
     static {
-        Map<String, String> f = new HashMap<>();
-        f.put("RESPAWN_ANCHOR", "PLACE_BLOCKS");
-        stringFlags = Collections.unmodifiableMap(f);
+        stringFlags = Map.<String, String>of("RESPAWN_ANCHOR", "PLACE_BLOCKS");
     }
 
     /**

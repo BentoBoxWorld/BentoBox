@@ -801,103 +801,58 @@ public class IslandEvent extends IslandBaseEvent {
          * @return deprecated event
          */
         private IslandBaseEvent getDeprecatedEvent() {
-            switch (reason) {
-            case EXPEL:
-                return new IslandExpelEvent(island, player, admin, location);
-            case BAN:
-                return new IslandBanEvent(island, player, admin, location);
-            case PRECREATE:
-                return new IslandPreCreateEvent(player);
-            case CREATE:
-                return new IslandCreateEvent(island, player, admin, location, blueprintBundle);
-            case CREATED:
-                return new IslandCreatedEvent(island, player, admin, location);
-            case DELETE:
-                return new IslandDeleteEvent(island, player, admin, location);
-            case DELETE_CHUNKS:
-                return new IslandDeleteChunksEvent(island, player, admin, location, deletedIslandInfo);
-            case DELETED:
-                return new IslandDeletedEvent(island, player, admin, location, deletedIslandInfo);
-            case ENTER:
-                return new IslandEnterEvent(island, player, admin, location, oldIsland, rawEvent);
-            case EXIT:
-                return new IslandExitEvent(island, player, admin, location, oldIsland, rawEvent);
-            case LOCK:
-                return new IslandLockEvent(island, player, admin, location);
-            case RESET:
-                return new IslandResetEvent(island, player, admin, location, blueprintBundle, oldIsland);
-            case RESETTED:
-                return new IslandResettedEvent(island, player, admin, location, oldIsland);
-            case UNBAN:
-                return new IslandUnbanEvent(island, player, admin, location);
-            case UNLOCK:
-                return new IslandUnlockEvent(island, player, admin, location);
-            case REGISTERED:
-                return new IslandRegisteredEvent(island, player, admin, location);
-            case UNREGISTERED:
-                return new IslandUnregisteredEvent(island, player, admin, location);
-            case RANGE_CHANGE:
-                return new IslandProtectionRangeChangeEvent(island, player, admin, location, newRange, oldRange);
-            case PRECLEAR:
-                return new IslandPreclearEvent(island, player, admin, location, oldIsland);
-            case RESERVED:
-                return new IslandReservedEvent(island, player, admin, location);
-            case RANK_CHANGE:
-                return new IslandRankChangeEvent(island, player, admin, location, oldRank, newRank);
-            default:
-                return new IslandGeneralEvent(island, player, admin, location);
-            }
+            return switch (reason) {
+                case EXPEL -> new IslandExpelEvent(island, player, admin, location);
+                case BAN -> new IslandBanEvent(island, player, admin, location);
+                case PRECREATE -> new IslandPreCreateEvent(player);
+                case CREATE -> new IslandCreateEvent(island, player, admin, location, blueprintBundle);
+                case CREATED -> new IslandCreatedEvent(island, player, admin, location);
+                case DELETE -> new IslandDeleteEvent(island, player, admin, location);
+                case DELETE_CHUNKS -> new IslandDeleteChunksEvent(island, player, admin, location, deletedIslandInfo);
+                case DELETED -> new IslandDeletedEvent(island, player, admin, location, deletedIslandInfo);
+                case ENTER -> new IslandEnterEvent(island, player, admin, location, oldIsland, rawEvent);
+                case EXIT -> new IslandExitEvent(island, player, admin, location, oldIsland, rawEvent);
+                case LOCK -> new IslandLockEvent(island, player, admin, location);
+                case RESET -> new IslandResetEvent(island, player, admin, location, blueprintBundle, oldIsland);
+                case RESETTED -> new IslandResettedEvent(island, player, admin, location, oldIsland);
+                case UNBAN -> new IslandUnbanEvent(island, player, admin, location);
+                case UNLOCK -> new IslandUnlockEvent(island, player, admin, location);
+                case REGISTERED -> new IslandRegisteredEvent(island, player, admin, location);
+                case UNREGISTERED -> new IslandUnregisteredEvent(island, player, admin, location);
+                case RANGE_CHANGE -> new IslandProtectionRangeChangeEvent(island, player, admin, location, newRange, oldRange);
+                case PRECLEAR -> new IslandPreclearEvent(island, player, admin, location, oldIsland);
+                case RESERVED -> new IslandReservedEvent(island, player, admin, location);
+                case RANK_CHANGE -> new IslandRankChangeEvent(island, player, admin, location, oldRank, newRank);
+                default -> new IslandGeneralEvent(island, player, admin, location);
+            };
         }
 
         private IslandBaseEvent getEvent() {
-            switch (reason) {
-            case EXPEL:
-                return new world.bentobox.bentobox.api.events.island.IslandExpelEvent(island, player, admin, location);
-            case BAN:
-                return new world.bentobox.bentobox.api.events.island.IslandBanEvent(island, player, admin, location);
-            case PRECREATE:
-                return new world.bentobox.bentobox.api.events.island.IslandPreCreateEvent(player);
-            case CREATE:
-                return new world.bentobox.bentobox.api.events.island.IslandCreateEvent(island, player, admin, location, blueprintBundle);
-            case CREATED:
-                return new world.bentobox.bentobox.api.events.island.IslandCreatedEvent(island, player, admin, location);
-            case DELETE:
-                return new world.bentobox.bentobox.api.events.island.IslandDeleteEvent(island, player, admin, location);
-            case DELETE_CHUNKS:
-                return new world.bentobox.bentobox.api.events.island.IslandDeleteChunksEvent(island, player, admin, location, deletedIslandInfo);
-            case DELETED:
-                return new world.bentobox.bentobox.api.events.island.IslandDeletedEvent(island, player, admin, location, deletedIslandInfo);
-            case ENTER:
-                return new world.bentobox.bentobox.api.events.island.IslandEnterEvent(island, player, admin, location, oldIsland, rawEvent);
-            case EXIT:
-                return new world.bentobox.bentobox.api.events.island.IslandExitEvent(island, player, admin, location, oldIsland, rawEvent);
-            case LOCK:
-                return new world.bentobox.bentobox.api.events.island.IslandLockEvent(island, player, admin, location);
-            case RESET:
-                return new world.bentobox.bentobox.api.events.island.IslandResetEvent(island, player, admin, location, blueprintBundle, oldIsland);
-            case RESETTED:
-                return new world.bentobox.bentobox.api.events.island.IslandResettedEvent(island, player, admin, location, oldIsland);
-            case UNBAN:
-                return new world.bentobox.bentobox.api.events.island.IslandUnbanEvent(island, player, admin, location);
-            case UNLOCK:
-                return new world.bentobox.bentobox.api.events.island.IslandUnlockEvent(island, player, admin, location);
-            case REGISTERED:
-                return new world.bentobox.bentobox.api.events.island.IslandRegisteredEvent(island, player, admin, location);
-            case UNREGISTERED:
-                return new world.bentobox.bentobox.api.events.island.IslandUnregisteredEvent(island, player, admin, location);
-            case RANGE_CHANGE:
-                return new world.bentobox.bentobox.api.events.island.IslandProtectionRangeChangeEvent(island, player, admin, location, newRange, oldRange);
-            case PRECLEAR:
-                return new world.bentobox.bentobox.api.events.island.IslandPreclearEvent(island, player, admin, location, oldIsland);
-            case RESERVED:
-                return new world.bentobox.bentobox.api.events.island.IslandReservedEvent(island, player, admin, location);
-            case RANK_CHANGE:
-                return new world.bentobox.bentobox.api.events.island.IslandRankChangeEvent(island, player, admin, location, oldRank, newRank);
-            case NEW_ISLAND:
-                return new IslandNewIslandEvent(island, player, admin, location);
-            default:
-                return new world.bentobox.bentobox.api.events.island.IslandGeneralEvent(island, player, admin, location);
-            }
+            return switch (reason) {
+                case EXPEL -> new world.bentobox.bentobox.api.events.island.IslandExpelEvent(island, player, admin, location);
+                case BAN -> new world.bentobox.bentobox.api.events.island.IslandBanEvent(island, player, admin, location);
+                case PRECREATE -> new world.bentobox.bentobox.api.events.island.IslandPreCreateEvent(player);
+                case CREATE -> new world.bentobox.bentobox.api.events.island.IslandCreateEvent(island, player, admin, location, blueprintBundle);
+                case CREATED -> new world.bentobox.bentobox.api.events.island.IslandCreatedEvent(island, player, admin, location);
+                case DELETE -> new world.bentobox.bentobox.api.events.island.IslandDeleteEvent(island, player, admin, location);
+                case DELETE_CHUNKS -> new world.bentobox.bentobox.api.events.island.IslandDeleteChunksEvent(island, player, admin, location, deletedIslandInfo);
+                case DELETED -> new world.bentobox.bentobox.api.events.island.IslandDeletedEvent(island, player, admin, location, deletedIslandInfo);
+                case ENTER -> new world.bentobox.bentobox.api.events.island.IslandEnterEvent(island, player, admin, location, oldIsland, rawEvent);
+                case EXIT -> new world.bentobox.bentobox.api.events.island.IslandExitEvent(island, player, admin, location, oldIsland, rawEvent);
+                case LOCK -> new world.bentobox.bentobox.api.events.island.IslandLockEvent(island, player, admin, location);
+                case RESET -> new world.bentobox.bentobox.api.events.island.IslandResetEvent(island, player, admin, location, blueprintBundle, oldIsland);
+                case RESETTED -> new world.bentobox.bentobox.api.events.island.IslandResettedEvent(island, player, admin, location, oldIsland);
+                case UNBAN -> new world.bentobox.bentobox.api.events.island.IslandUnbanEvent(island, player, admin, location);
+                case UNLOCK -> new world.bentobox.bentobox.api.events.island.IslandUnlockEvent(island, player, admin, location);
+                case REGISTERED -> new world.bentobox.bentobox.api.events.island.IslandRegisteredEvent(island, player, admin, location);
+                case UNREGISTERED -> new world.bentobox.bentobox.api.events.island.IslandUnregisteredEvent(island, player, admin, location);
+                case RANGE_CHANGE -> new world.bentobox.bentobox.api.events.island.IslandProtectionRangeChangeEvent(island, player, admin, location, newRange, oldRange);
+                case PRECLEAR -> new world.bentobox.bentobox.api.events.island.IslandPreclearEvent(island, player, admin, location, oldIsland);
+                case RESERVED -> new world.bentobox.bentobox.api.events.island.IslandReservedEvent(island, player, admin, location);
+                case RANK_CHANGE -> new world.bentobox.bentobox.api.events.island.IslandRankChangeEvent(island, player, admin, location, oldRank, newRank);
+                case NEW_ISLAND -> new IslandNewIslandEvent(island, player, admin, location);
+                default -> new world.bentobox.bentobox.api.events.island.IslandGeneralEvent(island, player, admin, location);
+            };
         }
 
         /**

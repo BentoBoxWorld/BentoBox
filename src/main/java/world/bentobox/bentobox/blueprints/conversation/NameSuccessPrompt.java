@@ -42,7 +42,6 @@ public class NameSuccessPrompt extends MessagePrompt {
         if (bp != null) {
             BentoBox.getInstance().getBlueprintsManager().renameBlueprint(addon, bp, name);
             new BlueprintManagementPanel(BentoBox.getInstance(), user, addon).openBB(bb);
-            return user.getTranslation("commands.admin.blueprint.management.description.success");
         } else {
             // Blueprint Bundle
             if (bb == null) {
@@ -61,8 +60,8 @@ public class NameSuccessPrompt extends MessagePrompt {
             new BlueprintManagementPanel(BentoBox.getInstance(), user, addon).openPanel();
             // Set the name
             // if successfully
-            return user.getTranslation("commands.admin.blueprint.management.description.success");
         }
+        return user.getTranslation("commands.admin.blueprint.management.description.success");
     }
 
     @Override

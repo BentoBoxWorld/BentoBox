@@ -75,10 +75,9 @@ public class Invite {
         if (obj == null) {
             return false;
         }
-        if (!(obj instanceof Invite)) {
+        if (!(obj instanceof Invite other)) {
             return false;
         }
-        Invite other = (Invite) obj;
         return Objects.equals(invitee, other.invitee) && Objects.equals(inviter, other.inviter) && type == other.type;
     }
 }

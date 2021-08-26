@@ -1,6 +1,5 @@
 package world.bentobox.bentobox.blueprints.worldedit;
 
-import java.io.IOException;
 import java.io.InputStream;
 
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
@@ -19,12 +18,12 @@ public class BlueprintClipboardReader implements ClipboardReader {
     }
 
     @Override
-    public Clipboard read() throws IOException {
+    public Clipboard read() {
         throw new UnsupportedOperationException(); // TODO
     }
 
     @Override
-    public void close() throws IOException {
+    public void close() {
         throw new UnsupportedOperationException(); // TODO
     }
 

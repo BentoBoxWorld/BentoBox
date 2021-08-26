@@ -38,7 +38,7 @@ There are also plenty of other official or community-made Addons you can try and
 ## Documentation
 
 * Start reading: [https://docs.bentobox.world](https://docs.bentobox.world)
-* For developers: [Javadocs](https://bentoboxworld.github.io/BentoBox/)
+* For developers: [Javadocs](https://ci.codemc.io/job/BentoBoxWorld/job/BentoBox/ws/target/apidocs/index.html)
 
 ## Downloads
 

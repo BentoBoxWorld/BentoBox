@@ -46,9 +46,8 @@ public class BreakBlocksListener extends FlagListener {
             checkIsland(e, (Player)e.getRemover(), e.getEntity().getLocation(), Flags.BREAK_BLOCKS);
         }
         // Check for projectiles
-        if (e.getRemover() instanceof Projectile) {
+        if (e.getRemover() instanceof Projectile p) {
             // Find out who fired it
-            Projectile p = (Projectile)e.getRemover();
             if (p.getShooter() instanceof Player) {
                 checkIsland(e, (Player)p.getShooter(), e.getEntity().getLocation(), Flags.BREAK_BLOCKS);
             }
@@ -118,9 +117,8 @@ public class BreakBlocksListener extends FlagListener {
         if (e.getDamager() instanceof Player) {
             // Check the break blocks flag
             notAllowed(e, (Player)e.getDamager(), e.getEntity().getLocation());
-        } else if (e.getDamager() instanceof Projectile) {
+        } else if (e.getDamager() instanceof Projectile p) {
             // Find out who fired the arrow
-            Projectile p = (Projectile) e.getDamager();
             if (p.getShooter() instanceof Player && notAllowed(e, (Player)p.getShooter(), e.getEntity().getLocation())) {
                 e.getEntity().setFireTicks(0);
                 p.setFireTicks(0);

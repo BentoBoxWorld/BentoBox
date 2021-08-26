@@ -3,13 +3,14 @@ package world.bentobox.bentobox.api.panels.builders;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import org.bukkit.ChatColor;
 import org.bukkit.World;
 
 import world.bentobox.bentobox.api.panels.Panel;
 import world.bentobox.bentobox.api.panels.PanelItem;
 import world.bentobox.bentobox.api.panels.PanelListener;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.util.Util;
+
 
 /**
  * Builds panels
@@ -26,7 +27,7 @@ public class PanelBuilder {
     private World world;
 
     public PanelBuilder name(String name) {
-        this.name = ChatColor.translateAlternateColorCodes('&', name);
+        this.name = Util.translateColorCodes(name);
         return this;
     }
 
