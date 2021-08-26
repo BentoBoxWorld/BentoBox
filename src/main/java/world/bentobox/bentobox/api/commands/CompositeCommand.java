@@ -33,7 +33,7 @@ import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.util.Util;
 
 /**
- * BSB composite command
+ * BentoBox composite command. Provides an abstract implementation of a command.
  * @author tastybento
  * @author Poslovitch
  */
