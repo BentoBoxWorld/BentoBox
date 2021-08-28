@@ -7,6 +7,7 @@ import org.bukkit.Bukkit;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.events.BentoBoxReadyEvent;
+import world.bentobox.bentobox.api.panels.reader.TemplateReader;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.commands.reload.BentoBoxReloadLocalesCommand;
 import world.bentobox.bentobox.listeners.PanelListenerManager;
@@ -45,6 +46,8 @@ public class BentoBoxReloadCommand extends ConfirmableCommand {
 
                 // Close all open panels
                 PanelListenerManager.closeAllPanels();
+                // Clear all template panels.
+                TemplateReader.clearPanels();
 
                 // Reload settings
                 getPlugin().loadSettings();
