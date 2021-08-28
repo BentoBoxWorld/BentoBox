@@ -308,6 +308,15 @@ public class TemplateReader
 
 
     /**
+     * This method clears loaded panels from the cache.
+     */
+    public static void clearPanels()
+    {
+        loadedPanels.clear();
+    }
+
+
+    /**
      * This map contains already read panels and their location.
      * This improves performance for GUI opening, with a some memory usage.
      */
