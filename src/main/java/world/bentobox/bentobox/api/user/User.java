@@ -47,7 +47,7 @@ import world.bentobox.bentobox.util.Util;
  */
 public class User implements MetaDataAble {
 
-    private static Map<UUID, User> users = new HashMap<>();
+    private static final Map<UUID, User> users = new HashMap<>();
 
     /**
      * Clears all users from the user list
@@ -136,7 +136,7 @@ public class User implements MetaDataAble {
     private static BentoBox plugin = BentoBox.getInstance();
 
     @Nullable
-    private Player player;
+    private final Player player;
     private OfflinePlayer offlinePlayer;
     private final UUID playerUUID;
     @Nullable

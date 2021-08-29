@@ -24,7 +24,7 @@ public class AdminRangeDisplayCommand extends CompositeCommand {
     private static final String HIDE = "hide";
 
     // Map of users to which ranges must be displayed
-    private Map<User, Integer> displayRanges = new HashMap<>();
+    private final Map<User, Integer> displayRanges = new HashMap<>();
 
     public AdminRangeDisplayCommand(CompositeCommand parent) {
         super(parent, DISPLAY, SHOW, HIDE);

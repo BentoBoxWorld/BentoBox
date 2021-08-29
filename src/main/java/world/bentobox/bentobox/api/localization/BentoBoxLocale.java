@@ -20,16 +20,16 @@ public class BentoBoxLocale {
 
     private static final String UNKNOWN = "unknown";
 
-    private Locale locale;
-    private YamlConfiguration config;
-    private ItemStack banner;
-    private List<String> authors;
+    private final Locale locale;
+    private final YamlConfiguration config;
+    private final ItemStack banner;
+    private final List<String> authors;
 
     /**
      * List of available prefixes in this locale.
      * @since 1.12.0
      */
-    private Set<String> prefixes;
+    private final Set<String> prefixes;
 
     public BentoBoxLocale(Locale locale, YamlConfiguration config) {
         this.locale = locale;

@@ -56,9 +56,9 @@ public class BlockInteractionListenerTest extends AbstractCommonSetup {
     @Mock
     private Block clickedBlock;
 
-    private Map<Material, Flag> inHandItems = new EnumMap<>(Material.class);
+    private final Map<Material, Flag> inHandItems = new EnumMap<>(Material.class);
 
-    private Map<Material, Flag> clickedBlocks = new EnumMap<>(Material.class);
+    private final Map<Material, Flag> clickedBlocks = new EnumMap<>(Material.class);
 
     private void setFlags() {
         inHandItems.put(Material.ENDER_PEARL, Flags.ENDER_PEARL);

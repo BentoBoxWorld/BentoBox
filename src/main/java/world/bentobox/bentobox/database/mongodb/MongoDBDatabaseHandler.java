@@ -40,7 +40,7 @@ public class MongoDBDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
     private static final String MONGO_ID = "_id";
 
     private MongoCollection<Document> collection;
-    private DatabaseConnector dbConnecter;
+    private final DatabaseConnector dbConnecter;
 
     /**
      * Handles the connection to the database and creation of the initial database schema (tables) for

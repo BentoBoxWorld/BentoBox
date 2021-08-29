@@ -15,7 +15,7 @@ import world.bentobox.bentobox.BentoBox;
  */
 public class DeathListener implements Listener {
 
-    private BentoBox plugin;
+    private final BentoBox plugin;
 
     public DeathListener(@NonNull BentoBox plugin) {
         super();

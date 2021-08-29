@@ -18,7 +18,7 @@ import world.bentobox.bentobox.api.commands.CompositeCommand;
 public class CommandsManager {
 
     @NonNull
-    private Map<@NonNull String, @NonNull CompositeCommand> commands = new HashMap<>();
+    private final Map<@NonNull String, @NonNull CompositeCommand> commands = new HashMap<>();
     private SimpleCommandMap commandMap;
 
     public void registerCommand(@NonNull CompositeCommand command) {

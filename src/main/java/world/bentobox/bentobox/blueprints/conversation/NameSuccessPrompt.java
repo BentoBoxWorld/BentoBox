@@ -17,9 +17,9 @@ import world.bentobox.bentobox.panels.BlueprintManagementPanel;
 
 public class NameSuccessPrompt extends MessagePrompt {
 
-    private GameModeAddon addon;
+    private final GameModeAddon addon;
     private BlueprintBundle bb;
-    private Blueprint bp;
+    private final Blueprint bp;
 
     /**
      * Handles the name processing

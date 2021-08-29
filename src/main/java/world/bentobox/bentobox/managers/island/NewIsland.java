@@ -26,14 +26,14 @@ import world.bentobox.bentobox.managers.BlueprintsManager;
  *
  */
 public class NewIsland {
-    private BentoBox plugin;
+    private final BentoBox plugin;
     private Island island;
     private final User user;
     private final Reason reason;
     private final World world;
     private String name;
     private final boolean noPaste;
-    private GameModeAddon addon;
+    private final GameModeAddon addon;
 
     private NewIslandLocationStrategy locationStrategy;
 

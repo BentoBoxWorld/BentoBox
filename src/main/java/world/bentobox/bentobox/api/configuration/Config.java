@@ -22,8 +22,8 @@ import world.bentobox.bentobox.database.yaml.YamlDatabase;
  */
 public class Config<T> {
 
-    private AbstractDatabaseHandler<T> handler;
-    private Logger logger;
+    private final AbstractDatabaseHandler<T> handler;
+    private final Logger logger;
     private Addon addon;
 
     public Config(BentoBox plugin, Class<T> type)  {

@@ -21,7 +21,7 @@ import world.bentobox.bentobox.lists.GameModePlaceholder;
  */
 public class PlaceholdersManager {
 
-    private BentoBox plugin;
+    private final BentoBox plugin;
 
     public PlaceholdersManager(BentoBox plugin) {
         this.plugin = plugin;

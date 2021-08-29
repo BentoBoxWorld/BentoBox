@@ -26,7 +26,7 @@ public abstract class DelayedTeleportCommand extends CompositeCommand implements
     /**
      * User monitor map
      */
-    private static Map<UUID, DelayedCommand> toBeMonitored = new HashMap<>();
+    private static final Map<UUID, DelayedCommand> toBeMonitored = new HashMap<>();
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerMove(PlayerMoveEvent e) {

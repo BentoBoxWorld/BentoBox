@@ -11,7 +11,7 @@ import world.bentobox.bentobox.api.user.User;
 
 public class IslandTeamInviteRejectCommand extends CompositeCommand {
 
-    private IslandTeamCommand itc;
+    private final IslandTeamCommand itc;
 
     public IslandTeamInviteRejectCommand(IslandTeamCommand islandTeamCommand) {
         super(islandTeamCommand, "reject");

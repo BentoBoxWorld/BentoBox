@@ -21,9 +21,9 @@ import world.bentobox.bentobox.api.addons.Addon;
  */
 public class Database<T> {
 
-    private AbstractDatabaseHandler<T> handler;
-    private Logger logger;
-    private static DatabaseSetup databaseSetup = DatabaseSetup.getDatabase();
+    private final AbstractDatabaseHandler<T> handler;
+    private final Logger logger;
+    private static final DatabaseSetup databaseSetup = DatabaseSetup.getDatabase();
 
     /**
      * Construct a database

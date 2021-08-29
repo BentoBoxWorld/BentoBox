@@ -66,7 +66,7 @@ import world.bentobox.bentobox.util.teleport.SafeSpotTeleport;
  */
 public class IslandsManager {
 
-    private BentoBox plugin;
+    private final BentoBox plugin;
 
     // Tree species to boat material map
     private static final Map<TreeSpecies, Material> TREE_TO_BOAT = ImmutableMap.<TreeSpecies, Material>builder().
@@ -81,7 +81,7 @@ public class IslandsManager {
      * One island can be spawn, this is the one - otherwise, this value is null
      */
     @NonNull
-    private Map<@NonNull World, @Nullable Island> spawn;
+    private final Map<@NonNull World, @Nullable Island> spawn;
 
     @NonNull
     private Database<Island> handler;
@@ -90,17 +90,17 @@ public class IslandsManager {
      * The last locations where an island were put.
      * This is not stored persistently and resets when the server starts
      */
-    private Map<World, Location> last;
+    private final Map<World, Location> last;
 
     // Island Cache
     @NonNull
     private IslandCache islandCache;
     // Quarantined islands
     @NonNull
-    private Map<UUID, List<Island>> quarantineCache;
+    private final Map<UUID, List<Island>> quarantineCache;
     // Deleted islands
     @NonNull
-    private List<String> deletedIslands;
+    private final List<String> deletedIslands;
 
     private boolean isSaveTaskRunning;
 

@@ -23,8 +23,8 @@ import world.bentobox.bentobox.util.Util;
  */
 public class IslandToggleClick implements ClickHandler {
 
-    private BentoBox plugin = BentoBox.getInstance();
-    private String id;
+    private final BentoBox plugin = BentoBox.getInstance();
+    private final String id;
 
     /**
      * @param id - the flag ID that this click listener is associated with

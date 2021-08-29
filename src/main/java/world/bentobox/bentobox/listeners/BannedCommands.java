@@ -19,7 +19,7 @@ import world.bentobox.bentobox.lists.Flags;
  */
 public class BannedCommands implements Listener {
 
-    private BentoBox plugin;
+    private final BentoBox plugin;
 
     /**
      * @param plugin - plugin

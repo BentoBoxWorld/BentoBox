@@ -667,7 +667,7 @@ public class BlueprintsManagerTest {
      * Utility methods
      */
     private void createJarArchive(File archiveFile, File folder, List<File> tobeJaredList) {
-        byte buffer[] = new byte[BUFFER_SIZE];
+        byte[] buffer = new byte[BUFFER_SIZE];
         // Open archive file
         try (FileOutputStream stream = new FileOutputStream(archiveFile)) {
             try (JarOutputStream out = new JarOutputStream(stream, new Manifest())) {

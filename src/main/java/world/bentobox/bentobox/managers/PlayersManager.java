@@ -28,12 +28,12 @@ import world.bentobox.bentobox.util.Util;
 
 public class PlayersManager {
 
-    private BentoBox plugin;
+    private final BentoBox plugin;
     private Database<Players> handler;
-    private Database<Names> names;
+    private final Database<Names> names;
 
-    private Map<UUID, Players> playerCache;
-    private Set<UUID> inTeleport;
+    private final Map<UUID, Players> playerCache;
+    private final Set<UUID> inTeleport;
 
     private boolean isSaveTaskRunning;
 

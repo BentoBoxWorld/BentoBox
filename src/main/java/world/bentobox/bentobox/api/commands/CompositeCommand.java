@@ -78,12 +78,12 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     /**
      * Map of sub commands
      */
-    private Map<String, CompositeCommand> subCommands;
+    private final Map<String, CompositeCommand> subCommands;
 
     /**
      * Map of aliases for subcommands
      */
-    private Map<String, CompositeCommand> subCommandAliases;
+    private final Map<String, CompositeCommand> subCommandAliases;
     /**
      * The command chain from the very top, e.g., island team promote
      */
@@ -93,7 +93,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * The prefix to be used in this command
      */
     @Nullable
-    private String permissionPrefix;
+    private final String permissionPrefix;
 
     /**
      * The world that this command operates in. This is an overworld and will cover any associated nether or end
@@ -104,17 +104,17 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     /**
      * The addon creating this command, if any
      */
-    private Addon addon;
+    private final Addon addon;
 
     /**
      * The top level label
      */
-    private String topLabel;
+    private final String topLabel;
 
     /**
      * Cool down tracker
      */
-    private Map<String, Map<String, Long>> cooldowns = new HashMap<>();
+    private final Map<String, Map<String, Long>> cooldowns = new HashMap<>();
 
     /**
      * Top level command

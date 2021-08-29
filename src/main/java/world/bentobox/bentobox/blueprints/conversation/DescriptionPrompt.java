@@ -23,8 +23,8 @@ import world.bentobox.bentobox.util.Util;
 public class DescriptionPrompt extends StringPrompt {
 
     private static final String DESCRIPTION = "description";
-    private GameModeAddon addon;
-    private BlueprintBundle bb;
+    private final GameModeAddon addon;
+    private final BlueprintBundle bb;
 
     public DescriptionPrompt(GameModeAddon addon, BlueprintBundle bb) {
         this.addon = addon;

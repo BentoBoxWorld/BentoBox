@@ -40,8 +40,8 @@ import world.bentobox.bentobox.managers.RanksManager;
  */
 public class PVPListener extends FlagListener {
 
-    private Map<Integer, UUID> thrownPotions = new HashMap<>();
-    private Map<Entity, Player> firedFireworks = new WeakHashMap<>();
+    private final Map<Integer, UUID> thrownPotions = new HashMap<>();
+    private final Map<Entity, Player> firedFireworks = new WeakHashMap<>();
 
     /**
      * This method protects players from PVP if it is not allowed and from

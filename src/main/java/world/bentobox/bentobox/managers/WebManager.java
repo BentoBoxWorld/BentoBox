@@ -34,11 +34,15 @@ import world.bentobox.bentobox.web.credits.Contributor;
  */
 public class WebManager {
 
-    private @NonNull BentoBox plugin;
+    private @NonNull
+    final BentoBox plugin;
     private @Nullable GitHubWebAPI gitHub;
-    private @NonNull List<CatalogEntry> addonsCatalog;
-    private @NonNull List<CatalogEntry> gamemodesCatalog;
-    private @NonNull Map<String, List<Contributor>> contributors;
+    private @NonNull
+    final List<CatalogEntry> addonsCatalog;
+    private @NonNull
+    final List<CatalogEntry> gamemodesCatalog;
+    private @NonNull
+    final Map<String, List<Contributor>> contributors;
 
     public WebManager(@NonNull BentoBox plugin) {
         this.plugin = plugin;

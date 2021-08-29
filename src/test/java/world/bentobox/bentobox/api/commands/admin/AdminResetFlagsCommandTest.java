@@ -58,7 +58,7 @@ public class AdminResetFlagsCommandTest {
 
     @Mock
     private CompositeCommand ac;
-    private UUID uuid = UUID.randomUUID();
+    private final UUID uuid = UUID.randomUUID();
     @Mock
     private IslandsManager im;
     @Mock

@@ -11,7 +11,7 @@ import com.sk89q.worldedit.extent.clipboard.io.ClipboardReader;
  */
 public class BlueprintClipboardReader implements ClipboardReader {
 
-    private InputStream inputStream;
+    private final InputStream inputStream;
 
     public BlueprintClipboardReader(InputStream inputStream) {
         this.inputStream = inputStream;

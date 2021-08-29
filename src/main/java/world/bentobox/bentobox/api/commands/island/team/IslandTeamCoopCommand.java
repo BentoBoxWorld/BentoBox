@@ -22,7 +22,7 @@ import world.bentobox.bentobox.util.Util;
  */
 public class IslandTeamCoopCommand extends CompositeCommand {
 
-    private IslandTeamCommand itc;
+    private final IslandTeamCommand itc;
     private @Nullable UUID targetUUID;
 
     public IslandTeamCoopCommand(IslandTeamCommand parentCommand) {

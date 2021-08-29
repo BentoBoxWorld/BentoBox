@@ -35,13 +35,13 @@ public class BlueprintClipboardManager {
 
     private static final String LOAD_ERROR = "Could not load blueprint file - does not exist : ";
 
-    private File blueprintFolder;
+    private final File blueprintFolder;
 
     private BlueprintClipboard clipboard;
 
     private Gson gson;
 
-    private BentoBox plugin;
+    private final BentoBox plugin;
 
     public BlueprintClipboardManager(BentoBox plugin, File blueprintFolder) {
         this(plugin, blueprintFolder, null);

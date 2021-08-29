@@ -63,10 +63,10 @@ public class BlueprintClipboard {
     private boolean copying;
     private int index;
     private int lastPercentage;
-    private Map<Vector, List<BlueprintEntity>> bpEntities = new LinkedHashMap<>();
-    private Map<Vector, BlueprintBlock> bpAttachable = new LinkedHashMap<>();
-    private Map<Vector, BlueprintBlock> bpBlocks = new LinkedHashMap<>();
-    private BentoBox plugin = BentoBox.getInstance();
+    private final Map<Vector, List<BlueprintEntity>> bpEntities = new LinkedHashMap<>();
+    private final Map<Vector, BlueprintBlock> bpAttachable = new LinkedHashMap<>();
+    private final Map<Vector, BlueprintBlock> bpBlocks = new LinkedHashMap<>();
+    private final BentoBox plugin = BentoBox.getInstance();
 
     /**
      * Create a clipboard for blueprint

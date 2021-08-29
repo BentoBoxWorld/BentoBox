@@ -16,7 +16,7 @@ import world.bentobox.bentobox.api.user.User;
  */
 abstract class BasicPlaceholderExpansion extends PlaceholderExpansion {
     @NonNull
-    private Map<@NonNull String, @NonNull PlaceholderReplacer> placeholders;
+    private final Map<@NonNull String, @NonNull PlaceholderReplacer> placeholders;
 
     BasicPlaceholderExpansion() {
         super();

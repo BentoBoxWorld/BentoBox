@@ -20,7 +20,7 @@ import world.bentobox.bentobox.util.Util;
 
 public class IslandTeamInviteCommand extends CompositeCommand {
 
-    private IslandTeamCommand itc;
+    private final IslandTeamCommand itc;
     private @Nullable User invitedPlayer;
 
     public IslandTeamInviteCommand(IslandTeamCommand parent) {
