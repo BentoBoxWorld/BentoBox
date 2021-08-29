@@ -42,15 +42,12 @@ public class BucketListener extends FlagListener {
         switch (e.getItemStack().getType()) {
             case LAVA_BUCKET -> {
                 checkIsland(e, e.getPlayer(), e.getBlockClicked().getLocation(), Flags.COLLECT_LAVA);
-                return;
             }
             case WATER_BUCKET -> {
                 checkIsland(e, e.getPlayer(), e.getBlockClicked().getLocation(), Flags.COLLECT_WATER);
-                return;
             }
             case MILK_BUCKET -> {
                 checkIsland(e, e.getPlayer(), e.getBlockClicked().getLocation(), Flags.MILKING);
-                return;
             }
             default ->
                     // Check general bucket use

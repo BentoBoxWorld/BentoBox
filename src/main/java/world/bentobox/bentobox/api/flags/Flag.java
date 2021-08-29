@@ -398,7 +398,6 @@ public class Flag implements Comparable<Flag> {
             case PROTECTION -> createProtectionFlag(plugin, user, island, pib).build();
             case SETTING -> createSettingFlag(user, island, pib).build();
             case WORLD_SETTING -> createWorldSettingFlag(user, pib).build();
-            default -> pib.build();
         };
     }
 

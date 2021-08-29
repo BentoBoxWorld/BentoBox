@@ -181,7 +181,7 @@ public class IslandCache {
 
         return islandsByLocation.entrySet().stream()
                 .filter(entry -> overworld.equals(Util.getWorld(entry.getKey().getWorld()))) // shouldn't make NPEs
-                .map(Map.Entry::getValue).collect(Collectors.toUnmodifiableList());
+                .map(Map.Entry::getValue).toList();
     }
 
     /**

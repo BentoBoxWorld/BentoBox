@@ -284,7 +284,6 @@ public class LangUtilsHook extends Hook {
             case LUCK -> "Potion of Luck";
             case TURTLE_MASTER -> "Potion of the Turtle Master";
             case SLOW_FALLING -> "Potion of Slow Falling";
-            default -> Util.prettifyText(potionType.name());
         };
 
     }
@@ -322,7 +321,6 @@ public class LangUtilsHook extends Hook {
             case LUCK -> "Splash Potion of Luck";
             case TURTLE_MASTER -> "Splash Potion of the Turtle Master";
             case SLOW_FALLING -> "Splash Potion of Slow Falling";
-            default -> Util.prettifyText(potionType.name());
         };
     }
 
@@ -359,7 +357,6 @@ public class LangUtilsHook extends Hook {
             case LUCK -> "Lingering Potion of Luck";
             case TURTLE_MASTER -> "Lingering Potion of the Turtle Master";
             case SLOW_FALLING -> "Lingering Potion of Slow Falling";
-            default -> Util.prettifyText(potionType.name());
         };
     }
 
@@ -394,7 +391,6 @@ public class LangUtilsHook extends Hook {
             case LUCK -> "Arrow of Luck";
             case TURTLE_MASTER -> "Arrow of the Turtle Master";
             case SLOW_FALLING -> "Arrow of Slow Falling";
-            default -> Util.prettifyText(potionType.name());
         };
     }
 
