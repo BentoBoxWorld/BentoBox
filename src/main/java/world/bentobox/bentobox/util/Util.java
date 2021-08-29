@@ -540,7 +540,7 @@ public class Util {
         // Use matcher to find hex patterns in given text.
         Matcher matcher = HEX_PATTERN.matcher(textToColor);
         // Increase buffer size by 32 like it is in bungee cord api. Use buffer because it is sync.
-        StringBuffer buffer = new StringBuffer(textToColor.length() + 32);
+        StringBuilder buffer = new StringBuilder(textToColor.length() + 32);
 
         while (matcher.find()) {
             String group = matcher.group(1);
