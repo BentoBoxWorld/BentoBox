@@ -39,7 +39,7 @@ class IslandGrid {
                     if (firstLoaded.getOwner().equals(island.getOwner())) {
                         // Find out which one is the original
                         if (firstLoaded.getCreatedDate() > island.getCreatedDate()) {
-                            plugin.logError("Same owner duplicate. Swaping based on creation date.");
+                            plugin.logError("Same owner duplicate. Swapping based on creation date.");
                             // FirstLoaded is the newer
                             firstLoaded = new Island(island);
                             zEntry.put(island.getMinZ(), firstLoaded);

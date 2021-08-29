@@ -308,9 +308,9 @@ public class ServerCompatibility {
     }
 
     /**
-     * Returns whether the server runs on the specified softwares.
+     * Returns whether the server runs on the specified software.
      * @param softwares the {@link ServerSoftware}s to check.
-     * @return {@code true} if the server runs on on of these softwares, {@code false} otherwise.
+     * @return {@code true} if the server runs on on of these software, {@code false} otherwise.
      * @since 1.5.0
      */
     public boolean isSoftware(@NonNull ServerSoftware... softwares) {

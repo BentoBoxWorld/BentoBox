@@ -61,7 +61,7 @@ public abstract class DefaultAdminCommand extends CompositeCommand {
         new AdminTeamDisbandCommand(this);
         new AdminTeamSetownerCommand(this);
         new AdminTeamFixCommand(this);
-        // Schems
+        // Blueprints
         new AdminBlueprintCommand(this);
         // Register/unregister islands
         new AdminRegisterCommand(this);

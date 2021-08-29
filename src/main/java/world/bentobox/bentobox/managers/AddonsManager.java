@@ -602,7 +602,7 @@ public class AddonsManager {
             try {
                 addon.onDisable();
             } catch (Exception e) {
-                plugin.logError("Error occured when disabling addon " + addon.getDescription().getName());
+                plugin.logError("Error occurred when disabling addon " + addon.getDescription().getName());
                 plugin.logError("Report this to the addon's author(s)");
                 addon.getDescription().getAuthors().forEach(plugin::logError);
                 plugin.logStacktrace(e);

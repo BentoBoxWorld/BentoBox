@@ -218,7 +218,7 @@ public class Flag implements Comparable<Flag> {
 
     /**
      * Set the original status of this flag for locations outside of island spaces.
-     * May be overriden by the the setting for this world.
+     * May be overridden by the setting for this world.
      * Does not affect subflags.
      * @param defaultSetting - true means it is allowed. false means it is not allowed
      */

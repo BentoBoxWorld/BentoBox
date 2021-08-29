@@ -7,8 +7,8 @@
  * and the ability to transition between them.
  * </p>
  * <p>
- * Storage of POJOs is done via GSON, i.e, the object is serialized and then stored. Each ddata object must
- * implement the DataObject interface, which requires a uniquId field. This is what is used for indexing
+ * Storage of POJOs is done via GSON, i.e, the object is serialized and then stored. Each data object must
+ * implement the DataObject interface, which requires a uniqueId field. This is what is used for indexing
  * and finding.
  * </p>
  * <p>
