@@ -14,6 +14,7 @@ import org.bukkit.potion.PotionType;
 import org.eclipse.jdt.annotation.Nullable;
 
 import java.lang.reflect.Field;
+import java.util.MissingFormatArgumentException;
 import java.util.UUID;
 
 import world.bentobox.bentobox.BentoBox;
@@ -26,16 +27,28 @@ import world.bentobox.bentobox.BentoBox;
  * @author tastybento, Poslovitch
  */
 public class ItemParser {
+
     /**
      * Parse given string to ItemStack.
      * @param text String value of item stack.
      * @return ItemStack of parsed item or null.
      */
-    @Nullable
     public static ItemStack parse(String text) {
+        return ItemParser.parse(text, null);
+    }
+
+
+    /**
+     * Parse given string to ItemStack.
+     * @param text String value of item stack.
+     * @param defaultItemStack Material that should be returned if parsing failed.
+     * @return ItemStack of parsed item or defaultItemStack.
+     */
+    @Nullable
+    public static ItemStack parse(@Nullable String text, @Nullable ItemStack defaultItemStack) {
         if (text == null || text.isBlank()) {
             // Text does not exist or is empty.
-            return null;
+            return defaultItemStack;
         }
 
         String[] part = text.split(":");
@@ -69,7 +82,7 @@ public class ItemParser {
             BentoBox.getInstance().logError("Could not parse item " + text);
         }
 
-        return null;
+        return defaultItemStack;
     }
 
 
@@ -86,7 +99,7 @@ public class ItemParser {
         Material reqItem = Material.getMaterial(part[0].toUpperCase(java.util.Locale.ENGLISH));
 
         if (reqItem == null) {
-            return null;
+            throw new IllegalArgumentException(part[0] + " is not a valid Material.");
         }
 
         return new ItemStack(reqItem, reqAmount);
@@ -107,13 +120,11 @@ public class ItemParser {
         String[] parsable = {part[0], part[2]};
         ItemStack durability = parseItemQuantity(parsable);
 
-        if (durability != null) {
-            ItemMeta meta = durability.getItemMeta();
+        ItemMeta meta = durability.getItemMeta();
 
-            if (meta instanceof Damageable) {
-                ((Damageable) meta).setDamage(Integer.parseInt(part[1]));
-                durability.setItemMeta(meta);
-            }
+        if (meta instanceof Damageable) {
+            ((Damageable) meta).setDamage(Integer.parseInt(part[1]));
+            durability.setItemMeta(meta);
         }
 
         return durability;
@@ -131,7 +142,7 @@ public class ItemParser {
      */
     private static ItemStack parsePotion(String[] part) {
         if (part.length != 6) {
-            return null;
+            throw new MissingFormatArgumentException("Potion parsing requires 6 parts.");
         }
 
         /*
@@ -172,29 +183,25 @@ public class ItemParser {
      * @return Banner as item stack.
      */
     private static ItemStack parseBanner(String[] part) {
-        try {
-            if (part.length >= 2) {
-                Material bannerMat = Material.getMaterial(part[0]);
-                if (bannerMat == null) {
-                    BentoBox.getInstance().logError("Could not parse banner item " + part[0] + " so using a white banner.");
-                    bannerMat = Material.WHITE_BANNER;
-                }
-                ItemStack result = new ItemStack(bannerMat, Integer.parseInt(part[1]));
-
-                BannerMeta meta = (BannerMeta) result.getItemMeta();
-                if (meta != null) {
-                    for (int i = 2; i < part.length; i += 2) {
-                        meta.addPattern(new Pattern(DyeColor.valueOf(part[i + 1]), PatternType.valueOf(part[i])));
-                    }
-                    result.setItemMeta(meta);
-                }
-
-                return result;
-            } else {
-                return null;
+        if (part.length >= 2) {
+            Material bannerMat = Material.getMaterial(part[0]);
+            if (bannerMat == null) {
+                BentoBox.getInstance().logError("Could not parse banner item " + part[0] + " so using a white banner.");
+                bannerMat = Material.WHITE_BANNER;
             }
-        } catch (Exception e) {
-            return null;
+            ItemStack result = new ItemStack(bannerMat, Integer.parseInt(part[1]));
+
+            BannerMeta meta = (BannerMeta) result.getItemMeta();
+            if (meta != null) {
+                for (int i = 2; i < part.length; i += 2) {
+                    meta.addPattern(new Pattern(DyeColor.valueOf(part[i + 1]), PatternType.valueOf(part[i])));
+                }
+                result.setItemMeta(meta);
+            }
+
+            return result;
+        } else {
+            throw new MissingFormatArgumentException("Banner parsing requires at least 2 parts.");
         }
     }
 
@@ -226,11 +233,6 @@ public class ItemParser {
         } else {
             // create new player head item stack.
             playerHead = new ItemStack(Material.PLAYER_HEAD);
-        }
-
-        if (playerHead == null) {
-            // just a null-pointer check.
-            return null;
         }
 
         // Set correct Skull texture

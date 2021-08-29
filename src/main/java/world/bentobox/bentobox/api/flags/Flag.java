@@ -25,6 +25,8 @@ import world.bentobox.bentobox.api.panels.builders.PanelItemBuilder;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.RanksManager;
+import world.bentobox.bentobox.util.ItemParser;
+
 
 public class Flag implements Comparable<Flag> {
 
@@ -316,6 +318,13 @@ public class Flag implements Comparable<Flag> {
     }
 
     /**
+     * @return a locale reference for the icon of this protection flag
+     */
+    public String getIconReference() {
+        return PROTECTION_FLAGS + this.id + ".icon";
+    }
+
+    /**
      * @return a locale reference for the description of this protection flag
      */
     public String getDescriptionReference() {
@@ -377,7 +386,7 @@ public class Flag implements Comparable<Flag> {
         }
         // Start the flag conversion
         PanelItemBuilder pib = new PanelItemBuilder()
-                .icon(new ItemStack(icon))
+                .icon(ItemParser.parse(user.getTranslation(this.getIconReference()), new ItemStack(icon)))
                 .name(user.getTranslation("protection.panel.flag-item.name-layout", TextVariables.NAME, user.getTranslation(getNameReference())))
                 .clickHandler(clickHandler)
                 .invisible(invisible);
