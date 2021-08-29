@@ -138,7 +138,7 @@ public class IslandDeletionManagerTest {
         BentoBoxReadyEvent e = new BentoBoxReadyEvent();
         idm.onBentoBoxReady(e);
         verify(plugin).log("There are 1 islands pending deletion.");
-        verify(plugin).logError("Island queued for deletion refers to a non-existant game world. Skipping...");
+        verify(plugin).logError("Island queued for deletion refers to a non-existent game world. Skipping...");
     }
 
     /**
