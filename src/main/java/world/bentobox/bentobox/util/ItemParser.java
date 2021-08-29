@@ -79,7 +79,7 @@ public class ItemParser {
                 return parseItemDurabilityAndQuantity(part);
             }
         } catch (Exception exception) {
-            BentoBox.getInstance().logError("Could not parse item " + text);
+            BentoBox.getInstance().logError("Could not parse item " + text + " " + exception.getLocalizedMessage());
         }
 
         return defaultItemStack;
