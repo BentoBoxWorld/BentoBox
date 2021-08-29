@@ -190,6 +190,91 @@ public class BlueprintClipboard {
         Vector pos = new Vector(x, y, z);
 
         // Set entities
+        List<BlueprintEntity> bpEnts = setEntities(entities);
+        // Store
+        if (!bpEnts.isEmpty()) {
+            bpEntities.put(pos, bpEnts);
+        }
+
+        // Return if this is just air block
+        if (!copyAir && block.getType().equals(Material.AIR) && !entities.isEmpty()) {
+            return true;
+        }
+
+
+        BlueprintBlock b = bluePrintBlock(pos, block);
+        if (b != null) {
+            this.bpBlocks.put(pos, b);
+        }
+        return true;
+    }
+
+    private BlueprintBlock bluePrintBlock(Vector pos, Block block) {
+        // Block state
+        BlockState blockState = block.getState();
+        BlueprintBlock b = new BlueprintBlock(block.getBlockData().getAsString());
+        // Biome
+        b.setBiome(block.getBiome());
+        // Signs
+        if (blockState instanceof Sign sign) {
+            b.setSignLines(Arrays.asList(sign.getLines()));
+            b.setGlowingText(sign.isGlowingText());
+        }
+        // Set block data
+        if (blockState.getData() instanceof Attachable) {
+            // Placeholder for attachment
+            bpBlocks.put(pos, new BlueprintBlock("minecraft:air"));
+            bpAttachable.put(pos, b);
+            return null;
+        }
+
+        if (block.getType().equals(Material.BEDROCK)) {
+            // Find highest bedrock
+            if(blueprint.getBedrock() == null) {
+                blueprint.setBedrock(pos);
+            } else {
+                if (pos.getBlockY() > blueprint.getBedrock().getBlockY()) {
+                    blueprint.setBedrock(pos);
+                }
+            }
+        }
+
+        // Chests
+        if (blockState instanceof InventoryHolder ih) {
+            b.setInventory(new HashMap<>());
+            for (int i = 0; i < ih.getInventory().getSize(); i++) {
+                ItemStack item = ih.getInventory().getItem(i);
+                if (item != null) {
+                    b.getInventory().put(i, item);
+                }
+            }
+        }
+
+        if (blockState instanceof CreatureSpawner spawner) {
+            b.setCreatureSpawner(getSpawner(spawner));
+        }
+
+        // Banners
+        if (blockState instanceof Banner) {
+            b.setBannerPatterns(((Banner) blockState).getPatterns());
+        }
+
+        return b;
+    }
+
+    private BlueprintCreatureSpawner getSpawner(CreatureSpawner spawner) {
+        BlueprintCreatureSpawner cs = new BlueprintCreatureSpawner();
+        cs.setSpawnedType(spawner.getSpawnedType());
+        cs.setDelay(spawner.getDelay());
+        cs.setMaxNearbyEntities(spawner.getMaxNearbyEntities());
+        cs.setMaxSpawnDelay(spawner.getMaxSpawnDelay());
+        cs.setMinSpawnDelay(spawner.getMinSpawnDelay());
+        cs.setRequiredPlayerRange(spawner.getRequiredPlayerRange());
+        cs.setSpawnRange(spawner.getSpawnRange());
+        return cs;
+    }
+
+    private List<BlueprintEntity> setEntities(Collection<LivingEntity> entities) {
         List<BlueprintEntity> bpEnts = new ArrayList<>();
         for (LivingEntity entity: entities) {
             BlueprintEntity bpe = new BlueprintEntity();
@@ -229,74 +314,7 @@ public class BlueprintClipboard {
             }
             bpEnts.add(bpe);
         }
-        // Store
-        if (!bpEnts.isEmpty()) {
-            bpEntities.put(pos, bpEnts);
-        }
-
-        // Return if this is just air block
-        if (!copyAir && block.getType().equals(Material.AIR) && !entities.isEmpty()) {
-            return true;
-        }
-
-        // Block state
-        BlockState blockState = block.getState();
-        BlueprintBlock b = new BlueprintBlock(block.getBlockData().getAsString());
-        // Biome
-        b.setBiome(block.getBiome());
-        // Signs
-        if (blockState instanceof Sign sign) {
-            b.setSignLines(Arrays.asList(sign.getLines()));
-        }
-        // Set block data
-        if (blockState.getData() instanceof Attachable) {
-            // Placeholder for attachment
-            bpBlocks.put(pos, new BlueprintBlock("minecraft:air"));
-            bpAttachable.put(pos, b);
-            return true;
-        }
-
-        if (block.getType().equals(Material.BEDROCK)) {
-            // Find highest bedrock
-            if(blueprint.getBedrock() == null) {
-                blueprint.setBedrock(pos);
-            } else {
-                if (pos.getBlockY() > blueprint.getBedrock().getBlockY()) {
-                    blueprint.setBedrock(pos);
-                }
-            }
-        }
-
-        // Chests
-        if (blockState instanceof InventoryHolder ih) {
-            b.setInventory(new HashMap<>());
-            for (int i = 0; i < ih.getInventory().getSize(); i++) {
-                ItemStack item = ih.getInventory().getItem(i);
-                if (item != null) {
-                    b.getInventory().put(i, item);
-                }
-            }
-        }
-
-        if (blockState instanceof CreatureSpawner spawner) {
-            BlueprintCreatureSpawner cs = new BlueprintCreatureSpawner();
-            cs.setSpawnedType(spawner.getSpawnedType());
-            cs.setDelay(spawner.getDelay());
-            cs.setMaxNearbyEntities(spawner.getMaxNearbyEntities());
-            cs.setMaxSpawnDelay(spawner.getMaxSpawnDelay());
-            cs.setMinSpawnDelay(spawner.getMinSpawnDelay());
-            cs.setRequiredPlayerRange(spawner.getRequiredPlayerRange());
-            cs.setSpawnRange(spawner.getSpawnRange());
-            b.setCreatureSpawner(cs);
-        }
-
-        // Banners
-        if (blockState instanceof Banner) {
-            b.setBannerPatterns(((Banner) blockState).getPatterns());
-        }
-
-        this.bpBlocks.put(pos, b);
-        return true;
+        return bpEnts;
     }
 
     /**

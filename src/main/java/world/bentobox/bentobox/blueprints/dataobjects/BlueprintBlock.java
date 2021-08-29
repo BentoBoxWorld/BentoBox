@@ -34,6 +34,8 @@ public class BlueprintBlock {
      */
     @Expose
     private List<Pattern> bannerPatterns;
+    @Expose
+    private boolean glowingText;
 
     public BlueprintBlock(String blockData) {
         this.blockData = blockData;
@@ -124,4 +126,20 @@ public class BlueprintBlock {
     public void setBiome(Biome biome) {
         this.biome = biome;
     }
+
+    /**
+     * @return the glowingText
+     */
+    public boolean isGlowingText() {
+        return glowingText;
+    }
+
+    /**
+     * @param glowingText the glowingText to set
+     */
+    public void setGlowingText(boolean glowingText) {
+        this.glowingText = glowingText;
+    }
+
+
 }

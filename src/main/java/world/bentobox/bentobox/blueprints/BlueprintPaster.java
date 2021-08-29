@@ -290,26 +290,19 @@ public class BlueprintPaster {
         // Get the block state
         BlockState bs = block.getState();
         // Signs
-        if (bs instanceof org.bukkit.block.Sign) {
-            writeSign(block, bpBlock.getSignLines());
+        if (bs instanceof org.bukkit.block.Sign sign) {
+            writeSign(block, bpBlock.getSignLines(), bpBlock.isGlowingText());
         }
         // Chests, in general
         if (bs instanceof InventoryHolder) {
             Inventory ih = ((InventoryHolder)bs).getInventory();
-            // Double chests are pasted as two blocks so inventory is filled twice. This code stops over filling for the first block.
+            // Double chests are pasted as two blocks so inventory is filled twice.
+            // This code stops over-filling for the first block.
             bpBlock.getInventory().forEach(ih::setItem);
         }
         // Mob spawners
         if (bs instanceof CreatureSpawner spawner) {
-            BlueprintCreatureSpawner s = bpBlock.getCreatureSpawner();
-            spawner.setSpawnedType(s.getSpawnedType());
-            spawner.setMaxNearbyEntities(s.getMaxNearbyEntities());
-            spawner.setMaxSpawnDelay(s.getMaxSpawnDelay());
-            spawner.setMinSpawnDelay(s.getMinSpawnDelay());
-            spawner.setDelay(s.getDelay());
-            spawner.setRequiredPlayerRange(s.getRequiredPlayerRange());
-            spawner.setSpawnRange(s.getSpawnRange());
-            bs.update(true, false);
+            setSpawner(spawner, bpBlock.getCreatureSpawner());
         }
         // Banners
         if (bs instanceof Banner banner && bpBlock.getBannerPatterns() != null) {
@@ -317,6 +310,17 @@ public class BlueprintPaster {
             banner.setPatterns(bpBlock.getBannerPatterns());
             banner.update(true, false);
         }
+    }
+
+    private void setSpawner(CreatureSpawner spawner, BlueprintCreatureSpawner s) {
+        spawner.setSpawnedType(s.getSpawnedType());
+        spawner.setMaxNearbyEntities(s.getMaxNearbyEntities());
+        spawner.setMaxSpawnDelay(s.getMaxSpawnDelay());
+        spawner.setMinSpawnDelay(s.getMinSpawnDelay());
+        spawner.setDelay(s.getDelay());
+        spawner.setRequiredPlayerRange(s.getRequiredPlayerRange());
+        spawner.setSpawnRange(s.getSpawnRange());
+        spawner.update(true, false);
     }
 
     /**
@@ -383,7 +387,7 @@ public class BlueprintPaster {
         }
     }
 
-    private void writeSign(final Block block, final List<String> lines) {
+    private void writeSign(final Block block, final List<String> lines, boolean glow) {
         BlockFace bf;
         if (block.getType().name().contains("WALL_SIGN")) {
             WallSign wallSign = (WallSign)block.getBlockData();
@@ -422,6 +426,7 @@ public class BlueprintPaster {
                 s.setLine(i, lines.get(i));
             }
         }
+        s.setGlowingText(glow);
         // Update the sign
         s.update();
     }
