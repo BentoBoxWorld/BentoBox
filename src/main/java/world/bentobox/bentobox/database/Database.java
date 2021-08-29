@@ -23,7 +23,7 @@ public class Database<T> {
 
     private final AbstractDatabaseHandler<T> handler;
     private final Logger logger;
-    private static final DatabaseSetup databaseSetup = DatabaseSetup.getDatabase();
+    private static DatabaseSetup databaseSetup = DatabaseSetup.getDatabase();
 
     /**
      * Construct a database
