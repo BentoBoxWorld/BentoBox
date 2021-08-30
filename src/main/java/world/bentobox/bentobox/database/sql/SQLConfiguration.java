@@ -18,7 +18,7 @@ public class SQLConfiguration {
     private String loadObjectsSQL;
     private String renameTableSQL;
     private final String tableName;
-    private boolean renameRequired;
+    private final boolean renameRequired;
     private final String oldTableName;
 
     public <T> SQLConfiguration(BentoBox plugin, Class<T> type) {

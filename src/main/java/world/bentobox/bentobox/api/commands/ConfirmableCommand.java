@@ -20,7 +20,7 @@ public abstract class ConfirmableCommand extends CompositeCommand {
     /**
      * Confirmation tracker
      */
-    private static Map<User, Confirmer> toBeConfirmed = new HashMap<>();
+    private static final Map<User, Confirmer> toBeConfirmed = new HashMap<>();
 
     /**
      * Top level command

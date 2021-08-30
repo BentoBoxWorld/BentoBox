@@ -52,7 +52,7 @@ public class BlueprintManagementPanel {
     public static final int MAX_BP_SLOT = 35;
     private static final String INSTRUCTION = "instruction";
     private Entry<Integer, Blueprint> selected;
-    private Map<Integer, Blueprint> blueprints = new HashMap<>();
+    private final Map<Integer, Blueprint> blueprints = new HashMap<>();
     private final User user;
     private final GameModeAddon addon;
 

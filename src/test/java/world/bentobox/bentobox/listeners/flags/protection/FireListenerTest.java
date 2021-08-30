@@ -61,7 +61,7 @@ public class FireListenerTest {
     @Mock
     private World world;
 
-    private Map<String, Boolean> worldFlags = new HashMap<>();
+    private final Map<String, Boolean> worldFlags = new HashMap<>();
 
     @Before
     public void setUp() {

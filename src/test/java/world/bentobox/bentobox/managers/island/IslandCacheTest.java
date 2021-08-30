@@ -49,7 +49,7 @@ public class IslandCacheTest {
     @Mock
     private Island island;
     // UUID
-    private UUID owner = UUID.randomUUID();
+    private final UUID owner = UUID.randomUUID();
     @Mock
     private Location location;
     // Test class

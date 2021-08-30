@@ -43,8 +43,8 @@ import world.bentobox.bentobox.util.teleport.SafeSpotTeleport;
 public class PortalTeleportationListener implements Listener {
 
     private final BentoBox plugin;
-    private Set<UUID> inPortal;
-    private Set<UUID> inTeleport;
+    private final Set<UUID> inPortal;
+    private final Set<UUID> inTeleport;
 
     public PortalTeleportationListener(@NonNull BentoBox plugin) {
         this.plugin = plugin;

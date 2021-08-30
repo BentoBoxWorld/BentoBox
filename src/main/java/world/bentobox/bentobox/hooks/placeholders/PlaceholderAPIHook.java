@@ -26,7 +26,7 @@ import world.bentobox.bentobox.api.placeholders.placeholderapi.BentoBoxPlacehold
 public class PlaceholderAPIHook extends PlaceholderHook {
 
     private BentoBoxPlaceholderExpansion bentoboxExpansion;
-    private Map<Addon, AddonPlaceholderExpansion> addonsExpansions;
+    private final Map<Addon, AddonPlaceholderExpansion> addonsExpansions;
     private final Set<String> bentoBoxPlaceholders;
     private final Map<Addon, Set<String>> addonPlaceholders;
 

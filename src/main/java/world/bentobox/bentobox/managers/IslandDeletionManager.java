@@ -26,12 +26,12 @@ import world.bentobox.bentobox.util.Util;
  */
 public class IslandDeletionManager implements Listener {
 
-    private BentoBox plugin;
+    private final BentoBox plugin;
     /**
      * Queue of islands to delete
      */
-    private Database<IslandDeletion> handler;
-    private Set<Location> inDeletion;
+    private final Database<IslandDeletion> handler;
+    private final Set<Location> inDeletion;
 
     public IslandDeletionManager(BentoBox plugin) {
         this.plugin = plugin;

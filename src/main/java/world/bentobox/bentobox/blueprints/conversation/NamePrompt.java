@@ -20,9 +20,9 @@ import world.bentobox.bentobox.util.Util;
 
 public class NamePrompt extends StringPrompt {
 
-    private GameModeAddon addon;
+    private final GameModeAddon addon;
     @Nullable
-    private BlueprintBundle bb;
+    private final BlueprintBundle bb;
     @Nullable
     private Blueprint bp;
 

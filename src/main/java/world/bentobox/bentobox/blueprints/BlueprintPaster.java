@@ -72,7 +72,7 @@ public class BlueprintPaster {
 
     private static final Map<String, String> BLOCK_CONVERSION = ImmutableMap.of("sign", "oak_sign", "wall_sign", "oak_wall_sign");
 
-    private BentoBox plugin;
+    private final BentoBox plugin;
     // The minimum block position (x,y,z)
     private Location pos1;
     // The maximum block position (x,y,z)
@@ -85,19 +85,19 @@ public class BlueprintPaster {
      * The Blueprint to paste.
      */
     @NonNull
-    private Blueprint blueprint;
+    private final Blueprint blueprint;
 
     /**
      * The Location to paste to.
      */
     @NonNull
-    private Location location;
+    private final Location location;
 
     /**
      * Island related to this paste, may be null.
      */
     @Nullable
-    private Island island;
+    private final Island island;
 
     /**
      * Paste a clipboard to a location and run task

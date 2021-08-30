@@ -33,9 +33,9 @@ public class DeleteIslandChunks {
     private int chunkX;
     private int chunkZ;
     private BukkitTask task;
-    private IslandDeletion di;
+    private final IslandDeletion di;
     private boolean inDelete;
-    private BentoBox plugin;
+    private final BentoBox plugin;
     private NMSAbstraction nms;
 
     public DeleteIslandChunks(BentoBox plugin, IslandDeletion di) {

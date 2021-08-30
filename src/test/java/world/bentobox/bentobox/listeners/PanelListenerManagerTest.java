@@ -128,8 +128,8 @@ public class PanelListenerManagerTest {
 
     class MyView extends InventoryView {
 
-        private Inventory top;
-        private String name;
+        private final Inventory top;
+        private final String name;
 
         /**
          * @param name

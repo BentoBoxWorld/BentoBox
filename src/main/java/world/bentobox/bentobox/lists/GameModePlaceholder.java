@@ -319,11 +319,11 @@ public enum GameModePlaceholder {
      */
     OWNS_ISLAND("owns_island", (addon, user, island) -> String.valueOf(island != null && user != null && user.getUniqueId().equals(island.getOwner())));
 
-    private String placeholder;
+    private final String placeholder;
     /**
      * @since 1.5.0
      */
-    private GameModePlaceholderReplacer replacer;
+    private final GameModePlaceholderReplacer replacer;
 
     GameModePlaceholder(String placeholder, GameModePlaceholderReplacer replacer) {
         this.placeholder = placeholder;

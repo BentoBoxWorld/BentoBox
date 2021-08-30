@@ -58,7 +58,7 @@ public class GameModePlaceholderTest {
     private IslandWorldManager iwm;
     @Mock
     private IslandsManager im;
-    private RanksManager rm = new RanksManager();
+    private final RanksManager rm = new RanksManager();
     @Mock
     private @Nullable Location location;
 

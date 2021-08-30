@@ -66,7 +66,7 @@ public class MySQLDatabaseHandlerTest {
             "}";
     private MySQLDatabaseHandler<Island> handler;
     private Island instance;
-    private String UNIQUE_ID = "xyz";
+    private final String UNIQUE_ID = "xyz";
     @Mock
     private MySQLDatabaseConnector dbConn;
     @Mock

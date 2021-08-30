@@ -11,7 +11,7 @@ import com.sk89q.worldedit.extent.clipboard.io.ClipboardWriter;
  */
 public class BlueprintClipboardWriter implements ClipboardWriter {
 
-    private OutputStream outputStream;
+    private final OutputStream outputStream;
 
     public BlueprintClipboardWriter(OutputStream outputStream) {
         this.outputStream = outputStream;

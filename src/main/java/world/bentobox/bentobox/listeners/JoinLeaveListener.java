@@ -32,8 +32,8 @@ import world.bentobox.bentobox.util.Util;
 
 public class JoinLeaveListener implements Listener {
 
-    private BentoBox plugin;
-    private PlayersManager players;
+    private final BentoBox plugin;
+    private final PlayersManager players;
 
     /**
      * @param plugin - plugin object

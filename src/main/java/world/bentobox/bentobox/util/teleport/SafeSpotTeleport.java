@@ -300,7 +300,7 @@ public class SafeSpotTeleport {
         private String failureMessage = "";
         private Location location;
         private Runnable runnable;
-        private CompletableFuture<Boolean> result = new CompletableFuture<>();
+        private final CompletableFuture<Boolean> result = new CompletableFuture<>();
 
         public Builder(BentoBox plugin) {
             this.plugin = plugin;

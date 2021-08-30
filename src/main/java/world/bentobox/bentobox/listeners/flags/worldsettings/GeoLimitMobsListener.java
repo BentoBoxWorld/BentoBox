@@ -24,7 +24,7 @@ import world.bentobox.bentobox.database.objects.Island;
  */
 public class GeoLimitMobsListener extends FlagListener {
 
-    private Map<Entity, Island> mobSpawnTracker = new WeakHashMap<>();
+    private final Map<Entity, Island> mobSpawnTracker = new WeakHashMap<>();
 
     /**
      * Start the tracker when the plugin is loaded

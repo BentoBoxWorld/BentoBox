@@ -31,7 +31,8 @@ public class TabbedPanel extends Panel implements PanelListener {
     private static final String PROTECTION_PANEL = "protection.panel.";
     private static final long ITEMS_PER_PAGE = 36;
     private final TabbedPanelBuilder tpb;
-    private @NonNull BentoBox plugin = BentoBox.getInstance();
+    private @NonNull
+    final BentoBox plugin = BentoBox.getInstance();
     private int activeTab;
     private int activePage;
     private boolean closed;

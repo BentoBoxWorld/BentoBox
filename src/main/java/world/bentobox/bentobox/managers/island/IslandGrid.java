@@ -12,8 +12,8 @@ import world.bentobox.bentobox.database.objects.Island;
  *
  */
 class IslandGrid {
-    private TreeMap<Integer, TreeMap<Integer, Island>> grid = new TreeMap<>();
-    private BentoBox plugin = BentoBox.getInstance();
+    private final TreeMap<Integer, TreeMap<Integer, Island>> grid = new TreeMap<>();
+    private final BentoBox plugin = BentoBox.getInstance();
 
     /**
      * Adds island to grid

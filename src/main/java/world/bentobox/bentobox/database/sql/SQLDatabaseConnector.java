@@ -15,7 +15,7 @@ import world.bentobox.bentobox.database.DatabaseConnector;
 public abstract class SQLDatabaseConnector implements DatabaseConnector {
 
     protected String connectionUrl;
-    private DatabaseConnectionSettingsImpl dbSettings;
+    private final DatabaseConnectionSettingsImpl dbSettings;
     protected static Connection connection = null;
     protected static Set<Class<?>> types = new HashSet<>();
 

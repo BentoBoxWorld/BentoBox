@@ -41,8 +41,8 @@ import world.bentobox.bentobox.versions.ServerCompatibility;
  */
 public class HurtingListener extends FlagListener {
 
-    private Map<Integer, Player> thrownPotions = new HashMap<>();
-    private Map<Entity, Entity> firedFireworks = new WeakHashMap<>();
+    private final Map<Integer, Player> thrownPotions = new HashMap<>();
+    private final Map<Entity, Entity> firedFireworks = new WeakHashMap<>();
 
     /**
      * Handles mob and monster protection

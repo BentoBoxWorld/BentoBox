@@ -56,7 +56,7 @@ public class BlueprintClipboardManagerTest {
 
     private File blueprintFolder;
 
-    private String json = "{\n" +
+    private final String json = "{\n" +
             "    \"name\": \"blueprint\",\n" +
             "    \"attached\": {},\n" +
             "    \"entities\": {},\n" +
@@ -78,7 +78,7 @@ public class BlueprintClipboardManagerTest {
             "    \"bedrock\": [-2.0, -16.0, -1.0]\n" +
             "}";
 
-    private String jsonNoBedrock = "{\n" +
+    private final String jsonNoBedrock = "{\n" +
             "    \"name\": \"blueprint\",\n" +
             "    \"attached\": {},\n" +
             "    \"entities\": {},\n" +

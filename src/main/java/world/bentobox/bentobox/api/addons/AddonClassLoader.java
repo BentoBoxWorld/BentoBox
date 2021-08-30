@@ -30,8 +30,8 @@ import world.bentobox.bentobox.managers.AddonsManager;
 public class AddonClassLoader extends URLClassLoader {
 
     private final Map<String, Class<?>> classes = new HashMap<>();
-    private Addon addon;
-    private AddonsManager loader;
+    private final Addon addon;
+    private final AddonsManager loader;
 
     public AddonClassLoader(AddonsManager addonsManager, YamlConfiguration data, File jarFile, ClassLoader parent)
             throws InvalidAddonInheritException,

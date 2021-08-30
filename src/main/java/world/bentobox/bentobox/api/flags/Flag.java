@@ -53,7 +53,8 @@ public class Flag implements Comparable<Flag> {
          */
         WORLD_SETTING(Material.GRASS_BLOCK);
 
-        private @NonNull Material icon;
+        private @NonNull
+        final Material icon;
 
         Type(@NonNull Material icon) {
             this.icon = icon;
@@ -482,8 +483,8 @@ public class Flag implements Comparable<Flag> {
      */
     public static class Builder {
         // Mandatory fields
-        private String id;
-        private Material icon;
+        private final String id;
+        private final Material icon;
 
         // Listener
         private Listener listener;
@@ -512,7 +513,7 @@ public class Flag implements Comparable<Flag> {
         private Mode mode = Mode.EXPERT;
 
         // Subflags
-        private Set<Flag> subflags;
+        private final Set<Flag> subflags;
 
         /**
          * Builder for making flags

@@ -15,8 +15,8 @@ import world.bentobox.bentobox.panels.BlueprintManagementPanel;
 
 public class DescriptionSuccessPrompt extends MessagePrompt {
 
-    private GameModeAddon addon;
-    private BlueprintBundle bb;
+    private final GameModeAddon addon;
+    private final BlueprintBundle bb;
 
     /**
      * @param addon game mode addon

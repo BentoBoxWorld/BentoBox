@@ -19,7 +19,7 @@ import world.bentobox.bentobox.lists.GameModePlaceholder;
 @Deprecated
 public class GameModePlaceholderManager {
 
-    private BentoBox plugin;
+    private final BentoBox plugin;
 
     public GameModePlaceholderManager(BentoBox plugin) {
         this.plugin = plugin;

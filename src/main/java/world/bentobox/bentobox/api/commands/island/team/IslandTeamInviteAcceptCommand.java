@@ -20,7 +20,7 @@ import world.bentobox.bentobox.util.Util;
  */
 public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
 
-    private IslandTeamCommand itc;
+    private final IslandTeamCommand itc;
     private UUID playerUUID;
     private UUID prospectiveOwnerUUID;
 

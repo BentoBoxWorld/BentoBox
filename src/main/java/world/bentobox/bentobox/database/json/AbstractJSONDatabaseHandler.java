@@ -17,7 +17,7 @@ import world.bentobox.bentobox.database.DatabaseConnector;
  */
 public abstract class AbstractJSONDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
 
-    private Gson gson;
+    private final Gson gson;
 
     /**
      * Constructor

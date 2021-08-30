@@ -62,14 +62,16 @@ public class AddonsManager {
     private static final String GAMEMODE = "[gamemode].";
 
     @NonNull
-    private List<Addon> addons;
+    private final List<Addon> addons;
     @NonNull
-    private Map<@NonNull Addon, @Nullable AddonClassLoader> loaders;
+    private final Map<@NonNull Addon, @Nullable AddonClassLoader> loaders;
     @NonNull
     private final Map<String, Class<?>> classes;
-    private BentoBox plugin;
-    private @NonNull Map<@NonNull String, @Nullable GameModeAddon> worldNames;
-    private @NonNull Map<@NonNull Addon, @NonNull List<Listener>> listeners;
+    private final BentoBox plugin;
+    private @NonNull
+    final Map<@NonNull String, @Nullable GameModeAddon> worldNames;
+    private @NonNull
+    final Map<@NonNull Addon, @NonNull List<Listener>> listeners;
 
     private final PluginLoader pluginLoader;
 

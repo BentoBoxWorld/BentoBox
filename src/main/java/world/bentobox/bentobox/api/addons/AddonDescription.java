@@ -163,9 +163,12 @@ public final class AddonDescription {
     }
 
     public static class Builder {
-        private @NonNull String main;
-        private @NonNull String name;
-        private @NonNull String version;
+        private @NonNull
+        final String main;
+        private @NonNull
+        final String name;
+        private @NonNull
+        final String version;
         private @NonNull String description = "";
         private @NonNull List<String> authors = new ArrayList<>();
         private @NonNull List<String> dependencies = new ArrayList<>();

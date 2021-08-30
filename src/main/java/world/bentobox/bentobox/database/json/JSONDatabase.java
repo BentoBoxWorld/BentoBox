@@ -6,7 +6,7 @@ import world.bentobox.bentobox.database.DatabaseSetup;
 
 public class JSONDatabase implements DatabaseSetup {
 
-    private JSONDatabaseConnector connector = new JSONDatabaseConnector(BentoBox.getInstance());
+    private final JSONDatabaseConnector connector = new JSONDatabaseConnector(BentoBox.getInstance());
 
     /* (non-Javadoc)
      * @see world.bentobox.bentobox.database.DatabaseSetup#getHandler(java.lang.Class)

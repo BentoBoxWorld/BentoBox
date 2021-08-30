@@ -35,8 +35,8 @@ import world.bentobox.bentobox.util.Util;
  */
 public class LocalesManager {
 
-    private BentoBox plugin;
-    private Map<Locale, BentoBoxLocale> languages = new HashMap<>();
+    private final BentoBox plugin;
+    private final Map<Locale, BentoBoxLocale> languages = new HashMap<>();
     private static final String LOCALE_FOLDER = "locales";
     private static final String BENTOBOX = "BentoBox";
     private static final String SPACER = "*************************************************";

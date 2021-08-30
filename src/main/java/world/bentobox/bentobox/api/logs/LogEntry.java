@@ -47,7 +47,7 @@ public class LogEntry {
 
     public static class Builder {
         private long timestamp;
-        private String type;
+        private final String type;
         private Map<String, String> data;
 
         public Builder(@NonNull String type) {
