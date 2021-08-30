@@ -126,7 +126,7 @@ public class JoinLeaveListener implements Listener {
                     // - abort on logout is false
                     // - abort on logout is true && user is online
                     if (!plugin.getIWM().isCreateIslandOnFirstLoginAbortOnLogout(w) || user.isOnline()){
-                        plugin.getIWM().getAddon(w).flatMap(addon -> addon.getPlayerCommand().map(command -> command.getSubCommand("create").orElse(null)))
+                        plugin.getIWM().getAddon(w).flatMap(addon -> addon.getPlayerCommand().flatMap(command -> command.getSubCommand("create")))
                         .ifPresent(command -> command.execute(user, "create", Collections.singletonList(BlueprintsManager.DEFAULT_BUNDLE_NAME)));
                     }
                 };

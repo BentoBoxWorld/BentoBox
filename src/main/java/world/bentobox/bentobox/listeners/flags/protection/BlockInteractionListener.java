@@ -34,7 +34,7 @@ public class BlockInteractionListener extends FlagListener {
      */
     private final static Map<String, String> stringFlags;
     static {
-        stringFlags = Map.<String, String>of("RESPAWN_ANCHOR", "PLACE_BLOCKS");
+        stringFlags = Map.of("RESPAWN_ANCHOR", "PLACE_BLOCKS");
     }
 
     /**

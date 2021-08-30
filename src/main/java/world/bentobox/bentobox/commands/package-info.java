@@ -1,5 +1,5 @@
 /**
- * The package cotnains non-API commands for BentoBox itself.
+ * The package contains non-API commands for BentoBox itself.
  *
  * @author tastybento
  *

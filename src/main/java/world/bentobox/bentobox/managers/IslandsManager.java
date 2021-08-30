@@ -484,7 +484,7 @@ public class IslandsManager {
      * Will update the value based on world settings or island owner permissions (if online).
      * If the island is unowned, then this value will be 0.
      * @param island - island
-     * @param rank {@link RanksManager.MEMBER_RANK}, {@link RanksManager.COOP_RANK}, or {@link RanksManager.TRUSTED_RANK}
+     * @param rank {@link RanksManager#MEMBER_RANK}, {@link RanksManager#COOP_RANK}, or {@link RanksManager#TRUSTED_RANK}
      * @return max number of members. If negative, then this means unlimited.
      * @since 1.16.0
      */
@@ -521,7 +521,7 @@ public class IslandsManager {
     /**
      * Sets the island max member size.
      * @param island - island
-     * @param rank {@link RanksManager.MEMBER_RANK}, {@link RanksManager.COOP_RANK}, or {@link RanksManager.TRUSTED_RANK}
+     * @param rank {@link RanksManager#MEMBER_RANK}, {@link RanksManager#COOP_RANK}, or {@link RanksManager#TRUSTED_RANK}
      * @param maxMembers - max number of members. If negative, then this means unlimited. Null means the world
      * default will be used.
      * @since 1.16.0

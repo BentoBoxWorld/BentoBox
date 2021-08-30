@@ -23,7 +23,7 @@ import world.bentobox.bentobox.util.Util;
 public class DefaultNewIslandLocationStrategy implements NewIslandLocationStrategy {
 
     /**
-     * The amount times to tolerate island check returning blocks without kwnon
+     * The amount times to tolerate island check returning blocks without known
      * island.
      */
     protected static final Integer MAX_UNOWNED_ISLANDS = 20;

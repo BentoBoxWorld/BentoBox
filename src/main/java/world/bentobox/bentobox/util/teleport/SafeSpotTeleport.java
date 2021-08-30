@@ -380,7 +380,7 @@ public class SafeSpotTeleport {
 
         /**
          * Try to teleport the player
-         * @return CompletableFuture that will become true if successfull and false if not
+         * @return CompletableFuture that will become true if successful and false if not
          * @since 1.14.0
          */
         @Nullable

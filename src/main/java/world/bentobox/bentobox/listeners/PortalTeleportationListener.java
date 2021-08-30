@@ -223,10 +223,10 @@ public class PortalTeleportationListener implements Listener {
             e.getEntity().setFallDistance(0);
         }
 
-        // If we do not generate portals, teleporation should happen manually with safe spot builder.
-        // Otherwise, we could end up with situations when player is placed in mid air, if teleporation
+        // If we do not generate portals, teleportation should happen manually with safe spot builder.
+        // Otherwise, we could end up with situations when player is placed in mid air, if teleportation
         // is done instantly.
-        // Our safe spot task is triggered in next tick, however, end teleporation happens in the same tick.
+        // Our safe spot task is triggered in next tick, however, end teleportation happens in the same tick.
         // It is placed outside THE_END check, as technically it could happen with the nether portal too.
         e.setCancelled(true);
 

@@ -7,7 +7,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -181,7 +180,7 @@ public class IslandCache {
 
         return islandsByLocation.entrySet().stream()
                 .filter(entry -> overworld.equals(Util.getWorld(entry.getKey().getWorld()))) // shouldn't make NPEs
-                .map(Map.Entry::getValue).collect(Collectors.toUnmodifiableList());
+                .map(Map.Entry::getValue).toList();
     }
 
     /**

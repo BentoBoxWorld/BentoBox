@@ -61,7 +61,7 @@ public abstract class DefaultAdminCommand extends CompositeCommand {
         new AdminTeamDisbandCommand(this);
         new AdminTeamSetownerCommand(this);
         new AdminTeamFixCommand(this);
-        // Schems
+        // Blueprints
         new AdminBlueprintCommand(this);
         // Register/unregister islands
         new AdminRegisterCommand(this);
@@ -96,7 +96,7 @@ public abstract class DefaultAdminCommand extends CompositeCommand {
 
     /**
      * Defines what will be executed when this command is run.
-     * @see world.bentobox.bentobox.api.commands.BentoBoxCommand#execute(User, String, List&lt;String&gt;)
+     * @see world.bentobox.bentobox.api.commands.BentoBoxCommand#execute(User, String, List)
      */
     @Override
     public boolean execute(User user, String label, List<String> args) {

@@ -72,7 +72,7 @@ public class HeadGetter {
 
         HeadCache cache = cachedHeads.get(panelItem.getPlayerHeadName());
 
-        // Get value from config. Multiply value to 60 000 as internally it uses miliseconds.
+        // Get value from config. Multiply value to 60 000 as internally it uses milliseconds.
         // Config value stores minutes.
         long cacheTimeout = BentoBox.getInstance().getSettings().getPlayerHeadCacheTime() * 60 * 1000;
 

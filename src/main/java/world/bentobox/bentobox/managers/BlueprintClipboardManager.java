@@ -77,7 +77,7 @@ public class BlueprintClipboardManager {
     /**
      * Load a file to clipboard
      * @param fileName - filename in blueprints folder
-     * @throws IOException - if there's a load error with unziping or name
+     * @throws IOException - if there's a load error with unzipping or name
      */
     public void load(String fileName) throws IOException {
         clipboard = new BlueprintClipboard(loadBlueprint(fileName));
