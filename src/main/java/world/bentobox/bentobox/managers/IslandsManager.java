@@ -104,6 +104,8 @@ public class IslandsManager {
 
     private boolean isSaveTaskRunning;
 
+    private final Set<UUID> goingHome;
+
     /**
      * Islands Manager
      * @param plugin - plugin
@@ -119,6 +121,8 @@ public class IslandsManager {
         // This list should always be empty unless database deletion failed
         // In that case a purge utility may be required in the future
         deletedIslands = new ArrayList<>();
+        // Mid-teleport players going home
+        goingHome = new HashSet<>();
     }
 
     /**
@@ -1057,6 +1061,7 @@ public class IslandsManager {
         CompletableFuture<Boolean> result = new CompletableFuture<>();
         User user = User.getInstance(player);
         user.sendMessage("commands.island.go.teleport");
+        goingHome.add(user.getUniqueId());
         // Stop any gliding
         player.setGliding(false);
         // Check if the player is a passenger in a boat
@@ -1156,6 +1161,8 @@ public class IslandsManager {
 
             // Set the game mode
             user.setGameMode(plugin.getIWM().getDefaultGameMode(world));
+            // Remove from mid-teleport set
+            goingHome.remove(user.getUniqueId());
         }
     }
 
@@ -1880,6 +1887,14 @@ public class IslandsManager {
 
 
         return r;
+    }
+
+    /**
+     * Is user mid home teleport?
+     * @return true or false
+     */
+    public boolean isGoingHome(User user) {
+        return goingHome.contains(user.getUniqueId());
     }
 
 }

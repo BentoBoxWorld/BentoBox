@@ -190,6 +190,16 @@ public class IslandGoCommandTest {
      * Test method for {@link IslandGoCommand#canExecute(User, String, List)}
      */
     @Test
+    public void testExecuteMidTeleport() {
+        when(im.isGoingHome(user)).thenReturn(true);
+        assertFalse(igc.canExecute(user, igc.getLabel(), Collections.emptyList()));
+        verify(player).sendMessage("commands.island.go.teleport");
+    }
+
+    /**
+     * Test method for {@link IslandGoCommand#canExecute(User, String, List)}
+     */
+    @Test
     public void testExecuteNoArgsNoIsland() {
         when(im.getIsland(any(), any(UUID.class))).thenReturn(null);
         assertFalse(igc.canExecute(user, igc.getLabel(), Collections.emptyList()));

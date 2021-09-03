@@ -32,6 +32,12 @@ public class IslandGoCommand extends DelayedTeleportCommand {
 
     @Override
     public boolean canExecute(User user, String label, List<String> args) {
+        // Check if mid-teleport
+        if (getIslands().isGoingHome(user)) {
+            // Tell them again that it's in progress
+            user.sendMessage("commands.island.go.teleport");
+            return false;
+        }
         // Check if the island is reserved
         Island island = getIslands().getIsland(getWorld(), user.getUniqueId());
         if (island == null) {
