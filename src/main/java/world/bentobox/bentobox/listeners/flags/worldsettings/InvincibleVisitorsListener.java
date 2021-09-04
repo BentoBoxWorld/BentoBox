@@ -128,7 +128,9 @@ public class InvincibleVisitorsListener extends FlagListener implements ClickHan
                 || !getIWM().inWorld(world)
                 || e.getEntity().hasMetadata("NPC")
                 || !getIWM().getIvSettings(world).contains(e.getCause().name())
-                || getIslands().userIsOnIsland(world, User.getInstance(e.getEntity()))) {
+                || getIslands().userIsOnIsland(world, User.getInstance(e.getEntity()))
+                || PVPAllowed(p.getLocation())
+                ) {
             return;
         }
         // Player is a visitor and should be protected from damage

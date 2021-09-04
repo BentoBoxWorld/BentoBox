@@ -7,7 +7,6 @@ import java.util.UUID;
 import java.util.WeakHashMap;
 
 import org.bukkit.Bukkit;
-import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.LivingEntity;
@@ -54,6 +53,10 @@ public class PVPListener extends FlagListener {
         if (e.getEntity() instanceof Player && getPlugin().getIWM().inWorld(e.getEntity().getWorld())) {
             // Allow self damage or NPC attack because Citizens handles its own PVP
             if (e.getEntity().equals(e.getDamager()) || e.getEntity().hasMetadata("NPC")) {
+                return;
+            }
+            // Is PVP allowed here?
+            if (this.PVPAllowed(e.getEntity().getLocation())) {
                 return;
             }
             // Protect visitors
@@ -117,6 +120,10 @@ public class PVPListener extends FlagListener {
             if (e.getCaught().equals(e.getPlayer()) || e.getCaught().hasMetadata("NPC")) {
                 return;
             }
+            // Is PVP allowed here?
+            if (this.PVPAllowed(e.getCaught().getLocation())) {
+                return;
+            }
             // Protect visitors
             if (protectedVisitor((Player)e.getCaught())) {
                 User.getInstance(e.getPlayer()).notify(Flags.INVINCIBLE_VISITORS.getHintReference());
@@ -137,6 +144,10 @@ public class PVPListener extends FlagListener {
     public void onSplashPotionSplash(final PotionSplashEvent e) {
         if (e.getEntity().getShooter() instanceof Player && getPlugin().getIWM().inWorld(e.getEntity().getWorld())) {
             User user = User.getInstance((Player)e.getEntity().getShooter());
+            // Is PVP allowed here?
+            if (this.PVPAllowed(e.getEntity().getLocation())) {
+                return;
+            }
             // Run through affected entities and cancel the splash for protected players
             for (LivingEntity le : e.getAffectedEntities()) {
                 if (!le.getUniqueId().equals(user.getUniqueId()) && blockPVP(user, le, e, getFlag(e.getEntity().getWorld()))) {
@@ -196,14 +207,6 @@ public class PVPListener extends FlagListener {
             // Run through affected entities and delete them if they are safe
             e.getAffectedEntities().removeIf(le -> !le.getUniqueId().equals(user.getUniqueId()) && blockPVP(user, le, e, getFlag(e.getEntity().getWorld())));
         }
-    }
-
-    private Flag getFlag(World w) {
-        return switch (w.getEnvironment()) {
-        case NETHER -> Flags.PVP_NETHER;
-        case THE_END -> Flags.PVP_END;
-        default -> Flags.PVP_OVERWORLD;
-        };
     }
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled=true)
