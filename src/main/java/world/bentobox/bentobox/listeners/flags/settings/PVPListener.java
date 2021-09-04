@@ -7,6 +7,7 @@ import java.util.UUID;
 import java.util.WeakHashMap;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.LivingEntity;
@@ -258,5 +259,6 @@ public class PVPListener extends FlagListener {
     private void alertUser(Player player, Flag flag) {
         String message = "protection.flags." + flag.getID() + ".enabled";
         Objects.requireNonNull(User.getInstance(player)).sendMessage(message);
+        player.playSound(player.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER,2F, 1F);
     }
 }
