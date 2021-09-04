@@ -93,7 +93,6 @@ public class PortalTeleportationListener implements Listener {
 
     /**
      * Handles non-player portal use.
-     * Currently disables portal use by entities to prevent dupe glitching.
      *
      * @param e - event
      */
