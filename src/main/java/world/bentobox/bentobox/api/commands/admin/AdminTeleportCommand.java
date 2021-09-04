@@ -87,6 +87,10 @@ public class AdminTeleportCommand extends CompositeCommand {
             world = getPlugin().getIWM().getEndWorld(getWorld());
         }
         Location warpSpot = getSpot(world);
+        if (world == null || warpSpot == null) {
+            user.sendMessage("general.errors.no-safe-location-found");
+            return false;
+        }
 
         // Otherwise, ask the admin to go to a safe spot
         String failureMessage = user.getTranslation("commands.admin.tp.manual", "[location]", warpSpot.getBlockX() + " " + warpSpot.getBlockY() + " "
