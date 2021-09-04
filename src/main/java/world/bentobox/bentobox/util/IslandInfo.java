@@ -29,7 +29,7 @@ public class IslandInfo {
 
     /**
      * @param plugin
-     * @param island
+     * @param island Island to show info
      */
     public IslandInfo(Island island) {
         this.plugin = BentoBox.getInstance();
@@ -39,11 +39,10 @@ public class IslandInfo {
     }
 
     /**
-     * Shows info of this island to this user.
-     * @param user the User who is requesting it
-     * @return always true
+     * Shows admin info of this island
+     * @param user user asking
      */
-    public boolean showInfo(User user) {
+    public void showAdminInfo(User user) {
         user.sendMessage("commands.admin.info.title");
         user.sendMessage("commands.admin.info.island-uuid", "[uuid]", island.getUniqueId());
         if (owner == null) {
@@ -86,6 +85,38 @@ public class IslandInfo {
         }
         if (island.getPurgeProtected()) {
             user.sendMessage("commands.admin.info.purge-protected");
+        }
+    }
+
+
+    /**
+     * Shows info of this island to this user.
+     * @param user the User who is requesting it
+     * @return always true
+     */
+    public boolean showInfo(User user) {
+        user.sendMessage("commands.admin.info.title");
+        if (owner == null) {
+            user.sendMessage("commands.admin.info.unowned");
+        } else {
+            user.sendMessage("commands.admin.info.owner", "[owner]", plugin.getPlayers().getName(owner));
+            user.sendMessage("commands.admin.info.deaths", "[number]", String.valueOf(plugin.getPlayers().getDeaths(world, owner)));
+            String resets = String.valueOf(plugin.getPlayers().getResets(world, owner));
+            String total = plugin.getIWM().getResetLimit(world) < 0 ? "Unlimited" : String.valueOf(plugin.getIWM().getResetLimit(world));
+            user.sendMessage("commands.admin.info.resets-left", "[number]", resets, "[total]", total);
+            // Show team members
+            showMembers(user);
+        }
+        Vector location = island.getProtectionCenter().toVector();
+        user.sendMessage("commands.admin.info.island-center", TextVariables.XYZ, Util.xyz(location));
+        user.sendMessage("commands.admin.info.protection-range", "[range]", String.valueOf(island.getProtectionRange()));
+        user.sendMessage("commands.admin.info.protection-coords", "[xz1]", Util.xyz(new Vector(island.getMinProtectedX(), 0, island.getMinProtectedZ())), "[xz2]", Util.xyz(new Vector(island.getMaxProtectedX(), 0, island.getMaxProtectedZ())));
+        if (island.isSpawn()) {
+            user.sendMessage("commands.admin.info.is-spawn");
+        }
+        if (!island.getBanned().isEmpty()) {
+            user.sendMessage("commands.admin.info.banned-players");
+            island.getBanned().forEach(u -> user.sendMessage("commands.admin.info.banned-format", TextVariables.NAME, plugin.getPlayers().getName(u)));
         }
         return true;
     }

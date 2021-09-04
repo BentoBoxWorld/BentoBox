@@ -196,18 +196,13 @@ public class IslandInfoCommandTest {
     public void testExecuteUserStringListOfStringNoArgsSuccess() {
         assertTrue(iic.execute(user, "", Collections.emptyList()));
         verify(user).sendMessage("commands.admin.info.title");
-        verify(user).sendMessage(eq("commands.admin.info.island-uuid"), eq("[uuid]"), any());
-        verify(user).sendMessage(eq("commands.admin.info.owner"), eq("[owner]"), eq(null), eq("[uuid]"), any());
-        verify(user).sendMessage(eq("commands.admin.info.last-login"), eq("[date]"), any());
+        verify(user).sendMessage(eq("commands.admin.info.owner"), eq("[owner]"), eq(null));
         verify(user).sendMessage("commands.admin.info.deaths", "[number]", "0");
         verify(user).sendMessage("commands.admin.info.resets-left", "[number]", "0", "[total]", "0");
         verify(user).sendMessage("commands.admin.info.team-members-title");
         verify(user).sendMessage("commands.admin.info.team-owner-format", "[name]", null, "[rank]", "ranks.owner");
-        verify(user).sendMessage("commands.admin.info.island-protection-center", "[xyz]", "0,0,0");
         verify(user).sendMessage("commands.admin.info.island-center", "[xyz]", "0,0,0");
-        verify(user).sendMessage("commands.admin.info.island-coords", "[xz1]", "0,0,0", "[xz2]", "0,0,0");
         verify(user).sendMessage("commands.admin.info.protection-range", "[range]", "100");
-        verify(user).sendMessage("commands.admin.info.max-protection-range", "[range]", "100");
         verify(user).sendMessage("commands.admin.info.protection-coords", "[xz1]", "0,0,0", "[xz2]", "0,0,0");
     }
 
@@ -218,20 +213,14 @@ public class IslandInfoCommandTest {
     public void testExecuteUserStringListOfStringArgsSuccess() {
         assertTrue(iic.execute(user, "", Collections.singletonList("tastybento")));
         verify(user).sendMessage("commands.admin.info.title");
-        verify(user).sendMessage(eq("commands.admin.info.island-uuid"), eq("[uuid]"), any());
-        verify(user).sendMessage(eq("commands.admin.info.owner"), eq("[owner]"), eq(null), eq("[uuid]"), any());
-        verify(user).sendMessage(eq("commands.admin.info.last-login"), eq("[date]"), any());
+        verify(user).sendMessage(eq("commands.admin.info.owner"), eq("[owner]"), eq(null));
         verify(user).sendMessage("commands.admin.info.deaths", "[number]", "0");
         verify(user).sendMessage("commands.admin.info.resets-left", "[number]", "0", "[total]", "0");
         verify(user).sendMessage("commands.admin.info.team-members-title");
         verify(user).sendMessage("commands.admin.info.team-owner-format", "[name]", null, "[rank]", "ranks.owner");
-        verify(user).sendMessage("commands.admin.info.island-protection-center", "[xyz]", "0,0,0");
         verify(user).sendMessage("commands.admin.info.island-center", "[xyz]", "0,0,0");
-        verify(user).sendMessage("commands.admin.info.island-coords", "[xz1]", "0,0,0", "[xz2]", "0,0,0");
         verify(user).sendMessage("commands.admin.info.protection-range", "[range]", "100");
-        verify(user).sendMessage("commands.admin.info.max-protection-range", "[range]", "100");
         verify(user).sendMessage("commands.admin.info.protection-coords", "[xz1]", "0,0,0", "[xz2]", "0,0,0");
-
     }
 
     /**

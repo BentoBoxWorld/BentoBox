@@ -185,7 +185,7 @@ public class AdminInfoCommandTest {
     @Test
     public void testExecuteUserStringListOfStringNoArgsNoIsland() {
         when(im.getIslandAt(any())).thenReturn(Optional.empty());
-        assertFalse(iic.execute(user, "", Collections.emptyList()));
+        assertTrue(iic.execute(user, "", Collections.emptyList()));
         verify(user).sendMessage("commands.admin.info.no-island");
     }
 
