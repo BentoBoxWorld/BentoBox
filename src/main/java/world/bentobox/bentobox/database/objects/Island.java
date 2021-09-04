@@ -1,8 +1,6 @@
 package world.bentobox.bentobox.database.objects;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -23,7 +21,6 @@ import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.entity.Player;
 import org.bukkit.util.BoundingBox;
-import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.jetbrains.annotations.NotNull;
@@ -37,7 +34,6 @@ import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.events.island.IslandEvent;
 import world.bentobox.bentobox.api.flags.Flag;
-import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.logs.LogEntry;
 import world.bentobox.bentobox.api.metadata.MetaDataAble;
 import world.bentobox.bentobox.api.metadata.MetaDataValue;
@@ -49,6 +45,7 @@ import world.bentobox.bentobox.database.objects.adapters.LogEntryListAdapter;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.RanksManager;
+import world.bentobox.bentobox.util.IslandInfo;
 import world.bentobox.bentobox.util.Pair;
 import world.bentobox.bentobox.util.Util;
 
@@ -1080,71 +1077,21 @@ public class Island implements DataObject, MetaDataAble {
      * Shows info of this island to this user.
      * @param user the User who is requesting it
      * @return always true
+     * @deprecated Use {@link IslandInfo#showInfo(User) instead}
      */
+    @Deprecated
     public boolean showInfo(User user) {
-        BentoBox plugin = BentoBox.getInstance();
-        user.sendMessage("commands.admin.info.title");
-        user.sendMessage("commands.admin.info.island-uuid", "[uuid]", this.getUniqueId());
-        if (getOwner() == null) {
-            user.sendMessage("commands.admin.info.unowned");
-        } else {
-            user.sendMessage("commands.admin.info.owner", "[owner]", plugin.getPlayers().getName(getOwner()), "[uuid]", getOwner().toString());
-
-            // Fixes #getLastPlayed() returning 0 when it is the owner's first connection.
-            long lastPlayed = (Bukkit.getServer().getOfflinePlayer(getOwner()).getLastPlayed() != 0) ?
-                    Bukkit.getServer().getOfflinePlayer(getOwner()).getLastPlayed() : Bukkit.getServer().getOfflinePlayer(getOwner()).getFirstPlayed();
-            String formattedDate;
-            try {
-                String dateTimeFormat = plugin.getLocalesManager().get("commands.admin.info.last-login-date-time-format");
-                formattedDate = new SimpleDateFormat(dateTimeFormat).format(new Date(lastPlayed));
-            } catch (NullPointerException | IllegalArgumentException ignored) {
-                formattedDate = new Date(lastPlayed).toString();
-            }
-            user.sendMessage("commands.admin.info.last-login","[date]", formattedDate);
-
-            user.sendMessage("commands.admin.info.deaths", "[number]", String.valueOf(plugin.getPlayers().getDeaths(getWorld(), getOwner())));
-            String resets = String.valueOf(plugin.getPlayers().getResets(getWorld(), getOwner()));
-            String total = plugin.getIWM().getResetLimit(getWorld()) < 0 ? "Unlimited" : String.valueOf(plugin.getIWM().getResetLimit(getWorld()));
-            user.sendMessage("commands.admin.info.resets-left", "[number]", resets, "[total]", total);
-            // Show team members
-            showMembers(user);
-        }
-        Vector location = getProtectionCenter().toVector();
-        user.sendMessage("commands.admin.info.island-protection-center", TextVariables.XYZ, Util.xyz(location));
-        user.sendMessage("commands.admin.info.island-center", TextVariables.XYZ, Util.xyz(getCenter().toVector()));
-        user.sendMessage("commands.admin.info.island-coords", "[xz1]", Util.xyz(new Vector(this.getMinX(), 0, getMinZ())), "[xz2]", Util.xyz(new Vector(this.getMaxX(), 0, getMaxZ())));
-        user.sendMessage("commands.admin.info.protection-range", "[range]", String.valueOf(getProtectionRange()));
-        user.sendMessage("commands.admin.info.max-protection-range", "[range]", String.valueOf(getMaxEverProtectionRange()));
-        user.sendMessage("commands.admin.info.protection-coords", "[xz1]", Util.xyz(new Vector(this.getMinProtectedX(), 0, getMinProtectedZ())), "[xz2]", Util.xyz(new Vector(this.getMaxProtectedX(), 0, getMaxProtectedZ())));
-        if (spawn) {
-            user.sendMessage("commands.admin.info.is-spawn");
-        }
-        if (!getBanned().isEmpty()) {
-            user.sendMessage("commands.admin.info.banned-players");
-            getBanned().forEach(u -> user.sendMessage("commands.admin.info.banned-format", TextVariables.NAME, plugin.getPlayers().getName(u)));
-        }
-        if (getPurgeProtected()) {
-            user.sendMessage("commands.admin.info.purge-protected");
-        }
-        return true;
+        return new IslandInfo(this).showInfo(user);
     }
 
     /**
      * Shows the members of this island to this user.
      * @param user the User who is requesting it
+     * @deprecated Use {@link IslandInfo#showMembers(User) instead}
      */
+    @Deprecated
     public void showMembers(User user) {
-        BentoBox plugin = BentoBox.getInstance();
-        user.sendMessage("commands.admin.info.team-members-title");
-        members.forEach((u, i) -> {
-            if (owner.equals(u)) {
-                user.sendMessage("commands.admin.info.team-owner-format", TextVariables.NAME, plugin.getPlayers().getName(u)
-                        , "[rank]", user.getTranslation(plugin.getRanksManager().getRank(i)));
-            } else if (i > RanksManager.VISITOR_RANK){
-                user.sendMessage("commands.admin.info.team-member-format", TextVariables.NAME, plugin.getPlayers().getName(u)
-                        , "[rank]", user.getTranslation(plugin.getRanksManager().getRank(i)));
-            }
-        });
+        new IslandInfo(this).showMembers(user);
     }
 
     /**

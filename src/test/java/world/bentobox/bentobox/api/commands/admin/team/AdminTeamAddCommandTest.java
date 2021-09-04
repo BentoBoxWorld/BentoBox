@@ -2,7 +2,10 @@ package world.bentobox.bentobox.api.commands.admin.team;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -90,15 +93,15 @@ public class AdminTeamAddCommandTest {
 
         // Player has island to begin with
         im = mock(IslandsManager.class);
-        when(im.hasIsland(Mockito.any(), Mockito.any(User.class))).thenReturn(true);
-        when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(true);
-        when(im.isOwner(Mockito.any(), Mockito.any())).thenReturn(true);
-        when(im.getOwner(Mockito.any(), Mockito.any())).thenReturn(uuid);
+        when(im.hasIsland(any(), any(User.class))).thenReturn(true);
+        when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
+        when(im.isOwner(any(), any())).thenReturn(true);
+        when(im.getOwner(any(), any())).thenReturn(uuid);
         when(plugin.getIslands()).thenReturn(im);
 
         // Has team
         pm = mock(PlayersManager.class);
-        when(im.inTeam(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
+        when(im.inTeam(any(), eq(uuid))).thenReturn(true);
 
         when(plugin.getPlayers()).thenReturn(pm);
 
@@ -112,16 +115,16 @@ public class AdminTeamAddCommandTest {
 
         // Locales
         LocalesManager lm = mock(LocalesManager.class);
-        when(lm.get(Mockito.any(), Mockito.any())).thenReturn("mock translation");
+        when(lm.get(any(), any())).thenReturn("mock translation");
         when(plugin.getLocalesManager()).thenReturn(lm);
 
         // Island World Manager
         IslandWorldManager iwm = mock(IslandWorldManager.class);
-        when(iwm.getFriendlyName(Mockito.any())).thenReturn("BSkyBlock");
+        when(iwm.getFriendlyName(any())).thenReturn("BSkyBlock");
         when(plugin.getIWM()).thenReturn(iwm);
 
         // Addon
-        when(iwm.getAddon(Mockito.any())).thenReturn(Optional.empty());
+        when(iwm.getAddon(any())).thenReturn(Optional.empty());
 
     }
 
@@ -158,16 +161,16 @@ public class AdminTeamAddCommandTest {
         String[] name = {"tastybento", "poslovich"};
 
         // Unknown owner
-        when(pm.getUUID(Mockito.eq("tastybento"))).thenReturn(null);
-        when(pm.getUUID(Mockito.eq("poslovich"))).thenReturn(notUUID);
+        when(pm.getUUID(eq("tastybento"))).thenReturn(null);
+        when(pm.getUUID(eq("poslovich"))).thenReturn(notUUID);
         assertFalse(itl.execute(user, ac.getLabel(), Arrays.asList(name)));
-        Mockito.verify(user).sendMessage("general.errors.unknown-player", "[name]", "tastybento");
+        verify(user).sendMessage("general.errors.unknown-player", "[name]", "tastybento");
 
         // Unknown target
-        when(pm.getUUID(Mockito.eq("tastybento"))).thenReturn(uuid);
-        when(pm.getUUID(Mockito.eq("poslovich"))).thenReturn(null);
+        when(pm.getUUID(eq("tastybento"))).thenReturn(uuid);
+        when(pm.getUUID(eq("poslovich"))).thenReturn(null);
         assertFalse(itl.execute(user, ac.getLabel(), Arrays.asList(name)));
-        Mockito.verify(user).sendMessage("general.errors.unknown-player", "[name]", "poslovich");
+        verify(user).sendMessage("general.errors.unknown-player", "[name]", "poslovich");
     }
 
     /**
@@ -178,13 +181,13 @@ public class AdminTeamAddCommandTest {
         AdminTeamAddCommand itl = new AdminTeamAddCommand(ac);
         String[] name = {"tastybento", "poslovich"};
 
-        when(pm.getUUID(Mockito.eq("tastybento"))).thenReturn(uuid);
-        when(pm.getUUID(Mockito.eq("poslovich"))).thenReturn(notUUID);
+        when(pm.getUUID(eq("tastybento"))).thenReturn(uuid);
+        when(pm.getUUID(eq("poslovich"))).thenReturn(notUUID);
 
-        when(im.inTeam(Mockito.any(), Mockito.eq(notUUID))).thenReturn(true);
+        when(im.inTeam(any(), eq(notUUID))).thenReturn(true);
 
         assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
-        Mockito.verify(user).sendMessage(Mockito.eq("commands.island.team.invite.errors.already-on-team"));
+        verify(user).sendMessage(eq("commands.island.team.invite.errors.already-on-team"));
     }
 
 
@@ -196,14 +199,14 @@ public class AdminTeamAddCommandTest {
         AdminTeamAddCommand itl = new AdminTeamAddCommand(ac);
         String[] name = {"tastybento", "poslovich"};
 
-        when(pm.getUUID(Mockito.eq("tastybento"))).thenReturn(uuid);
-        when(pm.getUUID(Mockito.eq("poslovich"))).thenReturn(notUUID);
+        when(pm.getUUID(eq("tastybento"))).thenReturn(uuid);
+        when(pm.getUUID(eq("poslovich"))).thenReturn(notUUID);
 
         // No island,
-        when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
+        when(im.hasIsland(any(), eq(uuid))).thenReturn(false);
 
         assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
-        Mockito.verify(user).sendMessage("general.errors.player-has-no-island");
+        verify(user).sendMessage("general.errors.player-has-no-island");
 
     }
 
@@ -215,21 +218,21 @@ public class AdminTeamAddCommandTest {
         AdminTeamAddCommand itl = new AdminTeamAddCommand(ac);
         String[] name = {"tastybento", "poslovich"};
 
-        when(pm.getUUID(Mockito.eq("tastybento"))).thenReturn(uuid);
-        when(pm.getUUID(Mockito.eq("poslovich"))).thenReturn(notUUID);
+        when(pm.getUUID(eq("tastybento"))).thenReturn(uuid);
+        when(pm.getUUID(eq("poslovich"))).thenReturn(notUUID);
 
         // Has island, has team, but not an owner
-        when(im.hasIsland(Mockito.any(),Mockito.eq(uuid))).thenReturn(true);
-        when(im.inTeam(Mockito.any(),Mockito.eq(uuid))).thenReturn(true);
-        when(im.getOwner(Mockito.any(),Mockito.eq(uuid))).thenReturn(notUUID);
+        when(im.hasIsland(any(),eq(uuid))).thenReturn(true);
+        when(im.inTeam(any(),eq(uuid))).thenReturn(true);
+        when(im.getOwner(any(),eq(uuid))).thenReturn(notUUID);
 
         // Island
         Island island = mock(Island.class);
-        when(im.getIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(island);
+        when(im.getIsland(any(), eq(uuid))).thenReturn(island);
 
         assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
-        Mockito.verify(user).sendMessage("commands.admin.team.add.name-not-owner", "[name]", "tastybento");
-        Mockito.verify(island).showMembers(Mockito.any());
+        verify(user).sendMessage("commands.admin.team.add.name-not-owner", "[name]", "tastybento");
+        verify(user).sendMessage("commands.admin.info.team-members-title");
     }
 
     /**
@@ -240,19 +243,19 @@ public class AdminTeamAddCommandTest {
         AdminTeamAddCommand itl = new AdminTeamAddCommand(ac);
         String[] name = {"tastybento", "poslovich"};
 
-        when(pm.getUUID(Mockito.eq("tastybento"))).thenReturn(uuid);
-        when(pm.getUUID(Mockito.eq("poslovich"))).thenReturn(notUUID);
+        when(pm.getUUID(eq("tastybento"))).thenReturn(uuid);
+        when(pm.getUUID(eq("poslovich"))).thenReturn(notUUID);
 
         // Has island, has team, is owner
-        when(im.hasIsland(Mockito.any(),Mockito.eq(uuid))).thenReturn(true);
-        when(im.inTeam(Mockito.any(),Mockito.eq(uuid))).thenReturn(true);
-        when(im.getOwner(Mockito.any(), Mockito.eq(uuid))).thenReturn(uuid);
+        when(im.hasIsland(any(),eq(uuid))).thenReturn(true);
+        when(im.inTeam(any(),eq(uuid))).thenReturn(true);
+        when(im.getOwner(any(), eq(uuid))).thenReturn(uuid);
 
         // Target has island
-        when(im.hasIsland(Mockito.any(), Mockito.eq(notUUID))).thenReturn(true);
+        when(im.hasIsland(any(), eq(notUUID))).thenReturn(true);
 
         assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
-        Mockito.verify(user).sendMessage("commands.admin.team.add.name-has-island", "[name]", "poslovich");
+        verify(user).sendMessage("commands.admin.team.add.name-has-island", "[name]", "poslovich");
 
     }
 
@@ -264,18 +267,18 @@ public class AdminTeamAddCommandTest {
         AdminTeamAddCommand itl = new AdminTeamAddCommand(ac);
         String[] name = {"tastybento", "poslovich"};
 
-        when(pm.getUUID(Mockito.eq("tastybento"))).thenReturn(uuid);
-        when(pm.getUUID(Mockito.eq("poslovich"))).thenReturn(notUUID);
+        when(pm.getUUID(eq("tastybento"))).thenReturn(uuid);
+        when(pm.getUUID(eq("poslovich"))).thenReturn(notUUID);
 
         // Has island, no team
-        when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
-        when(im.inTeam(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
+        when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
+        when(im.inTeam(any(), eq(uuid))).thenReturn(false);
 
         // Target has island
-        when(im.hasIsland(Mockito.any(), Mockito.eq(notUUID))).thenReturn(true);
+        when(im.hasIsland(any(), eq(notUUID))).thenReturn(true);
 
         assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
-        Mockito.verify(user).sendMessage("commands.admin.team.add.name-has-island", "[name]", "poslovich");
+        verify(user).sendMessage("commands.admin.team.add.name-has-island", "[name]", "poslovich");
 
     }
 
@@ -287,29 +290,29 @@ public class AdminTeamAddCommandTest {
         AdminTeamAddCommand itl = new AdminTeamAddCommand(ac);
         String[] name = {"tastybento", "poslovich"};
 
-        when(pm.getUUID(Mockito.eq("tastybento"))).thenReturn(uuid);
-        when(pm.getUUID(Mockito.eq("poslovich"))).thenReturn(notUUID);
+        when(pm.getUUID(eq("tastybento"))).thenReturn(uuid);
+        when(pm.getUUID(eq("poslovich"))).thenReturn(notUUID);
 
         // Has island, no team
-        when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
-        when(im.inTeam(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
+        when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
+        when(im.inTeam(any(), eq(uuid))).thenReturn(false);
 
         // Target has no island
-        when(im.hasIsland(Mockito.any(), Mockito.eq(notUUID))).thenReturn(false);
+        when(im.hasIsland(any(), eq(notUUID))).thenReturn(false);
 
         // Island
         Island island = mock(Island.class);
-        when(im.getIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(island);
+        when(im.getIsland(any(), eq(uuid))).thenReturn(island);
 
         // Player name
-        when(pm.getName(Mockito.eq(uuid))).thenReturn("tastybento");
-        when(pm.getName(Mockito.eq(notUUID))).thenReturn("poslovich");
+        when(pm.getName(eq(uuid))).thenReturn("tastybento");
+        when(pm.getName(eq(notUUID))).thenReturn("poslovich");
         when(plugin.getPlayers()).thenReturn(pm);
 
         // Success
         assertTrue(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
-        Mockito.verify(im).setJoinTeam(Mockito.eq(island), Mockito.eq(notUUID));
-        Mockito.verify(user).sendMessage("commands.admin.team.add.success", TextVariables.NAME, name[1], "[owner]", name[0]);
+        verify(im).setJoinTeam(eq(island), eq(notUUID));
+        verify(user).sendMessage("commands.admin.team.add.success", TextVariables.NAME, name[1], "[owner]", name[0]);
     }
 
 }

@@ -13,6 +13,7 @@ import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.RanksManager;
+import world.bentobox.bentobox.util.IslandInfo;
 import world.bentobox.bentobox.util.Util;
 
 /**
@@ -59,10 +60,12 @@ public class AdminTeamKickCommand extends CompositeCommand {
     @Override
     public boolean execute(User user, String label, @NonNull List<String> args) {
         Island island = getIslands().getIsland(getWorld(), targetUUID);
-
+        if (island == null) {
+            return false;
+        }
         if (targetUUID.equals(island.getOwner())) {
             user.sendMessage("commands.admin.team.kick.cannot-kick-owner");
-            island.showMembers(user);
+            new IslandInfo(island).showMembers(user);
             return false;
         }
         User target = User.getInstance(targetUUID);

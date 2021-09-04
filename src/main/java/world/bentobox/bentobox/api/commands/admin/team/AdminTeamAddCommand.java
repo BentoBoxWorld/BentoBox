@@ -10,6 +10,7 @@ import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.RanksManager;
+import world.bentobox.bentobox.util.IslandInfo;
 import world.bentobox.bentobox.util.Util;
 
 public class AdminTeamAddCommand extends CompositeCommand {
@@ -49,7 +50,10 @@ public class AdminTeamAddCommand extends CompositeCommand {
         }
         if (getIslands().inTeam(getWorld(), ownerUUID) && !getIslands().getOwner(getWorld(), ownerUUID).equals(ownerUUID)) {
             user.sendMessage("commands.admin.team.add.name-not-owner", TextVariables.NAME, args.get(0));
-            getIslands().getIsland(getWorld(), ownerUUID).showMembers(user);
+            Island island = getIslands().getIsland(getWorld(), ownerUUID);
+            if (island != null) {
+                new IslandInfo(island).showMembers(user);
+            }
             return false;
         }
         if (getIslands().inTeam(getWorld(), targetUUID)) {

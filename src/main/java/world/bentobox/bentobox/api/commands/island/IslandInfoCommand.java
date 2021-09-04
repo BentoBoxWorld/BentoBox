@@ -9,6 +9,7 @@ import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.util.IslandInfo;
 import world.bentobox.bentobox.util.Util;
 
 /**
@@ -37,7 +38,7 @@ public class IslandInfoCommand extends CompositeCommand {
         }
         // If there are no args, then the player wants info on the island at this location
         if (args.isEmpty()) {
-            if (!getIslands().getIslandAt(user.getLocation()).map(i -> i.showInfo(user)).orElse(false)) {
+            if (!getIslands().getIslandAt(user.getLocation()).map(i -> new IslandInfo(i).showInfo(user)).orElse(false)) {
                 user.sendMessage("commands.admin.info.no-island");
                 return false;
             }
@@ -56,10 +57,10 @@ public class IslandInfoCommand extends CompositeCommand {
             return false;
         }
         // Show info for this player
-        island.showInfo(user);
+        new IslandInfo(island).showInfo(user);
         return true;
     }
-    
+
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
         String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
