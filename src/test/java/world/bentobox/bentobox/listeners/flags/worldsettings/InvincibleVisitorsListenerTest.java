@@ -27,6 +27,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.World.Environment;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -80,6 +81,10 @@ public class InvincibleVisitorsListenerTest {
     private Optional<Island> optionalIsland;
     @Mock
     private GameModeAddon addon;
+    @Mock
+    private Location location;
+    @Mock
+    private World world;
 
     /**
      * @throws java.lang.Exception
@@ -114,10 +119,12 @@ public class InvincibleVisitorsListenerTest {
         when(panel.getItems()).thenReturn(map);
         // Sometimes use Mockito.withSettings().verboseLogging()
         when(user.inWorld()).thenReturn(true);
-        when(user.getWorld()).thenReturn(mock(World.class));
-        when(player.getWorld()).thenReturn(mock(World.class));
-        when(user.getLocation()).thenReturn(mock(Location.class));
-        when(player.getLocation()).thenReturn(mock(Location.class));
+        when(user.getWorld()).thenReturn(world);
+        when(player.getWorld()).thenReturn(world);
+        when(location.getWorld()).thenReturn(world);
+        when(user.getLocation()).thenReturn(location);
+        when(player.getLocation()).thenReturn(location);
+        when(world.getEnvironment()).thenReturn(Environment.NORMAL);
         when(user.getPlayer()).thenReturn(player);
         when(user.hasPermission(anyString())).thenReturn(true);
         when(user.getTranslation(anyString())).thenReturn("panel");
