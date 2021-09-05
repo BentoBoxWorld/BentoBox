@@ -95,9 +95,9 @@ public class Flag implements Comparable<Flag> {
          */
         public Mode getNext() {
             return switch (this) {
-                case ADVANCED -> EXPERT;
-                case BASIC -> ADVANCED;
-                default -> BASIC;
+            case ADVANCED -> EXPERT;
+            case BASIC -> ADVANCED;
+            default -> BASIC;
             };
         }
 
@@ -108,9 +108,9 @@ public class Flag implements Comparable<Flag> {
          */
         public boolean isGreaterThan(Mode rank) {
             return switch (this) {
-                case EXPERT -> rank.equals(BASIC) || rank.equals(ADVANCED);
-                case ADVANCED -> rank.equals(BASIC);
-                default -> false;
+            case EXPERT -> rank.equals(BASIC) || rank.equals(ADVANCED);
+            case ADVANCED -> rank.equals(BASIC);
+            default -> false;
             };
         }
     }
@@ -204,12 +204,12 @@ public class Flag implements Comparable<Flag> {
             // Subflag support
             if (hasSubflags()) {
                 subflags.stream()
-                        .filter(subflag -> subflag.getType().equals(Type.WORLD_SETTING) || subflag.getType().equals(Type.PROTECTION))
-                        .forEach(subflag -> BentoBox.getInstance()
-                                            .getIWM()
-                                            .getWorldSettings(world)
-                                            .getWorldFlags()
-                                            .put(subflag.getID(), setting));
+                .filter(subflag -> subflag.getType().equals(Type.WORLD_SETTING) || subflag.getType().equals(Type.PROTECTION))
+                .forEach(subflag -> BentoBox.getInstance()
+                        .getIWM()
+                        .getWorldSettings(world)
+                        .getWorldFlags()
+                        .put(subflag.getID(), setting));
             }
 
             // Save config file
@@ -387,7 +387,7 @@ public class Flag implements Comparable<Flag> {
         }
         // Start the flag conversion
         PanelItemBuilder pib = new PanelItemBuilder()
-                .icon(ItemParser.parse(user.getTranslation(this.getIconReference()), new ItemStack(icon)))
+                .icon(ItemParser.parse(user.getTranslationOrNothing(this.getIconReference()), new ItemStack(icon)))
                 .name(user.getTranslation("protection.panel.flag-item.name-layout", TextVariables.NAME, user.getTranslation(getNameReference())))
                 .clickHandler(clickHandler)
                 .invisible(invisible);
@@ -396,9 +396,9 @@ public class Flag implements Comparable<Flag> {
             return pib.build();
         }
         return switch (getType()) {
-            case PROTECTION -> createProtectionFlag(plugin, user, island, pib).build();
-            case SETTING -> createSettingFlag(user, island, pib).build();
-            case WORLD_SETTING -> createWorldSettingFlag(user, pib).build();
+        case PROTECTION -> createProtectionFlag(plugin, user, island, pib).build();
+        case SETTING -> createSettingFlag(user, island, pib).build();
+        case WORLD_SETTING -> createWorldSettingFlag(user, pib).build();
         };
     }
 
@@ -651,9 +651,9 @@ public class Flag implements Comparable<Flag> {
             // If no clickHandler has been set, then apply default ones
             if (clickHandler == null) {
                 switch (type) {
-                    case SETTING -> clickHandler = new IslandToggleClick(id);
-                    case WORLD_SETTING -> clickHandler = new WorldToggleClick(id);
-                    default -> clickHandler = new CycleClick(id);
+                case SETTING -> clickHandler = new IslandToggleClick(id);
+                case WORLD_SETTING -> clickHandler = new WorldToggleClick(id);
+                default -> clickHandler = new CycleClick(id);
                 }
             }
 
