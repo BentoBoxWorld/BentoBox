@@ -66,6 +66,8 @@ public class AddonsManager {
     @NonNull
     private final Map<@NonNull Addon, @Nullable AddonClassLoader> loaders;
     @NonNull
+    private final Map<@NonNull Addon, @Nullable Plugin> pladdons;
+    @NonNull
     private final Map<String, Class<?>> classes;
     private final BentoBox plugin;
     private @NonNull
@@ -79,6 +81,7 @@ public class AddonsManager {
         this.plugin = plugin;
         addons = new ArrayList<>();
         loaders = new HashMap<>();
+        pladdons = new HashMap<>();
         classes = new HashMap<>();
         listeners = new HashMap<>();
         worldNames = new HashMap<>();
@@ -161,6 +164,9 @@ public class AddonsManager {
                 if (pladdon instanceof Pladdon) {
                     addon = ((Pladdon) pladdon).getAddon();
                     addon.setDescription(AddonClassLoader.asDescription(data));
+                    // Mark pladdon as enabled.
+                    ((Pladdon) pladdon).setEnabled();
+                    pladdons.put(addon, pladdon);
                 } else {
                     plugin.logError("Could not load pladdon!");
                     return;
@@ -403,6 +409,7 @@ public class AddonsManager {
         plugin.getCommandsManager().unregisterCommands();
         // Clear all maps
         listeners.clear();
+        pladdons.clear();
         addons.clear();
         loaders.clear();
         classes.clear();
@@ -620,7 +627,11 @@ public class AddonsManager {
             addon.setState(State.DISABLED);
             loaders.remove(addon);
         }
-
+        // Disable pladdons
+        if (pladdons.containsKey(addon)) {
+            this.pluginLoader.disablePlugin(Objects.requireNonNull(this.pladdons.get(addon)));
+            pladdons.remove(addon);
+        }
         // Remove it from the addons list
         addons.remove(addon);
     }
