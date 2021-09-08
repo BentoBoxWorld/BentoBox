@@ -9,6 +9,8 @@ package world.bentobox.bentobox.api.panels.reader;
 
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,12 +29,12 @@ import java.util.Map;
  *
  * @since 1.17.3
  */
-public record ItemTemplateRecord(ItemStack icon,
-                                 String title,
-                                 String description,
-                                 List<ActionRecords> actions,
-                                 Map<String, Object> dataMap,
-                                 ItemTemplateRecord fallback)
+public record ItemTemplateRecord(@Nullable ItemStack icon,
+                                 @Nullable String title,
+                                 @Nullable String description,
+                                 @NonNull List<ActionRecords> actions,
+                                 @NonNull Map<String, Object> dataMap,
+                                 @Nullable ItemTemplateRecord fallback)
 {
     /**
      * Instantiates a new Item template record without actions and data map.
