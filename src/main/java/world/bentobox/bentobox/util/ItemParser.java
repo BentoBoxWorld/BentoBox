@@ -171,7 +171,7 @@ public class ItemParser {
         boolean isExtended = part[3].equalsIgnoreCase("EXTENDED");
         PotionData data = new PotionData(type, isExtended, isUpgraded);
         potionMeta.setBasePotionData(data);
-
+        result.setItemMeta(potionMeta);
         result.setAmount(Integer.parseInt(part[5]));
         return result;
     }
