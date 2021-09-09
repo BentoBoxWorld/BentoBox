@@ -96,7 +96,9 @@ public class TemplateReader
         }
 
         String title = configurationSection.getString("title");
-        Panel.Type type = configurationSection.getObject("type", Panel.Type.class);
+        Panel.Type type =
+            Enums.getIfPresent(Panel.Type.class, configurationSection.getString("type", "INVENTORY")).
+                or(Panel.Type.INVENTORY);
 
         PanelTemplateRecord.TemplateItem borderItem = null;
 
@@ -110,7 +112,7 @@ public class TemplateReader
             {
                 borderItem = new PanelTemplateRecord.TemplateItem(
                     ItemParser.parse((borderSection.getString("icon", Material.AIR.name()))),
-                    borderSection.getString("name", null),
+                    borderSection.getString("title", null),
                     borderSection.getString("description", null));
             }
         }
@@ -134,7 +136,7 @@ public class TemplateReader
             {
                 backgroundItem = new PanelTemplateRecord.TemplateItem(
                     ItemParser.parse((backgroundSection.getString("icon", Material.AIR.name()))),
-                    backgroundSection.getString("name", null),
+                    backgroundSection.getString("title", null),
                     backgroundSection.getString("description", null));
             }
         }
@@ -157,8 +159,11 @@ public class TemplateReader
                 readPanelItemTemplate(reusable.getConfigurationSection(key), key, panelItemDataMap));
         }
 
+        // Read content
+        boolean[] forcedRows = readForcedRows(configurationSection);
+
         // Create template record.
-        PanelTemplateRecord template = new PanelTemplateRecord(type, title, borderItem, backgroundItem);
+        PanelTemplateRecord template = new PanelTemplateRecord(type, title, borderItem, backgroundItem, forcedRows);
 
         // Read content
         ConfigurationSection content = configurationSection.getConfigurationSection("content");
@@ -204,6 +209,41 @@ public class TemplateReader
         panelItemDataMap.clear();
 
         return template;
+    }
+
+
+    /**
+     * This method reads force shown rows that must be always displayed.
+     * @param section Configuration section that contains force-shown path.
+     * @return boolean array that contains which lines are force loaded.
+     */
+    private static boolean[] readForcedRows(@Nullable ConfigurationSection section)
+    {
+        boolean[] forceShow = new boolean[6];
+
+        if (section != null && section.contains("force-shown"))
+        {
+            if (section.isInt("force-shown"))
+            {
+                int value = section.getInt("force-shown");
+
+                if (value > 0 && value < 7)
+                {
+                    forceShow[value-1] = true;
+                }
+            }
+            else if (section.isList("force-shown"))
+            {
+                section.getIntegerList("force-shown").forEach(number -> {
+                    if (number > 0 && number < 7)
+                    {
+                        forceShow[number-1] = true;
+                    }
+                });
+            }
+        }
+
+        return forceShow;
     }
 
 
