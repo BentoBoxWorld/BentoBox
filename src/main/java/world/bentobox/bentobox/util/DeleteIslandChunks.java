@@ -77,13 +77,15 @@ public class DeleteIslandChunks {
             inDelete = true;
             for (int i = 0; i < plugin.getSettings().getDeleteSpeed(); i++) {
                 boolean last = i == plugin.getSettings().getDeleteSpeed() -1;
+                final int x = chunkX;
+                final int z = chunkZ;
                 plugin.getIWM().getAddon(di.getWorld()).ifPresent(gm ->
                 // Overworld
-                processChunk(gm, di.getWorld(), chunkX, chunkZ).thenRun(() ->
+                processChunk(gm, di.getWorld(), x, z).thenRun(() ->
                 // Nether
-                processChunk(gm, netherWorld, chunkX, chunkZ).thenRun(() ->
+                processChunk(gm, netherWorld, x, z).thenRun(() ->
                 // End
-                processChunk(gm, endWorld, chunkX, chunkZ).thenRun(() -> finish(last)))));
+                processChunk(gm, endWorld, x, z).thenRun(() -> finish(last, x)))));
                 chunkZ++;
                 if (chunkZ > di.getMaxZChunk()) {
                     chunkZ = di.getMinZChunk();
@@ -94,8 +96,8 @@ public class DeleteIslandChunks {
 
     }
 
-    private void finish(boolean last) {
-        if (chunkX > di.getMaxXChunk()) {
+    private void finish(boolean last, int x) {
+        if (x > di.getMaxXChunk()) {
             // Fire event
             IslandEvent.builder().deletedIslandInfo(di).reason(Reason.DELETED).build();
             // We're done
@@ -107,19 +109,25 @@ public class DeleteIslandChunks {
     }
 
     private CompletableFuture<Boolean> processChunk(GameModeAddon gm, World world, int x, int z) {
-        if (world != null && PaperLib.isChunkGenerated(world, x, z)) {
+        if (world != null) {
             CompletableFuture<Boolean> r = new CompletableFuture<>();
-            PaperLib.getChunkAtAsync(world, x, z).thenAccept(chunk -> regenerateChunk(r, gm, chunk));
+            PaperLib.getChunkAtAsync(world, x, z).thenAccept(chunk -> regenerateChunk(r, gm, chunk, x, z));
             return r;
         }
         return CompletableFuture.completedFuture(false);
     }
 
-    private void regenerateChunk(CompletableFuture<Boolean> r, GameModeAddon gm, Chunk chunk) {
+    private void regenerateChunk(CompletableFuture<Boolean> r, GameModeAddon gm, Chunk chunk, int x, int z) {
         // Clear all inventories
         Arrays.stream(chunk.getTileEntities()).filter(te -> (te instanceof InventoryHolder))
         .filter(te -> di.inBounds(te.getLocation().getBlockX(), te.getLocation().getBlockZ()))
         .forEach(te -> ((InventoryHolder)te).getInventory().clear());
+        // Remove all entities
+        for (Entity e : chunk.getEntities()) {
+            if (!(e instanceof Player)) {
+                e.remove();
+            }
+        }
         // Reset blocks
         MyBiomeGrid grid = new MyBiomeGrid(chunk.getWorld().getEnvironment());
         ChunkGenerator cg = gm.getDefaultWorldGenerator(chunk.getWorld().getName(), "delete");
