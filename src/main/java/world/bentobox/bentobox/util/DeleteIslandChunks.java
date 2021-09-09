@@ -7,7 +7,6 @@ import java.util.concurrent.CompletableFuture;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.World;
-import org.bukkit.World.Environment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.generator.ChunkGenerator;
@@ -37,18 +36,34 @@ public class DeleteIslandChunks {
     private boolean inDelete;
     private final BentoBox plugin;
     private NMSAbstraction nms;
+    private final World netherWorld;
+    private final World endWorld;
 
     public DeleteIslandChunks(BentoBox plugin, IslandDeletion di) {
         this.plugin = plugin;
         this.chunkX = di.getMinXChunk();
         this.chunkZ = di.getMinZChunk();
         this.di = di;
+        // Nether
+        if (plugin.getIWM().isNetherGenerate(di.getWorld()) && plugin.getIWM().isNetherIslands(di.getWorld())) {
+            netherWorld = plugin.getIWM().getNetherWorld(di.getWorld());
+        } else {
+            netherWorld = null;
+        }
+        // End
+        if (plugin.getIWM().isEndGenerate(di.getWorld()) && plugin.getIWM().isEndIslands(di.getWorld())) {
+            endWorld = plugin.getIWM().getEndWorld(di.getWorld());
+        } else {
+            endWorld = null;
+        }
+        // NMS
         try {
             this.nms = Util.getNMS();
         } catch (Exception e) {
             plugin.logError("Could not delete chunks because of NMS error");
             return;
         }
+
         // Fire event
         IslandEvent.builder().deletedIslandInfo(di).reason(Reason.DELETE_CHUNKS).build();
         regenerateChunks();
@@ -64,11 +79,11 @@ public class DeleteIslandChunks {
                 boolean last = i == plugin.getSettings().getDeleteSpeed() -1;
                 plugin.getIWM().getAddon(di.getWorld()).ifPresent(gm ->
                 // Overworld
-                processChunk(gm, Environment.NORMAL, chunkX, chunkZ).thenRun(() ->
+                processChunk(gm, di.getWorld(), chunkX, chunkZ).thenRun(() ->
                 // Nether
-                processChunk(gm, Environment.NETHER, chunkX, chunkZ).thenRun(() ->
+                processChunk(gm, netherWorld, chunkX, chunkZ).thenRun(() ->
                 // End
-                processChunk(gm, Environment.THE_END, chunkX, chunkZ).thenRun(() -> finish(last)))));
+                processChunk(gm, endWorld, chunkX, chunkZ).thenRun(() -> finish(last)))));
                 chunkZ++;
                 if (chunkZ > di.getMaxZChunk()) {
                     chunkZ = di.getMinZChunk();
@@ -91,29 +106,8 @@ public class DeleteIslandChunks {
         }
     }
 
-    private CompletableFuture<Boolean> processChunk(GameModeAddon gm, Environment env, int x, int z) {
-        World world = di.getWorld();
-        switch (env) {
-        case NETHER:
-            // Nether
-            if (plugin.getIWM().isNetherGenerate(di.getWorld()) && plugin.getIWM().isNetherIslands(di.getWorld())) {
-                world = plugin.getIWM().getNetherWorld(di.getWorld());
-            } else {
-                return CompletableFuture.completedFuture(false);
-            }
-            break;
-        case THE_END:
-            // End
-            if (plugin.getIWM().isEndGenerate(di.getWorld()) && plugin.getIWM().isEndIslands(di.getWorld())) {
-                world = plugin.getIWM().getEndWorld(di.getWorld());
-            } else {
-                return CompletableFuture.completedFuture(false);
-            }
-            break;
-        default:
-            break;
-        }
-        if (PaperLib.isChunkGenerated(world, x, z)) {
+    private CompletableFuture<Boolean> processChunk(GameModeAddon gm, World world, int x, int z) {
+        if (world != null && PaperLib.isChunkGenerated(world, x, z)) {
             CompletableFuture<Boolean> r = new CompletableFuture<>();
             PaperLib.getChunkAtAsync(world, x, z).thenAccept(chunk -> regenerateChunk(r, gm, chunk));
             return r;
