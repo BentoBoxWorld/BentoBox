@@ -561,6 +561,9 @@ public class Island implements DataObject, MetaDataAble {
      * @return the maxEverProtectionRange or the protection range, whichever is larger
      */
     public int getMaxEverProtectionRange() {
+        if (maxEverProtectionRange > this.range) {
+            maxEverProtectionRange = this.range;
+        }
         return Math.max(protectionRange, maxEverProtectionRange);
     }
 
@@ -569,6 +572,9 @@ public class Island implements DataObject, MetaDataAble {
      */
     public void setMaxEverProtectionRange(int maxEverProtectionRange) {
         this.maxEverProtectionRange = maxEverProtectionRange;
+        if (maxEverProtectionRange > this.range) {
+            maxEverProtectionRange = this.range;
+        }
         setChanged();
     }
 
