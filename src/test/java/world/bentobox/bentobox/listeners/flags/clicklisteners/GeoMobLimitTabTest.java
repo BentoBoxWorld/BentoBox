@@ -78,7 +78,6 @@ public class GeoMobLimitTabTest {
         when(plugin.getIWM()).thenReturn(iwm);
         when(iwm.getAddon(any())).thenReturn(Optional.of(gma));
         list = new ArrayList<>();
-        list.add("AXOLOTL");
         list.add("BAT");
         list.add("COW");
         when(iwm.getMobLimitSettings(any())).thenReturn(list);
@@ -104,23 +103,19 @@ public class GeoMobLimitTabTest {
     public void testOnClick() {
         GeoMobLimitTab tab = new GeoMobLimitTab(user, EntityLimitTabType.GEO_LIMIT, world);
         // AXOLOTL, BAT, and COW in list
-        assertEquals(3, list.size());
-        assertEquals("COW", list.get(2));
-        assertEquals("BAT", list.get(1));
-        assertEquals("AXOLOTL", list.get(0));
-
-        // Click on AXOLOTL
-        tab.onClick(panel, user, ClickType.LEFT, 9);
-        list.forEach(System.out::println);
         assertEquals(2, list.size());
         assertEquals("COW", list.get(1));
         assertEquals("BAT", list.get(0));
-        // Click on AXOLOTL again to have it added
+
+        // Click on BAT
         tab.onClick(panel, user, ClickType.LEFT, 9);
-        assertEquals(3, list.size());
-        assertEquals("BAT", list.get(0));
-        assertEquals("COW", list.get(1));
-        assertEquals("AXOLOTL", list.get(2));
+        assertEquals(1, list.size());
+        assertEquals("COW", list.get(0));
+        // Click on BAT again to have it added
+        tab.onClick(panel, user, ClickType.LEFT, 9);
+        assertEquals(2, list.size());
+        assertEquals("COW", list.get(0));
+        assertEquals("BAT", list.get(1));
         verify(gma, times(2)).saveWorldSettings();
     }
 
