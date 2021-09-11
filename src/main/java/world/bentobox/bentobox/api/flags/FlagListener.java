@@ -4,6 +4,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
@@ -18,6 +19,7 @@ import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.metadata.MetaDataValue;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.util.Util;
@@ -253,4 +255,22 @@ public abstract class FlagListener implements Listener {
     protected IslandWorldManager getIWM() {
         return plugin.getIWM();
     }
+
+    /**
+     * Check if PVP is allowed here or not
+     * @param location location where action is taking
+     * @return true if PVP is allowed, false if not
+     */
+    protected boolean PVPAllowed(Location location) {
+        return plugin.getIslands().getIslandAt(location).map(i -> i.isAllowed(this.getFlag(location.getWorld()))).orElse(false);
+    }
+
+    protected Flag getFlag(World w) {
+        return switch (w.getEnvironment()) {
+        case NETHER -> Flags.PVP_NETHER;
+        case THE_END -> Flags.PVP_END;
+        default -> Flags.PVP_OVERWORLD;
+        };
+    }
+
 }

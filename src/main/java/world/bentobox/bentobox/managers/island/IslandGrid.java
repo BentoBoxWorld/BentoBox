@@ -12,8 +12,8 @@ import world.bentobox.bentobox.database.objects.Island;
  *
  */
 class IslandGrid {
-    private TreeMap<Integer, TreeMap<Integer, Island>> grid = new TreeMap<>();
-    private BentoBox plugin = BentoBox.getInstance();
+    private final TreeMap<Integer, TreeMap<Integer, Island>> grid = new TreeMap<>();
+    private final BentoBox plugin = BentoBox.getInstance();
 
     /**
      * Adds island to grid
@@ -39,7 +39,7 @@ class IslandGrid {
                     if (firstLoaded.getOwner().equals(island.getOwner())) {
                         // Find out which one is the original
                         if (firstLoaded.getCreatedDate() > island.getCreatedDate()) {
-                            plugin.logError("Same owner duplicate. Swaping based on creation date.");
+                            plugin.logError("Same owner duplicate. Swapping based on creation date.");
                             // FirstLoaded is the newer
                             firstLoaded = new Island(island);
                             zEntry.put(island.getMinZ(), firstLoaded);

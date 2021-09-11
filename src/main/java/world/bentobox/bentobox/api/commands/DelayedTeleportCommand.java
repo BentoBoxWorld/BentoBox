@@ -26,20 +26,20 @@ public abstract class DelayedTeleportCommand extends CompositeCommand implements
     /**
      * User monitor map
      */
-    private static Map<UUID, DelayedCommand> toBeMonitored = new HashMap<>();
+    private static final Map<UUID, DelayedCommand> toBeMonitored = new HashMap<>();
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerMove(PlayerMoveEvent e) {
         UUID uuid = e.getPlayer().getUniqueId();
         // Only check x,y,z
-        if (toBeMonitored.containsKey(uuid) && !e.getTo().toVector().equals(toBeMonitored.get(uuid).getLocation().toVector())) {
+        if (toBeMonitored.containsKey(uuid) && !e.getTo().toVector().equals(toBeMonitored.get(uuid).location().toVector())) {
             moved(uuid);
         }
     }
 
     private void moved(UUID uuid) {
         // Player moved
-        toBeMonitored.get(uuid).getTask().cancel();
+        toBeMonitored.get(uuid).task().cancel();
         toBeMonitored.remove(uuid);
         // Player has another outstanding confirmation request that will now be cancelled
         User.getInstance(uuid).notify("commands.delay.moved-so-command-cancelled");
@@ -103,7 +103,7 @@ public abstract class DelayedTeleportCommand extends CompositeCommand implements
         UUID uuid = user.getUniqueId();
         if (toBeMonitored.containsKey(uuid)) {
             // A double request - clear out the old one
-            toBeMonitored.get(uuid).getTask().cancel();
+            toBeMonitored.get(uuid).task().cancel();
             toBeMonitored.remove(uuid);
             // Player has another outstanding confirmation request that will now be cancelled
             user.sendMessage("commands.delay.previous-command-cancelled");
@@ -116,7 +116,7 @@ public abstract class DelayedTeleportCommand extends CompositeCommand implements
         user.sendMessage("commands.delay.stand-still", "[seconds]", String.valueOf(getSettings().getDelayTime()));
         // Set up the run task
         BukkitTask task = Bukkit.getScheduler().runTaskLater(getPlugin(), () -> {
-            Bukkit.getScheduler().runTask(getPlugin(), toBeMonitored.get(uuid).getRunnable());
+            Bukkit.getScheduler().runTask(getPlugin(), toBeMonitored.get(uuid).runnable());
             toBeMonitored.remove(uuid);
         }, getPlugin().getSettings().getDelayTime() * 20L);
 
@@ -135,42 +135,8 @@ public abstract class DelayedTeleportCommand extends CompositeCommand implements
 
     /**
      * Holds the data to run once the confirmation is given
-     * @author tastybento
      *
      */
-    private class DelayedCommand {
-        private final Runnable runnable;
-        private final BukkitTask task;
-        private final Location location;
-
-        /**
-         * @param runnable - runnable to run when confirmed
-         * @param task - task ID to cancel when confirmed
-         * @param location - location
-         */
-        DelayedCommand(Runnable runnable, BukkitTask task, Location location) {
-            this.runnable = runnable;
-            this.task = task;
-            this.location = location;
-        }
-        /**
-         * @return the runnable
-         */
-        public Runnable getRunnable() {
-            return runnable;
-        }
-        /**
-         * @return the task
-         */
-        public BukkitTask getTask() {
-            return task;
-        }
-        /**
-         * @return the location
-         */
-        public Location getLocation() {
-            return location;
-        }
-    }
+    private record DelayedCommand(Runnable runnable, BukkitTask task, Location location) {}
 
 }

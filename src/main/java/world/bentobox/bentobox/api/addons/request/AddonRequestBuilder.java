@@ -20,7 +20,7 @@ public class AddonRequestBuilder
 {
     private String addonName;
     private String requestLabel;
-    private Map<String, Object> metaData = new HashMap<>();
+    private final Map<String, Object> metaData = new HashMap<>();
 
     /**
      * Define the addon you wish to request.

@@ -1,5 +1,6 @@
 package world.bentobox.bentobox.api.addons.exceptions;
 
+import java.io.Serial;
 import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
@@ -9,6 +10,7 @@ public class InvalidAddonFormatException extends AddonException {
     /**
      *
      */
+    @Serial
     private static final long serialVersionUID = 7741502900847049986L;
 
     public InvalidAddonFormatException(String errorMessage) {

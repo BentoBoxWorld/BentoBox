@@ -23,7 +23,7 @@ public class LogEntryListAdapterTest {
 
     private LogEntryListAdapter a;
     private YamlConfiguration config;
-    private List<LogEntry> history = new LinkedList<>();
+    private final List<LogEntry> history = new LinkedList<>();
     private UUID target;
     private UUID issuer;
     private List<LogEntry> toLog;

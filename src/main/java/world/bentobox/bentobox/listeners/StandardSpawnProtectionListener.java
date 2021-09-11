@@ -111,8 +111,9 @@ public class StandardSpawnProtectionListener implements Listener {
     private boolean atSpawn(@NonNull Location location) {
         Vector p = location.toVector().multiply(new Vector(1, 0, 1));
         Vector spawn = location.getWorld().getSpawnLocation().toVector().multiply(new Vector(1, 0, 1));
-        int radiusSquared = plugin.getIWM().getNetherSpawnRadius(location.getWorld()) * plugin.getIWM().getNetherSpawnRadius(location.getWorld());
-        return (spawn.distanceSquared(p) < radiusSquared);
+        int radius = plugin.getIWM().getNetherSpawnRadius(location.getWorld());
+        Vector diff = p.subtract(spawn);
+        return Math.abs(diff.getBlockX()) <= radius && Math.abs(diff.getBlockZ()) <= radius;
     }
 
     /**
@@ -123,7 +124,7 @@ public class StandardSpawnProtectionListener implements Listener {
      * @return true if nothing needs to be done
      */
     private boolean noAction(@NonNull Player player) {
-        return (player.isOp() || player.getWorld().getEnvironment().equals(World.Environment.NORMAL) 
+        return (player.isOp() || player.getWorld().getEnvironment().equals(World.Environment.NORMAL)
                 || !plugin.getIWM().inWorld(Util.getWorld(player.getWorld()))
                 || (player.getWorld().getEnvironment().equals(World.Environment.NETHER) && plugin.getIWM().isNetherIslands(player.getWorld()))
                 || (player.getWorld().getEnvironment().equals(World.Environment.THE_END) && plugin.getIWM().isEndIslands(player.getWorld())));

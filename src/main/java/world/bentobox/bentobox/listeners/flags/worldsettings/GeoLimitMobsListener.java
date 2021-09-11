@@ -24,7 +24,7 @@ import world.bentobox.bentobox.database.objects.Island;
  */
 public class GeoLimitMobsListener extends FlagListener {
 
-    private Map<Entity, Island> mobSpawnTracker = new WeakHashMap<>();
+    private final Map<Entity, Island> mobSpawnTracker = new WeakHashMap<>();
 
     /**
      * Start the tracker when the plugin is loaded
@@ -69,8 +69,7 @@ public class GeoLimitMobsListener extends FlagListener {
     public void onProjectileExplode(final ExplosionPrimeEvent e) {
         if (e.getEntity() instanceof Projectile && getIWM().inWorld(e.getEntity().getLocation())) {
             ProjectileSource source = ((Projectile)e.getEntity()).getShooter();
-            if (source instanceof Entity) {
-                Entity shooter = (Entity)source;
+            if (source instanceof Entity shooter) {
                 if (mobSpawnTracker.containsKey(shooter)
                         && !mobSpawnTracker.get(shooter).onIsland(e.getEntity().getLocation())) {
                     e.getEntity().remove();

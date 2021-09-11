@@ -24,14 +24,14 @@ public class TreesGrowingOutsideRangeListener extends FlagListener {
         }
 
         // If there is no protected island at the location of the sapling, just cancel the event (prevents the sapling from growing).
-        if (!getIslands().getProtectedIslandAt(e.getLocation()).isPresent()) {
+        if (getIslands().getProtectedIslandAt(e.getLocation()).isEmpty()) {
             e.setCancelled(true);
             return;
         }
 
         // Now, run through all the blocks that will be generated and if there is no protected island at their location, turn them into AIR.
         e.getBlocks().stream()
-        .filter(blockState -> !getIslands().getProtectedIslandAt(blockState.getLocation()).isPresent())
+        .filter(blockState -> getIslands().getProtectedIslandAt(blockState.getLocation()).isEmpty())
         .forEach(blockState -> blockState.setType(Material.AIR));
     }
 
@@ -45,13 +45,13 @@ public class TreesGrowingOutsideRangeListener extends FlagListener {
         }
 
         // If there is no protected island at the location of the chorus flower, just cancel the event (prevents the flower from growing).
-        if (!getIslands().getProtectedIslandAt(e.getSource().getLocation()).isPresent()) {
+        if (getIslands().getProtectedIslandAt(e.getSource().getLocation()).isEmpty()) {
             e.setCancelled(true);
             return;
         }
 
         // Now prevent the flower to grow if this is growing outside the island
-        if (!getIslands().getProtectedIslandAt(e.getBlock().getLocation()).isPresent()) {
+        if (getIslands().getProtectedIslandAt(e.getBlock().getLocation()).isEmpty()) {
             e.setCancelled(true);
         }
     }

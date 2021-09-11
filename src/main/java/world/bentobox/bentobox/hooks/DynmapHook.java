@@ -24,7 +24,7 @@ public class DynmapHook extends Hook {
     private MarkerAPI markerAPI;
 
     @NonNull
-    private Map<@NonNull GameModeAddon, @NonNull MarkerSet> markerSets;
+    private final Map<@NonNull GameModeAddon, @NonNull MarkerSet> markerSets;
 
     public DynmapHook() {
         super("dynmap", Material.FILLED_MAP);

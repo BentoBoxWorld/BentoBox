@@ -13,16 +13,22 @@ import com.google.gson.JsonObject;
  */
 public class CatalogEntry {
 
-    private int slot;
+    private final int slot;
     /**
      * Defaults to {@link Material#PAPER}.
      */
-    private @NonNull Material icon;
-    private @NonNull String name;
-    private @NonNull String description;
-    private @Nullable String topic;
-    private @Nullable String tag;
-    private @NonNull String repository;
+    private @NonNull
+    final Material icon;
+    private @NonNull
+    final String name;
+    private @NonNull
+    final String description;
+    private @Nullable
+    final String topic;
+    private @Nullable
+    final String tag;
+    private @NonNull
+    final String repository;
 
     public CatalogEntry(@NonNull JsonObject object) {
         this.slot = object.get("slot").getAsInt();

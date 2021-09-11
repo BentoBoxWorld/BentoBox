@@ -1,15 +1,12 @@
 package world.bentobox.bentobox.managers.island;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -115,7 +112,7 @@ public class IslandCache {
         grids.putIfAbsent(island.getWorld(), new IslandGrid());
         return grids.get(island.getWorld()).removeFromGrid(island);
     }
-    
+
     /**
      * Delete island from the cache by ID. Does not remove blocks.
      * @param uniqueId - island unique ID
@@ -180,12 +177,10 @@ public class IslandCache {
     @NonNull
     public Collection<Island> getIslands(@NonNull World world) {
         World overworld = Util.getWorld(world);
-        List<Island> islandsInWorld = islandsByLocation.entrySet().stream()
-                .filter(entry -> overworld.equals(Util.getWorld(entry.getKey().getWorld()))) // shouldn't make NPEs
-                .map(Map.Entry::getValue)
-                .collect(Collectors.toCollection(ArrayList::new));
 
-        return Collections.unmodifiableCollection(islandsInWorld);
+        return islandsByLocation.entrySet().stream()
+                .filter(entry -> overworld.equals(Util.getWorld(entry.getKey().getWorld()))) // shouldn't make NPEs
+                .map(Map.Entry::getValue).toList();
     }
 
     /**

@@ -41,6 +41,7 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import net.md_5.bungee.api.ChatColor;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
@@ -125,7 +126,7 @@ public class UtilTest {
         when(phm.replacePlaceholders(any(), any())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
 
         when(plugin.getLocalesManager()).thenReturn(lm);
-        
+
     }
 
     @After
@@ -458,7 +459,7 @@ public class UtilTest {
         Bukkit.dispatchCommand(sender, "replace tastybento");
         verify(plugin).logError("Could not execute test command as console: replace tastybento");
     }
-    
+
     /**
      * Test for {@link Util#broadcast(String, String...)}
      */
@@ -468,7 +469,7 @@ public class UtilTest {
         int result = Util.broadcast("test.key", TextVariables.DESCRIPTION, "hello");
         assertEquals(0, result);
     }
-    
+
     /**
      * Test for {@link Util#broadcast(String, String...)}
      */
@@ -476,6 +477,38 @@ public class UtilTest {
     public void testBroadcastStringStringHasPerm() {
         int result = Util.broadcast("test.key", TextVariables.DESCRIPTION, "hello");
         assertEquals(11, result);
-        
+
+    }
+
+    /**
+     * Test for {@link Util#translateColorCodes(String)}
+     */
+    @Test
+    public void testTranslateColorCodesAmpersand() {
+        assertEquals("", Util.translateColorCodes(""));
+        assertEquals("abcdef ABCDEF", Util.translateColorCodes("abcdef ABCDEF"));
+        assertEquals("white space after   ", Util.translateColorCodes("white space after   "));
+        assertEquals("§ared color", Util.translateColorCodes("&a red color"));
+        assertEquals("§a   big space", Util.translateColorCodes("&a    big space"));
+        assertEquals("§ared color", Util.translateColorCodes("&ared color"));
+        assertEquals("§ared §bcolor §cgreen §fheheh", Util.translateColorCodes("&ared &bcolor &c green &f heheh"));
+    }
+
+    /**
+     * Test for {@link Util#translateColorCodes(String)}
+     */
+    @Test
+    public void testTranslateColorCodesHex() {
+        // Use Bungee Chat parsing for single color test to validate correct parsing
+        assertEquals(ChatColor.of("#ff0000").toString(), Util.translateColorCodes("&#ff0000"));
+        assertEquals(ChatColor.of("#ff2200").toString(), Util.translateColorCodes("&#f20"));
+
+        assertEquals("&#f single char", Util.translateColorCodes("&#f single char"));
+        assertEquals("&#f0 two chars", Util.translateColorCodes("&#f0 two chars"));
+        assertEquals("§x§f§f§0§0§0§0shorten hex", Util.translateColorCodes("&#f00 shorten hex"));
+        assertEquals("§x§f§f§0§0§0§01 four chars", Util.translateColorCodes("&#f001 four chars"));
+        assertEquals("§x§f§f§0§0§0§01f five chars", Util.translateColorCodes("&#f001f five chars"));
+        assertEquals("§x§f§f§0§0§0§0full hex", Util.translateColorCodes("&#ff0000 full hex"));
+        assertEquals("&#ggg outside hex range", Util.translateColorCodes("&#ggg outside hex range"));
     }
 }

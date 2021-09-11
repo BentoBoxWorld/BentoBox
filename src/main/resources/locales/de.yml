@@ -3,7 +3,7 @@ meta:
   authors:
   - xXjojojXx
   - Poslovitch
-  banner: RED_BANNER:1:STRIPE_RIGHT:BLACK:LEFT_STRIPE:YELLOW
+  banner: RED_BANNER:1:STRIPE_RIGHT:BLACK:STRIPE_LEFT:YELLOW
 commands:
   admin:
     setrank:

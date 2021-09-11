@@ -29,7 +29,7 @@ import world.bentobox.bentobox.util.Util;
  */
 public class CommandRankClickListener implements ClickHandler {
 
-    private BentoBox plugin = BentoBox.getInstance();
+    private final BentoBox plugin = BentoBox.getInstance();
 
     /* (non-Javadoc)
      * @see world.bentobox.bentobox.api.panels.PanelItem.ClickHandler#onClick(world.bentobox.bentobox.api.panels.Panel, world.bentobox.bentobox.api.user.User, org.bukkit.event.inventory.ClickType, int)

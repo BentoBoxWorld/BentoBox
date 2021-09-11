@@ -7,6 +7,7 @@ import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.util.IslandInfo;
 
 public class AdminTrashCommand extends CompositeCommand {
 
@@ -63,7 +64,7 @@ public class AdminTrashCommand extends CompositeCommand {
         user.sendMessage("commands.admin.trash.title");
         for (int i = 0; i < islands.size(); i++) {
             user.sendMessage("commands.admin.trash.count", TextVariables.NUMBER, String.valueOf(i+1));
-            islands.get(i).showInfo(user);
+            new IslandInfo(islands.get(i)).showInfo(user);
         }
         user.sendMessage("commands.admin.trash.use-switch", TextVariables.LABEL, getTopLabel());
         user.sendMessage("commands.admin.trash.use-emptytrash", TextVariables.LABEL, getTopLabel());

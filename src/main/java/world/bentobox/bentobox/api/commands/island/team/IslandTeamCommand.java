@@ -29,7 +29,7 @@ public class IslandTeamCommand extends CompositeCommand {
      * Invited list. Key is the invited party, value is the invite.
      * @since 1.8.0
      */
-    private Map<UUID, Invite> inviteMap;
+    private final Map<UUID, Invite> inviteMap;
 
     public IslandTeamCommand(CompositeCommand parent) {
         super(parent, "team");

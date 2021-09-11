@@ -15,7 +15,7 @@ import world.bentobox.bentobox.api.flags.Flag;
 
 public class FlagTypeAdapter extends TypeAdapter<Flag> {
 
-    private BentoBox plugin;
+    private final BentoBox plugin;
 
     public FlagTypeAdapter(BentoBox plugin) {
         this.plugin = plugin;
@@ -42,7 +42,7 @@ public class FlagTypeAdapter extends TypeAdapter<Flag> {
         // Flags can end up null if an addon that created one is removed or if a flag name was changed
         if (f == null) {
             // Create a temporary flag with a unique key. It will be immediately deleted after loading
-            f = new Flag.Builder("NULL_FLAG_"+ UUID.randomUUID().toString(), Material.STONE).build();
+            f = new Flag.Builder("NULL_FLAG_"+ UUID.randomUUID(), Material.STONE).build();
         }
         return f;
     }

@@ -13,7 +13,6 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -73,7 +72,7 @@ public class BlueprintPaster {
 
     private static final Map<String, String> BLOCK_CONVERSION = ImmutableMap.of("sign", "oak_sign", "wall_sign", "oak_wall_sign");
 
-    private BentoBox plugin;
+    private final BentoBox plugin;
     // The minimum block position (x,y,z)
     private Location pos1;
     // The maximum block position (x,y,z)
@@ -86,19 +85,19 @@ public class BlueprintPaster {
      * The Blueprint to paste.
      */
     @NonNull
-    private Blueprint blueprint;
+    private final Blueprint blueprint;
 
     /**
      * The Location to paste to.
      */
     @NonNull
-    private Location location;
+    private final Location location;
 
     /**
      * Island related to this paste, may be null.
      */
     @Nullable
-    private Island island;
+    private final Island island;
 
     /**
      * Paste a clipboard to a location and run task
@@ -291,35 +290,37 @@ public class BlueprintPaster {
         // Get the block state
         BlockState bs = block.getState();
         // Signs
-        if (bs instanceof org.bukkit.block.Sign) {
-            writeSign(block, bpBlock.getSignLines());
+        if (bs instanceof org.bukkit.block.Sign sign) {
+            writeSign(block, bpBlock.getSignLines(), bpBlock.isGlowingText());
         }
         // Chests, in general
         if (bs instanceof InventoryHolder) {
             Inventory ih = ((InventoryHolder)bs).getInventory();
-            // Double chests are pasted as two blocks so inventory is filled twice. This code stops over filling for the first block.
+            // Double chests are pasted as two blocks so inventory is filled twice.
+            // This code stops over-filling for the first block.
             bpBlock.getInventory().forEach(ih::setItem);
         }
         // Mob spawners
-        if (bs instanceof CreatureSpawner) {
-            CreatureSpawner spawner = ((CreatureSpawner) bs);
-            BlueprintCreatureSpawner s = bpBlock.getCreatureSpawner();
-            spawner.setSpawnedType(s.getSpawnedType());
-            spawner.setMaxNearbyEntities(s.getMaxNearbyEntities());
-            spawner.setMaxSpawnDelay(s.getMaxSpawnDelay());
-            spawner.setMinSpawnDelay(s.getMinSpawnDelay());
-            spawner.setDelay(s.getDelay());
-            spawner.setRequiredPlayerRange(s.getRequiredPlayerRange());
-            spawner.setSpawnRange(s.getSpawnRange());
-            bs.update(true, false);
+        if (bs instanceof CreatureSpawner spawner) {
+            setSpawner(spawner, bpBlock.getCreatureSpawner());
         }
         // Banners
-        if (bs instanceof Banner && bpBlock.getBannerPatterns() != null) {
-            Banner banner = (Banner) bs;
+        if (bs instanceof Banner banner && bpBlock.getBannerPatterns() != null) {
             bpBlock.getBannerPatterns().removeIf(Objects::isNull);
             banner.setPatterns(bpBlock.getBannerPatterns());
             banner.update(true, false);
         }
+    }
+
+    private void setSpawner(CreatureSpawner spawner, BlueprintCreatureSpawner s) {
+        spawner.setSpawnedType(s.getSpawnedType());
+        spawner.setMaxNearbyEntities(s.getMaxNearbyEntities());
+        spawner.setMaxSpawnDelay(s.getMaxSpawnDelay());
+        spawner.setMinSpawnDelay(s.getMinSpawnDelay());
+        spawner.setDelay(s.getDelay());
+        spawner.setRequiredPlayerRange(s.getRequiredPlayerRange());
+        spawner.setSpawnRange(s.getSpawnRange());
+        spawner.update(true, false);
     }
 
     /**
@@ -386,7 +387,7 @@ public class BlueprintPaster {
         }
     }
 
-    private void writeSign(final Block block, final List<String> lines) {
+    private void writeSign(final Block block, final List<String> lines, boolean glow) {
         BlockFace bf;
         if (block.getType().name().contains("WALL_SIGN")) {
             WallSign wallSign = (WallSign)block.getBlockData();
@@ -416,7 +417,7 @@ public class BlueprintPaster {
             // Get the addon that is operating in this world
             String addonName = plugin.getIWM().getAddon(island.getWorld()).map(addon -> addon.getDescription().getName().toLowerCase(Locale.ENGLISH)).orElse("");
             for (int i = 0; i < 4; i++) {
-                s.setLine(i, ChatColor.translateAlternateColorCodes('&', plugin.getLocalesManager().getOrDefault(User.getInstance(island.getOwner()),
+                s.setLine(i, Util.translateColorCodes(plugin.getLocalesManager().getOrDefault(User.getInstance(island.getOwner()),
                         addonName + ".sign.line" + i,"").replace(TextVariables.NAME, name)));
             }
         } else {
@@ -425,6 +426,7 @@ public class BlueprintPaster {
                 s.setLine(i, lines.get(i));
             }
         }
+        s.setGlowingText(glow);
         // Update the sign
         s.update();
     }

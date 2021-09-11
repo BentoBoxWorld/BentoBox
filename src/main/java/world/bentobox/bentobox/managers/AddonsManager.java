@@ -62,14 +62,18 @@ public class AddonsManager {
     private static final String GAMEMODE = "[gamemode].";
 
     @NonNull
-    private List<Addon> addons;
+    private final List<Addon> addons;
     @NonNull
-    private Map<@NonNull Addon, @Nullable AddonClassLoader> loaders;
+    private final Map<@NonNull Addon, @Nullable AddonClassLoader> loaders;
+    @NonNull
+    private final Map<@NonNull Addon, @Nullable Plugin> pladdons;
     @NonNull
     private final Map<String, Class<?>> classes;
-    private BentoBox plugin;
-    private @NonNull Map<@NonNull String, @Nullable GameModeAddon> worldNames;
-    private @NonNull Map<@NonNull Addon, @NonNull List<Listener>> listeners;
+    private final BentoBox plugin;
+    private @NonNull
+    final Map<@NonNull String, @Nullable GameModeAddon> worldNames;
+    private @NonNull
+    final Map<@NonNull Addon, @NonNull List<Listener>> listeners;
 
     private final PluginLoader pluginLoader;
 
@@ -77,6 +81,7 @@ public class AddonsManager {
         this.plugin = plugin;
         addons = new ArrayList<>();
         loaders = new HashMap<>();
+        pladdons = new HashMap<>();
         classes = new HashMap<>();
         listeners = new HashMap<>();
         worldNames = new HashMap<>();
@@ -159,6 +164,9 @@ public class AddonsManager {
                 if (pladdon instanceof Pladdon) {
                     addon = ((Pladdon) pladdon).getAddon();
                     addon.setDescription(AddonClassLoader.asDescription(data));
+                    // Mark pladdon as enabled.
+                    ((Pladdon) pladdon).setEnabled();
+                    pladdons.put(addon, pladdon);
                 } else {
                     plugin.logError("Could not load pladdon!");
                     return;
@@ -211,8 +219,7 @@ public class AddonsManager {
             // Run the onLoad.
             addon.onLoad();
             // if game mode, get the world name and generate
-            if (addon instanceof GameModeAddon && !addon.getState().equals(State.DISABLED)) {
-                GameModeAddon gameMode = (GameModeAddon) addon;
+            if (addon instanceof GameModeAddon gameMode && !addon.getState().equals(State.DISABLED)) {
                 if (!gameMode.getWorldSettings().getWorldName().isEmpty()) {
                     worldNames.put(gameMode.getWorldSettings().getWorldName().toLowerCase(Locale.ENGLISH), gameMode);
                 }
@@ -282,8 +289,7 @@ public class AddonsManager {
         plugin.log("Enabling " + addon.getDescription().getName() + " (" + addon.getDescription().getVersion() + ")...");
         try {
             // If this is a GameModeAddon create the worlds, register it and load the blueprints
-            if (addon instanceof GameModeAddon) {
-                GameModeAddon gameMode = (GameModeAddon) addon;
+            if (addon instanceof GameModeAddon gameMode) {
                 // Create the gameWorlds
                 gameMode.createWorlds();
                 plugin.getIWM().addGameMode(gameMode);
@@ -296,8 +302,7 @@ public class AddonsManager {
                 plugin.log(addon.getDescription().getName() + " is disabled.");
                 return;
             }
-            if (addon instanceof GameModeAddon) {
-                GameModeAddon gameMode = (GameModeAddon) addon;
+            if (addon instanceof GameModeAddon gameMode) {
                 // Set the worlds for the commands
                 gameMode.getPlayerCommand().ifPresent(c -> c.setWorld(gameMode.getOverWorld()));
                 gameMode.getAdminCommand().ifPresent(c -> c.setWorld(gameMode.getOverWorld()));
@@ -327,7 +332,7 @@ public class AddonsManager {
         plugin.logWarning("NOTE: DO NOT report this as a bug from BentoBox.");
         StringBuilder a = new StringBuilder();
         addon.getDescription().getAuthors().forEach(author -> a.append(author).append(" "));
-        plugin.getLogger().log(Level.SEVERE, "Please report this stack trace to the addon's author(s): " + a.toString(), e);
+        plugin.getLogger().log(Level.SEVERE, "Please report this stack trace to the addon's author(s): " + a, e);
 
     }
 
@@ -404,6 +409,7 @@ public class AddonsManager {
         plugin.getCommandsManager().unregisterCommands();
         // Clear all maps
         listeners.clear();
+        pladdons.clear();
         addons.clear();
         loaders.clear();
         classes.clear();
@@ -605,7 +611,7 @@ public class AddonsManager {
             try {
                 addon.onDisable();
             } catch (Exception e) {
-                plugin.logError("Error occured when disabling addon " + addon.getDescription().getName());
+                plugin.logError("Error occurred when disabling addon " + addon.getDescription().getName());
                 plugin.logError("Report this to the addon's author(s)");
                 addon.getDescription().getAuthors().forEach(plugin::logError);
                 plugin.logStacktrace(e);
@@ -621,7 +627,11 @@ public class AddonsManager {
             addon.setState(State.DISABLED);
             loaders.remove(addon);
         }
-
+        // Disable pladdons
+        if (pladdons.containsKey(addon)) {
+            this.pluginLoader.disablePlugin(Objects.requireNonNull(this.pladdons.get(addon)));
+            pladdons.remove(addon);
+        }
         // Remove it from the addons list
         addons.remove(addon);
     }

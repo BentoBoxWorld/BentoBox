@@ -9,8 +9,9 @@ import org.eclipse.jdt.annotation.NonNull;
  */
 public class Contributor {
 
-    private @NonNull String name;
-    private int commits;
+    private @NonNull
+    final String name;
+    private final int commits;
 
     public Contributor(@NonNull String name, int commits) {
         this.name = name;

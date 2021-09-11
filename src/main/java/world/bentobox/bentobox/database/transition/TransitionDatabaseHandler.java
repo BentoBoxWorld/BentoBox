@@ -19,8 +19,8 @@ import world.bentobox.bentobox.database.AbstractDatabaseHandler;
  */
 public class TransitionDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
 
-    private AbstractDatabaseHandler<T> fromHandler;
-    private AbstractDatabaseHandler<T> toHandler;
+    private final AbstractDatabaseHandler<T> fromHandler;
+    private final AbstractDatabaseHandler<T> toHandler;
 
     /**
      * Constructor

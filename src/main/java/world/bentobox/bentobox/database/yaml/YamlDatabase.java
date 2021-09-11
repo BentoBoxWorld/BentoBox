@@ -6,7 +6,7 @@ import world.bentobox.bentobox.database.DatabaseSetup;
 
 public class YamlDatabase implements DatabaseSetup {
 
-    private YamlDatabaseConnector connector = new YamlDatabaseConnector(BentoBox.getInstance());
+    private final YamlDatabaseConnector connector = new YamlDatabaseConnector(BentoBox.getInstance());
 
     /**
      * Get the config

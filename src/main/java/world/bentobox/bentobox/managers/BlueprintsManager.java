@@ -67,13 +67,15 @@ public class BlueprintsManager {
      * Inner map's key is the uniqueId of the blueprint bundle so it's
      * easy to get from a UI
      */
-    private @NonNull Map<GameModeAddon, List<BlueprintBundle>> blueprintBundles;
+    private @NonNull
+    final Map<GameModeAddon, List<BlueprintBundle>> blueprintBundles;
 
     /**
      * Map of blueprints. There can be many blueprints per game mode addon
      * Inner map's key is the blueprint's name so it's easy to get from a UI
      */
-    private @NonNull Map<GameModeAddon, List<Blueprint>> blueprints;
+    private @NonNull
+    final Map<GameModeAddon, List<Blueprint>> blueprints;
 
     /**
      * Gson used for serializing/deserializing the bundle class
@@ -82,7 +84,8 @@ public class BlueprintsManager {
 
     private final @NonNull BentoBox plugin;
 
-    private @NonNull Set<GameModeAddon> blueprintsLoaded;
+    private @NonNull
+    final Set<GameModeAddon> blueprintsLoaded;
 
 
     public BlueprintsManager(@NonNull BentoBox plugin) {

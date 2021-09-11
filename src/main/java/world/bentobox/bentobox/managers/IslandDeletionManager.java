@@ -26,12 +26,12 @@ import world.bentobox.bentobox.util.Util;
  */
 public class IslandDeletionManager implements Listener {
 
-    private BentoBox plugin;
+    private final BentoBox plugin;
     /**
      * Queue of islands to delete
      */
-    private Database<IslandDeletion> handler;
-    private Set<Location> inDeletion;
+    private final Database<IslandDeletion> handler;
+    private final Set<Location> inDeletion;
 
     public IslandDeletionManager(BentoBox plugin) {
         this.plugin = plugin;
@@ -52,7 +52,7 @@ public class IslandDeletionManager implements Listener {
             plugin.log("There are " + toBeDeleted.size() + " islands pending deletion.");
             toBeDeleted.forEach(di -> {
                 if (di.getLocation() == null || di.getLocation().getWorld() == null) {
-                    plugin.logError("Island queued for deletion refers to a non-existant game world. Skipping...");
+                    plugin.logError("Island queued for deletion refers to a non-existent game world. Skipping...");
                     toBeRemoved.add(di);
                 } else {
                     plugin.log("Resuming deletion of island at " + di.getLocation().getWorld().getName() + " " + Util.xyz(di.getLocation().toVector()));

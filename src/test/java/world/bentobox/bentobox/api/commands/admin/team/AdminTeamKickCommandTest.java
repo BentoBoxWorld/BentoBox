@@ -190,7 +190,7 @@ public class AdminTeamKickCommandTest {
         assertTrue(itl.canExecute(user, itl.getLabel(), Collections.singletonList("tastybento")));
         assertFalse(itl.execute(user, itl.getLabel(), Collections.singletonList("tastybento")));
         verify(user).sendMessage(eq("commands.admin.team.kick.cannot-kick-owner"));
-        verify(is).showMembers(any());
+        verify(user).sendMessage("commands.admin.info.team-members-title");
         verify(im, never()).removePlayer(eq(world), eq(notUUID));
         verify(pm, never()).clearHomeLocations(eq(world), eq(notUUID));
         verify(user, never()).sendMessage(eq("commands.admin.team.kick.success"), anyString(), anyString(), anyString(), anyString());

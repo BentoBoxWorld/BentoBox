@@ -320,7 +320,7 @@ public class BannedCommandsTest {
      */
     class MyWorldSettings implements WorldSettings {
 
-        private Map<String, Boolean> worldFlags = new HashMap<>();
+        private final Map<String, Boolean> worldFlags = new HashMap<>();
 
         @Override
         public @NonNull List<String> getOnLeaveCommands() {

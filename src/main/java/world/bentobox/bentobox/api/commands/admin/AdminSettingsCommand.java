@@ -38,8 +38,8 @@ public class AdminSettingsCommand extends CompositeCommand {
     private final List<String> PROTECTION_FLAG_NAMES;
     private Island island;
     private final List<String> SETTING_FLAG_NAMES;
-    private List<String> WORLD_SETTING_FLAG_NAMES;
-    private @NonNull Optional<Flag> flag;
+    private final List<String> WORLD_SETTING_FLAG_NAMES;
+    private @NonNull Optional<Flag> flag = Optional.empty();
     private boolean activeState;
     private int rank;
 
@@ -258,20 +258,14 @@ public class AdminSettingsCommand extends CompositeCommand {
             }
         } else if (args.size() == 4) {
             // Get flag in previous argument
-            options = getPlugin().getFlagsManager().getFlag(args.get(2).toUpperCase(Locale.ENGLISH)).map(f -> {
-                switch (f.getType()) {
-                case PROTECTION:
-                    return getPlugin().getRanksManager()                     
-                            .getRanks().entrySet().stream()
-                            .filter(en -> en.getValue() > RanksManager.BANNED_RANK && en.getValue() <= RanksManager.OWNER_RANK)
-                            .map(Entry::getKey)
-                            .map(user::getTranslation).collect(Collectors.toList());
-                case SETTING:
-                    return Arrays.asList(active, disabled);
-                default:
-                    return Collections.<String>emptyList();
-
-                }
+            options = getPlugin().getFlagsManager().getFlag(args.get(2).toUpperCase(Locale.ENGLISH)).map(f -> switch (f.getType()) {
+                case PROTECTION -> getPlugin().getRanksManager()
+                        .getRanks().entrySet().stream()
+                        .filter(en -> en.getValue() > RanksManager.BANNED_RANK && en.getValue() <= RanksManager.OWNER_RANK)
+                        .map(Entry::getKey)
+                        .map(user::getTranslation).collect(Collectors.toList());
+                case SETTING -> Arrays.asList(active, disabled);
+                default -> Collections.<String>emptyList();
             }).orElse(Collections.emptyList());
         }
         return Optional.of(Util.tabLimit(options, lastArg));

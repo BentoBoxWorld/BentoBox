@@ -3,7 +3,6 @@ package world.bentobox.bentobox.blueprints.conversation;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.bukkit.ChatColor;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.StringPrompt;
@@ -13,6 +12,8 @@ import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle;
+import world.bentobox.bentobox.util.Util;
+
 
 /**
  * Collects a description
@@ -22,8 +23,8 @@ import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle;
 public class DescriptionPrompt extends StringPrompt {
 
     private static final String DESCRIPTION = "description";
-    private GameModeAddon addon;
-    private BlueprintBundle bb;
+    private final GameModeAddon addon;
+    private final BlueprintBundle bb;
 
     public DescriptionPrompt(GameModeAddon addon, BlueprintBundle bb) {
         this.addon = addon;
@@ -57,7 +58,7 @@ public class DescriptionPrompt extends StringPrompt {
         if (context.getSessionData(DESCRIPTION) != null) {
             desc = ((List<String>) context.getSessionData(DESCRIPTION));
         }
-        desc.add(ChatColor.translateAlternateColorCodes('&', input));
+        desc.add(Util.translateColorCodes(input));
         context.setSessionData(DESCRIPTION, desc);
         return this;
     }

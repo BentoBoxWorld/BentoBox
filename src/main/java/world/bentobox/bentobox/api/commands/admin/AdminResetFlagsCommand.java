@@ -20,7 +20,7 @@ import world.bentobox.bentobox.util.Util;
  */
 public class AdminResetFlagsCommand extends ConfirmableCommand {
 
-    private List<String> options;
+    private final List<String> options;
 
     public AdminResetFlagsCommand(CompositeCommand parent) {
         super(parent, "resetflags");

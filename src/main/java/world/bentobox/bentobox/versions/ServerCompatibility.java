@@ -17,7 +17,7 @@ public class ServerCompatibility {
 
     // ---- SINGLETON ----
 
-    private static ServerCompatibility instance = new ServerCompatibility();
+    private static final ServerCompatibility instance = new ServerCompatibility();
 
     public static ServerCompatibility getInstance() {
         return instance;
@@ -54,7 +54,7 @@ public class ServerCompatibility {
          */
         INCOMPATIBLE(false);
 
-        private boolean canLaunch;
+        private final boolean canLaunch;
 
         Compatibility(boolean canLaunch) {
             this.canLaunch = canLaunch;
@@ -85,7 +85,7 @@ public class ServerCompatibility {
          */
         UNKNOWN(Compatibility.INCOMPATIBLE);
 
-        private Compatibility compatibility;
+        private final Compatibility compatibility;
         /**
          * @since 1.14.0
          */
@@ -190,7 +190,7 @@ public class ServerCompatibility {
         V1_17_1(Compatibility.COMPATIBLE)
         ;
 
-        private Compatibility compatibility;
+        private final Compatibility compatibility;
 
         ServerVersion(Compatibility compatibility) {
             this.compatibility = compatibility;
@@ -308,9 +308,9 @@ public class ServerCompatibility {
     }
 
     /**
-     * Returns whether the server runs on the specified softwares.
+     * Returns whether the server runs on the specified software.
      * @param softwares the {@link ServerSoftware}s to check.
-     * @return {@code true} if the server runs on on of these softwares, {@code false} otherwise.
+     * @return {@code true} if the server runs on on of these software, {@code false} otherwise.
      * @since 1.5.0
      */
     public boolean isSoftware(@NonNull ServerSoftware... softwares) {

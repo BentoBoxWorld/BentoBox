@@ -31,14 +31,14 @@ import world.bentobox.bentobox.util.Pair;
  */
 public class CleanSuperFlatListener extends FlagListener {
 
-    private BentoBox plugin = BentoBox.getInstance();
+    private final BentoBox plugin = BentoBox.getInstance();
 
     /**
      * Stores pairs of X,Z coordinates of chunks that need to be regenerated.
      * @since 1.1
      */
     @NonNull
-    private Queue<@NonNull Pair<@NonNull Integer, @NonNull Integer>> chunkQueue = new LinkedList<>();
+    private final Queue<@NonNull Pair<@NonNull Integer, @NonNull Integer>> chunkQueue = new LinkedList<>();
 
     /**
      * Task that runs each tick to regenerate chunks that are in the {@link #chunkQueue}.

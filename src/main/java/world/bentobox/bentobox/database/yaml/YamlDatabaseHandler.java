@@ -534,7 +534,7 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
     }
 
     private void setComment(@NonNull String comment, @NonNull YamlConfiguration config, @NonNull Map<String, String> yamlComments, @NonNull String parent) {
-        String random = "comment-" + UUID.randomUUID().toString();
+        String random = "comment-" + UUID.randomUUID();
         // Store placeholder
         config.set(parent + random, " ");
         // Create comment
@@ -554,20 +554,20 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         }
         // UUID has it's own serialization, that is not picked up automatically
         if (object instanceof UUID) {
-            return ((UUID)object).toString();
+            return object.toString();
         }
         // Only the world name is needed for worlds
-        if (object instanceof World) {
-            return ((World)object).getName();
+        if (object instanceof World w) {
+            return w.getName();
         }
         // Location
-        if (object instanceof Location) {
-            return Util.getStringLocation((Location)object);
+        if (object instanceof Location l) {
+            return Util.getStringLocation(l);
         }
         // Enums
-        if (object instanceof Enum) {
+        if (object instanceof Enum<?> e) {
             //Custom enums are a child of the Enum class. Just get the names of each one.
-            return ((Enum<?>)object).name();
+            return e.name();
         }
         return object;
     }

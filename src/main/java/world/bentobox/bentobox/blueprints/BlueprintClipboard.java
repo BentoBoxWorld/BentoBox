@@ -63,10 +63,10 @@ public class BlueprintClipboard {
     private boolean copying;
     private int index;
     private int lastPercentage;
-    private Map<Vector, List<BlueprintEntity>> bpEntities = new LinkedHashMap<>();
-    private Map<Vector, BlueprintBlock> bpAttachable = new LinkedHashMap<>();
-    private Map<Vector, BlueprintBlock> bpBlocks = new LinkedHashMap<>();
-    private BentoBox plugin = BentoBox.getInstance();
+    private final Map<Vector, List<BlueprintEntity>> bpEntities = new LinkedHashMap<>();
+    private final Map<Vector, BlueprintBlock> bpAttachable = new LinkedHashMap<>();
+    private final Map<Vector, BlueprintBlock> bpBlocks = new LinkedHashMap<>();
+    private final BentoBox plugin = BentoBox.getInstance();
 
     /**
      * Create a clipboard for blueprint
@@ -190,48 +190,7 @@ public class BlueprintClipboard {
         Vector pos = new Vector(x, y, z);
 
         // Set entities
-        List<BlueprintEntity> bpEnts = new ArrayList<>();
-        for (LivingEntity entity: entities) {
-            BlueprintEntity bpe = new BlueprintEntity();
-            bpe.setType(entity.getType());
-            bpe.setCustomName(entity.getCustomName());
-            if (entity instanceof Villager) {
-                setVillager(entity, bpe);
-            }
-            if (entity instanceof Colorable) {
-                Colorable c = (Colorable)entity;
-                if (c.getColor() != null) {
-                    bpe.setColor(c.getColor());
-                }
-            }
-            if (entity instanceof Tameable) {
-                bpe.setTamed(((Tameable)entity).isTamed());
-            }
-            if (entity instanceof ChestedHorse) {
-                bpe.setChest(((ChestedHorse)entity).isCarryingChest());
-            }
-            // Only set if child. Most animals are adults
-            if (entity instanceof Ageable && !((Ageable)entity).isAdult()) {
-                bpe.setAdult(false);
-            }
-            if (entity instanceof AbstractHorse) {
-                AbstractHorse horse = (AbstractHorse)entity;
-                bpe.setDomestication(horse.getDomestication());
-                bpe.setInventory(new HashMap<>());
-                for (int i = 0; i < horse.getInventory().getSize(); i++) {
-                    ItemStack item = horse.getInventory().getItem(i);
-                    if (item != null) {
-                        bpe.getInventory().put(i, item);
-                    }
-                }
-            }
-
-            if (entity instanceof Horse) {
-                Horse horse = (Horse)entity;
-                bpe.setStyle(horse.getStyle());
-            }
-            bpEnts.add(bpe);
-        }
+        List<BlueprintEntity> bpEnts = setEntities(entities);
         // Store
         if (!bpEnts.isEmpty()) {
             bpEntities.put(pos, bpEnts);
@@ -242,22 +201,31 @@ public class BlueprintClipboard {
             return true;
         }
 
+
+        BlueprintBlock b = bluePrintBlock(pos, block);
+        if (b != null) {
+            this.bpBlocks.put(pos, b);
+        }
+        return true;
+    }
+
+    private BlueprintBlock bluePrintBlock(Vector pos, Block block) {
         // Block state
         BlockState blockState = block.getState();
         BlueprintBlock b = new BlueprintBlock(block.getBlockData().getAsString());
         // Biome
         b.setBiome(block.getBiome());
         // Signs
-        if (blockState instanceof Sign) {
-            Sign sign = (Sign)blockState;
+        if (blockState instanceof Sign sign) {
             b.setSignLines(Arrays.asList(sign.getLines()));
+            b.setGlowingText(sign.isGlowingText());
         }
         // Set block data
         if (blockState.getData() instanceof Attachable) {
             // Placeholder for attachment
             bpBlocks.put(pos, new BlueprintBlock("minecraft:air"));
             bpAttachable.put(pos, b);
-            return true;
+            return null;
         }
 
         if (block.getType().equals(Material.BEDROCK)) {
@@ -272,9 +240,8 @@ public class BlueprintClipboard {
         }
 
         // Chests
-        if (blockState instanceof InventoryHolder) {
+        if (blockState instanceof InventoryHolder ih) {
             b.setInventory(new HashMap<>());
-            InventoryHolder ih = (InventoryHolder)blockState;
             for (int i = 0; i < ih.getInventory().getSize(); i++) {
                 ItemStack item = ih.getInventory().getItem(i);
                 if (item != null) {
@@ -283,17 +250,8 @@ public class BlueprintClipboard {
             }
         }
 
-        if (blockState instanceof CreatureSpawner) {
-            CreatureSpawner spawner = (CreatureSpawner)blockState;
-            BlueprintCreatureSpawner cs = new BlueprintCreatureSpawner();
-            cs.setSpawnedType(spawner.getSpawnedType());
-            cs.setDelay(spawner.getDelay());
-            cs.setMaxNearbyEntities(spawner.getMaxNearbyEntities());
-            cs.setMaxSpawnDelay(spawner.getMaxSpawnDelay());
-            cs.setMinSpawnDelay(spawner.getMinSpawnDelay());
-            cs.setRequiredPlayerRange(spawner.getRequiredPlayerRange());
-            cs.setSpawnRange(spawner.getSpawnRange());
-            b.setCreatureSpawner(cs);
+        if (blockState instanceof CreatureSpawner spawner) {
+            b.setCreatureSpawner(getSpawner(spawner));
         }
 
         // Banners
@@ -301,8 +259,62 @@ public class BlueprintClipboard {
             b.setBannerPatterns(((Banner) blockState).getPatterns());
         }
 
-        this.bpBlocks.put(pos, b);
-        return true;
+        return b;
+    }
+
+    private BlueprintCreatureSpawner getSpawner(CreatureSpawner spawner) {
+        BlueprintCreatureSpawner cs = new BlueprintCreatureSpawner();
+        cs.setSpawnedType(spawner.getSpawnedType());
+        cs.setDelay(spawner.getDelay());
+        cs.setMaxNearbyEntities(spawner.getMaxNearbyEntities());
+        cs.setMaxSpawnDelay(spawner.getMaxSpawnDelay());
+        cs.setMinSpawnDelay(spawner.getMinSpawnDelay());
+        cs.setRequiredPlayerRange(spawner.getRequiredPlayerRange());
+        cs.setSpawnRange(spawner.getSpawnRange());
+        return cs;
+    }
+
+    private List<BlueprintEntity> setEntities(Collection<LivingEntity> entities) {
+        List<BlueprintEntity> bpEnts = new ArrayList<>();
+        for (LivingEntity entity: entities) {
+            BlueprintEntity bpe = new BlueprintEntity();
+            bpe.setType(entity.getType());
+            bpe.setCustomName(entity.getCustomName());
+            if (entity instanceof Villager) {
+                setVillager(entity, bpe);
+            }
+            if (entity instanceof Colorable c) {
+                if (c.getColor() != null) {
+                    bpe.setColor(c.getColor());
+                }
+            }
+            if (entity instanceof Tameable) {
+                bpe.setTamed(((Tameable)entity).isTamed());
+            }
+            if (entity instanceof ChestedHorse) {
+                bpe.setChest(((ChestedHorse)entity).isCarryingChest());
+            }
+            // Only set if child. Most animals are adults
+            if (entity instanceof Ageable && !((Ageable)entity).isAdult()) {
+                bpe.setAdult(false);
+            }
+            if (entity instanceof AbstractHorse horse) {
+                bpe.setDomestication(horse.getDomestication());
+                bpe.setInventory(new HashMap<>());
+                for (int i = 0; i < horse.getInventory().getSize(); i++) {
+                    ItemStack item = horse.getInventory().getItem(i);
+                    if (item != null) {
+                        bpe.getInventory().put(i, item);
+                    }
+                }
+            }
+
+            if (entity instanceof Horse horse) {
+                bpe.setStyle(horse.getStyle());
+            }
+            bpEnts.add(bpe);
+        }
+        return bpEnts;
     }
 
     /**

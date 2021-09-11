@@ -21,10 +21,10 @@ import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle;
  */
 public class IconChanger implements PanelListener {
 
-    private GameModeAddon addon;
-    private BlueprintBundle bb;
-    private BlueprintManagementPanel blueprintManagementPanel;
-    private BentoBox plugin;
+    private final GameModeAddon addon;
+    private final BlueprintBundle bb;
+    private final BlueprintManagementPanel blueprintManagementPanel;
+    private final BentoBox plugin;
 
     /**
      * Change the icon of a blueprint bundle or blueprint

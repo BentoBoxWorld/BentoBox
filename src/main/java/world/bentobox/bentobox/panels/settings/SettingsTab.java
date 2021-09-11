@@ -135,27 +135,22 @@ public class SettingsTab implements Tab, ClickHandler {
             icons.put(5, Flags.LOCK.toPanelItem(plugin, user, island, false));
         }
         // Add the mode icon
-        switch(plugin.getPlayers().getFlagsDisplayMode(user.getUniqueId())) {
-        case ADVANCED:
-            icons.put(7, new PanelItemBuilder().icon(Material.GOLD_INGOT)
+        switch (plugin.getPlayers().getFlagsDisplayMode(user.getUniqueId())) {
+            case ADVANCED -> icons.put(7, new PanelItemBuilder().icon(Material.GOLD_INGOT)
                     .name(user.getTranslation(PROTECTION_PANEL + "mode.advanced.name"))
                     .description(user.getTranslation(PROTECTION_PANEL + "mode.advanced.description"), "",
                             user.getTranslation(CLICK_TO_SWITCH,
                                     TextVariables.NEXT, user.getTranslation(PROTECTION_PANEL + "mode.expert.name")))
                     .clickHandler(this)
                     .build());
-            break;
-        case EXPERT:
-            icons.put(7, new PanelItemBuilder().icon(Material.NETHER_BRICK)
+            case EXPERT -> icons.put(7, new PanelItemBuilder().icon(Material.NETHER_BRICK)
                     .name(user.getTranslation(PROTECTION_PANEL + "mode.expert.name"))
                     .description(user.getTranslation(PROTECTION_PANEL + "mode.expert.description"), "",
                             user.getTranslation(CLICK_TO_SWITCH,
                                     TextVariables.NEXT, user.getTranslation(PROTECTION_PANEL + "mode.basic.name")))
                     .clickHandler(this)
                     .build());
-            break;
-        default:
-            icons.put(7, new PanelItemBuilder().icon(Material.IRON_INGOT)
+            default -> icons.put(7, new PanelItemBuilder().icon(Material.IRON_INGOT)
                     .name(user.getTranslation(PROTECTION_PANEL + "mode.basic.name"))
                     .description(user.getTranslation(PROTECTION_PANEL + "mode.basic.description"), "",
                             user.getTranslation(CLICK_TO_SWITCH,
@@ -219,8 +214,7 @@ public class SettingsTab implements Tab, ClickHandler {
     public boolean onClick(Panel panel, User user, ClickType clickType, int slot) {
         // Cycle the mode
         plugin.getPlayers().setFlagsDisplayMode(user.getUniqueId(), plugin.getPlayers().getFlagsDisplayMode(user.getUniqueId()).getNext());
-        if (panel instanceof TabbedPanel) {
-            TabbedPanel tp = ((TabbedPanel)panel);
+        if (panel instanceof TabbedPanel tp) {
             tp.setActivePage(0);
             tp.refreshPanel();
             user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_OFF, 1F, 1F);

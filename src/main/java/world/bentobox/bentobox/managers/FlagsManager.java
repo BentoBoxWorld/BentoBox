@@ -23,8 +23,9 @@ import world.bentobox.bentobox.lists.Flags;
  */
 public class FlagsManager {
 
-    private @NonNull BentoBox plugin;
-    private Map<@NonNull Flag, @Nullable Addon> flags = new HashMap<>();
+    private @NonNull
+    final BentoBox plugin;
+    private final Map<@NonNull Flag, @Nullable Addon> flags = new HashMap<>();
 
     /**
      * Stores the flag listeners that have already been registered into Bukkit's API to avoid duplicates.
@@ -32,7 +33,7 @@ public class FlagsManager {
      * This helps to make sure each flag listener is loaded correctly.
      * @see #registerListeners()
      */
-    private Map<@NonNull Listener, @NonNull Boolean> registeredListeners = new HashMap<>();
+    private final Map<@NonNull Listener, @NonNull Boolean> registeredListeners = new HashMap<>();
 
     public FlagsManager(@NonNull BentoBox plugin) {
         this.plugin = plugin;

@@ -33,7 +33,7 @@ import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.util.Util;
 
 /**
- * BSB composite command
+ * BentoBox composite command. Provides an abstract implementation of a command.
  * @author tastybento
  * @author Poslovitch
  */
@@ -78,12 +78,12 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     /**
      * Map of sub commands
      */
-    private Map<String, CompositeCommand> subCommands;
+    private final Map<String, CompositeCommand> subCommands;
 
     /**
      * Map of aliases for subcommands
      */
-    private Map<String, CompositeCommand> subCommandAliases;
+    private final Map<String, CompositeCommand> subCommandAliases;
     /**
      * The command chain from the very top, e.g., island team promote
      */
@@ -93,7 +93,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * The prefix to be used in this command
      */
     @Nullable
-    private String permissionPrefix;
+    private final String permissionPrefix;
 
     /**
      * The world that this command operates in. This is an overworld and will cover any associated nether or end
@@ -104,17 +104,17 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     /**
      * The addon creating this command, if any
      */
-    private Addon addon;
+    private final Addon addon;
 
     /**
      * The top level label
      */
-    private String topLabel;
+    private final String topLabel;
 
     /**
      * Cool down tracker
      */
-    private Map<String, Map<String, Long>> cooldowns = new HashMap<>();
+    private final Map<String, Map<String, Long>> cooldowns = new HashMap<>();
 
     /**
      * Top level command
@@ -144,7 +144,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
 
         // Run setup
         setup();
-        if (!getSubCommand("help").isPresent() && !label.equals("help")) {
+        if (getSubCommand("help").isEmpty() && !label.equals("help")) {
             new DefaultHelpCommand(this);
         }
     }
@@ -204,11 +204,11 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
             p = p.getParent();
             index++;
         }
-        setDescription(COMMANDS + reference.toString() + ".description");
-        setParametersHelp(COMMANDS + reference.toString() + ".parameters");
+        setDescription(COMMANDS + reference + ".description");
+        setParametersHelp(COMMANDS + reference + ".parameters");
         setup();
         // If this command does not define its own help class, then use the default help command
-        if (!getSubCommand("help").isPresent() && !label.equals("help")) {
+        if (getSubCommand("help").isEmpty() && !label.equals("help")) {
             new DefaultHelpCommand(this);
         }
     }
@@ -278,7 +278,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
             // get the subcommand corresponding to the arg
             if (subCommand.hasSubCommands()) {
                 Optional<CompositeCommand> sub = subCommand.getSubCommand(arg);
-                if (!sub.isPresent()) {
+                if (sub.isEmpty()) {
                     return subCommand;
                 }
                 // Step down one
@@ -602,7 +602,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
             return options;
         }
         // Add any tab completion from the subcommand
-        options.addAll(command.tabComplete(User.getInstance(sender), alias, new LinkedList<>(Arrays.asList(args))).orElseGet(() -> new ArrayList<>()));
+        options.addAll(command.tabComplete(User.getInstance(sender), alias, new LinkedList<>(Arrays.asList(args))).orElseGet(ArrayList::new));
         if (command.hasSubCommands()) {
             options.addAll(getSubCommandLabels(sender, command));
         }
@@ -701,7 +701,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * @since 1.5.0
      */
     public void setCooldown(String uniqueId, String targetUUID, int timeInSeconds) {
-        cooldowns.computeIfAbsent(uniqueId, k -> new HashMap<>()).put(targetUUID, System.currentTimeMillis() + timeInSeconds * 1000);
+        cooldowns.computeIfAbsent(uniqueId, k -> new HashMap<>()).put(targetUUID, System.currentTimeMillis() + timeInSeconds * 1000L);
     }
 
     /**
@@ -711,7 +711,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * @param timeInSeconds - time in seconds to cool down
      */
     public void setCooldown(UUID uniqueId, UUID targetUUID, int timeInSeconds) {
-        cooldowns.computeIfAbsent(uniqueId.toString(), k -> new HashMap<>()).put(targetUUID == null ? null : targetUUID.toString(), System.currentTimeMillis() + timeInSeconds * 1000);
+        cooldowns.computeIfAbsent(uniqueId.toString(), k -> new HashMap<>()).put(targetUUID == null ? null : targetUUID.toString(), System.currentTimeMillis() + timeInSeconds * 1000L);
     }
 
     /**

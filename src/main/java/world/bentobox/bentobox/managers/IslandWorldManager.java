@@ -34,11 +34,11 @@ import world.bentobox.bentobox.lists.Flags;
  */
 public class IslandWorldManager {
 
-    private BentoBox plugin;
+    private final BentoBox plugin;
     /**
      * Map associating Worlds (Overworld, Nether and End) with the GameModeAddon that creates them.
      */
-    private Map<@NonNull World, @NonNull GameModeAddon> gameModes;
+    private final Map<@NonNull World, @NonNull GameModeAddon> gameModes;
 
     /**
      * Manages worlds registered with BentoBox

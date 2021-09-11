@@ -1,9 +1,9 @@
 package world.bentobox.bentobox.listeners;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.HumanEntity;
@@ -24,7 +24,7 @@ import world.bentobox.bentobox.api.user.User;
 
 public class PanelListenerManager implements Listener {
 
-    private static HashMap<UUID, Panel> openPanels = new HashMap<>();
+    private static final HashMap<UUID, Panel> openPanels = new HashMap<>();
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onInventoryClick(InventoryClickEvent event) {
@@ -97,8 +97,8 @@ public class PanelListenerManager implements Listener {
      */
     public static void closeAllPanels() {
         // Use stream clones to avoid concurrent modification exceptions
-        openPanels.values().stream().collect(Collectors.toList()).forEach(p ->
-        p.getInventory().getViewers().stream().collect(Collectors.toList()).forEach(HumanEntity::closeInventory));
+        new ArrayList<>(openPanels.values()).forEach(p ->
+        new ArrayList<>(p.getInventory().getViewers()).forEach(HumanEntity::closeInventory));
     }
 
     /**

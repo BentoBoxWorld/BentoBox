@@ -40,7 +40,7 @@ public class MongoDBDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
     private static final String MONGO_ID = "_id";
 
     private MongoCollection<Document> collection;
-    private DatabaseConnector dbConnecter;
+    private final DatabaseConnector dbConnecter;
 
     /**
      * Handles the connection to the database and creation of the initial database schema (tables) for
@@ -142,12 +142,11 @@ public class MongoDBDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
             completableFuture.complete(false);
             return completableFuture;
         }
-        if (!(instance instanceof DataObject)) {
+        if (!(instance instanceof DataObject dataObj)) {
             plugin.logError("This class is not a DataObject: " + instance.getClass().getName());
             completableFuture.complete(false);
             return completableFuture;
         }
-        DataObject dataObj = (DataObject)instance;
         try {
             Gson gson = getGson();
             String toStore = gson.toJson(instance);

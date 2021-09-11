@@ -93,7 +93,7 @@ public class NewIslandTest {
     @Mock
     private BlueprintBundle bpb;
 
-    private UUID uuid = UUID.randomUUID();
+    private final UUID uuid = UUID.randomUUID();
     @Mock
     private BlueprintsManager bpm;
 

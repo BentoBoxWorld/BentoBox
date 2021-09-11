@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
@@ -53,7 +52,7 @@ public class BlueprintManagementPanel {
     public static final int MAX_BP_SLOT = 35;
     private static final String INSTRUCTION = "instruction";
     private Entry<Integer, Blueprint> selected;
-    private Map<Integer, Blueprint> blueprints = new HashMap<>();
+    private final Map<Integer, Blueprint> blueprints = new HashMap<>();
     private final User user;
     private final GameModeAddon addon;
 
@@ -242,7 +241,7 @@ public class BlueprintManagementPanel {
     protected PanelItem getBundleIcon(BlueprintBundle bb) {
         return new PanelItemBuilder()
                 .name(t("edit-description"))
-                .description(bb.getDescription().stream().map(l -> ChatColor.translateAlternateColorCodes('&', l)).collect(Collectors.toList()))
+                .description(bb.getDescription().stream().map(Util::translateColorCodes).collect(Collectors.toList()))
                 .icon(bb.getIcon())
                 .clickHandler((panel, u, clickType, slot) -> {
                     u.closeInventory();
@@ -257,21 +256,22 @@ public class BlueprintManagementPanel {
         Material icon;
         String worldName;
         switch (env) {
-            case NORMAL:
+            case NORMAL -> {
                 icon = Material.GRASS_BLOCK;
                 worldName = normalBlueprint.getName();
-                break;
-            case NETHER:
+            }
+            case NETHER -> {
                 icon = Material.NETHERRACK;
                 worldName = netherBlueprint.getName();
-                break;
-            case THE_END:
+            }
+            case THE_END -> {
                 icon = Material.END_STONE;
                 worldName = endBlueprint.getName();
-                break;
-            default:
+            }
+            default -> {
                 icon = Material.STONE;
                 worldName = Util.prettifyText(env.name());
+            }
         }
 
         return new PanelItemBuilder()
@@ -339,7 +339,7 @@ public class BlueprintManagementPanel {
     protected PanelItem getBlueprintItem(GameModeAddon addon, int pos, BlueprintBundle bb, Blueprint blueprint) {
         // Create description
         List<String> desc = blueprint.getDescription() == null ? new ArrayList<>() : blueprint.getDescription();
-        desc = desc.stream().map(l -> ChatColor.translateAlternateColorCodes('&', l)).collect(Collectors.toList());
+        desc = desc.stream().map(Util::translateColorCodes).collect(Collectors.toList());
         if ((!blueprint.equals(endBlueprint) && !blueprint.equals(normalBlueprint) && !blueprint.equals(netherBlueprint))) {
             if ((pos > MIN_WORLD_SLOT && pos < MAX_WORLD_SLOT)) {
                 desc.add(t("remove"));

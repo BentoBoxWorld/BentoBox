@@ -20,7 +20,7 @@ import org.bukkit.plugin.java.JavaPlugin;
  * @author Poslovitch
  */
 public class FileLister{
-    private Plugin plugin;
+    private final Plugin plugin;
 
     public FileLister(Plugin level){
         plugin = level;

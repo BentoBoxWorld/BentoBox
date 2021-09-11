@@ -1,6 +1,5 @@
 package world.bentobox.bentobox.blueprints.worldedit;
 
-import java.io.IOException;
 import java.io.OutputStream;
 
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
@@ -12,18 +11,18 @@ import com.sk89q.worldedit.extent.clipboard.io.ClipboardWriter;
  */
 public class BlueprintClipboardWriter implements ClipboardWriter {
 
-    private OutputStream outputStream;
+    private final OutputStream outputStream;
 
     public BlueprintClipboardWriter(OutputStream outputStream) {
         this.outputStream = outputStream;
     }
     @Override
-    public void write(Clipboard clipboard) throws IOException {
+    public void write(Clipboard clipboard) {
         throw new UnsupportedOperationException(); // TODO
     }
 
     @Override
-    public void close() throws IOException {
+    public void close() {
         throw new UnsupportedOperationException(); // TODO
     }
 

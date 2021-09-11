@@ -35,13 +35,13 @@ public class BlueprintClipboardManager {
 
     private static final String LOAD_ERROR = "Could not load blueprint file - does not exist : ";
 
-    private File blueprintFolder;
+    private final File blueprintFolder;
 
     private BlueprintClipboard clipboard;
 
     private Gson gson;
 
-    private BentoBox plugin;
+    private final BentoBox plugin;
 
     public BlueprintClipboardManager(BentoBox plugin, File blueprintFolder) {
         this(plugin, blueprintFolder, null);
@@ -77,7 +77,7 @@ public class BlueprintClipboardManager {
     /**
      * Load a file to clipboard
      * @param fileName - filename in blueprints folder
-     * @throws IOException - if there's a load error with unziping or name
+     * @throws IOException - if there's a load error with unzipping or name
      */
     public void load(String fileName) throws IOException {
         clipboard = new BlueprintClipboard(loadBlueprint(fileName));

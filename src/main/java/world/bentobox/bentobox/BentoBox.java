@@ -263,7 +263,7 @@ public class BentoBox extends JavaPlugin {
     }
 
     private void fireCriticalError(String message, String error) {
-        logError("*****************CRITIAL ERROR!******************");
+        logError("*****************CRITICAL ERROR!******************");
         logError(message);
         logError(error + " Disabling BentoBox...");
         logError("*************************************************");

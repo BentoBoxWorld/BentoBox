@@ -20,7 +20,7 @@ import world.bentobox.bentobox.util.Util;
  */
 public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
 
-    private IslandTeamCommand itc;
+    private final IslandTeamCommand itc;
     private UUID playerUUID;
     private UUID prospectiveOwnerUUID;
 
@@ -50,16 +50,17 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
             user.sendMessage("commands.island.team.invite.errors.invalid-invite");
             return false;
         }
-        // Check rank to of inviter
-        Island island = getIslands().getIsland(getWorld(), prospectiveOwnerUUID);
-        String inviteUsage = getParent().getSubCommand("invite").map(CompositeCommand::getUsage).orElse("");
-        if (island == null || island.getRank(prospectiveOwnerUUID) < island.getRankCommand(inviteUsage)) {
-            user.sendMessage("commands.island.team.invite.errors.invalid-invite");
-            itc.removeInvite(playerUUID);
-            return false;
-        }
         Invite invite = itc.getInvite(playerUUID);
         if (invite.getType().equals(Type.TEAM)) {
+            // Check rank to of inviter
+            Island island = getIslands().getIsland(getWorld(), prospectiveOwnerUUID);
+            String inviteUsage = getParent().getSubCommand("invite").map(CompositeCommand::getUsage).orElse("");
+            if (island == null || island.getRank(prospectiveOwnerUUID) < island.getRankCommand(inviteUsage)) {
+                user.sendMessage("commands.island.team.invite.errors.invalid-invite");
+                itc.removeInvite(playerUUID);
+                return false;
+            }
+
             // Check if player is already in a team
             if (getIslands().inTeam(getWorld(), playerUUID)) {
                 user.sendMessage("commands.island.team.invite.errors.you-already-are-in-team");
@@ -82,14 +83,10 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
         // Get the invite
         Invite invite = itc.getInvite(playerUUID);
         switch (invite.getType()) {
-        case COOP:
-            askConfirmation(user, () -> acceptCoopInvite(user, invite));
-            break;
-        case TRUST:
-            askConfirmation(user, () -> acceptTrustInvite(user, invite));
-            break;
-        default:
-            askConfirmation(user, user.getTranslation("commands.island.team.invite.accept.confirmation"), () -> acceptTeamInvite(user, invite));
+        case COOP -> askConfirmation(user, () -> acceptCoopInvite(user, invite));
+        case TRUST -> askConfirmation(user, () -> acceptTrustInvite(user, invite));
+        default -> askConfirmation(user, user.getTranslation("commands.island.team.invite.accept.confirmation"),
+                () -> acceptTeamInvite(user, invite));
         }
         return true;
     }

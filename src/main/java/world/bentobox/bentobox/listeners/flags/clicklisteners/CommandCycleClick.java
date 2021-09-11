@@ -17,9 +17,9 @@ import world.bentobox.bentobox.managers.RanksManager;
  */
 public class CommandCycleClick implements ClickHandler {
 
-    private BentoBox plugin = BentoBox.getInstance();
-    private String command;
-    private CommandRankClickListener commandRankClickListener;
+    private final BentoBox plugin = BentoBox.getInstance();
+    private final String command;
+    private final CommandRankClickListener commandRankClickListener;
 
     public CommandCycleClick(CommandRankClickListener commandRankClickListener, String c) {
         this.commandRankClickListener = commandRankClickListener;

@@ -23,7 +23,7 @@ import world.bentobox.bentobox.util.Util;
 public class DefaultNewIslandLocationStrategy implements NewIslandLocationStrategy {
 
     /**
-     * The amount times to tolerate island check returning blocks without kwnon
+     * The amount times to tolerate island check returning blocks without known
      * island.
      */
     protected static final Integer MAX_UNOWNED_ISLANDS = 20;
@@ -102,7 +102,7 @@ public class DefaultNewIslandLocationStrategy implements NewIslandLocationStrate
         // Block check
         if (plugin.getIWM().isCheckForBlocks(world) 
                 && !plugin.getIWM().isUseOwnGenerator(world) 
-                && Arrays.asList(BlockFace.values()).stream().anyMatch(bf -> 
+                && Arrays.stream(BlockFace.values()).anyMatch(bf ->
                 !location.getBlock().getRelative(bf).isEmpty() 
                 && !location.getBlock().getRelative(bf).getType().equals(Material.WATER))) {
             // Block found

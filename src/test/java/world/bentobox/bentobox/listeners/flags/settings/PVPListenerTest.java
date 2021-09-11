@@ -230,8 +230,8 @@ public class PVPListenerTest {
         // Addon
         when(iwm.getAddon(any())).thenReturn(Optional.empty());
 
-        // Util strip spaces
-        when(Util.stripSpaceAfterColorCodes(anyString())).thenCallRealMethod();
+        // Util translate color codes (used in user translate methods)
+        when(Util.translateColorCodes(anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
 
     }
 
@@ -303,6 +303,8 @@ public class PVPListenerTest {
         when(world.getEnvironment()).thenReturn(World.Environment.NORMAL);
         when(damager.getWorld()).thenReturn(world);
         when(damagee.getWorld()).thenReturn(world);
+        when(damager.getLocation()).thenReturn(loc);
+        when(damagee.getLocation()).thenReturn(loc);
         EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(damager, damagee, EntityDamageEvent.DamageCause.ENTITY_ATTACK,
                 new EnumMap<>(ImmutableMap.of(DamageModifier.BASE, 0D)),
                 new EnumMap<DamageModifier, Function<? super Double, Double>>(ImmutableMap.of(DamageModifier.BASE, Functions.constant(-0.0))));
@@ -337,7 +339,8 @@ public class PVPListenerTest {
         when(world.getEnvironment()).thenReturn(World.Environment.NORMAL);
         when(damager.getWorld()).thenReturn(world);
         when(damagee.getWorld()).thenReturn(world);
-
+        when(damager.getLocation()).thenReturn(loc);
+        when(damagee.getLocation()).thenReturn(loc);
         // Protect visitors
         List<String> visitorProtectionList = new ArrayList<>();
         visitorProtectionList.add("ENTITY_ATTACK");
@@ -367,7 +370,8 @@ public class PVPListenerTest {
         Entity damagee = mock(Player.class);
         when(damager.getWorld()).thenReturn(world);
         when(damagee.getWorld()).thenReturn(world);
-
+        when(damager.getLocation()).thenReturn(loc);
+        when(damagee.getLocation()).thenReturn(loc);
         // Protect visitors
         when(iwm.getIvSettings(world)).thenReturn(Collections.singletonList("ENTITY_ATTACK"));
         // This player is a visitor
@@ -391,7 +395,8 @@ public class PVPListenerTest {
         when(world.getEnvironment()).thenReturn(World.Environment.NORMAL);
         when(damager.getWorld()).thenReturn(world);
         when(damagee.getWorld()).thenReturn(world);
-
+        when(damager.getLocation()).thenReturn(loc);
+        when(damagee.getLocation()).thenReturn(loc);
         // Protect visitors
         List<String> visitorProtectionList = new ArrayList<>();
         visitorProtectionList.add("ENTITY_ATTACK");
@@ -418,7 +423,8 @@ public class PVPListenerTest {
         when(world.getEnvironment()).thenReturn(World.Environment.NORMAL);
         when(damager.getWorld()).thenReturn(world);
         when(damagee.getWorld()).thenReturn(world);
-
+        when(damager.getLocation()).thenReturn(loc);
+        when(damagee.getLocation()).thenReturn(loc);
         // Protect visitors
         List<String> visitorProtectionList = new ArrayList<>();
         visitorProtectionList.add("ENTITY_ATTACK");
@@ -448,7 +454,8 @@ public class PVPListenerTest {
         when(world.getEnvironment()).thenReturn(World.Environment.NORMAL);
         when(damager.getWorld()).thenReturn(world);
         when(damagee.getWorld()).thenReturn(world);
-
+        when(damager.getLocation()).thenReturn(loc);
+        when(damagee.getLocation()).thenReturn(loc);
         // This player is a visitor
         when(im.userIsOnIsland(any(), any())).thenReturn(false);
 
@@ -532,9 +539,8 @@ public class PVPListenerTest {
         when(im.userIsOnIsland(any(), any())).thenReturn(false);
         when(iwm.getIvSettings(any())).thenReturn(Collections.singletonList("ENTITY_ATTACK"));
         new PVPListener().onEntityDamage(e);
-        // visitor should be protected
-        assertTrue(e.isCancelled());
-        verify(notifier).notify(any(), eq(Flags.INVINCIBLE_VISITORS.getHintReference()));
+        // visitor should not be protected
+        assertFalse(e.isCancelled());
 
     }
 
@@ -606,9 +612,8 @@ public class PVPListenerTest {
         when(im.userIsOnIsland(any(), any())).thenReturn(false);
         when(iwm.getIvSettings(any())).thenReturn(Collections.singletonList("ENTITY_ATTACK"));
         new PVPListener().onEntityDamage(e);
-        // visitor should be protected
-        assertTrue(e.isCancelled());
-        verify(notifier).notify(any(), eq(Flags.INVINCIBLE_VISITORS.getHintReference()));
+        // visitor should not be protected
+        assertFalse(e.isCancelled());
 
     }
 
@@ -723,9 +728,8 @@ public class PVPListenerTest {
         when(im.userIsOnIsland(any(), any())).thenReturn(false);
         when(iwm.getIvSettings(any())).thenReturn(Collections.singletonList("ENTITY_ATTACK"));
         new PVPListener().onFishing(pfe);
-        // visitor should be protected
-        assertTrue(pfe.isCancelled());
-        verify(notifier).notify(any(), eq(Flags.INVINCIBLE_VISITORS.getHintReference()));
+        // visitor should not be protected
+        assertFalse(pfe.isCancelled());
     }
 
     /**
@@ -785,10 +789,13 @@ public class PVPListenerTest {
         ThrownPotion tp = mock(ThrownPotion.class);
         when(tp.getShooter()).thenReturn(player);
         when(tp.getWorld()).thenReturn(world);
+        when(tp.getLocation()).thenReturn(loc);
         // Create a damage map
         Map<LivingEntity, Double> map = new HashMap<>();
         map.put(zombie, 100D);
         map.put(creeper, 10D);
+        when(zombie.getLocation()).thenReturn(loc);
+        when(creeper.getLocation()).thenReturn(loc);
         PotionSplashEvent e = new PotionSplashEvent(tp, map);
         new PVPListener().onSplashPotionSplash(e);
         assertFalse(e.isCancelled());
@@ -805,6 +812,7 @@ public class PVPListenerTest {
         ThrownPotion tp = mock(ThrownPotion.class);
         when(tp.getShooter()).thenReturn(player);
         when(tp.getWorld()).thenReturn(world);
+        when(tp.getLocation()).thenReturn(loc);
         // Create a damage map
         Map<LivingEntity, Double> map = new HashMap<>();
         map.put(player2, 100D);
@@ -835,6 +843,7 @@ public class PVPListenerTest {
         ThrownPotion tp = mock(ThrownPotion.class);
         when(tp.getShooter()).thenReturn(player);
         when(tp.getWorld()).thenReturn(world);
+        when(tp.getLocation()).thenReturn(loc);
         // Create a damage map
         Map<LivingEntity, Double> map = new HashMap<>();
         map.put(player, 100D);
@@ -862,6 +871,7 @@ public class PVPListenerTest {
         ThrownPotion tp = mock(ThrownPotion.class);
         when(tp.getShooter()).thenReturn(player);
         when(tp.getWorld()).thenReturn(world);
+        when(tp.getLocation()).thenReturn(loc);
         // Create a damage map
         Map<LivingEntity, Double> map = new HashMap<>();
         map.put(player2, 100D);
@@ -887,6 +897,7 @@ public class PVPListenerTest {
         ThrownPotion tp = mock(ThrownPotion.class);
         when(tp.getShooter()).thenReturn(player);
         when(tp.getWorld()).thenReturn(world);
+        when(tp.getLocation()).thenReturn(loc);
         // Create a damage map
         Map<LivingEntity, Double> map = new HashMap<>();
         map.put(player2, 100D);
@@ -898,11 +909,10 @@ public class PVPListenerTest {
         when(im.userIsOnIsland(any(), any())).thenReturn(false);
         when(iwm.getIvSettings(any())).thenReturn(Collections.singletonList("ENTITY_ATTACK"));
         new PVPListener().onSplashPotionSplash(e);
-        // visitor should be protected
-        assertFalse(e.getAffectedEntities().contains(player2));
+        // visitor should not be protected
+        assertTrue(e.getAffectedEntities().contains(player2));
         assertTrue(e.getAffectedEntities().contains(zombie));
         assertTrue(e.getAffectedEntities().contains(creeper));
-        verify(notifier).notify(any(), eq(Flags.INVINCIBLE_VISITORS.getHintReference()));
 
         // Wrong world
         wrongWorld();
@@ -919,6 +929,7 @@ public class PVPListenerTest {
         LingeringPotion tp = mock(LingeringPotion.class);
         when(tp.getShooter()).thenReturn(player);
         when(tp.getWorld()).thenReturn(world);
+        when(tp.getLocation()).thenReturn(loc);
         AreaEffectCloud cloud = mock(AreaEffectCloud.class);
         LingeringPotionSplashEvent e = new LingeringPotionSplashEvent(tp, cloud);
         new PVPListener().onLingeringPotionSplash(e);
@@ -938,6 +949,7 @@ public class PVPListenerTest {
         LingeringPotion tp = mock(LingeringPotion.class);
         when(tp.getShooter()).thenReturn(creeper);
         when(tp.getWorld()).thenReturn(world);
+        when(tp.getLocation()).thenReturn(loc);
         AreaEffectCloud cloud = mock(AreaEffectCloud.class);
         LingeringPotionSplashEvent e = new LingeringPotionSplashEvent(tp, cloud);
         new PVPListener().onLingeringPotionSplash(e);
@@ -959,6 +971,7 @@ public class PVPListenerTest {
         LingeringPotion tp = mock(LingeringPotion.class);
         when(tp.getShooter()).thenReturn(player);
         when(tp.getWorld()).thenReturn(world);
+        when(tp.getLocation()).thenReturn(loc);
         AreaEffectCloud cloud = mock(AreaEffectCloud.class);
         when(cloud.getWorld()).thenReturn(world);
         LingeringPotionSplashEvent e = new LingeringPotionSplashEvent(tp, cloud);
@@ -995,6 +1008,7 @@ public class PVPListenerTest {
         LingeringPotion tp = mock(LingeringPotion.class);
         when(tp.getShooter()).thenReturn(player);
         when(tp.getWorld()).thenReturn(world);
+        when(tp.getLocation()).thenReturn(loc);
         AreaEffectCloud cloud = mock(AreaEffectCloud.class);
         when(cloud.getWorld()).thenReturn(world);
         LingeringPotionSplashEvent e = new LingeringPotionSplashEvent(tp, cloud);
@@ -1029,6 +1043,7 @@ public class PVPListenerTest {
         LingeringPotion tp = mock(LingeringPotion.class);
         when(tp.getShooter()).thenReturn(player);
         when(tp.getWorld()).thenReturn(world);
+        when(tp.getLocation()).thenReturn(loc);
         AreaEffectCloud cloud = mock(AreaEffectCloud.class);
         when(cloud.getWorld()).thenReturn(world);
         LingeringPotionSplashEvent e = new LingeringPotionSplashEvent(tp, cloud);
@@ -1069,6 +1084,7 @@ public class PVPListenerTest {
         LingeringPotion tp = mock(LingeringPotion.class);
         when(tp.getShooter()).thenReturn(player);
         when(tp.getWorld()).thenReturn(world);
+        when(tp.getLocation()).thenReturn(loc);
         AreaEffectCloud cloud = mock(AreaEffectCloud.class);
         when(cloud.getWorld()).thenReturn(world);
         LingeringPotionSplashEvent e = new LingeringPotionSplashEvent(tp, cloud);

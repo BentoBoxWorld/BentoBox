@@ -1,7 +1,5 @@
 package world.bentobox.bentobox.listeners.flags.protection;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import org.bukkit.Location;
@@ -31,13 +29,13 @@ public class TNTListener extends FlagListener {
      * Contains {@link EntityType}s that generates an explosion.
      * @since 1.5.0
      */
-    private static final List<EntityType> TNT_TYPES = Collections.unmodifiableList(Arrays.asList(EntityType.PRIMED_TNT, EntityType.MINECART_TNT));
+    private static final List<EntityType> TNT_TYPES = List.of(EntityType.PRIMED_TNT, EntityType.MINECART_TNT);
 
     /**
      * Contains {@link Material}s that can be used to prime a TNT.
      * @since 1.5.0
      */
-    private static final List<Material> PRIMING_ITEMS = Collections.unmodifiableList(Arrays.asList(Material.FLINT_AND_STEEL, Material.FIRE_CHARGE));
+    private static final List<Material> PRIMING_ITEMS = List.of(Material.FLINT_AND_STEEL, Material.FIRE_CHARGE);
 
     /**
      * Protect TNT from being set light by a fire arrow
@@ -50,8 +48,7 @@ public class TNTListener extends FlagListener {
             return false;
         }
         // Stop TNT from being damaged if it is being caused by a visitor with a flaming arrow
-        if (e.getEntity() instanceof Projectile) {
-            Projectile projectile = (Projectile) e.getEntity();
+        if (e.getEntity() instanceof Projectile projectile) {
             // Find out who fired it
             if (projectile.getShooter() instanceof Player && projectile.getFireTicks() > 0
                     && !checkIsland(e, (Player)projectile.getShooter(), e.getBlock().getLocation(), Flags.TNT_PRIMING)) {

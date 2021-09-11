@@ -18,7 +18,7 @@ import world.bentobox.bentobox.lists.Flags;
 
 public class BlockEndDragon implements Listener {
 
-    private BentoBox plugin;
+    private final BentoBox plugin;
 
     public BlockEndDragon(@NonNull BentoBox plugin) {
         this.plugin = plugin;

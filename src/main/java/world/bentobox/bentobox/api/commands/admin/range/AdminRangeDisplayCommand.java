@@ -24,7 +24,7 @@ public class AdminRangeDisplayCommand extends CompositeCommand {
     private static final String HIDE = "hide";
 
     // Map of users to which ranges must be displayed
-    private Map<User, Integer> displayRanges = new HashMap<>();
+    private final Map<User, Integer> displayRanges = new HashMap<>();
 
     public AdminRangeDisplayCommand(CompositeCommand parent) {
         super(parent, DISPLAY, SHOW, HIDE);
@@ -46,29 +46,15 @@ public class AdminRangeDisplayCommand extends CompositeCommand {
 
         if (!displayRanges.containsKey(user)) {
             switch (label) {
-            case DISPLAY:
-            case SHOW:
-                showZones(user);
-                break;
-            case HIDE:
-                user.sendMessage("commands.admin.range.display.already-off");
-                break;
-            default:
-                showHelp(this, user);
-                break;
+                case DISPLAY, SHOW -> showZones(user);
+                case HIDE -> user.sendMessage("commands.admin.range.display.already-off");
+                default -> showHelp(this, user);
             }
         } else {
             switch (label) {
-            case DISPLAY:
-            case HIDE:
-                hideZones(user);
-                break;
-            case SHOW:
-                user.sendMessage("commands.admin.range.display.already-on");
-                break;
-            default:
-                showHelp(this, user);
-                break;
+                case DISPLAY, HIDE -> hideZones(user);
+                case SHOW -> user.sendMessage("commands.admin.range.display.already-on");
+                default -> showHelp(this, user);
             }
         }
 

@@ -54,4 +54,13 @@ public abstract class Pladdon extends JavaPlugin {
         }
 
     }
+
+
+    /**
+     * This method enables marks pladdons as enabled.
+     * By default, enable status is not set because onEnable and onLoad is not triggered.
+     */
+    public void setEnabled() {
+        this.setEnabled(true);
+    }
 }

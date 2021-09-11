@@ -13,13 +13,13 @@ public interface MetaDataAble {
     /**
      * @return the metaData
      */
-    public Optional<Map<String, MetaDataValue>> getMetaData();
+    Optional<Map<String, MetaDataValue>> getMetaData();
 
     /**
      * @param metaData the metaData to set
      * @since 1.15.4
      */
-    public void setMetaData(Map<String, MetaDataValue> metaData);
+    void setMetaData(Map<String, MetaDataValue> metaData);
 
     /**
      * Get meta data by key

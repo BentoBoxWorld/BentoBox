@@ -41,8 +41,8 @@ import world.bentobox.bentobox.versions.ServerCompatibility;
  */
 public class HurtingListener extends FlagListener {
 
-    private Map<Integer, Player> thrownPotions = new HashMap<>();
-    private Map<Entity, Entity> firedFireworks = new WeakHashMap<>();
+    private final Map<Integer, Player> thrownPotions = new HashMap<>();
+    private final Map<Entity, Entity> firedFireworks = new WeakHashMap<>();
 
     /**
      * Handles mob and monster protection
@@ -71,9 +71,8 @@ public class HurtingListener extends FlagListener {
         // Get the attacker
         if (damager instanceof Player) {
             checkIsland(e, (Player)damager, damager.getLocation(), flag);
-        } else if (damager instanceof Projectile) {
+        } else if (damager instanceof Projectile p) {
             // Find out who fired the projectile
-            Projectile p = (Projectile) damager;
             if (p.getShooter() instanceof Player && !checkIsland(e, (Player)p.getShooter(), damager.getLocation(), flag)) {
                 e.getEntity().setFireTicks(0);
             }
@@ -123,8 +122,7 @@ public class HurtingListener extends FlagListener {
     public void onSplashPotionSplash(final PotionSplashEvent e) {
         // Try to get the shooter
         Projectile projectile = e.getEntity();
-        if (projectile.getShooter() instanceof Player) {
-            Player attacker = (Player)projectile.getShooter();
+        if (projectile.getShooter() instanceof Player attacker) {
             // Run through all the affected entities
             for (LivingEntity entity: e.getAffectedEntities()) {
                 // Self damage

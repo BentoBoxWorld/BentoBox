@@ -162,7 +162,7 @@ public class IslandGoCommandTest {
 
         // Locales
         LocalesManager lm = mock(LocalesManager.class);
-        when(lm.get(Mockito.any(), Mockito.any())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
+        when(lm.get(any(), any())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
         when(plugin.getLocalesManager()).thenReturn(lm);
         // Return the same string
         PlaceholdersManager phm = mock(PlaceholdersManager.class);
@@ -172,8 +172,8 @@ public class IslandGoCommandTest {
         // Notifier
         when(plugin.getNotifier()).thenReturn(notifier);
 
-        // Util strip spaces
-        when(Util.stripSpaceAfterColorCodes(anyString())).thenCallRealMethod();
+        // Util translate color codes (used in user translate methods)
+        when(Util.translateColorCodes(anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
 
         // Command
         igc = new IslandGoCommand(ic);
@@ -184,6 +184,16 @@ public class IslandGoCommandTest {
     public void tearDown() {
         User.clearUsers();
         Mockito.framework().clearInlineMocks();
+    }
+
+    /**
+     * Test method for {@link IslandGoCommand#canExecute(User, String, List)}
+     */
+    @Test
+    public void testExecuteMidTeleport() {
+        when(im.isGoingHome(user)).thenReturn(true);
+        assertFalse(igc.canExecute(user, igc.getLabel(), Collections.emptyList()));
+        verify(player).sendMessage("commands.island.go.teleport");
     }
 
     /**

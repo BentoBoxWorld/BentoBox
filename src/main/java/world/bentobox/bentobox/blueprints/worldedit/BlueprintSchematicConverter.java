@@ -18,7 +18,7 @@ public class BlueprintSchematicConverter {
     private File blueprintFile;
 
     public BlueprintSchematicConverter(File blueprintFile) {
-        if(!BentoBox.getInstance().getHooks().getHook("WorldEdit").isPresent()) {
+        if(BentoBox.getInstance().getHooks().getHook("WorldEdit").isEmpty()) {
             BentoBox.getInstance().logError("WorldEdit must be installed to use that class !");
             return;
         }

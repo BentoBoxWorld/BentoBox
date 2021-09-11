@@ -14,11 +14,11 @@ import world.bentobox.bentobox.api.hooks.Hook;
  */
 public class HooksManager {
 
-    private BentoBox plugin;
+    private final BentoBox plugin;
     /**
      * List of successfully registered hooks.
      */
-    private List<Hook> hooks;
+    private final List<Hook> hooks;
 
     public HooksManager(BentoBox plugin) {
         this.plugin = plugin;

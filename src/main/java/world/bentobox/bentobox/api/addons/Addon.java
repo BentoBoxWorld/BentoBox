@@ -40,7 +40,7 @@ public abstract class Addon {
     private FileConfiguration config;
     private File dataFolder;
     private File file;
-    private Map<String, AddonRequestHandler> requestHandlers = new HashMap<>();
+    private final Map<String, AddonRequestHandler> requestHandlers = new HashMap<>();
 
     protected Addon() {
         state = State.DISABLED;

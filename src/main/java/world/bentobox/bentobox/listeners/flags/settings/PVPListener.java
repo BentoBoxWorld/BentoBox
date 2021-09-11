@@ -2,11 +2,12 @@ package world.bentobox.bentobox.listeners.flags.settings;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.WeakHashMap;
 
 import org.bukkit.Bukkit;
-import org.bukkit.World;
+import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.LivingEntity;
@@ -23,6 +24,7 @@ import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.LingeringPotionSplashEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.player.PlayerFishEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 
 import world.bentobox.bentobox.api.events.flags.FlagSettingChangeEvent;
 import world.bentobox.bentobox.api.flags.Flag;
@@ -38,8 +40,8 @@ import world.bentobox.bentobox.managers.RanksManager;
  */
 public class PVPListener extends FlagListener {
 
-    private Map<Integer, UUID> thrownPotions = new HashMap<>();
-    private Map<Entity, Player> firedFireworks = new WeakHashMap<>();
+    private final Map<Integer, UUID> thrownPotions = new HashMap<>();
+    private final Map<Entity, Player> firedFireworks = new WeakHashMap<>();
 
     /**
      * This method protects players from PVP if it is not allowed and from
@@ -52,6 +54,10 @@ public class PVPListener extends FlagListener {
         if (e.getEntity() instanceof Player && getPlugin().getIWM().inWorld(e.getEntity().getWorld())) {
             // Allow self damage or NPC attack because Citizens handles its own PVP
             if (e.getEntity().equals(e.getDamager()) || e.getEntity().hasMetadata("NPC")) {
+                return;
+            }
+            // Is PVP allowed here?
+            if (this.PVPAllowed(e.getEntity().getLocation())) {
                 return;
             }
             // Protect visitors
@@ -83,9 +89,8 @@ public class PVPListener extends FlagListener {
                 user.notify(getFlag(damager.getWorld()).getHintReference());
                 e.setCancelled(true);
             }
-        } else if (damager instanceof Projectile && ((Projectile)damager).getShooter() instanceof Player) {
+        } else if (damager instanceof Projectile p && ((Projectile)damager).getShooter() instanceof Player) {
             // Find out who fired the arrow
-            Projectile p = (Projectile) damager;
             Player shooter =(Player)p.getShooter();
             processDamage(e, damager, shooter, hurtEntity, flag);
         } else if (damager instanceof Firework && firedFireworks.containsKey(damager)) {
@@ -116,6 +121,10 @@ public class PVPListener extends FlagListener {
             if (e.getCaught().equals(e.getPlayer()) || e.getCaught().hasMetadata("NPC")) {
                 return;
             }
+            // Is PVP allowed here?
+            if (this.PVPAllowed(e.getCaught().getLocation())) {
+                return;
+            }
             // Protect visitors
             if (protectedVisitor((Player)e.getCaught())) {
                 User.getInstance(e.getPlayer()).notify(Flags.INVINCIBLE_VISITORS.getHintReference());
@@ -136,6 +145,10 @@ public class PVPListener extends FlagListener {
     public void onSplashPotionSplash(final PotionSplashEvent e) {
         if (e.getEntity().getShooter() instanceof Player && getPlugin().getIWM().inWorld(e.getEntity().getWorld())) {
             User user = User.getInstance((Player)e.getEntity().getShooter());
+            // Is PVP allowed here?
+            if (this.PVPAllowed(e.getEntity().getLocation())) {
+                return;
+            }
             // Run through affected entities and cancel the splash for protected players
             for (LivingEntity le : e.getAffectedEntities()) {
                 if (!le.getUniqueId().equals(user.getUniqueId()) && blockPVP(user, le, e, getFlag(e.getEntity().getWorld()))) {
@@ -197,17 +210,6 @@ public class PVPListener extends FlagListener {
         }
     }
 
-    private Flag getFlag(World w) {
-        switch (w.getEnvironment()) {
-        case NETHER:
-            return Flags.PVP_NETHER;
-        case THE_END:
-            return Flags.PVP_END;
-        default:
-            return Flags.PVP_OVERWORLD;
-        }
-    }
-
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled=true)
     public void onPlayerShootFireworkEvent(final EntityShootBowEvent e) {
         // Only care about players shooting fireworks
@@ -227,5 +229,36 @@ public class PVPListener extends FlagListener {
             // Send the message to island members (and coops and trusted)
             e.getIsland().getMemberSet(RanksManager.COOP_RANK).forEach(member -> User.getInstance(member).sendMessage(message));
         }
+    }
+
+    /**
+     * Warn visitors if the island they are teleporting to has PVP on
+     * @param e teleport event
+     */
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled=true)
+    public void onPlayerTeleport(PlayerTeleportEvent e) {
+        if (e.getTo() == null) {
+            return;
+        }
+        getIslands().getIslandAt(e.getTo()).ifPresent(island -> {
+            if (island.getMemberSet(RanksManager.COOP_RANK).contains(e.getPlayer().getUniqueId())) {
+                return;
+            }
+            if (island.isAllowed(Flags.PVP_OVERWORLD)) {
+                alertUser(e.getPlayer(), Flags.PVP_OVERWORLD);
+            }
+            if (island.isAllowed(Flags.PVP_NETHER)) {
+                alertUser(e.getPlayer(), Flags.PVP_NETHER);
+            }
+            if (island.isAllowed(Flags.PVP_END)) {
+                alertUser(e.getPlayer(), Flags.PVP_END);
+            }
+        });
+    }
+
+    private void alertUser(Player player, Flag flag) {
+        String message = "protection.flags." + flag.getID() + ".enabled";
+        Objects.requireNonNull(User.getInstance(player)).sendMessage(message);
+        player.playSound(player.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER,2F, 1F);
     }
 }

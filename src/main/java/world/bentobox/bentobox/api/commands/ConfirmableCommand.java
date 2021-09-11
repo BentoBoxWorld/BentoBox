@@ -20,7 +20,7 @@ public abstract class ConfirmableCommand extends CompositeCommand {
     /**
      * Confirmation tracker
      */
-    private static Map<User, Confirmer> toBeConfirmed = new HashMap<>();
+    private static final Map<User, Confirmer> toBeConfirmed = new HashMap<>();
 
     /**
      * Top level command
@@ -61,9 +61,9 @@ public abstract class ConfirmableCommand extends CompositeCommand {
     public void askConfirmation(User user, String message, Runnable confirmed) {
         // Check for pending confirmations
         if (toBeConfirmed.containsKey(user)) {
-            if (toBeConfirmed.get(user).getTopLabel().equals(getTopLabel()) && toBeConfirmed.get(user).getLabel().equalsIgnoreCase(getLabel())) {
-                toBeConfirmed.get(user).getTask().cancel();
-                Bukkit.getScheduler().runTask(getPlugin(), toBeConfirmed.get(user).getRunnable());
+            if (toBeConfirmed.get(user).topLabel().equals(getTopLabel()) && toBeConfirmed.get(user).label().equalsIgnoreCase(getLabel())) {
+                toBeConfirmed.get(user).task().cancel();
+                Bukkit.getScheduler().runTask(getPlugin(), toBeConfirmed.get(user).runnable());
                 toBeConfirmed.remove(user);
                 return;
             } else {
@@ -97,51 +97,9 @@ public abstract class ConfirmableCommand extends CompositeCommand {
     }
 
     /**
-     * Holds the data to run once the confirmation is given
-     * @author tastybento
+     * Record to hold the data to run once the confirmation is given
      *
      */
-    private class Confirmer {
-        private final String topLabel;
-        private final String label;
-        private final Runnable runnable;
-        private final BukkitTask task;
-
-        /**
-         * @param label - command label
-         * @param runnable - runnable to run when confirmed
-         * @param task - task ID to cancel when confirmed
-         */
-        Confirmer(String topLabel, String label, Runnable runnable, BukkitTask task) {
-            this.topLabel = topLabel;
-            this.label = label;
-            this.runnable = runnable;
-            this.task = task;
-        }
-        /**
-         * @return the topLabel
-         */
-        public String getTopLabel() {
-            return topLabel;
-        }
-        /**
-         * @return the label
-         */
-        public String getLabel() {
-            return label;
-        }
-        /**
-         * @return the runnable
-         */
-        public Runnable getRunnable() {
-            return runnable;
-        }
-        /**
-         * @return the task
-         */
-        public BukkitTask getTask() {
-            return task;
-        }
-    }
+    private record Confirmer (String topLabel, String label, Runnable runnable, BukkitTask task) { }
 
 }

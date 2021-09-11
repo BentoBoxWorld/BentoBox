@@ -422,7 +422,7 @@ public final class Flags {
             .listener(new PistonPushListener())
             .build();
 
-    private static InvincibleVisitorsListener ilv = new InvincibleVisitorsListener();
+    private static final InvincibleVisitorsListener ilv = new InvincibleVisitorsListener();
     public static final Flag INVINCIBLE_VISITORS = new Flag.Builder("INVINCIBLE_VISITORS", Material.DIAMOND_CHESTPLATE).type(Type.WORLD_SETTING)
             .listener(ilv).clickHandler(ilv).usePanel(true).build();
 

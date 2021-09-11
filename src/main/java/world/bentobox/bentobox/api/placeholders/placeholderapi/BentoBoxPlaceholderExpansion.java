@@ -3,7 +3,7 @@ package world.bentobox.bentobox.api.placeholders.placeholderapi;
 import world.bentobox.bentobox.BentoBox;
 
 public class BentoBoxPlaceholderExpansion extends BasicPlaceholderExpansion {
-    private BentoBox plugin;
+    private final BentoBox plugin;
 
     public BentoBoxPlaceholderExpansion(BentoBox plugin) {
         super();

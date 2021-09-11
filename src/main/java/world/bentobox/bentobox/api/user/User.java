@@ -47,7 +47,7 @@ import world.bentobox.bentobox.util.Util;
  */
 public class User implements MetaDataAble {
 
-    private static Map<UUID, User> users = new HashMap<>();
+    private static final Map<UUID, User> users = new HashMap<>();
 
     /**
      * Clears all users from the user list
@@ -136,7 +136,7 @@ public class User implements MetaDataAble {
     private static BentoBox plugin = BentoBox.getInstance();
 
     @Nullable
-    private Player player;
+    private final Player player;
     private OfflinePlayer offlinePlayer;
     private final UUID playerUUID;
     @Nullable
@@ -410,7 +410,7 @@ public class User implements MetaDataAble {
                 translation = plugin.getPlaceholdersManager().replacePlaceholders(player, translation);
             }
 
-            return Util.stripSpaceAfterColorCodes(ChatColor.translateAlternateColorCodes('&', translation));
+            return Util.translateColorCodes(translation);
         }
     }
 
@@ -618,10 +618,9 @@ public class User implements MetaDataAble {
         if (obj == null) {
             return false;
         }
-        if (!(obj instanceof User)) {
+        if (!(obj instanceof User other)) {
             return false;
         }
-        User other = (User) obj;
         if (playerUUID == null) {
             return other.playerUUID == null;
         } else return playerUUID.equals(other.playerUUID);

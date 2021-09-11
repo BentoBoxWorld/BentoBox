@@ -25,6 +25,8 @@ import world.bentobox.bentobox.api.panels.builders.PanelItemBuilder;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.RanksManager;
+import world.bentobox.bentobox.util.ItemParser;
+
 
 public class Flag implements Comparable<Flag> {
 
@@ -51,7 +53,8 @@ public class Flag implements Comparable<Flag> {
          */
         WORLD_SETTING(Material.GRASS_BLOCK);
 
-        private @NonNull Material icon;
+        private @NonNull
+        final Material icon;
 
         Type(@NonNull Material icon) {
             this.icon = icon;
@@ -91,14 +94,11 @@ public class Flag implements Comparable<Flag> {
          * @return next ranking mode
          */
         public Mode getNext() {
-            switch(this) {
-            case ADVANCED:
-                return EXPERT;
-            case BASIC:
-                return ADVANCED;
-            default:
-                return BASIC;
-            }
+            return switch (this) {
+            case ADVANCED -> EXPERT;
+            case BASIC -> ADVANCED;
+            default -> BASIC;
+            };
         }
 
         /**
@@ -107,14 +107,11 @@ public class Flag implements Comparable<Flag> {
          * @return true if ranked greater
          */
         public boolean isGreaterThan(Mode rank) {
-            switch(this) {
-            case EXPERT:
-                return rank.equals(BASIC) || rank.equals(ADVANCED);
-            case ADVANCED:
-                return rank.equals(BASIC);
-            default:
-                return false;
-            }
+            return switch (this) {
+            case EXPERT -> rank.equals(BASIC) || rank.equals(ADVANCED);
+            case ADVANCED -> rank.equals(BASIC);
+            default -> false;
+            };
         }
     }
 
@@ -207,12 +204,12 @@ public class Flag implements Comparable<Flag> {
             // Subflag support
             if (hasSubflags()) {
                 subflags.stream()
-                        .filter(subflag -> subflag.getType().equals(Type.WORLD_SETTING) || subflag.getType().equals(Type.PROTECTION))
-                        .forEach(subflag -> BentoBox.getInstance()
-                                            .getIWM()
-                                            .getWorldSettings(world)
-                                            .getWorldFlags()
-                                            .put(subflag.getID(), setting));
+                .filter(subflag -> subflag.getType().equals(Type.WORLD_SETTING) || subflag.getType().equals(Type.PROTECTION))
+                .forEach(subflag -> BentoBox.getInstance()
+                        .getIWM()
+                        .getWorldSettings(world)
+                        .getWorldFlags()
+                        .put(subflag.getID(), setting));
             }
 
             // Save config file
@@ -222,7 +219,7 @@ public class Flag implements Comparable<Flag> {
 
     /**
      * Set the original status of this flag for locations outside of island spaces.
-     * May be overriden by the the setting for this world.
+     * May be overridden by the setting for this world.
      * Does not affect subflags.
      * @param defaultSetting - true means it is allowed. false means it is not allowed
      */
@@ -300,10 +297,9 @@ public class Flag implements Comparable<Flag> {
         if (obj == null) {
             return false;
         }
-        if (!(obj instanceof Flag)) {
+        if (!(obj instanceof Flag other)) {
             return false;
         }
-        Flag other = (Flag) obj;
         if (id == null) {
             if (other.id != null) {
                 return false;
@@ -320,6 +316,13 @@ public class Flag implements Comparable<Flag> {
      */
     public String getNameReference() {
         return PROTECTION_FLAGS + this.id + ".name";
+    }
+
+    /**
+     * @return a locale reference for the icon of this protection flag
+     */
+    public String getIconReference() {
+        return PROTECTION_FLAGS + this.id + ".icon";
     }
 
     /**
@@ -384,7 +387,7 @@ public class Flag implements Comparable<Flag> {
         }
         // Start the flag conversion
         PanelItemBuilder pib = new PanelItemBuilder()
-                .icon(new ItemStack(icon))
+                .icon(ItemParser.parse(user.getTranslationOrNothing(this.getIconReference()), new ItemStack(icon)))
                 .name(user.getTranslation("protection.panel.flag-item.name-layout", TextVariables.NAME, user.getTranslation(getNameReference())))
                 .clickHandler(clickHandler)
                 .invisible(invisible);
@@ -392,16 +395,11 @@ public class Flag implements Comparable<Flag> {
             pib.description(user.getTranslation("protection.panel.flag-item.menu-layout", TextVariables.DESCRIPTION, user.getTranslation(getDescriptionReference())));
             return pib.build();
         }
-        switch(getType()) {
-        case PROTECTION:
-            return createProtectionFlag(plugin, user, island, pib).build();
-        case SETTING:
-            return createSettingFlag(user, island, pib).build();
-        case WORLD_SETTING:
-            return createWorldSettingFlag(user, pib).build();
-        default:
-            return pib.build();
-        }
+        return switch (getType()) {
+        case PROTECTION -> createProtectionFlag(plugin, user, island, pib).build();
+        case SETTING -> createSettingFlag(user, island, pib).build();
+        case WORLD_SETTING -> createWorldSettingFlag(user, pib).build();
+        };
     }
 
     private PanelItemBuilder createWorldSettingFlag(User user, PanelItemBuilder pib) {
@@ -484,8 +482,8 @@ public class Flag implements Comparable<Flag> {
      */
     public static class Builder {
         // Mandatory fields
-        private String id;
-        private Material icon;
+        private final String id;
+        private final Material icon;
 
         // Listener
         private Listener listener;
@@ -514,7 +512,7 @@ public class Flag implements Comparable<Flag> {
         private Mode mode = Mode.EXPERT;
 
         // Subflags
-        private Set<Flag> subflags;
+        private final Set<Flag> subflags;
 
         /**
          * Builder for making flags
@@ -638,7 +636,7 @@ public class Flag implements Comparable<Flag> {
          * Take extra care to ensure that subflags have the same number of possible values as the parent flag.
          * @param flags all Flags that are subflags
          * @return Builder - flag builder
-         * @since 1.17.0
+         * @since 1.17.1
          */
         public Builder subflags(Flag... flags) {
             this.subflags.addAll(Arrays.asList(flags));
@@ -653,17 +651,9 @@ public class Flag implements Comparable<Flag> {
             // If no clickHandler has been set, then apply default ones
             if (clickHandler == null) {
                 switch (type) {
-                case SETTING:
-                    clickHandler = new IslandToggleClick(id);
-                    break;
-                case WORLD_SETTING:
-                    clickHandler = new WorldToggleClick(id);
-                    break;
-                case PROTECTION:
-                    // Default option
-                default:
-                    clickHandler = new CycleClick(id);
-                    break;
+                case SETTING -> clickHandler = new IslandToggleClick(id);
+                case WORLD_SETTING -> clickHandler = new WorldToggleClick(id);
+                default -> clickHandler = new CycleClick(id);
                 }
             }
 
