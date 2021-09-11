@@ -426,7 +426,6 @@ public class BlueprintPaster {
                 s.setLine(i, lines.get(i));
             }
         }
-        s.setGlowingText(glow);
         // Update the sign
         s.update();
     }

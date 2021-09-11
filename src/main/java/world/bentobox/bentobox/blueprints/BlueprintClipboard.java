@@ -218,7 +218,6 @@ public class BlueprintClipboard {
         // Signs
         if (blockState instanceof Sign sign) {
             b.setSignLines(Arrays.asList(sign.getLines()));
-            b.setGlowingText(sign.isGlowingText());
         }
         // Set block data
         if (blockState.getData() instanceof Attachable) {
