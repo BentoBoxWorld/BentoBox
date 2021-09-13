@@ -192,6 +192,9 @@ public class BlueprintClipboardManager {
                 if (!entry.isDirectory()) {
                     unzipFiles(zipInputStream, filePath);
                 } else {
+                    if (!filePath.startsWith(blueprintFolder.getAbsolutePath())) {
+                        throw new IOException("Entry is outside of the target directory");
+                    }
                     Files.createDirectories(filePath);
                 }
 
@@ -202,6 +205,9 @@ public class BlueprintClipboardManager {
     }
 
     private void unzipFiles(final ZipInputStream zipInputStream, final Path unzipFilePath) throws IOException {
+        if (!unzipFilePath.toAbsolutePath().toString().startsWith(blueprintFolder.getAbsolutePath())) {
+            throw new IOException("Entry is outside of the target directory");
+        }
         try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(unzipFilePath.toAbsolutePath().toString()))) {
             byte[] bytesIn = new byte[1024];
             int read;
