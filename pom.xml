@@ -365,6 +365,7 @@
                         java.base/java.lang.reflect=ALL-UNNAMED
                         --add-opens
                         java.logging/java.util.logging=ALL-UNNAMED
+                        java.base/java.util.zip=ALL-UNNAMED
                         --illegal-access=permit
                     </argLine>
                 </configuration>
