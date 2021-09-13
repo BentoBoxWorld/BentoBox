@@ -45,7 +45,6 @@ import world.bentobox.bentobox.database.objects.adapters.LogEntryListAdapter;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.RanksManager;
-import world.bentobox.bentobox.util.IslandInfo;
 import world.bentobox.bentobox.util.Pair;
 import world.bentobox.bentobox.util.Util;
 
@@ -165,8 +164,6 @@ public class Island implements DataObject, MetaDataAble {
     private List<LogEntry> history = new LinkedList<>();
 
     @Expose
-    private int levelHandicap;
-    @Expose
     private Map<Environment, Location> spawnPoint = new EnumMap<>(Environment.class);
 
     /**
@@ -258,7 +255,6 @@ public class Island implements DataObject, MetaDataAble {
         this.gameMode = island.getGameMode();
         this.homes = new HashMap<>(island.getHomes());
         this.history.addAll(island.getHistory());
-        this.levelHandicap = island.getLevelHandicap();
         this.location = island.getProtectionCenter();
         this.maxEverProtectionRange = island.getMaxEverProtectionRange();
         this.maxHomes = island.getMaxHomes();
@@ -374,13 +370,6 @@ public class Island implements DataObject, MetaDataAble {
      */
     public Map<Flag, Integer> getFlags() {
         return flags;
-    }
-
-    /**
-     * @return the levelHandicap
-     */
-    public int getLevelHandicap() {
-        return levelHandicap;
     }
 
     /**
@@ -876,14 +865,6 @@ public class Island implements DataObject, MetaDataAble {
     }
 
     /**
-     * @param levelHandicap the levelHandicap to set
-     */
-    public void setLevelHandicap(int levelHandicap) {
-        this.levelHandicap = levelHandicap;
-        setChanged();
-    }
-
-    /**
      * @param members the members to set
      */
     public void setMembers(Map<UUID, Integer> members) {
@@ -1077,27 +1058,6 @@ public class Island implements DataObject, MetaDataAble {
     public void setWorld(World world) {
         this.world = world;
         setChanged();
-    }
-
-    /**
-     * Shows info of this island to this user.
-     * @param user the User who is requesting it
-     * @return always true
-     * @deprecated Use {@link IslandInfo#showInfo(User) instead}
-     */
-    @Deprecated
-    public boolean showInfo(User user) {
-        return new IslandInfo(this).showInfo(user);
-    }
-
-    /**
-     * Shows the members of this island to this user.
-     * @param user the User who is requesting it
-     * @deprecated Use {@link IslandInfo#showMembers(User) instead}
-     */
-    @Deprecated
-    public void showMembers(User user) {
-        new IslandInfo(this).showMembers(user);
     }
 
     /**
@@ -1580,7 +1540,7 @@ public class Island implements DataObject, MetaDataAble {
                 + ", name=" + name + ", createdDate=" + createdDate + ", updatedDate=" + updatedDate + ", owner="
                 + owner + ", members=" + members + ", maxMembers=" + maxMembers + ", spawn=" + spawn
                 + ", purgeProtected=" + purgeProtected + ", flags=" + flags + ", history=" + history
-                + ", levelHandicap=" + levelHandicap + ", spawnPoint=" + spawnPoint + ", doNotLoad=" + doNotLoad
+                + ", spawnPoint=" + spawnPoint + ", doNotLoad=" + doNotLoad
                 + ", cooldowns=" + cooldowns + ", commandRanks=" + commandRanks + ", reserved=" + reserved
                 + ", metaData=" + metaData + ", homes=" + homes + ", maxHomes=" + maxHomes + "]";
     }
