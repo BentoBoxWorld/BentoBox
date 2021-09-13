@@ -84,6 +84,8 @@
         <build.number>-LOCAL</build.number>
         <!-- This allows to change between versions. -->
         <build.version>1.17.4</build.version>
+        <sonar.organization>bentobox-world</sonar.organization>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     </properties>
 
     <!-- Profiles will allow to automatically change build version. -->
@@ -359,8 +361,10 @@
                         --add-opens java.base/java.nio.file=ALL-UNNAMED
                         --add-opens
                         java.base/java.nio.charset=ALL-UNNAMED
-                        --add-opens java.base/java.lang.reflect=ALL-UNNAMED
-                        --add-opens java.logging/java.util.logging=ALL-UNNAMED
+                        --add-opens
+                        java.base/java.lang.reflect=ALL-UNNAMED
+                        --add-opens
+                        java.logging/java.util.logging=ALL-UNNAMED
                         --illegal-access=permit
                     </argLine>
                 </configuration>
