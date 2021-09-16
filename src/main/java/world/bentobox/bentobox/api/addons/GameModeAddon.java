@@ -52,9 +52,9 @@ public abstract class GameModeAddon extends Addon {
     public abstract WorldSettings getWorldSettings();
 
     /**
-     * Checks if a player is in any of the island worlds
-     * @param loc - player to check
-     * @return true if in a world or false if not
+     * Checks if location is governed by this game mode
+     * @param loc - location to check
+     * @return true if location in covered by this addon or false if not
      */
     public boolean inWorld(Location loc) {
         return Util.sameWorld(loc.getWorld(), islandWorld);
@@ -63,7 +63,7 @@ public abstract class GameModeAddon extends Addon {
     /**
      * Checks if world is governed by this game mode
      * @param world - world to check
-     * @return true if in a world or false if not
+     * @return true if world in covered by this addon or false if not
      * @since 1.2.0
      */
     public boolean inWorld(World world) {
