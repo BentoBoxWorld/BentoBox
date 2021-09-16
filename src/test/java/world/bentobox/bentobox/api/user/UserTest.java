@@ -476,12 +476,6 @@ public class UserTest {
         assertTrue(user1.hashCode() == user2.hashCode());
     }
 
-    @Test
-    public void testNullPlayer() {
-        User user = User.getInstance((Player)null);
-        assertNull(user);
-    }
-
     /**
      * Test for {@link User#getPermissionValue(String, int)}
      */

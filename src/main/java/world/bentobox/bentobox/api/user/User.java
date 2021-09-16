@@ -61,8 +61,8 @@ public class User implements MetaDataAble {
      * @param sender - command sender, e.g. console
      * @return user - user
      */
-    @Nullable
-    public static User getInstance(CommandSender sender) {
+    @NonNull
+    public static User getInstance(@NonNull CommandSender sender) {
         if (sender instanceof Player) {
             return getInstance((Player)sender);
         }
@@ -71,15 +71,12 @@ public class User implements MetaDataAble {
     }
 
     /**
-     * Gets an instance of User from a Player object
+     * Gets an instance of User from a Player object.
      * @param player - the player
      * @return user - user
      */
-    @Nullable
-    public static User getInstance(Player player) {
-        if (player == null) {
-            return null;
-        }
+    @NonNull
+    public static User getInstance(@NonNull Player player) {
         if (users.containsKey(player.getUniqueId())) {
             return users.get(player.getUniqueId());
         }
@@ -87,15 +84,12 @@ public class User implements MetaDataAble {
     }
 
     /**
-     * Gets an instance of User from a UUID
+     * Gets an instance of User from a UUID.
      * @param uuid - UUID
      * @return user - user
      */
-    @Nullable
-    public static User getInstance(@Nullable UUID uuid) {
-        if (uuid == null) {
-            return null;
-        }
+    @NonNull
+    public static User getInstance(@NonNull UUID uuid) {
         if (users.containsKey(uuid)) {
             return users.get(uuid);
         }
@@ -109,11 +103,8 @@ public class User implements MetaDataAble {
      * @return user
      * @since 1.3.0
      */
-    @Nullable
-    public static User getInstance(OfflinePlayer offlinePlayer) {
-        if (offlinePlayer == null) {
-            return null;
-        }
+    @NonNull
+    public static User getInstance(@NonNull OfflinePlayer offlinePlayer) {
         if (users.containsKey(offlinePlayer.getUniqueId())) {
             return users.get(offlinePlayer.getUniqueId());
         }
