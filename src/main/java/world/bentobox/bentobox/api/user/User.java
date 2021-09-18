@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -175,16 +176,17 @@ public class User implements MetaDataAble {
         return sender.getEffectivePermissions();
     }
 
-    @Nullable
+    @NonNull
     public PlayerInventory getInventory() {
-        return player != null ? player.getInventory() : null;
+        return Objects.requireNonNull(player, "getInventory can only be called for online players!").getInventory();
     }
 
-    @Nullable
+    @NonNull
     public Location getLocation() {
-        return player != null ? player.getLocation() : null;
+        return Objects.requireNonNull(player, "getLocation can only be called for online players!").getLocation();
     }
 
+    @NonNull
     public String getName() {
         return player != null ? player.getName() : plugin.getPlayers().getName(playerUUID);
     }
