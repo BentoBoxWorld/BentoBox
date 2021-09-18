@@ -562,7 +562,7 @@ public class Island implements DataObject, MetaDataAble {
     public void setMaxEverProtectionRange(int maxEverProtectionRange) {
         this.maxEverProtectionRange = maxEverProtectionRange;
         if (maxEverProtectionRange > this.range) {
-            maxEverProtectionRange = this.range;
+            this.maxEverProtectionRange = this.range;
         }
         setChanged();
     }
@@ -604,7 +604,7 @@ public class Island implements DataObject, MetaDataAble {
     }
 
     @Override
-    public String getUniqueId() {
+    public @NonNull String getUniqueId() {
         return uniqueId;
     }
 
