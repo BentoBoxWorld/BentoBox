@@ -75,7 +75,6 @@ public class Island implements DataObject, MetaDataAble {
     //// Island ////
     // The center of the island space
     @Expose
-    @Nullable
     private Location center;
 
     /**
@@ -342,9 +341,9 @@ public class Island implements DataObject, MetaDataAble {
      * Returns a clone of the location of the center of this island.
      * @return clone of the center Location
      */
-    @Nullable
+    @NonNull
     public Location getCenter(){
-        return center == null ? null : center.clone();
+        return Objects.requireNonNull(center, "Island getCenter requires a non-null center").clone();
     }
 
     /**
@@ -798,10 +797,8 @@ public class Island implements DataObject, MetaDataAble {
     /**
      * @param center the center to set
      */
-    public void setCenter(@Nullable Location center) {
-        if (center != null) {
-            this.world = center.getWorld();
-        }
+    public void setCenter(@NonNull Location center) {
+        this.world = center.getWorld();
         this.center = center;
         setChanged();
     }
