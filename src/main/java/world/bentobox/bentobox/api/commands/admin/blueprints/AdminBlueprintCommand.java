@@ -70,15 +70,16 @@ public class AdminBlueprintCommand extends ConfirmableCommand {
 
             if (clipboards.containsKey(user.getUniqueId())) {
                 BlueprintClipboard clipboard = clipboards.get(user.getUniqueId());
-                if (clipboard.getPos1() != null && clipboard.getPos2() != null) {
-                    paintAxis(user, clipboard);
-                }
+                paintAxis(user, clipboard);
             }
 
         }, 20, 20));
     }
 
     private void paintAxis(User user, BlueprintClipboard clipboard) {
+        if (clipboard.getPos1() == null || clipboard.getPos2() == null) {
+            return;
+        }
         int minX = Math.min(clipboard.getPos1().getBlockX(), clipboard.getPos2().getBlockX());
         int minY = Math.min(clipboard.getPos1().getBlockY(), clipboard.getPos2().getBlockY());
         int minZ = Math.min(clipboard.getPos1().getBlockZ(), clipboard.getPos2().getBlockZ());
