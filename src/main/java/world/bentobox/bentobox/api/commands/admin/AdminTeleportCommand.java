@@ -86,8 +86,12 @@ public class AdminTeleportCommand extends CompositeCommand {
         } else if (getLabel().equals("tpend")) {
             world = getPlugin().getIWM().getEndWorld(getWorld());
         }
+        if (world == null) {
+            user.sendMessage("general.errors.no-safe-location-found");
+            return false;
+        }
         Location warpSpot = getSpot(world);
-        if (world == null || warpSpot == null) {
+        if (warpSpot == null) {
             user.sendMessage("general.errors.no-safe-location-found");
             return false;
         }
@@ -118,7 +122,7 @@ public class AdminTeleportCommand extends CompositeCommand {
             return island.getSpawnPoint(world.getEnvironment());
         }
         // Return the default island protection center
-        return getIslands().getIslandLocation(getWorld(), targetUUID).toVector().toLocation(world);
+        return island.getProtectionCenter().toVector().toLocation(world);
     }
 
     @Override
