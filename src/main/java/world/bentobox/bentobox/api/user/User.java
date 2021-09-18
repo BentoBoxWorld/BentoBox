@@ -192,10 +192,12 @@ public class User implements MetaDataAble {
     }
 
     /**
+     * Check if the User is a player before calling this method. {@link #isPlayer()}
      * @return the player
      */
+    @NonNull
     public Player getPlayer() {
-        return player;
+        return Objects.requireNonNull(player, "User is not a player!");
     }
 
     /**
@@ -206,11 +208,13 @@ public class User implements MetaDataAble {
     }
 
     /**
+     * Use {@link #isOfflinePlayer()} before calling this method
      * @return the offline player
      * @since 1.3.0
      */
+    @NonNull
     public OfflinePlayer getOfflinePlayer() {
-        return offlinePlayer;
+        return Objects.requireNonNull(offlinePlayer, "User is not an OfflinePlayer!");
     }
 
     /**
