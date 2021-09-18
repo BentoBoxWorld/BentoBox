@@ -432,7 +432,7 @@ public class Island implements DataObject, MetaDataAble {
      * @return the minProtectedX
      */
     public int getMinProtectedX() {
-        return getProtectionCenter() == null ? 0 : Math.max(getMinX(), getProtectionCenter().getBlockX() - protectionRange);
+        return Math.max(getMinX(), getProtectionCenter().getBlockX() - protectionRange);
     }
 
     /**
@@ -442,7 +442,7 @@ public class Island implements DataObject, MetaDataAble {
      * @since 1.5.2
      */
     public int getMaxProtectedX() {
-        return getProtectionCenter() == null ? 0 : Math.min(getMaxX(), getProtectionCenter().getBlockX() + protectionRange);
+        return Math.min(getMaxX(), getProtectionCenter().getBlockX() + protectionRange);
     }
 
     /**
@@ -451,7 +451,7 @@ public class Island implements DataObject, MetaDataAble {
      * @return the minProtectedZ
      */
     public int getMinProtectedZ() {
-        return getProtectionCenter() == null ? 0 : Math.max(getMinZ(), getProtectionCenter().getBlockZ() - protectionRange);
+        return Math.max(getMinZ(), getProtectionCenter().getBlockZ() - protectionRange);
     }
 
     /**
@@ -461,7 +461,7 @@ public class Island implements DataObject, MetaDataAble {
      * @since 1.5.2
      */
     public int getMaxProtectedZ() {
-        return getProtectionCenter() == null ? 0 : Math.min(getMaxZ(), getProtectionCenter().getBlockZ() + protectionRange);
+        return Math.min(getMaxZ(), getProtectionCenter().getBlockZ() + protectionRange);
     }
 
     /**
@@ -1380,7 +1380,7 @@ public class Island implements DataObject, MetaDataAble {
      * @return a clone of the protection center location
      * @since 1.16.0
      */
-    @Nullable
+    @NonNull
     public Location getProtectionCenter() {
         return location == null ? getCenter() : location.clone();
     }
