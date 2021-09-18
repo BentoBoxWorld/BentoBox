@@ -365,7 +365,6 @@
                         java.base/java.lang.reflect=ALL-UNNAMED
                         --add-opens
                         java.logging/java.util.logging=ALL-UNNAMED
-                        --illegal-access=permit
                     </argLine>
                 </configuration>
             </plugin>
@@ -384,12 +383,12 @@
                     <failOnError>false</failOnError>
                     <additionalJOption>-Xdoclint:none</additionalJOption>
                     <!-- To compile with Java 11, this tag may be required -->
-                    <!-- <javadocExecutable>${java.home}/bin/javadoc</javadocExecutable> -->
+                    <javadocExecutable>${java.home}/bin/javadoc</javadocExecutable>
                 </configuration>
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>
-                        <phase>install</phase>
+                        <phase>package</phase>
                         <goals>
                             <goal>jar</goal>
                         </goals>
