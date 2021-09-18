@@ -678,7 +678,7 @@ public class IslandWorldManager {
      * @return data folder file object or the plugin's data folder if none found
      */
     public File getDataFolder(@NonNull World world) {
-        return getAddon(world).map(GameModeAddon::getDataFolder).orElseGet(() -> plugin.getDataFolder());
+        return getAddon(world).map(GameModeAddon::getDataFolder).orElseGet(plugin::getDataFolder);
     }
 
     /**

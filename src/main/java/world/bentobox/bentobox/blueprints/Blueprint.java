@@ -79,7 +79,7 @@ public class Blueprint {
     /**
      * @return the icon
      */
-    public Material getIcon() {
+    public @NonNull Material getIcon() {
         return icon;
     }
     /**

@@ -158,7 +158,7 @@ public final class AddonDescription {
      * @return the permissions
      * @since 1.13.0
      */
-    public ConfigurationSection getPermissions() {
+    public @Nullable ConfigurationSection getPermissions() {
         return permissions;
     }
 

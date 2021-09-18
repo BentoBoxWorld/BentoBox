@@ -218,7 +218,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * subcommands until it finds the right object and then runs execute on it.
      */
     @Override
-    public boolean execute(CommandSender sender, String label, String[] args) {
+    public boolean execute(@NonNull CommandSender sender, @NonNull String label, String[] args) {
         // Get the User instance for this sender
         User user = User.getInstance(sender);
         // Fire an event to see if this command should be cancelled
@@ -352,7 +352,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     }
 
     @Override
-    public BentoBox getPlugin() {
+    public @NonNull BentoBox getPlugin() {
         return plugin;
     }
 
@@ -422,7 +422,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     }
 
     @Override
-    public String getUsage() {
+    public @NonNull String getUsage() {
         return "/" + usage;
     }
 
@@ -521,7 +521,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * @return The instance of this {@link Command}.
      */
     @Override
-    public Command setDescription(String description) {
+    public @NonNull Command setDescription(@NonNull String description) {
         super.setDescription(description);
         return this;
     }
@@ -575,7 +575,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * This creates the full linking chain of commands
      */
     @Override
-    public Command setUsage(String usage) {
+    public @NonNull Command setUsage(@NonNull String usage) {
         // Go up the chain
         CompositeCommand parentCommand = getParent();
         StringBuilder u = new StringBuilder().append(getLabel()).append(" ").append(usage);
@@ -590,7 +590,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
 
     @Override
     @NonNull
-    public List<String> tabComplete(final CommandSender sender, final String alias, final String[] args) {
+    public List<String> tabComplete(final @NonNull CommandSender sender, final @NonNull String alias, final String[] args) {
         List<String> options = new ArrayList<>();
         // Get command object based on args entered so far
         CompositeCommand command = getCommandFromArgs(args);

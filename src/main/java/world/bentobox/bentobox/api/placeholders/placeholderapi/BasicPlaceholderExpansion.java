@@ -24,7 +24,7 @@ abstract class BasicPlaceholderExpansion extends PlaceholderExpansion {
     }
 
     @Override
-    public String getIdentifier() {
+    public @NonNull String getIdentifier() {
         return getName().toLowerCase(Locale.ENGLISH);
     }
 
@@ -42,7 +42,7 @@ abstract class BasicPlaceholderExpansion extends PlaceholderExpansion {
     }
 
     @Override
-    public String onPlaceholderRequest(Player p, String placeholder) {
+    public String onPlaceholderRequest(Player p, @NonNull String placeholder) {
         if (placeholders.containsKey(placeholder)) {
             return placeholders.get(placeholder).onReplace(User.getInstance(p));
         }

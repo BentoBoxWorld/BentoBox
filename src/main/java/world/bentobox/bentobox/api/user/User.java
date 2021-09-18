@@ -135,7 +135,7 @@ public class User implements MetaDataAble {
 
     private Addon addon;
 
-    private User(CommandSender sender) {
+    private User(@Nullable CommandSender sender) {
         player = null;
         playerUUID = null;
         this.sender = sender;

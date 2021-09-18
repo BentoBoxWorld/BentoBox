@@ -12,6 +12,7 @@ import java.util.Objects;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
+import org.eclipse.jdt.annotation.NonNull;
 import world.bentobox.bentobox.BentoBox;
 
 /**
@@ -55,7 +56,7 @@ public abstract class BentoBoxEvent extends Event {
      */
     @Override
     @Deprecated
-    public HandlerList getHandlers() {
+    public @NonNull HandlerList getHandlers() {
         return getHandlerList();
     }
 

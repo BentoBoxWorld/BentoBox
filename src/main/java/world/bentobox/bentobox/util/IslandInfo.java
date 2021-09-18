@@ -28,7 +28,7 @@ public class IslandInfo {
 
 
     /**
-     * @param plugin
+     * Get island Info
      * @param island Island to show info
      */
     public IslandInfo(Island island) {

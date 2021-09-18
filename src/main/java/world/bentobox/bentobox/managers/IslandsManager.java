@@ -129,7 +129,7 @@ public class IslandsManager {
      * Used only for testing. Sets the database to a mock database.
      * @param handler - handler
      */
-    public void setHandler(Database<Island> handler) {
+    public void setHandler(@NonNull Database<Island> handler) {
         this.handler = handler;
     }
 

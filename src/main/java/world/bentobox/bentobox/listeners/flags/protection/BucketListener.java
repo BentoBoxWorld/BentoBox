@@ -40,15 +40,9 @@ public class BucketListener extends FlagListener {
     public void onBucketFill(final PlayerBucketFillEvent e) {
         // Check filling of various liquids
         switch (e.getItemStack().getType()) {
-            case LAVA_BUCKET -> {
-                checkIsland(e, e.getPlayer(), e.getBlockClicked().getLocation(), Flags.COLLECT_LAVA);
-            }
-            case WATER_BUCKET -> {
-                checkIsland(e, e.getPlayer(), e.getBlockClicked().getLocation(), Flags.COLLECT_WATER);
-            }
-            case MILK_BUCKET -> {
-                checkIsland(e, e.getPlayer(), e.getBlockClicked().getLocation(), Flags.MILKING);
-            }
+            case LAVA_BUCKET -> checkIsland(e, e.getPlayer(), e.getBlockClicked().getLocation(), Flags.COLLECT_LAVA);
+            case WATER_BUCKET -> checkIsland(e, e.getPlayer(), e.getBlockClicked().getLocation(), Flags.COLLECT_WATER);
+            case MILK_BUCKET -> checkIsland(e, e.getPlayer(), e.getBlockClicked().getLocation(), Flags.MILKING);
             default ->
                     // Check general bucket use
                     checkIsland(e, e.getPlayer(), e.getBlockClicked().getLocation(), Flags.BUCKET);

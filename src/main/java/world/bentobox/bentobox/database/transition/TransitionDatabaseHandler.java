@@ -5,6 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.database.AbstractDatabaseHandler;
@@ -55,7 +56,7 @@ public class TransitionDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      * @see world.bentobox.bentobox.database.AbstractDatabaseHandler#loadObject(java.lang.String)
      */
     @Override
-    public T loadObject(String uniqueId) throws InstantiationException, IllegalAccessException, InvocationTargetException, ClassNotFoundException, IntrospectionException, NoSuchMethodException {
+    public T loadObject(@NonNull String uniqueId) throws InstantiationException, IllegalAccessException, InvocationTargetException, ClassNotFoundException, IntrospectionException, NoSuchMethodException {
         // Try destination database
         @Nullable
         T object = toHandler.loadObject(uniqueId);

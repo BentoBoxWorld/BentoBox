@@ -32,7 +32,7 @@ public class DefaultNewIslandLocationStrategy implements NewIslandLocationStrate
         ISLAND_FOUND, BLOCKS_IN_AREA, FREE
     }
 
-    protected BentoBox plugin = BentoBox.getInstance();
+    protected final BentoBox plugin = BentoBox.getInstance();
 
     @Override
     public Location getNextLocation(World world) {

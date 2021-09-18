@@ -26,7 +26,7 @@ public class IslandEvent extends IslandBaseEvent {
     private static final HandlerList handlers = new HandlerList();
 
     @Override
-    public HandlerList getHandlers() {
+    public @NonNull HandlerList getHandlers() {
         return getHandlerList();
     }
 
@@ -425,7 +425,7 @@ public class IslandEvent extends IslandBaseEvent {
 
         private final @Nullable Island fromIsland;
 
-        private IslandEnterEvent(Island island, UUID player, boolean admin, Location location, Island fromIsland, Event rawEvent) {
+        private IslandEnterEvent(Island island, UUID player, boolean admin, Location location, @Nullable Island fromIsland, Event rawEvent) {
             // Final variables have to be declared in the constructor
             super(island, player, admin, location, rawEvent);
             this.fromIsland = fromIsland;
@@ -448,7 +448,7 @@ public class IslandEvent extends IslandBaseEvent {
         private final @Nullable Island toIsland;
 
 
-        private IslandExitEvent(Island island, UUID player, boolean admin, Location location, Island toIsland, Event rawEvent) {
+        private IslandExitEvent(Island island, UUID player, boolean admin, Location location, @Nullable Island toIsland, Event rawEvent) {
             // Final variables have to be declared in the constructor
             super(island, player, admin, location, rawEvent);
             this.toIsland = toIsland;

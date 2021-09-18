@@ -398,7 +398,7 @@ public class BlueprintClipboard {
     /**
      * @return the blueprint
      */
-    public Blueprint getBlueprint() {
+    public @Nullable Blueprint getBlueprint() {
         return blueprint;
     }
 

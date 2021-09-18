@@ -8,6 +8,7 @@ import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.StringPrompt;
 import org.bukkit.entity.Player;
 
+import org.eclipse.jdt.annotation.NonNull;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
@@ -33,7 +34,7 @@ public class DescriptionPrompt extends StringPrompt {
 
     @SuppressWarnings("unchecked")
     @Override
-    public String getPromptText(ConversationContext context) {
+    public @NonNull String getPromptText(ConversationContext context) {
         User user = User.getInstance((Player)context.getForWhom());
         if (context.getSessionData(DESCRIPTION) != null) {
             StringBuilder sb = new StringBuilder();

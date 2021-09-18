@@ -33,7 +33,7 @@ import world.bentobox.bentobox.database.json.adapters.WorldTypeAdapter;
  */
 public class BentoboxTypeAdapterFactory implements TypeAdapterFactory {
 
-    BentoBox plugin;
+    final BentoBox plugin;
 
     /**
      * @param plugin plugin
