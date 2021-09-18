@@ -193,7 +193,7 @@ public class Island implements DataObject, MetaDataAble {
     private Boolean reserved = null;
 
     /**
-     * A place to store meta data for this island.
+     * A place to store metadata for this island.
      * @since 1.15.4
      */
     @Expose
@@ -354,7 +354,7 @@ public class Island implements DataObject, MetaDataAble {
     }
 
     /**
-     * Gets the Island Guard flag's setting. If this is a protection flag, the this will be the
+     * Gets the Island Guard flag's setting. If this is a protection flag, then this will be the
      * rank needed to bypass this flag. If it is a Settings flag, any non-zero value means the
      * setting is allowed.
      * @param flag - flag
@@ -427,7 +427,7 @@ public class Island implements DataObject, MetaDataAble {
     }
 
     /**
-     * Get the minimum protected X block coord based on the island location.
+     * Get the minimum protected X block coordinate based on the island location.
      * It will never be less than {@link #getMinX()}
      * @return the minProtectedX
      */
@@ -436,7 +436,7 @@ public class Island implements DataObject, MetaDataAble {
     }
 
     /**
-     * Get the maximum protected X block coord based on the island location.
+     * Get the maximum protected X block coordinate based on the island location.
      * It will never be more than {@link #getMaxX()}
      * @return the maxProtectedX
      * @since 1.5.2
@@ -446,7 +446,7 @@ public class Island implements DataObject, MetaDataAble {
     }
 
     /**
-     * Get the minimum protected Z block coord based on the island location.
+     * Get the minimum protected Z block coordinate based on the island location.
      * It will never be less than {@link #getMinZ()}
      * @return the minProtectedZ
      */
@@ -455,7 +455,7 @@ public class Island implements DataObject, MetaDataAble {
     }
 
     /**
-     * Get the maximum protected Z block coord based on the island location.
+     * Get the maximum protected Z block coordinate based on the island location.
      * It will never be more than {@link #getMinZ()}
      * @return the maxProtectedZ
      * @since 1.5.2
@@ -998,7 +998,7 @@ public class Island implements DataObject, MetaDataAble {
      * Sets whether this island is a spawn or not.
      * <br/>
      * If {@code true}, the members and the owner will be removed from this island.
-     * The flags will also be resetted to default values.
+     * The flags will also be reset to default values.
      * @param isSpawn {@code true} if the island is a spawn, {@code false} otherwise.
      */
     public void setSpawn(boolean isSpawn){

@@ -151,6 +151,7 @@ public class BlueprintClipboard {
             }
             if (index > vectorsToCopy.size()) {
                 copyTask.cancel();
+                assert blueprint != null;
                 blueprint.setAttached(bpAttachable);
                 blueprint.setBlocks(bpBlocks);
                 blueprint.setEntities(bpEntities);

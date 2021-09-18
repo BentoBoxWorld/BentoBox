@@ -64,7 +64,7 @@ public class AdminBlueprintCommand extends ConfirmableCommand {
 
     protected void showClipboard(User user) {
         displayClipboards.putIfAbsent(user, Bukkit.getScheduler().scheduleSyncRepeatingTask(getPlugin(), () -> {
-            if (!user.getPlayer().isOnline()) {
+            if (user.getPlayer() == null || !user.getPlayer().isOnline()) {
                 hideClipboard(user);
             }
 

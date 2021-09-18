@@ -44,11 +44,11 @@ public class IslandInfo {
      */
     public void showAdminInfo(User user) {
         user.sendMessage("commands.admin.info.title");
-        user.sendMessage("commands.admin.info.island-uuid", "[uuid]", island.getUniqueId());
+        user.sendMessage("commands.admin.info.island-uuid", TextVariables.UUID, island.getUniqueId());
         if (owner == null) {
             user.sendMessage("commands.admin.info.unowned");
         } else {
-            user.sendMessage("commands.admin.info.owner", "[owner]", plugin.getPlayers().getName(owner), "[uuid]", owner.toString());
+            user.sendMessage("commands.admin.info.owner", "[owner]", plugin.getPlayers().getName(owner), TextVariables.UUID, owner.toString());
 
             // Fixes #getLastPlayed() returning 0 when it is the owner's first connection.
             long lastPlayed = (Bukkit.getOfflinePlayer(owner).getLastPlayed() != 0) ?
@@ -99,7 +99,7 @@ public class IslandInfo {
         if (owner == null) {
             user.sendMessage("commands.admin.info.unowned");
         } else {
-            user.sendMessage("commands.admin.info.owner", "[owner]", plugin.getPlayers().getName(owner), "[uuid]", owner.toString());
+            user.sendMessage("commands.admin.info.owner", "[owner]", plugin.getPlayers().getName(owner), TextVariables.UUID, owner.toString());
             user.sendMessage("commands.admin.info.deaths", "[number]", String.valueOf(plugin.getPlayers().getDeaths(world, owner)));
             String resets = String.valueOf(plugin.getPlayers().getResets(world, owner));
             String total = plugin.getIWM().getResetLimit(world) < 0 ? "Unlimited" : String.valueOf(plugin.getIWM().getResetLimit(world));

@@ -19,6 +19,7 @@ import world.bentobox.bentobox.util.teleport.SafeSpotTeleport;
 
 public class AdminTeleportCommand extends CompositeCommand {
 
+    private static final String NOT_SAFE = "general.errors.no-safe-location-found";
     private @Nullable UUID targetUUID;
     private @Nullable User userToTeleport;
 
@@ -87,12 +88,12 @@ public class AdminTeleportCommand extends CompositeCommand {
             world = getPlugin().getIWM().getEndWorld(getWorld());
         }
         if (world == null) {
-            user.sendMessage("general.errors.no-safe-location-found");
+            user.sendMessage(NOT_SAFE);
             return false;
         }
         Location warpSpot = getSpot(world);
         if (warpSpot == null) {
-            user.sendMessage("general.errors.no-safe-location-found");
+            user.sendMessage(NOT_SAFE);
             return false;
         }
 
@@ -103,7 +104,7 @@ public class AdminTeleportCommand extends CompositeCommand {
         Player player = user.getPlayer();
         if (args.size() == 2) {
             player = userToTeleport.getPlayer();
-            failureMessage = userToTeleport.getTranslation("general.errors.no-safe-location-found");
+            failureMessage = userToTeleport.getTranslation(NOT_SAFE);
         }
 
         // Teleport
