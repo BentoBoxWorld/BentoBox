@@ -476,9 +476,11 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * Convenience method to check if a user is a player
      * @param user - the User
      * @return true if sender is a player
+     * @deprecated use {@link User#isPlayer()}
      */
+    @Deprecated
     protected boolean isPlayer(User user) {
-        return user.getPlayer() != null;
+        return user.isPlayer();
     }
 
     /**
