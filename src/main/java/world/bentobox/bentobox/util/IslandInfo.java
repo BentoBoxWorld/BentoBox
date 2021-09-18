@@ -99,7 +99,7 @@ public class IslandInfo {
         if (owner == null) {
             user.sendMessage("commands.admin.info.unowned");
         } else {
-            user.sendMessage("commands.admin.info.owner", "[owner]", plugin.getPlayers().getName(owner));
+            user.sendMessage("commands.admin.info.owner", "[owner]", plugin.getPlayers().getName(owner), "[uuid]", owner.toString());
             user.sendMessage("commands.admin.info.deaths", "[number]", String.valueOf(plugin.getPlayers().getDeaths(world, owner)));
             String resets = String.valueOf(plugin.getPlayers().getResets(world, owner));
             String total = plugin.getIWM().getResetLimit(world) < 0 ? "Unlimited" : String.valueOf(plugin.getIWM().getResetLimit(world));
