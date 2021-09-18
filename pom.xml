@@ -365,6 +365,9 @@
                         java.base/java.lang.reflect=ALL-UNNAMED
                         --add-opens
                         java.logging/java.util.logging=ALL-UNNAMED
+                        --add-opens java.base/java.lang.ref=ALL-UNNAMED
+                        --add-opens java.base/java.util.jar=ALL-UNNAMED
+                        --add-opens java.base/java.util.zip=ALL-UNNAMED
                     </argLine>
                 </configuration>
             </plugin>
