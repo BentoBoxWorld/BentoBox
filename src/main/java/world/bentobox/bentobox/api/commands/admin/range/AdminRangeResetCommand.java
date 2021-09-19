@@ -2,6 +2,7 @@ package world.bentobox.bentobox.api.commands.admin.range;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -45,7 +46,7 @@ public class AdminRangeResetCommand extends CompositeCommand {
         }
 
         // Get island
-        Island island = getIslands().getIsland(getWorld(), targetUUID);
+        Island island = Objects.requireNonNull(getIslands().getIsland(getWorld(), targetUUID));
 
         // Get old range for event
         int oldRange = island.getProtectionRange();

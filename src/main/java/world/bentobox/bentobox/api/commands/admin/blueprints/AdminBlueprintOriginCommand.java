@@ -1,6 +1,7 @@
 package world.bentobox.bentobox.api.commands.admin.blueprints;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -34,7 +35,7 @@ public class AdminBlueprintOriginCommand extends CompositeCommand {
         }
 
         // Get the block player is looking at
-        Block b = user.getPlayer().getLineOfSight(null, 20).stream().filter(x -> !x.getType().equals(Material.AIR)).findFirst().orElse(null);
+        Block b = Objects.requireNonNull(user.getPlayer()).getLineOfSight(null, 20).stream().filter(x -> !x.getType().equals(Material.AIR)).findFirst().orElse(null);
         if (b != null) {
             clipboard.setOrigin(b.getLocation().toVector());
             user.getPlayer().sendBlockChange(b.getLocation(), Material.REDSTONE_BLOCK.createBlockData());

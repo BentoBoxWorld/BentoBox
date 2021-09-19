@@ -2,6 +2,7 @@ package world.bentobox.bentobox.api.commands.admin.range;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -52,7 +53,7 @@ public class AdminRangeSetCommand extends CompositeCommand {
         int range = Integer.parseInt(args.get(1));
 
         // Get island
-        Island island = getIslands().getIsland(getWorld(), targetUUID);
+        Island island = Objects.requireNonNull(getIslands().getIsland(getWorld(), targetUUID));
 
         // Do some sanity checks to make sure the new protection range won't cause problems
         if (range < 1) {

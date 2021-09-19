@@ -44,7 +44,7 @@ public class BlockInteractionListener extends FlagListener {
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerInteract(final PlayerInteractEvent e) {
         // We only care about the RIGHT_CLICK_BLOCK action.
-        if (!e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
+        if (!e.getAction().equals(Action.RIGHT_CLICK_BLOCK) || e.getClickedBlock() == null) {
             return;
         }
 

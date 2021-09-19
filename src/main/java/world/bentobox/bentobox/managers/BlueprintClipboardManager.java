@@ -144,10 +144,12 @@ public class BlueprintClipboardManager {
      * @return - true if successful, false if error
      */
     public boolean save(User user, String newName) {
-        clipboard.getBlueprint().setName(newName);
-        if (saveBlueprint(clipboard.getBlueprint())) {
-            user.sendMessage("general.success");
-            return true;
+        if (clipboard.getBlueprint() != null) {
+            clipboard.getBlueprint().setName(newName);
+            if (saveBlueprint(clipboard.getBlueprint())) {
+                user.sendMessage("general.success");
+                return true;
+            }
         }
         user.sendMessage("commands.admin.blueprint.could-not-save", "[message]", "Could not save temp blueprint file.");
         return false;

@@ -86,7 +86,7 @@ public class AdminDeleteCommand extends ConfirmableCommand {
             User target = User.getInstance(targetUUID);
             // Remove them from this island (it still exists and will be deleted later)
             getIslands().removePlayer(getWorld(), targetUUID);
-            if (target.isOnline()) {
+            if (target.getPlayer() != null && target.isOnline()) {
                 // Execute commands when leaving
                 Util.runCommands(user, getIWM().getOnLeaveCommands(getWorld()), "leave");
                 // Remove money inventory etc.
