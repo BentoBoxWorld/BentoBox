@@ -477,6 +477,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * @param user - the User
      * @return true if sender is a player
      * @deprecated use {@link User#isPlayer()}
+     * @forRemove 1.18.0
      */
     @Deprecated
     protected boolean isPlayer(User user) {

@@ -44,15 +44,15 @@ public class AdminSwitchCommand extends ConfirmableCommand {
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        boolean switchState = user.getMetaData("AdminCommandSwitch").map(MetaDataValue::asBoolean).orElse(false);
+        boolean switchState = user.getMetaData(META_TAG).map(MetaDataValue::asBoolean).orElse(false);
         if (switchState) {
             // Turn off
-            user.putMetaData("AdminCommandSwitch", new MetaDataValue(false));
+            user.putMetaData(META_TAG, new MetaDataValue(false));
             user.sendMessage("commands.admin.switch.adding"); // Adding protection bypass
             user.sendMessage("general.success");
         } else {
             // Turn on
-            user.putMetaData("AdminCommandSwitch", new MetaDataValue(true));
+            user.putMetaData(META_TAG, new MetaDataValue(true));
             user.sendMessage("commands.admin.switch.removing"); // Removing protection bypass
             user.sendMessage("general.success");
         }

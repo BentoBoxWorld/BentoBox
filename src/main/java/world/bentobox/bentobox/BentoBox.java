@@ -2,7 +2,6 @@ package world.bentobox.bentobox;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.bukkit.Bukkit;
@@ -102,7 +101,7 @@ public class BentoBox extends JavaPlugin {
             logWarning("BentoBox is tested only on the following Spigot versions:");
 
             List<String> versions = ServerCompatibility.ServerVersion.getVersions(ServerCompatibility.Compatibility.COMPATIBLE, ServerCompatibility.Compatibility.SUPPORTED)
-                    .stream().map(ServerCompatibility.ServerVersion::toString).collect(Collectors.toList());
+                    .stream().map(ServerCompatibility.ServerVersion::toString).toList();
 
             logWarning(String.join(", ", versions));
             logWarning("**************************************");
@@ -331,7 +330,7 @@ public class BentoBox extends JavaPlugin {
      * @since 1.16.0
      */
     public PlayersManager getPlayersManager() {
-        return playersManager;
+        return getPlayers();
     }
 
     /**
@@ -350,7 +349,7 @@ public class BentoBox extends JavaPlugin {
      * @since 1.16.0
      */
     public IslandsManager getIslandsManager() {
-        return islandsManager;
+        return getIslands();
     }
 
     private static void setInstance(BentoBox plugin) {
