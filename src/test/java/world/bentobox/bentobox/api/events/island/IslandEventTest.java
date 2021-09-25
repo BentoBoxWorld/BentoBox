@@ -168,7 +168,7 @@ public class IslandEventTest {
 
             }
         }
-        verify(pim, Mockito.times(Reason.values().length * 3)).callEvent(any());
+        verify(pim, Mockito.times(Reason.values().length * 2)).callEvent(any());
     }
 
 }

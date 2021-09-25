@@ -235,7 +235,7 @@ public class AdminTeamDisbandCommandTest {
         verify(user).sendMessage("commands.admin.team.disband.success", TextVariables.NAME, name[0]);
         verify(p).sendMessage("commands.admin.team.disband.disbanded");
         verify(p2).sendMessage("commands.admin.team.disband.disbanded");
-        // 2 * 2 + 1
-        verify(pim, times(5)).callEvent(any());
+        // 2 * 2
+        verify(pim, times(4)).callEvent(any());
     }
 }

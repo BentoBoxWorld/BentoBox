@@ -217,8 +217,8 @@ public class AdminTeamKickCommandTest {
         verify(im).removePlayer(eq(world), eq(notUUID));
         verify(pm).clearHomeLocations(eq(world), eq(notUUID));
         verify(user).sendMessage(eq("commands.admin.team.kick.success"), eq(TextVariables.NAME), eq(name), eq("[owner]"), anyString());
-        // Offline so event will be called six time
-        verify(pim, times(6)).callEvent(any());
+        // Offline so event will be called 5 times
+        verify(pim, times(5)).callEvent(any());
     }
 
 }

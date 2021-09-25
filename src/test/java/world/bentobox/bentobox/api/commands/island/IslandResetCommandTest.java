@@ -257,8 +257,8 @@ public class IslandResetCommandTest {
         assertTrue(irc.execute(user, irc.getLabel(), Collections.emptyList()));
         // TODO Verify that panel was shown
         // verify(bpm).showPanel(any(), eq(user), eq(irc.getLabel()));
-        // Verify event (13 * 2 + 1)
-        verify(pim, times(27)).callEvent(any(IslandBaseEvent.class));
+        // Verify event (13 * 2)
+        verify(pim, times(26)).callEvent(any(IslandBaseEvent.class));
         // Verify messaging
         verify(user).sendMessage("commands.island.create.creating-island");
         verify(user, never()).sendMessage(eq("commands.island.reset.kicked-from-island"), eq(TextVariables.GAMEMODE), anyString());
@@ -446,8 +446,8 @@ public class IslandResetCommandTest {
         // Reset command, no confirmation required
         assertTrue(irc.execute(user, irc.getLabel(), Collections.singletonList("custom")));
         verify(user).sendMessage("commands.island.create.creating-island");
-        // Verify event (13 * 2 + 1)
-        verify(pim, times(27)).callEvent(any(IslandBaseEvent.class));
+        // Verify event (13 * 2)
+        verify(pim, times(26)).callEvent(any(IslandBaseEvent.class));
 
     }
 }
