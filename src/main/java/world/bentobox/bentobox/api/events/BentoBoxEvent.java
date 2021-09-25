@@ -10,9 +10,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import org.bukkit.event.Event;
-import org.bukkit.event.HandlerList;
 
-import org.eclipse.jdt.annotation.NonNull;
 import world.bentobox.bentobox.BentoBox;
 
 /**
@@ -22,14 +20,6 @@ import world.bentobox.bentobox.BentoBox;
  *
  */
 public abstract class BentoBoxEvent extends Event {
-
-    /**
-     * Event handler list
-     * @deprecated This field will be removed from BentoBoxEvent.
-     * Events must provide their own handlers.
-     */
-    @Deprecated
-    private static final HandlerList handlers = new HandlerList();
 
     /**
      * The default constructor is defined for cleaner code.
@@ -46,29 +36,6 @@ public abstract class BentoBoxEvent extends Event {
      */
     protected BentoBoxEvent(boolean async) {
         super(async);
-    }
-
-    /**
-     * @return HandlerList
-     * @deprecated this method will no longer be in future versions of the BentoBoxEvent.
-     * Each event must declare its own static handler and handler methods.
-     * Will be removed by https://github.com/BentoBoxWorld/BentoBox/pull/1615
-     */
-    @Override
-    @Deprecated
-    public @NonNull HandlerList getHandlers() {
-        return getHandlerList();
-    }
-
-    /**
-     * @return HandlerList
-     * @deprecated this method will no longer be in future versions of the BentoBoxEvent.
-     * Each event must declare its own static handler and handler methods.
-     * Will be removed by https://github.com/BentoBoxWorld/BentoBox/pull/1615
-     */
-    @Deprecated
-    public static HandlerList getHandlerList() {
-        return handlers;
     }
 
     /**

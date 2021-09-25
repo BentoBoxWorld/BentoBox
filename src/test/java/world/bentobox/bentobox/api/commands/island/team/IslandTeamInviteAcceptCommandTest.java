@@ -10,7 +10,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.times;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -223,7 +222,7 @@ public class IslandTeamInviteAcceptCommandTest {
         assertTrue(c.canExecute(user, "accept", Collections.emptyList()));
         verify(user, never()).sendMessage("commands.island.team.invite.errors.you-already-are-in-team");
         verify(user, never()).sendMessage("commands.island.team.invite.errors.invalid-invite");
-        verify(pim, times(2)).callEvent(any());
+        verify(pim).callEvent(any());
     }
 
     /**
@@ -250,7 +249,7 @@ public class IslandTeamInviteAcceptCommandTest {
         assertTrue(c.canExecute(user, "accept", Collections.emptyList()));
         verify(user, never()).sendMessage("commands.island.team.invite.errors.you-already-are-in-team");
         verify(user, never()).sendMessage("commands.island.team.invite.errors.invalid-invite");
-        verify(pim, times(2)).callEvent(any());
+        verify(pim).callEvent(any());
     }
 
     /**
