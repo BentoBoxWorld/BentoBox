@@ -63,7 +63,8 @@ import world.bentobox.bentobox.managers.PlayersManager;
 @PrepareForTest({ BentoBox.class, Bukkit.class })
 public class UserTest {
 
-    private static final String TEST_TRANSLATION = "mock translation [test]";
+    private static final String TEST_TRANSLATION = "mock &a translation &b [test]";
+    private static final String TEST_TRANSLATION_WITH_COLOR = "mock §atranslation §b[test]";
     @Mock
     private Player player;
     @Mock
@@ -243,7 +244,7 @@ public class UserTest {
 
     @Test
     public void testHasPermission() {
-        // default behaviours
+        // default behaviors
         assertTrue(user.hasPermission(""));
         assertTrue(user.hasPermission(null));
 
@@ -276,12 +277,20 @@ public class UserTest {
 
     @Test
     public void testGetTranslation() {
-        assertEquals("mock translation [test]", user.getTranslation("a.reference"));
+        assertEquals(TEST_TRANSLATION_WITH_COLOR, user.getTranslation("a.reference"));
+    }
+
+    /**
+     * Test for {@link User#getTranslationNoColor(String, String...)}
+     */
+    @Test
+    public void testGetTranslationNoColor() {
+        assertEquals(TEST_TRANSLATION, user.getTranslationNoColor("a.reference"));
     }
 
     @Test
     public void testGetTranslationWithVariable() {
-        assertEquals("mock translation variable", user.getTranslation("a.reference", "[test]", "variable"));
+        assertEquals("mock §atranslation §bvariable", user.getTranslation("a.reference", "[test]", "variable"));
     }
 
     @Test
@@ -306,7 +315,7 @@ public class UserTest {
     @Test
     public void testSendMessage() {
         user.sendMessage("a.reference");
-        verify(player).sendMessage(eq(TEST_TRANSLATION));
+        verify(player).sendMessage(TEST_TRANSLATION_WITH_COLOR);
     }
 
     @Test

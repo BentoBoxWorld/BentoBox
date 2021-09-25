@@ -355,7 +355,7 @@ public class User implements MetaDataAble {
     }
 
     /**
-     * Gets a translation of this reference for this user. Translations may be overridden by Addons
+     * Gets a translation of this reference for this user with colors converted. Translations may be overridden by Addons
      * by using the same reference prefixed by the addon name (from the Addon Description) in lower case.
      * @param reference - reference found in a locale file
      * @param variables - variables to insert into translated string. Variables go in pairs, for example
@@ -363,6 +363,21 @@ public class User implements MetaDataAble {
      * @return Translated string with colors converted, or the reference if nothing has been found
      */
     public String getTranslation(String reference, String... variables) {
+        // Get addonPrefix
+        String addonPrefix = addon == null ? "" : addon.getDescription().getName().toLowerCase(Locale.ENGLISH) + ".";
+        return Util.translateColorCodes(translate(addonPrefix, reference, variables));
+    }
+
+    /**
+     * Gets a translation of this reference for this user without colors translated. Translations may be overridden by Addons
+     * by using the same reference prefixed by the addon name (from the Addon Description) in lower case.
+     * @param reference - reference found in a locale file
+     * @param variables - variables to insert into translated string. Variables go in pairs, for example
+     *                  "[name]", "tastybento"
+     * @return Translated string or the reference if nothing has been found
+     * @since 1.17.4
+     */
+    public String getTranslationNoColor(String reference, String... variables) {
         // Get addonPrefix
         String addonPrefix = addon == null ? "" : addon.getDescription().getName().toLowerCase(Locale.ENGLISH) + ".";
         return translate(addonPrefix, reference, variables);
@@ -407,7 +422,7 @@ public class User implements MetaDataAble {
                 translation = plugin.getPlaceholdersManager().replacePlaceholders(player, translation);
             }
 
-            return Util.translateColorCodes(translation);
+            return translation;
         }
     }
 
