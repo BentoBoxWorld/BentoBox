@@ -72,7 +72,7 @@ public class IslandBanCommand extends CompositeCommand {
             user.sendMessage("commands.island.ban.cannot-ban-member");
             return false;
         }
-        if (getIslands().getIsland(getWorld(), playerUUID).isBanned(targetUUID)) {
+        if (island.isBanned(targetUUID)) {
             user.sendMessage("commands.island.ban.player-already-banned");
             return false;
         }

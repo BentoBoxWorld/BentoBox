@@ -176,16 +176,30 @@ public class User implements MetaDataAble {
         return sender.getEffectivePermissions();
     }
 
+    /**
+     * Get the user's inventory
+     * @return player's inventory
+     * @throws {@link NullPointerException} - if user is not a player
+     */
     @NonNull
     public PlayerInventory getInventory() {
         return Objects.requireNonNull(player, "getInventory can only be called for online players!").getInventory();
     }
 
+    /**
+     * Get the user's location
+     * @return location
+     * @throws {@link NullPointerException} - if user is not a player
+     */
     @NonNull
     public Location getLocation() {
         return Objects.requireNonNull(player, "getLocation can only be called for online players!").getLocation();
     }
 
+    /**
+     * Get the user's name
+     * @return player's name
+     */
     @NonNull
     public String getName() {
         return player != null ? player.getName() : plugin.getPlayers().getName(playerUUID);
@@ -211,6 +225,7 @@ public class User implements MetaDataAble {
      * Use {@link #isOfflinePlayer()} before calling this method
      * @return the offline player
      * @since 1.3.0
+     * @throws {@link NullPointerException} - if user is not an offline player
      */
     @NonNull
     public OfflinePlayer getOfflinePlayer() {
@@ -511,10 +526,13 @@ public class User implements MetaDataAble {
 
     /**
      * Gets the current world this entity resides in
-     * @return World - world or null
+     * @return World - world
+     * @throws {@link NullPointerException} - if user is not a player
      */
+    @NonNull
     public World getWorld() {
-        return player == null ? null : player.getWorld();
+        Objects.requireNonNull(player, "Cannot be called on a non-player User!");
+        return Objects.requireNonNull(player.getWorld(), "Player's world cannot be null!");
     }
 
     /**
