@@ -88,7 +88,6 @@ public class AdminDeleteCommand extends ConfirmableCommand {
             vector = oldIsland.getCenter().toVector();
             getIslands().deleteIsland(oldIsland, true, targetUUID);
         }
-        getPlayers().clearHomeLocations(getWorld(), targetUUID);
         if (vector == null) {
             user.sendMessage("general.success");
         } else {

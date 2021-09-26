@@ -170,6 +170,7 @@ public class BentoBox extends JavaPlugin {
                 completeSetup(loadTime);
             } catch (Exception e) {
                 fireCriticalError(e.getMessage(), "");
+                e.printStackTrace();
             }
         });
     }

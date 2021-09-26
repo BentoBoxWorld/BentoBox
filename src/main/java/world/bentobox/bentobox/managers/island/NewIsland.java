@@ -224,7 +224,7 @@ public class NewIsland {
     private void postCreationTask(Island oldIsland) {
         // Set initial spawn point if one exists
         if (island.getSpawnPoint(Environment.NORMAL) != null) {
-            plugin.getPlayers().setHomeLocation(user, island.getSpawnPoint(Environment.NORMAL), 1);
+            plugin.getIslands().setHomeLocation(user, island.getSpawnPoint(Environment.NORMAL));
         }
         // Stop the player from falling or moving if they are
         if (user.isOnline()) {
@@ -252,10 +252,8 @@ public class NewIsland {
      * @param loc - the new island location
      */
     private void cleanUpUser(Location loc) {
-        // Clear any old home locations (they should be clear, but just in case)
-        plugin.getPlayers().clearHomeLocations(world, user.getUniqueId());
         // Set home location
-        plugin.getPlayers().setHomeLocation(user, new Location(loc.getWorld(), loc.getX() + 0.5D, loc.getY(), loc.getZ() + 0.5D), 1);
+        plugin.getIslands().setHomeLocation(user, new Location(loc.getWorld(), loc.getX() + 0.5D, loc.getY(), loc.getZ() + 0.5D));
         // Reset deaths
         if (plugin.getIWM().isDeathsResetOnNewIsland(world)) {
             plugin.getPlayers().setDeaths(world, user.getUniqueId(), 0);

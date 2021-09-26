@@ -158,8 +158,7 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
         cleanPlayer(user);
         // Add the player as a team member of the new island
         getIslands().setJoinTeam(teamIsland, playerUUID);
-        //Move player to team's island
-        getPlayers().clearHomeLocations(getWorld(), playerUUID);
+        // Move player to team's island
         getIslands().homeTeleportAsync(getWorld(), user.getPlayer()).thenRun(() -> {
             // Delete the old island
             if (island != null) {
