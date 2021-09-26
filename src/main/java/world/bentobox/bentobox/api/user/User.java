@@ -419,7 +419,7 @@ public class User implements MetaDataAble {
                 // Replace the [gamemode] text variable
                 prefixTranslation = prefixTranslation.replace("[gamemode]", addon != null ? addon.getDescription().getName() : "[gamemode]");
                 // Replace the [friendly_name] text variable
-                prefixTranslation = prefixTranslation.replace("[friendly_name]", getWorld() != null ? plugin.getIWM().getFriendlyName(getWorld()) : "[friendly_name]");
+                prefixTranslation = prefixTranslation.replace("[friendly_name]", isPlayer() ? plugin.getIWM().getFriendlyName(getWorld()) : "[friendly_name]");
 
                 // Replace the prefix in the actual message
                 translation = translation.replace("[prefix_" + prefix + "]", prefixTranslation);
