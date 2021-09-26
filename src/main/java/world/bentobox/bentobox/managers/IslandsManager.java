@@ -904,12 +904,12 @@ public class IslandsManager {
      * Get the named home location for this island
      * @param island - island
      * @param name - name of home, or blank for default
-     * @return home location
+     * @return home location or if there is none, then the island's center
      * @since 1.16.0
      */
     @NonNull
     public Location getHomeLocation(@NonNull Island island, @NonNull String name) {
-        return island.getHome(name);
+        return Objects.requireNonNullElse(island.getHome(name), island.getCenter());
     }
 
     /**
