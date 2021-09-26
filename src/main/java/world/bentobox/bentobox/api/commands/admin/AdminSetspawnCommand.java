@@ -65,10 +65,8 @@ public class AdminSetspawnCommand extends ConfirmableCommand {
                 .build();
             }
             // If island is owned, then unregister the owner and any members
-            new ImmutableSet.Builder<UUID>().addAll(i.getMembers().keySet()).build().forEach(m -> {
-                getIslands().removePlayer(getWorld(), m);
-                getPlayers().clearHomeLocations(getWorld(), m);
-            });
+            new ImmutableSet.Builder<UUID>().addAll(i.getMembers().keySet()).build().forEach(m ->
+            getIslands().removePlayer(getWorld(), m));
         }
         getIslands().setSpawn(i);
         i.setSpawnPoint(World.Environment.NORMAL, user.getLocation());

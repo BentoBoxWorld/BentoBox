@@ -227,7 +227,7 @@ public class IslandSethomeCommandTest {
      */
     @Test
     public void testExecuteUserStringListOfStringMultiHomeTooMany() {
-        when(island.getMaxHomes()).thenReturn(3);
+        when(im.getMaxHomes(island)).thenReturn(3);
         when(im.getNumberOfHomesIfAdded(eq(island), anyString())).thenReturn(4);
         IslandSethomeCommand isc = new IslandSethomeCommand(ic);
         assertFalse(isc.canExecute(user, "island", Collections.singletonList("13")));

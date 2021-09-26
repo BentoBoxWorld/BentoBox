@@ -726,7 +726,6 @@ public class IslandsManagerTest {
      */
     @Test
     public void testGetSafeHomeLocationNoIsland() {
-        when(pm.getHomeLocation(eq(world), eq(user), eq(0))).thenReturn(null);
         assertNull(im.getSafeHomeLocation(world, user, ""));
         verify(plugin).logWarning(eq("null player has no island in world world!"));
     }

@@ -162,9 +162,6 @@ public class IslandResetCommand extends ConfirmableCommand {
 
         // Add a reset
         getPlayers().addReset(getWorld(), user.getUniqueId());
-
-        // Reset the homes of the player
-        getPlayers().clearHomeLocations(getWorld(), user.getUniqueId());
     }
 
     /**

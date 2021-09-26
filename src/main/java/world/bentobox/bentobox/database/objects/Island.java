@@ -1467,6 +1467,8 @@ public class Island implements DataObject, MetaDataAble {
     }
 
     /**
+     * Get the max homes. You shouldn't access this directly.
+     * Use {@link world.bentobox.bentobox.managers.IslandsManager#getMaxHomes(Island)}
      * @return the maxHomes. If null, then the world default should be used.
      * @since 1.16.0
      */
@@ -1477,6 +1479,8 @@ public class Island implements DataObject, MetaDataAble {
 
     /**
      * @param maxHomes the maxHomes to set. If null then the world default will be used.
+     * You shouldn't access this directly.
+     * Use {@link world.bentobox.bentobox.managers.IslandsManager#setMaxHomes(Island, Integer)}
      * @since 1.16.0
      */
     public void setMaxHomes(@Nullable Integer maxHomes) {

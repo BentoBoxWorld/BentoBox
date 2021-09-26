@@ -231,9 +231,6 @@ public class AdminUnregisterCommandTest {
         verify(im).removePlayer(any(), eq(uuid1));
         verify(im).removePlayer(any(), eq(uuid2));
         verify(im).removePlayer(any(), eq(uuid3));
-        verify(pm).clearHomeLocations(any(), eq(uuid1));
-        verify(pm).clearHomeLocations(any(), eq(uuid2));
-        verify(pm).clearHomeLocations(any(), eq(uuid3));
         verify(im, never()).removePlayer(any(), eq(uuid4));
     }
 }
