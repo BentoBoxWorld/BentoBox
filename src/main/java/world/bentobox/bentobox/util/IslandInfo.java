@@ -75,7 +75,7 @@ public class IslandInfo {
         user.sendMessage("commands.admin.info.island-coords", "[xz1]", Util.xyz(new Vector(island.getMinX(), 0, island.getMinZ())), "[xz2]", Util.xyz(new Vector(island.getMaxX(), 0, island.getMaxZ())));
         user.sendMessage("commands.admin.info.protection-range", "[range]", String.valueOf(island.getProtectionRange()));
         user.sendMessage("commands.admin.info.max-protection-range", "[range]", String.valueOf(island.getMaxEverProtectionRange()));
-        user.sendMessage("commands.admin.info.protection-coords", "[xz1]", Util.xyz(new Vector(island.getMinProtectedX(), 0, island.getMinProtectedZ())), "[xz2]", Util.xyz(new Vector(island.getMaxProtectedX(), 0, island.getMaxProtectedZ())));
+        user.sendMessage("commands.admin.info.protection-coords", "[xz1]", Util.xyz(new Vector(island.getMinProtectedX(), 0, island.getMinProtectedZ())), "[xz2]", Util.xyz(new Vector(island.getMaxProtectedX() - 1, 0, island.getMaxProtectedZ() - 1)));
         if (island.isSpawn()) {
             user.sendMessage("commands.admin.info.is-spawn");
         }
@@ -110,7 +110,7 @@ public class IslandInfo {
         Vector location = island.getProtectionCenter().toVector();
         user.sendMessage("commands.admin.info.island-center", TextVariables.XYZ, Util.xyz(location));
         user.sendMessage("commands.admin.info.protection-range", "[range]", String.valueOf(island.getProtectionRange()));
-        user.sendMessage("commands.admin.info.protection-coords", "[xz1]", Util.xyz(new Vector(island.getMinProtectedX(), 0, island.getMinProtectedZ())), "[xz2]", Util.xyz(new Vector(island.getMaxProtectedX(), 0, island.getMaxProtectedZ())));
+        user.sendMessage("commands.admin.info.protection-coords", "[xz1]", Util.xyz(new Vector(island.getMinProtectedX(), 0, island.getMinProtectedZ())), "[xz2]", Util.xyz(new Vector(island.getMaxProtectedX() - 1, 0, island.getMaxProtectedZ() - 1)));
         if (island.isSpawn()) {
             user.sendMessage("commands.admin.info.is-spawn");
         }
