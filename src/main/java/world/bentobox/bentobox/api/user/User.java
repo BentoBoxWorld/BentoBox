@@ -366,7 +366,7 @@ public class User implements MetaDataAble {
         // Get translation.
         String addonPrefix = plugin.getIWM()
                 .getAddon(world).map(a -> a.getDescription().getName().toLowerCase(Locale.ENGLISH) + ".").orElse("");
-        return translate(addonPrefix, reference, variables);
+        return Util.translateColorCodes(translate(addonPrefix, reference, variables));
     }
 
     /**
