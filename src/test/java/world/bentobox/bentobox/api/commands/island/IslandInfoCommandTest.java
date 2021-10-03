@@ -203,7 +203,7 @@ public class IslandInfoCommandTest {
         verify(user).sendMessage("commands.admin.info.team-owner-format", "[name]", null, "[rank]", "ranks.owner");
         verify(user).sendMessage("commands.admin.info.island-center", "[xyz]", "0,0,0");
         verify(user).sendMessage("commands.admin.info.protection-range", "[range]", "100");
-        verify(user).sendMessage("commands.admin.info.protection-coords", "[xz1]", "0,0,0", "[xz2]", "0,0,0");
+        verify(user).sendMessage("commands.admin.info.protection-coords", "[xz1]", "0,0,0", "[xz2]", "-1,0,-1");
     }
 
     /**
@@ -220,7 +220,7 @@ public class IslandInfoCommandTest {
         verify(user).sendMessage("commands.admin.info.team-owner-format", "[name]", null, "[rank]", "ranks.owner");
         verify(user).sendMessage("commands.admin.info.island-center", "[xyz]", "0,0,0");
         verify(user).sendMessage("commands.admin.info.protection-range", "[range]", "100");
-        verify(user).sendMessage("commands.admin.info.protection-coords", "[xz1]", "0,0,0", "[xz2]", "0,0,0");
+        verify(user).sendMessage("commands.admin.info.protection-coords", "[xz1]", "0,0,0", "[xz2]", "-1,0,-1");
     }
 
     /**
