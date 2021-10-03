@@ -148,6 +148,10 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
         Island island = getIslands().getIsland(getWorld(), playerUUID);
         // Get the team's island
         Island teamIsland = getIslands().getIsland(getWorld(), prospectiveOwnerUUID);
+        if (teamIsland == null) {
+            user.sendMessage("commands.island.team.invite.errors.invalid-invite");
+            return;
+        }
         if (teamIsland.getMemberSet(RanksManager.MEMBER_RANK, true).size() > getIslands().getMaxMembers(teamIsland, RanksManager.MEMBER_RANK)) {
             user.sendMessage("commands.island.team.invite.errors.island-is-full");
             return;
