@@ -473,6 +473,7 @@ public class IslandTest {
         i.setWorld(world);
         when(location.getWorld()).thenReturn(world);
         assertNotNull(i.getBoundingBox());
+        assertEquals("BoundingBox [minX=-400.0, minY=0.0, minZ=-400.0, maxX=400.0, maxY=0.0, maxZ=400.0]", i.getBoundingBox().toString());
     }
 
     /**

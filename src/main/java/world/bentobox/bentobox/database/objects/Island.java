@@ -676,7 +676,7 @@ public class Island implements DataObject, MetaDataAble {
      * @since 1.5.2
      */
     public BoundingBox getBoundingBox() {
-        return new BoundingBox(getMinX(), 0.0D, getMinZ(), getMaxX()-1.0D, world.getMaxHeight(), getMaxZ()-1.0D);
+        return new BoundingBox(getMinX(), 0.0D, getMinZ(), getMaxX(), world.getMaxHeight(), getMaxZ());
     }
 
     /**
