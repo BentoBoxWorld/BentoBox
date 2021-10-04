@@ -191,7 +191,6 @@ public class IslandsManagerTest {
 
         // Player's manager
         when(plugin.getPlayers()).thenReturn(pm);
-        when(pm.getHomeLocations(any(), any())).thenReturn(Collections.emptyMap());
 
         // Scheduler
         BukkitScheduler sch = mock(BukkitScheduler.class);

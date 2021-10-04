@@ -1,7 +1,6 @@
 package world.bentobox.bentobox.api.commands.island;
 
 import java.util.List;
-import java.util.Objects;
 
 import org.eclipse.jdt.annotation.Nullable;
 
@@ -53,7 +52,7 @@ public class IslandSethomeCommand extends ConfirmableCommand {
     @Override
     public boolean execute(User user, String label, List<String> args) {
         String number = String.join(" ", args);
-        WorldSettings ws = Objects.requireNonNull(getIWM().getWorldSettings(user.getWorld()));
+        WorldSettings ws = getIWM().getWorldSettings(user.getWorld());
         // Check if the player is in the Nether
         if (getIWM().isNether(user.getWorld())) {
             // Check if he is (not) allowed to set his home here
