@@ -1,8 +1,10 @@
 package world.bentobox.bentobox.listeners.flags.protection;
 
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.MushroomCow;
+import org.bukkit.entity.Player;
 import org.bukkit.entity.TropicalFish;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -38,14 +40,14 @@ public class BucketListener extends FlagListener {
      */
     @EventHandler(priority = EventPriority.LOW)
     public void onBucketFill(final PlayerBucketFillEvent e) {
+        Player p = e.getPlayer();
+        Location l = e.getBlockClicked().getLocation();
         // Check filling of various liquids
         switch (e.getItemStack().getType()) {
-            case LAVA_BUCKET -> checkIsland(e, e.getPlayer(), e.getBlockClicked().getLocation(), Flags.COLLECT_LAVA);
-            case WATER_BUCKET -> checkIsland(e, e.getPlayer(), e.getBlockClicked().getLocation(), Flags.COLLECT_WATER);
-            case MILK_BUCKET -> checkIsland(e, e.getPlayer(), e.getBlockClicked().getLocation(), Flags.MILKING);
-            default ->
-                    // Check general bucket use
-                    checkIsland(e, e.getPlayer(), e.getBlockClicked().getLocation(), Flags.BUCKET);
+        case LAVA_BUCKET -> checkIsland(e, p, l, Flags.COLLECT_LAVA);
+        case WATER_BUCKET -> checkIsland(e, p, l, Flags.COLLECT_WATER);
+        case MILK_BUCKET -> checkIsland(e, p, l, Flags.MILKING);
+        default -> checkIsland(e, p, l, Flags.BUCKET);
         }
     }
 

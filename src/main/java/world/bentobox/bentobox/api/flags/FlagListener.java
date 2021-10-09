@@ -126,7 +126,7 @@ public abstract class FlagListener implements Listener {
      */
     public boolean checkIsland(@NonNull Event e, @Nullable Player player, @Nullable Location loc, @NonNull Flag flag, boolean silent) {
         // Set user
-        user = User.getInstance(player);
+        user = player == null ? null : User.getInstance(player);
         if (loc == null) {
             if (user.getLocation() != null && user.getLocation().getWorld() != null) {
                 report(user, e, user.getLocation(), flag, Why.NULL_LOCATION);
