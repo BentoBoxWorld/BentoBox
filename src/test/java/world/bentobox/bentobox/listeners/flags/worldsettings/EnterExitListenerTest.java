@@ -140,6 +140,7 @@ public class EnterExitListenerTest {
         when(island.getOwner()).thenReturn(uuid);
         when(island.getMemberSet()).thenReturn(ImmutableSet.of(uuid));
         when(island.isOwned()).thenReturn(true);
+        when(island.getWorld()).thenReturn(world);
 
         when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
 
