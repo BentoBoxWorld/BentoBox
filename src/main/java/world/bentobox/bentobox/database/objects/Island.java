@@ -16,7 +16,6 @@ import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.entity.Player;
@@ -43,7 +42,6 @@ import world.bentobox.bentobox.database.objects.adapters.FlagSerializer;
 import world.bentobox.bentobox.database.objects.adapters.FlagSerializer3;
 import world.bentobox.bentobox.database.objects.adapters.LogEntryListAdapter;
 import world.bentobox.bentobox.lists.Flags;
-import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Pair;
 import world.bentobox.bentobox.util.Util;
@@ -1216,11 +1214,9 @@ public class Island implements DataObject, MetaDataAble {
      * @return {@code true} if this island has its nether island generated, {@code false} otherwise.
      * @since 1.5.0
      */
-    public boolean hasNetherIsland(){
-        IslandWorldManager iwm = BentoBox.getInstance().getIWM();
-        return iwm.isNetherGenerate(getWorld()) && iwm.isNetherIslands(getWorld()) &&
-                iwm.getNetherWorld(getWorld()) != null &&
-                !getCenter().toVector().toLocation(iwm.getNetherWorld(getWorld())).getBlock().getType().equals(Material.AIR);
+    public boolean hasNetherIsland() {
+        World nether = BentoBox.getInstance().getIWM().getNetherWorld(getWorld());
+        return nether != null && !getCenter().toVector().toLocation(nether).getBlock().getType().isAir();
     }
 
     /**
@@ -1228,11 +1224,9 @@ public class Island implements DataObject, MetaDataAble {
      * @return {@code true} if this island has its end island generated, {@code false} otherwise.
      * @since 1.5.0
      */
-    public boolean hasEndIsland(){
-        IslandWorldManager iwm = BentoBox.getInstance().getIWM();
-        return iwm.isEndGenerate(getWorld()) && iwm.isEndIslands(getWorld()) &&
-                iwm.getEndWorld(getWorld()) != null &&
-                !getCenter().toVector().toLocation(iwm.getEndWorld(getWorld())).getBlock().getType().equals(Material.AIR);
+    public boolean hasEndIsland() {
+        World end = BentoBox.getInstance().getIWM().getEndWorld(getWorld());
+        return end != null && !getCenter().toVector().toLocation(end).getBlock().getType().isAir();
     }
 
 
