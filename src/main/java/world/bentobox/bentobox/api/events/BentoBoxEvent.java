@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.Objects;
 
 import org.bukkit.event.Event;
+import org.bukkit.event.HandlerList;
+import org.eclipse.jdt.annotation.NonNull;
 
 import world.bentobox.bentobox.BentoBox;
 
@@ -20,6 +22,24 @@ import world.bentobox.bentobox.BentoBox;
  *
  */
 public abstract class BentoBoxEvent extends Event {
+
+    private static final HandlerList handlers = new HandlerList();
+
+    /**
+     * This is here just for backwards compatibility. Users of BentoBoxEvent should implement their own getHandlers
+     */
+    @Override
+    public @NonNull HandlerList getHandlers() {
+        return getHandlerList();
+    }
+
+    /**
+     * This is here just for backwards compatibility. Users of BentoBoxEvent should implement their own getHandlers
+     * @return HandlerList
+     */
+    public static HandlerList getHandlerList() {
+        return handlers;
+    }
 
     /**
      * The default constructor is defined for cleaner code.
