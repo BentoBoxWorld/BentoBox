@@ -344,7 +344,10 @@ public class Players implements DataObject, MetaDataAble {
      */
     public void addToPendingKick(World world)
     {
-        this.pendingKicks.add(Util.getWorld(world).getName());
+        World w = Util.getWorld(world);
+        if (w != null) {
+            this.pendingKicks.add(w.getName());
+        }
     }
 
     /**
