@@ -33,6 +33,7 @@ import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.events.OfflineMessageEvent;
 import world.bentobox.bentobox.api.metadata.MetaDataAble;
 import world.bentobox.bentobox.api.metadata.MetaDataValue;
+import world.bentobox.bentobox.database.objects.Players;
 import world.bentobox.bentobox.util.Util;
 
 /**
@@ -671,10 +672,10 @@ public class User implements MetaDataAble {
      */
     @Override
     public Optional<Map<String, MetaDataValue>> getMetaData() {
-        return plugin
+        Players p = plugin
                 .getPlayers()
-                .getPlayer(playerUUID)
-                .getMetaData();
+                .getPlayer(playerUUID);
+        return Objects.requireNonNull(p, "Unknown player for " + playerUUID).getMetaData();
     }
 
     /**
@@ -683,7 +684,11 @@ public class User implements MetaDataAble {
      */
     @Override
     public void setMetaData(Map<String, MetaDataValue> metaData) {
-        plugin.getPlayers().getPlayer(playerUUID).setMetaData(metaData);
+        Players p = plugin
+                .getPlayers()
+                .getPlayer(playerUUID);
+
+        Objects.requireNonNull(p, "Unknown player for " + playerUUID).setMetaData(metaData);
     }
 
 }
