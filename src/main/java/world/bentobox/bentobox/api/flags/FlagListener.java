@@ -128,7 +128,7 @@ public abstract class FlagListener implements Listener {
         // Set user
         user = player == null ? null : User.getInstance(player);
         if (loc == null) {
-            if (user.getLocation() != null && user.getLocation().getWorld() != null) {
+            if (user != null && user.getLocation() != null && user.getLocation().getWorld() != null) {
                 report(user, e, user.getLocation(), flag, Why.NULL_LOCATION);
             }
             return true;
