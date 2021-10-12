@@ -2,6 +2,7 @@ package world.bentobox.bentobox.listeners;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -392,7 +393,7 @@ public class PortalTeleportationListener implements Listener {
      */
     private void handleStandardNetherOrEnd(PlayerEntityPortalEvent e, World fromWorld, World overWorld, Environment env) {
         if (fromWorld.getEnvironment() != env) {
-            World toWorld = getNetherEndWorld(overWorld, env);
+            World toWorld = Objects.requireNonNull(getNetherEndWorld(overWorld, env));
             Location spawnPoint = toWorld.getSpawnLocation();
             // If spawn is set as 0,63,0 in the End then move it to 100, 50 ,0.
             if (env.equals(Environment.THE_END) && spawnPoint.getBlockX() == 0 && spawnPoint.getBlockZ() == 0) {
