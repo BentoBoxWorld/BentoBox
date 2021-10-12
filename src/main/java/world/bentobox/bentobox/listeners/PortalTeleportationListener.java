@@ -155,7 +155,7 @@ public class PortalTeleportationListener implements Listener {
     private boolean processPortal(final PlayerEntityPortalEvent e, final Environment env) {
         World fromWorld = e.getFrom().getWorld();
         World overWorld = Util.getWorld(fromWorld);
-        if (fromWorld == null || !plugin.getIWM().inWorld(overWorld)) {
+        if (overWorld == null || fromWorld == null || !plugin.getIWM().inWorld(overWorld)) {
             // Do nothing special
             return false;
         }
