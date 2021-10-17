@@ -1101,6 +1101,7 @@ public class IslandsManager {
                 .island(island)
                 .homeName(name)
                 .thenRun(() -> teleported(world, user, name, newIsland, island))
+                .ifFail(() -> goingHome.remove(user.getUniqueId()))
                 .buildFuture()
                 .thenAccept(result::complete);
                 return;
@@ -1115,9 +1116,10 @@ public class IslandsManager {
                     teleported(world, user, name, newIsland, island);
                     result.complete(true);
                 } else {
+                    // Remove from mid-teleport set
+                    goingHome.remove(user.getUniqueId());
                     result.complete(false);
                 }
-
             });
         });
         return result;
@@ -1135,6 +1137,8 @@ public class IslandsManager {
         if (!name.isEmpty()) {
             user.sendMessage("commands.island.go.teleported", TextVariables.NUMBER, name);
         }
+        // Remove from mid-teleport set
+        goingHome.remove(user.getUniqueId());
         // If this is a new island, then run commands and do resets
         if (newIsland) {
             // Fire event
@@ -1178,10 +1182,7 @@ public class IslandsManager {
 
             // Set the game mode
             user.setGameMode(plugin.getIWM().getDefaultGameMode(world));
-
         }
-        // Remove from mid-teleport set
-        goingHome.remove(user.getUniqueId());
     }
 
     /**
