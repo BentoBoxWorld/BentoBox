@@ -57,7 +57,7 @@ public class PortalTeleportationListener implements Listener {
      * Fires the event if nether or end is disabled at the system level
      * @param e - EntityPortalEnterEvent
      */
-    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPlayerPortal(EntityPortalEnterEvent e) {
         if (!(e.getEntity() instanceof Player)) {
             return;
