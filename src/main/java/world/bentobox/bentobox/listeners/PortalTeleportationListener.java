@@ -97,7 +97,7 @@ public class PortalTeleportationListener implements Listener {
      *
      * @param e - event
      */
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public boolean onEntityPortal(EntityPortalEvent e) {
         if (plugin.getIWM().inWorld(e.getFrom())) {
             Optional<Material> mat = Arrays.stream(BlockFace.values())
