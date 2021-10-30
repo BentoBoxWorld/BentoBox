@@ -65,8 +65,8 @@ public class User implements MetaDataAble {
      */
     @NonNull
     public static User getInstance(@NonNull CommandSender sender) {
-        if (sender instanceof Player) {
-            return getInstance((Player)sender);
+        if (sender instanceof Player p) {
+            return getInstance(p);
         }
         // Console
         return new User(sender);
