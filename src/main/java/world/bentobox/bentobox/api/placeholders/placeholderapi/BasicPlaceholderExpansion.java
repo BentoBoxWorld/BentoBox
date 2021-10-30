@@ -43,12 +43,12 @@ abstract class BasicPlaceholderExpansion extends PlaceholderExpansion {
 
     @Override
     public String onPlaceholderRequest(Player p, @NonNull String placeholder) {
-        if (placeholders.containsKey(placeholder)) {
+        if (placeholders.containsKey(placeholder) && p != null) {
             return placeholders.get(placeholder).onReplace(User.getInstance(p));
         }
         return null;
     }
-    
+
     /**
      * Checks if a placeholder with this name is already registered
      * @param placeholder - name of placeholder
@@ -56,7 +56,7 @@ abstract class BasicPlaceholderExpansion extends PlaceholderExpansion {
      * @since 1.4.0
      */
     public boolean isPlaceholder(@NonNull String placeholder) {
-    	return placeholders.containsKey(placeholder);
+        return placeholders.containsKey(placeholder);
     }
 
     @Override
