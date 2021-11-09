@@ -139,7 +139,7 @@ public class BlueprintClipboard {
                                 Math.rint(e.getLocation().getY()),
                                 Math.rint(e.getLocation().getZ())).equals(v))
                         .collect(Collectors.toList());
-                if (copyBlock(v.toLocation(world), origin, copyAir, ents)) {
+                if (copyBlock(v.toLocation(world), copyAir, ents)) {
                     count++;
                 }
             });
@@ -151,6 +151,7 @@ public class BlueprintClipboard {
             }
             if (index > vectorsToCopy.size()) {
                 copyTask.cancel();
+                assert blueprint != null;
                 blueprint.setAttached(bpAttachable);
                 blueprint.setBlocks(bpBlocks);
                 blueprint.setEntities(bpEntities);
@@ -178,12 +179,13 @@ public class BlueprintClipboard {
         return r;
     }
 
-    private boolean copyBlock(Location l, @Nullable Vector origin2, boolean copyAir, Collection<LivingEntity> entities) {
+    private boolean copyBlock(Location l, boolean copyAir, Collection<LivingEntity> entities) {
         Block block = l.getBlock();
         if (!copyAir && block.getType().equals(Material.AIR) && entities.isEmpty()) {
             return false;
         }
         // Create position
+        Vector origin2 = origin == null ? new Vector(0,0,0) : origin;
         int x = l.getBlockX() - origin2.getBlockX();
         int y = l.getBlockY() - origin2.getBlockY();
         int z = l.getBlockZ() - origin2.getBlockZ();
@@ -398,7 +400,7 @@ public class BlueprintClipboard {
     /**
      * @return the blueprint
      */
-    public Blueprint getBlueprint() {
+    public @Nullable Blueprint getBlueprint() {
         return blueprint;
     }
 

@@ -10,7 +10,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.times;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -296,7 +295,7 @@ public class IslandTeamInviteCommandTest {
         when(im.hasIsland(any(), eq(notUUID))).thenReturn(true);
         testCanExecuteSuccess();
         assertTrue(itl.execute(user, itl.getLabel(), Collections.singletonList("target")));
-        verify(pim, times(2)).callEvent(any(IslandBaseEvent.class));
+        verify(pim).callEvent(any(IslandBaseEvent.class));
         verify(user, never()).sendMessage(eq("commands.island.team.invite.removing-invite"));
         verify(ic).addInvite(eq(Invite.Type.TEAM), eq(uuid), eq(notUUID));
         verify(user).sendMessage(eq("commands.island.team.invite.invitation-sent"), eq(TextVariables.NAME), eq("target"));
@@ -313,7 +312,7 @@ public class IslandTeamInviteCommandTest {
     public void testExecuteSuccessTargetHasNoIsland() {
         testCanExecuteSuccess();
         assertTrue(itl.execute(user, itl.getLabel(), Collections.singletonList("target")));
-        verify(pim, times(2)).callEvent(any(IslandBaseEvent.class));
+        verify(pim).callEvent(any(IslandBaseEvent.class));
         verify(user, never()).sendMessage(eq("commands.island.team.invite.removing-invite"));
         verify(ic).addInvite(eq(Invite.Type.TEAM), eq(uuid), eq(notUUID));
         verify(user).sendMessage(eq("commands.island.team.invite.invitation-sent"), eq(TextVariables.NAME), eq("target"));
@@ -337,7 +336,7 @@ public class IslandTeamInviteCommandTest {
         when(invite.getType()).thenReturn(Type.TEAM);
         when(ic.getInvite(eq(notUUID))).thenReturn(invite);
         assertTrue(itl.execute(user, itl.getLabel(), Collections.singletonList("target")));
-        verify(pim, times(2)).callEvent(any(IslandBaseEvent.class));
+        verify(pim).callEvent(any(IslandBaseEvent.class));
         verify(ic).removeInvite(eq(notUUID));
         verify(user).sendMessage(eq("commands.island.team.invite.removing-invite"));
     }

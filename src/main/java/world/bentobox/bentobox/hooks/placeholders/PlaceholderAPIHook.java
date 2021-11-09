@@ -32,7 +32,7 @@ public class PlaceholderAPIHook extends PlaceholderHook {
 
 
     public PlaceholderAPIHook() {
-        super("PlaceholderAPI");
+        super();
         this.addonsExpansions = new HashMap<>();
         this.bentoBoxPlaceholders = new HashSet<>();
         this.addonPlaceholders = new HashMap<>();

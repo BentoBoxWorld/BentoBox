@@ -7,6 +7,7 @@ import org.bukkit.World.Environment;
 import org.bukkit.block.Biome;
 import org.bukkit.generator.ChunkGenerator.BiomeGrid;
 import org.bukkit.util.Vector;
+import org.eclipse.jdt.annotation.NonNull;
 
 /**
  * A biome grid for generators
@@ -37,19 +38,19 @@ public class MyBiomeGrid implements BiomeGrid {
 
     }
     @Override
-    public Biome getBiome(int x, int z) {
+    public @NonNull Biome getBiome(int x, int z) {
         return map.getOrDefault(new Vector(x,0,z), defaultBiome);
     }
     @Override
-    public void setBiome(int x, int z, Biome bio) {
+    public void setBiome(int x, int z, @NonNull Biome bio) {
         map.put(new Vector(x,0,z), bio);
     }
     @Override
-    public Biome getBiome(int x, int y, int z) {
+    public @NonNull Biome getBiome(int x, int y, int z) {
         return map.getOrDefault(new Vector(x,y,z), defaultBiome);
     }
     @Override
-    public void setBiome(int x, int y, int z, Biome bio) {
+    public void setBiome(int x, int y, int z, @NonNull Biome bio) {
         map.put(new Vector(x, y, z), bio);
 
     }

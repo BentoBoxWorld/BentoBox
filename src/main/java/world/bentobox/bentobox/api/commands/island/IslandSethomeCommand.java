@@ -6,6 +6,7 @@ import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
+import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
@@ -40,7 +41,7 @@ public class IslandSethomeCommand extends ConfirmableCommand {
         // Check number of homes
         int maxHomes = getIslands().getMaxHomes(island);
         if (getIslands().getNumberOfHomesIfAdded(island, String.join(" ", args)) > maxHomes) {
-            user.sendMessage("commands.island.sethome.too-many-homes", TextVariables.NUMBER, String.valueOf(island.getMaxHomes()));
+            user.sendMessage("commands.island.sethome.too-many-homes", TextVariables.NUMBER, String.valueOf(maxHomes));
             user.sendMessage("commands.island.sethome.homes-are");
             island.getHomes().keySet().stream().filter(s -> !s.isEmpty()).forEach(s -> user.sendMessage("commands.island.sethome.home-list-syntax", TextVariables.NAME, s));
             return false;
@@ -51,29 +52,30 @@ public class IslandSethomeCommand extends ConfirmableCommand {
     @Override
     public boolean execute(User user, String label, List<String> args) {
         String number = String.join(" ", args);
+        WorldSettings ws = getIWM().getWorldSettings(user.getWorld());
         // Check if the player is in the Nether
         if (getIWM().isNether(user.getWorld())) {
             // Check if he is (not) allowed to set his home here
-            if (!getIWM().getWorldSettings(user.getWorld()).isAllowSetHomeInNether()) {
+            if (!ws.isAllowSetHomeInNether()) {
                 user.sendMessage("commands.island.sethome.nether.not-allowed");
                 return false;
             }
 
             // Check if a confirmation is required
-            if (getIWM().getWorldSettings(user.getWorld()).isRequireConfirmationToSetHomeInNether()) {
+            if (ws.isRequireConfirmationToSetHomeInNether()) {
                 askConfirmation(user, user.getTranslation("commands.island.sethome.nether.confirmation"), () -> doSetHome(user, number));
             } else {
                 doSetHome(user, number);
             }
         } else if (getIWM().isEnd(user.getWorld())) { // Check if the player is in the End
             // Check if he is (not) allowed to set his home here
-            if (!getIWM().getWorldSettings(user.getWorld()).isAllowSetHomeInTheEnd()) {
+            if (!ws.isAllowSetHomeInTheEnd()) {
                 user.sendMessage("commands.island.sethome.the-end.not-allowed");
                 return false;
             }
 
             // Check if a confirmation is required
-            if (getIWM().getWorldSettings(user.getWorld()).isRequireConfirmationToSetHomeInTheEnd()) {
+            if (ws.isRequireConfirmationToSetHomeInTheEnd()) {
                 askConfirmation(user, user.getTranslation("commands.island.sethome.the-end.confirmation"), () -> doSetHome(user, number));
             } else {
                 doSetHome(user, number);

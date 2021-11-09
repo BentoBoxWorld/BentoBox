@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.bukkit.Material;
 import org.bukkit.World;
 
+import org.eclipse.jdt.annotation.NonNull;
 import world.bentobox.bentobox.api.flags.Flag.Type;
 import world.bentobox.bentobox.api.flags.clicklisteners.WorldToggleClick;
 import world.bentobox.bentobox.api.localization.TextVariables;
@@ -68,7 +69,7 @@ public class WorldDefaultSettingsTab extends SettingsTab implements Tab {
      * @return list of all the panel items for this flag type
      */
     @Override
-    public List<PanelItem> getPanelItems() {
+    public @NonNull List<PanelItem> getPanelItems() {
         // Different description and click handlers
         return getFlags().stream().map(f -> {
             PanelItem i = f.toPanelItem(plugin, user, null, false);

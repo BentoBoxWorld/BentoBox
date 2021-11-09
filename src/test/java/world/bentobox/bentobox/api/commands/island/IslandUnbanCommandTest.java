@@ -6,7 +6,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -248,37 +247,10 @@ public class IslandUnbanCommandTest {
 
         // Allow removing from ban list
         when(island.unban(any(), any())).thenReturn(true);
-
+        assertTrue(iubc.canExecute(user, iubc.getLabel(), Collections.singletonList("bill")));
         assertTrue(iubc.execute(user, iubc.getLabel(), Collections.singletonList("bill")));
         verify(user).sendMessage("commands.island.unban.player-unbanned", TextVariables.NAME, targetUser.getName());
         verify(targetUser).sendMessage("commands.island.unban.you-are-unbanned", TextVariables.NAME, user.getName());
-    }
-
-    /**
-     * Test method for {@link IslandUnbanCommand#execute(User, String, List)}
-     */
-    @Test
-    public void testCancelledUnban() {
-        IslandUnbanCommand iubc = new IslandUnbanCommand(ic);
-        when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
-        when(im.isOwner(any(), eq(uuid))).thenReturn(true);
-        UUID targetUUID = UUID.randomUUID();
-        when(pm.getUUID(Mockito.anyString())).thenReturn(targetUUID);
-        PowerMockito.mockStatic(User.class);
-        User targetUser = mock(User.class);
-        when(targetUser.isOp()).thenReturn(false);
-        when(targetUser.isPlayer()).thenReturn(true);
-        when(targetUser.isOnline()).thenReturn(false);
-        when(User.getInstance(any(UUID.class))).thenReturn(targetUser);
-        // Mark as banned
-        when(island.isBanned(eq(targetUUID))).thenReturn(true);
-
-        // Allow removing from ban list
-        when(island.unban(any(), any())).thenReturn(false);
-
-        assertFalse(iubc.execute(user, iubc.getLabel(), Collections.singletonList("bill")));
-        verify(user, never()).sendMessage("commands.island.unban.player-unbanned", TextVariables.NAME, targetUser.getName());
-        verify(targetUser, never()).sendMessage("commands.island.unban.you-are-unbanned", "[owner]", user.getName());
     }
 
     /**

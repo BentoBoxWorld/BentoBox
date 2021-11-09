@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -199,11 +200,11 @@ public class IslandWorldManager {
      * Get the settings for this world or sub-worlds (nether, end)
      *
      * @param world world
-     * @return world settings, or null if world is unknown
+     * @return world settings
      */
-    @Nullable
+    @NonNull
     public WorldSettings getWorldSettings(@NonNull World world) {
-        return gameModes.containsKey(world) ? gameModes.get(world).getWorldSettings() : null;
+        return Objects.requireNonNull(gameModes.get(world), "Attempt to get WorldSettings for non-game world " + world.getName()).getWorldSettings();
     }
 
     /**
@@ -678,7 +679,7 @@ public class IslandWorldManager {
      * @return data folder file object or the plugin's data folder if none found
      */
     public File getDataFolder(@NonNull World world) {
-        return getAddon(world).map(GameModeAddon::getDataFolder).orElseGet(() -> plugin.getDataFolder());
+        return getAddon(world).map(GameModeAddon::getDataFolder).orElseGet(plugin::getDataFolder);
     }
 
     /**
@@ -725,7 +726,7 @@ public class IslandWorldManager {
     public boolean isUseOwnGenerator(@NonNull World world) {
         return gameModes.containsKey(world) && gameModes.get(world).getWorldSettings().isUseOwnGenerator();
     }
-    
+
     /**
      * Check for blocks when searching for a new island. This is a safety net check that does a look
      * around the new island location (3x3x3 block check). If any non-air or non-water blocks are found

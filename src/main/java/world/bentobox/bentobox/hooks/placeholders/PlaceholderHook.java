@@ -14,8 +14,8 @@ import world.bentobox.bentobox.api.placeholders.PlaceholderReplacer;
  */
 public abstract class PlaceholderHook extends Hook {
 
-    protected PlaceholderHook(@NonNull String pluginName) {
-        super(pluginName, Material.NAME_TAG);
+    protected PlaceholderHook() {
+        super("PlaceholderAPI", Material.NAME_TAG);
     }
 
     /**

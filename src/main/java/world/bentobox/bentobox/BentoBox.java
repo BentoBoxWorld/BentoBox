@@ -2,7 +2,6 @@ package world.bentobox.bentobox;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.bukkit.Bukkit;
@@ -23,7 +22,6 @@ import world.bentobox.bentobox.database.DatabaseSetup;
 import world.bentobox.bentobox.hooks.DynmapHook;
 import world.bentobox.bentobox.hooks.MultiverseCoreHook;
 import world.bentobox.bentobox.hooks.VaultHook;
-import world.bentobox.bentobox.hooks.WorldEditHook;
 import world.bentobox.bentobox.hooks.placeholders.PlaceholderAPIHook;
 import world.bentobox.bentobox.listeners.BannedCommands;
 import world.bentobox.bentobox.listeners.BlockEndDragon;
@@ -103,7 +101,7 @@ public class BentoBox extends JavaPlugin {
             logWarning("BentoBox is tested only on the following Spigot versions:");
 
             List<String> versions = ServerCompatibility.ServerVersion.getVersions(ServerCompatibility.Compatibility.COMPATIBLE, ServerCompatibility.Compatibility.SUPPORTED)
-                    .stream().map(ServerCompatibility.ServerVersion::toString).collect(Collectors.toList());
+                    .stream().map(ServerCompatibility.ServerVersion::toString).toList();
 
             logWarning(String.join(", ", versions));
             logWarning("**************************************");
@@ -172,6 +170,7 @@ public class BentoBox extends JavaPlugin {
                 completeSetup(loadTime);
             } catch (Exception e) {
                 fireCriticalError(e.getMessage(), "");
+                e.printStackTrace();
             }
         });
     }
@@ -227,7 +226,6 @@ public class BentoBox extends JavaPlugin {
 
         // Register additional hooks
         hooksManager.registerHook(new DynmapHook());
-        hooksManager.registerHook(new WorldEditHook());
         // TODO: re-enable after rework
         //hooksManager.registerHook(new LangUtilsHook());
 
@@ -333,7 +331,7 @@ public class BentoBox extends JavaPlugin {
      * @since 1.16.0
      */
     public PlayersManager getPlayersManager() {
-        return playersManager;
+        return getPlayers();
     }
 
     /**
@@ -352,7 +350,7 @@ public class BentoBox extends JavaPlugin {
      * @since 1.16.0
      */
     public IslandsManager getIslandsManager() {
-        return islandsManager;
+        return getIslands();
     }
 
     private static void setInstance(BentoBox plugin) {

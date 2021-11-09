@@ -79,8 +79,8 @@ public class AddonClassLoader extends URLClassLoader {
      */
     @NonNull
     public static AddonDescription asDescription(YamlConfiguration data) throws InvalidAddonDescriptionException {
-        AddonDescription.Builder builder = new AddonDescription.Builder(data.getString("main"), data.getString("name"), data.getString("version"))
-                .authors(data.getString("authors"))
+        AddonDescription.Builder builder = new AddonDescription.Builder(Objects.requireNonNull(data.getString("main")), Objects.requireNonNull(data.getString("name")), Objects.requireNonNull(data.getString("version")))
+                .authors(Objects.requireNonNull(data.getString("authors")))
                 .metrics(data.getBoolean("metrics", true))
                 .repository(data.getString("repository", ""));
 
@@ -92,7 +92,7 @@ public class AddonClassLoader extends URLClassLoader {
         if (softDepend != null) {
             builder.softDependencies(Arrays.asList(softDepend.split("\\s*,\\s*")));
         }
-        builder.icon(Material.getMaterial(data.getString("icon", "PAPER")));
+        builder.icon(Objects.requireNonNull(Material.getMaterial(data.getString("icon", "PAPER"))));
 
         String apiVersion = data.getString("api-version");
         if (apiVersion != null) {

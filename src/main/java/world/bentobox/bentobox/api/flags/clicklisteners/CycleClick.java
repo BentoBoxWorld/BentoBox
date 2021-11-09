@@ -24,7 +24,7 @@ import world.bentobox.bentobox.util.Util;
  */
 public class CycleClick implements PanelItem.ClickHandler {
 
-    protected BentoBox plugin = BentoBox.getInstance();
+    protected final BentoBox plugin = BentoBox.getInstance();
     protected Island island;
     protected User user;
     protected boolean changeOccurred;

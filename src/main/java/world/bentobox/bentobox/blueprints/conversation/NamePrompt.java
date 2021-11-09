@@ -38,7 +38,7 @@ public class NamePrompt extends StringPrompt {
     }
 
     @Override
-    public String getPromptText(ConversationContext context) {
+    public @NonNull String getPromptText(ConversationContext context) {
         User user = User.getInstance((Player)context.getForWhom());
         return user.getTranslation("commands.admin.blueprint.management.name.prompt");
     }

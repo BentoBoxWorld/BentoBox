@@ -30,7 +30,7 @@ public class AdminBlueprintPos1Command extends CompositeCommand {
             return false;
         }
         clipboard.setPos1(user.getLocation());
-        user.sendMessage("commands.admin.blueprint.set-pos1", "[vector]", Util.xyz(clipboard.getPos1().toVector()));
+        user.sendMessage("commands.admin.blueprint.set-pos1", "[vector]", Util.xyz(user.getLocation().toVector()));
         parent.getClipboards().put(user.getUniqueId(), clipboard);
         parent.showClipboard(user);
         return true;

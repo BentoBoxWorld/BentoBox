@@ -109,7 +109,7 @@ public class BlueprintPaster {
         this.plugin = plugin;
         this.clipboard = clipboard;
         // Calculate location for pasting
-        this.blueprint = clipboard.getBlueprint();
+        this.blueprint = Objects.requireNonNull(clipboard.getBlueprint(), "Clipboard cannot have a null Blueprint");
         this.location = location;
         this.island = null;
 
@@ -416,9 +416,11 @@ public class BlueprintPaster {
         if (island != null && !lines.isEmpty() && lines.get(0).equalsIgnoreCase(TextVariables.START_TEXT)) {
             // Get the addon that is operating in this world
             String addonName = plugin.getIWM().getAddon(island.getWorld()).map(addon -> addon.getDescription().getName().toLowerCase(Locale.ENGLISH)).orElse("");
-            for (int i = 0; i < 4; i++) {
-                s.setLine(i, Util.translateColorCodes(plugin.getLocalesManager().getOrDefault(User.getInstance(island.getOwner()),
-                        addonName + ".sign.line" + i,"").replace(TextVariables.NAME, name)));
+            if (island.getOwner() != null) {
+                for (int i = 0; i < 4; i++) {
+                    s.setLine(i, Util.translateColorCodes(plugin.getLocalesManager().getOrDefault(User.getInstance(island.getOwner()),
+                            addonName + ".sign.line" + i,"").replace(TextVariables.NAME, name)));
+                }
             }
         } else {
             // Just paste

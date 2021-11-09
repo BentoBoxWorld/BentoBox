@@ -106,6 +106,7 @@ public class RemoveMobsListenerTest {
         Map<String, Boolean> worldFlags = new HashMap<>();
         when(ws.getWorldFlags()).thenReturn(worldFlags);
         Flags.REMOVE_MOBS.setSetting(world, true);
+        when(iwm.inWorld(world)).thenReturn(true);
 
         // Sometimes use Mockito.withSettings().verboseLogging()
         UUID uuid = UUID.randomUUID();

@@ -86,7 +86,7 @@ public class FlagTest {
         GameModeAddon gma = mock(GameModeAddon.class);
         Optional<GameModeAddon> opGma = Optional.of(gma );
         when(iwm.getAddon(any())).thenReturn(opGma);
-
+        when(iwm.inWorld(any(World.class))).thenReturn(true);
         worldFlags = new HashMap<>();
         when(ws.getWorldFlags()).thenReturn(worldFlags);
 
@@ -223,7 +223,7 @@ public class FlagTest {
      */
     @Test
     public void testSetDefaultSettingWorldBooleanNullWorldSettings() {
-        when(iwm.getWorldSettings(any())).thenReturn(null);
+        when(iwm.inWorld(any(World.class))).thenReturn(false);
         f.setDefaultSetting(world, true);
         verify(plugin).logError("Attempt to set default world setting for unregistered world. Register flags in onEnable.");
     }

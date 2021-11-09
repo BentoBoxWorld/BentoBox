@@ -175,8 +175,10 @@ public class Flag implements Comparable<Flag> {
      * If world is not a game world, then the result will always be false!
      */
     public boolean isSetForWorld(World world) {
+        if (!BentoBox.getInstance().getIWM().inWorld(world)) {
+            return false;
+        }
         WorldSettings ws = BentoBox.getInstance().getIWM().getWorldSettings(world);
-        if (ws == null) return false;
         if (type.equals(Type.WORLD_SETTING) || type.equals(Type.PROTECTION)) {
             if (!ws.getWorldFlags().containsKey(getID())) {
                 ws.getWorldFlags().put(getID(), setting);
@@ -234,12 +236,11 @@ public class Flag implements Comparable<Flag> {
      * @param defaultSetting - true means it is allowed. false means it is not allowed
      */
     public void setDefaultSetting(World world, boolean defaultSetting) {
-        WorldSettings ws = BentoBox.getInstance().getIWM().getWorldSettings(world);
-        if (ws == null ) {
+        if (!BentoBox.getInstance().getIWM().inWorld(world)) {
             BentoBox.getInstance().logError("Attempt to set default world setting for unregistered world. Register flags in onEnable.");
             return;
         }
-        ws.getWorldFlags().put(getID(), defaultSetting);
+        BentoBox.getInstance().getIWM().getWorldSettings(world).getWorldFlags().put(getID(), defaultSetting);
         // Save config file
         BentoBox.getInstance().getIWM().getAddon(world).ifPresent(GameModeAddon::saveWorldSettings);
     }

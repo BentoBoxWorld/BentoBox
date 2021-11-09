@@ -11,6 +11,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
 import org.bukkit.util.Vector;
+import org.eclipse.jdt.annotation.NonNull;
 
 import io.papermc.lib.PaperLib;
 import world.bentobox.bentobox.BentoBox;
@@ -103,7 +104,7 @@ public class LockAndBanListener extends FlagListener {
      * @param loc - location to check
      * @return CheckResult LOCKED, BANNED or OPEN. If an island is locked, that will take priority over banned
      */
-    private CheckResult check(Player player, Location loc) {
+    private CheckResult check(@NonNull Player player, Location loc) {
         // Ops or NPC's are allowed everywhere
         if (player.isOp() || player.hasMetadata("NPC")) {
             return CheckResult.OPEN;
@@ -127,7 +128,7 @@ public class LockAndBanListener extends FlagListener {
      * @param loc - location to check
      * @return true if banned
      */
-    private CheckResult checkAndNotify(Player player, Location loc) {
+    private CheckResult checkAndNotify(@NonNull Player player, Location loc) {
         CheckResult r = check(player,loc);
         switch (r) {
         case BANNED:

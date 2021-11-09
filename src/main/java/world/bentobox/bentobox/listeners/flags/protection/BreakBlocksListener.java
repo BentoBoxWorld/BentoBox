@@ -42,15 +42,13 @@ public class BreakBlocksListener extends FlagListener {
      */
     @EventHandler(priority = EventPriority.LOW)
     public void onBreakHanging(final HangingBreakByEntityEvent e) {
-        if (e.getRemover() instanceof Player) {
-            checkIsland(e, (Player)e.getRemover(), e.getEntity().getLocation(), Flags.BREAK_BLOCKS);
+        if (e.getRemover() instanceof Player r) {
+            checkIsland(e, r, e.getEntity().getLocation(), Flags.BREAK_BLOCKS);
         }
         // Check for projectiles
-        if (e.getRemover() instanceof Projectile p) {
-            // Find out who fired it
-            if (p.getShooter() instanceof Player) {
-                checkIsland(e, (Player)p.getShooter(), e.getEntity().getLocation(), Flags.BREAK_BLOCKS);
-            }
+        // Find out who fired it
+        if (e.getRemover() instanceof Projectile p && p.getShooter() instanceof Player s) {
+            checkIsland(e, s, e.getEntity().getLocation(), Flags.BREAK_BLOCKS);
         }
     }
 
@@ -65,21 +63,14 @@ public class BreakBlocksListener extends FlagListener {
         if (!e.getAction().equals(Action.LEFT_CLICK_BLOCK)) {
             return;
         }
+        Player p = e.getPlayer();
+        Location l = e.getClickedBlock().getLocation();
         switch (e.getClickedBlock().getType()) {
-        case CAKE:
-            checkIsland(e, e.getPlayer(), e.getClickedBlock().getLocation(), Flags.BREAK_BLOCKS);
-            break;
-        case SPAWNER:
-            checkIsland(e, e.getPlayer(), e.getClickedBlock().getLocation(), Flags.BREAK_SPAWNERS);
-            break;
-        case DRAGON_EGG:
-            checkIsland(e, e.getPlayer(), e.getClickedBlock().getLocation(), Flags.DRAGON_EGG);
-            break;
-        case HOPPER:
-            checkIsland(e, e.getPlayer(), e.getClickedBlock().getLocation(), Flags.BREAK_HOPPERS);
-            break;
-        default:
-            break;
+        case CAKE -> checkIsland(e, p, l, Flags.BREAK_BLOCKS);
+        case SPAWNER ->  checkIsland(e, p, l, Flags.BREAK_SPAWNERS);
+        case DRAGON_EGG ->  checkIsland(e, p, l, Flags.DRAGON_EGG);
+        case HOPPER -> checkIsland(e, p, l, Flags.BREAK_HOPPERS);
+        default -> {}
         }
     }
 
@@ -89,14 +80,15 @@ public class BreakBlocksListener extends FlagListener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onVehicleDamageEvent(VehicleDamageEvent e) {
-        if (getIWM().inWorld(e.getVehicle().getLocation()) && e.getAttacker() instanceof Player) {
+        Location l = e.getVehicle().getLocation();
+        if (getIWM().inWorld(l) && e.getAttacker() instanceof Player p) {
             String vehicleType = e.getVehicle().getType().toString();
             if (e.getVehicle().getType().equals(EntityType.BOAT)) {
-                checkIsland(e, (Player) e.getAttacker(), e.getVehicle().getLocation(), Flags.BOAT);
+                checkIsland(e, p, l, Flags.BOAT);
             } else if (vehicleType.contains("MINECART")) {
-                checkIsland(e, (Player) e.getAttacker(), e.getVehicle().getLocation(), Flags.MINECART);
+                checkIsland(e, p, l, Flags.MINECART);
             } else {
-                checkIsland(e, (Player) e.getAttacker(), e.getVehicle().getLocation(), Flags.BREAK_BLOCKS);
+                checkIsland(e, p, l, Flags.BREAK_BLOCKS);
             }
         }
     }
@@ -114,9 +106,9 @@ public class BreakBlocksListener extends FlagListener {
             return;
         }
         // Get the attacker
-        if (e.getDamager() instanceof Player) {
+        if (e.getDamager() instanceof Player p) {
             // Check the break blocks flag
-            notAllowed(e, (Player)e.getDamager(), e.getEntity().getLocation());
+            notAllowed(e, p, e.getEntity().getLocation());
         } else if (e.getDamager() instanceof Projectile p) {
             // Find out who fired the arrow
             if (p.getShooter() instanceof Player && notAllowed(e, (Player)p.getShooter(), e.getEntity().getLocation())) {
@@ -153,8 +145,8 @@ public class BreakBlocksListener extends FlagListener {
         }
 
         // Find out who fired the arrow
-        if (e.getEntity().getShooter() instanceof Player &&
-                !checkIsland(e, (Player) e.getEntity().getShooter(), e.getHitBlock().getLocation(), Flags.BREAK_BLOCKS)) {
+        if (e.getEntity().getShooter() instanceof Player s &&
+                !checkIsland(e, s, e.getHitBlock().getLocation(), Flags.BREAK_BLOCKS)) {
             final BlockData data = e.getHitBlock().getBlockData();
             // We seemingly can't prevent the block from being destroyed
             // So we need to put it back with a slight delay (yup, this is hacky - it makes the block flicker sometimes)

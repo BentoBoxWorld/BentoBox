@@ -1,5 +1,6 @@
 package world.bentobox.bentobox.listeners;
 
+import java.util.Objects;
 import java.util.Optional;
 
 import org.bukkit.Location;
@@ -153,8 +154,8 @@ public class PlayerEntityPortalEvent {
      * Get the from world
      * @return from world
      */
-    @Nullable
+    @NonNull
     public World getWorld() {
-        return getFrom().getWorld();
+        return Objects.requireNonNull(getFrom().getWorld(), "From world is null!");
     }
 }

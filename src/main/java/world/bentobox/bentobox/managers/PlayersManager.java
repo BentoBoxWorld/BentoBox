@@ -195,7 +195,9 @@ public class PlayersManager {
      * @param user - the player
      * @param location - the location
      * @param number - a number - 1 is default. Can be any number.
+     * @deprecated Use {@link IslandsManager#setHomeLocation(User, Location, String)}
      */
+    @Deprecated(since="1.18.0", forRemoval=true)
     public void setHomeLocation(User user, Location location, int number) {
         setHomeLocation(user.getUniqueId(), location,number);
     }
@@ -205,7 +207,9 @@ public class PlayersManager {
      * @param playerUUID - the player's UUID
      * @param location - the location
      * @param number - a number - 1 is default. Can be any number.
+     * @deprecated Use {@link IslandsManager#setHomeLocation(UUID, Location, String)}
      */
+    @Deprecated(since="1.18.0", forRemoval=true)
     public void setHomeLocation(UUID playerUUID, Location location, int number) {
         addPlayer(playerUUID);
         playerCache.get(playerUUID).setHomeLocation(location,number);
@@ -215,7 +219,9 @@ public class PlayersManager {
      * Set the default home location for player
      * @param playerUUID - the player's UUID
      * @param location - the location
+     * @deprecated Use {@link IslandsManager#setHomeLocation(UUID, Location)}
      */
+    @Deprecated(since="1.18.0", forRemoval=true)
     public void setHomeLocation(UUID playerUUID, Location location) {
         setHomeLocation(playerUUID, location,1);
     }
@@ -224,7 +230,9 @@ public class PlayersManager {
      * Clears any home locations for player
      * @param world - world
      * @param playerUUID - the player's UUID
+     * @deprecated Not used anymore. Home locations are stored on islands.
      */
+    @Deprecated(since="1.18.0", forRemoval=true)
     public void clearHomeLocations(World world, UUID playerUUID) {
         addPlayer(playerUUID);
         playerCache.get(playerUUID).clearHomeLocations(world);
@@ -237,7 +245,9 @@ public class PlayersManager {
      * @param user - the player
      * @param number - a number
      * @return Home location or null if none
+     * @deprecated Use {@link IslandsManager#getHomeLocation(World, User, String)}
      */
+    @Deprecated(since="1.18.0", forRemoval=true)
     public Location getHomeLocation(World world, User user, int number) {
         addPlayer(user.getUniqueId());
         return playerCache.get(user.getUniqueId()).getHomeLocation(world, number);
@@ -250,7 +260,9 @@ public class PlayersManager {
      * @param playerUUID - the player's UUID
      * @param number - a number
      * @return Home location or null if none
+     * @deprecated Use {@link IslandsManager#getHomeLocation(World, UUID, String)}
      */
+    @Deprecated(since="1.18.0", forRemoval=true)
     public Location getHomeLocation(World world, UUID playerUUID, int number) {
         addPlayer(playerUUID);
         return playerCache.get(playerUUID).getHomeLocation(world, number);
@@ -260,7 +272,9 @@ public class PlayersManager {
      * Gets the default home location for player
      * @param playerUUID - the player's UUID
      * @return Home location or null if none
+     * @deprecated Use {@link IslandsManager#getHomeLocation(World, UUID)}
      */
+    @Deprecated(since="1.18.0", forRemoval=true)
     public Location getHomeLocation(World world, UUID playerUUID) {
         addPlayer(playerUUID);
         return playerCache.get(playerUUID).getHomeLocation(world, 1);
@@ -270,7 +284,9 @@ public class PlayersManager {
      * Provides all home locations for player
      * @param playerUUID - the player's UUID
      * @return List of home locations
+     * @deprecated Use {@link IslandsManager#getHomeLocations(world.bentobox.bentobox.database.objects.Island)}
      */
+    @Deprecated(since="1.18.0", forRemoval=true)
     public Map<Location, Integer> getHomeLocations(World world, UUID playerUUID) {
         addPlayer(playerUUID);
         return playerCache.get(playerUUID).getHomeLocations(world);

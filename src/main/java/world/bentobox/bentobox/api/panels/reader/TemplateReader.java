@@ -32,6 +32,14 @@ import world.bentobox.bentobox.util.ItemParser;
  */
 public class TemplateReader
 {
+    private static final String TITLE = "title";
+    private static final String ICON = "icon";
+    private static final String DESCRIPTION = "description";
+    private static final String BACKGROUND = "background";
+    private static final String BORDER = "border";
+    private static final String FORCE_SHOWN = "force-shown";
+    private static final String FALLBACK = "fallback";
+
     /**
      * Read template panel panel template record.
      *
@@ -95,57 +103,57 @@ public class TemplateReader
             return null;
         }
 
-        String title = configurationSection.getString("title");
+        String title = configurationSection.getString(TITLE);
         Panel.Type type =
-            Enums.getIfPresent(Panel.Type.class, configurationSection.getString("type", "INVENTORY")).
+                Enums.getIfPresent(Panel.Type.class, configurationSection.getString("type", "INVENTORY")).
                 or(Panel.Type.INVENTORY);
 
         PanelTemplateRecord.TemplateItem borderItem = null;
 
         // Read Border Icon.
-        if (configurationSection.isConfigurationSection("border"))
+        if (configurationSection.isConfigurationSection(BORDER))
         {
             // Process border icon if it contains more options.
-            ConfigurationSection borderSection = configurationSection.getConfigurationSection("border");
+            ConfigurationSection borderSection = configurationSection.getConfigurationSection(BORDER);
 
             if (borderSection != null)
             {
                 borderItem = new PanelTemplateRecord.TemplateItem(
-                    ItemParser.parse((borderSection.getString("icon", Material.AIR.name()))),
-                    borderSection.getString("title", null),
-                    borderSection.getString("description", null));
+                        ItemParser.parse((borderSection.getString(ICON, Material.AIR.name()))),
+                        borderSection.getString(TITLE, null),
+                        borderSection.getString(DESCRIPTION, null));
             }
         }
-        else if (configurationSection.isString("border"))
+        else if (configurationSection.isString(BORDER))
         {
             // Process border icon if it contains only icon.
 
             borderItem = new PanelTemplateRecord.TemplateItem(
-                ItemParser.parse((configurationSection.getString("border", Material.AIR.name()))));
+                    ItemParser.parse((configurationSection.getString(BORDER, Material.AIR.name()))));
         }
 
         PanelTemplateRecord.TemplateItem backgroundItem = null;
 
         // Read Background block
-        if (configurationSection.isConfigurationSection("background"))
+        if (configurationSection.isConfigurationSection(BACKGROUND))
         {
             // Process border icon if it contains more options.
-            ConfigurationSection backgroundSection = configurationSection.getConfigurationSection("background");
+            ConfigurationSection backgroundSection = configurationSection.getConfigurationSection(BACKGROUND);
 
             if (backgroundSection != null)
             {
                 backgroundItem = new PanelTemplateRecord.TemplateItem(
-                    ItemParser.parse((backgroundSection.getString("icon", Material.AIR.name()))),
-                    backgroundSection.getString("title", null),
-                    backgroundSection.getString("description", null));
+                        ItemParser.parse((backgroundSection.getString(ICON, Material.AIR.name()))),
+                        backgroundSection.getString(TITLE, null),
+                        backgroundSection.getString(DESCRIPTION, null));
             }
         }
-        else if (configurationSection.isString("background"))
+        else if (configurationSection.isString(BACKGROUND))
         {
             // Process background icon if it contains only icon.
 
             backgroundItem = new PanelTemplateRecord.TemplateItem(
-                ItemParser.parse((configurationSection.getString("background", Material.AIR.name()))));
+                    ItemParser.parse((configurationSection.getString(BACKGROUND, Material.AIR.name()))));
         }
 
         // Read reusable
@@ -156,7 +164,7 @@ public class TemplateReader
         {
             // Add all reusables to the local storage.
             reusable.getKeys(false).forEach(key ->
-                readPanelItemTemplate(reusable.getConfigurationSection(key), key, panelItemDataMap));
+            readPanelItemTemplate(reusable.getConfigurationSection(key), key, panelItemDataMap));
         }
 
         // Read content
@@ -190,15 +198,15 @@ public class TemplateReader
                         {
                             // If it contains a section, then build a new button template from it.
                             template.addButtonTemplate(rowIndex,
-                                columnIndex,
-                                readPanelItemTemplate(line.getConfigurationSection(String.valueOf(columnIndex + 1))));
+                                    columnIndex,
+                                    readPanelItemTemplate(line.getConfigurationSection(String.valueOf(columnIndex + 1))));
                         }
                         else if (line.isString(String.valueOf(columnIndex + 1)))
                         {
                             // If it contains just a single word, assume it is a reusable.
                             template.addButtonTemplate(rowIndex,
-                                columnIndex,
-                                panelItemDataMap.get(line.getString(String.valueOf(columnIndex + 1))));
+                                    columnIndex,
+                                    panelItemDataMap.get(line.getString(String.valueOf(columnIndex + 1))));
                         }
                     }
                 }
@@ -221,20 +229,20 @@ public class TemplateReader
     {
         boolean[] forceShow = new boolean[6];
 
-        if (section != null && section.contains("force-shown"))
+        if (section != null && section.contains(FORCE_SHOWN))
         {
-            if (section.isInt("force-shown"))
+            if (section.isInt(FORCE_SHOWN))
             {
-                int value = section.getInt("force-shown");
+                int value = section.getInt(FORCE_SHOWN);
 
                 if (value > 0 && value < 7)
                 {
                     forceShow[value-1] = true;
                 }
             }
-            else if (section.isList("force-shown"))
+            else if (section.isList(FORCE_SHOWN))
             {
-                section.getIntegerList("force-shown").forEach(number -> {
+                section.getIntegerList(FORCE_SHOWN).forEach(number -> {
                     if (number > 0 && number < 7)
                     {
                         forceShow[number-1] = true;
@@ -267,8 +275,8 @@ public class TemplateReader
      */
     @Nullable
     private static ItemTemplateRecord readPanelItemTemplate(@Nullable ConfigurationSection section,
-        String itemKey,
-        Map<String, ItemTemplateRecord> reusableItemMap)
+            String itemKey,
+            Map<String, ItemTemplateRecord> reusableItemMap)
     {
         if (section == null)
         {
@@ -278,13 +286,13 @@ public class TemplateReader
 
         ItemTemplateRecord fallback;
 
-        if (section.isConfigurationSection("fallback"))
+        if (section.isConfigurationSection(FALLBACK))
         {
-            fallback = readPanelItemTemplate(section.getConfigurationSection("fallback"));
+            fallback = readPanelItemTemplate(section.getConfigurationSection(FALLBACK));
         }
-        else if (section.isString("fallback") && reusableItemMap != null)
+        else if (section.isString(FALLBACK) && reusableItemMap != null)
         {
-            fallback = reusableItemMap.get(section.getString("fallback"));
+            fallback = reusableItemMap.get(section.getString(FALLBACK));
         }
         else
         {
@@ -292,10 +300,10 @@ public class TemplateReader
         }
 
         // Create Item Record
-        ItemTemplateRecord itemRecord = new ItemTemplateRecord(ItemParser.parse(section.getString("icon")),
-            section.getString("title", null),
-            section.getString("description", null),
-            fallback);
+        ItemTemplateRecord itemRecord = new ItemTemplateRecord(ItemParser.parse(section.getString(ICON)),
+                section.getString(TITLE, null),
+                section.getString(DESCRIPTION, null),
+                fallback);
 
         // Read data
         if (section.isConfigurationSection("data"))
@@ -325,11 +333,10 @@ public class TemplateReader
                         if (actionDataSection != null)
                         {
                             ItemTemplateRecord.ActionRecords actionData =
-                                new ItemTemplateRecord.ActionRecords(clickType,
-                                    actionDataSection.getString("type"),
-                                    actionDataSection.getString("content"),
-                                    actionDataSection.getString("tooltip"));
-
+                                    new ItemTemplateRecord.ActionRecords(clickType,
+                                            actionDataSection.getString("type"),
+                                            actionDataSection.getString("content"),
+                                            actionDataSection.getString("tooltip"));
                             itemRecord.addAction(actionData);
                         }
                     }

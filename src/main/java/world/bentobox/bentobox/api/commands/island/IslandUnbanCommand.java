@@ -6,6 +6,8 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.eclipse.jdt.annotation.Nullable;
+
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.island.IslandEvent;
@@ -20,6 +22,8 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 public class IslandUnbanCommand extends CompositeCommand {
+
+    private @Nullable UUID targetUUID;
 
     public IslandUnbanCommand(CompositeCommand islandCommand) {
         super(islandCommand, "unban", "pardon");
@@ -55,7 +59,7 @@ public class IslandUnbanCommand extends CompositeCommand {
             return false;
         }
         // Get target player
-        UUID targetUUID = getPlayers().getUUID(args.get(0));
+        targetUUID = getPlayers().getUUID(args.get(0));
         if (targetUUID == null) {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
             return false;
@@ -65,7 +69,7 @@ public class IslandUnbanCommand extends CompositeCommand {
             user.sendMessage("commands.island.unban.cannot-unban-yourself");
             return false;
         }
-        if (!getIslands().getIsland(getWorld(), playerUUID).isBanned(targetUUID)) {
+        if (!island.isBanned(targetUUID)) {
             user.sendMessage("commands.island.unban.player-not-banned");
             return false;
         }
@@ -75,7 +79,7 @@ public class IslandUnbanCommand extends CompositeCommand {
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        User target = User.getInstance(getPlayers().getUUID(args.get(0)));
+        User target = User.getInstance(targetUUID);
         Island island = getIslands().getIsland(getWorld(), user.getUniqueId());
 
         // Run the event

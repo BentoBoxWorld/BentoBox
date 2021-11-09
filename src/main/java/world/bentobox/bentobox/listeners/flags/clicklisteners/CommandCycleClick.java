@@ -36,7 +36,7 @@ public class CommandCycleClick implements ClickHandler {
         // Get the user's island for the game world
         World world = panel.getWorld().orElse(user.getWorld());
         Island island = plugin.getIslands().getIsland(world, user.getUniqueId());
-        if (island != null && island.getOwner().equals(user.getUniqueId())) {
+        if (island != null && island.getOwner() != null && island.getOwner().equals(user.getUniqueId())) {
             RanksManager rm = plugin.getRanksManager();
             int currentRank = island.getRankCommand(command);
             if (click.equals(ClickType.LEFT)) {

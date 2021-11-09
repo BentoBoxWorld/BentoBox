@@ -19,6 +19,7 @@ import com.mongodb.client.model.IndexOptions;
 import com.mongodb.client.model.Indexes;
 import com.mongodb.util.JSON;
 
+import org.eclipse.jdt.annotation.NonNull;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.database.DatabaseConnector;
 import world.bentobox.bentobox.database.json.AbstractJSONDatabaseHandler;
@@ -125,7 +126,7 @@ public class MongoDBDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
     }
 
     @Override
-    public T loadObject(String uniqueId) {
+    public T loadObject(@NonNull String uniqueId) {
         Document doc = collection.find(new Document(MONGO_ID, uniqueId)).limit(1).first();
         Gson gson = getGson();
         String json = JSON.serialize(doc).replaceFirst(MONGO_ID, UNIQUEID);

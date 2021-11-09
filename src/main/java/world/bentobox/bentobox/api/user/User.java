@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -32,6 +33,7 @@ import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.events.OfflineMessageEvent;
 import world.bentobox.bentobox.api.metadata.MetaDataAble;
 import world.bentobox.bentobox.api.metadata.MetaDataValue;
+import world.bentobox.bentobox.database.objects.Players;
 import world.bentobox.bentobox.util.Util;
 
 /**
@@ -61,25 +63,22 @@ public class User implements MetaDataAble {
      * @param sender - command sender, e.g. console
      * @return user - user
      */
-    @Nullable
-    public static User getInstance(CommandSender sender) {
-        if (sender instanceof Player) {
-            return getInstance((Player)sender);
+    @NonNull
+    public static User getInstance(@NonNull CommandSender sender) {
+        if (sender instanceof Player p) {
+            return getInstance(p);
         }
         // Console
         return new User(sender);
     }
 
     /**
-     * Gets an instance of User from a Player object
+     * Gets an instance of User from a Player object.
      * @param player - the player
      * @return user - user
      */
-    @Nullable
-    public static User getInstance(Player player) {
-        if (player == null) {
-            return null;
-        }
+    @NonNull
+    public static User getInstance(@NonNull Player player) {
         if (users.containsKey(player.getUniqueId())) {
             return users.get(player.getUniqueId());
         }
@@ -87,15 +86,12 @@ public class User implements MetaDataAble {
     }
 
     /**
-     * Gets an instance of User from a UUID
+     * Gets an instance of User from a UUID.
      * @param uuid - UUID
      * @return user - user
      */
-    @Nullable
-    public static User getInstance(@Nullable UUID uuid) {
-        if (uuid == null) {
-            return null;
-        }
+    @NonNull
+    public static User getInstance(@NonNull UUID uuid) {
         if (users.containsKey(uuid)) {
             return users.get(uuid);
         }
@@ -109,11 +105,8 @@ public class User implements MetaDataAble {
      * @return user
      * @since 1.3.0
      */
-    @Nullable
-    public static User getInstance(OfflinePlayer offlinePlayer) {
-        if (offlinePlayer == null) {
-            return null;
-        }
+    @NonNull
+    public static User getInstance(@NonNull OfflinePlayer offlinePlayer) {
         if (users.containsKey(offlinePlayer.getUniqueId())) {
             return users.get(offlinePlayer.getUniqueId());
         }
@@ -144,7 +137,7 @@ public class User implements MetaDataAble {
 
     private Addon addon;
 
-    private User(CommandSender sender) {
+    private User(@Nullable CommandSender sender) {
         player = null;
         playerUUID = null;
         this.sender = sender;
@@ -184,25 +177,42 @@ public class User implements MetaDataAble {
         return sender.getEffectivePermissions();
     }
 
-    @Nullable
+    /**
+     * Get the user's inventory
+     * @return player's inventory
+     * @throws {@link NullPointerException} - if user is not a player
+     */
+    @NonNull
     public PlayerInventory getInventory() {
-        return player != null ? player.getInventory() : null;
+        return Objects.requireNonNull(player, "getInventory can only be called for online players!").getInventory();
     }
 
-    @Nullable
+    /**
+     * Get the user's location
+     * @return location
+     * @throws {@link NullPointerException} - if user is not a player
+     */
+    @NonNull
     public Location getLocation() {
-        return player != null ? player.getLocation() : null;
+        return Objects.requireNonNull(player, "getLocation can only be called for online players!").getLocation();
     }
 
+    /**
+     * Get the user's name
+     * @return player's name
+     */
+    @NonNull
     public String getName() {
         return player != null ? player.getName() : plugin.getPlayers().getName(playerUUID);
     }
 
     /**
+     * Check if the User is a player before calling this method. {@link #isPlayer()}
      * @return the player
      */
+    @NonNull
     public Player getPlayer() {
-        return player;
+        return Objects.requireNonNull(player, "User is not a player!");
     }
 
     /**
@@ -213,11 +223,14 @@ public class User implements MetaDataAble {
     }
 
     /**
+     * Use {@link #isOfflinePlayer()} before calling this method
      * @return the offline player
      * @since 1.3.0
+     * @throws {@link NullPointerException} - if user is not an offline player
      */
+    @NonNull
     public OfflinePlayer getOfflinePlayer() {
-        return offlinePlayer;
+        return Objects.requireNonNull(offlinePlayer, "User is not an OfflinePlayer!");
     }
 
     /**
@@ -354,11 +367,11 @@ public class User implements MetaDataAble {
         // Get translation.
         String addonPrefix = plugin.getIWM()
                 .getAddon(world).map(a -> a.getDescription().getName().toLowerCase(Locale.ENGLISH) + ".").orElse("");
-        return translate(addonPrefix, reference, variables);
+        return Util.translateColorCodes(translate(addonPrefix, reference, variables));
     }
 
     /**
-     * Gets a translation of this reference for this user. Translations may be overridden by Addons
+     * Gets a translation of this reference for this user with colors converted. Translations may be overridden by Addons
      * by using the same reference prefixed by the addon name (from the Addon Description) in lower case.
      * @param reference - reference found in a locale file
      * @param variables - variables to insert into translated string. Variables go in pairs, for example
@@ -366,6 +379,21 @@ public class User implements MetaDataAble {
      * @return Translated string with colors converted, or the reference if nothing has been found
      */
     public String getTranslation(String reference, String... variables) {
+        // Get addonPrefix
+        String addonPrefix = addon == null ? "" : addon.getDescription().getName().toLowerCase(Locale.ENGLISH) + ".";
+        return Util.translateColorCodes(translate(addonPrefix, reference, variables));
+    }
+
+    /**
+     * Gets a translation of this reference for this user without colors translated. Translations may be overridden by Addons
+     * by using the same reference prefixed by the addon name (from the Addon Description) in lower case.
+     * @param reference - reference found in a locale file
+     * @param variables - variables to insert into translated string. Variables go in pairs, for example
+     *                  "[name]", "tastybento"
+     * @return Translated string or the reference if nothing has been found
+     * @since 1.17.4
+     */
+    public String getTranslationNoColor(String reference, String... variables) {
         // Get addonPrefix
         String addonPrefix = addon == null ? "" : addon.getDescription().getName().toLowerCase(Locale.ENGLISH) + ".";
         return translate(addonPrefix, reference, variables);
@@ -392,7 +420,7 @@ public class User implements MetaDataAble {
                 // Replace the [gamemode] text variable
                 prefixTranslation = prefixTranslation.replace("[gamemode]", addon != null ? addon.getDescription().getName() : "[gamemode]");
                 // Replace the [friendly_name] text variable
-                prefixTranslation = prefixTranslation.replace("[friendly_name]", getWorld() != null ? plugin.getIWM().getFriendlyName(getWorld()) : "[friendly_name]");
+                prefixTranslation = prefixTranslation.replace("[friendly_name]", isPlayer() ? plugin.getIWM().getFriendlyName(getWorld()) : "[friendly_name]");
 
                 // Replace the prefix in the actual message
                 translation = translation.replace("[prefix_" + prefix + "]", prefixTranslation);
@@ -410,7 +438,7 @@ public class User implements MetaDataAble {
                 translation = plugin.getPlaceholdersManager().replacePlaceholders(player, translation);
             }
 
-            return Util.translateColorCodes(translation);
+            return translation;
         }
     }
 
@@ -499,10 +527,13 @@ public class User implements MetaDataAble {
 
     /**
      * Gets the current world this entity resides in
-     * @return World - world or null
+     * @return World - world
+     * @throws {@link NullPointerException} - if user is not a player
      */
+    @NonNull
     public World getWorld() {
-        return player == null ? null : player.getWorld();
+        Objects.requireNonNull(player, "Cannot be called on a non-player User!");
+        return Objects.requireNonNull(player.getWorld(), "Player's world cannot be null!");
     }
 
     /**
@@ -641,10 +672,10 @@ public class User implements MetaDataAble {
      */
     @Override
     public Optional<Map<String, MetaDataValue>> getMetaData() {
-        return plugin
+        Players p = plugin
                 .getPlayers()
-                .getPlayer(playerUUID)
-                .getMetaData();
+                .getPlayer(playerUUID);
+        return Objects.requireNonNull(p, "Unknown player for " + playerUUID).getMetaData();
     }
 
     /**
@@ -653,7 +684,11 @@ public class User implements MetaDataAble {
      */
     @Override
     public void setMetaData(Map<String, MetaDataValue> metaData) {
-        plugin.getPlayers().getPlayer(playerUUID).setMetaData(metaData);
+        Players p = plugin
+                .getPlayers()
+                .getPlayer(playerUUID);
+
+        Objects.requireNonNull(p, "Unknown player for " + playerUUID).setMetaData(metaData);
     }
 
 }

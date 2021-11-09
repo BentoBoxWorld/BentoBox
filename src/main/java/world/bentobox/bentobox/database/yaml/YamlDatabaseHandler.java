@@ -80,7 +80,7 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      * @see world.bentobox.bentobox.database.AbstractDatabaseHandler#loadObject(java.lang.String)
      */
     @Override
-    public T loadObject(String key) throws InstantiationException, IllegalAccessException, InvocationTargetException, ClassNotFoundException, IntrospectionException, NoSuchMethodException {
+    public T loadObject(@NonNull String key) throws InstantiationException, IllegalAccessException, InvocationTargetException, ClassNotFoundException, IntrospectionException, NoSuchMethodException {
         // Objects are loaded from a folder named after the simple name of the class being stored
         String path = DATABASE_FOLDER_NAME + File.separator + dataObject.getSimpleName();
         // This path and key can be overridden by the StoreAt annotation in the code

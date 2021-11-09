@@ -6,6 +6,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 
+import org.eclipse.jdt.annotation.NonNull;
 import world.bentobox.bentobox.api.events.BentoBoxEvent;
 
 /**
@@ -24,7 +25,7 @@ public class CommandEvent extends BentoBoxEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
 
     @Override
-    public HandlerList getHandlers() {
+    public @NonNull HandlerList getHandlers() {
         return getHandlerList();
     }
 
