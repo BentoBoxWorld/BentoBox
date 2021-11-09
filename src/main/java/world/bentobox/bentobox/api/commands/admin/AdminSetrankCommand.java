@@ -101,6 +101,10 @@ public class AdminSetrankCommand extends CompositeCommand {
         } else {
             island = getIslands().getIsland(getWorld(), targetUUID);
         }
+        if (island == null) {
+            user.sendMessage("general.errors.player-has-no-island");
+            return false;
+        }
         int currentRank = island.getRank(target);
         island.setRank(target, rankValue);
         IslandEvent.builder()

@@ -113,31 +113,19 @@ public class IslandResetCommand extends ConfirmableCommand {
         }
     }
 
+    /**
+     * Reset island
+     * @param user user
+     * @param name name of Blueprint Bundle
+     * @return true if successful
+     */
     private boolean resetIsland(User user, String name) {
         // Get the player's old island
         Island oldIsland = getIslands().getIsland(getWorld(), user);
-
-        // Fire island preclear event
-        IslandEvent.builder()
-        .involvedPlayer(user.getUniqueId())
-        .reason(Reason.PRECLEAR)
-        .island(oldIsland)
-        .oldIsland(oldIsland)
-        .location(oldIsland.getCenter())
-        .build();
-
-        // Reset the island
+        if (oldIsland != null) {
+            deleteOldIsland(user, oldIsland);
+        }
         user.sendMessage("commands.island.create.creating-island");
-
-        // Kick all island members (including the owner)
-        kickMembers(oldIsland);
-
-        // Add a reset
-        getPlayers().addReset(getWorld(), user.getUniqueId());
-
-        // Reset the homes of the player
-        getPlayers().clearHomeLocations(getWorld(), user.getUniqueId());
-
         // Create new island and then delete the old one
         try {
             Builder builder = NewIsland.builder()
@@ -155,6 +143,25 @@ public class IslandResetCommand extends ConfirmableCommand {
         }
         setCooldown(user.getUniqueId(), getSettings().getResetCooldown());
         return true;
+    }
+
+    private void deleteOldIsland(User user, Island oldIsland) {
+        // Fire island preclear event
+        IslandEvent.builder()
+        .involvedPlayer(user.getUniqueId())
+        .reason(Reason.PRECLEAR)
+        .island(oldIsland)
+        .oldIsland(oldIsland)
+        .location(oldIsland.getCenter())
+        .build();
+
+        // Reset the island
+
+        // Kick all island members (including the owner)
+        kickMembers(oldIsland);
+
+        // Add a reset
+        getPlayers().addReset(getWorld(), user.getUniqueId());
     }
 
     /**

@@ -192,7 +192,6 @@ public class AdminTeamKickCommandTest {
         verify(user).sendMessage(eq("commands.admin.team.kick.cannot-kick-owner"));
         verify(user).sendMessage("commands.admin.info.team-members-title");
         verify(im, never()).removePlayer(eq(world), eq(notUUID));
-        verify(pm, never()).clearHomeLocations(eq(world), eq(notUUID));
         verify(user, never()).sendMessage(eq("commands.admin.team.kick.success"), anyString(), anyString(), anyString(), anyString());
         verify(pim, never()).callEvent(any());
     }
@@ -215,10 +214,9 @@ public class AdminTeamKickCommandTest {
         assertTrue(itl.canExecute(user, itl.getLabel(), Collections.singletonList(name)));
         assertTrue(itl.execute(user, itl.getLabel(), Collections.singletonList(name)));
         verify(im).removePlayer(eq(world), eq(notUUID));
-        verify(pm).clearHomeLocations(eq(world), eq(notUUID));
         verify(user).sendMessage(eq("commands.admin.team.kick.success"), eq(TextVariables.NAME), eq(name), eq("[owner]"), anyString());
-        // Offline so event will be called six time
-        verify(pim, times(6)).callEvent(any());
+        // Offline so event will be called 4 times
+        verify(pim, times(4)).callEvent(any());
     }
 
 }

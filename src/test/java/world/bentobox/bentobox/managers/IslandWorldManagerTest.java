@@ -212,14 +212,6 @@ public class IslandWorldManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getWorldSettings(org.bukkit.World)}.
-     */
-    @Test
-    public void testGetWorldSettingsNull() {
-        assertNull(iwm.getWorldSettings(null));
-    }
-
-    /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getOverWorld(java.lang.String)}.
      */
     @Test

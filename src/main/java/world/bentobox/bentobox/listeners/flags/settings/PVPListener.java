@@ -2,7 +2,6 @@ package world.bentobox.bentobox.listeners.flags.settings;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.WeakHashMap;
 
@@ -25,6 +24,7 @@ import org.bukkit.event.entity.LingeringPotionSplashEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.eclipse.jdt.annotation.NonNull;
 
 import world.bentobox.bentobox.api.events.flags.FlagSettingChangeEvent;
 import world.bentobox.bentobox.api.flags.Flag;
@@ -62,10 +62,10 @@ public class PVPListener extends FlagListener {
             }
             // Protect visitors
             if (e.getCause().equals(DamageCause.ENTITY_ATTACK) && protectedVisitor((Player)e.getEntity())) {
-                if (e.getDamager() instanceof Player) {
-                    User.getInstance(e.getDamager()).notify(Flags.INVINCIBLE_VISITORS.getHintReference());
-                } else if (e.getDamager() instanceof Projectile && ((Projectile)e.getDamager()).getShooter() instanceof Player) {
-                    User.getInstance((Player)((Projectile)e.getDamager()).getShooter()).notify(Flags.INVINCIBLE_VISITORS.getHintReference());
+                if (e.getDamager() instanceof Player p && p != null) {
+                    User.getInstance(p).notify(Flags.INVINCIBLE_VISITORS.getHintReference());
+                } else if (e.getDamager() instanceof Projectile pr && pr.getShooter() instanceof Player sh && sh != null) {
+                    User.getInstance(sh).notify(Flags.INVINCIBLE_VISITORS.getHintReference());
                 }
                 e.setCancelled(true);
             } else {
@@ -89,9 +89,8 @@ public class PVPListener extends FlagListener {
                 user.notify(getFlag(damager.getWorld()).getHintReference());
                 e.setCancelled(true);
             }
-        } else if (damager instanceof Projectile p && ((Projectile)damager).getShooter() instanceof Player) {
+        } else if (damager instanceof Projectile p && ((Projectile)damager).getShooter() instanceof Player shooter) {
             // Find out who fired the arrow
-            Player shooter =(Player)p.getShooter();
             processDamage(e, damager, shooter, hurtEntity, flag);
         } else if (damager instanceof Firework && firedFireworks.containsKey(damager)) {
             Player shooter = firedFireworks.get(damager);
@@ -101,7 +100,7 @@ public class PVPListener extends FlagListener {
 
     private void processDamage(Cancellable e, Entity damager, Player shooter, Entity hurtEntity, Flag flag) {
         // Allow self damage
-        if (hurtEntity.equals(shooter)) {
+        if (hurtEntity.equals(shooter) || shooter == null) {
             return;
         }
         User user = User.getInstance(shooter);
@@ -116,9 +115,13 @@ public class PVPListener extends FlagListener {
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onFishing(PlayerFishEvent e) {
-        if (e.getCaught() instanceof Player && getPlugin().getIWM().inWorld(e.getCaught().getLocation())) {
+        if (e.getCaught() instanceof Player c && getPlugin().getIWM().inWorld(c.getLocation())) {
             // Allow self-inflicted damage or NPC damage
-            if (e.getCaught().equals(e.getPlayer()) || e.getCaught().hasMetadata("NPC")) {
+            if (c.equals(e.getPlayer()) || c.hasMetadata("NPC")) {
+                return;
+            }
+            // Is PVP allowed here?
+            if (this.PVPAllowed(c.getLocation())) {
                 return;
             }
             // Is PVP allowed here?
@@ -126,12 +129,12 @@ public class PVPListener extends FlagListener {
                 return;
             }
             // Protect visitors
-            if (protectedVisitor((Player)e.getCaught())) {
+            if (protectedVisitor(c)) {
                 User.getInstance(e.getPlayer()).notify(Flags.INVINCIBLE_VISITORS.getHintReference());
                 e.setCancelled(true);
-            } else if (!checkIsland(e, e.getPlayer(), e.getCaught().getLocation(), getFlag(e.getCaught().getWorld()))) {
+            } else if (!checkIsland(e, e.getPlayer(), c.getLocation(), getFlag(c.getWorld()))) {
                 e.getHook().remove();
-                User.getInstance(e.getPlayer()).notify(getFlag(e.getCaught().getWorld()).getHintReference());
+                User.getInstance(e.getPlayer()).notify(getFlag(c.getWorld()).getHintReference());
                 e.setCancelled(true);
             }
         }
@@ -143,8 +146,8 @@ public class PVPListener extends FlagListener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onSplashPotionSplash(final PotionSplashEvent e) {
-        if (e.getEntity().getShooter() instanceof Player && getPlugin().getIWM().inWorld(e.getEntity().getWorld())) {
-            User user = User.getInstance((Player)e.getEntity().getShooter());
+        if (e.getEntity().getShooter() instanceof Player p && p != null && getPlugin().getIWM().inWorld(e.getEntity().getWorld())) {
+            User user = User.getInstance(p);
             // Is PVP allowed here?
             if (this.PVPAllowed(e.getEntity().getLocation())) {
                 return;
@@ -256,9 +259,9 @@ public class PVPListener extends FlagListener {
         });
     }
 
-    private void alertUser(Player player, Flag flag) {
+    private void alertUser(@NonNull Player player, Flag flag) {
         String message = "protection.flags." + flag.getID() + ".enabled";
-        Objects.requireNonNull(User.getInstance(player)).sendMessage(message);
+        User.getInstance(player).sendMessage(message);
         player.playSound(player.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER,2F, 1F);
     }
 }

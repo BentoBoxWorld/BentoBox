@@ -41,12 +41,14 @@ public class AdminDeleteCommand extends ConfirmableCommand {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
             return false;
         }
-        if (!getIslands().hasIsland(getWorld(), targetUUID)) {
+        UUID owner = getIslands().getOwner(getWorld(), targetUUID);
+        if (owner == null) {
             user.sendMessage("general.errors.player-has-no-island");
             return false;
         }
+
         // Team members should be kicked before deleting otherwise the whole team will become weird
-        if (getIslands().inTeam(getWorld(), targetUUID) && getIslands().getOwner(getWorld(), targetUUID).equals(targetUUID)) {
+        if (getIslands().inTeam(getWorld(), targetUUID) && owner.equals(targetUUID)) {
             user.sendMessage("commands.admin.delete.cannot-delete-owner");
             return false;
         }
@@ -55,11 +57,6 @@ public class AdminDeleteCommand extends ConfirmableCommand {
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        // If args are not right, show help
-        if (args.size() != 1) {
-            showHelp(this, user);
-            return false;
-        }
         // Get target
         UUID targetUUID = getPlayers().getUUID(args.get(0));
         // Confirm
@@ -85,43 +82,47 @@ public class AdminDeleteCommand extends ConfirmableCommand {
             User target = User.getInstance(targetUUID);
             // Remove them from this island (it still exists and will be deleted later)
             getIslands().removePlayer(getWorld(), targetUUID);
-            if (target.isOnline()) {
-                // Execute commands when leaving
-                Util.runCommands(user, getIWM().getOnLeaveCommands(getWorld()), "leave");
-                // Remove money inventory etc.
-                if (getIWM().isOnLeaveResetEnderChest(getWorld())) {
-                    target.getPlayer().getEnderChest().clear();
-                }
-                if (getIWM().isOnLeaveResetInventory(getWorld())) {
-                    target.getPlayer().getInventory().clear();
-                }
-                if (getSettings().isUseEconomy() && getIWM().isOnLeaveResetMoney(getWorld())) {
-                    getPlugin().getVault().ifPresent(vault -> vault.withdraw(target, vault.getBalance(target)));
-                }
-                // Reset the health
-                if (getIWM().isOnLeaveResetHealth(getWorld())) {
-                    Util.resetHealth(target.getPlayer());
-                }
-
-                // Reset the hunger
-                if (getIWM().isOnLeaveResetHunger(getWorld())) {
-                    target.getPlayer().setFoodLevel(20);
-                }
-
-                // Reset the XP
-                if (getIWM().isOnLeaveResetXP(getWorld())) {
-                    target.getPlayer().setTotalExperience(0);
-                }
+            if (target.isPlayer() && target.isOnline()) {
+                cleanUp(user, target);
             }
             vector = oldIsland.getCenter().toVector();
             getIslands().deleteIsland(oldIsland, true, targetUUID);
         }
-        getPlayers().clearHomeLocations(getWorld(), targetUUID);
         if (vector == null) {
             user.sendMessage("general.success");
         } else {
             user.sendMessage("commands.admin.delete.deleted-island", TextVariables.XYZ, Util.xyz(vector));
         }
+    }
+
+    private void cleanUp(User user, User target) {
+        // Execute commands when leaving
+        Util.runCommands(user, getIWM().getOnLeaveCommands(getWorld()), "leave");
+        // Remove money inventory etc.
+        if (getIWM().isOnLeaveResetEnderChest(getWorld())) {
+            target.getPlayer().getEnderChest().clear();
+        }
+        if (getIWM().isOnLeaveResetInventory(getWorld())) {
+            target.getPlayer().getInventory().clear();
+        }
+        if (getSettings().isUseEconomy() && getIWM().isOnLeaveResetMoney(getWorld())) {
+            getPlugin().getVault().ifPresent(vault -> vault.withdraw(target, vault.getBalance(target)));
+        }
+        // Reset the health
+        if (getIWM().isOnLeaveResetHealth(getWorld())) {
+            Util.resetHealth(target.getPlayer());
+        }
+
+        // Reset the hunger
+        if (getIWM().isOnLeaveResetHunger(getWorld())) {
+            target.getPlayer().setFoodLevel(20);
+        }
+
+        // Reset the XP
+        if (getIWM().isOnLeaveResetXP(getWorld())) {
+            target.getPlayer().setTotalExperience(0);
+        }
+
     }
 
     @Override

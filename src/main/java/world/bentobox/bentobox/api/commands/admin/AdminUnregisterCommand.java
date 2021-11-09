@@ -75,10 +75,7 @@ public class AdminUnregisterCommand extends ConfirmableCommand {
         .rankChange(RanksManager.OWNER_RANK, RanksManager.VISITOR_RANK)
         .build();
         // Remove all island members
-        oldIsland.getMemberSet().forEach(m -> {
-            getIslands().removePlayer(getWorld(), m);
-            getPlayers().clearHomeLocations(getWorld(), m);
-        });
+        oldIsland.getMemberSet().forEach(m -> getIslands().removePlayer(getWorld(), m));
         // Remove all island players that reference this island
         oldIsland.getMembers().clear();
         getIslands().save(oldIsland);

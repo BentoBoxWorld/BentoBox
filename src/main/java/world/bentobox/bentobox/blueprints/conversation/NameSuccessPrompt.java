@@ -34,7 +34,7 @@ public class NameSuccessPrompt extends MessagePrompt {
     }
 
     @Override
-    public String getPromptText(ConversationContext context) {
+    public @NonNull String getPromptText(ConversationContext context) {
         String name = (String) context.getSessionData("name");
         String uniqueId = (String) context.getSessionData("uniqueId");
         User user = User.getInstance((Player)context.getForWhom());
@@ -65,7 +65,7 @@ public class NameSuccessPrompt extends MessagePrompt {
     }
 
     @Override
-    protected Prompt getNextPrompt(ConversationContext context) {
+    protected Prompt getNextPrompt(@NonNull ConversationContext context) {
         return Prompt.END_OF_CONVERSATION;
     }
 

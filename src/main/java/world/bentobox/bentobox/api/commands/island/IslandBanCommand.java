@@ -51,8 +51,8 @@ public class IslandBanCommand extends CompositeCommand {
             return false;
         }
         // Check rank to use command
-        Island island = getIslands().getIsland(getWorld(), user);
-        int rank = Objects.requireNonNull(island).getRank(user);
+        Island island = Objects.requireNonNull(getIslands().getIsland(getWorld(), user));
+        int rank = island.getRank(user);
         if (rank < island.getRankCommand(getUsage())) {
             user.sendMessage("general.errors.insufficient-rank", TextVariables.RANK, user.getTranslation(getPlugin().getRanksManager().getRank(rank)));
             return false;
@@ -72,7 +72,7 @@ public class IslandBanCommand extends CompositeCommand {
             user.sendMessage("commands.island.ban.cannot-ban-member");
             return false;
         }
-        if (getIslands().getIsland(getWorld(), playerUUID).isBanned(targetUUID)) {
+        if (island.isBanned(targetUUID)) {
             user.sendMessage("commands.island.ban.player-already-banned");
             return false;
         }
@@ -95,7 +95,7 @@ public class IslandBanCommand extends CompositeCommand {
     }
 
     private boolean ban(@NonNull User issuer, User target) {
-        Island island = getIslands().getIsland(getWorld(), issuer.getUniqueId());
+        Island island = Objects.requireNonNull(getIslands().getIsland(getWorld(), issuer.getUniqueId()));
 
         // Check if player can ban any more players
         int banLimit = issuer.getPermissionValue(getPermissionPrefix() + "ban.maxlimit", getIWM().getBanLimit(getWorld()));

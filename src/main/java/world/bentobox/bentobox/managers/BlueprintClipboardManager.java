@@ -144,10 +144,12 @@ public class BlueprintClipboardManager {
      * @return - true if successful, false if error
      */
     public boolean save(User user, String newName) {
-        clipboard.getBlueprint().setName(newName);
-        if (saveBlueprint(clipboard.getBlueprint())) {
-            user.sendMessage("general.success");
-            return true;
+        if (clipboard.getBlueprint() != null) {
+            clipboard.getBlueprint().setName(newName);
+            if (saveBlueprint(clipboard.getBlueprint())) {
+                user.sendMessage("general.success");
+                return true;
+            }
         }
         user.sendMessage("commands.admin.blueprint.could-not-save", "[message]", "Could not save temp blueprint file.");
         return false;
@@ -192,6 +194,9 @@ public class BlueprintClipboardManager {
                 if (!entry.isDirectory()) {
                     unzipFiles(zipInputStream, filePath);
                 } else {
+                    if (!filePath.startsWith(blueprintFolder.getAbsolutePath())) {
+                        throw new IOException("Entry is outside of the target directory");
+                    }
                     Files.createDirectories(filePath);
                 }
 
@@ -202,6 +207,9 @@ public class BlueprintClipboardManager {
     }
 
     private void unzipFiles(final ZipInputStream zipInputStream, final Path unzipFilePath) throws IOException {
+        if (!unzipFilePath.toAbsolutePath().toString().startsWith(blueprintFolder.getAbsolutePath())) {
+            throw new IOException("Entry is outside of the target directory");
+        }
         try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(unzipFilePath.toAbsolutePath().toString()))) {
             byte[] bytesIn = new byte[1024];
             int read;

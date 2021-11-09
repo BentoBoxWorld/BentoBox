@@ -137,7 +137,7 @@ public class PanelItemBuilder {
     /**
      * @return the name
      */
-    public String getName() {
+    public @Nullable String getName() {
         return name;
     }
 

@@ -2,6 +2,7 @@ package world.bentobox.bentobox.listeners;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -56,7 +57,7 @@ public class PortalTeleportationListener implements Listener {
      * Fires the event if nether or end is disabled at the system level
      * @param e - EntityPortalEnterEvent
      */
-    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPlayerPortal(EntityPortalEnterEvent e) {
         if (!(e.getEntity() instanceof Player)) {
             return;
@@ -96,7 +97,7 @@ public class PortalTeleportationListener implements Listener {
      *
      * @param e - event
      */
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public boolean onEntityPortal(EntityPortalEvent e) {
         if (plugin.getIWM().inWorld(e.getFrom())) {
             Optional<Material> mat = Arrays.stream(BlockFace.values())
@@ -155,7 +156,7 @@ public class PortalTeleportationListener implements Listener {
     private boolean processPortal(final PlayerEntityPortalEvent e, final Environment env) {
         World fromWorld = e.getFrom().getWorld();
         World overWorld = Util.getWorld(fromWorld);
-        if (fromWorld == null || !plugin.getIWM().inWorld(overWorld)) {
+        if (overWorld == null || fromWorld == null || !plugin.getIWM().inWorld(overWorld)) {
             // Do nothing special
             return false;
         }
@@ -392,7 +393,7 @@ public class PortalTeleportationListener implements Listener {
      */
     private void handleStandardNetherOrEnd(PlayerEntityPortalEvent e, World fromWorld, World overWorld, Environment env) {
         if (fromWorld.getEnvironment() != env) {
-            World toWorld = getNetherEndWorld(overWorld, env);
+            World toWorld = Objects.requireNonNull(getNetherEndWorld(overWorld, env));
             Location spawnPoint = toWorld.getSpawnLocation();
             // If spawn is set as 0,63,0 in the End then move it to 100, 50 ,0.
             if (env.equals(Environment.THE_END) && spawnPoint.getBlockX() == 0 && spawnPoint.getBlockZ() == 0) {

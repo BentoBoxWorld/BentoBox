@@ -1,5 +1,7 @@
 package world.bentobox.bentobox.listeners.flags.clicklisteners;
 
+import java.util.Objects;
+
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.event.inventory.ClickType;
@@ -29,7 +31,8 @@ public class GeoLimitClickListener implements ClickHandler {
         }
         World world = panel.getWorld().orElse(user.getWorld());
         IslandWorldManager iwm = BentoBox.getInstance().getIWM();
-        String reqPerm = iwm.getPermissionPrefix(Util.getWorld(world)) + "admin.settings.GEO_LIMIT_MOBS";
+        World w = Objects.requireNonNull(Util.getWorld(world));
+        String reqPerm = iwm.getPermissionPrefix(w) + "admin.settings.GEO_LIMIT_MOBS";
         if (!user.hasPermission(reqPerm)) {
             user.sendMessage("general.errors.no-permission", "[permission]", reqPerm);
             user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_METAL_HIT, 1F, 1F);

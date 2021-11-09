@@ -104,10 +104,14 @@ public class MobSpawnListenerTest {
         when(zombie.getLocation()).thenReturn(location);
         when(slime.getLocation()).thenReturn(location);
         when(cow.getLocation()).thenReturn(location);
+        when(zombie.getWorld()).thenReturn(world);
+        when(slime.getWorld()).thenReturn(world);
+        when(cow.getWorld()).thenReturn(world);
 
         // Worlds
         when(plugin.getIWM()).thenReturn(iwm);
         when(iwm.inWorld(any(Location.class))).thenReturn(true);
+        when(iwm.inWorld(any(World.class))).thenReturn(true);
         when(plugin.getIWM()).thenReturn(iwm);
 
         // Util class

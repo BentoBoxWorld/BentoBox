@@ -6,6 +6,7 @@ import java.util.concurrent.TimeUnit;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import org.eclipse.jdt.annotation.NonNull;
 
 /**
  * Utilities class that helps to avoid spamming the User with potential repeated messages
@@ -26,7 +27,7 @@ public class Notifier {
             .build(
                     new CacheLoader<>() {
                         @Override
-                        public Notification load(User user) {
+                        public Notification load(@NonNull User user) {
                             return new Notification(null, 0);
                         }
                     }

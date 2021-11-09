@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -64,7 +63,8 @@ import world.bentobox.bentobox.managers.PlayersManager;
 @PrepareForTest({ BentoBox.class, Bukkit.class })
 public class UserTest {
 
-    private static final String TEST_TRANSLATION = "mock translation [test]";
+    private static final String TEST_TRANSLATION = "mock &a translation &b [test]";
+    private static final String TEST_TRANSLATION_WITH_COLOR = "mock §atranslation §b[test]";
     @Mock
     private Player player;
     @Mock
@@ -164,7 +164,6 @@ public class UserTest {
         // If the player has been removed from the cache, then code will ask server for player
         // Return null and check if instance is null will show that the player is not in the cache
         when(Bukkit.getPlayer(any(UUID.class))).thenReturn(null);
-        assertNull(User.getInstance(uuid).getPlayer());
         verify(pm).removePlayer(player);
     }
 
@@ -245,7 +244,7 @@ public class UserTest {
 
     @Test
     public void testHasPermission() {
-        // default behaviours
+        // default behaviors
         assertTrue(user.hasPermission(""));
         assertTrue(user.hasPermission(null));
 
@@ -278,12 +277,20 @@ public class UserTest {
 
     @Test
     public void testGetTranslation() {
-        assertEquals("mock translation [test]", user.getTranslation("a.reference"));
+        assertEquals(TEST_TRANSLATION_WITH_COLOR, user.getTranslation("a.reference"));
+    }
+
+    /**
+     * Test for {@link User#getTranslationNoColor(String, String...)}
+     */
+    @Test
+    public void testGetTranslationNoColor() {
+        assertEquals(TEST_TRANSLATION, user.getTranslationNoColor("a.reference"));
     }
 
     @Test
     public void testGetTranslationWithVariable() {
-        assertEquals("mock translation variable", user.getTranslation("a.reference", "[test]", "variable"));
+        assertEquals("mock §atranslation §bvariable", user.getTranslation("a.reference", "[test]", "variable"));
     }
 
     @Test
@@ -308,7 +315,7 @@ public class UserTest {
     @Test
     public void testSendMessage() {
         user.sendMessage("a.reference");
-        verify(player).sendMessage(eq(TEST_TRANSLATION));
+        verify(player).sendMessage(TEST_TRANSLATION_WITH_COLOR);
     }
 
     @Test
@@ -474,12 +481,6 @@ public class UserTest {
         User user2 = User.getInstance(uuid);
         assertEquals(user1, user2);
         assertTrue(user1.hashCode() == user2.hashCode());
-    }
-
-    @Test
-    public void testNullPlayer() {
-        User user = User.getInstance((Player)null);
-        assertNull(user);
     }
 
     /**

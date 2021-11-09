@@ -32,7 +32,7 @@ public class IslandRespawnListener extends FlagListener {
     @EventHandler(priority = EventPriority.LOW)
     public void onPlayerDeath(PlayerDeathEvent e) {
         World world = Util.getWorld(e.getEntity().getWorld());
-        if (!getIWM().inWorld(world)) {
+        if (world == null || !getIWM().inWorld(world)) {
             return; // not in the island world
         }
         if (!Flags.ISLAND_RESPAWN.isSetForWorld(world)) {

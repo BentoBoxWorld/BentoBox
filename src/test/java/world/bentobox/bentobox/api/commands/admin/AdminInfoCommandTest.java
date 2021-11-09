@@ -208,7 +208,7 @@ public class AdminInfoCommandTest {
         verify(user).sendMessage("commands.admin.info.island-coords", "[xz1]", "0,0,0", "[xz2]", "0,0,0");
         verify(user).sendMessage("commands.admin.info.protection-range", "[range]", "100");
         verify(user).sendMessage("commands.admin.info.max-protection-range", "[range]", "100");
-        verify(user).sendMessage("commands.admin.info.protection-coords", "[xz1]", "0,0,0", "[xz2]", "0,0,0");
+        verify(user).sendMessage("commands.admin.info.protection-coords", "[xz1]", "0,0,0", "[xz2]", "-1,0,-1");
     }
 
     /**
@@ -230,7 +230,7 @@ public class AdminInfoCommandTest {
         verify(user).sendMessage("commands.admin.info.island-coords", "[xz1]", "0,0,0", "[xz2]", "0,0,0");
         verify(user).sendMessage("commands.admin.info.protection-range", "[range]", "100");
         verify(user).sendMessage("commands.admin.info.max-protection-range", "[range]", "100");
-        verify(user).sendMessage("commands.admin.info.protection-coords", "[xz1]", "0,0,0", "[xz2]", "0,0,0");
+        verify(user).sendMessage("commands.admin.info.protection-coords", "[xz1]", "0,0,0", "[xz2]", "-1,0,-1");
 
     }
 

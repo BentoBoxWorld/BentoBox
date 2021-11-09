@@ -62,6 +62,8 @@ public class IslandSethomeCommandTest {
     private Island island;
     @Mock
     private IslandWorldManager iwm;
+    @Mock
+    private WorldSettings ws;
 
     /**
      * @throws java.lang.Exception
@@ -128,6 +130,8 @@ public class IslandSethomeCommandTest {
         // Number of homes default
         when(iwm.getMaxHomes(any())).thenReturn(3);
         when(plugin.getIWM()).thenReturn(iwm);
+        // World settings
+        when(iwm.getWorldSettings(any(World.class))).thenReturn(ws);
 
         // Number of homes
         PowerMockito.mockStatic(Util.class);
@@ -223,7 +227,7 @@ public class IslandSethomeCommandTest {
      */
     @Test
     public void testExecuteUserStringListOfStringMultiHomeTooMany() {
-        when(island.getMaxHomes()).thenReturn(3);
+        when(im.getMaxHomes(island)).thenReturn(3);
         when(im.getNumberOfHomesIfAdded(eq(island), anyString())).thenReturn(4);
         IslandSethomeCommand isc = new IslandSethomeCommand(ic);
         assertFalse(isc.canExecute(user, "island", Collections.singletonList("13")));

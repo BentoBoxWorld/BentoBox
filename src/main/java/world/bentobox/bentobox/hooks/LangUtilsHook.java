@@ -207,7 +207,7 @@ public class LangUtilsHook extends Hook {
     public static String getEnchantDisplayName(Enchantment ench, int level, User user) {
         return hooked
                 ? LanguageHelper.getEnchantmentDisplayName(ench, level, getUserLocale(user))
-                : ench.getKey().getKey() + " " + level;
+                : Util.prettifyText(ench.getKey().getKey()) + " " + level;
     }
 
     /**
@@ -221,7 +221,7 @@ public class LangUtilsHook extends Hook {
     public static String getEnchantDisplayName(Entry<Enchantment, Integer> entry, User user) {
         return hooked
                 ? LanguageHelper.getEnchantmentDisplayName(entry, getUserLocale(user))
-                : entry.getKey().getKey().getKey() + " " + entry.getValue();
+                : Util.prettifyText(entry.getKey().getKey().getKey()) + " " + entry.getValue();
     }
 
     /**
@@ -234,7 +234,7 @@ public class LangUtilsHook extends Hook {
     public static String getEnchantName(Enchantment enchant, User user) {
         return hooked
                 ? LanguageHelper.getEnchantmentName(enchant, getUserLocale(user))
-                : enchant.getKey().getKey();
+                : Util.prettifyText(enchant.getKey().getKey());
     }
 
     /**

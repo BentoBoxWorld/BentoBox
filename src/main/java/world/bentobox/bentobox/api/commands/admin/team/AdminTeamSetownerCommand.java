@@ -1,6 +1,7 @@
 package world.bentobox.bentobox.api.commands.admin.team;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
@@ -54,11 +55,10 @@ public class AdminTeamSetownerCommand extends CompositeCommand {
         }
 
         // Get the User corresponding to the current owner
-        User previousOwner = User.getInstance(previousOwnerUUID);
         User target = User.getInstance(targetUUID);
 
         // Fire event so add-ons know
-        Island island = getIslands().getIsland(getWorld(), targetUUID);
+        Island island = Objects.requireNonNull(getIslands().getIsland(getWorld(), targetUUID));
         // Call the setowner event
         TeamEvent.builder()
         .island(island)
@@ -82,15 +82,16 @@ public class AdminTeamSetownerCommand extends CompositeCommand {
         user.sendMessage("commands.admin.team.setowner.success", TextVariables.NAME, args.get(0));
 
         // Call the rank change event for the old island owner
-        // We need to call it AFTER the actual change.
-        IslandEvent.builder()
-        .island(island)
-        .involvedPlayer(previousOwnerUUID)
-        .admin(true)
-        .reason(IslandEvent.Reason.RANK_CHANGE)
-        .rankChange(RanksManager.OWNER_RANK, island.getRank(previousOwner))
-        .build();
-
+        if (previousOwnerUUID != null) {
+            // We need to call it AFTER the actual change.
+            IslandEvent.builder()
+            .island(island)
+            .involvedPlayer(previousOwnerUUID)
+            .admin(true)
+            .reason(IslandEvent.Reason.RANK_CHANGE)
+            .rankChange(RanksManager.OWNER_RANK, island.getRank(previousOwnerUUID))
+            .build();
+        }
         return true;
     }
 }

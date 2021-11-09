@@ -158,26 +158,35 @@ public final class AddonDescription {
      * @return the permissions
      * @since 1.13.0
      */
+    @Nullable
     public ConfigurationSection getPermissions() {
         return permissions;
     }
 
     public static class Builder {
-        private @NonNull
-        final String main;
-        private @NonNull
-        final String name;
-        private @NonNull
-        final String version;
-        private @NonNull String description = "";
-        private @NonNull List<String> authors = new ArrayList<>();
-        private @NonNull List<String> dependencies = new ArrayList<>();
-        private @NonNull List<String> softDependencies = new ArrayList<>();
+        @NonNull
+        private final String main;
+        @NonNull
+        private final String name;
+        @NonNull
+        private final String version;
+        @NonNull
+        private String description = "";
+        @NonNull
+        private List<String> authors = new ArrayList<>();
+        @NonNull
+        private List<String> dependencies = new ArrayList<>();
+        @NonNull
+        private List<String> softDependencies = new ArrayList<>();
         private boolean metrics = true;
-        private @NonNull String repository = "";
-        private @NonNull Material icon = Material.PAPER;
-        private @NonNull String apiVersion = "1";
-        private @Nullable ConfigurationSection permissions;
+        @NonNull
+        private String repository = "";
+        @NonNull
+        private Material icon = Material.PAPER;
+        @NonNull
+        private String apiVersion = "1";
+        @Nullable
+        private ConfigurationSection permissions;
 
         /**
          * @since 1.1
@@ -279,6 +288,6 @@ public final class AddonDescription {
     @Override
     public String toString() {
         return "AddonDescription [" + (name != null ? "name=" + name + ", " : "")
-                + (version != null ? "version=" + version : "") + "]";
+                + "version=" + version + "]";
     }
 }

@@ -5,6 +5,7 @@ import java.util.UUID;
 import org.bukkit.Location;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
@@ -20,7 +21,7 @@ public class IslandEnterEvent extends IslandBaseEvent {
     private static final HandlerList handlers = new HandlerList();
 
     @Override
-    public HandlerList getHandlers() {
+    public @NonNull HandlerList getHandlers() {
         return getHandlerList();
     }
 
@@ -28,7 +29,7 @@ public class IslandEnterEvent extends IslandBaseEvent {
         return handlers;
     }
 
-    IslandEnterEvent(Island island, UUID player, boolean admin, Location location, Island fromIsland, Event rawEvent) {
+    IslandEnterEvent(Island island, UUID player, boolean admin, Location location, @Nullable Island fromIsland, Event rawEvent) {
         // Final variables have to be declared in the constructor
         super(island, player, admin, location, rawEvent);
         this.fromIsland = fromIsland;

@@ -22,7 +22,7 @@ public class NamePrompt extends StringPrompt {
     private final String oldName;
     private final BentoBox plugin;
 
-    public NamePrompt(BentoBox plugin, @NonNull Island island, User user, String oldName) {
+    public NamePrompt(BentoBox plugin, @NonNull Island island, @NonNull User user, String oldName) {
         this.plugin = plugin;
         this.island = island;
         this.user = user;
@@ -30,12 +30,12 @@ public class NamePrompt extends StringPrompt {
     }
 
     @Override
-    public String getPromptText(ConversationContext context) {
+    public @NonNull String getPromptText(@NonNull ConversationContext context) {
         return user.getTranslation("commands.island.renamehome.enter-new-name");
     }
 
     @Override
-    public Prompt acceptInput(ConversationContext context, String input) {
+    public Prompt acceptInput(@NonNull ConversationContext context, String input) {
         if (island.renameHome(oldName, input)) {
             plugin.getIslands().save(island);
             Bukkit.getScheduler().runTask(plugin, () -> user.sendMessage("general.success"));

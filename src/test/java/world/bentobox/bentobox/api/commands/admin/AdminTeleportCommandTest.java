@@ -164,6 +164,11 @@ public class AdminTeleportCommandTest {
 
         // Return an island for spawn checking
         when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
+
+        when(island.getCenter()).thenReturn(location);
+        when(location.clone()).thenReturn(location);
+        when(location.toVector()).thenReturn(new Vector(0,0,0));
+        when(island.getProtectionCenter()).thenReturn(location);
         // Util
         PowerMockito.mockStatic(Util.class, Mockito.RETURNS_MOCKS);
         when(Util.getUUID(anyString())).thenCallRealMethod();

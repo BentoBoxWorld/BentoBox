@@ -83,7 +83,7 @@ public class IslandTeamKickCommand extends ConfirmableCommand {
 
     private void kick(User user, UUID targetUUID) {
         User target = User.getInstance(targetUUID);
-        Island oldIsland = getIslands().getIsland(getWorld(), targetUUID);
+        Island oldIsland = Objects.requireNonNull(getIslands().getIsland(getWorld(), targetUUID)); // Should never be null because of checks above
         // Fire event
         IslandBaseEvent event = TeamEvent.builder()
                 .island(oldIsland)

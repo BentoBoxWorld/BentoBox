@@ -1,5 +1,6 @@
 package world.bentobox.bentobox.api.placeholders.placeholderapi;
 
+import org.eclipse.jdt.annotation.NonNull;
 import world.bentobox.bentobox.api.addons.Addon;
 
 public class AddonPlaceholderExpansion extends BasicPlaceholderExpansion {
@@ -10,17 +11,17 @@ public class AddonPlaceholderExpansion extends BasicPlaceholderExpansion {
     }
 
     @Override
-    public String getName() {
+    public @NonNull String getName() {
         return addon.getDescription().getName();
     }
 
     @Override
-    public String getAuthor() {
+    public @NonNull String getAuthor() {
         return addon.getDescription().getAuthors().get(0);
     }
 
     @Override
-    public String getVersion() {
+    public @NonNull String getVersion() {
         return addon.getDescription().getVersion();
     }
 }

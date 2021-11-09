@@ -1,11 +1,8 @@
 package world.bentobox.bentobox.api.commands.island.team;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
-import org.bukkit.Bukkit;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
@@ -35,9 +32,13 @@ public class IslandTeamSetownerCommand extends CompositeCommand {
     public boolean execute(User user, String label, List<String> args) {
         UUID playerUUID = user.getUniqueId();
         // Can use if in a team
-        boolean inTeam = getPlugin().getIslands().inTeam(getWorld(), playerUUID);
+        boolean inTeam = getIslands().inTeam(getWorld(), playerUUID);
+        if (!inTeam) {
+            user.sendMessage("general.errors.no-team");
+            return false;
+        }
         UUID ownerUUID = getOwner(getWorld(), user);
-        if (!(inTeam && ownerUUID.equals(playerUUID))) {
+        if (ownerUUID == null || !ownerUUID.equals(playerUUID)) {
             user.sendMessage("general.errors.not-owner");
             return false;
         }
@@ -51,27 +52,23 @@ public class IslandTeamSetownerCommand extends CompositeCommand {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
             return false;
         }
-        if (!getIslands().inTeam(getWorld(), playerUUID)) {
-            user.sendMessage("general.errors.no-team");
-            return false;
-        }
         if (targetUUID.equals(playerUUID)) {
             user.sendMessage("commands.island.team.setowner.errors.cant-transfer-to-yourself");
             return false;
         }
-        if (!getPlugin().getIslands().getMembers(getWorld(), playerUUID).contains(targetUUID)) {
+        if (!getIslands().getMembers(getWorld(), playerUUID).contains(targetUUID)) {
             user.sendMessage("commands.island.team.setowner.errors.target-is-not-member");
             return false;
         }
         // Fire event so add-ons can run commands, etc.
-        Island island = getIslands().getIsland(getWorld(), playerUUID);
+        Island island = getIslands().getIsland(getWorld(), user);
         // Fire event so add-ons can run commands, etc.
         IslandBaseEvent e = TeamEvent.builder()
-                .island(getIslands().getIsland(getWorld(), user.getUniqueId()))
+                .island(island)
                 .reason(TeamEvent.Reason.SETOWNER)
                 .involvedPlayer(targetUUID)
                 .build();
-        if (e.getNewEvent().map(IslandBaseEvent::isCancelled).orElse(e.isCancelled())) {
+        if (e.isCancelled()) {
             return false;
         }
         getIslands().setOwner(getWorld(), user, targetUUID);
@@ -97,12 +94,8 @@ public class IslandTeamSetownerCommand extends CompositeCommand {
 
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
-        List<String> options = new ArrayList<>();
         String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
-        for (UUID member : getPlugin().getIslands().getMembers(getWorld(), user.getUniqueId())) {
-            options.add(Bukkit.getServer().getOfflinePlayer(member).getName());
-        }
-        return Optional.of(Util.tabLimit(options, lastArg));
+        return Optional.of(Util.tabLimit(getIslands().getMembers(getWorld(), user.getUniqueId()).stream().map(getPlayers()::getName).toList(), lastArg));
     }
 
 }

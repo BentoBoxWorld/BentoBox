@@ -49,6 +49,7 @@ public class SafeSpotTeleport {
     private final BentoBox plugin;
     private List<Pair<Integer, Integer>> chunksToScan;
     private final Runnable runnable;
+    private final Runnable failRunnable;
     private final CompletableFuture<Boolean> result;
     private final String homeName;
     private final int maxHeight;
@@ -65,6 +66,7 @@ public class SafeSpotTeleport {
         this.homeNumber = builder.getHomeNumber();
         this.homeName = builder.getHomeName();
         this.runnable = builder.getRunnable();
+        this.failRunnable = builder.getFailRunnable();
         this.result = builder.getResult();
         this.maxHeight = location.getWorld().getMaxHeight() - 20;
         // Try to go
@@ -151,9 +153,15 @@ public class SafeSpotTeleport {
                         makeAndTelport(Material.COBBLESTONE);
                     }
                 }
+                if (failRunnable != null) {
+                    Bukkit.getScheduler().runTask(plugin, failRunnable);
+                }
                 result.complete(false);
             });
         } else {
+            if (failRunnable != null) {
+                Bukkit.getScheduler().runTask(plugin, failRunnable);
+            }
             result.complete(false);
         }
     }
@@ -300,6 +308,7 @@ public class SafeSpotTeleport {
         private String failureMessage = "";
         private Location location;
         private Runnable runnable;
+        private Runnable failRunnable;
         private final CompletableFuture<Boolean> result = new CompletableFuture<>();
 
         public Builder(BentoBox plugin) {
@@ -424,6 +433,16 @@ public class SafeSpotTeleport {
         }
 
         /**
+         * The task to run if the player is not safely teleported
+         * @param runnable - task
+         * @return Builder
+         * @since 1.18.0
+         */
+        public Builder ifFail(Runnable rannable) {
+            this.failRunnable = runnable;
+            return this;
+        }
+        /**
          * @return the plugin
          */
         public BentoBox getPlugin() {
@@ -485,6 +504,13 @@ public class SafeSpotTeleport {
          */
         public CompletableFuture<Boolean> getResult() {
             return result;
+        }
+
+        /**
+         * @return the failRunnable
+         */
+        public Runnable getFailRunnable() {
+            return failRunnable;
         }
 
 

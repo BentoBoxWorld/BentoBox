@@ -2,6 +2,7 @@ package world.bentobox.bentobox.listeners;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
@@ -35,14 +36,15 @@ public class BlockEndDragon implements Listener {
     }
 
     private void testLocation(Location location) {
-        if (!plugin.getIWM().isIslandEnd(location.getWorld())
-                || !Flags.REMOVE_END_EXIT_ISLAND.isSetForWorld(location.getWorld())
-                || location.getWorld().getBlockAt(0, 255, 0).getType().equals(Material.END_PORTAL)) {
+        World w = location.getWorld();
+        if (w == null || !plugin.getIWM().isIslandEnd(w)
+                || !Flags.REMOVE_END_EXIT_ISLAND.isSetForWorld(w)
+                || w.getBlockAt(0, 255, 0).getType().equals(Material.END_PORTAL)) {
             return;
         }
 
         // Setting a End Portal at the top will trick dragon legacy check.
-        location.getWorld().getBlockAt(0, 255, 0).setType(Material.END_PORTAL, false);
+        w.getBlockAt(0, 255, 0).setType(Material.END_PORTAL, false);
     }
 
     /**

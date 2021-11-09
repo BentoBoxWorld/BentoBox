@@ -2,6 +2,7 @@ package world.bentobox.bentobox.listeners.flags.clicklisteners;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -43,7 +44,8 @@ public class CommandRankClickListener implements ClickHandler {
         }
 
         // Check if has permission
-        String prefix = plugin.getIWM().getPermissionPrefix(Util.getWorld(panel.getWorld().orElse(user.getWorld())));
+        World w = Objects.requireNonNull(Util.getWorld(panel.getWorld().orElse(user.getWorld())));
+        String prefix = plugin.getIWM().getPermissionPrefix(w);
         String reqPerm = prefix + "settings." + Flags.COMMAND_RANKS.getID();
         String allPerms = prefix + "settings.*";
         if (!user.hasPermission(reqPerm) && !user.hasPermission(allPerms)

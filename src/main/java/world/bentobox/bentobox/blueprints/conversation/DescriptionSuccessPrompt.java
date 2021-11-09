@@ -7,6 +7,7 @@ import org.bukkit.conversations.MessagePrompt;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.entity.Player;
 
+import org.eclipse.jdt.annotation.NonNull;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.user.User;
@@ -28,7 +29,7 @@ public class DescriptionSuccessPrompt extends MessagePrompt {
     }
 
     @Override
-    public String getPromptText(ConversationContext context) {
+    public @NonNull String getPromptText(ConversationContext context) {
         User user = User.getInstance((Player)context.getForWhom());
         @SuppressWarnings("unchecked")
         List<String> description = (List<String>)context.getSessionData("description");
@@ -46,7 +47,7 @@ public class DescriptionSuccessPrompt extends MessagePrompt {
     }
 
     @Override
-    protected Prompt getNextPrompt(ConversationContext context) {
+    protected Prompt getNextPrompt(@NonNull ConversationContext context) {
         return Prompt.END_OF_CONVERSATION;
     }
 

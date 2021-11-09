@@ -66,7 +66,7 @@ public class IslandTeamPromoteCommand extends CompositeCommand {
             user.sendMessage("commands.island.team.demote.errors.cant-demote-yourself");
             return true;
         }
-        if (!inTeam(getWorld(), target) || !getOwner(getWorld(), user).equals(getOwner(getWorld(), target))) {
+        if (!inTeam(getWorld(), target) || !Objects.requireNonNull(getOwner(getWorld(), user), "Island has no owner!").equals(getOwner(getWorld(), target))) {
             user.sendMessage("general.errors.not-in-team");
             return true;
         }
