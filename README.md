@@ -86,6 +86,10 @@ BentoBox uses Maven, and its Maven repository is kindly provided by [CodeMC](htt
 ```xml
 <repositories>
   <repository>
+    <id>codemc-snapshots</id>
+    <url>https://repo.codemc.org/repository/maven-snapshots</url>
+  </repository>
+  <repository>
     <id>codemc-repo</id>
     <url>https://repo.codemc.org/repository/maven-public/</url>
   </repository>
