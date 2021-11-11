@@ -81,7 +81,6 @@ public class TeamEvent {
             return this;
         }
 
-
         private IslandBaseEvent getEvent() {
             return switch (reason) {
             case JOIN -> new TeamJoinEvent(island, player, admin, location);

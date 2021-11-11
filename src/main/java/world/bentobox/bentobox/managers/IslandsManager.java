@@ -1183,6 +1183,8 @@ public class IslandsManager {
             // Set the game mode
             user.setGameMode(plugin.getIWM().getDefaultGameMode(world));
         }
+        // Remove from mid-teleport set
+        goingHome.remove(user.getUniqueId());
     }
 
     /**

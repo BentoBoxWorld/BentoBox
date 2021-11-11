@@ -337,7 +337,6 @@ public class TemplateReader
                                             actionDataSection.getString("type"),
                                             actionDataSection.getString("content"),
                                             actionDataSection.getString("tooltip"));
-
                             itemRecord.addAction(actionData);
                         }
                     }
