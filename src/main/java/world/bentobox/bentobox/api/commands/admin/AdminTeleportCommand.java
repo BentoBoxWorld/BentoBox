@@ -100,10 +100,9 @@ public class AdminTeleportCommand extends CompositeCommand {
         // Otherwise, ask the admin to go to a safe spot
         String failureMessage = user.getTranslation("commands.admin.tp.manual", "[location]", warpSpot.getBlockX() + " " + warpSpot.getBlockY() + " "
                 + warpSpot.getBlockZ());
-
-        Player player = user.getPlayer();
+        // Set the player
+        Player player = args.size() == 2 ? userToTeleport.getPlayer() : user.getPlayer();
         if (args.size() == 2) {
-            player = userToTeleport.getPlayer();
             failureMessage = userToTeleport.getTranslation(NOT_SAFE);
         }
 
@@ -112,6 +111,7 @@ public class AdminTeleportCommand extends CompositeCommand {
         .entity(player)
         .location(warpSpot)
         .failureMessage(failureMessage)
+        .thenRun(() -> user.sendMessage("general.success"))
         .build();
         return true;
     }
