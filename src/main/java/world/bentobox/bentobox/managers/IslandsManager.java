@@ -512,7 +512,7 @@ public class IslandsManager {
 
         int islandMax = island.getMaxMembers(rank) == null ? worldDefault : island.getMaxMembers(rank);
         // Update based on owner permissions if online
-        if (Bukkit.getPlayer(island.getOwner()) != null) {
+        if (island.getOwner() != null && Bukkit.getPlayer(island.getOwner()) != null) {
             User owner = User.getInstance(island.getOwner());
             islandMax = owner.getPermissionValue(plugin.getIWM().getPermissionPrefix(island.getWorld())
                     + perm, islandMax);
@@ -544,7 +544,7 @@ public class IslandsManager {
     public int getMaxHomes(@NonNull Island island) {
         int islandMax = island.getMaxHomes() == null ? plugin.getIWM().getMaxHomes(island.getWorld()) : island.getMaxHomes();
         // Update based on owner permissions if online
-        if (Bukkit.getPlayer(island.getOwner()) != null) {
+        if (island.getOwner() != null && Bukkit.getPlayer(island.getOwner()) != null) {
             User owner = User.getInstance(island.getOwner());
             islandMax = owner.getPermissionValue(plugin.getIWM().getPermissionPrefix(island.getWorld())
                     + "island.maxhomes", islandMax);
@@ -705,10 +705,13 @@ public class IslandsManager {
                 return l;
             } else {
                 // try owner's home
-                Location tlh = getHomeLocation(world, getOwner(world, user.getUniqueId()));
-                if (tlh != null && isSafeLocation(tlh)) {
-                    setHomeLocation(user, tlh, name);
-                    return tlh;
+                UUID owner = getOwner(world, user.getUniqueId());
+                if (owner != null) {
+                    Location tlh = getHomeLocation(world, owner);
+                    if (tlh != null && isSafeLocation(tlh)) {
+                        setHomeLocation(user, tlh, name);
+                        return tlh;
+                    }
                 }
             }
         } else {
@@ -874,7 +877,7 @@ public class IslandsManager {
             // No migration required
             return;
         }
-        if (island.getOwner().equals(uuid)) {
+        if (island.getOwner() != null && island.getOwner().equals(uuid)) {
             // Owner
             island.setHomes(homes.entrySet().stream().collect(Collectors.toMap(this::getHomeName, Map.Entry::getKey)));
             plugin.getPlayers().clearHomeLocations(world, uuid);
