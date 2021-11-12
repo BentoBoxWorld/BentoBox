@@ -118,7 +118,7 @@
             <activation>
                 <property>
                     <name>env.GIT_BRANCH</name>
-                    <value>origin/master</value>
+                    <value>origin/1.16.5_lts</value>
                 </property>
             </activation>
             <properties>
