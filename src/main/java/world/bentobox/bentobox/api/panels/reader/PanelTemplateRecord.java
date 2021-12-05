@@ -31,11 +31,11 @@ import world.bentobox.bentobox.api.panels.Panel;
  * @since 1.17.3
  */
 public record PanelTemplateRecord(Panel.Type type,
-                                  @Nullable String title,
-                                  @Nullable TemplateItem border,
-                                  @Nullable TemplateItem background,
-                                  boolean[] forcedRows,
-                                  @NonNull ItemTemplateRecord[][] content)
+        @Nullable String title,
+        @Nullable TemplateItem border,
+        @Nullable TemplateItem background,
+        boolean[] forcedRows,
+        @NonNull ItemTemplateRecord[][] content)
 {
     /**
      * Instantiates a new Panel template record with empty content.
@@ -105,6 +105,17 @@ public record PanelTemplateRecord(Panel.Type type,
                 && Arrays.deepEquals(content, other.content) && Arrays.equals(forcedRows, other.forcedRows)
                 && Objects.equals(title, other.title) && type == other.type;
     }
-    
-    
+
+
+    @Override
+    public String toString() {
+        return "PanelTemplateRecord {type=" + type +
+                ", title=" + title +
+                ", border=" + border +
+                ", background=" + background +
+                ", forcedRows=" + Arrays.toString(forcedRows) +
+                ", content=" +  Arrays.toString(content) + "}";
+    }
+
+
 }
