@@ -183,7 +183,7 @@ public class BlueprintManagementPanel {
             // Toggle permission - default is always allowed
             pb.item(39, getNoPermissionIcon());
         } else {
-         // Panel has a Trash icon. If right clicked it is discarded
+            // Panel has a Trash icon. If right clicked it is discarded
             pb.item(36, getTrashIcon(addon, bb));
             // Toggle permission - default is always allowed
             pb.item(39, getPermissionIcon(addon, bb));
@@ -256,22 +256,22 @@ public class BlueprintManagementPanel {
         Material icon;
         String worldName;
         switch (env) {
-            case NORMAL -> {
-                icon = Material.GRASS_BLOCK;
-                worldName = normalBlueprint.getName();
-            }
-            case NETHER -> {
-                icon = Material.NETHERRACK;
-                worldName = netherBlueprint.getName();
-            }
-            case THE_END -> {
-                icon = Material.END_STONE;
-                worldName = endBlueprint.getName();
-            }
-            default -> {
-                icon = Material.STONE;
-                worldName = Util.prettifyText(env.name());
-            }
+        case NORMAL -> {
+            icon = Material.GRASS_BLOCK;
+            worldName = normalBlueprint.getName();
+        }
+        case NETHER -> {
+            icon = Material.NETHERRACK;
+            worldName = netherBlueprint.getName();
+        }
+        case THE_END -> {
+            icon = Material.END_STONE;
+            worldName = endBlueprint.getName();
+        }
+        default -> {
+            icon = Material.STONE;
+            worldName = Util.prettifyText(env.name());
+        }
         }
 
         return new PanelItemBuilder()
@@ -297,7 +297,7 @@ public class BlueprintManagementPanel {
                 })
                 .build();
     }
-    
+
     private PanelItem getNoTrashIcon() {
         return new PanelItemBuilder()
                 .name(t("no-trash"))
@@ -321,7 +321,7 @@ public class BlueprintManagementPanel {
                     return true;
                 }).build();
     }
-    
+
     private PanelItem getNoPermissionIcon() {
         return new PanelItemBuilder().icon(Material.PAINTING).name(t("no-permission"))
                 .description(t("no-perm-required"))
@@ -350,7 +350,7 @@ public class BlueprintManagementPanel {
         return new PanelItemBuilder()
                 .name(blueprint.getDisplayName() == null ? blueprint.getName() : blueprint.getDisplayName())
                 .description(desc)
-                .icon(blueprint.getIcon() == null ? Material.PAPER : blueprint.getIcon())
+                .icon(blueprint.getIcon())
                 .glow(selected != null && pos == selected.getKey())
                 .clickHandler((panel, u, clickType, slot) -> {
                     // Handle the world squares

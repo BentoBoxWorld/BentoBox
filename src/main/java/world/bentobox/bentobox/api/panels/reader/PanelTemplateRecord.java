@@ -7,6 +7,9 @@
 package world.bentobox.bentobox.api.panels.reader;
 
 
+import java.util.Arrays;
+import java.util.Objects;
+
 import org.bukkit.inventory.ItemStack;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -28,11 +31,11 @@ import world.bentobox.bentobox.api.panels.Panel;
  * @since 1.17.3
  */
 public record PanelTemplateRecord(Panel.Type type,
-                                  @Nullable String title,
-                                  @Nullable TemplateItem border,
-                                  @Nullable TemplateItem background,
-                                  boolean[] forcedRows,
-                                  @NonNull ItemTemplateRecord[][] content)
+        @Nullable String title,
+        @Nullable TemplateItem border,
+        @Nullable TemplateItem background,
+        boolean[] forcedRows,
+        @NonNull ItemTemplateRecord[][] content)
 {
     /**
      * Instantiates a new Panel template record with empty content.
@@ -76,4 +79,43 @@ public record PanelTemplateRecord(Panel.Type type,
             this(icon, null, null);
         }
     }
+
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + Arrays.deepHashCode(content);
+        result = prime * result + Arrays.hashCode(forcedRows);
+        result = prime * result + Objects.hash(background, border, title, type);
+        return result;
+    }
+
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof PanelTemplateRecord)) {
+            return false;
+        }
+        PanelTemplateRecord other = (PanelTemplateRecord) obj;
+        return Objects.equals(background, other.background) && Objects.equals(border, other.border)
+                && Arrays.deepEquals(content, other.content) && Arrays.equals(forcedRows, other.forcedRows)
+                && Objects.equals(title, other.title) && type == other.type;
+    }
+
+
+    @Override
+    public String toString() {
+        return "PanelTemplateRecord {type=" + type +
+                ", title=" + title +
+                ", border=" + border +
+                ", background=" + background +
+                ", forcedRows=" + Arrays.toString(forcedRows) +
+                ", content=" +  Arrays.toString(content) + "}";
+    }
+
+
 }

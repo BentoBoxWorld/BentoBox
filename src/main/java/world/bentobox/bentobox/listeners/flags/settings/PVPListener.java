@@ -124,10 +124,6 @@ public class PVPListener extends FlagListener {
             if (this.PVPAllowed(c.getLocation())) {
                 return;
             }
-            // Is PVP allowed here?
-            if (this.PVPAllowed(e.getCaught().getLocation())) {
-                return;
-            }
             // Protect visitors
             if (protectedVisitor(c)) {
                 User.getInstance(e.getPlayer()).notify(Flags.INVINCIBLE_VISITORS.getHintReference());

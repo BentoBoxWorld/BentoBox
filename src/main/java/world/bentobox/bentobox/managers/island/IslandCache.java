@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
@@ -141,7 +142,11 @@ public class IslandCache {
      */
     @Nullable
     public Island get(@NonNull World world, @NonNull UUID uuid) {
-        return islandsByUUID.containsKey(Util.getWorld(world)) ? islandsByUUID.get(Util.getWorld(world)).get(uuid) : null;
+        World w = Util.getWorld(world);
+        if (w == null) {
+            return null;
+        }
+        return islandsByUUID.containsKey(w) ? islandsByUUID.get(w).get(uuid) : null;
     }
 
     /**
@@ -153,10 +158,11 @@ public class IslandCache {
      */
     @Nullable
     public Island getIslandAt(@NonNull Location location) {
-        if (!grids.containsKey(Util.getWorld(location.getWorld()))) {
+        World w = Util.getWorld(location.getWorld());
+        if (w == null || !grids.containsKey(w)) {
             return null;
         }
-        return grids.get(Util.getWorld(location.getWorld())).getIslandAt(location.getBlockX(), location.getBlockZ());
+        return grids.get(w).getIslandAt(location.getBlockX(), location.getBlockZ());
     }
 
     /**
@@ -177,7 +183,9 @@ public class IslandCache {
     @NonNull
     public Collection<Island> getIslands(@NonNull World world) {
         World overworld = Util.getWorld(world);
-
+        if (overworld == null) {
+            return Collections.emptyList();
+        }
         return islandsByLocation.entrySet().stream()
                 .filter(entry -> overworld.equals(Util.getWorld(entry.getKey().getWorld()))) // shouldn't make NPEs
                 .map(Map.Entry::getValue).toList();
@@ -191,7 +199,11 @@ public class IslandCache {
      */
     @NonNull
     public Set<UUID> getMembers(@NonNull World world, @NonNull UUID uuid, int minimumRank) {
-        Island island = islandsByUUID.computeIfAbsent(Util.getWorld(world), k -> new HashMap<>()).get(uuid);
+        World w = Util.getWorld(world);
+        if (w == null) {
+            return new HashSet<>();
+        }
+        Island island = islandsByUUID.computeIfAbsent(w, k -> new HashMap<>()).get(uuid);
         return island != null ? island.getMemberSet(minimumRank) : new HashSet<>();
     }
 
@@ -202,7 +214,11 @@ public class IslandCache {
      */
     @Nullable
     public UUID getOwner(@NonNull World world, @NonNull UUID uuid) {
-        Island island = islandsByUUID.computeIfAbsent(Util.getWorld(world), k -> new HashMap<>()).get(uuid);
+        World w = Util.getWorld(world);
+        if (w == null) {
+            return null;
+        }
+        Island island = islandsByUUID.computeIfAbsent(w, k -> new HashMap<>()).get(uuid);
         return island != null ? island.getOwner() : null;
 
     }
@@ -213,7 +229,11 @@ public class IslandCache {
      * @return true if player has island and owns it
      */
     public boolean hasIsland(@NonNull World world, @NonNull UUID uuid) {
-        Island island = islandsByUUID.computeIfAbsent(Util.getWorld(world), k -> new HashMap<>()).get(uuid);
+        World w = Util.getWorld(world);
+        if (w == null) {
+            return false;
+        }
+        Island island = islandsByUUID.computeIfAbsent(w, k -> new HashMap<>()).get(uuid);
         return island != null && uuid.equals(island.getOwner());
     }
 
@@ -226,7 +246,11 @@ public class IslandCache {
      */
     @Nullable
     public Island removePlayer(@NonNull World world, @NonNull UUID uuid) {
-        Island island = islandsByUUID.computeIfAbsent(Util.getWorld(world), k -> new HashMap<>()).get(uuid);
+        World w = Util.getWorld(world);
+        if (w == null) {
+            return null;
+        }
+        Island island = islandsByUUID.computeIfAbsent(w, k -> new HashMap<>()).get(uuid);
         if (island != null) {
             if (uuid.equals(island.getOwner())) {
                 // Clear ownership and members
@@ -237,7 +261,7 @@ public class IslandCache {
                 island.removeMember(uuid);
             }
         }
-        islandsByUUID.get(world).remove(uuid);
+        islandsByUUID.get(w).remove(uuid);
         return island;
     }
 
@@ -267,7 +291,7 @@ public class IslandCache {
     public void setOwner(@NonNull Island island, @Nullable UUID newOwnerUUID) {
         island.setOwner(newOwnerUUID);
         if (newOwnerUUID != null) {
-            islandsByUUID.computeIfAbsent(Util.getWorld(island.getWorld()), k -> new HashMap<>()).put(newOwnerUUID, island);
+            islandsByUUID.computeIfAbsent(Objects.requireNonNull(Util.getWorld(island.getWorld())), k -> new HashMap<>()).put(newOwnerUUID, island);
         }
         islandsByLocation.put(island.getCenter(), island);
         islandsById.put(island.getUniqueId(), island);
@@ -292,11 +316,15 @@ public class IslandCache {
     public void removeIsland(@NonNull Island island) {
         islandsByLocation.values().removeIf(island::equals);
         islandsById.values().removeIf(island::equals);
-        if (islandsByUUID.containsKey(Util.getWorld(island.getWorld()))) {
-            islandsByUUID.get(Util.getWorld(island.getWorld())).values().removeIf(island::equals);
+        World w = Util.getWorld(island.getWorld());
+        if (w == null) {
+            return;
         }
-        if (grids.containsKey(Util.getWorld(island.getWorld()))) {
-            grids.get(Util.getWorld(island.getWorld())).removeFromGrid(island);
+        if (islandsByUUID.containsKey(w)) {
+            islandsByUUID.get(w).values().removeIf(island::equals);
+        }
+        if (grids.containsKey(w)) {
+            grids.get(w).removeFromGrid(island);
         }
     }
 
@@ -307,6 +335,9 @@ public class IslandCache {
      */
     public void resetAllFlags(World world) {
         World w = Util.getWorld(world);
+        if (w == null) {
+            return;
+        }
         islandsById.values().stream().filter(i -> i.getWorld().equals(w)).forEach(Island::setFlagsDefaults);
     }
 
@@ -318,6 +349,9 @@ public class IslandCache {
      */
     public void resetFlag(World world, Flag flag) {
         World w = Util.getWorld(world);
+        if (w == null) {
+            return;
+        }
         int setting = BentoBox.getInstance().getIWM().getDefaultIslandFlags(w).getOrDefault(flag, flag.getDefaultRank());
         islandsById.values().stream().filter(i -> i.getWorld().equals(w)).forEach(i -> i.setFlag(flag, setting));
     }

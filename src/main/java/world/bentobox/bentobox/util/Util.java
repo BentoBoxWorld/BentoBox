@@ -238,7 +238,7 @@ public class Util {
     /**
      * Convert world to an overworld
      * @param world - world
-     * @return over world
+     * @return over world or null if world is null or a world cannot be found
      */
     @Nullable
     public static World getWorld(@Nullable World world) {
@@ -284,21 +284,21 @@ public class Util {
      */
     public static float blockFaceToFloat(BlockFace face) {
         return switch (face) {
-            case EAST -> 90F;
-            case EAST_NORTH_EAST -> 67.5F;
-            case NORTH_EAST -> 45F;
-            case NORTH_NORTH_EAST -> 22.5F;
-            case NORTH_NORTH_WEST -> 337.5F;
-            case NORTH_WEST -> 315F;
-            case SOUTH -> 180F;
-            case SOUTH_EAST -> 135F;
-            case SOUTH_SOUTH_EAST -> 157.5F;
-            case SOUTH_SOUTH_WEST -> 202.5F;
-            case SOUTH_WEST -> 225F;
-            case WEST -> 270F;
-            case WEST_NORTH_WEST -> 292.5F;
-            case WEST_SOUTH_WEST -> 247.5F;
-            default -> 0F;
+        case EAST -> 90F;
+        case EAST_NORTH_EAST -> 67.5F;
+        case NORTH_EAST -> 45F;
+        case NORTH_NORTH_EAST -> 22.5F;
+        case NORTH_NORTH_WEST -> 337.5F;
+        case NORTH_WEST -> 315F;
+        case SOUTH -> 180F;
+        case SOUTH_EAST -> 135F;
+        case SOUTH_SOUTH_EAST -> 157.5F;
+        case SOUTH_SOUTH_WEST -> 202.5F;
+        case SOUTH_WEST -> 225F;
+        case WEST -> 270F;
+        case WEST_NORTH_WEST -> 292.5F;
+        case WEST_SOUTH_WEST -> 247.5F;
+        default -> 0F;
         };
     }
 
@@ -548,21 +548,21 @@ public class Util {
             if (group.length() == 6) {
                 // Parses #ffffff to a color text.
                 matcher.appendReplacement(buffer, ChatColor.COLOR_CHAR + "x"
-                    + ChatColor.COLOR_CHAR + group.charAt(0) + ChatColor.COLOR_CHAR + group.charAt(1)
-                    + ChatColor.COLOR_CHAR + group.charAt(2) + ChatColor.COLOR_CHAR + group.charAt(3)
-                    + ChatColor.COLOR_CHAR + group.charAt(4) + ChatColor.COLOR_CHAR + group.charAt(5));
+                        + ChatColor.COLOR_CHAR + group.charAt(0) + ChatColor.COLOR_CHAR + group.charAt(1)
+                        + ChatColor.COLOR_CHAR + group.charAt(2) + ChatColor.COLOR_CHAR + group.charAt(3)
+                        + ChatColor.COLOR_CHAR + group.charAt(4) + ChatColor.COLOR_CHAR + group.charAt(5));
             } else {
                 // Parses #fff to a color text.
                 matcher.appendReplacement(buffer, ChatColor.COLOR_CHAR + "x"
-                    + ChatColor.COLOR_CHAR + group.charAt(0) + ChatColor.COLOR_CHAR + group.charAt(0)
-                    + ChatColor.COLOR_CHAR + group.charAt(1) + ChatColor.COLOR_CHAR + group.charAt(1)
-                    + ChatColor.COLOR_CHAR + group.charAt(2) + ChatColor.COLOR_CHAR + group.charAt(2));
+                        + ChatColor.COLOR_CHAR + group.charAt(0) + ChatColor.COLOR_CHAR + group.charAt(0)
+                        + ChatColor.COLOR_CHAR + group.charAt(1) + ChatColor.COLOR_CHAR + group.charAt(1)
+                        + ChatColor.COLOR_CHAR + group.charAt(2) + ChatColor.COLOR_CHAR + group.charAt(2));
             }
         }
 
         // transform normal codes and strip spaces after color code.
         return Util.stripSpaceAfterColorCodes(
-            ChatColor.translateAlternateColorCodes('&', matcher.appendTail(buffer).toString()));
+                ChatColor.translateAlternateColorCodes('&', matcher.appendTail(buffer).toString()));
     }
 
 
@@ -717,7 +717,7 @@ public class Util {
             throw new IllegalStateException("Class " + clazz.getName() + " does not implement NMSAbstraction");
         }
     }
-    
+
     /**
      * Broadcast a localized message to all players with the permission {@link Server#BROADCAST_CHANNEL_USERS}
      *

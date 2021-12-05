@@ -57,7 +57,7 @@ public class CommandRankClickListener implements ClickHandler {
 
         // Get the user's island
         Island island = plugin.getIslands().getIsland(panel.getWorld().orElse(user.getWorld()), user.getUniqueId());
-        if (island == null || !island.getOwner().equals(user.getUniqueId())) {
+        if (island == null || island.getOwner() == null || !island.getOwner().equals(user.getUniqueId())) {
             user.sendMessage("general.errors.not-owner");
             user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_METAL_HIT, 1F, 1F);
             return true;
