@@ -39,12 +39,12 @@ public class BlockEndDragon implements Listener {
         World w = location.getWorld();
         if (w == null || !plugin.getIWM().isIslandEnd(w)
                 || !Flags.REMOVE_END_EXIT_ISLAND.isSetForWorld(w)
-                || w.getBlockAt(0, 255, 0).getType().equals(Material.END_PORTAL)) {
+                || w.getBlockAt(0, w.getMaxHeight() - 1, 0).getType().equals(Material.END_PORTAL)) {
             return;
         }
 
         // Setting a End Portal at the top will trick dragon legacy check.
-        w.getBlockAt(0, 255, 0).setType(Material.END_PORTAL, false);
+        w.getBlockAt(0, w.getMaxHeight() - 1, 0).setType(Material.END_PORTAL, false);
     }
 
     /**
@@ -68,9 +68,9 @@ public class BlockEndDragon implements Listener {
     }
 
     private boolean testBlock(Block block) {
-        return block.getY() == 255
-                && block.getX() == 0
+        return block.getX() == 0
                 && block.getZ() == 0
+                && block.getY() == block.getWorld().getMaxHeight() - 1
                 && block.getWorld().getEnvironment().equals(Environment.THE_END)
                 && Flags.REMOVE_END_EXIT_ISLAND.isSetForWorld(block.getWorld())
                 && plugin.getIWM().inWorld(block.getWorld())
