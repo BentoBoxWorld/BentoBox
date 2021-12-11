@@ -187,10 +187,13 @@ public class ServerCompatibility {
          */
         V1_17_1(Compatibility.SUPPORTED),
         /**
-         * @since 1.18.0
+         * @since 1.19.0
          */
         V1_18(Compatibility.COMPATIBLE),
-
+        /**
+         * @since 1.19.0
+         */
+        V1_18_1(Compatibility.COMPATIBLE),
         ;
 
         private final Compatibility compatibility;
