@@ -96,6 +96,7 @@ public class BlockEndDragonTest {
         when(block.getZ()).thenReturn(0);
         when(block.getWorld()).thenReturn(world);
         when(world.getBlockAt(anyInt(), anyInt(), anyInt())).thenReturn(block);
+        when(world.getMaxHeight()).thenReturn(256);
         when(world.getEnvironment()).thenReturn(Environment.THE_END);
         // Player
         UUID uuid = UUID.randomUUID();

@@ -225,8 +225,8 @@ public class PVPListener extends FlagListener {
             String message = "protection.flags." + flag.getID() + "." + (e.isSetTo() ? "enabled" : "disabled");
             // Send the message to visitors
             e.getIsland().getVisitors().forEach(visitor -> User.getInstance(visitor).sendMessage(message));
-            // Send the message to island members (and coops and trusted)
-            e.getIsland().getMemberSet(RanksManager.COOP_RANK).forEach(member -> User.getInstance(member).sendMessage(message));
+            // Send the message to players on the island
+            e.getIsland().getPlayersOnIsland().forEach(player -> User.getInstance(player).sendMessage(message));
         }
     }
 
