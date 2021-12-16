@@ -230,17 +230,48 @@ public class SafeSpotTeleport {
      * @return true if a safe spot was found
      */
     private boolean scanChunk(ChunkSnapshot chunk) {
-        // Run through the chunk
-        for (int x = 0; x< 16; x++) {
+        int startY = location.getBlockY();
+        int minY = location.getWorld().getMinHeight() + 1;
+        int maxY = maxHeight;
+
+        // Check the safe spot at the current height
+        for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {
-                // Work down from the entry point up
-                for (int y = Math.min(chunk.getHighestBlockYAt(x, z), maxHeight); y >= 0; y--) {
-                    if (checkBlock(chunk, x,y,z)) {
+                if (minY >= startY && startY <= maxY && checkBlock(chunk, x, startY ,z)) {
+                    return true;
+                }
+            }
+        }
+
+        // Expand the height up and down until a safe spot is found
+        int upperY = startY + 1;
+        int lowerY = startY - 1;
+        boolean checkUpper = upperY <= maxY;
+        boolean checkLower = lowerY >= minY;
+        while (checkUpper || checkLower) {
+            for (int x = 0; x < 16; x++) {
+                for (int z = 0; z < 16; z++) {
+                    if (checkUpper && upperY <= maxY && checkBlock(chunk, x, upperY, z)) {
                         return true;
                     }
-                } // end y
-            } //end z
-        } // end x
+                    if (checkLower && lowerY >= minY && checkBlock(chunk, x, lowerY, z)) {
+                        return true;
+                    }
+                }
+            }
+            if (upperY > maxY) {
+                checkUpper = false;
+            } else {
+                upperY++;
+            }
+            if (lowerY < minY) {
+                checkLower = false;
+            } else {
+                lowerY--;
+            }
+        }
+
+        // We can't find a safe spot
         return false;
     }
 
