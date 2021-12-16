@@ -1,15 +1,6 @@
 package world.bentobox.bentobox.util.teleport;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
-
-import org.bukkit.Bukkit;
-import org.bukkit.ChunkSnapshot;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.World.Environment;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
@@ -17,12 +8,16 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.Nullable;
-
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.util.Pair;
 import world.bentobox.bentobox.util.Util;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * A class that calculates finds a safe spot asynchronously and then teleports the player there.
@@ -231,17 +226,19 @@ public class SafeSpotTeleport {
      */
     private boolean scanChunk(ChunkSnapshot chunk) {
         int startY = location.getBlockY();
-        int minY = location.getWorld().getMinHeight() + 1;
-        int maxY = maxHeight;
+        int minY = location.getWorld().getMinHeight();
+        int maxY = 60; // Just a dummy value
 
         // Check the safe spot at the current height
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {
-                if (minY >= startY && startY <= maxY && checkBlock(chunk, x, startY ,z)) {
+                if (minY >= startY && checkBlock(chunk, x, startY, z)) {
                     return true;
                 }
+                maxY = Math.max(chunk.getHighestBlockYAt(x, z), maxY);
             }
         }
+        maxY = Math.min(maxY, maxHeight);
 
         // Expand the height up and down until a safe spot is found
         int upperY = startY + 1;
@@ -251,23 +248,25 @@ public class SafeSpotTeleport {
         while (checkUpper || checkLower) {
             for (int x = 0; x < 16; x++) {
                 for (int z = 0; z < 16; z++) {
-                    if (checkUpper && upperY <= maxY && checkBlock(chunk, x, upperY, z)) {
+                    if (checkUpper && checkBlock(chunk, x, upperY, z)) {
                         return true;
                     }
-                    if (checkLower && lowerY >= minY && checkBlock(chunk, x, lowerY, z)) {
+                    if (checkLower && checkBlock(chunk, x, lowerY, z)) {
                         return true;
                     }
                 }
             }
-            if (upperY > maxY) {
-                checkUpper = false;
-            } else {
+            if (checkUpper) {
                 upperY++;
+                if (upperY > maxY) {
+                    checkUpper = false;
+                }
             }
-            if (lowerY < minY) {
-                checkLower = false;
-            } else {
+            if (checkLower) {
                 lowerY--;
+                if (lowerY < minY) {
+                    checkLower = false;
+                }
             }
         }
 
