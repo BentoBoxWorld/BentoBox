@@ -245,7 +245,8 @@ public class SafeSpotTeleport {
         int lowerY = startY - 1;
         boolean checkUpper = upperY <= maxY;
         boolean checkLower = lowerY >= minY;
-        while (checkUpper || checkLower) {
+        int limitRange = plugin.getSettings().getSafeSpotSearchVerticalRange(); // Limit the y-coordinate range
+        while (limitRange > 0 && (checkUpper || checkLower)) {
             for (int x = 0; x < 16; x++) {
                 for (int z = 0; z < 16; z++) {
                     if (checkUpper && checkBlock(chunk, x, upperY, z)) {
@@ -268,6 +269,7 @@ public class SafeSpotTeleport {
                     checkLower = false;
                 }
             }
+            limitRange--;
         }
 
         // We can't find a safe spot

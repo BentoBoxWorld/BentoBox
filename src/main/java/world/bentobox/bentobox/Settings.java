@@ -298,6 +298,13 @@ public class Settings implements ConfigObject {
     @ConfigEntry(path = "island.deletion.keep-previous-island-on-reset", since = "1.13.0")
     private boolean keepPreviousIslandOnReset = false;
 
+    @ConfigComment("By default, If the destination is not safe, the plugin will try to search for a safe spot around the destination,")
+    @ConfigComment("then it will try to expand the y-coordinate up and down from the destination.")
+    @ConfigComment("This setting limits how far the y-coordinate will be expanded.")
+    @ConfigComment("If set to 0 or lower, the plugin will not expand the y-coordinate.")
+    @ConfigEntry(path = "island.safe-spot-search-vertical-range", since = "1.19.1")
+    private int safeSpotSearchVerticalRange = 400;
+
     /* WEB */
     @ConfigComment("Toggle whether BentoBox can connect to GitHub to get data about updates and addons.")
     @ConfigComment("Disabling this will result in the deactivation of the update checker and of some other")
@@ -889,5 +896,13 @@ public class Settings implements ConfigObject {
      */
     public void setMinPortalSearchRadius(int minPortalSearchRadius) {
         this.minPortalSearchRadius = minPortalSearchRadius;
+    }
+
+    public int getSafeSpotSearchVerticalRange() {
+        return safeSpotSearchVerticalRange;
+    }
+
+    public void setSafeSpotSearchVerticalRange(int safeSpotSearchVerticalRange) {
+        this.safeSpotSearchVerticalRange = safeSpotSearchVerticalRange;
     }
 }
