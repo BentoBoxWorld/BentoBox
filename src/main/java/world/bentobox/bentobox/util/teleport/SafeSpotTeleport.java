@@ -71,7 +71,7 @@ public class SafeSpotTeleport {
         Util.getChunkAtAsync(location).thenRun(() -> tryToGo(builder.getFailureMessage()));
     }
 
-    private void tryToGo(String failureMessage) {
+    void tryToGo(String failureMessage) {
         if (plugin.getIslands().isSafeLocation(location)) {
             if (portal) {
                 // If the desired location is safe, then that's where you'll go if there's no portal
@@ -92,15 +92,16 @@ public class SafeSpotTeleport {
         task = Bukkit.getScheduler().runTaskTimer(plugin, () -> gatherChunks(failureMessage), 0L, SPEED);
     }
 
-    private void gatherChunks(String failureMessage) {
+    boolean gatherChunks(String failureMessage) {
+        // Set a flag so this is only run if it's not already in progress
         if (checking.get()) {
-            return;
+            return false;
         }
         checking.set(true);
         if (checkedChunks > MAX_CHUNKS || !chunksToScanIterator.hasNext()) {
             // Nothing left
             tidyUp(entity, failureMessage);
-            return;
+            return false;
         }
 
         // Get the chunk
@@ -109,22 +110,23 @@ public class SafeSpotTeleport {
         checkedChunks++;
         if (checkedChunks >= MAX_CHUNKS) {
             checking.set(false);
-            return;
+            return false;
         }
 
         // Get the chunk snapshot and scan it
         Util.getChunkAtAsync(world, chunkPair.x, chunkPair.z)
-                .thenApply(Chunk::getChunkSnapshot)
-                .whenCompleteAsync((snapshot, e) -> {
-                    if (snapshot != null && scanChunk(snapshot)) {
-                        task.cancel();
-                    } else {
-                        checking.set(false);
-                    }
-                });
+        .thenApply(Chunk::getChunkSnapshot)
+        .whenCompleteAsync((snapshot, e) -> {
+            if (snapshot != null && scanChunk(snapshot)) {
+                task.cancel();
+            } else {
+                checking.set(false);
+            }
+        });
+        return true;
     }
 
-    private void tidyUp(Entity entity, String failureMessage) {
+    void tidyUp(Entity entity, String failureMessage) {
         // Still Async!
         // Nothing left to check and still not canceled
         task.cancel();
@@ -165,7 +167,7 @@ public class SafeSpotTeleport {
         }
     }
 
-    private void makeAndTeleport(Material m) {
+    void makeAndTeleport(Material m) {
         location.getBlock().getRelative(BlockFace.DOWN).setType(m, false);
         location.getBlock().setType(Material.AIR, false);
         location.getBlock().getRelative(BlockFace.UP).setType(Material.AIR, false);
@@ -181,7 +183,7 @@ public class SafeSpotTeleport {
      *
      * @return - list of chunk coords to be scanned
      */
-    private List<Pair<Integer, Integer>> getChunksToScan() {
+    List<Pair<Integer, Integer>> getChunksToScan() {
         List<Pair<Integer, Integer>> chunksToScan = new ArrayList<>();
         int maxRadius = plugin.getIslands().getIslandAt(location).map(Island::getProtectionRange).orElseGet(() -> plugin.getIWM().getIslandProtectionRange(world));
         maxRadius = Math.min(MAX_RADIUS, maxRadius);
@@ -210,7 +212,7 @@ public class SafeSpotTeleport {
      * @param chunk - chunk snapshot
      * @return true if a safe spot was found
      */
-    private boolean scanChunk(ChunkSnapshot chunk) {
+    boolean scanChunk(ChunkSnapshot chunk) {
         int startY = location.getBlockY();
         int minY = world.getMinHeight();
         int maxY = 60; // Just a dummy value
@@ -265,7 +267,7 @@ public class SafeSpotTeleport {
     /**
      * Teleports entity to the safe spot
      */
-    private void teleportEntity(final Location loc) {
+    void teleportEntity(final Location loc) {
         task.cancel();
         // Return to main thread and teleport the player
         Bukkit.getScheduler().runTask(plugin, () -> {
@@ -303,7 +305,7 @@ public class SafeSpotTeleport {
         return false;
     }
 
-    private boolean safe(ChunkSnapshot chunk, int x, int y, int z, World world) {
+    boolean safe(ChunkSnapshot chunk, int x, int y, int z, World world) {
         Vector newSpot = new Vector((chunk.getX() << 4) + x + 0.5D, y + 1.0D, (chunk.getZ() << 4) + z + 0.5D);
         if (portal) {
             if (bestSpot == null) {
