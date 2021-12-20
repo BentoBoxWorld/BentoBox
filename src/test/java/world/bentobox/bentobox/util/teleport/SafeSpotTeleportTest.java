@@ -146,7 +146,7 @@ public class SafeSpotTeleportTest {
     /**
      * Test method for {@link world.bentobox.bentobox.util.teleport.SafeSpotTeleport#SafeSpotTeleport(world.bentobox.bentobox.util.teleport.SafeSpotTeleport.Builder)}.
      */
-    @Test(expected = AssertionError.class)
+    @Test(expected = NullPointerException.class)
     public void testSafeSpotTeleportNullWorld() {
         when(location.getWorld()).thenReturn(null);
         sst = new SafeSpotTeleport(builder);

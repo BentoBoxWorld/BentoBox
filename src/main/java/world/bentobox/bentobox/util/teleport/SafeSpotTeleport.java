@@ -17,6 +17,7 @@ import world.bentobox.bentobox.util.Util;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -64,8 +65,7 @@ public class SafeSpotTeleport {
         this.runnable = builder.getRunnable();
         this.failRunnable = builder.getFailRunnable();
         this.result = builder.getResult();
-        this.world = location.getWorld();
-        assert world != null;
+        this.world = Objects.requireNonNull(location.getWorld());
         this.maxHeight = world.getMaxHeight() - 20;
         // Try to go
         Util.getChunkAtAsync(location).thenRun(() -> tryToGo(builder.getFailureMessage()));
