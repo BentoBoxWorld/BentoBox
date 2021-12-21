@@ -18,6 +18,7 @@ import com.google.gson.reflect.TypeToken;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.database.json.adapters.*;
+import world.bentobox.bentobox.versions.ServerCompatibility;
 
 
 /**
@@ -47,7 +48,7 @@ public class BentoboxTypeAdapterFactory implements TypeAdapterFactory {
         if (Location.class.isAssignableFrom(rawType)) {
             // Use our current location adapter for backward compatibility
             return (TypeAdapter<T>) new LocationTypeAdapter();
-        } else if (Biome.class.isAssignableFrom(rawType)) {
+        } else if (Biome.class.isAssignableFrom(rawType) && ServerCompatibility.getInstance().isVersion(ServerCompatibility.ServerVersion.V1_18, ServerCompatibility.ServerVersion.V1_18_1)) { // TODO: Future-proof ?
             return (TypeAdapter<T>) new BiomeTypeAdapter();
         } else if (Enum.class.isAssignableFrom(rawType)) {
             return new EnumTypeAdapter(rawType);
