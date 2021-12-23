@@ -17,7 +17,9 @@ import world.bentobox.bentobox.api.events.island.IslandEvent.Reason;
 import world.bentobox.bentobox.database.objects.IslandDeletion;
 import world.bentobox.bentobox.nms.NMSAbstraction;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -37,8 +39,8 @@ public class DeleteIslandChunks {
     private int chunkX;
     private int chunkZ;
     private BukkitTask task;
-    private boolean inDelete;
     private NMSAbstraction nms;
+    private CompletableFuture<Void> currentTask = CompletableFuture.completedFuture(null);
 
     public DeleteIslandChunks(BentoBox plugin, IslandDeletion di) {
         this.plugin = plugin;
@@ -75,40 +77,43 @@ public class DeleteIslandChunks {
     private void regenerateChunks() {
         // Run through all chunks of the islands and regenerate them.
         task = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
-            if (inDelete) return;
-            inDelete = true;
+            if (!currentTask.isDone()) return;
+            if (isEnded(chunkX)) {
+                finish();
+                return;
+            }
+            List<CompletableFuture<Void>> newTasks = new ArrayList<>();
             for (int i = 0; i < plugin.getSettings().getDeleteSpeed(); i++) {
-                boolean last = i == plugin.getSettings().getDeleteSpeed() - 1;
+                if (isEnded(chunkX)) {
+                    break;
+                }
                 final int x = chunkX;
                 final int z = chunkZ;
-                plugin.getIWM().getAddon(di.getWorld()).ifPresent(gm ->
-                        // Overworld
-                        processChunk(gm, di.getWorld(), x, z).thenRun(() ->
-                                // Nether
-                                processChunk(gm, netherWorld, x, z).thenRun(() ->
-                                        // End
-                                        processChunk(gm, endWorld, x, z).thenRun(() -> finish(last, x)))));
+                plugin.getIWM().getAddon(di.getWorld()).ifPresent(gm -> {
+                    newTasks.add(processChunk(gm, di.getWorld(), x, z)); // Overworld
+                    newTasks.add(processChunk(gm, netherWorld, x, z)); // Nether
+                    newTasks.add(processChunk(gm, endWorld, x, z)); // End
+                });
                 chunkZ++;
                 if (chunkZ > di.getMaxZChunk()) {
                     chunkZ = di.getMinZChunk();
                     chunkX++;
                 }
             }
+            currentTask = CompletableFuture.allOf(newTasks.toArray(new CompletableFuture[0]));
         }, 0L, 20L);
-
     }
 
-    private void finish(boolean last, int x) {
-        if (x > di.getMaxXChunk()) {
-            // Fire event
-            IslandEvent.builder().deletedIslandInfo(di).reason(Reason.DELETED).build();
-            // We're done
-            completed.set(true);
-            task.cancel();
-        }
-        if (last) {
-            inDelete = false;
-        }
+    private boolean isEnded(int chunkX) {
+        return chunkX > di.getMaxXChunk();
+    }
+
+    private void finish() {
+        // Fire event
+        IslandEvent.builder().deletedIslandInfo(di).reason(Reason.DELETED).build();
+        // We're done
+        completed.set(true);
+        task.cancel();
     }
 
     private CompletableFuture<Void> processChunk(GameModeAddon gm, World world, int x, int z) {
