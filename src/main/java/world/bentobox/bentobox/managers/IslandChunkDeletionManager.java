@@ -9,8 +9,7 @@ import java.util.Queue;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class IslandChunkDeletionManager implements Runnable {
-    private static final boolean SLOW = true;
-
+    private final boolean slowDeletion;
     private final BentoBox plugin;
     private final AtomicReference<DeleteIslandChunks> currentTask;
     private final Queue<IslandDeletion> queue;
@@ -19,8 +18,9 @@ public class IslandChunkDeletionManager implements Runnable {
         this.plugin = plugin;
         this.currentTask = new AtomicReference<>();
         this.queue = new LinkedList<>();
+        this.slowDeletion = plugin.getSettings().isSlowDeletion();
 
-        if (SLOW) {
+        if (slowDeletion) {
             plugin.getServer().getScheduler().runTaskTimerAsynchronously(plugin, this, 0L, 20L);
         }
     }
@@ -39,7 +39,7 @@ public class IslandChunkDeletionManager implements Runnable {
     }
 
     public void add(IslandDeletion islandDeletion) {
-        if (SLOW) {
+        if (slowDeletion) {
             queue.add(islandDeletion);
         } else {
             new DeleteIslandChunks(plugin, islandDeletion);
