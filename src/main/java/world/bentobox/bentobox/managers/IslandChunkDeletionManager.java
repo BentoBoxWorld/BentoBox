@@ -21,7 +21,7 @@ public class IslandChunkDeletionManager implements Runnable {
         this.slowDeletion = plugin.getSettings().isSlowDeletion();
 
         if (slowDeletion) {
-            plugin.getServer().getScheduler().runTaskTimerAsynchronously(plugin, this, 0L, 20L);
+            plugin.getServer().getScheduler().runTaskTimer(plugin, this, 0L, 20L);
         }
     }
 
