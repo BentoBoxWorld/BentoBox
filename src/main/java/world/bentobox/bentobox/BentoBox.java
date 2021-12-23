@@ -176,9 +176,6 @@ public class BentoBox extends JavaPlugin {
         // Register default gamemode placeholders
         addonsManager.getGameModeAddons().forEach(placeholdersManager::registerDefaultPlaceholders);
 
-        // Setup the Island Chunk Deletion Manager
-        islandChunkDeletionManager = new IslandChunkDeletionManager(this);
-
         // Register Listeners
         registerListeners();
 
@@ -286,6 +283,7 @@ public class BentoBox extends JavaPlugin {
         // Death counter
         manager.registerEvents(new DeathListener(this), this);
         // Island Delete Manager
+        islandChunkDeletionManager = new IslandChunkDeletionManager(this);
         islandDeletionManager = new IslandDeletionManager(this);
         manager.registerEvents(islandDeletionManager, this);
     }
