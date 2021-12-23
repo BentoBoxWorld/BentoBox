@@ -8,6 +8,9 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.atomic.AtomicReference;
 
+/**
+ * Manages the queue of island chunks to be deleted.
+ */
 public class IslandChunkDeletionManager implements Runnable {
     private final boolean slowDeletion;
     private final BentoBox plugin;
@@ -38,6 +41,11 @@ public class IslandChunkDeletionManager implements Runnable {
         currentTask.set(new DeleteIslandChunks(plugin, islandDeletion));
     }
 
+    /**
+     * Adds an island deletion to the queue.
+     *
+     * @param islandDeletion island deletion
+     */
     public void add(IslandDeletion islandDeletion) {
         if (slowDeletion) {
             queue.add(islandDeletion);
