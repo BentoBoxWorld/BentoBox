@@ -3,6 +3,7 @@ package world.bentobox.bentobox.util;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -38,12 +39,14 @@ public class DeleteIslandChunks {
     private NMSAbstraction nms;
     private final World netherWorld;
     private final World endWorld;
+    private final AtomicBoolean completed;
 
     public DeleteIslandChunks(BentoBox plugin, IslandDeletion di) {
         this.plugin = plugin;
         this.chunkX = di.getMinXChunk();
         this.chunkZ = di.getMinZChunk();
         this.di = di;
+        completed = new AtomicBoolean(false);
         // Nether
         if (plugin.getIWM().isNetherGenerate(di.getWorld()) && plugin.getIWM().isNetherIslands(di.getWorld())) {
             netherWorld = plugin.getIWM().getNetherWorld(di.getWorld());
@@ -101,6 +104,7 @@ public class DeleteIslandChunks {
             // Fire event
             IslandEvent.builder().deletedIslandInfo(di).reason(Reason.DELETED).build();
             // We're done
+            completed.set(true);
             task.cancel();
         }
         if (last) {
@@ -158,5 +162,9 @@ public class DeleteIslandChunks {
         }
         // Remove all entities in chunk, including any dropped items as a result of clearing the blocks above
         Arrays.stream(chunk.getEntities()).filter(e -> !(e instanceof Player) && di.inBounds(e.getLocation().getBlockX(), e.getLocation().getBlockZ())).forEach(Entity::remove);
+    }
+
+    public boolean isCompleted() {
+        return completed.get();
     }
 }

@@ -57,7 +57,7 @@ public class IslandDeletionManager implements Listener {
                 } else {
                     plugin.log("Resuming deletion of island at " + di.getLocation().getWorld().getName() + " " + Util.xyz(di.getLocation().toVector()));
                     inDeletion.add(di.getLocation());
-                    new DeleteIslandChunks(plugin, di);
+                    plugin.getIslandChunkDeletionManager().add(di);
                 }
             });
         }
