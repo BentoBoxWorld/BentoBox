@@ -16,7 +16,6 @@ import world.bentobox.bentobox.api.events.island.IslandDeleteChunksEvent;
 import world.bentobox.bentobox.api.events.island.IslandDeletedEvent;
 import world.bentobox.bentobox.database.Database;
 import world.bentobox.bentobox.database.objects.IslandDeletion;
-import world.bentobox.bentobox.util.DeleteIslandChunks;
 import world.bentobox.bentobox.util.Util;
 
 /**
