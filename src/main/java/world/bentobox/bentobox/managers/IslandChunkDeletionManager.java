@@ -38,7 +38,11 @@ public class IslandChunkDeletionManager implements Runnable {
             return;
         }
         IslandDeletion islandDeletion = queue.remove();
-        currentTask.set(new DeleteIslandChunks(plugin, islandDeletion));
+        currentTask.set(startDeleteTask(islandDeletion));
+    }
+
+    private DeleteIslandChunks startDeleteTask(IslandDeletion islandDeletion) {
+        return new DeleteIslandChunks(plugin, islandDeletion);
     }
 
     /**
@@ -50,7 +54,7 @@ public class IslandChunkDeletionManager implements Runnable {
         if (slowDeletion) {
             queue.add(islandDeletion);
         } else {
-            new DeleteIslandChunks(plugin, islandDeletion);
+            startDeleteTask(islandDeletion);
         }
     }
 }
