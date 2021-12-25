@@ -61,9 +61,8 @@ public class DeleteIslandChunks {
             endWorld = null;
         }
         // NMS
-        try {
-            this.nms = Util.getNMS();
-        } catch (Exception e) {
+        this.nms = Util.getNMS();
+        if (nms == null) {
             plugin.logError("Could not delete chunks because of NMS error");
             return;
         }
