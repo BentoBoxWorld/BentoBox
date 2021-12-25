@@ -811,6 +811,12 @@ protection:
       name: "Barrels"
       description: "Toggle barrel interaction"
       hint: "Barrel access disabled"
+    BLOCK_EXPLODE_DAMAGE:
+      description: |-
+        &a Allow Bed & Respawn Anchors
+        &a to break blocks and damage
+        &a entities.
+      name: "Block explode damage"
     COMPOSTER:
       name: "Composters"
       description: "Toggle composter interaction"
@@ -1316,6 +1322,12 @@ protection:
       description: |-
         &a If active, withers can
         &a damage blocks and players
+    WORLD_BLOCK_EXPLODE_DAMAGE:
+      description: |-
+        &a Allow Bed & Respawn Anchors
+        &a to break blocks and damage
+        &a entities outside of island limits.
+      name: "World block explode damage"
     WORLD_TNT_DAMAGE:
       description: |-
         &a Allow TNT and TNT minecarts

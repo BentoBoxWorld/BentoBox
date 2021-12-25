@@ -91,20 +91,6 @@ public class TNTListener extends FlagListener {
 
     }
 
-    /**
-     * Prevents block explosion from breaking blocks
-     * @param e - event
-     */
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void onExplosion(final BlockExplodeEvent e) {
-        // Check world
-        if (getIWM().inWorld(e.getBlock().getLocation())) {
-            // Remove any blocks from the explosion list if required
-            e.blockList().removeIf(b -> protect(b.getLocation()));
-            e.setCancelled(protect(e.getBlock().getLocation()));
-        }
-    }
-
     protected boolean protect(Location location) {
         return getIslands().getProtectedIslandAt(location).map(i -> !i.isAllowed(Flags.TNT_DAMAGE))
                 .orElseGet(() -> !Flags.WORLD_TNT_DAMAGE.isSetForWorld(location.getWorld()));
@@ -125,6 +111,25 @@ public class TNTListener extends FlagListener {
         }
     }
 
+    protected boolean protectBlockExplode(Location location) {
+        return getIslands().getProtectedIslandAt(location).map(i -> !i.isAllowed(Flags.BLOCK_EXPLODE_DAMAGE))
+                .orElseGet(() -> !Flags.WORLD_BLOCK_EXPLODE_DAMAGE.isSetForWorld(location.getWorld()));
+    }
+
+    /**
+     * Prevents block explosion from breaking blocks
+     * @param e - event
+     */
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    public void onExplosion(final BlockExplodeEvent e) {
+        // Check world
+        if (getIWM().inWorld(e.getBlock().getLocation())) {
+            // Remove any blocks from the explosion list if required
+            e.blockList().removeIf(b -> protectBlockExplode(b.getLocation()));
+            e.setCancelled(protectBlockExplode(e.getBlock().getLocation()));
+        }
+    }
+
     /**
      * Prevents block explosion from damaging entities.
      * @param e event
@@ -135,7 +140,7 @@ public class TNTListener extends FlagListener {
         if (getIWM().inWorld(e.getEntity().getLocation())
                 && e.getCause().equals(EntityDamageEvent.DamageCause.BLOCK_EXPLOSION)) {
             // Check if it is disallowed, then cancel it.
-            e.setCancelled(protect(e.getEntity().getLocation()));
+            e.setCancelled(protectBlockExplode(e.getEntity().getLocation()));
         }
     }
 }
