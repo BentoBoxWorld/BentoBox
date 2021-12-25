@@ -124,4 +124,18 @@ public class TNTListener extends FlagListener {
             e.setCancelled(protect(e.getEntity().getLocation()));
         }
     }
+
+    /**
+     * Prevents block explosion from damaging entities.
+     * @param e event
+     */
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    public void onExplosion(final EntityDamageEvent e) {
+        // Check if this in world and a block explosion
+        if (getIWM().inWorld(e.getEntity().getLocation())
+                && e.getCause().equals(EntityDamageEvent.DamageCause.BLOCK_EXPLOSION)) {
+            // Check if it is disallowed, then cancel it.
+            e.setCancelled(protect(e.getEntity().getLocation()));
+        }
+    }
 }
