@@ -1,6 +1,5 @@
 package world.bentobox.bentobox.util;
 
-import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -65,6 +64,7 @@ public class Util {
     private static final String THE_END = "_the_end";
     private static String serverVersion = null;
     private static BentoBox plugin = BentoBox.getInstance();
+    private static NMSAbstraction nms = null;
 
     private Util() {}
 
@@ -689,33 +689,43 @@ public class Util {
     }
 
     /**
-     * Checks what version the server is running and picks the appropriate NMS handler, or fallback
-     * @return an NMS accelerated class for this server, or a fallback Bukkit API based one
-     * @throws ClassNotFoundException - thrown if there is no fallback class - should never be thrown
-     * @throws SecurityException - thrown if security violation - should never be thrown
-     * @throws NoSuchMethodException - thrown if no constructor for NMS package
-     * @throws InvocationTargetException - should never be thrown
-     * @throws IllegalArgumentException - should never be thrown
-     * @throws IllegalAccessException - should never be thrown
-     * @throws InstantiationException - should never be thrown
+     * Set the NMS handler the plugin will use
+     * @param nms the NMS handler
      */
-    public static NMSAbstraction getNMS() throws ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+    public static void setNms(NMSAbstraction nms) {
+        Util.nms = nms;
+    }
+
+    /**
+     * Initialize the NMS handler if there is none
+     */
+    private static void initializeDefaultNmsHandler() {
         String serverPackageName = Bukkit.getServer().getClass().getPackage().getName();
         String pluginPackageName = plugin.getClass().getPackage().getName();
         String version = serverPackageName.substring(serverPackageName.lastIndexOf('.') + 1);
-        Class<?> clazz;
         try {
-            clazz = Class.forName(pluginPackageName + ".nms." + version + ".NMSHandler");
+            Class<?> clazz = Class.forName(pluginPackageName + ".nms." + version + ".NMSHandler");
+            if (NMSAbstraction.class.isAssignableFrom(clazz)) {
+                setNms((NMSAbstraction) clazz.getConstructor().newInstance());
+            } else {
+                plugin.logError("Class " + clazz.getName() + " does not implement NMSAbstraction");
+                throw new IllegalArgumentException(clazz.getName() + " must implement NMSAbstraction");
+            }
         } catch (Exception e) {
             plugin.logWarning("No NMS Handler found for " + version + ", falling back to Bukkit API.");
-            clazz = Class.forName(pluginPackageName + ".nms.fallback.NMSHandler");
+            setNms(new world.bentobox.bentobox.nms.fallback.NMSHandler());
         }
-        // Check if we have a NMSAbstraction implementing class at that location.
-        if (NMSAbstraction.class.isAssignableFrom(clazz)) {
-            return (NMSAbstraction) clazz.getConstructor().newInstance();
-        } else {
-            throw new IllegalStateException("Class " + clazz.getName() + " does not implement NMSAbstraction");
+    }
+
+    /**
+     * Get the NMS handler the plugin will use
+     * @return an NMS accelerated class for this server
+     */
+    public static NMSAbstraction getNMS() {
+        if (nms == null) {
+            initializeDefaultNmsHandler();
         }
+        return nms;
     }
 
     /**
