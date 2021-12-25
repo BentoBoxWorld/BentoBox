@@ -83,12 +83,17 @@ public class TNTListener extends FlagListener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onExplosion(final EntityExplodeEvent e) {
         // Check world and types
-        if (getIWM().inWorld(e.getLocation()) && TNT_TYPES.contains(e.getEntityType())) {
-            // Remove any blocks from the explosion list if required
-            e.blockList().removeIf(b -> protect(b.getLocation()));
-            e.setCancelled(protect(e.getLocation()));
+        if (!getIWM().inWorld(e.getLocation()) || !TNT_TYPES.contains(e.getEntityType())) {
+            return;
         }
 
+        if (protect(e.getLocation())) {
+            // This is protected as a whole, so just cancel the event
+            e.setCancelled(true);
+        } else {
+            // Remove any blocks from the explosion list if required
+            e.blockList().removeIf(b -> protect(b.getLocation()));
+        }
     }
 
     protected boolean protect(Location location) {
@@ -123,10 +128,16 @@ public class TNTListener extends FlagListener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onExplosion(final BlockExplodeEvent e) {
         // Check world
-        if (getIWM().inWorld(e.getBlock().getLocation())) {
+        if (!getIWM().inWorld(e.getBlock().getLocation())) {
+            return;
+        }
+
+        if (protectBlockExplode(e.getBlock().getLocation())) {
+            // This is protected as a whole, so just cancel the event
+            e.setCancelled(true);
+        } else {
             // Remove any blocks from the explosion list if required
             e.blockList().removeIf(b -> protectBlockExplode(b.getLocation()));
-            e.setCancelled(protectBlockExplode(e.getBlock().getLocation()));
         }
     }
 
