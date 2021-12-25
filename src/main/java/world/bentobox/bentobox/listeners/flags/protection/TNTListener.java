@@ -10,6 +10,7 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -88,6 +89,20 @@ public class TNTListener extends FlagListener {
             e.setCancelled(protect(e.getLocation()));
         }
 
+    }
+
+    /**
+     * Prevents block explosion from breaking blocks
+     * @param e - event
+     */
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    public void onExplosion(final BlockExplodeEvent e) {
+        // Check world
+        if (getIWM().inWorld(e.getBlock().getLocation())) {
+            // Remove any blocks from the explosion list if required
+            e.blockList().removeIf(b -> protect(b.getLocation()));
+            e.setCancelled(protect(e.getBlock().getLocation()));
+        }
     }
 
     protected boolean protect(Location location) {
