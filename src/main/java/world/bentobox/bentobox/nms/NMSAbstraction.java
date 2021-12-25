@@ -4,7 +4,6 @@ import org.bukkit.Chunk;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.util.BoundingBox;
-import org.bukkit.util.Vector;
 
 public interface NMSAbstraction {
     /**
@@ -15,11 +14,11 @@ public interface NMSAbstraction {
      * @param limitBox - bounding box to limit the copying
      */
     default void copyChunkDataToChunk(Chunk chunk, ChunkGenerator.ChunkData chunkData, ChunkGenerator.BiomeGrid biomeGrid, BoundingBox limitBox) {
-        int baseX = chunk.getX() << 4;
-        int baseZ = chunk.getZ() << 4;
+        double baseX = chunk.getX() << 4;
+        double baseZ = chunk.getZ() << 4;
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {
-                if (!limitBox.contains(new Vector(baseX + x, 0, baseZ + z))) {
+                if (!limitBox.contains(baseX + x, 0, baseZ + z)) {
                     continue;
                 }
                 for (int y = 0; y < chunk.getWorld().getMaxHeight(); y++) {
