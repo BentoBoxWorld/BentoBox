@@ -547,7 +547,7 @@ public class PlayersManager {
         // Remove any tamed animals
         world.getEntitiesByClass(Tameable.class).stream()
         .filter(Tameable::isTamed)
-        .filter(t -> t.getOwner() != null && t.getOwner().equals(target.getPlayer()))
+        .filter(t -> t.getOwner() != null && t.getOwner().getUniqueId().equals(target.getUniqueId()))
         .forEach(t -> t.setOwner(null));
 
         // Remove money inventory etc.
