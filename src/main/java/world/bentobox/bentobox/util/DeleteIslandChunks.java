@@ -145,21 +145,7 @@ public class DeleteIslandChunks {
     }
 
     private void createChunk(ChunkData cd, Chunk chunk, MyBiomeGrid grid) {
-        int baseX = chunk.getX() << 4;
-        int baseZ = chunk.getZ() << 4;
-        for (int x = 0; x < 16; x++) {
-            for (int z = 0; z < 16; z++) {
-                if (di.inBounds(baseX + x, baseZ + z)) {
-                    for (int y = 0; y < chunk.getWorld().getMaxHeight(); y++) {
-                        nms.setBlockInNativeChunk(chunk, x, y, z, cd.getBlockData(x, y, z), false);
-                        // 3D biomes, 4 blocks separated
-                        if (x % 4 == 0 && y % 4 == 0 && z % 4 == 0) {
-                            chunk.getBlock(x, y, z).setBiome(grid.getBiome(x, y, z));
-                        }
-                    }
-                }
-            }
-        }
+        nms.copyChunkDataToChunk(chunk, cd, grid, di.getBox());
         // Remove all entities in chunk, including any dropped items as a result of clearing the blocks above
         Arrays.stream(chunk.getEntities()).filter(e -> !(e instanceof Player) && di.inBounds(e.getLocation().getBlockX(), e.getLocation().getBlockZ())).forEach(Entity::remove);
     }

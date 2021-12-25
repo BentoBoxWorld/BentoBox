@@ -2,9 +2,36 @@ package world.bentobox.bentobox.nms;
 
 import org.bukkit.Chunk;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.generator.ChunkGenerator;
+import org.bukkit.util.BoundingBox;
+import org.bukkit.util.Vector;
 
 public interface NMSAbstraction {
-
+    /**
+     * Copy the chunk data and biome grid to the given chunk.
+     * @param chunk - chunk to copy to
+     * @param chunkData - chunk data to copy
+     * @param biomeGrid - biome grid to copy to
+     * @param limitBox - bounding box to limit the copying
+     */
+    default void copyChunkDataToChunk(Chunk chunk, ChunkGenerator.ChunkData chunkData, ChunkGenerator.BiomeGrid biomeGrid, BoundingBox limitBox) {
+        int baseX = chunk.getX() << 4;
+        int baseZ = chunk.getZ() << 4;
+        for (int x = 0; x < 16; x++) {
+            for (int z = 0; z < 16; z++) {
+                if (!limitBox.contains(new Vector(baseX + x, 0, baseZ + z))) {
+                    continue;
+                }
+                for (int y = 0; y < chunk.getWorld().getMaxHeight(); y++) {
+                    setBlockInNativeChunk(chunk, x, y, z, chunkData.getBlockData(x, y, z), false);
+                    // 3D biomes, 4 blocks separated
+                    if (x % 4 == 0 && y % 4 == 0 && z % 4 == 0) {
+                        chunk.getBlock(x, y, z).setBiome(biomeGrid.getBiome(x, y, z));
+                    }
+                }
+            }
+        }
+    }
 
     /**
      * Update the low-level chunk information for the given block to the new block ID and data.  This
