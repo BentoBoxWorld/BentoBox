@@ -36,10 +36,10 @@ public class DeleteIslandChunks {
     private final World netherWorld;
     private final World endWorld;
     private final AtomicBoolean completed;
+    private final NMSAbstraction nms;
     private int chunkX;
     private int chunkZ;
     private BukkitTask task;
-    private NMSAbstraction nms;
     private CompletableFuture<Void> currentTask = CompletableFuture.completedFuture(null);
 
     public DeleteIslandChunks(BentoBox plugin, IslandDeletion di) {
