@@ -21,7 +21,7 @@ public interface NMSAbstraction {
                 if (!limitBox.contains(baseX + x, 0, baseZ + z)) {
                     continue;
                 }
-                for (int y = 0; y < chunk.getWorld().getMaxHeight(); y++) {
+                for (int y = chunk.getWorld().getMinHeight(); y < chunk.getWorld().getMaxHeight(); y++) {
                     setBlockInNativeChunk(chunk, x, y, z, chunkData.getBlockData(x, y, z), false);
                     // 3D biomes, 4 blocks separated
                     if (x % 4 == 0 && y % 4 == 0 && z % 4 == 0) {
