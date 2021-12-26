@@ -16,12 +16,14 @@ public interface NMSAbstraction {
     default void copyChunkDataToChunk(Chunk chunk, ChunkGenerator.ChunkData chunkData, ChunkGenerator.BiomeGrid biomeGrid, BoundingBox limitBox) {
         double baseX = chunk.getX() << 4;
         double baseZ = chunk.getZ() << 4;
+        int minHeight = chunk.getWorld().getMinHeight();
+        int maxHeight = chunk.getWorld().getMaxHeight();
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {
                 if (!limitBox.contains(baseX + x, 0, baseZ + z)) {
                     continue;
                 }
-                for (int y = chunk.getWorld().getMinHeight(); y < chunk.getWorld().getMaxHeight(); y++) {
+                for (int y = minHeight; y < maxHeight; y++) {
                     setBlockInNativeChunk(chunk, x, y, z, chunkData.getBlockData(x, y, z), false);
                     // 3D biomes, 4 blocks separated
                     if (x % 4 == 0 && y % 4 == 0 && z % 4 == 0) {
