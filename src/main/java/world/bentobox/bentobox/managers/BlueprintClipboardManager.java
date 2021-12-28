@@ -96,7 +96,7 @@ public class BlueprintClipboardManager {
             plugin.logError(LOAD_ERROR + zipFile.getName());
             throw new IOException(LOAD_ERROR + zipFile.getName());
         }
-        unzip(zipFile.getAbsolutePath());
+        unzip(zipFile.getCanonicalPath());
         File file = new File(blueprintFolder, BlueprintsManager.sanitizeFileName(fileName));
         if (!file.exists()) {
             plugin.logError(LOAD_ERROR + file.getName());
@@ -194,7 +194,7 @@ public class BlueprintClipboardManager {
                 if (!entry.isDirectory()) {
                     unzipFiles(zipInputStream, filePath);
                 } else {
-                    if (!filePath.startsWith(blueprintFolder.getAbsolutePath())) {
+                    if (!filePath.startsWith(blueprintFolder.getCanonicalPath())) {
                         throw new IOException("Entry is outside of the target directory");
                     }
                     Files.createDirectories(filePath);
@@ -207,10 +207,10 @@ public class BlueprintClipboardManager {
     }
 
     private void unzipFiles(final ZipInputStream zipInputStream, final Path unzipFilePath) throws IOException {
-        if (!unzipFilePath.toAbsolutePath().toString().startsWith(blueprintFolder.getAbsolutePath())) {
+        if (!unzipFilePath.toFile().getCanonicalPath().startsWith(blueprintFolder.getCanonicalPath())) {
             throw new IOException("Entry is outside of the target directory");
         }
-        try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(unzipFilePath.toAbsolutePath().toString()))) {
+        try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(unzipFilePath.toFile().getCanonicalPath()))) {
             byte[] bytesIn = new byte[1024];
             int read;
             while ((read = zipInputStream.read(bytesIn)) != -1) {
@@ -220,7 +220,7 @@ public class BlueprintClipboardManager {
     }
 
     private void zip(File targetFile) throws IOException {
-        try (ZipOutputStream zipOutputStream = new ZipOutputStream(new FileOutputStream(targetFile.getAbsolutePath() + BlueprintsManager.BLUEPRINT_SUFFIX))) {
+        try (ZipOutputStream zipOutputStream = new ZipOutputStream(new FileOutputStream(targetFile.getCanonicalPath() + BlueprintsManager.BLUEPRINT_SUFFIX))) {
             zipOutputStream.putNextEntry(new ZipEntry(targetFile.getName()));
             try (FileInputStream inputStream = new FileInputStream(targetFile)) {
                 final byte[] buffer = new byte[1024];
