@@ -622,11 +622,11 @@ public class IslandsManager {
         return result;
     }
 
-    private void tryIsland(CompletableFuture<Location> result, Location islandLoc, @NonNull User user, String number) {
+    private void tryIsland(CompletableFuture<Location> result, Location islandLoc, @NonNull User user, String name) {
         Util.getChunkAtAsync(islandLoc).thenRun(() -> {
             World w = islandLoc.getWorld();
             if (isSafeLocation(islandLoc)) {
-                setHomeLocation(user, islandLoc, number);
+                setHomeLocation(user, islandLoc, name);
                 result.complete(islandLoc.clone().add(new Vector(0.5D,0,0.5D)));
                 return;
             } else {
@@ -634,14 +634,14 @@ public class IslandsManager {
                 // Try the default location
                 Location dl = islandLoc.clone().add(new Vector(0.5D, 5D, 2.5D));
                 if (isSafeLocation(dl)) {
-                    setHomeLocation(user, dl, number);
+                    setHomeLocation(user, dl, name);
                     result.complete(dl);
                     return;
                 }
                 // Try just above the bedrock
                 dl = islandLoc.clone().add(new Vector(0.5D, 5D, 0.5D));
                 if (isSafeLocation(dl)) {
-                    setHomeLocation(user, dl, number);
+                    setHomeLocation(user, dl, name);
                     result.complete(dl);
                     return;
                 }
@@ -649,7 +649,7 @@ public class IslandsManager {
                 for (int y = islandLoc.getBlockY(); y < w.getMaxHeight(); y++) {
                     dl = new Location(w, islandLoc.getX() + 0.5D, y, islandLoc.getZ() + 0.5D);
                     if (isSafeLocation(dl)) {
-                        setHomeLocation(user, dl, number);
+                        setHomeLocation(user, dl, name);
                         result.complete(dl);
                         return;
                     }
@@ -869,6 +869,7 @@ public class IslandsManager {
         return getHomeLocation(island, name);
     }
 
+    @SuppressWarnings("removal")
     private void migrateHomes(@NonNull World world, @NonNull UUID uuid, String name, Island island) {
         Map<Location, Integer> homes = plugin
                 .getPlayers()

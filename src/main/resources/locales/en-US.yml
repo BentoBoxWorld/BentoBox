@@ -391,6 +391,10 @@ commands:
       description: "deletes a player's island"
       cannot-delete-owner: "&c All island members have to be kicked from the island before deleting it."
       deleted-island: "&a Island at &e [xyz] &a has been successfully deleted."
+    deletehomes:
+      parameters: "<player>"
+      description: "deletes all named homes from an island"
+      warning: "&c All named homes will be deleted from the island!"
     why:
       parameters: "<player>"
       description: "toggle console protection debug reporting"
