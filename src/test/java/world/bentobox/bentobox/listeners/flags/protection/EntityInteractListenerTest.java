@@ -34,6 +34,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.listeners.flags.AbstractCommonSetup;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.util.Util;
@@ -271,8 +272,8 @@ public class EntityInteractListenerTest extends AbstractCommonSetup {
      */
     @Test
     public void testOnPlayerInteractEntityNamingWanderingTraderAllowedNoTrading() {
-        when(island.isAllowed(any(), eq(Flags.TRADING))).thenReturn(false);
-        when(island.isAllowed(any(), eq(Flags.NAME_TAG))).thenReturn(true);
+        when(island.isAllowed(any(User.class), eq(Flags.TRADING))).thenReturn(false);
+        when(island.isAllowed(any(User.class), eq(Flags.NAME_TAG))).thenReturn(true);
         clickedEntity = mock(WanderingTrader.class);
         when(clickedEntity.getType()).thenReturn(EntityType.WANDERING_TRADER);
         when(clickedEntity.getLocation()).thenReturn(location);
@@ -287,8 +288,8 @@ public class EntityInteractListenerTest extends AbstractCommonSetup {
      */
     @Test
     public void testOnPlayerInteractEntityNamingWanderingTraderAllowedTradingNoNaming() {
-        when(island.isAllowed(any(), eq(Flags.TRADING))).thenReturn(true);
-        when(island.isAllowed(any(), eq(Flags.NAME_TAG))).thenReturn(false);
+        when(island.isAllowed(any(User.class), eq(Flags.TRADING))).thenReturn(true);
+        when(island.isAllowed(any(User.class), eq(Flags.NAME_TAG))).thenReturn(false);
         clickedEntity = mock(WanderingTrader.class);
         when(clickedEntity.getType()).thenReturn(EntityType.WANDERING_TRADER);
         when(clickedEntity.getLocation()).thenReturn(location);
