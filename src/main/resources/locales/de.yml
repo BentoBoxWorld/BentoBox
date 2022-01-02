@@ -36,6 +36,7 @@ general:
   worlds:
     overworld: Überwelt
     nether: Nether
+    the-end: Das Ende
   tips:
     changing-obsidian-to-lava: Wandelt Obsidian wieder in Lava um. Sei vorsichtig!
 commands:
