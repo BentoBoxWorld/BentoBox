@@ -4,15 +4,23 @@ meta:
   - tastybento
   - 
   banner: WHITE_BANNER
-prefixes: {}
+prefixes:
+  bentobox: "&6 BentoBox &7 &l> &r"
 general:
+  success: "&a Succes!"
   invalid: Ongeldig
   errors:
+    command-cancelled: "&c Commando geannuleerd."
     no-permission: "&c U heeft geen toestemming om deze opdracht uit te voeren (&7
       [permission] &c)."
     insufficient-rank: "&c Je rang is niet hoog genoeg om dat te doen! (&7 [rank]
       &c)"
+    use-in-game: "&c Dit commando is alleen beschikbaar in de game."
+    no-team: "&c Je hebt geen team!"
+    no-island: "&c Je hebt geen eiland!"
     player-has-island: "&c Speler heeft al een eiland!"
+    player-has-no-island: "&c Die speler heeft geen eiland!"
+    already-have-island: "&c Je hebt al een eiland!"
     no-safe-location-found: "&c Kon geen veilige plek vinden om je naar toe te teleporteren
       op het eiland."
     not-owner: "&c Je bent niet de eigenaar van het eiland!"
