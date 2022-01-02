@@ -393,11 +393,28 @@ public final class Flags {
             .mode(Flag.Mode.ADVANCED).build();
 
     /**
+     * If {@code false}, prevents Block Explode from breaking blocks and damaging nearby entities.
+     * @since 1.19.1
+     * @see TNTListener
+     */
+    public static final Flag BLOCK_EXPLODE_DAMAGE = new Flag.Builder("BLOCK_EXPLODE_DAMAGE", Material.TNT_MINECART).type(Type.SETTING)
+            .mode(Flag.Mode.ADVANCED).build();
+
+    /**
      * If {@code false}, prevents TNT from breaking blocks and damaging nearby entities outside of island boundaries.
      * @since 1.15.3
      * @see TNTListener
      */
     public static final Flag WORLD_TNT_DAMAGE = new Flag.Builder("WORLD_TNT_DAMAGE", Material.TNT)
+            .type(Type.WORLD_SETTING)
+            .build();
+
+    /**
+     * If {@code false}, prevents Block Explode from breaking blocks and damaging nearby entities outside of island boundaries.
+     * @since 1.19.1
+     * @see TNTListener
+     */
+    public static final Flag WORLD_BLOCK_EXPLODE_DAMAGE = new Flag.Builder("WORLD_BLOCK_EXPLODE_DAMAGE", Material.TNT_MINECART)
             .type(Type.WORLD_SETTING)
             .build();
 
