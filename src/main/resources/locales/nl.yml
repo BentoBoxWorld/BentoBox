@@ -82,6 +82,7 @@ commands:
         om te annuleren."
       number-error: "&c Argument moet een aantal dagen zijn"
       confirm: "&d Typ &b /[label] purge confirm &d om te beginnen met purgeren"
+      completed: "&a zuivering gestopt."
       see-console-for-status: "&a zuivering begon. Zie console voor status of gebruik
         &b /[label] zuiveringsstatus &a."
       no-purge-in-progress: "&c Er is momenteel geen zuivering bezig."
