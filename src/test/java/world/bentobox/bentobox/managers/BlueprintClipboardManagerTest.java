@@ -22,6 +22,7 @@ import java.util.zip.ZipOutputStream;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.Server;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.junit.After;
@@ -98,6 +99,8 @@ public class BlueprintClipboardManagerTest {
             "    \"ySize\": 10,\n" +
             "    \"zSize\": 10\n" +
             "}";
+    @Mock
+    private Server server;
 
     private void zip(File targetFile) throws IOException {
         try (ZipOutputStream zipOutputStream = new ZipOutputStream(new FileOutputStream(targetFile.getAbsolutePath() + BlueprintsManager.BLUEPRINT_SUFFIX))) {
@@ -129,6 +132,9 @@ public class BlueprintClipboardManagerTest {
         BlockData blockData = mock(BlockData.class);
         when(Bukkit.createBlockData(any(Material.class))).thenReturn(blockData);
         when(blockData.getAsString()).thenReturn("test123");
+        when(server.getBukkitVersion()).thenReturn("version");
+        when(Bukkit.getServer()).thenReturn(server);
+
     }
 
     /**

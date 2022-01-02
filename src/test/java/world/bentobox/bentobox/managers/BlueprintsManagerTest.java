@@ -28,6 +28,7 @@ import java.util.jar.Manifest;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.scheduler.BukkitScheduler;
@@ -93,6 +94,8 @@ public class BlueprintsManagerTest {
     private BukkitTask task;
 
     private int times;
+    @Mock
+    private Server server;
     /**
      * @throws java.lang.Exception
      */
@@ -116,6 +119,8 @@ public class BlueprintsManagerTest {
         // Scheduler
         PowerMockito.mockStatic(Bukkit.class);
         when(Bukkit.getScheduler()).thenReturn(scheduler);
+        when(server.getBukkitVersion()).thenReturn("version");
+        when(Bukkit.getServer()).thenReturn(server);
 
     }
 
