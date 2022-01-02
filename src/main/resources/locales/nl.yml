@@ -1,12 +1,14 @@
 ---
 meta:
-  banner: WHITE_BANNER
   authors:
   - tastybento
+  - 
+  banner: WHITE_BANNER
 prefixes:
   bentobox: "&6 BentoBox &7 &l> &r"
 general:
   success: "&a Succes!"
+  invalid: Ongeldig
   errors:
     command-cancelled: "&c Commando geannuleerd."
     no-permission: "&c U heeft geen toestemming om deze opdracht uit te voeren (&7
@@ -29,10 +31,9 @@ general:
     general: "&c Dat commando is nog niet klaar - neem contact op met de beheerder"
     unknown-command: "&c Onbekend commando. Doe &b /[label] help &c voor hulp."
     wrong-world: "&c Je bent niet in de juiste wereld om dat te doen!"
-    you-must-wait: "&c Je moet [number]seconden wachten voordat je dat commando
-      opnieuw kunt doen."
+    you-must-wait: "&c Je moet [number]seconden wachten voordat je dat commando opnieuw
+      kunt doen."
     must-be-positive-number: "&c [number] is geen geldig positief getal."
-  invalid: Ongeldig
   worlds:
     overworld: Bovenwereld
     nether: Nether
@@ -59,26 +60,26 @@ commands:
       reset:
         description: reset hoe vaak deze speler zijn eiland terugzet op 0
         parameters: "<speler>"
-        success-everyone: "&a Succesvol gereset &b iedereen &a 's resetten naar
-          &b 0 &a."
+        success-everyone: "&a Succesvol gereset &b iedereen &a 's resetten naar &b
+          0 &a."
         success: "&a Succesvol gereset &b [name] &a 's resetten naar &b 0 &a."
       add:
         description: telt op bij het aantal keren dat deze speler zijn eiland reset
         parameters: "<speler> <resets>"
-        success: "&a Met succes toegevoegd &b [number] &a wordt gereset naar &
-          b [name], waardoor het totaal wordt verhoogd naar &b [total] &a wordt
-          gereset."
+        success: "&a Met succes toegevoegd &b [number] &a wordt gereset naar & b [name],
+          waardoor het totaal wordt verhoogd naar &b [total] &a wordt gereset."
       remove:
         description: verwijdert uit hoe vaak deze speler zijn eiland reset
         parameters: "<speler> <resets>"
-        success: "&a Succesvol verwijderd &b [number] &a wordt gereset naar &b
-          [name], waardoor het totaal wordt verlaagd naar &b [total] &a wordt gereset."
+        success: "&a Succesvol verwijderd &b [number] &a wordt gereset naar &b [name],
+          waardoor het totaal wordt verlaagd naar &b [total] &a wordt gereset."
     purge:
       parameters: "[days]"
       description: eilanden zuiveren die al meer dan [days] zijn verlaten
+      days-one-or-more: Moet minimaal 1 dag of langer duren
       purgable-islands: "&a Gevonden &b [number]&a zuiverbare eilanden."
-      purge-in-progress: "&c Bezig met spoelen. Gebruik &b /[label] purge stop
-        &c om te annuleren."
+      purge-in-progress: "&c Bezig met spoelen. Gebruik &b /[label] purge stop &c
+        om te annuleren."
       number-error: "&c Argument moet een aantal dagen zijn"
       confirm: "&d Typ &b /[label] purge confirm &d om te beginnen met purgeren"
       completed: "&a zuivering gestopt."
@@ -98,9 +99,8 @@ commands:
         unowned-islands: "&a Found &b [number]&a eilanden zonder eigendom."
       status:
         description: geeft de status van de zuivering weer
-        status: "&b [purged] &a eilanden gezuiverd uit &b [purgeable] &7 (&
-          b [percentage]% &7) &a."
-      days-one-or-more: Moet minimaal 1 dag of langer duren
+        status: "&b [purged] &a eilanden gezuiverd uit &b [purgeable] &7 (& b [percentage]%
+          &7) &a."
     team:
       add:
         parameters: "<eigenaar> <speler>"
@@ -115,6 +115,16 @@ commands:
         use-disband-owner: "&c Geen eigenaar! Gebruik ontbinden [owner]."
         disbanded: "&c Admin heeft je team ontbonden!"
         success: "&b [name] &a 's team is opgeheven."
+      fix:
+        description: scant en repareert het lidmaatschap van meerdere eilanden in
+          de database
+        scanning: Database scannen ...
+        duplicate-owner: "&c Speler bezit meer dan één eiland in de database: [name]"
+        player-has: "&c Speler [name] heeft [number]eilanden"
+        duplicate-member: "&c Speler [name] is lid van meer dan één eiland in de database"
+        rank-on-island: "&c [rank] op het eiland op [xyz]"
+        fixed: "&a vaste"
+        done: "&a scan"
       kick:
         parameters: "<teamspeler>"
         description: schop een speler uit een team
@@ -127,17 +137,6 @@ commands:
         description: draagt het eilandbezit over aan de speler
         already-owner: "&c [name] is al de eigenaar van dit eiland!"
         success: "&b [name] &a is nu de eigenaar van dit eiland."
-      fix:
-        description: scant en repareert het lidmaatschap van meerdere eilanden in
-          de database
-        scanning: Database scannen ...
-        duplicate-owner: "&c Speler bezit meer dan één eiland in de database: [name]"
-        player-has: "&c Speler [name] heeft [number]eilanden"
-        fixed: "&a vaste"
-        done: "&a scan"
-        duplicate-member: "&c Speler [name] is lid van meer dan één eiland in de
-          database"
-        rank-on-island: "&c [rank] op het eiland op [xyz]"
     range:
       description: admin eilandbereik commando
       invalid-value:
@@ -159,8 +158,7 @@ commands:
       set:
         parameters: "<speler> <bereik>"
         description: stelt het beschermde eilandbereik in
-        success: "&a Stel het bereik van de eilandbescherming in op &b [number]
-          &a."
+        success: "&a Stel het bereik van de eilandbescherming in op &b [number] &a."
       reset:
         parameters: "<speler>"
         description: zet het beschermde eilandbereik terug naar de wereldstandaard
@@ -168,13 +166,13 @@ commands:
       add:
         description: vergroot het beschermde bereik van het eiland
         parameters: "<speler> <bereik>"
-        success: "&a Met succes het beschermde bereik van &b [name] &a 's op het
-          eiland vergroot tot &b [total] &7 (&b + [number]&7) &a."
+        success: "&a Met succes het beschermde bereik van &b [name] &a 's op het eiland
+          vergroot tot &b [total] &7 (&b + [number]&7) &a."
       remove:
         description: verkleint het beschermde bereik van het eiland
         parameters: "<speler> <bereik>"
-        success: "&a Succesvol verkleind &b [name] &a 's beschermde eilandbereik
-          naar &b [total] &7 (&b - [number]&7) &a."
+        success: "&a Succesvol verkleind &b [name] &a 's beschermde eilandbereik naar
+          &b [total] &7 (&b - [number]&7) &a."
     register:
       parameters: "<speler>"
       description: registreer speler op het eiland waar je je bevindt
@@ -206,6 +204,8 @@ commands:
       team-members-title: 'Leden van het team:'
       team-owner-format: "&a [name] [rank]"
       team-member-format: "&b [name] [rank]"
+      island-protection-center: 'Beschermingsgebied centrum: [xyz]'
+      island-center: 'Eilandcentrum: [xyz]'
       island-coords: 'Eilandcoördinaten: [xz1] tot [xz2]'
       islands-in-trash: "&d Player heeft eilanden in de prullenbak."
       protection-range: 'Beschermingsbereik: [range]'
@@ -216,12 +216,9 @@ commands:
       banned-players: 'Verbannen spelers:'
       banned-format: "&c [name]"
       unowned: "&c Onbeheerd"
-      island-protection-center: 'Beschermingsgebied centrum: [xyz]'
-      island-center: 'Eilandcentrum: [xyz]'
     switch:
       description: bescherming bypass in- / uitschakelen
-      op: "&c Ops kunnen de bescherming altijd omzeilen. Deop om het commando te
-        gebruiken."
+      op: "&c Ops kunnen de bescherming altijd omzeilen. Deop om het commando te gebruiken."
       removing: Bypass verwijderen ...
       adding: Beveiligingsbypass toevoegen ...
     switchto:
@@ -240,10 +237,10 @@ commands:
         de prullenbak
       title: "&d =========== Eilanden in prullenbak ==========="
       count: "&l &d Island [number]:"
-      use-switch: "&a Gebruik &l [label] switcht naar <player> <nummer> &r &a
-        om speler naar eiland in prullenbak te schakelen"
-      use-emptytrash: "&a Gebruik &l [label] lege prullenbak [player] &r &a om
-        prullenbakitems permanent te verwijderen"
+      use-switch: "&a Gebruik &l [label] switcht naar <player> <nummer> &r &a om speler
+        naar eiland in prullenbak te schakelen"
+      use-emptytrash: "&a Gebruik &l [label] lege prullenbak [player] &r &a om prullenbakitems
+        permanent te verwijderen"
     emptytrash:
       parameters: "[speler]"
       description: Wis de prullenbak voor de speler of verwijder alle eilanden die
@@ -273,14 +270,26 @@ commands:
         eiland van de eigenaar
       unknown-rank: "&c Onbekende rang!"
       not-possible: "&c Rang moet hoger zijn dan bezoeker."
-      rank-set: "&a Rang ingesteld van &b [from] &a naar &b [to] &a op &b
-        [name] &a 's eiland."
+      rank-set: "&a Rang ingesteld van &b [from] &a naar &b [to] &a op &b [name] &a
+        's eiland."
+    setprotectionlocation:
+      parameters: "[x y z coördinaten]"
+      description: stel de huidige locatie in of [x y z] als centrum van het beschermde
+        gebied van het eiland
+      island: "&c Dit heeft gevolgen voor het eiland op [xyz] dat eigendom is van
+        '[name]'."
+      confirmation: "&c Weet u zeker dat u [xyz] wilt instellen als het beschermingscentrum?"
+      success: "&a [xyz] met succes ingesteld als het beschermingscentrum."
+      fail: "&a Kan [xyz] niet instellen als het beschermingscentrum."
+      island-location-changed: "&a [user] heeft het beschermingscentrum van het eiland
+        gewijzigd in [xyz]."
+      xyz-error: "&c Specificeer drie integer-coördinaten: bijvoorbeeld 100120100"
     setspawn:
       description: stel een eiland in als spawn voor deze spelmodus
       already-spawn: "&c Dit eiland is al een spawn!"
       no-island-here: "&c Er is hier geen eiland."
-      confirmation: "&c Weet je zeker dat je dit eiland wilt instellen als spawn
-        voor deze wereld?"
+      confirmation: "&c Weet je zeker dat je dit eiland wilt instellen als spawn voor
+        deze wereld?"
       success: "&a Stel dit eiland met succes in als de spawn voor deze wereld."
     setspawnpoint:
       description: stel de huidige locatie in als spawn-punt voor dit eiland
@@ -288,8 +297,7 @@ commands:
       confirmation: "&c Weet u zeker dat u deze locatie wilt instellen als het spawn-punt
         voor dit eiland?"
       success: "&a Stel deze locatie met succes in als het spawn-punt voor dit eiland."
-      island-spawnpoint-changed: "&a [user] heeft dit spawnpunt op het eiland
-        gewijzigd."
+      island-spawnpoint-changed: "&a [user] heeft dit spawnpunt op het eiland gewijzigd."
     settings:
       parameters: "[speler] / [wereldvlag] / spawn-island [vlag / active / disable]
         [rang / active / disable]"
@@ -348,8 +356,7 @@ commands:
       rename:
         parameters: "<blauwdruknaam> <nieuwe naam>"
         description: hernoem een blauwdruk
-        success: "&a Blauwdruk &b [old] &a is met succes hernoemd naar &b [name]
-          &a."
+        success: "&a Blauwdruk &b [old] &a is met succes hernoemd naar &b [name] &a."
         pick-different-name: "&c Geef een naam op die verschilt van de huidige naam
           van de blueprint."
       management:
@@ -364,9 +371,13 @@ commands:
           Plaats blauwdruk
           naar rechts om in te stellen
         trash: Prullenbak
+        no-trash: Kan niet weggooien
         trash-instructions: Klik hier met de rechtermuisknop om te verwijderen
+        no-trash-instructions: Kan standaardbundel niet weggooien
         permission: Toestemming
+        no-permission: Geen toestemming
         perm-required: Verplicht
+        no-perm-required: Kan geen permissie instellen voor standaardbundel
         perm-not-required: Niet verplicht
         perm-format: "&e"
         remove: Klik met de rechtermuisknop om te verwijderen
@@ -395,10 +406,6 @@ commands:
         slot-instructions: |
           &a linkermuisknop om te verhogen
           &a Klik met de rechtermuisknop om te verlagen
-        no-trash: Kan niet weggooien
-        no-trash-instructions: Kan standaardbundel niet weggooien
-        no-permission: Geen toestemming
-        no-perm-required: Kan geen permissie instellen voor standaardbundel
     resetflags:
       parameters: "[vlag]"
       description: Reset alle eilanden naar de standaard vlaginstellingen in config.yml
@@ -413,6 +420,7 @@ commands:
       cannot-delete-owner: "&c Alle eilandleden moeten van het eiland worden verwijderd
         voordat ze het kunnen verwijderen."
       deleted-island: "&a Island at &e [xyz] &a is succesvol verwijderd."
+    deletehomes: {}
     why:
       parameters: "<speler>"
       description: schakel foutopsporingsrapportage voor consolebeveiliging in
@@ -423,35 +431,22 @@ commands:
       reset:
         description: reset de dood van de speler
         parameters: "<speler>"
-        success: "&a Met succes &b [name] &a 's sterfgevallen gereset naar &b
-          0 &a."
+        success: "&a Met succes &b [name] &a 's sterfgevallen gereset naar &b 0 &a."
       set:
         description: stelt de dood van de speler in
         parameters: "<speler> <doden>"
-        success: "&a De sterfgevallen van &b [name] &a zijn succesvol ingesteld
-          op &b [number] &a."
+        success: "&a De sterfgevallen van &b [name] &a zijn succesvol ingesteld op
+          &b [number] &a."
       add:
         description: voegt sterfgevallen toe aan de speler
         parameters: "<speler> <doden>"
-        success: "&a Met succes &b [number]&a sterfgevallen toegevoegd aan &b
-          [name], waardoor het totaal is verhoogd naar &b [total] &a sterfgevallen."
+        success: "&a Met succes &b [number]&a sterfgevallen toegevoegd aan &b [name],
+          waardoor het totaal is verhoogd naar &b [total] &a sterfgevallen."
       remove:
         description: verwijdert sterfgevallen voor de speler
         parameters: "<speler> <doden>"
-        success: "&a Met succes verwijderd &b [number]&a sterfgevallen aan &b
-          [name], waardoor het totaal afneemt tot &b [total] &a sterfgevallen."
-    setprotectionlocation:
-      parameters: "[x y z coördinaten]"
-      description: stel de huidige locatie in of [x y z] als centrum van het beschermde
-        gebied van het eiland
-      island: "&c Dit heeft gevolgen voor het eiland op [xyz] dat eigendom is van
-        '[name]'."
-      confirmation: "&c Weet u zeker dat u [xyz] wilt instellen als het beschermingscentrum?"
-      success: "&a [xyz] met succes ingesteld als het beschermingscentrum."
-      fail: "&a Kan [xyz] niet instellen als het beschermingscentrum."
-      island-location-changed: "&a [user] heeft het beschermingscentrum van
-        het eiland gewijzigd in [xyz]."
-      xyz-error: "&c Specificeer drie integer-coördinaten: bijvoorbeeld 100120100"
+        success: "&a Met succes verwijderd &b [number]&a sterfgevallen aan &b [name],
+          waardoor het totaal afneemt tot &b [total] &a sterfgevallen."
   bentobox:
     description: BentoBox admin-opdracht
     about:
@@ -529,8 +524,7 @@ commands:
       creating-island: "&a Een plek vinden voor uw eiland ..."
       pasting:
         estimated-time: "&a Geschatte tijd: &b [number]&a seconden."
-        blocks: "&a Building it blok voor blok: &b [number] &a blokken in totaal
-          ..."
+        blocks: "&a Building it blok voor blok: &b [number] &a blokken in totaal ..."
         entities: "&a Het vullen met entiteiten: &b [number]&a entiteiten in totaal
           ..."
         done: "&a Klaar! Je eiland staat klaar en wacht op je!"
@@ -540,6 +534,11 @@ commands:
         het voorbereiden van uw eiland."
       you-can-teleport-to-your-island: "&a Je kunt naar je eiland teleporteren wanneer
         je maar wilt."
+    deletehome:
+      description: een thuislocatie verwijderen
+      parameters: "[naam huis]"
+    homes:
+      description: lijst uw huizen
     info:
       description: informatie weergeven over uw eiland of het eiland van de speler
       parameters: "<speler>"
@@ -561,12 +560,15 @@ commands:
         &c Weet u zeker dat u dit wilt doen?
         &c Alle eilandleden worden van het eiland getrapt, je zult ze daarna opnieuw moeten uitnodigen.
         &c Er is geen weg meer terug: als je huidige eiland eenmaal is verwijderd, is er &l geen &r &c manier om het later terug te halen.
-      kicked-from-island: "&c Je wordt van je eiland getrapt in [gamemode] omdat
-        de eigenaar het aan het resetten is."
+      kicked-from-island: "&c Je wordt van je eiland getrapt in [gamemode] omdat de
+        eigenaar het aan het resetten is."
     sethome:
       description: stel uw thuisteleporteerpunt in
       must-be-on-your-island: "&c Je moet op je eiland zijn om naar huis te gaan!"
+      too-many-homes: "&c Kan niet instellen - je eiland heeft maximaal [number] huizen."
       home-set: "&6 Uw eilandhuis is ingesteld op uw huidige locatie."
+      homes-are: "&6 eilandwoningen zijn:"
+      home-list-syntax: "&6 [name]"
       nether:
         not-allowed: "&c Het is niet toegestaan om uw huis in Nederland te plaatsen."
         confirmation: "&c Weet u zeker dat u uw huis in de Nether wilt plaatsen?"
@@ -574,10 +576,6 @@ commands:
         not-allowed: "&c Je mag je huis niet op het einde zetten."
         confirmation: "&c Weet u zeker dat u uw huis op het einde wilt zetten?"
       parameters: "[naam huis]"
-      too-many-homes: "&c Kan niet instellen - je eiland heeft maximaal [number]
-        huizen."
-      homes-are: "&6 eilandwoningen zijn:"
-      home-list-syntax: "&6 [name]"
     setname:
       description: stel een naam voor je eiland in
       name-too-short: "&c Te kort. Minimale grootte is [number]tekens."
@@ -585,6 +583,11 @@ commands:
       name-already-exists: "&c Er is al een eiland met die naam in deze spelmodus."
       parameters: "<naam>"
       success: "&a Stel de naam van je eiland succesvol in op &b [name] &a."
+    renamehome:
+      description: de naam van een thuislocatie wijzigen
+      parameters: "[naam huis]"
+      enter-new-name: "&6 Voer de nieuwe naam in"
+      already-exists: "&c Die naam bestaat al, probeer een andere naam."
     resetname:
       description: reset je eilandnaam
       success: "&a Reset je eilandnaam succesvol."
@@ -654,8 +657,8 @@ commands:
         removing-invite: "&c Uitnodiging verwijderen."
         name-has-invited-you: "&a [name] heeft je uitgenodigd om lid te worden van
           hun eiland."
-        to-accept-or-reject: "&a Do /[label] team accepteren om te accepteren,
-          of /[label] team weigeren om te weigeren"
+        to-accept-or-reject: "&a Do /[label] team accepteren om te accepteren, of
+          /[label] team weigeren om te weigeren"
         you-will-lose-your-island: "&c WAARSCHUWING! Je verliest je eiland als je
           accepteert!"
         errors:
@@ -671,8 +674,8 @@ commands:
         you-can-invite: "&a Je kunt nog [number]spelers uitnodigen."
         accept:
           description: accepteer een uitnodiging
-          you-joined-island: "&a Je bent lid geworden van een eiland! Gebruik &b
-            /[label] team &a om de andere leden te zien."
+          you-joined-island: "&a Je bent lid geworden van een eiland! Gebruik &b /[label]
+            team &a om de andere leden te zien."
           name-joined-your-island: "&a [name] kwam bij je eiland!"
           confirmation: |-
             &c Weet u zeker dat u deze uitnodiging wilt accepteren?
@@ -759,16 +762,6 @@ commands:
       not-on-island: "&c Die speler is niet op jouw eiland!"
       player-expelled-you: "&b [name] &c hebben je van het eiland verdreven!"
       success: "&a Je hebt &b [name] &a van het eiland verdreven."
-    deletehome:
-      description: een thuislocatie verwijderen
-      parameters: "[naam huis]"
-    renamehome:
-      description: de naam van een thuislocatie wijzigen
-      parameters: "[naam huis]"
-      enter-new-name: "&6 Voer de nieuwe naam in"
-      already-exists: "&c Die naam bestaat al, probeer een andere naam."
-    homes:
-      description: lijst uw huizen
 ranks:
   owner: Eigenaar
   sub-owner: Ondereigenaar
@@ -856,6 +849,13 @@ protection:
         &7 Andere containers worden behandeld
         &7 door speciale vlaggen.
       hint: Containertoegang uitgeschakeld
+    CHEST: {}
+    BARREL: {}
+    BLOCK_EXPLODE_DAMAGE: {}
+    COMPOSTER: {}
+    FLOWER_POT: {}
+    SHULKER_BOX: {}
+    TRAPPED_CHEST: {}
     DISPENSER:
       name: Dispensers
       description: Wissel de interactie tussen de dispenser
@@ -1026,6 +1026,10 @@ protection:
         &a buitenkant beschermd
         &a eilandruimte
       name: "&e Beperk mobs tot het eiland"
+    HIVE:
+      description: "&a Toggle bijenkorf oogsten."
+      name: Bijenkorf oogsten
+      hint: Oogsten uitgeschakeld
     HURT_ANIMALS:
       description: Schakel pijn uit
       name: Gekwetste dieren
@@ -1186,6 +1190,13 @@ protection:
         &a Kan vertraging helpen verminderen.
         &a Heeft geen invloed op het spawn-eiland.
       name: Offline Redstone
+    PETS_STAY_AT_HOME:
+      description: |-
+        &a Bij actieve, getemde huisdieren
+        &a kan alleen naar en gaan
+        &a kan de eigenaar niet verlaten
+        &a thuiseiland.
+      name: Huisdieren blijven thuis
     PISTON_PUSH:
       description: |-
         &a Schakel dit in om te voorkomen
@@ -1322,28 +1333,19 @@ protection:
         &a terug naar hun eiland met behulp van commando's
         &a als ze vallen.
       hint: "&c Dat kun je niet doen terwijl je valt."
+    VISITOR_KEEP_INVENTORY: {}
     WITHER_DAMAGE:
       name: Schakel schoftschade in
       description: |-
         &a Indien actief, kan de schoft
         &a schadeblokken en spelers
+    WORLD_BLOCK_EXPLODE_DAMAGE: {}
     WORLD_TNT_DAMAGE:
       description: |-
         &a Allow TNT en TNT mijnkarren
         &a om blokken te breken en te beschadigen
         &a entiteit buiten de eilandgrenzen.
       name: Wereld TNT-schade
-    PETS_STAY_AT_HOME:
-      description: |-
-        &a Bij actieve, getemde huisdieren
-        &a kan alleen naar en gaan
-        &a kan de eigenaar niet verlaten
-        &a thuiseiland.
-      name: Huisdieren blijven thuis
-    HIVE:
-      description: "&a Toggle bijenkorf oogsten."
-      name: Bijenkorf oogsten
-      hint: Oogsten uitgeschakeld
   locked: "&c Dit eiland is op slot!"
   protected: "&c Eiland beschermd: [omschrijving]."
   world-protected: "&c Wereld beschermd: [omschrijving]."
@@ -1361,8 +1363,8 @@ protection:
       expert:
         name: "&c Expertinstellingen"
         description: "&a Geeft alle beschikbare instellingen weer."
-      click-to-switch: "&e Klik op &7 om over te schakelen naar de &r [volgende]
-        &r &7."
+      click-to-switch: "&e Klik op &7 om over te schakelen naar de &r [volgende] &r
+        &7."
     reset-to-default:
       name: "&c Reset naar standaard"
       description: |
@@ -1530,29 +1532,6 @@ catalog:
         &a Sta BentoBox toe om verbinding te maken met GitHub in
         &a de configuratie of probeer het later opnieuw.
 
-panel:
-  credits:
-    title: "&8 [name] &2 credits"
-    contributor:
-      name: "&a naam]"
-      description: "&a Commits: &b [commits]\n"
-    empty-here:
-      name: "&c Dit ziet er hier leeg uit ..."
-      description: |+
-        &c BentoBox kon de bijdragers niet verzamelen
-        &c voor deze add-on.
-
-        &a Sta BentoBox toe om verbinding te maken met GitHub in
-        &a de configuratie of probeer het later opnieuw.
-
-successfully-loaded: |2
-
-  &6 ____ _ ____
-  &6 | _ \ | | | _ \ &7 door &a tastybento &7 en &a Poslovitch
-  &6 | | _) | ___ _ __ | | _ ___ | | _) | _____ __ &7 2017-2022
-  &6 | _ </ _ \ '_ \ | __ / _ \ | _ </ _ \ \ / /
-  &6 | | _) | __ / | | | || (_) | | _) | (_)> <&b v &e [version]
-  &6 | ____ / \ ___ | _ | | _ | \ __ \ ___ / | ____ / \ ___ / _ / \ _ \ &8 Geladen in &e [time] &8 ms.
 enums:
   DamageCause:
     CONTACT: Contact
@@ -1583,3 +1562,26 @@ enums:
     HOT_FLOOR: Hete vloer
     CRAMMING: Proppen
     DRYOUT: Uitdrogen
+panel:
+  credits:
+    title: "&8 [name] &2 credits"
+    contributor:
+      name: "&a naam]"
+      description: "&a Commits: &b [commits]\n"
+    empty-here:
+      name: "&c Dit ziet er hier leeg uit ..."
+      description: |+
+        &c BentoBox kon de bijdragers niet verzamelen
+        &c voor deze add-on.
+
+        &a Sta BentoBox toe om verbinding te maken met GitHub in
+        &a de configuratie of probeer het later opnieuw.
+
+successfully-loaded: |2
+
+  &6 ____ _ ____
+  &6 | _ \ | | | _ \ &7 door &a tastybento &7 en &a Poslovitch
+  &6 | | _) | ___ _ __ | | _ ___ | | _) | _____ __ &7 2017-2022
+  &6 | _ </ _ \ '_ \ | __ / _ \ | _ </ _ \ \ / /
+  &6 | | _) | __ / | | | || (_) | | _) | (_)> <&b v &e [version]
+  &6 | ____ / \ ___ | _ | | _ | \ __ \ ___ / | ____ / \ ___ / _ / \ _ \ &8 Geladen in &e [time] &8 ms.
