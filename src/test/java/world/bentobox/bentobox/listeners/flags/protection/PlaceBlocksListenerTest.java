@@ -106,7 +106,7 @@ public class PlaceBlocksListenerTest extends AbstractCommonSetup {
         Hanging hanging = mock(Hanging.class);
         Block block = mock(Block.class);
         when(block.getLocation()).thenReturn(location);
-        HangingPlaceEvent e = new HangingPlaceEvent(hanging, player, block, BlockFace.EAST);
+        HangingPlaceEvent e = new HangingPlaceEvent(hanging, player, block, BlockFace.EAST, null);
         pbl.onHangingPlace(e);
         assertFalse(e.isCancelled());
         verify(notifier, never()).notify(any(), eq("protection.protected"));
@@ -121,7 +121,7 @@ public class PlaceBlocksListenerTest extends AbstractCommonSetup {
         Hanging hanging = mock(Hanging.class);
         Block block = mock(Block.class);
         when(block.getLocation()).thenReturn(location);
-        HangingPlaceEvent e = new HangingPlaceEvent(hanging, player, block, BlockFace.EAST);
+        HangingPlaceEvent e = new HangingPlaceEvent(hanging, player, block, BlockFace.EAST, null);
         pbl.onHangingPlace(e);
         assertTrue(e.isCancelled());
         verify(notifier).notify(any(), eq("protection.protected"));

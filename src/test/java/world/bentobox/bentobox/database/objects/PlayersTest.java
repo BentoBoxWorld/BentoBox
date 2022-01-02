@@ -1,9 +1,7 @@
 package world.bentobox.bentobox.database.objects;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -11,7 +9,6 @@ import static org.mockito.Mockito.when;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Server;
 import org.bukkit.World;
@@ -99,17 +96,6 @@ public class PlayersTest {
     @Test
     public void testPlayersBSkyBlockUUID() {
         assertNotNull(new Players(plugin, UUID.randomUUID()));
-    }
-
-    @Test
-    public void testSetHomeLocationLocation() {
-        Location l = mock(Location.class);
-        when(l.getWorld()).thenReturn(world);
-        p.setHomeLocation(l, 5);
-        assertEquals(l, p.getHomeLocation(world, 5));
-        assertNotEquals(l, p.getHomeLocation(world, 0));
-        p.clearHomeLocations(world);
-        assertTrue(p.getHomeLocations(world).isEmpty());
     }
 
     @Test
