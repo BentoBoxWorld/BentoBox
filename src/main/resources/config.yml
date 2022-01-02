@@ -195,6 +195,14 @@ island:
     #   This is the default behaviour.
     # Added since 1.13.0.
     keep-previous-island-on-reset: false
+    # Toggles how the islands are deleted.
+    # * If set to 'false', all islands will be deleted at once.
+    #   This is fast but may cause an impact on the performance
+    #   as it'll load all the chunks of the in-deletion islands.
+    # * If set to 'true', the islands will be deleted one by one.
+    #   This is slower but will not cause any impact on the performance.
+    # Added since 1.19.1.
+    slow-deletion: false
   # By default, If the destination is not safe, the plugin will try to search for a safe spot around the destination,
   # then it will try to expand the y-coordinate up and down from the destination.
   # This setting limits how far the y-coordinate will be expanded.

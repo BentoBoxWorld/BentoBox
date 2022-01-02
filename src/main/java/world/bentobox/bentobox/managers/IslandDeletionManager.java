@@ -16,7 +16,6 @@ import world.bentobox.bentobox.api.events.island.IslandDeleteChunksEvent;
 import world.bentobox.bentobox.api.events.island.IslandDeletedEvent;
 import world.bentobox.bentobox.database.Database;
 import world.bentobox.bentobox.database.objects.IslandDeletion;
-import world.bentobox.bentobox.util.DeleteIslandChunks;
 import world.bentobox.bentobox.util.Util;
 
 /**
@@ -57,7 +56,7 @@ public class IslandDeletionManager implements Listener {
                 } else {
                     plugin.log("Resuming deletion of island at " + di.getLocation().getWorld().getName() + " " + Util.xyz(di.getLocation().toVector()));
                     inDeletion.add(di.getLocation());
-                    new DeleteIslandChunks(plugin, di);
+                    plugin.getIslandChunkDeletionManager().add(di);
                 }
             });
         }

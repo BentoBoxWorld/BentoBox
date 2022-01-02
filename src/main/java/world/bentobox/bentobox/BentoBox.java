@@ -30,19 +30,7 @@ import world.bentobox.bentobox.listeners.JoinLeaveListener;
 import world.bentobox.bentobox.listeners.PanelListenerManager;
 import world.bentobox.bentobox.listeners.PortalTeleportationListener;
 import world.bentobox.bentobox.listeners.StandardSpawnProtectionListener;
-import world.bentobox.bentobox.managers.AddonsManager;
-import world.bentobox.bentobox.managers.BlueprintsManager;
-import world.bentobox.bentobox.managers.CommandsManager;
-import world.bentobox.bentobox.managers.FlagsManager;
-import world.bentobox.bentobox.managers.HooksManager;
-import world.bentobox.bentobox.managers.IslandDeletionManager;
-import world.bentobox.bentobox.managers.IslandWorldManager;
-import world.bentobox.bentobox.managers.IslandsManager;
-import world.bentobox.bentobox.managers.LocalesManager;
-import world.bentobox.bentobox.managers.PlaceholdersManager;
-import world.bentobox.bentobox.managers.PlayersManager;
-import world.bentobox.bentobox.managers.RanksManager;
-import world.bentobox.bentobox.managers.WebManager;
+import world.bentobox.bentobox.managers.*;
 import world.bentobox.bentobox.util.heads.HeadGetter;
 import world.bentobox.bentobox.versions.ServerCompatibility;
 
@@ -69,6 +57,7 @@ public class BentoBox extends JavaPlugin {
     private HooksManager hooksManager;
     private PlaceholdersManager placeholdersManager;
     private IslandDeletionManager islandDeletionManager;
+    private IslandChunkDeletionManager islandChunkDeletionManager;
     private WebManager webManager;
 
     // Settings
@@ -294,6 +283,7 @@ public class BentoBox extends JavaPlugin {
         // Death counter
         manager.registerEvents(new DeathListener(this), this);
         // Island Delete Manager
+        islandChunkDeletionManager = new IslandChunkDeletionManager(this);
         islandDeletionManager = new IslandDeletionManager(this);
         manager.registerEvents(islandDeletionManager, this);
     }
@@ -521,6 +511,13 @@ public class BentoBox extends JavaPlugin {
      */
     public IslandDeletionManager getIslandDeletionManager() {
         return islandDeletionManager;
+    }
+
+    /**
+     * @return the islandChunkDeletionManager
+     */
+    public IslandChunkDeletionManager getIslandChunkDeletionManager() {
+        return islandChunkDeletionManager;
     }
 
     /**

@@ -298,6 +298,15 @@ public class Settings implements ConfigObject {
     @ConfigEntry(path = "island.deletion.keep-previous-island-on-reset", since = "1.13.0")
     private boolean keepPreviousIslandOnReset = false;
 
+    @ConfigComment("Toggles how the islands are deleted.")
+    @ConfigComment("* If set to 'false', all islands will be deleted at once.")
+    @ConfigComment("  This is fast but may cause an impact on the performance")
+    @ConfigComment("  as it'll load all the chunks of the in-deletion islands.")
+    @ConfigComment("* If set to 'true', the islands will be deleted one by one.")
+    @ConfigComment("  This is slower but will not cause any impact on the performance.")
+    @ConfigEntry(path = "island.deletion.slow-deletion", since = "1.19.1")
+    private boolean slowDeletion = false;
+
     @ConfigComment("By default, If the destination is not safe, the plugin will try to search for a safe spot around the destination,")
     @ConfigComment("then it will try to expand the y-coordinate up and down from the destination.")
     @ConfigComment("This setting limits how far the y-coordinate will be expanded.")
@@ -904,5 +913,13 @@ public class Settings implements ConfigObject {
 
     public void setSafeSpotSearchVerticalRange(int safeSpotSearchVerticalRange) {
         this.safeSpotSearchVerticalRange = safeSpotSearchVerticalRange;
+    }
+
+    public boolean isSlowDeletion() {
+        return slowDeletion;
+    }
+
+    public void setSlowDeletion(boolean slowDeletion) {
+        this.slowDeletion = slowDeletion;
     }
 }

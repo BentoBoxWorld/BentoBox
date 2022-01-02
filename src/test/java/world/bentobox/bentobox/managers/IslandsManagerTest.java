@@ -108,6 +108,8 @@ public class IslandsManagerTest {
     @Mock
     private IslandWorldManager iwm;
     @Mock
+    private IslandChunkDeletionManager chunkDeletionManager;
+    @Mock
     private IslandCache islandCache;
     private Optional<Island> optionalIsland;
     @Mock
@@ -157,6 +159,9 @@ public class IslandsManagerTest {
         when(iwm.inWorld(any(World.class))).thenReturn(true);
         when(iwm.inWorld(any(Location.class))).thenReturn(true);
         when(plugin.getIWM()).thenReturn(iwm);
+
+        // Chunk deletion manager
+        when(plugin.getIslandChunkDeletionManager()).thenReturn(chunkDeletionManager);
 
         // Settings
         Settings s = mock(Settings.class);

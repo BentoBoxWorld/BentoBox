@@ -172,7 +172,10 @@
             <id>maven-snapshots</id>
             <url>https://repository.apache.org/content/repositories/snapshots/</url>
         </repository>
-
+        <repository>
+            <id>minecraft-repo</id>
+            <url>https://libraries.minecraft.net/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -190,11 +193,11 @@
             <version>${paper.version}</version>
             <scope>provided</scope>
         </dependency>
-        <!-- Spigot NMS. Used for Head Getter and chunk deletion. -->
+        <!-- AuthLib. Used for Head Getter. -->
         <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot</artifactId>
-            <version>${spigot.version}</version>
+            <groupId>com.mojang</groupId>
+            <artifactId>authlib</artifactId>
+            <version>3.2.38</version>
             <scope>provided</scope>
         </dependency>
         <!-- Metrics -->
