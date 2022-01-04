@@ -97,7 +97,7 @@ public class TemplatedPanel extends Panel
                 {
                     String type = String.valueOf(record.dataMap().get("type"));
 
-                    int counter = this.typeSlotMap.computeIfAbsent(type, key -> 1);
+                    int counter = this.typeSlotMap.computeIfAbsent(type, key -> 0);
                     this.typeSlotMap.put(type, counter + 1);
                 }
             }
@@ -227,7 +227,7 @@ public class TemplatedPanel extends Panel
             {
                 String type = String.valueOf(record.dataMap().get("type"));
 
-                int counter = this.typeSlotMap.computeIfAbsent(type, key -> 1);
+                int counter = this.typeSlotMap.computeIfAbsent(type, key -> 0);
                 this.typeSlotMap.put(type, counter + 1);
             }
         }
@@ -290,7 +290,7 @@ public class TemplatedPanel extends Panel
                 {
                     String type = String.valueOf(record.dataMap().get("type"));
 
-                    int counter = this.typeSlotMap.computeIfAbsent(type, key -> 1);
+                    int counter = this.typeSlotMap.computeIfAbsent(type, key -> 0);
                     this.typeSlotMap.put(type, counter + 1);
                 }
             }
