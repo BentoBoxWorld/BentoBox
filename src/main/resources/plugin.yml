@@ -26,6 +26,7 @@ softdepend:
   - WildStacker
   - LuckPerms
   - HolographicDisplays
+  - EconomyPlus
 
 permissions:
   bentobox.admin:

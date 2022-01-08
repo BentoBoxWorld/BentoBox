@@ -547,7 +547,7 @@ public class PlayersManager {
         // Remove any tamed animals
         world.getEntitiesByClass(Tameable.class).stream()
         .filter(Tameable::isTamed)
-        .filter(t -> t.getOwner() != null && t.getOwner().equals(target.getPlayer()))
+        .filter(t -> t.getOwner() != null && t.getOwner().getUniqueId().equals(target.getUniqueId()))
         .forEach(t -> t.setOwner(null));
 
         // Remove money inventory etc.
@@ -555,7 +555,10 @@ public class PlayersManager {
             if (target.isOnline()) {
                 target.getPlayer().getEnderChest().clear();
             } else {
-                getPlayer(target.getUniqueId()).addToPendingKick(world);
+                Players p = getPlayer(target.getUniqueId());
+                if (p != null) {
+                    p.addToPendingKick(world);
+                }
             }
         }
         if ((kicked && plugin.getIWM().isOnLeaveResetInventory(world) && !plugin.getIWM().isKickedKeepInventory(world))
@@ -563,7 +566,10 @@ public class PlayersManager {
             if (target.isOnline()) {
                 target.getPlayer().getInventory().clear();
             } else {
-                getPlayer(target.getUniqueId()).addToPendingKick(world);
+                Players p = getPlayer(target.getUniqueId());
+                if (p != null) {
+                    p.addToPendingKick(world);
+                }
             }
         }
 

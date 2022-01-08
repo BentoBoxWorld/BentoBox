@@ -1445,6 +1445,16 @@ public class Island implements DataObject, MetaDataAble {
     }
 
     /**
+     * Remove all homes from this island except the default home
+     * @return true if any non-default homes removed
+     * @since 1.20.0
+     */
+    public boolean removeHomes() {
+        setChanged();
+        return getHomes().keySet().removeIf(k -> !k.isEmpty());
+    }
+
+    /**
      * Rename a home
      * @param oldName - old name of home
      * @param newName - new name of home
@@ -1539,6 +1549,8 @@ public class Island implements DataObject, MetaDataAble {
                 + ", cooldowns=" + cooldowns + ", commandRanks=" + commandRanks + ", reserved=" + reserved
                 + ", metaData=" + metaData + ", homes=" + homes + ", maxHomes=" + maxHomes + "]";
     }
+
+
 
 
 

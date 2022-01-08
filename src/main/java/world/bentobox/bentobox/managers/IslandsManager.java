@@ -54,7 +54,6 @@ import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.database.objects.IslandDeletion;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.island.IslandCache;
-import world.bentobox.bentobox.util.DeleteIslandChunks;
 import world.bentobox.bentobox.util.Util;
 import world.bentobox.bentobox.util.teleport.SafeSpotTeleport;
 
@@ -346,7 +345,7 @@ public class IslandsManager {
             // Remove players from island
             removePlayersFromIsland(island);
             // Remove blocks from world
-            new DeleteIslandChunks(plugin, new IslandDeletion(island));
+            plugin.getIslandChunkDeletionManager().add(new IslandDeletion(island));
         }
     }
 
@@ -512,7 +511,7 @@ public class IslandsManager {
 
         int islandMax = island.getMaxMembers(rank) == null ? worldDefault : island.getMaxMembers(rank);
         // Update based on owner permissions if online
-        if (Bukkit.getPlayer(island.getOwner()) != null) {
+        if (island.getOwner() != null && Bukkit.getPlayer(island.getOwner()) != null) {
             User owner = User.getInstance(island.getOwner());
             islandMax = owner.getPermissionValue(plugin.getIWM().getPermissionPrefix(island.getWorld())
                     + perm, islandMax);
@@ -544,7 +543,7 @@ public class IslandsManager {
     public int getMaxHomes(@NonNull Island island) {
         int islandMax = island.getMaxHomes() == null ? plugin.getIWM().getMaxHomes(island.getWorld()) : island.getMaxHomes();
         // Update based on owner permissions if online
-        if (Bukkit.getPlayer(island.getOwner()) != null) {
+        if (island.getOwner() != null && Bukkit.getPlayer(island.getOwner()) != null) {
             User owner = User.getInstance(island.getOwner());
             islandMax = owner.getPermissionValue(plugin.getIWM().getPermissionPrefix(island.getWorld())
                     + "island.maxhomes", islandMax);
@@ -622,11 +621,11 @@ public class IslandsManager {
         return result;
     }
 
-    private void tryIsland(CompletableFuture<Location> result, Location islandLoc, @NonNull User user, String number) {
+    private void tryIsland(CompletableFuture<Location> result, Location islandLoc, @NonNull User user, String name) {
         Util.getChunkAtAsync(islandLoc).thenRun(() -> {
             World w = islandLoc.getWorld();
             if (isSafeLocation(islandLoc)) {
-                setHomeLocation(user, islandLoc, number);
+                setHomeLocation(user, islandLoc, name);
                 result.complete(islandLoc.clone().add(new Vector(0.5D,0,0.5D)));
                 return;
             } else {
@@ -634,14 +633,14 @@ public class IslandsManager {
                 // Try the default location
                 Location dl = islandLoc.clone().add(new Vector(0.5D, 5D, 2.5D));
                 if (isSafeLocation(dl)) {
-                    setHomeLocation(user, dl, number);
+                    setHomeLocation(user, dl, name);
                     result.complete(dl);
                     return;
                 }
                 // Try just above the bedrock
                 dl = islandLoc.clone().add(new Vector(0.5D, 5D, 0.5D));
                 if (isSafeLocation(dl)) {
-                    setHomeLocation(user, dl, number);
+                    setHomeLocation(user, dl, name);
                     result.complete(dl);
                     return;
                 }
@@ -649,7 +648,7 @@ public class IslandsManager {
                 for (int y = islandLoc.getBlockY(); y < w.getMaxHeight(); y++) {
                     dl = new Location(w, islandLoc.getX() + 0.5D, y, islandLoc.getZ() + 0.5D);
                     if (isSafeLocation(dl)) {
-                        setHomeLocation(user, dl, number);
+                        setHomeLocation(user, dl, name);
                         result.complete(dl);
                         return;
                     }
@@ -705,10 +704,13 @@ public class IslandsManager {
                 return l;
             } else {
                 // try owner's home
-                Location tlh = getHomeLocation(world, getOwner(world, user.getUniqueId()));
-                if (tlh != null && isSafeLocation(tlh)) {
-                    setHomeLocation(user, tlh, name);
-                    return tlh;
+                UUID owner = getOwner(world, user.getUniqueId());
+                if (owner != null) {
+                    Location tlh = getHomeLocation(world, owner);
+                    if (tlh != null && isSafeLocation(tlh)) {
+                        setHomeLocation(user, tlh, name);
+                        return tlh;
+                    }
                 }
             }
         } else {
@@ -866,6 +868,7 @@ public class IslandsManager {
         return getHomeLocation(island, name);
     }
 
+    @SuppressWarnings("removal")
     private void migrateHomes(@NonNull World world, @NonNull UUID uuid, String name, Island island) {
         Map<Location, Integer> homes = plugin
                 .getPlayers()
@@ -874,7 +877,7 @@ public class IslandsManager {
             // No migration required
             return;
         }
-        if (island.getOwner().equals(uuid)) {
+        if (island.getOwner() != null && island.getOwner().equals(uuid)) {
             // Owner
             island.setHomes(homes.entrySet().stream().collect(Collectors.toMap(this::getHomeName, Map.Entry::getKey)));
             plugin.getPlayers().clearHomeLocations(world, uuid);

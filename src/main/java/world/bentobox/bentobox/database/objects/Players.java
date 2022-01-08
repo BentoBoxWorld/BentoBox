@@ -237,7 +237,7 @@ public class Players implements DataObject, MetaDataAble {
     /**
      * Clears all home Locations in world
      * @param world - world
-     * @deprecated Home locations are no longer stored for players. Use {@link IslandManager}
+     * @deprecated Home locations are no longer stored for players. Use {@link world.bentobox.bentobox.managers.IslandsManager}
      */
     @Deprecated(since="1.18.0", forRemoval=true)
     public void clearHomeLocations(World world) {

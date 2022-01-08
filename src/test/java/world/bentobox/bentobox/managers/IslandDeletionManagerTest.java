@@ -67,6 +67,8 @@ public class IslandDeletionManagerTest {
     private BukkitScheduler scheduler;
     @Mock
     private IslandWorldManager iwm;
+    @Mock
+    private IslandChunkDeletionManager chunkDeletionManager;
 
 
     /**
@@ -101,6 +103,8 @@ public class IslandDeletionManagerTest {
         // IWM
         when(plugin.getIWM()).thenReturn(iwm);
         when(iwm.getIslandDistance(any())).thenReturn(64);
+        // Chunk deletion manager
+        when(plugin.getIslandChunkDeletionManager()).thenReturn(chunkDeletionManager);
 
         // Island Deletion Manager
         idm = new IslandDeletionManager(plugin);

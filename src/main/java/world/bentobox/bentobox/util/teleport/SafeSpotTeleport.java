@@ -1,15 +1,6 @@
 package world.bentobox.bentobox.util.teleport;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
-
-import org.bukkit.Bukkit;
-import org.bukkit.ChunkSnapshot;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.World.Environment;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
@@ -17,45 +8,51 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.Nullable;
-
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.util.Pair;
 import world.bentobox.bentobox.util.Util;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 /**
  * A class that calculates finds a safe spot asynchronously and then teleports the player there.
- * @author tastybento
  *
+ * @author tastybento
  */
 public class SafeSpotTeleport {
 
     private static final int MAX_CHUNKS = 6;
     private static final long SPEED = 1;
     private static final int MAX_RADIUS = 50;
-    private boolean notChecking;
-    private BukkitTask task;
-
     // Parameters
     private final Entity entity;
     private final Location location;
-    private boolean portal;
     private final int homeNumber;
-
-    // Locations
-    private Location bestSpot;
-
     private final BentoBox plugin;
-    private List<Pair<Integer, Integer>> chunksToScan;
     private final Runnable runnable;
     private final Runnable failRunnable;
     private final CompletableFuture<Boolean> result;
     private final String homeName;
     private final int maxHeight;
+    private final World world;
+    private final AtomicBoolean checking = new AtomicBoolean();
+    private BukkitTask task;
+    private boolean portal;
+    // Locations
+    private Location bestSpot;
+    private Iterator<Pair<Integer, Integer>> chunksToScanIterator;
+    private int checkedChunks = 0;
 
     /**
      * Teleports and entity to a safe spot on island
+     *
      * @param builder - safe spot teleport builder
      */
     SafeSpotTeleport(Builder builder) {
@@ -68,12 +65,13 @@ public class SafeSpotTeleport {
         this.runnable = builder.getRunnable();
         this.failRunnable = builder.getFailRunnable();
         this.result = builder.getResult();
-        this.maxHeight = location.getWorld().getMaxHeight() - 20;
+        this.world = Objects.requireNonNull(location.getWorld());
+        this.maxHeight = world.getMaxHeight() - 20;
         // Try to go
-        Util.getChunkAtAsync(location).thenRun(()-> tryToGo(builder.getFailureMessage()));
+        Util.getChunkAtAsync(location).thenRun(() -> tryToGo(builder.getFailureMessage()));
     }
 
-    private void tryToGo(String failureMessage) {
+    void tryToGo(String failureMessage) {
         if (plugin.getIslands().isSafeLocation(location)) {
             if (portal) {
                 // If the desired location is safe, then that's where you'll go if there's no portal
@@ -88,44 +86,47 @@ public class SafeSpotTeleport {
             }
         }
         // Get chunks to scan
-        chunksToScan = getChunksToScan();
-
-        // Start checking
-        notChecking = true;
+        chunksToScanIterator = getChunksToScan().iterator();
 
         // Start a recurring task until done or cancelled
         task = Bukkit.getScheduler().runTaskTimer(plugin, () -> gatherChunks(failureMessage), 0L, SPEED);
     }
 
-    private void gatherChunks(String failureMessage) {
-        if (!notChecking) {
-            return;
+    boolean gatherChunks(String failureMessage) {
+        // Set a flag so this is only run if it's not already in progress
+        if (checking.get()) {
+            return false;
         }
-        notChecking = false;
-        List<ChunkSnapshot> chunkSnapshot = new ArrayList<>();
-        Iterator<Pair<Integer, Integer>> it = chunksToScan.iterator();
-        if (!it.hasNext()) {
+        checking.set(true);
+        if (checkedChunks > MAX_CHUNKS || !chunksToScanIterator.hasNext()) {
             // Nothing left
             tidyUp(entity, failureMessage);
-            return;
+            return false;
         }
-        // Add chunk snapshots to the list
-        while (it.hasNext() && chunkSnapshot.size() < MAX_CHUNKS) {
-            Pair<Integer, Integer> pair = it.next();
-            if (location.getWorld() != null) {
-                boolean isLoaded = location.getWorld().getChunkAt(pair.x, pair.z).isLoaded();
-                chunkSnapshot.add(location.getWorld().getChunkAt(pair.x, pair.z).getChunkSnapshot());
-                if (!isLoaded) {
-                    location.getWorld().getChunkAt(pair.x, pair.z).unload();
-                }
+
+        // Get the chunk
+        Pair<Integer, Integer> chunkPair = chunksToScanIterator.next();
+        chunksToScanIterator.remove();
+        checkedChunks++;
+        if (checkedChunks >= MAX_CHUNKS) {
+            checking.set(false);
+            return false;
+        }
+
+        // Get the chunk snapshot and scan it
+        Util.getChunkAtAsync(world, chunkPair.x, chunkPair.z)
+        .thenApply(Chunk::getChunkSnapshot)
+        .whenCompleteAsync((snapshot, e) -> {
+            if (snapshot != null && scanChunk(snapshot)) {
+                task.cancel();
+            } else {
+                checking.set(false);
             }
-            it.remove();
-        }
-        // Move to next step
-        checkChunks(chunkSnapshot);
+        });
+        return true;
     }
 
-    private void tidyUp(Entity entity, String failureMessage) {
+    void tidyUp(Entity entity, String failureMessage) {
         // Still Async!
         // Nothing left to check and still not canceled
         task.cancel();
@@ -133,7 +134,7 @@ public class SafeSpotTeleport {
         if (portal && bestSpot != null) {
             // Portals found, teleport to the best spot we found
             teleportEntity(bestSpot);
-        } else if (entity instanceof Player) {
+        } else if (entity instanceof Player player) {
             // Return to main thread and teleport the player
             Bukkit.getScheduler().runTask(plugin, () -> {
                 // Failed, no safe spot
@@ -142,15 +143,15 @@ public class SafeSpotTeleport {
                 }
                 if (!plugin.getIWM().inWorld(entity.getLocation())) {
                     // Last resort
-                    ((Player)entity).performCommand("spawn");
+                    player.performCommand("spawn");
                 } else {
                     // Create a spot for the player to be
-                    if (location.getWorld().getEnvironment().equals(Environment.NETHER)) {
-                        makeAndTelport(Material.NETHERRACK);
-                    } else if (location.getWorld().getEnvironment().equals(Environment.THE_END)) {
-                        makeAndTelport(Material.END_STONE);
+                    if (world.getEnvironment().equals(Environment.NETHER)) {
+                        makeAndTeleport(Material.NETHERRACK);
+                    } else if (world.getEnvironment().equals(Environment.THE_END)) {
+                        makeAndTeleport(Material.END_STONE);
                     } else {
-                        makeAndTelport(Material.COBBLESTONE);
+                        makeAndTeleport(Material.COBBLESTONE);
                     }
                 }
                 if (failRunnable != null) {
@@ -166,7 +167,7 @@ public class SafeSpotTeleport {
         }
     }
 
-    private void makeAndTelport(Material m) {
+    void makeAndTeleport(Material m) {
         location.getBlock().getRelative(BlockFace.DOWN).setType(m, false);
         location.getBlock().setType(Material.AIR, false);
         location.getBlock().getRelative(BlockFace.UP).setType(Material.AIR, false);
@@ -179,20 +180,21 @@ public class SafeSpotTeleport {
 
     /**
      * Gets a set of chunk coords that will be scanned.
+     *
      * @return - list of chunk coords to be scanned
      */
-    private List<Pair<Integer, Integer>> getChunksToScan() {
+    List<Pair<Integer, Integer>> getChunksToScan() {
         List<Pair<Integer, Integer>> chunksToScan = new ArrayList<>();
-        int maxRadius = plugin.getIslands().getIslandAt(location).map(Island::getProtectionRange).orElseGet(() -> plugin.getIWM().getIslandProtectionRange(location.getWorld()));
+        int maxRadius = plugin.getIslands().getIslandAt(location).map(Island::getProtectionRange).orElseGet(() -> plugin.getIWM().getIslandProtectionRange(world));
         maxRadius = Math.min(MAX_RADIUS, maxRadius);
         int x = location.getBlockX();
         int z = location.getBlockZ();
         // Create ever increasing squares around the target location
         int radius = 0;
         do {
-            for (int i = x - radius; i <= x + radius; i+=16) {
-                for (int j = z - radius; j <= z + radius; j+=16) {
-                    addChunk(chunksToScan, new Pair<>(i,j), new Pair<>(i >> 4, j >> 4));
+            for (int i = x - radius; i <= x + radius; i += 16) {
+                for (int j = z - radius; j <= z + radius; j += 16) {
+                    addChunk(chunksToScan, new Pair<>(i, j), new Pair<>(i >> 4, j >> 4));
                 }
             }
             radius++;
@@ -207,47 +209,65 @@ public class SafeSpotTeleport {
     }
 
     /**
-     * Loops through the chunks and if a safe spot is found, fires off the teleportation
-     * @param chunkSnapshot - list of chunk snapshots to check
-     */
-    private void checkChunks(final List<ChunkSnapshot> chunkSnapshot) {
-        // Run async task to scan chunks
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-            for (ChunkSnapshot chunk: chunkSnapshot) {
-                if (scanChunk(chunk)) {
-                    task.cancel();
-                    return;
-                }
-            }
-            // Nothing happened, change state
-            notChecking = true;
-        });
-    }
-
-
-    /**
      * @param chunk - chunk snapshot
      * @return true if a safe spot was found
      */
-    private boolean scanChunk(ChunkSnapshot chunk) {
-        // Run through the chunk
-        for (int x = 0; x< 16; x++) {
+    boolean scanChunk(ChunkSnapshot chunk) {
+        int startY = location.getBlockY();
+        int minY = world.getMinHeight();
+        int maxY = 60; // Just a dummy value
+
+        // Check the safe spot at the current height
+        for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {
-                // Work down from the entry point up
-                for (int y = Math.min(chunk.getHighestBlockYAt(x, z), maxHeight); y >= 0; y--) {
-                    if (checkBlock(chunk, x,y,z)) {
+                if (minY >= startY && checkBlock(chunk, x, startY, z)) {
+                    return true;
+                }
+                maxY = Math.max(chunk.getHighestBlockYAt(x, z), maxY);
+            }
+        }
+        maxY = Math.min(maxY, maxHeight);
+
+        // Expand the height up and down until a safe spot is found
+        int upperY = startY + 1;
+        int lowerY = startY - 1;
+        boolean checkUpper = upperY <= maxY;
+        boolean checkLower = lowerY >= minY;
+        int limitRange = plugin.getSettings().getSafeSpotSearchVerticalRange(); // Limit the y-coordinate range
+        while (limitRange > 0 && (checkUpper || checkLower)) {
+            for (int x = 0; x < 16; x++) {
+                for (int z = 0; z < 16; z++) {
+                    if (checkUpper && checkBlock(chunk, x, upperY, z)) {
                         return true;
                     }
-                } // end y
-            } //end z
-        } // end x
+                    if (checkLower && checkBlock(chunk, x, lowerY, z)) {
+                        return true;
+                    }
+                }
+            }
+            if (checkUpper) {
+                upperY++;
+                if (upperY > maxY) {
+                    checkUpper = false;
+                }
+            }
+            if (checkLower) {
+                lowerY--;
+                if (lowerY < minY) {
+                    checkLower = false;
+                }
+            }
+            limitRange--;
+        }
+
+        // We can't find a safe spot
         return false;
     }
 
     /**
      * Teleports entity to the safe spot
      */
-    private void teleportEntity(final Location loc) {
+    void teleportEntity(final Location loc) {
         task.cancel();
         // Return to main thread and teleport the player
         Bukkit.getScheduler().runTask(plugin, () -> {
@@ -264,14 +284,14 @@ public class SafeSpotTeleport {
 
     /**
      * Returns true if the location is a safe one.
+     *
      * @param chunk - chunk snapshot
-     * @param x - x coordinate
-     * @param y - y coordinate
-     * @param z - z coordinate
+     * @param x     - x coordinate
+     * @param y     - y coordinate
+     * @param z     - z coordinate
      * @return true if this is a safe spot, false if this is a portal scan
      */
     boolean checkBlock(ChunkSnapshot chunk, int x, int y, int z) {
-        World world = location.getWorld();
         Material type = chunk.getBlockType(x, y, z);
         Material space1 = chunk.getBlockType(x, Math.min(y + 1, maxHeight), z);
         Material space2 = chunk.getBlockType(x, Math.min(y + 2, maxHeight), z);
@@ -285,7 +305,7 @@ public class SafeSpotTeleport {
         return false;
     }
 
-    private boolean safe(ChunkSnapshot chunk, int x, int y, int z, World world) {
+    boolean safe(ChunkSnapshot chunk, int x, int y, int z, World world) {
         Vector newSpot = new Vector((chunk.getX() << 4) + x + 0.5D, y + 1.0D, (chunk.getZ() << 4) + z + 0.5D);
         if (portal) {
             if (bestSpot == null) {
@@ -301,6 +321,7 @@ public class SafeSpotTeleport {
 
     public static class Builder {
         private final BentoBox plugin;
+        private final CompletableFuture<Boolean> result = new CompletableFuture<>();
         private Entity entity;
         private int homeNumber = 0;
         private String homeName = "";
@@ -309,7 +330,6 @@ public class SafeSpotTeleport {
         private Location location;
         private Runnable runnable;
         private Runnable failRunnable;
-        private final CompletableFuture<Boolean> result = new CompletableFuture<>();
 
         public Builder(BentoBox plugin) {
             this.plugin = plugin;
@@ -317,6 +337,7 @@ public class SafeSpotTeleport {
 
         /**
          * Set who or what is going to teleport
+         *
          * @param entity entity to teleport
          * @return Builder
          */
@@ -327,6 +348,7 @@ public class SafeSpotTeleport {
 
         /**
          * Set the island to teleport to
+         *
          * @param island island destination
          * @return Builder
          */
@@ -337,6 +359,7 @@ public class SafeSpotTeleport {
 
         /**
          * Set the home number to this number
+         *
          * @param homeNumber home number
          * @return Builder
          * @deprecated use {@link #homeName}
@@ -349,6 +372,7 @@ public class SafeSpotTeleport {
 
         /**
          * Set the home name
+         *
          * @param homeName - home name
          * @return Builder
          * @since 1.16.0
@@ -360,6 +384,7 @@ public class SafeSpotTeleport {
 
         /**
          * This is a portal teleportation
+         *
          * @return Builder
          */
         public Builder portal() {
@@ -369,6 +394,7 @@ public class SafeSpotTeleport {
 
         /**
          * Set the failure message if this teleport cannot happen
+         *
          * @param failureMessage failure message to report to user
          * @return Builder
          */
@@ -379,6 +405,7 @@ public class SafeSpotTeleport {
 
         /**
          * Set the desired location
+         *
          * @param location the location
          * @return Builder
          */
@@ -389,6 +416,7 @@ public class SafeSpotTeleport {
 
         /**
          * Try to teleport the player
+         *
          * @return CompletableFuture that will become true if successful and false if not
          * @since 1.14.0
          */
@@ -400,6 +428,7 @@ public class SafeSpotTeleport {
 
         /**
          * Try to teleport the player
+         *
          * @return SafeSpotTeleport
          */
         @Nullable
@@ -415,6 +444,11 @@ public class SafeSpotTeleport {
                 result.complete(null);
                 return null;
             }
+            if (location.getWorld() == null) {
+                plugin.logError("Attempt to safe teleport to a null world!");
+                result.complete(null);
+                return null;
+            }
             if (failureMessage.isEmpty() && entity instanceof Player) {
                 failureMessage = "general.errors.no-safe-location-found";
             }
@@ -423,6 +457,7 @@ public class SafeSpotTeleport {
 
         /**
          * The task to run after the player is safely teleported.
+         *
          * @param runnable - task
          * @return Builder
          * @since 1.13.0
@@ -434,14 +469,16 @@ public class SafeSpotTeleport {
 
         /**
          * The task to run if the player is not safely teleported
+         *
          * @param runnable - task
          * @return Builder
          * @since 1.18.0
          */
-        public Builder ifFail(Runnable rannable) {
+        public Builder ifFail(Runnable runnable) {
             this.failRunnable = runnable;
             return this;
         }
+
         /**
          * @return the plugin
          */

@@ -4,6 +4,7 @@ import java.util.Map;
 
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.block.Biome;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
@@ -16,14 +17,9 @@ import com.google.gson.reflect.TypeToken;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.flags.Flag;
-import world.bentobox.bentobox.database.json.adapters.BukkitObjectTypeAdapter;
-import world.bentobox.bentobox.database.json.adapters.EnumTypeAdapter;
-import world.bentobox.bentobox.database.json.adapters.FlagTypeAdapter;
-import world.bentobox.bentobox.database.json.adapters.ItemStackTypeAdapter;
-import world.bentobox.bentobox.database.json.adapters.LocationTypeAdapter;
-import world.bentobox.bentobox.database.json.adapters.PotionEffectTypeAdapter;
-import world.bentobox.bentobox.database.json.adapters.VectorTypeAdapter;
-import world.bentobox.bentobox.database.json.adapters.WorldTypeAdapter;
+import world.bentobox.bentobox.database.json.adapters.*;
+import world.bentobox.bentobox.versions.ServerCompatibility;
+
 
 /**
  * Allocates type adapters based on class type.
@@ -52,6 +48,8 @@ public class BentoboxTypeAdapterFactory implements TypeAdapterFactory {
         if (Location.class.isAssignableFrom(rawType)) {
             // Use our current location adapter for backward compatibility
             return (TypeAdapter<T>) new LocationTypeAdapter();
+        } else if (Biome.class.isAssignableFrom(rawType) && !ServerCompatibility.getInstance().isVersion(ServerCompatibility.ServerVersion.V1_17_1)) { // TODO: Any better way ?
+            return (TypeAdapter<T>) new BiomeTypeAdapter();
         } else if (Enum.class.isAssignableFrom(rawType)) {
             return new EnumTypeAdapter(rawType);
         } else if (ItemStack.class.isAssignableFrom(rawType)) {

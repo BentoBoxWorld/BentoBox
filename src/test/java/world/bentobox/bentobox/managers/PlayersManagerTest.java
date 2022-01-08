@@ -147,9 +147,17 @@ public class PlayersManagerTest {
         when(nether.getSpawnLocation()).thenReturn(netherSpawn);
         when(iwm.getNetherSpawnRadius(Mockito.any())).thenReturn(100);
 
+        // UUID
+        uuid = UUID.randomUUID();
+        notUUID = UUID.randomUUID();
+        while(notUUID.equals(uuid)) {
+            notUUID = UUID.randomUUID();
+        }
+
         // Player
         when(p.getEnderChest()).thenReturn(inv);
         when(p.getInventory()).thenReturn(playerInv);
+        when(p.getUniqueId()).thenReturn(uuid);
         AttributeInstance at = mock(AttributeInstance.class);
         when(at.getValue()).thenReturn(20D);
         when(p.getAttribute(Attribute.GENERIC_MAX_HEALTH)).thenReturn(at);
@@ -157,11 +165,6 @@ public class PlayersManagerTest {
         // Sometimes use Mockito.withSettings().verboseLogging()
         user = mock(User.class);
         when(user.isOp()).thenReturn(false);
-        uuid = UUID.randomUUID();
-        notUUID = UUID.randomUUID();
-        while(notUUID.equals(uuid)) {
-            notUUID = UUID.randomUUID();
-        }
         when(user.getUniqueId()).thenReturn(uuid);
         when(user.getPlayer()).thenReturn(p);
         when(user.getName()).thenReturn("tastybento");

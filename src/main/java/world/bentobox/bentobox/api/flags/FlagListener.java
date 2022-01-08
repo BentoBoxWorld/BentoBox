@@ -34,7 +34,7 @@ public abstract class FlagListener implements Listener {
      * Reason for why flag was allowed or disallowed
      * Used by admins for debugging player actions
      */
-    enum Why {
+    protected enum Why {
         UNPROTECTED_WORLD,
         OP,
         BYPASS_EVERYWHERE,
@@ -206,7 +206,15 @@ public abstract class FlagListener implements Listener {
         }
     }
 
-    private void report(@Nullable User user, @NonNull Event e, @NonNull Location loc, @NonNull Flag flag, @NonNull Why why) {
+    /**
+     * Report why something did or did not happen for the admin why command
+     * @param user user involved
+     * @param e associated event
+     * @param loc location
+     * @param flag flag
+     * @param why reason enum
+     */
+    protected void report(@Nullable User user, @NonNull Event e, @NonNull Location loc, @NonNull Flag flag, @NonNull Why why) {
         // A quick way to debug flag listener unit tests is to add this line here: System.out.println(why.name()); NOSONAR
         if (user != null && user.isPlayer() && user.getPlayer().getMetadata(loc.getWorld().getName() + "_why_debug").stream()
                 .filter(p -> p.getOwningPlugin().equals(getPlugin())).findFirst().map(MetadataValue::asBoolean).orElse(false)) {

@@ -1,6 +1,5 @@
 package world.bentobox.bentobox.util;
 
-import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -65,6 +64,7 @@ public class Util {
     private static final String THE_END = "_the_end";
     private static String serverVersion = null;
     private static BentoBox plugin = BentoBox.getInstance();
+    private static NMSAbstraction nms = null;
 
     private Util() {}
 
@@ -238,7 +238,7 @@ public class Util {
     /**
      * Convert world to an overworld
      * @param world - world
-     * @return over world
+     * @return over world or null if world is null or a world cannot be found
      */
     @Nullable
     public static World getWorld(@Nullable World world) {
@@ -284,21 +284,21 @@ public class Util {
      */
     public static float blockFaceToFloat(BlockFace face) {
         return switch (face) {
-            case EAST -> 90F;
-            case EAST_NORTH_EAST -> 67.5F;
-            case NORTH_EAST -> 45F;
-            case NORTH_NORTH_EAST -> 22.5F;
-            case NORTH_NORTH_WEST -> 337.5F;
-            case NORTH_WEST -> 315F;
-            case SOUTH -> 180F;
-            case SOUTH_EAST -> 135F;
-            case SOUTH_SOUTH_EAST -> 157.5F;
-            case SOUTH_SOUTH_WEST -> 202.5F;
-            case SOUTH_WEST -> 225F;
-            case WEST -> 270F;
-            case WEST_NORTH_WEST -> 292.5F;
-            case WEST_SOUTH_WEST -> 247.5F;
-            default -> 0F;
+        case EAST -> 90F;
+        case EAST_NORTH_EAST -> 67.5F;
+        case NORTH_EAST -> 45F;
+        case NORTH_NORTH_EAST -> 22.5F;
+        case NORTH_NORTH_WEST -> 337.5F;
+        case NORTH_WEST -> 315F;
+        case SOUTH -> 180F;
+        case SOUTH_EAST -> 135F;
+        case SOUTH_SOUTH_EAST -> 157.5F;
+        case SOUTH_SOUTH_WEST -> 202.5F;
+        case SOUTH_WEST -> 225F;
+        case WEST -> 270F;
+        case WEST_NORTH_WEST -> 292.5F;
+        case WEST_SOUTH_WEST -> 247.5F;
+        default -> 0F;
         };
     }
 
@@ -548,21 +548,21 @@ public class Util {
             if (group.length() == 6) {
                 // Parses #ffffff to a color text.
                 matcher.appendReplacement(buffer, ChatColor.COLOR_CHAR + "x"
-                    + ChatColor.COLOR_CHAR + group.charAt(0) + ChatColor.COLOR_CHAR + group.charAt(1)
-                    + ChatColor.COLOR_CHAR + group.charAt(2) + ChatColor.COLOR_CHAR + group.charAt(3)
-                    + ChatColor.COLOR_CHAR + group.charAt(4) + ChatColor.COLOR_CHAR + group.charAt(5));
+                        + ChatColor.COLOR_CHAR + group.charAt(0) + ChatColor.COLOR_CHAR + group.charAt(1)
+                        + ChatColor.COLOR_CHAR + group.charAt(2) + ChatColor.COLOR_CHAR + group.charAt(3)
+                        + ChatColor.COLOR_CHAR + group.charAt(4) + ChatColor.COLOR_CHAR + group.charAt(5));
             } else {
                 // Parses #fff to a color text.
                 matcher.appendReplacement(buffer, ChatColor.COLOR_CHAR + "x"
-                    + ChatColor.COLOR_CHAR + group.charAt(0) + ChatColor.COLOR_CHAR + group.charAt(0)
-                    + ChatColor.COLOR_CHAR + group.charAt(1) + ChatColor.COLOR_CHAR + group.charAt(1)
-                    + ChatColor.COLOR_CHAR + group.charAt(2) + ChatColor.COLOR_CHAR + group.charAt(2));
+                        + ChatColor.COLOR_CHAR + group.charAt(0) + ChatColor.COLOR_CHAR + group.charAt(0)
+                        + ChatColor.COLOR_CHAR + group.charAt(1) + ChatColor.COLOR_CHAR + group.charAt(1)
+                        + ChatColor.COLOR_CHAR + group.charAt(2) + ChatColor.COLOR_CHAR + group.charAt(2));
             }
         }
 
         // transform normal codes and strip spaces after color code.
         return Util.stripSpaceAfterColorCodes(
-            ChatColor.translateAlternateColorCodes('&', matcher.appendTail(buffer).toString()));
+                ChatColor.translateAlternateColorCodes('&', matcher.appendTail(buffer).toString()));
     }
 
 
@@ -689,35 +689,25 @@ public class Util {
     }
 
     /**
-     * Checks what version the server is running and picks the appropriate NMS handler, or fallback
-     * @return an NMS accelerated class for this server, or a fallback Bukkit API based one
-     * @throws ClassNotFoundException - thrown if there is no fallback class - should never be thrown
-     * @throws SecurityException - thrown if security violation - should never be thrown
-     * @throws NoSuchMethodException - thrown if no constructor for NMS package
-     * @throws InvocationTargetException - should never be thrown
-     * @throws IllegalArgumentException - should never be thrown
-     * @throws IllegalAccessException - should never be thrown
-     * @throws InstantiationException - should never be thrown
+     * Set the NMS handler the plugin will use
+     * @param nms the NMS handler
      */
-    public static NMSAbstraction getNMS() throws ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
-        String serverPackageName = Bukkit.getServer().getClass().getPackage().getName();
-        String pluginPackageName = plugin.getClass().getPackage().getName();
-        String version = serverPackageName.substring(serverPackageName.lastIndexOf('.') + 1);
-        Class<?> clazz;
-        try {
-            clazz = Class.forName(pluginPackageName + ".nms." + version + ".NMSHandler");
-        } catch (Exception e) {
-            plugin.logWarning("No NMS Handler found for " + version + ", falling back to Bukkit API.");
-            clazz = Class.forName(pluginPackageName + ".nms.fallback.NMSHandler");
-        }
-        // Check if we have a NMSAbstraction implementing class at that location.
-        if (NMSAbstraction.class.isAssignableFrom(clazz)) {
-            return (NMSAbstraction) clazz.getConstructor().newInstance();
-        } else {
-            throw new IllegalStateException("Class " + clazz.getName() + " does not implement NMSAbstraction");
-        }
+    public static void setNms(NMSAbstraction nms) {
+        Util.nms = nms;
     }
-    
+
+    /**
+     * Get the NMS handler the plugin will use
+     * @return an NMS accelerated class for this server
+     */
+    public static NMSAbstraction getNMS() {
+        if (nms == null) {
+            plugin.log("No NMS Handler was set, falling back to Bukkit API.");
+            setNms(new world.bentobox.bentobox.nms.fallback.NMSHandler());
+        }
+        return nms;
+    }
+
     /**
      * Broadcast a localized message to all players with the permission {@link Server#BROADCAST_CHANNEL_USERS}
      *

@@ -10,6 +10,7 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -50,8 +51,8 @@ public class TNTListener extends FlagListener {
         // Stop TNT from being damaged if it is being caused by a visitor with a flaming arrow
         if (e.getEntity() instanceof Projectile projectile) {
             // Find out who fired it
-            if (projectile.getShooter() instanceof Player && projectile.getFireTicks() > 0
-                    && !checkIsland(e, (Player)projectile.getShooter(), e.getBlock().getLocation(), Flags.TNT_PRIMING)) {
+            if (projectile.getShooter() instanceof Player shooter && projectile.getFireTicks() > 0
+                    && !checkIsland(e, shooter, e.getBlock().getLocation(), Flags.TNT_PRIMING)) {
                 // Remove the arrow
                 projectile.remove();
                 e.setCancelled(true);
@@ -82,12 +83,17 @@ public class TNTListener extends FlagListener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onExplosion(final EntityExplodeEvent e) {
         // Check world and types
-        if (getIWM().inWorld(e.getLocation()) && TNT_TYPES.contains(e.getEntityType())) {
-            // Remove any blocks from the explosion list if required
-            e.blockList().removeIf(b -> protect(b.getLocation()));
-            e.setCancelled(protect(e.getLocation()));
+        if (!getIWM().inWorld(e.getLocation()) || !TNT_TYPES.contains(e.getEntityType())) {
+            return;
         }
 
+        if (protect(e.getLocation())) {
+            // This is protected as a whole, so just cancel the event
+            e.setCancelled(true);
+        } else {
+            // Remove any blocks from the explosion list if required
+            e.blockList().removeIf(b -> protect(b.getLocation()));
+        }
     }
 
     protected boolean protect(Location location) {
@@ -107,6 +113,45 @@ public class TNTListener extends FlagListener {
                 && TNT_TYPES.contains(e.getDamager().getType())) {
             // Check if it is disallowed, then cancel it.
             e.setCancelled(protect(e.getEntity().getLocation()));
+        }
+    }
+
+    protected boolean protectBlockExplode(Location location) {
+        return getIslands().getProtectedIslandAt(location).map(i -> !i.isAllowed(Flags.BLOCK_EXPLODE_DAMAGE))
+                .orElseGet(() -> !Flags.WORLD_BLOCK_EXPLODE_DAMAGE.isSetForWorld(location.getWorld()));
+    }
+
+    /**
+     * Prevents block explosion from breaking blocks
+     * @param e - event
+     */
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    public void onExplosion(final BlockExplodeEvent e) {
+        // Check world
+        if (!getIWM().inWorld(e.getBlock().getLocation())) {
+            return;
+        }
+
+        if (protectBlockExplode(e.getBlock().getLocation())) {
+            // This is protected as a whole, so just cancel the event
+            e.setCancelled(true);
+        } else {
+            // Remove any blocks from the explosion list if required
+            e.blockList().removeIf(b -> protectBlockExplode(b.getLocation()));
+        }
+    }
+
+    /**
+     * Prevents block explosion from damaging entities.
+     * @param e event
+     */
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    public void onExplosion(final EntityDamageEvent e) {
+        // Check if this in world and a block explosion
+        if (getIWM().inWorld(e.getEntity().getLocation())
+                && e.getCause().equals(EntityDamageEvent.DamageCause.BLOCK_EXPLOSION)) {
+            // Check if it is disallowed, then cancel it.
+            e.setCancelled(protectBlockExplode(e.getEntity().getLocation()));
         }
     }
 }
