@@ -598,7 +598,7 @@ commands:
         you-are-no-longer-a-coop-member: "&c您不再是 &b[name] &c的协作者了。"
         all-members-logged-off: |-
           &c玩家 &b[name] &c的所有岛屿成员都已下线，
-          &c因此您与他自动解除了协作关系。"
+          &c因此您与他自动解除了协作关系。
         success: "&b[name] &a不再是您的协作者了。"
         is-full: "&c您协作者名额已经满了！"
       trust:
