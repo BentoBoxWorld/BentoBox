@@ -4,7 +4,7 @@ catalog:
     ADDONS:
       title: Catalogue d'addons
     empty-here:
-      description: |+
+      description: |
         &c BentoBox n'a pas pu se connecter à son GitHub.
 
         &a Autorisez BentoBox à se connecter à son GitHub dans

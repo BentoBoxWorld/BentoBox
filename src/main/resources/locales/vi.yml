@@ -1486,7 +1486,7 @@ management:
             &a Phần lớn tính năng vẫn sẽ chạy
             &a bình thường, nhưng &6 lỗi nền tảng
             &6 có thể xảy ra&a .
-          INCOMPATIBLE: |+
+          INCOMPATIBLE: |
             &a Đang chạy &e [name] [version]&a .
 
             &a BentoBox đang chạy trên một máy chủ có
@@ -1525,7 +1525,7 @@ catalog:
       install-now: Cài đặt ngay!
     empty-here:
       name: "&c Hơi trống ở đây..."
-      description: |+
+      description: |
         &c Bentobox không thể kết nối Github.
 
         &a Cho phép BentoBox kết nối GitHub trong
@@ -1569,7 +1569,7 @@ panel:
       description: "&a Commits: &b [commits]\n"
     empty-here:
       name: "&c Hơi trống ở đây..."
-      description: |+
+      description: |
         &c BentoBox không thể lấy người đống góp
         &c cho tiện ích này.
 

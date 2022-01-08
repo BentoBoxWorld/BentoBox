@@ -1308,7 +1308,7 @@ management:
             &a I když většina jeho funkcí poběží správně,
             &6 mohou se očekávat chyby nebo problémy
             &6 specifické pro platformu &a .
-          INCOMPATIBLE: |+
+          INCOMPATIBLE: |
             &a Běžím na &e [name] [version]&a .
 
             &a BentoBox právě běží na &c &l NEKOMPATIBILNÍM
@@ -1347,7 +1347,7 @@ catalog:
       install-now: Nainstalovat nyní!
     empty-here:
       name: '&b Tady to vypadá nějak prázdně...'
-      description: |+
+      description: |
         &c BentoBox se nemohl připojit na GitHub.
 
         &a Povol pluginu BentoBox v připojení na GitHub
@@ -1362,7 +1362,7 @@ panel:
         &a Příspěvky: &b [commits]
     empty-here:
       name: '&c Tady to vypadá nějak prázdně...'
-      description: |+
+      description: |
         &c Pluginu BentoBox se nepodařilo najít přispěvatele
         &c pro tento Doplňek.
 

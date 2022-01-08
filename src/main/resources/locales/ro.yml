@@ -1455,7 +1455,7 @@ management:
             &a În timp ce majoritatea funcțiilor sale vor rula
             &a corect, &6 erori specifice platformei sau
             &6 probleme sunt de așteptat &a.
-          INCOMPATIBLE: |+
+          INCOMPATIBLE: |
             &a Running &e [name] [version] &a.
 
             &a BentoBox rulează în prezent pe un
@@ -1495,7 +1495,7 @@ catalog:
       install-now: Instaleaza acum!
     empty-here:
       name: "&b Aici pare gol aici ..."
-      description: |+
+      description: |
         &c BentoBox nu s-a putut conecta la GitHub.
 
         &o Permiteți BentoBox să se conecteze la GitHub în
@@ -1509,7 +1509,7 @@ panel:
       description: "&a Commits: &b [commits]\n"
     empty-here:
       name: "&c Acesta pare gol aici ..."
-      description: |+
+      description: |
         &c BentoBox nu a putut să adune Contribuitorii
         &c pentru acest Addon.
 

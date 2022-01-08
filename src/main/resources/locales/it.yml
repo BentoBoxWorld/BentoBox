@@ -4,7 +4,7 @@ catalog:
     ADDONS:
       title: Catalogo Addons
     empty-here:
-      description: |+
+      description: |
         &cBentoBox non è riuscito a connettersi a GitHub.
 
         &aPermetti a BentoBox di connettersi a GitHub
@@ -773,7 +773,7 @@ management:
 
             &aLe sue caratteristiche sono state progettate
             &aper essere eseguite su questo ambiente.
-          INCOMPATIBLE: |+
+          INCOMPATIBLE: |
             &aIn esecuzione &e[name] [version]&a.
 
             &aBentoBox è in esecuzione su un
