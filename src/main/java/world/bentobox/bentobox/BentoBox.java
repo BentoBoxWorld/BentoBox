@@ -146,7 +146,6 @@ public class BentoBox extends JavaPlugin {
 
         // Load hooks
         hooksManager = new HooksManager(this);
-        hooksManager.registerHook(new VaultHook());
 
         // Load addons. Addons may load worlds, so they must go before islands are loaded.
         addonsManager = new AddonsManager(this);
@@ -166,6 +165,8 @@ public class BentoBox extends JavaPlugin {
 
     private void completeSetup(long loadTime) {
         final long enableStart = System.currentTimeMillis();
+        hooksManager.registerHook(new VaultHook());
+
         hooksManager.registerHook(new PlaceholderAPIHook());
         // Setup the Placeholders manager
         placeholdersManager = new PlaceholdersManager(this);
