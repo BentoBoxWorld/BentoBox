@@ -78,7 +78,7 @@ public class SettingsTab implements Tab, ClickHandler {
         List<Flag> flags = plugin.getFlagsManager().getFlags().stream().filter(f -> f.getType().equals(type))
                 // We're stripping colors to avoid weird sorting issues
                 .sorted(Comparator.comparing(flag -> ChatColor.stripColor(user.getTranslation(flag.getNameReference()))))
-                .toList();
+                .collect(Collectors.toList());
         // Remove any that are not for this game mode
         plugin.getIWM().getAddon(world).ifPresent(gm -> flags.removeIf(f -> !f.getGameModes().isEmpty() && !f.getGameModes().contains(gm)));
         // Remove any that are the wrong rank or that will be on the top row
