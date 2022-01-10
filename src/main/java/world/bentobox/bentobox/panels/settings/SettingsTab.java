@@ -78,7 +78,7 @@ public class SettingsTab implements Tab, ClickHandler {
         List<Flag> flags = plugin.getFlagsManager().getFlags().stream().filter(f -> f.getType().equals(type))
                 // We're stripping colors to avoid weird sorting issues
                 .sorted(Comparator.comparing(flag -> ChatColor.stripColor(user.getTranslation(flag.getNameReference()))))
-                .collect(Collectors.toList());
+                .toList();
         // Remove any that are not for this game mode
         plugin.getIWM().getAddon(world).ifPresent(gm -> flags.removeIf(f -> !f.getGameModes().isEmpty() && !f.getGameModes().contains(gm)));
         // Remove any that are the wrong rank or that will be on the top row
@@ -136,27 +136,27 @@ public class SettingsTab implements Tab, ClickHandler {
         }
         // Add the mode icon
         switch (plugin.getPlayers().getFlagsDisplayMode(user.getUniqueId())) {
-            case ADVANCED -> icons.put(7, new PanelItemBuilder().icon(Material.GOLD_INGOT)
-                    .name(user.getTranslation(PROTECTION_PANEL + "mode.advanced.name"))
-                    .description(user.getTranslation(PROTECTION_PANEL + "mode.advanced.description"), "",
-                            user.getTranslation(CLICK_TO_SWITCH,
-                                    TextVariables.NEXT, user.getTranslation(PROTECTION_PANEL + "mode.expert.name")))
-                    .clickHandler(this)
-                    .build());
-            case EXPERT -> icons.put(7, new PanelItemBuilder().icon(Material.NETHER_BRICK)
-                    .name(user.getTranslation(PROTECTION_PANEL + "mode.expert.name"))
-                    .description(user.getTranslation(PROTECTION_PANEL + "mode.expert.description"), "",
-                            user.getTranslation(CLICK_TO_SWITCH,
-                                    TextVariables.NEXT, user.getTranslation(PROTECTION_PANEL + "mode.basic.name")))
-                    .clickHandler(this)
-                    .build());
-            default -> icons.put(7, new PanelItemBuilder().icon(Material.IRON_INGOT)
-                    .name(user.getTranslation(PROTECTION_PANEL + "mode.basic.name"))
-                    .description(user.getTranslation(PROTECTION_PANEL + "mode.basic.description"), "",
-                            user.getTranslation(CLICK_TO_SWITCH,
-                                    TextVariables.NEXT, user.getTranslation(PROTECTION_PANEL + "mode.advanced.name")))
-                    .clickHandler(this)
-                    .build());
+        case ADVANCED -> icons.put(7, new PanelItemBuilder().icon(Material.GOLD_INGOT)
+                .name(user.getTranslation(PROTECTION_PANEL + "mode.advanced.name"))
+                .description(user.getTranslation(PROTECTION_PANEL + "mode.advanced.description"), "",
+                        user.getTranslation(CLICK_TO_SWITCH,
+                                TextVariables.NEXT, user.getTranslation(PROTECTION_PANEL + "mode.expert.name")))
+                .clickHandler(this)
+                .build());
+        case EXPERT -> icons.put(7, new PanelItemBuilder().icon(Material.NETHER_BRICK)
+                .name(user.getTranslation(PROTECTION_PANEL + "mode.expert.name"))
+                .description(user.getTranslation(PROTECTION_PANEL + "mode.expert.description"), "",
+                        user.getTranslation(CLICK_TO_SWITCH,
+                                TextVariables.NEXT, user.getTranslation(PROTECTION_PANEL + "mode.basic.name")))
+                .clickHandler(this)
+                .build());
+        default -> icons.put(7, new PanelItemBuilder().icon(Material.IRON_INGOT)
+                .name(user.getTranslation(PROTECTION_PANEL + "mode.basic.name"))
+                .description(user.getTranslation(PROTECTION_PANEL + "mode.basic.description"), "",
+                        user.getTranslation(CLICK_TO_SWITCH,
+                                TextVariables.NEXT, user.getTranslation(PROTECTION_PANEL + "mode.advanced.name")))
+                .clickHandler(this)
+                .build());
         }
         // Add the reset everything to default - it's only in the player's settings panel
         if (island != null && user.getUniqueId().equals(island.getOwner())) {
