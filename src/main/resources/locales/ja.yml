@@ -1452,7 +1452,7 @@ catalog:
       install-now: 今すぐインストール！
     empty-here:
       name: "&bこれはここでは空に見えます..."
-      description: |+
+      description: |
         &cBentoBoxはGitHubに接続できませんでした。
 
         &aBentoBoxでGitHubに接続できるようにする
@@ -1466,7 +1466,7 @@ panel:
       description: "&aCommits：&b [commits]\n"
     empty-here:
       name: "&cこれはここでは空に見えます..."
-      description: |+
+      description: |
         &cBentoBoxは貢献者を収集できませんでした
         このアドオン用。
 

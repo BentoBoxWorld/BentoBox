@@ -35,33 +35,36 @@ import world.bentobox.bentobox.util.Util;
 public class AdminSettingsCommand extends CompositeCommand {
 
     private static final String SPAWN_ISLAND = "spawn-island";
-    private final List<String> PROTECTION_FLAG_NAMES;
+    private List<String> protectionFlagNames;
     private Island island;
-    private final List<String> SETTING_FLAG_NAMES;
-    private final List<String> WORLD_SETTING_FLAG_NAMES;
+    private List<String> settingFlagNames;
+    private List<String> worldSettingFlagNames;
     private @NonNull Optional<Flag> flag = Optional.empty();
     private boolean activeState;
     private int rank;
+    private final GameModeAddon gameMode;
 
     public AdminSettingsCommand(CompositeCommand islandCommand) {
         super(islandCommand, "settings", "flags", "options");
-        // make constants
-        GameModeAddon gameMode = getPlugin().getIWM().getAddon(getWorld()).orElse(null);
-        PROTECTION_FLAG_NAMES = getPlugin().getFlagsManager().getFlags().stream()
+        gameMode = getPlugin().getIWM().getAddon(getWorld()).orElse(null);
+    }
+
+    private void makeLists() {
+        protectionFlagNames = getPlugin().getFlagsManager().getFlags().stream()
                 .filter(f -> f.getType().equals(Type.PROTECTION))
                 .filter(f -> f.getGameModes().isEmpty() || gameMode == null || f.getGameModes().contains(gameMode))
                 .map(Flag::getID)
-                .collect(Collectors.toList());
-        SETTING_FLAG_NAMES = getPlugin().getFlagsManager().getFlags().stream()
+                .toList();
+        settingFlagNames = getPlugin().getFlagsManager().getFlags().stream()
                 .filter(f -> f.getType().equals(Type.SETTING))
                 .filter(f -> f.getGameModes().isEmpty() || gameMode == null || f.getGameModes().contains(gameMode))
                 .map(Flag::getID)
-                .collect(Collectors.toList());
-        WORLD_SETTING_FLAG_NAMES = getPlugin().getFlagsManager().getFlags().stream()
+                .toList();
+        worldSettingFlagNames = getPlugin().getFlagsManager().getFlags().stream()
                 .filter(f -> f.getType().equals(Type.WORLD_SETTING))
                 .filter(f -> f.getGameModes().isEmpty() || gameMode == null || f.getGameModes().contains(gameMode))
                 .map(Flag::getID)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
@@ -79,7 +82,7 @@ public class AdminSettingsCommand extends CompositeCommand {
         }
         if (args.size() > 1) {
             // Command
-            return checkSyntax(user, args);            
+            return checkSyntax(user, args);
         }
         return getIsland(user, args);
     }
@@ -112,10 +115,12 @@ public class AdminSettingsCommand extends CompositeCommand {
      * @return true if the syntax is correct
      */
     private boolean checkSyntax(User user, List<String> args) {
+        // Update the flag lists
+        this.makeLists();
         if (args.size() == 2) {
             // Should be a world setting
             // If world settings, then active/disabled, otherwise player flags
-            if (WORLD_SETTING_FLAG_NAMES.contains(args.get(0).toUpperCase(Locale.ENGLISH))) {
+            if (worldSettingFlagNames.contains(args.get(0).toUpperCase(Locale.ENGLISH))) {
                 if (checkActiveDisabled(user, args.get(1))) {
                     flag = getPlugin().getFlagsManager().getFlag(args.get(0).toUpperCase(Locale.ENGLISH));
                     return true;
@@ -130,17 +135,17 @@ public class AdminSettingsCommand extends CompositeCommand {
                 return false;
             }
 
-            if (!SETTING_FLAG_NAMES.contains(args.get(1).toUpperCase(Locale.ENGLISH))
-                    && !PROTECTION_FLAG_NAMES.contains(args.get(1).toUpperCase(Locale.ENGLISH))) {
+            if (!settingFlagNames.contains(args.get(1).toUpperCase(Locale.ENGLISH))
+                    && !protectionFlagNames.contains(args.get(1).toUpperCase(Locale.ENGLISH))) {
                 user.sendMessage("commands.admin.settings.unknown-flag", TextVariables.NAME, args.get(2));
-                return false; 
+                return false;
             }
             // Set flag
             flag = getPlugin().getFlagsManager().getFlag(args.get(1).toUpperCase(Locale.ENGLISH));
             // Check settings
             if (flag.isPresent()) {
                 if (flag.get().getType().equals(Type.SETTING)) {
-                    return checkActiveDisabled(user, args.get(2)); 
+                    return checkActiveDisabled(user, args.get(2));
                 } else {
                     // Protection flag
                     return checkRank(user, String.join(" ", args.subList(2, args.size())));
@@ -175,7 +180,7 @@ public class AdminSettingsCommand extends CompositeCommand {
         String disabled = ChatColor.stripColor(user.getTranslation("protection.panel.flag-item.setting-disabled"));
         if (!string.equalsIgnoreCase(active) && !string.equalsIgnoreCase(disabled)) {
             user.sendMessage("commands.admin.settings.unknown-setting", TextVariables.NAME, string);
-            return false; 
+            return false;
         }
         activeState = string.equalsIgnoreCase(active);
         return true;
@@ -199,7 +204,7 @@ public class AdminSettingsCommand extends CompositeCommand {
                     f.setSetting(getWorld(), activeState);
                     break;
                 default:
-                    break;                
+                    break;
                 }
             });
             user.sendMessage("general.success");
@@ -236,36 +241,38 @@ public class AdminSettingsCommand extends CompositeCommand {
 
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
+        // Update with the latest lists
+        this.makeLists();
         String active = ChatColor.stripColor(user.getTranslation("protection.panel.flag-item.setting-active"));
         String disabled = ChatColor.stripColor(user.getTranslation("protection.panel.flag-item.setting-disabled"));
         List<String> options = new ArrayList<>();
         String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
         if (args.size() == 2) {
-            // Player names or world settings  
+            // Player names or world settings
             options = Util.tabLimit(Util.getOnlinePlayerList(user), lastArg);
-            options.addAll(WORLD_SETTING_FLAG_NAMES);
+            options.addAll(worldSettingFlagNames);
             if (getIslands().getSpawn(getWorld()).isPresent()) {
                 options.add(SPAWN_ISLAND);
             }
         } else if (args.size() == 3) {
             // If world settings, then active/disabled, otherwise player flags
-            if (WORLD_SETTING_FLAG_NAMES.contains(args.get(1).toUpperCase(Locale.ENGLISH))) {
+            if (worldSettingFlagNames.contains(args.get(1).toUpperCase(Locale.ENGLISH))) {
                 options = Arrays.asList(active, disabled);
             } else {
                 // Flag IDs
-                options.addAll(PROTECTION_FLAG_NAMES);
-                options.addAll(SETTING_FLAG_NAMES);
+                options.addAll(protectionFlagNames);
+                options.addAll(settingFlagNames);
             }
         } else if (args.size() == 4) {
             // Get flag in previous argument
             options = getPlugin().getFlagsManager().getFlag(args.get(2).toUpperCase(Locale.ENGLISH)).map(f -> switch (f.getType()) {
-                case PROTECTION -> getPlugin().getRanksManager()
-                        .getRanks().entrySet().stream()
-                        .filter(en -> en.getValue() > RanksManager.BANNED_RANK && en.getValue() <= RanksManager.OWNER_RANK)
-                        .map(Entry::getKey)
-                        .map(user::getTranslation).collect(Collectors.toList());
-                case SETTING -> Arrays.asList(active, disabled);
-                default -> Collections.<String>emptyList();
+            case PROTECTION -> getPlugin().getRanksManager()
+            .getRanks().entrySet().stream()
+            .filter(en -> en.getValue() > RanksManager.BANNED_RANK && en.getValue() <= RanksManager.OWNER_RANK)
+            .map(Entry::getKey)
+            .map(user::getTranslation).collect(Collectors.toList());
+            case SETTING -> Arrays.asList(active, disabled);
+            default -> Collections.<String>emptyList();
             }).orElse(Collections.emptyList());
         }
         return Optional.of(Util.tabLimit(options, lastArg));

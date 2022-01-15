@@ -568,7 +568,7 @@ commands:
           days: "days"
           hours: "hours"
           minutes: "minutes"
-        header: |+
+        header: |
           &f --- &a Team details &f ---
           &a Members: &b [total]&7 /&b [max]
           &a Online members: &b [online]
@@ -1359,7 +1359,7 @@ protection:
       click-to-switch: "&e Click &7 to switch to the &r [next]&r &7 ."
     reset-to-default:
       name: "&c Reset to default"
-      description: |+
+      description: |
         &a Resets &c &l ALL &r &a the settings to their
         &a default value.
     PROTECTION:
@@ -1427,7 +1427,7 @@ management:
           description: "&a Opens the Admin Blueprint menu."
         gamemode:
           name: "&f [name]"
-          description: |+
+          description: |
             &a Islands: &b [islands]
       addons:
         name: "&6 Addons"
@@ -1453,7 +1453,7 @@ management:
       state:
         name: "&6 Compatibility"
         description:
-          COMPATIBLE: |+
+          COMPATIBLE: |
             &a Running &e [name] [version]&a .
 
             &a BentoBox is currently running on a
@@ -1462,7 +1462,7 @@ management:
 
             &a Its features are fully designed to
             &a run in this environment.
-          SUPPORTED: |+
+          SUPPORTED: |
             &a Running &e [name] [version]&a .
 
             &a BentoBox is currently running on a
@@ -1471,7 +1471,7 @@ management:
 
             &a Most of its features will run smoothly
             &a in this environment.
-          NOT_SUPPORTED: |+
+          NOT_SUPPORTED: |
             &a Running &e [name] [version]&a .
 
             &a BentoBox is currently running on a
@@ -1481,7 +1481,7 @@ management:
             &a While most of its features will run
             &a correctly, &6 platform-specific bugs or
             &6 issues are to be expected&a .
-          INCOMPATIBLE: |+
+          INCOMPATIBLE: |
             &a Running &e [name] [version]&a .
 
             &a BentoBox is currently running on an
@@ -1500,16 +1500,16 @@ catalog:
     views:
       gamemodes:
         name: "&6 Gamemodes"
-        description: |+
+        description: |
           &e Click &a to browse through the
           &a available official Gamemodes.
       addons:
         name: "&6 Addons"
-        description: |+
+        description: |
           &e Click &a to browse through the
           &a available official Addons.
     icon:
-      description-template: |+
+      description-template: |
         &8 [topic]
         &a [install]
 
@@ -1522,7 +1522,7 @@ catalog:
 
     empty-here:
       name: "&b This looks empty here..."
-      description: |+
+      description: |
         &c BentoBox could not connect to GitHub.
 
         &a Allow BentoBox to connect to GitHub in
@@ -1568,14 +1568,14 @@ panel:
         &a Commits: &b [commits]
     empty-here:
       name: "&c This looks empty here..."
-      description: |+
+      description: |
         &c BentoBox could not gather the Contributors
         &c for this Addon.
 
         &a Allow BentoBox to connect to GitHub in
         &a the configuration or try again later.
 
-successfully-loaded: |
+successfully-loaded: |2
 
   &6   ____             _        ____
   &6  |  _ \           | |      |  _ \             &7 by &a tastybento &7 and &a Poslovitch

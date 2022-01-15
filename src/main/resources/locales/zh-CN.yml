@@ -1448,7 +1448,7 @@ catalog:
       install-now: 现在安装！
     empty-here:
       name: "&b&l这里空空如也..."
-      description: |+
+      description: |
         &c&lBentoBox&r  &c无法连接到 GitHub。
 
         &a请修改配置允许&b&lBentoBox&a连接

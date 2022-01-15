@@ -1337,7 +1337,7 @@ catalog:
       install-now: 지금 설치해보세요!
     empty-here:
       name: "&b 이곳엔 아무것도 없네요..."
-      description: |+
+      description: |
         &c BentoBox 가 깃헙에 연결할수 없습니다
 
         &a BentoBox가 구성에서 GitHub에 연결하도록 허용하거나 나중에 다시 시도하십시오.

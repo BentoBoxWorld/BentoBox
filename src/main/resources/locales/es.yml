@@ -1437,7 +1437,7 @@ catalog:
       install-now: Instalar ahora!
     empty-here:
       name: "&bEsto se ve vacío aquí..."
-      description: |+
+      description: |
         &cBentoBox no pudo conectarse a GitHub.
         &aPermitir que BentoBox se conecte a GitHub en
         &aLa configuración o vuelva a intentarlo más tarde.
@@ -1450,7 +1450,7 @@ panel:
       description: "&aCommits: &b[commits]\n"
     empty-here:
       name: "&cEsto parece vacío aquí..."
-      description: |+
+      description: |
         &cBentoBox no pudo reunir a los contribuyentes
         &cpara este complemento.
 

@@ -1398,7 +1398,7 @@ management:
             &a Enquanto a maior parte de suas funcionalidades rodarão
             &a corretamente, &6 problemas específicos a plataforma ou
             &6 erros são esperados &a .
-          INCOMPATIBLE: |+
+          INCOMPATIBLE: |
             &a Rodando &e [name] [version]&a .
 
             &a BentoBox no momento está rodando em um
@@ -1437,7 +1437,7 @@ catalog:
       install-now: Instalar agora!
     empty-here:
       name: '&b Isso parece vazio...'
-      description: |+
+      description: |
         &c BentoBox não pôde se conectar ao GitHub.
 
         &a Permita que BentoBox se conecte ao GitHub na
@@ -1452,7 +1452,7 @@ panel:
         &a Commits: &b [commits]
     empty-here:
       name: '&c Isso parece vazio...'
-      description: |+
+      description: |
         &c BentoBox não pôde juntar os contribuidores
         &c para esse Addon.
 

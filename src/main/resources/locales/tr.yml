@@ -1446,7 +1446,7 @@ catalog:
       install-now: Şimdi yükle!
     empty-here:
       name: "&9Burası boş gibi gözüküyor..."
-      description: |+
+      description: |
         &cBentoBox github'a bağlanamadı!
 
         &aBentoBox'un konfigürasyondaki GitHub'a

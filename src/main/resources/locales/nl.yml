@@ -1486,7 +1486,7 @@ management:
             &a Terwijl de meeste functies werken
             &a correct, &6 platformspecifieke bugs of
             &6 problemen zijn te verwachten &a.
-          INCOMPATIBLE: |+
+          INCOMPATIBLE: |
             &a Running &e [name] [version] &a.
 
             &a BentoBox draait momenteel op een
@@ -1526,7 +1526,7 @@ catalog:
       install-now: Installeer nu!
     empty-here:
       name: "&b Dit ziet er hier leeg uit ..."
-      description: |+
+      description: |
         &c BentoBox kon geen verbinding maken met GitHub.
 
         &a Sta BentoBox toe om verbinding te maken met GitHub in
@@ -1570,7 +1570,7 @@ panel:
       description: "&a Commits: &b [commits]\n"
     empty-here:
       name: "&c Dit ziet er hier leeg uit ..."
-      description: |+
+      description: |
         &c BentoBox kon de bijdragers niet verzamelen
         &c voor deze add-on.
 

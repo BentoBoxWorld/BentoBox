@@ -4,7 +4,7 @@ catalog:
     ADDONS:
       title: Papildinājumu Katalogs
     empty-here:
-      description: |+
+      description: |
         &cBentoBox nevarēja sazināties ar GitHub.
 
         &aAtļauj BentoBox savienoties ar GitHub
@@ -764,7 +764,7 @@ management:
 
             &aVisas funkcionalitātes tika radītas
             &atieši šai videi.
-          INCOMPATIBLE: |+
+          INCOMPATIBLE: |
             &aPalaista &e[name] [version]&a.
 
             &aBentoBox šobrīd strādā ar

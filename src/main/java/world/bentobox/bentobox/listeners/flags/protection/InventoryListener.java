@@ -1,11 +1,13 @@
 package world.bentobox.bentobox.listeners.flags.protection;
 
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Barrel;
 import org.bukkit.block.Beacon;
 import org.bukkit.block.BrewingStand;
 import org.bukkit.block.Chest;
 import org.bukkit.block.Dispenser;
+import org.bukkit.block.DoubleChest;
 import org.bukkit.block.Dropper;
 import org.bukkit.block.Furnace;
 import org.bukkit.block.Hopper;
@@ -20,6 +22,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.InventoryHolder;
 
+import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.lists.Flags;
 
@@ -72,25 +75,29 @@ public class InventoryListener extends FlagListener {
         else if (inventoryHolder instanceof ShulkerBox) {
             checkIsland(e, player, e.getInventory().getLocation(), Flags.SHULKER_BOX);
         }
-        else if (inventoryHolder instanceof Chest chestInventoryHolder) {
-            // To differentiate between a Chest and a Trapped Chest we need to get the Block corresponding to the inventory
-            try {
-                if (chestInventoryHolder.getType() == Material.TRAPPED_CHEST) {
-                    checkIsland(e, player, e.getInventory().getLocation(), Flags.TRAPPED_CHEST);
-                } else {
-                    checkIsland(e, player, e.getInventory().getLocation(), Flags.CHEST);
-                }
-            } catch (IllegalStateException ignored) {
-                // Thrown if the Chest corresponds to a block that isn't placed (how did we get here?)
-                checkIsland(e, player, e.getInventory().getLocation(), Flags.CHEST);
-            }
+        else if (inventoryHolder instanceof Chest c) {
+            checkInvHolder(c.getLocation(), e, player);
+        }
+        else if (inventoryHolder instanceof DoubleChest dc) {
+            checkInvHolder(dc.getLocation(), e, player);
         }
         else if (inventoryHolder instanceof StorageMinecart) {
             checkIsland(e, player, e.getInventory().getLocation(), Flags.CHEST);
         }
         else if (!(inventoryHolder instanceof Player)) {
+            BentoBox.getInstance().logDebug(inventoryHolder.getClass().toGenericString());
             // All other containers
             checkIsland(e, player, e.getInventory().getLocation(), Flags.CONTAINER);
         }
+    }
+
+    private void checkInvHolder(Location l, InventoryClickEvent e, Player player) {
+        if (l.getBlock().getType().equals(Material.TRAPPED_CHEST)) {
+            checkIsland(e, player, l, Flags.TRAPPED_CHEST);
+        } else {
+            checkIsland(e, player, l, Flags.CHEST);
+        }
+
+
     }
 }
