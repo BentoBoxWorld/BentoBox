@@ -2,16 +2,23 @@ package world.bentobox.bentobox.listeners.flags.protection;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.List;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.block.BrewingStand;
 import org.bukkit.block.Chest;
 import org.bukkit.block.Dispenser;
+import org.bukkit.block.DoubleChest;
 import org.bukkit.block.Dropper;
 import org.bukkit.block.Furnace;
 import org.bukkit.block.Hopper;
@@ -31,7 +38,6 @@ import org.bukkit.inventory.InventoryView;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
@@ -48,12 +54,14 @@ import world.bentobox.bentobox.util.Util;
 @PrepareForTest( {BentoBox.class, Flags.class, Util.class, Bukkit.class} )
 public class InventoryListenerTest extends AbstractCommonSetup {
 
-    private final static List<Class<?>> HOLDERS = Arrays.asList(Horse.class, Chest.class,ShulkerBox.class, StorageMinecart.class,
+    private final static List<Class<?>> HOLDERS = Arrays.asList(Horse.class, Chest.class,
+            DoubleChest.class,
+            ShulkerBox.class, StorageMinecart.class,
             Dispenser.class,
             Dropper.class, Hopper.class, Furnace.class, BrewingStand.class,
             Villager.class, WanderingTrader.class);
-
     private InventoryListener l;
+    private Material type;
 
     /**
      * @throws java.lang.Exception
@@ -63,7 +71,13 @@ public class InventoryListenerTest extends AbstractCommonSetup {
     public void setUp() throws Exception {
         super.setUp();
         // Default is that everything is allowed
-        when(island.isAllowed(Mockito.any(), Mockito.any())).thenReturn(true);
+        when(island.isAllowed(any(), any())).thenReturn(true);
+
+        // Block at chest location
+        type = Material.CHEST;
+        Block block = mock(Block.class);
+        when(block.getType()).thenReturn(type);
+        when(location.getBlock()).thenReturn(block);
 
         // Listener
         l = new InventoryListener();
@@ -82,6 +96,12 @@ public class InventoryListenerTest extends AbstractCommonSetup {
         HOLDERS.forEach(c -> {
             Object holder = mock(c);
             when(inv.getHolder()).thenReturn((InventoryHolder) holder);
+            if (c.equals(Chest.class)) {
+                when(((Chest)holder).getLocation()).thenReturn(location);
+            }
+            if (c.equals(DoubleChest.class)) {
+                when(((DoubleChest)holder).getLocation()).thenReturn(location);
+            }
             when(view.getTopInventory()).thenReturn(inv);
             when(inv.getLocation()).thenReturn(location);
             when(view.getBottomInventory()).thenReturn(inv);
@@ -92,6 +112,15 @@ public class InventoryListenerTest extends AbstractCommonSetup {
             assertFalse(e.isCancelled());
         });
 
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.InventoryListener#onInventoryClick(org.bukkit.event.inventory.InventoryClickEvent)}.
+     */
+    @Test
+    public void testOnInventoryClickAllowedTrappedChest() {
+        type = Material.TRAPPED_CHEST;
+        testOnInventoryClickAllowed();
     }
 
     /**
@@ -141,7 +170,7 @@ public class InventoryListenerTest extends AbstractCommonSetup {
      */
     @Test
     public void testOnInventoryClickNotAllowed() {
-        when(island.isAllowed(Mockito.any(), Mockito.any())).thenReturn(false);
+        when(island.isAllowed(any(), any())).thenReturn(false);
         InventoryView view = mock(InventoryView.class);
         when(view.getPlayer()).thenReturn(player);
         Inventory inv = mock(Inventory.class);
@@ -149,6 +178,12 @@ public class InventoryListenerTest extends AbstractCommonSetup {
         when(inv.getSize()).thenReturn(9);
         HOLDERS.forEach(c -> {
             Object holder = mock(c);
+            if (c.equals(Chest.class)) {
+                when(((Chest)holder).getLocation()).thenReturn(location);
+            }
+            if (c.equals(DoubleChest.class)) {
+                when(((DoubleChest)holder).getLocation()).thenReturn(location);
+            }
             when(inv.getHolder()).thenReturn((InventoryHolder) holder);
             when(view.getTopInventory()).thenReturn(inv);
             when(view.getBottomInventory()).thenReturn(inv);
@@ -158,8 +193,18 @@ public class InventoryListenerTest extends AbstractCommonSetup {
             l.onInventoryClick(e);
             assertTrue(e.isCancelled());
         });
-        Mockito.verify(notifier, Mockito.times(HOLDERS.size())).notify(Mockito.any(), Mockito.eq("protection.protected"));
+        verify(notifier, times(HOLDERS.size())).notify(any(), eq("protection.protected"));
     }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.InventoryListener#onInventoryClick(org.bukkit.event.inventory.InventoryClickEvent)}.
+     */
+    @Test
+    public void testOnInventoryClickNotAllowedTrappedChest() {
+        type = Material.TRAPPED_CHEST;
+        testOnInventoryClickNotAllowed();
+    }
+
 
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.InventoryListener#onInventoryClick(org.bukkit.event.inventory.InventoryClickEvent)}.
@@ -187,7 +232,7 @@ public class InventoryListenerTest extends AbstractCommonSetup {
      */
     @Test
     public void testOnInventoryClickOtherHolderNotAllowed() {
-        when(island.isAllowed(Mockito.any(), Mockito.any())).thenReturn(false);
+        when(island.isAllowed(any(), any())).thenReturn(false);
         InventoryView view = mock(InventoryView.class);
         when(view.getPlayer()).thenReturn(player);
         Inventory inv = mock(Inventory.class);
@@ -209,7 +254,7 @@ public class InventoryListenerTest extends AbstractCommonSetup {
      */
     @Test
     public void testOnInventoryClickOtherHolderPlayerNotAllowed() {
-        when(island.isAllowed(Mockito.any(), Mockito.any())).thenReturn(false);
+        when(island.isAllowed(any(), any())).thenReturn(false);
         InventoryView view = mock(InventoryView.class);
         when(view.getPlayer()).thenReturn(player);
         Inventory inv = mock(Inventory.class);
