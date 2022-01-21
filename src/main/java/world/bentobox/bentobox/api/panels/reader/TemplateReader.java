@@ -18,6 +18,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import world.bentobox.bentobox.api.panels.Panel;
@@ -339,6 +340,30 @@ public class TemplateReader
                                             actionDataSection.getString("tooltip"));
                             itemRecord.addAction(actionData);
                         }
+                    }
+                });
+            }
+        }
+        else if (section.isList("actions"))
+        {
+            // Read Click data as list which allows to have duplicate click types.
+
+            List<Map<?, ?>> actionList = section.getMapList("actions");
+
+            if (!actionList.isEmpty())
+            {
+                actionList.forEach(valueMap -> {
+                    ClickType clickType = Enums.getIfPresent(ClickType.class,
+                        String.valueOf(valueMap.get("click-type")).toUpperCase()).orNull();
+
+                    if (clickType != null)
+                    {
+                        ItemTemplateRecord.ActionRecords actionData =
+                            new ItemTemplateRecord.ActionRecords(clickType,
+                                valueMap.containsKey("type") ? String.valueOf(valueMap.get("type")) : null,
+                                valueMap.containsKey("content") ? String.valueOf(valueMap.get("content")) : null,
+                                valueMap.containsKey("tooltip") ? String.valueOf(valueMap.get("tooltip")) : null);
+                        itemRecord.addAction(actionData);
                     }
                 });
             }
