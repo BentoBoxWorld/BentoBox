@@ -33,10 +33,18 @@ public class ObsidianScoopingListener extends FlagListener {
      * Enables changing of obsidian back into lava
      *
      * @param e event
-     * @return false if obsidian not scooped, true if scooped
      */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
-    public void onPlayerInteract(final PlayerInteractEvent e) {
+    public void onPlayerInteractEvent(final PlayerInteractEvent e) {
+        onPlayerInteract(e);
+    }
+    /**
+     * Enables changing of obsidian back into lava
+     *
+     * @param e event
+     * @return false if obsidian not scooped, true if scooped
+     */
+    boolean onPlayerInteract(final PlayerInteractEvent e) {
         if (!getIWM().inWorld(e.getPlayer().getLocation())
                 || !Flags.OBSIDIAN_SCOOPING.isSetForWorld(e.getPlayer().getWorld())
                 || !e.getPlayer().getGameMode().equals(GameMode.SURVIVAL)
@@ -44,9 +52,9 @@ public class ObsidianScoopingListener extends FlagListener {
                 || !(e.getItem() != null && e.getItem().getType().equals(Material.BUCKET))
                 || !(e.getClickedBlock() != null && e.getClickedBlock().getType().equals(Material.OBSIDIAN))
                 || e.getClickedBlock().getRelative(e.getBlockFace()).getType().equals(Material.WATER)) {
-            return;
+            return false;
         }
-        lookForLava(e);
+        return lookForLava(e);
     }
 
     private boolean lookForLava(PlayerInteractEvent e) {

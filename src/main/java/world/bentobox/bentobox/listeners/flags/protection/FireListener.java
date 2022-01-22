@@ -48,11 +48,8 @@ public class FireListener extends FlagListener {
      * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void onBlockBurnEvent(BlockBurnEvent e) {
-        onBlockBurn(e);
-    }
-    boolean onBlockBurn(BlockBurnEvent e) {
-        return checkFire(e, e.getBlock().getLocation(), Flags.FIRE_BURNING);
+    public void onBlockBurn(BlockBurnEvent e) {
+        checkFire(e, e.getBlock().getLocation(), Flags.FIRE_BURNING);
     }
 
     /**
@@ -60,11 +57,10 @@ public class FireListener extends FlagListener {
      * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void onBlockSpreadEvent(BlockSpreadEvent e) {
-        onBlockSpread(e);
-    }
-    boolean onBlockSpread(BlockSpreadEvent e) {
-        return e.getSource().getType().equals(Material.FIRE)&& checkFire(e, e.getBlock().getLocation(), Flags.FIRE_SPREAD);
+    public void onBlockSpread(BlockSpreadEvent e) {
+        if (e.getSource().getType().equals(Material.FIRE)) {
+            checkFire(e, e.getBlock().getLocation(), Flags.FIRE_SPREAD);
+        }
     }
 
     /**
@@ -72,12 +68,11 @@ public class FireListener extends FlagListener {
      * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void onBlockIgniteEvent(BlockIgniteEvent e) {
-        onBlockIgnite(e);
-    }
-    boolean onBlockIgnite(BlockIgniteEvent e) {
+    public void onBlockIgnite(BlockIgniteEvent e) {
         // Check if this is a portal lighting - that is allowed any time
-        return !e.getBlock().getType().equals(Material.OBSIDIAN) &&  checkFire(e, e.getBlock().getLocation(), Flags.FIRE_IGNITE);
+        if (!e.getBlock().getType().equals(Material.OBSIDIAN)) {
+            checkFire(e, e.getBlock().getLocation(), Flags.FIRE_IGNITE);
+        }
     }
 
     /**
@@ -104,7 +99,7 @@ public class FireListener extends FlagListener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onLightningStrikeEvent(LightningStrikeEvent e) {
         checkFire(e, e.getLightning().getLocation(), Flags.FIRE_IGNITE);
     }

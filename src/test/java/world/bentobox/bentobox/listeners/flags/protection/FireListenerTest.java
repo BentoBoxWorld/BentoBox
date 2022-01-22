@@ -128,12 +128,12 @@ public class FireListenerTest {
 
         // Player name
         PlayersManager pm = mock(PlayersManager.class);
-        when(pm.getName(Mockito.any())).thenReturn("tastybento");
+        when(pm.getName(any())).thenReturn("tastybento");
         when(plugin.getPlayers()).thenReturn(pm);
 
         // World Settings
         WorldSettings ws = mock(WorldSettings.class);
-        when(iwm.getWorldSettings(Mockito.any())).thenReturn(ws);
+        when(iwm.getWorldSettings(any())).thenReturn(ws);
 
         when(ws.getWorldFlags()).thenReturn(worldFlags);
         GameModeAddon gma = mock(GameModeAddon.class);
@@ -141,7 +141,7 @@ public class FireListenerTest {
         when(iwm.getAddon(any())).thenReturn(opGma);
 
         PowerMockito.mockStatic(Util.class);
-        when(Util.getWorld(Mockito.any())).thenReturn(mock(World.class));
+        when(Util.getWorld(any())).thenReturn(mock(World.class));
     }
 
     @After
@@ -168,16 +168,16 @@ public class FireListenerTest {
         listener.setPlugin(plugin);
 
         // Disallow fire
-        when(island.isAllowed(Mockito.any())).thenReturn(false);
-        when(island.isAllowed(Mockito.any(), Mockito.any())).thenReturn(false);
+        when(island.isAllowed(any())).thenReturn(false);
+        when(island.isAllowed(any(), any())).thenReturn(false);
         Flags.FLINT_AND_STEEL.setDefaultSetting(false);
         assertTrue(listener.checkFire(e, location, Flags.FLINT_AND_STEEL));
         Flags.FLINT_AND_STEEL.setDefaultSetting(true);
         assertTrue(listener.checkFire(e, location, Flags.FLINT_AND_STEEL));
 
         // Allow fire
-        when(island.isAllowed(Mockito.any())).thenReturn(true);
-        when(island.isAllowed(Mockito.any(), Mockito.any())).thenReturn(true);
+        when(island.isAllowed(any())).thenReturn(true);
+        when(island.isAllowed(any(), any())).thenReturn(true);
         Flags.FLINT_AND_STEEL.setDefaultSetting(false);
         assertFalse(listener.checkFire(e, location, Flags.FLINT_AND_STEEL));
         Flags.FLINT_AND_STEEL.setDefaultSetting(true);
@@ -211,20 +211,24 @@ public class FireListenerTest {
         listener.setPlugin(plugin);
 
         // Disallow fire
-        when(island.isAllowed(Mockito.any())).thenReturn(false);
-        when(island.isAllowed(Mockito.any(), Mockito.any())).thenReturn(false);
+        when(island.isAllowed(any())).thenReturn(false);
+        when(island.isAllowed(any(), any())).thenReturn(false);
         Flags.FIRE_BURNING.setDefaultSetting(false);
-        assertTrue(listener.onBlockBurn(e));
+        listener.onBlockBurn(e);
+        assertTrue(e.isCancelled());
         Flags.FIRE_BURNING.setDefaultSetting(true);
-        assertTrue(listener.onBlockBurn(e));
+        listener.onBlockBurn(e);
+        assertTrue(e.isCancelled());
 
         // Allow fire
-        when(island.isAllowed(Mockito.any())).thenReturn(true);
-        when(island.isAllowed(Mockito.any(), Mockito.any())).thenReturn(true);
+        when(island.isAllowed(any())).thenReturn(true);
+        when(island.isAllowed(any(), any())).thenReturn(true);
         Flags.FIRE_BURNING.setDefaultSetting(false);
-        assertFalse(listener.onBlockBurn(e));
+        listener.onBlockBurn(e);
+        assertFalse(e.isCancelled());
         Flags.FIRE_BURNING.setDefaultSetting(true);
-        assertFalse(listener.onBlockBurn(e));
+        listener.onBlockBurn(e);
+        assertFalse(e.isCancelled());
 
         // Check with no island
         e = new BlockBurnEvent(block, block);
@@ -235,7 +239,8 @@ public class FireListenerTest {
         assertTrue(e.isCancelled());
         // Fire allowed
         Flags.FIRE_BURNING.setDefaultSetting(true);
-        assertFalse(listener.onBlockBurn(e));
+        listener.onBlockBurn(e);
+        assertFalse(e.isCancelled());
     }
 
     @Test
@@ -261,29 +266,35 @@ public class FireListenerTest {
         listener.setPlugin(plugin);
 
         // Disallow fire
-        when(island.isAllowed(Mockito.any())).thenReturn(false);
-        when(island.isAllowed(Mockito.any(), Mockito.any())).thenReturn(false);
+        when(island.isAllowed(any())).thenReturn(false);
+        when(island.isAllowed(any(), any())).thenReturn(false);
         Flags.FIRE_SPREAD.setDefaultSetting(false);
-        assertTrue(listener.onBlockSpread(e));
+        listener.onBlockSpread(e);
+        assertTrue(e.isCancelled());
         Flags.FIRE_SPREAD.setDefaultSetting(true);
-        assertTrue(listener.onBlockSpread(e));
+        listener.onBlockSpread(e);
+        assertTrue(e.isCancelled());
 
         // Allow fire spread
-        when(island.isAllowed(Mockito.any())).thenReturn(true);
-        when(island.isAllowed(Mockito.any(), Mockito.any())).thenReturn(true);
+        when(island.isAllowed(any())).thenReturn(true);
+        when(island.isAllowed(any(), any())).thenReturn(true);
         Flags.FIRE_SPREAD.setDefaultSetting(false);
-        assertFalse(listener.onBlockSpread(e));
+        listener.onBlockSpread(e);
+        assertFalse(e.isCancelled());
         Flags.FIRE_SPREAD.setDefaultSetting(true);
-        assertFalse(listener.onBlockSpread(e));
+        listener.onBlockSpread(e);
+        assertFalse(e.isCancelled());
 
         // Check with no island
         when(im.getIslandAt(any())).thenReturn(Optional.empty());
         // Fire spread is not allowed, so should be cancelled
         Flags.FIRE_SPREAD.setDefaultSetting(false);
-        assertTrue(listener.onBlockSpread(e));
+        listener.onBlockSpread(e);
+        assertTrue(e.isCancelled());
         // Fire allowed
         Flags.FIRE_SPREAD.setDefaultSetting(true);
-        assertFalse(listener.onBlockSpread(e));
+        listener.onBlockSpread(e);
+        assertFalse(e.isCancelled());
     }
 
     @Test
@@ -307,34 +318,41 @@ public class FireListenerTest {
         listener.setPlugin(plugin);
 
         // Obsidian is okay to ignite
-        assertFalse(listener.onBlockIgnite(e));
+        listener.onBlockIgnite(e);
+        assertFalse(e.isCancelled());
 
         // Now set to something flammable
         when(block.getType()).thenReturn(Material.OAK_PLANKS);
 
         // Disallow fire
-        when(island.isAllowed(Mockito.any())).thenReturn(false);
-        when(island.isAllowed(Mockito.any(), Mockito.any())).thenReturn(false);
+        when(island.isAllowed(any())).thenReturn(false);
+        when(island.isAllowed(any(), any())).thenReturn(false);
         Flags.FIRE_IGNITE.setDefaultSetting(false);
-        assertTrue(listener.onBlockIgnite(e));
+        listener.onBlockIgnite(e);
+        assertTrue(e.isCancelled());
         Flags.FIRE_IGNITE.setDefaultSetting(true);
-        assertTrue(listener.onBlockIgnite(e));
+        listener.onBlockIgnite(e);
+        assertTrue(e.isCancelled());
 
         // Allow fire spread
-        when(island.isAllowed(Mockito.any())).thenReturn(true);
-        when(island.isAllowed(Mockito.any(), Mockito.any())).thenReturn(true);
+        when(island.isAllowed(any())).thenReturn(true);
+        when(island.isAllowed(any(), any())).thenReturn(true);
         Flags.FIRE_IGNITE.setDefaultSetting(false);
-        assertFalse(listener.onBlockIgnite(e));
+        listener.onBlockIgnite(e);
+        assertFalse(e.isCancelled());
         Flags.FIRE_IGNITE.setDefaultSetting(true);
-        assertFalse(listener.onBlockIgnite(e));
+        listener.onBlockIgnite(e);
+        assertFalse(e.isCancelled());
 
         // Check with no island
         when(im.getIslandAt(any())).thenReturn(Optional.empty());
         // Fire spread is not allowed, so should be cancelled
         Flags.FIRE_IGNITE.setDefaultSetting(false);
-        assertTrue(listener.onBlockIgnite(e));
+        listener.onBlockIgnite(e);
+        assertTrue(e.isCancelled());
         // Fire allowed
         Flags.FIRE_IGNITE.setDefaultSetting(true);
-        assertFalse(listener.onBlockIgnite(e));
+        listener.onBlockIgnite(e);
+        assertFalse(e.isCancelled());
     }
 }

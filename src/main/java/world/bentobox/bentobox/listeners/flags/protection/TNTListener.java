@@ -43,13 +43,10 @@ public class TNTListener extends FlagListener {
      * @param e - event
      */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
-    public void onTNTDamageEvent(EntityChangeBlockEvent e) {
-        onTNTDamage(e);
-    }
-    boolean onTNTDamage(EntityChangeBlockEvent e) {
+    public void onTNTDamage(EntityChangeBlockEvent e) {
         // Check world
         if (!e.getBlock().getType().equals(Material.TNT) || !getIWM().inWorld(e.getBlock().getLocation())) {
-            return false;
+            return;
         }
         // Stop TNT from being damaged if it is being caused by a visitor with a flaming arrow
         if (e.getEntity() instanceof Projectile projectile) {
@@ -59,10 +56,8 @@ public class TNTListener extends FlagListener {
                 // Remove the arrow
                 projectile.remove();
                 e.setCancelled(true);
-                return true;
             }
         }
-        return false;
     }
 
     /**
