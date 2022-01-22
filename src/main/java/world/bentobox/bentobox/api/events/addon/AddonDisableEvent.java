@@ -3,8 +3,8 @@ package world.bentobox.bentobox.api.events.addon;
 import java.util.Map;
 
 import org.bukkit.event.HandlerList;
-
 import org.eclipse.jdt.annotation.NonNull;
+
 import world.bentobox.bentobox.api.addons.Addon;
 
 /**

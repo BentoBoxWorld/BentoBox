@@ -17,7 +17,15 @@ import com.google.gson.reflect.TypeToken;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.flags.Flag;
-import world.bentobox.bentobox.database.json.adapters.*;
+import world.bentobox.bentobox.database.json.adapters.BiomeTypeAdapter;
+import world.bentobox.bentobox.database.json.adapters.BukkitObjectTypeAdapter;
+import world.bentobox.bentobox.database.json.adapters.EnumTypeAdapter;
+import world.bentobox.bentobox.database.json.adapters.FlagTypeAdapter;
+import world.bentobox.bentobox.database.json.adapters.ItemStackTypeAdapter;
+import world.bentobox.bentobox.database.json.adapters.LocationTypeAdapter;
+import world.bentobox.bentobox.database.json.adapters.PotionEffectTypeAdapter;
+import world.bentobox.bentobox.database.json.adapters.VectorTypeAdapter;
+import world.bentobox.bentobox.database.json.adapters.WorldTypeAdapter;
 import world.bentobox.bentobox.versions.ServerCompatibility;
 
 

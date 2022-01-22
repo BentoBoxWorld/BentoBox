@@ -395,6 +395,10 @@ public class PortalTeleportationListener implements Listener {
         if (fromWorld.getEnvironment() != env) {
             World toWorld = Objects.requireNonNull(getNetherEndWorld(overWorld, env));
             Location spawnPoint = toWorld.getSpawnLocation();
+            // If going to the nether and nether portals are active then just teleport to approx location
+            if (env.equals(Environment.NETHER) && plugin.getIWM().getWorldSettings(overWorld).isMakeNetherPortals()) {
+                spawnPoint = e.getFrom().toVector().toLocation(toWorld);
+            }
             // If spawn is set as 0,63,0 in the End then move it to 100, 50 ,0.
             if (env.equals(Environment.THE_END) && spawnPoint.getBlockX() == 0 && spawnPoint.getBlockZ() == 0) {
                 // Set to the default end spawn

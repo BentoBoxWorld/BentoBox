@@ -25,10 +25,19 @@ public class MobSpawnListener extends FlagListener {
      * Prevents mobs spawning naturally
      *
      * @param e - event
+     */
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    public void onMobSpawnEvent(CreatureSpawnEvent e) {
+        onMobSpawn(e);
+    }
+    /**
+     * Prevents mobs spawning naturally
+     *
+     * @param e - event
      * @return true if cancelled
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public boolean onMobSpawn(CreatureSpawnEvent e) {
+    boolean onMobSpawn(CreatureSpawnEvent e) {
         // If not in the right world, or spawning is not natural return
         if (!getIWM().inWorld(e.getEntity().getLocation())) {
             return false;

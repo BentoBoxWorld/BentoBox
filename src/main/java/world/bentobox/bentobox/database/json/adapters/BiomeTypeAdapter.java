@@ -6,21 +6,21 @@
 
 package world.bentobox.bentobox.database.json.adapters;
 
-
-import com.google.common.base.Enums;
-import com.google.gson.TypeAdapter;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonToken;
-import com.google.gson.stream.JsonWriter;
-import org.bukkit.block.Biome;
-import org.eclipse.jdt.annotation.Nullable;
-
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+
+import org.bukkit.block.Biome;
+import org.eclipse.jdt.annotation.Nullable;
+
+import com.google.common.base.Enums;
+import com.google.gson.TypeAdapter;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonToken;
+import com.google.gson.stream.JsonWriter;
 
 
 /**

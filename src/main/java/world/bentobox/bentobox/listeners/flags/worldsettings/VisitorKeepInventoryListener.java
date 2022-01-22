@@ -1,16 +1,17 @@
 package world.bentobox.bentobox.listeners.flags.worldsettings;
 
+import java.util.Optional;
+
 import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.PlayerDeathEvent;
+
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.util.Util;
-
-import java.util.Optional;
 
 /**
  * Prevents visitors from losing their items if they

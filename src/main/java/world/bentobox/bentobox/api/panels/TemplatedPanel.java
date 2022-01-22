@@ -7,10 +7,13 @@
 package world.bentobox.bentobox.api.panels;
 
 
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.BiFunction;
+
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import java.util.*;
-import java.util.function.BiFunction;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.panels.builders.PanelItemBuilder;

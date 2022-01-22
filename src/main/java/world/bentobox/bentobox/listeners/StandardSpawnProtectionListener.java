@@ -109,6 +109,10 @@ public class StandardSpawnProtectionListener implements Listener {
      * @return true if in the spawn area, false if not
      */
     private boolean atSpawn(@NonNull Location location) {
+        if (plugin.getIWM().getWorldSettings(location.getWorld()).isMakeNetherPortals()) {
+            // If nether portals are active, there is no common spawn
+            return false;
+        }
         Vector p = location.toVector().multiply(new Vector(1, 0, 1));
         Vector spawn = location.getWorld().getSpawnLocation().toVector().multiply(new Vector(1, 0, 1));
         int radius = plugin.getIWM().getNetherSpawnRadius(location.getWorld());
@@ -118,6 +122,7 @@ public class StandardSpawnProtectionListener implements Listener {
 
     /**
      * If the player is not in the standard nether or standard end or op, do nothing.
+     * If portal making is true, then do not protect spawn.
      * Used to protect the standard spawn for nether or end.
      *
      * @param player - the player
@@ -127,6 +132,8 @@ public class StandardSpawnProtectionListener implements Listener {
         return (player.isOp() || player.getWorld().getEnvironment().equals(World.Environment.NORMAL)
                 || !plugin.getIWM().inWorld(Util.getWorld(player.getWorld()))
                 || (player.getWorld().getEnvironment().equals(World.Environment.NETHER) && plugin.getIWM().isNetherIslands(player.getWorld()))
+                || (player.getWorld().getEnvironment().equals(World.Environment.NETHER) && plugin.getIWM().getWorldSettings(player.getWorld()).isMakeNetherPortals())
                 || (player.getWorld().getEnvironment().equals(World.Environment.THE_END) && plugin.getIWM().isEndIslands(player.getWorld())));
+
     }
 }

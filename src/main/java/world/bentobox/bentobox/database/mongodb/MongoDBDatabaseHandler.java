@@ -7,6 +7,7 @@ import java.util.concurrent.CompletableFuture;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bukkit.Bukkit;
+import org.eclipse.jdt.annotation.NonNull;
 
 import com.google.gson.Gson;
 import com.mongodb.MongoClientException;
@@ -19,7 +20,6 @@ import com.mongodb.client.model.IndexOptions;
 import com.mongodb.client.model.Indexes;
 import com.mongodb.util.JSON;
 
-import org.eclipse.jdt.annotation.NonNull;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.database.DatabaseConnector;
 import world.bentobox.bentobox.database.json.AbstractJSONDatabaseHandler;
