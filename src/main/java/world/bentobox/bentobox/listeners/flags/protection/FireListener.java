@@ -48,8 +48,11 @@ public class FireListener extends FlagListener {
      * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void onBlockBurn(BlockBurnEvent e) {
-        checkFire(e, e.getBlock().getLocation(), Flags.FIRE_BURNING);
+    public void onBlockBurnEvent(BlockBurnEvent e) {
+        onBlockBurn(e);
+    }
+    boolean onBlockBurn(BlockBurnEvent e) {
+        return checkFire(e, e.getBlock().getLocation(), Flags.FIRE_BURNING);
     }
 
     /**
@@ -57,10 +60,11 @@ public class FireListener extends FlagListener {
      * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void onBlockSpread(BlockSpreadEvent e) {
-        if (e.getSource().getType().equals(Material.FIRE)) {
-            checkFire(e, e.getBlock().getLocation(), Flags.FIRE_SPREAD);
-        }
+    public void onBlockSpreadEvent(BlockSpreadEvent e) {
+        onBlockSpread(e);
+    }
+    boolean onBlockSpread(BlockSpreadEvent e) {
+        return e.getSource().getType().equals(Material.FIRE)&& checkFire(e, e.getBlock().getLocation(), Flags.FIRE_SPREAD);
     }
 
     /**
@@ -68,11 +72,12 @@ public class FireListener extends FlagListener {
      * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void onBlockIgnite(BlockIgniteEvent e) {
+    public void onBlockIgniteEvent(BlockIgniteEvent e) {
+        onBlockIgnite(e);
+    }
+    boolean onBlockIgnite(BlockIgniteEvent e) {
         // Check if this is a portal lighting - that is allowed any time
-        if (!e.getBlock().getType().equals(Material.OBSIDIAN)) {
-            checkFire(e, e.getBlock().getLocation(), Flags.FIRE_IGNITE);
-        }
+        return !e.getBlock().getType().equals(Material.OBSIDIAN) &&  checkFire(e, e.getBlock().getLocation(), Flags.FIRE_IGNITE);
     }
 
     /**
