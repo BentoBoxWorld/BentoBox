@@ -1,6 +1,7 @@
 package world.bentobox.bentobox.api.placeholders.placeholderapi;
 
 import org.eclipse.jdt.annotation.NonNull;
+
 import world.bentobox.bentobox.BentoBox;
 
 public class BentoBoxPlaceholderExpansion extends BasicPlaceholderExpansion {

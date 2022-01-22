@@ -1,6 +1,12 @@
 package world.bentobox.bentobox.util;
 
-import io.papermc.lib.PaperLib;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.World;
@@ -10,19 +16,14 @@ import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.generator.ChunkGenerator.ChunkData;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.scheduler.BukkitTask;
+
+import io.papermc.lib.PaperLib;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.events.island.IslandEvent;
 import world.bentobox.bentobox.api.events.island.IslandEvent.Reason;
 import world.bentobox.bentobox.database.objects.IslandDeletion;
 import world.bentobox.bentobox.nms.NMSAbstraction;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Deletes islands chunk by chunk

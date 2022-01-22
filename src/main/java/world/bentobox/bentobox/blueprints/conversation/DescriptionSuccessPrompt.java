@@ -6,8 +6,8 @@ import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.MessagePrompt;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.entity.Player;
-
 import org.eclipse.jdt.annotation.NonNull;
+
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.user.User;

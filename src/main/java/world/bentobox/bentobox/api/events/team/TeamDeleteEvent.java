@@ -4,8 +4,8 @@ import java.util.UUID;
 
 import org.bukkit.Location;
 import org.bukkit.event.HandlerList;
-
 import org.eclipse.jdt.annotation.NonNull;
+
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.database.objects.Island;
 
