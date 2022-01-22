@@ -3,8 +3,8 @@ package world.bentobox.bentobox.api.events.flags;
 import java.util.UUID;
 
 import org.bukkit.event.HandlerList;
-
 import org.eclipse.jdt.annotation.NonNull;
+
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.database.objects.Island;
 

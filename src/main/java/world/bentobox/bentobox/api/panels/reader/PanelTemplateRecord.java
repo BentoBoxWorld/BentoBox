@@ -15,6 +15,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.api.panels.Panel;
+import world.bentobox.bentobox.api.panels.reader.PanelTemplateRecord.TemplateItem;
 
 
 /**

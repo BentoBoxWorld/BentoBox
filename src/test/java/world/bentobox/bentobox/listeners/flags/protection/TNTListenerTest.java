@@ -152,7 +152,7 @@ public class TNTListenerTest extends AbstractCommonSetup {
         when(block.getType()).thenReturn(Material.TNT);
         // Entity is not a projectile
         EntityChangeBlockEvent e = new EntityChangeBlockEvent(player, block, Material.AIR.createBlockData());
-        assertFalse(listener.onTNTDamage(e));
+        listener.onTNTDamage(e);
         assertFalse(e.isCancelled());
 
     }
@@ -163,7 +163,7 @@ public class TNTListenerTest extends AbstractCommonSetup {
         // Out of world
         when(iwm.inWorld(any(Location.class))).thenReturn(false);
         EntityChangeBlockEvent e = new EntityChangeBlockEvent(player, block, Material.AIR.createBlockData());
-        assertFalse(listener.onTNTDamage(e));
+        listener.onTNTDamage(e);
         assertFalse(e.isCancelled());
     }
     @Test
@@ -173,7 +173,7 @@ public class TNTListenerTest extends AbstractCommonSetup {
         // Out of world
         when(iwm.inWorld(any(Location.class))).thenReturn(false);
         EntityChangeBlockEvent e = new EntityChangeBlockEvent(player, block, Material.AIR.createBlockData());
-        assertFalse(listener.onTNTDamage(e));
+        listener.onTNTDamage(e);
         assertFalse(e.isCancelled());
     }
 
@@ -191,7 +191,7 @@ public class TNTListenerTest extends AbstractCommonSetup {
         when(arrow.getFireTicks()).thenReturn(10);
 
         EntityChangeBlockEvent e = new EntityChangeBlockEvent(arrow, block, Material.AIR.createBlockData());
-        assertFalse(listener.onTNTDamage(e));
+        listener.onTNTDamage(e);
         assertFalse(e.isCancelled());
         verify(arrow, never()).remove();
     }
@@ -209,7 +209,7 @@ public class TNTListenerTest extends AbstractCommonSetup {
         when(arrow.getFireTicks()).thenReturn(0);
 
         EntityChangeBlockEvent e = new EntityChangeBlockEvent(arrow, block, Material.AIR.createBlockData());
-        assertFalse(listener.onTNTDamage(e));
+        listener.onTNTDamage(e);
         assertFalse(e.isCancelled());
         verify(arrow, never()).remove();
 
@@ -228,7 +228,7 @@ public class TNTListenerTest extends AbstractCommonSetup {
         when(arrow.getFireTicks()).thenReturn(10);
 
         EntityChangeBlockEvent e = new EntityChangeBlockEvent(arrow, block, Material.AIR.createBlockData());
-        assertTrue(listener.onTNTDamage(e));
+        listener.onTNTDamage(e);
         assertTrue(e.isCancelled());
         verify(arrow).remove();
 
@@ -249,7 +249,7 @@ public class TNTListenerTest extends AbstractCommonSetup {
         when(island.isAllowed(any(), eq(Flags.TNT_PRIMING))).thenReturn(true);
 
         EntityChangeBlockEvent e = new EntityChangeBlockEvent(arrow, block, Material.AIR.createBlockData());
-        assertFalse(listener.onTNTDamage(e));
+        listener.onTNTDamage(e);
         assertFalse(e.isCancelled());
         verify(arrow, never()).remove();
 
@@ -270,7 +270,7 @@ public class TNTListenerTest extends AbstractCommonSetup {
         when(arrow.getFireTicks()).thenReturn(10);
 
         EntityChangeBlockEvent e = new EntityChangeBlockEvent(arrow, block, Material.AIR.createBlockData());
-        assertTrue(listener.onTNTDamage(e));
+        listener.onTNTDamage(e);
         assertTrue(e.isCancelled());
         verify(arrow).remove();
 
@@ -291,7 +291,7 @@ public class TNTListenerTest extends AbstractCommonSetup {
         when(arrow.getFireTicks()).thenReturn(10);
 
         EntityChangeBlockEvent e = new EntityChangeBlockEvent(arrow, block, Material.AIR.createBlockData());
-        assertFalse(listener.onTNTDamage(e));
+        listener.onTNTDamage(e);
         assertFalse(e.isCancelled());
         verify(arrow, never()).remove();
 

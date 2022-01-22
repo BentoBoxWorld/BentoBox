@@ -1,21 +1,26 @@
 package world.bentobox.bentobox.util;
 
-import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.properties.Property;
+import java.lang.reflect.Field;
+import java.util.MissingFormatArgumentException;
+import java.util.UUID;
+
 import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.*;
+import org.bukkit.inventory.meta.BannerMeta;
+import org.bukkit.inventory.meta.Damageable;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionType;
 import org.eclipse.jdt.annotation.Nullable;
 
-import java.lang.reflect.Field;
-import java.util.MissingFormatArgumentException;
-import java.util.UUID;
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.Property;
 
 import world.bentobox.bentobox.BentoBox;
 

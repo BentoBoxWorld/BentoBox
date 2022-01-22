@@ -1,12 +1,12 @@
 package world.bentobox.bentobox.managers;
 
-import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.database.objects.IslandDeletion;
-import world.bentobox.bentobox.util.DeleteIslandChunks;
-
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.atomic.AtomicReference;
+
+import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.database.objects.IslandDeletion;
+import world.bentobox.bentobox.util.DeleteIslandChunks;
 
 /**
  * Manages the queue of island chunks to be deleted.

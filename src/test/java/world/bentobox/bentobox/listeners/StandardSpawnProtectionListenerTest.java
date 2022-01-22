@@ -40,6 +40,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
@@ -82,6 +83,8 @@ public class StandardSpawnProtectionListenerTest {
     private BlockState blockState;
     @Mock
     private Location spawnLocation;
+    @Mock
+    private WorldSettings ws;
 
     /**
      * @throws java.lang.Exception
@@ -105,6 +108,7 @@ public class StandardSpawnProtectionListenerTest {
         when(iwm.isEndIslands(any())).thenReturn(false);
         when(iwm.inWorld(any(World.class))).thenReturn(true);
         when(iwm.getNetherSpawnRadius(any())).thenReturn(25);
+        when(iwm.getWorldSettings(any())).thenReturn(ws);
         // Util
         PowerMockito.mockStatic(Util.class);
         when(Util.getWorld(any())).thenReturn(world);
@@ -155,6 +159,18 @@ public class StandardSpawnProtectionListenerTest {
         ssp.onBlockPlace(e);
         assertTrue(e.isCancelled());
         verify(player).sendMessage("protection.spawn-protected");
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.StandardSpawnProtectionListener#onBlockPlace(org.bukkit.event.block.BlockPlaceEvent)}.
+     */
+    @Test
+    public void testOnBlockPlaceDisallowedNoProtection() {
+        when(iwm.isNetherIslands(any())).thenReturn(true);
+        BlockPlaceEvent e = new BlockPlaceEvent(block, blockState, null, null, player, true, EquipmentSlot.HAND);
+        ssp.onBlockPlace(e);
+        assertFalse(e.isCancelled());
+        verify(player, never()).sendMessage("protection.spawn-protected");
     }
 
     /**
@@ -236,6 +252,18 @@ public class StandardSpawnProtectionListenerTest {
      * Test method for {@link world.bentobox.bentobox.listeners.StandardSpawnProtectionListener#onBlockBreak(org.bukkit.event.block.BlockBreakEvent)}.
      */
     @Test
+    public void testOnBlockBreakDisallowedNoProtection() {
+        when(ws.isMakeNetherPortals()).thenReturn(true);
+        BlockBreakEvent e = new BlockBreakEvent(block, player);
+        ssp.onBlockBreak(e);
+        assertFalse(e.isCancelled());
+        verify(player, never()).sendMessage("protection.spawn-protected");
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.StandardSpawnProtectionListener#onBlockBreak(org.bukkit.event.block.BlockBreakEvent)}.
+     */
+    @Test
     public void testOnBlockBreakAllowed() {
         when(player.isOp()).thenReturn(true);
         BlockBreakEvent e = new BlockBreakEvent(block, player);
@@ -267,6 +295,32 @@ public class StandardSpawnProtectionListenerTest {
         assertEquals(1, blockList.size());
     }
 
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.StandardSpawnProtectionListener#onExplosion(org.bukkit.event.entity.EntityExplodeEvent)}.
+     */
+    @Test
+    public void testOnExplosionNoProtection() {
+        when(ws.isMakeNetherPortals()).thenReturn(true);
+        List<Block> blockList = new ArrayList<>();
+        blockList.add(block);
+        blockList.add(block);
+        blockList.add(block);
+        blockList.add(block);
+        blockList.add(block);
+        // Make some inside and outside spawn
+        when(location.toVector()).thenReturn(new Vector(0,0,0),
+                new Vector(0,0,0),
+                new Vector(0,0,0),
+                new Vector(0,0,0),
+                new Vector(10000,0,0));
+        EntityExplodeEvent e = new EntityExplodeEvent(player, location, blockList, 0);
+        ssp.onExplosion(e);
+        // No blocks should be removed
+        assertEquals(5, blockList.size());
+    }
+
+
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.StandardSpawnProtectionListener#onBucketEmpty(org.bukkit.event.player.PlayerBucketEmptyEvent)}.
      */
@@ -276,6 +330,18 @@ public class StandardSpawnProtectionListenerTest {
         ssp.onBucketEmpty(e);
         assertTrue(e.isCancelled());
         verify(player).sendMessage("protection.spawn-protected");
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.StandardSpawnProtectionListener#onBucketEmpty(org.bukkit.event.player.PlayerBucketEmptyEvent)}.
+     */
+    @Test
+    public void testOnBucketEmptyDisallowedNoProtection() {
+        when(ws.isMakeNetherPortals()).thenReturn(true);
+        PlayerBucketEmptyEvent e = new PlayerBucketEmptyEvent(player, block, block, BlockFace.DOWN, null, null);
+        ssp.onBucketEmpty(e);
+        assertFalse(e.isCancelled());
+        verify(player, never()).sendMessage("protection.spawn-protected");
     }
 
     /**

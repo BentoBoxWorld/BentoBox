@@ -3,8 +3,8 @@ package world.bentobox.bentobox.blueprints.conversation;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.ConversationPrefix;
 import org.bukkit.entity.Player;
-
 import org.eclipse.jdt.annotation.NonNull;
+
 import world.bentobox.bentobox.api.user.User;
 
 public class NameConversationPrefix implements ConversationPrefix {

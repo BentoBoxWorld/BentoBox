@@ -3,10 +3,11 @@ package world.bentobox.bentobox.api.user;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
+import org.eclipse.jdt.annotation.NonNull;
+
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import org.eclipse.jdt.annotation.NonNull;
 
 /**
  * Utilities class that helps to avoid spamming the User with potential repeated messages
