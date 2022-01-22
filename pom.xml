@@ -270,6 +270,11 @@
             <artifactId>GitHubWebAPI4Java</artifactId>
             <version>${githubapi.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.Marcono1234</groupId>
+            <artifactId>gson-record-type-adapter-factory</artifactId>
+            <version>0.1.0</version>
+        </dependency>
         <!-- Static analysis -->
         <!-- We are using Eclipse's annotations. If you're using IDEA, update 
             your project settings to take these into account for in real time static 

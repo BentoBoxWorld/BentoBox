@@ -1,6 +1,7 @@
 package world.bentobox.bentobox.database.objects;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -90,6 +91,13 @@ public class Island implements DataObject, MetaDataAble {
     // Protection size
     @Expose
     private int protectionRange;
+
+    /**
+     * Bonuses to protection range
+     * @since 1.20.0
+     */
+    @Expose
+    private List<BonusRangeRecord> bonusRanges = new ArrayList<>();
 
     // Maximum ever protection range - used in island deletion
     @Expose
@@ -272,6 +280,7 @@ public class Island implements DataObject, MetaDataAble {
         this.uniqueId = island.getUniqueId();
         this.updatedDate = island.getUpdatedDate();
         this.world = island.getWorld();
+        this.bonusRanges.addAll(island.getBonusRanges());
         this.setChanged();
     }
 
@@ -534,12 +543,22 @@ public class Island implements DataObject, MetaDataAble {
     }
 
     /**
-     * Returns the protection range of this Island.
+     * Returns the protection range of this Island plus any bonuses. Will not be greater than getRange().
      * This represents half of the length of the side of a theoretical square around the island center inside which flags are enforced.
      * @return the protection range of this island, strictly positive integer.
      * @see #getRange()
      */
     public int getProtectionRange() {
+        return Math.min(this.getRange(), getRawProtectionRange() + this.getBonusRanges().stream().mapToInt(BonusRangeRecord::range).sum());
+    }
+
+    /**
+     * Returns the protection range of this Island without any bonuses
+     * This represents half of the length of the side of a theoretical square around the island center inside which flags are enforced.
+     * @return the protection range of this island, strictly positive integer.
+     * @since 1.20.0
+     */
+    public int getRawProtectionRange() {
         return protectionRange;
     }
 
@@ -549,15 +568,21 @@ public class Island implements DataObject, MetaDataAble {
     public int getMaxEverProtectionRange() {
         if (maxEverProtectionRange > this.range) {
             maxEverProtectionRange = this.range;
+            setChanged();
         }
         return Math.max(protectionRange, maxEverProtectionRange);
     }
 
     /**
+     * Sets the maximum protection range. This can be used to optimize
+     * island deletion. Setting this values to a lower value than the current value
+     * will have no effect.
      * @param maxEverProtectionRange the maxEverProtectionRange to set
      */
     public void setMaxEverProtectionRange(int maxEverProtectionRange) {
-        this.maxEverProtectionRange = maxEverProtectionRange;
+        if (maxEverProtectionRange > this.maxEverProtectionRange) {
+            this.maxEverProtectionRange = maxEverProtectionRange;
+        }
         if (maxEverProtectionRange > this.range) {
             this.maxEverProtectionRange = this.range;
         }
@@ -1354,7 +1379,7 @@ public class Island implements DataObject, MetaDataAble {
     }
 
     /**
-     * Indicates the class has been changed
+     * Indicates the fields have been changed. Used to optimize saving on shutdown.
      */
     public void setChanged() {
         this.changed = true;
@@ -1532,6 +1557,73 @@ public class Island implements DataObject, MetaDataAble {
      */
     public void setMaxMembers(int rank, Integer maxMembers) {
         getMaxMembers().put(rank, maxMembers);
+    }
+
+
+    /**
+     * @return the bonusRanges
+     */
+    public List<BonusRangeRecord> getBonusRanges() {
+        if (bonusRanges == null) {
+            this.setBonusRanges(new ArrayList<>());
+        }
+        return bonusRanges;
+    }
+
+    /**
+     * @param bonusRanges the bonusRanges to set
+     */
+    public void setBonusRanges(List<BonusRangeRecord> bonusRanges) {
+        this.bonusRanges = bonusRanges;
+        setChanged();
+    }
+
+    /**
+     * Get the bonus range provided by all settings of the range giver
+     * @param id an id to identify this bonus
+     * @return bonus range, or 0 if unknown
+     */
+    public int getBonusRange(String id) {
+        return this.getBonusRanges().stream().filter(r -> r.uniqueId().equals(id)).mapToInt(BonusRangeRecord::range).sum();
+    }
+
+    /**
+     * Get the BonusRangeRecord for uniqueId
+     * @param uniqueId a unique id to identify this bonus
+     * @return optional BonusRangeRecord
+     */
+    public Optional<BonusRangeRecord> getBonusRangeRecord(String uniqueId) {
+        return this.getBonusRanges().stream().filter(r -> r.uniqueId().equals(uniqueId)).findFirst();
+    }
+
+    /**
+     * Add a bonus range amount to the island for this addon or plugin.
+     * Note, this will not replace any range set already with the same id
+     * @param id an id to identify this bonus
+     * @param range range to add to the island protected range
+     * @param message the reference key to a locale message related to this bonus. May be blank.
+     */
+    public void addBonusRange(String id, int range, String message) {
+        this.getBonusRanges().add(new BonusRangeRecord(id, range, message));
+        setMaxEverProtectionRange(this.getProtectionRange());
+        setChanged();
+    }
+
+    /**
+     * Clear the bonus ranges for a unique ID
+     * @param id id to identify this bonus
+     */
+    public void clearBonusRange(String id) {
+        this.getBonusRanges().removeIf(r -> r.uniqueId().equals(id));
+        setChanged();
+    }
+
+    /**
+     * Clear all bonus ranges for this island
+     */
+    public void clearAllBonusRanges() {
+        this.getBonusRanges().clear();
+        setChanged();
     }
 
     /* (non-Javadoc)

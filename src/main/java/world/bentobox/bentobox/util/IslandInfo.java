@@ -74,6 +74,16 @@ public class IslandInfo {
         user.sendMessage("commands.admin.info.island-center", TextVariables.XYZ, Util.xyz(island.getCenter().toVector()));
         user.sendMessage("commands.admin.info.island-coords", "[xz1]", Util.xyz(new Vector(island.getMinX(), 0, island.getMinZ())), "[xz2]", Util.xyz(new Vector(island.getMaxX(), 0, island.getMaxZ())));
         user.sendMessage("commands.admin.info.protection-range", "[range]", String.valueOf(island.getProtectionRange()));
+        if (!island.getBonusRanges().isEmpty()) {
+            user.sendMessage("commands.admin.info.protection-range-bonus-title");
+        }
+        island.getBonusRanges().forEach(brb -> {
+            if (brb.message().isBlank()) {
+                user.sendMessage("commands.admin.info.protection-range-bonus", TextVariables.NUMBER, String.valueOf(brb.range()));
+            } else {
+                user.sendMessage(brb.message(), TextVariables.NUMBER, String.valueOf(brb.range()));
+            }
+        });
         user.sendMessage("commands.admin.info.max-protection-range", "[range]", String.valueOf(island.getMaxEverProtectionRange()));
         user.sendMessage("commands.admin.info.protection-coords", "[xz1]", Util.xyz(new Vector(island.getMinProtectedX(), 0, island.getMinProtectedZ())), "[xz2]", Util.xyz(new Vector(island.getMaxProtectedX() - 1, 0, island.getMaxProtectedZ() - 1)));
         if (island.isSpawn()) {

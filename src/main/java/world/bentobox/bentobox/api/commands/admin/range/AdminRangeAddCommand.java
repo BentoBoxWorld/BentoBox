@@ -56,7 +56,7 @@ public class AdminRangeAddCommand extends CompositeCommand {
         Island island = Objects.requireNonNull(getIslands().getIsland(getWorld(), targetUUID));
         int newRange = island.getProtectionRange() + Integer.parseInt(args.get(1));
 
-        if (newRange > island.getRange() * 2) {
+        if (newRange > island.getRange()) {
             user.sendMessage("commands.admin.range.invalid-value.too-high", TextVariables.NUMBER, String.valueOf(island.getRange()));
             return false;
         } else if (newRange == island.getProtectionRange()) {

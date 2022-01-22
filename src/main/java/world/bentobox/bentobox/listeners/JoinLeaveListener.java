@@ -223,16 +223,13 @@ public class JoinLeaveListener implements Listener {
                 // Range cannot be greater than the island distance
                 range = Math.min(range, plugin.getIWM().getIslandDistance(island.getWorld()));
                 // Range can go up or down
-                if (range != island.getProtectionRange()) {
+                if (range != island.getRawProtectionRange()) {
                     user.sendMessage("commands.admin.setrange.range-updated", TextVariables.NUMBER, String.valueOf(range));
-                    plugin.log("Island protection range changed from " + island.getProtectionRange() + " to "
-                            + range + " for " + user.getName() + " due to permission.");
-
-                    // Get old range for event
                     int oldRange = island.getProtectionRange();
-
                     island.setProtectionRange(range);
 
+                    plugin.log("Island protection range changed from " + oldRange + " to "
+                            + island.getProtectionRange() + " for " + user.getName() + " due to permission.");
                     // Call Protection Range Change event. Does not support canceling.
                     IslandEvent.builder()
                     .island(island)
@@ -240,7 +237,7 @@ public class JoinLeaveListener implements Listener {
                     .reason(IslandEvent.Reason.RANGE_CHANGE)
                     .involvedPlayer(user.getUniqueId())
                     .admin(true)
-                    .protectionRange(range, oldRange)
+                    .protectionRange(island.getProtectionRange(), oldRange)
                     .build();
                 }
             }
