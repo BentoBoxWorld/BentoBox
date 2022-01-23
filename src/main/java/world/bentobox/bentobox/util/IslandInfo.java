@@ -78,10 +78,10 @@ public class IslandInfo {
             user.sendMessage("commands.admin.info.protection-range-bonus-title");
         }
         island.getBonusRanges().forEach(brb -> {
-            if (brb.message().isBlank()) {
-                user.sendMessage("commands.admin.info.protection-range-bonus", TextVariables.NUMBER, String.valueOf(brb.range()));
+            if (brb.getMessage().isBlank()) {
+                user.sendMessage("commands.admin.info.protection-range-bonus", TextVariables.NUMBER, String.valueOf(brb.getRange()));
             } else {
-                user.sendMessage(brb.message(), TextVariables.NUMBER, String.valueOf(brb.range()));
+                user.sendMessage(brb.getMessage(), TextVariables.NUMBER, String.valueOf(brb.getRange()));
             }
         });
         user.sendMessage("commands.admin.info.max-protection-range", "[range]", String.valueOf(island.getMaxEverProtectionRange()));

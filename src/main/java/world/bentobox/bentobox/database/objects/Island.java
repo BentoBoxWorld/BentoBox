@@ -549,7 +549,7 @@ public class Island implements DataObject, MetaDataAble {
      * @see #getRange()
      */
     public int getProtectionRange() {
-        return Math.min(this.getRange(), getRawProtectionRange() + this.getBonusRanges().stream().mapToInt(BonusRangeRecord::range).sum());
+        return Math.min(this.getRange(), getRawProtectionRange() + this.getBonusRanges().stream().mapToInt(BonusRangeRecord::getRange).sum());
     }
 
     /**
@@ -1584,7 +1584,7 @@ public class Island implements DataObject, MetaDataAble {
      * @return bonus range, or 0 if unknown
      */
     public int getBonusRange(String id) {
-        return this.getBonusRanges().stream().filter(r -> r.uniqueId().equals(id)).mapToInt(BonusRangeRecord::range).sum();
+        return this.getBonusRanges().stream().filter(r -> r.getUniqueId().equals(id)).mapToInt(BonusRangeRecord::getRange).sum();
     }
 
     /**
@@ -1593,7 +1593,7 @@ public class Island implements DataObject, MetaDataAble {
      * @return optional BonusRangeRecord
      */
     public Optional<BonusRangeRecord> getBonusRangeRecord(String uniqueId) {
-        return this.getBonusRanges().stream().filter(r -> r.uniqueId().equals(uniqueId)).findFirst();
+        return this.getBonusRanges().stream().filter(r -> r.getUniqueId().equals(uniqueId)).findFirst();
     }
 
     /**
@@ -1614,7 +1614,7 @@ public class Island implements DataObject, MetaDataAble {
      * @param id id to identify this bonus
      */
     public void clearBonusRange(String id) {
-        this.getBonusRanges().removeIf(r -> r.uniqueId().equals(id));
+        this.getBonusRanges().removeIf(r -> r.getUniqueId().equals(id));
         setChanged();
     }
 
