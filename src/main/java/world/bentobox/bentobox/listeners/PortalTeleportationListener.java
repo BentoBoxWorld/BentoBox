@@ -98,7 +98,7 @@ public class PortalTeleportationListener implements Listener {
      * @param e - event
      */
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-    public boolean onEntityPortal(EntityPortalEvent e) {
+    public void onEntityPortal(EntityPortalEvent e) {
         if (plugin.getIWM().inWorld(e.getFrom())) {
             Optional<Material> mat = Arrays.stream(BlockFace.values())
                     .map(bf -> e.getFrom().getBlock().getRelative(bf).getType())
@@ -108,14 +108,12 @@ public class PortalTeleportationListener implements Listener {
                     .findFirst();
             if (mat.isEmpty()) {
                 e.setCancelled(true);
-                return false;
             } else if (mat.get().equals(Material.NETHER_PORTAL)){
-                return processPortal(new PlayerEntityPortalEvent(e), Environment.NETHER);
+                processPortal(new PlayerEntityPortalEvent(e), Environment.NETHER);
             } else {
-                return processPortal(new PlayerEntityPortalEvent(e), Environment.THE_END);
+                processPortal(new PlayerEntityPortalEvent(e), Environment.THE_END);
             }
         }
-        return false;
     }
 
     /**
@@ -138,11 +136,14 @@ public class PortalTeleportationListener implements Listener {
      * @param e - event
      */
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-    public boolean onIslandPortal(PlayerPortalEvent e) {
-        return switch (e.getCause()) {
+    public void onIslandPortal(PlayerPortalEvent e) {
+        switch (e.getCause()) {
         case END_GATEWAY, END_PORTAL -> processPortal(new PlayerEntityPortalEvent(e), Environment.THE_END);
         case NETHER_PORTAL -> processPortal(new PlayerEntityPortalEvent(e), Environment.NETHER);
-        default -> false;
+        default -> {
+            // Do nothing
+        }
+
         };
 
     }

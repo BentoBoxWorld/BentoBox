@@ -74,15 +74,14 @@ public class StandardSpawnProtectionListener implements Listener {
      * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public boolean onExplosion(EntityExplodeEvent e) {
+    public void onExplosion(EntityExplodeEvent e) {
         if (!plugin.getIWM().inWorld(Util.getWorld(e.getLocation().getWorld()))
                 || plugin.getIWM().isIslandNether(e.getLocation().getWorld())
                 || plugin.getIWM().isIslandEnd(e.getLocation().getWorld())) {
             // Not used in island worlds
-            return false;
+            return;
         }
         e.blockList().removeIf(b -> atSpawn(b.getLocation()));
-        return true;
     }
 
     /**

@@ -147,7 +147,7 @@ public class MobSpawnListenerTest {
         when(plugin.isLoaded()).thenReturn(false);
         CreatureSpawnEvent e = new CreatureSpawnEvent(livingEntity, SpawnReason.NATURAL);
         MobSpawnListener l = new MobSpawnListener();
-        assertFalse(l.onMobSpawn(e));
+        l.onMobSpawn(e);
         assertFalse(e.isCancelled());
     }
 
@@ -164,18 +164,14 @@ public class MobSpawnListenerTest {
         when(entity.getLocation()).thenReturn(null);
 
         // Setup event
-        CreatureSpawnEvent e = mock(CreatureSpawnEvent.class);
-        when(e.getLocation()).thenReturn(location);
+        CreatureSpawnEvent e = new CreatureSpawnEvent(entity, SpawnReason.NATURAL);
 
         // Setup the listener
         MobSpawnListener l = new MobSpawnListener();
         l.setPlugin(plugin);
 
-        // Check monsters
-        when(e.getEntity()).thenReturn(entity);
-
         // Should not be canceled
-        assertFalse(l.onMobSpawn(e));
+        l.onMobSpawn(e);
     }
 
     @Test
@@ -188,28 +184,21 @@ public class MobSpawnListenerTest {
         // Block mobs
         when(island.isAllowed(Mockito.any())).thenReturn(false);
 
-        // Setup event
-        CreatureSpawnEvent e = mock(CreatureSpawnEvent.class);
-        when(e.getLocation()).thenReturn(location);
-
         // Setup the listener
         MobSpawnListener l = new MobSpawnListener();
         l.setPlugin(plugin);
 
         // Check monsters
-        when(e.getEntity()).thenReturn(zombie);
-        checkBlocked(e,l);
-        when(e.getEntity()).thenReturn(slime);
-        checkBlocked(e,l);
+        checkBlocked(zombie,l);
+        checkBlocked(slime,l);
         // Check animal
-        when(e.getEntity()).thenReturn(cow);
-        checkBlocked(e,l);
+        checkBlocked(cow,l);
 
     }
 
-    private void checkBlocked(CreatureSpawnEvent e, MobSpawnListener l) {
+    private void checkBlocked(LivingEntity le, MobSpawnListener l) {
         for (SpawnReason reason: SpawnReason.values()) {
-            when(e.getSpawnReason()).thenReturn(reason);
+            CreatureSpawnEvent e = new CreatureSpawnEvent(le, reason);
             switch (reason) {
             // Natural
             case DEFAULT:
@@ -228,11 +217,13 @@ public class MobSpawnListenerTest {
             case VILLAGE_DEFENSE:
             case VILLAGE_INVASION:
                 // These should be blocked
-                assertTrue("Natural spawn should be blocked: " + reason.toString(), l.onMobSpawn(e));
+                l.onMobSpawn(e);
+                assertTrue("Natural spawn should be blocked: " + reason.toString(), e.isCancelled());
                 break;
                 // Spawners
             case SPAWNER:
-                assertTrue("Spawners spawn should be blocked: " + reason.toString(), l.onMobSpawn(e));
+                l.onMobSpawn(e);
+                assertTrue("Spawners spawn should be blocked: " + reason.toString(), e.isCancelled());
                 break;
                 // Unnatural - player involved or allowed
             case BREEDING:
@@ -250,7 +241,8 @@ public class MobSpawnListenerTest {
             case SHOULDER_ENTITY:
             case SPAWNER_EGG:
             case SLIME_SPLIT:
-                assertFalse("Should be not blocked: " + reason.toString(), l.onMobSpawn(e));
+                l.onMobSpawn(e);
+                assertFalse("Should be not blocked: " + reason.toString(), e.isCancelled());
                 break;
             default:
                 break;
@@ -270,29 +262,23 @@ public class MobSpawnListenerTest {
         // Allow mobs
         when(island.isAllowed(Mockito.any())).thenReturn(true);
 
-        // Setup event
-        CreatureSpawnEvent e = mock(CreatureSpawnEvent.class);
-        when(e.getLocation()).thenReturn(location);
-
         // Setup the listener
         MobSpawnListener l = new MobSpawnListener();
         l.setPlugin(plugin);
 
         // Check monsters
-        when(e.getEntity()).thenReturn(zombie);
-        checkUnBlocked(e,l);
-        when(e.getEntity()).thenReturn(slime);
-        checkUnBlocked(e,l);
+        checkUnBlocked(zombie,l);
+        checkUnBlocked(slime,l);
         // Check animal
-        when(e.getEntity()).thenReturn(cow);
-        checkUnBlocked(e,l);
+        checkUnBlocked(cow,l);
 
     }
 
-    private void checkUnBlocked(CreatureSpawnEvent e, MobSpawnListener l) {
+    private void checkUnBlocked(LivingEntity le, MobSpawnListener l) {
         for (SpawnReason reason: SpawnReason.values()) {
-            when(e.getSpawnReason()).thenReturn(reason);
-            assertFalse(l.onMobSpawn(e));
+            CreatureSpawnEvent e = new CreatureSpawnEvent(le, reason);
+            l.onMobSpawn(e);
+            assertFalse(e.isCancelled());
         }
     }
 
@@ -307,22 +293,16 @@ public class MobSpawnListenerTest {
         Flags.ANIMAL_NATURAL_SPAWN.setDefaultSetting(false);
         Flags.MONSTER_SPAWNERS_SPAWN.setDefaultSetting(false);
         Flags.ANIMAL_SPAWNERS_SPAWN.setDefaultSetting(false);
-        // Setup event
-        CreatureSpawnEvent e = mock(CreatureSpawnEvent.class);
-        when(e.getLocation()).thenReturn(location);
 
         // Setup the listener
         MobSpawnListener l = new MobSpawnListener();
         l.setPlugin(plugin);
 
         // Check monsters
-        when(e.getEntity()).thenReturn(zombie);
-        checkBlocked(e,l);
-        when(e.getEntity()).thenReturn(slime);
-        checkBlocked(e,l);
+        checkBlocked(zombie,l);
+        checkBlocked(slime,l);
         // Check animal
-        when(e.getEntity()).thenReturn(cow);
-        checkBlocked(e,l);
+        checkBlocked(cow,l);
 
     }
 
@@ -338,22 +318,15 @@ public class MobSpawnListenerTest {
         Flags.MONSTER_SPAWNERS_SPAWN.setDefaultSetting(true);
         Flags.ANIMAL_SPAWNERS_SPAWN.setDefaultSetting(true);
 
-        // Setup event
-        CreatureSpawnEvent e = mock(CreatureSpawnEvent.class);
-        when(e.getLocation()).thenReturn(location);
-
         // Setup the listener
         MobSpawnListener l = new MobSpawnListener();
         l.setPlugin(plugin);
 
         // Check monsters
-        when(e.getEntity()).thenReturn(zombie);
-        checkUnBlocked(e,l);
-        when(e.getEntity()).thenReturn(slime);
-        checkUnBlocked(e,l);
+        checkUnBlocked(zombie,l);
+        checkUnBlocked(slime,l);
         // Check animal
-        when(e.getEntity()).thenReturn(cow);
-        checkUnBlocked(e,l);
+        checkUnBlocked(cow,l);
     }
 
 }
