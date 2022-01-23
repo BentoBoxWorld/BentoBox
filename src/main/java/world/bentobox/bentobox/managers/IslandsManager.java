@@ -1154,9 +1154,6 @@ public class IslandsManager {
                 // Do nothing
                 return;
             }
-            // Execute commands
-            Util.runCommands(user, plugin.getIWM().getOnJoinCommands(world), "join");
-
             // Remove money inventory etc.
             if (plugin.getIWM().isOnJoinResetEnderChest(world)) {
                 user.getPlayer().getEnderChest().clear();
@@ -1185,6 +1182,9 @@ public class IslandsManager {
 
             // Set the game mode
             user.setGameMode(plugin.getIWM().getDefaultGameMode(world));
+
+            // Execute commands
+            Util.runCommands(user, plugin.getIWM().getOnJoinCommands(world), "join");
         }
         // Remove from mid-teleport set
         goingHome.remove(user.getUniqueId());
