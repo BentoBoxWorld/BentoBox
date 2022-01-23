@@ -222,5 +222,8 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
         if (getIWM().isOnJoinResetXP(getWorld())) {
             user.getPlayer().setTotalExperience(0);
         }
+
+        // Execute commands
+        Util.runCommands(user, getIWM().getOnJoinCommands(getWorld()), "join");
     }
 }
