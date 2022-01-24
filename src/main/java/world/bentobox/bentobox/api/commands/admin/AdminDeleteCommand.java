@@ -96,8 +96,6 @@ public class AdminDeleteCommand extends ConfirmableCommand {
     }
 
     private void cleanUp(User user, User target) {
-        // Execute commands when leaving
-        Util.runCommands(user, getIWM().getOnLeaveCommands(getWorld()), "leave");
         // Remove money inventory etc.
         if (getIWM().isOnLeaveResetEnderChest(getWorld())) {
             target.getPlayer().getEnderChest().clear();
@@ -123,6 +121,8 @@ public class AdminDeleteCommand extends ConfirmableCommand {
             target.getPlayer().setTotalExperience(0);
         }
 
+        // Execute commands when leaving
+        Util.runCommands(target, getIWM().getOnLeaveCommands(getWorld()), "leave");
     }
 
     @Override
