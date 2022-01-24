@@ -9,6 +9,7 @@ import world.bentobox.bentobox.api.panels.Panel;
 import world.bentobox.bentobox.api.panels.PanelItem.ClickHandler;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.RanksManager;
 
 /**
@@ -36,7 +37,7 @@ public class CommandCycleClick implements ClickHandler {
         // Get the user's island for the game world
         World world = panel.getWorld().orElse(user.getWorld());
         Island island = plugin.getIslands().getIsland(world, user.getUniqueId());
-        if (island != null && island.getOwner() != null && island.getOwner().equals(user.getUniqueId())) {
+        if (island != null && island.getOwner() != null && island.isAllowed(user, Flags.CHANGE_SETTINGS)) {
             RanksManager rm = plugin.getRanksManager();
             int currentRank = island.getRankCommand(command);
             if (click.equals(ClickType.LEFT)) {
