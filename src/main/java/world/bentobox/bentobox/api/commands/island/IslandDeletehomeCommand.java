@@ -2,6 +2,7 @@ package world.bentobox.bentobox.api.commands.island;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.eclipse.jdt.annotation.Nullable;
@@ -11,6 +12,7 @@ import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
 
 /**
@@ -32,6 +34,8 @@ public class IslandDeletehomeCommand extends ConfirmableCommand {
         setOnlyPlayer(true);
         setParametersHelp("commands.island.deletehome.parameters");
         setDescription("commands.island.deletehome.description");
+        setConfigurableRankCommand();
+        setDefaultCommandRank(RanksManager.MEMBER_RANK);
     }
 
     @Override
@@ -46,6 +50,15 @@ public class IslandDeletehomeCommand extends ConfirmableCommand {
             user.sendMessage("general.errors.no-island");
             return false;
         }
+
+        // check command permission
+        int rank = Objects.requireNonNull(island).getRank(user);
+        if (rank < island.getRankCommand(getUsage())) {
+            user.sendMessage("general.errors.insufficient-rank",
+                TextVariables.RANK, user.getTranslation(getPlugin().getRanksManager().getRank(rank)));
+            return false;
+        }
+
         // Check if the name is known
         if (!getIslands().isHomeLocation(island, String.join(" ", args))) {
             user.sendMessage("commands.island.go.unknown-home");
