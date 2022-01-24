@@ -30,6 +30,7 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.PlayersManager;
+import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
 
 /**
@@ -52,6 +53,12 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * True if command is a configurable rank
      */
     private boolean configurableRankCommand = false;
+
+    /**
+     * Make default command rank as owner rank.
+     * @since 1.20.0
+     */
+    private int defaultCommandRank = RanksManager.OWNER_RANK;
 
     /**
      * True if command is hidden from help and tab complete
@@ -782,6 +789,26 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      */
     public void setConfigurableRankCommand() {
         this.configurableRankCommand = true;
+    }
+
+    /**
+     * Sets default command rank.
+     *
+     * @param rank the rank
+     * @since 1.20.0
+     */
+    public void setDefaultCommandRank(int rank) {
+        this.defaultCommandRank = rank;
+    }
+
+    /**
+     * Gets default command rank.
+     *
+     * @return the default command rank
+     * @since 1.20.0
+     */
+    public int getDefaultCommandRank() {
+        return this.defaultCommandRank;
     }
 
     /**

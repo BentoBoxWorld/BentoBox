@@ -31,7 +31,6 @@ import com.google.gson.annotations.Expose;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
-import world.bentobox.bentobox.api.events.island.IslandEvent;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.logs.LogEntry;
 import world.bentobox.bentobox.api.metadata.MetaDataAble;
@@ -292,7 +291,7 @@ public class Island implements DataObject, MetaDataAble {
      * Bans the target player from this Island.
      * If the player is a member, coop or trustee, they will be removed from those lists.
      * <br/>
-     * Calling this method won't call the {@link world.bentobox.bentobox.api.events.island.IslandEvent.IslandBanEvent}.
+     * Calling this method won't call the {@link world.bentobox.bentobox.api.events.island.IslandBanEvent}.
      * @param issuer UUID of the issuer, may be null.
      *               Whenever possible, one should be provided.
      * @param target UUID of the target, must be provided.
@@ -971,7 +970,7 @@ public class Island implements DataObject, MetaDataAble {
 
     /**
      * Sets player's rank to an arbitrary rank value.
-     * Calling this method won't call the {@link IslandEvent.IslandRankChangeEvent}.
+     * Calling this method won't call the {@link world.bentobox.bentobox.api.events.island.IslandRankChangeEvent}.
      * @param uuid UUID of the player
      * @param rank rank value
      * @since 1.1
@@ -1288,10 +1287,31 @@ public class Island implements DataObject, MetaDataAble {
      * Get the rank required to run command on this island.
      * The command must have been registered with a rank.
      * @param command - the string given by {@link CompositeCommand#getUsage()}
-     * @return Rank value required, or if command is not set {@link RanksManager#OWNER_RANK}
+     * @return Rank value required, or if command is not set {@link CompositeCommand#getDefaultCommandRank()}
      */
     public int getRankCommand(String command) {
-        return commandRanks == null ? RanksManager.OWNER_RANK : commandRanks.getOrDefault(command, RanksManager.OWNER_RANK);
+
+        if (this.commandRanks == null) {
+            this.commandRanks = new HashMap<>();
+        }
+
+        // Return or calculate default rank for a command.
+        return this.commandRanks.computeIfAbsent(command, key -> {
+
+            // Need to find default value for the command.
+            String[] labels = key.replaceFirst("/", "").split(" ");
+
+            // Get first command label.
+            CompositeCommand compositeCommand = this.getPlugin().getCommandsManager().getCommand(labels[0]);
+
+            for (int i = 1; i < labels.length && compositeCommand != null; i++)
+            {
+                compositeCommand = compositeCommand.getSubCommand(labels[i]).orElse(null);
+            }
+
+            // Return default command rank or owner rank, if command does not exist.
+            return compositeCommand == null ? RanksManager.OWNER_RANK : compositeCommand.getDefaultCommandRank();
+        });
     }
 
     /**
