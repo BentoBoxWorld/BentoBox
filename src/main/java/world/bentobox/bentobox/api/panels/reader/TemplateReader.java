@@ -42,6 +42,7 @@ public class TemplateReader
     private static final String FORCE_SHOWN = "force-shown";
     private static final String FALLBACK = "fallback";
 
+
     /**
      * Read template panel panel template record.
      *
@@ -51,13 +52,28 @@ public class TemplateReader
      */
     public static PanelTemplateRecord readTemplatePanel(@NonNull String panelName, @NonNull File panelLocation)
     {
+        return readTemplatePanel(panelName, panelName, panelLocation);
+    }
+
+
+    /**
+     * Read template panel panel template record.
+     *
+     * @param panelName the panel name
+     * @param templateName the template file name
+     * @param panelLocation the panel location directory
+     * @return the panel template record
+     * @since 1.20.0
+     */
+    public static PanelTemplateRecord readTemplatePanel(@NonNull String panelName, @NonNull String templateName, @NonNull File panelLocation)
+    {
         if (!panelLocation.exists())
         {
             // Return null because folder does not exist.
             return null;
         }
 
-        File file = new File(panelLocation, panelName.endsWith(".yml") ? panelName : panelName + ".yml");
+        File file = new File(panelLocation, templateName.endsWith(".yml") ? templateName : templateName + ".yml");
 
         if (!file.exists())
         {
@@ -65,10 +81,12 @@ public class TemplateReader
             return null;
         }
 
+        final String panelKey = file.getAbsolutePath() + ":" + panelName;
+        
         // Check if panel is already crafted.
-        if (TemplateReader.loadedPanels.containsKey(file.getAbsolutePath()))
+        if (TemplateReader.loadedPanels.containsKey(panelKey))
         {
-            return TemplateReader.loadedPanels.get(file.getAbsolutePath());
+            return TemplateReader.loadedPanels.get(panelKey);
         }
 
         PanelTemplateRecord record;
@@ -81,7 +99,7 @@ public class TemplateReader
             // Read panel
             record = readPanelTemplate(config.getConfigurationSection(panelName));
             // Put panel into memory
-            TemplateReader.loadedPanels.put(file.getAbsolutePath(), record);
+            TemplateReader.loadedPanels.put(panelKey, record);
         }
         catch (IOException | InvalidConfigurationException e)
         {
