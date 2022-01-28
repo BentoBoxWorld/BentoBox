@@ -46,6 +46,8 @@ public class TemplatedPanel extends Panel
         this.typeIndex = new HashMap<>(builder.getObjectCreatorMap().size());
         this.typeSlotMap = new HashMap<>(builder.getObjectCreatorMap().size());
 
+        this.parameters = builder.getParameters().toArray(new String[0]);
+
         if (this.panelTemplate == null)
         {
             BentoBox.getInstance().logError("Cannot generate panel because template is not loaded.");
@@ -69,7 +71,7 @@ public class TemplatedPanel extends Panel
                 case DROPPER -> this.populateDropperPanel();
             };
 
-        super.makePanel(this.user.getTranslation(this.panelTemplate.title()),
+        super.makePanel(this.user.getTranslation(this.panelTemplate.title(), this.parameters),
             items,
             items.keySet().stream().max(Comparator.naturalOrder()).orElse(9),
             this.user,
@@ -527,4 +529,10 @@ public class TemplatedPanel extends Panel
      * Stores the number of items with given type in whole panel.
      */
     private final Map<String, Integer> typeSlotMap;
+
+    /**
+     * Stores the parameters for panel title object.
+     * @since 1.20.0
+     */
+    private final String[] parameters;
 }
