@@ -1,6 +1,7 @@
 package world.bentobox.bentobox.api.commands.island.team;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
@@ -40,14 +41,15 @@ public class IslandTeamInviteRejectCommand extends CompositeCommand {
                 return false;
             }
 
+            Optional.ofNullable(itc.getInviter(playerUUID))
+                    .map(User::getInstance)
+                    .ifPresent(inviter ->
+                            inviter.sendMessage("commands.island.team.invite.reject.name-rejected-your-invite", TextVariables.NAME, user.getName())
+                    );
+
             // Remove this player from the global invite list
             itc.removeInvite(user.getUniqueId());
             user.sendMessage("commands.island.team.invite.reject.you-rejected-invite");
-
-            User inviter = User.getInstance(itc.getInviter(playerUUID));
-            if (inviter != null) {
-                inviter.sendMessage("commands.island.team.invite.reject.name-rejected-your-invite", TextVariables.NAME, user.getName());
-            }
         } else {
             // Someone typed /island reject and had not been invited
             user.sendMessage("commands.island.team.invite.errors.none-invited-you");
