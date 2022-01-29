@@ -1,6 +1,7 @@
 package world.bentobox.bentobox.api.commands.island;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.eclipse.jdt.annotation.Nullable;
 
@@ -10,6 +11,8 @@ import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.managers.RanksManager;
+
 
 public class IslandSethomeCommand extends ConfirmableCommand {
 
@@ -24,6 +27,8 @@ public class IslandSethomeCommand extends ConfirmableCommand {
         setPermission("island.sethome");
         setOnlyPlayer(true);
         setDescription("commands.island.sethome.description");
+        setConfigurableRankCommand();
+        setDefaultCommandRank(RanksManager.MEMBER_RANK);
     }
 
     @Override
@@ -38,6 +43,13 @@ public class IslandSethomeCommand extends ConfirmableCommand {
             user.sendMessage("commands.island.sethome.must-be-on-your-island");
             return false;
         }
+
+        int rank = Objects.requireNonNull(island).getRank(user);
+        if (rank < island.getRankCommand(getUsage())) {
+            user.sendMessage("general.errors.insufficient-rank", TextVariables.RANK, user.getTranslation(getPlugin().getRanksManager().getRank(rank)));
+            return false;
+        }
+
         // Check number of homes
         int maxHomes = getIslands().getMaxHomes(island);
         if (getIslands().getNumberOfHomesIfAdded(island, String.join(" ", args)) > maxHomes) {
