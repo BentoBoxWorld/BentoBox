@@ -43,6 +43,7 @@ import world.bentobox.bentobox.api.logs.LogEntry;
 import world.bentobox.bentobox.api.metadata.MetaDataValue;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.lists.Flags;
+import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.FlagsManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.RanksManager;
@@ -56,6 +57,7 @@ import world.bentobox.bentobox.util.Pair;
 @PrepareForTest({Bukkit.class})
 public class IslandTest {
 
+    private static final int DISTANCE = 400;
     private final UUID uuid = UUID.randomUUID();
     private final UUID m = UUID.randomUUID();
     private Island i;
@@ -69,6 +71,8 @@ public class IslandTest {
     private World world;
     @Mock
     private User user;
+    @Mock
+    private CommandsManager cm;
 
 
     /**
@@ -81,7 +85,7 @@ public class IslandTest {
 
         // Max range
         when(plugin.getIWM()).thenReturn(iwm);
-        when(iwm.getIslandDistance(any())).thenReturn(400);
+        when(iwm.getIslandDistance(any())).thenReturn(DISTANCE);
 
         // Location
         //when(location.getWorld()).thenReturn(world);
@@ -98,6 +102,9 @@ public class IslandTest {
         FlagsManager fm = new FlagsManager(plugin);
         // Flags
         when(plugin.getFlagsManager()).thenReturn(fm);
+
+        // Commands manager
+        when(plugin.getCommandsManager()).thenReturn(cm);
 
         i = new Island(new Island(location, uuid , 100));
     }
@@ -116,7 +123,7 @@ public class IslandTest {
     public void testIslandLocationUUIDInt() {
         assertEquals("Location{world=null,x=0.0,y=0.0,z=0.0,pitch=0.0,yaw=0.0}", i.getCenter().toString());
         assertEquals(uuid, i.getOwner());
-        assertEquals(400, i.getRange());
+        assertEquals(DISTANCE, i.getRange());
     }
 
     /**
@@ -126,7 +133,7 @@ public class IslandTest {
     public void testIslandIsland() {
         assertEquals("Location{world=null,x=0.0,y=0.0,z=0.0,pitch=0.0,yaw=0.0}", i.getCenter().toString());
         assertEquals(uuid, i.getOwner());
-        assertEquals(400, i.getRange());
+        assertEquals(DISTANCE, i.getRange());
     }
 
     /**
@@ -273,7 +280,7 @@ public class IslandTest {
      */
     @Test
     public void testGetMinX() {
-        assertEquals(-400, i.getMinX());
+        assertEquals(-DISTANCE, i.getMinX());
     }
 
     /**
@@ -281,7 +288,7 @@ public class IslandTest {
      */
     @Test
     public void testGetMaxX() {
-        assertEquals(400, i.getMaxX());
+        assertEquals(DISTANCE, i.getMaxX());
     }
 
     /**
@@ -289,7 +296,7 @@ public class IslandTest {
      */
     @Test
     public void testGetMinZ() {
-        assertEquals(-400, i.getMinZ());
+        assertEquals(-DISTANCE, i.getMinZ());
     }
 
     /**
@@ -297,7 +304,7 @@ public class IslandTest {
      */
     @Test
     public void testGetMaxZ() {
-        assertEquals(400, i.getMaxZ());
+        assertEquals(DISTANCE, i.getMaxZ());
     }
 
     /**
@@ -372,7 +379,7 @@ public class IslandTest {
      */
     @Test
     public void testGetRange() {
-        assertEquals(400, i.getRange());
+        assertEquals(DISTANCE, i.getRange());
     }
 
     /**
@@ -473,7 +480,7 @@ public class IslandTest {
         i.setWorld(world);
         when(location.getWorld()).thenReturn(world);
         assertNotNull(i.getBoundingBox());
-        assertEquals("BoundingBox [minX=-400.0, minY=0.0, minZ=-400.0, maxX=400.0, maxY=0.0, maxZ=400.0]", i.getBoundingBox().toString());
+        assertEquals("BoundingBox [minX=-" + DISTANCE + ".0, minY=0.0, minZ=-" + DISTANCE + ".0, maxX=" + DISTANCE + ".0, maxY=0.0, maxZ=" + DISTANCE + ".0]", i.getBoundingBox().toString());
     }
 
     /**
@@ -665,8 +672,9 @@ public class IslandTest {
         assertEquals(50, i.getProtectionRange());
         i.setProtectionRange(100);
         assertEquals(100, i.getProtectionRange());
+        // Over island range
         i.setProtectionRange(1000);
-        assertEquals(1000, i.getProtectionRange());
+        assertEquals(DISTANCE, i.getProtectionRange());
     }
 
     /**
@@ -675,7 +683,7 @@ public class IslandTest {
     @Test
     public void testUpdateMaxEverProtectionRange() {
         i.setProtectionRange(1000);
-        assertEquals(1000, i.getMaxEverProtectionRange());
+        assertEquals(DISTANCE, i.getMaxEverProtectionRange());
     }
 
     /**
