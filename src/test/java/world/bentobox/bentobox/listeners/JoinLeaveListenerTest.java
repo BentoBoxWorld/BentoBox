@@ -1,5 +1,6 @@
 package world.bentobox.bentobox.listeners;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -19,6 +20,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
@@ -29,6 +31,7 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitScheduler;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.junit.After;
 import org.junit.Before;
@@ -93,12 +96,14 @@ public class JoinLeaveListenerTest {
     @Mock
     private PlayerInventory inv;
     private Set<String> set;
-    @Mock
+
     private @Nullable Island island;
     @Mock
     private GameModeAddon gameMode;
     @Mock
     private PluginManager pim;
+    @Mock
+    private @NonNull Location location;
 
     /**
      * @throws java.lang.Exception
@@ -152,11 +157,11 @@ public class JoinLeaveListenerTest {
         when(im.isOwner(any(), any())).thenReturn(true);
 
         // Island
+        island = new Island(location, uuid, 50);
+        island.setWorld(world);
+
         when(im.getIsland(any(), any(User.class))).thenReturn(island);
         when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
-        when(island.getWorld()).thenReturn(world);
-        when(island.getProtectionRange()).thenReturn(50);
-        when(island.getOwner()).thenReturn(uuid);
         Map<UUID, Integer> memberMap = new HashMap<>();
 
         memberMap.put(uuid, RanksManager.OWNER_RANK);
@@ -165,7 +170,7 @@ public class JoinLeaveListenerTest {
         when(coopPlayer.getUniqueId()).thenReturn(uuid2);
         User.getInstance(coopPlayer);
         memberMap.put(uuid2, RanksManager.COOP_RANK);
-        when(island.getMembers()).thenReturn(memberMap);
+        island.setMembers(memberMap);
 
         // Bukkit
         PowerMockito.mockStatic(Bukkit.class);
@@ -246,7 +251,7 @@ public class JoinLeaveListenerTest {
         // Verify
         verify(player).sendMessage(eq("commands.admin.setrange.range-updated"));
         // Verify island setting
-        verify(island).setProtectionRange(eq(100));
+        assertEquals(100, island.getProtectionRange());
         // Verify log
         verify(plugin).log("Island protection range changed from 50 to 100 for tastybento due to permission.");
     }
@@ -265,7 +270,7 @@ public class JoinLeaveListenerTest {
         // Verify
         verify(player).sendMessage(eq("commands.admin.setrange.range-updated"));
         // Verify island setting
-        verify(island).setProtectionRange(eq(10));
+        assertEquals(10, island.getProtectionRange());
         // Verify log
         verify(plugin).log("Island protection range changed from 50 to 10 for tastybento due to permission.");
     }
@@ -284,7 +289,7 @@ public class JoinLeaveListenerTest {
         // Verify
         verify(player).sendMessage(eq("commands.admin.setrange.range-updated"));
         // Verify island setting
-        verify(island).setProtectionRange(eq(55));
+        assertEquals(55, island.getProtectionRange());
         // Verify log
         verify(plugin).log("Island protection range changed from 50 to 55 for tastybento due to permission.");
     }
@@ -303,7 +308,7 @@ public class JoinLeaveListenerTest {
         // Verify
         verify(player, never()).sendMessage(eq("commands.admin.setrange.range-updated"));
         // Verify that the island protection range is not changed if it is already at that value
-        verify(island, never()).setProtectionRange(eq(50));
+        assertEquals(50, island.getProtectionRange());
         // Verify log
         verify(plugin, never()).log("Island protection range changed from 50 to 10 for tastybento due to permission.");
     }
@@ -344,7 +349,8 @@ public class JoinLeaveListenerTest {
         PlayerQuitEvent event = new PlayerQuitEvent(player, "");
         jll.onPlayerQuit(event);
         verify(coopPlayer).sendMessage(eq("commands.island.team.uncoop.all-members-logged-off"));
-        verify(island).removeRank(eq(RanksManager.COOP_RANK));
+        // Team is now only 1 big
+        assertEquals(1, island.getMembers().size());
     }
 
 }
