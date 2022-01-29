@@ -199,6 +199,8 @@ commands:
       island-coords: "Island coordinates: [xz1] to [xz2]"
       islands-in-trash: "&d Player has islands in trash."
       protection-range: "Protection range: [range]"
+      protection-range-bonus-title: "&b Includes these bonues:"
+      protection-range-bonus: "Bonus: [number]"
       purge-protected: "Island is purge protected"
       max-protection-range: "Largest historical protection range: [range]"
       protection-coords: "Protection coordinates: [xz1] to [xz2]"
