@@ -124,6 +124,7 @@ public class IslandInfoCommandTest {
 
         // Island manager
         island = new Island(location, uuid, 100);
+        island.setRange(400);
         when(location.toVector()).thenReturn(new Vector(1,2,3));
         when(plugin.getIslands()).thenReturn(im);
         Optional<Island> optionalIsland = Optional.of(island);
@@ -203,7 +204,7 @@ public class IslandInfoCommandTest {
         verify(user).sendMessage("commands.admin.info.team-owner-format", "[name]", null, "[rank]", "ranks.owner");
         verify(user).sendMessage("commands.admin.info.island-center", "[xyz]", "0,0,0");
         verify(user).sendMessage("commands.admin.info.protection-range", "[range]", "100");
-        verify(user).sendMessage("commands.admin.info.protection-coords", "[xz1]", "0,0,0", "[xz2]", "-1,0,-1");
+        verify(user).sendMessage("commands.admin.info.protection-coords", "[xz1]", "-100,0,-100", "[xz2]", "99,0,99");
     }
 
     /**
@@ -220,7 +221,7 @@ public class IslandInfoCommandTest {
         verify(user).sendMessage("commands.admin.info.team-owner-format", "[name]", null, "[rank]", "ranks.owner");
         verify(user).sendMessage("commands.admin.info.island-center", "[xyz]", "0,0,0");
         verify(user).sendMessage("commands.admin.info.protection-range", "[range]", "100");
-        verify(user).sendMessage("commands.admin.info.protection-coords", "[xz1]", "0,0,0", "[xz2]", "-1,0,-1");
+        verify(user).sendMessage("commands.admin.info.protection-coords", "[xz1]", "-100,0,-100", "[xz2]", "99,0,99");
     }
 
     /**
