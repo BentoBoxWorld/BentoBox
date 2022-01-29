@@ -304,6 +304,16 @@ public final class Flags {
             .clickHandler(new CycleClick("LOCK", RanksManager.VISITOR_RANK, RanksManager.MEMBER_RANK))
             .mode(Flag.Mode.TOP_ROW).build();
 
+    /**
+     * This flag allows choosing which island members can change island settings values.
+     *
+     * @since 1.20.0
+     */
+    public static final Flag CHANGE_SETTINGS = new Flag.Builder("CHANGE_SETTINGS", Material.CRAFTING_TABLE).defaultSetting(true)
+        .defaultRank(RanksManager.OWNER_RANK)
+        .clickHandler(new CycleClick("CHANGE_SETTINGS", RanksManager.MEMBER_RANK, RanksManager.OWNER_RANK))
+        .mode(Flag.Mode.TOP_ROW).build();
+
     /*
      * Settings flags (not protection flags)
      */

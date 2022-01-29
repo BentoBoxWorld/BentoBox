@@ -132,6 +132,7 @@ public class SettingsTab implements Tab, ClickHandler {
         Map<Integer, PanelItem> icons = new HashMap<>();
         // Add the lock icon - we want it to be displayed no matter the tab
         if (island != null) {
+            icons.put(4, Flags.CHANGE_SETTINGS.toPanelItem(plugin, user, island, false));
             icons.put(5, Flags.LOCK.toPanelItem(plugin, user, island, false));
         }
         // Add the mode icon

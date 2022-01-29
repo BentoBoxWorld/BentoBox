@@ -4,6 +4,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.event.inventory.ClickType;
 
+import java.util.Objects;
+
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.events.flags.FlagSettingChangeEvent;
@@ -13,6 +15,7 @@ import world.bentobox.bentobox.api.panels.PanelItem.ClickHandler;
 import world.bentobox.bentobox.api.panels.TabbedPanel;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.panels.settings.SettingsTab;
 import world.bentobox.bentobox.util.Util;
 
@@ -51,21 +54,30 @@ public class IslandToggleClick implements ClickHandler {
         }
         // Get the island for this tab
         Island island = st.getIsland();
-        if (island != null && (user.isOp() || user.getUniqueId().equals(island.getOwner()) || user.hasPermission(prefix + "admin.settings"))) {
-            plugin.getFlagsManager().getFlag(id).ifPresent(flag -> {
-                if (click.equals(ClickType.SHIFT_LEFT) && user.isOp()) {
-                    if (!plugin.getIWM().getHiddenFlags(user.getWorld()).contains(flag.getID())) {
+        if (island != null && (user.isOp() || island.isAllowed(user, Flags.CHANGE_SETTINGS) || user.hasPermission(prefix + "admin.settings")))
+        {
+            plugin.getFlagsManager().getFlag(id).ifPresent(flag ->
+            {
+                if (click.equals(ClickType.SHIFT_LEFT) && user.isOp())
+                {
+                    if (!plugin.getIWM().getHiddenFlags(user.getWorld()).contains(flag.getID()))
+                    {
                         plugin.getIWM().getHiddenFlags(user.getWorld()).add(flag.getID());
                         user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_GLASS_BREAK, 1F, 1F);
-                    } else {
+                    }
+                    else
+                    {
                         plugin.getIWM().getHiddenFlags(user.getWorld()).remove(flag.getID());
                         user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1F, 1F);
                     }
                     // Save changes
                     plugin.getIWM().getAddon(user.getWorld()).ifPresent(GameModeAddon::saveWorldSettings);
-                } else {
+                }
+                else
+                {
                     // Check cooldown
-                    if (!user.isOp() && island.isCooldown(flag)) {
+                    if (!user.isOp() && island.isCooldown(flag))
+                    {
                         user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_BEACON_DEACTIVATE, 1F, 1F);
                         user.notify("protection.panel.flag-item.setting-cooldown");
                         return;
@@ -76,17 +88,32 @@ public class IslandToggleClick implements ClickHandler {
                     // Set cooldown
                     island.setCooldown(flag);
                     // Fire event
-                    Bukkit.getPluginManager().callEvent(new FlagSettingChangeEvent(island, user.getUniqueId(), flag, island.isAllowed(flag)));
+                    Bukkit.getPluginManager().callEvent(new FlagSettingChangeEvent(island,
+                        user.getUniqueId(),
+                        flag,
+                        island.isAllowed(flag)));
 
-                    if (flag.hasSubflags()) {
+                    if (flag.hasSubflags())
+                    {
                         // Fire events for all subflags as well
-                        flag.getSubflags().forEach(subflag -> Bukkit.getPluginManager().callEvent(new FlagSettingChangeEvent(island, user.getUniqueId(), subflag, island.isAllowed(subflag))));
+                        flag.getSubflags().forEach(subflag -> Bukkit.getPluginManager()
+                            .callEvent(new FlagSettingChangeEvent(island,
+                                user.getUniqueId(),
+                                subflag,
+                                island.isAllowed(subflag))));
                     }
                 }
             });
         } else {
-            // Player is not the owner of the island.
-            user.sendMessage("general.errors.not-owner");
+            if (island == null) {
+                user.sendMessage("general.errors.not-on-island");
+            } else  {
+                // Player is not the allowed to change settings.
+                user.sendMessage("general.errors.insufficient-rank",
+                    TextVariables.RANK,
+                    user.getTranslation(plugin.getRanksManager().getRank(Objects.requireNonNull(island).getRank(user))));
+            }
+
             user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_METAL_HIT, 1F, 1F);
         }
         return true;
