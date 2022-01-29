@@ -85,7 +85,6 @@ public class InventoryListener extends FlagListener {
             checkIsland(e, player, e.getInventory().getLocation(), Flags.CHEST);
         }
         else if (!(inventoryHolder instanceof Player)) {
-            BentoBox.getInstance().logDebug(inventoryHolder.getClass().toGenericString());
             // All other containers
             checkIsland(e, player, e.getInventory().getLocation(), Flags.CONTAINER);
         }
