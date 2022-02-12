@@ -360,6 +360,24 @@ public class TemplateReader
                             itemRecord.addAction(actionData);
                         }
                     }
+                    else
+                    {
+                        ConfigurationSection actionDataSection = actionSection.getConfigurationSection(actionKey);
+
+                        if (actionDataSection != null && actionDataSection.contains("click-type"))
+                        {
+                            clickType = Enums.getIfPresent(ClickType.class,
+                                actionDataSection.getString("click-type", "UNKNOWN").toUpperCase()).
+                                or(ClickType.UNKNOWN);
+                            
+                            ItemTemplateRecord.ActionRecords actionData =
+                                new ItemTemplateRecord.ActionRecords(clickType,
+                                    actionKey,
+                                    actionDataSection.getString("content"),
+                                    actionDataSection.getString("tooltip"));
+                            itemRecord.addAction(actionData);
+                        }
+                    }
                 });
             }
         }
