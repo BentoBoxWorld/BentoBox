@@ -48,6 +48,23 @@ public class TemplatedPanelBuilder
     }
 
 
+
+    /**
+     * Adds the template that must be loaded for Template panel builder.
+     *
+     * @param panelName the gui name
+     * @param templateName the name of the file
+     * @param dataFolder the data folder
+     * @return the template panel builder
+     * @since 1.20.0
+     */
+    public TemplatedPanelBuilder template(String panelName, String templateName, File dataFolder)
+    {
+        this.panelTemplate = TemplateReader.readTemplatePanel(panelName, templateName, dataFolder);
+        return this;
+    }
+
+
     /**
      * Adds the user for template panel builder.
      *
