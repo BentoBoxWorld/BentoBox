@@ -298,6 +298,13 @@
             <version>3.2.2</version>
             <scope>provided</scope>
         </dependency>
+        <!-- Spigot NMS. Used for chunk deletion and pasting. -->
+        <dependency>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot</artifactId>
+            <version>${spigot.version}</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>
