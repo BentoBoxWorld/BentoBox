@@ -228,8 +228,8 @@ public class EntityInteractListenerTest extends AbstractCommonSetup {
      */
     @Test
     public void testOnPlayerInteractEntityNamingVillagerAllowedTradingNoNaming() {
-        when(island.isAllowed(any(), eq(Flags.TRADING))).thenReturn(true);
-        when(island.isAllowed(any(), eq(Flags.NAME_TAG))).thenReturn(false);
+        when(island.isAllowed(any(User.class), eq(Flags.TRADING))).thenReturn(true);
+        when(island.isAllowed(any(User.class), eq(Flags.NAME_TAG))).thenReturn(false);
         clickedEntity = mock(Villager.class);
         when(clickedEntity.getLocation()).thenReturn(location);
         PlayerInteractEntityEvent e = new PlayerInteractEntityEvent(player, clickedEntity, hand);
@@ -257,7 +257,7 @@ public class EntityInteractListenerTest extends AbstractCommonSetup {
      */
     @Test
     public void testOnPlayerInteractAtEntityWanderingTraderAllowed() {
-        when(island.isAllowed(any(), any())).thenReturn(true);
+        when(island.isAllowed(any(User.class), any())).thenReturn(true);
         clickedEntity = mock(WanderingTrader.class);
         when(clickedEntity.getType()).thenReturn(EntityType.WANDERING_TRADER);
         when(clickedEntity.getLocation()).thenReturn(location);
@@ -272,8 +272,10 @@ public class EntityInteractListenerTest extends AbstractCommonSetup {
      */
     @Test
     public void testOnPlayerInteractEntityNamingWanderingTraderAllowedNoTrading() {
-        when(island.isAllowed(any(User.class), eq(Flags.TRADING))).thenReturn(false);
-        when(island.isAllowed(any(User.class), eq(Flags.NAME_TAG))).thenReturn(true);
+        when(island.isAllowed(any(User.class), 
+        		eq(Flags.TRADING))).thenReturn(false);
+        when(island.isAllowed(any(User.class), 
+        		eq(Flags.NAME_TAG))).thenReturn(true);
         clickedEntity = mock(WanderingTrader.class);
         when(clickedEntity.getType()).thenReturn(EntityType.WANDERING_TRADER);
         when(clickedEntity.getLocation()).thenReturn(location);
