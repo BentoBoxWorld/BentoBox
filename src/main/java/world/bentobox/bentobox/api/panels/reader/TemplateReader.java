@@ -219,7 +219,7 @@ public class TemplateReader
                             // If it contains a section, then build a new button template from it.
                             template.addButtonTemplate(rowIndex,
                                     columnIndex,
-                                    readPanelItemTemplate(line.getConfigurationSection(String.valueOf(columnIndex + 1))));
+                                    readPanelItemTemplate(line.getConfigurationSection(String.valueOf(columnIndex + 1)), null, panelItemDataMap));
                         }
                         else if (line.isString(String.valueOf(columnIndex + 1)))
                         {
