@@ -69,6 +69,10 @@ public class EntityInteractListenerTest extends AbstractCommonSetup {
         position = new Vector(10,10,10);
         when(inv.getItemInMainHand()).thenReturn(new ItemStack(Material.NAME_TAG));
 
+        // Initialize the Flags class. This is a workaround to prevent weird errors when mocking
+        // I think it's because the flag class needs to be initialized before use in argument matchers
+        Flags.TRADING.setDefaultSetting(false);
+        
         // Class under test
         eil = new EntityInteractListener();
     }
@@ -91,7 +95,7 @@ public class EntityInteractListenerTest extends AbstractCommonSetup {
      */
     @Test
     public void testOnPlayerInteractAtEntityArmorStandAllowed() {
-        when(island.isAllowed(any(), any())).thenReturn(true);
+        when(island.isAllowed(any(User.class), any())).thenReturn(true);
         clickedEntity = mock(ArmorStand.class);
         when(clickedEntity.getLocation()).thenReturn(location);
         PlayerInteractAtEntityEvent e = new PlayerInteractAtEntityEvent(player, clickedEntity, position, hand);
@@ -118,7 +122,7 @@ public class EntityInteractListenerTest extends AbstractCommonSetup {
      */
     @Test
     public void testOnPlayerInteractEntityHorseAllowed() {
-        when(island.isAllowed(any(), any())).thenReturn(true);
+        when(island.isAllowed(any(User.class), any())).thenReturn(true);
         clickedEntity = mock(Horse.class);
         when(clickedEntity.getLocation()).thenReturn(location);
         PlayerInteractEntityEvent e = new PlayerInteractEntityEvent(player, clickedEntity, hand);
@@ -145,7 +149,7 @@ public class EntityInteractListenerTest extends AbstractCommonSetup {
      */
     @Test
     public void testOnPlayerInteractEntityMinecartAllowed() {
-        when(island.isAllowed(any(), any())).thenReturn(true);
+        when(island.isAllowed(any(User.class), any())).thenReturn(true);
         clickedEntity = mock(RideableMinecart.class);
         when(clickedEntity.getLocation()).thenReturn(location);
         PlayerInteractEntityEvent e = new PlayerInteractEntityEvent(player, clickedEntity, hand);
@@ -172,7 +176,7 @@ public class EntityInteractListenerTest extends AbstractCommonSetup {
      */
     @Test
     public void testOnPlayerInteractEntityBoatAllowed() {
-        when(island.isAllowed(any(), any())).thenReturn(true);
+        when(island.isAllowed(any(User.class), any())).thenReturn(true);
         clickedEntity = mock(Boat.class);
         when(clickedEntity.getLocation()).thenReturn(location);
         PlayerInteractEntityEvent e = new PlayerInteractEntityEvent(player, clickedEntity, hand);
@@ -199,7 +203,7 @@ public class EntityInteractListenerTest extends AbstractCommonSetup {
      */
     @Test
     public void testOnPlayerInteractAtEntityVillagerAllowed() {
-        when(island.isAllowed(any(), any())).thenReturn(true);
+        when(island.isAllowed(any(User.class), any())).thenReturn(true);
         clickedEntity = mock(Villager.class);
         when(clickedEntity.getLocation()).thenReturn(location);
         PlayerInteractEntityEvent e = new PlayerInteractEntityEvent(player, clickedEntity, hand);
@@ -212,9 +216,10 @@ public class EntityInteractListenerTest extends AbstractCommonSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.EntityInteractListener#onPlayerInteractEntity(org.bukkit.event.player.PlayerInteractAtEntityEvent)}.
      */
     @Test
+
     public void testOnPlayerInteractEntityNamingVillagerAllowedNoTrading() {
-        when(island.isAllowed(any(), eq(Flags.TRADING))).thenReturn(false);
-        when(island.isAllowed(any(), eq(Flags.NAME_TAG))).thenReturn(true);
+        when(island.isAllowed(any(User.class), eq(Flags.TRADING))).thenReturn(false);
+        when(island.isAllowed(any(User.class), eq(Flags.NAME_TAG))).thenReturn(true);
         clickedEntity = mock(Villager.class);
         when(clickedEntity.getLocation()).thenReturn(location);
         PlayerInteractEntityEvent e = new PlayerInteractEntityEvent(player, clickedEntity, hand);
@@ -271,8 +276,9 @@ public class EntityInteractListenerTest extends AbstractCommonSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.EntityInteractListener#onPlayerInteractEntity(org.bukkit.event.player.PlayerInteractAtEntityEvent)}.
      */
     @Test
+
     public void testOnPlayerInteractEntityNamingWanderingTraderAllowedNoTrading() {
-        when(island.isAllowed(any(User.class), 
+        when(island.isAllowed(any(), 
         		eq(Flags.TRADING))).thenReturn(false);
         when(island.isAllowed(any(User.class), 
         		eq(Flags.NAME_TAG))).thenReturn(true);
@@ -289,6 +295,7 @@ public class EntityInteractListenerTest extends AbstractCommonSetup {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.EntityInteractListener#onPlayerInteractEntity(org.bukkit.event.player.PlayerInteractAtEntityEvent)}.
      */
     @Test
+
     public void testOnPlayerInteractEntityNamingWanderingTraderAllowedTradingNoNaming() {
         when(island.isAllowed(any(User.class), eq(Flags.TRADING))).thenReturn(true);
         when(island.isAllowed(any(User.class), eq(Flags.NAME_TAG))).thenReturn(false);

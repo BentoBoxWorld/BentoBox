@@ -21,10 +21,12 @@ import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.PluginManager;
 import org.eclipse.jdt.annotation.Nullable;
 import org.junit.After;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
+import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
 import com.google.common.collect.ImmutableSet;
@@ -57,6 +59,7 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
+@RunWith(PowerMockRunner.class)
 public abstract class AbstractCommonSetup {
 
     protected UUID uuid = UUID.randomUUID();
@@ -136,7 +139,7 @@ public abstract class AbstractCommonSetup {
 
         // Island - nothing is allowed by default
         when(island.isAllowed(any())).thenReturn(false);
-        when(island.isAllowed(any(), any())).thenReturn(false);
+        when(island.isAllowed(any(User.class), any())).thenReturn(false);
         when(island.getOwner()).thenReturn(uuid);
         when(island.getMemberSet()).thenReturn(ImmutableSet.of(uuid));
 
