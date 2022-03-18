@@ -577,17 +577,17 @@ public class PlayersManager {
             plugin.getVault().ifPresent(vault -> vault.withdraw(target, vault.getBalance(target), world));
         }
         // Reset the health
-        if (plugin.getIWM().isOnLeaveResetHealth(world)) {
+        if (plugin.getIWM().isOnLeaveResetHealth(world) && target.isPlayer()) {
             Util.resetHealth(target.getPlayer());
         }
 
         // Reset the hunger
-        if (plugin.getIWM().isOnLeaveResetHunger(world)) {
+        if (plugin.getIWM().isOnLeaveResetHunger(world) && target.isPlayer()) {
             target.getPlayer().setFoodLevel(20);
         }
 
         // Reset the XP
-        if (plugin.getIWM().isOnLeaveResetXP(world)) {
+        if (plugin.getIWM().isOnLeaveResetXP(world) && target.isPlayer()) {
             target.getPlayer().setTotalExperience(0);
         }
         // Save player

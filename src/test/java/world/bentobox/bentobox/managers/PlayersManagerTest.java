@@ -169,6 +169,7 @@ public class PlayersManagerTest {
         when(user.getPlayer()).thenReturn(p);
         when(user.getName()).thenReturn("tastybento");
         when(user.isOnline()).thenReturn(true);
+        when(user.isPlayer()).thenReturn(true);
         User.setPlugin(plugin);
 
 
