@@ -57,7 +57,7 @@ public class IslandInfo {
             try {
                 String dateTimeFormat = plugin.getLocalesManager().get("commands.admin.info.last-login-date-time-format");
                 formattedDate = new SimpleDateFormat(dateTimeFormat).format(new Date(lastPlayed));
-            } catch (NullPointerException | IllegalArgumentException ignored) {
+            } catch (Exception ignored) {
                 formattedDate = new Date(lastPlayed).toString();
             }
             user.sendMessage("commands.admin.info.last-login","[date]", formattedDate);
