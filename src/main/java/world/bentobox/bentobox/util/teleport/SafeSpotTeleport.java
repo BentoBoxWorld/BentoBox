@@ -226,7 +226,7 @@ public class SafeSpotTeleport {
         // Check the safe spot at the current height
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {
-                if (minY >= startY && checkBlock(chunk, x, startY, z)) {
+                if (minY <= startY && checkBlock(chunk, x, startY, z)) {
                     return true;
                 }
                 maxY = Math.max(chunk.getHighestBlockYAt(x, z), maxY);
