@@ -51,6 +51,7 @@ public class SafeSpotTeleport {
     private final AtomicBoolean checking = new AtomicBoolean();
     private BukkitTask task;
     private boolean portal;
+    private boolean cancelIfFail;
     // Locations
     private Location bestSpot;
     private Iterator<Pair<Integer, Integer>> chunksToScanIterator;
@@ -73,6 +74,7 @@ public class SafeSpotTeleport {
         this.result = builder.getResult();
         this.world = Objects.requireNonNull(location.getWorld());
         this.maxHeight = world.getMaxHeight() - 20;
+        this.cancelIfFail = builder.isCancelIfFail();
         // Try to go
         Util.getChunkAtAsync(location).thenRun(() -> tryToGo(builder.getFailureMessage()));
     }
@@ -150,7 +152,7 @@ public class SafeSpotTeleport {
                 if (!plugin.getIWM().inWorld(entity.getLocation())) {
                     // Last resort
                     player.performCommand("spawn");
-                } else {
+                } else if (!this.cancelIfFail) {
                     // Create a spot for the player to be
                     if (world.getEnvironment().equals(Environment.NETHER)) {
                         makeAndTeleport(Material.NETHERRACK);
@@ -336,6 +338,7 @@ public class SafeSpotTeleport {
         private Location location;
         private Runnable runnable;
         private Runnable failRunnable;
+        private boolean cancelIfFail;
 
         public Builder(BentoBox plugin) {
             this.plugin = plugin;
@@ -461,6 +464,20 @@ public class SafeSpotTeleport {
             return new SafeSpotTeleport(this);
         }
 
+
+        /**
+         * This method allows stopping "safe" block generation if teleportation fails.
+         * @param cancelIfFail - value for canceling
+         * @return Builder
+         * @since 1.20.1
+         */
+        public Builder cancelIfFail(boolean cancelIfFail)
+        {
+            this.cancelIfFail = cancelIfFail;
+            return this;
+        }
+
+
         /**
          * The task to run after the player is safely teleported.
          *
@@ -557,5 +574,13 @@ public class SafeSpotTeleport {
         }
 
 
+        /**
+         * @return the cancelIfFail
+         * @since 1.20.1
+         */
+        public boolean isCancelIfFail()
+        {
+            return this.cancelIfFail;
+        }
     }
 }
