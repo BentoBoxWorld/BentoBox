@@ -452,7 +452,7 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         for (Entry<Object, Object> object : value.entrySet()) {
             // Serialize all key and values
             String key = (String)serialize(object.getKey());
-            key = key.replaceAll("\\.", ":dot:");
+            key = key.replace("\\.", ":dot:");
             result.put(key, serialize(object.getValue()));
         }
         // Save the list in the config file
