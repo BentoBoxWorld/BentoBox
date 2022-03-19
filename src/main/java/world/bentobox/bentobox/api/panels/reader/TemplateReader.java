@@ -45,6 +45,8 @@ public class TemplateReader
 	private static final String ACTIONS = "actions";
 	private static final String TOOLTIP = "tooltip";
 	private static final String CLICK_TYPE = "click-type";
+	private static final String CONTENT = "content";
+	private static final String TYPE = "type";
 
 
     /**
@@ -129,7 +131,7 @@ public class TemplateReader
 
         String title = configurationSection.getString(TITLE);
         Panel.Type type =
-                Enums.getIfPresent(Panel.Type.class, configurationSection.getString("type", "INVENTORY")).
+                Enums.getIfPresent(Panel.Type.class, configurationSection.getString(TYPE, "INVENTORY")).
                 or(Panel.Type.INVENTORY);
 
         PanelTemplateRecord.TemplateItem borderItem = null;
@@ -198,7 +200,7 @@ public class TemplateReader
         PanelTemplateRecord template = new PanelTemplateRecord(type, title, borderItem, backgroundItem, forcedRows);
 
         // Read content
-        ConfigurationSection content = configurationSection.getConfigurationSection("content");
+        ConfigurationSection content = configurationSection.getConfigurationSection(CONTENT);
 
         if (content == null)
         {
@@ -358,8 +360,8 @@ public class TemplateReader
                         {
                             ItemTemplateRecord.ActionRecords actionData =
                                     new ItemTemplateRecord.ActionRecords(clickType,
-                                            actionDataSection.getString("type"),
-                                            actionDataSection.getString("content"),
+                                            actionDataSection.getString(TYPE),
+                                            actionDataSection.getString(CONTENT),
                                             actionDataSection.getString(TOOLTIP));
                             itemRecord.addAction(actionData);
                         }
@@ -377,7 +379,7 @@ public class TemplateReader
                             ItemTemplateRecord.ActionRecords actionData =
                                 new ItemTemplateRecord.ActionRecords(clickType,
                                     actionKey,
-                                    actionDataSection.getString("content"),
+                                    actionDataSection.getString(CONTENT),
                                     actionDataSection.getString(TOOLTIP));
                             itemRecord.addAction(actionData);
                         }
@@ -401,8 +403,8 @@ public class TemplateReader
                     {
                         ItemTemplateRecord.ActionRecords actionData =
                             new ItemTemplateRecord.ActionRecords(clickType,
-                                valueMap.containsKey("type") ? String.valueOf(valueMap.get("type")) : null,
-                                valueMap.containsKey("content") ? String.valueOf(valueMap.get("content")) : null,
+                                valueMap.containsKey(TYPE) ? String.valueOf(valueMap.get(TYPE)) : null,
+                                valueMap.containsKey(CONTENT) ? String.valueOf(valueMap.get(CONTENT)) : null,
                                 valueMap.containsKey(TOOLTIP) ? String.valueOf(valueMap.get(TOOLTIP)) : null);
                         itemRecord.addAction(actionData);
                     }
