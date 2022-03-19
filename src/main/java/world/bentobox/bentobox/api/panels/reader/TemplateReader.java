@@ -41,6 +41,10 @@ public class TemplateReader
     private static final String BORDER = "border";
     private static final String FORCE_SHOWN = "force-shown";
     private static final String FALLBACK = "fallback";
+	private static final String YML = ".yml";
+	private static final String ACTIONS = "actions";
+	private static final String TOOLTIP = "tooltip";
+	private static final String CLICK_TYPE = "click-type";
 
 
     /**
@@ -73,7 +77,7 @@ public class TemplateReader
             return null;
         }
 
-        File file = new File(panelLocation, templateName.endsWith(".yml") ? templateName : templateName + ".yml");
+        File file = new File(panelLocation, templateName.endsWith(YML) ? templateName : templateName + YML);
 
         if (!file.exists())
         {
@@ -337,9 +341,9 @@ public class TemplateReader
         }
 
         // Read Click data
-        if (section.isConfigurationSection("actions"))
+        if (section.isConfigurationSection(ACTIONS))
         {
-            ConfigurationSection actionSection = section.getConfigurationSection("actions");
+            ConfigurationSection actionSection = section.getConfigurationSection(ACTIONS);
 
             if (actionSection != null)
             {
@@ -356,7 +360,7 @@ public class TemplateReader
                                     new ItemTemplateRecord.ActionRecords(clickType,
                                             actionDataSection.getString("type"),
                                             actionDataSection.getString("content"),
-                                            actionDataSection.getString("tooltip"));
+                                            actionDataSection.getString(TOOLTIP));
                             itemRecord.addAction(actionData);
                         }
                     }
@@ -364,34 +368,34 @@ public class TemplateReader
                     {
                         ConfigurationSection actionDataSection = actionSection.getConfigurationSection(actionKey);
 
-                        if (actionDataSection != null && actionDataSection.contains("click-type"))
+                        if (actionDataSection != null && actionDataSection.contains(CLICK_TYPE))
                         {
                             clickType = Enums.getIfPresent(ClickType.class,
-                                actionDataSection.getString("click-type", "UNKNOWN").toUpperCase()).
+                                actionDataSection.getString(CLICK_TYPE, "UNKNOWN").toUpperCase()).
                                 or(ClickType.UNKNOWN);
                             
                             ItemTemplateRecord.ActionRecords actionData =
                                 new ItemTemplateRecord.ActionRecords(clickType,
                                     actionKey,
                                     actionDataSection.getString("content"),
-                                    actionDataSection.getString("tooltip"));
+                                    actionDataSection.getString(TOOLTIP));
                             itemRecord.addAction(actionData);
                         }
                     }
                 });
             }
         }
-        else if (section.isList("actions"))
+        else if (section.isList(ACTIONS))
         {
             // Read Click data as list which allows to have duplicate click types.
 
-            List<Map<?, ?>> actionList = section.getMapList("actions");
+            List<Map<?, ?>> actionList = section.getMapList(ACTIONS);
 
             if (!actionList.isEmpty())
             {
                 actionList.forEach(valueMap -> {
                     ClickType clickType = Enums.getIfPresent(ClickType.class,
-                        String.valueOf(valueMap.get("click-type")).toUpperCase()).orNull();
+                        String.valueOf(valueMap.get(CLICK_TYPE)).toUpperCase()).orNull();
 
                     if (clickType != null)
                     {
@@ -399,7 +403,7 @@ public class TemplateReader
                             new ItemTemplateRecord.ActionRecords(clickType,
                                 valueMap.containsKey("type") ? String.valueOf(valueMap.get("type")) : null,
                                 valueMap.containsKey("content") ? String.valueOf(valueMap.get("content")) : null,
-                                valueMap.containsKey("tooltip") ? String.valueOf(valueMap.get("tooltip")) : null);
+                                valueMap.containsKey(TOOLTIP) ? String.valueOf(valueMap.get(TOOLTIP)) : null);
                         itemRecord.addAction(actionData);
                     }
                 });

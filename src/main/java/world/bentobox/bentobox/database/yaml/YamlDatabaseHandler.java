@@ -289,7 +289,7 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                 // Convert any serialized dots back to dots
                 // In YAML dots . cause a lot of problems, so I serialize them as :dot:
                 // There may be a better way to do this.
-                key = key.replaceAll(":dot:", ".");
+                key = key.replace(":dot:", ".");
                 Object mapKey = deserialize(key,Class.forName(keyType.getTypeName()));
                 if (mapKey == null) {
                     continue;

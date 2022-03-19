@@ -20,7 +20,8 @@ import world.bentobox.bentobox.util.Util;
  */
 public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
 
-    private final IslandTeamCommand itc;
+    private static final String INVALID_INVITE = "commands.island.team.invite.errors.invalid-invite";
+	private final IslandTeamCommand itc;
     private UUID playerUUID;
     private UUID prospectiveOwnerUUID;
 
@@ -47,7 +48,7 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
         // Get the island owner
         prospectiveOwnerUUID = itc.getInviter(playerUUID);
         if (prospectiveOwnerUUID == null) {
-            user.sendMessage("commands.island.team.invite.errors.invalid-invite");
+            user.sendMessage(INVALID_INVITE);
             return false;
         }
         Invite invite = itc.getInvite(playerUUID);
@@ -56,7 +57,7 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
             Island island = getIslands().getIsland(getWorld(), prospectiveOwnerUUID);
             String inviteUsage = getParent().getSubCommand("invite").map(CompositeCommand::getUsage).orElse("");
             if (island == null || island.getRank(prospectiveOwnerUUID) < island.getRankCommand(inviteUsage)) {
-                user.sendMessage("commands.island.team.invite.errors.invalid-invite");
+                user.sendMessage(INVALID_INVITE);
                 itc.removeInvite(playerUUID);
                 return false;
             }
@@ -149,7 +150,7 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
         // Get the team's island
         Island teamIsland = getIslands().getIsland(getWorld(), prospectiveOwnerUUID);
         if (teamIsland == null) {
-            user.sendMessage("commands.island.team.invite.errors.invalid-invite");
+            user.sendMessage(INVALID_INVITE);
             return;
         }
         if (teamIsland.getMemberSet(RanksManager.MEMBER_RANK, true).size() > getIslands().getMaxMembers(teamIsland, RanksManager.MEMBER_RANK)) {
