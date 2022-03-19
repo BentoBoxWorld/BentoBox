@@ -41,12 +41,12 @@ public class TemplateReader
     private static final String BORDER = "border";
     private static final String FORCE_SHOWN = "force-shown";
     private static final String FALLBACK = "fallback";
-	private static final String YML = ".yml";
-	private static final String ACTIONS = "actions";
-	private static final String TOOLTIP = "tooltip";
-	private static final String CLICK_TYPE = "click-type";
-	private static final String CONTENT = "content";
-	private static final String TYPE = "type";
+    private static final String YML = ".yml";
+    private static final String ACTIONS = "actions";
+    private static final String TOOLTIP = "tooltip";
+    private static final String CLICK_TYPE = "click-type";
+    private static final String CONTENT = "content";
+    private static final String TYPE = "type";
 
 
     /**
@@ -88,7 +88,7 @@ public class TemplateReader
         }
 
         final String panelKey = file.getAbsolutePath() + ":" + panelName;
-        
+
         // Check if panel is already crafted.
         if (TemplateReader.loadedPanels.containsKey(panelKey))
         {
@@ -373,14 +373,14 @@ public class TemplateReader
                         if (actionDataSection != null && actionDataSection.contains(CLICK_TYPE))
                         {
                             clickType = Enums.getIfPresent(ClickType.class,
-                                actionDataSection.getString(CLICK_TYPE, "UNKNOWN").toUpperCase()).
-                                or(ClickType.UNKNOWN);
-                            
+                                    actionDataSection.getString(CLICK_TYPE, "UNKNOWN").toUpperCase()).
+                                    or(ClickType.UNKNOWN);
+
                             ItemTemplateRecord.ActionRecords actionData =
-                                new ItemTemplateRecord.ActionRecords(clickType,
-                                    actionKey,
-                                    actionDataSection.getString(CONTENT),
-                                    actionDataSection.getString(TOOLTIP));
+                                    new ItemTemplateRecord.ActionRecords(clickType,
+                                            actionKey,
+                                            actionDataSection.getString(CONTENT),
+                                            actionDataSection.getString(TOOLTIP));
                             itemRecord.addAction(actionData);
                         }
                     }
@@ -397,15 +397,15 @@ public class TemplateReader
             {
                 actionList.forEach(valueMap -> {
                     ClickType clickType = Enums.getIfPresent(ClickType.class,
-                        String.valueOf(valueMap.get(CLICK_TYPE)).toUpperCase()).orNull();
+                            String.valueOf(valueMap.get(CLICK_TYPE)).toUpperCase()).orNull();
 
                     if (clickType != null)
                     {
                         ItemTemplateRecord.ActionRecords actionData =
-                            new ItemTemplateRecord.ActionRecords(clickType,
-                                valueMap.containsKey(TYPE) ? String.valueOf(valueMap.get(TYPE)) : null,
-                                valueMap.containsKey(CONTENT) ? String.valueOf(valueMap.get(CONTENT)) : null,
-                                valueMap.containsKey(TOOLTIP) ? String.valueOf(valueMap.get(TOOLTIP)) : null);
+                                new ItemTemplateRecord.ActionRecords(clickType,
+                                        valueMap.containsKey(TYPE) ? String.valueOf(valueMap.get(TYPE)) : null,
+                                                valueMap.containsKey(CONTENT) ? String.valueOf(valueMap.get(CONTENT)) : null,
+                                                        valueMap.containsKey(TOOLTIP) ? String.valueOf(valueMap.get(TOOLTIP)) : null);
                         itemRecord.addAction(actionData);
                     }
                 });
