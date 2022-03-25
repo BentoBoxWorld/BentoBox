@@ -652,8 +652,9 @@ commands:
       kick:
         description: "remove a member from your island"
         parameters: "<player>"
-        owner-kicked: "&c The owner kicked you from the island in [gamemode]!"
+        player-kicked: "&c The [name] kicked you from the island in [gamemode]!"
         cannot-kick: "&c You cannot kick yourself!"
+        cannot-kick-rank: "&c Your rank does not allow to kick [name]!"
         success: "&b [name] &a has been kicked from your island."
       demote:
         description: "demote a player on your island down a rank"
