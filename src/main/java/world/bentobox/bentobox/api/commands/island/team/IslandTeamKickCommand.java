@@ -68,6 +68,14 @@ public class IslandTeamKickCommand extends ConfirmableCommand {
             user.sendMessage("general.errors.not-in-team");
             return false;
         }
+
+        int targetRank = Objects.requireNonNull(island).getRank(user);
+        if (rank <= targetRank) {
+            user.sendMessage("commands.island.team.kick.cannot-kick-rank", 
+                TextVariables.NAME, getPlayers().getName(targetUUID));
+            return false;
+        }
+        
         if (!getSettings().isKickConfirmation()) {
             kick(user, targetUUID);
             return true;
@@ -89,7 +97,9 @@ public class IslandTeamKickCommand extends ConfirmableCommand {
         if (event.isCancelled()) {
             return;
         }
-        target.sendMessage("commands.island.team.kick.owner-kicked", TextVariables.GAMEMODE, getAddon().getDescription().getName());
+        target.sendMessage("commands.island.team.kick.player-kicked", 
+            TextVariables.GAMEMODE, getAddon().getDescription().getName(),
+            TextVariables.NAME, user.getName());
 
         getIslands().removePlayer(getWorld(), targetUUID);
         // Clean the target player
