@@ -305,8 +305,8 @@ public class BlueprintPaster {
             writeSign(block, bpBlock.getSignLines(), bpBlock.isGlowingText());
         }
         // Chests, in general
-        if (bs instanceof InventoryHolder) {
-            Inventory ih = ((InventoryHolder)bs).getInventory();
+        if (bs instanceof InventoryHolder holder) {
+            Inventory ih = holder.getInventory();
             // Double chests are pasted as two blocks so inventory is filled twice.
             // This code stops over-filling for the first block.
             bpBlock.getInventory().forEach(ih::setItem);

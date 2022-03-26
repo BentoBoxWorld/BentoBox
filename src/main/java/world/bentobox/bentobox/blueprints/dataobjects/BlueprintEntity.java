@@ -56,23 +56,23 @@ public class BlueprintEntity {
      * @since 1.8.0
      */
     public void configureEntity(Entity e) {
-        if (e instanceof Villager) {
-            setVillager(e);
+        if (e instanceof Villager villager) {
+            setVillager(villager);
         }
-        if (e instanceof Colorable) {
-            ((Colorable) e).setColor(color);
+        if (e instanceof Colorable c) {
+            c.setColor(color);
         }
-        if (tamed != null && e instanceof Tameable) {
-            ((Tameable)e).setTamed(tamed);
+        if (tamed != null && e instanceof Tameable tameable) {
+            tameable.setTamed(tamed);
         }
-        if (chest != null && e instanceof ChestedHorse) {
-            ((ChestedHorse)e).setCarryingChest(chest);
+        if (chest != null && e instanceof ChestedHorse chestedHorse) {
+            chestedHorse.setCarryingChest(chest);
         }
-        if (adult != null && e instanceof Ageable) {
+        if (adult != null && e instanceof Ageable ageable) {
             if (adult) {
-                ((Ageable)e).setAdult();
+                ageable.setAdult();
             } else {
-                ((Ageable)e).setBaby();
+                ageable.setBaby();
             }
         }
         if (e instanceof AbstractHorse horse) {
@@ -81,18 +81,17 @@ public class BlueprintEntity {
                 inventory.forEach(horse.getInventory()::setItem);
             }
         }
-        if (style != null && e instanceof Horse) {
-            ((Horse)e).setStyle(style);
+        if (style != null && e instanceof Horse horse) {
+            horse.setStyle(style);
         }
 
     }
     
     /**
-     * @param e - villager
+     * @param v - villager
      * @since 1.16.0
      */
-    private void setVillager(Entity e) {
-       Villager v = (Villager)e;
+    private void setVillager(Villager v) {
        v.setProfession(profession == null ? Profession.NONE : profession);
        v.setVillagerExperience(experience == null ? 0 : experience);
        v.setVillagerLevel(level == null ? 0 : level);

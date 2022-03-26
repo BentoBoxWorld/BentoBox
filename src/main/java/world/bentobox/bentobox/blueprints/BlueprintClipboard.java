@@ -257,8 +257,8 @@ public class BlueprintClipboard {
         }
 
         // Banners
-        if (blockState instanceof Banner) {
-            b.setBannerPatterns(((Banner) blockState).getPatterns());
+        if (blockState instanceof Banner banner) {
+            b.setBannerPatterns(banner.getPatterns());
         }
 
         return b;
@@ -282,8 +282,8 @@ public class BlueprintClipboard {
             BlueprintEntity bpe = new BlueprintEntity();
             bpe.setType(entity.getType());
             bpe.setCustomName(entity.getCustomName());
-            if (entity instanceof Villager) {
-                setVillager(entity, bpe);
+            if (entity instanceof Villager villager) {
+                setVillager(villager, bpe);
             }
             if (entity instanceof Colorable c) {
                 if (c.getColor() != null) {
@@ -321,11 +321,10 @@ public class BlueprintClipboard {
 
     /**
      * Set the villager stats
-     * @param entity - villager
+     * @param v - villager
      * @param bpe - Blueprint Entity
      */
-    private void setVillager(LivingEntity entity, BlueprintEntity bpe) {
-        Villager v = (Villager)entity;
+    private void setVillager(Villager v, BlueprintEntity bpe) {
         bpe.setExperience(v.getVillagerExperience());
         bpe.setLevel(v.getVillagerLevel());
         bpe.setProfession(v.getProfession());
