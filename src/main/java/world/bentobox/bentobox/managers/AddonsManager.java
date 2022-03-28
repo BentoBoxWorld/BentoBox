@@ -666,7 +666,28 @@ public class AddonsManager {
      * @since 1.8.0
      */
     public void allLoaded() {
-        addons.forEach(Addon::allLoaded);
+        this.getEnabledAddons().forEach(this::allLoaded);
     }
 
+
+    /**
+     * This method calls Addon#allLoaded in safe manner. If for some reason addon crashes on Addon#allLoaded, then
+     * it will disable itself without harming other addons.
+     * @param addon Addon that should trigger Addon#allLoaded method.
+     */
+    private void allLoaded(@NonNull Addon addon) {
+        try {
+            addon.allLoaded();
+        } catch (NoClassDefFoundError | NoSuchMethodError | NoSuchFieldError e) {
+            // Looks like the addon is incompatible, because it tries to refer to missing classes...
+            this.handleAddonIncompatibility(addon, e);
+            // Disable addon.
+            this.disable(addon);
+        } catch (Exception e) {
+            // Unhandled exception. We'll give a bit of debug here.
+            this.handleAddonError(addon, e);
+            // Disable addon.
+            this.disable(addon);
+        }
+    }
 }
