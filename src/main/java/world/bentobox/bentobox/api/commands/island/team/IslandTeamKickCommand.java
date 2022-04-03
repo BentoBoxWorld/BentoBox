@@ -69,7 +69,7 @@ public class IslandTeamKickCommand extends ConfirmableCommand {
             return false;
         }
 
-        int targetRank = Objects.requireNonNull(island).getRank(user);
+        int targetRank = Objects.requireNonNull(island).getRank(targetUUID);
         if (rank <= targetRank) {
             user.sendMessage("commands.island.team.kick.cannot-kick-rank", 
                 TextVariables.NAME, getPlayers().getName(targetUUID));
