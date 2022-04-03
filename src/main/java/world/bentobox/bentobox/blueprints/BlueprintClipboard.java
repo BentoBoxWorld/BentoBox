@@ -370,11 +370,17 @@ public class BlueprintClipboard {
     public void setPos1(@Nullable Location pos1) {
         origin = null;
         if (pos1 != null) {
-            if (pos1.getBlockY() < 0) {
-                pos1.setY(0);
+            final int minHeight = pos1.getWorld() == null ? 0 : pos1.getWorld().getMinHeight();
+            final int maxHeight = pos1.getWorld() == null ? 255 : pos1.getWorld().getMaxHeight();
+            
+            if (pos1.getBlockY() < minHeight)
+            {
+                pos1.setY(minHeight);
             }
-            if (pos1.getBlockY() > 255) {
-                pos1.setY(255);
+
+            if (pos1.getBlockY() > maxHeight)
+            {
+                pos1.setY(maxHeight);
             }
         }
         this.pos1 = pos1;
@@ -386,11 +392,17 @@ public class BlueprintClipboard {
     public void setPos2(@Nullable Location pos2) {
         origin = null;
         if (pos2 != null) {
-            if (pos2.getBlockY() < 0) {
-                pos2.setY(0);
+            final int minHeight = pos2.getWorld() == null ? 0 : pos2.getWorld().getMinHeight();
+            final int maxHeight = pos2.getWorld() == null ? 255 : pos2.getWorld().getMaxHeight();
+
+            if (pos2.getBlockY() < minHeight)
+            {
+                pos2.setY(minHeight);
             }
-            if (pos2.getBlockY() > 255) {
-                pos2.setY(255);
+
+            if (pos2.getBlockY() > maxHeight)
+            {
+                pos2.setY(maxHeight);
             }
         }
         this.pos2 = pos2;
