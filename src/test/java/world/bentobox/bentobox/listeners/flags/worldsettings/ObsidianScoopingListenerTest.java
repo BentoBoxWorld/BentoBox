@@ -153,6 +153,11 @@ public class ObsidianScoopingListenerTest {
         map.put("OBSIDIAN_SCOOPING", true);
         when(ws.getWorldFlags()).thenReturn(map);
 
+        PlayerInventory playerInventory = mock(PlayerInventory.class);
+        when(playerInventory.getItemInMainHand()).thenReturn(item);
+        when(playerInventory.getItemInOffHand()).thenReturn(new ItemStack(Material.AIR));
+        when(p.getInventory()).thenReturn(playerInventory);
+
         // Addon
         when(iwm.getAddon(Mockito.any())).thenReturn(Optional.empty());
     }
