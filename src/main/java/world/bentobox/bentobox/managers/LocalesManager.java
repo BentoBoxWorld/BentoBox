@@ -179,7 +179,7 @@ public class LocalesManager {
         } catch (InvalidConfigurationException e) {
             plugin.logError("Could not update locale file '" + lf + "' due to it being malformed: " + e.getMessage());
         } catch (Exception e) {
-            plugin.logError("Error updating locale file '" + lf + "': " + e.getMessage());
+            plugin.logError("Error updating locale file for " + addon.getDescription().getName() + "'s '" + lf + "': " + e.getMessage());
             plugin.logStacktrace(e);
         }
     }

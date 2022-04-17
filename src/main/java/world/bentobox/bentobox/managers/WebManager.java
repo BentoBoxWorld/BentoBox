@@ -196,7 +196,7 @@ public class WebManager {
     @NonNull
     private String getContent(@NonNull GitHubRepository repo, String fileName) {
         try {
-            String content = repo.getContent(fileName).getContent().replaceAll("\\n", "");
+            String content = repo.getContent(fileName).getContent().replaceAll("\\n", ""); // replaceAll is required here
             return new String(Base64.getDecoder().decode(content), StandardCharsets.UTF_8);
         } catch (IllegalAccessException e) {
             // Fail silently

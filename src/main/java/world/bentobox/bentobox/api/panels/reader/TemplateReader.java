@@ -41,6 +41,12 @@ public class TemplateReader
     private static final String BORDER = "border";
     private static final String FORCE_SHOWN = "force-shown";
     private static final String FALLBACK = "fallback";
+    private static final String YML = ".yml";
+    private static final String ACTIONS = "actions";
+    private static final String TOOLTIP = "tooltip";
+    private static final String CLICK_TYPE = "click-type";
+    private static final String CONTENT = "content";
+    private static final String TYPE = "type";
 
 
     /**
@@ -73,7 +79,7 @@ public class TemplateReader
             return null;
         }
 
-        File file = new File(panelLocation, templateName.endsWith(".yml") ? templateName : templateName + ".yml");
+        File file = new File(panelLocation, templateName.endsWith(YML) ? templateName : templateName + YML);
 
         if (!file.exists())
         {
@@ -82,7 +88,7 @@ public class TemplateReader
         }
 
         final String panelKey = file.getAbsolutePath() + ":" + panelName;
-        
+
         // Check if panel is already crafted.
         if (TemplateReader.loadedPanels.containsKey(panelKey))
         {
@@ -125,7 +131,7 @@ public class TemplateReader
 
         String title = configurationSection.getString(TITLE);
         Panel.Type type =
-                Enums.getIfPresent(Panel.Type.class, configurationSection.getString("type", "INVENTORY")).
+                Enums.getIfPresent(Panel.Type.class, configurationSection.getString(TYPE, "INVENTORY")).
                 or(Panel.Type.INVENTORY);
 
         PanelTemplateRecord.TemplateItem borderItem = null;
@@ -194,7 +200,7 @@ public class TemplateReader
         PanelTemplateRecord template = new PanelTemplateRecord(type, title, borderItem, backgroundItem, forcedRows);
 
         // Read content
-        ConfigurationSection content = configurationSection.getConfigurationSection("content");
+        ConfigurationSection content = configurationSection.getConfigurationSection(CONTENT);
 
         if (content == null)
         {
@@ -219,7 +225,7 @@ public class TemplateReader
                             // If it contains a section, then build a new button template from it.
                             template.addButtonTemplate(rowIndex,
                                     columnIndex,
-                                    readPanelItemTemplate(line.getConfigurationSection(String.valueOf(columnIndex + 1))));
+                                    readPanelItemTemplate(line.getConfigurationSection(String.valueOf(columnIndex + 1)), null, panelItemDataMap));
                         }
                         else if (line.isString(String.valueOf(columnIndex + 1)))
                         {
@@ -337,9 +343,9 @@ public class TemplateReader
         }
 
         // Read Click data
-        if (section.isConfigurationSection("actions"))
+        if (section.isConfigurationSection(ACTIONS))
         {
-            ConfigurationSection actionSection = section.getConfigurationSection("actions");
+            ConfigurationSection actionSection = section.getConfigurationSection(ACTIONS);
 
             if (actionSection != null)
             {
@@ -354,9 +360,9 @@ public class TemplateReader
                         {
                             ItemTemplateRecord.ActionRecords actionData =
                                     new ItemTemplateRecord.ActionRecords(clickType,
-                                            actionDataSection.getString("type"),
-                                            actionDataSection.getString("content"),
-                                            actionDataSection.getString("tooltip"));
+                                            actionDataSection.getString(TYPE),
+                                            actionDataSection.getString(CONTENT),
+                                            actionDataSection.getString(TOOLTIP));
                             itemRecord.addAction(actionData);
                         }
                     }
@@ -364,42 +370,42 @@ public class TemplateReader
                     {
                         ConfigurationSection actionDataSection = actionSection.getConfigurationSection(actionKey);
 
-                        if (actionDataSection != null && actionDataSection.contains("click-type"))
+                        if (actionDataSection != null && actionDataSection.contains(CLICK_TYPE))
                         {
                             clickType = Enums.getIfPresent(ClickType.class,
-                                actionDataSection.getString("click-type", "UNKNOWN").toUpperCase()).
-                                or(ClickType.UNKNOWN);
-                            
+                                    actionDataSection.getString(CLICK_TYPE, "UNKNOWN").toUpperCase()).
+                                    or(ClickType.UNKNOWN);
+
                             ItemTemplateRecord.ActionRecords actionData =
-                                new ItemTemplateRecord.ActionRecords(clickType,
-                                    actionKey,
-                                    actionDataSection.getString("content"),
-                                    actionDataSection.getString("tooltip"));
+                                    new ItemTemplateRecord.ActionRecords(clickType,
+                                            actionKey,
+                                            actionDataSection.getString(CONTENT),
+                                            actionDataSection.getString(TOOLTIP));
                             itemRecord.addAction(actionData);
                         }
                     }
                 });
             }
         }
-        else if (section.isList("actions"))
+        else if (section.isList(ACTIONS))
         {
             // Read Click data as list which allows to have duplicate click types.
 
-            List<Map<?, ?>> actionList = section.getMapList("actions");
+            List<Map<?, ?>> actionList = section.getMapList(ACTIONS);
 
             if (!actionList.isEmpty())
             {
                 actionList.forEach(valueMap -> {
                     ClickType clickType = Enums.getIfPresent(ClickType.class,
-                        String.valueOf(valueMap.get("click-type")).toUpperCase()).orNull();
+                            String.valueOf(valueMap.get(CLICK_TYPE)).toUpperCase()).orNull();
 
                     if (clickType != null)
                     {
                         ItemTemplateRecord.ActionRecords actionData =
-                            new ItemTemplateRecord.ActionRecords(clickType,
-                                valueMap.containsKey("type") ? String.valueOf(valueMap.get("type")) : null,
-                                valueMap.containsKey("content") ? String.valueOf(valueMap.get("content")) : null,
-                                valueMap.containsKey("tooltip") ? String.valueOf(valueMap.get("tooltip")) : null);
+                                new ItemTemplateRecord.ActionRecords(clickType,
+                                        valueMap.containsKey(TYPE) ? String.valueOf(valueMap.get(TYPE)) : null,
+                                                valueMap.containsKey(CONTENT) ? String.valueOf(valueMap.get(CONTENT)) : null,
+                                                        valueMap.containsKey(TOOLTIP) ? String.valueOf(valueMap.get(TOOLTIP)) : null);
                         itemRecord.addAction(actionData);
                     }
                 });

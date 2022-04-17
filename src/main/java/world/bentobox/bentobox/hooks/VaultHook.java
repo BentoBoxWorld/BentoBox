@@ -17,6 +17,7 @@ import world.bentobox.bentobox.api.user.User;
 public class VaultHook extends Hook {
 
     private static final String AMOUNT_MUST_BE_POSITIVE = "Amount must be positive.";
+	private static final String PLAYER_OR_OFFLINEPLAYER_REQUIRED = "User must be a Player or an OfflinePlayer";
     private Economy economy;
 
     public VaultHook() {
@@ -109,7 +110,7 @@ public class VaultHook extends Hook {
      */
     public EconomyResponse withdraw(User user, double amount, World world) {
         if (!user.isOfflinePlayer()) {
-            throw new IllegalArgumentException("User must be a Player or an OfflinePlayer");
+            throw new IllegalArgumentException(PLAYER_OR_OFFLINEPLAYER_REQUIRED);
         }
         if (amount < 0.0D) {
             throw new IllegalArgumentException(AMOUNT_MUST_BE_POSITIVE);
@@ -149,7 +150,7 @@ public class VaultHook extends Hook {
      */
     public EconomyResponse deposit(User user, double amount, World world) {
         if (!user.isOfflinePlayer()) {
-            throw new IllegalArgumentException("User must be a Player or an OfflinePlayer");
+            throw new IllegalArgumentException(PLAYER_OR_OFFLINEPLAYER_REQUIRED);
         }
         if (amount < 0.0D) {
             throw new IllegalArgumentException(AMOUNT_MUST_BE_POSITIVE);
@@ -198,7 +199,7 @@ public class VaultHook extends Hook {
         }
         
         if (!user.isOfflinePlayer()) {
-            throw new IllegalArgumentException("User must be a Player or an OfflinePlayer");
+            throw new IllegalArgumentException(PLAYER_OR_OFFLINEPLAYER_REQUIRED);
         }
         
         if (world == null)

@@ -257,8 +257,8 @@ public class BlueprintClipboard {
         }
 
         // Banners
-        if (blockState instanceof Banner) {
-            b.setBannerPatterns(((Banner) blockState).getPatterns());
+        if (blockState instanceof Banner banner) {
+            b.setBannerPatterns(banner.getPatterns());
         }
 
         return b;
@@ -282,8 +282,8 @@ public class BlueprintClipboard {
             BlueprintEntity bpe = new BlueprintEntity();
             bpe.setType(entity.getType());
             bpe.setCustomName(entity.getCustomName());
-            if (entity instanceof Villager) {
-                setVillager(entity, bpe);
+            if (entity instanceof Villager villager) {
+                setVillager(villager, bpe);
             }
             if (entity instanceof Colorable c) {
                 if (c.getColor() != null) {
@@ -321,11 +321,10 @@ public class BlueprintClipboard {
 
     /**
      * Set the villager stats
-     * @param entity - villager
+     * @param v - villager
      * @param bpe - Blueprint Entity
      */
-    private void setVillager(LivingEntity entity, BlueprintEntity bpe) {
-        Villager v = (Villager)entity;
+    private void setVillager(Villager v, BlueprintEntity bpe) {
         bpe.setExperience(v.getVillagerExperience());
         bpe.setLevel(v.getVillagerLevel());
         bpe.setProfession(v.getProfession());
@@ -371,11 +370,17 @@ public class BlueprintClipboard {
     public void setPos1(@Nullable Location pos1) {
         origin = null;
         if (pos1 != null) {
-            if (pos1.getBlockY() < 0) {
-                pos1.setY(0);
+            final int minHeight = pos1.getWorld() == null ? 0 : pos1.getWorld().getMinHeight();
+            final int maxHeight = pos1.getWorld() == null ? 255 : pos1.getWorld().getMaxHeight();
+            
+            if (pos1.getBlockY() < minHeight)
+            {
+                pos1.setY(minHeight);
             }
-            if (pos1.getBlockY() > 255) {
-                pos1.setY(255);
+
+            if (pos1.getBlockY() > maxHeight)
+            {
+                pos1.setY(maxHeight);
             }
         }
         this.pos1 = pos1;
@@ -387,11 +392,17 @@ public class BlueprintClipboard {
     public void setPos2(@Nullable Location pos2) {
         origin = null;
         if (pos2 != null) {
-            if (pos2.getBlockY() < 0) {
-                pos2.setY(0);
+            final int minHeight = pos2.getWorld() == null ? 0 : pos2.getWorld().getMinHeight();
+            final int maxHeight = pos2.getWorld() == null ? 255 : pos2.getWorld().getMaxHeight();
+
+            if (pos2.getBlockY() < minHeight)
+            {
+                pos2.setY(minHeight);
             }
-            if (pos2.getBlockY() > 255) {
-                pos2.setY(255);
+
+            if (pos2.getBlockY() > maxHeight)
+            {
+                pos2.setY(maxHeight);
             }
         }
         this.pos2 = pos2;

@@ -184,6 +184,10 @@ public class IslandTeamKickCommandTest {
         RanksManager rm = new RanksManager();
         when(plugin.getRanksManager()).thenReturn(rm);
 
+        // Ranks
+        when(island.getRank(uuid)).thenReturn(RanksManager.OWNER_RANK);
+        when(island.getRank(user)).thenReturn(RanksManager.OWNER_RANK);
+        when(island.getRank(notUUID)).thenReturn(RanksManager.MEMBER_RANK);
     }
 
     @After
@@ -206,11 +210,75 @@ public class IslandTeamKickCommandTest {
      * Test method for {@link IslandTeamKickCommand#execute(User, String, java.util.List)}
      */
     @Test
-    public void testExecuteNotTeamOwner() {
-        when(im.getOwner(any(), any())).thenReturn(notUUID);
+    public void testExecuteLowerTeamRank() {
+        when(island.getRank(user)).thenReturn(RanksManager.MEMBER_RANK);
+        when(island.getRank(notUUID)).thenReturn(RanksManager.SUB_OWNER_RANK);
+
+        when(pm.getUUID(any())).thenReturn(notUUID);
+        when(pm.getName(notUUID)).thenReturn("poslovitch");
+
+        Set<UUID> members = new HashSet<>();
+        members.add(notUUID);
+        when(im.getMembers(any(), any())).thenReturn(members);
+
+        IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
+        assertFalse(itl.execute(user, itl.getLabel(), Collections.singletonList("poslovitch")));
+        verify(user).sendMessage(eq("commands.island.team.kick.cannot-kick-rank"), eq(TextVariables.NAME), eq("poslovitch"));
+    }
+
+
+    /**
+     * Test method for {@link IslandTeamKickCommand#execute(User, String, java.util.List)}
+     */
+    @Test
+    public void testExecuteEqualTeamRank() {
+        when(island.getRank(user)).thenReturn(RanksManager.SUB_OWNER_RANK);
+        when(island.getRank(notUUID)).thenReturn(RanksManager.SUB_OWNER_RANK);
+
+        when(pm.getUUID(any())).thenReturn(notUUID);
+        when(pm.getName(notUUID)).thenReturn("poslovitch");
+
+        Set<UUID> members = new HashSet<>();
+        members.add(notUUID);
+        when(im.getMembers(any(), any())).thenReturn(members);
+
+        IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
+        assertFalse(itl.execute(user, itl.getLabel(), Collections.singletonList("poslovitch")));
+        verify(user).sendMessage(eq("commands.island.team.kick.cannot-kick-rank"), eq(TextVariables.NAME), eq("poslovitch"));
+    }
+
+    /**
+     * Test method for {@link IslandTeamKickCommand#execute(User, String, java.util.List)}
+     */
+    @Test
+    public void testExecuteLargerTeamRank() {
+        when(island.getRank(user)).thenReturn(RanksManager.SUB_OWNER_RANK);
+        when(island.getRank(notUUID)).thenReturn(RanksManager.MEMBER_RANK);
+
+        when(pm.getUUID(any())).thenReturn(notUUID);
+        when(pm.getName(notUUID)).thenReturn("poslovitch");
+
+        Set<UUID> members = new HashSet<>();
+        members.add(notUUID);
+        when(im.getMembers(any(), any())).thenReturn(members);
+
+        IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
+        assertTrue(itl.execute(user, itl.getLabel(), Collections.singletonList("poslovitch")));
+        verify(im).removePlayer(any(), eq(notUUID));
+        verify(user).sendMessage("commands.island.team.kick.success", TextVariables.NAME, "poslovitch");
+    }
+
+    /**
+     * Test method for {@link IslandTeamKickCommand#execute(User, String, java.util.List)}
+     */
+    @Test
+    public void testExecuteNoCommandRank() {
+        when(island.getRankCommand(anyString())).thenReturn(RanksManager.SUB_OWNER_RANK);
+        when(island.getRank(user)).thenReturn(RanksManager.MEMBER_RANK);
+
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
         assertFalse(itl.execute(user, itl.getLabel(), Collections.emptyList()));
-        verify(user).sendMessage(eq("general.errors.not-owner"));
+        verify(user).sendMessage(eq("general.errors.insufficient-rank"), eq(TextVariables.RANK), eq("ranks.member"));
     }
 
     /**

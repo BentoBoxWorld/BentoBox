@@ -30,6 +30,7 @@ import world.bentobox.bentobox.api.events.flags.FlagSettingChangeEvent;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.RanksManager;
 
@@ -239,10 +240,20 @@ public class PVPListener extends FlagListener {
         if (e.getTo() == null) {
             return;
         }
+
+        // Get previous island to skip reporting if island is not changed.
+        Island previousIsland = this.getIslands().getIslandAt(e.getFrom()).orElse(null);
+
         getIslands().getIslandAt(e.getTo()).ifPresent(island -> {
             if (island.getMemberSet(RanksManager.COOP_RANK).contains(e.getPlayer().getUniqueId())) {
                 return;
             }
+
+            if (e.getFrom().getWorld() == e.getTo().getWorld() && island == previousIsland) {
+                // do not report as it is the same world and same island.
+                return;
+            }
+
             if (island.isAllowed(Flags.PVP_OVERWORLD)) {
                 alertUser(e.getPlayer(), Flags.PVP_OVERWORLD);
             }
