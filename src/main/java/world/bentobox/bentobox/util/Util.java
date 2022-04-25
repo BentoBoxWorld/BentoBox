@@ -702,8 +702,22 @@ public class Util {
      */
     public static NMSAbstraction getNMS() {
         if (nms == null) {
-            plugin.log("No NMS Handler was set, falling back to Bukkit API.");
-            setNms(new world.bentobox.bentobox.nms.fallback.NMSHandler());
+            String serverPackageName = Bukkit.getServer().getClass().getPackage().getName();
+            String pluginPackageName = plugin.getClass().getPackage().getName();
+            String version = serverPackageName.substring(serverPackageName.lastIndexOf('.') + 1);
+            NMSAbstraction handler;
+            try {
+                Class<?> clazz = Class.forName(pluginPackageName + ".nms." + version + ".NMSHandler");
+                if (NMSAbstraction.class.isAssignableFrom(clazz)) {
+                    handler = (NMSAbstraction) clazz.getConstructor().newInstance();
+                } else {
+                    throw new IllegalStateException("Class " + clazz.getName() + " does not implement NMSAbstraction");
+                }
+            } catch (Exception e) {
+                plugin.logWarning("No NMS Handler found for " + version + ", falling back to Bukkit API.");
+                handler = new world.bentobox.bentobox.nms.fallback.NMSHandler();
+            }
+            setNms(handler);
         }
         return nms;
     }
