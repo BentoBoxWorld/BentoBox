@@ -1,29 +1,19 @@
 package world.bentobox.bentobox.util;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
 import org.bukkit.World;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
-import org.bukkit.generator.ChunkGenerator;
-import org.bukkit.generator.ChunkGenerator.ChunkData;
-import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.scheduler.BukkitTask;
-
-import io.papermc.lib.PaperLib;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.events.island.IslandEvent;
 import world.bentobox.bentobox.api.events.island.IslandEvent.Reason;
 import world.bentobox.bentobox.database.objects.IslandDeletion;
 import world.bentobox.bentobox.nms.NMSAbstraction;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Deletes islands chunk by chunk
@@ -118,37 +108,10 @@ public class DeleteIslandChunks {
 
     private CompletableFuture<Void> processChunk(GameModeAddon gm, World world, int x, int z) {
         if (world != null) {
-            return PaperLib.getChunkAtAsync(world, x, z).thenAccept(chunk -> regenerateChunk(gm, chunk, x, z));
+            return nms.regenerateChunk(gm, di, world, x, z);
         } else {
             return CompletableFuture.completedFuture(null);
         }
-    }
-
-    private void regenerateChunk(GameModeAddon gm, Chunk chunk, int x, int z) {
-        // Clear all inventories
-        Arrays.stream(chunk.getTileEntities()).filter(InventoryHolder.class::isInstance)
-                .filter(te -> di.inBounds(te.getLocation().getBlockX(), te.getLocation().getBlockZ()))
-                .forEach(te -> ((InventoryHolder) te).getInventory().clear());
-        // Remove all entities
-        for (Entity e : chunk.getEntities()) {
-            if (!(e instanceof Player)) {
-                e.remove();
-            }
-        }
-        // Reset blocks
-        MyBiomeGrid grid = new MyBiomeGrid(chunk.getWorld().getEnvironment());
-        ChunkGenerator cg = gm.getDefaultWorldGenerator(chunk.getWorld().getName(), "delete");
-        // Will be null if use-own-generator is set to true
-        if (cg != null) {
-            ChunkData cd = cg.generateChunkData(chunk.getWorld(), new Random(), chunk.getX(), chunk.getZ(), grid);
-            createChunk(cd, chunk, grid);
-        }
-    }
-
-    private void createChunk(ChunkData cd, Chunk chunk, MyBiomeGrid grid) {
-        nms.copyChunkDataToChunk(chunk, cd, grid, di.getBox());
-        // Remove all entities in chunk, including any dropped items as a result of clearing the blocks above
-        Arrays.stream(chunk.getEntities()).filter(e -> !(e instanceof Player) && di.inBounds(e.getLocation().getBlockX(), e.getLocation().getBlockZ())).forEach(Entity::remove);
     }
 
     public boolean isCompleted() {

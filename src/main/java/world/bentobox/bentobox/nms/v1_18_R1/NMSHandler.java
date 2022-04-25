@@ -10,10 +10,10 @@ import net.minecraft.core.BlockPosition;
 import net.minecraft.world.level.World;
 import net.minecraft.world.level.block.state.IBlockData;
 import net.minecraft.world.level.chunk.Chunk;
-import world.bentobox.bentobox.nms.NMSAbstraction;
+import world.bentobox.bentobox.nms.BaseNMSAbstraction;
 
 
-public class NMSHandler implements NMSAbstraction {
+public class NMSHandler extends BaseNMSAbstraction {
 
     private static final IBlockData AIR = ((CraftBlockData) Bukkit.createBlockData(Material.AIR)).getState();
 
