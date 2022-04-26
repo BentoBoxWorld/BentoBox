@@ -803,7 +803,7 @@ public class Island implements DataObject, MetaDataAble {
      * @since 1.5.2
      */
     public BoundingBox getProtectionBoundingBox() {
-        return new BoundingBox(getMinProtectedX(), 0.0D, getMinProtectedZ(), getMaxProtectedX()-1.0D, world.getMaxHeight(), getMaxProtectedZ()-1.0D);
+        return new BoundingBox(getMinProtectedX(), world.getMinHeight(), getMinProtectedZ(), getMaxProtectedX()-1.0D, world.getMaxHeight(), getMaxProtectedZ()-1.0D);
     }
 
     /**
@@ -1661,9 +1661,4 @@ public class Island implements DataObject, MetaDataAble {
                 + ", cooldowns=" + cooldowns + ", commandRanks=" + commandRanks + ", reserved=" + reserved
                 + ", metaData=" + metaData + ", homes=" + homes + ", maxHomes=" + maxHomes + "]";
     }
-
-
-
-
-
 }
