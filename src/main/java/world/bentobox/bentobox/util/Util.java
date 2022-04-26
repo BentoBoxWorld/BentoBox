@@ -48,6 +48,7 @@ import io.papermc.lib.features.blockstatesnapshot.BlockStateSnapshotResult;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.nms.NMSAbstraction;
+import world.bentobox.bentobox.nms.NMSPaster;
 
 /**
  * A set of utility methods
@@ -65,6 +66,7 @@ public class Util {
     private static String serverVersion = null;
     private static BentoBox plugin = BentoBox.getInstance();
     private static NMSAbstraction nms = null;
+    private static NMSPaster nmsPaster = null;
 
     private Util() {}
 
@@ -706,6 +708,25 @@ public class Util {
             setNms(new world.bentobox.bentobox.nms.fallback.NMSHandler());
         }
         return nms;
+    }
+
+    /**
+     * Set the NMS paster the plugin will use
+     * @param nmsPaster the NMS paster
+     */
+    public static void setNMSPaster(NMSPaster nmsPaster) {
+        Util.nmsPaster = nmsPaster;
+    }
+
+    /**
+     * Get the NMS paster the plugin will use
+     * @return an NMS accelerated class for this server
+     */
+    public static NMSPaster getNMSPaster() {
+        if (nmsPaster == null) {
+            setNMSPaster(new world.bentobox.bentobox.nms.fallback.NMSPasterHandler());
+        }
+        return nmsPaster;
     }
 
     /**
