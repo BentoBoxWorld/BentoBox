@@ -18,11 +18,12 @@ import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBlock;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintCreatureSpawner;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintEntity;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.nms.PasteHandler;
 
 import java.util.*;
 
 /**
- * A utility class for {@link world.bentobox.bentobox.nms.NMSPaster}
+ * A utility class for {@link PasteHandler}
  *
  * @author tastybento
  */

@@ -4,14 +4,14 @@ import org.bukkit.Location;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBlock;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintEntity;
 import world.bentobox.bentobox.database.objects.Island;
-import world.bentobox.bentobox.nms.NMSPaster;
+import world.bentobox.bentobox.nms.PasteHandler;
 import world.bentobox.bentobox.util.DefaultPasterUtil;
 
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
-public class NMSPasterImpl implements NMSPaster {
+public class PasteHandlerImpl implements PasteHandler {
     @Override
     public CompletableFuture<Void> pasteBlocks(Island island, Map<Location, BlueprintBlock> blockMap) {
         blockMap.forEach((location, block) -> DefaultPasterUtil.setBlock(island, location, block));

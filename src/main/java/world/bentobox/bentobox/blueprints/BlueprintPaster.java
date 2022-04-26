@@ -13,7 +13,7 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBlock;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintEntity;
 import world.bentobox.bentobox.database.objects.Island;
-import world.bentobox.bentobox.nms.NMSPaster;
+import world.bentobox.bentobox.nms.PasteHandler;
 import world.bentobox.bentobox.util.Util;
 
 import java.math.BigDecimal;
@@ -47,7 +47,7 @@ public class BlueprintPaster {
     private static long chunkLoadTime = 0;
 
     private final BentoBox plugin;
-    private final NMSPaster paster = Util.getNMSPaster();
+    private final PasteHandler paster = Util.getPasteHandler();
     // The minimum block position (x,y,z)
     private Location pos1;
     // The maximum block position (x,y,z)

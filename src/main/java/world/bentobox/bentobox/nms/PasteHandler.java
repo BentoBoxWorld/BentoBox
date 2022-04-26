@@ -12,7 +12,7 @@ import java.util.concurrent.CompletableFuture;
 /**
  * A helper class for {@link world.bentobox.bentobox.blueprints.BlueprintPaster}
  */
-public interface NMSPaster {
+public interface PasteHandler {
     /**
      * Create a future to paste the blocks
      *

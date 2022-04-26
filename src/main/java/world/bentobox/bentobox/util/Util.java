@@ -48,8 +48,8 @@ import io.papermc.lib.features.blockstatesnapshot.BlockStateSnapshotResult;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.nms.NMSAbstraction;
-import world.bentobox.bentobox.nms.NMSPaster;
-import world.bentobox.bentobox.nms.fallback.NMSPasterImpl;
+import world.bentobox.bentobox.nms.PasteHandler;
+import world.bentobox.bentobox.nms.fallback.PasteHandlerImpl;
 
 /**
  * A set of utility methods
@@ -67,7 +67,7 @@ public class Util {
     private static String serverVersion = null;
     private static BentoBox plugin = BentoBox.getInstance();
     private static NMSAbstraction nms = null;
-    private static NMSPaster nmsPaster = null;
+    private static PasteHandler pasteHandler = null;
 
     private Util() {}
 
@@ -713,21 +713,21 @@ public class Util {
 
     /**
      * Set the NMS paster the plugin will use
-     * @param nmsPaster the NMS paster
+     * @param pasteHandler the NMS paster
      */
-    public static void setNMSPaster(NMSPaster nmsPaster) {
-        Util.nmsPaster = nmsPaster;
+    public static void setPasteHandler(PasteHandler pasteHandler) {
+        Util.pasteHandler = pasteHandler;
     }
 
     /**
      * Get the NMS paster the plugin will use
      * @return an NMS accelerated class for this server
      */
-    public static NMSPaster getNMSPaster() {
-        if (nmsPaster == null) {
-            setNMSPaster(new NMSPasterImpl());
+    public static PasteHandler getPasteHandler() {
+        if (pasteHandler == null) {
+            setPasteHandler(new PasteHandlerImpl());
         }
-        return nmsPaster;
+        return pasteHandler;
     }
 
     /**
