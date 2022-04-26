@@ -8,14 +8,12 @@ import java.util.concurrent.CompletableFuture;
 
 public interface NMSAbstraction {
     /**
-     * Create a future to regenerate the chunk.
+     * Create a future to regenerate the regions of the island.
      *
      * @param gm     the game mode
      * @param di     the island deletion
      * @param world  the world
-     * @param chunkX the chunk x
-     * @param chunkZ the chunk z
      * @return the completable future
      */
-    CompletableFuture<Void> regenerateChunk(GameModeAddon gm, IslandDeletion di, World world, int chunkX, int chunkZ);
+    CompletableFuture<Void> regenerate(GameModeAddon gm, IslandDeletion di, World world);
 }
