@@ -27,7 +27,7 @@ import java.util.*;
  *
  * @author tastybento
  */
-public class DefaultPasterUtil {
+public class DefaultPasteUtil {
     private static final String MINECRAFT = "minecraft:";
     private static final Map<String, String> BLOCK_CONVERSION = Map.of("sign", "oak_sign", "wall_sign", "oak_wall_sign");
     private static final BentoBox plugin;
