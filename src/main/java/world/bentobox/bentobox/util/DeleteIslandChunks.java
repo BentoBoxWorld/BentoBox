@@ -1,6 +1,7 @@
 package world.bentobox.bentobox.util;
 
 import org.bukkit.World;
+import org.bukkit.scheduler.BukkitRunnable;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.events.island.IslandEvent;
@@ -63,13 +64,16 @@ public class DeleteIslandChunks {
             futures.add(processWorld(gm, netherWorld)); // Nether
             futures.add(processWorld(gm, endWorld)); // End
         });
-        CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
-                .whenComplete((v, t) -> {
-                    if (t != null) {
-                        plugin.logStacktrace(t);
-                    }
+        CompletableFuture<Void> all = CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                if (all.isDone()) {
                     finish();
-                });
+                    cancel();
+                }
+            }
+        }.runTaskTimer(plugin, 0, 20);
     }
 
     private void finish() {
