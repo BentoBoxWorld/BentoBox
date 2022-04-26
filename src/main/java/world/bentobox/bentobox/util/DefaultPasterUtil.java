@@ -21,6 +21,11 @@ import world.bentobox.bentobox.database.objects.Island;
 
 import java.util.*;
 
+/**
+ * A utility class for {@link world.bentobox.bentobox.nms.NMSPaster}
+ *
+ * @author tastybento
+ */
 public class DefaultPasterUtil {
     private static final String MINECRAFT = "minecraft:";
     private static final Map<String, String> BLOCK_CONVERSION = Map.of("sign", "oak_sign", "wall_sign", "oak_wall_sign");
@@ -30,8 +35,14 @@ public class DefaultPasterUtil {
         plugin = BentoBox.getInstance();
     }
 
+    /**
+     * Set the block to the location
+     *
+     * @param island   - island
+     * @param location - location
+     * @param bpBlock  - blueprint block
+     */
     public static void setBlock(Island island, Location location, BlueprintBlock bpBlock) {
-        World world = location.getWorld();
         Util.getChunkAtAsync(location).thenRun(() -> {
             Block block = location.getBlock();
             // Set the block data - default is AIR
@@ -39,7 +50,7 @@ public class DefaultPasterUtil {
             try {
                 bd = Bukkit.createBlockData(bpBlock.getBlockData());
             } catch (Exception e) {
-                bd = convertBlockData(world, bpBlock);
+                bd = convertBlockData(bpBlock);
             }
             block.setBlockData(bd, false);
             setBlockState(island, block, bpBlock);
@@ -50,7 +61,13 @@ public class DefaultPasterUtil {
         });
     }
 
-    public static BlockData convertBlockData(World world, BlueprintBlock block) {
+    /**
+     * Convert the blueprint to block data
+     *
+     * @param block - the blueprint block
+     * @return the block data
+     */
+    public static BlockData convertBlockData(BlueprintBlock block) {
         BlockData blockData = Bukkit.createBlockData(Material.AIR);
         try {
             for (Map.Entry<String, String> en : BLOCK_CONVERSION.entrySet()) {
@@ -63,11 +80,18 @@ public class DefaultPasterUtil {
             // This may happen if the block type is no longer supported by the server
             plugin.logWarning("Blueprint references materials not supported on this server version.");
             plugin.logWarning("Load blueprint manually, check and save to fix for this server version.");
-            plugin.logWarning("World: " + world.getName() + "; Failed block data: " + block.getBlockData());
+            plugin.logWarning("Failed block data: " + block.getBlockData());
         }
         return blockData;
     }
 
+    /**
+     * Handles signs, chests and mob spawner blocks
+     *
+     * @param island  - island
+     * @param block   - block
+     * @param bpBlock - config
+     */
     public static void setBlockState(Island island, Block block, BlueprintBlock bpBlock) {
         // Get the block state
         BlockState bs = block.getState();
@@ -94,6 +118,12 @@ public class DefaultPasterUtil {
         }
     }
 
+    /**
+     * Set the spawner setting from the blueprint
+     *
+     * @param spawner - spawner
+     * @param s       - blueprint spawner
+     */
     public static void setSpawner(CreatureSpawner spawner, BlueprintCreatureSpawner s) {
         spawner.setSpawnedType(s.getSpawnedType());
         spawner.setMaxNearbyEntities(s.getMaxNearbyEntities());
@@ -105,6 +135,13 @@ public class DefaultPasterUtil {
         spawner.update(true, false);
     }
 
+    /**
+     * Spawn the blueprint entities to the location
+     *
+     * @param island   - island
+     * @param location - location
+     * @param list     - blueprint entities
+     */
     public static void setEntity(Island island, Location location, List<BlueprintEntity> list) {
         World world = location.getWorld();
         assert world != null;
@@ -133,6 +170,14 @@ public class DefaultPasterUtil {
         }));
     }
 
+    /**
+     * Write the lines to the sign at the block
+     *
+     * @param island - island
+     * @param block  - block
+     * @param lines  - lines
+     * @param glow   - is sign glowing?
+     */
     public static void writeSign(Island island, final Block block, final List<String> lines, boolean glow) {
         BlockFace bf;
         if (block.getType().name().contains("WALL_SIGN")) {

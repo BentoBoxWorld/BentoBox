@@ -176,6 +176,7 @@ public class BlueprintPaster {
                     Location pasteTo = location.clone().add(entry.getKey());
                     // pos1 and pos2 update
                     updatePos(pasteTo);
+
                     BlueprintBlock block = entry.getValue();
                     blockMap.put(pasteTo, block);
                     count++;
