@@ -49,6 +49,7 @@ import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.nms.NMSAbstraction;
 import world.bentobox.bentobox.nms.NMSPaster;
+import world.bentobox.bentobox.nms.fallback.NMSPasterImpl;
 
 /**
  * A set of utility methods
@@ -724,7 +725,7 @@ public class Util {
      */
     public static NMSPaster getNMSPaster() {
         if (nmsPaster == null) {
-            setNMSPaster(new world.bentobox.bentobox.nms.fallback.NMSPasterHandler());
+            setNMSPaster(new NMSPasterImpl());
         }
         return nmsPaster;
     }

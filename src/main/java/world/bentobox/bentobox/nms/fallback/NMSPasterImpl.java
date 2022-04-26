@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
-public class NMSPasterHandler implements NMSPaster {
+public class NMSPasterImpl implements NMSPaster {
     @Override
     public CompletableFuture<Void> pasteBlocks(Island island, Map<Location, BlueprintBlock> blockMap) {
         blockMap.forEach((location, block) -> DefaultPasterUtil.setBlock(island, location, block));
