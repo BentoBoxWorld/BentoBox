@@ -101,18 +101,18 @@ public class DefaultPasteUtil {
             writeSign(island, block, bpBlock.getSignLines(), bpBlock.isGlowingText());
         }
         // Chests, in general
-        if (bs instanceof InventoryHolder holder) {
+        else if (bs instanceof InventoryHolder holder) {
             Inventory ih = holder.getInventory();
             // Double chests are pasted as two blocks so inventory is filled twice.
             // This code stops over-filling for the first block.
             bpBlock.getInventory().forEach(ih::setItem);
         }
         // Mob spawners
-        if (bs instanceof CreatureSpawner spawner) {
+        else if (bs instanceof CreatureSpawner spawner) {
             setSpawner(spawner, bpBlock.getCreatureSpawner());
         }
         // Banners
-        if (bs instanceof Banner banner && bpBlock.getBannerPatterns() != null) {
+        else if (bs instanceof Banner banner && bpBlock.getBannerPatterns() != null) {
             bpBlock.getBannerPatterns().removeIf(Objects::isNull);
             banner.setPatterns(bpBlock.getBannerPatterns());
             banner.update(true, false);
