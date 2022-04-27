@@ -47,12 +47,7 @@ public class DefaultPasteUtil {
         Util.getChunkAtAsync(location).thenRun(() -> {
             Block block = location.getBlock();
             // Set the block data - default is AIR
-            BlockData bd;
-            try {
-                bd = Bukkit.createBlockData(bpBlock.getBlockData());
-            } catch (Exception e) {
-                bd = convertBlockData(bpBlock);
-            }
+            BlockData bd = createBlockData(bpBlock);
             block.setBlockData(bd, false);
             setBlockState(island, block, bpBlock);
             // Set biome
@@ -60,6 +55,20 @@ public class DefaultPasteUtil {
                 block.setBiome(bpBlock.getBiome());
             }
         });
+    }
+
+    /**
+     * Create a block data from the blueprint
+     *
+     * @param block - blueprint block
+     * @return the block data
+     */
+    public static BlockData createBlockData(BlueprintBlock block) {
+        try {
+            return Bukkit.createBlockData(block.getBlockData());
+        } catch (Exception e) {
+            return convertBlockData(block);
+        }
     }
 
     /**
