@@ -21,10 +21,10 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 
-public abstract class SimpleNMSAbstraction implements NMSAbstraction {
+public abstract class SimpleWorldRegenerator implements WorldRegenerator {
     private final BentoBox plugin;
 
-    protected SimpleNMSAbstraction() {
+    protected SimpleWorldRegenerator() {
         this.plugin = BentoBox.getInstance();
     }
 

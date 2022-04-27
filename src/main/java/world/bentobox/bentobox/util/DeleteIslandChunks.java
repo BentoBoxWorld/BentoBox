@@ -7,10 +7,8 @@ import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.events.island.IslandEvent;
 import world.bentobox.bentobox.api.events.island.IslandEvent.Reason;
 import world.bentobox.bentobox.database.objects.IslandDeletion;
-import world.bentobox.bentobox.nms.NMSAbstraction;
+import world.bentobox.bentobox.nms.WorldRegenerator;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -26,7 +24,7 @@ public class DeleteIslandChunks {
     private final World netherWorld;
     private final World endWorld;
     private final AtomicBoolean completed;
-    private final NMSAbstraction nms;
+    private final WorldRegenerator regenerator;
 
     public DeleteIslandChunks(BentoBox plugin, IslandDeletion di) {
         this.plugin = plugin;
@@ -44,9 +42,9 @@ public class DeleteIslandChunks {
         } else {
             endWorld = null;
         }
-        // NMS
-        this.nms = Util.getNMS();
-        if (nms == null) {
+        // Regenerator
+        this.regenerator = Util.getRegenerator();
+        if (regenerator == null) {
             plugin.logError("Could not delete chunks because of NMS error");
             return;
         }
@@ -58,13 +56,14 @@ public class DeleteIslandChunks {
     }
 
     private void regenerateChunks() {
-        List<CompletableFuture<Void>> futures = new ArrayList<>(3);
-        plugin.getIWM().getAddon(di.getWorld()).ifPresent(gm -> {
-            futures.add(processWorld(gm, di.getWorld())); // Overworld
-            futures.add(processWorld(gm, netherWorld)); // Nether
-            futures.add(processWorld(gm, endWorld)); // End
-        });
-        CompletableFuture<Void> all = CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
+        CompletableFuture<Void> all = plugin.getIWM().getAddon(di.getWorld())
+                .map(gm -> new CompletableFuture[]{
+                        processWorld(gm, di.getWorld()), // Overworld
+                        processWorld(gm, netherWorld), // Nether
+                        processWorld(gm, endWorld) // End
+                })
+                .map(CompletableFuture::allOf)
+                .orElseGet(() -> CompletableFuture.completedFuture(null));
         new BukkitRunnable() {
             @Override
             public void run() {
@@ -85,7 +84,7 @@ public class DeleteIslandChunks {
 
     private CompletableFuture<Void> processWorld(GameModeAddon gm, World world) {
         if (world != null) {
-            return nms.regenerate(gm, di, world);
+            return regenerator.regenerate(gm, di, world);
         } else {
             return CompletableFuture.completedFuture(null);
         }

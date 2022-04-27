@@ -6,7 +6,10 @@ import world.bentobox.bentobox.database.objects.IslandDeletion;
 
 import java.util.concurrent.CompletableFuture;
 
-public interface NMSAbstraction {
+/**
+ * A world generator used by {@link world.bentobox.bentobox.util.DeleteIslandChunks}
+ */
+public interface WorldRegenerator {
     /**
      * Create a future to regenerate the regions of the island.
      *

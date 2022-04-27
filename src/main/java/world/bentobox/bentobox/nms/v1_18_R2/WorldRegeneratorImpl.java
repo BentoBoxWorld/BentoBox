@@ -10,10 +10,10 @@ import net.minecraft.core.BlockPosition;
 import net.minecraft.world.level.World;
 import net.minecraft.world.level.block.state.IBlockData;
 import net.minecraft.world.level.chunk.Chunk;
-import world.bentobox.bentobox.nms.SimpleNMSAbstraction;
+import world.bentobox.bentobox.nms.SimpleWorldRegenerator;
 
 
-public class NMSHandler extends SimpleNMSAbstraction {
+public class WorldRegeneratorImpl extends SimpleWorldRegenerator {
 
     private static final IBlockData AIR = ((CraftBlockData) Bukkit.createBlockData(Material.AIR)).getState();
 
