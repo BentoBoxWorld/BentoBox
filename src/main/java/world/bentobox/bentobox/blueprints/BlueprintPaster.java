@@ -48,6 +48,7 @@ public class BlueprintPaster {
 
     private final BentoBox plugin;
     private final PasteHandler paster = Util.getPasteHandler();
+    private final World world;
     // The minimum block position (x,y,z)
     private Location pos1;
     // The maximum block position (x,y,z)
@@ -87,6 +88,7 @@ public class BlueprintPaster {
         // Calculate location for pasting
         this.blueprint = Objects.requireNonNull(clipboard.getBlueprint(), "Clipboard cannot have a null Blueprint");
         this.location = location;
+        this.world = location.getWorld();
         this.island = null;
 
         // Paste
@@ -104,6 +106,7 @@ public class BlueprintPaster {
         this.plugin = plugin;
         this.blueprint = bp;
         this.island = island;
+        this.world = world;
         // Offset due to bedrock
         Vector off = bp.getBedrock() != null ? bp.getBedrock() : new Vector(0,0,0);
         // Calculate location for pasting
@@ -182,7 +185,7 @@ public class BlueprintPaster {
                     count++;
                 }
                 if (!blockMap.isEmpty()) {
-                    currentTask = paster.pasteBlocks(island, blockMap);
+                    currentTask = paster.pasteBlocks(island, world, blockMap);
                 }
             } else {
                 if (pasteState.equals(PasteState.BLOCKS)) {
@@ -207,7 +210,6 @@ public class BlueprintPaster {
                         break;
                     }
                     Entry<Vector, List<BlueprintEntity>> entry = bits.it3().next();
-                    World world = location.getWorld();
                     int x = location.getBlockX() + entry.getKey().getBlockX();
                     int y = location.getBlockY() + entry.getKey().getBlockY();
                     int z = location.getBlockZ() + entry.getKey().getBlockZ();
@@ -217,7 +219,7 @@ public class BlueprintPaster {
                     count++;
                 }
                 if (!entityMap.isEmpty()) {
-                    currentTask = paster.pasteEntities(island, entityMap);
+                    currentTask = paster.pasteEntities(island, world, entityMap);
                 }
             } else {
                 pasteState = PasteState.DONE;
