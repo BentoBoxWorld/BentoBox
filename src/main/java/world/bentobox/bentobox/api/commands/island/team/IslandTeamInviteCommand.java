@@ -109,6 +109,8 @@ public class IslandTeamInviteCommand extends CompositeCommand {
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
+        // Rare case when invited player is null. Could be a race condition.
+        if (invitedPlayer == null) return false;
         // If that player already has an invite out then retract it.
         // Players can only have one invite one at a time - interesting
         if (itc.isInvited(invitedPlayer.getUniqueId())) {
