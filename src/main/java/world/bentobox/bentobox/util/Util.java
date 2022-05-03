@@ -47,7 +47,9 @@ import io.papermc.lib.PaperLib;
 import io.papermc.lib.features.blockstatesnapshot.BlockStateSnapshotResult;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.nms.PasteHandler;
 import world.bentobox.bentobox.nms.WorldRegenerator;
+
 
 /**
  * A set of utility methods
@@ -64,6 +66,7 @@ public class Util {
     private static final String THE_END = "_the_end";
     private static String serverVersion = null;
     private static BentoBox plugin = BentoBox.getInstance();
+    private static PasteHandler pasteHandler = null;
     private static WorldRegenerator regenerator = null;
 
     private Util() {}
@@ -720,6 +723,25 @@ public class Util {
             setRegenerator(handler);
         }
         return regenerator;
+    }
+
+    /**
+     * Set the paste handler the plugin will use
+     * @param pasteHandler the NMS paster
+     */
+    public static void setPasteHandler(PasteHandler pasteHandler) {
+        Util.pasteHandler = pasteHandler;
+    }
+
+    /**
+     * Get the paste handler the plugin will use
+     * @return an NMS accelerated class for this server
+     */
+    public static PasteHandler getPasteHandler() {
+        if (pasteHandler == null) {
+            setPasteHandler(new world.bentobox.bentobox.nms.fallback.PasteHandlerImpl());
+        }
+        return pasteHandler;
     }
 
     /**
