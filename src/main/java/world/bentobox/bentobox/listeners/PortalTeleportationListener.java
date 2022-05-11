@@ -261,14 +261,17 @@ public class PortalTeleportationListener implements Listener {
         if (e.getFrom().getWorld() == null || toWorld == null) {
             return null;
         }
+
+				Location toWorldLocation = e.getFrom().toVector().toLocation(toWorld);
+				toWorldLocation.setY(Math.max(e.getFrom().getBlockY(), e.getTo().getWorld().getMinHeight()));
         if (!e.getCanCreatePortal()) {
             // Legacy portaling
-            return e.getIsland().map(i -> i.getSpawnPoint(env)).orElse(e.getFrom().toVector().toLocation(toWorld));
+            return e.getIsland().map(i -> i.getSpawnPoint(env)).orElse(toWorldLocation);
         }
         // Make portals
         // For anywhere other than the end - it is the player's location that is used
         if (!env.equals(Environment.THE_END)) {
-            return e.getFrom().toVector().toLocation(toWorld);
+            return toWorldLocation;
         }
         // If the-end then we want the platform to always be generated in the same place no matter where
         // they enter the portal
@@ -277,7 +280,7 @@ public class PortalTeleportationListener implements Listener {
         final int y = e.getFrom().getBlockY();
         int i = x;
         int j = z;
-        int k = y;
+        int k = Math.max(y, e.getTo().getWorld().getMinHeight());
         // If the from is not a portal, then we have to find it
         if (!e.getFrom().getBlock().getType().equals(Material.END_PORTAL)) {
             // Find the portal - due to speed, it is possible that the player will be below or above the portal
