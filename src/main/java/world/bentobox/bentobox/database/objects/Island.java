@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.GameMode;
 import org.bukkit.World.Environment;
 import org.bukkit.entity.Player;
 import org.bukkit.util.BoundingBox;
@@ -701,6 +702,19 @@ public class Island implements DataObject, MetaDataAble {
         return new BoundingBox(getMinX(), world.getMinHeight(), getMinZ(), getMaxX(), world.getMaxHeight(), getMaxZ());
     }
 
+		/**
+		 * Using this method in the filtering for getVisitors and hasVisitors
+		 * @param player
+		 * @return true if player is a visitor
+		 */
+		private boolean playerIsVisitor(Player player) {
+			if (player.getGameMode() == GameMode.SPECTATOR) {
+				return false;
+			}
+
+			return onIsland(player.getLocation()) && getRank(User.getInstance(player)) == RanksManager.VISITOR_RANK;
+		}
+
     /**
      * Returns a list of players that are physically inside the island's protection range and that are visitors.
      * @return list of visitors
@@ -709,7 +723,7 @@ public class Island implements DataObject, MetaDataAble {
     @NonNull
     public List<Player> getVisitors() {
         return Bukkit.getOnlinePlayers().stream()
-                .filter(player -> onIsland(player.getLocation()) && getRank(User.getInstance(player)) == RanksManager.VISITOR_RANK)
+                .filter(player -> playerIsVisitor(player))
                 .collect(Collectors.toList());
     }
 
@@ -722,7 +736,7 @@ public class Island implements DataObject, MetaDataAble {
      * @see #getVisitors()
      */
     public boolean hasVisitors() {
-        return Bukkit.getOnlinePlayers().stream().anyMatch(player -> onIsland(player.getLocation()) && getRank(User.getInstance(player)) == RanksManager.VISITOR_RANK);
+        return Bukkit.getOnlinePlayers().stream().anyMatch(player -> playerIsVisitor(player));
     }
 
     /**
@@ -803,7 +817,7 @@ public class Island implements DataObject, MetaDataAble {
      * @since 1.5.2
      */
     public BoundingBox getProtectionBoundingBox() {
-        return new BoundingBox(getMinProtectedX(), 0.0D, getMinProtectedZ(), getMaxProtectedX()-1.0D, world.getMaxHeight(), getMaxProtectedZ()-1.0D);
+        return new BoundingBox(getMinProtectedX(), world.getMinHeight(), getMinProtectedZ(), getMaxProtectedX()-1.0D, world.getMaxHeight(), getMaxProtectedZ()-1.0D);
     }
 
     /**
@@ -1661,9 +1675,4 @@ public class Island implements DataObject, MetaDataAble {
                 + ", cooldowns=" + cooldowns + ", commandRanks=" + commandRanks + ", reserved=" + reserved
                 + ", metaData=" + metaData + ", homes=" + homes + ", maxHomes=" + maxHomes + "]";
     }
-
-
-
-
-
 }

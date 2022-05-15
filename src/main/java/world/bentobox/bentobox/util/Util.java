@@ -47,7 +47,9 @@ import io.papermc.lib.PaperLib;
 import io.papermc.lib.features.blockstatesnapshot.BlockStateSnapshotResult;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.nms.NMSAbstraction;
+import world.bentobox.bentobox.nms.PasteHandler;
+import world.bentobox.bentobox.nms.WorldRegenerator;
+
 
 /**
  * A set of utility methods
@@ -64,7 +66,8 @@ public class Util {
     private static final String THE_END = "_the_end";
     private static String serverVersion = null;
     private static BentoBox plugin = BentoBox.getInstance();
-    private static NMSAbstraction nms = null;
+    private static PasteHandler pasteHandler = null;
+    private static WorldRegenerator regenerator = null;
 
     private Util() {}
 
@@ -689,23 +692,56 @@ public class Util {
     }
 
     /**
-     * Set the NMS handler the plugin will use
-     * @param nms the NMS handler
+     * Set the regenerator the plugin will use
+     * @param regenerator the regenerator
      */
-    public static void setNms(NMSAbstraction nms) {
-        Util.nms = nms;
+    public static void setRegenerator(WorldRegenerator regenerator) {
+        Util.regenerator = regenerator;
     }
 
     /**
-     * Get the NMS handler the plugin will use
+     * Get the regenerator the plugin will use
+     * @return an accelerated regenerator class for this server
+     */
+    public static WorldRegenerator getRegenerator() {
+        if (regenerator == null) {
+            String serverPackageName = Bukkit.getServer().getClass().getPackage().getName();
+            String pluginPackageName = plugin.getClass().getPackage().getName();
+            String version = serverPackageName.substring(serverPackageName.lastIndexOf('.') + 1);
+            WorldRegenerator handler;
+            try {
+                Class<?> clazz = Class.forName(pluginPackageName + ".nms." + version + ".WorldRegeneratorImpl");
+                if (WorldRegenerator.class.isAssignableFrom(clazz)) {
+                    handler = (WorldRegenerator) clazz.getConstructor().newInstance();
+                } else {
+                    throw new IllegalStateException("Class " + clazz.getName() + " does not implement WorldRegenerator");
+                }
+            } catch (Exception e) {
+                plugin.logWarning("No Regenerator found for " + version + ", falling back to Bukkit API.");
+                handler = new world.bentobox.bentobox.nms.fallback.WorldRegeneratorImpl();
+            }
+            setRegenerator(handler);
+        }
+        return regenerator;
+    }
+
+    /**
+     * Set the paste handler the plugin will use
+     * @param pasteHandler the NMS paster
+     */
+    public static void setPasteHandler(PasteHandler pasteHandler) {
+        Util.pasteHandler = pasteHandler;
+    }
+
+    /**
+     * Get the paste handler the plugin will use
      * @return an NMS accelerated class for this server
      */
-    public static NMSAbstraction getNMS() {
-        if (nms == null) {
-            plugin.log("No NMS Handler was set, falling back to Bukkit API.");
-            setNms(new world.bentobox.bentobox.nms.fallback.NMSHandler());
+    public static PasteHandler getPasteHandler() {
+        if (pasteHandler == null) {
+            setPasteHandler(new world.bentobox.bentobox.nms.fallback.PasteHandlerImpl());
         }
-        return nms;
+        return pasteHandler;
     }
 
     /**
