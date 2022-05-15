@@ -155,9 +155,7 @@ public class BlueprintPaster {
         pasteState = PasteState.CHUNK_LOAD;
 
         // If this is an island OVERWORLD paste, get the island owner.
-        final Optional<User> owner = Optional.ofNullable(island)
-                .filter(i -> location.getWorld().getEnvironment().equals(World.Environment.NORMAL))
-                .map(i -> User.getInstance(i.getOwner()));
+        final Optional<User> owner = Optional.ofNullable(island).map(i -> User.getInstance(i.getOwner()));
         // Tell the owner we're pasting blocks and how much time it might take
         owner.ifPresent(user -> tellOwner(user, blocks.size(), attached.size(), entities.size(), plugin.getSettings().getPasteSpeed()));
         Bits bits = new Bits(blocks, attached, entities, 
@@ -211,7 +209,14 @@ public class BlueprintPaster {
         }
         else if (pasteState.equals(PasteState.ENTITIES) && !bits.it3.hasNext()) {
             pasteState = PasteState.DONE;
-            owner.ifPresent(user -> user.sendMessage("commands.island.create.pasting.done"));
+
+            String world = switch (location.getWorld().getEnvironment()) {
+                case NETHER -> owner.map(user -> user.getTranslation("general.worlds.nether")).orElse("");
+                case THE_END -> owner.map(user -> user.getTranslation("general.worlds.the-end")).orElse("");
+                default -> owner.map(user -> user.getTranslation("general.worlds.overworld")).orElse("");
+            };
+
+            owner.ifPresent(user -> user.sendMessage("commands.island.create.pasting.dimension-done", "[world]", world));
         }
         else if (pasteState.equals(PasteState.DONE)) {
             // All done. Cancel task

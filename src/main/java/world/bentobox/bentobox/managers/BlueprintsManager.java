@@ -7,16 +7,7 @@ import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.jar.JarFile;
@@ -467,7 +458,7 @@ public class BlueprintsManager {
         // Paste
         if (bp != null) {
             new BlueprintPaster(plugin, bp, addon.getOverWorld(), island).paste().thenAccept(b -> pasteNether(addon, bb, island).thenAccept(b2 ->
-            pasteEnd(addon, bb, island).thenAccept(b3 -> Bukkit.getScheduler().runTask(plugin, task))));
+            pasteEnd(addon, bb, island).thenAccept(message -> sendMessage(island)).thenAccept(b3 -> Bukkit.getScheduler().runTask(plugin, task))));
         }
         return true;
 
@@ -498,6 +489,18 @@ public class BlueprintsManager {
             }
         }
         return CompletableFuture.completedFuture(false);
+    }
+
+
+    /**
+     * This method just sends a message to the island owner that island creating is completed.
+     * @param island Island which owner must receive a message.
+     */
+    private void sendMessage(Island island) {
+        if (island != null && island.getOwner() != null) {
+            final Optional<User> owner = Optional.of(island).map(i -> User.getInstance(i.getOwner()));
+            owner.ifPresent(user -> user.sendMessage("commands.island.create.pasting.done"));
+        }
     }
 
     /**

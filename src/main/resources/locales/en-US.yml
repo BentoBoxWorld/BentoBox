@@ -496,6 +496,7 @@ commands:
         estimated-time: "&a Estimated time: &b [number] &a seconds."
         blocks: "&a Building it block by block: &b [number] &a blocks in all..."
         entities: "&a Filling it with entities: &b [number] &a entities in all..."
+        dimension-done: "&a Island in [world] is constructed."
         done: "&a Done! Your island is ready and waiting for you!"
       pick: "&2 Pick an island"
       unknown-blueprint: "&c That blueprint has not been loaded yet."
