@@ -163,6 +163,8 @@ public class PortalTeleportationListener implements Listener {
             User user = User.getInstance(e.getPlayer());
 
             plugin.getIslands().getProtectedIslandAt(user.getLocation()).ifPresent(island -> {
+                // TODO : Add some hook here for Addons such as "Visit" that could teleport back to
+                // the visit location
                 if (island.getMembers().containsKey(user.getUniqueId()))
                     e.setRespawnLocation(island.getSpawnPoint(Environment.NORMAL));
             });;
