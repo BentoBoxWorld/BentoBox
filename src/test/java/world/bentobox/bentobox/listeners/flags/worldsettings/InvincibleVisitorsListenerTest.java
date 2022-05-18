@@ -176,7 +176,7 @@ public class InvincibleVisitorsListenerTest {
         when(top.getSize()).thenReturn(9);
         when(panel.getInventory()).thenReturn(top);
 
-        when(Bukkit.createInventory(any(), anyInt(), any())).thenReturn(top);
+        when(Bukkit.createInventory(any(), anyInt(), anyString())).thenReturn(top);
     }
 
     @After

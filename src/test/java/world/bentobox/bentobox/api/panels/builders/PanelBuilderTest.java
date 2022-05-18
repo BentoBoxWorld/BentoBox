@@ -40,7 +40,7 @@ public class PanelBuilderTest {
     public void setUp() throws Exception {
         PowerMockito.mockStatic(Bukkit.class);
         Inventory inv = mock(Inventory.class);
-        when(Bukkit.createInventory(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(inv);
+        when(Bukkit.createInventory(Mockito.any(), Mockito.any(), Mockito.anyString())).thenReturn(inv);
 
     }
 

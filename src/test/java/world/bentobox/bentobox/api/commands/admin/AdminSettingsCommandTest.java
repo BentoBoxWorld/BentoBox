@@ -170,8 +170,8 @@ public class AdminSettingsCommandTest {
         when(itemFactory.getItemMeta(any())).thenReturn(bannerMeta);
         when(Bukkit.getItemFactory()).thenReturn(itemFactory);
         Inventory inventory = mock(Inventory.class);
-        when(Bukkit.createInventory(eq(null), Mockito.anyInt(), any())).thenReturn(inventory);
-        when(Bukkit.createInventory(eq(null), any(InventoryType.class), any())).thenReturn(inventory);
+        when(Bukkit.createInventory(eq(null), Mockito.anyInt(), anyString())).thenReturn(inventory);
+        when(Bukkit.createInventory(eq(null), any(InventoryType.class), anyString())).thenReturn(inventory);
         // Flags manager
         when(Bukkit.getPluginManager()).thenReturn(pluginManager);
         FlagsManager fm = new FlagsManager(plugin);
