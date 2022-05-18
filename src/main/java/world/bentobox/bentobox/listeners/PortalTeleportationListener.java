@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -24,11 +25,14 @@ import org.bukkit.event.entity.EntityPortalEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.event.player.PlayerRespawnEvent.RespawnFlag;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
+import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.blueprints.Blueprint;
 import world.bentobox.bentobox.blueprints.BlueprintPaster;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle;
@@ -70,13 +74,14 @@ public class PortalTeleportationListener implements Listener {
         }
         inPortal.add(uuid);
         if (!Bukkit.getAllowNether() && type.equals(Material.NETHER_PORTAL)) {
+            long scheduleTime = ((Player)entity).getGameMode() == GameMode.CREATIVE ? 0 : 80;
             // Schedule a time
             Bukkit.getScheduler().runTaskLater(plugin, () -> {
                 // Check again if still in portal
                 if (inPortal.contains(uuid)) {
                     this.onIslandPortal(new PlayerPortalEvent((Player)entity, e.getLocation(), null, TeleportCause.NETHER_PORTAL, 0, false, 0));
                 }
-            }, 40);
+            }, scheduleTime);
             return;
         }
         // End portals are instant transfer
@@ -148,6 +153,22 @@ public class PortalTeleportationListener implements Listener {
 
     }
 
+		/**
+     * Handles the end portal in the end
+     * @param e - event
+     */
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onPlayerRespawn(PlayerRespawnEvent e) {
+        if (e.getRespawnFlags().contains(RespawnFlag.END_PORTAL)) {
+            User user = User.getInstance(e.getPlayer());
+
+            plugin.getIslands().getProtectedIslandAt(user.getLocation()).ifPresent(island -> {
+                if (island.getMembers().containsKey(user.getUniqueId()))
+                    e.setRespawnLocation(island.getSpawnPoint(Environment.NORMAL));
+            });;
+				}
+    }
+
     /**
      * Process the portal action
      * @param e - event
@@ -214,7 +235,7 @@ public class PortalTeleportationListener implements Listener {
             // All done here
             return true;
         }
-        if (e.getCanCreatePortal()) {
+        if (e.getCanCreatePortal() && ((env == Environment.THE_END && Bukkit.getAllowEnd()) || (env == Environment.NETHER && Bukkit.getAllowNether()))) {
             // Let the server teleport
             return true;
         }
@@ -262,8 +283,10 @@ public class PortalTeleportationListener implements Listener {
             return null;
         }
 
+        Location toLocation = e.getTo();
 				Location toWorldLocation = e.getFrom().toVector().toLocation(toWorld);
-				toWorldLocation.setY(Math.max(e.getFrom().getBlockY(), e.getTo().getWorld().getMinHeight()));
+        int toWorldMinHeight = toLocation == null ? 0 : toLocation.getWorld().getMinHeight();
+        toWorldLocation.setY(Math.max(e.getFrom().getBlockY(), toWorldMinHeight));
         if (!e.getCanCreatePortal()) {
             // Legacy portaling
             return e.getIsland().map(i -> i.getSpawnPoint(env)).orElse(toWorldLocation);
@@ -280,7 +303,7 @@ public class PortalTeleportationListener implements Listener {
         final int y = e.getFrom().getBlockY();
         int i = x;
         int j = z;
-        int k = Math.max(y, e.getTo().getWorld().getMinHeight());
+        int k = Math.max(y, toWorldMinHeight);
         // If the from is not a portal, then we have to find it
         if (!e.getFrom().getBlock().getType().equals(Material.END_PORTAL)) {
             // Find the portal - due to speed, it is possible that the player will be below or above the portal
@@ -367,7 +390,9 @@ public class PortalTeleportationListener implements Listener {
      */
     private void handleFromNetherOrEnd(PlayerEntityPortalEvent e, World overWorld, Environment env) {
         // Standard portals
-        if (plugin.getIWM().getAddon(overWorld).map(gm -> isMakePortals(gm, env)).orElse(false)) {
+        if (plugin.getIWM().getAddon(overWorld).map(gm -> isMakePortals(gm, env)
+          && (env == Environment.NETHER && Bukkit.getAllowNether())
+            || (env == Environment.THE_END && Bukkit.getAllowEnd())).orElse(false)) {
             e.setTo(e.getFrom().toVector().toLocation(overWorld));
             // Find distance from edge of island's protection
             plugin.getIslands().getIslandAt(e.getFrom()).ifPresent(i -> setSeachRadius(e, i));
