@@ -168,7 +168,7 @@ public class PortalTeleportationListener implements Listener {
                 if (island.getMembers().containsKey(user.getUniqueId()))
                     e.setRespawnLocation(island.getSpawnPoint(Environment.NORMAL));
             });;
-				}
+        }
     }
 
     /**
@@ -191,7 +191,7 @@ public class PortalTeleportationListener implements Listener {
         }
 
         if (!Bukkit.getServer().getAllowNether()) {
-            e.setCancelled(true);
+                e.setCancelled(true);
         }
 
         if (inTeleport.contains(e.getEntity().getUniqueId())) {
@@ -237,7 +237,7 @@ public class PortalTeleportationListener implements Listener {
             // All done here
             return true;
         }
-        if (e.getCanCreatePortal() && ((env == Environment.THE_END && Bukkit.getAllowEnd()) || (env == Environment.NETHER && Bukkit.getAllowNether()))) {
+        if (e.getCanCreatePortal() && isAllowedOnServer(env)) {
             // Let the server teleport
             return true;
         }
@@ -286,7 +286,7 @@ public class PortalTeleportationListener implements Listener {
         }
 
         Location toLocation = e.getTo();
-				Location toWorldLocation = e.getFrom().toVector().toLocation(toWorld);
+        Location toWorldLocation = e.getFrom().toVector().toLocation(toWorld);
         int toWorldMinHeight = toLocation == null ? 0 : toLocation.getWorld().getMinHeight();
         toWorldLocation.setY(Math.max(e.getFrom().getBlockY(), toWorldMinHeight));
         if (!e.getCanCreatePortal()) {
@@ -393,8 +393,7 @@ public class PortalTeleportationListener implements Listener {
     private void handleFromNetherOrEnd(PlayerEntityPortalEvent e, World overWorld, Environment env) {
         // Standard portals
         if (plugin.getIWM().getAddon(overWorld).map(gm -> isMakePortals(gm, env)
-          && (env == Environment.NETHER && Bukkit.getAllowNether())
-            || (env == Environment.THE_END && Bukkit.getAllowEnd())).orElse(false)) {
+            && isAllowedOnServer(env)).orElse(false)) {
             e.setTo(e.getFrom().toVector().toLocation(overWorld));
             // Find distance from edge of island's protection
             plugin.getIslands().getIslandAt(e.getFrom()).ifPresent(i -> setSeachRadius(e, i));
