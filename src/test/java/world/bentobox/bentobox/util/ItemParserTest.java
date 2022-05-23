@@ -1,7 +1,6 @@
 package world.bentobox.bentobox.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -280,5 +279,14 @@ public class ItemParserTest {
         assertEquals(defaultItem, ItemParser.parse("STNE:5:5", defaultItem));
         assertEquals(defaultItem, ItemParser.parse("STNE:AA:5", defaultItem));
         assertEquals(defaultItem, ItemParser.parse("WOODEN_SWORD:4:AA", defaultItem));
+    }
+
+
+    @Test
+    public void parseCustomModelData() {
+        ItemStack result = ItemParser.parse("WOODEN_SWORD:CMD-23151212:2");
+        assertEquals(Material.WOODEN_SWORD, result.getType());
+        assertEquals(2, result.getAmount());
+        assertNull(ItemParser.parse("WOODEN_SWORD:CMD-23151212:2:CMD-23151212"));
     }
 }
