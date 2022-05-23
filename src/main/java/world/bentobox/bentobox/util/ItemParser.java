@@ -88,7 +88,7 @@ public class ItemParser {
             // Check if there are more properties for the item stack
             if (part.length == 1) {
                 // Parse material directly. It does not have any extra properties.
-                returnValue = new ItemStack(Material.valueOf(text.toUpperCase()));
+                returnValue = new ItemStack(Material.valueOf(part[0].toUpperCase()));
             }
             // Material-specific handling
             else if (part[0].contains("POTION") || part[0].equalsIgnoreCase("TIPPED_ARROW")) {
