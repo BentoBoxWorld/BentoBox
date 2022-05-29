@@ -28,6 +28,11 @@ softdepend:
   - HolographicDisplays
   - EconomyPlus
 
+libraries:
+  - mysql:mysql-connector-java:8.0.27
+  - org.mongodb:mongodb-driver:${mongodb.version}
+  - postgresql:postgresql:9.1-901-1.jdbc4
+
 permissions:
   bentobox.admin:
     description: Allows admin command usage
