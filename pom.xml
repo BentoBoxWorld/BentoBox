@@ -230,11 +230,13 @@
             <groupId>org.mongodb</groupId>
             <artifactId>mongodb-driver</artifactId>
             <version>${mongodb.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <version>9.1-901-1.jdbc4</version>
+            <scope>provided</scope>
         </dependency>
         <!-- Vault: as their maven repo is down, we need to get it from jitpack -->
         <!-- See https://github.com/MilkBowl/VaultAPI/issues/69 -->
