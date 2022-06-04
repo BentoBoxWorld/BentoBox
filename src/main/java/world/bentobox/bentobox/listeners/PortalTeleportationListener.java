@@ -132,12 +132,13 @@ public class PortalTeleportationListener implements Listener {
      */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onExitPortal(PlayerMoveEvent e) {
-        if (!inPortal.contains(e.getPlayer().getUniqueId())) {
+        UUID uuid = e.getPlayer().getUniqueId();
+        if (!inPortal.contains(uuid) && !inTeleport.contains(uuid)) {
             return;
         }
         if (e.getTo() != null && !e.getTo().getBlock().getType().equals(Material.NETHER_PORTAL)) {
-            inPortal.remove(e.getPlayer().getUniqueId());
-            inTeleport.remove(e.getPlayer().getUniqueId());
+            inPortal.remove(uuid);
+            inTeleport.remove(uuid);
         }
     }
 
@@ -181,11 +182,11 @@ public class PortalTeleportationListener implements Listener {
             e.setCancelled(true);
         }
 
-//        if (inTeleport.contains(e.getEntity().getUniqueId())) {
-//            return false;
-//        }
+       if (inTeleport.contains(e.getEntity().getUniqueId())) {
+           return false;
+       }
 
-//        inTeleport.add(e.getEntity().getUniqueId());
+       inTeleport.add(e.getEntity().getUniqueId());
 
         // STANDARD NETHER OR END
         if (!isIslands(overWorld, env)) {
