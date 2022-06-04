@@ -1250,7 +1250,7 @@ public class Island implements DataObject, MetaDataAble {
     private Location getWorldLocationFromCenter(World world) {
         Location center = getCenter();
         Location loc = center.toVector().toLocation(world);
-        loc.setY(Math.max(center.getY(), world.getMinHeight()));
+        loc.setY(Math.max(center.getY(), world.getMinHeight() + 2));
         return loc;
     }
 
