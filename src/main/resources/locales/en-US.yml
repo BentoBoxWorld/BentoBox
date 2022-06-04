@@ -543,6 +543,10 @@ commands:
         not-allowed: "&c You are not allowed to set your home in the End."
         confirmation: "&c Are you sure you want to set your home in the End?"
       parameters: "[home name]"
+    setspawn:
+      description: "set your spawn point in this world"
+      must-be-on-your-island: "&c You must be on your island to set home!"
+      spawn-set: "&6 Your island spawn point has been set to your current location."
     setname:
       description: "set a name for your island"
       name-too-short: "&c Too short. Minimum size is [number] characters."

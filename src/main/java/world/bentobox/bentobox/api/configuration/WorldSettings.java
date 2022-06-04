@@ -568,4 +568,15 @@ public interface WorldSettings extends ConfigObject {
     default boolean isCheckForBlocks() {
         return true;
     }
+
+    /**
+     * By default, the destination will be island's home.
+     * This setting will allow players to do /gamemode setspawn and using
+     * /gamemode will teleport them to their island's spawn
+     * @return true if a check for blocks should happen
+     * @since 1.21.0
+     */
+    default boolean isAllowSpawnPerIsland() {
+        return false;
+    }
 }

@@ -707,13 +707,13 @@ public class Island implements DataObject, MetaDataAble {
 		 * @param player
 		 * @return true if player is a visitor
 		 */
-		private boolean playerIsVisitor(Player player) {
-			if (player.getGameMode() == GameMode.SPECTATOR) {
-				return false;
-			}
+    public boolean playerIsVisitor(Player player) {
+        if (player.getGameMode() == GameMode.SPECTATOR) {
+            return false;
+        }
 
-			return onIsland(player.getLocation()) && getRank(User.getInstance(player)) == RanksManager.VISITOR_RANK;
-		}
+        return onIsland(player.getLocation()) && getRank(User.getInstance(player)) == RanksManager.VISITOR_RANK;
+    }
 
     /**
      * Returns a list of players that are physically inside the island's protection range and that are visitors.
@@ -1247,6 +1247,13 @@ public class Island implements DataObject, MetaDataAble {
         setChanged();
     }
 
+    private Location getWorldLocationFromCenter(World world) {
+        Location center = getCenter();
+        Location loc = center.toVector().toLocation(world);
+        loc.setY(Math.max(center.getY(), world.getMinHeight()));
+        return loc;
+    }
+
     /**
      * Checks whether this island has its nether island generated or not.
      * @return {@code true} if this island has its nether island generated, {@code false} otherwise.
@@ -1254,7 +1261,7 @@ public class Island implements DataObject, MetaDataAble {
      */
     public boolean hasNetherIsland() {
         World nether = BentoBox.getInstance().getIWM().getNetherWorld(getWorld());
-        return nether != null && !getCenter().toVector().toLocation(nether).getBlock().getType().isAir();
+        return nether != null && !getWorldLocationFromCenter(nether).getBlock().getType().isAir();
     }
 
     /**
@@ -1264,7 +1271,7 @@ public class Island implements DataObject, MetaDataAble {
      */
     public boolean hasEndIsland() {
         World end = BentoBox.getInstance().getIWM().getEndWorld(getWorld());
-        return end != null && !getCenter().toVector().toLocation(end).getBlock().getType().isAir();
+        return end != null && !getWorldLocationFromCenter(end).getBlock().getType().isAir();
     }
 
 
