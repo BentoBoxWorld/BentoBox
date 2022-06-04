@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -59,36 +60,45 @@ public class PortalTeleportationListener implements Listener {
      */
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPlayerPortal(EntityPortalEnterEvent e) {
-        if (!(e.getEntity() instanceof Player)) {
-            return;
-        }
         Entity entity = e.getEntity();
         Material type = e.getLocation().getBlock().getType();
         UUID uuid = entity.getUniqueId();
-        if (inPortal.contains(uuid) || !plugin.getIWM().inWorld(Util.getWorld(e.getLocation().getWorld()))) {
+        if (!plugin.getIWM().inWorld(Util.getWorld(e.getLocation().getWorld()))) {
             return;
         }
-        inPortal.add(uuid);
         if (!Bukkit.getAllowNether() && type.equals(Material.NETHER_PORTAL)) {
+            if (inPortal.contains(uuid)) {
+                return;
+            }
+            inPortal.add(uuid);
+            long scheduleTime = entity instanceof Player && ((Player)entity).getGameMode() != GameMode.CREATIVE ? 80 : 0;
             // Schedule a time
             Bukkit.getScheduler().runTaskLater(plugin, () -> {
                 // Check again if still in portal
                 if (inPortal.contains(uuid)) {
-                    this.onIslandPortal(new PlayerPortalEvent((Player)entity, e.getLocation(), null, TeleportCause.NETHER_PORTAL, 0, false, 0));
+                    if (entity instanceof Player) {
+                        this.onIslandPortal(new PlayerPortalEvent((Player)entity, e.getLocation(), null, TeleportCause.NETHER_PORTAL, 0, false, 0));
+                    } else {
+                        processPortal(new PlayerEntityPortalEvent(new EntityPortalEvent(entity, e.getLocation(), null)), Environment.NETHER);
+                    }
                 }
-            }, 40);
+            }, scheduleTime);
             return;
         }
         // End portals are instant transfer
         if (!Bukkit.getAllowEnd() && (type.equals(Material.END_PORTAL) || type.equals(Material.END_GATEWAY))) {
-            PlayerPortalEvent en = new PlayerPortalEvent((Player)entity,
+            if (entity instanceof Player) {
+                PlayerPortalEvent en = new PlayerPortalEvent((Player)entity,
                     e.getLocation(),
                     null,
                     type.equals(Material.END_PORTAL) ? TeleportCause.END_PORTAL : TeleportCause.END_GATEWAY,
                             0,
                             false,
                             0);
-            this.onIslandPortal(en);
+                this.onIslandPortal(en);
+            } else {
+                processPortal(new PlayerEntityPortalEvent(new EntityPortalEvent(entity, e.getLocation(), null)), Environment.THE_END);
+            }
         }
     }
 
@@ -171,10 +181,11 @@ public class PortalTeleportationListener implements Listener {
             e.setCancelled(true);
         }
 
-        if (inTeleport.contains(e.getEntity().getUniqueId())) {
-            return false;
-        }
-        inTeleport.add(e.getEntity().getUniqueId());
+//        if (inTeleport.contains(e.getEntity().getUniqueId())) {
+//            return false;
+//        }
+
+//        inTeleport.add(e.getEntity().getUniqueId());
 
         // STANDARD NETHER OR END
         if (!isIslands(overWorld, env)) {
@@ -239,6 +250,7 @@ public class PortalTeleportationListener implements Listener {
                 .entity(e.getEntity())
                 .location(e.getTo())
                 .portal()
+                .cause(env == Environment.NETHER ? TeleportCause.NETHER_PORTAL : TeleportCause.END_PORTAL)
                 .thenRun(() -> {
                     e.getEntity().setVelocity(new Vector(0,0,0));
                     e.getEntity().setFallDistance(0);
