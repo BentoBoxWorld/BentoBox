@@ -53,7 +53,7 @@ public class IslandSetspawnCommand extends ConfirmableCommand {
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        this.askConfirmation(user, user.getTranslation("commands.island.reset.confirmation"), () -> doSetSpawn(user));
+        this.askConfirmation(user, user.getTranslation("commands.island.setspawn.confirmation"), () -> doSetSpawn(user));
         return true;
     }
 

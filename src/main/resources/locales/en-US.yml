@@ -547,6 +547,7 @@ commands:
       description: "set your spawn point in this world"
       must-be-on-your-island: "&c You must be on your island to set home!"
       spawn-set: "&6 Your island spawn point has been set to your current location."
+      confirmation: "&c Are you sure you want to change the spawn point of your island?"
     setname:
       description: "set a name for your island"
       name-too-short: "&c Too short. Minimum size is [number] characters."
