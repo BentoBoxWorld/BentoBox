@@ -52,7 +52,7 @@ public class PlaceBlocksListener extends FlagListener {
      */
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerHitItemFrame(PlayerInteractEntityEvent e) {
-        if (e.getRightClicked().getType().equals(EntityType.ITEM_FRAME)) {
+        if (e.getRightClicked().getType().equals(EntityType.ITEM_FRAME) || e.getRightClicked().getType().equals(EntityType.GLOW_ITEM_FRAME)) {
             if (!checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.PLACE_BLOCKS)) return;
             checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.ITEM_FRAME);
         }
