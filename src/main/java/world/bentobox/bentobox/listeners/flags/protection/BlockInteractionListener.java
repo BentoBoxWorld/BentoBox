@@ -198,8 +198,8 @@ public class BlockInteractionListener extends FlagListener {
         case END_PORTAL_FRAME:
             checkIsland(e, player, loc, Flags.PLACE_BLOCKS);
             break;
-        case GLOW_ITEM_FRAME,
-            ITEM_FRAME:
+        case GLOW_ITEM_FRAME:
+        case ITEM_FRAME:
             checkIsland(e, player, loc, Flags.ITEM_FRAME);
             break;
         case SWEET_BERRY_BUSH:
