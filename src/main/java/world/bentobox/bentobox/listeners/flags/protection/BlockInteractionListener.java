@@ -4,10 +4,12 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 
+import org.bukkit.FluidCollisionMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Tag;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.Waterlogged;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
@@ -85,6 +87,17 @@ public class BlockInteractionListener extends FlagListener
             {
                 this.checkIsland(e, e.getPlayer(), e.getClickedBlock().getLocation(), Flags.PLACE_BLOCKS);
             }
+            else if (e.getItem().getType() == Material.GLASS_BOTTLE)
+            {
+                Block targetedBlock = e.getPlayer().getTargetBlockExact(5, FluidCollisionMode.ALWAYS);
+
+                // Check if player is clicking on water or waterlogged block with a bottle.
+                if (targetedBlock != null && (Material.WATER.equals(targetedBlock.getType()) ||
+                    targetedBlock.getBlockData() instanceof Waterlogged))
+                {
+                    this.checkIsland(e, e.getPlayer(), e.getClickedBlock().getLocation(), Flags.BREWING);
+                }
+            }
         }
     }
 
@@ -154,7 +167,7 @@ public class BlockInteractionListener extends FlagListener
         switch (type)
         {
             case BEACON -> this.checkIsland(e, player, loc, Flags.BEACON);
-            case BREWING_STAND, CAULDRON -> this.checkIsland(e, player, loc, Flags.BREWING);
+            case BREWING_STAND -> this.checkIsland(e, player, loc, Flags.BREWING);
             case BEEHIVE, BEE_NEST -> this.checkIsland(e, player, loc, Flags.HIVE);
             case BARREL -> this.checkIsland(e, player, loc, Flags.BARREL);
             case CHEST, CHEST_MINECART -> this.checkIsland(e, player, loc, Flags.CHEST);
@@ -179,6 +192,45 @@ public class BlockInteractionListener extends FlagListener
             case GLOW_ITEM_FRAME, ITEM_FRAME -> this.checkIsland(e, player, loc, Flags.ITEM_FRAME);
             case SWEET_BERRY_BUSH -> this.checkIsland(e, player, loc, Flags.BREAK_BLOCKS);
             case CAKE -> this.checkIsland(e, player, loc, Flags.CAKE);
+            case LAVA_CAULDRON ->
+            {
+                if (BlockInteractionListener.holds(player, Material.BUCKET))
+                {
+                    this.checkIsland(e, player, loc, Flags.COLLECT_LAVA);
+                }
+            }
+            case WATER_CAULDRON ->
+            {
+                if (BlockInteractionListener.holds(player, Material.BUCKET))
+                {
+                    this.checkIsland(e, player, loc, Flags.COLLECT_WATER);
+                }
+                else if (BlockInteractionListener.holds(player, Material.GLASS_BOTTLE) ||
+                    BlockInteractionListener.holds(player, Material.POTION))
+                {
+                    this.checkIsland(e, player, loc, Flags.BREWING);
+                }
+            }
+            case POWDER_SNOW_CAULDRON ->
+            {
+                if (BlockInteractionListener.holds(player, Material.BUCKET))
+                {
+                    this.checkIsland(e, player, loc, Flags.COLLECT_POWDERED_SNOW);
+                }
+            }
+            case CAULDRON ->
+            {
+                if (BlockInteractionListener.holds(player, Material.WATER_BUCKET) ||
+                    BlockInteractionListener.holds(player, Material.LAVA_BUCKET) ||
+                    BlockInteractionListener.holds(player, Material.POWDER_SNOW_BUCKET))
+                {
+                    this.checkIsland(e, player, loc, Flags.BUCKET);
+                }
+                else if (BlockInteractionListener.holds(player, Material.POTION))
+                {
+                    this.checkIsland(e, player, loc, Flags.BREWING);
+                }
+            }
             default ->
             {
                 if (stringFlags.containsKey(type.name()))
@@ -226,5 +278,20 @@ public class BlockInteractionListener extends FlagListener
         Optional<Island> fromIsland = this.getIslands().getProtectedIslandAt(block.getLocation());
         Optional<Island> toIsland = this.getIslands().getProtectedIslandAt(e.getToBlock().getLocation());
         fromIsland.ifPresent(from -> e.setCancelled(toIsland.map(to -> to != from).orElse(true)));
+    }
+
+
+
+
+    /**
+     * This method returns if player is holding given material in main or offhand.
+     * @param player Player that must be checked.
+     * @param material item that mus t be checjed.
+     * @return {@code true} if player is holding item in main hand or offhand.
+     */
+    private static boolean holds(Player player, Material material)
+    {
+        return player.getInventory().getItemInMainHand().getType().equals(material) ||
+            player.getInventory().getItemInOffHand().getType().equals(material);
     }
 }
