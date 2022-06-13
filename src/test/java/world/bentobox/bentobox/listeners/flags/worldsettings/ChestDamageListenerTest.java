@@ -19,11 +19,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Logger;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Server;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Cow;
 import org.bukkit.entity.Entity;
@@ -50,6 +46,7 @@ import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.listeners.flags.AbstractCommonSetup;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.FlagsManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
@@ -64,17 +61,24 @@ import world.bentobox.bentobox.util.Util;
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( {Bukkit.class, BentoBox.class, Flags.class, Util.class} )
-public class ChestDamageListenerTest {
+public class ChestDamageListenerTest extends AbstractCommonSetup
+{
 
     private Location location;
     private BentoBox plugin;
     private World world;
 
+    @Override
     @Before
-    public void setUp() {
+    public void setUp() throws Exception {
+        super.setUp();
+
         // Set up plugin
         plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+
+        // Tags
+        when(Tag.SHULKER_BOXES.isTagged(any(Material.class))).thenReturn(false);
 
         Server server = mock(Server.class);
         world = mock(World.class);
@@ -161,8 +165,6 @@ public class ChestDamageListenerTest {
         // Util
         PowerMockito.mockStatic(Util.class);
         when(Util.getWorld(Mockito.any())).thenReturn(mock(World.class));
-
-
     }
 
     @After

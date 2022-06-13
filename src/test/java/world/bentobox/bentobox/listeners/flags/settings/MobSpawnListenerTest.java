@@ -45,6 +45,8 @@ import world.bentobox.bentobox.managers.FlagsManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.util.Util;
+import world.bentobox.bentobox.versions.ServerCompatibility;
+
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( {BentoBox.class, Bukkit.class, Flags.class, Util.class })
@@ -77,6 +79,10 @@ public class MobSpawnListenerTest {
         when(server.getLogger()).thenReturn(Logger.getAnonymousLogger());
         when(server.getWorld("world")).thenReturn(world);
         when(server.getVersion()).thenReturn("BSB_Mocking");
+
+        ServerCompatibility serverCompatibility = mock(ServerCompatibility.class);
+        Whitebox.setInternalState(ServerCompatibility.class, "instance", serverCompatibility);
+        when(serverCompatibility.getServerVersion()).thenReturn(ServerCompatibility.ServerVersion.V1_19);
 
         PluginManager pim = mock(PluginManager.class);
 
