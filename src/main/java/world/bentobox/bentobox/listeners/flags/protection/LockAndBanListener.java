@@ -104,22 +104,31 @@ public class LockAndBanListener extends FlagListener {
      * @param loc - location to check
      * @return CheckResult LOCKED, BANNED or OPEN. If an island is locked, that will take priority over banned
      */
-    private CheckResult check(@NonNull Player player, Location loc) {
+    private CheckResult check(@NonNull Player player, Location loc)
+    {
         // Ops or NPC's are allowed everywhere
-        if (player.isOp() || player.hasMetadata("NPC")) {
+        if (player.isOp() || player.hasMetadata("NPC"))
+        {
             return CheckResult.OPEN;
         }
+
         // See if the island is locked to non-members or player is banned
-        return getIslands().getProtectedIslandAt(loc)
-                .map(is -> {
-                    if (is.isBanned(player.getUniqueId())) {
-                        return player.hasPermission(getIWM().getPermissionPrefix(loc.getWorld()) + "mod.bypassban") ? CheckResult.OPEN : CheckResult.BANNED;
-                    }
-                    if (!is.isAllowed(User.getInstance(player), Flags.LOCK)) {
-                        return player.hasPermission(getIWM().getPermissionPrefix(loc.getWorld()) + "mod.bypasslock") ? CheckResult.OPEN : CheckResult.LOCKED;
-                    }
-                    return CheckResult.OPEN;
-                }).orElse(CheckResult.OPEN);
+        return this.getIslands().getProtectedIslandAt(loc).
+            map(is ->
+            {
+                if (is.isBanned(player.getUniqueId()))
+                {
+                    return player.hasPermission(getIWM().getPermissionPrefix(loc.getWorld()) + "mod.bypassban") ?
+                        CheckResult.OPEN : CheckResult.BANNED;
+                }
+                if (!is.isAllowed(User.getInstance(player), Flags.LOCK))
+                {
+                    return player.hasPermission(getIWM().getPermissionPrefix(loc.getWorld()) + "mod.bypasslock") ?
+                        CheckResult.OPEN : CheckResult.LOCKED;
+                }
+                return CheckResult.OPEN;
+            }).
+            orElse(CheckResult.OPEN);
     }
 
     /**
@@ -128,19 +137,17 @@ public class LockAndBanListener extends FlagListener {
      * @param loc - location to check
      * @return true if banned
      */
-    private CheckResult checkAndNotify(@NonNull Player player, Location loc) {
-        CheckResult r = check(player,loc);
-        switch (r) {
-        case BANNED:
-            User.getInstance(player).notify("commands.island.ban.you-are-banned");
-            break;
-        case LOCKED:
-            User.getInstance(player).notify("protection.locked");
-            break;
-        default:
-            break;
+    private CheckResult checkAndNotify(@NonNull Player player, Location loc)
+    {
+        CheckResult result = this.check(player, loc);
+
+        switch (result)
+        {
+            case BANNED -> User.getInstance(player).notify("commands.island.ban.you-are-banned");
+            case LOCKED -> User.getInstance(player).notify("protection.locked");
         }
-        return r;
+
+        return result;
     }
 
     /**
