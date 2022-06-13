@@ -33,7 +33,7 @@ public class PhysicalInteractionListener extends FlagListener
             return;
         }
 
-        if (this.isPressurePlate(e.getClickedBlock().getType()))
+        if (Tag.PRESSURE_PLATES.isTagged(e.getClickedBlock().getType()))
         {
             // Pressure plates
             this.checkIsland(e, e.getPlayer(), e.getPlayer().getLocation(), Flags.PRESSURE_PLATE);
@@ -68,37 +68,11 @@ public class PhysicalInteractionListener extends FlagListener
                 return;
             }
 
-            if (this.isPressurePlate(e.getBlock().getType()))
+            if (Tag.PRESSURE_PLATES.isTagged(e.getBlock().getType()))
             {
                 // Pressure plates
                 this.checkIsland(e, (Player) p.getShooter(), e.getBlock().getLocation(), Flags.PRESSURE_PLATE);
             }
         }
-    }
-
-
-    /**
-     * This method returns if given material is one of the pressure plates.
-     * @see Material.STONE_PRESSURE_PLATE
-     * @see Material.POLISHED_BLACKSTONE_PRESSURE_PLATE
-     * @see Material.LIGHT_WEIGHTED_PRESSURE_PLATE
-     * @see Material.HEAVY_WEIGHTED_PRESSURE_PLATE
-     * @see Material.OAK_PRESSURE_PLATE
-     * @see Material.SPRUCE_PRESSURE_PLATE
-     * @see Material.BIRCH_PRESSURE_PLATE
-     * @see Material.JUNGLE_PRESSURE_PLATE
-     * @see Material.ACACIA_PRESSURE_PLATE
-     * @see Material.DARK_OAK_PRESSURE_PLATE
-     * @see Material.MANGROVE_PRESSURE_PLATE
-     * @see Material.CRIMSON_PRESSURE_PLATE
-     * @see Material.WARPED_PRESSURE_PLATE
-     * Switch may be better, but due to 1.18 compatibility "_PLATE" is easier.
-     *
-     * @param material Material that must be checked.
-     * @return {@code true} if material is pressure plate, {@code false} otherwise.
-     */
-    private boolean isPressurePlate(Material material)
-    {
-        return material.name().endsWith("_PLATE");
     }
 }
