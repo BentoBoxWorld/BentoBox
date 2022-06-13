@@ -1356,6 +1356,14 @@ protection:
         &a
         &a Island members still lose their items
         &a if they die on their own island!
+    VISITOR_TRIGGER_RAID:
+      name: "Visitors triggers raids"
+      description: |-
+        &a Toggles if visitors can start
+        &a a raid on an island which they are
+        &a visiting.
+        &a
+        &a Bad Omen effect will be removed!
     WITHER_DAMAGE:
       name: "Toggle wither damage"
       description: |-
