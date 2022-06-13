@@ -171,7 +171,7 @@ public class InvincibleVisitorsListener extends FlagListener implements ClickHan
         if (!(e.getTarget() instanceof Player p) ||
             !this.getIWM().inWorld(world) ||
             e.getTarget().hasMetadata("NPC") ||
-            this.getIslands().userIsOnIsland(world, User.getInstance(e.getEntity())) ||
+            this.getIslands().userIsOnIsland(world, User.getInstance(e.getTarget())) ||
             this.PVPAllowed(p.getLocation()) ||
             e.getReason() == EntityTargetEvent.TargetReason.TARGET_DIED ||
             !this.getIWM().getIvSettings(world).contains(DamageCause.ENTITY_ATTACK.name()))
