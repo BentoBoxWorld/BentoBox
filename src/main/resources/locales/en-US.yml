@@ -996,6 +996,10 @@ protection:
       name: "Fish Scooping"
       description: "Allow scooping of fishes using a bucket"
       hint: "Fish scooping disabled"
+    AXOLOTL_SCOOPING:
+      name: "Axolotl Scooping"
+      description: "Allow scooping of axolotl using a bucket"
+      hint: "Axolotl scooping disabled"
     FLINT_AND_STEEL:
       name: "Flint and steel"
       description: |-

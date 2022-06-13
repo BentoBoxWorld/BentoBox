@@ -3,9 +3,10 @@ package world.bentobox.bentobox.listeners.flags.protection;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Axolotl;
+import org.bukkit.entity.Fish;
 import org.bukkit.entity.MushroomCow;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.TropicalFish;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
@@ -62,8 +63,15 @@ public class BucketListener extends FlagListener {
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onTropicalFishScooping(final PlayerInteractEntityEvent e) {
-        if (e.getRightClicked() instanceof TropicalFish && e.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.WATER_BUCKET)) {
-            checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.FISH_SCOOPING);
+        if (e.getRightClicked() instanceof Fish &&
+            e.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.WATER_BUCKET))
+        {
+            this.checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.FISH_SCOOPING);
+        }
+        else if (e.getRightClicked() instanceof Axolotl &&
+            e.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.WATER_BUCKET))
+        {
+            this.checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.AXOLOTL_SCOOPING);
         }
     }
 

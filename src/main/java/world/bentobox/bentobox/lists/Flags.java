@@ -185,6 +185,7 @@ public final class Flags {
     public static final Flag COLLECT_POWDERED_SNOW = new Flag.Builder("COLLECT_POWDERED_SNOW", Material.POWDER_SNOW_BUCKET).mode(Flag.Mode.ADVANCED).build();
     public static final Flag MILKING = new Flag.Builder("MILKING", Material.MILK_BUCKET).mode(Flag.Mode.ADVANCED).build();
     public static final Flag FISH_SCOOPING = new Flag.Builder("FISH_SCOOPING", Material.TROPICAL_FISH_BUCKET).build();
+    public static final Flag AXOLOTL_SCOOPING = new Flag.Builder("AXOLOTL_SCOOPING", Material.AXOLOTL_BUCKET).build();
 
     // Chorus Fruit and Enderpearls
     public static final Flag CHORUS_FRUIT = new Flag.Builder("CHORUS_FRUIT", Material.CHORUS_FRUIT).listener(new TeleportationListener()).build();
