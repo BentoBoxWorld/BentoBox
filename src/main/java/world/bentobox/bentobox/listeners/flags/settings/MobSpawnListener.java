@@ -48,17 +48,12 @@ public class MobSpawnListener extends FlagListener
             return;
         }
 
-        // Test if RAVAGER can be spawned.
-        LivingEntity dummyEntity = (LivingEntity) event.getWorld().spawnEntity(
-            event.getRaid().getLocation(),
-            EntityType.RAVAGER);
-        CreatureSpawnEvent dummyEvent = new CreatureSpawnEvent(dummyEntity, CreatureSpawnEvent.SpawnReason.RAID);
-        this.onMobSpawn(dummyEvent);
-        dummyEntity.remove();
+        Optional<Island> island = getIslands().getIslandAt(event.getPlayer().getLocation());
 
-        // If they cancelled spawning of entities, then stop raid.
-        if (dummyEvent.isCancelled())
+        if (island.map(i -> !i.isAllowed(Flags.MONSTER_NATURAL_SPAWN)).orElseGet(
+            () -> !Flags.MONSTER_NATURAL_SPAWN.isSetForWorld(event.getWorld())))
         {
+            // Monster spawning is disabled on island or world. Cancel the raid.
             event.setCancelled(true);
         }
     }
@@ -77,15 +72,10 @@ public class MobSpawnListener extends FlagListener
             return;
         }
 
-        // Test if RAVAGER can be spawned.
-        LivingEntity dummyEntity = (LivingEntity) event.getWorld().spawnEntity(
-            event.getRaid().getLocation(),
-            EntityType.RAVAGER);
-        CreatureSpawnEvent dummyEvent = new CreatureSpawnEvent(dummyEntity, CreatureSpawnEvent.SpawnReason.RAID);
-        this.onMobSpawn(dummyEvent);
-        dummyEntity.remove();
+        Optional<Island> island = getIslands().getIslandAt(event.getRaid().getLocation());
 
-        if (dummyEvent.isCancelled())
+        if (island.map(i -> !i.isAllowed(Flags.MONSTER_NATURAL_SPAWN)).orElseGet(
+            () -> !Flags.MONSTER_NATURAL_SPAWN.isSetForWorld(event.getWorld())))
         {
             // CHEATERS. PUNISH THEM.
             event.getWinners().forEach(player ->
