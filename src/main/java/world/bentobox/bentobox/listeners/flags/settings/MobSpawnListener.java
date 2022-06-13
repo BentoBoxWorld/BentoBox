@@ -19,68 +19,82 @@ import world.bentobox.bentobox.util.Util;
  * Handles natural mob spawning.
  * @author tastybento
  */
-public class MobSpawnListener extends FlagListener {
+public class MobSpawnListener extends FlagListener
+{
+    /**
+     * Prevents mobs spawning naturally
+     *
+     * @param e - event
+     */
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    public void onMobSpawnEvent(CreatureSpawnEvent e)
+    {
+        this.onMobSpawn(e);
+    }
+
 
     /**
      * Prevents mobs spawning naturally
-     *
      * @param e - event
      */
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void onMobSpawnEvent(CreatureSpawnEvent e) {
-        onMobSpawn(e);
-    }
-    /**
-     * Prevents mobs spawning naturally
-     *
-     * @param e - event
-     * @return true if cancelled
-     */
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    void onMobSpawn(CreatureSpawnEvent e) {
+    void onMobSpawn(CreatureSpawnEvent e)
+    {
         // If not in the right world, or spawning is not natural return
-        if (!getIWM().inWorld(e.getEntity().getLocation())) {
+        if (!this.getIWM().inWorld(e.getEntity().getLocation()))
+        {
             return;
         }
-        switch (e.getSpawnReason()) {
-        // Natural
-        case DEFAULT:
-        case DROWNED:
-        case JOCKEY:
-        case LIGHTNING:
-        case MOUNT:
-        case NATURAL:
-        case NETHER_PORTAL:
-        case OCELOT_BABY:
-        case PATROL:
-        case RAID:
-        case REINFORCEMENTS:
-        case SILVERFISH_BLOCK:
-            //case SLIME_SPLIT: messes with slimes from spawners, slime must have previously existed to create another
-        case TRAP:
-        case VILLAGE_DEFENSE:
-        case VILLAGE_INVASION:
-            boolean cancelNatural = shouldCancel(e.getEntity(), e.getLocation(), Flags.ANIMAL_NATURAL_SPAWN, Flags.MONSTER_NATURAL_SPAWN);
-            e.setCancelled(cancelNatural);
-            return;
+
+        switch (e.getSpawnReason())
+        {
+            // Natural
+            case DEFAULT, DROWNED, JOCKEY, LIGHTNING, MOUNT, NATURAL, NETHER_PORTAL, OCELOT_BABY, PATROL,
+                RAID, REINFORCEMENTS, SILVERFISH_BLOCK, TRAP, VILLAGE_DEFENSE, VILLAGE_INVASION ->
+            {
+                boolean cancelNatural = this.shouldCancel(e.getEntity(),
+                    e.getLocation(),
+                    Flags.ANIMAL_NATURAL_SPAWN,
+                    Flags.MONSTER_NATURAL_SPAWN);
+                e.setCancelled(cancelNatural);
+            }
             // Spawners
-        case SPAWNER:
-            boolean cancelSpawners = shouldCancel(e.getEntity(), e.getLocation(), Flags.ANIMAL_SPAWNERS_SPAWN, Flags.MONSTER_SPAWNERS_SPAWN);
-            e.setCancelled(cancelSpawners);
-            return;
-        default:
-            return;
+            case SPAWNER ->
+            {
+                boolean cancelSpawners = this.shouldCancel(e.getEntity(),
+                    e.getLocation(),
+                    Flags.ANIMAL_SPAWNERS_SPAWN,
+                    Flags.MONSTER_SPAWNERS_SPAWN);
+                e.setCancelled(cancelSpawners);
+            }
         }
     }
 
-    private boolean shouldCancel(Entity entity, Location loc, Flag animalSpawnFlag, Flag monsterSpawnFlag) {
+
+    /**
+     * This method checks if entity should be cancelled from spawning in given location base on flag values.
+     * @param entity Entity that is checked.
+     * @param loc location where entity is spawned.
+     * @param animalSpawnFlag Animal Spawn Flag.
+     * @param monsterSpawnFlag Monster Spawn Flag.
+     * @return {@code true} if flag prevents entity to spawn, {@code false} otherwise.
+     */
+    private boolean shouldCancel(Entity entity, Location loc, Flag animalSpawnFlag, Flag monsterSpawnFlag)
+    {
         Optional<Island> island = getIslands().getIslandAt(loc);
-        if (Util.isHostileEntity(entity) && !(entity instanceof PufferFish)) {
-            return island.map(i -> !i.isAllowed(monsterSpawnFlag)).orElseGet(() -> !monsterSpawnFlag.isSetForWorld(entity.getWorld()));
-        } else if (Util.isPassiveEntity(entity) || entity instanceof PufferFish) {
-            return island.map(i -> !i.isAllowed(animalSpawnFlag)).orElseGet(() -> !animalSpawnFlag.isSetForWorld(entity.getWorld()));
-        }
-        return false;
-    }
 
+        if (Util.isHostileEntity(entity) && !(entity instanceof PufferFish))
+        {
+            return island.map(i -> !i.isAllowed(monsterSpawnFlag)).
+                orElseGet(() -> !monsterSpawnFlag.isSetForWorld(entity.getWorld()));
+        }
+        else if (Util.isPassiveEntity(entity) || entity instanceof PufferFish)
+        {
+            return island.map(i -> !i.isAllowed(animalSpawnFlag)).
+                orElseGet(() -> !animalSpawnFlag.isSetForWorld(entity.getWorld()));
+        }
+        else
+        {
+            return false;
+        }
+    }
 }
