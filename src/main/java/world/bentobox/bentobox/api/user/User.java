@@ -17,10 +17,13 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Particle;
+import org.bukkit.Vibration;
 import org.bukkit.World;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.permissions.PermissionAttachmentInfo;
@@ -597,21 +600,89 @@ public class User implements MetaDataAble {
      * @param y Y coordinate of the particle to display.
      * @param z Z coordinate of the particle to display.
      */
-    public void spawnParticle(Particle particle, Particle.DustOptions dustOptions, double x, double y, double z) {
-        if (particle.equals(Particle.REDSTONE) && dustOptions == null) {
-            // Security check that will avoid later unexpected exceptions.
-            throw new IllegalArgumentException("A non-null Particle.DustOptions must be provided when using Particle.REDSTONE as particle.");
+    public void spawnParticle(Particle particle, Object dustOptions, double x, double y, double z)
+    {
+        // Improve particle validation.
+        switch (particle)
+        {
+            case REDSTONE ->
+            {
+                if (!(dustOptions instanceof Particle.DustOptions))
+                {
+                    throw new IllegalArgumentException("A non-null Particle.DustOptions must be provided when using Particle.REDSTONE as particle.");
+                }
+            }
+            case ITEM_CRACK ->
+            {
+                if (!(dustOptions instanceof ItemStack))
+                {
+                    throw new IllegalArgumentException("A non-null ItemStack must be provided when using Particle.ITEM_CRACK as particle.");
+                }
+            }
+            case BLOCK_CRACK, BLOCK_DUST, FALLING_DUST, BLOCK_MARKER ->
+            {
+                if (!(dustOptions instanceof BlockData))
+                {
+                    throw new IllegalArgumentException("A non-null BlockData must be provided when using Particle." + particle + " as particle.");
+                }
+            }
+            case DUST_COLOR_TRANSITION ->
+            {
+                if (!(dustOptions instanceof Particle.DustTransition))
+                {
+                    throw new IllegalArgumentException("A non-null Particle.DustTransition must be provided when using Particle.DUST_COLOR_TRANSITION as particle.");
+                }
+            }
+            case VIBRATION ->
+            {
+                if (!(dustOptions instanceof Vibration))
+                {
+                    throw new IllegalArgumentException("A non-null Vibration must be provided when using Particle.VIBRATION as particle.");
+                }
+            }
+            case SCULK_CHARGE ->
+            {
+                if (!(dustOptions instanceof Float))
+                {
+                    throw new IllegalArgumentException("A non-null Float must be provided when using Particle.SCULK_CHARGE as particle.");
+                }
+            }
+            case SHRIEK ->
+            {
+                if (!(dustOptions instanceof Integer))
+                {
+                    throw new IllegalArgumentException("A non-null Integer must be provided when using Particle.SHRIEK as particle.");
+                }
+            }
+            case LEGACY_BLOCK_CRACK, LEGACY_BLOCK_DUST, LEGACY_FALLING_DUST ->
+            {
+                if (!(dustOptions instanceof BlockData))
+                {
+                    throw new IllegalArgumentException("A non-null MaterialData must be provided when using Particle." + particle + " as particle.");
+                }
+            }
         }
 
         // Check if this particle is beyond the viewing distance of the server
-        if (player.getLocation().toVector().distanceSquared(new Vector(x,y,z)) < (Bukkit.getServer().getViewDistance()*256*Bukkit.getServer().getViewDistance())) {
-            if (particle.equals(Particle.REDSTONE)) {
+        if (this.player != null &&
+            this.player.getLocation().toVector().distanceSquared(new Vector(x, y, z)) <
+                (Bukkit.getServer().getViewDistance() * 256 * Bukkit.getServer().getViewDistance()))
+        {
+            if (particle.equals(Particle.REDSTONE))
+            {
                 player.spawnParticle(particle, x, y, z, 1, 0, 0, 0, 1, dustOptions);
-            } else {
+            }
+            else if (dustOptions != null)
+            {
+                player.spawnParticle(particle, x, y, z, 1, dustOptions);
+            }
+            else
+            {
                 player.spawnParticle(particle, x, y, z, 1);
             }
         }
     }
+
 
     /**
      * Spawn particles to the player.

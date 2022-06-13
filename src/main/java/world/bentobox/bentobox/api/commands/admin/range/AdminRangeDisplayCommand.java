@@ -7,9 +7,8 @@ import java.util.Map;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Particle;
-
-import com.google.common.base.Enums;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.user.User;
@@ -24,8 +23,6 @@ public class AdminRangeDisplayCommand extends CompositeCommand {
     private static final String DISPLAY = "display";
     private static final String SHOW = "show";
     private static final String HIDE = "hide";
-    // Since 1.18, the Particle.BARRIER was replaced by BLOCK_MARKER
-    private static final Particle BARRIER = Enums.getIfPresent(Particle.class, "BARRIER").or(Enums.getIfPresent(Particle.class, "BLOCK_MARKER").or(Particle.LAVA));
 
     // Map of users to which ranges must be displayed
     private final Map<User, Integer> displayRanges = new HashMap<>();
@@ -75,7 +72,7 @@ public class AdminRangeDisplayCommand extends CompositeCommand {
 
             getIslands().getIslandAt(user.getLocation()).ifPresent(island -> {
                 // Draw the island protected area
-                drawZone(user, BARRIER, null, island, island.getProtectionRange());
+                drawZone(user, Particle.BLOCK_MARKER, Material.BARRIER.createBlockData(), island, island.getProtectionRange());
 
                 // Draw the default protected area if island protected zone is different
                 if (island.getProtectionRange() != getPlugin().getIWM().getIslandProtectionRange(getWorld())) {
@@ -94,7 +91,7 @@ public class AdminRangeDisplayCommand extends CompositeCommand {
         displayRanges.remove(user);
     }
 
-    private void drawZone(User user, Particle particle, Particle.DustOptions dustOptions, Island island, int range) {
+    private void drawZone(User user, Particle particle, Object dustOptions, Island island, int range) {
         Location center = island.getProtectionCenter();
         // Get player Y coordinate
         int playerY = user.getPlayer().getLocation().getBlockY() + 1;
