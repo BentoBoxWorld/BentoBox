@@ -21,6 +21,7 @@ import org.bukkit.entity.minecart.StorageMinecart;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.InventoryHolder;
 
 import world.bentobox.bentobox.api.flags.FlagListener;
@@ -32,7 +33,37 @@ import world.bentobox.bentobox.versions.ServerCompatibility;
  * Handles inventory protection
  * @author tastybento
  */
-public class InventoryListener extends FlagListener {
+public class InventoryListener extends FlagListener
+{
+    /**
+     * Prevents players opening inventories
+     * @param event - event
+     */
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
+    public void onInventoryOpen(InventoryOpenEvent event)
+    {
+        InventoryHolder inventoryHolder = event.getInventory().getHolder();
+
+        if (inventoryHolder == null || !(event.getPlayer() instanceof Player player))
+        {
+            return;
+        }
+
+        if (inventoryHolder instanceof Animals)
+        {
+            // Prevent opening animal inventories.
+            this.checkIsland(event, player, event.getInventory().getLocation(), Flags.MOUNT_INVENTORY);
+        }
+        else if (!ServerCompatibility.getInstance().isVersion(ServerCompatibility.ServerVersion.V1_18,
+            ServerCompatibility.ServerVersion.V1_18_1,
+            ServerCompatibility.ServerVersion.V1_18_2) &&
+            inventoryHolder instanceof ChestBoat)
+        {
+            // Prevent opening chest inventories
+            this.checkIsland(event, player, event.getInventory().getLocation(), Flags.CHEST);
+        }
+    }
+
 
     /**
      * Prevents players picking items from inventories
