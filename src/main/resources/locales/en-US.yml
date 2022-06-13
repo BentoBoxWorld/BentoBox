@@ -889,6 +889,12 @@ protection:
           &a (override Buckets)
       name: "Collect water"
       hint: "Water buckets disabled"
+    COLLECT_POWDERED_SNOW:
+      description: |-
+        &a Toggle collecting powdered snow
+        &a (override Buckets)
+      name: "Collect powdered snow"
+      hint: "Powdered snow buckets disabled"
     COMMAND_RANKS:
       name: "&e Command Ranks"
       description: "&a Configure command ranks"

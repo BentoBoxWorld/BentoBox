@@ -31,7 +31,7 @@ public class BucketListener extends FlagListener {
     public void onBucketEmpty(final PlayerBucketEmptyEvent e) {
         // This is where the water or lava actually will be dumped
         Block dumpBlock = e.getBlockClicked().getRelative(e.getBlockFace());
-        checkIsland(e, e.getPlayer(), dumpBlock.getLocation(), Flags.BUCKET);
+        this.checkIsland(e, e.getPlayer(), dumpBlock.getLocation(), Flags.BUCKET);
     }
 
     /**
@@ -42,12 +42,21 @@ public class BucketListener extends FlagListener {
     public void onBucketFill(final PlayerBucketFillEvent e) {
         Player p = e.getPlayer();
         Location l = e.getBlockClicked().getLocation();
+
+        if (e.getItemStack() == null)
+        {
+            // Null-pointer check.
+            return;
+        }
+
         // Check filling of various liquids
-        switch (e.getItemStack().getType()) {
-        case LAVA_BUCKET -> checkIsland(e, p, l, Flags.COLLECT_LAVA);
-        case WATER_BUCKET -> checkIsland(e, p, l, Flags.COLLECT_WATER);
-        case MILK_BUCKET -> checkIsland(e, p, l, Flags.MILKING);
-        default -> checkIsland(e, p, l, Flags.BUCKET);
+        switch (e.getItemStack().getType())
+        {
+            case LAVA_BUCKET -> this.checkIsland(e, p, l, Flags.COLLECT_LAVA);
+            case WATER_BUCKET -> this.checkIsland(e, p, l, Flags.COLLECT_WATER);
+            case POWDER_SNOW_BUCKET -> this.checkIsland(e, p, l, Flags.COLLECT_POWDERED_SNOW);
+            case MILK_BUCKET -> this.checkIsland(e, p, l, Flags.MILKING);
+            default -> this.checkIsland(e, p, l, Flags.BUCKET);
         }
     }
 
