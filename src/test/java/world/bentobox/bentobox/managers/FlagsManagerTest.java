@@ -46,7 +46,7 @@ public class FlagsManagerTest {
     /**
      * Update this value if the number of registered listeners changes
      */
-    private static final int NUMBER_OF_LISTENERS = 50;
+    private static final int NUMBER_OF_LISTENERS = 52;
     @Mock
     private BentoBox plugin;
     @Mock

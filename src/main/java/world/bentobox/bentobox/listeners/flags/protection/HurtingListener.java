@@ -14,7 +14,6 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Parrot;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
-import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -31,7 +30,6 @@ import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.util.Util;
-import world.bentobox.bentobox.versions.ServerCompatibility;
 
 
 /**
@@ -50,16 +48,23 @@ public class HurtingListener extends FlagListener {
      * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void onEntityDamage(final EntityDamageByEntityEvent e) {
+    public void onEntityDamage(final EntityDamageByEntityEvent e)
+    {
         // Mobs being hurt
-        if (Util.isPassiveEntity(e.getEntity())) {
-            respond(e, e.getDamager(), Flags.HURT_ANIMALS);
-        } else if (e.getEntity() instanceof Villager || e.getEntityType().name().equals("WANDERING_TRADER")) { // TODO: Simplify when 1.13.2 support is dropped
-            respond(e, e.getDamager(), Flags.HURT_VILLAGERS);
-        } else if (Util.isHostileEntity(e.getEntity())) {
-            respond(e, e.getDamager(), Flags.HURT_MONSTERS);
+        if (Util.isPassiveEntity(e.getEntity()))
+        {
+            this.respond(e, e.getDamager(), Flags.HURT_ANIMALS);
+        }
+        else if (e.getEntity() instanceof AbstractVillager)
+        {
+            this.respond(e, e.getDamager(), Flags.HURT_VILLAGERS);
+        }
+        else if (Util.isHostileEntity(e.getEntity()))
+        {
+            this.respond(e, e.getDamager(), Flags.HURT_MONSTERS);
         }
     }
+
 
     /**
      * Finds the true attacker, even if the attack was via a projectile
@@ -159,12 +164,6 @@ public class HurtingListener extends FlagListener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onLingeringPotionSplash(final LingeringPotionSplashEvent e) {
-        // TODO Switch this to 1.13 when we move to 1.14 officially
-        if (!ServerCompatibility.getInstance().isVersion(ServerCompatibility.ServerVersion.V1_14, ServerCompatibility.ServerVersion.V1_14_1)) {
-            // We're disabling this check for non-1.14 servers.
-            return;
-        }
-
         // Try to get the shooter
         Projectile projectile = e.getEntity();
         if (projectile.getShooter() instanceof Player) {

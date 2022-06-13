@@ -626,6 +626,8 @@ public class LangUtilsHook extends Hook {
             case MUSIC_DISC_11 -> "C418 - 11";
             case MUSIC_DISC_WAIT -> "C418 - wait";
             case MUSIC_DISC_PIGSTEP -> "Lena Raine - Pigstep";
+            case MUSIC_DISC_5 -> "Samuel Åberg - 5";
+            case MUSIC_DISC_OTHERSIDE -> "Lena Raine - otherside";
             default -> null;
         };
     }

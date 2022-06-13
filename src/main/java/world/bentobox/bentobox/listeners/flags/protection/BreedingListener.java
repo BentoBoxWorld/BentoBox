@@ -56,16 +56,27 @@ public class BreedingListener extends FlagListener {
         bi.put(EntityType.TURTLE, Collections.singletonList(Material.SEAGRASS));
         bi.put(EntityType.PANDA, Collections.singletonList(Material.BAMBOO));
         bi.put(EntityType.FOX, Collections.singletonList(Material.SWEET_BERRIES));
-        if (Enums.getIfPresent(EntityType.class, "BEES").isPresent()) { // 1.15.2
-            bi.put(EntityType.BEE, Arrays.asList(Material.SUNFLOWER, Material.ORANGE_TULIP, Material.PINK_TULIP,
-                    Material.RED_TULIP, Material.WHITE_TULIP, Material.ALLIUM,
-                    Material.AZURE_BLUET, Material.BLUE_ORCHID, Material.CORNFLOWER,
-                    Material.DANDELION, Material.OXEYE_DAISY, Material.PEONY, Material.POPPY));
+        // 1.15+
+        bi.put(EntityType.BEE, Arrays.asList(Material.SUNFLOWER, Material.ORANGE_TULIP, Material.PINK_TULIP,
+            Material.RED_TULIP, Material.WHITE_TULIP, Material.ALLIUM,
+            Material.AZURE_BLUET, Material.BLUE_ORCHID, Material.CORNFLOWER,
+            Material.DANDELION, Material.OXEYE_DAISY, Material.PEONY, Material.POPPY));
+        // 1.16+
+        bi.put(EntityType.HOGLIN, Collections.singletonList(Material.CRIMSON_FUNGUS));
+        bi.put(EntityType.STRIDER, Collections.singletonList(Material.WARPED_FUNGUS));
+        // 1.18+
+        bi.put(EntityType.AXOLOTL, Collections.singletonList(Material.TROPICAL_FISH_BUCKET));
+        bi.put(EntityType.GOAT, Collections.singletonList(Material.WHEAT));
+        // 1.19+
+        // TODO: remove one 1.18 is dropped.
+        if (Enums.getIfPresent(EntityType.class, "FROG").isPresent()) {
+            bi.put(EntityType.FROG, Collections.singletonList(Material.SLIME_BALL));
+            bi.put(EntityType.ALLAY, Collections.singletonList(Material.AMETHYST_SHARD));
         }
-        if (Enums.getIfPresent(EntityType.class, "HOGLIN").isPresent()) {
-            bi.put(EntityType.HOGLIN, Collections.singletonList(Material.CRIMSON_FUNGUS)); // 1.16.1
-            bi.put(EntityType.STRIDER, Collections.singletonList(Material.WARPED_FUNGUS)); // 1.16.1
-        }
+        // Helper
+        //  if (Enums.getIfPresent(EntityType.class, "<name>").isPresent()) {
+        //      bi.put(EntityType.<type>, Collections.singletonList(Material.<material>));
+        //  }
         BREEDING_ITEMS = Collections.unmodifiableMap(bi);
     }
 

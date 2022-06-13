@@ -69,7 +69,7 @@ public class BlockInteractionListenerTest extends AbstractCommonSetup {
         clickedBlocks.put(Material.WHITE_BED, Flags.BED);
         when(Tag.BEDS.isTagged(Material.WHITE_BED)).thenReturn(true);
         clickedBlocks.put(Material.BREWING_STAND, Flags.BREWING);
-        clickedBlocks.put(Material.CAULDRON, Flags.BREWING);
+        clickedBlocks.put(Material.WATER_CAULDRON, Flags.COLLECT_WATER);
         clickedBlocks.put(Material.BARREL, Flags.BARREL);
         clickedBlocks.put(Material.CHEST, Flags.CHEST);
         clickedBlocks.put(Material.CHEST_MINECART, Flags.CHEST);
@@ -87,6 +87,7 @@ public class BlockInteractionListenerTest extends AbstractCommonSetup {
         clickedBlocks.put(Material.IRON_TRAPDOOR, Flags.TRAPDOOR);
         when(Tag.TRAPDOORS.isTagged(Material.IRON_TRAPDOOR)).thenReturn(true);
         clickedBlocks.put(Material.SPRUCE_FENCE_GATE, Flags.GATE);
+        when(Tag.FENCE_GATES.isTagged(Material.SPRUCE_FENCE_GATE)).thenReturn(true);
         clickedBlocks.put(Material.BLAST_FURNACE, Flags.FURNACE);
         clickedBlocks.put(Material.CAMPFIRE, Flags.FURNACE);
         clickedBlocks.put(Material.FURNACE_MINECART, Flags.FURNACE);
@@ -135,6 +136,8 @@ public class BlockInteractionListenerTest extends AbstractCommonSetup {
         // Nothing in hand right now
         when(item.getType()).thenReturn(Material.AIR);
         when(player.getInventory()).thenReturn(inv);
+        when(inv.getItemInMainHand()).thenReturn(item);
+        when(inv.getItemInOffHand()).thenReturn(new ItemStack(Material.BUCKET));
 
         // FlagsManager
         setFlags();

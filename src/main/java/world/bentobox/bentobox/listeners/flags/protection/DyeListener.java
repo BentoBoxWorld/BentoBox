@@ -1,10 +1,10 @@
 package world.bentobox.bentobox.listeners.flags.protection;
 
-import org.bukkit.entity.EntityType;
+import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.entity.SheepDyeWoolEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import world.bentobox.bentobox.api.flags.FlagListener;
@@ -22,24 +22,35 @@ public class DyeListener extends FlagListener {
 	 * @param e - event
 	 */
 	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-	public void onPlayerInteract(final PlayerInteractEvent e) {
-		if (e.getClickedBlock() == null || e.getItem() == null) {
+	public void onPlayerInteract(final PlayerInteractEvent e)
+	{
+		if (e.getClickedBlock() == null || e.getItem() == null)
+		{
 			return;
 		}
 
-		if (e.getAction().equals(Action.RIGHT_CLICK_BLOCK) && e.getClickedBlock().getType().name().contains("SIGN")
-			&& e.getItem().getType().name().contains("DYE")) {
-			checkIsland(e, e.getPlayer(), e.getClickedBlock().getLocation(), Flags.DYE);
+		if (e.getAction().equals(Action.RIGHT_CLICK_BLOCK) &&
+			e.getClickedBlock().getType().name().contains("SIGN") &&
+			(e.getItem().getType().name().contains("DYE") || e.getItem().getType().equals(Material.GLOW_INK_SAC)))
+		{
+			this.checkIsland(e, e.getPlayer(), e.getClickedBlock().getLocation(), Flags.DYE);
 		}
 	}
 
+
+	/**
+	 * Prevents from interacting with sheep.
+	 * @param e - event
+	 */
 	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-	public void onPlayerInteract(final PlayerInteractEntityEvent e) {
-		// We cannot use SheepDyeWoolEvent since it doesn't provide who dyed the sheep
-		if (e.getRightClicked().getType().equals(EntityType.SHEEP)
-				&& (e.getPlayer().getInventory().getItemInMainHand().getType().name().contains("DYE")
-				|| e.getPlayer().getInventory().getItemInOffHand().getType().name().contains("DYE"))) {
-			checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.DYE);
+	public void onPlayerInteract(final SheepDyeWoolEvent e)
+	{
+		if (e.getPlayer() == null)
+		{
+			// Sheep is not dyed by the player.
+			return;
 		}
+
+		this.checkIsland(e, e.getPlayer(), e.getPlayer().getLocation(), Flags.DYE);
 	}
 }

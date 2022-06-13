@@ -1,5 +1,6 @@
 package world.bentobox.bentobox.lists;
 
+import com.google.common.base.Enums;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -13,30 +14,7 @@ import world.bentobox.bentobox.api.flags.clicklisteners.CycleClick;
 import world.bentobox.bentobox.listeners.flags.clicklisteners.CommandRankClickListener;
 import world.bentobox.bentobox.listeners.flags.clicklisteners.GeoLimitClickListener;
 import world.bentobox.bentobox.listeners.flags.clicklisteners.MobLimitClickListener;
-import world.bentobox.bentobox.listeners.flags.protection.BlockInteractionListener;
-import world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener;
-import world.bentobox.bentobox.listeners.flags.protection.BreedingListener;
-import world.bentobox.bentobox.listeners.flags.protection.BucketListener;
-import world.bentobox.bentobox.listeners.flags.protection.DyeListener;
-import world.bentobox.bentobox.listeners.flags.protection.EggListener;
-import world.bentobox.bentobox.listeners.flags.protection.ElytraListener;
-import world.bentobox.bentobox.listeners.flags.protection.EntityInteractListener;
-import world.bentobox.bentobox.listeners.flags.protection.ExperiencePickupListener;
-import world.bentobox.bentobox.listeners.flags.protection.FireListener;
-import world.bentobox.bentobox.listeners.flags.protection.HurtingListener;
-import world.bentobox.bentobox.listeners.flags.protection.InventoryListener;
-import world.bentobox.bentobox.listeners.flags.protection.ItemDropPickUpListener;
-import world.bentobox.bentobox.listeners.flags.protection.LeashListener;
-import world.bentobox.bentobox.listeners.flags.protection.LecternListener;
-import world.bentobox.bentobox.listeners.flags.protection.LockAndBanListener;
-import world.bentobox.bentobox.listeners.flags.protection.PaperExperiencePickupListener;
-import world.bentobox.bentobox.listeners.flags.protection.PhysicalInteractionListener;
-import world.bentobox.bentobox.listeners.flags.protection.PlaceBlocksListener;
-import world.bentobox.bentobox.listeners.flags.protection.PortalListener;
-import world.bentobox.bentobox.listeners.flags.protection.ShearingListener;
-import world.bentobox.bentobox.listeners.flags.protection.TNTListener;
-import world.bentobox.bentobox.listeners.flags.protection.TeleportationListener;
-import world.bentobox.bentobox.listeners.flags.protection.ThrowingListener;
+import world.bentobox.bentobox.listeners.flags.protection.*;
 import world.bentobox.bentobox.listeners.flags.settings.DecayListener;
 import world.bentobox.bentobox.listeners.flags.settings.MobSpawnListener;
 import world.bentobox.bentobox.listeners.flags.settings.PVPListener;
@@ -174,7 +152,10 @@ public final class Flags {
     public static final Flag BOAT = new Flag.Builder("BOAT", Material.OAK_BOAT).mode(Flag.Mode.BASIC).build();
     public static final Flag TRADING = new Flag.Builder("TRADING", Material.EMERALD).defaultSetting(true).mode(Flag.Mode.BASIC).build();
     public static final Flag NAME_TAG = new Flag.Builder("NAME_TAG", Material.NAME_TAG).mode(Flag.Mode.ADVANCED).build();
-
+    /**
+     * @since 1.21
+     */
+    public static final Flag ALLAY = new Flag.Builder("ALLAY", Material.AMETHYST_SHARD).mode(Flag.Mode.ADVANCED).build();
     // Breeding
     public static final Flag BREEDING = new Flag.Builder("BREEDING", Material.CARROT).listener(new BreedingListener()).mode(Flag.Mode.ADVANCED).build();
 
@@ -182,8 +163,16 @@ public final class Flags {
     public static final Flag BUCKET = new Flag.Builder("BUCKET", Material.BUCKET).listener(new BucketListener()).mode(Flag.Mode.BASIC).build();
     public static final Flag COLLECT_LAVA = new Flag.Builder("COLLECT_LAVA", Material.LAVA_BUCKET).build();
     public static final Flag COLLECT_WATER = new Flag.Builder("COLLECT_WATER", Material.WATER_BUCKET).mode(Flag.Mode.ADVANCED).build();
+    /**
+     * @since 1.21
+     */
+    public static final Flag COLLECT_POWDERED_SNOW = new Flag.Builder("COLLECT_POWDERED_SNOW", Material.POWDER_SNOW_BUCKET).mode(Flag.Mode.ADVANCED).build();
     public static final Flag MILKING = new Flag.Builder("MILKING", Material.MILK_BUCKET).mode(Flag.Mode.ADVANCED).build();
     public static final Flag FISH_SCOOPING = new Flag.Builder("FISH_SCOOPING", Material.TROPICAL_FISH_BUCKET).build();
+    /**
+     * @since 1.21
+     */
+    public static final Flag AXOLOTL_SCOOPING = new Flag.Builder("AXOLOTL_SCOOPING", Material.AXOLOTL_BUCKET).build();
 
     // Chorus Fruit and Enderpearls
     public static final Flag CHORUS_FRUIT = new Flag.Builder("CHORUS_FRUIT", Material.CHORUS_FRUIT).listener(new TeleportationListener()).build();
@@ -313,6 +302,32 @@ public final class Flags {
         .defaultRank(RanksManager.OWNER_RANK)
         .clickHandler(new CycleClick("CHANGE_SETTINGS", RanksManager.MEMBER_RANK, RanksManager.OWNER_RANK))
         .mode(Flag.Mode.TOP_ROW).build();
+
+    /**
+     * This flag allows choosing which island member group can activate sculk sensors.
+     * TODO: Enums#getIfPresent is used to support 1.18
+     * @since 1.21.0
+     */
+    public static final Flag SCULK_SENSOR = new Flag.Builder("SCULK_SENSOR", Enums.getIfPresent(Material.class, "SCULK_SENSOR").or(Material.BARRIER)).
+        listener(new SculkSensorListener()).
+        type(Type.PROTECTION).
+        defaultSetting(true).
+        defaultRank(RanksManager.MEMBER_RANK).
+        clickHandler(new CycleClick("SCULK_SENSOR", RanksManager.VISITOR_RANK, RanksManager.MEMBER_RANK)).
+        build();
+
+    /**
+     * This flag allows choosing which island member group can activate sculk shrieker.
+     * TODO: Enums#getIfPresent is used to support 1.18
+     * @since 1.21.0
+     */
+    public static final Flag SCULK_SHRIEKER = new Flag.Builder("SCULK_SHRIEKER", Enums.getIfPresent(Material.class, "SCULK_SHRIEKER").or(Material.BARRIER)).
+        listener(new SculkShriekerListener()).
+        type(Type.PROTECTION).
+        defaultSetting(true).
+        defaultRank(RanksManager.MEMBER_RANK).
+        clickHandler(new CycleClick("SCULK_SHRIEKER", RanksManager.VISITOR_RANK, RanksManager.MEMBER_RANK)).
+        build();
 
     /*
      * Settings flags (not protection flags)
