@@ -1,5 +1,6 @@
 package world.bentobox.bentobox.listeners.flags.protection;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 
@@ -34,7 +35,7 @@ public class BlockInteractionListener extends FlagListener {
      */
     private final static Map<String, String> stringFlags;
     static {
-        stringFlags = Map.of("RESPAWN_ANCHOR", "PLACE_BLOCKS");
+        stringFlags = Collections.emptyMap();
     }
 
     /**
@@ -67,15 +68,13 @@ public class BlockInteractionListener extends FlagListener {
                     checkIsland(e, e.getPlayer(), e.getClickedBlock().getLocation(), Flags.PLACE_BLOCKS);
                     return;
                 }
+
                 switch (e.getItem().getType()) {
-                case ENDER_PEARL:
-                    checkIsland(e, e.getPlayer(), e.getClickedBlock().getLocation(), Flags.ENDER_PEARL);
-                    break;
-                case BONE_MEAL:
-                    checkIsland(e, e.getPlayer(), e.getClickedBlock().getLocation(), Flags.PLACE_BLOCKS);
-                    break;
-                default:
-                    break;
+                    case ENDER_PEARL ->
+                        checkIsland(e, e.getPlayer(), e.getClickedBlock().getLocation(), Flags.ENDER_PEARL);
+                    case BONE_MEAL ->
+                        checkIsland(e, e.getPlayer(), e.getClickedBlock().getLocation(), Flags.PLACE_BLOCKS);
+                    default -> {}
                 }
             }
         }
@@ -119,109 +118,42 @@ public class BlockInteractionListener extends FlagListener {
             return;
         }
 
-        switch (type) {
-        case BEACON:
-            checkIsland(e, player, loc, Flags.BEACON);
-            break;
-        case BREWING_STAND:
-        case CAULDRON:
-            checkIsland(e, player, loc, Flags.BREWING);
-            break;
-        case BEEHIVE:
-        case BEE_NEST:
-            checkIsland(e, player, loc, Flags.HIVE);
-            break;
-        case BARREL:
-            checkIsland(e, player, loc, Flags.BARREL);
-            break;
-        case CHEST:
-        case CHEST_MINECART:
-            checkIsland(e, player, loc, Flags.CHEST);
-            break;
-        case TRAPPED_CHEST:
-            checkIsland(e, player, loc, Flags.TRAPPED_CHEST);
-            break;
-        case FLOWER_POT:
-            checkIsland(e, player, loc, Flags.FLOWER_POT);
-            break;
-        case COMPOSTER:
-            checkIsland(e, player, loc, Flags.COMPOSTER);
-            break;
-        case DISPENSER:
-            checkIsland(e, player, loc, Flags.DISPENSER);
-            break;
-        case DROPPER:
-            checkIsland(e, player, loc, Flags.DROPPER);
-            break;
-        case HOPPER:
-        case HOPPER_MINECART:
-            checkIsland(e, player, loc, Flags.HOPPER);
-            break;
-        case BLAST_FURNACE:
-        case CAMPFIRE:
-        case FURNACE_MINECART:
-        case FURNACE:
-        case SMOKER:
-            checkIsland(e, player, loc, Flags.FURNACE);
-            break;
-        case ENCHANTING_TABLE:
-            checkIsland(e, player, loc, Flags.ENCHANTING);
-            break;
-        case ENDER_CHEST:
-            checkIsland(e, player, loc, Flags.ENDER_CHEST);
-            break;
-        case JUKEBOX:
-            checkIsland(e, player, loc, Flags.JUKEBOX);
-            break;
-        case NOTE_BLOCK:
-            checkIsland(e, player, loc, Flags.NOTE_BLOCK);
-            break;
-        case CRAFTING_TABLE:
-        case CARTOGRAPHY_TABLE:
-        case GRINDSTONE:
-        case STONECUTTER:
-        case LOOM:
-            checkIsland(e, player, loc, Flags.CRAFTING);
-            break;
-        case LEVER:
-            checkIsland(e, player, loc, Flags.LEVER);
-            break;
-        case REDSTONE_WIRE:
-        case REPEATER:
-        case COMPARATOR:
-        case DAYLIGHT_DETECTOR:
-            checkIsland(e, player, loc, Flags.REDSTONE);
-            break;
-        case DRAGON_EGG:
-            checkIsland(e, player, loc, Flags.DRAGON_EGG);
-            break;
-        case END_PORTAL_FRAME:
-            checkIsland(e, player, loc, Flags.PLACE_BLOCKS);
-            break;
-        case GLOW_ITEM_FRAME:
-        case ITEM_FRAME:
-            checkIsland(e, player, loc, Flags.ITEM_FRAME);
-            break;
-        case SWEET_BERRY_BUSH:
-            checkIsland(e, player, loc, Flags.BREAK_BLOCKS);
-            break;
-        case CAKE:
-            checkIsland(e, player, loc, Flags.CAKE);
-            break;
-        case OAK_FENCE_GATE:
-        case SPRUCE_FENCE_GATE:
-        case BIRCH_FENCE_GATE:
-        case JUNGLE_FENCE_GATE:
-        case DARK_OAK_FENCE_GATE:
-        case ACACIA_FENCE_GATE:
-        case CRIMSON_FENCE_GATE:
-        case WARPED_FENCE_GATE:
-            checkIsland(e, player, loc, Flags.GATE);
-            break;
-        default:
-            if (stringFlags.containsKey(type.name())) {
-                Optional<Flag> f = BentoBox.getInstance().getFlagsManager().getFlag(stringFlags.get(type.name()));
-                f.ifPresent(flag -> checkIsland(e, player, loc, flag));
+        switch (type)
+        {
+            case BEACON -> checkIsland(e, player, loc, Flags.BEACON);
+            case BREWING_STAND, CAULDRON -> checkIsland(e, player, loc, Flags.BREWING);
+            case BEEHIVE, BEE_NEST -> checkIsland(e, player, loc, Flags.HIVE);
+            case BARREL -> checkIsland(e, player, loc, Flags.BARREL);
+            case CHEST, CHEST_MINECART -> checkIsland(e, player, loc, Flags.CHEST);
+            case TRAPPED_CHEST -> checkIsland(e, player, loc, Flags.TRAPPED_CHEST);
+            case FLOWER_POT -> checkIsland(e, player, loc, Flags.FLOWER_POT);
+            case COMPOSTER -> checkIsland(e, player, loc, Flags.COMPOSTER);
+            case DISPENSER -> checkIsland(e, player, loc, Flags.DISPENSER);
+            case DROPPER -> checkIsland(e, player, loc, Flags.DROPPER);
+            case HOPPER, HOPPER_MINECART -> checkIsland(e, player, loc, Flags.HOPPER);
+            case BLAST_FURNACE, CAMPFIRE, FURNACE_MINECART, FURNACE, SMOKER ->
+                checkIsland(e, player, loc, Flags.FURNACE);
+            case ENCHANTING_TABLE -> checkIsland(e, player, loc, Flags.ENCHANTING);
+            case ENDER_CHEST -> checkIsland(e, player, loc, Flags.ENDER_CHEST);
+            case JUKEBOX -> checkIsland(e, player, loc, Flags.JUKEBOX);
+            case NOTE_BLOCK -> checkIsland(e, player, loc, Flags.NOTE_BLOCK);
+            case CRAFTING_TABLE, CARTOGRAPHY_TABLE, GRINDSTONE, STONECUTTER, LOOM ->
+                checkIsland(e, player, loc, Flags.CRAFTING);
+            case LEVER -> checkIsland(e, player, loc, Flags.LEVER);
+            case REDSTONE_WIRE, REPEATER, COMPARATOR, DAYLIGHT_DETECTOR -> checkIsland(e, player, loc, Flags.REDSTONE);
+            case DRAGON_EGG -> checkIsland(e, player, loc, Flags.DRAGON_EGG);
+            case END_PORTAL_FRAME, RESPAWN_ANCHOR -> checkIsland(e, player, loc, Flags.PLACE_BLOCKS);
+            case GLOW_ITEM_FRAME, ITEM_FRAME -> checkIsland(e, player, loc, Flags.ITEM_FRAME);
+            case SWEET_BERRY_BUSH -> checkIsland(e, player, loc, Flags.BREAK_BLOCKS);
+            case CAKE -> checkIsland(e, player, loc, Flags.CAKE);
+            case OAK_FENCE_GATE, SPRUCE_FENCE_GATE, BIRCH_FENCE_GATE, JUNGLE_FENCE_GATE,
+                DARK_OAK_FENCE_GATE, ACACIA_FENCE_GATE, CRIMSON_FENCE_GATE, WARPED_FENCE_GATE ->
+                checkIsland(e, player, loc, Flags.GATE);
+            default -> {
+                if (stringFlags.containsKey(type.name())) {
+                    Optional<Flag> f = BentoBox.getInstance().getFlagsManager().getFlag(stringFlags.get(type.name()));
+                    f.ifPresent(flag -> checkIsland(e, player, loc, flag));
+                }
             }
         }
     }
