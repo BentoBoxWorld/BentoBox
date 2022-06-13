@@ -731,6 +731,10 @@ ranks:
 protection:
   command-is-banned: "Command is banned for visitors"
   flags:
+    ALLAY:
+      name: "Allay interaction"
+      description: "Allow giving and taking items to/from Allay"
+      hint: "Allay interaction disabled"
     ANIMAL_NATURAL_SPAWN:
       description: "Toggle natural animal spawning"
       name: "Animal natural spawn"
@@ -745,6 +749,10 @@ protection:
       description: "Toggle interaction"
       name: "Armor stands"
       hint: "Armor stand use disabled"
+    AXOLOTL_SCOOPING:
+      name: "Axolotl Scooping"
+      description: "Allow scooping of axolotl using a bucket"
+      hint: "Axolotl scooping disabled"
     BEACON:
       description: "Toggle interaction"
       name: "Beacons"
@@ -996,10 +1004,6 @@ protection:
       name: "Fish Scooping"
       description: "Allow scooping of fishes using a bucket"
       hint: "Fish scooping disabled"
-    AXOLOTL_SCOOPING:
-      name: "Axolotl Scooping"
-      description: "Allow scooping of axolotl using a bucket"
-      hint: "Axolotl scooping disabled"
     FLINT_AND_STEEL:
       name: "Flint and steel"
       description: |-

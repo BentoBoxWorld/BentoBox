@@ -174,7 +174,10 @@ public final class Flags {
     public static final Flag BOAT = new Flag.Builder("BOAT", Material.OAK_BOAT).mode(Flag.Mode.BASIC).build();
     public static final Flag TRADING = new Flag.Builder("TRADING", Material.EMERALD).defaultSetting(true).mode(Flag.Mode.BASIC).build();
     public static final Flag NAME_TAG = new Flag.Builder("NAME_TAG", Material.NAME_TAG).mode(Flag.Mode.ADVANCED).build();
-
+    /**
+     * @since 1.21
+     */
+    public static final Flag ALLAY = new Flag.Builder("ALLAY", Material.AMETHYST_SHARD).mode(Flag.Mode.ADVANCED).build();
     // Breeding
     public static final Flag BREEDING = new Flag.Builder("BREEDING", Material.CARROT).listener(new BreedingListener()).mode(Flag.Mode.ADVANCED).build();
 
@@ -182,9 +185,15 @@ public final class Flags {
     public static final Flag BUCKET = new Flag.Builder("BUCKET", Material.BUCKET).listener(new BucketListener()).mode(Flag.Mode.BASIC).build();
     public static final Flag COLLECT_LAVA = new Flag.Builder("COLLECT_LAVA", Material.LAVA_BUCKET).build();
     public static final Flag COLLECT_WATER = new Flag.Builder("COLLECT_WATER", Material.WATER_BUCKET).mode(Flag.Mode.ADVANCED).build();
+    /**
+     * @since 1.21
+     */
     public static final Flag COLLECT_POWDERED_SNOW = new Flag.Builder("COLLECT_POWDERED_SNOW", Material.POWDER_SNOW_BUCKET).mode(Flag.Mode.ADVANCED).build();
     public static final Flag MILKING = new Flag.Builder("MILKING", Material.MILK_BUCKET).mode(Flag.Mode.ADVANCED).build();
     public static final Flag FISH_SCOOPING = new Flag.Builder("FISH_SCOOPING", Material.TROPICAL_FISH_BUCKET).build();
+    /**
+     * @since 1.21
+     */
     public static final Flag AXOLOTL_SCOOPING = new Flag.Builder("AXOLOTL_SCOOPING", Material.AXOLOTL_BUCKET).build();
 
     // Chorus Fruit and Enderpearls

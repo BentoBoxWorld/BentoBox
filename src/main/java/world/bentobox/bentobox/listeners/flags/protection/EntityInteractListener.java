@@ -73,6 +73,21 @@ public class EntityInteractListener extends FlagListener {
                 this.checkIsland(e, p, l, Flags.NAME_TAG);
             }
         }
+        else if (!ServerCompatibility.getInstance().isVersion(
+            ServerCompatibility.ServerVersion.V1_18,
+            ServerCompatibility.ServerVersion.V1_18_1,
+            ServerCompatibility.ServerVersion.V1_18_2) &&
+            e.getRightClicked() instanceof Allay)
+        {
+            // Allay item giving/taking
+            this.checkIsland(e, p, l, Flags.ALLAY);
+
+            // Check naming
+            if (e.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.NAME_TAG))
+            {
+                this.checkIsland(e, p, l, Flags.NAME_TAG);
+            }
+        }
         else if (e.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.NAME_TAG))
         {
             // Name tags
