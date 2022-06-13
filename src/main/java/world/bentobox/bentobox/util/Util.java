@@ -25,19 +25,7 @@ import org.bukkit.World.Environment;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.Animals;
-import org.bukkit.entity.Bat;
-import org.bukkit.entity.EnderDragon;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Flying;
-import org.bukkit.entity.IronGolem;
-import org.bukkit.entity.Monster;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.PufferFish;
-import org.bukkit.entity.Shulker;
-import org.bukkit.entity.Slime;
-import org.bukkit.entity.Snowman;
-import org.bukkit.entity.WaterMob;
+import org.bukkit.entity.*;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
@@ -49,6 +37,7 @@ import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.nms.PasteHandler;
 import world.bentobox.bentobox.nms.WorldRegenerator;
+import world.bentobox.bentobox.versions.ServerCompatibility;
 
 
 /**
@@ -356,8 +345,19 @@ public class Util {
         // Bat extends Mob
         // Most of passive mobs extends Animals
 
-        return entity instanceof Animals || entity instanceof IronGolem || entity instanceof Snowman ||
+        if (ServerCompatibility.getInstance().isVersion(ServerCompatibility.ServerVersion.V1_18,
+            ServerCompatibility.ServerVersion.V1_18_1,
+            ServerCompatibility.ServerVersion.V1_18_2))
+        {
+            return entity instanceof Animals || entity instanceof IronGolem || entity instanceof Snowman ||
                 entity instanceof WaterMob && !(entity instanceof PufferFish) || entity instanceof Bat;
+        }
+        else
+        {
+            return entity instanceof Animals || entity instanceof IronGolem || entity instanceof Snowman ||
+                entity instanceof WaterMob && !(entity instanceof PufferFish) || entity instanceof Bat ||
+                entity instanceof Allay;
+        }
     }
 
     /*
