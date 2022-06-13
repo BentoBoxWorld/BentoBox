@@ -1,5 +1,6 @@
 package world.bentobox.bentobox.lists;
 
+import com.google.common.base.Enums;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -13,30 +14,7 @@ import world.bentobox.bentobox.api.flags.clicklisteners.CycleClick;
 import world.bentobox.bentobox.listeners.flags.clicklisteners.CommandRankClickListener;
 import world.bentobox.bentobox.listeners.flags.clicklisteners.GeoLimitClickListener;
 import world.bentobox.bentobox.listeners.flags.clicklisteners.MobLimitClickListener;
-import world.bentobox.bentobox.listeners.flags.protection.BlockInteractionListener;
-import world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener;
-import world.bentobox.bentobox.listeners.flags.protection.BreedingListener;
-import world.bentobox.bentobox.listeners.flags.protection.BucketListener;
-import world.bentobox.bentobox.listeners.flags.protection.DyeListener;
-import world.bentobox.bentobox.listeners.flags.protection.EggListener;
-import world.bentobox.bentobox.listeners.flags.protection.ElytraListener;
-import world.bentobox.bentobox.listeners.flags.protection.EntityInteractListener;
-import world.bentobox.bentobox.listeners.flags.protection.ExperiencePickupListener;
-import world.bentobox.bentobox.listeners.flags.protection.FireListener;
-import world.bentobox.bentobox.listeners.flags.protection.HurtingListener;
-import world.bentobox.bentobox.listeners.flags.protection.InventoryListener;
-import world.bentobox.bentobox.listeners.flags.protection.ItemDropPickUpListener;
-import world.bentobox.bentobox.listeners.flags.protection.LeashListener;
-import world.bentobox.bentobox.listeners.flags.protection.LecternListener;
-import world.bentobox.bentobox.listeners.flags.protection.LockAndBanListener;
-import world.bentobox.bentobox.listeners.flags.protection.PaperExperiencePickupListener;
-import world.bentobox.bentobox.listeners.flags.protection.PhysicalInteractionListener;
-import world.bentobox.bentobox.listeners.flags.protection.PlaceBlocksListener;
-import world.bentobox.bentobox.listeners.flags.protection.PortalListener;
-import world.bentobox.bentobox.listeners.flags.protection.ShearingListener;
-import world.bentobox.bentobox.listeners.flags.protection.TNTListener;
-import world.bentobox.bentobox.listeners.flags.protection.TeleportationListener;
-import world.bentobox.bentobox.listeners.flags.protection.ThrowingListener;
+import world.bentobox.bentobox.listeners.flags.protection.*;
 import world.bentobox.bentobox.listeners.flags.settings.DecayListener;
 import world.bentobox.bentobox.listeners.flags.settings.MobSpawnListener;
 import world.bentobox.bentobox.listeners.flags.settings.PVPListener;
@@ -324,6 +302,32 @@ public final class Flags {
         .defaultRank(RanksManager.OWNER_RANK)
         .clickHandler(new CycleClick("CHANGE_SETTINGS", RanksManager.MEMBER_RANK, RanksManager.OWNER_RANK))
         .mode(Flag.Mode.TOP_ROW).build();
+
+    /**
+     * This flag allows choosing which island member group can activate sculk sensors.
+     * TODO: Enums#getIfPresent is used to support 1.18
+     * @since 1.21.0
+     */
+    public static final Flag SCULK_SENSOR = new Flag.Builder("SCULK_SENSOR", Enums.getIfPresent(Material.class, "SCULK_SENSOR").or(Material.BARRIER)).
+        listener(new SculkSensorListener()).
+        type(Type.PROTECTION).
+        defaultSetting(true).
+        defaultRank(RanksManager.MEMBER_RANK).
+        clickHandler(new CycleClick("SCULK_SENSOR", RanksManager.VISITOR_RANK, RanksManager.MEMBER_RANK)).
+        build();
+
+    /**
+     * This flag allows choosing which island member group can activate sculk shrieker.
+     * TODO: Enums#getIfPresent is used to support 1.18
+     * @since 1.21.0
+     */
+    public static final Flag SCULK_SHRIEKER = new Flag.Builder("SCULK_SHRIEKER", Enums.getIfPresent(Material.class, "SCULK_SHRIEKER").or(Material.BARRIER)).
+        listener(new SculkShriekerListener()).
+        type(Type.PROTECTION).
+        defaultSetting(true).
+        defaultRank(RanksManager.MEMBER_RANK).
+        clickHandler(new CycleClick("SCULK_SHRIEKER", RanksManager.VISITOR_RANK, RanksManager.MEMBER_RANK)).
+        build();
 
     /*
      * Settings flags (not protection flags)

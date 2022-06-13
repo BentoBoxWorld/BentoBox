@@ -1285,6 +1285,18 @@ protection:
         &a using spawn eggs.
       name: "Spawn eggs on spawners"
       hint: "changing a spawner's entity type using spawn eggs is not allowed"
+    SCULK_SENSOR:
+      description: |-
+        &a Allows to change if sculk sensor
+        &a can be activated by visitor.
+      name: "Sculk Sensor"
+      hint: "sculk sensor activation is disabled"
+    SCULK_SHRIEKER:
+      description: |-
+        &a Allows to change if sculk shrieker
+        &a can be activated by visitor.
+      name: "Sculk Shrieker"
+      hint: "sculk shrieker activation is disabled"
     TNT_DAMAGE:
       description: |-
         &a Allow TNT and TNT minecarts
