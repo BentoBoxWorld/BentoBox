@@ -337,7 +337,7 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
                 <configuration>
-                    <release>16</release>
+                    <release>${java.version}</release>
                     <!-- <source>${java.version}</source> <target>${java.version}</target> -->
                 </configuration>
             </plugin>
@@ -387,7 +387,7 @@
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>3.3.0</version>
                 <configuration>
-                    <source>16</source>
+                    <source>${java.version}</source>
                     <show>private</show>
                     <failOnError>false</failOnError>
                     <additionalJOption>-Xdoclint:none</additionalJOption>
