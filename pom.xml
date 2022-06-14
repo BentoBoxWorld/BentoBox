@@ -160,7 +160,7 @@
         </repository>
         <repository>
             <id>worldedit-repo</id>
-            <url>https://maven.sk89q.com/repo/</url>
+            <url>https://maven.enginehub.org/repo/</url>
         </repository>
         <repository>
             <id>papermc</id>
