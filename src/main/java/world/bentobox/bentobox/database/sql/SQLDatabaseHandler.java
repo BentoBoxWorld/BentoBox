@@ -17,6 +17,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
+import javax.sql.DataSource;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.database.DatabaseConnector;
 import world.bentobox.bentobox.database.json.AbstractJSONDatabaseHandler;
@@ -31,246 +32,395 @@ import world.bentobox.bentobox.database.objects.DataObject;
  *
  * @param <T>
  */
-public class SQLDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
-
+public class SQLDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T>
+{
     protected static final String COULD_NOT_LOAD_OBJECTS = "Could not load objects ";
     protected static final String COULD_NOT_LOAD_OBJECT = "Could not load object ";
 
     /**
-     * Connection to the database
+     * DataSource of database
      */
-    private Connection connection;
+    protected DataSource dataSource;
 
     /**
      * SQL configuration
      */
     private SQLConfiguration sqlConfig;
 
+
     /**
      * Handles the connection to the database and creation of the initial database schema (tables) for
      * the class that will be stored.
      * @param plugin - plugin object
      * @param type - the type of class to be stored in the database. Must inherit DataObject
-     * @param dbConnecter - authentication details for the database
+     * @param databaseConnector - authentication details for the database
      * @param sqlConfiguration - SQL configuration
      */
-    protected SQLDatabaseHandler(BentoBox plugin, Class<T> type, DatabaseConnector dbConnecter, SQLConfiguration sqlConfiguration) {
-        super(plugin, type, dbConnecter);
+    protected SQLDatabaseHandler(BentoBox plugin, Class<T> type, DatabaseConnector databaseConnector, SQLConfiguration sqlConfiguration)
+    {
+        super(plugin, type, databaseConnector);
         this.sqlConfig = sqlConfiguration;
-        if (setConnection((Connection)databaseConnector.createConnection(type))) {
+
+        if (this.setDataSource((DataSource) this.databaseConnector.createConnection(type)))
+        {
             // Check if the table exists in the database and if not, create it
-            createSchema();
+            this.createSchema();
         }
     }
+
 
     /**
      * @return the sqlConfig
      */
-    public SQLConfiguration getSqlConfig() {
+    public SQLConfiguration getSqlConfig()
+    {
         return sqlConfig;
     }
+
 
     /**
      * @param sqlConfig the sqlConfig to set
      */
-    public void setSqlConfig(SQLConfiguration sqlConfig) {
+    public void setSqlConfig(SQLConfiguration sqlConfig)
+    {
         this.sqlConfig = sqlConfig;
     }
+
 
     /**
      * Creates the table in the database if it doesn't exist already
      */
-    protected void createSchema() {
-        if (sqlConfig.renameRequired()) {
+    protected void createSchema()
+    {
+        if (this.sqlConfig.renameRequired())
+        {
             // Transition from the old table name
-            String sql = sqlConfig.getRenameTableSQL().replace("[oldTableName]", sqlConfig.getOldTableName()).replace("[tableName]", sqlConfig.getTableName());
-            try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-                pstmt.execute();
-            } catch (SQLException e) {
-                plugin.logError("Could not rename " + sqlConfig.getOldTableName() + " for data object " + dataObject.getCanonicalName() + " " + e.getMessage());
+            String sql = this.sqlConfig.getRenameTableSQL().
+                replace("[oldTableName]", this.sqlConfig.getOldTableName()).
+                replace("[tableName]", this.sqlConfig.getTableName());
+
+            try (Connection connection = this.dataSource.getConnection();
+                 PreparedStatement preparedStatement = connection.prepareStatement(sql))
+            {
+                preparedStatement.execute();
+            }
+            catch (SQLException e)
+            {
+                this.plugin.logError("Could not rename " + this.sqlConfig.getOldTableName() + " for data object " +
+                    this.dataObject.getCanonicalName() + " " + e.getMessage());
             }
         }
+
         // Prepare and execute the database statements
-        try (PreparedStatement pstmt = connection.prepareStatement(sqlConfig.getSchemaSQL())) {
-            pstmt.execute();
-        } catch (SQLException e) {
-            plugin.logError("Problem trying to create schema for data object " + dataObject.getCanonicalName() + " " + e.getMessage());
+        try (Connection connection = this.dataSource.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(this.sqlConfig.getSchemaSQL()))
+        {
+            preparedStatement.execute();
+        }
+        catch (SQLException e)
+        {
+            this.plugin.logError("Problem trying to create schema for data object " +
+                this.dataObject.getCanonicalName() + " " + e.getMessage());
         }
     }
 
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public List<T> loadObjects() {
-        try (Statement preparedStatement = connection.createStatement()) {
-            return loadIt(preparedStatement);
-        } catch (SQLException e) {
-            plugin.logError(COULD_NOT_LOAD_OBJECTS + e.getMessage());
+    public List<T> loadObjects()
+    {
+        try (Connection connection = this.dataSource.getConnection();
+             Statement preparedStatement = connection.createStatement())
+        {
+            return this.loadIt(preparedStatement);
         }
+        catch (SQLException e)
+        {
+            this.plugin.logError(COULD_NOT_LOAD_OBJECTS + e.getMessage());
+        }
+
         return Collections.emptyList();
     }
 
-    private List<T> loadIt(Statement preparedStatement) {
+
+    /**
+     * This method loads objects based on results provided by prepared statement.
+     * @param preparedStatement Statement from database.
+     * @return List of object <T> from database.
+     */
+    private List<T> loadIt(Statement preparedStatement)
+    {
         List<T> list = new ArrayList<>();
-        try (ResultSet resultSet = preparedStatement.executeQuery(sqlConfig.getLoadObjectsSQL())) {
+
+        try (ResultSet resultSet = preparedStatement.executeQuery(this.sqlConfig.getLoadObjectsSQL()))
+        {
             // Load all the results
-            Gson gson = getGson();
-            while (resultSet.next()) {
+            Gson gson = this.getGson();
+
+            while (resultSet.next())
+            {
                 String json = resultSet.getString("json");
-                if (json != null) {
-                    try {
-                        T gsonResult = gson.fromJson(json, dataObject);
-                        if (gsonResult != null) {
+
+                if (json != null)
+                {
+                    try
+                    {
+                        T gsonResult = gson.fromJson(json, this.dataObject);
+
+                        if (gsonResult != null)
+                        {
                             list.add(gsonResult);
                         }
-                    } catch (JsonSyntaxException ex) {
-                        plugin.logError(COULD_NOT_LOAD_OBJECT + ex.getMessage());
-                        plugin.logError(json);
+                    }
+                    catch (JsonSyntaxException ex)
+                    {
+                        this.plugin.logError(COULD_NOT_LOAD_OBJECT + ex.getMessage());
+                        this.plugin.logError(json);
                     }
                 }
             }
-        } catch (Exception e) {
-            plugin.logError(COULD_NOT_LOAD_OBJECTS + e.getMessage());
         }
+        catch (Exception e)
+        {
+            this.plugin.logError(COULD_NOT_LOAD_OBJECTS + e.getMessage());
+        }
+
         return list;
     }
 
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public T loadObject(@NonNull String uniqueId) {
-        try (PreparedStatement preparedStatement = connection.prepareStatement(sqlConfig.getLoadObjectSQL())) {
+    public T loadObject(@NonNull String uniqueId)
+    {
+        try (Connection connection = this.dataSource.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(this.sqlConfig.getLoadObjectSQL()))
+        {
             // UniqueId needs to be placed in quotes?
             preparedStatement.setString(1, this.sqlConfig.isUseQuotes() ? "\"" + uniqueId + "\"" : uniqueId);
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                if (resultSet.next()) {
+
+            try (ResultSet resultSet = preparedStatement.executeQuery())
+            {
+                if (resultSet.next())
+                {
                     // If there is a result, we only want/need the first one
-                    Gson gson = getGson();
-                    return gson.fromJson(resultSet.getString("json"), dataObject);
+                    Gson gson = this.getGson();
+                    return gson.fromJson(resultSet.getString("json"), this.dataObject);
                 }
-            } catch (Exception e) {
-                plugin.logError(COULD_NOT_LOAD_OBJECT + uniqueId + " " + e.getMessage());
             }
-        } catch (SQLException e) {
-            plugin.logError(COULD_NOT_LOAD_OBJECT + uniqueId + " " + e.getMessage());
+            catch (Exception e)
+            {
+                this.plugin.logError(COULD_NOT_LOAD_OBJECT + uniqueId + " " + e.getMessage());
+            }
         }
+        catch (SQLException e)
+        {
+            this.plugin.logError(COULD_NOT_LOAD_OBJECT + uniqueId + " " + e.getMessage());
+        }
+
         return null;
     }
 
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public CompletableFuture<Boolean> saveObject(T instance) {
+    public CompletableFuture<Boolean> saveObject(T instance)
+    {
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
+
         // Null check
-        if (instance == null) {
-            plugin.logError("SQL database request to store a null. ");
+        if (instance == null)
+        {
+            this.plugin.logError("SQL database request to store a null. ");
             completableFuture.complete(false);
             return completableFuture;
         }
-        if (!(instance instanceof DataObject)) {
-            plugin.logError("This class is not a DataObject: " + instance.getClass().getName());
+
+        if (!(instance instanceof DataObject))
+        {
+            this.plugin.logError("This class is not a DataObject: " + instance.getClass().getName());
             completableFuture.complete(false);
             return completableFuture;
         }
+
         // This has to be on the main thread to avoid concurrent modification errors
-        String toStore = getGson().toJson(instance);
-        if (plugin.isEnabled()) {
+        String toStore = this.getGson().toJson(instance);
+
+        if (this.plugin.isEnabled())
+        {
             // Async
-            processQueue.add(() -> store(completableFuture, instance.getClass().getName(), toStore, sqlConfig.getSaveObjectSQL(), true));
-        } else {
-            // Sync
-            store(completableFuture, instance.getClass().getName(), toStore, sqlConfig.getSaveObjectSQL(), false);
+            this.processQueue.add(() -> store(completableFuture,
+                instance.getClass().getName(),
+                toStore,
+                this.sqlConfig.getSaveObjectSQL(),
+                true));
         }
+        else
+        {
+            // Sync
+            this.store(completableFuture, instance.getClass().getName(), toStore, this.sqlConfig.getSaveObjectSQL(), false);
+        }
+
         return completableFuture;
     }
 
-    private void store(CompletableFuture<Boolean> completableFuture, String name, String toStore, String sb, boolean async) {
+
+    /**
+     * This method is called to save data into database based on given parameters.
+     * @param completableFuture Failsafe on saving data.
+     * @param name Name of the class that is saved.
+     * @param toStore data that is stored.
+     * @param storeSQL SQL command for saving.
+     * @param async boolean that indicates if saving is async or not.
+     */
+    private void store(CompletableFuture<Boolean> completableFuture, String name, String toStore, String storeSQL, boolean async)
+    {
         // Do not save anything if plug is disabled and this was an async request
-        if (async && !plugin.isEnabled()) return;
-        try (PreparedStatement preparedStatement = connection.prepareStatement(sb)) {
+        if (async && !this.plugin.isEnabled())
+        {
+            return;
+        }
+
+        try (Connection connection = this.dataSource.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(storeSQL))
+        {
             preparedStatement.setString(1, toStore);
             preparedStatement.setString(2, toStore);
             preparedStatement.execute();
             completableFuture.complete(true);
-        } catch (SQLException e) {
-            plugin.logError("Could not save object " + name + " " + e.getMessage());
+        }
+        catch (SQLException e)
+        {
+            this.plugin.logError("Could not save object " + name + " " + e.getMessage());
             completableFuture.complete(false);
         }
     }
 
-    /* (non-Javadoc)
-     * @see world.bentobox.bentobox.database.AbstractDatabaseHandler#deleteID(java.lang.String)
+
+    /**
+     * {@inheritDoc}
      */
     @Override
-    public void deleteID(String uniqueId) {
-        processQueue.add(() -> delete(uniqueId));
+    public void deleteID(String uniqueId)
+    {
+        this.processQueue.add(() -> this.delete(uniqueId));
     }
 
-    private void delete(String uniqueId) {
-        try (PreparedStatement preparedStatement = connection.prepareStatement(sqlConfig.getDeleteObjectSQL())) {
+
+    /**
+     * This method triggers object deletion from the database.
+     * @param uniqueId Object unique id.
+     */
+    private void delete(String uniqueId)
+    {
+        try (Connection connection = this.dataSource.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(this.sqlConfig.getDeleteObjectSQL()))
+        {
             // UniqueId needs to be placed in quotes?
             preparedStatement.setString(1, this.sqlConfig.isUseQuotes() ? "\"" + uniqueId + "\"" : uniqueId);
             preparedStatement.execute();
-        } catch (Exception e) {
-            plugin.logError("Could not delete object " + plugin.getSettings().getDatabasePrefix() + dataObject.getCanonicalName() + " " + uniqueId + " " + e.getMessage());
+        }
+        catch (Exception e)
+        {
+            this.plugin.logError("Could not delete object " + this.plugin.getSettings().getDatabasePrefix() +
+                this.dataObject.getCanonicalName() + " " + uniqueId + " " + e.getMessage());
         }
     }
 
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void deleteObject(T instance) {
+    public void deleteObject(T instance)
+    {
         // Null check
-        if (instance == null) {
-            plugin.logError("SQL database request to delete a null.");
+        if (instance == null)
+        {
+            this.plugin.logError("SQL database request to delete a null.");
             return;
         }
-        if (!(instance instanceof DataObject)) {
-            plugin.logError("This class is not a DataObject: " + instance.getClass().getName());
+
+        if (!(instance instanceof DataObject))
+        {
+            this.plugin.logError("This class is not a DataObject: " + instance.getClass().getName());
             return;
         }
-        try {
-            Method getUniqueId = dataObject.getMethod("getUniqueId");
-            deleteID((String) getUniqueId.invoke(instance));
-        } catch (Exception e) {
-            plugin.logError("Could not delete object " + instance.getClass().getName() + " " + e.getMessage());
+
+        try
+        {
+            Method getUniqueId = this.dataObject.getMethod("getUniqueId");
+            this.deleteID((String) getUniqueId.invoke(instance));
+        }
+        catch (Exception e)
+        {
+            this.plugin.logError("Could not delete object " + instance.getClass().getName() + " " + e.getMessage());
         }
     }
 
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public boolean objectExists(String uniqueId) {
+    public boolean objectExists(String uniqueId)
+    {
         // Query to see if this key exists
-        try (PreparedStatement preparedStatement = connection.prepareStatement(sqlConfig.getObjectExistsSQL())) {
+        try (Connection connection = this.dataSource.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(this.sqlConfig.getObjectExistsSQL()))
+        {
             // UniqueId needs to be placed in quotes?
             preparedStatement.setString(1, this.sqlConfig.isUseQuotes() ? "\"" + uniqueId + "\"" : uniqueId);
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                if (resultSet.next()) {
+
+            try (ResultSet resultSet = preparedStatement.executeQuery())
+            {
+                if (resultSet.next())
+                {
                     return resultSet.getBoolean(1);
                 }
             }
-        } catch (SQLException e) {
-            plugin.logError("Could not check if key exists in database! " + uniqueId + " " + e.getMessage());
         }
+        catch (SQLException e)
+        {
+            this.plugin.logError("Could not check if key exists in database! " + uniqueId + " " + e.getMessage());
+        }
+
         return false;
     }
 
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void close() {
-        shutdown = true;
+    public void close()
+    {
+        this.shutdown = true;
     }
 
-    /**
-     * @return the connection
-     */
-    public Connection getConnection() {
-        return connection;
-    }
 
     /**
-     * @param connection the connection to set
-     * @return true if connection is not null
+     * Sets data source of database.
+     *
+     * @param dataSource the data source
+     * @return {@code true} if data source is set, {@code false} otherwise.
      */
-    public boolean setConnection(Connection connection) {
-        if (connection == null) {
-            plugin.logError("Could not connect to the database. Are the credentials in the config.yml file correct?");
-            plugin.logWarning("Disabling the plugin...");
-            Bukkit.getPluginManager().disablePlugin(plugin);
+    public boolean setDataSource(DataSource dataSource)
+    {
+        if (dataSource == null)
+        {
+            this.plugin.logError("Could not connect to the database. Are the credentials in the config.yml file correct?");
+            this.plugin.logWarning("Disabling the plugin...");
+            Bukkit.getPluginManager().disablePlugin(this.plugin);
             return false;
         }
-        this.connection = connection;
+        this.dataSource = dataSource;
         return true;
     }
 }
