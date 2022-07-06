@@ -94,6 +94,8 @@ public abstract class DefaultAdminCommand extends CompositeCommand {
         new AdminSetProtectionCenterCommand(this);
         // Delete homes
         new AdminDeleteHomesCommand(this);
+        // Reset name
+        new AdminResetNameCommand(this);
     }
 
     /**

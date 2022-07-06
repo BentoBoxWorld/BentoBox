@@ -422,6 +422,9 @@ commands:
         description: "removes deaths to the player"
         parameters: "<player> <deaths>"
         success: "&a Successfully removed &b [number] &a deaths to &b [name], decreasing the total to &b [total]&a  deaths."
+    resetname:
+      description: "reset player island name"
+      success: "&a Successfully reset [name]'s island name."
   bentobox:
     description: "BentoBox admin command"
     about:

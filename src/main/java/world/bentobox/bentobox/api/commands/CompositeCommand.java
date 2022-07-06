@@ -310,6 +310,14 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     }
 
     /**
+     * Convenience method to get the island manager
+     * @return IslandsManager
+     */
+    protected IslandsManager getIslandsManager() {
+        return plugin.getIslandsManager();
+    }
+
+    /**
      * @return this command's sub-level. Top level is 0.
      * Every time a command registers with a parent, their level will be set.
      */
