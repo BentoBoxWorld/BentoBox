@@ -39,8 +39,6 @@ import world.bentobox.bentobox.api.metadata.MetaDataAble;
 import world.bentobox.bentobox.api.metadata.MetaDataValue;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.adapters.Adapter;
-import world.bentobox.bentobox.database.objects.adapters.FlagSerializer;
-import world.bentobox.bentobox.database.objects.adapters.FlagSerializer3;
 import world.bentobox.bentobox.database.objects.adapters.LogEntryListAdapter;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.RanksManager;
@@ -159,9 +157,8 @@ public class Island implements DataObject, MetaDataAble {
     private boolean purgeProtected = false;
 
     //// Protection flags ////
-    @Adapter(FlagSerializer.class)
     @Expose
-    private Map<Flag, Integer> flags = new HashMap<>();
+    private Map<String, Integer> flags = new HashMap<>();
 
     //// Island History ////
     @Adapter(LogEntryListAdapter.class)
@@ -180,9 +177,8 @@ public class Island implements DataObject, MetaDataAble {
     /**
      * Used to store flag cooldowns for this island
      */
-    @Adapter(FlagSerializer3.class)
     @Expose
-    private Map<Flag, Long> cooldowns = new HashMap<>();
+    private Map<String, Long> cooldowns = new HashMap<>();
 
     /**
      * Commands and the rank required to use them for this island
@@ -368,13 +364,13 @@ public class Island implements DataObject, MetaDataAble {
      * @return flag value
      */
     public int getFlag(@NonNull Flag flag) {
-        return flags.computeIfAbsent(flag, k -> flag.getDefaultRank());
+        return flags.computeIfAbsent(flag.getID(), k -> flag.getDefaultRank());
     }
 
     /**
      * @return the flags
      */
-    public Map<Flag, Integer> getFlags() {
+    public Map<String, Integer> getFlags() {
         return flags;
     }
 
@@ -722,9 +718,7 @@ public class Island implements DataObject, MetaDataAble {
      */
     @NonNull
     public List<Player> getVisitors() {
-        return Bukkit.getOnlinePlayers().stream()
-                .filter(player -> playerIsVisitor(player))
-                .collect(Collectors.toList());
+        return Bukkit.getOnlinePlayers().stream().filter(this::playerIsVisitor).collect(Collectors.toList());
     }
 
     /**
@@ -736,7 +730,7 @@ public class Island implements DataObject, MetaDataAble {
      * @see #getVisitors()
      */
     public boolean hasVisitors() {
-        return Bukkit.getOnlinePlayers().stream().anyMatch(player -> playerIsVisitor(player));
+        return Bukkit.getOnlinePlayers().stream().anyMatch(this::playerIsVisitor);
     }
 
     /**
@@ -865,7 +859,7 @@ public class Island implements DataObject, MetaDataAble {
      * @param doSubflags - whether to set subflags
      */
     public void setFlag(Flag flag, int value, boolean doSubflags) {
-        flags.put(flag, value);
+        flags.put(flag.getID(), value);
         // Subflag support
         if (doSubflags && flag.hasSubflags()) {
             // Ensure that a subflag isn't a subflag of itself or else we're in trouble!
@@ -877,7 +871,7 @@ public class Island implements DataObject, MetaDataAble {
     /**
      * @param flags the flags to set
      */
-    public void setFlags(Map<Flag, Integer> flags) {
+    public void setFlags(Map<String, Integer> flags) {
         this.flags = flags;
         setChanged();
     }
@@ -888,11 +882,13 @@ public class Island implements DataObject, MetaDataAble {
      */
     public void setFlagsDefaults() {
         BentoBox plugin = BentoBox.getInstance();
-        Map<Flag, Integer> result = new HashMap<>();
-        plugin.getFlagsManager().getFlags().stream().filter(f -> f.getType().equals(Flag.Type.PROTECTION))
-        .forEach(f -> result.put(f, plugin.getIWM().getDefaultIslandFlags(world).getOrDefault(f, f.getDefaultRank())));
-        plugin.getFlagsManager().getFlags().stream().filter(f -> f.getType().equals(Flag.Type.SETTING))
-        .forEach(f -> result.put(f, plugin.getIWM().getDefaultIslandSettings(world).getOrDefault(f, f.getDefaultRank())));
+        Map<String, Integer> result = new HashMap<>();
+        plugin.getFlagsManager().getFlags().stream().
+            filter(f -> f.getType().equals(Flag.Type.PROTECTION)).
+            forEach(f -> result.put(f.getID(), plugin.getIWM().getDefaultIslandFlags(world).getOrDefault(f, f.getDefaultRank())));
+        plugin.getFlagsManager().getFlags().stream().
+            filter(f -> f.getType().equals(Flag.Type.SETTING)).
+            forEach(f -> result.put(f.getID(), plugin.getIWM().getDefaultIslandSettings(world).getOrDefault(f, f.getDefaultRank())));
         this.setFlags(result);
         setChanged();
     }
@@ -1134,7 +1130,7 @@ public class Island implements DataObject, MetaDataAble {
     public void setSettingsFlag(Flag flag, boolean state, boolean doSubflags) {
         int newState = state ? 1 : -1;
         if (flag.getType().equals(Flag.Type.SETTING) || flag.getType().equals(Flag.Type.WORLD_SETTING)) {
-            flags.put(flag, newState);
+            flags.put(flag.getID(), newState);
             if (doSubflags && flag.hasSubflags()) {
                 // If we have circular subflags or a flag is a subflag of itself we are in trouble!
                 flag.getSubflags().forEach(subflag -> setSettingsFlag(subflag, state, true));
@@ -1275,10 +1271,10 @@ public class Island implements DataObject, MetaDataAble {
      * @since 1.6.0
      */
     public boolean isCooldown(Flag flag) {
-        if (cooldowns.containsKey(flag) && cooldowns.get(flag) > System.currentTimeMillis()) {
+        if (cooldowns.containsKey(flag.getID()) && cooldowns.get(flag.getID()) > System.currentTimeMillis()) {
             return true;
         }
-        cooldowns.remove(flag);
+        cooldowns.remove(flag.getID());
         setChanged();
         return false;
     }
@@ -1288,21 +1284,21 @@ public class Island implements DataObject, MetaDataAble {
      * @param flag - Flag to cooldown
      */
     public void setCooldown(Flag flag) {
-        cooldowns.put(flag, flag.getCooldown() * 1000L + System.currentTimeMillis());
+        cooldowns.put(flag.getID(), flag.getCooldown() * 1000L + System.currentTimeMillis());
         setChanged();
     }
 
     /**
      * @return the cooldowns
      */
-    public Map<Flag, Long> getCooldowns() {
+    public Map<String, Long> getCooldowns() {
         return cooldowns;
     }
 
     /**
      * @param cooldowns the cooldowns to set
      */
-    public void setCooldowns(Map<Flag, Long> cooldowns) {
+    public void setCooldowns(Map<String, Long> cooldowns) {
         this.cooldowns = cooldowns;
         setChanged();
     }

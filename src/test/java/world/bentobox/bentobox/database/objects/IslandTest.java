@@ -1018,7 +1018,7 @@ public class IslandTest {
      */
     @Test
     public void testSetCooldowns() {
-        i.setCooldowns(Collections.singletonMap(Flags.BREAK_BLOCKS, 123L));
+        i.setCooldowns(Collections.singletonMap(Flags.BREAK_BLOCKS.getID(), 123L));
         assertFalse(i.getCooldowns().isEmpty());
     }
 
