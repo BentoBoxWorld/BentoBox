@@ -86,6 +86,7 @@ commands:
         name:
           conversation-prefix: ">"
           pick-a-unique-name: Veuillez choisir un nom plus unique
+          invalid-char-in-unique-name: "Unique name cannot contain, start, or end with special characters, neither contain number! "
           prompt: Entrez un nom, ou "quitter" pour quitter
           quit: quitter
           success: Succès !

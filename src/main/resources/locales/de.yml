@@ -391,6 +391,7 @@ commands:
           prompt: Gib einen Namen ein, oder 'quit' zum Beenden
           too-long: "&c Zu lang"
           pick-a-unique-name: Wähle bitte einen eindeutigeren Namen
+          invalid-char-in-unique-name: "Unique name cannot contain, start, or end with special characters, neither contain number! "
           success: Erfolg!
           conversation-prefix: ">"
         description:

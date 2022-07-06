@@ -362,6 +362,7 @@ commands:
           prompt: Ingrese un nombre o 'quit' para salir
           too-long: "&cDemasiado largo"
           pick-a-unique-name: Elige un nombre más exclusivo
+          invalid-char-in-unique-name: "Unique name cannot contain, start, or end with special characters, neither contain number! "
           success: "¡Éxito!"
           conversation-prefix: ">"
         description:

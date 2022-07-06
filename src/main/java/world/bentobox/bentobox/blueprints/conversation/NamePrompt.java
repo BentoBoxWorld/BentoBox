@@ -51,6 +51,13 @@ public class NamePrompt extends StringPrompt {
         if (ChatColor.stripColor(input).length() > 32) {
             context.getForWhom().sendRawMessage("Too long");
             return this;
+
+            /*Check if unique name contains chars not supported in regex expression
+            Cannot start, contain, or end with special char, cannot contain any numbers.
+            Can only contain - for word separation*/
+        }else if (!ChatColor.stripColor(input).matches("^[a-zA-Z]+(?:-[a-zA-Z]+)*$")) {
+             context.getForWhom().sendRawMessage(user.getTranslation("commands.admin.blueprint.management.name.invalid-char-in-unique-name"));
+            return this;
         }
         if (bb == null || !bb.getUniqueId().equals(BlueprintsManager.DEFAULT_BUNDLE_NAME)) {
             // Make a uniqueid

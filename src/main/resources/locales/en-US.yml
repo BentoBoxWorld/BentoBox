@@ -367,6 +367,7 @@ commands:
           prompt: "Enter a name, or 'quit' to quit"
           too-long: "&c Too long"
           pick-a-unique-name: "Please pick a more unique name"
+          invalid-char-in-unique-name: "Unique name cannot contain, start, or end with special characters, neither contain number! "
           success: "Success!"
           conversation-prefix: ">"
         description:

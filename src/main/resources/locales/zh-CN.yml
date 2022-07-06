@@ -367,6 +367,7 @@ commands:
           prompt: "&e请输入新名称， 或 “&b quit&e” 来退出编辑。"
           too-long: "&c新名称太长了！"
           pick-a-unique-name: "&c这个名称已存在， 请另选一个不同的名称！"
+          invalid-char-in-unique-name: "Unique name cannot contain, start, or end with special characters, neither contain number! "
           success: "&a成功！"
           conversation-prefix: "&3> &r"
         description:
