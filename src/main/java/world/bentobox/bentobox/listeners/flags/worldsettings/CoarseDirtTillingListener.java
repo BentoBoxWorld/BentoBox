@@ -35,6 +35,28 @@ public class CoarseDirtTillingListener extends FlagListener {
         }
     }
 
+
+    /**
+     * Protect Coarse dirt and podzol from being made as dirt path block.
+     * @param e PlayerInteractEvent
+     */
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    public void onDirtPathCreation(PlayerInteractEvent e)
+    {
+        if (e.getAction().equals(Action.RIGHT_CLICK_BLOCK) &&
+            e.getItem() != null &&
+            this.getIWM().inWorld(e.getClickedBlock().getWorld()) &&
+            (e.getClickedBlock().getType().equals(Material.COARSE_DIRT) || e.getClickedBlock().getType().equals(Material.PODZOL)) &&
+            e.getItem().getType().name().endsWith("_SHOVEL") &&
+            !Flags.COARSE_DIRT_TILLING.isSetForWorld(e.getClickedBlock().getWorld()))
+        {
+            e.setCancelled(true);
+            User user = User.getInstance(e.getPlayer());
+            user.notify("protection.protected", TextVariables.DESCRIPTION, user.getTranslation(Flags.COARSE_DIRT_TILLING.getHintReference()));
+        }
+    }
+
+
     /**
      * If podzol is mined when coarse dirt tilling is not allowed, then it'll just drop podzol and not dirt
      * This prevents an exploit where growing big spruce trees can turn gravel into podzol.
