@@ -1333,7 +1333,7 @@ public class IslandsManager {
                 } else {
                     // Successful load
                     // Clean any null flags out of the island - these can occur for various reasons
-                    island.getFlags().keySet().removeIf(f -> f.getID().startsWith("NULL_FLAG"));
+                    island.getFlags().keySet().removeIf(f -> f.startsWith("NULL_FLAG"));
                 }
             }
 
