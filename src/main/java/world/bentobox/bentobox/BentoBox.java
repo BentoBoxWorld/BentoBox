@@ -227,8 +227,8 @@ public class BentoBox extends JavaPlugin {
         hooksManager.registerHook(new MultiverseCoreHook());
         islandWorldManager.registerWorldsToMultiverse();
 
-        // Register additional hooks
-        hooksManager.registerHook(new DynmapHook());
+        // TODO: re-enable after implementation
+        //hooksManager.registerHook(new DynmapHook());
         // TODO: re-enable after rework
         //hooksManager.registerHook(new LangUtilsHook());
 
