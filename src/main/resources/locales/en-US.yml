@@ -102,6 +102,7 @@ commands:
         status: "&b [purged] &a islands purged out of &b [purgeable] &7(&b[percentage] %&7)&a."
 
     team:
+      description: "manage teams"
       add:
         parameters: "<owner> <player>"
         description: "add player to owner's team"
