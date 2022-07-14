@@ -687,6 +687,7 @@ public class User implements MetaDataAble {
     /**
      * Spawn particles to the player.
      * They are only displayed if they are within the server's view distance.
+     * Compatibility method for older usages.
      * @param particle Particle to display.
      * @param dustOptions Particle.DustOptions for the particle to display.
      *                    Cannot be null when particle is {@link Particle#REDSTONE}.
@@ -694,9 +695,27 @@ public class User implements MetaDataAble {
      * @param y Y coordinate of the particle to display.
      * @param z Z coordinate of the particle to display.
      */
-    public void spawnParticle(Particle particle, Particle.DustOptions dustOptions, int x, int y, int z) {
-        spawnParticle(particle, dustOptions, (double) x, (double) y, (double) z);
+    public void spawnParticle(Particle particle, Particle.DustOptions dustOptions, double x, double y, double z)
+    {
+        this.spawnParticle(particle, (Object) dustOptions, x, y, z);
     }
+
+
+    /**
+     * Spawn particles to the player.
+     * They are only displayed if they are within the server's view distance.
+     * @param particle Particle to display.
+     * @param dustOptions Particle.DustOptions for the particle to display.
+     *                    Cannot be null when particle is {@link Particle#REDSTONE}.
+     * @param x X coordinate of the particle to display.
+     * @param y Y coordinate of the particle to display.
+     * @param z Z coordinate of the particle to display.
+     */
+    public void spawnParticle(Particle particle, Particle.DustOptions dustOptions, int x, int y, int z)
+    {
+        this.spawnParticle(particle, dustOptions, (double) x, (double) y, (double) z);
+    }
+
 
     /* (non-Javadoc)
      * @see java.lang.Object#hashCode()
