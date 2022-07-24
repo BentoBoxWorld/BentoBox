@@ -24,6 +24,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
+import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
 import org.junit.After;
 import org.junit.Before;
@@ -564,6 +565,7 @@ public class IslandTest {
     public void testGetProtectionBoundingBox() {
         i.setWorld(world);
         assertNotNull(i.getProtectionBoundingBox());
+        assertEquals("BoundingBox [minX=-100.0, minY=0.0, minZ=-100.0, maxX=100.0, maxY=0.0, maxZ=100.0]", i.getProtectionBoundingBox().toString());
     }
 
     /**

@@ -811,7 +811,12 @@ public class Island implements DataObject, MetaDataAble {
      * @since 1.5.2
      */
     public BoundingBox getProtectionBoundingBox() {
-        return new BoundingBox(getMinProtectedX(), world.getMinHeight(), getMinProtectedZ(), getMaxProtectedX()-1.0D, world.getMaxHeight(), getMaxProtectedZ()-1.0D);
+        return new BoundingBox(this.getMinProtectedX(),
+            this.world.getMinHeight(),
+            this.getMinProtectedZ(),
+            this.getMaxProtectedX(),
+            this.world.getMaxHeight(),
+            this.getMaxProtectedZ());
     }
 
     /**
