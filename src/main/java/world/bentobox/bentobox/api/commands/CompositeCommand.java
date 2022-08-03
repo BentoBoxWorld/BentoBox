@@ -262,16 +262,43 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
             user.sendMessage("general.errors.use-in-game");
             return false;
         }
-        // Check perms, but only if this isn't the console
-        if (user.isPlayer() && !user.isOp() && getPermission() != null && !getPermission().isEmpty() && !user.hasPermission(getPermission())) {
-            user.sendMessage("general.errors.no-permission", TextVariables.PERMISSION, getPermission());
+
+        if (!this.runPermissionCheck(user))
+        {
+            // Error message is displayed by permission check.
             return false;
         }
+
         // Set the user's addon context
         user.setAddon(addon);
         // Execute and trim args
         return canExecute(user, cmdLabel, cmdArgs) && execute(user, cmdLabel, cmdArgs);
     }
+
+
+    /**
+     * This method checks and returns if user has access to the called command.
+     * It also recursively checks if user has access to the all parent commands.
+     * @param user User who permission must be checked.
+     * @return {@code true} is user can execute given command, {@code false} otherwise.
+     */
+    private boolean runPermissionCheck(User user)
+    {
+        // Check perms, but only if this isn't the console
+        if (user.isPlayer() &&
+            !user.isOp() &&
+            this.getPermission() != null &&
+            !this.getPermission().isEmpty() &&
+            !user.hasPermission(this.getPermission()))
+        {
+            user.sendMessage("general.errors.no-permission", TextVariables.PERMISSION, this.getPermission());
+            return false;
+        }
+
+        // Recursive permission check to find if user has access to the parent command.
+        return this.getParent() == null || this.getParent().runPermissionCheck(user);
+    }
+
 
     /**
      * Get the current composite command based on the arguments
