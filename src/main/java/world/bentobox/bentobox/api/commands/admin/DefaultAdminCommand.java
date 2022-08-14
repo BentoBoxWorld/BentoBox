@@ -38,7 +38,7 @@ public abstract class DefaultAdminCommand extends CompositeCommand {
      */
     @Override
     public void setup() {
-        this.setPermission("admin.*");
+        this.setPermission("admin");
         this.setOnlyPlayer(false);
 
         this.setParametersHelp("commands.admin.help.parameters");
