@@ -3,6 +3,7 @@ package world.bentobox.bentobox.listeners.flags.worldsettings;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -13,6 +14,7 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.util.Util;
 
@@ -62,9 +64,20 @@ public class IslandRespawnListener extends FlagListener {
         }
         World w = Util.getWorld(world);
         if (w != null) {
-            final Location respawnLocation = getIslands().getSafeHomeLocation(w, User.getInstance(e.getPlayer().getUniqueId()), "");
-            if (respawnLocation != null) {
-                e.setRespawnLocation(respawnLocation);
+            AtomicReference<Location> respawnLocation = new AtomicReference<>();
+
+            User user = User.getInstance(e.getPlayer().getUniqueId());
+            respawnLocation.set(getIslands().getSafeHomeLocation(w, user, ""));
+            getIWM().getAddon(w).ifPresent(gameMode -> {
+                if (gameMode.getWorldSettings().isAllowSpawnPerIsland()) {
+                    Island island = getIslands().getIsland(w, user);
+                    if (island != null) {
+                        respawnLocation.set(island.getSpawnPoint(World.Environment.NORMAL));
+                    }
+                }
+            });
+            if (respawnLocation.get() != null) {
+                e.setRespawnLocation(respawnLocation.get());
             }
         }
         // Run respawn commands, if any

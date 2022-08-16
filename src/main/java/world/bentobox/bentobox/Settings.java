@@ -308,6 +308,12 @@ public class Settings implements ConfigObject {
     private boolean slowDeletion = false;
 
     @ConfigComment("By default, If the destination is not safe, the plugin will try to search for a safe spot around the destination,")
+    @ConfigComment("This setting will only find a spot on the Y axis.")
+    @ConfigComment("Will create a block platform if here is no block in the Y axis.")
+    @ConfigEntry(path = "island.use-soft-safe-spot-teleport", since = "1.21.0")
+    private boolean useSoftSafeSpotTeleport = false;
+
+    @ConfigComment("By default, If the destination is not safe, the plugin will try to search for a safe spot around the destination,")
     @ConfigComment("then it will try to expand the y-coordinate up and down from the destination.")
     @ConfigComment("This setting limits how far the y-coordinate will be expanded.")
     @ConfigComment("If set to 0 or lower, the plugin will not expand the y-coordinate.")
@@ -913,6 +919,14 @@ public class Settings implements ConfigObject {
 
     public void setSafeSpotSearchVerticalRange(int safeSpotSearchVerticalRange) {
         this.safeSpotSearchVerticalRange = safeSpotSearchVerticalRange;
+    }
+
+    public boolean isUseSoftSafeSpotTeleport() {
+        return useSoftSafeSpotTeleport;
+    }
+
+    public void setUseSoftSafeSpotTeleport(boolean useSoftSafeSpotTeleport) {
+        this.useSoftSafeSpotTeleport = useSoftSafeSpotTeleport;
     }
 
     public boolean isSlowDeletion() {

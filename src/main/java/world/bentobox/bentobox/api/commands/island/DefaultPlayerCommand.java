@@ -8,6 +8,8 @@ import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.island.team.IslandTeamCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.util.teleport.SafeSpotTeleport;
 
 /**
  * This is default player command class. It contains all necessary parts for main /[gamemode] command.
@@ -79,6 +81,11 @@ public abstract class DefaultPlayerCommand extends CompositeCommand {
         new IslandDeletehomeCommand(this);
         new IslandRenamehomeCommand(this);
         new IslandHomesCommand(this);
+
+        // Misc commands
+        if (this.<GameModeAddon>getAddon().getWorldSettings().isAllowSpawnPerIsland()) {
+            new IslandSetspawnCommand(this);
+        }
     }
 
 
@@ -98,9 +105,18 @@ public abstract class DefaultPlayerCommand extends CompositeCommand {
         }
 
         // Check if user has an island.
-        if (this.getIslands().getIsland(this.getWorld(), user.getUniqueId()) != null) {
+        Island userIsland = this.getIslands().getIsland(this.getWorld(), user.getUniqueId());
+        if (userIsland != null) {
             // Default command if user has an island.
-            return runCommand(user, label, this.<GameModeAddon>getAddon().getWorldSettings().getDefaultPlayerAction(), "go");
+            if (this.<GameModeAddon>getAddon().getWorldSettings().isAllowSpawnPerIsland()) {
+                new SafeSpotTeleport.Builder(getPlugin())
+                    .entity(user.getPlayer())
+                    .location(userIsland.getSpawnPoint(org.bukkit.World.Environment.NORMAL))
+                    .build();
+                return true;
+            } else {
+                return runCommand(user, label, this.<GameModeAddon>getAddon().getWorldSettings().getDefaultPlayerAction(), "go");
+            }
         } else {
             // Default command if user does not have an island.
             return runCommand(user, label, this.<GameModeAddon>getAddon().getWorldSettings().getDefaultNewPlayerAction(), "create");

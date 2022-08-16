@@ -1095,36 +1095,55 @@ public class IslandsManager {
                 player.updateInventory();
             }
         }
-        this.getAsyncSafeHomeLocation(world, user, name).thenAccept(home -> {
-            Island island = getIsland(world, user);
-            if (home == null) {
-                // Try to fix this teleport location and teleport the player if possible
-                new SafeSpotTeleport.Builder(plugin)
-                .entity(player)
-                .island(island)
-                .homeName(name)
+        Island island = getIsland(world, user);
+
+        if (plugin.getSettings().isUseSoftSafeSpotTeleport()) {
+            Location defaultHome = getHomeLocation(world, user);
+            Location namedHome = getHomeLocation(world, user, name);
+            Location loc = namedHome != null
+                ? namedHome
+                : defaultHome != null
+                    ? defaultHome
+                    : getIslandLocation(world, user.getUniqueId());
+            new SafeSpotTeleport.Builder(plugin)
+                .location(loc)
+                .entity(user.getPlayer())
                 .thenRun(() -> teleported(world, user, name, newIsland, island))
                 .ifFail(() -> goingHome.remove(user.getUniqueId()))
                 .buildFuture()
                 .thenAccept(result::complete);
-                return;
-            }
-            // Add home
-            if (getHomeLocations(island).isEmpty()) {
-                setHomeLocation(player.getUniqueId(), home);
-            }
-            PaperLib.teleportAsync(player, home).thenAccept(b -> {
-                // Only run the commands if the player is successfully teleported
-                if (Boolean.TRUE.equals(b)) {
-                    teleported(world, user, name, newIsland, island);
-                    result.complete(true);
-                } else {
-                    // Remove from mid-teleport set
-                    goingHome.remove(user.getUniqueId());
-                    result.complete(false);
-                }
-            });
-        });
+            return result;
+        } else {
+            this.getAsyncSafeHomeLocation(world, user, name).thenAccept(home -> {
+               if (home == null) {
+                   // Try to fix this teleport location and teleport the player if possible
+                   new SafeSpotTeleport.Builder(plugin)
+                   .entity(player)
+                   .island(island)
+                   .homeName(name)
+                   .thenRun(() -> teleported(world, user, name, newIsland, island))
+                   .ifFail(() -> goingHome.remove(user.getUniqueId()))
+                   .buildFuture()
+                   .thenAccept(result::complete);
+                   return;
+               }
+               // Add home
+               if (getHomeLocations(island).isEmpty()) {
+                   setHomeLocation(player.getUniqueId(), home);
+               }
+               PaperLib.teleportAsync(player, home).thenAccept(b -> {
+                   // Only run the commands if the player is successfully teleported
+                   if (Boolean.TRUE.equals(b)) {
+                       teleported(world, user, name, newIsland, island);
+                       result.complete(true);
+                   } else {
+                       // Remove from mid-teleport set
+                       goingHome.remove(user.getUniqueId());
+                       result.complete(false);
+                   }
+               });
+           });
+        }
         return result;
     }
 

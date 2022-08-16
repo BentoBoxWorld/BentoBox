@@ -17,6 +17,7 @@ import org.bukkit.World.Environment;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.Nullable;
@@ -56,6 +57,7 @@ public class SafeSpotTeleport {
     private Location bestSpot;
     private Iterator<Pair<Integer, Integer>> chunksToScanIterator;
     private int checkedChunks = 0;
+    private PlayerTeleportEvent.TeleportCause cause;
 
     /**
      * Teleports and entity to a safe spot on island
@@ -75,9 +77,58 @@ public class SafeSpotTeleport {
         this.world = Objects.requireNonNull(location.getWorld());
         this.maxHeight = world.getMaxHeight() - 20;
         this.cancelIfFail = builder.isCancelIfFail();
+        this.cause = builder.getCause();
+
+        if (entity != null) {
+            entity.setVelocity(new Vector(0,0,0));
+            entity.setFallDistance(0);
+        }
         // Try to go
-        Util.getChunkAtAsync(location).thenRun(() -> tryToGo(builder.getFailureMessage()));
+        if (plugin.getSettings().isUseSoftSafeSpotTeleport()) {
+            softSafeTeleport();
+        } else {
+            Util.getChunkAtAsync(location).thenRun(() -> tryToGo(builder.getFailureMessage()));
+        }
     }
+
+    void softSafeTeleport() {
+        Util.getChunkAtAsync(location).thenRun(() -> {
+            double x = location.getX();
+            double y = location.getY();
+            double z = location.getZ();
+            World world = location.getWorld();
+            int minHeight = world.getMinHeight();
+            int maxHeight = world.getMaxHeight();
+
+            int maxSearchRange = (int) Math.max(maxHeight - y, minHeight * -1 + y);
+            Location locationToTeleport = null;
+            for (int i = 0; i < maxSearchRange && locationToTeleport == null; i++) {
+                for (int j = 0; j < 2; j++) {
+                    double newY = j == 0
+                            ? y + i
+                            : y - i;
+                    Location tryLocation = location.clone();
+                    tryLocation.setY(newY);
+                    if (plugin.getIslandsManager().isSafeLocation(tryLocation)) {
+                        locationToTeleport = tryLocation;
+                    }
+                }
+            }
+
+            if (locationToTeleport == null) {
+                // Just in case the Y is under the world's min height, add + 2 to not replace the last bedrock
+                int checkY = Math.max((int) Math.floor(y), location.getWorld().getMinHeight() + 2);
+                location.setY(checkY);
+                world.setBlockData((int)Math.floor(x), checkY-1, (int)Math.floor(z), Material.GLASS.createBlockData());
+            }
+
+            Util.teleportAsync(entity, locationToTeleport == null ? location : locationToTeleport, cause).thenRun(() -> {
+                if (runnable != null) Bukkit.getScheduler().runTask(plugin, runnable);
+                result.complete(true);
+            });
+            return;
+        });
+    };
 
     void tryToGo(String failureMessage) {
         if (plugin.getIslands().isSafeLocation(location)) {
@@ -339,6 +390,7 @@ public class SafeSpotTeleport {
         private Runnable runnable;
         private Runnable failRunnable;
         private boolean cancelIfFail;
+        private PlayerTeleportEvent.TeleportCause cause = PlayerTeleportEvent.TeleportCause.PLUGIN;
 
         public Builder(BentoBox plugin) {
             this.plugin = plugin;
@@ -398,6 +450,16 @@ public class SafeSpotTeleport {
          */
         public Builder portal() {
             this.portal = true;
+            return this;
+        }
+
+        /**
+         * The cause of teleportation
+         *
+         * @return Builder
+         */
+        public Builder cause(PlayerTeleportEvent.TeleportCause cause) {
+            this.cause = cause;
             return this;
         }
 
@@ -535,6 +597,13 @@ public class SafeSpotTeleport {
          */
         public boolean isPortal() {
             return portal;
+        }
+
+        /**
+         * @return the teleportion causde
+         */
+        public PlayerTeleportEvent.TeleportCause getCause() {
+            return cause;
         }
 
         /**

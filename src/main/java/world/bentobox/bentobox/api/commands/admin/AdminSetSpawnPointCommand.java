@@ -56,9 +56,9 @@ public class AdminSetSpawnPointCommand extends ConfirmableCommand
 
         if (optionalIsland.isPresent() &&
             (optionalIsland.get().hasNetherIsland() ||
-            !World.Environment.NETHER.equals(user.getLocation().getWorld().getEnvironment())) &&
+            World.Environment.NETHER != user.getLocation().getWorld().getEnvironment()) &&
             (optionalIsland.get().hasEndIsland() ||
-            !World.Environment.THE_END.equals(user.getLocation().getWorld().getEnvironment())))
+            World.Environment.THE_END != user.getLocation().getWorld().getEnvironment()))
         {
             // Everything's fine, we can set the location as spawn point for island :)
             this.askConfirmation(user, user.getTranslation("commands.admin.setspawnpoint.confirmation"),
