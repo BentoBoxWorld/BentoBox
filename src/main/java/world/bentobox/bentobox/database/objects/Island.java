@@ -698,18 +698,18 @@ public class Island implements DataObject, MetaDataAble {
         return new BoundingBox(getMinX(), world.getMinHeight(), getMinZ(), getMaxX(), world.getMaxHeight(), getMaxZ());
     }
 
-		/**
-		 * Using this method in the filtering for getVisitors and hasVisitors
-		 * @param player
-		 * @return true if player is a visitor
-		 */
-		private boolean playerIsVisitor(Player player) {
-			if (player.getGameMode() == GameMode.SPECTATOR) {
-				return false;
-			}
+    /**
+     * Using this method in the filtering for getVisitors and hasVisitors
+     * @param player The player that must be checked.
+     * @return true if player is a visitor
+     */
+    private boolean playerIsVisitor(Player player) {
+        if (player.getGameMode() == GameMode.SPECTATOR) {
+            return false;
+        }
 
-			return onIsland(player.getLocation()) && getRank(User.getInstance(player)) == RanksManager.VISITOR_RANK;
-		}
+        return onIsland(player.getLocation()) && getRank(User.getInstance(player)) == RanksManager.VISITOR_RANK;
+    }
 
     /**
      * Returns a list of players that are physically inside the island's protection range and that are visitors.
@@ -810,14 +810,68 @@ public class Island implements DataObject, MetaDataAble {
      * @return a {@link BoundingBox} of this island's protected area.
      * @since 1.5.2
      */
+    @Nullable
     public BoundingBox getProtectionBoundingBox() {
-        return new BoundingBox(this.getMinProtectedX(),
-            this.world.getMinHeight(),
-            this.getMinProtectedZ(),
-            this.getMaxProtectedX(),
-            this.world.getMaxHeight(),
-            this.getMaxProtectedZ());
+        return this.getProtectionBoundingBox(Environment.NORMAL);
     }
+
+
+    /**
+     * Returns a {@link BoundingBox} of this island's protected area.
+     * @param environment an environment of bounding box area.
+     * @return a {@link BoundingBox} of this island's protected area or {null} if island does not have bounding box
+     * in required dimension.
+     * @since 1.21.0
+     */
+    @Nullable
+    public BoundingBox getProtectionBoundingBox(Environment environment)
+    {
+        BoundingBox boundingBox;
+        
+        if (Environment.NORMAL.equals(environment))
+        {
+            // Return normal world bounding box.
+            boundingBox = new BoundingBox(this.getMinProtectedX(),
+                this.world.getMinHeight(),
+                this.getMinProtectedZ(),
+                this.getMaxProtectedX(),
+                this.world.getMaxHeight(),
+                this.getMaxProtectedZ());
+        }
+        else if (Environment.THE_END.equals(environment) && 
+            this.getPlugin().getIWM().isEndGenerate(this.world) && 
+            this.getPlugin().getIWM().isEndIslands(this.world))
+        {
+            // If end world is generated, return end island bounding box.
+            //noinspection ConstantConditions
+            boundingBox = new BoundingBox(this.getMinProtectedX(),
+                this.getPlugin().getIWM().getEndWorld(this.world).getMinHeight(),
+                this.getMinProtectedZ(),
+                this.getMaxProtectedX(),
+                this.getPlugin().getIWM().getEndWorld(this.world).getMaxHeight(),
+                this.getMaxProtectedZ());
+        }
+        else if (Environment.NETHER.equals(environment) &&
+            this.getPlugin().getIWM().isNetherGenerate(this.world) &&
+            this.getPlugin().getIWM().isNetherIslands(this.world))
+        {
+            // If nether world is generated, return nether island bounding box.
+            //noinspection ConstantConditions
+            boundingBox = new BoundingBox(this.getMinProtectedX(),
+                this.getPlugin().getIWM().getNetherWorld(this.world).getMinHeight(),
+                this.getMinProtectedZ(),
+                this.getMaxProtectedX(),
+                this.getPlugin().getIWM().getNetherWorld(this.world).getMaxHeight(),
+                this.getMaxProtectedZ());
+        }
+        else
+        {
+            boundingBox = null;
+        }
+        
+        return boundingBox;
+    }
+
 
     /**
      * Removes a player from the team member map. Generally, you should
