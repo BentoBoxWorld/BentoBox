@@ -89,11 +89,12 @@ public class IslandTest {
         when(iwm.getIslandDistance(any())).thenReturn(DISTANCE);
 
         // Location
-        //when(location.getWorld()).thenReturn(world);
         when(location.clone()).thenReturn(location);
         when(world.getName()).thenReturn("bskyblock_world");
         when(location.getWorld()).thenReturn(world);
         when(world.getEnvironment()).thenReturn(Environment.NORMAL);
+        when(world.toString()).thenReturn(null);
+
         // User
         when(user.getUniqueId()).thenReturn(uuid);
 
@@ -421,7 +422,7 @@ public class IslandTest {
      */
     @Test
     public void testGetWorld() {
-        assertNull(i.getWorld());
+        assertEquals(i.getWorld(), world);
     }
 
     /**
