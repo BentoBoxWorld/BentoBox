@@ -92,7 +92,8 @@ public class IslandTest {
         //when(location.getWorld()).thenReturn(world);
         when(location.clone()).thenReturn(location);
         when(world.getName()).thenReturn("bskyblock_world");
-
+        when(location.getWorld()).thenReturn(world);
+        when(world.getEnvironment()).thenReturn(Environment.NORMAL);
         // User
         when(user.getUniqueId()).thenReturn(uuid);
 
