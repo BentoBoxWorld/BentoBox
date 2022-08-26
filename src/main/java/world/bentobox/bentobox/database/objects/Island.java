@@ -676,8 +676,13 @@ public class Island implements DataObject, MetaDataAble {
      * @param location - location
      * @return true if in island space
      */
+    @SuppressWarnings("ConstantConditions")
     public boolean inIslandSpace(Location location) {
-        return Util.sameWorld(world, location.getWorld()) && inIslandSpace(location.getBlockX(), location.getBlockZ());
+        return Util.sameWorld(this.world, location.getWorld()) &&
+            (location.getWorld().getEnvironment().equals(Environment.NORMAL) ||
+                this.getPlugin().getIWM().isIslandNether(location.getWorld()) ||
+                this.getPlugin().getIWM().isIslandEnd(location.getWorld())) &&
+            this.inIslandSpace(location.getBlockX(), location.getBlockZ());
     }
 
     /**
