@@ -640,6 +640,55 @@ public class Island implements DataObject, MetaDataAble {
         return world;
     }
 
+
+    /**
+     * @return the nether world
+     */
+    @Nullable
+    public World getNetherWorld()
+    {
+        return this.getWorld(Environment.NETHER);
+    }
+
+
+    /**
+     * @return the end world
+     */
+    @Nullable
+    public World getEndWorld()
+    {
+        return this.getWorld(Environment.THE_END);
+    }
+
+
+    /**
+     * This method returns this island world in given environment. This method can return {@code null} if dimension is
+     * disabled.
+     * @param environment The environment of the island world.
+     * @return the world in given environment.
+     */
+    @Nullable
+    public World getWorld(Environment environment)
+    {
+        if (Environment.NORMAL.equals(environment))
+        {
+            return this.world;
+        }
+        else if (Environment.THE_END.equals(environment) && this.isEndIslandEnabled())
+        {
+            return this.getPlugin().getIWM().getEndWorld(this.world);
+        }
+        else if (Environment.NETHER.equals(environment) && this.isNetherIslandEnabled())
+        {
+            return this.getPlugin().getIWM().getNetherWorld(this.world);
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+
     /**
      * @return the x coordinate of the island center
      */
@@ -676,8 +725,13 @@ public class Island implements DataObject, MetaDataAble {
      * @param location - location
      * @return true if in island space
      */
+    @SuppressWarnings("ConstantConditions")
     public boolean inIslandSpace(Location location) {
-        return Util.sameWorld(world, location.getWorld()) && inIslandSpace(location.getBlockX(), location.getBlockZ());
+        return Util.sameWorld(this.world, location.getWorld()) &&
+            (location.getWorld().getEnvironment().equals(Environment.NORMAL) ||
+                this.getPlugin().getIWM().isIslandNether(location.getWorld()) ||
+                this.getPlugin().getIWM().isIslandEnd(location.getWorld())) &&
+            this.inIslandSpace(location.getBlockX(), location.getBlockZ());
     }
 
     /**
@@ -690,26 +744,81 @@ public class Island implements DataObject, MetaDataAble {
     }
 
     /**
-     * Returns a {@link BoundingBox} of the full island space.
+     * Returns a {@link BoundingBox} of the full island space for overworld.
      * @return a {@link BoundingBox} of the full island space.
      * @since 1.5.2
      */
+    @SuppressWarnings("ConstantConditions")
+    @NotNull
     public BoundingBox getBoundingBox() {
-        return new BoundingBox(getMinX(), world.getMinHeight(), getMinZ(), getMaxX(), world.getMaxHeight(), getMaxZ());
+        return this.getBoundingBox(Environment.NORMAL);
     }
 
-		/**
-		 * Using this method in the filtering for getVisitors and hasVisitors
-		 * @param player
-		 * @return true if player is a visitor
-		 */
-		private boolean playerIsVisitor(Player player) {
-			if (player.getGameMode() == GameMode.SPECTATOR) {
-				return false;
-			}
 
-			return onIsland(player.getLocation()) && getRank(User.getInstance(player)) == RanksManager.VISITOR_RANK;
-		}
+    /**
+     * Returns a {@link BoundingBox} of this island's space area in requested dimension.
+     * @param environment the requested dimension.
+     * @return a {@link BoundingBox} of this island's space area or {@code null} if island is not created in requested dimension.
+     * @since 1.21.0
+     */
+    @Nullable
+    public BoundingBox getBoundingBox(Environment environment)
+    {
+        BoundingBox boundingBox;
+
+        if (Environment.NORMAL.equals(environment))
+        {
+            // Return normal world bounding box.
+            boundingBox = new BoundingBox(this.getMinX(),
+                this.world.getMinHeight(),
+                this.getMinZ(),
+                this.getMaxX(),
+                this.world.getMaxHeight(),
+                this.getMaxZ());
+        }
+        else if (Environment.THE_END.equals(environment) && this.isEndIslandEnabled())
+        {
+            // If end world is generated, return end island bounding box.
+            //noinspection ConstantConditions
+            boundingBox = new BoundingBox(this.getMinX(),
+                this.getEndWorld().getMinHeight(),
+                this.getMinZ(),
+                this.getMaxX(),
+                this.getEndWorld().getMaxHeight(),
+                this.getMaxZ());
+        }
+        else if (Environment.NETHER.equals(environment) && this.isNetherIslandEnabled())
+        {
+            // If nether world is generated, return nether island bounding box.
+            //noinspection ConstantConditions
+            boundingBox = new BoundingBox(this.getMinX(),
+                this.getNetherWorld().getMinHeight(),
+                this.getMinZ(),
+                this.getMaxX(),
+                this.getNetherWorld().getMaxHeight(),
+                this.getMaxZ());
+        }
+        else
+        {
+            boundingBox = null;
+        }
+
+        return boundingBox;
+    }
+
+
+    /**
+     * Using this method in the filtering for getVisitors and hasVisitors
+     * @param player The player that must be checked.
+     * @return true if player is a visitor
+     */
+    private boolean playerIsVisitor(Player player) {
+        if (player.getGameMode() == GameMode.SPECTATOR) {
+            return false;
+        }
+
+        return onIsland(player.getLocation()) && getRank(User.getInstance(player)) == RanksManager.VISITOR_RANK;
+    }
 
     /**
      * Returns a list of players that are physically inside the island's protection range and that are visitors.
@@ -801,23 +910,82 @@ public class Island implements DataObject, MetaDataAble {
      * @param target location to check, not null
      * @return {@code true} if this location is within this island's protected area, {@code false} otherwise.
      */
+    @SuppressWarnings("ConstantConditions")
     public boolean onIsland(@NonNull Location target) {
-        return Util.sameWorld(world, target.getWorld()) && target.getBlockX() >= getMinProtectedX() && target.getBlockX() < (getMinProtectedX() + protectionRange * 2) && target.getBlockZ() >= getMinProtectedZ() && target.getBlockZ() < (getMinProtectedZ() + protectionRange * 2);
+        return Util.sameWorld(this.world, target.getWorld()) &&
+            (target.getWorld().getEnvironment().equals(Environment.NORMAL) ||
+                this.getPlugin().getIWM().isIslandNether(target.getWorld()) ||
+                this.getPlugin().getIWM().isIslandEnd(target.getWorld())) &&
+            target.getBlockX() >= this.getMinProtectedX() &&
+            target.getBlockX() < (this.getMinProtectedX() + this.protectionRange * 2) &&
+            target.getBlockZ() >= this.getMinProtectedZ() &&
+            target.getBlockZ() < (this.getMinProtectedZ() + this.protectionRange * 2);
     }
 
     /**
-     * Returns a {@link BoundingBox} of this island's protected area.
+     * Returns a {@link BoundingBox} of this island's protected area for overworld.
      * @return a {@link BoundingBox} of this island's protected area.
      * @since 1.5.2
      */
+    @SuppressWarnings("ConstantConditions")
+    @NotNull
     public BoundingBox getProtectionBoundingBox() {
-        return new BoundingBox(this.getMinProtectedX(),
-            this.world.getMinHeight(),
-            this.getMinProtectedZ(),
-            this.getMaxProtectedX(),
-            this.world.getMaxHeight(),
-            this.getMaxProtectedZ());
+        return this.getProtectionBoundingBox(Environment.NORMAL);
     }
+
+
+    /**
+     * Returns a {@link BoundingBox} of this island's protected area.
+     * @param environment an environment of bounding box area.
+     * @return a {@link BoundingBox} of this island's protected area or {@code null} if island is not created in required dimension.
+     * in required dimension.
+     * @since 1.21.0
+     */
+    @Nullable
+    public BoundingBox getProtectionBoundingBox(Environment environment)
+    {
+        BoundingBox boundingBox;
+        
+        if (Environment.NORMAL.equals(environment))
+        {
+            // Return normal world bounding box.
+            boundingBox = new BoundingBox(this.getMinProtectedX(),
+                this.world.getMinHeight(),
+                this.getMinProtectedZ(),
+                this.getMaxProtectedX(),
+                this.world.getMaxHeight(),
+                this.getMaxProtectedZ());
+        }
+        else if (Environment.THE_END.equals(environment) && this.isEndIslandEnabled())
+        {
+            // If end world is generated, return end island bounding box.
+            //noinspection ConstantConditions
+            boundingBox = new BoundingBox(this.getMinProtectedX(),
+                this.getEndWorld().getMinHeight(),
+                this.getMinProtectedZ(),
+                this.getMaxProtectedX(),
+                this.getEndWorld().getMaxHeight(),
+                this.getMaxProtectedZ());
+        }
+        else if (Environment.NETHER.equals(environment) && this.isNetherIslandEnabled())
+        {
+            // If nether world is generated, return nether island bounding box.
+            //noinspection ConstantConditions
+            boundingBox = new BoundingBox(this.getMinProtectedX(),
+                this.getNetherWorld().getMinHeight(),
+                this.getMinProtectedZ(),
+                this.getMaxProtectedX(),
+                this.getNetherWorld().getMaxHeight(),
+                this.getMaxProtectedZ());
+        }
+        else
+        {
+            boundingBox = null;
+        }
+        
+        return boundingBox;
+    }
+
 
     /**
      * Removes a player from the team member map. Generally, you should
@@ -1259,6 +1427,15 @@ public class Island implements DataObject, MetaDataAble {
     }
 
     /**
+     * Checks whether this island has its nether island mode enabled or not.
+     * @return {@code true} if this island has its nether island enabled, {@code false} otherwise.
+     * @since 1.21.0
+     */
+    public boolean isNetherIslandEnabled() {
+        return this.getPlugin().getIWM().isNetherGenerate(this.world) && this.getPlugin().getIWM().isNetherIslands(this.world);
+    }
+
+    /**
      * Checks whether this island has its end island generated or not.
      * @return {@code true} if this island has its end island generated, {@code false} otherwise.
      * @since 1.5.0
@@ -1266,6 +1443,16 @@ public class Island implements DataObject, MetaDataAble {
     public boolean hasEndIsland() {
         World end = BentoBox.getInstance().getIWM().getEndWorld(getWorld());
         return end != null && !getCenter().toVector().toLocation(end).getBlock().getType().isAir();
+    }
+
+
+    /**
+     * Checks whether this island has its end island mode enabled or not.
+     * @return {@code true} if this island has its end island enabled, {@code false} otherwise.
+     * @since 1.21.0
+     */
+    public boolean isEndIslandEnabled() {
+        return this.getPlugin().getIWM().isEndGenerate(this.world) && this.getPlugin().getIWM().isEndIslands(this.world);
     }
 
 
