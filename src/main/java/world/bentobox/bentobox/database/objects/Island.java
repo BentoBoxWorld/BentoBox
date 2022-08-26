@@ -860,8 +860,14 @@ public class Island implements DataObject, MetaDataAble {
      * @param target location to check, not null
      * @return {@code true} if this location is within this island's protected area, {@code false} otherwise.
      */
+    @SuppressWarnings("ConstantConditions")
     public boolean onIsland(@NonNull Location target) {
-        return Util.sameWorld(world, target.getWorld()) && target.getBlockX() >= getMinProtectedX() && target.getBlockX() < (getMinProtectedX() + protectionRange * 2) && target.getBlockZ() >= getMinProtectedZ() && target.getBlockZ() < (getMinProtectedZ() + protectionRange * 2);
+        return Util.sameWorld(this.world, target.getWorld()) &&
+            (target.getWorld().getEnvironment().equals(Environment.NORMAL) ||
+                this.getPlugin().getIWM().isIslandNether(target.getWorld()) ||
+                this.getPlugin().getIWM().isIslandEnd(target.getWorld())) &&
+            target.getBlockX() >= this.getMinProtectedX() && target.getBlockX() < (this.getMinProtectedX() + this.protectionRange * 2) &&
+            target.getBlockZ() >= this.getMinProtectedZ() && target.getBlockZ() < (this.getMinProtectedZ() + this.protectionRange * 2);
     }
 
     /**
