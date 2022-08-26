@@ -690,13 +690,72 @@ public class Island implements DataObject, MetaDataAble {
     }
 
     /**
-     * Returns a {@link BoundingBox} of the full island space.
+     * Returns a {@link BoundingBox} of the full island space for overworld.
      * @return a {@link BoundingBox} of the full island space.
      * @since 1.5.2
      */
+    @SuppressWarnings("ConstantConditions")
+    @NotNull
     public BoundingBox getBoundingBox() {
-        return new BoundingBox(getMinX(), world.getMinHeight(), getMinZ(), getMaxX(), world.getMaxHeight(), getMaxZ());
+        return this.getBoundingBox(Environment.NORMAL);
     }
+
+
+    /**
+     * Returns a {@link BoundingBox} of this island's space area in requested dimension.
+     * @param environment the requested dimension.
+     * @return a {@link BoundingBox} of this island's space area or {@code null} if island is not created in requested dimension.
+     * @since 1.21.0
+     */
+    @Nullable
+    public BoundingBox getBoundingBox(Environment environment)
+    {
+        BoundingBox boundingBox;
+
+        if (Environment.NORMAL.equals(environment))
+        {
+            // Return normal world bounding box.
+            boundingBox = new BoundingBox(this.getMinX(),
+                this.world.getMinHeight(),
+                this.getMinZ(),
+                this.getMaxX(),
+                this.world.getMaxHeight(),
+                this.getMaxZ());
+        }
+        else if (Environment.THE_END.equals(environment) &&
+            this.getPlugin().getIWM().isEndGenerate(this.world) &&
+            this.getPlugin().getIWM().isEndIslands(this.world))
+        {
+            // If end world is generated, return end island bounding box.
+            //noinspection ConstantConditions
+            boundingBox = new BoundingBox(this.getMinX(),
+                this.getPlugin().getIWM().getEndWorld(this.world).getMinHeight(),
+                this.getMinZ(),
+                this.getMaxX(),
+                this.getPlugin().getIWM().getEndWorld(this.world).getMaxHeight(),
+                this.getMaxZ());
+        }
+        else if (Environment.NETHER.equals(environment) &&
+            this.getPlugin().getIWM().isNetherGenerate(this.world) &&
+            this.getPlugin().getIWM().isNetherIslands(this.world))
+        {
+            // If nether world is generated, return nether island bounding box.
+            //noinspection ConstantConditions
+            boundingBox = new BoundingBox(this.getMinX(),
+                this.getPlugin().getIWM().getNetherWorld(this.world).getMinHeight(),
+                this.getMinZ(),
+                this.getMaxX(),
+                this.getPlugin().getIWM().getNetherWorld(this.world).getMaxHeight(),
+                this.getMaxZ());
+        }
+        else
+        {
+            boundingBox = null;
+        }
+
+        return boundingBox;
+    }
+
 
     /**
      * Using this method in the filtering for getVisitors and hasVisitors
@@ -806,11 +865,12 @@ public class Island implements DataObject, MetaDataAble {
     }
 
     /**
-     * Returns a {@link BoundingBox} of this island's protected area.
+     * Returns a {@link BoundingBox} of this island's protected area for overworld.
      * @return a {@link BoundingBox} of this island's protected area.
      * @since 1.5.2
      */
-    @Nullable
+    @SuppressWarnings("ConstantConditions")
+    @NotNull
     public BoundingBox getProtectionBoundingBox() {
         return this.getProtectionBoundingBox(Environment.NORMAL);
     }
@@ -819,7 +879,7 @@ public class Island implements DataObject, MetaDataAble {
     /**
      * Returns a {@link BoundingBox} of this island's protected area.
      * @param environment an environment of bounding box area.
-     * @return a {@link BoundingBox} of this island's protected area or {null} if island does not have bounding box
+     * @return a {@link BoundingBox} of this island's protected area or {@code null} if island is not created in required dimension.
      * in required dimension.
      * @since 1.21.0
      */
