@@ -21,6 +21,7 @@ import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.nms.PasteHandler;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * A utility class for {@link PasteHandler}
@@ -43,8 +44,8 @@ public class DefaultPasteUtil {
      * @param location - location
      * @param bpBlock  - blueprint block
      */
-    public static void setBlock(Island island, Location location, BlueprintBlock bpBlock) {
-        Util.getChunkAtAsync(location).thenRun(() -> {
+    public static CompletableFuture<Void> setBlock(Island island, Location location, BlueprintBlock bpBlock) {
+        return Util.getChunkAtAsync(location).thenRun(() -> {
             Block block = location.getBlock();
             // Set the block data - default is AIR
             BlockData bd = createBlockData(bpBlock);
@@ -152,10 +153,10 @@ public class DefaultPasteUtil {
      * @param location - location
      * @param list     - blueprint entities
      */
-    public static void setEntity(Island island, Location location, List<BlueprintEntity> list) {
+    public static CompletableFuture<Void> setEntity(Island island, Location location, List<BlueprintEntity> list) {
         World world = location.getWorld();
         assert world != null;
-        Util.getChunkAtAsync(location).thenRun(() -> list.stream().filter(k -> k.getType() != null).forEach(k -> {
+        return Util.getChunkAtAsync(location).thenRun(() -> list.stream().filter(k -> k.getType() != null).forEach(k -> {
             LivingEntity e = (LivingEntity) location.getWorld().spawnEntity(location, k.getType());
             if (k.getCustomName() != null) {
                 String customName = k.getCustomName();
