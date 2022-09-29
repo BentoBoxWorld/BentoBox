@@ -39,6 +39,8 @@ import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.blueprints.Blueprint;
 import world.bentobox.bentobox.blueprints.BlueprintClipboard;
+import world.bentobox.bentobox.util.Util;
+
 
 /**
  * @author tastybento
@@ -345,7 +347,7 @@ public class BlueprintClipboardManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.BlueprintClipboardManager#save(world.bentobox.bentobox.api.user.User, java.lang.String)}.
+     * Test method for {@link world.bentobox.bentobox.managers.BlueprintClipboardManager#save(world.bentobox.bentobox.api.user.User, java.lang.String, java.lang.String)}.
      * @throws IOException
      */
     @Test
@@ -361,14 +363,14 @@ public class BlueprintClipboardManagerTest {
         BlueprintClipboardManager bcm = new BlueprintClipboardManager(plugin, blueprintFolder);
         bcm.load(BLUEPRINT);
         User user = mock(User.class);
-        assertTrue(bcm.save(user, "test1234"));
+        assertTrue(bcm.save(user, "test1234", ""));
         File bp = new File(blueprintFolder, "test1234.blu");
         assertTrue(bp.exists());
         verify(user).sendMessage("general.success");
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.BlueprintClipboardManager#save(world.bentobox.bentobox.api.user.User, java.lang.String)}.
+     * Test method for {@link world.bentobox.bentobox.managers.BlueprintClipboardManager#save(world.bentobox.bentobox.api.user.User, java.lang.String, java.lang.String)}.
      * @throws IOException
      */
     @Test
@@ -384,14 +386,14 @@ public class BlueprintClipboardManagerTest {
         BlueprintClipboardManager bcm = new BlueprintClipboardManager(plugin, blueprintFolder);
         bcm.load(BLUEPRINT);
         User user = mock(User.class);
-        assertTrue(bcm.save(user, "test.1234/../../film"));
-        File bp = new File(blueprintFolder, "test1234film.blu");
+        assertTrue(bcm.save(user, Util.sanitizeInput("test.1234/../../film"), ""));
+        File bp = new File(blueprintFolder, "test.1234_.._.._film.blu");
         assertTrue(bp.exists());
         verify(user).sendMessage("general.success");
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.BlueprintClipboardManager#save(world.bentobox.bentobox.api.user.User, java.lang.String)}.
+     * Test method for {@link world.bentobox.bentobox.managers.BlueprintClipboardManager#save(world.bentobox.bentobox.api.user.User, java.lang.String, java.lang.String)}.
      * @throws IOException
      */
     @Test
@@ -407,14 +409,14 @@ public class BlueprintClipboardManagerTest {
         BlueprintClipboardManager bcm = new BlueprintClipboardManager(plugin, blueprintFolder);
         bcm.load(BLUEPRINT);
         User user = mock(User.class);
-        assertTrue(bcm.save(user, "日本語の言葉"));
+        assertTrue(bcm.save(user, "日本語の言葉", ""));
         File bp = new File(blueprintFolder, "日本語の言葉.blu");
         assertTrue(bp.exists());
         verify(user).sendMessage("general.success");
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.BlueprintClipboardManager#save(world.bentobox.bentobox.api.user.User, java.lang.String)}.
+     * Test method for {@link world.bentobox.bentobox.managers.BlueprintClipboardManager#save(world.bentobox.bentobox.api.user.User, java.lang.String, java.lang.String)}.
      * @throws IOException
      */
     @Test
@@ -430,8 +432,9 @@ public class BlueprintClipboardManagerTest {
         BlueprintClipboardManager bcm = new BlueprintClipboardManager(plugin, blueprintFolder);
         bcm.load(BLUEPRINT);
         User user = mock(User.class);
-        assertTrue(bcm.save(user, "日本語の言葉/../../../config"));
-        File bp = new File(blueprintFolder, "日本語の言葉config.blu");
+
+        assertTrue(bcm.save(user, Util.sanitizeInput("日本語の言葉/../../../config"), ""));
+        File bp = new File(blueprintFolder, "日本語の言葉_.._.._.._config.blu");
         assertTrue(bp.exists());
         verify(user).sendMessage("general.success");
     }
