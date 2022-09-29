@@ -20,6 +20,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityPortalEnterEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
@@ -101,6 +102,8 @@ public class PlayerTeleportListener extends AbstractTeleportListener implements 
         }
 
         this.inPortal.add(uuid);
+        // Add original world for respawning.
+        this.teleportOrigin.put(uuid, event.getLocation().getWorld());
 
         if (!Bukkit.getAllowNether() && type.equals(Material.NETHER_PORTAL))
         {
@@ -160,8 +163,63 @@ public class PlayerTeleportListener extends AbstractTeleportListener implements 
             // Player exits nether portal.
             this.inPortal.remove(event.getPlayer().getUniqueId());
             this.inTeleport.remove(event.getPlayer().getUniqueId());
+            this.teleportOrigin.remove(event.getPlayer().getUniqueId());
         }
     }
+
+
+    /**
+     * Player respawn event is triggered when player enters exit portal at the end.
+     * This will take over respawn mechanism and place player on island.
+     * @param event player respawn event
+     */
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onPlayerExitPortal(PlayerRespawnEvent event)
+    {
+        if (!this.teleportOrigin.containsKey(event.getPlayer().getUniqueId()))
+        {
+            // Player is already processed.
+            return;
+        }
+
+        World fromWorld = this.teleportOrigin.get(event.getPlayer().getUniqueId());
+        World overWorld = Util.getWorld(fromWorld);
+
+        if (overWorld == null || !this.plugin.getIWM().inWorld(overWorld))
+        {
+            // Not teleporting from/to bentobox worlds.
+            return;
+        }
+
+        this.getIsland(overWorld, event.getPlayer()).ifPresentOrElse(island -> {
+            if (!island.onIsland(event.getRespawnLocation()))
+            {
+                // If respawn location is outside island protection range, change location to the
+                // spawn in overworld or home location.
+                Location location = island.getSpawnPoint(World.Environment.NORMAL);
+
+                if (location == null)
+                {
+                    // No spawn point. Rare thing. Well, use island protection center.
+                    location = island.getProtectionCenter();
+                }
+
+                event.setRespawnLocation(location);
+            }
+        },
+        () -> {
+            // Player does not an island. Try to get spawn island, and if that fails, use world spawn point.
+            // If spawn point is not safe, do nothing. Let server handle it.
+
+            Location spawnLocation = this.getSpawnLocation(overWorld);
+
+            if (spawnLocation != null)
+            {
+                event.setRespawnLocation(spawnLocation);
+            }
+        });
+    }
+
 
 
 // ---------------------------------------------------------------------
@@ -365,21 +423,10 @@ public class PlayerTeleportListener extends AbstractTeleportListener implements 
         else
         {
             // Cannot be portal. Should recalculate position.
-
-            Location toLocation;
-            Island island = this.plugin.getIslandsManager().getIsland(overWorld, event.getPlayer().getUniqueId());
-
-            if (island == null)
-            {
-                // What to do? Player do not have an island! Check for spawn?
-                // TODO: SPAWN CHECK.
-                toLocation = event.getFrom();
-            }
-            else
-            {
-                // TODO: Island Respawn, Bed, Default home location check.
-                toLocation = island.getSpawnPoint(World.Environment.NORMAL);
-            }
+            // TODO: Currently, it is always spawn location. However, default home must be assigned.
+            Location toLocation = this.getIsland(overWorld, event.getPlayer()).
+                map(island -> island.getSpawnPoint(World.Environment.NORMAL)).
+                orElse(event.getFrom());
 
             event.setTo(toLocation);
         }

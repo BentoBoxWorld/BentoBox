@@ -11,12 +11,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.event.player.PlayerPortalEvent;
+import org.bukkit.entity.Player;
 import org.eclipse.jdt.annotation.NonNull;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import org.eclipse.jdt.annotation.Nullable;
+import java.util.*;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
@@ -37,6 +35,7 @@ public abstract class AbstractTeleportListener
         this.plugin = bentoBox;
         this.inPortal = new HashSet<>();
         this.inTeleport = new HashSet<>();
+        this.teleportOrigin = new HashMap<>();
     }
 
 
@@ -51,7 +50,17 @@ public abstract class AbstractTeleportListener
      */
     protected Optional<Island> getIsland(Location location)
     {
-        return this.plugin.getIslands().getProtectedIslandAt(location);
+        return this.plugin.getIslandsManager().getProtectedIslandAt(location);
+    }
+
+
+    /**
+     * Get island for given player at the given world.
+     * @return optional island at given world.
+     */
+    protected Optional<Island> getIsland(World world, Player player)
+    {
+        return Optional.ofNullable(this.plugin.getIslandsManager().getIsland(world, player.getUniqueId()));
     }
 
 
@@ -261,6 +270,23 @@ public abstract class AbstractTeleportListener
 
 
     /**
+     * This method returns spawn location for given world.
+     * @param world World which spawn point must be returned.
+     * @return Spawn location for world or null.
+     */
+    @Nullable
+    protected Location getSpawnLocation(World world)
+    {
+        return this.plugin.getIslandsManager().getSpawn(world).map(island ->
+            island.getSpawnPoint(World.Environment.NORMAL) == null ?
+                island.getCenter() :
+                island.getSpawnPoint(World.Environment.NORMAL)).
+            orElse(this.plugin.getIslands().isSafeLocation(world.getSpawnLocation()) ?
+                world.getSpawnLocation() : null);
+    }
+
+
+    /**
      * This method returns if missing islands should be generated uppon teleportation.
      * Can happen only in non-custom generators.
      * @param overWorld OverWorld
@@ -288,6 +314,11 @@ public abstract class AbstractTeleportListener
      * Set of entities that currently is inside portal.
      */
     protected final Set<UUID> inPortal;
+
+    /**
+     * Map that links entities origin of teleportation. Used for respawning.
+     */
+    protected final Map<UUID, World> teleportOrigin;
 
     /**
      * Set of entities that currently is in teleportation.
