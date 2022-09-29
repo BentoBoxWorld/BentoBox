@@ -332,7 +332,7 @@ commands:
       rename:
         parameters: "<blueprint name> <new name>"
         description: "rename a blueprint"
-        success: "&a Blueprint &b [old] &a has been successfully renamed to &b [name]&a."
+        success: "&a Blueprint &b [old] &a has been successfully renamed to &b [display]&a. Filename now is &b [name]&a."
         pick-different-name: "&c Please specify a name that is different from the blueprint's current name."
       management:
         back: "Back"
@@ -366,9 +366,9 @@ commands:
         name:
           quit: "quit"
           prompt: "Enter a name, or 'quit' to quit"
-          too-long: "&c Too long"
+          too-long: "&c Too long name. Only 32 chars are allowed."
           pick-a-unique-name: "Please pick a more unique name"
-          invalid-char-in-unique-name: "Unique name cannot contain, start, or end with special characters, neither contain number! "
+          stripped-char-in-unique-name: "&c Some chars were removed because they are not allowed. &a New ID will be &b [name]&a."
           success: "Success!"
           conversation-prefix: ">"
         description:

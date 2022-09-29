@@ -2,11 +2,7 @@ package world.bentobox.bentobox.util;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -760,5 +756,20 @@ public class Util {
             }
         }
         return count;
+    }
+
+
+    /**
+     * This method removes all special characters that are not allowed in filenames (windows).
+     * It also includes any white-spaces, as for some reason, I do like it more without them.
+     * Also, all cases are lower cased for easier blueprint mapping.
+     * @param input Input that need to be sanitized.
+     * @return A sanitized input without illegal characters in names.
+     */
+    public static String sanitizeInput(String input)
+    {
+        return ChatColor.stripColor(
+            Util.translateColorCodes(input.replaceAll("[\\\\/:*?\"<>|\s]", "_"))).
+            toLowerCase();
     }
 }

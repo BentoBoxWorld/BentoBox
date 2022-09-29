@@ -69,7 +69,7 @@ public class BlueprintBundle implements DataObject {
      */
     @Override
     public String getUniqueId() {
-        return uniqueId.toLowerCase(Locale.ENGLISH);
+        return uniqueId;
     }
     /**
      * @param uniqueId the uniqueId to set

@@ -53,14 +53,14 @@ public class Blueprint {
     public String getName() {
         if (name == null) name = "unnamed";
         // Force lower case
-        return name.toLowerCase(Locale.ENGLISH);
+        return name;
     }
     /**
      * @param name the name to set
      */
     public Blueprint setName(@NonNull String name) {
         // Force lowercase
-        this.name = name.toLowerCase(Locale.ENGLISH);
+        this.name = name;
         return this;
     }
     /**

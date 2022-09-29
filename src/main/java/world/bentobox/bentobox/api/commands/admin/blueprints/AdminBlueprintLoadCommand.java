@@ -32,7 +32,7 @@ public class AdminBlueprintLoadCommand extends CompositeCommand {
         AdminBlueprintCommand parent = (AdminBlueprintCommand) getParent();
 
         BlueprintClipboardManager bp = new BlueprintClipboardManager(getPlugin(), parent.getBlueprintsFolder());
-        if (bp.load(user, args.get(0))) {
+        if (bp.load(user, Util.sanitizeInput(args.get(0)))) {
             parent.getClipboards().put(user.getUniqueId(), bp.getClipboard());
             return true;
         }
