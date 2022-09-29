@@ -314,6 +314,10 @@ public class Settings implements ConfigObject {
     @ConfigEntry(path = "island.safe-spot-search-vertical-range", since = "1.19.1")
     private int safeSpotSearchVerticalRange = 400;
 
+    @ConfigComment("By default, If the destination is not safe, the plugin will try to search for a safe spot around the destination,")
+    @ConfigEntry(path = "island.safe-spot-search-range", since = "1.21.0")
+    private int safeSpotSearchRange = 16;
+
     /* WEB */
     @ConfigComment("Toggle whether BentoBox can connect to GitHub to get data about updates and addons.")
     @ConfigComment("Disabling this will result in the deactivation of the update checker and of some other")
@@ -907,19 +911,65 @@ public class Settings implements ConfigObject {
         this.minPortalSearchRadius = minPortalSearchRadius;
     }
 
+
+    /**
+     * Gets safe spot search vertical range.
+     *
+     * @return the safe spot search vertical range
+     */
     public int getSafeSpotSearchVerticalRange() {
         return safeSpotSearchVerticalRange;
     }
 
+
+    /**
+     * Sets safe spot search vertical range.
+     *
+     * @param safeSpotSearchVerticalRange the safe spot search vertical range
+     */
     public void setSafeSpotSearchVerticalRange(int safeSpotSearchVerticalRange) {
         this.safeSpotSearchVerticalRange = safeSpotSearchVerticalRange;
     }
 
+
+    /**
+     * Is slow deletion boolean.
+     *
+     * @return the boolean
+     */
     public boolean isSlowDeletion() {
         return slowDeletion;
     }
 
+
+    /**
+     * Sets slow deletion.
+     *
+     * @param slowDeletion the slow deletion
+     */
     public void setSlowDeletion(boolean slowDeletion) {
         this.slowDeletion = slowDeletion;
+    }
+
+
+    /**
+     * Gets safe spot search range.
+     *
+     * @return the safe spot search range
+     */
+    public int getSafeSpotSearchRange()
+    {
+        return safeSpotSearchRange;
+    }
+
+
+    /**
+     * Sets safe spot search range.
+     *
+     * @param safeSpotSearchRange the safe spot search range
+     */
+    public void setSafeSpotSearchRange(int safeSpotSearchRange)
+    {
+        this.safeSpotSearchRange = safeSpotSearchRange;
     }
 }
