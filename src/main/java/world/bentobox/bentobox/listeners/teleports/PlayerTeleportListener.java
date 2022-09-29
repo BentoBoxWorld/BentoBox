@@ -119,7 +119,7 @@ public class PlayerTeleportListener extends AbstractTeleportListener implements 
                         false,
                         0);
 
-                    this.onPlayerPortalEvent(en);
+                    this.portalProcess(en, World.Environment.NETHER);
                 }
             }, 40);
             return;
@@ -137,7 +137,7 @@ public class PlayerTeleportListener extends AbstractTeleportListener implements 
                 false,
                 0);
 
-            this.onPlayerPortalEvent(en);
+            this.portalProcess(en, World.Environment.THE_END);
         }
     }
 
@@ -169,6 +169,11 @@ public class PlayerTeleportListener extends AbstractTeleportListener implements 
 // ---------------------------------------------------------------------
 
 
+    /**
+     * This method process player teleportation to new dimension.
+     * @param event Event that triggers teleportation.
+     * @param environment Environment of portal type.
+     */
     private void portalProcess(PlayerPortalEvent event, World.Environment environment)
     {
         World fromWorld = event.getFrom().getWorld();
