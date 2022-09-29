@@ -37,6 +37,11 @@ import world.bentobox.bentobox.util.Util;
 import world.bentobox.bentobox.util.teleport.ClosestSafeSpotTeleport;
 
 
+/**
+ * This class handles player teleportation between dimensions.
+ *
+ * @author tastybento and BONNe
+ */
 public class PlayerTeleportListener extends AbstractTeleportListener implements Listener
 {
     /**
