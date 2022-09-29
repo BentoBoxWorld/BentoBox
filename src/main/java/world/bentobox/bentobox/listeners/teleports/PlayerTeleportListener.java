@@ -426,7 +426,13 @@ public class PlayerTeleportListener extends AbstractTeleportListener implements 
             // TODO: Currently, it is always spawn location. However, default home must be assigned.
             Location toLocation = this.getIsland(overWorld, event.getPlayer()).
                 map(island -> island.getSpawnPoint(World.Environment.NORMAL)).
-                orElse(event.getFrom());
+                orElseGet(() -> {
+                    // If player do not have island, try spawn.
+                    Location spawnLocation = this.getSpawnLocation(overWorld);
+                    return spawnLocation == null ?
+                        event.getFrom().toVector().toLocation(overWorld) :
+                        spawnLocation;
+                });
 
             event.setTo(toLocation);
         }
