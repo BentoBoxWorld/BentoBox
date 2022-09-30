@@ -19,6 +19,7 @@ import java.util.*;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.util.Util;
 
 
 /**
@@ -88,9 +89,11 @@ public abstract class AbstractTeleportListener
      */
     protected boolean isMakePortals(GameModeAddon gameMode, World.Environment environment)
     {
-        return environment.equals(World.Environment.NETHER) ?
-            gameMode.getWorldSettings().isMakeNetherPortals() :
-            gameMode.getWorldSettings().isMakeEndPortals();
+        return switch (environment) {
+            case NETHER -> gameMode.getWorldSettings().isMakeNetherPortals();
+            case THE_END -> gameMode.getWorldSettings().isMakeEndPortals();
+            default -> false;
+        };
     }
 
 
@@ -98,14 +101,16 @@ public abstract class AbstractTeleportListener
      * Check if nether or end are generated
      *
      * @param overWorld - game world
-     * @param env - environment
+     * @param environment - environment
      * @return true or false
      */
-    protected boolean isAllowedInConfig(World overWorld, World.Environment env)
+    protected boolean isAllowedInConfig(World overWorld, World.Environment environment)
     {
-        return env.equals(World.Environment.NETHER) ?
-            this.plugin.getIWM().isNetherGenerate(overWorld) :
-            this.plugin.getIWM().isEndGenerate(overWorld);
+        return switch (environment) {
+            case NETHER -> this.plugin.getIWM().isNetherGenerate(overWorld);
+            case THE_END -> this.plugin.getIWM().isEndGenerate(overWorld);
+            default -> true;
+        };
     }
 
 
@@ -117,7 +122,11 @@ public abstract class AbstractTeleportListener
      */
     protected boolean isAllowedOnServer(World.Environment environment)
     {
-        return environment.equals(World.Environment.NETHER) ? Bukkit.getAllowNether() : Bukkit.getAllowEnd();
+        return switch (environment) {
+            case NETHER -> Bukkit.getAllowNether();
+            case THE_END -> Bukkit.getAllowEnd();
+            default -> true;
+        };
     }
 
 
@@ -130,9 +139,11 @@ public abstract class AbstractTeleportListener
      */
     protected boolean isIslandWorld(World overWorld, World.Environment environment)
     {
-        return environment.equals(World.Environment.NETHER) ?
-            this.plugin.getIWM().isNetherIslands(overWorld) :
-            this.plugin.getIWM().isEndIslands(overWorld);
+        return switch (environment) {
+            case NETHER -> this.plugin.getIWM().isNetherIslands(overWorld);
+            case THE_END -> this.plugin.getIWM().isEndIslands(overWorld);
+            default -> true;
+        };
     }
 
 
@@ -145,9 +156,11 @@ public abstract class AbstractTeleportListener
      */
     protected World getNetherEndWorld(World overWorld, World.Environment environment)
     {
-        return environment.equals(World.Environment.NETHER) ?
-            this.plugin.getIWM().getNetherWorld(overWorld) :
-            this.plugin.getIWM().getEndWorld(overWorld);
+        return switch (environment) {
+            case NETHER -> this.plugin.getIWM().getNetherWorld(overWorld);
+            case THE_END -> this.plugin.getIWM().getEndWorld(overWorld);
+            default -> Util.getWorld(overWorld);
+        };
     }
 
 
@@ -160,7 +173,11 @@ public abstract class AbstractTeleportListener
      */
     protected boolean hasPartnerIsland(Island island, World.Environment environment)
     {
-        return environment.equals(World.Environment.NETHER) ? island.hasNetherIsland() : island.hasEndIsland();
+        return switch (environment) {
+            case NETHER -> island.hasNetherIsland();
+            case THE_END -> island.hasEndIsland();
+            default -> true;
+        };
     }
 
 
