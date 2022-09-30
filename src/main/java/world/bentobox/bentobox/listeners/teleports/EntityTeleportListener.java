@@ -18,12 +18,12 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityPortalEnterEvent;
 import org.bukkit.event.entity.EntityPortalEvent;
+import org.bukkit.event.entity.EntityPortalExitEvent;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
 
 import java.util.UUID;
 
-import io.papermc.paper.event.entity.EntityMoveEvent;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.util.Util;
@@ -170,20 +170,16 @@ public class EntityTeleportListener extends AbstractTeleportListener implements 
      * @param event entity move event
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onEntityExitPortal(EntityMoveEvent event)
+    public void onEntityExitPortal(EntityPortalExitEvent event)
     {
         if (!this.inPortal.contains(event.getEntity().getUniqueId()))
         {
             return;
         }
 
-        if (!event.getTo().getBlock().getType().equals(Material.NETHER_PORTAL))
-        {
-            // Player exits nether portal.
-            this.inPortal.remove(event.getEntity().getUniqueId());
-            this.inTeleport.remove(event.getEntity().getUniqueId());
-            this.teleportOrigin.remove(event.getEntity().getUniqueId());
-        }
+        this.inPortal.remove(event.getEntity().getUniqueId());
+        this.inTeleport.remove(event.getEntity().getUniqueId());
+        this.teleportOrigin.remove(event.getEntity().getUniqueId());
     }
 
 
