@@ -314,7 +314,9 @@ public class Settings implements ConfigObject {
     @ConfigEntry(path = "island.safe-spot-search-vertical-range", since = "1.19.1")
     private int safeSpotSearchVerticalRange = 400;
 
-    @ConfigComment("By default, If the destination is not safe, the plugin will try to search for a safe spot around the destination,")
+    @ConfigComment("By default, if the destination is not safe, the plugin will try to search for a safe spot around the destination.")
+    @ConfigComment("This allows to change the distance for searching this spot. Larger value will mean longer position search.")
+    @ConfigComment("This value is also used for valid nether portal linking between dimension.")
     @ConfigEntry(path = "island.safe-spot-search-range", since = "1.21.0")
     private int safeSpotSearchRange = 16;
 
