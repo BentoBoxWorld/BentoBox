@@ -17,7 +17,7 @@ import world.bentobox.bentobox.database.objects.Island;
 /**
  * Abstracts PlayerPortalEvent and EntityPortalEvent
  * @author tastybento
- *
+ * @deprecated replaced not used in new listeners.
  */
 public class PlayerEntityPortalEvent {
 

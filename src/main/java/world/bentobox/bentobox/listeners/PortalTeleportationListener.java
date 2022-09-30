@@ -40,7 +40,11 @@ import world.bentobox.bentobox.util.teleport.SafeSpotTeleport;
  * Handles teleportation via the Nether/End portals to the Nether and End dimensions of the worlds added by the GameModeAddons.
  *
  * @author tastybento
+ * @deprecated replaced by better listeners.
+ * @see world.bentobox.bentobox.listeners.teleports.PlayerTeleportListener
+ * @see world.bentobox.bentobox.listeners.teleports.EntityTeleportListener
  */
+@Deprecated
 public class PortalTeleportationListener implements Listener {
 
     private final BentoBox plugin;
