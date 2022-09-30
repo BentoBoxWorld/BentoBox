@@ -27,6 +27,7 @@ import world.bentobox.bentobox.listeners.BlockEndDragon;
 import world.bentobox.bentobox.listeners.DeathListener;
 import world.bentobox.bentobox.listeners.JoinLeaveListener;
 import world.bentobox.bentobox.listeners.PanelListenerManager;
+import world.bentobox.bentobox.listeners.teleports.EntityTeleportListener;
 import world.bentobox.bentobox.listeners.teleports.PlayerTeleportListener;
 import world.bentobox.bentobox.listeners.StandardSpawnProtectionListener;
 import world.bentobox.bentobox.managers.AddonsManager;
@@ -289,6 +290,8 @@ public class BentoBox extends JavaPlugin {
         manager.registerEvents(new StandardSpawnProtectionListener(this), this);
         // Player portals
         manager.registerEvents(new PlayerTeleportListener(this), this);
+        // Entity portals
+        manager.registerEvents(new EntityTeleportListener(this), this);
         // End dragon blocking
         manager.registerEvents(new BlockEndDragon(this), this);
         // Banned visitor commands

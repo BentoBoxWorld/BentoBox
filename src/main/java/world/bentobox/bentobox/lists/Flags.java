@@ -571,6 +571,13 @@ public final class Flags {
     public static final Flag VISITOR_TRIGGER_RAID = new Flag.Builder("VISITOR_TRIGGER_RAID", Material.RAVAGER_SPAWN_EGG).listener(new VisitorsStartingRaidListener()).type(Type.WORLD_SETTING).defaultSetting(true).build();
 
     /**
+     * Toggles whether entities can teleport between dimensions using portals.
+     * @since 1.21.0
+     * @see world.bentobox.bentobox.listeners.teleports.EntityTeleportListener
+     */
+    public static final Flag ENTITY_PORTAL_TELEPORT = new Flag.Builder("ENTITY_PORTAL_TELEPORT", Material.ENDER_EYE).type(Type.WORLD_SETTING).defaultSetting(false).build();
+
+    /**
      * Provides a list of all the Flag instances contained in this class using reflection.
      * Deprecated Flags are ignored.
      * @return List of all the flags in this class

@@ -1370,6 +1370,12 @@ protection:
         &a visiting.
         &a
         &a Bad Omen effect will be removed!
+    ENTITY_PORTAL_TELEPORT:
+      name: "Entity portal usage"
+      description: |-
+        &a Toggles if entities (non-player) can
+        &a use portals to teleport between
+        &a dimensions
     WITHER_DAMAGE:
       name: "Toggle wither damage"
       description: |-
