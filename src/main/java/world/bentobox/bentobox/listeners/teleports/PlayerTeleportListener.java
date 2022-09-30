@@ -308,7 +308,7 @@ public class PlayerTeleportListener extends AbstractTeleportListener implements 
             this.isIslandWorld(overWorld, environment) &&
             this.getNetherEndWorld(overWorld, environment) != null &&
             this.getIsland(event.getTo()).
-                filter(island -> this.hasPartnerIsland(island, environment)).
+                filter(island -> !this.hasPartnerIsland(island, environment)).
                 map(island -> {
                     event.setCancelled(true);
                     this.pasteNewIsland(event.getPlayer(), event.getTo(), island, environment);
