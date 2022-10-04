@@ -3,7 +3,10 @@ package world.bentobox.bentobox.listeners.flags.protection;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.*;
+import org.bukkit.entity.minecart.HopperMinecart;
+import org.bukkit.entity.minecart.PoweredMinecart;
 import org.bukkit.entity.minecart.RideableMinecart;
+import org.bukkit.entity.minecart.StorageMinecart;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
@@ -46,6 +49,18 @@ public class EntityInteractListener extends FlagListener {
             {
                 // Minecart riding
                 this.checkIsland(e, p, l, Flags.MINECART);
+            }
+            else if (e.getRightClicked() instanceof StorageMinecart)
+            {
+                this.checkIsland(e, p, l, Flags.CHEST);
+            }
+            else if (e.getRightClicked() instanceof HopperMinecart)
+            {
+                this.checkIsland(e, p, l, Flags.HOPPER);
+            }
+            else if (e.getRightClicked() instanceof PoweredMinecart)
+            {
+                this.checkIsland(e, p, l, Flags.FURNACE);
             }
             else if (!ServerCompatibility.getInstance().isVersion(
                 ServerCompatibility.ServerVersion.V1_18,
