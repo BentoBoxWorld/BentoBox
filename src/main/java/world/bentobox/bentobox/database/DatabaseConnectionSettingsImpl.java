@@ -1,5 +1,13 @@
 package world.bentobox.bentobox.database;
 
+
+import java.util.Collections;
+import java.util.Map;
+
+
+/**
+ * The type Database connection settings.
+ */
 public class DatabaseConnectionSettingsImpl {
     private String host;
     private int port;
@@ -15,21 +23,87 @@ public class DatabaseConnectionSettingsImpl {
     private boolean useSSL;
 
     /**
+     * Number of max connections in pool.
+     * @since 1.21.0
+     */
+    private int maxConnections;
+
+    /**
+     * Map of extra properties.
+     * @since 1.21.0
+     */
+    private Map<String, String> extraProperties;
+
+    /**
      * Hosts database settings
      * @param host - database host
      * @param port - port
      * @param databaseName - database name
      * @param username - username 
      * @param password - password
+     * @param extraProperties Map with extra properties.
      */
-    public DatabaseConnectionSettingsImpl(String host, int port, String databaseName, String username, String password, boolean useSSL) {
+    public DatabaseConnectionSettingsImpl(String host,
+        int port,
+        String databaseName,
+        String username,
+        String password,
+        boolean useSSL,
+        int maxConnections,
+        Map<String, String> extraProperties)
+    {
         this.host = host;
         this.port = port;
         this.databaseName = databaseName;
         this.username = username;
         this.password = password;
         this.useSSL = useSSL;
+        this.maxConnections = maxConnections;
+        this.extraProperties = extraProperties;
     }
+
+
+    /**
+     * Hosts database settings
+     * @param host - database host
+     * @param port - port
+     * @param databaseName - database name
+     * @param username - username
+     * @param password - password
+     * @param useSSL - ssl usage.
+     * @param maxConnections - number of maximal connections in pool.
+     */
+    public DatabaseConnectionSettingsImpl(String host,
+        int port,
+        String databaseName,
+        String username,
+        String password,
+        boolean useSSL,
+        int maxConnections)
+    {
+        this(host, port, databaseName, username, password, useSSL, maxConnections, Collections.emptyMap());
+    }
+
+
+    /**
+     * Hosts database settings
+     * @param host - database host
+     * @param port - port
+     * @param databaseName - database name
+     * @param username - username
+     * @param password - password
+     * @param useSSL - ssl usage.
+     */
+    public DatabaseConnectionSettingsImpl(String host,
+        int port,
+        String databaseName,
+        String username,
+        String password,
+        boolean useSSL)
+    {
+        this(host, port, databaseName, username, password, useSSL, 0, Collections.emptyMap());
+    }
+
 
     /**
      * @return the host
@@ -116,5 +190,49 @@ public class DatabaseConnectionSettingsImpl {
      */
     public void setUseSSL(boolean useSSL) {
         this.useSSL = useSSL;
+    }
+
+
+    /**
+     * Gets max connections.
+     *
+     * @return the max connections
+     */
+    public int getMaxConnections()
+    {
+        return this.maxConnections;
+    }
+
+
+    /**
+     * Sets max connections.
+     *
+     * @param maxConnections the max connections
+     */
+    public void setMaxConnections(int maxConnections)
+    {
+        this.maxConnections = maxConnections;
+    }
+
+
+    /**
+     * Gets extra properties.
+     *
+     * @return the extra properties
+     */
+    public Map<String, String> getExtraProperties()
+    {
+        return extraProperties;
+    }
+
+
+    /**
+     * Sets extra properties.
+     *
+     * @param extraProperties the extra properties
+     */
+    public void setExtraProperties(Map<String, String> extraProperties)
+    {
+        this.extraProperties = extraProperties;
     }
 }

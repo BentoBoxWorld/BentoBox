@@ -45,10 +45,5 @@ public interface DatabaseConnector {
      * @return true if it exists
      */
     boolean uniqueIdExists(String tableName, String key);
-
-
-
-
-
 }
 

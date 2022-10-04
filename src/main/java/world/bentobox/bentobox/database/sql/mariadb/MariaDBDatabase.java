@@ -9,26 +9,34 @@ import world.bentobox.bentobox.database.DatabaseSetup;
  * @author barpec12
  * @since 1.1
  */
-public class MariaDBDatabase implements DatabaseSetup {
+public class MariaDBDatabase implements DatabaseSetup
+{
+    /**
+     * MariaDB Database Connector.
+     */
     private MariaDBDatabaseConnector connector;
 
-    /* (non-Javadoc)
-     * @see world.bentobox.bentobox.database.DatabaseSetup#getHandler(java.lang.Class)
+
+    /*
+     * {@inheritDoc}
      */
     @Override
-    public <T> AbstractDatabaseHandler<T> getHandler(Class<T> type) {
+    public <T> AbstractDatabaseHandler<T> getHandler(Class<T> type)
+    {
         BentoBox plugin = BentoBox.getInstance();
-        if (connector == null) {
-            connector = new MariaDBDatabaseConnector(new DatabaseConnectionSettingsImpl(
-                    plugin.getSettings().getDatabaseHost(),
-                    plugin.getSettings().getDatabasePort(),
-                    plugin.getSettings().getDatabaseName(),
-                    plugin.getSettings().getDatabaseUsername(),
-                    plugin.getSettings().getDatabasePassword(),
-                    plugin.getSettings().isUseSSL()
-                    ));
-        }
-        return new MariaDBDatabaseHandler<>(plugin, type, connector);
-    }
 
+        if (this.connector == null)
+        {
+            this.connector = new MariaDBDatabaseConnector(new DatabaseConnectionSettingsImpl(
+                plugin.getSettings().getDatabaseHost(),
+                plugin.getSettings().getDatabasePort(),
+                plugin.getSettings().getDatabaseName(),
+                plugin.getSettings().getDatabaseUsername(),
+                plugin.getSettings().getDatabasePassword(),
+                plugin.getSettings().isUseSSL(),
+                plugin.getSettings().getMaximumPoolSize()));
+        }
+
+        return new MariaDBDatabaseHandler<>(plugin, type, this.connector);
+    }
 }

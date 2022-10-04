@@ -1,6 +1,8 @@
 package world.bentobox.bentobox;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.bukkit.Material;
@@ -11,8 +13,10 @@ import world.bentobox.bentobox.api.configuration.ConfigObject;
 import world.bentobox.bentobox.api.configuration.StoreAt;
 import world.bentobox.bentobox.database.DatabaseSetup.DatabaseType;
 
+
 /**
  * All the plugin settings are here
+ *
  * @author tastybento
  */
 @StoreAt(filename="config.yml") // Explicitly call out what name this should have.
@@ -68,6 +72,7 @@ public class Settings implements ConfigObject {
     @ConfigComment("Transition options enable migration from one database type to another. Use /bbox migrate.")
     @ConfigComment("YAML and JSON are file-based databases.")
     @ConfigComment("MYSQL might not work with all implementations: if available, use a dedicated database type (e.g. MARIADB).")
+    @ConfigComment("BentoBox uses HikariCP for connecting with SQL databases.")
     @ConfigComment("If you use MONGODB, you must also run the BSBMongo plugin (not addon).")
     @ConfigComment("See https://github.com/tastybento/bsbMongo/releases/.")
     @ConfigEntry(path = "general.database.type", video = "https://youtu.be/FFzCk5-y7-g")
@@ -107,6 +112,11 @@ public class Settings implements ConfigObject {
     @ConfigEntry(path = "general.database.max-saved-islands-per-tick")
     private int maxSavedIslandsPerTick = 20;
 
+    @ConfigComment("Number of active connections to the SQL database at the same time.")
+    @ConfigComment("Default 10.")
+    @ConfigEntry(path = "general.database.max-pool-size", since = "1.21.0")
+    private int maximumPoolSize = 10;
+
     @ConfigComment("Enable SSL connection to MongoDB, MariaDB, MySQL and PostgreSQL databases.")
     @ConfigEntry(path = "general.database.use-ssl", since = "1.12.0")
     private boolean useSSL = false;
@@ -117,6 +127,16 @@ public class Settings implements ConfigObject {
     @ConfigComment("Be careful about length - databases usually have a limit of 63 characters for table lengths")
     @ConfigEntry(path = "general.database.prefix-character", since = "1.13.0")
     private String databasePrefix = "";
+
+    @ConfigComment("Custom connection datasource properties that will be applied to connection pool.")
+    @ConfigComment("Check available values to your SQL driver implementation.")
+    @ConfigComment("Example: ")
+    @ConfigComment("  custom-properties: ")
+    @ConfigComment("    cachePrepStmts: 'true'")
+    @ConfigComment("    prepStmtCacheSize: '250'")
+    @ConfigComment("    prepStmtCacheSqlLimit: '2048'")
+    @ConfigEntry(path = "general.database.custom-properties", since = "1.21.0")
+    private Map<String, String> customPoolProperties = new HashMap<>();
 
     @ConfigComment("MongoDB client connection URI to override default connection options.")
     @ConfigComment("See: https://docs.mongodb.com/manual/reference/connection-string/")
@@ -955,6 +975,17 @@ public class Settings implements ConfigObject {
 
 
     /**
+     * Gets maximum pool size.
+     *
+     * @return the maximum pool size
+     */
+    public int getMaximumPoolSize()
+    {
+        return maximumPoolSize;
+    }
+    
+    
+    /**
      * Gets safe spot search range.
      *
      * @return the safe spot search range
@@ -962,6 +993,39 @@ public class Settings implements ConfigObject {
     public int getSafeSpotSearchRange()
     {
         return safeSpotSearchRange;
+    }
+
+
+    /**
+     * Sets maximum pool size.
+     *
+     * @param maximumPoolSize the maximum pool size
+     */
+    public void setMaximumPoolSize(int maximumPoolSize)
+    {
+        this.maximumPoolSize = maximumPoolSize;
+    }
+
+
+    /**
+     * Gets custom pool properties.
+     *
+     * @return the custom pool properties
+     */
+    public Map<String, String> getCustomPoolProperties()
+    {
+        return customPoolProperties;
+    }
+
+
+    /**
+     * Sets custom pool properties.
+     *
+     * @param customPoolProperties the custom pool properties
+     */
+    public void setCustomPoolProperties(Map<String, String> customPoolProperties)
+    {
+        this.customPoolProperties = customPoolProperties;
     }
 
 
