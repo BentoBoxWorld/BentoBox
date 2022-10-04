@@ -58,19 +58,23 @@ public class BreakBlocksListener extends FlagListener {
      * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void onPlayerInteract(final PlayerInteractEvent e) {
+    public void onPlayerInteract(final PlayerInteractEvent e)
+    {
         // Only handle hitting things
-        if (!e.getAction().equals(Action.LEFT_CLICK_BLOCK)) {
+        if (!e.getAction().equals(Action.LEFT_CLICK_BLOCK) || e.getClickedBlock() == null)
+        {
             return;
         }
+
         Player p = e.getPlayer();
         Location l = e.getClickedBlock().getLocation();
-        switch (e.getClickedBlock().getType()) {
-        case CAKE -> checkIsland(e, p, l, Flags.BREAK_BLOCKS);
-        case SPAWNER ->  checkIsland(e, p, l, Flags.BREAK_SPAWNERS);
-        case DRAGON_EGG ->  checkIsland(e, p, l, Flags.DRAGON_EGG);
-        case HOPPER -> checkIsland(e, p, l, Flags.BREAK_HOPPERS);
-        default -> {}
+        
+        switch (e.getClickedBlock().getType())
+        {
+            case CAKE -> this.checkIsland(e, p, l, Flags.BREAK_BLOCKS);
+            case SPAWNER -> this.checkIsland(e, p, l, Flags.BREAK_SPAWNERS);
+            case DRAGON_EGG -> this.checkIsland(e, p, l, Flags.DRAGON_EGG);
+            case HOPPER -> this.checkIsland(e, p, l, Flags.BREAK_HOPPERS);
         }
     }
 
@@ -79,16 +83,26 @@ public class BreakBlocksListener extends FlagListener {
      * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
-    public void onVehicleDamageEvent(VehicleDamageEvent e) {
+    public void onVehicleDamageEvent(VehicleDamageEvent e)
+    {
         Location l = e.getVehicle().getLocation();
-        if (getIWM().inWorld(l) && e.getAttacker() instanceof Player p) {
-            String vehicleType = e.getVehicle().getType().toString();
-            if (e.getVehicle().getType().equals(EntityType.BOAT)) {
-                checkIsland(e, p, l, Flags.BOAT);
-            } else if (vehicleType.contains("MINECART")) {
-                checkIsland(e, p, l, Flags.MINECART);
-            } else {
-                checkIsland(e, p, l, Flags.BREAK_BLOCKS);
+
+        if (getIWM().inWorld(l) && e.getAttacker() instanceof Player p)
+        {
+            String vehicleType = e.getVehicle().getType().name();
+
+            // 1.19 introduced Chest Boat.
+            if (vehicleType.contains("BOAT"))
+            {
+                this.checkIsland(e, p, l, Flags.BOAT);
+            }
+            else if (vehicleType.contains("MINECART"))
+            {
+                this.checkIsland(e, p, l, Flags.MINECART);
+            }
+            else
+            {
+                this.checkIsland(e, p, l, Flags.BREAK_BLOCKS);
             }
         }
     }

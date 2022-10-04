@@ -110,13 +110,13 @@ public class GeoMobLimitTabTest {
         assertEquals("AXOLOTL", list.get(0));
 
         // Click on AXOLOTL
-        tab.onClick(panel, user, ClickType.LEFT, 9);
+        tab.onClick(panel, user, ClickType.LEFT, 10);
         list.forEach(System.out::println);
         assertEquals(2, list.size());
         assertEquals("COW", list.get(1));
         assertEquals("BAT", list.get(0));
         // Click on AXOLOTL again to have it added
-        tab.onClick(panel, user, ClickType.LEFT, 9);
+        tab.onClick(panel, user, ClickType.LEFT, 10);
         assertEquals(3, list.size());
         assertEquals("BAT", list.get(0));
         assertEquals("COW", list.get(1));

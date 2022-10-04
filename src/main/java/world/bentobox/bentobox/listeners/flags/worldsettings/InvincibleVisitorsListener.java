@@ -12,6 +12,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.EntityTargetEvent;
+import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 import org.bukkit.event.inventory.ClickType;
 
 import world.bentobox.bentobox.BentoBox;
@@ -157,5 +159,28 @@ public class InvincibleVisitorsListener extends FlagListener implements ClickHan
     }
 
 
+    /**
+     * This listener cancels entity targeting a player if he is a visitor, and visitors are immune to entity damage.
+     * @param e EntityTargetLivingEntityEvent
+     */
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onVisitorTargeting(EntityTargetLivingEntityEvent e)
+    {
+        World world = e.getEntity().getWorld();
+
+        if (!(e.getTarget() instanceof Player p) ||
+            !this.getIWM().inWorld(world) ||
+            e.getTarget().hasMetadata("NPC") ||
+            this.getIslands().userIsOnIsland(world, User.getInstance(e.getTarget())) ||
+            this.PVPAllowed(p.getLocation()) ||
+            e.getReason() == EntityTargetEvent.TargetReason.TARGET_DIED ||
+            !this.getIWM().getIvSettings(world).contains(DamageCause.ENTITY_ATTACK.name()))
+        {
+            return;
+        }
+
+        // Cancel targeting event.
+        e.setCancelled(true);
+    }
 }
 

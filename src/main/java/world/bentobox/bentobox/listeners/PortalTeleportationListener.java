@@ -40,7 +40,11 @@ import world.bentobox.bentobox.util.teleport.SafeSpotTeleport;
  * Handles teleportation via the Nether/End portals to the Nether and End dimensions of the worlds added by the GameModeAddons.
  *
  * @author tastybento
+ * @deprecated replaced by better listeners.
+ * @see world.bentobox.bentobox.listeners.teleports.PlayerTeleportListener
+ * @see world.bentobox.bentobox.listeners.teleports.EntityTeleportListener
  */
+@Deprecated
 public class PortalTeleportationListener implements Listener {
 
     private final BentoBox plugin;
@@ -167,7 +171,7 @@ public class PortalTeleportationListener implements Listener {
             return false;
         }
 
-        if (!Bukkit.getServer().getAllowNether()) {
+        if (!Bukkit.getAllowNether()) {
             e.setCancelled(true);
         }
 
@@ -256,19 +260,30 @@ public class PortalTeleportationListener implements Listener {
      * @param env - environment
      * @param toWorld - to world
      */
-    Location getTo(PlayerEntityPortalEvent e, Environment env, World toWorld) {
+    Location getTo(PlayerEntityPortalEvent e, Environment env, World toWorld)
+    {
         // Null check - not that useful
-        if (e.getFrom().getWorld() == null || toWorld == null) {
+        if (e.getFrom().getWorld() == null || toWorld == null)
+        {
             return null;
         }
-        if (!e.getCanCreatePortal()) {
+
+        Location toLocation = e.getIsland().map(island -> island.getSpawnPoint(env)).
+            orElse(e.getFrom().toVector().toLocation(toWorld));
+
+        // Limit Y to the min/max world height.
+        toLocation.setY(Math.max(Math.min(toLocation.getY(), toWorld.getMaxHeight()), toWorld.getMinHeight()));
+
+        if (!e.getCanCreatePortal())
+        {
             // Legacy portaling
-            return e.getIsland().map(i -> i.getSpawnPoint(env)).orElse(e.getFrom().toVector().toLocation(toWorld));
+            return toLocation;
         }
         // Make portals
         // For anywhere other than the end - it is the player's location that is used
-        if (!env.equals(Environment.THE_END)) {
-            return e.getFrom().toVector().toLocation(toWorld);
+        if (!env.equals(Environment.THE_END))
+        {
+            return toLocation;
         }
         // If the-end then we want the platform to always be generated in the same place no matter where
         // they enter the portal
@@ -279,13 +294,15 @@ public class PortalTeleportationListener implements Listener {
         int j = z;
         int k = y;
         // If the from is not a portal, then we have to find it
-        if (!e.getFrom().getBlock().getType().equals(Material.END_PORTAL)) {
+        if (!e.getFrom().getBlock().getType().equals(Material.END_PORTAL))
+        {
             // Find the portal - due to speed, it is possible that the player will be below or above the portal
-            for (k = 0; (k < e.getWorld().getMaxHeight()) && !e.getWorld().getBlockAt(x, k, z).getType().equals(Material.END_PORTAL); k++);
+            for (k = toWorld.getMinHeight(); (k < e.getWorld().getMaxHeight()) &&
+                !e.getWorld().getBlockAt(x, k, z).getType().equals(Material.END_PORTAL); k++);
         }
         // Find the maximum x and z corner
-        for (; (i < x + 5) && e.getWorld().getBlockAt(i, k, z).getType().equals(Material.END_PORTAL); i++);
-        for (; (j < z + 5) && e.getWorld().getBlockAt(x, k, j).getType().equals(Material.END_PORTAL); j++);
+        for (; (i < x + 5) && e.getWorld().getBlockAt(i, k, z).getType().equals(Material.END_PORTAL); i++) ;
+        for (; (j < z + 5) && e.getWorld().getBlockAt(x, k, j).getType().equals(Material.END_PORTAL); j++) ;
 
         // Mojang end platform generation is:
         // AIR
@@ -293,7 +310,7 @@ public class PortalTeleportationListener implements Listener {
         // OBSIDIAN
         // and player is placed on second air block above obsidian.
         // If Y coordinate is below 2, then obsidian platform is not generated and player falls in void.
-        return new Location(toWorld, i, Math.max(2, k), j);
+        return new Location(toWorld, i, Math.max(toWorld.getMinHeight() + 2, k), j);
     }
 
 
@@ -304,7 +321,9 @@ public class PortalTeleportationListener implements Listener {
      * @return true or false
      */
     private boolean isMakePortals(GameModeAddon gm, Environment env) {
-        return env.equals(Environment.NETHER) ? gm.getWorldSettings().isMakeNetherPortals() : gm.getWorldSettings().isMakeEndPortals();
+        return env.equals(Environment.NETHER) ?
+            gm.getWorldSettings().isMakeNetherPortals() && Bukkit.getAllowNether() :
+            gm.getWorldSettings().isMakeEndPortals() && Bukkit.getAllowEnd();
     }
 
     /**

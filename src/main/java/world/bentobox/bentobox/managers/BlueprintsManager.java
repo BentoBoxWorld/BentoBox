@@ -1,22 +1,11 @@
 package world.bentobox.bentobox.managers;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.jar.JarFile;
@@ -216,13 +205,24 @@ public class BlueprintsManager {
             bpf.mkdirs();
         }
         boolean loaded = false;
-        File[] bundles = bpf.listFiles((dir, name) -> name.toLowerCase(Locale.ENGLISH).endsWith(BLUEPRINT_BUNDLE_SUFFIX));
+        File[] bundles = bpf.listFiles((dir, name) -> name.endsWith(BLUEPRINT_BUNDLE_SUFFIX));
+
         if (bundles == null || bundles.length == 0) {
             return false;
         }
+
         for (File file : bundles) {
-            try {
-                BlueprintBundle bb = gson.fromJson(new FileReader(file), BlueprintBundle.class);
+            
+            try (FileReader fileReader = new FileReader(file, StandardCharsets.UTF_8))
+            {
+                if (!file.getName().equals(Util.sanitizeInput(file.getName())))
+                {
+                    // fail on all blueprints with incorrect names.
+                    throw new InputMismatchException(file.getName());
+                }
+
+                BlueprintBundle bb = gson.fromJson(fileReader, BlueprintBundle.class);
+
                 if (bb != null) {
                     // Make sure there is no existing bundle with the same uniqueId
                     if (blueprintBundles.get(addon).stream().noneMatch(bundle ->  bundle.getUniqueId().equals(bb.getUniqueId()))) {
@@ -299,13 +299,17 @@ public class BlueprintsManager {
             plugin.logError("There is no blueprint folder for addon " + addon.getDescription().getName());
             bpf.mkdirs();
         }
-        File[] bps = bpf.listFiles((dir, name) -> name.toLowerCase(Locale.ENGLISH).endsWith(BLUEPRINT_SUFFIX));
+        File[] bps = bpf.listFiles((dir, name) -> name.endsWith(BLUEPRINT_SUFFIX));
+
         if (bps == null || bps.length == 0) {
             plugin.logError("No blueprints found for " + addon.getDescription().getName());
             return;
         }
         for (File file : bps) {
-            String fileName = file.getName().substring(0, file.getName().length() - BLUEPRINT_SUFFIX.length());
+
+            // Input sanitization is required for weirdos that edit files manually.
+            String fileName = Util.sanitizeInput(file.getName().substring(0, file.getName().length() - BLUEPRINT_SUFFIX.length()));
+
             try {
                 Blueprint bp = new BlueprintClipboardManager(plugin, bpf).loadBlueprint(fileName);
                 bp.setName(fileName);
@@ -354,9 +358,9 @@ public class BlueprintsManager {
             if (!bpf.exists()) {
                 bpf.mkdirs();
             }
-            File fileName = new File(bpf, sanitizeFileName(bb.getUniqueId()) + BLUEPRINT_BUNDLE_SUFFIX);
+            File fileName = new File(bpf, bb.getUniqueId() + BLUEPRINT_BUNDLE_SUFFIX);
             String toStore = gson.toJson(bb, BlueprintBundle.class);
-            try (FileWriter fileWriter = new FileWriter(fileName)) {
+            try (FileWriter fileWriter = new FileWriter(fileName, StandardCharsets.UTF_8)) {
                 fileWriter.write(toStore);
             } catch (IOException e) {
                 plugin.logError("Could not save blueprint bundle file: " + e.getMessage());
@@ -364,20 +368,6 @@ public class BlueprintsManager {
         });
     }
 
-    /**
-     * Sanitizes a filename as much as possible retaining the original name
-     * @param name - filename to sanitize
-     * @return sanitized name
-     */
-    public static String sanitizeFileName(String name) {
-        return name
-                .chars()
-                .mapToObj(i -> (char) i)
-                .map(c -> Character.isWhitespace(c) ? '_' : c)
-                .filter(c -> Character.isLetterOrDigit(c) || c == '-' || c == '_')
-                .map(String::valueOf)
-                .collect(Collectors.joining());
-    }
 
     /**
      * Saves all the blueprint bundles
@@ -405,25 +395,34 @@ public class BlueprintsManager {
      * @param name name of the Blueprint to delete
      * @since 1.9.0
      */
-    public void deleteBlueprint(GameModeAddon addon, String name) {
-        List<Blueprint> addonBlueprints = blueprints.get(addon);
+    public void deleteBlueprint(GameModeAddon addon, String name)
+    {
+        List<Blueprint> addonBlueprints = this.blueprints.get(addon);
         Iterator<Blueprint> it = addonBlueprints.iterator();
-        while (it.hasNext()) {
-            Blueprint b = it.next();
-            if (b.getName().equalsIgnoreCase(name)) {
-                it.remove();
-                blueprints.put(addon, addonBlueprints);
 
-                File file = new File(getBlueprintsFolder(addon), b.getName() + BLUEPRINT_SUFFIX);
+        while (it.hasNext())
+        {
+            Blueprint b = it.next();
+
+            if (b.getName().equalsIgnoreCase(name))
+            {
+                it.remove();
+
+                File file = new File(this.getBlueprintsFolder(addon), b.getName() + BLUEPRINT_SUFFIX);
+
                 // Delete the file
-                try {
+                try
+                {
                     Files.deleteIfExists(file.toPath());
-                } catch (IOException e) {
-                    plugin.logError("Could not delete Blueprint " + e.getLocalizedMessage());
+                }
+                catch (IOException e)
+                {
+                    this.plugin.logError("Could not delete Blueprint " + e.getLocalizedMessage());
                 }
             }
         }
     }
+
 
     /**
      * Paste the islands to world
@@ -450,7 +449,7 @@ public class BlueprintsManager {
             plugin.logError("Tried to paste '" + name + "' but the bundle is not loaded!");
             return false;
         }
-        BlueprintBundle bb = getBlueprintBundles(addon).get(name.toLowerCase(Locale.ENGLISH));
+        BlueprintBundle bb = getBlueprintBundles(addon).get(name.toLowerCase());
         if (!blueprints.containsKey(addon) || blueprints.get(addon).isEmpty()) {
             plugin.logError("No blueprints loaded for bundle '" + name + "'!");
             return false;
@@ -467,7 +466,7 @@ public class BlueprintsManager {
         // Paste
         if (bp != null) {
             new BlueprintPaster(plugin, bp, addon.getOverWorld(), island).paste().thenAccept(b -> pasteNether(addon, bb, island).thenAccept(b2 ->
-            pasteEnd(addon, bb, island).thenAccept(b3 -> Bukkit.getScheduler().runTask(plugin, task))));
+            pasteEnd(addon, bb, island).thenAccept(message -> sendMessage(island)).thenAccept(b3 -> Bukkit.getScheduler().runTask(plugin, task))));
         }
         return true;
 
@@ -500,6 +499,18 @@ public class BlueprintsManager {
         return CompletableFuture.completedFuture(false);
     }
 
+
+    /**
+     * This method just sends a message to the island owner that island creating is completed.
+     * @param island Island which owner must receive a message.
+     */
+    private void sendMessage(Island island) {
+        if (island != null && island.getOwner() != null) {
+            final Optional<User> owner = Optional.of(island).map(i -> User.getInstance(i.getOwner()));
+            owner.ifPresent(user -> user.sendMessage("commands.island.create.pasting.done"));
+        }
+    }
+
     /**
      * Validate if the bundle name is valid or not
      *
@@ -511,7 +522,7 @@ public class BlueprintsManager {
         if (name == null) {
             return null;
         }
-        if (blueprintBundles.containsKey(addon) && getBlueprintBundles(addon).containsKey(name.toLowerCase(Locale.ENGLISH))) {
+        if (blueprintBundles.containsKey(addon) && getBlueprintBundles(addon).containsKey(name)) {
             return name;
         }
         return null;
@@ -543,7 +554,7 @@ public class BlueprintsManager {
         // Permission
         String permission = addon.getPermissionPrefix() + "island.create." + name;
         // Get Blueprint bundle
-        BlueprintBundle bb = getBlueprintBundles((GameModeAddon) addon).get(name.toLowerCase(Locale.ENGLISH));
+        BlueprintBundle bb = getBlueprintBundles((GameModeAddon) addon).get(name.toLowerCase());
         if (bb == null || (bb.isRequirePermission() && !name.equals(DEFAULT_BUNDLE_NAME) && !user.hasPermission(permission))) {
             user.sendMessage("general.errors.no-permission", TextVariables.PERMISSION, permission);
             return false;
@@ -562,7 +573,7 @@ public class BlueprintsManager {
             blueprintBundles.get(addon).removeIf(k -> k.getUniqueId().equals(bb.getUniqueId()));
         }
         File bpf = getBlueprintsFolder(addon);
-        File fileName = new File(bpf, sanitizeFileName(bb.getUniqueId()) + BLUEPRINT_BUNDLE_SUFFIX);
+        File fileName = new File(bpf, bb.getUniqueId() + BLUEPRINT_BUNDLE_SUFFIX);
         try {
             Files.deleteIfExists(fileName.toPath());
         } catch (IOException e) {
@@ -576,25 +587,39 @@ public class BlueprintsManager {
      * @param addon - Game Mode Addon
      * @param bp    - blueprint
      * @param name  - new name
+     * @param displayName - display name for blueprint
      */
-    public void renameBlueprint(GameModeAddon addon, Blueprint bp, String name) {
-        if (bp.getName().equalsIgnoreCase(name)) {
+    public void renameBlueprint(GameModeAddon addon, Blueprint bp, String name, String displayName)
+    {
+        if (bp.getName().equalsIgnoreCase(name))
+        {
             // If the name is the same, do not do anything
             return;
         }
-        File bpf = getBlueprintsFolder(addon);
-        // Get the filename
-        File fileName = new File(bpf, sanitizeFileName(bp.getName()) + BLUEPRINT_SUFFIX);
-        // Delete the old file
-        try {
-            Files.deleteIfExists(fileName.toPath());
-        } catch (IOException e) {
-            plugin.logError("Could not delete old Blueprint " + e.getLocalizedMessage());
-        }
-        // Set new name
-        bp.setName(name.toLowerCase(Locale.ENGLISH));
-        // Save it
-        saveBlueprint(addon, bp);
-    }
 
+        File bpf = this.getBlueprintsFolder(addon);
+        // Get the filename
+        File fileName = new File(bpf, bp.getName() + BLUEPRINT_SUFFIX);
+        // Delete the old file
+
+        try
+        {
+            Files.deleteIfExists(fileName.toPath());
+        }
+        catch (IOException e)
+        {
+            this.plugin.logError("Could not delete old Blueprint " + e.getLocalizedMessage());
+        }
+
+        // Remove blueprint from the blueprints.
+        this.blueprints.get(addon).remove(bp);
+
+        // Set new name
+        bp.setName(name);
+        bp.setDisplayName(displayName);
+
+        // Save it
+        this.saveBlueprint(addon, bp);
+        this.addBlueprint(addon, bp);
+    }
 }

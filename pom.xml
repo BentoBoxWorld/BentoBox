@@ -63,27 +63,26 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>16</java.version>
+        <java.version>17</java.version>
         <!-- Non-minecraft related dependencies -->
         <powermock.version>2.0.9</powermock.version>
         <mongodb.version>3.12.8</mongodb.version>
         <!-- More visible way to change dependency versions -->
-        <spigot.version>1.18-R0.1-SNAPSHOT</spigot.version>
+        <spigot.version>1.19.2-R0.1-SNAPSHOT</spigot.version>
         <!-- Might differ from the last Spigot release for short periods 
             of time -->
-        <paper.version>1.16.5-R0.1-SNAPSHOT</paper.version>
+        <paper.version>1.19-R0.1-SNAPSHOT</paper.version>
         <bstats.version>2.2.1</bstats.version>
         <vault.version>1.7</vault.version>
         <placeholderapi.version>2.10.9</placeholderapi.version>
         <githubapi.version>d5f5e0bbd8</githubapi.version>
         <dynmap.version>3.0-SNAPSHOT</dynmap.version>
-        <worldedit.version>7.2.5</worldedit.version>
         <!-- Revision variable removes warning about dynamic version -->
         <revision>${build.version}-SNAPSHOT</revision>
         <!-- Do not change unless you want different name for local builds. -->
         <build.number>-LOCAL</build.number>
         <!-- This allows to change between versions. -->
-        <build.version>1.20.1</build.version>
+        <build.version>1.21.0</build.version>
         <sonar.organization>bentobox-world</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     </properties>
@@ -159,12 +158,8 @@
             <url>https://repo.mikeprimm.com/</url>
         </repository>
         <repository>
-            <id>worldedit-repo</id>
-            <url>https://maven.sk89q.com/repo/</url>
-        </repository>
-        <repository>
             <id>papermc</id>
-            <url>https://papermc.io/repo/repository/maven-public/</url>
+            <url>https://repo.papermc.io/repository/maven-public/</url>
         </repository>
         <repository>
             <!-- This is a temporary reference as the Maven Shade plugin 
@@ -175,6 +170,11 @@
         <repository>
             <id>minecraft-repo</id>
             <url>https://libraries.minecraft.net/</url>
+        </repository>
+        <!-- Spigot NMS required for world regeneration :( -->
+        <repository>
+            <id>nms-repo</id>
+            <url>https://repo.codemc.io/repository/nms/</url>
         </repository>
     </repositories>
 
@@ -188,7 +188,7 @@
         </dependency>
         <!-- Paper API -->
         <dependency>
-            <groupId>com.destroystokyo.paper</groupId>
+            <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
             <version>${paper.version}</version>
             <scope>provided</scope>
@@ -230,11 +230,13 @@
             <groupId>org.mongodb</groupId>
             <artifactId>mongodb-driver</artifactId>
             <version>${mongodb.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <version>9.1-901-1.jdbc4</version>
+            <scope>provided</scope>
         </dependency>
         <!-- Vault: as their maven repo is down, we need to get it from jitpack -->
         <!-- See https://github.com/MilkBowl/VaultAPI/issues/69 -->
@@ -256,12 +258,6 @@
             <groupId>us.dynmap</groupId>
             <artifactId>dynmap-api</artifactId>
             <version>${dynmap.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.sk89q.worldedit</groupId>
-            <artifactId>worldedit-core</artifactId>
-            <version>${worldedit.version}</version>
             <scope>provided</scope>
         </dependency>
         <!-- Shaded APIs -->
@@ -346,7 +342,7 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
                 <configuration>
-                    <release>16</release>
+                    <release>${java.version}</release>
                     <!-- <source>${java.version}</source> <target>${java.version}</target> -->
                 </configuration>
             </plugin>
@@ -396,7 +392,7 @@
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>3.3.0</version>
                 <configuration>
-                    <source>16</source>
+                    <source>${java.version}</source>
                     <show>private</show>
                     <failOnError>false</failOnError>
                     <additionalJOption>-Xdoclint:none</additionalJOption>

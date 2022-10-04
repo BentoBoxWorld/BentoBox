@@ -2,11 +2,7 @@ package world.bentobox.bentobox.util;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -25,19 +21,7 @@ import org.bukkit.World.Environment;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.Animals;
-import org.bukkit.entity.Bat;
-import org.bukkit.entity.EnderDragon;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Flying;
-import org.bukkit.entity.IronGolem;
-import org.bukkit.entity.Monster;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.PufferFish;
-import org.bukkit.entity.Shulker;
-import org.bukkit.entity.Slime;
-import org.bukkit.entity.Snowman;
-import org.bukkit.entity.WaterMob;
+import org.bukkit.entity.*;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
@@ -47,7 +31,10 @@ import io.papermc.lib.PaperLib;
 import io.papermc.lib.features.blockstatesnapshot.BlockStateSnapshotResult;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.nms.NMSAbstraction;
+import world.bentobox.bentobox.nms.PasteHandler;
+import world.bentobox.bentobox.nms.WorldRegenerator;
+import world.bentobox.bentobox.versions.ServerCompatibility;
+
 
 /**
  * A set of utility methods
@@ -64,7 +51,8 @@ public class Util {
     private static final String THE_END = "_the_end";
     private static String serverVersion = null;
     private static BentoBox plugin = BentoBox.getInstance();
-    private static NMSAbstraction nms = null;
+    private static PasteHandler pasteHandler = null;
+    private static WorldRegenerator regenerator = null;
 
     private Util() {}
 
@@ -353,8 +341,19 @@ public class Util {
         // Bat extends Mob
         // Most of passive mobs extends Animals
 
-        return entity instanceof Animals || entity instanceof IronGolem || entity instanceof Snowman ||
+        if (ServerCompatibility.getInstance().isVersion(ServerCompatibility.ServerVersion.V1_18,
+            ServerCompatibility.ServerVersion.V1_18_1,
+            ServerCompatibility.ServerVersion.V1_18_2))
+        {
+            return entity instanceof Animals || entity instanceof IronGolem || entity instanceof Snowman ||
                 entity instanceof WaterMob && !(entity instanceof PufferFish) || entity instanceof Bat;
+        }
+        else
+        {
+            return entity instanceof Animals || entity instanceof IronGolem || entity instanceof Snowman ||
+                entity instanceof WaterMob && !(entity instanceof PufferFish) || entity instanceof Bat ||
+                entity instanceof Allay;
+        }
     }
 
     /*
@@ -689,23 +688,56 @@ public class Util {
     }
 
     /**
-     * Set the NMS handler the plugin will use
-     * @param nms the NMS handler
+     * Set the regenerator the plugin will use
+     * @param regenerator the regenerator
      */
-    public static void setNms(NMSAbstraction nms) {
-        Util.nms = nms;
+    public static void setRegenerator(WorldRegenerator regenerator) {
+        Util.regenerator = regenerator;
     }
 
     /**
-     * Get the NMS handler the plugin will use
+     * Get the regenerator the plugin will use
+     * @return an accelerated regenerator class for this server
+     */
+    public static WorldRegenerator getRegenerator() {
+        if (regenerator == null) {
+            String serverPackageName = Bukkit.getServer().getClass().getPackage().getName();
+            String pluginPackageName = plugin.getClass().getPackage().getName();
+            String version = serverPackageName.substring(serverPackageName.lastIndexOf('.') + 1);
+            WorldRegenerator handler;
+            try {
+                Class<?> clazz = Class.forName(pluginPackageName + ".nms." + version + ".WorldRegeneratorImpl");
+                if (WorldRegenerator.class.isAssignableFrom(clazz)) {
+                    handler = (WorldRegenerator) clazz.getConstructor().newInstance();
+                } else {
+                    throw new IllegalStateException("Class " + clazz.getName() + " does not implement WorldRegenerator");
+                }
+            } catch (Exception e) {
+                plugin.logWarning("No Regenerator found for " + version + ", falling back to Bukkit API.");
+                handler = new world.bentobox.bentobox.nms.fallback.WorldRegeneratorImpl();
+            }
+            setRegenerator(handler);
+        }
+        return regenerator;
+    }
+
+    /**
+     * Set the paste handler the plugin will use
+     * @param pasteHandler the NMS paster
+     */
+    public static void setPasteHandler(PasteHandler pasteHandler) {
+        Util.pasteHandler = pasteHandler;
+    }
+
+    /**
+     * Get the paste handler the plugin will use
      * @return an NMS accelerated class for this server
      */
-    public static NMSAbstraction getNMS() {
-        if (nms == null) {
-            plugin.log("No NMS Handler was set, falling back to Bukkit API.");
-            setNms(new world.bentobox.bentobox.nms.fallback.NMSHandler());
+    public static PasteHandler getPasteHandler() {
+        if (pasteHandler == null) {
+            setPasteHandler(new world.bentobox.bentobox.nms.fallback.PasteHandlerImpl());
         }
-        return nms;
+        return pasteHandler;
     }
 
     /**
@@ -724,5 +756,20 @@ public class Util {
             }
         }
         return count;
+    }
+
+
+    /**
+     * This method removes all special characters that are not allowed in filenames (windows).
+     * It also includes any white-spaces, as for some reason, I do like it more without them.
+     * Also, all cases are lower cased for easier blueprint mapping.
+     * @param input Input that need to be sanitized.
+     * @return A sanitized input without illegal characters in names.
+     */
+    public static String sanitizeInput(String input)
+    {
+        return ChatColor.stripColor(
+            Util.translateColorCodes(input.replaceAll("[\\\\/:*?\"<>|\s]", "_"))).
+            toLowerCase();
     }
 }

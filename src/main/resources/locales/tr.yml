@@ -384,6 +384,7 @@ commands:
           prompt: İsim gir ya da çıkmak için 'quit' yaz.
           too-long: "&cÇok uzun."
           pick-a-unique-name: Lütfen daha benzersiz bir ad seçin
+          invalid-char-in-unique-name: "Unique name cannot contain, start, or end with special characters, neither contain number! "
           success: Başarılı!
           conversation-prefix: ">"
         description:

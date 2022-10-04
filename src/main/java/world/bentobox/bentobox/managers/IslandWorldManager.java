@@ -171,10 +171,13 @@ public class IslandWorldManager {
         }
 
         // Set default island settings
-        plugin.getFlagsManager().getFlags().stream().filter(f -> f.getType().equals(Flag.Type.PROTECTION))
-        .forEach(f -> settings.getDefaultIslandFlags().putIfAbsent(f, f.getDefaultRank()));
-        plugin.getFlagsManager().getFlags().stream().filter(f -> f.getType().equals(Flag.Type.SETTING))
-        .forEach(f -> settings.getDefaultIslandSettings().putIfAbsent(f, f.getDefaultRank()));
+        plugin.getFlagsManager().getFlags().stream().
+            filter(f -> f.getType().equals(Flag.Type.PROTECTION)).
+            forEach(f -> settings.getDefaultIslandFlagNames().putIfAbsent(f.getID(), f.getDefaultRank()));
+        plugin.getFlagsManager().getFlags().stream().
+            filter(f -> f.getType().equals(Flag.Type.SETTING)).
+            forEach(f -> settings.getDefaultIslandSettingNames().putIfAbsent(f.getID(), f.getDefaultRank()));
+
         Bukkit.getScheduler().runTask(plugin, () -> {
             // Set world difficulty
             Difficulty diff = settings.getDifficulty();
@@ -229,13 +232,13 @@ public class IslandWorldManager {
     }
 
     /**
-     * Value will always be greater than 0 and less than the world's max height.
+     * Value will always be greater than the world's min height and less than the world's max height.
      * @return the islandHeight
      */
     public int getIslandHeight(@NonNull World world) {
         if (gameModes.containsKey(world) && world.getMaxHeight() > 0) {
             return Math.min(world.getMaxHeight() - 1,
-                    Math.max(0, gameModes.get(world).getWorldSettings().getIslandHeight()));
+                    Math.max(world.getMinHeight(), gameModes.get(world).getWorldSettings().getIslandHeight()));
         }
         return 0;
     }
@@ -477,7 +480,9 @@ public class IslandWorldManager {
      * @return Friendly name or world name if world is not a game world
      */
     public String getFriendlyName(@NonNull World world) {
-        return gameModes.containsKey(world) ? gameModes.get(world).getWorldSettings().getFriendlyName() : world.getName();
+        return gameModes.containsKey(world) ?
+            gameModes.get(world).getWorldSettings().getFriendlyName() :
+            world.getName();
     }
 
     /**
@@ -699,8 +704,11 @@ public class IslandWorldManager {
      * @param world - world
      * @return default rank settings for new islands.
      */
-    public Map<Flag, Integer> getDefaultIslandFlags(@NonNull World world) {
-        return gameModes.containsKey(world) ? gameModes.get(world).getWorldSettings().getDefaultIslandFlags() : Collections.emptyMap();
+    public Map<Flag, Integer> getDefaultIslandFlags(@NonNull World world)
+    {
+        return this.gameModes.containsKey(world) ?
+            this.convertToFlags(this.gameModes.get(world).getWorldSettings().getDefaultIslandFlagNames()) :
+            Collections.emptyMap();
     }
 
     /**
@@ -715,12 +723,14 @@ public class IslandWorldManager {
     /**
      * Return island setting defaults for world
      *
-     * @param world
-     *            - world
+     * @param world - world
      * @return default settings for new islands
      */
-    public Map<Flag, Integer> getDefaultIslandSettings(@NonNull World world) {
-        return gameModes.containsKey(world) ? gameModes.get(world).getWorldSettings().getDefaultIslandSettings() : Collections.emptyMap();
+    public Map<Flag, Integer> getDefaultIslandSettings(@NonNull World world)
+    {
+        return this.gameModes.containsKey(world) ?
+            this.convertToFlags(this.gameModes.get(world).getWorldSettings().getDefaultIslandSettingNames()) :
+            Collections.emptyMap();
     }
 
     public boolean isUseOwnGenerator(@NonNull World world) {
@@ -921,4 +931,18 @@ public class IslandWorldManager {
         return gameModes.containsKey(world) && gameModes.get(world).getWorldSettings().isTeleportPlayerToIslandUponIslandCreation();
     }
 
+
+    /**
+     * This method migrates Map of String, Integer to Map of Flag, Integer.
+     * @param flagNamesMap Map that contains flag names to their values.
+     * @return Flag objects to their values.
+     * @since 1.21
+     */
+    private Map<Flag, Integer> convertToFlags(Map<String, Integer> flagNamesMap)
+    {
+        Map<Flag, Integer> flagMap = new HashMap<>();
+        flagNamesMap.forEach((key, value) ->
+            this.plugin.getFlagsManager().getFlag(key).ifPresent(flag -> flagMap.put(flag, value)));
+        return flagMap;
+    }
 }

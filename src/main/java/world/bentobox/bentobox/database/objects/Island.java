@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.GameMode;
 import org.bukkit.World.Environment;
 import org.bukkit.entity.Player;
 import org.bukkit.util.BoundingBox;
@@ -38,8 +39,6 @@ import world.bentobox.bentobox.api.metadata.MetaDataAble;
 import world.bentobox.bentobox.api.metadata.MetaDataValue;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.adapters.Adapter;
-import world.bentobox.bentobox.database.objects.adapters.FlagSerializer;
-import world.bentobox.bentobox.database.objects.adapters.FlagSerializer3;
 import world.bentobox.bentobox.database.objects.adapters.LogEntryListAdapter;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.RanksManager;
@@ -158,9 +157,8 @@ public class Island implements DataObject, MetaDataAble {
     private boolean purgeProtected = false;
 
     //// Protection flags ////
-    @Adapter(FlagSerializer.class)
     @Expose
-    private Map<Flag, Integer> flags = new HashMap<>();
+    private Map<String, Integer> flags = new HashMap<>();
 
     //// Island History ////
     @Adapter(LogEntryListAdapter.class)
@@ -179,9 +177,8 @@ public class Island implements DataObject, MetaDataAble {
     /**
      * Used to store flag cooldowns for this island
      */
-    @Adapter(FlagSerializer3.class)
     @Expose
-    private Map<Flag, Long> cooldowns = new HashMap<>();
+    private Map<String, Long> cooldowns = new HashMap<>();
 
     /**
      * Commands and the rank required to use them for this island
@@ -367,13 +364,13 @@ public class Island implements DataObject, MetaDataAble {
      * @return flag value
      */
     public int getFlag(@NonNull Flag flag) {
-        return flags.computeIfAbsent(flag, k -> flag.getDefaultRank());
+        return flags.computeIfAbsent(flag.getID(), k -> flag.getDefaultRank());
     }
 
     /**
      * @return the flags
      */
-    public Map<Flag, Integer> getFlags() {
+    public Map<String, Integer> getFlags() {
         return flags;
     }
 
@@ -643,6 +640,55 @@ public class Island implements DataObject, MetaDataAble {
         return world;
     }
 
+
+    /**
+     * @return the nether world
+     */
+    @Nullable
+    public World getNetherWorld()
+    {
+        return this.getWorld(Environment.NETHER);
+    }
+
+
+    /**
+     * @return the end world
+     */
+    @Nullable
+    public World getEndWorld()
+    {
+        return this.getWorld(Environment.THE_END);
+    }
+
+
+    /**
+     * This method returns this island world in given environment. This method can return {@code null} if dimension is
+     * disabled.
+     * @param environment The environment of the island world.
+     * @return the world in given environment.
+     */
+    @Nullable
+    public World getWorld(Environment environment)
+    {
+        if (Environment.NORMAL.equals(environment))
+        {
+            return this.world;
+        }
+        else if (Environment.THE_END.equals(environment) && this.isEndIslandEnabled())
+        {
+            return this.getPlugin().getIWM().getEndWorld(this.world);
+        }
+        else if (Environment.NETHER.equals(environment) && this.isNetherIslandEnabled())
+        {
+            return this.getPlugin().getIWM().getNetherWorld(this.world);
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+
     /**
      * @return the x coordinate of the island center
      */
@@ -679,8 +725,13 @@ public class Island implements DataObject, MetaDataAble {
      * @param location - location
      * @return true if in island space
      */
+    @SuppressWarnings("ConstantConditions")
     public boolean inIslandSpace(Location location) {
-        return Util.sameWorld(world, location.getWorld()) && inIslandSpace(location.getBlockX(), location.getBlockZ());
+        return Util.sameWorld(this.world, location.getWorld()) &&
+            (location.getWorld().getEnvironment().equals(Environment.NORMAL) ||
+                this.getPlugin().getIWM().isIslandNether(location.getWorld()) ||
+                this.getPlugin().getIWM().isIslandEnd(location.getWorld())) &&
+            this.inIslandSpace(location.getBlockX(), location.getBlockZ());
     }
 
     /**
@@ -693,12 +744,80 @@ public class Island implements DataObject, MetaDataAble {
     }
 
     /**
-     * Returns a {@link BoundingBox} of the full island space.
+     * Returns a {@link BoundingBox} of the full island space for overworld.
      * @return a {@link BoundingBox} of the full island space.
      * @since 1.5.2
      */
+    @SuppressWarnings("ConstantConditions")
+    @NotNull
     public BoundingBox getBoundingBox() {
-        return new BoundingBox(getMinX(), world.getMinHeight(), getMinZ(), getMaxX(), world.getMaxHeight(), getMaxZ());
+        return this.getBoundingBox(Environment.NORMAL);
+    }
+
+
+    /**
+     * Returns a {@link BoundingBox} of this island's space area in requested dimension.
+     * @param environment the requested dimension.
+     * @return a {@link BoundingBox} of this island's space area or {@code null} if island is not created in requested dimension.
+     * @since 1.21.0
+     */
+    @Nullable
+    public BoundingBox getBoundingBox(Environment environment)
+    {
+        BoundingBox boundingBox;
+
+        if (Environment.NORMAL.equals(environment))
+        {
+            // Return normal world bounding box.
+            boundingBox = new BoundingBox(this.getMinX(),
+                this.world.getMinHeight(),
+                this.getMinZ(),
+                this.getMaxX(),
+                this.world.getMaxHeight(),
+                this.getMaxZ());
+        }
+        else if (Environment.THE_END.equals(environment) && this.isEndIslandEnabled())
+        {
+            // If end world is generated, return end island bounding box.
+            //noinspection ConstantConditions
+            boundingBox = new BoundingBox(this.getMinX(),
+                this.getEndWorld().getMinHeight(),
+                this.getMinZ(),
+                this.getMaxX(),
+                this.getEndWorld().getMaxHeight(),
+                this.getMaxZ());
+        }
+        else if (Environment.NETHER.equals(environment) && this.isNetherIslandEnabled())
+        {
+            // If nether world is generated, return nether island bounding box.
+            //noinspection ConstantConditions
+            boundingBox = new BoundingBox(this.getMinX(),
+                this.getNetherWorld().getMinHeight(),
+                this.getMinZ(),
+                this.getMaxX(),
+                this.getNetherWorld().getMaxHeight(),
+                this.getMaxZ());
+        }
+        else
+        {
+            boundingBox = null;
+        }
+
+        return boundingBox;
+    }
+
+
+    /**
+     * Using this method in the filtering for getVisitors and hasVisitors
+     * @param player The player that must be checked.
+     * @return true if player is a visitor
+     */
+    private boolean playerIsVisitor(Player player) {
+        if (player.getGameMode() == GameMode.SPECTATOR) {
+            return false;
+        }
+
+        return onIsland(player.getLocation()) && getRank(User.getInstance(player)) == RanksManager.VISITOR_RANK;
     }
 
     /**
@@ -708,9 +827,7 @@ public class Island implements DataObject, MetaDataAble {
      */
     @NonNull
     public List<Player> getVisitors() {
-        return Bukkit.getOnlinePlayers().stream()
-                .filter(player -> onIsland(player.getLocation()) && getRank(User.getInstance(player)) == RanksManager.VISITOR_RANK)
-                .collect(Collectors.toList());
+        return Bukkit.getOnlinePlayers().stream().filter(this::playerIsVisitor).collect(Collectors.toList());
     }
 
     /**
@@ -722,7 +839,7 @@ public class Island implements DataObject, MetaDataAble {
      * @see #getVisitors()
      */
     public boolean hasVisitors() {
-        return Bukkit.getOnlinePlayers().stream().anyMatch(player -> onIsland(player.getLocation()) && getRank(User.getInstance(player)) == RanksManager.VISITOR_RANK);
+        return Bukkit.getOnlinePlayers().stream().anyMatch(this::playerIsVisitor);
     }
 
     /**
@@ -793,18 +910,82 @@ public class Island implements DataObject, MetaDataAble {
      * @param target location to check, not null
      * @return {@code true} if this location is within this island's protected area, {@code false} otherwise.
      */
+    @SuppressWarnings("ConstantConditions")
     public boolean onIsland(@NonNull Location target) {
-        return Util.sameWorld(world, target.getWorld()) && target.getBlockX() >= getMinProtectedX() && target.getBlockX() < (getMinProtectedX() + protectionRange * 2) && target.getBlockZ() >= getMinProtectedZ() && target.getBlockZ() < (getMinProtectedZ() + protectionRange * 2);
+        return Util.sameWorld(this.world, target.getWorld()) &&
+            (target.getWorld().getEnvironment().equals(Environment.NORMAL) ||
+                this.getPlugin().getIWM().isIslandNether(target.getWorld()) ||
+                this.getPlugin().getIWM().isIslandEnd(target.getWorld())) &&
+            target.getBlockX() >= this.getMinProtectedX() &&
+            target.getBlockX() < (this.getMinProtectedX() + this.protectionRange * 2) &&
+            target.getBlockZ() >= this.getMinProtectedZ() &&
+            target.getBlockZ() < (this.getMinProtectedZ() + this.protectionRange * 2);
     }
 
     /**
-     * Returns a {@link BoundingBox} of this island's protected area.
+     * Returns a {@link BoundingBox} of this island's protected area for overworld.
      * @return a {@link BoundingBox} of this island's protected area.
      * @since 1.5.2
      */
+    @SuppressWarnings("ConstantConditions")
+    @NotNull
     public BoundingBox getProtectionBoundingBox() {
-        return new BoundingBox(getMinProtectedX(), 0.0D, getMinProtectedZ(), getMaxProtectedX()-1.0D, world.getMaxHeight(), getMaxProtectedZ()-1.0D);
+        return this.getProtectionBoundingBox(Environment.NORMAL);
     }
+
+
+    /**
+     * Returns a {@link BoundingBox} of this island's protected area.
+     * @param environment an environment of bounding box area.
+     * @return a {@link BoundingBox} of this island's protected area or {@code null} if island is not created in required dimension.
+     * in required dimension.
+     * @since 1.21.0
+     */
+    @Nullable
+    public BoundingBox getProtectionBoundingBox(Environment environment)
+    {
+        BoundingBox boundingBox;
+
+        if (Environment.NORMAL.equals(environment))
+        {
+            // Return normal world bounding box.
+            boundingBox = new BoundingBox(this.getMinProtectedX(),
+                this.world.getMinHeight(),
+                this.getMinProtectedZ(),
+                this.getMaxProtectedX(),
+                this.world.getMaxHeight(),
+                this.getMaxProtectedZ());
+        }
+        else if (Environment.THE_END.equals(environment) && this.isEndIslandEnabled())
+        {
+            // If end world is generated, return end island bounding box.
+            //noinspection ConstantConditions
+            boundingBox = new BoundingBox(this.getMinProtectedX(),
+                this.getEndWorld().getMinHeight(),
+                this.getMinProtectedZ(),
+                this.getMaxProtectedX(),
+                this.getEndWorld().getMaxHeight(),
+                this.getMaxProtectedZ());
+        }
+        else if (Environment.NETHER.equals(environment) && this.isNetherIslandEnabled())
+        {
+            // If nether world is generated, return nether island bounding box.
+            //noinspection ConstantConditions
+            boundingBox = new BoundingBox(this.getMinProtectedX(),
+                this.getNetherWorld().getMinHeight(),
+                this.getMinProtectedZ(),
+                this.getMaxProtectedX(),
+                this.getNetherWorld().getMaxHeight(),
+                this.getMaxProtectedZ());
+        }
+        else
+        {
+            boundingBox = null;
+        }
+
+        return boundingBox;
+    }
+
 
     /**
      * Removes a player from the team member map. Generally, you should
@@ -851,7 +1032,7 @@ public class Island implements DataObject, MetaDataAble {
      * @param doSubflags - whether to set subflags
      */
     public void setFlag(Flag flag, int value, boolean doSubflags) {
-        flags.put(flag, value);
+        flags.put(flag.getID(), value);
         // Subflag support
         if (doSubflags && flag.hasSubflags()) {
             // Ensure that a subflag isn't a subflag of itself or else we're in trouble!
@@ -863,7 +1044,7 @@ public class Island implements DataObject, MetaDataAble {
     /**
      * @param flags the flags to set
      */
-    public void setFlags(Map<Flag, Integer> flags) {
+    public void setFlags(Map<String, Integer> flags) {
         this.flags = flags;
         setChanged();
     }
@@ -874,11 +1055,13 @@ public class Island implements DataObject, MetaDataAble {
      */
     public void setFlagsDefaults() {
         BentoBox plugin = BentoBox.getInstance();
-        Map<Flag, Integer> result = new HashMap<>();
-        plugin.getFlagsManager().getFlags().stream().filter(f -> f.getType().equals(Flag.Type.PROTECTION))
-        .forEach(f -> result.put(f, plugin.getIWM().getDefaultIslandFlags(world).getOrDefault(f, f.getDefaultRank())));
-        plugin.getFlagsManager().getFlags().stream().filter(f -> f.getType().equals(Flag.Type.SETTING))
-        .forEach(f -> result.put(f, plugin.getIWM().getDefaultIslandSettings(world).getOrDefault(f, f.getDefaultRank())));
+        Map<String, Integer> result = new HashMap<>();
+        plugin.getFlagsManager().getFlags().stream().
+            filter(f -> f.getType().equals(Flag.Type.PROTECTION)).
+            forEach(f -> result.put(f.getID(), plugin.getIWM().getDefaultIslandFlags(world).getOrDefault(f, f.getDefaultRank())));
+        plugin.getFlagsManager().getFlags().stream().
+            filter(f -> f.getType().equals(Flag.Type.SETTING)).
+            forEach(f -> result.put(f.getID(), plugin.getIWM().getDefaultIslandSettings(world).getOrDefault(f, f.getDefaultRank())));
         this.setFlags(result);
         setChanged();
     }
@@ -1120,7 +1303,7 @@ public class Island implements DataObject, MetaDataAble {
     public void setSettingsFlag(Flag flag, boolean state, boolean doSubflags) {
         int newState = state ? 1 : -1;
         if (flag.getType().equals(Flag.Type.SETTING) || flag.getType().equals(Flag.Type.WORLD_SETTING)) {
-            flags.put(flag, newState);
+            flags.put(flag.getID(), newState);
             if (doSubflags && flag.hasSubflags()) {
                 // If we have circular subflags or a flag is a subflag of itself we are in trouble!
                 flag.getSubflags().forEach(subflag -> setSettingsFlag(subflag, state, true));
@@ -1244,6 +1427,15 @@ public class Island implements DataObject, MetaDataAble {
     }
 
     /**
+     * Checks whether this island has its nether island mode enabled or not.
+     * @return {@code true} if this island has its nether island enabled, {@code false} otherwise.
+     * @since 1.21.0
+     */
+    public boolean isNetherIslandEnabled() {
+        return this.getPlugin().getIWM().isNetherGenerate(this.world) && this.getPlugin().getIWM().isNetherIslands(this.world);
+    }
+
+    /**
      * Checks whether this island has its end island generated or not.
      * @return {@code true} if this island has its end island generated, {@code false} otherwise.
      * @since 1.5.0
@@ -1255,16 +1447,26 @@ public class Island implements DataObject, MetaDataAble {
 
 
     /**
+     * Checks whether this island has its end island mode enabled or not.
+     * @return {@code true} if this island has its end island enabled, {@code false} otherwise.
+     * @since 1.21.0
+     */
+    public boolean isEndIslandEnabled() {
+        return this.getPlugin().getIWM().isEndGenerate(this.world) && this.getPlugin().getIWM().isEndIslands(this.world);
+    }
+
+
+    /**
      * Checks if a flag is on cooldown. Only stored in memory so a server restart will reset the cooldown.
      * @param flag - flag
      * @return true if on cooldown, false if not
      * @since 1.6.0
      */
     public boolean isCooldown(Flag flag) {
-        if (cooldowns.containsKey(flag) && cooldowns.get(flag) > System.currentTimeMillis()) {
+        if (cooldowns.containsKey(flag.getID()) && cooldowns.get(flag.getID()) > System.currentTimeMillis()) {
             return true;
         }
-        cooldowns.remove(flag);
+        cooldowns.remove(flag.getID());
         setChanged();
         return false;
     }
@@ -1274,21 +1476,21 @@ public class Island implements DataObject, MetaDataAble {
      * @param flag - Flag to cooldown
      */
     public void setCooldown(Flag flag) {
-        cooldowns.put(flag, flag.getCooldown() * 1000L + System.currentTimeMillis());
+        cooldowns.put(flag.getID(), flag.getCooldown() * 1000L + System.currentTimeMillis());
         setChanged();
     }
 
     /**
      * @return the cooldowns
      */
-    public Map<Flag, Long> getCooldowns() {
+    public Map<String, Long> getCooldowns() {
         return cooldowns;
     }
 
     /**
      * @param cooldowns the cooldowns to set
      */
-    public void setCooldowns(Map<Flag, Long> cooldowns) {
+    public void setCooldowns(Map<String, Long> cooldowns) {
         this.cooldowns = cooldowns;
         setChanged();
     }
@@ -1661,9 +1863,4 @@ public class Island implements DataObject, MetaDataAble {
                 + ", cooldowns=" + cooldowns + ", commandRanks=" + commandRanks + ", reserved=" + reserved
                 + ", metaData=" + metaData + ", homes=" + homes + ", maxHomes=" + maxHomes + "]";
     }
-
-
-
-
-
 }

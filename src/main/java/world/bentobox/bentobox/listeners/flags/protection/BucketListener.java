@@ -3,9 +3,10 @@ package world.bentobox.bentobox.listeners.flags.protection;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Axolotl;
+import org.bukkit.entity.Fish;
 import org.bukkit.entity.MushroomCow;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.TropicalFish;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
@@ -31,7 +32,7 @@ public class BucketListener extends FlagListener {
     public void onBucketEmpty(final PlayerBucketEmptyEvent e) {
         // This is where the water or lava actually will be dumped
         Block dumpBlock = e.getBlockClicked().getRelative(e.getBlockFace());
-        checkIsland(e, e.getPlayer(), dumpBlock.getLocation(), Flags.BUCKET);
+        this.checkIsland(e, e.getPlayer(), dumpBlock.getLocation(), Flags.BUCKET);
     }
 
     /**
@@ -42,19 +43,35 @@ public class BucketListener extends FlagListener {
     public void onBucketFill(final PlayerBucketFillEvent e) {
         Player p = e.getPlayer();
         Location l = e.getBlockClicked().getLocation();
+
+        if (e.getItemStack() == null)
+        {
+            // Null-pointer check.
+            return;
+        }
+
         // Check filling of various liquids
-        switch (e.getItemStack().getType()) {
-        case LAVA_BUCKET -> checkIsland(e, p, l, Flags.COLLECT_LAVA);
-        case WATER_BUCKET -> checkIsland(e, p, l, Flags.COLLECT_WATER);
-        case MILK_BUCKET -> checkIsland(e, p, l, Flags.MILKING);
-        default -> checkIsland(e, p, l, Flags.BUCKET);
+        switch (e.getItemStack().getType())
+        {
+            case LAVA_BUCKET -> this.checkIsland(e, p, l, Flags.COLLECT_LAVA);
+            case WATER_BUCKET -> this.checkIsland(e, p, l, Flags.COLLECT_WATER);
+            case POWDER_SNOW_BUCKET -> this.checkIsland(e, p, l, Flags.COLLECT_POWDERED_SNOW);
+            case MILK_BUCKET -> this.checkIsland(e, p, l, Flags.MILKING);
+            default -> this.checkIsland(e, p, l, Flags.BUCKET);
         }
     }
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onTropicalFishScooping(final PlayerInteractEntityEvent e) {
-        if (e.getRightClicked() instanceof TropicalFish && e.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.WATER_BUCKET)) {
-            checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.FISH_SCOOPING);
+        if (e.getRightClicked() instanceof Fish &&
+            e.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.WATER_BUCKET))
+        {
+            this.checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.FISH_SCOOPING);
+        }
+        else if (e.getRightClicked() instanceof Axolotl &&
+            e.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.WATER_BUCKET))
+        {
+            this.checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.AXOLOTL_SCOOPING);
         }
     }
 

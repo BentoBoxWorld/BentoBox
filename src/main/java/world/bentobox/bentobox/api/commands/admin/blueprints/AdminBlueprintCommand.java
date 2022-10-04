@@ -62,19 +62,29 @@ public class AdminBlueprintCommand extends ConfirmableCommand {
         return clipboards;
     }
 
-    protected void showClipboard(User user) {
-        displayClipboards.putIfAbsent(user, Bukkit.getScheduler().scheduleSyncRepeatingTask(getPlugin(), () -> {
-            if (!user.isPlayer() || !user.getPlayer().isOnline()) {
-                hideClipboard(user);
-            }
 
-            if (clipboards.containsKey(user.getUniqueId())) {
-                BlueprintClipboard clipboard = clipboards.get(user.getUniqueId());
-                paintAxis(user, clipboard);
-            }
+    /**
+     * This method shows clipboard for requested user.
+     * @param user User who need to see clipboard.
+     */
+    protected void showClipboard(User user)
+    {
+        this.displayClipboards.computeIfAbsent(user,
+            key -> Bukkit.getScheduler().scheduleSyncRepeatingTask(this.getPlugin(), () ->
+            {
+                if (!key.isPlayer() || !key.getPlayer().isOnline())
+                {
+                    this.hideClipboard(key);
+                }
 
-        }, 20, 20));
+                if (this.clipboards.containsKey(key.getUniqueId()))
+                {
+                    BlueprintClipboard clipboard = this.clipboards.get(key.getUniqueId());
+                    this.paintAxis(key, clipboard);
+                }
+            }, 20, 20));
     }
+
 
     private void paintAxis(User user, BlueprintClipboard clipboard) {
         if (clipboard.getPos1() == null || clipboard.getPos2() == null) {

@@ -85,7 +85,7 @@ public class BlueprintClipboard {
      * @param user - user
      * @return true if successful, false if pos1 or pos2 are undefined.
      */
-    public boolean copy(User user, boolean copyAir) {
+    public boolean copy(User user, boolean copyAir, boolean copyBiome) {
         if (copying) {
             user.sendMessage("commands.admin.blueprint.mid-copy");
             return false;
@@ -120,11 +120,11 @@ public class BlueprintClipboard {
 
         int speed = plugin.getSettings().getPasteSpeed();
         List<Vector> vectorsToCopy = getVectors(toCopy);
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> copyAsync(world, user, vectorsToCopy, speed, copyAir));
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> copyAsync(world, user, vectorsToCopy, speed, copyAir, copyBiome));
         return true;
     }
 
-    private void copyAsync(World world, User user, List<Vector> vectorsToCopy, int speed, boolean copyAir) {
+    private void copyAsync(World world, User user, List<Vector> vectorsToCopy, int speed, boolean copyAir, boolean copyBiome) {
         copying = false;
         copyTask = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
             if (copying) {
@@ -139,7 +139,7 @@ public class BlueprintClipboard {
                                 Math.rint(e.getLocation().getY()),
                                 Math.rint(e.getLocation().getZ())).equals(v))
                         .collect(Collectors.toList());
-                if (copyBlock(v.toLocation(world), copyAir, ents)) {
+                if (copyBlock(v.toLocation(world), copyAir, copyBiome, ents)) {
                     count++;
                 }
             });
@@ -179,7 +179,7 @@ public class BlueprintClipboard {
         return r;
     }
 
-    private boolean copyBlock(Location l, boolean copyAir, Collection<LivingEntity> entities) {
+    private boolean copyBlock(Location l, boolean copyAir, boolean copyBiome, Collection<LivingEntity> entities) {
         Block block = l.getBlock();
         if (!copyAir && block.getType().equals(Material.AIR) && entities.isEmpty()) {
             return false;
@@ -203,20 +203,23 @@ public class BlueprintClipboard {
             return true;
         }
 
-
-        BlueprintBlock b = bluePrintBlock(pos, block);
+        BlueprintBlock b = bluePrintBlock(pos, block, copyBiome);
         if (b != null) {
             this.bpBlocks.put(pos, b);
         }
         return true;
     }
 
-    private BlueprintBlock bluePrintBlock(Vector pos, Block block) {
+    private BlueprintBlock bluePrintBlock(Vector pos, Block block, boolean copyBiome) {
         // Block state
         BlockState blockState = block.getState();
         BlueprintBlock b = new BlueprintBlock(block.getBlockData().getAsString());
-        // Biome
-        b.setBiome(block.getBiome());
+
+        if (copyBiome) {
+            // Biome
+            b.setBiome(block.getBiome());
+        }
+
         // Signs
         if (blockState instanceof Sign sign) {
             b.setSignLines(Arrays.asList(sign.getLines()));

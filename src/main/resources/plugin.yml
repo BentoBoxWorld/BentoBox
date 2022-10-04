@@ -1,7 +1,7 @@
 name: BentoBox
 main: world.bentobox.bentobox.BentoBox
 version: ${project.version}${build.number}
-api-version: "1.17"
+api-version: "1.18"
 
 authors: [tastybento, Poslovitch]
 contributors: ["The BentoBoxWorld Community"]
@@ -17,7 +17,6 @@ softdepend:
   - Vault
   - PlaceholderAPI
   - dynmap
-  - WorldEdit
   - WorldBorderAPI
   - BsbMongo
   - WorldGeneratorApi
@@ -27,6 +26,11 @@ softdepend:
   - LuckPerms
   - HolographicDisplays
   - EconomyPlus
+
+libraries:
+  - mysql:mysql-connector-java:8.0.27
+  - org.mongodb:mongodb-driver:${mongodb.version}
+  - postgresql:postgresql:9.1-901-1.jdbc4
 
 permissions:
   bentobox.admin:

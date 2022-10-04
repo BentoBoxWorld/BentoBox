@@ -24,6 +24,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
+import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
 import org.junit.After;
 import org.junit.Before;
@@ -88,9 +89,11 @@ public class IslandTest {
         when(iwm.getIslandDistance(any())).thenReturn(DISTANCE);
 
         // Location
-        //when(location.getWorld()).thenReturn(world);
         when(location.clone()).thenReturn(location);
         when(world.getName()).thenReturn("bskyblock_world");
+        when(location.getWorld()).thenReturn(world);
+        when(world.getEnvironment()).thenReturn(Environment.NORMAL);
+        when(world.toString()).thenReturn(null);
 
         // User
         when(user.getUniqueId()).thenReturn(uuid);
@@ -419,7 +422,7 @@ public class IslandTest {
      */
     @Test
     public void testGetWorld() {
-        assertNull(i.getWorld());
+        assertEquals(i.getWorld(), world);
     }
 
     /**
@@ -564,6 +567,7 @@ public class IslandTest {
     public void testGetProtectionBoundingBox() {
         i.setWorld(world);
         assertNotNull(i.getProtectionBoundingBox());
+        assertEquals("BoundingBox [minX=-100.0, minY=0.0, minZ=-100.0, maxX=100.0, maxY=0.0, maxZ=100.0]", i.getProtectionBoundingBox().toString());
     }
 
     /**
@@ -1018,7 +1022,7 @@ public class IslandTest {
      */
     @Test
     public void testSetCooldowns() {
-        i.setCooldowns(Collections.singletonMap(Flags.BREAK_BLOCKS, 123L));
+        i.setCooldowns(Collections.singletonMap(Flags.BREAK_BLOCKS.getID(), 123L));
         assertFalse(i.getCooldowns().isEmpty());
     }
 

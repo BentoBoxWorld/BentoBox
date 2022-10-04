@@ -1,7 +1,9 @@
 package world.bentobox.bentobox.util;
 
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.MissingFormatArgumentException;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -56,38 +58,78 @@ public class ItemParser {
             return defaultItemStack;
         }
 
+        ItemStack returnValue = defaultItemStack;
+
         String[] part = text.split(":");
 
         try {
+            // Because I am lazy, and do not want to rewrite every parser, I will just add custom data as
+            // parameter and remove that array part form input data.
+            Optional<String> first = Arrays.stream(part).filter(field -> field.matches("(CMD-[0-9]*)")).findFirst();
+            Integer customModelData = null;
+
+            if (first.isPresent()) {
+                // Ugly and fast way how to get rid of customData field.
+                String[] copyParts = new String[part.length - 1];
+                int j = 0;
+
+                for (String field : part) {
+                    if (!field.matches("(CMD-[0-9]*)")) {
+                        copyParts[j++] = field;
+                    }
+                }
+
+                // Replace original parts with the copy parts that does not have any CMD values.
+                part = copyParts;
+                // Now use value from Custom Data Model and parse it as integer.
+                customModelData = Integer.valueOf(first.get().replaceFirst("CMD-", ""));
+            }
+
             // Check if there are more properties for the item stack
             if (part.length == 1) {
                 // Parse material directly. It does not have any extra properties.
-                return new ItemStack(Material.valueOf(text.toUpperCase()));
+                returnValue = new ItemStack(Material.valueOf(part[0].toUpperCase()));
             }
             // Material-specific handling
             else if (part[0].contains("POTION") || part[0].equalsIgnoreCase("TIPPED_ARROW")) {
                 // Parse Potions and Tipped Arrows
-                return parsePotion(part);
+                returnValue = parsePotion(part);
             } else if (part[0].contains("BANNER")) {
                 // Parse Banners
-                return parseBanner(part);
+                returnValue = parseBanner(part);
             } else if (part[0].equalsIgnoreCase("PLAYER_HEAD")) {
                 // Parse Player Heads
-                return parsePlayerHead(part);
+                returnValue = parsePlayerHead(part);
             }
             // Generic handling
             else if (part.length == 2) {
                 // Material:Qty
-                return parseItemQuantity(part);
+                returnValue = parseItemQuantity(part);
             } else if (part.length == 3) {
                 // Material:Durability:Qty
-                return parseItemDurabilityAndQuantity(part);
+                returnValue = parseItemDurabilityAndQuantity(part);
+            }
+
+            if (returnValue != null) {
+                // If wrapper is just for code-style null-pointer checks.
+                if (customModelData != null) {
+                    // We have custom data model. Now assign it to the item-stack.
+                    ItemMeta itemMeta = returnValue.getItemMeta();
+
+                    // Another null-pointer check for materials that does not have item meta.
+                    if (itemMeta != null) {
+                        itemMeta.setCustomModelData(customModelData);
+                        // Update meta to the return item.
+                        returnValue.setItemMeta(itemMeta);
+                    }
+                }
             }
         } catch (Exception exception) {
             BentoBox.getInstance().logError("Could not parse item " + text + " " + exception.getLocalizedMessage());
+            returnValue = defaultItemStack;
         }
 
-        return defaultItemStack;
+        return returnValue;
     }
 
 

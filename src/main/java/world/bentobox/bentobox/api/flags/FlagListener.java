@@ -257,6 +257,14 @@ public abstract class FlagListener implements Listener {
     }
 
     /**
+     * Get the island database manager
+     * @return the island database manager
+     */
+    protected IslandsManager getIslandsManager() {
+        return plugin.getIslands();
+    }
+
+    /**
      * Get the island world manager
      * @return Island World Manager
      */

@@ -90,6 +90,7 @@ commands:
         name:
           conversation-prefix: ">"
           pick-a-unique-name: Lūdzu izvēlies unikālu nosaukumu
+          invalid-char-in-unique-name: "Unique name cannot contain, start, or end with special characters, neither contain number! "
           prompt: Ieraksti vārdu vai 'iziet', lai izietu
           quit: iziet
           success: Izdevās!
