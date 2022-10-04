@@ -44,6 +44,7 @@ general:
     # Transition options enable migration from one database type to another. Use /bbox migrate.
     # YAML and JSON are file-based databases.
     # MYSQL might not work with all implementations: if available, use a dedicated database type (e.g. MARIADB).
+    # BentoBox uses HikariCP for connecting with SQL databases.
     # If you use MONGODB, you must also run the BSBMongo plugin (not addon).
     # See https://github.com/tastybento/bsbMongo/releases/.
     # You can find more details in this video: https://youtu.be/FFzCk5-y7-g
@@ -66,6 +67,10 @@ general:
     # Reduce if you experience lag while saving.
     # Do not set this too low or data might get lost!
     max-saved-islands-per-tick: 20
+    # Number of active connections to the SQL database at the same time.
+    # Default 10.
+    # Added since 1.21.0.
+    max-pool-size: 10
     # Enable SSL connection to MongoDB, MariaDB, MySQL and PostgreSQL databases.
     # Added since 1.12.0.
     use-ssl: false
@@ -75,6 +80,15 @@ general:
     # Be careful about length - databases usually have a limit of 63 characters for table lengths
     # Added since 1.13.0.
     prefix-character: ''
+    # Custom connection datasource properties that will be applied to connection pool.
+    # Check available values to your SQL driver implementation.
+    # Example: ")
+    #   custom-properties:
+    #     cachePrepStmts: 'true'
+    #     prepStmtCacheSize: '250'
+    #     prepStmtCacheSqlLimit: '2048'
+    # Added since 1.21.0.
+    custom-properties: {}
     # MongoDB client connection URI to override default connection options.
     # See: https://docs.mongodb.com/manual/reference/connection-string/
     # Added since 1.14.0.
