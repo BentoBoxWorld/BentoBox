@@ -17,7 +17,6 @@ softdepend:
   - Vault
   - PlaceholderAPI
   - dynmap
-  - WorldEdit
   - WorldBorderAPI
   - BsbMongo
   - WorldGeneratorApi

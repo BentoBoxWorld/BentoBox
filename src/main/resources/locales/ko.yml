@@ -337,6 +337,7 @@ commands:
           prompt: 이름을 입력하세요, quit를 입력하여 종료할수 있습니다
           too-long: "&c 너무 깁니다"
           pick-a-unique-name: 더 독특한 이름을 선택하십시오
+          invalid-char-in-unique-name: "Unique name cannot contain, start, or end with special characters, neither contain number! "
           success: 완료!
           conversation-prefix: ">"
         description:

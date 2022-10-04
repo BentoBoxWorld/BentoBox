@@ -223,6 +223,11 @@ island:
   # If set to 0 or lower, the plugin will not expand the y-coordinate.
   # Added since 1.19.1.
   safe-spot-search-vertical-range: 400
+  # By default, if the destination is not safe, the plugin will try to search for a safe spot around the destination.
+  # This allows to change the distance for searching this spot. Larger value will mean longer position search.
+  # This value is also used for valid nether portal linking between dimension.
+  # Added since 1.21.0.
+  safe-spot-search-range: 16
 web:
   github:
     # Toggle whether BentoBox can connect to GitHub to get data about updates and addons.

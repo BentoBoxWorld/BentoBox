@@ -102,6 +102,7 @@ commands:
         status: "&b [purged] &a islands purged out of &b [purgeable] &7(&b[percentage] %&7)&a."
 
     team:
+      description: "manage teams"
       add:
         parameters: "<owner> <player>"
         description: "add player to owner's team"
@@ -331,7 +332,7 @@ commands:
       rename:
         parameters: "<blueprint name> <new name>"
         description: "rename a blueprint"
-        success: "&a Blueprint &b [old] &a has been successfully renamed to &b [name]&a."
+        success: "&a Blueprint &b [old] &a has been successfully renamed to &b [display]&a. Filename now is &b [name]&a."
         pick-different-name: "&c Please specify a name that is different from the blueprint's current name."
       management:
         back: "Back"
@@ -365,8 +366,9 @@ commands:
         name:
           quit: "quit"
           prompt: "Enter a name, or 'quit' to quit"
-          too-long: "&c Too long"
+          too-long: "&c Too long name. Only 32 chars are allowed."
           pick-a-unique-name: "Please pick a more unique name"
+          stripped-char-in-unique-name: "&c Some chars were removed because they are not allowed. &a New ID will be &b [name]&a."
           success: "Success!"
           conversation-prefix: ">"
         description:
@@ -421,6 +423,9 @@ commands:
         description: "removes deaths to the player"
         parameters: "<player> <deaths>"
         success: "&a Successfully removed &b [number] &a deaths to &b [name], decreasing the total to &b [total]&a  deaths."
+    resetname:
+      description: "reset player island name"
+      success: "&a Successfully reset [name]'s island name."
   bentobox:
     description: "BentoBox admin command"
     about:
@@ -496,6 +501,7 @@ commands:
         estimated-time: "&a Estimated time: &b [number] &a seconds."
         blocks: "&a Building it block by block: &b [number] &a blocks in all..."
         entities: "&a Filling it with entities: &b [number] &a entities in all..."
+        dimension-done: "&a Island in [world] is constructed."
         done: "&a Done! Your island is ready and waiting for you!"
       pick: "&2 Pick an island"
       unknown-blueprint: "&c That blueprint has not been loaded yet."
@@ -1287,14 +1293,14 @@ protection:
       hint: "changing a spawner's entity type using spawn eggs is not allowed"
     SCULK_SENSOR:
       description: |-
-        &a Allows to change if sculk sensor
-        &a can be activated by visitor.
+        &a Toggles sculk sensor
+        &a activation.
       name: "Sculk Sensor"
       hint: "sculk sensor activation is disabled"
     SCULK_SHRIEKER:
       description: |-
-        &a Allows to change if sculk shrieker
-        &a can be activated by visitor.
+        &a Toggles sculk shrieker
+        &a activation.
       name: "Sculk Shrieker"
       hint: "sculk shrieker activation is disabled"
     TNT_DAMAGE:
@@ -1356,6 +1362,20 @@ protection:
         &a
         &a Island members still lose their items
         &a if they die on their own island!
+    VISITOR_TRIGGER_RAID:
+      name: "Visitors triggers raids"
+      description: |-
+        &a Toggles if visitors can start
+        &a a raid on an island which they are
+        &a visiting.
+        &a
+        &a Bad Omen effect will be removed!
+    ENTITY_PORTAL_TELEPORT:
+      name: "Entity portal usage"
+      description: |-
+        &a Toggles if entities (non-player) can
+        &a use portals to teleport between
+        &a dimensions
     WITHER_DAMAGE:
       name: "Toggle wither damage"
       description: |-

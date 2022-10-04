@@ -354,6 +354,7 @@ commands:
           prompt: Digite um nome, ou 'quit' para sair
           too-long: '&c Muito comprido'
           pick-a-unique-name: Por favor escolha um nome único
+          invalid-char-in-unique-name: "Unique name cannot contain, start, or end with special characters, neither contain number! "
           success: Sucesso!
           conversation-prefix: '>'
         description:

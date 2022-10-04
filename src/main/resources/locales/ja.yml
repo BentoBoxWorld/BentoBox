@@ -328,6 +328,7 @@ commands:
           prompt: 名前を入力するか、「quit」で終了します
           too-long: "&c長すぎる"
           pick-a-unique-name: よりユニークな名前を選んでください
+          invalid-char-in-unique-name: "Unique name cannot contain, start, or end with special characters, neither contain number! "
           success: 成功！
           conversation-prefix: ">"
         description:

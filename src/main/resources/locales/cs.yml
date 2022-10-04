@@ -340,6 +340,7 @@ commands:
           prompt: Napiš jméno, nebo 'quit' ke zrušení
           too-long: '&c Příliš dlouhé'
           pick-a-unique-name: Prosím, zvol více jedinečný název
+          invalid-char-in-unique-name: "Unique name cannot contain, start, or end with special characters, neither contain number! "
           success: Povedlo se!
           conversation-prefix: '>'
         description:

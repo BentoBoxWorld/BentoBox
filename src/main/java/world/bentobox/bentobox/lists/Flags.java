@@ -18,30 +18,7 @@ import world.bentobox.bentobox.listeners.flags.protection.*;
 import world.bentobox.bentobox.listeners.flags.settings.DecayListener;
 import world.bentobox.bentobox.listeners.flags.settings.MobSpawnListener;
 import world.bentobox.bentobox.listeners.flags.settings.PVPListener;
-import world.bentobox.bentobox.listeners.flags.worldsettings.ChestDamageListener;
-import world.bentobox.bentobox.listeners.flags.worldsettings.CleanSuperFlatListener;
-import world.bentobox.bentobox.listeners.flags.worldsettings.CoarseDirtTillingListener;
-import world.bentobox.bentobox.listeners.flags.worldsettings.CreeperListener;
-import world.bentobox.bentobox.listeners.flags.worldsettings.EnderChestListener;
-import world.bentobox.bentobox.listeners.flags.worldsettings.EndermanListener;
-import world.bentobox.bentobox.listeners.flags.worldsettings.EnterExitListener;
-import world.bentobox.bentobox.listeners.flags.worldsettings.GeoLimitMobsListener;
-import world.bentobox.bentobox.listeners.flags.worldsettings.InvincibleVisitorsListener;
-import world.bentobox.bentobox.listeners.flags.worldsettings.IslandRespawnListener;
-import world.bentobox.bentobox.listeners.flags.worldsettings.ItemFrameListener;
-import world.bentobox.bentobox.listeners.flags.worldsettings.LimitMobsListener;
-import world.bentobox.bentobox.listeners.flags.worldsettings.LiquidsFlowingOutListener;
-import world.bentobox.bentobox.listeners.flags.worldsettings.NaturalSpawningOutsideRangeListener;
-import world.bentobox.bentobox.listeners.flags.worldsettings.ObsidianScoopingListener;
-import world.bentobox.bentobox.listeners.flags.worldsettings.OfflineGrowthListener;
-import world.bentobox.bentobox.listeners.flags.worldsettings.OfflineRedstoneListener;
-import world.bentobox.bentobox.listeners.flags.worldsettings.PetTeleportListener;
-import world.bentobox.bentobox.listeners.flags.worldsettings.PistonPushListener;
-import world.bentobox.bentobox.listeners.flags.worldsettings.RemoveMobsListener;
-import world.bentobox.bentobox.listeners.flags.worldsettings.SpawnerSpawnEggsListener;
-import world.bentobox.bentobox.listeners.flags.worldsettings.TreesGrowingOutsideRangeListener;
-import world.bentobox.bentobox.listeners.flags.worldsettings.VisitorKeepInventoryListener;
-import world.bentobox.bentobox.listeners.flags.worldsettings.WitherListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.*;
 import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
 
@@ -585,7 +562,21 @@ public final class Flags {
      * @see VisitorKeepInventoryListener
      */
     public static final Flag VISITOR_KEEP_INVENTORY = new Flag.Builder("VISITOR_KEEP_INVENTORY", Material.TOTEM_OF_UNDYING).listener(new VisitorKeepInventoryListener()).type(Type.WORLD_SETTING).defaultSetting(false).build();
-    
+
+    /**
+     * Toggles whether island visitors can trigger to start a raid on another player's island.
+     * @since 1.21.0
+     * @see VisitorsStartingRaidListener
+     */
+    public static final Flag VISITOR_TRIGGER_RAID = new Flag.Builder("VISITOR_TRIGGER_RAID", Material.RAVAGER_SPAWN_EGG).listener(new VisitorsStartingRaidListener()).type(Type.WORLD_SETTING).defaultSetting(true).build();
+
+    /**
+     * Toggles whether entities can teleport between dimensions using portals.
+     * @since 1.21.0
+     * @see world.bentobox.bentobox.listeners.teleports.EntityTeleportListener
+     */
+    public static final Flag ENTITY_PORTAL_TELEPORT = new Flag.Builder("ENTITY_PORTAL_TELEPORT", Material.ENDER_EYE).type(Type.WORLD_SETTING).defaultSetting(false).build();
+
     /**
      * Provides a list of all the Flag instances contained in this class using reflection.
      * Deprecated Flags are ignored.

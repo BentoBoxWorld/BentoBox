@@ -3,11 +3,13 @@ package world.bentobox.bentobox.listeners.flags.settings;
 import java.util.Optional;
 
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.PufferFish;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.raid.RaidFinishEvent;
+import org.bukkit.event.raid.RaidTriggerEvent;
+import org.bukkit.potion.PotionEffectType;
 
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.flags.FlagListener;
@@ -30,6 +32,60 @@ public class MobSpawnListener extends FlagListener
     public void onMobSpawnEvent(CreatureSpawnEvent e)
     {
         this.onMobSpawn(e);
+    }
+
+
+    /**
+     * This prevents to start a raid if mob spawning rules prevents it.
+     * @param event RaidTriggerEvent
+     */
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    public void onRaidStartEvent(RaidTriggerEvent event)
+    {
+        // If not in the right world exit immediately.
+        if (!this.getIWM().inWorld(event.getWorld()))
+        {
+            return;
+        }
+
+        Optional<Island> island = getIslands().getIslandAt(event.getPlayer().getLocation());
+
+        if (island.map(i -> !i.isAllowed(Flags.MONSTER_NATURAL_SPAWN)).orElseGet(
+            () -> !Flags.MONSTER_NATURAL_SPAWN.isSetForWorld(event.getWorld())))
+        {
+            // Monster spawning is disabled on island or world. Cancel the raid.
+            event.setCancelled(true);
+        }
+    }
+
+
+    /**
+     * This removes HERO_OF_THE_VILLAGE from players that cheated victory.
+     * @param event RaidFinishEvent
+     */
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    public void onRaidFinishEvent(RaidFinishEvent event)
+    {
+        // If not in the right world exit immediately.
+        if (!this.getIWM().inWorld(event.getWorld()))
+        {
+            return;
+        }
+
+        Optional<Island> island = getIslands().getIslandAt(event.getRaid().getLocation());
+
+        if (island.map(i -> !i.isAllowed(Flags.MONSTER_NATURAL_SPAWN)).orElseGet(
+            () -> !Flags.MONSTER_NATURAL_SPAWN.isSetForWorld(event.getWorld())))
+        {
+            // CHEATERS. PUNISH THEM.
+            event.getWinners().forEach(player ->
+            {
+                if (player.isOnline())
+                {
+                    player.removePotionEffect(PotionEffectType.HERO_OF_THE_VILLAGE);
+                }
+            });
+        }
     }
 
 

@@ -393,6 +393,7 @@ commands:
           prompt: Voer een naam in of 'quit' om te stoppen
           too-long: "&c Te lang"
           pick-a-unique-name: Kies een meer unieke naam
+          invalid-char-in-unique-name: "Unique name cannot contain, start, or end with special characters, neither contain number! "
           success: Succes!
           conversation-prefix: ">"
         description:

@@ -526,8 +526,6 @@ public class BlueprintsManagerTest {
         BlueprintsManager bpm = new BlueprintsManager(plugin);
         bpm.addBlueprintBundle(addon, bb);
         assertEquals("bundle", bpm.validate(addon, "bundle"));
-        // Mixed case
-        assertEquals("buNdle", bpm.validate(addon, "buNdle"));
         // Not there
         assertNull(bpm.validate(addon, "buNdle2"));
     }
@@ -651,18 +649,19 @@ public class BlueprintsManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.BlueprintsManager#renameBlueprint(world.bentobox.bentobox.api.addons.GameModeAddon, world.bentobox.bentobox.blueprints.Blueprint, java.lang.String)}.
+     * Test method for {@link world.bentobox.bentobox.managers.BlueprintsManager#renameBlueprint(world.bentobox.bentobox.api.addons.GameModeAddon, world.bentobox.bentobox.blueprints.Blueprint, java.lang.String, java.lang.String)}.
      */
     @Test
     public void testRenameBlueprint() {
         // Save it
         BlueprintsManager bpm = new BlueprintsManager(plugin);
         bpm.saveBlueprint(addon, defaultBp);
+        bpm.addBlueprint(addon, defaultBp);
         File blueprints = new File(dataFolder, BlueprintsManager.FOLDER_NAME);
         File d = new File(blueprints, "bedrock.blu");
         assertTrue(d.exists());
         // Rename it
-        bpm.renameBlueprint(addon, defaultBp, "bedrock2");
+        bpm.renameBlueprint(addon, defaultBp, "bedrock2", "");
         assertFalse(d.exists());
         d = new File(blueprints, "bedrock2.blu");
         assertTrue(d.exists());

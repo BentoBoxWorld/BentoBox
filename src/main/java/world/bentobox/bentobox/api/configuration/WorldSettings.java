@@ -2,6 +2,7 @@ package world.bentobox.bentobox.api.configuration;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -31,10 +32,53 @@ public interface WorldSettings extends ConfigObject {
 
     /**
      * @return default rank settings for new islands
+     * @deprecated since 1.21
+     *             Map of Flag, Integer does not allow to load other plugin/addon flags.
+     *             It cannot be replaced with Map of String, Integer due to compatibility issues.
+     * @see WorldSettings#getDefaultIslandFlagNames()
      */
+    @Deprecated
     Map<Flag, Integer> getDefaultIslandFlags();
 
+    /**
+     * Return map of flags ID's linked to default rank for new island.
+     * This is necessary so users could specify any flag names in settings file from other plugins and addons.
+     * Otherwise, Flag reader would mark flag as invalid and remove it.
+     * Default implementation is compatibility layer so GameModes that are not upgraded still works.
+     * @since 1.21
+     * @return default rank settings for new islands.
+     */
+    default Map<String, Integer> getDefaultIslandFlagNames()
+    {
+        Map<String, Integer> flags = new HashMap<>();
+        this.getDefaultIslandFlags().forEach((key, value) -> flags.put(key.getID(), value));
+        return flags;
+    }
+
+    /**
+     * @return default settings for new
+     * @deprecated since 1.21
+     *             Map of Flag, Integer does not allow to load other plugin/addon flags.
+     *             It cannot be replaced with Map of String, Integer due to compatibility issues.
+     * @see WorldSettings#getDefaultIslandSettingNames()
+     */
+    @Deprecated
     Map<Flag, Integer> getDefaultIslandSettings();
+
+    /**
+     * Return map of flags ID's linked to default settings for new island.
+     * This is necessary so users could specify any flag names in settings file from other plugins and addons.
+     * Otherwise, Flag reader would mark flag as invalid and remove it.
+     * Default implementation is compatibility layer so GameModes that are not upgraded still works.
+     * @since 1.21
+     * @return default settings for new islands.
+     */
+    default Map<String, Integer> getDefaultIslandSettingNames()
+    {
+        Map<String, Integer> flags = new HashMap<>();
+        this.getDefaultIslandSettings().forEach((key, value) -> flags.put(key.getID(), value));
+        return flags;
+    }
 
     /**
      * Get the world difficulty

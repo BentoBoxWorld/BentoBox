@@ -19,7 +19,6 @@ import world.bentobox.bentobox.api.user.Notifier;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.commands.BentoBoxCommand;
 import world.bentobox.bentobox.database.DatabaseSetup;
-import world.bentobox.bentobox.hooks.DynmapHook;
 import world.bentobox.bentobox.hooks.MultiverseCoreHook;
 import world.bentobox.bentobox.hooks.VaultHook;
 import world.bentobox.bentobox.hooks.placeholders.PlaceholderAPIHook;
@@ -28,7 +27,8 @@ import world.bentobox.bentobox.listeners.BlockEndDragon;
 import world.bentobox.bentobox.listeners.DeathListener;
 import world.bentobox.bentobox.listeners.JoinLeaveListener;
 import world.bentobox.bentobox.listeners.PanelListenerManager;
-import world.bentobox.bentobox.listeners.PortalTeleportationListener;
+import world.bentobox.bentobox.listeners.teleports.EntityTeleportListener;
+import world.bentobox.bentobox.listeners.teleports.PlayerTeleportListener;
 import world.bentobox.bentobox.listeners.StandardSpawnProtectionListener;
 import world.bentobox.bentobox.managers.AddonsManager;
 import world.bentobox.bentobox.managers.BlueprintsManager;
@@ -227,8 +227,8 @@ public class BentoBox extends JavaPlugin {
         hooksManager.registerHook(new MultiverseCoreHook());
         islandWorldManager.registerWorldsToMultiverse();
 
-        // Register additional hooks
-        hooksManager.registerHook(new DynmapHook());
+        // TODO: re-enable after implementation
+        //hooksManager.registerHook(new DynmapHook());
         // TODO: re-enable after rework
         //hooksManager.registerHook(new LangUtilsHook());
 
@@ -288,8 +288,10 @@ public class BentoBox extends JavaPlugin {
         manager.registerEvents(new PanelListenerManager(), this);
         // Standard Nether/End spawns protection
         manager.registerEvents(new StandardSpawnProtectionListener(this), this);
-        // Nether portals
-        manager.registerEvents(new PortalTeleportationListener(this), this);
+        // Player portals
+        manager.registerEvents(new PlayerTeleportListener(this), this);
+        // Entity portals
+        manager.registerEvents(new EntityTeleportListener(this), this);
         // End dragon blocking
         manager.registerEvents(new BlockEndDragon(this), this);
         // Banned visitor commands
