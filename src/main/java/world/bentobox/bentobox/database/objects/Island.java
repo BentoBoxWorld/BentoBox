@@ -945,7 +945,7 @@ public class Island implements DataObject, MetaDataAble {
     public BoundingBox getProtectionBoundingBox(Environment environment)
     {
         BoundingBox boundingBox;
-        
+
         if (Environment.NORMAL.equals(environment))
         {
             // Return normal world bounding box.
@@ -982,7 +982,7 @@ public class Island implements DataObject, MetaDataAble {
         {
             boundingBox = null;
         }
-        
+
         return boundingBox;
     }
 

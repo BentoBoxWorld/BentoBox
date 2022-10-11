@@ -138,8 +138,8 @@ public class BlueprintPaster {
 
       // Tell the owner we're pasting blocks and how much time it might take
         owner.ifPresent(user -> tellOwner(user, blocks.size(), attached.size(), entities.size(), plugin.getSettings().getPasteSpeed()));
-        Bits bits = new Bits(blocks, attached, entities, 
-                blocks.entrySet().iterator(), attached.entrySet().iterator(), entities.entrySet().iterator(), 
+        Bits bits = new Bits(blocks, attached, entities,
+                blocks.entrySet().iterator(), attached.entrySet().iterator(), entities.entrySet().iterator(),
                 plugin.getSettings().getPasteSpeed());
         pastingTask = Bukkit.getScheduler().runTaskTimer(plugin, () -> pasterTask(result, owner, bits), 0L, 1L);
 
@@ -237,7 +237,7 @@ public class BlueprintPaster {
             if (island == null && clipboard != null) {
                 clipboard.setPos1(pos1);
                 clipboard.setPos2(pos2);
-            }			
+            }
             pasteState = PasteState.CANCEL;
             result.complete(true);
         } else if (pasteState.equals(PasteState.CANCEL)) {
@@ -247,13 +247,13 @@ public class BlueprintPaster {
         }
     }
 
-    private void tellOwner(User user, int blocksSize, int attachedSize, int entitiesSize, int pasteSpeed) {    	
+    private void tellOwner(User user, int blocksSize, int attachedSize, int entitiesSize, int pasteSpeed) {
         // Estimated time:
         double total = (double) blocksSize + attachedSize + entitiesSize;
         BigDecimal time = BigDecimal.valueOf(total / (pasteSpeed * 20.0D) + (chunkLoadTime / 1000.0D)).setScale(1, RoundingMode.UP);
         user.sendMessage("commands.island.create.pasting.estimated-time", TextVariables.NUMBER, String.valueOf(time.doubleValue()));
         // We're pasting blocks!
-        user.sendMessage("commands.island.create.pasting.blocks", TextVariables.NUMBER, String.valueOf(blocksSize + attachedSize));        
+        user.sendMessage("commands.island.create.pasting.blocks", TextVariables.NUMBER, String.valueOf(blocksSize + attachedSize));
     }
 
     /**
