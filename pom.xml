@@ -82,6 +82,7 @@
         <placeholderapi.version>2.10.9</placeholderapi.version>
         <githubapi.version>d5f5e0bbd8</githubapi.version>
         <dynmap.version>3.0-SNAPSHOT</dynmap.version>
+        <myworlds.version>1.19-v2</myworlds.version>
         <!-- Revision variable removes warning about dynamic version -->
         <revision>${build.version}-SNAPSHOT</revision>
         <!-- Do not change unless you want different name for local builds. -->
@@ -181,6 +182,11 @@
             <id>nms-repo</id>
             <url>https://repo.codemc.io/repository/nms/</url>
         </repository>
+        <!-- Used for MyWorlds hook -->
+        <repository>
+            <id>MG-Dev Jenkins CI Maven Repository</id>
+            <url>https://ci.mg-dev.eu/plugin/repository/everything</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -264,6 +270,12 @@
             <groupId>us.dynmap</groupId>
             <artifactId>dynmap-api</artifactId>
             <version>${dynmap.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.bergerkiller.bukkit</groupId>
+            <artifactId>MyWorlds</artifactId>
+            <version>${myworlds.version}</version>
             <scope>provided</scope>
         </dependency>
         <!-- Shaded APIs -->
