@@ -269,7 +269,11 @@ public class IslandsManager {
                 || ground.name().contains("SIGN")
                 || ground.name().contains("BANNER")
                 || ground.name().contains("BUTTON")
-                || ground.name().contains("BOAT")) {
+                || ground.name().contains("BOAT")
+                || space1.equals(Material.END_PORTAL)
+                || space2.equals(Material.END_PORTAL)
+                || space1.equals(Material.END_GATEWAY)
+                || space2.equals(Material.END_GATEWAY)) {
             return false;
         }
         // Known unsafe blocks
