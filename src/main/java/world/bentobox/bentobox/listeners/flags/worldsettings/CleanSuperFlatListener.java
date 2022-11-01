@@ -141,7 +141,7 @@ public class CleanSuperFlatListener extends FlagListener {
         return !(e.getChunk().getBlock(0, 0, 0).getType().equals(Material.BEDROCK) && 
             e.getChunk().getBlock(0, 1, 0).getType().equals(Material.DIRT) && 
             e.getChunk().getBlock(0, 2, 0).getType().equals(Material.DIRT) &&
-            e.getChunk().getBlock(0, 3, 0).getType().equals(Material.GRASS_BLOCK)) ||
+            e.getChunk().getBlock(0, 3, 0).getType().equals(Material.GRASS_BLOCK)) &&
             !(e.getChunk().getBlock(0, minHeight, 0).getType().equals(Material.BEDROCK) && 
                 e.getChunk().getBlock(0, minHeight + 1, 0).getType().equals(Material.DIRT) &&
                 e.getChunk().getBlock(0, minHeight + 2, 0).getType().equals(Material.DIRT) && 
