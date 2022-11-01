@@ -116,17 +116,35 @@ public class CleanSuperFlatListener extends FlagListener {
      * @return true if the chunk should not be cleaned
      */
     private boolean noClean(World world, ChunkLoadEvent e) {
-        if (!ready) {
+        if (!this.ready)
+        {
             return true;
         }
-        return !getIWM().inWorld(world) || !Flags.CLEAN_SUPER_FLAT.isSetForWorld(world) ||
-                (!(e.getChunk().getBlock(0, 0, 0).getType().equals(Material.BEDROCK)
-                        && e.getChunk().getBlock(0, 1, 0).getType().equals(Material.DIRT)
-                        && e.getChunk().getBlock(0, 2, 0).getType().equals(Material.DIRT)
-                        && e.getChunk().getBlock(0, 3, 0).getType().equals(Material.GRASS_BLOCK))
-                        || (world.getEnvironment().equals(Environment.NETHER) && (!plugin.getIWM().isNetherGenerate(world)
-                                || !plugin.getIWM().isNetherIslands(world)))
-                        || (world.getEnvironment().equals(Environment.THE_END) && (!plugin.getIWM().isEndGenerate(world)
-                                || !plugin.getIWM().isEndIslands(world))));
+
+        // Check if super-flat must even be working.
+        if (!this.getIWM().inWorld(world) ||
+            !Flags.CLEAN_SUPER_FLAT.isSetForWorld(world) ||
+            world.getEnvironment().equals(Environment.NETHER) &&
+                (!plugin.getIWM().isNetherGenerate(world) || !plugin.getIWM().isNetherIslands(world)) ||
+            world.getEnvironment().equals(Environment.THE_END) &&
+                (!plugin.getIWM().isEndGenerate(world) || !plugin.getIWM().isEndIslands(world)))
+        {
+            return true;
+        }
+
+        // Check if bottom is a super-flat chunk.
+        int minHeight = world.getMinHeight();
+
+        // Due to flat super flat chunk generation changes in 1.19, they now are generated properly at the world min.
+        // Extra check for 0-4 can be removed with 1.18 dropping.
+        
+        return !(e.getChunk().getBlock(0, 0, 0).getType().equals(Material.BEDROCK) && 
+            e.getChunk().getBlock(0, 1, 0).getType().equals(Material.DIRT) && 
+            e.getChunk().getBlock(0, 2, 0).getType().equals(Material.DIRT) &&
+            e.getChunk().getBlock(0, 3, 0).getType().equals(Material.GRASS_BLOCK)) ||
+            !(e.getChunk().getBlock(0, minHeight, 0).getType().equals(Material.BEDROCK) && 
+                e.getChunk().getBlock(0, minHeight + 1, 0).getType().equals(Material.DIRT) &&
+                e.getChunk().getBlock(0, minHeight + 2, 0).getType().equals(Material.DIRT) && 
+                e.getChunk().getBlock(0, minHeight + 3, 0).getType().equals(Material.GRASS_BLOCK));
     }
 }
