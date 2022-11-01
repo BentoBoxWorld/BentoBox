@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
@@ -61,51 +62,82 @@ public class CleanSuperFlatListener extends FlagListener {
     }
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void onChunkLoad(ChunkLoadEvent e) {
+    public void onChunkLoad(ChunkLoadEvent e) 
+    {
         World world = e.getWorld();
-        if (noClean(world, e)) {
+        
+        if (this.noClean(world, e)) 
+        {
             return;
         }
+        
         MyBiomeGrid grid = new MyBiomeGrid(world.getEnvironment());
         ChunkGenerator cg = plugin.getAddonsManager().getDefaultWorldGenerator(world.getName(), "");
-        if (cg == null) {
+        
+        if (cg == null) 
+        {
             Flags.CLEAN_SUPER_FLAT.setSetting(world, false);
 
-            plugin.logWarning("Could not enable Clean Super Flat for " + world.getName());
-            plugin.logWarning("There is no world generator assigned to this world.");
-            plugin.logWarning("This is often caused by the 'use-own-generator' being set to 'true' in the gamemode's" +
+            this.plugin.logWarning("Could not enable Clean Super Flat for " + world.getName());
+            this.plugin.logWarning("There is no world generator assigned to this world.");
+            this.plugin.logWarning("This is often caused by the 'use-own-generator' being set to 'true' in the gamemode's" +
                     " configuration while there hasn't been any custom world generator assigned to the world.");
-            plugin.logWarning("Either revert the changes in the gamemode's config.yml or assign your custom world generator to the world.");
+            this.plugin.logWarning("Either revert the changes in the gamemode's config.yml or assign your custom world generator to the world.");
 
             return;
         }
+        
         // Add to queue
-        chunkQueue.add(new Pair<>(e.getChunk().getX(), e.getChunk().getZ()));
-        if (task == null || task.isCancelled()) {
-            task = Bukkit.getScheduler().runTaskTimer(plugin, () -> cleanChunk(e, world, cg, grid), 0L, 1L);
+        this.chunkQueue.add(new Pair<>(e.getChunk().getX(), e.getChunk().getZ()));
+        
+        if (this.task == null || this.task.isCancelled())
+        {
+            this.task = Bukkit.getScheduler().runTaskTimer(this.plugin, () -> this.cleanChunk(world, cg, grid), 0L, 1L);
         }
     }
 
-    private void cleanChunk(ChunkLoadEvent e, World world, ChunkGenerator cg, MyBiomeGrid grid) {
+
+    /**
+     * This method clears the chunk from queue in the given world
+     * @param world The world that must be cleared.
+     * @param cg Chunk generator.
+     * @param grid Biome Grid.
+     */
+    private void cleanChunk(World world, ChunkGenerator cg, MyBiomeGrid grid)
+    {
         SecureRandom random = new SecureRandom();
-        if (!chunkQueue.isEmpty()) {
-            Pair<Integer, Integer> chunkXZ = chunkQueue.poll();
-            ChunkData cd = cg.generateChunkData(world, random, e.getChunk().getX(), e.getChunk().getZ(), grid);
-            for (int x = 0; x < 16; x++) {
-                for (int z = 0; z < 16; z++) {
-                    for (int y = 0; y < world.getMaxHeight(); y++) {
-                        e.getChunk().getBlock(x, y, z).setBlockData(cd.getBlockData(x, y, z), false);
+
+        if (!this.chunkQueue.isEmpty())
+        {
+            Pair<Integer, Integer> chunkXZ = this.chunkQueue.poll();
+
+            ChunkData cd = cg.generateChunkData(world, random, chunkXZ.getKey(), chunkXZ.getValue(), grid);
+            Chunk chunk = world.getChunkAt(chunkXZ.getKey(), chunkXZ.getValue());
+
+            for (int x = 0; x < 16; x++)
+            {
+                for (int z = 0; z < 16; z++)
+                {
+                    for (int y = world.getMinHeight(); y < world.getMaxHeight(); y++)
+                    {
+                        chunk.getBlock(x, y, z).setBlockData(cd.getBlockData(x, y, z), false);
                     }
                 }
             }
+
             // Run populators
-            cg.getDefaultPopulators(world).forEach(pop -> pop.populate(world, random, e.getChunk()));
-            if (plugin.getSettings().isLogCleanSuperFlatChunks()) {
-                plugin.log("Regenerating superflat chunk in " + world.getName() + " at (" + chunkXZ.x + ", " + chunkXZ.z + ") " +
-                        "(" + chunkQueue.size() + " chunk(s) remaining in the queue)");
+            cg.getDefaultPopulators(world).forEach(pop -> pop.populate(world, random, chunk));
+
+            if (this.plugin.getSettings().isLogCleanSuperFlatChunks())
+            {
+                this.plugin.log("Regenerating superflat chunk in " + world.getName() +
+                    " at (" + chunkXZ.x + ", " + chunkXZ.z + ") " +
+                    "(" + this.chunkQueue.size() + " chunk(s) remaining in the queue)");
             }
-        } else {
-            task.cancel();
+        }
+        else
+        {
+            this.task.cancel();
         }
     }
 
@@ -125,9 +157,9 @@ public class CleanSuperFlatListener extends FlagListener {
         if (!this.getIWM().inWorld(world) ||
             !Flags.CLEAN_SUPER_FLAT.isSetForWorld(world) ||
             world.getEnvironment().equals(Environment.NETHER) &&
-                (!plugin.getIWM().isNetherGenerate(world) || !plugin.getIWM().isNetherIslands(world)) ||
+                (!this.plugin.getIWM().isNetherGenerate(world) || !this.plugin.getIWM().isNetherIslands(world)) ||
             world.getEnvironment().equals(Environment.THE_END) &&
-                (!plugin.getIWM().isEndGenerate(world) || !plugin.getIWM().isEndIslands(world)))
+                (!this.plugin.getIWM().isEndGenerate(world) || !this.plugin.getIWM().isEndIslands(world)))
         {
             return true;
         }
@@ -137,14 +169,14 @@ public class CleanSuperFlatListener extends FlagListener {
 
         // Due to flat super flat chunk generation changes in 1.19, they now are generated properly at the world min.
         // Extra check for 0-4 can be removed with 1.18 dropping.
-        
-        return !(e.getChunk().getBlock(0, 0, 0).getType().equals(Material.BEDROCK) && 
-            e.getChunk().getBlock(0, 1, 0).getType().equals(Material.DIRT) && 
+
+        return !(e.getChunk().getBlock(0, 0, 0).getType().equals(Material.BEDROCK) &&
+            e.getChunk().getBlock(0, 1, 0).getType().equals(Material.DIRT) &&
             e.getChunk().getBlock(0, 2, 0).getType().equals(Material.DIRT) &&
             e.getChunk().getBlock(0, 3, 0).getType().equals(Material.GRASS_BLOCK)) &&
-            !(e.getChunk().getBlock(0, minHeight, 0).getType().equals(Material.BEDROCK) && 
+            !(e.getChunk().getBlock(0, minHeight, 0).getType().equals(Material.BEDROCK) &&
                 e.getChunk().getBlock(0, minHeight + 1, 0).getType().equals(Material.DIRT) &&
-                e.getChunk().getBlock(0, minHeight + 2, 0).getType().equals(Material.DIRT) && 
+                e.getChunk().getBlock(0, minHeight + 2, 0).getType().equals(Material.DIRT) &&
                 e.getChunk().getBlock(0, minHeight + 3, 0).getType().equals(Material.GRASS_BLOCK));
     }
 }
