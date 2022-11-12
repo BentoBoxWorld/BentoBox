@@ -9,7 +9,6 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
-import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.placeholders.PlaceholderReplacer;
 import world.bentobox.bentobox.api.user.User;
 
