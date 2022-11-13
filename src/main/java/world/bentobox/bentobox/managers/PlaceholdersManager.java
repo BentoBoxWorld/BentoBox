@@ -116,12 +116,12 @@ public class PlaceholdersManager {
 
     /**
      * Replaces the placeholders in this String and returns it.
-     * @param player the Player to get the placeholders for.
+     * @param player the Player to get the placeholders for or null for non-player-specific placeholders
      * @param string the String to replace the placeholders in.
      * @return the String with placeholders replaced, or the identical String if no placeholders were available.
      * @since 1.5.0
      */
-    public String replacePlaceholders(@NonNull Player player, @NonNull String string) {
+    public String replacePlaceholders(@Nullable Player player, @NonNull String string) {
         return getPlaceholderAPIHook().map(papi -> papi.replacePlaceholders(player, string)).orElse(string);
     }
 
@@ -131,6 +131,6 @@ public class PlaceholdersManager {
      */
     public void unregisterAll() {
         getPlaceholderAPIHook().ifPresent(PlaceholderAPIHook::unregisterAll);
-        
+
     }
 }
