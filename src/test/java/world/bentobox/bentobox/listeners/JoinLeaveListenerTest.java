@@ -1,6 +1,7 @@
 package world.bentobox.bentobox.listeners;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -235,6 +236,29 @@ public class JoinLeaveListenerTest {
         verify(player, never()).sendMessage(anyString());
         // Verify resets
         verify(pm).setResets(eq(world), any(), eq(0));
+        // Verify inventory clear because of kick
+        // Check inventory cleared
+        verify(chest).clear();
+        verify(inv).clear();
+        assertTrue(set.isEmpty());
+        verify(pm, times(2)).save(any());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.JoinLeaveListener#onPlayerJoin(org.bukkit.event.player.PlayerJoinEvent)}.
+     */
+    @Test
+    public void testOnPlayerJoinNullWorld() {
+        when(player.getWorld()).thenReturn(null); // Null
+        when(Util.getWorld(any())).thenReturn(null); // Make null
+        PlayerJoinEvent event = new PlayerJoinEvent(player, "");
+        jll.onPlayerJoin(event);
+        // Verify inventory clear because of kick
+        // Check inventory cleared
+        verify(chest, never()).clear();
+        verify(inv, never()).clear();
+        assertFalse(set.isEmpty());
+        verify(pm).save(any());
     }
 
     /**
@@ -334,12 +358,28 @@ public class JoinLeaveListenerTest {
     public void testOnPlayerSwitchWorld() {
         PlayerChangedWorldEvent event = new PlayerChangedWorldEvent(player, world);
         jll.onPlayerSwitchWorld(event);
-        // Player was kicked so check
+        // Check inventory cleared
         verify(chest).clear();
         verify(inv).clear();
         assertTrue(set.isEmpty());
         verify(pm).save(any());
     }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.JoinLeaveListener#onPlayerSwitchWorld(org.bukkit.event.player.PlayerChangedWorldEvent)}.
+     */
+    @Test
+    public void testOnPlayerSwitchWorldNullWorld() {
+        when(Util.getWorld(any())).thenReturn(null);
+        PlayerChangedWorldEvent event = new PlayerChangedWorldEvent(player, world);
+        jll.onPlayerSwitchWorld(event);
+        // These should not happen
+        verify(chest, never()).clear();
+        verify(inv, never()).clear();
+        assertFalse(set.isEmpty());
+        verify(pm, never()).save(any());
+    }
+
 
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.JoinLeaveListener#onPlayerQuit(org.bukkit.event.player.PlayerQuitEvent)}.
