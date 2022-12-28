@@ -1,6 +1,11 @@
 package world.bentobox.bentobox.nms;
 
-import io.papermc.lib.PaperLib;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
+import java.util.concurrent.CompletableFuture;
+
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.block.data.BlockData;
@@ -10,16 +15,12 @@ import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.BoundingBox;
+
+import io.papermc.lib.PaperLib;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.database.objects.IslandDeletion;
 import world.bentobox.bentobox.util.MyBiomeGrid;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
-import java.util.concurrent.CompletableFuture;
 
 public abstract class SimpleWorldRegenerator implements WorldRegenerator {
     private final BentoBox plugin;

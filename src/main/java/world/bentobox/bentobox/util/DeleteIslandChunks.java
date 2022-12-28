@@ -1,16 +1,17 @@
 package world.bentobox.bentobox.util;
 
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.bukkit.World;
 import org.bukkit.scheduler.BukkitRunnable;
+
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.events.island.IslandEvent;
 import world.bentobox.bentobox.api.events.island.IslandEvent.Reason;
 import world.bentobox.bentobox.database.objects.IslandDeletion;
 import world.bentobox.bentobox.nms.WorldRegenerator;
-
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Deletes islands chunk by chunk

@@ -13,7 +13,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -59,9 +58,9 @@ public class CoarseDirtTillingListenerTest {
 
     @SuppressWarnings("deprecation")
     private static final List<Material> HOES = Collections.unmodifiableList(Arrays.stream(Material.values())
-            .filter(m -> !m.isLegacy()).filter(m -> m.name().endsWith("_HOE")).collect(Collectors.toList()));
+            .filter(m -> !m.isLegacy()).filter(m -> m.name().endsWith("_HOE")).toList());
     private static final List<Material> NOT_HOES = Collections.unmodifiableList(Arrays.stream(Material.values())
-            .filter(m -> !m.name().endsWith("_HOE")).collect(Collectors.toList()));
+            .filter(m -> !m.name().endsWith("_HOE")).toList());
 
     // Class under test
     private CoarseDirtTillingListener ctl;

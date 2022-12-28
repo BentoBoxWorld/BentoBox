@@ -4,7 +4,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -78,7 +77,7 @@ public class SettingsTab implements Tab, ClickHandler {
         List<Flag> flags = plugin.getFlagsManager().getFlags().stream().filter(f -> f.getType().equals(type))
                 // We're stripping colors to avoid weird sorting issues
                 .sorted(Comparator.comparing(flag -> ChatColor.stripColor(user.getTranslation(flag.getNameReference()))))
-                .collect(Collectors.toList());
+                .toList();
         // Remove any that are not for this game mode
         plugin.getIWM().getAddon(world).ifPresent(gm -> flags.removeIf(f -> !f.getGameModes().isEmpty() && !f.getGameModes().contains(gm)));
         // Remove any that are the wrong rank or that will be on the top row
@@ -124,7 +123,7 @@ public class SettingsTab implements Tab, ClickHandler {
             plugin.getPlayers().setFlagsDisplayMode(user.getUniqueId(), plugin.getPlayers().getFlagsDisplayMode(user.getUniqueId()).getNext());
             flags = getFlags();
         }
-        return flags.stream().map((f -> f.toPanelItem(plugin, user, island, plugin.getIWM().getHiddenFlags(world).contains(f.getID())))).collect(Collectors.toList());
+        return flags.stream().map((f -> f.toPanelItem(plugin, user, island, plugin.getIWM().getHiddenFlags(world).contains(f.getID())))).toList();
     }
 
     @Override

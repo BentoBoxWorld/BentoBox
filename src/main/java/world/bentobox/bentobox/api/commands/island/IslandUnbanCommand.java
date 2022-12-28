@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.eclipse.jdt.annotation.Nullable;
 
@@ -112,7 +111,7 @@ public class IslandUnbanCommand extends CompositeCommand {
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
         Island island = getIslands().getIsland(getWorld(), user.getUniqueId());
         if (island != null) {
-            List<String> options = island.getBanned().stream().map(getPlayers()::getName).collect(Collectors.toList());
+            List<String> options = island.getBanned().stream().map(getPlayers()::getName).toList();
             String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
             return Optional.of(Util.tabLimit(options, lastArg));
         } else {

@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
@@ -142,7 +141,7 @@ public class IslandBanCommand extends CompositeCommand {
                     .filter(p -> !p.getUniqueId().equals(user.getUniqueId()))
                     .filter(p -> !island.isBanned(p.getUniqueId()))
                     .filter(p -> user.getPlayer().canSee(p))
-                    .map(Player::getName).collect(Collectors.toList());
+                    .map(Player::getName).toList();
             return Optional.of(Util.tabLimit(options, lastArg));
         } else {
             return Optional.empty();

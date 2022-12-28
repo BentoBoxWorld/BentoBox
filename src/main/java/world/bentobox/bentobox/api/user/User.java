@@ -8,7 +8,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Bukkit;
@@ -330,7 +329,7 @@ public class User implements MetaDataAble {
                 .filter(PermissionAttachmentInfo::getValue) // Must be a positive permission, not a negative one
                 .map(PermissionAttachmentInfo::getPermission)
                 .filter(permission -> permission.startsWith(permPrefix))
-                .collect(Collectors.toList());
+                .toList();
 
         if (permissions.isEmpty()) return defaultValue;
 
@@ -414,9 +413,7 @@ public class User implements MetaDataAble {
         }
 
         // If this is a prefix, just gather and return the translation
-        if (reference.startsWith("prefixes.")) {
-            return translation;
-        } else {
+        if (!reference.startsWith("prefixes.")) {
             // Replace the prefixes
             for (String prefix : plugin.getLocalesManager().getAvailablePrefixes(this)) {
                 String prefixTranslation = getTranslation("prefixes." + prefix);
@@ -441,8 +438,8 @@ public class User implements MetaDataAble {
                 translation = plugin.getPlaceholdersManager().replacePlaceholders(player, translation);
             }
 
-            return translation;
         }
+        return translation;
     }
 
     /**
@@ -605,67 +602,68 @@ public class User implements MetaDataAble {
         // Improve particle validation.
         switch (particle)
         {
-            case REDSTONE ->
+        case REDSTONE ->
+        {
+            if (!(dustOptions instanceof Particle.DustOptions))
             {
-                if (!(dustOptions instanceof Particle.DustOptions))
-                {
-                    throw new IllegalArgumentException("A non-null Particle.DustOptions must be provided when using Particle.REDSTONE as particle.");
-                }
+                throw new IllegalArgumentException("A non-null Particle.DustOptions must be provided when using Particle.REDSTONE as particle.");
             }
-            case ITEM_CRACK ->
+        }
+        case ITEM_CRACK ->
+        {
+            if (!(dustOptions instanceof ItemStack))
             {
-                if (!(dustOptions instanceof ItemStack))
-                {
-                    throw new IllegalArgumentException("A non-null ItemStack must be provided when using Particle.ITEM_CRACK as particle.");
-                }
+                throw new IllegalArgumentException("A non-null ItemStack must be provided when using Particle.ITEM_CRACK as particle.");
             }
-            case BLOCK_CRACK, BLOCK_DUST, FALLING_DUST, BLOCK_MARKER ->
+        }
+        case BLOCK_CRACK, BLOCK_DUST, FALLING_DUST, BLOCK_MARKER ->
+        {
+            if (!(dustOptions instanceof BlockData))
             {
-                if (!(dustOptions instanceof BlockData))
-                {
-                    throw new IllegalArgumentException("A non-null BlockData must be provided when using Particle." + particle + " as particle.");
-                }
+                throw new IllegalArgumentException("A non-null BlockData must be provided when using Particle." + particle + " as particle.");
             }
-            case DUST_COLOR_TRANSITION ->
+        }
+        case DUST_COLOR_TRANSITION ->
+        {
+            if (!(dustOptions instanceof Particle.DustTransition))
             {
-                if (!(dustOptions instanceof Particle.DustTransition))
-                {
-                    throw new IllegalArgumentException("A non-null Particle.DustTransition must be provided when using Particle.DUST_COLOR_TRANSITION as particle.");
-                }
+                throw new IllegalArgumentException("A non-null Particle.DustTransition must be provided when using Particle.DUST_COLOR_TRANSITION as particle.");
             }
-            case VIBRATION ->
+        }
+        case VIBRATION ->
+        {
+            if (!(dustOptions instanceof Vibration))
             {
-                if (!(dustOptions instanceof Vibration))
-                {
-                    throw new IllegalArgumentException("A non-null Vibration must be provided when using Particle.VIBRATION as particle.");
-                }
+                throw new IllegalArgumentException("A non-null Vibration must be provided when using Particle.VIBRATION as particle.");
             }
-            case SCULK_CHARGE ->
+        }
+        case SCULK_CHARGE ->
+        {
+            if (!(dustOptions instanceof Float))
             {
-                if (!(dustOptions instanceof Float))
-                {
-                    throw new IllegalArgumentException("A non-null Float must be provided when using Particle.SCULK_CHARGE as particle.");
-                }
+                throw new IllegalArgumentException("A non-null Float must be provided when using Particle.SCULK_CHARGE as particle.");
             }
-            case SHRIEK ->
+        }
+        case SHRIEK ->
+        {
+            if (!(dustOptions instanceof Integer))
             {
-                if (!(dustOptions instanceof Integer))
-                {
-                    throw new IllegalArgumentException("A non-null Integer must be provided when using Particle.SHRIEK as particle.");
-                }
+                throw new IllegalArgumentException("A non-null Integer must be provided when using Particle.SHRIEK as particle.");
             }
-            case LEGACY_BLOCK_CRACK, LEGACY_BLOCK_DUST, LEGACY_FALLING_DUST ->
+        }
+        case LEGACY_BLOCK_CRACK, LEGACY_BLOCK_DUST, LEGACY_FALLING_DUST ->
+        {
+            if (!(dustOptions instanceof BlockData))
             {
-                if (!(dustOptions instanceof BlockData))
-                {
-                    throw new IllegalArgumentException("A non-null MaterialData must be provided when using Particle." + particle + " as particle.");
-                }
+                throw new IllegalArgumentException("A non-null MaterialData must be provided when using Particle." + particle + " as particle.");
             }
+        }
+        default -> throw new IllegalArgumentException("Unexpected value: " + particle);
         }
 
         // Check if this particle is beyond the viewing distance of the server
         if (this.player != null &&
-            this.player.getLocation().toVector().distanceSquared(new Vector(x, y, z)) <
+                this.player.getLocation().toVector().distanceSquared(new Vector(x, y, z)) <
                 (Bukkit.getServer().getViewDistance() * 256 * Bukkit.getServer().getViewDistance()))
         {
             if (particle.equals(Particle.REDSTONE))

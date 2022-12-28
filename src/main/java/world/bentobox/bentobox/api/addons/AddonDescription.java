@@ -287,7 +287,7 @@ public final class AddonDescription {
      */
     @Override
     public String toString() {
-        return "AddonDescription [" + (name != null ? "name=" + name + ", " : "")
+        return "AddonDescription [" + "name=" + name + ", "
                 + "version=" + version + "]";
     }
 }

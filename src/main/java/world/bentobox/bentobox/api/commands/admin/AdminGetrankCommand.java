@@ -3,7 +3,6 @@ package world.bentobox.bentobox.api.commands.admin;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -98,7 +97,7 @@ public class AdminGetrankCommand extends CompositeCommand {
             return Optional.empty();
         }
         String lastArg = args.get(args.size() - 1);
-        List<String> options = Bukkit.getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList());
+        List<String> options = Bukkit.getOnlinePlayers().stream().map(Player::getName).toList();
         return Optional.of(Util.tabLimit(options, lastArg));
     }
 }

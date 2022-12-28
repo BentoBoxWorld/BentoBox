@@ -71,8 +71,7 @@ public class IslandWorldManager {
     private void registerToWorldManagementPlugins(@NonNull World world, boolean islandWorld) {
         if (plugin.getHooks() != null) {
             for (Hook hook : plugin.getHooks().getHooks()) {
-                if (hook instanceof WorldManagementHook) {
-                    final WorldManagementHook worldManagementHook = (WorldManagementHook) hook;
+                if (hook instanceof final WorldManagementHook worldManagementHook) {
                     if (Bukkit.isPrimaryThread()) {
                         worldManagementHook.registerWorld(world, islandWorld);
                     } else {
@@ -119,7 +118,7 @@ public class IslandWorldManager {
      */
     public List<World> getOverWorlds() {
         return gameModes.keySet().stream().filter(w -> w.getEnvironment().equals(Environment.NORMAL))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**

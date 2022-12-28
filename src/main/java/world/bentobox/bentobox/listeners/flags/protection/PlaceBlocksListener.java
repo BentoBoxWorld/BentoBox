@@ -90,10 +90,7 @@ public class PlaceBlocksListener extends FlagListener
 
         switch (e.getClickedBlock().getType())
         {
-            case FIREWORK_ROCKET ->
-            {
-                this.checkIsland(e, e.getPlayer(), e.getClickedBlock().getLocation(), Flags.PLACE_BLOCKS);
-            }
+            case FIREWORK_ROCKET -> this.checkIsland(e, e.getPlayer(), e.getClickedBlock().getLocation(), Flags.PLACE_BLOCKS);
             case RAIL, POWERED_RAIL, DETECTOR_RAIL, ACTIVATOR_RAIL ->
             {
                 if (e.getMaterial() == Material.MINECART ||

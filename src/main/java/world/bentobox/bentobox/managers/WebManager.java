@@ -8,7 +8,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -103,7 +102,7 @@ public class WebManager {
             repositories.addAll(plugin.getAddonsManager().getEnabledAddons()
                     .stream().map(addon -> addon.getDescription().getRepository())
                     .filter(repo -> !repo.isEmpty())
-                    .collect(Collectors.toList()));
+                    .toList());
 
             /* Download the contributors */
             if (plugin.getSettings().isLogGithubDownloadData()) {

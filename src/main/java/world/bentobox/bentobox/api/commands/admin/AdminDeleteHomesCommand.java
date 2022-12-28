@@ -55,11 +55,11 @@ public class AdminDeleteHomesCommand extends ConfirmableCommand {
             return false;
         }
         // Confirm
-        askConfirmation(user, user.getTranslation("commands.admin.deletehomes.warning"), () -> deleteHomes(user, targetUUID, island));
+        askConfirmation(user, user.getTranslation("commands.admin.deletehomes.warning"), () -> deleteHomes(user, island));
         return true;
     }
 
-    private boolean deleteHomes(User user, UUID targetUUID, Island island) {
+    private boolean deleteHomes(User user, Island island) {
         island.removeHomes();
         user.sendMessage("general.success");
         return true;

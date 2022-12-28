@@ -77,7 +77,7 @@
         <!-- Might differ from the last Spigot release for short periods 
             of time -->
         <paper.version>1.19-R0.1-SNAPSHOT</paper.version>
-        <bstats.version>2.2.1</bstats.version>
+        <bstats.version>3.0.0</bstats.version>
         <vault.version>1.7.1</vault.version>
         <placeholderapi.version>2.10.9</placeholderapi.version>
         <githubapi.version>25f6c5c571</githubapi.version>

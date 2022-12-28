@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -108,7 +107,7 @@ public class IslandTeamCommand extends CompositeCommand {
 
         // We now need to get all online "members" of the island - incl. Trusted and coop
         List<UUID> onlineMembers = island.getMemberSet(RanksManager.COOP_RANK).stream()
-                .filter(uuid -> Util.getOnlinePlayerList(user).contains(Bukkit.getOfflinePlayer(uuid).getName())).collect(Collectors.toList());
+                .filter(uuid -> Util.getOnlinePlayerList(user).contains(Bukkit.getOfflinePlayer(uuid).getName())).toList();
 
         for (int rank : ranks) {
             Set<UUID> players = island.getMemberSet(rank, false);

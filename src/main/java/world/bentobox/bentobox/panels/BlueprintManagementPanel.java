@@ -2,6 +2,7 @@ package world.bentobox.bentobox.panels;
 
 import java.util.AbstractMap;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -241,7 +242,7 @@ public class BlueprintManagementPanel {
     protected PanelItem getBundleIcon(BlueprintBundle bb) {
         return new PanelItemBuilder()
                 .name(t("edit-description"))
-                .description(bb.getDescription().stream().map(Util::translateColorCodes).collect(Collectors.toList()))
+                .description(bb.getDescription().stream().map(Util::translateColorCodes).toList())
                 .icon(bb.getIcon())
                 .clickHandler((panel, u, clickType, slot) -> {
                     u.closeInventory();
@@ -339,7 +340,7 @@ public class BlueprintManagementPanel {
     protected PanelItem getBlueprintItem(GameModeAddon addon, int pos, BlueprintBundle bb, Blueprint blueprint) {
         // Create description
         List<String> desc = blueprint.getDescription() == null ? new ArrayList<>() : blueprint.getDescription();
-        desc = desc.stream().map(Util::translateColorCodes).collect(Collectors.toList());
+        desc = desc.stream().map(Util::translateColorCodes).collect(Collectors.toList()); // Must be mutable
         if ((!blueprint.equals(endBlueprint) && !blueprint.equals(normalBlueprint) && !blueprint.equals(netherBlueprint))) {
             if ((pos > MIN_WORLD_SLOT && pos < MAX_WORLD_SLOT)) {
                 desc.add(t("remove"));

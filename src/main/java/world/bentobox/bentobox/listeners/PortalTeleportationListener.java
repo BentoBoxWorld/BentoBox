@@ -148,7 +148,7 @@ public class PortalTeleportationListener implements Listener {
             // Do nothing
         }
 
-        };
+        }
 
     }
 

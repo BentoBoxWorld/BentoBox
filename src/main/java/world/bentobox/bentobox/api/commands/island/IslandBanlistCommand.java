@@ -3,7 +3,6 @@ package world.bentobox.bentobox.api.commands.island;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
@@ -57,7 +56,7 @@ public class IslandBanlistCommand extends CompositeCommand {
         // Title
         user.sendMessage("commands.island.banlist.the-following");
         // Create a nicely formatted list
-        List<String> names = island.getBanned().stream().map(u -> getPlayers().getName(u)).sorted().collect(Collectors.toList());
+        List<String> names = island.getBanned().stream().map(u -> getPlayers().getName(u)).sorted().toList();
         List<String> lines = new ArrayList<>();
         StringBuilder line = new StringBuilder();
         // Put the names into lines of no more than 40 characters long, separated by commas

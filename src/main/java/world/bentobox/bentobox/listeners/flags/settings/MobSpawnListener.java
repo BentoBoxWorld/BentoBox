@@ -3,7 +3,8 @@ package world.bentobox.bentobox.listeners.flags.settings;
 import java.util.Optional;
 
 import org.bukkit.Location;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.PufferFish;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.CreatureSpawnEvent;

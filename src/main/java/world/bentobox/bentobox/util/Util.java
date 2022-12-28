@@ -2,13 +2,16 @@ package world.bentobox.bentobox.util;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
@@ -21,7 +24,20 @@ import org.bukkit.World.Environment;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Allay;
+import org.bukkit.entity.Animals;
+import org.bukkit.entity.Bat;
+import org.bukkit.entity.EnderDragon;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Flying;
+import org.bukkit.entity.IronGolem;
+import org.bukkit.entity.Monster;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.PufferFish;
+import org.bukkit.entity.Shulker;
+import org.bukkit.entity.Slime;
+import org.bukkit.entity.Snowman;
+import org.bukkit.entity.WaterMob;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
@@ -171,10 +187,10 @@ public class Util {
     public static List<String> getOnlinePlayerList(User user) {
         if (user == null || !user.isPlayer()) {
             // Console and null get to see every player
-            return Bukkit.getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList());
+            return Bukkit.getOnlinePlayers().stream().map(Player::getName).toList();
         }
         // Otherwise prevent invisible players from seeing
-        return Bukkit.getOnlinePlayers().stream().filter(p -> user.getPlayer().canSee(p)).map(Player::getName).collect(Collectors.toList());
+        return Bukkit.getOnlinePlayers().stream().filter(p -> user.getPlayer().canSee(p)).map(Player::getName).toList();
     }
 
     /**
