@@ -208,7 +208,7 @@
         <dependency>
             <groupId>com.mojang</groupId>
             <artifactId>authlib</artifactId>
-            <version>3.2.38</version>
+            <version>3.16.29</version>
             <scope>provided</scope>
         </dependency>
         <!-- Metrics -->
