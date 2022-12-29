@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -388,7 +387,7 @@ public class IslandBanCommandTest {
         args.add("d");
         result = ibc.tabComplete(user, "", args);
         assertTrue(result.isPresent());
-        List<String> r = result.get().stream().sorted().collect(Collectors.toList());
+        List<String> r = result.get().stream().sorted().toList();
         // Compare the expected with the actual
         String[] expectedName = {"dave"};
         assertTrue(Arrays.equals(expectedName, r.toArray()));
@@ -398,7 +397,7 @@ public class IslandBanCommandTest {
         args.add("fr");
         result = ibc.tabComplete(user, "", args);
         assertTrue(result.isPresent());
-        r = result.get().stream().sorted().collect(Collectors.toList());
+        r = result.get().stream().sorted().toList();
         // Compare the expected with the actual
         String[] expected = {"frank", "freddy"};
         assertTrue(Arrays.equals(expected, r.toArray()));

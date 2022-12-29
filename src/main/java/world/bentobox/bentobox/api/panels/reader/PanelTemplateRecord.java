@@ -15,7 +15,6 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.api.panels.Panel;
-import world.bentobox.bentobox.api.panels.reader.PanelTemplateRecord.TemplateItem;
 
 
 /**
@@ -98,10 +97,9 @@ public record PanelTemplateRecord(Panel.Type type,
         if (this == obj) {
             return true;
         }
-        if (!(obj instanceof PanelTemplateRecord)) {
+        if (!(obj instanceof PanelTemplateRecord other)) {
             return false;
         }
-        PanelTemplateRecord other = (PanelTemplateRecord) obj;
         return Objects.equals(background, other.background) && Objects.equals(border, other.border)
                 && Arrays.deepEquals(content, other.content) && Arrays.equals(forcedRows, other.forcedRows)
                 && Objects.equals(title, other.title) && type == other.type;

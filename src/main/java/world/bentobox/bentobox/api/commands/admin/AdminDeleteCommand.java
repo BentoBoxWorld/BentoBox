@@ -83,7 +83,7 @@ public class AdminDeleteCommand extends ConfirmableCommand {
             // Remove them from this island (it still exists and will be deleted later)
             getIslands().removePlayer(getWorld(), targetUUID);
             if (target.isPlayer() && target.isOnline()) {
-                cleanUp(user, target);
+                cleanUp(target);
             }
             vector = oldIsland.getCenter().toVector();
             getIslands().deleteIsland(oldIsland, true, targetUUID);
@@ -95,7 +95,7 @@ public class AdminDeleteCommand extends ConfirmableCommand {
         }
     }
 
-    private void cleanUp(User user, User target) {
+    private void cleanUp(User target) {
         // Remove money inventory etc.
         if (getIWM().isOnLeaveResetEnderChest(getWorld())) {
             target.getPlayer().getEnderChest().clear();

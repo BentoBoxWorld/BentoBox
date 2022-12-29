@@ -7,6 +7,9 @@
 package world.bentobox.bentobox.listeners.teleports;
 
 
+import java.util.Objects;
+import java.util.UUID;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -24,9 +27,6 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
-
-import java.util.Objects;
-import java.util.UUID;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.blueprints.Blueprint;
@@ -55,9 +55,9 @@ public class PlayerTeleportListener extends AbstractTeleportListener implements 
     }
 
 
-// ---------------------------------------------------------------------
-// Section: Listeners
-// ---------------------------------------------------------------------
+    // ---------------------------------------------------------------------
+    // Section: Listeners
+    // ---------------------------------------------------------------------
 
 
     /**
@@ -76,8 +76,9 @@ public class PlayerTeleportListener extends AbstractTeleportListener implements 
     {
         switch (event.getCause())
         {
-            case NETHER_PORTAL -> this.portalProcess(event, World.Environment.NETHER);
-            case END_PORTAL, END_GATEWAY -> this.portalProcess(event, World.Environment.THE_END);
+        case NETHER_PORTAL -> this.portalProcess(event, World.Environment.NETHER);
+        case END_PORTAL, END_GATEWAY -> this.portalProcess(event, World.Environment.THE_END);
+        default -> throw new IllegalArgumentException("Unexpected value: " + event.getCause());
         }
     }
 
@@ -101,7 +102,7 @@ public class PlayerTeleportListener extends AbstractTeleportListener implements 
         UUID uuid = entity.getUniqueId();
 
         if (this.inPortal.contains(uuid) ||
-            !this.plugin.getIWM().inWorld(Util.getWorld(event.getLocation().getWorld())))
+                !this.plugin.getIWM().inWorld(Util.getWorld(event.getLocation().getWorld())))
         {
             return;
         }
@@ -120,12 +121,12 @@ public class PlayerTeleportListener extends AbstractTeleportListener implements 
                 {
                     // Create new PlayerPortalEvent
                     PlayerPortalEvent en = new PlayerPortalEvent((Player) entity,
-                        event.getLocation(),
-                        null,
-                        PlayerTeleportEvent.TeleportCause.NETHER_PORTAL,
-                        0,
-                        false,
-                        0);
+                            event.getLocation(),
+                            null,
+                            PlayerTeleportEvent.TeleportCause.NETHER_PORTAL,
+                            0,
+                            false,
+                            0);
 
                     this.portalProcess(en, World.Environment.NETHER);
                 }
@@ -138,12 +139,12 @@ public class PlayerTeleportListener extends AbstractTeleportListener implements 
         {
             // Create new PlayerPortalEvent
             PlayerPortalEvent en = new PlayerPortalEvent((Player) entity,
-                event.getLocation(),
-                null,
-                type.equals(Material.END_PORTAL) ? PlayerTeleportEvent.TeleportCause.END_PORTAL : PlayerTeleportEvent.TeleportCause.END_GATEWAY,
-                0,
-                false,
-                0);
+                    event.getLocation(),
+                    null,
+                    type.equals(Material.END_PORTAL) ? PlayerTeleportEvent.TeleportCause.END_PORTAL : PlayerTeleportEvent.TeleportCause.END_GATEWAY,
+                            0,
+                            false,
+                            0);
 
             this.portalProcess(en, World.Environment.THE_END);
         }
@@ -212,24 +213,24 @@ public class PlayerTeleportListener extends AbstractTeleportListener implements 
                 event.setRespawnLocation(location);
             }
         },
-        () -> {
-            // Player does not an island. Try to get spawn island, and if that fails, use world spawn point.
-            // If spawn point is not safe, do nothing. Let server handle it.
+                () -> {
+                    // Player does not an island. Try to get spawn island, and if that fails, use world spawn point.
+                    // If spawn point is not safe, do nothing. Let server handle it.
 
-            Location spawnLocation = this.getSpawnLocation(overWorld);
+                    Location spawnLocation = this.getSpawnLocation(overWorld);
 
-            if (spawnLocation != null)
-            {
-                event.setRespawnLocation(spawnLocation);
-            }
-        });
+                    if (spawnLocation != null)
+                    {
+                        event.setRespawnLocation(spawnLocation);
+                    }
+                });
     }
 
 
 
-// ---------------------------------------------------------------------
-// Section: Processors
-// ---------------------------------------------------------------------
+    // ---------------------------------------------------------------------
+    // Section: Processors
+    // ---------------------------------------------------------------------
 
 
     /**
@@ -286,7 +287,7 @@ public class PlayerTeleportListener extends AbstractTeleportListener implements 
 
         // To the nether/end or overworld.
         World toWorld = !fromWorld.getEnvironment().equals(environment) ?
-            this.getNetherEndWorld(overWorld, environment) : overWorld;
+                this.getNetherEndWorld(overWorld, environment) : overWorld;
 
         // Set whether portals should be created or not
         event.setCanCreatePortal(this.isMakePortals(overWorld, environment));
@@ -300,14 +301,14 @@ public class PlayerTeleportListener extends AbstractTeleportListener implements 
 
         // Find the distance from edge of island's protection and set the search radius
         this.getIsland(event.getTo()).ifPresent(island ->
-            event.setSearchRadius(this.calculateSearchRadius(event.getTo(), island)));
+        event.setSearchRadius(this.calculateSearchRadius(event.getTo(), island)));
 
         // Check if there is an island there or not
         if (this.isPastingMissingIslands(overWorld) &&
-            this.isAllowedInConfig(overWorld, environment) &&
-            this.isIslandWorld(overWorld, environment) &&
-            this.getNetherEndWorld(overWorld, environment) != null &&
-            this.getIsland(event.getTo()).
+                this.isAllowedInConfig(overWorld, environment) &&
+                this.isIslandWorld(overWorld, environment) &&
+                this.getNetherEndWorld(overWorld, environment) != null &&
+                this.getIsland(event.getTo()).
                 filter(island -> !this.hasPartnerIsland(island, environment)).
                 map(island -> {
                     event.setCancelled(true);
@@ -345,15 +346,15 @@ public class PlayerTeleportListener extends AbstractTeleportListener implements 
             {
                 // Else manually teleport entity
                 ClosestSafeSpotTeleport.builder(this.plugin).
-                    entity(event.getPlayer()).
-                    location(event.getTo()).
-                    portal().
-                    successRunnable(() -> {
-                        // Reset velocity just in case.
-                        event.getPlayer().setVelocity(new Vector(0,0,0));
-                        event.getPlayer().setFallDistance(0);
-                    }).
-                    build();
+                entity(event.getPlayer()).
+                location(event.getTo()).
+                portal().
+                successRunnable(() -> {
+                    // Reset velocity just in case.
+                    event.getPlayer().setVelocity(new Vector(0,0,0));
+                    event.getPlayer().setFallDistance(0);
+                }).
+                build();
             }
         });
     }
@@ -366,15 +367,15 @@ public class PlayerTeleportListener extends AbstractTeleportListener implements 
      * @param environment - environment involved
      */
     private void handleToStandardNetherOrEnd(PlayerPortalEvent event,
-        World overWorld,
-        World.Environment environment)
+            World overWorld,
+            World.Environment environment)
     {
         World toWorld = Objects.requireNonNull(this.getNetherEndWorld(overWorld, environment));
         Location spawnPoint = toWorld.getSpawnLocation();
 
         // If going to the nether and nether portals are active then just teleport to approx location
         if (environment.equals(World.Environment.NETHER) &&
-            this.plugin.getIWM().getWorldSettings(overWorld).isMakeNetherPortals())
+                this.plugin.getIWM().getWorldSettings(overWorld).isMakeNetherPortals())
         {
             spawnPoint = event.getFrom().toVector().toLocation(toWorld);
         }
@@ -396,10 +397,10 @@ public class PlayerTeleportListener extends AbstractTeleportListener implements 
         {
             // Teleport to standard nether or end
             ClosestSafeSpotTeleport.builder(this.plugin).
-                entity(event.getPlayer()).
-                location(spawnPoint).
-                portal().
-                build();
+            entity(event.getPlayer()).
+            location(spawnPoint).
+            portal().
+            build();
         }
     }
 
@@ -413,14 +414,14 @@ public class PlayerTeleportListener extends AbstractTeleportListener implements 
     private void handleFromStandardNetherOrEnd(PlayerPortalEvent event, World overWorld, World.Environment environment)
     {
         if (environment.equals(World.Environment.NETHER) &&
-            this.plugin.getIWM().getWorldSettings(overWorld).isMakeNetherPortals())
+                this.plugin.getIWM().getWorldSettings(overWorld).isMakeNetherPortals())
         {
             // Set to location directly to the from location.
             event.setTo(event.getFrom().toVector().toLocation(overWorld));
 
             // Update portal search radius.
             this.getIsland(event.getTo()).ifPresent(island ->
-                event.setSearchRadius(this.calculateSearchRadius(event.getTo(), island)));
+            event.setSearchRadius(this.calculateSearchRadius(event.getTo(), island)));
 
             event.setCanCreatePortal(true);
             // event.setCreationRadius(16); 16 is default creation radius.
@@ -430,14 +431,14 @@ public class PlayerTeleportListener extends AbstractTeleportListener implements 
             // Cannot be portal. Should recalculate position.
             // TODO: Currently, it is always spawn location. However, default home must be assigned.
             Location toLocation = this.getIsland(overWorld, event.getPlayer()).
-                map(island -> island.getSpawnPoint(World.Environment.NORMAL)).
-                orElseGet(() -> {
-                    // If player do not have island, try spawn.
-                    Location spawnLocation = this.getSpawnLocation(overWorld);
-                    return spawnLocation == null ?
-                        event.getFrom().toVector().toLocation(overWorld) :
-                        spawnLocation;
-                });
+                    map(island -> island.getSpawnPoint(World.Environment.NORMAL)).
+                    orElseGet(() -> {
+                        // If player do not have island, try spawn.
+                        Location spawnLocation = this.getSpawnLocation(overWorld);
+                        return spawnLocation == null ?
+                                event.getFrom().toVector().toLocation(overWorld) :
+                                    spawnLocation;
+                    });
 
             event.setTo(toLocation);
         }
@@ -449,10 +450,10 @@ public class PlayerTeleportListener extends AbstractTeleportListener implements 
 
             // Teleport to standard nether or end
             ClosestSafeSpotTeleport.builder(this.plugin).
-                entity(event.getPlayer()).
-                location(event.getTo()).
-                portal().
-                build();
+            entity(event.getPlayer()).
+            location(event.getTo()).
+            portal().
+            build();
         }
     }
 
@@ -465,9 +466,9 @@ public class PlayerTeleportListener extends AbstractTeleportListener implements 
      * @param environment - NETHER or THE_END
      */
     private void pasteNewIsland(Player player,
-        Location to,
-        Island island,
-        World.Environment environment)
+            Location to,
+            Island island,
+            World.Environment environment)
     {
         // Paste then teleport player
         this.plugin.getIWM().getAddon(island.getWorld()).ifPresent(addon ->
@@ -478,13 +479,13 @@ public class PlayerTeleportListener extends AbstractTeleportListener implements 
             if (blueprintBundle != null)
             {
                 Blueprint bluePrint = this.plugin.getBlueprintsManager().getBlueprints(addon).
-                    get(blueprintBundle.getBlueprint(environment));
+                        get(blueprintBundle.getBlueprint(environment));
 
                 if (bluePrint != null)
                 {
                     new BlueprintPaster(this.plugin, bluePrint, to.getWorld(), island).
-                        paste().
-                        thenAccept(state -> ClosestSafeSpotTeleport.builder(this.plugin).
+                    paste().
+                    thenAccept(state -> ClosestSafeSpotTeleport.builder(this.plugin).
                             entity(player).
                             location(island.getSpawnPoint(environment) == null ? to : island.getSpawnPoint(environment)).
                             portal().
@@ -493,7 +494,7 @@ public class PlayerTeleportListener extends AbstractTeleportListener implements 
                 else
                 {
                     this.plugin.logError("Could not paste default island in nether or end. " +
-                        "Is there a nether-island or end-island blueprint?");
+                            "Is there a nether-island or end-island blueprint?");
                 }
             }
         });

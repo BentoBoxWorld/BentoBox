@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.eclipse.jdt.annotation.Nullable;
 
@@ -140,7 +139,7 @@ public class AdminSetrankCommand extends CompositeCommand {
             return Optional.of(getPlugin().getRanksManager().getRanks()
                     .entrySet().stream()
                     .filter(entry -> entry.getValue() > RanksManager.VISITOR_RANK)
-                    .map(entry -> user.getTranslation(entry.getKey())).collect(Collectors.toList()));
+                    .map(entry -> user.getTranslation(entry.getKey())).toList());
         }
 
         // Return the player names again for the optional island owner argument

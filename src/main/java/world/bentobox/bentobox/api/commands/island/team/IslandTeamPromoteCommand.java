@@ -3,7 +3,6 @@ package world.bentobox.bentobox.api.commands.island.team;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -125,7 +124,7 @@ public class IslandTeamPromoteCommand extends CompositeCommand {
         if (island != null) {
             List<String> options = island.getMemberSet().stream()
                     .map(Bukkit::getOfflinePlayer)
-                    .map(OfflinePlayer::getName).collect(Collectors.toList());
+                    .map(OfflinePlayer::getName).toList();
 
             String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
             return Optional.of(Util.tabLimit(options, lastArg));

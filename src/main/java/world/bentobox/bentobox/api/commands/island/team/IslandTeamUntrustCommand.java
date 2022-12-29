@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -114,7 +113,7 @@ public class IslandTeamUntrustCommand extends CompositeCommand {
             List<String> options = island.getMembers().entrySet().stream()
                     .filter(e -> e.getValue() == RanksManager.TRUSTED_RANK)
                     .map(e -> Bukkit.getOfflinePlayer(e.getKey()))
-                    .map(OfflinePlayer::getName).collect(Collectors.toList());
+                    .map(OfflinePlayer::getName).toList();
             String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
             return Optional.of(Util.tabLimit(options, lastArg));
         } else {

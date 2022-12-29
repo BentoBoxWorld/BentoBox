@@ -192,14 +192,9 @@ public class NewIsland {
         event = event.getNewEvent().orElse(event);
         // Get the new BlueprintBundle if it was changed
         switch (reason) {
-        case CREATE:
-            name = ((IslandCreateEvent) event).getBlueprintBundle().getUniqueId();
-            break;
-        case RESET:
-            name = ((IslandResetEvent) event).getBlueprintBundle().getUniqueId();
-            break;
-        default:
-            break;
+            case CREATE -> name = ((IslandCreateEvent) event).getBlueprintBundle().getUniqueId();
+            case RESET -> name = ((IslandResetEvent) event).getBlueprintBundle().getUniqueId();
+            default -> {}
         }
 
         // Run task to run after creating the island in one tick if island is not being pasted
@@ -318,14 +313,10 @@ public class NewIsland {
         // Fire exit event
         Reason reasonDone = Reason.CREATED;
         switch (reason) {
-        case CREATE:
-            reasonDone = Reason.CREATED;
-            break;
-        case RESET:
-            reasonDone = Reason.RESETTED;
-            break;
-        default:
-            break;
+            case CREATE -> reasonDone = Reason.CREATED;
+            case RESET -> reasonDone = Reason.RESETTED;
+            default -> {
+            }
         }
         IslandEvent.builder()
         .involvedPlayer(user.getUniqueId())

@@ -1,7 +1,8 @@
 package world.bentobox.bentobox.database.sql.mysql;
 
-import com.zaxxer.hikari.HikariConfig;
 import org.eclipse.jdt.annotation.NonNull;
+
+import com.zaxxer.hikari.HikariConfig;
 
 import world.bentobox.bentobox.database.DatabaseConnectionSettingsImpl;
 import world.bentobox.bentobox.database.sql.SQLDatabaseConnector;

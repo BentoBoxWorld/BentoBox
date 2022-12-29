@@ -1,12 +1,12 @@
 package world.bentobox.bentobox.lists;
 
-import com.google.common.base.Enums;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+
+import com.google.common.base.Enums;
 
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.flags.Flag.Type;
@@ -14,11 +14,60 @@ import world.bentobox.bentobox.api.flags.clicklisteners.CycleClick;
 import world.bentobox.bentobox.listeners.flags.clicklisteners.CommandRankClickListener;
 import world.bentobox.bentobox.listeners.flags.clicklisteners.GeoLimitClickListener;
 import world.bentobox.bentobox.listeners.flags.clicklisteners.MobLimitClickListener;
-import world.bentobox.bentobox.listeners.flags.protection.*;
+import world.bentobox.bentobox.listeners.flags.protection.BlockInteractionListener;
+import world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener;
+import world.bentobox.bentobox.listeners.flags.protection.BreedingListener;
+import world.bentobox.bentobox.listeners.flags.protection.BucketListener;
+import world.bentobox.bentobox.listeners.flags.protection.DyeListener;
+import world.bentobox.bentobox.listeners.flags.protection.EggListener;
+import world.bentobox.bentobox.listeners.flags.protection.ElytraListener;
+import world.bentobox.bentobox.listeners.flags.protection.EntityInteractListener;
+import world.bentobox.bentobox.listeners.flags.protection.ExperiencePickupListener;
+import world.bentobox.bentobox.listeners.flags.protection.FireListener;
+import world.bentobox.bentobox.listeners.flags.protection.HurtingListener;
+import world.bentobox.bentobox.listeners.flags.protection.InventoryListener;
+import world.bentobox.bentobox.listeners.flags.protection.ItemDropPickUpListener;
+import world.bentobox.bentobox.listeners.flags.protection.LeashListener;
+import world.bentobox.bentobox.listeners.flags.protection.LecternListener;
+import world.bentobox.bentobox.listeners.flags.protection.LockAndBanListener;
+import world.bentobox.bentobox.listeners.flags.protection.PaperExperiencePickupListener;
+import world.bentobox.bentobox.listeners.flags.protection.PhysicalInteractionListener;
+import world.bentobox.bentobox.listeners.flags.protection.PlaceBlocksListener;
+import world.bentobox.bentobox.listeners.flags.protection.PortalListener;
+import world.bentobox.bentobox.listeners.flags.protection.SculkSensorListener;
+import world.bentobox.bentobox.listeners.flags.protection.SculkShriekerListener;
+import world.bentobox.bentobox.listeners.flags.protection.ShearingListener;
+import world.bentobox.bentobox.listeners.flags.protection.TNTListener;
+import world.bentobox.bentobox.listeners.flags.protection.TeleportationListener;
+import world.bentobox.bentobox.listeners.flags.protection.ThrowingListener;
 import world.bentobox.bentobox.listeners.flags.settings.DecayListener;
 import world.bentobox.bentobox.listeners.flags.settings.MobSpawnListener;
 import world.bentobox.bentobox.listeners.flags.settings.PVPListener;
-import world.bentobox.bentobox.listeners.flags.worldsettings.*;
+import world.bentobox.bentobox.listeners.flags.worldsettings.ChestDamageListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.CleanSuperFlatListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.CoarseDirtTillingListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.CreeperListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.EnderChestListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.EndermanListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.EnterExitListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.GeoLimitMobsListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.InvincibleVisitorsListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.IslandRespawnListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.ItemFrameListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.LimitMobsListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.LiquidsFlowingOutListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.NaturalSpawningOutsideRangeListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.ObsidianScoopingListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.OfflineGrowthListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.OfflineRedstoneListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.PetTeleportListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.PistonPushListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.RemoveMobsListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.SpawnerSpawnEggsListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.TreesGrowingOutsideRangeListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.VisitorKeepInventoryListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.VisitorsStartingRaidListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.WitherListener;
 import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
 
@@ -592,6 +641,6 @@ public final class Flags {
                         Bukkit.getLogger().severe("Could not get Flag values " + e.getMessage());
                     }
                     return null;
-                }).collect(Collectors.toList());
+                }).toList();
     }
 }

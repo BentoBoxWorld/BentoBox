@@ -99,10 +99,10 @@ public class AdminRangeDisplayCommand extends CompositeCommand {
         // Draw 3 "stages" (one line below, at and above player's y coordinate)
         for (int stage = -1 ; stage <= 1 ; stage++) {
             for (int i = -range ; i <= range ; i++) {
-                user.spawnParticle(particle, dustOptions, center.getBlockX() + i, playerY + stage, center.getBlockZ() + range);
-                user.spawnParticle(particle, dustOptions, center.getBlockX() + i, playerY + stage, center.getBlockZ() - range);
-                user.spawnParticle(particle, dustOptions, center.getBlockX() + range, playerY + stage, center.getBlockZ() + i);
-                user.spawnParticle(particle, dustOptions, center.getBlockX() - range, playerY + stage, center.getBlockZ() + i);
+                user.spawnParticle(particle, dustOptions, (double)center.getBlockX() + i, (double)playerY + stage, (double)center.getBlockZ() + range);
+                user.spawnParticle(particle, dustOptions, (double)center.getBlockX() + i, (double)playerY + stage, (double)center.getBlockZ() - range);
+                user.spawnParticle(particle, dustOptions, (double)center.getBlockX() + range, (double)playerY + stage, (double)center.getBlockZ() + i);
+                user.spawnParticle(particle, dustOptions, (double)center.getBlockX() - range, (double)playerY + stage, (double)center.getBlockZ() + i);
             }
         }
     }

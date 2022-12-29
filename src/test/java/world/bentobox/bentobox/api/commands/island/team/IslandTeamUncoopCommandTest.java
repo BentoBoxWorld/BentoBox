@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -282,7 +281,7 @@ public class IslandTeamUncoopCommandTest {
         // Get the tab-complete list with no argument
         Optional<List<String>> result = ibc.tabComplete(user, "", new LinkedList<>());
         assertTrue(result.isPresent());
-        List<String> r = result.get().stream().sorted().collect(Collectors.toList());
+        List<String> r = result.get().stream().sorted().toList();
         // Compare the expected with the actual
         String[] expectedNames = {"adam", "ben", "cara"};
 
@@ -319,7 +318,7 @@ public class IslandTeamUncoopCommandTest {
         args.add("c");
         Optional<List<String>> result = ibc.tabComplete(user, "", args);
         assertTrue(result.isPresent());
-        List<String> r = result.get().stream().sorted().collect(Collectors.toList());
+        List<String> r = result.get().stream().sorted().toList();
         // Compare the expected with the actual
         String[] expectedNames = {"cara"};
 

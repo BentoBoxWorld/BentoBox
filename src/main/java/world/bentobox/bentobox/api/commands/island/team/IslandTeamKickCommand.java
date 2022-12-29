@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -131,7 +130,7 @@ public class IslandTeamKickCommand extends ConfirmableCommand {
             List<String> options = island.getMemberSet().stream()
                     .filter(uuid -> island.getRank(uuid) >= RanksManager.MEMBER_RANK)
                     .map(Bukkit::getOfflinePlayer)
-                    .map(OfflinePlayer::getName).collect(Collectors.toList());
+                    .map(OfflinePlayer::getName).toList();
 
             String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
             return Optional.of(Util.tabLimit(options, lastArg));

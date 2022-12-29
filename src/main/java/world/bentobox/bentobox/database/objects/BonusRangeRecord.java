@@ -5,9 +5,6 @@ import com.google.gson.annotations.Expose;
 /**
  * Record for bonus ranges
  * @author tastybento
- * @param id an id to identify this bonus
- * @param range the additional bonus range
- * @param message the reference key to a locale message related to this bonus. May be blank.
  */
 public class BonusRangeRecord {
     @Expose
@@ -17,9 +14,9 @@ public class BonusRangeRecord {
     @Expose
     private String message;
     /**
-     * @param uniqueId
-     * @param range
-     * @param message
+     * @param uniqueId an id to identify this bonus
+     * @param range the additional bonus range
+     * @param message the reference key to a locale message related to this bonus. May be blank.
      */
     public BonusRangeRecord(String uniqueId, int range, String message) {
         this.uniqueId = uniqueId;

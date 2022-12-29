@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -472,7 +471,7 @@ public class IslandTeamKickCommandTest {
         // Get the tab-complete list with no argument
         Optional<List<String>> result = ibc.tabComplete(user, "", new LinkedList<>());
         assertTrue(result.isPresent());
-        List<String> r = result.get().stream().sorted().collect(Collectors.toList());
+        List<String> r = result.get().stream().sorted().toList();
         // Compare the expected with the actual - first names in the list
         String[] expectedNames = {"adam", "ben", "cara", "dave", "ed", "frank", "freddy", "george"};
         int i = 0;
@@ -515,7 +514,7 @@ public class IslandTeamKickCommandTest {
         // Get the tab-complete list with argument
         Optional<List<String>> result = ibc.tabComplete(user, "", Collections.singletonList("g"));
         assertTrue(result.isPresent());
-        List<String> r = result.get().stream().sorted().collect(Collectors.toList());
+        List<String> r = result.get().stream().sorted().toList();
         assertFalse(r.isEmpty());
         // Compare the expected with the actual
         String[] expectedNames = {"george"};

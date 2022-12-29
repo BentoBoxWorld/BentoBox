@@ -7,11 +7,12 @@
 package world.bentobox.bentobox.listeners.flags.worldsettings;
 
 
+import java.util.Optional;
+
 import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.raid.RaidTriggerEvent;
-import java.util.Optional;
 
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.api.user.User;

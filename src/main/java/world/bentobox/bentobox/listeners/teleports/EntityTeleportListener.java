@@ -7,6 +7,8 @@
 package world.bentobox.bentobox.listeners.teleports;
 
 
+import java.util.UUID;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -21,8 +23,6 @@ import org.bukkit.event.entity.EntityPortalEvent;
 import org.bukkit.event.entity.EntityPortalExitEvent;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
-
-import java.util.UUID;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.lists.Flags;

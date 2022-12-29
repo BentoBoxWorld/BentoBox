@@ -1,10 +1,10 @@
 package world.bentobox.bentobox.api.flags.clicklisteners;
 
+import java.util.Objects;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.event.inventory.ClickType;
-
-import java.util.Objects;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;

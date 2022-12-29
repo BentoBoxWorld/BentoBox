@@ -1,6 +1,5 @@
 package world.bentobox.bentobox.listeners.flags.protection;
 
-import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 
