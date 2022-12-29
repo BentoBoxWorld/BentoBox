@@ -22,7 +22,6 @@ import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.logging.Level;
-import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
@@ -477,7 +476,7 @@ public class AddonsManager {
         return getEnabledAddons().stream()
                 .filter(GameModeAddon.class::isInstance)
                 .map(GameModeAddon.class::cast)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
@@ -487,7 +486,7 @@ public class AddonsManager {
      */
     @NonNull
     public List<Addon> getLoadedAddons() {
-        return addons.stream().filter(addon -> addon.getState().equals(Addon.State.LOADED)).collect(Collectors.toList());
+        return addons.stream().filter(addon -> addon.getState().equals(Addon.State.LOADED)).toList();
     }
 
     /**
@@ -497,7 +496,7 @@ public class AddonsManager {
      */
     @NonNull
     public List<Addon> getEnabledAddons() {
-        return addons.stream().filter(addon -> addon.getState().equals(Addon.State.ENABLED)).collect(Collectors.toList());
+        return addons.stream().filter(addon -> addon.getState().equals(Addon.State.ENABLED)).toList();
     }
 
     @Nullable
@@ -535,7 +534,7 @@ public class AddonsManager {
      */
     private void sortAddons() {
         // Lists all available addons as names.
-        List<String> names = addons.stream().map(a -> a.getDescription().getName()).collect(Collectors.toList());
+        List<String> names = addons.stream().map(a -> a.getDescription().getName()).toList();
 
         // Check that any dependencies exist
         Iterator<Addon> addonsIterator = addons.iterator();
@@ -556,7 +555,7 @@ public class AddonsManager {
         addons.stream().filter(a -> a.getDescription().getDependencies().isEmpty() && a.getDescription().getSoftDependencies().isEmpty())
         .forEach(a -> sortedAddons.put(a.getDescription().getName(), a));
         // Fill remaining
-        List<Addon> remaining = addons.stream().filter(a -> !sortedAddons.containsKey(a.getDescription().getName())).collect(Collectors.toList());
+        List<Addon> remaining = addons.stream().filter(a -> !sortedAddons.containsKey(a.getDescription().getName())).toList();
 
         // Run through remaining addons
         remaining.forEach(addon -> {
@@ -587,7 +586,7 @@ public class AddonsManager {
     public ChunkGenerator getDefaultWorldGenerator(String worldName, String id) {
         // Clean up world name
         String w = worldName.replace("_nether", "").replace("_the_end", "").toLowerCase(Locale.ENGLISH);
-        if (worldNames.containsKey(w)) {
+        if (worldNames.containsKey(w) && worldNames.get(w) != null) {
             return worldNames.get(w).getDefaultWorldGenerator(worldName, id);
         }
         return null;
@@ -658,7 +657,7 @@ public class AddonsManager {
                 .filter(DataObject.class::isAssignableFrom)
                 // Do not include config files
                 .filter(c -> !ConfigObject.class.isAssignableFrom(c))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**

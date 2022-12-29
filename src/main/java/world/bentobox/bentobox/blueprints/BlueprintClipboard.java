@@ -8,7 +8,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -138,7 +137,7 @@ public class BlueprintClipboard {
                         .filter(e -> new Vector(Math.rint(e.getLocation().getX()),
                                 Math.rint(e.getLocation().getY()),
                                 Math.rint(e.getLocation().getZ())).equals(v))
-                        .collect(Collectors.toList());
+                        .toList();
                 if (copyBlock(v.toLocation(world), copyAir, copyBiome, ents)) {
                     count++;
                 }

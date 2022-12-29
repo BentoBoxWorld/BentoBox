@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -39,7 +38,7 @@ public class GeoMobLimitTab implements Tab, ClickHandler {
             .filter(EntityType::isAlive)
             .filter(t -> !(t.equals(EntityType.PLAYER) || t.equals(EntityType.GIANT) || t.equals(EntityType.ARMOR_STAND)))
             .sorted(Comparator.comparing(EntityType::name))
-            .collect(Collectors.toList()));
+            .toList());
 
     public enum EntityLimitTabType {
         GEO_LIMIT,
@@ -110,7 +109,7 @@ public class GeoMobLimitTab implements Tab, ClickHandler {
     @Override
     public List<@Nullable PanelItem> getPanelItems() {
         // Make panel items
-        return LIVING_ENTITY_TYPES.stream().map(c -> getPanelItem(c, user)).collect(Collectors.toList());
+        return LIVING_ENTITY_TYPES.stream().map(c -> getPanelItem(c, user)).toList();
     }
 
     @Override

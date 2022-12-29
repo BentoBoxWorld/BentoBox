@@ -151,9 +151,8 @@ public class YamlDatabaseConnector implements DatabaseConnector {
                 for (Entry<String, String> e : commentMap.entrySet()) {
                     if (nextLine.contains(e.getKey())) {
                         // We want the comment to start at the same level as the entry
-                        String commentLine = " ".repeat(Math.max(0, nextLine.indexOf(e.getKey()))) +
+                        nextLine = " ".repeat(Math.max(0, nextLine.indexOf(e.getKey()))) +
                                 e.getValue();
-                        nextLine = commentLine;
                         break;
                     }
                 }

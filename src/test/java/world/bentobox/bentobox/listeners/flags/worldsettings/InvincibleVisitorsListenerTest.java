@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -109,7 +108,7 @@ public class InvincibleVisitorsListenerTest {
         when(panel.getName()).thenReturn("panel");
         Map<Integer, PanelItem> map = new HashMap<>();
         List<String> sortedNames = Arrays.stream(EntityDamageEvent.DamageCause.values()).map(DamageCause::name)
-                .map(Util::prettifyText).sorted().collect(Collectors.toList());
+                .map(Util::prettifyText).sorted().toList();
         int i = 0;
         for (String name : sortedNames) {
             PanelItem pi = mock(PanelItem.class);
@@ -220,7 +219,7 @@ public class InvincibleVisitorsListenerTest {
         // Test all damage causes to make sure they can be clicked on and off
         for (int slot = 0; slot < DamageCause.values().length; slot++) {
             // Get the damage type
-            DamageCause dc = Arrays.stream(EntityDamageEvent.DamageCause.values()).sorted(Comparator.comparing(DamageCause::name)).collect(Collectors.toList()).get(slot);
+            DamageCause dc = Arrays.stream(EntityDamageEvent.DamageCause.values()).sorted(Comparator.comparing(DamageCause::name)).toList().get(slot);
             // IV settings should be empty
             assertFalse(ivSettings.contains(dc.name()));
             // Click on the icon

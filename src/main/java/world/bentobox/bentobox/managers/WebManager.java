@@ -8,7 +8,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -18,9 +17,9 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 
-import io.github.thebusybiscuit.githubjavaapi.GitHubWebAPI;
-import io.github.thebusybiscuit.githubjavaapi.objects.repositories.GitHubContributor;
-import io.github.thebusybiscuit.githubjavaapi.objects.repositories.GitHubRepository;
+import io.github.TheBusyBiscuit.GitHubWebAPI4Java.GitHubWebAPI;
+import io.github.TheBusyBiscuit.GitHubWebAPI4Java.objects.repositories.GitHubContributor;
+import io.github.TheBusyBiscuit.GitHubWebAPI4Java.objects.repositories.GitHubRepository;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.web.catalog.CatalogEntry;
@@ -103,7 +102,7 @@ public class WebManager {
             repositories.addAll(plugin.getAddonsManager().getEnabledAddons()
                     .stream().map(addon -> addon.getDescription().getRepository())
                     .filter(repo -> !repo.isEmpty())
-                    .collect(Collectors.toList()));
+                    .toList());
 
             /* Download the contributors */
             if (plugin.getSettings().isLogGithubDownloadData()) {

@@ -3,7 +3,6 @@ package world.bentobox.bentobox.panels;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.eclipse.jdt.annotation.NonNull;
 
@@ -40,7 +39,7 @@ public class IslandCreationPanel {
         // Get the bundles
         Comparator<BlueprintBundle> sortByDisplayName = (p, o) -> p.getDisplayName().compareToIgnoreCase(o.getDisplayName());
         List<BlueprintBundle> bbs = plugin.getBlueprintsManager().getBlueprintBundles(command.getAddon()).values()
-                .stream().sorted(sortByDisplayName).collect(Collectors.toList());
+                .stream().sorted(sortByDisplayName).toList();
         // Loop through them and create items in the panel
         for (BlueprintBundle bb : bbs) {
             String perm = command.getPermissionPrefix() + "island.create." + bb.getUniqueId();
@@ -50,7 +49,7 @@ public class IslandCreationPanel {
                 // Add an item
                 PanelItem item = new PanelItemBuilder()
                         .name(bb.getDisplayName())
-                        .description(bb.getDescription().stream().map(Util::translateColorCodes).collect(Collectors.toList()))
+                        .description(bb.getDescription().stream().map(Util::translateColorCodes).toList())
                         .icon(bb.getIcon()).clickHandler((panel, user1, clickType, slot1) -> {
                             user1.closeInventory();
                             command.execute(user1, label, Collections.singletonList(bb.getUniqueId()));

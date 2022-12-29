@@ -1,10 +1,11 @@
 package world.bentobox.bentobox.nms;
 
+import java.util.concurrent.CompletableFuture;
+
 import org.bukkit.World;
+
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.database.objects.IslandDeletion;
-
-import java.util.concurrent.CompletableFuture;
 
 /**
  * A world generator used by {@link world.bentobox.bentobox.util.DeleteIslandChunks}

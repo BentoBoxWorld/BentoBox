@@ -8,7 +8,6 @@ import java.util.Locale;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.bukkit.ChatColor;
 import org.eclipse.jdt.annotation.NonNull;
@@ -192,19 +191,17 @@ public class AdminSettingsCommand extends CompositeCommand {
             // Command line setting
             flag.ifPresent(f -> {
                 switch (f.getType()) {
-                case PROTECTION:
-                    island.setFlag(f, rank);
-                    getIslands().save(island);
-                    break;
-                case SETTING:
-                    island.setSettingsFlag(f, activeState);
-                    getIslands().save(island);
-                    break;
-                case WORLD_SETTING:
-                    f.setSetting(getWorld(), activeState);
-                    break;
-                default:
-                    break;
+                    case PROTECTION -> {
+                        island.setFlag(f, rank);
+                        getIslands().save(island);
+                    }
+                    case SETTING -> {
+                        island.setSettingsFlag(f, activeState);
+                        getIslands().save(island);
+                    }
+                    case WORLD_SETTING -> f.setSetting(getWorld(), activeState);
+                    default -> {
+                    }
                 }
             });
             user.sendMessage("general.success");
@@ -270,7 +267,7 @@ public class AdminSettingsCommand extends CompositeCommand {
             .getRanks().entrySet().stream()
             .filter(en -> en.getValue() > RanksManager.BANNED_RANK && en.getValue() <= RanksManager.OWNER_RANK)
             .map(Entry::getKey)
-            .map(user::getTranslation).collect(Collectors.toList());
+            .map(user::getTranslation).toList();
             case SETTING -> Arrays.asList(active, disabled);
             default -> Collections.<String>emptyList();
             }).orElse(Collections.emptyList());

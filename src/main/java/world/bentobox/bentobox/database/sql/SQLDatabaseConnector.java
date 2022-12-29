@@ -1,7 +1,5 @@
 package world.bentobox.bentobox.database.sql;
 
-import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashSet;
@@ -9,6 +7,9 @@ import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.eclipse.jdt.annotation.NonNull;
+
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 
 import world.bentobox.bentobox.database.DatabaseConnectionSettingsImpl;
 import world.bentobox.bentobox.database.DatabaseConnector;

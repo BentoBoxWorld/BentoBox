@@ -1700,7 +1700,7 @@ public class IslandsManager {
     @NonNull
     public List<Island> getQuarantinedIslandByUser(@NonNull World world, @Nullable UUID uuid) {
         return quarantineCache.getOrDefault(uuid, Collections.emptyList()).stream()
-                .filter(i -> i.getWorld().equals(world)).collect(Collectors.toList());
+                .filter(i -> i.getWorld().equals(world)).toList();
     }
 
     /**

@@ -3,7 +3,6 @@ package world.bentobox.bentobox.api.commands.admin;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
@@ -26,7 +25,7 @@ public class AdminResetFlagsCommand extends ConfirmableCommand {
         super(parent, "resetflags");
         options = getPlugin().getFlagsManager().getFlags().stream()
                 .filter(f -> f.getType().equals(Type.PROTECTION) || f.getType().equals(Type.SETTING))
-                .map(Flag::getID).collect(Collectors.toList());
+                .map(Flag::getID).toList();
     }
 
     @Override
