@@ -1,5 +1,7 @@
 package world.bentobox.bentobox.listeners.flags.worldsettings;
 
+import java.util.Optional;
+
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -7,6 +9,7 @@ import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.world.StructureGrowEvent;
 
 import world.bentobox.bentobox.api.flags.FlagListener;
+import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.Flags;
 
 /**
@@ -24,15 +27,16 @@ public class TreesGrowingOutsideRangeListener extends FlagListener {
         }
 
         // If there is no protected island at the location of the sapling, just cancel the event (prevents the sapling from growing).
-        if (getIslands().getProtectedIslandAt(e.getLocation()).isEmpty()) {
+        Optional<Island> optionalProtectedIsland = getIslands().getProtectedIslandAt(e.getLocation());
+        if (optionalProtectedIsland.isEmpty()) {
             e.setCancelled(true);
             return;
         }
-
-        // Now, run through all the blocks that will be generated and if there is no protected island at their location, turn them into AIR.
-        e.getBlocks().stream()
-        .filter(blockState -> getIslands().getProtectedIslandAt(blockState.getLocation()).isEmpty())
-        .forEach(blockState -> blockState.setType(Material.AIR));
+        // Now, run through all the blocks that will be generated and if there is no protected island at their location, or the protected island is not the same as the one growing the tree then turn them into AIR.
+        e.getBlocks().removeIf(blockState -> {
+            Optional<Island> island = getIslands().getProtectedIslandAt(blockState.getLocation());
+            return island.isEmpty() || !island.equals(optionalProtectedIsland);
+        });
     }
 
     @EventHandler(priority = EventPriority.HIGH)
@@ -45,13 +49,15 @@ public class TreesGrowingOutsideRangeListener extends FlagListener {
         }
 
         // If there is no protected island at the location of the chorus flower, just cancel the event (prevents the flower from growing).
-        if (getIslands().getProtectedIslandAt(e.getSource().getLocation()).isEmpty()) {
+        Optional<Island> optionalProtectedIsland = getIslands().getProtectedIslandAt(e.getSource().getLocation());
+        if (optionalProtectedIsland.isEmpty()) {
             e.setCancelled(true);
             return;
         }
 
         // Now prevent the flower to grow if this is growing outside the island
-        if (getIslands().getProtectedIslandAt(e.getBlock().getLocation()).isEmpty()) {
+        Optional<Island> island = getIslands().getProtectedIslandAt(e.getBlock().getLocation());
+        if (island.isEmpty() || !island.equals(optionalProtectedIsland)) {
             e.setCancelled(true);
         }
     }
