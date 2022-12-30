@@ -5,7 +5,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -70,6 +69,8 @@ public class TreesGrowingOutsideRangeListenerTest {
 
     @Mock
     private Island island;
+    @Mock
+    private Island anotherIsland;
 
     @Mock
     private BlockState firstBlock;
@@ -127,13 +128,16 @@ public class TreesGrowingOutsideRangeListenerTest {
      * Populates {@link TreesGrowingOutsideRangeListenerTest#blockStates} with a tree schema.
      */
     private void populateBlockStatesList() {
-        //when(firstBlock.getLocation()).thenReturn(new Location(world, 2, 0, 2));
+        Location a = new Location(world, 2, 0, 2);
+
+        when(firstBlock.getLocation()).thenReturn(a);
         blockStates.add(firstBlock);
         // Tree logs
         for (int i = 0; i < 3; i++) {
             BlockState logState = mock(BlockState.class);
             when(logState.getType()).thenReturn(Material.OAK_LOG);
-            when(logState.getLocation()).thenReturn(new Location(world, 2, i, 2));
+            Location trunk = new Location(world, 2, i, 2);
+            when(logState.getLocation()).thenReturn(trunk);
             blockStates.add(logState);
         }
 
@@ -144,13 +148,14 @@ public class TreesGrowingOutsideRangeListenerTest {
                     if (x != 2 && y >= 3 && z != 2) {
                         BlockState leafState = mock(BlockState.class);
                         when(leafState.getType()).thenReturn(Material.OAK_LEAVES);
-                        when(leafState.getLocation()).thenReturn(new Location(world, x, y, z));
+                        Location l = new Location(world, x, y, z);
+                        when(leafState.getLocation()).thenReturn(l);
                         blockStates.add(leafState);
                     }
                 }
             }
         }
-        //when(lastBlock.getLocation()).thenReturn(new Location(world, 2, 0, 2));
+        when(lastBlock.getLocation()).thenReturn(new Location(world, 2, 0, 2));
         blockStates.add(lastBlock);
     }
 
@@ -198,6 +203,23 @@ public class TreesGrowingOutsideRangeListenerTest {
     }
 
     /**
+     * Asserts that the event is cancelled and that there is no interaction with the blocks list when the sapling is outside an island but inside another island.
+     */
+    @Test
+    public void testSaplingOutsideIslandButInAnotherIsland() {
+        // Sapling is on the island, but some leaves are in another island. For simplicity
+        for (BlockState b: blockStates) {
+            if (b.getLocation().getBlockY() == 4) {
+                when(islandsManager.getProtectedIslandAt(b.getLocation())).thenReturn(Optional.of(anotherIsland));
+            }
+        }
+        // Run
+        new TreesGrowingOutsideRangeListener().onTreeGrow(event);
+        // Some blocks should have become air only 21 are left
+        assertEquals(21, event.getBlocks().size());
+    }
+
+    /**
      * Asserts that no interaction is done to the event when everything's inside an island.
      */
     @Test
@@ -219,7 +241,7 @@ public class TreesGrowingOutsideRangeListenerTest {
         // Run
         new TreesGrowingOutsideRangeListener().onTreeGrow(event);
         assertFalse(event.isCancelled());
-        verify(firstBlock, Mockito.never()).setType(Material.AIR);
-        verify(lastBlock).setType(Material.AIR);
+        // Some blocks should have become air only 21 are left
+        assertEquals(2, event.getBlocks().size());
     }
 }
