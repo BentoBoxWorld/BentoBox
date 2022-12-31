@@ -204,31 +204,43 @@ public class SQLDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T>
     @Override
     public T loadObject(@NonNull String uniqueId)
     {
+        T result = null;
         try (Connection connection = this.dataSource.getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(this.sqlConfig.getLoadObjectSQL()))
         {
             // UniqueId needs to be placed in quotes?
             preparedStatement.setString(1, this.sqlConfig.isUseQuotes() ? "\"" + uniqueId + "\"" : uniqueId);
-
-            try (ResultSet resultSet = preparedStatement.executeQuery())
-            {
-                if (resultSet.next())
-                {
-                    // If there is a result, we only want/need the first one
-                    Gson gson = this.getGson();
-                    return gson.fromJson(resultSet.getString("json"), this.dataObject);
-                }
-            }
-            catch (Exception e)
-            {
-                this.plugin.logError(COULD_NOT_LOAD_OBJECT + uniqueId + " " + e.getMessage());
-            }
+            result = getObject(uniqueId, preparedStatement);
         }
         catch (SQLException e)
         {
             this.plugin.logError(COULD_NOT_LOAD_OBJECT + uniqueId + " " + e.getMessage());
         }
 
+        return result;
+    }
+
+
+    /**
+     * Return the object decoded from JSON or null if there is an error
+     * @param uniqueId - unique Id of object used in error reporting
+     * @param preparedStatement - database statement to execute
+     * @return
+     */
+    private T getObject(@NonNull String uniqueId, PreparedStatement preparedStatement) {
+        try (ResultSet resultSet = preparedStatement.executeQuery())
+        {
+            if (resultSet.next())
+            {
+                // If there is a result, we only want/need the first one
+                Gson gson = this.getGson();
+                return gson.fromJson(resultSet.getString("json"), this.dataObject);
+            }
+        }
+        catch (Exception e)
+        {
+            this.plugin.logError(COULD_NOT_LOAD_OBJECT + uniqueId + " " + e.getMessage());
+        }
         return null;
     }
 
