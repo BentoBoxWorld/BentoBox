@@ -17,7 +17,7 @@ public class MariaDBDatabase implements DatabaseSetup
     private MariaDBDatabaseConnector connector;
 
 
-    /*
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -28,13 +28,13 @@ public class MariaDBDatabase implements DatabaseSetup
         if (this.connector == null)
         {
             this.connector = new MariaDBDatabaseConnector(new DatabaseConnectionSettingsImpl(
-                plugin.getSettings().getDatabaseHost(),
-                plugin.getSettings().getDatabasePort(),
-                plugin.getSettings().getDatabaseName(),
-                plugin.getSettings().getDatabaseUsername(),
-                plugin.getSettings().getDatabasePassword(),
-                plugin.getSettings().isUseSSL(),
-                plugin.getSettings().getMaximumPoolSize()));
+                    plugin.getSettings().getDatabaseHost(),
+                    plugin.getSettings().getDatabasePort(),
+                    plugin.getSettings().getDatabaseName(),
+                    plugin.getSettings().getDatabaseUsername(),
+                    plugin.getSettings().getDatabasePassword(),
+                    plugin.getSettings().isUseSSL(),
+                    plugin.getSettings().getMaximumPoolSize()));
         }
 
         return new MariaDBDatabaseHandler<>(plugin, type, this.connector);

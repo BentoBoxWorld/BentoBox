@@ -24,7 +24,7 @@ public class SQLiteDatabase implements DatabaseSetup
     private SQLiteDatabaseConnector connector;
 
 
-    /*
+    /**
      * {@inheritDoc}
      */
     @Override
