@@ -1,7 +1,5 @@
 package world.bentobox.bentobox.hooks;
 
-import java.util.logging.Level;
-
 import org.bukkit.Material;
 import org.bukkit.World;
 
