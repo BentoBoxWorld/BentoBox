@@ -59,8 +59,7 @@ public class MyWorldsHook extends Hook implements WorldManagementHook {
                     .invoke(worldConfig, name);
              */
         } catch (Exception t) {
-            BentoBox.getInstance().getLogger().log(Level.SEVERE,
-                    "Failed to register world " + world.getName() + " with MyWorlds", t);
+            BentoBox.getInstance().logError("Failed to register world " + world.getName() + " with MyWorlds " + t.getMessage());
         }
     }
 
