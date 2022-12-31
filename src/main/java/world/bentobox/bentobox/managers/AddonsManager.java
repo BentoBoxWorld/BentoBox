@@ -21,7 +21,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
@@ -341,8 +340,8 @@ public class AddonsManager {
         plugin.logWarning("NOTE: DO NOT report this as a bug from BentoBox.");
         StringBuilder a = new StringBuilder();
         addon.getDescription().getAuthors().forEach(author -> a.append(author).append(" "));
-        plugin.getLogger().log(Level.SEVERE, "Please report this stack trace to the addon's author(s): " + a, e);
-
+        plugin.logError("Please report this stack trace to the addon's author(s): " + a);
+        plugin.logStacktrace(e);
     }
 
     private boolean isAddonCompatibleWithBentoBox(@NonNull Addon addon) {
