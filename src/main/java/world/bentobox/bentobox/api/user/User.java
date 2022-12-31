@@ -88,7 +88,8 @@ public class User implements MetaDataAble {
     }
 
     /**
-     * Gets an instance of User from a UUID.
+     * Gets an instance of User from a UUID. This will always return a user object.
+     * If the player is offline then the getPlayer value will be null.
      * @param uuid - UUID
      * @return user - user
      */
@@ -97,7 +98,7 @@ public class User implements MetaDataAble {
         if (users.containsKey(uuid)) {
             return users.get(uuid);
         }
-        // Return player, or null if they are not online
+        // Return a user instance
         return new User(uuid);
     }
 

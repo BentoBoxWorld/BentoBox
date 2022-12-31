@@ -96,22 +96,24 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
         // Remove the invite
         itc.removeInvite(playerUUID);
         User inviter = User.getInstance(invite.getInviter());
-        if (inviter != null) {
-            Island island = getIslands().getIsland(getWorld(), inviter);
-            if (island != null) {
-                if (island.getMemberSet(RanksManager.TRUSTED_RANK, false).size() > getIslands().getMaxMembers(island, RanksManager.TRUSTED_RANK)) {
-                    user.sendMessage("commands.island.team.trust.is-full");
-                    return;
-                }
-                island.setRank(user, RanksManager.TRUSTED_RANK);
-                IslandEvent.builder()
-                .island(island)
-                .involvedPlayer(user.getUniqueId())
-                .admin(false)
-                .reason(IslandEvent.Reason.RANK_CHANGE)
-                .rankChange(island.getRank(user), RanksManager.TRUSTED_RANK)
-                .build();
+        Island island = getIslands().getIsland(getWorld(), inviter);
+        if (island != null) {
+            if (island.getMemberSet(RanksManager.TRUSTED_RANK, false).size() > getIslands().getMaxMembers(island, RanksManager.TRUSTED_RANK)) {
+                user.sendMessage("commands.island.team.trust.is-full");
+                return;
+            }
+            island.setRank(user, RanksManager.TRUSTED_RANK);
+            IslandEvent.builder()
+            .island(island)
+            .involvedPlayer(user.getUniqueId())
+            .admin(false)
+            .reason(IslandEvent.Reason.RANK_CHANGE)
+            .rankChange(island.getRank(user), RanksManager.TRUSTED_RANK)
+            .build();
+            if (inviter.isOnline()) {
                 inviter.sendMessage("commands.island.team.trust.success", TextVariables.NAME, user.getName());
+            }
+            if (inviter.isPlayer()) {
                 user.sendMessage("commands.island.team.trust.you-are-trusted", TextVariables.NAME, inviter.getName());
             }
         }
@@ -121,22 +123,24 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
         // Remove the invite
         itc.removeInvite(playerUUID);
         User inviter = User.getInstance(invite.getInviter());
-        if (inviter != null) {
-            Island island = getIslands().getIsland(getWorld(), inviter);
-            if (island != null) {
-                if (island.getMemberSet(RanksManager.COOP_RANK, false).size() > getIslands().getMaxMembers(island, RanksManager.COOP_RANK)) {
-                    user.sendMessage("commands.island.team.coop.is-full");
-                    return;
-                }
-                island.setRank(user, RanksManager.COOP_RANK);
-                IslandEvent.builder()
-                .island(island)
-                .involvedPlayer(user.getUniqueId())
-                .admin(false)
-                .reason(IslandEvent.Reason.RANK_CHANGE)
-                .rankChange(island.getRank(user), RanksManager.COOP_RANK)
-                .build();
+        Island island = getIslands().getIsland(getWorld(), inviter);
+        if (island != null) {
+            if (island.getMemberSet(RanksManager.COOP_RANK, false).size() > getIslands().getMaxMembers(island, RanksManager.COOP_RANK)) {
+                user.sendMessage("commands.island.team.coop.is-full");
+                return;
+            }
+            island.setRank(user, RanksManager.COOP_RANK);
+            IslandEvent.builder()
+            .island(island)
+            .involvedPlayer(user.getUniqueId())
+            .admin(false)
+            .reason(IslandEvent.Reason.RANK_CHANGE)
+            .rankChange(island.getRank(user), RanksManager.COOP_RANK)
+            .build();
+            if (inviter.isOnline()) {
                 inviter.sendMessage("commands.island.team.coop.success", TextVariables.NAME, user.getName());
+            }
+            if (inviter.isPlayer()) {
                 user.sendMessage("commands.island.team.coop.you-are-a-coop-member", TextVariables.NAME, inviter.getName());
             }
         }
@@ -179,7 +183,7 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
         }
         user.sendMessage("commands.island.team.invite.accept.you-joined-island", TextVariables.LABEL, getTopLabel());
         User inviter = User.getInstance(invite.getInviter());
-        if (inviter != null) {
+        if (inviter.isOnline()) {
             inviter.sendMessage("commands.island.team.invite.accept.name-joined-your-island", TextVariables.NAME, user.getName());
         }
         getIslands().save(teamIsland);
