@@ -43,6 +43,7 @@ import world.bentobox.bentobox.util.teleport.SafeSpotTeleport;
  * @deprecated replaced by better listeners.
  * @see world.bentobox.bentobox.listeners.teleports.PlayerTeleportListener
  * @see world.bentobox.bentobox.listeners.teleports.EntityTeleportListener
+ * @since 1.12.1
  */
 @Deprecated
 public class PortalTeleportationListener implements Listener {
