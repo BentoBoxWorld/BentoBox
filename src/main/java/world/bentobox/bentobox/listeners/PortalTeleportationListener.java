@@ -268,9 +268,8 @@ public class PortalTeleportationListener implements Listener {
             return null;
         }
 
-        Location toLocation = e.getIsland().map(island -> island.getSpawnPoint(env)).
-            orElse(e.getFrom().toVector().toLocation(toWorld));
-
+        Location toLocation = Objects.requireNonNullElse(e.getIsland().map(island -> island.getSpawnPoint(env)).
+                orElse(e.getFrom().toVector().toLocation(toWorld)), e.getFrom().toVector().toLocation(toWorld));
         // Limit Y to the min/max world height.
         toLocation.setY(Math.max(Math.min(toLocation.getY(), toWorld.getMaxHeight()), toWorld.getMinHeight()));
 
@@ -298,7 +297,7 @@ public class PortalTeleportationListener implements Listener {
         {
             // Find the portal - due to speed, it is possible that the player will be below or above the portal
             for (k = toWorld.getMinHeight(); (k < e.getWorld().getMaxHeight()) &&
-                !e.getWorld().getBlockAt(x, k, z).getType().equals(Material.END_PORTAL); k++);
+                    !e.getWorld().getBlockAt(x, k, z).getType().equals(Material.END_PORTAL); k++);
         }
         // Find the maximum x and z corner
         for (; (i < x + 5) && e.getWorld().getBlockAt(i, k, z).getType().equals(Material.END_PORTAL); i++) ;
@@ -322,8 +321,8 @@ public class PortalTeleportationListener implements Listener {
      */
     private boolean isMakePortals(GameModeAddon gm, Environment env) {
         return env.equals(Environment.NETHER) ?
-            gm.getWorldSettings().isMakeNetherPortals() && Bukkit.getAllowNether() :
-            gm.getWorldSettings().isMakeEndPortals() && Bukkit.getAllowEnd();
+                gm.getWorldSettings().isMakeNetherPortals() && Bukkit.getAllowNether() :
+                    gm.getWorldSettings().isMakeEndPortals() && Bukkit.getAllowEnd();
     }
 
     /**

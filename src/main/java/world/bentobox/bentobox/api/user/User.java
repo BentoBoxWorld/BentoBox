@@ -597,7 +597,7 @@ public class User implements MetaDataAble {
      * @param y Y coordinate of the particle to display.
      * @param z Z coordinate of the particle to display.
      */
-    public void spawnParticle(Particle particle, Object dustOptions, double x, double y, double z)
+    public void spawnParticle(Particle particle, @Nullable Object dustOptions, double x, double y, double z)
     {
         // Improve particle validation.
         switch (particle)
