@@ -102,7 +102,8 @@ public class Database<T> {
      * Save object. Saving may be done async or sync, depending on the underlying database.
      * @param instance to save
      * @return true - always.
-     * @deprecated As of 1.13.0. Use {@link #saveObjectAsync(Object)}.
+     * @deprecated Use {@link #saveObjectAsync(Object)}.
+     * @since 1.13.0
      */
     @Deprecated
     public boolean saveObject(T instance) {

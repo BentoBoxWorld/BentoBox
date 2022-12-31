@@ -39,27 +39,35 @@ public class DatabaseConnectionSettingsImpl {
      * @param host - database host
      * @param port - port
      * @param databaseName - database name
-     * @param username - username 
+     * @param username - username
      * @param password - password
+     * @param useSSL - whether to use SSL or not
+     * @param maxConnections - max number of connections
      * @param extraProperties Map with extra properties.
      */
-    public DatabaseConnectionSettingsImpl(String host,
-        int port,
-        String databaseName,
-        String username,
-        String password,
-        boolean useSSL,
-        int maxConnections,
-        Map<String, String> extraProperties)
+    public record DatabaseSettings(String host,
+            int port,
+            String databaseName,
+            String username,
+            String password,
+            boolean useSSL,
+            int maxConnections,
+            Map<String, String> extraProperties) {}
+
+    /**
+     * Hosts database settings
+     * @param settings - database settings see {@link DatabaseSettings}
+     */
+    public DatabaseConnectionSettingsImpl(DatabaseSettings settings)
     {
-        this.host = host;
-        this.port = port;
-        this.databaseName = databaseName;
-        this.username = username;
-        this.password = password;
-        this.useSSL = useSSL;
-        this.maxConnections = maxConnections;
-        this.extraProperties = extraProperties;
+        this.host = settings.host;
+        this.port = settings.port;
+        this.databaseName = settings.databaseName;
+        this.username = settings.username;
+        this.password = settings.password;
+        this.useSSL = settings.useSSL;
+        this.maxConnections = settings.maxConnections;
+        this.extraProperties = settings.extraProperties;
     }
 
 
@@ -74,14 +82,14 @@ public class DatabaseConnectionSettingsImpl {
      * @param maxConnections - number of maximal connections in pool.
      */
     public DatabaseConnectionSettingsImpl(String host,
-        int port,
-        String databaseName,
-        String username,
-        String password,
-        boolean useSSL,
-        int maxConnections)
+            int port,
+            String databaseName,
+            String username,
+            String password,
+            boolean useSSL,
+            int maxConnections)
     {
-        this(host, port, databaseName, username, password, useSSL, maxConnections, Collections.emptyMap());
+        this(new DatabaseSettings(host, port, databaseName, username, password, useSSL, maxConnections, Collections.emptyMap()));
     }
 
 
@@ -95,13 +103,13 @@ public class DatabaseConnectionSettingsImpl {
      * @param useSSL - ssl usage.
      */
     public DatabaseConnectionSettingsImpl(String host,
-        int port,
-        String databaseName,
-        String username,
-        String password,
-        boolean useSSL)
+            int port,
+            String databaseName,
+            String username,
+            String password,
+            boolean useSSL)
     {
-        this(host, port, databaseName, username, password, useSSL, 0, Collections.emptyMap());
+        this(new DatabaseSettings(host, port, databaseName, username, password, useSSL, 0, Collections.emptyMap()));
     }
 
 
