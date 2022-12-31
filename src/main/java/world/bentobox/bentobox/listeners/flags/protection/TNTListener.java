@@ -49,14 +49,12 @@ public class TNTListener extends FlagListener {
             return;
         }
         // Stop TNT from being damaged if it is being caused by a visitor with a flaming arrow
-        if (e.getEntity() instanceof Projectile projectile) {
-            // Find out who fired it
-            if (projectile.getShooter() instanceof Player shooter && projectile.getFireTicks() > 0
-                    && !checkIsland(e, shooter, e.getBlock().getLocation(), Flags.TNT_PRIMING)) {
-                // Remove the arrow
-                projectile.remove();
-                e.setCancelled(true);
-            }
+        if (e.getEntity() instanceof Projectile projectile && // Find out who fired it
+                projectile.getShooter() instanceof Player shooter && projectile.getFireTicks() > 0
+                && !checkIsland(e, shooter, e.getBlock().getLocation(), Flags.TNT_PRIMING)) {
+            // Remove the arrow
+            projectile.remove();
+            e.setCancelled(true);
         }
     }
 
