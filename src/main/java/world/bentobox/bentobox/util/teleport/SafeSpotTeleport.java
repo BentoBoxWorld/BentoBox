@@ -367,19 +367,6 @@ public class SafeSpotTeleport {
         }
 
         /**
-         * Set the home number to this number
-         *
-         * @param homeNumber home number
-         * @return Builder
-         * @deprecated use {@link #homeName}
-         */
-        @Deprecated
-        public Builder homeNumber(int homeNumber) {
-            this.homeNumber = homeNumber;
-            return this;
-        }
-
-        /**
          * Set the home name
          *
          * @param homeName - home name
