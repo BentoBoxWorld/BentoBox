@@ -82,7 +82,7 @@
         <placeholderapi.version>2.10.9</placeholderapi.version>
         <githubapi.version>d5f5e0bbd8</githubapi.version>
         <dynmap.version>3.0-SNAPSHOT</dynmap.version>
-        <myworlds.version>1.19-v2</myworlds.version>
+        <myworlds.version>1.19.3-v1</myworlds.version>
         <!-- Revision variable removes warning about dynamic version -->
         <revision>${build.version}-SNAPSHOT</revision>
         <!-- Do not change unless you want different name for local builds. -->
