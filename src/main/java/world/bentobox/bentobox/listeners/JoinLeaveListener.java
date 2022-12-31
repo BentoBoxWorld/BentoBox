@@ -50,7 +50,8 @@ public class JoinLeaveListener implements Listener {
         User.removePlayer(event.getPlayer());
 
         User user = User.getInstance(event.getPlayer());
-        if (user == null || user.getUniqueId() == null) {
+        if (!user.isPlayer() || user.getUniqueId() == null) {
+            // This should never be the case, but it might be caused by some fake player plugins
             return;
         }
         UUID playerUUID = event.getPlayer().getUniqueId();
