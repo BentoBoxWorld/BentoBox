@@ -123,7 +123,7 @@ public class BreakBlocksListener extends FlagListener {
             // Check the break blocks flag
             notAllowed(e, p, e.getEntity().getLocation());
         } else if (e.getDamager() instanceof Projectile p && // Find out who fired the arrow
-                p.getShooter() instanceof Player && notAllowed(e, (Player)p.getShooter(), e.getEntity().getLocation())) {
+                p.getShooter() instanceof Player player && notAllowed(e, player, e.getEntity().getLocation())) {
             e.getEntity().setFireTicks(0);
             p.setFireTicks(0);
         }
