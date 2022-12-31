@@ -42,11 +42,6 @@ import world.bentobox.bentobox.util.Util;
 public class ClosestSafeSpotTeleport
 {
     /**
-     * Range to scan
-     */
-    private static final int RANGE = 20;
-
-    /**
      * Teleports and entity to a safe spot on island
      *
      * @param builder - safe spot teleport builder
@@ -178,8 +173,8 @@ public class ClosestSafeSpotTeleport
         int z = this.location.getBlockZ();
 
         // Normalize block coordinates to chunk coordinates and add extra 1 for visiting.
-        int numberOfChunks = (((x + RANGE) >> 4) - ((x - RANGE) >> 4) + 1) *
-                (((z + RANGE) >> 4) - ((z - RANGE) >> 4) + 1);
+        int numberOfChunks = (((x + SCAN_RANGE) >> 4) - ((x - SCAN_RANGE) >> 4) + 1) *
+                (((z + SCAN_RANGE) >> 4) - ((z - SCAN_RANGE) >> 4) + 1);
 
         // Ideally it would be if visitor switch from clockwise to counter-clockwise if X % 16 < 8 and
         // up to down if Z % 16 < 8.
@@ -796,6 +791,12 @@ public class ClosestSafeSpotTeleport
      * Stores chunk load speed.
      */
     private static final long CHUNK_LOAD_SPEED = 1;
+
+    /**
+     * Range to scan
+     */
+    private static final int SCAN_RANGE = 20;
+
 
     // ---------------------------------------------------------------------
     // Section: Variables
