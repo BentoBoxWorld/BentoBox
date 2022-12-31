@@ -58,7 +58,7 @@ public class MyWorldsHook extends Hook implements WorldManagementHook {
                     .getMethod("setChunkGeneratorName", String.class)
                     .invoke(worldConfig, name);
              */
-        } catch (Throwable t) {
+        } catch (Exception t) {
             BentoBox.getInstance().getLogger().log(Level.SEVERE,
                     "Failed to register world " + world.getName() + " with MyWorlds", t);
         }
