@@ -97,31 +97,31 @@ public class SQLDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T>
         {
             // Transition from the old table name
             String sql = this.sqlConfig.getRenameTableSQL().
-                replace("[oldTableName]", this.sqlConfig.getOldTableName()).
-                replace("[tableName]", this.sqlConfig.getTableName());
+                    replace("[oldTableName]", this.sqlConfig.getOldTableName()).
+                    replace("[tableName]", this.sqlConfig.getTableName());
 
             try (Connection connection = this.dataSource.getConnection();
-                 PreparedStatement preparedStatement = connection.prepareStatement(sql))
+                    PreparedStatement preparedStatement = connection.prepareStatement(sql))
             {
                 preparedStatement.execute();
             }
             catch (SQLException e)
             {
                 this.plugin.logError("Could not rename " + this.sqlConfig.getOldTableName() + " for data object " +
-                    this.dataObject.getCanonicalName() + " " + e.getMessage());
+                        this.dataObject.getCanonicalName() + " " + e.getMessage());
             }
         }
 
         // Prepare and execute the database statements
         try (Connection connection = this.dataSource.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(this.sqlConfig.getSchemaSQL()))
+                PreparedStatement preparedStatement = connection.prepareStatement(this.sqlConfig.getSchemaSQL()))
         {
             preparedStatement.execute();
         }
         catch (SQLException e)
         {
             this.plugin.logError("Problem trying to create schema for data object " +
-                this.dataObject.getCanonicalName() + " " + e.getMessage());
+                    this.dataObject.getCanonicalName() + " " + e.getMessage());
         }
     }
 
@@ -133,7 +133,7 @@ public class SQLDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T>
     public List<T> loadObjects()
     {
         try (Connection connection = this.dataSource.getConnection();
-             Statement preparedStatement = connection.createStatement())
+                Statement preparedStatement = connection.createStatement())
         {
             return this.loadIt(preparedStatement);
         }
@@ -166,20 +166,7 @@ public class SQLDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T>
 
                 if (json != null)
                 {
-                    try
-                    {
-                        T gsonResult = gson.fromJson(json, this.dataObject);
-
-                        if (gsonResult != null)
-                        {
-                            list.add(gsonResult);
-                        }
-                    }
-                    catch (JsonSyntaxException ex)
-                    {
-                        this.plugin.logError(COULD_NOT_LOAD_OBJECT + ex.getMessage());
-                        this.plugin.logError(json);
-                    }
+                    getGsonResultSet(gson, json, list);
                 }
             }
         }
@@ -192,6 +179,25 @@ public class SQLDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T>
     }
 
 
+    private void getGsonResultSet(Gson gson, String json, List<T> list) {
+        try
+        {
+            T gsonResult = gson.fromJson(json, this.dataObject);
+
+            if (gsonResult != null)
+            {
+                list.add(gsonResult);
+            }
+        }
+        catch (JsonSyntaxException ex)
+        {
+            this.plugin.logError(COULD_NOT_LOAD_OBJECT + ex.getMessage());
+            this.plugin.logError(json);
+        }
+
+    }
+
+
     /**
      * {@inheritDoc}
      */
@@ -199,7 +205,7 @@ public class SQLDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T>
     public T loadObject(@NonNull String uniqueId)
     {
         try (Connection connection = this.dataSource.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(this.sqlConfig.getLoadObjectSQL()))
+                PreparedStatement preparedStatement = connection.prepareStatement(this.sqlConfig.getLoadObjectSQL()))
         {
             // UniqueId needs to be placed in quotes?
             preparedStatement.setString(1, this.sqlConfig.isUseQuotes() ? "\"" + uniqueId + "\"" : uniqueId);
@@ -257,10 +263,10 @@ public class SQLDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T>
         {
             // Async
             this.processQueue.add(() -> store(completableFuture,
-                instance.getClass().getName(),
-                toStore,
-                this.sqlConfig.getSaveObjectSQL(),
-                true));
+                    instance.getClass().getName(),
+                    toStore,
+                    this.sqlConfig.getSaveObjectSQL(),
+                    true));
         }
         else
         {
@@ -289,7 +295,7 @@ public class SQLDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T>
         }
 
         try (Connection connection = this.dataSource.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(storeSQL))
+                PreparedStatement preparedStatement = connection.prepareStatement(storeSQL))
         {
             preparedStatement.setString(1, toStore);
             preparedStatement.setString(2, toStore);
@@ -321,7 +327,7 @@ public class SQLDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T>
     private void delete(String uniqueId)
     {
         try (Connection connection = this.dataSource.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(this.sqlConfig.getDeleteObjectSQL()))
+                PreparedStatement preparedStatement = connection.prepareStatement(this.sqlConfig.getDeleteObjectSQL()))
         {
             // UniqueId needs to be placed in quotes?
             preparedStatement.setString(1, this.sqlConfig.isUseQuotes() ? "\"" + uniqueId + "\"" : uniqueId);
@@ -330,7 +336,7 @@ public class SQLDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T>
         catch (Exception e)
         {
             this.plugin.logError("Could not delete object " + this.plugin.getSettings().getDatabasePrefix() +
-                this.dataObject.getCanonicalName() + " " + uniqueId + " " + e.getMessage());
+                    this.dataObject.getCanonicalName() + " " + uniqueId + " " + e.getMessage());
         }
     }
 
@@ -374,7 +380,7 @@ public class SQLDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T>
     {
         // Query to see if this key exists
         try (Connection connection = this.dataSource.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(this.sqlConfig.getObjectExistsSQL()))
+                PreparedStatement preparedStatement = connection.prepareStatement(this.sqlConfig.getObjectExistsSQL()))
         {
             // UniqueId needs to be placed in quotes?
             preparedStatement.setString(1, this.sqlConfig.isUseQuotes() ? "\"" + uniqueId + "\"" : uniqueId);
