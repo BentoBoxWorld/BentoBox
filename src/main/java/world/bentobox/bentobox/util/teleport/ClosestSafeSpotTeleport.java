@@ -74,16 +74,14 @@ public class ClosestSafeSpotTeleport
      */
     private void checkLocation()
     {
-        if (this.plugin.getIslandsManager().isSafeLocation(this.location))
+        if (!this.portal && this.plugin.getIslandsManager().isSafeLocation(this.location))
         {
-            if (!this.portal)
-            {
-                // If this is not a portal teleport, then go to the safe location immediately
-                this.teleportEntity(this.location);
-                // Position search is completed. Quit faster.
-                return;
-            }
+            // If this is not a portal teleport, then go to the safe location immediately
+            this.teleportEntity(this.location);
+            // Position search is completed. Quit faster.
+            return;
         }
+
 
         // Players should not be teleported outside protection range if they already are in it.
         this.boundingBox = this.plugin.getIslandsManager().getIslandAt(this.location).
