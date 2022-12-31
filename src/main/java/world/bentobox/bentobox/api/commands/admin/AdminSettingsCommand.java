@@ -87,11 +87,9 @@ public class AdminSettingsCommand extends CompositeCommand {
     }
 
     private boolean getIsland(User user, List<String> args) {
-        if (args.get(0).equalsIgnoreCase(SPAWN_ISLAND)) {
-            if (getIslands().getSpawn(getWorld()).isPresent()) {
-                island = getIslands().getSpawn(getWorld()).get();
-                return true;
-            }
+        if (args.get(0).equalsIgnoreCase(SPAWN_ISLAND) && getIslands().getSpawn(getWorld()).isPresent()) {
+            island = getIslands().getSpawn(getWorld()).get();
+            return true;
         }
         // Get target player
         @Nullable UUID targetUUID = Util.getUUID(args.get(0));
@@ -191,17 +189,18 @@ public class AdminSettingsCommand extends CompositeCommand {
             // Command line setting
             flag.ifPresent(f -> {
                 switch (f.getType()) {
-                    case PROTECTION -> {
-                        island.setFlag(f, rank);
-                        getIslands().save(island);
-                    }
-                    case SETTING -> {
-                        island.setSettingsFlag(f, activeState);
-                        getIslands().save(island);
-                    }
-                    case WORLD_SETTING -> f.setSetting(getWorld(), activeState);
-                    default -> {
-                    }
+                case PROTECTION -> {
+                    island.setFlag(f, rank);
+                    getIslands().save(island);
+                }
+                case SETTING -> {
+                    island.setSettingsFlag(f, activeState);
+                    getIslands().save(island);
+                }
+                case WORLD_SETTING -> f.setSetting(getWorld(), activeState);
+                default -> {
+                    // Do nothing
+                }
                 }
             });
             user.sendMessage("general.success");
