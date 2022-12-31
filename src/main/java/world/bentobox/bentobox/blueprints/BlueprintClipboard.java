@@ -287,10 +287,8 @@ public class BlueprintClipboard {
             if (entity instanceof Villager villager) {
                 setVillager(villager, bpe);
             }
-            if (entity instanceof Colorable c) {
-                if (c.getColor() != null) {
-                    bpe.setColor(c.getColor());
-                }
+            if (entity instanceof Colorable c && c.getColor() != null) {
+                bpe.setColor(c.getColor());
             }
             if (entity instanceof Tameable) {
                 bpe.setTamed(((Tameable)entity).isTamed());
@@ -374,7 +372,7 @@ public class BlueprintClipboard {
         if (pos1 != null) {
             final int minHeight = pos1.getWorld() == null ? 0 : pos1.getWorld().getMinHeight();
             final int maxHeight = pos1.getWorld() == null ? 255 : pos1.getWorld().getMaxHeight();
-            
+
             if (pos1.getBlockY() < minHeight)
             {
                 pos1.setY(minHeight);

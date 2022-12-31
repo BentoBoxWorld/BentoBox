@@ -229,13 +229,13 @@ public class BlueprintPaster {
             } else {
                 pasteState = PasteState.DONE;
 
-                String world = switch (location.getWorld().getEnvironment()) {
+                String dimensionType = switch (location.getWorld().getEnvironment()) {
                     case NETHER -> owner.map(user -> user.getTranslation("general.worlds.nether")).orElse("");
                     case THE_END -> owner.map(user -> user.getTranslation("general.worlds.the-end")).orElse("");
                     default -> owner.map(user -> user.getTranslation("general.worlds.overworld")).orElse("");
                 };
 
-                owner.ifPresent(user -> user.sendMessage("commands.island.create.pasting.dimension-done", "[world]", world));
+                owner.ifPresent(user -> user.sendMessage("commands.island.create.pasting.dimension-done", "[world]", dimensionType));
             }
         }
         else if (pasteState.equals(PasteState.DONE)) {
