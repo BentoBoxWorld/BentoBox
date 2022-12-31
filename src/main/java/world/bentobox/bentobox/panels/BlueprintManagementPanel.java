@@ -2,7 +2,6 @@ package world.bentobox.bentobox.panels;
 
 import java.util.AbstractMap;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -18,8 +17,6 @@ import org.bukkit.conversations.Conversable;
 import org.bukkit.conversations.ConversationFactory;
 import org.bukkit.event.inventory.ClickType;
 import org.eclipse.jdt.annotation.NonNull;
-
-import com.google.common.collect.ImmutableMap;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
@@ -76,8 +73,8 @@ public class BlueprintManagementPanel {
         endBlueprint = new Blueprint().setIcon(Material.YELLOW_STAINED_GLASS_PANE)
                 .setName(user.getTranslation("general.worlds.the-end"))
                 .setDescription(t(INSTRUCTION));
-        slotToEnvironment = ImmutableMap.of(3, World.Environment.NORMAL, 5, World.Environment.NETHER, 7, World.Environment.THE_END);
-        environmentToBlueprint = ImmutableMap.of(World.Environment.NORMAL, normalBlueprint, World.Environment.NETHER, netherBlueprint, World.Environment.THE_END, endBlueprint);
+        slotToEnvironment = Map.of(3, World.Environment.NORMAL, 5, World.Environment.NETHER, 7, World.Environment.THE_END);
+        environmentToBlueprint = Map.of(World.Environment.NORMAL, normalBlueprint, World.Environment.NETHER, netherBlueprint, World.Environment.THE_END, endBlueprint);
     }
 
     private String t(String t) {
