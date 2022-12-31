@@ -106,7 +106,8 @@ public class YamlDatabaseConnector implements DatabaseConnector {
                 writer.println(line);
                 line = reader.readLine();
             }
-            if (yamlFile.delete() && !temp.renameTo(yamlFile)) {
+            Files.delete(yamlFile.toPath());
+            if (!temp.renameTo(yamlFile)) {
                 plugin.logError("Could not rename fixed Island object. Are the writing permissions correctly setup?");
             }
         } catch (Exception e) {
