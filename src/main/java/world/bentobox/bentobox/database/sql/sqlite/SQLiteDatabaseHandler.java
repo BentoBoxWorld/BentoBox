@@ -31,12 +31,12 @@ public class SQLiteDatabaseHandler<T> extends SQLDatabaseHandler<T>
     protected SQLiteDatabaseHandler(BentoBox plugin, Class<T> type, DatabaseConnector databaseConnector)
     {
         super(plugin, type, databaseConnector, new SQLConfiguration(plugin, type).
-            schema("CREATE TABLE IF NOT EXISTS `[tableName]` (json JSON, uniqueId VARCHAR(255) NOT NULL PRIMARY KEY)").
-            saveObject("INSERT INTO `[tableName]` (json, uniqueId) VALUES (?, ?) ON CONFLICT(uniqueId) DO UPDATE SET json = ?").
-            objectExists("SELECT EXISTS (SELECT 1 FROM `[tableName]` WHERE `uniqueId` = ?)").
-            renameTable("ALTER TABLE `[oldTableName]` RENAME TO `[tableName]`").
-            setUseQuotes(false)
-        );
+                schema("CREATE TABLE IF NOT EXISTS `[tableName]` (json JSON, uniqueId VARCHAR(255) NOT NULL PRIMARY KEY)").
+                saveObject("INSERT INTO `[tableName]` (json, uniqueId) VALUES (?, ?) ON CONFLICT(uniqueId) DO UPDATE SET json = ?").
+                objectExists("SELECT EXISTS (SELECT 1 FROM `[tableName]` WHERE `uniqueId` = ?)").
+                renameTable("ALTER TABLE `[oldTableName]` RENAME TO `[tableName]`").
+                setUseQuotes(false)
+                );
     }
 
 
@@ -50,29 +50,29 @@ public class SQLiteDatabaseHandler<T> extends SQLDatabaseHandler<T>
         {
             // SQLite does not have a rename if exists command so we have to manually check if the old table exists
             String sql = "SELECT EXISTS (SELECT 1 FROM sqlite_master WHERE type='table' AND name='" +
-                this.getSqlConfig().getOldTableName() + "' COLLATE NOCASE)";
+                    this.getSqlConfig().getOldTableName() + "' COLLATE NOCASE)";
 
             try (Connection connection = this.dataSource.getConnection();
-                 PreparedStatement preparedStatement = connection.prepareStatement(sql))
+                    PreparedStatement preparedStatement = connection.prepareStatement(sql))
             {
                 this.rename(preparedStatement);
             }
             catch (SQLException e)
             {
                 this.plugin.logError("Could not check if " + this.getSqlConfig().getOldTableName() + " exists for data object " +
-                    this.dataObject.getCanonicalName() + " " + e.getMessage());
+                        this.dataObject.getCanonicalName() + " " + e.getMessage());
             }
         }
         // Prepare and execute the database statements
         try (Connection connection = this.dataSource.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(this.getSqlConfig().getSchemaSQL()))
+                PreparedStatement preparedStatement = connection.prepareStatement(this.getSqlConfig().getSchemaSQL()))
         {
             preparedStatement.execute();
         }
         catch (SQLException e)
         {
             this.plugin.logError("Problem trying to create schema for data object " + dataObject.getCanonicalName() + " " +
-                e.getMessage());
+                    e.getMessage());
         }
     }
 
@@ -85,24 +85,29 @@ public class SQLiteDatabaseHandler<T> extends SQLDatabaseHandler<T>
             {
                 // Transition from the old table name
                 String sql = this.getSqlConfig().getRenameTableSQL().replace("[oldTableName]",
-                    this.getSqlConfig().getOldTableName().replace("[tableName]", this.getSqlConfig().getTableName()));
+                        this.getSqlConfig().getOldTableName().replace("[tableName]", this.getSqlConfig().getTableName()));
 
-                try (Connection connection = this.dataSource.getConnection();
-                     PreparedStatement preparedStatement = connection.prepareStatement(sql))
-                {
-                    preparedStatement.execute();
-                }
-                catch (SQLException e)
-                {
-                    this.plugin.logError("Could not rename " + getSqlConfig().getOldTableName() + " for data object " +
-                        this.dataObject.getCanonicalName() + " " + e.getMessage());
-                }
+                executeStatement(sql);
             }
         }
         catch (Exception ex)
         {
             this.plugin.logError("Could not check if " + getSqlConfig().getOldTableName() + " exists for data object " +
-                this.dataObject.getCanonicalName() + " " + ex.getMessage());
+                    this.dataObject.getCanonicalName() + " " + ex.getMessage());
+        }
+    }
+
+
+    private void executeStatement(String sql) {
+        try (Connection connection = this.dataSource.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(sql))
+        {
+            preparedStatement.execute();
+        }
+        catch (SQLException e)
+        {
+            this.plugin.logError("Could not rename " + getSqlConfig().getOldTableName() + " for data object " +
+                    this.dataObject.getCanonicalName() + " " + e.getMessage());
         }
     }
 
@@ -133,7 +138,7 @@ public class SQLiteDatabaseHandler<T> extends SQLDatabaseHandler<T>
         this.processQueue.add(() ->
         {
             try (Connection connection = this.dataSource.getConnection();
-                 PreparedStatement preparedStatement = connection.prepareStatement(this.getSqlConfig().getSaveObjectSQL()))
+                    PreparedStatement preparedStatement = connection.prepareStatement(this.getSqlConfig().getSaveObjectSQL()))
             {
                 preparedStatement.setString(1, toStore);
                 preparedStatement.setString(2, ((DataObject) instance).getUniqueId());
