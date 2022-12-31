@@ -313,16 +313,9 @@ public class NewIsland {
         }
 
         // Fire exit event
-        Reason reasonDone = Reason.CREATED;
-        switch (reason) {
-        case CREATE -> reasonDone = Reason.CREATED;
-        case RESET -> reasonDone = Reason.RESETTED;
-        default -> {
-        }
-        }
         IslandEvent.builder()
         .involvedPlayer(user.getUniqueId())
-        .reason(reasonDone)
+        .reason(reason == Reason.RESET ? Reason.RESETTED : Reason.CREATED)
         .island(island)
         .location(island.getCenter())
         .oldIsland(oldIsland)
