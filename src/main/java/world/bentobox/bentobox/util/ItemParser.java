@@ -310,7 +310,9 @@ public class ItemParser {
 
             // Apply new meta to the item.
             playerHead.setItemMeta(meta);
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+            // Ignored
+        }
 
         return playerHead;
     }
