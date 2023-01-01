@@ -1,6 +1,3 @@
-/**
- *
- */
 package world.bentobox.bentobox.api.user;
 
 import static org.junit.Assert.*;
