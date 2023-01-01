@@ -623,11 +623,11 @@ public class User implements MetaDataAble {
      */
     public void spawnParticle(Particle particle, @Nullable Object dustOptions, double x, double y, double z)
     {
-        Class<?> expectedClass = VALIDATION_CHECK.get(dustOptions);
+        Class<?> expectedClass = VALIDATION_CHECK.get(particle);
         if (expectedClass == null) throw new IllegalArgumentException("Unexpected value: " + particle);
 
         if (!(expectedClass.isInstance(dustOptions))) {
-            throw new IllegalArgumentException("A non-null " + expectedClass.getName() + " must be provided when using Particle." + particle + " as particle.");
+            throw new IllegalArgumentException("A non-null " + expectedClass.getSimpleName() + " must be provided when using Particle." + particle + " as particle.");
         }
 
         // Check if this particle is beyond the viewing distance of the server
@@ -645,6 +645,7 @@ public class User implements MetaDataAble {
             }
             else
             {
+                // This will never be called unless the value in VALIDATION_CHECK is null in the future
                 player.spawnParticle(particle, x, y, z, 1);
             }
         }
