@@ -32,10 +32,10 @@ public interface WorldSettings extends ConfigObject {
 
     /**
      * @return default rank settings for new islands
-     * @deprecated since 1.21
-     *             Map of Flag, Integer does not allow to load other plugin/addon flags.
+     * @deprecated Map of Flag, Integer does not allow to load other plugin/addon flags.
      *             It cannot be replaced with Map of String, Integer due to compatibility issues.
      * @see WorldSettings#getDefaultIslandFlagNames()
+     * @since 1.21.0
      */
     @Deprecated
     Map<Flag, Integer> getDefaultIslandFlags();
@@ -57,10 +57,10 @@ public interface WorldSettings extends ConfigObject {
 
     /**
      * @return default settings for new
-     * @deprecated since 1.21
-     *             Map of Flag, Integer does not allow to load other plugin/addon flags.
+     * @deprecated Map of Flag, Integer does not allow to load other plugin/addon flags.
      *             It cannot be replaced with Map of String, Integer due to compatibility issues.
      * @see WorldSettings#getDefaultIslandSettingNames()
+     * @since 1.21.0
      */
     @Deprecated
     Map<Flag, Integer> getDefaultIslandSettings();
@@ -70,7 +70,7 @@ public interface WorldSettings extends ConfigObject {
      * This is necessary so users could specify any flag names in settings file from other plugins and addons.
      * Otherwise, Flag reader would mark flag as invalid and remove it.
      * Default implementation is compatibility layer so GameModes that are not upgraded still works.
-     * @since 1.21
+     * @since 1.21.0
      * @return default settings for new islands.
      */
     default Map<String, Integer> getDefaultIslandSettingNames()
@@ -599,7 +599,7 @@ public interface WorldSettings extends ConfigObject {
     default boolean isMakeEndPortals() {
         return false;
     }
-    
+
     /**
      * Check for blocks when searching for a new island. This is a safety net check that does a look
      * around the new island location (3x3x3 block check). If any non-air or non-water blocks are found
