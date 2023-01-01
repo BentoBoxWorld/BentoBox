@@ -51,7 +51,7 @@ public class AdminBlueprintSaveCommand extends ConfirmableCommand
             return false;
         }
 
-        if (clipboard.getBlueprint().getBedrock() == null)
+        if (clipboard.getBlueprint() != null && clipboard.getBlueprint().getBedrock() == null)
         {
             // Bedrock is required for all blueprints.
             user.sendMessage("commands.admin.blueprint.bedrock-required");

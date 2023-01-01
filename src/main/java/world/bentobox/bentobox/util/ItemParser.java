@@ -35,6 +35,7 @@ import world.bentobox.bentobox.BentoBox;
  */
 public class ItemParser {
 
+    private ItemParser() {} // private constructor to hide the implicit public one.
     /**
      * Parse given string to ItemStack.
      * @param text String value of item stack.
@@ -110,20 +111,20 @@ public class ItemParser {
                 returnValue = parseItemDurabilityAndQuantity(part);
             }
 
-            if (returnValue != null) {
-                // If wrapper is just for code-style null-pointer checks.
-                if (customModelData != null) {
-                    // We have custom data model. Now assign it to the item-stack.
-                    ItemMeta itemMeta = returnValue.getItemMeta();
+            if (returnValue != null
+                    // If wrapper is just for code-style null-pointer checks.
+                    && customModelData != null) {
+                // We have custom data model. Now assign it to the item-stack.
+                ItemMeta itemMeta = returnValue.getItemMeta();
 
-                    // Another null-pointer check for materials that does not have item meta.
-                    if (itemMeta != null) {
-                        itemMeta.setCustomModelData(customModelData);
-                        // Update meta to the return item.
-                        returnValue.setItemMeta(itemMeta);
-                    }
+                // Another null-pointer check for materials that does not have item meta.
+                if (itemMeta != null) {
+                    itemMeta.setCustomModelData(customModelData);
+                    // Update meta to the return item.
+                    returnValue.setItemMeta(itemMeta);
                 }
             }
+
         } catch (Exception exception) {
             BentoBox.getInstance().logError("Could not parse item " + text + " " + exception.getLocalizedMessage());
             returnValue = defaultItemStack;
@@ -309,7 +310,9 @@ public class ItemParser {
 
             // Apply new meta to the item.
             playerHead.setItemMeta(meta);
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+            // Ignored
+        }
 
         return playerHead;
     }

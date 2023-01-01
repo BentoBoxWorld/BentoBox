@@ -47,6 +47,8 @@ public class DefaultPasteUtil {
         plugin = BentoBox.getInstance();
     }
 
+    private DefaultPasteUtil() {} // private constructor to hide the implicit public one.
+
     /**
      * Set the block to the location
      *

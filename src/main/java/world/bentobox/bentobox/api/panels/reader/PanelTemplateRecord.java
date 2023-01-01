@@ -16,7 +16,6 @@ import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.api.panels.Panel;
 
-
 /**
  * This is template object for the panel reader. It contains data that can exist in the panel.
  * PanelBuilder will use this to build panel.

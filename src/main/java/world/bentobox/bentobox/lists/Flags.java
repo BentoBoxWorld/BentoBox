@@ -325,9 +325,9 @@ public final class Flags {
      * @since 1.20.0
      */
     public static final Flag CHANGE_SETTINGS = new Flag.Builder("CHANGE_SETTINGS", Material.CRAFTING_TABLE).defaultSetting(true)
-        .defaultRank(RanksManager.OWNER_RANK)
-        .clickHandler(new CycleClick("CHANGE_SETTINGS", RanksManager.MEMBER_RANK, RanksManager.OWNER_RANK))
-        .mode(Flag.Mode.TOP_ROW).build();
+            .defaultRank(RanksManager.OWNER_RANK)
+            .clickHandler(new CycleClick("CHANGE_SETTINGS", RanksManager.MEMBER_RANK, RanksManager.OWNER_RANK))
+            .mode(Flag.Mode.TOP_ROW).build();
 
     /**
      * This flag allows choosing which island member group can activate sculk sensors.
@@ -335,12 +335,12 @@ public final class Flags {
      * @since 1.21.0
      */
     public static final Flag SCULK_SENSOR = new Flag.Builder("SCULK_SENSOR", Enums.getIfPresent(Material.class, "SCULK_SENSOR").or(Material.BARRIER)).
-        listener(new SculkSensorListener()).
-        type(Type.PROTECTION).
-        defaultSetting(true).
-        defaultRank(RanksManager.MEMBER_RANK).
-        clickHandler(new CycleClick("SCULK_SENSOR", RanksManager.VISITOR_RANK, RanksManager.MEMBER_RANK)).
-        build();
+            listener(new SculkSensorListener()).
+            type(Type.PROTECTION).
+            defaultSetting(true).
+            defaultRank(RanksManager.MEMBER_RANK).
+            clickHandler(new CycleClick("SCULK_SENSOR", RanksManager.VISITOR_RANK, RanksManager.MEMBER_RANK)).
+            build();
 
     /**
      * This flag allows choosing which island member group can activate sculk shrieker.
@@ -348,12 +348,12 @@ public final class Flags {
      * @since 1.21.0
      */
     public static final Flag SCULK_SHRIEKER = new Flag.Builder("SCULK_SHRIEKER", Enums.getIfPresent(Material.class, "SCULK_SHRIEKER").or(Material.BARRIER)).
-        listener(new SculkShriekerListener()).
-        type(Type.PROTECTION).
-        defaultSetting(true).
-        defaultRank(RanksManager.MEMBER_RANK).
-        clickHandler(new CycleClick("SCULK_SHRIEKER", RanksManager.VISITOR_RANK, RanksManager.MEMBER_RANK)).
-        build();
+            listener(new SculkShriekerListener()).
+            type(Type.PROTECTION).
+            defaultSetting(true).
+            defaultRank(RanksManager.MEMBER_RANK).
+            clickHandler(new CycleClick("SCULK_SHRIEKER", RanksManager.VISITOR_RANK, RanksManager.MEMBER_RANK)).
+            build();
 
     /*
      * Settings flags (not protection flags)
@@ -390,12 +390,14 @@ public final class Flags {
 
     // Mob spawning
     /**
-     * @deprecated as of 1.14.0, see {@link #ANIMAL_NATURAL_SPAWN} and {@link #ANIMAL_SPAWNERS_SPAWN}.
+     * @deprecated see {@link #ANIMAL_NATURAL_SPAWN} and {@link #ANIMAL_SPAWNERS_SPAWN}.
+     * @since 1.14.0
      */
     @Deprecated
     public static final Flag ANIMAL_SPAWN = new Flag.Builder("ANIMAL_SPAWN", Material.APPLE).defaultSetting(true).type(Type.SETTING).build();
     /**
-     * @deprecated as of 1.14.0, see {@link #MONSTER_NATURAL_SPAWN} and {@link #MONSTER_SPAWNERS_SPAWN}.
+     * @deprecated see {@link #MONSTER_NATURAL_SPAWN} and {@link #MONSTER_SPAWNERS_SPAWN}.
+     * @since 1.14.0
      */
     @Deprecated
     public static final Flag MONSTER_SPAWN = new Flag.Builder("MONSTER_SPAWN", Material.SPAWNER).defaultSetting(true).type(Type.SETTING).build();

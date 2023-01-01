@@ -70,12 +70,12 @@ public class PlaceholderAPIHook extends PlaceholderHook {
     @Override
     public void registerPlaceholder(@NonNull Addon addon, @NonNull String placeholder, @NonNull PlaceholderReplacer replacer) {
         // Check if the addon expansion does not exist
-        if (!addonsExpansions.containsKey(addon)) {
+        addonsExpansions.computeIfAbsent(addon, k -> {
             AddonPlaceholderExpansion addonPlaceholderExpansion = new AddonPlaceholderExpansion(addon);
             addonPlaceholderExpansion.register();
-            addonsExpansions.put(addon, addonPlaceholderExpansion);
-            this.addonPlaceholders.computeIfAbsent(addon, k -> new HashSet<>()).add(placeholder);
-        }
+            this.addonPlaceholders.computeIfAbsent(addon, kk -> new HashSet<>()).add(placeholder);
+            return addonPlaceholderExpansion;
+        });
         addonsExpansions.get(addon).registerPlaceholder(placeholder, replacer);
     }
 

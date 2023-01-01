@@ -18,7 +18,9 @@ import world.bentobox.bentobox.database.objects.Island;
  * Abstracts PlayerPortalEvent and EntityPortalEvent
  * @author tastybento
  * @deprecated replaced not used in new listeners.
+ * @since 1.12.1
  */
+@Deprecated
 public class PlayerEntityPortalEvent {
 
     private final EntityPortalEvent epe;

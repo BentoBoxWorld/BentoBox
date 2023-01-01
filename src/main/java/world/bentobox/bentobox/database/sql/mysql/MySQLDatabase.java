@@ -13,7 +13,7 @@ public class MySQLDatabase implements DatabaseSetup
     private MySQLDatabaseConnector connector;
 
 
-    /*
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -24,13 +24,13 @@ public class MySQLDatabase implements DatabaseSetup
         if (this.connector == null)
         {
             this.connector = new MySQLDatabaseConnector(new DatabaseConnectionSettingsImpl(
-                plugin.getSettings().getDatabaseHost(),
-                plugin.getSettings().getDatabasePort(),
-                plugin.getSettings().getDatabaseName(),
-                plugin.getSettings().getDatabaseUsername(),
-                plugin.getSettings().getDatabasePassword(),
-                plugin.getSettings().isUseSSL(),
-                plugin.getSettings().getMaximumPoolSize()));
+                    plugin.getSettings().getDatabaseHost(),
+                    plugin.getSettings().getDatabasePort(),
+                    plugin.getSettings().getDatabaseName(),
+                    plugin.getSettings().getDatabaseUsername(),
+                    plugin.getSettings().getDatabasePassword(),
+                    plugin.getSettings().isUseSSL(),
+                    plugin.getSettings().getMaximumPoolSize()));
         }
 
         return new MySQLDatabaseHandler<>(plugin, type, this.connector);

@@ -55,13 +55,11 @@ public class IslandGoCommand extends DelayedTeleportCommand {
             user.sendMessage(Flags.PREVENT_TELEPORT_WHEN_FALLING.getHintReference());
             return false;
         }
-        if (!args.isEmpty()) {
-            if (!getIslands().isHomeLocation(island, String.join(" ", args))) {
-                user.sendMessage("commands.island.go.unknown-home");
-                user.sendMessage("commands.island.sethome.homes-are");
-                island.getHomes().keySet().stream().filter(s -> !s.isEmpty()).forEach(s -> user.sendMessage("commands.island.sethome.home-list-syntax", TextVariables.NAME, s));
-                return false;
-            }
+        if (!args.isEmpty() && !getIslands().isHomeLocation(island, String.join(" ", args))) {
+            user.sendMessage("commands.island.go.unknown-home");
+            user.sendMessage("commands.island.sethome.homes-are");
+            island.getHomes().keySet().stream().filter(s -> !s.isEmpty()).forEach(s -> user.sendMessage("commands.island.sethome.home-list-syntax", TextVariables.NAME, s));
+            return false;
         }
         return true;
     }

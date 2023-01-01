@@ -17,7 +17,6 @@ import org.bukkit.inventory.ItemStack;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
-
 /**
  * This Record contains all necessary information about Item Template that can be used to craft panel item.
  *

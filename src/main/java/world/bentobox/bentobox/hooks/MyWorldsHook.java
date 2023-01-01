@@ -1,7 +1,5 @@
 package world.bentobox.bentobox.hooks;
 
-import java.util.logging.Level;
-
 import org.bukkit.Material;
 import org.bukkit.World;
 
@@ -58,9 +56,8 @@ public class MyWorldsHook extends Hook implements WorldManagementHook {
                     .getMethod("setChunkGeneratorName", String.class)
                     .invoke(worldConfig, name);
              */
-        } catch (Throwable t) {
-            BentoBox.getInstance().getLogger().log(Level.SEVERE,
-                    "Failed to register world " + world.getName() + " with MyWorlds", t);
+        } catch (Exception t) {
+            BentoBox.getInstance().logError("Failed to register world " + world.getName() + " with MyWorlds " + t.getMessage());
         }
     }
 

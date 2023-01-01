@@ -100,11 +100,14 @@ public class YamlDatabaseConnector implements DatabaseConnector {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(yamlFile), StandardCharsets.UTF_8))){
             File temp = File.createTempFile("file", ".tmp", yamlFile.getParentFile());
             writer = new PrintWriter(new OutputStreamWriter(new FileOutputStream(temp), StandardCharsets.UTF_8));
-            for (String line; (line = reader.readLine()) != null;) {
+            String line = reader.readLine();
+            while (line != null) {
                 line = line.replace("!!java.util.UUID", "");
                 writer.println(line);
+                line = reader.readLine();
             }
-            if (yamlFile.delete() && !temp.renameTo(yamlFile)) {
+            Files.delete(yamlFile.toPath());
+            if (!temp.renameTo(yamlFile)) {
                 plugin.logError("Could not rename fixed Island object. Are the writing permissions correctly setup?");
             }
         } catch (Exception e) {

@@ -96,11 +96,11 @@ public class TemplatedPanel extends Panel
         {
             for (int k = 0; k < this.panelTemplate.content()[i].length; k++)
             {
-                ItemTemplateRecord record = this.panelTemplate.content()[i][k];
+                ItemTemplateRecord rec = this.panelTemplate.content()[i][k];
 
-                if (record != null && record.dataMap().containsKey("type"))
+                if (rec != null && rec.dataMap().containsKey("type"))
                 {
-                    String type = String.valueOf(record.dataMap().get("type"));
+                    String type = String.valueOf(rec.dataMap().get("type"));
 
                     int counter = this.typeSlotMap.computeIfAbsent(type, key -> 0);
                     this.typeSlotMap.put(type, counter + 1);
@@ -226,11 +226,11 @@ public class TemplatedPanel extends Panel
         // Analyze the template
         for (int i = 0; i < 5; i++)
         {
-            ItemTemplateRecord record = this.panelTemplate.content()[0][i];
+            ItemTemplateRecord rec = this.panelTemplate.content()[0][i];
 
-            if (record != null && record.dataMap().containsKey("type"))
+            if (rec != null && rec.dataMap().containsKey("type"))
             {
-                String type = String.valueOf(record.dataMap().get("type"));
+                String type = String.valueOf(rec.dataMap().get("type"));
 
                 int counter = this.typeSlotMap.computeIfAbsent(type, key -> 0);
                 this.typeSlotMap.put(type, counter + 1);
@@ -289,11 +289,11 @@ public class TemplatedPanel extends Panel
         {
             for (int k = 0; k < 3; k++)
             {
-                ItemTemplateRecord record = this.panelTemplate.content()[i][k];
+                ItemTemplateRecord rec = this.panelTemplate.content()[i][k];
 
-                if (record != null && record.dataMap().containsKey("type"))
+                if (rec != null && rec.dataMap().containsKey("type"))
                 {
-                    String type = String.valueOf(record.dataMap().get("type"));
+                    String type = String.valueOf(rec.dataMap().get("type"));
 
                     int counter = this.typeSlotMap.computeIfAbsent(type, key -> 0);
                     this.typeSlotMap.put(type, counter + 1);
@@ -354,41 +354,41 @@ public class TemplatedPanel extends Panel
 
     /**
      * This method passes button creation from given record template.
-     * @param record Template of the button that must be created.
+     * @param rec Template of the button that must be created.
      * @return PanelItem of the template, otherwise null.
      */
     @Nullable
-    private PanelItem makeButton(@Nullable ItemTemplateRecord record)
+    private PanelItem makeButton(@Nullable ItemTemplateRecord rec)
     {
-        if (record == null)
+        if (rec == null)
         {
             // Immediate exit if record is null.
             return null;
         }
 
-        if (record.dataMap().containsKey("type"))
+        if (rec.dataMap().containsKey("type"))
         {
             // If dataMap is not null, and it is not empty, then pass button to the object creator function.
 
-            return this.makeAddonButton(record);
+            return this.makeAddonButton(rec);
         }
         else
         {
             PanelItemBuilder itemBuilder = new PanelItemBuilder();
 
-            if (record.icon() != null)
+            if (rec.icon() != null)
             {
-                itemBuilder.icon(record.icon().clone());
+                itemBuilder.icon(rec.icon().clone());
             }
 
-            if (record.title() != null)
+            if (rec.title() != null)
             {
-                itemBuilder.name(this.user.getTranslation(record.title()));
+                itemBuilder.name(this.user.getTranslation(rec.title()));
             }
 
-            if (record.description() != null)
+            if (rec.description() != null)
             {
-                itemBuilder.description(this.user.getTranslation(record.description()));
+                itemBuilder.description(this.user.getTranslation(rec.description()));
             }
 
             // If there are generic click handlers that could be added, then this is a place
@@ -402,19 +402,19 @@ public class TemplatedPanel extends Panel
 
     /**
      * This method passes button to the type creator, if that exists.
-     * @param record Template of the button that must be created.
+     * @param rec Template of the button that must be created.
      * @return PanelItem of the button created by typeCreator, otherwise null.
      */
     @Nullable
-    private PanelItem makeAddonButton(@NonNull ItemTemplateRecord record)
+    private PanelItem makeAddonButton(@NonNull ItemTemplateRecord rec)
     {
         // Get object type.
-        String type = String.valueOf(record.dataMap().getOrDefault("type", ""));
+        String type = String.valueOf(rec.dataMap().getOrDefault("type", ""));
 
         if (!this.typeCreators.containsKey(type))
         {
             // There are no object with a given type.
-            return this.makeFallBack(record.fallback());
+            return this.makeFallBack(rec.fallback());
         }
 
         BiFunction<ItemTemplateRecord, ItemSlot, PanelItem> buttonBuilder = this.typeCreators.get(type);
@@ -426,48 +426,48 @@ public class TemplatedPanel extends Panel
         this.typeIndex.put(type, itemSlot.nextItemSlot());
 
         // Try to get next object.
-        PanelItem item = buttonBuilder.apply(record, itemSlot);
-        return item == null ? this.makeFallBack(record.fallback()) : item;
+        PanelItem item = buttonBuilder.apply(rec, itemSlot);
+        return item == null ? this.makeFallBack(rec.fallback()) : item;
     }
 
 
     /**
      * This method creates a fall back button for given record.
-     * @param record Record which fallback must be created.
+     * @param rec Record which fallback must be created.
      * @return PanelItem if fallback was creates successfully, otherwise null.
      */
     @Nullable
-    private PanelItem makeFallBack(@Nullable ItemTemplateRecord record)
+    private PanelItem makeFallBack(@Nullable ItemTemplateRecord rec)
     {
-        return record == null ? null : this.makeButton(record.fallback());
+        return rec == null ? null : this.makeButton(rec.fallback());
     }
 
 
     /**
      * This method translates template record into a panel item.
-     * @param record Record that must be translated.
+     * @param rec Record that must be translated.
      * @return PanelItem that contains all information from the record.
      */
-    private PanelItem makeTemplate(PanelTemplateRecord.TemplateItem record)
+    private PanelItem makeTemplate(PanelTemplateRecord.TemplateItem rec)
     {
         PanelItemBuilder itemBuilder = new PanelItemBuilder();
 
         // Read icon only if it is not null.
-        if (record.icon() != null)
+        if (rec.icon() != null)
         {
-            itemBuilder.icon(record.icon().clone());
+            itemBuilder.icon(rec.icon().clone());
         }
 
         // Read title only if it is not null.
-        if (record.title() != null)
+        if (rec.title() != null)
         {
-            itemBuilder.name(this.user.getTranslation(record.title()));
+            itemBuilder.name(this.user.getTranslation(rec.title()));
         }
 
         // Read description only if it is not null.
-        if (record.description() != null)
+        if (rec.description() != null)
         {
-            itemBuilder.description(this.user.getTranslation(record.description()));
+            itemBuilder.description(this.user.getTranslation(rec.description()));
         }
 
         // Click Handlers are managed by custom addon buttons.

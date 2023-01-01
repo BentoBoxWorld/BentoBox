@@ -1,5 +1,7 @@
 package world.bentobox.bentobox.api.user;
 
+import java.util.Collections;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -16,6 +18,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Particle;
+import org.bukkit.Particle.DustTransition;
 import org.bukkit.Vibration;
 import org.bukkit.World;
 import org.bukkit.block.data.BlockData;
@@ -53,6 +56,26 @@ public class User implements MetaDataAble {
 
     private static final Map<UUID, User> users = new HashMap<>();
 
+    // Used for particle validation
+    private static final Map<Particle, Class<?>> VALIDATION_CHECK;
+    static {
+        Map<Particle, Class<?>> v = new EnumMap<>(Particle.class);
+        v.put(Particle.REDSTONE, Particle.DustOptions.class);
+        v.put(Particle.ITEM_CRACK, ItemStack.class);
+        v.put(Particle.BLOCK_CRACK, BlockData.class);
+        v.put(Particle.BLOCK_DUST, BlockData.class);
+        v.put(Particle.FALLING_DUST, BlockData.class);
+        v.put(Particle.BLOCK_MARKER, BlockData.class);
+        v.put(Particle.DUST_COLOR_TRANSITION, DustTransition.class);
+        v.put(Particle.VIBRATION, Vibration.class);
+        v.put(Particle.SCULK_CHARGE, Float.class);
+        v.put(Particle.SHRIEK, Integer.class);
+        v.put(Particle.LEGACY_BLOCK_CRACK, BlockData.class);
+        v.put(Particle.LEGACY_BLOCK_DUST, BlockData.class);
+        v.put(Particle.LEGACY_FALLING_DUST, BlockData.class);
+        VALIDATION_CHECK = Collections.unmodifiableMap(v);
+    }
+
     /**
      * Clears all users from the user list
      */
@@ -88,7 +111,8 @@ public class User implements MetaDataAble {
     }
 
     /**
-     * Gets an instance of User from a UUID.
+     * Gets an instance of User from a UUID. This will always return a user object.
+     * If the player is offline then the getPlayer value will be null.
      * @param uuid - UUID
      * @return user - user
      */
@@ -97,7 +121,7 @@ public class User implements MetaDataAble {
         if (users.containsKey(uuid)) {
             return users.get(uuid);
         }
-        // Return player, or null if they are not online
+        // Return a user instance
         return new User(uuid);
     }
 
@@ -597,73 +621,18 @@ public class User implements MetaDataAble {
      * @param y Y coordinate of the particle to display.
      * @param z Z coordinate of the particle to display.
      */
-    public void spawnParticle(Particle particle, Object dustOptions, double x, double y, double z)
+    public void spawnParticle(Particle particle, @Nullable Object dustOptions, double x, double y, double z)
     {
-        // Improve particle validation.
-        switch (particle)
-        {
-        case REDSTONE ->
-        {
-            if (!(dustOptions instanceof Particle.DustOptions))
-            {
-                throw new IllegalArgumentException("A non-null Particle.DustOptions must be provided when using Particle.REDSTONE as particle.");
-            }
-        }
-        case ITEM_CRACK ->
-        {
-            if (!(dustOptions instanceof ItemStack))
-            {
-                throw new IllegalArgumentException("A non-null ItemStack must be provided when using Particle.ITEM_CRACK as particle.");
-            }
-        }
-        case BLOCK_CRACK, BLOCK_DUST, FALLING_DUST, BLOCK_MARKER ->
-        {
-            if (!(dustOptions instanceof BlockData))
-            {
-                throw new IllegalArgumentException("A non-null BlockData must be provided when using Particle." + particle + " as particle.");
-            }
-        }
-        case DUST_COLOR_TRANSITION ->
-        {
-            if (!(dustOptions instanceof Particle.DustTransition))
-            {
-                throw new IllegalArgumentException("A non-null Particle.DustTransition must be provided when using Particle.DUST_COLOR_TRANSITION as particle.");
-            }
-        }
-        case VIBRATION ->
-        {
-            if (!(dustOptions instanceof Vibration))
-            {
-                throw new IllegalArgumentException("A non-null Vibration must be provided when using Particle.VIBRATION as particle.");
-            }
-        }
-        case SCULK_CHARGE ->
-        {
-            if (!(dustOptions instanceof Float))
-            {
-                throw new IllegalArgumentException("A non-null Float must be provided when using Particle.SCULK_CHARGE as particle.");
-            }
-        }
-        case SHRIEK ->
-        {
-            if (!(dustOptions instanceof Integer))
-            {
-                throw new IllegalArgumentException("A non-null Integer must be provided when using Particle.SHRIEK as particle.");
-            }
-        }
-        case LEGACY_BLOCK_CRACK, LEGACY_BLOCK_DUST, LEGACY_FALLING_DUST ->
-        {
-            if (!(dustOptions instanceof BlockData))
-            {
-                throw new IllegalArgumentException("A non-null MaterialData must be provided when using Particle." + particle + " as particle.");
-            }
-        }
-        default -> throw new IllegalArgumentException("Unexpected value: " + particle);
+        Class<?> expectedClass = VALIDATION_CHECK.get(dustOptions);
+        if (expectedClass == null) throw new IllegalArgumentException("Unexpected value: " + particle);
+
+        if (!(expectedClass.isInstance(dustOptions))) {
+            throw new IllegalArgumentException("A non-null " + expectedClass.getName() + " must be provided when using Particle." + particle + " as particle.");
         }
 
         // Check if this particle is beyond the viewing distance of the server
-        if (this.player != null &&
-                this.player.getLocation().toVector().distanceSquared(new Vector(x, y, z)) <
+        if (this.player != null
+                && this.player.getLocation().toVector().distanceSquared(new Vector(x, y, z)) <
                 (Bukkit.getServer().getViewDistance() * 256 * Bukkit.getServer().getViewDistance()))
         {
             if (particle.equals(Particle.REDSTONE))

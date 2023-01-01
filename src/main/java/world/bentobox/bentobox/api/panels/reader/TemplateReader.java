@@ -50,6 +50,14 @@ public class TemplateReader
 
 
     /**
+     * Utility classes, which are collections of static members, are not meant to be instantiated.
+     * Even abstract utility classes, which can be extended, should not have public constructors.
+     * Java adds an implicit public constructor to every class which does not define at least one explicitly.
+     * Hence, at least one non-public constructor should be defined.
+     */
+    private TemplateReader() {}
+
+    /**
      * Read template panel panel template record.
      *
      * @param panelName the panel name
@@ -95,7 +103,7 @@ public class TemplateReader
             return TemplateReader.loadedPanels.get(panelKey);
         }
 
-        PanelTemplateRecord record;
+        PanelTemplateRecord rec;
 
         try
         {
@@ -103,16 +111,16 @@ public class TemplateReader
             YamlConfiguration config = new YamlConfiguration();
             config.load(file);
             // Read panel
-            record = readPanelTemplate(config.getConfigurationSection(panelName));
+            rec = readPanelTemplate(config.getConfigurationSection(panelName));
             // Put panel into memory
-            TemplateReader.loadedPanels.put(panelKey, record);
+            TemplateReader.loadedPanels.put(panelKey, rec);
         }
         catch (IOException | InvalidConfigurationException e)
         {
-            record = null;
+            rec = null;
         }
 
-        return record;
+        return rec;
     }
 
 
