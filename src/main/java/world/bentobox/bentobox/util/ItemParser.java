@@ -170,8 +170,8 @@ public class ItemParser {
 
         ItemMeta meta = durability.getItemMeta();
 
-        if (meta instanceof Damageable) {
-            ((Damageable) meta).setDamage(Integer.parseInt(part[1]));
+        if (meta instanceof Damageable damageable) {
+            damageable.setDamage(Integer.parseInt(part[1]));
             durability.setItemMeta(meta);
         }
 

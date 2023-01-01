@@ -782,7 +782,7 @@ public class ClosestSafeSpotTeleport
      * - the smallest z value
      * - the smallest y value
      */
-    private final static Comparator<PositionData> POSITION_COMPARATOR = Comparator.comparingDouble(PositionData::distance).
+    private static final Comparator<PositionData> POSITION_COMPARATOR = Comparator.comparingDouble(PositionData::distance).
             thenComparingInt(position -> position.vector().getBlockX()).
             thenComparingInt(position -> position.vector().getBlockZ()).
             thenComparingInt(position -> position.vector().getBlockY());

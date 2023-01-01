@@ -69,10 +69,10 @@ public class AddonsManager {
     @NonNull
     private final Map<String, Class<?>> classes;
     private final BentoBox plugin;
-    private @NonNull
-    final Map<@NonNull String, @Nullable GameModeAddon> worldNames;
-    private @NonNull
-    final Map<@NonNull Addon, @NonNull List<Listener>> listeners;
+    @NonNull
+    private final Map<@NonNull String, @Nullable GameModeAddon> worldNames;
+    @NonNull
+    private final Map<@NonNull Addon, @NonNull List<Listener>> listeners;
 
     private final PluginLoader pluginLoader;
 
@@ -165,11 +165,11 @@ public class AddonsManager {
             try {
 
                 Plugin pladdon = pluginLoader.loadPlugin(f);
-                if (pladdon instanceof Pladdon) {
-                    addon = ((Pladdon) pladdon).getAddon();
+                if (pladdon instanceof Pladdon pl) {
+                    addon = pl.getAddon();
                     addon.setDescription(AddonClassLoader.asDescription(data));
                     // Mark pladdon as enabled.
-                    ((Pladdon) pladdon).setEnabled();
+                    pl.setEnabled();
                     pladdons.put(addon, pladdon);
                 } else {
                     plugin.logError("Could not load pladdon!");

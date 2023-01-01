@@ -53,8 +53,8 @@ public class Flag implements Comparable<Flag> {
          */
         WORLD_SETTING(Material.GRASS_BLOCK);
 
-        private @NonNull
-        final Material icon;
+        @NonNull
+        private final Material icon;
 
         Type(@NonNull Material icon) {
             this.icon = icon;

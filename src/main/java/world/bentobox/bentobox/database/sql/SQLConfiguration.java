@@ -37,7 +37,7 @@ public class SQLConfiguration
         // Set the table name
         this.oldTableName = plugin.getSettings().getDatabasePrefix() + type.getCanonicalName();
         this.tableName = plugin.getSettings().getDatabasePrefix() +
-            (type.getAnnotation(Table.class) == null ? type.getCanonicalName() : type.getAnnotation(Table.class).name());
+                (type.getAnnotation(Table.class) == null ? type.getCanonicalName() : type.getAnnotation(Table.class).name());
         // Only rename if there is a specific Table annotation
         this.renameRequired = !this.tableName.equals(this.oldTableName);
         this.schema("CREATE TABLE IF NOT EXISTS `[tableName]` (json JSON, uniqueId VARCHAR(255) GENERATED ALWAYS AS (json->\"$.uniqueId\"), UNIQUE INDEX i (uniqueId) )");
@@ -47,17 +47,17 @@ public class SQLConfiguration
         this.deleteObject("DELETE FROM `[tableName]` WHERE uniqueId = ?");
         this.objectExists("SELECT IF ( EXISTS( SELECT * FROM `[tableName]` WHERE `uniqueId` = ?), 1, 0)");
         this.renameTable("SELECT Count(*) INTO @exists " +
-            "FROM information_schema.tables " +
-            "WHERE table_schema = '" + plugin.getSettings().getDatabaseName() + "' " +
-            "AND table_type = 'BASE TABLE' " +
-            "AND table_name = '[oldTableName]'; " +
-            "SET @query = If(@exists=1,'RENAME TABLE `[oldTableName]` TO `[tableName]`','SELECT \\'nothing to rename\\' status'); " +
-            "PREPARE stmt FROM @query;" +
-            "EXECUTE stmt;");
+                "FROM information_schema.tables " +
+                "WHERE table_schema = '" + plugin.getSettings().getDatabaseName() + "' " +
+                "AND table_type = 'BASE TABLE' " +
+                "AND table_name = '[oldTableName]'; " +
+                "SET @query = If(@exists=1,'RENAME TABLE `[oldTableName]` TO `[tableName]`','SELECT \\'nothing to rename\\' status'); " +
+                "PREPARE stmt FROM @query;" +
+                "EXECUTE stmt;");
     }
 
 
-    private final String TABLE_NAME = "\\[tableName]";
+    private static final String TABLE_NAME = "\\[tableName]";
 
     /**
      * By default, use quotes around the unique ID in the SQL statement

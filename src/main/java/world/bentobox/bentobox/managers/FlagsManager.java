@@ -23,8 +23,8 @@ import world.bentobox.bentobox.lists.Flags;
  */
 public class FlagsManager {
 
-    private @NonNull
-    final BentoBox plugin;
+    @NonNull
+    private final BentoBox plugin;
     private final Map<@NonNull Flag, @Nullable Addon> flags = new HashMap<>();
 
     /**

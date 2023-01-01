@@ -29,9 +29,9 @@ public class PlaceBlocksListener extends FlagListener
     public void onBlockPlace(final BlockPlaceEvent e)
     {
         if (e.getBlock().getType().equals(Material.FIRE) ||
-            e.getItemInHand() == null || // Note that this should never happen officially, but it's possible for other plugins to cause it to happen
-            e.getItemInHand().getType().equals(Material.WRITABLE_BOOK) ||
-            e.getItemInHand().getType().equals(Material.WRITTEN_BOOK))
+                e.getItemInHand() == null || // Note that this should never happen officially, but it's possible for other plugins to cause it to happen
+                e.getItemInHand().getType().equals(Material.WRITABLE_BOOK) ||
+                e.getItemInHand().getType().equals(Material.WRITTEN_BOOK))
         {
             // Books can only be placed on lecterns and as such are protected by the LECTERN flag.
             return;
@@ -62,7 +62,7 @@ public class PlaceBlocksListener extends FlagListener
     public void onPlayerHitItemFrame(PlayerInteractEntityEvent e)
     {
         if (e.getRightClicked().getType().equals(EntityType.ITEM_FRAME) ||
-            e.getRightClicked().getType().equals(EntityType.GLOW_ITEM_FRAME))
+                e.getRightClicked().getType().equals(EntityType.GLOW_ITEM_FRAME))
         {
             if (!this.checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.PLACE_BLOCKS))
             {
@@ -90,36 +90,36 @@ public class PlaceBlocksListener extends FlagListener
 
         switch (e.getClickedBlock().getType())
         {
-            case FIREWORK_ROCKET -> this.checkIsland(e, e.getPlayer(), e.getClickedBlock().getLocation(), Flags.PLACE_BLOCKS);
-            case RAIL, POWERED_RAIL, DETECTOR_RAIL, ACTIVATOR_RAIL ->
-            {
-                if (e.getMaterial() == Material.MINECART ||
+        case FIREWORK_ROCKET -> this.checkIsland(e, e.getPlayer(), e.getClickedBlock().getLocation(), Flags.PLACE_BLOCKS);
+        case RAIL, POWERED_RAIL, DETECTOR_RAIL, ACTIVATOR_RAIL ->
+        {
+            if (e.getMaterial() == Material.MINECART ||
                     e.getMaterial() == Material.CHEST_MINECART ||
                     e.getMaterial() == Material.HOPPER_MINECART ||
                     e.getMaterial() == Material.TNT_MINECART ||
                     e.getMaterial() == Material.FURNACE_MINECART)
-                {
-                    this.checkIsland(e, e.getPlayer(), e.getClickedBlock().getLocation(), Flags.MINECART);
-                }
-            }
-            default ->
             {
-                // Check in-hand items
-                if (e.getMaterial() == Material.FIREWORK_ROCKET ||
+                this.checkIsland(e, e.getPlayer(), e.getClickedBlock().getLocation(), Flags.MINECART);
+            }
+        }
+        default ->
+        {
+            // Check in-hand items
+            if (e.getMaterial() == Material.FIREWORK_ROCKET ||
                     e.getMaterial() == Material.ARMOR_STAND ||
                     e.getMaterial() == Material.END_CRYSTAL ||
                     e.getMaterial() == Material.ITEM_FRAME ||
                     e.getMaterial() == Material.GLOW_ITEM_FRAME ||
                     e.getMaterial() == Material.CHEST ||
                     e.getMaterial() == Material.TRAPPED_CHEST)
-                {
-                    this.checkIsland(e, e.getPlayer(), e.getPlayer().getLocation(), Flags.PLACE_BLOCKS);
-                }
-                else if (e.getMaterial().name().contains("BOAT"))
-                {
-                    this.checkIsland(e, e.getPlayer(), e.getPlayer().getLocation(), Flags.BOAT);
-                }
+            {
+                this.checkIsland(e, e.getPlayer(), e.getPlayer().getLocation(), Flags.PLACE_BLOCKS);
             }
+            else if (e.getMaterial().name().contains("BOAT"))
+            {
+                this.checkIsland(e, e.getPlayer(), e.getPlayer().getLocation(), Flags.BOAT);
+            }
+        }
         }
     }
 
@@ -132,9 +132,9 @@ public class PlaceBlocksListener extends FlagListener
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onBlockForm(EntityBlockFormEvent e)
     {
-        if (e.getNewState().getType().equals(Material.FROSTED_ICE) && e.getEntity() instanceof Player)
+        if (e.getNewState().getType().equals(Material.FROSTED_ICE) && e.getEntity() instanceof Player player)
         {
-            this.checkIsland(e, (Player) e.getEntity(), e.getBlock().getLocation(), Flags.FROST_WALKER);
+            this.checkIsland(e, player, e.getBlock().getLocation(), Flags.FROST_WALKER);
         }
     }
 }

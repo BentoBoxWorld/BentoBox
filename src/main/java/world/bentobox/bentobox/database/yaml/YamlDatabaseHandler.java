@@ -316,9 +316,9 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         // There could be more than one argument, so step through them
         for (Type genericParameterType : genericParameterTypes) {
             // If the argument is a parameter, then do something - this should always be true if the parameter is a collection
-            if(genericParameterType instanceof ParameterizedType ) {
+            if(genericParameterType instanceof ParameterizedType pt) {
                 // Get the actual type arguments of the parameter
-                Type[] parameters = ((ParameterizedType)genericParameterType).getActualTypeArguments();
+                Type[] parameters = pt.getActualTypeArguments();
                 result.addAll(Arrays.asList(parameters));
             }
         }

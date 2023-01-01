@@ -25,8 +25,6 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.eclipse.jdt.annotation.NonNull;
 
-import com.google.common.base.Charsets;
-
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.database.DatabaseConnector;
 
@@ -126,7 +124,7 @@ public class YamlDatabaseConnector implements DatabaseConnector {
         if (!tableFolder.exists()) {
             tableFolder.mkdirs();
         }
-        try (Writer writer = new OutputStreamWriter(new FileOutputStream(file), Charsets.UTF_8)) {
+        try (Writer writer = new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8)) {
             writer.write(data);
         } catch (IOException e) {
             plugin.logError("Could not save yml file: " + tableName + " " + fileName + " " + e.getMessage());

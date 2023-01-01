@@ -67,8 +67,8 @@ public class GeoLimitMobsListener extends FlagListener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onProjectileExplode(final ExplosionPrimeEvent e) {
-        if (e.getEntity() instanceof Projectile && getIWM().inWorld(e.getEntity().getLocation())) {
-            ProjectileSource source = ((Projectile)e.getEntity()).getShooter();
+        if (e.getEntity() instanceof Projectile projectile && getIWM().inWorld(e.getEntity().getLocation())) {
+            ProjectileSource source = projectile.getShooter();
             if (source instanceof Entity shooter
                     && mobSpawnTracker.containsKey(shooter)
                     && !mobSpawnTracker.get(shooter).onIsland(e.getEntity().getLocation())) {

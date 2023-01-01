@@ -86,10 +86,10 @@ public abstract class SimpleWorldRegenerator implements WorldRegenerator {
     private CompletableFuture<Void> regenerateChunk(GameModeAddon gm, IslandDeletion di, World world, int chunkX, int chunkZ) {
         CompletableFuture<Chunk> chunkFuture = PaperLib.getChunkAtAsync(world, chunkX, chunkZ);
         CompletableFuture<Void> invFuture = chunkFuture.thenAccept(chunk ->
-                Arrays.stream(chunk.getTileEntities()).filter(InventoryHolder.class::isInstance)
-                        .filter(te -> di.inBounds(te.getLocation().getBlockX(), te.getLocation().getBlockZ()))
-                        .forEach(te -> ((InventoryHolder) te).getInventory().clear())
-        );
+        Arrays.stream(chunk.getTileEntities()).filter(InventoryHolder.class::isInstance)
+        .filter(te -> di.inBounds(te.getLocation().getBlockX(), te.getLocation().getBlockZ()))
+        .forEach(te -> ((InventoryHolder) te).getInventory().clear())
+                );
         CompletableFuture<Void> entitiesFuture = chunkFuture.thenAccept(chunk -> {
             for (Entity e : chunk.getEntities()) {
                 if (!(e instanceof Player)) {
@@ -108,13 +108,13 @@ public abstract class SimpleWorldRegenerator implements WorldRegenerator {
             }
             return chunk;
         });
-        CompletableFuture<Void> postCopyFuture = copyFuture.thenAccept(chunk -> {
-            // Remove all entities in chunk, including any dropped items as a result of clearing the blocks above
-            Arrays.stream(chunk.getEntities()).filter(e -> !(e instanceof Player) && di.inBounds(e.getLocation().getBlockX(), e.getLocation().getBlockZ())).forEach(Entity::remove);
-        });
+        CompletableFuture<Void> postCopyFuture = copyFuture.thenAccept(chunk ->
+        // Remove all entities in chunk, including any dropped items as a result of clearing the blocks above
+        Arrays.stream(chunk.getEntities()).filter(e -> !(e instanceof Player) && di.inBounds(e.getLocation().getBlockX(), e.getLocation().getBlockZ())).forEach(Entity::remove));
         return CompletableFuture.allOf(invFuture, entitiesFuture, postCopyFuture);
     }
 
+    @SuppressWarnings("deprecation")
     private void copyChunkDataToChunk(Chunk chunk, ChunkGenerator.ChunkData chunkData, ChunkGenerator.BiomeGrid biomeGrid, BoundingBox limitBox) {
         double baseX = chunk.getX() << 4;
         double baseZ = chunk.getZ() << 4;

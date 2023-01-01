@@ -2,7 +2,7 @@ package world.bentobox.bentobox.listeners.flags.protection;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
@@ -36,7 +36,7 @@ public class BreedingListener extends FlagListener {
      */
     private static final Map<EntityType, List<Material>> BREEDING_ITEMS;
     static {
-        Map<EntityType, List<Material>> bi = new HashMap<>();
+        Map<EntityType, List<Material>> bi = new EnumMap<>(EntityType.class);
 
         bi.put(EntityType.HORSE, Arrays.asList(Material.GOLDEN_APPLE, Material.GOLDEN_CARROT));
         bi.put(EntityType.DONKEY, Arrays.asList(Material.GOLDEN_APPLE, Material.GOLDEN_CARROT));
@@ -58,9 +58,9 @@ public class BreedingListener extends FlagListener {
         bi.put(EntityType.FOX, Collections.singletonList(Material.SWEET_BERRIES));
         // 1.15+
         bi.put(EntityType.BEE, Arrays.asList(Material.SUNFLOWER, Material.ORANGE_TULIP, Material.PINK_TULIP,
-            Material.RED_TULIP, Material.WHITE_TULIP, Material.ALLIUM,
-            Material.AZURE_BLUET, Material.BLUE_ORCHID, Material.CORNFLOWER,
-            Material.DANDELION, Material.OXEYE_DAISY, Material.PEONY, Material.POPPY));
+                Material.RED_TULIP, Material.WHITE_TULIP, Material.ALLIUM,
+                Material.AZURE_BLUET, Material.BLUE_ORCHID, Material.CORNFLOWER,
+                Material.DANDELION, Material.OXEYE_DAISY, Material.PEONY, Material.POPPY));
         // 1.16+
         bi.put(EntityType.HOGLIN, Collections.singletonList(Material.CRIMSON_FUNGUS));
         bi.put(EntityType.STRIDER, Collections.singletonList(Material.WARPED_FUNGUS));

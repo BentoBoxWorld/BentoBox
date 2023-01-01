@@ -27,8 +27,8 @@ public class ItemDropPickUpListener extends FlagListener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onPickup(EntityPickupItemEvent e) {
-        if (e.getEntity() instanceof Player) {
-            checkIsland(e, (Player)e.getEntity(), e.getItem().getLocation(), Flags.ITEM_PICKUP);
+        if (e.getEntity() instanceof Player player) {
+            checkIsland(e, player, e.getItem().getLocation(), Flags.ITEM_PICKUP);
         }
     }
 }

@@ -17,8 +17,10 @@ import world.bentobox.bentobox.database.objects.Island;
  */
 public class NamePrompt extends StringPrompt {
 
-    private @NonNull final Island island;
-    private @NonNull final User user;
+    @NonNull
+    private final Island island;
+    @NonNull
+    private final User user;
     private final String oldName;
     private final BentoBox plugin;
 
@@ -30,7 +32,8 @@ public class NamePrompt extends StringPrompt {
     }
 
     @Override
-    public @NonNull String getPromptText(@NonNull ConversationContext context) {
+    @NonNull
+    public String getPromptText(@NonNull ConversationContext context) {
         return user.getTranslation("commands.island.renamehome.enter-new-name");
     }
 

@@ -74,10 +74,10 @@ public class HurtingListener extends FlagListener {
      */
     private void respond(EntityDamageByEntityEvent e, Entity damager, Flag flag) {
         // Get the attacker
-        if (damager instanceof Player) {
-            checkIsland(e, (Player)damager, damager.getLocation(), flag);
+        if (damager instanceof Player player) {
+            checkIsland(e, player, player.getLocation(), flag);
         } else if (damager instanceof Projectile p && // Find out who fired the projectile
-                p.getShooter() instanceof Player player && !checkIsland(e, player, damager.getLocation(), flag)) {
+                p.getShooter() instanceof Player player && !checkIsland(e, player, player.getLocation(), flag)) {
             e.getEntity().setFireTicks(0);
         }
     }
@@ -164,9 +164,9 @@ public class HurtingListener extends FlagListener {
     public void onLingeringPotionSplash(final LingeringPotionSplashEvent e) {
         // Try to get the shooter
         Projectile projectile = e.getEntity();
-        if (projectile.getShooter() instanceof Player) {
+        if (projectile.getShooter() instanceof Player player) {
             // Store it and remove it when the effect is gone
-            thrownPotions.put(e.getAreaEffectCloud().getEntityId(), (Player)projectile.getShooter());
+            thrownPotions.put(e.getAreaEffectCloud().getEntityId(), player);
             getPlugin().getServer().getScheduler().runTaskLater(getPlugin(), () -> thrownPotions.remove(e.getAreaEffectCloud().getEntityId()), e.getAreaEffectCloud().getDuration());
         }
     }

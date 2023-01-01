@@ -84,13 +84,13 @@ public class PVPListener extends FlagListener {
      */
     private void respond(Cancellable e, Entity damager, Entity hurtEntity, Flag flag) {
         // Get the attacker
-        if (damager instanceof Player) {
+        if (damager instanceof Player player) {
             User user = User.getInstance(damager);
-            if (!checkIsland((Event)e, (Player)damager, damager.getLocation(), flag)) {
-                user.notify(getFlag(damager.getWorld()).getHintReference());
+            if (!checkIsland((Event)e, player, player.getLocation(), flag)) {
+                user.notify(getFlag(player.getWorld()).getHintReference());
                 e.setCancelled(true);
             }
-        } else if (damager instanceof Projectile p && ((Projectile)damager).getShooter() instanceof Player shooter) {
+        } else if (damager instanceof Projectile && ((Projectile)damager).getShooter() instanceof Player shooter) {
             // Find out who fired the arrow
             processDamage(e, damager, shooter, hurtEntity, flag);
         } else if (damager instanceof Firework && firedFireworks.containsKey(damager)) {
@@ -194,9 +194,9 @@ public class PVPListener extends FlagListener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onLingeringPotionSplash(final LingeringPotionSplashEvent e) {
         // Try to get the shooter
-        if (e.getEntity().getShooter() instanceof Player && getPlugin().getIWM().inWorld(e.getEntity().getWorld())) {
+        if (e.getEntity().getShooter() instanceof Player player && getPlugin().getIWM().inWorld(e.getEntity().getWorld())) {
             // Store it and remove it when the effect is gone (Entity ID, UUID of throwing player)
-            thrownPotions.put(e.getAreaEffectCloud().getEntityId(), ((Player)e.getEntity().getShooter()).getUniqueId());
+            thrownPotions.put(e.getAreaEffectCloud().getEntityId(), player.getUniqueId());
             Bukkit.getScheduler().runTaskLater(getPlugin(), () -> thrownPotions.remove(e.getAreaEffectCloud().getEntityId()), e.getAreaEffectCloud().getDuration());
         }
     }
@@ -213,8 +213,8 @@ public class PVPListener extends FlagListener {
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled=true)
     public void onPlayerShootFireworkEvent(final EntityShootBowEvent e) {
         // Only care about players shooting fireworks
-        if (e.getEntity() instanceof Player && (e.getProjectile() instanceof Firework)) {
-            firedFireworks.put(e.getProjectile(), (Player)e.getEntity());
+        if (e.getEntity() instanceof Player player && (e.getProjectile() instanceof Firework)) {
+            firedFireworks.put(e.getProjectile(), player);
         }
     }
 

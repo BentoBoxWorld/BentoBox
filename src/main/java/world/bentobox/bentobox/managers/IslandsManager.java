@@ -1075,11 +1075,11 @@ public class IslandsManager {
         // Check if the player is a passenger in a boat
         if (player.isInsideVehicle()) {
             Entity boat = player.getVehicle();
-            if (boat instanceof Boat) {
+            if (boat instanceof Boat boaty) {
                 player.leaveVehicle();
                 // Remove the boat so they don't lie around everywhere
                 boat.remove();
-                player.getInventory().addItem(new ItemStack(TREE_TO_BOAT.getOrDefault(((Boat) boat).getBoatType(), Material.OAK_BOAT)));
+                player.getInventory().addItem(new ItemStack(TREE_TO_BOAT.getOrDefault(boaty.getBoatType(), Material.OAK_BOAT)));
                 player.updateInventory();
             }
         }
@@ -1199,11 +1199,11 @@ public class IslandsManager {
             // Check if the player is a passenger in a boat
             if (player.isInsideVehicle()) {
                 Entity boat = player.getVehicle();
-                if (boat instanceof Boat) {
+                if (boat instanceof Boat boaty) {
                     player.leaveVehicle();
                     // Remove the boat so they don't lie around everywhere
                     boat.remove();
-                    Material boatMat = Material.getMaterial(((Boat) boat).getType() + "_BOAT");
+                    Material boatMat = Material.getMaterial(boaty.getType() + "_BOAT");
                     if (boatMat == null) {
                         boatMat = Material.OAK_BOAT;
                     }

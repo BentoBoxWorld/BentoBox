@@ -438,9 +438,9 @@ public class PortalTeleportationListener implements Listener {
             }
         }
         // From standard nether or end
-        else if (e.getEntity() instanceof Player){
+        else if (e.getEntity() instanceof Player player){
             e.setCancelled(true);
-            plugin.getIslands().homeTeleportAsync(overWorld, (Player)e.getEntity());
+            plugin.getIslands().homeTeleportAsync(overWorld, player);
         }
 
     }

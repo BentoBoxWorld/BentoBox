@@ -95,8 +95,8 @@ public abstract class FlagListener implements Listener {
      * @param string - translation reference
      */
     public void noGo(@NonNull Event e, @NonNull Flag flag, boolean silent, String string) {
-        if (e instanceof Cancellable) {
-            ((Cancellable)e).setCancelled(true);
+        if (e instanceof Cancellable cancellable) {
+            cancellable.setCancelled(true);
         }
         if (user != null && !silent) {
             user.notify(string, TextVariables.DESCRIPTION, user.getTranslation(flag.getHintReference()));

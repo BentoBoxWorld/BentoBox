@@ -102,7 +102,7 @@ public class PlaceholdersManager {
      */
     @NonNull
     private Optional<PlaceholderAPIHook> getPlaceholderAPIHook() {
-        return plugin.getHooks().getHook("PlaceholderAPI").map(hook -> (PlaceholderAPIHook) hook);
+        return plugin.getHooks().getHook("PlaceholderAPI").map(PlaceholderAPIHook.class::cast);
     }
 
     /**

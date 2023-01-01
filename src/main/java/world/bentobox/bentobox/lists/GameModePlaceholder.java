@@ -172,15 +172,13 @@ public enum GameModePlaceholder {
      * Returns the name of the island the player is standing on.
      * @since 1.5.2
      */
-    VISITED_ISLAND_NAME("visited_island_name", (addon, user, island) -> {
-        return getVisitedIsland(addon, user).map(is -> {
-            if (is.getName() != null) {
-                return is.getName();
-            } else {
-                return user.getTranslation(is.getWorld(), "protection.flags.ENTER_EXIT_MESSAGES.island", TextVariables.NAME, addon.getPlayers().getName(is.getOwner()));
-            }
-        }).orElse("");
-    }),
+    VISITED_ISLAND_NAME("visited_island_name", (addon, user, island) -> getVisitedIsland(addon, user).map(is -> {
+        if (is.getName() != null) {
+            return is.getName();
+        } else {
+            return user.getTranslation(is.getWorld(), "protection.flags.ENTER_EXIT_MESSAGES.island", TextVariables.NAME, addon.getPlayers().getName(is.getOwner()));
+        }
+    }).orElse("")),
     /**
      * Returns the coordinates of the center of the island the player is standing on.
      * @since 1.5.2
