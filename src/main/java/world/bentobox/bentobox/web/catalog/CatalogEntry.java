@@ -23,9 +23,9 @@ public class CatalogEntry {
     private final String name;
     @NonNull
     private final String description;
-    @NonNull
+    @Nullable
     private final String topic;
-    @NonNull
+    @Nullable
     private final String tag;
     @NonNull
     private final String repository;
