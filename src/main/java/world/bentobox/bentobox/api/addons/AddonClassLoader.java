@@ -7,6 +7,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -32,6 +33,19 @@ public class AddonClassLoader extends URLClassLoader {
     private final Map<String, Class<?>> classes = new HashMap<>();
     private final Addon addon;
     private final AddonsManager loader;
+
+    /**
+     * For testing only
+     * @param addon addon
+     * @param loader Addons Manager
+     * @param jarFile Jar File
+     * @throws MalformedURLException exception
+     */
+    protected AddonClassLoader(Addon addon, AddonsManager loader, File jarFile) throws MalformedURLException {
+        super(new URL[]{jarFile.toURI().toURL()});
+        this.addon = addon;
+        this.loader = loader;
+    }
 
     public AddonClassLoader(AddonsManager addonsManager, YamlConfiguration data, File jarFile, ClassLoader parent)
             throws InvalidAddonInheritException,
@@ -79,8 +93,27 @@ public class AddonClassLoader extends URLClassLoader {
      */
     @NonNull
     public static AddonDescription asDescription(YamlConfiguration data) throws InvalidAddonDescriptionException {
-        AddonDescription.Builder builder = new AddonDescription.Builder(Objects.requireNonNull(data.getString("main")), Objects.requireNonNull(data.getString("name")), Objects.requireNonNull(data.getString("version")))
+        // Validate addon.yml
+        if (!data.contains("main")) {
+            throw new InvalidAddonDescriptionException("Missing 'main' tag. A main class must be listed in addon.yml");
+        }
+        if (!data.contains("name")) {
+            throw new InvalidAddonDescriptionException("Missing 'name' tag. An addon name must be listed in addon.yml");
+        }
+        if (!data.contains("version")) {
+            throw new InvalidAddonDescriptionException("Missing 'version' tag. A version must be listed in addon.yml");
+        }
+        if (!data.contains("authors")) {
+            throw new InvalidAddonDescriptionException("Missing 'authors' tag. At least one author must be listed in addon.yml");
+        }
+
+        AddonDescription.Builder builder = new AddonDescription.Builder(
+                // Mandatory elements
+                Objects.requireNonNull(data.getString("main")),
+                Objects.requireNonNull(data.getString("name")),
+                Objects.requireNonNull(data.getString("version")))
                 .authors(Objects.requireNonNull(data.getString("authors")))
+                // Optional elements
                 .metrics(data.getBoolean("metrics", true))
                 .repository(data.getString("repository", ""));
 
@@ -92,7 +125,7 @@ public class AddonClassLoader extends URLClassLoader {
         if (softDepend != null) {
             builder.softDependencies(Arrays.asList(softDepend.split("\\s*,\\s*")));
         }
-        builder.icon(Objects.requireNonNull(Material.getMaterial(data.getString("icon", "PAPER"))));
+        builder.icon(Objects.requireNonNull(Material.getMaterial(data.getString("icon", "PAPER").toUpperCase(Locale.ENGLISH))));
 
         String apiVersion = data.getString("api-version");
         if (apiVersion != null) {
