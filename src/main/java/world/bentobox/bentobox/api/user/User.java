@@ -431,6 +431,19 @@ public class User implements MetaDataAble {
         if (translation == null) {
             translation = plugin.getLocalesManager().get(this, reference);
             if (translation == null) {
+                
+                // Then replace variables
+                if (variables.length > 1) {
+                    for (int i = 0; i < variables.length; i += 2) {
+                        reference = reference.replace(variables[i], variables[i + 1]);
+                    }
+                }
+
+                // Then replace Placeholders, this will only work if this is a player
+                if (player != null) {
+                    reference = plugin.getPlaceholdersManager().replacePlaceholders(player, reference);
+                }
+                
                 // If no translation has been found, return the reference for debug purposes.
                 return reference;
             }
