@@ -357,19 +357,9 @@ public class Util {
         // Bat extends Mob
         // Most of passive mobs extends Animals
 
-        if (ServerCompatibility.getInstance().isVersion(ServerCompatibility.ServerVersion.V1_18,
-            ServerCompatibility.ServerVersion.V1_18_1,
-            ServerCompatibility.ServerVersion.V1_18_2))
-        {
-            return entity instanceof Animals || entity instanceof IronGolem || entity instanceof Snowman ||
-                entity instanceof WaterMob && !(entity instanceof PufferFish) || entity instanceof Bat;
-        }
-        else
-        {
-            return entity instanceof Animals || entity instanceof IronGolem || entity instanceof Snowman ||
-                entity instanceof WaterMob && !(entity instanceof PufferFish) || entity instanceof Bat ||
-                entity instanceof Allay;
-        }
+        return entity instanceof Animals || entity instanceof IronGolem || entity instanceof Snowman ||
+            entity instanceof WaterMob && !(entity instanceof PufferFish) || entity instanceof Bat ||
+            entity instanceof Allay;
     }
 
     /*

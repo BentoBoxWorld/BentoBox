@@ -35,14 +35,6 @@ public class SculkSensorListener extends FlagListener
             return;
         }
 
-        if (ServerCompatibility.getInstance().isVersion(ServerCompatibility.ServerVersion.V1_18,
-            ServerCompatibility.ServerVersion.V1_18_1,
-            ServerCompatibility.ServerVersion.V1_18_2))
-        {
-            // TODO: 1.18 compatibility exit
-            return;
-        }
-
         if (event.getBlock().getType() == Material.SCULK_SENSOR &&
             event.getEntity() != null &&
             event.getEntity() instanceof Player player)
