@@ -1674,7 +1674,7 @@ public class IslandsManager {
     }
 
     /**
-     * Try to get a list of quarantined islands owned by uuid in this world
+     * Try to get an unmodifiable list of quarantined islands owned by uuid in this world
      *
      * @param world - world
      * @param uuid - target player's UUID, or <tt>null</tt> = unowned islands

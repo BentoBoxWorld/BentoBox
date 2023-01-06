@@ -180,7 +180,7 @@ public class Util {
     }
 
     /**
-     * Return a list of online players this player can see, i.e. are not invisible
+     * Return an immutable list of online players this player can see, i.e. are not invisible
      * @param user - the User - if null, all player names on the server are shown
      * @return a list of online players this player can see
      */

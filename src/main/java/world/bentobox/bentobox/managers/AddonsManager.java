@@ -479,7 +479,7 @@ public class AddonsManager {
     }
 
     /**
-     * Gets the list of Addons that are loaded.
+     * Gets an unmodifiable list of Addons that are loaded.
      * @return list of loaded Addons.
      * @since 1.1
      */
@@ -489,7 +489,7 @@ public class AddonsManager {
     }
 
     /**
-     * Gets the list of Addons that are enabled.
+     * Gets an unmodifiable list of Addons that are enabled.
      * @return list of enabled Addons.
      * @since 1.1
      */
@@ -645,7 +645,7 @@ public class AddonsManager {
     }
 
     /*
-     * Get a list of addon classes that are of type {@link DataObject}
+     * Get a unmodifiable list of addon classes that are of type {@link DataObject}
      * but not {@link ConfigObject}. Configs are not transitioned to database.
      * Used in database transition.
      * @return list of DataObjects

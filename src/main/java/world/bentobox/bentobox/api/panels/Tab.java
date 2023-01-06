@@ -24,7 +24,7 @@ public interface Tab {
     String getName();
 
     /**
-     * Return the panel items for this tab
+     * Return an immutable list of the panel items for this tab
      * @return a list of items in slot order
      */
     List<@Nullable PanelItem> getPanelItems();
