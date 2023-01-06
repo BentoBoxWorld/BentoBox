@@ -201,15 +201,15 @@ public class ServerCompatibility {
         /**
          * @since 1.21.0
          */
-        V1_19(Compatibility.INCOMPATIBLE),
+        V1_19(Compatibility.COMPATIBLE),
         /**
          * @since 1.21.0
          */
-        V1_19_1(Compatibility.INCOMPATIBLE),
+        V1_19_1(Compatibility.COMPATIBLE),
         /**
          * @since 1.21.0
          */
-        V1_19_2(Compatibility.INCOMPATIBLE),
+        V1_19_2(Compatibility.COMPATIBLE),
         /**
          * @since 1.22.0
          */
