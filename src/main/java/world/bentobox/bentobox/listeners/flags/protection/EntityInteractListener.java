@@ -70,11 +70,7 @@ public class EntityInteractListener extends FlagListener {
             {
                 this.checkIsland(e, p, l, Flags.FURNACE);
             }
-            else if (!ServerCompatibility.getInstance().isVersion(
-                ServerCompatibility.ServerVersion.V1_18,
-                ServerCompatibility.ServerVersion.V1_18_1,
-                ServerCompatibility.ServerVersion.V1_18_2) &&
-                e.getPlayer().isSneaking() && e.getRightClicked() instanceof ChestBoat)
+            else if (e.getPlayer().isSneaking() && e.getRightClicked() instanceof ChestBoat)
             {
                 // Access to chest boat since 1.19
                 this.checkIsland(e, p, l, Flags.CHEST);
@@ -96,11 +92,7 @@ public class EntityInteractListener extends FlagListener {
                 this.checkIsland(e, p, l, Flags.NAME_TAG);
             }
         }
-        else if (!ServerCompatibility.getInstance().isVersion(
-            ServerCompatibility.ServerVersion.V1_18,
-            ServerCompatibility.ServerVersion.V1_18_1,
-            ServerCompatibility.ServerVersion.V1_18_2) &&
-            e.getRightClicked() instanceof Allay)
+        else if (e.getRightClicked() instanceof Allay)
         {
             // Allay item giving/taking
             this.checkIsland(e, p, l, Flags.ALLAY);
