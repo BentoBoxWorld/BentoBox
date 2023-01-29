@@ -75,8 +75,8 @@ public class EntityTeleportListener extends AbstractTeleportListener implements 
         {
             // Teleportation is disabled. Cancel event.
             event.setCancelled(true);
+            return;
         }
-
         // Trigger event processor.
         this.portalProcess(event, event.getTo().getWorld().getEnvironment());
     }
@@ -204,26 +204,24 @@ public class EntityTeleportListener extends AbstractTeleportListener implements 
             event.setCancelled(true);
             return;
         }
-
+        
         if (!this.isAllowedInConfig(overWorld, environment))
         {
             // World is disabled in config. Do not teleport player.
             event.setCancelled(true);
             return;
         }
-
+        
         if (!this.isAllowedOnServer(environment))
         {
-            // World is disabled in bukkit. Event is not triggered, but cancel by chance.
+            // World is disabled in bukkit. Event is not triggered, but cancel just in case.
             event.setCancelled(true);
         }
-
         if (this.inTeleport.contains(event.getEntity().getUniqueId()))
         {
             // Entity is already in teleportation.
             return;
         }
-
         this.inTeleport.add(event.getEntity().getUniqueId());
 
         // Get target world.
@@ -244,7 +242,7 @@ public class EntityTeleportListener extends AbstractTeleportListener implements 
             this.handleToStandardNetherOrEnd(event, overWorld, toWorld);
             return;
         }
-
+        
         if (!overWorld.equals(fromWorld) && !this.isIslandWorld(overWorld, environment))
         {
             // If entering a portal in the other world, teleport to a portal in overworld if
@@ -252,7 +250,7 @@ public class EntityTeleportListener extends AbstractTeleportListener implements 
             this.handleFromStandardNetherOrEnd(event, overWorld, toWorld.getEnvironment());
             return;
         }
-
+        
         // Set the destination location
         // If portals cannot be created, then destination is the spawn point, otherwise it's the vector
         event.setTo(this.calculateLocation(event.getFrom(),
@@ -282,20 +280,20 @@ public class EntityTeleportListener extends AbstractTeleportListener implements 
             // visit that dimension.
             return;
         }
-
+        
         if (!event.isCancelled())
         {
             // Let the server teleport
             return;
         }
-
+        
         if (environment.equals(World.Environment.THE_END))
         {
             // Prevent death from hitting the ground while calculating location.
             event.getEntity().setVelocity(new Vector(0,0,0));
             event.getEntity().setFallDistance(0);
         }
-
+        
         // If we do not generate portals, teleportation should happen manually with safe spot builder.
         // Otherwise, we could end up with situations when player is placed in mid air, if teleportation
         // is done instantly.
