@@ -58,6 +58,7 @@ import world.bentobox.bentobox.database.AbstractDatabaseHandler;
 import world.bentobox.bentobox.database.Database;
 import world.bentobox.bentobox.database.DatabaseSetup;
 import world.bentobox.bentobox.database.DatabaseSetup.DatabaseType;
+import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.database.objects.Players;
 import world.bentobox.bentobox.hooks.VaultHook;
 import world.bentobox.bentobox.util.Util;
@@ -95,6 +96,9 @@ public class PlayersManagerTest {
     private VaultHook vault;
     @Mock
     private PlayerInventory playerInv;
+    @Mock
+    private Island island;
+    
     private static AbstractDatabaseHandler<Object> h;
 
     @SuppressWarnings("unchecked")
@@ -153,6 +157,9 @@ public class PlayersManagerTest {
         while(notUUID.equals(uuid)) {
             notUUID = UUID.randomUUID();
         }
+        
+        // Island
+        when(island.getOwner()).thenReturn(uuid);
 
         // Player
         when(p.getEnderChest()).thenReturn(inv);
@@ -391,7 +398,7 @@ public class PlayersManagerTest {
      */
     @Test
     public void testCleanLeavingPlayerLeave() {
-        pm.cleanLeavingPlayer(world, user, false);
+        pm.cleanLeavingPlayer(world, user, false, island);
         // Tamed animals
         verify(tamed).setOwner(eq(null));
         // Economy
@@ -415,7 +422,7 @@ public class PlayersManagerTest {
     @Test
     public void testCleanLeavingPlayerKicked() {
         // Player is kicked
-        pm.cleanLeavingPlayer(world, user, true);
+        pm.cleanLeavingPlayer(world, user, true, island);
         // Tamed animals
         verify(tamed).setOwner(eq(null));
         // Economy
@@ -440,7 +447,7 @@ public class PlayersManagerTest {
     public void testCleanLeavingPlayerKickedOffline() {
         when(user.isOnline()).thenReturn(false);
         // Player is kicked
-        pm.cleanLeavingPlayer(world, user, true);
+        pm.cleanLeavingPlayer(world, user, true, island);
         // Tamed animals
         verify(tamed).setOwner(eq(null));
         // Economy

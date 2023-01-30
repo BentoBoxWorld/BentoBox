@@ -406,7 +406,7 @@ public class IslandTeamKickCommandTest {
         verify(im).removePlayer(any(), eq(notUUID));
         verify(user).sendMessage("commands.island.team.kick.success", TextVariables.NAME, "poslovitch");
         verify(target, Mockito.never()).getInventory();
-        verify(pm).cleanLeavingPlayer(any(), any(User.class), eq(true));
+        verify(pm).cleanLeavingPlayer(any(), any(User.class), eq(true), eq(island));
     }
 
     /**

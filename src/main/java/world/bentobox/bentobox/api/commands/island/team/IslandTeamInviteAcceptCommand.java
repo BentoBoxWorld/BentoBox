@@ -176,6 +176,10 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
             // Put player back into normal mode
             user.setGameMode(getIWM().getDefaultGameMode(getWorld()));
 
+            // Execute commands
+            String ownerName = this.getPlayers().getName(teamIsland.getOwner());
+            Util.runCommands(user, ownerName, getIWM().getOnJoinCommands(getWorld()), "join");
+
         });
         // Reset deaths
         if (getIWM().isTeamJoinDeathReset(getWorld())) {
@@ -228,7 +232,5 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
             user.getPlayer().setTotalExperience(0);
         }
 
-        // Execute commands
-        Util.runCommands(user, getIWM().getOnJoinCommands(getWorld()), "join");
     }
 }

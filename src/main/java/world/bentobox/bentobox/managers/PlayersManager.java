@@ -22,6 +22,7 @@ import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.Database;
+import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.database.objects.Names;
 import world.bentobox.bentobox.database.objects.Players;
 import world.bentobox.bentobox.util.Util;
@@ -538,11 +539,13 @@ public class PlayersManager {
      * @param world - island world
      * @param target - target user
      * @param kicked - true if player is being kicked
+     * @param island - island being left
      * @since 1.15.4
      */
-    public void cleanLeavingPlayer(World world, User target, boolean kicked) {
+    public void cleanLeavingPlayer(World world, User target, boolean kicked, Island island) {
         // Execute commands when leaving
-        Util.runCommands(target, plugin.getIWM().getOnLeaveCommands(world), "leave");
+        String ownerName = this.getName(island.getOwner());
+        Util.runCommands(target, ownerName, plugin.getIWM().getOnLeaveCommands(world), "leave");
 
         // Remove any tamed animals
         world.getEntitiesByClass(Tameable.class).stream()

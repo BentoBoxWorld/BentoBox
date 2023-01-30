@@ -187,7 +187,7 @@ public class IslandResetCommand extends ConfirmableCommand {
             getIslands().removePlayer(getWorld(), memberUUID);
 
             // Clean player
-            getPlayers().cleanLeavingPlayer(getWorld(), member, false);
+            getPlayers().cleanLeavingPlayer(getWorld(), member, false, island);
 
             // Fire event
             TeamEvent.builder()

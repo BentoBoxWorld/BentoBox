@@ -102,7 +102,7 @@ public class IslandTeamKickCommand extends ConfirmableCommand {
 
         getIslands().removePlayer(getWorld(), targetUUID);
         // Clean the target player
-        getPlayers().cleanLeavingPlayer(getWorld(), target, true);
+        getPlayers().cleanLeavingPlayer(getWorld(), target, true, oldIsland);
 
         user.sendMessage("commands.island.team.kick.success", TextVariables.NAME, target.getName());
         IslandEvent.builder()
