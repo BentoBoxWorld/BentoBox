@@ -122,7 +122,7 @@ public class AdminDeleteCommand extends ConfirmableCommand {
         }
 
         // Execute commands when leaving
-        Util.runCommands(target, getIWM().getOnLeaveCommands(getWorld()), "leave");
+        Util.runCommands(target, target.getName(), getIWM().getOnLeaveCommands(getWorld()), "leave");
     }
 
     @Override

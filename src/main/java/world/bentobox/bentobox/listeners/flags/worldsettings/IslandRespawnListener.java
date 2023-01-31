@@ -11,8 +11,10 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 
+import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.util.Util;
 
@@ -61,14 +63,20 @@ public class IslandRespawnListener extends FlagListener {
             return; // world no longer available
         }
         World w = Util.getWorld(world);
+        String ownerName = e.getPlayer().getName();
         if (w != null) {
             final Location respawnLocation = getIslands().getSafeHomeLocation(w, User.getInstance(e.getPlayer().getUniqueId()), "");
             if (respawnLocation != null) {
                 e.setRespawnLocation(respawnLocation);
+                // Get the island owner name
+                Island island = BentoBox.getInstance().getIslandsManager().getIsland(w, User.getInstance(e.getPlayer()));
+                if (island != null) {
+                    ownerName = BentoBox.getInstance().getPlayers().getName(island.getOwner());
+                }
             }
         }
         // Run respawn commands, if any
-        Util.runCommands(User.getInstance(e.getPlayer()), getIWM().getOnRespawnCommands(world), "respawn");
+        Util.runCommands(User.getInstance(e.getPlayer()), ownerName, getIWM().getOnRespawnCommands(world), "respawn");
     }
 
 }

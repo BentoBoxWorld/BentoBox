@@ -288,6 +288,8 @@ public interface WorldSettings extends ConfigObject {
      * Available placeholders for the commands are the following:
      * <ul>
      *     <li>{@code [player]}: name of the player</li>
+     *     <li>{@code [owner]}: name of the owner of the island. When joining a team, this will be the team leader's name. When
+     *     creating an island, it is the name of the player</li>
      * </ul>
      * <br/>
      * Here are some examples of valid commands to execute:
@@ -345,6 +347,8 @@ public interface WorldSettings extends ConfigObject {
      * Available placeholders for the commands are the following:
      * <ul>
      *     <li>{@code [player]}: name of the player</li>
+     *     <li>{@code [owner]}: name of the owner of the island. When joining a team, this will be the team leader's name. When
+     *     creating an island, it is the name of the player</li>
      * </ul>
      * <br/>
      * Here are some examples of valid commands to execute:
@@ -363,6 +367,22 @@ public interface WorldSettings extends ConfigObject {
 
     /**
      * Returns a list of commands that should be executed when the player respawns after death if {@link Flags#ISLAND_RESPAWN} is true.<br/>
+     * These commands are executed by the console, unless otherwise stated using the {@code [SUDO]} prefix, in which case they are executed by the player.<br/>
+     * <br/>
+     * Available placeholders for the commands are the following:
+     * <ul>
+     *     <li>{@code [player]}: name of the player</li>
+     *     <li>{@code [owner]}: name of the owner of the island. When joining a team, this will be the team leader's name. When
+     *     creating an island, it is the name of the player</li>
+     * </ul>
+     * <br/>
+     * Here are some examples of valid commands to execute:
+     * <ul>
+     *     <li>{@code "[SUDO] bbox version"}</li>
+     *     <li>{@code "bsbadmin deaths set [player] 0"}</li>
+     * </ul>
+     * <br/>
+     * Note that player-executed commands might not work, as these commands can be run with said player being offline.
      * @return a list of commands.
      * @since 1.14.0
      * @see #getOnJoinCommands()

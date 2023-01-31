@@ -1172,7 +1172,7 @@ public class IslandsManager {
             user.setGameMode(plugin.getIWM().getDefaultGameMode(world));
 
             // Execute commands
-            Util.runCommands(user, plugin.getIWM().getOnJoinCommands(world), "join");
+            Util.runCommands(user, user.getName(), plugin.getIWM().getOnJoinCommands(world), "join");
         }
         // Remove from mid-teleport set
         goingHome.remove(user.getUniqueId());
