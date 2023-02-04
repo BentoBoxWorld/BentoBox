@@ -3,18 +3,24 @@
 # the one at http://yaml-online-parser.appspot.com                                        #
 ###########################################################################################
 
+# This locale is updated to version 1.21.1 by JamesMCL44
+
 meta:
   authors:
   - mkcoldwolf
   - DuckSoft
   - Haruchan__
+  - JamesMCL44
   banner: "RED_BANNER:1:CIRCLE_MIDDLE:WHITE:FLOWER:WHITE:FLOWER:WHITE:CROSS:RED:FLOWER:WHITE"
-
+prefixes:
+  bentobox: '&6 BentoBox &7 &l > &r '
 general:
   success: "&a成功!"
+  invalid: 無效
   errors:
     command-cancelled: "&c命令已取消執行"
     no-permission: "&c您沒有使用該命令的權限 (&7[permission]&c)。"
+    insufficient-rank: '&c 您的階銜沒有達到要求! (&7[rank]&c)'
     use-in-game: "&c本命令僅能在遊戲內使用。"
     no-team: "&c您沒有隊伍!"
     no-island: "&c您沒有島嶼!"
@@ -23,6 +29,7 @@ general:
     already-have-island: "&c您已經有島嶼了!"
     no-safe-location-found: "&c島上沒有安全位置!"
     not-owner: "&c您不是您的島上的隊長!"
+    player-is-not-owner: '&b[name] &c不是島嶼的主人!'
     not-in-team: "&c該玩家不是您的隊員!"
     offline-player: "&c該玩家不在線或不存在。"
     unknown-player: "&c[name] 是未知玩家!"
@@ -31,8 +38,12 @@ general:
     wrong-world: "&c您不在正確的世界!"
     you-must-wait: "&c要再次使用該命令, 您必須等待 [number] 秒"
     must-be-positive-number: "&c[number] 不是一個有效的正數。"
-  tips:
-    changing-obsidian-to-lava: "正在將黑曜石變回岩漿。下次注意啊!"
+    not-on-island: '&c你目前不在這島嶼上!'
+  
+  worlds:
+    overworld: 主世界
+    nether: 地獄
+    the-end: 終界
 
 commands:
   # Parameters in <> are required, parameters in [] are optional
@@ -46,68 +57,135 @@ commands:
     console: "控制台"
   admin:
     help:
-      parameters: ""
       description: "管理員命令"
+      parameters: ""
     resets:
       description: "強制設置玩家的重製次數"
       set:
         description: "強制設置玩家的重製次數"
         parameters: "<player> <resets>"
+        success: '&a已將玩家 &b[name] &a的島嶼已重置次數設置為 &b[number] &a。'
       reset:
         description: "強制重置玩家的重製次數為零"
         parameters: "<player>"
+        success-everyone: '&a已將&b所有玩家&a的島嶼重置次數設置為 &b0 &a。'
+        success: '&a已將玩家 &b[name] &a的島嶼重置次數設置為 &b0 &a。'
+      add:
+        description: '增加玩家的島嶼重置次數'
+        parameters: <player> <resets>
+        success: '&a已將玩家 &b[name] &a的島嶼重置次數增加&b[number]次&a，現在為 &b[total]次 &a。'
+      remove:
+        description: '減少玩家的島嶼重置次數'
+        parameters: <player> <resets>
+        success: '&a 已將玩家 &b[name] &a的島嶼重置次數 扣除&b[number]次&a，現在為 &b[total]次 &a。'
+    purge:
+      parameters: '[days]'
+      description: '清理不活動超過 [days]天 的島嶼'
+      days-one-or-more: '&c天數必須為最少1。'
+      purgable-islands: '&a找到 &b[number]個 &a不活動可以被清理的島嶼。'
+      purge-in-progress: |-
+        &c清理正在進行中。
+        &c使用 &b/[label] purge stop &c來取消清理。
+      number-error: '&c變數必須是整天數。'
+      confirm: '&d輸入 &b/[label] purge confirm &d開始清理。'
+      completed: '&a清理工作已結束。'
+      see-console-for-status: |-
+        &a清理已開始。
+        &a請參閱控制台或使用 &b/[label] purge status &a來查看清理狀態。
+      no-purge-in-progress: '&c沒有正在進行的清理工作。'
+      protect:
+        description: '開/關 島嶼清理保護， 開啟清理保護的島嶼不會被清理。'
+        move-to-island: '&c請先回到島上再進行操作!'
+        protecting: '&a已為島嶼開啟清理保護。'
+        unprotecting: '&a已關閉該島嶼的清理保護。'
+      stop:
+        description: '停止正在進行的清理工作'
+        stopping: '&e正在停止清理。'
+      unowned:
+        description: '清理被遺棄(無主)的島嶼'
+        unowned-islands: '&a找到 &b[number] &a個被遺棄(無主)的島嶼。'
+      status:
+        description: '顯示清理狀態'
+        status: '&a共有 &b[purgeable]個 &a可清理，已清理 &b[purged]個 &a &7(&b[percentage] %&7)&a。'
+
     team:
       add:
-        parameters: "<owner> <player>"
+        parameters: <owner> <player>
         description: "將玩家添加到隊長的隊伍中"
         name-not-owner: "&c[name] 不是隊長"
         name-has-island: "&c[name] 已經有島嶼了。請先註銷或刪除它們!"
+        success: '&a已將 &b[name] &a加入到 &b[owner] &a的島嶼。'
       disband:
-        parameters: "<owner>"
+        parameters: <owner>
         description: "解散隊長的隊伍"
         use-disband-owner: "&c不是隊長!請用 disband [owner]"
         disbanded: "&c管理員解散了您的隊伍!"
+        success: '&b[name] &a的島嶼成員已被解散。'
+      fix:
+        description: '掃描數據庫，並修復跨島嶼成員(某些玩家錯誤地擁有或歸屬於多個島嶼)。'
+        scanning: '&e正在掃描數據庫...'
+        duplicate-owner: '&c玩家 &b[name] &c擁有多個島嶼。'
+        player-has: '&c玩家 &b[name] &c擁有 &b[number] 個島嶼。'
+        duplicate-member: '&c玩家 &b[name] &c是多個島嶼的成員。'
+        rank-on-island: '&c[rank] 在 [xyz]'
+        fixed: '&a已修復。'
+        done: '&a掃描完畢。'
       kick:
-        parameters: "<team player>"
-        description: "從隊伍中踢走玩家"
+        parameters: <team player>
+        description: "從隊伍中踢走指定玩家"
         cannot-kick-owner: "&c您不能踢走隊長。請先踢走成員"
+        not-in-team: '&c這玩家不在隊伍中。'
         admin-kicked: "&c管理員將您從隊伍中踢了出來。"
+        success: '&a您已將 &b[name] &a從 &b[owner] &a的島嶼裡踢出去。'
       setowner:
-        parameters: "<player>"
-        description: "將島主轉移給玩家"
-        already-owner: "&c玩家已經是這個島的島主了!"
+        parameters: <player>
+        description: '將島嶼所有權轉移給指定玩家'
+        already-owner: '&c[name]本身已經是島主！'
+        success: '&a已將&b[name]&a提升為島主。'
     range:
-      description: "管理員 island range 命令"
+      description: '島嶼範圍管理命令'
+      invalid-value:
+        too-low: '&c保護範圍必需大於 &b1 &c！'
+        too-high: '&c保護範圍應等於或小於 &b[number] &c！'
+        same-as-before: '&c保護範圍已設置為 &b[number] &c！'
       display:
-        already-off: "&c指示器已關閉"
-        already-on: "&c指示器已打開"
-        description: "顯示或隱藏島嶼範圍指示器"
-        hiding: "&2正在隱藏範圍指示器"
+        already-off: '&c範圍指示器已關閉'
+        already-on: '&c範圍指示器已打開'
+        description: '顯示或隱藏島嶼範圍指示器'
+        hiding: '&2正在隱藏範圍指示器'
         hint: |-
-          &c紅色屏障圖標&f顯示當前島嶼的保護範圍限制。
-          &7灰色粒子&f顯示島的最大限制。
-          &a綠色粒子&f顯示默認的保護範圍(若當前島嶼保護範圍有所不同)。
+          &c紅色屏障 &f顯示當前島嶼的保護範圍限制。
+          &7灰色粒子 &f顯示島的最大限制。
+          &a綠色粒子 &f顯示默認的保護範圍(若當前島嶼保護範圍有所不同)。
         showing: "&2正在顯示範圍指示器"
       set:
-        parameters: "<player> <range>"
-        description: "設置島嶼保護範圍"
-        invalid-value:
-          not-numeric: "&c[number] 不是自然數!"
-          too-low: "&c保護範圍必須大於 1!"
-          too-high: "&c保護範圍應該不大於 [number]!"
-          same-as-before: "&c保護範圍已經被設置為 [number] 了!"
-        success: "&2已將島嶼保護範圍設置為 [number]"
+        parameters: <player> <range>
+        description: '設置島嶼保護範圍'
+        success: '&a已將島嶼保護範圍設置為&b[number]&a。'
       reset:
-        parameters: "<player>"
+        parameters: <player>
         description: "將島嶼保護範圍重置為世界默認"
-        success: "&2已將島嶼保護範圍重置為 [number]"
+        success: "&2已將島嶼保護範圍重置為&b[number]&a。"
+      add:
+        description: '增加島嶼保護範圍'
+        parameters: <player> <range>
+        success: '&a已將 &b[name]&a 的島嶼保護範圍增加到 &b[total] &7（&b+[number]&7）&a。'
+      remove:
+        description: '減少島嶼保護範圍'
+        parameters: <player> <range>
+        success: '&a已將 &b[name]&a 的島嶼保護範圍減少到 &b[total] &7（&b+[number]&7）&a。'
     register:
       parameters: "<player>"
       description: "將玩家註冊到您當前所在的無人島"
       registered-island: "&a已將玩家註冊到位於 [xyz] 的島嶼。"
+      reserved-island: '&a Reserved island at [xyz] for [name].'
       already-owned: "&c該島嶼不是無人島!"
       no-island-here: "&c這個地方沒有島嶼。確認來創建一個。"
       in-deletion: "&c這個島嶼空間正在被刪除。 請稍後再試"
+      cannot-make-island: '&c抱歉，不能在這裡創建島嶼。 請參閱控制台以獲取詳細信息。'
+      island-is-spawn: |-
+        &c所處位置為出生點島嶼， 您確定要將玩家注冊到這個島嶼上？
+        &6請再次輸入命令以確認。
     unregister:
       parameters: "<owner>"
       description: "將島主註銷但保留方塊"
@@ -117,92 +195,231 @@ commands:
       description: "獲得您當前所在或者指定玩家的島嶼信息"
       no-island: "&c您當前不在一座島上......"
       title: "========== 島嶼信息 ============"
+      island-uuid: "UUID: [uuid]"
       owner: "島主：[owner] ([uuid])"
       last-login: "最後登錄：[date]"
+      last-login-date-time-format: EEE MMM dd HH:mm:ss zzz yyyy
       deaths: "死亡次數：[number]"
       resets-left: "重置次數： [number](最多： [total])"
       team-members-title: "隊伍成員："
       team-owner-format: "&a[name] [rank]"
       team-member-format: "&b[name] [rank]"
-      island-location: "島嶼位置：[xyz]"
+      island-protection-center: '保護範圍中心: [xyz]'
+      island-center: '島嶼中心: [xyz]'
       island-coords: "島嶼邊界：[xz1] 至 [xz2]"
+      islands-in-trash: '&d 在垃圾桶內發現玩家的島嶼'
       protection-range: "保護範圍：[range]"
+      protection-range-bonus-title: '&b 包括以下加成:'
+      protection-range-bonus: '加成: [number]'
+      purge-protected: '島嶼已被加入清理白名單 不會被自動清理'
       max-protection-range: "最大紀錄過的保護範圍: [range]"
       protection-coords: "保護邊界：[xz1] 至 [xz2]"
       is-spawn: "此島嶼是初始島"
       banned-players: "封禁玩家："
       banned-format: "&c[name]"
       unowned: "&c無人島"
+    switch:
+      description: 開/關 保護規避機制
+      op: '&c運維人員始終可以規避島嶼保護。 除非將他們開除。'
+      removing: '&c正在刪除保護規避...'
+      adding: '&a正在添加保護規避...'
+    switchto:
+      parameters: <player> <number>
+      description: 將玩家的島嶼扔進垃圾桶指定的位置
+      out-of-range: |-
+        &c數字必須介於 &b1 &c到 &b[number] &c之間。
+        &c使用 &b[label] trash [player] &c來查看島嶼在垃圾桶中的位置。"
+      cannot-switch: '&c切換失敗。請參閱控制台以獲取詳細信息。'
+      success: '&a成功將玩家的島嶼切換到垃圾桶指定的位置。'
+    trash:
+      no-unowned-in-trash: '&c垃圾桶中沒有無人島。'
+      no-islands-in-trash: '&c垃圾桶中沒有玩家島嶼。'
+      parameters: '[player]'
+      description: '顯示垃圾桶中的無人島或玩家島嶼'
+      title: '&d =========== 島嶼垃圾桶 ==========='
+      count: '&d&l島嶼： [number]'
+      use-switch: '&a使用 &b[label] switchto <player> <number> &a將玩家島嶼扔到垃圾桶中指定的位置。'
+      use-emptytrash: '&a使用 &b[label] emptytrash [player] &a來永久刪除島嶼。'
+    emptytrash:
+      parameters: '[player]'
+      description: '清空垃圾桶中玩家或無人島嶼'
+      success: '&a垃圾桶已清空。'
     version:
       description: "顯示 BentoBox 及其組件的版本"
     setrange:
-      parameters: "<player> <range>"
+      parameters: <player> <range>
       description: "設置玩家島嶼的範圍"
       range-updated: "島嶼範圍已被更新至 [number]"
     reload:
-      description: "重載本插件"
+      description: "重載本插件(不建議使用 請重啟伺服器以免發生錯誤)"
     tp:
-      parameters: "<player>"
+      parameters: <player>
       description: "傳送到玩家的島嶼"
       manual: "&c沒有安全傳送點!手動傳送至 &b[location] &c附近並解決這個問題"
     getrank:
-      parameters: "<player>"
-      description: "得到玩家在他們的島嶼上的頭銜"
-      rank-is: "&a在他們的島嶼上的頭銜是 [rank]。"
+      parameters: <player> [island owner]
+      description: "得到玩家在他們的島嶼上的階銜"
+      rank-is: '&a在他們的島嶼上的階銜是 [rank]。'
     setrank:
-      parameters: "<player> <rank>"
-      description: "設置玩家在他們島嶼上的頭銜"
-      unknown-rank: "&c未知頭銜!"
-      rank-set: "&a頭銜由 [from] 設置為 [to]。"
+      parameters: <player> <rank>
+      description: "設置玩家在他們島嶼上的階銜"
+      unknown-rank: "&c未知階銜!"
+      not-possible: '&c要設置的階銜必須比 “訪客” 高。'
+      rank-set: "&a階銜由 [from] 設置為 [to]。"
+    setprotectionlocation:
+      parameters: '[x y z (坐標)]'
+      description: '將所處位置或給定坐標設置為島嶼保護區的中心點'
+      island: '&c這將影響玩家 &b[name] &c位於 &b[xyz] &c的島嶼。'
+      confirmation: '&c您確定將 &b[xyz] &c設置為該島嶼的保護區中心點嗎？'
+      success: '&a成功將 &b[xyz] &a設置為該島嶼的保護區中心點。'
+      fail: |-
+        &c未能將 &b[xyz] &c設置為該島嶼的保護區中心點！
+        &c請參閱控制台以獲得詳細錯誤信息。
+      island-location-changed: '&a[user] 將島嶼保護區中心點更改為 [xyz]。'
+      xyz-error: '&c坐標應該為三個整數， 例如： 100 120 100。'
     setspawn:
       description: "在這個世界中把您的位置設置為島嶼的重生點"
       already-spawn: "&c這個島嶼早就設定了重生點!"
       no-island-here: "&c沒有在您的位置找到任何島嶼。"
       confirmation: "&c您確定要在這個世界中把現在的位置設置為島嶼的重生點?"
+      success: '&a已成功將該島嶼設置為出生島嶼(主城)。'
+    setspawnpoint:
+      description: '將當前位置設置為島嶼出生點'
+      no-island-here: '&c這裡沒有島嶼。'
+      confirmation: '&c您確定要把所處位置設置為該島嶼的出生點？'
+      success: '&a成功將所處位置設置為該島嶼的出生點。'
+      island-spawnpoint-changed: '&b[user] &a更改了島嶼出生點。'
+    settings:
+      parameters: '[player]/[world flag]/spawn-island [flag/active/disable] [rank/active/disable]'
+      description: '打開設置面板或使用命令調整島嶼設置'
+      unknown-setting: '&c未知設置項'
     blueprint:
-      parameters: "<load/copy/paste/pos1/pos2/save>"
-      description: "調整規劃方案"
-      copy-first: "&c請先複製一份規劃方案!"
-      file-exists: "&c文件已存在, 是否覆蓋?"
-      no-such-file: "&c文件不存在!"
-      could-not-load: "&c無法加載該文件!"
-      could-not-save: "&c嗯......寫入文件失敗：[message]"
-      set-pos1: "&a位置 1 設置為 [vector]"
-      set-pos2: "&a位置 2 設置為 [vector]"
-      set-different-pos: "&c請設置另一個地點 - 該位置已經設置了!"
-      need-pos1-pos2: "&c請先設置 pos1 和 pos2 !"
-      copied-blocks: "&b從剪切板複製 [number] 個方塊"
-      look-at-a-block: "&c請看向 20 個方塊以內的方塊來設置"
+      parameters: <load/copy/paste/pos1/pos2/save>
+      description: '管理藍圖'
+      bedrock-required: '&c 藍圖中必須包含最少一格基岩!'
+      copy-first: '&c請先使用 &bcopy &c命令將所選區域複製到剪貼板'
+      file-exists: '&c文件已存在, 是否覆蓋?'
+      no-such-file: '&c文件不存在!'
+      could-not-load: '&c無法加載該文件!'
+      could-not-save: '&c嗯......寫入文件失敗：[message]'
+      set-pos1: '&a位置 1 設置為 [vector]'
+      set-pos2: '&a位置 2 設置為 [vector]'
+      set-different-pos: '&c請設置另一個地點 - 該位置已經設置了!'
+      need-pos1-pos2: '&c請先設置 pos1 和 pos2 !'
+      copying: '&b正在複製區域內的所有方塊...'
+      copied-blocks: '&b從剪貼板複製 [number] 個方塊'
+      look-at-a-block: '&c請看向 20 個方塊以內的方塊來設置'
+      mid-copy: '&c已有一個複製動作正在進行， 請稍等。'
+      copied-percent: '&6複製了&b[number]%'
       copy:
-        parameters: "[air]"
-        description: "複製 pos1 和 pos2 之間設置的方塊(或使用空氣方塊)到剪切板"
+        parameters: '[air]'
+        description: '複製 pos1 和 pos2 之間設置的方塊(或使用空氣方塊)到剪貼板'
+      delete:
+        parameters: <name>
+        description: '刪除藍圖'
+        no-blueprint: '&c藍圖 &b[name] &c不存在！'
+        confirmation: '&c請注意， 藍圖刪除後將無法恢復！ 您確定要刪除嗎？'
+        success: '&a成功刪除了藍圖 &b[name] &a。'
       load:
-        parameters: "<blueprint name>"
-        description: "加載規劃文件到剪切板"
+        parameters: <blueprint name>
+        description: '加載藍圖到剪貼板'
+      list:
+        description: '列出可用的藍圖'
+        no-blueprints: '&c藍圖文件夾中沒有藍圖文件！'
+        available-blueprints: '&a這些藍圖可以加載：'
       origin:
-        parameters: ""
-        description: "設置在您的位置中規劃方案的原點"
+        description: '設置在您的位置中規劃方案的原點'
+        parameters: ''
       paste:
-        parameters: ""
-        description: "在您的位置上粘貼剪切板的內容"
+        description: '在您的位置上黏貼剪貼板的內容'
+        pasting: '&a黏貼中...'
+        parameters: ''
       pos1:
-        parameters: ""
-        description: "設置立方體剪切板的第一個頂點"
+        description: '設置立方體剪貼板的第一個頂點'
+        parameters: ''
       pos2:
-        parameters: ""
-        description: "設置立方體剪切板的第二個頂點"
+        description: '設置立方體剪貼板的第二個頂點'
+        parameters: ''
       save:
         parameters: "<blueprint name>"
         description: "保存已復制的剪切板"
+      rename:
+        parameters: <blueprint name> <new name>
+        description: '重命名藍圖文件'
+        success: '&a藍圖文件 &b[old] &a已被重命名為 &b[name] &a。'
+        pick-different-name: '&c該藍圖名稱已存在， 請指定一個不同的名稱。'
+      management:
+        back: '&f返回'
+        instruction: '&7單擊藍圖，然後單擊此處'
+        title: '&9&l藍圖方案管理器'
+        edit: '&7左鍵點擊 - 編輯藍圖方案'
+        rename: '&7右鍵點擊 - 重命名藍圖方案'
+        edit-description: '&7&l編輯描述'
+        world-name-syntax: '&b&l[name]'
+        world-instructions: |-
+          &7請從以下列表中選擇一個
+          &7藍圖並放置在右邊一格裡
+          &7以將藍圖應用到這個世界
+        trash: '&c&l垃圾桶'
+        no-trash: '&8&l垃圾桶'
+        trash-instructions: '&e右鍵點擊刪除此藍圖方案'
+        no-trash-instructions: '&c不能刪除預置藍圖方案'
+        permission: '&f&l權限'
+        no-permission: '&f&l不需要權限'
+        perm-required: '&c需要：'
+        no-perm-required: '&c不能為預置的藍圖方案設置權限'
+        perm-not-required: '&7不需要'
+        perm-format: '&e'
+        remove: '&7右鍵點擊來刪除'
+        blueprint-instruction: |-
+          &7左鍵點擊 - 選擇藍圖
+          &7右鍵點擊 - 重新命名藍圖
+        select-first: '&c請先選擇藍圖！'
+        new-bundle: '&f&l新建藍圖方案'
+        new-bundle-instructions: |-
+          &7右鍵點擊來創建一個新的藍圖方案。
+          &7藍圖方案是指包含適用於主世界、下界、末地
+          &7三個世界的藍圖的捆綁包。
+          &7它將出現在玩家創建島嶼界面中。
+        name:
+          quit: '退出'
+          prompt: '&e請輸入新名稱， 或 “&b quit&e” 來退出編輯。'
+          too-long: '&c新名稱太長了！'
+          pick-a-unique-name: '&c這個名稱已存在， 請另選一個不同的名稱！'
+          success: '&a成功！'
+          conversation-prefix: '&3> &r'
+          stripped-char-in-unique-name: '&c部分字符因受限制而被刪除。 &a新名稱為 &b[name]&a。'
+        description:
+          quit: '退出'
+          instructions: |-
+            &e請為 &b[name] &e輸入描述， 每輸入一次為一行。
+            &e最後輸入 “&bquit&e” 退出編輯。
+          default-color: ''
+          success: '&a成功！'
+          cancelling: '&c已取消！'
+        slot: '&f&l顯示槽位： [number]'
+        slot-instructions: |-
+          &e左鍵點擊 &7- &b增加(往後移)
+          &e右鍵點擊 &7- &b減少(往前移)
+    resetflags:
+      parameters: '[flag]'
+      description: '將所有島嶼的保護標志設置為 config.yml 中默認的狀態'
+      confirm: '&4這將把所有島嶼的保護標志重置為默認值！'
+      success: '&a已成功將所有島嶼的保護標志重置為默認設置。'
+      success-one: '&a所有島嶼的 “&b[name]&a” 保護標志已重置為默認值。'
     world:
       description: "管理世界設置"
     delete:
-      parameters: "<player>"
+      parameters: <player>
       description: "刪除玩家的島嶼"
       cannot-delete-owner: "&c刪除之前必須將所有島嶼成員都踢出島嶼。"
       deleted-island: "&a位於 &e[xyz] &a的島嶼已經被成功刪除。"
+    deletehomes:
+      parameters: <player>
+      description: '從島上刪除所有已命名的Home點'
+      warning: '&c島上所有已命名Home點將被刪除！'
     why:
-      parameters: "<player>"
+      parameters: <player>
       description: "切換控制台保護調試報告"
       turning-on: "打開 [name] 的控制台調試信息"
       turning-off: "關閉 [name] 的控制台調試信息"
@@ -210,29 +427,73 @@ commands:
       description: "強制設置玩家的死亡次數"
       reset:
         description: "強制重置玩家的死亡次數為零"
-        parameters: "<player>"
+        parameters: <player>
+        success: '&a成功重置玩家 &b[name] &a的死亡次數。'
       set:
         description: "強制設置玩家的死亡次數"
-        parameters: "<player> <deaths>"
+        parameters: <player> <deaths>
+        success: '&a成功將玩家 &b[name] &a的死亡次數設置為 &b[number] &a次。'
+      add:
+        description: '增加玩家的死亡次數'
+        parameters: <player> <deaths>
+        success: |-
+          &a成功將玩家 &b[name] &a的死亡次數增加 &b[number] 次。
+          &a他現在的死亡次數為： &b[total] &a次。"
+      remove:
+        description: '減少玩家的死亡次數'
+        parameters: <player> <deaths>
+        success: |-
+          &a成功將玩家 &b[name] &a的死亡次數減少 &b[number] 次。
+          &a他現在的死亡次數為： &b[total] &a次。"
   bentobox:
-    description: "BentoBox 管理員命令"
+    description: 'BentoBox 管理員命令'
     about:
-      description: "顯示版權和協議信息"
+      description: '顯示版權和協議信息'
     reload:
-      description: "重新載入所有語言文件"
+      description: '重載 BentoBox 和所有附加組件、設置和語言'
       locales-reloaded: "&2語言文件已經重新載入"
       addons-reloaded: "&2組件已經重新載入"
+      settings-reloaded: '[prefix_bentobox]&2設置已重載。'
+      addon: '[prefix_bentobox]&6正在重載 &b[name] &2。'
+      addon-reloaded: '[prefix_bentobox]&b[name] &2已重載。'
+      warning: '[prefix_bentobox]&c警告： 重載可能導致不穩定， 如果發生錯誤， 請重啟服務器。'
+      unknown-addon: '[prefix_bentobox]&c未知組件！'
+      locales:
+        description: '重載語言資源(zh-HK)'
     version:
       plugin-version: "&2Bentobox 版本：&3[version]"
-      description: "顯示信息"
-      loaded-addons: "已加載組件"
-      loaded-game-worlds: "已加載遊戲世界："
-      addon-syntax: "&2[name] &3[version] &7(&3[state]&7)"
-      game-world: "&2[name] &7(&3[addon]&7): &a Overworld&7, &r Nether&7, &r End"
+      description: '顯示 BentoBox 和附加組件版本'
+      loaded-addons: '已載入的附加組件：'
+      loaded-game-worlds: '已載入的游戲世界：'
+      addon-syntax: '&2[name] &3[version] &7(&3[state]&7)'
+      game-world: '&2[name] &7(&3[addon]&7) : &3[worlds]'
+      server: '&2服務器： &3[name] [version]&2'
+      database: '&2數據庫： &3[database]'
+    manage:
+      description: '顯示管理面板'
+    catalog:
+      description: '顯示編目'
+    locale:
+      description: '執行語言文件分析'
+      see-console: |-
+        [prefix_bentobox] &a請從控制台讀取反饋信息。
+        [prefix_bentobox] &a此命令非常垃圾，無法從聊天中讀取反饋...
+        [prefix_bentobox] &a確實垃圾，就算從控制台裡讀取反饋也非常吃力啊！
+    migrate:
+      description: 將數據從一個數據庫遷移到另一個數據庫
+      players: '[prefix_bentobox] &6遷移玩家數據庫'
+      names: '[prefix_bentobox] &6遷移玩家名稱數據庫'
+      addons: '[prefix_bentobox] &6遷移附加組件'
+      class: '[prefix_bentobox] &6遷移 [description]'
+      migrated: '[prefix_bentobox] &a遷移完成'
   confirmation:
     confirm: "&c於 &b[seconds] &c秒內再次輸入命令來確認"
     previous-request-cancelled: "&6上一個確認請求已取消"
     request-cancelled: "&c確認超時 - &b請求已取消"
+  delay:
+    previous-command-cancelled: '&c上一個命令已取消。'
+    stand-still: '&6請不要移動！ 將在 &b[seconds] &6秒後傳送。'
+    moved-so-command-cancelled: '&c您移動了， 傳送已取消。'
   island:
     about:
       description: "關於本組件"
@@ -241,165 +502,248 @@ commands:
       description: "將您傳送到您的島嶼"
       teleport: "&a將您傳送到您的島嶼。"
       teleported: "&a傳送到您的第 &e#[number] 號家。"
-      tip: "&b輸入 /[label] help &a來得到幫助。"
+      unknown-home: '&c未知島嶼傳送點。'
     help:
       description: "主要島嶼命令"
-      pick-world: "&c從 [worlds] 中指定世界"
     spawn:
       description: "傳送您到初始點"
       teleporting: "&a正在把您傳送到重生點。"
       no-spawn: "&c這個世界並沒有重生點。"
     create:
-      description: "創建島嶼, 可以使用指定的blueprint (需要權限)"
-      parameters: "<blueprint>"
-      too-many-islands: "&c這個世界已經有太多島嶼了: 所以這裏沒有足夠的空間去創建您的島嶼。"
-      unable-create-island: "&c您的島嶼無法被生成, 請聯繫管理員。"
-      creating-island: "&a正在創建島嶼, 請耐心等候......"
-      pick-world: "&c請從 [worlds] 中選擇世界。"
-      unknown-blueprint: "&c這一個blueprint還未被加載。"
+      description: '創建島嶼, 可以使用指定的藍圖 (需要權限)'
+      parameters: <blueprint>
+      too-many-islands: '&c這個世界太擁擠了，已經沒有空餘空間為您創建島嶼。'
+      cannot-create-island: '&c找不到合適的地點為您創建島嶼，請稍後重試...'
+      unable-create-island: '&c無法生成您的島嶼，請聯系管理員。'
+      creating-island: '&a正在尋找合適的地點創建島嶼, 請耐心等候...'
+      pasting:
+        estimated-time: '&b預計用時： &e[number] &a秒。'
+        blocks: '&b正在構建： &a總共需要構建 &e[number] &a個方塊...'
+        entities: '&b填充實體： &a總共需要填充 &e[number] &a個實體...'
+        done: '&a完成！ 您的島嶼已准備就緒！'
+        dimension-done: '&a在[world]的島嶼已完成構建。'
+      pick: '&9&l選擇島嶼方案'
+      unknown-blueprint: '&c該藍圖方案尚未加載。'
+      on-first-login: '&a歡迎！我們將在幾秒鐘內開始創建您的島嶼！'
+      you-can-teleport-to-your-island: '&a您可以在任何時傳送到您的島嶼。'
+    deletehome:
+      description: '刪除島嶼傳送點'
+      parameters: '[home name]'
+    homes:
+      description: '列出你的Home點'
     info:
       description: "顯示關於您或某一個玩家島嶼的信息"
-      parameters: "<player>"
+      parameters: <player>
+    near:
+      description: 顯示您附近的島嶼的名稱
+      parameters: ''
+      the-following-islands: '&a這些島嶼在您附近：'
+      syntax: '&6  - [direction]： &a[name]'
+      north: 北方
+      south: 南方
+      east: 東方
+      west: 西方
+      no-neighbors: '&c您附近沒有靠近的島嶼!'
     reset:
       description: "重置您的島嶼, 並且刪除舊的島嶼"
-      parameters: "<blueprint>"
-      must-remove-members: "&c在您可以重製您的島嶼之前, 您必須移除掉所有的島上成員(/island team kick <player>)。"
+      parameters: <blueprint>
       none-left: "&c您沒有重置次數了!"
       resets-left: "&c您還有 [number] 次重置機會"
+      confirmation: |-
+        &c您確定要重新開始嗎？
+        &c島上所有成員都會被踢出島嶼，如果需要，必須重新邀請他們。
+        &c沒有回頭路：一旦刪除了島嶼就再也不能恢復了。
+      kicked-from-island: '&c您被踢出了 &b[gamemode] &c的島嶼，因為島主正在重置島嶼。'
     sethome:
       description: "設置您家的傳送點"
-      must-be-on-your-island: "&c您必須在您的島上才能設置家!"
-      num-homes: "&c家編號可以從 1 到 [number]。"
-      home-set: "&6您的島嶼的家已經被設置到您的當前位置。"
+      must-be-on-your-island: '&c您必須在您的島上才能設置島嶼傳送點!'
+      too-many-homes: '&c無法設置 - 您的島嶼最多只能有 &b[number] &c個傳送點。'
+      home-set: '&6您的島嶼傳送點已經被設置到您的當前位置。'
+      homes-are: '&6您的島嶼傳送點有'
+      home-list-syntax: '&6 [name]'
       nether:
-        not-allowed: "&c您無法在地獄設置您的家。"
-        confirmation: "&c您確定要在地獄設置您的家嗎?"
+        not-allowed: '&c您無法在地獄設置您的家。'
+        confirmation: '&c您確定要在地獄設置您的家嗎?'
       the-end:
-        not-allowed: "&c您無法在終界設置您的家。"
-        confirmation: "&c您確定要在終界設置您的家嗎?"
-      parameters: "[home number]"
+        not-allowed: '&c您無法在終界設置您的家。'
+        confirmation: '&c您確定要在終界設置您的家嗎?'
+      parameters: '[home number]'
     setname:
-      description: "設置您的島嶼的名字"
-      name-too-short: "&c太短了。最少要求 [number] 個字符。"
-      name-too-long: "&c太長了。最多要求 [number] 個字符。"
-      parameters: "<name>"
+      description: 設置您的島嶼的名字
+      name-too-short: '&c太短了。最少要求 [number] 個字符。'
+      name-too-long: '&c太長了。最多要求 [number] 個字符。'
+      name-already-exists: '&c已經有一個該名稱的島嶼了。'
+      parameters: <name>
+      success: '&a成功為您的島嶼取名為 &b[name] &a。'
+    renamehome:
+      description: 重命名島嶼傳送點
+      parameters: '[home name]'
+      enter-new-name: '&6輸入新名稱'
+      already-exists: '&c該名稱已存在，請輸入一個不同的名稱。'
     resetname:
-      description: "重置您的島嶼的名字"
+      description: 重置您的島嶼的名字
+      success: '&a已成功重置島嶼名稱。'
     team:
-      description: "管理您的隊伍"
+      description: 管理您的隊伍
       info:
-        description: "顯示關於您的隊伍的詳細信息"
+        description: 顯示關於您的隊伍的詳細信息
+        member-layout:
+          online: '&a &l  o &r &f [name]'
+          offline: '&c &l  o &r &f [name] &7 ([last_seen])'
+          offline-not-last-seen: '&c &l  o &r &f [name]'
+        last-seen:
+          layout: '&b [number] &7 [unit] 前'
+          days: 天
+          hours: 小時
+          minutes: 分鐘
+        header: |
+          &f--- &a團隊信息 &f---
+          &a成員： &b[total]&7/&b[max]
+          &a在線： &b[online]
+        rank-layout:
+          owner: '&6 [rank]:'
+          generic: '&6 [rank] &7 (&b [number]&7 )&6 :'
       coop:
-        description: "使玩家成為您島嶼上的協作者"
-        parameters: "<player>"
-        cannot-coop-yourself: "&c您不能將自己設為協作者!"
-        already-has-rank: "&c玩家已經有頭銜了!"
-        you-are-a-coop-member: "&2您與 [name] 成為協作關係"
+        description: 使玩家成為您島嶼上的協作者
+        parameters: <player>
+        cannot-coop-yourself: '&c您不能將自己設為協作者!'
+        already-has-rank: '&c玩家已經有階銜了!'
+        you-are-a-coop-member: '&2您與 [name] 成為協作關係'
+        success: '&a成功！ &b[name] &a成為了您的協作者。'
+        name-has-invited-you: '&a[name] 邀請您與他建立協作關系。'
       uncoop:
-        description: "移除與玩家的協作關係"
-        parameters: "<player>"
-        cannot-uncoop-yourself: "&c您不能取消與自己的協作關係!"
-        cannot-uncoop-member: "&c您不能取消與隊伍成員的協作關係!"
-        player-not-cooped: "&c玩家並沒有與您是協作關係!"
-        you-are-no-longer-a-coop-member: "&c您已經不再是 [name] 的島嶼的協作者了"
-        all-members-logged-off: "&c由於 [name] 的島嶼的所有成員都已經下線, 所以您已經不再是其島嶼的協作者了"
+        description: 移除與玩家的協作關係
+        parameters: <player>
+        cannot-uncoop-yourself: '&c您不能取消與自己的協作關係!'
+        cannot-uncoop-member: '&c您不能取消與隊伍成員的協作關係!'
+        player-not-cooped: '&c玩家並沒有與您是協作關係!'
+        you-are-no-longer-a-coop-member: '&c您已經不再是 [name] 的島嶼的協作者了'
+        all-members-logged-off: '&c由於 [name] 的島嶼的所有成員都已經下線, 所以您已經不再是其島嶼的協作者了'
+        success: '&b[name] &a不再是您的協作者了。'
+        is-full: '&c您的協作者名額已經滿了！'
       trust:
-        description: "賜予您島上的玩家信任者頭銜"
-        parameters: "<player>"
-        trust-in-yourself: "&c信任您自己!"
-        members-trusted: "&c團隊成員已經是信任者了"
-        player-already-trusted: "&c玩家已經是信任者了!"
-        you-are-trusted: "&2您被 [name] 賜予信任者頭銜!"
+        description: 賜予您島上的玩家信任者頭銜
+        parameters: <player>
+        trust-in-yourself: '&c信任您自己!'
+        name-has-invited-you: '&b[name] &a邀請您成為他的可信者。'
+        player-already-trusted: '&c玩家已經是信任者了!'
+        you-are-trusted: '&2您被 [name] 賜予信任者頭銜!'
+        success: '&a已把 &b[name] &a列為可信者。'
+        is-full: '&c您的可信者名額已經滿了！'
       untrust:
-        description: "移除玩家的信任者頭銜"
-        parameters: "<player>"
-        cannot-untrust-yourself: "&c您不能不信任您自己!"
-        cannot-untrust-member: "&c您不能不信任團隊成員!"
-        player-not-trusted: "&c玩家不是信任者!"
-        you-are-no-longer-trusted: "&c您不再擁有 [name] 的信任者頭銜了!"
+        description: 移除玩家的信任者頭銜
+        parameters: <player>
+        cannot-untrust-yourself: '&c您不能不信任您自己!'
+        cannot-untrust-member: '&c您不能不信任團隊成員!'
+        player-not-trusted: '&c玩家不是信任者!'
+        you-are-no-longer-trusted: '&c您不再擁有 [name] 的信任者頭銜了!'
+        success: '&b[name] &a不再是您的可信者了。'
       invite:
-        description: "邀請玩家來您的島嶼"
-        invitation-sent: "&a邀請已經發送給 [name]"
-        removing-invite: "&c移除邀請"
-        name-has-invited-you: "&a[name] 邀請您去他們的島嶼。"
-        to-accept-or-reject: "&a輸入 /[label] team accept 來接受, 或者 /[label] team reject 來拒絕"
-        you-will-lose-your-island: "&c警告!如果您同意, 您將失去自己的島嶼!"
+        description: 邀請玩家來您的島嶼
+        invitation-sent: '&a邀請已經發送給 [name]'
+        removing-invite: '&c移除邀請'
+        name-has-invited-you: '&a[name] 邀請您去他們的島嶼。'
+        to-accept-or-reject: |-
+          &a 輸入 /[label] team accept &a接受邀請
+          &a , 或者 /[label] team reject &a拒絕邀請。
+        you-will-lose-your-island: '&c警告!如果您同意, 您將失去自己的島嶼!'
         errors:
-          cannot-invite-self: "&c您不能邀請您自己!"
-          cooldown: "&c您必須在 [number] 秒後才能邀請這個人"
-          island-is-full: "&c您的島嶼滿員了, 您不能再邀請其他人。"
-          none-invited-you: "&c還沒有人邀請您呢 :c。"
-          you-already-are-in-team: "&c您已經在隊伍裡了!"
-          already-on-team: "&c該玩家已經在隊伍裡了!"
-          invalid-invite: "&c邀請失效了, 抱歉。"
-        parameters: "<player>"
-        you-can-invite: "&a您還能邀請 [number] 名玩家。"
+          cannot-invite-self: '&c您不能邀請您自己!'
+          cooldown: '&c您必須在 [number] 秒後才能邀請這個人'
+          island-is-full: '&c您的島嶼滿員了, 您不能再邀請其他人。'
+          none-invited-you: '&c還沒有人邀請您呢 :c。'
+          you-already-are-in-team: '&c您已經在隊伍裡了!'
+          already-on-team: '&c該玩家已經在隊伍裡了!'
+          invalid-invite: '&c邀請失效了, 抱歉。'
+          you-have-already-invited: '&c您剛剛已經邀請過該玩家！'
+        parameters: <player>
+        you-can-invite: '&a您還能邀請 [number] 名玩家。'
         accept:
-          description: "接受邀請"
-          you-joined-island: "&a您已經加入島嶼!使用 /[label] team info 來查看其他成員。"
-          name-joined-your-island: "&a[name] 加入了您的島嶼!"
+          description: 接受邀請
+          you-joined-island: '&a您已經加入島嶼!使用 /[label] team info 來查看其他成員。'
+          
+          name-joined-your-island: '&a[name] 加入了您的島嶼!'
           confirmation: |-
             &c您是否確定要接受這個邀請?
             &c&l您將會 &n失去 &r&c&l您現在的島嶼!
         reject:
-          description: "拒絕邀請"
-          you-rejected-invite: "&a您拒絕了加入島嶼的邀請。"
-          name-rejected-your-invite: "&c[name] 拒絕了您的島嶼邀請!"
+          description: 拒絕邀請
+          you-rejected-invite: '&a您拒絕了加入島嶼的邀請。'
+          name-rejected-your-invite: '&c[name] 拒絕了您的島嶼邀請!'
         cancel:
-          description: "取消尚未接受加入您的島嶼的邀請"
+          description: 取消尚未接受加入您的島嶼的邀請
       leave:
-        cannot-leave: "&c隊長不能離隊!先成為成員, 或踢除所有成員。"
-        description: "離開您的島嶼"
-        left-your-island: "&c[name] &c離開了您的島嶼"
+        cannot-leave: '&c隊長不能離隊!先成為成員, 或踢出所有成員。'
+        description: 離開您的島嶼
+        left-your-island: '&c[name] &c離開了您的島嶼'
+        success: '&a您退出了這個島嶼。'
       kick:
-        description: "從您的島嶼踢出成員"
-        parameters: "<player>"
-        owner-kicked: "&c隊長將您踢出島嶼!"
-        cannot-kick: "&c您不能把自己踢出去!"
+        description: '從您的島嶼踢出成員'
+        parameters: <player>
+        player-kicked: '&c [name]在[gamemode]模式下將您踢出了島嶼!'
+        cannot-kick: '&c您不能把自己踢出去!'
+        cannot-kick-rank: '&c您的頭銜沒有足夠權限把[name]踢出去!'
+        success: '&a已將 &b[name] &a踢出了島嶼。'
       demote:
-        description: "將您島嶼上的玩家降階"
-        parameters: "<player>"
-        failure: "&c玩家不能再被降階了!"
-        success: "&a將 [name] 降階至 [rank]"
-      promote:
-        description: "將您島嶼上的玩家升階"
-        parameters: "<player>"
-        failure: "&c玩家不能再被升階了!"
-        success: "&a將 [name] 升階至 [rank]"
-      setowner:
-        description: "向成員轉移您的島主身份"
+        description: '將您島嶼上的玩家降階'
+        parameters: <player>
         errors:
-          cant-transfer-to-yourself: "&c您不能把島主之位傳給自己!嘛, 其實您可以的......但是我們不想讓您這麼做。因為這樣不好。"
-          target-is-not-member: "&c該玩家不是您的島嶼成員!"
-        name-is-the-owner: "&a[name] 現在是島主了!"
-        parameters: "<player>"
-        you-are-the-owner: "&a您現在是島主了!"
+          cant-demote-yourself: '&c您不能將自己降階！'
+        failure: '&c玩家不能再被降階了!'
+        success: '&a已將 [name] 降階至 [rank]'
+      promote:
+        description: '將您島嶼上的玩家升階'
+        parameters: <player>
+        failure: '&c玩家不能再被升階了!'
+        success: '&a已將 [name] 升階至 [rank]'
+      setowner:
+        description: '將您的島嶼所有權轉讓給成員'
+        errors:
+          cant-transfer-to-yourself: '&c沒有必要把所有權轉讓給自己！'
+          target-is-not-member: '&c該玩家不是您的島嶼成員！'
+        name-is-the-owner: '&a[name] 現在是島主了!'
+        parameters: <player>
+        you-are-the-owner: '&a您現在是島主了!'
     ban:
-      description: "從您的島嶼上封禁玩家"
-      parameters: "<player>"
-      cannot-ban-yourself: "&c您不能封禁自己!"
-      cannot-ban: "&c該玩家不能被封禁。"
-      cannot-ban-member: "&c先把他踢出成員, 然後再封禁。"
-      cannot-ban-more-players: "&c您的封禁名單已經達到上限, 您不能再增加任何玩家到您的封禁名單。"
-      player-already-banned: "&c玩家已經被封禁"
-      owner-banned-you: "您被 &b[name]&c 從他們的島嶼上封禁了!"
-      you-are-banned: "&b您被該島嶼封禁了!"
+      description: '從您的島嶼上封禁玩家'
+      parameters: <player>
+      cannot-ban-yourself: '&c您干嘛要拉黑自己呢?!'
+      cannot-ban: '&c該玩家不能被封禁。'
+      cannot-ban-member: '&c先把他踢出成員, 然後再封禁。'
+      cannot-ban-more-players: '&c您的封禁名單已經達到上限, 您不能再增加任何玩家到您的封禁名單。'
+      player-already-banned: '&c玩家已經被封禁'
+      player-banned: '&b[name] &c已被您列入黑名單，從現在開始他不能再進入您的島嶼。'
+      owner-banned-you: '您被 &b[name]&c 從他們的島嶼上封禁了!'
+      you-are-banned: '&b您被該島嶼封禁了!'
     unban:
-      description: "從您的島嶼上解封玩家"
-      parameters: "<player>"
-      cannot-unban-yourself: "&c您不能解封自己!"
-      player-not-banned: "&c玩家沒有被封禁"
-      you-are-unbanned: "&b[name]&a 將您從他們的島嶼上解封了!"
+      description: '從您的島嶼上解封玩家'
+      parameters: <player>
+      cannot-unban-yourself: '&c您不能解封自己!'
+      player-not-banned: '&c玩家沒有被封禁'
+      player-unbanned: '&b[name] &a已從您的島嶼封禁名單中解封。'
+      you-are-unbanned: '&b[name]&a 將您從他們的島嶼上解封了!'
     banlist:
-      description: "列舉被封禁玩家"
-      noone: "&a本島上無人被封禁"
-      the-following: "&b以下玩家被封禁："
-      names: "&c[line]"
-      you-can-ban: "&b您還可以再封禁 &e[number] &b個玩家。"
+      description: '列舉被封禁玩家'
+      noone: '&a本島上無人被封禁'
+      the-following: '&b以下玩家被封禁：'
+      names: '&c[line]'
+      you-can-ban: '&b您還可以再封禁 &e[number] &b個玩家。'
     settings:
-      description: "顯示島嶼設置"
+      description: '顯示島嶼設置'
     language:
-      description: "選擇語言"
+      description: '選擇語言'
+      parameters: '[language]'
+      not-available: '&c這不是可用的語言。'
+      already-selected: '&c您原本已經在使用這種語言了。'
+    expel:
+      description: 將玩家驅逐出您的島嶼
+      parameters: <player>
+      cannot-expel-yourself: '&c您不能驅逐自己！'
+      cannot-expel: '&c該玩家不能被驅逐！'
+      cannot-expel-member: '&c您不能驅逐島嶼成員！'
+      not-on-island: '&c該玩家不在您的島上！'
+      player-expelled-you: '&c您被 &b[name] &c驅逐出他的島嶼！'
+      success: '&a已把 &b[name] &a從您的島上驅逐出去。'
 
 ranks:
   owner: "島主"
@@ -413,382 +757,758 @@ ranks:
   mod: "主持人"
   
 protection:
-  command-is-banned: "命令對訪客禁止"
+  command-is-banned: '訪客已被禁止使用此指令'
   flags:
     ANIMAL_SPAWN:
-      description: "切換生成動物"
-      name: "動物現在將會生成"
+      description: 允許/禁止 自然生成動物
+      name: '&a&l動物自然生成'
+    ANIMAL_SPAWNERS_SPAWN:
+      description: 允許/禁止 刷怪籠生成動物
+      name: '&a&l動物刷怪籠'
     ANVIL:
-      description: "切換交互/使用權"
-      name: "鐵砧"
-      hint: "禁止使用鐵砧"
+      description: 切換 鐵砧交互/使用權
+      name: '&a&l使用鐵砧'
+      hint: '&c已被禁止使用鐵砧'
     ARMOR_STAND:
-      description: "切換交互/使用權"
-      name: "盔甲架"
-      hint: "禁止使用盔甲架"
+      description: 切換 盔甲架交互/使用權
+      name: '&a&l使用盔甲架'
+      hint: '&c已被禁止與盔甲架互動'
     BEACON:
-      description: "切換交互/使用權"
-      name: "信標"
-      hint: "禁止使用信標"
+      description: 切換 信標交互/使用權
+      name: '&a&l使用信標'
+      hint: '&c已被禁止使用信標'
     BED:
-      description: "切換交互/使用權"
-      name: "床"
-      hint: "禁止使用床"
+      description: 切換 床交互/使用權
+      name: '&a&l使用床'
+      hint: '&c已被禁止使用床'
+    BOAT:
+      description: 切換 船隻交互/使用權
+      name: '&a&l使用船隻'
+      hint: '&c已被禁止使用船隻'
     BREAK_BLOCKS:
       description: "切換破壞權"
       name: "破壞方塊"
       hint: "禁止破壞方塊"
-    BREEDING:
-      description: "切換動物能否繁殖"
-      name: "動物繁殖"
-      hint: "動物繁殖已被取消"
-    BREWING:
-      description: "切換交互/使用權"
-      name: "釀造台"
-      hint: "禁止釀造"
-    BUCKET:
-      description: "切換交互/使用權"
-      name: "桶"
-      hint: "禁止使用桶"
-    BUTTON:
-      description: "切換按鈕使用權"
-      name: "按鈕"
-      hint: "禁止使用按鈕"
-    CONTAINER:
-      name: "容器"
+    BREAK_SPAWNERS:
       description: |-
-        &a切換箱子,
-        &a界伏盒以及花盆的交互/使用權。
+        &7允許/禁止 破壞刷怪籠
+        &7可以淩駕 '&a破壞方塊&7' 設定
+      name: '&a&l破壞刷怪籠'
+      hint: '&c已被禁止破壞刷怪籠'
+    BREAK_HOPPERS:
+      description: |-
+        &7允許/禁止 破壞漏斗
+        &7可以淩駕 '&a破壞方塊&7' 設定
+      name: '&a&l破壞漏斗'
+      hint: '&c已被禁止破壞漏斗'
+    BREEDING:
+      description: 允許/禁止 喂食動物進行繁殖
+      name: '&a&l繁殖動物'
+      hint: '&c已被禁止繁殖動物'
+    BREWING:
+      description: 允許/禁止 使用釀造台
+      name: '&a&l使用釀造台'
+      hint: '&c已被禁止使用釀造台'
+    BUCKET:
+      description: 允許/禁止 使用桶
+      name: '&a&l使用桶'
+      hint: '&c已被禁止使用桶'
+    BUTTON:
+      description: 允許/禁止 使用按鈕
+      name: '&a&l使用按鈕'
+      hint: '&c已被禁止使用按鈕'
+    CAKE:
+      description: 允許/禁止 食用蛋糕
+      name: '&a&l食用蛋糕'
+      hint: '&c已被禁止食用蛋糕'
+    CONTAINER:
+      description: |-
+        &7允許/禁止 與箱子、界伏盒
+        &7花盆、堆肥桶和木桶
+        &7等容器進行交互。
 
-        &7其他沒有列出的容器
-        &7由專用的設置控制。
-      hint: "容器的交互/使用權已經被禁止"
+        &8其他容器由專門的設定項設置。
+      name: '&a&l使用容器'
+      hint: '&c已被禁止使用容器'
+    CHEST:
+      description: |-
+        &a 切換與寶箱的交互
+        &a 和箱子礦車。
+        &a（不包括陷阱箱）
+      name: '&a&l箱子和礦車箱子'
+      hint: '&c已被禁止使用箱子'
+    BARREL:
+      description: 允許/禁止 使用桶
+      name: '&a&l使用桶'
+      hint: '&c已被禁止使用桶'
+    BLOCK_EXPLODE_DAMAGE:
+      description: |-
+        &a 允許床和重生錨
+        &a 打破塊和損壞
+        &a 實體。
+      name: 阻止爆炸傷害
+    COMPOSTER:
+      description: 允許/禁止 使用堆肥桶
+      name: '&a&l使用堆肥桶'
+      hint: '&c已被禁止使用堆肥桶'
+    FLOWER_POT:
+      description: 允許/禁止 使用花盆
+      name: '&a&l使用花盆'
+      hint: '&c已被禁止使用花盆'
+    SHULKER_BOX:
+      description: 允許/禁止 使用界伏盒
+      name: '&a&l使用界伏盒'
+      hint: '&c已被禁止使用界伏盒'
+    TRAPPED_CHEST:
+      description: 允許/禁止 使用陷阱箱
+      name: '&a&l使用陷阱箱'
+      hint: '&c已被禁止使用陷阱箱'
     DISPENSER:
-      name: "發射器"
-      description: "切換發射器的交互/使用權"
-      hint: "發射器的交互/使用權已經被禁止"
+      description: 允許/禁止 使用發射器
+      name: '&a&l使用發射器'
+      hint: '&c已被禁止使用發射器'
     DROPPER:
-      name: "投擲器"
-      description: "切換投擲器的交互/使用權"
-      hint: "投擲器的交互/使用權已經被禁止"
+      description: 允許/禁止 使用投擲器
+      name: '&a&l使用投擲器'
+      hint: '&c已被禁止使用投擲器'
+    ELYTRA:
+      description: 允許/禁止 使用鞘翅
+      name: '&a&l使用鞘翅'
+      hint: '&c警告: 鞘翅已被禁止使用!'
     HOPPER:
-      name: "漏斗"
-      description: "切換漏斗的交互/使用權"
-      hint: "漏斗的交互/使用權已經被禁止"
+      description: 允許/禁止 使用漏斗
+      name: '&a&l使用漏斗'
+      hint: '&c已被禁止使用漏斗'
     CHEST_DAMAGE:
-      description: "切換能否通過爆炸來破壞箱子"
-      name: "破壞箱子"
+      description: 允許/禁止 炸毀箱子
+      name: '&a&l炸毀箱子'
     CHORUS_FRUIT:
-      description: "切換能否傳送"
-      name: "紫頌果"
-      hint: "禁止傳送"
+      description: '&7允許/禁止 使用紫頌果進行傳送'
+      name: '&a&l使用紫頌果'
+      hint: '&c已被禁止使用紫頌果進行傳送'
     CLEAN_SUPER_FLAT:
       description: |-
-          &a啟用來清除
-          &a島嶼世界上的
-          &a超平坦區塊
-      name: "清除超平坦"
+        &7是否允許清理島嶼世界的超平坦地形。
+        &7超平坦地形一般是由於世界生成器
+        &7發生錯誤導致的。
+      name: '&a&l清理超平坦地形'
     COARSE_DIRT_TILLING:
-      description: |-
-          &a切換耕耘砂土
-          &A來獲得
-          &a普通泥土
-      name: "耕耘砂土"
-      hint: "禁止耕耘砂土"
+      description: 允許/禁止 用鋤頭耕耘砂土以獲得泥土
+      name: '&a&l砂土變泥土'
+      hint: '&c已被禁止將砂土耕耘為泥土'
     COLLECT_LAVA:
       description: |-
-          &a切換收集岩漿
-          &a(覆蓋 桶)
-      name: "收集岩漿"
-      hint: "禁止收集岩漿"
+        &7允許/禁止 用桶收集岩漿
+        &7可以超越 “&a使用桶&7” 設定
+      name: '&a&l收集岩漿'
+      hint: '&c已被禁止收集岩漿'
     COLLECT_WATER:
       description: |-
-          &a切換收集水
-          &A(覆蓋 桶)
-      name: "收集水"
-      hint: "禁止收集水"
+        &7允許/禁止 用桶收集水
+        &7可以超越 “&a使用桶&7” 設定
+      name: '&a&l收集水'
+      hint: '&c已被禁止收集水'
     COMMAND_RANKS:
-      name: "&e命令等級"
-      description: "&a配置命令等級"
+      name: '&6&l命令授權'
+      description: |-
+        &7打開 &b階銜 - 命令 &7配置面板
+        &7設置每種階銜的玩家可以使用的命令
     CRAFTING:
-      description: "切換使用權"
-      name: "合成台"
-      hint: "禁止使用合成台"
+      description: 允許/禁止 使用合成台
+      name: '&a&l使用合成台'
+      hint: '&c已被禁止使用合成台'
     CREEPER_DAMAGE:
-      description: "切換Creeper能否傷害"
-      name: "Creeper傷害"
+      description: 允許/禁止 苦力怕的爆炸生效
+      name: '&a&l苦力怕爆炸'
     CREEPER_GRIEFING:
-      description: "切換Creeper能否破壞方塊"
-      name: "Creeper破壞"
-      hint: "禁止Creeper破壞方塊"
+      description: |-
+        &7當訪客引燃苦力怕時，是否允許爆炸
+        &7效果生效（炸毀方塊、傷害實體）
+      name: '&a&l苦力怕訪客保護'
+      hint: '&c已禁止訪客引燃的苦力怕爆炸'
     CROP_TRAMPLE:
-      description: "切換能否踩壞作物"
-      name: "踩壞作物"
-      hint: "作物已被保護"
+      description: 允許/禁止 踩壞農作物
+      name: '&a&l踐踏農作物'
+      hint: '&c已被禁止踐踏農作物'
     DOOR:
-      description: "切換門的使用權"
-      name: "門"
-      hint: "禁止使用門"
+      description: 允許/禁止 使用門
+      name: '&a&l使用門'
+      hint: '&c已被禁止使用門'
+    DRAGON_EGG:
+      name: '&a&l龍蛋交互'
+      description: |-
+        &7允許/禁止 與龍蛋交互
+        &c這不能防止放置或破壞龍蛋
+      hint: '&c已被禁止與龍蛋交互'
+    DYE:
+      description: 允許/禁止 使用染料染色
+      name: '&a&l使用染料'
+      hint: '&c已被禁止使用染料染色'
     EGGS:
-      description: "切換能否扔雞蛋"
-      name: "扔雞蛋"
-      hint: "禁止扔雞蛋"
-    ELYTRA:
-      description: "切換能否在島上使用"
-      name: "鞘翅"
-      hint: "禁止使用鞘翅飛行"
+      description: 允許/禁止 使用扔雞蛋
+      name: '&a&l使用扔雞蛋'
+      hint: '&c已被禁止使用扔雞蛋'
     ENCHANTING:
-      description: "切換能否使用"
-      name: "附魔台"
-      hint: "禁止使用附魔台"
+      description: 允許/禁止 使用附魔台
+      name: '&a&l使用附魔台'
+      hint: '&c已被禁止使用附魔台'
     ENDER_CHEST:
-      description: "切換能否使用或製作"
-      name: "末影箱"
-      hint: "已禁止本世界的末影箱"
+      description: 允許/禁止 使用終界箱
+      name: '&a&l使用終界箱'
+      hint: '&c已被禁止使用終界箱'
     ENDERMAN_DEATH_DROP:
-      description: |-
-         &aEnderman被殺害時
-         &a將掉落
-         &a任何他們手持的方塊。
-      name: "Enderman死亡掉落物"
+      description: 允許/禁止 終界使者死亡後掉落手中的物品
+      name: '&d&l終界使者死亡掉落'
     ENDERMAN_GRIEFING:
-      description: |-
-         &aEnderman能夠
-         &a破壞島上方塊
-      name: "Enderman破壞"
+      description: 允許/禁止 終界使者破壞島上方塊
+      name: '&a&l終界使者破壞'
     ENDER_PEARL:
-      description: "切換使用權"
-      name: "末影珍珠"
-      hint: "禁止使用末影珍珠"
+      description: |-
+        &7允許/禁止 使用終界珍珠
+        &7進行傳送
+      name: '&a&l使用終界珍珠'
+      hint: '&c已被禁止使用終界珍珠'
     ENTER_EXIT_MESSAGES:
-      description: "顯示進入和離開消息"
-      island: "[name] 的島嶼"
-      name: "進入和離開消息"
-      now-entering: "&b當前進入 [name]"
-      now-leaving: "&b當前離開 [name]"
-    FIRE:
-      description: "允許火焰存在與否"
-      name: "火焰"
-      hint: "禁止火焰"
+      description: 允許/禁止 顯示進出島嶼的提示
+      island: '[name] 的島嶼'
+      name: '&a&l進出島嶼提示'
+      now-entering: '&a您已進入 &b[name] &a。'
+      now-entering-your-island: '&a您已進入自己的島嶼。'
+      now-leaving: '&6您已離開 &b[name] &a。'
+      now-leaving-your-island: '&6您已離開自己的島嶼。'
+    EXPERIENCE_BOTTLE_THROWING:
+      name: '&a&l投擲經驗瓶'
+      description: 允許/禁止 在島上扔經驗瓶
+      hint: '&c已被禁止投擲經驗瓶'
+    FIRE_BURNING:
+      name: '&a&l燒毀方塊'
+      description: |-
+        &7允許/禁止 方塊被火燒毀
+        &7這不能防止火勢蔓延！
     FIRE_EXTINGUISH:
-      description: "切換火焰能否熄滅"
-      name: "熄滅火焰"
-      hint: "禁止熄滅火焰"
+      description: 允許/禁止 熄滅火焰
+      name: '&a&l滅火'
+      hint: '&c已被禁止滅火'
+    FIRE_IGNITE:
+      name: '&a&l方塊燃燒'
+      description: |-
+        &7允許/禁止 方塊被非玩家方式點燃
+        &7例如被雷電擊中
     FIRE_SPREAD:
       description: "切換火焰能否蔓延"
       name: "火焰蔓延"
-      hint: "禁止火焰蔓延"
     FISH_SCOOPING:
-       description: |-
-          &a允許打撈
-          &a熱帶魚
-       name: "打撈魚"
-       hint: "禁止打撈熱帶魚"
+      name: '&a&l捕魚'
+      description: 允許/禁止 用水桶捕魚
+      hint: '&c已被禁止捕魚'
+    FLINT_AND_STEEL:
+      name: '&a&l點火'
+      description: |-
+        &7允許/禁止 玩家使用打火石
+        &7或火焰彈點燃方塊或篝火
+      hint: '&c已被禁止點火'
     FURNACE:
-      description: "切換使用權"
-      name: "熔爐"
-      hint: "禁止使用熔爐"
+      description: 允許/禁止 使用熔爐
+      name: '&a&l使用熔爐'
+      hint: '&c已被禁止使用熔爐'
     GATE:
-      description: "切換使用權"
-      name: "柵欄門"
-      hint: "禁止使用柵欄門"
+      description: 允許/禁止 使用柵欄門
+      name: '&a&l使用柵欄門'
+      hint: '&c已被禁止使用柵欄門'
     GEO_LIMIT_MOBS:
       description: |-
-         &a移除
-         &a走到島嶼保護範圍外
-         &a的怪物
-      name: "&e限制怪物到島上"
+        &7允許/禁止 移除島嶼範圍外的生物
+        &7以及將生物生成限制在島嶼範圍內
+      name: '&e&l生物分布限制'
+    HIVE:
+      description: 允許/禁止 收集蜂蜜
+      name: '&a&l收集蜂蜜'
+      hint: '&c已被禁止收集蜂蜜'
     HURT_ANIMALS:
-      description: "切換能否傷害"
-      name: "傷害動物"
-      hint: "禁止傷害動物"
+      description: 允許/禁止 傷害動物
+      name: '&a&l傷害動物'
+      hint: '&c已被禁止傷害動物'
     HURT_MONSTERS:
-      description: "切換能否傷害"
-      name: "傷害怪物"
-      hint: "禁止傷害怪物"
+      description: 允許/禁止 殺傷怪物
+      name: '&a&l殺傷怪物'
+      hint: '&c已被禁止殺傷怪物'
     HURT_VILLAGERS:
-      description: "切換能否傷害"
-      name: "傷害村民"
-      hint: "禁止傷害村民"
+      description: 允許/禁止 傷害村民
+      name: '&a&l傷害村民'
+      hint: '&c已被禁止傷害村民'
     ITEM_FRAME:
-      name: "物品展示框"
-      description: "切換交互/使用權"
-      hint: "投擲器的交互/使用權已經被禁止"
+      description: |-
+        &7允許/禁止 放置和取下物品框
+        &7可以超越 '&a放置方塊&7/&a破壞方塊&7' 設定
+      name: '&a&l取放物品框'
+      hint: '&c已被禁止使用物品框'
     ITEM_FRAME_DAMAGE:
-      description: |-
-          &a怪物能否破壞
-          &a物品展示框
-      name: "破壞物品展示框"
+      description: 允許/禁止 （非玩家）生物破壞物品框
+      name: '&a&l生物破壞物品框'
     INVINCIBLE_VISITORS:
-      description: |-
-          &a配置
-          &a無敵訪客的設置。
-      name: "&e無敵的訪客"
-      hint: "&c訪客已被保護"
+      description: 選擇訪客在島上可以免疫哪些傷害
+      name: '&5&l訪客無敵'
+      hint: '&c已禁止傷害訪客'
     ISLAND_RESPAWN:
       description: |-
-        &a玩家重生
-        &a在島上
-      name: "島嶼上重生"
+        &7允許/禁止 玩家死亡後
+        &7在自己的島嶼上重生
+      name: '&a&l在島嶼上重生'
     ITEM_DROP:
-      description: "切換能否掉落"
-      name: "物品掉落"
-      hint: "物品無法被扔掉"
+      description: 允許/禁止 丟棄物品
+      name: '&a&l丟棄物品'
+      hint: '&c已被禁止丟棄物品'
     ITEM_PICKUP:
-      description: "切換能否拾起"
-      name: "物品拾起"
-      hint: "物品無法被拾起"
+      description: 允許/禁止 拾取物品
+      name: '&a&l拾取物品'
+      hint: '&c已被禁止拾取物品'
     JUKEBOX:
-      description: "切換使用權"
-      name: "使用音樂盒"
-      hint: "禁止使用音樂盒"
+      description: 允許/禁止 使用唱片機
+      name: '&a&l使用唱片機'
+      hint: '&c已被禁止使用唱片機'
+    LEAF_DECAY:
+      description: 允許/禁止 樹葉自然枯萎
+      name: '&a&l樹葉枯萎'
     LEASH:
-      description: "切換使用權"
-      name: "使用拴繩"
-    LEVER:
-      description: "切換使用權"
-      name: "使用拉桿"
-      hint: "禁止使用拉桿"
-    LOCK:
-      description: "切換鎖定"
-      name: "鎖定島嶼"
-    MILKING:
-      description: "切換能否擠牛奶"
-      name: "擠牛奶"
-      hint: "禁止擠牛奶"
-    MONSTER_SPAWN:
-      description: "切換能否生成"
-      name: "生成怪物"
-    MOUNT_INVENTORY:
+      description: 允許/禁止 使用栓繩
+      name: '&a&l使用栓繩'
+    LECTERN:
+      name: '&a&l講台上的書'
       description: |-
-        &a切換使用
-        &a坐騎物品欄
-      name: "坐騎物品欄"
-      hint: "禁止使用坐騎物品欄"
+        &7允許/禁止 取放講台上的書
+        &c不會阻止閱讀講台上的書
+      hint: '&c已被禁止從講台上取放書籍'
+    LEVER:
+      description: 允許/禁止 使用拉杆
+      name: '&a&l使用拉杆'
+      hint: '&c已被禁止使用拉杆'
+    LIMIT_MOBS:
+      description: '&7選擇哪些實體可以被生成'
+      name: '&3&l實體生成限制'
+      can: '&a允許生成'
+      cannot: '&c禁止生成'
+    LIQUIDS_FLOWING_OUT:
+      name: '&a&l液體溢出'
+      description: |-
+        &7允許/禁止 液體流到島嶼保護範圍外
+        &c注意，該選項僅能控制水平流動的液體
+    CHANGE_SETTINGS:
+      name: 更改島上設定
+      description: |-
+        &a 允許/禁止 島員中哪個頭銜成員
+        &a 可以修改島上設定
+    LOCK:
+      description: 選擇島嶼對哪些對像開放
+      name: '&6&l鎖定島嶼'
+    MILKING:
+      description: 允許/禁止 擠牛奶
+      name: '&a&l擠牛奶'
+      hint: '&c已被禁止擠牛奶'
+    MINECART:
+      name: '&a&l礦車交互'
+      description: |-
+        &7允許/禁止 放置、摧毀和
+        &7進入礦車"
+    MONSTER_NATURAL_SPAWN:
+      description: 允許/禁止 怪物自然生成
+      name: '&a&l怪物自然生成'
+    MONSTER_SPAWNERS_SPAWN:
+      description: 允許/禁止 刷怪籠生成怪物
+      name: '&a&l怪物刷怪籠'
+    MOUNT_INVENTORY:
+      description: 允許/禁止 使用坐騎物品欄
+      name: '&a&l坐騎物品欄'
+      hint: '&c已被禁止使用坐騎物品欄'
     NAME_TAG:
-      name: "命名牌"
-      description: "切換使用權"
-      hint: "禁止使用命名牌"
+      name: '&a&l使用命名牌'
+      description: 允許/禁止 使用命名牌
+      hint: '&c已被禁止使用命名牌'
+    NATURAL_SPAWNING_OUTSIDE_RANGE:
+      name: '&a&l島外自然生成生物'
+      description: |-
+        &7允許/禁止 生物（動物和怪物）在島嶼
+        &7保護範圍外自然生成
+        &c這不會阻止刷怪籠和生成蛋生成生物
     NOTE_BLOCK:
-      description: "切換使用權"
-      name: "音符盒"
-      hint: "禁止使用音符盒"
+      description: 允許/禁止 使用音符盒
+      name: '&a&l使用音符盒'
+      hint: '&c已被禁止使用音符盒'
     OBSIDIAN_SCOOPING:
-      name: "回收黑曜石"
-      description: | 
-        切換能否把
-        黑曜石重新回收
-        到一個空桶之中變成熔岩。
-        有助保護新手。 減少玩家們的重製次數。
+      name: '&a&l黑曜石變熔岩'
+      description: |-
+        &7允許/禁止 玩家用桶把黑曜石變回熔岩
+        &7這可以幫助新手找回熔岩
+        &c注意： 如果黑曜石附近2格範圍內還有
+        &c其它黑曜石，則不能把黑曜石變回熔岩
+      scooping: '&a已將黑曜石變回熔岩。 下次請小心！'
+      obsidian-nearby: '&c附近有其它黑曜石， 這個黑曜石不能變回熔岩。'
+    OFFLINE_GROWTH:
+      description: |-
+        &7允許/禁止 所有成員都已離線
+        &7的島嶼上的植物繼續生長
+        &a這可以幫助減少性能開銷
+      name: '&a&l離線生長'
     OFFLINE_REDSTONE:
       description: |-
-          &a當禁止時, 所有成員離線的情況下
-          &a紅石將不再動作。
-          &a可能有助於減輕
-          &a卡頓情況。
-      name: "離線紅石"
+        &7允許/禁止 所有成員都已離線
+        &7的島嶼上的紅石設備繼續運行
+        &a這可以幫助減少性能開銷
+        &a這個設置不會影響出生島嶼（主城）
+      name: '&a&l離線紅石'
+    PETS_STAY_AT_HOME:
+      description: |-
+        &7允許/禁止 馴服的寵物始終待在自
+        &7己的島上，不會到別人的倒上去。
+      name: '&a&l寵物不離開島嶼'
     PISTON_PUSH:
-      description: |-
-          &a防止活塞
-          &a將方塊推出島嶼
-      name: "活塞推動"
+      description: 允許/禁止 活塞將方塊推出島嶼範圍
+      name: '&a&l活塞推動保護'
     PLACE_BLOCKS:
-      description: "切換能否放置"
-      name: "放置方塊"
-      hint: "禁止放置方塊"
+      description: 允許/禁止 在島上放置方塊
+      name: '&a&l放置方塊'
+      hint: '&c已被禁止在島上放置方塊'
     POTION_THROWING:
-      name: "藥水投擲"
       description: |-
-        &a切換能否投擲藥水。
-        &a這包括了飛濺, 滯留藥水
-        &a以及經驗瓶。
-      hint: "禁止投擲藥水"
+        &7允許/禁止 在島上投擲藥水瓶
+        &7這包括噴濺型藥水和滯留型藥水
+      name: '&a&l投擲藥水瓶'
+      hint: '&c已被禁止投擲藥水瓶'
     NETHER_PORTAL:
-      description: "切換使用權"
-      name: "地獄傳送門"
-      hint: "禁止使用傳送門"
+      description: 允許/禁止 使用地獄傳送門
+      name: '&a&l使用地獄傳送門'
+      hint: '&c已被禁止使用地獄傳送門'
     END_PORTAL:
-      description: "切換使用權"
-      name: "終界傳送門"
-      hint: "禁止使用傳送門"
+      description: 允許/禁止 使用終界傳送門
+      name: '&a&l使用終界傳送門'
+      hint: '&c已被禁止使用終界傳送門'
     PRESSURE_PLATE:
-      description: "切換使用權"
-      name: "壓力板"
-      hint: "禁止使用壓力板"
+      description: 允許/禁止 激活壓力板
+      name: '&a&l使用壓力板'
+      hint: '&c已被禁止使用壓力板'
     PVP_END:
-      description: |-
-          &c允許或禁止
-          &c在終界 PVP。
-      name: "終界 PVP"
-      hint: "禁止在終界 PVP"
+      description: '&c允許/禁止 在終界PVP'
+      name: '&a&l終界PVP'
+      hint: '&c已被禁止在終界PVP'
+      enabled: '&e已允許在終界PVP！'
+      disabled: '&a已禁止在終界PVP。'
     PVP_NETHER:
-      description: |-
-          &c允許或禁止
-          &c在地獄 PVP。
-      name: "地獄 PVP"
-      hint: "禁止在地獄 PVP"
+      description: '&c允許/禁止 在地獄PVP'
+      name: '&a&l地獄 PVP'
+      hint: '&c已被禁止在地獄 PVP'
+      enabled: '&e已允許在地獄 PVP！'
+      disabled: '&a已禁止在地獄 PVP。'
     PVP_OVERWORLD:
-      description: |-
-          &c允許或禁止
-          &c在島上 PVP。
-      name: "主世界 PVP"
-      hint: "&c禁止 PVP"
-      active: "&c這裡允許 PVP!"
+      description: '&c允許/禁止 在主世界PVP'
+      name: '&a&l主世界 PVP'
+      hint: '&c已被禁止在主世界 PVP'
+      enabled: '&e已允許在主世界 PVP！'
+      disabled: '&a已禁止在主世界 PVP。'
     REDSTONE:
-      description: "切換使用權"
-      name: "紅石物品"
-      hint: "禁止使用紅石物品"
-    RIDING:
-      description: "切換能否騎乘"
-      name: "動物騎乘"
-      hint: "禁止動物騎乘"
+      description: |-
+        &7允許/禁止 使用紅石設備
+        &7包括紅石線、中繼器、
+        &7比較器和陽光感應器
+      name: '&a&l使用紅石設備'
+      hint: '&c已被禁止使用紅石設備'
+    REMOVE_END_EXIT_ISLAND:
+      description: |-
+        &7允許/禁止 移除終界的終界龍
+        &7如果允許移除終界龍，則終界龍不會
+        &7在終界坐標 0,0 處生成。
+      name: '&a&l移除終界龍'
     REMOVE_MOBS:
       description: |-
-        &a傳送到島上時
-        &a移除怪物
-      name: "移除怪物"
+        &7允許/禁止 玩家回到島嶼時
+        &7移除怪物
+        &a這有助於玩家安全回到島上
+      name: '&a&l移除怪物'
+    RIDING:
+      description: 允許/禁止 乘騎動物
+      name: '&a&l乘騎動物'
+      hint: '&c已被禁止乘騎動物'
     SHEARING:
-      description: "切換能否剪羊毛"
-      name: "剪羊毛"
-      hint: "禁止剪羊毛"
+      description: 允許/禁止 使用剪刀
+      name: '&a&l使用剪刀'
+      hint: '&c已被禁止使用剪刀'
     SPAWN_EGGS:
-      description: "切換使用權"
-      name: "刷怪蛋"
-      hint: "禁止使用刷怪蛋"
-    TNT:
-      description: "切換 TNT 能否傷害"
-      name: "TNT 傷害"
-    TRADING:
-      description: "切換能否交易"
-      name: "村民交易"
-      hint: "禁止村民交易"
-    TRAPDOOR:
-      description: "切換使用權"
-      name: "活板門"
-      hint: "禁止使用活板門"
-    TURTLE_EGGS:
-      description: "切換敲裂"
-      name: "海龜蛋"
-      hint: "禁止敲裂海龜蛋!"
-    FROST_WALKER:
-      description: "切換冰霜行者附魔能否作用"
-      name: "冰霜行者"
-      hint: "禁止在此使用冰霜行者"
-    EXPERIENCE_PICKUP:
-      name: "經驗球吸收"
-      description: "切換能否吸收經驗球"
-      hint: "禁止吸收經驗球"
-    PREVENT_TELEPORT_WHEN_FALLING:
-      name: "禁止在掉落時傳送"
+      description: 允許/禁止 使用生成蛋
+      name: '&a&l使用生成蛋'
+      hint: '&c已被禁止使用生成蛋'
+    SPAWNER_SPAWN_EGGS:
+      description: 允許/禁止 使用生成蛋更改刷怪籠類型
+      name: '&a&l更改刷怪籠類型'
+      hint: '&c已被禁止使用生成蛋更改刷怪籠實體類型'
+    TNT_DAMAGE:
+      description: 允許/禁止 TNT和TNT礦車破壞方塊和實體
+      name: '&a&lTNT傷害'
+    TNT_PRIMING:
       description: |-
-        &a禁止玩家在掉落時
-        &a使用指令
-        &a傳送回自己的島嶼。
-      hint: "&c您無法在掉落時傳送回自己的島嶼。"
+        &7允許/禁止 用打火石和火焰彈點燃TNT
+        &7可以被 '&a點火&7' 設定項淩駕
+      name: '&a&l點燃 TNT'
+      hint: '&c已被禁止點燃 TNT'
+    TRADING:
+      description: 允許/禁止 與村民交易
+      name: '&a&l與村民交易'
+      hint: '&c已被禁止與村民交易'
+    TRAPDOOR:
+      description: 允許/禁止 使用地板門
+      name: '&a&l使用地板門'
+      hint: '&c已被禁止使用地板門'
+    TREES_GROWING_OUTSIDE_RANGE:
+      name: '&a&l島外的樹木'
+      description: |-
+        &7允許/禁止 樹木生長到島嶼保護
+        &7範圍外這不僅可以防止島保護範
+        &7圍之外的樹苗生長，還能防止島
+        &7外的樹木被砍伐後樹葉變枯萎。
+    TURTLE_EGGS:
+      description: 允許/禁止 踩碎海龜蛋
+      name: '&a&l踩碎海龜蛋'
+      hint: '&c已被禁止踩碎海龜蛋'
+    FROST_WALKER:
+      description: 允許/禁止 冰霜行者附魔生成霜冰
+      name: '&a&l冰霜行者'
+      hint: '&c已被禁止使用冰霜行者'
+    EXPERIENCE_PICKUP:
+      name: '&a&l拾取經驗球'
+      description: 允許/禁止 拾取經驗球
+      hint: '&c已被禁止拾取經驗球'
+    PREVENT_TELEPORT_WHEN_FALLING:
+      name: '&a&l阻止墜落時傳送'
+      description: |-
+        &7允許/禁止 阻止玩家在下墜時傳送
+        &7例如用 /is go 傳送到島嶼上
+        &c允許即為阻止傳送
+      hint: '&c已禁止在下墜時進行傳送'
+    VISITOR_KEEP_INVENTORY:
+      name: 游客對死亡進行盤點
+      description: |-
+        &a 防止玩家失去他們的物品和
+        &a 經驗，只適用於他們死在了
+        &a 他們是游客的島嶼。
+    WITHER_DAMAGE:
+      name: '&a&l凋零傷害'
+      description: |-
+        &7允許/禁止 凋靈傷害允許時，
+        &7凋靈可以破壞方塊和傷害玩家
+    WORLD_BLOCK_EXPLODE_DAMAGE:
+      description: |-
+        &a 允許床和重生錨
+        &a 打破塊和損壞
+        &a 島嶼限制之外的實體。
+      name: 世界方塊爆炸傷害
+    WORLD_TNT_DAMAGE:
+      description: |-
+        &7允許/禁止 島嶼保護範圍外的TNT
+        &7和TNT礦車破壞方塊和實體
+      name: '&a&l世界TNT傷害'
+    ALLAY:
+      description: '&7允許/禁止 給予和提取物品自悅靈'
+      name: '&7與悅靈交互'
+      hint: '&c已禁止與悅靈交互'
+    AXOLOTL_SCOOPING:
+      description: 允许/禁止 用水桶捕捉六角恐龍
+      name: '&7捕捉六角恐龍'
+      hint: '&c已被禁止捕捉六角恐龍'
+    COLLECT_POWDERED_SNOW:
+      description: |-
+        &a 允许/禁止 盛載粉雪
+        &a (覆蓋桶設定)
+      name: '&7盛載粉雪'
+      hint: '&c已被禁止盛載粉雪'
+    SCULK_SENSOR:
+      description: '&a允许/禁止 啟動伏聆振測器'
+      name: '&7使用伏聆振測器'
+      hint: '&c已被禁止使用伏聆振測器'
+    SCULK_SHRIEKER:
+      description: '&a允许/禁止 啟動伏聆嘯口'
+      name: '&7使用伏聆嘯口'
+      hint: '&c已被禁止使用伏聆嘯口'
+    VISITOR_TRIGGER_RAID:
+      name: '&a允许/禁止 訪客觸發突襲'
+      description: |-
+        &a 允许/禁止 訪客可以在
+        &a 他訪問的空島中觸發突襲
+        &a
+        &a 不祥之兆 效果會被移除!
+    ENTITY_PORTAL_TELEPORT:
+      name: 實體使用傳送門
+      description: |-
+        &a 允许/禁止 非玩家實體
+        &a 使用傳送門，前往其他世界
   locked: "&c本島嶼已被鎖定!"
   protected: "&c島嶼保護：[description]"
+  world-protected: '&c世界保護: [description].'
   spawn-protected: "&c生成保護：[description]"
+  
+  panel:
+    next: '&f下一頁'
+    previous: '&f上一頁'
+    mode:
+      advanced:
+        name: '&6&l高級設置'
+        description: '&7顯示一些合理的設置項'
+      basic:
+        name: '&a&l基本設置'
+        description: '&7只顯示最常用的設置項'
+      expert:
+        name: '&c&l專家設置'
+        description: '&7顯示所有可用的設置項。'
+      click-to-switch: '&e點擊 &7切換到 &r[next]'
+    reset-to-default:
+      name: '&c&l重置為默認值'
+      description: '&7將 &e所有 &7設置項恢復為默認值'
+    PROTECTION:
+      title: '&5&l保護'
+      description: '&7適用於該島嶼的保護設定'
+    SETTING:
+      title: '&5&l設置'
+      description: '&7適用於該島嶼的一般設置項'
+    WORLD_SETTING:
+      title: '&5&l用於 &3&l[world_name] &5&l的一般設置'
+      description: '&7這些設置項適用於全部游戲世界'
+    WORLD_DEFAULTS:
+      title: '&5&l用於 &3&l[world_name] &5&l的保護設定'
+      description: '&7島嶼範圍外適用的保護設定'
+    flag-item:
+      name-layout: '&a&l[name]'
+      description-layout: |-
+        &7[description]
 
+        &e左鍵點擊 &7向下循環選擇
+        &e右鍵點擊 &7向上循環選擇
+
+        &7允許給：
+      allowed-rank: '&3 - &a '
+      blocked-rank: '&3 - &c '
+      minimal-rank: '&3 - &2 '
+      menu-layout: |
+        &7[description]
+
+        &e點擊 &f打開
+      setting-cooldown: '&c設置項正在冷卻'
+      setting-layout: |-
+        &7[description]
+
+        &e點擊 &7切換 &a允許&7/&c禁止
+
+        &7當前設定： [setting]
+      setting-active: '&a允許'
+      setting-disabled: '&c禁止'
+
+language:
+  panel-title: '&l選擇您適用的語言'
+  description:
+    selected: '&a已選定'
+    click-to-select: '&e點擊 &f選擇'
+    authors: '&7作者：'
+    author: '&3- &b[name]'
+  edited: '&a已將您的語言更改為 &e[lang] &a。'
+  selected: '&a Currently selected.'
+
+management:
+  panel:
+    title: '&lBentoBox 管理'
+    views:
+      gamemodes:
+        name: '&6游戲模式'
+        description: '&e點擊 &7列出所有已載入的游戲模式'
+        blueprints:
+          name: '&9藍圖方案'
+          description: '&e點擊 &7打開藍圖方案管理器'
+        gamemode:
+          name: '&6[name]'
+          description: |
+            &a島嶼數量： &b[islands]
+      addons:
+        name: '&6附加組件'
+        description: '&e點擊 &7顯示所有已加載的附加組件'
+      hooks:
+        name: '&6已掛鉤插件'
+        description: '&e點擊 &7顯示所有已掛鉤的插件'
+    actions:
+      reload:
+        name: '&c重載'
+        description: '&7點擊 &c&l兩次&r  &7重載 &7&lBentoBox'
+    buttons:
+      catalog:
+        name: '&6編目'
+        description: '&7打開編目界面'
+      credits:
+        name: '&6貢獻者名錄'
+        description: '&7查看 &7&lBentoBox&r  &7的貢獻者名錄'
+      empty-here:
+        name: '&b這裡空空如也...'
+        description: '&7您也可以看看我們的編目'
+    information:
+      state:
+        name: '&6兼容性'
+        description:
+          COMPATIBLE: |
+            &7正在運行 &e[name] [version]&7。
+
+            &7&lBentoBox&r  &7當前正運行在&a&l完全兼容
+            &7的服務器軟件和版本上。
+
+            &7它完全按照此運行環境設計，
+            &7所有功能均可以穩定運行。
+          SUPPORTED: |
+            &7正在運行 &e[name] [version]&7。
+
+            &7&lBentoBox&r  &7當前正運行在&a&l支持的
+            &7的服務器軟件和版本上。
+
+            &7盡管它不是完全按照此運行環境
+            &7設計， 但它的大部分功能能夠在
+            &7此環境良好運行。
+          NOT_SUPPORTED: |
+            &7正在運行 &e[name] [version]&7。
+
+            &7&lBentoBox&r &7當前正運行在
+            &6&lb不支持的&7的服務器軟件和版本上。
+
+            &7雖然它的部分功能可以正常運行，
+            &但可能發生平台相關的錯誤。
+          INCOMPATIBLE: |
+            &7正在運行 &e[name] [version]&7。
+
+            &7&lBentoBox&r &7當前正運行在
+            &c&l不兼容 &7的服務器軟件和版本上。
+
+            &c它並不是為此運行環境設計的，可能
+            &c會發生奇怪的行為和錯誤，並且大部
+            &7分功能可能不穩定。
+catalog:
+  panel:
+    GAMEMODES:
+      title: '&l游戲模式編目'
+    ADDONS:
+      title: '&l附加組件編目'
+    views:
+      gamemodes:
+        name: '&6游戲模式'
+        description: '&e點擊 &7瀏覽可用的官方游戲模式'
+      addons:
+        name: '&6附加組件'
+        description: '&e點擊 &7瀏覽可用的官方附加組件'
+    icon:
+      description-template: |
+        &f[topic]
+        &a[install]
+
+        &7[description]
+
+        &e點擊 &7獲取最新版本的鏈接。
+      already-installed: 已安裝！
+      install-now: 現在安裝！
+    empty-here:
+      name: '&b&l這裡空空如也...'
+      description: |
+        &c&lBentoBox&r  &c無法連接到 GitHub。
+
+        &a請修改配置允許&b&lBentoBox&a連接
+        &a到互聯網， 或稍後再試。
 enums:
   DamageCause:
     CONTACT: 接觸（如仙人掌）
@@ -820,43 +1540,19 @@ enums:
     CRAMMING: 擁擠
     DRYOUT: 乾燥（魚類暴露在空氣中）
 
-  panel:
-    next: "下一頁"
-    previous: "上一頁"
-    PROTECTION:
-      title: "&6保護"
+panel:
+  credits:
+    title: '&8[name] &3貢獻者名錄'
+    contributor:
+      name: '&a[name]'
+      description: '&a提交: &b[commits] &a個'
+    empty-here:
+      name: '&c&l這裡空空如也...'
       description: |-
-        &a當前島嶼的
-        &a保護設置
-    SETTING:
-      title: "&6設置"
-      description: |-
-        &a當前島嶼的
-        &a通用設置
-    WORLD_SETTING:
-      title: "&b[world_name] &6設置"
-      description: "&a本遊戲世界的設置"
-    flag-item:
-      name-layout: "&a[name]"
-      description-layout: |
-        &a[description]
+        &c&lBentoBox&r  &c無法收集此組件的貢獻者。
 
-        &7允許給：
-      allowed-rank: "&3- &a"
-      blocked-rank: "&3- &c"
-      minimal-rank: "&3- &2"
-      menu-layout: "&a[description]"
-      setting-layout: |
-        &a[description]
-        
-        &7當前設置：[setting]
-      setting-active: "&a激活"
-      setting-disabled: "&c禁止"
-
-language:
-  panel-title: "選擇您的語言"
-  selected: "&a當前選中。"
-  edited: "&a更改您的語言為 &e[lang]&a。"
+        &a請修改配置允許&b&lBentoBox&a連接
+        &a到互聯網， 或稍後再試。
   
 successfully-loaded: |
 
