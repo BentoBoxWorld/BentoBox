@@ -15,6 +15,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.BoundingBox;
+import org.eclipse.jdt.annotation.Nullable;
 
 import io.papermc.lib.PaperLib;
 import world.bentobox.bentobox.BentoBox;
@@ -28,6 +29,7 @@ import world.bentobox.bentobox.database.objects.IslandDeletion;
  *
  */
 public abstract class CopyWorldRegenerator implements WorldRegenerator {
+    private static final String SEEDS = "seeds/";
     private final BentoBox plugin;
 
     protected CopyWorldRegenerator() {
@@ -70,7 +72,7 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
                     }
                     final int x = chunkX;
                     final int z = chunkZ;
-                    newTasks.add(regenerateChunk(gm, di, world, x, z));
+                    newTasks.add(regenerateChunk(di, world, x, z));
                     chunkZ++;
                     if (chunkZ > di.getMaxZChunk()) {
                         chunkZ = di.getMinZChunk();
@@ -87,22 +89,28 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
         return bigFuture;
     }
 
-    private CompletableFuture<Void> regenerateChunk(GameModeAddon gm, IslandDeletion di, World world, int chunkX, int chunkZ) {
-
+    @Override
+    public CompletableFuture<Void> regenerateChunk(Chunk chunk) {
+        return regenerateChunk(null, chunk.getWorld(), chunk.getX(), chunk.getZ()); 
+    }
+    
+    private CompletableFuture<Void> regenerateChunk(@Nullable IslandDeletion di, World world, int chunkX, int chunkZ) {
         CompletableFuture<Chunk> seedWorldFuture = getSeedWorldChunk(world, chunkX, chunkZ);
 
         // Set up a future to get the chunk requests using Paper's Lib. If Paper is used, this should be done async
         CompletableFuture<Chunk> chunkFuture = PaperLib.getChunkAtAsync(world, chunkX, chunkZ);
 
-        CompletableFuture<Void> cleanFuture = cleanChunk(chunkFuture, di);
+        // If there is no island, do not clean chunk
+        CompletableFuture<Void> cleanFuture = di != null ? cleanChunk(chunkFuture, di) : CompletableFuture.completedFuture(null);
 
         CompletableFuture<Void> copyFuture = CompletableFuture.allOf(cleanFuture, chunkFuture, seedWorldFuture);
         
         copyFuture.thenRun(() -> {
+            
             try {
-                Chunk chunkToDelete = chunkFuture.get();
-                Chunk chunkToCopy = seedWorldFuture.get();
-                copyChunkDataToChunk(chunkToDelete, chunkToCopy, di.getBox());
+                Chunk chunkTo = chunkFuture.get();
+                Chunk chunkFrom = seedWorldFuture.get();
+                copyChunkDataToChunk(chunkTo, chunkFrom, di != null ? di.getBox() : null);
 
             } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();
@@ -113,8 +121,8 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
     }
 
     private CompletableFuture<Chunk> getSeedWorldChunk(World world, int chunkX, int chunkZ) {
-        World seed = Bukkit.getWorld("seeds/" + world.getName());
-        if (seed == null) return CompletableFuture.completedFuture(null);     
+        World seed = Bukkit.getWorld(SEEDS + world.getName());
+        if (seed == null) return CompletableFuture.completedFuture(null);
         return PaperLib.getChunkAtAsync(seed, chunkX, chunkZ);
     }
 
@@ -142,21 +150,29 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
         return CompletableFuture.allOf(invFuture, entitiesFuture);
     }
 
-    private void copyChunkDataToChunk(Chunk chunk, Chunk chunkData, BoundingBox limitBox) {
-        double baseX = chunk.getX() << 4;
-        double baseZ = chunk.getZ() << 4;
-        int minHeight = chunk.getWorld().getMinHeight();
-        int maxHeight = chunk.getWorld().getMaxHeight();
+    /**
+     * Copies a chunk to another chunk
+     * @param toChunk - chunk to be copied into
+     * @param fromChunk - chunk to be copied from
+     * @param limitBox - limit box that the chunk needs to be in
+     */
+    private void copyChunkDataToChunk(Chunk toChunk, Chunk fromChunk, BoundingBox limitBox) {
+        BentoBox.getInstance().logDebug("Copying chunk " + toChunk.getX() + " " + toChunk.getZ() + " from " 
+    + fromChunk.getWorld().getName() + " to "  + toChunk.getWorld().getName());
+        double baseX = toChunk.getX() << 4;
+        double baseZ = toChunk.getZ() << 4;
+        int minHeight = toChunk.getWorld().getMinHeight();
+        int maxHeight = toChunk.getWorld().getMaxHeight();
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {
-                if (!limitBox.contains(baseX + x, 0, baseZ + z)) {
+                if (limitBox != null && !limitBox.contains(baseX + x, 0, baseZ + z)) {
                     continue;
                 }
                 for (int y = minHeight; y < maxHeight; y++) {
-                    setBlockInNativeChunk(chunk, x, y, z, chunkData.getBlock(x, y, z).getBlockData(), false);
+                    setBlockInNativeChunk(toChunk, x, y, z, fromChunk.getBlock(x, y, z).getBlockData(), false);
                     // 3D biomes, 4 blocks separated
                     if (x % 4 == 0 && y % 4 == 0 && z % 4 == 0) {
-                        chunk.getBlock(x, y, z).setBiome(chunkData.getBlock(x, y, z).getBiome());
+                        toChunk.getBlock(x, y, z).setBiome(fromChunk.getBlock(x, y, z).getBiome());
                     }
                 }
             }
