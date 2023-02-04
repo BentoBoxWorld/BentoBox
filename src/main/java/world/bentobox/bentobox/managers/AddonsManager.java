@@ -26,6 +26,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Difficulty;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
+import org.bukkit.WorldType;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -348,8 +349,8 @@ public class AddonsManager {
     }
 
     private void seedWorld(GameModeAddon gameMode, @Nullable World world) {
-        @SuppressWarnings("deprecation")
-        WorldCreator wc = WorldCreator.name("seeds/" + world.getName()).type(world.getWorldType()).environment(world.getEnvironment());
+        // Use the Flat type of world because this is a copy and no vanilla creation is required
+        WorldCreator wc = WorldCreator.name("seeds/" + world.getName()).type(WorldType.FLAT).environment(world.getEnvironment());
         World w = gameMode.getWorldSettings().isUseOwnGenerator() ? wc.createWorld() : wc.generator(world.getGenerator()).createWorld();
         w.setDifficulty(Difficulty.PEACEFUL);       
     }
