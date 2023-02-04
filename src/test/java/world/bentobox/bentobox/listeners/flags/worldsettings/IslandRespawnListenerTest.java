@@ -88,6 +88,7 @@ public class IslandRespawnListenerTest {
         when(player.getUniqueId()).thenReturn(UUID.randomUUID());
         when(player.getLocation()).thenReturn(mock(Location.class));
         when(player.getServer()).thenReturn(server);
+        when(player.getName()).thenReturn("tasty");
 
         // Island World Manager
         // All locations are in world by default
