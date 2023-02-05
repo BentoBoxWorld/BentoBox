@@ -15,7 +15,6 @@ import org.bukkit.event.block.BlockReceiveGameEvent;
 
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.lists.Flags;
-import world.bentobox.bentobox.versions.ServerCompatibility;
 
 
 /**
