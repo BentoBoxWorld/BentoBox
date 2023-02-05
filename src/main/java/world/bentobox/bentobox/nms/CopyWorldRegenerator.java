@@ -113,8 +113,7 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
                 copyChunkDataToChunk(chunkTo, chunkFrom, di != null ? di.getBox() : null);
 
             } catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
-                
+                Thread.currentThread().interrupt();                
             }
         });
         return CompletableFuture.allOf(cleanFuture, copyFuture);

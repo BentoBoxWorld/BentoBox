@@ -348,7 +348,7 @@ public class AddonsManager {
         }
     }
 
-    private void seedWorld(GameModeAddon gameMode, @Nullable World world) {
+    private void seedWorld(GameModeAddon gameMode, @NonNull World world) {
         // Use the Flat type of world because this is a copy and no vanilla creation is required
         WorldCreator wc = WorldCreator.name("seeds/" + world.getName()).type(WorldType.FLAT).environment(world.getEnvironment());
         World w = gameMode.getWorldSettings().isUseOwnGenerator() ? wc.createWorld() : wc.generator(world.getGenerator()).createWorld();
