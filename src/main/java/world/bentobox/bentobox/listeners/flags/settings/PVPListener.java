@@ -52,7 +52,7 @@ public class PVPListener extends FlagListener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onEntityDamage(EntityDamageByEntityEvent e) {
-        if (e.getEntity() instanceof Player && getPlugin().getIWM().inWorld(e.getEntity().getWorld())) {
+        if (e.getEntity() instanceof Player player && getPlugin().getIWM().inWorld(e.getEntity().getWorld())) {
             // Allow self damage or NPC attack because Citizens handles its own PVP
             if (e.getEntity().equals(e.getDamager()) || e.getEntity().hasMetadata("NPC")) {
                 return;
@@ -62,7 +62,7 @@ public class PVPListener extends FlagListener {
                 return;
             }
             // Protect visitors
-            if (e.getCause().equals(DamageCause.ENTITY_ATTACK) && protectedVisitor((Player)e.getEntity())) {
+            if (e.getCause().equals(DamageCause.ENTITY_ATTACK) && protectedVisitor(player)) {
                 if (e.getDamager() instanceof Player p && p != null) {
                     User.getInstance(p).notify(Flags.INVINCIBLE_VISITORS.getHintReference());
                 } else if (e.getDamager() instanceof Projectile pr && pr.getShooter() instanceof Player sh && sh != null) {
