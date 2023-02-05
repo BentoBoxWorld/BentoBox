@@ -42,7 +42,6 @@ import world.bentobox.bentobox.database.objects.IslandDeletion;
  *
  */
 public abstract class CopyWorldRegenerator implements WorldRegenerator {
-    private static final String SEEDS = "seeds/";
     private final BentoBox plugin;
 
     protected CopyWorldRegenerator() {
@@ -133,7 +132,7 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
     }
 
     private CompletableFuture<Chunk> getSeedWorldChunk(World world, int chunkX, int chunkZ) {
-        World seed = Bukkit.getWorld(SEEDS + world.getName());
+        World seed = Bukkit.getWorld(world.getName() + "/bentobox");
         if (seed == null) return CompletableFuture.completedFuture(null);
         return PaperLib.getChunkAtAsync(seed, chunkX, chunkZ);
     }
