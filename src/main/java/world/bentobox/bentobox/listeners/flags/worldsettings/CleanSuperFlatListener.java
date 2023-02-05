@@ -138,7 +138,6 @@ public class CleanSuperFlatListener extends FlagListener {
         {
             return true;
         }
-
         // Check if super-flat must even be working.
         if (!this.getIWM().inWorld(world) ||
             !Flags.CLEAN_SUPER_FLAT.isSetForWorld(world) ||

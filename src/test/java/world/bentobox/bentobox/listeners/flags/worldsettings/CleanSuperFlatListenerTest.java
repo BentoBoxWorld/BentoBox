@@ -1,7 +1,6 @@
 package world.bentobox.bentobox.listeners.flags.worldsettings;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -11,17 +10,14 @@ import static org.mockito.Mockito.when;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Random;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.block.data.BlockData;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.generator.ChunkGenerator;
-import org.bukkit.generator.ChunkGenerator.ChunkData;
 import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitScheduler;
@@ -44,7 +40,7 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.AddonsManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
-import world.bentobox.bentobox.util.MyBiomeGrid;
+import world.bentobox.bentobox.nms.WorldRegenerator;
 import world.bentobox.bentobox.util.Util;
 
 /**
@@ -66,6 +62,8 @@ public class CleanSuperFlatListenerTest {
     private CleanSuperFlatListener l;
     @Mock
     private BukkitScheduler scheduler;
+    @Mock
+    private WorldRegenerator regenerator;
 
     /**
      * @throws java.lang.Exception
@@ -83,8 +81,10 @@ public class CleanSuperFlatListenerTest {
         when(world.getEnvironment()).thenReturn(World.Environment.NORMAL);
         when(world.getName()).thenReturn("world");
 
-        PowerMockito.mockStatic(Util.class);
+        PowerMockito.mockStatic(Util.class, Mockito.RETURNS_MOCKS);
         when(Util.getWorld(any())).thenReturn(world);
+        // Regenerator
+        when(Util.getRegenerator()).thenReturn(regenerator);
 
         // World Settings
         when(plugin.getIWM()).thenReturn(iwm);
@@ -125,13 +125,12 @@ public class CleanSuperFlatListenerTest {
         AddonsManager am = mock(AddonsManager.class);
         @Nullable
         ChunkGenerator cg = mock(ChunkGenerator.class);
-        ChunkData cd = mock(ChunkData.class);
-        when(cg.generateChunkData(any(World.class), any(Random.class), anyInt(), anyInt(), any(MyBiomeGrid.class))).thenReturn(cd);
-        BlockData bd = mock(BlockData.class);
-        when(cd.getBlockData(anyInt(), anyInt(), anyInt())).thenReturn(bd);
 
         when(plugin.getAddonsManager()).thenReturn(am);
         when(am.getDefaultWorldGenerator(anyString(), anyString())).thenReturn(cg);
+        
+        
+        
     }
 
     @After
