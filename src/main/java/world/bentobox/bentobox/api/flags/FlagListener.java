@@ -170,7 +170,7 @@ public abstract class FlagListener implements Listener {
         User.setPlugin(plugin);
 
         if (island.isPresent()) {
-            return processBypass(flag, island, e, loc, silent);
+            return processBypass(flag, island.get(), e, loc, silent);
         }
         // The player is in the world, but not on an island, so general world settings apply
         if (flag.isSetForWorld(loc.getWorld())) {
@@ -183,9 +183,9 @@ public abstract class FlagListener implements Listener {
         }
     }
 
-    private boolean processBypass(@NonNull Flag flag, Optional<Island> island, @NonNull Event e, @Nullable Location loc, boolean silent) {
+    private boolean processBypass(@NonNull Flag flag, Island island, @NonNull Event e, @Nullable Location loc, boolean silent) {
      // If it is not allowed on the island, "bypass island" moderators can do anything
-        if (island.get().isAllowed(user, flag)) {
+        if (island.isAllowed(user, flag)) {
             report(user, e, loc, flag,  Why.RANK_ALLOWED);
             return true;
         } else if (!user.getMetaData(AdminSwitchCommand.META_TAG).map(MetaDataValue::asBoolean).orElse(false)
@@ -194,7 +194,7 @@ public abstract class FlagListener implements Listener {
             return true;
         }
         report(user, e, loc, flag,  Why.NOT_ALLOWED_ON_ISLAND);
-        noGo(e, flag, silent, island.get().isSpawn() ? "protection.spawn-protected" : "protection.protected");
+        noGo(e, flag, silent, island.isSpawn() ? "protection.spawn-protected" : "protection.protected");
         return false;
     }
 
