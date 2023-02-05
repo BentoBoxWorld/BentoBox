@@ -430,57 +430,68 @@ public class User implements MetaDataAble {
     }
 
     private String translate(String addonPrefix, String reference, String[] variables) {
+        // Try to get the translation for this specific addon
         String translation = plugin.getLocalesManager().get(this, addonPrefix + reference);
 
         if (translation == null) {
+            // No luck, try to get the generic translation
             translation = plugin.getLocalesManager().get(this, reference);
             if (translation == null) {
-                
-                // Then replace variables
-                if (variables.length > 1) {
-                    for (int i = 0; i < variables.length; i += 2) {
-                        reference = reference.replace(variables[i], variables[i + 1]);
-                    }
-                }
-
-                // Then replace Placeholders, this will only work if this is a player
-                if (player != null) {
-                    reference = plugin.getPlaceholdersManager().replacePlaceholders(player, reference);
-                }
-                
-                // If no translation has been found, return the reference for debug purposes.
-                return reference;
+                // Nothing found. Replace vars (probably will do nothing) and return
+                return replaceVars(reference, variables);
             }
         }
 
         // If this is a prefix, just gather and return the translation
         if (!reference.startsWith("prefixes.")) {
             // Replace the prefixes
-            for (String prefix : plugin.getLocalesManager().getAvailablePrefixes(this)) {
-                String prefixTranslation = getTranslation("prefixes." + prefix);
-                // Replace the [gamemode] text variable
-                prefixTranslation = prefixTranslation.replace("[gamemode]", addon != null ? addon.getDescription().getName() : "[gamemode]");
-                // Replace the [friendly_name] text variable
-                prefixTranslation = prefixTranslation.replace("[friendly_name]", isPlayer() ? plugin.getIWM().getFriendlyName(getWorld()) : "[friendly_name]");
-
-                // Replace the prefix in the actual message
-                translation = translation.replace("[prefix_" + prefix + "]", prefixTranslation);
-            }
-
-            // Then replace variables
-            if (variables.length > 1) {
-                for (int i = 0; i < variables.length; i += 2) {
-                    translation = translation.replace(variables[i], variables[i + 1]);
-                }
-            }
-
-            // Then replace Placeholders, this will only work if this is a player
-            if (player != null) {
-                translation = plugin.getPlaceholdersManager().replacePlaceholders(player, translation);
-            }
-
+            return replacePrefixes(translation, variables);
         }
         return translation;
+    }
+
+    private String replacePrefixes(String translation, String[] variables) {
+        for (String prefix : plugin.getLocalesManager().getAvailablePrefixes(this)) {
+            String prefixTranslation = getTranslation("prefixes." + prefix);
+            // Replace the [gamemode] text variable
+            prefixTranslation = prefixTranslation.replace("[gamemode]", addon != null ? addon.getDescription().getName() : "[gamemode]");
+            // Replace the [friendly_name] text variable
+            prefixTranslation = prefixTranslation.replace("[friendly_name]", isPlayer() ? plugin.getIWM().getFriendlyName(getWorld()) : "[friendly_name]");
+
+            // Replace the prefix in the actual message
+            translation = translation.replace("[prefix_" + prefix + "]", prefixTranslation);
+        }
+
+        // Then replace variables
+        if (variables.length > 1) {
+            for (int i = 0; i < variables.length; i += 2) {
+                translation = translation.replace(variables[i], variables[i + 1]);
+            }
+        }
+
+        // Then replace Placeholders, this will only work if this is a player
+        if (player != null) {
+            translation = plugin.getPlaceholdersManager().replacePlaceholders(player, translation);
+        }
+        return translation;
+    }
+
+    private String replaceVars(String reference, String[] variables) {
+        
+        // Then replace variables
+        if (variables.length > 1) {
+            for (int i = 0; i < variables.length; i += 2) {
+                reference = reference.replace(variables[i], variables[i + 1]);
+            }
+        }
+
+        // Then replace Placeholders, this will only work if this is a player
+        if (player != null) {
+            reference = plugin.getPlaceholdersManager().replacePlaceholders(player, reference);
+        }
+        
+        // If no translation has been found, return the reference for debug purposes.
+        return reference;
     }
 
     /**
