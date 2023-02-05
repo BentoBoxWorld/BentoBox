@@ -144,13 +144,7 @@ public abstract class FlagListener implements Listener {
         Optional<Island> island = getIslands().getProtectedIslandAt(loc);
         // Handle Settings Flag
         if (flag.getType().equals(Flag.Type.SETTING)) {
-            // If the island exists, return the setting, otherwise return the default setting for this flag
-            if (island.isPresent()) {
-                report(user, e, loc, flag,  island.map(x -> x.isAllowed(flag)).orElse(false) ? Why.SETTING_ALLOWED_ON_ISLAND : Why.SETTING_NOT_ALLOWED_ON_ISLAND);
-            } else {
-                report(user, e, loc, flag,  flag.isSetForWorld(loc.getWorld()) ? Why.SETTING_ALLOWED_IN_WORLD : Why.SETTING_NOT_ALLOWED_IN_WORLD);
-            }
-            return island.map(x -> x.isAllowed(flag)).orElseGet(() -> flag.isSetForWorld(loc.getWorld()));
+            return processSetting(flag, island, e, loc);
         }
 
         // Protection flag
@@ -169,31 +163,14 @@ public abstract class FlagListener implements Listener {
 
         // Handle World Settings
         if (flag.getType().equals(Flag.Type.WORLD_SETTING)) {
-            if (flag.isSetForWorld(loc.getWorld())) {
-                report(user, e, loc, flag,  Why.ALLOWED_IN_WORLD);
-                return true;
-            }
-            report(user, e, loc, flag,  Why.NOT_ALLOWED_IN_WORLD);
-            noGo(e, flag, silent, "protection.world-protected");
-            return false;
+            return processWorldSetting(flag, loc, e, silent);
         }
 
         // Check if the plugin is set in User (required for testing)
         User.setPlugin(plugin);
 
         if (island.isPresent()) {
-            // If it is not allowed on the island, "bypass island" moderators can do anything
-            if (island.get().isAllowed(user, flag)) {
-                report(user, e, loc, flag,  Why.RANK_ALLOWED);
-                return true;
-            } else if (!user.getMetaData(AdminSwitchCommand.META_TAG).map(MetaDataValue::asBoolean).orElse(false)
-                    && (user.hasPermission(getIWM().getPermissionPrefix(loc.getWorld()) + "mod.bypass." + flag.getID() + ".island"))) {
-                report(user, e, loc, flag,  Why.BYPASS_ISLAND);
-                return true;
-            }
-            report(user, e, loc, flag,  Why.NOT_ALLOWED_ON_ISLAND);
-            noGo(e, flag, silent, island.get().isSpawn() ? "protection.spawn-protected" : "protection.protected");
-            return false;
+            return processBypass(flag, island, e, loc, silent);
         }
         // The player is in the world, but not on an island, so general world settings apply
         if (flag.isSetForWorld(loc.getWorld())) {
@@ -204,6 +181,41 @@ public abstract class FlagListener implements Listener {
             noGo(e, flag, silent, "protection.world-protected");
             return false;
         }
+    }
+
+    private boolean processBypass(@NonNull Flag flag, Optional<Island> island, @NonNull Event e, @Nullable Location loc, boolean silent) {
+     // If it is not allowed on the island, "bypass island" moderators can do anything
+        if (island.get().isAllowed(user, flag)) {
+            report(user, e, loc, flag,  Why.RANK_ALLOWED);
+            return true;
+        } else if (!user.getMetaData(AdminSwitchCommand.META_TAG).map(MetaDataValue::asBoolean).orElse(false)
+                && (user.hasPermission(getIWM().getPermissionPrefix(loc.getWorld()) + "mod.bypass." + flag.getID() + ".island"))) {
+            report(user, e, loc, flag,  Why.BYPASS_ISLAND);
+            return true;
+        }
+        report(user, e, loc, flag,  Why.NOT_ALLOWED_ON_ISLAND);
+        noGo(e, flag, silent, island.get().isSpawn() ? "protection.spawn-protected" : "protection.protected");
+        return false;
+    }
+
+    private boolean processWorldSetting(@NonNull Flag flag, @Nullable Location loc, @NonNull Event e, boolean silent) {
+        if (flag.isSetForWorld(loc.getWorld())) {
+            report(user, e, loc, flag,  Why.ALLOWED_IN_WORLD);
+            return true;
+        }
+        report(user, e, loc, flag,  Why.NOT_ALLOWED_IN_WORLD);
+        noGo(e, flag, silent, "protection.world-protected");
+        return false;
+    }
+
+    private boolean processSetting(@NonNull Flag flag, Optional<Island> island, @NonNull Event e, @Nullable Location loc) {
+        // If the island exists, return the setting, otherwise return the default setting for this flag
+        if (island.isPresent()) {
+            report(user, e, loc, flag,  island.map(x -> x.isAllowed(flag)).orElse(false) ? Why.SETTING_ALLOWED_ON_ISLAND : Why.SETTING_NOT_ALLOWED_ON_ISLAND);
+        } else {
+            report(user, e, loc, flag,  flag.isSetForWorld(loc.getWorld()) ? Why.SETTING_ALLOWED_IN_WORLD : Why.SETTING_NOT_ALLOWED_IN_WORLD);
+        }
+        return island.map(x -> x.isAllowed(flag)).orElseGet(() -> flag.isSetForWorld(loc.getWorld()));
     }
 
     /**
