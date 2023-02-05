@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -34,6 +35,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.permissions.PermissionDefault;
+import org.bukkit.plugin.InvalidDescriptionException;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginLoader;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -49,6 +51,7 @@ import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.addons.Pladdon;
 import world.bentobox.bentobox.api.addons.exceptions.InvalidAddonDescriptionException;
 import world.bentobox.bentobox.api.addons.exceptions.InvalidAddonFormatException;
+import world.bentobox.bentobox.api.addons.exceptions.InvalidAddonInheritException;
 import world.bentobox.bentobox.api.configuration.ConfigObject;
 import world.bentobox.bentobox.api.events.addon.AddonEvent;
 import world.bentobox.bentobox.commands.BentoBoxCommand;
@@ -149,9 +152,10 @@ public class AddonsManager {
         }
     }
 
+    private record PladdonData(Addon addon, boolean success) {}
+
     private void loadAddon(@NonNull File f) {
-        Addon addon;
-        AddonClassLoader addonClassLoader;
+        PladdonData result = new PladdonData(null, false);
         try (JarFile jar = new JarFile(f)) {
             // try loading the addon
             // Get description in the addon.yml file
@@ -165,41 +169,47 @@ public class AddonsManager {
                 });
                 return;
             }
-            // Load the addon
-            try {
-
-                Plugin pladdon = pluginLoader.loadPlugin(f);
-                if (pladdon instanceof Pladdon pl) {
-                    addon = pl.getAddon();
-                    addon.setDescription(AddonClassLoader.asDescription(data));
-                    // Mark pladdon as enabled.
-                    pl.setEnabled();
-                    pladdons.put(addon, pladdon);
-                } else {
-                    plugin.logError("Could not load pladdon!");
-                    return;
-                }
-            } catch (Exception ex) {
-                // Addon not pladdon
-                addonClassLoader = new AddonClassLoader(this, data, f, this.getClass().getClassLoader());
-                // Get the addon itself
-                addon = addonClassLoader.getAddon();
-                // Add to the list of loaders
-                loaders.put(addon, addonClassLoader);
-            }
+            // Load the pladdon or addon if it isn't a pladdon
+            result = loadPladdon(data, f);
         } catch (Exception e) {
             // We couldn't load the addon, aborting.
             plugin.logError("Could not load addon '" + f.getName() + "'. Error is: " + e.getMessage());
             plugin.logStacktrace(e);
             return;
         }
+        // Success
+        if (result.success) {
+            // Initialize some settings
+            result.addon.setDataFolder(new File(f.getParent(), result.addon.getDescription().getName()));
+            result.addon.setFile(f);
+            // Initialize addon
+            initializeAddon(result.addon);
+        }
+    }
 
-        // Initialize some settings
-        addon.setDataFolder(new File(f.getParent(), addon.getDescription().getName()));
-        addon.setFile(f);
-        // Initialize addon
-        initializeAddon(addon);
-
+    private PladdonData loadPladdon(YamlConfiguration data, @NonNull File f) throws InvalidAddonInheritException, MalformedURLException, InvalidAddonDescriptionException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException, InvalidDescriptionException {
+        Addon addon = null;
+        try {
+            Plugin pladdon = pluginLoader.loadPlugin(f);
+            if (pladdon instanceof Pladdon pl) {
+                addon = pl.getAddon();
+                addon.setDescription(AddonClassLoader.asDescription(data));
+                // Mark pladdon as enabled.
+                pl.setEnabled();
+                pladdons.put(addon, pladdon);
+            } else {
+                plugin.logError("Could not load pladdon!");
+                return new PladdonData(null, false);
+            }
+        } catch (Exception ex) {
+            // Addon not pladdon
+            AddonClassLoader addonClassLoader = new AddonClassLoader(this, data, f, this.getClass().getClassLoader());
+            // Get the addon itself
+            addon = addonClassLoader.getAddon();
+            // Add to the list of loaders
+            loaders.put(addon, addonClassLoader);
+        }
+        return new PladdonData(addon, true);
     }
 
     private void initializeAddon(Addon addon) {
@@ -352,7 +362,7 @@ public class AddonsManager {
         // Use the Flat type of world because this is a copy and no vanilla creation is required
         WorldCreator wc = WorldCreator.name(world.getName() + "/bentobox").type(WorldType.FLAT).environment(world.getEnvironment());
         World w = gameMode.getWorldSettings().isUseOwnGenerator() ? wc.createWorld() : wc.generator(world.getGenerator()).createWorld();
-        w.setDifficulty(Difficulty.PEACEFUL);       
+        w.setDifficulty(Difficulty.PEACEFUL);
     }
 
     /**
