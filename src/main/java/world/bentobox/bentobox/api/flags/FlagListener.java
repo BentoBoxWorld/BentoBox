@@ -198,7 +198,7 @@ public abstract class FlagListener implements Listener {
         return false;
     }
 
-    private boolean processWorldSetting(@NonNull Flag flag, @Nullable Location loc, @NonNull Event e, boolean silent) {
+    private boolean processWorldSetting(@NonNull Flag flag, @NonNull Location loc, @NonNull Event e, boolean silent) {
         if (flag.isSetForWorld(loc.getWorld())) {
             report(user, e, loc, flag,  Why.ALLOWED_IN_WORLD);
             return true;
@@ -208,7 +208,7 @@ public abstract class FlagListener implements Listener {
         return false;
     }
 
-    private boolean processSetting(@NonNull Flag flag, Optional<Island> island, @NonNull Event e, @Nullable Location loc) {
+    private boolean processSetting(@NonNull Flag flag, Optional<Island> island, @NonNull Event e, @NonNull Location loc) {
         // If the island exists, return the setting, otherwise return the default setting for this flag
         if (island.isPresent()) {
             report(user, e, loc, flag,  island.map(x -> x.isAllowed(flag)).orElse(false) ? Why.SETTING_ALLOWED_ON_ISLAND : Why.SETTING_NOT_ALLOWED_ON_ISLAND);
