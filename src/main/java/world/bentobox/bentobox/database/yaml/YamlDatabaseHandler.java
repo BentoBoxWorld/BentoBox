@@ -338,13 +338,11 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         // Null check
         if (instance == null) {
             plugin.logError("YAML database request to store a null.");
-            completableFuture.complete(false);
-            return completableFuture;
+            return CompletableFuture.completedFuture(false);
         }
         if (!(instance instanceof DataObject)) {
             plugin.logError("This class is not a DataObject: " + instance.getClass().getName());
-            completableFuture.complete(false);
-            return completableFuture;
+            return CompletableFuture.completedFuture(false);
         }
         // This is the Yaml Configuration that will be used and saved at the end
         YamlConfiguration config = new YamlConfiguration();
@@ -396,22 +394,21 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                 handleConfigEntryComments(configEntry, config, yamlComments, parent);
             }
 
-            if (checkAdapter(field, config, storageLocation, value)) {
-                continue;
-            }
-            // Set the filename if it has not be set already
-            if (filename.isEmpty() && method.getName().equals("getUniqueId")) {
-                // Save the name for when the file is saved
-                filename = getFilename(propertyDescriptor, instance, (String)value);
-            }
-            // Collections need special serialization
-            if (Map.class.isAssignableFrom(propertyDescriptor.getPropertyType()) && value != null) {
-                serializeMap((Map<Object,Object>)value, config, storageLocation);
-            } else if (Set.class.isAssignableFrom(propertyDescriptor.getPropertyType()) && value != null) {
-                serializeSet((Set<Object>)value, config, storageLocation);
-            } else {
-                // For all other data that doesn't need special serialization
-                config.set(storageLocation, serialize(value));
+            if (!checkAdapter(field, config, storageLocation, value)) {
+                // Set the filename if it has not be set already
+                if (filename.isEmpty() && method.getName().equals("getUniqueId")) {
+                    // Save the name for when the file is saved
+                    filename = getFilename(propertyDescriptor, instance, (String)value);
+                }
+                // Collections need special serialization
+                if (Map.class.isAssignableFrom(propertyDescriptor.getPropertyType()) && value != null) {
+                    serializeMap((Map<Object,Object>)value, config, storageLocation);
+                } else if (Set.class.isAssignableFrom(propertyDescriptor.getPropertyType()) && value != null) {
+                    serializeSet((Set<Object>)value, config, storageLocation);
+                } else {
+                    // For all other data that doesn't need special serialization
+                    config.set(storageLocation, serialize(value));
+                }
             }
         }
         // If the filename has not been set by now then we have a problem
@@ -469,6 +466,16 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         return id;
     }
 
+    /**
+     * Checks if an adapter is to be used. If so, it is used and true returned, if not, fase is returned
+     * @param field Field
+     * @param config Yaml Config
+     * @param storageLocation Storage location
+     * @param value Value
+     * @return true if adapater used
+     * @throws IllegalAccessException exception
+     * @throws InvocationTargetException exception
+     */
     private boolean checkAdapter(Field field, YamlConfiguration config, String storageLocation, Object value) throws IllegalAccessException, InvocationTargetException {
         Adapter adapterNotation = field.getAnnotation(Adapter.class);
         if (adapterNotation != null && AdapterInterface.class.isAssignableFrom(adapterNotation.value())) {
