@@ -8,11 +8,24 @@ import java.util.concurrent.ExecutionException;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
+import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.block.Banner;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.CreatureSpawner;
+import org.bukkit.block.Sign;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.entity.AbstractHorse;
+import org.bukkit.entity.Ageable;
+import org.bukkit.entity.ChestedHorse;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Tameable;
+import org.bukkit.entity.Villager;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.material.Colorable;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.BoundingBox;
 import org.eclipse.jdt.annotation.Nullable;
@@ -24,7 +37,7 @@ import world.bentobox.bentobox.database.objects.IslandDeletion;
 
 /**
  * Regenerates by using a seed world. The seed world is created using the same generator as the game
- * world so that features created by metods like generateNoise or generateCaves can be regenerated.
+ * world so that features created by methods like generateNoise or generateCaves can be regenerated.
  * @author tastybento
  *
  */
@@ -93,7 +106,7 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
     public CompletableFuture<Void> regenerateChunk(Chunk chunk) {
         return regenerateChunk(null, chunk.getWorld(), chunk.getX(), chunk.getZ()); 
     }
-    
+
     private CompletableFuture<Void> regenerateChunk(@Nullable IslandDeletion di, World world, int chunkX, int chunkZ) {
         CompletableFuture<Chunk> seedWorldFuture = getSeedWorldChunk(world, chunkX, chunkZ);
 
@@ -104,9 +117,9 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
         CompletableFuture<Void> cleanFuture = di != null ? cleanChunk(chunkFuture, di) : CompletableFuture.completedFuture(null);
 
         CompletableFuture<Void> copyFuture = CompletableFuture.allOf(cleanFuture, chunkFuture, seedWorldFuture);
-        
+
         copyFuture.thenRun(() -> {
-            
+
             try {
                 Chunk chunkTo = chunkFuture.get();
                 Chunk chunkFrom = seedWorldFuture.get();
@@ -138,14 +151,13 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
         .filter(te -> di.inBounds(te.getLocation().getBlockX(), te.getLocation().getBlockZ()))
         .forEach(te -> ((InventoryHolder) te).getInventory().clear())
                 );
-        
+
         // Similarly, when the chunk is loaded, remove all the entities in the chunk apart from players
-        CompletableFuture<Void> entitiesFuture = chunkFuture.thenAccept(chunk -> {
-            // Remove all entities in chunk, including any dropped items as a result of clearing the blocks above
-            Arrays.stream(chunk.getEntities())
-            .filter(e -> !(e instanceof Player) && di.inBounds(e.getLocation().getBlockX(), e.getLocation().getBlockZ()))
-            .forEach(Entity::remove);
-        });
+        CompletableFuture<Void> entitiesFuture = chunkFuture.thenAccept(chunk -> 
+        // Remove all entities in chunk, including any dropped items as a result of clearing the blocks above
+        Arrays.stream(chunk.getEntities())
+        .filter(e -> !(e instanceof Player) && di.inBounds(e.getLocation().getBlockX(), e.getLocation().getBlockZ()))
+        .forEach(Entity::remove));
         return CompletableFuture.allOf(invFuture, entitiesFuture);
     }
 
@@ -156,8 +168,6 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
      * @param limitBox - limit box that the chunk needs to be in
      */
     private void copyChunkDataToChunk(Chunk toChunk, Chunk fromChunk, BoundingBox limitBox) {
-        BentoBox.getInstance().logDebug("Copying chunk " + toChunk.getX() + " " + toChunk.getZ() + " from " 
-    + fromChunk.getWorld().getName() + " to "  + toChunk.getWorld().getName());
         double baseX = toChunk.getX() << 4;
         double baseZ = toChunk.getZ() << 4;
         int minHeight = toChunk.getWorld().getMinHeight();
@@ -176,6 +186,82 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
                 }
             }
         }
-        // TODO: Copy chest contents and entities
+        // Entities
+        Arrays.stream(fromChunk.getEntities()).forEach(e -> processEntity(e, e.getLocation().toVector().toLocation(toChunk.getWorld())));
+
+        // Tile Entities
+        Arrays.stream(fromChunk.getTileEntities()).forEach(bs -> processTileEntity(bs.getBlock(), bs.getLocation().toVector().toLocation(toChunk.getWorld()).getBlock()));
+    }
+
+    private void processEntity(Entity entity, Location location) {
+            Entity bpe = location.getWorld().spawnEntity(location, entity.getType());
+            bpe.setCustomName(entity.getCustomName());
+            if (entity instanceof Villager villager && bpe instanceof Villager villager2) {
+                setVillager(villager, villager2);
+            }
+            if (entity instanceof Colorable c && bpe instanceof Colorable cc) {
+                if (c.getColor() != null) {
+                    cc.setColor(c.getColor());
+                }
+            }
+            if (entity instanceof Tameable t && bpe instanceof Tameable tt) {
+                tt.setTamed(t.isTamed());
+            }
+            if (entity instanceof ChestedHorse ch && bpe instanceof ChestedHorse ch2) {
+                ch2.setCarryingChest(ch.isCarryingChest());
+            }
+            // Only set if child. Most animals are adults
+            if (entity instanceof Ageable a && bpe instanceof Ageable aa) {
+                if (a.isAdult()) aa.setAdult();
+            }
+            if (entity instanceof AbstractHorse horse && bpe instanceof AbstractHorse horse2) {
+                horse2.setDomestication(horse.getDomestication());
+                horse2.getInventory().setContents(horse.getInventory().getContents());
+            }
+
+            if (entity instanceof Horse horse && bpe instanceof Horse horse2) {
+                horse2.setStyle(horse.getStyle());
+            }
+        }
+
+    /**
+     * Set the villager stats
+     * @param v - villager
+     * @param villager2 villager
+     */
+    private void setVillager(Villager v, Villager villager2) {
+        villager2.setVillagerExperience(v.getVillagerExperience());
+        villager2.setVillagerLevel(v.getVillagerLevel());
+        villager2.setProfession(v.getProfession());
+        villager2.setVillagerType(v.getVillagerType());
+    }
+    
+    private void processTileEntity(Block fromBlock, Block toBlock) {
+        // Block state
+        BlockState blockState = fromBlock.getState();
+        BlockState b = toBlock.getState();
+
+        // Signs
+        if (blockState instanceof Sign fromSign && b instanceof Sign toSign) {
+            int i = 0;
+            for (String line : fromSign.getLines()) {
+                toSign.setLine(i++, line);  
+            }
+            toSign.setGlowingText(fromSign.isGlowingText());
+        }
+        // Chests
+        else if (blockState instanceof InventoryHolder ih && b instanceof InventoryHolder toChest) {
+            toChest.getInventory().setContents(ih.getInventory().getContents());
+        }
+        // Spawner type
+        else if (blockState instanceof CreatureSpawner spawner && b instanceof CreatureSpawner toSpawner) {
+            toSpawner.setSpawnedType(spawner.getSpawnedType());
+        }
+
+        // Banners
+        else if (blockState instanceof Banner banner && b instanceof Banner toBanner) {
+            toBanner.setBaseColor(banner.getBaseColor());
+            toBanner.setPatterns(banner.getPatterns());
+        }
     }
 }

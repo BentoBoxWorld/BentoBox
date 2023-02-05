@@ -95,7 +95,7 @@ public class CleanSuperFlatListener extends FlagListener {
         
         if (this.task == null || this.task.isCancelled())
         {
-            this.task = Bukkit.getScheduler().runTaskTimer(this.plugin, () -> this.cleanChunk(world, cg), 0L, 1L);
+            this.task = Bukkit.getScheduler().runTaskTimer(this.plugin, () -> this.cleanChunk(world), 0L, 1L);
         }
     }
 
@@ -105,7 +105,7 @@ public class CleanSuperFlatListener extends FlagListener {
      * @param world The world that must be cleared.
      * @param cg Chunk generator.
      */
-    private void cleanChunk(World world, ChunkGenerator cg)
+    private void cleanChunk(World world)
     {
         if (!this.chunkQueue.isEmpty())
         {
