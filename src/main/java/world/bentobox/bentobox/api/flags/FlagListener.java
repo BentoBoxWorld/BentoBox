@@ -128,7 +128,7 @@ public abstract class FlagListener implements Listener {
         // Set user
         user = player == null ? null : User.getInstance(player);
         if (loc == null) {
-            if (user != null && user.getLocation() != null && user.getLocation().getWorld() != null) {
+            if (user != null && user.getLocation().getWorld() != null) {
                 report(user, e, user.getLocation(), flag, Why.NULL_LOCATION);
             }
             return true;
@@ -184,7 +184,7 @@ public abstract class FlagListener implements Listener {
     }
 
     private boolean processBypass(@NonNull Flag flag, Island island, @NonNull Event e, @NonNull Location loc, boolean silent) {
-     // If it is not allowed on the island, "bypass island" moderators can do anything
+        // If it is not allowed on the island, "bypass island" moderators can do anything
         if (island.isAllowed(user, flag)) {
             report(user, e, loc, flag,  Why.RANK_ALLOWED);
             return true;
@@ -241,7 +241,7 @@ public abstract class FlagListener implements Listener {
                     .filter(p -> getPlugin().equals(p.getOwningPlugin())).findFirst().map(MetadataValue::asString).orElse("");
             if (!issuerUUID.isEmpty()) {
                 User issuer = User.getInstance(UUID.fromString(issuerUUID));
-                if (issuer != null && issuer.isPlayer()) {
+                if (issuer.isPlayer()) {
                     user.sendRawMessage(whyEvent);
                     user.sendRawMessage(whyBypass);
                 }
