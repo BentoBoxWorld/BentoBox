@@ -23,6 +23,10 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Difficulty;
+import org.bukkit.World;
+import org.bukkit.WorldCreator;
+import org.bukkit.WorldType;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -300,6 +304,8 @@ public class AddonsManager {
             if (addon instanceof GameModeAddon gameMode) {
                 // Create the gameWorlds
                 gameMode.createWorlds();
+                // Create the seed worlds
+                createSeedWorlds(gameMode);
                 plugin.getIWM().addGameMode(gameMode);
                 // Save and load blueprints
                 plugin.getBlueprintsManager().extractDefaultBlueprints(gameMode);
@@ -324,6 +330,29 @@ public class AddonsManager {
             // Unhandled exception. We'll give a bit of debug here.
             handleAddonError(addon, e);
         }
+    }
+
+    /**
+     * Create seed worlds, which are used for deletion
+     * @param gameMode
+     */
+    private void createSeedWorlds(GameModeAddon gameMode) {
+        if (gameMode.getOverWorld() != null) {
+            seedWorld(gameMode, gameMode.getOverWorld());
+        }
+        if (gameMode.getNetherWorld() != null) {
+            seedWorld(gameMode, gameMode.getNetherWorld());
+        }
+        if (gameMode.getEndWorld() != null) {
+            seedWorld(gameMode, gameMode.getEndWorld());
+        }
+    }
+
+    private void seedWorld(GameModeAddon gameMode, @NonNull World world) {
+        // Use the Flat type of world because this is a copy and no vanilla creation is required
+        WorldCreator wc = WorldCreator.name("seeds/" + world.getName()).type(WorldType.FLAT).environment(world.getEnvironment());
+        World w = gameMode.getWorldSettings().isUseOwnGenerator() ? wc.createWorld() : wc.generator(world.getGenerator()).createWorld();
+        w.setDifficulty(Difficulty.PEACEFUL);       
     }
 
     /**

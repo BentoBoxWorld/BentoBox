@@ -1,6 +1,5 @@
 package world.bentobox.bentobox.listeners.flags.worldsettings;
 
-import java.security.SecureRandom;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -13,7 +12,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.generator.ChunkGenerator;
-import org.bukkit.generator.ChunkGenerator.ChunkData;
 import org.bukkit.scheduler.BukkitTask;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -22,8 +20,8 @@ import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.events.BentoBoxReadyEvent;
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.lists.Flags;
-import world.bentobox.bentobox.util.MyBiomeGrid;
-import world.bentobox.bentobox.util.Pair;
+import world.bentobox.bentobox.nms.WorldRegenerator;
+import world.bentobox.bentobox.util.Util;
 
 /**
  * Cleans super-flat world chunks or normal nether chunks if they generate accidentally
@@ -35,11 +33,10 @@ public class CleanSuperFlatListener extends FlagListener {
     private final BentoBox plugin = BentoBox.getInstance();
 
     /**
-     * Stores pairs of X,Z coordinates of chunks that need to be regenerated.
-     * @since 1.1
+     * Stores chunks that need to be regenerated.
      */
     @NonNull
-    private final Queue<@NonNull Pair<@NonNull Integer, @NonNull Integer>> chunkQueue = new LinkedList<>();
+    private final Queue<Chunk> chunkQueue = new LinkedList<>();
 
     /**
      * Task that runs each tick to regenerate chunks that are in the {@link #chunkQueue}.
@@ -56,8 +53,15 @@ public class CleanSuperFlatListener extends FlagListener {
      */
     private boolean ready;
 
+    private WorldRegenerator regenerator;
+
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onBentoBoxReady(BentoBoxReadyEvent e) {
+        this.regenerator = Util.getRegenerator();
+        if (regenerator == null) {
+            plugin.logError("Could not start CleanSuperFlat because of NMS error");
+            return;
+        }
         ready = true;
     }
 
@@ -71,7 +75,6 @@ public class CleanSuperFlatListener extends FlagListener {
             return;
         }
         
-        MyBiomeGrid grid = new MyBiomeGrid(world.getEnvironment());
         ChunkGenerator cg = plugin.getAddonsManager().getDefaultWorldGenerator(world.getName(), "");
         
         if (cg == null) 
@@ -88,11 +91,11 @@ public class CleanSuperFlatListener extends FlagListener {
         }
         
         // Add to queue
-        this.chunkQueue.add(new Pair<>(e.getChunk().getX(), e.getChunk().getZ()));
+        this.chunkQueue.add(e.getChunk());
         
         if (this.task == null || this.task.isCancelled())
         {
-            this.task = Bukkit.getScheduler().runTaskTimer(this.plugin, () -> this.cleanChunk(world, cg, grid), 0L, 1L);
+            this.task = Bukkit.getScheduler().runTaskTimer(this.plugin, () -> this.cleanChunk(world), 0L, 1L);
         }
     }
 
@@ -101,37 +104,19 @@ public class CleanSuperFlatListener extends FlagListener {
      * This method clears the chunk from queue in the given world
      * @param world The world that must be cleared.
      * @param cg Chunk generator.
-     * @param grid Biome Grid.
      */
-    private void cleanChunk(World world, ChunkGenerator cg, MyBiomeGrid grid)
+    private void cleanChunk(World world)
     {
-        SecureRandom random = new SecureRandom();
-
         if (!this.chunkQueue.isEmpty())
         {
-            Pair<Integer, Integer> chunkXZ = this.chunkQueue.poll();
+            Chunk chunk = this.chunkQueue.poll();
 
-            ChunkData cd = cg.generateChunkData(world, random, chunkXZ.getKey(), chunkXZ.getValue(), grid);
-            Chunk chunk = world.getChunkAt(chunkXZ.getKey(), chunkXZ.getValue());
-
-            for (int x = 0; x < 16; x++)
-            {
-                for (int z = 0; z < 16; z++)
-                {
-                    for (int y = world.getMinHeight(); y < world.getMaxHeight(); y++)
-                    {
-                        chunk.getBlock(x, y, z).setBlockData(cd.getBlockData(x, y, z), false);
-                    }
-                }
-            }
-
-            // Run populators
-            cg.getDefaultPopulators(world).forEach(pop -> pop.populate(world, random, chunk));
-
+            regenerator.regenerateChunk(chunk);
+            
             if (this.plugin.getSettings().isLogCleanSuperFlatChunks())
             {
                 this.plugin.log("Regenerating superflat chunk in " + world.getName() +
-                    " at (" + chunkXZ.x + ", " + chunkXZ.z + ") " +
+                    " at (" + chunk.getX() + ", " + chunk.getZ() + ") " +
                     "(" + this.chunkQueue.size() + " chunk(s) remaining in the queue)");
             }
         }
@@ -140,6 +125,7 @@ public class CleanSuperFlatListener extends FlagListener {
             this.task.cancel();
         }
     }
+    
 
     /**
      * Check if chunk should be cleaned or not
@@ -152,7 +138,6 @@ public class CleanSuperFlatListener extends FlagListener {
         {
             return true;
         }
-
         // Check if super-flat must even be working.
         if (!this.getIWM().inWorld(world) ||
             !Flags.CLEAN_SUPER_FLAT.isSetForWorld(world) ||
