@@ -20,7 +20,7 @@ import world.bentobox.bentobox.database.objects.Island;
  * @deprecated replaced not used in new listeners.
  * @since 1.12.1
  */
-@Deprecated
+@Deprecated(since="1.21.0", forRemoval=true)
 public class PlayerEntityPortalEvent {
 
     private final EntityPortalEvent epe;

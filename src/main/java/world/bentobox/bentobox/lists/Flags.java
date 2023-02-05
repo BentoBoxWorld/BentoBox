@@ -393,13 +393,13 @@ public final class Flags {
      * @deprecated see {@link #ANIMAL_NATURAL_SPAWN} and {@link #ANIMAL_SPAWNERS_SPAWN}.
      * @since 1.14.0
      */
-    @Deprecated
+    @Deprecated(since="1.14.0", forRemoval=true)
     public static final Flag ANIMAL_SPAWN = new Flag.Builder("ANIMAL_SPAWN", Material.APPLE).defaultSetting(true).type(Type.SETTING).build();
     /**
      * @deprecated see {@link #MONSTER_NATURAL_SPAWN} and {@link #MONSTER_SPAWNERS_SPAWN}.
      * @since 1.14.0
      */
-    @Deprecated
+    @Deprecated(since="1.14.0", forRemoval=true)
     public static final Flag MONSTER_SPAWN = new Flag.Builder("MONSTER_SPAWN", Material.SPAWNER).defaultSetting(true).type(Type.SETTING).build();
 
     /**

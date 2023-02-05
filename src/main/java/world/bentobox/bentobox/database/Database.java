@@ -99,13 +99,11 @@ public class Database<T> {
     }
 
     /**
-     * Save object. Saving may be done async or sync, depending on the underlying database.
+     * Save object. Saving is done async. Same as {@link #saveObjectAsync(Object)}, which is recommended.
      * @param instance to save
      * @return true - always.
-     * @deprecated Use {@link #saveObjectAsync(Object)}.
      * @since 1.13.0
      */
-    @Deprecated
     public boolean saveObject(T instance) {
         saveObjectAsync(instance).thenAccept(r -> {
             if (Boolean.FALSE.equals(r)) logger.severe(() -> "Could not save object to database!");

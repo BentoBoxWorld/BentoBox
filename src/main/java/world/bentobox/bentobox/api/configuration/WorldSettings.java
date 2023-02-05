@@ -37,7 +37,7 @@ public interface WorldSettings extends ConfigObject {
      * @see WorldSettings#getDefaultIslandFlagNames()
      * @since 1.21.0
      */
-    @Deprecated
+    @Deprecated(since="1.21.0", forRemoval=true)
     Map<Flag, Integer> getDefaultIslandFlags();
 
     /**
@@ -62,7 +62,7 @@ public interface WorldSettings extends ConfigObject {
      * @see WorldSettings#getDefaultIslandSettingNames()
      * @since 1.21.0
      */
-    @Deprecated
+    @Deprecated(since="1.21.0", forRemoval=true)
     Map<Flag, Integer> getDefaultIslandSettings();
 
     /**
