@@ -340,8 +340,6 @@ public class User implements MetaDataAble {
         // If requester is console, then return the default value
         if (!isPlayer()) return defaultValue;
 
-        int value = 0;
-
         // If there is a dot at the end of the permissionPrefix, remove it
         if (permissionPrefix.endsWith(".")) {
             permissionPrefix = permissionPrefix.substring(0, permissionPrefix.length()-1);
@@ -357,6 +355,12 @@ public class User implements MetaDataAble {
 
         if (permissions.isEmpty()) return defaultValue;
 
+        return iteratePerms(permissions, permPrefix, defaultValue);
+ 
+    }
+
+    private int iteratePerms(List<String> permissions, String permPrefix, int defaultValue) {
+        int value = 0;
         for (String permission : permissions) {
             if (permission.contains(permPrefix + "*")) {
                 // 'Star' permission
