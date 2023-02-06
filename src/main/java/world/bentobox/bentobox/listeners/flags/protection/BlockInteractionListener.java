@@ -36,17 +36,18 @@ public class BlockInteractionListener extends FlagListener
      * expense of a string comparison
      */
     private static final Map<String, String> stringFlags;
+    private static final String CHEST = "CHEST";
 
     static
     {
         stringFlags = Map.of(
-                "ACACIA_CHEST_BOAT", "CHEST",
-                "BIRCH_CHEST_BOAT", "CHEST",
-                "JUNGLE_CHEST_BOAT", "CHEST",
-                "DARK_OAK_CHEST_BOAT", "CHEST",
-                "MANGROVE_CHEST_BOAT", "CHEST",
-                "OAK_CHEST_BOAT", "CHEST",
-                "SPRUCE_CHEST_BOAT", "CHEST");
+                "ACACIA_CHEST_BOAT", CHEST,
+                "BIRCH_CHEST_BOAT", CHEST,
+                "JUNGLE_CHEST_BOAT", CHEST,
+                "DARK_OAK_CHEST_BOAT", CHEST,
+                "MANGROVE_CHEST_BOAT", CHEST,
+                "OAK_CHEST_BOAT", CHEST,
+                "SPRUCE_CHEST_BOAT", CHEST);
     }
 
     /**
