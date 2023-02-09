@@ -103,7 +103,6 @@ public class CleanSuperFlatListener extends FlagListener {
     /**
      * This method clears the chunk from queue in the given world
      * @param world The world that must be cleared.
-     * @param cg Chunk generator.
      */
     private void cleanChunk(World world)
     {

@@ -59,7 +59,7 @@ import world.bentobox.bentobox.nms.WorldRegenerator;
  */
 public class Util {
     /**
-     * Use standard color code definition: &<hex>.
+     * Use standard color code definition: {@code &<hex>}.
      */
     private static final Pattern HEX_PATTERN = Pattern.compile("&#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})");
     private static final String NETHER = "_nether";

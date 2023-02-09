@@ -182,9 +182,13 @@ public class ItemParser {
     /**
      * This method parses array of 6 items into an item stack.
      * Format:
+     * <pre>{@code 
      *      POTION:NAME:<LEVEL>:<EXTENDED>:<SPLASH/LINGER>:QTY
+     * }</pre>
      * Example:
+     * <pre>{@code 
      *      POTION:STRENGTH:1:EXTENDED:SPLASH:1
+     * }</pre>
      * @param part String array that contains 6 elements.
      * @return Potion with given properties.
      */
@@ -257,13 +261,17 @@ public class ItemParser {
     /**
      * This method parses array of 2 to 3 elements that represents player head.
      * Format:
+     * <pre>{@code 
      *    PLAYER_HEAD:<STRING/Trimmed UUID/UUID/Texture>:QTY
      *    PLAYER_HEAD:<STRING/Trimmed UUID/UUID/Texture>
      *    PLAYER_HEAD:QTY
+     * }</pre>
      * Example:
+     * <pre>{@code 
      *    PLAYER_HEAD:1
      *    PLAYER_HEAD:BONNe1704
      *    PLAYER_HEAD:eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYWY1ZjE1OTg4NmNjNTMxZmZlYTBkOGFhNWY5MmVkNGU1ZGE2NWY3MjRjMDU3MGFmODZhOTBiZjAwYzY3YzQyZSJ9fX0:1
+     * }</pre>
      * @param part String array that contains at least 2 elements.
      * @return Player head with given properties.
      */
