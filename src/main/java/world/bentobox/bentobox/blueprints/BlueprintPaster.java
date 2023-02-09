@@ -84,10 +84,10 @@ public class BlueprintPaster {
     private final Island island;
 
     /**
-     * Paste a clipboard to a location and run task
+     * Paste a clipboard to a location. Run {@link #paste()} to paste
      * @param plugin - BentoBox
      * @param clipboard - clipboard to paste
-     * @param location - location to paste to
+     * @param location - location to which to paste
      */
     public BlueprintPaster(@NonNull BentoBox plugin, @NonNull BlueprintClipboard clipboard, @NonNull Location location) {
         this.plugin = plugin;
@@ -97,9 +97,6 @@ public class BlueprintPaster {
         this.location = location;
         this.world = location.getWorld();
         this.island = null;
-
-        // Paste
-        paste();
     }
 
     /**
