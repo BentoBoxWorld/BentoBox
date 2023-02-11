@@ -42,7 +42,7 @@ public class AdminBlueprintSaveCommand extends ConfirmableCommand
         }
 
         BlueprintClipboard clipboard = ((AdminBlueprintCommand) this.getParent()).getClipboards().
-            computeIfAbsent(user.getUniqueId(), v -> new BlueprintClipboard());
+                computeIfAbsent(user.getUniqueId(), v -> new BlueprintClipboard());
 
         if (!clipboard.isFull())
         {
@@ -67,7 +67,7 @@ public class AdminBlueprintSaveCommand extends ConfirmableCommand
     {
         AdminBlueprintCommand parent = (AdminBlueprintCommand) this.getParent();
         BlueprintClipboard clipboard = parent.getClipboards().
-            computeIfAbsent(user.getUniqueId(), v -> new BlueprintClipboard());
+                computeIfAbsent(user.getUniqueId(), v -> new BlueprintClipboard());
 
         String fileName = Util.sanitizeInput(args.get(0));
 
@@ -77,8 +77,8 @@ public class AdminBlueprintSaveCommand extends ConfirmableCommand
         if (newFile.exists())
         {
             this.askConfirmation(user,
-                user.getTranslation("commands.admin.blueprint.file-exists"),
-                () -> this.hideAndSave(user, parent, clipboard, fileName, args.get(0)));
+                    user.getTranslation("commands.admin.blueprint.file-exists"),
+                    () -> this.hideAndSave(user, parent, clipboard, fileName, args.get(0)));
             return false;
         }
 
@@ -96,15 +96,15 @@ public class AdminBlueprintSaveCommand extends ConfirmableCommand
      * @return {@code true} if blueprint is saved, {@code false} otherwise.
      */
     private boolean hideAndSave(User user,
-        AdminBlueprintCommand parent,
-        BlueprintClipboard clipboard,
-        String name,
-        String displayName)
+            AdminBlueprintCommand parent,
+            BlueprintClipboard clipboard,
+            String name,
+            String displayName)
     {
         parent.hideClipboard(user);
         boolean result = new BlueprintClipboardManager(this.getPlugin(),
-            parent.getBlueprintsFolder(), clipboard).
-            save(user, name, displayName);
+                parent.getBlueprintsFolder(), clipboard).
+                save(user, name, displayName);
 
         if (result && clipboard.isFull())
         {
