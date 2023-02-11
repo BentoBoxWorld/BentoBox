@@ -21,7 +21,7 @@ public final class EnumTypeAdapter<T extends Enum<T>> extends TypeAdapter<T> {
 
 
     /**
-     * Bimap to store name <-> enum references
+     * Bimap to store name,enum pair references
      */
     private final BiMap<String, T> enumMap = HashBiMap.create();
 
