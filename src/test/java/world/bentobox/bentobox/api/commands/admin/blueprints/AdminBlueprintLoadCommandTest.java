@@ -1,17 +1,17 @@
 package world.bentobox.bentobox.api.commands.admin.blueprints;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.Collections;
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,8 +33,9 @@ import org.powermock.reflect.Whitebox;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
+import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.blueprints.BlueprintClipboard;
+import world.bentobox.bentobox.blueprints.Blueprint;
 import world.bentobox.bentobox.managers.BlueprintsManager;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
@@ -45,20 +46,23 @@ import world.bentobox.bentobox.managers.LocalesManager;
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({Bukkit.class, BentoBox.class, User.class })
-public class AdminBlueprintCopyCommandTest {
+public class AdminBlueprintLoadCommandTest {
 
+    @Mock
+    BentoBox plugin;
     @Mock
     private AdminBlueprintCommand ac;
     @Mock
     private GameModeAddon addon;
     @Mock
     private User user;
-    @Mock
-    private BlueprintClipboard clip;
     private UUID uuid = UUID.randomUUID();
     @Mock
     private BlueprintsManager bm;
-    private AdminBlueprintCopyCommand abcc;
+    private Blueprint bp = new Blueprint();
+    private AdminBlueprintLoadCommand abcc;
+    private Map<String, Blueprint> map;
+    private File blueprintsFolder;
 
     /**
      * @throws java.lang.Exception
@@ -66,7 +70,6 @@ public class AdminBlueprintCopyCommandTest {
     @Before
     public void setUp() throws Exception {
         // Set up plugin
-        BentoBox plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
 
         // Blueprints Manager
@@ -92,12 +95,16 @@ public class AdminBlueprintCopyCommandTest {
         when(ac.getSubCommandAliases()).thenReturn(new HashMap<>());
         when(ac.getTopLabel()).thenReturn("admin");
 
-        Map<UUID, BlueprintClipboard> map = new HashMap<>();
-        map.put(uuid , clip);
-        when(ac.getClipboards()).thenReturn(map);
-
-        // Clipboard
-        when(clip.copy(any(), anyBoolean(), anyBoolean())).thenReturn(true);
+        map = new HashMap<>();
+        map.put("key", bp);
+        when(bm.getBlueprints(any())).thenReturn(map);
+        blueprintsFolder = new File("blueprints");
+        File blueprint = new File(blueprintsFolder, "island.blu");
+        blueprint.mkdirs();
+        blueprint.createNewFile();
+        File source = new File("src/test/java/world/bentobox/bentobox/api/commands/admin/blueprints", "island.blu");
+        Files.copy(source.toPath(), blueprint.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        when(ac.getBlueprintsFolder()).thenReturn(blueprintsFolder);
 
         // Locales
         LocalesManager lm = mock(LocalesManager.class);
@@ -107,7 +114,7 @@ public class AdminBlueprintCopyCommandTest {
         PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
 
 
-        abcc = new AdminBlueprintCopyCommand(ac);
+        abcc = new AdminBlueprintLoadCommand(ac);
     }
 
     /**
@@ -117,29 +124,36 @@ public class AdminBlueprintCopyCommandTest {
     public void tearDown() throws Exception {
         User.clearUsers();
         Mockito.framework().clearInlineMocks();
+
+        if (blueprintsFolder.exists()) {
+            Files.walk(blueprintsFolder.toPath())
+            .sorted(Comparator.reverseOrder())
+            .map(Path::toFile)
+            .forEach(File::delete);
+        }
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintCopyCommand#AdminBlueprintCopyCommand(world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintCommand)}.
+     * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintLoadCommand#AdminBlueprintLoadCommand(world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintCommand)}.
      */
     @Test
-    public void testAdminBlueprintCopyCommand() {
+    public void testAdminBlueprintLoadCommand() {
         assertNotNull(abcc);
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintCopyCommand#setup()}.
+     * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintLoadCommand#setup()}.
      */
     @Test
     public void testSetup() {
         abcc.setup();
-        assertEquals("commands.admin.blueprint.copy.description", abcc.getDescription());
-        assertEquals("commands.admin.blueprint.copy.parameters", abcc.getParameters());
+        assertEquals("commands.admin.blueprint.load.description", abcc.getDescription());
+        assertEquals("commands.admin.blueprint.load.parameters", abcc.getParameters());
 
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintCopyCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintLoadCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testExecuteUserStringListOfStringHelp() {
@@ -148,50 +162,41 @@ public class AdminBlueprintCopyCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintCopyCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintLoadCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringSuccess() {
-        assertTrue(abcc.execute(user, "", List.of("air", "biome")));
-        verify(clip).copy(user, true, true);
+    public void testExecuteUserStringListOfStringNoLoad() {
+        assertFalse(abcc.execute(user, "", List.of(" iSlAnd  ")));
+        verify(user).sendMessage("commands.admin.blueprint.could-not-load");
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintCopyCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintLoadCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testExecuteUserStringListOfStringSuccessCaps() {
-        assertTrue(abcc.execute(user, "", List.of("AIR", "BIOME")));
-        verify(clip).copy(user, true, true);
+        assertTrue(abcc.execute(user, "", List.of("island")));
+        verify(user).sendMessage("general.success");
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintCopyCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
-     */
-    @Test
-    public void testExecuteUserStringListOfStringJunk() {
-        assertTrue(abcc.execute(user, "", List.of("junk", "junk")));
-        verify(clip).copy(user, false, false);
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintCopyCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
-     */
-    @Test
-    public void testExecuteUserStringListOfStringNothing() {
-        assertTrue(abcc.execute(user, "", Collections.emptyList()));
-        verify(clip).copy(user, false, false);
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintCopyCommand#tabComplete(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintLoadCommand#tabComplete(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testTabCompleteUserStringListOfString() {
         Optional<List<String>> o = abcc.tabComplete(user, "", List.of(""));
         assertTrue(o.isPresent());
-        assertEquals("air", o.get().get(0));
-        assertEquals("biome", o.get().get(1));
+        assertEquals("island", o.get().get(0));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintLoadCommand#tabComplete(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     */
+    @Test
+    public void testTabCompleteUserStringListOfStringIsland() {
+        Optional<List<String>> o = abcc.tabComplete(user, "", List.of("e"));
+        assertTrue(o.isPresent());
+        assertEquals("end-island", o.get().get(0));
     }
 
 }
