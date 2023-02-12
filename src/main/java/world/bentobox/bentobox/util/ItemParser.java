@@ -35,6 +35,7 @@ import world.bentobox.bentobox.BentoBox;
  */
 public class ItemParser {
 
+    private ItemParser() {} // private constructor to hide the implicit public one.
     /**
      * Parse given string to ItemStack.
      * @param text String value of item stack.
@@ -110,20 +111,20 @@ public class ItemParser {
                 returnValue = parseItemDurabilityAndQuantity(part);
             }
 
-            if (returnValue != null) {
-                // If wrapper is just for code-style null-pointer checks.
-                if (customModelData != null) {
-                    // We have custom data model. Now assign it to the item-stack.
-                    ItemMeta itemMeta = returnValue.getItemMeta();
+            if (returnValue != null
+                    // If wrapper is just for code-style null-pointer checks.
+                    && customModelData != null) {
+                // We have custom data model. Now assign it to the item-stack.
+                ItemMeta itemMeta = returnValue.getItemMeta();
 
-                    // Another null-pointer check for materials that does not have item meta.
-                    if (itemMeta != null) {
-                        itemMeta.setCustomModelData(customModelData);
-                        // Update meta to the return item.
-                        returnValue.setItemMeta(itemMeta);
-                    }
+                // Another null-pointer check for materials that does not have item meta.
+                if (itemMeta != null) {
+                    itemMeta.setCustomModelData(customModelData);
+                    // Update meta to the return item.
+                    returnValue.setItemMeta(itemMeta);
                 }
             }
+
         } catch (Exception exception) {
             BentoBox.getInstance().logError("Could not parse item " + text + " " + exception.getLocalizedMessage());
             returnValue = defaultItemStack;
@@ -169,8 +170,8 @@ public class ItemParser {
 
         ItemMeta meta = durability.getItemMeta();
 
-        if (meta instanceof Damageable) {
-            ((Damageable) meta).setDamage(Integer.parseInt(part[1]));
+        if (meta instanceof Damageable damageable) {
+            damageable.setDamage(Integer.parseInt(part[1]));
             durability.setItemMeta(meta);
         }
 
@@ -181,9 +182,13 @@ public class ItemParser {
     /**
      * This method parses array of 6 items into an item stack.
      * Format:
+     * <pre>{@code 
      *      POTION:NAME:<LEVEL>:<EXTENDED>:<SPLASH/LINGER>:QTY
+     * }</pre>
      * Example:
+     * <pre>{@code 
      *      POTION:STRENGTH:1:EXTENDED:SPLASH:1
+     * }</pre>
      * @param part String array that contains 6 elements.
      * @return Potion with given properties.
      */
@@ -256,13 +261,17 @@ public class ItemParser {
     /**
      * This method parses array of 2 to 3 elements that represents player head.
      * Format:
+     * <pre>{@code 
      *    PLAYER_HEAD:<STRING/Trimmed UUID/UUID/Texture>:QTY
      *    PLAYER_HEAD:<STRING/Trimmed UUID/UUID/Texture>
      *    PLAYER_HEAD:QTY
+     * }</pre>
      * Example:
+     * <pre>{@code 
      *    PLAYER_HEAD:1
      *    PLAYER_HEAD:BONNe1704
      *    PLAYER_HEAD:eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYWY1ZjE1OTg4NmNjNTMxZmZlYTBkOGFhNWY5MmVkNGU1ZGE2NWY3MjRjMDU3MGFmODZhOTBiZjAwYzY3YzQyZSJ9fX0:1
+     * }</pre>
      * @param part String array that contains at least 2 elements.
      * @return Player head with given properties.
      */
@@ -309,7 +318,9 @@ public class ItemParser {
 
             // Apply new meta to the item.
             playerHead.setItemMeta(meta);
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+            // Ignored
+        }
 
         return playerHead;
     }

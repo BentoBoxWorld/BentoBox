@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 
 import org.bukkit.entity.Player;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 
 import me.clip.placeholderapi.PlaceholderAPI;
 import world.bentobox.bentobox.BentoBox;
@@ -69,12 +70,12 @@ public class PlaceholderAPIHook extends PlaceholderHook {
     @Override
     public void registerPlaceholder(@NonNull Addon addon, @NonNull String placeholder, @NonNull PlaceholderReplacer replacer) {
         // Check if the addon expansion does not exist
-        if (!addonsExpansions.containsKey(addon)) {
+        addonsExpansions.computeIfAbsent(addon, k -> {
             AddonPlaceholderExpansion addonPlaceholderExpansion = new AddonPlaceholderExpansion(addon);
             addonPlaceholderExpansion.register();
-            addonsExpansions.put(addon, addonPlaceholderExpansion);
-            this.addonPlaceholders.computeIfAbsent(addon, k -> new HashSet<>()).add(placeholder);
-        }
+            this.addonPlaceholders.computeIfAbsent(addon, kk -> new HashSet<>()).add(placeholder);
+            return addonPlaceholderExpansion;
+        });
         addonsExpansions.get(addon).registerPlaceholder(placeholder, replacer);
     }
 
@@ -109,7 +110,10 @@ public class PlaceholderAPIHook extends PlaceholderHook {
      */
     @Override
     @NonNull
-    public String replacePlaceholders(@NonNull Player player, @NonNull String string) {
+    public String replacePlaceholders(@Nullable Player player, @NonNull String string) {
+        if (player == null) {
+            return PlaceholderAPI.setPlaceholders(player, removeGMPlaceholder(string));
+        }
         // Transform [gamemode] in string to the game mode description name, or remove it for the default replacement
         String newString = BentoBox.getInstance().getIWM().getAddon(player.getWorld()).map(gm ->
         string.replace(TextVariables.GAMEMODE, gm.getDescription().getName().toLowerCase())

@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -21,10 +22,12 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import java.util.logging.Level;
-import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Difficulty;
+import org.bukkit.World;
+import org.bukkit.WorldCreator;
+import org.bukkit.WorldType;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -32,6 +35,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.permissions.PermissionDefault;
+import org.bukkit.plugin.InvalidDescriptionException;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginLoader;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -47,6 +51,7 @@ import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.addons.Pladdon;
 import world.bentobox.bentobox.api.addons.exceptions.InvalidAddonDescriptionException;
 import world.bentobox.bentobox.api.addons.exceptions.InvalidAddonFormatException;
+import world.bentobox.bentobox.api.addons.exceptions.InvalidAddonInheritException;
 import world.bentobox.bentobox.api.configuration.ConfigObject;
 import world.bentobox.bentobox.api.events.addon.AddonEvent;
 import world.bentobox.bentobox.commands.BentoBoxCommand;
@@ -71,10 +76,10 @@ public class AddonsManager {
     @NonNull
     private final Map<String, Class<?>> classes;
     private final BentoBox plugin;
-    private @NonNull
-    final Map<@NonNull String, @Nullable GameModeAddon> worldNames;
-    private @NonNull
-    final Map<@NonNull Addon, @NonNull List<Listener>> listeners;
+    @NonNull
+    private final Map<@NonNull String, @Nullable GameModeAddon> worldNames;
+    @NonNull
+    private final Map<@NonNull Addon, @NonNull List<Listener>> listeners;
 
     private final PluginLoader pluginLoader;
 
@@ -147,9 +152,10 @@ public class AddonsManager {
         }
     }
 
+    private record PladdonData(Addon addon, boolean success) {}
+
     private void loadAddon(@NonNull File f) {
-        Addon addon;
-        AddonClassLoader addonClassLoader;
+        PladdonData result = new PladdonData(null, false);
         try (JarFile jar = new JarFile(f)) {
             // try loading the addon
             // Get description in the addon.yml file
@@ -163,41 +169,47 @@ public class AddonsManager {
                 });
                 return;
             }
-            // Load the addon
-            try {
-
-                Plugin pladdon = pluginLoader.loadPlugin(f);
-                if (pladdon instanceof Pladdon) {
-                    addon = ((Pladdon) pladdon).getAddon();
-                    addon.setDescription(AddonClassLoader.asDescription(data));
-                    // Mark pladdon as enabled.
-                    ((Pladdon) pladdon).setEnabled();
-                    pladdons.put(addon, pladdon);
-                } else {
-                    plugin.logError("Could not load pladdon!");
-                    return;
-                }
-            } catch (Exception ex) {
-                // Addon not pladdon
-                addonClassLoader = new AddonClassLoader(this, data, f, this.getClass().getClassLoader());
-                // Get the addon itself
-                addon = addonClassLoader.getAddon();
-                // Add to the list of loaders
-                loaders.put(addon, addonClassLoader);
-            }
+            // Load the pladdon or addon if it isn't a pladdon
+            result = loadPladdon(data, f);
         } catch (Exception e) {
             // We couldn't load the addon, aborting.
             plugin.logError("Could not load addon '" + f.getName() + "'. Error is: " + e.getMessage());
             plugin.logStacktrace(e);
             return;
         }
+        // Success
+        if (result.success) {
+            // Initialize some settings
+            result.addon.setDataFolder(new File(f.getParent(), result.addon.getDescription().getName()));
+            result.addon.setFile(f);
+            // Initialize addon
+            initializeAddon(result.addon);
+        }
+    }
 
-        // Initialize some settings
-        addon.setDataFolder(new File(f.getParent(), addon.getDescription().getName()));
-        addon.setFile(f);
-        // Initialize addon
-        initializeAddon(addon);
-
+    private PladdonData loadPladdon(YamlConfiguration data, @NonNull File f) throws InvalidAddonInheritException, MalformedURLException, InvalidAddonDescriptionException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException, InvalidDescriptionException {
+        Addon addon = null;
+        try {
+            Plugin pladdon = pluginLoader.loadPlugin(f);
+            if (pladdon instanceof Pladdon pl) {
+                addon = pl.getAddon();
+                addon.setDescription(AddonClassLoader.asDescription(data));
+                // Mark pladdon as enabled.
+                pl.setEnabled();
+                pladdons.put(addon, pladdon);
+            } else {
+                plugin.logError("Could not load pladdon!");
+                return new PladdonData(null, false);
+            }
+        } catch (Exception ex) {
+            // Addon not pladdon
+            AddonClassLoader addonClassLoader = new AddonClassLoader(this, data, f, this.getClass().getClassLoader());
+            // Get the addon itself
+            addon = addonClassLoader.getAddon();
+            // Add to the list of loaders
+            loaders.put(addon, addonClassLoader);
+        }
+        return new PladdonData(addon, true);
     }
 
     private void initializeAddon(Addon addon) {
@@ -302,6 +314,8 @@ public class AddonsManager {
             if (addon instanceof GameModeAddon gameMode) {
                 // Create the gameWorlds
                 gameMode.createWorlds();
+                // Create the seed worlds
+                createSeedWorlds(gameMode);
                 plugin.getIWM().addGameMode(gameMode);
                 // Save and load blueprints
                 plugin.getBlueprintsManager().extractDefaultBlueprints(gameMode);
@@ -329,6 +343,30 @@ public class AddonsManager {
     }
 
     /**
+     * Create seed worlds, which are used for deletion
+     * @param gameMode
+     */
+    private void createSeedWorlds(GameModeAddon gameMode) {
+        if (gameMode.getOverWorld() != null) {
+            seedWorld(gameMode, gameMode.getOverWorld());
+        }
+        if (gameMode.getNetherWorld() != null) {
+            seedWorld(gameMode, gameMode.getNetherWorld());
+        }
+        if (gameMode.getEndWorld() != null) {
+            seedWorld(gameMode, gameMode.getEndWorld());
+        }
+    }
+
+    private void seedWorld(GameModeAddon gameMode, @NonNull World world) {
+        // Use the Flat type of world because this is a copy and no vanilla creation is required
+        WorldCreator wc = WorldCreator.name(world.getName() + "/bentobox").type(WorldType.FLAT).environment(world.getEnvironment())
+                .seed(world.getSeed());
+        World w = gameMode.getWorldSettings().isUseOwnGenerator() ? wc.createWorld() : wc.generator(world.getGenerator()).createWorld();
+        w.setDifficulty(Difficulty.PEACEFUL);
+    }
+
+    /**
      * Handles an addon which failed to load due to an incompatibility (missing class, missing method).
      * @param addon instance of the Addon.
      * @param e - linkage exception
@@ -342,8 +380,8 @@ public class AddonsManager {
         plugin.logWarning("NOTE: DO NOT report this as a bug from BentoBox.");
         StringBuilder a = new StringBuilder();
         addon.getDescription().getAuthors().forEach(author -> a.append(author).append(" "));
-        plugin.getLogger().log(Level.SEVERE, "Please report this stack trace to the addon's author(s): " + a, e);
-
+        plugin.logError("Please report this stack trace to the addon's author(s): " + a);
+        plugin.logStacktrace(e);
     }
 
     private boolean isAddonCompatibleWithBentoBox(@NonNull Addon addon) {
@@ -477,27 +515,27 @@ public class AddonsManager {
         return getEnabledAddons().stream()
                 .filter(GameModeAddon.class::isInstance)
                 .map(GameModeAddon.class::cast)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
-     * Gets the list of Addons that are loaded.
+     * Gets an unmodifiable list of Addons that are loaded.
      * @return list of loaded Addons.
      * @since 1.1
      */
     @NonNull
     public List<Addon> getLoadedAddons() {
-        return addons.stream().filter(addon -> addon.getState().equals(Addon.State.LOADED)).collect(Collectors.toList());
+        return addons.stream().filter(addon -> addon.getState().equals(Addon.State.LOADED)).toList();
     }
 
     /**
-     * Gets the list of Addons that are enabled.
+     * Gets an unmodifiable list of Addons that are enabled.
      * @return list of enabled Addons.
      * @since 1.1
      */
     @NonNull
     public List<Addon> getEnabledAddons() {
-        return addons.stream().filter(addon -> addon.getState().equals(Addon.State.ENABLED)).collect(Collectors.toList());
+        return addons.stream().filter(addon -> addon.getState().equals(Addon.State.ENABLED)).toList();
     }
 
     @Nullable
@@ -535,7 +573,7 @@ public class AddonsManager {
      */
     private void sortAddons() {
         // Lists all available addons as names.
-        List<String> names = addons.stream().map(a -> a.getDescription().getName()).collect(Collectors.toList());
+        List<String> names = addons.stream().map(a -> a.getDescription().getName()).toList();
 
         // Check that any dependencies exist
         Iterator<Addon> addonsIterator = addons.iterator();
@@ -556,7 +594,7 @@ public class AddonsManager {
         addons.stream().filter(a -> a.getDescription().getDependencies().isEmpty() && a.getDescription().getSoftDependencies().isEmpty())
         .forEach(a -> sortedAddons.put(a.getDescription().getName(), a));
         // Fill remaining
-        List<Addon> remaining = addons.stream().filter(a -> !sortedAddons.containsKey(a.getDescription().getName())).collect(Collectors.toList());
+        List<Addon> remaining = addons.stream().filter(a -> !sortedAddons.containsKey(a.getDescription().getName())).toList();
 
         // Run through remaining addons
         remaining.forEach(addon -> {
@@ -587,7 +625,7 @@ public class AddonsManager {
     public ChunkGenerator getDefaultWorldGenerator(String worldName, String id) {
         // Clean up world name
         String w = worldName.replace("_nether", "").replace("_the_end", "").toLowerCase(Locale.ENGLISH);
-        if (worldNames.containsKey(w)) {
+        if (worldNames.containsKey(w) && worldNames.get(w) != null) {
             return worldNames.get(w).getDefaultWorldGenerator(worldName, id);
         }
         return null;
@@ -647,7 +685,7 @@ public class AddonsManager {
     }
 
     /*
-     * Get a list of addon classes that are of type {@link DataObject}
+     * Get a unmodifiable list of addon classes that are of type {@link DataObject}
      * but not {@link ConfigObject}. Configs are not transitioned to database.
      * Used in database transition.
      * @return list of DataObjects
@@ -658,7 +696,7 @@ public class AddonsManager {
                 .filter(DataObject.class::isAssignableFrom)
                 // Do not include config files
                 .filter(c -> !ConfigObject.class.isAssignableFrom(c))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**

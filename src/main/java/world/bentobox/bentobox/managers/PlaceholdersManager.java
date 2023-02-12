@@ -11,6 +11,8 @@ import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.placeholders.PlaceholderReplacer;
+import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.hooks.placeholders.PlaceholderAPIHook;
 import world.bentobox.bentobox.lists.GameModePlaceholder;
 
@@ -100,7 +102,7 @@ public class PlaceholdersManager {
      */
     @NonNull
     private Optional<PlaceholderAPIHook> getPlaceholderAPIHook() {
-        return plugin.getHooks().getHook("PlaceholderAPI").map(hook -> (PlaceholderAPIHook) hook);
+        return plugin.getHooks().getHook("PlaceholderAPI").map(PlaceholderAPIHook.class::cast);
     }
 
     /**
@@ -116,12 +118,12 @@ public class PlaceholdersManager {
 
     /**
      * Replaces the placeholders in this String and returns it.
-     * @param player the Player to get the placeholders for.
+     * @param player the Player to get the placeholders for or null for non-player-specific placeholders
      * @param string the String to replace the placeholders in.
      * @return the String with placeholders replaced, or the identical String if no placeholders were available.
      * @since 1.5.0
      */
-    public String replacePlaceholders(@NonNull Player player, @NonNull String string) {
+    public String replacePlaceholders(@Nullable Player player, @NonNull String string) {
         return getPlaceholderAPIHook().map(papi -> papi.replacePlaceholders(player, string)).orElse(string);
     }
 
@@ -131,6 +133,32 @@ public class PlaceholdersManager {
      */
     public void unregisterAll() {
         getPlaceholderAPIHook().ifPresent(PlaceholderAPIHook::unregisterAll);
-        
+
+    }
+
+    /**
+     * Default placeholder
+     *
+     */
+    class DefaultPlaceholder implements PlaceholderReplacer {
+        private final GameModeAddon addon;
+        private final GameModePlaceholder type;
+        public DefaultPlaceholder(GameModeAddon addon, GameModePlaceholder type) {
+            this.addon = addon;
+            this.type = type;
+        }
+        /* (non-Javadoc)
+         * @see world.bentobox.bentobox.api.placeholders.PlaceholderReplacer#onReplace(world.bentobox.bentobox.api.user.User)
+         */
+        @NonNull
+        @Override
+        public String onReplace(@Nullable User user) {
+            if (user == null) {
+                return "";
+            }
+            Island island = addon.getIslands().getIsland(addon.getOverWorld(), user);
+
+            return type.getReplacer().onReplace(addon, user, island);
+        }
     }
 }

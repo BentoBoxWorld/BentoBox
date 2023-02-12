@@ -14,11 +14,13 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockGrowEvent;
+import org.bukkit.event.block.BlockSpreadEvent;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -88,6 +90,7 @@ public class OfflineGrowthListenerTest {
         // Blocks
         when(block.getWorld()).thenReturn(world);
         when(block.getLocation()).thenReturn(inside);
+        when(block.getType()).thenReturn(Material.KELP);
 
         PowerMockito.mockStatic(Util.class);
         when(Util.getWorld(any())).thenReturn(world);
@@ -191,4 +194,113 @@ public class OfflineGrowthListenerTest {
         assertFalse(e.isCancelled());
     }
 
+    /**
+     * Test method for {@link OfflineGrowthListener#onSpread(BlockSpreadEvent}.
+     */
+    @Test
+    public void testOnSpreadDoNothing() {
+        // Make an event to give some current to block
+        BlockSpreadEvent e = new BlockSpreadEvent(block, block, blockState);
+        OfflineGrowthListener orl = new OfflineGrowthListener();
+        Flags.OFFLINE_GROWTH.setSetting(world, true);
+        orl.onSpread(e);
+        // Allow growth
+        assertFalse(e.isCancelled());
+    }
+
+    /**
+     * Test method for {@link OfflineGrowthListener#onSpread(BlockSpreadEvent}.
+     */
+    @Test
+    public void testOnSpreadMembersOnline() {
+        // Make an event to give some current to block
+        BlockSpreadEvent e = new BlockSpreadEvent(block, block, blockState);
+        OfflineGrowthListener orl = new OfflineGrowthListener();
+        // Offline Growth not allowed
+        Flags.OFFLINE_GROWTH.setSetting(world, false);
+        // Members are online
+        when(Bukkit.getPlayer(any(UUID.class))).thenReturn(mock(Player.class));
+
+        orl.onSpread(e);
+        // Allow growth
+        assertFalse(e.isCancelled());
+    }
+
+    /**
+     * Test method for {@link OfflineGrowthListener#onSpread(BlockSpreadEvent}.
+     */
+    @Test
+    public void testOnSpreadMembersOffline() {
+        // Make an event to give some current to block
+        BlockSpreadEvent e = new BlockSpreadEvent(block, block, blockState);
+        OfflineGrowthListener orl = new OfflineGrowthListener();
+        // Offline Growth not allowed
+        Flags.OFFLINE_GROWTH.setSetting(world, false);
+        // Members are online
+        when(Bukkit.getPlayer(any(UUID.class))).thenReturn(null);
+
+        orl.onCropGrow(e);
+        // Block growth
+        assertTrue(e.isCancelled());
+
+        when(block.getType()).thenReturn(Material.BAMBOO);
+        orl.onSpread(e);
+        // Block growth
+        assertTrue(e.isCancelled());
+
+        when(block.getType()).thenReturn(Material.BAMBOO_SAPLING);
+        orl.onSpread(e);
+        // Block growth
+        assertTrue(e.isCancelled());
+    }
+
+    /**
+     * Test method for {@link OfflineGrowthListener#onSpread(BlockSpreadEvent}.
+     */
+    @Test
+    public void testOnSpreadMembersOfflineTree() {
+        when(block.getType()).thenReturn(Material.SPRUCE_LOG);
+        // Make an event to give some current to block
+        BlockSpreadEvent e = new BlockSpreadEvent(block, block, blockState);
+        OfflineGrowthListener orl = new OfflineGrowthListener();
+        // Offline Growth not allowed
+        Flags.OFFLINE_GROWTH.setSetting(world, false);
+        // Members are online
+        when(Bukkit.getPlayer(any(UUID.class))).thenReturn(null);
+
+        orl.onSpread(e);
+        // Do not block growth
+        assertFalse(e.isCancelled());
+    }
+
+    /**
+     * Test method for {@link OfflineGrowthListener#onSpread(BlockSpreadEvent}.
+     */
+    @Test
+    public void testOnSpreadNonIsland() {
+        // Make an event to give some current to block
+        BlockSpreadEvent e = new BlockSpreadEvent(block, block, blockState);
+        OfflineGrowthListener orl = new OfflineGrowthListener();
+        Flags.OFFLINE_GROWTH.setSetting(world, false);
+        when(im.getProtectedIslandAt(eq(inside))).thenReturn(Optional.empty());
+        orl.onSpread(e);
+        // Allow growth
+        assertFalse(e.isCancelled());
+    }
+
+    /**
+     * Test method for {@link OfflineGrowthListener#onSpread(BlockSpreadEvent}.
+     */
+    @Test
+    public void testOnSpreadNonBentoBoxWorldIsland() {
+        when(iwm.inWorld(any(World.class))).thenReturn(false);
+        // Make an event to give some current to block
+        BlockSpreadEvent e = new BlockSpreadEvent(block, block, blockState);
+        OfflineGrowthListener orl = new OfflineGrowthListener();
+        Flags.OFFLINE_GROWTH.setSetting(world, false);
+        when(im.getProtectedIslandAt(eq(inside))).thenReturn(Optional.empty());
+        orl.onSpread(e);
+        // Allow growth
+        assertFalse(e.isCancelled());
+    }
 }

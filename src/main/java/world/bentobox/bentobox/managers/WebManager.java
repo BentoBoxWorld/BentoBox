@@ -8,7 +8,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -34,15 +33,16 @@ import world.bentobox.bentobox.web.credits.Contributor;
  */
 public class WebManager {
 
-    private @NonNull
-    final BentoBox plugin;
-    private @Nullable GitHubWebAPI gitHub;
-    private @NonNull
-    final List<CatalogEntry> addonsCatalog;
-    private @NonNull
-    final List<CatalogEntry> gamemodesCatalog;
-    private @NonNull
-    final Map<String, List<Contributor>> contributors;
+    @NonNull
+    private final BentoBox plugin;
+    @Nullable
+    private GitHubWebAPI gitHub;
+    @NonNull
+    private final List<CatalogEntry> addonsCatalog;
+    @NonNull
+    private final List<CatalogEntry> gamemodesCatalog;
+    @NonNull
+    private final Map<String, List<Contributor>> contributors;
 
     public WebManager(@NonNull BentoBox plugin) {
         this.plugin = plugin;
@@ -103,7 +103,7 @@ public class WebManager {
             repositories.addAll(plugin.getAddonsManager().getEnabledAddons()
                     .stream().map(addon -> addon.getDescription().getRepository())
                     .filter(repo -> !repo.isEmpty())
-                    .collect(Collectors.toList()));
+                    .toList());
 
             /* Download the contributors */
             if (plugin.getSettings().isLogGithubDownloadData()) {
@@ -137,7 +137,7 @@ public class WebManager {
         // Register the tags translations in the locales
         if (!tagsContent.isEmpty()) {
             try {
-                JsonObject tags = new JsonParser().parse(tagsContent).getAsJsonObject();
+                JsonObject tags = JsonParser.parseString(tagsContent).getAsJsonObject();
                 tags.entrySet().forEach(entry -> plugin.getLocalesManager().getLanguages().values().forEach(locale -> {
                     JsonElement translation = entry.getValue().getAsJsonObject().get(locale.toLanguageTag());
                     if (translation != null) {
@@ -154,7 +154,7 @@ public class WebManager {
         // Register the topics translations in the locales
         if (!topicsContent.isEmpty()) {
             try {
-                JsonObject topics = new JsonParser().parse(topicsContent).getAsJsonObject();
+                JsonObject topics = JsonParser.parseString(topicsContent).getAsJsonObject();
                 topics.entrySet().forEach(entry -> plugin.getLocalesManager().getLanguages().values().forEach(locale -> {
                     JsonElement translation = entry.getValue().getAsJsonObject().get(locale.toLanguageTag());
                     if (translation != null) {
@@ -171,7 +171,7 @@ public class WebManager {
         // Register the catalog data
         if (!catalogContent.isEmpty()) {
             try {
-                JsonObject catalog = new JsonParser().parse(catalogContent).getAsJsonObject();
+                JsonObject catalog = JsonParser.parseString(catalogContent).getAsJsonObject();
 
                 this.addonsCatalog.clear();
                 this.gamemodesCatalog.clear();

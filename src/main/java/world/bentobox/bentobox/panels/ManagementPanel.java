@@ -1,7 +1,6 @@
 package world.bentobox.bentobox.panels;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -91,7 +90,7 @@ public class ManagementPanel {
                 }
             }
             case ADDONS -> {
-                addons = plugin.getAddonsManager().getEnabledAddons().stream().filter(addon -> !(addon instanceof GameModeAddon)).collect(Collectors.toList());
+                addons = plugin.getAddonsManager().getEnabledAddons().stream().filter(addon -> !(addon instanceof GameModeAddon)).toList();
                 if (addons.isEmpty()) {
                     looksEmpty(builder, user);
                     break;

@@ -2,7 +2,6 @@ package world.bentobox.bentobox.panels.settings;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -82,7 +81,7 @@ public class WorldDefaultSettingsTab extends SettingsTab implements Tab {
                     TextVariables.DESCRIPTION, user.getTranslation(f.getDescriptionReference()),
                     "[setting]", worldSetting).split("\n")));
             return i;
-        }).collect(Collectors.toList());
+        }).toList();
     }
 
 }

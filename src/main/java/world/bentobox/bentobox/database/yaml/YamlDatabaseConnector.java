@@ -25,8 +25,6 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.eclipse.jdt.annotation.NonNull;
 
-import com.google.common.base.Charsets;
-
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.database.DatabaseConnector;
 
@@ -100,11 +98,14 @@ public class YamlDatabaseConnector implements DatabaseConnector {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(yamlFile), StandardCharsets.UTF_8))){
             File temp = File.createTempFile("file", ".tmp", yamlFile.getParentFile());
             writer = new PrintWriter(new OutputStreamWriter(new FileOutputStream(temp), StandardCharsets.UTF_8));
-            for (String line; (line = reader.readLine()) != null;) {
+            String line = reader.readLine();
+            while (line != null) {
                 line = line.replace("!!java.util.UUID", "");
                 writer.println(line);
+                line = reader.readLine();
             }
-            if (yamlFile.delete() && !temp.renameTo(yamlFile)) {
+            Files.delete(yamlFile.toPath());
+            if (!temp.renameTo(yamlFile)) {
                 plugin.logError("Could not rename fixed Island object. Are the writing permissions correctly setup?");
             }
         } catch (Exception e) {
@@ -123,7 +124,7 @@ public class YamlDatabaseConnector implements DatabaseConnector {
         if (!tableFolder.exists()) {
             tableFolder.mkdirs();
         }
-        try (Writer writer = new OutputStreamWriter(new FileOutputStream(file), Charsets.UTF_8)) {
+        try (Writer writer = new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8)) {
             writer.write(data);
         } catch (IOException e) {
             plugin.logError("Could not save yml file: " + tableName + " " + fileName + " " + e.getMessage());
@@ -151,9 +152,8 @@ public class YamlDatabaseConnector implements DatabaseConnector {
                 for (Entry<String, String> e : commentMap.entrySet()) {
                     if (nextLine.contains(e.getKey())) {
                         // We want the comment to start at the same level as the entry
-                        String commentLine = " ".repeat(Math.max(0, nextLine.indexOf(e.getKey()))) +
+                        nextLine = " ".repeat(Math.max(0, nextLine.indexOf(e.getKey()))) +
                                 e.getValue();
-                        nextLine = commentLine;
                         break;
                     }
                 }

@@ -7,6 +7,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -380,7 +381,7 @@ public class PortalTeleportationListenerTest {
         // Event is canceled
         assertTrue(e.isCancelled());
         // If nether islands, then to = from but in nether
-        verify(from).toVector();
+        verify(from, times(2)).toVector();
         // Do not go to spawn
         verify(nether, never()).getSpawnLocation();
     }
@@ -416,7 +417,7 @@ public class PortalTeleportationListenerTest {
         // Verify
         assertTrue(e.isCancelled());
         // If nether islands, then to = from but in nether
-        verify(from).toVector();
+        verify(from, times(2)).toVector();
         // Do not go to spawn
         verify(nether, never()).getSpawnLocation();
     }
@@ -447,7 +448,7 @@ public class PortalTeleportationListenerTest {
         // Verify
         assertTrue(e.isCancelled());
         // If nether islands, then to = from but in nether
-        verify(from).toVector();
+        verify(from, times(2)).toVector();
         // Do not go to spawn
         verify(nether, never()).getSpawnLocation();
     }

@@ -18,8 +18,6 @@ import org.bukkit.conversations.ConversationFactory;
 import org.bukkit.event.inventory.ClickType;
 import org.eclipse.jdt.annotation.NonNull;
 
-import com.google.common.collect.ImmutableMap;
-
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.localization.TextVariables;
@@ -75,8 +73,8 @@ public class BlueprintManagementPanel {
         endBlueprint = new Blueprint().setIcon(Material.YELLOW_STAINED_GLASS_PANE)
                 .setName(user.getTranslation("general.worlds.the-end"))
                 .setDescription(t(INSTRUCTION));
-        slotToEnvironment = ImmutableMap.of(3, World.Environment.NORMAL, 5, World.Environment.NETHER, 7, World.Environment.THE_END);
-        environmentToBlueprint = ImmutableMap.of(World.Environment.NORMAL, normalBlueprint, World.Environment.NETHER, netherBlueprint, World.Environment.THE_END, endBlueprint);
+        slotToEnvironment = Map.of(3, World.Environment.NORMAL, 5, World.Environment.NETHER, 7, World.Environment.THE_END);
+        environmentToBlueprint = Map.of(World.Environment.NORMAL, normalBlueprint, World.Environment.NETHER, netherBlueprint, World.Environment.THE_END, endBlueprint);
     }
 
     private String t(String t) {
@@ -241,7 +239,7 @@ public class BlueprintManagementPanel {
     protected PanelItem getBundleIcon(BlueprintBundle bb) {
         return new PanelItemBuilder()
                 .name(t("edit-description"))
-                .description(bb.getDescription().stream().map(Util::translateColorCodes).collect(Collectors.toList()))
+                .description(bb.getDescription().stream().map(Util::translateColorCodes).toList())
                 .icon(bb.getIcon())
                 .clickHandler((panel, u, clickType, slot) -> {
                     u.closeInventory();
@@ -339,7 +337,7 @@ public class BlueprintManagementPanel {
     protected PanelItem getBlueprintItem(GameModeAddon addon, int pos, BlueprintBundle bb, Blueprint blueprint) {
         // Create description
         List<String> desc = blueprint.getDescription() == null ? new ArrayList<>() : blueprint.getDescription();
-        desc = desc.stream().map(Util::translateColorCodes).collect(Collectors.toList());
+        desc = desc.stream().map(Util::translateColorCodes).collect(Collectors.toList()); // Must be mutable
         if ((!blueprint.equals(endBlueprint) && !blueprint.equals(normalBlueprint) && !blueprint.equals(netherBlueprint))) {
             if ((pos > MIN_WORLD_SLOT && pos < MAX_WORLD_SLOT)) {
                 desc.add(t("remove"));

@@ -5,27 +5,34 @@ import world.bentobox.bentobox.database.AbstractDatabaseHandler;
 import world.bentobox.bentobox.database.DatabaseConnectionSettingsImpl;
 import world.bentobox.bentobox.database.DatabaseSetup;
 
-public class MySQLDatabase implements DatabaseSetup {
-
+public class MySQLDatabase implements DatabaseSetup
+{
+    /**
+     * MySQL Database Connector
+     */
     private MySQLDatabaseConnector connector;
 
-    /* (non-Javadoc)
-     * @see world.bentobox.bentobox.database.DatabaseSetup#getHandler(java.lang.Class)
+
+    /**
+     * {@inheritDoc}
      */
     @Override
-    public <T> AbstractDatabaseHandler<T> getHandler(Class<T> type) {
+    public <T> AbstractDatabaseHandler<T> getHandler(Class<T> type)
+    {
         BentoBox plugin = BentoBox.getInstance();
-        if (connector == null) {
-            connector = new MySQLDatabaseConnector(new DatabaseConnectionSettingsImpl(
+
+        if (this.connector == null)
+        {
+            this.connector = new MySQLDatabaseConnector(new DatabaseConnectionSettingsImpl(
                     plugin.getSettings().getDatabaseHost(),
                     plugin.getSettings().getDatabasePort(),
                     plugin.getSettings().getDatabaseName(),
                     plugin.getSettings().getDatabaseUsername(),
                     plugin.getSettings().getDatabasePassword(),
-                    plugin.getSettings().isUseSSL()
-                    ));
+                    plugin.getSettings().isUseSSL(),
+                    plugin.getSettings().getMaximumPoolSize()));
         }
-        return new MySQLDatabaseHandler<>(plugin, type, connector);
-    }
 
+        return new MySQLDatabaseHandler<>(plugin, type, this.connector);
+    }
 }

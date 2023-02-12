@@ -26,7 +26,6 @@ import world.bentobox.bentobox.database.json.adapters.LocationTypeAdapter;
 import world.bentobox.bentobox.database.json.adapters.PotionEffectTypeAdapter;
 import world.bentobox.bentobox.database.json.adapters.VectorTypeAdapter;
 import world.bentobox.bentobox.database.json.adapters.WorldTypeAdapter;
-import world.bentobox.bentobox.versions.ServerCompatibility;
 
 
 /**

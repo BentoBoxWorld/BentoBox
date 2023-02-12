@@ -14,7 +14,7 @@ import world.bentobox.bentobox.api.hooks.Hook;
  *
  * @author Poslovitch
  */
-public class MultiverseCoreHook extends Hook {
+public class MultiverseCoreHook extends Hook implements WorldManagementHook {
 
     private static final String MULTIVERSE_SET_GENERATOR = "mv modify set generator ";
     private static final String MULTIVERSE_IMPORT = "mv import ";
@@ -28,6 +28,7 @@ public class MultiverseCoreHook extends Hook {
      * @param world - world to register
      * @param islandWorld - if true, then this is an island world
      */
+    @Override
     public void registerWorld(World world, boolean islandWorld) {
         if (islandWorld) {
             // Only register generator if one is defined in the addon (is not null)

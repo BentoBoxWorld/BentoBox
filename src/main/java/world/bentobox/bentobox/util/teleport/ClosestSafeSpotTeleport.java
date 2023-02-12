@@ -7,6 +7,16 @@
 package world.bentobox.bentobox.util.teleport;
 
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
+import java.util.PriorityQueue;
+import java.util.Queue;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.ChunkSnapshot;
@@ -21,15 +31,6 @@ import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
-import java.util.PriorityQueue;
-import java.util.Queue;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.user.User;
@@ -73,30 +74,28 @@ public class ClosestSafeSpotTeleport
      */
     private void checkLocation()
     {
-        if (this.plugin.getIslandsManager().isSafeLocation(this.location))
+        if (!this.portal && this.plugin.getIslandsManager().isSafeLocation(this.location))
         {
-            if (!this.portal)
-            {
-                // If this is not a portal teleport, then go to the safe location immediately
-                this.teleportEntity(this.location);
-                // Position search is completed. Quit faster.
-                return;
-            }
+            // If this is not a portal teleport, then go to the safe location immediately
+            this.teleportEntity(this.location);
+            // Position search is completed. Quit faster.
+            return;
         }
+
 
         // Players should not be teleported outside protection range if they already are in it.
         this.boundingBox = this.plugin.getIslandsManager().getIslandAt(this.location).
-            map(Island::getProtectionBoundingBox).
-            orElseGet(() -> {
-                int protectionRange = this.plugin.getIWM().getIslandProtectionRange(this.world);
+                map(Island::getProtectionBoundingBox).
+                orElseGet(() -> {
+                    double protectionRange = this.plugin.getIWM().getIslandProtectionRange(this.world);
 
-                return new BoundingBox(this.location.getBlockX() - protectionRange,
-                    Math.max(this.world.getMinHeight(), this.location.getBlockY() - protectionRange),
-                    this.location.getBlockZ() - protectionRange,
-                    this.location.getBlockX() + protectionRange,
-                    Math.min(this.world.getMaxHeight(), this.location.getBlockY() + protectionRange),
-                    this.location.getBlockZ() + protectionRange);
-            });
+                    return new BoundingBox(this.location.getBlockX() - protectionRange,
+                            Math.max(this.world.getMinHeight(), this.location.getBlockY() - protectionRange),
+                            this.location.getBlockZ() - protectionRange,
+                            this.location.getBlockX() + protectionRange,
+                            Math.min(this.world.getMaxHeight(), this.location.getBlockY() + protectionRange),
+                            this.location.getBlockZ() + protectionRange);
+                });
 
         // The maximal range of search.
         this.range = Math.min(this.plugin.getSettings().getSafeSpotSearchRange(), (int) this.boundingBox.getWidthX() / 2);
@@ -147,17 +146,17 @@ public class ClosestSafeSpotTeleport
 
         // Get the chunk snapshot and scan it
         Util.getChunkAtAsync(this.world, chunkPair.x, chunkPair.z).
-            thenApply(Chunk::getChunkSnapshot).
-            whenCompleteAsync((snapshot, e) ->
+        thenApply(Chunk::getChunkSnapshot).
+        whenCompleteAsync((snapshot, e) ->
+        {
+            if (snapshot != null)
             {
-                if (snapshot != null)
-                {
-                    // Find best spot based on collected information chunks.
-                    this.scanAndPopulateBlockQueue(snapshot);
-                }
+                // Find best spot based on collected information chunks.
+                this.scanAndPopulateBlockQueue(snapshot);
+            }
 
-                this.checking.set(false);
-            });
+            this.checking.set(false);
+        });
     }
 
 
@@ -173,11 +172,9 @@ public class ClosestSafeSpotTeleport
         int x = this.location.getBlockX();
         int z = this.location.getBlockZ();
 
-        int range = 20;
-
         // Normalize block coordinates to chunk coordinates and add extra 1 for visiting.
-        int numberOfChunks = (((x + range) >> 4) - ((x - range) >> 4) + 1) *
-            (((z + range) >> 4) - ((z - range) >> 4) + 1);
+        int numberOfChunks = (((x + SCAN_RANGE) >> 4) - ((x - SCAN_RANGE) >> 4) + 1) *
+                (((z + SCAN_RANGE) >> 4) - ((z - SCAN_RANGE) >> 4) + 1);
 
         // Ideally it would be if visitor switch from clockwise to counter-clockwise if X % 16 < 8 and
         // up to down if Z % 16 < 8.
@@ -214,11 +211,11 @@ public class ClosestSafeSpotTeleport
      * @param chunkCoord Chunk coordinate.
      */
     private void addChunk(List<Pair<Integer, Integer>> chunksToScan,
-        Pair<Integer, Integer> blockCoord,
-        Pair<Integer, Integer> chunkCoord)
+            Pair<Integer, Integer> blockCoord,
+            Pair<Integer, Integer> chunkCoord)
     {
         if (!chunksToScan.contains(chunkCoord) &&
-            this.plugin.getIslandsManager().getIslandAt(this.location).
+                this.plugin.getIslandsManager().getIslandAt(this.location).
                 map(is -> is.inIslandSpace(blockCoord)).orElse(true))
         {
             chunksToScan.add(chunkCoord);
@@ -255,16 +252,16 @@ public class ClosestSafeSpotTeleport
                         // Process positions that are inside bounding box of search area.
 
                         PositionData positionData = new PositionData(
-                            positionVector,
-                            chunkSnapshot.getBlockType(x, y - 1, z),
-                            y < maxY ? chunkSnapshot.getBlockType(x, y, z) : null,
-                            y + 1 < maxY ? chunkSnapshot.getBlockType(x, y + 1, z) : null,
-                            blockVector.distanceSquared(positionVector));
+                                positionVector,
+                                chunkSnapshot.getBlockType(x, y - 1, z),
+                                y < maxY ? chunkSnapshot.getBlockType(x, y, z) : null,
+                                        y + 1 < maxY ? chunkSnapshot.getBlockType(x, y + 1, z) : null,
+                                                blockVector.distanceSquared(positionVector));
 
                         if (this.plugin.getIslandsManager().checkIfSafe(this.world,
-                            positionData.block,
-                            positionData.spaceOne,
-                            positionData.spaceTwo))
+                                positionData.block,
+                                positionData.spaceOne,
+                                positionData.spaceTwo))
                         {
                             // Add only safe locations to the queue.
                             this.blockQueue.add(positionData);
@@ -312,7 +309,7 @@ public class ClosestSafeSpotTeleport
                 Block highestBlock = this.world.getHighestBlockAt(this.location);
 
                 if (highestBlock.getType().isSolid() &&
-                    this.plugin.getIslandsManager().isSafeLocation(highestBlock.getLocation()))
+                        this.plugin.getIslandsManager().isSafeLocation(highestBlock.getLocation()))
                 {
                     // Try to teleport player to the highest block.
                     this.asyncTeleport(highestBlock.getLocation().add(new Vector(0.5D, 0D, 0.5D)));
@@ -437,15 +434,15 @@ public class ClosestSafeSpotTeleport
         if (this.portal)
         {
             if (Material.NETHER_PORTAL.equals(positionData.spaceOne()) ||
-                Material.NETHER_PORTAL.equals(positionData.spaceTwo()))
+                    Material.NETHER_PORTAL.equals(positionData.spaceTwo()))
             {
                 // Portal is found. Teleport entity to the portal location.
                 this.teleportEntity(new Location(this.world,
-                    positionData.vector().getBlockX() + 0.5,
-                    positionData.vector().getBlockY() + 0.1,
-                    positionData.vector().getBlockZ() + 0.5,
-                    this.location.getYaw(),
-                    this.location.getPitch()));
+                        positionData.vector().getBlockX() + 0.5,
+                        positionData.vector().getBlockY() + 0.1,
+                        positionData.vector().getBlockZ() + 0.5,
+                        this.location.getYaw(),
+                        this.location.getPitch()));
 
                 // Position found and player can is already teleported to it.
                 return true;
@@ -454,22 +451,22 @@ public class ClosestSafeSpotTeleport
             {
                 // Mark first incoming position as the best for teleportation.
                 this.noPortalPosition = new Location(this.world,
-                    positionData.vector().getBlockX() + 0.5,
-                    positionData.vector().getBlockY() + 0.1,
-                    positionData.vector().getBlockZ() + 0.5,
-                    this.location.getYaw(),
-                    this.location.getPitch());
+                        positionData.vector().getBlockX() + 0.5,
+                        positionData.vector().getBlockY() + 0.1,
+                        positionData.vector().getBlockZ() + 0.5,
+                        this.location.getYaw(),
+                        this.location.getPitch());
             }
         }
         else
         {
             // First best position should be valid for teleportation.
             this.teleportEntity(new Location(this.world,
-                positionData.vector().getBlockX() + 0.5,
-                positionData.vector().getBlockY() + 0.1,
-                positionData.vector().getBlockZ() + 0.5,
-                this.location.getYaw(),
-                this.location.getPitch()));
+                    positionData.vector().getBlockX() + 0.5,
+                    positionData.vector().getBlockY() + 0.1,
+                    positionData.vector().getBlockZ() + 0.5,
+                    this.location.getYaw(),
+                    this.location.getPitch()));
             return true;
         }
 
@@ -494,9 +491,9 @@ public class ClosestSafeSpotTeleport
     }
 
 
-// ---------------------------------------------------------------------
-// Section: Builder
-// ---------------------------------------------------------------------
+    // ---------------------------------------------------------------------
+    // Section: Builder
+    // ---------------------------------------------------------------------
 
 
     public static class Builder
@@ -774,9 +771,9 @@ public class ClosestSafeSpotTeleport
     }
 
 
-// ---------------------------------------------------------------------
-// Section: Constants
-// ---------------------------------------------------------------------
+    // ---------------------------------------------------------------------
+    // Section: Constants
+    // ---------------------------------------------------------------------
 
     /**
      * This comparator sorts position data based in order:
@@ -785,19 +782,25 @@ public class ClosestSafeSpotTeleport
      * - the smallest z value
      * - the smallest y value
      */
-    private final static Comparator<PositionData> POSITION_COMPARATOR = Comparator.comparingDouble(PositionData::distance).
-        thenComparingInt(position -> position.vector().getBlockX()).
-        thenComparingInt(position -> position.vector().getBlockZ()).
-        thenComparingInt(position -> position.vector().getBlockY());
+    private static final Comparator<PositionData> POSITION_COMPARATOR = Comparator.comparingDouble(PositionData::distance).
+            thenComparingInt(position -> position.vector().getBlockX()).
+            thenComparingInt(position -> position.vector().getBlockZ()).
+            thenComparingInt(position -> position.vector().getBlockY());
 
     /**
      * Stores chunk load speed.
      */
     private static final long CHUNK_LOAD_SPEED = 1;
 
-// ---------------------------------------------------------------------
-// Section: Variables
-// ---------------------------------------------------------------------
+    /**
+     * Range to scan
+     */
+    private static final int SCAN_RANGE = 20;
+
+
+    // ---------------------------------------------------------------------
+    // Section: Variables
+    // ---------------------------------------------------------------------
 
     /**
      * BentoBox plugin instance.

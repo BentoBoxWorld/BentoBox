@@ -1,14 +1,15 @@
 package world.bentobox.bentobox.api.flags.clicklisteners;
 
+import java.util.Objects;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.event.inventory.ClickType;
 
-import java.util.Objects;
-
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.events.flags.FlagProtectionChangeEvent;
+import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.panels.Panel;
 import world.bentobox.bentobox.api.panels.PanelItem;
@@ -57,13 +58,13 @@ public class CycleClick implements PanelItem.ClickHandler {
     }
 
     @Override
-    public boolean onClick(Panel panel, User user, ClickType click, int slot) {
+    public boolean onClick(Panel panel, User user2, ClickType click, int slot) {
         // This click listener is used with TabbedPanel and SettingsTabs only
         TabbedPanel tp = (TabbedPanel)panel;
         SettingsTab st = (SettingsTab)tp.getActiveTab();
         // Get the island for this tab
         island = st.getIsland();
-        this.user = user;
+        this.user = user2;
         changeOccurred = false;
         // Permission prefix
         String prefix = plugin.getIWM().getPermissionPrefix(Util.getWorld(user.getWorld()));
@@ -85,61 +86,81 @@ public class CycleClick implements PanelItem.ClickHandler {
                 // Rank
                 int currentRank = island.getFlag(flag);
                 if (click.equals(ClickType.LEFT)) {
-                    if (currentRank >= maxRank) {
-                        island.setFlag(flag, minRank);
-                    } else {
-                        island.setFlag(flag, rm.getRankUpValue(currentRank));
-                    }
-                    user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_OFF, 1F, 1F);
-                    // Fire event
-                    Bukkit.getPluginManager().callEvent(new FlagProtectionChangeEvent(island, user.getUniqueId(), flag, island.getFlag(flag)));
+                    leftClick(flag, rm, currentRank);
 
-                    // Subflag support
-                    if (flag.hasSubflags()) {
-                        // Fire events for all subflags as well
-                        flag.getSubflags().forEach(subflag -> Bukkit.getPluginManager().callEvent(new FlagProtectionChangeEvent(island, user.getUniqueId(), subflag, island.getFlag(subflag))));
-                    }
                 } else if (click.equals(ClickType.RIGHT)) {
-                    if (currentRank <= minRank) {
-                        island.setFlag(flag, maxRank);
-                    } else {
-                        island.setFlag(flag, rm.getRankDownValue(currentRank));
-                    }
-                    user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 1F, 1F);
-                    // Fire event
-                    Bukkit.getPluginManager().callEvent(new FlagProtectionChangeEvent(island, user.getUniqueId(), flag, island.getFlag(flag)));
+                    rightClick(flag, rm, currentRank);
 
-                    // Subflag support
-                    if (flag.hasSubflags()) {
-                        // Fire events for all subflags as well
-                        flag.getSubflags().forEach(subflag -> Bukkit.getPluginManager().callEvent(new FlagProtectionChangeEvent(island, user.getUniqueId(), subflag, island.getFlag(subflag))));
-                    }
-                } else if (click.equals(ClickType.SHIFT_LEFT) && user.isOp()) {
-                    if (!plugin.getIWM().getHiddenFlags(user.getWorld()).contains(flag.getID())) {
-                        plugin.getIWM().getHiddenFlags(user.getWorld()).add(flag.getID());
-                        user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_GLASS_BREAK, 1F, 1F);
-                    } else {
-                        plugin.getIWM().getHiddenFlags(user.getWorld()).remove(flag.getID());
-                        user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1F, 1F);
-                    }
-                    // Save changes
-                    plugin.getIWM().getAddon(user.getWorld()).ifPresent(GameModeAddon::saveWorldSettings);
+                } else if (click.equals(ClickType.SHIFT_LEFT) && user2.isOp()) {
+                    leftShiftClick(flag);
                 }
             });
         } else {
-            if (island == null) {
-                // Island is not targeted.
-                user.sendMessage("general.errors.not-on-island");
-            } else  {
-                // Player is not the allowed to change settings.
-                user.sendMessage("general.errors.insufficient-rank",
-                    TextVariables.RANK,
-                    user.getTranslation(plugin.getRanksManager().getRank(Objects.requireNonNull(island).getRank(user))));
-            }
-
-            user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_METAL_HIT, 1F, 1F);
+            reportError();
         }
         return true;
+    }
+
+    private void reportError() {
+        if (island == null) {
+            // Island is not targeted.
+            user.sendMessage("general.errors.not-on-island");
+        } else  {
+            // Player is not the allowed to change settings.
+            user.sendMessage("general.errors.insufficient-rank",
+                    TextVariables.RANK,
+                    user.getTranslation(plugin.getRanksManager().getRank(Objects.requireNonNull(island).getRank(user))));
+        }
+        user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_METAL_HIT, 1F, 1F);
+    }
+
+    private void leftClick(Flag flag, RanksManager rm, int currentRank) {
+        if (currentRank >= maxRank) {
+            island.setFlag(flag, minRank);
+        } else {
+            island.setFlag(flag, rm.getRankUpValue(currentRank));
+        }
+        user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_OFF, 1F, 1F);
+        // Fire event
+        Bukkit.getPluginManager().callEvent(new FlagProtectionChangeEvent(island, user.getUniqueId(), flag, island.getFlag(flag)));
+
+        // Subflag support
+        if (flag.hasSubflags()) {
+            // Fire events for all subflags as well
+            flag.getSubflags().forEach(subflag -> Bukkit.getPluginManager().callEvent(new FlagProtectionChangeEvent(island, user.getUniqueId(), subflag, island.getFlag(subflag))));
+        }
+
+    }
+
+    private void rightClick(Flag flag, RanksManager rm, int currentRank) {
+        if (currentRank <= minRank) {
+            island.setFlag(flag, maxRank);
+        } else {
+            island.setFlag(flag, rm.getRankDownValue(currentRank));
+        }
+        user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 1F, 1F);
+        // Fire event
+        Bukkit.getPluginManager().callEvent(new FlagProtectionChangeEvent(island, user.getUniqueId(), flag, island.getFlag(flag)));
+
+        // Subflag support
+        if (flag.hasSubflags()) {
+            // Fire events for all subflags as well
+            flag.getSubflags().forEach(subflag -> Bukkit.getPluginManager().callEvent(new FlagProtectionChangeEvent(island, user.getUniqueId(), subflag, island.getFlag(subflag))));
+        }
+
+    }
+
+    private void leftShiftClick(Flag flag) {
+        if (!plugin.getIWM().getHiddenFlags(user.getWorld()).contains(flag.getID())) {
+            plugin.getIWM().getHiddenFlags(user.getWorld()).add(flag.getID());
+            user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_GLASS_BREAK, 1F, 1F);
+        } else {
+            plugin.getIWM().getHiddenFlags(user.getWorld()).remove(flag.getID());
+            user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1F, 1F);
+        }
+        // Save changes
+        plugin.getIWM().getAddon(user.getWorld()).ifPresent(GameModeAddon::saveWorldSettings);
+
     }
 
     /**

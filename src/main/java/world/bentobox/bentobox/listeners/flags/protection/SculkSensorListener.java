@@ -15,7 +15,6 @@ import org.bukkit.event.block.BlockReceiveGameEvent;
 
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.lists.Flags;
-import world.bentobox.bentobox.versions.ServerCompatibility;
 
 
 /**
@@ -32,14 +31,6 @@ public class SculkSensorListener extends FlagListener
     {
         if (!this.getIWM().inWorld(event.getBlock().getWorld()))
         {
-            return;
-        }
-
-        if (ServerCompatibility.getInstance().isVersion(ServerCompatibility.ServerVersion.V1_18,
-            ServerCompatibility.ServerVersion.V1_18_1,
-            ServerCompatibility.ServerVersion.V1_18_2))
-        {
-            // TODO: 1.18 compatibility exit
             return;
         }
 

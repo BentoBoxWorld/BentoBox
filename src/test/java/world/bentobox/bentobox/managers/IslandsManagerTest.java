@@ -420,7 +420,7 @@ public class IslandsManagerTest {
         when(ground.getType()).thenReturn(Material.STONE);
         when(space1.getType()).thenReturn(Material.AIR);
         when(space2.getType()).thenReturn(Material.END_PORTAL);
-        assertTrue(im.isSafeLocation(location));
+        assertFalse(im.isSafeLocation(location));
         when(ground.getType()).thenReturn(Material.STONE);
         when(space1.getType()).thenReturn(Material.NETHER_PORTAL);
         when(space2.getType()).thenReturn(Material.AIR);
@@ -428,7 +428,7 @@ public class IslandsManagerTest {
         when(ground.getType()).thenReturn(Material.STONE);
         when(space1.getType()).thenReturn(Material.END_PORTAL);
         when(space2.getType()).thenReturn(Material.AIR);
-        assertTrue(im.isSafeLocation(location));
+        assertFalse(im.isSafeLocation(location));
         when(ground.getType()).thenReturn(Material.NETHER_PORTAL);
         when(space1.getType()).thenReturn(Material.AIR);
         when(space2.getType()).thenReturn(Material.AIR);
@@ -437,6 +437,19 @@ public class IslandsManagerTest {
         when(space1.getType()).thenReturn(Material.AIR);
         when(space2.getType()).thenReturn(Material.AIR);
         assertFalse(im.isSafeLocation(location));
+        when(ground.getType()).thenReturn(Material.END_GATEWAY);
+        when(space1.getType()).thenReturn(Material.AIR);
+        when(space2.getType()).thenReturn(Material.AIR);
+        assertFalse(im.isSafeLocation(location));
+        when(ground.getType()).thenReturn(Material.STONE);
+        when(space1.getType()).thenReturn(Material.END_GATEWAY);
+        when(space2.getType()).thenReturn(Material.AIR);
+        assertFalse(im.isSafeLocation(location));
+        when(ground.getType()).thenReturn(Material.STONE);
+        when(space1.getType()).thenReturn(Material.AIR);
+        when(space2.getType()).thenReturn(Material.END_GATEWAY);
+        assertFalse(im.isSafeLocation(location));
+
     }
 
     /**

@@ -7,6 +7,14 @@
 package world.bentobox.bentobox.listeners.teleports;
 
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -14,7 +22,6 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import java.util.*;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
@@ -40,9 +47,9 @@ public abstract class AbstractTeleportListener
     }
 
 
-// ---------------------------------------------------------------------
-// Section: Methods
-// ---------------------------------------------------------------------
+    // ---------------------------------------------------------------------
+    // Section: Methods
+    // ---------------------------------------------------------------------
 
 
     /**
@@ -75,8 +82,8 @@ public abstract class AbstractTeleportListener
     protected boolean isMakePortals(World world, World.Environment environment)
     {
         return this.plugin.getIWM().getAddon(world).
-            map(gameMode -> this.isMakePortals(gameMode, environment)).
-            orElse(false);
+                map(gameMode -> this.isMakePortals(gameMode, environment)).
+                orElse(false);
     }
 
 
@@ -90,9 +97,9 @@ public abstract class AbstractTeleportListener
     protected boolean isMakePortals(GameModeAddon gameMode, World.Environment environment)
     {
         return switch (environment) {
-            case NETHER -> gameMode.getWorldSettings().isMakeNetherPortals();
-            case THE_END -> gameMode.getWorldSettings().isMakeEndPortals();
-            default -> false;
+        case NETHER -> gameMode.getWorldSettings().isMakeNetherPortals();
+        case THE_END -> gameMode.getWorldSettings().isMakeEndPortals();
+        default -> false;
         };
     }
 
@@ -107,9 +114,9 @@ public abstract class AbstractTeleportListener
     protected boolean isAllowedInConfig(World overWorld, World.Environment environment)
     {
         return switch (environment) {
-            case NETHER -> this.plugin.getIWM().isNetherGenerate(overWorld);
-            case THE_END -> this.plugin.getIWM().isEndGenerate(overWorld);
-            default -> true;
+        case NETHER -> this.plugin.getIWM().isNetherGenerate(overWorld);
+        case THE_END -> this.plugin.getIWM().isEndGenerate(overWorld);
+        default -> true;
         };
     }
 
@@ -123,9 +130,9 @@ public abstract class AbstractTeleportListener
     protected boolean isAllowedOnServer(World.Environment environment)
     {
         return switch (environment) {
-            case NETHER -> Bukkit.getAllowNether();
-            case THE_END -> Bukkit.getAllowEnd();
-            default -> true;
+        case NETHER -> Bukkit.getAllowNether();
+        case THE_END -> Bukkit.getAllowEnd();
+        default -> true;
         };
     }
 
@@ -140,9 +147,9 @@ public abstract class AbstractTeleportListener
     protected boolean isIslandWorld(World overWorld, World.Environment environment)
     {
         return switch (environment) {
-            case NETHER -> this.plugin.getIWM().isNetherIslands(overWorld);
-            case THE_END -> this.plugin.getIWM().isEndIslands(overWorld);
-            default -> true;
+        case NETHER -> this.plugin.getIWM().isNetherIslands(overWorld);
+        case THE_END -> this.plugin.getIWM().isEndIslands(overWorld);
+        default -> true;
         };
     }
 
@@ -157,9 +164,9 @@ public abstract class AbstractTeleportListener
     protected World getNetherEndWorld(World overWorld, World.Environment environment)
     {
         return switch (environment) {
-            case NETHER -> this.plugin.getIWM().getNetherWorld(overWorld);
-            case THE_END -> this.plugin.getIWM().getEndWorld(overWorld);
-            default -> Util.getWorld(overWorld);
+        case NETHER -> this.plugin.getIWM().getNetherWorld(overWorld);
+        case THE_END -> this.plugin.getIWM().getEndWorld(overWorld);
+        default -> Util.getWorld(overWorld);
         };
     }
 
@@ -174,9 +181,9 @@ public abstract class AbstractTeleportListener
     protected boolean hasPartnerIsland(Island island, World.Environment environment)
     {
         return switch (environment) {
-            case NETHER -> island.hasNetherIsland();
-            case THE_END -> island.hasEndIsland();
-            default -> true;
+        case NETHER -> island.hasNetherIsland();
+        case THE_END -> island.hasEndIsland();
+        default -> true;
         };
     }
 
@@ -198,7 +205,7 @@ public abstract class AbstractTeleportListener
             int z = Math.abs(island.getProtectionCenter().getBlockZ() - location.getBlockZ());
 
             diff = Math.min(this.plugin.getSettings().getSafeSpotSearchRange(),
-                island.getProtectionRange() - Math.max(x, z));
+                    island.getProtectionRange() - Math.max(x, z));
         }
         else
         {
@@ -219,10 +226,10 @@ public abstract class AbstractTeleportListener
      * @return Location for new portal.
      */
     protected Location calculateLocation(Location fromLocation,
-        World fromWorld,
-        World toWorld,
-        World.Environment environment,
-        boolean canCreatePortal)
+            World fromWorld,
+            World toWorld,
+            World.Environment environment,
+            boolean canCreatePortal)
     {
         // Null check - not that useful
         if (fromWorld == null || toWorld == null)
@@ -234,9 +241,9 @@ public abstract class AbstractTeleportListener
 
         if (!this.isMakePortals(fromWorld, environment))
         {
-            toLocation = this.getIsland(fromLocation).
-                map(island -> island.getSpawnPoint(toWorld.getEnvironment())).
-                orElse(toLocation);
+            toLocation = Objects.requireNonNullElse(this.getIsland(fromLocation).
+                    map(island -> island.getSpawnPoint(toWorld.getEnvironment())).
+                    orElse(toLocation), toLocation);
         }
 
         // Limit Y to the min/max world height.
@@ -269,7 +276,7 @@ public abstract class AbstractTeleportListener
         {
             // Find the portal - due to speed, it is possible that the player will be below or above the portal
             for (k = toWorld.getMinHeight(); (k < fromWorld.getMaxHeight()) &&
-                !fromWorld.getBlockAt(x, k, z).getType().equals(Material.END_PORTAL); k++);
+                    !fromWorld.getBlockAt(x, k, z).getType().equals(Material.END_PORTAL); k++);
         }
 
         // Find the maximum x and z corner
@@ -295,11 +302,11 @@ public abstract class AbstractTeleportListener
     protected Location getSpawnLocation(World world)
     {
         return this.plugin.getIslandsManager().getSpawn(world).map(island ->
-            island.getSpawnPoint(World.Environment.NORMAL) == null ?
+        island.getSpawnPoint(World.Environment.NORMAL) == null ?
                 island.getCenter() :
-                island.getSpawnPoint(World.Environment.NORMAL)).
-            orElse(this.plugin.getIslands().isSafeLocation(world.getSpawnLocation()) ?
-                world.getSpawnLocation() : null);
+                    island.getSpawnPoint(World.Environment.NORMAL)).
+                orElse(this.plugin.getIslands().isSafeLocation(world.getSpawnLocation()) ?
+                        world.getSpawnLocation() : null);
     }
 
 
@@ -312,13 +319,13 @@ public abstract class AbstractTeleportListener
     protected boolean isPastingMissingIslands(World overWorld)
     {
         return this.plugin.getIWM().isPasteMissingIslands(overWorld) &&
-            !this.plugin.getIWM().isUseOwnGenerator(overWorld);
+                !this.plugin.getIWM().isUseOwnGenerator(overWorld);
     }
 
 
-// ---------------------------------------------------------------------
-// Section: Variables
-// ---------------------------------------------------------------------
+    // ---------------------------------------------------------------------
+    // Section: Variables
+    // ---------------------------------------------------------------------
 
 
     /**

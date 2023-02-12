@@ -66,23 +66,29 @@
         <java.version>17</java.version>
         <!-- Non-minecraft related dependencies -->
         <powermock.version>2.0.9</powermock.version>
+        <!-- Database related dependencies -->
         <mongodb.version>3.12.8</mongodb.version>
+        <mariadb.version>3.0.5</mariadb.version>
+        <mysql.version>8.0.27</mysql.version>
+        <postgresql.version>42.2.18</postgresql.version>
+        <hikaricp.version>5.0.1</hikaricp.version>
         <!-- More visible way to change dependency versions -->
-        <spigot.version>1.19.2-R0.1-SNAPSHOT</spigot.version>
+        <spigot.version>1.19.3-R0.1-SNAPSHOT</spigot.version>
         <!-- Might differ from the last Spigot release for short periods 
             of time -->
         <paper.version>1.19-R0.1-SNAPSHOT</paper.version>
-        <bstats.version>2.2.1</bstats.version>
-        <vault.version>1.7</vault.version>
+        <bstats.version>3.0.0</bstats.version>
+        <vault.version>1.7.1</vault.version>
         <placeholderapi.version>2.10.9</placeholderapi.version>
         <githubapi.version>d5f5e0bbd8</githubapi.version>
         <dynmap.version>3.0-SNAPSHOT</dynmap.version>
+        <myworlds.version>1.19.3-v1</myworlds.version>
         <!-- Revision variable removes warning about dynamic version -->
         <revision>${build.version}-SNAPSHOT</revision>
         <!-- Do not change unless you want different name for local builds. -->
         <build.number>-LOCAL</build.number>
         <!-- This allows to change between versions. -->
-        <build.version>1.21.1</build.version>
+        <build.version>1.22.0</build.version>
         <sonar.organization>bentobox-world</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     </properties>
@@ -176,6 +182,11 @@
             <id>nms-repo</id>
             <url>https://repo.codemc.io/repository/nms/</url>
         </repository>
+        <!-- Used for MyWorlds hook -->
+        <repository>
+            <id>MG-Dev Jenkins CI Maven Repository</id>
+            <url>https://ci.mg-dev.eu/plugin/repository/everything</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -197,7 +208,7 @@
         <dependency>
             <groupId>com.mojang</groupId>
             <artifactId>authlib</artifactId>
-            <version>3.2.38</version>
+            <version>3.16.29</version>
             <scope>provided</scope>
         </dependency>
         <!-- Metrics -->
@@ -232,10 +243,11 @@
             <version>${mongodb.version}</version>
             <scope>provided</scope>
         </dependency>
+        <!-- HikariCP database handler -->
         <dependency>
-            <groupId>postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <version>9.1-901-1.jdbc4</version>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+            <version>${hikaricp.version}</version>
             <scope>provided</scope>
         </dependency>
         <!-- Vault: as their maven repo is down, we need to get it from jitpack -->
@@ -260,6 +272,12 @@
             <version>${dynmap.version}</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.bergerkiller.bukkit</groupId>
+            <artifactId>MyWorlds</artifactId>
+            <version>${myworlds.version}</version>
+            <scope>provided</scope>
+        </dependency>
         <!-- Shaded APIs -->
         <dependency>
             <groupId>com.github.TheBusyBiscuit</groupId>
@@ -269,7 +287,7 @@
         <dependency>
             <groupId>com.github.Marcono1234</groupId>
             <artifactId>gson-record-type-adapter-factory</artifactId>
-            <version>0.1.0</version>
+            <version>0.3.0</version>
         </dependency>
         <!-- Static analysis -->
         <!-- We are using Eclipse's annotations. If you're using IDEA, update 
@@ -352,6 +370,7 @@
                 <version>3.0.0-M5</version>
                 <configuration>
                     <argLine>
+                        ${argLine}
                         --add-opens java.base/java.lang=ALL-UNNAMED
                         --add-opens java.base/java.math=ALL-UNNAMED
                         --add-opens java.base/java.io=ALL-UNNAMED
@@ -390,10 +409,11 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.3.0</version>
+                <version>3.4.1</version>
                 <configuration>
                     <source>${java.version}</source>
                     <show>private</show>
+                    <quiet>true</quiet>
                     <failOnError>false</failOnError>
                     <additionalJOption>-Xdoclint:none</additionalJOption>
                     <!-- To compile with Java 11, this tag may be required -->
@@ -495,16 +515,21 @@
                 </configuration>
                 <executions>
                     <execution>
-                        <id>pre-unit-test</id>
+                        <id>prepare-agent</id>
                         <goals>
                             <goal>prepare-agent</goal>
                         </goals>
                     </execution>
                     <execution>
-                        <id>post-unit-test</id>
+                        <id>report</id>
                         <goals>
                             <goal>report</goal>
                         </goals>
+                        <configuration>
+                            <formats>
+                                <format>XML</format>
+                            </formats>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

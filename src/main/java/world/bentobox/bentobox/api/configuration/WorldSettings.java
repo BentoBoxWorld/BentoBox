@@ -32,12 +32,12 @@ public interface WorldSettings extends ConfigObject {
 
     /**
      * @return default rank settings for new islands
-     * @deprecated since 1.21
-     *             Map of Flag, Integer does not allow to load other plugin/addon flags.
+     * @deprecated Map of Flag, Integer does not allow to load other plugin/addon flags.
      *             It cannot be replaced with Map of String, Integer due to compatibility issues.
      * @see WorldSettings#getDefaultIslandFlagNames()
+     * @since 1.21.0
      */
-    @Deprecated
+    @Deprecated(since="1.21.0", forRemoval=true)
     Map<Flag, Integer> getDefaultIslandFlags();
 
     /**
@@ -57,12 +57,12 @@ public interface WorldSettings extends ConfigObject {
 
     /**
      * @return default settings for new
-     * @deprecated since 1.21
-     *             Map of Flag, Integer does not allow to load other plugin/addon flags.
+     * @deprecated Map of Flag, Integer does not allow to load other plugin/addon flags.
      *             It cannot be replaced with Map of String, Integer due to compatibility issues.
      * @see WorldSettings#getDefaultIslandSettingNames()
+     * @since 1.21.0
      */
-    @Deprecated
+    @Deprecated(since="1.21.0", forRemoval=true)
     Map<Flag, Integer> getDefaultIslandSettings();
 
     /**
@@ -70,7 +70,7 @@ public interface WorldSettings extends ConfigObject {
      * This is necessary so users could specify any flag names in settings file from other plugins and addons.
      * Otherwise, Flag reader would mark flag as invalid and remove it.
      * Default implementation is compatibility layer so GameModes that are not upgraded still works.
-     * @since 1.21
+     * @since 1.21.0
      * @return default settings for new islands.
      */
     default Map<String, Integer> getDefaultIslandSettingNames()
@@ -288,6 +288,8 @@ public interface WorldSettings extends ConfigObject {
      * Available placeholders for the commands are the following:
      * <ul>
      *     <li>{@code [player]}: name of the player</li>
+     *     <li>{@code [owner]}: name of the owner of the island. When joining a team, this will be the team leader's name. When
+     *     creating an island, it is the name of the player</li>
      * </ul>
      * <br/>
      * Here are some examples of valid commands to execute:
@@ -345,6 +347,8 @@ public interface WorldSettings extends ConfigObject {
      * Available placeholders for the commands are the following:
      * <ul>
      *     <li>{@code [player]}: name of the player</li>
+     *     <li>{@code [owner]}: name of the owner of the island. When joining a team, this will be the team leader's name. When
+     *     creating an island, it is the name of the player</li>
      * </ul>
      * <br/>
      * Here are some examples of valid commands to execute:
@@ -363,6 +367,22 @@ public interface WorldSettings extends ConfigObject {
 
     /**
      * Returns a list of commands that should be executed when the player respawns after death if {@link Flags#ISLAND_RESPAWN} is true.<br/>
+     * These commands are executed by the console, unless otherwise stated using the {@code [SUDO]} prefix, in which case they are executed by the player.<br/>
+     * <br/>
+     * Available placeholders for the commands are the following:
+     * <ul>
+     *     <li>{@code [player]}: name of the player</li>
+     *     <li>{@code [owner]}: name of the owner of the island. When joining a team, this will be the team leader's name. When
+     *     creating an island, it is the name of the player</li>
+     * </ul>
+     * <br/>
+     * Here are some examples of valid commands to execute:
+     * <ul>
+     *     <li>{@code "[SUDO] bbox version"}</li>
+     *     <li>{@code "bsbadmin deaths set [player] 0"}</li>
+     * </ul>
+     * <br/>
+     * Note that player-executed commands might not work, as these commands can be run with said player being offline.
      * @return a list of commands.
      * @since 1.14.0
      * @see #getOnJoinCommands()
@@ -599,7 +619,7 @@ public interface WorldSettings extends ConfigObject {
     default boolean isMakeEndPortals() {
         return false;
     }
-    
+
     /**
      * Check for blocks when searching for a new island. This is a safety net check that does a look
      * around the new island location (3x3x3 block check). If any non-air or non-water blocks are found

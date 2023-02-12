@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
@@ -156,7 +155,7 @@ public class IslandExpelCommand extends CompositeCommand {
                     .filter(p -> !p.isOp()) // Not op
                     .filter(p -> !p.hasPermission(this.getPermissionPrefix() + "admin.noexpel"))
                     .filter(p -> !p.hasPermission(this.getPermissionPrefix() + "mod.bypassexpel"))
-                    .map(Player::getName).collect(Collectors.toList());
+                    .map(Player::getName).toList();
 
             String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
             return Optional.of(Util.tabLimit(options, lastArg));

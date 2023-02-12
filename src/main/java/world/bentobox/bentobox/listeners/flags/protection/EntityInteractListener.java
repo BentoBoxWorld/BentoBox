@@ -2,8 +2,19 @@ package world.bentobox.bentobox.listeners.flags.protection;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Allay;
+import org.bukkit.entity.Animals;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Boat;
+import org.bukkit.entity.ChestBoat;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Vehicle;
+import org.bukkit.entity.Villager;
+import org.bukkit.entity.WanderingTrader;
+import org.bukkit.entity.minecart.HopperMinecart;
+import org.bukkit.entity.minecart.PoweredMinecart;
 import org.bukkit.entity.minecart.RideableMinecart;
+import org.bukkit.entity.minecart.StorageMinecart;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
@@ -11,7 +22,6 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.lists.Flags;
-import world.bentobox.bentobox.versions.ServerCompatibility;
 
 
 /**
@@ -47,11 +57,19 @@ public class EntityInteractListener extends FlagListener {
                 // Minecart riding
                 this.checkIsland(e, p, l, Flags.MINECART);
             }
-            else if (!ServerCompatibility.getInstance().isVersion(
-                ServerCompatibility.ServerVersion.V1_18,
-                ServerCompatibility.ServerVersion.V1_18_1,
-                ServerCompatibility.ServerVersion.V1_18_2) &&
-                e.getPlayer().isSneaking() && e.getRightClicked() instanceof ChestBoat)
+            else if (e.getRightClicked() instanceof StorageMinecart)
+            {
+                this.checkIsland(e, p, l, Flags.CHEST);
+            }
+            else if (e.getRightClicked() instanceof HopperMinecart)
+            {
+                this.checkIsland(e, p, l, Flags.HOPPER);
+            }
+            else if (e.getRightClicked() instanceof PoweredMinecart)
+            {
+                this.checkIsland(e, p, l, Flags.FURNACE);
+            }
+            else if (e.getPlayer().isSneaking() && e.getRightClicked() instanceof ChestBoat)
             {
                 // Access to chest boat since 1.19
                 this.checkIsland(e, p, l, Flags.CHEST);
@@ -73,11 +91,7 @@ public class EntityInteractListener extends FlagListener {
                 this.checkIsland(e, p, l, Flags.NAME_TAG);
             }
         }
-        else if (!ServerCompatibility.getInstance().isVersion(
-            ServerCompatibility.ServerVersion.V1_18,
-            ServerCompatibility.ServerVersion.V1_18_1,
-            ServerCompatibility.ServerVersion.V1_18_2) &&
-            e.getRightClicked() instanceof Allay)
+        else if (e.getRightClicked() instanceof Allay)
         {
             // Allay item giving/taking
             this.checkIsland(e, p, l, Flags.ALLAY);

@@ -1,6 +1,5 @@
 package world.bentobox.bentobox.listeners.flags.protection;
 
-import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 
@@ -36,18 +35,19 @@ public class BlockInteractionListener extends FlagListener
      * These cover materials in another server version. This avoids run time errors due to unknown enum values, at the
      * expense of a string comparison
      */
-    private final static Map<String, String> stringFlags;
+    private static final Map<String, String> stringFlags;
+    private static final String CHEST = "CHEST";
 
     static
     {
         stringFlags = Map.of(
-            "ACACIA_CHEST_BOAT", "CHEST",
-            "BIRCH_CHEST_BOAT", "CHEST",
-            "JUNGLE_CHEST_BOAT", "CHEST",
-            "DARK_OAK_CHEST_BOAT", "CHEST",
-            "MANGROVE_CHEST_BOAT", "CHEST",
-            "OAK_CHEST_BOAT", "CHEST",
-            "SPRUCE_CHEST_BOAT", "CHEST");
+                "ACACIA_CHEST_BOAT", CHEST,
+                "BIRCH_CHEST_BOAT", CHEST,
+                "JUNGLE_CHEST_BOAT", CHEST,
+                "DARK_OAK_CHEST_BOAT", CHEST,
+                "MANGROVE_CHEST_BOAT", CHEST,
+                "OAK_CHEST_BOAT", CHEST,
+                "SPRUCE_CHEST_BOAT", CHEST);
     }
 
     /**
@@ -93,7 +93,7 @@ public class BlockInteractionListener extends FlagListener
 
                 // Check if player is clicking on water or waterlogged block with a bottle.
                 if (targetedBlock != null && (Material.WATER.equals(targetedBlock.getType()) ||
-                    targetedBlock.getBlockData() instanceof Waterlogged))
+                        targetedBlock.getBlockData() instanceof Waterlogged))
                 {
                     this.checkIsland(e, e.getPlayer(), e.getClickedBlock().getLocation(), Flags.BREWING);
                 }
@@ -166,79 +166,79 @@ public class BlockInteractionListener extends FlagListener
 
         switch (type)
         {
-            case BEACON -> this.checkIsland(e, player, loc, Flags.BEACON);
-            case BREWING_STAND -> this.checkIsland(e, player, loc, Flags.BREWING);
-            case BEEHIVE, BEE_NEST -> this.checkIsland(e, player, loc, Flags.HIVE);
-            case BARREL -> this.checkIsland(e, player, loc, Flags.BARREL);
-            case CHEST, CHEST_MINECART -> this.checkIsland(e, player, loc, Flags.CHEST);
-            case TRAPPED_CHEST -> this.checkIsland(e, player, loc, Flags.TRAPPED_CHEST);
-            case FLOWER_POT -> this.checkIsland(e, player, loc, Flags.FLOWER_POT);
-            case COMPOSTER -> this.checkIsland(e, player, loc, Flags.COMPOSTER);
-            case DISPENSER -> this.checkIsland(e, player, loc, Flags.DISPENSER);
-            case DROPPER -> this.checkIsland(e, player, loc, Flags.DROPPER);
-            case HOPPER, HOPPER_MINECART -> this.checkIsland(e, player, loc, Flags.HOPPER);
-            case BLAST_FURNACE, CAMPFIRE, FURNACE_MINECART, FURNACE, SMOKER ->
-                this.checkIsland(e, player, loc, Flags.FURNACE);
-            case ENCHANTING_TABLE -> this.checkIsland(e, player, loc, Flags.ENCHANTING);
-            case ENDER_CHEST -> this.checkIsland(e, player, loc, Flags.ENDER_CHEST);
-            case JUKEBOX -> this.checkIsland(e, player, loc, Flags.JUKEBOX);
-            case NOTE_BLOCK -> this.checkIsland(e, player, loc, Flags.NOTE_BLOCK);
-            case CRAFTING_TABLE, CARTOGRAPHY_TABLE, GRINDSTONE, STONECUTTER, LOOM ->
-                this.checkIsland(e, player, loc, Flags.CRAFTING);
-            case LEVER -> this.checkIsland(e, player, loc, Flags.LEVER);
-            case REDSTONE_WIRE, REPEATER, COMPARATOR, DAYLIGHT_DETECTOR -> this.checkIsland(e, player, loc, Flags.REDSTONE);
-            case DRAGON_EGG -> this.checkIsland(e, player, loc, Flags.DRAGON_EGG);
-            case END_PORTAL_FRAME, RESPAWN_ANCHOR -> this.checkIsland(e, player, loc, Flags.PLACE_BLOCKS);
-            case GLOW_ITEM_FRAME, ITEM_FRAME -> this.checkIsland(e, player, loc, Flags.ITEM_FRAME);
-            case SWEET_BERRY_BUSH, CAVE_VINES -> this.checkIsland(e, player, loc, Flags.BREAK_BLOCKS);
-            case CAKE -> this.checkIsland(e, player, loc, Flags.CAKE);
-            case LAVA_CAULDRON ->
+        case BEACON -> this.checkIsland(e, player, loc, Flags.BEACON);
+        case BREWING_STAND -> this.checkIsland(e, player, loc, Flags.BREWING);
+        case BEEHIVE, BEE_NEST -> this.checkIsland(e, player, loc, Flags.HIVE);
+        case BARREL -> this.checkIsland(e, player, loc, Flags.BARREL);
+        case CHEST, CHEST_MINECART -> this.checkIsland(e, player, loc, Flags.CHEST);
+        case TRAPPED_CHEST -> this.checkIsland(e, player, loc, Flags.TRAPPED_CHEST);
+        case FLOWER_POT -> this.checkIsland(e, player, loc, Flags.FLOWER_POT);
+        case COMPOSTER -> this.checkIsland(e, player, loc, Flags.COMPOSTER);
+        case DISPENSER -> this.checkIsland(e, player, loc, Flags.DISPENSER);
+        case DROPPER -> this.checkIsland(e, player, loc, Flags.DROPPER);
+        case HOPPER, HOPPER_MINECART -> this.checkIsland(e, player, loc, Flags.HOPPER);
+        case BLAST_FURNACE, CAMPFIRE, FURNACE_MINECART, FURNACE, SMOKER ->
+        this.checkIsland(e, player, loc, Flags.FURNACE);
+        case ENCHANTING_TABLE -> this.checkIsland(e, player, loc, Flags.ENCHANTING);
+        case ENDER_CHEST -> this.checkIsland(e, player, loc, Flags.ENDER_CHEST);
+        case JUKEBOX -> this.checkIsland(e, player, loc, Flags.JUKEBOX);
+        case NOTE_BLOCK -> this.checkIsland(e, player, loc, Flags.NOTE_BLOCK);
+        case CRAFTING_TABLE, CARTOGRAPHY_TABLE, GRINDSTONE, STONECUTTER, LOOM ->
+        this.checkIsland(e, player, loc, Flags.CRAFTING);
+        case LEVER -> this.checkIsland(e, player, loc, Flags.LEVER);
+        case REDSTONE_WIRE, REPEATER, COMPARATOR, DAYLIGHT_DETECTOR -> this.checkIsland(e, player, loc, Flags.REDSTONE);
+        case DRAGON_EGG -> this.checkIsland(e, player, loc, Flags.DRAGON_EGG);
+        case END_PORTAL_FRAME, RESPAWN_ANCHOR -> this.checkIsland(e, player, loc, Flags.PLACE_BLOCKS);
+        case GLOW_ITEM_FRAME, ITEM_FRAME -> this.checkIsland(e, player, loc, Flags.ITEM_FRAME);
+        case SWEET_BERRY_BUSH, CAVE_VINES -> this.checkIsland(e, player, loc, Flags.BREAK_BLOCKS);
+        case CAKE -> this.checkIsland(e, player, loc, Flags.CAKE);
+        case LAVA_CAULDRON ->
+        {
+            if (BlockInteractionListener.holds(player, Material.BUCKET))
             {
-                if (BlockInteractionListener.holds(player, Material.BUCKET))
-                {
-                    this.checkIsland(e, player, loc, Flags.COLLECT_LAVA);
-                }
+                this.checkIsland(e, player, loc, Flags.COLLECT_LAVA);
             }
-            case WATER_CAULDRON ->
+        }
+        case WATER_CAULDRON ->
+        {
+            if (BlockInteractionListener.holds(player, Material.BUCKET))
             {
-                if (BlockInteractionListener.holds(player, Material.BUCKET))
-                {
-                    this.checkIsland(e, player, loc, Flags.COLLECT_WATER);
-                }
-                else if (BlockInteractionListener.holds(player, Material.GLASS_BOTTLE) ||
+                this.checkIsland(e, player, loc, Flags.COLLECT_WATER);
+            }
+            else if (BlockInteractionListener.holds(player, Material.GLASS_BOTTLE) ||
                     BlockInteractionListener.holds(player, Material.POTION))
-                {
-                    this.checkIsland(e, player, loc, Flags.BREWING);
-                }
-            }
-            case POWDER_SNOW_CAULDRON ->
             {
-                if (BlockInteractionListener.holds(player, Material.BUCKET))
-                {
-                    this.checkIsland(e, player, loc, Flags.COLLECT_POWDERED_SNOW);
-                }
+                this.checkIsland(e, player, loc, Flags.BREWING);
             }
-            case CAULDRON ->
+        }
+        case POWDER_SNOW_CAULDRON ->
+        {
+            if (BlockInteractionListener.holds(player, Material.BUCKET))
             {
-                if (BlockInteractionListener.holds(player, Material.WATER_BUCKET) ||
+                this.checkIsland(e, player, loc, Flags.COLLECT_POWDERED_SNOW);
+            }
+        }
+        case CAULDRON ->
+        {
+            if (BlockInteractionListener.holds(player, Material.WATER_BUCKET) ||
                     BlockInteractionListener.holds(player, Material.LAVA_BUCKET) ||
                     BlockInteractionListener.holds(player, Material.POWDER_SNOW_BUCKET))
-                {
-                    this.checkIsland(e, player, loc, Flags.BUCKET);
-                }
-                else if (BlockInteractionListener.holds(player, Material.POTION))
-                {
-                    this.checkIsland(e, player, loc, Flags.BREWING);
-                }
-            }
-            default ->
             {
-                if (stringFlags.containsKey(type.name()))
-                {
-                    Optional<Flag> f = BentoBox.getInstance().getFlagsManager().getFlag(stringFlags.get(type.name()));
-                    f.ifPresent(flag -> this.checkIsland(e, player, loc, flag));
-                }
+                this.checkIsland(e, player, loc, Flags.BUCKET);
             }
+            else if (BlockInteractionListener.holds(player, Material.POTION))
+            {
+                this.checkIsland(e, player, loc, Flags.BREWING);
+            }
+        }
+        default ->
+        {
+            if (stringFlags.containsKey(type.name()))
+            {
+                Optional<Flag> f = BentoBox.getInstance().getFlagsManager().getFlag(stringFlags.get(type.name()));
+                f.ifPresent(flag -> this.checkIsland(e, player, loc, flag));
+            }
+        }
         }
     }
 
@@ -292,6 +292,6 @@ public class BlockInteractionListener extends FlagListener
     private static boolean holds(Player player, Material material)
     {
         return player.getInventory().getItemInMainHand().getType().equals(material) ||
-            player.getInventory().getItemInOffHand().getType().equals(material);
+                player.getInventory().getItemInOffHand().getType().equals(material);
     }
 }

@@ -36,22 +36,22 @@ public class MetaDataValue {
      * @param value the value assigned to this metadata value
      */
     public MetaDataValue(@NonNull Object value) {
-        if (value instanceof Integer) {
-            intValue = (int)value;
-        } else if (value instanceof Float) {
-            floatValue = (float)value;
-        } else if (value instanceof Double) {
-            doubleValue = (double)value;
-        } else if (value instanceof Long) {
-            longValue = (long)value;
-        } else if (value instanceof Short) {
-            shortValue = (short)value;
-        } else if (value instanceof Byte) {
-            byteValue = (byte)value;
-        } else if (value instanceof Boolean) {
-            booleanValue = (boolean)value;
-        } else if (value instanceof String) {
-            stringValue = (String)value;
+        if (value instanceof Integer i) {
+            intValue = i;
+        } else if (value instanceof Float f) {
+            floatValue = f;
+        } else if (value instanceof Double d) {
+            doubleValue = d;
+        } else if (value instanceof Long l) {
+            longValue = l;
+        } else if (value instanceof Short s) {
+            shortValue = s;
+        } else if (value instanceof Byte b) {
+            byteValue = b;
+        } else if (value instanceof Boolean bo) {
+            booleanValue = bo;
+        } else if (value instanceof String st) {
+            stringValue = st;
         }
     }
 

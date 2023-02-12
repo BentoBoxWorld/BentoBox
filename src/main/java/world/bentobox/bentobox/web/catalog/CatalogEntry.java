@@ -17,18 +17,18 @@ public class CatalogEntry {
     /**
      * Defaults to {@link Material#PAPER}.
      */
-    private @NonNull
-    final Material icon;
-    private @NonNull
-    final String name;
-    private @NonNull
-    final String description;
-    private @Nullable
-    final String topic;
-    private @Nullable
-    final String tag;
-    private @NonNull
-    final String repository;
+    @NonNull
+    private final Material icon;
+    @NonNull
+    private final String name;
+    @NonNull
+    private final String description;
+    @Nullable
+    private final String topic;
+    @Nullable
+    private final String tag;
+    @NonNull
+    private final String repository;
 
     public CatalogEntry(@NonNull JsonObject object) {
         this.slot = object.get("slot").getAsInt();

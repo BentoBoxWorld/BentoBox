@@ -6,6 +6,12 @@
 
 package world.bentobox.bentobox.api.panels.reader;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -13,12 +19,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.inventory.ClickType;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import com.google.common.base.Enums;
 
@@ -48,6 +48,14 @@ public class TemplateReader
     private static final String CONTENT = "content";
     private static final String TYPE = "type";
 
+
+    /**
+     * Utility classes, which are collections of static members, are not meant to be instantiated.
+     * Even abstract utility classes, which can be extended, should not have public constructors.
+     * Java adds an implicit public constructor to every class which does not define at least one explicitly.
+     * Hence, at least one non-public constructor should be defined.
+     */
+    private TemplateReader() {}
 
     /**
      * Read template panel panel template record.
@@ -95,7 +103,7 @@ public class TemplateReader
             return TemplateReader.loadedPanels.get(panelKey);
         }
 
-        PanelTemplateRecord record;
+        PanelTemplateRecord rec;
 
         try
         {
@@ -103,16 +111,16 @@ public class TemplateReader
             YamlConfiguration config = new YamlConfiguration();
             config.load(file);
             // Read panel
-            record = readPanelTemplate(config.getConfigurationSection(panelName));
+            rec = readPanelTemplate(config.getConfigurationSection(panelName));
             // Put panel into memory
-            TemplateReader.loadedPanels.put(panelKey, record);
+            TemplateReader.loadedPanels.put(panelKey, rec);
         }
         catch (IOException | InvalidConfigurationException e)
         {
-            record = null;
+            rec = null;
         }
 
-        return record;
+        return rec;
     }
 
 

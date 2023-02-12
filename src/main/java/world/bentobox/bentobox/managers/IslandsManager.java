@@ -22,11 +22,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.TreeSpecies;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Boat;
+import org.bukkit.entity.Boat.Type;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -68,13 +68,13 @@ public class IslandsManager {
     private final BentoBox plugin;
 
     // Tree species to boat material map
-    private static final Map<TreeSpecies, Material> TREE_TO_BOAT = ImmutableMap.<TreeSpecies, Material>builder().
-            put(TreeSpecies.ACACIA, Material.ACACIA_BOAT).
-            put(TreeSpecies.BIRCH, Material.BIRCH_BOAT).
-            put(TreeSpecies.DARK_OAK, Material.DARK_OAK_BOAT).
-            put(TreeSpecies.JUNGLE, Material.JUNGLE_BOAT).
-            put(TreeSpecies.GENERIC, Material.OAK_BOAT).
-            put(TreeSpecies.REDWOOD, Material.SPRUCE_BOAT).build();
+    private static final Map<Type, Material> TREE_TO_BOAT = ImmutableMap.<Type, Material>builder().
+            put(Type.ACACIA, Material.ACACIA_BOAT).
+            put(Type.BIRCH, Material.BIRCH_BOAT).
+            put(Type.DARK_OAK, Material.DARK_OAK_BOAT).
+            put(Type.JUNGLE, Material.JUNGLE_BOAT).
+            put(Type.OAK, Material.OAK_BOAT).
+            put(Type.SPRUCE, Material.SPRUCE_BOAT).build();
 
     /**
      * One island can be spawn, this is the one - otherwise, this value is null
@@ -269,7 +269,11 @@ public class IslandsManager {
                 || ground.name().contains("SIGN")
                 || ground.name().contains("BANNER")
                 || ground.name().contains("BUTTON")
-                || ground.name().contains("BOAT")) {
+                || ground.name().contains("BOAT")
+                || space1.equals(Material.END_PORTAL)
+                || space2.equals(Material.END_PORTAL)
+                || space1.equals(Material.END_GATEWAY)
+                || space2.equals(Material.END_GATEWAY)) {
             return false;
         }
         // Known unsafe blocks
@@ -486,6 +490,8 @@ public class IslandsManager {
      * Gets the maximum number of island members allowed on this island.
      * Will update the value based on world settings or island owner permissions (if online).
      * If the island is unowned, then this value will be 0.
+     * The number given for MEMBER_RANK is meant to include this rank and higher, e.g. {@link RanksManager#SUB_OWNER_RANK}
+     * and {@link RanksManager#OWNER_RANK}
      * @param island - island
      * @param rank {@link RanksManager#MEMBER_RANK}, {@link RanksManager#COOP_RANK}, or {@link RanksManager#TRUSTED_RANK}
      * @return max number of members. If negative, then this means unlimited.
@@ -1038,22 +1044,6 @@ public class IslandsManager {
      *
      * @param world - world to check
      * @param player - the player
-     * @param number - a number - home location to do to
-     * @return CompletableFuture true if successful, false if not
-     * @since 1.14.0
-     * @deprecated Use {@link #homeTeleportAsync(World, Player, String)}
-     */
-    @Deprecated
-    public CompletableFuture<Boolean> homeTeleportAsync(@NonNull World world, @NonNull Player player, int number) {
-        return homeTeleportAsync(world, player, String.valueOf(number), false);
-    }
-
-    /**
-     * Teleport player to a home location. If one cannot be found a search is done to
-     * find a safe place.
-     *
-     * @param world - world to check
-     * @param player - the player
      * @param name - a named home location. Blank means default.
      * @return CompletableFuture true if successful, false if not
      * @since 1.16.0
@@ -1087,11 +1077,11 @@ public class IslandsManager {
         // Check if the player is a passenger in a boat
         if (player.isInsideVehicle()) {
             Entity boat = player.getVehicle();
-            if (boat instanceof Boat) {
+            if (boat instanceof Boat boaty) {
                 player.leaveVehicle();
                 // Remove the boat so they don't lie around everywhere
                 boat.remove();
-                player.getInventory().addItem(new ItemStack(TREE_TO_BOAT.getOrDefault(((Boat) boat).getWoodType(), Material.OAK_BOAT)));
+                player.getInventory().addItem(new ItemStack(TREE_TO_BOAT.getOrDefault(boaty.getBoatType(), Material.OAK_BOAT)));
                 player.updateInventory();
             }
         }
@@ -1184,7 +1174,7 @@ public class IslandsManager {
             user.setGameMode(plugin.getIWM().getDefaultGameMode(world));
 
             // Execute commands
-            Util.runCommands(user, plugin.getIWM().getOnJoinCommands(world), "join");
+            Util.runCommands(user, user.getName(), plugin.getIWM().getOnJoinCommands(world), "join");
         }
         // Remove from mid-teleport set
         goingHome.remove(user.getUniqueId());
@@ -1211,11 +1201,11 @@ public class IslandsManager {
             // Check if the player is a passenger in a boat
             if (player.isInsideVehicle()) {
                 Entity boat = player.getVehicle();
-                if (boat instanceof Boat) {
+                if (boat instanceof Boat boaty) {
                     player.leaveVehicle();
                     // Remove the boat so they don't lie around everywhere
                     boat.remove();
-                    Material boatMat = Material.getMaterial(((Boat) boat).getWoodType() + "_BOAT");
+                    Material boatMat = Material.getMaterial(boaty.getType() + "_BOAT");
                     if (boatMat == null) {
                         boatMat = Material.OAK_BOAT;
                     }
@@ -1686,7 +1676,7 @@ public class IslandsManager {
     }
 
     /**
-     * Try to get a list of quarantined islands owned by uuid in this world
+     * Try to get an unmodifiable list of quarantined islands owned by uuid in this world
      *
      * @param world - world
      * @param uuid - target player's UUID, or <tt>null</tt> = unowned islands
@@ -1696,7 +1686,7 @@ public class IslandsManager {
     @NonNull
     public List<Island> getQuarantinedIslandByUser(@NonNull World world, @Nullable UUID uuid) {
         return quarantineCache.getOrDefault(uuid, Collections.emptyList()).stream()
-                .filter(i -> i.getWorld().equals(world)).collect(Collectors.toList());
+                .filter(i -> i.getWorld().equals(world)).toList();
     }
 
     /**

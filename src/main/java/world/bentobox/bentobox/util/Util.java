@@ -2,13 +2,16 @@ package world.bentobox.bentobox.util;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
@@ -21,7 +24,20 @@ import org.bukkit.World.Environment;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Allay;
+import org.bukkit.entity.Animals;
+import org.bukkit.entity.Bat;
+import org.bukkit.entity.EnderDragon;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Flying;
+import org.bukkit.entity.IronGolem;
+import org.bukkit.entity.Monster;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.PufferFish;
+import org.bukkit.entity.Shulker;
+import org.bukkit.entity.Slime;
+import org.bukkit.entity.Snowman;
+import org.bukkit.entity.WaterMob;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
@@ -33,7 +49,6 @@ import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.nms.PasteHandler;
 import world.bentobox.bentobox.nms.WorldRegenerator;
-import world.bentobox.bentobox.versions.ServerCompatibility;
 
 
 /**
@@ -44,7 +59,7 @@ import world.bentobox.bentobox.versions.ServerCompatibility;
  */
 public class Util {
     /**
-     * Use standard color code definition: &<hex>.
+     * Use standard color code definition: {@code &<hex>}.
      */
     private static final Pattern HEX_PATTERN = Pattern.compile("&#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})");
     private static final String NETHER = "_nether";
@@ -164,17 +179,17 @@ public class Util {
     }
 
     /**
-     * Return a list of online players this player can see, i.e. are not invisible
+     * Return an immutable list of online players this player can see, i.e. are not invisible
      * @param user - the User - if null, all player names on the server are shown
      * @return a list of online players this player can see
      */
     public static List<String> getOnlinePlayerList(User user) {
         if (user == null || !user.isPlayer()) {
             // Console and null get to see every player
-            return Bukkit.getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList());
+            return Bukkit.getOnlinePlayers().stream().map(Player::getName).toList();
         }
         // Otherwise prevent invisible players from seeing
-        return Bukkit.getOnlinePlayers().stream().filter(p -> user.getPlayer().canSee(p)).map(Player::getName).collect(Collectors.toList());
+        return Bukkit.getOnlinePlayers().stream().filter(p -> user.getPlayer().canSee(p)).map(Player::getName).toList();
     }
 
     /**
@@ -341,19 +356,9 @@ public class Util {
         // Bat extends Mob
         // Most of passive mobs extends Animals
 
-        if (ServerCompatibility.getInstance().isVersion(ServerCompatibility.ServerVersion.V1_18,
-            ServerCompatibility.ServerVersion.V1_18_1,
-            ServerCompatibility.ServerVersion.V1_18_2))
-        {
-            return entity instanceof Animals || entity instanceof IronGolem || entity instanceof Snowman ||
-                entity instanceof WaterMob && !(entity instanceof PufferFish) || entity instanceof Bat;
-        }
-        else
-        {
-            return entity instanceof Animals || entity instanceof IronGolem || entity instanceof Snowman ||
+        return entity instanceof Animals || entity instanceof IronGolem || entity instanceof Snowman ||
                 entity instanceof WaterMob && !(entity instanceof PufferFish) || entity instanceof Bat ||
                 entity instanceof Allay;
-        }
     }
 
     /*
@@ -661,8 +666,21 @@ public class Util {
      * @param commandType - the type of command being run - used in the console error message
      */
     public static void runCommands(User user, @NonNull List<String> commands, String commandType) {
+        runCommands(user, user.getName(), commands, commandType);
+    }
+
+    /**
+     * Run a list of commands for a user
+     * @param user - user affected by the commands
+     * @param ownerName - name of the island owner, or the user's name if it is the user's island
+     * @param commands - a list of commands
+     * @param commandType - the type of command being run - used in the console error message
+     * @since 1.22.0
+     */
+    public static void runCommands(User user, String ownerName, @NonNull List<String> commands, String commandType) {
         commands.forEach(command -> {
             command = command.replace("[player]", user.getName());
+            command = command.replace("[owner]", ownerName);
             if (command.startsWith("[SUDO]")) {
                 // Execute the command by the player
                 if (!user.isOnline() || !user.performCommand(command.substring(6))) {
@@ -769,7 +787,7 @@ public class Util {
     public static String sanitizeInput(String input)
     {
         return ChatColor.stripColor(
-            Util.translateColorCodes(input.replaceAll("[\\\\/:*?\"<>|\s]", "_"))).
-            toLowerCase();
+                Util.translateColorCodes(input.replaceAll("[\\\\/:*?\"<>|\s]", "_"))).
+                toLowerCase();
     }
 }

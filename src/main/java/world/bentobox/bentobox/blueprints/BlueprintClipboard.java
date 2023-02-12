@@ -8,7 +8,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -138,7 +137,7 @@ public class BlueprintClipboard {
                         .filter(e -> new Vector(Math.rint(e.getLocation().getX()),
                                 Math.rint(e.getLocation().getY()),
                                 Math.rint(e.getLocation().getZ())).equals(v))
-                        .collect(Collectors.toList());
+                        .toList();
                 if (copyBlock(v.toLocation(world), copyAir, copyBiome, ents)) {
                     count++;
                 }
@@ -288,19 +287,17 @@ public class BlueprintClipboard {
             if (entity instanceof Villager villager) {
                 setVillager(villager, bpe);
             }
-            if (entity instanceof Colorable c) {
-                if (c.getColor() != null) {
-                    bpe.setColor(c.getColor());
-                }
+            if (entity instanceof Colorable c && c.getColor() != null) {
+                bpe.setColor(c.getColor());
             }
-            if (entity instanceof Tameable) {
-                bpe.setTamed(((Tameable)entity).isTamed());
+            if (entity instanceof Tameable tameable) {
+                bpe.setTamed(tameable.isTamed());
             }
-            if (entity instanceof ChestedHorse) {
-                bpe.setChest(((ChestedHorse)entity).isCarryingChest());
+            if (entity instanceof ChestedHorse chestedHorse) {
+                bpe.setChest(chestedHorse.isCarryingChest());
             }
             // Only set if child. Most animals are adults
-            if (entity instanceof Ageable && !((Ageable)entity).isAdult()) {
+            if (entity instanceof Ageable ageable && !ageable.isAdult()) {
                 bpe.setAdult(false);
             }
             if (entity instanceof AbstractHorse horse) {
@@ -375,7 +372,7 @@ public class BlueprintClipboard {
         if (pos1 != null) {
             final int minHeight = pos1.getWorld() == null ? 0 : pos1.getWorld().getMinHeight();
             final int maxHeight = pos1.getWorld() == null ? 255 : pos1.getWorld().getMaxHeight();
-            
+
             if (pos1.getBlockY() < minHeight)
             {
                 pos1.setY(minHeight);

@@ -1,12 +1,12 @@
 package world.bentobox.bentobox.lists;
 
-import com.google.common.base.Enums;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+
+import com.google.common.base.Enums;
 
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.flags.Flag.Type;
@@ -14,11 +14,60 @@ import world.bentobox.bentobox.api.flags.clicklisteners.CycleClick;
 import world.bentobox.bentobox.listeners.flags.clicklisteners.CommandRankClickListener;
 import world.bentobox.bentobox.listeners.flags.clicklisteners.GeoLimitClickListener;
 import world.bentobox.bentobox.listeners.flags.clicklisteners.MobLimitClickListener;
-import world.bentobox.bentobox.listeners.flags.protection.*;
+import world.bentobox.bentobox.listeners.flags.protection.BlockInteractionListener;
+import world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener;
+import world.bentobox.bentobox.listeners.flags.protection.BreedingListener;
+import world.bentobox.bentobox.listeners.flags.protection.BucketListener;
+import world.bentobox.bentobox.listeners.flags.protection.DyeListener;
+import world.bentobox.bentobox.listeners.flags.protection.EggListener;
+import world.bentobox.bentobox.listeners.flags.protection.ElytraListener;
+import world.bentobox.bentobox.listeners.flags.protection.EntityInteractListener;
+import world.bentobox.bentobox.listeners.flags.protection.ExperiencePickupListener;
+import world.bentobox.bentobox.listeners.flags.protection.FireListener;
+import world.bentobox.bentobox.listeners.flags.protection.HurtingListener;
+import world.bentobox.bentobox.listeners.flags.protection.InventoryListener;
+import world.bentobox.bentobox.listeners.flags.protection.ItemDropPickUpListener;
+import world.bentobox.bentobox.listeners.flags.protection.LeashListener;
+import world.bentobox.bentobox.listeners.flags.protection.LecternListener;
+import world.bentobox.bentobox.listeners.flags.protection.LockAndBanListener;
+import world.bentobox.bentobox.listeners.flags.protection.PaperExperiencePickupListener;
+import world.bentobox.bentobox.listeners.flags.protection.PhysicalInteractionListener;
+import world.bentobox.bentobox.listeners.flags.protection.PlaceBlocksListener;
+import world.bentobox.bentobox.listeners.flags.protection.PortalListener;
+import world.bentobox.bentobox.listeners.flags.protection.SculkSensorListener;
+import world.bentobox.bentobox.listeners.flags.protection.SculkShriekerListener;
+import world.bentobox.bentobox.listeners.flags.protection.ShearingListener;
+import world.bentobox.bentobox.listeners.flags.protection.TNTListener;
+import world.bentobox.bentobox.listeners.flags.protection.TeleportationListener;
+import world.bentobox.bentobox.listeners.flags.protection.ThrowingListener;
 import world.bentobox.bentobox.listeners.flags.settings.DecayListener;
 import world.bentobox.bentobox.listeners.flags.settings.MobSpawnListener;
 import world.bentobox.bentobox.listeners.flags.settings.PVPListener;
-import world.bentobox.bentobox.listeners.flags.worldsettings.*;
+import world.bentobox.bentobox.listeners.flags.worldsettings.ChestDamageListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.CleanSuperFlatListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.CoarseDirtTillingListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.CreeperListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.EnderChestListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.EndermanListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.EnterExitListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.GeoLimitMobsListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.InvincibleVisitorsListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.IslandRespawnListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.ItemFrameListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.LimitMobsListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.LiquidsFlowingOutListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.NaturalSpawningOutsideRangeListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.ObsidianScoopingListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.OfflineGrowthListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.OfflineRedstoneListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.PetTeleportListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.PistonPushListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.RemoveMobsListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.SpawnerSpawnEggsListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.TreesGrowingOutsideRangeListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.VisitorKeepInventoryListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.VisitorsStartingRaidListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.WitherListener;
 import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
 
@@ -276,35 +325,39 @@ public final class Flags {
      * @since 1.20.0
      */
     public static final Flag CHANGE_SETTINGS = new Flag.Builder("CHANGE_SETTINGS", Material.CRAFTING_TABLE).defaultSetting(true)
-        .defaultRank(RanksManager.OWNER_RANK)
-        .clickHandler(new CycleClick("CHANGE_SETTINGS", RanksManager.MEMBER_RANK, RanksManager.OWNER_RANK))
-        .mode(Flag.Mode.TOP_ROW).build();
+            .defaultRank(RanksManager.OWNER_RANK)
+            .clickHandler(new CycleClick("CHANGE_SETTINGS", RanksManager.MEMBER_RANK, RanksManager.OWNER_RANK))
+            .mode(Flag.Mode.TOP_ROW).build();
+
+    private static final String SCULKSENSOR = "SCULK_SENSOR";
 
     /**
      * This flag allows choosing which island member group can activate sculk sensors.
      * TODO: Enums#getIfPresent is used to support 1.18
      * @since 1.21.0
      */
-    public static final Flag SCULK_SENSOR = new Flag.Builder("SCULK_SENSOR", Enums.getIfPresent(Material.class, "SCULK_SENSOR").or(Material.BARRIER)).
-        listener(new SculkSensorListener()).
-        type(Type.PROTECTION).
-        defaultSetting(true).
-        defaultRank(RanksManager.MEMBER_RANK).
-        clickHandler(new CycleClick("SCULK_SENSOR", RanksManager.VISITOR_RANK, RanksManager.MEMBER_RANK)).
-        build();
+    public static final Flag SCULK_SENSOR = new Flag.Builder(SCULKSENSOR, Enums.getIfPresent(Material.class, SCULKSENSOR).or(Material.BARRIER)).
+            listener(new SculkSensorListener()).
+            type(Type.PROTECTION).
+            defaultSetting(true).
+            defaultRank(RanksManager.MEMBER_RANK).
+            clickHandler(new CycleClick(SCULKSENSOR, RanksManager.VISITOR_RANK, RanksManager.MEMBER_RANK)).
+            build();
+
+    private static final String SCULKSHRIEKER = "SCULK_SHRIEKER";
 
     /**
      * This flag allows choosing which island member group can activate sculk shrieker.
      * TODO: Enums#getIfPresent is used to support 1.18
      * @since 1.21.0
      */
-    public static final Flag SCULK_SHRIEKER = new Flag.Builder("SCULK_SHRIEKER", Enums.getIfPresent(Material.class, "SCULK_SHRIEKER").or(Material.BARRIER)).
-        listener(new SculkShriekerListener()).
-        type(Type.PROTECTION).
-        defaultSetting(true).
-        defaultRank(RanksManager.MEMBER_RANK).
-        clickHandler(new CycleClick("SCULK_SHRIEKER", RanksManager.VISITOR_RANK, RanksManager.MEMBER_RANK)).
-        build();
+    public static final Flag SCULK_SHRIEKER = new Flag.Builder(SCULKSHRIEKER, Enums.getIfPresent(Material.class, SCULKSHRIEKER).or(Material.BARRIER)).
+            listener(new SculkShriekerListener()).
+            type(Type.PROTECTION).
+            defaultSetting(true).
+            defaultRank(RanksManager.MEMBER_RANK).
+            clickHandler(new CycleClick(SCULKSHRIEKER, RanksManager.VISITOR_RANK, RanksManager.MEMBER_RANK)).
+            build();
 
     /*
      * Settings flags (not protection flags)
@@ -341,14 +394,16 @@ public final class Flags {
 
     // Mob spawning
     /**
-     * @deprecated as of 1.14.0, see {@link #ANIMAL_NATURAL_SPAWN} and {@link #ANIMAL_SPAWNERS_SPAWN}.
+     * @deprecated see {@link #ANIMAL_NATURAL_SPAWN} and {@link #ANIMAL_SPAWNERS_SPAWN}.
+     * @since 1.14.0
      */
-    @Deprecated
+    @Deprecated(since="1.14.0", forRemoval=true)
     public static final Flag ANIMAL_SPAWN = new Flag.Builder("ANIMAL_SPAWN", Material.APPLE).defaultSetting(true).type(Type.SETTING).build();
     /**
-     * @deprecated as of 1.14.0, see {@link #MONSTER_NATURAL_SPAWN} and {@link #MONSTER_SPAWNERS_SPAWN}.
+     * @deprecated see {@link #MONSTER_NATURAL_SPAWN} and {@link #MONSTER_SPAWNERS_SPAWN}.
+     * @since 1.14.0
      */
-    @Deprecated
+    @Deprecated(since="1.14.0", forRemoval=true)
     public static final Flag MONSTER_SPAWN = new Flag.Builder("MONSTER_SPAWN", Material.SPAWNER).defaultSetting(true).type(Type.SETTING).build();
 
     /**
@@ -592,6 +647,6 @@ public final class Flags {
                         Bukkit.getLogger().severe("Could not get Flag values " + e.getMessage());
                     }
                     return null;
-                }).collect(Collectors.toList());
+                }).toList();
     }
 }

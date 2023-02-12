@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -91,12 +90,11 @@ public class IslandTeamCommand extends CompositeCommand {
 
     private void showMembers(Island island, User user) {
         // Gather online members
-        List<UUID> onlineMembers = island
+        long count = island
                 .getMemberSet(RanksManager.MEMBER_RANK)
                 .stream()
-                .filter(uuid -> Bukkit.getOfflinePlayer(uuid)
-                        .isOnline())
-                .collect(Collectors.toList());
+                .filter(uuid -> Util.getOnlinePlayerList(user).contains(Bukkit.getOfflinePlayer(uuid).getName()))
+                .count();
 
         // List of ranks that we will loop through
         Integer[] ranks = new Integer[]{RanksManager.OWNER_RANK, RanksManager.SUB_OWNER_RANK, RanksManager.MEMBER_RANK, RanksManager.TRUSTED_RANK, RanksManager.COOP_RANK};
@@ -105,11 +103,11 @@ public class IslandTeamCommand extends CompositeCommand {
         user.sendMessage("commands.island.team.info.header",
                 "[max]", String.valueOf(getIslands().getMaxMembers(island, RanksManager.MEMBER_RANK)),
                 "[total]", String.valueOf(island.getMemberSet().size()),
-                "[online]", String.valueOf(onlineMembers.size()));
+                "[online]", String.valueOf(count));
 
         // We now need to get all online "members" of the island - incl. Trusted and coop
-        onlineMembers = island.getMemberSet(RanksManager.COOP_RANK).stream()
-                .filter(uuid -> Util.getOnlinePlayerList(user).contains(Bukkit.getOfflinePlayer(uuid).getName())).collect(Collectors.toList());
+        List<UUID> onlineMembers = island.getMemberSet(RanksManager.COOP_RANK).stream()
+                .filter(uuid -> Util.getOnlinePlayerList(user).contains(Bukkit.getOfflinePlayer(uuid).getName())).toList();
 
         for (int rank : ranks) {
             Set<UUID> players = island.getMemberSet(rank, false);
@@ -123,47 +121,52 @@ public class IslandTeamCommand extends CompositeCommand {
                             TextVariables.RANK, user.getTranslation(getPlugin().getRanksManager().getRank(rank)),
                             TextVariables.NUMBER, String.valueOf(island.getMemberSet(rank, false).size()));
                 }
-                for (UUID member : island.getMemberSet(rank, false)) {
-                    OfflinePlayer offlineMember = Bukkit.getOfflinePlayer(member);
-                    if (onlineMembers.contains(member)) {
-                        // the player is online
-                        user.sendMessage("commands.island.team.info.member-layout.online",
-                                TextVariables.NAME, offlineMember.getName());
-                    } else {
-                        // A bit of handling for the last joined date
-                        Instant lastJoined = Instant.ofEpochMilli(offlineMember.getLastPlayed());
-                        Instant now = Instant.now();
+                displayOnOffline(user, rank, island, onlineMembers);
+            }
+        }
+    }
 
-                        Duration duration = Duration.between(lastJoined, now);
-                        String lastSeen;
-                        final String reference = "commands.island.team.info.last-seen.layout";
-                        if (duration.toMinutes() < 60L) {
-                            lastSeen = user.getTranslation(reference,
-                                    TextVariables.NUMBER, String.valueOf(duration.toMinutes()),
-                                    TextVariables.UNIT, user.getTranslation("commands.island.team.info.last-seen.minutes"));
-                        } else if (duration.toHours() < 24L) {
-                            lastSeen = user.getTranslation(reference,
-                                    TextVariables.NUMBER, String.valueOf(duration.toHours()),
-                                    TextVariables.UNIT, user.getTranslation("commands.island.team.info.last-seen.hours"));
-                        } else {
-                            lastSeen = user.getTranslation(reference,
-                                    TextVariables.NUMBER, String.valueOf(duration.toDays()),
-                                    TextVariables.UNIT, user.getTranslation("commands.island.team.info.last-seen.days"));
-                        }
+    private void displayOnOffline(User user, int rank, Island island, List<UUID> onlineMembers) {
+        for (UUID member : island.getMemberSet(rank, false)) {
+            OfflinePlayer offlineMember = Bukkit.getOfflinePlayer(member);
+            if (onlineMembers.contains(member)) {
+                // the player is online
+                user.sendMessage("commands.island.team.info.member-layout.online",
+                        TextVariables.NAME, offlineMember.getName());
+            } else {
+                // A bit of handling for the last joined date
+                Instant lastJoined = Instant.ofEpochMilli(offlineMember.getLastPlayed());
+                Instant now = Instant.now();
 
-                        if(island.getMemberSet(RanksManager.MEMBER_RANK, true).contains(member)) {
-                            user.sendMessage("commands.island.team.info.member-layout.offline",
-                                    TextVariables.NAME, offlineMember.getName(),
-                                    "[last_seen]", lastSeen);
-                        }else{
-                            // This will prevent anyone that is trusted or below to not have a last-seen status
-                            user.sendMessage("commands.island.team.info.member-layout.offline-not-last-seen",
-                                    TextVariables.NAME, offlineMember.getName());
-                        }
-                    }
+                Duration duration = Duration.between(lastJoined, now);
+                String lastSeen;
+                final String reference = "commands.island.team.info.last-seen.layout";
+                if (duration.toMinutes() < 60L) {
+                    lastSeen = user.getTranslation(reference,
+                            TextVariables.NUMBER, String.valueOf(duration.toMinutes()),
+                            TextVariables.UNIT, user.getTranslation("commands.island.team.info.last-seen.minutes"));
+                } else if (duration.toHours() < 24L) {
+                    lastSeen = user.getTranslation(reference,
+                            TextVariables.NUMBER, String.valueOf(duration.toHours()),
+                            TextVariables.UNIT, user.getTranslation("commands.island.team.info.last-seen.hours"));
+                } else {
+                    lastSeen = user.getTranslation(reference,
+                            TextVariables.NUMBER, String.valueOf(duration.toDays()),
+                            TextVariables.UNIT, user.getTranslation("commands.island.team.info.last-seen.days"));
+                }
+
+                if(island.getMemberSet(RanksManager.MEMBER_RANK, true).contains(member)) {
+                    user.sendMessage("commands.island.team.info.member-layout.offline",
+                            TextVariables.NAME, offlineMember.getName(),
+                            "[last_seen]", lastSeen);
+                } else {
+                    // This will prevent anyone that is trusted or below to not have a last-seen status
+                    user.sendMessage("commands.island.team.info.member-layout.offline-not-last-seen",
+                            TextVariables.NAME, offlineMember.getName());
                 }
             }
         }
+
     }
 
     private boolean fireEvent(User user) {

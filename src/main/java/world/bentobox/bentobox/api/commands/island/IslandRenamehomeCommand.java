@@ -87,9 +87,9 @@ public class IslandRenamehomeCommand extends ConfirmableCommand {
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
         String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
-        Island island = getIslands().getIsland(getWorld(), user.getUniqueId());
-        if (island != null) {
-            return Optional.of(Util.tabLimit(new ArrayList<>(island.getHomes().keySet()), lastArg));
+        Island is = getIslands().getIsland(getWorld(), user.getUniqueId());
+        if (is != null) {
+            return Optional.of(Util.tabLimit(new ArrayList<>(is.getHomes().keySet()), lastArg));
         } else {
             return Optional.empty();
         }

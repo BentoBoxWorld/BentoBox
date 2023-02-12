@@ -39,11 +39,10 @@ public class PhysicalInteractionListener extends FlagListener
             this.checkIsland(e, e.getPlayer(), e.getPlayer().getLocation(), Flags.PRESSURE_PLATE);
             return;
         }
-
-        switch (e.getClickedBlock().getType())
-        {
-            case FARMLAND -> this.checkIsland(e, e.getPlayer(), e.getPlayer().getLocation(), Flags.CROP_TRAMPLE);
-            case TURTLE_EGG -> this.checkIsland(e, e.getPlayer(), e.getPlayer().getLocation(), Flags.TURTLE_EGGS);
+        if (e.getClickedBlock().getType() == Material.FARMLAND) {
+            this.checkIsland(e, e.getPlayer(), e.getPlayer().getLocation(), Flags.CROP_TRAMPLE);
+        } else if (e.getClickedBlock().getType() == Material.TURTLE_EGG) {
+            this.checkIsland(e, e.getPlayer(), e.getPlayer().getLocation(), Flags.TURTLE_EGGS);
         }
     }
 
@@ -60,18 +59,18 @@ public class PhysicalInteractionListener extends FlagListener
             return;
         }
 
-        if (p.getShooter() instanceof Player)
+        if (p.getShooter() instanceof Player player)
         {
             if (Tag.WOODEN_BUTTONS.isTagged(e.getBlock().getType()))
             {
-                this.checkIsland(e, (Player) p.getShooter(), e.getBlock().getLocation(), Flags.BUTTON);
+                this.checkIsland(e, player, e.getBlock().getLocation(), Flags.BUTTON);
                 return;
             }
 
             if (Tag.PRESSURE_PLATES.isTagged(e.getBlock().getType()))
             {
                 // Pressure plates
-                this.checkIsland(e, (Player) p.getShooter(), e.getBlock().getLocation(), Flags.PRESSURE_PLATE);
+                this.checkIsland(e, player, e.getBlock().getLocation(), Flags.PRESSURE_PLATE);
             }
         }
     }

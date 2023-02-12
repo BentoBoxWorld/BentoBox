@@ -16,6 +16,7 @@ import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
@@ -49,7 +50,8 @@ public class JoinLeaveListener implements Listener {
         User.removePlayer(event.getPlayer());
 
         User user = User.getInstance(event.getPlayer());
-        if (user == null || user.getUniqueId() == null) {
+        if (!user.isPlayer() || user.getUniqueId() == null) {
+            // This should never be the case, but it might be caused by some fake player plugins
             return;
         }
         UUID playerUUID = event.getPlayer().getUniqueId();
@@ -142,7 +144,7 @@ public class JoinLeaveListener implements Listener {
     }
 
     /**
-     * This event will clean players inventor
+     * This event will clean players inventory
      * @param event SwitchWorld event.
      */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -161,8 +163,8 @@ public class JoinLeaveListener implements Listener {
      * @param world World where cleaning must occur.
      * @param user Targeted user.
      */
-    private void clearPlayersInventory(World world, @NonNull User user) {
-        if (user.getUniqueId() == null) return;
+    private void clearPlayersInventory(@Nullable World world, @NonNull User user) {
+        if (user.getUniqueId() == null || world == null) return;
         // Clear inventory if required
         Players playerData = players.getPlayer(user.getUniqueId());
 

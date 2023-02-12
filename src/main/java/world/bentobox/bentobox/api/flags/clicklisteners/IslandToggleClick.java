@@ -1,14 +1,15 @@
 package world.bentobox.bentobox.api.flags.clicklisteners;
 
+import java.util.Objects;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.event.inventory.ClickType;
 
-import java.util.Objects;
-
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.events.flags.FlagSettingChangeEvent;
+import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.panels.Panel;
 import world.bentobox.bentobox.api.panels.PanelItem.ClickHandler;
@@ -60,18 +61,7 @@ public class IslandToggleClick implements ClickHandler {
             {
                 if (click.equals(ClickType.SHIFT_LEFT) && user.isOp())
                 {
-                    if (!plugin.getIWM().getHiddenFlags(user.getWorld()).contains(flag.getID()))
-                    {
-                        plugin.getIWM().getHiddenFlags(user.getWorld()).add(flag.getID());
-                        user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_GLASS_BREAK, 1F, 1F);
-                    }
-                    else
-                    {
-                        plugin.getIWM().getHiddenFlags(user.getWorld()).remove(flag.getID());
-                        user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1F, 1F);
-                    }
-                    // Save changes
-                    plugin.getIWM().getAddon(user.getWorld()).ifPresent(GameModeAddon::saveWorldSettings);
+                    shiftLeftClick(user, flag);
                 }
                 else
                 {
@@ -82,40 +72,66 @@ public class IslandToggleClick implements ClickHandler {
                         user.notify("protection.panel.flag-item.setting-cooldown");
                         return;
                     }
-                    // Toggle flag
-                    island.toggleFlag(flag);
-                    user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 1F, 1F);
-                    // Set cooldown
-                    island.setCooldown(flag);
-                    // Fire event
-                    Bukkit.getPluginManager().callEvent(new FlagSettingChangeEvent(island,
-                        user.getUniqueId(),
-                        flag,
-                        island.isAllowed(flag)));
-
-                    if (flag.hasSubflags())
-                    {
-                        // Fire events for all subflags as well
-                        flag.getSubflags().forEach(subflag -> Bukkit.getPluginManager()
-                            .callEvent(new FlagSettingChangeEvent(island,
-                                user.getUniqueId(),
-                                subflag,
-                                island.isAllowed(subflag))));
-                    }
+                    toggleFlag(user, flag, island);
                 }
             });
         } else {
-            if (island == null) {
-                user.sendMessage("general.errors.not-on-island");
-            } else  {
-                // Player is not the allowed to change settings.
-                user.sendMessage("general.errors.insufficient-rank",
-                    TextVariables.RANK,
-                    user.getTranslation(plugin.getRanksManager().getRank(Objects.requireNonNull(island).getRank(user))));
-            }
-
-            user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_METAL_HIT, 1F, 1F);
+            reportError(user, island);
         }
         return true;
+    }
+
+    private void toggleFlag(User user, Flag flag, Island island) {
+        // Toggle flag
+        island.toggleFlag(flag);
+        user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 1F, 1F);
+        // Set cooldown
+        island.setCooldown(flag);
+        // Fire event
+        Bukkit.getPluginManager().callEvent(new FlagSettingChangeEvent(island,
+                user.getUniqueId(),
+                flag,
+                island.isAllowed(flag)));
+
+        if (flag.hasSubflags())
+        {
+            // Fire events for all subflags as well
+            flag.getSubflags().forEach(subflag -> Bukkit.getPluginManager()
+                    .callEvent(new FlagSettingChangeEvent(island,
+                            user.getUniqueId(),
+                            subflag,
+                            island.isAllowed(subflag))));
+        }
+
+    }
+
+    private void reportError(User user, Island island) {
+        if (island == null) {
+            user.sendMessage("general.errors.not-on-island");
+        } else  {
+            // Player is not the allowed to change settings.
+            user.sendMessage("general.errors.insufficient-rank",
+                    TextVariables.RANK,
+                    user.getTranslation(plugin.getRanksManager().getRank(Objects.requireNonNull(island).getRank(user))));
+        }
+
+        user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_METAL_HIT, 1F, 1F);
+
+    }
+
+    private void shiftLeftClick(User user, Flag flag) {
+        if (!plugin.getIWM().getHiddenFlags(user.getWorld()).contains(flag.getID()))
+        {
+            plugin.getIWM().getHiddenFlags(user.getWorld()).add(flag.getID());
+            user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_GLASS_BREAK, 1F, 1F);
+        }
+        else
+        {
+            plugin.getIWM().getHiddenFlags(user.getWorld()).remove(flag.getID());
+            user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1F, 1F);
+        }
+        // Save changes
+        plugin.getIWM().getAddon(user.getWorld()).ifPresent(GameModeAddon::saveWorldSettings);
+
     }
 }

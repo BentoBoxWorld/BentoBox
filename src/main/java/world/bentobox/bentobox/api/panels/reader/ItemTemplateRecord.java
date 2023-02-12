@@ -19,7 +19,6 @@ import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.api.panels.reader.ItemTemplateRecord.ActionRecords;
 
-
 /**
  * This Record contains all necessary information about Item Template that can be used to craft panel item.
  *
@@ -33,11 +32,11 @@ import world.bentobox.bentobox.api.panels.reader.ItemTemplateRecord.ActionRecord
  * @since 1.17.3
  */
 public record ItemTemplateRecord(@Nullable ItemStack icon,
-                                 @Nullable String title,
-                                 @Nullable String description,
-                                 @NonNull List<ActionRecords> actions,
-                                 @NonNull Map<String, Object> dataMap,
-                                 @Nullable ItemTemplateRecord fallback)
+        @Nullable String title,
+        @Nullable String description,
+        @NonNull List<ActionRecords> actions,
+        @NonNull Map<String, Object> dataMap,
+        @Nullable ItemTemplateRecord fallback)
 {
     /**
      * Instantiates a new Item template record without actions and data map.

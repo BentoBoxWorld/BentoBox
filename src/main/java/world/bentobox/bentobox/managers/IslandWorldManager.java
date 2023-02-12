@@ -25,7 +25,8 @@ import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.flags.Flag;
-import world.bentobox.bentobox.hooks.MultiverseCoreHook;
+import world.bentobox.bentobox.api.hooks.Hook;
+import world.bentobox.bentobox.hooks.WorldManagementHook;
 import world.bentobox.bentobox.lists.Flags;
 
 /**
@@ -51,31 +52,33 @@ public class IslandWorldManager {
 
     public void registerWorldsToMultiverse() {
         gameModes.values().stream().distinct().forEach(gm -> {
-            registerToMultiverse(gm.getOverWorld(), true);
+            registerToWorldManagementPlugins(gm.getOverWorld(), true);
             if (gm.getWorldSettings().isNetherGenerate()) {
-                registerToMultiverse(gm.getNetherWorld(), gm.getWorldSettings().isNetherIslands());
+                registerToWorldManagementPlugins(gm.getNetherWorld(), gm.getWorldSettings().isNetherIslands());
             }
             if (gm.getWorldSettings().isEndGenerate()) {
-                registerToMultiverse(gm.getEndWorld(), gm.getWorldSettings().isEndIslands());
+                registerToWorldManagementPlugins(gm.getEndWorld(), gm.getWorldSettings().isEndIslands());
             }
         });
     }
 
     /**
-     * Registers a world with Multiverse if Multiverse is available.
+     * Registers a world with world management plugins
      *
      * @param world the World to register
      * @param islandWorld true if this is an island world
      */
-    private void registerToMultiverse(@NonNull World world, boolean islandWorld) {
+    private void registerToWorldManagementPlugins(@NonNull World world, boolean islandWorld) {
         if (plugin.getHooks() != null) {
-            plugin.getHooks().getHook("Multiverse-Core").ifPresent(hook -> {
-                if (Bukkit.isPrimaryThread()) {
-                    ((MultiverseCoreHook) hook).registerWorld(world, islandWorld);
-                } else {
-                    Bukkit.getScheduler().runTask(plugin, () -> ((MultiverseCoreHook) hook).registerWorld(world, islandWorld));
+            for (Hook hook : plugin.getHooks().getHooks()) {
+                if (hook instanceof final WorldManagementHook worldManagementHook) {
+                    if (Bukkit.isPrimaryThread()) {
+                        worldManagementHook.registerWorld(world, islandWorld);
+                    } else {
+                        Bukkit.getScheduler().runTask(plugin, () -> worldManagementHook.registerWorld(world, islandWorld));
+                    }
                 }
-            });
+            }
         }
     }
 
@@ -115,7 +118,7 @@ public class IslandWorldManager {
      */
     public List<World> getOverWorlds() {
         return gameModes.keySet().stream().filter(w -> w.getEnvironment().equals(Environment.NORMAL))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
@@ -156,17 +159,17 @@ public class IslandWorldManager {
         // Add worlds to map
         gameModes.put(world, gameMode);
         // Call Multiverse
-        registerToMultiverse(world, true);
+        registerToWorldManagementPlugins(world, true);
         if (settings.isNetherGenerate()) {
             gameModes.put(gameMode.getNetherWorld(), gameMode);
             if (settings.isNetherIslands()) {
-                registerToMultiverse(gameMode.getNetherWorld(), true);
+                registerToWorldManagementPlugins(gameMode.getNetherWorld(), true);
             }
         }
         if (settings.isEndGenerate()) {
             gameModes.put(gameMode.getEndWorld(), gameMode);
             if (settings.isEndIslands()) {
-                registerToMultiverse(gameMode.getEndWorld(), true);
+                registerToWorldManagementPlugins(gameMode.getEndWorld(), true);
             }
         }
 

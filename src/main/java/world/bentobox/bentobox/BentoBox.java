@@ -20,6 +20,7 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.commands.BentoBoxCommand;
 import world.bentobox.bentobox.database.DatabaseSetup;
 import world.bentobox.bentobox.hooks.MultiverseCoreHook;
+import world.bentobox.bentobox.hooks.MyWorldsHook;
 import world.bentobox.bentobox.hooks.VaultHook;
 import world.bentobox.bentobox.hooks.placeholders.PlaceholderAPIHook;
 import world.bentobox.bentobox.listeners.BannedCommands;
@@ -27,9 +28,9 @@ import world.bentobox.bentobox.listeners.BlockEndDragon;
 import world.bentobox.bentobox.listeners.DeathListener;
 import world.bentobox.bentobox.listeners.JoinLeaveListener;
 import world.bentobox.bentobox.listeners.PanelListenerManager;
+import world.bentobox.bentobox.listeners.StandardSpawnProtectionListener;
 import world.bentobox.bentobox.listeners.teleports.EntityTeleportListener;
 import world.bentobox.bentobox.listeners.teleports.PlayerTeleportListener;
-import world.bentobox.bentobox.listeners.StandardSpawnProtectionListener;
 import world.bentobox.bentobox.managers.AddonsManager;
 import world.bentobox.bentobox.managers.BlueprintsManager;
 import world.bentobox.bentobox.managers.CommandsManager;
@@ -225,6 +226,7 @@ public class BentoBox extends JavaPlugin {
         // Register Multiverse hook - MV loads AFTER BentoBox
         // Make sure all worlds are already registered to Multiverse.
         hooksManager.registerHook(new MultiverseCoreHook());
+        hooksManager.registerHook(new MyWorldsHook());
         islandWorldManager.registerWorldsToMultiverse();
 
         // TODO: re-enable after implementation

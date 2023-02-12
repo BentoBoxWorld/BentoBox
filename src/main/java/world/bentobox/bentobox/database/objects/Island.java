@@ -16,9 +16,9 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.GameMode;
 import org.bukkit.World.Environment;
 import org.bukkit.entity.Player;
 import org.bukkit.util.BoundingBox;
@@ -728,10 +728,10 @@ public class Island implements DataObject, MetaDataAble {
     @SuppressWarnings("ConstantConditions")
     public boolean inIslandSpace(Location location) {
         return Util.sameWorld(this.world, location.getWorld()) &&
-            (location.getWorld().getEnvironment().equals(Environment.NORMAL) ||
-                this.getPlugin().getIWM().isIslandNether(location.getWorld()) ||
-                this.getPlugin().getIWM().isIslandEnd(location.getWorld())) &&
-            this.inIslandSpace(location.getBlockX(), location.getBlockZ());
+                (location.getWorld().getEnvironment().equals(Environment.NORMAL) ||
+                        this.getPlugin().getIWM().isIslandNether(location.getWorld()) ||
+                        this.getPlugin().getIWM().isIslandEnd(location.getWorld())) &&
+                this.inIslandSpace(location.getBlockX(), location.getBlockZ());
     }
 
     /**
@@ -770,33 +770,33 @@ public class Island implements DataObject, MetaDataAble {
         {
             // Return normal world bounding box.
             boundingBox = new BoundingBox(this.getMinX(),
-                this.world.getMinHeight(),
-                this.getMinZ(),
-                this.getMaxX(),
-                this.world.getMaxHeight(),
-                this.getMaxZ());
+                    this.world.getMinHeight(),
+                    this.getMinZ(),
+                    this.getMaxX(),
+                    this.world.getMaxHeight(),
+                    this.getMaxZ());
         }
         else if (Environment.THE_END.equals(environment) && this.isEndIslandEnabled())
         {
             // If end world is generated, return end island bounding box.
             //noinspection ConstantConditions
             boundingBox = new BoundingBox(this.getMinX(),
-                this.getEndWorld().getMinHeight(),
-                this.getMinZ(),
-                this.getMaxX(),
-                this.getEndWorld().getMaxHeight(),
-                this.getMaxZ());
+                    this.getEndWorld().getMinHeight(),
+                    this.getMinZ(),
+                    this.getMaxX(),
+                    this.getEndWorld().getMaxHeight(),
+                    this.getMaxZ());
         }
         else if (Environment.NETHER.equals(environment) && this.isNetherIslandEnabled())
         {
             // If nether world is generated, return nether island bounding box.
             //noinspection ConstantConditions
             boundingBox = new BoundingBox(this.getMinX(),
-                this.getNetherWorld().getMinHeight(),
-                this.getMinZ(),
-                this.getMaxX(),
-                this.getNetherWorld().getMaxHeight(),
-                this.getMaxZ());
+                    this.getNetherWorld().getMinHeight(),
+                    this.getMinZ(),
+                    this.getMaxX(),
+                    this.getNetherWorld().getMaxHeight(),
+                    this.getMaxZ());
         }
         else
         {
@@ -913,13 +913,13 @@ public class Island implements DataObject, MetaDataAble {
     @SuppressWarnings("ConstantConditions")
     public boolean onIsland(@NonNull Location target) {
         return Util.sameWorld(this.world, target.getWorld()) &&
-            (target.getWorld().getEnvironment().equals(Environment.NORMAL) ||
-                this.getPlugin().getIWM().isIslandNether(target.getWorld()) ||
-                this.getPlugin().getIWM().isIslandEnd(target.getWorld())) &&
-            target.getBlockX() >= this.getMinProtectedX() &&
-            target.getBlockX() < (this.getMinProtectedX() + this.protectionRange * 2) &&
-            target.getBlockZ() >= this.getMinProtectedZ() &&
-            target.getBlockZ() < (this.getMinProtectedZ() + this.protectionRange * 2);
+                (target.getWorld().getEnvironment().equals(Environment.NORMAL) ||
+                        this.getPlugin().getIWM().isIslandNether(target.getWorld()) ||
+                        this.getPlugin().getIWM().isIslandEnd(target.getWorld())) &&
+                target.getBlockX() >= this.getMinProtectedX() &&
+                target.getBlockX() < (this.getMinProtectedX() + this.protectionRange * 2) &&
+                target.getBlockZ() >= this.getMinProtectedZ() &&
+                target.getBlockZ() < (this.getMinProtectedZ() + this.protectionRange * 2);
     }
 
     /**
@@ -950,33 +950,33 @@ public class Island implements DataObject, MetaDataAble {
         {
             // Return normal world bounding box.
             boundingBox = new BoundingBox(this.getMinProtectedX(),
-                this.world.getMinHeight(),
-                this.getMinProtectedZ(),
-                this.getMaxProtectedX(),
-                this.world.getMaxHeight(),
-                this.getMaxProtectedZ());
+                    this.world.getMinHeight(),
+                    this.getMinProtectedZ(),
+                    this.getMaxProtectedX(),
+                    this.world.getMaxHeight(),
+                    this.getMaxProtectedZ());
         }
         else if (Environment.THE_END.equals(environment) && this.isEndIslandEnabled())
         {
             // If end world is generated, return end island bounding box.
             //noinspection ConstantConditions
             boundingBox = new BoundingBox(this.getMinProtectedX(),
-                this.getEndWorld().getMinHeight(),
-                this.getMinProtectedZ(),
-                this.getMaxProtectedX(),
-                this.getEndWorld().getMaxHeight(),
-                this.getMaxProtectedZ());
+                    this.getEndWorld().getMinHeight(),
+                    this.getMinProtectedZ(),
+                    this.getMaxProtectedX(),
+                    this.getEndWorld().getMaxHeight(),
+                    this.getMaxProtectedZ());
         }
         else if (Environment.NETHER.equals(environment) && this.isNetherIslandEnabled())
         {
             // If nether world is generated, return nether island bounding box.
             //noinspection ConstantConditions
             boundingBox = new BoundingBox(this.getMinProtectedX(),
-                this.getNetherWorld().getMinHeight(),
-                this.getMinProtectedZ(),
-                this.getMaxProtectedX(),
-                this.getNetherWorld().getMaxHeight(),
-                this.getMaxProtectedZ());
+                    this.getNetherWorld().getMinHeight(),
+                    this.getMinProtectedZ(),
+                    this.getMaxProtectedX(),
+                    this.getNetherWorld().getMaxHeight(),
+                    this.getMaxProtectedZ());
         }
         else
         {
@@ -1057,11 +1057,11 @@ public class Island implements DataObject, MetaDataAble {
         BentoBox plugin = BentoBox.getInstance();
         Map<String, Integer> result = new HashMap<>();
         plugin.getFlagsManager().getFlags().stream().
-            filter(f -> f.getType().equals(Flag.Type.PROTECTION)).
-            forEach(f -> result.put(f.getID(), plugin.getIWM().getDefaultIslandFlags(world).getOrDefault(f, f.getDefaultRank())));
+        filter(f -> f.getType().equals(Flag.Type.PROTECTION)).
+        forEach(f -> result.put(f.getID(), plugin.getIWM().getDefaultIslandFlags(world).getOrDefault(f, f.getDefaultRank())));
         plugin.getFlagsManager().getFlags().stream().
-            filter(f -> f.getType().equals(Flag.Type.SETTING)).
-            forEach(f -> result.put(f.getID(), plugin.getIWM().getDefaultIslandSettings(world).getOrDefault(f, f.getDefaultRank())));
+        filter(f -> f.getType().equals(Flag.Type.SETTING)).
+        forEach(f -> result.put(f.getID(), plugin.getIWM().getDefaultIslandSettings(world).getOrDefault(f, f.getDefaultRank())));
         this.setFlags(result);
         setChanged();
     }

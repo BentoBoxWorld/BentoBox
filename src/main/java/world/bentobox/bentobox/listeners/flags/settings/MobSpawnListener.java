@@ -3,7 +3,8 @@ package world.bentobox.bentobox.listeners.flags.settings;
 import java.util.Optional;
 
 import org.bukkit.Location;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.PufferFish;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.CreatureSpawnEvent;
@@ -50,8 +51,8 @@ public class MobSpawnListener extends FlagListener
 
         Optional<Island> island = getIslands().getIslandAt(event.getPlayer().getLocation());
 
-        if (island.map(i -> !i.isAllowed(Flags.MONSTER_NATURAL_SPAWN)).orElseGet(
-            () -> !Flags.MONSTER_NATURAL_SPAWN.isSetForWorld(event.getWorld())))
+        if (Boolean.TRUE.equals(island.map(i -> !i.isAllowed(Flags.MONSTER_NATURAL_SPAWN)).orElseGet(
+                () -> !Flags.MONSTER_NATURAL_SPAWN.isSetForWorld(event.getWorld()))))
         {
             // Monster spawning is disabled on island or world. Cancel the raid.
             event.setCancelled(true);
@@ -74,8 +75,8 @@ public class MobSpawnListener extends FlagListener
 
         Optional<Island> island = getIslands().getIslandAt(event.getRaid().getLocation());
 
-        if (island.map(i -> !i.isAllowed(Flags.MONSTER_NATURAL_SPAWN)).orElseGet(
-            () -> !Flags.MONSTER_NATURAL_SPAWN.isSetForWorld(event.getWorld())))
+        if (Boolean.TRUE.equals(island.map(i -> !i.isAllowed(Flags.MONSTER_NATURAL_SPAWN)).orElseGet(
+                () -> !Flags.MONSTER_NATURAL_SPAWN.isSetForWorld(event.getWorld()))))
         {
             // CHEATERS. PUNISH THEM.
             event.getWinners().forEach(player ->
@@ -103,25 +104,28 @@ public class MobSpawnListener extends FlagListener
 
         switch (e.getSpawnReason())
         {
-            // Natural
-            case DEFAULT, DROWNED, JOCKEY, LIGHTNING, MOUNT, NATURAL, NETHER_PORTAL, OCELOT_BABY, PATROL,
-                RAID, REINFORCEMENTS, SILVERFISH_BLOCK, TRAP, VILLAGE_DEFENSE, VILLAGE_INVASION ->
-            {
-                boolean cancelNatural = this.shouldCancel(e.getEntity(),
+        // Natural
+        case DEFAULT, DROWNED, JOCKEY, LIGHTNING, MOUNT, NATURAL, NETHER_PORTAL, OCELOT_BABY, PATROL,
+        RAID, REINFORCEMENTS, SILVERFISH_BLOCK, TRAP, VILLAGE_DEFENSE, VILLAGE_INVASION ->
+        {
+            boolean cancelNatural = this.shouldCancel(e.getEntity(),
                     e.getLocation(),
                     Flags.ANIMAL_NATURAL_SPAWN,
                     Flags.MONSTER_NATURAL_SPAWN);
-                e.setCancelled(cancelNatural);
-            }
-            // Spawners
-            case SPAWNER ->
-            {
-                boolean cancelSpawners = this.shouldCancel(e.getEntity(),
+            e.setCancelled(cancelNatural);
+        }
+        // Spawners
+        case SPAWNER ->
+        {
+            boolean cancelSpawners = this.shouldCancel(e.getEntity(),
                     e.getLocation(),
                     Flags.ANIMAL_SPAWNERS_SPAWN,
                     Flags.MONSTER_SPAWNERS_SPAWN);
-                e.setCancelled(cancelSpawners);
-            }
+            e.setCancelled(cancelSpawners);
+        }
+        default -> {
+            // Nothing to do
+        }
         }
     }
 
@@ -141,12 +145,12 @@ public class MobSpawnListener extends FlagListener
         if (Util.isHostileEntity(entity) && !(entity instanceof PufferFish))
         {
             return island.map(i -> !i.isAllowed(monsterSpawnFlag)).
-                orElseGet(() -> !monsterSpawnFlag.isSetForWorld(entity.getWorld()));
+                    orElseGet(() -> !monsterSpawnFlag.isSetForWorld(entity.getWorld()));
         }
         else if (Util.isPassiveEntity(entity) || entity instanceof PufferFish)
         {
             return island.map(i -> !i.isAllowed(animalSpawnFlag)).
-                orElseGet(() -> !animalSpawnFlag.isSetForWorld(entity.getWorld()));
+                    orElseGet(() -> !animalSpawnFlag.isSetForWorld(entity.getWorld()));
         }
         else
         {

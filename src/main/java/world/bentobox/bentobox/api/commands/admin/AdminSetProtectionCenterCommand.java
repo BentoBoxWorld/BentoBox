@@ -50,7 +50,7 @@ public class AdminSetProtectionCenterCommand extends ConfirmableCommand
     public boolean canExecute(User user, String label, List<String> args) {
         if (args.size() == 3) {
             // Get location
-            targetLoc = getLocation(user, args);
+            targetLoc = getLocation(args);
         } else {
             targetLoc = new Location(getWorld(), user.getLocation().getBlockX(), user.getLocation().getBlockY(), user.getLocation().getBlockZ());
         }
@@ -67,7 +67,7 @@ public class AdminSetProtectionCenterCommand extends ConfirmableCommand
         return true;
     }
 
-    private Location getLocation(User user, List<String> args) {
+    private Location getLocation(List<String> args) {
         try {
             int x = Integer.parseInt(args.get(0));
             int y = Integer.parseInt(args.get(1));

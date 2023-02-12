@@ -6,7 +6,6 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.AbstractArrow;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EnderCrystal;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -68,13 +67,13 @@ public class BreakBlocksListener extends FlagListener {
 
         Player p = e.getPlayer();
         Location l = e.getClickedBlock().getLocation();
-        
+
         switch (e.getClickedBlock().getType())
         {
-            case CAKE -> this.checkIsland(e, p, l, Flags.BREAK_BLOCKS);
-            case SPAWNER -> this.checkIsland(e, p, l, Flags.BREAK_SPAWNERS);
-            case DRAGON_EGG -> this.checkIsland(e, p, l, Flags.DRAGON_EGG);
-            case HOPPER -> this.checkIsland(e, p, l, Flags.BREAK_HOPPERS);
+        case CAKE -> this.checkIsland(e, p, l, Flags.BREAK_BLOCKS);
+        case SPAWNER -> this.checkIsland(e, p, l, Flags.BREAK_SPAWNERS);
+        case DRAGON_EGG -> this.checkIsland(e, p, l, Flags.DRAGON_EGG);
+        case HOPPER -> this.checkIsland(e, p, l, Flags.BREAK_HOPPERS);
         }
     }
 
@@ -123,12 +122,10 @@ public class BreakBlocksListener extends FlagListener {
         if (e.getDamager() instanceof Player p) {
             // Check the break blocks flag
             notAllowed(e, p, e.getEntity().getLocation());
-        } else if (e.getDamager() instanceof Projectile p) {
-            // Find out who fired the arrow
-            if (p.getShooter() instanceof Player && notAllowed(e, (Player)p.getShooter(), e.getEntity().getLocation())) {
-                e.getEntity().setFireTicks(0);
-                p.setFireTicks(0);
-            }
+        } else if (e.getDamager() instanceof Projectile p && // Find out who fired the arrow
+                p.getShooter() instanceof Player player && notAllowed(e, player, e.getEntity().getLocation())) {
+            e.getEntity().setFireTicks(0);
+            p.setFireTicks(0);
         }
     }
 

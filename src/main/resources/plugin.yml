@@ -10,7 +10,7 @@ description: ${project.description}
 
 load: STARTUP
 
-loadbefore: [Pladdon, Multiverse-Core, Residence]
+loadbefore: [Pladdon, Multiverse-Core, My_Worlds, Residence]
 
 softdepend:
   - Citizens
@@ -28,9 +28,11 @@ softdepend:
   - EconomyPlus
 
 libraries:
-  - mysql:mysql-connector-java:8.0.27
+  - mysql:mysql-connector-java:${mysql.version}
+  - org.mariadb.jdbc:mariadb-java-client:${mariadb.version}
+  - org.postgresql:postgresql:${postgresql.version}
   - org.mongodb:mongodb-driver:${mongodb.version}
-  - postgresql:postgresql:9.1-901-1.jdbc4
+  - com.zaxxer:HikariCP:${hikaricp.version}
 
 permissions:
   bentobox.admin:

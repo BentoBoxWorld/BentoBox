@@ -19,6 +19,7 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.PluginManager;
+import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.Nullable;
 import org.junit.After;
 import org.junit.runner.RunWith;
@@ -103,6 +104,7 @@ public abstract class AbstractCommonSetup {
         when(location.getBlockX()).thenReturn(0);
         when(location.getBlockY()).thenReturn(0);
         when(location.getBlockZ()).thenReturn(0);
+        when(location.toVector()).thenReturn(new Vector(0,0,0));
 
         // Players Manager and meta data
         PlayersManager pm = mock(PlayersManager.class);

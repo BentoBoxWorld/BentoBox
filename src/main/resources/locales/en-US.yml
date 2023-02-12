@@ -20,7 +20,7 @@ general:
     command-cancelled: "&c Command cancelled."
     no-permission: "&c You don't have the permission to execute this command (&7 [permission]&c )."
     insufficient-rank: "&c Your rank is not high enough to do that! (&7 [rank]&c )"
-    use-in-game: "&c This command is only available in game."
+    use-in-game: "&c This command is only available in-game."
     no-team: "&c You do not have a team!"
     no-island: "&c You do not have an island!"
     player-has-island: "&c Player already has an island!"
@@ -57,24 +57,24 @@ commands:
     help:
       description: "admin command"
     resets:
-      description: "edit resets of the players"
+      description: "edit player reset values"
       set:
-        description: "sets how many time this player reset his island"
+        description: "sets how many times this player has reset his island"
         parameters: "<player> <resets>"
-        success: "&a Successfully set &b [name]&a 's resets to &b [number]&a ."
+        success: "&b [name]&a 's island reset count is now &b [number]&a ."
       reset:
-        description: "resets how many time this player reset his island to 0"
+        description: "sets the player's island reset count to 0"
         parameters: "<player>"
-        success-everyone: "&a Successfully reset &b everyone&a 's resets to &b 0&a ."
-        success: "&a Successfully reset &b [name]&a 's resets to &b 0&a ."
+        success-everyone: "&a Successfully reset &b everyone&a 's reset count to &b 0&a ."
+        success: "&a Successfully reset &b [name]&a 's reset count to &b 0&a ."
       add:
-        description: "adds to how many times this player reset his island"
+        description: "adds this player's island reset count"
         parameters: "<player> <resets>"
         success: "&a Successfully added &b [number] &a resets to &b [name], increasing the total to &b [total]&a  resets."
       remove:
-        description: "removes from how many times this player reset his island"
+        description: "reduces the player's island reset count"
         parameters: "<player> <resets>"
-        success: "&a Successfully removed &b [number] &a resets to &b [name], decreasing the total to &b [total]&a  resets."
+        success: "&a Successfully removed &b [number] &a resets from &b [name]'s island, decreasing the total to &b [total]&a resets."
     purge:
       parameters: "[days]"
       description: "purge islands abandoned for more than [days]"
@@ -118,7 +118,7 @@ commands:
       fix:
         description: "scans and fixes cross island membership in database"
         scanning: "Scanning database..."
-        duplicate-owner: "&c Player owns more than one island in database: [name]"
+        duplicate-owner: "&c Player owns more than one island in the database: [name]"
         player-has: "&c Player [name] has [number] islands"
         duplicate-member: "&c Player [name] is a member of more than one island in the database"
         rank-on-island: "&c [rank] on island at [xyz]"
@@ -185,7 +185,7 @@ commands:
     info:
       parameters: "<player>"
       description: "get info on where you are or player's island"
-      no-island: "&c You are not in an island right now..."
+      no-island: "&c You are not on an island right now..."
       title: "========== Island Info ============"
       island-uuid: "UUID: [uuid]"
       owner: "Owner: [owner] ([uuid])"
@@ -213,8 +213,8 @@ commands:
     switch:
       description: "switch on/off protection bypass"
       op: "&c Ops can always bypass protection. Deop to use command."
-      removing: "Removing protection bypass..."
-      adding: "Adding protection bypass..."
+      removing: "&a Removing protection bypass..."
+      adding: "&a Adding protection bypass..."
     switchto:
       parameters: "<player> <number>"
       description: "switch player's island to the numbered one in trash"
@@ -262,7 +262,7 @@ commands:
       island: "&c This will affect the island at [xyz] owned by '[name]'."
       confirmation: "&c Are you sure you want to set [xyz] as the protection center?"
       success: "&a Successfully set [xyz] as the protection center."
-      fail: "&a Failed to set [xyz] as the protection center."
+      fail: "&c Failed to set [xyz] as the protection center."
       island-location-changed: "&a [user] changed island's protection center to [xyz]."
       xyz-error: "&c Specify three integer coordinates: e.g, 100 120 100"
     setspawn:
@@ -276,7 +276,7 @@ commands:
       no-island-here: "&c There is no island here."
       confirmation: "&c Are you sure you want to set this location as the spawn point for this island?"
       success: "&a Successfully set this location as the spawn point for this island."
-      island-spawnpoint-changed: "&a [user] changed this island spawn point."
+      island-spawnpoint-changed: "&a [user] changed the island spawn point."
     settings:
       parameters: "[player]/[world flag]/spawn-island [flag/active/disable] [rank/active/disable]"
       description: "open settings GUI or set settings"
@@ -403,8 +403,8 @@ commands:
     why:
       parameters: "<player>"
       description: "toggle console protection debug reporting"
-      turning-on: "Turning on console debug for [name]."
-      turning-off: "Turning off console debug for [name]."
+      turning-on: "&a Turning on console debug for &b [name]."
+      turning-off: "&a Turning off console debug for &b [name]."
     deaths:
       description: "edit deaths of players"
       reset:
@@ -591,7 +591,7 @@ commands:
         already-has-rank: "&c Player already has a rank!"
         you-are-a-coop-member: "&2 You were cooped by &b[name]&a."
         success: "&a You cooped &b [name]&a."
-        name-has-invited-you: "&a [name] has invited you to join be a coop member of their island."
+        name-has-invited-you: "&a [name] has invited you to join as a coop member of their island."
       uncoop:
         description: "remove a coop rank from player"
         parameters: "<player>"
@@ -606,11 +606,11 @@ commands:
         description: "give a player trusted rank on your island"
         parameters: "<player>"
         trust-in-yourself: "&c Trust in yourself!"
-        name-has-invited-you: "&a [name] has invited you to join be a trusted member of their island."
+        name-has-invited-you: "&a [name] has invited you to join as a trusted member of their island."
         player-already-trusted: "&c Player is already trusted!"
         you-are-trusted: "&2 You are trusted by &b [name]&a !"
         success: "&a You trusted &b [name]&a ."
-        is-full: "&c You cannot trust anyone else."
+        is-full: "&c You cannot trust anyone else. Watch your back!"
       untrust:
         description: "remove trusted player rank from player"
         parameters: "<player>"

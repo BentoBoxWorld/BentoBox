@@ -936,7 +936,7 @@ public class PVPListenerTest {
         // Verify
         verify(player, times(3)).getUniqueId();
         verify(cloud).getEntityId();
-        verify(tp, times(2)).getShooter();
+        verify(tp).getShooter();
         PowerMockito.verifyStatic(Bukkit.class);
         Bukkit.getScheduler();
     }

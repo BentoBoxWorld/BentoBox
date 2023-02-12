@@ -35,8 +35,8 @@ public class ItemFrameListener extends FlagListener {
                 && getIWM().inWorld(entity.getLocation())
                 && !Flags.ITEM_FRAME_DAMAGE.isSetForWorld(entity.getWorld())
                 && !(damager instanceof Player)) {
-            if (damager instanceof Projectile) {
-                if (!(((Projectile) damager).getShooter() instanceof Player)) {
+            if (damager instanceof Projectile projectile) {
+                if (!(projectile.getShooter() instanceof Player)) {
                     e.setCancelled(true);
                 }
             } else {

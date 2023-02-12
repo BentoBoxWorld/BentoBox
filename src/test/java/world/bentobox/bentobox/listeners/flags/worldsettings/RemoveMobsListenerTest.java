@@ -15,6 +15,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.junit.After;
@@ -81,7 +82,7 @@ public class RemoveMobsListenerTest {
         when(island.getOwner()).thenReturn(uuid1);
 
         when(plugin.getIslands()).thenReturn(im);
-        when(im.getIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(island);
+        when(im.getIsland(any(), Mockito.any(UUID.class))).thenReturn(island);
 
         // Location
         when(inside.getWorld()).thenReturn(world);
@@ -92,17 +93,17 @@ public class RemoveMobsListenerTest {
         Optional<Island> opIsland = Optional.ofNullable(island);
         when(im.getProtectedIslandAt(Mockito.eq(inside))).thenReturn(opIsland);
         // On island
-        when(im.locationIsOnIsland(Mockito.any(), Mockito.any())).thenReturn(true);
+        when(im.locationIsOnIsland(any(), any())).thenReturn(true);
 
         PowerMockito.mockStatic(Util.class);
-        when(Util.getWorld(Mockito.any())).thenReturn(world);
+        when(Util.getWorld(any())).thenReturn(world);
 
         // World Settings
         IslandWorldManager iwm = mock(IslandWorldManager.class);
         when(iwm.getAddon(any())).thenReturn(Optional.empty());
         when(plugin.getIWM()).thenReturn(iwm);
         WorldSettings ws = mock(WorldSettings.class);
-        when(iwm.getWorldSettings(Mockito.any())).thenReturn(ws);
+        when(iwm.getWorldSettings(any())).thenReturn(ws);
         Map<String, Boolean> worldFlags = new HashMap<>();
         when(ws.getWorldFlags()).thenReturn(worldFlags);
         Flags.REMOVE_MOBS.setSetting(world, true);
@@ -171,6 +172,7 @@ public class RemoveMobsListenerTest {
         new RemoveMobsListener().onUserTeleport(e);
         verify(scheduler, never()).runTask(any(), any(Runnable.class));
     }
+
     /**
      * Test method for {@link RemoveMobsListener#onUserTeleport(org.bukkit.event.player.PlayerTeleportEvent)}.
      */
@@ -188,10 +190,42 @@ public class RemoveMobsListenerTest {
     @Test
     public void testOnUserTeleportToNotIsland() {
         // Not on island
-        when(im.locationIsOnIsland(Mockito.any(), Mockito.any())).thenReturn(false);
+        when(im.locationIsOnIsland(any(), any())).thenReturn(false);
         PlayerTeleportEvent e = new PlayerTeleportEvent(player, inside, inside, PlayerTeleportEvent.TeleportCause.PLUGIN);
         new RemoveMobsListener().onUserTeleport(e);
         verify(scheduler, never()).runTask(any(), any(Runnable.class));
     }
 
+    /**
+     * Test method for {@link RemoveMobsListener#onUserRespawn(org.bukkit.event.player.PlayerRespawnEvent)}.
+     */
+    @Test
+    public void testOnUserRespawn() {
+        PlayerRespawnEvent e = new PlayerRespawnEvent(player, inside, false, false);
+        new RemoveMobsListener().onUserRespawn(e);
+        verify(scheduler).runTask(any(), any(Runnable.class));
+    }
+
+    /**
+     * Test method for {@link RemoveMobsListener#onUserRespawn(org.bukkit.event.player.PlayerRespawnEvent)}.
+     */
+    @Test
+    public void testOnUserRespawnDoNotRemove() {
+        Flags.REMOVE_MOBS.setSetting(world, false);
+        PlayerRespawnEvent e = new PlayerRespawnEvent(player, inside, false, false);
+        new RemoveMobsListener().onUserRespawn(e);
+        verify(scheduler, never()).runTask(any(), any(Runnable.class));
+    }
+
+    /**
+     * Test method for {@link RemoveMobsListener#onUserRespawn(org.bukkit.event.player.PlayerRespawnEvent)}.
+     */
+    @Test
+    public void testOnUserRespawnNotIsland() {
+        // Not on island
+        when(im.locationIsOnIsland(any(), any())).thenReturn(false);
+        PlayerRespawnEvent e = new PlayerRespawnEvent(player, inside, false, false);
+        new RemoveMobsListener().onUserRespawn(e);
+        verify(scheduler, never()).runTask(any(), any(Runnable.class));
+    }
 }

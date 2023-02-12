@@ -9,7 +9,12 @@ import world.bentobox.bentobox.api.commands.admin.deaths.AdminDeathsCommand;
 import world.bentobox.bentobox.api.commands.admin.purge.AdminPurgeCommand;
 import world.bentobox.bentobox.api.commands.admin.range.AdminRangeCommand;
 import world.bentobox.bentobox.api.commands.admin.resets.AdminResetsCommand;
-import world.bentobox.bentobox.api.commands.admin.team.*;
+import world.bentobox.bentobox.api.commands.admin.team.AdminTeamAddCommand;
+import world.bentobox.bentobox.api.commands.admin.team.AdminTeamCommand;
+import world.bentobox.bentobox.api.commands.admin.team.AdminTeamDisbandCommand;
+import world.bentobox.bentobox.api.commands.admin.team.AdminTeamFixCommand;
+import world.bentobox.bentobox.api.commands.admin.team.AdminTeamKickCommand;
+import world.bentobox.bentobox.api.commands.admin.team.AdminTeamSetownerCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 
@@ -25,7 +30,7 @@ public abstract class DefaultAdminCommand extends CompositeCommand {
      *
      * @param addon   - GameMode addon
      */
-    public DefaultAdminCommand(GameModeAddon addon) {
+    protected DefaultAdminCommand(GameModeAddon addon) {
         // Register command with alias from config.
         super(addon,
                 addon.getWorldSettings().getAdminCommandAliases().split(" ")[0],

@@ -8,7 +8,6 @@ import java.util.Locale;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.bukkit.ChatColor;
 import org.eclipse.jdt.annotation.NonNull;
@@ -88,11 +87,9 @@ public class AdminSettingsCommand extends CompositeCommand {
     }
 
     private boolean getIsland(User user, List<String> args) {
-        if (args.get(0).equalsIgnoreCase(SPAWN_ISLAND)) {
-            if (getIslands().getSpawn(getWorld()).isPresent()) {
-                island = getIslands().getSpawn(getWorld()).get();
-                return true;
-            }
+        if (args.get(0).equalsIgnoreCase(SPAWN_ISLAND) && getIslands().getSpawn(getWorld()).isPresent()) {
+            island = getIslands().getSpawn(getWorld()).get();
+            return true;
         }
         // Get target player
         @Nullable UUID targetUUID = Util.getUUID(args.get(0));
@@ -192,19 +189,18 @@ public class AdminSettingsCommand extends CompositeCommand {
             // Command line setting
             flag.ifPresent(f -> {
                 switch (f.getType()) {
-                case PROTECTION:
+                case PROTECTION -> {
                     island.setFlag(f, rank);
                     getIslands().save(island);
-                    break;
-                case SETTING:
+                }
+                case SETTING -> {
                     island.setSettingsFlag(f, activeState);
                     getIslands().save(island);
-                    break;
-                case WORLD_SETTING:
-                    f.setSetting(getWorld(), activeState);
-                    break;
-                default:
-                    break;
+                }
+                case WORLD_SETTING -> f.setSetting(getWorld(), activeState);
+                default -> {
+                    // Do nothing
+                }
                 }
             });
             user.sendMessage("general.success");
@@ -270,7 +266,7 @@ public class AdminSettingsCommand extends CompositeCommand {
             .getRanks().entrySet().stream()
             .filter(en -> en.getValue() > RanksManager.BANNED_RANK && en.getValue() <= RanksManager.OWNER_RANK)
             .map(Entry::getKey)
-            .map(user::getTranslation).collect(Collectors.toList());
+            .map(user::getTranslation).toList();
             case SETTING -> Arrays.asList(active, disabled);
             default -> Collections.<String>emptyList();
             }).orElse(Collections.emptyList());

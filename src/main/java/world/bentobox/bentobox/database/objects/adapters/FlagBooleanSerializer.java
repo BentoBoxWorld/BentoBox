@@ -1,10 +1,11 @@
 package world.bentobox.bentobox.database.objects.adapters;
 
 
-import org.bukkit.configuration.MemorySection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import org.bukkit.configuration.MemorySection;
 
 
 /**
@@ -35,7 +36,7 @@ public class FlagBooleanSerializer implements AdapterInterface<Map<String, Integ
         {
             for (Entry<String, Boolean> en : ((Map<String, Boolean>) object).entrySet())
             {
-                result.put(en.getKey(), en.getValue() ? 0 : -1);
+                result.put(en.getKey(), Boolean.TRUE.equals(en.getValue()) ? 0 : -1);
             }
         }
 

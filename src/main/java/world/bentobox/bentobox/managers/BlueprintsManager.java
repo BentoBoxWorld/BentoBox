@@ -1,11 +1,24 @@
 package world.bentobox.bentobox.managers;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.InputMismatchException;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.jar.JarFile;
@@ -47,8 +60,8 @@ public class BlueprintsManager {
     private static final String BLUEPRINT_BUNDLE_SUFFIX = ".json";
     public static final String BLUEPRINT_SUFFIX = ".blu";
     public static final String DEFAULT_BUNDLE_NAME = "default";
-
-    public static final @NonNull String FOLDER_NAME = "blueprints";
+    @NonNull
+    public static final String FOLDER_NAME = "blueprints";
     private static final String FOR = "' for ";
 
     /**
@@ -56,15 +69,15 @@ public class BlueprintsManager {
      * Inner map's key is the uniqueId of the blueprint bundle so it's
      * easy to get from a UI
      */
-    private @NonNull
-    final Map<GameModeAddon, List<BlueprintBundle>> blueprintBundles;
+    @NonNull
+    private final Map<GameModeAddon, List<BlueprintBundle>> blueprintBundles;
 
     /**
      * Map of blueprints. There can be many blueprints per game mode addon
      * Inner map's key is the blueprint's name so it's easy to get from a UI
      */
-    private @NonNull
-    final Map<GameModeAddon, List<Blueprint>> blueprints;
+    @NonNull
+    private final Map<GameModeAddon, List<Blueprint>> blueprints;
 
     /**
      * Gson used for serializing/deserializing the bundle class
@@ -73,8 +86,8 @@ public class BlueprintsManager {
 
     private final @NonNull BentoBox plugin;
 
-    private @NonNull
-    final Set<GameModeAddon> blueprintsLoaded;
+    @NonNull
+    private final Set<GameModeAddon> blueprintsLoaded;
 
 
     public BlueprintsManager(@NonNull BentoBox plugin) {
@@ -212,7 +225,7 @@ public class BlueprintsManager {
         }
 
         for (File file : bundles) {
-            
+
             try (FileReader fileReader = new FileReader(file, StandardCharsets.UTF_8))
             {
                 if (!file.getName().equals(Util.sanitizeInput(file.getName())))

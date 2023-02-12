@@ -205,26 +205,29 @@ public class LocalesManager {
                 File targetFile = new File(localeDir, name.substring(Math.max(lastIndex, 0)));
                 copyFile(name, targetFile);
                 // Update the locale file if it exists already
-                try (InputStreamReader in = new InputStreamReader(plugin.getResource(name))) {
-                    YamlConfiguration jarLocale = new YamlConfiguration();
-                    jarLocale.load(in);
-
-                    YamlConfiguration fileLocale = new YamlConfiguration();
-                    fileLocale.load(targetFile);
-                    for (String k : jarLocale.getKeys(true)) {
-                        if (!fileLocale.contains(k, false)) {
-                            fileLocale.set(k, jarLocale.get(k));
-                        }
-                    }
-                    // Save it
-                    fileLocale.save(targetFile);
-                } catch (InvalidConfigurationException e) {
-                    plugin.logError("Could not update locale files from jar " + e.getMessage());
-                }
-
+                updateFile(name, targetFile);
             }
         } catch (IOException e) {
             plugin.logError("Could not copy locale files from jar " + e.getMessage());
+        }
+    }
+
+    private void updateFile(String name, File targetFile) throws IOException {
+        try (InputStreamReader in = new InputStreamReader(plugin.getResource(name))) {
+            YamlConfiguration jarLocale = new YamlConfiguration();
+            jarLocale.load(in);
+
+            YamlConfiguration fileLocale = new YamlConfiguration();
+            fileLocale.load(targetFile);
+            for (String k : jarLocale.getKeys(true)) {
+                if (!fileLocale.contains(k, false)) {
+                    fileLocale.set(k, jarLocale.get(k));
+                }
+            }
+            // Save it
+            fileLocale.save(targetFile);
+        } catch (InvalidConfigurationException e) {
+            plugin.logError("Could not update locale files from jar " + e.getMessage());
         }
     }
 

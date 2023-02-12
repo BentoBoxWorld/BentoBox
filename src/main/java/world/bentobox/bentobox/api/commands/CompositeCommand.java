@@ -11,7 +11,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 import org.bukkit.World;
 import org.bukkit.command.Command;
@@ -286,10 +285,10 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     {
         // Check perms, but only if this isn't the console
         if (user.isPlayer() &&
-            !user.isOp() &&
-            this.getPermission() != null &&
-            !this.getPermission().isEmpty() &&
-            !user.hasPermission(this.getPermission()))
+                !user.isOp() &&
+                this.getPermission() != null &&
+                !this.getPermission().isEmpty() &&
+                !user.hasPermission(this.getPermission()))
         {
             user.sendMessage("general.errors.no-permission", TextVariables.PERMISSION, this.getPermission());
             return false;
@@ -515,18 +514,6 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     }
 
     /**
-     * Convenience method to check if a user is a player
-     * @param user - the User
-     * @return true if sender is a player
-     * @deprecated use {@link User#isPlayer()}
-     * @forRemove 1.18.0
-     */
-    @Deprecated
-    protected boolean isPlayer(User user) {
-        return user.isPlayer();
-    }
-
-    /**
      * Sets whether this command should only be run by players.
      * If this is set to {@code true}, this command will only be runnable by objects implementing {@link Player}.
      * <br/><br/>
@@ -663,7 +650,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         /* ------------ */
 
         String lastArg = args.length != 0 ? args[args.length - 1] : "";
-        return Util.tabLimit(options, lastArg).stream().sorted().collect(Collectors.toList());
+        return Util.tabLimit(options, lastArg).stream().sorted().toList();
     }
 
     /**
@@ -677,7 +664,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         return command.getSubCommands().values().stream()
                 .filter(cmd -> !cmd.isHidden())
                 .filter(cmd -> !cmd.isOnlyPlayer() || sender.isOp() || (sender instanceof Player && cmd.getPermission() != null && (cmd.getPermission().isEmpty() || sender.hasPermission(cmd.getPermission()))) )
-                .map(CompositeCommand::getLabel).collect(Collectors.toList());
+                .map(CompositeCommand::getLabel).toList();
     }
 
     /**

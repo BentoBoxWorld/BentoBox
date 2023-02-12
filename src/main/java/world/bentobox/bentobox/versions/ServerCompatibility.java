@@ -189,15 +189,15 @@ public class ServerCompatibility {
         /**
          * @since 1.19.0
          */
-        V1_18(Compatibility.SUPPORTED),
+        V1_18(Compatibility.INCOMPATIBLE),
         /**
          * @since 1.19.0
          */
-        V1_18_1(Compatibility.SUPPORTED),
+        V1_18_1(Compatibility.INCOMPATIBLE),
         /**
          * @since 1.20.1
          */
-        V1_18_2(Compatibility.SUPPORTED),
+        V1_18_2(Compatibility.INCOMPATIBLE),
         /**
          * @since 1.21.0
          */
@@ -210,6 +210,10 @@ public class ServerCompatibility {
          * @since 1.21.0
          */
         V1_19_2(Compatibility.COMPATIBLE),
+        /**
+         * @since 1.22.0
+         */
+        V1_19_3(Compatibility.COMPATIBLE),
         ;
 
         private final Compatibility compatibility;
