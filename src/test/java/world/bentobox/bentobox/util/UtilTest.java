@@ -406,7 +406,7 @@ public class UtilTest {
         when(user.getName()).thenReturn("tastybento");
         when(user.isOnline()).thenReturn(true);
         when(user.performCommand(anyString())).thenReturn(true);
-        Util.runCommands(user, "tasty", Collections.singletonList("[SUDO]help"), "test");
+        Util.runCommands(user, Collections.singletonList("[SUDO]help"), "test");
         verify(plugin, never()).logError(anyString());
     }
 
@@ -418,7 +418,7 @@ public class UtilTest {
         when(user.getName()).thenReturn("tastybento");
         when(user.isOnline()).thenReturn(true);
         when(user.performCommand(anyString())).thenReturn(false);
-        Util.runCommands(user, "tasty",  Collections.singletonList("[SUDO]help"), "test");
+        Util.runCommands(user, Collections.singletonList("[SUDO]help"), "test");
         verify(plugin).logError(eq("Could not execute test command for tastybento: help"));
     }
 
@@ -430,7 +430,7 @@ public class UtilTest {
         when(user.getName()).thenReturn("tastybento");
         when(user.isOnline()).thenReturn(false);
         when(user.performCommand(anyString())).thenReturn(true);
-        Util.runCommands(user, "tasty", Collections.singletonList("[SUDO]help"), "test");
+        Util.runCommands(user, Collections.singletonList("[SUDO]help"), "test");
         verify(plugin).logError(eq("Could not execute test command for tastybento: help"));
     }
 
@@ -441,13 +441,13 @@ public class UtilTest {
     public void testRunCommandsConsoleCommand() {
         when(user.getName()).thenReturn("tastybento");
         when(Bukkit.dispatchCommand(eq(sender), anyString())).thenReturn(true);
-        Util.runCommands(user, "tasty", List.of("replace [player]", "replace owner [owner]", "[owner] [player]"), "test");
+        Util.runCommands(user, List.of("replace [player]", "replace owner [owner]", "[owner] [player]"), "test");
         PowerMockito.verifyStatic(Bukkit.class);
         Bukkit.dispatchCommand(sender, "replace tastybento");
         PowerMockito.verifyStatic(Bukkit.class);
-        Bukkit.dispatchCommand(sender, "replace owner tasty");
+        Bukkit.dispatchCommand(sender, "replace owner tastybento");
         PowerMockito.verifyStatic(Bukkit.class);
-        Bukkit.dispatchCommand(sender, "tasty tastybento");
+        Bukkit.dispatchCommand(sender, "tastybento tastybento");
         verify(plugin, never()).logError(anyString());
     }
 
@@ -458,7 +458,7 @@ public class UtilTest {
     public void testRunCommandsConsoleCommandFail() {
         when(user.getName()).thenReturn("tastybento");
         when(Bukkit.dispatchCommand(eq(sender), anyString())).thenReturn(false);
-        Util.runCommands(user, "", Collections.singletonList("replace [player]"), "test");
+        Util.runCommands(user, Collections.singletonList("replace [player]"), "test");
         PowerMockito.verifyStatic(Bukkit.class);
         Bukkit.dispatchCommand(sender, "replace tastybento");
         verify(plugin).logError("Could not execute test command as console: replace tastybento");

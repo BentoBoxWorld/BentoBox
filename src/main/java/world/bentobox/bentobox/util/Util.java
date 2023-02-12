@@ -357,8 +357,8 @@ public class Util {
         // Most of passive mobs extends Animals
 
         return entity instanceof Animals || entity instanceof IronGolem || entity instanceof Snowman ||
-            entity instanceof WaterMob && !(entity instanceof PufferFish) || entity instanceof Bat ||
-            entity instanceof Allay;
+                entity instanceof WaterMob && !(entity instanceof PufferFish) || entity instanceof Bat ||
+                entity instanceof Allay;
     }
 
     /*
@@ -662,9 +662,20 @@ public class Util {
     /**
      * Run a list of commands for a user
      * @param user - user affected by the commands
+     * @param commands - a list of commands
+     * @param commandType - the type of command being run - used in the console error message
+     */
+    public static void runCommands(User user, @NonNull List<String> commands, String commandType) {
+        runCommands(user, user.getName(), commands, commandType);
+    }
+
+    /**
+     * Run a list of commands for a user
+     * @param user - user affected by the commands
      * @param ownerName - name of the island owner, or the user's name if it is the user's island
      * @param commands - a list of commands
      * @param commandType - the type of command being run - used in the console error message
+     * @since 1.22.0
      */
     public static void runCommands(User user, String ownerName, @NonNull List<String> commands, String commandType) {
         commands.forEach(command -> {
@@ -776,7 +787,7 @@ public class Util {
     public static String sanitizeInput(String input)
     {
         return ChatColor.stripColor(
-            Util.translateColorCodes(input.replaceAll("[\\\\/:*?\"<>|\s]", "_"))).
-            toLowerCase();
+                Util.translateColorCodes(input.replaceAll("[\\\\/:*?\"<>|\s]", "_"))).
+                toLowerCase();
     }
 }
