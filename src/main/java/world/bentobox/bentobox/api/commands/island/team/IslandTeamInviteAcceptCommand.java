@@ -157,7 +157,7 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
             user.sendMessage(INVALID_INVITE);
             return;
         }
-        if (teamIsland.getMemberSet(RanksManager.MEMBER_RANK, true).size() > getIslands().getMaxMembers(teamIsland, RanksManager.MEMBER_RANK)) {
+        if (teamIsland.getMemberSet(RanksManager.MEMBER_RANK, true).size() >= getIslands().getMaxMembers(teamIsland, RanksManager.MEMBER_RANK)) {
             user.sendMessage("commands.island.team.invite.errors.island-is-full");
             return;
         }

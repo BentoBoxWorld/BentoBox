@@ -51,9 +51,9 @@ public class IslandTeamInviteCommand extends CompositeCommand {
                 Invite invite = itc.getInvite(playerUUID);
                 String name = getPlayers().getName(playerUUID);
                 switch (invite.getType()) {
-                    case COOP -> user.sendMessage("commands.island.team.invite.name-has-invited-you.coop", TextVariables.NAME, name);
-                    case TRUST -> user.sendMessage("commands.island.team.invite.name-has-invited-you.trust", TextVariables.NAME, name);
-                    default -> user.sendMessage("commands.island.team.invite.name-has-invited-you", TextVariables.NAME, name);
+                case COOP -> user.sendMessage("commands.island.team.invite.name-has-invited-you.coop", TextVariables.NAME, name);
+                case TRUST -> user.sendMessage("commands.island.team.invite.name-has-invited-you.trust", TextVariables.NAME, name);
+                default -> user.sendMessage("commands.island.team.invite.name-has-invited-you", TextVariables.NAME, name);
                 }
                 return true;
             }
@@ -69,7 +69,7 @@ public class IslandTeamInviteCommand extends CompositeCommand {
             return false;
         }
         // Check for space on team
-        if (island.getMemberSet().size() > getIslands().getMaxMembers(island, RanksManager.MEMBER_RANK)) {
+        if (island.getMemberSet().size() >= getIslands().getMaxMembers(island, RanksManager.MEMBER_RANK)) {
             user.sendMessage("commands.island.team.invite.errors.island-is-full");
             return false;
         }

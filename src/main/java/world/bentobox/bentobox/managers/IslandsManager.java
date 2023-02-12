@@ -490,6 +490,8 @@ public class IslandsManager {
      * Gets the maximum number of island members allowed on this island.
      * Will update the value based on world settings or island owner permissions (if online).
      * If the island is unowned, then this value will be 0.
+     * The number given for MEMBER_RANK is meant to include this rank and higher, e.g. {@link RanksManager#SUB_OWNER_RANK}
+     * and {@link RanksManager#OWNER_RANK}
      * @param island - island
      * @param rank {@link RanksManager#MEMBER_RANK}, {@link RanksManager#COOP_RANK}, or {@link RanksManager#TRUSTED_RANK}
      * @return max number of members. If negative, then this means unlimited.
