@@ -34,7 +34,7 @@ public class TeamJoinedEvent extends IslandBaseEvent {
      * @param location - location
      * @since 1.3.0
      */
-    TeamJoinedEvent(Island island, UUID player, boolean admin, Location location) {
+    public TeamJoinedEvent(Island island, UUID player, boolean admin, Location location) {
         // Final variables have to be declared in the constructor
         super(island, player, admin, location);
     }

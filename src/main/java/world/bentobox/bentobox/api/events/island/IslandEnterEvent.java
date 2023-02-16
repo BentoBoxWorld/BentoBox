@@ -29,7 +29,7 @@ public class IslandEnterEvent extends IslandBaseEvent {
         return handlers;
     }
 
-    IslandEnterEvent(Island island, UUID player, boolean admin, Location location, @Nullable Island fromIsland, Event rawEvent) {
+    public IslandEnterEvent(Island island, UUID player, boolean admin, Location location, @Nullable Island fromIsland, Event rawEvent) {
         // Final variables have to be declared in the constructor
         super(island, player, admin, location, rawEvent);
         this.fromIsland = fromIsland;

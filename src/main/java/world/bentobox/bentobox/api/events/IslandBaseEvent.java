@@ -23,7 +23,7 @@ public abstract class IslandBaseEvent extends BentoBoxEvent implements Cancellab
     protected final Event rawEvent;
     protected IslandBaseEvent newEvent;
 
-    protected IslandBaseEvent(Island island) {
+    public IslandBaseEvent(Island island) {
         super();
         this.island = island;
         playerUUID = island == null ? null : island.getOwner();
@@ -38,7 +38,7 @@ public abstract class IslandBaseEvent extends BentoBoxEvent implements Cancellab
      * @param admin - true if ths is due to an admin event
      * @param location - the location
      */
-    protected IslandBaseEvent(Island island, UUID playerUUID, boolean admin, Location location) {
+    public IslandBaseEvent(Island island, UUID playerUUID, boolean admin, Location location) {
         super();
         this.island = island;
         this.playerUUID = playerUUID;
@@ -54,7 +54,7 @@ public abstract class IslandBaseEvent extends BentoBoxEvent implements Cancellab
      * @param location - the location
      * @param rawEvent - the raw event
      */
-    protected IslandBaseEvent(Island island, UUID playerUUID, boolean admin, Location location, Event rawEvent) {
+    public IslandBaseEvent(Island island, UUID playerUUID, boolean admin, Location location, Event rawEvent) {
         super();
         this.island = island;
         this.playerUUID = playerUUID;

@@ -25,7 +25,7 @@ public class IslandPreCreateEvent extends IslandBaseEvent {
         return handlers;
     }
 
-    IslandPreCreateEvent(UUID player) {
+    public IslandPreCreateEvent(UUID player) {
         // Final variables have to be declared in the constructor
         super(null, player, false, null);
     }

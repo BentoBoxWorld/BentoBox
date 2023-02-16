@@ -28,7 +28,7 @@ public class IslandBanEvent extends IslandBaseEvent {
         return handlers;
     }
 
-    IslandBanEvent(Island island, UUID player, boolean admin, Location location) {
+    public IslandBanEvent(Island island, UUID player, boolean admin, Location location) {
         // Final variables have to be declared in the constructor
         super(island, player, admin, location);
     }

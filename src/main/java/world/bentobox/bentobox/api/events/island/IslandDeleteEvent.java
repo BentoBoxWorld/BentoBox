@@ -26,7 +26,7 @@ public class IslandDeleteEvent extends IslandBaseEvent {
         return handlers;
     }
 
-    IslandDeleteEvent(Island island, UUID player, boolean admin, Location location) {
+    public IslandDeleteEvent(Island island, UUID player, boolean admin, Location location) {
         // Final variables have to be declared in the constructor
         super(island, player, admin, location);
     }

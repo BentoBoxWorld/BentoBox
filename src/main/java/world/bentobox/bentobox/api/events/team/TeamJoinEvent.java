@@ -22,7 +22,7 @@ public class TeamJoinEvent extends IslandBaseEvent {
         return handlers;
     }
 
-    TeamJoinEvent(Island island, UUID player, boolean admin, Location location) {
+    public TeamJoinEvent(Island island, UUID player, boolean admin, Location location) {
         // Final variables have to be declared in the constructor
         super(island, player, admin, location);
     }

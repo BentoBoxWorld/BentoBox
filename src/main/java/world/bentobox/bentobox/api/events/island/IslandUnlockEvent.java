@@ -26,7 +26,7 @@ public class IslandUnlockEvent extends IslandBaseEvent {
         return handlers;
     }
 
-    IslandUnlockEvent(Island island, UUID player, boolean admin, Location location) {
+    public IslandUnlockEvent(Island island, UUID player, boolean admin, Location location) {
         // Final variables have to be declared in the constructor
         super(island, player, admin, location);
     }

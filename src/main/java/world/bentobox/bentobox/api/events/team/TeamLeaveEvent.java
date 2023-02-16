@@ -27,7 +27,7 @@ public class TeamLeaveEvent extends IslandBaseEvent {
         return handlers;
     }
 
-    TeamLeaveEvent(Island island, UUID player, boolean admin, Location location) {
+    public TeamLeaveEvent(Island island, UUID player, boolean admin, Location location) {
         // Final variables have to be declared in the constructor
         super(island, player, admin, location);
     }

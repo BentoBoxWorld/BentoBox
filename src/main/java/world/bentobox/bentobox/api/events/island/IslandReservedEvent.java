@@ -26,7 +26,7 @@ public class IslandReservedEvent extends IslandBaseEvent {
         return handlers;
     }
 
-    IslandReservedEvent(Island island, UUID player, boolean admin, Location location) {
+    public IslandReservedEvent(Island island, UUID player, boolean admin, Location location) {
         super(island, player, admin, location);
     }
 }

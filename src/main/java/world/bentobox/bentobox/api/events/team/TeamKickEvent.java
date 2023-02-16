@@ -22,7 +22,7 @@ public class TeamKickEvent extends IslandBaseEvent {
         return handlers;
     }
 
-    TeamKickEvent(Island island, UUID player, boolean admin, Location location) {
+    public TeamKickEvent(Island island, UUID player, boolean admin, Location location) {
         // Final variables have to be declared in the constructor
         super(island, player, admin, location);
     }

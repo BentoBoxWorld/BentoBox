@@ -29,7 +29,7 @@ public class IslandResetEvent extends IslandBaseEvent {
         return handlers;
     }
 
-    IslandResetEvent(Island island, UUID player, boolean admin, Location location, @NonNull BlueprintBundle blueprintBundle, @NonNull Island oldIsland) {
+    public IslandResetEvent(Island island, UUID player, boolean admin, Location location, @NonNull BlueprintBundle blueprintBundle, @NonNull Island oldIsland) {
         // Final variables have to be declared in the constructor
         super(island, player, admin, location);
         this.blueprintBundle = blueprintBundle;
