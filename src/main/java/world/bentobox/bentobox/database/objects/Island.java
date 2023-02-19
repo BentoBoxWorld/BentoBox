@@ -24,7 +24,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.BoundingBox;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.jetbrains.annotations.NotNull;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
@@ -749,7 +748,7 @@ public class Island implements DataObject, MetaDataAble {
      * @since 1.5.2
      */
     @SuppressWarnings("ConstantConditions")
-    @NotNull
+    @NonNull
     public BoundingBox getBoundingBox() {
         return this.getBoundingBox(Environment.NORMAL);
     }
@@ -928,7 +927,7 @@ public class Island implements DataObject, MetaDataAble {
      * @since 1.5.2
      */
     @SuppressWarnings("ConstantConditions")
-    @NotNull
+    @NonNull
     public BoundingBox getProtectionBoundingBox() {
         return this.getProtectionBoundingBox(Environment.NORMAL);
     }
@@ -1645,7 +1644,7 @@ public class Island implements DataObject, MetaDataAble {
      * @return the homes
      * @since 1.16.0
      */
-    @NotNull
+    @NonNull
     public Map<String, Location> getHomes() {
         if (homes == null) {
             homes = new HashMap<>();
