@@ -36,19 +36,42 @@ public class BannedCommands implements Listener {
     public void onVisitorCommand(PlayerCommandPreprocessEvent e) {
         if (!plugin.getIWM().inWorld(e.getPlayer().getLocation()) || e.getPlayer().isOp()
                 || e.getPlayer().hasPermission(plugin.getIWM().getPermissionPrefix(e.getPlayer().getWorld()) + "mod.bypassprotect")
-                || plugin.getIslands().locationIsOnIsland(e.getPlayer(), e.getPlayer().getLocation())) {
+                || plugin.getIslands().locationIsOnIsland(e.getPlayer(), e.getPlayer().getLocation())
+                || e.getMessage().isEmpty()
+                ) {
             return;
         }
         World w = e.getPlayer().getWorld();
         // Check banned commands
+        // Split up the entry
         String[] args = e.getMessage().substring(1).toLowerCase(java.util.Locale.ENGLISH).split(" ");
-        if (plugin.getIWM().getVisitorBannedCommands(w).contains(args[0])) {
-            User user = User.getInstance(e.getPlayer());
-            user.notify("protection.protected", TextVariables.DESCRIPTION, user.getTranslation("protection.command-is-banned"));
-            e.setCancelled(true);
+        // Loop through each of the banned commands
+        for (String cmd : plugin.getIWM().getVisitorBannedCommands(w)) {
+            if (checkCmd(cmd, args)) {
+                User user = User.getInstance(e.getPlayer());
+                user.notify("protection.protected", TextVariables.DESCRIPTION, user.getTranslation("protection.command-is-banned"));
+                e.setCancelled(true);
+                return;
+            }
         }
     }
     
+    private boolean checkCmd(String cmd, String[] args) {
+        // Commands are guilty until proven innocent :-)
+        boolean banned = true;
+        // Get the elements of the banned command by splitting it
+        String[] bannedSplit = cmd.toLowerCase(java.util.Locale.ENGLISH).split(" ");
+        // If the banned command has the same number of elements or less than the entered command then it may be banned
+        if (bannedSplit.length <= args.length) {                
+            for (int i = 0; i < bannedSplit.length; i++) {
+                if (!bannedSplit[i].equals(args[i])) {
+                   banned = false; 
+                }
+            }
+        }
+        return banned;
+    }
+
     /**
      * Prevents falling players from using commands, like /warp
      * @param e - event
