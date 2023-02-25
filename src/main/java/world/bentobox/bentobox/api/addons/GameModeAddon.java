@@ -130,5 +130,14 @@ public abstract class GameModeAddon extends Addon {
      * @since 1.4.0
      */
     public abstract void saveWorldSettings();
+    
+    /**
+     * Defines if the game mode uses the latest {@link ChunkGenerator} API or 
+     * deprecated {@link ChunkGenerator#generateChunkData(World, java.util.Random, int, int, org.bukkit.generator.ChunkGenerator.BiomeGrid)} approach.
+     * @return true if this game mode is a void world and should just be deleted as such
+     */
+    public boolean isUsesNewChunkGeneration() {
+        return false;
+    }
 
 }
