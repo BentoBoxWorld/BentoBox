@@ -314,8 +314,10 @@ public class AddonsManager {
             if (addon instanceof GameModeAddon gameMode) {
                 // Create the gameWorlds
                 gameMode.createWorlds();
-                // Create the seed worlds
-                createSeedWorlds(gameMode);
+                if (gameMode.isUsesNewChunkGeneration()) {
+                    // Create the seed worlds
+                    createSeedWorlds(gameMode);
+                }
                 plugin.getIWM().addGameMode(gameMode);
                 // Save and load blueprints
                 plugin.getBlueprintsManager().extractDefaultBlueprints(gameMode);

@@ -3,6 +3,7 @@ package world.bentobox.bentobox.nms;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -24,6 +25,7 @@ import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Tameable;
 import org.bukkit.entity.Villager;
+import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.material.Colorable;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -34,6 +36,7 @@ import io.papermc.lib.PaperLib;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.database.objects.IslandDeletion;
+import world.bentobox.bentobox.util.MyBiomeGrid;
 
 /**
  * Regenerates by using a seed world. The seed world is created using the same generator as the game
@@ -63,6 +66,10 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
 
     @Override
     public CompletableFuture<Void> regenerate(GameModeAddon gm, IslandDeletion di, World world) {
+        return gm.isUsesNewChunkGeneration() ? regenerateCopy(gm, di, world) : regenerateSimple(gm, di, world);
+    }
+    
+    public CompletableFuture<Void> regenerateCopy(GameModeAddon gm, IslandDeletion di, World world) {
         CompletableFuture<Void> bigFuture = new CompletableFuture<>();
         new BukkitRunnable() {
             private int chunkX = di.getMinXChunk();
@@ -261,6 +268,100 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
         else if (blockState instanceof Banner banner && b instanceof Banner toBanner) {
             toBanner.setBaseColor(banner.getBaseColor());
             toBanner.setPatterns(banner.getPatterns());
+        }
+    }
+    
+
+    public CompletableFuture<Void> regenerateSimple(GameModeAddon gm, IslandDeletion di, World world) {
+        CompletableFuture<Void> bigFuture = new CompletableFuture<>();
+        new BukkitRunnable() {
+            private int chunkX = di.getMinXChunk();
+            private int chunkZ = di.getMinZChunk();
+            CompletableFuture<Void> currentTask = CompletableFuture.completedFuture(null);
+
+            @Override
+            public void run() {
+                if (!currentTask.isDone()) return;
+                if (isEnded(chunkX)) {
+                    cancel();
+                    bigFuture.complete(null);
+                    return;
+                }
+                List<CompletableFuture<Void>> newTasks = new ArrayList<>();
+                for (int i = 0; i < plugin.getSettings().getDeleteSpeed(); i++) {
+                    if (isEnded(chunkX)) {
+                        break;
+                    }
+                    final int x = chunkX;
+                    final int z = chunkZ;
+                    newTasks.add(regenerateChunk(gm, di, world, x, z));
+                    chunkZ++;
+                    if (chunkZ > di.getMaxZChunk()) {
+                        chunkZ = di.getMinZChunk();
+                        chunkX++;
+                    }
+                }
+                currentTask = CompletableFuture.allOf(newTasks.toArray(new CompletableFuture[0]));
+            }
+
+            private boolean isEnded(int chunkX) {
+                return chunkX > di.getMaxXChunk();
+            }
+        }.runTaskTimer(plugin, 0L, 20L);
+        return bigFuture;
+    }
+
+    @SuppressWarnings("deprecation")
+    private CompletableFuture<Void> regenerateChunk(GameModeAddon gm, IslandDeletion di, World world, int chunkX, int chunkZ) {
+        CompletableFuture<Chunk> chunkFuture = PaperLib.getChunkAtAsync(world, chunkX, chunkZ);
+        CompletableFuture<Void> invFuture = chunkFuture.thenAccept(chunk ->
+        Arrays.stream(chunk.getTileEntities()).filter(InventoryHolder.class::isInstance)
+        .filter(te -> di.inBounds(te.getLocation().getBlockX(), te.getLocation().getBlockZ()))
+        .forEach(te -> ((InventoryHolder) te).getInventory().clear())
+                );
+        CompletableFuture<Void> entitiesFuture = chunkFuture.thenAccept(chunk -> {
+            for (Entity e : chunk.getEntities()) {
+                if (!(e instanceof Player)) {
+                    e.remove();
+                }
+            }
+        });
+        CompletableFuture<Chunk> copyFuture = chunkFuture.thenApply(chunk -> {
+            // Reset blocks
+            MyBiomeGrid grid = new MyBiomeGrid(chunk.getWorld().getEnvironment());
+            ChunkGenerator cg = gm.getDefaultWorldGenerator(chunk.getWorld().getName(), "delete");
+            // Will be null if use-own-generator is set to true
+            if (cg != null) {
+                ChunkGenerator.ChunkData cd = cg.generateChunkData(chunk.getWorld(), new Random(), chunk.getX(), chunk.getZ(), grid);
+                copyChunkDataToChunk(chunk, cd, grid, di.getBox());
+            }
+            return chunk;
+        });
+        CompletableFuture<Void> postCopyFuture = copyFuture.thenAccept(chunk ->
+        // Remove all entities in chunk, including any dropped items as a result of clearing the blocks above
+        Arrays.stream(chunk.getEntities()).filter(e -> !(e instanceof Player) && di.inBounds(e.getLocation().getBlockX(), e.getLocation().getBlockZ())).forEach(Entity::remove));
+        return CompletableFuture.allOf(invFuture, entitiesFuture, postCopyFuture);
+    }
+
+    @SuppressWarnings("deprecation")
+    private void copyChunkDataToChunk(Chunk chunk, ChunkGenerator.ChunkData chunkData, ChunkGenerator.BiomeGrid biomeGrid, BoundingBox limitBox) {
+        double baseX = chunk.getX() << 4;
+        double baseZ = chunk.getZ() << 4;
+        int minHeight = chunk.getWorld().getMinHeight();
+        int maxHeight = chunk.getWorld().getMaxHeight();
+        for (int x = 0; x < 16; x++) {
+            for (int z = 0; z < 16; z++) {
+                if (!limitBox.contains(baseX + x, 0, baseZ + z)) {
+                    continue;
+                }
+                for (int y = minHeight; y < maxHeight; y++) {
+                    setBlockInNativeChunk(chunk, x, y, z, chunkData.getBlockData(x, y, z), false);
+                    // 3D biomes, 4 blocks separated
+                    if (x % 4 == 0 && y % 4 == 0 && z % 4 == 0) {
+                        chunk.getBlock(x, y, z).setBiome(biomeGrid.getBiome(x, y, z));
+                    }
+                }
+            }
         }
     }
 }
