@@ -64,7 +64,6 @@ public class DefaultNewIslandLocationStrategyTest {
     private int count;
 
     /**
-     * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {
@@ -108,7 +107,6 @@ public class DefaultNewIslandLocationStrategyTest {
     }
 
     /**
-     * @throws java.lang.Exception
      */
     @After
     public void tearDown() {

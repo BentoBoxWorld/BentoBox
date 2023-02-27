@@ -51,10 +51,10 @@ public class EntityTeleportListener extends AbstractTeleportListener implements 
     /**
      * This listener checks entity portal events and triggers appropriate methods to transfer
      * entities to the correct location in other dimension.
-     *
+     * <p>
      * This event is triggered when entity is about to being teleported because of contact with the
      * nether portal or end gateway portal (exit portal triggers respawn).
-     *
+     * <p>
      * This event is not called if nether/end is disabled in server settings.
      *
      * @param event the entity portal event.

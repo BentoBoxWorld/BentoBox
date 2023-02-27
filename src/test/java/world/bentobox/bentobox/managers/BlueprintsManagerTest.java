@@ -97,7 +97,6 @@ public class BlueprintsManagerTest {
     @Mock
     private Server server;
     /**
-     * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {
@@ -170,7 +169,6 @@ public class BlueprintsManagerTest {
     }
 
     /**
-     * @throws java.lang.Exception
      */
     @After
     public void tearDown() throws Exception {
@@ -195,7 +193,6 @@ public class BlueprintsManagerTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.BlueprintsManager#extractDefaultBlueprints(world.bentobox.bentobox.api.addons.GameModeAddon)}.
-     * @throws IOException
      */
     @Test
     public void testExtractDefaultBlueprintsFolderExists() throws IOException {
@@ -248,18 +245,15 @@ public class BlueprintsManagerTest {
     @Test
     public void testLoadBlueprintBundlesNoBlueprintFolder() {
         // Set up running and verification
-        when(scheduler.runTaskAsynchronously(eq(plugin), any(Runnable.class))).thenAnswer(new Answer<BukkitTask>() {
-
-            @Override
-            public BukkitTask answer(InvocationOnMock invocation) throws Throwable {
-                invocation.getArgument(1,Runnable.class).run();
-                verify(plugin).logError(eq("There is no blueprint folder for addon name"));
-                verify(plugin).logError(eq("No blueprint bundles found! Creating a default one."));
-                File blueprints = new File(dataFolder, BlueprintsManager.FOLDER_NAME);
-                File d = new File(blueprints, "default.json");
-                assertTrue(d.exists());
-                return task;
-            }});
+        when(scheduler.runTaskAsynchronously(eq(plugin), any(Runnable.class))).thenAnswer((Answer<BukkitTask>) invocation -> {
+            invocation.getArgument(1,Runnable.class).run();
+            verify(plugin).logError(eq("There is no blueprint folder for addon name"));
+            verify(plugin).logError(eq("No blueprint bundles found! Creating a default one."));
+            File blueprints = new File(dataFolder, BlueprintsManager.FOLDER_NAME);
+            File d = new File(blueprints, "default.json");
+            assertTrue(d.exists());
+            return task;
+        });
 
         BlueprintsManager bpm = new BlueprintsManager(plugin);
         bpm.loadBlueprintBundles(addon);
@@ -271,14 +265,11 @@ public class BlueprintsManagerTest {
     @Test
     public void testLoadBlueprintBundles() {
         // Set up running and verification
-        when(scheduler.runTaskAsynchronously(eq(plugin), any(Runnable.class))).thenAnswer(new Answer<BukkitTask>() {
-
-            @Override
-            public BukkitTask answer(InvocationOnMock invocation) throws Throwable {
-                invocation.getArgument(1,Runnable.class).run();
-                verify(plugin).logError(eq("No blueprint bundles found! Creating a default one."));
-                return task;
-            }});
+        when(scheduler.runTaskAsynchronously(eq(plugin), any(Runnable.class))).thenAnswer((Answer<BukkitTask>) invocation -> {
+            invocation.getArgument(1,Runnable.class).run();
+            verify(plugin).logError(eq("No blueprint bundles found! Creating a default one."));
+            return task;
+        });
         BlueprintsManager bpm = new BlueprintsManager(plugin);
         bpm.extractDefaultBlueprints(addon);
         bpm.loadBlueprintBundles(addon);
@@ -312,13 +303,10 @@ public class BlueprintsManagerTest {
     @Test
     public void testLoadBlueprints() {
         // Set up running and verification
-        when(scheduler.runTaskAsynchronously(eq(plugin), any(Runnable.class))).thenAnswer(new Answer<BukkitTask>() {
-
-            @Override
-            public BukkitTask answer(InvocationOnMock invocation) throws Throwable {
-                invocation.getArgument(1,Runnable.class).run();
-                return task;
-            }});
+        when(scheduler.runTaskAsynchronously(eq(plugin), any(Runnable.class))).thenAnswer((Answer<BukkitTask>) invocation -> {
+            invocation.getArgument(1,Runnable.class).run();
+            return task;
+        });
         BlueprintsManager bpm = new BlueprintsManager(plugin);
         // Load once (makes default files too)
         bpm.loadBlueprintBundles(addon);
@@ -369,15 +357,12 @@ public class BlueprintsManagerTest {
         File blueprints = new File(dataFolder, BlueprintsManager.FOLDER_NAME);
 
         // Set up running and verification
-        when(scheduler.runTaskAsynchronously(eq(plugin), any(Runnable.class))).thenAnswer(new Answer<BukkitTask>() {
-
-            @Override
-            public BukkitTask answer(InvocationOnMock invocation) throws Throwable {
-                invocation.getArgument(1,Runnable.class).run();
-                File d = new File(blueprints, "bundle.json");
-                assertTrue(d.exists());
-                return task;
-            }});
+        when(scheduler.runTaskAsynchronously(eq(plugin), any(Runnable.class))).thenAnswer((Answer<BukkitTask>) invocation -> {
+            invocation.getArgument(1,Runnable.class).run();
+            File d = new File(blueprints, "bundle.json");
+            assertTrue(d.exists());
+            return task;
+        });
 
         BlueprintsManager bpm = new BlueprintsManager(plugin);
         bpm.saveBlueprintBundle(addon, bb);
@@ -412,19 +397,16 @@ public class BlueprintsManagerTest {
         File d2 = new File(blueprints, "bundle2.json");
         times = 0;
         // Set up running and verification
-        when(scheduler.runTaskAsynchronously(eq(plugin), any(Runnable.class))).thenAnswer(new Answer<BukkitTask>() {
-
-            @Override
-            public BukkitTask answer(InvocationOnMock invocation) throws Throwable {
-                invocation.getArgument(1,Runnable.class).run();
-                // Verify
-                times++;
-                if (times > 2) {
-                    assertTrue(d.exists());
-                    assertTrue(d2.exists());
-                }
-                return task;
-            }});
+        when(scheduler.runTaskAsynchronously(eq(plugin), any(Runnable.class))).thenAnswer((Answer<BukkitTask>) invocation -> {
+            invocation.getArgument(1,Runnable.class).run();
+            // Verify
+            times++;
+            if (times > 2) {
+                assertTrue(d.exists());
+                assertTrue(d2.exists());
+            }
+            return task;
+        });
         // Save
         bpm.saveBlueprintBundles();
     }
@@ -614,7 +596,6 @@ public class BlueprintsManagerTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.BlueprintsManager#deleteBlueprintBundle(world.bentobox.bentobox.api.addons.GameModeAddon, world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle)}.
-     * @throws IOException
      */
     @Test
     public void testDeleteBlueprintBundle() throws IOException {
@@ -632,16 +613,13 @@ public class BlueprintsManagerTest {
 
         BlueprintsManager bpm = new BlueprintsManager(plugin);
         // Set up running and verification
-        when(scheduler.runTaskAsynchronously(eq(plugin), any(Runnable.class))).thenAnswer(new Answer<BukkitTask>() {
+        when(scheduler.runTaskAsynchronously(eq(plugin), any(Runnable.class))).thenAnswer((Answer<BukkitTask>) invocation -> {
+            invocation.getArgument(1,Runnable.class).run();
 
-            @Override
-            public BukkitTask answer(InvocationOnMock invocation) throws Throwable {
-                invocation.getArgument(1,Runnable.class).run();
-
-                // Verify
-                assertFalse(d.exists());
-                return task;
-            }});
+            // Verify
+            assertFalse(d.exists());
+            return task;
+        });
 
         // Delete it
         bpm.deleteBlueprintBundle(addon, bb);

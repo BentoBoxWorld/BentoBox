@@ -52,7 +52,6 @@ public class LocalesManagerTest {
     private static final String BENTOBOX = "BentoBox";
 
     /**
-     * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {
@@ -79,7 +78,6 @@ public class LocalesManagerTest {
 
     /**
      * Deletes the fake locales folder
-     * @throws Exception
      */
     @After
     public void cleanUp() throws Exception {
@@ -121,7 +119,6 @@ public class LocalesManagerTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.LocalesManager#get(java.lang.String)}.
-     * @throws IOException
      */
     @Test
     public void testGetString() throws IOException {
@@ -132,7 +129,6 @@ public class LocalesManagerTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.LocalesManager#get(java.lang.String)}.
-     * @throws IOException
      */
     @Test
     public void testGetStringFail() throws IOException {
@@ -143,7 +139,6 @@ public class LocalesManagerTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.LocalesManager#getOrDefault(java.lang.String, java.lang.String)}.
-     * @throws IOException
      */
     @Test
     public void testGetOrDefaultStringString() throws IOException {
@@ -154,7 +149,6 @@ public class LocalesManagerTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.LocalesManager#getOrDefault(java.lang.String, java.lang.String)}.
-     * @throws IOException
      */
     @Test
     public void testGetOrDefaultStringStringFail() throws IOException {
@@ -165,7 +159,6 @@ public class LocalesManagerTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.LocalesManager#get(world.bentobox.bentobox.api.user.User, java.lang.String)}.
-     * @throws IOException
      */
     @Test
     public void testGetNullUserString() throws IOException {
@@ -177,7 +170,6 @@ public class LocalesManagerTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.LocalesManager#get(world.bentobox.bentobox.api.user.User, java.lang.String)}.
-     * @throws IOException
      */
     @Test
     public void testGetUserString() throws IOException {
@@ -190,7 +182,6 @@ public class LocalesManagerTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.LocalesManager#getOrDefault(world.bentobox.bentobox.api.user.User, java.lang.String, java.lang.String)}.
-     * @throws IOException
      */
     @Test
     public void testGetOrDefaultUserStringString() throws IOException {
@@ -203,7 +194,6 @@ public class LocalesManagerTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.LocalesManager#get(world.bentobox.bentobox.api.user.User, java.lang.String)}.
-     * @throws IOException
      */
     @Test
     public void testGetCanadianUserString() throws IOException {
@@ -216,7 +206,6 @@ public class LocalesManagerTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.LocalesManager#get(world.bentobox.bentobox.api.user.User, java.lang.String)}.
-     * @throws IOException
      */
     @Test
     public void testGetUserStringFail() throws IOException {
@@ -229,7 +218,6 @@ public class LocalesManagerTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.LocalesManager#getOrDefault(world.bentobox.bentobox.api.user.User, java.lang.String, java.lang.String)}.
-     * @throws IOException
      */
     @Test
     public void testGetOrDefaultUserStringStringFail() throws IOException {
@@ -243,7 +231,6 @@ public class LocalesManagerTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.LocalesManager#getAvailableLocales(boolean)}.
-     * @throws IOException
      */
     @Test
     public void testGetAvailableLocales() throws IOException {
@@ -263,7 +250,6 @@ public class LocalesManagerTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.LocalesManager#getLanguages()}.
-     * @throws IOException
      */
     @Test
     public void testGetLanguages() throws IOException {
@@ -274,7 +260,6 @@ public class LocalesManagerTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.LocalesManager#reloadLanguages()}.
-     * @throws IOException
      */
     @Test
     public void testReloadLanguagesNoAddons() throws IOException {
@@ -292,7 +277,6 @@ public class LocalesManagerTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.LocalesManager#reloadLanguages()}.
-     * @throws IOException
      */
     @Test
     public void testReloadLanguages() throws IOException {
@@ -395,7 +379,6 @@ public class LocalesManagerTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.LocalesManager#reloadLanguages()}.
-     * @throws IOException
      */
     @Test
     public void testReloadLanguagesNoLocaleFolder() throws IOException {

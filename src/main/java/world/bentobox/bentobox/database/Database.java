@@ -85,7 +85,7 @@ public class Database<T> {
     /**
      * Save object async. Saving may be done sync, depending on the underlying database.
      * @param instance to save
-     * @return true if no immediate errors. If async, errors may occur later.
+     * @return Completable future that results in true if successful.
      * @since 1.13.0
      */
     public CompletableFuture<Boolean> saveObjectAsync(T instance) {

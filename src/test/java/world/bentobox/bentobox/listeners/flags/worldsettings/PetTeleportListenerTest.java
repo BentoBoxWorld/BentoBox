@@ -42,7 +42,6 @@ public class PetTeleportListenerTest extends AbstractCommonSetup {
     private AnimalTamer tamer;
 
     /**
-     * @throws java.lang.Exception
      */
     @Override
     @Before

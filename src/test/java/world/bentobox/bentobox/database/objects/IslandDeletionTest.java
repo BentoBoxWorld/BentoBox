@@ -54,7 +54,6 @@ public class IslandDeletionTest {
     private UUID uuid;
 
     /**
-     * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {

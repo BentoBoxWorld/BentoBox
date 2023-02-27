@@ -93,7 +93,6 @@ public class AdminSettingsCommandTest {
     private PluginManager pluginManager;
 
     /**
-     * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {
@@ -187,7 +186,6 @@ public class AdminSettingsCommandTest {
     }
 
     /**
-     * @throws java.lang.Exception
      */
     @After
     public void tearDown() throws Exception {

@@ -206,7 +206,6 @@ public class User implements MetaDataAble {
     /**
      * Get the user's inventory
      * @return player's inventory
-     * @throws {@link NullPointerException} - if user is not a player
      */
     @NonNull
     public PlayerInventory getInventory() {
@@ -216,7 +215,6 @@ public class User implements MetaDataAble {
     /**
      * Get the user's location
      * @return location
-     * @throws {@link NullPointerException} - if user is not a player
      */
     @NonNull
     public Location getLocation() {
@@ -252,7 +250,6 @@ public class User implements MetaDataAble {
      * Use {@link #isOfflinePlayer()} before calling this method
      * @return the offline player
      * @since 1.3.0
-     * @throws {@link NullPointerException} - if user is not an offline player
      */
     @NonNull
     public OfflinePlayer getOfflinePlayer() {
@@ -580,7 +577,6 @@ public class User implements MetaDataAble {
     /**
      * Gets the current world this entity resides in
      * @return World - world
-     * @throws {@link NullPointerException} - if user is not a player
      */
     @NonNull
     public World getWorld() {

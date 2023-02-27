@@ -87,7 +87,6 @@ public class EnterExitListenerTest {
     private EnterExitListener listener;
 
     /**
-     * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {

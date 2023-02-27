@@ -60,7 +60,6 @@ public class AddonsManagerTest {
     private CommandsManager cm;
 
     /**
-     * @throws Exception
      */
     @Before
     public void setup() throws Exception {
@@ -85,7 +84,6 @@ public class AddonsManagerTest {
     }
 
     /**
-     * @throws java.lang.Exception
      */
     @After
     public void tearDown() throws Exception {
@@ -351,8 +349,8 @@ public class AddonsManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#isAddonCompatibleWithBentoBox(Addon, String)}.
-     * Prevents regression on https://github.com/BentoBoxWorld/BentoBox/issues/1346.
+     * Test method for {@link AddonsManager#isAddonCompatibleWithBentoBox(Addon, String)}.
+     * Prevents regression on <a href="https://github.com/BentoBoxWorld/BentoBox/issues/1346">issue 1346</a>.
      */
     @Test
     public void testIsAddonCompatibleWithBentoBoxNewRelease() {
@@ -364,8 +362,6 @@ public class AddonsManagerTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#setPerms(Addon)}
-     * @throws InvalidAddonDescriptionException
-     * @throws InvalidConfigurationException
      */
     @Test
     public void testSetPermsNoPerms() {
@@ -377,8 +373,6 @@ public class AddonsManagerTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#setPerms(Addon)}
-     * @throws InvalidAddonDescriptionException
-     * @throws InvalidConfigurationException
      */
     @Test
     public void testSetPermsHasPerms() throws InvalidConfigurationException {
@@ -401,8 +395,6 @@ public class AddonsManagerTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#setPerms(Addon)}
-     * @throws InvalidAddonDescriptionException
-     * @throws InvalidConfigurationException
      */
     @Test
     public void testSetPermsHasPermsError() throws InvalidConfigurationException {
@@ -428,8 +420,6 @@ public class AddonsManagerTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#registerPermission(org.bukkit.configuration.ConfigurationSection, String)}
-     * @throws InvalidAddonDescriptionException
-     * @throws InvalidConfigurationException
      */
     @Test
     public void testRegisterPermissionStandardPerm() throws InvalidAddonDescriptionException, InvalidConfigurationException {
@@ -446,8 +436,6 @@ public class AddonsManagerTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#registerPermission(org.bukkit.configuration.ConfigurationSection, String)}
-     * @throws InvalidAddonDescriptionException
-     * @throws InvalidConfigurationException
      */
     @Test
     public void testRegisterPermissionGameModePerm() throws InvalidAddonDescriptionException, InvalidConfigurationException {

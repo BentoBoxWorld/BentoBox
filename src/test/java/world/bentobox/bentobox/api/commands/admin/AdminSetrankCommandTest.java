@@ -63,7 +63,6 @@ public class AdminSetrankCommandTest {
     private UUID targetUUID;
 
     /**
-     * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {
@@ -106,7 +105,6 @@ public class AdminSetrankCommandTest {
     }
 
     /**
-     * @throws java.lang.Exception
      */
     @After
     public void tearDown() {

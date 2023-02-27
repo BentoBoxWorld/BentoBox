@@ -24,7 +24,6 @@ public class AddonDescriptionTest {
     private ConfigurationSection configSec;
 
     /**
-     * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {

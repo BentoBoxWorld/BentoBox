@@ -45,7 +45,6 @@ public class PlayersTest {
     private Players p;
 
     /**
-     * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {

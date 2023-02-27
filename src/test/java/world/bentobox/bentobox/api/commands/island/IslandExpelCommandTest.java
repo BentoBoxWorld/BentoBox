@@ -166,7 +166,6 @@ public class IslandExpelCommandTest {
     }
 
     /**
-     * @throws java.lang.Exception
      */
     @After
     public void tearDown() {

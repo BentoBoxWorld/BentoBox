@@ -20,7 +20,6 @@ public class RanksManagerTest {
     public static RanksManager ranksManager;
 
     /**
-     * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {

@@ -107,7 +107,6 @@ public class JoinLeaveListenerTest {
     private @NonNull Location location;
 
     /**
-     * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {
@@ -183,12 +182,12 @@ public class JoinLeaveListenerTest {
         Map<UUID, String> online = new HashMap<>();
 
         Set<Player> onlinePlayers = new HashSet<>();
-        for (int j = 0; j < NAMES.length; j++) {
+        for (String name : NAMES) {
             Player p1 = mock(Player.class);
             UUID u = UUID.randomUUID();
             when(p1.getUniqueId()).thenReturn(u);
-            when(p1.getName()).thenReturn(NAMES[j]);
-            online.put(u, NAMES[j]);
+            when(p1.getName()).thenReturn(name);
+            online.put(u, name);
             onlinePlayers.add(p1);
         }
         onlinePlayers.add(player);
@@ -215,7 +214,6 @@ public class JoinLeaveListenerTest {
     }
 
     /**
-     * @throws java.lang.Exception
      */
     @After
     public void tearDown() {

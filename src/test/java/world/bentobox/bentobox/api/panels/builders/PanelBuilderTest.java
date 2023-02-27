@@ -34,7 +34,6 @@ import world.bentobox.bentobox.api.user.User;
 public class PanelBuilderTest {
 
     /**
-     * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {

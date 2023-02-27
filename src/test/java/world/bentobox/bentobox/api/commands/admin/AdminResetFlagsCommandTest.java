@@ -78,7 +78,6 @@ public class AdminResetFlagsCommandTest {
     private @Nullable User user;
 
     /**
-     * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {
@@ -140,7 +139,6 @@ public class AdminResetFlagsCommandTest {
     }
 
     /**
-     * @throws java.lang.Exception
      */
     @After
     public void tearDown() {

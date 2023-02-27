@@ -225,7 +225,7 @@ public class SQLDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T>
      * Return the object decoded from JSON or null if there is an error
      * @param uniqueId - unique Id of object used in error reporting
      * @param preparedStatement - database statement to execute
-     * @return
+     * @return T
      */
     private T getObject(@NonNull String uniqueId, PreparedStatement preparedStatement) {
         try (ResultSet resultSet = preparedStatement.executeQuery())

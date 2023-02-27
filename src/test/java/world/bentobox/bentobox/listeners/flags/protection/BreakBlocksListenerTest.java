@@ -59,7 +59,6 @@ public class BreakBlocksListenerTest extends AbstractCommonSetup {
     private BreakBlocksListener bbl;
 
     /**
-     * @throws java.lang.Exception
      */
     @Override
     @Before

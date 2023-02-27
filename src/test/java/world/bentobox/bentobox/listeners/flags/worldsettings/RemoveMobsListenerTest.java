@@ -63,7 +63,6 @@ public class RemoveMobsListenerTest {
     private Settings settings;
 
     /**
-     * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {

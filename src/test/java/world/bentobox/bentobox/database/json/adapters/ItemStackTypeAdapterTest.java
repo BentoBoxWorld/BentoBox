@@ -64,7 +64,6 @@ public class ItemStackTypeAdapterTest {
     private ItemFactory itemFactory;
 
     /**
-     * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {
@@ -105,7 +104,6 @@ public class ItemStackTypeAdapterTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.database.json.adapters.ItemStackTypeAdapter#write(com.google.gson.stream.JsonWriter, org.bukkit.inventory.ItemStack)}.
-     * @throws IOException
      */
     @Test
     public void testWriteJsonWriterItemStack() throws IOException {
@@ -118,7 +116,6 @@ public class ItemStackTypeAdapterTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.database.json.adapters.ItemStackTypeAdapter#write(com.google.gson.stream.JsonWriter, org.bukkit.inventory.ItemStack)}.
-     * @throws IOException
      */
     @Test
     public void testWriteJsonWriterItemStackNull() throws IOException {
@@ -128,7 +125,6 @@ public class ItemStackTypeAdapterTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.database.json.adapters.ItemStackTypeAdapter#read(com.google.gson.stream.JsonReader)}.
-     * @throws IOException
      */
     @Test
     public void testReadJsonReaderNull() throws IOException {
@@ -138,7 +134,6 @@ public class ItemStackTypeAdapterTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.database.json.adapters.ItemStackTypeAdapter#read(com.google.gson.stream.JsonReader)}.
-     * @throws IOException
      */
     @Test
     public void testReadJsonReader() throws IOException {
@@ -164,7 +159,6 @@ public class ItemStackTypeAdapterTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.database.json.adapters.ItemStackTypeAdapter#read(com.google.gson.stream.JsonReader)}.
-     * @throws IOException
      */
     @Test
     public void testReadJsonReaderUnknownMaterial() throws IOException {

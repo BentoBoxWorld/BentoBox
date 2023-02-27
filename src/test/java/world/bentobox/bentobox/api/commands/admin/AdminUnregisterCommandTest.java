@@ -65,7 +65,6 @@ public class AdminUnregisterCommandTest {
     private UUID notUUID;
 
     /**
-     * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {

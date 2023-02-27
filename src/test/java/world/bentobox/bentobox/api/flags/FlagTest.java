@@ -68,7 +68,6 @@ public class FlagTest {
     private BentoBox plugin;
 
     /**
-     * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {
@@ -102,7 +101,6 @@ public class FlagTest {
     }
 
     /**
-     * @throws java.lang.Exception
      */
     @After
     public void tearDown() {

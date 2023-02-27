@@ -82,7 +82,6 @@ public class MySQLDatabaseHandlerTest {
     @Mock
     private Settings settings;
     /**
-     * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {
@@ -126,7 +125,6 @@ public class MySQLDatabaseHandlerTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#loadObjects()}.
-     * @throws SQLException
      */
     @Test
     @Ignore("After reworking to HikariCP, this does not work.")
@@ -138,7 +136,6 @@ public class MySQLDatabaseHandlerTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#loadObjects()}.
-     * @throws SQLException
      */
     @Test
     @Ignore("After reworking to HikariCP, this does not work.")
@@ -156,7 +153,6 @@ public class MySQLDatabaseHandlerTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#loadObjects()}.
-     * @throws SQLException
      */
     @Test
     @Ignore
@@ -175,7 +171,6 @@ public class MySQLDatabaseHandlerTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#loadObjects()}.
-     * @throws SQLException
      */
     @Test
     @Ignore("After reworking to HikariCP, this does not work.")
@@ -193,7 +188,6 @@ public class MySQLDatabaseHandlerTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#loadObjects()}.
-     * @throws SQLException
      */
     @Test
     @Ignore("After reworking to HikariCP, this does not work.")
@@ -223,7 +217,6 @@ public class MySQLDatabaseHandlerTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#loadObject(java.lang.String)}.
-     * @throws SQLException
      */
     @Test
     @Ignore("After reworking to HikariCP, this does not work.")
@@ -242,7 +235,6 @@ public class MySQLDatabaseHandlerTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#loadObject(java.lang.String)}.
-     * @throws SQLException
      */
     @Test
     @Ignore("After reworking to HikariCP, this does not work.")
@@ -258,7 +250,6 @@ public class MySQLDatabaseHandlerTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#loadObject(java.lang.String)}.
-     * @throws SQLException
      */
     @Test
     @Ignore("After reworking to HikariCP, this does not work.")
@@ -289,14 +280,13 @@ public class MySQLDatabaseHandlerTest {
     @Ignore("After reworking to HikariCP, this does not work.")
     public void testSaveObjectNotDataObject() {
         @SuppressWarnings("rawtypes")
-        MySQLDatabaseHandler<List> h = new MySQLDatabaseHandler<List>(plugin, List.class, dbConn);
+        MySQLDatabaseHandler<List> h = new MySQLDatabaseHandler<>(plugin, List.class, dbConn);
         h.saveObject(Collections.singletonList("test"));
         verify(plugin).logError(eq("This class is not a DataObject: java.util.Collections$SingletonList"));
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#saveObject(java.lang.Object)}.
-     * @throws SQLException
      */
     @Test
     @Ignore("Async cannot be tested")
@@ -328,7 +318,6 @@ public class MySQLDatabaseHandlerTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#saveObject(java.lang.Object)}.
-     * @throws SQLException
      */
     @Test
     @Ignore("Async cannot be tested")
@@ -358,14 +347,13 @@ public class MySQLDatabaseHandlerTest {
     @Ignore("After reworking to HikariCP, this does not work.")
     public void testDeleteObjectIncorrectType() {
         @SuppressWarnings("rawtypes")
-        MySQLDatabaseHandler<List> h = new MySQLDatabaseHandler<List>(plugin, List.class, dbConn);
+        MySQLDatabaseHandler<List> h = new MySQLDatabaseHandler<>(plugin, List.class, dbConn);
         h.deleteObject(Collections.singletonList("test"));
         verify(plugin).logError(eq("This class is not a DataObject: java.util.Collections$SingletonList"));
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#deleteObject(java.lang.Object)}.
-     * @throws SQLException
      */
     @Test
     @Ignore("Async cannot be tested")
@@ -379,7 +367,6 @@ public class MySQLDatabaseHandlerTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#objectExists(java.lang.String)}.
-     * @throws SQLException
      */
     @Test
     @Ignore("After reworking to HikariCP, this does not work.")
@@ -395,7 +382,6 @@ public class MySQLDatabaseHandlerTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#objectExists(java.lang.String)}.
-     * @throws SQLException
      */
     @Test
     @Ignore("After reworking to HikariCP, this does not work.")
@@ -412,7 +398,6 @@ public class MySQLDatabaseHandlerTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#objectExists(java.lang.String)}.
-     * @throws SQLException
      */
     @Test
     @Ignore("After reworking to HikariCP, this does not work.")
@@ -429,7 +414,6 @@ public class MySQLDatabaseHandlerTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#objectExists(java.lang.String)}.
-     * @throws SQLException
      */
     @Test
     @Ignore
@@ -447,7 +431,6 @@ public class MySQLDatabaseHandlerTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#objectExists(java.lang.String)}.
-     * @throws SQLException
      */
     @Test
     @Ignore("After reworking to HikariCP, this does not work.")
@@ -461,7 +444,6 @@ public class MySQLDatabaseHandlerTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#deleteID(java.lang.String)}.
-     * @throws SQLException
      */
     @Test
     @Ignore("Cannot test async")
@@ -475,7 +457,6 @@ public class MySQLDatabaseHandlerTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#deleteID(java.lang.String)}.
-     * @throws SQLException
      */
     @Test
     @Ignore("Cannot test async")
@@ -501,7 +482,6 @@ public class MySQLDatabaseHandlerTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#MySQLDatabaseHandler(world.bentobox.bentobox.BentoBox, java.lang.Class, world.bentobox.bentobox.database.DatabaseConnector)}.
-     * @throws SQLException
      */
     @Test
     @Ignore("After reworking to HikariCP, this does not work.")
@@ -512,7 +492,6 @@ public class MySQLDatabaseHandlerTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#MySQLDatabaseHandler(world.bentobox.bentobox.BentoBox, java.lang.Class, world.bentobox.bentobox.database.DatabaseConnector)}.
-     * @throws SQLException
      */
     @Test
     @Ignore
@@ -523,7 +502,6 @@ public class MySQLDatabaseHandlerTest {
     }
     /**
      * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#MySQLDatabaseHandler(world.bentobox.bentobox.BentoBox, java.lang.Class, world.bentobox.bentobox.database.DatabaseConnector)}.
-     * @throws SQLException
      */
     @Test
     @Ignore("After reworking to HikariCP, this does not work.")

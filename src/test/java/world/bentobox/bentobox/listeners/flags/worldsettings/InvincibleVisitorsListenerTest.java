@@ -86,7 +86,6 @@ public class InvincibleVisitorsListenerTest {
     private World world;
 
     /**
-     * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {

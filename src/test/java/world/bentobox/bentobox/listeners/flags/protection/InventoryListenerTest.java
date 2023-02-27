@@ -64,7 +64,6 @@ public class InventoryListenerTest extends AbstractCommonSetup {
     private Material type;
 
     /**
-     * @throws java.lang.Exception
      */
     @Override
     @Before

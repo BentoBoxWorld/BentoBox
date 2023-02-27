@@ -42,7 +42,6 @@ public class MySQLDatabaseConnectorTest {
     private Logger logger;
 
     /**
-     * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {
@@ -57,7 +56,6 @@ public class MySQLDatabaseConnectorTest {
     }
 
     /**
-     * @throws java.lang.Exception
      */
     @After
     public void tearDown() {
@@ -87,7 +85,6 @@ public class MySQLDatabaseConnectorTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseConnector#createConnection()}.
-     * @throws SQLException
      */
     @Ignore("Does not work in Java 11")
     @Test

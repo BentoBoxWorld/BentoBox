@@ -70,7 +70,7 @@ public class DefaultNewIslandLocationStrategy implements NewIslandLocationStrate
      * Checks if there is an island or blocks at this location
      *
      * @param location - the location
-     * @return Result enum if island found, null if blocks found, false if nothing found
+     * @return Result enum indicated what was found or not found
      */
     protected Result isIsland(Location location) {
         // Quick check

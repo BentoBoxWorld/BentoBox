@@ -68,7 +68,6 @@ public class AdminRegisterCommandTest {
     private IslandDeletionManager idm;
 
     /**
-     * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {

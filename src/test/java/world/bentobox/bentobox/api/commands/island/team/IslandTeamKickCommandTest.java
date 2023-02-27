@@ -88,7 +88,6 @@ public class IslandTeamKickCommandTest {
     private Addon addon;
 
     /**
-     * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {

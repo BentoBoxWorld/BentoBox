@@ -94,7 +94,6 @@ public class IslandResetCommandTest {
     private UUID uuid;
 
     /**
-     * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {

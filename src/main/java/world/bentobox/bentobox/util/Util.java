@@ -467,7 +467,7 @@ public class Util {
 
     /**
      * Detects if the current MC version is at least the following version.
-     *
+     * <p>
      * Assumes 0 patch version.
      *
      * @param minor Min Minor Version

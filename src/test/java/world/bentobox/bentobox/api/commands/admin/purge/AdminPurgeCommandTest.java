@@ -71,7 +71,6 @@ public class AdminPurgeCommandTest {
     private PlayersManager pm;
 
     /**
-     * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {

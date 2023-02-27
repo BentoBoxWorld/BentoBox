@@ -69,7 +69,6 @@ public class BlueprintManagementPanelTest {
     private Blueprint blueprint;
 
     /**
-     * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {
@@ -131,7 +130,6 @@ public class BlueprintManagementPanelTest {
     }
 
     /**
-     * @throws java.lang.Exception
      */
     @After
     public void tearDown() {

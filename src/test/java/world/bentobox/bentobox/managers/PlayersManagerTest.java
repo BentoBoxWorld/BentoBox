@@ -115,7 +115,6 @@ public class PlayersManagerTest {
     }
 
     /**
-     * @throws java.lang.Exception
      */
     @SuppressWarnings("unchecked")
     @Before
@@ -236,7 +235,6 @@ public class PlayersManagerTest {
     }
 
     /**
-     * @throws java.lang.Exception
      */
     @After
     public void tearDown() throws Exception {

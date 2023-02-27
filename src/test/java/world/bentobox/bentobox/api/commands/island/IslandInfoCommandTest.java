@@ -81,7 +81,6 @@ public class IslandInfoCommandTest {
     private IslandWorldManager iwm;
 
     /**
-     * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {
@@ -141,7 +140,6 @@ public class IslandInfoCommandTest {
     }
 
     /**
-     * @throws java.lang.Exception
      */
     @After
     public void tearDown() {

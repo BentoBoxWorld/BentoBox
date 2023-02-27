@@ -44,7 +44,6 @@ public class AdminRangeDisplayCommandTest {
 
 
     /**
-     * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {

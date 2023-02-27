@@ -77,7 +77,6 @@ public class PanelListenerManagerTest {
     private InventoryAction inv;
 
     /**
-     * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {
@@ -132,7 +131,6 @@ public class PanelListenerManagerTest {
         private final String name;
 
         /**
-         * @param name
          */
         public MyView(String name) {
             top = mock(Inventory.class);
@@ -142,7 +140,6 @@ public class PanelListenerManagerTest {
         }
 
         /**
-         * @param name
          */
         public MyView(String name, Inventory inventory) {
             top = inventory;
