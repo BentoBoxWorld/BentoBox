@@ -98,7 +98,6 @@ public class NewIslandTest {
     private BlueprintsManager bpm;
 
     /**
-     * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {
@@ -167,7 +166,6 @@ public class NewIslandTest {
     }
 
     /**
-     * @throws java.lang.Exception
      */
     @After
     public void tearDown() {
@@ -176,7 +174,6 @@ public class NewIslandTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.island.NewIsland#builder()}.
-     * @throws Exception
      */
     @Test
     public void testBuilderNoUser(){
@@ -189,7 +186,6 @@ public class NewIslandTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.island.NewIsland#builder()}.
-     * @throws Exception
      */
     @Test
     public void testBuilder() throws Exception {
@@ -208,7 +204,6 @@ public class NewIslandTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.island.NewIsland#builder()}.
-     * @throws Exception
      */
     @Test
     public void testBuilderReset() throws Exception {
@@ -228,7 +223,6 @@ public class NewIslandTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.island.NewIsland#builder()}.
-     * @throws Exception
      */
     @Test
     public void testBuilderNoOldIsland() throws Exception {
@@ -246,7 +240,6 @@ public class NewIslandTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.island.NewIsland#builder()}.
-     * @throws Exception
      */
     @Test
     public void testBuilderNoOldIslandPaste() throws Exception {
@@ -264,7 +257,6 @@ public class NewIslandTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.island.NewIsland#builder()}.
-     * @throws Exception
      */
     @Test
     public void testBuilderHasIsland() throws Exception {
@@ -285,7 +277,6 @@ public class NewIslandTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.island.NewIsland#builder()}.
-     * @throws Exception
      */
     @Test
     public void testBuilderHasIslandFail() throws Exception {
@@ -307,7 +298,6 @@ public class NewIslandTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.island.NewIsland#builder()}.
-     * @throws Exception
      */
     @Test
     public void testBuilderHasIslandFailnoReserve() throws Exception {

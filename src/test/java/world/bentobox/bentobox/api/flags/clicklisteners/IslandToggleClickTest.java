@@ -64,7 +64,6 @@ public class IslandToggleClickTest {
     private SettingsTab settingsTab;
 
     /**
-     * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {

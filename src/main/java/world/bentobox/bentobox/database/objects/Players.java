@@ -119,7 +119,7 @@ public class Players implements DataObject, MetaDataAble {
 
     /**
      * @param world - world
-     * @return List of home locations
+     * @return Map of home locations
      * @deprecated Homes are stored in the island object now
      */
     @Deprecated(since="1.18.0", forRemoval=true)

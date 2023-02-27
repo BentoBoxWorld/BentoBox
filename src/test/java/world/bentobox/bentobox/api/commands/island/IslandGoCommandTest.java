@@ -92,7 +92,6 @@ public class IslandGoCommandTest {
     private @Nullable WorldSettings ws;
 
     /**
-     * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {

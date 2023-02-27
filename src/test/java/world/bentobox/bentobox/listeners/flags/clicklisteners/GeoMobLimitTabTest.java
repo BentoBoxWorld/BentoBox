@@ -66,7 +66,6 @@ public class GeoMobLimitTabTest {
     private GameModeAddon gma;
 
     /**
-     * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {

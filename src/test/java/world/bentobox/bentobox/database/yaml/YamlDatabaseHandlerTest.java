@@ -81,7 +81,6 @@ public class YamlDatabaseHandlerTest {
 
 
     /**
-     * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {
@@ -122,11 +121,10 @@ public class YamlDatabaseHandlerTest {
         config2.save(record2);
 
         // Handler
-        handler = new YamlDatabaseHandler<Island>(plugin, Island.class, dbConnector);
+        handler = new YamlDatabaseHandler<>(plugin, Island.class, dbConnector);
     }
 
     /**
-     * @throws java.lang.Exception
      */
     @After
     public void tearDown() throws Exception {
@@ -161,12 +159,6 @@ public class YamlDatabaseHandlerTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.database.yaml.YamlDatabaseHandler#loadObject(java.lang.String)}.
-     * @throws IntrospectionException
-     * @throws NoSuchMethodException
-     * @throws ClassNotFoundException
-     * @throws InvocationTargetException
-     * @throws IllegalAccessException
-     * @throws InstantiationException
      */
     @Ignore("YAML database is no longer supported")
     @Test
@@ -181,9 +173,6 @@ public class YamlDatabaseHandlerTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.database.yaml.YamlDatabaseHandler#saveObject(java.lang.Object)}.
-     * @throws IntrospectionException
-     * @throws InvocationTargetException
-     * @throws IllegalAccessException
      */
     @Ignore("YAML database is no longer supported")
     @SuppressWarnings("unchecked")
@@ -200,9 +189,6 @@ public class YamlDatabaseHandlerTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.database.yaml.YamlDatabaseHandler#saveObject(java.lang.Object)}.
-     * @throws IntrospectionException
-     * @throws InvocationTargetException
-     * @throws IllegalAccessException
      */
     @Test
     public void testSaveObjectNull() throws IllegalAccessException, InvocationTargetException, IntrospectionException {
@@ -212,13 +198,10 @@ public class YamlDatabaseHandlerTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.database.yaml.YamlDatabaseHandler#saveObject(java.lang.Object)}.
-     * @throws IntrospectionException
-     * @throws InvocationTargetException
-     * @throws IllegalAccessException
      */
     @Test
     public void testSaveObjectNotDO() throws IllegalAccessException, InvocationTargetException, IntrospectionException{
-        YamlDatabaseHandler<String> h = new YamlDatabaseHandler<String>(plugin, String.class, dbConnector);
+        YamlDatabaseHandler<String> h = new YamlDatabaseHandler<>(plugin, String.class, dbConnector);
         String test = "";
         h.saveObject(test);
         verify(plugin).logError("This class is not a DataObject: java.lang.String");
@@ -226,9 +209,6 @@ public class YamlDatabaseHandlerTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.database.yaml.YamlDatabaseHandler#deleteObject(java.lang.Object)}.
-     * @throws IntrospectionException
-     * @throws InvocationTargetException
-     * @throws IllegalAccessException
      */
     @Test
     public void testDeleteObject() throws IllegalAccessException, InvocationTargetException, IntrospectionException {
@@ -237,9 +217,6 @@ public class YamlDatabaseHandlerTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.database.yaml.YamlDatabaseHandler#deleteObject(java.lang.Object)}.
-     * @throws IntrospectionException
-     * @throws InvocationTargetException
-     * @throws IllegalAccessException
      */
     @Test
     public void testDeleteObjectNull() throws IllegalAccessException, InvocationTargetException, IntrospectionException {
@@ -249,13 +226,10 @@ public class YamlDatabaseHandlerTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.database.yaml.YamlDatabaseHandler#deleteObject(java.lang.Object)}.
-     * @throws IntrospectionException
-     * @throws InvocationTargetException
-     * @throws IllegalAccessException
      */
     @Test
     public void testDeleteObjectNotDO() throws IllegalAccessException, InvocationTargetException, IntrospectionException {
-        YamlDatabaseHandler<String> h = new YamlDatabaseHandler<String>(plugin, String.class, dbConnector);
+        YamlDatabaseHandler<String> h = new YamlDatabaseHandler<>(plugin, String.class, dbConnector);
         String test = "";
         h.deleteObject(test);
         verify(plugin).logError("This class is not a DataObject: java.lang.String");

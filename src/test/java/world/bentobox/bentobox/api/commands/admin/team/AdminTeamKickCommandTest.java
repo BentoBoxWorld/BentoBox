@@ -71,7 +71,6 @@ public class AdminTeamKickCommandTest {
     private PluginManager pim;
 
     /**
-     * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {

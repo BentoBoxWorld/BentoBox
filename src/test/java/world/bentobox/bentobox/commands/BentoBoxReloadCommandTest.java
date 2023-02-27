@@ -56,7 +56,6 @@ public class BentoBoxReloadCommandTest {
     private BentoBoxReloadCommand reload;
 
     /**
-     * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {
@@ -106,7 +105,6 @@ public class BentoBoxReloadCommandTest {
     }
 
     /**
-     * @throws java.lang.Exception
      */
     @After
     public void tearDown() {

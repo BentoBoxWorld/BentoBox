@@ -43,7 +43,6 @@ public class ExperiencePickupListenerTest extends AbstractCommonSetup {
     private Entity entity;
 
     /**
-     * @throws java.lang.Exception
      */
     @Override
     @Before

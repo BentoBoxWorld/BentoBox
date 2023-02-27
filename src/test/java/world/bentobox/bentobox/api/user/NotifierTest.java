@@ -18,7 +18,6 @@ public class NotifierTest {
     private Notifier n;
 
     /**
-     * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {
@@ -26,7 +25,6 @@ public class NotifierTest {
     }
 
     /**
-     * @throws java.lang.Exception
      */
     @After
     public void tearDown() {
@@ -61,7 +59,6 @@ public class NotifierTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.api.user.Notifier#notify(world.bentobox.bentobox.api.user.User, java.lang.String)}.
-     * @throws InterruptedException
      */
     @Test
     public void testNotifyUserStringMultisendWaitSend() throws InterruptedException {

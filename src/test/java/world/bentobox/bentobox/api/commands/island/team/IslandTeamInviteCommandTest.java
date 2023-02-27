@@ -78,7 +78,6 @@ public class IslandTeamInviteCommandTest {
 
 
     /**
-     * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {

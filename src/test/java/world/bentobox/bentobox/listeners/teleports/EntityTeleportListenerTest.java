@@ -43,7 +43,6 @@ public class EntityTeleportListenerTest extends AbstractCommonSetup {
 
 
     /**
-     * @throws java.lang.Exception
      */
     @Override
     @Before
@@ -192,19 +191,12 @@ public class EntityTeleportListenerTest extends AbstractCommonSetup {
         assertTrue(event.isCancelled());
         
     }
-    
-    /**
-     * TODO: Lots more tests can be written here.
-     */
 
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.teleports.EntityTeleportListener#onEntityEnterPortal(org.bukkit.event.entity.EntityPortalEnterEvent)}.
      */
     @Test
     public void testOnEntityEnterPortal() {
-        /**
-         * TODO: Lots more tests can be written here.
-         */
     }
 
     /**
@@ -212,9 +204,6 @@ public class EntityTeleportListenerTest extends AbstractCommonSetup {
      */
     @Test
     public void testOnEntityExitPortal() {
-        /**
-         * TODO: Lots more tests can be written here.
-         */
     }
 
 }

@@ -66,7 +66,6 @@ public class IslandSethomeCommandTest {
     private WorldSettings ws;
 
     /**
-     * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {

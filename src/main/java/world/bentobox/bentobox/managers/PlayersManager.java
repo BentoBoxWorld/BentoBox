@@ -284,7 +284,7 @@ public class PlayersManager {
     /**
      * Provides all home locations for player
      * @param playerUUID - the player's UUID
-     * @return List of home locations
+     * @return Map of home locations
      * @deprecated Use {@link IslandsManager#getHomeLocations(world.bentobox.bentobox.database.objects.Island)}
      */
     @Deprecated(since="1.18.0", forRemoval=true)

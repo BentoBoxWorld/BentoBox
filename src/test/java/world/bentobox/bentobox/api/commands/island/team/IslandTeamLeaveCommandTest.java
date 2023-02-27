@@ -68,7 +68,6 @@ public class IslandTeamLeaveCommandTest {
     private World world;
 
     /**
-     * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {

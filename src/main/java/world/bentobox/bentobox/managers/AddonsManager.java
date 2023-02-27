@@ -346,7 +346,6 @@ public class AddonsManager {
 
     /**
      * Create seed worlds, which are used for deletion
-     * @param gameMode
      */
     private void createSeedWorlds(GameModeAddon gameMode) {
         if (gameMode.getOverWorld() != null) {

@@ -50,7 +50,6 @@ public class AdminSwitchCommandTest {
     private UUID notUUID;
 
     /**
-     * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {
@@ -85,7 +84,6 @@ public class AdminSwitchCommandTest {
     }
 
     /**
-     * @throws java.lang.Exception
      */
     @After
     public void tearDown() throws Exception {

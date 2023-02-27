@@ -71,7 +71,6 @@ public class BlockEndDragonTest {
     private Block block;
 
     /**
-     * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {
@@ -113,7 +112,6 @@ public class BlockEndDragonTest {
     }
 
     /**
-     * @throws java.lang.Exception
      */
     @After
     public void tearDown() {

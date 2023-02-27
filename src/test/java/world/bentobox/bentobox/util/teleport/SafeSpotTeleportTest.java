@@ -89,7 +89,6 @@ public class SafeSpotTeleportTest {
     @Mock
     private BukkitTask task;
     /**
-     * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {
@@ -137,7 +136,6 @@ public class SafeSpotTeleportTest {
     }
 
     /**
-     * @throws java.lang.Exception
      */
     @After
     public void tearDown() throws Exception {

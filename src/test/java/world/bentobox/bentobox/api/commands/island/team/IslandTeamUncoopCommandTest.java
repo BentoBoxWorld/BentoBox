@@ -64,7 +64,6 @@ public class IslandTeamUncoopCommandTest {
     private Island island;
 
     /**
-     * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {

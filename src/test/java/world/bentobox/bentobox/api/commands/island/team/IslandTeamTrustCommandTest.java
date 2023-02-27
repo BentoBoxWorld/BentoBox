@@ -71,7 +71,6 @@ public class IslandTeamTrustCommandTest {
     private Player targetPlayer;
 
     /**
-     * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {

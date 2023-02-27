@@ -52,7 +52,6 @@ public class AdminSetspawnCommandTest {
     private IslandsManager im;
 
     /**
-     * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {

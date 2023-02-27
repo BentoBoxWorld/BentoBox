@@ -65,7 +65,8 @@ public class BannedCommands implements Listener {
         if (bannedSplit.length <= args.length) {                
             for (int i = 0; i < bannedSplit.length; i++) {
                 if (!bannedSplit[i].equals(args[i])) {
-                   banned = false; 
+                    banned = false;
+                    break;
                 }
             }
         }

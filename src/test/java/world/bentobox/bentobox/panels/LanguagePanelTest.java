@@ -76,7 +76,6 @@ public class LanguagePanelTest {
     private Map<Locale, BentoBoxLocale> map;
 
     /**
-     * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {
@@ -116,7 +115,6 @@ public class LanguagePanelTest {
     }
 
     /**
-     * @throws java.lang.Exception
      */
     @After
     public void tearDown() {

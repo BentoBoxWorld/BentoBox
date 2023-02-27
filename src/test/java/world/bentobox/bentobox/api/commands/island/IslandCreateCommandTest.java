@@ -77,7 +77,6 @@ public class IslandCreateCommandTest {
     private BlueprintsManager bpm;
 
     /**
-     * @throws java.lang.Exception
      */
     @SuppressWarnings("deprecation")
     @Before
@@ -160,7 +159,6 @@ public class IslandCreateCommandTest {
     }
 
     /**
-     * @throws java.lang.Exception
      */
     @After
     public void tearDown() {
@@ -230,7 +228,6 @@ public class IslandCreateCommandTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandCreateCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
-     * @throws IOException
      */
     @Test
     public void testExecuteUserStringListOfStringSuccess() throws Exception {
@@ -250,7 +247,6 @@ public class IslandCreateCommandTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandCreateCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
-     * @throws IOException
      */
     @Test
     public void testExecuteUserStringListOfStringThrowException() throws Exception {
@@ -302,7 +298,6 @@ public class IslandCreateCommandTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandCreateCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
-     * @throws IOException
      */
     @Test
     public void testExecuteUserStringListOfStringKnownBundle() throws Exception {

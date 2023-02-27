@@ -39,7 +39,6 @@ public class DefaultHelpCommandTest {
     private User user;
 
     /**
-     * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {

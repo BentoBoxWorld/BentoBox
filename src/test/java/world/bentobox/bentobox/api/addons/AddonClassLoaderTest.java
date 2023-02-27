@@ -49,7 +49,7 @@ import world.bentobox.bentobox.managers.AddonsManager;
 @PrepareForTest( { BentoBox.class, Bukkit.class })
 public class AddonClassLoaderTest {
 
-    private enum MandatoryTags {
+    private enum mandatoryTags {
         MAIN,
         NAME,
         VERSION,
@@ -76,7 +76,6 @@ public class AddonClassLoaderTest {
     private BentoBox plugin;
 
     /**
-     * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {
@@ -91,7 +90,7 @@ public class AddonClassLoaderTest {
 
     }
 
-    public void makeAddon(List<MandatoryTags> missingTags) throws IOException {
+    public void makeAddon(List<mandatoryTags> missingTags) throws IOException {
         // Make the addon
         dataFolder = new File("dataFolder");
         jarFile = new File("addon.jar");
@@ -112,18 +111,18 @@ public class AddonClassLoaderTest {
         Files.deleteIfExists(ymlFile.toPath());
     }
 
-    private YamlConfiguration getYaml(List<MandatoryTags> missingTags) {
+    private YamlConfiguration getYaml(List<mandatoryTags> missingTags) {
         YamlConfiguration r = new YamlConfiguration();
-        if (!missingTags.contains(MandatoryTags.NAME)) {
+        if (!missingTags.contains(mandatoryTags.NAME)) {
             r.set("name", "TestAddon");
         }
-        if (!missingTags.contains(MandatoryTags.MAIN)) {
+        if (!missingTags.contains(mandatoryTags.MAIN)) {
             r.set("main", "world.bentobox.test.Test");
         }
-        if (!missingTags.contains(MandatoryTags.VERSION)) {
+        if (!missingTags.contains(mandatoryTags.VERSION)) {
             r.set("version", "1.0.0");
         }
-        if (!missingTags.contains(MandatoryTags.AUTHORS)) {
+        if (!missingTags.contains(mandatoryTags.AUTHORS)) {
             r.set("authors", "tastybento");
         }
         r.set("metrics", false);
@@ -174,7 +173,6 @@ public class AddonClassLoaderTest {
     }
 
     /**
-     * @throws java.lang.Exception
      */
     @After
     public void TearDown() throws IOException {
@@ -199,7 +197,6 @@ public class AddonClassLoaderTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.api.addons.AddonClassLoader#AddonClassLoader(world.bentobox.bentobox.managers.AddonsManager, org.bukkit.configuration.file.YamlConfiguration, java.io.File, java.lang.ClassLoader)}.
-     * @throws MalformedURLException
      */
     @Test
     public void testAddonClassLoader() throws MalformedURLException {
@@ -208,7 +205,6 @@ public class AddonClassLoaderTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.api.addons.AddonClassLoader#asDescription(org.bukkit.configuration.file.YamlConfiguration)}.
-     * @throws InvalidAddonDescriptionException
      */
     @Test
     public void testAsDescription() throws InvalidAddonDescriptionException {
@@ -232,11 +228,10 @@ public class AddonClassLoaderTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.api.addons.AddonClassLoader#asDescription(org.bukkit.configuration.file.YamlConfiguration)}.
-     * @throws InvalidAddonDescriptionException
      */
     @Test
     public void testAsDescriptionNoName() {
-        YamlConfiguration yml = this.getYaml(List.of(MandatoryTags.NAME));
+        YamlConfiguration yml = this.getYaml(List.of(mandatoryTags.NAME));
         try {
             AddonClassLoader.asDescription(yml);
         } catch (InvalidAddonDescriptionException e) {
@@ -246,11 +241,10 @@ public class AddonClassLoaderTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.api.addons.AddonClassLoader#asDescription(org.bukkit.configuration.file.YamlConfiguration)}.
-     * @throws InvalidAddonDescriptionException
      */
     @Test
     public void testAsDescriptionNoAuthors() {
-        YamlConfiguration yml = this.getYaml(List.of(MandatoryTags.AUTHORS));
+        YamlConfiguration yml = this.getYaml(List.of(mandatoryTags.AUTHORS));
         try {
             AddonClassLoader.asDescription(yml);
         } catch (InvalidAddonDescriptionException e) {
@@ -260,11 +254,10 @@ public class AddonClassLoaderTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.api.addons.AddonClassLoader#asDescription(org.bukkit.configuration.file.YamlConfiguration)}.
-     * @throws InvalidAddonDescriptionException
      */
     @Test
     public void testAsDescriptionNoVersion() {
-        YamlConfiguration yml = this.getYaml(List.of(MandatoryTags.VERSION));
+        YamlConfiguration yml = this.getYaml(List.of(mandatoryTags.VERSION));
         try {
             AddonClassLoader.asDescription(yml);
         } catch (InvalidAddonDescriptionException e) {
@@ -274,11 +267,10 @@ public class AddonClassLoaderTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.api.addons.AddonClassLoader#asDescription(org.bukkit.configuration.file.YamlConfiguration)}.
-     * @throws InvalidAddonDescriptionException
      */
     @Test
     public void testAsDescriptionNoMain() {
-        YamlConfiguration yml = this.getYaml(List.of(MandatoryTags.MAIN));
+        YamlConfiguration yml = this.getYaml(List.of(mandatoryTags.MAIN));
         try {
             AddonClassLoader.asDescription(yml);
         } catch (InvalidAddonDescriptionException e) {
@@ -288,7 +280,6 @@ public class AddonClassLoaderTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.api.addons.AddonClassLoader#findClass(java.lang.String)}.
-     * @throws MalformedURLException
      */
     @Test
     public void testFindClassString() throws MalformedURLException {
@@ -299,7 +290,6 @@ public class AddonClassLoaderTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.api.addons.AddonClassLoader#findClass(java.lang.String, boolean)}.
-     * @throws MalformedURLException
      */
     @Test
     public void testFindClassStringBoolean() throws MalformedURLException {
@@ -310,7 +300,6 @@ public class AddonClassLoaderTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.api.addons.AddonClassLoader#getAddon()}.
-     * @throws MalformedURLException
      */
     @Test
     public void testGetAddon() throws MalformedURLException {
@@ -321,7 +310,6 @@ public class AddonClassLoaderTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.api.addons.AddonClassLoader#getClasses()}.
-     * @throws MalformedURLException
      */
     @Test
     public void testGetClasses() throws MalformedURLException {

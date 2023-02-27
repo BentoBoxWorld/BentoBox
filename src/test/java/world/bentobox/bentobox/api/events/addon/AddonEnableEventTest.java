@@ -28,7 +28,6 @@ public class AddonEnableEventTest {
     private Addon addon;
 
     /**
-     * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {

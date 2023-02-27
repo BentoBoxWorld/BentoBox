@@ -91,7 +91,7 @@ public class LangUtilsHook extends Hook {
 
     /**
      * Get the item display name.
-     *
+     * <p>
      * If the item contains a custom name, return its custom name.
      * If the item itself does not have a custom name, the material
      * name will be translated and returned.
@@ -515,29 +515,74 @@ public class LangUtilsHook extends Hook {
             int variant = (pcol & 255) << 24 | (bcol & 255) << 16 | (patt & 255) << 8 | type;
 
             switch (variant) {
-                case 117506305: return "Anemone";
-                case 117899265: return "Black Tang";
-                case 185008129: return "Blue Tang";
-                case 117441793: return "Butterflyfish";
-                case 118161664: return "Cichlid";
-                case 65536    : return "Clownfish";
-                case 50726144 : return "Cotton Candy Betta";
-                case 67764993 : return "Dottyback";
-                case 234882305: return "Emperor Red Snapper";
-                case 67110144 : return "Goatfish";
-                case 117441025: return "Moorish Idol";
-                case 16778497 : return "Ornate Butterflyfish";
-                case 101253888: return "Parrotfish";
-                case 50660352 : return "Queen Angelfish";
-                case 918529   : return "Red Cichlid";
-                case 235340288: return "Red Lipped Blenny";
-                case 918273   : return "Red Snapper";
-                case 67108865 : return "Threadfin";
-                case 917504   : return "Tomato Clownfish";
-                case 459008   : return "Triggerfish";
-                case 67699456 : return "Yellowtail Parrotfish";
-                case 67371009 : return "Yellow Tang";
-                default       : break;
+                case 117506305 -> {
+                    return "Anemone";
+                }
+                case 117899265 -> {
+                    return "Black Tang";
+                }
+                case 185008129 -> {
+                    return "Blue Tang";
+                }
+                case 117441793 -> {
+                    return "Butterflyfish";
+                }
+                case 118161664 -> {
+                    return "Cichlid";
+                }
+                case 65536 -> {
+                    return "Clownfish";
+                }
+                case 50726144 -> {
+                    return "Cotton Candy Betta";
+                }
+                case 67764993 -> {
+                    return "Dottyback";
+                }
+                case 234882305 -> {
+                    return "Emperor Red Snapper";
+                }
+                case 67110144 -> {
+                    return "Goatfish";
+                }
+                case 117441025 -> {
+                    return "Moorish Idol";
+                }
+                case 16778497 -> {
+                    return "Ornate Butterflyfish";
+                }
+                case 101253888 -> {
+                    return "Parrotfish";
+                }
+                case 50660352 -> {
+                    return "Queen Angelfish";
+                }
+                case 918529 -> {
+                    return "Red Cichlid";
+                }
+                case 235340288 -> {
+                    return "Red Lipped Blenny";
+                }
+                case 918273 -> {
+                    return "Red Snapper";
+                }
+                case 67108865 -> {
+                    return "Threadfin";
+                }
+                case 917504 -> {
+                    return "Tomato Clownfish";
+                }
+                case 459008 -> {
+                    return "Triggerfish";
+                }
+                case 67699456 -> {
+                    return "Yellowtail Parrotfish";
+                }
+                case 67371009 -> {
+                    return "Yellow Tang";
+                }
+                default -> {
+                }
             }
         }
         return null;

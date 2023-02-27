@@ -497,7 +497,6 @@ public class PortalTeleportationListenerTest {
 
     /**
      * Test method for {@link PortalTeleportationListener#onIslandPortal(org.bukkit.event.player.PlayerPortalEvent)}.
-     * @throws Exception
      */
     @Test
     public void testonIslandPortalFromNetherStandard() throws Exception {

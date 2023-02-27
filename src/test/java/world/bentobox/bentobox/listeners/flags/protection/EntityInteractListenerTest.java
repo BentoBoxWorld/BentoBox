@@ -54,7 +54,6 @@ public class EntityInteractListenerTest extends AbstractCommonSetup {
     private EquipmentSlot hand;
 
     /**
-     * @throws java.lang.Exception
      */
     @Override
     @Before

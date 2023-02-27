@@ -63,10 +63,10 @@ public class PlayerTeleportListener extends AbstractTeleportListener implements 
     /**
      * This listener checks player portal events and triggers appropriate methods to transfer
      * players to the correct location in other dimension.
-     *
+     * <p>
      * This event is triggered when player is about to being teleported because of contact with the
      * nether portal or end gateway portal (exit portal triggers respawn).
-     *
+     * <p>
      * This event is not called if nether/end is disabled in server settings.
      *
      * @param event the player portal event.

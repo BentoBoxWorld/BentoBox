@@ -51,7 +51,6 @@ public class PlaceBlocksListenerTest extends AbstractCommonSetup {
     private PlaceBlocksListener pbl;
 
     /**
-     * @throws java.lang.Exception
      */
     @Override
     @Before

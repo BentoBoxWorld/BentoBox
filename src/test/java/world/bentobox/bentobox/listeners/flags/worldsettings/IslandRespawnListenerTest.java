@@ -67,7 +67,6 @@ public class IslandRespawnListenerTest {
     private Server server;
 
     /**
-     * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {

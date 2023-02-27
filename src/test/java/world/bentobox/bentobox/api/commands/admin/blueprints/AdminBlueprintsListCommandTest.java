@@ -54,7 +54,6 @@ public class AdminBlueprintsListCommandTest {
     private File dataFolder;
 
     /**
-     * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {
@@ -97,7 +96,6 @@ public class AdminBlueprintsListCommandTest {
     }
 
     /**
-     * @throws java.lang.Exception
      */
     @After
     public void tearDown() throws Exception {
@@ -157,7 +155,6 @@ public class AdminBlueprintsListCommandTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintListCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
-     * @throws IOException
      */
     @Test
     public void testExecuteUserStringListOfStringNoBlueprintsFiles() throws IOException {
@@ -170,7 +167,6 @@ public class AdminBlueprintsListCommandTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintListCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
-     * @throws IOException
      */
     @Test
     public void testExecuteUserStringListOfStringWithBlueprintsFiles() throws IOException {

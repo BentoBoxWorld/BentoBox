@@ -42,7 +42,6 @@ public class BucketListenerTest extends AbstractCommonSetup {
     private BucketListener l;
 
     /**
-     * @throws java.lang.Exception
      */
     @Override
     @Before

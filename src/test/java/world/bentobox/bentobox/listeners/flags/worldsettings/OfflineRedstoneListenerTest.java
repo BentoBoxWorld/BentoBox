@@ -107,11 +107,11 @@ public class OfflineRedstoneListenerTest {
         PowerMockito.mockStatic(Bukkit.class);
         // Online players
         Set<Player> onlinePlayers = new HashSet<>();
-        for (int j = 0; j < NAMES.length; j++) {
+        for (String name : NAMES) {
             Player p1 = mock(Player.class);
             UUID u = UUID.randomUUID();
             when(p1.getUniqueId()).thenReturn(u);
-            when(p1.getName()).thenReturn(NAMES[j]);
+            when(p1.getName()).thenReturn(name);
             // All ops
             when(p1.isOp()).thenReturn(true);
             onlinePlayers.add(p1);
