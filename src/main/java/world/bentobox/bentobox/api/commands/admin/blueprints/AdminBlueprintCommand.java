@@ -121,11 +121,6 @@ public class AdminBlueprintCommand extends ConfirmableCommand {
             user.spawnParticle(PARTICLE, PARTICLE_DUST_OPTIONS, maxX + 0.5, maxY + 0.5, z + 0.5);
         }
 
-        // Drawing origin
-        if (clipboard.getOrigin() != null) {
-            user.spawnParticle(Particle.VILLAGER_HAPPY, null, clipboard.getOrigin().getBlockX() + 0.5, clipboard.getOrigin().getBlockY() + 0.5, clipboard.getOrigin().getBlockZ() + 0.5);
-        }
-
     }
 
     protected void hideClipboard(User user) {
