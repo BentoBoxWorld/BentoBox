@@ -971,6 +971,11 @@ protection:
          &a Endermen can remove
          &a blocks from islands
       name: "Enderman griefing"
+    ENDERMAN_TELEPORT:
+      description: |-
+         &a Endermen can teleport
+         &a if active.
+      name: "Enderman teleport"
     ENDER_PEARL:
       description: "Toggle use"
       name: "EnderPearls"

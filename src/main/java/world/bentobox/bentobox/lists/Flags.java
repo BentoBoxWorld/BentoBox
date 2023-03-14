@@ -42,6 +42,7 @@ import world.bentobox.bentobox.listeners.flags.protection.TeleportationListener;
 import world.bentobox.bentobox.listeners.flags.protection.ThrowingListener;
 import world.bentobox.bentobox.listeners.flags.settings.DecayListener;
 import world.bentobox.bentobox.listeners.flags.settings.MobSpawnListener;
+import world.bentobox.bentobox.listeners.flags.settings.MobTeleportListener;
 import world.bentobox.bentobox.listeners.flags.settings.PVPListener;
 import world.bentobox.bentobox.listeners.flags.worldsettings.ChestDamageListener;
 import world.bentobox.bentobox.listeners.flags.worldsettings.CleanSuperFlatListener;
@@ -487,6 +488,13 @@ public final class Flags {
             .defaultSetting(true).type(Type.WORLD_SETTING)
             .listener(new EndermanListener())
             .build();
+
+    /**
+     * If {@code false}, prevents Endermans from teleporting
+     * @since 1.22.1
+     */
+    public static final Flag ENDERMAN_TELEPORT = new Flag.Builder("ENDERMAN_TELEPORT", Material.ENDER_PEARL).type(Type.SETTING)
+            .defaultSetting(true).listener(new MobTeleportListener()).mode(Flag.Mode.ADVANCED).build();
 
     public static final Flag ENTER_EXIT_MESSAGES = new Flag.Builder("ENTER_EXIT_MESSAGES", Material.DIRT).defaultSetting(true).type(Type.WORLD_SETTING)
             .listener(new EnterExitListener())
