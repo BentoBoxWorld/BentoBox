@@ -104,6 +104,25 @@ public class LocalesManager {
         }
         return null;
     }
+    
+    /**
+     * Set the translation for a reference for a specific locale. The locale must be a known locale on this server.
+     * User {@link #getAvailableLocales(boolean)} to find out what locales are available.
+     * Note, the usual default locale is {@code Locale.US}
+     * @param locale locale
+     * @param reference reference
+     * @param translation translation
+     * @return true if successful, false if the locale is not a known locale on this server
+     * @since 1.22.1
+     */
+    public boolean setTranslation(Locale locale, String reference, String translation) {
+        // Set a translation
+        if (!languages.containsKey(locale)) {
+            return false;
+        }
+        languages.get(locale).set(reference, translation);       
+        return true;
+    }
 
     /**
      * Gets the translated String corresponding to the reference from the server's or the en-US locale file.
