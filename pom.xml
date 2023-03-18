@@ -73,10 +73,10 @@
         <postgresql.version>42.2.18</postgresql.version>
         <hikaricp.version>5.0.1</hikaricp.version>
         <!-- More visible way to change dependency versions -->
-        <spigot.version>1.19.3-R0.1-SNAPSHOT</spigot.version>
+        <spigot.version>1.19.4-R0.1-SNAPSHOT</spigot.version>
         <!-- Might differ from the last Spigot release for short periods 
             of time -->
-        <paper.version>1.19.3-R0.1-SNAPSHOT</paper.version>
+        <paper.version>1.19.4-R0.1-SNAPSHOT</paper.version>
         <bstats.version>3.0.0</bstats.version>
         <vault.version>1.7.1</vault.version>
         <placeholderapi.version>2.10.9</placeholderapi.version>
