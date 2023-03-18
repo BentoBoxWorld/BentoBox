@@ -48,6 +48,8 @@ public class MobTeleportListenerTest {
     @Mock
     private Entity enderman;
     @Mock
+    private Entity shulker;
+    @Mock
     private Entity other;
     @Mock
     private Location from;
@@ -71,10 +73,12 @@ public class MobTeleportListenerTest {
         when(plugin.getIslands()).thenReturn(im);
         when(im.getIslandAt(any())).thenReturn(Optional.of(island));
         when(island.isAllowed(Flags.ENDERMAN_TELEPORT)).thenReturn(true);
+        when(island.isAllowed(Flags.SHULKER_TELEPORT)).thenReturn(true);
 
         when(to.getWorld()).thenReturn(world);
         when(from.getWorld()).thenReturn(world);
         when(enderman.getType()).thenReturn(EntityType.ENDERMAN);
+        when(shulker.getType()).thenReturn(EntityType.SHULKER);
         when(other.getType()).thenReturn(EntityType.AXOLOTL);
         mtl = new MobTeleportListener();
 
@@ -141,6 +145,67 @@ public class MobTeleportListenerTest {
     @Test
     public void testOnEntityTeleportEventOther() {
         EntityTeleportEvent e = new EntityTeleportEvent(other, from, to);
+        mtl.onEntityTeleportEvent(e);
+        assertFalse(e.isCancelled());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.flags.settings.MobTeleportListener#onEntityTeleportEvent(org.bukkit.event.entity.EntityTeleportEvent)}.
+     */
+    @Test
+    public void testOnEntityTeleportEventEndermanNotAllowedButOther() {
+        Flags.ENDERMAN_TELEPORT.setSetting(world, false);
+        Flags.SHULKER_TELEPORT.setSetting(world, false);
+        when(island.isAllowed(Flags.ENDERMAN_TELEPORT)).thenReturn(false);
+        when(island.isAllowed(Flags.SHULKER_TELEPORT)).thenReturn(false);
+        EntityTeleportEvent e = new EntityTeleportEvent(other, from, to);
+        mtl.onEntityTeleportEvent(e);
+        assertFalse(e.isCancelled());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.flags.settings.MobTeleportListener#onEntityTeleportEvent(org.bukkit.event.entity.EntityTeleportEvent)}.
+     */
+    @Test
+    public void testOnEntityTeleportEventShulkerNotAllowed() {
+        Flags.SHULKER_TELEPORT.setSetting(world, false);
+        when(island.isAllowed(Flags.SHULKER_TELEPORT)).thenReturn(false);
+        EntityTeleportEvent e = new EntityTeleportEvent(shulker, from, to);
+        mtl.onEntityTeleportEvent(e);
+        assertTrue(e.isCancelled());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.flags.settings.MobTeleportListener#onEntityTeleportEvent(org.bukkit.event.entity.EntityTeleportEvent)}.
+     */
+    @Test
+    public void testOnEntityTeleportEventShulkerNotAllowedWrongWorld() {
+        when(iwm.inWorld(any(World.class))).thenReturn(false);
+        Flags.SHULKER_TELEPORT.setSetting(world, false);
+        when(island.isAllowed(Flags.SHULKER_TELEPORT)).thenReturn(false);
+        EntityTeleportEvent e = new EntityTeleportEvent(shulker, from, to);
+        mtl.onEntityTeleportEvent(e);
+        assertFalse(e.isCancelled());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.flags.settings.MobTeleportListener#onEntityTeleportEvent(org.bukkit.event.entity.EntityTeleportEvent)}.
+     */
+    @Test
+    public void testOnEntityTeleportEventShulkerNotAllowedNotOnIsland() {
+        when(im.getIslandAt(any())).thenReturn(Optional.empty());
+        Flags.SHULKER_TELEPORT.setSetting(world, false);
+        EntityTeleportEvent e = new EntityTeleportEvent(shulker, from, to);
+        mtl.onEntityTeleportEvent(e);
+        assertFalse(e.isCancelled());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.flags.settings.MobTeleportListener#onEntityTeleportEvent(org.bukkit.event.entity.EntityTeleportEvent)}.
+     */
+    @Test
+    public void testOnEntityTeleportEventShulkerAllowedDefault() {
+        EntityTeleportEvent e = new EntityTeleportEvent(shulker, from, to);
         mtl.onEntityTeleportEvent(e);
         assertFalse(e.isCancelled());
     }

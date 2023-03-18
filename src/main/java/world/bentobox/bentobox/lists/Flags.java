@@ -495,6 +495,14 @@ public final class Flags {
      */
     public static final Flag ENDERMAN_TELEPORT = new Flag.Builder("ENDERMAN_TELEPORT", Material.ENDER_PEARL).type(Type.SETTING)
             .defaultSetting(true).listener(new MobTeleportListener()).mode(Flag.Mode.ADVANCED).build();
+    /**
+     * If {@code false}, prevents Shulkers from teleporting
+     * Uses same listener as ENDERMAN_TELEPORT
+     * @since 1.22.1
+     */
+    public static final Flag SHULKER_TELEPORT = new Flag.Builder("SHULKER_TELEPORT", Material.SHULKER_SHELL).type(Type.SETTING)
+            .defaultSetting(true).mode(Flag.Mode.ADVANCED).build();
+
 
     public static final Flag ENTER_EXIT_MESSAGES = new Flag.Builder("ENTER_EXIT_MESSAGES", Material.DIRT).defaultSetting(true).type(Type.WORLD_SETTING)
             .listener(new EnterExitListener())
