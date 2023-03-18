@@ -92,6 +92,7 @@ public class IslandUnbanCommandTest {
         when(user.getUniqueId()).thenReturn(uuid);
         when(user.getPlayer()).thenReturn(p);
         when(user.getName()).thenReturn("tastybento");
+        when(user.getDisplayName()).thenReturn("&Ctastybento");
         when(user.getTranslation(any())).thenAnswer(invocation -> invocation.getArgument(0, String.class));
 
         // Parent command has no aliases
@@ -240,6 +241,8 @@ public class IslandUnbanCommandTest {
         when(targetUser.isOp()).thenReturn(false);
         when(targetUser.isPlayer()).thenReturn(true);
         when(targetUser.isOnline()).thenReturn(false);
+        when(targetUser.getName()).thenReturn("target");
+        when(targetUser.getDisplayName()).thenReturn("&Ctarget");
         when(User.getInstance(any(UUID.class))).thenReturn(targetUser);
         // Mark as banned
         when(island.isBanned(eq(targetUUID))).thenReturn(true);
@@ -248,8 +251,8 @@ public class IslandUnbanCommandTest {
         when(island.unban(any(), any())).thenReturn(true);
         assertTrue(iubc.canExecute(user, iubc.getLabel(), Collections.singletonList("bill")));
         assertTrue(iubc.execute(user, iubc.getLabel(), Collections.singletonList("bill")));
-        verify(user).sendMessage("commands.island.unban.player-unbanned", TextVariables.NAME, targetUser.getName());
-        verify(targetUser).sendMessage("commands.island.unban.you-are-unbanned", TextVariables.NAME, user.getName());
+        verify(user).sendMessage("commands.island.unban.player-unbanned", TextVariables.NAME, targetUser.getName(), TextVariables.DISPLAY_NAME, targetUser.getDisplayName());
+        verify(targetUser).sendMessage("commands.island.unban.you-are-unbanned", TextVariables.NAME, user.getName(), TextVariables.DISPLAY_NAME, user.getDisplayName());
     }
 
     /**
