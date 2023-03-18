@@ -82,7 +82,7 @@ public class IslandTeamPromoteCommand extends CompositeCommand {
             if (nextRank != RanksManager.OWNER_RANK && nextRank > currentRank) {
                 getIslands().getIsland(getWorld(), user.getUniqueId()).setRank(target, nextRank);
                 String rankName = user.getTranslation(getPlugin().getRanksManager().getRank(nextRank));
-                user.sendMessage("commands.island.team.promote.success", TextVariables.NAME, target.getName(), TextVariables.RANK, rankName);
+                user.sendMessage("commands.island.team.promote.success", TextVariables.NAME, target.getName(), TextVariables.RANK, rankName, TextVariables.DISPLAY_NAME, target.getDisplayName());
                 IslandEvent.builder()
                 .island(island)
                 .involvedPlayer(user.getUniqueId())
@@ -102,7 +102,7 @@ public class IslandTeamPromoteCommand extends CompositeCommand {
             if (prevRank >= RanksManager.MEMBER_RANK && prevRank < currentRank) {
                 getIslands().getIsland(getWorld(), user.getUniqueId()).setRank(target, prevRank);
                 String rankName = user.getTranslation(getPlugin().getRanksManager().getRank(prevRank));
-                user.sendMessage("commands.island.team.demote.success", TextVariables.NAME, target.getName(), TextVariables.RANK, rankName);
+                user.sendMessage("commands.island.team.demote.success", TextVariables.NAME, target.getName(), TextVariables.RANK, rankName, TextVariables.DISPLAY_NAME, target.getDisplayName());
                 IslandEvent.builder()
                 .island(island)
                 .involvedPlayer(user.getUniqueId())

@@ -112,8 +112,8 @@ public class IslandBanCommand extends CompositeCommand {
             }
             // Event is not cancelled
             if (island.ban(issuer.getUniqueId(), target.getUniqueId())) {
-                issuer.sendMessage("commands.island.ban.player-banned", TextVariables.NAME, target.getName());
-                target.sendMessage("commands.island.ban.owner-banned-you", TextVariables.NAME, issuer.getName());
+                issuer.sendMessage("commands.island.ban.player-banned", TextVariables.NAME, target.getName(), TextVariables.DISPLAY_NAME, target.getDisplayName());
+                target.sendMessage("commands.island.ban.owner-banned-you", TextVariables.NAME, issuer.getName(), TextVariables.DISPLAY_NAME, issuer.getDisplayName());
                 // If the player is online, has an island and on the banned island, move them home immediately
                 if (target.isOnline() && getIslands().hasIsland(getWorld(), target.getUniqueId()) && island.onIsland(target.getLocation())) {
                     getIslands().homeTeleportAsync(getWorld(), target.getPlayer());

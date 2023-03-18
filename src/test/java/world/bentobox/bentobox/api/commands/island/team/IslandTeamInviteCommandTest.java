@@ -101,6 +101,7 @@ public class IslandTeamInviteCommandTest {
         when(user.getUniqueId()).thenReturn(uuid);
         when(user.getPlayer()).thenReturn(p);
         when(user.getName()).thenReturn("tastybento");
+        when(user.getDisplayName()).thenReturn("&Ctastbento");
         when(user.isOnline()).thenReturn(true);
         // Permission to invite 3 more players
         when(user.getPermissionValue(anyString(), anyInt())).thenReturn(3);
@@ -116,6 +117,7 @@ public class IslandTeamInviteCommandTest {
         when(target.getPlayer()).thenReturn(p);
         when(target.isOnline()).thenReturn(true);
         when(target.getName()).thenReturn("target");
+        when(target.getDisplayName()).thenReturn("&Ctarget");
         when(User.getInstance(eq(notUUID))).thenReturn(target);
 
 
@@ -297,10 +299,10 @@ public class IslandTeamInviteCommandTest {
         verify(pim).callEvent(any(IslandBaseEvent.class));
         verify(user, never()).sendMessage(eq("commands.island.team.invite.removing-invite"));
         verify(ic).addInvite(eq(Invite.Type.TEAM), eq(uuid), eq(notUUID));
-        verify(user).sendMessage(eq("commands.island.team.invite.invitation-sent"), eq(TextVariables.NAME), eq("target"));
-        verify(target).sendMessage(eq("commands.island.team.invite.name-has-invited-you"), eq(TextVariables.NAME), eq("tastybento"));
-        verify(target).sendMessage(eq("commands.island.team.invite.to-accept-or-reject"), eq(TextVariables.LABEL), eq("island"));
-        verify(target).sendMessage(eq("commands.island.team.invite.you-will-lose-your-island"));
+        verify(user).sendMessage("commands.island.team.invite.invitation-sent", TextVariables.NAME, "target", TextVariables.DISPLAY_NAME, "&Ctarget");
+        verify(target).sendMessage("commands.island.team.invite.name-has-invited-you", TextVariables.NAME, "tastybento", TextVariables.DISPLAY_NAME, "&Ctastbento");
+        verify(target).sendMessage("commands.island.team.invite.to-accept-or-reject", TextVariables.LABEL, "island");
+        verify(target).sendMessage("commands.island.team.invite.you-will-lose-your-island");
 
     }
 
@@ -312,12 +314,12 @@ public class IslandTeamInviteCommandTest {
         testCanExecuteSuccess();
         assertTrue(itl.execute(user, itl.getLabel(), Collections.singletonList("target")));
         verify(pim).callEvent(any(IslandBaseEvent.class));
-        verify(user, never()).sendMessage(eq("commands.island.team.invite.removing-invite"));
-        verify(ic).addInvite(eq(Invite.Type.TEAM), eq(uuid), eq(notUUID));
-        verify(user).sendMessage(eq("commands.island.team.invite.invitation-sent"), eq(TextVariables.NAME), eq("target"));
-        verify(target).sendMessage(eq("commands.island.team.invite.name-has-invited-you"), eq(TextVariables.NAME), eq("tastybento"));
-        verify(target).sendMessage(eq("commands.island.team.invite.to-accept-or-reject"), eq(TextVariables.LABEL), eq("island"));
-        verify(target, never()).sendMessage(eq("commands.island.team.invite.you-will-lose-your-island"));
+        verify(user, never()).sendMessage("commands.island.team.invite.removing-invite");
+        verify(ic).addInvite(Invite.Type.TEAM, uuid, notUUID);
+        verify(user).sendMessage("commands.island.team.invite.invitation-sent", TextVariables.NAME, "target", TextVariables.DISPLAY_NAME, "&Ctarget");
+        verify(target).sendMessage("commands.island.team.invite.name-has-invited-you", TextVariables.NAME, "tastybento", TextVariables.DISPLAY_NAME, "&Ctastbento");
+        verify(target).sendMessage("commands.island.team.invite.to-accept-or-reject", TextVariables.LABEL, "island");
+        verify(target, never()).sendMessage("commands.island.team.invite.you-will-lose-your-island");
 
     }
 
@@ -328,16 +330,16 @@ public class IslandTeamInviteCommandTest {
     public void testExecuteTargetAlreadyInvited() {
         testCanExecuteSuccess();
 
-        when(ic.isInvited(eq(notUUID))).thenReturn(true);
+        when(ic.isInvited(notUUID)).thenReturn(true);
         // Set up invite
-        when(ic.getInviter(eq(notUUID))).thenReturn(uuid);
+        when(ic.getInviter(notUUID)).thenReturn(uuid);
         Invite invite = mock(Invite.class);
         when(invite.getType()).thenReturn(Type.TEAM);
-        when(ic.getInvite(eq(notUUID))).thenReturn(invite);
+        when(ic.getInvite(notUUID)).thenReturn(invite);
         assertTrue(itl.execute(user, itl.getLabel(), Collections.singletonList("target")));
         verify(pim).callEvent(any(IslandBaseEvent.class));
-        verify(ic).removeInvite(eq(notUUID));
-        verify(user).sendMessage(eq("commands.island.team.invite.removing-invite"));
+        verify(ic).removeInvite(notUUID);
+        verify(user).sendMessage("commands.island.team.invite.removing-invite");
     }
 
 }

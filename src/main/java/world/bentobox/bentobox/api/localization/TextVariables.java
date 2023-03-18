@@ -9,6 +9,7 @@ public class TextVariables {
     private TextVariables() {}
 
     public static final String NAME = "[name]";
+    public static final String DISPLAY_NAME = "[display_name]";
     public static final String DESCRIPTION = "[description]";
     public static final String NUMBER = "[number]";
     public static final String RANK = "[rank]";

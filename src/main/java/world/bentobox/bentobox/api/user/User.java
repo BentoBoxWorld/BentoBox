@@ -231,6 +231,16 @@ public class User implements MetaDataAble {
     }
 
     /**
+     * Get the user's display name
+     * @return player's display name if the player is online otherwise just their name
+     * @since 1.22.1
+     */
+    @NonNull
+    public String getDisplayName() {
+        return player != null ? player.getDisplayName() : plugin.getPlayers().getName(playerUUID);
+    }
+
+    /**
      * Check if the User is a player before calling this method. {@link #isPlayer()}
      * @return the player
      */
@@ -353,7 +363,7 @@ public class User implements MetaDataAble {
         if (permissions.isEmpty()) return defaultValue;
 
         return iteratePerms(permissions, permPrefix, defaultValue);
- 
+
     }
 
     private int iteratePerms(List<String> permissions, String permPrefix, int defaultValue) {
@@ -474,7 +484,7 @@ public class User implements MetaDataAble {
     }
 
     private String replaceVars(String reference, String[] variables) {
-        
+
         // Then replace variables
         if (variables.length > 1) {
             for (int i = 0; i < variables.length; i += 2) {
@@ -486,7 +496,7 @@ public class User implements MetaDataAble {
         if (player != null) {
             reference = plugin.getPlaceholdersManager().replacePlaceholders(player, reference);
         }
-        
+
         // If no translation has been found, return the reference for debug purposes.
         return reference;
     }

@@ -113,11 +113,13 @@ public class IslandTeamKickCommandTest {
         when(target.getUniqueId()).thenReturn(notUUID);
         when(target.isOnline()).thenReturn(true);
         when(target.getName()).thenReturn("poslovitch");
+        when(target.getDisplayName()).thenReturn("&Cposlovich");
         // Set the target user
         User.getInstance(target);
         when(user.getUniqueId()).thenReturn(uuid);
         when(user.getPlayer()).thenReturn(player);
         when(user.getName()).thenReturn("tastybento");
+        when(user.getDisplayName()).thenReturn("&Ctastybento");
         when(user.getTranslation(any())).thenAnswer(invocation -> invocation.getArgument(0, String.class));
         User.setPlugin(plugin);
 
@@ -263,7 +265,7 @@ public class IslandTeamKickCommandTest {
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
         assertTrue(itl.execute(user, itl.getLabel(), Collections.singletonList("poslovitch")));
         verify(im).removePlayer(any(), eq(notUUID));
-        verify(user).sendMessage("commands.island.team.kick.success", TextVariables.NAME, "poslovitch");
+        verify(user).sendMessage("commands.island.team.kick.success", TextVariables.NAME, "poslovitch", TextVariables.DISPLAY_NAME, "&Cposlovich");
     }
 
     /**
@@ -353,7 +355,7 @@ public class IslandTeamKickCommandTest {
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
         assertTrue(itl.execute(user, itl.getLabel(), Collections.singletonList("poslovitch")));
         verify(im).removePlayer(any(), eq(notUUID));
-        verify(user).sendMessage("commands.island.team.kick.success", TextVariables.NAME, "poslovitch");
+        verify(user).sendMessage("commands.island.team.kick.success", TextVariables.NAME, "poslovitch", TextVariables.DISPLAY_NAME, "&Cposlovich");
     }
 
     /**
@@ -375,7 +377,7 @@ public class IslandTeamKickCommandTest {
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
         assertTrue(itl.execute(user, itl.getLabel(), Collections.singletonList("poslovitch")));
         verify(im).removePlayer(any(), eq(notUUID));
-        verify(user).sendMessage("commands.island.team.kick.success", TextVariables.NAME, "poslovitch");
+        verify(user).sendMessage("commands.island.team.kick.success", TextVariables.NAME, "poslovitch", TextVariables.DISPLAY_NAME, "&Cposlovich");
         verify(target, Mockito.never()).getInventory();
 
     }
@@ -403,7 +405,7 @@ public class IslandTeamKickCommandTest {
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
         assertTrue(itl.execute(user, itl.getLabel(), Collections.singletonList("poslovitch")));
         verify(im).removePlayer(any(), eq(notUUID));
-        verify(user).sendMessage("commands.island.team.kick.success", TextVariables.NAME, "poslovitch");
+        verify(user).sendMessage("commands.island.team.kick.success", TextVariables.NAME, "poslovitch", TextVariables.DISPLAY_NAME, "&Cposlovich");
         verify(target, Mockito.never()).getInventory();
         verify(pm).cleanLeavingPlayer(any(), any(User.class), eq(true), eq(island));
     }

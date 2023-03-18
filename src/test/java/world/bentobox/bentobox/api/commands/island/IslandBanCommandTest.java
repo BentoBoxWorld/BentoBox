@@ -104,6 +104,7 @@ public class IslandBanCommandTest {
         when(user.getUniqueId()).thenReturn(uuid);
         when(user.getPlayer()).thenReturn(p);
         when(user.getName()).thenReturn("tastybento");
+        when(user.getDisplayName()).thenReturn("&Ctastybento");
         when(user.getPermissionValue(anyString(), anyInt())).thenReturn(-1);
         when(user.getTranslation(any())).thenAnswer(invocation -> invocation.getArgument(0, String.class));
 
@@ -157,6 +158,7 @@ public class IslandBanCommandTest {
         UUID uuid = UUID.randomUUID();
         when(pm.getUUID(anyString())).thenReturn(uuid);
         when(targetPlayer.getName()).thenReturn("bill");
+        when(targetPlayer.getDisplayName()).thenReturn("&Cbill");
         when(targetPlayer.getUniqueId()).thenReturn(uuid);
         when(targetPlayer.isOp()).thenReturn(false);
         when(targetPlayer.isOnline()).thenReturn(true);
@@ -278,7 +280,7 @@ public class IslandBanCommandTest {
         when(island.ban(any(), any())).thenReturn(true);
         // Run execute
         assertTrue(ibc.execute(user, ibc.getLabel(), Collections.singletonList("bill")));
-        verify(user).sendMessage("commands.island.ban.player-banned", "[name]", "bill");
+        verify(user).sendMessage("commands.island.ban.player-banned", TextVariables.NAME, "bill", TextVariables.DISPLAY_NAME, "&Cbill");
         verify(targetPlayer).sendMessage("commands.island.ban.owner-banned-you");
     }
 
@@ -290,7 +292,7 @@ public class IslandBanCommandTest {
         when(island.ban(any(), any())).thenReturn(true);
 
         assertTrue(ibc.execute(user, ibc.getLabel(), Collections.singletonList("bill")));
-        verify(user).sendMessage("commands.island.ban.player-banned", "[name]", "bill");
+        verify(user).sendMessage("commands.island.ban.player-banned", TextVariables.NAME, "bill", TextVariables.DISPLAY_NAME, "&Cbill");
         verify(targetPlayer).sendMessage("commands.island.ban.owner-banned-you");
     }
 
@@ -302,7 +304,7 @@ public class IslandBanCommandTest {
         when(island.ban(any(), any())).thenReturn(false);
 
         assertFalse(ibc.execute(user, ibc.getLabel(), Collections.singletonList("bill")));
-        verify(user, never()).sendMessage("commands.island.ban.player-banned", TextVariables.NAME, targetPlayer.getName());
+        verify(user, never()).sendMessage("commands.island.ban.player-banned", TextVariables.NAME, targetPlayer.getName(), TextVariables.DISPLAY_NAME, targetPlayer.getDisplayName());
         verify(targetPlayer, never()).sendMessage("commands.island.ban.owner-banned-you");
     }
 

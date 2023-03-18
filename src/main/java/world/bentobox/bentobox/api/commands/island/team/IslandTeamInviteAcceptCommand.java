@@ -111,10 +111,10 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
             .rankChange(island.getRank(user), RanksManager.TRUSTED_RANK)
             .build();
             if (inviter.isOnline()) {
-                inviter.sendMessage("commands.island.team.trust.success", TextVariables.NAME, user.getName());
+                inviter.sendMessage("commands.island.team.trust.success", TextVariables.NAME, user.getName(), TextVariables.DISPLAY_NAME, user.getDisplayName());
             }
             if (inviter.isPlayer()) {
-                user.sendMessage("commands.island.team.trust.you-are-trusted", TextVariables.NAME, inviter.getName());
+                user.sendMessage("commands.island.team.trust.you-are-trusted", TextVariables.NAME, inviter.getName(), TextVariables.DISPLAY_NAME, inviter.getDisplayName());
             }
         }
     }
@@ -138,10 +138,10 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
             .rankChange(island.getRank(user), RanksManager.COOP_RANK)
             .build();
             if (inviter.isOnline()) {
-                inviter.sendMessage("commands.island.team.coop.success", TextVariables.NAME, user.getName());
+                inviter.sendMessage("commands.island.team.coop.success", TextVariables.NAME, user.getName(), TextVariables.DISPLAY_NAME, user.getDisplayName());
             }
             if (inviter.isPlayer()) {
-                user.sendMessage("commands.island.team.coop.you-are-a-coop-member", TextVariables.NAME, inviter.getName());
+                user.sendMessage("commands.island.team.coop.you-are-a-coop-member", TextVariables.NAME, inviter.getName(), TextVariables.DISPLAY_NAME, inviter.getDisplayName());
             }
         }
     }
@@ -188,7 +188,7 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
         user.sendMessage("commands.island.team.invite.accept.you-joined-island", TextVariables.LABEL, getTopLabel());
         User inviter = User.getInstance(invite.getInviter());
         if (inviter.isOnline()) {
-            inviter.sendMessage("commands.island.team.invite.accept.name-joined-your-island", TextVariables.NAME, user.getName());
+            inviter.sendMessage("commands.island.team.invite.accept.name-joined-your-island", TextVariables.NAME, user.getName(), TextVariables.DISPLAY_NAME, user.getDisplayName());
         }
         getIslands().save(teamIsland);
         // Fire event
