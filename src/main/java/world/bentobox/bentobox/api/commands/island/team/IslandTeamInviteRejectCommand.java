@@ -42,9 +42,9 @@ public class IslandTeamInviteRejectCommand extends CompositeCommand {
             }
 
             Optional.ofNullable(itc.getInviter(playerUUID))
-                    .map(User::getInstance)
-                    .ifPresent(inviter ->
-                            inviter.sendMessage("commands.island.team.invite.reject.name-rejected-your-invite", TextVariables.NAME, user.getName())
+            .map(User::getInstance)
+            .ifPresent(inviter ->
+            inviter.sendMessage("commands.island.team.invite.reject.name-rejected-your-invite", TextVariables.NAME, user.getName(), TextVariables.DISPLAY_NAME, user.getDisplayName())
                     );
 
             // Remove this player from the global invite list

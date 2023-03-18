@@ -100,11 +100,13 @@ public class IslandTeamTrustCommandTest {
         when(user.getUniqueId()).thenReturn(uuid);
         when(user.getPlayer()).thenReturn(p);
         when(user.getName()).thenReturn("tastybento");
+        when(user.getDisplayName()).thenReturn("&Ctastybento");
         when(user.getTranslation(any())).thenAnswer(invocation -> invocation.getArgument(0, String.class));
         User.setPlugin(plugin);
         // Target player
         when(targetPlayer.getUniqueId()).thenReturn(notUUID);
         when(targetPlayer.getName()).thenReturn("target");
+        when(targetPlayer.getDisplayName()).thenReturn("&Cposlovich");
         User.getInstance(targetPlayer);
 
         // Parent command has no aliases
@@ -311,7 +313,7 @@ public class IslandTeamTrustCommandTest {
         // Execute
         when(im.getIsland(any(), Mockito.any(UUID.class))).thenReturn(island);
         assertTrue(itl.execute(user, itl.getLabel(), Collections.singletonList("target")));
-        verify(user).sendMessage(eq("commands.island.team.trust.success"),  eq(TextVariables.NAME), eq("target"));
+        verify(user).sendMessage("commands.island.team.trust.success",  TextVariables.NAME, "target", TextVariables.DISPLAY_NAME, "&Cposlovich");
         verify(island).setRank(target, RanksManager.TRUSTED_RANK);
         verify(targetPlayer).sendMessage("commands.island.team.trust.you-are-trusted");
     }
@@ -333,7 +335,7 @@ public class IslandTeamTrustCommandTest {
         // Execute
         when(im.getIsland(any(), Mockito.any(UUID.class))).thenReturn(island);
         assertTrue(itl.execute(user, itl.getLabel(), Collections.singletonList("target")));
-        verify(user).sendMessage(eq("commands.island.team.invite.invitation-sent"), eq(TextVariables.NAME), eq("target"));
+        verify(user).sendMessage("commands.island.team.invite.invitation-sent", TextVariables.NAME, "target", TextVariables.DISPLAY_NAME, "&Cposlovich");
         // Send message to online player
         verify(targetPlayer).sendMessage(eq("commands.island.team.trust.name-has-invited-you"));
         verify(targetPlayer).sendMessage(eq("commands.island.team.invite.to-accept-or-reject"));

@@ -84,8 +84,8 @@ public class IslandTeamUntrustCommand extends CompositeCommand {
         Island island = getIslands().getIsland(getWorld(), user.getUniqueId());
         if (island != null) {
             island.removeMember(targetUUID);
-            user.sendMessage("commands.island.team.untrust.success", TextVariables.NAME, target.getName());
-            target.sendMessage("commands.island.team.untrust.you-are-no-longer-trusted", TextVariables.NAME, user.getName());
+            user.sendMessage("commands.island.team.untrust.success", TextVariables.NAME, target.getName(), TextVariables.DISPLAY_NAME, target.getDisplayName());
+            target.sendMessage("commands.island.team.untrust.you-are-no-longer-trusted", TextVariables.NAME, user.getName(), TextVariables.DISPLAY_NAME, user.getDisplayName());
             // Set cooldown
             if (getSettings().getTrustCooldown() > 0 && getParent() != null) {
                 getParent().getSubCommand("trust").ifPresent(subCommand ->

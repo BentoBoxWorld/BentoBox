@@ -96,9 +96,9 @@ public class IslandTeamTrustCommand extends CompositeCommand {
                 // Put the invited player (key) onto the list with inviter (value)
                 // If someone else has invited a player, then this invite will overwrite the previous invite!
                 itc.addInvite(Type.TRUST, user.getUniqueId(), target.getUniqueId());
-                user.sendMessage("commands.island.team.invite.invitation-sent", TextVariables.NAME, target.getName());
+                user.sendMessage("commands.island.team.invite.invitation-sent", TextVariables.NAME, target.getName(), TextVariables.DISPLAY_NAME, target.getDisplayName());
                 // Send message to online player
-                target.sendMessage("commands.island.team.trust.name-has-invited-you", TextVariables.NAME, user.getName());
+                target.sendMessage("commands.island.team.trust.name-has-invited-you", TextVariables.NAME, user.getName(), TextVariables.DISPLAY_NAME, user.getDisplayName());
                 target.sendMessage("commands.island.team.invite.to-accept-or-reject", TextVariables.LABEL, getTopLabel());
             } else {
                 if (island.getMemberSet(RanksManager.TRUSTED_RANK, false).size() >= getIslands().getMaxMembers(island, RanksManager.TRUSTED_RANK)) {
@@ -107,8 +107,8 @@ public class IslandTeamTrustCommand extends CompositeCommand {
                 }
 
                 island.setRank(target, RanksManager.TRUSTED_RANK);
-                user.sendMessage("commands.island.team.trust.success", TextVariables.NAME, target.getName());
-                target.sendMessage("commands.island.team.trust.you-are-trusted", TextVariables.NAME, user.getName());
+                user.sendMessage("commands.island.team.trust.success", TextVariables.NAME, target.getName(), TextVariables.DISPLAY_NAME, target.getDisplayName());
+                target.sendMessage("commands.island.team.trust.you-are-trusted", TextVariables.NAME, user.getName(), TextVariables.DISPLAY_NAME, user.getDisplayName());
             }
             return true;
         } else {
