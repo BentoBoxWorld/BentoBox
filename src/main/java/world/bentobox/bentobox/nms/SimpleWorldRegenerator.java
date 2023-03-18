@@ -11,7 +11,9 @@ import org.bukkit.World;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.generator.BlockPopulator;
 import org.bukkit.generator.ChunkGenerator;
+import org.bukkit.generator.LimitedRegion;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.BoundingBox;
@@ -105,6 +107,9 @@ public abstract class SimpleWorldRegenerator implements WorldRegenerator {
             if (cg != null) {
                 ChunkGenerator.ChunkData cd = cg.generateChunkData(chunk.getWorld(), new Random(), chunk.getX(), chunk.getZ(), grid);
                 copyChunkDataToChunk(chunk, cd, grid, di.getBox());
+                for (BlockPopulator pop : cg.getDefaultPopulators(world)) {
+                pop.populate(world, new Random(), chunkX, chunkZ, null);
+                }
             }
             return chunk;
         });
