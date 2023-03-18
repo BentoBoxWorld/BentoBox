@@ -74,6 +74,9 @@ public class BreakBlocksListener extends FlagListener {
         case SPAWNER -> this.checkIsland(e, p, l, Flags.BREAK_SPAWNERS);
         case DRAGON_EGG -> this.checkIsland(e, p, l, Flags.DRAGON_EGG);
         case HOPPER -> this.checkIsland(e, p, l, Flags.BREAK_HOPPERS);
+        default -> {
+            // Do nothing
+        }
         }
     }
 
