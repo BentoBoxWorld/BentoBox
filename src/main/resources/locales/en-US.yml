@@ -851,6 +851,11 @@ protection:
       name: "Shulker boxes"
       description: "Toggle shulker box interaction"
       hint: "Shulker box access disabled"
+    SHULKER_TELEPORT:
+      description: |-
+         &a Shulker can teleport
+         &a if active.
+      name: "Shulker teleport"
     TRAPPED_CHEST:
       name: "Trapped chests"
       description: "Toggle trapped chest interaction"
