@@ -76,7 +76,7 @@
         <spigot.version>1.19.4-R0.1-SNAPSHOT</spigot.version>
         <!-- Might differ from the last Spigot release for short periods 
             of time -->
-        <paper.version>1.19.4-R0.1-SNAPSHOT</paper.version>
+        <paper.version>1.19.3-R0.1-SNAPSHOT</paper.version>
         <bstats.version>3.0.0</bstats.version>
         <vault.version>1.7.1</vault.version>
         <placeholderapi.version>2.10.9</placeholderapi.version>
@@ -91,6 +91,7 @@
         <build.version>1.22.1</build.version>
         <sonar.organization>bentobox-world</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <server.jars>${project.basedir}/lib</server.jars>
     </properties>
 
     <!-- Profiles will allow to automatically change build version. -->
@@ -312,13 +313,20 @@
             <version>3.2.2</version>
             <scope>provided</scope>
         </dependency>
-        <!-- Spigot NMS. Used for chunk deletion and pasting. -->
+        <!-- Spigot NMS. Used for chunk deletion and pasting.-->
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot</artifactId>
             <version>${spigot.version}</version>
             <scope>provided</scope>
         </dependency>
+        <!-- For each additional dependency, add a dot to the groupId. This "cheats" maven but enables it to use versions -->
+        <dependency>
+            <groupId>org.spigotmc.</groupId>
+            <artifactId>spigot</artifactId>
+            <version>1.19.3-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency> 
     </dependencies>
 
     <build>

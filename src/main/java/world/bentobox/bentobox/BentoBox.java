@@ -218,6 +218,8 @@ public class BentoBox extends JavaPlugin {
 
         // Make sure all flag listeners are registered.
         flagsManager.registerListeners();
+        // Sync any perms so that flag perms are set or not
+        flagsManager.syncPerms();
 
         // Load metrics
         metrics = new BStats(this);
