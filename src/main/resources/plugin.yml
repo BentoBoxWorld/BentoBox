@@ -60,7 +60,4 @@ permissions:
   bentobox.version:
     description: Allows to use /bentobox version
     default: op
-  '[gamemode].settings.ENDERMAN_TELEPORT':
-    description: Allows access to enderman teleport cheat
-    default: false
   
