@@ -1,22 +1,57 @@
 package world.bentobox.bentobox.nms.v1_19_R3;
 
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.craftbukkit.v1_19_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_19_R3.block.data.CraftBlockData;
 
 import net.minecraft.core.BlockPosition;
+import net.minecraft.world.level.block.state.IBlockData;
 import net.minecraft.world.level.chunk.Chunk;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBlock;
+import world.bentobox.bentobox.blueprints.dataobjects.BlueprintEntity;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.nms.PasteHandler;
 import world.bentobox.bentobox.util.DefaultPasteUtil;
 import world.bentobox.bentobox.util.Util;
 
-public class PasteHandlerImpl extends world.bentobox.bentobox.nms.v1_19_R2.PasteHandlerImpl {
-       
+public class PasteHandlerImpl implements PasteHandler {
+
+    protected static final IBlockData AIR = ((CraftBlockData) Bukkit.createBlockData(Material.AIR)).getState();
+
+    @Override
+    public CompletableFuture<Void> pasteBlocks(Island island, World world, Map<Location, BlueprintBlock> blockMap) {
+        return blockMap.entrySet().stream()
+                .map(entry -> setBlock(island, entry.getKey(), entry.getValue()))
+                .collect(
+                        Collectors.collectingAndThen(
+                                Collectors.toList(),
+                                list -> CompletableFuture.allOf(list.toArray(new CompletableFuture[0]))
+                                )
+                        );
+    }
+
+    @Override
+    public CompletableFuture<Void> pasteEntities(Island island, World world, Map<Location, List<BlueprintEntity>> entityMap) {
+        return entityMap.entrySet().stream()
+                .map(entry -> DefaultPasteUtil.setEntity(island, entry.getKey(), entry.getValue()))
+                .collect(
+                        Collectors.collectingAndThen(
+                                Collectors.toList(),
+                                list -> CompletableFuture.allOf(list.toArray(new CompletableFuture[0]))
+                                )
+                        );
+    }
+
     /**
      * Set the block to the location
      *

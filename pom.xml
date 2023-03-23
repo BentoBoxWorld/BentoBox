@@ -320,13 +320,6 @@
             <version>${spigot.version}</version>
             <scope>provided</scope>
         </dependency>
-        <!-- For each additional dependency, add a dot to the groupId. This "cheats" maven but enables it to use versions -->
-        <dependency>
-            <groupId>org.spigotmc.</groupId>
-            <artifactId>spigot</artifactId>
-            <version>1.19.3-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency> 
     </dependencies>
 
     <build>
