@@ -202,8 +202,8 @@ public class AddonsManager {
                 return new PladdonData(null, false);
             }
         } catch (Exception ex) {
-            
-            ex.printStackTrace();
+            plugin.logError("Could not load pladdon " + f.getName() + ". Loading as addon.");
+            plugin.logStacktrace(ex);
             // Addon not pladdon
             AddonClassLoader addonClassLoader = new AddonClassLoader(this, data, f, this.getClass().getClassLoader());
             // Get the addon itself
