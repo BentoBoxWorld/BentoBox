@@ -190,7 +190,7 @@ public class AddonsManager {
     private PladdonData loadPladdon(YamlConfiguration data, @NonNull File f) throws InvalidAddonInheritException, MalformedURLException, InvalidAddonDescriptionException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException, InvalidDescriptionException {
         Addon addon = null;
         try {
-            Plugin pladdon = pluginLoader.loadPlugin(f);
+            Plugin pladdon = Bukkit.getPluginManager().loadPlugin(f);
             if (pladdon instanceof Pladdon pl) {
                 addon = pl.getAddon();
                 addon.setDescription(AddonClassLoader.asDescription(data));
@@ -202,6 +202,8 @@ public class AddonsManager {
                 return new PladdonData(null, false);
             }
         } catch (Exception ex) {
+            
+            ex.printStackTrace();
             // Addon not pladdon
             AddonClassLoader addonClassLoader = new AddonClassLoader(this, data, f, this.getClass().getClassLoader());
             // Get the addon itself
