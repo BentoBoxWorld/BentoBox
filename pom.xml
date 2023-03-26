@@ -91,6 +91,7 @@
         <build.version>1.22.1</build.version>
         <sonar.organization>bentobox-world</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <server.jars>${project.basedir}/lib</server.jars>
     </properties>
 
     <!-- Profiles will allow to automatically change build version. -->
@@ -312,7 +313,7 @@
             <version>3.2.2</version>
             <scope>provided</scope>
         </dependency>
-        <!-- Spigot NMS. Used for chunk deletion and pasting. -->
+        <!-- Spigot NMS. Used for chunk deletion and pasting.-->
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot</artifactId>

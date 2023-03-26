@@ -60,3 +60,4 @@ permissions:
   bentobox.version:
     description: Allows to use /bentobox version
     default: op
+  
