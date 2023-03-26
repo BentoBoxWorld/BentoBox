@@ -1,9 +1,11 @@
 package world.bentobox.bentobox.managers;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.BufferedInputStream;
@@ -64,6 +66,10 @@ public class LocalesManagerTest {
         when(plugin.getSettings()).thenReturn(settings);
     }
 
+    /**
+     * Makes fake English and French local files
+     * @throws IOException if the file saving fails
+     */
     private void makeFakeLocaleFile() throws IOException {
         File localeDir = new File(plugin.getDataFolder(), LOCALE_FOLDER + File.separator + BENTOBOX);
         File english = new File(localeDir, Locale.US.toLanguageTag() + ".yml");
@@ -270,7 +276,7 @@ public class LocalesManagerTest {
         makeFakeLocaleFile();
         LocalesManager lm = new LocalesManager(plugin);
         lm.reloadLanguages();
-        Mockito.verify(am).getAddons();
+        verify(am).getAddons();
         File localeDir = new File(plugin.getDataFolder(), LOCALE_FOLDER + File.separator + BENTOBOX);
         assertTrue(localeDir.exists());
     }
@@ -313,7 +319,7 @@ public class LocalesManagerTest {
         lm.reloadLanguages();
 
         // Verify that the resources have been saved (note that they are not actually saved because addon is a mock)
-        Mockito.verify(addon).saveResource(
+        verify(addon).saveResource(
                 Mockito.eq("locales/en-US.yml"),
                 Mockito.any(),
                 Mockito.eq(false),
@@ -332,6 +338,8 @@ public class LocalesManagerTest {
         }
 
     }
+    
+    
 
     private void add(File source, JarOutputStream target) throws IOException
     {
@@ -388,9 +396,32 @@ public class LocalesManagerTest {
         when(plugin.getAddonsManager()).thenReturn(am);
         LocalesManager lm = new LocalesManager(plugin);
         lm.reloadLanguages();
-        Mockito.verify(am).getAddons();
+        verify(am).getAddons();
         File localeDir = new File(plugin.getDataFolder(), LOCALE_FOLDER + File.separator + BENTOBOX);
         assertTrue(localeDir.exists());
     }
 
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.LocalesManager#setTranslation(Locale, String, String)}.
+     */
+    @Test
+    public void testSetTranslationUnknownLocale() throws IOException {
+        makeFakeLocaleFile();
+        LocalesManager lm = new LocalesManager(plugin);
+        assertFalse(lm.setTranslation(Locale.GERMAN, "anything.ref", "a translation"));
+        
+    }
+    
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.LocalesManager#setTranslation(Locale, String, String)}.
+     */
+    @Test
+    public void testSetTranslationKnownLocale() throws IOException {
+        makeFakeLocaleFile();
+        LocalesManager lm = new LocalesManager(plugin);
+        assertEquals("test string", lm.get("test.test"));
+        assertTrue(lm.setTranslation(Locale.US, "test.test", "a translation"));
+        assertEquals("a translation", lm.get("test.test"));
+        
+    }
 }

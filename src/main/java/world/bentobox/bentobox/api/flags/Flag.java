@@ -2,6 +2,7 @@ package world.bentobox.bentobox.api.flags;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 
@@ -465,6 +466,33 @@ public class Flag implements Comparable<Flag> {
      */
     public Set<Flag> getSubflags() {
         return subflags;
+    }
+    
+    /**
+     * Set the name of this flag for a specified locale. This enables the flag's name to be assigned via API. It will not be stored anywhere
+     * and must be rewritten using this call every time the flag is built.
+     * @param locale locale (language) to which this name should be assigned. Assigning to {@code Locale.US} will make this the default
+     * @param name the translated name for this flag
+     * @return true if successful, false if the locale is unknown to this server.
+     * See {@link world.bentobox.bentobox.managers.LocalesManager#getAvailableLocales(boolean sort)}
+     * @since 1.22.1
+     */
+    public boolean setTranslatedName(Locale locale, String name) {
+        return BentoBox.getInstance().getLocalesManager().setTranslation(locale, getNameReference(), name);
+    }
+    
+    /**
+     * Set the name of this flag for a specified locale. This enables the flag's name to be assigned via API. It will not be stored anywhere
+     * and must be rewritten using this call every time the flag is built.
+     * @param locale locale (language) to which this name should be assigned. Assigning to {@code Locale.US} will make this the default
+     * @param description the translated description for this flag
+     * @return true if successful, false if the locale is unknown to this server.
+     * See {@link world.bentobox.bentobox.managers.LocalesManager#getAvailableLocales(boolean sort)}
+     * @since 1.22.1
+     */
+
+    public boolean setTranslatedDescription(Locale locale, String description) {
+        return BentoBox.getInstance().getLocalesManager().setTranslation(locale, getDescriptionReference(), description);
     }
 
     @Override
