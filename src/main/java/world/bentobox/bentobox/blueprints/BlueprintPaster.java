@@ -273,7 +273,15 @@ public class BlueprintPaster {
     private void tellOwner(User user, int blocksSize, int attachedSize, int entitiesSize, int pasteSpeed) {
         // Estimated time:
         double total = (double) blocksSize + attachedSize + entitiesSize;
-        BigDecimal time = BigDecimal.valueOf(total / (pasteSpeed * 20.0D) + (chunkLoadTime / 1000.0D)).setScale(1, RoundingMode.UP);
+
+        double blocksPerCycle = 20.0D;
+        double blocksPerSecond = pasteSpeed;
+        double millisecondsToSeconds = 1000.0D;
+        double pasteTime = total / (blocksPerSecond * blocksPerCycle);
+        double chunkLoadTimeInSeconds = chunkLoadTime / millisecondsToSeconds;
+        double totalTimeInSeconds = pasteTime + chunkLoadTimeInSeconds;
+
+        BigDecimal time = BigDecimal.valueOf(totalTimeInSeconds).setScale(1, RoundingMode.UP);
         user.sendMessage("commands.island.create.pasting.estimated-time", TextVariables.NUMBER, String.valueOf(time.doubleValue()));
         // We're pasting blocks!
         user.sendMessage("commands.island.create.pasting.blocks", TextVariables.NUMBER, String.valueOf(blocksSize + attachedSize));
