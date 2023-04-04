@@ -25,7 +25,7 @@ public class CatalogPanel {
 
     private CatalogPanel() {}
 
-    public static void openPanel(@NonNull User user, @NonNull View view) {
+    public static void openCatalogPanelForUser(@NonNull User user, @NonNull View view) {
         BentoBox plugin = BentoBox.getInstance();
 
         PanelBuilder builder = new PanelBuilder()
@@ -47,23 +47,23 @@ public class CatalogPanel {
                 .name(user.getTranslation(LOCALE_REF + "views.addons.name"))
                 .description(user.getTranslation(LOCALE_REF + "views.addons.description"));
 
-        List<CatalogEntry> catalog;
+        List<CatalogEntry> catalogEntries;
         if (view == View.GAMEMODES) {
-            catalog = plugin.getWebManager().getGamemodesCatalog();
+            catalogEntries = plugin.getWebManager().getGamemodesCatalog();
             // Make the gamemodes button glow
             gamemodesButton.glow(true);
             // Make the addons button move to the addons view
             addonsButton.clickHandler((panel, user1, clickType, slot) -> {
-                openPanel(user, View.ADDONS);
+                openCatalogPanelForUser(user, View.ADDONS);
                 return true;
             });
         } else {
-            catalog = plugin.getWebManager().getAddonsCatalog();
+            catalogEntries = plugin.getWebManager().getAddonsCatalog();
             // Make the addons button glow
             addonsButton.glow(true);
             // Make the gamemodes button move to the gamemodes view
             gamemodesButton.clickHandler((panel, user1, clickType, slot) -> {
-                openPanel(user, View.GAMEMODES);
+                openCatalogPanelForUser(user, View.GAMEMODES);
                 return true;
             });
         }
@@ -72,10 +72,10 @@ public class CatalogPanel {
         builder.item(2, addonsButton.build());
 
         // Populate with the addons from the catalog we're actually viewing.
-        if (catalog.isEmpty()) {
+        if (catalogEntries.isEmpty()) {
             looksEmpty(builder, user);
         } else {
-            for (CatalogEntry addon : catalog) {
+            for (CatalogEntry addon : catalogEntries) {
                 PanelItemBuilder itemBuilder = new PanelItemBuilder();
 
                 String name = ChatColor.WHITE + addon.getName();

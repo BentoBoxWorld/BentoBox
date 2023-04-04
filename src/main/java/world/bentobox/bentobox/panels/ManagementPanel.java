@@ -141,7 +141,7 @@ public class ManagementPanel {
                 .name(user.getTranslation(LOCALE_REF + "buttons.catalog.name"))
                 .description(user.getTranslation(LOCALE_REF + "buttons.catalog.description"))
                 .clickHandler((panel, user1, clickType, slot) -> {
-                    CatalogPanel.openPanel(user, CatalogPanel.View.GAMEMODES);
+                    CatalogPanel.openCatalogPanelForUser(user, CatalogPanel.View.GAMEMODES);
                     return true;
                 })
                 .build();
@@ -242,7 +242,7 @@ public class ManagementPanel {
                 .name(user.getTranslation(LOCALE_REF + "buttons.empty-here.name"))
                 .description(user.getTranslation(LOCALE_REF + "buttons.empty-here.description"))
                 .clickHandler((panel, user1, clickType, slot) -> {
-                    CatalogPanel.openPanel(user, CatalogPanel.View.GAMEMODES);
+                    CatalogPanel.openCatalogPanelForUser(user, CatalogPanel.View.GAMEMODES);
                     return true;
                 })
                 .build();
