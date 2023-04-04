@@ -645,6 +645,14 @@ public class User implements MetaDataAble {
         return plugin.getIWM().inWorld(getLocation());
     }
 
+    public boolean isPlayerNearLocation(Player player, double x, double y, double z) {
+        if (player != null && player.getLocation().toVector().distanceSquared(new Vector(x, y, z)) < (Bukkit.getServer().getViewDistance() * 256 * Bukkit.getServer().getViewDistance())) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     /**
      * Spawn particles to the player.
      * They are only displayed if they are within the server's view distance.
@@ -665,9 +673,7 @@ public class User implements MetaDataAble {
         }
 
         // Check if this particle is beyond the viewing distance of the server
-        if (this.player != null
-                && this.player.getLocation().toVector().distanceSquared(new Vector(x, y, z)) <
-                (Bukkit.getServer().getViewDistance() * 256 * Bukkit.getServer().getViewDistance()))
+        if (isPlayerNearLocation(this.player, x ,y ,z))
         {
             if (particle.equals(Particle.REDSTONE))
             {
