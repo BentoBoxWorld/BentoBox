@@ -184,6 +184,7 @@ public class BStats {
         }));
     }
 
+
     /**
      * Sends the "flags display mode" of all the online players.
      * @since 1.6.0
