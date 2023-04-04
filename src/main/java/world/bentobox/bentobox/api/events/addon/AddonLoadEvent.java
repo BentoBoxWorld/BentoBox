@@ -14,8 +14,6 @@ import world.bentobox.bentobox.api.addons.Addon;
  */
 public class AddonLoadEvent extends AddonBaseEvent {
 
-    private static final HandlerList handlers = new HandlerList();
-
     @Override
     public @NonNull HandlerList getHandlers() {
         return getHandlerList();

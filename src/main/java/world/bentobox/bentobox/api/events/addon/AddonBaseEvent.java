@@ -3,6 +3,7 @@ package world.bentobox.bentobox.api.events.addon;
 import java.util.Map;
 import java.util.Optional;
 
+import org.bukkit.event.HandlerList;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.events.BentoBoxEvent;
 
@@ -12,6 +13,7 @@ import world.bentobox.bentobox.api.events.BentoBoxEvent;
  */
 public abstract class AddonBaseEvent extends BentoBoxEvent {
 
+    protected static final HandlerList handlers = new HandlerList();
     private final Addon addon;
     private final Map<String, Object> keyValues;
     private AddonBaseEvent newEvent;
