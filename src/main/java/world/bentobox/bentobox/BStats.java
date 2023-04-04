@@ -15,6 +15,7 @@ import org.bukkit.Bukkit;
 
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.flags.Flag;
+import world.bentobox.bentobox.api.addons.poly.*;
 
 /**
  * @author Poslovitch
@@ -159,15 +160,27 @@ public class BStats {
         metrics.addCustomChart(new SimplePie("playersPerServer", () -> {
             int players = this.connectedPlayerSet.size();
             this.connectedPlayerSet.clear();
-
-            if (players <= 0) return "0";
-            else if (players <= 10) return "1-10";
-            else if (players <= 30) return "11-30";
-            else if (players <= 50) return "31-50";
-            else if (players <= 100) return "51-100";
-            else if (players <= 150) return "101-150";
-            else if (players <= 200) return "151-200";
-            else return "201+";
+            PlayersPerServer playersPerServer;
+            if (players <= 0) {
+                playersPerServer = new ZeroPlayers();
+            } else if (players <= 10) {
+                playersPerServer = new Range1to10();
+            } else if (players <= 30) {
+                playersPerServer = new Range11to30();
+            } else if (players <= 50) {
+                playersPerServer = new Range31to50();
+            }
+            else if (players <= 100) {
+                playersPerServer = new Range51to100();
+            } else if (players <= 150) {
+                playersPerServer = new Range101to150();
+            } else if (players <= 200) {
+                playersPerServer = new Range151to200();
+            }
+            else {
+                playersPerServer = new MoreThan200();
+            }
+            return playersPerServer.getRange(players);
         }));
     }
 
