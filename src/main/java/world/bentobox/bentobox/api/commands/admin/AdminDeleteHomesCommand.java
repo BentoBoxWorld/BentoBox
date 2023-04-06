@@ -14,8 +14,6 @@ import world.bentobox.bentobox.util.Util;
 
 /**
  * Deletes all named homes from an island
- * @author tastybento
- *
  */
 public class AdminDeleteHomesCommand extends ConfirmableCommand {
 
@@ -60,7 +58,8 @@ public class AdminDeleteHomesCommand extends ConfirmableCommand {
     }
 
     private boolean deleteHomes(User user, Island island) {
-        island.removeHomes();
+        AdminDeleteHomesManager homesManager = new AdminDeleteHomesManager(island);
+        homesManager.deleteHomes();
         user.sendMessage("general.success");
         return true;
     }
