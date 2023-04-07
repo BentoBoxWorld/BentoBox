@@ -1,5 +1,7 @@
 package world.bentobox.bentobox.listeners.flags.protection;
 
+import java.util.Set;
+
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -12,6 +14,7 @@ import org.bukkit.event.hanging.HangingPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
+import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.lists.Flags;
 
@@ -20,6 +23,7 @@ import world.bentobox.bentobox.lists.Flags;
  */
 public class PlaceBlocksListener extends FlagListener
 {
+    public static final Set<Material> SEEDS = Set.of(Material.BEETROOT_SEEDS, Material.MELON_SEEDS, Material.WHEAT_SEEDS);
     /**
      * Check blocks being placed in general
      *
@@ -28,7 +32,9 @@ public class PlaceBlocksListener extends FlagListener
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onBlockPlace(final BlockPlaceEvent e)
     {
-        if (e.getBlock().getType().equals(Material.FIRE) ||
+        Material m = e.getBlock().getType();
+        Material against = e.getBlockAgainst().getType();
+        if (m.equals(Material.FIRE) ||
                 e.getItemInHand() == null || // Note that this should never happen officially, but it's possible for other plugins to cause it to happen
                 e.getItemInHand().getType().equals(Material.WRITABLE_BOOK) ||
                 e.getItemInHand().getType().equals(Material.WRITTEN_BOOK))
@@ -36,8 +42,12 @@ public class PlaceBlocksListener extends FlagListener
             // Books can only be placed on lecterns and as such are protected by the LECTERN flag.
             return;
         }
-
-        this.checkIsland(e, e.getPlayer(), e.getBlock().getLocation(), Flags.PLACE_BLOCKS);
+        // Crops
+        if (against.equals(Material.FARMLAND) && SEEDS.contains(e.getItemInHand().getType())) {
+            this.checkIsland(e, e.getPlayer(), e.getBlock().getLocation(), Flags.CROP_PLANTING);
+        } else {        
+            this.checkIsland(e, e.getPlayer(), e.getBlock().getLocation(), Flags.PLACE_BLOCKS);
+        }
     }
 
 
@@ -61,6 +71,7 @@ public class PlaceBlocksListener extends FlagListener
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerHitItemFrame(PlayerInteractEntityEvent e)
     {
+        BentoBox.getInstance().logDebug(e.getEventName());
         if (e.getRightClicked().getType().equals(EntityType.ITEM_FRAME) ||
                 e.getRightClicked().getType().equals(EntityType.GLOW_ITEM_FRAME))
         {

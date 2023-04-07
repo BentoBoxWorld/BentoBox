@@ -80,6 +80,7 @@ public class BreakBlocksListenerTest extends AbstractCommonSetup {
     public void testOnBlockBreakAllowed() {
         Block block = mock(Block.class);
         when(block.getLocation()).thenReturn(location);
+        when(block.getType()).thenReturn(Material.DIRT);
         BlockBreakEvent e = new BlockBreakEvent(block, player);
         bbl.onBlockBreak(e);
         assertFalse(e.isCancelled());
@@ -92,11 +93,42 @@ public class BreakBlocksListenerTest extends AbstractCommonSetup {
     public void testOnBlockBreakNotAllowed() {
         when(island.isAllowed(any(), any())).thenReturn(false);
         Block block = mock(Block.class);
+        when(block.getType()).thenReturn(Material.DIRT);
         when(block.getLocation()).thenReturn(location);
         BlockBreakEvent e = new BlockBreakEvent(block, player);
         bbl.onBlockBreak(e);
         assertTrue(e.isCancelled());
         verify(notifier).notify(any(), eq("protection.protected"));
+    }
+    
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onBlockBreak(org.bukkit.event.block.BlockBreakEvent)}.
+     */
+    @Test
+    public void testOnBlockHarvestNotAllowed() {
+        when(island.isAllowed(any(), eq(Flags.HARVEST))).thenReturn(false);
+        Block block = mock(Block.class);
+        when(block.getType()).thenReturn(Material.PUMPKIN);
+        when(block.getLocation()).thenReturn(location);
+        BlockBreakEvent e = new BlockBreakEvent(block, player);
+        bbl.onBlockBreak(e);
+        assertTrue(e.isCancelled());
+        verify(notifier).notify(any(), eq("protection.protected"));
+    }
+    
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onBlockBreak(org.bukkit.event.block.BlockBreakEvent)}.
+     */
+    @Test
+    public void testOnBlockHarvestAllowed() {
+        when(island.isAllowed(any(), eq(Flags.BREAK_BLOCKS))).thenReturn(false);
+        when(island.isAllowed(any(), eq(Flags.HARVEST))).thenReturn(true);
+        Block block = mock(Block.class);
+        when(block.getType()).thenReturn(Material.PUMPKIN);
+        when(block.getLocation()).thenReturn(location);
+        BlockBreakEvent e = new BlockBreakEvent(block, player);
+        bbl.onBlockBreak(e);
+        assertFalse(e.isCancelled());
     }
 
     /**

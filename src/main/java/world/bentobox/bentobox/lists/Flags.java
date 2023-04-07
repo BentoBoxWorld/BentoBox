@@ -288,12 +288,12 @@ public final class Flags {
     public static final Flag SHEARING = new Flag.Builder("SHEARING", Material.SHEARS).listener(new ShearingListener()).mode(Flag.Mode.ADVANCED).build();
 
     // Item pickup or drop
-    public static final Flag ITEM_DROP = new Flag.Builder("ITEM_DROP", Material.DIAMOND).defaultSetting(true).listener(new ItemDropPickUpListener()).mode(Flag.Mode.BASIC).build();
-    public static final Flag ITEM_PICKUP = new Flag.Builder("ITEM_PICKUP", Material.SUGAR_CANE).mode(Flag.Mode.BASIC).build();
+    public static final Flag ITEM_DROP = new Flag.Builder("ITEM_DROP", Material.DIAMOND).defaultRank(RanksManager.VISITOR_RANK).listener(new ItemDropPickUpListener()).mode(Flag.Mode.BASIC).build();
+    public static final Flag ITEM_PICKUP = new Flag.Builder("ITEM_PICKUP", Material.SUGAR_CANE).mode(Flag.Mode.BASIC).defaultRank(RanksManager.VISITOR_RANK).build();
 
     // Experience
     public static final Flag EXPERIENCE_PICKUP = new Flag.Builder("EXPERIENCE_PICKUP", Material.EXPERIENCE_BOTTLE)
-            .listener(Util.isPaper() ? new PaperExperiencePickupListener() : new ExperiencePickupListener()).mode(Flag.Mode.ADVANCED).build();
+            .listener(Util.isPaper() ? new PaperExperiencePickupListener() : new ExperiencePickupListener()).mode(Flag.Mode.ADVANCED).defaultRank(RanksManager.VISITOR_RANK).build();
 
     // Command ranks
     public static final Flag COMMAND_RANKS = new Flag.Builder("COMMAND_RANKS", Material.PLAYER_HEAD)
@@ -648,6 +648,21 @@ public final class Flags {
      */
     public static final Flag ENTITY_PORTAL_TELEPORT = new Flag.Builder("ENTITY_PORTAL_TELEPORT", Material.ENDER_EYE).type(Type.WORLD_SETTING).defaultSetting(false).build();
 
+    /**
+     * Harvest Setting
+     * Controls who gets to harvest any crop related contents. e.g. Wheat, Sugar Cane, melon blocks, not stems, pumpkin blocks, etc.
+     * @since 1.23.0
+     */
+    public static final Flag HARVEST = new Flag.Builder("HARVEST", Material.PUMPKIN).type(Type.PROTECTION).build();
+
+    /**
+     * Crop Planting
+     * Controls who gets to plant crops on tilled soil.
+     * @since 1.23.0
+     */
+    public static final Flag CROP_PLANTING = new Flag.Builder("CROP_PLANTING", Material.PUMPKIN_SEEDS).type(Type.PROTECTION).build();
+
+    
     /**
      * Provides a list of all the Flag instances contained in this class using reflection.
      * Deprecated Flags are ignored.

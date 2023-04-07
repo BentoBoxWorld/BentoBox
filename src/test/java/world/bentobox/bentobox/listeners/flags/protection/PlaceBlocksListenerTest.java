@@ -89,6 +89,7 @@ public class PlaceBlocksListenerTest extends AbstractCommonSetup {
         when(placedBlock.getLocation()).thenReturn(location);
         BlockState replacedBlockState = mock(BlockState.class);
         Block placedAgainst = mock(Block.class);
+        when(placedAgainst.getType()).thenReturn(Material.STONE);
         ItemStack itemInHand = mock(ItemStack.class);
         when(itemInHand.getType()).thenReturn(Material.STONE);
         EquipmentSlot hand = EquipmentSlot.HAND;
@@ -153,8 +154,74 @@ public class PlaceBlocksListenerTest extends AbstractCommonSetup {
         when(placedBlock.getLocation()).thenReturn(location);
         BlockState replacedBlockState = mock(BlockState.class);
         Block placedAgainst = mock(Block.class);
+        when(placedAgainst.getType()).thenReturn(Material.STONE);
         ItemStack itemInHand = mock(ItemStack.class);
         when(itemInHand.getType()).thenReturn(Material.STONE);
+        EquipmentSlot hand = EquipmentSlot.HAND;
+        BlockPlaceEvent e = new BlockPlaceEvent(placedBlock, replacedBlockState, placedAgainst, itemInHand, player, true, hand);
+        pbl.onBlockPlace(e);
+        assertTrue(e.isCancelled());
+        verify(notifier).notify(any(), eq("protection.protected"));
+    }
+    
+    /**
+     * Test method for {@link PlaceBlocksListener#onBlockPlace(org.bukkit.event.block.BlockPlaceEvent)}.
+     */
+    @Test
+    public void testOnBlockCropsAllowed() {
+        when(island.isAllowed(any(), eq(Flags.PLACE_BLOCKS))).thenReturn(false);
+        when(island.isAllowed(any(), eq(Flags.CROP_PLANTING))).thenReturn(true);
+        Block placedBlock = mock(Block.class);
+        when(placedBlock.getType()).thenReturn(Material.WHEAT);
+        when(placedBlock.getLocation()).thenReturn(location);
+        BlockState replacedBlockState = mock(BlockState.class);
+        Block placedAgainst = mock(Block.class);
+        when(placedAgainst.getType()).thenReturn(Material.FARMLAND);
+        ItemStack itemInHand = mock(ItemStack.class);
+        when(itemInHand.getType()).thenReturn(Material.WHEAT_SEEDS);
+        EquipmentSlot hand = EquipmentSlot.HAND;
+        BlockPlaceEvent e = new BlockPlaceEvent(placedBlock, replacedBlockState, placedAgainst, itemInHand, player, true, hand);
+        pbl.onBlockPlace(e);
+        assertFalse(e.isCancelled());
+    }
+    
+    /**
+     * Test method for {@link PlaceBlocksListener#onBlockPlace(org.bukkit.event.block.BlockPlaceEvent)}.
+     */
+    @Test
+    public void testOnBlockCropsAllowedNotCrop() {
+        when(island.isAllowed(any(), eq(Flags.PLACE_BLOCKS))).thenReturn(false);
+        when(island.isAllowed(any(), eq(Flags.CROP_PLANTING))).thenReturn(true);
+        Block placedBlock = mock(Block.class);
+        when(placedBlock.getType()).thenReturn(Material.DIRT);
+        when(placedBlock.getLocation()).thenReturn(location);
+        BlockState replacedBlockState = mock(BlockState.class);
+        Block placedAgainst = mock(Block.class);
+        when(placedAgainst.getType()).thenReturn(Material.FARMLAND);
+        ItemStack itemInHand = mock(ItemStack.class);
+        when(itemInHand.getType()).thenReturn(Material.DIRT);
+        EquipmentSlot hand = EquipmentSlot.HAND;
+        BlockPlaceEvent e = new BlockPlaceEvent(placedBlock, replacedBlockState, placedAgainst, itemInHand, player, true, hand);
+        pbl.onBlockPlace(e);
+        assertTrue(e.isCancelled());
+        verify(notifier).notify(any(), eq("protection.protected"));
+    }
+    
+    /**
+     * Test method for {@link PlaceBlocksListener#onBlockPlace(org.bukkit.event.block.BlockPlaceEvent)}.
+     */
+    @Test
+    public void testOnBlockCropsNotAllowed() {
+        when(island.isAllowed(any(), eq(Flags.PLACE_BLOCKS))).thenReturn(false);
+        when(island.isAllowed(any(), eq(Flags.CROP_PLANTING))).thenReturn(false);
+        Block placedBlock = mock(Block.class);
+        when(placedBlock.getType()).thenReturn(Material.WHEAT);
+        when(placedBlock.getLocation()).thenReturn(location);
+        BlockState replacedBlockState = mock(BlockState.class);
+        Block placedAgainst = mock(Block.class);
+        when(placedAgainst.getType()).thenReturn(Material.FARMLAND);
+        ItemStack itemInHand = mock(ItemStack.class);
+        when(itemInHand.getType()).thenReturn(Material.WHEAT_SEEDS);
         EquipmentSlot hand = EquipmentSlot.HAND;
         BlockPlaceEvent e = new BlockPlaceEvent(placedBlock, replacedBlockState, placedAgainst, itemInHand, player, true, hand);
         pbl.onBlockPlace(e);
