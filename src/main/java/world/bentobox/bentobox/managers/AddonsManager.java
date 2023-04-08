@@ -450,8 +450,8 @@ public class AddonsManager {
     public void disableAddons() {
         if (!getEnabledAddons().isEmpty()) {
             plugin.log("Disabling addons...");
-            // Disable addons
-            getEnabledAddons().forEach(this::disable);
+            // Disable addons - pladdons are disabled by the server
+            getEnabledAddons().stream().filter(addon -> !pladdons.keySet().contains(addon)).forEach(this::disable);
             plugin.log("Addons successfully disabled.");
         }
         // Unregister all commands
