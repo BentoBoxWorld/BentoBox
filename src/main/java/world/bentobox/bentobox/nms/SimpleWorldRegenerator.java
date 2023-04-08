@@ -66,7 +66,12 @@ public abstract class SimpleWorldRegenerator implements WorldRegenerator {
                     }
                     final int x = chunkX;
                     final int z = chunkZ;
-                    newTasks.add(regenerateChunk(gm, di, world, x, z));
+                    
+                    // Only process non-generated chunks
+                    if (world.isChunkGenerated(x, z)) {
+                        newTasks.add(regenerateChunk(gm, di, world, x, z));
+                    }
+                    
                     chunkZ++;
                     if (chunkZ > di.getMaxZChunk()) {
                         chunkZ = di.getMinZChunk();
