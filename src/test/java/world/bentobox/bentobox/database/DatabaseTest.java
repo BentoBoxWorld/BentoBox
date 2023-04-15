@@ -60,7 +60,6 @@ public class DatabaseTest {
     private Island island;
 
     /**
-     * @throws java.lang.Exception
      */
     @SuppressWarnings("unchecked")
     @Before
@@ -91,7 +90,6 @@ public class DatabaseTest {
     }
 
     /**
-     * @throws java.lang.Exception
      */
     @After
     public void tearDown() throws Exception {
@@ -101,7 +99,6 @@ public class DatabaseTest {
 
     /**
      * Check if logger logged a severe string
-     * @param stringToCheck
      */
     private void checkSevereLog(String stringToCheck) {
         // This magic obtains the lambda from an argument
@@ -114,7 +111,7 @@ public class DatabaseTest {
      */
     @Test
     public void testDatabaseBentoBoxClassOfT() {
-        new Database<Island>(plugin, Island.class);
+        new Database<>(plugin, Island.class);
         verify(plugin).getLogger();
         verify(dbSetup).getHandler(any());
     }
@@ -124,40 +121,28 @@ public class DatabaseTest {
      */
     @Test
     public void testDatabaseAddonClassOfT() {
-        new Database<Island>(addon, Island.class);
+        new Database<>(addon, Island.class);
         verify(addon).getLogger();
         verify(dbSetup).getHandler(any());
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.database.Database#loadObjects()}.
-     * @throws IntrospectionException
-     * @throws NoSuchMethodException
-     * @throws ClassNotFoundException
-     * @throws InvocationTargetException
-     * @throws IllegalAccessException
-     * @throws InstantiationException
      */
     @Test
     public void testLoadObjects() throws InstantiationException, IllegalAccessException, InvocationTargetException, ClassNotFoundException, NoSuchMethodException, IntrospectionException {
-        Database<Island> db = new Database<Island>(plugin, Island.class);
+        Database<Island> db = new Database<>(plugin, Island.class);
         assertEquals(objectList, db.loadObjects());
         verify(handler).loadObjects();
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.database.Database#loadObjects()}.
-     * @throws IntrospectionException
-     * @throws NoSuchMethodException
-     * @throws ClassNotFoundException
-     * @throws InvocationTargetException
-     * @throws IllegalAccessException
-     * @throws InstantiationException
      */
     @Test
     public void testLoadObjectsThrowException() throws InstantiationException, IllegalAccessException, InvocationTargetException, ClassNotFoundException, NoSuchMethodException, IntrospectionException {
         when(handler.loadObjects()).thenThrow(new IllegalAccessException("No bad dog! No biscuit!"));
-        Database<Island> db = new Database<Island>(plugin, Island.class);
+        Database<Island> db = new Database<>(plugin, Island.class);
         db.loadObjects();
         verify(handler).loadObjects();
         checkSevereLog("Could not load objects from database! Error: No bad dog! No biscuit!");
@@ -166,16 +151,10 @@ public class DatabaseTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.database.Database#loadObject(java.lang.String)}.
-     * @throws IntrospectionException
-     * @throws NoSuchMethodException
-     * @throws ClassNotFoundException
-     * @throws InvocationTargetException
-     * @throws IllegalAccessException
-     * @throws InstantiationException
      */
     @Test
     public void testLoadObject() throws InstantiationException, IllegalAccessException, InvocationTargetException, ClassNotFoundException, NoSuchMethodException, IntrospectionException {
-        Database<Island> db = new Database<Island>(plugin, Island.class);
+        Database<Island> db = new Database<>(plugin, Island.class);
         String uniqueId = UUID.randomUUID().toString();
         assertEquals(island, db.loadObject(uniqueId));
         verify(handler).loadObject(eq(uniqueId));
@@ -183,13 +162,10 @@ public class DatabaseTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.database.Database#saveObject(java.lang.Object)}.
-     * @throws IntrospectionException
-     * @throws InvocationTargetException
-     * @throws IllegalAccessException
      */
     @Test
     public void testSaveObject() throws IllegalAccessException, InvocationTargetException, IntrospectionException {
-        Database<Island> db = new Database<Island>(plugin, Island.class);
+        Database<Island> db = new Database<>(plugin, Island.class);
         db.saveObjectAsync(island);
         verify(handler).saveObject(eq(island));
 
@@ -197,14 +173,11 @@ public class DatabaseTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.database.Database#saveObject(java.lang.Object)}.
-     * @throws IntrospectionException
-     * @throws InvocationTargetException
-     * @throws IllegalAccessException
      */
     @Test
     public void testSaveObjectException() throws IllegalAccessException, InvocationTargetException, IntrospectionException {
         doThrow(new IntrospectionException("No means no!")).when(handler).saveObject(any(Island.class));
-        Database<Island> db = new Database<Island>(plugin, Island.class);
+        Database<Island> db = new Database<>(plugin, Island.class);
         db.saveObjectAsync(island);
         checkSevereLog("Could not save object to database! Error: No means no!");
     }
@@ -216,7 +189,7 @@ public class DatabaseTest {
     public void testObjectExists() {
         when(handler.objectExists(eq("test"))).thenReturn(false);
         when(handler.objectExists(eq("exists"))).thenReturn(true);
-        Database<Island> db = new Database<Island>(plugin, Island.class);
+        Database<Island> db = new Database<>(plugin, Island.class);
         assertFalse(db.objectExists("test"));
         assertTrue(db.objectExists("exists"));
     }
@@ -226,34 +199,28 @@ public class DatabaseTest {
      */
     @Test
     public void testDeleteID() {
-        Database<Island> db = new Database<Island>(plugin, Island.class);
+        Database<Island> db = new Database<>(plugin, Island.class);
         db.deleteID("test");
         verify(handler).deleteID(eq("test"));
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.database.Database#deleteObject(java.lang.Object)}.
-     * @throws IntrospectionException
-     * @throws InvocationTargetException
-     * @throws IllegalAccessException
      */
     @Test
     public void testDeleteObject() throws IllegalAccessException, InvocationTargetException, IntrospectionException {
-        Database<Island> db = new Database<Island>(plugin, Island.class);
+        Database<Island> db = new Database<>(plugin, Island.class);
         db.deleteObject(island);
         verify(handler).deleteObject(eq(island));
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.database.Database#deleteObject(java.lang.Object)}.
-     * @throws IntrospectionException
-     * @throws InvocationTargetException
-     * @throws IllegalAccessException
      */
     @Test
     public void testDeleteObjectFail() throws IllegalAccessException, InvocationTargetException, IntrospectionException {
         doThrow(new IllegalArgumentException("Wot?!")).when(handler).deleteObject(any());
-        Database<Island> db = new Database<Island>(plugin, Island.class);
+        Database<Island> db = new Database<>(plugin, Island.class);
         db.deleteObject(island);
         checkSevereLog("Could not delete object! Error: Wot?!");
     }
@@ -264,7 +231,7 @@ public class DatabaseTest {
      */
     @Test
     public void testClose() {
-        Database<Island> db = new Database<Island>(plugin, Island.class);
+        Database<Island> db = new Database<>(plugin, Island.class);
         db.close();
         verify(handler).close();
     }

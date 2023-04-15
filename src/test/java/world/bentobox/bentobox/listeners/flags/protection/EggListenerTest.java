@@ -35,7 +35,6 @@ public class EggListenerTest extends AbstractCommonSetup {
     private EggListener el;
 
     /**
-     * @throws java.lang.Exception
      */
     @Override
     @Before

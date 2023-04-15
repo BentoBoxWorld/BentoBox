@@ -467,7 +467,7 @@ public class Util {
 
     /**
      * Detects if the current MC version is at least the following version.
-     *
+     * <p>
      * Assumes 0 patch version.
      *
      * @param minor Min Minor Version
@@ -738,6 +738,32 @@ public class Util {
         }
         return regenerator;
     }
+    
+    /**
+     * Checks what version the server is running and picks the appropriate NMS handler, or fallback
+     * @return PasteHandler
+     */
+    public static PasteHandler getPasteHandler() {
+        if (pasteHandler == null) {
+            String serverPackageName = Bukkit.getServer().getClass().getPackage().getName();
+            String pluginPackageName = plugin.getClass().getPackage().getName();
+            String version = serverPackageName.substring(serverPackageName.lastIndexOf('.') + 1);
+            PasteHandler handler;
+            try {
+                Class<?> clazz = Class.forName(pluginPackageName + ".nms." + version + ".PasteHandlerImpl");
+                if (PasteHandler.class.isAssignableFrom(clazz)) {
+                    handler = (PasteHandler) clazz.getConstructor().newInstance();
+                } else {
+                    throw new IllegalStateException("Class " + clazz.getName() + " does not implement PasteHandler");
+                }
+            } catch (Exception e) {
+                plugin.logWarning("No PasteHandler found for " + version + ", falling back to Bukkit API.");
+                handler = new world.bentobox.bentobox.nms.fallback.PasteHandlerImpl();
+            }
+            setPasteHandler(handler);
+        }
+        return pasteHandler;
+    }
 
     /**
      * Set the paste handler the plugin will use
@@ -745,17 +771,6 @@ public class Util {
      */
     public static void setPasteHandler(PasteHandler pasteHandler) {
         Util.pasteHandler = pasteHandler;
-    }
-
-    /**
-     * Get the paste handler the plugin will use
-     * @return an NMS accelerated class for this server
-     */
-    public static PasteHandler getPasteHandler() {
-        if (pasteHandler == null) {
-            setPasteHandler(new world.bentobox.bentobox.nms.fallback.PasteHandlerImpl());
-        }
-        return pasteHandler;
     }
 
     /**

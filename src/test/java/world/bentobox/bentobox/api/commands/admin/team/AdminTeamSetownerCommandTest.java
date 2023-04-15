@@ -63,7 +63,6 @@ public class AdminTeamSetownerCommandTest {
     private UUID notUUID;
 
     /**
-     * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {

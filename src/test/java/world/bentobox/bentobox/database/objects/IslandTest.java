@@ -76,7 +76,6 @@ public class IslandTest {
 
 
     /**
-     * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {
@@ -112,7 +111,6 @@ public class IslandTest {
     }
 
     /**
-     * @throws java.lang.Exception
      */
     @After
     public void tearDown() throws Exception {
@@ -471,7 +469,7 @@ public class IslandTest {
      */
     @Test
     public void testInIslandSpacePairOfIntegerInteger() {
-        assertTrue(i.inIslandSpace(new Pair<Integer, Integer>(0,0)));
+        assertTrue(i.inIslandSpace(new Pair<>(0, 0)));
     }
 
     /**
@@ -611,7 +609,7 @@ public class IslandTest {
      */
     @Test
     public void testSetFlagFlagIntBoolean() {
-        Flag f = Flags.values().stream().filter(fl -> fl.hasSubflags()).findFirst().orElse(null);
+        Flag f = Flags.values().stream().filter(Flag::hasSubflags).findFirst().orElse(null);
         if (f != null) {
             i.setFlag(f, 100, true);
             assertTrue(i.isChanged());
@@ -813,7 +811,7 @@ public class IslandTest {
      */
     @Test
     public void testToggleFlagFlagBoolean() {
-        Flag f = Flags.values().stream().filter(fl -> fl.hasSubflags())
+        Flag f = Flags.values().stream().filter(Flag::hasSubflags)
                 .filter(fl -> fl.getType().equals(Type.SETTING))
                 .findFirst().orElse(null);
         if (f != null) {

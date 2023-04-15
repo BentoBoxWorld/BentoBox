@@ -73,7 +73,6 @@ public class UtilTest {
     private ConsoleCommandSender sender;
 
     /**
-     * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {
@@ -310,50 +309,21 @@ public class UtilTest {
         for (BlockFace bf : BlockFace.values()) {
             float r = Util.blockFaceToFloat(bf);
             switch (bf) {
-            case EAST:
-                assertEquals(90F, r, 0);
-                break;
-            case EAST_NORTH_EAST:
-                assertEquals(67.5F, r, 0);
-                break;
-            case NORTH_EAST:
-                assertEquals(45F, r, 0);
-                break;
-            case NORTH_NORTH_EAST:
-                assertEquals(22.5F, r, 0);
-                break;
-            case NORTH_NORTH_WEST:
-                assertEquals(337.5F, r, 0);
-                break;
-            case NORTH_WEST:
-                assertEquals(315F, r, 0);
-                break;
-            case SOUTH:
-                assertEquals(180F, r, 0);
-                break;
-            case SOUTH_EAST:
-                assertEquals(135F, r, 0);
-                break;
-            case SOUTH_SOUTH_EAST:
-                assertEquals(157.5F, r, 0);
-                break;
-            case SOUTH_SOUTH_WEST:
-                assertEquals(202.5F, r, 0);
-                break;
-            case SOUTH_WEST:
-                assertEquals(225F, r, 0);
-                break;
-            case WEST:
-                assertEquals(270F, r, 0);
-                break;
-            case WEST_NORTH_WEST:
-                assertEquals(292.5F, r, 0);
-                break;
-            case WEST_SOUTH_WEST:
-                assertEquals(247.5F, r, 0);
-                break;
-            default:
-                assertEquals(0F, r, 0);
+                case EAST -> assertEquals(90F, r, 0);
+                case EAST_NORTH_EAST -> assertEquals(67.5F, r, 0);
+                case NORTH_EAST -> assertEquals(45F, r, 0);
+                case NORTH_NORTH_EAST -> assertEquals(22.5F, r, 0);
+                case NORTH_NORTH_WEST -> assertEquals(337.5F, r, 0);
+                case NORTH_WEST -> assertEquals(315F, r, 0);
+                case SOUTH -> assertEquals(180F, r, 0);
+                case SOUTH_EAST -> assertEquals(135F, r, 0);
+                case SOUTH_SOUTH_EAST -> assertEquals(157.5F, r, 0);
+                case SOUTH_SOUTH_WEST -> assertEquals(202.5F, r, 0);
+                case SOUTH_WEST -> assertEquals(225F, r, 0);
+                case WEST -> assertEquals(270F, r, 0);
+                case WEST_NORTH_WEST -> assertEquals(292.5F, r, 0);
+                case WEST_SOUTH_WEST -> assertEquals(247.5F, r, 0);
+                default -> assertEquals(0F, r, 0);
             }
         }
     }

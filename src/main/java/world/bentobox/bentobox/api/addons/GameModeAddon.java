@@ -117,7 +117,7 @@ public abstract class GameModeAddon extends Addon {
     /**
      * Defines the world generator for this game mode
      * @param worldName - name of world that this applies to
-     * @param id - id if any
+     * @param id - id if any. "delete" is used when this request is for island deletion purposes
      * @return Chunk generator or null if one does not exist, e.g. the use own generator setting is true
      * @since 1.2.0
      */
@@ -130,5 +130,14 @@ public abstract class GameModeAddon extends Addon {
      * @since 1.4.0
      */
     public abstract void saveWorldSettings();
+    
+    /**
+     * Defines if the game mode uses the latest {@link ChunkGenerator} API or 
+     * deprecated {@link ChunkGenerator#generateChunkData(World, java.util.Random, int, int, org.bukkit.generator.ChunkGenerator.BiomeGrid)} approach.
+     * @return true if this game mode is a void world and should just be deleted as such
+     */
+    public boolean isUsesNewChunkGeneration() {
+        return false;
+    }
 
 }

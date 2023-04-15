@@ -17,6 +17,7 @@ import org.bukkit.entity.TropicalFish;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.junit.Before;
@@ -42,7 +43,6 @@ public class BucketListenerTest extends AbstractCommonSetup {
     private BucketListener l;
 
     /**
-     * @throws java.lang.Exception
      */
     @Override
     @Before
@@ -66,7 +66,7 @@ public class BucketListenerTest extends AbstractCommonSetup {
         when(block.getLocation()).thenReturn(location);
         when(block.getRelative(any())).thenReturn(block);
         ItemStack item = mock(ItemStack.class);
-        PlayerBucketEmptyEvent e = new PlayerBucketEmptyEvent(player, block, block, BlockFace.UP, Material.WATER_BUCKET, item);
+        PlayerBucketEmptyEvent e = new PlayerBucketEmptyEvent(player, block, block, BlockFace.UP, Material.WATER_BUCKET, item, EquipmentSlot.HAND);
         l.onBucketEmpty(e);
         assertFalse(e.isCancelled());
     }
@@ -81,7 +81,7 @@ public class BucketListenerTest extends AbstractCommonSetup {
         when(block.getLocation()).thenReturn(location);
         when(block.getRelative(any())).thenReturn(block);
         ItemStack item = mock(ItemStack.class);
-        PlayerBucketEmptyEvent e = new PlayerBucketEmptyEvent(player, block, block, BlockFace.UP, Material.WATER_BUCKET, item);
+        PlayerBucketEmptyEvent e = new PlayerBucketEmptyEvent(player, block, block, BlockFace.UP, Material.WATER_BUCKET, item, EquipmentSlot.HAND);
         l.onBucketEmpty(e);
         assertTrue(e.isCancelled());
         verify(notifier).notify(any(), eq("protection.protected"));
@@ -97,22 +97,22 @@ public class BucketListenerTest extends AbstractCommonSetup {
         when(block.getRelative(any())).thenReturn(block);
         ItemStack item = mock(ItemStack.class);
         when(item.getType()).thenReturn(Material.WATER_BUCKET);
-        PlayerBucketFillEvent e = new PlayerBucketFillEvent(player, block, block, BlockFace.UP, Material.WATER_BUCKET, item);
+        PlayerBucketFillEvent e = new PlayerBucketFillEvent(player, block, block, BlockFace.UP, Material.WATER_BUCKET, item, EquipmentSlot.HAND);
         l.onBucketFill(e);
         assertFalse(e.isCancelled());
 
         when(item.getType()).thenReturn(Material.BUCKET);
-        e = new PlayerBucketFillEvent(player, block, block, BlockFace.UP, Material.WATER_BUCKET, item);
+        e = new PlayerBucketFillEvent(player, block, block, BlockFace.UP, Material.WATER_BUCKET, item, EquipmentSlot.HAND);
         l.onBucketFill(e);
         assertFalse(e.isCancelled());
 
         when(item.getType()).thenReturn(Material.LAVA_BUCKET);
-        e = new PlayerBucketFillEvent(player, block, block, BlockFace.UP, Material.WATER_BUCKET, item);
+        e = new PlayerBucketFillEvent(player, block, block, BlockFace.UP, Material.WATER_BUCKET, item, EquipmentSlot.HAND);
         l.onBucketFill(e);
         assertFalse(e.isCancelled());
 
         when(item.getType()).thenReturn(Material.MILK_BUCKET);
-        e = new PlayerBucketFillEvent(player, block, block, BlockFace.UP, Material.WATER_BUCKET, item);
+        e = new PlayerBucketFillEvent(player, block, block, BlockFace.UP, Material.WATER_BUCKET, item, EquipmentSlot.HAND);
         l.onBucketFill(e);
         assertFalse(e.isCancelled());
     }
@@ -128,22 +128,22 @@ public class BucketListenerTest extends AbstractCommonSetup {
         when(block.getRelative(any())).thenReturn(block);
         ItemStack item = mock(ItemStack.class);
         when(item.getType()).thenReturn(Material.WATER_BUCKET);
-        PlayerBucketFillEvent e = new PlayerBucketFillEvent(player, block, block, BlockFace.UP, Material.WATER_BUCKET, item);
+        PlayerBucketFillEvent e = new PlayerBucketFillEvent(player, block, block, BlockFace.UP, Material.WATER_BUCKET, item, EquipmentSlot.HAND);
         l.onBucketFill(e);
         assertTrue(e.isCancelled());
 
         when(item.getType()).thenReturn(Material.BUCKET);
-        e = new PlayerBucketFillEvent(player, block, block, BlockFace.UP, Material.WATER_BUCKET, item);
+        e = new PlayerBucketFillEvent(player, block, block, BlockFace.UP, Material.WATER_BUCKET, item, EquipmentSlot.HAND);
         l.onBucketFill(e);
         assertTrue(e.isCancelled());
 
         when(item.getType()).thenReturn(Material.LAVA_BUCKET);
-        e = new PlayerBucketFillEvent(player, block, block, BlockFace.UP, Material.WATER_BUCKET, item);
+        e = new PlayerBucketFillEvent(player, block, block, BlockFace.UP, Material.WATER_BUCKET, item, EquipmentSlot.HAND);
         l.onBucketFill(e);
         assertTrue(e.isCancelled());
 
         when(item.getType()).thenReturn(Material.MILK_BUCKET);
-        e = new PlayerBucketFillEvent(player, block, block, BlockFace.UP, Material.WATER_BUCKET, item);
+        e = new PlayerBucketFillEvent(player, block, block, BlockFace.UP, Material.WATER_BUCKET, item, EquipmentSlot.HAND);
         l.onBucketFill(e);
         assertTrue(e.isCancelled());
 
@@ -164,22 +164,22 @@ public class BucketListenerTest extends AbstractCommonSetup {
         when(block.getRelative(any())).thenReturn(block);
         ItemStack item = mock(ItemStack.class);
         when(item.getType()).thenReturn(Material.WATER_BUCKET);
-        PlayerBucketFillEvent e = new PlayerBucketFillEvent(player, block, block, BlockFace.UP, Material.WATER_BUCKET, item);
+        PlayerBucketFillEvent e = new PlayerBucketFillEvent(player, block, block, BlockFace.UP, Material.WATER_BUCKET, item, EquipmentSlot.HAND);
         l.onBucketFill(e);
         assertFalse(e.isCancelled());
 
         when(item.getType()).thenReturn(Material.BUCKET);
-        e = new PlayerBucketFillEvent(player, block, block, BlockFace.UP, Material.WATER_BUCKET, item);
+        e = new PlayerBucketFillEvent(player, block, block, BlockFace.UP, Material.WATER_BUCKET, item, EquipmentSlot.HAND);
         l.onBucketFill(e);
         assertTrue(e.isCancelled());
 
         when(item.getType()).thenReturn(Material.LAVA_BUCKET);
-        e = new PlayerBucketFillEvent(player, block, block, BlockFace.UP, Material.WATER_BUCKET, item);
+        e = new PlayerBucketFillEvent(player, block, block, BlockFace.UP, Material.WATER_BUCKET, item, EquipmentSlot.HAND);
         l.onBucketFill(e);
         assertFalse(e.isCancelled());
 
         when(item.getType()).thenReturn(Material.MILK_BUCKET);
-        e = new PlayerBucketFillEvent(player, block, block, BlockFace.UP, Material.WATER_BUCKET, item);
+        e = new PlayerBucketFillEvent(player, block, block, BlockFace.UP, Material.WATER_BUCKET, item, EquipmentSlot.HAND);
         l.onBucketFill(e);
         assertFalse(e.isCancelled());
 

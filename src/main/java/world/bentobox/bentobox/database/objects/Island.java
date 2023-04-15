@@ -24,7 +24,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.BoundingBox;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.jetbrains.annotations.NotNull;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
@@ -725,7 +724,6 @@ public class Island implements DataObject, MetaDataAble {
      * @param location - location
      * @return true if in island space
      */
-    @SuppressWarnings("ConstantConditions")
     public boolean inIslandSpace(Location location) {
         return Util.sameWorld(this.world, location.getWorld()) &&
                 (location.getWorld().getEnvironment().equals(Environment.NORMAL) ||
@@ -748,8 +746,7 @@ public class Island implements DataObject, MetaDataAble {
      * @return a {@link BoundingBox} of the full island space.
      * @since 1.5.2
      */
-    @SuppressWarnings("ConstantConditions")
-    @NotNull
+    @NonNull
     public BoundingBox getBoundingBox() {
         return this.getBoundingBox(Environment.NORMAL);
     }
@@ -779,7 +776,6 @@ public class Island implements DataObject, MetaDataAble {
         else if (Environment.THE_END.equals(environment) && this.isEndIslandEnabled())
         {
             // If end world is generated, return end island bounding box.
-            //noinspection ConstantConditions
             boundingBox = new BoundingBox(this.getMinX(),
                     this.getEndWorld().getMinHeight(),
                     this.getMinZ(),
@@ -790,7 +786,6 @@ public class Island implements DataObject, MetaDataAble {
         else if (Environment.NETHER.equals(environment) && this.isNetherIslandEnabled())
         {
             // If nether world is generated, return nether island bounding box.
-            //noinspection ConstantConditions
             boundingBox = new BoundingBox(this.getMinX(),
                     this.getNetherWorld().getMinHeight(),
                     this.getMinZ(),
@@ -910,7 +905,6 @@ public class Island implements DataObject, MetaDataAble {
      * @param target location to check, not null
      * @return {@code true} if this location is within this island's protected area, {@code false} otherwise.
      */
-    @SuppressWarnings("ConstantConditions")
     public boolean onIsland(@NonNull Location target) {
         return Util.sameWorld(this.world, target.getWorld()) &&
                 (target.getWorld().getEnvironment().equals(Environment.NORMAL) ||
@@ -927,8 +921,7 @@ public class Island implements DataObject, MetaDataAble {
      * @return a {@link BoundingBox} of this island's protected area.
      * @since 1.5.2
      */
-    @SuppressWarnings("ConstantConditions")
-    @NotNull
+    @NonNull
     public BoundingBox getProtectionBoundingBox() {
         return this.getProtectionBoundingBox(Environment.NORMAL);
     }
@@ -959,7 +952,6 @@ public class Island implements DataObject, MetaDataAble {
         else if (Environment.THE_END.equals(environment) && this.isEndIslandEnabled())
         {
             // If end world is generated, return end island bounding box.
-            //noinspection ConstantConditions
             boundingBox = new BoundingBox(this.getMinProtectedX(),
                     this.getEndWorld().getMinHeight(),
                     this.getMinProtectedZ(),
@@ -970,7 +962,6 @@ public class Island implements DataObject, MetaDataAble {
         else if (Environment.NETHER.equals(environment) && this.isNetherIslandEnabled())
         {
             // If nether world is generated, return nether island bounding box.
-            //noinspection ConstantConditions
             boundingBox = new BoundingBox(this.getMinProtectedX(),
                     this.getNetherWorld().getMinHeight(),
                     this.getMinProtectedZ(),
@@ -1645,7 +1636,7 @@ public class Island implements DataObject, MetaDataAble {
      * @return the homes
      * @since 1.16.0
      */
-    @NotNull
+    @NonNull
     public Map<String, Location> getHomes() {
         if (homes == null) {
             homes = new HashMap<>();

@@ -111,6 +111,7 @@ public class IslandExpelCommandTest {
         when(p.getServer()).thenReturn(server);
         when(user.getPlayer()).thenReturn(p);
         when(user.getName()).thenReturn("tastybento");
+        when(user.getDisplayName()).thenReturn("&Ctastybento");
         when(user.getTranslation(any())).thenAnswer(invocation -> invocation.getArgument(0, String.class));
 
         // Parent command has no aliases
@@ -166,7 +167,6 @@ public class IslandExpelCommandTest {
     }
 
     /**
-     * @throws java.lang.Exception
      */
     @After
     public void tearDown() {
@@ -366,6 +366,7 @@ public class IslandExpelCommandTest {
         when(t.getLocation()).thenReturn(mock(Location.class));
         when(t.performCommand(anyString())).thenReturn(true);
         when(t.getName()).thenReturn("target");
+        when(t.getDisplayName()).thenReturn("&Ctarget");
         when(t.getServer()).thenReturn(server);
         when(server.getOnlinePlayers()).thenReturn(Collections.emptySet());
         User.getInstance(t);
@@ -382,7 +383,7 @@ public class IslandExpelCommandTest {
     public void testExecuteUserStringListOfStringHasIsland() {
         testCanExecute();
         assertTrue(iec.execute(user, "", Collections.singletonList("tasty")));
-        verify(user).sendMessage("commands.island.expel.success", TextVariables.NAME, "target");
+        verify(user).sendMessage("commands.island.expel.success", TextVariables.NAME, "target", TextVariables.DISPLAY_NAME, "&Ctarget");
         verify(im).homeTeleportAsync(any(), any());
     }
 
@@ -396,7 +397,7 @@ public class IslandExpelCommandTest {
         testCanExecute();
         when(im.hasIsland(any(), any(User.class))).thenReturn(false);
         assertTrue(iec.execute(user, "", Collections.singletonList("tasty")));
-        verify(user).sendMessage("commands.island.expel.success", TextVariables.NAME, "target");
+        verify(user).sendMessage("commands.island.expel.success", TextVariables.NAME, "target", TextVariables.DISPLAY_NAME, "&Ctarget");
         verify(im).spawnTeleport(any(), any());
     }
 
@@ -416,7 +417,7 @@ public class IslandExpelCommandTest {
         testCanExecute();
         when(im.hasIsland(any(), any(User.class))).thenReturn(false);
         assertTrue(iec.execute(user, "", Collections.singletonList("tasty")));
-        verify(user).sendMessage("commands.island.expel.success", TextVariables.NAME, "target");
+        verify(user).sendMessage("commands.island.expel.success", TextVariables.NAME, "target", TextVariables.DISPLAY_NAME, "&Ctarget");
         verify(addon).logWarning(eq("Expel: target had no island, so one was created"));
     }
 

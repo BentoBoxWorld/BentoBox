@@ -71,7 +71,6 @@ public class AdminGetrankCommandTest {
     private Island island;
 
     /**
-     * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {
@@ -99,12 +98,12 @@ public class AdminGetrankCommandTest {
         Map<UUID, String> online = new HashMap<>();
 
         Set<Player> onlinePlayers = new HashSet<>();
-        for (int j = 0; j < NAMES.length; j++) {
+        for (String name : NAMES) {
             Player p1 = mock(Player.class);
             UUID uuid = UUID.randomUUID();
             when(p1.getUniqueId()).thenReturn(uuid);
-            when(p1.getName()).thenReturn(NAMES[j]);
-            online.put(uuid, NAMES[j]);
+            when(p1.getName()).thenReturn(name);
+            online.put(uuid, name);
             onlinePlayers.add(p1);
         }
         PowerMockito.mockStatic(Bukkit.class);
@@ -115,7 +114,6 @@ public class AdminGetrankCommandTest {
     }
 
     /**
-     * @throws java.lang.Exception
      */
     @After
     public void tearDown() {
@@ -221,15 +219,11 @@ public class AdminGetrankCommandTest {
     public void testTabCompleteUserStringListOfStringWithChars() {
         Optional<List<String>> result = c.tabComplete(user, "", Collections.singletonList("g"));
         assertTrue(result.isPresent());
-        result.ifPresent(list -> {
-            assertEquals(1, list.size());
-        });
+        result.ifPresent(list -> assertEquals(1, list.size()));
         // Two names
         result = c.tabComplete(user, "", Collections.singletonList("f"));
         assertTrue(result.isPresent());
-        result.ifPresent(list -> {
-            assertEquals(2, list.size());
-        });
+        result.ifPresent(list -> assertEquals(2, list.size()));
     }
 
 }

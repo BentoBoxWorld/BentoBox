@@ -11,6 +11,7 @@ import org.bukkit.World;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.generator.BlockPopulator;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -65,7 +66,12 @@ public abstract class SimpleWorldRegenerator implements WorldRegenerator {
                     }
                     final int x = chunkX;
                     final int z = chunkZ;
-                    newTasks.add(regenerateChunk(gm, di, world, x, z));
+                    
+                    // Only process non-generated chunks
+                    if (world.isChunkGenerated(x, z)) {
+                        newTasks.add(regenerateChunk(gm, di, world, x, z));
+                    }
+                    
                     chunkZ++;
                     if (chunkZ > di.getMaxZChunk()) {
                         chunkZ = di.getMinZChunk();
@@ -105,6 +111,9 @@ public abstract class SimpleWorldRegenerator implements WorldRegenerator {
             if (cg != null) {
                 ChunkGenerator.ChunkData cd = cg.generateChunkData(chunk.getWorld(), new Random(), chunk.getX(), chunk.getZ(), grid);
                 copyChunkDataToChunk(chunk, cd, grid, di.getBox());
+                for (BlockPopulator pop : cg.getDefaultPopulators(world)) {
+                pop.populate(world, new Random(), chunkX, chunkZ, null);
+                }
             }
             return chunk;
         });

@@ -56,7 +56,6 @@ public class BlueprintPasterTest {
 
 
     /**
-     * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {

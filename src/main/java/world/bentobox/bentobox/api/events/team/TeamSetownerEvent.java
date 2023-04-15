@@ -28,7 +28,7 @@ public class TeamSetownerEvent extends IslandBaseEvent {
         return handlers;
     }
 
-    TeamSetownerEvent(Island island, UUID player, boolean admin, Location location) {
+    public TeamSetownerEvent(Island island, UUID player, boolean admin, Location location) {
         // Final variables have to be declared in the constructor
         super(island, player, admin, location);
     }

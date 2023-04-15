@@ -85,7 +85,6 @@ public class IslandNearCommandTest {
     private Block block;
 
     /**
-     * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {
@@ -160,7 +159,6 @@ public class IslandNearCommandTest {
     }
 
     /**
-     * @throws java.lang.Exception
      */
     @After
     public void tearDown() {

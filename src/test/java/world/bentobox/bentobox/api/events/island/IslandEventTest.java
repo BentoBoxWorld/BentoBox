@@ -49,7 +49,6 @@ public class IslandEventTest {
     private PluginManager pim;
 
     /**
-     * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {
@@ -64,7 +63,6 @@ public class IslandEventTest {
     }
 
     /**
-     * @throws java.lang.Exception
      */
     @After
     public void tearDown() throws Exception {
@@ -103,69 +101,28 @@ public class IslandEventTest {
                     .build();
             e = e.getNewEvent().orElse(e);
             switch (reason) {
-            case BAN:
-                assertTrue(e instanceof IslandBanEvent);
-                break;
-            case CREATE:
-                assertTrue(e instanceof IslandCreateEvent);
-                break;
-            case CREATED:
-                assertTrue(e instanceof IslandCreatedEvent);
-                break;
-            case DELETE:
-                assertTrue(e instanceof IslandDeleteEvent);
-                break;
-            case DELETED:
-                assertTrue(e instanceof IslandDeletedEvent);
-                break;
-            case DELETE_CHUNKS:
-                assertTrue(e instanceof IslandDeleteChunksEvent);
-                break;
-            case ENTER:
-                assertTrue(e instanceof IslandEnterEvent);
-                break;
-            case EXIT:
-                assertTrue(e instanceof IslandExitEvent);
-                break;
-            case EXPEL:
-                assertTrue(e instanceof IslandExpelEvent);
-                break;
-            case LOCK:
-                assertTrue(e instanceof IslandLockEvent);
-                break;
-            case PRECLEAR:
-                assertTrue(e instanceof IslandPreclearEvent);
-                break;
-            case RANGE_CHANGE:
-                assertTrue(e instanceof IslandProtectionRangeChangeEvent);
-                break;
-            case REGISTERED:
-                assertTrue(e instanceof IslandRegisteredEvent);
-                break;
-            case RESERVED:
-                assertTrue(e instanceof IslandReservedEvent);
-                break;
-            case RESET:
-                assertTrue(e instanceof IslandResetEvent);
-                break;
-            case RESETTED:
-                assertTrue(e instanceof IslandResettedEvent);
-                break;
-            case UNBAN:
-                assertTrue(e instanceof IslandUnbanEvent);
-                break;
-            case UNKNOWN:
-                assertTrue(e instanceof IslandGeneralEvent);
-                break;
-            case UNLOCK:
-                assertTrue(e instanceof IslandUnlockEvent);
-                break;
-            case UNREGISTERED:
-                assertTrue(e instanceof IslandUnregisteredEvent);
-                break;
-            default:
-                break;
-
+                case BAN -> assertTrue(e instanceof IslandBanEvent);
+                case CREATE -> assertTrue(e instanceof IslandCreateEvent);
+                case CREATED -> assertTrue(e instanceof IslandCreatedEvent);
+                case DELETE -> assertTrue(e instanceof IslandDeleteEvent);
+                case DELETED -> assertTrue(e instanceof IslandDeletedEvent);
+                case DELETE_CHUNKS -> assertTrue(e instanceof IslandDeleteChunksEvent);
+                case ENTER -> assertTrue(e instanceof IslandEnterEvent);
+                case EXIT -> assertTrue(e instanceof IslandExitEvent);
+                case EXPEL -> assertTrue(e instanceof IslandExpelEvent);
+                case LOCK -> assertTrue(e instanceof IslandLockEvent);
+                case PRECLEAR -> assertTrue(e instanceof IslandPreclearEvent);
+                case RANGE_CHANGE -> assertTrue(e instanceof IslandProtectionRangeChangeEvent);
+                case REGISTERED -> assertTrue(e instanceof IslandRegisteredEvent);
+                case RESERVED -> assertTrue(e instanceof IslandReservedEvent);
+                case RESET -> assertTrue(e instanceof IslandResetEvent);
+                case RESETTED -> assertTrue(e instanceof IslandResettedEvent);
+                case UNBAN -> assertTrue(e instanceof IslandUnbanEvent);
+                case UNKNOWN -> assertTrue(e instanceof IslandGeneralEvent);
+                case UNLOCK -> assertTrue(e instanceof IslandUnlockEvent);
+                case UNREGISTERED -> assertTrue(e instanceof IslandUnregisteredEvent);
+                default -> {
+                }
             }
         }
         verify(pim, Mockito.times(Reason.values().length * 2)).callEvent(any());

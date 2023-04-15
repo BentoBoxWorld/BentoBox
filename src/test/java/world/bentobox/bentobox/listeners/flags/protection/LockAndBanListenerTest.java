@@ -82,7 +82,6 @@ public class LockAndBanListenerTest {
     private BukkitScheduler sch;
 
     /**
-     * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {

@@ -46,7 +46,7 @@ public class IslandProtectionRangeChangeEvent extends IslandBaseEvent {
      * @param newRange of type int
      * @param oldRange of type int
      */
-    IslandProtectionRangeChangeEvent(Island island, UUID player, boolean admin, Location location, int newRange, int oldRange) {
+    public IslandProtectionRangeChangeEvent(Island island, UUID player, boolean admin, Location location, int newRange, int oldRange) {
         super(island, player, admin, location);
         this.newRange = newRange;
         this.oldRange = oldRange;

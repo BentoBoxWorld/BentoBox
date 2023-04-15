@@ -94,8 +94,8 @@ public class IslandUnbanCommand extends CompositeCommand {
         }
         // Event is not cancelled
         if (island.unban(user.getUniqueId(), target.getUniqueId())) {
-            user.sendMessage("commands.island.unban.player-unbanned", TextVariables.NAME, target.getName());
-            target.sendMessage("commands.island.unban.you-are-unbanned", TextVariables.NAME, user.getName());
+            user.sendMessage("commands.island.unban.player-unbanned", TextVariables.NAME, target.getName(), TextVariables.DISPLAY_NAME, target.getDisplayName());
+            target.sendMessage("commands.island.unban.you-are-unbanned", TextVariables.NAME, user.getName(), TextVariables.DISPLAY_NAME, user.getDisplayName());
             // Set cooldown
             if (getSettings().getBanCooldown() > 0 && getParent() != null) {
                 getParent().getSubCommand("ban").ifPresent(subCommand ->

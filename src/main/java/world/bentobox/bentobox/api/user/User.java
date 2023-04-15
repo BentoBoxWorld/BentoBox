@@ -206,7 +206,6 @@ public class User implements MetaDataAble {
     /**
      * Get the user's inventory
      * @return player's inventory
-     * @throws {@link NullPointerException} - if user is not a player
      */
     @NonNull
     public PlayerInventory getInventory() {
@@ -216,7 +215,6 @@ public class User implements MetaDataAble {
     /**
      * Get the user's location
      * @return location
-     * @throws {@link NullPointerException} - if user is not a player
      */
     @NonNull
     public Location getLocation() {
@@ -230,6 +228,16 @@ public class User implements MetaDataAble {
     @NonNull
     public String getName() {
         return player != null ? player.getName() : plugin.getPlayers().getName(playerUUID);
+    }
+
+    /**
+     * Get the user's display name
+     * @return player's display name if the player is online otherwise just their name
+     * @since 1.22.1
+     */
+    @NonNull
+    public String getDisplayName() {
+        return player != null ? player.getDisplayName() : plugin.getPlayers().getName(playerUUID);
     }
 
     /**
@@ -252,7 +260,6 @@ public class User implements MetaDataAble {
      * Use {@link #isOfflinePlayer()} before calling this method
      * @return the offline player
      * @since 1.3.0
-     * @throws {@link NullPointerException} - if user is not an offline player
      */
     @NonNull
     public OfflinePlayer getOfflinePlayer() {
@@ -356,7 +363,7 @@ public class User implements MetaDataAble {
         if (permissions.isEmpty()) return defaultValue;
 
         return iteratePerms(permissions, permPrefix, defaultValue);
- 
+
     }
 
     private int iteratePerms(List<String> permissions, String permPrefix, int defaultValue) {
@@ -477,7 +484,7 @@ public class User implements MetaDataAble {
     }
 
     private String replaceVars(String reference, String[] variables) {
-        
+
         // Then replace variables
         if (variables.length > 1) {
             for (int i = 0; i < variables.length; i += 2) {
@@ -489,7 +496,7 @@ public class User implements MetaDataAble {
         if (player != null) {
             reference = plugin.getPlaceholdersManager().replacePlaceholders(player, reference);
         }
-        
+
         // If no translation has been found, return the reference for debug purposes.
         return reference;
     }
@@ -580,7 +587,6 @@ public class User implements MetaDataAble {
     /**
      * Gets the current world this entity resides in
      * @return World - world
-     * @throws {@link NullPointerException} - if user is not a player
      */
     @NonNull
     public World getWorld() {

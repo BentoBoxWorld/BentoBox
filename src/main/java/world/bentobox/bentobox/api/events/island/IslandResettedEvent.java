@@ -27,7 +27,7 @@ public class IslandResettedEvent extends IslandBaseEvent {
         return handlers;
     }
 
-    IslandResettedEvent(Island island, UUID player, boolean admin, Location location, Island oldIsland) {
+    public IslandResettedEvent(Island island, UUID player, boolean admin, Location location, Island oldIsland) {
         // Final variables have to be declared in the constructor
         super(island, player, admin, location);
         // Create a copy of the old island

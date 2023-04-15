@@ -50,7 +50,7 @@ import world.bentobox.bentobox.util.Util;
 
 /**
  * Common items for testing. Don't forget to use super.setUp()!
- *
+ * <p>
  * Sets up BentoBox plugin, pluginManager and ItemFactory.
  * Location, world, playersManager and player.
  * IWM, Addon and WorldSettings. IslandManager with one
@@ -172,7 +172,6 @@ public abstract class AbstractCommonSetup {
     }
 
     /**
-     * @throws java.lang.Exception
      */
     @After
     public void tearDown() {

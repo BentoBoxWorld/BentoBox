@@ -135,7 +135,7 @@ public class LockAndBanListener extends FlagListener {
      * Checks if a player is banned from this location and notifies them if so
      * @param player - player
      * @param loc - location to check
-     * @return true if banned
+     * @return CheckResult
      */
     private CheckResult checkAndNotify(@NonNull Player player, Location loc)
     {

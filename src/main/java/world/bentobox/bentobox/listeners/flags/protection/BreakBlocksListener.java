@@ -2,6 +2,7 @@ package world.bentobox.bentobox.listeners.flags.protection;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Tag;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.AbstractArrow;
 import org.bukkit.entity.ArmorStand;
@@ -31,7 +32,26 @@ public class BreakBlocksListener extends FlagListener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onBlockBreak(final BlockBreakEvent e) {
-        checkIsland(e, e.getPlayer(), e.getBlock().getLocation(), Flags.BREAK_BLOCKS);
+        Player p = e.getPlayer();
+        Location l = e.getBlock().getLocation();
+        Material m = e.getBlock().getType();
+        switch (m)
+        {
+        case MELON -> this.checkIsland(e, p, l, Flags.HARVEST);
+        case PUMPKIN -> this.checkIsland(e, p, l, Flags.HARVEST);
+        default -> {
+            // Crops
+            if (Tag.CROPS.isTagged(m) 
+                    && !m.equals(Material.MELON_STEM) 
+                    && !m.equals(Material.PUMPKIN_STEM) 
+                    && !m.equals(Material.ATTACHED_MELON_STEM) 
+                    && !m.equals(Material.ATTACHED_PUMPKIN_STEM)) {
+                this.checkIsland(e,  p,  l, Flags.HARVEST);
+            } else {
+                checkIsland(e, p, l, Flags.BREAK_BLOCKS);
+            }
+        }
+        }
     }
 
     /**
@@ -64,16 +84,18 @@ public class BreakBlocksListener extends FlagListener {
         {
             return;
         }
-
         Player p = e.getPlayer();
         Location l = e.getClickedBlock().getLocation();
-
-        switch (e.getClickedBlock().getType())
+        Material m = e.getClickedBlock().getType();
+        switch (m)
         {
         case CAKE -> this.checkIsland(e, p, l, Flags.BREAK_BLOCKS);
         case SPAWNER -> this.checkIsland(e, p, l, Flags.BREAK_SPAWNERS);
         case DRAGON_EGG -> this.checkIsland(e, p, l, Flags.DRAGON_EGG);
         case HOPPER -> this.checkIsland(e, p, l, Flags.BREAK_HOPPERS);
+        default -> {
+            // Do nothing
+        }
         }
     }
 

@@ -32,7 +32,7 @@ public class BreedingListener extends FlagListener {
     /**
      * A list of items that cause breeding if a player has them in their hand and they click an animal
      * This list may need to be extended with future versions of Minecraft.
-     * See this Minecraft Wiki page for reference: https://minecraft.gamepedia.com/Breeding#Breeding_foods.
+     * See this Minecraft Wiki page for reference: <a href="https://minecraft.gamepedia.com/Breeding#Breeding_foods">...</a>.
      */
     private static final Map<EntityType, List<Material>> BREEDING_ITEMS;
     static {

@@ -28,7 +28,7 @@ public class IslandDeleteChunksEvent extends IslandBaseEvent {
         return handlers;
     }
 
-    IslandDeleteChunksEvent(Island island, UUID player, boolean admin, Location location, IslandDeletion deletedIsland) {
+    public IslandDeleteChunksEvent(Island island, UUID player, boolean admin, Location location, IslandDeletion deletedIsland) {
         // Final variables have to be declared in the constructor
         super(island, player, admin, location);
         this.deletedIslandInfo = deletedIsland;

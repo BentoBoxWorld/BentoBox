@@ -78,7 +78,6 @@ public class IslandTeamCommandTest {
     private @Nullable Island island;
 
     /**
-     * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {
@@ -132,7 +131,6 @@ public class IslandTeamCommandTest {
     }
 
     /**
-     * @throws java.lang.Exception
      */
     @After
     public void tearDown() throws Exception {

@@ -29,7 +29,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -78,7 +77,6 @@ public class AdminTeleportCommandTest {
 
 
     /**
-     * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {
@@ -142,12 +140,7 @@ public class AdminTeleportCommandTest {
         when(lm.get(any(), any())).thenReturn("mock translation");
         when(plugin.getLocalesManager()).thenReturn(lm);
 
-        when(user.getTranslation(Mockito.anyString(),Mockito.anyString(), Mockito.anyString())).thenAnswer(new Answer<String>() {
-
-            @Override
-            public String answer(InvocationOnMock invocation) throws Throwable {
-                return invocation.getArgument(0, String.class);
-            }});
+        when(user.getTranslation(Mockito.anyString(),Mockito.anyString(), Mockito.anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
 
         // Island location
         Location location = mock(Location.class);

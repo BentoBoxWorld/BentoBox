@@ -142,7 +142,6 @@ public class IslandsManagerTest {
     IslandsManager im;
 
     /**
-     * @throws java.lang.Exception
      */
     @SuppressWarnings("unchecked")
     @Before
@@ -339,7 +338,6 @@ public class IslandsManagerTest {
     }
 
     /**
-     * @throws java.lang.Exception
      */
     @After
     public void tearDown() throws Exception {
@@ -625,7 +623,6 @@ public class IslandsManagerTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#getIslandAt(org.bukkit.Location)}.
-     * @throws Exception
      */
     @Test
     public void testGetIslandAtLocation() throws Exception {

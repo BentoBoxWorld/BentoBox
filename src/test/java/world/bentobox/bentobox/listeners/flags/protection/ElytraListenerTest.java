@@ -33,7 +33,6 @@ public class ElytraListenerTest extends AbstractCommonSetup {
     private ElytraListener el;
 
     /**
-     * @throws java.lang.Exception
      */
     @Override
     @Before

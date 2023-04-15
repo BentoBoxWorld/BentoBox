@@ -78,7 +78,7 @@ public class IslandTeamLeaveCommand extends ConfirmableCommand {
         }
         UUID ownerUUID = getIslands().getOwner(getWorld(), user.getUniqueId());
         if (ownerUUID != null) {
-            User.getInstance(ownerUUID).sendMessage("commands.island.team.leave.left-your-island", TextVariables.NAME, user.getName());
+            User.getInstance(ownerUUID).sendMessage("commands.island.team.leave.left-your-island", TextVariables.NAME, user.getName(), TextVariables.DISPLAY_NAME, user.getDisplayName());
         }
         getIslands().setLeaveTeam(getWorld(), user.getUniqueId());
         // Clean the player

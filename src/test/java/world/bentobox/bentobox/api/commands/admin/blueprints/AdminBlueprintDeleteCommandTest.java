@@ -60,7 +60,6 @@ public class AdminBlueprintDeleteCommandTest {
     private Map<String, Blueprint> map;
 
     /**
-     * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {
@@ -107,7 +106,6 @@ public class AdminBlueprintDeleteCommandTest {
     }
 
     /**
-     * @throws java.lang.Exception
      */
     @After
     public void tearDown() throws Exception {

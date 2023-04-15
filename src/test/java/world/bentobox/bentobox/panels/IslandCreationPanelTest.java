@@ -80,7 +80,6 @@ public class IslandCreationPanelTest {
 
 
     /**
-     * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {

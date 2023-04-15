@@ -129,9 +129,9 @@ public class IslandTeamInviteCommand extends CompositeCommand {
         // Put the invited player (key) onto the list with inviter (value)
         // If someone else has invited a player, then this invite will overwrite the previous invite!
         itc.addInvite(Invite.Type.TEAM, user.getUniqueId(), invitedPlayer.getUniqueId());
-        user.sendMessage("commands.island.team.invite.invitation-sent", TextVariables.NAME, invitedPlayer.getName());
+        user.sendMessage("commands.island.team.invite.invitation-sent", TextVariables.NAME, invitedPlayer.getName(), TextVariables.DISPLAY_NAME, invitedPlayer.getDisplayName());
         // Send message to online player
-        invitedPlayer.sendMessage("commands.island.team.invite.name-has-invited-you", TextVariables.NAME, user.getName());
+        invitedPlayer.sendMessage("commands.island.team.invite.name-has-invited-you", TextVariables.NAME, user.getName(), TextVariables.DISPLAY_NAME, user.getDisplayName());
         invitedPlayer.sendMessage("commands.island.team.invite.to-accept-or-reject", TextVariables.LABEL, getTopLabel());
         if (getIslands().hasIsland(getWorld(), invitedPlayer.getUniqueId())) {
             invitedPlayer.sendMessage("commands.island.team.invite.you-will-lose-your-island");

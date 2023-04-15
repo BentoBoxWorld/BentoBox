@@ -116,17 +116,17 @@ public class IslandExpelCommand extends CompositeCommand {
             return false;
         }
 
-        target.sendMessage("commands.island.expel.player-expelled-you", TextVariables.NAME, user.getName());
+        target.sendMessage("commands.island.expel.player-expelled-you", TextVariables.NAME, user.getName(), TextVariables.DISPLAY_NAME, user.getDisplayName());
         island.getWorld().playSound(target.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 1F, 1F);
         if (getIslands().hasIsland(getWorld(), target) || getIslands().inTeam(getWorld(), target.getUniqueId())) {
             // Success
-            user.sendMessage(SUCCESS, TextVariables.NAME, target.getName());
+            user.sendMessage(SUCCESS, TextVariables.NAME, target.getName(), TextVariables.DISPLAY_NAME, target.getDisplayName());
             // Teleport home
             getIslands().homeTeleportAsync(getWorld(), target.getPlayer());
             return true;
         } else if (getIslands().getSpawn(getWorld()).isPresent()){
             // Success
-            user.sendMessage(SUCCESS, TextVariables.NAME, target.getName());
+            user.sendMessage(SUCCESS, TextVariables.NAME, target.getName(), TextVariables.DISPLAY_NAME, target.getDisplayName());
             getIslands().spawnTeleport(getWorld(), target.getPlayer());
             return true;
         } else if (getIWM().getAddon(getWorld())
@@ -136,7 +136,7 @@ public class IslandExpelCommand extends CompositeCommand {
                 .orElse(false)
                 && target.performCommand(this.getTopLabel() + " create")) {
             getAddon().logWarning("Expel: " + target.getName() + " had no island, so one was created");
-            user.sendMessage(SUCCESS, TextVariables.NAME, target.getName());
+            user.sendMessage(SUCCESS, TextVariables.NAME, target.getName(), TextVariables.DISPLAY_NAME, target.getDisplayName());
             return true;
         }
 

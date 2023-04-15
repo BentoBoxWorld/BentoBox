@@ -123,7 +123,6 @@ public class BlueprintClipboardManagerTest {
     }
 
     /**
-     * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {
@@ -140,7 +139,6 @@ public class BlueprintClipboardManagerTest {
     }
 
     /**
-     * @throws java.lang.Exception
      */
     @After
     public void tearDown() throws Exception {
@@ -184,7 +182,6 @@ public class BlueprintClipboardManagerTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.BlueprintClipboardManager#loadBlueprint(java.lang.String)}.
-     * @throws IOException
      */
     @Test
     public void testLoadBlueprintNoSuchFile() {
@@ -200,7 +197,6 @@ public class BlueprintClipboardManagerTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.BlueprintClipboardManager#loadBlueprint(java.lang.String)}.
-     * @throws IOException
      */
     @Test
     public void testLoadBlueprintNoFileInZip() throws IOException {
@@ -223,7 +219,6 @@ public class BlueprintClipboardManagerTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.BlueprintClipboardManager#loadBlueprint(java.lang.String)}.
-     * @throws IOException
      */
     @Test
     public void testLoadBlueprintFileInZipJSONError() throws IOException {
@@ -247,15 +242,13 @@ public class BlueprintClipboardManagerTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.BlueprintClipboardManager#loadBlueprint(java.lang.String)}.
-     * @throws IOException
      */
     @Test
     public void testLoadBlueprintFileInZipNoBedrock() throws IOException {
         blueprintFolder.mkdirs();
         // Make a blueprint file
         File configFile = new File(blueprintFolder, BLUEPRINT);
-        byte[] bytes = jsonNoBedrock.getBytes(StandardCharsets.UTF_8);
-        Files.write(configFile.toPath(), bytes, StandardOpenOption.CREATE);
+        Files.writeString(configFile.toPath(), jsonNoBedrock, StandardOpenOption.CREATE);
         // Zip it
         zip(configFile);
         BlueprintClipboardManager bcm = new BlueprintClipboardManager(plugin, blueprintFolder);
@@ -269,15 +262,13 @@ public class BlueprintClipboardManagerTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.BlueprintClipboardManager#loadBlueprint(java.lang.String)}.
-     * @throws IOException
      */
     @Test
     public void testLoadBlueprintFileInZip() throws IOException {
         blueprintFolder.mkdirs();
         // Make a blueprint file
         File configFile = new File(blueprintFolder, BLUEPRINT);
-        byte[] bytes = json.getBytes(StandardCharsets.UTF_8);
-        Files.write(configFile.toPath(), bytes, StandardOpenOption.CREATE);
+        Files.writeString(configFile.toPath(), json, StandardOpenOption.CREATE);
         // Zip it
         zip(configFile);
         BlueprintClipboardManager bcm = new BlueprintClipboardManager(plugin, blueprintFolder);
@@ -292,15 +283,13 @@ public class BlueprintClipboardManagerTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.BlueprintClipboardManager#load(java.lang.String)}.
-     * @throws IOException
      */
     @Test
     public void testLoadString() throws IOException {
         blueprintFolder.mkdirs();
         // Make a blueprint file
         File configFile = new File(blueprintFolder, BLUEPRINT);
-        byte[] bytes = json.getBytes(StandardCharsets.UTF_8);
-        Files.write(configFile.toPath(), bytes, StandardOpenOption.CREATE);
+        Files.writeString(configFile.toPath(), json, StandardOpenOption.CREATE);
         // Zip it
         zip(configFile);
         BlueprintClipboardManager bcm = new BlueprintClipboardManager(plugin, blueprintFolder);
@@ -316,15 +305,13 @@ public class BlueprintClipboardManagerTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.BlueprintClipboardManager#load(world.bentobox.bentobox.api.user.User, java.lang.String)}.
-     * @throws IOException
      */
     @Test
     public void testLoadUserString() throws IOException {
         blueprintFolder.mkdirs();
         // Make a blueprint file
         File configFile = new File(blueprintFolder, BLUEPRINT);
-        byte[] bytes = json.getBytes(StandardCharsets.UTF_8);
-        Files.write(configFile.toPath(), bytes, StandardOpenOption.CREATE);
+        Files.writeString(configFile.toPath(), json, StandardOpenOption.CREATE);
         // Zip it
         zip(configFile);
         BlueprintClipboardManager bcm = new BlueprintClipboardManager(plugin, blueprintFolder);
@@ -335,7 +322,6 @@ public class BlueprintClipboardManagerTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.BlueprintClipboardManager#load(world.bentobox.bentobox.api.user.User, java.lang.String)}.
-     * @throws IOException
      */
     @Test
     public void testLoadUserStringFail() throws IOException {
@@ -348,7 +334,6 @@ public class BlueprintClipboardManagerTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.BlueprintClipboardManager#save(world.bentobox.bentobox.api.user.User, java.lang.String, java.lang.String)}.
-     * @throws IOException
      */
     @Test
     public void testSave() throws IOException {
@@ -356,8 +341,7 @@ public class BlueprintClipboardManagerTest {
         blueprintFolder.mkdirs();
         // Make a blueprint file
         File configFile = new File(blueprintFolder, BLUEPRINT);
-        byte[] bytes = json.getBytes(StandardCharsets.UTF_8);
-        Files.write(configFile.toPath(), bytes, StandardOpenOption.CREATE);
+        Files.writeString(configFile.toPath(), json, StandardOpenOption.CREATE);
         // Zip it
         zip(configFile);
         BlueprintClipboardManager bcm = new BlueprintClipboardManager(plugin, blueprintFolder);
@@ -371,7 +355,6 @@ public class BlueprintClipboardManagerTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.BlueprintClipboardManager#save(world.bentobox.bentobox.api.user.User, java.lang.String, java.lang.String)}.
-     * @throws IOException
      */
     @Test
     public void testSaveBadChars() throws IOException {
@@ -379,8 +362,7 @@ public class BlueprintClipboardManagerTest {
         blueprintFolder.mkdirs();
         // Make a blueprint file
         File configFile = new File(blueprintFolder, BLUEPRINT);
-        byte[] bytes = json.getBytes(StandardCharsets.UTF_8);
-        Files.write(configFile.toPath(), bytes, StandardOpenOption.CREATE);
+        Files.writeString(configFile.toPath(), json, StandardOpenOption.CREATE);
         // Zip it
         zip(configFile);
         BlueprintClipboardManager bcm = new BlueprintClipboardManager(plugin, blueprintFolder);
@@ -394,7 +376,6 @@ public class BlueprintClipboardManagerTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.BlueprintClipboardManager#save(world.bentobox.bentobox.api.user.User, java.lang.String, java.lang.String)}.
-     * @throws IOException
      */
     @Test
     public void testSaveForeignChars() throws IOException {
@@ -402,8 +383,7 @@ public class BlueprintClipboardManagerTest {
         blueprintFolder.mkdirs();
         // Make a blueprint file
         File configFile = new File(blueprintFolder, BLUEPRINT);
-        byte[] bytes = json.getBytes(StandardCharsets.UTF_8);
-        Files.write(configFile.toPath(), bytes, StandardOpenOption.CREATE);
+        Files.writeString(configFile.toPath(), json, StandardOpenOption.CREATE);
         // Zip it
         zip(configFile);
         BlueprintClipboardManager bcm = new BlueprintClipboardManager(plugin, blueprintFolder);
@@ -417,7 +397,6 @@ public class BlueprintClipboardManagerTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.BlueprintClipboardManager#save(world.bentobox.bentobox.api.user.User, java.lang.String, java.lang.String)}.
-     * @throws IOException
      */
     @Test
     public void testSaveForeignBadChars() throws IOException {
@@ -425,8 +404,7 @@ public class BlueprintClipboardManagerTest {
         blueprintFolder.mkdirs();
         // Make a blueprint file
         File configFile = new File(blueprintFolder, BLUEPRINT);
-        byte[] bytes = json.getBytes(StandardCharsets.UTF_8);
-        Files.write(configFile.toPath(), bytes, StandardOpenOption.CREATE);
+        Files.writeString(configFile.toPath(), json, StandardOpenOption.CREATE);
         // Zip it
         zip(configFile);
         BlueprintClipboardManager bcm = new BlueprintClipboardManager(plugin, blueprintFolder);

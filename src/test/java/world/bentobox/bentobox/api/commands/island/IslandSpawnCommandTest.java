@@ -81,7 +81,6 @@ public class IslandSpawnCommandTest {
     private Settings s;
 
     /**
-     * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {
@@ -149,7 +148,6 @@ public class IslandSpawnCommandTest {
     }
 
     /**
-     * @throws java.lang.Exception
      */
     @After
     public void tearDown() {

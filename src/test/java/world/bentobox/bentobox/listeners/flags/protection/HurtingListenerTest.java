@@ -52,7 +52,6 @@ public class HurtingListenerTest extends AbstractCommonSetup {
     private User user;
 
     /**
-     * @throws java.lang.Exception
      */
     @Override
     @Before

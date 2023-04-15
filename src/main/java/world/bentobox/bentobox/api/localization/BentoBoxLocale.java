@@ -163,7 +163,7 @@ public class BentoBoxLocale {
 
     /**
      * Returns the list of prefixes available in this locale.
-     * @return list of prefixes available in this locale.
+     * @return Set of prefixes available in this locale.
      * @since 1.13.0
      */
     @NonNull

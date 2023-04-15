@@ -29,7 +29,7 @@ public class IslandExpelEvent extends IslandBaseEvent {
         return handlers;
     }
 
-    IslandExpelEvent(Island island, UUID player, boolean admin, Location location) {
+    public IslandExpelEvent(Island island, UUID player, boolean admin, Location location) {
         // Final variables have to be declared in the constructor
         super(island, player, admin, location);
     }

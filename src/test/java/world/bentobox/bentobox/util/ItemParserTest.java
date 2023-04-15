@@ -54,18 +54,11 @@ public class ItemParserTest {
          */
         bannerMeta = mock(BannerMeta.class);
         when(itemFactory.getItemMeta(Mockito.any())).thenAnswer((Answer<ItemMeta>) invocation -> {
-            switch (invocation.getArgument(0, Material.class)) {
-            case RED_BANNER:
-            case WHITE_BANNER:
-                return bannerMeta;
-            case POTION:
-            case SPLASH_POTION:
-            case LINGERING_POTION:
-            case TIPPED_ARROW:
-                return potionMeta;
-            default:
-                return mock(ItemMeta.class);
-            }
+            return switch (invocation.getArgument(0, Material.class)) {
+                case RED_BANNER, WHITE_BANNER -> bannerMeta;
+                case POTION, SPLASH_POTION, LINGERING_POTION, TIPPED_ARROW -> potionMeta;
+                default -> mock(ItemMeta.class);
+            };
         });
 
         defaultItem = new ItemStack(Material.STONE);
@@ -154,12 +147,12 @@ public class ItemParserTest {
         assertEquals(3, result.getAmount());
     }
 
-    enum ex {
+    enum extend {
         NOT_EXTENDED,
         EXTENDED
     }
 
-    enum ty {
+    enum type {
         NO_SPLASH,
         SPLASH,
         LINGER
@@ -179,10 +172,10 @@ public class ItemParserTest {
     @Test
     public void testParsePotion() {
         for (PotionType type : PotionType.values()) {
-            for (ex e : ex.values()) {
-                for (ty t: ty.values()) {
+            for (extend e : extend.values()) {
+                for (ItemParserTest.type t: ItemParserTest.type.values()) {
                     for (int up = 1; up < 2; up++) {
-                        boolean isExtended = e.equals(ex.EXTENDED);
+                        boolean isExtended = e.equals(extend.EXTENDED);
                         boolean isUpgraded = up > 1;
                         if (isExtended && notExtendable.contains(type)) {
                             continue;

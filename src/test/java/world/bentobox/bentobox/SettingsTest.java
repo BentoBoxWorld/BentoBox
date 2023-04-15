@@ -28,7 +28,6 @@ public class SettingsTest {
     private Settings s;
 
     /**
-     * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {

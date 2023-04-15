@@ -121,7 +121,6 @@ public class BlockInteractionListenerTest extends AbstractCommonSetup {
 
 
     /**
-     * @throws java.lang.Exception
      */
     @Override
     @Before

@@ -68,7 +68,6 @@ public class IslandTeamCoopCommandTest {
     private Island island;
 
     /**
-     * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {
@@ -96,6 +95,7 @@ public class IslandTeamCoopCommandTest {
         when(user.getUniqueId()).thenReturn(uuid);
         when(user.getPlayer()).thenReturn(p);
         when(user.getName()).thenReturn("tastybento");
+        when(user.getDisplayName()).thenReturn("&Ctastybento");
         when(user.getTranslation(any())).thenAnswer(invocation -> invocation.getArgument(0, String.class));
         User.setPlugin(plugin);
 
@@ -305,6 +305,8 @@ public class IslandTeamCoopCommandTest {
     public void testExecuteSuccess() {
         Player p = mock(Player.class);
         when(p.getUniqueId()).thenReturn(notUUID);
+        when(p.getName()).thenReturn("target");
+        when(p.getDisplayName()).thenReturn("&Ctarget");
         User target = User.getInstance(p);
         // Can execute
         when(pm.getUUID(any())).thenReturn(notUUID);
@@ -316,7 +318,7 @@ public class IslandTeamCoopCommandTest {
         // Execute
         when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
         assertTrue(itl.execute(user, itl.getLabel(), Collections.singletonList("tastybento")));
-        verify(user).sendMessage("commands.island.team.coop.success",  TextVariables.NAME, null);
+        verify(user).sendMessage("commands.island.team.coop.success",  TextVariables.NAME, "target", TextVariables.DISPLAY_NAME, "&Ctarget");
         verify(island).setRank(target, RanksManager.COOP_RANK);
     }
 }

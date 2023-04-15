@@ -29,7 +29,6 @@ public class LogEntryListAdapterTest {
     private List<LogEntry> toLog;
 
     /**
-     * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {
@@ -42,7 +41,7 @@ public class LogEntryListAdapterTest {
         toLog.add(new LogEntry.Builder("BAN").data("player", target.toString()).data("issuer", issuer.toString()).build());
         toLog.add(new LogEntry.Builder("UNBAN").data("player", target.toString()).data("issuer", issuer.toString()).build());
         toLog.add(new LogEntry.Builder("UNOWNED").build());
-        toLog.forEach(history::add);
+        history.addAll(toLog);
     }
 
     @After

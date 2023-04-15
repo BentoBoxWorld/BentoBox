@@ -28,7 +28,7 @@ public class IslandCreateEvent extends IslandBaseEvent {
         return handlers;
     }
 
-    IslandCreateEvent(Island island, UUID player, boolean admin, Location location, @NonNull BlueprintBundle blueprintBundle) {
+    public IslandCreateEvent(Island island, UUID player, boolean admin, Location location, @NonNull BlueprintBundle blueprintBundle) {
         // Final variables have to be declared in the constructor
         super(island, player, admin, location);
         this.blueprintBundle = blueprintBundle;

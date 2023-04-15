@@ -206,53 +206,24 @@ public class MobSpawnListenerTest {
         for (SpawnReason reason: SpawnReason.values()) {
             CreatureSpawnEvent e = new CreatureSpawnEvent(le, reason);
             switch (reason) {
-            // Natural
-            case DEFAULT:
-            case DROWNED:
-            case JOCKEY:
-            case LIGHTNING:
-            case MOUNT:
-            case NATURAL:
-            case NETHER_PORTAL:
-            case OCELOT_BABY:
-            case PATROL:
-            case RAID:
-            case REINFORCEMENTS:
-            case SILVERFISH_BLOCK:
-            case TRAP:
-            case VILLAGE_DEFENSE:
-            case VILLAGE_INVASION:
-                // These should be blocked
-                l.onMobSpawn(e);
-                assertTrue("Natural spawn should be blocked: " + reason.toString(), e.isCancelled());
-                break;
+                // Natural
+                case DEFAULT, DROWNED, JOCKEY, LIGHTNING, MOUNT, NATURAL, NETHER_PORTAL, OCELOT_BABY, PATROL, RAID, REINFORCEMENTS, SILVERFISH_BLOCK, TRAP, VILLAGE_DEFENSE, VILLAGE_INVASION -> {
+                    // These should be blocked
+                    l.onMobSpawn(e);
+                    assertTrue("Natural spawn should be blocked: " + reason.toString(), e.isCancelled());
+                }
                 // Spawners
-            case SPAWNER:
-                l.onMobSpawn(e);
-                assertTrue("Spawners spawn should be blocked: " + reason.toString(), e.isCancelled());
-                break;
+                case SPAWNER -> {
+                    l.onMobSpawn(e);
+                    assertTrue("Spawners spawn should be blocked: " + reason.toString(), e.isCancelled());
+                }
                 // Unnatural - player involved or allowed
-            case BREEDING:
-            case BUILD_IRONGOLEM:
-            case BUILD_SNOWMAN:
-            case BUILD_WITHER:
-            case CURED:
-            case CUSTOM:
-            case DISPENSE_EGG:
-            case EGG:
-            case ENDER_PEARL:
-            case EXPLOSION:
-            case INFECTION:
-            case SHEARED:
-            case SHOULDER_ENTITY:
-            case SPAWNER_EGG:
-            case SLIME_SPLIT:
-                l.onMobSpawn(e);
-                assertFalse("Should be not blocked: " + reason.toString(), e.isCancelled());
-                break;
-            default:
-                break;
-
+                case BREEDING, BUILD_IRONGOLEM, BUILD_SNOWMAN, BUILD_WITHER, CURED, CUSTOM, DISPENSE_EGG, EGG, ENDER_PEARL, EXPLOSION, INFECTION, SHEARED, SHOULDER_ENTITY, SPAWNER_EGG, SLIME_SPLIT -> {
+                    l.onMobSpawn(e);
+                    assertFalse("Should be not blocked: " + reason.toString(), e.isCancelled());
+                }
+                default -> {
+                }
             }
         }
 

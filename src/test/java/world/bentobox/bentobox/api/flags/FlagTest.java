@@ -6,6 +6,8 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -13,6 +15,7 @@ import static org.mockito.Mockito.when;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -45,6 +48,7 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
+import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
 
@@ -66,9 +70,10 @@ public class FlagTest {
     private IslandWorldManager iwm;
     @Mock
     private BentoBox plugin;
+    @Mock
+    private LocalesManager lm;
 
     /**
-     * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {
@@ -77,7 +82,7 @@ public class FlagTest {
 
         PowerMockito.mockStatic(Util.class);
         // Return world
-        when(Util.getWorld(Mockito.any())).thenAnswer((Answer<World>) invocation -> invocation.getArgument(0, World.class));
+        when(Util.getWorld(any())).thenAnswer((Answer<World>) invocation -> invocation.getArgument(0, World.class));
 
         // World Settings
         when(plugin.getIWM()).thenReturn(iwm);
@@ -93,8 +98,13 @@ public class FlagTest {
         PowerMockito.mockStatic(Bukkit.class);
         ItemFactory itemF = mock(ItemFactory.class);
         ItemMeta im = mock(ItemMeta.class);
-        when(itemF.getItemMeta(Mockito.any())).thenReturn(im);
+        when(itemF.getItemMeta(any())).thenReturn(im);
         when(Bukkit.getItemFactory()).thenReturn(itemF);
+        
+        // Locales manager
+        when(plugin.getLocalesManager()).thenReturn(lm);
+        // Setting US text is successful
+        when(lm.setTranslation(eq(Locale.US), anyString(), anyString())).thenReturn(true);
 
         // Flag
         f = new Flag.Builder("flagID", Material.ACACIA_PLANKS).type(Flag.Type.PROTECTION).listener(listener).build();
@@ -102,7 +112,6 @@ public class FlagTest {
     }
 
     /**
-     * @throws java.lang.Exception
      */
     @After
     public void tearDown() {
@@ -348,7 +357,7 @@ public class FlagTest {
         IslandsManager im = mock(IslandsManager.class);
 
         Island island = mock(Island.class);
-        when(island.getFlag(Mockito.any())).thenReturn(RanksManager.VISITOR_RANK);
+        when(island.getFlag(any())).thenReturn(RanksManager.VISITOR_RANK);
 
         User user = mock(User.class);
         when(user.getUniqueId()).thenReturn(UUID.randomUUID());
@@ -359,26 +368,44 @@ public class FlagTest {
             return sb.toString();
         };
 
-        when(user.getTranslation(Mockito.any(String.class),Mockito.any(),Mockito.any())).thenAnswer(answer);
+        when(user.getTranslation(any(String.class),any(),any())).thenAnswer(answer);
 
-        when(im.getIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(island);
-        when(im.getIsland(Mockito.any(), Mockito.any(User.class))).thenReturn(island);
+        when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
+        when(im.getIsland(any(), any(User.class))).thenReturn(island);
         Optional<Island> oL = Optional.of(island);
-        when(im.getIslandAt(Mockito.any(Location.class))).thenReturn(oL);
+        when(im.getIslandAt(any(Location.class))).thenReturn(oL);
         when(plugin.getIslands()).thenReturn(im);
 
         RanksManager rm = mock(RanksManager.class);
         when(plugin.getRanksManager()).thenReturn(rm);
-        when(rm.getRank(Mockito.eq(RanksManager.VISITOR_RANK))).thenReturn("Visitor");
-        when(rm.getRank(Mockito.eq(RanksManager.OWNER_RANK))).thenReturn("Owner");
+        when(rm.getRank(RanksManager.VISITOR_RANK)).thenReturn("Visitor");
+        when(rm.getRank(RanksManager.OWNER_RANK)).thenReturn("Owner");
 
 
         PanelItem pi = f.toPanelItem(plugin, user, island, false);
 
-        verify(user).getTranslation(Mockito.eq("protection.flags.flagID.name"));
-        verify(user).getTranslation(Mockito.eq("protection.panel.flag-item.name-layout"), any());
+        verify(user).getTranslation("protection.flags.flagID.name");
+        verify(user).getTranslation(eq("protection.panel.flag-item.name-layout"), any());
 
         assertEquals(Material.ACACIA_PLANKS, pi.getItem().getType());
+    }
+    
+    /**
+     * Test method for {@link world.bentobox.bentobox.api.flags.Flag#setTranslatedName(java.util.Locale, String)}.
+     */
+    @Test
+    public void testSetTranslatedName() {
+        assertFalse(f.setTranslatedName(Locale.CANADA, "Good eh?"));
+        assertTrue(f.setTranslatedName(Locale.US, "Yihaa"));
+    }
+    
+    /**
+     * Test method for {@link world.bentobox.bentobox.api.flags.Flag#setTranslatedDescription(java.util.Locale, String)}.
+     */
+    @Test
+    public void testSetTranslatedDescription() {
+        assertFalse(f.setTranslatedDescription(Locale.CANADA, "Good eh?"));
+        assertTrue(f.setTranslatedDescription(Locale.US, "Yihaa"));
     }
 
     /**

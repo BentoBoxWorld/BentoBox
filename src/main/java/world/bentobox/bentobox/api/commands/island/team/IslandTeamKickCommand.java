@@ -70,11 +70,11 @@ public class IslandTeamKickCommand extends ConfirmableCommand {
 
         int targetRank = Objects.requireNonNull(island).getRank(targetUUID);
         if (rank <= targetRank) {
-            user.sendMessage("commands.island.team.kick.cannot-kick-rank", 
-                TextVariables.NAME, getPlayers().getName(targetUUID));
+            user.sendMessage("commands.island.team.kick.cannot-kick-rank",
+                    TextVariables.NAME, getPlayers().getName(targetUUID));
             return false;
         }
-        
+
         if (!getSettings().isKickConfirmation()) {
             kick(user, targetUUID);
             return true;
@@ -96,15 +96,15 @@ public class IslandTeamKickCommand extends ConfirmableCommand {
         if (event.isCancelled()) {
             return;
         }
-        target.sendMessage("commands.island.team.kick.player-kicked", 
-            TextVariables.GAMEMODE, getAddon().getDescription().getName(),
-            TextVariables.NAME, user.getName());
+        target.sendMessage("commands.island.team.kick.player-kicked",
+                TextVariables.GAMEMODE, getAddon().getDescription().getName(),
+                TextVariables.NAME, user.getName(), TextVariables.DISPLAY_NAME, user.getDisplayName());
 
         getIslands().removePlayer(getWorld(), targetUUID);
         // Clean the target player
         getPlayers().cleanLeavingPlayer(getWorld(), target, true, oldIsland);
 
-        user.sendMessage("commands.island.team.kick.success", TextVariables.NAME, target.getName());
+        user.sendMessage("commands.island.team.kick.success", TextVariables.NAME, target.getName(), TextVariables.DISPLAY_NAME, target.getDisplayName());
         IslandEvent.builder()
         .island(oldIsland)
         .involvedPlayer(user.getUniqueId())

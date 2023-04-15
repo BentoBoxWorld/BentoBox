@@ -73,7 +73,6 @@ public class IslandWorldManagerTest {
     private GameModeAddon gm;
 
     /**
-     * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {

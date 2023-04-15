@@ -67,7 +67,6 @@ public class IslandHomesCommandTest {
     private IslandWorldManager iwm;
 
     /**
-     * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {

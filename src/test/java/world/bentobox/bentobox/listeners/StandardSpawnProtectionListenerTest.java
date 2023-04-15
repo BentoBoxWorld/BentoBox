@@ -87,7 +87,6 @@ public class StandardSpawnProtectionListenerTest {
     private WorldSettings ws;
 
     /**
-     * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {
@@ -141,7 +140,6 @@ public class StandardSpawnProtectionListenerTest {
     }
 
     /**
-     * @throws java.lang.Exception
      */
     @After
     public void tearDown() {
@@ -326,7 +324,7 @@ public class StandardSpawnProtectionListenerTest {
      */
     @Test
     public void testOnBucketEmptyDisallowed() {
-        PlayerBucketEmptyEvent e = new PlayerBucketEmptyEvent(player, block, block, BlockFace.DOWN, null, null);
+        PlayerBucketEmptyEvent e = new PlayerBucketEmptyEvent(player, block, block, BlockFace.DOWN, null, null, null);
         ssp.onBucketEmpty(e);
         assertTrue(e.isCancelled());
         verify(player).sendMessage("protection.spawn-protected");
@@ -338,7 +336,7 @@ public class StandardSpawnProtectionListenerTest {
     @Test
     public void testOnBucketEmptyDisallowedNoProtection() {
         when(ws.isMakeNetherPortals()).thenReturn(true);
-        PlayerBucketEmptyEvent e = new PlayerBucketEmptyEvent(player, block, block, BlockFace.DOWN, null, null);
+        PlayerBucketEmptyEvent e = new PlayerBucketEmptyEvent(player, block, block, BlockFace.DOWN, null, null, null);
         ssp.onBucketEmpty(e);
         assertFalse(e.isCancelled());
         verify(player, never()).sendMessage("protection.spawn-protected");
@@ -350,7 +348,7 @@ public class StandardSpawnProtectionListenerTest {
     @Test
     public void testOnBucketEmptyAllowed() {
         when(player.isOp()).thenReturn(true);
-        PlayerBucketEmptyEvent e = new PlayerBucketEmptyEvent(player, block, block, BlockFace.DOWN, null, null);
+        PlayerBucketEmptyEvent e = new PlayerBucketEmptyEvent(player, block, block, BlockFace.DOWN, null, null, null);
         ssp.onBucketEmpty(e);
         assertFalse(e.isCancelled());
         verify(player, never()).sendMessage("protection.spawn-protected");

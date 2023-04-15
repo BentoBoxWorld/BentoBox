@@ -59,7 +59,6 @@ public class AdminRangeResetCommandTest {
 
 
     /**
-     * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {

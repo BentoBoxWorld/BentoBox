@@ -190,7 +190,7 @@ public class AddonsManager {
     private PladdonData loadPladdon(YamlConfiguration data, @NonNull File f) throws InvalidAddonInheritException, MalformedURLException, InvalidAddonDescriptionException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException, InvalidDescriptionException {
         Addon addon = null;
         try {
-            Plugin pladdon = pluginLoader.loadPlugin(f);
+            Plugin pladdon = Bukkit.getPluginManager().loadPlugin(f);
             if (pladdon instanceof Pladdon pl) {
                 addon = pl.getAddon();
                 addon.setDescription(AddonClassLoader.asDescription(data));
@@ -314,8 +314,10 @@ public class AddonsManager {
             if (addon instanceof GameModeAddon gameMode) {
                 // Create the gameWorlds
                 gameMode.createWorlds();
-                // Create the seed worlds
-                createSeedWorlds(gameMode);
+                if (gameMode.isUsesNewChunkGeneration()) {
+                    // Create the seed worlds
+                    createSeedWorlds(gameMode);
+                }
                 plugin.getIWM().addGameMode(gameMode);
                 // Save and load blueprints
                 plugin.getBlueprintsManager().extractDefaultBlueprints(gameMode);
@@ -344,7 +346,6 @@ public class AddonsManager {
 
     /**
      * Create seed worlds, which are used for deletion
-     * @param gameMode
      */
     private void createSeedWorlds(GameModeAddon gameMode) {
         if (gameMode.getOverWorld() != null) {
@@ -449,8 +450,8 @@ public class AddonsManager {
     public void disableAddons() {
         if (!getEnabledAddons().isEmpty()) {
             plugin.log("Disabling addons...");
-            // Disable addons
-            getEnabledAddons().forEach(this::disable);
+            // Disable addons - pladdons are disabled by the server
+            getEnabledAddons().stream().filter(addon -> !pladdons.keySet().contains(addon)).forEach(this::disable);
             plugin.log("Addons successfully disabled.");
         }
         // Unregister all commands

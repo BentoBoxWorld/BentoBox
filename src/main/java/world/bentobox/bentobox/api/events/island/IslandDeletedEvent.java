@@ -30,7 +30,7 @@ public class IslandDeletedEvent extends IslandBaseEvent {
         return handlers;
     }
 
-    IslandDeletedEvent(Island island, UUID player, boolean admin, Location location, IslandDeletion deletedIsland) {
+    public IslandDeletedEvent(Island island, UUID player, boolean admin, Location location, IslandDeletion deletedIsland) {
         // Final variables have to be declared in the constructor
         super(island, player, admin, location);
         this.deletedIslandInfo = deletedIsland;

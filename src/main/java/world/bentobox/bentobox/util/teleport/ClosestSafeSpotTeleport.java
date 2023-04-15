@@ -276,7 +276,7 @@ public class ClosestSafeSpotTeleport
     /**
      * This method finishes the chunk loading task and checks from all remaining positions in block queue
      * to find the best location for teleportation.
-     *
+     * <p>
      * This method stops position finding task and process teleporation.
      */
     private void finishTask()

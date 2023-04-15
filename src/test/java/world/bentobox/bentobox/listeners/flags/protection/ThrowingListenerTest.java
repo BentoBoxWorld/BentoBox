@@ -34,7 +34,6 @@ public class ThrowingListenerTest extends AbstractCommonSetup {
     private ThrowingListener tl;
 
     /**
-     * @throws java.lang.Exception
      */
     @Override
     @Before

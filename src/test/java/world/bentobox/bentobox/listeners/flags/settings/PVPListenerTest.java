@@ -119,7 +119,6 @@ public class PVPListenerTest {
     private Notifier notifier;
 
     /**
-     * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {
