@@ -14,7 +14,6 @@ import org.bukkit.event.hanging.HangingPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.lists.Flags;
 
@@ -71,7 +70,6 @@ public class PlaceBlocksListener extends FlagListener
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerHitItemFrame(PlayerInteractEntityEvent e)
     {
-        BentoBox.getInstance().logDebug(e.getEventName());
         if (e.getRightClicked().getType().equals(EntityType.ITEM_FRAME) ||
                 e.getRightClicked().getType().equals(EntityType.GLOW_ITEM_FRAME))
         {
