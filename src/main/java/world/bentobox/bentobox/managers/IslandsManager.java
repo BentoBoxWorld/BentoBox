@@ -20,19 +20,25 @@ import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.AbstractArrow.PickupStatus;
+import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Boat;
 import org.bukkit.entity.Boat.Type;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.PufferFish;
+import org.bukkit.entity.Zombie;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.PermissionAttachmentInfo;
+import org.bukkit.potion.PotionData;
+import org.bukkit.potion.PotionType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
@@ -1642,7 +1648,26 @@ public class IslandsManager {
                 && !(en instanceof PufferFish)
                 && ((LivingEntity)en).getRemoveWhenFarAway())
         .filter(en -> en.getCustomName() == null)
-        .forEach(Entity::remove);
+        .forEach(e -> fireArrowOfPower(e, loc));
+    }
+
+    private void fireArrowOfPower(Entity e, Location loc) {
+        Vector direction = e.getLocation().toVector().subtract(loc.toVector()).normalize();
+        if (e instanceof Zombie z) {
+            plugin.logDebug("Health = " + z.getHealth() + " direction " + direction);
+        }
+
+        Arrow arrow = loc.getWorld().spawnArrow(loc, direction, 0.7F, 0);
+        arrow.setDamage(0);
+        arrow.setPierceLevel(0);
+        PotionData pd = new PotionData(PotionType.INSTANT_HEAL, false, false);
+        arrow.setBasePotionData(pd);
+        arrow.setCritical(false);
+        arrow.setKnockbackStrength(50);
+        Color color = Color.AQUA;
+        //color.setAlpha(0);
+        arrow.setColor(color);
+        arrow.setPickupStatus(PickupStatus.DISALLOWED);
     }
 
     /**
