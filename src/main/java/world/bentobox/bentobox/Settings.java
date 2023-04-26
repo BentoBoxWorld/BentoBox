@@ -147,6 +147,14 @@ public class Settings implements ConfigObject {
     @ConfigComment("Add other fake player names here if required")
     @ConfigEntry(path = "general.fakeplayers", experimental = true)
     private Set<String> fakePlayers = new HashSet<>();
+    
+    @ConfigComment("Flingback power. How far hostile mobs will be flung back when a player teleports into them.")
+    @ConfigEntry(path = "general.flingback")
+    private double flingback = 5D;
+    
+    @ConfigComment("Kill mobs on teleport. If thw world flag is set, then they will be killed/removed instead of flung.")
+    @ConfigEntry(path = "general.teleport-remove-mobs")
+    private boolean teleportRemoveMobs = false;    
 
     /* PANELS */
 
@@ -1037,5 +1045,33 @@ public class Settings implements ConfigObject {
     public void setSafeSpotSearchRange(int safeSpotSearchRange)
     {
         this.safeSpotSearchRange = safeSpotSearchRange;
+    }
+
+    /**
+     * @return the flingback
+     */
+    public double getFlingback() {
+        return flingback;
+    }
+
+    /**
+     * @param flingback the flingback to set
+     */
+    public void setFlingback(double flingback) {
+        this.flingback = flingback;
+    }
+
+    /**
+     * @return the teleportRemoveMobs
+     */
+    public boolean isTeleportRemoveMobs() {
+        return teleportRemoveMobs;
+    }
+
+    /**
+     * @param teleportRemoveMobs the teleportRemoveMobs to set
+     */
+    public void setTeleportRemoveMobs(boolean teleportRemoveMobs) {
+        this.teleportRemoveMobs = teleportRemoveMobs;
     }
 }
