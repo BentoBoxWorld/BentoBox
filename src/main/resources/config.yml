@@ -59,11 +59,11 @@ general:
     # This helps prevent issues if the server crashes.
     # Data is also saved at important points in the game.
     backup-period: 5
-    # How many players will be saved in one tick. Default is 200
+    # How many players will be saved in one tick. Default is 20
     # Reduce if you experience lag while saving.
     # Do not set this too low or data might get lost!
     max-saved-players-per-tick: 20
-    # How many islands will be saved in one tick. Default is 200
+    # How many islands will be saved in one tick. Default is 20
     # Reduce if you experience lag while saving.
     # Do not set this too low or data might get lost!
     max-saved-islands-per-tick: 20
