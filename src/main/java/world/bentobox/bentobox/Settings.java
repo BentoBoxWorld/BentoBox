@@ -148,6 +148,15 @@ public class Settings implements ConfigObject {
     @ConfigEntry(path = "general.fakeplayers", experimental = true)
     private Set<String> fakePlayers = new HashSet<>();
 
+    @ConfigComment("Flingback power. How far hostile mobs will be flung back when a player teleports into them.")
+    @ConfigComment("2.5 will push back a number of blocks, 5 will throw them far, 1 will not do much.")
+    @ConfigEntry(path = "general.flingback")
+    private double flingback = 2.5D;
+
+    @ConfigComment("Kill mobs on teleport. If the world flag in Admin Settings is set, then they will be killed/removed instead of flung.")
+    @ConfigEntry(path = "general.teleport-remove-mobs")
+    private boolean teleportRemoveMobs = false;
+
     /* PANELS */
 
     @ConfigComment("Toggle whether panels should be closed or not when the player clicks anywhere outside of the inventory view.")
@@ -983,8 +992,8 @@ public class Settings implements ConfigObject {
     {
         return maximumPoolSize;
     }
-    
-    
+
+
     /**
      * Gets safe spot search range.
      *
@@ -1037,5 +1046,33 @@ public class Settings implements ConfigObject {
     public void setSafeSpotSearchRange(int safeSpotSearchRange)
     {
         this.safeSpotSearchRange = safeSpotSearchRange;
+    }
+
+    /**
+     * @return the flingback
+     */
+    public double getFlingback() {
+        return flingback;
+    }
+
+    /**
+     * @param flingback the flingback to set
+     */
+    public void setFlingback(double flingback) {
+        this.flingback = flingback;
+    }
+
+    /**
+     * @return the teleportRemoveMobs
+     */
+    public boolean isTeleportRemoveMobs() {
+        return teleportRemoveMobs;
+    }
+
+    /**
+     * @param teleportRemoveMobs the teleportRemoveMobs to set
+     */
+    public void setTeleportRemoveMobs(boolean teleportRemoveMobs) {
+        this.teleportRemoveMobs = teleportRemoveMobs;
     }
 }

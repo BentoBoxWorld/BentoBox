@@ -82,8 +82,8 @@ general:
     prefix-character: ''
     # Custom connection datasource properties that will be applied to connection pool.
     # Check available values to your SQL driver implementation.
-    # Example: ")
-    #   custom-properties:
+    # Example: 
+    #   custom-properties: 
     #     cachePrepStmts: 'true'
     #     prepStmtCacheSize: '250'
     #     prepStmtCacheSqlLimit: '2048'
@@ -98,6 +98,10 @@ general:
   # /!\ This feature is experimental and might not work as expected or might not work at all.
   fakeplayers:
   - '[CoFH]'
+  # Flingback power. How far hostile mobs will be flung back when a player teleports into them.
+  flingback: 5.0
+  # Remove mobs on teleport.
+  teleport-remove-mobs: false
 panel:
   # Toggle whether panels should be closed or not when the player clicks anywhere outside of the inventory view.
   close-on-click-outside: true

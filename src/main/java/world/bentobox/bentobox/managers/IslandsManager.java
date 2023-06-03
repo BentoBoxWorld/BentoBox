@@ -13,6 +13,7 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Queue;
+import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -22,6 +23,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -66,6 +68,7 @@ import world.bentobox.bentobox.util.teleport.SafeSpotTeleport;
 public class IslandsManager {
 
     private final BentoBox plugin;
+    private final Random rand = new Random();
 
     // Tree species to boat material map
     private static final Map<Type, Material> TREE_TO_BOAT = ImmutableMap.<Type, Material>builder().
@@ -1633,6 +1636,7 @@ public class IslandsManager {
      */
     public void clearArea(Location loc) {
         if (!plugin.getIWM().inWorld(loc)) return;
+        
         loc.getWorld().getNearbyEntities(loc, plugin.getSettings().getClearRadius(),
                 plugin.getSettings().getClearRadius(),
                 plugin.getSettings().getClearRadius()).stream()
@@ -1642,7 +1646,29 @@ public class IslandsManager {
                 && !(en instanceof PufferFish)
                 && ((LivingEntity)en).getRemoveWhenFarAway())
         .filter(en -> en.getCustomName() == null)
-        .forEach(Entity::remove);
+        .forEach(e -> flingOrKill(e, loc));
+    }
+
+    private void flingOrKill(Entity e, Location loc) {
+        if (plugin.getSettings().isTeleportRemoveMobs()) {
+            e.remove();
+            return;
+        }
+        Vector entVec = e.getLocation().toVector();
+        double dist = plugin.getSettings().getFlingback() - entVec.distance(loc.toVector());
+        if (dist < 1) {
+            dist = 1;
+        }
+        Vector direction = entVec.subtract(loc.toVector());
+        if (direction.lengthSquared() < 3) {
+            // On top of us
+            direction.add(new Vector(rand.nextDouble(), 0, rand.nextDouble())); 
+        }
+        // Add a bit of lift
+        direction.add(new Vector(0, rand.nextDouble(), 0)); 
+        direction.multiply(dist);
+        loc.getWorld().playSound(e, Sound.ENTITY_ILLUSIONER_HURT, 1F, 5F);
+        e.setVelocity(direction);
     }
 
     /**
