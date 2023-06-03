@@ -171,6 +171,17 @@ public class PanelListenerManagerTest {
             return name;
         }
 
+        @Override
+        public String getOriginalTitle() {
+            return "";
+        }
+
+        @Override
+        public void setTitle(String title) {
+            // TODO Auto-generated method stub
+
+        }
+
     }
 
     @After
