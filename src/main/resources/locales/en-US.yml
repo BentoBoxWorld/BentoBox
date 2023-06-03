@@ -74,7 +74,7 @@ commands:
       remove:
         description: "reduces the player's island reset count"
         parameters: "<player> <resets>"
-        success: "&a Successfully removed &b [number] &a resets from &b [name]'s island, decreasing the total to &b [total]&a resets."
+        success: "&a Successfully removed &b [number] &a resets from &b [name]'s island&a, decreasing the total to &b[total]&a resets."
     purge:
       parameters: "[days]"
       description: "purge islands abandoned for more than [days]"
