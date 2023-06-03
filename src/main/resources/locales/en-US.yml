@@ -1292,9 +1292,9 @@ protection:
       name: "Remove end exit island"
     REMOVE_MOBS: 
       description: |-
-        &a Remove monsters when
+        &a Push monsters away when
         &a teleporting to island
-      name: "Remove monsters"
+      name: "Fling back monsters"
     RIDING: 
       description: "Toggle riding"
       name: "Animal riding"

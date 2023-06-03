@@ -147,14 +147,15 @@ public class Settings implements ConfigObject {
     @ConfigComment("Add other fake player names here if required")
     @ConfigEntry(path = "general.fakeplayers", experimental = true)
     private Set<String> fakePlayers = new HashSet<>();
-    
+
     @ConfigComment("Flingback power. How far hostile mobs will be flung back when a player teleports into them.")
+    @ConfigComment("2.5 will push back a number of blocks, 5 will throw them far, 1 will not do much.")
     @ConfigEntry(path = "general.flingback")
-    private double flingback = 5D;
-    
-    @ConfigComment("Kill mobs on teleport. If thw world flag is set, then they will be killed/removed instead of flung.")
+    private double flingback = 2.5D;
+
+    @ConfigComment("Kill mobs on teleport. If the world flag in Admin Settings is set, then they will be killed/removed instead of flung.")
     @ConfigEntry(path = "general.teleport-remove-mobs")
-    private boolean teleportRemoveMobs = false;    
+    private boolean teleportRemoveMobs = false;
 
     /* PANELS */
 
@@ -991,8 +992,8 @@ public class Settings implements ConfigObject {
     {
         return maximumPoolSize;
     }
-    
-    
+
+
     /**
      * Gets safe spot search range.
      *
