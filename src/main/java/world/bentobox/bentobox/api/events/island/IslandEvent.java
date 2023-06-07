@@ -7,6 +7,7 @@ import org.bukkit.Location;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle;
@@ -169,7 +170,12 @@ public class IslandEvent extends IslandBaseEvent {
          * Event that will fire any time a player's rank changes on an island.
          * @since 1.13.0
          */
-        RANK_CHANGE
+        RANK_CHANGE,
+        /**
+         * Event that will fire when an island is named or renamed
+         * @since 1.24.0
+         */
+        NAME
     }
 
     public static IslandEventBuilder builder() {
@@ -213,6 +219,10 @@ public class IslandEvent extends IslandBaseEvent {
          * @since 1.13.0
          */
         private int newRank;
+        /**
+         * @since 1.24.0 Previous name of island
+         */
+        private String previousName;
 
         public IslandEventBuilder island(Island island) {
             this.island = island;
@@ -305,6 +315,16 @@ public class IslandEvent extends IslandBaseEvent {
             return this;
         }
 
+        /**
+         * Sets the previous name of the island
+         * @param previousName previous name. May be null.
+         * @since 1.24.0
+         */
+        public IslandEventBuilder previousName(@Nullable String previousName) {
+            this.previousName = previousName;
+            return this;
+        }
+
         private IslandBaseEvent getEvent() {
             return switch (reason) {
             case EXPEL -> new IslandExpelEvent(island, player, admin, location);
@@ -329,6 +349,7 @@ public class IslandEvent extends IslandBaseEvent {
             case RESERVED -> new IslandReservedEvent(island, player, admin, location);
             case RANK_CHANGE -> new IslandRankChangeEvent(island, player, admin, location, oldRank, newRank);
             case NEW_ISLAND -> new IslandNewIslandEvent(island, player, admin, location);
+            case NAME -> new IslandNameEvent(island, player, admin, location, previousName);
             default -> new IslandGeneralEvent(island, player, admin, location);
             };
         }
@@ -345,5 +366,6 @@ public class IslandEvent extends IslandBaseEvent {
             Bukkit.getPluginManager().callEvent(newEvent);
             return newEvent;
         }
+
     }
 }
