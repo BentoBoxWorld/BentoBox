@@ -1325,6 +1325,12 @@ protection:
         &a activation.
       name: "Sculk Shrieker"
       hint: "sculk shrieker activation is disabled"
+    SIGN_EDITING:
+      description: |-
+        &a Allows text editing
+        &a of signs
+      name: "Sign Editing"
+      hint: "sign editing is disabled"
     TNT_DAMAGE:
       description: |-
         &a Allow TNT and TNT minecarts

@@ -155,6 +155,11 @@ public class BlockInteractionListener extends FlagListener
             return;
         }
 
+        if (Tag.SIGNS.isTagged(type)) {
+            this.checkIsland(e, player, loc, Flags.SIGN_EDITING);
+            return;
+        }
+
         if (Tag.FENCE_GATES.isTagged(type))
         {
             this.checkIsland(e, player, loc, Flags.GATE);

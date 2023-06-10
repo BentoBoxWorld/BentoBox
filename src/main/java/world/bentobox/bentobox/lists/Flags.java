@@ -653,16 +653,21 @@ public final class Flags {
      * Controls who gets to harvest any crop related contents. e.g. Wheat, Sugar Cane, melon blocks, not stems, pumpkin blocks, etc.
      * @since 1.23.0
      */
-    public static final Flag HARVEST = new Flag.Builder("HARVEST", Material.PUMPKIN).type(Type.PROTECTION).build();
+    public static final Flag HARVEST = new Flag.Builder("HARVEST", Material.PUMPKIN).mode(Flag.Mode.BASIC).type(Type.PROTECTION).build();
 
     /**
      * Crop Planting
      * Controls who gets to plant crops on tilled soil.
      * @since 1.23.0
      */
-    public static final Flag CROP_PLANTING = new Flag.Builder("CROP_PLANTING", Material.PUMPKIN_SEEDS).type(Type.PROTECTION).build();
+    public static final Flag CROP_PLANTING = new Flag.Builder("CROP_PLANTING", Material.PUMPKIN_SEEDS).mode(Flag.Mode.BASIC).type(Type.PROTECTION).build();
 
-    
+    /**
+     * Sign edit protection
+     * @since 1.24.0
+     */
+    public static final Flag SIGN_EDITING = new Flag.Builder("SIGN_EDITING", Material.DARK_OAK_SIGN).mode(Flag.Mode.BASIC).type(Type.PROTECTION).build();
+
     /**
      * Provides a list of all the Flag instances contained in this class using reflection.
      * Deprecated Flags are ignored.
