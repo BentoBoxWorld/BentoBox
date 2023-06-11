@@ -1,6 +1,5 @@
 package world.bentobox.bentobox.listeners.flags.protection;
 
-import java.util.Map;
 import java.util.Optional;
 
 import org.bukkit.FluidCollisionMode;
@@ -18,8 +17,6 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.Flags;
@@ -30,25 +27,6 @@ import world.bentobox.bentobox.lists.Flags;
  */
 public class BlockInteractionListener extends FlagListener
 {
-
-    /**
-     * These cover materials in another server version. This avoids run time errors due to unknown enum values, at the
-     * expense of a string comparison
-     */
-    private static final Map<String, String> stringFlags;
-    private static final String CHEST = "CHEST";
-
-    static
-    {
-        stringFlags = Map.of(
-                "ACACIA_CHEST_BOAT", CHEST,
-                "BIRCH_CHEST_BOAT", CHEST,
-                "JUNGLE_CHEST_BOAT", CHEST,
-                "DARK_OAK_CHEST_BOAT", CHEST,
-                "MANGROVE_CHEST_BOAT", CHEST,
-                "OAK_CHEST_BOAT", CHEST,
-                "SPRUCE_CHEST_BOAT", CHEST);
-    }
 
     /**
      * Handle interaction with blocks
@@ -71,7 +49,7 @@ public class BlockInteractionListener extends FlagListener
         if (e.getItem() != null && !e.getItem().getType().equals(Material.AIR))
         {
             // Boats
-            if (e.getItem().getType().name().endsWith("BOAT"))
+            if (Tag.ITEMS_BOATS.isTagged(e.getItem().getType()))
             {
                 this.checkIsland(e, e.getPlayer(), e.getClickedBlock().getLocation(), Flags.BOAT);
             }
@@ -164,10 +142,11 @@ public class BlockInteractionListener extends FlagListener
         {
             this.checkIsland(e, player, loc, Flags.GATE);
         }
-        // TODO: 1.18 compatibility
-        // if (Tag.ITEMS_CHEST_BOATS.isTagged(type)) {
-        //   this.checkIsland(e, player, loc, Flags.CHEST);
-        // }
+
+        if (Tag.ITEMS_CHEST_BOATS.isTagged(type))
+        {
+            this.checkIsland(e, player, loc, Flags.CHEST);
+        }
 
         switch (type)
         {
@@ -237,12 +216,7 @@ public class BlockInteractionListener extends FlagListener
             }
         }
         default ->
-        {
-            if (stringFlags.containsKey(type.name()))
-            {
-                Optional<Flag> f = BentoBox.getInstance().getFlagsManager().getFlag(stringFlags.get(type.name()));
-                f.ifPresent(flag -> this.checkIsland(e, player, loc, flag));
-            }
+        { // nothing to do
         }
         }
     }

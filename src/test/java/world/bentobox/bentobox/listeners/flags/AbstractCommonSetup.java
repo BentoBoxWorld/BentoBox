@@ -12,6 +12,8 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Tag;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFactory;
@@ -169,12 +171,36 @@ public abstract class AbstractCommonSetup {
         // Util translate color codes (used in user translate methods)
         when(Util.translateColorCodes(anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
 
+        // Tags
+        for (Material m : Material.values()) {
+            if (m.name().contains("_SIGN")) {
+                when(Tag.ALL_SIGNS.isTagged(m)).thenReturn(true);
+                when(Tag.SIGNS.isTagged(m)).thenReturn(true);
+            }
+            if (m.name().contains("_WALL_SIGN")) {
+                when(Tag.WALL_SIGNS.isTagged(m)).thenReturn(true);
+            }
+            if (m.name().contains("_TRAPDOOR")) {
+                when(Tag.TRAPDOORS.isTagged(m)).thenReturn(true);
+            }
+            if (m.name().contains("FENCE")) {
+                when(Tag.FENCES.isTagged(m)).thenReturn(true);
+            }
+            if (m.name().contains("_DOOR")) {
+                when(Tag.DOORS.isTagged(m)).thenReturn(true);
+            }
+            if (m.name().contains("_BOAT") || m.name().contains("_RAFT")) {
+                when(Tag.ITEMS_BOATS.isTagged(m)).thenReturn(true);
+            }
+
+        }
     }
 
     /**
+     * @throws Exception
      */
     @After
-    public void tearDown() {
+    public void tearDown() throws Exception {
         User.clearUsers();
         Mockito.framework().clearInlineMocks();
     }

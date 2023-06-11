@@ -13,7 +13,6 @@ import static org.mockito.Mockito.when;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
@@ -45,7 +44,7 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( {BentoBox.class, Flags.class, Util.class, Bukkit.class, Tag.class} )
+@PrepareForTest( {BentoBox.class, Flags.class, Util.class, Bukkit.class} )
 public class PlaceBlocksListenerTest extends AbstractCommonSetup {
 
     private PlaceBlocksListener pbl;
@@ -163,7 +162,7 @@ public class PlaceBlocksListenerTest extends AbstractCommonSetup {
         assertTrue(e.isCancelled());
         verify(notifier).notify(any(), eq("protection.protected"));
     }
-    
+
     /**
      * Test method for {@link PlaceBlocksListener#onBlockPlace(org.bukkit.event.block.BlockPlaceEvent)}.
      */
@@ -184,7 +183,7 @@ public class PlaceBlocksListenerTest extends AbstractCommonSetup {
         pbl.onBlockPlace(e);
         assertFalse(e.isCancelled());
     }
-    
+
     /**
      * Test method for {@link PlaceBlocksListener#onBlockPlace(org.bukkit.event.block.BlockPlaceEvent)}.
      */
@@ -206,7 +205,7 @@ public class PlaceBlocksListenerTest extends AbstractCommonSetup {
         assertTrue(e.isCancelled());
         verify(notifier).notify(any(), eq("protection.protected"));
     }
-    
+
     /**
      * Test method for {@link PlaceBlocksListener#onBlockPlace(org.bukkit.event.block.BlockPlaceEvent)}.
      */

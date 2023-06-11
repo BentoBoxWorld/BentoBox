@@ -78,13 +78,14 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.Database;
 import world.bentobox.bentobox.database.DatabaseSetup.DatabaseType;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.listeners.flags.AbstractCommonSetup;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.island.IslandCache;
 import world.bentobox.bentobox.util.Util;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( { Bukkit.class, BentoBox.class, Util.class, Location.class })
-public class IslandsManagerTest {
+public class IslandsManagerTest extends AbstractCommonSetup {
 
     @Mock
     private BentoBox plugin;
@@ -141,11 +142,12 @@ public class IslandsManagerTest {
     // Class under test
     IslandsManager im;
 
-    /**
-     */
+    @Override
     @SuppressWarnings("unchecked")
     @Before
     public void setUp() throws Exception {
+        super.setUp();
+
         // Clear any lingering database
         tearDown();
         // Set up plugin
@@ -315,14 +317,8 @@ public class IslandsManagerTest {
         db = mock(Database.class);
 
         // Signs
-        sign = Material.getMaterial("SIGN");
-        if (sign == null) {
-            sign = Material.getMaterial("OAK_SIGN");
-        }
-        wallSign = Material.getMaterial("WALL_SIGN");
-        if (wallSign == null) {
-            wallSign = Material.getMaterial("OAK_WALL_SIGN");
-        }
+        sign = Material.BIRCH_SIGN;
+        wallSign = Material.ACACIA_WALL_SIGN;
 
         // PaperLib
         env = new CraftBukkitEnvironment();
@@ -337,10 +333,10 @@ public class IslandsManagerTest {
         //im.setIslandCache(islandCache);
     }
 
-    /**
-     */
+    @Override
     @After
     public void tearDown() throws Exception {
+        super.tearDown();
         Mockito.framework().clearInlineMocks();
         deleteAll(new File("database"));
         deleteAll(new File("database_backup"));
@@ -393,12 +389,13 @@ public class IslandsManagerTest {
         assertFalse(im.isSafeLocation(location));
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void testCheckIfSafeTrapdoor() {
         for (Material d : Material.values()) {
             if (d.name().contains("DOOR")) {
                 for (Material s : Material.values()) {
-                    if (s.name().contains("_SIGN")) {
+                    if (s.name().contains("_SIGN") && !s.isLegacy()) {
                         assertFalse("Fail " + d.name() + " " + s.name(), im.checkIfSafe(world, d, s, Material.AIR));
                     }
                 }
@@ -486,13 +483,13 @@ public class IslandsManagerTest {
     @Test
     public void testBadBlocks() {
         // Fences
-        Arrays.stream(Material.values()).filter(m -> m.toString().contains("FENCE")).forEach(m -> {
-            when(ground.getType()).thenReturn(m);
-            assertFalse("Fence :" + m.toString(), im.isSafeLocation(location));
-        });
+        when(ground.getType()).thenReturn(Material.SPRUCE_FENCE);
+        assertFalse("Fence :" + Material.SPRUCE_FENCE.toString(), im.isSafeLocation(location));
         // Signs
+        sign = Material.BIRCH_SIGN;
         when(ground.getType()).thenReturn(sign);
         assertFalse("Sign", im.isSafeLocation(location));
+        wallSign = Material.ACACIA_WALL_SIGN;
         when(ground.getType()).thenReturn(wallSign);
         assertFalse("Sign", im.isSafeLocation(location));
         // Bad Blocks

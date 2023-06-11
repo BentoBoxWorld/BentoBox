@@ -614,6 +614,7 @@ public class IslandWorldManagerTest {
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getDefaultIslandFlags(org.bukkit.World)}.
      */
+    @SuppressWarnings("removal")
     @Test
     public void testGetDefaultIslandFlags() {
         Map<Flag, Integer> flags = new HashMap<>();
@@ -634,6 +635,7 @@ public class IslandWorldManagerTest {
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getDefaultIslandSettings(org.bukkit.World)}.
      */
+    @SuppressWarnings("removal")
     @Test
     public void testGetDefaultIslandSettings() {
         Map<Flag, Integer> flags = new HashMap<>();
