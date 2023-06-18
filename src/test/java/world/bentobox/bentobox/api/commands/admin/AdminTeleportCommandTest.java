@@ -44,6 +44,7 @@ import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
+import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.util.Util;
 
@@ -74,6 +75,8 @@ public class AdminTeleportCommandTest {
     private World netherWorld;
     @Mock
     private World endWorld;
+    @Mock
+    private PlaceholdersManager phm;
 
 
     /**
@@ -96,16 +99,24 @@ public class AdminTeleportCommandTest {
         while(notUUID.equals(uuid)) {
             notUUID = UUID.randomUUID();
         }
+        when(p.getUniqueId()).thenReturn(uuid);
+        when(p.hasPermission("admin.tp")).thenReturn(true);
+        when(p.hasPermission("admin")).thenReturn(false);
+        
         when(user.getUniqueId()).thenReturn(uuid);
         when(user.getPlayer()).thenReturn(p);
         when(user.getName()).thenReturn("tastybento");
         when(user.isPlayer()).thenReturn(true);
+        when(user.hasPermission("admin.tp")).thenReturn(true);
+        when(user.hasPermission("admin")).thenReturn(false);
+
         User.setPlugin(plugin);
 
         // Parent command has no aliases
         when(ac.getSubCommandAliases()).thenReturn(new HashMap<>());
         when(ac.getTopLabel()).thenReturn("bskyblock");
         when(ac.getWorld()).thenReturn(world);
+        when(ac.getPermission()).thenReturn("admin");
 
         // World
         when(world.getEnvironment()).thenReturn(Environment.NORMAL);
@@ -132,7 +143,7 @@ public class AdminTeleportCommandTest {
 
         // Server & Scheduler
         BukkitScheduler sch = mock(BukkitScheduler.class);
-        PowerMockito.mockStatic(Bukkit.class);
+        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         when(Bukkit.getScheduler()).thenReturn(sch);
 
         // Locales
@@ -165,6 +176,9 @@ public class AdminTeleportCommandTest {
         // Util
         PowerMockito.mockStatic(Util.class, Mockito.RETURNS_MOCKS);
         when(Util.getUUID(anyString())).thenCallRealMethod();
+        
+        // Placeholder manager
+        when(plugin.getPlaceholdersManager()).thenReturn(phm);
     }
 
     @After
@@ -276,5 +290,17 @@ public class AdminTeleportCommandTest {
         verify(user).getTranslation(eq("commands.admin.tp.manual"), eq("[location]"), eq("0 0 0"));
     }
 
+    @Test
+    public void testPermissions() {
+        when(pm.getUUID(eq("tastybento"))).thenReturn(notUUID);
+        when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
+        AdminTeleportCommand atc = new AdminTeleportCommand(ac,"tpend");
+        assertTrue(atc.canExecute(user, "tpend", Collections.singletonList("tastybento")));
+        String[] list = new String[1];
+        list[0] = "tastybento";
+        System.out.println("UUID " + p.getUniqueId());
+        assertTrue(atc.execute(p, "tpend", list));
+        verify(user).getTranslation(eq("commands.admin.tp.manual"), eq("[location]"), eq("0 0 0"));
+    }
 
 }
