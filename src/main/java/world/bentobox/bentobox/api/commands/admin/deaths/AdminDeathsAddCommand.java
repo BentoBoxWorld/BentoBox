@@ -22,7 +22,7 @@ public class AdminDeathsAddCommand extends CompositeCommand {
 
     @Override
     public void setup() {
-        inheritPermission();
+        setPermission("admin.deaths.add");
         setDescription("commands.admin.deaths.add.description");
         setParametersHelp("commands.admin.deaths.add.parameters");
     }

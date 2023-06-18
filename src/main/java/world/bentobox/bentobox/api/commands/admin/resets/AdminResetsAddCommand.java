@@ -22,7 +22,7 @@ public class AdminResetsAddCommand extends CompositeCommand {
 
     @Override
     public void setup() {
-        inheritPermission();
+        setPermission("admin.resets.add");
         setDescription("commands.admin.resets.add.description");
         setParametersHelp("commands.admin.resets.add.parameters");
     }

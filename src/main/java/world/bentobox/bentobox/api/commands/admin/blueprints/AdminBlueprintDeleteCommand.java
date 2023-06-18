@@ -26,7 +26,7 @@ public class AdminBlueprintDeleteCommand extends ConfirmableCommand
     @Override
     public void setup()
     {
-        this.inheritPermission();
+        setPermission("admin.blueprint.delete");
         this.setParametersHelp("commands.admin.blueprint.delete.parameters");
         this.setDescription("commands.admin.blueprint.delete.description");
     }
@@ -47,10 +47,10 @@ public class AdminBlueprintDeleteCommand extends ConfirmableCommand
         if (this.getPlugin().getBlueprintsManager().getBlueprints(this.getAddon()).containsKey(blueprintName))
         {
             this.askConfirmation(user, user.getTranslation("commands.admin.blueprint.delete.confirmation"),
-                () -> {
-                    this.getPlugin().getBlueprintsManager().deleteBlueprint(this.getAddon(), blueprintName);
-                    user.sendMessage("commands.admin.blueprint.delete.success", TextVariables.NAME, blueprintName);
-                });
+                    () -> {
+                        this.getPlugin().getBlueprintsManager().deleteBlueprint(this.getAddon(), blueprintName);
+                        user.sendMessage("commands.admin.blueprint.delete.success", TextVariables.NAME, blueprintName);
+                    });
             return true;
         }
         else

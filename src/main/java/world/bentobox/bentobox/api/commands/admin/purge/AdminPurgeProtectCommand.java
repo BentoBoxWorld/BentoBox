@@ -16,7 +16,7 @@ public class AdminPurgeProtectCommand extends CompositeCommand {
 
     @Override
     public void setup() {
-        inheritPermission();
+        setPermission("admin.purge.protect");
         setOnlyPlayer(true);
         setDescription("commands.admin.purge.protect.description");
     }

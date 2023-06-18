@@ -21,7 +21,7 @@ public class AdminTeamAddCommand extends CompositeCommand {
 
     @Override
     public void setup() {
-        setPermission("mod.team");
+        setPermission("mod.team.add");
         setParametersHelp("commands.admin.team.add.parameters");
         setDescription("commands.admin.team.add.description");
     }
