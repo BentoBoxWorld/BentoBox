@@ -13,6 +13,7 @@ import world.bentobox.bentobox.database.objects.Island;
 /**
  * Fired when an a player reuqets info about an island
  * Cancellation has no effect.
+ * @since 1.24.0
  */
 public class IslandInfoEvent extends IslandBaseEvent {
 
@@ -44,9 +45,10 @@ public class IslandInfoEvent extends IslandBaseEvent {
     /**
      * @return the gameMode that is for this island
      */
-    public Addon getGameMode() {
+    public Addon getAddon() {
         return addon;
     }
+    
     
     
 
