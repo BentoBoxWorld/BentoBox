@@ -10,6 +10,7 @@ import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.events.island.IslandEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
@@ -98,6 +99,14 @@ public class IslandInfo {
         if (island.getPurgeProtected()) {
             user.sendMessage("commands.admin.info.purge-protected");
         }
+        // Fire info event
+        IslandEvent.builder()
+        .island(island)
+        .location(island.getCenter())
+        .reason(IslandEvent.Reason.INFO)
+        .involvedPlayer(user.getUniqueId())
+        .admin(true)
+        .build();
     }
 
 
@@ -130,6 +139,13 @@ public class IslandInfo {
             user.sendMessage("commands.admin.info.banned-players");
             island.getBanned().forEach(u -> user.sendMessage("commands.admin.info.banned-format", TextVariables.NAME, plugin.getPlayers().getName(u)));
         }
+        // Fire info event
+        IslandEvent.builder()
+        .island(island)
+        .location(island.getCenter())
+        .reason(IslandEvent.Reason.INFO)
+        .involvedPlayer(user.getUniqueId())
+        .build();
         return true;
     }
 

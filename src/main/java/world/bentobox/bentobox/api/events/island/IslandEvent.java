@@ -175,7 +175,12 @@ public class IslandEvent extends IslandBaseEvent {
          * Event that will fire when an island is named or renamed
          * @since 1.24.0
          */
-        NAME
+        NAME, 
+        /**
+         * Event that will fire when the info command is executed. Allows addons to add to it
+         * @since 1.24.0
+         */
+        INFO
     }
 
     public static IslandEventBuilder builder() {
@@ -350,6 +355,7 @@ public class IslandEvent extends IslandBaseEvent {
             case RANK_CHANGE -> new IslandRankChangeEvent(island, player, admin, location, oldRank, newRank);
             case NEW_ISLAND -> new IslandNewIslandEvent(island, player, admin, location);
             case NAME -> new IslandNameEvent(island, player, admin, location, previousName);
+            case INFO -> new IslandInfoEvent(island, player, admin, location);
             default -> new IslandGeneralEvent(island, player, admin, location);
             };
         }
