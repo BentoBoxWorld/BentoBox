@@ -241,7 +241,6 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         CompositeCommand cmd = getCommandFromArgs(args);
         String cmdLabel = (cmd.subCommandLevel > 0) ? args[cmd.subCommandLevel-1] : label;
         List<String> cmdArgs = Arrays.asList(args).subList(cmd.subCommandLevel, args.length);
-        // Call
         return cmd.call(user, cmdLabel, cmdArgs);
     }
 
@@ -261,13 +260,11 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
             user.sendMessage("general.errors.use-in-game");
             return false;
         }
-
         if (!this.runPermissionCheck(user))
         {
             // Error message is displayed by permission check.
             return false;
         }
-
         // Set the user's addon context
         user.setAddon(addon);
         // Execute and trim args
