@@ -13,6 +13,7 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -115,6 +116,7 @@ public class AdminTeleportCommandTest {
         // Parent command has no aliases
         when(ac.getSubCommandAliases()).thenReturn(new HashMap<>());
         when(ac.getTopLabel()).thenReturn("bskyblock");
+        when(ac.getLabel()).thenReturn("bskyblock");
         when(ac.getWorld()).thenReturn(world);
         when(ac.getPermission()).thenReturn("admin");
 
@@ -148,7 +150,7 @@ public class AdminTeleportCommandTest {
 
         // Locales
         LocalesManager lm = mock(LocalesManager.class);
-        when(lm.get(any(), any())).thenReturn("mock translation");
+        when(lm.get(any(), any())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
         when(plugin.getLocalesManager()).thenReturn(lm);
 
         when(user.getTranslation(Mockito.anyString(),Mockito.anyString(), Mockito.anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
@@ -291,16 +293,35 @@ public class AdminTeleportCommandTest {
     }
 
     @Test
-    public void testPermissions() {
+    public void testPermissionsNoRootPermission() {
+        when(p.hasPermission("admin.tp")).thenReturn(true);
+        when(p.hasPermission("admin")).thenReturn(false);
         when(pm.getUUID(eq("tastybento"))).thenReturn(notUUID);
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
         AdminTeleportCommand atc = new AdminTeleportCommand(ac,"tpend");
-        assertTrue(atc.canExecute(user, "tpend", Collections.singletonList("tastybento")));
-        String[] list = new String[1];
-        list[0] = "tastybento";
-        System.out.println("UUID " + p.getUniqueId());
+        assertTrue(atc.canExecute(user, "tpend", List.of("tastybento")));
+        String[] list = new String[2];
+        list[0] = "tpend";
+        list[1] = "tastybento";
+        // Should fail
+        assertFalse(atc.execute(p, "tpend", list));
+    }
+    
+    @Test
+    public void testPermissionsHasRootPermission() {
+        when(p.hasPermission("admin.tp")).thenReturn(true);
+        when(p.hasPermission("admin")).thenReturn(true);
+        when(pm.getUUID(eq("tastybento"))).thenReturn(notUUID);
+        when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
+        AdminTeleportCommand atc = new AdminTeleportCommand(ac,"tpend");
+        assertTrue(atc.canExecute(user, "tpend", List.of("tastybento")));
+        String[] list = new String[2];
+        list[0] = "tpend";
+        list[1] = "tastybento";
+        // Should pass
         assertTrue(atc.execute(p, "tpend", list));
-        verify(user).getTranslation(eq("commands.admin.tp.manual"), eq("[location]"), eq("0 0 0"));
+        verify(p).hasPermission("admin.tp");
+        verify(p).hasPermission("admin");
     }
 
 }
