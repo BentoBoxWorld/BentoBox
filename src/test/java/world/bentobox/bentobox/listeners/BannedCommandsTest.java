@@ -266,6 +266,106 @@ public class BannedCommandsTest {
      * Test for {@link BannedCommands#onCommand(PlayerCommandPreprocessEvent)}
      */
     @Test
+    public void testBannedCommandsWithBannedCommand2() {
+        PlayerCommandPreprocessEvent e = new PlayerCommandPreprocessEvent(player, "/spawn");
+        BannedCommands bvc = new BannedCommands(plugin);
+        List<String> banned = new ArrayList<>();
+        banned.add("cmi sethome");
+        when(iwm.getVisitorBannedCommands(any())).thenReturn(banned);
+        bvc.onVisitorCommand(e);
+        verify(iwm).getVisitorBannedCommands(any());
+        assertFalse(e.isCancelled());
+
+    }
+    
+    /**
+     * Test for {@link BannedCommands#onCommand(PlayerCommandPreprocessEvent)}
+     */
+    @Test
+    public void testBannedCommandsWithBannedCommand3() {
+        PlayerCommandPreprocessEvent e = new PlayerCommandPreprocessEvent(player, "/cmi sethome");
+        BannedCommands bvc = new BannedCommands(plugin);
+        List<String> banned = new ArrayList<>();
+        banned.add("cmi sethome");
+        when(iwm.getVisitorBannedCommands(any())).thenReturn(banned);
+        bvc.onVisitorCommand(e);
+        verify(iwm).getVisitorBannedCommands(any());
+        assertTrue(e.isCancelled());
+
+    }
+    
+    /**
+     * Test for {@link BannedCommands#onCommand(PlayerCommandPreprocessEvent)}
+     */
+    @Test
+    public void testBannedCommandsWithBannedComman4() {
+        PlayerCommandPreprocessEvent e = new PlayerCommandPreprocessEvent(player, "/cmi");
+        BannedCommands bvc = new BannedCommands(plugin);
+        List<String> banned = new ArrayList<>();
+        banned.add("cmi sethome");
+        when(iwm.getVisitorBannedCommands(any())).thenReturn(banned);
+        bvc.onVisitorCommand(e);
+        verify(iwm).getVisitorBannedCommands(any());
+        assertFalse(e.isCancelled());
+
+    }
+    
+    /**
+     * Test for {@link BannedCommands#onCommand(PlayerCommandPreprocessEvent)}
+     */
+    @Test
+    public void testBannedCommandsWithBannedCommand5() {
+        PlayerCommandPreprocessEvent e = new PlayerCommandPreprocessEvent(player, "/cmi homey");
+        BannedCommands bvc = new BannedCommands(plugin);
+        List<String> banned = new ArrayList<>();
+        banned.add("cmi sethome");
+        when(iwm.getVisitorBannedCommands(any())).thenReturn(banned);
+        bvc.onVisitorCommand(e);
+        verify(iwm).getVisitorBannedCommands(any());
+        assertFalse(e.isCancelled());
+
+    }
+    
+    /**
+     * Test for {@link BannedCommands#onCommand(PlayerCommandPreprocessEvent)}
+     */
+    @Test
+    public void testBannedCommandsWithBannedCommand6() {
+        PlayerCommandPreprocessEvent e = new PlayerCommandPreprocessEvent(player, "/spawn");
+        BannedCommands bvc = new BannedCommands(plugin);
+        List<String> banned = new ArrayList<>();
+        banned.add("cmi sethome");
+        banned.add("spawn sethome now");
+        when(iwm.getVisitorBannedCommands(any())).thenReturn(banned);
+        bvc.onVisitorCommand(e);
+        verify(iwm).getVisitorBannedCommands(any());
+        assertFalse(e.isCancelled());
+
+    }
+    
+    /**
+     * Test for {@link BannedCommands#onCommand(PlayerCommandPreprocessEvent)}
+     */
+    @Test
+    public void testBannedCommandsWithBannedCommand7() {
+        PlayerCommandPreprocessEvent e = new PlayerCommandPreprocessEvent(player, "/spawn");
+        BannedCommands bvc = new BannedCommands(plugin);
+        List<String> banned = new ArrayList<>();
+        banned.add("cmi sethome");
+        banned.add("spawn sethome now");
+        banned.add("cmi multi now");
+        when(iwm.getVisitorBannedCommands(any())).thenReturn(banned);
+        bvc.onVisitorCommand(e);
+        verify(iwm).getVisitorBannedCommands(any());
+        assertFalse(e.isCancelled());
+
+    }
+    
+    
+    /**
+     * Test for {@link BannedCommands#onCommand(PlayerCommandPreprocessEvent)}
+     */
+    @Test
     public void testBannedCommandsWithNothing() {
         PlayerCommandPreprocessEvent e = new PlayerCommandPreprocessEvent(player, "");
         BannedCommands bvc = new BannedCommands(plugin);
