@@ -143,6 +143,16 @@ public class IslandWorldManager {
                 .anyMatch(gm -> gm.getWorldSettings().getFriendlyName().equalsIgnoreCase(name));
     }
 
+    /**
+     * Associate a world with a game mode. This enables game modes to register more worlds than just the standard
+     * overworld, nether, and end worlds.
+     * @param world world
+     * @param gameMode game mode
+     * @since 1.24.0
+     */
+    public void addWorld(World world, GameModeAddon gameMode) {
+        gameModes.put(world, gameMode);
+    }
 
     /**
      * Adds a GameMode to island world manager
