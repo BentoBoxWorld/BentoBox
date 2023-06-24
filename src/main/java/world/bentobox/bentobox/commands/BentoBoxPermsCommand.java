@@ -26,8 +26,10 @@ public class BentoBoxPermsCommand extends CompositeCommand {
 
     @Override
     public void setup() {
-        setPermission("bentobox.perms");
-        this.isOnlyConsole();
+        setPermission("bentobox.admin.perms");
+        setParametersHelp("commands.bentobox.perms.parameters");
+        setDescription("commands.bentobox.perms.description");
+        this.setOnlyConsole(true);
     }
 
     @Override
