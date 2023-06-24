@@ -7,6 +7,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Tag;
 import org.bukkit.block.Block;
+import org.bukkit.block.Sign;
 import org.bukkit.block.data.Waterlogged;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -33,7 +34,7 @@ public class BlockInteractionListener extends FlagListener
      *
      * @param e - event
      */
-    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerInteract(final PlayerInteractEvent e)
     {
         // We only care about the RIGHT_CLICK_BLOCK action.
@@ -43,7 +44,7 @@ public class BlockInteractionListener extends FlagListener
         }
 
         // Check clicked block
-        this.checkClickedBlock(e, e.getPlayer(), e.getClickedBlock().getLocation(), e.getClickedBlock().getType());
+        this.checkClickedBlock(e, e.getPlayer(), e.getClickedBlock());
 
         // Now check for in-hand items
         if (e.getItem() != null && !e.getItem().getType().equals(Material.AIR))
@@ -85,11 +86,12 @@ public class BlockInteractionListener extends FlagListener
      *
      * @param e - event called
      * @param player - player
-     * @param loc - location of clicked block
-     * @param type - material type of clicked block
+     * @param block - block being clicked or used
      */
-    private void checkClickedBlock(Event e, Player player, Location loc, Material type)
+    private void checkClickedBlock(Event e, Player player, Block block)
     {
+        Material type = block.getType();
+        Location loc = block.getLocation();
         // Handle pots
         if (type.name().startsWith("POTTED"))
         {
@@ -133,7 +135,8 @@ public class BlockInteractionListener extends FlagListener
             return;
         }
 
-        if (Tag.SIGNS.isTagged(type)) {
+        if (Tag.SIGNS.isTagged(type) && block instanceof Sign sign && sign.isEditable()) {
+            // If waxed, then sign cannot be edited otherwise check
             this.checkIsland(e, player, loc, Flags.SIGN_EDITING);
             return;
         }
@@ -232,7 +235,7 @@ public class BlockInteractionListener extends FlagListener
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onBlockBreak(final BlockBreakEvent e)
     {
-        this.checkClickedBlock(e, e.getPlayer(), e.getBlock().getLocation(), e.getBlock().getType());
+        this.checkClickedBlock(e, e.getPlayer(), e.getBlock());
     }
 
 
