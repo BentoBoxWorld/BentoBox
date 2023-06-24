@@ -221,7 +221,7 @@ public class ServerCompatibility {
         /**
          * @since 1.24.0
          */
-        V1_20(Compatibility.COMPATIBLE),
+        V1_20(Compatibility.INCOMPATIBLE),
         /**
          * @since 1.24.0
          */
