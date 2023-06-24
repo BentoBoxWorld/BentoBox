@@ -57,20 +57,19 @@ public class BannedCommands implements Listener {
     }
     
     private boolean checkCmd(String cmd, String[] args) {
-        // Commands are guilty until proven innocent :-)
-        boolean banned = true;
         // Get the elements of the banned command by splitting it
         String[] bannedSplit = cmd.toLowerCase(java.util.Locale.ENGLISH).split(" ");
         // If the banned command has the same number of elements or less than the entered command then it may be banned
-        if (bannedSplit.length <= args.length) {                
+        if (bannedSplit.length <= args.length) {               
             for (int i = 0; i < bannedSplit.length; i++) {
-                if (!bannedSplit[i].equals(args[i])) {
-                    banned = false;
-                    break;
+                if (!bannedSplit[i].equalsIgnoreCase(args[i])) {
+                    return false;
                 }
             }
+        } else {
+            return false;
         }
-        return banned;
+        return true;
     }
 
     /**

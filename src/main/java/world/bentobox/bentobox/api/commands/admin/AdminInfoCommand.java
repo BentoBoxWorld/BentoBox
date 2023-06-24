@@ -35,7 +35,7 @@ public class AdminInfoCommand extends CompositeCommand {
         }
         // If there are no args, then the player wants info on the island at this location
         if (args.isEmpty()) {
-            getIslands().getIslandAt(user.getLocation()).ifPresentOrElse(i -> new IslandInfo(i).showAdminInfo(user), () ->
+            getIslands().getIslandAt(user.getLocation()).ifPresentOrElse(i -> new IslandInfo(i).showAdminInfo(user, getAddon()), () ->
             user.sendMessage("commands.admin.info.no-island"));
             return true;
         }
@@ -48,7 +48,7 @@ public class AdminInfoCommand extends CompositeCommand {
         // Show info for this player
         Island island = getIslands().getIsland(getWorld(), targetUUID);
         if (island != null) {
-            new IslandInfo(island).showAdminInfo(user);
+            new IslandInfo(island).showAdminInfo(user, getAddon());
             if (!getIslands().getQuarantinedIslandByUser(getWorld(), targetUUID).isEmpty()) {
                 user.sendMessage("commands.admin.info.islands-in-trash");
             }

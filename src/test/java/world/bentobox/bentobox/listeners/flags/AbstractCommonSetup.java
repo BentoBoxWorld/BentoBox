@@ -123,6 +123,7 @@ public abstract class AbstractCommonSetup {
         when(player.getInventory()).thenReturn(inv);
 
         User.setPlugin(plugin);
+        User.clearUsers();
         User.getInstance(player);
 
         // IWM

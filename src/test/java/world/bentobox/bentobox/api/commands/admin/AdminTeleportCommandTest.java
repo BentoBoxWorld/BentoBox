@@ -13,6 +13,7 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -44,6 +45,7 @@ import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
+import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.util.Util;
 
@@ -74,6 +76,8 @@ public class AdminTeleportCommandTest {
     private World netherWorld;
     @Mock
     private World endWorld;
+    @Mock
+    private PlaceholdersManager phm;
 
 
     /**
@@ -96,16 +100,25 @@ public class AdminTeleportCommandTest {
         while(notUUID.equals(uuid)) {
             notUUID = UUID.randomUUID();
         }
+        when(p.getUniqueId()).thenReturn(uuid);
+        when(p.hasPermission("admin.tp")).thenReturn(true);
+        when(p.hasPermission("admin")).thenReturn(false);
+        
         when(user.getUniqueId()).thenReturn(uuid);
         when(user.getPlayer()).thenReturn(p);
         when(user.getName()).thenReturn("tastybento");
         when(user.isPlayer()).thenReturn(true);
+        when(user.hasPermission("admin.tp")).thenReturn(true);
+        when(user.hasPermission("admin")).thenReturn(false);
+
         User.setPlugin(plugin);
 
         // Parent command has no aliases
         when(ac.getSubCommandAliases()).thenReturn(new HashMap<>());
         when(ac.getTopLabel()).thenReturn("bskyblock");
+        when(ac.getLabel()).thenReturn("bskyblock");
         when(ac.getWorld()).thenReturn(world);
+        when(ac.getPermission()).thenReturn("admin");
 
         // World
         when(world.getEnvironment()).thenReturn(Environment.NORMAL);
@@ -132,12 +145,12 @@ public class AdminTeleportCommandTest {
 
         // Server & Scheduler
         BukkitScheduler sch = mock(BukkitScheduler.class);
-        PowerMockito.mockStatic(Bukkit.class);
+        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
         when(Bukkit.getScheduler()).thenReturn(sch);
 
         // Locales
         LocalesManager lm = mock(LocalesManager.class);
-        when(lm.get(any(), any())).thenReturn("mock translation");
+        when(lm.get(any(), any())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
         when(plugin.getLocalesManager()).thenReturn(lm);
 
         when(user.getTranslation(Mockito.anyString(),Mockito.anyString(), Mockito.anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
@@ -165,6 +178,9 @@ public class AdminTeleportCommandTest {
         // Util
         PowerMockito.mockStatic(Util.class, Mockito.RETURNS_MOCKS);
         when(Util.getUUID(anyString())).thenCallRealMethod();
+        
+        // Placeholder manager
+        when(plugin.getPlaceholdersManager()).thenReturn(phm);
     }
 
     @After
@@ -276,5 +292,36 @@ public class AdminTeleportCommandTest {
         verify(user).getTranslation(eq("commands.admin.tp.manual"), eq("[location]"), eq("0 0 0"));
     }
 
+    @Test
+    public void testPermissionsNoRootPermission() {
+        when(p.hasPermission("admin.tp")).thenReturn(true);
+        when(p.hasPermission("admin")).thenReturn(false);
+        when(pm.getUUID(eq("tastybento"))).thenReturn(notUUID);
+        when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
+        AdminTeleportCommand atc = new AdminTeleportCommand(ac,"tpend");
+        assertTrue(atc.canExecute(user, "tpend", List.of("tastybento")));
+        String[] list = new String[2];
+        list[0] = "tpend";
+        list[1] = "tastybento";
+        // Should fail
+        assertFalse(atc.execute(p, "tpend", list));
+    }
+    
+    @Test
+    public void testPermissionsHasRootPermission() {
+        when(p.hasPermission("admin.tp")).thenReturn(true);
+        when(p.hasPermission("admin")).thenReturn(true);
+        when(pm.getUUID(eq("tastybento"))).thenReturn(notUUID);
+        when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
+        AdminTeleportCommand atc = new AdminTeleportCommand(ac,"tpend");
+        assertTrue(atc.canExecute(user, "tpend", List.of("tastybento")));
+        String[] list = new String[2];
+        list[0] = "tpend";
+        list[1] = "tastybento";
+        // Should pass
+        assertTrue(atc.execute(p, "tpend", list));
+        verify(p).hasPermission("admin.tp");
+        verify(p).hasPermission("admin");
+    }
 
 }

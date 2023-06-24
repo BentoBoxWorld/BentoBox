@@ -9,6 +9,7 @@ import org.bukkit.event.HandlerList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
+import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle;
 import world.bentobox.bentobox.database.objects.Island;
@@ -175,7 +176,12 @@ public class IslandEvent extends IslandBaseEvent {
          * Event that will fire when an island is named or renamed
          * @since 1.24.0
          */
-        NAME
+        NAME, 
+        /**
+         * Event that will fire when the info command is executed. Allows addons to add to it
+         * @since 1.24.0
+         */
+        INFO
     }
 
     public static IslandEventBuilder builder() {
@@ -223,6 +229,10 @@ public class IslandEvent extends IslandBaseEvent {
          * @since 1.24.0 Previous name of island
          */
         private String previousName;
+        /**
+         * @since 1.24.0 GameMode addon causing this event
+         */
+        private Addon addon;
 
         public IslandEventBuilder island(Island island) {
             this.island = island;
@@ -324,6 +334,16 @@ public class IslandEvent extends IslandBaseEvent {
             this.previousName = previousName;
             return this;
         }
+        
+        /**
+         * Addon that triggered this event, e.g. BSkyBlock
+         * @param addon Addon.
+         * @since 1.24.0
+         */
+        public IslandEventBuilder addon(Addon addon) {
+            this.addon = addon;
+            return this;
+        }
 
         private IslandBaseEvent getEvent() {
             return switch (reason) {
@@ -350,6 +370,7 @@ public class IslandEvent extends IslandBaseEvent {
             case RANK_CHANGE -> new IslandRankChangeEvent(island, player, admin, location, oldRank, newRank);
             case NEW_ISLAND -> new IslandNewIslandEvent(island, player, admin, location);
             case NAME -> new IslandNameEvent(island, player, admin, location, previousName);
+            case INFO -> new IslandInfoEvent(island, player, admin, location, addon);
             default -> new IslandGeneralEvent(island, player, admin, location);
             };
         }
