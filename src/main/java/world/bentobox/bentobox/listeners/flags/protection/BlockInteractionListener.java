@@ -7,6 +7,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Tag;
 import org.bukkit.block.Block;
+import org.bukkit.block.BrushableBlock;
 import org.bukkit.block.Sign;
 import org.bukkit.block.data.Waterlogged;
 import org.bukkit.entity.Player;
@@ -96,6 +97,12 @@ public class BlockInteractionListener extends FlagListener
         if (type.name().startsWith("POTTED"))
         {
             this.checkIsland(e, player, loc, Flags.FLOWER_POT);
+            return;
+        }
+        
+        if (block.getState() instanceof BrushableBlock bb && BlockInteractionListener.holds(player, Material.BRUSH)) {
+            // Protect this using break blocks flag for now. Maybe in the future it can have its own flag.
+            this.checkIsland(e, player, loc, Flags.BREAK_BLOCKS);
             return;
         }
 
