@@ -1,9 +1,8 @@
 package world.bentobox.bentobox.listeners.flags.protection;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.bukkit.Bukkit;
@@ -69,7 +68,8 @@ public class SculkSensorListenerTest extends AbstractCommonSetup {
     public void testOnSculkSensorNotAllowed() {
         when(island.isAllowed(any(), any())).thenReturn(false);
         BlockReceiveGameEvent e = new BlockReceiveGameEvent(GameEvent.BLOCK_ACTIVATE, block, player);
-        assertFalse(ssl.onSculkSensor(e));
+        ssl.onSculkSensor(e);
+        assertTrue(e.isCancelled());
     }
     
     /**
@@ -78,7 +78,8 @@ public class SculkSensorListenerTest extends AbstractCommonSetup {
     @Test
     public void testOnSculkSensorAllowed() {
         BlockReceiveGameEvent e = new BlockReceiveGameEvent(GameEvent.BLOCK_ACTIVATE, block, player);
-        assertTrue(ssl.onSculkSensor(e));
+        ssl.onSculkSensor(e);
+        assertFalse(e.isCancelled());
     }
     
     /**
@@ -88,7 +89,8 @@ public class SculkSensorListenerTest extends AbstractCommonSetup {
     public void testOnSculkSensorNotInWorld() {
         when(iwm.inWorld(any(World.class))).thenReturn(false);
         BlockReceiveGameEvent e = new BlockReceiveGameEvent(GameEvent.BLOCK_ACTIVATE, block, player);
-        assertTrue(ssl.onSculkSensor(e));
+        ssl.onSculkSensor(e);
+        assertFalse(e.isCancelled());
     }
     
     /**
@@ -99,7 +101,8 @@ public class SculkSensorListenerTest extends AbstractCommonSetup {
         when(block.getType()).thenReturn(Material.CALIBRATED_SCULK_SENSOR);
         when(island.isAllowed(any(), any())).thenReturn(false);
         BlockReceiveGameEvent e = new BlockReceiveGameEvent(GameEvent.BLOCK_ACTIVATE, block, player);
-        assertFalse(ssl.onSculkSensor(e));
+        ssl.onSculkSensor(e);
+        assertTrue(e.isCancelled());
     }
     
     /**
@@ -109,7 +112,8 @@ public class SculkSensorListenerTest extends AbstractCommonSetup {
     public void testOnSculkSensorAllowedCalibrated() {
         when(block.getType()).thenReturn(Material.CALIBRATED_SCULK_SENSOR);
         BlockReceiveGameEvent e = new BlockReceiveGameEvent(GameEvent.BLOCK_ACTIVATE, block, player);
-        assertTrue(ssl.onSculkSensor(e));
+        ssl.onSculkSensor(e);
+        assertFalse(e.isCancelled());
     }
     
     /**
@@ -120,7 +124,8 @@ public class SculkSensorListenerTest extends AbstractCommonSetup {
         when(block.getType()).thenReturn(Material.CALIBRATED_SCULK_SENSOR);
         when(iwm.inWorld(any(World.class))).thenReturn(false);
         BlockReceiveGameEvent e = new BlockReceiveGameEvent(GameEvent.BLOCK_ACTIVATE, block, player);
-        assertTrue(ssl.onSculkSensor(e));
+        ssl.onSculkSensor(e);
+        assertFalse(e.isCancelled());
     }
     
     /**
@@ -131,7 +136,8 @@ public class SculkSensorListenerTest extends AbstractCommonSetup {
         when(block.getType()).thenReturn(Material.SHULKER_BOX);
         when(island.isAllowed(any(), any())).thenReturn(false);
         BlockReceiveGameEvent e = new BlockReceiveGameEvent(GameEvent.BLOCK_ACTIVATE, block, player);
-        assertTrue(ssl.onSculkSensor(e));
+        ssl.onSculkSensor(e);
+        assertFalse(e.isCancelled());
     }
     
     /**
@@ -141,7 +147,8 @@ public class SculkSensorListenerTest extends AbstractCommonSetup {
     public void testOnSculkSensorAllowedNotSculk() {
         when(block.getType()).thenReturn(Material.SHULKER_BOX);
         BlockReceiveGameEvent e = new BlockReceiveGameEvent(GameEvent.BLOCK_ACTIVATE, block, player);
-        assertTrue(ssl.onSculkSensor(e));
+        ssl.onSculkSensor(e);
+        assertFalse(e.isCancelled());
     }
     
     /**
@@ -152,7 +159,8 @@ public class SculkSensorListenerTest extends AbstractCommonSetup {
         when(block.getType()).thenReturn(Material.SHULKER_BOX);
         when(iwm.inWorld(any(World.class))).thenReturn(false);
         BlockReceiveGameEvent e = new BlockReceiveGameEvent(GameEvent.BLOCK_ACTIVATE, block, player);
-        assertTrue(ssl.onSculkSensor(e));
+        ssl.onSculkSensor(e);
+        assertFalse(e.isCancelled());
     }
 
 }

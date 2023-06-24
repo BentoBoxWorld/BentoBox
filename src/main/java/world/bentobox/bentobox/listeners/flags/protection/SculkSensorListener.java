@@ -27,22 +27,21 @@ public class SculkSensorListener extends FlagListener
     /**
      * This listener detects if a visitor activates sculk sensor, and block it, if required.
      * @param event Sculk activation event.
-     * @return true if the check is okay, false if it was disallowed
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public boolean onSculkSensor(BlockReceiveGameEvent event)
+    public void onSculkSensor(BlockReceiveGameEvent event)
     {
         if (!this.getIWM().inWorld(event.getBlock().getWorld()))
         {
-            return true;
+            return;
         }
 
         if ((event.getBlock().getType() == Material.SCULK_SENSOR 
                 || event.getBlock().getType() == Enums.getIfPresent(Material.class, "CALIBRATED_SCULK_SENSOR").or(Material.SCULK_SENSOR))
             && event.getEntity() != null && event.getEntity() instanceof Player player)
         {
-            return this.checkIsland(event, player, event.getBlock().getLocation(), Flags.SCULK_SENSOR, true);
+            this.checkIsland(event, player, event.getBlock().getLocation(), Flags.SCULK_SENSOR, true);
         }
-        return true;
+        return;
     }
 }
