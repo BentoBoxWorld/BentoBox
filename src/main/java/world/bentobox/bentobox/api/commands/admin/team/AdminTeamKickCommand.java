@@ -30,7 +30,7 @@ public class AdminTeamKickCommand extends CompositeCommand {
 
     @Override
     public void setup() {
-        setPermission("mod.team");
+        setPermission("mod.team.kick");
         setParametersHelp("commands.admin.team.kick.parameters");
         setDescription("commands.admin.team.kick.description");
     }

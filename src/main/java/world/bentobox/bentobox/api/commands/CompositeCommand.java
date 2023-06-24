@@ -49,6 +49,13 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     private boolean onlyPlayer = false;
 
     /**
+     * True if the command is only for the console
+     * @since 1.24.0
+     */
+    private boolean onlyConsole = false;
+
+
+    /**
      * True if command is a configurable rank
      */
     private boolean configurableRankCommand = false;
@@ -256,10 +263,16 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      */
     public boolean call(User user, String cmdLabel, List<String> cmdArgs) {
         // Check for console and permissions
-        if (onlyPlayer && !user.isPlayer()) {
+        if (isOnlyPlayer() && !user.isPlayer()) {
             user.sendMessage("general.errors.use-in-game");
             return false;
         }
+
+        if (isOnlyConsole() && user.isPlayer()) {
+            user.sendMessage("general.errors.use-in-console");
+            return false;
+        }
+
         if (!this.runPermissionCheck(user))
         {
             // Error message is displayed by permission check.
@@ -511,6 +524,14 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     }
 
     /**
+     * Check if this command is only for consoles.
+     * @return true or false
+     */
+    public boolean isOnlyConsole() {
+        return onlyConsole;
+    }
+
+    /**
      * Sets whether this command should only be run by players.
      * If this is set to {@code true}, this command will only be runnable by objects implementing {@link Player}.
      * <br/><br/>
@@ -520,6 +541,18 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      */
     public void setOnlyPlayer(boolean onlyPlayer) {
         this.onlyPlayer = onlyPlayer;
+    }
+
+    /**
+     * Sets whether this command should only be run in the console.
+     * This is for commands that dump a lot of data or are for debugging.
+     * The default value provided when instantiating this CompositeCommand is {@code false}.
+     * Therefore, this method should only be used in case you want to explicitly edit the value.
+     * @param onlyConsole {@code true} if this command should only be run in the console.
+     * @since 1.24.0
+     */
+    public void setOnlyConsole(boolean onlyConsole) {
+        this.onlyConsole = onlyConsole;
     }
 
     /**
@@ -620,16 +653,17 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     @Override
     @NonNull
     public List<String> tabComplete(final @NonNull CommandSender sender, final @NonNull String alias, final String[] args) {
-        List<String> options = new ArrayList<>();
         // Get command object based on args entered so far
         CompositeCommand command = getCommandFromArgs(args);
         // Check for console and permissions
-        if (command.isOnlyPlayer() && !(sender instanceof Player)) {
-            return options;
+        if ((command.isOnlyPlayer() && !(sender instanceof Player))
+                || (command.isOnlyConsole() && sender instanceof Player)) {
+            return List.of();
         }
         if (command.getPermission() != null && !command.getPermission().isEmpty() && !sender.hasPermission(command.getPermission()) && !sender.isOp()) {
-            return options;
+            return List.of();
         }
+        List<String> options = new ArrayList<>();
         // Add any tab completion from the subcommand
         options.addAll(command.tabComplete(User.getInstance(sender), alias, new LinkedList<>(Arrays.asList(args))).orElseGet(ArrayList::new));
         if (command.hasSubCommands()) {
@@ -651,17 +685,26 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     }
 
     /**
-     * Returns a list containing all the labels of the subcommands for the provided CompositeCommand excluding any hidden commands
+     * Returns a list containing all the labels of the subcommands for the provided
+     * CompositeCommand excluding any hidden commands
      * @param sender the CommandSender
      * @param command the CompositeCommand to get the subcommands from
      * @return a list of subcommands labels or an empty list.
      */
     @NonNull
     private List<String> getSubCommandLabels(@NonNull CommandSender sender, @NonNull CompositeCommand command) {
-        return command.getSubCommands().values().stream()
-                .filter(cmd -> !cmd.isHidden())
-                .filter(cmd -> !cmd.isOnlyPlayer() || sender.isOp() || (sender instanceof Player && cmd.getPermission() != null && (cmd.getPermission().isEmpty() || sender.hasPermission(cmd.getPermission()))) )
-                .map(CompositeCommand::getLabel).toList();
+        List<String> result = new ArrayList<>();
+        for (CompositeCommand cc: command.getSubCommands().values()) {
+            // Player or not
+            if (sender instanceof Player) {
+                if (!cc.isHidden() && !cc.isOnlyConsole() && (cc.getPermission().isEmpty() || sender.hasPermission(cc.getPermission()))) {
+                    result.add(cc.getLabel());
+                }
+            } else if (!cc.isOnlyPlayer()) {
+                result.add(cc.getLabel());
+            }
+        }
+        return result;
     }
 
     /**

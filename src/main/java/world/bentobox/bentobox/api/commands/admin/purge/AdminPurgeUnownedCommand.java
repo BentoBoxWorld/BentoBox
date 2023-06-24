@@ -17,7 +17,7 @@ public class AdminPurgeUnownedCommand extends ConfirmableCommand {
 
     @Override
     public void setup() {
-        inheritPermission();
+        setPermission("admin.purge.unowned");
         setOnlyPlayer(false);
         setParametersHelp("commands.admin.purge.unowned.parameters");
         setDescription("commands.admin.purge.unowned.description");

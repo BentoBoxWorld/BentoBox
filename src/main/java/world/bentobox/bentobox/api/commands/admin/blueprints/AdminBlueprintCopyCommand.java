@@ -19,7 +19,7 @@ public class AdminBlueprintCopyCommand extends CompositeCommand
     @Override
     public void setup()
     {
-        inheritPermission();
+        setPermission("admin.blueprint.copy");
         setParametersHelp("commands.admin.blueprint.copy.parameters");
         setDescription("commands.admin.blueprint.copy.description");
     }
@@ -37,7 +37,7 @@ public class AdminBlueprintCopyCommand extends CompositeCommand
         AdminBlueprintCommand parent = (AdminBlueprintCommand) getParent();
 
         BlueprintClipboard clipboard =
-            parent.getClipboards().computeIfAbsent(user.getUniqueId(), v -> new BlueprintClipboard());
+                parent.getClipboards().computeIfAbsent(user.getUniqueId(), v -> new BlueprintClipboard());
 
         boolean copyAir = args.stream().anyMatch(key -> key.equalsIgnoreCase("air"));
         boolean copyBiome = args.stream().anyMatch(key -> key.equalsIgnoreCase("biome"));
