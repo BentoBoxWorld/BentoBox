@@ -125,6 +125,7 @@ public abstract class FlagListener implements Listener {
      * @return true if the check is okay, false if it was disallowed
      */
     public boolean checkIsland(@NonNull Event e, @Nullable Player player, @Nullable Location loc, @NonNull Flag flag, boolean silent) {
+        
         // Set user
         user = player == null ? null : User.getInstance(player);
         if (loc == null) {
