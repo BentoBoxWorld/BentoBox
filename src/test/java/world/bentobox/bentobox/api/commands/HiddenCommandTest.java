@@ -13,6 +13,7 @@ import static org.mockito.Mockito.when;
 import java.util.List;
 
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -85,6 +86,21 @@ public class HiddenCommandTest {
         CommandSender sender = mock(CommandSender.class);
         String[] args = {"h"};
         List<String> opList = tlc.tabComplete(sender, "top", args);
+        assertEquals(2, opList.size());
+        assertEquals("help", opList.get(0)); // Console can see all commands
+        assertEquals("hidden", opList.get(1)); // Console can see all commands
+    }
+    
+    /**
+     * Test method for {@link world.bentobox.bentobox.api.commands.CompositeCommand#tabComplete(Player, java.lang.String, java.lang.String[])}.
+     */
+    @Test
+    public void testTabCompletePlayerStringStringArrayHidden() {
+        TopLevelCommand tlc = new TopLevelCommand();
+        Player sender = mock(Player.class);
+        String[] args = {"h"};
+        List<String> opList = tlc.tabComplete(sender, "top", args);
+        opList.forEach(System.out::println);
         assertEquals(1, opList.size());
         assertEquals("help", opList.get(0)); // Only help
     }
@@ -95,7 +111,7 @@ public class HiddenCommandTest {
     @Test
     public void testTabCompleteCommandSenderStringStringArrayInvisible() {
         TopLevelCommand tlc = new TopLevelCommand();
-        CommandSender sender = mock(CommandSender.class);
+        Player sender = mock(Player.class);
         String[] args = {"i"};
         List<String> opList = tlc.tabComplete(sender, "top", args);
         assertTrue(opList.isEmpty());
