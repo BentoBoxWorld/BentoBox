@@ -5,6 +5,9 @@ import java.util.Optional;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.server.ServerCommandEvent;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -52,7 +55,7 @@ import world.bentobox.bentobox.versions.ServerCompatibility;
  * Main BentoBox class
  * @author tastybento, Poslovitch
  */
-public class BentoBox extends JavaPlugin {
+public class BentoBox extends JavaPlugin implements Listener {
 
     private static BentoBox instance;
 
@@ -227,7 +230,7 @@ public class BentoBox extends JavaPlugin {
         // Make sure all worlds are already registered to Multiverse.
         hooksManager.registerHook(new MultiverseCoreHook());
         hooksManager.registerHook(new MyWorldsHook());
-        islandWorldManager.registerWorldsToMultiverse();
+        islandWorldManager.registerWorldsToMultiverse(true);
 
         // TODO: re-enable after implementation
         //hooksManager.registerHook(new DynmapHook());
@@ -300,6 +303,8 @@ public class BentoBox extends JavaPlugin {
         manager.registerEvents(new BannedCommands(this), this);
         // Death counter
         manager.registerEvents(new DeathListener(this), this);
+        // MV unregister
+        manager.registerEvents(this, this);
         // Island Delete Manager
         islandChunkDeletionManager = new IslandChunkDeletionManager(this);
         islandDeletionManager = new IslandDeletionManager(this);
@@ -320,6 +325,15 @@ public class BentoBox extends JavaPlugin {
         }
         if (islandsManager != null) {
             islandsManager.shutdown();
+        }
+
+    }
+
+    @EventHandler
+    public void onServerStop(ServerCommandEvent e) {
+        if (islandWorldManager != null && (e.getCommand().equalsIgnoreCase("stop") || e.getCommand().equalsIgnoreCase("restart"))) {
+            // Unregister any MV worlds            if () {
+            islandWorldManager.registerWorldsToMultiverse(false);
         }
     }
 

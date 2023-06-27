@@ -50,35 +50,47 @@ public class IslandWorldManager {
         gameModes = new HashMap<>();
     }
 
-    public void registerWorldsToMultiverse() {
+    /**
+     * Registers or unregisters worlds with world management plugins
+     *
+     * @param reg true to register, false to remove registration
+     *
+     * Updated 1.24.0
+     */
+    public void registerWorldsToMultiverse(boolean reg) {
         gameModes.values().stream().distinct().forEach(gm -> {
-            registerToWorldManagementPlugins(gm.getOverWorld(), true);
+            registerToWorldManagementPlugins(gm.getOverWorld(), true, reg);
             if (gm.getWorldSettings().isNetherGenerate()) {
-                registerToWorldManagementPlugins(gm.getNetherWorld(), gm.getWorldSettings().isNetherIslands());
+                registerToWorldManagementPlugins(gm.getNetherWorld(), gm.getWorldSettings().isNetherIslands(), reg);
             }
             if (gm.getWorldSettings().isEndGenerate()) {
-                registerToWorldManagementPlugins(gm.getEndWorld(), gm.getWorldSettings().isEndIslands());
+                registerToWorldManagementPlugins(gm.getEndWorld(), gm.getWorldSettings().isEndIslands(), reg);
             }
         });
     }
 
-    /**
-     * Registers a world with world management plugins
-     *
-     * @param world the World to register
-     * @param islandWorld true if this is an island world
-     */
-    private void registerToWorldManagementPlugins(@NonNull World world, boolean islandWorld) {
-        if (plugin.getHooks() != null) {
-            for (Hook hook : plugin.getHooks().getHooks()) {
-                if (hook instanceof final WorldManagementHook worldManagementHook) {
-                    if (Bukkit.isPrimaryThread()) {
-                        worldManagementHook.registerWorld(world, islandWorld);
-                    } else {
-                        Bukkit.getScheduler().runTask(plugin, () -> worldManagementHook.registerWorld(world, islandWorld));
-                    }
+
+    private void registerToWorldManagementPlugins(@NonNull World world, boolean islandWorld, boolean reg) {
+        if (plugin.getHooks() == null) {
+            return;
+        }
+        for (Hook hook : plugin.getHooks().getHooks()) {
+            if (hook instanceof final WorldManagementHook worldManagementHook) {
+                if (Bukkit.isPrimaryThread()) {
+                    runTask(worldManagementHook, world, islandWorld, reg);
+                } else {
+                    Bukkit.getScheduler().runTask(plugin, () -> runTask(worldManagementHook, world, islandWorld, reg));
                 }
             }
+        }
+
+    }
+
+    private void runTask(WorldManagementHook worldManagementHook, @NonNull World world, boolean islandWorld, boolean reg) {
+        if (reg) {
+            worldManagementHook.registerWorld(world, islandWorld);
+        } else {
+            worldManagementHook.unregisterWorld(world);
         }
     }
 
@@ -169,27 +181,27 @@ public class IslandWorldManager {
         // Add worlds to map
         gameModes.put(world, gameMode);
         // Call Multiverse
-        registerToWorldManagementPlugins(world, true);
+        registerToWorldManagementPlugins(world, true, true);
         if (settings.isNetherGenerate()) {
             gameModes.put(gameMode.getNetherWorld(), gameMode);
             if (settings.isNetherIslands()) {
-                registerToWorldManagementPlugins(gameMode.getNetherWorld(), true);
+                registerToWorldManagementPlugins(gameMode.getNetherWorld(), true, true);
             }
         }
         if (settings.isEndGenerate()) {
             gameModes.put(gameMode.getEndWorld(), gameMode);
             if (settings.isEndIslands()) {
-                registerToWorldManagementPlugins(gameMode.getEndWorld(), true);
+                registerToWorldManagementPlugins(gameMode.getEndWorld(), true, true);
             }
         }
 
         // Set default island settings
         plugin.getFlagsManager().getFlags().stream().
-            filter(f -> f.getType().equals(Flag.Type.PROTECTION)).
-            forEach(f -> settings.getDefaultIslandFlagNames().putIfAbsent(f.getID(), f.getDefaultRank()));
+        filter(f -> f.getType().equals(Flag.Type.PROTECTION)).
+        forEach(f -> settings.getDefaultIslandFlagNames().putIfAbsent(f.getID(), f.getDefaultRank()));
         plugin.getFlagsManager().getFlags().stream().
-            filter(f -> f.getType().equals(Flag.Type.SETTING)).
-            forEach(f -> settings.getDefaultIslandSettingNames().putIfAbsent(f.getID(), f.getDefaultRank()));
+        filter(f -> f.getType().equals(Flag.Type.SETTING)).
+        forEach(f -> settings.getDefaultIslandSettingNames().putIfAbsent(f.getID(), f.getDefaultRank()));
 
         Bukkit.getScheduler().runTask(plugin, () -> {
             // Set world difficulty
@@ -494,8 +506,8 @@ public class IslandWorldManager {
      */
     public String getFriendlyName(@NonNull World world) {
         return gameModes.containsKey(world) ?
-            gameModes.get(world).getWorldSettings().getFriendlyName() :
-            world.getName();
+                gameModes.get(world).getWorldSettings().getFriendlyName() :
+                    world.getName();
     }
 
     /**
@@ -720,8 +732,8 @@ public class IslandWorldManager {
     public Map<Flag, Integer> getDefaultIslandFlags(@NonNull World world)
     {
         return this.gameModes.containsKey(world) ?
-            this.convertToFlags(this.gameModes.get(world).getWorldSettings().getDefaultIslandFlagNames()) :
-            Collections.emptyMap();
+                this.convertToFlags(this.gameModes.get(world).getWorldSettings().getDefaultIslandFlagNames()) :
+                    Collections.emptyMap();
     }
 
     /**
@@ -742,8 +754,8 @@ public class IslandWorldManager {
     public Map<Flag, Integer> getDefaultIslandSettings(@NonNull World world)
     {
         return this.gameModes.containsKey(world) ?
-            this.convertToFlags(this.gameModes.get(world).getWorldSettings().getDefaultIslandSettingNames()) :
-            Collections.emptyMap();
+                this.convertToFlags(this.gameModes.get(world).getWorldSettings().getDefaultIslandSettingNames()) :
+                    Collections.emptyMap();
     }
 
     public boolean isUseOwnGenerator(@NonNull World world) {
@@ -955,7 +967,7 @@ public class IslandWorldManager {
     {
         Map<Flag, Integer> flagMap = new HashMap<>();
         flagNamesMap.forEach((key, value) ->
-            this.plugin.getFlagsManager().getFlag(key).ifPresent(flag -> flagMap.put(flag, value)));
+        this.plugin.getFlagsManager().getFlag(key).ifPresent(flag -> flagMap.put(flag, value)));
         return flagMap;
     }
 }
