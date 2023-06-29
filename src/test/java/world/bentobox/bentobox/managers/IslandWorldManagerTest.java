@@ -114,7 +114,7 @@ public class IslandWorldManagerTest {
      */
     @Test
     public void testRegisterWorldsToMultiverse() {
-        iwm.registerWorldsToMultiverse();
+        iwm.registerWorldsToMultiverse(true);
     }
 
     /**
