@@ -182,13 +182,13 @@ public class IslandWorldManager {
         gameModes.put(world, gameMode);
         // Call Multiverse
         registerToWorldManagementPlugins(world, true, true);
-        if (settings.isNetherGenerate()) {
+        if (settings.isNetherGenerate() && gameMode.getNetherWorld() != null) {
             gameModes.put(gameMode.getNetherWorld(), gameMode);
             if (settings.isNetherIslands()) {
                 registerToWorldManagementPlugins(gameMode.getNetherWorld(), true, true);
             }
         }
-        if (settings.isEndGenerate()) {
+        if (settings.isEndGenerate() && gameMode.getEndWorld() != null) {
             gameModes.put(gameMode.getEndWorld(), gameMode);
             if (settings.isEndIslands()) {
                 registerToWorldManagementPlugins(gameMode.getEndWorld(), true, true);
