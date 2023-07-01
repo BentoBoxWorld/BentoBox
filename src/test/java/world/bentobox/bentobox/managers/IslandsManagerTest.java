@@ -109,6 +109,8 @@ public class IslandsManagerTest extends AbstractCommonSetup {
     @Mock
     private IslandWorldManager iwm;
     @Mock
+    private IslandDeletionManager deletionManager;
+    @Mock
     private IslandChunkDeletionManager chunkDeletionManager;
     @Mock
     private IslandCache islandCache;
@@ -160,9 +162,6 @@ public class IslandsManagerTest extends AbstractCommonSetup {
         when(iwm.inWorld(any(World.class))).thenReturn(true);
         when(iwm.inWorld(any(Location.class))).thenReturn(true);
         when(plugin.getIWM()).thenReturn(iwm);
-
-        // Chunk deletion manager
-        when(plugin.getIslandChunkDeletionManager()).thenReturn(chunkDeletionManager);
 
         // Settings
         Settings s = mock(Settings.class);
@@ -311,7 +310,9 @@ public class IslandsManagerTest extends AbstractCommonSetup {
                 .getNearbyEntities(any(Location.class), Mockito.anyDouble(), Mockito.anyDouble(), Mockito.anyDouble()))
         .thenReturn(collection);
 
-
+        // Deletion Manager
+        when(deletionManager.getIslandChunkDeletionManager()).thenReturn(chunkDeletionManager);
+        when(plugin.getIslandDeletionManager()).thenReturn(deletionManager);
 
         // database must be mocked here
         db = mock(Database.class);

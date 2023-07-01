@@ -343,7 +343,7 @@ public class IslandsManager {
             // Remove players from island
             removePlayersFromIsland(island);
             // Remove blocks from world
-            plugin.getIslandChunkDeletionManager().add(new IslandDeletion(island));
+            plugin.getIslandDeletionManager().getIslandChunkDeletionManager().add(new IslandDeletion(island));
         }
     }
 
