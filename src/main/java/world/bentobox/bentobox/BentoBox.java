@@ -39,7 +39,6 @@ import world.bentobox.bentobox.managers.BlueprintsManager;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.FlagsManager;
 import world.bentobox.bentobox.managers.HooksManager;
-import world.bentobox.bentobox.managers.IslandChunkDeletionManager;
 import world.bentobox.bentobox.managers.IslandDeletionManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
@@ -74,7 +73,6 @@ public class BentoBox extends JavaPlugin implements Listener {
     private HooksManager hooksManager;
     private PlaceholdersManager placeholdersManager;
     private IslandDeletionManager islandDeletionManager;
-    private IslandChunkDeletionManager islandChunkDeletionManager;
     private WebManager webManager;
 
     // Settings
@@ -306,7 +304,6 @@ public class BentoBox extends JavaPlugin implements Listener {
         // MV unregister
         manager.registerEvents(this, this);
         // Island Delete Manager
-        islandChunkDeletionManager = new IslandChunkDeletionManager(this);
         islandDeletionManager = new IslandDeletionManager(this);
         manager.registerEvents(islandDeletionManager, this);
     }
@@ -543,13 +540,6 @@ public class BentoBox extends JavaPlugin implements Listener {
      */
     public IslandDeletionManager getIslandDeletionManager() {
         return islandDeletionManager;
-    }
-
-    /**
-     * @return the islandChunkDeletionManager
-     */
-    public IslandChunkDeletionManager getIslandChunkDeletionManager() {
-        return islandChunkDeletionManager;
     }
 
     /**
