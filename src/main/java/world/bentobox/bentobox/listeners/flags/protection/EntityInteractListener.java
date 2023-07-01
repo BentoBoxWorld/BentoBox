@@ -39,7 +39,7 @@ public class EntityInteractListener extends FlagListener {
         }
     }
 
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerInteractEntity(PlayerInteractEntityEvent e)
     {
         Player p = e.getPlayer();
