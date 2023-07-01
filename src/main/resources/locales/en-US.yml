@@ -776,6 +776,12 @@ protection:
         Toggle placing, breaking and
         entering into boats.
       hint: "No boat interaction allowed"
+    BOOKSHELF:
+      name: "Bookshelves"
+      description: |-
+        &a Allow to place books
+        &a or to take books.
+      hint: "cannot place a book or take a book."
     BREAK_BLOCKS:
       description: "Toggle breaking"
       name: "Break blocks"

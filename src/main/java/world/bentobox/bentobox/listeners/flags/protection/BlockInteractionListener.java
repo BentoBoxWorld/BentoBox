@@ -99,7 +99,7 @@ public class BlockInteractionListener extends FlagListener
             this.checkIsland(e, player, loc, Flags.FLOWER_POT);
             return;
         }
-        
+
         if (block.getState() instanceof BrushableBlock bb && BlockInteractionListener.holds(player, Material.BRUSH)) {
             // Protect this using break blocks flag for now. Maybe in the future it can have its own flag.
             this.checkIsland(e, player, loc, Flags.BREAK_BLOCKS);
@@ -171,14 +171,12 @@ public class BlockInteractionListener extends FlagListener
         case DISPENSER -> this.checkIsland(e, player, loc, Flags.DISPENSER);
         case DROPPER -> this.checkIsland(e, player, loc, Flags.DROPPER);
         case HOPPER, HOPPER_MINECART -> this.checkIsland(e, player, loc, Flags.HOPPER);
-        case BLAST_FURNACE, CAMPFIRE, FURNACE_MINECART, FURNACE, SMOKER ->
-        this.checkIsland(e, player, loc, Flags.FURNACE);
+        case BLAST_FURNACE, CAMPFIRE, FURNACE_MINECART, FURNACE, SMOKER -> this.checkIsland(e, player, loc, Flags.FURNACE);
         case ENCHANTING_TABLE -> this.checkIsland(e, player, loc, Flags.ENCHANTING);
         case ENDER_CHEST -> this.checkIsland(e, player, loc, Flags.ENDER_CHEST);
         case JUKEBOX -> this.checkIsland(e, player, loc, Flags.JUKEBOX);
         case NOTE_BLOCK -> this.checkIsland(e, player, loc, Flags.NOTE_BLOCK);
-        case CRAFTING_TABLE, CARTOGRAPHY_TABLE, GRINDSTONE, STONECUTTER, LOOM ->
-        this.checkIsland(e, player, loc, Flags.CRAFTING);
+        case CRAFTING_TABLE, CARTOGRAPHY_TABLE, GRINDSTONE, STONECUTTER, LOOM -> this.checkIsland(e, player, loc, Flags.CRAFTING);
         case LEVER -> this.checkIsland(e, player, loc, Flags.LEVER);
         case REDSTONE_WIRE, REPEATER, COMPARATOR, DAYLIGHT_DETECTOR -> this.checkIsland(e, player, loc, Flags.REDSTONE);
         case DRAGON_EGG -> this.checkIsland(e, player, loc, Flags.DRAGON_EGG);
@@ -186,6 +184,7 @@ public class BlockInteractionListener extends FlagListener
         case GLOW_ITEM_FRAME, ITEM_FRAME -> this.checkIsland(e, player, loc, Flags.ITEM_FRAME);
         case SWEET_BERRY_BUSH, CAVE_VINES -> this.checkIsland(e, player, loc, Flags.BREAK_BLOCKS);
         case CAKE -> this.checkIsland(e, player, loc, Flags.CAKE);
+        case CHISELED_BOOKSHELF -> this.checkIsland(e, player, loc, Flags.BOOKSHELF);
         case LAVA_CAULDRON ->
         {
             if (BlockInteractionListener.holds(player, Material.BUCKET))
