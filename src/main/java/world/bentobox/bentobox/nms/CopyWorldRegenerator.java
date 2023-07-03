@@ -17,6 +17,8 @@ import org.bukkit.block.BlockState;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.block.Sign;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.block.sign.Side;
+import org.bukkit.block.sign.SignSide;
 import org.bukkit.entity.AbstractHorse;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.ChestedHorse;
@@ -45,6 +47,7 @@ import world.bentobox.bentobox.util.MyBiomeGrid;
  *
  */
 public abstract class CopyWorldRegenerator implements WorldRegenerator {
+
     private final BentoBox plugin;
 
     protected CopyWorldRegenerator() {
@@ -68,7 +71,7 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
     public CompletableFuture<Void> regenerate(GameModeAddon gm, IslandDeletion di, World world) {
         return gm.isUsesNewChunkGeneration() ? regenerateCopy(gm, di, world) : regenerateSimple(gm, di, world);
     }
-    
+
     public CompletableFuture<Void> regenerateCopy(GameModeAddon gm, IslandDeletion di, World world) {
         CompletableFuture<Void> bigFuture = new CompletableFuture<>();
         new BukkitRunnable() {
@@ -110,7 +113,7 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
 
     @Override
     public CompletableFuture<Void> regenerateChunk(Chunk chunk) {
-        return regenerateChunk(null, chunk.getWorld(), chunk.getX(), chunk.getZ()); 
+        return regenerateChunk(null, chunk.getWorld(), chunk.getX(), chunk.getZ());
     }
 
     private CompletableFuture<Void> regenerateChunk(@Nullable IslandDeletion di, World world, int chunkX, int chunkZ) {
@@ -132,7 +135,7 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
                 copyChunkDataToChunk(chunkTo, chunkFrom, di != null ? di.getBox() : null);
 
             } catch (InterruptedException | ExecutionException e) {
-                Thread.currentThread().interrupt();                
+                Thread.currentThread().interrupt();
             }
         });
         return CompletableFuture.allOf(cleanFuture, copyFuture);
@@ -159,7 +162,7 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
                 );
 
         // Similarly, when the chunk is loaded, remove all the entities in the chunk apart from players
-        CompletableFuture<Void> entitiesFuture = chunkFuture.thenAccept(chunk -> 
+        CompletableFuture<Void> entitiesFuture = chunkFuture.thenAccept(chunk ->
         // Remove all entities in chunk, including any dropped items as a result of clearing the blocks above
         Arrays.stream(chunk.getEntities())
         .filter(e -> !(e instanceof Player) && di.inBounds(e.getLocation().getBlockX(), e.getLocation().getBlockZ()))
@@ -200,35 +203,35 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
     }
 
     private void processEntity(Entity entity, Location location) {
-            Entity bpe = location.getWorld().spawnEntity(location, entity.getType());
-            bpe.setCustomName(entity.getCustomName());
-            if (entity instanceof Villager villager && bpe instanceof Villager villager2) {
-                setVillager(villager, villager2);
-            }
-            if (entity instanceof Colorable c && bpe instanceof Colorable cc) {
-                if (c.getColor() != null) {
-                    cc.setColor(c.getColor());
-                }
-            }
-            if (entity instanceof Tameable t && bpe instanceof Tameable tt) {
-                tt.setTamed(t.isTamed());
-            }
-            if (entity instanceof ChestedHorse ch && bpe instanceof ChestedHorse ch2) {
-                ch2.setCarryingChest(ch.isCarryingChest());
-            }
-            // Only set if child. Most animals are adults
-            if (entity instanceof Ageable a && bpe instanceof Ageable aa) {
-                if (a.isAdult()) aa.setAdult();
-            }
-            if (entity instanceof AbstractHorse horse && bpe instanceof AbstractHorse horse2) {
-                horse2.setDomestication(horse.getDomestication());
-                horse2.getInventory().setContents(horse.getInventory().getContents());
-            }
-
-            if (entity instanceof Horse horse && bpe instanceof Horse horse2) {
-                horse2.setStyle(horse.getStyle());
+        Entity bpe = location.getWorld().spawnEntity(location, entity.getType());
+        bpe.setCustomName(entity.getCustomName());
+        if (entity instanceof Villager villager && bpe instanceof Villager villager2) {
+            setVillager(villager, villager2);
+        }
+        if (entity instanceof Colorable c && bpe instanceof Colorable cc) {
+            if (c.getColor() != null) {
+                cc.setColor(c.getColor());
             }
         }
+        if (entity instanceof Tameable t && bpe instanceof Tameable tt) {
+            tt.setTamed(t.isTamed());
+        }
+        if (entity instanceof ChestedHorse ch && bpe instanceof ChestedHorse ch2) {
+            ch2.setCarryingChest(ch.isCarryingChest());
+        }
+        // Only set if child. Most animals are adults
+        if (entity instanceof Ageable a && bpe instanceof Ageable aa) {
+            if (a.isAdult()) aa.setAdult();
+        }
+        if (entity instanceof AbstractHorse horse && bpe instanceof AbstractHorse horse2) {
+            horse2.setDomestication(horse.getDomestication());
+            horse2.getInventory().setContents(horse.getInventory().getContents());
+        }
+
+        if (entity instanceof Horse horse && bpe instanceof Horse horse2) {
+            horse2.setStyle(horse.getStyle());
+        }
+    }
 
     /**
      * Set the villager stats
@@ -241,7 +244,7 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
         villager2.setProfession(v.getProfession());
         villager2.setVillagerType(v.getVillagerType());
     }
-    
+
     private void processTileEntity(Block fromBlock, Block toBlock) {
         // Block state
         BlockState blockState = fromBlock.getState();
@@ -249,11 +252,9 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
 
         // Signs
         if (blockState instanceof Sign fromSign && b instanceof Sign toSign) {
-            int i = 0;
-            for (String line : fromSign.getLines()) {
-                toSign.setLine(i++, line);  
+            for (Side side : Side.values()) {
+                writeSign(fromSign, toSign, side);
             }
-            toSign.setGlowingText(fromSign.isGlowingText());
         }
         // Chests
         else if (blockState instanceof InventoryHolder ih && b instanceof InventoryHolder toChest) {
@@ -270,7 +271,17 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
             toBanner.setPatterns(banner.getPatterns());
         }
     }
-    
+
+
+    private void writeSign(Sign fromSign, Sign toSign, Side side) {
+        SignSide fromSide = fromSign.getSide(side);
+        SignSide toSide = toSign.getSide(side);
+        int i = 0;
+        for (String line : fromSide.getLines()) {
+            toSide.setLine(i++, line);
+        }
+        toSide.setGlowingText(fromSide.isGlowingText());
+    }
 
     public CompletableFuture<Void> regenerateSimple(GameModeAddon gm, IslandDeletion di, World world) {
         CompletableFuture<Void> bigFuture = new CompletableFuture<>();

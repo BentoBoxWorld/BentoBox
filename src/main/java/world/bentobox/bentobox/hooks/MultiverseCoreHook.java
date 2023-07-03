@@ -50,6 +50,12 @@ public class MultiverseCoreHook extends Hook implements WorldManagementHook {
     }
 
     @Override
+    public void unregisterWorld(World world) {
+        String cmd = "mv remove " + world.getName();
+        Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), cmd);
+    }
+
+    @Override
     public boolean hook() {
         return true; // The hook process shouldn't fail
     }

@@ -27,7 +27,7 @@ public class AdminBlueprintRenameCommand extends ConfirmableCommand
     @Override
     public void setup()
     {
-        this.inheritPermission();
+        setPermission("admin.blueprint.rename");
         this.setParametersHelp("commands.admin.blueprint.rename.parameters");
         this.setDescription("commands.admin.blueprint.rename.description");
     }
@@ -83,8 +83,8 @@ public class AdminBlueprintRenameCommand extends ConfirmableCommand
         {
             // Ask for confirmation to overwrite
             this.askConfirmation(user,
-                user.getTranslation("commands.admin.blueprint.file-exists"),
-                () -> this.rename(user, from, to, args.get(1)));
+                    user.getTranslation("commands.admin.blueprint.file-exists"),
+                    () -> this.rename(user, from, to, args.get(1)));
         }
         else
         {
@@ -102,11 +102,11 @@ public class AdminBlueprintRenameCommand extends ConfirmableCommand
         this.getPlugin().getBlueprintsManager().renameBlueprint(this.getAddon(), blueprint, fileName, displayName);
 
         user.sendMessage("commands.admin.blueprint.rename.success",
-            "[old]",
-            blueprintName,
-            TextVariables.NAME,
-            blueprint.getName(),
-            "[display]",
-            blueprint.getDisplayName());
+                "[old]",
+                blueprintName,
+                TextVariables.NAME,
+                blueprint.getName(),
+                "[display]",
+                blueprint.getDisplayName());
     }
 }

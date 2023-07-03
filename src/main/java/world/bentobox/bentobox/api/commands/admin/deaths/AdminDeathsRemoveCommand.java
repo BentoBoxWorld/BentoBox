@@ -22,7 +22,7 @@ public class AdminDeathsRemoveCommand extends CompositeCommand {
 
     @Override
     public void setup() {
-        inheritPermission();
+        setPermission("admin.deaths.remove");
         setDescription("commands.admin.deaths.remove.description");
         setParametersHelp("commands.admin.deaths.remove.parameters");
     }

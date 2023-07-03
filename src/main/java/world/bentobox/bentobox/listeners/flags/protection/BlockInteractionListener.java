@@ -1,6 +1,5 @@
 package world.bentobox.bentobox.listeners.flags.protection;
 
-import java.util.Map;
 import java.util.Optional;
 
 import org.bukkit.FluidCollisionMode;
@@ -8,6 +7,8 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Tag;
 import org.bukkit.block.Block;
+import org.bukkit.block.BrushableBlock;
+import org.bukkit.block.Sign;
 import org.bukkit.block.data.Waterlogged;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -18,8 +19,6 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.Flags;
@@ -32,30 +31,11 @@ public class BlockInteractionListener extends FlagListener
 {
 
     /**
-     * These cover materials in another server version. This avoids run time errors due to unknown enum values, at the
-     * expense of a string comparison
-     */
-    private static final Map<String, String> stringFlags;
-    private static final String CHEST = "CHEST";
-
-    static
-    {
-        stringFlags = Map.of(
-                "ACACIA_CHEST_BOAT", CHEST,
-                "BIRCH_CHEST_BOAT", CHEST,
-                "JUNGLE_CHEST_BOAT", CHEST,
-                "DARK_OAK_CHEST_BOAT", CHEST,
-                "MANGROVE_CHEST_BOAT", CHEST,
-                "OAK_CHEST_BOAT", CHEST,
-                "SPRUCE_CHEST_BOAT", CHEST);
-    }
-
-    /**
      * Handle interaction with blocks
      *
      * @param e - event
      */
-    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerInteract(final PlayerInteractEvent e)
     {
         // We only care about the RIGHT_CLICK_BLOCK action.
@@ -65,13 +45,13 @@ public class BlockInteractionListener extends FlagListener
         }
 
         // Check clicked block
-        this.checkClickedBlock(e, e.getPlayer(), e.getClickedBlock().getLocation(), e.getClickedBlock().getType());
+        this.checkClickedBlock(e, e.getPlayer(), e.getClickedBlock());
 
         // Now check for in-hand items
         if (e.getItem() != null && !e.getItem().getType().equals(Material.AIR))
         {
             // Boats
-            if (e.getItem().getType().name().endsWith("BOAT"))
+            if (Tag.ITEMS_BOATS.isTagged(e.getItem().getType()))
             {
                 this.checkIsland(e, e.getPlayer(), e.getClickedBlock().getLocation(), Flags.BOAT);
             }
@@ -107,15 +87,22 @@ public class BlockInteractionListener extends FlagListener
      *
      * @param e - event called
      * @param player - player
-     * @param loc - location of clicked block
-     * @param type - material type of clicked block
+     * @param block - block being clicked or used
      */
-    private void checkClickedBlock(Event e, Player player, Location loc, Material type)
+    private void checkClickedBlock(Event e, Player player, Block block)
     {
+        Material type = block.getType();
+        Location loc = block.getLocation();
         // Handle pots
         if (type.name().startsWith("POTTED"))
         {
             this.checkIsland(e, player, loc, Flags.FLOWER_POT);
+            return;
+        }
+
+        if (block.getState() instanceof BrushableBlock bb && BlockInteractionListener.holds(player, Material.BRUSH)) {
+            // Protect this using break blocks flag for now. Maybe in the future it can have its own flag.
+            this.checkIsland(e, player, loc, Flags.BREAK_BLOCKS);
             return;
         }
 
@@ -155,14 +142,21 @@ public class BlockInteractionListener extends FlagListener
             return;
         }
 
+        if (Tag.SIGNS.isTagged(type) && block.getState() instanceof Sign sign && !sign.isWaxed()) {
+            // If waxed, then sign cannot be edited otherwise check
+            this.checkIsland(e, player, loc, Flags.SIGN_EDITING);
+            return;
+        }
+
         if (Tag.FENCE_GATES.isTagged(type))
         {
             this.checkIsland(e, player, loc, Flags.GATE);
         }
-        // TODO: 1.18 compatibility
-        // if (Tag.ITEMS_CHEST_BOATS.isTagged(type)) {
-        //   this.checkIsland(e, player, loc, Flags.CHEST);
-        // }
+
+        if (Tag.ITEMS_CHEST_BOATS.isTagged(type))
+        {
+            this.checkIsland(e, player, loc, Flags.CHEST);
+        }
 
         switch (type)
         {
@@ -177,14 +171,12 @@ public class BlockInteractionListener extends FlagListener
         case DISPENSER -> this.checkIsland(e, player, loc, Flags.DISPENSER);
         case DROPPER -> this.checkIsland(e, player, loc, Flags.DROPPER);
         case HOPPER, HOPPER_MINECART -> this.checkIsland(e, player, loc, Flags.HOPPER);
-        case BLAST_FURNACE, CAMPFIRE, FURNACE_MINECART, FURNACE, SMOKER ->
-        this.checkIsland(e, player, loc, Flags.FURNACE);
+        case BLAST_FURNACE, CAMPFIRE, FURNACE_MINECART, FURNACE, SMOKER -> this.checkIsland(e, player, loc, Flags.FURNACE);
         case ENCHANTING_TABLE -> this.checkIsland(e, player, loc, Flags.ENCHANTING);
         case ENDER_CHEST -> this.checkIsland(e, player, loc, Flags.ENDER_CHEST);
         case JUKEBOX -> this.checkIsland(e, player, loc, Flags.JUKEBOX);
         case NOTE_BLOCK -> this.checkIsland(e, player, loc, Flags.NOTE_BLOCK);
-        case CRAFTING_TABLE, CARTOGRAPHY_TABLE, GRINDSTONE, STONECUTTER, LOOM ->
-        this.checkIsland(e, player, loc, Flags.CRAFTING);
+        case CRAFTING_TABLE, CARTOGRAPHY_TABLE, GRINDSTONE, STONECUTTER, LOOM -> this.checkIsland(e, player, loc, Flags.CRAFTING);
         case LEVER -> this.checkIsland(e, player, loc, Flags.LEVER);
         case REDSTONE_WIRE, REPEATER, COMPARATOR, DAYLIGHT_DETECTOR -> this.checkIsland(e, player, loc, Flags.REDSTONE);
         case DRAGON_EGG -> this.checkIsland(e, player, loc, Flags.DRAGON_EGG);
@@ -192,6 +184,7 @@ public class BlockInteractionListener extends FlagListener
         case GLOW_ITEM_FRAME, ITEM_FRAME -> this.checkIsland(e, player, loc, Flags.ITEM_FRAME);
         case SWEET_BERRY_BUSH, CAVE_VINES -> this.checkIsland(e, player, loc, Flags.BREAK_BLOCKS);
         case CAKE -> this.checkIsland(e, player, loc, Flags.CAKE);
+        case CHISELED_BOOKSHELF -> this.checkIsland(e, player, loc, Flags.BOOKSHELF);
         case LAVA_CAULDRON ->
         {
             if (BlockInteractionListener.holds(player, Material.BUCKET))
@@ -232,12 +225,7 @@ public class BlockInteractionListener extends FlagListener
             }
         }
         default ->
-        {
-            if (stringFlags.containsKey(type.name()))
-            {
-                Optional<Flag> f = BentoBox.getInstance().getFlagsManager().getFlag(stringFlags.get(type.name()));
-                f.ifPresent(flag -> this.checkIsland(e, player, loc, flag));
-            }
+        { // nothing to do
         }
         }
     }
@@ -253,7 +241,7 @@ public class BlockInteractionListener extends FlagListener
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onBlockBreak(final BlockBreakEvent e)
     {
-        this.checkClickedBlock(e, e.getPlayer(), e.getBlock().getLocation(), e.getBlock().getType());
+        this.checkClickedBlock(e, e.getPlayer(), e.getBlock());
     }
 
 

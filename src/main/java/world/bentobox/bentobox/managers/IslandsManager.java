@@ -22,11 +22,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Tag;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Boat;
-import org.bukkit.entity.Boat.Type;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -37,8 +37,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-
-import com.google.common.collect.ImmutableMap;
 
 import io.papermc.lib.PaperLib;
 import world.bentobox.bentobox.BentoBox;
@@ -66,15 +64,6 @@ import world.bentobox.bentobox.util.teleport.SafeSpotTeleport;
 public class IslandsManager {
 
     private final BentoBox plugin;
-
-    // Tree species to boat material map
-    private static final Map<Type, Material> TREE_TO_BOAT = ImmutableMap.<Type, Material>builder().
-            put(Type.ACACIA, Material.ACACIA_BOAT).
-            put(Type.BIRCH, Material.BIRCH_BOAT).
-            put(Type.DARK_OAK, Material.DARK_OAK_BOAT).
-            put(Type.JUNGLE, Material.JUNGLE_BOAT).
-            put(Type.OAK, Material.OAK_BOAT).
-            put(Type.SPRUCE, Material.SPRUCE_BOAT).build();
 
     /**
      * One island can be spawn, this is the one - otherwise, this value is null
@@ -250,8 +239,8 @@ public class IslandsManager {
     public boolean checkIfSafe(@Nullable World world, @NonNull Material ground, @NonNull Material space1, @NonNull Material space2) {
         // Ground must be solid, space 1 and 2 must not be solid
         if (world == null || !ground.isSolid()
-                || (space1.isSolid() && !space1.name().contains("SIGN"))
-                || (space2.isSolid() && !space2.name().contains("SIGN"))) {
+                || (space1.isSolid() && !Tag.SIGNS.isTagged(space1))
+                || (space2.isSolid() && !Tag.SIGNS.isTagged(space2))) {
             return false;
         }
         // Cannot be submerged or water cannot be dangerous
@@ -262,14 +251,19 @@ public class IslandsManager {
         if (ground.equals(Material.LAVA)
                 || space1.equals(Material.LAVA)
                 || space2.equals(Material.LAVA)
-                || ground.name().contains("FENCE")
-                || ground.name().contains("DOOR")
-                || ground.name().contains("GATE")
-                || ground.name().contains("PLATE")
-                || ground.name().contains("SIGN")
-                || ground.name().contains("BANNER")
-                || ground.name().contains("BUTTON")
-                || ground.name().contains("BOAT")
+                || Tag.SIGNS.isTagged(ground)
+                || Tag.TRAPDOORS.isTagged(ground)
+                || Tag.BANNERS.isTagged(ground)
+                || Tag.PRESSURE_PLATES.isTagged(ground)
+                || Tag.FENCE_GATES.isTagged(ground)
+                || Tag.DOORS.isTagged(ground)
+                || Tag.FENCES.isTagged(ground)
+                || Tag.BUTTONS.isTagged(ground)
+                || Tag.ITEMS_BOATS.isTagged(ground)
+                || Tag.ITEMS_CHEST_BOATS.isTagged(ground)
+                || Tag.CAMPFIRES.isTagged(ground)
+                || Tag.FIRE.isTagged(ground)
+                || Tag.FIRE.isTagged(space1)
                 || space1.equals(Material.END_PORTAL)
                 || space2.equals(Material.END_PORTAL)
                 || space1.equals(Material.END_GATEWAY)
@@ -349,7 +343,7 @@ public class IslandsManager {
             // Remove players from island
             removePlayersFromIsland(island);
             // Remove blocks from world
-            plugin.getIslandChunkDeletionManager().add(new IslandDeletion(island));
+            plugin.getIslandDeletionManager().getIslandChunkDeletionManager().add(new IslandDeletion(island));
         }
     }
 
@@ -1072,19 +1066,7 @@ public class IslandsManager {
         User user = User.getInstance(player);
         user.sendMessage("commands.island.go.teleport");
         goingHome.add(user.getUniqueId());
-        // Stop any gliding
-        player.setGliding(false);
-        // Check if the player is a passenger in a boat
-        if (player.isInsideVehicle()) {
-            Entity boat = player.getVehicle();
-            if (boat instanceof Boat boaty) {
-                player.leaveVehicle();
-                // Remove the boat so they don't lie around everywhere
-                boat.remove();
-                player.getInventory().addItem(new ItemStack(TREE_TO_BOAT.getOrDefault(boaty.getBoatType(), Material.OAK_BOAT)));
-                player.updateInventory();
-            }
-        }
+        readyPlayer(player);
         this.getAsyncSafeHomeLocation(world, user, name).thenAccept(home -> {
             Island island = getIsland(world, user);
             if (home == null) {
@@ -1196,28 +1178,29 @@ public class IslandsManager {
             user.sendMessage("commands.island.spawn.no-spawn");
         } else {
             // Teleport the player to the spawn
-            // Stop any gliding
-            player.setGliding(false);
-            // Check if the player is a passenger in a boat
-            if (player.isInsideVehicle()) {
-                Entity boat = player.getVehicle();
-                if (boat instanceof Boat boaty) {
-                    player.leaveVehicle();
-                    // Remove the boat so they don't lie around everywhere
-                    boat.remove();
-                    Material boatMat = Material.getMaterial(boaty.getType() + "_BOAT");
-                    if (boatMat == null) {
-                        boatMat = Material.OAK_BOAT;
-                    }
-                    player.getInventory().addItem(new ItemStack(boatMat, 1));
-                    player.updateInventory();
-                }
-            }
+            readyPlayer(player);
 
             user.sendMessage("commands.island.spawn.teleporting");
             // Safe teleport
             new SafeSpotTeleport.Builder(plugin).entity(player).location(spawnTo).build();
         }
+    }
+
+    private void readyPlayer(@NonNull Player player) {
+        // Stop any gliding
+        player.setGliding(false);
+        // Check if the player is a passenger in a boat
+        if (player.isInsideVehicle()) {
+            Entity boat = player.getVehicle();
+            if (boat instanceof Boat boaty) {
+                player.leaveVehicle();
+                // Remove the boat so they don't lie around everywhere
+                boat.remove();
+                player.getInventory().addItem(new ItemStack(boaty.getBoatType().getMaterial()));
+                player.updateInventory();
+            }
+        }
+
     }
 
     /**

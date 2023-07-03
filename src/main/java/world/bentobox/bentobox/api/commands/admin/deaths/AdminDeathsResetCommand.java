@@ -21,7 +21,7 @@ public class AdminDeathsResetCommand extends CompositeCommand {
 
     @Override
     public void setup() {
-        inheritPermission();
+        setPermission("admin.deaths.reset");
         setDescription("commands.admin.deaths.reset.description");
         setParametersHelp("commands.admin.deaths.reset.parameters");
     }

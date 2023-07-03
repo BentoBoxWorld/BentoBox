@@ -23,6 +23,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.event.player.PlayerRespawnEvent.RespawnReason;
 import org.bukkit.inventory.ItemStack;
 import org.junit.After;
 import org.junit.Before;
@@ -213,7 +214,7 @@ public class IslandRespawnListenerTest {
         // Has island
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
         // Respawn
-        PlayerRespawnEvent ev = new PlayerRespawnEvent(player, location, false, false);
+        PlayerRespawnEvent ev = new PlayerRespawnEvent(player, location, false, false, RespawnReason.DEATH);
         l.onPlayerRespawn(ev);
         assertEquals(safeLocation, ev.getRespawnLocation());
         // Verify commands
@@ -232,7 +233,7 @@ public class IslandRespawnListenerTest {
         // Has island
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
         // Respawn
-        PlayerRespawnEvent ev = new PlayerRespawnEvent(player, location, false, false);
+        PlayerRespawnEvent ev = new PlayerRespawnEvent(player, location, false, false, RespawnReason.DEATH);
         l.onPlayerRespawn(ev);
         assertEquals(location, ev.getRespawnLocation());
     }
@@ -255,7 +256,7 @@ public class IslandRespawnListenerTest {
         // Has island
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
         // Respawn
-        PlayerRespawnEvent ev = new PlayerRespawnEvent(player, location, false, false);
+        PlayerRespawnEvent ev = new PlayerRespawnEvent(player, location, false, false, RespawnReason.DEATH);
         l.onPlayerRespawn(ev);
         assertEquals(location, ev.getRespawnLocation());
     }
@@ -276,7 +277,7 @@ public class IslandRespawnListenerTest {
         // Has island
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
         // Respawn
-        PlayerRespawnEvent ev = new PlayerRespawnEvent(player, location, false, false);
+        PlayerRespawnEvent ev = new PlayerRespawnEvent(player, location, false, false, RespawnReason.DEATH);
         l.onPlayerRespawn(ev);
         assertEquals(location, ev.getRespawnLocation());
     }

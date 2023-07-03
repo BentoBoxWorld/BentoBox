@@ -17,6 +17,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.player.PlayerRespawnEvent.RespawnReason;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.junit.After;
 import org.junit.Before;
@@ -200,7 +201,7 @@ public class RemoveMobsListenerTest {
      */
     @Test
     public void testOnUserRespawn() {
-        PlayerRespawnEvent e = new PlayerRespawnEvent(player, inside, false, false);
+        PlayerRespawnEvent e = new PlayerRespawnEvent(player, inside, false, false, RespawnReason.DEATH);
         new RemoveMobsListener().onUserRespawn(e);
         verify(scheduler).runTask(any(), any(Runnable.class));
     }
@@ -211,7 +212,7 @@ public class RemoveMobsListenerTest {
     @Test
     public void testOnUserRespawnDoNotRemove() {
         Flags.REMOVE_MOBS.setSetting(world, false);
-        PlayerRespawnEvent e = new PlayerRespawnEvent(player, inside, false, false);
+        PlayerRespawnEvent e = new PlayerRespawnEvent(player, inside, false, false, RespawnReason.DEATH);
         new RemoveMobsListener().onUserRespawn(e);
         verify(scheduler, never()).runTask(any(), any(Runnable.class));
     }
@@ -223,7 +224,7 @@ public class RemoveMobsListenerTest {
     public void testOnUserRespawnNotIsland() {
         // Not on island
         when(im.locationIsOnIsland(any(), any())).thenReturn(false);
-        PlayerRespawnEvent e = new PlayerRespawnEvent(player, inside, false, false);
+        PlayerRespawnEvent e = new PlayerRespawnEvent(player, inside, false, false, RespawnReason.DEATH);
         new RemoveMobsListener().onUserRespawn(e);
         verify(scheduler, never()).runTask(any(), any(Runnable.class));
     }

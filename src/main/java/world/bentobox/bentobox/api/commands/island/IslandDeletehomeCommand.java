@@ -24,6 +24,10 @@ public class IslandDeletehomeCommand extends ConfirmableCommand {
 
     private @Nullable Island island;
 
+    /**
+     * Deletes a home
+     * @param islandCommand parent command
+     */
     public IslandDeletehomeCommand(CompositeCommand islandCommand) {
         super(islandCommand, "deletehome");
     }
@@ -51,11 +55,11 @@ public class IslandDeletehomeCommand extends ConfirmableCommand {
             return false;
         }
 
-        // check command permission
+        // check command ranks
         int rank = Objects.requireNonNull(island).getRank(user);
         if (rank < island.getRankCommand(getUsage())) {
             user.sendMessage("general.errors.insufficient-rank",
-                TextVariables.RANK, user.getTranslation(getPlugin().getRanksManager().getRank(rank)));
+                    TextVariables.RANK, user.getTranslation(getPlugin().getRanksManager().getRank(rank)));
             return false;
         }
 

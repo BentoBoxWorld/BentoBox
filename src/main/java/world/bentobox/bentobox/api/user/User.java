@@ -472,7 +472,10 @@ public class User implements MetaDataAble {
         // Then replace variables
         if (variables.length > 1) {
             for (int i = 0; i < variables.length; i += 2) {
-                translation = translation.replace(variables[i], variables[i + 1]);
+                // Prevent a NPE if the substituting variable is null
+                if (variables[i + 1] != null) {
+                    translation = translation.replace(variables[i], variables[i + 1]);
+                }
             }
         }
 

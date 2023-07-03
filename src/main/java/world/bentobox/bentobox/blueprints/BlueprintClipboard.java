@@ -18,6 +18,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.block.Sign;
+import org.bukkit.block.sign.Side;
 import org.bukkit.entity.AbstractHorse;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.ChestedHorse;
@@ -221,8 +222,10 @@ public class BlueprintClipboard {
 
         // Signs
         if (blockState instanceof Sign sign) {
-            b.setSignLines(Arrays.asList(sign.getLines()));
-            b.setGlowingText(sign.isGlowingText());
+            for (Side side : Side.values()) {
+                b.setSignLines(side, Arrays.asList(sign.getSide(side).getLines()));
+                b.setGlowingText(side, sign.getSide(side).isGlowingText());
+            }
         }
         // Set block data
         if (blockState.getData() instanceof Attachable) {

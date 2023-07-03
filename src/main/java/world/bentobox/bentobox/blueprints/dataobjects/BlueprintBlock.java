@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.bukkit.block.Biome;
 import org.bukkit.block.banner.Pattern;
+import org.bukkit.block.sign.Side;
 import org.bukkit.inventory.ItemStack;
 
 import com.google.gson.annotations.Expose;
@@ -20,6 +21,8 @@ public class BlueprintBlock {
     private String blockData;
     @Expose
     private List<String> signLines;
+    @Expose
+    private List<String> signLines2;
     @Expose
     private Map<Integer, ItemStack> inventory;
     @Expose
@@ -36,6 +39,8 @@ public class BlueprintBlock {
     private List<Pattern> bannerPatterns;
     @Expose
     private boolean glowingText;
+    @Expose
+    private boolean glowingText2;
 
     public BlueprintBlock(String blockData) {
         this.blockData = blockData;
@@ -57,14 +62,20 @@ public class BlueprintBlock {
 
     /**
      * @return the signLines
+     * @deprecated signs now have two sides
+     * @since 1.24.0
      */
+    @Deprecated
     public List<String> getSignLines() {
         return signLines;
     }
 
     /**
      * @param signLines the signLines to set
+     * @deprecated signs now have two sides
+     * @since 1.24.0
      */
+    @Deprecated
     public void setSignLines(List<String> signLines) {
         this.signLines = signLines;
     }
@@ -129,17 +140,73 @@ public class BlueprintBlock {
 
     /**
      * @return the glowingText
+     * @deprecated signs now have two sides
+     * @since 1.24.0
      */
+    @Deprecated
     public boolean isGlowingText() {
         return glowingText;
     }
 
     /**
      * @param glowingText the glowingText to set
+     * @deprecated signs now have two sides
+     * @since 1.24.0
      */
+    @Deprecated
     public void setGlowingText(boolean glowingText) {
         this.glowingText = glowingText;
     }
+
+    /**
+     * @param side side of sign
+     * @param glowingText the glowingText to set
+     * @since 1.24.0
+     */
+    public void setGlowingText(Side side, boolean glowingText) {
+        switch (side) {
+        case FRONT -> this.glowingText = glowingText;
+        default -> this.glowingText2 = glowingText;
+        };
+
+    }
+
+    /**
+     * @param side side of sign
+     * @return the glowingText
+     * @since 1.24.0
+     */
+    public boolean isGlowingText(Side side) {
+        return switch (side) {
+        case FRONT -> glowingText;
+        default -> glowingText2;
+        };
+    }
+
+    /**
+     * @param side side of sign
+     * @return the signLines
+     * @since 1.24.0
+     */
+    public List<String> getSignLines(Side side) {
+        return switch (side) {
+        case FRONT -> signLines;
+        default -> signLines2;
+        };
+    }
+
+    /**
+     * @param side side of sign
+     * @param signLines the signLines to set
+     * @since 1.24.0
+     */
+    public void setSignLines(Side side, List<String> signLines) {
+        switch (side) {
+        case FRONT -> this.signLines = signLines;
+        default -> this.signLines2 = signLines;
+        };
+    }
+
 
 
 }

@@ -21,6 +21,7 @@ general:
     no-permission: "&c You don't have the permission to execute this command (&7 [permission]&c )."
     insufficient-rank: "&c Your rank is not high enough to do that! (&7 [rank]&c )"
     use-in-game: "&c This command is only available in-game."
+    use-in-console: "&c This command is only available in the console."
     no-team: "&c You do not have a team!"
     no-island: "&c You do not have an island!"
     player-has-island: "&c Player already has an island!"
@@ -428,6 +429,8 @@ commands:
       success: "&a Successfully reset [name]'s island name."
   bentobox:
     description: "BentoBox admin command"
+    perms:
+      description: "displays the effective perms for BentoBox and Addons in a YAML format"
     about:
       description: "displays copyright and license information"
     reload:
@@ -773,6 +776,12 @@ protection:
         Toggle placing, breaking and
         entering into boats.
       hint: "No boat interaction allowed"
+    BOOKSHELF:
+      name: "Bookshelves"
+      description: |-
+        &a Allow to place books
+        &a or to take books.
+      hint: "cannot place a book or take a book."
     BREAK_BLOCKS:
       description: "Toggle breaking"
       name: "Break blocks"
@@ -1325,6 +1334,12 @@ protection:
         &a activation.
       name: "Sculk Shrieker"
       hint: "sculk shrieker activation is disabled"
+    SIGN_EDITING:
+      description: |-
+        &a Allows text editing
+        &a of signs
+      name: "Sign Editing"
+      hint: "sign editing is disabled"
     TNT_DAMAGE:
       description: |-
         &a Allow TNT and TNT minecarts

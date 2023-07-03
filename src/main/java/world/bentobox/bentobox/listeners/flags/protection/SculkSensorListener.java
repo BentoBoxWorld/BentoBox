@@ -13,6 +13,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockReceiveGameEvent;
 
+import com.google.common.base.Enums;
+
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.lists.Flags;
 
@@ -34,11 +36,12 @@ public class SculkSensorListener extends FlagListener
             return;
         }
 
-        if (event.getBlock().getType() == Material.SCULK_SENSOR &&
-            event.getEntity() != null &&
-            event.getEntity() instanceof Player player)
+        if ((event.getBlock().getType() == Material.SCULK_SENSOR 
+                || event.getBlock().getType() == Enums.getIfPresent(Material.class, "CALIBRATED_SCULK_SENSOR").or(Material.SCULK_SENSOR))
+            && event.getEntity() != null && event.getEntity() instanceof Player player)
         {
             this.checkIsland(event, player, event.getBlock().getLocation(), Flags.SCULK_SENSOR, true);
         }
+        return;
     }
 }

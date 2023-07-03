@@ -9,6 +9,7 @@ import org.bukkit.Material;
 import com.google.common.base.Enums;
 
 import world.bentobox.bentobox.api.flags.Flag;
+import world.bentobox.bentobox.api.flags.Flag.Mode;
 import world.bentobox.bentobox.api.flags.Flag.Type;
 import world.bentobox.bentobox.api.flags.clicklisteners.CycleClick;
 import world.bentobox.bentobox.listeners.flags.clicklisteners.CommandRankClickListener;
@@ -158,11 +159,18 @@ public final class Flags {
      * @since 1.10.0
      * @see LecternListener
      */
-    public static final Flag LECTERN = new Flag.Builder("LECTERN", Material.LECTERN).listener(new LecternListener()).build();
+    public static final Flag LECTERN = new Flag.Builder("LECTERN", Material.LECTERN).mode(Mode.ADVANCED).listener(new LecternListener()).build();
+
+    /**
+     * Prevents players from placing a book in a bookshelf or taking the book from it.
+     * @since 1.24.0
+     * @see BlockInteractionListener
+     */
+    public static final Flag BOOKSHELF = new Flag.Builder("BOOKSHELF", Material.CHISELED_BOOKSHELF).mode(Mode.ADVANCED).build();
 
     // Entity interactions
-    public static final Flag ARMOR_STAND = new Flag.Builder("ARMOR_STAND", Material.ARMOR_STAND).listener(new EntityInteractListener()).mode(Flag.Mode.ADVANCED).build();
-    public static final Flag RIDING = new Flag.Builder("RIDING", Material.GOLDEN_HORSE_ARMOR).build();
+    public static final Flag ARMOR_STAND = new Flag.Builder("ARMOR_STAND", Material.ARMOR_STAND).listener(new EntityInteractListener()).mode(Mode.ADVANCED).build();
+    public static final Flag RIDING = new Flag.Builder("RIDING", Material.GOLDEN_HORSE_ARMOR).mode(Mode.ADVANCED).build();
     /**
      * Prevents players from issuing any kind of interactions with Minecarts (entering, placing and opening if chest).
      * @since 1.3.0
@@ -188,7 +196,7 @@ public final class Flags {
 
     // Buckets. All bucket use is covered by one listener
     public static final Flag BUCKET = new Flag.Builder("BUCKET", Material.BUCKET).listener(new BucketListener()).mode(Flag.Mode.BASIC).build();
-    public static final Flag COLLECT_LAVA = new Flag.Builder("COLLECT_LAVA", Material.LAVA_BUCKET).build();
+    public static final Flag COLLECT_LAVA = new Flag.Builder("COLLECT_LAVA", Material.LAVA_BUCKET).mode(Mode.ADVANCED).build();
     public static final Flag COLLECT_WATER = new Flag.Builder("COLLECT_WATER", Material.WATER_BUCKET).mode(Flag.Mode.ADVANCED).build();
     /**
      * @since 1.21
@@ -215,7 +223,7 @@ public final class Flags {
      * Prevents players from throwing eggs.
      * @see EggListener
      */
-    public static final Flag EGGS = new Flag.Builder("EGGS", Material.EGG).listener(new EggListener()).build();
+    public static final Flag EGGS = new Flag.Builder("EGGS", Material.EGG).mode(Mode.ADVANCED).listener(new EggListener()).build();
     /**
      * Prevents players from throwing potions / experience bottles.
      * @since 1.1
@@ -259,7 +267,7 @@ public final class Flags {
      * Prevents players from extinguishing fires.
      * @see FireListener
      */
-    public static final Flag FIRE_EXTINGUISH = new Flag.Builder("FIRE_EXTINGUISH", Material.POTION).build();
+    public static final Flag FIRE_EXTINGUISH = new Flag.Builder("FIRE_EXTINGUISH", Material.POTION).mode(Mode.ADVANCED).build();
 
     // Inventories
     public static final Flag MOUNT_INVENTORY = new Flag.Builder("MOUNT_INVENTORY", Material.IRON_HORSE_ARMOR).listener(new InventoryListener()).mode(Flag.Mode.ADVANCED).build();
@@ -277,12 +285,12 @@ public final class Flags {
      * Prevents players from going through the Nether Portal.
      * @see PortalListener
      */
-    public static final Flag NETHER_PORTAL = new Flag.Builder("NETHER_PORTAL", Material.NETHERRACK).listener(new PortalListener()).build();
+    public static final Flag NETHER_PORTAL = new Flag.Builder("NETHER_PORTAL", Material.NETHERRACK).mode(Mode.ADVANCED).listener(new PortalListener()).build();
     /**
      * Prevents players from going through the End Portal.
      * @see PortalListener
      */
-    public static final Flag END_PORTAL = new Flag.Builder("END_PORTAL", Material.END_PORTAL_FRAME).build();
+    public static final Flag END_PORTAL = new Flag.Builder("END_PORTAL", Material.END_PORTAL_FRAME).mode(Mode.ADVANCED).build();
 
     // Shearing
     public static final Flag SHEARING = new Flag.Builder("SHEARING", Material.SHEARS).listener(new ShearingListener()).mode(Flag.Mode.ADVANCED).build();
@@ -653,16 +661,21 @@ public final class Flags {
      * Controls who gets to harvest any crop related contents. e.g. Wheat, Sugar Cane, melon blocks, not stems, pumpkin blocks, etc.
      * @since 1.23.0
      */
-    public static final Flag HARVEST = new Flag.Builder("HARVEST", Material.PUMPKIN).type(Type.PROTECTION).build();
+    public static final Flag HARVEST = new Flag.Builder("HARVEST", Material.PUMPKIN).mode(Flag.Mode.BASIC).type(Type.PROTECTION).build();
 
     /**
      * Crop Planting
      * Controls who gets to plant crops on tilled soil.
      * @since 1.23.0
      */
-    public static final Flag CROP_PLANTING = new Flag.Builder("CROP_PLANTING", Material.PUMPKIN_SEEDS).type(Type.PROTECTION).build();
+    public static final Flag CROP_PLANTING = new Flag.Builder("CROP_PLANTING", Material.PUMPKIN_SEEDS).mode(Flag.Mode.BASIC).type(Type.PROTECTION).build();
 
-    
+    /**
+     * Sign edit protection
+     * @since 1.24.0
+     */
+    public static final Flag SIGN_EDITING = new Flag.Builder("SIGN_EDITING", Material.DARK_OAK_SIGN).mode(Flag.Mode.BASIC).type(Type.PROTECTION).build();
+
     /**
      * Provides a list of all the Flag instances contained in this class using reflection.
      * Deprecated Flags are ignored.

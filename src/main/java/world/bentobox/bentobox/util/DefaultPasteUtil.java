@@ -19,6 +19,8 @@ import org.bukkit.block.CreatureSpawner;
 import org.bukkit.block.Sign;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.type.WallSign;
+import org.bukkit.block.sign.Side;
+import org.bukkit.block.sign.SignSide;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -120,7 +122,9 @@ public class DefaultPasteUtil {
         BlockState bs = block.getState();
         // Signs
         if (bs instanceof Sign) {
-            writeSign(island, block, bpBlock.getSignLines(), bpBlock.isGlowingText());
+            for (Side side : Side.values()) {
+                writeSign(island, block, bpBlock, side);
+            }
         }
         // Chests, in general
         else if (bs instanceof InventoryHolder holder) {
@@ -200,8 +204,12 @@ public class DefaultPasteUtil {
      * @param block  - block
      * @param lines  - lines
      * @param glow   - is sign glowing?
+     * @param side   - the side being writted
      */
-    public static void writeSign(Island island, final Block block, final List<String> lines, boolean glow) {
+    public static void writeSign(Island island, final Block block, BlueprintBlock bpSign, Side side) {
+        List<String> lines = bpSign.getSignLines(side);
+        boolean glow = bpSign.isGlowingText(side);
+
         BlockFace bf;
         if (block.getType().name().contains("WALL_SIGN")) {
             WallSign wallSign = (WallSign) block.getBlockData();
@@ -211,7 +219,7 @@ public class DefaultPasteUtil {
             bf = sign.getRotation();
         }
         // Handle spawn sign
-        if (island != null && !lines.isEmpty() && lines.get(0).equalsIgnoreCase(TextVariables.SPAWN_HERE)) {
+        if (side == Side.FRONT && island != null && !lines.isEmpty() && lines.get(0).equalsIgnoreCase(TextVariables.SPAWN_HERE)) {
             block.setType(Material.AIR);
             // Orient to face same direction as sign
             Location spawnPoint = new Location(block.getWorld(), block.getX() + 0.5D, block.getY(),
@@ -225,7 +233,8 @@ public class DefaultPasteUtil {
             name = plugin.getPlayers().getName(island.getOwner());
         }
         // Handle locale text for starting sign
-        org.bukkit.block.Sign s = (org.bukkit.block.Sign) block.getState();
+        Sign s = (org.bukkit.block.Sign) block.getState();
+        SignSide signSide = s.getSide(side);
         // Sign text must be stored under the addon's name.sign.line0,1,2,3 in the yaml file
         if (island != null && !lines.isEmpty() && lines.get(0).equalsIgnoreCase(TextVariables.START_TEXT)) {
             // Get the addon that is operating in this world
@@ -233,17 +242,17 @@ public class DefaultPasteUtil {
             Optional<User> user = Optional.ofNullable(island.getOwner()).map(User::getInstance);
             if (user.isPresent()) {
                 for (int i = 0; i < 4; i++) {
-                    s.setLine(i, Util.translateColorCodes(plugin.getLocalesManager().getOrDefault(user.get(),
+                    signSide.setLine(i, Util.translateColorCodes(plugin.getLocalesManager().getOrDefault(user.get(),
                             addonName + ".sign.line" + i, "").replace(TextVariables.NAME, name)));
                 }
             }
         } else {
             // Just paste
             for (int i = 0; i < 4; i++) {
-                s.setLine(i, lines.get(i));
+                signSide.setLine(i, lines.get(i));
             }
         }
-        s.setGlowingText(glow);
+        signSide.setGlowingText(glow);
         // Update the sign
         s.update();
     }

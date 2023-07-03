@@ -19,6 +19,9 @@ import world.bentobox.bentobox.api.user.User;
  */
 public class PanelItem {
 
+    /**
+     * @return an empty PanelItem
+     */
     public static PanelItem empty() {
         return new PanelItemBuilder().build();
     }
@@ -58,6 +61,9 @@ public class PanelItem {
 
     }
 
+    /**
+     * @return the icon itemstack
+     */
     public ItemStack getItem() {
         return icon;
     }
@@ -135,14 +141,14 @@ public class PanelItem {
     public boolean isPlayerHead() {
         return playerHeadName != null && !playerHeadName.isEmpty();
     }
-    
+
     /**
      * @return the playerHeadName
      * @since 1.9.0
      */
     public String getPlayerHeadName() {
         return playerHeadName;
-    }      
+    }
 
     /**
      * Click handler interface

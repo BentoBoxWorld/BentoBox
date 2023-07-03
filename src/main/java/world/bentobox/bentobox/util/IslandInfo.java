@@ -10,6 +10,8 @@ import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.addons.Addon;
+import world.bentobox.bentobox.api.events.island.IslandEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
@@ -43,8 +45,9 @@ public class IslandInfo {
     /**
      * Shows admin info of this island
      * @param user user asking
+     * @param addon Addon executing this command
      */
-    public void showAdminInfo(User user) {
+    public void showAdminInfo(User user, Addon addon) {
         user.sendMessage("commands.admin.info.title");
         user.sendMessage("commands.admin.info.island-uuid", TextVariables.UUID, island.getUniqueId());
         if (owner == null) {
@@ -98,6 +101,15 @@ public class IslandInfo {
         if (island.getPurgeProtected()) {
             user.sendMessage("commands.admin.info.purge-protected");
         }
+        // Fire info event to allow other addons to add to info
+        IslandEvent.builder()
+        .island(island)
+        .location(island.getCenter())
+        .reason(IslandEvent.Reason.INFO)
+        .involvedPlayer(user.getUniqueId())
+        .addon(addon)
+        .admin(true)
+        .build();
     }
 
 
@@ -130,6 +142,13 @@ public class IslandInfo {
             user.sendMessage("commands.admin.info.banned-players");
             island.getBanned().forEach(u -> user.sendMessage("commands.admin.info.banned-format", TextVariables.NAME, plugin.getPlayers().getName(u)));
         }
+        // Fire info event
+        IslandEvent.builder()
+        .island(island)
+        .location(island.getCenter())
+        .reason(IslandEvent.Reason.INFO)
+        .involvedPlayer(user.getUniqueId())
+        .build();
         return true;
     }
 

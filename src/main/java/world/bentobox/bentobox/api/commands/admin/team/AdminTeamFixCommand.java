@@ -14,7 +14,7 @@ public class AdminTeamFixCommand extends CompositeCommand {
 
     @Override
     public void setup() {
-        setPermission("mod.team");
+        setPermission("mod.team.fix");
         setDescription("commands.admin.team.fix.description");
     }
 

@@ -6,6 +6,7 @@ import java.util.Objects;
 import org.bukkit.ChatColor;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
+import world.bentobox.bentobox.api.events.island.IslandEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
@@ -93,8 +94,18 @@ public class IslandSetnameCommand extends CompositeCommand {
         }
 
         // Everything's good!
-        Objects.requireNonNull(getIslands().getIsland(getWorld(), user)).setName(name);
+        Island island = Objects.requireNonNull(getIslands().getIsland(getWorld(), user));
+        String previousName = island.getName();
+        island.setName(name);
         user.sendMessage("commands.island.setname.success", TextVariables.NAME, name);
+        // Fire the IslandNameEvent
+        new IslandEvent.IslandEventBuilder()
+        .island(island)
+        .involvedPlayer(user.getUniqueId())
+        .reason(IslandEvent.Reason.NAME)
+        .previousName(previousName)
+        .admin(false)
+        .build();
         return true;
     }
 }
