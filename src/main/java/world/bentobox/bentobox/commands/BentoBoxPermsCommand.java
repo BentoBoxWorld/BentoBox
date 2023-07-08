@@ -68,7 +68,7 @@ public class BentoBoxPermsCommand extends CompositeCommand {
      * Iterates over sub-commands
      * @param user user
      * @param parent parent command
-     * @param label
+     * @param label label
      */
     private void printSubCommandData(User user, CompositeCommand parent, String label) {
         for (CompositeCommand cc : parent.getSubCommands().values()) {
