@@ -62,4 +62,4 @@ permissions:
     default: op
   bentobox.perms:
     description: Allow use of '/bentobox perms' command
-    default: OP 
+    default: op
