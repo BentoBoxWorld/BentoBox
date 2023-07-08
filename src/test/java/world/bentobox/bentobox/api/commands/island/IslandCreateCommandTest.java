@@ -78,7 +78,6 @@ public class IslandCreateCommandTest {
 
     /**
      */
-    @SuppressWarnings("deprecation")
     @Before
     public void setUp() throws Exception {
         // Set up plugin
@@ -99,7 +98,7 @@ public class IslandCreateCommandTest {
         when(user.getUniqueId()).thenReturn(uuid);
         when(user.getPlayer()).thenReturn(player);
         when(user.hasPermission(Mockito.anyString())).thenReturn(true);
-        when(user.getTranslation(Mockito.anyVararg())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
+        when(user.getTranslation(Mockito.any())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
         User.setPlugin(plugin);
         // Set up user already
         User.getInstance(player);
