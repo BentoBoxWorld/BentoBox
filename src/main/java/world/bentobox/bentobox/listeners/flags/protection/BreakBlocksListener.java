@@ -37,9 +37,8 @@ public class BreakBlocksListener extends FlagListener {
         Material m = e.getBlock().getType();
         switch (m)
         {
-        case MELON -> this.checkIsland(e, p, l, Flags.HARVEST);
-        case PUMPKIN -> this.checkIsland(e, p, l, Flags.HARVEST);
-        default -> {
+        case MELON, PUMPKIN -> this.checkIsland(e, p, l, Flags.HARVEST);
+            default -> {
             // Crops
             if (Tag.CROPS.isTagged(m) 
                     && !m.equals(Material.MELON_STEM) 
