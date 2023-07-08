@@ -663,9 +663,8 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         if (command.getPermission() != null && !command.getPermission().isEmpty() && !sender.hasPermission(command.getPermission()) && !sender.isOp()) {
             return List.of();
         }
-        List<String> options = new ArrayList<>();
         // Add any tab completion from the subcommand
-        options.addAll(command.tabComplete(User.getInstance(sender), alias, new LinkedList<>(Arrays.asList(args))).orElseGet(ArrayList::new));
+        List<String> options = new ArrayList<>(command.tabComplete(User.getInstance(sender), alias, new LinkedList<>(Arrays.asList(args))).orElseGet(ArrayList::new));
         if (command.hasSubCommands()) {
             options.addAll(getSubCommandLabels(sender, command));
         }
