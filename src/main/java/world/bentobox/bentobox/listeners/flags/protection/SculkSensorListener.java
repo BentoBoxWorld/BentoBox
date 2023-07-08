@@ -42,6 +42,5 @@ public class SculkSensorListener extends FlagListener
         {
             this.checkIsland(event, player, event.getBlock().getLocation(), Flags.SCULK_SENSOR, true);
         }
-        return;
     }
 }
