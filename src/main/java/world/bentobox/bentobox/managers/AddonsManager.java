@@ -188,7 +188,7 @@ public class AddonsManager {
     }
 
     private PladdonData loadPladdon(YamlConfiguration data, @NonNull File f) throws InvalidAddonInheritException, MalformedURLException, InvalidAddonDescriptionException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException, InvalidDescriptionException {
-        Addon addon = null;
+        Addon addon;
         try {
             Plugin pladdon = Bukkit.getPluginManager().loadPlugin(f);
             if (pladdon instanceof Pladdon pl) {
@@ -451,7 +451,7 @@ public class AddonsManager {
         if (!getEnabledAddons().isEmpty()) {
             plugin.log("Disabling addons...");
             // Disable addons - pladdons are disabled by the server
-            getEnabledAddons().stream().filter(addon -> !pladdons.keySet().contains(addon)).forEach(this::disable);
+            getEnabledAddons().stream().filter(addon -> !pladdons.containsKey(addon)).forEach(this::disable);
             plugin.log("Addons successfully disabled.");
         }
         // Unregister all commands
