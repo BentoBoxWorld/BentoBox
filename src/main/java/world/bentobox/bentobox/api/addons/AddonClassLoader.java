@@ -125,7 +125,11 @@ public class AddonClassLoader extends URLClassLoader {
         if (softDepend != null) {
             builder.softDependencies(Arrays.asList(softDepend.split("\\s*,\\s*")));
         }
-        builder.icon(Objects.requireNonNull(Material.getMaterial(data.getString("icon", "PAPER").toUpperCase(Locale.ENGLISH))));
+        Material icon = Material.getMaterial(data.getString("icon", "PAPER").toUpperCase(Locale.ENGLISH));
+        if (icon == null) {
+            throw new InvalidAddonDescriptionException("'icon' tag refers to an unknown Material: " + data.getString("icon"));
+        }
+        builder.icon(Objects.requireNonNull(icon));
 
         String apiVersion = data.getString("api-version");
         if (apiVersion != null) {

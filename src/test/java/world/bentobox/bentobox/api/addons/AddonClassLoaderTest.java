@@ -53,7 +53,8 @@ public class AddonClassLoaderTest {
         MAIN,
         NAME,
         VERSION,
-        AUTHORS
+        AUTHORS,
+        ICON
     }
     /**
      * Used for file writing etc.
@@ -129,7 +130,11 @@ public class AddonClassLoaderTest {
         r.set("repository", "repo");
         r.set("depend", "Level, Warps");
         r.set("softdepend", "Boxed, AcidIsland");
-        r.set("icon", "IRON_INGOT");
+        if (!missingTags.contains(mandatoryTags.ICON)) {
+            r.set("icon", "IRON_INGOT");
+        } else {
+            r.set("icon", "unkOwnMateriaL");
+        }
         r.set("api-version", "1.21-SNAPSHOT");
         return r;
     }
@@ -275,6 +280,19 @@ public class AddonClassLoaderTest {
             AddonClassLoader.asDescription(yml);
         } catch (InvalidAddonDescriptionException e) {
             assertEquals("AddonException : Missing 'main' tag. A main class must be listed in addon.yml", e.getMessage());
+        }
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.api.addons.AddonClassLoader#asDescription(org.bukkit.configuration.file.YamlConfiguration)}.
+     */
+    @Test
+    public void testAsDescriptionUnknownIconMaterial() {
+        YamlConfiguration yml = this.getYaml(List.of(mandatoryTags.ICON));
+        try {
+            AddonClassLoader.asDescription(yml);
+        } catch (InvalidAddonDescriptionException e) {
+            assertEquals("AddonException : 'icon' tag refers to an unknown Material: unkOwnMateriaL", e.getMessage());
         }
     }
 
