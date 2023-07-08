@@ -13,7 +13,6 @@ import java.util.jar.JarFile;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
@@ -578,7 +577,7 @@ public class Util {
      */
     @NonNull
     public static String stripSpaceAfterColorCodes(@NonNull String textToStrip) {
-        Validate.notNull(textToStrip, "Cannot strip null text");
+        if (textToStrip == null) return "";
         textToStrip = textToStrip.replaceAll("(" + ChatColor.COLOR_CHAR + ".)[\\s]", "$1");
         return textToStrip;
     }
@@ -738,7 +737,7 @@ public class Util {
         }
         return regenerator;
     }
-    
+
     /**
      * Checks what version the server is running and picks the appropriate NMS handler, or fallback
      * @return PasteHandler
