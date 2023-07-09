@@ -75,9 +75,9 @@ public class HurtingListener extends FlagListener {
     private void respond(EntityDamageByEntityEvent e, Entity damager, Flag flag) {
         // Get the attacker
         if (damager instanceof Player player) {
-            checkIsland(e, player, player.getLocation(), flag);
+            checkIsland(e, player, e.getEntity().getLocation(), flag);
         } else if (damager instanceof Projectile p && // Find out who fired the projectile
-                p.getShooter() instanceof Player player && !checkIsland(e, player, player.getLocation(), flag)) {
+                p.getShooter() instanceof Player player && !checkIsland(e, player, e.getEntity().getLocation(), flag)) {
             e.getEntity().setFireTicks(0);
         }
     }
