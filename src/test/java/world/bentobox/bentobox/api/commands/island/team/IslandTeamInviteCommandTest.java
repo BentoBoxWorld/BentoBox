@@ -13,6 +13,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -182,7 +183,7 @@ public class IslandTeamInviteCommandTest {
         // 10 minutes = 600 seconds
         when(s.getInviteCooldown()).thenReturn(10);
         itl.setCooldown(islandUUID, notUUID, 100);
-        assertFalse(itl.canExecute(user, itl.getLabel(), Collections.singletonList("target")));
+        assertFalse(itl.canExecute(user, itl.getLabel(), List.of("target")));
         verify(user).sendMessage(eq("general.errors.you-must-wait"), eq(TextVariables.NUMBER), anyString());
     }
 
@@ -192,7 +193,7 @@ public class IslandTeamInviteCommandTest {
     @Test
     public void testCanExecuteDifferentPlayerInTeam() {
         when(im.inTeam(any(), any())).thenReturn(true);
-        assertFalse(itl.canExecute(user, itl.getLabel(), Collections.singletonList("target")));
+        assertFalse(itl.canExecute(user, itl.getLabel(), List.of("target")));
         verify(user).sendMessage(eq("commands.island.team.invite.errors.already-on-team"));
     }
 
@@ -203,7 +204,7 @@ public class IslandTeamInviteCommandTest {
     public void testCanExecuteLowRank() {
         when(island.getRank(any(User.class))).thenReturn(RanksManager.MEMBER_RANK);
         when(island.getRankCommand(anyString())).thenReturn(RanksManager.OWNER_RANK);
-        assertFalse(itl.canExecute(user, itl.getLabel(), Collections.singletonList("target")));
+        assertFalse(itl.canExecute(user, itl.getLabel(), List.of("target")));
         verify(user).sendMessage(eq("general.errors.insufficient-rank"), eq(TextVariables.RANK), eq("ranks.member"));
     }
 
@@ -214,7 +215,7 @@ public class IslandTeamInviteCommandTest {
     public void testCanExecuteNoIsland() {
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(false);
         when(im.inTeam(any(), any(UUID.class))).thenReturn(false);
-        assertFalse(itl.canExecute(user, itl.getLabel(), Collections.singletonList("target")));
+        assertFalse(itl.canExecute(user, itl.getLabel(), List.of("target")));
         verify(user).sendMessage(eq("general.errors.no-island"));
     }
 
@@ -235,7 +236,7 @@ public class IslandTeamInviteCommandTest {
     @Test
     public void testCanExecuteOfflinePlayer() {
         when(target.isOnline()).thenReturn(false);
-        assertFalse(itl.canExecute(user, itl.getLabel(), Collections.singletonList("target")));
+        assertFalse(itl.canExecute(user, itl.getLabel(), List.of("target")));
         verify(user).sendMessage(eq("general.errors.offline-player"));
     }
 
@@ -245,7 +246,7 @@ public class IslandTeamInviteCommandTest {
     @Test
     public void testCanExecuteVanishedPlayer() {
         when(p.canSee(any())).thenReturn(false);
-        assertFalse(itl.canExecute(user, itl.getLabel(), Collections.singletonList("target")));
+        assertFalse(itl.canExecute(user, itl.getLabel(), List.of("target")));
         verify(user).sendMessage(eq("general.errors.offline-player"));
     }
 
@@ -255,7 +256,7 @@ public class IslandTeamInviteCommandTest {
      */
     @Test
     public void testCanExecuteSamePlayer() {
-        assertFalse(itl.canExecute(user, itl.getLabel(), Collections.singletonList("tastybento")));
+        assertFalse(itl.canExecute(user, itl.getLabel(), List.of("tastybento")));
         verify(user).sendMessage(eq("commands.island.team.invite.errors.cannot-invite-self"));
     }
 
@@ -264,7 +265,7 @@ public class IslandTeamInviteCommandTest {
      */
     @Test
     public void testCanExecuteSuccess() {
-        assertTrue(itl.canExecute(user, itl.getLabel(), Collections.singletonList("target")));
+        assertTrue(itl.canExecute(user, itl.getLabel(), List.of("target")));
     }
 
     /**
@@ -273,7 +274,7 @@ public class IslandTeamInviteCommandTest {
     @Test
     public void testCanExecuteUnknownPlayer() {
         when(pm.getUUID(eq("target"))).thenReturn(null);
-        assertFalse(itl.canExecute(user, itl.getLabel(), Collections.singletonList("target")));
+        assertFalse(itl.canExecute(user, itl.getLabel(), List.of("target")));
         verify(user).sendMessage(eq("general.errors.unknown-player"), eq(TextVariables.NAME), eq("target"));
     }
 
@@ -284,7 +285,7 @@ public class IslandTeamInviteCommandTest {
     @Test
     public void testCanExecuteFullIsland() {
         when(im.getMaxMembers(eq(island), anyInt())).thenReturn(0);
-        assertFalse(itl.canExecute(user, itl.getLabel(), Collections.singletonList("target")));
+        assertFalse(itl.canExecute(user, itl.getLabel(), List.of("target")));
         verify(user).sendMessage(eq("commands.island.team.invite.errors.island-is-full"));
     }
 
@@ -295,7 +296,7 @@ public class IslandTeamInviteCommandTest {
     public void testExecuteSuccessTargetHasIsland() {
         when(im.hasIsland(any(), eq(notUUID))).thenReturn(true);
         testCanExecuteSuccess();
-        assertTrue(itl.execute(user, itl.getLabel(), Collections.singletonList("target")));
+        assertTrue(itl.execute(user, itl.getLabel(), List.of("target")));
         verify(pim).callEvent(any(IslandBaseEvent.class));
         verify(user, never()).sendMessage(eq("commands.island.team.invite.removing-invite"));
         verify(ic).addInvite(eq(Invite.Type.TEAM), eq(uuid), eq(notUUID));
@@ -312,7 +313,7 @@ public class IslandTeamInviteCommandTest {
     @Test
     public void testExecuteSuccessTargetHasNoIsland() {
         testCanExecuteSuccess();
-        assertTrue(itl.execute(user, itl.getLabel(), Collections.singletonList("target")));
+        assertTrue(itl.execute(user, itl.getLabel(), List.of("target")));
         verify(pim).callEvent(any(IslandBaseEvent.class));
         verify(user, never()).sendMessage("commands.island.team.invite.removing-invite");
         verify(ic).addInvite(Invite.Type.TEAM, uuid, notUUID);
@@ -336,7 +337,7 @@ public class IslandTeamInviteCommandTest {
         Invite invite = mock(Invite.class);
         when(invite.getType()).thenReturn(Type.TEAM);
         when(ic.getInvite(notUUID)).thenReturn(invite);
-        assertTrue(itl.execute(user, itl.getLabel(), Collections.singletonList("target")));
+        assertTrue(itl.execute(user, itl.getLabel(), List.of("target")));
         verify(pim).callEvent(any(IslandBaseEvent.class));
         verify(ic).removeInvite(notUUID);
         verify(user).sendMessage("commands.island.team.invite.removing-invite");
