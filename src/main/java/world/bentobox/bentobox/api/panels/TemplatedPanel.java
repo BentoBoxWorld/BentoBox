@@ -122,30 +122,33 @@ public class TemplatedPanel extends Panel
     }
 
     private void fillBorder(PanelItem[][] itemArray) {
-        if (panelTemplate.border() != null) {
-            PanelItem template = makeTemplate(panelTemplate.border());
-            // Hard coded 6
-            for (int i = 0; i < 6; i++) {
-                if (i == 0 || i == 5) {
-                    // Fill first and last row completely with border.
-                    for (int k = 0; k < 9; k++) {
-                        if (itemArray[i][k] == null) {
-                            itemArray[i][k] = template;
-                        }
-                    }
-                } else {
-                    // Fill first and last element in row with border.
-                    if (itemArray[i][0] == null) {
-                        itemArray[i][0] = template;
-                    }
-                    if (itemArray[i][8] == null) {
-                        itemArray[i][8] = template;
+        if (panelTemplate.border() == null) {
+            return;
+        }
+        PanelItem template = makeTemplate(panelTemplate.border());
+        int numRows = itemArray.length;
+        int numCols = itemArray[0].length;
+
+        for (int i = 0; i < numRows; i++) {
+            if (i == 0 || i == numRows - 1) {
+                // Fill first and last row completely with border.
+                for (int k = 0; k < numCols; k++) {
+                    if (itemArray[i][k] == null) {
+                        itemArray[i][k] = template;
                     }
                 }
+            } else {
+                // Fill first and last element in row with border.
+                if (itemArray[i][0] == null) {
+                    itemArray[i][0] = template;
+                }
+                if (itemArray[i][numCols - 1] == null) {
+                    itemArray[i][numCols - 1] = template;
+                }
             }
-            panelTemplate.forcedRows()[0] = true;
-            panelTemplate.forcedRows()[5] = true;
         }
+        panelTemplate.forcedRows()[0] = true;
+        panelTemplate.forcedRows()[numRows - 1] = true;
     }
 
     private void fillBackground(PanelItem[][] itemArray) {

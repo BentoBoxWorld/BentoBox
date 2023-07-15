@@ -153,7 +153,7 @@ public class IslandTeamInviteCommand extends CompositeCommand {
     }
 
     private boolean isInviteTypeTeam(UUID invitedPlayerUUID) {
-        return itc.getInvite(invitedPlayerUUID).getType().equals(Type.TEAM);
+        return Objects.requireNonNull(itc.getInvite(invitedPlayerUUID)).getType().equals(Type.TEAM);
     }
 
     @Override
