@@ -130,8 +130,13 @@ public class PanelItem {
     public void setGlow(boolean glow) {
         this.glow = glow;
         if (meta != null) {
-            meta.addEnchant(Enchantment.ARROW_DAMAGE, 0, glow);
+            if (glow) {
+                meta.addEnchant(Enchantment.ARROW_DAMAGE, 0, glow);
+            } else {
+                meta.removeEnchant(Enchantment.ARROW_DAMAGE);
+            }
             icon.setItemMeta(meta);
+
         }
     }
 
