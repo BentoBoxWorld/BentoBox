@@ -479,7 +479,8 @@ public class PlayersManager {
      * @return user - user or null if unknown
      */
     public User getUser(String name) {
-        return getUser(getUUID(name));
+        UUID uuid = getUUID(name);
+        return uuid == null ? null : getUser(uuid);
     }
 
     /**
