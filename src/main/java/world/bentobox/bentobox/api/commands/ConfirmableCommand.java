@@ -11,7 +11,8 @@ import world.bentobox.bentobox.api.user.User;
 
 /**
  * BentoBox Confirmable Command
- * Adds ability to confirm a command before execution
+ * Adds ability to confirm a command before execution.
+ * See {@link #askConfirmation(User, Runnable)}, {@link #askConfirmation(User, String, Runnable)}
  * @author tastybento
  * @author Poslovitch
  */
@@ -88,7 +89,8 @@ public abstract class ConfirmableCommand extends CompositeCommand {
     }
 
     /**
-     * Tells user to confirm command by retyping it.
+     * Tells user to confirm command by retyping it. Uses the default message to retype it.<p>
+     * If you need a custom message, use {@link #askConfirmation(User, String, Runnable)}
      * @param user User to ask confirmation to.
      * @param confirmed Runnable to be executed if successfully confirmed.
      */
