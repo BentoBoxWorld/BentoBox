@@ -313,7 +313,6 @@ public class ClosestSafeSpotTeleport
         {
             // Try to teleport player to the highest block.
             this.asyncTeleport(highestBlock.getLocation().add(new Vector(0.5D, 0D, 0.5D)));
-            return;
         }
         else if (!this.plugin.getIWM().inWorld(this.entity.getLocation()))
         {

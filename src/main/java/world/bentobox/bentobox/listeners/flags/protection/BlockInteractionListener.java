@@ -100,7 +100,7 @@ public class BlockInteractionListener extends FlagListener
             return;
         }
 
-        if (block.getState() instanceof BrushableBlock bb && BlockInteractionListener.holds(player, Material.BRUSH)) {
+        if (block.getState() instanceof BrushableBlock && BlockInteractionListener.holds(player, Material.BRUSH)) {
             // Protect this using break blocks flag for now. Maybe in the future it can have its own flag.
             this.checkIsland(e, player, loc, Flags.BREAK_BLOCKS);
             return;

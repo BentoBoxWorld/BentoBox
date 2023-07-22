@@ -35,21 +35,19 @@ public class BreakBlocksListener extends FlagListener {
         Player p = e.getPlayer();
         Location l = e.getBlock().getLocation();
         Material m = e.getBlock().getType();
-        switch (m)
-        {
-        case MELON, PUMPKIN -> this.checkIsland(e, p, l, Flags.HARVEST);
-            default -> {
+        if (m.equals(Material.MELON) || m.equals(Material.PUMPKIN)) {
+            this.checkIsland(e, p, l, Flags.HARVEST);
+        } else {
             // Crops
-            if (Tag.CROPS.isTagged(m) 
-                    && !m.equals(Material.MELON_STEM) 
-                    && !m.equals(Material.PUMPKIN_STEM) 
-                    && !m.equals(Material.ATTACHED_MELON_STEM) 
+            if (Tag.CROPS.isTagged(m)
+                    && !m.equals(Material.MELON_STEM)
+                    && !m.equals(Material.PUMPKIN_STEM)
+                    && !m.equals(Material.ATTACHED_MELON_STEM)
                     && !m.equals(Material.ATTACHED_PUMPKIN_STEM)) {
                 this.checkIsland(e,  p,  l, Flags.HARVEST);
             } else {
                 checkIsland(e, p, l, Flags.BREAK_BLOCKS);
             }
-        }
         }
     }
 
