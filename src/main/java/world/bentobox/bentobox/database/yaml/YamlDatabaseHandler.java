@@ -358,11 +358,11 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         // See if there are any top-level comments
         handleComments(instance.getClass(), config, yamlComments, "");
 
+        // Run through all the fields in the class that is being stored. EVERY field must have a get and set method
         for (Field field : dataObject.getDeclaredFields()) {
             if (field.isSynthetic()) {
                 continue;
             }
-
             // Get the property descriptor for this field
             PropertyDescriptor propertyDescriptor = new PropertyDescriptor(field.getName(), dataObject);
             // Get the read method
@@ -376,7 +376,12 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             ConfigEntry configEntry = field.getAnnotation(ConfigEntry.class);
 
             // If there is a config path annotation or adapter then deal with them
-            if (configEntry != null && !configEntry.path().isEmpty() && !configEntry.hidden()) {
+            if (configEntry != null && !configEntry.path().isEmpty()) {
+                if (configEntry.hidden()) {
+                    // If the annotation tells us to not print the config entry, then we won't.
+                    continue;
+                }
+
                 // Get the storage location
                 storageLocation = configEntry.path();
 
@@ -387,7 +392,9 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                 }
                 handleComments(field, config, yamlComments, parent);
                 handleConfigEntryComments(configEntry, config, yamlComments, parent);
-            } else if (!checkAdapter(field, config, storageLocation, value)) {
+            }
+
+            if (!checkAdapter(field, config, storageLocation, value)) {
                 // Set the filename if it has not be set already
                 if (filename.isEmpty() && method.getName().equals("getUniqueId")) {
                     // Save the name for when the file is saved
@@ -404,7 +411,6 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                 }
             }
         }
-
         // If the filename has not been set by now then we have a problem
         if (filename.isEmpty()) {
             throw new IllegalArgumentException("No uniqueId in class");
