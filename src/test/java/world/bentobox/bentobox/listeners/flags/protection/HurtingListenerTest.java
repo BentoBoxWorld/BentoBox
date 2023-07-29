@@ -3,7 +3,6 @@ package world.bentobox.bentobox.listeners.flags.protection;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -93,7 +92,7 @@ public class HurtingListenerTest extends AbstractCommonSetup {
         HurtingListener hl = new HurtingListener();
         hl.onEntityDamage(e);
         assertTrue(e.isCancelled());
-        verify(notifier).notify(eq(user), eq("protection.protected"));
+        verify(notifier).notify(user, "protection.protected");
     }
 
     /**
@@ -106,7 +105,7 @@ public class HurtingListenerTest extends AbstractCommonSetup {
         HurtingListener hl = new HurtingListener();
         hl.onEntityDamage(e);
         assertFalse(e.isCancelled());
-        verify(notifier, never()).notify(eq(user), eq("protection.protected"));
+        verify(notifier, never()).notify(user, "protection.protected");
     }
 
     /**
@@ -121,7 +120,7 @@ public class HurtingListenerTest extends AbstractCommonSetup {
         HurtingListener hl = new HurtingListener();
         hl.onFishing(e);
         // Verify
-        verify(notifier).notify(eq(user), eq("protection.protected"));
+        verify(notifier).notify(user, "protection.protected");
     }
 
     /**
@@ -138,7 +137,7 @@ public class HurtingListenerTest extends AbstractCommonSetup {
         when(island.isAllowed(any(), any())).thenReturn(true);
         hl.onFishing(e);
         // Verify
-        verify(notifier, never()).notify(eq(user), eq("protection.protected"));
+        verify(notifier, never()).notify(user, "protection.protected");
     }
 
     /**
@@ -153,7 +152,7 @@ public class HurtingListenerTest extends AbstractCommonSetup {
         HurtingListener hl = new HurtingListener();
         hl.onFishing(e);
         // Verify
-        verify(notifier).notify(eq(user), eq("protection.protected"));
+        verify(notifier).notify(user, "protection.protected");
     }
 
     /**
@@ -170,7 +169,7 @@ public class HurtingListenerTest extends AbstractCommonSetup {
         when(island.isAllowed(any(), any())).thenReturn(true);
         hl.onFishing(e);
         // Verify
-        verify(notifier, never()).notify(eq(user), eq("protection.protected"));
+        verify(notifier, never()).notify(user, "protection.protected");
     }
 
     /**
@@ -185,7 +184,7 @@ public class HurtingListenerTest extends AbstractCommonSetup {
         HurtingListener hl = new HurtingListener();
         hl.onFishing(e);
         // Verify
-        verify(notifier).notify(eq(user), eq("protection.protected"));
+        verify(notifier).notify(user, "protection.protected");
     }
 
     /**
@@ -202,7 +201,7 @@ public class HurtingListenerTest extends AbstractCommonSetup {
         when(island.isAllowed(any(), any())).thenReturn(true);
         hl.onFishing(e);
         // Verify
-        verify(notifier, never()).notify(eq(user), eq("protection.protected"));
+        verify(notifier, never()).notify(user, "protection.protected");
     }
 
     /**
@@ -218,7 +217,7 @@ public class HurtingListenerTest extends AbstractCommonSetup {
         HurtingListener hl = new HurtingListener();
         hl.onFishing(e);
         // Verify
-        verify(notifier).notify(eq(user), eq("protection.protected"));
+        verify(notifier).notify(user, "protection.protected");
     }
 
     /**
@@ -234,7 +233,7 @@ public class HurtingListenerTest extends AbstractCommonSetup {
         HurtingListener hl = new HurtingListener();
         hl.onFishing(e);
         // Verify
-        verify(notifier).notify(eq(user), eq("protection.protected"));
+        verify(notifier).notify(user, "protection.protected");
     }
 
 
@@ -253,7 +252,7 @@ public class HurtingListenerTest extends AbstractCommonSetup {
         when(island.isAllowed(any(), any())).thenReturn(true);
         hl.onFishing(e);
         // Verify
-        verify(notifier, never()).notify(eq(user), eq("protection.protected"));
+        verify(notifier, never()).notify(user, "protection.protected");
     }
 
     /**
@@ -271,7 +270,7 @@ public class HurtingListenerTest extends AbstractCommonSetup {
         when(island.isAllowed(any(), any())).thenReturn(true);
         hl.onFishing(e);
         // Verify
-        verify(notifier, never()).notify(eq(user), eq("protection.protected"));
+        verify(notifier, never()).notify(user, "protection.protected");
     }
 
     /**

@@ -202,9 +202,8 @@ public class DefaultPasteUtil {
      *
      * @param island - island
      * @param block  - block
-     * @param lines  - lines
-     * @param glow   - is sign glowing?
-     * @param side   - the side being writted
+     * @param bpSign - BlueprintBlock that is the sign
+     * @param side   - the side being written
      */
     public static void writeSign(Island island, final Block block, BlueprintBlock bpSign, Side side) {
         List<String> lines = bpSign.getSignLines(side);

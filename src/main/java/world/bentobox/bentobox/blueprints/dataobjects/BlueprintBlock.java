@@ -164,10 +164,11 @@ public class BlueprintBlock {
      * @since 1.24.0
      */
     public void setGlowingText(Side side, boolean glowingText) {
-        switch (side) {
-        case FRONT -> this.glowingText = glowingText;
-        default -> this.glowingText2 = glowingText;
-        };
+        if (side == Side.FRONT) {
+            this.glowingText = glowingText;
+        } else {
+            this.glowingText2 = glowingText;
+        }
 
     }
 
@@ -177,10 +178,8 @@ public class BlueprintBlock {
      * @since 1.24.0
      */
     public boolean isGlowingText(Side side) {
-        return switch (side) {
-        case FRONT -> glowingText;
-        default -> glowingText2;
-        };
+        if (side == Side.FRONT) return glowingText;
+        return glowingText2;
     }
 
     /**
@@ -189,10 +188,8 @@ public class BlueprintBlock {
      * @since 1.24.0
      */
     public List<String> getSignLines(Side side) {
-        return switch (side) {
-        case FRONT -> signLines;
-        default -> signLines2;
-        };
+        if (side == Side.FRONT) return signLines;
+        return signLines2;
     }
 
     /**
@@ -201,12 +198,10 @@ public class BlueprintBlock {
      * @since 1.24.0
      */
     public void setSignLines(Side side, List<String> signLines) {
-        switch (side) {
-        case FRONT -> this.signLines = signLines;
-        default -> this.signLines2 = signLines;
-        };
+        if (side == Side.FRONT) {
+            this.signLines = signLines;
+        } else {
+            this.signLines2 = signLines;
+        }
     }
-
-
-
 }

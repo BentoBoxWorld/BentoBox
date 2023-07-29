@@ -107,51 +107,66 @@ public class AdminSettingsCommand extends CompositeCommand {
 
     /**
      * Check that this command is correct to set a setting
+     *
      * @param user - user
      * @param args - args
      * @return true if the syntax is correct
      */
     private boolean checkSyntax(User user, List<String> args) {
-        // Update the flag lists
         this.makeLists();
-        if (args.size() == 2) {
-            // Should be a world setting
-            // If world settings, then active/disabled, otherwise player flags
-            if (worldSettingFlagNames.contains(args.get(0).toUpperCase(Locale.ENGLISH))) {
-                if (checkActiveDisabled(user, args.get(1))) {
-                    flag = getPlugin().getFlagsManager().getFlag(args.get(0).toUpperCase(Locale.ENGLISH));
-                    return true;
-                }
-            } else {
-                this.showHelp(this, user);
-                return false;
-            }
-        } else if (args.size() > 2) {
-            // Get island
-            if (!getIsland(user, args)) {
-                return false;
-            }
 
-            if (!settingFlagNames.contains(args.get(1).toUpperCase(Locale.ENGLISH))
-                    && !protectionFlagNames.contains(args.get(1).toUpperCase(Locale.ENGLISH))) {
-                user.sendMessage("commands.admin.settings.unknown-flag", TextVariables.NAME, args.get(2));
-                return false;
+        int argSize = args.size();
+
+        if (argSize == 2) {
+            return checkWorldSetting(user, args);
+        } else if (argSize > 2) {
+            return checkIslandSetting(user, args);
+        }
+
+        return false;
+    }
+
+    private boolean checkWorldSetting(User user, List<String> args) {
+        String arg0 = args.get(0).toUpperCase(Locale.ENGLISH);
+
+        if (worldSettingFlagNames.contains(arg0)) {
+            if (checkActiveDisabled(user, args.get(1))) {
+                flag = getPlugin().getFlagsManager().getFlag(args.get(0).toUpperCase(Locale.ENGLISH));
+                return true;
             }
-            // Set flag
-            flag = getPlugin().getFlagsManager().getFlag(args.get(1).toUpperCase(Locale.ENGLISH));
-            // Check settings
-            if (flag.isPresent()) {
-                if (flag.get().getType().equals(Type.SETTING)) {
-                    return checkActiveDisabled(user, args.get(2));
-                } else {
-                    // Protection flag
-                    return checkRank(user, String.join(" ", args.subList(2, args.size())));
-                }
-            }
+        } else {
+            this.showHelp(this, user);
+            return false;
         }
         return false;
     }
 
+    private boolean checkIslandSetting(User user, List<String> args) {
+        // Get island
+        if (!getIsland(user, args)) {
+            return false;
+        }
+
+        String arg1 = args.get(1).toUpperCase(Locale.ENGLISH);
+
+        if (!settingFlagNames.contains(arg1) && !protectionFlagNames.contains(arg1)) {
+            user.sendMessage("commands.admin.settings.unknown-flag", TextVariables.NAME, args.get(2));
+            return false;
+        }
+        // Set flag
+        flag = getPlugin().getFlagsManager().getFlag(arg1);
+        // Check settings
+        if (flag.isPresent()) {
+            if (flag.get().getType().equals(Type.SETTING)) {
+                return checkActiveDisabled(user, args.get(2));
+            } else {
+                // Protection flag
+                return checkRank(user, String.join(" ", args.subList(2, args.size())));
+            }
+        }
+
+        return false;
+    }
 
     /**
      * Check the rank given.

@@ -90,7 +90,7 @@ public class PVPListener extends FlagListener {
                 user.notify(getFlag(player.getWorld()).getHintReference());
                 e.setCancelled(true);
             }
-        } else if (damager instanceof Projectile && ((Projectile)damager).getShooter() instanceof Player shooter) {
+        } else if (damager instanceof Projectile projectile && projectile.getShooter() instanceof Player shooter) {
             // Find out who fired the arrow
             processDamage(e, damager, shooter, hurtEntity, flag);
         } else if (damager instanceof Firework && firedFireworks.containsKey(damager)) {

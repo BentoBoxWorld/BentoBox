@@ -139,6 +139,7 @@ public class SafeSpotTeleportTest {
      */
     @After
     public void tearDown() throws Exception {
+        Mockito.framework().clearInlineMocks();
     }
 
     /**

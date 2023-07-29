@@ -66,7 +66,7 @@ public class ItemParser {
         try {
             // Because I am lazy, and do not want to rewrite every parser, I will just add custom data as
             // parameter and remove that array part form input data.
-            Optional<String> first = Arrays.stream(part).filter(field -> field.matches("(CMD-[0-9]*)")).findFirst();
+            Optional<String> first = Arrays.stream(part).filter(field -> field.matches("(CMD-\\d*)")).findFirst();
             Integer customModelData = null;
 
             if (first.isPresent()) {
@@ -75,7 +75,7 @@ public class ItemParser {
                 int j = 0;
 
                 for (String field : part) {
-                    if (!field.matches("(CMD-[0-9]*)")) {
+                    if (!field.matches("(CMD-\\d*)")) {
                         copyParts[j++] = field;
                     }
                 }
@@ -182,11 +182,11 @@ public class ItemParser {
     /**
      * This method parses array of 6 items into an item stack.
      * Format:
-     * <pre>{@code 
+     * <pre>{@code
      *      POTION:NAME:<LEVEL>:<EXTENDED>:<SPLASH/LINGER>:QTY
      * }</pre>
      * Example:
-     * <pre>{@code 
+     * <pre>{@code
      *      POTION:STRENGTH:1:EXTENDED:SPLASH:1
      * }</pre>
      * @param part String array that contains 6 elements.
@@ -261,13 +261,13 @@ public class ItemParser {
     /**
      * This method parses array of 2 to 3 elements that represents player head.
      * Format:
-     * <pre>{@code 
+     * <pre>{@code
      *    PLAYER_HEAD:<STRING/Trimmed UUID/UUID/Texture>:QTY
      *    PLAYER_HEAD:<STRING/Trimmed UUID/UUID/Texture>
      *    PLAYER_HEAD:QTY
      * }</pre>
      * Example:
-     * <pre>{@code 
+     * <pre>{@code
      *    PLAYER_HEAD:1
      *    PLAYER_HEAD:BONNe1704
      *    PLAYER_HEAD:eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYWY1ZjE1OTg4NmNjNTMxZmZlYTBkOGFhNWY5MmVkNGU1ZGE2NWY3MjRjMDU3MGFmODZhOTBiZjAwYzY3YzQyZSJ9fX0:1

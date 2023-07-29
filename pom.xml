@@ -67,7 +67,7 @@
         <!-- Non-minecraft related dependencies -->
         <powermock.version>2.0.9</powermock.version>
         <!-- Database related dependencies -->
-        <mongodb.version>3.12.8</mongodb.version>
+        <mongodb.version>3.12.12</mongodb.version>
         <mariadb.version>3.0.5</mariadb.version>
         <mysql.version>8.0.27</mysql.version>
         <postgresql.version>42.2.18</postgresql.version>
@@ -88,7 +88,7 @@
         <!-- Do not change unless you want different name for local builds. -->
         <build.number>-LOCAL</build.number>
         <!-- This allows to change between versions. -->
-        <build.version>1.24.0</build.version>
+        <build.version>1.24.1</build.version>
         <sonar.organization>bentobox-world</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <server.jars>${project.basedir}/lib</server.jars>
@@ -127,6 +127,7 @@
                     <value>origin/master</value>
                 </property>
             </activation>
+            <!--suppress CheckTagEmptyBody -->
             <properties>
                 <!-- Override only if necessary -->
                 <revision>${build.version}</revision>
@@ -369,6 +370,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.0.0-M5</version>
+                <!--suppress MavenModelInspection -->
                 <configuration>
                     <argLine>
                         ${argLine}
@@ -505,7 +507,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.7</version>
+                <version>0.8.10</version>
                 <configuration>
                     <append>true</append>
                     <excludes>

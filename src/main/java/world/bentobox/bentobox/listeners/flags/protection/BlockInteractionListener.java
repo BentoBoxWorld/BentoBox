@@ -91,72 +91,11 @@ public class BlockInteractionListener extends FlagListener
      */
     private void checkClickedBlock(Event e, Player player, Block block)
     {
+        if (checkSpecialCases(e, player, block) || checkTags(e, player, block)) {
+            return;
+        }
         Material type = block.getType();
         Location loc = block.getLocation();
-        // Handle pots
-        if (type.name().startsWith("POTTED"))
-        {
-            this.checkIsland(e, player, loc, Flags.FLOWER_POT);
-            return;
-        }
-
-        if (block.getState() instanceof BrushableBlock bb && BlockInteractionListener.holds(player, Material.BRUSH)) {
-            // Protect this using break blocks flag for now. Maybe in the future it can have its own flag.
-            this.checkIsland(e, player, loc, Flags.BREAK_BLOCKS);
-            return;
-        }
-
-        if (Tag.ANVIL.isTagged(type))
-        {
-            this.checkIsland(e, player, loc, Flags.ANVIL);
-            return;
-        }
-
-        if (Tag.BUTTONS.isTagged(type))
-        {
-            this.checkIsland(e, player, loc, Flags.BUTTON);
-            return;
-        }
-
-        if (Tag.BEDS.isTagged(type))
-        {
-            this.checkIsland(e, player, loc, Flags.BED);
-            return;
-        }
-
-        if (Tag.DOORS.isTagged(type))
-        {
-            this.checkIsland(e, player, loc, Flags.DOOR);
-            return;
-        }
-
-        if (Tag.SHULKER_BOXES.isTagged(type))
-        {
-            this.checkIsland(e, player, loc, Flags.SHULKER_BOX);
-            return;
-        }
-
-        if (Tag.TRAPDOORS.isTagged(type))
-        {
-            this.checkIsland(e, player, loc, Flags.TRAPDOOR);
-            return;
-        }
-
-        if (Tag.SIGNS.isTagged(type) && block.getState() instanceof Sign sign && !sign.isWaxed()) {
-            // If waxed, then sign cannot be edited otherwise check
-            this.checkIsland(e, player, loc, Flags.SIGN_EDITING);
-            return;
-        }
-
-        if (Tag.FENCE_GATES.isTagged(type))
-        {
-            this.checkIsland(e, player, loc, Flags.GATE);
-        }
-
-        if (Tag.ITEMS_CHEST_BOATS.isTagged(type))
-        {
-            this.checkIsland(e, player, loc, Flags.CHEST);
-        }
 
         switch (type)
         {
@@ -228,6 +167,87 @@ public class BlockInteractionListener extends FlagListener
         { // nothing to do
         }
         }
+    }
+
+
+    private boolean checkTags(Event e, Player player, Block block) {
+        Material type = block.getType();
+        Location loc = block.getLocation();
+
+        if (Tag.ANVIL.isTagged(type))
+        {
+            this.checkIsland(e, player, loc, Flags.ANVIL);
+            return true;
+        }
+
+        if (Tag.BUTTONS.isTagged(type))
+        {
+            this.checkIsland(e, player, loc, Flags.BUTTON);
+            return true;
+        }
+
+        if (Tag.BEDS.isTagged(type))
+        {
+            this.checkIsland(e, player, loc, Flags.BED);
+            return true;
+        }
+
+        if (Tag.DOORS.isTagged(type))
+        {
+            this.checkIsland(e, player, loc, Flags.DOOR);
+            return true;
+        }
+
+        if (Tag.SHULKER_BOXES.isTagged(type))
+        {
+            this.checkIsland(e, player, loc, Flags.SHULKER_BOX);
+            return true;
+        }
+
+        if (Tag.TRAPDOORS.isTagged(type))
+        {
+            this.checkIsland(e, player, loc, Flags.TRAPDOOR);
+            return true;
+        }
+
+        if (Tag.SIGNS.isTagged(type) && block.getState() instanceof Sign sign && !sign.isWaxed()) {
+            // If waxed, then sign cannot be edited otherwise check
+            this.checkIsland(e, player, loc, Flags.SIGN_EDITING);
+            return true;
+        }
+
+        if (Tag.FENCE_GATES.isTagged(type))
+        {
+            this.checkIsland(e, player, loc, Flags.GATE);
+            return true;
+        }
+
+        if (Tag.ITEMS_CHEST_BOATS.isTagged(type))
+        {
+            this.checkIsland(e, player, loc, Flags.CHEST);
+            return true;
+        }
+        return false;
+    }
+
+
+    private boolean checkSpecialCases(Event e, Player player, Block block) {
+        Material type = block.getType();
+        Location loc = block.getLocation();
+
+        // Handle pots
+        if (type.name().startsWith("POTTED"))
+        {
+            this.checkIsland(e, player, loc, Flags.FLOWER_POT);
+            return true;
+        }
+
+        if (block.getState() instanceof BrushableBlock && BlockInteractionListener.holds(player, Material.BRUSH)) {
+            // Protect this using break blocks flag for now. Maybe in the future it can have its own flag.
+            this.checkIsland(e, player, loc, Flags.BREAK_BLOCKS);
+            return true;
+        }
+        return false;
     }
 
 

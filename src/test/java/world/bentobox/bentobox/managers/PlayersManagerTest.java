@@ -1,10 +1,6 @@
 package world.bentobox.bentobox.managers;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -53,6 +49,7 @@ import org.powermock.reflect.Whitebox;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
+import world.bentobox.bentobox.api.flags.Flag.Mode;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.AbstractDatabaseHandler;
 import world.bentobox.bentobox.database.Database;
@@ -71,35 +68,36 @@ import world.bentobox.bentobox.util.Util;
 @PrepareForTest({Bukkit.class, BentoBox.class, User.class, Util.class, Logger.class, DatabaseSetup.class,})
 public class PlayersManagerTest {
 
+    private static AbstractDatabaseHandler<Object> h;
+    private Database<Players> db;
     @Mock
-    private BentoBox plugin;
+    private World end;
     @Mock
-    private World world;
+    private Inventory inv;
+    @Mock
+    private Island island;
     @Mock
     private IslandWorldManager iwm;
     @Mock
     private World nether;
-    @Mock
-    private World end;
-    private UUID uuid;
-    private User user;
     private UUID notUUID;
-    private Database<Players> db;
-    private PlayersManager pm;
-    @Mock
-    private Tameable tamed;
     @Mock
     private Player p;
     @Mock
-    private Inventory inv;
-    @Mock
-    private VaultHook vault;
-    @Mock
     private PlayerInventory playerInv;
     @Mock
-    private Island island;
-    
-    private static AbstractDatabaseHandler<Object> h;
+    private BentoBox plugin;
+    private PlayersManager pm;
+    @Mock
+    private Tameable tamed;
+    private User user;
+    private UUID uuid;
+
+    @Mock
+    private VaultHook vault;
+
+    @Mock
+    private World world;
 
     @SuppressWarnings("unchecked")
     @BeforeClass
@@ -112,6 +110,16 @@ public class PlayersManagerTest {
         when(DatabaseSetup.getDatabase()).thenReturn(dbSetup);
         when(dbSetup.getHandler(any())).thenReturn(h);
         when(h.saveObject(any())).thenReturn(CompletableFuture.completedFuture(true));
+    }
+
+    private void deleteAll(File file) throws IOException {
+        if (file.exists()) {
+            Files.walk(file.toPath())
+            .sorted(Comparator.reverseOrder())
+            .map(Path::toFile)
+            .forEach(File::delete);
+        }
+
     }
 
     /**
@@ -156,7 +164,7 @@ public class PlayersManagerTest {
         while(notUUID.equals(uuid)) {
             notUUID = UUID.randomUUID();
         }
-        
+
         // Island
         when(island.getOwner()).thenReturn(uuid);
 
@@ -167,6 +175,8 @@ public class PlayersManagerTest {
         AttributeInstance at = mock(AttributeInstance.class);
         when(at.getValue()).thenReturn(20D);
         when(p.getAttribute(Attribute.GENERIC_MAX_HEALTH)).thenReturn(at);
+        when(p.getName()).thenReturn("tastybento");
+        User.getInstance(p);
 
         // Sometimes use Mockito.withSettings().verboseLogging()
         user = mock(User.class);
@@ -213,6 +223,8 @@ public class PlayersManagerTest {
         // Leave commands
         when(iwm.getOnLeaveCommands(any())).thenReturn(Collections.emptyList());
 
+        // Deaths
+        when(iwm.getDeathsMax(world)).thenReturn(100);
 
         // Leave settings
         when(iwm.isOnLeaveResetEnderChest(any())).thenReturn(true);
@@ -244,56 +256,14 @@ public class PlayersManagerTest {
         deleteAll(new File("database_backup"));
     }
 
-    private void deleteAll(File file) throws IOException {
-        if (file.exists()) {
-            Files.walk(file.toPath())
-            .sorted(Comparator.reverseOrder())
-            .map(Path::toFile)
-            .forEach(File::delete);
-        }
-
-    }
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#PlayersManager(world.bentobox.bentobox.BentoBox)}.
+     * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#addDeath(org.bukkit.World, java.util.UUID)}.
      */
     @Test
-    public void testPlayersManager() {
-        assertNotNull(pm);
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#load()}.
-     */
-    @Test
-    public void testLoad() {
-        pm.setHandler(db);
-        pm.load();
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#saveAll()}.
-     */
-    @Test
-    public void testSaveBoolean() {
-        pm.saveAll();
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#shutdown()}.
-     */
-    @Test
-    public void testShutdown() {
-        pm.shutdown();
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#getPlayer(java.util.UUID)}.
-     */
-    @Test
-    public void testGetPlayer() {
-        Players player = pm.getPlayer(uuid);
-        assertEquals("tastybento", player.getPlayerName());
-        assertEquals(uuid.toString(), player.getUniqueId());
+    public void testAddDeath() {
+        int deaths = pm.getDeaths(world, uuid);
+        pm.addDeath(world, uuid);
+        assertEquals(deaths + 1, pm.getDeaths(world, uuid));
     }
 
     /**
@@ -311,107 +281,13 @@ public class PlayersManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#isKnown(java.util.UUID)}.
+     * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#addReset(org.bukkit.World, java.util.UUID)}.
      */
     @Test
-    public void testIsKnown() {
-
-        pm.addPlayer(uuid);
-        pm.addPlayer(notUUID);
-
-        assertFalse(pm.isKnown(null));
-        assertTrue(pm.isKnown(uuid));
-        assertTrue(pm.isKnown(notUUID));
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#getUUID(java.lang.String)}.
-     */
-    @Test
-    public void testGetUUIDwithUUID() {
-        assertEquals(uuid,pm.getUUID(uuid.toString()));
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#getUUID(java.lang.String)}.
-     */
-    @Test
-    public void testGetUUIDOfflinePlayer() {
-        pm.setHandler(db);
-        // Add a player to the cache
-        pm.addPlayer(uuid);
-        UUID uuidResult = pm.getUUID("tastybento");
-        assertEquals(uuid, uuidResult);
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#setPlayerName(world.bentobox.bentobox.api.user.User)}.
-     */
-    @Test
-    public void testSetandGetPlayerName() {
-        pm.setHandler(db);
-        // Add a player
-        pm.addPlayer(uuid);
-        assertEquals("tastybento", pm.getName(user.getUniqueId()));
-        pm.setPlayerName(user);
-        assertEquals(user.getName(), pm.getName(user.getUniqueId()));
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#getUUID(java.lang.String)}.
-     */
-    @Test
-    public void testGetUUIDUnknownPlayer() {
-        pm.setHandler(db);
-        // Add a player to the cache
-        pm.addPlayer(uuid);
-        // Unknown player should return null
-        assertNull(pm.getUUID("tastybento123"));
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#setResets(World, UUID, int)}.
-     */
-    @Test
-    public void testGetSetResetsLeft() {
-        // Add a player
-        pm.addPlayer(uuid);
-        assertEquals(0, pm.getResets(world, uuid));
-        pm.setResets(world, uuid, 20);
-        assertEquals(20, pm.getResets(world, uuid));
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#save(java.util.UUID)}.
-     */
-    @Test
-    public void testSaveUUID() {
-        // Add a player
-        pm.addPlayer(uuid);
-        //pm.save(uuid);
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#cleanLeavingPlayer(World, User, boolean)}.
-     */
-    @Test
-    public void testCleanLeavingPlayerLeave() {
-        pm.cleanLeavingPlayer(world, user, false, island);
-        // Tamed animals
-        verify(tamed).setOwner(eq(null));
-        // Economy
-        verify(vault).withdraw(eq(user), eq(0D), eq(world));
-        // Enderchest
-        verify(inv).clear();
-        // Player inventory
-        verify(playerInv).clear();
-        // Health
-        PowerMockito.verifyStatic(Util.class);
-        Util.resetHealth(eq(p));
-        // Food
-        verify(p).setFoodLevel(eq(20));
-        // XP
-        verify(p).setTotalExperience(eq(0));
+    public void testAddReset() {
+        int resets = pm.getResets(world, uuid);
+        pm.addReset(world, uuid);
+        assertEquals(resets + 1, pm.getResets(world, uuid));
     }
 
     /**
@@ -462,4 +338,354 @@ public class PlayersManagerTest {
         // XP
         verify(p).setTotalExperience(eq(0));
     }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#cleanLeavingPlayer(World, User, boolean)}.
+     */
+    @Test
+    public void testCleanLeavingPlayerLeave() {
+        pm.cleanLeavingPlayer(world, user, false, island);
+        // Tamed animals
+        verify(tamed).setOwner(eq(null));
+        // Economy
+        verify(vault).withdraw(eq(user), eq(0D), eq(world));
+        // Enderchest
+        verify(inv).clear();
+        // Player inventory
+        verify(playerInv).clear();
+        // Health
+        PowerMockito.verifyStatic(Util.class);
+        Util.resetHealth(eq(p));
+        // Food
+        verify(p).setFoodLevel(eq(20));
+        // XP
+        verify(p).setTotalExperience(eq(0));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#getDeaths(org.bukkit.World, java.util.UUID)}.
+     */
+    @Test
+    public void testGetDeaths() {
+        assertEquals(0, pm.getDeaths(world, uuid));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#getFlagsDisplayMode(java.util.UUID)}.
+     */
+    @Test
+    public void testGetFlagsDisplayMode() {
+        assertEquals(Mode.BASIC, pm.getFlagsDisplayMode(uuid));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#getLocale(java.util.UUID)}.
+     */
+    @Test
+    public void testGetLocale() {
+        assertTrue(pm.getLocale(uuid).isEmpty());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#getName(java.util.UUID)}.
+     */
+    @Test
+    public void testGetName() {
+        assertTrue(pm.getName(null).isEmpty());
+        String name = pm.getName(uuid);
+        assertEquals("tastybento", name);
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#getPlayer(java.util.UUID)}.
+     */
+    @Test
+    public void testGetPlayer() {
+        Players player = pm.getPlayer(uuid);
+        assertEquals("tastybento", player.getPlayerName());
+        assertEquals(uuid.toString(), player.getUniqueId());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#getPlayers()}.
+     */
+    @Test
+    public void testGetPlayers() {
+        assertTrue(pm.getPlayers().isEmpty());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#getResets(org.bukkit.World, java.util.UUID)}.
+     */
+    @Test
+    public void testGetResets() {
+        assertEquals(0, pm.getResets(world, uuid));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#getResetsLeft(org.bukkit.World, java.util.UUID)}.
+     */
+    @Test
+    public void testGetResetsLeft() {
+        assertEquals(0, pm.getResetsLeft(world, uuid));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#setResets(World, UUID, int)}.
+     */
+    @Test
+    public void testGetSetResetsLeft() {
+        // Add a player
+        pm.addPlayer(uuid);
+        assertEquals(0, pm.getResets(world, uuid));
+        pm.setResets(world, uuid, 20);
+        assertEquals(20, pm.getResets(world, uuid));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#getUser(java.lang.String)}.
+     */
+    @Test
+    public void testGetUserString() {
+        User user = pm.getUser("random");
+        assertNull(user);
+        pm.addPlayer(uuid);
+        user = pm.getUser("tastybento");
+        assertEquals("tastybento", user.getName());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#getUser(java.util.UUID)}.
+     */
+    @Test
+    public void testGetUserUUID() {
+        UUID uuid = pm.getUUID("unknown");
+        assertNull(uuid);
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#getUUID(java.lang.String)}.
+     */
+    @Test
+    public void testGetUUID() {
+        pm.addPlayer(uuid);
+        assertEquals(uuid, pm.getUUID("tastybento"));
+        assertNull(pm.getUUID("unknown"));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#getUUID(java.lang.String)}.
+     */
+    @Test
+    public void testGetUUIDOfflinePlayer() {
+        pm.setHandler(db);
+        // Add a player to the cache
+        pm.addPlayer(uuid);
+        UUID uuidResult = pm.getUUID("tastybento");
+        assertEquals(uuid, uuidResult);
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#getUUID(java.lang.String)}.
+     */
+    @Test
+    public void testGetUUIDUnknownPlayer() {
+        pm.setHandler(db);
+        // Add a player to the cache
+        pm.addPlayer(uuid);
+        // Unknown player should return null
+        assertNull(pm.getUUID("tastybento123"));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#getUUID(java.lang.String)}.
+     */
+    @Test
+    public void testGetUUIDwithUUID() {
+        assertEquals(uuid,pm.getUUID(uuid.toString()));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#isInTeleport(java.util.UUID)}.
+     */
+    @Test
+    public void testIsInTeleport() {
+        assertFalse(pm.isInTeleport(uuid));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#isKnown(java.util.UUID)}.
+     */
+    @Test
+    public void testIsKnown() {
+
+        pm.addPlayer(uuid);
+        pm.addPlayer(notUUID);
+
+        assertFalse(pm.isKnown(null));
+        assertTrue(pm.isKnown(uuid));
+        assertTrue(pm.isKnown(notUUID));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#isSaveTaskRunning()}.
+     */
+    @Test
+    public void testIsSaveTaskRunning() {
+        assertFalse(pm.isSaveTaskRunning());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#load()}.
+     */
+    @Test
+    public void testLoad() {
+        pm.setHandler(db);
+        pm.load();
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#PlayersManager(world.bentobox.bentobox.BentoBox)}.
+     */
+    @Test
+    public void testPlayersManager() {
+        assertNotNull(pm);
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#removeInTeleport(java.util.UUID)}.
+     */
+    @Test
+    public void testRemoveInTeleport() {
+        pm.setInTeleport(uuid);
+        assertTrue(pm.isInTeleport(uuid));
+        pm.removeInTeleport(uuid);
+        assertFalse(pm.isInTeleport(uuid));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#removePlayer(org.bukkit.entity.Player)}.
+     */
+    @Test
+    public void testRemovePlayer() {
+        this.testGetUUID();
+        pm.removePlayer(p);
+        assertNull(pm.getUUID("tastybeto"));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#saveAll()}.
+     */
+    @Test
+    public void testSaveAll() {
+        pm.setHandler(db);
+        pm.addPlayer(uuid);
+        pm.saveAll();
+        verify(db).saveObjectAsync(any());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#saveAll(boolean)}.
+     */
+    @Test
+    public void testSaveAllBoolean() {
+        pm.setHandler(db);
+        pm.addPlayer(uuid);
+        pm.saveAll(true);
+        assertTrue(pm.isSaveTaskRunning());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#save(java.util.UUID)}.
+     */
+    @Test
+    public void testSave() {
+        pm.setHandler(db);
+        // Add a player
+        pm.addPlayer(uuid);
+        pm.save(uuid);
+        verify(db).saveObjectAsync(any());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#setPlayerName(world.bentobox.bentobox.api.user.User)}.
+     */
+    @Test
+    public void testSetandGetPlayerName() {
+        pm.setHandler(db);
+        // Add a player
+        pm.addPlayer(uuid);
+        assertEquals("tastybento", pm.getName(user.getUniqueId()));
+        pm.setPlayerName(user);
+        assertEquals(user.getName(), pm.getName(user.getUniqueId()));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#setDeaths(org.bukkit.World, java.util.UUID, int)}.
+     */
+    @Test
+    public void testSetDeaths() {
+        pm.setDeaths(world, uuid, 50);
+        assertEquals(50, pm.getDeaths(world, uuid));
+
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#setFlagsDisplayMode(java.util.UUID, world.bentobox.bentobox.api.flags.Flag.Mode)}.
+     */
+    @Test
+    public void testSetFlagsDisplayMode() {
+        pm.setFlagsDisplayMode(uuid, Mode.ADVANCED);
+        assertEquals(Mode.ADVANCED, pm.getFlagsDisplayMode(uuid));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#setInTeleport(java.util.UUID)}.
+     */
+    @Test
+    public void testSetInTeleport() {
+        assertFalse(pm.isInTeleport(uuid));
+        pm.setInTeleport(uuid);
+        assertTrue(pm.isInTeleport(uuid));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#setLocale(java.util.UUID, java.lang.String)}.
+     */
+    @Test
+    public void testSetLocale() {
+        pm.setLocale(uuid, "en-UK");
+        assertEquals("en-UK", pm.getLocale(uuid));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#setPlayerName(world.bentobox.bentobox.api.user.User)}.
+     */
+    @Test
+    public void testSetPlayerName() {
+        pm.setPlayerName(user);
+        assertEquals("tastybento", pm.getName(uuid));
+        when(user.getName()).thenReturn("newName");
+        assertEquals("tastybento", pm.getName(uuid));
+        pm.setPlayerName(user);
+        assertEquals("newName", pm.getName(uuid));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#setResets(org.bukkit.World, java.util.UUID, int)}.
+     */
+    @Test
+    public void testSetResets() {
+        pm.setResets(world, uuid, 33);
+        assertEquals(33, pm.getResets(world, uuid));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#shutdown()}.
+     */
+    @Test
+    public void testShutdown() {
+        pm.shutdown(); // Clears cache
+    }
+
 }

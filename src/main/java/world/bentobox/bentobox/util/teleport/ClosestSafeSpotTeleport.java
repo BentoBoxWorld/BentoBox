@@ -54,9 +54,6 @@ public class ClosestSafeSpotTeleport
         this.portal = builder.isPortal();
 
         this.successRunnable = builder.getSuccessRunnable();
-        this.failRunnable = builder.getFailRunnable();
-
-        this.failureMessage = builder.getFailureMessage();
 
         this.result = builder.getResult();
         this.world = Objects.requireNonNull(this.location.getWorld());
@@ -72,7 +69,7 @@ public class ClosestSafeSpotTeleport
      * This is main method that triggers safe spot search.
      * It starts with the given location and afterwards checks all blocks in required area.
      */
-    private void checkLocation()
+    void checkLocation()
     {
         if (!this.portal && this.plugin.getIslandsManager().isSafeLocation(this.location))
         {
@@ -115,7 +112,7 @@ public class ClosestSafeSpotTeleport
     /**
      * This method loads all chunks in async and populates blockQueue with all blocks.
      */
-    private void gatherChunks()
+    void gatherChunks()
     {
         // Set a flag so this is only run if it's not already in progress
         if (this.checking.get())
@@ -165,7 +162,7 @@ public class ClosestSafeSpotTeleport
      *
      * @return - list of chunk coordinates to be scanned
      */
-    private List<Pair<Integer, Integer>> getChunksToScan()
+    List<Pair<Integer, Integer>> getChunksToScan()
     {
         List<Pair<Integer, Integer>> chunksToScan = new ArrayList<>();
 
@@ -210,7 +207,7 @@ public class ClosestSafeSpotTeleport
      * @param blockCoord Block coordinates that must be in island.
      * @param chunkCoord Chunk coordinate.
      */
-    private void addChunk(List<Pair<Integer, Integer>> chunksToScan,
+    void addChunk(List<Pair<Integer, Integer>> chunksToScan,
             Pair<Integer, Integer> blockCoord,
             Pair<Integer, Integer> chunkCoord)
     {
@@ -228,7 +225,7 @@ public class ClosestSafeSpotTeleport
      * Add only positions that are inside BoundingBox and is safe for teleportation.
      * @param chunkSnapshot Spigot Chunk Snapshot with blocks.
      */
-    private void scanAndPopulateBlockQueue(ChunkSnapshot chunkSnapshot)
+    void scanAndPopulateBlockQueue(ChunkSnapshot chunkSnapshot)
     {
         int startY = this.location.getBlockY();
         int minY = this.world.getMinHeight();
@@ -238,15 +235,14 @@ public class ClosestSafeSpotTeleport
 
         int chunkX = chunkSnapshot.getX() << 4;
         int chunkZ = chunkSnapshot.getZ() << 4;
-
         for (int x = 0; x < 16; x++)
         {
             for (int z = 0; z < 16; z++)
             {
+
                 for (int y = Math.max(minY, startY - this.range); y < Math.min(maxY, startY + this.range); y++)
                 {
                     Vector positionVector = new Vector(chunkX + x, y, chunkZ + z);
-
                     if (this.boundingBox.contains(positionVector))
                     {
                         // Process positions that are inside bounding box of search area.
@@ -279,7 +275,7 @@ public class ClosestSafeSpotTeleport
      * <p>
      * This method stops position finding task and process teleporation.
      */
-    private void finishTask()
+    void finishTask()
     {
         // Still Async!
         // Nothing left to check and still not canceled
@@ -297,64 +293,40 @@ public class ClosestSafeSpotTeleport
         else if (this.entity instanceof Player player)
         {
             // Return to main thread and teleport the player
-            Bukkit.getScheduler().runTask(this.plugin, () ->
-            {
-                // Failed, no safe spot
-                if (!this.failureMessage.isEmpty())
-                {
-                    User.getInstance(this.entity).notify(this.failureMessage);
-                }
-
-                // Check highest block
-                Block highestBlock = this.world.getHighestBlockAt(this.location);
-
-                if (highestBlock.getType().isSolid() &&
-                        this.plugin.getIslandsManager().isSafeLocation(highestBlock.getLocation()))
-                {
-                    // Try to teleport player to the highest block.
-                    this.asyncTeleport(highestBlock.getLocation().add(new Vector(0.5D, 0D, 0.5D)));
-                    return;
-                }
-                else if (!this.plugin.getIWM().inWorld(this.entity.getLocation()))
-                {
-                    // Last resort
-                    player.performCommand("spawn");
-                }
-                else if (!this.cancelIfFail)
-                {
-                    // Create a spot for the player to be
-                    if (this.world.getEnvironment().equals(World.Environment.NETHER))
-                    {
-                        this.makeAndTeleport(Material.NETHERRACK);
-                    }
-                    else if (this.world.getEnvironment().equals(World.Environment.THE_END))
-                    {
-                        this.makeAndTeleport(Material.END_STONE);
-                    }
-                    else
-                    {
-                        this.makeAndTeleport(Material.COBBLESTONE);
-                    }
-                }
-
-                if (this.failRunnable != null)
-                {
-                    Bukkit.getScheduler().runTask(this.plugin, this.failRunnable);
-                }
-
-                this.result.complete(false);
-            });
+            Bukkit.getScheduler().runTask(this.plugin, () -> returnAndTeleport(player));
         }
-        else
+        // We do not teleport entities if position failed.
+        // Fail the completion
+        this.result.complete(false);
+
+    }
+
+    void returnAndTeleport(Player player) {
+        // Notify player
+        User.getInstance(this.entity).notify("general.errors.no-safe-location-found");
+
+        // Check highest block
+        Block highestBlock = this.world.getHighestBlockAt(this.location);
+
+        if (highestBlock.getType().isSolid() &&
+                this.plugin.getIslandsManager().isSafeLocation(highestBlock.getLocation()))
         {
-            // We do not teleport entities if position failed.
-
-            if (this.failRunnable != null)
-            {
-                Bukkit.getScheduler().runTask(this.plugin, this.failRunnable);
+            // Try to teleport player to the highest block.
+            this.asyncTeleport(highestBlock.getLocation().add(new Vector(0.5D, 0D, 0.5D)));
+        }
+        else if (!this.plugin.getIWM().inWorld(this.entity.getLocation()))
+        {
+            // Last resort
+            player.performCommand("spawn");
+        }
+        else if (!this.cancelIfFail)
+        {
+            // Create a spot for the player to be
+            switch(world.getEnvironment()) {
+            case NETHER -> this.makeAndTeleport(Material.NETHERRACK);
+            case THE_END -> this.makeAndTeleport(Material.END_STONE);
+            default -> this.makeAndTeleport(Material.COBBLESTONE);
             }
-
-            this.result.complete(false);
         }
     }
 
@@ -364,7 +336,7 @@ public class ClosestSafeSpotTeleport
      * above location and fills the space between them with air.
      * @param baseMaterial Material that will be for top and bottom block.
      */
-    private void makeAndTeleport(Material baseMaterial)
+    void makeAndTeleport(Material baseMaterial)
     {
         this.location.getBlock().getRelative(BlockFace.DOWN).setType(baseMaterial, false);
         this.location.getBlock().setType(Material.AIR, false);
@@ -380,7 +352,7 @@ public class ClosestSafeSpotTeleport
      * This method scans all populated positions and returns true if position is found, or false, if not.
      * @return {@code true} if safe position is found, otherwise false.
      */
-    private boolean scanBlockQueue()
+    boolean scanBlockQueue()
     {
         boolean blockFound = false;
 
@@ -396,7 +368,7 @@ public class ClosestSafeSpotTeleport
     /**
      * This method triggers a task that will teleport entity in a main thread.
      */
-    private void teleportEntity(final Location location)
+    void teleportEntity(final Location location)
     {
         // Return to main thread and teleport the player
         Bukkit.getScheduler().runTask(this.plugin, () -> this.asyncTeleport(location));
@@ -407,7 +379,7 @@ public class ClosestSafeSpotTeleport
      * This method performs async teleportation and runs end tasks for spot-finder.
      * @param location Location where player should be teleported.
      */
-    private void asyncTeleport(final Location location)
+    void asyncTeleport(final Location location)
     {
         Util.teleportAsync(this.entity, location).thenRun(() ->
         {
@@ -429,7 +401,7 @@ public class ClosestSafeSpotTeleport
      * @param positionData Position data that must be checked.
      * @return {@code true} if position is found and no extra processing required, {@code false} otherwise.
      */
-    private boolean checkPosition(PositionData positionData)
+    boolean checkPosition(PositionData positionData)
     {
         if (this.portal)
         {
@@ -477,12 +449,12 @@ public class ClosestSafeSpotTeleport
     /**
      * PositionData record holds information about position where player will be teleported.
      * @param vector Vector of the position.
+     * @param block Block material on which player will be placed.
+     * @param spaceOne Material one block above block.
+     * @param spaceTwo Material two blocks above block.
      * @param distance Distance till the position.
-     * @param block Block on which player will be placed.
-     * @param spaceOne One block above block.
-     * @param spaceTwo Two blocks above block.
      */
-    private record PositionData(Vector vector, Material block, Material spaceOne, Material spaceTwo, double distance) {}
+    record PositionData(Vector vector, Material block, Material spaceOne, Material spaceTwo, double distance) {}
 
 
     public static Builder builder(BentoBox plugin)
@@ -496,6 +468,10 @@ public class ClosestSafeSpotTeleport
     // ---------------------------------------------------------------------
 
 
+    /**
+     * Builder for ClosestSafeSpotTeleport
+     *
+     */
     public static class Builder
     {
         private Builder(BentoBox plugin)
@@ -590,11 +566,6 @@ public class ClosestSafeSpotTeleport
                 return null;
             }
 
-            if (this.failureMessage.isEmpty() && this.entity instanceof Player)
-            {
-                this.failureMessage = "general.errors.no-safe-location-found";
-            }
-
             return new ClosestSafeSpotTeleport(this);
         }
 
@@ -669,29 +640,6 @@ public class ClosestSafeSpotTeleport
             return this.successRunnable;
         }
 
-
-        /**
-         * Gets fail runnable.
-         *
-         * @return the fail runnable
-         */
-        public Runnable getFailRunnable()
-        {
-            return this.failRunnable;
-        }
-
-
-        /**
-         * Gets failure message.
-         *
-         * @return the failure message
-         */
-        public String getFailureMessage()
-        {
-            return this.failureMessage;
-        }
-
-
         /**
          * Is portal boolean.
          *
@@ -748,16 +696,6 @@ public class ClosestSafeSpotTeleport
          * Runnable that will be triggered after successful teleportation.
          */
         private Runnable successRunnable;
-
-        /**
-         * Runnable that will be triggered after failing teleportation.
-         */
-        private Runnable failRunnable;
-
-        /**
-         * Stores the failure message that is sent to a player.
-         */
-        private String failureMessage = "";
 
         /**
          * Boolean that indicates if teleportation should search for portal.
@@ -826,16 +764,6 @@ public class ClosestSafeSpotTeleport
      * Runnable that will be triggered after successful teleportation.
      */
     private final Runnable successRunnable;
-
-    /**
-     * Runnable that will be triggered after failing teleportation.
-     */
-    private final Runnable failRunnable;
-
-    /**
-     * Stores the failure message that is sent to a player.
-     */
-    private final String failureMessage;
 
     /**
      * CompletableFuture that is triggered upon finishing position searching.
