@@ -32,6 +32,7 @@ public abstract class DefaultAdminCommand extends CompositeCommand {
      */
     protected DefaultAdminCommand(GameModeAddon addon) {
         // Register command with alias from config.
+        // The first command listed is the "label" and the others are aliases.
         super(addon,
                 addon.getWorldSettings().getAdminCommandAliases().split(" ")[0],
                 addon.getWorldSettings().getAdminCommandAliases().split(" "));

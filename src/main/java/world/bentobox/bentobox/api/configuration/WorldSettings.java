@@ -549,6 +549,7 @@ public interface WorldSettings extends ConfigObject {
      * Returns all aliases for main admin command.
      * It is assumed that all aliases are split with whitespace between them.
      * String cannot be empty.
+     * The first command listed is the "label" in the API, and after that are the aliases
      * Default value: {@code getFriendlyName() + "admin"} (to retain backward compatibility).
      * @return String value
      * @since 1.13.0
@@ -563,6 +564,7 @@ public interface WorldSettings extends ConfigObject {
      * Returns all aliases for main player command.
      * It is assumed that all aliases are split with whitespace between them.
      * String cannot be empty.
+     * The first command listed is the "label" in the API, and after that are the aliases
      * Default value: {@code getFriendlyName()} (to retain backward compatibility).
      * @return String value
      * @since 1.13.0

@@ -23,6 +23,7 @@ public abstract class DefaultPlayerCommand extends CompositeCommand {
      */
     protected DefaultPlayerCommand(GameModeAddon addon) {
         // Register command with alias from config.
+        // The first command listed is the "label" and the others are aliases.
         super(addon,
                 addon.getWorldSettings().getPlayerCommandAliases().split(" ")[0],
                 addon.getWorldSettings().getPlayerCommandAliases().split(" "));
