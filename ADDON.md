@@ -15,7 +15,6 @@ The following is a list of all addons currently made for BentoBox:
 * [**Likes**](https://github.com/BentoBoxWorld/Likes/): Creates a voting system to rank islands.
 * [**Limits**](https://github.com/BentoBoxWorld/Limits/): Limits blocks and entities that your players can place on their islands.
 * [**MagicCobblestoneGenerator**](https://github.com/BentoBoxWorld/MagicCobblestoneGenerator/): Generates any blocks in a cobblestone generator.
-* [**Parkour**](https://github.com/BentoBoxWorld/Parkour): Give your players a world to make Parkour courses and run them against the clock!
 * [**TwerkingForTrees**](https://github.com/BentoBoxWorld/TwerkingForTrees/): Twerk to make trees grow faster on your island.
 * [**Upgrades**](https://github.com/BentoBoxWorld/Upgrades/): Upgrades to an island of any GameMode.
 * [**Visit**](https://github.com/BentoBoxWorld/Visit/): Lets your players visit other islands with a command.
