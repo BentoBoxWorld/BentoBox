@@ -67,8 +67,6 @@ public class IslandTeamCoopCommandTest {
     @Mock
     private Island island;
 
-    /**
-     */
     @Before
     public void setUp() throws Exception {
         // Set up plugin
