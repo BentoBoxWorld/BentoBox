@@ -58,7 +58,7 @@ public class IslandTeamCommand extends CompositeCommand {
     @Override
     public boolean execute(User user, String label, List<String> args) {
         // Player issuing the command must have an island
-        UUID ownerUUID = getOwner(getWorld(), user);
+        UUID ownerUUID = getIslands().getOwner(getWorld(), user.getUniqueId());
         if (ownerUUID == null) {
             user.sendMessage("general.errors.no-island");
             return false;

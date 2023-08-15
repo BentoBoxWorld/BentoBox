@@ -9,7 +9,6 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Queue;
@@ -80,7 +79,9 @@ public class IslandsManager {
      */
     private final Map<World, Location> last;
 
-    // Island Cache
+    /**
+     * Island Cache
+     */
     @NonNull
     private IslandCache islandCache;
     // Quarantined islands
@@ -126,7 +127,9 @@ public class IslandsManager {
      * @param l - location around which to scan
      * @param i - the range to scan for a location less than 0 means the full island.
      * @return - safe location, or null if none can be found
+     * @deprecated This method is not used anymore by BentoBox and is due for deletion.
      */
+    @Deprecated
     @Nullable
     public Location bigScan(@NonNull Location l, int i) {
         final int height;
@@ -347,17 +350,29 @@ public class IslandsManager {
         }
     }
 
+    /**
+     * Get the number of islands made on this server. Used by stats.
+     * @return total number of islands known to this server
+     */
     public int getIslandCount() {
         return islandCache.size();
     }
 
+    /**
+     * Get the number of islands made on this server in a particular world. Used to limit the number of islands
+     * if required by settings.
+     * @param world game world
+     * @return number of islands
+     */
     public int getIslandCount(@NonNull World world) {
         return islandCache.size(world);
     }
 
     /**
-     * Gets the island for this player.
+     * Gets the current active island for this player.
      * If they are in a team, the team island is returned.
+     * If they have more than one island, then the island they are on now, or the last island they were on
+     * is returned.
      * @param world world to check
      * @param user user
      * @return Island or null if not found or null user
@@ -368,7 +383,9 @@ public class IslandsManager {
     }
 
     /**
-     * Gets the island for this player. If they are in a team, the team island is returned.
+     * Gets the active island for this player. If they are in a team, the team island is returned.
+     * User may have more than one island.
+     * Returns the island the player is on now, or their last known island.
      * @param world world to check. Includes nether and end worlds.
      * @param uuid user's uuid
      * @return Island or null
@@ -859,37 +876,11 @@ public class IslandsManager {
      */
     @Nullable
     public Location getHomeLocation(@NonNull World world, @NonNull UUID uuid, String name) {
-        // Migrate from player homes to island homes
         Island island = this.getIsland(world, uuid);
         if (island == null) {
             return null;
         }
-        migrateHomes(world, uuid, name, island);
         return getHomeLocation(island, name);
-    }
-
-    @SuppressWarnings("removal")
-    private void migrateHomes(@NonNull World world, @NonNull UUID uuid, String name, Island island) {
-        Map<Location, Integer> homes = plugin
-                .getPlayers()
-                .getHomeLocations(world, uuid);
-        if (homes.isEmpty()) {
-            // No migration required
-            return;
-        }
-        if (island.getOwner() != null && island.getOwner().equals(uuid)) {
-            // Owner
-            island.setHomes(homes.entrySet().stream().collect(Collectors.toMap(this::getHomeName, Map.Entry::getKey)));
-            plugin.getPlayers().clearHomeLocations(world, uuid);
-        }
-    }
-
-    private String getHomeName(Entry<Location, Integer> e) {
-        // Home 1 has an empty name
-        if (e.getValue() == 1) {
-            return "";
-        }
-        return String.valueOf(e.getValue());
     }
 
     /**
@@ -912,7 +903,7 @@ public class IslandsManager {
      */
     @NonNull
     public Location getHomeLocation(@NonNull Island island, @NonNull String name) {
-        return Objects.requireNonNullElse(island.getHome(name), island.getCenter());
+        return Objects.requireNonNullElse(island.getHome(name), island.getProtectionCenter());
     }
 
     /**
@@ -1421,10 +1412,7 @@ public class IslandsManager {
      * @param uuid - user's uuid
      */
     public void removePlayer(World world, UUID uuid) {
-        Island island = islandCache.removePlayer(world, uuid);
-        if (island != null) {
-            handler.saveObjectAsync(island);
-        }
+        islandCache.removePlayer(world, uuid).forEach(handler::saveObjectAsync);
     }
 
     /**
@@ -1665,7 +1653,9 @@ public class IslandsManager {
      * @param uuid - target player's UUID, or <tt>null</tt> = unowned islands
      * @return list of islands; may be empty
      * @since 1.3.0
+     * @deprecated This should no long be needed.
      */
+    @Deprecated
     @NonNull
     public List<Island> getQuarantinedIslandByUser(@NonNull World world, @Nullable UUID uuid) {
         return quarantineCache.getOrDefault(uuid, Collections.emptyList()).stream()
@@ -1678,7 +1668,9 @@ public class IslandsManager {
      * @param world - world
      * @param uuid - target player's UUID, or <tt>null</tt> = unowned islands
      * @since 1.3.0
+     * @deprecated This should no long be needed.
      */
+    @Deprecated
     public void deleteQuarantinedIslandByUser(World world, @Nullable UUID uuid) {
         if (quarantineCache.containsKey(uuid)) {
             quarantineCache.get(uuid).stream().filter(i -> i.getWorld().equals(world))
@@ -1690,7 +1682,9 @@ public class IslandsManager {
     /**
      * @return the quarantineCache
      * @since 1.3.0
+     * @deprecated This should no long be needed.
      */
+    @Deprecated
     @NonNull
     public Map<UUID, List<Island>> getQuarantineCache() {
         return quarantineCache;
@@ -1702,7 +1696,9 @@ public class IslandsManager {
      * @param island island
      * @return {@code true} if island is quarantined and removed
      * @since 1.3.0
+     * @deprecated This should no long be needed.
      */
+    @Deprecated
     public boolean purgeQuarantinedIsland(Island island) {
         if (quarantineCache.containsKey(island.getOwner()) && quarantineCache.get(island.getOwner()).remove(island)) {
             handler.deleteObject(island);
@@ -1718,7 +1714,9 @@ public class IslandsManager {
      * @param island - island in trash
      * @return <tt>true</tt> if successful, otherwise <tt>false</tt>
      * @since 1.3.0
+     * @deprecated This should no long be needed.
      */
+    @Deprecated
     public boolean switchIsland(World world, UUID target, Island island) {
         // Remove trashed island from trash
         if (!quarantineCache.containsKey(island.getOwner()) || !quarantineCache.get(island.getOwner()).remove(island)) {

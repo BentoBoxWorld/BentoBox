@@ -37,7 +37,7 @@ public class IslandTeamSetownerCommand extends CompositeCommand {
             user.sendMessage("general.errors.no-team");
             return false;
         }
-        UUID ownerUUID = getOwner(getWorld(), user);
+        UUID ownerUUID = getIslands().getOwner(getWorld(), user.getUniqueId());
         if (ownerUUID == null || !ownerUUID.equals(playerUUID)) {
             user.sendMessage("general.errors.not-owner");
             return false;

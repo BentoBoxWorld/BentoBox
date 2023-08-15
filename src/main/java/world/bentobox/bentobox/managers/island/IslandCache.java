@@ -1,13 +1,18 @@
 package world.bentobox.bentobox.managers.island;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -20,6 +25,7 @@ import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.util.Util;
 
 /**
+ * This class stores the islands in memory
  * @author tastybento
  */
 public class IslandCache {
@@ -34,7 +40,7 @@ public class IslandCache {
      * Every player who is associated with an island is in this map.
      */
     @NonNull
-    private final Map<@NonNull World, @NonNull Map<@NonNull UUID, @NonNull Island>> islandsByUUID;
+    private final Map<@NonNull World, @NonNull Map<@NonNull UUID, List<Island>>> islandsByUUID;
     @NonNull
     private final Map<@NonNull World, @NonNull IslandGrid> grids;
 
@@ -66,8 +72,8 @@ public class IslandCache {
             islandsByUUID.putIfAbsent(island.getWorld(), new HashMap<>());
             // Only add islands to this map if they are owned
             if (island.isOwned()) {
-                islandsByUUID.get(island.getWorld()).put(island.getOwner(), island);
-                island.getMemberSet().forEach(member -> islandsByUUID.get(island.getWorld()).put(member, island));
+                islandsByUUID.get(island.getWorld()).computeIfAbsent(island.getOwner(), k -> new ArrayList<>()).add(island);
+                island.getMemberSet().forEach(member -> addPlayer(member, island));
             }
             return true;
         }
@@ -80,7 +86,7 @@ public class IslandCache {
      * @param island island to associate with this uuid. Only one island can be associated per world.
      */
     public void addPlayer(@NonNull UUID uuid, @NonNull Island island) {
-        islandsByUUID.computeIfAbsent(island.getWorld(), k -> new HashMap<>()).put(uuid, island);
+        islandsByUUID.computeIfAbsent(island.getWorld(), k -> new HashMap<>()).computeIfAbsent(uuid, k -> new ArrayList<>()).add(island);
     }
 
     /**
@@ -99,7 +105,7 @@ public class IslandCache {
     }
 
     /**
-     * Deletes an island from the cache.. Does not remove blocks
+     * Deletes an island from the cache. Does not remove blocks.
      * @param island island to delete
      * @return true if successful, false if not
      */
@@ -108,10 +114,24 @@ public class IslandCache {
             return false;
         }
         islandsById.remove(island.getUniqueId());
-        islandsByUUID.get(island.getWorld()).entrySet().removeIf(en -> en.getValue().equals(island));
+        removeFromIslandsByUUID(island.getUniqueId(), islandsByUUID.get(island.getWorld()));
         // Remove from grid
         grids.putIfAbsent(island.getWorld(), new IslandGrid());
         return grids.get(island.getWorld()).removeFromGrid(island);
+    }
+
+    private void removeFromIslandsByUUID(@NonNull String id, Map<@NonNull UUID, List<Island>> map) {
+        Iterator<Entry<@NonNull UUID, List<Island>>> it = map.entrySet().iterator();
+        // This iterator goes through every known UUID.
+        while (it.hasNext()) {
+            Entry<@NonNull UUID, List<Island>> en = it.next();
+            // Remove any islands
+            en.getValue().removeIf(is -> is.getUniqueId().equals(id));
+            // Remove any UUID entries with no islands
+            if (en.getValue().isEmpty()) {
+                it.remove();
+            }
+        }
     }
 
     /**
@@ -121,7 +141,9 @@ public class IslandCache {
     public void deleteIslandFromCache(@NonNull String uniqueId) {
         islandsById.remove(uniqueId);
         islandsByLocation.values().removeIf(i -> i.getUniqueId().equals(uniqueId));
-        islandsByUUID.values().forEach(m -> m.values().removeIf(i -> i.getUniqueId().equals(uniqueId)));
+        for (Map<@NonNull UUID, List<Island>> loop : islandsByUUID.values()) {
+            removeFromIslandsByUUID(uniqueId, loop);
+        }
     }
 
     /**
@@ -135,18 +157,43 @@ public class IslandCache {
     }
 
     /**
-     * Returns island referenced by UUID
+     * Returns island referenced by player's UUID.
+     * Returns the island the player is on now, or their last known island
      * @param world world to check. Includes nether and end worlds.
      * @param uuid player's UUID
      * @return island or null if none
      */
     @Nullable
     public Island get(@NonNull World world, @NonNull UUID uuid) {
+        List<Island> all = getAllIslands(world, uuid);
+        if (all.isEmpty()) return null;
+        return all.get(0); // The current island is always the first in the list
+    }
+
+    /**
+     * Returns all the islands referenced by player's UUID.
+     * @param world world to check. Includes nether and end worlds.
+     * @param uuid player's UUID
+     * @return list of island or empty list if none
+     */
+    public List<Island> getAllIslands(@NonNull World world, @NonNull UUID uuid) {
         World w = Util.getWorld(world);
         if (w == null) {
-            return null;
+            return new ArrayList<>();
         }
-        return islandsByUUID.containsKey(w) ? islandsByUUID.get(w).get(uuid) : null;
+        return islandsByUUID.computeIfAbsent(w, k -> new HashMap<>()).computeIfAbsent(uuid, k -> new ArrayList<>());
+    }
+
+    /**
+     * Sets the current island for the user as their primary island
+     * @param uuid UUID of user
+     * @param island island to make primary
+     */
+    public void setPrimaryIsland(@NonNull UUID uuid, @NonNull Island island) {
+        List<Island> all = getAllIslands(island.getWorld(), uuid);
+        all.remove(island);
+        all.add(0, island);
+        islandsByUUID.get(island.getWorld()).put(uuid, all);
     }
 
     /**
@@ -192,20 +239,39 @@ public class IslandCache {
     }
 
     /**
+     * Get the members of the user's team
      * @param world world to check
      * @param uuid uuid of player to check
      * @param minimumRank minimum rank requested
-     * @return set of UUID's of island members. If there is no island, this set will be empty
+     * @return set of UUID's of island members. If there are no islands, this set will be empty
      */
     @NonNull
     public Set<UUID> getMembers(@NonNull World world, @NonNull UUID uuid, int minimumRank) {
+
         World w = Util.getWorld(world);
-        if (w == null) {
+
+        return Optional.ofNullable(w)
+                .map(islandsByUUID::get)
+                .map(map -> map.get(uuid))
+                .orElse(Collections.emptyList())
+                .stream()
+                .flatMap(island -> island.getMemberSet(minimumRank).stream())
+                .collect(Collectors.toSet());
+    }
+    /*
+        World w = Util.getWorld(world);
+        if (w == null || !islandsByUUID.containsKey(w)) {
             return new HashSet<>();
         }
-        Island island = islandsByUUID.computeIfAbsent(w, k -> new HashMap<>()).get(uuid);
-        return island != null ? island.getMemberSet(minimumRank) : new HashSet<>();
-    }
+        Map<@NonNull UUID, List<Island>> map = islandsByUUID.get(w);
+        if (!map.containsKey(uuid) || map.get(uuid).isEmpty()) {
+            return new HashSet<>();
+        }
+        List<Island> islandList = islandsByUUID.get(w).get(uuid);
+        return islandList.stream()
+                .flatMap(island -> island.getMemberSet(minimumRank).stream())
+                .collect(Collectors.toSet());
+    }*/
 
     /**
      * @param world the world to check
@@ -218,8 +284,8 @@ public class IslandCache {
         if (w == null) {
             return null;
         }
-        Island island = islandsByUUID.computeIfAbsent(w, k -> new HashMap<>()).get(uuid);
-        return island != null ? island.getOwner() : null;
+        List<Island> islands = islandsByUUID.computeIfAbsent(w, k -> new HashMap<>()).get(uuid);
+        return islands != null ? islands.get(0).getOwner() : null;
 
     }
 
@@ -233,7 +299,7 @@ public class IslandCache {
         if (w == null) {
             return false;
         }
-        Island island = islandsByUUID.computeIfAbsent(w, k -> new HashMap<>()).get(uuid);
+        Island island = islandsByUUID.computeIfAbsent(w, k -> new HashMap<>()).get(uuid).get(0);
         return island != null && uuid.equals(island.getOwner());
     }
 
@@ -242,27 +308,39 @@ public class IslandCache {
      * The island is removed from the islandsByUUID map, but kept in the location map.
      * @param world world
      * @param uuid player's UUID
-     * @return island player had or null if none
+     * @return list of islands player had or empty if none
      */
-    @Nullable
-    public Island removePlayer(@NonNull World world, @NonNull UUID uuid) {
+    public List<Island> removePlayer(@NonNull World world, @NonNull UUID uuid) {
         World w = Util.getWorld(world);
+
         if (w == null) {
-            return null;
+            return Collections.emptyList();
         }
-        Island island = islandsByUUID.computeIfAbsent(w, k -> new HashMap<>()).get(uuid);
-        if (island != null) {
-            if (uuid.equals(island.getOwner())) {
-                // Clear ownership and members
-                island.getMembers().clear();
-                island.setOwner(null);
-            } else {
-                // Remove player from the island membership
-                island.removeMember(uuid);
+
+        Map<UUID, List<Island>> islandsMap = islandsByUUID.get(w);
+        if (islandsMap == null) {
+            return Collections.emptyList(); // Return empty list if no islands map exists for the world
+        }
+
+        List<Island> islands = islandsMap.getOrDefault(uuid, Collections.emptyList());
+        if (islands.isEmpty()) {
+            return Collections.emptyList(); // Return empty list if no islands exist for the UUID
+        }
+
+        islands.forEach(island -> {
+            if (island != null) {
+                if (uuid.equals(island.getOwner())) {
+                    island.getMembers().clear();
+                    island.setOwner(null);
+                } else {
+                    island.removeMember(uuid);
+                }
             }
-        }
-        islandsByUUID.get(w).remove(uuid);
-        return island;
+        });
+
+        islandsMap.remove(uuid);
+
+        return islands;
     }
 
     /**
@@ -291,7 +369,7 @@ public class IslandCache {
     public void setOwner(@NonNull Island island, @Nullable UUID newOwnerUUID) {
         island.setOwner(newOwnerUUID);
         if (newOwnerUUID != null) {
-            islandsByUUID.computeIfAbsent(Objects.requireNonNull(Util.getWorld(island.getWorld())), k -> new HashMap<>()).put(newOwnerUUID, island);
+            islandsByUUID.computeIfAbsent(Objects.requireNonNull(Util.getWorld(island.getWorld())), k -> new HashMap<>()).computeIfAbsent(newOwnerUUID, k -> new ArrayList<>()).add(island);
         }
         islandsByLocation.put(island.getCenter(), island);
         islandsById.put(island.getUniqueId(), island);

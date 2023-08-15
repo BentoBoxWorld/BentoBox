@@ -41,14 +41,14 @@ public class AdminDeleteCommand extends ConfirmableCommand {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
             return false;
         }
-        UUID owner = getIslands().getOwner(getWorld(), targetUUID);
-        if (owner == null) {
+        Island island = getIslands().getIsland(getWorld(), user);
+        if (island == null) {
             user.sendMessage("general.errors.player-has-no-island");
             return false;
         }
 
         // Team members should be kicked before deleting otherwise the whole team will become weird
-        if (getIslands().inTeam(getWorld(), targetUUID) && owner.equals(targetUUID)) {
+        if (getIslands().inTeam(getWorld(), targetUUID) && user.getUniqueId().equals(island.getOwner())) {
             user.sendMessage("commands.admin.delete.cannot-delete-owner");
             return false;
         }

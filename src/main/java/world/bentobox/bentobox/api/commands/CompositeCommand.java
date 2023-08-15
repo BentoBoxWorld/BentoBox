@@ -467,11 +467,12 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * @param user the User
      * @return UUID of player's island owner or null if user has no island
      */
+    /*
     @Nullable
     protected UUID getOwner(@NonNull World world, @NonNull User user) {
         return plugin.getIslands().getOwner(world, user.getUniqueId());
     }
-
+     */
     @Override
     public @NonNull String getUsage() {
         return "/" + usage;
