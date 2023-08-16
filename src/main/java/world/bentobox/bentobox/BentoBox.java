@@ -251,6 +251,8 @@ public class BentoBox extends JavaPlugin implements Listener {
                 // Tell all addons that everything is loaded
                 isLoaded = true;
                 this.addonsManager.allLoaded();
+                // Run ready commands
+                settings.getReadyCommands().forEach(cmd -> Bukkit.getServer().dispatchCommand(getServer().getConsoleSender(), cmd));
                 // Fire plugin ready event - this should go last after everything else
                 Bukkit.getPluginManager().callEvent(new BentoBoxReadyEvent());
                 instance.log("All blueprints loaded.");
