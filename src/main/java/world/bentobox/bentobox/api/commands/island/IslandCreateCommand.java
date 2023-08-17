@@ -48,6 +48,11 @@ public class IslandCreateCommand extends CompositeCommand {
             if (island.isReserved()) {
                 return true;
             }
+            // Get how many islands this player has
+            int num = this.getIslands().getNumberOfConcurrentIslands(user.getUniqueId(), getWorld());
+            if (num < this.getIWM().getWorldSettings(getWorld()).getConcurrentIslands()) {
+                return true;
+            }
             // You cannot make an island
             user.sendMessage("general.errors.already-have-island");
             return false;

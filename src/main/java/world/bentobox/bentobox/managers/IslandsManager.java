@@ -1891,4 +1891,14 @@ public class IslandsManager {
         return goingHome.contains(user.getUniqueId());
     }
 
+    /**
+     * Get the number of concurrent islands for this player
+     * @param uuid UUID of player
+     * @param world world to check
+     * @return number of islands this player owns in this game world
+     */
+    public int getNumberOfConcurrentIslands(UUID uuid, World world) {
+        return islandCache.getAllIslands(world, uuid).size();
+    }
+
 }

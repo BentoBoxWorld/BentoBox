@@ -634,4 +634,13 @@ public interface WorldSettings extends ConfigObject {
     default boolean isCheckForBlocks() {
         return true;
     }
+
+    /**
+     * Get the number of concurrent islands a player can have in the world
+     * @return 1 by default
+     * @since 1.24.2
+     */
+    default int getConcurrentIslands() {
+        return 5;
+    }
 }
