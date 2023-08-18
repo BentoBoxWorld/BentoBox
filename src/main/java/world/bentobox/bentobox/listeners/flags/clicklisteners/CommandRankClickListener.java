@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
@@ -16,12 +15,14 @@ import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.panels.Panel;
 import world.bentobox.bentobox.api.panels.PanelItem;
 import world.bentobox.bentobox.api.panels.PanelItem.ClickHandler;
+import world.bentobox.bentobox.api.panels.TabbedPanel;
 import world.bentobox.bentobox.api.panels.builders.PanelBuilder;
 import world.bentobox.bentobox.api.panels.builders.PanelItemBuilder;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.RanksManager;
+import world.bentobox.bentobox.panels.settings.SettingsTab;
 import world.bentobox.bentobox.util.Util;
 
 /**
@@ -31,12 +32,19 @@ import world.bentobox.bentobox.util.Util;
 public class CommandRankClickListener implements ClickHandler {
 
     private final BentoBox plugin = BentoBox.getInstance();
+    private Island island;
 
     /* (non-Javadoc)
      * @see world.bentobox.bentobox.api.panels.PanelItem.ClickHandler#onClick(world.bentobox.bentobox.api.panels.Panel, world.bentobox.bentobox.api.user.User, org.bukkit.event.inventory.ClickType, int)
      */
     @Override
     public boolean onClick(Panel panel, User user, ClickType clickType, int slot) {
+        // This click listener is used with TabbedPanel and SettingsTabs only
+        TabbedPanel tp = (TabbedPanel)panel;
+        SettingsTab st = (SettingsTab)tp.getActiveTab();
+        // Get the island for this tab
+        island = st.getIsland();
+
         // Get the world
         if (!user.inWorld()) {
             user.sendMessage("general.errors.wrong-world");
@@ -55,16 +63,15 @@ public class CommandRankClickListener implements ClickHandler {
             return true;
         }
 
-        // Get the user's island
-        Island island = plugin.getIslands().getIsland(panel.getWorld().orElse(user.getWorld()), user.getUniqueId());
-        if (island == null || island.getOwner() == null || !island.isAllowed(user, Flags.CHANGE_SETTINGS)) {
-            user.sendMessage("general.errors.insufficient-rank",
-                TextVariables.RANK,
-                user.getTranslation(plugin.getRanksManager().getRank(Objects.requireNonNull(island).getRank(user))));
-
+        // Check if user has rank enough on the island
+        //Island island = plugin.getIslands().getIsland(panel.getWorld().orElse(user.getWorld()), user.getUniqueId());
+        if (!island.isAllowed(user, Flags.CHANGE_SETTINGS)) {
+            String rank = user.getTranslation(plugin.getRanksManager().getRank(Objects.requireNonNull(island).getRank(user)));
+            user.sendMessage("general.errors.insufficient-rank", TextVariables.RANK, rank);
             user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_METAL_HIT, 1F, 1F);
             return true;
         }
+
 
         String panelName = user.getTranslation("protection.flags.COMMAND_RANKS.name");
         if (panel.getName().equals(panelName)) {
@@ -100,7 +107,6 @@ public class CommandRankClickListener implements ClickHandler {
      * @return panel item for this command
      */
     public PanelItem getPanelItem(String c, User user, World world) {
-        Island island = plugin.getIslands().getIsland(world, user);
         PanelItemBuilder pib = new PanelItemBuilder();
         pib.name(c);
         pib.clickHandler(new CommandCycleClick(this, c));
@@ -126,7 +132,7 @@ public class CommandRankClickListener implements ClickHandler {
         .filter(c -> c.getWorld() != null &&  c.getWorld().equals(world))
         .forEach(c -> result.addAll(getCmdRecursively("/", c)));
         if (result.size() > 49) {
-            Bukkit.getLogger().severe("Number of rank setting commands is too big for GUI");
+            plugin.logError("Number of rank setting commands is too big for GUI");
             result.subList(49, result.size()).clear();
         }
         return result;

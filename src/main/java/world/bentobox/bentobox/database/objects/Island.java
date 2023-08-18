@@ -607,6 +607,9 @@ public class Island implements DataObject, MetaDataAble {
      * @return rank integer
      */
     public int getRank(User user) {
+        if (user.isOp()) {
+            return RanksManager.ADMIN_RANK;
+        }
         return members.getOrDefault(user.getUniqueId(), RanksManager.VISITOR_RANK);
     }
 
