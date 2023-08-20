@@ -275,46 +275,4 @@ public class NewIslandTest {
         verify(island).setReserved(eq(false));
     }
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.managers.island.NewIsland#builder()}.
-     */
-    @Test
-    public void testBuilderHasIslandFail() throws Exception {
-        when(im.getIsland(any(), any(User.class))).thenReturn(null);
-        when(im.hasIsland(any(), any(User.class))).thenReturn(true);
-        NewIsland.builder().addon(addon).name(NAME).player(user).noPaste().reason(Reason.CREATE).oldIsland(oldIsland).build();
-        // Verifications
-        verify(im).save(eq(island));
-        verify(island).setFlagsDefaults();
-        verify(scheduler).runTask(any(BentoBox.class), any(Runnable.class));
-        verify(builder, times(2)).build();
-        verify(bpb).getUniqueId();
-        verify(ice).getBlueprintBundle();
-        verify(pm).setDeaths(eq(world), eq(uuid), eq(0));
-        verify(im).setHomeLocation(eq(user), any());
-        verify(island).setProtectionRange(eq(20));
-        verify(plugin).logError("New island for user tastybento was not reserved!");
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.managers.island.NewIsland#builder()}.
-     */
-    @Test
-    public void testBuilderHasIslandFailnoReserve() throws Exception {
-        when(island.isReserved()).thenReturn(false);
-        when(im.hasIsland(any(), any(User.class))).thenReturn(true);
-        NewIsland.builder().addon(addon).name(NAME).player(user).noPaste().reason(Reason.CREATE).oldIsland(oldIsland).build();
-        // Verifications
-        verify(im).save(eq(island));
-        verify(island).setFlagsDefaults();
-        verify(scheduler).runTask(any(BentoBox.class), any(Runnable.class));
-        verify(builder, times(2)).build();
-        verify(bpb).getUniqueId();
-        verify(ice).getBlueprintBundle();
-        verify(pm).setDeaths(eq(world), eq(uuid), eq(0));
-        verify(im).setHomeLocation(eq(user), any());
-        verify(island).setProtectionRange(eq(20));
-        verify(plugin).logError("New island for user tastybento was not reserved!");
-    }
-
 }

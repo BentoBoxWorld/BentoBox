@@ -1901,4 +1901,13 @@ public class IslandsManager {
         return islandCache.getAllIslands(world, uuid).size();
     }
 
+    /**
+     * Sets the user's primary island
+     * @param uuid user's uuid
+     * @param i island
+     */
+    public void setPrimaryIsland(UUID uuid, Island i) {
+        this.getIslandCache().setPrimaryIsland(uuid, i);
+    }
+
 }

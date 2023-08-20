@@ -11,18 +11,22 @@ import static org.mockito.Mockito.when;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
+import org.eclipse.jdt.annotation.Nullable;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -49,12 +53,20 @@ import world.bentobox.bentobox.util.Util;
 @PrepareForTest({Bukkit.class, BentoBox.class, User.class })
 public class AdminDeleteCommandTest {
 
+    @Mock
     private CompositeCommand ac;
+    @Mock
     private User user;
+    @Mock
     private IslandsManager im;
+    @Mock
     private PlayersManager pm;
     private UUID notUUID;
     private UUID uuid;
+    @Mock
+    private World world;
+    @Mock
+    private @Nullable Island island;
 
     /**
      */
@@ -79,7 +91,6 @@ public class AdminDeleteCommandTest {
         // Player
         Player p = mock(Player.class);
         // Sometimes use Mockito.withSettings().verboseLogging()
-        user = mock(User.class);
         when(user.isOp()).thenReturn(false);
         uuid = UUID.randomUUID();
         notUUID = UUID.randomUUID();
@@ -92,9 +103,9 @@ public class AdminDeleteCommandTest {
         User.setPlugin(plugin);
 
         // Parent command has no aliases
-        ac = mock(CompositeCommand.class);
         when(ac.getSubCommandAliases()).thenReturn(new HashMap<>());
         when(ac.getTopLabel()).thenReturn("admin");
+        when(ac.getWorld()).thenReturn(world);
 
         // Island World Manager
         IslandWorldManager iwm = mock(IslandWorldManager.class);
@@ -102,15 +113,17 @@ public class AdminDeleteCommandTest {
 
 
         // Player has island to begin with
-        im = mock(IslandsManager.class);
         when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
         when(im.hasIsland(any(), any(User.class))).thenReturn(true);
         when(im.isOwner(any(),any())).thenReturn(true);
         when(im.getOwner(any(),any())).thenReturn(uuid);
+        when(im.getIsland(world, user)).thenReturn(island);
         when(plugin.getIslands()).thenReturn(im);
 
+        // Island
+        when(island.getOwner()).thenReturn(uuid);
+
         // Has team
-        pm = mock(PlayersManager.class);
         when(im.inTeam(any(), eq(uuid))).thenReturn(true);
 
         when(plugin.getPlayers()).thenReturn(pm);
@@ -162,10 +175,9 @@ public class AdminDeleteCommandTest {
     @Test
     public void testExecutePlayerNoIsland() {
         AdminDeleteCommand itl = new AdminDeleteCommand(ac);
-        String[] name = {"tastybento"};
         when(pm.getUUID(any())).thenReturn(notUUID);
-        when(im.getOwner(any(), any())).thenReturn(null);
-        assertFalse(itl.canExecute(user, itl.getLabel(), Arrays.asList(name)));
+        when(im.getIsland(world, user)).thenReturn(null);
+        assertFalse(itl.canExecute(user, "", List.of("tastybento")));
         verify(user).sendMessage(eq("general.errors.player-has-no-island"));
     }
 
@@ -174,6 +186,7 @@ public class AdminDeleteCommandTest {
      */
     @Test
     public void testExecuteOwner() {
+
         when(im.inTeam(any(),any())).thenReturn(true);
         when(im.getOwner(any(), any())).thenReturn(notUUID);
         String[] name = {"tastybento"};

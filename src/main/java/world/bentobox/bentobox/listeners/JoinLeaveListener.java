@@ -215,33 +215,30 @@ public class JoinLeaveListener implements Listener {
     }
 
     private void updateIslandRange(User user) {
-        plugin.getIWM().getOverWorlds().stream()
-        .filter(world -> plugin.getIslands().isOwner(world, user.getUniqueId()))
-        .forEach(world -> {
-            Island island = plugin.getIslands().getIsland(world, user);
-            if (island != null) {
-                // Check if new owner has a different range permission than the island size
-                int range = user.getPermissionValue(plugin.getIWM().getAddon(island.getWorld()).map(GameModeAddon::getPermissionPrefix).orElse("") + "island.range", island.getRawProtectionRange());
-                // Range cannot be greater than the island distance
-                range = Math.min(range, plugin.getIWM().getIslandDistance(island.getWorld()));
-                // Range can go up or down
-                if (range != island.getRawProtectionRange()) {
-                    user.sendMessage("commands.admin.setrange.range-updated", TextVariables.NUMBER, String.valueOf(range));
-                    int oldRange = island.getProtectionRange();
-                    island.setProtectionRange(range);
+        plugin.getIslands().getIslands().stream()
+        .filter(island -> island.getOwner() != null && island.getOwner().equals(user.getUniqueId()))
+        .forEach(island -> {
+            // Check if new owner has a different range permission than the island size
+            int range = user.getPermissionValue(plugin.getIWM().getAddon(island.getWorld()).map(GameModeAddon::getPermissionPrefix).orElse("") + "island.range", island.getRawProtectionRange());
+            // Range cannot be greater than the island distance
+            range = Math.min(range, plugin.getIWM().getIslandDistance(island.getWorld()));
+            // Range can go up or down
+            if (range != island.getRawProtectionRange()) {
+                user.sendMessage("commands.admin.setrange.range-updated", TextVariables.NUMBER, String.valueOf(range));
+                int oldRange = island.getProtectionRange();
+                island.setProtectionRange(range);
 
-                    plugin.log("Island protection range changed from " + oldRange + " to "
-                            + island.getProtectionRange() + " for " + user.getName() + " due to permission.");
-                    // Call Protection Range Change event. Does not support canceling.
-                    IslandEvent.builder()
-                    .island(island)
-                    .location(island.getProtectionCenter())
-                    .reason(IslandEvent.Reason.RANGE_CHANGE)
-                    .involvedPlayer(user.getUniqueId())
-                    .admin(true)
-                    .protectionRange(island.getProtectionRange(), oldRange)
-                    .build();
-                }
+                plugin.log("Island protection range changed from " + oldRange + " to "
+                        + island.getProtectionRange() + " for " + user.getName() + " due to permission.");
+                // Call Protection Range Change event. Does not support canceling.
+                IslandEvent.builder()
+                .island(island)
+                .location(island.getProtectionCenter())
+                .reason(IslandEvent.Reason.RANGE_CHANGE)
+                .involvedPlayer(user.getUniqueId())
+                .admin(true)
+                .protectionRange(island.getProtectionRange(), oldRange)
+                .build();
             }
         });
     }

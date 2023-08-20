@@ -18,8 +18,10 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitScheduler;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.junit.After;
 import org.junit.Before;
@@ -37,6 +39,7 @@ import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
+import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.events.island.IslandEvent.Reason;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle;
@@ -75,6 +78,10 @@ public class IslandCreateCommandTest {
     private CompositeCommand ic;
     @Mock
     private BlueprintsManager bpm;
+    @Mock
+    private World world;
+    @Mock
+    private @NonNull WorldSettings ws;
 
     /**
      */
@@ -115,6 +122,7 @@ public class IslandCreateCommandTest {
         when(ic.getUsage()).thenReturn("");
         when(ic.getSubCommand(Mockito.anyString())).thenReturn(Optional.empty());
         when(ic.getAddon()).thenReturn(addon);
+        when(ic.getWorld()).thenReturn(world);
 
 
         // No island for player to begin with (set it later in the tests)
@@ -136,6 +144,8 @@ public class IslandCreateCommandTest {
 
         // IWM friendly name
         when(iwm.getFriendlyName(any())).thenReturn("BSkyBlock");
+        when(ws.getConcurrentIslands()).thenReturn(1); // One island allowed
+        when(iwm.getWorldSettings(world)).thenReturn(ws);
         when(plugin.getIWM()).thenReturn(iwm);
 
         // NewIsland
@@ -190,9 +200,12 @@ public class IslandCreateCommandTest {
      */
     @Test
     public void testCanExecuteUserStringListOfStringHasIsland() {
+        // Currently user has two islands
+        when(im.getNumberOfConcurrentIslands(user.getUniqueId(), world)).thenReturn(2);
+        // Player has an island
         @Nullable
         Island island = mock(Island.class);
-        when(im.getIsland(any(), Mockito.any(User.class))).thenReturn(island);
+        when(im.getIsland(any(), any(User.class))).thenReturn(island);
         assertFalse(cc.canExecute(user, "", Collections.emptyList()));
         verify(user).sendMessage(eq("general.errors.already-have-island"));
     }

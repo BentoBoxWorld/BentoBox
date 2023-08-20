@@ -274,9 +274,10 @@ public class IslandCache {
     }*/
 
     /**
+     * Get the UUID of the owner of the island of the player, which may be their UUID
      * @param world the world to check
      * @param uuid the player's UUID
-     * @return island owner's UUID, the player UUID if they are not in a team, or null if there is no island
+     * @return island owner's UUID or null if there is no island
      */
     @Nullable
     public UUID getOwner(@NonNull World world, @NonNull UUID uuid) {
@@ -285,11 +286,11 @@ public class IslandCache {
             return null;
         }
         List<Island> islands = islandsByUUID.computeIfAbsent(w, k -> new HashMap<>()).get(uuid);
-        return islands != null ? islands.get(0).getOwner() : null;
-
+        return islands == null ? null : islands.get(0).getOwner();
     }
 
     /**
+     * Checks is a player has an island and owns it
      * @param world the world to check
      * @param uuid the player
      * @return true if player has island and owns it
@@ -299,8 +300,9 @@ public class IslandCache {
         if (w == null) {
             return false;
         }
-        Island island = islandsByUUID.computeIfAbsent(w, k -> new HashMap<>()).get(uuid).get(0);
-        return island != null && uuid.equals(island.getOwner());
+        List<Island> island = islandsByUUID.computeIfAbsent(w, k -> new HashMap<>()).get(uuid);
+        if (island == null) return false;
+        return !island.isEmpty() && uuid.equals(island.get(0).getOwner());
     }
 
     /**

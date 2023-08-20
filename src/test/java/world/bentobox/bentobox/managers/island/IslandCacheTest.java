@@ -16,7 +16,6 @@ import java.util.UUID;
 
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.plugin.PluginAwareness.Flags;
 import org.eclipse.jdt.annotation.NonNull;
 import org.junit.After;
 import org.junit.Before;
@@ -253,7 +252,7 @@ public class IslandCacheTest {
     @Test
     public void testGetOwner() {
         ic.addIsland(island);
-
+        // Should be no owner, so null
         assertEquals(owner, ic.getOwner(world, owner));
         assertNull(ic.getOwner(world, UUID.randomUUID()));
     }
