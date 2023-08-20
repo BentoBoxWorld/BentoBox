@@ -2,11 +2,8 @@ package world.bentobox.bentobox.commands;
 
 import java.util.List;
 
-import org.bukkit.Bukkit;
-
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
-import world.bentobox.bentobox.api.events.BentoBoxReadyEvent;
 import world.bentobox.bentobox.api.panels.reader.TemplateReader;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.commands.reload.BentoBoxReloadLocalesCommand;
