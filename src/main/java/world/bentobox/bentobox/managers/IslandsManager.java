@@ -632,9 +632,18 @@ public class IslandsManager {
             result.complete(null);
             return result;
         }
+        // Check if the user is switching island and if so, switch name
+        String name = this.getIslands(world, user).stream()
+                .filter(i -> i.getName() != null && !i.getName().isBlank() && i.getName().equalsIgnoreCase(homeName))
+                .findFirst().map(island -> {
+                    // This is an island, so switch to that island and then go to the default home
+                    this.setPrimaryIsland(user.getUniqueId(), island);
+                    return "";
+                }).orElse(homeName);
+
         // Try the home location first
         Location defaultHome = getHomeLocation(world, user);
-        Location namedHome = getHomeLocation(world, user, homeName);
+        Location namedHome = getHomeLocation(world, user, name);
         Location l = namedHome != null ? namedHome : defaultHome;
         if (l != null) {
             Util.getChunkAtAsync(l).thenRun(() -> {
@@ -647,17 +656,17 @@ public class IslandsManager {
                 Location lPlusOne = l.clone().add(new Vector(0, 1, 0));
                 if (isSafeLocation(lPlusOne)) {
                     // Adjust the home location accordingly
-                    setHomeLocation(user, lPlusOne, homeName);
+                    setHomeLocation(user, lPlusOne, name);
                     result.complete(lPlusOne);
                     return;
                 }
                 // Try island
-                tryIsland(result, islandLoc, user, homeName);
+                tryIsland(result, islandLoc, user, name);
             });
             return result;
         }
         // Try island
-        tryIsland(result, islandLoc, user, homeName);
+        tryIsland(result, islandLoc, user, name);
         return result;
     }
 
@@ -1048,7 +1057,7 @@ public class IslandsManager {
      *
      * @param world - world to check
      * @param player - the player
-     * @param name - a named home location. Blank means default.
+     * @param name - a named home location or island name. Blank means default home for current island.
      * @return CompletableFuture true if successful, false if not
      * @since 1.16.0
      */
@@ -1075,7 +1084,7 @@ public class IslandsManager {
      * Teleports player async
      * @param world world
      * @param player player
-     * @param name home name
+     * @param name - a named home location or island name. Blank means default home for current island.
      * @param newIsland true if this is a new island
      * @return completable future that is true when the teleport has been completed
      */

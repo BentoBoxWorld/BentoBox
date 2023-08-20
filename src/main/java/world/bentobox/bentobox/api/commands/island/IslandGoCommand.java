@@ -56,7 +56,7 @@ public class IslandGoCommand extends DelayedTeleportCommand {
         }
         // Check if the home is known
         if (!args.isEmpty()) {
-            if (checkHomes(user, islands, args)) {
+            if (!checkHomes(user, islands, args)) {
                 // Failed home name check
                 user.sendMessage("commands.island.sethome.homes-are");
                 islands.forEach(island ->
@@ -67,14 +67,25 @@ public class IslandGoCommand extends DelayedTeleportCommand {
         return true;
     }
 
+    /**
+     * Check if the args contain a valid home or island name
+     * @param user user
+     * @param islands user's island list
+     * @param args args used
+     * @return true if there is a valid home
+     */
     private boolean checkHomes(User user, List<Island> islands, List<String> args) {
+        boolean result = false;
+        String name = String.join(" ", args);
         for (Island island : islands) {
-            if (!getIslands().isHomeLocation(island, String.join(" ", args))) {
-                user.sendMessage("commands.island.go.unknown-home");
-                return true;
+            if ((island.getName() != null && !island.getName().isBlank() && island.getName().equalsIgnoreCase(name)) || getIslands().isHomeLocation(island, name)) {
+                result = true;
             }
         }
-        return false;
+        if (!result) {
+            user.sendMessage("commands.island.go.unknown-home");
+        }
+        return result;
     }
 
     private boolean checkReserved(User user, List<Island> islands) {
@@ -99,6 +110,9 @@ public class IslandGoCommand extends DelayedTeleportCommand {
         String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
         List<String> result = new ArrayList<>();
         for (Island island : getIslands().getIslands(getWorld(), user.getUniqueId())) {
+            if (island.getName() != null && !island.getName().isBlank()) {
+                result.add(island.getName());
+            }
             result.addAll(island.getHomes().keySet());
         }
         return Optional.of(Util.tabLimit(result, lastArg));
