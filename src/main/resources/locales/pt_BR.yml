@@ -915,9 +915,9 @@ protection:
       island: ilha de [name]
       name: Mensagens de entrada/saída
       now-entering: '&a Entrando na &b [name]&a .'
-      now-entering-your-island: '&a Entrando em sua ilha.'
+      now-entering-your-island: '&a Entrando em sua ilha: &b [name]'
       now-leaving: '&a Deixando a &b [name]&a .'
-      now-leaving-your-island: '&a Deixando sua ilha.'
+      now-leaving-your-island: '&a Deixando sua ilha: &b [name]'
     EXPERIENCE_BOTTLE_THROWING:
       name: Arremesso de frasco de experiência
       description: Permitir arremesso de frascos de experiência

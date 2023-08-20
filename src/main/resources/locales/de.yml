@@ -978,9 +978,9 @@ protection:
       island: "[name]'s Insel"
       name: Ein- und Ausgangsmeldungen
       now-entering: "&b Du betrittst jetzt [name]"
-      now-entering-your-island: "&a Geben Sie jetzt Ihre Insel ein."
+      now-entering-your-island: "&a Geben Sie jetzt Ihre Insel ein: &b [name]"
       now-leaving: "&b Du verlässt jetzt [name]"
-      now-leaving-your-island: "&a Verlasse jetzt deine Insel."
+      now-leaving-your-island: "&a Verlasse jetzt deine Insel: &b [name]"
     EXPERIENCE_BOTTLE_THROWING:
       name: Erfahrungsflasche werfen
       description: Umschalten des Werfens von Erfahrungsflaschen.

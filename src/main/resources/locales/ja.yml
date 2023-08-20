@@ -901,8 +901,8 @@ protection:
       name: 入り口/終了メッセージ
       now-entering: 今[name]を入力する
       now-leaving: 今[name]を残し
-      now-entering-your-island: "&a今あなたの島に入っています。"
-      now-leaving-your-island: "&a今あなたの島を去ります。"
+      now-entering-your-island: "&a今あなたの島に入っています。 &b [name]"
+      now-leaving-your-island: "&a今あなたの島を去ります。 &b [name]"
     EXPERIENCE_BOTTLE_THROWING:
       name: ボトル投げ体験
       description: エクスペリエンスボトルの投げを切り替えます。
