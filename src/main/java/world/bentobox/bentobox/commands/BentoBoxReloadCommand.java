@@ -40,7 +40,7 @@ public class BentoBoxReloadCommand extends ConfirmableCommand {
     public boolean execute(User user, String label, List<String> args) {
         if (args.isEmpty()) {
             this.askConfirmation(user, user.getTranslation("commands.bentobox.reload.warning"), () -> {
-                
+
                 // Unregister all placeholders
                 getPlugin().getPlaceholdersManager().unregisterAll();
 
@@ -53,22 +53,13 @@ public class BentoBoxReloadCommand extends ConfirmableCommand {
                 getPlugin().loadSettings();
                 user.sendMessage("commands.bentobox.reload.settings-reloaded");
 
-                // Reload addons
-                getPlugin().getAddonsManager().reloadAddons();
-                user.sendMessage("commands.bentobox.reload.addons-reloaded");
-
                 // Reload locales
                 getPlugin().getLocalesManager().reloadLanguages();
                 user.sendMessage("commands.bentobox.reload.locales-reloaded");
-                
+
                 // Register new default gamemode placeholders
                 getPlugin().getAddonsManager().getGameModeAddons().forEach(getPlugin().getPlaceholdersManager()::registerDefaultPlaceholders);
 
-                // Call the all Loaded method for addons
-                getPlugin().getAddonsManager().allLoaded();
-                
-                // Fire ready event
-                Bukkit.getPluginManager().callEvent(new BentoBoxReadyEvent());
             });
         } else {
             showHelp(this, user);
