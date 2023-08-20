@@ -1645,12 +1645,16 @@ public class Island implements DataObject, MetaDataAble {
     }
 
     /**
-     * @return the homes
+     * Get the location of a named home
+     * @param name home name case insensitive (name is forced to lower case)
+     * @return the home location or null if none found. If the name is blank and no home set,
+     * the protection center of the island is returned.
      * @since 1.16.0
      */
     @Nullable
     public Location getHome(String name) {
-        return getHomes().get(name.toLowerCase());
+        Location l = getHomes().get(name.toLowerCase());
+        return l == null && name.isBlank() ? getProtectionCenter() : l;
     }
 
     /**

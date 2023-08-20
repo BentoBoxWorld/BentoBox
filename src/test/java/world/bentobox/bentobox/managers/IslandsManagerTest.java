@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -249,6 +250,7 @@ public class IslandsManagerTest extends AbstractCommonSetup {
         when(islandCache.getIslandAt(any(Location.class))).thenReturn(island);
         when(islandCache.get(any(), any())).thenReturn(island);
         optionalIsland = Optional.ofNullable(island);
+        when(islandCache.getIslands(world, uuid)).thenReturn(List.of(island));
 
         // User location
         when(user.getLocation()).thenReturn(location);
@@ -532,16 +534,6 @@ public class IslandsManagerTest extends AbstractCommonSetup {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#bigScan(org.bukkit.Location, int)}.
-     */
-    @Test
-    public void testBigScan() {
-        // Negative value = full island scan
-        // No island here yet
-        assertNull(im.bigScan(location, -1));
-    }
-
-    /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#createIsland(org.bukkit.Location)}.
      */
     @Test
@@ -716,7 +708,6 @@ public class IslandsManagerTest extends AbstractCommonSetup {
         im.setIslandCache(islandCache);
         when(island.getHome(any())).thenReturn(location);
         when(iwm.inWorld(eq(world))).thenReturn(true);
-
         assertEquals(location, im.getSafeHomeLocation(world, user, ""));
 
         // Change location so that it is not safe

@@ -383,6 +383,29 @@ public class IslandsManager {
     }
 
     /**
+     * Gets the islands for this player.
+     * If they are in a team, the team island is returned.
+     * @param world world to check
+     * @param user user
+     * @return List of islands or empty list if none found for user
+     */
+    @Nullable
+    public List<Island> getIslands(@NonNull World world, @NonNull User user){
+        return getIslands(world, user.getUniqueId());
+    }
+
+    /**
+     * Gets all the islands for this player in this world.
+     * If they are in a team, the team island is returned.
+     * @param world world to check
+     * @param uuid user's uuid
+     * @return List of islands or empty list if none found for user
+     */
+    public List<Island> getIslands(@NonNull World world, UUID uniqueId) {
+        return islandCache.getIslands(world, uniqueId);
+    }
+
+    /**
      * Gets the active island for this player. If they are in a team, the team island is returned.
      * User may have more than one island.
      * Returns the island the player is on now, or their last known island.
@@ -447,7 +470,7 @@ public class IslandsManager {
     }
 
     /**
-     * Returns the player's island location in World based on the island protection center.
+     * Returns the player's current island location in World based on the island protection center.
      * If you need the actual island center location for some reason use {@link Island#getCenter()}<p>
      *
      * @param world - world to check
@@ -597,11 +620,11 @@ public class IslandsManager {
      * Get a safe home location using async chunk loading and set the home location
      * @param world - world
      * @param user - user
-     * @param name - home name
+     * @param homeName - home name
      * @return CompletableFuture with the location found, or null
      * @since 1.14.0
      */
-    private CompletableFuture<Location> getAsyncSafeHomeLocation(@NonNull World world, @NonNull User user, String name) {
+    private CompletableFuture<Location> getAsyncSafeHomeLocation(@NonNull World world, @NonNull User user, String homeName) {
         CompletableFuture<Location> result = new CompletableFuture<>();
         // Check if the world is a gamemode world and the player has an island
         Location islandLoc = getIslandLocation(world, user.getUniqueId());
@@ -611,7 +634,7 @@ public class IslandsManager {
         }
         // Try the home location first
         Location defaultHome = getHomeLocation(world, user);
-        Location namedHome = getHomeLocation(world, user, name);
+        Location namedHome = getHomeLocation(world, user, homeName);
         Location l = namedHome != null ? namedHome : defaultHome;
         if (l != null) {
             Util.getChunkAtAsync(l).thenRun(() -> {
@@ -624,17 +647,17 @@ public class IslandsManager {
                 Location lPlusOne = l.clone().add(new Vector(0, 1, 0));
                 if (isSafeLocation(lPlusOne)) {
                     // Adjust the home location accordingly
-                    setHomeLocation(user, lPlusOne, name);
+                    setHomeLocation(user, lPlusOne, homeName);
                     result.complete(lPlusOne);
                     return;
                 }
                 // Try island
-                tryIsland(result, islandLoc, user, name);
+                tryIsland(result, islandLoc, user, homeName);
             });
             return result;
         }
         // Try island
-        tryIsland(result, islandLoc, user, name);
+        tryIsland(result, islandLoc, user, homeName);
         return result;
     }
 
@@ -838,7 +861,7 @@ public class IslandsManager {
      */
     @Nullable
     public Location getHomeLocation(@NonNull World world, @NonNull User user) {
-        return getHomeLocation(world, user, "");
+        return getHomeLocation(world, user.getUniqueId(), "");
     }
 
     /**
@@ -876,11 +899,7 @@ public class IslandsManager {
      */
     @Nullable
     public Location getHomeLocation(@NonNull World world, @NonNull UUID uuid, String name) {
-        Island island = this.getIsland(world, uuid);
-        if (island == null) {
-            return null;
-        }
-        return getHomeLocation(island, name);
+        return getIslands(world, uuid).stream().map(is -> is.getHome(name)).filter(Objects::nonNull).findFirst().orElse(null);
     }
 
     /**
@@ -1052,6 +1071,14 @@ public class IslandsManager {
     }
 
 
+    /**
+     * Teleports player async
+     * @param world world
+     * @param player player
+     * @param name home name
+     * @param newIsland true if this is a new island
+     * @return completable future that is true when the teleport has been completed
+     */
     private CompletableFuture<Boolean> homeTeleportAsync(@NonNull World world, @NonNull Player player, String name, boolean newIsland) {
         CompletableFuture<Boolean> result = new CompletableFuture<>();
         User user = User.getInstance(player);
@@ -1177,6 +1204,10 @@ public class IslandsManager {
         }
     }
 
+    /**
+     * Prepares the player for teleporting by: stopping gliding, exiting any boats and giving the player the boat
+     * @param player player
+     */
     private void readyPlayer(@NonNull Player player) {
         // Stop any gliding
         player.setGliding(false);
@@ -1898,7 +1929,7 @@ public class IslandsManager {
      * @return number of islands this player owns in this game world
      */
     public int getNumberOfConcurrentIslands(UUID uuid, World world) {
-        return islandCache.getAllIslands(world, uuid).size();
+        return islandCache.getIslands(world, uuid).size();
     }
 
     /**
@@ -1908,6 +1939,16 @@ public class IslandsManager {
      */
     public void setPrimaryIsland(UUID uuid, Island i) {
         this.getIslandCache().setPrimaryIsland(uuid, i);
+    }
+
+    /**
+     * Convenience method. See {@link IslandCache#get(World, UUID)}
+     * @param world world
+     * @param uuid player's UUID
+     * @return Island of player or null if there isn't one
+     */
+    public Island getPrimaryIsland(World world, UUID uuid) {
+        return this.getIslandCache().get(world, uuid);
     }
 
 }

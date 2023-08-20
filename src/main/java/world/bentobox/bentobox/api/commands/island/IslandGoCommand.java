@@ -38,30 +38,54 @@ public class IslandGoCommand extends DelayedTeleportCommand {
             user.sendMessage("commands.island.go.teleport");
             return false;
         }
-        // Check if the island is reserved
-        Island island = getIslands().getIsland(getWorld(), user.getUniqueId());
-        if (island == null) {
+        List<Island> islands = getIslands().getIslands(getWorld(), user.getUniqueId());
+        if (islands.isEmpty()) {
             user.sendMessage("general.errors.no-island");
             return false;
         }
-        if (island.isReserved()) {
-            // Send player to create an island
-            getParent().getSubCommand("create").ifPresent(createCmd -> createCmd.call(user, createCmd.getLabel(), Collections.emptyList()));
+        // Check if the island is reserved
+        if (checkReserved(user, islands)) {
             return false;
         }
+        // Prevent command if player is falling and its not allowed
         if ((getIWM().inWorld(user.getWorld()) && Flags.PREVENT_TELEPORT_WHEN_FALLING.isSetForWorld(user.getWorld()))
                 && user.getPlayer().getFallDistance() > 0) {
             // We're sending the "hint" to the player to tell them they cannot teleport while falling.
             user.sendMessage(Flags.PREVENT_TELEPORT_WHEN_FALLING.getHintReference());
             return false;
         }
-        if (!args.isEmpty() && !getIslands().isHomeLocation(island, String.join(" ", args))) {
-            user.sendMessage("commands.island.go.unknown-home");
-            user.sendMessage("commands.island.sethome.homes-are");
-            island.getHomes().keySet().stream().filter(s -> !s.isEmpty()).forEach(s -> user.sendMessage("commands.island.sethome.home-list-syntax", TextVariables.NAME, s));
-            return false;
+        // Check if the home is known
+        if (!args.isEmpty()) {
+            if (checkHomes(user, islands, args)) {
+                // Failed home name check
+                user.sendMessage("commands.island.sethome.homes-are");
+                islands.forEach(island ->
+                island.getHomes().keySet().stream().filter(s -> !s.isEmpty()).forEach(s -> user.sendMessage("commands.island.sethome.home-list-syntax", TextVariables.NAME, s)));
+                return false;
+            }
         }
         return true;
+    }
+
+    private boolean checkHomes(User user, List<Island> islands, List<String> args) {
+        for (Island island : islands) {
+            if (!getIslands().isHomeLocation(island, String.join(" ", args))) {
+                user.sendMessage("commands.island.go.unknown-home");
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean checkReserved(User user, List<Island> islands) {
+        for (Island island : islands) {
+            if (island.isReserved()) {
+                // Send player to create an island
+                getParent().getSubCommand("create").ifPresent(createCmd -> createCmd.call(user, createCmd.getLabel(), Collections.emptyList()));
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
@@ -73,12 +97,12 @@ public class IslandGoCommand extends DelayedTeleportCommand {
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
         String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
-        Island island = getIslands().getIsland(getWorld(), user.getUniqueId());
-        if (island != null) {
-            return Optional.of(Util.tabLimit(new ArrayList<>(island.getHomes().keySet()), lastArg));
-        } else {
-            return Optional.empty();
+        List<String> result = new ArrayList<>();
+        for (Island island : getIslands().getIslands(getWorld(), user.getUniqueId())) {
+            result.addAll(island.getHomes().keySet());
         }
+        return Optional.of(Util.tabLimit(result, lastArg));
+
     }
 
 }

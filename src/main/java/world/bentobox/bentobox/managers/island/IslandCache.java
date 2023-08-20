@@ -165,7 +165,7 @@ public class IslandCache {
      */
     @Nullable
     public Island get(@NonNull World world, @NonNull UUID uuid) {
-        List<Island> all = getAllIslands(world, uuid);
+        List<Island> all = getIslands(world, uuid);
         if (all.isEmpty()) return null;
         return all.get(0); // The current island is always the first in the list
     }
@@ -176,7 +176,7 @@ public class IslandCache {
      * @param uuid player's UUID
      * @return list of island or empty list if none
      */
-    public List<Island> getAllIslands(@NonNull World world, @NonNull UUID uuid) {
+    public List<Island> getIslands(@NonNull World world, @NonNull UUID uuid) {
         World w = Util.getWorld(world);
         if (w == null) {
             return new ArrayList<>();
@@ -190,7 +190,7 @@ public class IslandCache {
      * @param island island to make primary
      */
     public void setPrimaryIsland(@NonNull UUID uuid, @NonNull Island island) {
-        List<Island> all = getAllIslands(island.getWorld(), uuid);
+        List<Island> all = getIslands(island.getWorld(), uuid);
         all.remove(island);
         all.add(0, island);
         islandsByUUID.get(island.getWorld()).put(uuid, all);
