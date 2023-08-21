@@ -364,7 +364,7 @@ public class IslandsManager {
      * @param world game world
      * @return number of islands
      */
-    public int getIslandCount(@NonNull World world) {
+    public long getIslandCount(@NonNull World world) {
         return islandCache.size(world);
     }
 
@@ -390,7 +390,7 @@ public class IslandsManager {
      * @return List of islands or empty list if none found for user
      */
     @Nullable
-    public List<Island> getIslands(@NonNull World world, @NonNull User user){
+    public Set<Island> getIslands(@NonNull World world, @NonNull User user){
         return getIslands(world, user.getUniqueId());
     }
 
@@ -401,7 +401,7 @@ public class IslandsManager {
      * @param uuid user's uuid
      * @return List of islands or empty list if none found for user
      */
-    public List<Island> getIslands(@NonNull World world, UUID uniqueId) {
+    public Set<Island> getIslands(@NonNull World world, UUID uniqueId) {
         return islandCache.getIslands(world, uniqueId);
     }
 

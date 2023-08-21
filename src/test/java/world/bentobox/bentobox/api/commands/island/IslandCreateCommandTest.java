@@ -232,7 +232,7 @@ public class IslandCreateCommandTest {
         when(im.hasIsland(any(), Mockito.any(UUID.class))).thenReturn(false);
         when(im.inTeam(any(), Mockito.any(UUID.class))).thenReturn(false);
         when(iwm.getMaxIslands(any())).thenReturn(100);
-        when(im.getIslandCount(any())).thenReturn(100);
+        when(im.getIslandCount(any())).thenReturn(100L);
         assertFalse(cc.canExecute(user, "", Collections.emptyList()));
         verify(user).sendMessage(eq("commands.island.create.too-many-islands"));
 

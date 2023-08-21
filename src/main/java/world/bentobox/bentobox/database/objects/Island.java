@@ -55,6 +55,9 @@ import world.bentobox.bentobox.util.Util;
 @Table(name = "Islands")
 public class Island implements DataObject, MetaDataAble {
 
+    @Expose
+    private boolean primary;
+
     /**
      * Set to true if this data object has been changed since being loaded from the database
      */
@@ -1840,6 +1843,21 @@ public class Island implements DataObject, MetaDataAble {
      */
     public void clearAllBonusRanges() {
         this.getBonusRanges().clear();
+        setChanged();
+    }
+
+    /**
+     * @return the primary
+     */
+    public boolean isPrimary() {
+        return primary;
+    }
+
+    /**
+     * @param primary the primary to set
+     */
+    public void setPrimary(boolean primary) {
+        this.primary = primary;
         setChanged();
     }
 

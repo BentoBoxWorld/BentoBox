@@ -24,7 +24,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -250,7 +249,7 @@ public class IslandsManagerTest extends AbstractCommonSetup {
         when(islandCache.getIslandAt(any(Location.class))).thenReturn(island);
         when(islandCache.get(any(), any())).thenReturn(island);
         optionalIsland = Optional.ofNullable(island);
-        when(islandCache.getIslands(world, uuid)).thenReturn(List.of(island));
+        when(islandCache.getIslands(world, uuid)).thenReturn(Set.of(island));
 
         // User location
         when(user.getLocation()).thenReturn(location);

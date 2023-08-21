@@ -126,7 +126,7 @@ public class IslandGoCommandTest {
         when(ic.getWorld()).thenReturn(world);
 
         // Player has island by default
-        when(im.getIslands(world, uuid)).thenReturn(List.of(island));
+        when(im.getIslands(world, uuid)).thenReturn(Set.of(island));
         when(im.hasIsland(world, uuid)).thenReturn(true);
         when(im.isOwner(world, uuid)).thenReturn(true);
         when(plugin.getIslands()).thenReturn(im);
@@ -202,7 +202,7 @@ public class IslandGoCommandTest {
      */
     @Test
     public void testExecuteNoArgsNoIsland() {
-        when(im.getIslands(world, uuid)).thenReturn(List.of());
+        when(im.getIslands(world, uuid)).thenReturn(Set.of());
         assertFalse(igc.canExecute(user, igc.getLabel(), Collections.emptyList()));
         verify(player).sendMessage("general.errors.no-island");
     }
