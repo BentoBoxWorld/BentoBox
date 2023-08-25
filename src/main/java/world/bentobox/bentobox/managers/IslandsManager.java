@@ -1108,6 +1108,7 @@ public class IslandsManager {
                 .thenAccept(result::complete);
                 return;
             }
+            // TODO - fix the homes being storing on the wrong island.
             // Add home
             if (getHomeLocations(island).isEmpty()) {
                 setHomeLocation(player.getUniqueId(), home);
