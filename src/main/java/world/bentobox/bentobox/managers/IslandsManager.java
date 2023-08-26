@@ -908,6 +908,9 @@ public class IslandsManager {
      */
     @Nullable
     public Location getHomeLocation(@NonNull World world, @NonNull UUID uuid, String name) {
+        if (name.isBlank() && this.getPrimaryIsland(world, uuid) != null) {
+            return this.getPrimaryIsland(world, uuid).getProtectionCenter();
+        }
         return getIslands(world, uuid).stream().map(is -> is.getHome(name)).filter(Objects::nonNull).findFirst().orElse(null);
     }
 
@@ -1107,11 +1110,6 @@ public class IslandsManager {
                 .buildFuture()
                 .thenAccept(result::complete);
                 return;
-            }
-            // TODO - fix the homes being storing on the wrong island.
-            // Add home
-            if (getHomeLocations(island).isEmpty()) {
-                setHomeLocation(player.getUniqueId(), home);
             }
             PaperLib.teleportAsync(player, home).thenAccept(b -> {
                 // Only run the commands if the player is successfully teleported

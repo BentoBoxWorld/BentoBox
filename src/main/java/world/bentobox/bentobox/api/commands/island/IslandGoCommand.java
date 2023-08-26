@@ -3,10 +3,11 @@ package world.bentobox.bentobox.api.commands.island;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TreeMap;
 
-import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.DelayedTeleportCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
@@ -19,6 +20,8 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  */
 public class IslandGoCommand extends DelayedTeleportCommand {
+
+    private Island island;
 
     public IslandGoCommand(CompositeCommand islandCommand) {
         super(islandCommand, "go", "home", "h");
@@ -58,13 +61,15 @@ public class IslandGoCommand extends DelayedTeleportCommand {
         }
         // Check if the home is known
         if (!args.isEmpty()) {
-            List<String> names = getNameList(user);
-            if (!names.contains(String.join(" ", args))) {
+            Map<String, Island> names = getNameList(user);
+            if (!names.containsKey(String.join(" ", args))) {
                 // Failed home name check
                 user.sendMessage("commands.island.go.unknown-home");
                 user.sendMessage("commands.island.sethome.homes-are");
-                names.forEach(name -> user.sendMessage("commands.island.sethome.home-list-syntax", TextVariables.NAME, name));
+                names.keySet().forEach(name -> user.sendMessage("commands.island.sethome.home-list-syntax", TextVariables.NAME, name));
                 return false;
+            } else {
+                island = names.get(String.join(" ", args));
             }
         }
         return true;
@@ -83,38 +88,43 @@ public class IslandGoCommand extends DelayedTeleportCommand {
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        this.delayCommand(user, () -> getIslands().homeTeleportAsync(getWorld(), user.getPlayer(), String.join(" ", args)));
+        if (island != null) {
+            // This is an island hop
+            // Don't use the name, just go home to the new island
+            this.delayCommand(user, () -> {
+                getIslands().setPrimaryIsland(user.getUniqueId(), island);
+                getIslands().homeTeleportAsync(getWorld(), user.getPlayer());
+            });
+        } else {
+            this.delayCommand(user, () -> getIslands().homeTeleportAsync(getWorld(), user.getPlayer(), String.join(" ", args)));
+        }
         return true;
     }
 
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
         String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
-        return Optional.of(Util.tabLimit(getNameList(user), lastArg));
+
+        return Optional.of(Util.tabLimit(new ArrayList<>(getNameList(user).keySet()), lastArg));
 
     }
 
-    private List<String> getNameList(User user) {
-        BentoBox.getInstance().logDebug("getNameList ");
-        List<String> result = new ArrayList<>();
+    private Map<String, Island> getNameList(User user) {
+        Map<String, Island> islandMap = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
         int index = 1;
         for (Island island : getIslands().getIslands(getWorld(), user.getUniqueId())) {
-            BentoBox.getInstance().logDebug("island ");
-            // TODO DEBUG THIS. WHY IS THERE REPEATED ITEMS IN THIS LIST?
             if (island.getName() != null && !island.getName().isBlank()) {
                 // Name has been set
-                result.add(island.getName());
+                islandMap.put(island.getName(), island);
             } else {
                 // Name has not been set
                 String text = user.getTranslation("protection.flags.ENTER_EXIT_MESSAGES.island", TextVariables.NAME, user.getName(), TextVariables.DISPLAY_NAME, user.getDisplayName());
-                result.add(text + " " + index++);
+                islandMap.put(text + " " + index++, island);
             }
             // Add homes
-            BentoBox.getInstance().logDebug("There are " + result.size() + " island names and " + island.getHomes().size() + " homes");
-            result.addAll(island.getHomes().keySet());
-
+            island.getHomes().keySet().forEach(n -> islandMap.put(n, island));
         }
-        return result;
+        return islandMap;
 
     }
 
