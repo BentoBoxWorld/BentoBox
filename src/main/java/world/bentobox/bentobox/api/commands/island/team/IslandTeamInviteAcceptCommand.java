@@ -1,6 +1,7 @@
 package world.bentobox.bentobox.api.commands.island.team;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
@@ -150,7 +151,7 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
         // Remove the invite
         itc.removeInvite(playerUUID);
         // Get the player's island - may be null if the player has no island
-        Island island = getIslands().getIsland(getWorld(), playerUUID);
+        Set<Island> islands = getIslands().getIslands(getWorld(), playerUUID);
         // Get the team's island
         Island teamIsland = getIslands().getIsland(getWorld(), prospectiveOwnerUUID);
         if (teamIsland == null) {
@@ -169,10 +170,9 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
         getIslands().setJoinTeam(teamIsland, playerUUID);
         // Move player to team's island
         getIslands().homeTeleportAsync(getWorld(), user.getPlayer()).thenRun(() -> {
-            // Delete the old island
-            if (island != null) {
-                getIslands().deleteIsland(island, true, user.getUniqueId());
-            }
+            // Delete the old islands
+            islands.forEach(island -> getIslands().deleteIsland(island, true, user.getUniqueId()));
+
             // Put player back into normal mode
             user.setGameMode(getIWM().getDefaultGameMode(getWorld()));
 

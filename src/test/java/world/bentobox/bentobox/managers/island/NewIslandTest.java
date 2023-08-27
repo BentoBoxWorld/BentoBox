@@ -11,7 +11,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -68,6 +70,7 @@ public class NewIslandTest {
     private User user;
     @Mock
     private Island oldIsland;
+    private Set<Island> oldIslands;
     @Mock
     private IslandsManager im;
     @Mock
@@ -139,6 +142,7 @@ public class NewIslandTest {
         when(builder.location(any())).thenReturn(builder);
         when(builder.reason(any())).thenReturn(builder);
         when(builder.oldIsland(any())).thenReturn(builder);
+        when(builder.oldIslands(any())).thenReturn(builder);
         when(builder.build()).thenReturn(ice);
         when(ice.getBlueprintBundle()).thenReturn(bpb);
         when(ire.getBlueprintBundle()).thenReturn(bpb);
@@ -152,6 +156,8 @@ public class NewIslandTest {
         when(block.isEmpty()).thenReturn(true);
         when(world.getBlockAt(anyInt(), anyInt(), anyInt())).thenReturn(block);
         when(oldIsland.getWorld()).thenReturn(world);
+        oldIslands = new HashSet<>();
+        oldIslands.add(island);
 
         // Util - return the same location
         PowerMockito.mockStatic(Util.class);
@@ -189,7 +195,7 @@ public class NewIslandTest {
      */
     @Test
     public void testBuilder() throws Exception {
-        NewIsland.builder().addon(addon).name(NAME).player(user).noPaste().reason(Reason.CREATE).oldIsland(oldIsland).build();
+        NewIsland.builder().addon(addon).name(NAME).player(user).noPaste().reason(Reason.CREATE).oldIslands(oldIslands).build();
         // Verifications
         verify(im).save(eq(island));
         verify(island).setFlagsDefaults();
@@ -208,7 +214,7 @@ public class NewIslandTest {
     @Test
     public void testBuilderReset() throws Exception {
         when(builder.build()).thenReturn(ire);
-        NewIsland.builder().addon(addon).name(NAME).player(user).noPaste().reason(Reason.RESET).oldIsland(oldIsland).build();
+        NewIsland.builder().addon(addon).name(NAME).player(user).noPaste().reason(Reason.RESET).oldIslands(oldIslands).build();
         // Verifications
         verify(im).save(eq(island));
         verify(island).setFlagsDefaults();
@@ -261,7 +267,7 @@ public class NewIslandTest {
     @Test
     public void testBuilderHasIsland() throws Exception {
         when(im.hasIsland(any(), any(User.class))).thenReturn(true);
-        NewIsland.builder().addon(addon).name(NAME).player(user).noPaste().reason(Reason.CREATE).oldIsland(oldIsland).build();
+        NewIsland.builder().addon(addon).name(NAME).player(user).noPaste().reason(Reason.CREATE).oldIslands(oldIslands).build();
         // Verifications
         verify(im).save(eq(island));
         verify(island).setFlagsDefaults();

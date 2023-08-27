@@ -1,5 +1,7 @@
 package world.bentobox.bentobox.api.events.island;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Location;
@@ -16,7 +18,7 @@ import world.bentobox.bentobox.database.objects.Island;
  */
 public class IslandResetEvent extends IslandBaseEvent {
 
-    private final @NonNull Island oldIsland;
+    private final @NonNull Set<Island> oldIslands;
     private @NonNull BlueprintBundle blueprintBundle;
     private static final HandlerList handlers = new HandlerList();
 
@@ -29,20 +31,19 @@ public class IslandResetEvent extends IslandBaseEvent {
         return handlers;
     }
 
-    public IslandResetEvent(Island island, UUID player, boolean admin, Location location, @NonNull BlueprintBundle blueprintBundle, @NonNull Island oldIsland) {
+    public IslandResetEvent(Island island, UUID player, boolean admin, Location location, @NonNull BlueprintBundle blueprintBundle, Set<Island> oldIslands) {
         // Final variables have to be declared in the constructor
         super(island, player, admin, location);
         this.blueprintBundle = blueprintBundle;
         // Create a copy of the old island
-        this.oldIsland = new Island(oldIsland);
+        this.oldIslands = oldIslands != null ? new HashSet<>(oldIslands) : null;
     }
 
     /**
-     * @since 1.12.0
+     * @since 2.0.0
      */
-    @NonNull
-    public Island getOldIsland() {
-        return oldIsland;
+    public Set<Island> getOldIslands() {
+        return oldIslands;
     }
 
     /**

@@ -13,6 +13,7 @@ import org.bukkit.GameMode;
 import org.bukkit.entity.EntityType;
 import org.eclipse.jdt.annotation.NonNull;
 
+import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.lists.Flags;
 
@@ -638,9 +639,9 @@ public interface WorldSettings extends ConfigObject {
     /**
      * Get the number of concurrent islands a player can have in the world
      * @return 1 by default
-     * @since 1.24.2
+     * @since 2.0.0
      */
     default int getConcurrentIslands() {
-        return 5;
+        return BentoBox.getInstance().getSettings().getIslandNumber();
     }
 }

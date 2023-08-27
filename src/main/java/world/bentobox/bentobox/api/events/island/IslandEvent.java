@@ -1,5 +1,7 @@
 package world.bentobox.bentobox.api.events.island;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -176,7 +178,7 @@ public class IslandEvent extends IslandBaseEvent {
          * Event that will fire when an island is named or renamed
          * @since 1.24.0
          */
-        NAME, 
+        NAME,
         /**
          * Event that will fire when the info command is executed. Allows addons to add to it
          * @since 1.24.0
@@ -215,6 +217,12 @@ public class IslandEvent extends IslandBaseEvent {
          * @since 1.12.0
          */
         private Island oldIsland;
+
+        /**
+         * Store old islands
+         * @since 2.0.0
+         */
+        private Set<Island> oldIslands;
 
         /**
          * @since 1.13.0
@@ -301,6 +309,14 @@ public class IslandEvent extends IslandBaseEvent {
             return this;
         }
 
+        /**
+         * @param oldIslands2 set of old islands
+         * @since 2.0.0
+         */
+        public IslandEventBuilder oldIslands(Set<Island> oldIslands2) {
+            this.oldIslands = new HashSet<>(oldIslands2);
+            return this;
+        }
 
         /**
          * Allows to set new and old protection range.
@@ -334,7 +350,7 @@ public class IslandEvent extends IslandBaseEvent {
             this.previousName = previousName;
             return this;
         }
-        
+
         /**
          * Addon that triggered this event, e.g. BSkyBlock
          * @param addon Addon.
@@ -358,7 +374,7 @@ public class IslandEvent extends IslandBaseEvent {
             case ENTER -> new IslandEnterEvent(island, player, admin, location, oldIsland, rawEvent);
             case EXIT -> new IslandExitEvent(island, player, admin, location, oldIsland, rawEvent);
             case LOCK -> new IslandLockEvent(island, player, admin, location);
-            case RESET -> new IslandResetEvent(island, player, admin, location, blueprintBundle, oldIsland);
+            case RESET -> new IslandResetEvent(island, player, admin, location, blueprintBundle, oldIslands);
             case RESETTED -> new IslandResettedEvent(island, player, admin, location, oldIsland);
             case UNBAN -> new IslandUnbanEvent(island, player, admin, location);
             case UNLOCK -> new IslandUnlockEvent(island, player, admin, location);

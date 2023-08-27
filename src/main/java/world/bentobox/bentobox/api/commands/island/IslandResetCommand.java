@@ -2,8 +2,10 @@ package world.bentobox.bentobox.api.commands.island;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
@@ -123,10 +125,9 @@ public class IslandResetCommand extends ConfirmableCommand {
      */
     private boolean resetIsland(User user, String name) {
         // Get the player's old island
-        Island oldIsland = getIslands().getIsland(getWorld(), user);
-        if (oldIsland != null) {
-            deleteOldIsland(user, oldIsland);
-        }
+        Set<Island> oldIslands = getIslands().getIslands(getWorld(), user);
+        oldIslands.forEach(oldIsland -> deleteOldIsland(user, oldIsland));
+
         user.sendMessage("commands.island.create.creating-island");
         // Create new island and then delete the old one
         try {
@@ -134,7 +135,7 @@ public class IslandResetCommand extends ConfirmableCommand {
                     .player(user)
                     .reason(Reason.RESET)
                     .addon(getAddon())
-                    .oldIsland(oldIsland)
+                    .oldIslands(oldIslands)
                     .name(name);
             if (noPaste) builder.noPaste();
             builder.build();
