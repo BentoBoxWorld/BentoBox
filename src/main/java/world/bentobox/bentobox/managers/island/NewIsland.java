@@ -1,8 +1,6 @@
 package world.bentobox.bentobox.managers.island;
 
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -61,7 +59,7 @@ public class NewIsland {
             // Do nothing
             return;
         }
-        newIsland(builder.oldIslands);
+        newIsland(builder.oldIsland2);
     }
 
     /**
@@ -84,7 +82,7 @@ public class NewIsland {
      * @author tastybento
      */
     public static class Builder {
-        private Set<Island> oldIslands = new HashSet<>();
+        private Island oldIsland2;
         private User user2;
         private Reason reason2;
         private World world2;
@@ -92,6 +90,12 @@ public class NewIsland {
         private boolean noPaste2;
         private GameModeAddon addon2;
         private NewIslandLocationStrategy locationStrategy2;
+
+        public Builder oldIsland(Island oldIsland) {
+            this.oldIsland2 = oldIsland;
+            this.world2 = oldIsland.getWorld();
+            return this;
+        }
 
 
         public Builder player(User player) {
@@ -157,22 +161,14 @@ public class NewIsland {
             }
             throw new IOException("Insufficient parameters. Must have a user!");
         }
-
-        /**
-         * @param oldIslands2 old islands
-         */
-        public Builder oldIslands(Set<Island> oldIslands2) {
-            oldIslands = new HashSet<>(oldIslands2);
-            return this;
-        }
     }
 
     /**
      * Makes an island.
-     * @param oldIslands old island that is being replaced, if any
+     * @param oldIsland old island that is being replaced, if any
      * @throws IOException - if an island cannot be made. Message is the tag to show the user.
      */
-    public void newIsland(Set<Island> oldIslands) throws IOException {
+    public void newIsland(Island oldIsland) throws IOException {
         // Find the new island location
         Location next = checkReservedIsland();
         if (next == null) {
@@ -187,7 +183,7 @@ public class NewIsland {
                 .island(island)
                 .location(island.getCenter())
                 .blueprintBundle(plugin.getBlueprintsManager().getBlueprintBundles(addon).get(name))
-                .oldIslands(oldIslands)
+                .oldIsland(oldIsland)
                 .build();
         if (event.getNewEvent().map(IslandBaseEvent::isCancelled).orElse(event.isCancelled())) {
             // Do nothing
@@ -205,10 +201,10 @@ public class NewIsland {
 
         // Run task to run after creating the island in one tick if island is not being pasted
         if (noPaste) {
-            Bukkit.getScheduler().runTask(plugin, () -> postCreationTask(oldIslands));
+            Bukkit.getScheduler().runTask(plugin, () -> postCreationTask(oldIsland));
         } else {
             // Create islands, then run task
-            plugin.getBlueprintsManager().paste(addon, island, name, () -> postCreationTask(oldIslands));
+            plugin.getBlueprintsManager().paste(addon, island, name, () -> postCreationTask(oldIsland));
         }
         // Set default settings
         island.setFlagsDefaults();
@@ -220,10 +216,9 @@ public class NewIsland {
 
     /**
      * Tasks to run after the new island has been created
-     * @param oldIslands - old island that will be deleted
+     * @param oldIsland - old island that will be deleted
      */
-    private void postCreationTask(Set<Island> oldIslands) {
-        plugin.getIslands().setPrimaryIsland(user.getPlayer().getUniqueId(), island);
+    private void postCreationTask(Island oldIsland) {
         // Set initial spawn point if one exists
         if (island.getSpawnPoint(Environment.NORMAL) != null) {
             plugin.getIslands().setHomeLocation(user, island.getSpawnPoint(Environment.NORMAL));
@@ -234,7 +229,7 @@ public class NewIsland {
                 user.getPlayer().setVelocity(new Vector(0, 0, 0));
                 user.getPlayer().setFallDistance(0F);
                 // Teleport player after this island is built
-                plugin.getIslands().homeTeleportAsync(world, user.getPlayer(), true).thenRun(() -> tidyUp(oldIslands));
+                plugin.getIslands().homeTeleportAsync(world, user.getPlayer(), true).thenRun(() -> tidyUp(oldIsland));
                 return;
             } else {
                 // let's send him a message so that he knows he can teleport to his island!
@@ -244,7 +239,7 @@ public class NewIsland {
             // Remove the player again to completely clear the data
             User.removePlayer(user.getPlayer());
         }
-        tidyUp(oldIslands);
+        tidyUp(oldIsland);
     }
 
     /**
@@ -302,15 +297,19 @@ public class NewIsland {
                 // Clear the reservation
                 island.setReserved(false);
                 return l;
+            } else {
+                // This should never happen unless we allow another way to paste over islands without reserving
+                plugin.logError("New island for user " + user.getName() + " was not reserved!");
             }
         }
         return null;
     }
 
-    private void tidyUp(Set<Island> oldIslands) {
+    private void tidyUp(Island oldIsland) {
         // Delete old island
-        if (!plugin.getSettings().isKeepPreviousIslandOnReset()) {
-            oldIslands.forEach(old -> plugin.getIslands().deleteIsland(old, true, user.getUniqueId()));
+        if (oldIsland != null && !plugin.getSettings().isKeepPreviousIslandOnReset()) {
+            // Delete the old island
+            plugin.getIslands().deleteIsland(oldIsland, true, user.getUniqueId());
         }
 
         // Fire exit event
@@ -319,7 +318,7 @@ public class NewIsland {
         .reason(reason == Reason.RESET ? Reason.RESETTED : Reason.CREATED)
         .island(island)
         .location(island.getCenter())
-        .oldIslands(oldIslands)
+        .oldIsland(oldIsland)
         .build();
 
     }

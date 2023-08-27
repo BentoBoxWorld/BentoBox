@@ -14,7 +14,6 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -178,7 +177,6 @@ public class IslandResetCommandTest {
         when(island.getCenter()).thenReturn(location);
         when(island.getHistory()).thenReturn(Collections.emptyList());
         when(island.getSpawnPoint()).thenReturn(Collections.emptyMap());
-        when(im.getIslands(world, user)).thenReturn(Set.of(island));
 
         // Addon
         GameModeAddon addon1 = mock(GameModeAddon.class);
@@ -246,7 +244,7 @@ public class IslandResetCommandTest {
         // Mock up NewIsland builder
         NewIsland.Builder builder = mock(NewIsland.Builder.class);
         when(builder.player(any())).thenReturn(builder);
-        when(builder.oldIslands(any())).thenReturn(builder);
+        when(builder.oldIsland(any())).thenReturn(builder);
         when(builder.reason(any())).thenReturn(builder);
         when(builder.name(any())).thenReturn(builder);
         when(builder.addon(any())).thenReturn(builder);
@@ -292,7 +290,7 @@ public class IslandResetCommandTest {
         // Mock up NewIsland builder
         NewIsland.Builder builder = mock(NewIsland.Builder.class);
         when(builder.player(any())).thenReturn(builder);
-        when(builder.oldIslands(any())).thenReturn(builder);
+        when(builder.oldIsland(any())).thenReturn(builder);
         when(builder.reason(any())).thenReturn(builder);
         when(builder.name(any())).thenReturn(builder);
         when(builder.addon(any())).thenReturn(builder);
@@ -324,7 +322,7 @@ public class IslandResetCommandTest {
         // Mock up NewIsland builder
         NewIsland.Builder builder = mock(NewIsland.Builder.class);
         when(builder.player(any())).thenReturn(builder);
-        when(builder.oldIslands(any())).thenReturn(builder);
+        when(builder.oldIsland(any())).thenReturn(builder);
         when(builder.reason(any())).thenReturn(builder);
         when(builder.name(any())).thenReturn(builder);
         when(builder.addon(any())).thenReturn(builder);
@@ -360,7 +358,7 @@ public class IslandResetCommandTest {
         // Mock up NewIsland builder
         NewIsland.Builder builder = mock(NewIsland.Builder.class);
         when(builder.player(any())).thenReturn(builder);
-        when(builder.oldIslands(any())).thenReturn(builder);
+        when(builder.oldIsland(any())).thenReturn(builder);
         when(builder.reason(any())).thenReturn(builder);
         when(builder.name(any())).thenReturn(builder);
         when(builder.addon(any())).thenReturn(builder);
@@ -432,7 +430,7 @@ public class IslandResetCommandTest {
         // Mock up NewIsland builder
         NewIsland.Builder builder = mock(NewIsland.Builder.class);
         when(builder.player(any())).thenReturn(builder);
-        when(builder.oldIslands(any())).thenReturn(builder);
+        when(builder.oldIsland(any())).thenReturn(builder);
         when(builder.reason(any())).thenReturn(builder);
         when(builder.name(any())).thenReturn(builder);
         when(builder.addon(any())).thenReturn(builder);

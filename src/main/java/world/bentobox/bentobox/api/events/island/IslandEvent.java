@@ -1,7 +1,5 @@
 package world.bentobox.bentobox.api.events.island;
 
-import java.util.HashSet;
-import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -219,12 +217,6 @@ public class IslandEvent extends IslandBaseEvent {
         private Island oldIsland;
 
         /**
-         * Store old islands
-         * @since 2.0.0
-         */
-        private Set<Island> oldIslands;
-
-        /**
          * @since 1.13.0
          */
         private int oldRank;
@@ -309,14 +301,6 @@ public class IslandEvent extends IslandBaseEvent {
             return this;
         }
 
-        /**
-         * @param oldIslands2 set of old islands
-         * @since 2.0.0
-         */
-        public IslandEventBuilder oldIslands(Set<Island> oldIslands2) {
-            this.oldIslands = new HashSet<>(oldIslands2);
-            return this;
-        }
 
         /**
          * Allows to set new and old protection range.
@@ -374,7 +358,7 @@ public class IslandEvent extends IslandBaseEvent {
             case ENTER -> new IslandEnterEvent(island, player, admin, location, oldIsland, rawEvent);
             case EXIT -> new IslandExitEvent(island, player, admin, location, oldIsland, rawEvent);
             case LOCK -> new IslandLockEvent(island, player, admin, location);
-            case RESET -> new IslandResetEvent(island, player, admin, location, blueprintBundle, oldIslands);
+            case RESET -> new IslandResetEvent(island, player, admin, location, blueprintBundle, oldIsland);
             case RESETTED -> new IslandResettedEvent(island, player, admin, location, oldIsland);
             case UNBAN -> new IslandUnbanEvent(island, player, admin, location);
             case UNLOCK -> new IslandUnlockEvent(island, player, admin, location);
