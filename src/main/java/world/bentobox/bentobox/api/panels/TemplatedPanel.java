@@ -64,19 +64,18 @@ public class TemplatedPanel extends Panel
      */
     private void generatePanel()
     {
-        Map<Integer, PanelItem> items = switch (this.panelTemplate.type())
-                {
-                case INVENTORY -> this.populateInventoryPanel();
-                case HOPPER -> this.populateHopperPanel();
-                case DROPPER -> this.populateDropperPanel();
-                };
+        Map<Integer, PanelItem> items = switch (this.panelTemplate.type()) {
+            case INVENTORY -> this.populateInventoryPanel(new PanelItem[6][9]);
+            case HOPPER -> this.populateInventoryPanel(new PanelItem[1][5]);
+            case DROPPER -> this.populateInventoryPanel(new PanelItem[3][3]);
+        };
 
-                super.makePanel(this.user.getTranslation(this.panelTemplate.title(), this.parameters),
-                        items,
-                        items.keySet().stream().max(Comparator.naturalOrder()).orElse(9),
-                        this.user,
-                        this.getListener().orElse(null),
-                        this.panelTemplate.type());
+        super.makePanel(this.user.getTranslation(this.panelTemplate.title(), this.parameters),
+            items,
+            items.keySet().stream().max(Comparator.naturalOrder()).orElse(9),
+            this.user,
+            this.getListener().orElse(null),
+            this.panelTemplate.type());
     }
 
     /**
@@ -85,185 +84,31 @@ public class TemplatedPanel extends Panel
      * @return Map that contains indexes linked to the correct panel item.
      */
     @NonNull
-    private Map<Integer, PanelItem> populateInventoryPanel() {
-        PanelItem[][] itemArray = new PanelItem[6][9];
-        processItemData(itemArray);
-        removeEmptyLines(itemArray);
-        fillBorder(itemArray);
-        fillBackground(itemArray);
-        return createItemMap(itemArray);
+    private Map<Integer, PanelItem> populateInventoryPanel(PanelItem[][] itemArray)
+    {
+        this.preProcessPanelTemplate(itemArray);
+        this.processItemData(itemArray);
+        this.removeEmptyLines(itemArray);
+        this.fillBorder(itemArray);
+        this.fillBackground(itemArray);
+
+        return this.createItemMap(itemArray);
     }
 
-    private void processItemData(PanelItem[][] itemArray) {
+
+    /**
+     * This method processes what items should be added into the panel.
+     * @param itemArray The double array with items into panel
+     */
+    private void preProcessPanelTemplate(PanelItem[][] itemArray)
+    {
+        final int numRows = itemArray.length;
+        final int numCols = itemArray[0].length;
+
         // Analyze the GUI button layout a bit.
-        for (int i = 0; i < panelTemplate.content().length; i++) {
-            for (int k = 0; k < panelTemplate.content()[i].length; k++) {
-                ItemTemplateRecord rec = panelTemplate.content()[i][k];
-                if (rec != null && rec.dataMap().containsKey("type")) {
-                    String type = String.valueOf(rec.dataMap().get("type"));
-                    int counter = typeSlotMap.computeIfAbsent(type, key -> 0);
-                    typeSlotMap.put(type, counter + 1);
-                }
-            }
-        }
-
-        // Button creation must be added after the analysis is done currently.
-        // Make buttons for the GUI
-
-        for (int i = 0; i < this.panelTemplate.content().length; i++)
+        for (int i = 0; i < numRows; i++)
         {
-            for (int k = 0; k < this.panelTemplate.content()[i].length; k++)
-            {
-                itemArray[i][k] = this.makeButton(this.panelTemplate.content()[i][k]);
-            }
-        }
-    }
-
-    private void removeEmptyLines(PanelItem[][] itemArray) {
-        boolean[] showLine = panelTemplate.forcedRows();
-        for (int i = 0; i < panelTemplate.content().length; i++) {
-            boolean emptyLine = true;
-            for (int k = 0; emptyLine && k < panelTemplate.content()[i].length; k++) {
-                emptyLine = itemArray[i][k] == null;
-            }
-            showLine[i] = showLine[i] || !emptyLine;
-        }
-    }
-
-    private void fillBorder(PanelItem[][] itemArray) {
-        if (panelTemplate.border() == null) {
-            return;
-        }
-        PanelItem template = makeTemplate(panelTemplate.border());
-        int numRows = itemArray.length;
-        int numCols = itemArray[0].length;
-
-        for (int i = 0; i < numRows; i++) {
-            if (i == 0 || i == numRows - 1) {
-                // Fill first and last row completely with border.
-                for (int k = 0; k < numCols; k++) {
-                    if (itemArray[i][k] == null) {
-                        itemArray[i][k] = template;
-                    }
-                }
-            } else {
-                // Fill first and last element in row with border.
-                if (itemArray[i][0] == null) {
-                    itemArray[i][0] = template;
-                }
-                if (itemArray[i][numCols - 1] == null) {
-                    itemArray[i][numCols - 1] = template;
-                }
-            }
-        }
-        panelTemplate.forcedRows()[0] = true;
-        panelTemplate.forcedRows()[numRows - 1] = true;
-    }
-
-    private void fillBackground(PanelItem[][] itemArray) {
-        if (panelTemplate.background() != null) {
-            PanelItem template = makeTemplate(panelTemplate.background());
-            for (int i = 0; i < 6; i++) {
-                for (int k = 0; k < 9; k++) {
-                    if (itemArray[i][k] == null) {
-                        itemArray[i][k] = template;
-                    }
-                }
-            }
-        }
-    }
-
-    private Map<Integer, PanelItem> createItemMap(PanelItem[][] itemArray) {
-        Map<Integer, PanelItem> itemMap = new HashMap<>(6 * 9);
-        int correctIndex = 0;
-        for (int i = 0; i < itemArray.length; i++) {
-            final boolean iterate = panelTemplate.forcedRows()[i];
-            for (int k = 0; iterate && k < itemArray[i].length; k++) {
-                if (itemArray[i][k] != null) {
-                    itemMap.put(correctIndex, itemArray[i][k]);
-                }
-                correctIndex++;
-            }
-        }
-        return itemMap;
-    }
-
-    /**
-     * This method creates map with item indexes and their icons that will be added into
-     * hopper Panel.
-     * @return Map that contains indexes linked to the correct panel item.
-     */
-    @NonNull
-    private Map<Integer, PanelItem> populateHopperPanel()
-    {
-        // Init item array with the max available size.
-        PanelItem[] itemArray = new PanelItem[5];
-
-        // Analyze the template
-        for (int i = 0; i < 5; i++)
-        {
-            ItemTemplateRecord rec = this.panelTemplate.content()[0][i];
-
-            if (rec != null && rec.dataMap().containsKey("type"))
-            {
-                String type = String.valueOf(rec.dataMap().get("type"));
-
-                int counter = this.typeSlotMap.computeIfAbsent(type, key -> 0);
-                this.typeSlotMap.put(type, counter + 1);
-            }
-        }
-
-        // Make buttons
-        for (int i = 0; i < 5; i++)
-        {
-            itemArray[i] = this.makeButton(this.panelTemplate.content()[0][i]);
-        }
-
-        // Now fill the background.
-        if (this.panelTemplate.background() != null)
-        {
-            PanelItem template = this.makeTemplate(this.panelTemplate.background());
-
-            for (int i = 0; i < 5; i++)
-            {
-                if (itemArray[i] == null)
-                {
-                    itemArray[i] = template;
-                }
-            }
-        }
-
-        // Now place all panel items with their indexes into item map.
-        Map<Integer, PanelItem> itemMap = new HashMap<>(5);
-
-        int correctIndex = 0;
-
-        for (PanelItem panelItem : itemArray)
-        {
-            if (panelItem != null)
-            {
-                itemMap.put(correctIndex, panelItem);
-            }
-
-            correctIndex++;
-        }
-
-        return itemMap;
-    }
-
-
-    /**
-     * This method creates map with item indexes and their icons that will be added into
-     * dropper Panel.
-     * @return Map that contains indexes linked to the correct panel item.
-     */
-    @NonNull
-    private Map<Integer, PanelItem> populateDropperPanel()
-    {
-        // Analyze the template
-        for (int i = 0; i < 3; i++)
-        {
-            for (int k = 0; k < 3; k++)
+            for (int k = 0; k < numCols; k++)
             {
                 ItemTemplateRecord rec = this.panelTemplate.content()[i][k];
 
@@ -276,27 +121,78 @@ public class TemplatedPanel extends Panel
                 }
             }
         }
+    }
 
-        // Init item array with the max available size.
-        PanelItem[][] itemArray = new PanelItem[3][3];
 
-        // Make buttons
-        for (int i = 0; i < 3; i++)
+    /**
+     * This method populates item array with all buttons.
+     * @param itemArray The double array with items into panel
+     */
+    private void processItemData(PanelItem[][] itemArray)
+    {
+        final int numRows = itemArray.length;
+        final int numCols = itemArray[0].length;
+
+        for (int i = 0; i < numRows; i++)
         {
-            for (int k = 0; k < 3; k++)
+            for (int k = 0; k < numCols; k++)
             {
                 itemArray[i][k] = this.makeButton(this.panelTemplate.content()[i][k]);
             }
         }
+    }
 
-        // Now fill the background.
-        if (this.panelTemplate.background() != null)
+
+    /**
+     * This method removes all empty lines if they are not forced to be
+     * showed.
+     * @param itemArray The double array with items into panel
+     */
+    private void removeEmptyLines(PanelItem[][] itemArray)
+    {
+        // After items are created, remove empty lines.
+        boolean[] showLine = this.panelTemplate.forcedRows();
+
+        final int numRows = itemArray.length;
+        final int numCols = itemArray[0].length;
+
+        for (int i = 0; i < numRows; i++)
         {
-            PanelItem template = this.makeTemplate(this.panelTemplate.background());
+            boolean emptyLine = true;
 
-            for (int i = 0; i < 3; i++)
+            for (int k = 0; emptyLine && k < numCols; k++)
             {
-                for (int k = 0; k < 3; k++)
+                emptyLine = itemArray[i][k] == null;
+            }
+
+            // Do not generate fallback for "empty" lines.
+            showLine[i] = showLine[i] || !emptyLine;
+        }
+    }
+
+
+    /**
+     * This method fills border elements with item from template.
+     * @param itemArray The double array with items into panel
+     */
+    private void fillBorder(PanelItem[][] itemArray)
+    {
+        if (this.panelTemplate.border() == null)
+        {
+            // Ugly return because tasty does not like extra {}.
+            return;
+        }
+
+        PanelItem template = makeTemplate(this.panelTemplate.border());
+        final int numRows = itemArray.length;
+        final int numCols = itemArray[0].length;
+
+        for (int i = 0; i < numRows; i++)
+        {
+            if (i == 0 || i == numRows - 1)
+            {
+                // Fill first and last row completely with border.
+                for (int k = 0; k < numCols; k++)
                 {
                     if (itemArray[i][k] == null)
                     {
@@ -304,16 +200,69 @@ public class TemplatedPanel extends Panel
                     }
                 }
             }
+            else
+            {
+                // Fill first and last element in row with border.
+                if (itemArray[i][0] == null)
+                {
+                    itemArray[i][0] = template;
+                }
+
+                if (itemArray[i][numCols - 1] == null)
+                {
+                    itemArray[i][numCols - 1] = template;
+                }
+            }
         }
 
-        // Init item map with the max available size.
-        Map<Integer, PanelItem> itemMap = new HashMap<>(9);
+        this.panelTemplate.forcedRows()[0] = true;
+        this.panelTemplate.forcedRows()[numRows - 1] = true;
+    }
 
+
+    /**
+     * This method fills background elements with item from template.
+     * @param itemArray The double array with items into panel
+     */
+    private void fillBackground(PanelItem[][] itemArray)
+    {
+        if (this.panelTemplate.background() == null)
+        {
+            return;
+        }
+
+        PanelItem template = this.makeTemplate(this.panelTemplate.background());
+        final int numRows = itemArray.length;
+        final int numCols = itemArray[0].length;
+
+        for (int i = 0; i < numRows; i++)
+        {
+            for (int k = 0; k < numCols; k++)
+            {
+                if (itemArray[i][k] == null)
+                {
+                    itemArray[i][k] = template;
+                }
+            }
+        }
+    }
+
+
+    /**
+     * This method converts to PanelItem array to the correct item map.
+     * @param itemArray The double array with items into panel
+     * @return The map that links index of button to panel item.
+     */
+    private Map<Integer, PanelItem> createItemMap(PanelItem[][] itemArray)
+    {
+        Map<Integer, PanelItem> itemMap = new HashMap<>(itemArray.length * itemArray[0].length);
         int correctIndex = 0;
 
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < itemArray.length; i++)
         {
-            for (int k = 0; k < 3; k++)
+            final boolean iterate = this.panelTemplate.forcedRows()[i];
+
+            for (int k = 0; iterate && k < itemArray[i].length; k++)
             {
                 if (itemArray[i][k] != null)
                 {
@@ -370,8 +319,8 @@ public class TemplatedPanel extends Panel
             // If there are generic click handlers that could be added, then this is a place
             // where to process them.
 
-            // Click Handlers are managed by custom addon buttons.
-            return itemBuilder.build();
+             // Click Handlers are managed by custom addon buttons.
+             return itemBuilder.build();
         }
     }
 
@@ -397,8 +346,8 @@ public class TemplatedPanel extends Panel
 
         // Get next slot index.
         ItemSlot itemSlot = this.typeIndex.containsKey(type) ?
-                this.typeIndex.get(type) :
-                    new ItemSlot(0, this.typeSlotMap);
+            this.typeIndex.get(type) :
+            new ItemSlot(0, this.typeSlotMap);
         this.typeIndex.put(type, itemSlot.nextItemSlot());
 
         // Try to get next object.
@@ -451,9 +400,9 @@ public class TemplatedPanel extends Panel
     }
 
 
-    // ---------------------------------------------------------------------
-    // Section: Classes
-    // ---------------------------------------------------------------------
+// ---------------------------------------------------------------------
+// Section: Classes
+// ---------------------------------------------------------------------
 
 
     /**
@@ -476,9 +425,9 @@ public class TemplatedPanel extends Panel
     }
 
 
-    // ---------------------------------------------------------------------
-    // Section: Variables
-    // ---------------------------------------------------------------------
+// ---------------------------------------------------------------------
+// Section: Variables
+// ---------------------------------------------------------------------
 
 
     /**
