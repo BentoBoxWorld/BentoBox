@@ -347,7 +347,7 @@ public class TemplatedPanel extends Panel
         // Get next slot index.
         ItemSlot itemSlot = this.typeIndex.containsKey(type) ?
             this.typeIndex.get(type) :
-            new ItemSlot(0, this.typeSlotMap);
+            new ItemSlot(0, this);
         this.typeIndex.put(type, itemSlot.nextItemSlot());
 
         // Try to get next object.
@@ -410,9 +410,9 @@ public class TemplatedPanel extends Panel
      * panel with it.
      * Some buttons need information about all types, like previous/next.
      * @param slot Index of object in current panel.
-     * @param amountMap Map that links types with number of objects in panel.
+     * @param parentPanel The parent panel for current Item.
      */
-    public record ItemSlot(int slot, Map<String, Integer> amountMap)
+    public record ItemSlot(int slot, TemplatedPanel parentPanel)
     {
         /**
          * This method returns new record object with iterative slot index.
@@ -420,7 +420,30 @@ public class TemplatedPanel extends Panel
          */
         ItemSlot nextItemSlot()
         {
-            return new ItemSlot(this.slot() + 1, this.amountMap());
+            return new ItemSlot(this.slot() + 1, this.parentPanel());
+        }
+
+
+        /**
+         * This method returns map that links button types with a number of slots that this button
+         * is present.
+         * @return Map that links button type to amount in the gui.
+         * @deprecated Use {@link #amount(String)} instead.
+         */
+        public Map<String, Integer> amountMap()
+        {
+            return this.parentPanel.typeSlotMap;
+        }
+
+
+        /**
+         * This returns amount of slots for given button type.
+         * @param type Type of the button.
+         * @return Number of slots in panel.
+         */
+        public int amount(String type)
+        {
+            return this.amountMap().getOrDefault(type, 0);
         }
     }
 
