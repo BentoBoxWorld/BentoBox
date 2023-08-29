@@ -104,8 +104,17 @@ public class TemplatedPanel extends Panel
                     int counter = typeSlotMap.computeIfAbsent(type, key -> 0);
                     typeSlotMap.put(type, counter + 1);
                 }
-                // Make buttons for the GUI
-                itemArray[i][k] = makeButton(panelTemplate.content()[i][k]);
+            }
+        }
+
+        // Button creation must be added after the analysis is done currently.
+        // Make buttons for the GUI
+
+        for (int i = 0; i < this.panelTemplate.content().length; i++)
+        {
+            for (int k = 0; k < this.panelTemplate.content()[i].length; k++)
+            {
+                itemArray[i][k] = this.makeButton(this.panelTemplate.content()[i][k]);
             }
         }
     }
