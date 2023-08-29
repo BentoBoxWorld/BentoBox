@@ -98,6 +98,8 @@ public class TemplatedPanel extends Panel
 
     /**
      * This method processes what items should be added into the panel.
+     * It counts how many same type buttons should be generated.
+     * This cannot be done in the same step as creating button.
      * @param itemArray The double array with items into panel
      */
     private void preProcessPanelTemplate(PanelItem[][] itemArray)
