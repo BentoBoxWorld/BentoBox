@@ -432,6 +432,7 @@ public class TemplatedPanel extends Panel
          * @return Map that links button type to amount in the gui.
          * @deprecated Use {@link #amount(String)} instead.
          */
+        @Deprecated
         public Map<String, Integer> amountMap()
         {
             return this.parentPanel.typeSlotMap;
@@ -445,7 +446,7 @@ public class TemplatedPanel extends Panel
          */
         public int amount(String type)
         {
-            return this.amountMap().getOrDefault(type, 0);
+            return this.parentPanel.typeSlotMap.getOrDefault(type, 0);
         }
     }
 
