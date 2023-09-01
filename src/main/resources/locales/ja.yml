@@ -59,6 +59,7 @@ commands:
       reset:
         description: プレイヤーの島のリセットカウントを0に設定します
         parameters: "<プレーヤー>"
+        success-everyone: "&a &bみんな&a のリセット カウントを &b 0&a に正常にリセットしました。"
         success: "&a &b [name]&a のリセット カウントを &b 0&a に正常にリセットしました。"
       add:
         description: このプレイヤーの島リセット数を追加します
@@ -200,6 +201,7 @@ commands:
       islands-in-trash: "&dプレーヤーにはゴミ箱があります。"
       protection-range: '保護範囲: [range]'
       protection-range-bonus-title: "&b 以下の特典が含まれます:"
+      protection-range-bonus: 'ボーナス: [number]'
       purge-protected: 島はパージ保護されています
       max-protection-range: 最大の歴史的保護範囲：[range]
       protection-coords: '保護座標: [xz1] - [xz2]'
@@ -274,6 +276,7 @@ commands:
       no-island-here: "&cここには島はありません。"
       confirmation: "&cこの場所をこの島のスポーンポイントとして設定してもよろしいですか？"
       success: "&aこの場所をこの島のスポーンポイントとして正常に設定しました。"
+      island-spawnpoint-changed: "&a [user] が島のスポーンポイントを変更しました。"
     settings:
       parameters: "[プレーヤー]"
       description: プレーヤーのシステム設定またはアイランド設定を開きます
@@ -403,6 +406,8 @@ commands:
     why:
       parameters: "<プレイヤー>"
       description: コンソール保護デバッグレポートの切り替え
+      turning-on: "&b [name]&a  のコンソール デバッグをオンにします。"
+      turning-off: "&b [name]&a のコンソール デバッグをオフにします。"
     deaths:
       description: プレイヤーの死を編集する
       reset:
@@ -425,6 +430,7 @@ commands:
         success: "&a&b [number]&adeathsを&b [name]に正常に削除し、合計を&b [total]&a deathsに減らしました。"
     resetname:
       description: プレイヤーの島名をリセットする
+      success: "&a [name] の島名が正常にリセットされました。"
     clearresets:
       parameters: "<プレーヤー>"
       cleared: "&2リセット解除"
@@ -509,6 +515,7 @@ commands:
         estimated-time: "&a推定時間：&b [number]s。"
         blocks: "&a ブロックごとに構築します。 合計&b[numbber]&aブロック。"
         entities: "&aそれを生き物で満たす。 合計&b[number]&a体のクリーチャー。"
+        dimension-done: "&a [world]に島が建設されます。"
         done: "&a完了しました。あなたの島の準備が整い、あなたを待っています！"
       pick: "&2島を選ぶ"
       unknown-blueprint: "&cそのブループリントはまだロードされていません。"
@@ -603,6 +610,7 @@ commands:
         already-has-rank: プレイヤーはすでにランクを持っている!
         you-are-a-coop-member: あなたは [name]に閉じこもっれた
         success: "&b[name]&aを協力メンバーにしました"
+        name-has-invited-you: "&a [name] はあなたを彼らの島の協力メンバーとして招待しています。"
         paramters: "<プレーヤー>"
       uncoop:
         description: プレイヤーから生協のランクを削除する
@@ -619,6 +627,7 @@ commands:
         description: 島でプレイヤーに信頼できるランクを与える
         parameters: "<プレイヤー>"
         trust-in-yourself: 自分を信頼して!
+        name-has-invited-you: "&a [name] は、あなたを島の信頼できるメンバーとして招待しています。"
         player-already-trusted: プレイヤーはすでに信頼されている!
         you-are-trusted: "[name]はあなたを信頼!"
         success: "&a信頼済み&b [name]&a。"
@@ -671,6 +680,7 @@ commands:
       kick:
         description: 島からメンバーを削除する
         parameters: "<プレーヤー>"
+        player-kicked: "&c [gamemode] で [name] によってあなたは島から追い出されました!"
         cannot-kick: 自分を削除することはできません!
         cannot-kick-rank: "&c あなたのランクでは [名前] をキックすることはできません!"
         success: "&b [name]&aはあなたの島から追い出されました。"
@@ -1637,3 +1647,11 @@ panel:
 
         &aBentoBoxでGitHubに接続できるようにする
         設定を変更するか、後で再試行してください。
+successfully-loaded: |2
+
+  &6 ____ _ ____
+  &6 | _ \ | | | _ \ &7 by &a tastybento &7 と &a Poslovitch
+  &6 | |_) | ＿＿＿＿ | |_ ___ | |_) | ______ __ &7 2017 - 2023
+  &6 | _ < / _ \ '_ \| __/ _ \| _ < / _ \ \/ /
+  &6 | |_) | __/ | | | || (_) | |_) | (_) > < &b v&e [バージョン]
+  &6 |___/ \___|_| |_|\__\___/|____/ \___/_/\_\ &8 &e [time]&8 ミリ秒でロードされました。
