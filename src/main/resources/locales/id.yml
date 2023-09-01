@@ -16,6 +16,7 @@ general:
     insufficient-rank: "&c Peringkat mu tidak cukup tinggi untuk melakukan itu! (&7
       [rank]&c )"
     use-in-game: "&c Perintah ini hanya tersedia di dalam permainan."
+    use-in-console: "&c Perintah ini hanya tersedia di konsol."
     no-team: "&c Kamu tidak punya tim!"
     no-island: "&c Kamu tidak punya pulau!"
     player-has-island: "&c Pemain sudah punya pulau!"
@@ -46,12 +47,14 @@ commands:
     syntax: "&b [usage] &a [parameters]&7 : &e [description]"
     syntax-no-parameters: "&b [usage]&7 : &e [description]"
     end: "&7 ================================="
+    parameters: "[memerintah]"
     description: perintah bantuan
     console: Console
   admin:
     help:
       description: perintah admin
     resets:
+      description: edit nilai reset pemain
       set:
         description: mengatur berapa kali pemain ini mereset pulaunya
         parameters: "<player> <resets>"
@@ -75,323 +78,1453 @@ commands:
       parameters: "[days]"
       description: membersihkan pulau-pulau yang ditinggalkan selama [days]
       days-one-or-more: Harus minimal 1 hari atau lebih
-      protect: {}
-      stop: {}
-      unowned: {}
-      status: {}
+      purge-in-progress: "&c Pembersihan sedang berlangsung. Gunakan &b /[label] purge
+        stop &c untuk membatalkan."
+      number-error: "&c Argumen harus beberapa hari"
+      confirm: "&d Ketik &b /[label] purge konfirmasi &d untuk memulai pembersihan"
+      completed: "&a Pembersihan dihentikan."
+      see-console-for-status: "& Pembersihan dimulai. Lihat konsol untuk status atau
+        gunakan &b /[label] purge status&a."
+      no-purge-in-progress: "&c Saat ini tidak ada pembersihan yang sedang berlangsung."
+      protect:
+        description: beralih perlindungan pembersihan pulau
+        move-to-island: "&c Pindah ke pulau dulu!"
+        protecting: "&a Melindungi pulau dari pembersihan."
+        unprotecting: "&a Menghapus perlindungan pembersihan."
+      stop:
+        description: menghentikan pembersihan yang sedang berlangsung
+        stopping: Menghentikan pembersihan
+      unowned:
+        description: membersihkan pulau-pulau yang tidak dimiliki
+      status:
+        description: menampilkan status pembersihan
     team:
-      add: {}
-      disband: {}
-      fix: {}
-      kick: {}
-      setowner: {}
+      description: mengelola tim
+      add:
+        parameters: "<pemilik> <pemain>"
+        description: tambahkan pemain ke tim pemilik
+      disband:
+        parameters: "<pemilik>"
+        description: membubarkan tim pemilik
+        disbanded: "&c Admin membubarkan tim Anda!"
+      fix:
+        description: memindai dan memperbaiki keanggotaan lintas pulau dalam database
+        scanning: Memindai basis data...
+        player-has: "&c Pemain [nama] memiliki [nomor] pulau"
+        fixed: "&a Tetap"
+        done: "& Pemindaian"
+      kick:
+        parameters: "<pemain tim>"
+        description: menendang pemain dari tim
+        cannot-kick-owner: "&c Anda tidak dapat menendang pemiliknya. Tendang anggota
+          terlebih dahulu."
+        not-in-team: "&c Pemain ini tidak ada dalam tim."
+        admin-kicked: "&c Admin mengeluarkan Anda dari tim."
+      setowner:
+        parameters: "<pemain>"
+        description: mentransfer kepemilikan pulau kepada pemain
     range:
-      invalid-value: {}
-      display: {}
-      set: {}
-      reset: {}
-      add: {}
-      remove: {}
-    register: {}
-    unregister: {}
+      description: perintah jangkauan pulau admin
+      invalid-value:
+        too-low: "&c Jangkauan perlindungan harus lebih besar dari &b 1&c !"
+        same-as-before: "&c Rentang perlindungan sudah disetel ke &b [number]&c !"
+      display:
+        already-off: "&c Indikator sudah mati"
+        already-on: "&c Indikator sudah menyala"
+        description: tampilkan/sembunyikan indikator jangkauan pulau
+        hiding: "&2 Menyembunyikan indikator jangkauan"
+        hint: |-
+          &c Ikon Penghalang Merah &f menunjukkan batas jangkauan pulau yang dilindungi saat ini.
+          &7 Partikel Abu-abu &f menunjukkan batas maksimal pulau.
+          &a Partikel Hijau &f menunjukkan rentang perlindungan default jika rentang perlindungan pulau berbeda darinya.
+        showing: "&2 Menampilkan indikator jangkauan"
+      set:
+        parameters: "<pemain> <rentang>"
+        description: menetapkan kisaran pulau yang dilindungi
+        success: "&a Tetapkan rentang perlindungan pulau ke &b [number]&a ."
+      reset:
+        parameters: "<pemain>"
+        description: mengatur ulang rentang pulau yang dilindungi ke default dunia
+        success: "&a Setel ulang rentang perlindungan pulau ke &b [angka]&a ."
+      add:
+        description: meningkatkan jangkauan pulau yang dilindungi
+        parameters: "<pemain> <rentang>"
+        success: "&a Berhasil meningkatkan jangkauan perlindungan pulau &b [name]&a
+          menjadi &b [total] &7 (&b +[number]&7 )&a ."
+      remove:
+        description: mengurangi jangkauan pulau yang dilindungi
+        parameters: "<pemain> <rentang>"
+        success: "&a Berhasil menurunkan jangkauan perlindungan pulau &b [name]&a
+          menjadi &b [total] &7 (&b -[number]&7 )&a ."
+    register:
+      parameters: "<pemain>"
+      description: daftarkan pemain ke pulau tak berpemilik tempat Anda berada
+      reserved-island: "&a Pulau yang dilindungi di [xyz] untuk [nama]."
+      already-owned: "&c Pulau sudah dimiliki oleh pemain lain!"
+      no-island-here: "&c Tidak ada pulau di sini. Konfirmasikan untuk membuatnya."
+      in-deletion: "&c Ruang pulau ini sedang dihapus. Coba nanti."
+      cannot-make-island: "&c Sebuah pulau tidak dapat ditempatkan di sini, maaf.
+        Lihat konsol untuk kemungkinan kesalahan."
+      island-is-spawn: "&6 Pulau muncul. Apa kamu yakin? Masukkan perintah lagi untuk
+        mengonfirmasi."
+    unregister:
+      parameters: "<pemilik>"
+      description: batalkan pendaftaran pemilik dari pulau, tetapi pertahankan blok
+        pulau
     info:
       parameters: "<player>"
+      description: dapatkan info di mana Anda berada atau pulau pemain
+      no-island: "&c Anda tidak berada di pulau saat ini..."
       title: "========== Info Pulau ============"
       island-uuid: 'UUID: [uuid]'
       owner: 'Pemilik: [owner] ([uuid])'
+      last-login-date-time-format: EEE MMM dd HH:mm:ss zzz yyyy
       deaths: 'Kematian: [number]'
       team-members-title: 'Anggota Tim:'
+      island-protection-center: 'Pusat area perlindungan: [xyz]'
+      island-center: 'Pusat pulau: [xyz]'
+      island-coords: 'Koordinat pulau: [xz1] hingga [xz2]'
+      islands-in-trash: "&d Pemain memiliki pulau di tempat sampah."
+      protection-range-bonus-title: "&b Termasuk bonus berikut:"
+      purge-protected: Pulau dilindungi dari pembersihan
+      protection-coords: 'Koordinat perlindungan: [xz1] hingga [xz2]'
+      is-spawn: Pulau adalah pulau bibit
+      banned-players: 'Pemain yang dilarang:'
       banned-format: "&c [name]"
-    switch: {}
-    switchto: {}
-    trash: {}
-    emptytrash: {}
-    version: {}
-    setrange: {}
-    reload: {}
-    tp: {}
-    getrank: {}
-    setrank: {}
-    setprotectionlocation: {}
-    setspawn: {}
-    setspawnpoint: {}
-    settings: {}
-    blueprint:
-      copy: {}
-      delete: {}
-      load: {}
-      list: {}
-      origin: {}
-      paste: {}
-      pos1: {}
-      pos2: {}
-      save: {}
-      rename: {}
-      management:
-        name: {}
-        description: {}
-    resetflags: {}
-    world: {}
-    delete: {}
-    deletehomes: {}
-    why: {}
-    deaths:
-      reset: {}
-      set: {}
-      add: {}
-      remove: {}
-    resetname: {}
-  bentobox:
-    perms: {}
-    about: {}
+      unowned: "&c Tidak dimiliki"
+    switch:
+      description: mengaktifkan/menonaktifkan bypass proteksi
+      op: "&c Ops selalu dapat melewati perlindungan. Deop untuk menggunakan perintah."
+      removing: "&a Menghapus bypass perlindungan..."
+      adding: "&a Menambahkan bypass perlindungan..."
+    switchto:
+      parameters: "<pemain> <angka>"
+      description: ganti pulau pemain ke pulau nomor satu di tempat sampah
+      cannot-switch: "&c Pengalihan gagal. Lihat log konsol untuk mengetahui kesalahan."
+      success: "&a Berhasil mengalihkan pulau pemain ke pulau yang ditentukan."
+    trash:
+      no-unowned-in-trash: "&c Tidak ada pulau tak berpemilik yang dibuang ke tempat
+        sampah"
+      no-islands-in-trash: "&c Pemain tidak memiliki pulau di sampah"
+      parameters: "[pemain]"
+      description: tampilkan pulau yang tidak dimiliki atau pulau pemain di tempat
+        sampah
+      title: "&d =========== Pulau di Sampah ==========="
+      use-switch: "&a Gunakan &l [label] switchto <player> <number>&r &a untuk mengalihkan
+        pemain ke pulau di tempat sampah"
+      use-emptytrash: "&a Gunakan &l [label] blanktrash [pemain]&r &a untuk menghapus
+        item sampah secara permanen"
+    emptytrash:
+      parameters: "[pemain]"
+      description: Bersihkan sampah untuk pemain, atau semua pulau yang tidak dimiliki
+        di tempat sampah
+      success: "&a Sampah berhasil dikosongkan."
+    version:
+      description: menampilkan versi BentoBox dan add-on
+    setrange:
+      parameters: "<pemain> <rentang>"
+      description: mengatur jangkauan pulau pemain
+      range-updated: "&a Rentang pulau diperbarui menjadi &b [number]&a ."
     reload:
-      locales: {}
-    version: {}
-    manage: {}
-    catalog: {}
-    locale: {}
-    migrate: {}
-  confirmation: {}
-  delay: {}
+      description: memuat ulang
+    tp:
+      parameters: "<pemain> [pemain untuk berteleportasi]"
+      description: teleport ke pulau pemain
+    getrank:
+      parameters: "<pemain> [pemilik pulau]"
+      description: mendapatkan peringkat pemain di pulau mereka atau pulau pemiliknya
+    setrank:
+      parameters: "<pemain> <peringkat> [pemilik pulau]"
+      description: mengatur peringkat pemain di pulau mereka atau pulau pemiliknya
+      unknown-rank: "&c Peringkat tidak diketahui!"
+      not-possible: "&c Peringkat harus lebih tinggi dari pengunjung."
+    setprotectionlocation:
+      parameters: "[koord x y z]"
+      description: tetapkan lokasi saat ini atau [x y z] sebagai pusat kawasan perlindungan
+        pulau
+      confirmation: "&c Apakah Anda yakin ingin menetapkan [xyz] sebagai pusat perlindungan?"
+      success: "&a Berhasil menetapkan [xyz] sebagai pusat perlindungan."
+      fail: "&c Gagal menetapkan [xyz] sebagai pusat perlindungan."
+      island-location-changed: "&a [pengguna] mengubah pusat perlindungan pulau menjadi
+        [xyz]."
+      xyz-error: "&c Tentukan tiga koordinat bilangan bulat: misalnya 100 120 100"
+    setspawn:
+      description: tetapkan pulau sebagai tempat bertelur untuk mode permainan ini
+      already-spawn: "&c Pulau ini sudah menjadi tempat bertelur!"
+      no-island-here: "&c Tidak ada pulau di sini."
+      confirmation: "&c Apakah Anda yakin ingin menjadikan pulau ini sebagai tempat
+        berkembang biaknya dunia ini?"
+      success: "&a Berhasil menetapkan pulau ini sebagai tempat berkembang biaknya
+        dunia ini."
+    setspawnpoint:
+      description: tetapkan lokasi saat ini sebagai titik spawn untuk pulau ini
+      no-island-here: "&c Tidak ada pulau di sini."
+      confirmation: "&c Apakah Anda yakin ingin menetapkan lokasi ini sebagai titik
+        pemijahan pulau ini?"
+      success: "&a Berhasil menetapkan lokasi ini sebagai titik pemijahan pulau ini."
+      island-spawnpoint-changed: "&a [pengguna] mengubah titik spawn pulau."
+    settings:
+      description: buka pengaturan GUI atau atur pengaturan
+      unknown-setting: "&c Pengaturan tidak diketahui"
+    blueprint:
+      parameters: "<muat/salin/tempel/pos1/pos2/simpan>"
+      description: memanipulasi cetak biru
+      bedrock-required: "&c Setidaknya satu blok batuan dasar harus ada dalam cetak
+        biru!"
+      copy-first: "&c Salin dulu!"
+      file-exists: "&c File sudah ada, timpa?"
+      no-such-file: "&c Tidak ada file seperti itu!"
+      could-not-load: "&c Tidak dapat memuat file itu!"
+      set-different-pos: "&c Tetapkan lokasi lain - pos ini sudah disetel!"
+      need-pos1-pos2: "&c Tetapkan pos1 dan pos2 terlebih dahulu!"
+      copying: "&b Menyalin blok..."
+      look-at-a-block: "&c Lihat blok dalam 20 blok untuk disetel"
+      mid-copy: "&c Anda sedang menyalin. Tunggu hingga penyalinan selesai."
+      copy:
+        description: salin clipboard yang diatur oleh pos1 dan pos2 dan opsional blok
+          udara
+      delete:
+        parameters: "<nama>"
+        description: hapus cetak birunya
+        confirmation: |
+          &c Apakah Anda yakin ingin menghapus cetak biru ini?
+          &c Setelah dihapus, tidak ada cara untuk memulihkannya.
+      load:
+        parameters: "<nama>"
+        description: memuat cetak biru ke clipboard
+      list:
+        description: daftar cetak biru yang tersedia
+        no-blueprints: "&c Tidak ada cetak biru di folder cetak biru!"
+        available-blueprints: "&a Cetak biru ini tersedia untuk dimuat:"
+      origin:
+        description: atur asal cetak biru ke posisi Anda
+      paste:
+        description: tempelkan clipboard ke lokasi Anda
+        pasting: "&a Menempel..."
+      pos1:
+        description: atur sudut pertama papan klip berbentuk kubus
+      pos2:
+        description: atur sudut ke-2 papan klip berbentuk kubus
+      save:
+        parameters: "<nama cetak biru>"
+        description: simpan clipboard yang disalin
+      rename:
+        parameters: "<nama cetak biru> <nama baru>"
+        description: mengganti nama cetak biru
+        pick-different-name: "&c Harap tentukan nama yang berbeda dari nama cetak
+          biru saat ini."
+      management:
+        back: Kembali
+        instruction: Klik cetak biru lalu klik di sini
+        title: Manajer Paket Cetak Biru
+        edit: Klik untuk mengedit
+        rename: Klik kanan untuk mengganti nama
+        edit-description: Klik untuk mengedit deskripsi
+        world-instructions: |
+          Tempatkan cetak biru
+          ke kanan untuk mengatur
+        trash: Sampah
+        no-trash: Tidak Bisa Sampah
+        trash-instructions: Klik kanan di sini untuk menghapus
+        no-trash-instructions: Tidak dapat membuang paket default
+        permission: Izin
+        no-permission: Tidak ada izin
+        perm-required: Diperlukan
+        no-perm-required: Tidak dapat menyetel izin untuk paket default
+        perm-not-required: Tidak dibutuhkan
+        perm-format: "&e"
+        remove: Klik kanan untuk menghapus
+        blueprint-instruction: |
+          Klik untuk memilih,
+          lalu tambahkan ke bundel.
+          Klik kanan untuk mengganti nama.
+        select-first: Pilih Cetak Biru terlebih dahulu
+        new-bundle: Paket Baru
+        new-bundle-instructions: Klik untuk membuat bundel baru
+        name:
+          quit: berhenti
+          prompt: Masukkan nama, atau 'keluar' untuk keluar
+          too-long: "&c Nama terlalu panjang. Hanya 32 karakter yang diperbolehkan."
+          pick-a-unique-name: Silakan pilih nama yang lebih unik
+          success: Kesuksesan!
+          conversation-prefix: ">"
+        description:
+          quit: berhenti
+          success: Kesuksesan!
+          cancelling: Membatalkan
+        slot-instructions: |
+          &a Klik kiri untuk menambah
+          &a Klik kanan untuk mengurangi
+    resetflags:
+      parameters: "[bendera]"
+      description: Setel ulang semua pulau ke pengaturan bendera default di config.yml
+      confirm: "&4 Ini akan mengatur ulang bendera ke default untuk semua pulau!"
+      success: "&a Berhasil mengatur ulang bendera semua pulau ke pengaturan default."
+    world:
+      description: Kelola pengaturan dunia
+    delete:
+      parameters: "<pemain>"
+      description: menghapus pulau pemain
+      cannot-delete-owner: "&c Semua anggota pulau harus dikeluarkan dari pulau sebelum
+        menghapusnya."
+      deleted-island: "&a Pulau di &e [xyz] &a telah berhasil dihapus."
+    deletehomes:
+      parameters: "<pemain>"
+      description: menghapus semua rumah bernama dari sebuah pulau
+      warning: "&c Semua rumah yang disebutkan akan dihapus dari pulau!"
+    why:
+      parameters: "<pemain>"
+      description: beralih pelaporan debug perlindungan konsol
+    deaths:
+      description: edit kematian pemain
+      reset:
+        description: mengatur ulang kematian pemain
+        parameters: "<pemain>"
+      set:
+        description: menetapkan kematian pemain
+        parameters: "<pemain> <kematian>"
+        success: "&a Berhasil mengatur kematian &b [name]&a menjadi &b [number]&a
+          ."
+      add:
+        description: menambahkan kematian pada pemain
+        parameters: "<pemain> <kematian>"
+      remove:
+        description: menghilangkan kematian pada pemain
+        parameters: "<pemain> <kematian>"
+    resetname:
+      description: setel ulang nama pulau pemain
+  bentobox:
+    description: Perintah admin BentoBox
+    perms:
+      description: menampilkan izin efektif untuk BentoBox dan Addons dalam format
+        YAML
+    about:
+      description: menampilkan informasi hak cipta dan lisensi
+    reload:
+      description: memuat ulang BentoBox dan semua tambahan, pengaturan, dan lokal
+      locales-reloaded: "[prefix_bentobox]&2 Bahasa dimuat ulang."
+      addons-reloaded: "[prefix_bentobox]&2 Tambahan dimuat ulang."
+      settings-reloaded: "[prefix_bentobox]&2 Pengaturan dimuat ulang."
+      addon: "[prefix_bentobox]&6 Memuat ulang &b [nama]&2 ."
+      addon-reloaded: "[prefix_bentobox]&b [nama] &2 dimuat ulang."
+      warning: "[prefix_bentobox]&c Peringatan: Memuat ulang dapat menyebabkan ketidakstabilan,
+        jadi jika Anda melihat kesalahan setelahnya, mulai ulang server."
+      unknown-addon: "[prefix_bentobox]&c Add-on tidak dikenal!"
+      locales:
+        description: memuat ulang lokal
+    version:
+      description: menampilkan versi BentoBox dan add-on
+      loaded-addons: 'Add-on yang Dimuat:'
+      loaded-game-worlds: 'Dunia Game yang Dimuat:'
+      game-world: "&2 [nama] &7 (&3 [tambahan]&7 ): &3 [dunia]"
+    manage:
+      description: menampilkan Panel Manajemen
+    catalog:
+      description: menampilkan Katalog
+    locale:
+      description: melakukan analisis file lokalisasi
+      see-console: |-
+        [prefix_bentobox]&a Periksa konsol untuk melihat masukannya.
+        [prefix_bentobox]&a Perintah ini sangat berisi spam sehingga umpan balik tidak dapat dibaca dari obrolan...
+    migrate:
+      description: memigrasikan data dari satu database ke database lainnya
+      players: "[prefix_bentobox]&6 Memigrasikan pemain"
+      names: "[prefix_bentobox]&6 Memigrasikan nama"
+      addons: "[prefix_bentobox]&6 Memigrasi add-on"
+      class: "[prefix_bentobox]&6 Migrasi [deskripsi]"
+      migrated: "[prefix_bentobox]&a Bermigrasi"
+  confirmation:
+    previous-request-cancelled: "&6 Permintaan konfirmasi sebelumnya dibatalkan."
+    request-cancelled: "&c Batas waktu konfirmasi - &b permintaan dibatalkan."
+  delay:
+    previous-command-cancelled: "&c Perintah sebelumnya dibatalkan"
+    moved-so-command-cancelled: "&c Anda pindah. Teleportasi dibatalkan!"
   island:
-    about: {}
-    go: {}
-    help: {}
-    spawn: {}
+    about:
+      description: menampilkan rincian lisensi
+    go:
+      parameters: "[nama rumah]"
+      description: memindahkanmu ke pulaumu
+      teleport: "&a Teleportasi Anda ke pulau Anda."
+      unknown-home: "&c Nama rumah tidak diketahui!"
+    help:
+      description: komando pulau utama
+    spawn:
+      description: memindahkanmu ke tempat pemijahan
+      teleporting: "&a Teleportasi Anda ke tempat bertelur."
+      no-spawn: "&c Tidak ada spawn dalam gamemode ini."
     create:
-      pasting: {}
-    deletehome: {}
-    homes: {}
-    info: {}
-    near: {}
-    reset: {}
+      description: membuat pulau, menggunakan cetak biru opsional (memerlukan izin)
+      parameters: "<cetak biru>"
+      too-many-islands: "&c Ada terlalu banyak pulau di dunia ini: tidak ada cukup
+        ruang untuk membuat pulau Anda."
+      cannot-create-island: "&c Tempat tidak dapat ditemukan tepat waktu, silakan
+        coba lagi..."
+      unable-create-island: "&c Pulau Anda tidak dapat dibuat, harap hubungi administrator."
+      creating-island: "&a Menemukan tempat untuk pulau Anda..."
+      pasting:
+        blocks: "&a Membangunnya blok demi blok: &b [angka] &a blok semuanya..."
+        done: "&a Selesai! Pulau Anda sudah siap dan menunggu Anda!"
+      pick: "&2 Pilih pulau"
+      unknown-blueprint: "&c Cetak biru itu belum dimuat."
+      on-first-login: "&a Selamat datang! Kami akan mulai mempersiapkan pulau Anda
+        dalam beberapa detik."
+      you-can-teleport-to-your-island: "&a Anda dapat berteleportasi ke pulau Anda
+        kapan pun Anda mau."
+    deletehome:
+      description: menghapus lokasi rumah
+      parameters: "[nama rumah]"
+    homes:
+      description: daftarkan rumah Anda
+    info:
+      description: menampilkan info tentang pulau Anda atau pulau pemain
+      parameters: "<pemain>"
+    near:
+      description: tunjukkan nama pulau-pulau tetangga di sekitar Anda
+      the-following-islands: "&a Pulau-pulau berikut ini berada di dekatnya:"
+      north: Utara
+      south: Selatan
+      east: Timur
+      west: Barat
+      no-neighbors: "&c Anda tidak memiliki pulau tetangga dekat!"
+    reset:
+      description: mulai ulang pulau Anda dan hapus yang lama
+      parameters: "<cetak biru>"
+      none-left: "&c Anda tidak perlu melakukan reset lagi!"
+      confirmation: |-
+        &c Apakah Anda yakin ingin melakukan ini?
+        &c Semua anggota pulau akan dikeluarkan dari pulau, Anda harus mengundang mereka kembali setelahnya.
+        &c Tidak ada jalan untuk kembali: setelah pulau Anda saat ini dihapus, &l tidak ada cara &r &c untuk mengambilnya kembali nanti.
+      kicked-from-island: "&c Anda dikeluarkan dari pulau Anda dalam [mode permainan]
+        karena pemiliknya menyetel ulang."
     sethome:
-      nether: {}
-      the-end: {}
-    setname: {}
-    renamehome: {}
-    resetname: {}
+      description: atur titik teleportasi rumah Anda
+      must-be-on-your-island: "&c Anda harus berada di pulau Anda untuk pulang!"
+      home-set: "&6 Rumah pulau Anda telah disetel ke lokasi Anda saat ini."
+      homes-are: "&6 Rumah pulau adalah:"
+      nether:
+        not-allowed: "&c Anda tidak diperbolehkan mengatur rumah Anda di Nether."
+        confirmation: "&c Apakah Anda yakin ingin menempatkan rumah Anda di Nether?"
+      the-end:
+        not-allowed: "&c Anda tidak diperbolehkan mengatur rumah Anda di Akhir."
+        confirmation: "&c Apakah Anda yakin ingin mengatur rumah Anda pada akhirnya?"
+      parameters: "[nama rumah]"
+    setname:
+      description: tetapkan nama untuk pulau Anda
+      name-too-long: "&c Terlalu panjang. Ukuran maksimum adalah [angka] karakter."
+      name-already-exists: "&c Sudah ada pulau dengan nama itu di mode permainan ini."
+      parameters: "<nama>"
+    renamehome:
+      description: mengganti nama lokasi rumah
+      parameters: "[nama rumah]"
+      enter-new-name: "&6 Masukkan nama baru"
+      already-exists: "&c Nama itu sudah ada, coba nama lain."
+    resetname:
+      description: atur ulang nama pulau Anda
+      success: "&a Berhasil mengatur ulang nama pulau Anda."
     team:
+      description: mengelola tim Anda
       info:
+        description: menampilkan info detail tentang tim Anda
         member-layout: {}
-        last-seen: {}
-        rank-layout: {}
-      coop: {}
-      uncoop: {}
-      trust: {}
-      untrust: {}
+        last-seen:
+          days: hari
+          hours: jam
+          minutes: menit
+        rank-layout:
+          owner: "&6 [peringkat]:"
+      coop:
+        description: buat peringkat coop pemain di pulaumu
+        parameters: "<pemain>"
+        cannot-coop-yourself: "&c Anda tidak bisa menahan diri!"
+        already-has-rank: "&c Pemain sudah memiliki peringkat!"
+      uncoop:
+        description: menghapus peringkat koperasi dari pemain
+        parameters: "<pemain>"
+        cannot-uncoop-yourself: "&c Anda tidak dapat melepaskan diri Anda sendiri!"
+        cannot-uncoop-member: "&c Anda tidak dapat melepaskan anggota tim!"
+        player-not-cooped: "&c Pemain tidak terkurung!"
+        is-full: "&c Anda tidak dapat bekerja sama dengan orang lain."
+      trust:
+        description: berikan peringkat tepercaya kepada pemain di pulau Anda
+        parameters: "<pemain>"
+        trust-in-yourself: "&c Percayalah pada dirimu sendiri!"
+        name-has-invited-you: "&a [nama] telah mengundang Anda untuk bergabung sebagai
+          anggota tepercaya di pulau mereka."
+        player-already-trusted: "&c Pemain sudah dipercaya!"
+        success: "&a Anda mempercayai &b [nama]&a ."
+        is-full: "&c Anda tidak bisa mempercayai orang lain. Awasi punggungmu!"
+      untrust:
+        description: hapus peringkat pemain tepercaya dari pemain
+        parameters: "<pemain>"
+        cannot-untrust-yourself: "&c Anda tidak bisa tidak mempercayai diri sendiri!"
+        cannot-untrust-member: "&c Anda tidak bisa tidak mempercayai anggota tim!"
+        player-not-trusted: "&c Pemain tidak dipercaya!"
       invite:
-        errors: {}
-        accept: {}
-        reject: {}
-        cancel: {}
-      leave: {}
-      kick: {}
+        description: undang pemain untuk bergabung dengan pulau Anda
+        removing-invite: "&c Menghapus undangan."
+        to-accept-or-reject: "&a Lakukan /tim [label] terima untuk menerima, atau
+          /tim [label] tolak untuk menolak"
+        you-will-lose-your-island: "&c PERINGATAN! Anda akan kehilangan pulau Anda
+          jika Anda menerimanya!"
+        errors:
+          cannot-invite-self: "&c Anda tidak dapat mengundang diri sendiri!"
+          island-is-full: "&c Pulau Anda penuh, Anda tidak dapat mengundang orang
+            lain."
+          none-invited-you: "&c Tidak ada yang mengundangmu :c."
+          you-already-are-in-team: "&c Anda sudah menjadi anggota tim!"
+          already-on-team: "&c Pemain itu sudah ada dalam tim!"
+          invalid-invite: "&c Undangan itu tidak berlaku lagi, maaf."
+          you-have-already-invited: "&c Anda telah mengundang pemain itu!"
+        parameters: "<pemain>"
+        you-can-invite: "&a Anda dapat mengundang [number] pemain lainnya."
+        accept:
+          description: menerima undangan
+          you-joined-island: "&a Anda bergabung dengan sebuah pulau! Gunakan tim &b/[label]
+            &a untuk melihat anggota lainnya."
+          confirmation: |-
+            &c Apakah Anda yakin ingin menerima undangan ini?
+            &c&l Anda akan &n KEHILANGAN &r&c&l pulau Anda saat ini!
+        reject:
+          description: menolak undangan
+          you-rejected-invite: "&a Anda menolak undangan untuk bergabung dengan sebuah
+            pulau."
+        cancel:
+          description: batalkan undangan yang tertunda untuk bergabung dengan pulau
+            Anda
+      leave:
+        cannot-leave: "&c Pemilik tidak bisa pergi! Jadilah anggota terlebih dahulu,
+          atau keluarkan semua anggota."
+        description: meninggalkan pulaumu
+        success: "&a Anda meninggalkan pulau ini."
+      kick:
+        description: hapus anggota dari pulau Anda
+        parameters: "<pemain>"
+        cannot-kick: "&c Anda tidak bisa menendang diri sendiri!"
       demote:
-        errors: {}
+        description: menurunkan peringkat pemain di pulau Anda
+        parameters: "<pemain>"
+        errors:
+          cant-demote-yourself: "&c Anda tidak dapat menurunkan diri sendiri!"
+          cant-demote: "&c Anda tidak dapat menurunkan peringkat yang lebih tinggi!"
+        failure: "&c Pemain tidak dapat diturunkan lebih jauh!"
       promote:
-        errors: {}
+        description: promosikan pemain di pulau Anda naik peringkat
+        parameters: "<pemain>"
+        errors:
+          cant-promote-yourself: "&c Anda tidak dapat mempromosikan diri sendiri!"
+          cant-promote: "&c Anda tidak dapat berpromosi di atas peringkat Anda!"
+        failure: "&c Pemain tidak dapat dipromosikan lebih jauh!"
       setowner:
-        errors: {}
-    ban: {}
+        description: mentransfer kepemilikan pulau Anda ke anggota
+        errors:
+          cant-transfer-to-yourself: "&c Anda tidak dapat mentransfer kepemilikan
+            kepada diri Anda sendiri! &7 (&o Sebenarnya, Anda bisa... Tapi kami tidak
+            ingin Anda melakukannya. Karena tidak ada gunanya.&r &7 )"
+          target-is-not-member: "&c Pemain itu bukan bagian dari tim pulau Anda!"
+        parameters: "<pemain>"
+        you-are-the-owner: "&a Anda sekarang adalah pemilik pulau!"
+    ban:
+      description: melarang pemain dari pulau Anda
+      parameters: "<pemain>"
+      cannot-ban-yourself: "&c Anda tidak dapat melarang diri Anda sendiri!"
+      cannot-ban: "&c Pemain itu tidak dapat dibanned."
+      cannot-ban-member: "&c Tendang anggota tim terlebih dahulu, lalu ban."
+      cannot-ban-more-players: "&c Anda telah mencapai batas larangan, Anda tidak
+        dapat melarang pemain lain lagi dari pulau Anda."
+      player-already-banned: "&c Pemain sudah diblokir."
+      player-banned: "&b [nama]&c sekarang dilarang di pulau Anda."
+      owner-banned-you: "&b [nama]&c melarang Anda memasuki pulau mereka!"
+      you-are-banned: "&b Anda dilarang memasuki pulau ini!"
     unban:
+      description: batalkan pelarangan pemain dari pulau Anda
       parameters: "<player>"
+      cannot-unban-yourself: "&c Anda tidak dapat membatalkan pemblokiran diri Anda
+        sendiri!"
+      player-not-banned: "&c Pemain tidak dilarang."
+      you-are-unbanned: "&b [nama]&a membatalkan pemblokiran Anda dari pulau mereka!"
     banlist:
+      description: daftar pemain yang dilarang
+      noone: "&a Tidak ada yang dilarang di pulau ini."
+      the-following: "&b Pemain berikut dilarang:"
       names: "&c [line]"
-    settings: {}
+      you-can-ban: "&b Anda dapat melarang hingga &e [angka] &b lebih banyak pemain."
+    settings:
+      description: menampilkan pengaturan pulau
     language:
       description: pilih bahasa
       parameters: "[language]"
+      not-available: "&c Bahasa ini tidak tersedia."
+      already-selected: "&c Anda sudah menggunakan bahasa ini."
     expel:
+      description: mengusir pemain dari pulau Anda
       parameters: "<player>"
+      cannot-expel-yourself: "&c Anda tidak bisa mengeluarkan diri sendiri!"
+      cannot-expel: "&c Pemain itu tidak bisa dikeluarkan."
+      cannot-expel-member: "&c Anda tidak dapat mengeluarkan anggota tim!"
+      not-on-island: "&c Pemain itu tidak ada di pulau Anda!"
+      player-expelled-you: "&b [nama]&c mengusirmu dari pulau!"
+      success: "&a Anda mengusir &b [nama] &a dari pulau."
 ranks:
   owner: Pemilik
+  sub-owner: Sub-Pemilik
   member: Anggota
+  trusted: Tepercaya
+  coop: Mengurung
   visitor: Pengunjung
+  banned: Dilarang
   admin: Admin
   mod: Mod
 protection:
+  command-is-banned: Perintah dilarang untuk pengunjung
   flags:
     ALLAY:
       name: Interaksi Allay
-    ANIMAL_NATURAL_SPAWN: {}
-    ANIMAL_SPAWNERS_SPAWN: {}
-    ANVIL: {}
-    ARMOR_STAND: {}
-    AXOLOTL_SCOOPING: {}
-    BEACON: {}
-    BED: {}
-    BOAT: {}
-    BOOKSHELF: {}
-    BREAK_BLOCKS: {}
-    BREAK_SPAWNERS: {}
-    BREAK_HOPPERS: {}
-    BREEDING: {}
-    BREWING: {}
-    BUCKET: {}
-    BUTTON: {}
-    CAKE: {}
-    CONTAINER: {}
-    CHEST: {}
-    BARREL: {}
-    BLOCK_EXPLODE_DAMAGE: {}
-    COMPOSTER: {}
-    FLOWER_POT: {}
-    SHULKER_BOX: {}
-    SHULKER_TELEPORT: {}
-    TRAPPED_CHEST: {}
-    DISPENSER: {}
-    DROPPER: {}
-    ELYTRA: {}
-    HOPPER: {}
-    CHEST_DAMAGE: {}
-    CHORUS_FRUIT: {}
-    CLEAN_SUPER_FLAT: {}
-    COARSE_DIRT_TILLING: {}
-    COLLECT_LAVA: {}
-    COLLECT_WATER: {}
-    COLLECT_POWDERED_SNOW: {}
-    COMMAND_RANKS: {}
-    CRAFTING: {}
-    CREEPER_DAMAGE: {}
-    CREEPER_GRIEFING: {}
-    CROP_PLANTING: {}
-    CROP_TRAMPLE: {}
-    DOOR: {}
-    DRAGON_EGG: {}
-    DYE: {}
-    EGGS: {}
-    ENCHANTING: {}
-    ENDER_CHEST: {}
-    ENDERMAN_DEATH_DROP: {}
-    ENDERMAN_GRIEFING: {}
-    ENDERMAN_TELEPORT: {}
-    ENDER_PEARL: {}
-    ENTER_EXIT_MESSAGES: {}
-    EXPERIENCE_BOTTLE_THROWING: {}
-    FIRE_BURNING: {}
-    FIRE_EXTINGUISH: {}
-    FIRE_IGNITE: {}
-    FIRE_SPREAD: {}
-    FISH_SCOOPING: {}
-    FLINT_AND_STEEL: {}
-    FURNACE: {}
-    GATE: {}
-    GEO_LIMIT_MOBS: {}
-    HARVEST: {}
-    HIVE: {}
-    HURT_ANIMALS: {}
-    HURT_MONSTERS: {}
-    HURT_VILLAGERS: {}
-    ITEM_FRAME: {}
-    ITEM_FRAME_DAMAGE: {}
-    INVINCIBLE_VISITORS: {}
-    ISLAND_RESPAWN: {}
-    ITEM_DROP: {}
-    ITEM_PICKUP: {}
-    JUKEBOX: {}
-    LEAF_DECAY: {}
-    LEASH: {}
-    LECTERN: {}
-    LEVER: {}
-    LIMIT_MOBS: {}
-    LIQUIDS_FLOWING_OUT: {}
-    LOCK: {}
-    CHANGE_SETTINGS: {}
-    MILKING: {}
-    MINECART: {}
-    MONSTER_NATURAL_SPAWN: {}
-    MONSTER_SPAWNERS_SPAWN: {}
-    MOUNT_INVENTORY: {}
-    NAME_TAG: {}
-    NATURAL_SPAWNING_OUTSIDE_RANGE: {}
-    NOTE_BLOCK: {}
-    OBSIDIAN_SCOOPING: {}
-    OFFLINE_GROWTH: {}
-    OFFLINE_REDSTONE: {}
-    PETS_STAY_AT_HOME: {}
-    PISTON_PUSH: {}
-    PLACE_BLOCKS: {}
-    POTION_THROWING: {}
-    NETHER_PORTAL: {}
-    END_PORTAL: {}
-    PRESSURE_PLATE: {}
-    PVP_END: {}
-    PVP_NETHER: {}
-    PVP_OVERWORLD: {}
-    REDSTONE: {}
-    REMOVE_END_EXIT_ISLAND: {}
-    REMOVE_MOBS: {}
-    RIDING: {}
-    SHEARING: {}
-    SPAWN_EGGS: {}
-    SPAWNER_SPAWN_EGGS: {}
-    SCULK_SENSOR: {}
-    SCULK_SHRIEKER: {}
-    SIGN_EDITING: {}
-    TNT_DAMAGE: {}
-    TNT_PRIMING: {}
-    TRADING: {}
-    TRAPDOOR: {}
-    TREES_GROWING_OUTSIDE_RANGE: {}
-    TURTLE_EGGS: {}
-    FROST_WALKER: {}
-    EXPERIENCE_PICKUP: {}
-    PREVENT_TELEPORT_WHEN_FALLING: {}
-    VISITOR_KEEP_INVENTORY: {}
-    VISITOR_TRIGGER_RAID: {}
-    ENTITY_PORTAL_TELEPORT: {}
-    WITHER_DAMAGE: {}
-    WORLD_BLOCK_EXPLODE_DAMAGE: {}
-    WORLD_TNT_DAMAGE: {}
+      description: Izinkan memberi dan mengambil barang ke/dari Allay
+      hint: Interaksi Allay dinonaktifkan
+    ANIMAL_NATURAL_SPAWN:
+      description: Alihkan pemijahan hewan secara alami
+      name: Pemijahan alami hewan
+    ANIMAL_SPAWNERS_SPAWN:
+      description: Alihkan pemijahan hewan dengan pemijahan
+      name: Pemijahan hewan
+    ANVIL:
+      description: Alihkan interaksi
+      name: landasan
+      hint: Penggunaan landasan dinonaktifkan
+    ARMOR_STAND:
+      description: Alihkan interaksi
+      name: Armor berdiri
+      hint: Penggunaan armor stand dinonaktifkan
+    AXOLOTL_SCOOPING:
+      name: Axolotl Menyendoki
+      description: Izinkan menyendok axolotl menggunakan ember
+      hint: Penyendok Axolotl dinonaktifkan
+    BEACON:
+      description: Alihkan interaksi
+      name: Beacon
+      hint: Penggunaan suar dinonaktifkan
+    BED:
+      description: Alihkan interaksi
+      name: Tempat tidur
+      hint: Penggunaan tempat tidur dinonaktifkan
+    BOAT:
+      name: Perahu
+      description: |-
+        Alihkan penempatan, pemutusan, dan
+        masuk ke dalam perahu.
+      hint: Interaksi perahu tidak diperbolehkan
+    BOOKSHELF:
+      name: Rak buku
+      description: |-
+        &a Izinkan untuk menempatkan buku
+        &a atau untuk mengambil buku.
+      hint: tidak dapat menempatkan buku atau mengambil buku.
+    BREAK_BLOCKS:
+      description: Beralih melanggar
+      name: Hancurkan blok
+      hint: Pembobolan blok dinonaktifkan
+    BREAK_SPAWNERS:
+      description: |-
+        Matikan pemijahan yang melanggar.
+        Menggantikan bendera Break Blocks.
+      name: Hancurkan pemijahan
+      hint: Pembobolan spawner dinonaktifkan
+    BREAK_HOPPERS:
+      description: |-
+        Matikan hopper yang rusak.
+        Menggantikan bendera Break Blocks.
+      name: Hancurkan hopper
+      hint: Pembobolan hopper dinonaktifkan
+    BREEDING:
+      description: Alihkan pembiakan
+      name: Hewan berkembang biak
+      hint: Peternakan hewan dilindungi
+    BREWING:
+      description: Alihkan interaksi
+      name: Tempat pembuatan bir
+      hint: Pembuatan bir dinonaktifkan
+    BUCKET:
+      description: Alihkan interaksi
+      name: ember
+      hint: Penggunaan keranjang dinonaktifkan
+    BUTTON:
+      description: Alihkan penggunaan tombol
+      name: Tombol
+      hint: Penggunaan tombol dinonaktifkan
+    CAKE:
+      description: Alihkan interaksi kue
+      name: Kue
+      hint: Makan kue dinonaktifkan
+    CONTAINER:
+      name: Semua kontainer
+      description: |-
+        &a Alihkan interaksi dengan semua penampung.
+        &a Termasuk: Barel, sarang lebah, tempat pembuatan bir,
+        & peti, komposter, dispenser, penetes,
+        & pot bunga, tungku, hopper, bingkai barang,
+        &sebuah jukebox, peti kereta tambang, kotak shulker,
+        & dada yang terperangkap.
+
+        &7 Mengubah penggantian pengaturan individual
+        &7 bendera ini.
+      hint: Akses kontainer dinonaktifkan
+    CHEST:
+      name: Peti dan peti kereta tambang
+      description: |-
+        &a Beralih interaksi dengan peti
+        &a dan kereta tambang peti.
+        &a (tidak termasuk peti yang terperangkap)
+      hint: Akses dada dinonaktifkan
+    BARREL:
+      name: barel
+      description: Alihkan interaksi barel
+      hint: Akses barel dinonaktifkan
+    BLOCK_EXPLODE_DAMAGE:
+      description: |-
+        &a Izinkan Tempat Tidur & Respawn Jangkar
+        &a untuk memecahkan blok dan merusak
+        &sebuah entitas.
+      name: Blokir kerusakan ledakan
+    COMPOSTER:
+      name: Komposter
+      description: Alihkan interaksi komposter
+      hint: Interaksi komposter dinonaktifkan
+    FLOWER_POT:
+      name: Pot bunga
+      description: Alihkan interaksi pot bunga
+      hint: Interaksi pot bunga dinonaktifkan
+    SHULKER_BOX:
+      name: Kotak Shulker
+      description: Alihkan interaksi kotak shulker
+      hint: Akses kotak Shulker dinonaktifkan
+    SHULKER_TELEPORT:
+      description: |-
+        &a Shulker dapat berteleportasi
+        &a jika aktif.
+      name: Teleportasi Shulker
+    TRAPPED_CHEST:
+      name: Peti yang terperangkap
+      description: Alihkan interaksi dada yang terjebak
+      hint: Akses dada yang terjebak dinonaktifkan
+    DISPENSER:
+      name: Dispenser
+      description: Alihkan interaksi dispenser
+      hint: Interaksi dispenser dinonaktifkan
+    DROPPER:
+      name: Penetes
+      description: Alihkan interaksi penetes
+      hint: Interaksi penetes dinonaktifkan
+    ELYTRA:
+      name: elytra
+      description: Alihkan elytra diperbolehkan atau tidak
+      hint: "&c PERINGATAN: Elytra tidak dapat digunakan di sini!"
+    HOPPER:
+      name: gerbong
+      description: Alihkan interaksi hopper
+      hint: Interaksi hopper dinonaktifkan
+    CHEST_DAMAGE:
+      description: Alihkan kerusakan dada akibat ledakan
+      name: Kerusakan Dada
+    CHORUS_FRUIT:
+      description: Alihkan teleportasi
+      name: Buah paduan suara
+      hint: Teleportasi buah paduan suara dinonaktifkan
+    CLEAN_SUPER_FLAT:
+      description: |-
+        &a Aktifkan untuk membersihkan apa pun
+        & potongan super datar
+        &sebuah dunia pulau
+      name: Bersih Super Datar
+    COARSE_DIRT_TILLING:
+      description: |-
+        &a Alihkan pengolahan kasar
+        &sebuah podzol yang kotor dan pecah
+        &a untuk mendapatkan kotoran
+      name: Pengolahan tanah kasar
+      hint: Tidak ada tanah kasar yang diolah
+    COLLECT_LAVA:
+      description: |-
+        &a Beralih mengumpulkan lava
+        &a (mengganti Bucket)
+      name: Kumpulkan lahar
+      hint: Tidak ada pengumpulan lava
+    COLLECT_WATER:
+      description: |-
+        &a Beralih untuk mengumpulkan air
+        &a (mengganti Bucket)
+      name: Kumpulkan air
+      hint: Ember air dinonaktifkan
+    COLLECT_POWDERED_SNOW:
+      description: |-
+        &a Beralih mengumpulkan bubuk salju
+        &a (mengganti Bucket)
+      name: Kumpulkan bubuk salju
+      hint: Ember salju bubuk dinonaktifkan
+    COMMAND_RANKS:
+      name: "&e Pangkat Komando"
+      description: "&a Konfigurasikan peringkat perintah"
+    CRAFTING:
+      description: Alihkan penggunaan
+      name: meja kerja
+      hint: Akses meja kerja dinonaktifkan
+    CREEPER_DAMAGE:
+      description: |
+        &a Alihkan tanaman menjalar
+        & perlindungan kerusakan
+      name: Perlindungan kerusakan menjalar
+    CREEPER_GRIEFING:
+      description: |
+        &a Mengalihkan kesedihan yang menjalar
+        & perlindungan saat dinyalakan
+        &a oleh pengunjung pulau.
+      name: Perlindungan kesedihan yang menjalar
+      hint: Creeper berduka dinonaktifkan
+    CROP_PLANTING:
+      description: "&Satu Set yang bisa menanam benih."
+      name: Penanaman tanaman
+      hint: Penanaman tanaman dinonaktifkan
+    CROP_TRAMPLE:
+      description: Matikan menginjak-injak tanaman
+      name: Menginjak-injak tanaman
+      hint: Penginjakan tanaman dinonaktifkan
+    DOOR:
+      description: Alihkan penggunaan pintu
+      name: Gunakan pintu
+      hint: Interaksi pintu dinonaktifkan
+    DRAGON_EGG:
+      name: Telur Naga
+      description: |-
+        &a Mencegah interaksi dengan Telur Naga.
+
+        &c Ini tidak melindunginya dari keberadaan
+        &c ditempatkan atau rusak.
+      hint: Interaksi telur naga dinonaktifkan
+    DYE:
+      description: Cegah penggunaan pewarna
+      name: Penggunaan pewarna
+      hint: Pencelupan dinonaktifkan
+    EGGS:
+      description: Beralih melempar telur
+      name: Melempar telur
+      hint: Pelemparan telur dinonaktifkan
+    ENCHANTING:
+      description: Alihkan penggunaan
+      name: Meja yang mempesona
+      hint: Tabel pesona dinonaktifkan
+    ENDER_CHEST:
+      description: Alihkan penggunaan/kerajinan
+      name: Peti Ender
+      hint: Peti Ender dinonaktifkan di dunia ini
+    ENDERMAN_DEATH_DROP:
+      description: |-
+        &a Endermen akan jatuh
+        &di blok mana pun mereka berada
+        &penahanan jika dibunuh.
+      name: Penurunan Kematian Enderman
+    ENDERMAN_GRIEFING:
+      description: |-
+        &a Endermen dapat menghapus
+        & satu blok dari pulau
+      name: Enderman berduka
+    ENDERMAN_TELEPORT:
+      description: |-
+        &a Endermen bisa berteleportasi
+        &a jika aktif.
+      name: Teleportasi Enderman
+    ENDER_PEARL:
+      description: Alihkan penggunaan
+      name: Mutiara Ender
+      hint: Penggunaan Enderpearl dinonaktifkan
+    ENTER_EXIT_MESSAGES:
+      description: Menampilkan pesan masuk dan keluar
+      island: pulau [nama].
+      name: Masuk/Keluar pesan
+      now-entering: "&a Sekarang masuk &b [nama]&a ."
+      now-entering-your-island: "&a Sekarang memasuki pulau Anda."
+      now-leaving: "&a Sekarang meninggalkan &b [nama]&a ."
+      now-leaving-your-island: "&a Sekarang tinggalkan pulau Anda."
+    EXPERIENCE_BOTTLE_THROWING:
+      name: Rasakan pengalaman melempar botol
+      description: Beralih melempar botol pengalaman.
+      hint: Botol pengalaman dinonaktifkan
+    FIRE_BURNING:
+      name: Api membakar
+      description: |-
+        &a Beralih apakah api dapat menyala
+        &a blok atau tidak.
+    FIRE_EXTINGUISH:
+      description: Beralih untuk memadamkan api
+      name: Memadamkan api
+      hint: Pemadaman api dinonaktifkan
+    FIRE_IGNITE:
+      name: Pengapian api
+      description: |-
+        &a Beralih apakah api dapat dinyalakan
+        &a dengan cara non-pemain atau tidak.
+    FIRE_SPREAD:
+      name: Api menyebar
+      description: |-
+        &a Beralih apakah api dapat menyebar
+        &a ke blok terdekat atau tidak.
+    FISH_SCOOPING:
+      name: Menyendoki Ikan
+      description: Biarkan menyendok ikan menggunakan ember
+      hint: Penyendok ikan dinonaktifkan
+    FLINT_AND_STEEL:
+      name: batu dan baja
+      description: |-
+        &a Izinkan pemain menyalakan api atau
+        & api unggun menggunakan batu api dan baja
+        &a atau biaya kebakaran.
+      hint: Batu api dan baja serta muatan api dinonaktifkan
+    FURNACE:
+      description: Alihkan penggunaan
+      name: Perapian
+      hint: Penggunaan tungku dinonaktifkan
+    GATE:
+      description: Alihkan penggunaan
+      name: Gerbang
+      hint: Penggunaan gerbang dinonaktifkan
+    GEO_LIMIT_MOBS:
+      description: |-
+        &a Hapus massa yang pergi
+        & dilindungi dari luar
+        & ruang pulau
+      name: "&e Batasi massa di pulau"
+    HARVEST:
+      description: |-
+        &Satu set yang bisa memanen tanaman.
+        &a Jangan lupa untuk mengizinkan item
+        & penjemputan juga!
+      name: Panen tanaman
+      hint: Pemanenan tanaman dinonaktifkan
+    HIVE:
+      description: "&a Alihkan pemanenan sarang."
+      name: Pemanenan sarang
+      hint: Pemanenan dinonaktifkan
+    HURT_ANIMALS:
+      description: Alihkan rasa sakit
+      name: Menyakiti binatang
+      hint: Penyakiti hewan dinonaktifkan
+    HURT_MONSTERS:
+      description: Alihkan rasa sakit
+      name: Monster yang terluka
+      hint: Monster yang terluka dinonaktifkan
+    HURT_VILLAGERS:
+      description: Alihkan rasa sakit
+      name: Menyakiti penduduk desa
+      hint: Penduduk desa melukai orang cacat
+    ITEM_FRAME:
+      name: Bingkai Barang
+      description: |-
+        &a Beralih interaksi.
+        &a Mengganti tempat atau menghancurkan blok
+      hint: Penggunaan Bingkai Item dinonaktifkan
+    ITEM_FRAME_DAMAGE:
+      description: |-
+        &a Massa dapat merusak
+        & bingkai item
+      name: Kerusakan Bingkai Barang
+    INVINCIBLE_VISITORS:
+      description: |-
+        &a Konfigurasikan pengunjung yang tak terkalahkan
+        &a pengaturan.
+      name: "&e Pengunjung Tak Terkalahkan"
+      hint: "&c Pengunjung dilindungi"
+    ISLAND_RESPAWN:
+      description: |-
+        &a Pemain muncul kembali
+        &a di pulau
+      name: Pulau muncul kembali
+    ITEM_DROP:
+      description: Beralih menjatuhkan
+      name: Penurunan barang
+      hint: Penurunan item dinonaktifkan
+    ITEM_PICKUP:
+      description: Alihkan pengambilan
+      name: Pengambilan barang
+      hint: Pengambilan item dinonaktifkan
+    JUKEBOX:
+      description: Alihkan penggunaan
+      name: penggunaan jukebox
+      hint: Penggunaan jukebox dinonaktifkan
+    LEAF_DECAY:
+      name: Pembusukan daun
+      description: Biarkan daun membusuk secara alami
+    LEASH:
+      description: Alihkan penggunaan
+      name: Penggunaan tali
+    LECTERN:
+      name: podium
+      description: |-
+        &a Izinkan untuk meletakkan buku di podium
+        &a atau mengambil buku darinya.
+
+        &c Itu tidak menghalangi pemain untuk melakukannya
+        &c membaca buku.
+      hint: tidak dapat meletakkan buku di atas mimbar atau mengambil buku darinya.
+    LEVER:
+      description: Alihkan penggunaan
+      name: Penggunaan tuas
+      hint: Penggunaan tuas dinonaktifkan
+    LIMIT_MOBS:
+      description: |-
+        &a Batasi entitas dari
+        & pemijahan dalam game ini
+        & sebuah modus.
+      name: "&e Batasi pemijahan tipe entitas"
+      can: "&a Dapat bertelur"
+      cannot: "&c Tidak dapat muncul"
+    LIQUIDS_FLOWING_OUT:
+      name: Cairan mengalir ke luar pulau
+      description: |-
+        &a Beralih apakah cairan dapat mengalir ke luar
+        &a dari jangkauan perlindungan pulau.
+        &a Menonaktifkannya membantu menghindari lahar dan air
+        & batu besar yang menghasilkan di area antara
+        & dua pulau.
+
+        &c Perhatikan bahwa cairan akan tetap mengalir secara vertikal.
+        &c Mereka juga tidak akan menyebar secara horizontal jika
+        &c mereka ditempatkan di luar pulau
+        &c jangkauan perlindungan.
+    LOCK:
+      description: Alihkan kunci
+      name: Pulau kunci
+    CHANGE_SETTINGS:
+      name: Ubah pengaturan
+      description: |-
+        &a Izinkan untuk berpindah anggota yang mana
+        &peran dapat mengubah pengaturan pulau.
+    MILKING:
+      description: Alihkan pemerahan sapi
+      name: Pemerahan
+      hint: Perah sapi dinonaktifkan
+    MINECART:
+      name: kereta tambang
+      description: |-
+        Alihkan penempatan, pemutusan, dan
+        memasuki kereta tambang.
+      hint: Interaksi kereta tambang dinonaktifkan
+    MONSTER_NATURAL_SPAWN:
+      description: Alihkan pemijahan monster secara alami
+      name: Monster bertelur secara alami
+    MONSTER_SPAWNERS_SPAWN:
+      description: Alihkan pemijahan monster dengan pemijahan
+      name: Pemijahan monster
+    MOUNT_INVENTORY:
+      description: |-
+        &a Alihkan akses
+        &a untuk memasang inventaris
+      name: Pasang inventaris
+      hint: Pemasangan inventaris dinonaktifkan
+    NAME_TAG:
+      name: Tanda nama
+      description: Alihkan penggunaan
+      hint: Interaksi tag nama dinonaktifkan
+    NATURAL_SPAWNING_OUTSIDE_RANGE:
+      name: Makhluk alami yang bertelur di luar jangkauan
+      description: |-
+        &a Beralih apakah makhluk (hewan dan
+        &a monster) dapat muncul secara alami di luar
+        &a jangkauan perlindungan sebuah pulau.
+
+        &c Perhatikan bahwa itu tidak mencegah makhluk
+        &c untuk bertelur melalui mob spawner atau spawn
+        & c telur.
+    NOTE_BLOCK:
+      description: Alihkan penggunaan
+      name: Blok catatan
+      hint: Interaksi Noteblock dinonaktifkan
+    OBSIDIAN_SCOOPING:
+      name: Menyendoki obsidian
+      description: |-
+        &a Izinkan pemain mengambil obsidian
+        &a dengan ember kosong kembali ke lava.
+
+        &a Ini membantu pemula yang gagal
+        &a membangun generator batu bulat mereka.
+
+        &a Catatan: obsidian tidak dapat diambil
+        &a jika ada blok obsidian lainnya
+        &a dalam radius 2 blok.
+      scooping: "&a Mengubah obsidian kembali menjadi lava. Lain kali hati-hati!"
+      obsidian-nearby: "&c Ada blok obsidian di dekatnya, Anda tidak dapat memasukkan
+        blok ini ke dalam lava."
+    OFFLINE_GROWTH:
+      description: |-
+        &a Saat dinonaktifkan, tanaman
+        &a tidak akan tumbuh di pulau-pulau
+        &a di mana semua anggota sedang offline.
+        &a Dapat membantu mengurangi kelambatan.
+      name: Pertumbuhan Offline
+    OFFLINE_REDSTONE:
+      description: |-
+        &a Saat dinonaktifkan, batu merah
+        &a tidak akan beroperasi di pulau-pulau
+        &a di mana semua anggota sedang offline.
+        &a Dapat membantu mengurangi kelambatan.
+        &a Tidak memengaruhi pulau pemijahan.
+      name: Batu Merah Luar Talian
+    PETS_STAY_AT_HOME:
+      description: |-
+        &a Saat aktif, hewan peliharaan yang dijinakkan
+        &a hanya dapat pergi ke dan
+        &a tidak bisa meninggalkan milik pemiliknya
+        & pulau asal.
+      name: Hewan Peliharaan Tetap Di Rumah
+    PISTON_PUSH:
+      description: |-
+        &a Aktifkan ini untuk mencegah
+        & piston dari dorongan
+        &satu blok di luar pulau
+      name: Perlindungan Dorong Piston
+    PLACE_BLOCKS:
+      description: Alihkan penempatan
+      name: Tempatkan blok
+      hint: Penempatan blok dinonaktifkan
+    POTION_THROWING:
+      name: Melempar ramuan
+      description: |-
+        &a Beralih melempar ramuan.
+        &a Ini termasuk ramuan percikan dan sisa-sisa.
+      hint: Melempar ramuan dinonaktifkan
+    NETHER_PORTAL:
+      description: Alihkan penggunaan
+      name: Portal Nether
+      hint: Penggunaan portal dinonaktifkan
+    END_PORTAL:
+      description: Alihkan penggunaan
+      name: Portal Akhir
+      hint: Penggunaan portal dinonaktifkan
+    PRESSURE_PLATE:
+      description: Alihkan penggunaan
+      name: Pelat Tekanan
+      hint: Penggunaan pelat tekanan dinonaktifkan
+    PVP_END:
+      description: |-
+        &c Aktifkan/Nonaktifkan PVT
+        &c pada akhirnya.
+      name: Akhiri PVP
+      hint: PVP dinonaktifkan pada akhirnya
+      enabled: "&c PVP di Akhir telah diaktifkan."
+      disabled: "&a PVP pada akhirnya telah dinonaktifkan."
+    PVP_NETHER:
+      description: |-
+        &c Aktifkan/Nonaktifkan PVP
+        &c di Nether.
+      name: PVT Bawah
+      hint: PVP dinonaktifkan di Nether
+      enabled: "&c PVP di Nether telah diaktifkan."
+      disabled: "&a PVP di Nether telah dinonaktifkan."
+    PVP_OVERWORLD:
+      description: |-
+        &c Aktifkan/Nonaktifkan PVP
+        &c di pulau.
+      name: PVP Dunia Luar
+      hint: "&c PVP dinonaktifkan di Dunia Atas"
+      enabled: "&c PVP di Dunia Atas telah diaktifkan."
+      disabled: "&a PVP di Dunia Atas telah dinonaktifkan."
+    REDSTONE:
+      description: Alihkan penggunaan
+      name: Item batu merah
+      hint: Interaksi Redstone dinonaktifkan
+    REMOVE_END_EXIT_ISLAND:
+      description: |-
+        &a Mencegah keluarnya akhir
+        &sebuah pulau dari pembangkitan
+        &a pada koordinat 0,0
+      name: Hapus pulau keluar ujung
+    REMOVE_MOBS:
+      description: |-
+        &a Hapus monster kapan
+        &teleportasi ke pulau
+      name: Hapus monster
+    RIDING:
+      description: Beralih berkendara
+      name: Menunggang binatang
+      hint: Menunggang hewan dinonaktifkan
+    SHEARING:
+      description: Beralih geser
+      name: Pencukuran
+      hint: Geser dinonaktifkan
+    SPAWN_EGGS:
+      description: Alihkan penggunaan
+      name: Menelurkan telur
+      hint: Telur bertelur dinonaktifkan
+    SPAWNER_SPAWN_EGGS:
+      description: |-
+        &a Memungkinkan untuk mengubah tipe entitas spawner
+        &a menggunakan telur bibit.
+      name: Menelurkan telur pada spawner
+      hint: mengubah tipe entitas pemijahan menggunakan telur pemijahan tidak diperbolehkan
+    SCULK_SENSOR:
+      description: |-
+        &a Mengaktifkan sensor sculk
+        & aktivasi.
+      name: Sensor Sculk
+      hint: aktivasi sensor sculk dinonaktifkan
+    SCULK_SHRIEKER:
+      description: |-
+        &a Mengalihkan jeritan sculk
+        & aktivasi.
+      name: Sculk Shrieker
+      hint: aktivasi sculk shrieker dinonaktifkan
+    SIGN_EDITING:
+      description: |-
+        &a Memungkinkan pengeditan teks
+        &a tanda
+      name: Pengeditan Tanda Tangan
+      hint: pengeditan tanda dinonaktifkan
+    TNT_DAMAGE:
+      description: |-
+        &a Izinkan kereta tambang TNT dan TNT
+        &a untuk memecahkan blok dan merusak
+        &sebuah entitas.
+      name: kerusakan TNT
+    TNT_PRIMING:
+      description: |-
+        &a Mencegah priming TNT.
+        &a Ini tidak mengesampingkan
+        &a Pelindung batu dan baja.
+      name: cat dasar TNT
+      hint: Cat dasar TNT dinonaktifkan
+    TRADING:
+      description: Beralih perdagangan
+      name: Perdagangan penduduk desa
+      hint: Perdagangan penduduk desa dinonaktifkan
+    TRAPDOOR:
+      description: Alihkan akses
+      name: Pintu jebakan
+      hint: Penggunaan pintu jebakan dinonaktifkan
+    TREES_GROWING_OUTSIDE_RANGE:
+      name: Pohon yang tumbuh di luar jangkauan
+      description: |-
+        &a Beralih apakah pohon dapat tumbuh di luar an
+        & jangkauan perlindungan suatu pulau atau tidak.
+        &a Tidak hanya akan mencegah penempatan anakan
+        &a di luar jangkauan perlindungan pulau
+        & terus berkembang, namun hal ini juga akan menghambat generasi
+        &a dedaunan/batang kayu di luar pulau, demikian
+        &a menebang pohon.
+    TURTLE_EGGS:
+      description: Alihkan penghancuran
+      name: Telur Penyu
+      hint: Penghancuran telur penyu dinonaktifkan
+    FROST_WALKER:
+      description: Alihkan pesona Frost Walker
+      name: Pejalan Beku
+      hint: Frost Walker dinonaktifkan
+    EXPERIENCE_PICKUP:
+      name: Pengalaman penjemputan
+      description: Alihkan pengambilan bola pengalaman
+      hint: Penjemputan pengalaman dinonaktifkan
+    PREVENT_TELEPORT_WHEN_FALLING:
+      name: Mencegah teleport ketika terjatuh
+      description: |-
+        &a Mencegah pemain melakukan teleportasi
+        &a kembali ke pulau mereka menggunakan perintah
+        &a jika mereka jatuh.
+      hint: "&c Anda tidak dapat melakukan itu sambil jatuh."
+    VISITOR_KEEP_INVENTORY:
+      name: Pengunjung menyimpan inventaris kematian
+      description: |-
+        &a Mencegah pemain kehilangan miliknya
+        &sebuah item dan pengalaman jika mereka mati
+        &sebuah pulau tempat mereka menjadi pengunjung.
+        &A
+        &a Anggota pulau masih kehilangan item mereka
+        &a jika mereka mati di pulau mereka sendiri!
+    VISITOR_TRIGGER_RAID:
+      name: Pengunjung memicu penggerebekan
+      description: |-
+        &a Beralih jika pengunjung dapat memulai
+        &sebuah serangan di sebuah pulau di mana mereka berada
+        & kunjungan.
+        &A
+        &efek Pertanda Buruk akan dihilangkan!
+    ENTITY_PORTAL_TELEPORT:
+      name: Penggunaan portal entitas
+      description: |-
+        &a Beralih jika entitas (non-pemain) bisa
+        &a gunakan portal untuk berteleportasi
+        &sebuah dimensi
+    WITHER_DAMAGE:
+      name: Alihkan kerusakan layu
+      description: |-
+        &a Kalau aktif, layu bisa
+        & blok kerusakan dan pemain
+    WORLD_BLOCK_EXPLODE_DAMAGE:
+      description: |-
+        &a Izinkan Tempat Tidur & Respawn Jangkar
+        &a untuk memecahkan blok dan merusak
+        &sebuah entitas di luar batas pulau.
+      name: Kerusakan ledakan blok dunia
+    WORLD_TNT_DAMAGE:
+      description: |-
+        &a Izinkan kereta tambang TNT dan TNT
+        &a untuk memecahkan blok dan merusak
+        &sebuah entitas di luar batas pulau.
+      name: Kerusakan TNT dunia
+  locked: "&c Pulau ini terkunci!"
+  protected: "&c Pulau dilindungi: [deskripsi]."
+  world-protected: "&c Dunia dilindungi: [deskripsi]."
+  spawn-protected: "&c Bibit dilindungi: [deskripsi]."
   panel:
+    next: "&f Halaman Berikutnya"
+    previous: "&f Halaman Sebelumnya"
     mode:
-      advanced: {}
-      basic: {}
-      expert: {}
-    reset-to-default: {}
-    PROTECTION: {}
-    SETTING: {}
-    WORLD_SETTING: {}
-    WORLD_DEFAULTS: {}
-    flag-item: {}
+      advanced:
+        name: "&6 Pengaturan Lanjutan"
+        description: "&a Menampilkan sejumlah pengaturan yang masuk akal."
+      basic:
+        name: "&a Pengaturan Dasar"
+        description: "&a Menampilkan pengaturan yang paling berguna."
+      expert:
+        name: "&c Pengaturan Pakar"
+        description: "&a Menampilkan semua pengaturan yang tersedia."
+      click-to-switch: "&e Klik &7 untuk beralih ke &r [berikutnya]&r &7 ."
+    reset-to-default:
+      name: "&c Atur ulang ke default"
+      description: |
+        &a Menyetel ulang &c &l SEMUA &r &a pengaturan ke pengaturannya
+        &nilai bawaan.
+    PROTECTION:
+      title: "&6 Perlindungan"
+      description: |-
+        &a Pengaturan perlindungan
+        &a untuk pulau ini
+    SETTING:
+      title: "&6 Pengaturan"
+      description: |-
+        &a Pengaturan umum
+        &a untuk pulau ini
+    WORLD_SETTING:
+      title: "&b [nama_dunia] &6 Pengaturan"
+      description: "&a Pengaturan untuk dunia game ini"
+    WORLD_DEFAULTS:
+      title: "&b [nama_dunia] &6 Perlindungan Dunia"
+      description: |
+        &a Pengaturan perlindungan kapan
+        &seorang pemain berada di luar pulau mereka
+    flag-item:
+      name-layout: "&sebuah nama]"
+      allowed-rank: "&3 - &a"
+      blocked-rank: "&3 - &c"
+      minimal-rank: "&3 - &2"
+      setting-cooldown: "&c Pengaturan sedang dalam cooldown"
+      setting-active: "&a Aktif"
+      setting-disabled: "&c Dinonaktifkan"
 language:
-  description: {}
+  panel-title: Pilih bahasamu
+  description:
+    selected: "&a Saat ini dipilih."
+    click-to-select: "&e Klik &a untuk memilih."
+    authors: "&a Penulis:"
+  edited: "&a Mengubah bahasa Anda menjadi &e [lang]&a ."
 management:
   panel:
+    title: Manajemen BentoBox
     views:
       gamemodes:
-        blueprints: {}
+        name: "&6 Mode permainan"
+        description: "&e Klik &a untuk menampilkan Gamemode yang sedang dimuat"
+        blueprints:
+          name: "&6 Cetak Biru"
+          description: "&a Membuka menu Cetak Biru Admin."
         gamemode: {}
-      addons: {}
-      hooks: {}
+      addons:
+        name: "&6 Tambahan"
+        description: "&e Klik &a untuk menampilkan Addons yang sedang dimuat"
+      hooks:
+        name: "&6 Kait"
+        description: "&e Klik &a untuk menampilkan Hooks yang sedang dimuat"
     actions:
-      reload: {}
+      reload:
+        name: "&c Muat ulang"
+        description: "&e Klik &c &l dua kali &r &a untuk memuat ulang BentoBox"
     buttons:
-      catalog: {}
-      credits: {}
-      empty-here: {}
+      catalog:
+        name: "&6 Katalog Tambahan"
+        description: "&a Membuka Katalog Addons"
+      credits:
+        name: "&6 SKS"
+        description: "&a Membuka Kredit untuk BentoBox"
+      empty-here:
+        name: "&b Ini terlihat kosong di sini..."
+        description: "&a Bagaimana jika Anda melihat katalog kami?"
     information:
       state:
+        name: "&6 Kompatibilitas"
         description: {}
 catalog:
   panel:
-    GAMEMODES: {}
-    ADDONS: {}
+    GAMEMODES:
+      title: Katalog Gamemode
+    ADDONS:
+      title: Katalog Addons
     views:
-      gamemodes: {}
-      addons: {}
-    icon: {}
-    empty-here: {}
+      gamemodes:
+        name: "&6 Mode permainan"
+        description: |
+          &e Klik &a untuk menelusuri
+          & Gamemode resmi yang tersedia.
+      addons:
+        name: "&6 Tambahan"
+        description: |
+          &e Klik &a untuk menelusuri
+          & Addons resmi yang tersedia.
+    icon:
+      already-installed: Sudah terpasang!
+      install-now: Instal sekarang!
+    empty-here:
+      name: "&b Ini terlihat kosong di sini..."
+      description: |
+        &c BentoBox tidak dapat terhubung ke GitHub.
+
+        &a Izinkan BentoBox terhubung ke GitHub di
+        &a konfigurasi atau coba lagi nanti.
 enums:
   DamageCause:
+    CONTACT: Kontak
+    ENTITY_ATTACK: Serangan Massa
+    ENTITY_SWEEP_ATTACK: Serangan Sapu
+    PROJECTILE: Proyektil
+    SUFFOCATION: Mati lemas
+    FALL: Jatuh
+    FIRE: Api
+    FIRE_TICK: Pembakaran
+    MELTING: Meleleh
+    LAVA: Lahar
+    DROWNING: Tenggelam
+    BLOCK_EXPLOSION: Blokir Ledakan
+    ENTITY_EXPLOSION: Ledakan Entitas
+    VOID: Ruang kosong
     LIGHTNING: Petir
     SUICIDE: Bunuh Diri
     STARVATION: Kelaparan
     POISON: Racun
     MAGIC: Sihir
     WITHER: Wither
+    FALLING_BLOCK: Blok Jatuh
+    THORNS: duri
+    DRAGON_BREATH: Nafas Naga
+    CUSTOM: Kebiasaan
+    FLY_INTO_WALL: Terbang Ke Dinding
+    HOT_FLOOR: Lantai Panas
+    CRAMMING: menjejalkan
+    DRYOUT: Mengering
 panel:
   credits:
-    contributor: {}
-    empty-here: {}
+    title: "&8 [nama] &2 SKS"
+    contributor:
+      name: "&sebuah nama]"
+    empty-here:
+      name: "&c Ini terlihat kosong di sini..."
+      description: |
+        &c BentoBox tidak dapat mengumpulkan Kontributor
+        &c untuk Addon ini.
+
+        &a Izinkan BentoBox terhubung ke GitHub di
+        &a konfigurasi atau coba lagi nanti.
