@@ -167,11 +167,11 @@ public class BlueprintClipboard {
      * @param b - bounding box
      * @return - list of vectors
      */
-    private List<Vector> getVectors(BoundingBox b) {
+    protected List<Vector> getVectors(BoundingBox b) {
         List<Vector> r = new ArrayList<>();
-        for (int y = (int)b.getMinY(); y <= b.getMaxY(); y++) {
-            for (int x = (int)b.getMinX(); x <= b.getMaxX(); x++) {
-                for (int z = (int)b.getMinZ(); z <= b.getMaxZ(); z++) {
+        for (int y = (int) Math.floor(b.getMinY()); y <= b.getMaxY(); y++) {
+            for (int x = (int) Math.floor(b.getMinX()); x <= b.getMaxX(); x++) {
+                for (int z = (int) Math.floor(b.getMinZ()); z <= b.getMaxZ(); z++) {
                     r.add(new Vector(x,y,z));
                 }
             }
