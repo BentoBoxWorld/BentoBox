@@ -1657,7 +1657,7 @@ public class Island implements DataObject, MetaDataAble {
     @Nullable
     public Location getHome(String name) {
         Location l = getHomes().get(name.toLowerCase());
-        return l == null && name.isBlank() ? getProtectionCenter() : l;
+        return l == null ? getProtectionCenter() : l;
     }
 
     /**

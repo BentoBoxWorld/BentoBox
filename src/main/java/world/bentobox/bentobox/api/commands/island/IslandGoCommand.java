@@ -2,12 +2,13 @@ package world.bentobox.bentobox.api.commands.island;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.TreeMap;
 
+import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.DelayedTeleportCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
@@ -15,13 +16,12 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.util.Util;
+import world.bentobox.bentobox.util.teleport.SafeSpotTeleport;
 
 /**
  * @author tastybento
  */
 public class IslandGoCommand extends DelayedTeleportCommand {
-
-    private Island island;
 
     public IslandGoCommand(CompositeCommand islandCommand) {
         super(islandCommand, "go", "home", "h");
@@ -59,18 +59,49 @@ public class IslandGoCommand extends DelayedTeleportCommand {
             user.sendMessage(Flags.PREVENT_TELEPORT_WHEN_FALLING.getHintReference());
             return false;
         }
+        return true;
+    }
+
+    @Override
+    public boolean execute(User user, String label, List<String> args) {
         // Check if the home is known
         if (!args.isEmpty()) {
-            Map<String, Island> names = getNameList(user);
-            if (!names.containsKey(String.join(" ", args))) {
+            BentoBox.getInstance().logDebug("An arg has been supplied");
+            Map<String, IslandInfo> names = getNameIslandMap(user);
+            final String name = String.join(" ", args);
+            if (!names.containsKey(name)) {
+                BentoBox.getInstance().logDebug("Unknown arg");
                 // Failed home name check
                 user.sendMessage("commands.island.go.unknown-home");
                 user.sendMessage("commands.island.sethome.homes-are");
-                names.keySet().forEach(name -> user.sendMessage("commands.island.sethome.home-list-syntax", TextVariables.NAME, name));
+                names.keySet().forEach(n -> user.sendMessage("commands.island.sethome.home-list-syntax", TextVariables.NAME, n));
                 return false;
             } else {
-                island = names.get(String.join(" ", args));
+                names.entrySet().forEach(n -> BentoBox.getInstance().logDebug(n.getKey() + " " + n.getValue().islandName + " " + n.getValue().island.getProtectionCenter()));
+                IslandInfo info = names.get(name);
+                getIslands().setPrimaryIsland(user.getUniqueId(), info.island);
+                if (info.islandName) {
+                    BentoBox.getInstance().logDebug("Teleporting to island");
+                    this.delayCommand(user, () -> {
+                        new SafeSpotTeleport.Builder(getPlugin())
+                        .entity(user.getPlayer())
+                        .location(getIslands().getHomeLocation(info.island))
+                        .thenRun(() -> user.sendMessage("general.success"))
+                        .build();
+                        //getIslands().homeTeleportAsync(getWorld(), user.getPlayer(), "");
+                    });
+                } else {
+                    BentoBox.getInstance().logDebug("Teleporting to a home: " + name);
+                    this.delayCommand(user, () -> new SafeSpotTeleport.Builder(getPlugin())
+                            .entity(user.getPlayer())
+                            .location(getIslands().getHomeLocation(info.island, name))
+                            .thenRun(() -> user.sendMessage("general.success"))
+                            .build());
+                }
             }
+        } else {
+            BentoBox.getInstance().logDebug("Normal home go");
+            this.delayCommand(user, () -> getIslands().homeTeleportAsync(getWorld(), user.getPlayer()));
         }
         return true;
     }
@@ -86,44 +117,39 @@ public class IslandGoCommand extends DelayedTeleportCommand {
         return false;
     }
 
-    @Override
-    public boolean execute(User user, String label, List<String> args) {
-        if (island != null) {
-            // This is an island hop
-            // Don't use the name, just go home to the new island
-            this.delayCommand(user, () -> {
-                getIslands().setPrimaryIsland(user.getUniqueId(), island);
-                getIslands().homeTeleportAsync(getWorld(), user.getPlayer());
-            });
-        } else {
-            this.delayCommand(user, () -> getIslands().homeTeleportAsync(getWorld(), user.getPlayer(), String.join(" ", args)));
-        }
-        return true;
-    }
 
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
         String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
 
-        return Optional.of(Util.tabLimit(new ArrayList<>(getNameList(user).keySet()), lastArg));
+        return Optional.of(Util.tabLimit(new ArrayList<>(getNameIslandMap(user).keySet()), lastArg));
 
     }
 
-    private Map<String, Island> getNameList(User user) {
-        Map<String, Island> islandMap = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-        int index = 1;
+    private record IslandInfo(Island island, boolean islandName) {};
+
+    private Map<String, IslandInfo> getNameIslandMap(User user) {
+        Map<String, IslandInfo> islandMap = new HashMap<>();
+        int index = 0;
         for (Island island : getIslands().getIslands(getWorld(), user.getUniqueId())) {
+            index++;
+            BentoBox.getInstance().logDebug("Processing island " + index + " at " + island.getProtectionCenter());
             if (island.getName() != null && !island.getName().isBlank()) {
                 // Name has been set
-                islandMap.put(island.getName(), island);
+                islandMap.put(island.getName(), new IslandInfo(island, true));
+                BentoBox.getInstance().logDebug("name has been set " + island.getName());
             } else {
                 // Name has not been set
-                String text = user.getTranslation("protection.flags.ENTER_EXIT_MESSAGES.island", TextVariables.NAME, user.getName(), TextVariables.DISPLAY_NAME, user.getDisplayName());
-                islandMap.put(text + " " + index++, island);
+                String text = user.getTranslation("protection.flags.ENTER_EXIT_MESSAGES.island", TextVariables.NAME, user.getName(), TextVariables.DISPLAY_NAME, user.getDisplayName()) + " " + index;
+                islandMap.put(text, new IslandInfo(island, true));
+                BentoBox.getInstance().logDebug("Name has not been set. Giving " + index + " the temp name: " + text);
             }
-            // Add homes
-            island.getHomes().keySet().forEach(n -> islandMap.put(n, island));
+            // Add homes. Homes do not need an island specified
+            BentoBox.getInstance().logDebug("Adding homes for island " + index);
+            island.getHomes().keySet().forEach(n -> islandMap.put(n, new IslandInfo(island, false)));
         }
+        BentoBox.getInstance().logDebug("\n\n\n");
+
         return islandMap;
 
     }

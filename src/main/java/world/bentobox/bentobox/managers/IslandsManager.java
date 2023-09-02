@@ -908,9 +908,6 @@ public class IslandsManager {
      */
     @Nullable
     public Location getHomeLocation(@NonNull World world, @NonNull UUID uuid, String name) {
-        if (name.isBlank() && this.getPrimaryIsland(world, uuid) != null) {
-            return this.getPrimaryIsland(world, uuid).getProtectionCenter();
-        }
         return getIslands(world, uuid).stream().map(is -> is.getHome(name)).filter(Objects::nonNull).findFirst().orElse(null);
     }
 
