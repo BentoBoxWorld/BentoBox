@@ -2,6 +2,7 @@ package world.bentobox.bentobox.managers;
 
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.bukkit.entity.Player;
 import org.eclipse.jdt.annotation.NonNull;
@@ -23,6 +24,7 @@ import world.bentobox.bentobox.lists.GameModePlaceholder;
  */
 public class PlaceholdersManager {
 
+    private static final int MAX_TEAM_MEMBER_PLACEHOLDERS = 50;
     private final BentoBox plugin;
 
     public PlaceholdersManager(BentoBox plugin) {
@@ -66,6 +68,105 @@ public class PlaceholdersManager {
         Arrays.stream(GameModePlaceholder.values())
         .filter(placeholder -> !isPlaceholder(addon, placeholder.getPlaceholder()))
         .forEach(placeholder -> registerPlaceholder(addon, placeholder.getPlaceholder(), new DefaultPlaceholder(addon, placeholder)));
+        // Register team member placeholders
+        registerTeamMemberPlaceholders(addon);
+    }
+
+    private void registerTeamMemberPlaceholders(@NonNull GameModeAddon addon) {
+        for (int i = 1; i <= MAX_TEAM_MEMBER_PLACEHOLDERS; i++) {
+            final int count = i;
+            // Names
+            registerPlaceholder(addon, "island_member_name_" + i, user -> {
+                if (user != null) {
+                    Island island = plugin.getIslands().getIsland(addon.getOverWorld(), user);
+                    int j = 1;
+                    for (UUID uuid : island.getMemberSet(RanksManager.MEMBER_RANK)) {
+                        if (j++ == count) {
+                            return plugin.getPlayers().getName(uuid);
+                        }
+                    }
+                }
+                return "";
+            });
+            // Register ranks
+            registerPlaceholder(addon, "island_member_rank_" + i, user -> {
+                if (user != null) {
+                    Island island = plugin.getIslands().getIsland(addon.getOverWorld(), user);
+                    int j = 1;
+                    for (UUID uuid : island.getMemberSet(RanksManager.MEMBER_RANK)) {
+                        if (j++ == count) {
+                            return user.getTranslationOrNothing(plugin.getRanksManager().getRank(island.getRank(uuid)));
+                        }
+                    }
+                }
+                return "";
+            });
+            // Banned
+            registerPlaceholder(addon, "island_banned_name_" + i, user -> {
+                if (user != null) {
+                    Island island = plugin.getIslands().getIsland(addon.getOverWorld(), user);
+                    int j = 1;
+                    for (UUID uuid : island.getBanned()) {
+                        if (j++ == count) {
+                            return plugin.getPlayers().getName(uuid);
+                        }
+                    }
+                }
+                return "";
+            });
+            // Visited Island
+            registerPlaceholder(addon, "visited_island_member_name_" + i, user -> {
+                if (user != null) {
+                    return plugin.getIslands().getIslandAt(user.getLocation())
+                            .filter(island -> addon.inWorld(island.getCenter()))
+                            .map(island -> {
+                                int j = 1;
+                                for (UUID uuid : island.getMemberSet(RanksManager.MEMBER_RANK)) {
+                                    if (j++ == count) {
+                                        return plugin.getPlayers().getName(uuid);
+                                    }
+                                }
+                                return "";
+                            }).orElse("");
+
+                }
+                return "";
+            });
+            registerPlaceholder(addon, "visited_island_member_rank_" + i, user -> {
+                if (user != null) {
+                    return plugin.getIslands().getIslandAt(user.getLocation())
+                            .filter(island -> addon.inWorld(island.getCenter()))
+                            .map(island -> {
+                                int j = 1;
+                                for (UUID uuid : island.getMemberSet(RanksManager.MEMBER_RANK)) {
+                                    if (j++ == count) {
+                                        return user.getTranslationOrNothing(plugin.getRanksManager().getRank(island.getRank(uuid)));
+                                    }
+                                }
+                                return "";
+                            }).orElse("");
+
+                }
+                return "";
+            });
+            registerPlaceholder(addon, "visited_island_banned_name_" + i, user -> {
+                if (user != null) {
+                    return plugin.getIslands().getIslandAt(user.getLocation())
+                            .filter(island -> addon.inWorld(island.getCenter()))
+                            .map(island -> {
+                                int j = 1;
+                                for (UUID uuid : island.getBanned()) {
+                                    if (j++ == count) {
+                                        return plugin.getPlayers().getName(uuid);
+                                    }
+                                }
+                                return "";
+                            }).orElse("");
+
+                }
+                return "";
+            });
+        }
     }
 
     /**
