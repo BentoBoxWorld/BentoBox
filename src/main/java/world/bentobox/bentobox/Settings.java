@@ -1,11 +1,17 @@
 package world.bentobox.bentobox;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.bukkit.Material;
+
+import com.google.common.collect.ImmutableList;
 
 import world.bentobox.bentobox.api.configuration.ConfigComment;
 import world.bentobox.bentobox.api.configuration.ConfigEntry;
@@ -22,26 +28,6 @@ import world.bentobox.bentobox.database.DatabaseSetup.DatabaseType;
 @StoreAt(filename="config.yml") // Explicitly call out what name this should have.
 @ConfigComment("BentoBox v[version] configuration file.")
 @ConfigComment("")
-@ConfigComment("This configuration file contains settings that mainly apply to or manage the following elements:")
-@ConfigComment(" * Data storage")
-@ConfigComment(" * Gamemodes (commands, ...)")
-@ConfigComment(" * Internet connectivity (web-based content-enriched features, ...)")
-@ConfigComment("")
-@ConfigComment("Note that this configuration file is dynamic:")
-@ConfigComment(" * It gets updated with the newest settings and comments after BentoBox loaded its settings from it.")
-@ConfigComment(" * Upon updating BentoBox, new settings will be automatically added into this configuration file.")
-@ConfigComment("    * Said settings are distinguishable by a dedicated comment, which looks like this:")
-@ConfigComment("       Added since X.Y.Z.")
-@ConfigComment("    * They are provided with default values that should not cause issues on live production servers.")
-@ConfigComment(" * You can however edit this file while the server is online.")
-@ConfigComment("   You will therefore need to run the following command in order to take the changes into account: /bentobox reload.")
-@ConfigComment("")
-@ConfigComment("Here are a few pieces of advice before you get started:")
-@ConfigComment(" * You should check out our Wiki, which may provide you useful tips or insights about BentoBox's features.")
-@ConfigComment("    Link: https://github.com/BentoBoxWorld/BentoBox/wiki")
-@ConfigComment(" * You should edit this configuration file while the server is offline.")
-@ConfigComment(" * Moreover, whenever you update BentoBox, you should do so on a test server first.")
-@ConfigComment("    This will allow you to configure the new settings beforehand instead of applying them inadvertently on a live production server.")
 public class Settings implements ConfigObject {
 
     /*      GENERAL     */
@@ -56,10 +42,17 @@ public class Settings implements ConfigObject {
     @ConfigEntry(path = "general.use-economy")
     private boolean useEconomy = true;
 
+    /*      COMMANDS     */
+    @ConfigComment("Console commands to run when BentoBox has loaded all worlds and addons.")
+    @ConfigComment("Commands are run as the console.")
+    @ConfigComment("e.g. set aliases for worlds in Multiverse here, or anything you need to")
+    @ConfigComment("run after the plugin is fully loaded.")
+    @ConfigEntry(path = "general.ready-commands", since = "1.24.2")
+    private List<String> readyCommands = new ArrayList<>();
+
     // Database
-    @ConfigComment("JSON, MYSQL, MARIADB, MONGODB, SQLITE, POSTGRESQL and YAML(deprecated).")
+    @ConfigComment("JSON, MYSQL, MARIADB, MONGODB, SQLITE, and POSTGRESQL.")
     @ConfigComment("Transition database options are:")
-    @ConfigComment("  YAML2JSON, YAML2MARIADB, YAML2MYSQL, YAML2MONGODB, YAML2SQLITE")
     @ConfigComment("  JSON2MARIADB, JSON2MYSQL, JSON2MONGODB, JSON2SQLITE, JSON2POSTGRESQL")
     @ConfigComment("  MYSQL2JSON, MARIADB2JSON, MONGODB2JSON, SQLITE2JSON, POSTGRESQL2JSON")
     @ConfigComment("If you need others, please make a feature request.")
@@ -70,7 +63,7 @@ public class Settings implements ConfigObject {
     @ConfigComment("   SQLite versions 3.28 or later")
     @ConfigComment("   PostgreSQL versions 9.4 or later")
     @ConfigComment("Transition options enable migration from one database type to another. Use /bbox migrate.")
-    @ConfigComment("YAML and JSON are file-based databases.")
+    @ConfigComment("JSON is a file-based database.")
     @ConfigComment("MYSQL might not work with all implementations: if available, use a dedicated database type (e.g. MARIADB).")
     @ConfigComment("BentoBox uses HikariCP for connecting with SQL databases.")
     @ConfigComment("If you use MONGODB, you must also run the BSBMongo plugin (not addon).")
@@ -1046,6 +1039,20 @@ public class Settings implements ConfigObject {
     }
 
     /**
+     * @return an immutable list of readyCommands
+     */
+    public List<String> getReadyCommands() {
+        return ImmutableList.copyOf(Objects.requireNonNullElse(readyCommands, Collections.emptyList()));
+    }
+
+    /**
+     * @param readyCommands the readyCommands to set
+     */
+    public void setReadyCommands(List<String> readyCommands) {
+        this.readyCommands = readyCommands;
+    }
+
+    /**
      * @return the islandNumber
      * @since 2.0.0
      */
@@ -1060,4 +1067,5 @@ public class Settings implements ConfigObject {
     public void setIslandNumber(int islandNumber) {
         this.islandNumber = islandNumber;
     }
+
 }
