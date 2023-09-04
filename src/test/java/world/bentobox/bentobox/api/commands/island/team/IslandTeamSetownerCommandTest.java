@@ -152,73 +152,73 @@ public class IslandTeamSetownerCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamSetownerCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamSetownerCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testExecuteUserStringListOfStringNullOwner() {
         when(im.getOwner(any(), any())).thenReturn(null);
-        assertFalse(its.execute(user, "", Collections.emptyList()));
+        assertFalse(its.canExecute(user, "", Collections.emptyList()));
         verify(user).sendMessage("general.errors.not-owner");
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamSetownerCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamSetownerCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testExecuteUserStringListOfStringNotInTeam() {
         when(im.inTeam(any(), any())).thenReturn(false);
-        assertFalse(its.execute(user, "", Collections.emptyList()));
+        assertFalse(its.canExecute(user, "", Collections.emptyList()));
         verify(user).sendMessage("general.errors.no-team");
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamSetownerCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamSetownerCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testExecuteUserStringListOfStringNotOwner() {
         when(im.inTeam(any(), any())).thenReturn(true);
         when(im.getOwner(any(), any())).thenReturn(UUID.randomUUID());
-        assertFalse(its.execute(user, "", Collections.emptyList()));
+        assertFalse(its.canExecute(user, "", Collections.emptyList()));
         verify(user).sendMessage("general.errors.not-owner");
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamSetownerCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamSetownerCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testExecuteUserStringListOfStringShowHelp() {
         when(im.inTeam(any(), any())).thenReturn(true);
         when(im.getOwner(any(), any())).thenReturn(uuid);
-        assertFalse(its.execute(user, "", Collections.emptyList()));
+        assertFalse(its.canExecute(user, "", Collections.emptyList()));
         verify(user).sendMessage("commands.help.header","[label]", null);
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamSetownerCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamSetownerCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testExecuteUserStringListOfStringUnknownPlayer() {
         when(im.inTeam(any(), any())).thenReturn(true);
         when(im.getOwner(any(), any())).thenReturn(uuid);
         when(pm.getUUID(anyString())).thenReturn(null);
-        assertFalse(its.execute(user, "", Collections.singletonList("tastybento")));
+        assertFalse(its.canExecute(user, "", Collections.singletonList("tastybento")));
         verify(user).sendMessage("general.errors.unknown-player", TextVariables.NAME, "tastybento");
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamSetownerCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamSetownerCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testExecuteUserStringListOfStringSamePlayer() {
         when(im.inTeam(any(), any())).thenReturn(true);
         when(im.getOwner(any(), any())).thenReturn(uuid);
         when(pm.getUUID(anyString())).thenReturn(uuid);
-        assertFalse(its.execute(user, "", Collections.singletonList("tastybento")));
+        assertFalse(its.canExecute(user, "", Collections.singletonList("tastybento")));
         verify(user).sendMessage("commands.island.team.setowner.errors.cant-transfer-to-yourself");
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamSetownerCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamSetownerCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testExecuteUserStringListOfStringTargetNotInTeam() {
@@ -226,7 +226,7 @@ public class IslandTeamSetownerCommandTest {
         when(im.getOwner(any(), any())).thenReturn(uuid);
         when(pm.getUUID(anyString())).thenReturn(UUID.randomUUID());
         when(im.getMembers(any(), any())).thenReturn(Collections.singleton(uuid));
-        assertFalse(its.execute(user, "", Collections.singletonList("tastybento")));
+        assertFalse(its.canExecute(user, "", Collections.singletonList("tastybento")));
         verify(user).sendMessage("commands.island.team.setowner.errors.target-is-not-member");
     }
 
@@ -243,7 +243,7 @@ public class IslandTeamSetownerCommandTest {
         @Nullable
         Island island = mock(Island.class);
         when(im.getIsland(any(), any(User.class))).thenReturn(island);
-
+        assertTrue(its.canExecute(user, "", Collections.singletonList("tastybento")));
         assertTrue(its.execute(user, "", Collections.singletonList("tastybento")));
         verify(im).setOwner(any(), eq(user), eq(target));
         verify(im).save(island);

@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.eclipse.jdt.annotation.Nullable;
+
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.island.IslandEvent;
@@ -15,6 +17,8 @@ import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
 
 public class IslandTeamSetownerCommand extends CompositeCommand {
+
+    private @Nullable UUID targetUUID;
 
     public IslandTeamSetownerCommand(CompositeCommand islandTeamCommand) {
         super(islandTeamCommand, "setowner");
@@ -29,7 +33,7 @@ public class IslandTeamSetownerCommand extends CompositeCommand {
     }
 
     @Override
-    public boolean execute(User user, String label, List<String> args) {
+    public boolean canExecute(User user, String label, List<String> args) {
         UUID playerUUID = user.getUniqueId();
         // Can use if in a team
         boolean inTeam = getIslands().inTeam(getWorld(), playerUUID);
@@ -47,7 +51,7 @@ public class IslandTeamSetownerCommand extends CompositeCommand {
             showHelp(this, user);
             return false;
         }
-        UUID targetUUID = getPlayers().getUUID(args.get(0));
+        targetUUID = getPlayers().getUUID(args.get(0));
         if (targetUUID == null) {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
             return false;
@@ -60,6 +64,12 @@ public class IslandTeamSetownerCommand extends CompositeCommand {
             user.sendMessage("commands.island.team.setowner.errors.target-is-not-member");
             return false;
         }
+        return true;
+    }
+
+
+    @Override
+    public boolean execute(User user, String label, List<String> args) {
         // Fire event so add-ons can run commands, etc.
         Island island = getIslands().getIsland(getWorld(), user);
         // Fire event so add-ons can run commands, etc.
@@ -83,7 +93,7 @@ public class IslandTeamSetownerCommand extends CompositeCommand {
         // Call the event for the previous owner
         IslandEvent.builder()
         .island(island)
-        .involvedPlayer(playerUUID)
+        .involvedPlayer(user.getUniqueId())
         .admin(false)
         .reason(IslandEvent.Reason.RANK_CHANGE)
         .rankChange(RanksManager.OWNER_RANK, island.getRank(user))
