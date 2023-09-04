@@ -389,7 +389,7 @@ public class IslandsManager {
      * @param user user
      * @return List of islands or empty list if none found for user
      */
-    @Nullable
+    @NonNull
     public Set<Island> getIslands(@NonNull World world, @NonNull User user){
         return getIslands(world, user.getUniqueId());
     }
@@ -401,6 +401,7 @@ public class IslandsManager {
      * @param uuid user's uuid
      * @return List of islands or empty list if none found for user
      */
+    @NonNull
     public Set<Island> getIslands(@NonNull World world, UUID uniqueId) {
         return islandCache.getIslands(world, uniqueId);
     }
@@ -503,6 +504,7 @@ public class IslandsManager {
      * @param minimumRank - the minimum rank to be included in the set.
      * @return Set of team UUIDs
      */
+    @NonNull
     public Set<UUID> getMembers(@NonNull World world, @NonNull UUID playerUUID, int minimumRank) {
         return islandCache.getMembers(world, playerUUID, minimumRank);
     }
@@ -516,6 +518,7 @@ public class IslandsManager {
      * @param playerUUID - the player's UUID
      * @return Set of team UUIDs
      */
+    @NonNull
     public Set<UUID> getMembers(@NonNull World world, @NonNull UUID playerUUID) {
         return islandCache.getMembers(world, playerUUID, RanksManager.MEMBER_RANK);
     }
