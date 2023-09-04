@@ -193,7 +193,7 @@ public class Settings implements ConfigObject {
     // Number of islands
     @ConfigComment("The default number of concurrent islands a player may have.")
     @ConfigComment("This may be overridden by individual game mode config settings.")
-    @ConfigEntry(path = "island.cooldown.time.invite")
+    @ConfigEntry(path = "island.concurrent-islands")
     private int islandNumber = 1;
 
     // Cooldowns
