@@ -1471,15 +1471,6 @@ public class IslandsManager {
         this.last.put(last.getWorld(), last);
     }
 
-    /**
-     * Called when a player leaves a team
-     * @param world - world
-     * @param uuid - the player's UUID
-     */
-    public void setLeaveTeam(World world, UUID uuid) {
-        removePlayer(world, uuid);
-    }
-
     public void shutdown(){
         plugin.log("Removing coops from islands...");
         // Remove all coop associations
@@ -1514,12 +1505,15 @@ public class IslandsManager {
 
     /**
      * Sets this target as the owner for this island
-     * @param user requester
+     * @param user previous owner
      * @param targetUUID new owner
      * @param island island to register
      */
     public void setOwner(User user, UUID targetUUID, Island island) {
         islandCache.setOwner(island, targetUUID);
+        // Remove the old owner from the island
+        island.removeMember(user.getUniqueId());
+
         user.sendMessage("commands.island.team.setowner.name-is-the-owner", "[name]", plugin.getPlayers().getName(targetUUID));
         plugin.getIWM().getAddon(island.getWorld()).ifPresent(addon -> {
             User target = User.getInstance(targetUUID);

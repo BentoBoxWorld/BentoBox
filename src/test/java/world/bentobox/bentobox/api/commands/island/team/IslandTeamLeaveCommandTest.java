@@ -18,6 +18,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitScheduler;
+import org.eclipse.jdt.annotation.Nullable;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -66,6 +67,8 @@ public class IslandTeamLeaveCommandTest {
     private PlayersManager pm;
     @Mock
     private World world;
+    @Mock
+    private @Nullable Island island;
 
     /**
      */
@@ -120,10 +123,8 @@ public class IslandTeamLeaveCommandTest {
         when(Bukkit.getPluginManager()).thenReturn(pim);
 
         // Island
-        Island island = mock(Island.class);
         when(island.getUniqueId()).thenReturn("uniqueid");
-        when(im.getIsland(any(), Mockito.any(User.class))).thenReturn(island);
-
+        when(im.getIsland(world, user)).thenReturn(island);
 
     }
 
@@ -161,7 +162,7 @@ public class IslandTeamLeaveCommandTest {
 
         IslandTeamLeaveCommand itl = new IslandTeamLeaveCommand(ic);
         assertTrue(itl.execute(user, itl.getLabel(), new ArrayList<>()));
-        verify(im).setLeaveTeam(any(), eq(uuid));
+        verify(island).removeMember(uuid);
         verify(user).sendMessage(eq("commands.island.team.leave.success"));
     }
 
@@ -220,10 +221,10 @@ public class IslandTeamLeaveCommandTest {
 
         IslandTeamLeaveCommand itl = new IslandTeamLeaveCommand(ic);
         assertTrue(itl.execute(user, itl.getLabel(), new ArrayList<>()));
-        verify(im).setLeaveTeam(any(), eq(uuid));
-        verify(user).sendMessage(eq("commands.island.team.leave.success"));
+        verify(island).removeMember(uuid);
+        verify(user).sendMessage("commands.island.team.leave.success");
         verify(pm).addReset(eq(world), eq(uuid));
-        verify(user).sendMessage(eq("commands.island.reset.resets-left"), eq(TextVariables.NUMBER), eq("100"));
+        verify(user).sendMessage("commands.island.reset.resets-left", TextVariables.NUMBER, "100");
     }
 
     /**
