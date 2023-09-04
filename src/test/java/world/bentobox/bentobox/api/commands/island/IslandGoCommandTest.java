@@ -275,30 +275,10 @@ public class IslandGoCommandTest {
      */
     @Test
     public void testExecuteArgs1MultipleHomes() {
-
-        //when(user.getPermissionValue(anyString(), anyInt())).thenReturn(3);
-        assertTrue(igc.execute(user, igc.getLabel(), Collections.singletonList("1")));
-    }
-
-    /**
-     * Test method for {@link IslandGoCommand#execute(User, String, List)}
-     */
-    @Test
-    public void testExecuteArgs2MultipleHomes() {
-
-        //when(user.getPermissionValue(anyString(), anyInt())).thenReturn(3);
-        assertTrue(igc.execute(user, igc.getLabel(), Collections.singletonList("2")));
-    }
-
-
-    /**
-     * Test method for {@link IslandGoCommand#execute(User, String, List)}
-     */
-    @Test
-    public void testExecuteArgsJunkMultipleHomes() {
-
-        //when(user.getPermissionValue(anyString(), anyInt())).thenReturn(3);
-        assertTrue(igc.execute(user, igc.getLabel(), Collections.singletonList("sdfghhj")));
+        assertFalse(igc.execute(user, igc.getLabel(), Collections.singletonList("1")));
+        verify(player).sendMessage("commands.island.go.unknown-home");
+        verify(player).sendMessage("commands.island.sethome.homes-are");
+        verify(player).sendMessage("commands.island.sethome.home-list-syntax");
     }
 
     /**
@@ -325,19 +305,6 @@ public class IslandGoCommandTest {
         verify(task).cancel();
         verify(player).sendMessage(eq("commands.delay.previous-command-cancelled"));
         verify(player, Mockito.times(2)).sendMessage(eq("commands.delay.stand-still"));
-    }
-
-    /**
-     * Test method for {@link IslandGoCommand#execute(User, String, List)}
-     */
-    @Test
-    public void testExecuteNoArgsDelayMultiHome() {
-        when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
-        //when(user.getPermissionValue(anyString(), anyInt())).thenReturn(3);
-        when(s.getDelayTime()).thenReturn(10);
-
-        assertTrue(igc.execute(user, igc.getLabel(), Collections.singletonList("2")));
-        verify(player).sendMessage(eq("commands.delay.stand-still"));
     }
 
     /**

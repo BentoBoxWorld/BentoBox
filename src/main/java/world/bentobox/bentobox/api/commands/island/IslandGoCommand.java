@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.DelayedTeleportCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
@@ -66,32 +65,26 @@ public class IslandGoCommand extends DelayedTeleportCommand {
     public boolean execute(User user, String label, List<String> args) {
         // Check if the home is known
         if (!args.isEmpty()) {
-            BentoBox.getInstance().logDebug("An arg has been supplied");
             Map<String, IslandInfo> names = getNameIslandMap(user);
             final String name = String.join(" ", args);
             if (!names.containsKey(name)) {
-                BentoBox.getInstance().logDebug("Unknown arg");
                 // Failed home name check
                 user.sendMessage("commands.island.go.unknown-home");
                 user.sendMessage("commands.island.sethome.homes-are");
                 names.keySet().forEach(n -> user.sendMessage("commands.island.sethome.home-list-syntax", TextVariables.NAME, n));
                 return false;
             } else {
-                names.entrySet().forEach(n -> BentoBox.getInstance().logDebug(n.getKey() + " " + n.getValue().islandName + " " + n.getValue().island.getProtectionCenter()));
                 IslandInfo info = names.get(name);
                 getIslands().setPrimaryIsland(user.getUniqueId(), info.island);
                 if (info.islandName) {
-                    BentoBox.getInstance().logDebug("Teleporting to island");
                     this.delayCommand(user, () -> {
                         new SafeSpotTeleport.Builder(getPlugin())
                         .entity(user.getPlayer())
                         .location(getIslands().getHomeLocation(info.island))
                         .thenRun(() -> user.sendMessage("general.success"))
                         .build();
-                        //getIslands().homeTeleportAsync(getWorld(), user.getPlayer(), "");
                     });
                 } else {
-                    BentoBox.getInstance().logDebug("Teleporting to a home: " + name);
                     this.delayCommand(user, () -> new SafeSpotTeleport.Builder(getPlugin())
                             .entity(user.getPlayer())
                             .location(getIslands().getHomeLocation(info.island, name))
@@ -100,7 +93,6 @@ public class IslandGoCommand extends DelayedTeleportCommand {
                 }
             }
         } else {
-            BentoBox.getInstance().logDebug("Normal home go");
             this.delayCommand(user, () -> getIslands().homeTeleportAsync(getWorld(), user.getPlayer()));
         }
         return true;
@@ -133,22 +125,17 @@ public class IslandGoCommand extends DelayedTeleportCommand {
         int index = 0;
         for (Island island : getIslands().getIslands(getWorld(), user.getUniqueId())) {
             index++;
-            BentoBox.getInstance().logDebug("Processing island " + index + " at " + island.getProtectionCenter());
             if (island.getName() != null && !island.getName().isBlank()) {
                 // Name has been set
                 islandMap.put(island.getName(), new IslandInfo(island, true));
-                BentoBox.getInstance().logDebug("name has been set " + island.getName());
             } else {
                 // Name has not been set
                 String text = user.getTranslation("protection.flags.ENTER_EXIT_MESSAGES.island", TextVariables.NAME, user.getName(), TextVariables.DISPLAY_NAME, user.getDisplayName()) + " " + index;
                 islandMap.put(text, new IslandInfo(island, true));
-                BentoBox.getInstance().logDebug("Name has not been set. Giving " + index + " the temp name: " + text);
             }
             // Add homes. Homes do not need an island specified
-            BentoBox.getInstance().logDebug("Adding homes for island " + index);
             island.getHomes().keySet().forEach(n -> islandMap.put(n, new IslandInfo(island, false)));
         }
-        BentoBox.getInstance().logDebug("\n\n\n");
 
         return islandMap;
 

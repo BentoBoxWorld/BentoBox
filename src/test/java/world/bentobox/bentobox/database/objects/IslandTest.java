@@ -1,6 +1,3 @@
-/**
- *
- */
 package world.bentobox.bentobox.database.objects;
 
 import static org.junit.Assert.assertEquals;
@@ -1156,7 +1153,7 @@ public class IslandTest {
      */
     @Test
     public void testGetHome() {
-        assertNull(i.getHome("default"));
+        assertEquals(i.getProtectionCenter(), i.getHome("default"));
     }
 
     /**
