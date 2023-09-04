@@ -637,7 +637,7 @@ public class IslandsManager {
         }
         // Check if the user is switching island and if so, switch name
         String name = this.getIslands(world, user).stream()
-                .filter(i -> i.getName() != null && !i.getName().isBlank() && i.getName().equalsIgnoreCase(homeName))
+                .filter(i -> !homeName.isBlank() && i.getName() != null && !i.getName().isBlank() && i.getName().equalsIgnoreCase(homeName))
                 .findFirst().map(island -> {
                     // This is an island, so switch to that island and then go to the default home
                     this.setPrimaryIsland(user.getUniqueId(), island);
@@ -646,7 +646,7 @@ public class IslandsManager {
 
         // Try the home location first
         Location defaultHome = getHomeLocation(world, user);
-        Location namedHome = getHomeLocation(world, user, name);
+        Location namedHome = homeName.isBlank() ? null : getHomeLocation(world, user, name);
         Location l = namedHome != null ? namedHome : defaultHome;
         if (l != null) {
             Util.getChunkAtAsync(l).thenRun(() -> {
@@ -865,27 +865,27 @@ public class IslandsManager {
     }
 
     /**
-     * Get the home location for user in world
+     * Get the home location for user in world for their primary island
      * @param world - world
      * @param user - user
-     * @return home location or null if there is no home
-     * @since 1.16.0
+     * @return home location or the protection center location if no home defined
+     * @since 2.0.0
      */
     @Nullable
     public Location getHomeLocation(@NonNull World world, @NonNull User user) {
-        return getHomeLocation(world, user.getUniqueId(), "");
+        return this.getPrimaryIsland(world, user.getUniqueId()).getHome("");
     }
 
     /**
-     * Get the home location for player's UUID in world
+     * Get the home location for player's UUID in world for their primary island
      * @param world - world
      * @param uuid - uuid of player
-     * @return home location or null if there is no home
+     * @return home location or the protection center location if no home defined
      * @since 1.16.0
      */
     @Nullable
     public Location getHomeLocation(@NonNull World world, @NonNull UUID uuid) {
-        return getHomeLocation(world, uuid, "");
+        return this.getPrimaryIsland(world, uuid).getHome("");
     }
 
     /**
