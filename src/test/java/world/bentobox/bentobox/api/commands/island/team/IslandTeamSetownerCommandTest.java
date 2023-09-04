@@ -12,6 +12,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -20,6 +21,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitScheduler;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.junit.After;
 import org.junit.Before;
@@ -35,6 +37,7 @@ import org.powermock.reflect.Whitebox;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
+import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
@@ -119,6 +122,10 @@ public class IslandTeamSetownerCommandTest {
 
         // Island World Manager
         when(plugin.getIWM()).thenReturn(iwm);
+        @NonNull
+        WorldSettings ws = mock(WorldSettings.class);
+        when(iwm.getWorldSettings(world)).thenReturn(ws);
+        when(ws.getConcurrentIslands()).thenReturn(3);
 
         // Plugin Manager
         PluginManager pim = mock(PluginManager.class);
@@ -155,9 +162,9 @@ public class IslandTeamSetownerCommandTest {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamSetownerCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringNullOwner() {
+    public void testCanExecuteUserStringListOfStringNullOwner() {
         when(im.getOwner(any(), any())).thenReturn(null);
-        assertFalse(its.canExecute(user, "", Collections.emptyList()));
+        assertFalse(its.canExecute(user, "", List.of("gibby")));
         verify(user).sendMessage("general.errors.not-owner");
     }
 
@@ -165,9 +172,9 @@ public class IslandTeamSetownerCommandTest {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamSetownerCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringNotInTeam() {
+    public void testCanExecuteUserStringListOfStringNotInTeam() {
         when(im.inTeam(any(), any())).thenReturn(false);
-        assertFalse(its.canExecute(user, "", Collections.emptyList()));
+        assertFalse(its.canExecute(user, "", List.of("gibby")));
         verify(user).sendMessage("general.errors.no-team");
     }
 
@@ -175,10 +182,10 @@ public class IslandTeamSetownerCommandTest {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamSetownerCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringNotOwner() {
+    public void testCanExecuteUserStringListOfStringNotOwner() {
         when(im.inTeam(any(), any())).thenReturn(true);
         when(im.getOwner(any(), any())).thenReturn(UUID.randomUUID());
-        assertFalse(its.canExecute(user, "", Collections.emptyList()));
+        assertFalse(its.canExecute(user, "", List.of("gibby")));
         verify(user).sendMessage("general.errors.not-owner");
     }
 
@@ -186,7 +193,7 @@ public class IslandTeamSetownerCommandTest {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamSetownerCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringShowHelp() {
+    public void testCanExecuteUserStringListOfStringShowHelp() {
         when(im.inTeam(any(), any())).thenReturn(true);
         when(im.getOwner(any(), any())).thenReturn(uuid);
         assertFalse(its.canExecute(user, "", Collections.emptyList()));
@@ -197,7 +204,7 @@ public class IslandTeamSetownerCommandTest {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamSetownerCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringUnknownPlayer() {
+    public void testCanExecuteUserStringListOfStringUnknownPlayer() {
         when(im.inTeam(any(), any())).thenReturn(true);
         when(im.getOwner(any(), any())).thenReturn(uuid);
         when(pm.getUUID(anyString())).thenReturn(null);
@@ -209,7 +216,7 @@ public class IslandTeamSetownerCommandTest {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamSetownerCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringSamePlayer() {
+    public void testCanExecuteUserStringListOfStringSamePlayer() {
         when(im.inTeam(any(), any())).thenReturn(true);
         when(im.getOwner(any(), any())).thenReturn(uuid);
         when(pm.getUUID(anyString())).thenReturn(uuid);
@@ -221,7 +228,27 @@ public class IslandTeamSetownerCommandTest {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamSetownerCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringTargetNotInTeam() {
+    public void testCanExecuteUserStringListOfStringTargetAtMaxIslands() {
+        when(im.inTeam(any(), any())).thenReturn(true);
+        when(im.getOwner(any(), any())).thenReturn(uuid);
+        UUID target = UUID.randomUUID();
+        when(pm.getUUID(anyString())).thenReturn(target);
+        when(im.getMembers(any(), any())).thenReturn(Collections.singleton(target));
+        @Nullable
+        Island island = mock(Island.class);
+        when(im.getIsland(any(), any(User.class))).thenReturn(island);
+
+        when(im.getNumberOfConcurrentIslands(target, world)).thenReturn(3);
+
+        assertFalse(its.canExecute(user, "", Collections.singletonList("tastybento")));
+        verify(user).sendMessage("commands.island.team.setowner.errors.at-max");
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamSetownerCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     */
+    @Test
+    public void testCanExecuteUserStringListOfStringTargetNotInTeam() {
         when(im.inTeam(any(), any())).thenReturn(true);
         when(im.getOwner(any(), any())).thenReturn(uuid);
         when(pm.getUUID(anyString())).thenReturn(UUID.randomUUID());

@@ -34,21 +34,20 @@ public class IslandTeamSetownerCommand extends CompositeCommand {
 
     @Override
     public boolean canExecute(User user, String label, List<String> args) {
-        UUID playerUUID = user.getUniqueId();
+        // If args are not right, show help
+        if (args.size() != 1) {
+            showHelp(this, user);
+            return false;
+        }
         // Can use if in a team
-        boolean inTeam = getIslands().inTeam(getWorld(), playerUUID);
+        boolean inTeam = getIslands().inTeam(getWorld(), user.getUniqueId());
         if (!inTeam) {
             user.sendMessage("general.errors.no-team");
             return false;
         }
         UUID ownerUUID = getIslands().getOwner(getWorld(), user.getUniqueId());
-        if (ownerUUID == null || !ownerUUID.equals(playerUUID)) {
+        if (ownerUUID == null || !ownerUUID.equals(user.getUniqueId())) {
             user.sendMessage("general.errors.not-owner");
-            return false;
-        }
-        // If args are not right, show help
-        if (args.size() != 1) {
-            showHelp(this, user);
             return false;
         }
         targetUUID = getPlayers().getUUID(args.get(0));
@@ -56,12 +55,18 @@ public class IslandTeamSetownerCommand extends CompositeCommand {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
             return false;
         }
-        if (targetUUID.equals(playerUUID)) {
+        if (targetUUID.equals(user.getUniqueId())) {
             user.sendMessage("commands.island.team.setowner.errors.cant-transfer-to-yourself");
             return false;
         }
-        if (!getIslands().getMembers(getWorld(), playerUUID).contains(targetUUID)) {
+        if (!getIslands().getMembers(getWorld(), user.getUniqueId()).contains(targetUUID)) {
             user.sendMessage("commands.island.team.setowner.errors.target-is-not-member");
+            return false;
+        }
+        // Check how many islands target has
+        if (getIslands().getNumberOfConcurrentIslands(targetUUID, getWorld()) >= this.getIWM().getWorldSettings(getWorld()).getConcurrentIslands()) {
+            // Too many
+            user.sendMessage("commands.island.team.setowner.errors.at-max");
             return false;
         }
         return true;

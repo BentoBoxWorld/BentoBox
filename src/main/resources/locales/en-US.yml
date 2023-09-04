@@ -41,7 +41,6 @@ general:
     you-must-wait: '&c You must wait [number]s before you can do that command again.'
     must-be-positive-number: '&c [number] is not a valid positive number.'
     not-on-island: '&c You are not on island!'
-    you-cannot-make: '&c You cannot make any more islands!'
   worlds:
     overworld: Overworld
     nether: Nether
@@ -532,6 +531,7 @@ commands:
       unable-create-island: '&c Your island could not be generated, please contact
         an administrator.'
       creating-island: '&a Finding a spot for your island...'
+      you-cannot-make: '&c You cannot make any more islands!'
       pasting:
         estimated-time: '&a Estimated time: &b [number] &a seconds.'
         blocks: '&a Building it block by block: &b [number] &a blocks in all...'
@@ -729,6 +729,7 @@ commands:
             &7 (&o Well, in fact, you could... But we don''t want you to. Because
             it''s useless.&r &7 )'
           target-is-not-member: '&c That player is not part of your island team!'
+          at-max: '&c That player already has the maximum number of islands they are allowed!'
         name-is-the-owner: '&a [name] is now the island owner!'
         parameters: <player>
         you-are-the-owner: '&a You are now the island owner!'
