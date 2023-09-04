@@ -3,6 +3,8 @@ package world.bentobox.bentobox.api.commands.island.team;
 import java.util.Objects;
 import java.util.UUID;
 
+import world.bentobox.bentobox.database.objects.Island;
+
 /**
  * Represents an invite
  * @author tastybento
@@ -23,16 +25,19 @@ public class Invite {
     private final Type type;
     private final UUID inviter;
     private final UUID invitee;
+    private final Island island;
 
     /**
      * @param type - invitation type, e.g., coop, team, trust
      * @param inviter - UUID of inviter
      * @param invitee - UUID of invitee
+     * @param island - the island this invite is for
      */
-    public Invite(Type type, UUID inviter, UUID invitee) {
+    public Invite(Type type, UUID inviter, UUID invitee, Island island) {
         this.type = type;
         this.inviter = inviter;
         this.invitee = invitee;
+        this.island = island;
     }
 
     /**
@@ -54,6 +59,13 @@ public class Invite {
      */
     public UUID getInvitee() {
         return invitee;
+    }
+
+    /**
+     * @return the island
+     */
+    public Island getIsland() {
+        return island;
     }
 
     /* (non-Javadoc)

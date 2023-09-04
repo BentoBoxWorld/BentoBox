@@ -97,7 +97,7 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
         // Remove the invite
         itc.removeInvite(playerUUID);
         User inviter = User.getInstance(invite.getInviter());
-        Island island = getIslands().getIsland(getWorld(), inviter);
+        Island island = invite.getIsland();
         if (island != null) {
             if (island.getMemberSet(RanksManager.TRUSTED_RANK, false).size() > getIslands().getMaxMembers(island, RanksManager.TRUSTED_RANK)) {
                 user.sendMessage("commands.island.team.trust.is-full");
@@ -124,7 +124,7 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
         // Remove the invite
         itc.removeInvite(playerUUID);
         User inviter = User.getInstance(invite.getInviter());
-        Island island = getIslands().getIsland(getWorld(), inviter);
+        Island island = invite.getIsland();
         if (island != null) {
             if (island.getMemberSet(RanksManager.COOP_RANK, false).size() > getIslands().getMaxMembers(island, RanksManager.COOP_RANK)) {
                 user.sendMessage("commands.island.team.coop.is-full");
@@ -153,7 +153,7 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
         // Get the player's island - may be null if the player has no island
         Set<Island> islands = getIslands().getIslands(getWorld(), playerUUID);
         // Get the team's island
-        Island teamIsland = getIslands().getIsland(getWorld(), prospectiveOwnerUUID);
+        Island teamIsland = invite.getIsland();
         if (teamIsland == null) {
             user.sendMessage(INVALID_INVITE);
             return;
@@ -193,7 +193,7 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
         getIslands().save(teamIsland);
         // Fire event
         TeamEvent.builder()
-        .island(getIslands().getIsland(getWorld(), prospectiveOwnerUUID))
+        .island(teamIsland)
         .reason(TeamEvent.Reason.JOINED)
         .involvedPlayer(playerUUID)
         .build();

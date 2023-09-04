@@ -299,7 +299,7 @@ public class IslandTeamInviteCommandTest {
         assertTrue(itl.execute(user, itl.getLabel(), List.of("target")));
         verify(pim).callEvent(any(IslandBaseEvent.class));
         verify(user, never()).sendMessage(eq("commands.island.team.invite.removing-invite"));
-        verify(ic).addInvite(eq(Invite.Type.TEAM), eq(uuid), eq(notUUID));
+        verify(ic).addInvite(Invite.Type.TEAM, uuid, notUUID, null);
         verify(user).sendMessage("commands.island.team.invite.invitation-sent", TextVariables.NAME, "target", TextVariables.DISPLAY_NAME, "&Ctarget");
         verify(target).sendMessage("commands.island.team.invite.name-has-invited-you", TextVariables.NAME, "tastybento", TextVariables.DISPLAY_NAME, "&Ctastbento");
         verify(target).sendMessage("commands.island.team.invite.to-accept-or-reject", TextVariables.LABEL, "island");
@@ -316,7 +316,7 @@ public class IslandTeamInviteCommandTest {
         assertTrue(itl.execute(user, itl.getLabel(), List.of("target")));
         verify(pim).callEvent(any(IslandBaseEvent.class));
         verify(user, never()).sendMessage("commands.island.team.invite.removing-invite");
-        verify(ic).addInvite(Invite.Type.TEAM, uuid, notUUID);
+        verify(ic).addInvite(Invite.Type.TEAM, uuid, notUUID, null);
         verify(user).sendMessage("commands.island.team.invite.invitation-sent", TextVariables.NAME, "target", TextVariables.DISPLAY_NAME, "&Ctarget");
         verify(target).sendMessage("commands.island.team.invite.name-has-invited-you", TextVariables.NAME, "tastybento", TextVariables.DISPLAY_NAME, "&Ctastbento");
         verify(target).sendMessage("commands.island.team.invite.to-accept-or-reject", TextVariables.LABEL, "island");

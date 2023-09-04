@@ -95,7 +95,7 @@ public class IslandTeamTrustCommand extends CompositeCommand {
             if (getPlugin().getSettings().isInviteConfirmation()) {
                 // Put the invited player (key) onto the list with inviter (value)
                 // If someone else has invited a player, then this invite will overwrite the previous invite!
-                itc.addInvite(Type.TRUST, user.getUniqueId(), target.getUniqueId());
+                itc.addInvite(Type.TRUST, user.getUniqueId(), target.getUniqueId(), island);
                 user.sendMessage("commands.island.team.invite.invitation-sent", TextVariables.NAME, target.getName(), TextVariables.DISPLAY_NAME, target.getDisplayName());
                 // Send message to online player
                 target.sendMessage("commands.island.team.trust.name-has-invited-you", TextVariables.NAME, user.getName(), TextVariables.DISPLAY_NAME, user.getDisplayName());

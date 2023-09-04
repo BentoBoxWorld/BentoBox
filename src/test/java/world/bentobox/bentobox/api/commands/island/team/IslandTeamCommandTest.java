@@ -190,7 +190,7 @@ public class IslandTeamCommandTest {
      */
     @Test
     public void testAddInvite() {
-        tc.addInvite(Invite.Type.TEAM, uuid, invitee);
+        tc.addInvite(Invite.Type.TEAM, uuid, invitee, island);
         assertTrue(tc.isInvited(invitee));
     }
 
@@ -207,7 +207,7 @@ public class IslandTeamCommandTest {
      */
     @Test
     public void testGetInviter() {
-        tc.addInvite(Invite.Type.TEAM, uuid, invitee);
+        tc.addInvite(Invite.Type.TEAM, uuid, invitee, island);
         assertEquals(uuid, tc.getInviter(invitee));
     }
 
@@ -225,7 +225,7 @@ public class IslandTeamCommandTest {
     @Test
     public void testGetInvite() {
         assertNull(tc.getInvite(invitee));
-        tc.addInvite(Invite.Type.TEAM, uuid, invitee);
+        tc.addInvite(Invite.Type.TEAM, uuid, invitee, island);
         @Nullable
         Invite invite = tc.getInvite(invitee);
         assertEquals(invitee, invite.getInvitee());
@@ -239,7 +239,7 @@ public class IslandTeamCommandTest {
     @Test
     public void testRemoveInvite() {
         assertNull(tc.getInvite(invitee));
-        tc.addInvite(Invite.Type.TEAM, uuid, invitee);
+        tc.addInvite(Invite.Type.TEAM, uuid, invitee, island);
         tc.removeInvite(invitee);
         assertNull(tc.getInvite(invitee));
     }

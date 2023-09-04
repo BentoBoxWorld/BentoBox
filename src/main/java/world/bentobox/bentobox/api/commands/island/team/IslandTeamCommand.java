@@ -58,24 +58,20 @@ public class IslandTeamCommand extends CompositeCommand {
     @Override
     public boolean execute(User user, String label, List<String> args) {
         // Player issuing the command must have an island
-        UUID ownerUUID = getIslands().getOwner(getWorld(), user.getUniqueId());
-        if (ownerUUID == null) {
+        Island island = getIslands().getPrimaryIsland(getWorld(), user.getUniqueId());
+        if (island == null) {
             user.sendMessage("general.errors.no-island");
             return false;
         }
 
         UUID playerUUID = user.getUniqueId();
         // Fire event so add-ons can run commands, etc.
-        if (fireEvent(user)) {
+        if (fireEvent(user, island)) {
             // Cancelled
             return false;
         }
-        Island island = getIslands().getIsland(getWorld(), playerUUID);
-        if (island == null) {
-            return false;
-        }
         Set<UUID> teamMembers = getMembers(getWorld(), user);
-        if (ownerUUID.equals(playerUUID)) {
+        if (playerUUID.equals(island.getOwner())) {
             int maxSize = getIslands().getMaxMembers(island, RanksManager.MEMBER_RANK);
             if (teamMembers.size() < maxSize) {
                 user.sendMessage("commands.island.team.invite.you-can-invite", TextVariables.NUMBER, String.valueOf(maxSize - teamMembers.size()));
@@ -169,10 +165,9 @@ public class IslandTeamCommand extends CompositeCommand {
 
     }
 
-    private boolean fireEvent(User user) {
+    private boolean fireEvent(User user, Island island) {
         IslandBaseEvent e = TeamEvent.builder()
-                .island(getIslands()
-                        .getIsland(getWorld(), user.getUniqueId()))
+                .island(island)
                 .reason(TeamEvent.Reason.INFO)
                 .involvedPlayer(user.getUniqueId())
                 .build();
@@ -187,8 +182,8 @@ public class IslandTeamCommand extends CompositeCommand {
      * @param invitee - uuid of invitee
      * @since 1.8.0
      */
-    public void addInvite(Invite.Type type, @NonNull UUID inviter, @NonNull UUID invitee) {
-        inviteMap.put(invitee, new Invite(type, inviter, invitee));
+    public void addInvite(Invite.Type type, @NonNull UUID inviter, @NonNull UUID invitee, @NonNull Island island) {
+        inviteMap.put(invitee, new Invite(type, inviter, invitee, island));
     }
 
     /**
