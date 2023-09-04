@@ -1,7 +1,9 @@
 package world.bentobox.bentobox.api.commands.island;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -63,19 +65,21 @@ public class IslandDeletehomeCommand extends ConfirmableCommand {
             return false;
         }
 
-        // Check if the name is known
-        if (!getIslands().isHomeLocation(island, String.join(" ", args))) {
-            user.sendMessage("commands.island.go.unknown-home");
-            user.sendMessage("commands.island.sethome.homes-are");
-            island.getHomes().keySet().stream().filter(s -> !s.isEmpty()).forEach(s -> user.sendMessage("commands.island.sethome.home-list-syntax", TextVariables.NAME, s));
-            return false;
-        }
         return true;
     }
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        this.askConfirmation(user, () -> delete(island, user, String.join(" ", args)));
+        // Check if the name is known
+        Map<String, Island> map = getNameIslandMap(user);
+        String name = String.join(" ", args);
+        if (!map.containsKey(name)) {
+            user.sendMessage("commands.island.go.unknown-home");
+            user.sendMessage("commands.island.sethome.homes-are");
+            map.keySet().stream().filter(s -> !s.isEmpty()).forEach(s -> user.sendMessage("commands.island.sethome.home-list-syntax", TextVariables.NAME, s));
+            return false;
+        }
+        this.askConfirmation(user, () -> delete(map.get(name), user, name));
         return true;
     }
 
@@ -88,11 +92,19 @@ public class IslandDeletehomeCommand extends ConfirmableCommand {
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
         String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
-        Island is = getIslands().getIsland(getWorld(), user.getUniqueId());
-        if (is != null) {
-            return Optional.of(Util.tabLimit(new ArrayList<>(is.getHomes().keySet()), lastArg));
-        } else {
-            return Optional.empty();
-        }
+
+        return Optional.of(Util.tabLimit(new ArrayList<>(getNameIslandMap(user).keySet()), lastArg));
+
     }
+
+    private Map<String, Island> getNameIslandMap(User user) {
+        Map<String, Island> islandMap = new HashMap<>();
+        for (Island island : getIslands().getIslands(getWorld(), user.getUniqueId())) {
+            // Add homes.
+            island.getHomes().keySet().forEach(name -> islandMap.put(name, island));
+        }
+        return islandMap;
+
+    }
+
 }
