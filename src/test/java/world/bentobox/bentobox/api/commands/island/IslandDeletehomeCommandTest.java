@@ -214,7 +214,7 @@ public class IslandDeletehomeCommandTest {
         assertFalse(idh.canExecute(user, "label", List.of("something")));
         verify(user).sendMessage("commands.island.go.unknown-home");
         verify(user).sendMessage("commands.island.sethome.homes-are");
-        verify(user).sendMessage("home-list-syntax", TextVariables.NAME, "home");
+        verify(user).sendMessage("commands.island.sethome.home-list-syntax", TextVariables.NAME, "home");
 
     }
 
