@@ -7,8 +7,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
-import org.eclipse.jdt.annotation.Nullable;
-
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
@@ -23,8 +21,6 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 public class IslandDeletehomeCommand extends ConfirmableCommand {
-
-    private @Nullable Island island;
 
     /**
      * Deletes a home
@@ -50,7 +46,7 @@ public class IslandDeletehomeCommand extends ConfirmableCommand {
             this.showHelp(this, user);
             return false;
         }
-        island = getIslands().getIsland(getWorld(), user);
+        Island island = getIslands().getIsland(getWorld(), user);
         // Check island
         if (island == null) {
             user.sendMessage("general.errors.no-island");
@@ -99,9 +95,9 @@ public class IslandDeletehomeCommand extends ConfirmableCommand {
 
     private Map<String, Island> getNameIslandMap(User user) {
         Map<String, Island> islandMap = new HashMap<>();
-        for (Island island : getIslands().getIslands(getWorld(), user.getUniqueId())) {
+        for (Island isle : getIslands().getIslands(getWorld(), user.getUniqueId())) {
             // Add homes.
-            island.getHomes().keySet().forEach(name -> islandMap.put(name, island));
+            isle.getHomes().keySet().forEach(name -> islandMap.put(name, isle));
         }
         return islandMap;
 

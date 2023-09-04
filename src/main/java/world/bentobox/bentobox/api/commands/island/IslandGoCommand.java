@@ -77,13 +77,11 @@ public class IslandGoCommand extends DelayedTeleportCommand {
                 IslandInfo info = names.get(name);
                 getIslands().setPrimaryIsland(user.getUniqueId(), info.island);
                 if (info.islandName) {
-                    this.delayCommand(user, () -> {
-                        new SafeSpotTeleport.Builder(getPlugin())
-                        .entity(user.getPlayer())
-                        .location(getIslands().getHomeLocation(info.island))
-                        .thenRun(() -> user.sendMessage("general.success"))
-                        .build();
-                    });
+                    this.delayCommand(user, () -> new SafeSpotTeleport.Builder(getPlugin())
+                            .entity(user.getPlayer())
+                            .location(getIslands().getHomeLocation(info.island))
+                            .thenRun(() -> user.sendMessage("general.success"))
+                            .build());
                 } else {
                     this.delayCommand(user, () -> new SafeSpotTeleport.Builder(getPlugin())
                             .entity(user.getPlayer())
@@ -118,7 +116,7 @@ public class IslandGoCommand extends DelayedTeleportCommand {
 
     }
 
-    private record IslandInfo(Island island, boolean islandName) {};
+    private record IslandInfo(Island island, boolean islandName) {}
 
     private Map<String, IslandInfo> getNameIslandMap(User user) {
         Map<String, IslandInfo> islandMap = new HashMap<>();
