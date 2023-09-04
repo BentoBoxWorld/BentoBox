@@ -42,7 +42,7 @@ public class IslandCreateCommand extends CompositeCommand {
     public boolean canExecute(User user, String label, List<String> args) {
         // Check if the island is reserved
         @Nullable
-        Island island = getIslands().getIsland(getWorld(), user);
+        Island island = getIslands().getPrimaryIsland(getWorld(), user.getUniqueId());
         if (island != null) {
             // Reserved islands can be made
             if (island.isReserved()) {
@@ -50,11 +50,12 @@ public class IslandCreateCommand extends CompositeCommand {
             }
             // Get how many islands this player has
             int num = this.getIslands().getNumberOfConcurrentIslands(user.getUniqueId(), getWorld());
-            if (num < this.getIWM().getWorldSettings(getWorld()).getConcurrentIslands()) {
+            int max = this.getIWM().getWorldSettings(getWorld()).getConcurrentIslands();
+            if (num < max) {
                 return true;
             }
             // You cannot make an island
-            user.sendMessage("general.errors.already-have-island");
+            user.sendMessage("general.errors.you-cannot-make");
             return false;
         }
         if (getIWM().getMaxIslands(getWorld()) > 0

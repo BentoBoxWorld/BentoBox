@@ -82,6 +82,8 @@ public class IslandCreateCommandTest {
     private World world;
     @Mock
     private @NonNull WorldSettings ws;
+    @Mock
+    private Island island;
 
     /**
      */
@@ -130,7 +132,7 @@ public class IslandCreateCommandTest {
         when(im.isOwner(any(), eq(uuid))).thenReturn(false);
         // Has team
         when(im.inTeam(any(), eq(uuid))).thenReturn(true);
-
+        when(im.getPrimaryIsland(world, uuid)).thenReturn(island);
         when(plugin.getIslands()).thenReturn(im);
 
 
@@ -203,11 +205,8 @@ public class IslandCreateCommandTest {
         // Currently user has two islands
         when(im.getNumberOfConcurrentIslands(user.getUniqueId(), world)).thenReturn(2);
         // Player has an island
-        @Nullable
-        Island island = mock(Island.class);
-        when(im.getIsland(any(), any(User.class))).thenReturn(island);
         assertFalse(cc.canExecute(user, "", Collections.emptyList()));
-        verify(user).sendMessage(eq("general.errors.already-have-island"));
+        verify(user).sendMessage(eq("general.errors.you-cannot-make"));
     }
 
     /**
@@ -229,7 +228,7 @@ public class IslandCreateCommandTest {
      */
     @Test
     public void testCanExecuteUserStringListOfStringTooManyIslands() {
-        when(im.hasIsland(any(), Mockito.any(UUID.class))).thenReturn(false);
+        when(im.getPrimaryIsland(any(), Mockito.any(UUID.class))).thenReturn(null);
         when(im.inTeam(any(), Mockito.any(UUID.class))).thenReturn(false);
         when(iwm.getMaxIslands(any())).thenReturn(100);
         when(im.getIslandCount(any())).thenReturn(100L);
