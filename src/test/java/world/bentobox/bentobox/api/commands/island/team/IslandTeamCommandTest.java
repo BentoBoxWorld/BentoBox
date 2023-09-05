@@ -103,6 +103,7 @@ public class IslandTeamCommandTest {
         when(plugin.getIslands()).thenReturn(im);
         // is owner of island
         when(im.getOwner(any(), any())).thenReturn(uuid);
+        when(im.getPrimaryIsland(world, uuid)).thenReturn(island);
         // Max members
         when(im.getMaxMembers(eq(island), eq(RanksManager.MEMBER_RANK))).thenReturn(3);
         // No team members
@@ -160,7 +161,7 @@ public class IslandTeamCommandTest {
      */
     @Test
     public void testExecuteUserStringListOfStringNoIsland() {
-        when(im.getOwner(any(), any())).thenReturn(null);
+        when(im.getPrimaryIsland(world, uuid)).thenReturn(null);
         assertFalse(tc.execute(user, "team", Collections.emptyList()));
         verify(user).sendMessage(eq("general.errors.no-island"));
     }
