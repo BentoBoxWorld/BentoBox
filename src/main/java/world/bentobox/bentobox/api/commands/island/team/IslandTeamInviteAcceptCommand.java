@@ -24,7 +24,6 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
     private static final String INVALID_INVITE = "commands.island.team.invite.errors.invalid-invite";
     private final IslandTeamCommand itc;
     private UUID playerUUID;
-    private UUID prospectiveOwnerUUID;
 
     public IslandTeamInviteAcceptCommand(IslandTeamCommand islandTeamCommand) {
         super(islandTeamCommand, "accept");
@@ -47,7 +46,7 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
             return false;
         }
         // Get the island owner
-        prospectiveOwnerUUID = itc.getInviter(playerUUID);
+        UUID prospectiveOwnerUUID = itc.getInviter(playerUUID);
         if (prospectiveOwnerUUID == null) {
             user.sendMessage(INVALID_INVITE);
             return false;

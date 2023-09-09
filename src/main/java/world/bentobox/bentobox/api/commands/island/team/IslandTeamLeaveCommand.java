@@ -67,6 +67,10 @@ public class IslandTeamLeaveCommand extends ConfirmableCommand {
 
     private void leave(User user) {
         Island island = getIslands().getIsland(getWorld(), user);
+        if (island == null) {
+            user.sendMessage("general.errors.no-island");
+            return;
+        }
         // Fire event
         IslandBaseEvent event = TeamEvent.builder()
                 .island(island)

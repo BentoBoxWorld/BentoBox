@@ -167,6 +167,10 @@ public class IslandTeamInviteCommand extends CompositeCommand {
             user.sendMessage("commands.island.team.invite.removing-invite");
         }
         Island island = getIslands().getIsland(getWorld(), user.getUniqueId());
+        if (island == null) {
+            user.sendMessage("general.errors.no-island");
+            return false;
+        }
         // Fire event so add-ons can run commands, etc.
         IslandBaseEvent e = TeamEvent.builder()
                 .island(island)
