@@ -17,9 +17,11 @@ import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitScheduler;
+import org.eclipse.jdt.annotation.NonNull;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -76,6 +78,8 @@ public class IslandTeamInviteCommandTest {
     private UUID notUUID;
     @Mock
     private Player p;
+    @Mock
+    private @NonNull World world;
 
 
     /**
@@ -106,7 +110,7 @@ public class IslandTeamInviteCommandTest {
         when(user.isOnline()).thenReturn(true);
         // Permission to invite 3 more players
         when(user.getPermissionValue(anyString(), anyInt())).thenReturn(3);
-        when(User.getInstance(eq(uuid))).thenReturn(user);
+        when(User.getInstance(uuid)).thenReturn(user);
         when(user.getTranslation(any())).thenAnswer(invocation -> invocation.getArgument(0, String.class));
         // Vanished players
         when(p.canSee(any())).thenReturn(true);
@@ -119,11 +123,12 @@ public class IslandTeamInviteCommandTest {
         when(target.isOnline()).thenReturn(true);
         when(target.getName()).thenReturn("target");
         when(target.getDisplayName()).thenReturn("&Ctarget");
-        when(User.getInstance(eq(notUUID))).thenReturn(target);
+        when(User.getInstance(notUUID)).thenReturn(target);
 
 
         // Parent command has no aliases
         when(ic.getSubCommandAliases()).thenReturn(new HashMap<>());
+        when(ic.getWorld()).thenReturn(world);
 
         // Island
         islandUUID = UUID.randomUUID();
@@ -144,8 +149,8 @@ public class IslandTeamInviteCommandTest {
 
         // Player Manager
         when(plugin.getPlayers()).thenReturn(pm);
-        when(pm.getUUID(eq("tastybento"))).thenReturn(uuid);
-        when(pm.getUUID(eq("target"))).thenReturn(notUUID);
+        when(pm.getUUID("tastybento")).thenReturn(uuid);
+        when(pm.getUUID("target")).thenReturn(notUUID);
 
         // Server & Scheduler
         BukkitScheduler sch = mock(BukkitScheduler.class);
@@ -227,7 +232,7 @@ public class IslandTeamInviteCommandTest {
     public void testCanExecuteNoTarget() {
         assertFalse(itl.canExecute(user, itl.getLabel(), Collections.emptyList()));
         // Show help
-        verify(user).sendMessage(eq("commands.help.header"),eq(TextVariables.LABEL),eq("commands.help.console"));
+        verify(user).sendMessage("commands.help.header", TextVariables.LABEL, "BSkyBlock");
     }
 
     /**
@@ -294,12 +299,13 @@ public class IslandTeamInviteCommandTest {
      */
     @Test
     public void testExecuteSuccessTargetHasIsland() {
-        when(im.hasIsland(any(), eq(notUUID))).thenReturn(true);
+        when(im.getIsland(world, uuid)).thenReturn(island);
+        when(im.hasIsland(world, notUUID)).thenReturn(true);
         testCanExecuteSuccess();
         assertTrue(itl.execute(user, itl.getLabel(), List.of("target")));
         verify(pim).callEvent(any(IslandBaseEvent.class));
         verify(user, never()).sendMessage(eq("commands.island.team.invite.removing-invite"));
-        verify(ic).addInvite(Invite.Type.TEAM, uuid, notUUID, null);
+        verify(ic).addInvite(Invite.Type.TEAM, uuid, notUUID, island);
         verify(user).sendMessage("commands.island.team.invite.invitation-sent", TextVariables.NAME, "target", TextVariables.DISPLAY_NAME, "&Ctarget");
         verify(target).sendMessage("commands.island.team.invite.name-has-invited-you", TextVariables.NAME, "tastybento", TextVariables.DISPLAY_NAME, "&Ctastbento");
         verify(target).sendMessage("commands.island.team.invite.to-accept-or-reject", TextVariables.LABEL, "island");
@@ -313,10 +319,11 @@ public class IslandTeamInviteCommandTest {
     @Test
     public void testExecuteSuccessTargetHasNoIsland() {
         testCanExecuteSuccess();
+        when(im.getIsland(world, uuid)).thenReturn(island);
         assertTrue(itl.execute(user, itl.getLabel(), List.of("target")));
         verify(pim).callEvent(any(IslandBaseEvent.class));
         verify(user, never()).sendMessage("commands.island.team.invite.removing-invite");
-        verify(ic).addInvite(Invite.Type.TEAM, uuid, notUUID, null);
+        verify(ic).addInvite(Invite.Type.TEAM, uuid, notUUID, island);
         verify(user).sendMessage("commands.island.team.invite.invitation-sent", TextVariables.NAME, "target", TextVariables.DISPLAY_NAME, "&Ctarget");
         verify(target).sendMessage("commands.island.team.invite.name-has-invited-you", TextVariables.NAME, "tastybento", TextVariables.DISPLAY_NAME, "&Ctastbento");
         verify(target).sendMessage("commands.island.team.invite.to-accept-or-reject", TextVariables.LABEL, "island");
@@ -330,7 +337,7 @@ public class IslandTeamInviteCommandTest {
     @Test
     public void testExecuteTargetAlreadyInvited() {
         testCanExecuteSuccess();
-
+        when(im.getIsland(world, uuid)).thenReturn(island);
         when(ic.isInvited(notUUID)).thenReturn(true);
         // Set up invite
         when(ic.getInviter(notUUID)).thenReturn(uuid);
