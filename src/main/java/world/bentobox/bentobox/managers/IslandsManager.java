@@ -1610,9 +1610,7 @@ public class IslandsManager {
      * @param uuid - target player's UUID, or <tt>null</tt> = unowned islands
      * @return list of islands; may be empty
      * @since 1.3.0
-     * @deprecated This should no long be needed.
      */
-    @Deprecated
     @NonNull
     public List<Island> getQuarantinedIslandByUser(@NonNull World world, @Nullable UUID uuid) {
         return quarantineCache.getOrDefault(uuid, Collections.emptyList()).stream()
@@ -1625,9 +1623,7 @@ public class IslandsManager {
      * @param world - world
      * @param uuid - target player's UUID, or <tt>null</tt> = unowned islands
      * @since 1.3.0
-     * @deprecated This should no long be needed.
      */
-    @Deprecated
     public void deleteQuarantinedIslandByUser(World world, @Nullable UUID uuid) {
         if (quarantineCache.containsKey(uuid)) {
             quarantineCache.get(uuid).stream().filter(i -> i.getWorld().equals(world))
@@ -1639,9 +1635,7 @@ public class IslandsManager {
     /**
      * @return the quarantineCache
      * @since 1.3.0
-     * @deprecated This should no long be needed.
      */
-    @Deprecated
     @NonNull
     public Map<UUID, List<Island>> getQuarantineCache() {
         return quarantineCache;
@@ -1653,9 +1647,7 @@ public class IslandsManager {
      * @param island island
      * @return {@code true} if island is quarantined and removed
      * @since 1.3.0
-     * @deprecated This should no long be needed.
      */
-    @Deprecated
     public boolean purgeQuarantinedIsland(Island island) {
         if (quarantineCache.containsKey(island.getOwner()) && quarantineCache.get(island.getOwner()).remove(island)) {
             handler.deleteObject(island);
@@ -1671,9 +1663,7 @@ public class IslandsManager {
      * @param island - island in trash
      * @return <tt>true</tt> if successful, otherwise <tt>false</tt>
      * @since 1.3.0
-     * @deprecated This should no long be needed.
      */
-    @Deprecated
     public boolean switchIsland(World world, UUID target, Island island) {
         // Remove trashed island from trash
         if (!quarantineCache.containsKey(island.getOwner()) || !quarantineCache.get(island.getOwner()).remove(island)) {
