@@ -206,7 +206,7 @@ public class IslandCreateCommandTest {
         when(im.getNumberOfConcurrentIslands(user.getUniqueId(), world)).thenReturn(2);
         // Player has an island
         assertFalse(cc.canExecute(user, "", Collections.emptyList()));
-        verify(user).sendMessage(eq("general.errors.you-cannot-make"));
+        verify(user).sendMessage("general.errors.you-cannot-make");
     }
 
     /**
@@ -219,7 +219,7 @@ public class IslandCreateCommandTest {
         when(im.getIsland(any(), Mockito.any(User.class))).thenReturn(island);
         when(island.isReserved()).thenReturn(true);
         assertTrue(cc.canExecute(user, "", Collections.emptyList()));
-        verify(user, never()).sendMessage(eq("general.errors.already-have-island"));
+        verify(user, never()).sendMessage("general.errors.already-have-island");
 
     }
 
@@ -233,7 +233,7 @@ public class IslandCreateCommandTest {
         when(iwm.getMaxIslands(any())).thenReturn(100);
         when(im.getIslandCount(any())).thenReturn(100L);
         assertFalse(cc.canExecute(user, "", Collections.emptyList()));
-        verify(user).sendMessage(eq("commands.island.create.too-many-islands"));
+        verify(user).sendMessage("commands.island.create.too-many-islands");
 
     }
 
