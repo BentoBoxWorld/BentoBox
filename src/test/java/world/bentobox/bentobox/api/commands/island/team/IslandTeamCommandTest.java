@@ -103,6 +103,7 @@ public class IslandTeamCommandTest {
         when(plugin.getIslands()).thenReturn(im);
         // is owner of island
         when(im.getOwner(any(), any())).thenReturn(uuid);
+        when(im.getPrimaryIsland(world, uuid)).thenReturn(island);
         // Max members
         when(im.getMaxMembers(eq(island), eq(RanksManager.MEMBER_RANK))).thenReturn(3);
         // No team members
@@ -160,7 +161,7 @@ public class IslandTeamCommandTest {
      */
     @Test
     public void testExecuteUserStringListOfStringNoIsland() {
-        when(im.getOwner(any(), any())).thenReturn(null);
+        when(im.getPrimaryIsland(world, uuid)).thenReturn(null);
         assertFalse(tc.execute(user, "team", Collections.emptyList()));
         verify(user).sendMessage(eq("general.errors.no-island"));
     }
@@ -190,7 +191,7 @@ public class IslandTeamCommandTest {
      */
     @Test
     public void testAddInvite() {
-        tc.addInvite(Invite.Type.TEAM, uuid, invitee);
+        tc.addInvite(Invite.Type.TEAM, uuid, invitee, island);
         assertTrue(tc.isInvited(invitee));
     }
 
@@ -207,7 +208,7 @@ public class IslandTeamCommandTest {
      */
     @Test
     public void testGetInviter() {
-        tc.addInvite(Invite.Type.TEAM, uuid, invitee);
+        tc.addInvite(Invite.Type.TEAM, uuid, invitee, island);
         assertEquals(uuid, tc.getInviter(invitee));
     }
 
@@ -225,7 +226,7 @@ public class IslandTeamCommandTest {
     @Test
     public void testGetInvite() {
         assertNull(tc.getInvite(invitee));
-        tc.addInvite(Invite.Type.TEAM, uuid, invitee);
+        tc.addInvite(Invite.Type.TEAM, uuid, invitee, island);
         @Nullable
         Invite invite = tc.getInvite(invitee);
         assertEquals(invitee, invite.getInvitee());
@@ -239,7 +240,7 @@ public class IslandTeamCommandTest {
     @Test
     public void testRemoveInvite() {
         assertNull(tc.getInvite(invitee));
-        tc.addInvite(Invite.Type.TEAM, uuid, invitee);
+        tc.addInvite(Invite.Type.TEAM, uuid, invitee, island);
         tc.removeInvite(invitee);
         assertNull(tc.getInvite(invitee));
     }

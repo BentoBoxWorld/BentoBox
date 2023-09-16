@@ -14,12 +14,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.eclipse.jdt.annotation.NonNull;
 import org.jetbrains.annotations.NotNull;
 import org.junit.After;
 import org.junit.Before;
@@ -67,6 +69,10 @@ public class IslandDeletehomeCommandTest {
     private IslandDeletehomeCommand idh;
     @Mock
     private IslandWorldManager iwm;
+    @Mock
+    private @NonNull World world;
+    @Mock
+    private Location location;
 
     /**
      * @throws java.lang.Exception
@@ -100,6 +106,7 @@ public class IslandDeletehomeCommandTest {
         when(ic.getUsage()).thenReturn("");
         when(ic.getSubCommand(Mockito.anyString())).thenReturn(Optional.empty());
         when(ic.getAddon()).thenReturn(addon);
+        when(ic.getWorld()).thenReturn(world);
         when(plugin.getIslands()).thenReturn(im);
         // Player
         Player player = mock(Player.class);
@@ -108,13 +115,14 @@ public class IslandDeletehomeCommandTest {
         when(user.getUniqueId()).thenReturn(uuid);
         when(user.getPlayer()).thenReturn(player);
         when(user.getName()).thenReturn("tastybento");
-        when(user.getWorld()).thenReturn(mock(World.class));
+        when(user.getWorld()).thenReturn(world);
         when(user.getTranslation(anyString())).thenAnswer(i -> i.getArgument(0, String.class));
         // Island
         when(island.getOwner()).thenReturn(uuid);
         when(island.onIsland(any())).thenReturn(true);
-        when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
-        when(im.getIsland(any(), any(User.class))).thenReturn(island);
+        when(im.getIsland(world, uuid)).thenReturn(island);
+        when(im.getIsland(world, user)).thenReturn(island);
+        when(im.getIslands(world, uuid)).thenReturn(Set.of(island));
         @NotNull
         Map<String, Location> homeMap = new HashMap<>();
         homeMap.put("Home", null);
@@ -175,7 +183,7 @@ public class IslandDeletehomeCommandTest {
     @Test
     public void testCanExecuteHelp() {
         idh.canExecute(user, "label", List.of());
-        verify(user).sendMessage("commands.help.header","[label]","commands.help.console");
+        verify(user).sendMessage("commands.help.header","[label]","BSkyBlock");
     }
 
     /**
@@ -201,17 +209,15 @@ public class IslandDeletehomeCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandDeletehomeCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandDeletehomeCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteUnknownHome() {
-        when(island.getRank(user)).thenReturn(RanksManager.OWNER_RANK);
-        when(island.getRankCommand(anyString())).thenReturn(RanksManager.COOP_RANK);
-        when(island.getHomes()).thenReturn(Map.of("home", mock(Location.class)));
+    public void testExecuteUnknownHome() {
+        when(island.getHomes()).thenReturn(Map.of("home", location));
 
         when(im.isHomeLocation(eq(island), anyString())).thenReturn(false);
 
-        assertFalse(idh.canExecute(user, "label", List.of("something")));
+        assertFalse(idh.execute(user, "label", List.of("something")));
         verify(user).sendMessage("commands.island.go.unknown-home");
         verify(user).sendMessage("commands.island.sethome.homes-are");
         verify(user).sendMessage("commands.island.sethome.home-list-syntax", TextVariables.NAME, "home");
@@ -219,23 +225,12 @@ public class IslandDeletehomeCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandDeletehomeCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
-     */
-    @Test
-    public void testCanExecuteKnownHome() {
-        when(island.getRank(user)).thenReturn(RanksManager.OWNER_RANK);
-        when(island.getRankCommand(anyString())).thenReturn(RanksManager.COOP_RANK);
-        when(island.getHomes()).thenReturn(Map.of("home", mock(Location.class)));
-
-        when(im.isHomeLocation(eq(island), anyString())).thenReturn(true);
-
-        assertTrue(idh.canExecute(user, "label", List.of("home")));
-    }
-    /**
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandDeletehomeCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testExecuteUserStringListOfString() {
+        when(island.getHomes()).thenReturn(Map.of("home", location));
+        when(im.isHomeLocation(eq(island), anyString())).thenReturn(true);
         assertTrue(idh.execute(user, "label", List.of("home")));
         verify(user).sendMessage("commands.confirmation.confirm", "[seconds]", "10");
     }
@@ -245,7 +240,7 @@ public class IslandDeletehomeCommandTest {
      */
     @Test
     public void testTabCompleteUserStringListOfString() {
-        when(island.getHomes()).thenReturn(Map.of("home", mock(Location.class)));
+        when(island.getHomes()).thenReturn(Map.of("home", location));
         Optional<List<String>> list = idh.tabComplete(user, "label", List.of("hom"));
         assertTrue(list.isPresent());
         assertEquals("home", list.get().get(0));
@@ -256,7 +251,7 @@ public class IslandDeletehomeCommandTest {
      */
     @Test
     public void testTabCompleteUserStringListOfStringNothing() {
-        when(island.getHomes()).thenReturn(Map.of("home", mock(Location.class)));
+        when(island.getHomes()).thenReturn(Map.of("home", location));
         Optional<List<String>> list = idh.tabComplete(user, "label", List.of("f"));
         assertTrue(list.isPresent());
         assertTrue(list.get().isEmpty());

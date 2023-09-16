@@ -9,7 +9,6 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Queue;
@@ -80,7 +79,9 @@ public class IslandsManager {
      */
     private final Map<World, Location> last;
 
-    // Island Cache
+    /**
+     * Island Cache
+     */
     @NonNull
     private IslandCache islandCache;
     // Quarantined islands
@@ -119,80 +120,6 @@ public class IslandsManager {
      */
     public void setHandler(@NonNull Database<Island> handler) {
         this.handler = handler;
-    }
-
-    /**
-     * This is a generic scan that can work in the overworld or the nether
-     * @param l - location around which to scan
-     * @param i - the range to scan for a location less than 0 means the full island.
-     * @return - safe location, or null if none can be found
-     */
-    @Nullable
-    public Location bigScan(@NonNull Location l, int i) {
-        final int height;
-        final int depth;
-        if (i > 0) {
-            height = i;
-            depth = i;
-        } else {
-            Optional<Island> island = getIslandAt(l);
-            if (island.isEmpty()) {
-                return null;
-            }
-            i = island.get().getProtectionRange();
-            height = l.getWorld().getMaxHeight() - l.getBlockY();
-            depth = l.getBlockY();
-        }
-
-        // Work outwards from l until the closest safe location is found.
-        int minXradius = 0;
-        int maxXradius = 0;
-        int minZradius = 0;
-        int maxZradius = 0;
-        int minYradius = 0;
-        int maxYradius = 0;
-
-        do {
-            int minX = l.getBlockX()-minXradius;
-            int minZ = l.getBlockZ()-minZradius;
-            int minY = l.getBlockY()-minYradius;
-            int maxX = l.getBlockX()+maxXradius;
-            int maxZ = l.getBlockZ()+maxZradius;
-            int maxY = l.getBlockY()+maxYradius;
-            for (int x = minX; x<= maxX; x++) {
-                for (int z = minZ; z <= maxZ; z++) {
-                    for (int y = minY; y <= maxY; y++) {
-                        if (!((x > minX && x < maxX) && (z > minZ && z < maxZ) && (y > minY && y < maxY))) {
-                            Location ultimate = new Location(l.getWorld(), x + 0.5D, y, z + 0.5D);
-                            if (isSafeLocation(ultimate)) {
-                                return ultimate;
-                            }
-                        }
-                    }
-                }
-            }
-            if (minXradius < i) {
-                minXradius++;
-            }
-            if (maxXradius < i) {
-                maxXradius++;
-            }
-            if (minZradius < i) {
-                minZradius++;
-            }
-            if (maxZradius < i) {
-                maxZradius++;
-            }
-            if (minYradius < depth) {
-                minYradius++;
-            }
-            if (maxYradius < height) {
-                maxYradius++;
-            }
-        } while (minXradius < i || maxXradius < i || minZradius < i || maxZradius < i || minYradius < depth
-                || maxYradius < height);
-        // Nothing worked
-        return null;
     }
 
     /**
@@ -347,17 +274,29 @@ public class IslandsManager {
         }
     }
 
+    /**
+     * Get the number of islands made on this server. Used by stats.
+     * @return total number of islands known to this server
+     */
     public int getIslandCount() {
         return islandCache.size();
     }
 
-    public int getIslandCount(@NonNull World world) {
+    /**
+     * Get the number of islands made on this server in a particular world. Used to limit the number of islands
+     * if required by settings.
+     * @param world game world
+     * @return number of islands
+     */
+    public long getIslandCount(@NonNull World world) {
         return islandCache.size(world);
     }
 
     /**
-     * Gets the island for this player.
+     * Gets the current active island for this player.
      * If they are in a team, the team island is returned.
+     * If they have more than one island, then the island they are on now, or the last island they were on
+     * is returned.
      * @param world world to check
      * @param user user
      * @return Island or null if not found or null user
@@ -368,7 +307,33 @@ public class IslandsManager {
     }
 
     /**
-     * Gets the island for this player. If they are in a team, the team island is returned.
+     * Gets the islands for this player.
+     * If they are in a team, the team island is returned.
+     * @param world world to check
+     * @param user user
+     * @return List of islands or empty list if none found for user
+     */
+    @NonNull
+    public Set<Island> getIslands(@NonNull World world, @NonNull User user){
+        return getIslands(world, user.getUniqueId());
+    }
+
+    /**
+     * Gets all the islands for this player in this world.
+     * If they are in a team, the team island is returned.
+     * @param world world to check
+     * @param uuid user's uuid
+     * @return List of islands or empty list if none found for user
+     */
+    @NonNull
+    public Set<Island> getIslands(@NonNull World world, UUID uniqueId) {
+        return islandCache.getIslands(world, uniqueId);
+    }
+
+    /**
+     * Gets the active island for this player. If they are in a team, the team island is returned.
+     * User may have more than one island.
+     * Returns the island the player is on now, or their last known island.
      * @param world world to check. Includes nether and end worlds.
      * @param uuid user's uuid
      * @return Island or null
@@ -430,7 +395,7 @@ public class IslandsManager {
     }
 
     /**
-     * Returns the player's island location in World based on the island protection center.
+     * Returns the player's current island location in World based on the island protection center.
      * If you need the actual island center location for some reason use {@link Island#getCenter()}<p>
      *
      * @param world - world to check
@@ -463,6 +428,7 @@ public class IslandsManager {
      * @param minimumRank - the minimum rank to be included in the set.
      * @return Set of team UUIDs
      */
+    @NonNull
     public Set<UUID> getMembers(@NonNull World world, @NonNull UUID playerUUID, int minimumRank) {
         return islandCache.getMembers(world, playerUUID, minimumRank);
     }
@@ -476,6 +442,7 @@ public class IslandsManager {
      * @param playerUUID - the player's UUID
      * @return Set of team UUIDs
      */
+    @NonNull
     public Set<UUID> getMembers(@NonNull World world, @NonNull UUID playerUUID) {
         return islandCache.getMembers(world, playerUUID, RanksManager.MEMBER_RANK);
     }
@@ -580,11 +547,11 @@ public class IslandsManager {
      * Get a safe home location using async chunk loading and set the home location
      * @param world - world
      * @param user - user
-     * @param name - home name
+     * @param homeName - home name
      * @return CompletableFuture with the location found, or null
      * @since 1.14.0
      */
-    private CompletableFuture<Location> getAsyncSafeHomeLocation(@NonNull World world, @NonNull User user, String name) {
+    private CompletableFuture<Location> getAsyncSafeHomeLocation(@NonNull World world, @NonNull User user, String homeName) {
         CompletableFuture<Location> result = new CompletableFuture<>();
         // Check if the world is a gamemode world and the player has an island
         Location islandLoc = getIslandLocation(world, user.getUniqueId());
@@ -592,9 +559,18 @@ public class IslandsManager {
             result.complete(null);
             return result;
         }
+        // Check if the user is switching island and if so, switch name
+        String name = this.getIslands(world, user).stream()
+                .filter(i -> !homeName.isBlank() && i.getName() != null && !i.getName().isBlank() && i.getName().equalsIgnoreCase(homeName))
+                .findFirst().map(island -> {
+                    // This is an island, so switch to that island and then go to the default home
+                    this.setPrimaryIsland(user.getUniqueId(), island);
+                    return "";
+                }).orElse(homeName);
+
         // Try the home location first
         Location defaultHome = getHomeLocation(world, user);
-        Location namedHome = getHomeLocation(world, user, name);
+        Location namedHome = homeName.isBlank() ? null : getHomeLocation(world, user, name);
         Location l = namedHome != null ? namedHome : defaultHome;
         if (l != null) {
             Util.getChunkAtAsync(l).thenRun(() -> {
@@ -813,27 +789,27 @@ public class IslandsManager {
     }
 
     /**
-     * Get the home location for user in world
+     * Get the home location for user in world for their primary island
      * @param world - world
      * @param user - user
-     * @return home location or null if there is no home
-     * @since 1.16.0
+     * @return home location or the protection center location if no home defined
+     * @since 2.0.0
      */
     @Nullable
     public Location getHomeLocation(@NonNull World world, @NonNull User user) {
-        return getHomeLocation(world, user, "");
+        return this.getPrimaryIsland(world, user.getUniqueId()).getHome("");
     }
 
     /**
-     * Get the home location for player's UUID in world
+     * Get the home location for player's UUID in world for their primary island
      * @param world - world
      * @param uuid - uuid of player
-     * @return home location or null if there is no home
+     * @return home location or the protection center location if no home defined
      * @since 1.16.0
      */
     @Nullable
     public Location getHomeLocation(@NonNull World world, @NonNull UUID uuid) {
-        return getHomeLocation(world, uuid, "");
+        return this.getPrimaryIsland(world, uuid).getHome("");
     }
 
     /**
@@ -859,37 +835,7 @@ public class IslandsManager {
      */
     @Nullable
     public Location getHomeLocation(@NonNull World world, @NonNull UUID uuid, String name) {
-        // Migrate from player homes to island homes
-        Island island = this.getIsland(world, uuid);
-        if (island == null) {
-            return null;
-        }
-        migrateHomes(world, uuid, name, island);
-        return getHomeLocation(island, name);
-    }
-
-    @SuppressWarnings("removal")
-    private void migrateHomes(@NonNull World world, @NonNull UUID uuid, String name, Island island) {
-        Map<Location, Integer> homes = plugin
-                .getPlayers()
-                .getHomeLocations(world, uuid);
-        if (homes.isEmpty()) {
-            // No migration required
-            return;
-        }
-        if (island.getOwner() != null && island.getOwner().equals(uuid)) {
-            // Owner
-            island.setHomes(homes.entrySet().stream().collect(Collectors.toMap(this::getHomeName, Map.Entry::getKey)));
-            plugin.getPlayers().clearHomeLocations(world, uuid);
-        }
-    }
-
-    private String getHomeName(Entry<Location, Integer> e) {
-        // Home 1 has an empty name
-        if (e.getValue() == 1) {
-            return "";
-        }
-        return String.valueOf(e.getValue());
+        return getIslands(world, uuid).stream().map(is -> is.getHome(name)).filter(Objects::nonNull).findFirst().orElse(null);
     }
 
     /**
@@ -912,7 +858,7 @@ public class IslandsManager {
      */
     @NonNull
     public Location getHomeLocation(@NonNull Island island, @NonNull String name) {
-        return Objects.requireNonNullElse(island.getHome(name), island.getCenter());
+        return Objects.requireNonNullElse(island.getHome(name), island.getProtectionCenter());
     }
 
     /**
@@ -1038,7 +984,7 @@ public class IslandsManager {
      *
      * @param world - world to check
      * @param player - the player
-     * @param name - a named home location. Blank means default.
+     * @param name - a named home location or island name. Blank means default home for current island.
      * @return CompletableFuture true if successful, false if not
      * @since 1.16.0
      */
@@ -1061,6 +1007,14 @@ public class IslandsManager {
     }
 
 
+    /**
+     * Teleports player async
+     * @param world world
+     * @param player player
+     * @param name - a named home location or island name. Blank means default home for current island.
+     * @param newIsland true if this is a new island
+     * @return completable future that is true when the teleport has been completed
+     */
     private CompletableFuture<Boolean> homeTeleportAsync(@NonNull World world, @NonNull Player player, String name, boolean newIsland) {
         CompletableFuture<Boolean> result = new CompletableFuture<>();
         User user = User.getInstance(player);
@@ -1080,10 +1034,6 @@ public class IslandsManager {
                 .buildFuture()
                 .thenAccept(result::complete);
                 return;
-            }
-            // Add home
-            if (getHomeLocations(island).isEmpty()) {
-                setHomeLocation(player.getUniqueId(), home);
             }
             PaperLib.teleportAsync(player, home).thenAccept(b -> {
                 // Only run the commands if the player is successfully teleported
@@ -1186,6 +1136,10 @@ public class IslandsManager {
         }
     }
 
+    /**
+     * Prepares the player for teleporting by: stopping gliding, exiting any boats and giving the player the boat
+     * @param player player
+     */
     private void readyPlayer(@NonNull Player player) {
         // Stop any gliding
         player.setGliding(false);
@@ -1421,10 +1375,7 @@ public class IslandsManager {
      * @param uuid - user's uuid
      */
     public void removePlayer(World world, UUID uuid) {
-        Island island = islandCache.removePlayer(world, uuid);
-        if (island != null) {
-            handler.saveObjectAsync(island);
-        }
+        islandCache.removePlayer(world, uuid).forEach(handler::saveObjectAsync);
     }
 
     /**
@@ -1520,15 +1471,6 @@ public class IslandsManager {
         this.last.put(last.getWorld(), last);
     }
 
-    /**
-     * Called when a player leaves a team
-     * @param world - world
-     * @param uuid - the player's UUID
-     */
-    public void setLeaveTeam(World world, UUID uuid) {
-        removePlayer(world, uuid);
-    }
-
     public void shutdown(){
         plugin.log("Removing coops from islands...");
         // Remove all coop associations
@@ -1563,12 +1505,15 @@ public class IslandsManager {
 
     /**
      * Sets this target as the owner for this island
-     * @param user requester
+     * @param user previous owner
      * @param targetUUID new owner
      * @param island island to register
      */
     public void setOwner(User user, UUID targetUUID, Island island) {
         islandCache.setOwner(island, targetUUID);
+        // Remove the old owner from the island
+        island.removeMember(user.getUniqueId());
+
         user.sendMessage("commands.island.team.setowner.name-is-the-owner", "[name]", plugin.getPlayers().getName(targetUUID));
         plugin.getIWM().getAddon(island.getWorld()).ifPresent(addon -> {
             User target = User.getInstance(targetUUID);
@@ -1891,6 +1836,35 @@ public class IslandsManager {
      */
     public boolean isGoingHome(User user) {
         return goingHome.contains(user.getUniqueId());
+    }
+
+    /**
+     * Get the number of concurrent islands for this player
+     * @param uuid UUID of player
+     * @param world world to check
+     * @return number of islands this player owns in this game world
+     */
+    public int getNumberOfConcurrentIslands(UUID uuid, World world) {
+        return islandCache.getIslands(world, uuid).size();
+    }
+
+    /**
+     * Sets the user's primary island
+     * @param uuid user's uuid
+     * @param i island
+     */
+    public void setPrimaryIsland(UUID uuid, Island i) {
+        this.getIslandCache().setPrimaryIsland(uuid, i);
+    }
+
+    /**
+     * Convenience method. See {@link IslandCache#get(World, UUID)}
+     * @param world world
+     * @param uuid player's UUID
+     * @return Island of player or null if there isn't one
+     */
+    public Island getPrimaryIsland(World world, UUID uuid) {
+        return this.getIslandCache().get(world, uuid);
     }
 
 }

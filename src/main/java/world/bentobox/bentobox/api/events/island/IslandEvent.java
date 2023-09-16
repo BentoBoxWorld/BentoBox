@@ -176,7 +176,7 @@ public class IslandEvent extends IslandBaseEvent {
          * Event that will fire when an island is named or renamed
          * @since 1.24.0
          */
-        NAME, 
+        NAME,
         /**
          * Event that will fire when the info command is executed. Allows addons to add to it
          * @since 1.24.0
@@ -334,7 +334,7 @@ public class IslandEvent extends IslandBaseEvent {
             this.previousName = previousName;
             return this;
         }
-        
+
         /**
          * Addon that triggered this event, e.g. BSkyBlock
          * @param addon Addon.

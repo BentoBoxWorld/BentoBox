@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.bukkit.util.Vector;
-
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.events.island.IslandEvent;
@@ -41,14 +39,14 @@ public class AdminDeleteCommand extends ConfirmableCommand {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
             return false;
         }
-        UUID owner = getIslands().getOwner(getWorld(), targetUUID);
-        if (owner == null) {
+        Island island = getIslands().getIsland(getWorld(), user);
+        if (island == null) {
             user.sendMessage("general.errors.player-has-no-island");
             return false;
         }
 
         // Team members should be kicked before deleting otherwise the whole team will become weird
-        if (getIslands().inTeam(getWorld(), targetUUID) && owner.equals(targetUUID)) {
+        if (getIslands().inTeam(getWorld(), targetUUID) && user.getUniqueId().equals(island.getOwner())) {
             user.sendMessage("commands.admin.delete.cannot-delete-owner");
             return false;
         }
@@ -66,10 +64,7 @@ public class AdminDeleteCommand extends ConfirmableCommand {
 
     private void deletePlayer(User user, UUID targetUUID) {
         // Delete player and island
-        // Get the target's island
-        Island oldIsland = getIslands().getIsland(getWorld(), targetUUID);
-        Vector vector = null;
-        if (oldIsland != null) {
+        for (Island oldIsland : getIslands().getIslands(getWorld(), targetUUID)) {
             // Fire island preclear event
             IslandEvent.builder()
             .involvedPlayer(user.getUniqueId())
@@ -78,21 +73,17 @@ public class AdminDeleteCommand extends ConfirmableCommand {
             .oldIsland(oldIsland)
             .location(oldIsland.getCenter())
             .build();
-            // Check if player is online and on the island
-            User target = User.getInstance(targetUUID);
-            // Remove them from this island (it still exists and will be deleted later)
-            getIslands().removePlayer(getWorld(), targetUUID);
-            if (target.isPlayer() && target.isOnline()) {
-                cleanUp(target);
-            }
-            vector = oldIsland.getCenter().toVector();
+            user.sendMessage("commands.admin.delete.deleted-island", TextVariables.XYZ, Util.xyz(oldIsland.getCenter().toVector()));
             getIslands().deleteIsland(oldIsland, true, targetUUID);
         }
-        if (vector == null) {
-            user.sendMessage("general.success");
-        } else {
-            user.sendMessage("commands.admin.delete.deleted-island", TextVariables.XYZ, Util.xyz(vector));
+        // Check if player is online and on the island
+        User target = User.getInstance(targetUUID);
+        // Remove them from this island (it still exists and will be deleted later)
+        getIslands().removePlayer(getWorld(), targetUUID);
+        if (target.isPlayer() && target.isOnline()) {
+            cleanUp(target);
         }
+        user.sendMessage("general.success");
     }
 
     private void cleanUp(User target) {

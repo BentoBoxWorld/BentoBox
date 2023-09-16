@@ -1003,9 +1003,9 @@ protection:
       island: "[name]"
       name: Enter/Exit messages
       now-entering: "&a Entrer maintenant &b [nom] &a."
-      now-entering-your-island: "&a Vous venez d'entrer sur votre île."
+      now-entering-your-island: "&a Vous venez d'entrer sur votre île: &b [name]"
       now-leaving: "&a Quittant maintenant &b [nom] &a."
-      now-leaving-your-island: "&a Vous venez de quitter votre île."
+      now-leaving-your-island: "&a Vous venez de quitter votre île: &b [name]"
     EXPERIENCE_BOTTLE_THROWING:
       description: Toggle throwing experience bottles.
       hint: Bouteilles d'expérience désactivées

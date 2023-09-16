@@ -190,6 +190,12 @@ public class Settings implements ConfigObject {
     /*
      * Island
      */
+    // Number of islands
+    @ConfigComment("The default number of concurrent islands a player may have.")
+    @ConfigComment("This may be overridden by individual game mode config settings.")
+    @ConfigEntry(path = "island.concurrent-islands")
+    private int islandNumber = 1;
+
     // Cooldowns
     @ConfigComment("How long a player must wait until they can rejoin a team island after being kicked in minutes.")
     @ConfigComment("This slows the effectiveness of players repeating challenges")
@@ -1045,4 +1051,21 @@ public class Settings implements ConfigObject {
     public void setReadyCommands(List<String> readyCommands) {
         this.readyCommands = readyCommands;
     }
+
+    /**
+     * @return the islandNumber
+     * @since 2.0.0
+     */
+    public int getIslandNumber() {
+        return islandNumber;
+    }
+
+    /**
+     * @param islandNumber the islandNumber to set
+     * @since 2.0.0
+     */
+    public void setIslandNumber(int islandNumber) {
+        this.islandNumber = islandNumber;
+    }
+
 }

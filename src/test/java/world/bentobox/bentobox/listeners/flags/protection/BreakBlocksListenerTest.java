@@ -58,8 +58,6 @@ public class BreakBlocksListenerTest extends AbstractCommonSetup {
 
     private BreakBlocksListener bbl;
 
-    /**
-     */
     @Override
     @Before
     public void setUp() throws Exception {
@@ -100,7 +98,7 @@ public class BreakBlocksListenerTest extends AbstractCommonSetup {
         assertTrue(e.isCancelled());
         verify(notifier).notify(any(), eq("protection.protected"));
     }
-    
+
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onBlockBreak(org.bukkit.event.block.BlockBreakEvent)}.
      */
@@ -115,7 +113,7 @@ public class BreakBlocksListenerTest extends AbstractCommonSetup {
         assertTrue(e.isCancelled());
         verify(notifier).notify(any(), eq("protection.protected"));
     }
-    
+
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onBlockBreak(org.bukkit.event.block.BlockBreakEvent)}.
      */

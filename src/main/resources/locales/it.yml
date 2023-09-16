@@ -992,8 +992,8 @@ protection:
       name: Messaggi di Entrata/Uscita
       now-entering: "&bStai entrando in [name]"
       now-leaving: "&bStai uscendo da [name]"
-      now-entering-your-island: "&a Stai entrando nella tua isola."
-      now-leaving-your-island: "&a Stai uscendo dalla tua isola."
+      now-entering-your-island: "&a Stai entrando nella tua isola: &b [name]"
+      now-leaving-your-island: "&a Stai uscendo dalla tua isola: &b [name]"
     EXPERIENCE_BOTTLE_THROWING:
       description: Abilita/disabilita lancio di boccette di esperienza.
       hint: Lancio di boccette di esperienza disabilitato

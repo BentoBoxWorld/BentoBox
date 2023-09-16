@@ -90,6 +90,7 @@ public class IslandGoCommandTest {
     @Mock
     private World world;
     private @Nullable WorldSettings ws;
+    private UUID uuid = UUID.randomUUID();
 
     /**
      */
@@ -108,7 +109,6 @@ public class IslandGoCommandTest {
 
         // Player
         when(player.isOp()).thenReturn(false);
-        UUID uuid = UUID.randomUUID();
         when(player.getUniqueId()).thenReturn(uuid);
         when(player.getName()).thenReturn("tastybento");
         when(player.getWorld()).thenReturn(world);
@@ -123,10 +123,12 @@ public class IslandGoCommandTest {
         // Have the create command point to the ic command
         Optional<CompositeCommand> createCommand = Optional.of(ic);
         when(ic.getSubCommand(eq("create"))).thenReturn(createCommand);
+        when(ic.getWorld()).thenReturn(world);
 
-        // No island for player to begin with (set it later in the tests)
-        when(im.hasIsland(any(), eq(uuid))).thenReturn(false);
-        when(im.isOwner(any(), eq(uuid))).thenReturn(false);
+        // Player has island by default
+        when(im.getIslands(world, uuid)).thenReturn(Set.of(island));
+        when(im.hasIsland(world, uuid)).thenReturn(true);
+        when(im.isOwner(world, uuid)).thenReturn(true);
         when(plugin.getIslands()).thenReturn(im);
 
         // Has team
@@ -200,7 +202,7 @@ public class IslandGoCommandTest {
      */
     @Test
     public void testExecuteNoArgsNoIsland() {
-        when(im.getIsland(any(), any(UUID.class))).thenReturn(null);
+        when(im.getIslands(world, uuid)).thenReturn(Set.of());
         assertFalse(igc.canExecute(user, igc.getLabel(), Collections.emptyList()));
         verify(player).sendMessage("general.errors.no-island");
     }
@@ -210,7 +212,6 @@ public class IslandGoCommandTest {
      */
     @Test
     public void testExecuteNoArgs() {
-        when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
         assertTrue(igc.canExecute(user, igc.getLabel(), Collections.emptyList()));
     }
 
@@ -219,7 +220,6 @@ public class IslandGoCommandTest {
      */
     @Test
     public void testExecuteNoArgsReservedIsland() {
-        when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
         when(ic.call(any(), any(), any())).thenReturn(true);
         when(island.isReserved()).thenReturn(true);
         assertFalse(igc.canExecute(user, igc.getLabel(), Collections.emptyList()));
@@ -232,7 +232,7 @@ public class IslandGoCommandTest {
     @Test
     public void testExecuteNoArgsReservedIslandNoCreateCommand() {
         when(ic.getSubCommand(eq("create"))).thenReturn(Optional.empty());
-        when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
+
         when(ic.call(any(), any(), any())).thenReturn(true);
         when(island.isReserved()).thenReturn(true);
         assertFalse(igc.canExecute(user, igc.getLabel(), Collections.emptyList()));
@@ -265,7 +265,7 @@ public class IslandGoCommandTest {
      */
     @Test
     public void testExecuteNoArgsMultipleHomes() {
-        when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
+
         //when(user.getPermissionValue(anyString(), anyInt())).thenReturn(3);
         assertTrue(igc.execute(user, igc.getLabel(), Collections.emptyList()));
     }
@@ -275,30 +275,10 @@ public class IslandGoCommandTest {
      */
     @Test
     public void testExecuteArgs1MultipleHomes() {
-        when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
-        //when(user.getPermissionValue(anyString(), anyInt())).thenReturn(3);
-        assertTrue(igc.execute(user, igc.getLabel(), Collections.singletonList("1")));
-    }
-
-    /**
-     * Test method for {@link IslandGoCommand#execute(User, String, List)}
-     */
-    @Test
-    public void testExecuteArgs2MultipleHomes() {
-        when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
-        //when(user.getPermissionValue(anyString(), anyInt())).thenReturn(3);
-        assertTrue(igc.execute(user, igc.getLabel(), Collections.singletonList("2")));
-    }
-
-
-    /**
-     * Test method for {@link IslandGoCommand#execute(User, String, List)}
-     */
-    @Test
-    public void testExecuteArgsJunkMultipleHomes() {
-        when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
-        //when(user.getPermissionValue(anyString(), anyInt())).thenReturn(3);
-        assertTrue(igc.execute(user, igc.getLabel(), Collections.singletonList("sdfghhj")));
+        assertFalse(igc.execute(user, igc.getLabel(), Collections.singletonList("1")));
+        verify(player).sendMessage("commands.island.go.unknown-home");
+        verify(player).sendMessage("commands.island.sethome.homes-are");
+        verify(player).sendMessage("commands.island.sethome.home-list-syntax");
     }
 
     /**
@@ -307,7 +287,7 @@ public class IslandGoCommandTest {
     @Test
     public void testExecuteNoArgsDelay() {
         when(s.getDelayTime()).thenReturn(10);
-        when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
+
         assertTrue(igc.execute(user, igc.getLabel(), Collections.emptyList()));
         verify(player).sendMessage(eq("commands.delay.stand-still"));
     }
@@ -325,19 +305,6 @@ public class IslandGoCommandTest {
         verify(task).cancel();
         verify(player).sendMessage(eq("commands.delay.previous-command-cancelled"));
         verify(player, Mockito.times(2)).sendMessage(eq("commands.delay.stand-still"));
-    }
-
-    /**
-     * Test method for {@link IslandGoCommand#execute(User, String, List)}
-     */
-    @Test
-    public void testExecuteNoArgsDelayMultiHome() {
-        when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
-        //when(user.getPermissionValue(anyString(), anyInt())).thenReturn(3);
-        when(s.getDelayTime()).thenReturn(10);
-        when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
-        assertTrue(igc.execute(user, igc.getLabel(), Collections.singletonList("2")));
-        verify(player).sendMessage(eq("commands.delay.stand-still"));
     }
 
     /**

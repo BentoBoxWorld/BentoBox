@@ -119,6 +119,9 @@ logs:
   # Added since 1.5.0.
   github-download-data: true
 island:
+  # The default number of concurrent islands a player may have.
+  # This may be overridden by individual game mode config settings.
+  concurrent-islands: 1
   cooldown:
     time:
       # How long a player must wait until they can rejoin a team island after being kicked in minutes.

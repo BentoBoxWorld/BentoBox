@@ -124,9 +124,8 @@ public class IslandResetCommand extends ConfirmableCommand {
     private boolean resetIsland(User user, String name) {
         // Get the player's old island
         Island oldIsland = getIslands().getIsland(getWorld(), user);
-        if (oldIsland != null) {
-            deleteOldIsland(user, oldIsland);
-        }
+        deleteOldIsland(user, oldIsland);
+
         user.sendMessage("commands.island.create.creating-island");
         // Create new island and then delete the old one
         try {

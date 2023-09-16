@@ -18,8 +18,10 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitScheduler;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.junit.After;
 import org.junit.Before;
@@ -37,6 +39,7 @@ import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
+import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.events.island.IslandEvent.Reason;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle;
@@ -75,6 +78,12 @@ public class IslandCreateCommandTest {
     private CompositeCommand ic;
     @Mock
     private BlueprintsManager bpm;
+    @Mock
+    private World world;
+    @Mock
+    private @NonNull WorldSettings ws;
+    @Mock
+    private Island island;
 
     /**
      */
@@ -115,6 +124,7 @@ public class IslandCreateCommandTest {
         when(ic.getUsage()).thenReturn("");
         when(ic.getSubCommand(Mockito.anyString())).thenReturn(Optional.empty());
         when(ic.getAddon()).thenReturn(addon);
+        when(ic.getWorld()).thenReturn(world);
 
 
         // No island for player to begin with (set it later in the tests)
@@ -122,7 +132,7 @@ public class IslandCreateCommandTest {
         when(im.isOwner(any(), eq(uuid))).thenReturn(false);
         // Has team
         when(im.inTeam(any(), eq(uuid))).thenReturn(true);
-
+        when(im.getPrimaryIsland(world, uuid)).thenReturn(island);
         when(plugin.getIslands()).thenReturn(im);
 
 
@@ -136,6 +146,8 @@ public class IslandCreateCommandTest {
 
         // IWM friendly name
         when(iwm.getFriendlyName(any())).thenReturn("BSkyBlock");
+        when(ws.getConcurrentIslands()).thenReturn(1); // One island allowed
+        when(iwm.getWorldSettings(world)).thenReturn(ws);
         when(plugin.getIWM()).thenReturn(iwm);
 
         // NewIsland
@@ -190,11 +202,11 @@ public class IslandCreateCommandTest {
      */
     @Test
     public void testCanExecuteUserStringListOfStringHasIsland() {
-        @Nullable
-        Island island = mock(Island.class);
-        when(im.getIsland(any(), Mockito.any(User.class))).thenReturn(island);
+        // Currently user has two islands
+        when(im.getNumberOfConcurrentIslands(user.getUniqueId(), world)).thenReturn(2);
+        // Player has an island
         assertFalse(cc.canExecute(user, "", Collections.emptyList()));
-        verify(user).sendMessage(eq("general.errors.already-have-island"));
+        verify(user).sendMessage("general.errors.you-cannot-make");
     }
 
     /**
@@ -207,7 +219,7 @@ public class IslandCreateCommandTest {
         when(im.getIsland(any(), Mockito.any(User.class))).thenReturn(island);
         when(island.isReserved()).thenReturn(true);
         assertTrue(cc.canExecute(user, "", Collections.emptyList()));
-        verify(user, never()).sendMessage(eq("general.errors.already-have-island"));
+        verify(user, never()).sendMessage("general.errors.already-have-island");
 
     }
 
@@ -216,12 +228,12 @@ public class IslandCreateCommandTest {
      */
     @Test
     public void testCanExecuteUserStringListOfStringTooManyIslands() {
-        when(im.hasIsland(any(), Mockito.any(UUID.class))).thenReturn(false);
+        when(im.getPrimaryIsland(any(), Mockito.any(UUID.class))).thenReturn(null);
         when(im.inTeam(any(), Mockito.any(UUID.class))).thenReturn(false);
         when(iwm.getMaxIslands(any())).thenReturn(100);
-        when(im.getIslandCount(any())).thenReturn(100);
+        when(im.getIslandCount(any())).thenReturn(100L);
         assertFalse(cc.canExecute(user, "", Collections.emptyList()));
-        verify(user).sendMessage(eq("commands.island.create.too-many-islands"));
+        verify(user).sendMessage("commands.island.create.too-many-islands");
 
     }
 

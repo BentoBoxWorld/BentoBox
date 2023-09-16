@@ -162,6 +162,7 @@ public class JoinLeaveListenerTest {
 
         when(im.getIsland(any(), any(User.class))).thenReturn(island);
         when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
+        when(im.getIslands()).thenReturn(Collections.singletonList(island));
         Map<UUID, Integer> memberMap = new HashMap<>();
 
         memberMap.put(uuid, RanksManager.OWNER_RANK);

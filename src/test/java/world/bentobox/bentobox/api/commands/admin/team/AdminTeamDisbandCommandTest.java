@@ -229,8 +229,8 @@ public class AdminTeamDisbandCommandTest {
 
         AdminTeamDisbandCommand itl = new AdminTeamDisbandCommand(ac);
         assertTrue(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
-        verify(im, never()).setLeaveTeam(any(), eq(notUUID));
-        verify(im).setLeaveTeam(any(), eq(uuid));
+        verify(is, never()).removeMember(notUUID);
+        verify(is).removeMember(uuid);
         verify(user).sendMessage("commands.admin.team.disband.success", TextVariables.NAME, name[0]);
         verify(p).sendMessage("commands.admin.team.disband.disbanded");
         verify(p2).sendMessage("commands.admin.team.disband.disbanded");

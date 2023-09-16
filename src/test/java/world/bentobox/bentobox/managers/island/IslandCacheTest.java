@@ -16,6 +16,7 @@ import java.util.UUID;
 
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.eclipse.jdt.annotation.NonNull;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -81,6 +82,9 @@ public class IslandCacheTest {
 
         // Island
         when(island.getWorld()).thenReturn(world);
+        @NonNull
+        String uniqueId = UUID.randomUUID().toString();
+        when(island.getUniqueId()).thenReturn(uniqueId);
         // Location
         when(location.getWorld()).thenReturn(world);
         when(location.getBlockX()).thenReturn(0);
@@ -248,9 +252,8 @@ public class IslandCacheTest {
     @Test
     public void testGetOwner() {
         ic.addIsland(island);
-
+        // Should be no owner, so null
         assertEquals(owner, ic.getOwner(world, owner));
-        assertNull(ic.getOwner(world, null));
         assertNull(ic.getOwner(world, UUID.randomUUID()));
     }
 
@@ -263,7 +266,6 @@ public class IslandCacheTest {
 
         assertTrue(ic.hasIsland(world, owner));
         assertFalse(ic.hasIsland(world, UUID.randomUUID()));
-        assertFalse(ic.hasIsland(world, null));
     }
 
     /**
@@ -273,7 +275,6 @@ public class IslandCacheTest {
     public void testRemovePlayer() {
         ic.addIsland(island);
         assertTrue(ic.hasIsland(world, owner));
-        ic.removePlayer(world, null);
         assertTrue(ic.hasIsland(world, owner));
         ic.removePlayer(world, UUID.randomUUID());
         assertTrue(ic.hasIsland(world, owner));

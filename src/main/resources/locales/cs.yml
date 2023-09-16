@@ -863,9 +863,9 @@ protection:
       island: 'Ostrov [name]'
       name: Hlášení o návštěvě/opuštění
       now-entering: '&a Právě vcházíš na &b [name]&a .'
-      now-entering-your-island: '&a Právě vcházíš na svůj ostrov.'
+      now-entering-your-island: '&a Právě vcházíš na svůj ostrov: &b [name]'
       now-leaving: '&a Právě odcházíš od &b [name]&a .'
-      now-leaving-your-island: '&a Právě odcházíš ze svého ostrova.'
+      now-leaving-your-island: '&a Právě odcházíš ze svého ostrova: &b [name]'
     EXPERIENCE_BOTTLE_THROWING:
       name: Házení zkošenostními lahvičkami
       description: Přepnout házení zkušenostními lahvičkami.

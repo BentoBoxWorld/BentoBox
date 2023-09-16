@@ -51,11 +51,13 @@ public class IslandSethomeCommand extends ConfirmableCommand {
         }
 
         // Check number of homes
-        int maxHomes = getIslands().getMaxHomes(island);
+
+        int maxHomes = getIslands().getIslands(getWorld(), user).stream().mapToInt(getIslands()::getMaxHomes).sum();
         if (getIslands().getNumberOfHomesIfAdded(island, String.join(" ", args)) > maxHomes) {
             user.sendMessage("commands.island.sethome.too-many-homes", TextVariables.NUMBER, String.valueOf(maxHomes));
             user.sendMessage("commands.island.sethome.homes-are");
-            island.getHomes().keySet().stream().filter(s -> !s.isEmpty()).forEach(s -> user.sendMessage("commands.island.sethome.home-list-syntax", TextVariables.NAME, s));
+            getIslands().getIslands(getWorld(), user).forEach(is ->
+            is.getHomes().keySet().stream().filter(s -> !s.isEmpty()).forEach(s -> user.sendMessage("commands.island.sethome.home-list-syntax", TextVariables.NAME, s)));
             return false;
         }
         return true;

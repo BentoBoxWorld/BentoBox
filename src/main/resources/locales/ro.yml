@@ -949,9 +949,9 @@ protection:
       island: insula [numele]
       name: Introduceți / ieșiți din mesaje
       now-entering: "&a Acum introduceți &b [name] &a."
-      now-entering-your-island: "&a Acum intrând în insula ta."
+      now-entering-your-island: "&a Acum intrând în insula ta: &b [name]"
       now-leaving: "&a Acum plecăm de la &b [name] &a."
-      now-leaving-your-island: "&a Acum părăsind insula ta."
+      now-leaving-your-island: "&a Acum părăsind insula ta: &b [name]"
     EXPERIENCE_BOTTLE_THROWING:
       name: Experimentați aruncarea cu sticle
       description: Comutați aruncarea sticlelor de experiență.
