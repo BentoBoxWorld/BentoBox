@@ -22,6 +22,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.inventory.EnchantingInventory;
 import org.bukkit.inventory.InventoryHolder;
 
 import world.bentobox.bentobox.api.flags.FlagListener;
@@ -69,6 +70,14 @@ public class InventoryListener extends FlagListener
     public void onInventoryClick(InventoryClickEvent e)
     {
         Player player = (Player) e.getWhoClicked();
+
+        // Enchanting
+        if (e.getInventory() instanceof EnchantingInventory) {
+            this.checkIsland(e, player, e.getInventory().getLocation(), Flags.ENCHANTING);
+            return;
+        }
+
+        // Inventory holders
         InventoryHolder inventoryHolder = e.getInventory().getHolder();
 
         if (inventoryHolder == null || !(e.getWhoClicked() instanceof Player))
@@ -130,7 +139,6 @@ public class InventoryListener extends FlagListener
         }
         else if (inventoryHolder instanceof ChestBoat)
         {
-            // TODO: 1.19 added chest boat. Remove compatibility check when 1.18 is dropped.
             this.checkIsland(e, player, e.getInventory().getLocation(), Flags.CHEST);
         }
         else if (!(inventoryHolder instanceof Player))

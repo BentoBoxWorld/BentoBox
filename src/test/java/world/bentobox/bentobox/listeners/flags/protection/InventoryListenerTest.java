@@ -32,6 +32,7 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType.SlotType;
+import org.bukkit.inventory.EnchantingInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.InventoryView;
@@ -80,6 +81,25 @@ public class InventoryListenerTest extends AbstractCommonSetup {
 
         // Listener
         l = new InventoryListener();
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.InventoryListener#onInventoryClick(org.bukkit.event.inventory.InventoryClickEvent)}.
+     */
+    @Test
+    public void testOnInventoryClickEnchantingAllowed() {
+        InventoryView view = mock(InventoryView.class);
+        when(view.getPlayer()).thenReturn(player);
+        EnchantingInventory inv = mock(EnchantingInventory.class);
+        when(inv.getSize()).thenReturn(9);
+        when(view.getTopInventory()).thenReturn(inv);
+        when(inv.getLocation()).thenReturn(location);
+        when(view.getBottomInventory()).thenReturn(inv);
+        SlotType slotType = SlotType.CRAFTING;
+        InventoryAction action = InventoryAction.PLACE_ONE;
+        InventoryClickEvent e = new InventoryClickEvent(view, slotType, 0, ClickType.LEFT, action );
+        l.onInventoryClick(e);
+        assertFalse(e.isCancelled());
     }
 
     /**
@@ -193,6 +213,27 @@ public class InventoryListenerTest extends AbstractCommonSetup {
             assertTrue(e.isCancelled());
         });
         verify(notifier, times(HOLDERS.size())).notify(any(), eq("protection.protected"));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.InventoryListener#onInventoryClick(org.bukkit.event.inventory.InventoryClickEvent)}.
+     */
+    @Test
+    public void testOnInventoryClickEnchantingNotAllowed() {
+        when(island.isAllowed(any(), any())).thenReturn(false);
+        InventoryView view = mock(InventoryView.class);
+        when(view.getPlayer()).thenReturn(player);
+        EnchantingInventory inv = mock(EnchantingInventory.class);
+        when(inv.getSize()).thenReturn(9);
+        when(view.getTopInventory()).thenReturn(inv);
+        when(inv.getLocation()).thenReturn(location);
+        when(view.getBottomInventory()).thenReturn(inv);
+        SlotType slotType = SlotType.CRAFTING;
+        InventoryAction action = InventoryAction.PLACE_ONE;
+        InventoryClickEvent e = new InventoryClickEvent(view, slotType, 0, ClickType.LEFT, action );
+        l.onInventoryClick(e);
+        assertTrue(e.isCancelled());
+        verify(notifier).notify(any(), eq("protection.protected"));
     }
 
     /**
