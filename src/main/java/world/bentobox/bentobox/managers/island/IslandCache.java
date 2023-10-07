@@ -177,7 +177,7 @@ public class IslandCache {
         if (w == null) {
             return new HashSet<>();
         }
-        return islandsByUUID.computeIfAbsent(uuid, k -> new HashSet<>()).stream().filter(i -> world.equals(i.getWorld())).collect(Collectors.toSet());
+        return islandsByUUID.computeIfAbsent(uuid, k -> new HashSet<>()).stream().filter(i -> w.equals(i.getWorld())).collect(Collectors.toSet());
     }
 
     /**
@@ -252,7 +252,7 @@ public class IslandCache {
      * Get the UUID of the owner of the island of the player, which may be their UUID
      * @param world the world to check
      * @param uuid the player's UUID
-     * @return island owner's UUID or null if there is no island
+     * @return island owner's UUID or null if there is no island owned by the player in this world
      */
     @Nullable
     public UUID getOwner(@NonNull World world, @NonNull UUID uuid) {
@@ -261,7 +261,8 @@ public class IslandCache {
         if (w == null || islands == null || islands.isEmpty()) {
             return null;
         }
-        return islands.iterator().next().getOwner(); // This assumes that all islands in this set have the same owner
+        // Find the island for this world
+        return islands.stream().filter(i -> w.equals(i.getWorld())).findFirst().map(Island::getOwner).orElse(null);
     }
 
     /**
