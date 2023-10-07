@@ -1,4 +1,4 @@
-package world.bentobox.bentobox.nms.v1_20_R1;
+package world.bentobox.bentobox.nms.v1_20_R2;
 
 import java.util.List;
 import java.util.Map;
@@ -11,8 +11,8 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
-import org.bukkit.craftbukkit.v1_20_R1.CraftWorld;
-import org.bukkit.craftbukkit.v1_20_R1.block.data.CraftBlockData;
+import org.bukkit.craftbukkit.v1_20_R2.CraftWorld;
+import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
 
 import net.minecraft.core.BlockPosition;
 import net.minecraft.world.level.block.state.IBlockData;
