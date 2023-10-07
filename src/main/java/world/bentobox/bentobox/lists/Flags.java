@@ -143,8 +143,15 @@ public final class Flags {
     public static final Flag ITEM_FRAME = new Flag.Builder("ITEM_FRAME", Material.ITEM_FRAME).mode(Flag.Mode.ADVANCED).build();
     public static final Flag CAKE = new Flag.Builder("CAKE", Material.CAKE).build();
     public static final Flag HIVE = new Flag.Builder("HIVE", Material.HONEY_BOTTLE).type(Type.PROTECTION).build();
+    public static final Flag CARTOGRAPHY = new Flag.Builder("CARTOGRAPHY", Material.CARTOGRAPHY_TABLE).build();
+    public static final Flag GRINDSTONE = new Flag.Builder("GRINDSTONE", Material.GRINDSTONE).build();
+    public static final Flag SMITHING = new Flag.Builder("SMITHING", Material.SMITHING_TABLE).build();
+    public static final Flag STONECUTTING = new Flag.Builder("STONECUTTING", Material.STONECUTTER).build();
+    public static final Flag LOOM = new Flag.Builder("LOOM", Material.LOOM).build();
+
     public static final Flag CONTAINER = new Flag.Builder("CONTAINER", Material.CHEST).mode(Flag.Mode.BASIC)
-            .subflags(BREWING, BARREL, CHEST, COMPOSTER, FLOWER_POT, SHULKER_BOX, TRAPPED_CHEST, FURNACE, JUKEBOX, DISPENSER, DROPPER, HOPPER, ITEM_FRAME, HIVE)
+            .subflags(BREWING, BARREL, CHEST, COMPOSTER, FLOWER_POT, SHULKER_BOX, TRAPPED_CHEST, FURNACE, JUKEBOX, DISPENSER,
+                    DROPPER, HOPPER, ITEM_FRAME, HIVE)
             .build();
 
     /**

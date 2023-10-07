@@ -22,8 +22,27 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.inventory.AbstractHorseInventory;
+import org.bukkit.inventory.AnvilInventory;
+import org.bukkit.inventory.BeaconInventory;
+import org.bukkit.inventory.BrewerInventory;
+import org.bukkit.inventory.CartographyInventory;
+import org.bukkit.inventory.ChiseledBookshelfInventory;
+import org.bukkit.inventory.CraftingInventory;
+import org.bukkit.inventory.DoubleChestInventory;
 import org.bukkit.inventory.EnchantingInventory;
+import org.bukkit.inventory.FurnaceInventory;
+import org.bukkit.inventory.GrindstoneInventory;
+import org.bukkit.inventory.HorseInventory;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.JukeboxInventory;
+import org.bukkit.inventory.LecternInventory;
+import org.bukkit.inventory.LlamaInventory;
+import org.bukkit.inventory.LoomInventory;
+import org.bukkit.inventory.MerchantInventory;
+import org.bukkit.inventory.SmithingInventory;
+import org.bukkit.inventory.StonecutterInventory;
 
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.lists.Flags;
@@ -71,12 +90,10 @@ public class InventoryListener extends FlagListener
     {
         Player player = (Player) e.getWhoClicked();
 
-        // Enchanting
-        if (e.getInventory() instanceof EnchantingInventory) {
-            this.checkIsland(e, player, e.getInventory().getLocation(), Flags.ENCHANTING);
+        // Special inventory types
+        if (checkSpecificInventories(e, player, e.getInventory())) {
             return;
         }
-
         // Inventory holders
         InventoryHolder inventoryHolder = e.getInventory().getHolder();
 
@@ -146,6 +163,69 @@ public class InventoryListener extends FlagListener
             // All other containers
             this.checkIsland(e, player, e.getInventory().getLocation(), Flags.CONTAINER);
         }
+    }
+
+
+    private boolean checkSpecificInventories(InventoryClickEvent e, Player player, Inventory inventory) {
+        if (e.getInventory() instanceof AbstractHorseInventory) {
+            this.checkIsland(e, player, e.getInventory().getLocation(), Flags.MOUNT_INVENTORY);
+            return true;
+        } else if (e.getInventory() instanceof AnvilInventory) {
+            this.checkIsland(e, player, e.getInventory().getLocation(), Flags.ANVIL);
+            return true;
+        } else if (e.getInventory() instanceof BeaconInventory) {
+            this.checkIsland(e, player, e.getInventory().getLocation(), Flags.BEACON);
+            return true;
+        } else if (e.getInventory() instanceof BrewerInventory) {
+            this.checkIsland(e, player, e.getInventory().getLocation(), Flags.BREWING);
+            return true;
+        } else if (e.getInventory() instanceof CartographyInventory) {
+            this.checkIsland(e, player, e.getInventory().getLocation(), Flags.CARTOGRAPHY);
+            return true;
+        } else if (e.getInventory() instanceof ChiseledBookshelfInventory) {
+            this.checkIsland(e, player, e.getInventory().getLocation(), Flags.BOOKSHELF);
+            return true;
+        } else if (e.getInventory() instanceof CraftingInventory) {
+            this.checkIsland(e, player, e.getInventory().getLocation(), Flags.CRAFTING);
+            return true;
+        } else if (e.getInventory() instanceof DoubleChestInventory) {
+            this.checkIsland(e, player, e.getInventory().getLocation(), Flags.CHEST);
+            return true;
+        } else if (e.getInventory() instanceof EnchantingInventory) {
+            this.checkIsland(e, player, e.getInventory().getLocation(), Flags.ENCHANTING);
+            return true;
+        } else if (e.getInventory() instanceof FurnaceInventory) {
+            this.checkIsland(e, player, e.getInventory().getLocation(), Flags.FURNACE);
+            return true;
+        } else if (e.getInventory() instanceof GrindstoneInventory) {
+            this.checkIsland(e, player, e.getInventory().getLocation(), Flags.GRINDSTONE);
+            return true;
+        } else if (e.getInventory() instanceof HorseInventory) {
+            this.checkIsland(e, player, e.getInventory().getLocation(), Flags.MOUNT_INVENTORY);
+            return true;
+        } else if (e.getInventory() instanceof JukeboxInventory) {
+            this.checkIsland(e, player, e.getInventory().getLocation(), Flags.JUKEBOX);
+            return true;
+        } else if (e.getInventory() instanceof LecternInventory) {
+            this.checkIsland(e, player, e.getInventory().getLocation(), Flags.LECTERN);
+            return true;
+        } else if (e.getInventory() instanceof LlamaInventory) {
+            this.checkIsland(e, player, e.getInventory().getLocation(), Flags.MOUNT_INVENTORY);
+            return true;
+        } else if (e.getInventory() instanceof LoomInventory) {
+            this.checkIsland(e, player, e.getInventory().getLocation(), Flags.LOOM);
+            return true;
+        } else if (e.getInventory() instanceof MerchantInventory) {
+            this.checkIsland(e, player, e.getInventory().getLocation(), Flags.TRADING);
+            return true;
+        } else if (e.getInventory() instanceof SmithingInventory) {
+            this.checkIsland(e, player, e.getInventory().getLocation(), Flags.SMITHING);
+            return true;
+        } else if (e.getInventory() instanceof StonecutterInventory) {
+            this.checkIsland(e, player, e.getInventory().getLocation(), Flags.STONECUTTING);
+            return true;
+        }
+        return false;
     }
 
 

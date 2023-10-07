@@ -867,6 +867,10 @@ protection:
       description: Toggle cake interaction
       name: Cakes
       hint: Cake eating disabled
+    CARTOGRAPHY:
+      name: Cartography tables
+      description: Toggle use
+      hint: Cartography table access disabled
     CONTAINER:
       name: All containers
       description: |-
@@ -901,10 +905,18 @@ protection:
       name: Composters
       description: Toggle composter interaction
       hint: Composter interaction disabled
+    LOOM:
+      name: Loom
+      description: Toggle use
+      hint: Loom access disabled
     FLOWER_POT:
       name: Flower pots
       description: Toggle flower pot interaction
       hint: Flower pot interaction disabled
+    GRINDSTONE:
+      name: Grindstone
+      description: Toggle use
+      hint: Grindstone access disabled
     SHULKER_BOX:
       name: Shulker boxes
       description: Toggle shulker box interaction
@@ -914,6 +926,14 @@ protection:
         &a Shulker can teleport
         &a if active.
       name: Shulker teleport
+    SMITHING:
+      name: Smithing
+      description: Toggle use
+      hint: Smithing access disabled
+    STONECUTTING:
+      name: Stonecutting
+      description: Toggle use
+      hint: Stonecutting access disabled
     TRAPPED_CHEST:
       name: Trapped chests
       description: Toggle trapped chest interaction
