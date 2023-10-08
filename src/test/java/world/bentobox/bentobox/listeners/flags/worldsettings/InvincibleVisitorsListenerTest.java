@@ -36,6 +36,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.Nullable;
 import org.junit.After;
@@ -51,6 +52,7 @@ import org.powermock.reflect.Whitebox;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
+import world.bentobox.bentobox.api.events.flags.InvincibleVistorFlagDamageRemovalEvent;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.panels.Panel;
 import world.bentobox.bentobox.api.panels.PanelItem;
@@ -84,6 +86,8 @@ public class InvincibleVisitorsListenerTest {
     private Location location;
     @Mock
     private World world;
+    @Mock
+    private PluginManager pim;
 
     /**
      */
@@ -169,6 +173,7 @@ public class InvincibleVisitorsListenerTest {
         ItemMeta imeta = mock(ItemMeta.class);
         when(itemF.getItemMeta(any())).thenReturn(imeta);
         when(Bukkit.getItemFactory()).thenReturn(itemF);
+        when(Bukkit.getPluginManager()).thenReturn(pim);
 
         Inventory top = mock(Inventory.class);
         when(top.getSize()).thenReturn(9);
@@ -279,6 +284,7 @@ public class InvincibleVisitorsListenerTest {
         listener.onVisitorGetDamage(e);
         assertTrue(e.isCancelled());
         verify(player, never()).setGameMode(eq(GameMode.SPECTATOR));
+        verify(pim).callEvent(any(InvincibleVistorFlagDamageRemovalEvent.class));
     }
 
     @Test
@@ -297,6 +303,7 @@ public class InvincibleVisitorsListenerTest {
         // Player should be teleported to this island
         listener.onVisitorGetDamage(e);
         assertTrue(e.isCancelled());
+        verify(pim).callEvent(any(InvincibleVistorFlagDamageRemovalEvent.class));
     }
 
     @Test
@@ -307,6 +314,7 @@ public class InvincibleVisitorsListenerTest {
         // Player should die
         listener.onVisitorGetDamage(e);
         assertFalse(e.isCancelled());
+        verify(pim).callEvent(any(InvincibleVistorFlagDamageRemovalEvent.class));
     }
 
     @Test
@@ -320,5 +328,6 @@ public class InvincibleVisitorsListenerTest {
         listener.onVisitorGetDamage(e);
         assertTrue(e.isCancelled());
         verify(im).homeTeleportAsync(any(), eq(player));
+        verify(pim).callEvent(any(InvincibleVistorFlagDamageRemovalEvent.class));
     }
 }
