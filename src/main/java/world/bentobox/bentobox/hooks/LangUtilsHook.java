@@ -127,7 +127,7 @@ public class LangUtilsHook extends Hook {
     public static String getItemName(ItemStack itemStack, User user) {
         return hooked
                 ? LanguageHelper.getItemName(itemStack, getUserLocale(user))
-                : Util.prettifyText(itemStack.getType().name());
+                        : Util.prettifyText(itemStack.getType().name());
     }
 
     /**
@@ -143,7 +143,7 @@ public class LangUtilsHook extends Hook {
     public static String getMaterialName(Material material, User user) {
         return hooked
                 ? LanguageHelper.getMaterialName(material, getUserLocale(user))
-                : Util.prettifyText(material.name());
+                        : Util.prettifyText(material.name());
     }
 
     /**
@@ -156,7 +156,7 @@ public class LangUtilsHook extends Hook {
     public static String getEntityDisplayName(Entity entity, User user) {
         return entity.getCustomName() != null
                 ? entity.getCustomName()
-                : getEntityName(entity, user);
+                        : getEntityName(entity, user);
     }
 
     /**
@@ -169,7 +169,7 @@ public class LangUtilsHook extends Hook {
     public static String getEntityName(EntityType entityType, User user) {
         return hooked
                 ? LanguageHelper.getEntityName(entityType, getUserLocale(user))
-                : Util.prettifyText(entityType.toString());
+                        : Util.prettifyText(entityType.toString());
     }
 
     /**
@@ -182,7 +182,7 @@ public class LangUtilsHook extends Hook {
     public static String getEntityName(Entity entity, User user) {
         return hooked
                 ? LanguageHelper.getEntityName(entity, getUserLocale(user))
-                : Util.prettifyText(entity.getType().toString());
+                        : Util.prettifyText(entity.getType().toString());
     }
 
     /**
@@ -195,7 +195,7 @@ public class LangUtilsHook extends Hook {
     public static String getBiomeName(Biome biome, User user) {
         return hooked
                 ? LanguageHelper.getBiomeName(biome, getUserLocale(user))
-                : Util.prettifyText(biome.name());
+                        : Util.prettifyText(biome.name());
     }
 
     /**
@@ -209,7 +209,7 @@ public class LangUtilsHook extends Hook {
     public static String getEnchantDisplayName(Enchantment ench, int level, User user) {
         return hooked
                 ? LanguageHelper.getEnchantmentDisplayName(ench, level, getUserLocale(user))
-                : Util.prettifyText(ench.getKey().getKey()) + " " + level;
+                        : Util.prettifyText(ench.getKey().getKey()) + " " + level;
     }
 
     /**
@@ -223,7 +223,7 @@ public class LangUtilsHook extends Hook {
     public static String getEnchantDisplayName(Entry<Enchantment, Integer> entry, User user) {
         return hooked
                 ? LanguageHelper.getEnchantmentDisplayName(entry, getUserLocale(user))
-                : Util.prettifyText(entry.getKey().getKey().getKey()) + " " + entry.getValue();
+                        : Util.prettifyText(entry.getKey().getKey().getKey()) + " " + entry.getValue();
     }
 
     /**
@@ -236,7 +236,7 @@ public class LangUtilsHook extends Hook {
     public static String getEnchantName(Enchantment enchant, User user) {
         return hooked
                 ? LanguageHelper.getEnchantmentName(enchant, getUserLocale(user))
-                : Util.prettifyText(enchant.getKey().getKey());
+                        : Util.prettifyText(enchant.getKey().getKey());
     }
 
     /**
@@ -250,7 +250,7 @@ public class LangUtilsHook extends Hook {
     public static String getEnchantLevelName(int level, User user) {
         return hooked
                 ? LanguageHelper.getEnchantmentLevelName(level, getUserLocale(user))
-                : String.valueOf(level);
+                        : String.valueOf(level);
     }
 
     /**
@@ -265,27 +265,28 @@ public class LangUtilsHook extends Hook {
             return LanguageHelper.getPotionName(potionType, getUserLocale(user));
         }
         return switch (potionType) {
-            case UNCRAFTABLE -> "Uncraftable Potion";
-            case WATER -> "Water Bottle";
-            case MUNDANE -> "Mundane Potion";
-            case THICK -> "Thick Potion";
-            case AWKWARD -> "Awkward Potion";
-            case NIGHT_VISION -> "Potion of Night Vision";
-            case INVISIBILITY -> "Potion of Invisibility";
-            case JUMP -> "Potion of Leaping";
-            case FIRE_RESISTANCE -> "Potion of Fire Resistance";
-            case SPEED -> "Potion of Swiftness";
-            case SLOWNESS -> "Potion of Slowness";
-            case WATER_BREATHING -> "Potion of Water Breathing";
-            case INSTANT_HEAL -> "Potion of Healing";
-            case INSTANT_DAMAGE -> "Potion of Harming";
-            case POISON -> "Potion of Poison";
-            case REGEN -> "Potion of Regeneration";
-            case STRENGTH -> "Potion of Strength";
-            case WEAKNESS -> "Potion of Weakness";
-            case LUCK -> "Potion of Luck";
-            case TURTLE_MASTER -> "Potion of the Turtle Master";
-            case SLOW_FALLING -> "Potion of Slow Falling";
+        case UNCRAFTABLE -> "Uncraftable Potion";
+        case WATER -> "Water Bottle";
+        case MUNDANE -> "Mundane Potion";
+        case THICK -> "Thick Potion";
+        case AWKWARD -> "Awkward Potion";
+        case NIGHT_VISION -> "Potion of Night Vision";
+        case INVISIBILITY -> "Potion of Invisibility";
+        case JUMP -> "Potion of Leaping";
+        case FIRE_RESISTANCE -> "Potion of Fire Resistance";
+        case SPEED -> "Potion of Swiftness";
+        case SLOWNESS -> "Potion of Slowness";
+        case WATER_BREATHING -> "Potion of Water Breathing";
+        case INSTANT_HEAL -> "Potion of Healing";
+        case INSTANT_DAMAGE -> "Potion of Harming";
+        case POISON -> "Potion of Poison";
+        case REGEN -> "Potion of Regeneration";
+        case STRENGTH -> "Potion of Strength";
+        case WEAKNESS -> "Potion of Weakness";
+        case LUCK -> "Potion of Luck";
+        case TURTLE_MASTER -> "Potion of the Turtle Master";
+        case SLOW_FALLING -> "Potion of Slow Falling";
+        default -> "Unknown Potion";
         };
 
     }
@@ -302,27 +303,28 @@ public class LangUtilsHook extends Hook {
             return LanguageHelper.getSplashPotionName(potionType, getUserLocale(user));
         }
         return switch (potionType) {
-            case UNCRAFTABLE -> "Splash Uncraftable Potion";
-            case WATER -> "Splash Water Bottle";
-            case MUNDANE -> "Mundane Splash Potion";
-            case THICK -> "Thick Splash Potion";
-            case AWKWARD -> "Awkward Splash Potion";
-            case NIGHT_VISION -> "Splash Potion of Night Vision";
-            case INVISIBILITY -> "Splash Potion of Invisibility";
-            case JUMP -> "Splash Potion of Leaping";
-            case FIRE_RESISTANCE -> "Splash Potion of Fire Resistance";
-            case SPEED -> "Splash Potion of Swiftness";
-            case SLOWNESS -> "Splash Potion of Slowness";
-            case WATER_BREATHING -> "Splash Potion of Water Breathing";
-            case INSTANT_HEAL -> "Splash Potion of Healing";
-            case INSTANT_DAMAGE -> "Splash Potion of Harming";
-            case POISON -> "Splash Potion of Poison";
-            case REGEN -> "Splash Potion of Regeneration";
-            case STRENGTH -> "Splash Potion of Strength";
-            case WEAKNESS -> "Splash Potion of Weakness";
-            case LUCK -> "Splash Potion of Luck";
-            case TURTLE_MASTER -> "Splash Potion of the Turtle Master";
-            case SLOW_FALLING -> "Splash Potion of Slow Falling";
+        case UNCRAFTABLE -> "Splash Uncraftable Potion";
+        case WATER -> "Splash Water Bottle";
+        case MUNDANE -> "Mundane Splash Potion";
+        case THICK -> "Thick Splash Potion";
+        case AWKWARD -> "Awkward Splash Potion";
+        case NIGHT_VISION -> "Splash Potion of Night Vision";
+        case INVISIBILITY -> "Splash Potion of Invisibility";
+        case JUMP -> "Splash Potion of Leaping";
+        case FIRE_RESISTANCE -> "Splash Potion of Fire Resistance";
+        case SPEED -> "Splash Potion of Swiftness";
+        case SLOWNESS -> "Splash Potion of Slowness";
+        case WATER_BREATHING -> "Splash Potion of Water Breathing";
+        case INSTANT_HEAL -> "Splash Potion of Healing";
+        case INSTANT_DAMAGE -> "Splash Potion of Harming";
+        case POISON -> "Splash Potion of Poison";
+        case REGEN -> "Splash Potion of Regeneration";
+        case STRENGTH -> "Splash Potion of Strength";
+        case WEAKNESS -> "Splash Potion of Weakness";
+        case LUCK -> "Splash Potion of Luck";
+        case TURTLE_MASTER -> "Splash Potion of the Turtle Master";
+        case SLOW_FALLING -> "Splash Potion of Slow Falling";
+        default -> "Unknown Splash Potion";
         };
     }
 
@@ -338,27 +340,28 @@ public class LangUtilsHook extends Hook {
             return LanguageHelper.getLingeringPotionName(potionType, getUserLocale(user));
         }
         return switch (potionType) {
-            case UNCRAFTABLE -> "Lingering Uncraftable Potion";
-            case WATER -> "Lingering Water Bottle";
-            case MUNDANE -> "Mundane Lingering Potion";
-            case THICK -> "Thick Lingering Potion";
-            case AWKWARD -> "Awkward Lingering Potion";
-            case NIGHT_VISION -> "Lingering Potion of Night Vision";
-            case INVISIBILITY -> "Lingering Potion of Invisibility";
-            case JUMP -> "Lingering Potion of Leaping";
-            case FIRE_RESISTANCE -> "Lingering Potion of Fire Resistance";
-            case SPEED -> "Lingering Potion of Swiftness";
-            case SLOWNESS -> "Lingering Potion of Slowness";
-            case WATER_BREATHING -> "Lingering Potion of Water Breathing";
-            case INSTANT_HEAL -> "Lingering Potion of Healing";
-            case INSTANT_DAMAGE -> "Lingering Potion of Harming";
-            case POISON -> "Lingering Potion of Poison";
-            case REGEN -> "Lingering Potion of Regeneration";
-            case STRENGTH -> "Lingering Potion of Strength";
-            case WEAKNESS -> "Lingering Potion of Weakness";
-            case LUCK -> "Lingering Potion of Luck";
-            case TURTLE_MASTER -> "Lingering Potion of the Turtle Master";
-            case SLOW_FALLING -> "Lingering Potion of Slow Falling";
+        case UNCRAFTABLE -> "Lingering Uncraftable Potion";
+        case WATER -> "Lingering Water Bottle";
+        case MUNDANE -> "Mundane Lingering Potion";
+        case THICK -> "Thick Lingering Potion";
+        case AWKWARD -> "Awkward Lingering Potion";
+        case NIGHT_VISION -> "Lingering Potion of Night Vision";
+        case INVISIBILITY -> "Lingering Potion of Invisibility";
+        case JUMP -> "Lingering Potion of Leaping";
+        case FIRE_RESISTANCE -> "Lingering Potion of Fire Resistance";
+        case SPEED -> "Lingering Potion of Swiftness";
+        case SLOWNESS -> "Lingering Potion of Slowness";
+        case WATER_BREATHING -> "Lingering Potion of Water Breathing";
+        case INSTANT_HEAL -> "Lingering Potion of Healing";
+        case INSTANT_DAMAGE -> "Lingering Potion of Harming";
+        case POISON -> "Lingering Potion of Poison";
+        case REGEN -> "Lingering Potion of Regeneration";
+        case STRENGTH -> "Lingering Potion of Strength";
+        case WEAKNESS -> "Lingering Potion of Weakness";
+        case LUCK -> "Lingering Potion of Luck";
+        case TURTLE_MASTER -> "Lingering Potion of the Turtle Master";
+        case SLOW_FALLING -> "Lingering Potion of Slow Falling";
+        default -> "Unknown Lingering Potion";
         };
     }
 
@@ -374,25 +377,26 @@ public class LangUtilsHook extends Hook {
             return LanguageHelper.getTippedArrowName(potionType, getUserLocale(user));
         }
         return switch (potionType) {
-            case UNCRAFTABLE -> "Uncraftable Tipped Arrow";
-            case WATER -> "Arrow of Splashing";
-            case MUNDANE, THICK, AWKWARD -> "Tipped Arrow";
-            case NIGHT_VISION -> "Arrow of Night Vision";
-            case INVISIBILITY -> "Arrow of Invisibility";
-            case JUMP -> "Arrow of Leaping";
-            case FIRE_RESISTANCE -> "Arrow of Fire Resistance";
-            case SPEED -> "Arrow of Swiftness";
-            case SLOWNESS -> "Arrow of Slowness";
-            case WATER_BREATHING -> "Arrow of Water Breathing";
-            case INSTANT_HEAL -> "Arrow of Healing";
-            case INSTANT_DAMAGE -> "Arrow of Harming";
-            case POISON -> "Arrow of Poison";
-            case REGEN -> "Arrow of Regeneration";
-            case STRENGTH -> "Arrow of Strength";
-            case WEAKNESS -> "Arrow of Weakness";
-            case LUCK -> "Arrow of Luck";
-            case TURTLE_MASTER -> "Arrow of the Turtle Master";
-            case SLOW_FALLING -> "Arrow of Slow Falling";
+        case UNCRAFTABLE -> "Uncraftable Tipped Arrow";
+        case WATER -> "Arrow of Splashing";
+        case MUNDANE, THICK, AWKWARD -> "Tipped Arrow";
+        case NIGHT_VISION -> "Arrow of Night Vision";
+        case INVISIBILITY -> "Arrow of Invisibility";
+        case JUMP -> "Arrow of Leaping";
+        case FIRE_RESISTANCE -> "Arrow of Fire Resistance";
+        case SPEED -> "Arrow of Swiftness";
+        case SLOWNESS -> "Arrow of Slowness";
+        case WATER_BREATHING -> "Arrow of Water Breathing";
+        case INSTANT_HEAL -> "Arrow of Healing";
+        case INSTANT_DAMAGE -> "Arrow of Harming";
+        case POISON -> "Arrow of Poison";
+        case REGEN -> "Arrow of Regeneration";
+        case STRENGTH -> "Arrow of Strength";
+        case WEAKNESS -> "Arrow of Weakness";
+        case LUCK -> "Arrow of Luck";
+        case TURTLE_MASTER -> "Arrow of the Turtle Master";
+        case SLOW_FALLING -> "Arrow of Slow Falling";
+        default -> "Unknown Arrow";
         };
     }
 
@@ -426,7 +430,7 @@ public class LangUtilsHook extends Hook {
     public static String getPotionEffectName(PotionEffectType effectType, User user) {
         return hooked
                 ? LanguageHelper.getPotionEffectName(effectType, getUserLocale(user))
-                : Util.prettifyText(effectType.getName());
+                        : Util.prettifyText(effectType.getName());
     }
 
     /**
@@ -483,7 +487,7 @@ public class LangUtilsHook extends Hook {
     public static String getTropicalFishTypeName(TropicalFish.Pattern fishPattern, User user) {
         return hooked
                 ? LanguageHelper.getTropicalFishTypeName(fishPattern, getUserLocale(user))
-                : Util.prettifyText(fishPattern.name());
+                        : Util.prettifyText(fishPattern.name());
     }
 
     /**
@@ -515,74 +519,74 @@ public class LangUtilsHook extends Hook {
             int variant = (pcol & 255) << 24 | (bcol & 255) << 16 | (patt & 255) << 8 | type;
 
             switch (variant) {
-                case 117506305 -> {
-                    return "Anemone";
-                }
-                case 117899265 -> {
-                    return "Black Tang";
-                }
-                case 185008129 -> {
-                    return "Blue Tang";
-                }
-                case 117441793 -> {
-                    return "Butterflyfish";
-                }
-                case 118161664 -> {
-                    return "Cichlid";
-                }
-                case 65536 -> {
-                    return "Clownfish";
-                }
-                case 50726144 -> {
-                    return "Cotton Candy Betta";
-                }
-                case 67764993 -> {
-                    return "Dottyback";
-                }
-                case 234882305 -> {
-                    return "Emperor Red Snapper";
-                }
-                case 67110144 -> {
-                    return "Goatfish";
-                }
-                case 117441025 -> {
-                    return "Moorish Idol";
-                }
-                case 16778497 -> {
-                    return "Ornate Butterflyfish";
-                }
-                case 101253888 -> {
-                    return "Parrotfish";
-                }
-                case 50660352 -> {
-                    return "Queen Angelfish";
-                }
-                case 918529 -> {
-                    return "Red Cichlid";
-                }
-                case 235340288 -> {
-                    return "Red Lipped Blenny";
-                }
-                case 918273 -> {
-                    return "Red Snapper";
-                }
-                case 67108865 -> {
-                    return "Threadfin";
-                }
-                case 917504 -> {
-                    return "Tomato Clownfish";
-                }
-                case 459008 -> {
-                    return "Triggerfish";
-                }
-                case 67699456 -> {
-                    return "Yellowtail Parrotfish";
-                }
-                case 67371009 -> {
-                    return "Yellow Tang";
-                }
-                default -> {
-                }
+            case 117506305 -> {
+                return "Anemone";
+            }
+            case 117899265 -> {
+                return "Black Tang";
+            }
+            case 185008129 -> {
+                return "Blue Tang";
+            }
+            case 117441793 -> {
+                return "Butterflyfish";
+            }
+            case 118161664 -> {
+                return "Cichlid";
+            }
+            case 65536 -> {
+                return "Clownfish";
+            }
+            case 50726144 -> {
+                return "Cotton Candy Betta";
+            }
+            case 67764993 -> {
+                return "Dottyback";
+            }
+            case 234882305 -> {
+                return "Emperor Red Snapper";
+            }
+            case 67110144 -> {
+                return "Goatfish";
+            }
+            case 117441025 -> {
+                return "Moorish Idol";
+            }
+            case 16778497 -> {
+                return "Ornate Butterflyfish";
+            }
+            case 101253888 -> {
+                return "Parrotfish";
+            }
+            case 50660352 -> {
+                return "Queen Angelfish";
+            }
+            case 918529 -> {
+                return "Red Cichlid";
+            }
+            case 235340288 -> {
+                return "Red Lipped Blenny";
+            }
+            case 918273 -> {
+                return "Red Snapper";
+            }
+            case 67108865 -> {
+                return "Threadfin";
+            }
+            case 917504 -> {
+                return "Tomato Clownfish";
+            }
+            case 459008 -> {
+                return "Triggerfish";
+            }
+            case 67699456 -> {
+                return "Yellowtail Parrotfish";
+            }
+            case 67371009 -> {
+                return "Yellow Tang";
+            }
+            default -> {
+            }
             }
         }
         return null;
@@ -598,7 +602,7 @@ public class LangUtilsHook extends Hook {
     public static String getDyeColorName(DyeColor color, User user) {
         return hooked
                 ? LanguageHelper.getDyeColorName(color, getUserLocale(user))
-                : Util.prettifyText(color.name());
+                        : Util.prettifyText(color.name());
     }
 
     /**
@@ -611,7 +615,7 @@ public class LangUtilsHook extends Hook {
     public static String getVillagerLevelName(int level, User user) {
         return hooked
                 ? LanguageHelper.getVillagerLevelName(level, getUserLocale(user))
-                : Integer.toString(level);
+                        : Integer.toString(level);
     }
 
     /**
@@ -624,7 +628,7 @@ public class LangUtilsHook extends Hook {
     public static String getVillagerProfessionName(Villager.Profession profession, User user) {
         return hooked
                 ? LanguageHelper.getVillagerProfessionName(profession, getUserLocale(user))
-                : Util.prettifyText(profession.name());
+                        : Util.prettifyText(profession.name());
     }
 
     /**
@@ -637,9 +641,9 @@ public class LangUtilsHook extends Hook {
     public static String getBannerPatternName(Pattern pattern, User user) {
         return hooked
                 ? LanguageHelper.getBannerPatternName(pattern, getUserLocale(user))
-                : pattern.getColor().name().toLowerCase(Locale.ROOT)
-                + "_"
-                + pattern.getPattern().name().toLowerCase(Locale.ROOT);
+                        : pattern.getColor().name().toLowerCase(Locale.ROOT)
+                        + "_"
+                        + pattern.getPattern().name().toLowerCase(Locale.ROOT);
     }
 
     /**
@@ -658,22 +662,22 @@ public class LangUtilsHook extends Hook {
         // so directly output it here.
 
         return switch (material) {
-            case MUSIC_DISC_13 -> "C418 - 13";
-            case MUSIC_DISC_CAT -> "C418 - cat";
-            case MUSIC_DISC_BLOCKS -> "C418 - blocks";
-            case MUSIC_DISC_CHIRP -> "C418 - chirp";
-            case MUSIC_DISC_FAR -> "C418 - far";
-            case MUSIC_DISC_MALL -> "C418 - mall";
-            case MUSIC_DISC_MELLOHI -> "C418 - mellohi";
-            case MUSIC_DISC_STAL -> "C418 - stal";
-            case MUSIC_DISC_STRAD -> "C418 - strad";
-            case MUSIC_DISC_WARD -> "C418 - ward";
-            case MUSIC_DISC_11 -> "C418 - 11";
-            case MUSIC_DISC_WAIT -> "C418 - wait";
-            case MUSIC_DISC_PIGSTEP -> "Lena Raine - Pigstep";
-            case MUSIC_DISC_5 -> "Samuel Åberg - 5";
-            case MUSIC_DISC_OTHERSIDE -> "Lena Raine - otherside";
-            default -> null;
+        case MUSIC_DISC_13 -> "C418 - 13";
+        case MUSIC_DISC_CAT -> "C418 - cat";
+        case MUSIC_DISC_BLOCKS -> "C418 - blocks";
+        case MUSIC_DISC_CHIRP -> "C418 - chirp";
+        case MUSIC_DISC_FAR -> "C418 - far";
+        case MUSIC_DISC_MALL -> "C418 - mall";
+        case MUSIC_DISC_MELLOHI -> "C418 - mellohi";
+        case MUSIC_DISC_STAL -> "C418 - stal";
+        case MUSIC_DISC_STRAD -> "C418 - strad";
+        case MUSIC_DISC_WARD -> "C418 - ward";
+        case MUSIC_DISC_11 -> "C418 - 11";
+        case MUSIC_DISC_WAIT -> "C418 - wait";
+        case MUSIC_DISC_PIGSTEP -> "Lena Raine - Pigstep";
+        case MUSIC_DISC_5 -> "Samuel Åberg - 5";
+        case MUSIC_DISC_OTHERSIDE -> "Lena Raine - otherside";
+        default -> null;
         };
     }
 
