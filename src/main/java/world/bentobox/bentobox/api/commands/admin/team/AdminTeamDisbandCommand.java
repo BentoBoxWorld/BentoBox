@@ -57,7 +57,7 @@ public class AdminTeamDisbandCommand extends CompositeCommand {
             mUser.sendMessage("commands.admin.team.disband.disbanded");
             // The owner gets to keep the island
             if (!m.equals(targetUUID)) {
-                island.removeMember(m);
+                getIslands().removePlayer(island, m);
                 TeamEvent.builder()
                 .island(island)
                 .reason(TeamEvent.Reason.KICK)

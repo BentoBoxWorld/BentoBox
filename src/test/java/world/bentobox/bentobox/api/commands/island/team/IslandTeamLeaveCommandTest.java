@@ -162,7 +162,7 @@ public class IslandTeamLeaveCommandTest {
 
         IslandTeamLeaveCommand itl = new IslandTeamLeaveCommand(ic);
         assertTrue(itl.execute(user, itl.getLabel(), new ArrayList<>()));
-        verify(island).removeMember(uuid);
+        verify(im).removePlayer(island,uuid);
         verify(user).sendMessage(eq("commands.island.team.leave.success"));
     }
 
@@ -221,7 +221,7 @@ public class IslandTeamLeaveCommandTest {
 
         IslandTeamLeaveCommand itl = new IslandTeamLeaveCommand(ic);
         assertTrue(itl.execute(user, itl.getLabel(), new ArrayList<>()));
-        verify(island).removeMember(uuid);
+        verify(im).removePlayer(island, uuid);
         verify(user).sendMessage("commands.island.team.leave.success");
         verify(pm).addReset(eq(world), eq(uuid));
         verify(user).sendMessage("commands.island.reset.resets-left", TextVariables.NUMBER, "100");

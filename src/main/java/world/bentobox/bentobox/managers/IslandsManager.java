@@ -1379,6 +1379,15 @@ public class IslandsManager {
     }
 
     /**
+     * Remove this player from this island
+     * @param island island
+     * @param uuid uuid of member
+     */
+    public void removePlayer(Island island, UUID uuid) {
+        islandCache.removePlayer(island, uuid);
+    }
+
+    /**
      * This teleports players away from an island - used when reseting or deleting an island
      * @param island to remove players from
      */
@@ -1512,7 +1521,7 @@ public class IslandsManager {
     public void setOwner(User user, UUID targetUUID, Island island) {
         islandCache.setOwner(island, targetUUID);
         // Remove the old owner from the island
-        island.removeMember(user.getUniqueId());
+        plugin.getIslands().removePlayer(island, user.getUniqueId());
 
         user.sendMessage("commands.island.team.setowner.name-is-the-owner", "[name]", plugin.getPlayers().getName(targetUUID));
         plugin.getIWM().getAddon(island.getWorld()).ifPresent(addon -> {

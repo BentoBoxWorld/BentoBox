@@ -21,6 +21,7 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitScheduler;
@@ -86,6 +87,8 @@ public class IslandTeamKickCommandTest {
     private Island island;
     @Mock
     private Addon addon;
+    @Mock
+    private World world;
 
     /**
      */
@@ -132,6 +135,7 @@ public class IslandTeamKickCommandTest {
         when(ic.getAddon()).thenReturn(addon);
         AddonDescription desc = new AddonDescription.Builder("main", "name", "version").build();
         when(addon.getDescription()).thenReturn(desc);
+        when(ic.getWorld()).thenReturn(world);
 
         // Player has island to begin with
         im = mock(IslandsManager.class);
@@ -264,7 +268,7 @@ public class IslandTeamKickCommandTest {
 
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
         assertTrue(itl.execute(user, itl.getLabel(), Collections.singletonList("poslovitch")));
-        verify(im).removePlayer(any(), eq(notUUID));
+        verify(im).removePlayer(any(World.class), eq(notUUID));
         verify(user).sendMessage("commands.island.team.kick.success", TextVariables.NAME, "poslovitch", TextVariables.DISPLAY_NAME, "&Cposlovich");
     }
 
@@ -354,7 +358,7 @@ public class IslandTeamKickCommandTest {
 
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
         assertTrue(itl.execute(user, itl.getLabel(), Collections.singletonList("poslovitch")));
-        verify(im).removePlayer(any(), eq(notUUID));
+        verify(im).removePlayer(any(World.class), eq(notUUID));
         verify(user).sendMessage("commands.island.team.kick.success", TextVariables.NAME, "poslovitch", TextVariables.DISPLAY_NAME, "&Cposlovich");
     }
 
@@ -376,7 +380,7 @@ public class IslandTeamKickCommandTest {
 
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
         assertTrue(itl.execute(user, itl.getLabel(), Collections.singletonList("poslovitch")));
-        verify(im).removePlayer(any(), eq(notUUID));
+        verify(im).removePlayer(any(World.class), eq(notUUID));
         verify(user).sendMessage("commands.island.team.kick.success", TextVariables.NAME, "poslovitch", TextVariables.DISPLAY_NAME, "&Cposlovich");
         verify(target, Mockito.never()).getInventory();
 
@@ -404,7 +408,7 @@ public class IslandTeamKickCommandTest {
 
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
         assertTrue(itl.execute(user, itl.getLabel(), Collections.singletonList("poslovitch")));
-        verify(im).removePlayer(any(), eq(notUUID));
+        verify(im).removePlayer(any(World.class), eq(notUUID));
         verify(user).sendMessage("commands.island.team.kick.success", TextVariables.NAME, "poslovitch", TextVariables.DISPLAY_NAME, "&Cposlovich");
         verify(target, Mockito.never()).getInventory();
         verify(pm).cleanLeavingPlayer(any(), any(User.class), eq(true), eq(island));

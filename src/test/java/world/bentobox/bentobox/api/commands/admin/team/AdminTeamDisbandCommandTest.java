@@ -21,9 +21,11 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitScheduler;
+import org.eclipse.jdt.annotation.Nullable;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -72,6 +74,8 @@ public class AdminTeamDisbandCommandTest {
     @Mock
     private PluginManager pim;
     private UUID notUUID;
+    @Mock
+    private @Nullable Island island;
 
     /**
      */
@@ -119,6 +123,7 @@ public class AdminTeamDisbandCommandTest {
         when(im.hasIsland(any(), any(User.class))).thenReturn(true);
         when(im.isOwner(any(),any())).thenReturn(true);
         when(im.getOwner(any(),any())).thenReturn(uuid);
+        when(im.getIsland(any(World.class), any(UUID.class))).thenReturn(island);
         when(plugin.getIslands()).thenReturn(im);
 
         // Has team
@@ -214,8 +219,7 @@ public class AdminTeamDisbandCommandTest {
     @Test
     public void testExecuteSuccess() {
         when(im.inTeam(any(), any())).thenReturn(true);
-        Island is = mock(Island.class);
-        when(im.getIsland(any(), any(UUID.class))).thenReturn(is);
+        when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
         String[] name = {"tastybento"};
         when(pm.getUUID(any())).thenReturn(notUUID);
         when(pm.getName(any())).thenReturn(name[0]);
@@ -229,8 +233,8 @@ public class AdminTeamDisbandCommandTest {
 
         AdminTeamDisbandCommand itl = new AdminTeamDisbandCommand(ac);
         assertTrue(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
-        verify(is, never()).removeMember(notUUID);
-        verify(is).removeMember(uuid);
+        verify(im, never()).removePlayer(island, notUUID);
+        verify(im).removePlayer(island, uuid);
         verify(user).sendMessage("commands.admin.team.disband.success", TextVariables.NAME, name[0]);
         verify(p).sendMessage("commands.admin.team.disband.disbanded");
         verify(p2).sendMessage("commands.admin.team.disband.disbanded");

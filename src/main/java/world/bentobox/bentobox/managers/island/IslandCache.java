@@ -304,6 +304,19 @@ public class IslandCache {
     }
 
     /**
+     * Removes player from island and removes the cache reference
+     * @param island member's island
+     * @param uuid uuid of member to remove
+     */
+    public void removePlayer(@NonNull Island island, @NonNull UUID uuid) {
+        Set<Island> islandSet = islandsByUUID.get(uuid);
+        if (islandSet != null) {
+            islandSet.remove(island);
+        }
+        island.removeMember(uuid);
+    }
+
+    /**
      * Get the number of islands in the cache
      * @return the number of islands
      */
