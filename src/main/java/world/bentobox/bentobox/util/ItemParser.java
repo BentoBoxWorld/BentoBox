@@ -33,6 +33,7 @@ import world.bentobox.bentobox.BentoBox;
  *
  * @author tastybento, Poslovitch
  */
+@SuppressWarnings("deprecation")
 public class ItemParser {
 
     private ItemParser() {} // private constructor to hide the implicit public one.
@@ -54,6 +55,7 @@ public class ItemParser {
      */
     @Nullable
     public static ItemStack parse(@Nullable String text, @Nullable ItemStack defaultItemStack) {
+
         if (text == null || text.isBlank()) {
             // Text does not exist or is empty.
             return defaultItemStack;
@@ -68,7 +70,6 @@ public class ItemParser {
             // parameter and remove that array part form input data.
             Optional<String> first = Arrays.stream(part).filter(field -> field.matches("(CMD-\\d*)")).findFirst();
             Integer customModelData = null;
-
             if (first.isPresent()) {
                 // Ugly and fast way how to get rid of customData field.
                 String[] copyParts = new String[part.length - 1];
@@ -91,6 +92,7 @@ public class ItemParser {
                 // Parse material directly. It does not have any extra properties.
                 returnValue = new ItemStack(Material.valueOf(part[0].toUpperCase()));
             }
+
             // Material-specific handling
             else if (part[0].contains("POTION") || part[0].equalsIgnoreCase("TIPPED_ARROW")) {
                 // Parse Potions and Tipped Arrows
@@ -114,26 +116,30 @@ public class ItemParser {
             if (returnValue != null
                     // If wrapper is just for code-style null-pointer checks.
                     && customModelData != null) {
-                // We have custom data model. Now assign it to the item-stack.
-                ItemMeta itemMeta = returnValue.getItemMeta();
-
-                // Another null-pointer check for materials that does not have item meta.
-                if (itemMeta != null) {
-                    itemMeta.setCustomModelData(customModelData);
-                    // Update meta to the return item.
-                    returnValue.setItemMeta(itemMeta);
-                }
+                return customValue(returnValue, customModelData);
             }
 
         } catch (Exception exception) {
             BentoBox.getInstance().logError("Could not parse item " + text + " " + exception.getLocalizedMessage());
             returnValue = defaultItemStack;
         }
-
         return returnValue;
+
     }
 
 
+    private static @Nullable ItemStack customValue(ItemStack returnValue, Integer customModelData) {
+        // We have custom data model. Now assign it to the item-stack.
+        ItemMeta itemMeta = returnValue.getItemMeta();
+
+        // Another null-pointer check for materials that does not have item meta.
+        if (itemMeta != null) {
+            itemMeta.setCustomModelData(customModelData);
+            // Update meta to the return item.
+            returnValue.setItemMeta(itemMeta);
+        }
+        return null;
+    }
     /**
      * This method parses array of 2 items into an item stack.
      * First array element is material, while second array element is integer, that represents item count.
@@ -275,7 +281,6 @@ public class ItemParser {
      * @param part String array that contains at least 2 elements.
      * @return Player head with given properties.
      */
-    @SuppressWarnings("deprecation")
     private static ItemStack parsePlayerHead(String[] part) {
         ItemStack playerHead;
 
