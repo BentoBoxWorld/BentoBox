@@ -333,10 +333,14 @@ public class BentoBox extends JavaPlugin implements Listener {
 
     @EventHandler
     public void onServerStop(ServerCommandEvent e) {
+        /* This is no longer needed as with https://github.com/Multiverse/Multiverse-Core/releases/tag/4.3.12 (or maybe earlier) the issue
+         * is fixed where the generator was not remembered across reboots.
+         */
+        /*
         if (islandWorldManager != null && (e.getCommand().equalsIgnoreCase("stop") || e.getCommand().equalsIgnoreCase("restart"))) {
             // Unregister any MV worlds            if () {
-            islandWorldManager.registerWorldsToMultiverse(false);
-        }
+            //islandWorldManager.registerWorldsToMultiverse(false);
+        }*/
     }
 
     /**
