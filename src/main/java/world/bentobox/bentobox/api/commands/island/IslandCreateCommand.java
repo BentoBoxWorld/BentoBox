@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.eclipse.jdt.annotation.Nullable;
 
+import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.events.island.IslandEvent.Reason;
 import world.bentobox.bentobox.api.user.User;
@@ -48,12 +49,11 @@ public class IslandCreateCommand extends CompositeCommand {
             if (island.isReserved()) {
                 return true;
             }
-            // Get how many islands this player has
-            int num = this.getIslands().getNumberOfConcurrentIslands(user.getUniqueId(), getWorld());
-            int max = this.getIWM().getWorldSettings(getWorld()).getConcurrentIslands();
-            if (num < max) {
-                return true;
-            }
+        }
+        // Get how many islands this player has
+        int num = this.getIslands().getNumberOfConcurrentIslands(user.getUniqueId(), getWorld());
+        int max = user.getPermissionValue(this.getIWM().getAddon(getWorld()).map(GameModeAddon::getPermissionPrefix).orElse("") + "island.number", this.getIWM().getWorldSettings(getWorld()).getConcurrentIslands());
+        if (num >= max) {
             // You cannot make an island
             user.sendMessage("general.errors.you-cannot-make");
             return false;
