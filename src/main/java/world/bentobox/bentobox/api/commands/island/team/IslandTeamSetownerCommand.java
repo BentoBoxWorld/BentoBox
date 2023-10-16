@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import org.eclipse.jdt.annotation.Nullable;
 
+import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.island.IslandEvent;
@@ -64,7 +65,9 @@ public class IslandTeamSetownerCommand extends CompositeCommand {
             return false;
         }
         // Check how many islands target has
-        if (getIslands().getNumberOfConcurrentIslands(targetUUID, getWorld()) >= this.getIWM().getWorldSettings(getWorld()).getConcurrentIslands()) {
+        int num = getIslands().getNumberOfConcurrentIslands(targetUUID, getWorld());
+        int max = user.getPermissionValue(this.getIWM().getAddon(getWorld()).map(GameModeAddon::getPermissionPrefix).orElse("") + "island.number", this.getIWM().getWorldSettings(getWorld()).getConcurrentIslands());
+        if (num >= max) {
             // Too many
             user.sendMessage("commands.island.team.setowner.errors.at-max");
             return false;

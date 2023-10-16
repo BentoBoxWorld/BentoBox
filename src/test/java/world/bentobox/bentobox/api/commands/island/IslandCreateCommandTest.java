@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -13,6 +15,7 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -106,15 +109,17 @@ public class IslandCreateCommandTest {
         UUID uuid = UUID.randomUUID();
         when(user.getUniqueId()).thenReturn(uuid);
         when(user.getPlayer()).thenReturn(player);
-        when(user.hasPermission(Mockito.anyString())).thenReturn(true);
-        when(user.getTranslation(Mockito.any())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
+        when(user.hasPermission(anyString())).thenReturn(true);
+        when(user.getTranslation(any())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
+        // Return the default value for perm questions by default
+        when(user.getPermissionValue(anyString(), anyInt())).thenAnswer((Answer<Integer>) inv -> inv.getArgument(1, Integer.class));
         User.setPlugin(plugin);
         // Set up user already
         User.getInstance(player);
 
         // Addon
         GameModeAddon addon = mock(GameModeAddon.class);
-
+        when(addon.getPermissionPrefix()).thenReturn("bskyblock.");
 
         // Parent command has no aliases
         when(ic.getSubCommandAliases()).thenReturn(new HashMap<>());
@@ -144,10 +149,11 @@ public class IslandCreateCommandTest {
         PowerMockito.mockStatic(Bukkit.class);
         when(Bukkit.getScheduler()).thenReturn(sch);
 
-        // IWM friendly name
+        // IWM
         when(iwm.getFriendlyName(any())).thenReturn("BSkyBlock");
         when(ws.getConcurrentIslands()).thenReturn(1); // One island allowed
         when(iwm.getWorldSettings(world)).thenReturn(ws);
+        when(iwm.getAddon(world)).thenReturn(Optional.of(addon));
         when(plugin.getIWM()).thenReturn(iwm);
 
         // NewIsland
@@ -213,13 +219,10 @@ public class IslandCreateCommandTest {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandCreateCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testCanExecuteUserStringListOfStringHasIslandReserved() {
-        @Nullable
-        Island island = mock(Island.class);
-        when(im.getIsland(any(), Mockito.any(User.class))).thenReturn(island);
-        when(island.isReserved()).thenReturn(true);
-        assertTrue(cc.canExecute(user, "", Collections.emptyList()));
-        verify(user, never()).sendMessage("general.errors.already-have-island");
+    public void testCanExecuteUserStringListOfStringZeroAllowed() {
+        when(ws.getConcurrentIslands()).thenReturn(0); // No islands allowed
+        assertFalse(cc.canExecute(user, "", Collections.emptyList()));
+        verify(user).sendMessage("general.errors.you-cannot-make");
 
     }
 
@@ -227,9 +230,38 @@ public class IslandCreateCommandTest {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandCreateCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
+    public void testCanExecuteUserStringListOfStringHasPerm() {
+        // Currently user has two islands
+        when(im.getNumberOfConcurrentIslands(user.getUniqueId(), world)).thenReturn(19);
+        // Perm
+        when(user.getPermissionValue(anyString(), anyInt())).thenReturn(20); // 20 allowed!
+        assertTrue(cc.canExecute(user, "", Collections.emptyList()));
+        verify(user, never()).sendMessage(anyString());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandCreateCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     */
+    @Test
+    public void testCanExecuteUserStringListOfStringHasIslandReserved() {
+        @Nullable
+        Island island = mock(Island.class);
+        when(im.getIsland(any(), any(User.class))).thenReturn(island);
+        when(island.isReserved()).thenReturn(true);
+        assertTrue(cc.canExecute(user, "", Collections.emptyList()));
+        verify(user, never()).sendMessage("general.errors.already-have-island");
+
+    }
+
+
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandCreateCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     */
+    @Test
     public void testCanExecuteUserStringListOfStringTooManyIslands() {
-        when(im.getPrimaryIsland(any(), Mockito.any(UUID.class))).thenReturn(null);
-        when(im.inTeam(any(), Mockito.any(UUID.class))).thenReturn(false);
+        when(im.getPrimaryIsland(any(), any(UUID.class))).thenReturn(null);
+        when(im.inTeam(any(), any(UUID.class))).thenReturn(false);
         when(iwm.getMaxIslands(any())).thenReturn(100);
         when(im.getIslandCount(any())).thenReturn(100L);
         assertFalse(cc.canExecute(user, "", Collections.emptyList()));
@@ -247,7 +279,7 @@ public class IslandCreateCommandTest {
         // Has permission
         when(bpm.checkPerm(any(), any(), any())).thenReturn(true);
 
-        assertTrue(cc.execute(user, "", Collections.singletonList("custom")));
+        assertTrue(cc.execute(user, "", List.of("custom")));
         verify(builder).player(eq(user));
         verify(builder).addon(any());
         verify(builder).reason(eq(Reason.CREATE));
@@ -267,7 +299,7 @@ public class IslandCreateCommandTest {
         when(bpm.checkPerm(any(), any(), any())).thenReturn(true);
 
         when(builder.build()).thenThrow(new IOException("commands.island.create.unable-create-island"));
-        assertFalse(cc.execute(user, "", Collections.singletonList("custom")));
+        assertFalse(cc.execute(user, "", List.of("custom")));
         verify(user).sendMessage("commands.island.create.creating-island");
         verify(user).sendMessage("commands.island.create.unable-create-island");
         verify(plugin).logError("Could not create island for player. commands.island.create.unable-create-island");
@@ -291,7 +323,7 @@ public class IslandCreateCommandTest {
      */
     @Test
     public void testExecuteUserStringListOfStringUnknownBundle() {
-        assertFalse(cc.execute(user, "", Collections.singletonList("custom")));
+        assertFalse(cc.execute(user, "", List.of("custom")));
         verify(user).sendMessage(eq("commands.island.create.unknown-blueprint"));
         verify(user, never()).sendMessage("commands.island.create.creating-island");
     }
@@ -347,10 +379,9 @@ public class IslandCreateCommandTest {
      */
     @Test
     public void testExecuteUserStringListOfStringShowPanel() {
-        Map<String, BlueprintBundle> map = new HashMap<>();
-        map.put("bundle1", new BlueprintBundle());
-        map.put("bundle2", new BlueprintBundle());
-        map.put("bundle3", new BlueprintBundle());
+        Map<String, BlueprintBundle> map = Map.of("bundle1", new BlueprintBundle(),
+                "bundle2", new BlueprintBundle(),
+                "bundle3", new BlueprintBundle());
         when(bpm.getBlueprintBundles(any())).thenReturn(map);
         assertTrue(cc.execute(user, "", Collections.emptyList()));
         // Panel is shown, not the creation message

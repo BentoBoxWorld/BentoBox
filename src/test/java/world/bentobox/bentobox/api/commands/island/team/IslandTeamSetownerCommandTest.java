@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -14,6 +15,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -29,6 +31,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -98,6 +101,8 @@ public class IslandTeamSetownerCommandTest {
         when(user.getUniqueId()).thenReturn(uuid);
         when(user.getPlayer()).thenReturn(player);
         when(user.getName()).thenReturn("tastybento");
+        // Return the default value for perm questions by default
+        when(user.getPermissionValue(anyString(), anyInt())).thenAnswer((Answer<Integer>) inv -> inv.getArgument(1, Integer.class));
 
         // Parent command has no aliases
         ic = mock(CompositeCommand.class);
@@ -196,7 +201,7 @@ public class IslandTeamSetownerCommandTest {
     public void testCanExecuteUserStringListOfStringShowHelp() {
         when(im.inTeam(any(), any())).thenReturn(true);
         when(im.getOwner(any(), any())).thenReturn(uuid);
-        assertFalse(its.canExecute(user, "", Collections.emptyList()));
+        assertFalse(its.canExecute(user, "", List.of()));
         verify(user).sendMessage("commands.help.header","[label]", null);
     }
 
@@ -208,7 +213,7 @@ public class IslandTeamSetownerCommandTest {
         when(im.inTeam(any(), any())).thenReturn(true);
         when(im.getOwner(any(), any())).thenReturn(uuid);
         when(pm.getUUID(anyString())).thenReturn(null);
-        assertFalse(its.canExecute(user, "", Collections.singletonList("tastybento")));
+        assertFalse(its.canExecute(user, "", List.of("tastybento")));
         verify(user).sendMessage("general.errors.unknown-player", TextVariables.NAME, "tastybento");
     }
 
@@ -220,7 +225,7 @@ public class IslandTeamSetownerCommandTest {
         when(im.inTeam(any(), any())).thenReturn(true);
         when(im.getOwner(any(), any())).thenReturn(uuid);
         when(pm.getUUID(anyString())).thenReturn(uuid);
-        assertFalse(its.canExecute(user, "", Collections.singletonList("tastybento")));
+        assertFalse(its.canExecute(user, "", List.of("tastybento")));
         verify(user).sendMessage("commands.island.team.setowner.errors.cant-transfer-to-yourself");
     }
 
@@ -233,14 +238,14 @@ public class IslandTeamSetownerCommandTest {
         when(im.getOwner(any(), any())).thenReturn(uuid);
         UUID target = UUID.randomUUID();
         when(pm.getUUID(anyString())).thenReturn(target);
-        when(im.getMembers(any(), any())).thenReturn(Collections.singleton(target));
+        when(im.getMembers(any(), any())).thenReturn(Set.of(target));
         @Nullable
         Island island = mock(Island.class);
         when(im.getIsland(any(), any(User.class))).thenReturn(island);
 
         when(im.getNumberOfConcurrentIslands(target, world)).thenReturn(3);
 
-        assertFalse(its.canExecute(user, "", Collections.singletonList("tastybento")));
+        assertFalse(its.canExecute(user, "", List.of("tastybento")));
         verify(user).sendMessage("commands.island.team.setowner.errors.at-max");
     }
 
@@ -252,9 +257,48 @@ public class IslandTeamSetownerCommandTest {
         when(im.inTeam(any(), any())).thenReturn(true);
         when(im.getOwner(any(), any())).thenReturn(uuid);
         when(pm.getUUID(anyString())).thenReturn(UUID.randomUUID());
-        when(im.getMembers(any(), any())).thenReturn(Collections.singleton(uuid));
-        assertFalse(its.canExecute(user, "", Collections.singletonList("tastybento")));
+        when(im.getMembers(any(), any())).thenReturn(Set.of(uuid));
+        assertFalse(its.canExecute(user, "", List.of("tastybento")));
         verify(user).sendMessage("commands.island.team.setowner.errors.target-is-not-member");
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamSetownerCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     */
+    @Test
+    public void testExecuteUserStringListOfStringTooManyConcurrent() {
+        when(im.getNumberOfConcurrentIslands(any(), eq(world))).thenReturn(20);
+        when(im.inTeam(any(), any())).thenReturn(true);
+        when(im.getOwner(any(), any())).thenReturn(uuid);
+        UUID target = UUID.randomUUID();
+        when(pm.getUUID(anyString())).thenReturn(target);
+        when(im.getMembers(any(), any())).thenReturn(Set.of(target));
+        @Nullable
+        Island island = mock(Island.class);
+        when(im.getIsland(any(), any(User.class))).thenReturn(island);
+        assertFalse(its.canExecute(user, "", List.of("tastybento")));
+        verify(user).sendMessage("commands.island.team.setowner.errors.at-max");
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamSetownerCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     */
+    @Test
+    public void testExecuteUserStringListOfStringHasManyConcurrentAndPerm() {
+        when(user.getPermissionValue(anyString(), anyInt())).thenReturn(40);
+        when(im.getNumberOfConcurrentIslands(any(), eq(world))).thenReturn(20);
+        when(im.inTeam(any(), any())).thenReturn(true);
+        when(im.getOwner(any(), any())).thenReturn(uuid);
+        UUID target = UUID.randomUUID();
+        when(pm.getUUID(anyString())).thenReturn(target);
+        when(im.getMembers(any(), any())).thenReturn(Set.of(target));
+        @Nullable
+        Island island = mock(Island.class);
+        when(im.getIsland(any(), any(User.class))).thenReturn(island);
+        assertTrue(its.canExecute(user, "", List.of("tastybento")));
+        assertTrue(its.execute(user, "", List.of("tastybento")));
+        verify(im).setOwner(any(), eq(user), eq(target));
+        verify(im).save(island);
     }
 
     /**
@@ -266,12 +310,12 @@ public class IslandTeamSetownerCommandTest {
         when(im.getOwner(any(), any())).thenReturn(uuid);
         UUID target = UUID.randomUUID();
         when(pm.getUUID(anyString())).thenReturn(target);
-        when(im.getMembers(any(), any())).thenReturn(Collections.singleton(target));
+        when(im.getMembers(any(), any())).thenReturn(Set.of(target));
         @Nullable
         Island island = mock(Island.class);
         when(im.getIsland(any(), any(User.class))).thenReturn(island);
-        assertTrue(its.canExecute(user, "", Collections.singletonList("tastybento")));
-        assertTrue(its.execute(user, "", Collections.singletonList("tastybento")));
+        assertTrue(its.canExecute(user, "", List.of("tastybento")));
+        assertTrue(its.execute(user, "", List.of("tastybento")));
         verify(im).setOwner(any(), eq(user), eq(target));
         verify(im).save(island);
     }
@@ -281,7 +325,7 @@ public class IslandTeamSetownerCommandTest {
      */
     @Test
     public void testTabCompleteUserStringListOfString() {
-        assertTrue(its.tabComplete(user, "", Collections.emptyList()).get().isEmpty());
+        assertTrue(its.tabComplete(user, "", List.of()).get().isEmpty());
     }
 
     /**
@@ -289,7 +333,7 @@ public class IslandTeamSetownerCommandTest {
      */
     @Test
     public void testTabCompleteUserStringListOfStringUnknown() {
-        assertTrue(its.tabComplete(user, "ta", Collections.emptyList()).get().isEmpty());
+        assertTrue(its.tabComplete(user, "ta", List.of()).get().isEmpty());
     }
 
     /**
@@ -299,8 +343,8 @@ public class IslandTeamSetownerCommandTest {
     public void testTabCompleteUserStringListOfStringMember() {
         UUID target = UUID.randomUUID();
         when(pm.getName(any())).thenReturn("tastybento");
-        when(im.getMembers(any(), any())).thenReturn(Collections.singleton(target));
-        assertEquals("tastybento", its.tabComplete(user, "", Collections.emptyList()).get().get(0));
+        when(im.getMembers(any(), any())).thenReturn(Set.of(target));
+        assertEquals("tastybento", its.tabComplete(user, "", List.of()).get().get(0));
     }
 
 }
