@@ -55,7 +55,7 @@ public class IslandCreateCommand extends CompositeCommand {
         int max = user.getPermissionValue(this.getIWM().getAddon(getWorld()).map(GameModeAddon::getPermissionPrefix).orElse("") + "island.number", this.getIWM().getWorldSettings(getWorld()).getConcurrentIslands());
         if (num >= max) {
             // You cannot make an island
-            user.sendMessage("general.errors.you-cannot-make");
+            user.sendMessage("commands.island.create.you-cannot-make");
             return false;
         }
         if (getIWM().getMaxIslands(getWorld()) > 0
