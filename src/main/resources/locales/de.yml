@@ -211,6 +211,7 @@ commands:
       islands-in-trash: "&d Der Spieler hat Inseln im Papierkorb."
       protection-range: 'Schutzbereich: [range]'
       protection-range-bonus-title: "&b Beinhaltet diese Boni:"
+      protection-range-bonus: 'Bonus: [number]'
       purge-protected: Die Insel ist löschgeschützt
       max-protection-range: 'Größter historischer Schutzbereich: [range]'
       protection-coords: 'Schutz-Koordinaten: [xz1] bis [xz2]'
@@ -390,6 +391,8 @@ commands:
           prompt: Gib einen Namen ein, oder 'quit' zum Beenden
           too-long: "&c Zu lang"
           pick-a-unique-name: Wähle bitte einen eindeutigeren Namen
+          stripped-char-in-unique-name: "&c Einige Zeichen wurden entfernt, da sie
+            nicht zulässig sind. &a Die neue ID lautet &b [name]&a."
           success: Erfolg!
           conversation-prefix: ">"
         description:
