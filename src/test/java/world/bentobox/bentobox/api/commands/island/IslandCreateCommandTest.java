@@ -212,7 +212,7 @@ public class IslandCreateCommandTest {
         when(im.getNumberOfConcurrentIslands(user.getUniqueId(), world)).thenReturn(2);
         // Player has an island
         assertFalse(cc.canExecute(user, "", Collections.emptyList()));
-        verify(user).sendMessage("general.errors.you-cannot-make");
+        verify(user).sendMessage("commands.island.create.you-cannot-make");
     }
 
     /**
@@ -222,7 +222,7 @@ public class IslandCreateCommandTest {
     public void testCanExecuteUserStringListOfStringZeroAllowed() {
         when(ws.getConcurrentIslands()).thenReturn(0); // No islands allowed
         assertFalse(cc.canExecute(user, "", Collections.emptyList()));
-        verify(user).sendMessage("general.errors.you-cannot-make");
+        verify(user).sendMessage("commands.island.create.you-cannot-make");
 
     }
 
