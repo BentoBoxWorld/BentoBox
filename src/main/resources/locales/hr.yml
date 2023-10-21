@@ -11,8 +11,8 @@ general:
   invalid: Neispravno
   errors:
     command-cancelled: "&c Naredba otkazana."
-    no-permission: "&c Nemate dopuštenje za izvršenje ove naredbe (&7 [dopuštenje]&c)."
-    insufficient-rank: "&c Vaš rang nije dovoljno visok za to! (&7 [rang]&c )"
+    no-permission: "&c Nemate dopuštenje za izvršenje ove naredbe (&7 [permission]&c)."
+    insufficient-rank: "&c Vaš rang nije dovoljno visok za to! (&7 [rank]&c )"
     use-in-game: "&c Ova je naredba dostupna samo u igri."
     use-in-console: "&c Ova naredba je dostupna samo u konzoli."
     no-team: "&c Nemate tim!"
@@ -20,19 +20,18 @@ general:
     player-has-island: "&c Igrač već ima otok!"
     player-has-no-island: "&c Taj igrač nema otok!"
     already-have-island: "&c Već imate otok!"
-    no-safe-location-found: "&c Nisam mogao pronaći sigurno mjesto na koje bih te
-      teleportirao na otoku."
+    no-safe-location-found: "&c Nisam mogao pronaći sigurno mjesto na koje bih te teleportirao na otoku."
     not-owner: "&c Vi niste vlasnik otoka!"
-    player-is-not-owner: "&b [ime] &c nije vlasnik otoka!"
+    player-is-not-owner: "&b [name] &c nije vlasnik otoka!"
     not-in-team: "&c Taj igrač nije u vašem timu!"
     offline-player: "&c Taj igrač je offline ili ne postoji."
-    unknown-player: "&c [ime] je nepoznat igrač!"
+    unknown-player: "&c [name] je nepoznat igrač!"
     general: "&c Ta naredba još nije spremna - obratite se administratoru"
     unknown-command: "&c Nepoznata naredba. Do &b /[label] help &c za pomoć."
     wrong-world: "&c Niste u pravom svijetu da to učinite!"
     you-must-wait: "&c Morate pričekati [number]s prije nego što možete ponovno izvesti
       tu naredbu."
-    must-be-positive-number: "&c [broj] nije važeći pozitivan broj."
+    must-be-positive-number: "&c [number] nije važeći pozitivan broj."
     not-on-island: "&c Niste na otoku!"
   worlds:
     overworld: Nadzemlje
@@ -40,10 +39,10 @@ general:
     the-end: Kraj
 commands:
   help:
-    header: "&7 =========== &c [oznaka] pomoć &7 ==========="
-    syntax: "&b [upotreba] &a [parametri]&7 : &e [opis]"
-    syntax-no-parameters: "&b [upotreba]&7 : &e [opis]"
-    end: "&7 =================================="
+    header: "&7 =========== &c [label] pomoć &7 ==========="
+    syntax: '&b [usage] &a [parameters]&7 : &e [description]'
+    syntax-no-parameters: '&b [usage]&7 : &e [description]'
+    end: '&7 ================================='
     parameters: "[naredba]"
     description: naredba pomoći
     console: Konzola
@@ -55,30 +54,30 @@ commands:
       set:
         description: postavlja koliko je puta ovaj igrač resetirao svoj otok
         parameters: "<igrač> <poništava>"
-        success: Broj resetiranja otoka &b [ime]&a sada je &b [broj]&a .
+        success: Broj resetiranja otoka &b [name]&a sada je &b [number]&a .
       reset:
         description: postavlja igračev broj resetiranja otoka na 0
         parameters: "<igrač>"
         success-everyone: "&a Uspješno resetirati &b svačije&a resetirano brojanje
           na &b 0&a ."
-        success: "&a Uspješno poništi &b [ime]&a ponovno postavljeni brojač na &b
+        success: "&a Uspješno poništi &b [name]&a ponovno postavljeni brojač na &b
           0&a."
       add:
         description: dodaje broj resetiranja otoka ovog igrača
         parameters: "<igrač> <poništava>"
-        success: "&a Uspješno dodan &b [broj] &a resetira na &b [ime], povećavajući
-          ukupni broj na &b [ukupno]&a resetira."
+        success: "&a Uspješno dodan &b [number] &a resetira na &b [name], povećavajući
+          ukupni broj na &b [total]&a resetira."
       remove:
         description: smanjuje igračev broj resetiranja otoka
         parameters: "<igrač> <poništava>"
-        success: "&a Uspješno uklonjen &b [broj] &a reseta s otoka &b [ime]&a, smanjujući
-          ukupan broj na &b[ukupno]&a reseta."
+        success: "&a Uspješno uklonjen &b [number] &a reseta s otoka &b [name]&a, smanjujući
+          ukupan broj na &b[total]&a reseta."
     purge:
       parameters: "[dani]"
-      description: otoci za čišćenje napušteni više od [dana]
+      description: otoci za čišćenje napušteni više od [days]
       days-one-or-more: Mora biti najmanje 1 dan ili više
-      purgable-islands: "&a Pronađeni &b [broj] &a otoci koji se mogu očistiti."
-      purge-in-progress: "&c Čišćenje u tijeku. Koristite &b /[oznaka] zaustavljanje
+      purgable-islands: "&a Pronađeni &b [number] &a otoci koji se mogu očistiti."
+      purge-in-progress: "&c Čišćenje u tijeku. Koristite &b /[label] zaustavljanje
         čišćenja &c za poništavanje."
       number-error: "&c Argument mora biti broj dana"
       confirm: "&d Upišite &b /[label] purge confirm &d za početak čišćenja"
@@ -96,32 +95,31 @@ commands:
         stopping: Zaustavljanje čistke
       unowned:
         description: očistiti neposjedovane otoke
-        unowned-islands: "&a Pronađeni &b [broj] &a otoci bez posjeda."
+        unowned-islands: "&a Pronađeni &b [number] &a otoci bez posjeda."
       status:
         description: prikazuje status čišćenja
-        status: "&b [očišćeno] &a otoci očišćeni od &b [očišćeno] &7(&b[postotak]
-          %&7)&a."
+        status: "&b [purge] &a otoci očišćeni od &b [purgeable] &7(&b[percentage]%&7)&a."
     team:
       description: upravljati timovima
       add:
         parameters: "<vlasnik> <igrač>"
         description: dodati igrača u vlasnikov tim
-        name-not-owner: "&c [ime] nije vlasnik."
-        name-has-island: "&c [ime] ima otok. Prvo ih odjavite ili izbrišite!"
-        success: "&b [ime]&a je dodan otoku &b [vlasnika]&a."
+        name-not-owner: "&c [name] nije vlasnik."
+        name-has-island: "&c [name] ima otok. Prvo ih odjavite ili izbrišite!"
+        success: "&b [name]&a je dodan otoku &b [owner]&a."
       disband:
         parameters: "<vlasnik>"
         description: raspustiti vlasnikov tim
-        use-disband-owner: "&c Nije vlasnik! Upotrijebi disband [vlasnik]."
+        use-disband-owner: "&c Nije vlasnik! Upotrijebi disband [owner]."
         disbanded: "&c Admin je raspustio vaš tim!"
-        success: "&b [ime]&a tim je raspušten."
+        success: "&b [name]&a tim je raspušten."
       fix:
         description: skenira i popravlja međuotočno članstvo u bazi podataka
         scanning: Skeniranje baze podataka...
         duplicate-owner: "&c Igrač posjeduje više od jednog otoka u bazi podataka:
-          [ime]"
-        player-has: "&c Igrač [ime] ima [broj] otoka"
-        duplicate-member: "&c Igrač [ime] je član više od jednog otoka u bazi podataka"
+          [name]"
+        player-has: "&c Igrač [name] ima [number] otoka"
+        duplicate-member: "&c Igrač [name] je član više od jednog otoka u bazi podataka"
         rank-on-island: "&c [rank] na otoku na [xyz]"
         fixed: "&a Popravljeno"
         done: "&a Skeniraj"
@@ -131,18 +129,18 @@ commands:
         cannot-kick-owner: "&c Ne možete šutnuti vlasnika. Prvo udarite članove."
         not-in-team: "&c Ovaj igrač nije u timu."
         admin-kicked: "&c Admin vas je izbacio iz tima."
-        success: "&b [ime] &a je izbačen s otoka &b [vlasnika]&a."
+        success: "&b [name] &a je izbačen s otoka &b [owner]&a."
       setowner:
         parameters: "<igrač>"
         description: prenosi vlasništvo nad otokom na igrača
-        already-owner: "&c [ime] je već vlasnik ovog otoka!"
-        success: "&b [ime]&a je sada vlasnik ovog otoka."
+        already-owner: "&c [name] je već vlasnik ovog otoka!"
+        success: "&b [name]&a je sada vlasnik ovog otoka."
     range:
       description: admin island range command
       invalid-value:
         too-low: "&c Raspon zaštite mora biti veći od &b 1&c !"
-        too-high: "&c Raspon zaštite trebao bi biti jednak ili manji od &b [broj]&c!"
-        same-as-before: "&c Raspon zaštite već je postavljen na &b [broj]&c !"
+        too-high: "&c Raspon zaštite trebao bi biti jednak ili manji od &b [number]&c!"
+        same-as-before: "&c Raspon zaštite već je postavljen na &b [number]&c !"
       display:
         already-off: "&c Indikatori su već isključeni"
         already-on: "&c Indikatori su već uključeni"
@@ -156,26 +154,26 @@ commands:
       set:
         parameters: "<igrač> <raspon>"
         description: postavlja zaštićeni raspon otoka
-        success: "&a Postavite raspon zaštite otoka na &b [broj]&a ."
+        success: "&a Postavite raspon zaštite otoka na &b [number]&a ."
       reset:
         parameters: "<igrač>"
         description: vraća zaštićeni raspon otoka na svjetsku zadanu vrijednost
-        success: "&a Resetiraj raspon zaštite otoka na &b [broj]&a ."
+        success: "&a Resetiraj raspon zaštite otoka na &b [number]&a ."
       add:
         description: povećava zaštićeni domet otoka
         parameters: "<igrač> <raspon>"
-        success: "&a Uspješno je povećao zaštićeni domet &b [ime]&a na &b [ukupno]
-          &7 (&b +[broj]&7 )&a ."
+        success: "&a Uspješno je povećao zaštićeni domet &b [name]&a na &b [total]
+          &7 (&b +[number]&7 )&a ."
       remove:
         description: smanjuje zaštićeni domet otoka
         parameters: "<igrač> <raspon>"
-        success: "&a Uspješno je smanjio &b [ime]&a zaštićeni domet otoka na &b [ukupno]
-          &7 (&b -[broj]&7 )&a ."
+        success: "&a Uspješno je smanjio &b [name]&a zaštićeni domet otoka na &b [total]
+          &7 (&b -[number]&7 )&a ."
     register:
       parameters: "<igrač>"
       description: registrirajte igrača na nevlasnički otok na kojem se nalazite
-      registered-island: "&a Registriran [ime] na otok na [xyz]."
-      reserved-island: "&a Rezervirani otok na [xyz] za [ime]."
+      registered-island: "&a Registriran [name] na otok na [xyz]."
+      reserved-island: "&a Rezervirani otok na [xyz] za [name]."
       already-owned: "&c Island je već u vlasništvu drugog igrača!"
       no-island-here: "&c Ovdje nema otoka. Potvrdite da napravite jedan."
       in-deletion: "&c Ovaj otočni prostor trenutno se briše. Pokušaj kasnije."
@@ -186,34 +184,34 @@ commands:
     unregister:
       parameters: "<vlasnik>"
       description: odjaviti vlasnika s otoka, ali zadržati otočne blokove
-      unregistered-island: "&a Neregistrirano [ime] s otoka na [xyz]."
+      unregistered-island: "&a Neregistrirano [name] otoka na [xyz]."
     info:
       parameters: "<igrač>"
       description: dobiti informacije o tome gdje se nalazite ili igračev otok
       no-island: "&c Trenutno nisi na otoku..."
       title: "========== Informacije o otoku ============"
       island-uuid: 'UUID: [uuid]'
-      owner: 'Vlasnik: [vlasnik] ([uuid])'
+      owner: 'Vlasnik: [owner] ([uuid])'
       last-login: 'Zadnja prijava: [datum]'
       last-login-date-time-format: EEE MMM dd HH:mm:ss zzz yyyy
-      deaths: 'Smrti: [broj]'
-      resets-left: 'Poništavanje: [broj] (Maksimalno: [ukupno])'
+      deaths: 'Smrti: [number]'
+      resets-left: 'Poništavanje: [number] (Maksimalno: [total])'
       team-members-title: 'Članovi tima:'
-      team-owner-format: "&a [ime] [rang]"
-      team-member-format: "&b [ime] [rang]"
+      team-owner-format: "&a [name] [rank]"
+      team-member-format: "&b [name] [rank]"
       island-protection-center: 'Centar zaštićenog područja: [xyz]'
       island-center: 'Središte otoka: [xyz]'
       island-coords: 'Koordinate otoka: [xz1] do [xz2]'
       islands-in-trash: "&d Igrač ima otoke u smeću."
-      protection-range: 'Raspon zaštite: [raspon]'
+      protection-range: 'Raspon zaštite: [range]'
       protection-range-bonus-title: "&b Uključuje ove bonuse:"
-      protection-range-bonus: 'Bonus: [broj]'
+      protection-range-bonus: 'Bonus: [number]'
       purge-protected: Otok je zaštićen od čišćenja
-      max-protection-range: 'Najveći povijesni raspon zaštite: [raspon]'
+      max-protection-range: 'Najveći povijesni raspon zaštite: [range]'
       protection-coords: 'Koordinate zaštite: [xz1] do [xz2]'
       is-spawn: Otok je otok za mrijest
       banned-players: 'Zabranjeni igrači:'
-      banned-format: "&c [ime]"
+      banned-format: "&c [name]"
       unowned: "&c Neposjedovan"
     switch:
       description: uključivanje/isključivanje zaštitne premosnice
@@ -223,24 +221,24 @@ commands:
     switchto:
       parameters: "<igrač> <broj>"
       description: prebaciti igračev otok na broj jedan u smeću
-      out-of-range: "&c Broj mora biti između 1 i [broj]. Koristite &l [oznaka] smeće
-        [igrač] &r &c da vidite brojeve otoka"
+      out-of-range: "&c Broj mora biti između 1 i [number]. Koristite &l [label] smeće
+        [player] &r &c da vidite brojeve otoka"
       cannot-switch: "&c Prebacivanje nije uspjelo. Za pogrešku pogledajte zapisnik
         konzole."
       success: "&a Uspješno je prebacio igračev otok na navedeni."
     trash:
       no-unowned-in-trash: "&c Nema otoka bez vlasnika u smeću"
       no-islands-in-trash: "&c Igrač nema otoka u smeću"
-      parameters: "[igrač]"
+      parameters: "[player]"
       description: prikaži otoke koji nisu u vlasništvu ili igračeve otoke u smeću
       title: "&d =========== Otoci u smeću ==========="
-      count: "&l &d otok [broj]:"
-      use-switch: "&a Koristite &l [oznaka] switchto <igrač> <broj>&r &a za prebacivanje
+      count: "&l &d otok [number]:"
+      use-switch: "&a Koristite &l [label] switchto <igrač> <broj>&r &a za prebacivanje
         igrača na otok u smeću"
-      use-emptytrash: "&a Koristite &l [oznaka] emptytrash [igrač]&r &a za trajno
+      use-emptytrash: "&a Koristite &l [label] emptytrash [player]&r &a za trajno
         uklanjanje stavki iz smeća"
     emptytrash:
-      parameters: "[igrač]"
+      parameters: "[player]"
       description: Očisti smeće za igrača ili sve otoke koji nisu u vlasništvu u smeće
       success: "&a Otpad je uspješno ispražnjen."
     version:
@@ -248,23 +246,23 @@ commands:
     setrange:
       parameters: "<igrač> <raspon>"
       description: postavite domet otoka igrača
-      range-updated: "&a Raspon otoka ažuriran na &b [broj]&a ."
+      range-updated: "&a Raspon otoka ažuriran na &b [number]&a ."
     reload:
       description: ponovno učitati
     tp:
       parameters: "<igrač> [igrač za teleportaciju]"
       description: teleportirati se na igračev otok
-      manual: "&c Nije pronađen siguran warp! Ručno tp blizu &b [lokacija] &c i provjerite"
+      manual: "&c Nije pronađen siguran warp! Ručno tp blizu &b [location] &c i provjerite"
     getrank:
       parameters: "<igrač> [vlasnik otoka]"
       description: dobiti rang igrača na svom otoku ili otoku vlasnika
-      rank-is: "&a Rang je &b [rang] &a na &b [ime]&a otoku."
+      rank-is: "&a Rang je &b [rank] &a na &b [name]&a otoku."
     setrank:
       parameters: "<igrač> <rang> [vlasnik otoka]"
       description: postaviti rang igrača na njegovom otoku ili otoku vlasnika
       unknown-rank: "&c Nepoznat rang!"
       not-possible: "&c Rang mora biti viši od posjetitelja."
-      rank-set: "&a Rang postavljen od &b [od] &a do &b [do] &a na &b [ime]&a otoku."
+      rank-set: "&a Rang postavljen od &b [from] &a do &b [to] &a na &b [name]&a otoku."
     setprotectionlocation:
       parameters: "[x y z koordinate]"
       description: postavite trenutnu lokaciju ili [x y z] kao središte zaštićenog
@@ -288,10 +286,10 @@ commands:
       confirmation: "&c Jeste li sigurni da želite postaviti ovu lokaciju kao točku
         mriještenja za ovaj otok?"
       success: "&a Uspješno postavite ovu lokaciju kao točku mrijesta za ovaj otok."
-      island-spawnpoint-changed: "&a [korisnik] je promijenio točku pojavljivanja
+      island-spawnpoint-changed: "&a [user] je promijenio točku pojavljivanja
         otoka."
     settings:
-      parameters: "[igrač]/[svjetska zastava]/spawn-island [flag/active/disable] [rank/active/disable]"
+      parameters: "[player]/[svjetska zastava]/spawn-island [flag/active/disable] [rank/active/disable]"
       description: otvorite GUI postavki ili postavite postavke
       unknown-setting: "&c Nepoznata postavka"
     blueprint:
@@ -303,15 +301,15 @@ commands:
       no-such-file: "&c Nema takve datoteke!"
       could-not-load: "&c Nije moguće učitati tu datoteku!"
       could-not-save: "&c Hmm, nešto nije u redu prilikom spremanja te datoteke: [poruka]"
-      set-pos1: "&a Pozicija 1 postavljena na [vektor]"
-      set-pos2: "&a Položaj 2 postavljen na [vektor]"
+      set-pos1: "&a Pozicija 1 postavljena na [vector]"
+      set-pos2: "&a Položaj 2 postavljen na [vector]"
       set-different-pos: "&c Postavite drugu lokaciju - ova pozicija je već postavljena!"
       need-pos1-pos2: "&c Prvo postavite pos1 i pos2!"
       copying: "&b Kopiranje blokova..."
-      copied-blocks: "&b Kopirano [broj] blokova u međuspremnik"
+      copied-blocks: "&b Kopirano [number] blokova u međuspremnik"
       look-at-a-block: "&c Pogledajte blok unutar 20 blokova za postavljanje"
       mid-copy: "&c Vi ste u sredini kopije. Pričekajte dok se kopija ne završi."
-      copied-percent: "&6 Kopirano [broj]%"
+      copied-percent: "&6 Kopirano [number]%"
       copy:
         parameters: "[zrak]"
         description: kopirajte međuspremnik koji su postavili pos1 i pos2 i opcionalno
@@ -319,11 +317,11 @@ commands:
       delete:
         parameters: "<ime>"
         description: izbrisati nacrt
-        no-blueprint: "&b [ime] &c ne postoji."
+        no-blueprint: "&b [name] &c ne postoji."
         confirmation: |
           &c Jeste li sigurni da želite izbrisati ovaj nacrt?
           &c Jednom izbrisan, ne postoji način da se oporavi.
-        success: "&a Uspješno izbrisan nacrt &b [ime]&a ."
+        success: "&a Uspješno izbrisan nacrt &b [name]&a ."
       load:
         parameters: "<ime>"
         description: učitati nacrt u međuspremnik
@@ -346,8 +344,8 @@ commands:
       rename:
         parameters: "<naziv nacrta> <novi naziv>"
         description: preimenovati nacrt
-        success: "&a Nacrt &b [stari] &a je uspješno preimenovan u &b [prikaz]&a.
-          Naziv datoteke sada je &b [ime]&a."
+        success: "&a Nacrt &b [old] &a je uspješno preimenovan u &b [prikaz]&a.
+          Naziv datoteke sada je &b [name]&a."
         pick-different-name: "&c Navedite naziv koji se razlikuje od trenutnog naziva
           nacrta."
       management:
@@ -357,7 +355,7 @@ commands:
         edit: Kliknite za uređivanje
         rename: Desnom tipkom miša promijenite naziv
         edit-description: Kliknite za uređivanje opisa
-        world-name-syntax: "[ime] svijet"
+        world-name-syntax: "[name] svijet"
         world-instructions: |
           Nacrt mjesta
           na desno postaviti
@@ -385,17 +383,17 @@ commands:
           too-long: "&c Predugo ime. Dopuštena su samo 32 znaka."
           pick-a-unique-name: Odaberite jedinstvenije ime
           stripped-char-in-unique-name: "&c Neki su znakovi uklonjeni jer nisu dopušteni.
-            &a Novi ID će biti &b [ime]&a."
+            &a Novi ID će biti &b [name]&a."
           success: Uspjeh!
           conversation-prefix: ">"
         description:
           quit: prestati
           instructions: |
-            Unesite višeredni opis za [ime]
+            Unesite višeredni opis za [name]
             i 'odustati' na samoj liniji da završi.
           success: Uspjeh!
           cancelling: Otkazivanje
-        slot: "&f Preferirani utor [broj]"
+        slot: "&f Preferirani utor [number]"
         slot-instructions: |
           &a Lijevi klik za povećanje
           &a Desni klik za smanjenje
@@ -420,28 +418,28 @@ commands:
     why:
       parameters: "<igrač>"
       description: uključivanje izvješća o otklanjanju pogrešaka zaštite konzole
-      turning-on: "&a Uključivanje otklanjanja pogrešaka konzole za &b [ime]."
-      turning-off: "&a Isključivanje otklanjanja pogrešaka konzole za &b [ime]."
+      turning-on: "&a Uključivanje otklanjanja pogrešaka konzole za &b [name]."
+      turning-off: "&a Isključivanje otklanjanja pogrešaka konzole za &b [name]."
     deaths:
       description: uredi smrti igrača
       reset:
         description: resetira smrt igrača
         parameters: "<igrač>"
-        success: "&a Uspješno resetirati &b [ime]&a smrti na &b 0&a."
+        success: "&a Uspješno resetirati &b [name]&a smrti na &b 0&a."
       set:
         description: postavlja smrt igrača
         parameters: "<igrač> <smrti>"
-        success: "&a Uspješno postavite &b [ime]&a smrti na &b [broj]&a."
+        success: "&a Uspješno postavite &b [name]&a smrti na &b [number]&a."
       add:
         description: dodaje smrti igraču
         parameters: "<igrač> <smrti>"
-        success: "&a Uspješno dodan &b [broj] &a smrtnih slučajeva u &b [ime], povećavajući
-          ukupan broj na &b [ukupno]&a smrtnih slučajeva."
+        success: "&a Uspješno dodan &b [number] &a smrtnih slučajeva u &b [name], povećavajući
+          ukupan broj na &b [total]&a smrtnih slučajeva."
       remove:
         description: uklanja smrt igrača
         parameters: "<igrač> <smrti>"
-        success: "&a Uspješno uklonjen &b [broj] &a smrtnih slučajeva za &b [ime],
-          smanjujući ukupan broj na &b [ukupno]&a smrtnih slučajeva."
+        success: "&a Uspješno uklonjen &b [number] &a smrtnih slučajeva za &b [name],
+          smanjujući ukupan broj na &b [total]&a smrtnih slučajeva."
     resetname:
       description: resetirati ime otoka igrača
       success: "&a Uspješno resetirano ime otoka [name]."
@@ -456,22 +454,22 @@ commands:
       locales-reloaded: "[prefix_bentobox]&2 jezika ponovno učitano."
       addons-reloaded: "[prefix_bentobox]&2 dodatka ponovno učitana."
       settings-reloaded: "[prefix_bentobox]&2 Postavke ponovno učitane."
-      addon: "[prefix_bentobox]&6 Ponovno učitavanje &b [ime]&2 ."
-      addon-reloaded: "[prefix_bentobox]&b [ime] &2 ponovno učitano."
+      addon: "[prefix_bentobox]&6 Ponovno učitavanje &b [name]&2 ."
+      addon-reloaded: "[prefix_bentobox]&b [name] &2 ponovno učitano."
       warning: "[prefix_bentobox]&c Upozorenje: Ponovno učitavanje može uzrokovati
         nestabilnost, pa ako nakon toga vidite pogreške, ponovno pokrenite poslužitelj."
       unknown-addon: "[prefix_bentobox]&c Nepoznati dodatak!"
       locales:
         description: ponovno učitava lokalizacije
     version:
-      plugin-version: "&2 BentoBox verzija: &3 [verzija]"
+      plugin-version: "&2 BentoBox verzija: &3 [version]"
       description: prikazuje BentoBox i verzije dodataka
       loaded-addons: 'Učitani dodaci:'
       loaded-game-worlds: 'Učitani svjetovi igre:'
-      addon-syntax: "&2 [ime] &3 [verzija] &7 (&3 [stanje]&7 )"
-      game-world: "&2 [ime] &7 (&3 [dodatak]&7 ): &3 [svjetovi]"
-      server: "&2 Pokretanje &3 [naziv] [verzija]&2 ."
-      database: "&2 Baza podataka: &3 [baza podataka]"
+      addon-syntax: "&2 [name] &3 [version] &7 (&3 [state]&7 )"
+      game-world: "&2 [name] &7 (&3 [addon]&7 ): &3 [worlds]"
+      server: "&2 Pokretanje &3 [name] [version]&2 ."
+      database: "&2 Baza podataka: &3 [database]"
     manage:
       description: prikazuje upravljačku ploču
     catalog:
@@ -494,7 +492,7 @@ commands:
     request-cancelled: "&c Istek potvrde - &b zahtjev otkazan."
   delay:
     previous-command-cancelled: "&c Prethodna naredba poništena"
-    stand-still: "&6 Ne miči se! Teleportiranje za [sekundi] sekundi"
+    stand-still: "&6 Ne miči se! Teleportiranje za [seconds] sekundi"
     moved-so-command-cancelled: "&c Preselili ste se. Teleport otkazan!"
   island:
     about:
@@ -503,7 +501,7 @@ commands:
       parameters: "[kućno ime]"
       description: teleportirati vas na vaš otok
       teleport: "&a Teleportira vas na vaš otok."
-      teleported: "&a Vas je teleportirao kući &e [broj]."
+      teleported: "&a Vas je teleportirao kući &e [number]."
       unknown-home: "&c Nepoznato kućno ime!"
     help:
       description: glavna otočka komanda
@@ -522,9 +520,9 @@ commands:
       creating-island: "&a Traženje mjesta za vaš otok..."
       you-cannot-make: "&c Ne možete napraviti više otoka!"
       pasting:
-        estimated-time: "&a Procijenjeno vrijeme: &b [broj] &a sekundi."
-        blocks: "&a Izgradnja blok po blok: &b [broj] &a blokova u svim..."
-        entities: "&a Popunjavanje entitetima: &b [broj] &a entiteta u svim..."
+        estimated-time: "&a Procijenjeno vrijeme: &b [number] &a sekundi."
+        blocks: "&a Izgradnja blok po blok: &b [number] &a blokova u svim..."
+        entities: "&a Popunjavanje entitetima: &b [number] &a entiteta u svim..."
         dimension-done: "&a otok u [svijetu] je izgrađen."
         done: "&a Gotovo! Vaš otok je spreman i čeka vas!"
       pick: "&2 Odaberite otok"
@@ -544,7 +542,7 @@ commands:
     near:
       description: pokažite ime susjednih otoka oko vas
       the-following-islands: "&a U blizini su sljedeći otoci:"
-      syntax: "&6 [smjer]: &a [ime]"
+      syntax: "&6 [direction]: &a [name]"
       north: Sjeverno
       south: Jug
       east: Istočno
@@ -554,7 +552,7 @@ commands:
       description: ponovno pokrenite svoj otok i uklonite stari
       parameters: "<nacrt>"
       none-left: "&c Nemate više resetiranja!"
-      resets-left: "&c Ostalo vam je &b [broj] &c resetiranja"
+      resets-left: "&c Ostalo vam je &b [number] &c resetiranja"
       confirmation: |-
         &c Jeste li sigurni da to želite učiniti?
         &c Svi članovi otoka bit će izbačeni s otoka, nakon toga ćete ih morati ponovno pozvati.
@@ -568,7 +566,7 @@ commands:
         (broj)."
       home-set: "&6 Vaš dom na otoku postavljen je na vašu trenutnu lokaciju."
       homes-are: "&6 Kuće na otoku su:"
-      home-list-syntax: "&6 [ime]"
+      home-list-syntax: "&6 [name]"
       nether:
         not-allowed: "&c Nije vam dopušteno postaviti svoj dom u Nether."
         confirmation: "&c Jeste li sigurni da želite postaviti svoj dom u Nether?"
@@ -578,11 +576,11 @@ commands:
       parameters: "[kućno ime]"
     setname:
       description: odredi ime za svoj otok
-      name-too-short: "&c Prekratko. Minimalna veličina je [broj] znakova."
-      name-too-long: "&c Predugo. Maksimalna veličina je [broj] znakova."
+      name-too-short: "&c Prekratko. Minimalna veličina je [number] znakova."
+      name-too-long: "&c Predugo. Maksimalna veličina je [number] znakova."
       name-already-exists: "&c Već postoji otok s tim imenom u ovom načinu igre."
       parameters: "<ime>"
-      success: "&a Uspješno postavite ime svog otoka na &b [ime]&a ."
+      success: "&a Uspješno postavite ime svog otoka na &b [name]&a ."
     renamehome:
       description: preimenovati početnu lokaciju
       parameters: "[kućno ime]"
@@ -596,29 +594,29 @@ commands:
       info:
         description: prikazati detaljne informacije o vašem timu
         member-layout:
-          online: "&a &l o &r &f [ime]"
-          offline: "&c &l o &r &f [ime] &7 ([posljednje_viđeno])"
-          offline-not-last-seen: "&c &l o &r &f [ime]"
+          online: "&a &l o &r &f [name]"
+          offline: "&c &l o &r &f [name] &7 ([posljednje_viđeno])"
+          offline-not-last-seen: "&c &l o &r &f [name]"
         last-seen:
-          layout: "&b [broj] &7 [jedinica] prije"
+          layout: "&b [number] &7 [unit] prije"
           days: dana
           hours: sati
           minutes: minuta
         header: |
           &f --- &a Podaci o timu &f ---
-          &a Članovi: &b [ukupno]&7 /&b [maks.]
+          &a Članovi: &b [total]&7 /&b [max]
           &a Online članovi: &b [online]
         rank-layout:
-          owner: "&6 [rang]:"
-          generic: "&6 [rang] &7 (&b [broj]&7 )&6 :"
+          owner: "&6 [rank]:"
+          generic: "&6 [rank] &7 (&b [number]&7 )&6 :"
       coop:
         description: rangirajte kokošinjac za igrače na svom otoku
         parameters: "<igrač>"
         cannot-coop-yourself: "&c Ne možete se sami boriti!"
         already-has-rank: "&c Igrač već ima rang!"
-        you-are-a-coop-member: "&2 Sarađivali ste s &b[ime]&a."
-        success: "&a Surađivao si s &b [ime]&a."
-        name-has-invited-you: "&a [ime] vas je pozvao da se pridružite kao član zadruge
+        you-are-a-coop-member: "&2 Sarađivali ste s &b[name]&a."
+        success: "&a Surađivao si s &b [name]&a."
+        name-has-invited-you: "&a [name] vas je pozvao da se pridružite kao član zadruge
           na njihovom otoku."
       uncoop:
         description: ukloniti coop čin s igrača
@@ -628,18 +626,18 @@ commands:
         player-not-cooped: "&c Igrač nije povezan!"
         you-are-no-longer-a-coop-member: "&c Više nisi član zadruge [name]'s island."
         all-members-logged-off: "&c Svi članovi otoka su se odjavili tako da više
-          niste član coop-a otoka [ime]."
-        success: "&b [ime] &a više nije član zadruge na vašem otoku."
+          niste član coop-a otoka [name]."
+        success: "&b [name] &a više nije član zadruge na vašem otoku."
         is-full: "&c Ne možete surađivati ​​ni s kim drugim."
       trust:
         description: dajte pouzdanom igraču rang na vašem otoku
         parameters: "<igrač>"
         trust-in-yourself: "&c Vjerujte u sebe!"
-        name-has-invited-you: "&a [ime] vas je pozvao da se pridružite kao pouzdani
+        name-has-invited-you: "&a [name] vas je pozvao da se pridružite kao pouzdani
           član njihovog otoka."
         player-already-trusted: "&c Player već ima povjerenja!"
-        you-are-trusted: "&2 &b [ime]&a vam vjeruje!"
-        success: "&a Vjerovali ste &b [ime]&a ."
+        you-are-trusted: "&2 &b [name]&a vam vjeruje!"
+        success: "&a Vjerovali ste &b [name]&a ."
         is-full: "&c Ne možete vjerovati nikome drugome. Čuvaj leđa!"
       untrust:
         description: ukloniti rang pouzdanog igrača s igrača
@@ -647,13 +645,13 @@ commands:
         cannot-untrust-yourself: "&c Ne možete ne vjerovati sebi!"
         cannot-untrust-member: "&c Ne možete ne vjerovati članu tima!"
         player-not-trusted: "&c Igraču se ne vjeruje!"
-        you-are-no-longer-trusted: "&c &b [ime]&a vam više ne vjeruje!"
-        success: "&b [ime] &a više nije pouzdan na vašem otoku."
+        you-are-no-longer-trusted: "&c &b [name]&a vam više ne vjeruje!"
+        success: "&b [name] &a više nije pouzdan na vašem otoku."
       invite:
         description: pozovite igrača da se pridruži vašem otoku
         invitation-sent: "&a Pozivnica poslana na &b[name]&a."
         removing-invite: "&c Uklanjanje pozivnice."
-        name-has-invited-you: "&a [ime] vas je pozvao da se pridružite njihovom otoku."
+        name-has-invited-you: "&a [name] vas je pozvao da se pridružite njihovom otoku."
         to-accept-or-reject: "&a Da li /[label] team accept prihvatiti ili /[label]
           team reject odbiti"
         you-will-lose-your-island: "&c UPOZORENJE! Izgubit ćeš svoj otok ako prihvatiš!"
@@ -672,29 +670,29 @@ commands:
           description: prihvatiti poziv
           you-joined-island: "&a Pridružili ste se otoku! Koristite &b/[label] team
             &a da vidite ostale članove."
-          name-joined-your-island: "&a [ime] se pridružio vašem otoku!"
+          name-joined-your-island: "&a [name] se pridružio vašem otoku!"
           confirmation: |-
             &c Jeste li sigurni da želite prihvatiti ovaj poziv?
             &c&l IzGUBIT ćete &r&c&l svoj trenutni otok!
         reject:
           description: odbiti pozivnicu
           you-rejected-invite: "&a Odbili ste poziv da se pridružite otoku."
-          name-rejected-your-invite: "&c [ime] je odbio tvoj poziv za otok!"
+          name-rejected-your-invite: "&c [name] je odbio tvoj poziv za otok!"
         cancel:
           description: poništite poziv na čekanju da se pridružite vašem otoku
       leave:
         cannot-leave: "&c Vlasnici ne mogu otići! Prvo postanite član ili izbacite
           sve članove."
         description: napusti svoj otok
-        left-your-island: "&c [ime] &c je napustio vaš otok"
+        left-your-island: "&c [name] &c je napustio vaš otok"
         success: "&a Napustili ste ovaj otok."
       kick:
         description: uklonite člana sa svog otoka
         parameters: "<igrač>"
-        player-kicked: "&c [ime] te izbacio s otoka u [gamemode]!"
+        player-kicked: "&c [name] te izbacio s otoka u [gamemode]!"
         cannot-kick: "&c Ne možete se šutnuti!"
-        cannot-kick-rank: "&c Vaš rang ne dopušta šutnuti [ime]!"
-        success: "&b [ime] &a je izbačen s vašeg otoka."
+        cannot-kick-rank: "&c Vaš rang ne dopušta šutnuti [name]!"
+        success: "&b [name] &a je izbačen s vašeg otoka."
       demote:
         description: degradirajte igrača na svom otoku za jedan rang niže
         parameters: "<igrač>"
@@ -710,7 +708,7 @@ commands:
           cant-promote-yourself: "&c Ne možete se promovirati!"
           cant-promote: "&c Ne možete napredovati iznad svog ranga!"
         failure: "&c Igrač više ne može biti unaprijeđen!"
-        success: "&a Promaknut [ime] u [rank]"
+        success: "&a Promaknut [name] u [rank]"
       setowner:
         description: prenesite vlasništvo nad otokom na člana
         errors:
@@ -719,7 +717,7 @@ commands:
             beskorisno.&r &7 )"
           target-is-not-member: "&c Taj igrač nije dio vašeg otočkog tima!"
           at-max: "&c Taj igrač već ima najveći dopušteni broj otoka!"
-        name-is-the-owner: "&a [ime] je sada vlasnik otoka!"
+        name-is-the-owner: "&a [name] je sada vlasnik otoka!"
         parameters: "<igrač>"
         you-are-the-owner: "&a Sada ste vlasnik otoka!"
     ban:
@@ -731,22 +729,22 @@ commands:
       cannot-ban-more-players: "&c Dosegli ste ograničenje zabrane, ne možete više
         zabraniti nijednog igrača sa svog otoka."
       player-already-banned: "&c Igrač je već zabranjen."
-      player-banned: "&b [ime]&c sada je zabranjen pristup vašem otoku."
-      owner-banned-you: "&b [ime]&c vam je zabranio pristup njihovom otoku!"
+      player-banned: "&b [name]&c sada je zabranjen pristup vašem otoku."
+      owner-banned-you: "&b [name]&c vam je zabranio pristup njihovom otoku!"
       you-are-banned: "&b Zabranjen vam je pristup ovom otoku!"
     unban:
       description: poništite ban igraču s vašeg otoka
       parameters: "<igrač>"
       cannot-unban-yourself: "&c Ne možete sami sebi poništiti zabranu!"
       player-not-banned: "&c Igrač nije zabranjen."
-      player-unbanned: "&b [ime]&a sada nije zabranjen pristup vašem otoku."
-      you-are-unbanned: "&b [ime]&a poništio vam je zabranu pristupa njihovom otoku!"
+      player-unbanned: "&b [name]&a sada nije zabranjen pristup vašem otoku."
+      you-are-unbanned: "&b [name]&a poništio vam je zabranu pristupa njihovom otoku!"
     banlist:
       description: popis zabranjenih igrača
       noone: "&a Nitko nije zabranjen na ovom otoku."
       the-following: "&b Sljedeći igrači su zabranjeni:"
       names: "&c [redak]"
-      you-can-ban: "&b Možete zabraniti do &e [broj] &b više igrača."
+      you-can-ban: "&b Možete zabraniti do &e [number] &b više igrača."
     settings:
       description: prikaz postavki otoka
     language:
@@ -761,8 +759,8 @@ commands:
       cannot-expel: "&c Taj igrač ne može biti izbačen."
       cannot-expel-member: "&c Ne možete izbaciti člana tima!"
       not-on-island: "&c Taj igrač nije na vašem otoku!"
-      player-expelled-you: "&b [ime]&c te protjerao s otoka!"
-      success: "&a Protjerali ste &b [ime] &a s otoka."
+      player-expelled-you: "&b [name]&c te protjerao s otoka!"
+      success: "&a Protjerali ste &b [name] &a s otoka."
 ranks:
   owner: Vlasnik
   sub-owner: Podvlasnik
@@ -1056,12 +1054,12 @@ protection:
       hint: Upotreba Enderpearla onemogućena
     ENTER_EXIT_MESSAGES:
       description: Prikaz ulaznih i izlaznih poruka
-      island: "[ime] otok"
+      island: "[name] otok"
       name: Ulaz/Izlaz iz poruka
-      now-entering: "&a Sada ulazimo u &b [ime]&a ."
-      now-entering-your-island: "&a Sada ulazite na svoj otok: &b [ime]"
-      now-leaving: "&a Sada napuštam &b [ime]&a ."
-      now-leaving-your-island: "&a Sada napuštam vaš otok: &b [ime]"
+      now-entering: "&a Sada ulazimo u &b [name]&a ."
+      now-entering-your-island: "&a Sada ulazite na svoj otok: &b [name]"
+      now-leaving: "&a Sada napuštam &b [name]&a ."
+      now-leaving-your-island: "&a Sada napuštam vaš otok: &b [name]"
     EXPERIENCE_BOTTLE_THROWING:
       name: Doživite bacanje boce
       description: Uključi/isključi bacanje boca iskustva.
@@ -1558,7 +1556,7 @@ language:
     selected: "&a Trenutno odabrano."
     click-to-select: "&e Pritisnite &a za odabir."
     authors: "&a Autori:"
-    author: "&3 - &b [ime]"
+    author: "&3 - &b [name]"
   edited: "&a Promijenio je vaš jezik u &e [jezik]&a ."
 management:
   panel:
@@ -1571,7 +1569,7 @@ management:
           name: "&6 Nacrti"
           description: "&a Otvara izbornik Admin Blueprint."
         gamemode:
-          name: "&f [ime]"
+          name: "&f [name]"
           description: "&a Otoci: &b [otoci]\n"
       addons:
         name: "&6 Dodaci"
@@ -1598,7 +1596,7 @@ management:
         name: "&6 Kompatibilnost"
         description:
           COMPATIBLE: |
-            &a Pokretanje &e [ime] [verzija]&a .
+            &a Pokretanje &e [name] [version]&a .
 
             &a BentoBox trenutno radi na a
             &a &l KOMPATIBILAN &r &a poslužiteljski softver i
@@ -1607,7 +1605,7 @@ management:
             &a Njegove su značajke u potpunosti dizajnirane za
             &a trčanje u ovom okruženju.
           SUPPORTED: |
-            &a Pokretanje &e [ime] [verzija]&a .
+            &a Pokretanje &e [name] [version]&a .
 
             &a BentoBox trenutno radi na a
             &a &l PODRŽAN &r &a poslužiteljski softver i
@@ -1616,7 +1614,7 @@ management:
             &a Većina njegovih značajki radit će glatko
             &a u ovom okruženju.
           NOT_SUPPORTED: |
-            &a Pokretanje &e [ime] [verzija]&a .
+            &a Pokretanje &e [name] [version]&a .
 
             &a BentoBox trenutno radi na a
             &6 &l NIJE PODRŽAN &r &a poslužiteljski softver ili
@@ -1626,7 +1624,7 @@ management:
             &a ispravno, &6 grešaka specifičnih za platformu ili
             Za očekivati ​​je &6 pitanja&a .
           INCOMPATIBLE: |
-            &a Pokretanje &e [ime] [verzija]&a .
+            &a Pokretanje &e [name] [version]&a .
 
             &a BentoBox trenutno radi na
             &c &l NEKOMPATIBILNO &r &a poslužiteljski softver ili
@@ -1701,10 +1699,10 @@ enums:
     DRYOUT: Isušiti
 panel:
   credits:
-    title: "&8 [ime] &2 kredita"
+    title: "&8 [name] &2 kredita"
     contributor:
-      name: "&ime]"
-      description: "&a Predaje: &b [obvezuje]\n"
+      name: "&a [name]"
+      description: "&a Predaje: &b [commits]\n"
     empty-here:
       name: "&c Ovo ovdje izgleda prazno..."
       description: |
@@ -1719,5 +1717,5 @@ successfully-loaded: |2
   &6 | _ \ | | | _ \ &7 od &a tastybento &7 i &a Poslovitch
   &6 | |_) | ___ _ __ | |_ ___ | |_) | _____ __ &7 2017. - 2023
   &6 | _ < / _ \ '_ \| __/ _ \| _ < / _ \ \/ /
-  &6 | |_) | __/ | | | || (_) | |_) | (_) > < &b v&e [verzija]
+  &6 | |_) | __/ | | | || (_) | |_) | (_) > < &b v&e [version]
   &6 |____/ \___|_| |_|\__\___/|____/ \___/_/\_\ &8 Učitano za &e [vrijeme]&8 ms.
