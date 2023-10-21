@@ -108,6 +108,7 @@ commands:
       description: csapatokat irányítani
       add:
         parameters: "<tulajdonos> <játékos>"
+        description: játékos hozzáadása a tulajdonos csapatához
         name-not-owner: "&c [Név] nem tulajdonos."
         name-has-island: "&c [Név] már van egy szigete. Először azt kell törölnöd!"
         success: "&b [Játékosnév]&a  hozzá lett adva &b [tulajdonos]&a  szigetéhez."
@@ -458,16 +459,36 @@ commands:
       description: állítsa vissza a játékossziget nevét
       success: "&a Sikeresen visszaállította [name] szigetnevét."
   bentobox:
+    description: BentoBox admin parancsok
     perms:
       description: megjeleníti a BentoBox és az Addons érvényes engedélyeit YAML formátumban
-    about: {}
+    about:
+      description: információkat jelenít meg a pluginról
     reload:
-      locales: {}
+      description: BentoBox újratöltése
+      locales-reloaded: "[prefix_bentobox]&2 Nyelvek sikeresen újratöltve."
+      addons-reloaded: "[prefix_bentobox]&2 Bővítmények újratöltve."
+      settings-reloaded: "[prefix_bentobox]&2 Beállítások újratöltve.\n"
+      addon: "[prefix_bentobox]&b [name]&2  újratöltése folyamatban..."
+      addon-reloaded: "[prefix_bentobox]&b [name] &2 sikeresen újratöltve."
+      warning: "[prefix_bentobox]&c Figyelem: Az újratöltés nem a legjobb választás,
+        inkább indítsd újra a szervert."
+      unknown-addon: "[prefix_bentobox]&c Ismeretlen bővítmény."
+      locales:
+        description: nyelvek újratöltése
     version:
+      plugin-version: "&2 BentoBox verzió: &3 [version]"
+      description: megjeleníti a bentobox és a bővítmények verzióját
+      loaded-addons: 'Betöltött bővítmények:'
+      loaded-game-worlds: 'Betöltött játék világok:'
       addon-syntax: "&2 [name] &3 [version] &7 (&3 [state]&7 )"
       game-world: "&2 [name] &7 (&3 [addon]&7 ): &3 [worlds]"
-    manage: {}
-    catalog: {}
+      server: "&2 Jelenlegi verzió: &3 [name] [version]&2 ."
+      database: "&2 Adatbázis: &3 [database]"
+    manage:
+      description: megjeleníti a GUI panelt
+    catalog:
+      description: katalógus megjelenítése
     locale:
       description: lokalizációs fájlok elemzését végzi
       see-console: |-
