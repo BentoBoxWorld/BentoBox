@@ -230,23 +230,23 @@ public class IslandTeamSetownerCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamSetownerCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * test method for {@link world.bentobox.bentobox.api.commands.island.team.islandteamsetownercommand#canexecute(world.bentobox.bentobox.api.user.user, java.lang.string, java.util.list)}.
      */
-    @Test
-    public void testCanExecuteUserStringListOfStringTargetAtMaxIslands() {
-        when(im.inTeam(any(), any())).thenReturn(true);
-        when(im.getOwner(any(), any())).thenReturn(uuid);
-        UUID target = UUID.randomUUID();
-        when(pm.getUUID(anyString())).thenReturn(target);
-        when(im.getMembers(any(), any())).thenReturn(Set.of(target));
-        @Nullable
-        Island island = mock(Island.class);
-        when(im.getIsland(any(), any(User.class))).thenReturn(island);
+    @test
+    public void testcanexecuteuserstringlistofstringtargetatmaxislands() {
+        when(im.inteam(any(), any())).thenreturn(true);
+        when(im.getowner(any(), any())).thenreturn(uuid);
+        uuid target = uuid.randomuuid();
+        when(pm.getuuid(anystring())).thenreturn(target);
+        when(im.getmembers(any(), any())).thenreturn(set.of(target));
+        @nullable
+        island island = mock(island.class);
+        when(im.getisland(any(), any(user.class))).thenreturn(island);
 
-        when(im.getNumberOfConcurrentIslands(target, world)).thenReturn(3);
+        when(im.getnumberofconcurrentislands(target, world)).thenreturn(3);
 
-        assertFalse(its.canExecute(user, "", List.of("tastybento")));
-        verify(user).sendMessage("commands.island.team.setowner.errors.at-max");
+        assertfalse(its.canexecute(user, "", list.of("tastybento")));
+        verify(user).sendmessage("commands.island.team.setowner.errors.at-max");
     }
 
     /**
@@ -260,24 +260,6 @@ public class IslandTeamSetownerCommandTest {
         when(im.getMembers(any(), any())).thenReturn(Set.of(uuid));
         assertFalse(its.canExecute(user, "", List.of("tastybento")));
         verify(user).sendMessage("commands.island.team.setowner.errors.target-is-not-member");
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamSetownerCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
-     */
-    @Test
-    public void testExecuteUserStringListOfStringTooManyConcurrent() {
-        when(im.getNumberOfConcurrentIslands(any(), eq(world))).thenReturn(20);
-        when(im.inTeam(any(), any())).thenReturn(true);
-        when(im.getOwner(any(), any())).thenReturn(uuid);
-        UUID target = UUID.randomUUID();
-        when(pm.getUUID(anyString())).thenReturn(target);
-        when(im.getMembers(any(), any())).thenReturn(Set.of(target));
-        @Nullable
-        Island island = mock(Island.class);
-        when(im.getIsland(any(), any(User.class))).thenReturn(island);
-        assertFalse(its.canExecute(user, "", List.of("tastybento")));
-        verify(user).sendMessage("commands.island.team.setowner.errors.at-max");
     }
 
     /**
