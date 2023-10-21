@@ -12,17 +12,39 @@ general:
   errors:
     command-cancelled: "&c A parancs megszakítva."
     no-permission: "&c Nincs engedélye a parancs végrehajtására (&7 [permission] &c)."
+    insufficient-rank: "&c A rangod nem elég magas ahhoz, hogy ezt meg tudd tenni!
+      (&7 [rank] &c)Rang"
     no-team: "&c Nincs csapata!"
     no-island: "&c Nincs szigete!"
     player-has-island: "&c A játékosnak már van szigete!"
     player-has-no-island: "&c Ennek a játékosnak nincs szigete!"
+    already-have-island: "&c Már van egy szigeted!"
+    no-safe-location-found: "&c Nem található egy biztonságos hely sem, ahova teleportálhat
+      a szigeten."
+    not-owner: "&c Nem te vagy a sziget tulajdonosa!"
+    player-is-not-owner: "&b [Név] &c nem egy sziget tulajdonosa!"
     not-in-team: "&c Az a játékos nincs a csapatodban!"
     offline-player: "&c Az a játékos offline állapotban van, vagy nem létezik."
+    unknown-player: "&c [Név] ismeretlen játékos!"
+    general: "&c Ez a parancs még nem elérhető- fordulj egy  adminhoz"
+    unknown-command: "&c Ismeretlen parancs. Használd a &b / [label] help &cparancsot
+      a segítségért."
     wrong-world: "&c Nem vagy a megfelelő világban, hogy ezt megcsináld!"
-  worlds: {}
+    you-must-wait: "&c Várnod kell [szám] másodpercet, mielőtt újra végrehajthatod
+      ezt a parancsot."
+    must-be-positive-number: "&c [Szám] nem egy érvényes pozitív szám."
+  worlds:
+    overworld: Alap világ
+    nether: Pokol
+    the-end: Vég
 commands:
   help:
+    header: "&7 =========== &c [címke] segítség &7 ==========="
+    syntax: "&b [Használat] &a [paraméterek]&7 : &e [leírás]"
+    syntax-no-parameters: "&b [Használat]&7 : &e [leírás]"
     end: "&7 ================================="
+    parameters: "[Parancs]"
+    description: Segítség Parancs
     console: Konzol
   admin:
     help:
@@ -41,20 +63,78 @@ commands:
       remove:
         parameters: "<játékos> <visszaállítás>"
     purge:
-      protect: {}
-      stop: {}
-      unowned: {}
-      status: {}
+      description: Több mint [napja] elhagyatott szigetek törlése.
+      purgable-islands: "&a Megtalálva &b [szám] &a törölhető sziget."
+      purge-in-progress: "&c Törlés folyamatban. Használd a &b /[label] parancsot
+        a &ctörlés leállításához."
+      number-error: "&cA kikötésnek számnak kell lennie."
+      confirm: "&d Írd be a &b /[label] purge confirm parancsot &d a törlés megkezdéséhez."
+      completed: "&aTörlés megállítva."
+      see-console-for-status: "&a Törlés elkezdve. Nézd meg a konzolt a jelenlegi
+        állapotért, vagy használd a &b /[label] purge status&a parancsot."
+      no-purge-in-progress: "&c Jelenleg egy törlés  sincs folyamatban."
+      protect:
+        description: Sziget törlés elleni védelmének engedélyezése
+        move-to-island: "&c Először menj egy szigetre!"
+        protecting: "&a A sziget törlés ellen védve van."
+        unprotecting: "&a Törlés elleni védelem eltávolítása."
+      stop:
+        description: Törlés megállítása a folyamat közben.
+        stopping: Törlés megállítása
+      unowned:
+        description: Tulajdonos nélküli szigetek törlése.
+        unowned-islands: "&a Megtalálva &b [szám] &a tulajdonos nélküli sziget."
+      status:
+        description: Törlés státuszának kijelzése.
+        status: "&b [Törölt] &a szigetek törölve a &b [törölhető] &7(&b[százalékérték]
+          %&7)-ból/ből&a."
     team:
-      add: {}
-      disband: {}
+      add:
+        parameters: "<tulajdonos> <játékos>"
+        name-not-owner: "&c [Név] nem tulajdonos."
+        name-has-island: "&c [Név] már van egy szigete. Először azt kell törölnöd!"
+        success: "&b [Játékosnév]&a  hozzá lett adva &b [tulajdonos]&a  szigetéhez."
+      disband:
+        parameters: "<Tulajdonos>"
+        description: A tulajdonos csapatának feloszlatása.
+        use-disband-owner: "&c Nem tulajdonos! Használd a feloszlatás [tulajdonos]-t."
+        disbanded: "&c Egy adminisztrátor feloszlatta a csapatodat!"
+        success: "&b [Név]&a csapata fel lett oszlatva."
       fix: {}
-      kick: {}
-      setowner: {}
+      kick:
+        parameters: "<Csapat játékos>"
+        description: Egy játékos kirúgása a csapatból.
+        cannot-kick-owner: "&c Nem rúghatod ki a tulajdonost. Először rúgd ki a tagokat."
+        not-in-team: "&c Ez a játékos nem tagja egy csapatnak sem."
+        admin-kicked: "&c Egy adminisztrátor kirúgott téged a csapatból."
+        success: "&b [Játékosnév] &a ki lett rúgva &b [Tulajdonos]&a szigetéről."
+      setowner:
+        parameters: "<Játékosnév>"
+        description: A sziget tulajdonjogának átruházása a játékosnak.
+        already-owner: "&c [Játékosnév] már a szigetnek a tulajdonosa!"
+        success: "&b [Játékosnév]&a  nem a sziget tulajdonosa."
     range:
-      invalid-value: {}
-      display: {}
-      set: {}
+      description: Admin sziget tartományának parancsa
+      invalid-value:
+        too-low: "&c A védelem tartományának nagyobbnak kell lennie &b 1-nél&c !"
+        too-high: "&c A védelem tartománya egyenlő vagy kisebb kell hogy legyen, mint&b
+          [szám]&c !"
+        same-as-before: "&c A védelem tartománya már be van állítva &b [szám]-ra/re&c
+          !"
+      display:
+        already-off: "&c A jelölők már ki vannak kapcsolva."
+        already-on: "&c A jelölők már be vannak kapcsolva."
+        description: A sziget tartomány jelölőinek mutatása/elrejtése.
+        hiding: "&2 Tartomány jelölőinek elrejtése."
+        hint: |-
+          &c A pirosa akadály ikon &f mutatja a sziget jelenlegi védelmi tartományának a limitjét..
+          &7 A szürke effektek &f mutatják a sziget maximális limitjét..
+          &a A zöld  effektek &f mutatják a sziget alap levédett tartományát, ha a sziget jelenlegi védelmi tartománya ettől eltér.
+        showing: "&2Tartomány jelölőinek mutatása."
+      set:
+        parameters: "<Játékos> <tartomány>"
+        description: Beállítja a sziget védelmi tartományát
+        success: "&aA sziget védelmi tartományának beállítása  &b [szám]-ra/re&a ."
       reset: {}
       add: {}
       remove: {}
