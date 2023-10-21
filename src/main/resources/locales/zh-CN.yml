@@ -97,6 +97,7 @@ commands:
         description: 显示清理状态
         status: "&a共有 &b[purgeable] &a个可清理，已清理 &b[purged] &a个 &7(&b[percentage] %&7)&a。"
     team:
+      description: 管理团队
       add:
         parameters: "<owner> <player>"
         description: 将玩家添加到某个岛屿
@@ -881,6 +882,7 @@ protection:
       description: |-
         &a潜影贝可以传送
         &a 如果处于活动状态。
+      name: 潜影贝传送
     SMITHING:
       name: 锻造
       description: 切换使用
@@ -1008,6 +1010,7 @@ protection:
       description: |-
         &a末影人可以传送
         &a 如果处于活动状态。
+      name: 末影人传送
     ENDER_PEARL:
       description: |-
         &7允许/禁止 使用末影珍珠
