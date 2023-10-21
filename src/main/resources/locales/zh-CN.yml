@@ -3,7 +3,6 @@ meta:
   authors:
   - DuckSoft
   - shaokeyibb
-  - ApacheZy
   banner: RED_BANNER:1:SQUARE_TOP_RIGHT:YELLOW:CROSS:RED:CURLY_BORDER:RED:MOJANG:YELLOW:HALF_HORIZONTAL_MIRROR:RED:HALF_VERTICAL:RED
 prefixes:
   bentobox: "&6 BentoBox &7 &l > &r "
@@ -15,6 +14,7 @@ general:
     no-permission: "&c您无权执行此命令 （&7[permission]&c）。"
     insufficient-rank: "&c您的阶衔没有达到要求 （&7[rank]&c）！"
     use-in-game: "&c这个命令只能在游戏中使用。"
+    use-in-console: "&c 该命令仅在控制台中可用。"
     no-team: "&c您目前没有团队！"
     no-island: "&c您现在没有岛屿！"
     player-has-island: "&c该玩家原本已经有岛屿了！"
@@ -31,6 +31,7 @@ general:
     wrong-world: "&c在您现在所处的世界里不能这么做！"
     you-must-wait: "&c该命令冷却中， 剩余： &b[number] &c秒。"
     must-be-positive-number: "&c“[number]” 不是有效的正数。"
+    not-on-island: "&c 你不在岛上！"
   worlds:
     overworld: 主世界
     nether: 下界
@@ -196,6 +197,7 @@ commands:
       island-coords: "&d岛屿界线： &f[xz1] 到 [xz2]"
       islands-in-trash: "&d这个岛屿在垃圾桶中。"
       protection-range: "&d保护范围： &f[range]"
+      protection-range-bonus-title: "&b 包括以下奖励："
       purge-protected: "&d清理保护： &a已开启"
       max-protection-range: "&d历史最大保护范围： &f[range]"
       protection-coords: "&d保护界线： &f[xz1] 到 [xz2]"
@@ -367,7 +369,6 @@ commands:
           prompt: "&e请输入新名称， 或 “&b quit&e” 来退出编辑。"
           too-long: "&c新名称太长了！"
           pick-a-unique-name: "&c这个名称已存在， 请另选一个不同的名称！"
-          invalid-char-in-unique-name: "Unique name cannot contain, start, or end with special characters, neither contain number! "
           success: "&a成功！"
           conversation-prefix: "&3> &r"
         description:
@@ -375,7 +376,6 @@ commands:
           instructions: |-
             &e请为 &b[name] &e输入描述， 每输入一次为一行。
             &e最后输入 “&bquit&e” 退出编辑。
-          default-color: "&7"
           success: "&a成功！"
           cancelling: "&c已取消！"
         slot: "&f&l显示槽位： [number]"
@@ -426,8 +426,13 @@ commands:
         success: |-
           &a成功将玩家 &b[name] &a的死亡次数减少 &b[number] 次。
           &a他现在的死亡次数为： &b[total] &a次。"
+    resetname:
+      description: 重置玩家岛屿名称
+      success: "&a 成功重置[name]的岛屿名称。"
   bentobox:
     description: BentoBox 管理员命令
+    perms:
+      description: 以 YAML 格式显示 BentoBox 和 Addons 的有效权限
     about:
       description: 显示版权和许可信息
     reload:
@@ -497,6 +502,7 @@ commands:
       cannot-create-island: "&c找不到合适的地点为您创建岛屿， 请稍后重试..."
       unable-create-island: "&c无法生成您的岛屿， 请联系管理员。"
       creating-island: "&a正在为您的岛屿寻找合适的地点..."
+      you-cannot-make: "&c 你不能再建造任何岛屿了！"
       pasting:
         estimated-time: "&b预计用时： &e[number] &a秒。"
         blocks: "&b正在构建： &a总共需要构建 &e[number] &a个方块..."
@@ -659,19 +665,23 @@ commands:
       kick:
         description: 将成员从您的岛屿中踢出
         parameters: "<player>"
-        owner-kicked: "&b[gamemode] &c中的岛主将您踢出了岛屿！"
         cannot-kick: "&c您不能踢您自己！"
+        cannot-kick-rank: "&c 你的等级不允许踢[名字]！"
         success: "&a已将 &b[name] &a踢出了岛屿。"
       demote:
         description: 将您的岛屿成员降级
         parameters: "<player>"
         errors:
           cant-demote-yourself: "&c您不能将自己降级！"
+          cant-demote: "&c 你不能降级更高的等级！"
         failure: "&c该玩家已经不能再降级了！"
         success: "&a已将玩家 &b[name] &a降级为 &b[rank]。"
       promote:
         description: 将您的岛屿成员升级
         parameters: "<player>"
+        errors:
+          cant-promote-yourself: "&c 你无法推销自己！"
+          cant-promote: "&c 您无法晋升至高于您的级别！"
         failure: "&c该玩家已经不能再升级了！"
         success: "&a已将玩家 &b[name] &a升级为 &b[rank]"
       setowner:
@@ -679,6 +689,7 @@ commands:
         errors:
           cant-transfer-to-yourself: "&c没有必要把所有权转让给自己！"
           target-is-not-member: "&c该玩家不是您的岛屿成员！"
+          at-max: "&c 该玩家已经拥有了允许的最大岛屿数量！"
         name-is-the-owner: "&b[name] &a现在是岛主了！"
         parameters: "<player>"
         you-are-the-owner: "&a您现在是岛主了！"
@@ -735,6 +746,10 @@ ranks:
 protection:
   command-is-banned: 禁止访客使用命令
   flags:
+    ALLAY:
+      name: 缓解互动
+      description: 允许向 Allay 提供物品或从 Allay 获取物品
+      hint: 缓解交互禁用
     ANIMAL_NATURAL_SPAWN:
       description: 允许/禁止 动物自然生成
       name: "&a&l动物自然生成"
@@ -749,6 +764,10 @@ protection:
       description: 允许/禁止 与盔甲架互动
       name: "&a&l使用盔甲架"
       hint: "&c已被禁止与盔甲架互动"
+    AXOLOTL_SCOOPING:
+      name: 舀蝾螈
+      description: 允许使用桶舀蝾螈
+      hint: 铲蝾螈已禁用
     BEACON:
       description: 允许/禁止 使用信标
       name: "&a&l使用信标"
@@ -763,6 +782,11 @@ protection:
         &7允许/禁止 放置、摧毁和
         &7进入船
       hint: "&c已被禁止与船只互动"
+    BOOKSHELF:
+      description: |-
+        &a 允许放置书籍
+        &a 或拿书。
+      hint: 不能放置一本书或拿走一本书。
     BREAK_BLOCKS:
       description: 允许/禁止 破坏方块
       name: "&a&l破坏方块"
@@ -799,6 +823,10 @@ protection:
       description: 允许/禁止 食用蛋糕
       name: "&a&l食用蛋糕"
       hint: "&c已被禁止食用蛋糕"
+    CARTOGRAPHY:
+      name: 制图桌
+      description: 切换使用
+      hint: 制图表访问已禁用
     CONTAINER:
       name: "&a&l使用容器"
       description: |-
@@ -829,14 +857,34 @@ protection:
       name: 堆肥工
       description: 切换堆肥器交互
       hint: 堆肥器交互已禁用
+    LOOM:
+      name: 织布机
+      description: 切换使用
+      hint: 织机访问已禁用
     FLOWER_POT:
       name: 花盆
       description: 切换花盆互动
       hint: 花盆互动禁用
+    GRINDSTONE:
+      name: 磨石
+      description: 切换使用
+      hint: 磨石访问已禁用
     SHULKER_BOX:
       name: 潜影盒
       description: 切换潜影盒交互
       hint: 潜影盒访问被禁用
+    SHULKER_TELEPORT:
+      description: |-
+        &a潜影贝可以传送
+        &a 如果处于活动状态。
+    SMITHING:
+      name: 锻造
+      description: 切换使用
+      hint: 史密斯访问已禁用
+    STONECUTTING:
+      name: 石刻
+      description: 切换使用
+      hint: 石刻访问已禁用
     TRAPPED_CHEST:
       name: 被困的箱子
       description: 切换困宝箱互动
@@ -888,6 +936,12 @@ protection:
         &7可以超越 “&a使用桶&7” 设定
       name: "&a&l收集水"
       hint: "&c已被禁止收集水"
+    COLLECT_POWDERED_SNOW:
+      description: |-
+        &a 切换收集粉状雪
+        &a（覆盖存储桶）
+      name: 收集粉状雪
+      hint: 粉雪桶已禁用
     COMMAND_RANKS:
       name: "&6&l命令授权"
       description: |-
@@ -906,6 +960,10 @@ protection:
         &7效果生效（炸毁方块、伤害实体）
       name: "&a&l苦力怕访客保护"
       hint: "&c已禁止访客引燃的苦力怕爆炸"
+    CROP_PLANTING:
+      description: "&a 设置谁可以播种。"
+      name: 农作物种植
+      hint: 禁止农作物种植
     CROP_TRAMPLE:
       description: 允许/禁止 踩坏农作物
       name: "&a&l践踏农作物"
@@ -942,6 +1000,10 @@ protection:
     ENDERMAN_GRIEFING:
       description: 允许/禁止 末影人从岛上拿起方块
       name: "&a&l末影人破坏"
+    ENDERMAN_TELEPORT:
+      description: |-
+        &a末影人可以传送
+        &a 如果处于活动状态。
     ENDER_PEARL:
       description: |-
         &7允许/禁止 使用末影珍珠
@@ -1000,6 +1062,13 @@ protection:
         &7允许/禁止 移除岛屿范围外的生物
         &7以及将生物生成限制在岛屿范围内
       name: "&e&l生物分布限制"
+    HARVEST:
+      description: |-
+        &a 设置谁可以收割庄稼。
+        &a 不要忘记允许项目
+        还有皮卡！
+      name: 农作物收割
+      hint: 禁止收割农作物
     HIVE:
       description: 允许/禁止 收集蜂蜜
       name: "&a&l收集蜂蜜"
@@ -1075,6 +1144,11 @@ protection:
     LOCK:
       description: 选择岛屿对哪些对象开放
       name: "&6&l锁定岛屿"
+    CHANGE_SETTINGS:
+      name: 更改设置
+      description: |-
+        &a 允许切换哪个成员
+        &a角色可以改变岛屿设置。
     MILKING:
       description: 允许/禁止 挤牛奶
       name: "&a&l挤牛奶"
@@ -1215,6 +1289,24 @@ protection:
       description: 允许/禁止 使用生成蛋更改刷怪笼类型
       name: "&a&l更改刷怪笼类型"
       hint: "&c已被禁止使用生成蛋更改刷怪笼实体类型"
+    SCULK_SENSOR:
+      description: |-
+        &a 切换浮游传感器
+        &a 激活。
+      name: 浮雕传感器
+      hint: 污迹传感器激活被禁用
+    SCULK_SHRIEKER:
+      description: |-
+        &a 切换恶棍尖叫者
+        &a 激活。
+      name: 恶棍尖啸者
+      hint: sculk shrieker激活被禁用
+    SIGN_EDITING:
+      description: |-
+        &a 允许文本编辑
+        符号&a
+      name: 标志编辑
+      hint: 符号编辑已禁用
     TNT_DAMAGE:
       description: 允许/禁止 TNT和TNT矿车破坏方块和实体
       name: "&a&lTNT伤害"
@@ -1270,6 +1362,14 @@ protection:
         ＆一个
         &a 岛成员仍然丢失他们的物品
         &a 如果他们死在自己的岛上！
+    VISITOR_TRIGGER_RAID:
+      name: 访客引发袭击
+    ENTITY_PORTAL_TELEPORT:
+      name: 实体门户使用情况
+      description: |-
+        &a 切换实体（非玩家）是否可以
+        &a 使用传送门在之间传送
+        &a 尺寸
     WITHER_DAMAGE:
       name: "&a&l凋零伤害"
       description: |-
@@ -1454,7 +1554,6 @@ catalog:
 
         &a请修改配置允许&b&lBentoBox&a连接
         &a到互联网， 或稍后再试。
-
 enums:
   DamageCause:
     CONTACT: 接触（如仙人掌）
