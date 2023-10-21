@@ -439,7 +439,7 @@ commands:
       set:
         description: Legt die Tode des Spielers fest
         parameters: "<player> <deaths>"
-        success: "&a Erfolgreiche Einstellung von &b [ame]&a's Toden auf &b [number]&a."
+        success: "&a Erfolgreiche Einstellung von &b [name]&a's Toden auf &b [number]&a."
       add:
         description: fügt dem Spieler Tode hinzu
         parameters: "<player> <deaths>"
