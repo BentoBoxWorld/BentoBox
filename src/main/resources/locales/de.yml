@@ -15,6 +15,7 @@ general:
       [permission]&c )."
     insufficient-rank: "&c Ihr Rang ist dafür nicht hoch genug! (&7 [rank]&c )"
     use-in-game: "&c Dieser Befehl ist nur im Spiel verfügbar."
+    use-in-console: "&c Dieser Befehl ist nur in der Konsole verfügbar."
     no-team: "&c Du hast kein Team!"
     no-island: "&c Du hast keine Insel!"
     player-has-island: "&c Der Spieler hat bereits eine Insel!"
@@ -33,12 +34,11 @@ general:
     you-must-wait: "&c Du musst [number]s warten, bevor du diesen Befehl erneut ausführen
       kannst."
     must-be-positive-number: "&c [number] ist keine gültige positive Zahl."
+    not-on-island: "&c Du bist nicht auf der Insel!"
   worlds:
     overworld: Überwelt
     nether: Nether
     the-end: Das Ende
-  tips:
-    changing-obsidian-to-lava: Wandelt Obsidian wieder in Lava um. Sei vorsichtig!
 commands:
   help:
     header: "&7 =========== &c [label] Hilfe &7 ==========="
@@ -93,7 +93,6 @@ commands:
       stop:
         description: Anhalten einer laufenden Löschung
         stopping: Stoppen der Löschung
-        no-purge-in-progress: "&c Keine Löschung in Ausführung!"
       unowned:
         description: Löschen freier Inseln - Bestätigung erforderlich
         unowned-islands: "&d [number] Inseln gefunden"
@@ -102,6 +101,7 @@ commands:
         status: "&b [purged] &a islands purged out of &b [purgeable] &7(&b[percentage]
           %&7)&a."
     team:
+      description: Teams verwalten
       add:
         parameters: "<owner> <player>"
         description: Spieler zum Team des Besitzers hinzufügen
@@ -210,6 +210,7 @@ commands:
       island-coords: 'Koordinaten der Insel: [xz1] bis [xz2]'
       islands-in-trash: "&d Der Spieler hat Inseln im Papierkorb."
       protection-range: 'Schutzbereich: [range]'
+      protection-range-bonus-title: "&b Beinhaltet diese Boni:"
       purge-protected: Die Insel ist löschgeschützt
       max-protection-range: 'Größter historischer Schutzbereich: [range]'
       protection-coords: 'Schutz-Koordinaten: [xz1] bis [xz2]'
@@ -217,7 +218,6 @@ commands:
       banned-players: 'Gebannte Spieler:'
       banned-format: "&c [name]"
       unowned: "&c Frei"
-      island-location: 'Standort der Insel: [xyz]'
     switch:
       description: Schutzumgehung ein-/ausschalten
       op: "&c Ops können den Schutz immer umgehen. Deop um den Befehl zu benutzen."
@@ -272,7 +272,6 @@ commands:
       not-possible: "&c Der Rang muss höher sein als Besucher."
       rank-set: "&a Rang gesetzt von &b [from] &a auf &b [to] &a auf &b [name]&a 's
         Insel."
-      name-not-owner: "&b [name] &c ist nicht der Besitzer einer Insel. "
     setprotectionlocation:
       parameters: "[x y z Koordinaten]"
       description: aktuellen Standort oder [x y z] als Zentrum des Schutzbereichs
@@ -391,7 +390,6 @@ commands:
           prompt: Gib einen Namen ein, oder 'quit' zum Beenden
           too-long: "&c Zu lang"
           pick-a-unique-name: Wähle bitte einen eindeutigeren Namen
-          invalid-char-in-unique-name: "Unique name cannot contain, start, or end with special characters, neither contain number! "
           success: Erfolg!
           conversation-prefix: ">"
         description:
@@ -405,9 +403,6 @@ commands:
         slot-instructions: |-
           &a Linksklick zum Erhöhen
           &a Rechtsklick zum Verringern
-        normal: Normal
-        nether: Nether
-        end: The End
     resetflags:
       parameters: "[flag]"
       description: Alle Inseln in der config.yml auf Standard-Flag-Einstellungen zurücksetzen
@@ -453,8 +448,14 @@ commands:
         parameters: "<player> <deaths>"
         success: "&a Es wurden erfolgreich &b [number] &a Tode von &b [name] entfernt,
           wodurch sich die Gesamtzahl auf &b [total]&a Tode verringert hat."
+    resetname:
+      description: Spielerinselnamen zurücksetzen
+      success: "&a Der Inselname von [Name] wurde erfolgreich zurückgesetzt."
   bentobox:
     description: BentoBox Admin-Befehl
+    perms:
+      description: Zeigt die effektiven Dauerwellen für BentoBox und Add-ons in einem
+        YAML-Format an
     about:
       description: zeigt Copyright- und Lizenzinformationen an
     reload:
@@ -529,10 +530,12 @@ commands:
       unable-create-island: "&c Deine Insel konnte nicht generiert werden, bitte kontaktiere
         einen Admin."
       creating-island: "&a Einen Ort für deine Insel finden..."
+      you-cannot-make: "&c Du kannst keine weiteren Inseln erschaffen!"
       pasting:
         estimated-time: "&a Geschätzte Zeit: &b [number] &a Sekunden."
         blocks: "&a Block für Block aufbauen: &b [number] &a Blöcke insgesamt..."
         entities: "&a Füllen mit Entitäten: &b [number] &a Entitäten in insgesamt..."
+        dimension-done: "&eine Insel in [Welt] wird gebaut."
         done: "&a Erledigt! Deine Insel ist bereit und wartet auf dich!"
       pick: "&2 Eine Insel auswählen"
       unknown-blueprint: "&c Diese Blaupause wurde noch nicht geladen."
@@ -705,19 +708,24 @@ commands:
       kick:
         description: entferne ein Mitglied von deiner Insel
         parameters: "<player>"
-        owner-kicked: "&c Der Besitzer hat dich von der Insel gekickt im [gamemode]!"
+        player-kicked: "&c Der [Name] hat dich im [Spielmodus] von der Insel geworfen!"
         cannot-kick: "&c Du kannst dich nicht selbst kicken!"
+        cannot-kick-rank: "&c Dein Rang erlaubt es nicht, [Name] zu treten!"
         success: "&b [name] &a wurde von deiner Insel gekickt."
       demote:
         description: einen Spieler auf deiner Insel um einen Rang zurückstufen
         parameters: "<player>"
         errors:
           cant-demote-yourself: "&c Du kannst dich nicht selbst zurückstufen!"
+          cant-demote: "&c Sie können keine höheren Ränge herabstufen!"
         failure: "&c Der Spieler kann nicht weiter zurückgestuft werden!"
         success: "&a Rückstufung von [name] auf [rank]."
       promote:
         description: einen Spieler auf deiner Insel um einen Rang befördern
         parameters: "<player>"
+        errors:
+          cant-promote-yourself: "&c Du kannst dich nicht bewerben!"
+          cant-promote: "&c Sie können nicht über Ihren Rang hinaus aufsteigen!"
         failure: "&c Der Spieler kann nicht weiter befördert werden!"
         success: "&a Beförderung von [name] auf [rank]."
       setowner:
@@ -727,6 +735,7 @@ commands:
             &7 (&o Tja, eigentlich könntest du... Aber wir wollen nicht, dass du es
             tust. Weil es sinnlos ist. &r &7 )"
           target-is-not-member: "&c Dieser Spieler gehört nicht zu deinem Inselteam!"
+          at-max: "&c Dieser Spieler hat bereits die maximal zulässige Anzahl an Inseln!"
         name-is-the-owner: "&a [name] ist jetzt der Inselbesitzer!"
         parameters: "<player>"
         you-are-the-owner: "&a Du bist jetzt der Inselbesitzer!"
@@ -784,6 +793,11 @@ ranks:
 protection:
   command-is-banned: Der Befehl ist für Besucher verboten
   flags:
+    ALLAY:
+      name: Interaktion beruhigen
+      description: Erlauben Sie das Geben und Mitnehmen von Gegenständen nach/von
+        Allay
+      hint: Allay-Interaktion deaktiviert
     ANIMAL_NATURAL_SPAWN:
       description: Natürliches Laichen von Tieren umschalten
       name: Tier natürlicher Laich
@@ -798,6 +812,10 @@ protection:
       description: Interaktion umschalten
       name: Rüstungsständer
       hint: Rüstungsstandnutzung deaktiviert
+    AXOLOTL_SCOOPING:
+      name: Axolotl beim Schöpfen
+      description: Lassen Sie Axolotl mit einem Eimer schöpfen
+      hint: Axolotl-Schaufeln deaktiviert
     BEACON:
       description: Interaktion umschalten
       name: Leuchtfeuer
@@ -810,6 +828,12 @@ protection:
       name: Boote
       description: Umschalten der Boots-Interaktionen
       hint: Keine Bootsinteraktion erlaubt
+    BOOKSHELF:
+      name: Bücherregale
+      description: |-
+        &a Platzieren von Büchern zulassen
+        &a oder Bücher mitnehmen.
+      hint: Sie können weder ein Buch platzieren noch ein Buch mitnehmen.
     BREAK_BLOCKS:
       description: Abbauen umschalten
       name: Blöcke abbauen
@@ -846,6 +870,10 @@ protection:
       description: Kuchen Interaktion umschalten
       name: Kuchen
       hint: Kuchen essen deaktiviert
+    CARTOGRAPHY:
+      name: Kartographietabellen
+      description: Verwendung umschalten
+      hint: Zugriff auf die Kartografietabelle deaktiviert
     CONTAINER:
       name: Behälter
       description: "&a Umschalten der Interaktion mit Truhen, \n&a Shulker-Boxen und
@@ -863,18 +891,45 @@ protection:
       name: Fässer
       description: Fass-Interaktion umschalten
       hint: Fasszugang deaktiviert
+    BLOCK_EXPLODE_DAMAGE:
+      description: |-
+        &a Bett- und Respawn-Anker zulassen
+        &a, um Blöcke zu zerstören und zu beschädigen
+        &a Entitäten.
+      name: Blockieren Sie Explosionsschaden
     COMPOSTER:
       name: Komposter
       description: Komposter-Interaktion umschalten
       hint: Composer-Interaktion deaktiviert
+    LOOM:
+      name: Webstuhl
+      description: Verwendung umschalten
+      hint: Zugang zum Webstuhl deaktiviert
     FLOWER_POT:
       name: Blumentöpfe
       description: Blumentopf-Interaktion umschalten
       hint: Blumentopf-Interaktion deaktiviert
+    GRINDSTONE:
+      name: Schleifstein
+      description: Verwendung umschalten
+      hint: Grindstone-Zugriff deaktiviert
     SHULKER_BOX:
       name: Shulker-Boxen
       description: Shulker-Box-Interaktion umschalten
       hint: Zugriff auf Shulker-Box deaktiviert
+    SHULKER_TELEPORT:
+      description: |-
+        &a Shulker kann teleportieren
+        &a wenn aktiv.
+      name: Shulker-Teleport
+    SMITHING:
+      name: Schmieden
+      description: Verwendung umschalten
+      hint: Schmiedezugriff deaktiviert
+    STONECUTTING:
+      name: Steinmetz
+      description: Verwendung umschalten
+      hint: Der Zugang zum Steinmetz ist deaktiviert
     TRAPPED_CHEST:
       name: Gefangene Truhen
       description: Wechseln Sie zwischen der Interaktion mit eingeschlossener Brust
@@ -919,6 +974,12 @@ protection:
       description: "&a Umschalten des Wassersammelns \n&a (Überbrückung der Eimer)"
       name: Wasser sammeln
       hint: Wassereimer deaktiviert
+    COLLECT_POWDERED_SNOW:
+      description: |-
+        &a Toggle Sammeln von Pulverschnee
+        &a (Buckets überschreiben)
+      name: Sammeln Sie Pulverschnee
+      hint: Pulverschneeschaufeln deaktiviert
     COMMAND_RANKS:
       name: "&e Befehlsreihenfolge"
       description: "&a Befehlsreihenfolge konfigurieren"
@@ -933,6 +994,10 @@ protection:
       description: Umschalten von Creeper-Beschädigung
       name: Creeper-Beschädigung
       hint: Beschädigung durch Creeper deaktiviert
+    CROP_PLANTING:
+      description: "&a Legen Sie fest, wer Samen pflanzen kann."
+      name: Pflanzenanbau
+      hint: Pflanzenanbau deaktiviert
     CROP_TRAMPLE:
       description: Umschalten des Felder zertrampelns
       name: Felder zertrampeln
@@ -969,6 +1034,11 @@ protection:
     ENDERMAN_GRIEFING:
       description: "&a Endermen können \n&a Blöcke von Inseln entfernen"
       name: Enderman Beschädigung
+    ENDERMAN_TELEPORT:
+      description: |-
+        &a Endermen können teleportieren
+        &a wenn aktiv.
+      name: Enderman-Teleport
     ENDER_PEARL:
       description: Umschalten der Nutzung
       name: Enderperlen
@@ -1021,6 +1091,13 @@ protection:
       description: "&a Die Mobs entfernen, die \n&a aus dem geschützten \n&a Inselraum
         herausgehen"
       name: "&e Mobs auf der Insel begrenzen"
+    HARVEST:
+      description: |-
+        &a Legt fest, wer Getreide ernten kann.
+        &a Vergessen Sie nicht, das Element zuzulassen
+        &eine Abholung auch!
+      name: Ernte
+      hint: Ernteernte deaktiviert
     HIVE:
       description: "&a Bienenstockernte umschalten."
       name: Bienenstockernte
@@ -1099,6 +1176,11 @@ protection:
     LOCK:
       description: Umschalten der Sperre
       name: Insel sperren
+    CHANGE_SETTINGS:
+      name: Einstellungen ändern
+      description: |-
+        &a Ermöglicht den Wechsel des Mitglieds
+        &eine Rolle kann Inseleinstellungen ändern.
     MILKING:
       description: Umschalten des Melkens von Kühen
       name: Melken
@@ -1203,7 +1285,6 @@ protection:
       hint: "&c PVP in der Oberwelt deaktiviert"
       enabled: "&c Der PVP in der Oberwelt wurde aktiviert."
       disabled: "&a Der PVP in der Oberwelt wurde deaktiviert."
-      active: "&c Hier ist PVP aktiv!"
     REDSTONE:
       description: Umschalten der Nutzung
       name: Redstone Items
@@ -1232,6 +1313,24 @@ protection:
         Verwendung von Spawn-Eiern."
       name: Spawneier auf spawnern
       hint: changing a spawner's entity type using spawn eggs is not allowed
+    SCULK_SENSOR:
+      description: |-
+        &a Schaltet den Sculk-Sensor um
+        &a Aktivierung.
+      name: Sculk-Sensor
+      hint: Die Aktivierung des Sculk-Sensors ist deaktiviert
+    SCULK_SHRIEKER:
+      description: |-
+        &a Schaltet den Sculk-Schreier um
+        &a Aktivierung.
+      name: Sculk-Schreier
+      hint: Die Aktivierung von Sculk Shrieker ist deaktiviert
+    SIGN_EDITING:
+      description: |-
+        &a Ermöglicht Textbearbeitung
+        &a von Zeichen
+      name: Zeichenbearbeitung
+      hint: Die Zeichenbearbeitung ist deaktiviert
     TNT_DAMAGE:
       description: "&a Erlaubt es TNT und TNT-Minecarts \n&a Blöcke zu zerstören und
         Objekte \n&a zu beschädigen."
@@ -1289,21 +1388,35 @@ protection:
         &a gezähmte Haustiere nur auf die
         &a Heimatinsel des Besitzers gehen
         &a und sie nicht verlassen.
+    VISITOR_TRIGGER_RAID:
+      name: Besucher lösen Razzien aus
+      description: |-
+        &a Schaltet um, ob Besucher starten können
+        &a ein Überfall auf eine Insel, die sie sind
+        &ein Besuch.
+        &A
+        &ein Bad Omen-Effekt wird entfernt!
+    ENTITY_PORTAL_TELEPORT:
+      name: Nutzung des Entitätsportals
+      description: |-
+        &a Schaltet um, ob Entitäten (Nicht-Spieler) dies können
+        &a nutzen Portale, um zwischen ihnen zu teleportieren
+        &a Dimensionen
     WITHER_DAMAGE:
       name: Umschalten von Wither-Schäden
       description: "&a Wenn aktiv, kann der Wither \n&a Blöcke und Spieler schädigen"
+    WORLD_BLOCK_EXPLODE_DAMAGE:
+      description: |-
+        &a Bett- und Respawn-Anker zulassen
+        &a, um Blöcke zu zerstören und zu beschädigen
+        &a Entitäten außerhalb der Inselgrenzen.
+      name: Weltblock-Explosionsschaden
     WORLD_TNT_DAMAGE:
       description: |-
         &a TNT- und TNT-Minecarts zulassen
         &a um Blöcke zu brechen und zu beschädigen
         &a Entitäten außerhalb der Inselgrenzen.
       name: Welt-TNT-Schaden
-    ANIMAL_SPAWN:
-      description: Umschalten des Spawnings
-      name: Tier spawning
-    MONSTER_SPAWN:
-      description: Umschalten des Spawnings
-      name: Monster spawning
   locked: "&c Diese Insel ist gesperrt!"
   protected: "&c Insel geschützt: [description]"
   world-protected: "&c Welt geschützt: [description]"
