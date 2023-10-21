@@ -759,7 +759,7 @@ commands:
       description: listar jogadores banidos
       noone: "&a Ninguém está proibido nesta ilha."
       the-following: "&b Os seguintes jogadores estão banidos:"
-      names: "&c [linha]"
+      names: "&c [line]"
       you-can-ban: "&b Você pode banir até &e [number] &b mais jogadores."
     settings:
       description: exibir configurações da ilha
@@ -1717,7 +1717,7 @@ panel:
   credits:
     title: "&8 [name] &2 créditos"
     contributor:
-      name: "&um nome]"
+      name: "&a [name]"
       description: "&a Confirmações: &b [commits]\n"
     empty-here:
       name: "&c Isso parece vazio aqui ..."
@@ -1730,7 +1730,7 @@ panel:
 successfully-loaded: |2
 
   &6 ____ _ ____
-  &6 | _\ | | | _ \ &7 por &a saborosobento &7 e &a Poslovitch
+  &6 | _\ | | | _ \ &7 por &a tastybento &7 e &a Poslovitch
   &6 | |_) | ___ _ __ | |_ ___ | |_) | _____ __ &7 2017 - 2023
   &6 | _ < / _ \ '_ \| __/ _\| _ < / _ \ \/ /
   &6 | |_) | __/ | | | || (_) | |_) | (_) > < &b v&e [versão]
