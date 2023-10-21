@@ -7,8 +7,34 @@ meta:
 prefixes:
   bentobox: "&6 BentoBox &7 &l > &r"
 general:
+  success: "&c Sucesso!"
+  invalid: Invalido
   errors:
+    command-cancelled: "&c Comando cancelado."
+    no-permission: "&c Você não tem permissão para executar este comando (&7 [permission]&c
+      )."
+    insufficient-rank: "&c Seu cargo não é alto o suficiente para fazer isso! (&7
+      [rank]&c )"
+    use-in-game: "&c Este comando está disponível apenas no jogo."
     use-in-console: "&c Este comando está disponível apenas no console."
+    no-team: "&c Você não possui um time!"
+    no-island: "&c Você não possui uma ilha!"
+    player-has-island: "&c O jogador já possui uma ilha!"
+    player-has-no-island: "&c Esse jogador não possui ilha!"
+    already-have-island: "&c Você já possui uma ilha!"
+    no-safe-location-found: "&c Não foi possível encontrar um local seguro para o
+      teleportar à ilha."
+    not-owner: "&c Você não é o dono da ilha!"
+    player-is-not-owner: "&b [name] &c não é o dono de uma ilha!"
+    not-in-team: "&c Esse jogador não está no seu time!"
+    offline-player: "&c Esse jogador está offline ou não existe."
+    unknown-player: "&c [name] é um jogador desconhecido!"
+    general: "&c Esse comando ainda não está pronto - entre em contato com um administrador"
+    unknown-command: "&c Comando Desconhecido. Use &b /[label] help &c para ajuda."
+    wrong-world: "&c Você não está no mundo certo para fazer isso!"
+    you-must-wait: "&c Você deve aguardar [number]s antes de poder executar esse comando
+      novamente."
+    must-be-positive-number: "&c [number] não é um número positivo válido."
     not-on-island: "&c Você não está na ilha!"
   worlds:
     overworld: Mundo superior
@@ -16,11 +42,14 @@ general:
     the-end: O fim
 commands:
   help:
+    header: "&7 =========== &c [label] ajuda &7 ==========="
     end: "&7 ================================="
     parameters: "[comando]"
+    description: comando de ajuda
     console: Console
   admin:
-    help: {}
+    help:
+      description: comando de administrador
     resets:
       description: editar valores de redefinição do jogador
       set:
@@ -31,6 +60,7 @@ commands:
       reset:
         description: define a contagem de reinicialização da ilha do jogador para
           0
+        parameters: "<player>"
         success-everyone: "&a Redefiniu com sucesso a contagem de redefinições de
           &b todos&a para &b 0&a ."
         success: "&a Redefiniu com êxito a contagem de redefinições de &b [nome]&a
@@ -38,21 +68,54 @@ commands:
       add:
         description: adiciona a contagem de reinicialização da ilha deste jogador
         parameters: "<jogador> <reset>"
+        success: "&a Adicionado com sucesso &b [number] &a resets para &b [name],
+          aumentando o total para &b [total]&a  resets."
       remove:
         description: reduz a contagem de reinicialização da ilha do jogador
         parameters: "<jogador> <reset>"
     purge:
+      parameters: "[dias]"
+      description: apagar ilhas abandonadas por mais de [dias]
       days-one-or-more: Deve ter pelo menos 1 dia ou mais
-      protect: {}
-      stop: {}
-      unowned: {}
-      status: {}
+      purgable-islands: "&a Encontrada &b [number] &a ilhas apagáveis."
+      purge-in-progress: "&c Exclusão em progresso. Use &b /[label] purge stop &c
+        para cancelar."
+      number-error: "&c O argumento deve ser um número valido de dias"
+      confirm: "&d Digite &b /[label] purge confirm &d para começar a limpeza"
+      completed: "&a Limpeza interrompida."
+      see-console-for-status: "&a Limpeza iniciada. Veja o console para status ou
+        use &b /[label] purge status&a."
+      no-purge-in-progress: "&c Atualmente, não há limpeza em andamento."
+      protect:
+        description: alternar proteção contra exclusão de ilha
+        move-to-island: "&c Vá para uma ilha primeiro!"
+        protecting: "&a Protegendo ilha de exclusão."
+        unprotecting: "&a Removendo proteção de exclusão."
+      stop:
+        description: interromper uma limpeza em andamento
+        stopping: Parando a limpeza
+      unowned:
+        description: Excluir ilhas sem dono
+        unowned-islands: "&a Encontrado &b [number] &a ilhas sem dono."
+      status:
+        description: exibe o status da limpeza
+        status: "&b [purged] &a ilhas excluídas de &b [purgeable] &7(&b[percentage]
+          %&7)&a."
     team:
       description: gerenciar equipes
       add:
         parameters: "<proprietário> <jogador>"
+        description: adicionar jogador à equipe do dono
+        name-not-owner: "&c [name] não é o dono."
+        name-has-island: "&c [name] possui uma ilha. Cancele o registro ou exclua-os
+          primeiro!"
+        success: "&b [name]&a foi adicionado a ilha de &b [owner]&a."
       disband:
         parameters: "<proprietário>"
+        description: dissolver a equipe do dono
+        use-disband-owner: "&c Não é o dono! Use disband [owner]."
+        disbanded: "&c Admin desfez sua equipe!"
+        success: "&a Equipe de &b [name]&a foi desfeita."
       fix:
         description: verifica e corrige membros entre ilhas no banco de dados
         scanning: Verificando banco de dados...
@@ -60,51 +123,142 @@ commands:
         done: "&uma digitalização"
       kick:
         parameters: "<jogador da equipe>"
+        description: expulse um jogador de um time
+        cannot-kick-owner: "&c Você não pode expulsar o dono. Expulse os membros primeiro."
+        not-in-team: "&c Este jogador não está em um time."
+        admin-kicked: "&c O administrador expulsou você do time."
+        success: "&b [name] &a foi expulsa da ilha de &b [owner]&a."
       setowner:
         parameters: "<jogador>"
+        description: transfere o dono da ilha para o jogador
+        already-owner: "&c [name] já é o dono desta ilha!"
+        success: "&b [name]&a agora é o dono desta ilha."
     range:
       description: comando de intervalo da ilha de administração
-      invalid-value: {}
-      display: {}
+      invalid-value:
+        too-low: "&c A área de proteção deve ser maior que &b 1&c !"
+        too-high: "&c A área de proteção deveria ser igual ou menor que &b [number]&c
+          !"
+        same-as-before: "&c A área de proteção já está definida para &b [number]&c
+          !"
+      display:
+        already-off: "&c Os indicadores já estão desativados"
+        already-on: "&c Os indicadores já estão ativados"
+        description: mostrar/ocultar indicadores de alcance da ilha
+        hiding: "&2 Ocultando indicadores de alcance"
+        hint: |-
+          &c Ícones de Barreira Vermelha &f mostram o limite de alcance protegido da ilha atual.
+          &7 Partículas cinzas &f mostram o limite máximo da ilha.
+          &a Partículas verdes &f mostram a faixa protegida padrão se a faixa de proteção da ilha for diferente dela.
+        showing: "&2 Mostrando indicadores de alcance"
       set:
         parameters: "<jogador> <alcance>"
+        description: define a área de proteção da ilha
+        success: "&a A área de proteção da ilha foi definida para &b [number]&a ."
       reset:
         parameters: "<jogador>"
+        description: redefine a área de proteção para o padrão
+        success: "&a Área de proteção redefinida para &b [number]&a ."
       add:
+        description: aumenta o alcance da área de proteção da ilha
         parameters: "<jogador> <alcance>"
+        success: "&a Aumentado com sucesso  &b [name]&a área de proteção da ilha para
+          &b [total] &7 (&b +[number]&7 )&a ."
       remove:
+        description: diminui a área de proteção da ilha
         parameters: "<jogador> <alcance>"
+        success: "&a Diminuido com sucesso &b [name]&a área de proteção para &b [total]
+          &7 (&b -[number]&7 )&a ."
     register:
       parameters: "<jogador>"
+      description: registrar jogador na ilha sem dono em que você está
+      registered-island: "&a Registrado [name] para ilha em [xyz]."
+      reserved-island: "&a Ilha reservada em [xyz] para [name]."
+      already-owned: "&c Ilha já pertence a outro jogador!"
+      no-island-here: "&c Não há ilha aqui. Confirme para criar uma."
+      in-deletion: "&c Este espaço na ilha está sendo excluído no momento. Tente depois."
+      cannot-make-island: "&c Uma ilha não pode ser colocada aqui, desculpe. Veja
+        o console para possíveis erros."
+      island-is-spawn: "&6 Ilha é spawn. Você tem certeza? Digite o comando novamente
+        para confirmar."
     unregister:
       parameters: "<proprietário>"
+      description: Remover o registro de dono da ilha, mas manter os blocos da ilha
+      unregistered-island: "&a Registro removido de [name] de ilha em [xyz]."
     info:
       parameters: "<jogador>"
+      description: obtenha informações sobre onde você está ou a ilha do jogador
       no-island: "&c Você não está em uma ilha agora..."
+      title: "========== Informações da Ilha ============"
       island-uuid: 'UUID: [uuid]'
+      owner: 'Dono: [owner] ([uuid])'
+      last-login: 'Ultimo login: [date]'
       last-login-date-time-format: EEE MMM dd HH:mm:ss zzz aaaa
+      deaths: 'Mortes: [number]'
+      team-members-title: 'Membros do Time:'
       island-protection-center: 'Centro da área de proteção: [xyz]'
       island-center: 'Centro da ilha: [xyz]'
+      island-coords: 'Coordenadas da Ilha: [xz1] até [xz2]'
+      islands-in-trash: "&d O jogador tem ilhas na lixeira."
+      protection-range: 'Alcance de Proteção: [range]'
       protection-range-bonus-title: "&b Inclui estes bônus:"
+      purge-protected: Ilha é protegida de exclusão
+      max-protection-range: 'Maior histórico de alcance de proteção: [range]'
+      protection-coords: 'Coordenadas de Proteção: [xz1] até [xz2]'
+      is-spawn: Ilha é uma ilha de spawn
+      banned-players: 'Jogadores banidos:'
+      unowned: "&c Sem dono"
     switch:
+      description: ligar/desligar proteção de bypass
+      op: "&c OPs sempre podem ignorar a proteção. Deop para usar o comando."
       removing: "&a Removendo desvio de proteção..."
       adding: "&a Adicionando desvio de proteção..."
     switchto:
       parameters: "<jogador> <número>"
+      description: mudar a ilha do jogador para a numerada na lixeira
+      out-of-range: "&c Número deve estar entre 1 e [number]. Use &l [label] trash
+        [player] &r &c para ver o número de ilhas"
+      cannot-switch: "&c A mudança falhou. Consulte o log do console para verificar
+        o erro."
+      success: "&a Trocou com sucesso a ilha do jogador para a especificada."
     trash:
+      no-unowned-in-trash: "&c Não há ilhas sem dono na lixeira"
+      no-islands-in-trash: "&c O jogador não tem ilhas na lixeira"
       parameters: "[jogador]"
+      description: mostrar ilhas sem dono ou ilhas de jogadores na lixeira
+      title: "&d =========== Ilhas na Lixeira ==========="
+      count: "&l &d Ilha [number]:"
+      use-switch: "&a Use &l [label] switchto <player> <number>&r &a  para mudar a
+        ilha do jogador para a ilha na lixeira"
+      use-emptytrash: "&a Use &l [label] emptytrash [player]&r &a  para remover permanentemente
+        itens da lixeira"
     emptytrash:
       parameters: "[jogador]"
-    version: {}
+      description: Lixeira limpa para o jogador ou todas as ilhas sem dono na lixeira
+      success: "&a Lixeira esvaziado com sucesso."
+    version:
+      description: exibe as versões do BentoBox e dos addons
     setrange:
       parameters: "<jogador> <alcance>"
-    reload: {}
+      description: definir o alcance da ilha do jogador
+      range-updated: "&a Alcance da ilha atualizada para &b [number]&a ."
+    reload:
+      description: reiniciar
     tp:
       parameters: "<jogador> [jogador para teletransportar]"
+      description: teleportar para a ilha de um jogador
+      manual: "&c Nenhuma warp segura encontrada! Teleporte manualmente perto de &b
+        [location] &c e verifique"
     getrank:
       parameters: "<jogador> [dono da ilha]"
+      description: obter o cargo de um jogador em sua ilha ou na ilha do dono
+      rank-is: "&a Cargo é &b [rank] &a na ilha de &b [name]&a."
     setrank:
       parameters: "<jogador> <classificação> [dono da ilha]"
+      description: definir o cargo de um jogador em sua ilha ou na ilha do dono
+      unknown-rank: "&c Cargo desconhecido!"
+      not-possible: "&c O cargo deve ser maior que visitante."
+      rank-set: "&a Cargo definido de &b [from] &a para &b [to] &a na ilha de &b [name]&a."
     setprotectionlocation:
       parameters: "[coordenadas x y z]"
       description: definir a localização atual ou [x y z] como centro da área de proteção
@@ -115,14 +269,30 @@ commands:
       island-location-changed: "&a [usuário] mudou o centro de proteção da ilha para
         [xyz]."
       xyz-error: "&c Especifique três coordenadas inteiras: por exemplo, 100 120 100"
-    setspawn: {}
+    setspawn:
+      description: definir uma ilha como spawn para este modo de jogo
+      already-spawn: "&c Esta ilha já é um spawn!"
+      no-island-here: "&c Não há ilha aqui."
+      confirmation: "&c Tem certeza de que deseja definir esta ilha como o spawn deste
+        mundo?"
+      success: "&a Definido com sucesso esta ilha como o spawn deste mundo."
     setspawnpoint:
+      description: definir a localização atual como spawnpoint para esta ilha
+      no-island-here: "&c Não há ilha aqui."
+      confirmation: "&c Tem certeza de que deseja definir este local como o spawnpoint
+        desta ilha?"
+      success: "&a Definido com sucesso este local como o spawnpoint desta ilha."
       island-spawnpoint-changed: "&a [usuário] mudou o ponto de desova da ilha."
     settings:
       parameters: "[jogador]/[bandeira mundial]/spawn-island [bandeira/ativa/desativada]
         [classificação/ativa/desativada]"
+      description: Abre configurações de sistema ou configurações da ilha para o jogador
       unknown-setting: "&c Configuração desconhecida"
     blueprint:
+      description: manipular blueprints
+      bedrock-required: "&c Pelo menos um bloco de bedrock deve existir em uma blueprint!"
+      copy-first: "&c Copie primeiro!"
+      file-exists: "&c O arquivo já existe, sobrescrever?"
       no-such-file: "&c Esse arquivo não existe!"
       could-not-load: "&c Não foi possível carregar esse arquivo!"
       set-pos1: "&a Posição 1 definida em [vetor]"
