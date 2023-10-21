@@ -24,17 +24,17 @@ general:
     no-safe-location-found: "&c Nem található egy biztonságos hely sem, ahova teleportálhat
       a szigeten."
     not-owner: "&c Nem te vagy a sziget tulajdonosa!"
-    player-is-not-owner: "&b [Név] &c nem egy sziget tulajdonosa!"
+    player-is-not-owner: "&b [name] &c nem egy sziget tulajdonosa!"
     not-in-team: "&c Az a játékos nincs a csapatodban!"
     offline-player: "&c Az a játékos offline állapotban van, vagy nem létezik."
-    unknown-player: "&c [Név] ismeretlen játékos!"
+    unknown-player: "&c [name] ismeretlen játékos!"
     general: "&c Ez a parancs még nem elérhető- fordulj egy  adminhoz"
     unknown-command: "&c Ismeretlen parancs. Használd a &b / [label] help &cparancsot
       a segítségért."
     wrong-world: "&c Nem vagy a megfelelő világban, hogy ezt megcsináld!"
-    you-must-wait: "&c Várnod kell [szám] másodpercet, mielőtt újra végrehajthatod
+    you-must-wait: "&c Várnod kell [number] másodpercet, mielőtt újra végrehajthatod
       ezt a parancsot."
-    must-be-positive-number: "&c [Szám] nem egy érvényes pozitív szám."
+    must-be-positive-number: "&c [number] nem egy érvényes pozitív szám."
     not-on-island: "&c Nem vagy a szigeten!"
   worlds:
     overworld: Alap világ
@@ -42,10 +42,10 @@ general:
     the-end: Vég
 commands:
   help:
-    header: "&7 =========== &c [címke] segítség &7 ==========="
-    syntax: "&b [Használat] &a [paraméterek]&7 : &e [leírás]"
-    syntax-no-parameters: "&b [Használat]&7 : &e [leírás]"
-    end: "&7 ================================="
+    header: '&7 =========== &c [label] help &7 ==========='
+    syntax: '&b [usage] &a [parameters]&7 : &e [description]'
+    syntax-no-parameters: '&b [usage]&7 : &e [description]'
+    end: '&7 ================================='
     parameters: "[Parancs]"
     description: Segítség Parancs
     console: Konzol
@@ -59,7 +59,7 @@ commands:
       set:
         description: beállítja, hogy ez a játékos hányszor állította vissza a szigetét
         parameters: "<játekos> <visszaállitás>"
-        success: "&b [név]&a sziget-visszaállítási száma most &b [szám]&a ."
+        success: "&b [name]&a sziget-visszaállítási száma most &b [number]&a ."
       reset:
         description: 0-ra állítja a játékos sziget visszaállítási számát
         parameters: "<játékos>"
@@ -80,7 +80,7 @@ commands:
       parameters: "[days]"
       description: Több mint [napja] elhagyatott szigetek törlése.
       days-one-or-more: Legalább 1 napnak vagy hosszabbnak kell lennie
-      purgable-islands: "&a Megtalálva &b [szám] &a törölhető sziget."
+      purgable-islands: "&a Megtalálva &b [number] &a törölhető sziget."
       purge-in-progress: "&c Törlés folyamatban. Használd a &b /[label] parancsot
         a &ctörlés leállításához."
       number-error: "&cA kikötésnek számnak kell lennie."
@@ -99,31 +99,31 @@ commands:
         stopping: Törlés megállítása
       unowned:
         description: Tulajdonos nélküli szigetek törlése.
-        unowned-islands: "&a Megtalálva &b [szám] &a tulajdonos nélküli sziget."
+        unowned-islands: "&a Megtalálva &b [number] &a tulajdonos nélküli sziget."
       status:
         description: Törlés státuszának kijelzése.
-        status: "&b [Törölt] &a szigetek törölve a &b [törölhető] &7(&b[százalékérték]
+        status: "&b [purged] &a szigetek törölve a &b [purgeable] &7(&b[percentage]
           %&7)-ból/ből&a."
     team:
       description: csapatokat irányítani
       add:
         parameters: "<tulajdonos> <játékos>"
         description: játékos hozzáadása a tulajdonos csapatához
-        name-not-owner: "&c [Név] nem tulajdonos."
-        name-has-island: "&c [Név] már van egy szigete. Először azt kell törölnöd!"
-        success: "&b [Játékosnév]&a  hozzá lett adva &b [tulajdonos]&a  szigetéhez."
+        name-not-owner: "&c [name] nem tulajdonos."
+        name-has-island: "&c [name] már van egy szigete. Először azt kell törölnöd!"
+        success: "&b [name]&a hozzá lett adva &b [owner]&a szigetéhez."
       disband:
         parameters: "<Tulajdonos>"
         description: A tulajdonos csapatának feloszlatása.
-        use-disband-owner: "&c Nem tulajdonos! Használd a feloszlatás [tulajdonos]-t."
+        use-disband-owner: "&c Nem tulajdonos! Használd a feloszlatás [owner]-t."
         disbanded: "&c Egy adminisztrátor feloszlatta a csapatodat!"
-        success: "&b [Név]&a csapata fel lett oszlatva."
+        success: "&b [name]&a csapata fel lett oszlatva."
       fix:
         description: átvizsgálja és javítja a szigetek közötti tagságot az adatbázisban
         scanning: Adatbázis szkennelése...
         duplicate-owner: 'Az &c Player egynél több szigettel rendelkezik az adatbázisban:
           [name]'
-        player-has: "&c A [név] játékosnak [szám] szigete van"
+        player-has: "&c A [name] játékosnak [number] szigete van"
         duplicate-member: "&c A játékos [name] egynél több sziget tagja az adatbázisban"
         rank-on-island: "&c [rank] a szigeten itt: [xyz]"
         fixed: "&a Javítva"
@@ -134,19 +134,19 @@ commands:
         cannot-kick-owner: "&c Nem rúghatod ki a tulajdonost. Először rúgd ki a tagokat."
         not-in-team: "&c Ez a játékos nem tagja egy csapatnak sem."
         admin-kicked: "&c Egy adminisztrátor kirúgott téged a csapatból."
-        success: "&b [Játékosnév] &a ki lett rúgva &b [Tulajdonos]&a szigetéről."
+        success: "&b [name] &a ki lett rúgva &b [owner]&a szigetéről."
       setowner:
         parameters: "<Játékosnév>"
         description: A sziget tulajdonjogának átruházása a játékosnak.
-        already-owner: "&c [Játékosnév] már a szigetnek a tulajdonosa!"
-        success: "&b [Játékosnév]&a  nem a sziget tulajdonosa."
+        already-owner: "&c [name] már a szigetnek a tulajdonosa!"
+        success: "&b [name]&a nem a sziget tulajdonosa."
     range:
       description: Admin sziget tartományának parancsa
       invalid-value:
         too-low: "&c A védelem tartományának nagyobbnak kell lennie &b 1-nél&c !"
         too-high: "&c A védelem tartománya egyenlő vagy kisebb kell hogy legyen, mint&b
-          [szám]&c !"
-        same-as-before: "&c A védelem tartománya már be van állítva &b [szám]-ra/re&c
+          [number]&c !"
+        same-as-before: "&c A védelem tartománya már be van állítva &b [number]-ra/re&c
           !"
       display:
         already-off: "&c A jelölők már ki vannak kapcsolva."
@@ -156,12 +156,12 @@ commands:
         hint: |-
           &c A pirosa akadály ikon &f mutatja a sziget jelenlegi védelmi tartományának a limitjét..
           &7 A szürke effektek &f mutatják a sziget maximális limitjét..
-          &a A zöld  effektek &f mutatják a sziget alap levédett tartományát, ha a sziget jelenlegi védelmi tartománya ettől eltér.
+          &a A zöld effektek &f mutatják a sziget alap levédett tartományát, ha a sziget jelenlegi védelmi tartománya ettől eltér.
         showing: "&2Tartomány jelölőinek mutatása."
       set:
         parameters: "<Játékos> <tartomány>"
         description: Beállítja a sziget védelmi tartományát
-        success: "&aA sziget védelmi tartományának beállítása  &b [szám]-ra/re&a ."
+        success: "&aA sziget védelmi tartományának beállítása  &b [number]-ra/re&a ."
       reset:
         parameters: "<lejátszó>"
         description: visszaállítja a sziget védett tartományát a világ alapértelmezett
@@ -181,7 +181,7 @@ commands:
       parameters: "<lejátszó>"
       description: regisztrálj játékost egy ismeretlen szigetre, amelyen tartózkodsz
       registered-island: "&a [name] regisztrálva a [xyz] szigetre."
-      reserved-island: "&egy fenntartott sziget a [xyz] címen a [név] számára."
+      reserved-island: "&egy fenntartott sziget a [xyz] címen a [name] számára."
       already-owned: Az &c Island már egy másik játékos tulajdona!
       no-island-here: "&c Itt nincs sziget. Erősítse meg, hogy készítsen egyet."
       in-deletion: "&c Ez a szigetterület jelenleg törlés alatt áll. Próbáld később."
@@ -193,7 +193,7 @@ commands:
       parameters: "<tulajdonos>"
       description: törölje a tulajdonos regisztrációját a szigetről, de tartsa meg
         a szigettömböket
-      unregistered-island: "&a Nem regisztrált [név] a következő szigetről: [xyz]."
+      unregistered-island: "&a Nem regisztrált [name] a következő szigetről: [xyz]."
     info:
       parameters: "<lejátszó>"
       description: információkat kaphat a tartózkodási helyéről vagy a játékos szigetéről
@@ -204,7 +204,7 @@ commands:
       last-login: 'Utolsó bejelentkezés: [dátum]'
       last-login-date-time-format: EEE HMM nn ÓÓ:pp:ss zzz éééé
       deaths: 'Halálozás: [number]'
-      resets-left: 'Visszaállítások: [szám] (max.: [összesen])'
+      resets-left: 'Visszaállítások: [number] (max.: [total])'
       team-members-title: 'Csapattagok:'
       team-owner-format: "&a [name] [rank]"
       team-member-format: "&b [name] [rank]"
@@ -214,7 +214,7 @@ commands:
       islands-in-trash: "&d A játékosnak szigetei vannak a kukában."
       protection-range: 'Védelmi tartomány: [range]'
       protection-range-bonus-title: "&b A következő bónuszokat tartalmazza:"
-      protection-range-bonus: 'Bónusz: [szám]'
+      protection-range-bonus: 'Bónusz: [number]'
       purge-protected: A sziget takarítással védett
       max-protection-range: 'Legnagyobb történelmi védelmi tartomány: [range]'
       protection-coords: 'Védelmi koordináták: [xz1] – [xz2]'
@@ -244,7 +244,7 @@ commands:
       count: "&l &d Island [number]:"
       use-switch: "&a Használja az &l [label] kapcsolót a <lejátszó> <szám>&r &a gombbal
         a lejátszót a kukában lévő szigetre válthatja"
-      use-emptytrash: "&a Az &l [címke] ürestrash [lejátszó]&r &a használatával véglegesen
+      use-emptytrash: "&a Az &l [label] ürestrash [lejátszó]&r &a használatával véglegesen
         eltávolíthatja a kukát"
     emptytrash:
       parameters: "[játékos]"
@@ -319,7 +319,7 @@ commands:
       set-different-pos: "&c Másik hely beállítása – ez a pozíció már be van állítva!"
       need-pos1-pos2: "&c Állítsa be először a pos1-et és a pos2-t!"
       copying: "&b Blokkok másolása..."
-      copied-blocks: "&b [szám] blokk a vágólapra másolva"
+      copied-blocks: "&b [number] blokk a vágólapra másolva"
       look-at-a-block: "&c Nézze meg a blokkot 20 blokkon belül a beállításhoz"
       mid-copy: "&c Ön a másolat közepén áll. Várja meg, amíg a másolás elkészül."
       copied-percent: "&6 másolva [number]%"
@@ -357,8 +357,8 @@ commands:
       rename:
         parameters: "<tervrajznév> <új név>"
         description: nevezzen át egy tervrajzot
-        success: "&a Terv &b [régi] &a sikeresen át lett nevezve erre: &b [megjelenítés]&a.
-          A fájlnév most &b [név]&a."
+        success: "&a Terv &b [old] &a sikeresen át lett nevezve erre: &b [display]&a.
+          A fájlnév most &b [name]&a."
         pick-different-name: "&c Kérjük, adjon meg egy nevet, amely eltér a terv jelenlegi
           nevétől."
       management:
@@ -368,7 +368,7 @@ commands:
         edit: Kattintson a szerkesztéshez
         rename: Kattintson a jobb gombbal az átnevezéshez
         edit-description: Kattintson a leírás szerkesztéséhez
-        world-name-syntax: "[name] világ"
+        world-name-syntax: "[név] világ"
         world-instructions: |
           Hely tervrajz
           jobbra a beállításhoz
@@ -402,7 +402,7 @@ commands:
         description:
           quit: kilép
           instructions: |
-            Írjon be többsoros leírást a következőhöz: [name]
+            Írjon be többsoros leírást a következőhöz: [név]
             és „kilép” egy sorból a befejezéshez.
           success: Siker!
           cancelling: Törlés
@@ -594,7 +594,7 @@ commands:
       name-too-long: "&c Túl hosszú. A maximális méret [number] karakter."
       name-already-exists: "&c Ebben a játékmódban már van egy ilyen nevű sziget."
       parameters: "<név>"
-      success: "&a Sikeresen beállította a sziget nevét &b [név]&a értékre."
+      success: "&a Sikeresen beállította a sziget nevét &b [name]&a értékre."
     renamehome:
       description: nevezzen át egy otthoni helyet
       parameters: "[otthon neve]"
@@ -659,19 +659,19 @@ commands:
         cannot-untrust-yourself: "&c Nem bízhatsz magadban!"
         cannot-untrust-member: "&c Nem bízhatsz meg egy csapattagban!"
         player-not-trusted: Az &c Player nem megbízható!
-        you-are-no-longer-trusted: "&b Már nem bízik Önben &b [név]&a !"
-        success: "&b [név] &a már nem megbízható a szigetén."
+        you-are-no-longer-trusted: "&b Már nem bízik Önben &b [name]&a !"
+        success: "&b [name] &a már nem megbízható a szigetén."
       invite:
         description: hívj meg egy játékost a szigetedre
         invitation-sent: "&a Meghívó elküldve a &b[name]&a címre."
         removing-invite: "&c Meghívó eltávolítása."
-        name-has-invited-you: "&a [név] meghívott téged, hogy csatlakozz a szigetéhez."
-        to-accept-or-reject: "&a A /[címke] csapat elfogadja az elfogadást, vagy /[címke]
+        name-has-invited-you: "&a [name] meghívott téged, hogy csatlakozz a szigetéhez."
+        to-accept-or-reject: "&a A /[label] csapat elfogadja az elfogadást, vagy /[label]
           csapat elutasítja az elutasításhoz"
         you-will-lose-your-island: "&c FIGYELEM! Elveszted a szigetedet, ha elfogadod!"
         errors:
           cannot-invite-self: "&c Nem hívhatod meg magad!"
-          cooldown: "&c Nem hívhatja meg ezt a személyt további [szám] másodpercig."
+          cooldown: "&c Nem hívhatja meg ezt a személyt további [number] másodpercig."
           island-is-full: "&c A szigeted tele van, nem hívhatsz meg mást."
           none-invited-you: "&c Senki sem hívott meg :c."
           you-already-are-in-team: "&c Már egy csapat tagja vagy!"
@@ -683,8 +683,8 @@ commands:
         accept:
           description: fogadja el a meghívást
           you-joined-island: "&a Egy szigethez csatlakoztál! A többi tag megtekintéséhez
-            használja a &b/[címke] csapatot &a."
-          name-joined-your-island: "&a [név] csatlakozott a szigetéhez!"
+            használja a &b/[label] csapatot &a."
+          name-joined-your-island: "&a [name] csatlakozott a szigetéhez!"
           confirmation: |-
             &c Biztosan elfogadja ezt a meghívást?
             &c&l Elveszíti &r&c&l jelenlegi szigetét!
@@ -699,15 +699,15 @@ commands:
         cannot-leave: "&c A tulajdonosok nem távozhatnak! Legyél először tag, vagy
           rúgj ki minden tagot."
         description: hagyd el a szigetedet
-        left-your-island: "&c [név] &c elhagyta a szigetedet"
+        left-your-island: "&c [name] &c elhagyta a szigetedet"
         success: "&a Elhagytad ezt a szigetet."
       kick:
         description: távolíts el egy tagot a szigetedről
         parameters: "<lejátszó>"
-        player-kicked: "&c A [név] kirúgott a szigetről [játékmód]-ban!"
+        player-kicked: "&c A [name] kirúgott a szigetről [játékmód]-ban!"
         cannot-kick: "&c Nem rúghatod meg magad!"
-        cannot-kick-rank: "&c A rangod nem teszi lehetővé [név] rúgását!"
-        success: "&b [név] &a-t kirúgták a szigetedről."
+        cannot-kick-rank: "&c A rangod nem teszi lehetővé [name] rúgását!"
+        success: "&b [name] &a-t kirúgták a szigetedről."
       demote:
         description: lefokozz egy játékost a szigeteden egy ranggal lejjebb
         parameters: "<lejátszó>"
@@ -715,7 +715,7 @@ commands:
           cant-demote-yourself: "&c Nem lefokozhatod magad!"
           cant-demote: "&c Magasabb rangokat nem lehet lefokozni!"
         failure: Az &c Player nem csökkenthető tovább!
-        success: "&a [név] lefokozva [rang]"
+        success: "&a [name] lefokozva [rank]"
       promote:
         description: előléptessen egy játékost a szigeten egy rangot feljebb
         parameters: "<lejátszó>"
@@ -723,7 +723,7 @@ commands:
           cant-promote-yourself: "&c Nem reklámozhatod magad!"
           cant-promote: "&c Nem léphetsz a rangod fölé!"
         failure: "&c A játékos nem léptethető tovább!"
-        success: "&a Előléptette [név] a [rang] rangra"
+        success: "&a Előléptette [name] a [rank] rangra"
       setowner:
         description: átadja a sziget tulajdonjogát egy tagnak
         errors:
@@ -732,7 +732,7 @@ commands:
             haszontalan.&r &7 )"
           target-is-not-member: "&c Az a játékos nem tagja a szigeti csapatodnak!"
           at-max: "&c Ennek a játékosnak már van a megengedett maximális számú szigete!"
-        name-is-the-owner: "&a [név] mostantól a sziget tulajdonosa!"
+        name-is-the-owner: "&a [name] mostantól a sziget tulajdonosa!"
         parameters: "<lejátszó>"
         you-are-the-owner: "&a Mostantól Ön a sziget tulajdonosa!"
     ban:
@@ -744,21 +744,21 @@ commands:
       cannot-ban-more-players: "&c Elérted a kitiltási határt, nem tilthatsz ki több
         játékost a szigetedről."
       player-already-banned: Az &c Player már ki van tiltva.
-      player-banned: "&b [név]&c ki van tiltva a szigetedről."
-      owner-banned-you: "&b [név]&c kitiltott a szigetükről!"
+      player-banned: "&b [name]&c ki van tiltva a szigetedről."
+      owner-banned-you: "&b [name]&c kitiltott a szigetükről!"
       you-are-banned: "&b Ki vagy tiltva erről a szigetről!"
     unban:
       description: tiltson le egy játékost a szigetéről
       parameters: "<lejátszó>"
       cannot-unban-yourself: "&c Nem oldhatod fel magad!"
       player-not-banned: "&c Player nincs kitiltva."
-      player-unbanned: "&b [név]&a ki van tiltva a szigetedről."
-      you-are-unbanned: "&b [név]&a kitiltotta a szigetükről!"
+      player-unbanned: "&b [name]&a ki van tiltva a szigetedről."
+      you-are-unbanned: "&b [name]&a kitiltotta a szigetükről!"
     banlist:
       description: listás eltiltott játékosok
       noone: "&a Senki sincs kitiltva ezen a szigeten."
       the-following: "&b A következő játékosok ki vannak tiltva:"
-      names: "&c [sor]"
+      names: "&c [line]"
       you-can-ban: "&b Legfeljebb &e [number] &b további játékost kitilthatsz."
     settings:
       description: kijelző sziget beállításai
@@ -774,8 +774,8 @@ commands:
       cannot-expel: "&c Ezt a játékost nem lehet kizárni."
       cannot-expel-member: "&c Csapattagot nem zárhatsz ki!"
       not-on-island: "&c Az a játékos nincs a szigeteden!"
-      player-expelled-you: "&b [név]&c kiutasított a szigetről!"
-      success: "&a Kiutasítottad &b [név] &a-t a szigetről."
+      player-expelled-you: "&b [name]&c kiutasított a szigetről!"
+      success: "&a Kiutasítottad &b [name] &a-t a szigetről."
 ranks:
   owner: Tulajdonos
   sub-owner: Altulajdonos
@@ -1069,12 +1069,12 @@ protection:
       hint: Enderpearl használat letiltva
     ENTER_EXIT_MESSAGES:
       description: Belépési és kilépési üzenetek megjelenítése
-      island: "[név] szigete"
+      island: "[name] szigete"
       name: Üzenetek be-/kilépése
-      now-entering: "&a Most írja be: &b [név]&a ."
-      now-entering-your-island: "&a Most belép a szigetére: &b [név]"
-      now-leaving: "&a Most távozik &b [név]&a ."
-      now-leaving-your-island: "&a Most elhagyja szigetét: &b [név]"
+      now-entering: "&a Most írja be: &b [name]&a ."
+      now-entering-your-island: "&a Most belép a szigetére: &b [name]"
+      now-leaving: "&a Most távozik &b [name]&a ."
+      now-leaving-your-island: "&a Most elhagyja szigetét: &b [name]"
     EXPERIENCE_BOTTLE_THROWING:
       name: Tapasztalja meg a palackdobálást
       description: Az élménypalackok dobásának váltása.
@@ -1571,7 +1571,7 @@ language:
     selected: "&a Jelenleg kiválasztva."
     click-to-select: "&e Kattintson a &a gombra a kiválasztáshoz."
     authors: "&a Szerzők:"
-    author: "&3 - &b [név]"
+    author: "&3 - &b [name]"
   edited: "&a A nyelve &e [lang]&a nyelvre változott."
 management:
   panel:
@@ -1585,7 +1585,7 @@ management:
           name: "&6 Tervrajzok"
           description: "&a Megnyitja az Admin Blueprint menüt."
         gamemode:
-          name: "&f [név]"
+          name: "&f [name]"
           description: "&a Szigetek: &b [szigetek]\n"
       addons:
         name: "&6 Kiegészítések"
@@ -1613,7 +1613,7 @@ management:
         name: "&6 Kompatibilitás"
         description:
           COMPATIBLE: |
-            &a Futó &e [név] [verzió]&a .
+            &a Futó &e [name] [verzió]&a .
 
             &a BentoBox jelenleg fut a
             &a &l KOMPATIBILIS &r &a szerverszoftver és
@@ -1622,7 +1622,7 @@ management:
             &a Funkcióit teljes mértékben arra tervezték
             &futás ebben a környezetben.
           SUPPORTED: |
-            &a Futó &e [név] [verzió]&a .
+            &a Futó &e [name] [verzió]&a .
 
             &a BentoBox jelenleg fut a
             &a &l TÁMOGATOTT &r &a szerverszoftver és
@@ -1631,7 +1631,7 @@ management:
             &a A legtöbb funkció zökkenőmentesen fog működni
             &a ebben a környezetben.
           NOT_SUPPORTED: |
-            &a Futó &e [név] [verzió]&a .
+            &a Futó &e [name] [verzió]&a .
 
             &a BentoBox jelenleg fut a
             &6 &l NEM TÁMOGATOTT &r &a szerverszoftver ill
@@ -1641,7 +1641,7 @@ management:
             &a helyesen, &6 platform-specifikus hibák ill
             &6 probléma várható&a .
           INCOMPATIBLE: |
-            &a Futó &e [név] [verzió]&a .
+            &a Futó &e [name] [verzió]&a .
 
             &a BentoBox jelenleg egy
             &c &l INCOMPATIBLE &r &a szerverszoftver ill
@@ -1716,9 +1716,9 @@ enums:
     DRYOUT: Kiszáradni
 panel:
   credits:
-    title: "&8 [név] &2 Kredit"
+    title: "&8 [name] &2 Kredit"
     contributor:
-      name: "&egy név]"
+      name: "&a [name]"
       description: "&a véglegesítések: &b [commits]\n"
     empty-here:
       name: "&c Ez itt üresnek tűnik..."
