@@ -708,7 +708,7 @@ commands:
       kick:
         description: entferne ein Mitglied von deiner Insel
         parameters: "<player>"
-        player-kicked: "&c Der [name] hat dich im [Spielmodus] von der Insel geworfen!"
+        player-kicked: "&c Der [name] hat dich im [gamemode] von der Insel geworfen!"
         cannot-kick: "&c Du kannst dich nicht selbst kicken!"
         cannot-kick-rank: "&c Dein Rang erlaubt es nicht, [name] zu treten!"
         success: "&b [name] &a wurde von deiner Insel gekickt."
