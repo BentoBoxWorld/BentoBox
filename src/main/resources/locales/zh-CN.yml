@@ -198,6 +198,7 @@ commands:
       islands-in-trash: "&d这个岛屿在垃圾桶中。"
       protection-range: "&d保护范围： &f[range]"
       protection-range-bonus-title: "&b 包括以下奖励："
+      protection-range-bonus: 奖金：[number]
       purge-protected: "&d清理保护： &a已开启"
       max-protection-range: "&d历史最大保护范围： &f[range]"
       protection-coords: "&d保护界线： &f[xz1] 到 [xz2]"
@@ -369,6 +370,7 @@ commands:
           prompt: "&e请输入新名称， 或 “&b quit&e” 来退出编辑。"
           too-long: "&c新名称太长了！"
           pick-a-unique-name: "&c这个名称已存在， 请另选一个不同的名称！"
+          stripped-char-in-unique-name: "&c 一些字符被删除，因为它们是不允许的。 &a 新 ID 将为 &b [name]&a。"
           success: "&a成功！"
           conversation-prefix: "&3> &r"
         description:
@@ -507,6 +509,7 @@ commands:
         estimated-time: "&b预计用时： &e[number] &a秒。"
         blocks: "&b正在构建： &a总共需要构建 &e[number] &a个方块..."
         entities: "&b填充实体： &a总共需要填充 &e[number] &a个实体..."
+        dimension-done: "[world]中的一座岛屿已建成。"
         done: "&a完成！ 您的岛屿已准备就绪！"
       pick: "&9&l选择岛屿方案"
       unknown-blueprint: "&c该蓝图方案尚未加载。"
@@ -665,6 +668,7 @@ commands:
       kick:
         description: 将成员从您的岛屿中踢出
         parameters: "<player>"
+        player-kicked: "&c [name] 在 [gamemode] 将你踢出了岛上！"
         cannot-kick: "&c您不能踢您自己！"
         cannot-kick-rank: "&c 你的等级不允许踢[名字]！"
         success: "&a已将 &b[name] &a踢出了岛屿。"
@@ -1364,6 +1368,12 @@ protection:
         &a 如果他们死在自己的岛上！
     VISITOR_TRIGGER_RAID:
       name: 访客引发袭击
+      description: |-
+        &a 切换访客是否可以开始
+        &a 对他们所在的岛屿进行突袭
+        &a 来访。
+        ＆a
+        &a 不祥之兆效果将被移除！
     ENTITY_PORTAL_TELEPORT:
       name: 实体门户使用情况
       description: |-
