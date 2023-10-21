@@ -77,6 +77,7 @@ commands:
         success: "&a sikeresen eltávolítva &b [number] &a visszaállítja &b [name]
           szigetét&a, így a végösszeg &b[total]&a visszaállításra csökkent."
     purge:
+      parameters: "[days]"
       description: Több mint [napja] elhagyatott szigetek törlése.
       days-one-or-more: Legalább 1 napnak vagy hosszabbnak kell lennie
       purgable-islands: "&a Megtalálva &b [szám] &a törölhető sziget."
