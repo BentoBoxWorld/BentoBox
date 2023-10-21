@@ -788,6 +788,7 @@ protection:
         &7进入船
       hint: "&c已被禁止与船只互动"
     BOOKSHELF:
+      name: 书架
       description: |-
         &a 允许放置书籍
         &a 或拿书。
