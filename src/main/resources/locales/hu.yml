@@ -1,5 +1,344 @@
-# 
-# This is a YML file. Be careful when editing. Check your edits in a YAML checker like    #
-# the one at http://yaml-online-parser.appspot.com                                        #
+---
 meta:
-  banner: "WHITE_BANNER:1:STRIPE_TOP:RED:STRIPE_BOTTOM:LIME"
+  authors:
+  - 
+  - 
+  banner: WHITE_BANNER:1:STRIPE_TOP:RED:STRIPE_BOTTOM:LIME
+prefixes:
+  bentobox: "&6 BentoBox &7 &l > &r"
+general:
+  success: "&a Siker!"
+  invalid: Érvénytelen
+  errors:
+    command-cancelled: "&c A parancs megszakítva."
+    no-permission: "&c Nincs engedélye a parancs végrehajtására (&7 [permission] &c)."
+    no-team: "&c Nincs csapata!"
+    no-island: "&c Nincs szigete!"
+    player-has-island: "&c A játékosnak már van szigete!"
+    player-has-no-island: "&c Ennek a játékosnak nincs szigete!"
+    not-in-team: "&c Az a játékos nincs a csapatodban!"
+    offline-player: "&c Az a játékos offline állapotban van, vagy nem létezik."
+    wrong-world: "&c Nem vagy a megfelelő világban, hogy ezt megcsináld!"
+  worlds: {}
+commands:
+  help:
+    end: "&7 ================================="
+    console: Konzol
+  admin:
+    help:
+      description: 'Admin parancs
+
+        '
+    resets:
+      set:
+        parameters: "<játekos> <visszaállitás>"
+      reset:
+        parameters: "<játékos>"
+      add:
+        parameters: "<játékos> <Visszaállítás>"
+        success: "&a Sikeresen hozzáadva &b [number]&a visszaállítás a &b [name] értékre,
+          növelve az összértéket &b [total] &a visszaállítássra."
+      remove:
+        parameters: "<játékos> <visszaállítás>"
+    purge:
+      protect: {}
+      stop: {}
+      unowned: {}
+      status: {}
+    team:
+      add: {}
+      disband: {}
+      fix: {}
+      kick: {}
+      setowner: {}
+    range:
+      invalid-value: {}
+      display: {}
+      set: {}
+      reset: {}
+      add: {}
+      remove: {}
+    register: {}
+    unregister: {}
+    info: {}
+    switch: {}
+    switchto: {}
+    trash: {}
+    emptytrash: {}
+    version: {}
+    setrange: {}
+    reload: {}
+    tp: {}
+    getrank: {}
+    setrank: {}
+    setprotectionlocation: {}
+    setspawn: {}
+    setspawnpoint: {}
+    settings: {}
+    blueprint:
+      copy: {}
+      delete: {}
+      load: {}
+      list: {}
+      origin: {}
+      paste: {}
+      pos1: {}
+      pos2: {}
+      save: {}
+      rename: {}
+      management:
+        name: {}
+        description: {}
+    resetflags: {}
+    world: {}
+    delete: {}
+    deletehomes: {}
+    why: {}
+    deaths:
+      reset: {}
+      set: {}
+      add: {}
+      remove: {}
+    resetname: {}
+  bentobox:
+    perms: {}
+    about: {}
+    reload:
+      locales: {}
+    version: {}
+    manage: {}
+    catalog: {}
+    locale: {}
+    migrate: {}
+  confirmation: {}
+  delay: {}
+  island:
+    about: {}
+    go: {}
+    help: {}
+    spawn: {}
+    create:
+      pasting: {}
+    deletehome: {}
+    homes: {}
+    info: {}
+    near: {}
+    reset: {}
+    sethome:
+      nether: {}
+      the-end: {}
+    setname: {}
+    renamehome: {}
+    resetname: {}
+    team:
+      info:
+        member-layout: {}
+        last-seen: {}
+        rank-layout: {}
+      coop: {}
+      uncoop: {}
+      trust: {}
+      untrust: {}
+      invite:
+        errors: {}
+        accept: {}
+        reject: {}
+        cancel: {}
+      leave: {}
+      kick: {}
+      demote:
+        errors: {}
+      promote:
+        errors: {}
+      setowner:
+        errors: {}
+    ban: {}
+    unban: {}
+    banlist: {}
+    settings: {}
+    language: {}
+    expel: {}
+ranks: {}
+protection:
+  flags:
+    ALLAY: {}
+    ANIMAL_NATURAL_SPAWN: {}
+    ANIMAL_SPAWNERS_SPAWN: {}
+    ANVIL: {}
+    ARMOR_STAND: {}
+    AXOLOTL_SCOOPING: {}
+    BEACON: {}
+    BED: {}
+    BOAT: {}
+    BOOKSHELF: {}
+    BREAK_BLOCKS: {}
+    BREAK_SPAWNERS: {}
+    BREAK_HOPPERS: {}
+    BREEDING: {}
+    BREWING: {}
+    BUCKET: {}
+    BUTTON: {}
+    CAKE: {}
+    CARTOGRAPHY: {}
+    CONTAINER: {}
+    CHEST: {}
+    BARREL: {}
+    BLOCK_EXPLODE_DAMAGE: {}
+    COMPOSTER: {}
+    LOOM: {}
+    FLOWER_POT: {}
+    GRINDSTONE: {}
+    SHULKER_BOX: {}
+    SHULKER_TELEPORT: {}
+    SMITHING: {}
+    STONECUTTING: {}
+    TRAPPED_CHEST: {}
+    DISPENSER: {}
+    DROPPER: {}
+    ELYTRA: {}
+    HOPPER: {}
+    CHEST_DAMAGE: {}
+    CHORUS_FRUIT: {}
+    CLEAN_SUPER_FLAT: {}
+    COARSE_DIRT_TILLING: {}
+    COLLECT_LAVA: {}
+    COLLECT_WATER: {}
+    COLLECT_POWDERED_SNOW: {}
+    COMMAND_RANKS: {}
+    CRAFTING: {}
+    CREEPER_DAMAGE: {}
+    CREEPER_GRIEFING: {}
+    CROP_PLANTING: {}
+    CROP_TRAMPLE: {}
+    DOOR: {}
+    DRAGON_EGG: {}
+    DYE: {}
+    EGGS: {}
+    ENCHANTING: {}
+    ENDER_CHEST: {}
+    ENDERMAN_DEATH_DROP: {}
+    ENDERMAN_GRIEFING: {}
+    ENDERMAN_TELEPORT: {}
+    ENDER_PEARL: {}
+    ENTER_EXIT_MESSAGES: {}
+    EXPERIENCE_BOTTLE_THROWING: {}
+    FIRE_BURNING: {}
+    FIRE_EXTINGUISH: {}
+    FIRE_IGNITE: {}
+    FIRE_SPREAD: {}
+    FISH_SCOOPING: {}
+    FLINT_AND_STEEL: {}
+    FURNACE: {}
+    GATE: {}
+    GEO_LIMIT_MOBS: {}
+    HARVEST: {}
+    HIVE: {}
+    HURT_ANIMALS: {}
+    HURT_MONSTERS: {}
+    HURT_VILLAGERS: {}
+    ITEM_FRAME: {}
+    ITEM_FRAME_DAMAGE: {}
+    INVINCIBLE_VISITORS: {}
+    ISLAND_RESPAWN: {}
+    ITEM_DROP: {}
+    ITEM_PICKUP: {}
+    JUKEBOX: {}
+    LEAF_DECAY: {}
+    LEASH: {}
+    LECTERN: {}
+    LEVER: {}
+    LIMIT_MOBS: {}
+    LIQUIDS_FLOWING_OUT: {}
+    LOCK: {}
+    CHANGE_SETTINGS: {}
+    MILKING: {}
+    MINECART: {}
+    MONSTER_NATURAL_SPAWN: {}
+    MONSTER_SPAWNERS_SPAWN: {}
+    MOUNT_INVENTORY: {}
+    NAME_TAG: {}
+    NATURAL_SPAWNING_OUTSIDE_RANGE: {}
+    NOTE_BLOCK: {}
+    OBSIDIAN_SCOOPING: {}
+    OFFLINE_GROWTH: {}
+    OFFLINE_REDSTONE: {}
+    PETS_STAY_AT_HOME: {}
+    PISTON_PUSH: {}
+    PLACE_BLOCKS: {}
+    POTION_THROWING: {}
+    NETHER_PORTAL: {}
+    END_PORTAL: {}
+    PRESSURE_PLATE: {}
+    PVP_END: {}
+    PVP_NETHER: {}
+    PVP_OVERWORLD: {}
+    REDSTONE: {}
+    REMOVE_END_EXIT_ISLAND: {}
+    REMOVE_MOBS: {}
+    RIDING: {}
+    SHEARING: {}
+    SPAWN_EGGS: {}
+    SPAWNER_SPAWN_EGGS: {}
+    SCULK_SENSOR: {}
+    SCULK_SHRIEKER: {}
+    SIGN_EDITING: {}
+    TNT_DAMAGE: {}
+    TNT_PRIMING: {}
+    TRADING: {}
+    TRAPDOOR: {}
+    TREES_GROWING_OUTSIDE_RANGE: {}
+    TURTLE_EGGS: {}
+    FROST_WALKER: {}
+    EXPERIENCE_PICKUP: {}
+    PREVENT_TELEPORT_WHEN_FALLING: {}
+    VISITOR_KEEP_INVENTORY: {}
+    VISITOR_TRIGGER_RAID: {}
+    ENTITY_PORTAL_TELEPORT: {}
+    WITHER_DAMAGE: {}
+    WORLD_BLOCK_EXPLODE_DAMAGE: {}
+    WORLD_TNT_DAMAGE: {}
+  panel:
+    mode:
+      advanced: {}
+      basic: {}
+      expert: {}
+    reset-to-default: {}
+    PROTECTION: {}
+    SETTING: {}
+    WORLD_SETTING: {}
+    WORLD_DEFAULTS: {}
+    flag-item: {}
+language:
+  description: {}
+management:
+  panel:
+    views:
+      gamemodes:
+        blueprints: {}
+        gamemode: {}
+      addons: {}
+      hooks: {}
+    actions:
+      reload: {}
+    buttons:
+      catalog: {}
+      credits: {}
+      empty-here: {}
+    information:
+      state:
+        description: {}
+catalog:
+  panel:
+    GAMEMODES: {}
+    ADDONS: {}
+    views:
+      gamemodes: {}
+      addons: {}
+    icon: {}
+    empty-here: {}
+enums:
+  DamageCause: {}
+panel:
+  credits:
+    contributor: {}
+    empty-here: {}
