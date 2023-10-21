@@ -515,6 +515,7 @@ commands:
     go:
       parameters: "[nome da casa]"
       description: teletransportar você para sua ilha
+      teleport: "&a Teletransportando você para sua ilha."
       teleported: "&a Teletransportou você para casa &e [número]."
       unknown-home: "&c Nome residencial desconhecido!"
     help:
@@ -532,11 +533,15 @@ commands:
         novamente..."
       unable-create-island: "&c Sua ilha não pôde ser gerada, entre em contato com
         um administrador."
+      creating-island: "&a Encontrando um lugar para sua ilha..."
       you-cannot-make: "&c Você não pode fazer mais ilhas!"
       pasting:
+        estimated-time: "&a Tempo estimado: &b [number] &a seconds."
+        blocks: "&a BConstruindo bloco por bloco: &b [number] &a blocos em todos..."
         entities: "&a Preenchendo com entidades: &b [número] &a entidades em todas..."
         dimension-done: "&a Ilha em [mundo] é construída."
         done: "&a Concluído! Sua ilha está pronta e esperando por você!"
+      pick: "&2 Escolha uma estilo:"
       unknown-blueprint: "&c Esse blueprint ainda não foi carregado."
       on-first-login: "&a Bem-vindo! Começaremos a preparar sua ilha em alguns segundos."
       you-can-teleport-to-your-island: "&a Você pode se teletransportar para sua ilha
@@ -1068,6 +1073,9 @@ protection:
       island: ilha de [nome]
       name: Mensagens de entrada/saída
       now-entering: "&a Agora digitando &b [nome]&a ."
+      now-entering-your-island: "&a Agora entrando na sua ilha: &b [name]"
+      now-leaving: "&a Agora saindo da ilha de &b [name]&a ."
+      now-leaving-your-island: "&a Agora entrando na sua ilha: &b [name]"
     EXPERIENCE_BOTTLE_THROWING:
       name: Experimente jogar garrafas
       description: Alternar garrafas de experiência de lançamento.
