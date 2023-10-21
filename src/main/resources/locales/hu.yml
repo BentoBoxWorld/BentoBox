@@ -1,7 +1,7 @@
 ---
 meta:
   authors:
-  - 
+  - tastybento
   - 
   banner: WHITE_BANNER:1:STRIPE_TOP:RED:STRIPE_BOTTOM:LIME
 prefixes:
@@ -14,6 +14,7 @@ general:
     no-permission: "&c Nincs engedélye a parancs végrehajtására (&7 [permission] &c)."
     insufficient-rank: "&c A rangod nem elég magas ahhoz, hogy ezt meg tudd tenni!
       (&7 [rank] &c)Rang"
+    use-in-game: "&c Ez a parancs csak a játékon belül érhető el."
     no-team: "&c Nincs csapata!"
     no-island: "&c Nincs szigete!"
     player-has-island: "&c A játékosnak már van szigete!"
@@ -56,12 +57,15 @@ commands:
         parameters: "<játekos> <visszaállitás>"
       reset:
         parameters: "<játékos>"
+        success: "&a Sikeresen visszaállította &b [name]&a számlálóját &b 0&a értékre."
       add:
         parameters: "<játékos> <Visszaállítás>"
         success: "&a Sikeresen hozzáadva &b [number]&a visszaállítás a &b [name] értékre,
           növelve az összértéket &b [total] &a visszaállítássra."
       remove:
         parameters: "<játékos> <visszaállítás>"
+        success: "&a sikeresen eltávolítva &b [number] &a visszaállítja &b [name]
+          szigetét&a, így a végösszeg &b[total]&a visszaállításra csökkent."
     purge:
       description: Több mint [napja] elhagyatott szigetek törlése.
       purgable-islands: "&a Megtalálva &b [szám] &a törölhető sziget."
@@ -100,7 +104,10 @@ commands:
         use-disband-owner: "&c Nem tulajdonos! Használd a feloszlatás [tulajdonos]-t."
         disbanded: "&c Egy adminisztrátor feloszlatta a csapatodat!"
         success: "&b [Név]&a csapata fel lett oszlatva."
-      fix: {}
+      fix:
+        duplicate-owner: 'Az &c Player egynél több szigettel rendelkezik az adatbázisban:
+          [name]'
+        duplicate-member: "&c A játékos [name] egynél több sziget tagja az adatbázisban"
       kick:
         parameters: "<Csapat játékos>"
         description: Egy játékos kirúgása a csapatból.
@@ -135,29 +142,60 @@ commands:
         parameters: "<Játékos> <tartomány>"
         description: Beállítja a sziget védelmi tartományát
         success: "&aA sziget védelmi tartományának beállítása  &b [szám]-ra/re&a ."
-      reset: {}
-      add: {}
-      remove: {}
-    register: {}
+      reset:
+        success: "&a Szigetvédelmi tartomány visszaállítása erre: &b [number]&a ."
+      add:
+        success: "&a Sikeresen megnöveltük &b [name]&a sziget védett tartományát &b
+          [total] &7-re (&b +[number]&7 )&a ."
+      remove:
+        success: "&a Sikeresen csökkentette &b [name]&a sziget védett tartományát
+          &b [total] &7-re (&b -[number]&7 )&a ."
+    register:
+      registered-island: "&a [name] regisztrálva a [xyz] szigetre."
     unregister: {}
-    info: {}
+    info:
+      owner: 'Tulajdonos: [owner] ([uuid])'
+      deaths: 'Halálozás: [number]'
+      team-owner-format: "&a [name] [rank]"
+      team-member-format: "&b [name] [rank]"
+      protection-range: 'Védelmi tartomány: [range]'
+      max-protection-range: 'Legnagyobb történelmi védelmi tartomány: [range]'
+      banned-format: "&c [name]"
     switch: {}
-    switchto: {}
-    trash: {}
+    switchto:
+      out-of-range: "&c A számnak 1 és [number] között kell lennie. A szigetszámok
+        megtekintéséhez használja az &l [label] kuka [player] &r &c parancsot"
+    trash:
+      count: "&l &d Island [number]:"
+      use-switch: "&a Használja az &l [label] kapcsolót a <lejátszó> <szám>&r &a gombbal
+        a lejátszót a kukában lévő szigetre válthatja"
     emptytrash: {}
     version: {}
-    setrange: {}
+    setrange:
+      range-updated: "&a Szigettartomány frissítve a következőre: &b [number]&a ."
     reload: {}
     tp: {}
-    getrank: {}
-    setrank: {}
-    setprotectionlocation: {}
+    getrank:
+      rank-is: Az &a Rank &b [rank] &a &b [name]&a szigetén.
+    setrank:
+      rank-set: Az &a rangsor beállítva &b-től [from] &a-ig &b-ig [to] &a-ig &b [name]&a
+        szigetén.
+    setprotectionlocation:
+      island: "&c Ez hatással lesz a '[name]' tulajdonában lévő [xyz] szigetre."
+      island-location-changed: "&a [user] megváltoztatta a sziget védelmi központját
+        a következőre: [xyz]."
     setspawn: {}
-    setspawnpoint: {}
+    setspawnpoint:
+      island-spawnpoint-changed: "&a [user] megváltoztatta a sziget spawn pontot."
     settings: {}
     blueprint:
-      copy: {}
-      delete: {}
+      could-not-save: "&c Hmm, valami hiba történt a fájl mentésekor: [message]"
+      copied-percent: "&6 másolva [number]%"
+      copy:
+        parameters: "[air]"
+      delete:
+        no-blueprint: "&b [name] &c nem létezik."
+        success: "&a tervrajz sikeresen törölve &b [name]&a ."
       load: {}
       list: {}
       origin: {}
@@ -167,57 +205,112 @@ commands:
       save: {}
       rename: {}
       management:
-        name: {}
-        description: {}
-    resetflags: {}
+        world-name-syntax: "[name] világ"
+        name:
+          stripped-char-in-unique-name: "&c Néhány karaktert eltávolítottunk, mert
+            nem engedélyezettek. Az új azonosító &b [name]&a lesz."
+        description:
+          quit: kilép
+          instructions: |
+            Írjon be többsoros leírást a következőhöz: [name]
+            és „kilép” egy sorból a befejezéshez.
+        slot: "&f Előnyben részesített hely [number]"
+    resetflags:
+      success-one: "&a [name] jelző minden szigeten alapértelmezettre van állítva."
     world: {}
     delete: {}
     deletehomes: {}
-    why: {}
+    why:
+      turning-on: "&a Konzolhibakeresés bekapcsolása &b [name] számára."
+      turning-off: "&a A konzolhibakeresés kikapcsolása &b [name] esetén."
     deaths:
-      reset: {}
-      set: {}
-      add: {}
-      remove: {}
-    resetname: {}
+      reset:
+        success: "&a Sikeresen visszaállította &b [name]&a halálát &b 0&a értékre."
+      set:
+        success: "&a Sikeresen beállította &b [name]&a halálát &b [number]&a értékre."
+      add:
+        success: "&a Sikeresen hozzáadta a &b [number] &a halálesetet a &b [name]
+          listához, így a teljes szám &b [total]&a halálesetre nőtt."
+      remove:
+        success: "&a Sikeresen eltávolítottuk &b [number] &a halálesetet &b [name]
+          számára, a teljes szám &b [total]&a halálesetre csökkent."
+    resetname:
+      success: "&a Sikeresen visszaállította [name] szigetnevét."
   bentobox:
     perms: {}
     about: {}
     reload:
       locales: {}
-    version: {}
+    version:
+      addon-syntax: "&2 [name] &3 [version] &7 (&3 [state]&7 )"
+      game-world: "&2 [name] &7 (&3 [addon]&7 ): &3 [worlds]"
     manage: {}
     catalog: {}
     locale: {}
     migrate: {}
   confirmation: {}
-  delay: {}
+  delay:
+    stand-still: "&6 Ne mozdulj! Teleportálás [seconds] másodpercen belül"
   island:
     about: {}
-    go: {}
+    go:
+      teleported: "&a hazateleportált &e [number]."
     help: {}
     spawn: {}
     create:
-      pasting: {}
+      pasting:
+        estimated-time: "&a Becsült idő: &b [number] &a másodperc."
+        blocks: "&a Építés blokkonként: &b [number] &a blokk mind..."
+        entities: "&a Entitások kitöltése: &b [number] &a entitások mind..."
+        dimension-done: "&a sziget a [world] épül."
     deletehome: {}
     homes: {}
     info: {}
-    near: {}
-    reset: {}
+    near:
+      syntax: "&6 [direction]: &a [name]"
+      west: Nyugat
+    reset:
+      resets-left: "&c Maradt &b [number] &c visszaállítása"
     sethome:
+      too-many-homes: "&c Nem lehet beállítani – a szigeten legfeljebb [number] otthon
+        található."
+      home-list-syntax: "&6 [name]"
       nether: {}
       the-end: {}
-    setname: {}
+    setname:
+      name-too-short: "&c Túl rövid. A minimális méret [number] karakter."
+      name-too-long: "&c Túl hosszú. A maximális méret [number] karakter."
     renamehome: {}
     resetname: {}
     team:
       info:
-        member-layout: {}
-        last-seen: {}
-        rank-layout: {}
-      coop: {}
-      uncoop: {}
-      trust: {}
+        member-layout:
+          online: "&a &l o &r &f [name]"
+          offline: "&c &l o &r &f [name] &7 ([last_seen])"
+          offline-not-last-seen: "&c &l o &r &f [name]"
+        last-seen:
+          layout: "&b [number] &7 [unit] ezelőtt"
+        header: |
+          &f --- &a A csapat adatai &f ---
+          &a Tagok: &b [total]&7 /&b [max]
+          &a Online tagok: &b [online]
+        rank-layout:
+          owner: "&6 [rank]:"
+          generic: "&6 [rank] &7 (&b [number]&7 )&6 :"
+      coop:
+        success: "&a Ön együttműködött &b [name]&a."
+        name-has-invited-you: "&a [name] meghívott téged, hogy csatlakozz a szigetük
+          együttműködési tagjává."
+      uncoop:
+        you-are-no-longer-a-coop-member: "&c Ön már nem tagja [name] szigetének."
+        all-members-logged-off: "&c A sziget összes tagja kijelentkezett, így Ön többé
+          nem tagja [name] szigetének."
+        success: "&b [name] &a már nem tagja a szigetednek."
+      trust:
+        name-has-invited-you: "&a [name] meghívott téged, hogy csatlakozz a szigetük
+          megbízható tagjává."
+        you-are-trusted: "&2 Megbízik Önben &b [name]&a !"
+        success: "&a Megbíztál &b [name] és a ."
       untrust: {}
       invite:
         errors: {}
