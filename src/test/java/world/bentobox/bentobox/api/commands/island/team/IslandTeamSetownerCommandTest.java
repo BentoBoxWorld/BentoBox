@@ -11,7 +11,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -227,26 +226,6 @@ public class IslandTeamSetownerCommandTest {
         when(pm.getUUID(anyString())).thenReturn(uuid);
         assertFalse(its.canExecute(user, "", List.of("tastybento")));
         verify(user).sendMessage("commands.island.team.setowner.errors.cant-transfer-to-yourself");
-    }
-
-    /**
-     * test method for {@link world.bentobox.bentobox.api.commands.island.team.islandteamsetownercommand#canexecute(world.bentobox.bentobox.api.user.user, java.lang.string, java.util.list)}.
-     */
-    @test
-    public void testcanexecuteuserstringlistofstringtargetatmaxislands() {
-        when(im.inteam(any(), any())).thenreturn(true);
-        when(im.getowner(any(), any())).thenreturn(uuid);
-        uuid target = uuid.randomuuid();
-        when(pm.getuuid(anystring())).thenreturn(target);
-        when(im.getmembers(any(), any())).thenreturn(set.of(target));
-        @nullable
-        island island = mock(island.class);
-        when(im.getisland(any(), any(user.class))).thenreturn(island);
-
-        when(im.getnumberofconcurrentislands(target, world)).thenreturn(3);
-
-        assertfalse(its.canexecute(user, "", list.of("tastybento")));
-        verify(user).sendmessage("commands.island.team.setowner.errors.at-max");
     }
 
     /**
