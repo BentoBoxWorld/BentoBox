@@ -12,7 +12,7 @@ general:
   errors:
     command-cancelled: "&c Commande annulée."
     no-permission: "&c Vous n'êtes pas autorisé à exécuter cette commande (&7 [permission]&c)."
-    insufficient-rank: "&c Votre rang n'est pas assez élevé pour faire ça ! (&7 [rang]&c
+    insufficient-rank: "&c Votre rang n'est pas assez élevé pour faire ça ! (&7 [rank]&c
       )"
     use-in-game: "&c Cette commande est uniquement disponible dans le jeu."
     use-in-console: "&c Cette commande n'est disponible que dans la console."
@@ -101,7 +101,7 @@ commands:
         unowned-islands: "&a Trouvé &b [number] &a îles sans propriétaire."
       status:
         description: affiche l'état de la purge
-        status: "&b [purged] &a îles purgées sur &b [purgeable] &7 (&b [pourcentage]%
+        status: "&b [purged] &a îles purgées sur &b [purgeable] &7 (&b [percentage]%
           &7) &a."
     team:
       description: gérer des équipes
@@ -109,7 +109,7 @@ commands:
         parameters: "<propriétaire> <joueur>"
         description: ajouter un joueur à l'équipe du propriétaire
         name-not-owner: "&c [name] n'est pas le propriétaire."
-        name-has-island: "&c [nom] a une île. Désinscrivez-vous ou supprimez-les d'abord!"
+        name-has-island: "&c [name] a une île. Désinscrivez-vous ou supprimez-les d'abord!"
         success: "&b [name] &a a été ajouté à l'île de &b [owner] &a."
       disband:
         parameters: "<propriétaire>"
@@ -122,18 +122,17 @@ commands:
           de données
         scanning: Base de données d'analyse...
         duplicate-owner: "&c Player possède plus d'une île dans la base de données :
-          [nom]"
-        player-has: "&c Le joueur [nom] a [nombre] îles"
-        duplicate-member: "&c Le joueur [nom] est membre de plusieurs îles dans la
+          [name]"
+        player-has: "&c Le joueur [name] a [number] îles"
+        duplicate-member: "&c Le joueur [name] est membre de plusieurs îles dans la
           base de données"
-        rank-on-island: "&c [rang] sur l'île à [xyz]"
+        rank-on-island: "&c [rank] sur l'île à [xyz]"
         fixed: "&a Fixe"
         done: "&Un scanner"
       kick:
         parameters: "<joueur>"
         description: Kicker le joueur de son équipe
-        cannot-kick-owner: "&c Vous ne pouvez pas kicker le propriétaire. Kickez d'abord
-          les membres."
+        cannot-kick-owner: "&c Vous ne pouvez pas kicker le propriétaire. Kickez d'abord les membres."
         not-in-team: "&c Ce joueur ne fait pas partie d'une équipe."
         admin-kicked: "&c L'administrateur vous a kické de l'équipe."
         success: "&b [name] &a a été kické de l'île de &b [owner] &a."
@@ -146,10 +145,8 @@ commands:
       description: rayon de la zone de protection de l'île
       invalid-value:
         too-low: "&c La distance de protection doit être supérieure à &b 1&c !"
-        too-high: "&c La distance de protection doit être égale ou inférieure à &b
-          [number]&c !"
-        same-as-before: "&c La distance de protection est déjà réglée sur &b [number]&c
-          !"
+        too-high: "&c La distance de protection doit être égale ou inférieure à &b [number]&c !"
+        same-as-before: "&c La distance de protection est déjà réglée sur &b [number]&c!"
       display:
         already-off: "&c Les indicateurs sont déjà éteints"
         already-on: "&c Les indicateurs sont déjà allumés"
@@ -170,7 +167,7 @@ commands:
         description: réinitialise le rayon de la zone de protection de l'île à la
           valeur par défaut
         success: "&a Remise à zéro du rayon de la zone de protection de l'île à &b
-          [nombre] &a blocs."
+          [number] &a blocs."
       add:
         description: augmente l''aire de protection de l'île
         parameters: "<player> <range>"
@@ -220,7 +217,7 @@ commands:
       islands-in-trash: "&d Le joueur a des îles dans la Corbeille."
       protection-range: 'Rayon de protection : [range]'
       protection-range-bonus-title: "&b Comprend ces bonus :"
-      protection-range-bonus: Bonus : [nombre]
+      protection-range-bonus: Bonus : [number]
       purge-protected: L'île est protégée contre la purge
       max-protection-range: 'La plus grande gamme de protection historique: [range]'
       protection-coords: 'Coordonnées de protection: [xz1] to [xz2]'
@@ -237,7 +234,7 @@ commands:
     switchto:
       parameters: "<player> <number>"
       description: changer l'île du joueur pour la première île dans la Corbeille
-      out-of-range: "&c Le nombre doit être compris entre 1 et [nombre]. Utilisez
+      out-of-range: "&c Le nombre doit être compris entre 1 et [number]. Utilisez
         &l [label] trash [player] &r &c pour voir les numéros d'îles"
       cannot-switch: "&c L'opération a échoué. Voir le journal de la console pour
         l'erreur."
@@ -287,11 +284,11 @@ commands:
       parameters: "[coordonnées x y z]"
       description: définir l'emplacement actuel ou [x y z] comme centre de la zone
         de protection de l'île
-      island: "&c Cela affectera l'île de [xyz] appartenant à « [nom] »."
+      island: "&c Cela affectera l'île de [xyz] appartenant à « [name] »."
       confirmation: "&c Êtes-vous sûr de vouloir définir [xyz] comme centre de protection ?"
       success: "&a Définissez avec succès [xyz] comme centre de protection."
       fail: "&c Échec de la définition de [xyz] comme centre de protection."
-      island-location-changed: "&a [utilisateur] a changé le centre de protection
+      island-location-changed: "&a [user] a changé le centre de protection
         de l'île en [xyz]."
       xyz-error: "&c Spécifiez trois coordonnées entières : par exemple, 100 120 100"
     setspawn:
@@ -325,18 +322,16 @@ commands:
         de ce fichier: [message]"
       set-pos1: "&a Position 1 définie sur [vector]"
       set-pos2: "&a Position 2 définie sur [vector]"
-      set-different-pos: "&c Définissez un emplacement différent - cette position
-        est déjà définie!"
+      set-different-pos: "&c Définissez un emplacement différent - cette position est déjà définie!"
       need-pos1-pos2: "&c Réglez d'abord pos1 et pos2!"
       copying: "&b Copie en cours ..."
-      copied-blocks: "&b Copie de [nombre] blocs dans le presse-papiers"
+      copied-blocks: "&b Copie de [number] blocs dans le presse-papiers"
       look-at-a-block: "&c Regardez le bloc dans les 20 blocs à définir"
       mid-copy: "&c Vous êtes à mi-copie. Attendez que la copie soit terminée."
       copied-percent: "&6 Copié [number]%"
       copy:
         parameters: "[air]"
-        description: copier le presse-papiers réglé par pos1 et pos2 et éventuellement
-          les blocs d'air
+        description: copier le presse-papiers réglé par pos1 et pos2 et éventuellement les blocs d'air
       delete:
         parameters: "<nom>"
         description: supprimer le blueprint
@@ -368,8 +363,7 @@ commands:
         parameters: "<blueprint name> <new name>"
         description: renommer un plan
         success: "&a Blueprint &b [old] &a has been successfully renamed to &b [name]&a."
-        pick-different-name: "&c Veuillez préciser un nom différent que celui du Blueprint
-          actuel."
+        pick-different-name: "&c Veuillez préciser un nom différent que celui du Blueprint actuel."
       management:
         back: Retour
         instruction: Cliquez sur le plan puis cliquez ici
@@ -402,8 +396,8 @@ commands:
           too-long: "&c Le nom est trop long."
           pick-a-unique-name: Veuillez choisir un nom plus unique
           stripped-char-in-unique-name: "&c Certains caractères ont été supprimés
-            car ils ne sont pas autorisés. &a Le nouvel identifiant sera &b [nom]&a."
-          success: Succès !
+            car ils ne sont pas autorisés. &a Le nouvel identifiant sera &b [name]&a."
+          success: Succès!
           conversation-prefix: ">"
         description:
           quit: quitter
@@ -411,7 +405,7 @@ commands:
             et "quitter" sur une ligne pour finir.
           success: Succès
           cancelling: Annulation
-        slot: "&f Slot [nombre]"
+        slot: "&f Slot [number]"
         slot-instructions: |-
           &a Clic gauche pour incrémenter
           &a Clic droit pour décrémenter
@@ -461,7 +455,7 @@ commands:
           le total de morts à &b [total] &a."
     resetname:
       description: réinitialiser le nom de l'île du joueur
-      success: "&a Réinitialisation réussie du nom de l'île de [nom]."
+      success: "&a Réinitialisation réussie du nom de l'île de [name]."
   bentobox:
     description: commande d'administration de BentoBox
     perms:
@@ -475,7 +469,7 @@ commands:
       addons-reloaded: "[prefix_bentobox] &2 Addons rechargés."
       settings-reloaded: "[prefix_bentobox] &2 Paramètres rechargés."
       addon: "[prefix_bentobox] &2 Rechargement de &b [name]&2."
-      addon-reloaded: "[prefix_bentobox] &b [nom] &2 rechargé."
+      addon-reloaded: "[prefix_bentobox] &b [name] &2 rechargé."
       warning: "[prefix_bentobox] &c Attention : le rechargement peut provoquer une
         instabilité. Si vous rencontrez des erreurs par la suite, redémarrez le serveur."
       unknown-addon: "[prefix_bentobox] &c Addon inconnu !"
@@ -523,7 +517,7 @@ commands:
       description: vous téléporter sur votre île
       teleport: "&a Téléportation vers votre île."
       teleported: "&a Téléportation vers votre home &e#[number]&a."
-      unknown-home: "&c Nom de maison inconnu !"
+      unknown-home: "&c Nom de maison inconnu!"
     help:
       description: commande principale pour l'île
     spawn:
@@ -546,7 +540,7 @@ commands:
         blocks: "&a Construire bloc par bloc: &b [number] &a blocs en tout ..."
         entities: "&a Remplissage avec des entités : &b [number] &a entités en tout
           ..."
-        dimension-done: "&Une île dans [monde] est construite."
+        dimension-done: "&Une île dans [world] est construite."
         done: "&a C'est fait! Votre île est prête et vous attend!"
       pick: "&2 Choisissez une île"
       unknown-blueprint: "&c Ce blueprint n'existe pas."
@@ -585,11 +579,11 @@ commands:
     sethome:
       description: définir votre home
       must-be-on-your-island: "&c Vous devez être sur votre île pour placer un home."
-      too-many-homes: "&c Impossible de définir - votre île compte au maximum [nombre]
+      too-many-homes: "&c Impossible de définir - votre île compte au maximum [number]
         maisons."
       home-set: "&6 Votre home a été placé à votre position actuelle."
       homes-are: 'Les maisons &6 de l''île sont :'
-      home-list-syntax: "&6 [nom]"
+      home-list-syntax: "&6 [name]"
       nether:
         not-allowed: "&c Vous n'êtes pas autorisé sur placer votre home dans le Nether."
         confirmation: "&c Êtes-vous sûr de vouloir placer votre home dans le Nether
@@ -620,7 +614,7 @@ commands:
         member-layout:
           online: "&a &l o &r &f [name]"
           offline: "&a &l o &r &f [name] &7 ([last_seen])"
-          offline-not-last-seen: "&c &l o &r &f [nom]"
+          offline-not-last-seen: "&c &l o &r &f [name]"
         last-seen:
           layout: "&7 il y a &b [number] &7 [unit]"
           days: jours
@@ -705,23 +699,23 @@ commands:
         reject:
           description: refuser une invitation
           you-rejected-invite: "&a Vous avez rejeté l'invitation à rejoindre une île."
-          name-rejected-your-invite: "&c [nom] a rejeté votre invitation sur l'île!"
+          name-rejected-your-invite: "&c [name] a rejeté votre invitation sur l'île!"
         cancel:
           description: annuler l'invitation en attente
       leave:
         cannot-leave: "&c Les propriétaires ne peuvent pas partir! Devenez d'abord
           un membre ou limitez tous les membres."
         description: quitter votre île
-        left-your-island: "&c [nom] &c a quitté votre île"
+        left-your-island: "&c [name] &c a quitté votre île"
         success: "&a Vous avez quitté cette île."
       kick:
         description: supprimer un membre de votre île
         parameters: "<joueur>"
-        player-kicked: "&c Le [nom] vous a expulsé de l'île en [mode de jeu] !"
+        player-kicked: "&c Le [name] vous a expulsé de l'île en [mode de jeu] !"
         cannot-kick: "&c Vous ne pouvez pas vous botter!"
         cannot-kick-rank: "&c Votre rang ne vous permet pas de donner un coup de pied
-          à [nom] !"
-        success: "&b [nom] &a a été exclu de votre île."
+          à [name] !"
+        success: "&b [name] &a a été exclu de votre île."
       demote:
         description: rétrograder un joueur de votre île à un rang inférieur
         parameters: "<joueur>"
@@ -729,7 +723,7 @@ commands:
           cant-demote-yourself: "&c Vous ne pouvez pas vous rétrograder!"
           cant-demote: "&c Vous ne pouvez pas rétrograder des rangs supérieurs !"
         failure: "&c Le joueur ne peut plus être rétrogradé!"
-        success: "&un [nom] rétrogradé à [rang]"
+        success: "&un [name] rétrogradé à [rank]"
       promote:
         description: promouvoir un joueur de votre île à un rang supérieur
         parameters: "<joueur>"
@@ -737,7 +731,7 @@ commands:
           cant-promote-yourself: "&c Vous ne pouvez pas vous promouvoir !"
           cant-promote: "&c Vous ne pouvez pas promouvoir au-dessus de votre rang !"
         failure: "&c Le joueur ne peut plus être promu!"
-        success: "&un [nom] promu au [rang]"
+        success: "&un [name] promu au [rank]"
       setowner:
         description: transférer la propriété de votre île à un membre
         errors:
@@ -746,7 +740,7 @@ commands:
             vous. Parce que c'est inutile. &R &7)"
           target-is-not-member: "&c Ce joueur ne fait pas partie de votre équipe insulaire!"
           at-max: "&c Ce joueur a déjà le nombre maximum d'îles qui lui est autorisé !"
-        name-is-the-owner: "&a [nom] est maintenant le propriétaire de l'île!"
+        name-is-the-owner: "&a [name] est maintenant le propriétaire de l'île!"
         parameters: "<joueur>"
         you-are-the-owner: "&a Vous êtes maintenant le propriétaire de l'île!"
     ban:
@@ -766,8 +760,8 @@ commands:
       parameters: "<joueur>"
       cannot-unban-yourself: "&c Vous ne pouvez pas vous défaire!"
       player-not-banned: "&c Le lecteur n'est pas interdit."
-      player-unbanned: "&b [nom] &a est désormais interdit sur votre île."
-      you-are-unbanned: "&b [nom] &a vous a banni de leur île!"
+      player-unbanned: "&b [name] &a est désormais interdit sur votre île."
+      you-are-unbanned: "&b [name] &a vous a banni de leur île!"
     banlist:
       description: lister les joueurs bannis
       noone: "&a Personne n'est interdit sur cette île."
@@ -788,8 +782,8 @@ commands:
       cannot-expel: "&c Ce joueur ne peut pas être expulsé."
       cannot-expel-member: "&c Vous ne pouvez pas expulser un membre de l'équipe!"
       not-on-island: "&c Ce joueur n'est pas sur votre île!"
-      player-expelled-you: "&b [nom] &c vous a expulsé de l'île!"
-      success: "&a Vous avez expulsé &b [nom] &a de l'île."
+      player-expelled-you: "&b [name] &c vous a expulsé de l'île!"
+      success: "&a Vous avez expulsé &b [name] &a de l'île."
 ranks:
   owner: Propriétaire
   sub-owner: Sous-propriétaire
@@ -1074,9 +1068,9 @@ protection:
       description: Display entry and exit messages
       island: "[name]"
       name: Enter/Exit messages
-      now-entering: "&a Entrer maintenant &b [nom] &a."
+      now-entering: "&a Entrer maintenant &b [name] &a."
       now-entering-your-island: "&a Vous venez d'entrer sur votre île: &b [name]"
-      now-leaving: "&a Quittant maintenant &b [nom] &a."
+      now-leaving: "&a Quittant maintenant &b [name] &a."
       now-leaving-your-island: "&a Vous venez de quitter votre île: &b [name]"
     EXPERIENCE_BOTTLE_THROWING:
       name: Experience bottle throwing
@@ -1699,7 +1693,7 @@ panel:
 successfully-loaded: |-
   &6   ____             _        ____
   &6  |  _ \           | |      |  _ \             &7 par &a tastybento &7 et &a Poslovitch
-  &6  | |_) | ___ _ __ | |_ ___ | |_) | _____  __  &7 2017 - 2022
+  &6  | |_) | ___ _ __ | |_ ___ | |_) | _____  __  &7 2017 - 2023
   &6  |  _ < / _ \ '_ \| __/ _ \|  _ < / _ \ \/ /
   &6  | |_) |  __/ | | | || (_) | |_) | (_) >  <   &b v&e [version]
   &6  |____/ \___|_| |_|\__\___/|____/ \___/_/\_\  &8 Chargé en &e [time]&8 ms.
