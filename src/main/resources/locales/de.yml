@@ -164,7 +164,7 @@ commands:
       reset:
         parameters: "<player>"
         description: Setzt den inselgeschützten Bereich auf den Weltstandard zurück
-        success: "& a Setzen Sie den Inselschutzbereich auf & b [Nummer] & a zurück."
+        success: "& a Setzen Sie den Inselschutzbereich auf & b [number] & a zurück."
       add:
         description: Erhöht den Schutzbereich der Insel
         parameters: "<player> <range>"
@@ -439,8 +439,7 @@ commands:
       set:
         description: Legt die Tode des Spielers fest
         parameters: "<player> <deaths>"
-        success: "&a Erfolgreiche Einstellung von &b [ame]&a ' s Toden auf &b [number]&a
-          ."
+        success: "&a Erfolgreiche Einstellung von &b [ame]&a's Toden auf &b [number]&a."
       add:
         description: fügt dem Spieler Tode hinzu
         parameters: "<player> <deaths>"
@@ -453,7 +452,7 @@ commands:
           wodurch sich die Gesamtzahl auf &b [total]&a Tode verringert hat."
     resetname:
       description: Spielerinselnamen zurücksetzen
-      success: "&a Der Inselname von [Name] wurde erfolgreich zurückgesetzt."
+      success: "&a Der Inselname von [name] wurde erfolgreich zurückgesetzt."
   bentobox:
     description: BentoBox Admin-Befehl
     perms:
@@ -538,7 +537,7 @@ commands:
         estimated-time: "&a Geschätzte Zeit: &b [number] &a Sekunden."
         blocks: "&a Block für Block aufbauen: &b [number] &a Blöcke insgesamt..."
         entities: "&a Füllen mit Entitäten: &b [number] &a Entitäten in insgesamt..."
-        dimension-done: "&eine Insel in [Welt] wird gebaut."
+        dimension-done: "&eine Insel in [world] wird gebaut."
         done: "&a Erledigt! Deine Insel ist bereit und wartet auf dich!"
       pick: "&2 Eine Insel auswählen"
       unknown-blueprint: "&c Diese Blaupause wurde noch nicht geladen."
@@ -601,8 +600,7 @@ commands:
       description: einen Heimatort umbenennen
       parameters: "[Heimatname]"
       enter-new-name: "&6 Geben Sie den neuen Namen ein"
-      already-exists: "&c Dieser Name existiert bereits, versuchen Sie es mit einem
-        anderen Namen."
+      already-exists: "&c Dieser Name existiert bereits, versuchen Sie es mit einem anderen Namen."
     resetname:
       description: setze deinen Inselnamen zurück
       success: "&a Setzen Sie Ihren Inselnamen erfolgreich zurück."
@@ -611,9 +609,9 @@ commands:
       info:
         description: zeigt detaillierte Informationen über dein Team an
         member-layout:
-          online: "&a &l  o &r &f [name]"
-          offline: "&c &l  o &r &f [name] &7 ([last_seen])"
-          offline-not-last-seen: "&c &l  o &r &f [name]"
+          online: '&a &l  o &r &f [name]'
+          offline: '&c &l  o &r &f [name] &7 ([last_seen])'
+          offline-not-last-seen: '&c &l  o &r &f [name]'
         last-seen:
           layout: "&b [number] &7 [unit] vorher"
           days: Tage
@@ -697,8 +695,7 @@ commands:
             &c&l Du &n VERLIERST&r&c&l deine jetzige Insel!
         reject:
           description: eine Einladung ablehnen
-          you-rejected-invite: "&a Du hast die Einladung, einer Insel beizutreten,
-            abgelehnt."
+          you-rejected-invite: "&a Du hast die Einladung, einer Insel beizutreten, abgelehnt."
           name-rejected-your-invite: "&c [name] hat deine Insel-Einladung abgelehnt!"
         cancel:
           description: die ausstehende Einladung zu deiner Insel zurücknehmen
@@ -711,9 +708,9 @@ commands:
       kick:
         description: entferne ein Mitglied von deiner Insel
         parameters: "<player>"
-        player-kicked: "&c Der [Name] hat dich im [Spielmodus] von der Insel geworfen!"
+        player-kicked: "&c Der [name] hat dich im [Spielmodus] von der Insel geworfen!"
         cannot-kick: "&c Du kannst dich nicht selbst kicken!"
-        cannot-kick-rank: "&c Dein Rang erlaubt es nicht, [Name] zu treten!"
+        cannot-kick-rank: "&c Dein Rang erlaubt es nicht, [name] zu treten!"
         success: "&b [name] &a wurde von deiner Insel gekickt."
       demote:
         description: einen Spieler auf deiner Insel um einen Rang zurückstufen
@@ -1517,20 +1514,20 @@ management:
       state:
         name: "&6 Kompatibilität"
         description:
-          COMPATIBLE: "&a Ausführung &e [Name] [Version]&a .\n\n&a BentoBox läuft
+          COMPATIBLE: "&a Ausführung &e [name] [Version]&a .\n\n&a BentoBox läuft
             derzeit auf einer \n&a &l KOMPATIBELEN &r &a Server Software und \n&a
             Version.\n\n&a Seine Funktionen sind vollständig darauf ausgelegt, \n&a
             in dieser Umgebung zu laufen."
-          SUPPORTED: "&a Ausführung &e [Name] [Version]&a .\n\n&a BentoBox läuft derzeit
+          SUPPORTED: "&a Ausführung &e [name] [Version]&a .\n\n&a BentoBox läuft derzeit
             auf einer \n&a &l UNTERSTÜTZTEN &r &a Server-Software und einer \n&a Version.\n\n&a
             Die meisten seiner Funktionen werden \n&a in dieser Umgebung problemlos
             laufen."
-          NOT_SUPPORTED: "&a Ausführung &e [Name] [Version]&a .\n\n&a BentoBox läuft
+          NOT_SUPPORTED: "&a Ausführung &e [name] [Version]&a .\n\n&a BentoBox läuft
             derzeit auf einer \n&6 &l NICHT UNTERSTÜTZTEN &r &a Server-Software oder
             \n&a Version.\n\n&a Während die meisten seiner Funktionen \n&a korrekt
             ausgeführt werden, ist mit &6 plattformspezifischen Fehlern oder \n&6
             Problemen zu rechnen&a ."
-          INCOMPATIBLE: "&a Ausführung &e [Name] [Version]&a .\n\n&a BentoBox läuft
+          INCOMPATIBLE: "&a Ausführung &e [name] [Version]&a .\n\n&a BentoBox läuft
             derzeit auf einer \n&c &l INKOMPATIBELEN &r &a Server-Software oder \n&a
             Version.\n\n&c Seltsames Verhalten und Fehler können auftreten \n&c und
             die meisten Funktionen können instabil sein."
