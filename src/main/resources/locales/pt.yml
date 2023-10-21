@@ -43,6 +43,8 @@ general:
 commands:
   help:
     header: "&7 =========== &c [label] ajuda &7 ==========="
+    syntax: "&b [usage] &a [parameters]&7 : &e [description]"
+    syntax-no-parameters: "&b [usage]&7: &e [description]"
     end: "&7 ================================="
     parameters: "[comando]"
     description: comando de ajuda
@@ -73,6 +75,8 @@ commands:
       remove:
         description: reduz a contagem de reinicialização da ilha do jogador
         parameters: "<jogador> <reset>"
+        success: "&a Redefinições de &b [number] &a removidas da ilha&a de &b [name],
+          diminuindo o total para redefinições de &b[total]&a."
     purge:
       parameters: "[dias]"
       description: apagar ilhas abandonadas por mais de [dias]
@@ -119,6 +123,12 @@ commands:
       fix:
         description: verifica e corrige membros entre ilhas no banco de dados
         scanning: Verificando banco de dados...
+        duplicate-owner: "&c O jogador possui mais de uma ilha no banco de dados:
+          [name]"
+        player-has: "&c O jogador [name] tem [number] ilhas"
+        duplicate-member: "&c O jogador [name] é membro de mais de uma ilha no banco
+          de dados"
+        rank-on-island: "&c [rank] na ilha em [xyz]"
         fixed: "&uma fixa"
         done: "&uma digitalização"
       kick:
@@ -195,18 +205,23 @@ commands:
       last-login: 'Ultimo login: [date]'
       last-login-date-time-format: EEE MMM dd HH:mm:ss zzz aaaa
       deaths: 'Mortes: [number]'
+      resets-left: 'Reinicializações: [number] (Máx.: [total])'
       team-members-title: 'Membros do Time:'
+      team-owner-format: "&a [name] [rank]"
+      team-member-format: "&b [name] [rank]"
       island-protection-center: 'Centro da área de proteção: [xyz]'
       island-center: 'Centro da ilha: [xyz]'
       island-coords: 'Coordenadas da Ilha: [xz1] até [xz2]'
       islands-in-trash: "&d O jogador tem ilhas na lixeira."
       protection-range: 'Alcance de Proteção: [range]'
       protection-range-bonus-title: "&b Inclui estes bônus:"
+      protection-range-bonus: 'Bônus: [number]'
       purge-protected: Ilha é protegida de exclusão
       max-protection-range: 'Maior histórico de alcance de proteção: [range]'
       protection-coords: 'Coordenadas de Proteção: [xz1] até [xz2]'
       is-spawn: Ilha é uma ilha de spawn
       banned-players: 'Jogadores banidos:'
+      banned-format: "& c [name]"
       unowned: "&c Sem dono"
     switch:
       description: ligar/desligar proteção de bypass
@@ -263,6 +278,7 @@ commands:
       parameters: "[coordenadas x y z]"
       description: definir a localização atual ou [x y z] como centro da área de proteção
         da ilha
+      island: "&c Isso afetará a ilha em [xyz] de propriedade de '[name]'."
       confirmation: "&c Tem certeza de que deseja definir [xyz] como centro de proteção?"
       success: "&a Definido com sucesso [xyz] como centro de proteção."
       fail: "&c Falha ao definir [xyz] como centro de proteção."
@@ -289,16 +305,20 @@ commands:
       description: Abre configurações de sistema ou configurações da ilha para o jogador
       unknown-setting: "&c Configuração desconhecida"
     blueprint:
+      parameters: "<load/copy/paste/pos1/pos2/save>"
       description: manipular blueprints
       bedrock-required: "&c Pelo menos um bloco de bedrock deve existir em uma blueprint!"
       copy-first: "&c Copie primeiro!"
       file-exists: "&c O arquivo já existe, sobrescrever?"
       no-such-file: "&c Esse arquivo não existe!"
       could-not-load: "&c Não foi possível carregar esse arquivo!"
+      could-not-save: "&c Hmm, algo deu errado ao salvar esse arquivo: [message]"
       set-pos1: "&a Posição 1 definida em [vetor]"
+      set-pos2: "&a Posição 2 definida em [vector]"
       set-different-pos: "&c Defina um local diferente - esta posição já está definida!"
       need-pos1-pos2: "&c Defina pos1 e pos2 primeiro!"
       copying: "&b Copiando blocos..."
+      copied-blocks: "&b Copiou [number] blocos para a área de transferência"
       look-at-a-block: "&c Observe o bloco dentro de 20 blocos para definir"
       mid-copy: "&c Você está no meio da cópia. Espere até que a cópia seja concluída."
       copied-percent: "&6 Copiado [número]%"
