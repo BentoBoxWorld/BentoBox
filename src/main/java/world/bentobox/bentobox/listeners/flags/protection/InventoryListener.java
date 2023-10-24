@@ -189,7 +189,7 @@ public class InventoryListener extends FlagListener
             this.checkIsland(e, player, e.getInventory().getLocation(), Flags.CRAFTING);
             return true;
         } else if (e.getInventory() instanceof DoubleChestInventory) {
-            this.checkIsland(e, player, e.getInventory().getLocation(), Flags.CHEST);
+            checkInvHolder(e.getInventory().getLocation(), e, player);
             return true;
         } else if (e.getInventory() instanceof EnchantingInventory) {
             this.checkIsland(e, player, e.getInventory().getLocation(), Flags.ENCHANTING);
