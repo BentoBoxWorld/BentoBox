@@ -36,8 +36,6 @@ general:
     overworld: オーバーワールド
     nether: ネザー
     the-end: 終わり
-  tips:
-    changing-obsidian-to-lava: 黒曜石を溶岩に戻します。注意してください！
 commands:
   help:
     header: "&7=========== &c[label]の ヘルプ &7==========="
@@ -88,7 +86,6 @@ commands:
       stop:
         description: 進行中のパージを停止する
         stopping: パージの停止
-        no-purge-in-progress: "&cパージは進行中です！"
       unowned:
         description: 未所有の島を削除-確認が必要
         unowned-islands: "&d[number]島を見つけました。"
@@ -150,11 +147,6 @@ commands:
         parameters: "<プレーヤー><範囲>"
         description: 島の保護範囲を設定します
         success: "&2島の保護範囲を [number]に設定します。"
-        invalid-value:
-          too-low: "&c保護範囲は1より大きくなければなりません"
-          same-as-before: "&c保護範囲はすでに [number]に設定されています!"
-          not-numeric: "&c[number]は整数ではありません!"
-          too-high: "&c保護範囲は [number]と同じかそれ以下である必要があります。"
       reset:
         parameters: "<プレーヤー>"
         description: 世界のデフォルトに島の保護された範囲をリセットします
@@ -209,7 +201,6 @@ commands:
       banned-players: 禁止選手
       banned-format: "&c[name]"
       unowned: 所有
-      island-location: '島の位置: [xyz]'
     switch:
       description: 保護バイパスのオン/オフを切り替えます
       op: "&cオップは常に保護をバイパスできます。コマンドを使用しないようにします。"
@@ -383,9 +374,6 @@ commands:
         slot-instructions: |
           &a左クリックして増加
           &a右クリックして減少
-        normal: 普通
-        nether: ネザー
-        end: The End
     resetflags:
       parameters: "[flag]"
       description: すべての島をconfig.ymlのデフォルトのフラグ設定にリセットします
@@ -431,12 +419,6 @@ commands:
     resetname:
       description: プレイヤーの島名をリセットする
       success: "&a [name] の島名が正常にリセットされました。"
-    clearresets:
-      parameters: "<プレーヤー>"
-      cleared: "&2リセット解除"
-      description: この世界のプレーヤーリセットカウントをクリアします。
-    clearresetsall:
-      description: この世界のプレーヤーリセットカウントをすべてクリアします。
   bentobox:
     description: BentoBox管理コマンド
     perms:
@@ -496,10 +478,8 @@ commands:
       teleport: "&a島にテレポート"
       teleported: "&aテレポート #[number]をホームにします。"
       unknown-home: "&c不明な家の名前！"
-      tip: "&bヘルプの種類/[label]ヘルプを表示します。"
     help:
       description: 本島のコマンド
-      pick-world: "&c[worlds]からワールドを指定する"
     spawn:
       description: スポーンにテレポート
       teleporting: "&aスポーンに移動します。"
@@ -511,6 +491,7 @@ commands:
       cannot-create-island: "&c時間内にスポットが見つかりませんでした。もう一度お試しください..."
       unable-create-island: 島を生成することができませんでした, 管理者に連絡してください.
       creating-island: "&aあなたの島の場所を見つけました。あなたのために準備しましょう。"
+      you-cannot-make: "&c これ以上島を作ることはできません。"
       pasting:
         estimated-time: "&a推定時間：&b [number]s。"
         blocks: "&a ブロックごとに構築します。 合計&b[numbber]&aブロック。"
@@ -521,7 +502,6 @@ commands:
       unknown-blueprint: "&cそのブループリントはまだロードされていません。"
       on-first-login: "&aWelcome！数秒で島の準備を開始します。"
       you-can-teleport-to-your-island: "&a必要なときに島にテレポートできます。"
-      pick-world: 世界から選ぶ [worlds]
     deletehome:
       description: 自宅の場所を削除する
       parameters: "[家名]"
@@ -553,7 +533,6 @@ commands:
         &c現在の島が削除されると、
         &c後でそれを取得する方法はありません。
       kicked-from-island: "&c所有者がリセットしているため、[gamemode]で島から追い出されます。"
-      must-remove-members: あなたはそれを (/island team kick <player>) を再起動する前に、あなたの島からすべてのメンバーを削除する必要があります。
     sethome:
       description: ホームテレポートポイントを設定する
       must-be-on-your-island: あなたの島に家を設定する必要があります!
@@ -611,7 +590,6 @@ commands:
         you-are-a-coop-member: あなたは [name]に閉じこもっれた
         success: "&b[name]&aを協力メンバーにしました"
         name-has-invited-you: "&a [name] はあなたを彼らの島の協力メンバーとして招待しています。"
-        paramters: "<プレーヤー>"
       uncoop:
         description: プレイヤーから生協のランクを削除する
         parameters: "<プレイヤー>"
@@ -622,7 +600,6 @@ commands:
         all-members-logged-off: "&cすべての島のメンバーがログオフしたため、あなたはもはや[name]の島の協同組合員ではありません"
         success: "&b [name]&aisはもはやあなたの島の協同組合員ではありません。"
         is-full: "&cこれ以上生協メンバーを追加することはできません"
-        paramters: "<プレーヤー>"
       trust:
         description: 島でプレイヤーに信頼できるランクを与える
         parameters: "<プレイヤー>"
@@ -632,8 +609,6 @@ commands:
         you-are-trusted: "[name]はあなたを信頼!"
         success: "&a信頼済み&b [name]&a。"
         is-full: "&c 他人を信頼することはできません。背後に注意！"
-        members-trusted: メンバは既に信頼されています
-        paramters: "<プレーヤー>"
       untrust:
         description: プレイヤーから信頼できるプレイヤーランクを削除する
         parameters: "<プレイヤー>"
@@ -642,7 +617,6 @@ commands:
         player-not-trusted: プレイヤーは信頼されていません!
         you-are-no-longer-trusted: "[name]はもはやあなたを信頼していない!"
         success: "&b [name]&aはあなたの島ではもはや信頼されていません。"
-        paramters: "<プレーヤー>"
       invite:
         description: 島に参加するプレーヤーを招待
         invitation-sent: 招待状を [name] に送信
@@ -705,6 +679,7 @@ commands:
         errors:
           cant-transfer-to-yourself: あなた自身に所有権を移すことができない!
           target-is-not-member: そのプレイヤーはあなたの島のチームの一部ではありません!
+          at-max: "&c そのプレイヤーはすでに許可されている最大数の島を持っています。"
         name-is-the-owner: "[name]は、島の所有者になりました!"
         parameters: "<プレーヤー>"
         you-are-the-owner: あなたは今、島の所有者です!
@@ -837,6 +812,10 @@ protection:
       description: ケーキの相互作用の切り替え
       name: ケーキ
       hint: ケーキを食べることができない
+    CARTOGRAPHY:
+      name: 地図作成テーブル
+      description: 使用を切り替えます
+      hint: 地図作成テーブルへのアクセスが無効になっています
     CONTAINER:
       name: コンテナ
       description: |-
@@ -867,10 +846,18 @@ protection:
       name: コンポスター
       description: コンポスターのインタラクションを切り替えます
       hint: コンポスターインタラクションが無効になっています
+    LOOM:
+      name: 織機
+      description: 使用を切り替えます
+      hint: 織機へのアクセスが無効になっています
     FLOWER_POT:
       name: 植木鉢
       description: 植木鉢のインタラクションを切り替えます
       hint: 植木鉢のインタラクションが無効になっています
+    GRINDSTONE:
+      name: 砥石
+      description: 使用を切り替えます
+      hint: 砥石へのアクセスが無効になっています
     SHULKER_BOX:
       name: シュルカーボックス
       description: シュルカーボックスのインタラクションを切り替えます
@@ -880,6 +867,14 @@ protection:
         &a シュルカーはテレポートできる
         &a アクティブな場合。
       name: シュルカーのテレポート
+    SMITHING:
+      name: 鍛冶
+      description: 使用を切り替えます
+      hint: 鍛冶アクセスが無効になっています
+    STONECUTTING:
+      name: 石切り
+      description: 使用を切り替えます
+      hint: 石材切断アクセスが無効になっています
     TRAPPED_CHEST:
       name: トラップチェスト
       description: トラップされたチェストのインタラクションを切り替えます
@@ -1008,8 +1003,8 @@ protection:
       island: "[name]の島"
       name: 入り口/終了メッセージ
       now-entering: 今[name]を入力する
-      now-leaving: 今[name]を残し
       now-entering-your-island: "&a今あなたの島に入っています。 &b [name]"
+      now-leaving: 今[name]を残し
       now-leaving-your-island: "&a今あなたの島を去ります。 &b [name]"
     EXPERIENCE_BOTTLE_THROWING:
       name: ボトル投げ体験
@@ -1033,7 +1028,6 @@ protection:
     FIRE_SPREAD:
       name: 延焼
       description: 火の広がりをトグル
-      hint: 延焼禁止
     FISH_SCOOPING:
       name: 魚すくい
       description: バケツを使用して魚をすくい取る
@@ -1276,7 +1270,6 @@ protection:
       hint: "&cPVPはオーバーワールドで無効になっています"
       enabled: "&cオーバーワールドのPVPが有効になりました。"
       disabled: "&aオーバーワールドのPVPが無効になりました。"
-      active: PVP はここでアクティブです!
     REDSTONE:
       description: トグル使用
       name: レッドストーンアイテム
@@ -1414,23 +1407,6 @@ protection:
         &aブロックを壊してダメージを与える
         &a島の制限外のエンティティ。
       name: 世界のTNTダメージ
-    PORTAL:
-      description: トグル使用
-      hint: ポータルの使用は許可されない
-      name: ポータル
-    FIRE:
-      name: 火
-      description: 火災が存在するかどうかを許可する
-      hint: 火は許されない
-    ANIMAL_SPAWN:
-      description: 産卵の切り替え
-      name: 動物の産卵
-    MONSTER_SPAWN:
-      description: 産卵の切り替え
-      name: モンスターの産卵
-    TNT:
-      description: TNT のダメージを切り替える
-      name: TNT の損傷
   locked: 島はロックされている!
   protected: '島保護: [description]'
   world-protected: "&c世界保護: [description]"
@@ -1493,7 +1469,6 @@ language:
     authors: "&a著者:"
     author: "&3- &b[name]"
   edited: 言語を[lang]に変更しました。
-  selected: 選ばれた
 management:
   panel:
     title: BentoBoxの管理
