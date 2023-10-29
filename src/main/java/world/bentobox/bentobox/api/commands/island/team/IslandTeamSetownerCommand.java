@@ -95,7 +95,7 @@ public class IslandTeamSetownerCommand extends CompositeCommand {
         .involvedPlayer(user.getUniqueId())
         .admin(false)
         .reason(IslandEvent.Reason.RANK_CHANGE)
-        .rankChange(RanksManager.OWNER_RANK, RanksManager.VISITOR_RANK)
+        .rankChange(RanksManager.OWNER_RANK, RanksManager.SUB_OWNER_RANK)
         .build();
         getIslands().save(island);
         return true;
