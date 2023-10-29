@@ -169,14 +169,14 @@ public class BentoBox extends JavaPlugin implements Listener {
 
         final long loadTime = System.currentTimeMillis() - loadStart;
 
-        Bukkit.getScheduler().runTask(instance, () -> {
-            try {
-                completeSetup(loadTime);
-            } catch (Exception e) {
-                fireCriticalError(e.getMessage(), "");
-                e.printStackTrace();
-            }
-        });
+        //Bukkit.getScheduler().runTask(instance, () -> {
+        try {
+            completeSetup(loadTime);
+        } catch (Exception e) {
+            fireCriticalError(e.getMessage(), "");
+            e.printStackTrace();
+        }
+        //});
     }
 
     private void completeSetup(long loadTime) {
