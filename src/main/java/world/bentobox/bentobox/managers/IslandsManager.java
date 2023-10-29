@@ -1520,8 +1520,10 @@ public class IslandsManager {
      */
     public void setOwner(User user, UUID targetUUID, Island island) {
         islandCache.setOwner(island, targetUUID);
-        // Remove the old owner from the island
+        // Remove the old owner from the island to clear cache
         plugin.getIslands().removePlayer(island, user.getUniqueId());
+        // Set old owner as sub-owner on island.
+        island.setRank(user, RanksManager.SUB_OWNER_RANK);
 
         user.sendMessage("commands.island.team.setowner.name-is-the-owner", "[name]", plugin.getPlayers().getName(targetUUID));
         plugin.getIWM().getAddon(island.getWorld()).ifPresent(addon -> {
