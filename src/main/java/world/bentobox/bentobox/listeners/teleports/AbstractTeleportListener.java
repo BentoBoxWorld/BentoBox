@@ -311,7 +311,7 @@ public abstract class AbstractTeleportListener
 
 
     /**
-     * This method returns if missing islands should be generated uppon teleportation.
+     * This method returns if missing islands should be generated upon teleportation.
      * Can happen only in non-custom generators.
      * @param overWorld OverWorld
      * @return {@code true} if missing islands must be pasted, {@code false} otherwise.
