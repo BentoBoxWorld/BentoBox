@@ -6,6 +6,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
@@ -21,6 +24,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
+import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
 import org.junit.After;
 import org.junit.Before;
@@ -85,6 +89,7 @@ public class IslandTest {
 
         // Location
         when(location.clone()).thenReturn(location);
+        when(location.toVector()).thenReturn(new Vector(0,0,0));
         when(world.getName()).thenReturn("bskyblock_world");
         when(location.getWorld()).thenReturn(world);
         when(world.getEnvironment()).thenReturn(Environment.NORMAL);
@@ -1171,6 +1176,18 @@ public class IslandTest {
     @Test
     public void testAddHome() {
         i.addHome("backyard", location);
+        assertEquals(location, i.getHome("backyard"));
+    }
+    
+    /**
+     * Test method for {@link world.bentobox.bentobox.database.objects.Island#addHome(java.lang.String, org.bukkit.Location)}.
+     */
+    @Test
+    public void testAddHomeOutsideIsland() {
+    	when(location.toVector()).thenReturn(new Vector(1000000, 0, 10000000));
+        i.addHome("backyard", location);
+        // Check there is a warning about this home being outside of the island
+        verify(plugin, times(3)).logWarning(anyString());
         assertEquals(location, i.getHome("backyard"));
     }
 

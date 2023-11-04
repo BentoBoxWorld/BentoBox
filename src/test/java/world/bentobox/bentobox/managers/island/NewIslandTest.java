@@ -198,7 +198,7 @@ public class NewIslandTest {
         verify(bpb).getUniqueId();
         verify(ice).getBlueprintBundle();
         verify(pm).setDeaths(eq(world), eq(uuid), eq(0));
-        verify(im).setHomeLocation(eq(user), any());
+        verify(im, never()).setHomeLocation(eq(user), any());
         verify(island).setProtectionRange(eq(20));
     }
 
@@ -218,7 +218,7 @@ public class NewIslandTest {
         verify(ice, never()).getBlueprintBundle();
         verify(ire).getBlueprintBundle();
         verify(pm).setDeaths(eq(world), eq(uuid), eq(0));
-        verify(im).setHomeLocation(eq(user), any());
+        verify(im, never()).setHomeLocation(eq(user), any());
     }
 
     /**
@@ -235,7 +235,7 @@ public class NewIslandTest {
         verify(bpb).getUniqueId();
         verify(ice).getBlueprintBundle();
         verify(pm).setDeaths(eq(world), eq(uuid), eq(0));
-        verify(im).setHomeLocation(eq(user), any());
+        verify(im, never()).setHomeLocation(eq(user), any());
     }
 
     /**
@@ -252,7 +252,7 @@ public class NewIslandTest {
         verify(bpb).getUniqueId();
         verify(ice).getBlueprintBundle();
         verify(pm).setDeaths(eq(world), eq(uuid), eq(0));
-        verify(im).setHomeLocation(eq(user), any());
+        verify(im, never()).setHomeLocation(eq(user), any());
     }
 
     /**
@@ -270,7 +270,7 @@ public class NewIslandTest {
         verify(bpb).getUniqueId();
         verify(ice).getBlueprintBundle();
         verify(pm).setDeaths(eq(world), eq(uuid), eq(0));
-        verify(im).setHomeLocation(eq(user), any());
+        verify(im, never()).setHomeLocation(eq(user), any());
         verify(island).setProtectionRange(eq(20));
         verify(island).setReserved(eq(false));
     }
@@ -291,7 +291,7 @@ public class NewIslandTest {
         verify(bpb).getUniqueId();
         verify(ice).getBlueprintBundle();
         verify(pm).setDeaths(eq(world), eq(uuid), eq(0));
-        verify(im).setHomeLocation(eq(user), any());
+        verify(im, never()).setHomeLocation(eq(user), any());
         verify(island).setProtectionRange(eq(20));
         verify(plugin).logError("New island for user tastybento was not reserved!");
     }
@@ -312,7 +312,7 @@ public class NewIslandTest {
         verify(bpb).getUniqueId();
         verify(ice).getBlueprintBundle();
         verify(pm).setDeaths(eq(world), eq(uuid), eq(0));
-        verify(im).setHomeLocation(eq(user), any());
+        verify(im, never()).setHomeLocation(eq(user), any());
         verify(island).setProtectionRange(eq(20));
         verify(plugin).logError("New island for user tastybento was not reserved!");
     }

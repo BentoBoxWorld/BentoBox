@@ -50,7 +50,7 @@ public class PrimaryIslandListener implements Listener {
 
     private void setIsland(Player player, Location location) {
         im.getIslandAt(location)
-        .filter(i -> i.getOwner() != null && i.getOwner().equals(player.getUniqueId()))
+        .filter(i -> player.getUniqueId().equals(i.getOwner()))
         .ifPresent(i -> im.setPrimaryIsland(player.getUniqueId(), i));
     }
 

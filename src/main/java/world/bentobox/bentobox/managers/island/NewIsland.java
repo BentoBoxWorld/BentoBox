@@ -198,7 +198,8 @@ public class NewIsland {
             // Do nothing of other cases
         }
         }
-
+        // Set the player's primary island
+        plugin.getIslands().setPrimaryIsland(user.getUniqueId(), island);
         // Run task to run after creating the island in one tick if island is not being pasted
         if (noPaste) {
             Bukkit.getScheduler().runTask(plugin, () -> postCreationTask(oldIsland));
@@ -244,13 +245,11 @@ public class NewIsland {
 
     /**
      * Cleans up a user before moving them to a new island.
-     * Removes any old home locations. Sets the next home location. Resets deaths.
+     * Resets deaths.
      * Checks range permissions and saves the player to the database.
      * @param loc - the new island location
      */
     private void cleanUpUser(Location loc) {
-        // Set home location
-        plugin.getIslands().setHomeLocation(user, new Location(loc.getWorld(), loc.getX() + 0.5D, loc.getY(), loc.getZ() + 0.5D));
         // Reset deaths
         if (plugin.getIWM().isDeathsResetOnNewIsland(world)) {
             plugin.getPlayers().setDeaths(world, user.getUniqueId(), 0);
