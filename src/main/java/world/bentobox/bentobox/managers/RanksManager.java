@@ -66,6 +66,15 @@ public class RanksManager {
 	}
 
 	/**
+	 * Check if a rank exists
+	 * @param reference YAML reference to rank, e.g., ranks.trusted
+	 * @return true if the rank exists
+	 */
+	public boolean rankExists(String reference) {
+		return ranks.containsKey(reference);
+	}
+	
+	/**
 	 * Try to add a new rank. Owner, member, visitor and banned ranks cannot be changed.
 	 * @param reference - a reference that can be found in a locale file
 	 * @param value - the rank value
