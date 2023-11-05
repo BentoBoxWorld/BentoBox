@@ -16,6 +16,7 @@ import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
 
 /**
+ * Tells the rank of the player
  * @author tastybento
  *
  */

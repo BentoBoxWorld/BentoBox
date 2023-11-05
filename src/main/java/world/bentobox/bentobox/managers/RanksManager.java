@@ -3,6 +3,7 @@ package world.bentobox.bentobox.managers;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.eclipse.jdt.annotation.NonNull;
@@ -41,6 +42,15 @@ public class RanksManager {
 
 	// The store of ranks
 	private LinkedHashMap<String, Integer> ranks = new LinkedHashMap<>();
+	public static final Map<String, Integer> DEFAULT_RANKS = Map.of(ADMIN_RANK_REF, ADMIN_RANK,
+			MOD_RANK_REF, MOD_RANK,
+			OWNER_RANK_REF, OWNER_RANK,
+			SUB_OWNER_RANK_REF, SUB_OWNER_RANK,
+			MEMBER_RANK_REF, MEMBER_RANK,
+			TRUSTED_RANK_REF, TRUSTED_RANK,
+			COOP_RANK_REF, COOP_RANK,
+			VISITOR_RANK_REF, VISITOR_RANK,
+			BANNED_RANK_REF, BANNED_RANK);
 
 	@NonNull
 	private Database<RankObject> handler;
@@ -50,19 +60,13 @@ public class RanksManager {
 		handler = new Database<>(BentoBox.getInstance(), RankObject.class);
 		if (!handler.objectExists(RankObject.ID)) {
 			// Make the initial object
-			ranksPut(ADMIN_RANK_REF, ADMIN_RANK);
-			ranksPut(MOD_RANK_REF, MOD_RANK);
-			ranksPut(OWNER_RANK_REF, OWNER_RANK);
-			ranksPut(SUB_OWNER_RANK_REF, SUB_OWNER_RANK);
-			ranksPut(MEMBER_RANK_REF, MEMBER_RANK);
-			ranksPut(TRUSTED_RANK_REF, TRUSTED_RANK);
-			ranksPut(COOP_RANK_REF, COOP_RANK);
-			ranksPut(VISITOR_RANK_REF, VISITOR_RANK);
-			ranksPut(BANNED_RANK_REF, BANNED_RANK);
+			DEFAULT_RANKS.forEach((ref, rank) -> ranksPut(ref, rank));
 			handler.saveObject(new RankObject(ranks));
 		} else {
-			handler.loadObject(RankObject.ID).getRankReference().forEach(this::ranksPut);
+			// Load the ranks from the database
+			Objects.requireNonNull(handler.loadObject(RankObject.ID)).getRankReference().forEach(this::ranksPut);
 		}
+		
 	}
 
 	/**
@@ -81,15 +85,7 @@ public class RanksManager {
 	 * @return true if the rank was successfully added
 	 */
 	public boolean addRank(String reference, int value) {
-		if (reference.equalsIgnoreCase(OWNER_RANK_REF)
-				|| reference.equalsIgnoreCase(SUB_OWNER_RANK_REF)
-				|| reference.equalsIgnoreCase(TRUSTED_RANK_REF)
-				|| reference.equalsIgnoreCase(COOP_RANK_REF)
-				|| reference.equalsIgnoreCase(MEMBER_RANK_REF)
-				|| reference.equalsIgnoreCase(VISITOR_RANK_REF)
-				|| reference.equalsIgnoreCase(BANNED_RANK_REF)
-				|| reference.equalsIgnoreCase(ADMIN_RANK_REF)
-				|| reference.equalsIgnoreCase(MOD_RANK_REF)) {
+		if (rankExists(reference)) {
 			return false;
 		}
 		ranksPut(reference, value);
@@ -112,15 +108,7 @@ public class RanksManager {
 	 * @return true if removed
 	 */
 	public boolean removeRank(String reference) {
-		return !reference.equalsIgnoreCase(OWNER_RANK_REF)
-				&& !reference.equalsIgnoreCase(SUB_OWNER_RANK_REF)
-				&& !reference.equalsIgnoreCase(TRUSTED_RANK_REF)
-				&& !reference.equalsIgnoreCase(COOP_RANK_REF)
-				&& !reference.equalsIgnoreCase(MEMBER_RANK_REF)
-				&& !reference.equalsIgnoreCase(VISITOR_RANK_REF)
-				&& !reference.equalsIgnoreCase(BANNED_RANK_REF)
-				&& !reference.equalsIgnoreCase(ADMIN_RANK_REF)
-				&& !reference.equalsIgnoreCase(MOD_RANK_REF) && (ranks.remove(reference) != null);
+		return ranks.remove(reference) != null;
 
 	}
 
