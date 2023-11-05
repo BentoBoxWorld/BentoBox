@@ -10,11 +10,11 @@ import com.google.gson.annotations.Expose;
  * Stores data on ranks
  */
 @Table(name = "Ranks")
-public class RankObject implements DataObject {
+public class Ranks implements DataObject {
 	
 	public static final String ID = "BentoBox-Ranks";
 	
-	public RankObject(Map<String, Integer> rankReference) {
+	public Ranks(Map<String, Integer> rankReference) {
 		super();
 		this.rankReference = rankReference;
 	}

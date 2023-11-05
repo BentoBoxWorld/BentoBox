@@ -10,7 +10,7 @@ import org.eclipse.jdt.annotation.NonNull;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.database.Database;
-import world.bentobox.bentobox.database.objects.RankObject;
+import world.bentobox.bentobox.database.objects.Ranks;
 
 /**
  * Ranks Manager
@@ -53,18 +53,18 @@ public class RanksManager {
 			BANNED_RANK_REF, BANNED_RANK);
 
 	@NonNull
-	private Database<RankObject> handler;
+	private Database<Ranks> handler;
 
 	public RanksManager() {
 		// Set up the database handler to store and retrieve Island classes
-		handler = new Database<>(BentoBox.getInstance(), RankObject.class);
-		if (!handler.objectExists(RankObject.ID)) {
+		handler = new Database<>(BentoBox.getInstance(), Ranks.class);
+		if (!handler.objectExists(Ranks.ID)) {
 			// Make the initial object
 			DEFAULT_RANKS.forEach((ref, rank) -> ranksPut(ref, rank));
-			handler.saveObject(new RankObject(ranks));
+			handler.saveObject(new Ranks(ranks));
 		} else {
 			// Load the ranks from the database
-			Objects.requireNonNull(handler.loadObject(RankObject.ID)).getRankReference().forEach(this::ranksPut);
+			Objects.requireNonNull(handler.loadObject(Ranks.ID)).getRankReference().forEach(this::ranksPut);
 		}
 		
 	}
