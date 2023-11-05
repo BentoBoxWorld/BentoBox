@@ -24,7 +24,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitScheduler;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,7 +32,6 @@ import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
@@ -46,6 +44,7 @@ import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.RanksManager;
+import world.bentobox.bentobox.managers.RanksManagerBeforeClassTest;
 
 /**
  * @author tastybento
@@ -53,7 +52,7 @@ import world.bentobox.bentobox.managers.RanksManager;
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({Bukkit.class, BentoBox.class, User.class })
-public class IslandUnbanCommandTest {
+public class IslandUnbanCommandTest extends RanksManagerBeforeClassTest {
 
     @Mock
     private CompositeCommand ic;
@@ -71,9 +70,7 @@ public class IslandUnbanCommandTest {
      */
     @Before
     public void setUp() throws Exception {
-        // Set up plugin
-        BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        super.setUp();
         User.setPlugin(plugin);
 
         // Command manager
@@ -133,11 +130,6 @@ public class IslandUnbanCommandTest {
         when(plugin.getRanksManager()).thenReturn(rm);
 
 
-    }
-
-    @After
-    public void tearDown() {
-        Mockito.framework().clearInlineMocks();
     }
 
     /**

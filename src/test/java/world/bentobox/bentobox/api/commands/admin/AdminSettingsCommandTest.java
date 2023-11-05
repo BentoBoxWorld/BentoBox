@@ -29,7 +29,6 @@ import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitScheduler;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,7 +38,6 @@ import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
@@ -55,6 +53,7 @@ import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.RanksManager;
+import world.bentobox.bentobox.managers.RanksManagerBeforeClassTest;
 import world.bentobox.bentobox.util.Util;
 
 /**
@@ -63,7 +62,7 @@ import world.bentobox.bentobox.util.Util;
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({Bukkit.class, BentoBox.class, User.class, Util.class})
-public class AdminSettingsCommandTest {
+public class AdminSettingsCommandTest extends RanksManagerBeforeClassTest {
 
     private AdminSettingsCommand asc;
     @Mock
@@ -96,9 +95,7 @@ public class AdminSettingsCommandTest {
      */
     @Before
     public void setUp() throws Exception {
-        // Set up plugin
-        BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+    	super.setUp();
         Util.setPlugin(plugin);
 
         // Command manager
@@ -177,20 +174,12 @@ public class AdminSettingsCommandTest {
         when(plugin.getFlagsManager()).thenReturn(fm);
 
         // RnksManager
-        when(plugin.getRanksManager()).thenReturn(new RanksManager());
+        RanksManager rm = new RanksManager();
+        when(plugin.getRanksManager()).thenReturn(rm);
 
 
 
         asc = new AdminSettingsCommand(ac);
-
-    }
-
-    /**
-     */
-    @After
-    public void tearDown() throws Exception {
-        User.clearUsers();
-        Mockito.framework().clearInlineMocks();
 
     }
 
