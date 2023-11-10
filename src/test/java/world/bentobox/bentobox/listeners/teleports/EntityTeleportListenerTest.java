@@ -34,50 +34,51 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({BentoBox.class, Util.class, Bukkit.class })
+@PrepareForTest({ BentoBox.class, Util.class, Bukkit.class })
 public class EntityTeleportListenerTest extends AbstractCommonSetup {
-    
-    private EntityTeleportListener etl;
-    @Mock
-    private IslandsManager im;
 
+	private EntityTeleportListener etl;
+	@Mock
+	private IslandsManager im;
 
-    /**
-     */
-    @Override
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-        
-        when(plugin.getIslands()).thenReturn(im);
-        when(plugin.getIslandsManager()).thenReturn(im);
-        
-        when(im.getProtectedIslandAt(any())).thenReturn(Optional.of(island));
-        
-        etl = new EntityTeleportListener(plugin);
-    }
+	/**
+	 */
+	@Override
+	@Before
+	public void setUp() throws Exception {
+		super.setUp();
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.listeners.teleports.EntityTeleportListener#EntityTeleportListener(world.bentobox.bentobox.BentoBox)}.
-     */
-    @Test
-    public void testEntityTeleportListener() {
-        assertNotNull(etl);
-    }
+		when(plugin.getIslands()).thenReturn(im);
+		when(plugin.getIslandsManager()).thenReturn(im);
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.listeners.teleports.EntityTeleportListener#onEntityPortal(org.bukkit.event.entity.EntityPortalEvent)}.
-     */
-    @Test
-    public void testOnEntityPortalWrongWorld() {
-        PowerMockito.mockStatic(Util.class, Mockito.RETURNS_MOCKS);
-        when(Util.getWorld(any())).thenReturn(null);
-        EntityPortalEvent event = new EntityPortalEvent(player, location, location, 10);
-        etl.onEntityPortal(event);
-        assertFalse(event.isCancelled());
-    }
-    
-    /**
+		when(im.getProtectedIslandAt(any())).thenReturn(Optional.of(island));
+
+		etl = new EntityTeleportListener(plugin);
+	}
+
+	/**
+	 * Test method for
+	 * {@link world.bentobox.bentobox.listeners.teleports.EntityTeleportListener#EntityTeleportListener(world.bentobox.bentobox.BentoBox)}.
+	 */
+	@Test
+	public void testEntityTeleportListener() {
+		assertNotNull(etl);
+	}
+
+	/**
+	 * Test method for
+	 * {@link world.bentobox.bentobox.listeners.teleports.EntityTeleportListener#onEntityPortal(org.bukkit.event.entity.EntityPortalEvent)}.
+	 */
+	@Test
+	public void testOnEntityPortalWrongWorld() {
+		PowerMockito.mockStatic(Util.class, Mockito.RETURNS_MOCKS);
+		when(Util.getWorld(any())).thenReturn(null);
+		EntityPortalEvent event = new EntityPortalEvent(player, location, location, 10);
+		etl.onEntityPortal(event);
+		assertFalse(event.isCancelled());
+	}
+
+	/**
      * Test method for {@link world.bentobox.bentobox.listeners.teleports.EntityTeleportListener#onEntityPortal(org.bukkit.event.entity.EntityPortalEvent)}.
      */
     @Test
@@ -87,44 +88,47 @@ public class EntityTeleportListenerTest extends AbstractCommonSetup {
         etl.onEntityPortal(event);
         assertFalse(event.isCancelled());
     }
-    
-    /**
-     * Test method for {@link world.bentobox.bentobox.listeners.teleports.EntityTeleportListener#onEntityPortal(org.bukkit.event.entity.EntityPortalEvent)}.
-     */
-    @Test
-    public void testOnEntityPortalNullTo() {
-        EntityPortalEvent event = new EntityPortalEvent(player, location, null, 10);
-        etl.onEntityPortal(event);
-        assertFalse(event.isCancelled());
-    }
-    
-    /**
-     * Test method for {@link world.bentobox.bentobox.listeners.teleports.EntityTeleportListener#onEntityPortal(org.bukkit.event.entity.EntityPortalEvent)}.
-     */
-    @Test
-    public void testOnEntityPortalTeleportDisabled() {
-        EntityPortalEvent event = new EntityPortalEvent(player, location, location, 10);
-        etl.onEntityPortal(event);
-        assertTrue(event.isCancelled());
-    }
-    
-    /**
-     * Test method for {@link world.bentobox.bentobox.listeners.teleports.EntityTeleportListener#onEntityPortal(org.bukkit.event.entity.EntityPortalEvent)}.
-     */
-    @Test
-    public void testOnEntityPortalTeleportEnabled() {
-        PowerMockito.mockStatic(Util.class, Mockito.RETURNS_MOCKS);
-        when(Util.getWorld(any())).thenReturn(world);
-        when(world.getEnvironment()).thenReturn(Environment.NORMAL);
-        
-        Flags.ENTITY_PORTAL_TELEPORT.setSetting(world, true);
-        EntityPortalEvent event = new EntityPortalEvent(player, location, location, 10);
-        etl.onEntityPortal(event);
-        assertFalse(event.isCancelled());
-        
-    }
-    
-    /**
+
+	/**
+	 * Test method for
+	 * {@link world.bentobox.bentobox.listeners.teleports.EntityTeleportListener#onEntityPortal(org.bukkit.event.entity.EntityPortalEvent)}.
+	 */
+	@Test
+	public void testOnEntityPortalNullTo() {
+		EntityPortalEvent event = new EntityPortalEvent(player, location, null, 10);
+		etl.onEntityPortal(event);
+		assertFalse(event.isCancelled());
+	}
+
+	/**
+	 * Test method for
+	 * {@link world.bentobox.bentobox.listeners.teleports.EntityTeleportListener#onEntityPortal(org.bukkit.event.entity.EntityPortalEvent)}.
+	 */
+	@Test
+	public void testOnEntityPortalTeleportDisabled() {
+		EntityPortalEvent event = new EntityPortalEvent(player, location, location, 10);
+		etl.onEntityPortal(event);
+		assertTrue(event.isCancelled());
+	}
+
+	/**
+	 * Test method for
+	 * {@link world.bentobox.bentobox.listeners.teleports.EntityTeleportListener#onEntityPortal(org.bukkit.event.entity.EntityPortalEvent)}.
+	 */
+	@Test
+	public void testOnEntityPortalTeleportEnabled() {
+		PowerMockito.mockStatic(Util.class, Mockito.RETURNS_MOCKS);
+		when(Util.getWorld(any())).thenReturn(world);
+		when(world.getEnvironment()).thenReturn(Environment.NORMAL);
+
+		Flags.ENTITY_PORTAL_TELEPORT.setSetting(world, true);
+		EntityPortalEvent event = new EntityPortalEvent(player, location, location, 10);
+		etl.onEntityPortal(event);
+		assertFalse(event.isCancelled());
+
+	}
+
+	/**
      * Test method for {@link world.bentobox.bentobox.listeners.teleports.EntityTeleportListener#onEntityPortal(org.bukkit.event.entity.EntityPortalEvent)}.
      */
     @Test
@@ -139,15 +143,15 @@ public class EntityTeleportListenerTest extends AbstractCommonSetup {
         PowerMockito.mockStatic(Util.class, Mockito.RETURNS_MOCKS);
         when(Util.getWorld(any())).thenReturn(world2);
 
-        when(location.getWorld()).thenReturn(null);
+        when(location.getWorld()).thenReturn(world);
         Flags.ENTITY_PORTAL_TELEPORT.setSetting(world, true);
         EntityPortalEvent event = new EntityPortalEvent(player, location, location2, 10);
         etl.onEntityPortal(event);
         assertTrue(event.isCancelled());
         
     }
-    
-    /**
+
+	/**
      * Test method for {@link world.bentobox.bentobox.listeners.teleports.EntityTeleportListener#onEntityPortal(org.bukkit.event.entity.EntityPortalEvent)}.
      */
     @Test
@@ -168,12 +172,14 @@ public class EntityTeleportListenerTest extends AbstractCommonSetup {
         assertTrue(event.isCancelled());
         
     }
-    
-    /**
+
+	/**
      * Test method for {@link world.bentobox.bentobox.listeners.teleports.EntityTeleportListener#onEntityPortal(org.bukkit.event.entity.EntityPortalEvent)}.
      */
     @Test
     public void testOnEntityPortalTeleportEnabledIsAllowedInConfig() {
+    	when(world.getEnvironment()).thenReturn(Environment.NORMAL);
+    	
         when(iwm.isNetherGenerate(any())).thenReturn(true);
         when(iwm.isNetherIslands(any())).thenReturn(true);
                 
@@ -192,18 +198,20 @@ public class EntityTeleportListenerTest extends AbstractCommonSetup {
         
     }
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.listeners.teleports.EntityTeleportListener#onEntityEnterPortal(org.bukkit.event.entity.EntityPortalEnterEvent)}.
-     */
-    @Test
-    public void testOnEntityEnterPortal() {
-    }
+	/**
+	 * Test method for
+	 * {@link world.bentobox.bentobox.listeners.teleports.EntityTeleportListener#onEntityEnterPortal(org.bukkit.event.entity.EntityPortalEnterEvent)}.
+	 */
+	@Test
+	public void testOnEntityEnterPortal() {
+	}
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.listeners.teleports.EntityTeleportListener#onEntityExitPortal(org.bukkit.event.entity.EntityPortalExitEvent)}.
-     */
-    @Test
-    public void testOnEntityExitPortal() {
-    }
+	/**
+	 * Test method for
+	 * {@link world.bentobox.bentobox.listeners.teleports.EntityTeleportListener#onEntityExitPortal(org.bukkit.event.entity.EntityPortalExitEvent)}.
+	 */
+	@Test
+	public void testOnEntityExitPortal() {
+	}
 
 }
