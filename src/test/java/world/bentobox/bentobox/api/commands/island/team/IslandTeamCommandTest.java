@@ -18,7 +18,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.plugin.PluginManager;
 import org.eclipse.jdt.annotation.Nullable;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,7 +25,6 @@ import org.mockito.Mock;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -40,6 +38,7 @@ import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.RanksManager;
+import world.bentobox.bentobox.managers.RanksManagerBeforeClassTest;
 
 /**
  * @author tastybento
@@ -47,7 +46,7 @@ import world.bentobox.bentobox.managers.RanksManager;
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({Bukkit.class, BentoBox.class, User.class })
-public class IslandTeamCommandTest {
+public class IslandTeamCommandTest extends RanksManagerBeforeClassTest {
 
     @Mock
     private CompositeCommand ic;
@@ -81,9 +80,7 @@ public class IslandTeamCommandTest {
      */
     @Before
     public void setUp() throws Exception {
-        // Set up plugin
-        BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        super.setUp();
 
         // Command manager
         CommandsManager cm = mock(CommandsManager.class);
@@ -125,16 +122,14 @@ public class IslandTeamCommandTest {
         // IWM
         when(plugin.getIWM()).thenReturn(iwm);
         when(iwm.getPermissionPrefix(any())).thenReturn("bskyblock.");
+        
+        // RanksManager
+        RanksManager rm = new RanksManager();
+        when(plugin.getRanksManager()).thenReturn(rm);
 
 
         // Command under test
         tc = new IslandTeamCommand(ic);
-    }
-
-    /**
-     */
-    @After
-    public void tearDown() throws Exception {
     }
 
     /**

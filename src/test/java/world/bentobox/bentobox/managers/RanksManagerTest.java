@@ -6,31 +6,32 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Map;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
+import org.junit.runner.RunWith;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+
+import world.bentobox.bentobox.database.DatabaseSetup;
 
 /**
  * @author tastybento
  *
  */
-public class RanksManagerTest {
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({DatabaseSetup.class,})
+public class RanksManagerTest extends RanksManagerBeforeClassTest {
 
     public static RanksManager ranksManager;
-
+    
     /**
      */
     @Before
     public void setUp() throws Exception {
+    	super.setUp();
         ranksManager = new RanksManager();
     }
-
-    @After
-    public void tearDown() {
-        Mockito.framework().clearInlineMocks();
-    }
-
+    
     /**
      * Test method for {@link world.bentobox.bentobox.managers.RanksManager#addRank(java.lang.String, int)}.
      */

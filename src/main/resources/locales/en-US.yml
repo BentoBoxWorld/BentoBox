@@ -498,7 +498,16 @@ commands:
       addons: '[prefix_bentobox]&6 Migrating addons'
       class: '[prefix_bentobox]&6 Migrating [description]'
       migrated: '[prefix_bentobox]&a Migrated'
-  
+    rank:
+      description: 'list, add, or remove ranks'
+      parameters: '&a [list | add | remove] [rank reference] [rank value]'
+      add:
+        success: '&a Added [rank] with value [number]'
+        failure: '&c Failed to add [rank] with value [number]. Maybe a duplicate?'
+      remove:
+        success: '&a Removed [rank]'
+        failure: '&c Failed to remove [rank]. Unknown rank.'
+      list: '&a Registered ranks are as follows:'
   confirmation:
     confirm: '&c Type command again within &b [seconds]s&c  to confirm.'
     previous-request-cancelled: '&6 Previous confirmation request cancelled.'

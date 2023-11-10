@@ -25,7 +25,6 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.Inventory;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,7 +34,6 @@ import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
@@ -50,6 +48,7 @@ import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.RanksManager;
+import world.bentobox.bentobox.managers.RanksManagerBeforeClassTest;
 import world.bentobox.bentobox.panels.settings.SettingsTab;
 import world.bentobox.bentobox.util.Util;
 
@@ -59,15 +58,13 @@ import world.bentobox.bentobox.util.Util;
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({Bukkit.class, BentoBox.class, Util.class})
-public class CommandRankClickListenerTest {
+public class CommandRankClickListenerTest extends RanksManagerBeforeClassTest {
     @Mock
     private User user;
     @Mock
     private World world;
     @Mock
     private TabbedPanel panel;
-    @Mock
-    private BentoBox plugin;
     @Mock
     private IslandWorldManager iwm;
     @Mock
@@ -94,11 +91,11 @@ public class CommandRankClickListenerTest {
      */
     @Before
     public void setUp() throws Exception {
+    	super.setUp();
 
         // Bukkit
         PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
-        // Set up plugin
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        
         // Island
         when(island.getOwner()).thenReturn(uuid);
         when(island.isAllowed(user, Flags.CHANGE_SETTINGS)).thenReturn(true);
@@ -144,14 +141,6 @@ public class CommandRankClickListenerTest {
         map.put("test", cc);
         when(cm.getCommands()).thenReturn(map);
         crcl = new CommandRankClickListener();
-    }
-
-    /**
-     * @throws java.lang.Exception
-     */
-    @After
-    public void tearDown() throws Exception {
-        Mockito.framework().clearInlineMocks();
     }
 
     /**

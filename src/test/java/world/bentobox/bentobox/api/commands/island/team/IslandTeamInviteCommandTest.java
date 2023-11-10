@@ -29,7 +29,6 @@ import org.mockito.Mock;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -46,6 +45,7 @@ import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.RanksManager;
+import world.bentobox.bentobox.managers.RanksManagerBeforeClassTest;
 
 /**
  * @author tastybento
@@ -53,7 +53,7 @@ import world.bentobox.bentobox.managers.RanksManager;
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({Bukkit.class, BentoBox.class, User.class })
-public class IslandTeamInviteCommandTest {
+public class IslandTeamInviteCommandTest extends RanksManagerBeforeClassTest {
 
     @Mock
     private IslandTeamCommand ic;
@@ -86,10 +86,8 @@ public class IslandTeamInviteCommandTest {
      */
     @Before
     public void setUp() throws Exception {
-        // Set up plugin
-        BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
-
+        super.setUp();
+        
         // Command manager
         CommandsManager cm = mock(CommandsManager.class);
         when(plugin.getCommandsManager()).thenReturn(cm);

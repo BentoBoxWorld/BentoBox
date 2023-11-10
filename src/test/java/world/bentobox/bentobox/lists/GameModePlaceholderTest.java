@@ -23,7 +23,6 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import com.google.common.collect.ImmutableSet;
 
-import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.TestWorldSettings;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
@@ -33,13 +32,14 @@ import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.RanksManager;
+import world.bentobox.bentobox.managers.RanksManagerBeforeClassTest;
 
 /**
  * @author tastybento
  *
  */
 @RunWith(PowerMockRunner.class)
-public class GameModePlaceholderTest {
+public class GameModePlaceholderTest extends RanksManagerBeforeClassTest {
 
     @Mock
     private GameModeAddon addon;
@@ -53,12 +53,10 @@ public class GameModePlaceholderTest {
     @Mock
     private World world;
     @Mock
-    private BentoBox plugin;
-    @Mock
     private IslandWorldManager iwm;
     @Mock
     private IslandsManager im;
-    private final RanksManager rm = new RanksManager();
+    private RanksManager rm;
     @Mock
     private @Nullable Location location;
 
@@ -67,6 +65,8 @@ public class GameModePlaceholderTest {
      */
     @Before
     public void setUp() throws Exception {
+    	super.setUp();
+    	rm = new RanksManager();
         uuid = UUID.randomUUID();
         when(addon.getPlayers()).thenReturn(pm);
         when(addon.getIslands()).thenReturn(im);

@@ -25,6 +25,7 @@ public class BentoBoxCommand extends CompositeCommand {
         new BentoBoxLocaleCommand(this);
         new BentoBoxHelpCommand(this);
         new BentoBoxPermsCommand(this);
+        new BentoBoxRankCommand(this);
         // Database names with a 2 in them are migration databases
         if (getPlugin().getSettings().getDatabaseType().name().contains("2")) {
             new BentoBoxMigrateCommand(this);

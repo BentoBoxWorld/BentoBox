@@ -23,7 +23,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,7 +32,6 @@ import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
@@ -46,6 +44,7 @@ import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.RanksManager;
+import world.bentobox.bentobox.managers.RanksManagerBeforeClassTest;
 import world.bentobox.bentobox.util.Util;
 
 /**
@@ -54,7 +53,7 @@ import world.bentobox.bentobox.util.Util;
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({Bukkit.class, BentoBox.class, Util.class})
-public class IslandInfoCommandTest {
+public class IslandInfoCommandTest extends RanksManagerBeforeClassTest {
 
     @Mock
     private CompositeCommand ic;
@@ -84,13 +83,12 @@ public class IslandInfoCommandTest {
      */
     @Before
     public void setUp() throws Exception {
-        // Set up plugin
-        BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        super.setUp();
 
         // IWM
         when(plugin.getIWM()).thenReturn(iwm);
-        when(plugin.getRanksManager()).thenReturn(new RanksManager());
+        RanksManager rm = new RanksManager();
+        when(plugin.getRanksManager()).thenReturn(rm);
 
         // Bukkit
         PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
@@ -137,14 +135,6 @@ public class IslandInfoCommandTest {
 
         // Command
         iic = new IslandInfoCommand(ic);
-    }
-
-    /**
-     */
-    @After
-    public void tearDown() {
-        User.clearUsers();
-        Mockito.framework().clearInlineMocks();
     }
 
     /**

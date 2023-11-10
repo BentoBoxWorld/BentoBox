@@ -250,8 +250,6 @@ public class PlayersManagerTest {
         pm = new PlayersManager(plugin);
     }
 
-    /**
-     */
     @After
     public void tearDown() throws Exception {
         User.clearUsers();
