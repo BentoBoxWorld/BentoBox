@@ -8,6 +8,7 @@ contributors: ["The BentoBoxWorld Community"]
 website: https://bentobox.world
 description: ${project.description}
 
+load: STARTUP
 
 loadbefore: [Pladdon, Multiverse-Core, My_Worlds, Residence]
 
