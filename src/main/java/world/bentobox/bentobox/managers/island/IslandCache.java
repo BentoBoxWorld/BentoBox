@@ -307,31 +307,38 @@ public class IslandCache {
 
 	/**
 	 * Removes a player from the cache. If the player has an island, the island
-	 * owner is removed and membership cleared. The island is removed from the
-	 * islandsByUUID map, but kept in the location map.
+	 * owner is removed and membership cleared.
 	 * 
 	 * @param world world
 	 * @param uuid  player's UUID
 	 * @return list of islands player had or empty if none
 	 */
 	public Set<Island> removePlayer(@NonNull World world, @NonNull UUID uuid) {
+		BentoBox.getInstance().logDebug("Island cache - remove Player " + world.getName());
 		World w = Util.getWorld(world);
 		Set<Island> islandSet = islandsByUUID.get(uuid);
 		if (w == null || islandSet == null) {
 			return Collections.emptySet(); // Return empty list if no islands map exists for the world
 		}
-
-		islandSet.stream().filter(i -> w.equals(i.getWorld())).forEach(island -> {
-			if (uuid.equals(island.getOwner())) {
-				island.getMembers().clear();
-				island.setOwner(null);
-			} else {
-				island.removeMember(uuid);
+		// Go through all the islands associated with this player in this world and
+		// remove the player from them.
+		Iterator<Island> it = islandSet.iterator();
+		while (it.hasNext()) {
+			Island island = it.next();
+			if (w.equals(island.getWorld())) {
+				if (uuid.equals(island.getOwner())) {
+					// Player is the owner, so clear the whole island and clear the ownership
+					island.getMembers().clear();
+					island.setOwner(null);
+				} else {
+					island.removeMember(uuid);
+				}
+				// Remove this island from this set of islands associated to this player
+				it.remove();
 			}
-		});
-
-		islandsByUUID.remove(uuid);
-
+		}
+		islandSet.forEach(i -> BentoBox.getInstance()
+				.logDebug("Remaining island " + i.getUniqueId() + " in " + i.getWorld().getName()));
 		return islandSet;
 	}
 

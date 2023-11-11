@@ -541,6 +541,7 @@ commands:
         an administrator.'
       creating-island: '&a Finding a spot for your island...'
       you-cannot-make: '&c You cannot make any more islands!'
+      you-cannot-make-team: '&c Team members cannot make islands in the same world as their team island.'
       pasting:
         estimated-time: '&a Estimated time: &b [number] &a seconds.'
         blocks: '&a Building it block by block: &b [number] &a blocks in all...'

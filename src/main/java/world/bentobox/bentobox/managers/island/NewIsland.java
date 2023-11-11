@@ -305,10 +305,6 @@ public class NewIsland {
 				// Clear the reservation
 				island.setReserved(false);
 				return l;
-			} else {
-				// This should never happen unless we allow another way to paste over islands
-				// without reserving
-				plugin.logError("New island for user " + user.getName() + " was not reserved!");
 			}
 		}
 		return null;
