@@ -46,9 +46,8 @@ import world.bentobox.bentobox.util.Pair;
 import world.bentobox.bentobox.util.Util;
 
 /**
- * Stores all the info about an island
- * Managed by IslandsManager
- * Responsible for team information as well.
+ * Stores all the info about an island Managed by IslandsManager Responsible for
+ * team information as well.
  *
  * @author tastybento
  * @author Poslovitch
@@ -60,7 +59,8 @@ public class Island implements DataObject, MetaDataAble {
 	private boolean primary;
 
 	/**
-	 * Set to true if this data object has been changed since being loaded from the database
+	 * Set to true if this data object has been changed since being loaded from the
+	 * database
 	 */
 	private boolean changed;
 
@@ -84,7 +84,6 @@ public class Island implements DataObject, MetaDataAble {
 	@Nullable
 	private Location location;
 
-
 	// Island range
 	@Expose
 	private int range;
@@ -95,6 +94,7 @@ public class Island implements DataObject, MetaDataAble {
 
 	/**
 	 * Bonuses to protection range
+	 * 
 	 * @since 1.20.0
 	 */
 	@Expose
@@ -109,7 +109,9 @@ public class Island implements DataObject, MetaDataAble {
 	private World world;
 
 	/**
-	 * Name of the {@link world.bentobox.bentobox.api.addons.GameModeAddon GameModeAddon} this island is handled by.
+	 * Name of the {@link world.bentobox.bentobox.api.addons.GameModeAddon
+	 * GameModeAddon} this island is handled by.
+	 * 
 	 * @since 1.5.0
 	 */
 	@Expose
@@ -128,26 +130,27 @@ public class Island implements DataObject, MetaDataAble {
 
 	//// Team ////
 	/**
-	 * Owner of the island.
-	 * There can only be one per island.
-	 * If it is {@code null}, then the island is considered as unowned.
+	 * Owner of the island. There can only be one per island. If it is {@code null},
+	 * then the island is considered as unowned.
 	 */
 	@Expose
 	@Nullable
 	private UUID owner;
 
 	/**
-	 * Members of the island.
-	 * It contains any player which has one of the following rank on this island: {@link RanksManager#COOP_RANK COOP},
-	 * {@link RanksManager#TRUSTED_RANK TRUSTED}, {@link RanksManager#MEMBER_RANK MEMBER}, {@link RanksManager#SUB_OWNER_RANK SUB_OWNER},
+	 * Members of the island. It contains any player which has one of the following
+	 * rank on this island: {@link RanksManager#COOP_RANK COOP},
+	 * {@link RanksManager#TRUSTED_RANK TRUSTED}, {@link RanksManager#MEMBER_RANK
+	 * MEMBER}, {@link RanksManager#SUB_OWNER_RANK SUB_OWNER},
 	 * {@link RanksManager#OWNER_RANK OWNER}.
 	 */
 	@Expose
 	private Map<UUID, Integer> members = new HashMap<>();
 
 	/**
-	 * Maximum number of members allowed in this island.
-	 * Key is rank, value is number
+	 * Maximum number of members allowed in this island. Key is rank, value is
+	 * number
+	 * 
 	 * @since 1.16.0
 	 */
 	@Expose
@@ -172,7 +175,8 @@ public class Island implements DataObject, MetaDataAble {
 	private Map<Environment, Location> spawnPoint = new EnumMap<>(Environment.class);
 
 	/**
-	 * This flag is used to quarantine islands that cannot be loaded and should be purged at some point
+	 * This flag is used to quarantine islands that cannot be loaded and should be
+	 * purged at some point
 	 */
 	@Expose
 	private boolean doNotLoad;
@@ -190,7 +194,9 @@ public class Island implements DataObject, MetaDataAble {
 	private Map<String, Integer> commandRanks;
 
 	/**
-	 * If true then this space is reserved for the owner and when they teleport there they will be asked to make an island
+	 * If true then this space is reserved for the owner and when they teleport
+	 * there they will be asked to make an island
+	 * 
 	 * @since 1.6.0
 	 */
 	@Expose
@@ -199,6 +205,7 @@ public class Island implements DataObject, MetaDataAble {
 
 	/**
 	 * A place to store metadata for this island.
+	 * 
 	 * @since 1.15.4
 	 */
 	@Expose
@@ -206,13 +213,15 @@ public class Island implements DataObject, MetaDataAble {
 
 	/**
 	 * Island homes. Replaces player homes
+	 * 
 	 * @since 1.16.0
 	 */
 	@Expose
 	private Map<String, Location> homes;
 
 	/**
-	 * The maximum number of homes allowed on this island. If null, then the world default is used.
+	 * The maximum number of homes allowed on this island. If null, then the world
+	 * default is used.
 	 */
 	@Expose
 	private Integer maxHomes;
@@ -221,7 +230,8 @@ public class Island implements DataObject, MetaDataAble {
 	 * *************************** Constructors ******************************
 	 */
 
-	public Island() {}
+	public Island() {
+	}
 
 	public Island(@NonNull Location location, UUID owner, int protectionRange) {
 		setOwner(owner);
@@ -236,9 +246,9 @@ public class Island implements DataObject, MetaDataAble {
 		this.setChanged();
 	}
 
-
 	/**
 	 * Clones an island object
+	 * 
 	 * @param island - island to clone
 	 */
 	public Island(Island island) {
@@ -275,7 +285,7 @@ public class Island implements DataObject, MetaDataAble {
 		this.range = island.getRange();
 		this.reserved = island.isReserved();
 		this.spawn = island.isSpawn();
-		island.getSpawnPoint().forEach((k,v) -> island.spawnPoint.put(k, v.clone()));
+		island.getSpawnPoint().forEach((k, v) -> island.spawnPoint.put(k, v.clone()));
 		this.uniqueId = island.getUniqueId();
 		this.updatedDate = island.getUpdatedDate();
 		this.world = island.getWorld();
@@ -288,7 +298,9 @@ public class Island implements DataObject, MetaDataAble {
 	 */
 
 	/**
-	 * Adds a team member. If player is on banned list, they will be removed from it.
+	 * Adds a team member. If player is on banned list, they will be removed from
+	 * it.
+	 * 
 	 * @param playerUUID - the player's UUID
 	 */
 	public void addMember(@NonNull UUID playerUUID) {
@@ -297,12 +309,13 @@ public class Island implements DataObject, MetaDataAble {
 	}
 
 	/**
-	 * Bans the target player from this Island.
-	 * If the player is a member, coop or trustee, they will be removed from those lists.
-	 * <br/>
-	 * Calling this method won't call the {@link world.bentobox.bentobox.api.events.island.IslandBanEvent}.
-	 * @param issuer UUID of the issuer, may be null.
-	 *               Whenever possible, one should be provided.
+	 * Bans the target player from this Island. If the player is a member, coop or
+	 * trustee, they will be removed from those lists. <br/>
+	 * Calling this method won't call the
+	 * {@link world.bentobox.bentobox.api.events.island.IslandBanEvent}.
+	 * 
+	 * @param issuer UUID of the issuer, may be null. Whenever possible, one should
+	 *               be provided.
 	 * @param target UUID of the target, must be provided.
 	 * @return {@code true}
 	 */
@@ -318,7 +331,7 @@ public class Island implements DataObject, MetaDataAble {
 	 */
 	public Set<UUID> getBanned() {
 		Set<UUID> result = new HashSet<>();
-		for (Entry<UUID, Integer> member: members.entrySet()) {
+		for (Entry<UUID, Integer> member : members.entrySet()) {
 			if (member.getValue() <= RanksManager.BANNED_RANK) {
 				result.add(member.getKey());
 			}
@@ -327,17 +340,20 @@ public class Island implements DataObject, MetaDataAble {
 	}
 
 	/**
-	 * Unbans the target player from this Island.
-	 * <br/>
-	 * Calling this method won't call the {@link world.bentobox.bentobox.api.events.island.IslandUnbanEvent}.
-	 * @param issuer UUID of the issuer, may be null.
-	 *               Whenever possible, one should be provided.
+	 * Unbans the target player from this Island. <br/>
+	 * Calling this method won't call the
+	 * {@link world.bentobox.bentobox.api.events.island.IslandUnbanEvent}.
+	 * 
+	 * @param issuer UUID of the issuer, may be null. Whenever possible, one should
+	 *               be provided.
 	 * @param target UUID of the target, must be provided.
-	 * @return {@code true} if the target is successfully unbanned, {@code false} otherwise.
+	 * @return {@code true} if the target is successfully unbanned, {@code false}
+	 *         otherwise.
 	 */
 	public boolean unban(@NonNull UUID issuer, @NonNull UUID target) {
 		if (members.remove(target) != null) {
-			log(new LogEntry.Builder("UNBAN").data("player", target.toString()).data("issuer", issuer.toString()).build());
+			log(new LogEntry.Builder("UNBAN").data("player", target.toString()).data("issuer", issuer.toString())
+					.build());
 			return true;
 		}
 		return false;
@@ -345,24 +361,26 @@ public class Island implements DataObject, MetaDataAble {
 
 	/**
 	 * Returns a clone of the location of the center of this island.
+	 * 
 	 * @return clone of the center Location
 	 */
 	@NonNull
-	public Location getCenter(){
+	public Location getCenter() {
 		return Objects.requireNonNull(center, "Island getCenter requires a non-null center").clone();
 	}
 
 	/**
 	 * @return the date when the island was created
 	 */
-	public long getCreatedDate(){
+	public long getCreatedDate() {
 		return createdDate;
 	}
 
 	/**
-	 * Gets the Island Guard flag's setting. If this is a protection flag, then this will be the
-	 * rank needed to bypass this flag. If it is a Settings flag, any non-zero value means the
-	 * setting is allowed.
+	 * Gets the Island Guard flag's setting. If this is a protection flag, then this
+	 * will be the rank needed to bypass this flag. If it is a Settings flag, any
+	 * non-zero value means the setting is allowed.
+	 * 
 	 * @param flag - flag
 	 * @return flag value
 	 */
@@ -378,12 +396,14 @@ public class Island implements DataObject, MetaDataAble {
 	}
 
 	/**
-	 * Returns the members of this island.
-	 * It contains all players that have any rank on this island, including {@link RanksManager#BANNED_RANK BANNED},
-	 * {@link RanksManager#TRUSTED_RANK TRUSTED}, {@link RanksManager#MEMBER_RANK MEMBER}, {@link RanksManager#SUB_OWNER_RANK SUB_OWNER},
+	 * Returns the members of this island. It contains all players that have any
+	 * rank on this island, including {@link RanksManager#BANNED_RANK BANNED},
+	 * {@link RanksManager#TRUSTED_RANK TRUSTED}, {@link RanksManager#MEMBER_RANK
+	 * MEMBER}, {@link RanksManager#SUB_OWNER_RANK SUB_OWNER},
 	 * {@link RanksManager#OWNER_RANK OWNER}, etc.
 	 *
-	 * @return the members - key is the UUID, value is the RanksManager enum, e.g. {@link RanksManager#MEMBER_RANK}.
+	 * @return the members - key is the UUID, value is the RanksManager enum, e.g.
+	 *         {@link RanksManager#MEMBER_RANK}.
 	 * @see #getMemberSet()
 	 */
 	public Map<UUID, Integer> getMembers() {
@@ -391,18 +411,23 @@ public class Island implements DataObject, MetaDataAble {
 	}
 
 	/**
-	 * Returns an immutable set containing the UUIDs of players that are truly members of this island.
-	 * This includes any player which has one of the following rank on this island: {@link RanksManager#MEMBER_RANK MEMBER},
-	 * {@link RanksManager#SUB_OWNER_RANK SUB_OWNER}, {@link RanksManager#OWNER_RANK OWNER}.
+	 * Returns an immutable set containing the UUIDs of players that are truly
+	 * members of this island. This includes any player which has one of the
+	 * following rank on this island: {@link RanksManager#MEMBER_RANK MEMBER},
+	 * {@link RanksManager#SUB_OWNER_RANK SUB_OWNER}, {@link RanksManager#OWNER_RANK
+	 * OWNER}.
+	 * 
 	 * @return the members of the island (owner included)
 	 * @see #getMembers()
 	 */
-	public ImmutableSet<UUID> getMemberSet(){
+	public ImmutableSet<UUID> getMemberSet() {
 		return getMemberSet(RanksManager.MEMBER_RANK);
 	}
 
 	/**
-	 * Returns an immutable set containing the UUIDs of players with rank above that requested rank inclusive
+	 * Returns an immutable set containing the UUIDs of players with rank above that
+	 * requested rank inclusive
+	 * 
 	 * @param minimumRank minimum rank (inclusive) of members
 	 * @return immutable set of UUIDs
 	 * @see #getMembers()
@@ -410,14 +435,18 @@ public class Island implements DataObject, MetaDataAble {
 	 */
 	public @NonNull ImmutableSet<UUID> getMemberSet(int minimumRank) {
 		Builder<UUID> result = new ImmutableSet.Builder<>();
-		members.entrySet().stream().filter(e -> e.getValue() >= minimumRank).map(Map.Entry::getKey).forEach(result::add);
+		members.entrySet().stream().filter(e -> e.getValue() >= minimumRank).map(Map.Entry::getKey)
+				.forEach(result::add);
 		return result.build();
 	}
 
 	/**
-	 * Returns an immutable set containing the UUIDs of players with rank equal or above that requested rank (inclusive).
-	 * @param rank rank to request
-	 * @param includeAboveRanks whether including players with rank above the requested rank or not
+	 * Returns an immutable set containing the UUIDs of players with rank equal or
+	 * above that requested rank (inclusive).
+	 * 
+	 * @param rank              rank to request
+	 * @param includeAboveRanks whether including players with rank above the
+	 *                          requested rank or not
 	 * @return immutable set of UUIDs
 	 * @see #getMemberSet(int)
 	 * @see #getMembers()
@@ -433,8 +462,9 @@ public class Island implements DataObject, MetaDataAble {
 	}
 
 	/**
-	 * Get the minimum protected X block coordinate based on the island location.
-	 * It will never be less than {@link #getMinX()}
+	 * Get the minimum protected X block coordinate based on the island location. It
+	 * will never be less than {@link #getMinX()}
+	 * 
 	 * @return the minProtectedX
 	 */
 	public int getMinProtectedX() {
@@ -442,8 +472,9 @@ public class Island implements DataObject, MetaDataAble {
 	}
 
 	/**
-	 * Get the maximum protected X block coordinate based on the island location.
-	 * It will never be more than {@link #getMaxX()}
+	 * Get the maximum protected X block coordinate based on the island location. It
+	 * will never be more than {@link #getMaxX()}
+	 * 
 	 * @return the maxProtectedX
 	 * @since 1.5.2
 	 */
@@ -452,8 +483,9 @@ public class Island implements DataObject, MetaDataAble {
 	}
 
 	/**
-	 * Get the minimum protected Z block coordinate based on the island location.
-	 * It will never be less than {@link #getMinZ()}
+	 * Get the minimum protected Z block coordinate based on the island location. It
+	 * will never be less than {@link #getMinZ()}
+	 * 
 	 * @return the minProtectedZ
 	 */
 	public int getMinProtectedZ() {
@@ -461,8 +493,9 @@ public class Island implements DataObject, MetaDataAble {
 	}
 
 	/**
-	 * Get the maximum protected Z block coordinate based on the island location.
-	 * It will never be more than {@link #getMinZ()}
+	 * Get the maximum protected Z block coordinate based on the island location. It
+	 * will never be more than {@link #getMinZ()}
+	 * 
 	 * @return the maxProtectedZ
 	 * @since 1.5.2
 	 */
@@ -510,17 +543,19 @@ public class Island implements DataObject, MetaDataAble {
 
 	/**
 	 * Returns the owner of this island.
+	 * 
 	 * @return the owner, may be null.
 	 * @see #isOwned()
 	 * @see #isUnowned()
 	 */
 	@Nullable
-	public UUID getOwner(){
+	public UUID getOwner() {
 		return owner;
 	}
 
 	/**
 	 * Returns whether this island is owned or not.
+	 * 
 	 * @return {@code true} if this island has an owner, {@code false} otherwise.
 	 * @since 1.9.1
 	 * @see #getOwner()
@@ -532,7 +567,9 @@ public class Island implements DataObject, MetaDataAble {
 
 	/**
 	 * Returns whether this island does not have an owner.
-	 * @return {@code true} if this island does not have an owner, {@code false} otherwise.
+	 * 
+	 * @return {@code true} if this island does not have an owner, {@code false}
+	 *         otherwise.
 	 * @since 1.9.1
 	 * @see #getOwner()
 	 * @see #isOwned()
@@ -542,18 +579,23 @@ public class Island implements DataObject, MetaDataAble {
 	}
 
 	/**
-	 * Returns the protection range of this Island plus any bonuses. Will not be greater than getRange().
-	 * This represents half of the length of the side of a theoretical square around the island center inside which flags are enforced.
+	 * Returns the protection range of this Island plus any bonuses. Will not be
+	 * greater than getRange(). This represents half of the length of the side of a
+	 * theoretical square around the island center inside which flags are enforced.
+	 * 
 	 * @return the protection range of this island, strictly positive integer.
 	 * @see #getRange()
 	 */
 	public int getProtectionRange() {
-		return Math.min(this.getRange(), getRawProtectionRange() + this.getBonusRanges().stream().mapToInt(BonusRangeRecord::getRange).sum());
+		return Math.min(this.getRange(),
+				getRawProtectionRange() + this.getBonusRanges().stream().mapToInt(BonusRangeRecord::getRange).sum());
 	}
 
 	/**
-	 * Returns the protection range of this Island without any bonuses
-	 * This represents half of the length of the side of a theoretical square around the island center inside which flags are enforced.
+	 * Returns the protection range of this Island without any bonuses This
+	 * represents half of the length of the side of a theoretical square around the
+	 * island center inside which flags are enforced.
+	 * 
 	 * @return the protection range of this island, strictly positive integer.
 	 * @since 1.20.0
 	 */
@@ -562,7 +604,8 @@ public class Island implements DataObject, MetaDataAble {
 	}
 
 	/**
-	 * @return the maxEverProtectionRange or the protection range, whichever is larger
+	 * @return the maxEverProtectionRange or the protection range, whichever is
+	 *         larger
 	 */
 	public int getMaxEverProtectionRange() {
 		if (maxEverProtectionRange > this.getRange()) {
@@ -573,9 +616,10 @@ public class Island implements DataObject, MetaDataAble {
 	}
 
 	/**
-	 * Sets the maximum protection range. This can be used to optimize
-	 * island deletion. Setting this values to a lower value than the current value
-	 * will have no effect.
+	 * Sets the maximum protection range. This can be used to optimize island
+	 * deletion. Setting this values to a lower value than the current value will
+	 * have no effect.
+	 * 
 	 * @param maxEverProtectionRange the maxEverProtectionRange to set
 	 */
 	public void setMaxEverProtectionRange(int maxEverProtectionRange) {
@@ -591,22 +635,25 @@ public class Island implements DataObject, MetaDataAble {
 	/**
 	 * @return true if the island is protected from the Purge, otherwise false
 	 */
-	public boolean getPurgeProtected(){
+	public boolean getPurgeProtected() {
 		return purgeProtected;
 	}
 
 	/**
-	 * Returns the island range.
-	 * It is a convenience method that returns the exact same value than island range, although it has been saved into the Island object for easier access.
+	 * Returns the island range. It is a convenience method that returns the exact
+	 * same value than island range, although it has been saved into the Island
+	 * object for easier access.
+	 * 
 	 * @return the island range
 	 * @see #getProtectionRange()
 	 */
-	public int getRange(){
+	public int getRange() {
 		return range;
 	}
 
 	/**
 	 * Get the rank of user for this island
+	 * 
 	 * @param user - the User
 	 * @return rank integer
 	 */
@@ -619,6 +666,7 @@ public class Island implements DataObject, MetaDataAble {
 
 	/**
 	 * Get the rank of user for this island
+	 * 
 	 * @param userUUID - the User's UUID
 	 * @return rank integer
 	 * @since 1.14.0
@@ -635,7 +683,7 @@ public class Island implements DataObject, MetaDataAble {
 	/**
 	 * @return the date when the island was updated (team member connection, etc...)
 	 */
-	public long getUpdatedDate(){
+	public long getUpdatedDate() {
 		return updatedDate;
 	}
 
@@ -646,101 +694,91 @@ public class Island implements DataObject, MetaDataAble {
 		return world;
 	}
 
-
 	/**
 	 * @return the nether world
 	 */
 	@Nullable
-	public World getNetherWorld()
-	{
+	public World getNetherWorld() {
 		return this.getWorld(Environment.NETHER);
 	}
-
 
 	/**
 	 * @return the end world
 	 */
 	@Nullable
-	public World getEndWorld()
-	{
+	public World getEndWorld() {
 		return this.getWorld(Environment.THE_END);
 	}
 
-
 	/**
-	 * This method returns this island world in given environment. This method can return {@code null} if dimension is
-	 * disabled.
+	 * This method returns this island world in given environment. This method can
+	 * return {@code null} if dimension is disabled.
+	 * 
 	 * @param environment The environment of the island world.
 	 * @return the world in given environment.
 	 */
 	@Nullable
-	public World getWorld(Environment environment)
-	{
-		if (Environment.NORMAL.equals(environment))
-		{
+	public World getWorld(Environment environment) {
+		if (Environment.NORMAL.equals(environment)) {
 			return this.world;
-		}
-		else if (Environment.THE_END.equals(environment) && this.isEndIslandEnabled())
-		{
+		} else if (Environment.THE_END.equals(environment) && this.isEndIslandEnabled()) {
 			return this.getPlugin().getIWM().getEndWorld(this.world);
-		}
-		else if (Environment.NETHER.equals(environment) && this.isNetherIslandEnabled())
-		{
+		} else if (Environment.NETHER.equals(environment) && this.isNetherIslandEnabled()) {
 			return this.getPlugin().getIWM().getNetherWorld(this.world);
-		}
-		else
-		{
+		} else {
 			return null;
 		}
 	}
 
-
 	/**
 	 * @return the x coordinate of the island center
 	 */
-	public int getX(){
+	public int getX() {
 		return center.getBlockX();
 	}
 
 	/**
 	 * @return the y coordinate of the island center
 	 */
-	public int getY(){
+	public int getY() {
 		return center.getBlockY();
 	}
 
 	/**
 	 * @return the z coordinate of the island center
 	 */
-	public int getZ(){
+	public int getZ() {
 		return center.getBlockZ();
 	}
 
 	/**
 	 * Checks if coords are in the island space
+	 * 
 	 * @param x - x coordinate
 	 * @param z - z coordinate
 	 * @return true if in the island space
 	 */
 	public boolean inIslandSpace(int x, int z) {
-		return x >= getMinX() && x < getMinX() + range*2 && z >= getMinZ() && z < getMinZ() + range*2;
+		return x >= getMinX() && x < getMinX() + range * 2 && z >= getMinZ() && z < getMinZ() + range * 2;
 	}
 
 	/**
 	 * Checks if location is in full island space, not just protected space
+	 * 
 	 * @param location - location
 	 * @return true if in island space
 	 */
 	public boolean inIslandSpace(Location location) {
-		return Util.sameWorld(this.world, location.getWorld()) &&
-				(location.getWorld().getEnvironment().equals(Environment.NORMAL) ||
-						this.getPlugin().getIWM().isIslandNether(location.getWorld()) ||
-						this.getPlugin().getIWM().isIslandEnd(location.getWorld())) &&
-				this.inIslandSpace(location.getBlockX(), location.getBlockZ());
+		return Util.sameWorld(this.world, location.getWorld())
+				&& (location.getWorld().getEnvironment().equals(Environment.NORMAL)
+						|| this.getPlugin().getIWM().isIslandNether(location.getWorld())
+						|| this.getPlugin().getIWM().isIslandEnd(location.getWorld()))
+				&& this.inIslandSpace(location.getBlockX(), location.getBlockZ());
 	}
 
 	/**
 	 * Checks if the coordinates are in full island space, not just protected space
+	 * 
 	 * @param blockCoordinates - Pair(x,z) coordinates of block
 	 * @return true or false
 	 */
@@ -750,6 +788,7 @@ public class Island implements DataObject, MetaDataAble {
 
 	/**
 	 * Returns a {@link BoundingBox} of the full island space for overworld.
+	 * 
 	 * @return a {@link BoundingBox} of the full island space.
 	 * @since 1.5.2
 	 */
@@ -758,59 +797,41 @@ public class Island implements DataObject, MetaDataAble {
 		return this.getBoundingBox(Environment.NORMAL);
 	}
 
-
 	/**
-	 * Returns a {@link BoundingBox} of this island's space area in requested dimension.
+	 * Returns a {@link BoundingBox} of this island's space area in requested
+	 * dimension.
+	 * 
 	 * @param environment the requested dimension.
-	 * @return a {@link BoundingBox} of this island's space area or {@code null} if island is not created in requested dimension.
+	 * @return a {@link BoundingBox} of this island's space area or {@code null} if
+	 *         island is not created in requested dimension.
 	 * @since 1.21.0
 	 */
 	@Nullable
-	public BoundingBox getBoundingBox(Environment environment)
-	{
+	public BoundingBox getBoundingBox(Environment environment) {
 		BoundingBox boundingBox;
 
-		if (Environment.NORMAL.equals(environment))
-		{
+		if (Environment.NORMAL.equals(environment)) {
 			// Return normal world bounding box.
-			boundingBox = new BoundingBox(this.getMinX(),
-					this.world.getMinHeight(),
-					this.getMinZ(),
-					this.getMaxX(),
-					this.world.getMaxHeight(),
-					this.getMaxZ());
-		}
-		else if (Environment.THE_END.equals(environment) && this.isEndIslandEnabled())
-		{
+			boundingBox = new BoundingBox(this.getMinX(), this.world.getMinHeight(), this.getMinZ(), this.getMaxX(),
+					this.world.getMaxHeight(), this.getMaxZ());
+		} else if (Environment.THE_END.equals(environment) && this.isEndIslandEnabled()) {
 			// If end world is generated, return end island bounding box.
-			boundingBox = new BoundingBox(this.getMinX(),
-					this.getEndWorld().getMinHeight(),
-					this.getMinZ(),
-					this.getMaxX(),
-					this.getEndWorld().getMaxHeight(),
-					this.getMaxZ());
-		}
-		else if (Environment.NETHER.equals(environment) && this.isNetherIslandEnabled())
-		{
+			boundingBox = new BoundingBox(this.getMinX(), this.getEndWorld().getMinHeight(), this.getMinZ(),
+					this.getMaxX(), this.getEndWorld().getMaxHeight(), this.getMaxZ());
+		} else if (Environment.NETHER.equals(environment) && this.isNetherIslandEnabled()) {
 			// If nether world is generated, return nether island bounding box.
-			boundingBox = new BoundingBox(this.getMinX(),
-					this.getNetherWorld().getMinHeight(),
-					this.getMinZ(),
-					this.getMaxX(),
-					this.getNetherWorld().getMaxHeight(),
-					this.getMaxZ());
-		}
-		else
-		{
+			boundingBox = new BoundingBox(this.getMinX(), this.getNetherWorld().getMinHeight(), this.getMinZ(),
+					this.getMaxX(), this.getNetherWorld().getMaxHeight(), this.getMaxZ());
+		} else {
 			boundingBox = null;
 		}
 
 		return boundingBox;
 	}
 
-
 	/**
 	 * Using this method in the filtering for getVisitors and hasVisitors
+	 * 
 	 * @param player The player that must be checked.
 	 * @return true if player is a visitor
 	 */
@@ -823,7 +844,9 @@ public class Island implements DataObject, MetaDataAble {
 	}
 
 	/**
-	 * Returns a list of players that are physically inside the island's protection range and that are visitors.
+	 * Returns a list of players that are physically inside the island's protection
+	 * range and that are visitors.
+	 * 
 	 * @return list of visitors
 	 * @since 1.3.0
 	 */
@@ -833,9 +856,11 @@ public class Island implements DataObject, MetaDataAble {
 	}
 
 	/**
-	 * Returns whether this Island has visitors inside its protection range.
-	 * Note this is equivalent to {@code !island.getVisitors().isEmpty()}.
-	 * @return {@code true} if there are visitors inside this Island's protection range, {@code false} otherwise.
+	 * Returns whether this Island has visitors inside its protection range. Note
+	 * this is equivalent to {@code !island.getVisitors().isEmpty()}.
+	 * 
+	 * @return {@code true} if there are visitors inside this Island's protection
+	 *         range, {@code false} otherwise.
 	 *
 	 * @since 1.3.0
 	 * @see #getVisitors()
@@ -845,21 +870,24 @@ public class Island implements DataObject, MetaDataAble {
 	}
 
 	/**
-	 * Returns a list of players that are physically inside the island's protection range
+	 * Returns a list of players that are physically inside the island's protection
+	 * range
+	 * 
 	 * @return list of players
 	 * @since 1.6.0
 	 */
 	@NonNull
 	public List<Player> getPlayersOnIsland() {
-		return Bukkit.getOnlinePlayers().stream()
-				.filter(player -> onIsland(player.getLocation()))
+		return Bukkit.getOnlinePlayers().stream().filter(player -> onIsland(player.getLocation()))
 				.collect(Collectors.toList());
 	}
 
 	/**
-	 * Returns whether this Island has players inside its protection range.
-	 * Note this is equivalent to {@code !island.getPlayersOnIsland().isEmpty()}.
-	 * @return {@code true} if there are players inside this Island's protection range, {@code false} otherwise.
+	 * Returns whether this Island has players inside its protection range. Note
+	 * this is equivalent to {@code !island.getPlayersOnIsland().isEmpty()}.
+	 * 
+	 * @return {@code true} if there are players inside this Island's protection
+	 *         range, {@code false} otherwise.
 	 *
 	 * @since 1.6.0
 	 * @see #getPlayersOnIsland()
@@ -869,8 +897,9 @@ public class Island implements DataObject, MetaDataAble {
 	}
 
 	/**
-	 * Check if the flag is allowed or not
-	 * For flags that are for the island in general and not related to rank.
+	 * Check if the flag is allowed or not For flags that are for the island in
+	 * general and not related to rank.
+	 * 
 	 * @param flag - flag
 	 * @return true if allowed, false if not
 	 */
@@ -881,6 +910,7 @@ public class Island implements DataObject, MetaDataAble {
 
 	/**
 	 * Check if a user is allowed to bypass the flag or not
+	 * 
 	 * @param user - the User - user
 	 * @param flag - flag
 	 * @return true if allowed, false if not
@@ -891,6 +921,7 @@ public class Island implements DataObject, MetaDataAble {
 
 	/**
 	 * Check if banned
+	 * 
 	 * @param targetUUID - the target's UUID
 	 * @return Returns true if target is banned on this island
 	 */
@@ -900,6 +931,7 @@ public class Island implements DataObject, MetaDataAble {
 
 	/**
 	 * Returns whether the island is a spawn or not.
+	 * 
 	 * @return {@code true} if the island is a spawn, {@code false} otherwise.
 	 */
 	public boolean isSpawn() {
@@ -910,21 +942,23 @@ public class Island implements DataObject, MetaDataAble {
 	 * Checks if a location is within this island's protected area.
 	 *
 	 * @param target location to check, not null
-	 * @return {@code true} if this location is within this island's protected area, {@code false} otherwise.
+	 * @return {@code true} if this location is within this island's protected area,
+	 *         {@code false} otherwise.
 	 */
 	public boolean onIsland(@NonNull Location target) {
-		return Util.sameWorld(this.world, target.getWorld()) &&
-				(target.getWorld().getEnvironment().equals(Environment.NORMAL) ||
-						this.getPlugin().getIWM().isIslandNether(target.getWorld()) ||
-						this.getPlugin().getIWM().isIslandEnd(target.getWorld())) &&
-				target.getBlockX() >= this.getMinProtectedX() &&
-				target.getBlockX() < (this.getMinProtectedX() + this.protectionRange * 2) &&
-				target.getBlockZ() >= this.getMinProtectedZ() &&
-				target.getBlockZ() < (this.getMinProtectedZ() + this.protectionRange * 2);
+		return Util.sameWorld(this.world, target.getWorld())
+				&& (target.getWorld().getEnvironment().equals(Environment.NORMAL)
+						|| this.getPlugin().getIWM().isIslandNether(target.getWorld())
+						|| this.getPlugin().getIWM().isIslandEnd(target.getWorld()))
+				&& target.getBlockX() >= this.getMinProtectedX()
+				&& target.getBlockX() < (this.getMinProtectedX() + this.protectionRange * 2)
+				&& target.getBlockZ() >= this.getMinProtectedZ()
+				&& target.getBlockZ() < (this.getMinProtectedZ() + this.protectionRange * 2);
 	}
 
 	/**
 	 * Returns a {@link BoundingBox} of this island's protected area for overworld.
+	 * 
 	 * @return a {@link BoundingBox} of this island's protected area.
 	 * @since 1.5.2
 	 */
@@ -933,61 +967,44 @@ public class Island implements DataObject, MetaDataAble {
 		return this.getProtectionBoundingBox(Environment.NORMAL);
 	}
 
-
 	/**
 	 * Returns a {@link BoundingBox} of this island's protected area.
+	 * 
 	 * @param environment an environment of bounding box area.
-	 * @return a {@link BoundingBox} of this island's protected area or {@code null} if island is not created in required dimension.
-	 * in required dimension.
+	 * @return a {@link BoundingBox} of this island's protected area or {@code null}
+	 *         if island is not created in required dimension. in required
+	 *         dimension.
 	 * @since 1.21.0
 	 */
 	@Nullable
-	public BoundingBox getProtectionBoundingBox(Environment environment)
-	{
+	public BoundingBox getProtectionBoundingBox(Environment environment) {
 		BoundingBox boundingBox;
 
-		if (Environment.NORMAL.equals(environment))
-		{
+		if (Environment.NORMAL.equals(environment)) {
 			// Return normal world bounding box.
-			boundingBox = new BoundingBox(this.getMinProtectedX(),
-					this.world.getMinHeight(),
-					this.getMinProtectedZ(),
-					this.getMaxProtectedX(),
-					this.world.getMaxHeight(),
-					this.getMaxProtectedZ());
-		}
-		else if (Environment.THE_END.equals(environment) && this.isEndIslandEnabled())
-		{
+			boundingBox = new BoundingBox(this.getMinProtectedX(), this.world.getMinHeight(), this.getMinProtectedZ(),
+					this.getMaxProtectedX(), this.world.getMaxHeight(), this.getMaxProtectedZ());
+		} else if (Environment.THE_END.equals(environment) && this.isEndIslandEnabled()) {
 			// If end world is generated, return end island bounding box.
-			boundingBox = new BoundingBox(this.getMinProtectedX(),
-					this.getEndWorld().getMinHeight(),
-					this.getMinProtectedZ(),
-					this.getMaxProtectedX(),
-					this.getEndWorld().getMaxHeight(),
+			boundingBox = new BoundingBox(this.getMinProtectedX(), this.getEndWorld().getMinHeight(),
+					this.getMinProtectedZ(), this.getMaxProtectedX(), this.getEndWorld().getMaxHeight(),
 					this.getMaxProtectedZ());
-		}
-		else if (Environment.NETHER.equals(environment) && this.isNetherIslandEnabled())
-		{
+		} else if (Environment.NETHER.equals(environment) && this.isNetherIslandEnabled()) {
 			// If nether world is generated, return nether island bounding box.
-			boundingBox = new BoundingBox(this.getMinProtectedX(),
-					this.getNetherWorld().getMinHeight(),
-					this.getMinProtectedZ(),
-					this.getMaxProtectedX(),
-					this.getNetherWorld().getMaxHeight(),
+			boundingBox = new BoundingBox(this.getMinProtectedX(), this.getNetherWorld().getMinHeight(),
+					this.getMinProtectedZ(), this.getMaxProtectedX(), this.getNetherWorld().getMaxHeight(),
 					this.getMaxProtectedZ());
-		}
-		else
-		{
+		} else {
 			boundingBox = null;
 		}
 
 		return boundingBox;
 	}
 
-
 	/**
-	 * Removes a player from the team member map. Generally, you should
-	 * use {@link world.bentobox.bentobox.managers.IslandsManager#removePlayer(World, UUID)}
+	 * Removes a player from the team member map. Generally, you should use
+	 * {@link world.bentobox.bentobox.managers.IslandsManager#removePlayer(World, UUID)}
+	 * 
 	 * @param playerUUID - uuid of player
 	 */
 	public void removeMember(UUID playerUUID) {
@@ -1007,15 +1024,16 @@ public class Island implements DataObject, MetaDataAble {
 	/**
 	 * @param createdDate - the createdDate to sets
 	 */
-	public void setCreatedDate(long createdDate){
+	public void setCreatedDate(long createdDate) {
 		this.createdDate = createdDate;
 		setChanged();
 	}
 
 	/**
-	 * Set the Island Guard flag rank
-	 * This method affects subflags (if the given flag is a parent flag)
-	 * @param flag - flag
+	 * Set the Island Guard flag rank This method affects subflags (if the given
+	 * flag is a parent flag)
+	 * 
+	 * @param flag  - flag
 	 * @param value - Use RanksManager settings, e.g. RanksManager.MEMBER
 	 */
 	public void setFlag(Flag flag, int value) {
@@ -1023,10 +1041,11 @@ public class Island implements DataObject, MetaDataAble {
 	}
 
 	/**
-	 * Set the Island Guard flag rank
-	 * Also specify whether subflags are affected by this method call
-	 * @param flag - flag
-	 * @param value - Use RanksManager settings, e.g. RanksManager.MEMBER
+	 * Set the Island Guard flag rank Also specify whether subflags are affected by
+	 * this method call
+	 * 
+	 * @param flag       - flag
+	 * @param value      - Use RanksManager settings, e.g. RanksManager.MEMBER
 	 * @param doSubflags - whether to set subflags
 	 */
 	public void setFlag(Flag flag, int value, boolean doSubflags) {
@@ -1048,18 +1067,19 @@ public class Island implements DataObject, MetaDataAble {
 	}
 
 	/**
-	 * Resets the flags to their default as set in config.yml for this island.
-	 * If flags are missing from the config, the default hard-coded value is used and set
+	 * Resets the flags to their default as set in config.yml for this island. If
+	 * flags are missing from the config, the default hard-coded value is used and
+	 * set
 	 */
 	public void setFlagsDefaults() {
 		BentoBox plugin = BentoBox.getInstance();
 		Map<String, Integer> result = new HashMap<>();
-		plugin.getFlagsManager().getFlags().stream().
-		filter(f -> f.getType().equals(Flag.Type.PROTECTION)).
-		forEach(f -> result.put(f.getID(), plugin.getIWM().getDefaultIslandFlags(world).getOrDefault(f, f.getDefaultRank())));
-		plugin.getFlagsManager().getFlags().stream().
-		filter(f -> f.getType().equals(Flag.Type.SETTING)).
-		forEach(f -> result.put(f.getID(), plugin.getIWM().getDefaultIslandSettings(world).getOrDefault(f, f.getDefaultRank())));
+		plugin.getFlagsManager().getFlags().stream().filter(f -> f.getType().equals(Flag.Type.PROTECTION))
+				.forEach(f -> result.put(f.getID(),
+						plugin.getIWM().getDefaultIslandFlags(world).getOrDefault(f, f.getDefaultRank())));
+		plugin.getFlagsManager().getFlags().stream().filter(f -> f.getType().equals(Flag.Type.SETTING))
+				.forEach(f -> result.put(f.getID(),
+						plugin.getIWM().getDefaultIslandSettings(world).getOrDefault(f, f.getDefaultRank())));
 		this.setFlags(result);
 		setChanged();
 	}
@@ -1073,23 +1093,25 @@ public class Island implements DataObject, MetaDataAble {
 	}
 
 	/**
-	 * Sets the display name of this Island.
-	 * <br/><br/>
+	 * Sets the display name of this Island. <br/>
+	 * <br/>
 	 * An empty String or {@code null} will remove the display name.
+	 * 
 	 * @param name The display name to set.
 	 */
-	public void setName(String name){
+	public void setName(String name) {
 		this.name = (name != null && !name.equals("")) ? name : null;
 		setChanged();
 	}
 
 	/**
 	 * Sets the owner of the island.
+	 * 
 	 * @param owner the island owner - the owner to set
 	 */
-	public void setOwner(@Nullable UUID owner){
+	public void setOwner(@Nullable UUID owner) {
 		if (this.owner == owner) {
-			return; //No need to update anything
+			return; // No need to update anything
 		}
 
 		this.owner = owner;
@@ -1144,28 +1166,29 @@ public class Island implements DataObject, MetaDataAble {
 	/**
 	 * @param purgeProtected - if the island is protected from the Purge
 	 */
-	public void setPurgeProtected(boolean purgeProtected){
+	public void setPurgeProtected(boolean purgeProtected) {
 		this.purgeProtected = purgeProtected;
 		setChanged();
 	}
 
 	/**
-	 * Sets the island range.
-	 * This method should <u><strong>NEVER</strong></u> be used except for testing purposes.
-	 * <br>
-	 * The range value is a copy of {@link WorldSettings#getIslandDistance()} made when the Island
-	 * got created in order to allow easier access to this value and must therefore remain
-	 * <u><strong>AS IS</strong></u>.
+	 * Sets the island range. This method should <u><strong>NEVER</strong></u> be
+	 * used except for testing purposes. <br>
+	 * The range value is a copy of {@link WorldSettings#getIslandDistance()} made
+	 * when the Island got created in order to allow easier access to this value and
+	 * must therefore remain <u><strong>AS IS</strong></u>.
+	 * 
 	 * @param range the range to set
 	 * @see #setProtectionRange(int)
 	 */
-	public void setRange(int range){
+	public void setRange(int range) {
 		this.range = range;
 		setChanged();
 	}
 
 	/**
 	 * Set user's rank to an arbitrary rank value
+	 * 
 	 * @param user the User
 	 * @param rank rank value
 	 */
@@ -1175,8 +1198,9 @@ public class Island implements DataObject, MetaDataAble {
 	}
 
 	/**
-	 * Sets player's rank to an arbitrary rank value.
-	 * Calling this method won't call the {@link world.bentobox.bentobox.api.events.island.IslandRankChangeEvent}.
+	 * Sets player's rank to an arbitrary rank value. Calling this method won't call
+	 * the {@link world.bentobox.bentobox.api.events.island.IslandRankChangeEvent}.
+	 * 
 	 * @param uuid UUID of the player
 	 * @param rank rank value
 	 * @since 1.1
@@ -1198,13 +1222,14 @@ public class Island implements DataObject, MetaDataAble {
 	}
 
 	/**
-	 * Sets whether this island is a spawn or not.
-	 * <br/>
+	 * Sets whether this island is a spawn or not. <br/>
 	 * If {@code true}, the members and the owner will be removed from this island.
 	 * The flags will also be reset to default values.
-	 * @param isSpawn {@code true} if the island is a spawn, {@code false} otherwise.
+	 * 
+	 * @param isSpawn {@code true} if the island is a spawn, {@code false}
+	 *                otherwise.
 	 */
-	public void setSpawn(boolean isSpawn){
+	public void setSpawn(boolean isSpawn) {
 		if (spawn == isSpawn) {
 			return; // No need to update anything
 		}
@@ -1221,8 +1246,10 @@ public class Island implements DataObject, MetaDataAble {
 	}
 
 	/**
-	 * Get the default spawn location for this island. Note that this may only be valid
-	 * after the initial pasting because the player can change the island after that point
+	 * Get the default spawn location for this island. Note that this may only be
+	 * valid after the initial pasting because the player can change the island
+	 * after that point
+	 * 
 	 * @return the spawnPoint
 	 */
 	public Map<Environment, Location> getSpawnPoint() {
@@ -1231,6 +1258,7 @@ public class Island implements DataObject, MetaDataAble {
 
 	/**
 	 * Set when island is pasted
+	 * 
 	 * @param spawnPoint the spawnPoint to set
 	 */
 	public void setSpawnPoint(Map<Environment, Location> spawnPoint) {
@@ -1247,7 +1275,7 @@ public class Island implements DataObject, MetaDataAble {
 	/**
 	 * @param updatedDate - the updatedDate to sets
 	 */
-	public void setUpdatedDate(long updatedDate){
+	public void setUpdatedDate(long updatedDate) {
 		this.updatedDate = updatedDate;
 		setChanged();
 	}
@@ -1261,8 +1289,9 @@ public class Island implements DataObject, MetaDataAble {
 	}
 
 	/**
-	 * Toggles a settings flag
-	 * This method affects subflags (if the given flag is a parent flag)
+	 * Toggles a settings flag This method affects subflags (if the given flag is a
+	 * parent flag)
+	 * 
 	 * @param flag - flag
 	 */
 	public void toggleFlag(Flag flag) {
@@ -1270,8 +1299,9 @@ public class Island implements DataObject, MetaDataAble {
 	}
 
 	/**
-	 * Toggles a settings flag
-	 * Also specify whether subflags are affected by this method call
+	 * Toggles a settings flag Also specify whether subflags are affected by this
+	 * method call
+	 * 
 	 * @param flag - flag
 	 */
 	public void toggleFlag(Flag flag, boolean doSubflags) {
@@ -1283,9 +1313,10 @@ public class Island implements DataObject, MetaDataAble {
 	}
 
 	/**
-	 * Sets the state of a settings flag
-	 * This method affects subflags (if the given flag is a parent flag)
-	 * @param flag - flag
+	 * Sets the state of a settings flag This method affects subflags (if the given
+	 * flag is a parent flag)
+	 * 
+	 * @param flag  - flag
 	 * @param state - true or false
 	 */
 	public void setSettingsFlag(Flag flag, boolean state) {
@@ -1293,9 +1324,10 @@ public class Island implements DataObject, MetaDataAble {
 	}
 
 	/**
-	 * Sets the state of a settings flag
-	 * Also specify whether subflags are affected by this method call
-	 * @param flag - flag
+	 * Sets the state of a settings flag Also specify whether subflags are affected
+	 * by this method call
+	 * 
+	 * @param flag  - flag
 	 * @param state - true or false
 	 */
 	public void setSettingsFlag(Flag flag, boolean state, boolean doSubflags) {
@@ -1303,7 +1335,8 @@ public class Island implements DataObject, MetaDataAble {
 		if (flag.getType().equals(Flag.Type.SETTING) || flag.getType().equals(Flag.Type.WORLD_SETTING)) {
 			flags.put(flag.getID(), newState);
 			if (doSubflags && flag.hasSubflags()) {
-				// If we have circular subflags or a flag is a subflag of itself we are in trouble!
+				// If we have circular subflags or a flag is a subflag of itself we are in
+				// trouble!
 				flag.getSubflags().forEach(subflag -> setSettingsFlag(subflag, state, true));
 			}
 		}
@@ -1312,8 +1345,9 @@ public class Island implements DataObject, MetaDataAble {
 
 	/**
 	 * Set the spawn location for this island type
+	 * 
 	 * @param islandType - island type
-	 * @param l - location
+	 * @param l          - location
 	 */
 	public void setSpawnPoint(Environment islandType, Location l) {
 		spawnPoint.put(islandType, l);
@@ -1322,6 +1356,7 @@ public class Island implements DataObject, MetaDataAble {
 
 	/**
 	 * Get the spawn point for this island type
+	 * 
 	 * @param islandType - island type
 	 * @return - location or null if one does not exist
 	 */
@@ -1332,6 +1367,7 @@ public class Island implements DataObject, MetaDataAble {
 
 	/**
 	 * Removes all of a specified rank from the member list
+	 * 
 	 * @param rank rank value
 	 */
 	public void removeRank(Integer rank) {
@@ -1341,6 +1377,7 @@ public class Island implements DataObject, MetaDataAble {
 
 	/**
 	 * Gets the history of the island.
+	 * 
 	 * @return the list of {@link LogEntry} for this island.
 	 */
 	public List<LogEntry> getHistory() {
@@ -1349,6 +1386,7 @@ public class Island implements DataObject, MetaDataAble {
 
 	/**
 	 * Adds a {@link LogEntry} to the history of this island.
+	 * 
 	 * @param logEntry the LogEntry to add.
 	 */
 	public void log(LogEntry logEntry) {
@@ -1358,6 +1396,7 @@ public class Island implements DataObject, MetaDataAble {
 
 	/**
 	 * Sets the history of the island.
+	 * 
 	 * @param history the list of {@link LogEntry} to set for this island.
 	 */
 	public void setHistory(List<LogEntry> history) {
@@ -1396,8 +1435,13 @@ public class Island implements DataObject, MetaDataAble {
 	}
 
 	/**
-	 * Returns the name of the {@link world.bentobox.bentobox.api.addons.GameModeAddon GameModeAddon} this island is handled by.
-	 * @return the name of the {@link world.bentobox.bentobox.api.addons.GameModeAddon GameModeAddon} this island is handled by.
+	 * Returns the name of the
+	 * {@link world.bentobox.bentobox.api.addons.GameModeAddon GameModeAddon} this
+	 * island is handled by.
+	 * 
+	 * @return the name of the
+	 *         {@link world.bentobox.bentobox.api.addons.GameModeAddon
+	 *         GameModeAddon} this island is handled by.
 	 * @since 1.5.0
 	 */
 	public String getGameMode() {
@@ -1405,8 +1449,11 @@ public class Island implements DataObject, MetaDataAble {
 	}
 
 	/**
-	 * Sets the name of the {@link world.bentobox.bentobox.api.addons.GameModeAddon GameModeAddon} this island is handled by.
-	 * Note this has no effect over the actual location of the island, however this may cause issues with addons using this data.
+	 * Sets the name of the {@link world.bentobox.bentobox.api.addons.GameModeAddon
+	 * GameModeAddon} this island is handled by. Note this has no effect over the
+	 * actual location of the island, however this may cause issues with addons
+	 * using this data.
+	 * 
 	 * @since 1.5.0
 	 */
 	public void setGameMode(String gameMode) {
@@ -1416,7 +1463,9 @@ public class Island implements DataObject, MetaDataAble {
 
 	/**
 	 * Checks whether this island has its nether island generated or not.
-	 * @return {@code true} if this island has its nether island generated, {@code false} otherwise.
+	 * 
+	 * @return {@code true} if this island has its nether island generated,
+	 *         {@code false} otherwise.
 	 * @since 1.5.0
 	 */
 	public boolean hasNetherIsland() {
@@ -1426,16 +1475,21 @@ public class Island implements DataObject, MetaDataAble {
 
 	/**
 	 * Checks whether this island has its nether island mode enabled or not.
-	 * @return {@code true} if this island has its nether island enabled, {@code false} otherwise.
+	 * 
+	 * @return {@code true} if this island has its nether island enabled,
+	 *         {@code false} otherwise.
 	 * @since 1.21.0
 	 */
 	public boolean isNetherIslandEnabled() {
-		return this.getPlugin().getIWM().isNetherGenerate(this.world) && this.getPlugin().getIWM().isNetherIslands(this.world);
+		return this.getPlugin().getIWM().isNetherGenerate(this.world)
+				&& this.getPlugin().getIWM().isNetherIslands(this.world);
 	}
 
 	/**
 	 * Checks whether this island has its end island generated or not.
-	 * @return {@code true} if this island has its end island generated, {@code false} otherwise.
+	 * 
+	 * @return {@code true} if this island has its end island generated,
+	 *         {@code false} otherwise.
 	 * @since 1.5.0
 	 */
 	public boolean hasEndIsland() {
@@ -1443,19 +1497,22 @@ public class Island implements DataObject, MetaDataAble {
 		return end != null && !getCenter().toVector().toLocation(end).getBlock().getType().isAir();
 	}
 
-
 	/**
 	 * Checks whether this island has its end island mode enabled or not.
-	 * @return {@code true} if this island has its end island enabled, {@code false} otherwise.
+	 * 
+	 * @return {@code true} if this island has its end island enabled, {@code false}
+	 *         otherwise.
 	 * @since 1.21.0
 	 */
 	public boolean isEndIslandEnabled() {
-		return this.getPlugin().getIWM().isEndGenerate(this.world) && this.getPlugin().getIWM().isEndIslands(this.world);
+		return this.getPlugin().getIWM().isEndGenerate(this.world)
+				&& this.getPlugin().getIWM().isEndIslands(this.world);
 	}
 
-
 	/**
-	 * Checks if a flag is on cooldown. Only stored in memory so a server restart will reset the cooldown.
+	 * Checks if a flag is on cooldown. Only stored in memory so a server restart
+	 * will reset the cooldown.
+	 * 
 	 * @param flag - flag
 	 * @return true if on cooldown, false if not
 	 * @since 1.6.0
@@ -1471,6 +1528,7 @@ public class Island implements DataObject, MetaDataAble {
 
 	/**
 	 * Sets a cooldown for this flag on this island.
+	 * 
 	 * @param flag - Flag to cooldown
 	 */
 	public void setCooldown(Flag flag) {
@@ -1509,10 +1567,12 @@ public class Island implements DataObject, MetaDataAble {
 	}
 
 	/**
-	 * Get the rank required to run command on this island.
-	 * The command must have been registered with a rank.
+	 * Get the rank required to run command on this island. The command must have
+	 * been registered with a rank.
+	 * 
 	 * @param command - the string given by {@link CompositeCommand#getUsage()}
-	 * @return Rank value required, or if command is not set {@link CompositeCommand#getDefaultCommandRank()}
+	 * @return Rank value required, or if command is not set
+	 *         {@link CompositeCommand#getDefaultCommandRank()}
 	 */
 	public int getRankCommand(String command) {
 
@@ -1529,8 +1589,7 @@ public class Island implements DataObject, MetaDataAble {
 			// Get first command label.
 			CompositeCommand compositeCommand = this.getPlugin().getCommandsManager().getCommand(labels[0]);
 
-			for (int i = 1; i < labels.length && compositeCommand != null; i++)
-			{
+			for (int i = 1; i < labels.length && compositeCommand != null; i++) {
 				compositeCommand = compositeCommand.getSubCommand(labels[i]).orElse(null);
 			}
 
@@ -1542,17 +1601,20 @@ public class Island implements DataObject, MetaDataAble {
 	/**
 	 *
 	 * @param command - the string given by {@link CompositeCommand#getUsage()}
-	 * @param rank value as used by {@link RanksManager}
+	 * @param rank    value as used by {@link RanksManager}
 	 */
 	public void setRankCommand(String command, int rank) {
-		if (this.commandRanks == null) this.commandRanks = new HashMap<>();
+		if (this.commandRanks == null)
+			this.commandRanks = new HashMap<>();
 		this.commandRanks.put(command, rank);
 		setChanged();
 	}
 
 	/**
-	 * Returns whether this Island is currently reserved or not.
-	 * If {@code true}, this means no blocks, except a bedrock one at the center of the island, exist.
+	 * Returns whether this Island is currently reserved or not. If {@code true},
+	 * this means no blocks, except a bedrock one at the center of the island,
+	 * exist.
+	 * 
 	 * @return {@code true} if this Island is reserved, {@code false} otherwise.
 	 * @since 1.6.0
 	 */
@@ -1613,9 +1675,10 @@ public class Island implements DataObject, MetaDataAble {
 	}
 
 	/**
-	 * Get the center location of the protection zone.
-	 * This can be anywhere within the island space and can move.
-	 * Unless explicitly set, it will return the same as {@link #getCenter()}.
+	 * Get the center location of the protection zone. This can be anywhere within
+	 * the island space and can move. Unless explicitly set, it will return the same
+	 * as {@link #getCenter()}.
+	 * 
 	 * @return a clone of the protection center location
 	 * @since 1.16.0
 	 */
@@ -1626,6 +1689,7 @@ public class Island implements DataObject, MetaDataAble {
 
 	/**
 	 * Sets the protection center location of the island within the island space.
+	 * 
 	 * @param location the location to set
 	 * @throws IOException if the location is not in island space
 	 * @since 1.16.0
@@ -1653,8 +1717,10 @@ public class Island implements DataObject, MetaDataAble {
 
 	/**
 	 * Get the location of a named home
+	 * 
 	 * @param name home name case insensitive (name is forced to lower case)
-	 * @return the home location or if none found the protection center of the island is returned.
+	 * @return the home location or if none found the protection center of the
+	 *         island is returned.
 	 * @since 1.16.0
 	 */
 	@NonNull
@@ -1680,8 +1746,10 @@ public class Island implements DataObject, MetaDataAble {
 		if (location != null) {
 			Vector v = location.toVector();
 			if (!this.getBoundingBox().contains(v)) {
-				BentoBox.getInstance().logWarning("Tried to set a home location " + location + " outside of the island. This generally should not happen.");
-				BentoBox.getInstance().logWarning("Island is at " + this.getCenter() + ". The island file may need editing to remove this home.");
+				BentoBox.getInstance().logWarning("Tried to set a home location " + location
+						+ " outside of the island. This generally should not happen.");
+				BentoBox.getInstance().logWarning(
+						"Island is at " + this.getCenter() + ". The island file may need editing to remove this home.");
 				BentoBox.getInstance().logWarning("Please report this issue and logs around this item to BentoBox");
 			}
 		}
@@ -1691,6 +1759,7 @@ public class Island implements DataObject, MetaDataAble {
 
 	/**
 	 * Remove a named home from this island
+	 * 
 	 * @param name - home name to remove
 	 * @return true if home removed successfully
 	 * @since 1.16.0
@@ -1702,6 +1771,7 @@ public class Island implements DataObject, MetaDataAble {
 
 	/**
 	 * Remove all homes from this island except the default home
+	 * 
 	 * @return true if any non-default homes removed
 	 * @since 1.20.0
 	 */
@@ -1712,6 +1782,7 @@ public class Island implements DataObject, MetaDataAble {
 
 	/**
 	 * Rename a home
+	 * 
 	 * @param oldName - old name of home
 	 * @param newName - new name of home
 	 * @return true if successful, false if oldName does not exist, already exists
@@ -1727,8 +1798,9 @@ public class Island implements DataObject, MetaDataAble {
 	}
 
 	/**
-	 * Get the max homes. You shouldn't access this directly.
-	 * Use {@link world.bentobox.bentobox.managers.IslandsManager#getMaxHomes(Island)}
+	 * Get the max homes. You shouldn't access this directly. Use
+	 * {@link world.bentobox.bentobox.managers.IslandsManager#getMaxHomes(Island)}
+	 * 
 	 * @return the maxHomes. If null, then the world default should be used.
 	 * @since 1.16.0
 	 */
@@ -1738,9 +1810,9 @@ public class Island implements DataObject, MetaDataAble {
 	}
 
 	/**
-	 * @param maxHomes the maxHomes to set. If null then the world default will be used.
-	 * You shouldn't access this directly.
-	 * Use {@link world.bentobox.bentobox.managers.IslandsManager#setMaxHomes(Island, Integer)}
+	 * @param maxHomes the maxHomes to set. If null then the world default will be
+	 *                 used. You shouldn't access this directly. Use
+	 *                 {@link world.bentobox.bentobox.managers.IslandsManager#setMaxHomes(Island, Integer)}
 	 * @since 1.16.0
 	 */
 	public void setMaxHomes(@Nullable Integer maxHomes) {
@@ -1770,8 +1842,10 @@ public class Island implements DataObject, MetaDataAble {
 
 	/**
 	 * Get the maximum number of island members
+	 * 
 	 * @param rank island rank value from {@link RanksManager}
-	 * @return the maxMembers for the rank given - if null then the world default should be used. Negative values = unlimited.
+	 * @return the maxMembers for the rank given - if null then the world default
+	 *         should be used. Negative values = unlimited.
 	 * @since 1.16.0
 	 */
 	@Nullable
@@ -1779,17 +1853,17 @@ public class Island implements DataObject, MetaDataAble {
 		return getMaxMembers().get(rank);
 	}
 
-
 	/**
 	 * Set the maximum number of island members
-	 * @param rank island rank value from {@link RanksManager}
-	 * @param maxMembers the maxMembers to set. If null then the world default applies. Negative values = unlimited.
+	 * 
+	 * @param rank       island rank value from {@link RanksManager}
+	 * @param maxMembers the maxMembers to set. If null then the world default
+	 *                   applies. Negative values = unlimited.
 	 * @since 1.16.0
 	 */
 	public void setMaxMembers(int rank, Integer maxMembers) {
 		getMaxMembers().put(rank, maxMembers);
 	}
-
 
 	/**
 	 * @return the bonusRanges
@@ -1811,15 +1885,18 @@ public class Island implements DataObject, MetaDataAble {
 
 	/**
 	 * Get the bonus range provided by all settings of the range giver
+	 * 
 	 * @param id an id to identify this bonus
 	 * @return bonus range, or 0 if unknown
 	 */
 	public int getBonusRange(String id) {
-		return this.getBonusRanges().stream().filter(r -> r.getUniqueId().equals(id)).mapToInt(BonusRangeRecord::getRange).sum();
+		return this.getBonusRanges().stream().filter(r -> r.getUniqueId().equals(id))
+				.mapToInt(BonusRangeRecord::getRange).sum();
 	}
 
 	/**
 	 * Get the BonusRangeRecord for uniqueId
+	 * 
 	 * @param uniqueId a unique id to identify this bonus
 	 * @return optional BonusRangeRecord
 	 */
@@ -1828,11 +1905,13 @@ public class Island implements DataObject, MetaDataAble {
 	}
 
 	/**
-	 * Add a bonus range amount to the island for this addon or plugin.
-	 * Note, this will not replace any range set already with the same id
-	 * @param id an id to identify this bonus
-	 * @param range range to add to the island protected range
-	 * @param message the reference key to a locale message related to this bonus. May be blank.
+	 * Add a bonus range amount to the island for this addon or plugin. Note, this
+	 * will not replace any range set already with the same id
+	 * 
+	 * @param id      an id to identify this bonus
+	 * @param range   range to add to the island protected range
+	 * @param message the reference key to a locale message related to this bonus.
+	 *                May be blank.
 	 */
 	public void addBonusRange(String id, int range, String message) {
 		this.getBonusRanges().add(new BonusRangeRecord(id, range, message));
@@ -1842,6 +1921,7 @@ public class Island implements DataObject, MetaDataAble {
 
 	/**
 	 * Clear the bonus ranges for a unique ID
+	 * 
 	 * @param id id to identify this bonus
 	 */
 	public void clearBonusRange(String id) {
@@ -1872,7 +1952,9 @@ public class Island implements DataObject, MetaDataAble {
 		setChanged();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
@@ -1882,9 +1964,9 @@ public class Island implements DataObject, MetaDataAble {
 				+ ", maxEverProtectionRange=" + maxEverProtectionRange + ", world=" + world + ", gameMode=" + gameMode
 				+ ", name=" + name + ", createdDate=" + createdDate + ", updatedDate=" + updatedDate + ", owner="
 				+ owner + ", members=" + members + ", maxMembers=" + maxMembers + ", spawn=" + spawn
-				+ ", purgeProtected=" + purgeProtected + ", flags=" + flags + ", history=" + history
-				+ ", spawnPoint=" + spawnPoint + ", doNotLoad=" + doNotLoad
-				+ ", cooldowns=" + cooldowns + ", commandRanks=" + commandRanks + ", reserved=" + reserved
-				+ ", metaData=" + metaData + ", homes=" + homes + ", maxHomes=" + maxHomes + "]";
+				+ ", purgeProtected=" + purgeProtected + ", flags=" + flags + ", history=" + history + ", spawnPoint="
+				+ spawnPoint + ", doNotLoad=" + doNotLoad + ", cooldowns=" + cooldowns + ", commandRanks="
+				+ commandRanks + ", reserved=" + reserved + ", metaData=" + metaData + ", homes=" + homes
+				+ ", maxHomes=" + maxHomes + "]";
 	}
 }
