@@ -61,149 +61,152 @@ import world.bentobox.bentobox.panels.IslandCreationPanel;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, NewIsland.class, IslandCreationPanel.class})
+@PrepareForTest({ Bukkit.class, BentoBox.class, NewIsland.class, IslandCreationPanel.class })
 public class IslandCreateCommandTest {
 
-    @Mock
-    private User user;
-    private IslandCreateCommand cc;
-    @Mock
-    private IslandsManager im;
-    @Mock
-    private IslandWorldManager iwm;
-    @Mock
-    private Builder builder;
-    @Mock
-    private BentoBox plugin;
-    @Mock
-    private Settings settings;
-    @Mock
-    private CompositeCommand ic;
-    @Mock
-    private BlueprintsManager bpm;
-    @Mock
-    private World world;
-    @Mock
-    private @NonNull WorldSettings ws;
-    @Mock
-    private Island island;
+	@Mock
+	private User user;
+	private IslandCreateCommand cc;
+	@Mock
+	private IslandsManager im;
+	@Mock
+	private IslandWorldManager iwm;
+	@Mock
+	private Builder builder;
+	@Mock
+	private BentoBox plugin;
+	@Mock
+	private Settings settings;
+	@Mock
+	private CompositeCommand ic;
+	@Mock
+	private BlueprintsManager bpm;
+	@Mock
+	private World world;
+	@Mock
+	private @NonNull WorldSettings ws;
+	@Mock
+	private Island island;
 
-    /**
-     */
-    @Before
-    public void setUp() throws Exception {
-        // Set up plugin
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+	/**
+	 */
+	@Before
+	public void setUp() throws Exception {
+		// Set up plugin
+		Whitebox.setInternalState(BentoBox.class, "instance", plugin);
 
-        // Command manager
-        CommandsManager cm = mock(CommandsManager.class);
-        when(plugin.getCommandsManager()).thenReturn(cm);
+		// Command manager
+		CommandsManager cm = mock(CommandsManager.class);
+		when(plugin.getCommandsManager()).thenReturn(cm);
 
-        // Settings
-        when(plugin.getSettings()).thenReturn(settings);
+		// Settings
+		when(plugin.getSettings()).thenReturn(settings);
 
-        // Player
-        Player player = mock(Player.class);
-        when(user.isOp()).thenReturn(false);
-        when(user.isPlayer()).thenReturn(true);
-        UUID uuid = UUID.randomUUID();
-        when(user.getUniqueId()).thenReturn(uuid);
-        when(user.getPlayer()).thenReturn(player);
-        when(user.hasPermission(anyString())).thenReturn(true);
-        when(user.getTranslation(any())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
-        // Return the default value for perm questions by default
-        when(user.getPermissionValue(anyString(), anyInt())).thenAnswer((Answer<Integer>) inv -> inv.getArgument(1, Integer.class));
-        User.setPlugin(plugin);
-        // Set up user already
-        User.getInstance(player);
+		// Player
+		Player player = mock(Player.class);
+		when(user.isOp()).thenReturn(false);
+		when(user.isPlayer()).thenReturn(true);
+		UUID uuid = UUID.randomUUID();
+		when(user.getUniqueId()).thenReturn(uuid);
+		when(user.getPlayer()).thenReturn(player);
+		when(user.hasPermission(anyString())).thenReturn(true);
+		when(user.getTranslation(any()))
+				.thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
+		// Return the default value for perm questions by default
+		when(user.getPermissionValue(anyString(), anyInt()))
+				.thenAnswer((Answer<Integer>) inv -> inv.getArgument(1, Integer.class));
+		User.setPlugin(plugin);
+		// Set up user already
+		User.getInstance(player);
 
-        // Addon
-        GameModeAddon addon = mock(GameModeAddon.class);
-        when(addon.getPermissionPrefix()).thenReturn("bskyblock.");
+		// Addon
+		GameModeAddon addon = mock(GameModeAddon.class);
+		when(addon.getPermissionPrefix()).thenReturn("bskyblock.");
 
-        // Parent command has no aliases
-        when(ic.getSubCommandAliases()).thenReturn(new HashMap<>());
-        when(ic.getParameters()).thenReturn("parameters");
-        when(ic.getDescription()).thenReturn("description");
-        when(ic.getPermissionPrefix()).thenReturn("permission.");
-        when(ic.getUsage()).thenReturn("");
-        when(ic.getSubCommand(Mockito.anyString())).thenReturn(Optional.empty());
-        when(ic.getAddon()).thenReturn(addon);
-        when(ic.getWorld()).thenReturn(world);
+		// Parent command has no aliases
+		when(ic.getSubCommandAliases()).thenReturn(new HashMap<>());
+		when(ic.getParameters()).thenReturn("parameters");
+		when(ic.getDescription()).thenReturn("description");
+		when(ic.getPermissionPrefix()).thenReturn("permission.");
+		when(ic.getUsage()).thenReturn("");
+		when(ic.getSubCommand(Mockito.anyString())).thenReturn(Optional.empty());
+		when(ic.getAddon()).thenReturn(addon);
+		when(ic.getWorld()).thenReturn(world);
 
+		// No island for player to begin with (set it later in the tests)
+		when(im.hasIsland(any(), eq(uuid))).thenReturn(false);
+		// when(im.isOwner(any(), eq(uuid))).thenReturn(false);
+		// Has team
+		when(im.inTeam(any(), eq(uuid))).thenReturn(true);
+		when(island.getOwner()).thenReturn(uuid);
+		when(im.getPrimaryIsland(world, uuid)).thenReturn(island);
+		when(plugin.getIslands()).thenReturn(im);
 
-        // No island for player to begin with (set it later in the tests)
-        when(im.hasIsland(any(), eq(uuid))).thenReturn(false);
-        when(im.isOwner(any(), eq(uuid))).thenReturn(false);
-        // Has team
-        when(im.inTeam(any(), eq(uuid))).thenReturn(true);
-        when(im.getPrimaryIsland(world, uuid)).thenReturn(island);
-        when(plugin.getIslands()).thenReturn(im);
+		PlayersManager pm = mock(PlayersManager.class);
+		when(plugin.getPlayers()).thenReturn(pm);
 
+		// Server & Scheduler
+		BukkitScheduler sch = mock(BukkitScheduler.class);
+		PowerMockito.mockStatic(Bukkit.class);
+		when(Bukkit.getScheduler()).thenReturn(sch);
 
-        PlayersManager pm = mock(PlayersManager.class);
-        when(plugin.getPlayers()).thenReturn(pm);
+		// IWM
+		when(iwm.getFriendlyName(any())).thenReturn("BSkyBlock");
+		when(ws.getConcurrentIslands()).thenReturn(1); // One island allowed
+		when(iwm.getWorldSettings(world)).thenReturn(ws);
+		when(iwm.getAddon(world)).thenReturn(Optional.of(addon));
+		when(plugin.getIWM()).thenReturn(iwm);
 
-        // Server & Scheduler
-        BukkitScheduler sch = mock(BukkitScheduler.class);
-        PowerMockito.mockStatic(Bukkit.class);
-        when(Bukkit.getScheduler()).thenReturn(sch);
+		// NewIsland
+		PowerMockito.mockStatic(NewIsland.class);
+		when(NewIsland.builder()).thenReturn(builder);
+		when(builder.player(any())).thenReturn(builder);
+		when(builder.name(Mockito.anyString())).thenReturn(builder);
+		when(builder.addon(addon)).thenReturn(builder);
+		when(builder.reason(any())).thenReturn(builder);
+		when(builder.build()).thenReturn(mock(Island.class));
 
-        // IWM
-        when(iwm.getFriendlyName(any())).thenReturn("BSkyBlock");
-        when(ws.getConcurrentIslands()).thenReturn(1); // One island allowed
-        when(iwm.getWorldSettings(world)).thenReturn(ws);
-        when(iwm.getAddon(world)).thenReturn(Optional.of(addon));
-        when(plugin.getIWM()).thenReturn(iwm);
+		// Bundles manager
+		when(plugin.getBlueprintsManager()).thenReturn(bpm);
 
-        // NewIsland
-        PowerMockito.mockStatic(NewIsland.class);
-        when(NewIsland.builder()).thenReturn(builder);
-        when(builder.player(any())).thenReturn(builder);
-        when(builder.name(Mockito.anyString())).thenReturn(builder);
-        when(builder.addon(addon)).thenReturn(builder);
-        when(builder.reason(any())).thenReturn(builder);
-        when(builder.build()).thenReturn(mock(Island.class));
+		// IslandCreationPanel
+		PowerMockito.mockStatic(IslandCreationPanel.class);
 
-        // Bundles manager
-        when(plugin.getBlueprintsManager()).thenReturn(bpm);
+		// Command
+		cc = new IslandCreateCommand(ic);
+	}
 
-        // IslandCreationPanel
-        PowerMockito.mockStatic(IslandCreationPanel.class);
+	/**
+	 */
+	@After
+	public void tearDown() {
+		User.clearUsers();
+		Mockito.framework().clearInlineMocks();
+	}
 
-        // Command
-        cc = new IslandCreateCommand(ic);
-    }
+	/**
+	 * Test method for
+	 * {@link world.bentobox.bentobox.api.commands.island.IslandCreateCommand#IslandCreateCommand(world.bentobox.bentobox.api.commands.CompositeCommand)}.
+	 */
+	@Test
+	public void testIslandCreateCommand() {
+		assertEquals("create", cc.getLabel());
+		assertEquals("new", cc.getAliases().get(0));
+	}
 
-    /**
-     */
-    @After
-    public void tearDown() {
-        User.clearUsers();
-        Mockito.framework().clearInlineMocks();
-    }
+	/**
+	 * Test method for
+	 * {@link world.bentobox.bentobox.api.commands.island.IslandCreateCommand#setup()}.
+	 */
+	@Test
+	public void testSetup() {
+		assertTrue(cc.isOnlyPlayer());
+		assertEquals("commands.island.create.parameters", cc.getParameters());
+		assertEquals("commands.island.create.description", cc.getDescription());
+		assertEquals("permission.island.create", cc.getPermission());
+	}
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandCreateCommand#IslandCreateCommand(world.bentobox.bentobox.api.commands.CompositeCommand)}.
-     */
-    @Test
-    public void testIslandCreateCommand() {
-        assertEquals("create", cc.getLabel());
-        assertEquals("new", cc.getAliases().get(0));
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandCreateCommand#setup()}.
-     */
-    @Test
-    public void testSetup() {
-        assertTrue(cc.isOnlyPlayer());
-        assertEquals("commands.island.create.parameters", cc.getParameters());
-        assertEquals("commands.island.create.description", cc.getDescription());
-        assertEquals("permission.island.create", cc.getPermission());
-    }
-
-    /**
+	/**
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandCreateCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
@@ -215,7 +218,7 @@ public class IslandCreateCommandTest {
         verify(user).sendMessage("commands.island.create.you-cannot-make");
     }
 
-    /**
+	/**
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandCreateCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
@@ -226,7 +229,7 @@ public class IslandCreateCommandTest {
 
     }
 
-    /**
+	/**
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandCreateCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
@@ -239,23 +242,22 @@ public class IslandCreateCommandTest {
         verify(user, never()).sendMessage(anyString());
     }
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandCreateCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
-     */
-    @Test
-    public void testCanExecuteUserStringListOfStringHasIslandReserved() {
-        @Nullable
-        Island island = mock(Island.class);
-        when(im.getIsland(any(), any(User.class))).thenReturn(island);
-        when(island.isReserved()).thenReturn(true);
-        assertTrue(cc.canExecute(user, "", Collections.emptyList()));
-        verify(user, never()).sendMessage("general.errors.already-have-island");
+	/**
+	 * Test method for
+	 * {@link world.bentobox.bentobox.api.commands.island.IslandCreateCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+	 */
+	@Test
+	public void testCanExecuteUserStringListOfStringHasIslandReserved() {
+		@Nullable
+		Island island = mock(Island.class);
+		when(im.getIsland(any(), any(User.class))).thenReturn(island);
+		when(island.isReserved()).thenReturn(true);
+		assertTrue(cc.canExecute(user, "", Collections.emptyList()));
+		verify(user, never()).sendMessage("general.errors.already-have-island");
 
-    }
+	}
 
-
-
-    /**
+	/**
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandCreateCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
@@ -269,7 +271,7 @@ public class IslandCreateCommandTest {
 
     }
 
-    /**
+	/**
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandCreateCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
@@ -288,7 +290,7 @@ public class IslandCreateCommandTest {
         verify(user).sendMessage("commands.island.create.creating-island");
     }
 
-    /**
+	/**
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandCreateCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
@@ -305,7 +307,7 @@ public class IslandCreateCommandTest {
         verify(plugin).logError("Could not create island for player. commands.island.create.unable-create-island");
     }
 
-    /**
+	/**
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandCreateCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
@@ -318,28 +320,30 @@ public class IslandCreateCommandTest {
         verify(user, never()).sendMessage("commands.island.create.creating-island");
     }
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandCreateCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
-     */
-    @Test
-    public void testExecuteUserStringListOfStringUnknownBundle() {
-        assertFalse(cc.execute(user, "", List.of("custom")));
-        verify(user).sendMessage(eq("commands.island.create.unknown-blueprint"));
-        verify(user, never()).sendMessage("commands.island.create.creating-island");
-    }
+	/**
+	 * Test method for
+	 * {@link world.bentobox.bentobox.api.commands.island.IslandCreateCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+	 */
+	@Test
+	public void testExecuteUserStringListOfStringUnknownBundle() {
+		assertFalse(cc.execute(user, "", List.of("custom")));
+		verify(user).sendMessage(eq("commands.island.create.unknown-blueprint"));
+		verify(user, never()).sendMessage("commands.island.create.creating-island");
+	}
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandCreateCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
-     */
-    @Test
-    public void testExecuteUserStringListOfStringNoBundleNoPanel() {
-        // Creates default bundle
-        assertTrue(cc.execute(user, "", Collections.emptyList()));
-        // do not show panel, just make the island
-        verify(user).sendMessage("commands.island.create.creating-island");
-    }
+	/**
+	 * Test method for
+	 * {@link world.bentobox.bentobox.api.commands.island.IslandCreateCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+	 */
+	@Test
+	public void testExecuteUserStringListOfStringNoBundleNoPanel() {
+		// Creates default bundle
+		assertTrue(cc.execute(user, "", Collections.emptyList()));
+		// do not show panel, just make the island
+		verify(user).sendMessage("commands.island.create.creating-island");
+	}
 
-    /**
+	/**
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandCreateCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
@@ -356,16 +360,17 @@ public class IslandCreateCommandTest {
         verify(user).sendMessage("commands.island.create.creating-island");
     }
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandCreateCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
-     */
-    @Test
-    public void testExecuteUserStringListOfStringCooldown() {
-        assertTrue(cc.execute(user, "", Collections.emptyList()));
-        verify(ic, never()).getSubCommand(eq("reset"));
-    }
+	/**
+	 * Test method for
+	 * {@link world.bentobox.bentobox.api.commands.island.IslandCreateCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+	 */
+	@Test
+	public void testExecuteUserStringListOfStringCooldown() {
+		assertTrue(cc.execute(user, "", Collections.emptyList()));
+		verify(ic, never()).getSubCommand(eq("reset"));
+	}
 
-    /**
+	/**
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandCreateCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
@@ -374,17 +379,17 @@ public class IslandCreateCommandTest {
         assertTrue(cc.execute(user, "", Collections.emptyList()));
     }
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandCreateCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
-     */
-    @Test
-    public void testExecuteUserStringListOfStringShowPanel() {
-        Map<String, BlueprintBundle> map = Map.of("bundle1", new BlueprintBundle(),
-                "bundle2", new BlueprintBundle(),
-                "bundle3", new BlueprintBundle());
-        when(bpm.getBlueprintBundles(any())).thenReturn(map);
-        assertTrue(cc.execute(user, "", Collections.emptyList()));
-        // Panel is shown, not the creation message
-        verify(user, never()).sendMessage("commands.island.create.creating-island");
-    }
+	/**
+	 * Test method for
+	 * {@link world.bentobox.bentobox.api.commands.island.IslandCreateCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+	 */
+	@Test
+	public void testExecuteUserStringListOfStringShowPanel() {
+		Map<String, BlueprintBundle> map = Map.of("bundle1", new BlueprintBundle(), "bundle2", new BlueprintBundle(),
+				"bundle3", new BlueprintBundle());
+		when(bpm.getBlueprintBundles(any())).thenReturn(map);
+		assertTrue(cc.execute(user, "", Collections.emptyList()));
+		// Panel is shown, not the creation message
+		verify(user, never()).sendMessage("commands.island.create.creating-island");
+	}
 }

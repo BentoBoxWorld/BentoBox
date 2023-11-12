@@ -449,10 +449,13 @@ public class IslandsManager {
 	 * @param minimumRank - the minimum rank to be included in the set.
 	 * @return Set of team UUIDs
 	 */
-	@NonNull
-	public Set<UUID> getMembers(@NonNull World world, @NonNull UUID playerUUID, int minimumRank) {
-		return islandCache.getMembers(world, playerUUID, minimumRank);
-	}
+	/*
+	 * @Deprecated
+	 * 
+	 * @NonNull public Set<UUID> getMembers(@NonNull World world, @NonNull UUID
+	 * playerUUID, int minimumRank) { return islandCache.getMembers(world,
+	 * playerUUID, minimumRank); }
+	 */
 
 	/**
 	 * Returns a set of island member UUID's for the island of playerUUID. Only
@@ -464,10 +467,13 @@ public class IslandsManager {
 	 * @param playerUUID - the player's UUID
 	 * @return Set of team UUIDs
 	 */
-	@NonNull
-	public Set<UUID> getMembers(@NonNull World world, @NonNull UUID playerUUID) {
-		return islandCache.getMembers(world, playerUUID, RanksManager.MEMBER_RANK);
-	}
+	/*
+	 * @Deprecated
+	 * 
+	 * @NonNull public Set<UUID> getMembers(@NonNull World world, @NonNull UUID
+	 * playerUUID) { return islandCache.getMembers(world, playerUUID,
+	 * RanksManager.MEMBER_RANK); }
+	 */
 
 	/**
 	 * Gets the maximum number of island members allowed on this island. Will update
@@ -679,86 +685,41 @@ public class IslandsManager {
 	 * @return Location of a safe teleport spot or {@code null} if one cannot be
 	 *         found or if the world is not an island world.
 	 */
-	@Nullable
-	public Location getSafeHomeLocation(@NonNull World world, @NonNull User user, String name) {
-		// Check if the world is a gamemode world
-		if (!plugin.getIWM().inWorld(world)) {
-			return null;
-		}
-		// Try the named home location first
-		Location l = getHomeLocation(world, user, name);
-		if (l == null) {
-			// Get the default home, which may be null too, but that's okay
-			name = "";
-			l = getHomeLocation(world, user, name);
-		}
-		// Check if it is safe
-		if (l != null) {
-			if (isSafeLocation(l)) {
-				return l;
-			}
-			// To cover slabs, stairs and other half blocks, try one block above
-			Location lPlusOne = l.clone();
-			lPlusOne.add(new Vector(0, 1, 0));
-			if (isSafeLocation(lPlusOne)) {
-				// Adjust the home location accordingly
-				setHomeLocation(user, lPlusOne, name);
-				return lPlusOne;
-			}
-		}
-		// Home location either isn't safe, or does not exist so try the island
-		// location
-		if (inTeam(world, user.getUniqueId())) {
-			l = getIslandLocation(world, user.getUniqueId());
-			if (l != null && isSafeLocation(l)) {
-				setHomeLocation(user, l, name);
-				return l;
-			} else {
-				// try owner's home
-				UUID owner = getOwner(world, user.getUniqueId());
-				if (owner != null) {
-					Location tlh = getHomeLocation(world, owner);
-					if (tlh != null && isSafeLocation(tlh)) {
-						setHomeLocation(user, tlh, name);
-						return tlh;
-					}
-				}
-			}
-		} else {
-			l = getIslandLocation(world, user.getUniqueId());
-			if (l != null && isSafeLocation(l)) {
-				setHomeLocation(user, l, name);
-				return l.clone().add(new Vector(0.5D, 0, 0.5D));
-			}
-		}
-		if (l == null) {
-			plugin.logWarning(user.getName() + " player has no island in world " + world.getName() + "!");
-			return null;
-		}
-		// If these island locations are not safe, then we need to get creative
-		// Try the default location
-		Location dl = new Location(l.getWorld(), l.getX() + 0.5D, l.getY() + 5D, l.getZ() + 2.5D, 0F, 30F);
-		if (isSafeLocation(dl)) {
-			setHomeLocation(user, dl, name);
-			return dl;
-		}
-		// Try just above the bedrock
-		dl = new Location(l.getWorld(), l.getX() + 0.5D, l.getY() + 5D, l.getZ() + 0.5D, 0F, 30F);
-		if (isSafeLocation(dl)) {
-			setHomeLocation(user, dl, name);
-			return dl;
-		}
-		// Try all the way up to the sky
-		for (int y = l.getBlockY(); y < 255; y++) {
-			final Location n = new Location(l.getWorld(), l.getX() + 0.5D, y, l.getZ() + 0.5D);
-			if (isSafeLocation(n)) {
-				setHomeLocation(user, n, name);
-				return n;
-			}
-		}
-		// Unsuccessful
-		return null;
-	}
+	/*
+	 * @Nullable
+	 * 
+	 * @Deprecated public Location getSafeHomeLocation(@NonNull World
+	 * world, @NonNull User user, String name) { // Check if the world is a gamemode
+	 * world if (!plugin.getIWM().inWorld(world)) { return null; } // Try the named
+	 * home location first Location l = getHomeLocation(world, user, name); if (l ==
+	 * null) { // Get the default home, which may be null too, but that's okay name
+	 * = ""; l = getHomeLocation(world, user, name); } // Check if it is safe if (l
+	 * != null) { if (isSafeLocation(l)) { return l; } // To cover slabs, stairs and
+	 * other half blocks, try one block above Location lPlusOne = l.clone();
+	 * lPlusOne.add(new Vector(0, 1, 0)); if (isSafeLocation(lPlusOne)) { // Adjust
+	 * the home location accordingly setHomeLocation(user, lPlusOne, name); return
+	 * lPlusOne; } } // Home location either isn't safe, or does not exist so try
+	 * the island // location if (inTeam(world, user.getUniqueId())) { l =
+	 * getIslandLocation(world, user.getUniqueId()); if (l != null &&
+	 * isSafeLocation(l)) { setHomeLocation(user, l, name); return l; } else { //
+	 * try owner's home UUID owner = getOwner(world, user.getUniqueId()); if (owner
+	 * != null) { Location tlh = getHomeLocation(world, owner); if (tlh != null &&
+	 * isSafeLocation(tlh)) { setHomeLocation(user, tlh, name); return tlh; } } } }
+	 * else { l = getIslandLocation(world, user.getUniqueId()); if (l != null &&
+	 * isSafeLocation(l)) { setHomeLocation(user, l, name); return l.clone().add(new
+	 * Vector(0.5D, 0, 0.5D)); } } if (l == null) { plugin.logWarning(user.getName()
+	 * + " player has no island in world " + world.getName() + "!"); return null; }
+	 * // If these island locations are not safe, then we need to get creative //
+	 * Try the default location Location dl = new Location(l.getWorld(), l.getX() +
+	 * 0.5D, l.getY() + 5D, l.getZ() + 2.5D, 0F, 30F); if (isSafeLocation(dl)) {
+	 * setHomeLocation(user, dl, name); return dl; } // Try just above the bedrock
+	 * dl = new Location(l.getWorld(), l.getX() + 0.5D, l.getY() + 5D, l.getZ() +
+	 * 0.5D, 0F, 30F); if (isSafeLocation(dl)) { setHomeLocation(user, dl, name);
+	 * return dl; } // Try all the way up to the sky for (int y = l.getBlockY(); y <
+	 * 255; y++) { final Location n = new Location(l.getWorld(), l.getX() + 0.5D, y,
+	 * l.getZ() + 0.5D); if (isSafeLocation(n)) { setHomeLocation(user, n, name);
+	 * return n; } } // Unsuccessful return null; }
+	 */
 
 	/**
 	 * Sets a default home location on user's island. Replaces previous default
@@ -1003,13 +964,15 @@ public class IslandsManager {
 	 * @param playerUUID the player's UUID
 	 * @return island owner's UUID or null if player has no island
 	 */
-	@Nullable
-	public UUID getOwner(@NonNull World world, @NonNull UUID playerUUID) {
-		return islandCache.getOwner(world, playerUUID);
-	}
-
+	/*
+	 * @Deprecated
+	 * 
+	 * @Nullable public UUID getOwner(@NonNull World world, @NonNull UUID
+	 * playerUUID) { return islandCache.getOwner(world, playerUUID); }
+	 */
 	/**
-	 * Checks if a player has an island in the world and owns it
+	 * Checks if a player has an island in the world and owns it. Note that players
+	 * may have more than one island
 	 * 
 	 * @param world - world to check
 	 * @param user  - the user
@@ -1272,10 +1235,11 @@ public class IslandsManager {
 	 * @param uniqueId - unique ID
 	 * @return true if the player is the owner of their island.
 	 */
-	public boolean isOwner(@NonNull World world, @NonNull UUID uniqueId) {
-		return hasIsland(world, uniqueId) && uniqueId.equals(getIsland(world, uniqueId).getOwner());
-	}
-
+	/*
+	 * @Deprecated public boolean isOwner(@NonNull World world, @NonNull UUID
+	 * uniqueId) { return hasIsland(world, uniqueId) &&
+	 * uniqueId.equals(getIsland(world, uniqueId).getOwner()); }
+	 */
 	/**
 	 * Clear and reload all islands from database
 	 * 
@@ -1580,14 +1544,16 @@ public class IslandsManager {
 	}
 
 	/**
-	 * Checks if a player is in a team
+	 * Checks if a player is in a team in this world. Note that the player may have
+	 * multiple islands in the world, any one of which may have a team.
 	 * 
 	 * @param world      - world
 	 * @param playerUUID - player's UUID
 	 * @return true if in team, false if not
 	 */
 	public boolean inTeam(World world, UUID playerUUID) {
-		return getMembers(world, playerUUID).size() > 1;
+		return this.islandCache.getIslands(world, playerUUID).stream()
+				.anyMatch(island -> island.getMembers().containsKey(playerUUID));
 	}
 
 	/**
@@ -1599,7 +1565,7 @@ public class IslandsManager {
 	 *                   owner
 	 */
 	public void setOwner(World world, User user, UUID targetUUID) {
-		setOwner(user, targetUUID, getIsland(world, targetUUID));
+		setOwner(user, targetUUID, getIsland(world, user.getUniqueId()));
 	}
 
 	/**
