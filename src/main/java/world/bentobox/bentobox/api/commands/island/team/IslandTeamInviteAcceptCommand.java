@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.commands.island.team.Invite.Type;
@@ -147,7 +146,6 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
 		itc.removeInvite(playerUUID);
 		// Get the player's island - may be null if the player has no island
 		Set<Island> islands = getIslands().getIslands(getWorld(), playerUUID);
-		BentoBox.getInstance().logDebug("Player has " + islands.size() + " islands in this world");
 		// Get the team's island
 		Island teamIsland = invite.getIsland();
 		if (teamIsland == null) {
@@ -160,7 +158,6 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
 			return;
 		}
 		// Remove player as owner of the old island
-		BentoBox.getInstance().logDebug("Remove player as owner of any islands in the world");
 		getIslands().removePlayer(getWorld(), playerUUID);
 		// Remove money inventory etc. for leaving
 		cleanPlayer(user);

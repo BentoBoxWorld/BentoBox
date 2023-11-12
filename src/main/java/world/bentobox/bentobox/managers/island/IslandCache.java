@@ -325,7 +325,6 @@ public class IslandCache {
 	 * @return list of islands player had or empty if none
 	 */
 	public Set<Island> removePlayer(@NonNull World world, @NonNull UUID uuid) {
-		BentoBox.getInstance().logDebug("Island cache - remove Player " + world.getName());
 		World w = Util.getWorld(world);
 		Set<Island> islandSet = islandsByUUID.get(uuid);
 		if (w == null || islandSet == null) {
@@ -348,8 +347,6 @@ public class IslandCache {
 				it.remove();
 			}
 		}
-		islandSet.forEach(i -> BentoBox.getInstance()
-				.logDebug("Remaining island " + i.getUniqueId() + " in " + i.getWorld().getName()));
 		return islandSet;
 	}
 

@@ -248,8 +248,6 @@ public class IslandsManager {
 	 * @param involvedPlayer - player related to the island deletion, if any
 	 */
 	public void deleteIsland(@NonNull Island island, boolean removeBlocks, @Nullable UUID involvedPlayer) {
-		BentoBox.getInstance()
-				.logDebug("Request to delete island " + island.getUniqueId() + " in " + island.getWorld().getName());
 		// Fire event
 		IslandBaseEvent event = IslandEvent.builder().island(island).involvedPlayer(involvedPlayer)
 				.reason(Reason.DELETE).build();
