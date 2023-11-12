@@ -448,14 +448,15 @@ public class IslandsManager {
 	 * @param playerUUID  - the player's UUID
 	 * @param minimumRank - the minimum rank to be included in the set.
 	 * @return Set of team UUIDs
+	 * @deprecated This will be removed in 2.0 because it is ambiguous when a user
+	 *             has more than one island in the world.
 	 */
-	/*
-	 * @Deprecated
-	 * 
-	 * @NonNull public Set<UUID> getMembers(@NonNull World world, @NonNull UUID
-	 * playerUUID, int minimumRank) { return islandCache.getMembers(world,
-	 * playerUUID, minimumRank); }
-	 */
+
+	@Deprecated(since = "2.0", forRemoval = true)
+	@NonNull
+	public Set<UUID> getMembers(@NonNull World world, @NonNull UUID playerUUID, int minimumRank) {
+		return islandCache.getMembers(world, playerUUID, minimumRank);
+	}
 
 	/**
 	 * Returns a set of island member UUID's for the island of playerUUID. Only
@@ -466,14 +467,15 @@ public class IslandsManager {
 	 * @param world      - world to check
 	 * @param playerUUID - the player's UUID
 	 * @return Set of team UUIDs
+	 * @deprecated This will be removed in 2.0 because it is ambiguous when a user
+	 *             has more than one island in the world.
 	 */
-	/*
-	 * @Deprecated
-	 * 
-	 * @NonNull public Set<UUID> getMembers(@NonNull World world, @NonNull UUID
-	 * playerUUID) { return islandCache.getMembers(world, playerUUID,
-	 * RanksManager.MEMBER_RANK); }
-	 */
+
+	@Deprecated(since = "2.0", forRemoval = true)
+	@NonNull
+	public Set<UUID> getMembers(@NonNull World world, @NonNull UUID playerUUID) {
+		return islandCache.getMembers(world, playerUUID, RanksManager.MEMBER_RANK);
+	}
 
 	/**
 	 * Gets the maximum number of island members allowed on this island. Will update

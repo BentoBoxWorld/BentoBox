@@ -267,16 +267,16 @@ public class IslandCache {
 	 * @param minimumRank minimum rank requested
 	 * @return set of UUID's of island members. If there are no islands, this set
 	 *         will be empty
-	 * @deprecated Players can have more than one island
+	 * @deprecated This will be removed in 2.0 because it is ambiguous when a user
+	 *             has more than one island in the world.
 	 */
-	/*
-	 * @Deprecated
-	 * 
-	 * @NonNull public Set<UUID> getMembers(@NonNull World world, @NonNull UUID
-	 * uuid, int minimumRank) { return getIslands(world,
-	 * uuid).stream().flatMap(island -> island.getMemberSet(minimumRank).stream())
-	 * .collect(Collectors.toSet()); }
-	 */
+
+	@Deprecated(since = "2.0", forRemoval = true)
+	@NonNull
+	public Set<UUID> getMembers(@NonNull World world, @NonNull UUID uuid, int minimumRank) {
+		return getIslands(world, uuid).stream().flatMap(island -> island.getMemberSet(minimumRank).stream())
+				.collect(Collectors.toSet());
+	}
 
 	/**
 	 * Get the UUID of the owner of the island of the player, which may be their
@@ -286,19 +286,20 @@ public class IslandCache {
 	 * @param uuid  the player's UUID
 	 * @return island owner's UUID or null if there is no island owned by the player
 	 *         in this world
-	 * @deprecated players can have multiple islands in the world, so this has no
-	 *             meaning any more
+	 * @deprecated This will be removed in 2.0 because it is ambiguous when a user
+	 *             has more than one island in the world.
 	 */
-	/*
-	 * @Deprecated
-	 * 
-	 * @Nullable public UUID getOwner(@NonNull World world, @NonNull UUID uuid) {
-	 * World w = Util.getWorld(world); Set<Island> islands =
-	 * islandsByUUID.get(uuid); if (w == null || islands == null ||
-	 * islands.isEmpty()) { return null; } // Find the island for this world return
-	 * islands.stream().filter(i ->
-	 * w.equals(i.getWorld())).findFirst().map(Island::getOwner).orElse(null); }
-	 */
+
+	@Deprecated(since = "2.0", forRemoval = true)
+	@Nullable
+	public UUID getOwner(@NonNull World world, @NonNull UUID uuid) {
+		World w = Util.getWorld(world);
+		Set<Island> islands = islandsByUUID.get(uuid);
+		if (w == null || islands == null || islands.isEmpty()) {
+			return null;
+		} // Find the island for this world return
+		return islands.stream().filter(i -> w.equals(i.getWorld())).findFirst().map(Island::getOwner).orElse(null);
+	}
 
 	/**
 	 * Checks is a player has an island and owns it in this world. Note that players
