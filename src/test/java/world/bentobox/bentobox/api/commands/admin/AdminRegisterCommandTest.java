@@ -44,138 +44,139 @@ import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.util.Util;
 
-
 /**
  * @author tastybento
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, User.class })
+@PrepareForTest({ Bukkit.class, BentoBox.class, User.class })
 public class AdminRegisterCommandTest {
 
-    @Mock
-    private CompositeCommand ac;
-    private UUID uuid;
-    @Mock
-    private User user;
-    @Mock
-    private IslandsManager im;
-    @Mock
-    private PlayersManager pm;
+	@Mock
+	private CompositeCommand ac;
+	private UUID uuid;
+	@Mock
+	private User user;
+	@Mock
+	private IslandsManager im;
+	@Mock
+	private PlayersManager pm;
 
-    private UUID notUUID;
+	private UUID notUUID;
 
-    private IslandDeletionManager idm;
+	private IslandDeletionManager idm;
 
-    /**
-     */
-    @Before
-    public void setUp() throws Exception {
-        // Set up plugin
-        BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
-        Util.setPlugin(plugin);
+	/**
+	 */
+	@Before
+	public void setUp() throws Exception {
+		// Set up plugin
+		BentoBox plugin = mock(BentoBox.class);
+		Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+		Util.setPlugin(plugin);
 
-        // Command manager
-        CommandsManager cm = mock(CommandsManager.class);
-        when(plugin.getCommandsManager()).thenReturn(cm);
+		// Command manager
+		CommandsManager cm = mock(CommandsManager.class);
+		when(plugin.getCommandsManager()).thenReturn(cm);
 
-        // Player
-        Player p = mock(Player.class);
-        // Sometimes use Mockito.withSettings().verboseLogging()
-        when(user.isOp()).thenReturn(false);
-        uuid = UUID.randomUUID();
-        notUUID = UUID.randomUUID();
-        while(notUUID.equals(uuid)) {
-            notUUID = UUID.randomUUID();
-        }
-        when(user.getUniqueId()).thenReturn(uuid);
-        when(user.getPlayer()).thenReturn(p);
-        when(user.getName()).thenReturn("tastybento");
-        User.setPlugin(plugin);
+		// Player
+		Player p = mock(Player.class);
+		// Sometimes use Mockito.withSettings().verboseLogging()
+		when(user.isOp()).thenReturn(false);
+		uuid = UUID.randomUUID();
+		notUUID = UUID.randomUUID();
+		while (notUUID.equals(uuid)) {
+			notUUID = UUID.randomUUID();
+		}
+		when(user.getUniqueId()).thenReturn(uuid);
+		when(user.getPlayer()).thenReturn(p);
+		when(user.getName()).thenReturn("tastybento");
+		User.setPlugin(plugin);
 
-        // Parent command has no aliases
-        when(ac.getSubCommandAliases()).thenReturn(new HashMap<>());
+		// Parent command has no aliases
+		when(ac.getSubCommandAliases()).thenReturn(new HashMap<>());
 
-        // Island World Manager
-        IslandWorldManager iwm = mock(IslandWorldManager.class);
-        when(plugin.getIWM()).thenReturn(iwm);
+		// Island World Manager
+		IslandWorldManager iwm = mock(IslandWorldManager.class);
+		when(plugin.getIWM()).thenReturn(iwm);
 
+		// Player has island to begin with
+		when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
+		when(im.hasIsland(any(), any(User.class))).thenReturn(true);
+		// when(im.isOwner(any(),any())).thenReturn(true);
+		// when(im.getOwner(any(),any())).thenReturn(uuid);
+		when(plugin.getIslands()).thenReturn(im);
 
-        // Player has island to begin with
-        when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
-        when(im.hasIsland(any(), any(User.class))).thenReturn(true);
-        when(im.isOwner(any(),any())).thenReturn(true);
-        when(im.getOwner(any(),any())).thenReturn(uuid);
-        when(plugin.getIslands()).thenReturn(im);
+		// Has team
+		when(im.inTeam(any(), eq(uuid))).thenReturn(true);
 
-        // Has team
-        when(im.inTeam(any(), eq(uuid))).thenReturn(true);
+		when(plugin.getPlayers()).thenReturn(pm);
 
-        when(plugin.getPlayers()).thenReturn(pm);
+		// Server & Scheduler
+		BukkitScheduler sch = mock(BukkitScheduler.class);
+		PowerMockito.mockStatic(Bukkit.class);
+		when(Bukkit.getScheduler()).thenReturn(sch);
 
-        // Server & Scheduler
-        BukkitScheduler sch = mock(BukkitScheduler.class);
-        PowerMockito.mockStatic(Bukkit.class);
-        when(Bukkit.getScheduler()).thenReturn(sch);
+		// Locales
+		LocalesManager lm = mock(LocalesManager.class);
+		when(lm.get(any(), any())).thenReturn("mock translation");
+		when(plugin.getLocalesManager()).thenReturn(lm);
 
-        // Locales
-        LocalesManager lm = mock(LocalesManager.class);
-        when(lm.get(any(), any())).thenReturn("mock translation");
-        when(plugin.getLocalesManager()).thenReturn(lm);
+		// Deletion Manager
+		idm = mock(IslandDeletionManager.class);
+		when(idm.inDeletion(any())).thenReturn(false);
+		when(plugin.getIslandDeletionManager()).thenReturn(idm);
 
-        // Deletion Manager
-        idm = mock(IslandDeletionManager.class);
-        when(idm.inDeletion(any())).thenReturn(false);
-        when(plugin.getIslandDeletionManager()).thenReturn(idm);
+		// Plugin Manager
+		PluginManager pim = mock(PluginManager.class);
+		when(Bukkit.getPluginManager()).thenReturn(pim);
 
-        // Plugin Manager
-        PluginManager pim = mock(PluginManager.class);
-        when(Bukkit.getPluginManager()).thenReturn(pim);
+	}
 
-    }
+	@After
+	public void tearDown() {
+		User.clearUsers();
+		Mockito.framework().clearInlineMocks();
+	}
 
-    @After
-    public void tearDown() {
-        User.clearUsers();
-        Mockito.framework().clearInlineMocks();
-    }
+	/**
+	 * Test method for
+	 * {@link AdminRegisterCommand#execute(org.bukkit.command.CommandSender, String, String[])}.
+	 */
+	@Test
+	public void testExecuteNoTarget() {
+		AdminRegisterCommand itl = new AdminRegisterCommand(ac);
+		assertFalse(itl.execute(user, itl.getLabel(), new ArrayList<>()));
+		// Show help
+	}
 
-    /**
-     * Test method for {@link AdminRegisterCommand#execute(org.bukkit.command.CommandSender, String, String[])}.
-     */
-    @Test
-    public void testExecuteNoTarget() {
-        AdminRegisterCommand itl = new AdminRegisterCommand(ac);
-        assertFalse(itl.execute(user, itl.getLabel(), new ArrayList<>()));
-        // Show help
-    }
+	/**
+	 * Test method for
+	 * {@link AdminRegisterCommand#execute(org.bukkit.command.CommandSender, String, String[])}.
+	 */
+	@Test
+	public void testExecuteUnknownPlayer() {
+		AdminRegisterCommand itl = new AdminRegisterCommand(ac);
+		when(pm.getUUID(any())).thenReturn(null);
+		assertFalse(itl.execute(user, itl.getLabel(), Collections.singletonList("tastybento")));
+		verify(user).sendMessage(eq("general.errors.unknown-player"), eq("[name]"), eq("tastybento"));
+	}
 
-    /**
-     * Test method for {@link AdminRegisterCommand#execute(org.bukkit.command.CommandSender, String, String[])}.
-     */
-    @Test
-    public void testExecuteUnknownPlayer() {
-        AdminRegisterCommand itl = new AdminRegisterCommand(ac);
-        when(pm.getUUID(any())).thenReturn(null);
-        assertFalse(itl.execute(user, itl.getLabel(), Collections.singletonList("tastybento")));
-        verify(user).sendMessage(eq("general.errors.unknown-player"), eq("[name]"), eq("tastybento"));
-    }
+	/**
+	 * Test method for
+	 * {@link AdminRegisterCommand#execute(org.bukkit.command.CommandSender, String, String[])}.
+	 */
+	@Test
+	public void testExecutePlayerHasIsland() {
+		AdminRegisterCommand itl = new AdminRegisterCommand(ac);
+		when(pm.getUUID(any())).thenReturn(notUUID);
+		when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
+		when(im.inTeam(any(), any())).thenReturn(false);
+		assertFalse(itl.execute(user, itl.getLabel(), Collections.singletonList("tastybento")));
+		verify(user).sendMessage(eq("general.errors.player-has-island"));
+	}
 
-    /**
-     * Test method for {@link AdminRegisterCommand#execute(org.bukkit.command.CommandSender, String, String[])}.
-     */
-    @Test
-    public void testExecutePlayerHasIsland() {
-        AdminRegisterCommand itl = new AdminRegisterCommand(ac);
-        when(pm.getUUID(any())).thenReturn(notUUID);
-        when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
-        when(im.inTeam(any(), any())).thenReturn(false);
-        assertFalse(itl.execute(user, itl.getLabel(), Collections.singletonList("tastybento")));
-        verify(user).sendMessage(eq("general.errors.player-has-island"));
-    }
-
-    /**
+	/**
      * Test method for {@link AdminRegisterCommand#execute(org.bukkit.command.CommandSender, String, String[])}.
      */
     @Test
@@ -188,7 +189,7 @@ public class AdminRegisterCommandTest {
         verify(user).sendMessage("commands.admin.register.cannot-register-team-player");
     }
 
-    /**
+	/**
      * Test method for {@link AdminRegisterCommand#execute(org.bukkit.command.CommandSender, String, String[])}.
      */
     @Test
@@ -210,7 +211,7 @@ public class AdminRegisterCommandTest {
         verify(user).sendMessage("commands.admin.register.already-owned");
     }
 
-    /**
+	/**
      * Test method for {@link AdminRegisterCommand#execute(org.bukkit.command.CommandSender, String, String[])}.
      */
     @Test
@@ -232,7 +233,7 @@ public class AdminRegisterCommandTest {
         verify(user).sendMessage("commands.admin.register.in-deletion");
     }
 
-    /**
+	/**
      * Test method for {@link AdminRegisterCommand#execute(org.bukkit.command.CommandSender, String, String[])}.
      */
     @Test

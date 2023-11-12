@@ -45,90 +45,90 @@ import world.bentobox.bentobox.managers.PlayersManager;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, User.class })
+@PrepareForTest({ Bukkit.class, BentoBox.class, User.class })
 public class IslandTeamLeaveCommandTest {
 
-    @Mock
-    private CompositeCommand ic;
-    private UUID uuid;
-    @Mock
-    private User user;
-    @Mock
-    private Settings s;
-    @Mock
-    private IslandsManager im;
-    @Mock
-    private IslandWorldManager iwm;
-    @Mock
-    private Player player;
-    @Mock
-    private CompositeCommand subCommand;
-    @Mock
-    private PlayersManager pm;
-    @Mock
-    private World world;
-    @Mock
-    private @Nullable Island island;
+	@Mock
+	private CompositeCommand ic;
+	private UUID uuid;
+	@Mock
+	private User user;
+	@Mock
+	private Settings s;
+	@Mock
+	private IslandsManager im;
+	@Mock
+	private IslandWorldManager iwm;
+	@Mock
+	private Player player;
+	@Mock
+	private CompositeCommand subCommand;
+	@Mock
+	private PlayersManager pm;
+	@Mock
+	private World world;
+	@Mock
+	private @Nullable Island island;
 
-    /**
-     */
-    @Before
-    public void setUp() throws Exception {
-        // Set up plugin
-        BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+	/**
+	 */
+	@Before
+	public void setUp() throws Exception {
+		// Set up plugin
+		BentoBox plugin = mock(BentoBox.class);
+		Whitebox.setInternalState(BentoBox.class, "instance", plugin);
 
-        // Command manager
-        CommandsManager cm = mock(CommandsManager.class);
-        when(plugin.getCommandsManager()).thenReturn(cm);
+		// Command manager
+		CommandsManager cm = mock(CommandsManager.class);
+		when(plugin.getCommandsManager()).thenReturn(cm);
 
-        // Settings
-        when(s.getResetCooldown()).thenReturn(0);
-        when(plugin.getSettings()).thenReturn(s);
+		// Settings
+		when(s.getResetCooldown()).thenReturn(0);
+		when(plugin.getSettings()).thenReturn(s);
 
-        // Player
-        // Sometimes use Mockito.withSettings().verboseLogging()
-        when(user.isOp()).thenReturn(false);
-        uuid = UUID.randomUUID();
-        when(user.getUniqueId()).thenReturn(uuid);
-        when(user.getPlayer()).thenReturn(player);
-        when(user.getName()).thenReturn("tastybento");
+		// Player
+		// Sometimes use Mockito.withSettings().verboseLogging()
+		when(user.isOp()).thenReturn(false);
+		uuid = UUID.randomUUID();
+		when(user.getUniqueId()).thenReturn(uuid);
+		when(user.getPlayer()).thenReturn(player);
+		when(user.getName()).thenReturn("tastybento");
 
-        // Parent command has no aliases
-        ic = mock(CompositeCommand.class);
-        when(ic.getSubCommandAliases()).thenReturn(new HashMap<>());
-        Optional<CompositeCommand> optionalCommand = Optional.of(subCommand);
-        when(ic.getSubCommand(Mockito.anyString())).thenReturn(optionalCommand);
-        when(ic.getWorld()).thenReturn(world);
+		// Parent command has no aliases
+		ic = mock(CompositeCommand.class);
+		when(ic.getSubCommandAliases()).thenReturn(new HashMap<>());
+		Optional<CompositeCommand> optionalCommand = Optional.of(subCommand);
+		when(ic.getSubCommand(Mockito.anyString())).thenReturn(optionalCommand);
+		when(ic.getWorld()).thenReturn(world);
 
-        // Player has island to begin with
-        when(im.hasIsland(any(), Mockito.any(UUID.class))).thenReturn(true);
-        when(im.isOwner(any(), any())).thenReturn(true);
-        when(plugin.getIslands()).thenReturn(im);
+		// Player has island to begin with
+		when(im.hasIsland(any(), Mockito.any(UUID.class))).thenReturn(true);
+		// when(im.isOwner(any(), any())).thenReturn(true);
+		when(plugin.getIslands()).thenReturn(im);
 
-        // Has team
-        when(im.inTeam(any(), eq(uuid))).thenReturn(true);
-        when(plugin.getPlayers()).thenReturn(pm);
+		// Has team
+		when(im.inTeam(any(), eq(uuid))).thenReturn(true);
+		when(plugin.getPlayers()).thenReturn(pm);
 
-        // Server & Scheduler
-        BukkitScheduler sch = mock(BukkitScheduler.class);
-        PowerMockito.mockStatic(Bukkit.class);
-        when(Bukkit.getScheduler()).thenReturn(sch);
+		// Server & Scheduler
+		BukkitScheduler sch = mock(BukkitScheduler.class);
+		PowerMockito.mockStatic(Bukkit.class);
+		when(Bukkit.getScheduler()).thenReturn(sch);
 
-        // Island World Manager
-        when(plugin.getIWM()).thenReturn(iwm);
+		// Island World Manager
+		when(plugin.getIWM()).thenReturn(iwm);
 
-        // Plugin Manager
-        PluginManager pim = mock(PluginManager.class);
-        when(Bukkit.getPluginManager()).thenReturn(pim);
+		// Plugin Manager
+		PluginManager pim = mock(PluginManager.class);
+		when(Bukkit.getPluginManager()).thenReturn(pim);
 
-        // Island
-        when(island.getUniqueId()).thenReturn("uniqueid");
-        when(im.getIsland(world, user)).thenReturn(island);
+		// Island
+		when(island.getUniqueId()).thenReturn("uniqueid");
+		when(im.getIsland(world, user)).thenReturn(island);
 
-    }
+	}
 
-    /**
+	/**
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamLeaveCommand#execute(User, String, java.util.List)}
      */
     @Test
@@ -139,26 +139,27 @@ public class IslandTeamLeaveCommandTest {
         verify(user).sendMessage(eq("general.errors.no-team"));
     }
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamLeaveCommand#execute(User, String, java.util.List)}
-     */
-    @Test
-    public void testExecuteInOwner() {
-        IslandTeamLeaveCommand itl = new IslandTeamLeaveCommand(ic);
-        assertFalse(itl.execute(user, itl.getLabel(), new ArrayList<>()));
-        verify(user).sendMessage(eq("commands.island.team.leave.cannot-leave"));
-    }
+	/**
+	 * Test method for
+	 * {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamLeaveCommand#execute(User, String, java.util.List)}
+	 */
+	@Test
+	public void testExecuteInOwner() {
+		IslandTeamLeaveCommand itl = new IslandTeamLeaveCommand(ic);
+		assertFalse(itl.execute(user, itl.getLabel(), new ArrayList<>()));
+		verify(user).sendMessage(eq("commands.island.team.leave.cannot-leave"));
+	}
 
-    /**
+	/**
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamLeaveCommand#execute(User, String, java.util.List)}
      */
     @Test
     public void testExecuteNoConfirmation() {
         when(s.isLeaveConfirmation()).thenReturn(false);
         when(im.hasIsland(any(), eq(uuid))).thenReturn(false);
-        when(im.isOwner(any(), eq(uuid))).thenReturn(false);
+        //when(im.isOwner(any(), eq(uuid))).thenReturn(false);
         // Add a team owner - null
-        when(im.getOwner(any(), any())).thenReturn(null);
+        ///when(im.getOwner(any(), any())).thenReturn(null);
 
         IslandTeamLeaveCommand itl = new IslandTeamLeaveCommand(ic);
         assertTrue(itl.execute(user, itl.getLabel(), new ArrayList<>()));
@@ -166,7 +167,7 @@ public class IslandTeamLeaveCommandTest {
         verify(user).sendMessage(eq("commands.island.team.leave.success"));
     }
 
-    /**
+	/**
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamLeaveCommand#execute(User, String, java.util.List)}
      */
     @Test
@@ -175,9 +176,9 @@ public class IslandTeamLeaveCommandTest {
         // 3 second timeout
         when(s.getConfirmationTime()).thenReturn(3);
         when(im.hasIsland(any(), eq(uuid))).thenReturn(false);
-        when(im.isOwner(any(), eq(uuid))).thenReturn(false);
+        //when(im.isOwner(any(), eq(uuid))).thenReturn(false);
         // Add a team owner - null
-        when(im.getOwner(any(), any())).thenReturn(null);
+        //when(im.getOwner(any(), any())).thenReturn(null);
 
         IslandTeamLeaveCommand itl = new IslandTeamLeaveCommand(ic);
         assertFalse(itl.execute(user, itl.getLabel(), new ArrayList<>()));
@@ -185,7 +186,7 @@ public class IslandTeamLeaveCommandTest {
         verify(user).sendMessage(eq("commands.confirmation.confirm"), eq("[seconds]"), eq("3"));
     }
 
-    /**
+	/**
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamLeaveCommand#execute(User, String, java.util.List)}
      */
     @Test
@@ -195,16 +196,16 @@ public class IslandTeamLeaveCommandTest {
 
         when(s.isLeaveConfirmation()).thenReturn(false);
         when(im.hasIsland(any(), eq(uuid))).thenReturn(false);
-        when(im.isOwner(any(), eq(uuid))).thenReturn(false);
+        //when(im.isOwner(any(), eq(uuid))).thenReturn(false);
         // Add a team owner - null
-        when(im.getOwner(any(), any())).thenReturn(null);
+        //when(im.getOwner(any(), any())).thenReturn(null);
 
         IslandTeamLeaveCommand itl = new IslandTeamLeaveCommand(ic);
         assertTrue(itl.execute(user, itl.getLabel(), new ArrayList<>()));
         verify(user).sendMessage("commands.island.reset.none-left");
     }
 
-    /**
+	/**
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamLeaveCommand#execute(User, String, java.util.List)}
      */
     @Test
@@ -215,9 +216,9 @@ public class IslandTeamLeaveCommandTest {
 
         when(s.isLeaveConfirmation()).thenReturn(false);
         when(im.hasIsland(any(), eq(uuid))).thenReturn(false);
-        when(im.isOwner(any(), eq(uuid))).thenReturn(false);
+        //when(im.isOwner(any(), eq(uuid))).thenReturn(false);
         // Add a team owner - null
-        when(im.getOwner(any(), any())).thenReturn(null);
+        //when(im.getOwner(any(), any())).thenReturn(null);
 
         IslandTeamLeaveCommand itl = new IslandTeamLeaveCommand(ic);
         assertTrue(itl.execute(user, itl.getLabel(), new ArrayList<>()));
@@ -227,7 +228,7 @@ public class IslandTeamLeaveCommandTest {
         verify(user).sendMessage("commands.island.reset.resets-left", TextVariables.NUMBER, "100");
     }
 
-    /**
+	/**
      * Test method for {@link IslandTeamLeaveCommand#execute(User, String, java.util.List)}
      */
     @Test

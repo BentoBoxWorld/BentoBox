@@ -50,145 +50,147 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, User.class })
+@PrepareForTest({ Bukkit.class, BentoBox.class, User.class })
 public class AdminDeleteCommandTest {
 
-    @Mock
-    private CompositeCommand ac;
-    @Mock
-    private User user;
-    @Mock
-    private IslandsManager im;
-    @Mock
-    private PlayersManager pm;
-    private UUID notUUID;
-    private UUID uuid;
-    @Mock
-    private World world;
-    @Mock
-    private @Nullable Island island;
+	@Mock
+	private CompositeCommand ac;
+	@Mock
+	private User user;
+	@Mock
+	private IslandsManager im;
+	@Mock
+	private PlayersManager pm;
+	private UUID notUUID;
+	private UUID uuid;
+	@Mock
+	private World world;
+	@Mock
+	private @Nullable Island island;
 
-    /**
-     */
-    @Before
-    public void setUp() throws Exception {
-        // Set up plugin
-        BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+	/**
+	 */
+	@Before
+	public void setUp() throws Exception {
+		// Set up plugin
+		BentoBox plugin = mock(BentoBox.class);
+		Whitebox.setInternalState(BentoBox.class, "instance", plugin);
 
-        // Util
-        Util.setPlugin(plugin);
+		// Util
+		Util.setPlugin(plugin);
 
-        // Command manager
-        CommandsManager cm = mock(CommandsManager.class);
-        when(plugin.getCommandsManager()).thenReturn(cm);
+		// Command manager
+		CommandsManager cm = mock(CommandsManager.class);
+		when(plugin.getCommandsManager()).thenReturn(cm);
 
-        // Settings
-        Settings s = mock(Settings.class);
-        when(s.getResetCooldown()).thenReturn(0);
-        when(plugin.getSettings()).thenReturn(s);
+		// Settings
+		Settings s = mock(Settings.class);
+		when(s.getResetCooldown()).thenReturn(0);
+		when(plugin.getSettings()).thenReturn(s);
 
-        // Player
-        Player p = mock(Player.class);
-        // Sometimes use Mockito.withSettings().verboseLogging()
-        when(user.isOp()).thenReturn(false);
-        uuid = UUID.randomUUID();
-        notUUID = UUID.randomUUID();
-        while(notUUID.equals(uuid)) {
-            notUUID = UUID.randomUUID();
-        }
-        when(user.getUniqueId()).thenReturn(uuid);
-        when(user.getPlayer()).thenReturn(p);
-        when(user.getName()).thenReturn("tastybento");
-        User.setPlugin(plugin);
+		// Player
+		Player p = mock(Player.class);
+		// Sometimes use Mockito.withSettings().verboseLogging()
+		when(user.isOp()).thenReturn(false);
+		uuid = UUID.randomUUID();
+		notUUID = UUID.randomUUID();
+		while (notUUID.equals(uuid)) {
+			notUUID = UUID.randomUUID();
+		}
+		when(user.getUniqueId()).thenReturn(uuid);
+		when(user.getPlayer()).thenReturn(p);
+		when(user.getName()).thenReturn("tastybento");
+		User.setPlugin(plugin);
 
-        // Parent command has no aliases
-        when(ac.getSubCommandAliases()).thenReturn(new HashMap<>());
-        when(ac.getTopLabel()).thenReturn("admin");
-        when(ac.getWorld()).thenReturn(world);
+		// Parent command has no aliases
+		when(ac.getSubCommandAliases()).thenReturn(new HashMap<>());
+		when(ac.getTopLabel()).thenReturn("admin");
+		when(ac.getWorld()).thenReturn(world);
 
-        // Island World Manager
-        IslandWorldManager iwm = mock(IslandWorldManager.class);
-        when(plugin.getIWM()).thenReturn(iwm);
+		// Island World Manager
+		IslandWorldManager iwm = mock(IslandWorldManager.class);
+		when(plugin.getIWM()).thenReturn(iwm);
 
+		// Player has island to begin with
+		when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
+		when(im.hasIsland(any(), any(User.class))).thenReturn(true);
+		// when(im.isOwner(any(),any())).thenReturn(true);
+		// when(im.getOwner(any(),any())).thenReturn(uuid);
+		when(im.getIsland(world, user)).thenReturn(island);
+		when(plugin.getIslands()).thenReturn(im);
 
-        // Player has island to begin with
-        when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
-        when(im.hasIsland(any(), any(User.class))).thenReturn(true);
-        when(im.isOwner(any(),any())).thenReturn(true);
-        when(im.getOwner(any(),any())).thenReturn(uuid);
-        when(im.getIsland(world, user)).thenReturn(island);
-        when(plugin.getIslands()).thenReturn(im);
+		// Island
+		when(island.getOwner()).thenReturn(uuid);
 
-        // Island
-        when(island.getOwner()).thenReturn(uuid);
+		// Has team
+		when(im.inTeam(any(), eq(uuid))).thenReturn(true);
 
-        // Has team
-        when(im.inTeam(any(), eq(uuid))).thenReturn(true);
+		when(plugin.getPlayers()).thenReturn(pm);
 
-        when(plugin.getPlayers()).thenReturn(pm);
+		// Server & Scheduler
+		BukkitScheduler sch = mock(BukkitScheduler.class);
+		PowerMockito.mockStatic(Bukkit.class);
+		when(Bukkit.getScheduler()).thenReturn(sch);
+		BukkitTask task = mock(BukkitTask.class);
+		when(sch.runTaskLater(any(), any(Runnable.class), any(Long.class))).thenReturn(task);
 
-        // Server & Scheduler
-        BukkitScheduler sch = mock(BukkitScheduler.class);
-        PowerMockito.mockStatic(Bukkit.class);
-        when(Bukkit.getScheduler()).thenReturn(sch);
-        BukkitTask task = mock(BukkitTask.class);
-        when(sch.runTaskLater(any(), any(Runnable.class), any(Long.class))).thenReturn(task);
+		// Locales
+		LocalesManager lm = mock(LocalesManager.class);
+		when(lm.get(any(), any())).thenReturn("mock translation");
+		when(plugin.getLocalesManager()).thenReturn(lm);
+	}
 
-        // Locales
-        LocalesManager lm = mock(LocalesManager.class);
-        when(lm.get(any(), any())).thenReturn("mock translation");
-        when(plugin.getLocalesManager()).thenReturn(lm);
-    }
+	@After
+	public void tearDown() {
+		User.clearUsers();
+		Mockito.framework().clearInlineMocks();
+	}
 
-    @After
-    public void tearDown() {
-        User.clearUsers();
-        Mockito.framework().clearInlineMocks();
-    }
+	/**
+	 * Test method for
+	 * {@link AdminDeleteCommand#canExecute(User, String, java.util.List)
+	 */
+	@Test
+	public void testExecuteNoTarget() {
+		AdminDeleteCommand itl = new AdminDeleteCommand(ac);
+		assertFalse(itl.canExecute(user, itl.getLabel(), Collections.emptyList()));
+		// Show help
+	}
 
-    /**
-     * Test method for {@link AdminDeleteCommand#canExecute(User, String, java.util.List)
-     */
-    @Test
-    public void testExecuteNoTarget() {
-        AdminDeleteCommand itl = new AdminDeleteCommand(ac);
-        assertFalse(itl.canExecute(user, itl.getLabel(), Collections.emptyList()));
-        // Show help
-    }
+	/**
+	 * Test method for
+	 * {@link AdminDeleteCommand#canExecute(User, String, java.util.List)
+	 */
+	@Test
+	public void testExecuteUnknownPlayer() {
+		AdminDeleteCommand itl = new AdminDeleteCommand(ac);
+		String[] name = { "tastybento" };
+		when(pm.getUUID(any())).thenReturn(null);
+		assertFalse(itl.canExecute(user, itl.getLabel(), Arrays.asList(name)));
+		verify(user).sendMessage("general.errors.unknown-player", "[name]", name[0]);
+	}
 
-    /**
-     * Test method for {@link AdminDeleteCommand#canExecute(User, String, java.util.List)
-     */
-    @Test
-    public void testExecuteUnknownPlayer() {
-        AdminDeleteCommand itl = new AdminDeleteCommand(ac);
-        String[] name = {"tastybento"};
-        when(pm.getUUID(any())).thenReturn(null);
-        assertFalse(itl.canExecute(user, itl.getLabel(), Arrays.asList(name)));
-        verify(user).sendMessage("general.errors.unknown-player", "[name]", name[0]);
-    }
+	/**
+	 * Test method for
+	 * {@link AdminDeleteCommand#canExecute(User, String, java.util.List)
+	 */
+	@Test
+	public void testExecutePlayerNoIsland() {
+		AdminDeleteCommand itl = new AdminDeleteCommand(ac);
+		when(pm.getUUID(any())).thenReturn(notUUID);
+		when(im.getIsland(world, user)).thenReturn(null);
+		assertFalse(itl.canExecute(user, "", List.of("tastybento")));
+		verify(user).sendMessage(eq("general.errors.player-has-no-island"));
+	}
 
-    /**
-     * Test method for {@link AdminDeleteCommand#canExecute(User, String, java.util.List)
-     */
-    @Test
-    public void testExecutePlayerNoIsland() {
-        AdminDeleteCommand itl = new AdminDeleteCommand(ac);
-        when(pm.getUUID(any())).thenReturn(notUUID);
-        when(im.getIsland(world, user)).thenReturn(null);
-        assertFalse(itl.canExecute(user, "", List.of("tastybento")));
-        verify(user).sendMessage(eq("general.errors.player-has-no-island"));
-    }
-
-    /**
+	/**
      * Test method for {@link AdminDeleteCommand#canExecute(User, String, java.util.List)
      */
     @Test
     public void testExecuteOwner() {
 
         when(im.inTeam(any(),any())).thenReturn(true);
-        when(im.getOwner(any(), any())).thenReturn(notUUID);
+        //when(im.getOwner(any(), any())).thenReturn(notUUID);
         String[] name = {"tastybento"};
         when(pm.getUUID(any())).thenReturn(notUUID);
         AdminDeleteCommand itl = new AdminDeleteCommand(ac);
@@ -196,13 +198,13 @@ public class AdminDeleteCommandTest {
         verify(user).sendMessage("commands.admin.delete.cannot-delete-owner");
     }
 
-    /**
+	/**
      * Test method for {@link AdminDeleteCommand#canExecute(User, String, java.util.List)
      */
     @Test
     public void testcanExecuteSuccessUUID() {
         when(im.inTeam(any(), any())).thenReturn(false);
-        when(im.getOwner(any(), any())).thenReturn(uuid);
+        //when(im.getOwner(any(), any())).thenReturn(uuid);
         Island is = mock(Island.class);
         Location loc = mock(Location.class);
         when(loc.toVector()).thenReturn(new Vector(123,123,432));
@@ -215,13 +217,14 @@ public class AdminDeleteCommandTest {
         // Success because it's a valid UUID
         assertTrue(itl.canExecute(user, itl.getLabel(), Collections.singletonList(uuid.toString())));
     }
-    /**
+
+	/**
      * Test method for {@link AdminDeleteCommand#canExecute(User, String, java.util.List)
      */
     @Test
     public void testExecuteFailUUID() {
         when(im.inTeam(any(), any())).thenReturn(false);
-        when(im.getOwner(any(), any())).thenReturn(uuid);
+        //when(im.getOwner(any(), any())).thenReturn(uuid);
         Island is = mock(Island.class);
         Location loc = mock(Location.class);
         when(loc.toVector()).thenReturn(new Vector(123,123,432));
@@ -235,13 +238,13 @@ public class AdminDeleteCommandTest {
         assertFalse(itl.canExecute(user, itl.getLabel(), Collections.singletonList("not-A-UUID")));
     }
 
-    /**
+	/**
      * Test method for {@link AdminDeleteCommand#execute(User, String, java.util.List)
      */
     @Test
     public void testCanExecuteSuccess() {
         when(im.inTeam(any(), any())).thenReturn(false);
-        when(im.getOwner(any(), any())).thenReturn(uuid);
+        //when(im.getOwner(any(), any())).thenReturn(uuid);
         Island is = mock(Island.class);
         Location loc = mock(Location.class);
         when(loc.toVector()).thenReturn(new Vector(123,123,432));
@@ -256,9 +259,5 @@ public class AdminDeleteCommandTest {
         itl.execute(user, itl.getLabel(), Arrays.asList(name));
         verify(user).sendMessage("commands.confirmation.confirm", "[seconds]", "0");
     }
-
-
-
-
 
 }

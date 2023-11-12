@@ -62,155 +62,157 @@ import world.bentobox.bentobox.managers.island.NewIsland;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, NewIsland.class })
+@PrepareForTest({ Bukkit.class, BentoBox.class, NewIsland.class })
 public class IslandResetCommandTest {
 
-    @Mock
-    private CompositeCommand ic;
-    @Mock
-    private User user;
-    @Mock
-    private Settings s;
-    @Mock
-    private IslandsManager im;
-    @Mock
-    private PlayersManager pm;
-    @Mock
-    private World world;
-    @Mock
-    private IslandWorldManager iwm;
-    @Mock
-    private BlueprintsManager bpm;
-    @Mock
-    private @Nullable Island island;
-    @Mock
-    private PluginManager pim;
+	@Mock
+	private CompositeCommand ic;
+	@Mock
+	private User user;
+	@Mock
+	private Settings s;
+	@Mock
+	private IslandsManager im;
+	@Mock
+	private PlayersManager pm;
+	@Mock
+	private World world;
+	@Mock
+	private IslandWorldManager iwm;
+	@Mock
+	private BlueprintsManager bpm;
+	@Mock
+	private @Nullable Island island;
+	@Mock
+	private PluginManager pim;
 
-    private IslandResetCommand irc;
+	private IslandResetCommand irc;
 
-    @Mock
-    private Player pp;
+	@Mock
+	private Player pp;
 
-    private UUID uuid;
+	private UUID uuid;
 
-    /**
-     */
-    @Before
-    public void setUp() throws Exception {
-        // Set up plugin
-        BentoBox plugin = mock(BentoBox.class);
-        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+	/**
+	 */
+	@Before
+	public void setUp() throws Exception {
+		// Set up plugin
+		BentoBox plugin = mock(BentoBox.class);
+		Whitebox.setInternalState(BentoBox.class, "instance", plugin);
 
-        // Command manager
-        CommandsManager cm = mock(CommandsManager.class);
-        when(plugin.getCommandsManager()).thenReturn(cm);
+		// Command manager
+		CommandsManager cm = mock(CommandsManager.class);
+		when(plugin.getCommandsManager()).thenReturn(cm);
 
-        // Settings
-        when(s.getResetCooldown()).thenReturn(0);
-        when(plugin.getSettings()).thenReturn(s);
+		// Settings
+		when(s.getResetCooldown()).thenReturn(0);
+		when(plugin.getSettings()).thenReturn(s);
 
-        // Player
-        Player p = mock(Player.class);
-        when(p.getUniqueId()).thenReturn(uuid);
-        User.getInstance(p);
-        when(p.isOnline()).thenReturn(true);
-        // User
-        User.setPlugin(plugin);
+		// Player
+		Player p = mock(Player.class);
+		when(p.getUniqueId()).thenReturn(uuid);
+		User.getInstance(p);
+		when(p.isOnline()).thenReturn(true);
+		// User
+		User.setPlugin(plugin);
 
-        when(user.isOp()).thenReturn(false);
-        uuid = UUID.randomUUID();
-        when(user.getUniqueId()).thenReturn(uuid);
-        when(user.isOnline()).thenReturn(true);
-        when(user.getPlayer()).thenReturn(p);
-        when(user.getTranslation(any())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
+		when(user.isOp()).thenReturn(false);
+		uuid = UUID.randomUUID();
+		when(user.getUniqueId()).thenReturn(uuid);
+		when(user.isOnline()).thenReturn(true);
+		when(user.getPlayer()).thenReturn(p);
+		when(user.getTranslation(any()))
+				.thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
 
-        // Parent command has no aliases
-        when(ic.getSubCommandAliases()).thenReturn(new HashMap<>());
-        when(ic.getTopLabel()).thenReturn("island");
-        // World
-        when(ic.getWorld()).thenReturn(world);
+		// Parent command has no aliases
+		when(ic.getSubCommandAliases()).thenReturn(new HashMap<>());
+		when(ic.getTopLabel()).thenReturn("island");
+		// World
+		when(ic.getWorld()).thenReturn(world);
 
-        // No island for player to begin with (set it later in the tests)
-        when(im.hasIsland(any(), eq(uuid))).thenReturn(false);
-        when(im.isOwner(any(), eq(uuid))).thenReturn(false);
-        when(plugin.getIslands()).thenReturn(im);
+		// No island for player to begin with (set it later in the tests)
+		when(im.hasIsland(any(), eq(uuid))).thenReturn(false);
+		// when(im.isOwner(any(), eq(uuid))).thenReturn(false);
+		when(plugin.getIslands()).thenReturn(im);
 
-        // Has team
-        when(im.inTeam(any(), eq(uuid))).thenReturn(true);
-        when(plugin.getPlayers()).thenReturn(pm);
+		// Has team
+		when(im.inTeam(any(), eq(uuid))).thenReturn(true);
+		when(plugin.getPlayers()).thenReturn(pm);
 
-        // Server & Scheduler
-        BukkitScheduler sch = mock(BukkitScheduler.class);
-        BukkitTask task = mock(BukkitTask.class);
-        when(sch.runTaskLater(any(), any(Runnable.class), any(Long.class))).thenReturn(task);
+		// Server & Scheduler
+		BukkitScheduler sch = mock(BukkitScheduler.class);
+		BukkitTask task = mock(BukkitTask.class);
+		when(sch.runTaskLater(any(), any(Runnable.class), any(Long.class))).thenReturn(task);
 
-        PowerMockito.mockStatic(Bukkit.class);
-        when(Bukkit.getScheduler()).thenReturn(sch);
-        // Event
-        when(Bukkit.getPluginManager()).thenReturn(pim);
+		PowerMockito.mockStatic(Bukkit.class);
+		when(Bukkit.getScheduler()).thenReturn(sch);
+		// Event
+		when(Bukkit.getPluginManager()).thenReturn(pim);
 
-        // IWM friendly name
-        when(iwm.getFriendlyName(any())).thenReturn("BSkyBlock");
-        when(plugin.getIWM()).thenReturn(iwm);
+		// IWM friendly name
+		when(iwm.getFriendlyName(any())).thenReturn("BSkyBlock");
+		when(plugin.getIWM()).thenReturn(iwm);
 
-        // Bundles manager
-        when(plugin.getBlueprintsManager()).thenReturn(bpm);
-        when(bpm.validate(any(), any())).thenReturn("custom");
+		// Bundles manager
+		when(plugin.getBlueprintsManager()).thenReturn(bpm);
+		when(bpm.validate(any(), any())).thenReturn("custom");
 
-        // Give the user some resets
-        when(pm.getResetsLeft(eq(world), eq(uuid))).thenReturn(3);
+		// Give the user some resets
+		when(pm.getResetsLeft(eq(world), eq(uuid))).thenReturn(3);
 
-        // Island team members
-        when(im.getIsland(any(), any(User.class))).thenReturn(island);
-        Builder<UUID> members = new ImmutableSet.Builder<>();
-        members.add(uuid);
-        // Put a team on the island
-        for (int j = 0; j < 11; j++) {
-            UUID temp = UUID.randomUUID();
-            when(pp.getUniqueId()).thenReturn(temp);
-            User.getInstance(pp);
-            members.add(temp);
-        }
-        when(island.getMemberSet()).thenReturn(members.build());
-        Location location = mock(Location.class);
-        when(location.clone()).thenReturn(location);
-        when(island.getCenter()).thenReturn(location);
-        when(island.getHistory()).thenReturn(Collections.emptyList());
-        when(island.getSpawnPoint()).thenReturn(Collections.emptyMap());
+		// Island team members
+		when(im.getIsland(any(), any(User.class))).thenReturn(island);
+		Builder<UUID> members = new ImmutableSet.Builder<>();
+		members.add(uuid);
+		// Put a team on the island
+		for (int j = 0; j < 11; j++) {
+			UUID temp = UUID.randomUUID();
+			when(pp.getUniqueId()).thenReturn(temp);
+			User.getInstance(pp);
+			members.add(temp);
+		}
+		when(island.getMemberSet()).thenReturn(members.build());
+		Location location = mock(Location.class);
+		when(location.clone()).thenReturn(location);
+		when(island.getCenter()).thenReturn(location);
+		when(island.getHistory()).thenReturn(Collections.emptyList());
+		when(island.getSpawnPoint()).thenReturn(Collections.emptyMap());
 
-        // Addon
-        GameModeAddon addon1 = mock(GameModeAddon.class);
-        AddonDescription desc = new AddonDescription.Builder("main", "BSkyBlock", "1.0.0").build();
-        when(addon1.getDescription()).thenReturn(desc);
-        when(ic.getAddon()).thenReturn(addon1);
+		// Addon
+		GameModeAddon addon1 = mock(GameModeAddon.class);
+		AddonDescription desc = new AddonDescription.Builder("main", "BSkyBlock", "1.0.0").build();
+		when(addon1.getDescription()).thenReturn(desc);
+		when(ic.getAddon()).thenReturn(addon1);
 
-        // Locales
-        LocalesManager lm = mock(LocalesManager.class);
-        when(lm.get(Mockito.any(), Mockito.any())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
-        when(plugin.getLocalesManager()).thenReturn(lm);
+		// Locales
+		LocalesManager lm = mock(LocalesManager.class);
+		when(lm.get(Mockito.any(), Mockito.any()))
+				.thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
+		when(plugin.getLocalesManager()).thenReturn(lm);
 
-        PlaceholdersManager phm = mock(PlaceholdersManager.class);
-        when(phm.replacePlaceholders(any(), any())).thenAnswer(invocation -> invocation.getArgument(1, String.class));
-        // Placeholder manager
-        when(plugin.getPlaceholdersManager()).thenReturn(phm);
+		PlaceholdersManager phm = mock(PlaceholdersManager.class);
+		when(phm.replacePlaceholders(any(), any())).thenAnswer(invocation -> invocation.getArgument(1, String.class));
+		// Placeholder manager
+		when(plugin.getPlaceholdersManager()).thenReturn(phm);
 
-        // The command
-        irc = new IslandResetCommand(ic);
-    }
+		// The command
+		irc = new IslandResetCommand(ic);
+	}
 
+	/**
+	 * Test method for
+	 * {@link IslandResetCommand#canExecute(User, String, java.util.List)}
+	 */
+	@Test
+	public void testNoIsland() {
+		// Test the reset command
+		// Does not have island
+		assertFalse(irc.canExecute(user, irc.getLabel(), Collections.emptyList()));
+		verify(user).sendMessage("general.errors.no-island");
+	}
 
-    /**
-     * Test method for {@link IslandResetCommand#canExecute(User, String, java.util.List)}
-     */
-    @Test
-    public void testNoIsland() {
-        // Test the reset command
-        // Does not have island
-        assertFalse(irc.canExecute(user, irc.getLabel(), Collections.emptyList()));
-        verify(user).sendMessage("general.errors.no-island");
-    }
-
-    /**
+	/**
      * Test method for {@link IslandResetCommand#canExecute(User, String, java.util.List)}
      */
     @Test
@@ -218,7 +220,7 @@ public class IslandResetCommandTest {
         // Now has island, but is not the owner
         when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
         // Now is owner, but still has team
-        when(im.isOwner(any(), eq(uuid))).thenReturn(true);
+        //when(im.isOwner(any(), eq(uuid))).thenReturn(true);
         // Now has no team
         when(im.inTeam(any(), eq(uuid))).thenReturn(false);
 
@@ -231,7 +233,7 @@ public class IslandResetCommandTest {
         verify(pim, never()).callEvent(any(IslandBaseEvent.class));
     }
 
-    /**
+	/**
      * Test method for {@link IslandResetCommand#execute(User, String, java.util.List)}
      */
     @Test
@@ -265,13 +267,13 @@ public class IslandResetCommandTest {
         verify(pp, times(11)).sendMessage("commands.island.reset.kicked-from-island");
     }
 
-    @After
-    public void tearDown() {
-        User.clearUsers();
-        Mockito.framework().clearInlineMocks();
-    }
+	@After
+	public void tearDown() {
+		User.clearUsers();
+		Mockito.framework().clearInlineMocks();
+	}
 
-    /**
+	/**
      * Test method for {@link IslandResetCommand#canExecute(User, String, java.util.List)}
      */
     @Test
@@ -304,40 +306,41 @@ public class IslandResetCommandTest {
         assertTrue(irc.canExecute(user, irc.getLabel(), Collections.emptyList()));
     }
 
-    /**
-     * Test method for {@link IslandResetCommand#canExecute(User, String, java.util.List)}
-     */
-    @Test
-    public void testNoPaste() throws Exception {
-        irc = new IslandResetCommand(ic, true);
-        // Now has island, but is not the owner
-        when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
-        // Set so no confirmation required
-        when(s.isResetConfirmation()).thenReturn(false);
+	/**
+	 * Test method for
+	 * {@link IslandResetCommand#canExecute(User, String, java.util.List)}
+	 */
+	@Test
+	public void testNoPaste() throws Exception {
+		irc = new IslandResetCommand(ic, true);
+		// Now has island, but is not the owner
+		when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
+		// Set so no confirmation required
+		when(s.isResetConfirmation()).thenReturn(false);
 
-        // Old island mock
-        Island oldIsland = mock(Island.class);
-        when(im.getIsland(any(), eq(uuid))).thenReturn(oldIsland);
+		// Old island mock
+		Island oldIsland = mock(Island.class);
+		when(im.getIsland(any(), eq(uuid))).thenReturn(oldIsland);
 
-        // Mock up NewIsland builder
-        NewIsland.Builder builder = mock(NewIsland.Builder.class);
-        when(builder.player(any())).thenReturn(builder);
-        when(builder.oldIsland(any())).thenReturn(builder);
-        when(builder.reason(any())).thenReturn(builder);
-        when(builder.name(any())).thenReturn(builder);
-        when(builder.addon(any())).thenReturn(builder);
-        when(builder.build()).thenReturn(mock(Island.class));
-        PowerMockito.mockStatic(NewIsland.class);
-        when(NewIsland.builder()).thenReturn(builder);
-        // Test with unlimited resets
-        when(pm.getResetsLeft(eq(world), eq(uuid))).thenReturn(-1);
+		// Mock up NewIsland builder
+		NewIsland.Builder builder = mock(NewIsland.Builder.class);
+		when(builder.player(any())).thenReturn(builder);
+		when(builder.oldIsland(any())).thenReturn(builder);
+		when(builder.reason(any())).thenReturn(builder);
+		when(builder.name(any())).thenReturn(builder);
+		when(builder.addon(any())).thenReturn(builder);
+		when(builder.build()).thenReturn(mock(Island.class));
+		PowerMockito.mockStatic(NewIsland.class);
+		when(NewIsland.builder()).thenReturn(builder);
+		// Test with unlimited resets
+		when(pm.getResetsLeft(eq(world), eq(uuid))).thenReturn(-1);
 
-        // Reset
-        assertTrue(irc.canExecute(user, irc.getLabel(), Collections.emptyList()));
-        verify(builder, never()).noPaste();
-    }
+		// Reset
+		assertTrue(irc.canExecute(user, irc.getLabel(), Collections.emptyList()));
+		verify(builder, never()).noPaste();
+	}
 
-    /**
+	/**
      * Test method for {@link IslandResetCommand#execute(User, String, java.util.List)}
      */
     @Test
@@ -345,7 +348,7 @@ public class IslandResetCommandTest {
         // Now has island, but is not the owner
         when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
         // Now is owner, but still has team
-        when(im.isOwner(any(), eq(uuid))).thenReturn(true);
+        //when(im.isOwner(any(), eq(uuid))).thenReturn(true);
         // Now has no team
         when(im.inTeam(any(), eq(uuid))).thenReturn(false);
         // Give the user some resets
@@ -380,7 +383,7 @@ public class IslandResetCommandTest {
         // Some more checking can go here...
     }
 
-    /**
+	/**
      * Test method for {@link IslandResetCommand#execute(User, String, java.util.List)}
      */
     @Test
@@ -394,7 +397,7 @@ public class IslandResetCommandTest {
                 );
     }
 
-    /**
+	/**
      * Test method for {@link IslandResetCommand#execute(User, String, java.util.List)}
      */
     @Test
@@ -407,7 +410,7 @@ public class IslandResetCommandTest {
         assertFalse(irc.execute(user, irc.getLabel(), Collections.singletonList("custom")));
     }
 
-    /**
+	/**
      * Test method for {@link IslandResetCommand#execute(User, String, java.util.List)}
      */
     @Test
@@ -415,7 +418,7 @@ public class IslandResetCommandTest {
         // Now has island, but is not the owner
         when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
         // Now is owner, but still has team
-        when(im.isOwner(any(), eq(uuid))).thenReturn(true);
+        //when(im.isOwner(any(), eq(uuid))).thenReturn(true);
         // Now has no team
         when(im.inTeam(any(), eq(uuid))).thenReturn(false);
         // Give the user some resets

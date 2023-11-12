@@ -267,7 +267,11 @@ public class IslandCache {
 	 * @param minimumRank minimum rank requested
 	 * @return set of UUID's of island members. If there are no islands, this set
 	 *         will be empty
+	 * @deprecated This will be removed in 2.0 because it is ambiguous when a user
+	 *             has more than one island in the world.
 	 */
+
+	@Deprecated(since = "2.0", forRemoval = true)
 	@NonNull
 	public Set<UUID> getMembers(@NonNull World world, @NonNull UUID uuid, int minimumRank) {
 		return getIslands(world, uuid).stream().flatMap(island -> island.getMemberSet(minimumRank).stream())
@@ -282,33 +286,39 @@ public class IslandCache {
 	 * @param uuid  the player's UUID
 	 * @return island owner's UUID or null if there is no island owned by the player
 	 *         in this world
+	 * @deprecated This will be removed in 2.0 because it is ambiguous when a user
+	 *             has more than one island in the world.
 	 */
+
+	@Deprecated(since = "2.0", forRemoval = true)
 	@Nullable
 	public UUID getOwner(@NonNull World world, @NonNull UUID uuid) {
 		World w = Util.getWorld(world);
 		Set<Island> islands = islandsByUUID.get(uuid);
 		if (w == null || islands == null || islands.isEmpty()) {
 			return null;
-		}
-		// Find the island for this world
+		} // Find the island for this world return
 		return islands.stream().filter(i -> w.equals(i.getWorld())).findFirst().map(Island::getOwner).orElse(null);
 	}
 
 	/**
-	 * Checks is a player has an island and owns it
+	 * Checks is a player has an island and owns it in this world. Note that players
+	 * may have multiple islands so this means the player is an owner of ANY island.
 	 * 
 	 * @param world the world to check
 	 * @param uuid  the player
-	 * @return true if player has island and owns it
+	 * @return true if player has an island and owns it
 	 */
 	public boolean hasIsland(@NonNull World world, @NonNull UUID uuid) {
-		return uuid.equals(getOwner(world, uuid));
+		if (!islandsByUUID.containsKey(uuid)) {
+			return false;
+		}
+		return this.islandsByUUID.get(uuid).stream().anyMatch(i -> uuid.equals(i.getOwner()));
 	}
 
 	/**
 	 * Removes a player from the cache. If the player has an island, the island
-	 * owner is removed and membership cleared. The island is removed from the
-	 * islandsByUUID map, but kept in the location map.
+	 * owner is removed and membership cleared.
 	 * 
 	 * @param world world
 	 * @param uuid  player's UUID
@@ -320,18 +330,23 @@ public class IslandCache {
 		if (w == null || islandSet == null) {
 			return Collections.emptySet(); // Return empty list if no islands map exists for the world
 		}
-
-		islandSet.stream().filter(i -> w.equals(i.getWorld())).forEach(island -> {
-			if (uuid.equals(island.getOwner())) {
-				island.getMembers().clear();
-				island.setOwner(null);
-			} else {
-				island.removeMember(uuid);
+		// Go through all the islands associated with this player in this world and
+		// remove the player from them.
+		Iterator<Island> it = islandSet.iterator();
+		while (it.hasNext()) {
+			Island island = it.next();
+			if (w.equals(island.getWorld())) {
+				if (uuid.equals(island.getOwner())) {
+					// Player is the owner, so clear the whole island and clear the ownership
+					island.getMembers().clear();
+					island.setOwner(null);
+				} else {
+					island.removeMember(uuid);
+				}
+				// Remove this island from this set of islands associated to this player
+				it.remove();
 			}
-		});
-
-		islandsByUUID.remove(uuid);
-
+		}
 		return islandSet;
 	}
 

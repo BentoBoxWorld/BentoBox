@@ -52,133 +52,131 @@ import world.bentobox.bentobox.managers.RanksManagerBeforeClassTest;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, User.class })
+@PrepareForTest({ Bukkit.class, BentoBox.class, User.class })
 public class IslandTeamInviteCommandTest extends RanksManagerBeforeClassTest {
 
-    @Mock
-    private IslandTeamCommand ic;
-    @Mock
-    private IslandsManager im;
-    @Mock
-    private Island island;
-    @Mock
-    private PluginManager pim;
-    @Mock
-    private PlayersManager pm;
-    @Mock
-    private Settings s;
-    @Mock
-    private User target;
-    @Mock
-    private User user;
+	@Mock
+	private IslandTeamCommand ic;
+	@Mock
+	private IslandsManager im;
+	@Mock
+	private Island island;
+	@Mock
+	private PluginManager pim;
+	@Mock
+	private PlayersManager pm;
+	@Mock
+	private Settings s;
+	@Mock
+	private User target;
+	@Mock
+	private User user;
 
-    private UUID uuid;
-    private UUID islandUUID;
-    private IslandTeamInviteCommand itl;
-    private UUID notUUID;
-    @Mock
-    private Player p;
-    @Mock
-    private @NonNull World world;
+	private UUID uuid;
+	private UUID islandUUID;
+	private IslandTeamInviteCommand itl;
+	private UUID notUUID;
+	@Mock
+	private Player p;
+	@Mock
+	private @NonNull World world;
 
+	/**
+	 */
+	@Before
+	public void setUp() throws Exception {
+		super.setUp();
 
-    /**
-     */
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-        
-        // Command manager
-        CommandsManager cm = mock(CommandsManager.class);
-        when(plugin.getCommandsManager()).thenReturn(cm);
+		// Command manager
+		CommandsManager cm = mock(CommandsManager.class);
+		when(plugin.getCommandsManager()).thenReturn(cm);
 
-        // Settings
-        when(plugin.getSettings()).thenReturn(s);
+		// Settings
+		when(plugin.getSettings()).thenReturn(s);
 
-        // Player & users
-        PowerMockito.mockStatic(User.class);
+		// Player & users
+		PowerMockito.mockStatic(User.class);
 
-        // Sometimes use Mockito.withSettings().verboseLogging()
-        when(user.isOp()).thenReturn(false);
-        uuid = UUID.randomUUID();
-        when(user.getUniqueId()).thenReturn(uuid);
-        when(user.getPlayer()).thenReturn(p);
-        when(user.getName()).thenReturn("tastybento");
-        when(user.getDisplayName()).thenReturn("&Ctastbento");
-        when(user.isOnline()).thenReturn(true);
-        // Permission to invite 3 more players
-        when(user.getPermissionValue(anyString(), anyInt())).thenReturn(3);
-        when(User.getInstance(uuid)).thenReturn(user);
-        when(user.getTranslation(any())).thenAnswer(invocation -> invocation.getArgument(0, String.class));
-        // Vanished players
-        when(p.canSee(any())).thenReturn(true);
+		// Sometimes use Mockito.withSettings().verboseLogging()
+		when(user.isOp()).thenReturn(false);
+		uuid = UUID.randomUUID();
+		when(user.getUniqueId()).thenReturn(uuid);
+		when(user.getPlayer()).thenReturn(p);
+		when(user.getName()).thenReturn("tastybento");
+		when(user.getDisplayName()).thenReturn("&Ctastbento");
+		when(user.isOnline()).thenReturn(true);
+		// Permission to invite 3 more players
+		when(user.getPermissionValue(anyString(), anyInt())).thenReturn(3);
+		when(User.getInstance(uuid)).thenReturn(user);
+		when(user.getTranslation(any())).thenAnswer(invocation -> invocation.getArgument(0, String.class));
+		// Vanished players
+		when(p.canSee(any())).thenReturn(true);
 
-        User.setPlugin(plugin);
-        // Target
-        notUUID = UUID.randomUUID();
-        when(target.getUniqueId()).thenReturn(notUUID);
-        when(target.getPlayer()).thenReturn(p);
-        when(target.isOnline()).thenReturn(true);
-        when(target.getName()).thenReturn("target");
-        when(target.getDisplayName()).thenReturn("&Ctarget");
-        when(User.getInstance(notUUID)).thenReturn(target);
+		User.setPlugin(plugin);
+		// Target
+		notUUID = UUID.randomUUID();
+		when(target.getUniqueId()).thenReturn(notUUID);
+		when(target.getPlayer()).thenReturn(p);
+		when(target.isOnline()).thenReturn(true);
+		when(target.getName()).thenReturn("target");
+		when(target.getDisplayName()).thenReturn("&Ctarget");
+		when(User.getInstance(notUUID)).thenReturn(target);
 
+		// Parent command has no aliases
+		when(ic.getSubCommandAliases()).thenReturn(new HashMap<>());
+		when(ic.getWorld()).thenReturn(world);
 
-        // Parent command has no aliases
-        when(ic.getSubCommandAliases()).thenReturn(new HashMap<>());
-        when(ic.getWorld()).thenReturn(world);
+		// Island
+		islandUUID = UUID.randomUUID();
+		when(island.getUniqueId()).thenReturn(islandUUID.toString());
+		when(island.getMemberSet()).thenReturn(ImmutableSet.of(uuid));
 
-        // Island
-        islandUUID = UUID.randomUUID();
-        when(island.getUniqueId()).thenReturn(islandUUID.toString());
-        when(island.getMemberSet()).thenReturn(ImmutableSet.of(uuid));
+		// Player has island to begin with
+		when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
+		// when(im.isOwner(any(), eq(uuid))).thenReturn(true);
+		// when(im.getOwner(any(), eq(uuid))).thenReturn(uuid);
+		when(island.getRank(any(User.class))).thenReturn(RanksManager.OWNER_RANK);
+		when(im.getIsland(any(), eq(user))).thenReturn(island);
+		when(im.getMaxMembers(eq(island), anyInt())).thenReturn(4);
+		when(plugin.getIslands()).thenReturn(im);
 
-        // Player has island to begin with
-        when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
-        when(im.isOwner(any(), eq(uuid))).thenReturn(true);
-        when(im.getOwner(any(), eq(uuid))).thenReturn(uuid);
-        when(island.getRank(any(User.class))).thenReturn(RanksManager.OWNER_RANK);
-        when(im.getIsland(any(), eq(user))).thenReturn(island);
-        when(im.getMaxMembers(eq(island), anyInt())).thenReturn(4);
-        when(plugin.getIslands()).thenReturn(im);
+		// Has team
+		when(im.inTeam(any(), eq(uuid))).thenReturn(true);
 
-        // Has team
-        when(im.inTeam(any(), eq(uuid))).thenReturn(true);
+		// Player Manager
+		when(plugin.getPlayers()).thenReturn(pm);
+		when(pm.getUUID("tastybento")).thenReturn(uuid);
+		when(pm.getUUID("target")).thenReturn(notUUID);
 
-        // Player Manager
-        when(plugin.getPlayers()).thenReturn(pm);
-        when(pm.getUUID("tastybento")).thenReturn(uuid);
-        when(pm.getUUID("target")).thenReturn(notUUID);
+		// Server & Scheduler
+		BukkitScheduler sch = mock(BukkitScheduler.class);
+		PowerMockito.mockStatic(Bukkit.class);
+		when(Bukkit.getScheduler()).thenReturn(sch);
+		when(Bukkit.getPluginManager()).thenReturn(pim);
 
-        // Server & Scheduler
-        BukkitScheduler sch = mock(BukkitScheduler.class);
-        PowerMockito.mockStatic(Bukkit.class);
-        when(Bukkit.getScheduler()).thenReturn(sch);
-        when(Bukkit.getPluginManager()).thenReturn(pim);
+		// Locales
+		LocalesManager lm = mock(LocalesManager.class);
+		when(lm.get(any(), any())).thenReturn(null);
+		when(plugin.getLocalesManager()).thenReturn(lm);
 
-        // Locales
-        LocalesManager lm = mock(LocalesManager.class);
-        when(lm.get(any(), any())).thenReturn(null);
-        when(plugin.getLocalesManager()).thenReturn(lm);
+		// IWM friendly name
+		IslandWorldManager iwm = mock(IslandWorldManager.class);
+		when(iwm.getFriendlyName(any())).thenReturn("BSkyBlock");
+		when(plugin.getIWM()).thenReturn(iwm);
 
-        // IWM friendly name
-        IslandWorldManager iwm = mock(IslandWorldManager.class);
-        when(iwm.getFriendlyName(any())).thenReturn("BSkyBlock");
-        when(plugin.getIWM()).thenReturn(iwm);
+		// Parent command
+		when(ic.getTopLabel()).thenReturn("island");
 
-        // Parent command
-        when(ic.getTopLabel()).thenReturn("island");
+		// Ranks Manager
+		RanksManager rm = new RanksManager();
+		when(plugin.getRanksManager()).thenReturn(rm);
 
-        // Ranks Manager
-        RanksManager rm = new RanksManager();
-        when(plugin.getRanksManager()).thenReturn(rm);
+		// Command under test
+		itl = new IslandTeamInviteCommand(ic);
 
-        // Command under test
-        itl = new IslandTeamInviteCommand(ic);
+	}
 
-    }
-
-    /**
+	/**
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteCommand#canExecute(User, String, java.util.List)}.
      */
     @Test
@@ -190,7 +188,7 @@ public class IslandTeamInviteCommandTest extends RanksManagerBeforeClassTest {
         verify(user).sendMessage(eq("general.errors.you-must-wait"), eq(TextVariables.NUMBER), anyString());
     }
 
-    /**
+	/**
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteCommand#canExecute(User, String, java.util.List)}.
      */
     @Test
@@ -200,7 +198,7 @@ public class IslandTeamInviteCommandTest extends RanksManagerBeforeClassTest {
         verify(user).sendMessage(eq("commands.island.team.invite.errors.already-on-team"));
     }
 
-    /**
+	/**
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteCommand#canExecute(User, String, java.util.List)}.
      */
     @Test
@@ -211,7 +209,7 @@ public class IslandTeamInviteCommandTest extends RanksManagerBeforeClassTest {
         verify(user).sendMessage(eq("general.errors.insufficient-rank"), eq(TextVariables.RANK), eq("ranks.member"));
     }
 
-    /**
+	/**
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteCommand#canExecute(User, String, java.util.List)}.
      */
     @Test
@@ -222,18 +220,18 @@ public class IslandTeamInviteCommandTest extends RanksManagerBeforeClassTest {
         verify(user).sendMessage(eq("general.errors.no-island"));
     }
 
+	/**
+	 * Test method for
+	 * {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteCommand#canExecute(User, String, java.util.List)}.
+	 */
+	@Test
+	public void testCanExecuteNoTarget() {
+		assertFalse(itl.canExecute(user, itl.getLabel(), Collections.emptyList()));
+		// Show help
+		verify(user).sendMessage("commands.help.header", TextVariables.LABEL, "BSkyBlock");
+	}
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteCommand#canExecute(User, String, java.util.List)}.
-     */
-    @Test
-    public void testCanExecuteNoTarget() {
-        assertFalse(itl.canExecute(user, itl.getLabel(), Collections.emptyList()));
-        // Show help
-        verify(user).sendMessage("commands.help.header", TextVariables.LABEL, "BSkyBlock");
-    }
-
-    /**
+	/**
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteCommand#canExecute(User, String, java.util.List)}.
      */
     @Test
@@ -243,7 +241,7 @@ public class IslandTeamInviteCommandTest extends RanksManagerBeforeClassTest {
         verify(user).sendMessage(eq("general.errors.offline-player"));
     }
 
-    /**
+	/**
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteCommand#canExecute(User, String, java.util.List)}.
      */
     @Test
@@ -253,25 +251,26 @@ public class IslandTeamInviteCommandTest extends RanksManagerBeforeClassTest {
         verify(user).sendMessage(eq("general.errors.offline-player"));
     }
 
+	/**
+	 * Test method for
+	 * {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteCommand#canExecute(User, String, java.util.List)}.
+	 */
+	@Test
+	public void testCanExecuteSamePlayer() {
+		assertFalse(itl.canExecute(user, itl.getLabel(), List.of("tastybento")));
+		verify(user).sendMessage(eq("commands.island.team.invite.errors.cannot-invite-self"));
+	}
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteCommand#canExecute(User, String, java.util.List)}.
-     */
-    @Test
-    public void testCanExecuteSamePlayer() {
-        assertFalse(itl.canExecute(user, itl.getLabel(), List.of("tastybento")));
-        verify(user).sendMessage(eq("commands.island.team.invite.errors.cannot-invite-self"));
-    }
+	/**
+	 * Test method for
+	 * {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteCommand#canExecute(User, String, java.util.List)}.
+	 */
+	@Test
+	public void testCanExecuteSuccess() {
+		assertTrue(itl.canExecute(user, itl.getLabel(), List.of("target")));
+	}
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteCommand#canExecute(User, String, java.util.List)}.
-     */
-    @Test
-    public void testCanExecuteSuccess() {
-        assertTrue(itl.canExecute(user, itl.getLabel(), List.of("target")));
-    }
-
-    /**
+	/**
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteCommand#canExecute(User, String, java.util.List)}.
      */
     @Test
@@ -281,8 +280,7 @@ public class IslandTeamInviteCommandTest extends RanksManagerBeforeClassTest {
         verify(user).sendMessage(eq("general.errors.unknown-player"), eq(TextVariables.NAME), eq("target"));
     }
 
-
-    /**
+	/**
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteCommand#canExecute(User, String, java.util.List)}.
      */
     @Test
@@ -292,7 +290,7 @@ public class IslandTeamInviteCommandTest extends RanksManagerBeforeClassTest {
         verify(user).sendMessage(eq("commands.island.team.invite.errors.island-is-full"));
     }
 
-    /**
+	/**
      * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteCommand#execute(User, String, java.util.List)}.
      */
     @Test
@@ -311,41 +309,45 @@ public class IslandTeamInviteCommandTest extends RanksManagerBeforeClassTest {
 
     }
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteCommand#execute(User, String, java.util.List)}.
-     */
-    @Test
-    public void testExecuteSuccessTargetHasNoIsland() {
-        testCanExecuteSuccess();
-        when(im.getIsland(world, uuid)).thenReturn(island);
-        assertTrue(itl.execute(user, itl.getLabel(), List.of("target")));
-        verify(pim).callEvent(any(IslandBaseEvent.class));
-        verify(user, never()).sendMessage("commands.island.team.invite.removing-invite");
-        verify(ic).addInvite(Invite.Type.TEAM, uuid, notUUID, island);
-        verify(user).sendMessage("commands.island.team.invite.invitation-sent", TextVariables.NAME, "target", TextVariables.DISPLAY_NAME, "&Ctarget");
-        verify(target).sendMessage("commands.island.team.invite.name-has-invited-you", TextVariables.NAME, "tastybento", TextVariables.DISPLAY_NAME, "&Ctastbento");
-        verify(target).sendMessage("commands.island.team.invite.to-accept-or-reject", TextVariables.LABEL, "island");
-        verify(target, never()).sendMessage("commands.island.team.invite.you-will-lose-your-island");
+	/**
+	 * Test method for
+	 * {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteCommand#execute(User, String, java.util.List)}.
+	 */
+	@Test
+	public void testExecuteSuccessTargetHasNoIsland() {
+		testCanExecuteSuccess();
+		when(im.getIsland(world, uuid)).thenReturn(island);
+		assertTrue(itl.execute(user, itl.getLabel(), List.of("target")));
+		verify(pim).callEvent(any(IslandBaseEvent.class));
+		verify(user, never()).sendMessage("commands.island.team.invite.removing-invite");
+		verify(ic).addInvite(Invite.Type.TEAM, uuid, notUUID, island);
+		verify(user).sendMessage("commands.island.team.invite.invitation-sent", TextVariables.NAME, "target",
+				TextVariables.DISPLAY_NAME, "&Ctarget");
+		verify(target).sendMessage("commands.island.team.invite.name-has-invited-you", TextVariables.NAME, "tastybento",
+				TextVariables.DISPLAY_NAME, "&Ctastbento");
+		verify(target).sendMessage("commands.island.team.invite.to-accept-or-reject", TextVariables.LABEL, "island");
+		verify(target, never()).sendMessage("commands.island.team.invite.you-will-lose-your-island");
 
-    }
+	}
 
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteCommand#execute(User, String, java.util.List)}.
-     */
-    @Test
-    public void testExecuteTargetAlreadyInvited() {
-        testCanExecuteSuccess();
-        when(im.getIsland(world, uuid)).thenReturn(island);
-        when(ic.isInvited(notUUID)).thenReturn(true);
-        // Set up invite
-        when(ic.getInviter(notUUID)).thenReturn(uuid);
-        Invite invite = mock(Invite.class);
-        when(invite.getType()).thenReturn(Type.TEAM);
-        when(ic.getInvite(notUUID)).thenReturn(invite);
-        assertTrue(itl.execute(user, itl.getLabel(), List.of("target")));
-        verify(pim).callEvent(any(IslandBaseEvent.class));
-        verify(ic).removeInvite(notUUID);
-        verify(user).sendMessage("commands.island.team.invite.removing-invite");
-    }
+	/**
+	 * Test method for
+	 * {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteCommand#execute(User, String, java.util.List)}.
+	 */
+	@Test
+	public void testExecuteTargetAlreadyInvited() {
+		testCanExecuteSuccess();
+		when(im.getIsland(world, uuid)).thenReturn(island);
+		when(ic.isInvited(notUUID)).thenReturn(true);
+		// Set up invite
+		when(ic.getInviter(notUUID)).thenReturn(uuid);
+		Invite invite = mock(Invite.class);
+		when(invite.getType()).thenReturn(Type.TEAM);
+		when(ic.getInvite(notUUID)).thenReturn(invite);
+		assertTrue(itl.execute(user, itl.getLabel(), List.of("target")));
+		verify(pim).callEvent(any(IslandBaseEvent.class));
+		verify(ic).removeInvite(notUUID);
+		verify(user).sendMessage("commands.island.team.invite.removing-invite");
+	}
 
 }
