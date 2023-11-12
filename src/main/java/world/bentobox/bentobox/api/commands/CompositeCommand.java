@@ -20,8 +20,6 @@ import org.bukkit.entity.Player;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
-import com.google.common.collect.ImmutableSet;
-
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.addons.Addon;
@@ -387,7 +385,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
 	protected Set<UUID> getMembers(World world, User user) {
 		Island island = plugin.getIslands().getIsland(world, user);
 		if (island == null) {
-			return ImmutableSet.of();
+			return Set.of();
 		}
 		return island.getMemberSet();
 	}

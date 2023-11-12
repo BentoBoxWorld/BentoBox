@@ -186,7 +186,7 @@ public class IslandNearCommandTest {
 	@Test
 	public void testCanExecuteWithArgsShowHelp() {
 		assertFalse(inc.canExecute(user, "near", Collections.singletonList("fghjk")));
-		verify(user).sendMessage(eq("commands.help.header"), eq(TextVariables.LABEL), eq("BSkyBlock"));
+		verify(user).sendMessage("commands.help.header", TextVariables.LABEL, "BSkyBlock");
 	}
 
 	/**
@@ -236,15 +236,15 @@ public class IslandNearCommandTest {
 	@Test
 	public void testExecuteUserStringListOfStringAllFourPoints() {
 		assertTrue(inc.execute(user, "near", Collections.emptyList()));
-		verify(user).sendMessage(eq("commands.island.near.the-following-islands"));
-		verify(user).sendMessage(eq("commands.island.near.syntax"), eq("[direction]"), eq("commands.island.near.north"),
-				eq(TextVariables.NAME), eq("Island name"));
-		verify(user).sendMessage(eq("commands.island.near.syntax"), eq("[direction]"), eq("commands.island.near.east"),
-				eq(TextVariables.NAME), eq("Island name"));
-		verify(user).sendMessage(eq("commands.island.near.syntax"), eq("[direction]"), eq("commands.island.near.south"),
-				eq(TextVariables.NAME), eq("Island name"));
-		verify(user).sendMessage(eq("commands.island.near.syntax"), eq("[direction]"), eq("commands.island.near.west"),
-				eq(TextVariables.NAME), eq("Island name"));
+		verify(user).sendMessage("commands.island.near.the-following-islands");
+		verify(user).sendMessage("commands.island.near.syntax", "[direction]", "commands.island.near.north",
+				TextVariables.NAME, "Island name");
+		verify(user).sendMessage("commands.island.near.syntax", "[direction]", "commands.island.near.east",
+				TextVariables.NAME, "Island name");
+		verify(user).sendMessage("commands.island.near.syntax", "[direction]", "commands.island.near.south",
+				TextVariables.NAME, "Island name");
+		verify(user).sendMessage("commands.island.near.syntax", "[direction]", "commands.island.near.west",
+				TextVariables.NAME, "Island name");
 	}
 
 	/**
@@ -256,18 +256,10 @@ public class IslandNearCommandTest {
         when(island.isUnowned()).thenReturn(true);
         assertTrue(inc.execute(user, "near", Collections.emptyList()));
         verify(user).sendMessage(eq("commands.island.near.the-following-islands"));
-        verify(user).sendMessage(eq("commands.island.near.syntax"),
-                eq("[direction]"), eq("commands.island.near.north"),
-                eq(TextVariables.NAME), eq("commands.admin.info.unowned"));
-        verify(user).sendMessage(eq("commands.island.near.syntax"),
-                eq("[direction]"), eq("commands.island.near.east"),
-                eq(TextVariables.NAME), eq("commands.admin.info.unowned"));
-        verify(user).sendMessage(eq("commands.island.near.syntax"),
-                eq("[direction]"), eq("commands.island.near.south"),
-                eq(TextVariables.NAME), eq("commands.admin.info.unowned"));
-        verify(user).sendMessage(eq("commands.island.near.syntax"),
-                eq("[direction]"), eq("commands.island.near.west"),
-                eq(TextVariables.NAME), eq("commands.admin.info.unowned"));
+		verify(user).sendMessage("commands.island.near.syntax", "[direction]", "commands.island.near.north", TextVariables.NAME, "commands.admin.info.unowned");
+		verify(user).sendMessage("commands.island.near.syntax", "[direction]", "commands.island.near.east", TextVariables.NAME, "commands.admin.info.unowned");
+		verify(user).sendMessage("commands.island.near.syntax", "[direction]", "commands.island.near.south", TextVariables.NAME, "commands.admin.info.unowned");
+		verify(user).sendMessage("commands.island.near.syntax", "[direction]", "commands.island.near.west", TextVariables.NAME, "commands.admin.info.unowned");
     }
 
 	/**
@@ -277,19 +269,19 @@ public class IslandNearCommandTest {
     public void testExecuteUserStringListOfStringNoName() {
         when(island.getName()).thenReturn("");
         assertTrue(inc.execute(user, "near", Collections.emptyList()));
-        verify(user).sendMessage(eq("commands.island.near.the-following-islands"));
-        verify(user).sendMessage(eq("commands.island.near.syntax"),
-                eq("[direction]"), eq("commands.island.near.north"),
-                eq(TextVariables.NAME), eq("tastybento"));
-        verify(user).sendMessage(eq("commands.island.near.syntax"),
-                eq("[direction]"), eq("commands.island.near.east"),
-                eq(TextVariables.NAME), eq("tastybento"));
-        verify(user).sendMessage(eq("commands.island.near.syntax"),
-                eq("[direction]"), eq("commands.island.near.south"),
-                eq(TextVariables.NAME), eq("tastybento"));
-        verify(user).sendMessage(eq("commands.island.near.syntax"),
-                eq("[direction]"), eq("commands.island.near.west"),
-                eq(TextVariables.NAME), eq("tastybento"));
+        verify(user).sendMessage("commands.island.near.the-following-islands");
+        verify(user).sendMessage("commands.island.near.syntax",
+                "[direction]", "commands.island.near.north",
+                TextVariables.NAME, "tastybento");
+        verify(user).sendMessage("commands.island.near.syntax",
+                "[direction]", "commands.island.near.east",
+                TextVariables.NAME, "tastybento");
+        verify(user).sendMessage("commands.island.near.syntax",
+                "[direction]", "commands.island.near.south",
+                TextVariables.NAME, "tastybento");
+        verify(user).sendMessage("commands.island.near.syntax",
+                "[direction]", "commands.island.near.west",
+                TextVariables.NAME, "tastybento");
     }
 
 	/**
@@ -299,9 +291,9 @@ public class IslandNearCommandTest {
     public void testExecuteUserStringListOfStringNoIslands() {
         when(im.getIslandAt(any())).thenReturn(Optional.empty());
         assertTrue(inc.execute(user, "near", Collections.emptyList()));
-        verify(user).sendMessage(eq("commands.island.near.the-following-islands"));
+        verify(user).sendMessage("commands.island.near.the-following-islands");
         verify(user, never()).sendMessage(any(), any(), any(), any(), any());
-        verify(user).sendMessage(eq("commands.island.near.no-neighbors"));
+        verify(user).sendMessage("commands.island.near.no-neighbors");
     }
 
 }
