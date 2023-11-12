@@ -47,7 +47,7 @@ public class AdminTeamDisbandCommand extends CompositeCommand {
 			return false;
 		}
 		Island island = getIslands().getPrimaryIsland(getWorld(), targetUUID);
-		if (!island.getOwner().equals(targetUUID)) {
+		if (!targetUUID.equals(island.getOwner())) {
 			user.sendMessage("commands.admin.team.disband.use-disband-owner", "[owner]",
 					getPlayers().getName(island.getOwner()));
 			return false;

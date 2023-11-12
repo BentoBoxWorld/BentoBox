@@ -1201,9 +1201,11 @@ public class IslandsManager {
 		User user = User.getInstance(player);
 		// If there's no spawn island or the spawn location is null for some reason,
 		// then error
-		Location spawnTo = getSpawn(world).map(i -> i.getSpawnPoint(World.Environment.NORMAL) == null ? i.getCenter()
-				: i.getSpawnPoint(World.Environment.NORMAL)).orElse(null);
-		if (spawnTo == null) {
+		Optional<Location> spawnTo = getSpawn(world).map(island -> {
+			Location spawnPoint = island.getSpawnPoint(World.Environment.NORMAL);
+			return spawnPoint != null ? spawnPoint : island.getCenter();
+		});
+		if (spawnTo.isEmpty()) {
 			// There is no spawn here.
 			user.sendMessage("commands.island.spawn.no-spawn");
 		} else {
@@ -1212,7 +1214,7 @@ public class IslandsManager {
 
 			user.sendMessage("commands.island.spawn.teleporting");
 			// Safe teleport
-			new SafeSpotTeleport.Builder(plugin).entity(player).location(spawnTo).build();
+			new SafeSpotTeleport.Builder(plugin).entity(player).location(spawnTo.get()).build();
 		}
 	}
 

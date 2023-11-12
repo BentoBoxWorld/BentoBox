@@ -20,12 +20,15 @@ import org.bukkit.entity.Player;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
+import com.google.common.collect.ImmutableSet;
+
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.events.command.CommandEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.PlayersManager;
@@ -379,10 +382,14 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
 	 * 
 	 * @param world - world to check
 	 * @param user  - the User
-	 * @return set of UUIDs of all team members
+	 * @return set of UUIDs of all team members, or empty set if there is no island
 	 */
 	protected Set<UUID> getMembers(World world, User user) {
-		return plugin.getIslands().getIsland(world, user).getMemberSet();
+		Island island = plugin.getIslands().getIsland(world, user);
+		if (island == null) {
+			return ImmutableSet.of();
+		}
+		return island.getMemberSet();
 	}
 
 	public String getParameters() {
