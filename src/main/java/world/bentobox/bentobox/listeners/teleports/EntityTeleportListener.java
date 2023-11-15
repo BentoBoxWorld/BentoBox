@@ -150,18 +150,9 @@ public class EntityTeleportListener extends AbstractTeleportListener implements 
         // Entities are teleported instantly.
         if (!Bukkit.getAllowNether() && type.equals(Material.NETHER_PORTAL))
         {
-            if (fromWorld == overWorld)
-            {
-                this.portalProcess(
-                    new EntityPortalEvent(entity, event.getLocation(), event.getLocation(), 0),
-                    World.Environment.NETHER);
-            }
-            else
-            {
-                this.portalProcess(
-                    new EntityPortalEvent(entity, event.getLocation(), event.getLocation(), 0),
-                    World.Environment.NORMAL);
-            }
+            this.portalProcess(
+                new EntityPortalEvent(entity, event.getLocation(), event.getLocation(), 0),
+                World.Environment.NETHER);
 
             // Do not process anything else.
             return;
@@ -170,18 +161,9 @@ public class EntityTeleportListener extends AbstractTeleportListener implements 
         // Entities are teleported instantly.
         if (!Bukkit.getAllowEnd() && (type.equals(Material.END_PORTAL) || type.equals(Material.END_GATEWAY)))
         {
-            if (fromWorld == this.getNetherEndWorld(overWorld, World.Environment.THE_END))
-            {
-                this.portalProcess(
-                    new EntityPortalEvent(entity, event.getLocation(), event.getLocation(), 0),
-                    World.Environment.NORMAL);
-            }
-            else
-            {
-                this.portalProcess(
-                    new EntityPortalEvent(entity, event.getLocation(), event.getLocation(), 0),
-                    World.Environment.THE_END);
-            }
+            this.portalProcess(
+                new EntityPortalEvent(entity, event.getLocation(), event.getLocation(), 0),
+                World.Environment.THE_END);
         }
     }
 
