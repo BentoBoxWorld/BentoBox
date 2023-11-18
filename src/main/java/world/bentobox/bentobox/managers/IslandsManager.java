@@ -1286,15 +1286,16 @@ public class IslandsManager {
 	}
 
 	/**
+	 * Check is a player has an island and owns it in world
+	 * 
 	 * @param uniqueId - unique ID
-	 * @return true if the player is the owner of their island.
-	 * @deprecated This will be removed in 2.0 because it is ambiguous when a user
-	 *             has more than one island in the world.
+	 * @return true if the player is the owner of any island in the world.
+	 * @deprecated Duplicate of {@link #hasIsland(World, UUID)}. Players can have
+	 *             multiple islands.
 	 */
-
 	@Deprecated(since = "2.0", forRemoval = true)
 	public boolean isOwner(@NonNull World world, @NonNull UUID uniqueId) {
-		return hasIsland(world, uniqueId) && uniqueId.equals(getIsland(world, uniqueId).getOwner());
+		return hasIsland(world, uniqueId);
 	}
 
 	/**
