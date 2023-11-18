@@ -892,7 +892,7 @@ protection:
         &a Activer/désactiver l'interaction avec les coffres
         &un et des minecarts de coffre.
         &a (n'inclut pas les coffres piégés)
-      hint: Accès à la poitrine désactivé
+      hint: Accès à la coffre désactivé
     BARREL:
       name: Barils
       description: Activer/désactiver l'interaction du canon
@@ -938,8 +938,8 @@ protection:
       hint: Accès à la taille de pierre désactivé
     TRAPPED_CHEST:
       name: Coffres piégés
-      description: Activer/Désactiver l'interaction de la poitrine piégée
-      hint: Accès à la poitrine piégée désactivé
+      description: Activer/Désactiver l'interaction de la coffre piégée
+      hint: Accès à la coffre piégée désactivé
     DISPENSER:
       name: Dispensers
       description: Autoriser l'interaction avec dispensers
