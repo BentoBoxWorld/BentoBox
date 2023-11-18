@@ -938,8 +938,8 @@ protection:
       hint: Accès à la taille de pierre désactivé
     TRAPPED_CHEST:
       name: Coffres piégés
-      description: Activer/Désactiver l'interaction de le coffre piégée
-      hint: Accès à le coffre piégée désactivé
+      description: Activer/Désactiver l'interaction du coffre piégée
+      hint: Accès au coffre piégé désactivé.
     DISPENSER:
       name: Dispensers
       description: Autoriser l'interaction avec dispensers
