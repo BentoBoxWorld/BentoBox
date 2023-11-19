@@ -12,8 +12,7 @@ general:
   errors:
     command-cancelled: "&c Commande annulée."
     no-permission: "&c Vous n'êtes pas autorisé à exécuter cette commande (&7 [permission]&c)."
-    insufficient-rank: "&c Votre rang n'est pas assez élevé pour faire ça ! (&7 [rank]&c
-      )"
+    insufficient-rank: "&c Votre rang n'est pas assez élevé pour faire ça ! (&7 [rank]&c)"
     use-in-game: "&c Cette commande est uniquement disponible dans le jeu."
     use-in-console: "&c Cette commande n'est disponible que dans la console."
     no-team: "&c Vous n'avez pas d'équipe !"
@@ -32,8 +31,7 @@ general:
     unknown-command: "&c Commande inconnue. Faites &b /[label] help &c pour obtenir
       de l'aide."
     wrong-world: "&c Vous n'êtes pas dans le bon monde pour faire ça !"
-    you-must-wait: "&c Vous devez attendre [number] secondes avant de pouvoir utiliser
-      à nouveau cette commande."
+    you-must-wait: "&c Vous devez attendre [number] secondes avant de pouvoir à nouveau utiliser cette commande."
     must-be-positive-number: "&c [number] n'est pas un nombre positif valide."
     not-on-island: "&c Vous n'êtes pas sur l'île !"
   worlds:
@@ -66,7 +64,7 @@ commands:
           Monde &a à 0."
         success: "&a Remis avec succès le compteur de Reset de &b [name] &a à 0."
       add:
-        description: ajoute au nombre de fois où ce joueur a réinitialisé son île
+        description: "ajoute au nombre de fois où ce joueur a réinitialisé son île"
         parameters: "<player> <resets>"
         success: "&a Ajouté avec succès &b [number] &a resets à &b [name], augmentant
           le total de resets à &b [total] &a."
@@ -78,15 +76,14 @@ commands:
     purge:
       parameters: "[jours]"
       description: supprime les îles inactives depuis plus de [jours] jours
-      days-one-or-more: Veuillez spécifier une durée supérieure à 1 jour.
+      days-one-or-more: "Veuillez spécifier une durée de plus d'un jour."
       purgable-islands: "[number] îles inactives peuvent être supprimées."
       purge-in-progress: "&c Purge en cours. Utilisez &b /[label] stop purge &c pour
         annuler."
       number-error: "&c L'argument doit être un nombre de jours"
       confirm: "&d Tapez &b /[label] purge confirmez &d pour commencer la purge"
       completed: "&a Purge complétée."
-      see-console-for-status: La purge a commencé. Voir la console pour la progression
-        ou utilisez &b/[label] purge status&a.
+      see-console-for-status: "La purge a commencé. Consultez la console pour le suivi ou utilisez &b/[label] purge status&a."
       no-purge-in-progress: "&c Il n'y a actuellement aucune purge en cours."
       protect:
         description: activer/désactiver la protection de l'île contre la purge
@@ -120,9 +117,8 @@ commands:
       fix:
         description: analyse et corrige l'appartenance à plusieurs îles dans la base
           de données
-        scanning: Base de données d'analyse...
-        duplicate-owner: "&c Player possède plus d'une île dans la base de données :
-          [name]"
+        scanning: "Analyse de la base de données en cours..."
+        duplicate-owner: "&c Le joueur [name] possède plus d'une île dans la base de données."
         player-has: "&c Le joueur [name] a [number] îles"
         duplicate-member: "&c Le joueur [name] est membre de plusieurs îles dans la
           base de données"
@@ -151,7 +147,7 @@ commands:
         already-off: "&c Les indicateurs sont déjà éteints"
         already-on: "&c Les indicateurs sont déjà allumés"
         description: afficher/masquer les indicateurs de portée de l''île
-        hiding: "&2 Cacher les indicateurs de rayon de la zone de protection"
+        hiding: "&2 Masquer les indicateurs de rayon de la zone de protection"
         hint: |-
           &c Les icônes de la barrière rouge &f indiquent la limite du rayon de la zone de protection de l'île actuelle.
           &7 Les particules grises &f indiquent la limite maximale des îles.
@@ -160,8 +156,7 @@ commands:
       set:
         parameters: "<player> <range>"
         description: définit la distance du rayon de la zone de protection de l'île
-        success: "&a Le rayon de la zone de protection de l'île a été réglé à &b [number]
-          &a blocs."
+        success: "&a Le rayon de la zone de protection de l'île a été défini à &b [number] &a blocs."
       reset:
         parameters: "<player>"
         description: réinitialise le rayon de la zone de protection de l'île à la
@@ -171,16 +166,14 @@ commands:
       add:
         description: augmente l''aire de protection de l'île
         parameters: "<player> <range>"
-        success: "&a A augmenté avec succès &b [name]&a 's island protected range
-          to &b [total] &7 (&b +[number]&7 )&a ."
+        success: "&a Augmentation réussie de la zone de protection de l'île de &b [name] &a à &b [total] &7 (&b +[number]&7 )&a."
       remove:
         description: diminue l''aire de protection de l''île
         parameters: "<player> <range>"
-        success: "&a Successfully decreased &b [name]&a 's l'aire de répartition protégée
-          de l'île à &b [total] &7 (&b -[number]&7 )&a ."
+        success: "&a Diminution réussie de la zone de protection de l'île de &b [name] &a à &b [total] &7 (&b -[number]&7 )&a."
     register:
       parameters: "<player>"
-      description: enregistrer le joueur sur l'île sans propriétaire où vous êtes
+      description: "enregistrer le joueur sur une île sans propriétaire où vous êtes"
       registered-island: "&b [name] &a possède maintenant l'île aux coordonnées [xyz]."
       reserved-island: "&a l'île à [xyz] est réservée pour le joueur &b [name] &a
         ."
@@ -226,14 +219,14 @@ commands:
       banned-format: "&c [name]"
       unowned: "&c Sans propriétaire"
     switch:
-      description: mise en marche/arrêt du bypass de protection
+      description: "activer/désactiver le contournement de la protection"
       op: "&c Les OPs peuvent toujours contourner la protection. Deop pour utiliser
         la commande."
       removing: Suppression du bypass de protection...
       adding: Ajout d'un bypass de protection...
     switchto:
       parameters: "<player> <number>"
-      description: changer l'île du joueur pour la première île dans la Corbeille
+      description: "changer l'île du joueur pour la première île disponible dans la Corbeille"
       out-of-range: "&c Le nombre doit être compris entre 1 et [number]. Utilisez
         &l [label] trash [player] &r &c pour voir les numéros d'îles"
       cannot-switch: "&c L'opération a échoué. Voir le journal de la console pour
@@ -267,7 +260,7 @@ commands:
       description: recharger
     tp:
       parameters: "<joueur> [joueur à téléporter]"
-      description: se téléporter sur l''île d'un joueur
+      description: "se téléporter sur l'île d'un joueur"
       manual: "&c Aucun Warp sûr trouvé! Téléportez-vous manuellement près de &b [location]
         &c et vérifiez le warp en question"
     getrank:
@@ -276,14 +269,13 @@ commands:
       rank-is: "&a Le rang du joueur est &b [rank] &a sur l'île de &b[name]&a."
     setrank:
       parameters: "<player> <rank> [propriétaire de l'île]"
-      description: définir le rang d'un joueur sur son île ou sur l'île du propriétaire
+      description: "définir le rang d'un joueur sur son île ou sur celle du propriétaire"
       unknown-rank: "&c Rang inconnu!"
       not-possible: "&c Le classement doit être supérieur à celui du visiteur."
       rank-set: "&a Rang défini de &b [from] &a à &b [to] &&a sur l'île de &b[name]&a."
     setprotectionlocation:
       parameters: "[coordonnées x y z]"
-      description: définir l'emplacement actuel ou [x y z] comme centre de la zone
-        de protection de l'île
+      description: "définir l'emplacement actuel ou les coordonnées [x y z] comme centre de la zone de protection de l'île"
       island: "&c Cela affectera l'île de [xyz] appartenant à « [name] »."
       confirmation: "&c Êtes-vous sûr de vouloir définir [xyz] comme centre de protection ?"
       success: "&a Définissez avec succès [xyz] comme centre de protection."
@@ -301,14 +293,12 @@ commands:
     setspawnpoint:
       description: définir l'emplacement actuel comme spawn pour cette île
       no-island-here: "&c Il n'y a pas d'île ici."
-      confirmation: "&c Voulez-vous vraiment définir cet emplacement comme point d'apparition
-        pour cette île?"
-      success: "&a Spawn de l'île défini avec succès."
-      island-spawnpoint-changed: "&a [user] a modifié ce spawn de l'île."
+      confirmation: "&c Voulez-vous vraiment définir cet emplacement comme point d'apparition pour cette île?"
+      success: "&a Point de spawn de l'île défini avec succès."
+      island-spawnpoint-changed: "&a [user] a modifié le point de spawn de l'île."
     settings:
       parameters: "[player]"
-      description: ouvrir les réglages du système ou les réglages de l'île pour le
-        joueur
+      description: ouvrir les réglages du système ou les réglages de l'île pour le joueur
       unknown-setting: "&c Paramètre inconnu"
     blueprint:
       parameters: "<load/copy/paste/pos1/pos2/save>"
@@ -318,17 +308,16 @@ commands:
       file-exists: "&c Le fichier existe déjà, écraser?"
       no-such-file: "&c Aucun fichier de ce type!"
       could-not-load: "&c Impossible de charger ce fichier!"
-      could-not-save: "&c Hmm, quelque chose s'est mal passé lors de l'enregistrement
-        de ce fichier: [message]"
+      could-not-save: "&c Hmm, quelque chose a mal tourné lors de l'enregistrement de ce fichier: [message]"
       set-pos1: "&a Position 1 définie sur [vector]"
       set-pos2: "&a Position 2 définie sur [vector]"
       set-different-pos: "&c Définissez un emplacement différent - cette position est déjà définie!"
-      need-pos1-pos2: "&c Réglez d'abord pos1 et pos2!"
-      copying: "&b Copie en cours ..."
+      need-pos1-pos2: "&c Réglez d'abord les positions pos1 et pos2!"
+      copying: "&b Copie en cours..."
       copied-blocks: "&b Copie de [number] blocs dans le presse-papiers"
-      look-at-a-block: "&c Regardez le bloc dans les 20 blocs à définir"
-      mid-copy: "&c Vous êtes à mi-copie. Attendez que la copie soit terminée."
-      copied-percent: "&6 Copié [number]%"
+      look-at-a-block: "&c Regardez un bloc dans les 20 blocs pour le définir"
+      mid-copy: "&c Copie en cours. Veuillez attendre la fin de la copie."
+      copied-percent: "&6 Copié à [number]%"
       copy:
         parameters: "[air]"
         description: copier le presse-papiers réglé par pos1 et pos2 et éventuellement les blocs d'air
@@ -337,14 +326,14 @@ commands:
         description: supprimer le blueprint
         no-blueprint: "&b [name] &c n'existe pas."
         confirmation: |
-          &c Êtes-vous sûr de vouloir supprimer ce blueprint  ?
-          &c Une fois effacé, il n''y a aucun moyen de le récupérer.
-        success: "&a Blueprint supprimé avec succès &b [name]&a ."
+          &c Êtes-vous sûr de vouloir supprimer ce blueprint ?
+          &c Une fois effacé, il n'y a aucun moyen de le récupérer.
+        success: "&a Blueprint supprimé avec succès &b [name]&a."
       load:
         parameters: "<name>"
-        description: charger le blueprint  dans le presse-papiers
+        description: charger le blueprint dans le presse-papiers
       list:
-        description: liste des blueprint disponibles
+        description: liste des blueprints disponibles
         no-blueprints: "&c Aucun blueprint dans le dossier des blueprints!"
         available-blueprints: "&a Ces blueprints sont disponibles pour le chargement:"
       origin:
@@ -361,9 +350,9 @@ commands:
         description: enregistrer le presse-papiers copié
       rename:
         parameters: "<blueprint name> <new name>"
-        description: renommer un plan
-        success: "&a Blueprint &b [old] &a has been successfully renamed to &b [name]&a."
-        pick-different-name: "&c Veuillez préciser un nom différent que celui du Blueprint actuel."
+        description: renommer un blueprint
+        success: "&a Blueprint &b [old] &a a été renommé avec succès en &b [name]&a."
+        pick-different-name: "&c Veuillez préciser un nom différent de celui du Blueprint actuel."
       management:
         back: Retour
         instruction: Cliquez sur le plan puis cliquez ici
@@ -385,8 +374,9 @@ commands:
         perm-format: "&e"
         remove: Clic droit pour supprimer
         blueprint-instruction: |-
-          Clic gauche pour sélectionner puis ajouter au bundle
-          Clic droit pour renommer
+            Clic gauche pour sélectionner
+            puis ajouter au bundle
+            Clic droit pour renommer
         select-first: Sélectionnez d'abord un blueprint
         new-bundle: Créer un bundle
         new-bundle-instructions: Cliquez pour créer un nouveau bundle
@@ -411,56 +401,51 @@ commands:
           &a Clic droit pour décrémenter
     resetflags:
       parameters: "[flag]"
-      description: Réinitialiser toutes les îles aux flags par défaut dans le fichier
-        config.yml
-      confirm: "&4 Cela réinitialisera les flag par défaut pour toutes les îles!"
+      description: Réinitialiser toutes les îles aux flags par défaut dans le fichier config.yml
+      confirm: "&4 Cela réinitialisera les flags par défaut pour toutes les îles!"
       success: "&a Réinitialisation des flags de toutes les îles aux valeurs par défaut."
-      success-one: "&a flag[name] défini par défaut pour toutes les îles."
+      success-one: "&a flag[name] défini par défaut pour toutes"
     world:
       description: Gérer les paramètres du monde
     delete:
       parameters: "<joueur>"
-      description: supprime l'île d'un joueur
-      cannot-delete-owner: "&c Tous les membres de l'île doivent être expulsés avant
-        de la supprimer."
+      description: supprimer l'île d'un joueur
+      cannot-delete-owner: "&c Tous les membres de l'île doivent être expulsés avant de la supprimer."
       deleted-island: "&a L'île aux coordonnées &e [xyz] &a a été supprimée."
     deletehomes:
       parameters: "<joueur>"
-      description: supprime toutes les maisons nommées d'une île
-      warning: "&c Toutes les maisons nommées seront supprimées de l'île !"
+      description: supprimer toutes les maisons nommées d'une île
+      warning: "&c Toutes les maisons nommées seront supprimées de l'île !"
     why:
       parameters: "<joueur>"
-      description: active/désactive le débogage de protection
-      turning-on: Débogage de protection activé pour [name].
-      turning-off: Débogage de protection désactivé pour [name].
+      description: activer/désactiver le débogage de protection
+      turning-on: "Débogage de protection activé pour [name]."
+      turning-off: "Débogage de protection désactivé pour [name]."
     deaths:
-      description: édite le nombre de morts du joueur
+      description: éditer le nombre de morts du joueur
       reset:
-        description: réinitialise le nombre de morts du joueur
+        description: réinitialiser le nombre de morts du joueur
         parameters: "<joueur>"
         success: "&a Le nombre de morts de &b [name] &a a été réinitialisé à &b 0&a."
       set:
-        description: définit le nombre de morts du joueur
+        description: définir le nombre de morts du joueur
         parameters: "<joueur> <morts>"
-        success: "&a Nombre de morts de &b [name] &a définit à &b [number]&a."
+        success: "&a Nombre de morts de &b [name] &a défini à &b [number]&a."
       add:
-        description: ajoute des morts au joueur
+        description: ajouter des morts au joueur
         parameters: "<player> <deaths>"
-        success: "&a Ajouté avec succès &b [number] &a morts à &b [name], augmentant
-          le total de morts à &b [total] &a."
+        success: "&a Ajouté avec succès &b [number] &a morts à &b [name], augmentant le total de morts à &b [total] &a."
       remove:
-        description: enlève les morts au joueur
+        description: retirer des morts du joueur
         parameters: "<player> <deaths>"
-        success: "&a Supprimé avec succès &b [number] &a morts à &b [name], diminuant
-          le total de morts à &b [total] &a."
+        success: "&a Supprimé avec succès &b [number] &a morts à &b [name], diminuant le total de morts à &b [total] &a."
     resetname:
-      description: réinitialiser le nom de l'île du joueur
-      success: "&a Réinitialisation réussie du nom de l'île de [name]."
+    description: réinitialiser le nom de l'île du joueur
+    success: "&a Réinitialisation réussie du nom de l'île de [name]."
   bentobox:
     description: commande d'administration de BentoBox
     perms:
-      description: affiche les autorisations effectives pour BentoBox et Addons au
-        format YAML
+      description: affiche les autorisations effectives pour BentoBox et Addons au format YAML
     about:
       description: affiche les informations sur la licence
     reload:
@@ -470,8 +455,7 @@ commands:
       settings-reloaded: "[prefix_bentobox] &2 Paramètres rechargés."
       addon: "[prefix_bentobox] &2 Rechargement de &b [name]&2."
       addon-reloaded: "[prefix_bentobox] &b [name] &2 rechargé."
-      warning: "[prefix_bentobox] &c Attention : le rechargement peut provoquer une
-        instabilité. Si vous rencontrez des erreurs par la suite, redémarrez le serveur."
+      warning: "[prefix_bentobox] &c Attention : le rechargement peut provoquer une instabilité. Si vous rencontrez des erreurs par la suite, redémarrez le serveur."
       unknown-addon: "[prefix_bentobox] &c Addon inconnu !"
       locales:
         description: recharger les locales
@@ -500,9 +484,18 @@ commands:
       addons: "[prefix_bentobox] &6 Migration des données des addons"
       class: "[prefix_bentobox] &6 Migration de [description]"
       migrated: "[prefix_bentobox] &a Migration terminée"
+    rank:
+      description: 'lister, ajouter ou supprimer des rangs'
+      parameters: '&a [list | add | remove] [référence du rang] [valeur du rang]'
+      add:
+        success: '&a Ajouté [rank] avec la valeur [number]'
+        failure: "&c Échec de l'ajout de [rank] avec la valeur [number]. Peut-être un doublon ?"
+      remove:
+        success: '&a Supprimé [rank]'
+        failure: '&c Échec de la suppression de [rank]. Rang inconnu.'
+      list: '&a Les rangs enregistrés sont les suivants :'
   confirmation:
-    confirm: "&c Entrez à nouveau la commande dans &b [secondes] secondes &c pour
-      confirmer."
+    confirm: "&c Entrez à nouveau la commande dans &b [secondes] secondes &c pour confirmer."
     previous-request-cancelled: "&6 La demande de confirmation est annulée."
     request-cancelled: "&c Délai de confirmation dépassé - &b demande annulée."
   delay:
