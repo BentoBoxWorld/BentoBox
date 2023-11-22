@@ -101,6 +101,7 @@ public class HeadCache
         if (meta != null && this.playerProfile != null)
         {
             meta.setOwnerProfile(this.playerProfile);
+            item.setItemMeta(meta);
         }
 
         return item;
