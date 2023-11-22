@@ -401,7 +401,7 @@ public class HeadGetter {
     }
 
     private static URL getSkinURLFromBase64(String base64) {
-        /**
+        /*
          * Base64 encoded string is in format:
          * {
          *    "timestamp": 0,
@@ -429,7 +429,7 @@ public class HeadGetter {
 
     private static PlayerProfile createProfile(@NonNull String userName, @NonNull UUID uuid, @Nullable String encodedBase64Texture) {
         PlayerProfile profile = Bukkit.createPlayerProfile(uuid, userName);
-        if (encodedBase64Texture != null) {
+        if (encodedBase64Texture != null && !encodedBase64Texture.isEmpty()) {
             URL skinURL = HeadGetter.getSkinURLFromBase64(encodedBase64Texture);
             profile.getTextures().setSkin(skinURL);
         }
