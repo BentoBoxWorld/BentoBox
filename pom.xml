@@ -206,13 +206,6 @@
             <version>${paper.version}</version>
             <scope>provided</scope>
         </dependency>
-        <!-- AuthLib. Used for Head Getter. -->
-        <dependency>
-            <groupId>com.mojang</groupId>
-            <artifactId>authlib</artifactId>
-            <version>3.16.29</version>
-            <scope>provided</scope>
-        </dependency>
         <!-- Metrics -->
         <dependency>
             <groupId>org.bstats</groupId>

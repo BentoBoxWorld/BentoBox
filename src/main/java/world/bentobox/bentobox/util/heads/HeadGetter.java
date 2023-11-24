@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -14,6 +15,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
+import org.bukkit.profile.PlayerProfile;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
@@ -165,7 +167,7 @@ public class HeadGetter {
                             // Create new cache object.
                             cache = new HeadCache(userName,
                                 playerSkin.getKey(),
-                                playerSkin.getValue());
+                                HeadGetter.createProfile(userName, playerSkin.getKey(), playerSkin.getValue()));
                         }
                         else
                         {
@@ -178,14 +180,14 @@ public class HeadGetter {
                             // Create new cache object.
                             cache = new HeadCache(userName,
                                 userId,
-                                HeadGetter.getTextureFromUUID(userId));
+                                HeadGetter.createProfile(userName, userId, HeadGetter.getTextureFromUUID(userId)));
                         }
 
                         // Save in cache
                         HeadGetter.cachedHeads.put(userName, cache);
 
                         // Tell requesters the head came in, but only if the texture is usable.
-                        if (cache.encodedTextureLink != null && HeadGetter.headRequesters.containsKey(userName))
+                        if (cache.playerProfile != null && HeadGetter.headRequesters.containsKey(userName))
                         {
                             for (HeadRequester req : HeadGetter.headRequesters.get(userName))
                             {
@@ -396,5 +398,41 @@ public class HeadGetter {
         }
 
         return returnValue;
+    }
+
+    private static URL getSkinURLFromBase64(String base64) {
+        /*
+         * Base64 encoded string is in format:
+         * {
+         *    "timestamp": 0,
+         *    "profileId": "UUID",
+         *    "profileName": "USERNAME",
+         *    "textures": {
+         *      "SKIN": {
+         *          "url": "https://textures.minecraft.net/texture/TEXTURE_ID"
+         *      },
+         *      "CAPE": {
+         *          "url": "https://textures.minecraft.net/texture/TEXTURE_ID"
+         *      }
+         *    }
+         * }
+         */
+        try {
+            String decoded = new String(Base64.getDecoder().decode(base64));
+            JsonObject json = new Gson().fromJson(decoded, JsonObject.class);
+            String url = json.getAsJsonObject("textures").getAsJsonObject("SKIN").get("url").getAsString();
+            return new URL(url);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private static PlayerProfile createProfile(@NonNull String userName, @NonNull UUID uuid, @Nullable String encodedBase64Texture) {
+        PlayerProfile profile = Bukkit.createPlayerProfile(uuid, userName);
+        if (encodedBase64Texture != null && !encodedBase64Texture.isEmpty()) {
+            URL skinURL = HeadGetter.getSkinURLFromBase64(encodedBase64Texture);
+            profile.getTextures().setSkin(skinURL);
+        }
+        return profile;
     }
 }
