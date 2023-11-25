@@ -20,26 +20,26 @@ import world.bentobox.bentobox.nms.WorldRegenerator;
  */
 public class DeleteIslandChunks {
 
-    private final IslandDeletion di;
+    private final IslandDeletion islandDeletion;
     private final BentoBox plugin;
     private final World netherWorld;
     private final World endWorld;
     private final AtomicBoolean completed;
     private final WorldRegenerator regenerator;
 
-    public DeleteIslandChunks(BentoBox plugin, IslandDeletion di) {
+    public DeleteIslandChunks(BentoBox plugin, IslandDeletion islandDeletion) {
         this.plugin = plugin;
-        this.di = di;
+        this.islandDeletion = islandDeletion;
         completed = new AtomicBoolean(false);
         // Nether
-        if (plugin.getIWM().isNetherGenerate(di.getWorld()) && plugin.getIWM().isNetherIslands(di.getWorld())) {
-            netherWorld = plugin.getIWM().getNetherWorld(di.getWorld());
+        if (plugin.getIWM().isNetherGenerate(islandDeletion.getWorld()) && plugin.getIWM().isNetherIslands(islandDeletion.getWorld())) {
+            netherWorld = plugin.getIWM().getNetherWorld(islandDeletion.getWorld());
         } else {
             netherWorld = null;
         }
         // End
-        if (plugin.getIWM().isEndGenerate(di.getWorld()) && plugin.getIWM().isEndIslands(di.getWorld())) {
-            endWorld = plugin.getIWM().getEndWorld(di.getWorld());
+        if (plugin.getIWM().isEndGenerate(islandDeletion.getWorld()) && plugin.getIWM().isEndIslands(islandDeletion.getWorld())) {
+            endWorld = plugin.getIWM().getEndWorld(islandDeletion.getWorld());
         } else {
             endWorld = null;
         }
@@ -51,15 +51,15 @@ public class DeleteIslandChunks {
         }
 
         // Fire event
-        IslandEvent.builder().deletedIslandInfo(di).reason(Reason.DELETE_CHUNKS).build();
+        IslandEvent.builder().deletedIslandInfo(islandDeletion).reason(Reason.DELETE_CHUNKS).build();
         regenerateChunks();
 
     }
 
     private void regenerateChunks() {
-        CompletableFuture<Void> all = plugin.getIWM().getAddon(di.getWorld())
+        CompletableFuture<Void> all = plugin.getIWM().getAddon(islandDeletion.getWorld())
                 .map(gm -> new CompletableFuture[]{
-                        processWorld(gm, di.getWorld()), // Overworld
+                        processWorld(gm, islandDeletion.getWorld()), // Overworld
                         processWorld(gm, netherWorld), // Nether
                         processWorld(gm, endWorld) // End
                 })
@@ -78,14 +78,14 @@ public class DeleteIslandChunks {
 
     private void finish() {
         // Fire event
-        IslandEvent.builder().deletedIslandInfo(di).reason(Reason.DELETED).build();
+        IslandEvent.builder().deletedIslandInfo(islandDeletion).reason(Reason.DELETED).build();
         // We're done
         completed.set(true);
     }
 
     private CompletableFuture<Void> processWorld(GameModeAddon gm, World world) {
         if (world != null) {
-            return regenerator.regenerate(gm, di, world);
+            return regenerator.regenerate(gm, islandDeletion, world);
         } else {
             return CompletableFuture.completedFuture(null);
         }
