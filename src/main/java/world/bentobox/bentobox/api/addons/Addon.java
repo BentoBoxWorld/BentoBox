@@ -263,7 +263,7 @@ public abstract class Addon {
             throw new IllegalArgumentException("ResourcePath cannot be null or empty");
         }
 
-        jarResource = jarResource.replace('\\', '/');
+        jarResource = jarResource.replace("\\", File.separator).replace("/", File.separator);
         try (JarFile jar = new JarFile(file)) {
             JarEntry jarConfig = jar.getJarEntry(jarResource);
             if (jarConfig != null) {
@@ -308,7 +308,7 @@ public abstract class Addon {
             throw new IllegalArgumentException("jarResource cannot be null or empty");
         }
         YamlConfiguration result = new YamlConfiguration();
-        jarResource = jarResource.replace('\\', '/');
+        jarResource = jarResource.replace("\\", File.separator).replace("/", File.separator);
         try (JarFile jar = new JarFile(file)) {
             JarEntry jarConfig = jar.getJarEntry(jarResource);
             if (jarConfig != null) {
@@ -330,7 +330,7 @@ public abstract class Addon {
             throw new IllegalArgumentException("ResourcePath cannot be null or empty");
         }
 
-        jarResource = jarResource.replace('\\', '/');
+        jarResource = jarResource.replace("\\", File.separator).replace("/", File.separator);
         try (JarFile jar = new JarFile(file)) {
             JarEntry jarConfig = jar.getJarEntry(jarResource);
             if (jarConfig != null) {
