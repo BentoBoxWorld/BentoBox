@@ -45,7 +45,7 @@ public final class AddonDescription {
      */
     private final @NonNull String apiVersion;
 
-    private AddonDescription(@NonNull Builder builder) {
+    AddonDescription(@NonNull AddonDescriptionBuilder builder) {
         this.main = builder.main;
         this.name = builder.name;
         this.version = builder.version;
@@ -163,124 +163,124 @@ public final class AddonDescription {
         return permissions;
     }
 
-    public static class Builder {
-        @NonNull
-        private final String main;
-        @NonNull
-        private final String name;
-        @NonNull
-        private final String version;
-        @NonNull
-        private String description = "";
-        @NonNull
-        private List<String> authors = new ArrayList<>();
-        @NonNull
-        private List<String> dependencies = new ArrayList<>();
-        @NonNull
-        private List<String> softDependencies = new ArrayList<>();
-        private boolean metrics = true;
-        @NonNull
-        private String repository = "";
-        @NonNull
-        private Material icon = Material.PAPER;
-        @NonNull
-        private String apiVersion = "1";
-        @Nullable
-        private ConfigurationSection permissions;
-
-        /**
-         * @since 1.1
-         */
-        public Builder(@NonNull String main, @NonNull String name, @NonNull String version) {
-            this.main = main;
-            this.name = name;
-            this.version = version;
-        }
-
-        @NonNull
-        public Builder description(@NonNull String description) {
-            this.description = description;
-            return this;
-        }
-
-        @NonNull
-        public Builder authors(@NonNull String... authors) {
-            this.authors = Arrays.asList(authors);
-            return this;
-        }
-
-        @NonNull
-        public Builder dependencies(@NonNull List<String> dependencies) {
-            this.dependencies = dependencies;
-            return this;
-        }
-
-        @NonNull
-        public Builder softDependencies(@NonNull List<String> softDependencies) {
-            this.softDependencies = softDependencies;
-            return this;
-        }
-
-        /**
-         * @since 1.1
-         */
-        @NonNull
-        public Builder metrics(boolean metrics) {
-            this.metrics = metrics;
-            return this;
-        }
-
-        /**
-         * Sets the name of the GitHub repository.
-         * Must follow the {@code Owner/Name} format.
-         * @since 1.3.0
-         */
-        @NonNull
-        public Builder repository(@NonNull String repository) {
-            this.repository = repository;
-            return this;
-        }
-
-        /**
-         * Sets the icon representing the addon.
-         * @param icon Material to set as the icon. Default is {@link Material#PAPER}.
-         * @since 1.5.0
-         */
-        @NonNull
-        public Builder icon(@NonNull Material icon) {
-            this.icon = icon;
-            return this;
-        }
-
-        /**
-         * Sets the minimum BentoBox version this addon requires in order to work properly.
-         * @param apiVersion the minimum BentoBox version this addon requires in order to work properly.
-         * @since 1.11.0
-         * @see AddonDescription#getApiVersion()
-         */
-        @NonNull
-        public Builder apiVersion(@NonNull String apiVersion) {
-            this.apiVersion = apiVersion;
-            return this;
-        }
-
-        @NonNull
-        public AddonDescription build() {
-            return new AddonDescription(this);
-        }
-
-        /**
-         * Sets the permission config section. Taken from the addon.yml
-         * @param permissions - YAML configuration section
-         * @return Builder
-         * @since 1.13.0
-         */
-        @NonNull
-        public Builder permissions(ConfigurationSection permissions) {
-            this.permissions = permissions;
-            return this;
-        }
-    }
+//    public static class Builder {
+//        @NonNull
+//        private final String main;
+//        @NonNull
+//        private final String name;
+//        @NonNull
+//        private final String version;
+//        @NonNull
+//        private String description = "";
+//        @NonNull
+//        private List<String> authors = new ArrayList<>();
+//        @NonNull
+//        private List<String> dependencies = new ArrayList<>();
+//        @NonNull
+//        private List<String> softDependencies = new ArrayList<>();
+//        private boolean metrics = true;
+//        @NonNull
+//        private String repository = "";
+//        @NonNull
+//        private Material icon = Material.PAPER;
+//        @NonNull
+//        private String apiVersion = "1";
+//        @Nullable
+//        private ConfigurationSection permissions;
+//
+//        /**
+//         * @since 1.1
+//         */
+//        public Builder(@NonNull String main, @NonNull String name, @NonNull String version) {
+//            this.main = main;
+//            this.name = name;
+//            this.version = version;
+//        }
+//
+//        @NonNull
+//        public Builder description(@NonNull String description) {
+//            this.description = description;
+//            return this;
+//        }
+//
+//        @NonNull
+//        public Builder authors(@NonNull String... authors) {
+//            this.authors = Arrays.asList(authors);
+//            return this;
+//        }
+//
+//        @NonNull
+//        public Builder dependencies(@NonNull List<String> dependencies) {
+//            this.dependencies = dependencies;
+//            return this;
+//        }
+//
+//        @NonNull
+//        public Builder softDependencies(@NonNull List<String> softDependencies) {
+//            this.softDependencies = softDependencies;
+//            return this;
+//        }
+//
+//        /**
+//         * @since 1.1
+//         */
+//        @NonNull
+//        public Builder metrics(boolean metrics) {
+//            this.metrics = metrics;
+//            return this;
+//        }
+//
+//        /**
+//         * Sets the name of the GitHub repository.
+//         * Must follow the {@code Owner/Name} format.
+//         * @since 1.3.0
+//         */
+//        @NonNull
+//        public Builder repository(@NonNull String repository) {
+//            this.repository = repository;
+//            return this;
+//        }
+//
+//        /**
+//         * Sets the icon representing the addon.
+//         * @param icon Material to set as the icon. Default is {@link Material#PAPER}.
+//         * @since 1.5.0
+//         */
+//        @NonNull
+//        public Builder icon(@NonNull Material icon) {
+//            this.icon = icon;
+//            return this;
+//        }
+//
+//        /**
+//         * Sets the minimum BentoBox version this addon requires in order to work properly.
+//         * @param apiVersion the minimum BentoBox version this addon requires in order to work properly.
+//         * @since 1.11.0
+//         * @see AddonDescription#getApiVersion()
+//         */
+//        @NonNull
+//        public Builder apiVersion(@NonNull String apiVersion) {
+//            this.apiVersion = apiVersion;
+//            return this;
+//        }
+//
+//        @NonNull
+//        public AddonDescription build() {
+//            return new AddonDescription(this);
+//        }
+//
+//        /**
+//         * Sets the permission config section. Taken from the addon.yml
+//         * @param permissions - YAML configuration section
+//         * @return Builder
+//         * @since 1.13.0
+//         */
+//        @NonNull
+//        public Builder permissions(ConfigurationSection permissions) {
+//            this.permissions = permissions;
+//            return this;
+//        }
+//    }
 
     /* (non-Javadoc)
      * @see java.lang.Object#toString()

@@ -21,6 +21,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.AddonDescription;
+import world.bentobox.bentobox.api.addons.AddonDescriptionBuilder;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.hooks.Hook;
 import world.bentobox.bentobox.hooks.placeholders.PlaceholderAPIHook;
@@ -48,7 +49,7 @@ public class PlaceholdersManagerTest {
     public void setUp() throws Exception {
         // Addon
         @NonNull
-        AddonDescription desc = new AddonDescription.Builder("main", "bskyblock", "1.0").build();
+        AddonDescription desc = new AddonDescriptionBuilder("main", "bskyblock", "1.0").build();
         when(addon.getDescription()).thenReturn(desc);
 
         when(plugin.getPlaceholdersManager()).thenReturn(pm);

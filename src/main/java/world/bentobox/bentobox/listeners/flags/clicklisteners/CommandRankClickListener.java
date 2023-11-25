@@ -77,7 +77,7 @@ public class CommandRankClickListener implements ClickHandler {
         if (panel.getName().equals(panelName)) {
             // This is a click on the panel
             // Slot relates to the command
-            String c = getCommands(panel.getWorld().orElse(user.getWorld())).get(slot);
+            String c = plugin.getCommands(panel.getWorld().orElse(user.getWorld())).get(slot);
             // Apply change to panel
             panel.getInventory().setItem(slot, getPanelItem(c, user, panel.getWorld().orElse(user.getWorld())).getItem());
         } else {
@@ -94,7 +94,7 @@ public class CommandRankClickListener implements ClickHandler {
         PanelBuilder pb = new PanelBuilder();
         pb.user(user).name(panelName).world(world);
         // Make panel items
-        getCommands(world).forEach(c -> pb.item(getPanelItem(c, user, world)));
+        plugin.getCommands(world).forEach(c -> pb.item(getPanelItem(c, user, world)));
         pb.build();
 
     }
@@ -126,17 +126,7 @@ public class CommandRankClickListener implements ClickHandler {
         return pib.build();
     }
 
-    private List<String> getCommands(World world) {
-        List<String> result = new ArrayList<>();
-        plugin.getCommandsManager().getCommands().values().stream()
-        .filter(c -> c.getWorld() != null &&  c.getWorld().equals(world))
-        .forEach(c -> result.addAll(getCmdRecursively("/", c)));
-        if (result.size() > 49) {
-            plugin.logError("Number of rank setting commands is too big for GUI");
-            result.subList(49, result.size()).clear();
-        }
-        return result;
-    }
+
 
     /**
      * Recursively traverses the command tree looking for any configurable rank command and returns a string list of commands
@@ -144,7 +134,7 @@ public class CommandRankClickListener implements ClickHandler {
      * @param cc - composite command
      * @return string list of commands
      */
-    private List<String> getCmdRecursively(String labels, CompositeCommand cc) {
+    public static List<String> getCmdRecursively(String labels, CompositeCommand cc) {
         List<String> result = new ArrayList<>();
         String newLabel = labels + cc.getName();
         if (cc.isConfigurableRankCommand()) {

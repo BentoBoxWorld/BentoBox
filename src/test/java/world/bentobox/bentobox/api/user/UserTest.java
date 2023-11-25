@@ -58,7 +58,7 @@ import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.addons.AddonDescription;
-import world.bentobox.bentobox.api.addons.AddonDescription.Builder;
+import world.bentobox.bentobox.api.addons.AddonDescriptionBuilder;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.metadata.MetaDataValue;
 import world.bentobox.bentobox.database.objects.Players;
@@ -335,7 +335,7 @@ public class UserTest {
     @Test
     public void testSendMessageOverrideWithAddon() {
         GameModeAddon addon = mock(GameModeAddon.class);
-        AddonDescription desc = new AddonDescription.Builder("mock", "name", "1.0").build();
+        AddonDescription desc = new AddonDescriptionBuilder("mock", "name", "1.0").build();
         when(addon.getDescription()).thenReturn(desc);
         // Set addon context
         user.setAddon(addon);
@@ -743,7 +743,7 @@ public class UserTest {
         World world = mock(World.class);
 
         GameModeAddon gameAddon = mock(GameModeAddon.class);
-        AddonDescription desc = new Builder("main", "gameAddon", "1.0").build();
+        AddonDescription desc = new AddonDescriptionBuilder("main", "gameAddon", "1.0").build();
         when(gameAddon.getDescription()).thenReturn(desc);
         when(iwm.getAddon(any(World.class))).thenReturn(Optional.of(gameAddon));
         assertEquals("mock §atranslation §btastybento", p.getTranslation(world, "test.ref", "[test]", "tastybento"));
@@ -785,7 +785,7 @@ public class UserTest {
         World world = mock(World.class);
 
         GameModeAddon gameAddon = mock(GameModeAddon.class);
-        AddonDescription desc = new Builder("main", "gameAddon", "1.0").build();
+        AddonDescription desc = new AddonDescriptionBuilder("main", "gameAddon", "1.0").build();
         when(gameAddon.getDescription()).thenReturn(desc);
         when(iwm.getAddon(any(World.class))).thenReturn(Optional.of(gameAddon));
         p.notify(world, TEST_TRANSLATION, "[test]", "tastybento");
@@ -927,7 +927,7 @@ public class UserTest {
         User.clearUsers();
         User p = User.getInstance(player);
         Addon addon = mock(Addon.class);
-        when(addon.getDescription()).thenReturn(new Builder("main", "gameAddon", "1.0").build());
+        when(addon.getDescription()).thenReturn(new AddonDescriptionBuilder("main", "gameAddon", "1.0").build());
         p.setAddon(addon);
         p.getTranslation(TEST_TRANSLATION);
         verify(addon).getDescription();

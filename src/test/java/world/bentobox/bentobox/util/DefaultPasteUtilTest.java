@@ -39,6 +39,7 @@ import org.powermock.reflect.Whitebox;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.AddonDescription;
+import world.bentobox.bentobox.api.addons.AddonDescriptionBuilder;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
@@ -92,7 +93,7 @@ public class DefaultPasteUtilTest {
     public void setUp() throws Exception {
         // Set up plugin
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
-        AddonDescription desc = new AddonDescription.Builder("", "", "").build();
+        AddonDescription desc = new AddonDescriptionBuilder("", "", "").build();
         when(addon.getDescription()).thenReturn(desc);
         when(plugin.getIWM()).thenReturn(iwm);
         when(iwm.getAddon(any())).thenReturn(Optional.of(addon));

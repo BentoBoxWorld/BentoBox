@@ -172,7 +172,7 @@ public class AddonTest {
 
     @Test
     public void testGetDescription() {
-        AddonDescription d = new AddonDescription.Builder("main", "name", "1.0").build();
+        AddonDescription d = new AddonDescriptionBuilder("main", "name", "1.0").build();
         assertNull(test.getDescription());
         test.setDescription(d);
         assertEquals(d, test.getDescription());
@@ -262,7 +262,7 @@ public class AddonTest {
 
     @Test
     public void testSetDescription() {
-        AddonDescription desc = new AddonDescription.Builder("main", "name", "2.0").build();
+        AddonDescription desc = new AddonDescriptionBuilder("main", "name", "2.0").build();
         test.setDescription(desc);
         assertEquals(desc, test.getDescription());
     }

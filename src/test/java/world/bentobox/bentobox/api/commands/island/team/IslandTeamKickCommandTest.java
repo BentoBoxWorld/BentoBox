@@ -39,6 +39,7 @@ import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.addons.AddonDescription;
+import world.bentobox.bentobox.api.addons.AddonDescriptionBuilder;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
@@ -128,7 +129,7 @@ public class IslandTeamKickCommandTest extends RanksManagerBeforeClassTest {
 		Optional<CompositeCommand> optionalCommand = Optional.of(subCommand);
 		when(ic.getSubCommand(Mockito.anyString())).thenReturn(optionalCommand);
 		when(ic.getAddon()).thenReturn(addon);
-		AddonDescription desc = new AddonDescription.Builder("main", "name", "version").build();
+		AddonDescription desc = new AddonDescriptionBuilder("main", "name", "version").build();
 		when(addon.getDescription()).thenReturn(desc);
 		when(ic.getWorld()).thenReturn(world);
 

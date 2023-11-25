@@ -1,10 +1,12 @@
 package world.bentobox.bentobox;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.ServerCommandEvent;
@@ -33,6 +35,7 @@ import world.bentobox.bentobox.listeners.JoinLeaveListener;
 import world.bentobox.bentobox.listeners.PanelListenerManager;
 import world.bentobox.bentobox.listeners.PrimaryIslandListener;
 import world.bentobox.bentobox.listeners.StandardSpawnProtectionListener;
+import world.bentobox.bentobox.listeners.flags.clicklisteners.CommandRankClickListener;
 import world.bentobox.bentobox.listeners.teleports.EntityTeleportListener;
 import world.bentobox.bentobox.listeners.teleports.PlayerTeleportListener;
 import world.bentobox.bentobox.managers.AddonsManager;
@@ -593,5 +596,17 @@ public class BentoBox extends JavaPlugin implements Listener {
      */
     public boolean isShutdown() {
         return shutdown;
+    }
+
+    public List<String> getCommands(World world) {
+        List<String> result = new ArrayList<>();
+        getCommandsManager().getCommands().values().stream()
+                .filter(c -> c.getWorld() != null &&  c.getWorld().equals(world))
+                .forEach(c -> result.addAll(CommandRankClickListener.getCmdRecursively("/", c)));
+        if (result.size() > 49) {
+            logError("Number of rank setting commands is too big for GUI");
+            result.subList(49, result.size()).clear();
+        }
+        return result;
     }
 }

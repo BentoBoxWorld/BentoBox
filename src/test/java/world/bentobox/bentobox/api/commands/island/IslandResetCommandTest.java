@@ -42,6 +42,7 @@ import com.google.common.collect.ImmutableSet.Builder;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.addons.AddonDescription;
+import world.bentobox.bentobox.api.addons.AddonDescriptionBuilder;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
@@ -181,7 +182,7 @@ public class IslandResetCommandTest {
 
 		// Addon
 		GameModeAddon addon1 = mock(GameModeAddon.class);
-		AddonDescription desc = new AddonDescription.Builder("main", "BSkyBlock", "1.0.0").build();
+		AddonDescription desc = new AddonDescriptionBuilder("main", "BSkyBlock", "1.0.0").build();
 		when(addon1.getDescription()).thenReturn(desc);
 		when(ic.getAddon()).thenReturn(addon1);
 

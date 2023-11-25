@@ -107,7 +107,7 @@ public class AddonClassLoader extends URLClassLoader {
             throw new InvalidAddonDescriptionException("Missing 'authors' tag. At least one author must be listed in addon.yml");
         }
 
-        AddonDescription.Builder builder = new AddonDescription.Builder(
+        AddonDescriptionBuilder builder = new AddonDescriptionBuilder(
                 // Mandatory elements
                 Objects.requireNonNull(data.getString("main")),
                 Objects.requireNonNull(data.getString("name")),

@@ -28,6 +28,7 @@ import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.addons.AddonDescription;
+import world.bentobox.bentobox.api.addons.AddonDescriptionBuilder;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.listeners.PanelListenerManager;
@@ -71,10 +72,10 @@ public class BentoBoxReloadCommandTest {
         when(plugin.getAddonsManager()).thenReturn(am);
         // Addons
         Addon addon1 = mock(Addon.class);
-        AddonDescription desc = new AddonDescription.Builder("main", "BSkyBlock", "1.0.0").build();
+        AddonDescription desc = new AddonDescriptionBuilder("main", "BSkyBlock", "1.0.0").build();
         when(addon1.getDescription()).thenReturn(desc);
         Addon addon2 = mock(Addon.class);
-        AddonDescription desc2 = new AddonDescription.Builder("main", "AcidIsland", "1.0.0").build();
+        AddonDescription desc2 = new AddonDescriptionBuilder("main", "AcidIsland", "1.0.0").build();
         when(addon2.getDescription()).thenReturn(desc2);
         // Linking
         Optional<Addon> optionalAddon1 = Optional.of(addon1);

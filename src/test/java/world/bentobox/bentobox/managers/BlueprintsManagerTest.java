@@ -48,6 +48,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.addons.AddonDescription;
+import world.bentobox.bentobox.api.addons.AddonDescriptionBuilder;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
@@ -162,7 +163,7 @@ public class BlueprintsManagerTest {
         when(addon.getOverWorld()).thenReturn(world);
         when(addon.getPermissionPrefix()).thenReturn("bskyblock.");
         // Desc
-        AddonDescription desc = new AddonDescription.Builder("main", "name", "1.0").build();
+        AddonDescription desc = new AddonDescriptionBuilder("main", "name", "1.0").build();
         when(addon.getDescription()).thenReturn(desc);
 
     }

@@ -32,6 +32,7 @@ import me.clip.placeholderapi.PlaceholderAPIPlugin;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.addons.AddonDescription;
+import world.bentobox.bentobox.api.addons.AddonDescriptionBuilder;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.placeholders.PlaceholderReplacer;
 import world.bentobox.bentobox.api.placeholders.placeholderapi.BentoBoxPlaceholderExpansion;
@@ -75,7 +76,7 @@ public class PlaceholderAPIHookTest {
         when(plugin.getIWM()).thenReturn(iwm);
         when(iwm.getAddon(any())).thenReturn(Optional.of(gma));
         // Desc
-        AddonDescription desc = new AddonDescription.Builder("main", "name", "1.0").build();
+        AddonDescription desc = new AddonDescriptionBuilder("main", "name", "1.0").build();
         when(addon.getDescription()).thenReturn(desc);
         when(gma.getDescription()).thenReturn(desc);
         // PlaceholderAPI

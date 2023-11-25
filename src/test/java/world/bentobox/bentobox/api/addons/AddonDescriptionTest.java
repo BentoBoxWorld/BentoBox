@@ -29,7 +29,7 @@ public class AddonDescriptionTest {
     @Before
     public void setUp() throws Exception {
         configSec = new YamlConfiguration();
-        ad = new AddonDescription.Builder("main", "name", "version")
+        ad = new AddonDescriptionBuilder("main", "name", "version")
                 .apiVersion("api")
                 .authors("tastybento", "poslovitch")
                 .dependencies(List.of("dep1", "dep2"))

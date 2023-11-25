@@ -42,6 +42,7 @@ import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.addons.Addon.State;
 import world.bentobox.bentobox.api.addons.AddonDescription;
+import world.bentobox.bentobox.api.addons.AddonDescriptionBuilder;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.addons.exceptions.InvalidAddonDescriptionException;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
@@ -255,7 +256,7 @@ public class AddonsManagerTest {
     @Test
     public void testIsAddonCompatibleWithBentoBoxSnapshotNoAPIVersion() {
         Addon addon = mock(Addon.class);
-        AddonDescription addonDesc = new AddonDescription.Builder("main.class", "Addon-name", "1.0.1").build();
+        AddonDescription addonDesc = new AddonDescriptionBuilder("main.class", "Addon-name", "1.0.1").build();
         when(addon.getDescription()).thenReturn(addonDesc);
         assertTrue(am.isAddonCompatibleWithBentoBox(addon, "1.0.1-SNAPSHOT-b1642"));
     }
@@ -266,7 +267,7 @@ public class AddonsManagerTest {
     @Test
     public void testIsAddonCompatibleWithBentoBoxReleaseAPIVersion() {
         Addon addon = mock(Addon.class);
-        AddonDescription addonDesc = new AddonDescription.Builder("main.class", "Addon-name", "1.0.1").apiVersion("1.0.1").build();
+        AddonDescription addonDesc = new AddonDescriptionBuilder("main.class", "Addon-name", "1.0.1").apiVersion("1.0.1").build();
         when(addon.getDescription()).thenReturn(addonDesc);
         assertTrue(am.isAddonCompatibleWithBentoBox(addon, "1.0.1"));
     }
@@ -277,7 +278,7 @@ public class AddonsManagerTest {
     @Test
     public void testIsAddonCompatibleWithBentoBoxSnapshotAPIVersion() {
         Addon addon = mock(Addon.class);
-        AddonDescription addonDesc = new AddonDescription.Builder("main.class", "Addon-name", "1.0.1").apiVersion("1.0.1").build();
+        AddonDescription addonDesc = new AddonDescriptionBuilder("main.class", "Addon-name", "1.0.1").apiVersion("1.0.1").build();
         when(addon.getDescription()).thenReturn(addonDesc);
         assertTrue(am.isAddonCompatibleWithBentoBox(addon, "1.0.1-SNAPSHOT-b1642"));
     }
@@ -288,7 +289,7 @@ public class AddonsManagerTest {
     @Test
     public void testIsAddonCompatibleWithBentoBoxReleaseNoAPIVersion() {
         Addon addon = mock(Addon.class);
-        AddonDescription addonDesc = new AddonDescription.Builder("main.class", "Addon-name", "1.0.1").build();
+        AddonDescription addonDesc = new AddonDescriptionBuilder("main.class", "Addon-name", "1.0.1").build();
         when(addon.getDescription()).thenReturn(addonDesc);
         assertTrue(am.isAddonCompatibleWithBentoBox(addon, "1.0.1"));
     }
@@ -299,7 +300,7 @@ public class AddonsManagerTest {
     @Test
     public void testIsAddonCompatibleWithBentoBoxSnapshotAPIVersionVariableDigits() {
         Addon addon = mock(Addon.class);
-        AddonDescription addonDesc = new AddonDescription.Builder("main.class", "Addon-name", "1.0.1").apiVersion("1.2.1").build();
+        AddonDescription addonDesc = new AddonDescriptionBuilder("main.class", "Addon-name", "1.0.1").apiVersion("1.2.1").build();
         when(addon.getDescription()).thenReturn(addonDesc);
         assertFalse(am.isAddonCompatibleWithBentoBox(addon, "1.2-SNAPSHOT-b1642"));
     }
@@ -310,7 +311,7 @@ public class AddonsManagerTest {
     @Test
     public void testIsAddonCompatibleWithBentoBoxOldSnapshot() {
         Addon addon = mock(Addon.class);
-        AddonDescription addonDesc = new AddonDescription.Builder("main.class", "Addon-name", "1.0.0").apiVersion("1.11.1").build();
+        AddonDescription addonDesc = new AddonDescriptionBuilder("main.class", "Addon-name", "1.0.0").apiVersion("1.11.1").build();
         when(addon.getDescription()).thenReturn(addonDesc);
         assertFalse(am.isAddonCompatibleWithBentoBox(addon, "1.0.1-SNAPSHOT-b1642"));
     }
@@ -321,7 +322,7 @@ public class AddonsManagerTest {
     @Test
     public void testIsAddonCompatibleWithBentoBoxOldRelease() {
         Addon addon = mock(Addon.class);
-        AddonDescription addonDesc = new AddonDescription.Builder("main.class", "Addon-name", "1.0.0").apiVersion("1.11.1").build();
+        AddonDescription addonDesc = new AddonDescriptionBuilder("main.class", "Addon-name", "1.0.0").apiVersion("1.11.1").build();
         when(addon.getDescription()).thenReturn(addonDesc);
         assertFalse(am.isAddonCompatibleWithBentoBox(addon, "1.0.1"));
     }
@@ -332,7 +333,7 @@ public class AddonsManagerTest {
     @Test
     public void testIsAddonCompatibleWithBentoBoxOldReleaseLong() {
         Addon addon = mock(Addon.class);
-        AddonDescription addonDesc = new AddonDescription.Builder("main.class", "Addon-name", "1.0.0").apiVersion("1.11.1").build();
+        AddonDescription addonDesc = new AddonDescriptionBuilder("main.class", "Addon-name", "1.0.0").apiVersion("1.11.1").build();
         when(addon.getDescription()).thenReturn(addonDesc);
         assertTrue(am.isAddonCompatibleWithBentoBox(addon, "1.11.1.11.1.1"));
     }
@@ -343,7 +344,7 @@ public class AddonsManagerTest {
     @Test
     public void testIsAddonCompatibleWithBentoBoxOldReleaseLongAPI() {
         Addon addon = mock(Addon.class);
-        AddonDescription addonDesc = new AddonDescription.Builder("main.class", "Addon-name", "1.0.0").apiVersion("1.11.1.0.0.0.1").build();
+        AddonDescription addonDesc = new AddonDescriptionBuilder("main.class", "Addon-name", "1.0.0").apiVersion("1.11.1.0.0.0.1").build();
         when(addon.getDescription()).thenReturn(addonDesc);
         assertFalse(am.isAddonCompatibleWithBentoBox(addon, "1.11.1"));
     }
@@ -355,7 +356,7 @@ public class AddonsManagerTest {
     @Test
     public void testIsAddonCompatibleWithBentoBoxNewRelease() {
         Addon addon = mock(Addon.class);
-        AddonDescription addonDesc = new AddonDescription.Builder("main.class", "Addon-name", "1.0.0").apiVersion("1.13.1").build();
+        AddonDescription addonDesc = new AddonDescriptionBuilder("main.class", "Addon-name", "1.0.0").apiVersion("1.13.1").build();
         when(addon.getDescription()).thenReturn(addonDesc);
         assertTrue(am.isAddonCompatibleWithBentoBox(addon, "1.14.0-SNAPSHOT-b1777"));
     }
@@ -366,7 +367,7 @@ public class AddonsManagerTest {
     @Test
     public void testSetPermsNoPerms() {
         Addon addon = mock(Addon.class);
-        AddonDescription addonDesc = new AddonDescription.Builder("main.class", "Addon-name", "1.0.0").apiVersion("1.11.1.0.0.0.1").build();
+        AddonDescription addonDesc = new AddonDescriptionBuilder("main.class", "Addon-name", "1.0.0").apiVersion("1.11.1.0.0.0.1").build();
         when(addon.getDescription()).thenReturn(addonDesc);
         assertFalse(am.setPerms(addon));
     }
@@ -383,7 +384,7 @@ public class AddonsManagerTest {
         YamlConfiguration config = new YamlConfiguration();
         config.loadFromString(perms);
         GameModeAddon addon = new MyGameMode();
-        AddonDescription addonDesc = new AddonDescription.Builder("main.class", "mygame", "1.0.0").apiVersion("1.11.1.0.0.0.1")
+        AddonDescription addonDesc = new AddonDescriptionBuilder("main.class", "mygame", "1.0.0").apiVersion("1.11.1.0.0.0.1")
                 .permissions(config)
                 .build();
         addon.setDescription(addonDesc);
@@ -405,7 +406,7 @@ public class AddonsManagerTest {
         YamlConfiguration config = new YamlConfiguration();
         config.loadFromString(perms);
         GameModeAddon addon = new MyGameMode();
-        AddonDescription addonDesc = new AddonDescription.Builder("main.class", "mygame", "1.0.0").apiVersion("1.11.1.0.0.0.1")
+        AddonDescription addonDesc = new AddonDescriptionBuilder("main.class", "mygame", "1.0.0").apiVersion("1.11.1.0.0.0.1")
                 .permissions(config)
                 .build();
         addon.setDescription(addonDesc);
@@ -446,7 +447,7 @@ public class AddonsManagerTest {
         YamlConfiguration config = new YamlConfiguration();
         config.loadFromString(perms);
         GameModeAddon addon = new MyGameMode();
-        AddonDescription addonDesc = new AddonDescription.Builder("main.class", "mygame", "1.0.0").apiVersion("1.11.1.0.0.0.1")
+        AddonDescription addonDesc = new AddonDescriptionBuilder("main.class", "mygame", "1.0.0").apiVersion("1.11.1.0.0.0.1")
                 .permissions(config)
                 .build();
         addon.setDescription(addonDesc);
