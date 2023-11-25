@@ -300,40 +300,44 @@ public class AddonClassLoaderTest {
      * Test method for {@link world.bentobox.bentobox.api.addons.AddonClassLoader#findClass(java.lang.String)}.
      */
     @Test
-    public void testFindClassString() throws MalformedURLException {
+    public void testFindClassString() throws IOException {
         acl = new AddonClassLoader(testAddon, am, jarFile);
         assertNull(acl.findClass(""));
         assertNull(acl.findClass("world.bentobox.bentobox"));
+        acl.close();
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.api.addons.AddonClassLoader#findClass(java.lang.String, boolean)}.
      */
     @Test
-    public void testFindClassStringBoolean() throws MalformedURLException {
+    public void testFindClassStringBoolean() throws IOException {
         acl = new AddonClassLoader(testAddon, am, jarFile);
         assertNull(acl.findClass("", false));
         assertNull(acl.findClass("world.bentobox.bentobox", false));
+        acl.close();
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.api.addons.AddonClassLoader#getAddon()}.
      */
     @Test
-    public void testGetAddon() throws MalformedURLException {
+    public void testGetAddon() throws IOException {
         acl = new AddonClassLoader(testAddon, am, jarFile);
         Addon addon = acl.getAddon();
         assertEquals(addon, testAddon);
+        acl.close();
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.api.addons.AddonClassLoader#getClasses()}.
      */
     @Test
-    public void testGetClasses() throws MalformedURLException {
+    public void testGetClasses() throws IOException {
         acl = new AddonClassLoader(testAddon, am, jarFile);
         Set<String> set = acl.getClasses();
         assertTrue(set.isEmpty());
+        acl.close();
     }
 
 }
