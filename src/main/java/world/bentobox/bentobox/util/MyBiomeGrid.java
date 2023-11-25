@@ -32,7 +32,6 @@ public class MyBiomeGrid implements BiomeGrid {
         case THE_END -> defaultBiome = Biome.THE_END;
         default -> defaultBiome = Biome.PLAINS;
         }
-
     }
     @Override
     public @NonNull Biome getBiome(int x, int z) {

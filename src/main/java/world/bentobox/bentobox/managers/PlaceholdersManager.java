@@ -76,97 +76,97 @@ public class PlaceholdersManager {
         for (int i = 1; i <= MAX_TEAM_MEMBER_PLACEHOLDERS; i++) {
             final int count = i;
             // Names
-            registerPlaceholder(addon, "island_member_name_" + i, user -> {
-                if (user != null) {
-                    Island island = plugin.getIslands().getIsland(addon.getOverWorld(), user);
-                    int j = 1;
-                    for (UUID uuid : island.getMemberSet(RanksManager.MEMBER_RANK)) {
-                        if (j++ == count) {
-                            return plugin.getPlayers().getName(uuid);
-                        }
-                    }
-                }
-                return "";
-            });
+            registerNewIslandPlaceholders(addon, count, i, "island_member_name_");
             // Register ranks
-            registerPlaceholder(addon, "island_member_rank_" + i, user -> {
-                if (user != null) {
-                    Island island = plugin.getIslands().getIsland(addon.getOverWorld(), user);
-                    int j = 1;
-                    for (UUID uuid : island.getMemberSet(RanksManager.MEMBER_RANK)) {
-                        if (j++ == count) {
-                            return user.getTranslationOrNothing(plugin.getRanksManager().getRank(island.getRank(uuid)));
-                        }
-                    }
-                }
-                return "";
-            });
+            registerNewIslandPlaceholders(addon, count, i, "island_member_rank_");
             // Banned
-            registerPlaceholder(addon, "island_banned_name_" + i, user -> {
-                if (user != null) {
-                    Island island = plugin.getIslands().getIsland(addon.getOverWorld(), user);
-                    int j = 1;
-                    for (UUID uuid : island.getBanned()) {
-                        if (j++ == count) {
-                            return plugin.getPlayers().getName(uuid);
+            registerBannedPlaceholder(addon, count, i);
+
+            // Visited Island
+            registerVisitedPlaceholders(addon, count, i, "visited_island_member_name_");
+            registerVisitedPlaceholders(addon, count, i, "visited_island_member_rank_");
+            registerVisitedBannedPlaceholder(addon, count, i);
+        }
+    }
+
+    private void registerNewIslandPlaceholders(@NonNull GameModeAddon addon, int count, int index, String placeholder){
+        String toRegister = "";
+        registerPlaceholder(addon, placeholder + index, user -> {
+            if (user != null) {
+                Island island = plugin.getIslands().getIsland(addon.getOverWorld(), user);
+                int j = 1;
+                for (UUID uuid : island.getMemberSet(RanksManager.MEMBER_RANK)) {
+                    if (j++ == count) {
+                        switch (toRegister) {
+                            case "island_member_name_": plugin.getPlayers().getName(uuid);
+                            case "island_member_rank_": user.getTranslationOrNothing(plugin.getRanksManager().getRank(island.getRank(uuid)));
+                            default: ;
                         }
+                        return toRegister;
                     }
                 }
-                return "";
-            });
-            // Visited Island
-            registerPlaceholder(addon, "visited_island_member_name_" + i, user -> {
-                if (user != null) {
-                    return plugin.getIslands().getIslandAt(user.getLocation())
-                            .filter(island -> addon.inWorld(island.getCenter()))
-                            .map(island -> {
-                                int j = 1;
-                                for (UUID uuid : island.getMemberSet(RanksManager.MEMBER_RANK)) {
-                                    if (j++ == count) {
-                                        return plugin.getPlayers().getName(uuid);
-                                    }
-                                }
-                                return "";
-                            }).orElse("");
+            }
+            return "";
+        });
+    }
 
+    private void registerBannedPlaceholder(@NonNull GameModeAddon addon, int count, int index) {
+        registerPlaceholder(addon, "island_banned_name_" + index, user -> {
+            if (user != null) {
+                Island island = plugin.getIslands().getIsland(addon.getOverWorld(), user);
+                int j = 1;
+                for (UUID uuid : island.getBanned()) {
+                    if (j++ == count) {
+                        return plugin.getPlayers().getName(uuid);
+                    }
                 }
-                return "";
-            });
-            registerPlaceholder(addon, "visited_island_member_rank_" + i, user -> {
-                if (user != null) {
-                    return plugin.getIslands().getIslandAt(user.getLocation())
-                            .filter(island -> addon.inWorld(island.getCenter()))
-                            .map(island -> {
-                                int j = 1;
-                                for (UUID uuid : island.getMemberSet(RanksManager.MEMBER_RANK)) {
-                                    if (j++ == count) {
-                                        return user.getTranslationOrNothing(plugin.getRanksManager().getRank(island.getRank(uuid)));
-                                    }
-                                }
-                                return "";
-                            }).orElse("");
+            }
+            return "";
+        });
+    }
 
-                }
-                return "";
-            });
-            registerPlaceholder(addon, "visited_island_banned_name_" + i, user -> {
-                if (user != null) {
-                    return plugin.getIslands().getIslandAt(user.getLocation())
-                            .filter(island -> addon.inWorld(island.getCenter()))
-                            .map(island -> {
-                                int j = 1;
-                                for (UUID uuid : island.getBanned()) {
-                                    if (j++ == count) {
-                                        return plugin.getPlayers().getName(uuid);
-                                    }
+    private void registerVisitedBannedPlaceholder(@NonNull GameModeAddon addon, int count, int index) {
+        registerPlaceholder(addon, "visited_island_banned_name_" + index, user -> {
+            if (user != null) {
+                return plugin.getIslands().getIslandAt(user.getLocation())
+                        .filter(island -> addon.inWorld(island.getCenter()))
+                        .map(island -> {
+                            int j = 1;
+                            for (UUID uuid : island.getBanned()) {
+                                if (j++ == count) {
+                                    return plugin.getPlayers().getName(uuid);
                                 }
-                                return "";
-                            }).orElse("");
+                            }
+                            return "";
+                        }).orElse("");
+            }
+            return "";
+        });
+    }
 
-                }
-                return "";
-            });
-        }
+    private void registerVisitedPlaceholders(@NonNull GameModeAddon addon, int count, int index, String placeholder) {
+        String toRegister = "";
+        registerPlaceholder(addon, placeholder + index, user -> {
+            if (user != null) {
+                return plugin.getIslands().getIslandAt(user.getLocation())
+                        .filter(island -> addon.inWorld(island.getCenter()))
+                        .map(island -> {
+                            int j = 1;
+                            for (UUID uuid : island.getMemberSet(RanksManager.MEMBER_RANK)) {
+                                if (j++ == count) {
+                                    switch (toRegister) {
+                                        case "visited_island_member_name_": plugin.getPlayers().getName(uuid);
+                                        case "visited_island_member_rank_": user.getTranslationOrNothing(plugin.getRanksManager().getRank(island.getRank(uuid)));
+                                        default: ;
+                                    }
+                                    return toRegister;
+                                }
+                            }
+                            return "";
+                        }).orElse("");
+            }
+            return "";
+        });
     }
 
     /**
