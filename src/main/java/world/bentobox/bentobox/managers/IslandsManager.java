@@ -1823,8 +1823,9 @@ public class IslandsManager {
 	}
 	// Save new island
 	handler.saveObjectAsync(island).thenAccept(result -> {
-	    if (Boolean.FALSE.equals(result))
+	    if (Boolean.FALSE.equals(result)) {
 		plugin.logError("Could not save recovered island to database");
+	    }
 	});
 	return true;
     }
