@@ -1,15 +1,19 @@
 ---
 meta:
   authors:
-  - 
-  - 
+  - tastybento
+  - Poslovitch
   banner: WHITE_BANNER:1:STRIPE_SMALL:RED:SQUARE_TOP_RIGHT:CYAN:SQUARE_TOP_RIGHT:BLUE
 prefixes:
   bentobox: "&6 BentoBox &7 &l > &r"
 general:
+  success: "&a Успіх!"
   invalid: Недійсний
   errors:
     command-cancelled: "&c Команда скасована."
+    no-permission: "&c Ви не маєте дозволу на виконання цієї команди (&7 [permission]&c)."
+    insufficient-rank: "&c Ваш ранг недостатньо високий, щоб це зробити! (&7 [rank]&c
+      )"
     use-in-game: "&c Ця команда доступна лише в грі."
     use-in-console: "&c Ця команда доступна лише в консолі."
     no-team: "&c У вас немає команди!"
@@ -20,11 +24,16 @@ general:
     no-safe-location-found: "&c Не вдалося знайти безпечне місце на острові, щоб телепортувати
       вас."
     not-owner: "&c Ви не власник острова!"
+    player-is-not-owner: "&b [name] &c не є власником острова!"
     not-in-team: "&c Цього гравця немає у вашій команді!"
     offline-player: "&c Цей програвач офлайн або не існує."
+    unknown-player: "&c [name] невідомий гравець!"
     general: "&c Ця команда ще не готова - зверніться до адміністратора"
     unknown-command: "&c Невідома команда. Допоможіть &b /[label] &c для допомоги."
     wrong-world: "&c Ви не в тому світі, щоб це робити!"
+    you-must-wait: "&c Ви повинні зачекати [number], перш ніж ви зможете виконати
+      цю команду знову."
+    must-be-positive-number: "&c [number] не є дійсним додатним числом."
     not-on-island: "&c Ви не на острові!"
   worlds:
     overworld: Надземний світ
@@ -32,7 +41,11 @@ general:
     the-end: Кінець
 commands:
   help:
+    header: "&7 =========== &c [label] довідка &7 ==========="
+    syntax: "&b [usage] &a [parameters]&7 : &e [description]"
+    syntax-no-parameters: "&b [usage]&7 : &e [description]"
     end: "&7 =================================="
+    parameters: "[command]"
     description: команда допомоги
     console: Консоль
   admin:
@@ -42,20 +55,33 @@ commands:
       description: редагувати значення скидання гравця
       set:
         description: встановлює, скільки разів цей гравець скидав свій острів
+        parameters: "<player> <resets>"
         success: "&b [name]&a кількість скинутих островів тепер &b [number]&a ."
       reset:
         description: встановлює лічильник скидання острова гравця на 0
+        parameters: "<player>"
         success-everyone: "&a Успішно скинуто &b скидання лічильника всіх&a до &b
           0&a ."
+        success: "&a Успішно скинуто лічильник &b [player]&a до &b 0&a ."
       add:
         description: додає кількість скинутих островів цього гравця
+        parameters: "<player> <resets>"
+        success: "&a Успішно додано &b [number] &a скидається до &b [name], збільшуючи
+          загальну кількість до &b [total]&a скидається."
       remove:
         description: зменшує кількість скинутих островів гравця
+        parameters: "<player> <resets>"
+        success: "&a Успішно видалено &b [number] &a скидання з острова &b [name]&a,
+          зменшивши загальну кількість до &b[total]&a скидання."
     purge:
+      parameters: "[days]"
+      description: острови очищення покинуті більше ніж на [days]
       days-one-or-more: Має бути принаймні 1 день або більше
+      purgable-islands: "&a Знайдено &b [number] &a острови, які можна очистити."
       purge-in-progress: "&c Триває очищення. Використовуйте &b /[label] purge stop
         &c, щоб скасувати."
       number-error: "&c Аргумент має бути кількістю днів"
+      confirm: "&d Введіть &b /[label] очищення, підтвердьте &d, щоб почати очищення"
       completed: "&a Очищення зупинено."
       see-console-for-status: "&Почалося очищення. Перегляньте статус у консолі або
         скористайтеся &b /[label] purge status&a."
@@ -70,32 +96,55 @@ commands:
         stopping: Припинення чистки
       unowned:
         description: очистити неналежні острови
+        unowned-islands: "&a Знайдені &b [number] &a острови, які не належать."
       status:
         description: відображає стан очищення
+        status: "&b [purged] &a острови очищено від &b [purgeable] &7(&b[percentage]
+          %&7)&a."
     team:
       description: керувати командами
       add:
+        parameters: "<owner> <player>"
         description: додати гравця до команди власника
+        name-not-owner: "&c [name] не є власником."
+        name-has-island: "&c [name] має острів. Спочатку скасуйте реєстрацію або видаліть
+          їх!"
+        success: "&b [name]&a додано до острова &b [owner]&a."
       disband:
+        parameters: "<owner>"
         description: розпустити команду власника
+        use-disband-owner: "&c Не власник! Використовуйте disband [owner]."
         disbanded: "&c Адміністратор розпустив вашу команду!"
         success: Команда &b [name]&a була розпущена.
       fix:
         description: сканує та виправляє членство між островами в базі даних
         scanning: Сканування бази даних...
+        duplicate-owner: "&c Гравець володіє більш ніж одним островом у базі даних:
+          [name]"
+        player-has: "&c Гравець [name] має [number] островів"
+        duplicate-member: "&c Гравець [name] є членом кількох островів у базі даних"
+        rank-on-island: "&c [rank] на острові в [xyz]"
         fixed: "&a Виправлено"
         done: "&a Сканування"
       kick:
+        parameters: "<team player>"
         description: вибити гравця з команди
         cannot-kick-owner: "&c Ви не можете бити власника. Спершу вибийте учасників."
         not-in-team: "&c Цей гравець не входить до команди."
         admin-kicked: "&c Адміністратор вигнав вас із команди."
+        success: "&b [name] &a був вигнаний з острова &b [owner]&a."
       setowner:
+        parameters: "<player>"
         description: передає право власності на острів гравцеві
+        already-owner: "&c [name] вже є власником цього острова!"
+        success: "&b [name]&a тепер є власником цього острова."
     range:
       description: адміністративна команда діапазону острова
       invalid-value:
         too-low: "&c Діапазон захисту повинен бути більшим ніж &b 1&c !"
+        too-high: "&c Діапазон захисту має бути рівним або меншим ніж &b [number]&c
+          !"
+        same-as-before: "&c Діапазон захисту вже встановлено на &b [number]&c !"
       display:
         already-off: "&c Індикатори вже вимкнені"
         already-on: "&c Індикатори вже включені"
@@ -107,16 +156,28 @@ commands:
           &a Зелені частинки &f показують захищений діапазон за умовчанням, якщо діапазон захисту острова відрізняється від нього.
         showing: "&2 Показ індикаторів діапазону"
       set:
+        parameters: "<player> <range>"
         description: встановлює захищений діапазон острова
+        success: "&a Встановити діапазон захисту острова на &b [number]&a ."
       reset:
+        parameters: "<player>"
         description: скидає захищений діапазон острова до світового значення за замовчуванням
+        success: "&a Скинути діапазон захисту острова до &b [number]&a ."
       add:
         description: збільшує радіус дії острова під захистом
+        parameters: "<player> <range>"
+        success: "&a Успішно збільшено діапазон захисту острова &b [name]&a до &b
+          [total] &7 (&b +[number]&7 )&a ."
       remove:
         description: зменшує радіус дії острова, що захищається
+        parameters: "<player> <range>"
+        success: "&a Успішно зменшено діапазон захисту острова &b [name]&a до &b [total]
+          &7 (&b -[number]&7 )&a ."
     register:
+      parameters: "<player>"
       description: зареєструйте гравця на острові, на якому ви перебуваєте
       registered-island: "&a Зареєстровано [name] на острові [xyz]."
+      reserved-island: "&a Зарезервований острів на [xyz] для [name]."
       already-owned: Острів &c вже належить іншому гравцеві!
       no-island-here: "&c Тут немає острова. Підтвердьте, щоб створити один."
       in-deletion: "&c Цей простір острова наразі видаляється. Спробуйте пізніше."
@@ -124,22 +185,36 @@ commands:
         консоль для можливих помилок."
       island-is-spawn: "&6 Острів ікру. Ти впевнений? Введіть команду ще раз для підтвердження."
     unregister:
+      parameters: "<owner>"
       description: скасувати реєстрацію власника з острова, але зберегти блоки острова
+      unregistered-island: "&a Незареєстрований [name] з острова на [xyz]."
     info:
+      parameters: "<player>"
       description: отримати інформацію про те, де ви або острів гравця
       no-island: "&c Ви зараз не на острові..."
       title: "========== Інформація про острів ============"
       island-uuid: 'UUID: [uuid]'
+      owner: 'Власник: [owner] ([uuid])'
+      last-login: 'Останній вхід: [date]'
+      last-login-date-time-format: EEE MMM dd HH:mm:ss zzz yyyy
+      deaths: 'Смерті: [number]'
+      resets-left: 'Скидання: [number] (Макс.: [total])'
       team-members-title: 'Члени команди:'
+      team-owner-format: "&a [name] [rank]"
+      team-member-format: "&b [name] [rank]"
       island-protection-center: 'Центр зони захисту: [xyz]'
       island-center: 'Центр острова: [xyz]'
       island-coords: 'Координати острова: [xz1] до [xz2]'
       islands-in-trash: "&d Гравець має острови у кошику."
+      protection-range: 'Діапазон захисту: [range]'
       protection-range-bonus-title: "&b Включає такі бонуси:"
+      protection-range-bonus: 'Бонус: [number]'
       purge-protected: Острів захищений від очищення
+      max-protection-range: 'Найбільший історичний діапазон захисту: [range]'
       protection-coords: 'Координати захисту: [xz1] до [xz2]'
       is-spawn: Острів — острів-нерест
       banned-players: 'Забанені гравці:'
+      banned-format: "&c [name]"
       unowned: "&c Без власності"
     switch:
       description: увімкнути/вимкнути байпас захисту
@@ -147,40 +222,61 @@ commands:
       removing: "&a Видалення захисного обходу..."
       adding: "&a Додавання обходу захисту..."
     switchto:
+      parameters: "<player> <number>"
       description: переключити острів гравця на острів з номером один у кошику
+      out-of-range: "&c Число має бути від 1 до [number]. Використовуйте &l [label]
+        кошик [player] &r &c, щоб побачити номери островів"
       cannot-switch: "&c Помилка перемикання. Перегляньте журнал консолі, щоб дізнатися
         про помилку."
       success: "&a Успішно змінено острів гравця на вказаний."
     trash:
       no-unowned-in-trash: "&c Жодних неналежних островів у смітнику"
       no-islands-in-trash: "&c Гравець не має островів у кошику"
+      parameters: "[player]"
       description: показувати неналежні острови або острови гравця в кошику
       title: "&d ============ Острови у смітнику ============"
+      count: "&l &d Острів [number]:"
+      use-switch: "&a Використовуйте &l [label] switchto <player> <number>&r &a, щоб
+        переключити гравця на острів у кошику"
+      use-emptytrash: "&a Використовуйте &l [label] emptytrash [player]&r &a, щоб
+        назавжди видалити елементи зі смітника"
     emptytrash:
+      parameters: "[player]"
       description: Очистіть сміття для гравця або всі острови, яким не належить, у
         смітник
       success: "&a Кошик успішно очищено."
     version:
       description: відображати версії BentoBox і доповнень
     setrange:
+      parameters: "<player> <range>"
       description: встановити діапазон острова гравця
+      range-updated: "&a Діапазон островів оновлено до &b [number]&a ."
     reload:
       description: перезавантажити
     tp:
+      parameters: "<player> [player to teleport]"
       description: телепортуватися на острів гравця
+      manual: "&c Не знайдено безпечної деформації! Перейдіть вручну поблизу &b [location]
+        &c і перевірте це"
     getrank:
+      parameters: "<player> [island owner]"
       description: отримати ранг гравця на своєму острові або на острові власника
+      rank-is: "&a Ранг &b [rang] &a на острові &b [name]&a."
     setrank:
+      parameters: "<player> <rank> [island owner]"
       description: встановити ранг гравця на його острові або на острові власника
       unknown-rank: "&c Невідомий ранг!"
       not-possible: "&c Рейтинг має бути вищим, ніж відвідувач."
+      rank-set: "&a Ранг встановлено з &b [from] &a до &b [to] &a на острові &b [name]&a."
     setprotectionlocation:
+      parameters: "[x y z coords]"
       description: встановити поточне розташування або [x y z] як центр охоронної
         зони острова
       island: "&c Це вплине на острів за адресою [xyz], який належить '[name]'."
       confirmation: "&c Ви впевнені, що хочете встановити [xyz] як центр захисту?"
       success: "&a Успішно встановлено [xyz] як центр захисту."
       fail: "&c Не вдалося встановити [xyz] як центр захисту."
+      island-location-changed: "&a [user] змінив центр захисту острова на [xyz]."
       xyz-error: "&c Укажіть три цілі координати: наприклад, 100 120 100"
     setspawn:
       description: встановити острів як джерело для цього ігрового режиму
@@ -195,7 +291,9 @@ commands:
       confirmation: "&c Ви впевнені, що хочете встановити це місце як точку появи
         для цього острова?"
       success: "&a Успішно встановлено це місце як точку появи для цього острова."
+      island-spawnpoint-changed: "&a [user] змінив точку появи острова."
     settings:
+      parameters: "[player]/[world flag]/spawn-island [flag/active/disable] [rank/active/disable]"
       description: відкрити графічний інтерфейс налаштувань або встановити налаштування
       unknown-setting: "&c Невідоме налаштування"
     blueprint:
@@ -207,19 +305,29 @@ commands:
       no-such-file: "&c Такого файлу немає!"
       could-not-load: "&c Не вдалося завантажити цей файл!"
       could-not-save: "&c Хм, щось пішло не так під час збереження цього файлу: [повідомлення]"
+      set-pos1: "&a Позиція 1 встановлена ​​на [vector]"
+      set-pos2: "&a Позиція 2 встановлена ​​на [vector]"
       set-different-pos: "&c Встановіть інше розташування - цю позицію вже встановлено!"
+      need-pos1-pos2: "&c Спочатку встановіть pos1 та pos2!"
       copying: "&b Копіювання блоків..."
+      copied-blocks: "&b Скопійовано [number] блоків у буфер обміну"
       look-at-a-block: "&c Подивіться на блок у межах 20 блоків, щоб встановити"
       mid-copy: "&c Ви в середині копії. Дочекайтеся завершення копіювання."
+      copied-percent: "&6 Скопійовано [number]%"
       copy:
+        parameters: "[air]"
         description: скопіюйте буфер обміну, встановлений pos1 і pos2, і, за бажанням,
           повітряні блоки
       delete:
+        parameters: "<name>"
         description: видалити креслення
+        no-blueprint: "&b [name] &c не існує."
         confirmation: |
           &c Ви впевнені, що хочете видалити цей проект?
           &c Після видалення його неможливо відновити.
+        success: "&a Успішно видалено проект &b [name]&a ."
       load:
+        parameters: "<name>"
         description: завантажити креслення в буфер обміну
       list:
         description: список доступних креслень
@@ -235,9 +343,13 @@ commands:
       pos2:
         description: встановити 2-й кут прямокутного буфера обміну
       save:
+        parameters: "<blueprint name>"
         description: зберегти скопійований буфер обміну
       rename:
+        parameters: "<blueprint name> <new name>"
         description: перейменувати проект
+        success: "&a Blueprint &b [old] &a було успішно перейменовано на &b [display]&a.
+          Зараз файл називається &b [name]&a."
         pick-different-name: "&c Будь ласка, вкажіть назву, яка відрізняється від
           поточної назви креслення."
       management:
@@ -247,6 +359,7 @@ commands:
         edit: Натисніть, щоб редагувати
         rename: Клацніть правою кнопкою миші, щоб перейменувати
         edit-description: Натисніть, щоб редагувати опис
+        world-name-syntax: "[name] світ"
         world-instructions: |
           Розмістити план
           праворуч, щоб встановити
@@ -269,43 +382,68 @@ commands:
         new-bundle: Новий комплект
         new-bundle-instructions: Натисніть, щоб створити новий пакет
         name:
+          quit: quit
+          prompt: Введіть ім'я або 'quit', щоб вийти
           too-long: "&c Надто довга назва. Дозволено лише 32 символи."
           pick-a-unique-name: Виберіть більш унікальне ім’я
+          stripped-char-in-unique-name: "&c Деякі символи було видалено, оскільки
+            вони заборонені. &a Новий ідентифікатор буде &b [name]&a."
           success: Успіх!
           conversation-prefix: ">"
         description:
+          quit: quit
+          instructions: |
+            Введіть багаторядковий опис для [name]
+            і 'quit' на самому рядку, щоб завершити.
           success: Успіх!
           cancelling: Скасування
+        slot: "&f Бажаний слот [number]"
         slot-instructions: |
           &a Клацніть лівою кнопкою миші, щоб збільшити
           &a Клацніть правою кнопкою миші, щоб зменшити
     resetflags:
+      parameters: "[flag]"
       description: Скинути всі острови до налаштувань прапора за замовчуванням у config.yml
       confirm: "&4 Це скине прапор(и) до стандартних для всіх островів!"
       success: "&a Успішно скинути прапори всіх островів до стандартних налаштувань."
+      success-one: "&прапор [name] встановлений за замовчуванням для всіх островів."
     world:
       description: Керуйте налаштуваннями світу
     delete:
+      parameters: "<player>"
       description: видаляє острів гравця
       cannot-delete-owner: "&c Усі учасники острова повинні бути вигнані з острова
         перед його видаленням."
       deleted-island: "&a Острів на &e [xyz] &a успішно видалено."
     deletehomes:
+      parameters: "<player>"
       description: видаляє всі названі будинки з острова
       warning: "&c Усі названі будинки будуть видалені з острова!"
     why:
+      parameters: "<player>"
       description: увімкнути звіт про налагодження захисту консолі
+      turning-on: "&a Увімкнення налагодження консолі для &b [name]."
+      turning-off: "&a Вимкнення налагодження консолі для &b [name]."
     deaths:
       description: редагувати смерть гравців
       reset:
         description: скидає смерть гравця
+        parameters: "<player>"
         success: "&a Успішно скинуто кількість смертей &b [name]&a до &b 0&a ."
       set:
         description: встановлює смерть гравця
+        parameters: "<player> <deaths>"
+        success: "&a Успішно встановлено &b [name]&a смертей на &b [number]&a ."
       add:
         description: додає смерті гравцеві
+        parameters: "<player> <deaths>"
+        success: "&a Успішно додано &b [number] &a смертей до &b [name], збільшивши
+          загальну кількість до &b [total]&a смертей."
       remove:
         description: знімає смерть гравця
+        parameters: "<player> <deaths>"
+        success: "&a Успішно видалено &b [number] &a смертей для &b [name], зменшивши
+          загальну кількість до &b [total]&a смертей."
     resetname:
       description: скинути назву острова гравця
       success: "&a Успішно скинуто назву острова [name]."
@@ -320,6 +458,8 @@ commands:
       locales-reloaded: "[prefix_bentobox]&2 мови перезавантажено."
       addons-reloaded: "[prefix_bentobox]&2 Addons перезавантажено."
       settings-reloaded: "[prefix_bentobox]&2 Налаштування перезавантажено."
+      addon: "[prefix_bentobox]&6 Перезавантаження &b [name]&2 ."
+      addon-reloaded: "[prefix_bentobox]&b [name] &2 перезавантажено."
       warning: "[prefix_bentobox]&c Попередження: перезавантаження може спричинити
         нестабільність, тому, якщо після цього ви побачите помилки, перезапустіть
         сервер."
@@ -327,9 +467,14 @@ commands:
       locales:
         description: перезавантажує локалі
     version:
+      plugin-version: "&2 Версія BentoBox: &3 [version]"
       description: відображає версії BentoBox і додатків
       loaded-addons: 'Завантажені доповнення:'
       loaded-game-worlds: 'Завантажені ігрові світи:'
+      addon-syntax: "&2 [name] &3 [version] &7 (&3 [state]&7 )"
+      game-world: "&2 [name] &7 (&3 [addon]&7 ): &3 [worlds]"
+      server: "&2 Запущена &3 [name] [version]&2 ."
+      database: "&2 База даних: &3 [database]"
     manage:
       description: відображає панель керування
     catalog:
@@ -344,16 +489,20 @@ commands:
       players: "[prefix_bentobox]&6 Перенесення гравців"
       names: "[prefix_bentobox]&6 Переміщення імен"
       addons: "[prefix_bentobox]&6 Міграція додатків"
+      class: "[prefix_bentobox]&6 Міграція [description]"
       migrated: "[prefix_bentobox]&a Перенесено"
     rank:
       description: список, додавання або видалення рангів
+      parameters: "&a [list | add | remove] [rank reference] [rank value]"
       add:
         success: "&a Додано [rank] із значенням [number]"
         failure: "&c Не вдалося додати [rank] зі значенням [number]. Може, дублікат?"
       remove:
+        success: "&a Видалено [rang]"
         failure: "&c Не вдалося видалити [rank]. Невідомий ранг."
       list: "&a Зареєстровані ранги такі:"
   confirmation:
+    confirm: "&c Введіть команду ще раз протягом &b [seconds]c&c для підтвердження."
     previous-request-cancelled: "&6 Попередній запит на підтвердження скасовано."
     request-cancelled: "&c Час очікування підтвердження - запит &b скасовано."
   delay:
@@ -364,8 +513,10 @@ commands:
     about:
       description: відображення деталей ліцензії
     go:
+      parameters: "[home name]"
       description: телепортувати вас на ваш острів
       teleport: "&a Телепортація вас на ваш острів."
+      teleported: "&a Телепортував вас додому &e [number]."
       unknown-home: "&c Невідома домашня назва!"
     help:
       description: командування головного острова
@@ -375,6 +526,7 @@ commands:
       no-spawn: "&c У цьому ігровому режимі немає відродження."
     create:
       description: створити острів, використовуючи додатковий план (потрібен дозвіл)
+      parameters: "<blueprint>"
       too-many-islands: "&c У цьому світі надто багато островів: недостатньо місця
         для створення вашого."
       cannot-create-island: "&c Місце не знайдено вчасно, спробуйте ще раз..."
@@ -384,6 +536,10 @@ commands:
       you-cannot-make-team: "&c Члени команди не можуть створювати острови в тому
         ж світі, що й острів їх команди."
       pasting:
+        estimated-time: "&a Приблизний час: &b [number] &a секунд."
+        blocks: "&a Побудова блок за блоком: &b [number] &a блоків у всіх..."
+        entities: "&a Заповнення його сутностями: &b [number] &a сутності у всіх..."
+        dimension-done: "&Побудовано острів у [world]."
         done: "&a Готово! Ваш острів готовий і чекає на вас!"
       pick: "&2 Виберіть острів"
       unknown-blueprint: "&c Цей проект ще не завантажено."
@@ -393,40 +549,58 @@ commands:
         коли захочете."
     deletehome:
       description: видалити домашнє розташування
+      parameters: "[home name]"
     homes:
       description: перелічіть ваші будинки
     info:
       description: відображати інформацію про ваш острів або острів гравця
+      parameters: "<player>"
     near:
       description: покажіть назви сусідніх островів навколо вас
       the-following-islands: "&a Поруч знаходяться такі острови:"
+      syntax: "&6 [direction]: &a [name]"
+      north: Північ
       south: Південь
+      east: Схід
       west: Захід
       no-neighbors: "&c У вас немає найближчих сусідніх островів!"
     reset:
       description: перезапустіть свій острів і видаліть старий
+      parameters: "<blueprint>"
       none-left: "&c У вас більше не залишилося скидань!"
+      resets-left: "&c У вас залишилося &b [number] &c скидання"
       confirmation: |-
         &c Ви впевнені, що хочете це зробити?
         &c Усі учасники острова будуть вигнані з острова, потім вам доведеться знову запросити їх.
         &c Повороту назад немає: після видалення поточного острова &l &r &c способу відновити його пізніше не буде.
+      kicked-from-island: "&c Ви вигнані зі свого острова в [gamemode], тому що власник
+        скидає його."
     sethome:
       description: встановіть домашню точку телепорту
       must-be-on-your-island: "&c Ви повинні бути на своєму острові, щоб повернутися
         додому!"
+      too-many-homes: "&c Неможливо встановити - ваш острів має максимальну кількість
+        будинків [number]."
       home-set: "&6 Вашим домом на острові встановлено ваше поточне місцезнаходження."
       homes-are: "&6 Острівні будинки:"
+      home-list-syntax: "&6 [name]"
       nether:
         not-allowed: "&c Вам заборонено встановлювати свій дім у Пустоті."
         confirmation: "&c Ви впевнені, що хочете встановити свій дім у Пустоті?"
       the-end:
         not-allowed: "&c Вам не дозволено встановлювати свій будинок в End."
         confirmation: "&c Ви впевнені, що хочете встановити свій дім у End?"
+      parameters: "[home name]"
     setname:
       description: дайте назву своєму острову
+      name-too-short: "&c Занадто короткий. Мінімальний розмір — [number] символів."
+      name-too-long: "&c Занадто довго. Максимальний розмір: [number] символів."
       name-already-exists: "&c У цьому ігровому режимі вже є острів із такою назвою."
+      parameters: "<name>"
+      success: "&a Успішно встановили назву свого острова на &b [name]&a ."
     renamehome:
       description: перейменувати домашнє розташування
+      parameters: "[home name]"
       enter-new-name: "&6 Введіть нову назву"
       already-exists: "&c Ця назва вже існує, спробуйте іншу назву."
     resetname:
@@ -436,19 +610,34 @@ commands:
       description: керуйте своєю командою
       info:
         description: відобразити детальну інформацію про вашу команду
-        member-layout: {}
+        member-layout:
+          online: "&a &l  o &r &f [name]"
+          offline: "&c &l  o &r &f [name] &7 ([last_seen])"
+          offline-not-last-seen: "&c &l  o &r &f [name]"
         last-seen:
+          layout: "&b [number] &7 [unit] тому"
           days: днів
           hours: години
           minutes: хвилин
-        rank-layout: {}
+        header: |
+          &f --- &a Інформація про команду &f ---
+          &a Члени: &b [total]&7 /&b [max]
+          &a Онлайн-учасники: &b [online]
+        rank-layout:
+          owner: "&6 [rank]:"
+          generic: "&6 [rank] &7 (&b [number]&7 )&6 :"
       coop:
         description: зробіть кооператив гравців рангом на своєму острові
+        parameters: "<player>"
         cannot-coop-yourself: "&c Ви не можете самі себе брати!"
         already-has-rank: "&c У гравця вже є ранг!"
         you-are-a-coop-member: "&2 З вами співпрацював &b[name]&a."
+        success: "&a Ви співпрацювали &b [name]&a."
+        name-has-invited-you: "&a [name] запросив вас приєднатися як член кооперативу
+          на їхньому острові."
       uncoop:
         description: зняти з гравця ранг кооперативу
+        parameters: "<player>"
         cannot-uncoop-yourself: "&c Ви не можете відірватися!"
         cannot-uncoop-member: "&c Ви не можете відключити члена команди!"
         player-not-cooped: "&c Гравець не підтримується!"
@@ -456,17 +645,26 @@ commands:
           острові [name]."
         all-members-logged-off: "&c Усі члени острова вийшли з системи, тому ви більше
           не є членом кооперативу на острові [name]."
+        success: "&b [name] &a більше не є членом кооперативу на вашому острові."
         is-full: "&c Ви не можете співпрацювати з кимось іншим."
       trust:
         description: дайте гравцеві ранг надійного гравця на вашому острові
+        parameters: "<player>"
         trust-in-yourself: "&c Довіряйте собі!"
+        name-has-invited-you: "&a [name] запросив вас приєднатися як довіреного учасника
+          їхнього острова."
         player-already-trusted: "&c Гравець уже довірений!"
+        you-are-trusted: "&2 Вам довіряє &b [name]&a !"
+        success: "&a Ви довіряли &b [name]&a ."
         is-full: "&c Ви не можете довіряти нікому іншому. Стежте за вашою спиною!"
       untrust:
         description: видалити ранг довіреного гравця
+        parameters: "<player>"
         cannot-untrust-yourself: "&c Ви не можете не довіряти собі!"
         cannot-untrust-member: "&c Ви не можете не довіряти члену команди!"
         player-not-trusted: "&c Гравець не є надійним!"
+        you-are-no-longer-trusted: "&c Вам більше не довіряють &b [name]&a !"
+        success: "&b [name] &a більше не довіряють на вашому острові."
       invite:
         description: запросіть гравця приєднатися до вашого острова
         invitation-sent: "&a Запрошення надіслано &b[name]&a."
@@ -478,6 +676,7 @@ commands:
           приймете!"
         errors:
           cannot-invite-self: "&c Ви не можете запросити себе!"
+          cooldown: "&c Ви не можете запросити цю особу ще [number] секунд."
           island-is-full: "&c Ваш острів заповнений, ви не можете запросити нікого
             іншого."
           none-invited-you: "&c Вас ніхто не запрошував :c."
@@ -485,6 +684,8 @@ commands:
           already-on-team: "&c Цей гравець уже в команді!"
           invalid-invite: "&c Це запрошення більше не дійсне, вибачте."
           you-have-already-invited: "&c Ви вже запросили цього гравця!"
+        parameters: "<player>"
+        you-can-invite: "&a Ви можете запросити ще [number] гравців."
         accept:
           description: прийняти запрошення
           you-joined-island: "&a Ви приєдналися до острова! Використовуйте &b/[label]
@@ -503,12 +704,18 @@ commands:
         cannot-leave: "&c Власники не можуть піти! Станьте учасником спочатку або
           викиньте всіх учасників."
         description: залишити свій острів
+        left-your-island: "&c [name] &c покинув ваш острів"
         success: "&a Ви залишили цей острів."
       kick:
         description: видалити учасника зі свого острова
+        parameters: "<player>"
+        player-kicked: "&c [name] вигнав вас з острова в [gamemode]!"
         cannot-kick: "&c Ви не можете бити себе ногами!"
+        cannot-kick-rank: "&c Ваш ранг не дозволяє викинути [name]!"
+        success: "&b [name] &a був вигнаний з вашого острова."
       demote:
         description: понизити гравця на вашому острові на один ранг
+        parameters: "<player>"
         errors:
           cant-demote-yourself: "&c Ви не можете понизити себе!"
           cant-demote: "&c Ви не можете понизити вищі ранги!"
@@ -516,6 +723,7 @@ commands:
         success: "&a Понижено [name] до [rank]"
       promote:
         description: підвищити ранг гравця на вашому острові
+        parameters: "<player>"
         errors:
           cant-promote-yourself: "&c Ви не можете рекламувати себе!"
           cant-promote: "&c Ви не можете просуватися вище свого рангу!"
@@ -529,9 +737,12 @@ commands:
             Бо це марно.&r &7 )"
           target-is-not-member: "&c Цей гравець не є частиною вашої острівної команди!"
           at-max: "&c У цього гравця вже є максимальна дозволена кількість островів!"
+        name-is-the-owner: "&a [name] тепер є власником острова!"
+        parameters: "<player>"
         you-are-the-owner: "&a Тепер ви власник острова!"
     ban:
       description: забанити гравця на вашому острові
+      parameters: "<player>"
       cannot-ban-yourself: "&c Ви не можете заборонити себе!"
       cannot-ban: "&c Цей гравець не може бути забанений."
       cannot-ban-member: "&c Спочатку вибити члена команди, а потім забанити."
@@ -543,25 +754,33 @@ commands:
       you-are-banned: "&b Вам заборонено відвідувати цей острів!"
     unban:
       description: скасувати бан гравця на вашому острові
+      parameters: "<player>"
       cannot-unban-yourself: "&c Ви не можете розблокувати себе!"
       player-not-banned: "&c Гравець не забанений."
       player-unbanned: "&b [name]&a тепер розблоковано на вашому острові."
+      you-are-unbanned: "&b [name]&a скасував заборону на вашому острові!"
     banlist:
       description: список забанених гравців
       noone: "&a Ніхто не заборонений на цьому острові."
       the-following: "&b Наступні гравці забанені:"
+      names: "&c [line]"
+      you-can-ban: "&b Ви можете заборонити до &e [number] &b більше гравців."
     settings:
       description: відображення параметрів острова
     language:
       description: Оберіть мову
+      parameters: "[language]"
       not-available: "&c Ця мова недоступна."
       already-selected: "&c Ви вже використовуєте цю мову."
     expel:
       description: вигнати гравця зі свого острова
+      parameters: "<player>"
       cannot-expel-yourself: "&c Ви не можете виключити себе!"
       cannot-expel: "&c Цей гравець не може бути виключений."
       cannot-expel-member: "&c Ви не можете виключити члена команди!"
       not-on-island: "&c Цей гравець не на вашому острові!"
+      player-expelled-you: "&b [name]&c вигнали вас з острова!"
+      success: "&a Ви вигнали &b [name] &a з острова."
 ranks:
   owner: Власник
   sub-owner: Субвласник
@@ -569,12 +788,15 @@ ranks:
   trusted: Довірений
   coop: Курятник
   visitor: Відвідувач
+  banned: Заборонено
+  admin: Адмін
   mod: Мод
 protection:
   command-is-banned: Команда заборонена для відвідувачів
   flags:
     ALLAY:
       name: Розслабте взаємодію
+      description: Дозволити давати та брати предмети до/з Allay
       hint: Взаємодія Allay вимкнено
     ANIMAL_NATURAL_SPAWN:
       description: Перемкнути природне нерест тварин
@@ -644,6 +866,7 @@ protection:
       hint: Використання сегмента вимкнено
     BUTTON:
       description: Використання кнопки перемикання
+      name: Кнопки
       hint: Використання кнопок вимкнено
     CAKE:
       description: Перемкнути взаємодію торта
@@ -684,6 +907,7 @@ protection:
         &a сутності.
       name: Пошкодження від вибуху блоку
     COMPOSTER:
+      name: Компостери
       description: Перемкнути взаємодію компостера
       hint: Взаємодія компостера вимкнено
     LOOM:
@@ -703,8 +927,12 @@ protection:
       description: Перемкнути взаємодію коробки шулкера
       hint: Доступ до скриньки Shulker вимкнено
     SHULKER_TELEPORT:
+      description: |-
+        &a Шулкер може телепортуватися
+        &a, якщо активний.
       name: Телепорт Шулкера
     SMITHING:
+      name: Ковальство
       description: Перемкнути використання
       hint: Ковальський доступ вимкнено
     STONECUTTING:
@@ -720,6 +948,7 @@ protection:
       description: Перемкнути взаємодію дозатора
       hint: Взаємодія з дозатором вимкнено
     DROPPER:
+      name: Крапельниці
       description: Перемкнути взаємодію крапельниці
       hint: Взаємодія Dropper вимкнено
     ELYTRA:
@@ -736,6 +965,7 @@ protection:
     CHORUS_FRUIT:
       description: Увімкнути телепортацію
       name: Приспів фруктів
+      hint: Телепортація Хорусом вимкнена
     CLEAN_SUPER_FLAT:
       description: |-
         &a Увімкнути для очищення будь-яких
@@ -832,6 +1062,7 @@ protection:
       description: |-
         &a Ендермен може видалити
         &a кварталів від островів
+      name: Гріф Ендерменом
     ENDERMAN_TELEPORT:
       description: |-
         &a Ендермен може телепортуватися
@@ -843,7 +1074,12 @@ protection:
       hint: Використання Enderpearl вимкнено
     ENTER_EXIT_MESSAGES:
       description: Відображати повідомлення про вхід і вихід
+      island: острів [name].
       name: Вхід/вихід із повідомлень
+      now-entering: "&a Зараз вводиться &b [name]&a ."
+      now-entering-your-island: "&a Зараз входимо на ваш острів: &b [name]"
+      now-leaving: "&a Тепер залишаю &b [name]&a ."
+      now-leaving-your-island: "&a Зараз покидаємо ваш острів: &b [name]"
     EXPERIENCE_BOTTLE_THROWING:
       name: Досвід метання пляшки
       description: Перемкніть кидання пляшок досвіду.
@@ -1067,6 +1303,7 @@ protection:
         &a, де всі учасники офлайн.
         &a Може допомогти зменшити відставання.
         &a Не впливає на спавн-острів.
+      name: Офлайн Redstone
     PETS_STAY_AT_HOME:
       description: |-
         &a Коли активні, приручені домашні тварини
@@ -1108,12 +1345,16 @@ protection:
         &c в кінці.
       name: Закінчити PVP
       hint: PVP вимкнено в кінці
+      enabled: "&c PVP у End було ввімкнено."
+      disabled: "&a PVP у End було вимкнено."
     PVP_NETHER:
       description: |-
         &c Увімкнути/вимкнути PVP
         &c у Пустоті.
       name: Nether PVP
       hint: PVP вимкнено в Пустоті
+      enabled: "&c Увімкнено PVP у Nether."
+      disabled: "&a PVP у Nether вимкнено."
     PVP_OVERWORLD:
       description: |-
         &c Увімкнути/вимкнути PVP
@@ -1121,6 +1362,7 @@ protection:
       name: Надсвітовий PVP
       hint: "&c PVP вимкнено в Overworld"
       enabled: "&c PVP у Overworld було ввімкнено."
+      disabled: "&a PVP у Overworld світі вимкнено."
     REDSTONE:
       description: Перемкнути використання
       name: Редстоун предмети
@@ -1164,6 +1406,7 @@ protection:
       description: |-
         &a Перемикає скулк-крикун
         &a активація.
+      name: Sculk Shrieker
       hint: активацію sculk shrieker вимкнено
     SIGN_EDITING:
       description: |-
@@ -1262,6 +1505,9 @@ protection:
         &a організації за межами острова.
       name: World TNT пошкодження
   locked: "&c Цей острів замкнено!"
+  protected: "&c Захищений острів: [description]."
+  world-protected: "&c Світ захищений: [description]."
+  spawn-protected: "&c Spawn protected: [description]."
   panel:
     next: "&f Наступна сторінка"
     previous: "&f Попередня сторінка"
@@ -1292,16 +1538,36 @@ protection:
         &a Загальні налаштування
         &a для цього острова
     WORLD_SETTING:
+      title: "&b [world_name] &6 Налаштування"
       description: "&a Налаштування для цього ігрового світу"
     WORLD_DEFAULTS:
+      title: "&b [world_name] &6 Захист світу"
       description: |
         &a Параметри захисту, коли
         &гравець знаходиться за межами свого острова
     flag-item:
+      name-layout: "&a [name]"
+      description-layout: |
+        &a [description]
+
+        &e Клацніть лівою кнопкою миші &7, щоб перейти вниз.
+        &e Клацніть правою кнопкою миші &7, щоб перейти вгору.
+
+        &7 Дозволено для:
       allowed-rank: "&3 - &a"
       blocked-rank: "&3 - &c"
       minimal-rank: "&3 - &2"
+      menu-layout: |
+        &a [description]
+
+        &e Натисніть &7, щоб відкрити.
       setting-cooldown: "&c Налаштування на відновлення"
+      setting-layout: |
+        &a [description]
+
+        &e Натисніть &7, щоб перемкнути.
+
+        &7 Поточне налаштування: [setting]
       setting-active: "&a Активний"
       setting-disabled: "&c Вимкнено"
 language:
@@ -1310,6 +1576,8 @@ language:
     selected: "&a Наразі вибрано."
     click-to-select: "&e Натисніть &a, щоб вибрати."
     authors: "&a Автори:"
+    author: "&3 - &b [name]"
+  edited: "&a Змінено вашу мову на &e [lang]&a ."
 management:
   panel:
     title: Управління BentoBox
@@ -1320,7 +1588,9 @@ management:
         blueprints:
           name: "&6 Креслення"
           description: "&a Відкриває меню Admin Blueprint."
-        gamemode: {}
+        gamemode:
+          name: "&f [name]"
+          description: "&a Острови: &b [islands]\n"
       addons:
         name: "&6 Доповнення"
         description: "&e Клацніть &a, щоб відобразити наразі завантажені доповнення"
@@ -1336,6 +1606,7 @@ management:
         name: "&6 Каталог додатків"
         description: "&a Відкриває каталог додатків"
       credits:
+        name: "&6 Кредитів"
         description: "&a Відкриває кредити для BentoBox"
       empty-here:
         name: "&b Тут виглядає порожньо..."
@@ -1343,7 +1614,44 @@ management:
     information:
       state:
         name: "&6 Сумісність"
-        description: {}
+        description:
+          COMPATIBLE: |
+            &a Виконується &e ​​[name] [version]&a .
+
+            &a BentoBox зараз працює на a
+            &a &l СУМІСНИЙ &r &a серверне програмне забезпечення та
+            &версія.
+
+            &a Його функції повністю розроблені для
+            &пробіг у цьому середовищі.
+          SUPPORTED: |
+            &a Виконується &e ​​[name] [version]&a .
+
+            &a BentoBox зараз працює на a
+            &a &l ПІДТРИМУЄТЬСЯ &r &a серверне програмне забезпечення та
+            &версія.
+
+            &a Більшість його функцій працюватимуть безперебійно
+            &a в цьому середовищі.
+          NOT_SUPPORTED: |
+            &a Виконується &e ​​[name] [version]&a .
+
+            &a BentoBox зараз працює на a
+            &6 &l НЕ ПІДТРИМУЄТЬСЯ &r &серверне програмне забезпечення або
+            &версія.
+
+            &a Хоча більшість його функцій працюватимуть
+            &a правильно, &6 специфічних для платформи помилок або
+            &6 проблем слід очікувати&a .
+          INCOMPATIBLE: |
+            &a Виконується &e ​​[name] [version]&a .
+
+            &a BentoBox зараз працює на
+            &c &l НЕСУМІСНИЙ &r &серверне програмне забезпечення або
+            &версія.
+
+            &c Може виникати дивна поведінка та помилки
+            &c і більшість функцій можуть працювати нестабільно.
 catalog:
   panel:
     GAMEMODES:
@@ -1362,6 +1670,14 @@ catalog:
           &e Натисніть &a, щоб переглянути
           & доступні офіційні доповнення.
     icon:
+      description-template: |
+        &8 [topic]
+        &a [install]
+
+        &7 &o [description]
+
+        &e Натисніть &a, щоб отримати посилання на
+        &останній випуск.
       already-installed: Вже встановлено!
       install-now: Встановити зараз!
     empty-here:
@@ -1378,23 +1694,35 @@ enums:
     ENTITY_SWEEP_ATTACK: Атака розмахом
     PROJECTILE: Снаряд
     SUFFOCATION: Задуха
+    FALL: Падіння
+    FIRE: Вогонь
+    FIRE_TICK: Горіння
+    MELTING: Плавлення
     LAVA: Лава
     DROWNING: Утоплення
     BLOCK_EXPLOSION: Вибух блоку
     ENTITY_EXPLOSION: Вибух сутності
     VOID: Пустота
     LIGHTNING: Блискавка
+    SUICIDE: Самогубство
+    STARVATION: Голодування
     POISON: Отрута
     MAGIC: Магія
     WITHER: Зів'янути
     FALLING_BLOCK: Падаючий блок
     THORNS: Шипи
     DRAGON_BREATH: Подих дракона
+    CUSTOM: Кастомно
+    FLY_INTO_WALL: Політ в стіну(Урон)
     HOT_FLOOR: Гаряча Підлога
+    CRAMMING: Зубріння
     DRYOUT: Підсохнути
 panel:
   credits:
-    contributor: {}
+    title: "&8 [name] &2 кредити"
+    contributor:
+      name: "&a [name]"
+      description: "&a Здійснює: &b [commits]\n"
     empty-here:
       name: "&c Тут виглядає порожньо..."
       description: |
