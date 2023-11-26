@@ -152,36 +152,25 @@ public class TemplatedPanel extends Panel {
     }
 
     /**
-     * This method fills border elements with item from template.
+     * Fills the border of a panel with a template item.
      * 
-     * @param itemArray The double array with items into panel
+     * @param itemArray 2D array of panel items
      */
     private void fillBorder(PanelItem[][] itemArray) {
-	if (this.panelTemplate.border() == null) {
-	    // Ugly return because tasty does not like extra {}.
+	if (this.panelTemplate.border() == null)
 	    return;
-	}
 
 	PanelItem template = makeTemplate(this.panelTemplate.border());
-	final int numRows = itemArray.length;
-	final int numCols = itemArray[0].length;
+	int numRows = itemArray.length;
+	int numCols = itemArray[0].length;
 
-	for (int i = 0; i < numRows; i++) {
-	    if (i == 0 || i == numRows - 1) {
-		// Fill first and last row completely with border.
-		for (int k = 0; k < numCols; k++) {
-		    if (itemArray[i][k] == null) {
-			itemArray[i][k] = template;
+	for (int row = 0; row < numRows; row++) {
+	    for (int col = 0; col < numCols; col++) {
+		// Fill border rows completely, and first/last columns of other rows
+		if (row == 0 || row == numRows - 1 || col == 0 || col == numCols - 1) {
+		    if (itemArray[row][col] == null) {
+			itemArray[row][col] = template;
 		    }
-		}
-	    } else {
-		// Fill first and last element in row with border.
-		if (itemArray[i][0] == null) {
-		    itemArray[i][0] = template;
-		}
-
-		if (itemArray[i][numCols - 1] == null) {
-		    itemArray[i][numCols - 1] = template;
 		}
 	    }
 	}
