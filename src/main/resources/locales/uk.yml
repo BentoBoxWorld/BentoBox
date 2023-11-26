@@ -261,7 +261,7 @@ commands:
     getrank:
       parameters: "<player> [island owner]"
       description: отримати ранг гравця на своєму острові або на острові власника
-      rank-is: "&a Ранг &b [rang] &a на острові &b [name]&a."
+      rank-is: "&a Ранг &b [rank] &a на острові &b [name]&a."
     setrank:
       parameters: "<player> <rank> [island owner]"
       description: встановити ранг гравця на його острові або на острові власника
@@ -304,7 +304,7 @@ commands:
       file-exists: "&c Файл уже існує, перезаписати?"
       no-such-file: "&c Такого файлу немає!"
       could-not-load: "&c Не вдалося завантажити цей файл!"
-      could-not-save: "&c Хм, щось пішло не так під час збереження цього файлу: [повідомлення]"
+      could-not-save: "&c Хм, щось пішло не так під час збереження цього файлу: [message]"
       set-pos1: "&a Позиція 1 встановлена ​​на [vector]"
       set-pos2: "&a Позиція 2 встановлена ​​на [vector]"
       set-different-pos: "&c Встановіть інше розташування - цю позицію вже встановлено!"
