@@ -274,9 +274,38 @@ public abstract class AbstractTeleportListener
         // If the from is not a portal, then we have to find it
         if (!fromLocation.getBlock().getType().equals(Material.END_PORTAL))
         {
-            // Find the portal - due to speed, it is possible that the player will be below or above the portal
-            for (k = toWorld.getMinHeight(); (k < fromWorld.getMaxHeight()) &&
-                    !fromWorld.getBlockAt(x, k, z).getType().equals(Material.END_PORTAL); k++);
+            // Search portal block 5 blocks in all directions from starting location. Return the first one.
+            boolean continueSearch = true;
+
+            // simplistic search pattern to look at all blocks from the middle outwards by preferring
+            // Y location first, then Z and as last X
+            // Proper implementation would require queue and distance calculation.
+
+            for (int offsetX = 0; continueSearch && offsetX < 10; offsetX++)
+            {
+                // Change sign based on mod value.
+                int posX = x + ((offsetX % 2 == 0) ? 1 : -1) * (offsetX / 2);
+
+                for (int offsetZ = 0; continueSearch && offsetZ < 10; offsetZ++)
+                {
+                    // Change sign based on mod value.
+                    int posZ = z + ((offsetZ % 2 == 0) ? 1 : -1) * (offsetZ / 2);
+
+                    for (int offsetY = 0; continueSearch && offsetY < 10; offsetY++)
+                    {
+                        // Change sign based on mod value.
+                        int posY = y + ((offsetY % 2 == 0) ? 1 : -1) * (offsetY / 2);
+
+                        if (fromWorld.getBlockAt(posX, posY, posZ).getType().equals(Material.END_PORTAL))
+                        {
+                            i = posX;
+                            j = posZ;
+                            k = posY;
+                            continueSearch = false;
+                        }
+                    }
+                }
+            }
         }
 
         // Find the maximum x and z corner
@@ -289,7 +318,7 @@ public abstract class AbstractTeleportListener
         // OBSIDIAN
         // and player is placed on second air block above obsidian.
         // If Y coordinate is below 2, then obsidian platform is not generated and player falls in void.
-        return new Location(toWorld, i, Math.max(toWorld.getMinHeight() + 2, k), j);
+        return new Location(toWorld, i, Math.min(toWorld.getMaxHeight() - 2, Math.max(toWorld.getMinHeight() + 2, k)), j);
     }
 
 
