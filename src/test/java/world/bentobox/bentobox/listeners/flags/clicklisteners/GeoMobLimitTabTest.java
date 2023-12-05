@@ -46,7 +46,7 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, Util.class})
+@PrepareForTest({ Bukkit.class, BentoBox.class, Util.class })
 public class GeoMobLimitTabTest {
 
     @Mock
@@ -85,7 +85,8 @@ public class GeoMobLimitTabTest {
         // Panel
         when(panel.getInventory()).thenReturn(inv);
         // User
-        when(user.getTranslation(anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
+        when(user.getTranslation(anyString()))
+                .thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
         // Util
         PowerMockito.mockStatic(Util.class, Mockito.CALLS_REAL_METHODS);
         when(Util.getWorld(any())).thenReturn(world);
@@ -97,7 +98,8 @@ public class GeoMobLimitTabTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.clicklisteners.GeoMobLimitTab#onClick(world.bentobox.bentobox.api.panels.Panel, world.bentobox.bentobox.api.user.User, org.bukkit.event.inventory.ClickType, int)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.flags.clicklisteners.GeoMobLimitTab#onClick(world.bentobox.bentobox.api.panels.Panel, world.bentobox.bentobox.api.user.User, org.bukkit.event.inventory.ClickType, int)}.
      */
     @Test
     public void testOnClick() {
@@ -124,7 +126,8 @@ public class GeoMobLimitTabTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.clicklisteners.GeoMobLimitTab#getIcon()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.flags.clicklisteners.GeoMobLimitTab#getIcon()}.
      */
     @Test
     public void testGetIcon() {
@@ -135,7 +138,8 @@ public class GeoMobLimitTabTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.clicklisteners.GeoMobLimitTab#getIcon()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.flags.clicklisteners.GeoMobLimitTab#getIcon()}.
      */
     @Test
     public void testGetIconGeoLimit() {
@@ -146,7 +150,8 @@ public class GeoMobLimitTabTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.clicklisteners.GeoMobLimitTab#getName()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.flags.clicklisteners.GeoMobLimitTab#getName()}.
      */
     @Test
     public void testGetName() {
@@ -157,7 +162,8 @@ public class GeoMobLimitTabTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.clicklisteners.GeoMobLimitTab#getPanelItems()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.flags.clicklisteners.GeoMobLimitTab#getPanelItems()}.
      */
     @Test
     public void testGetPanelItemsMobLimit() {
@@ -174,7 +180,8 @@ public class GeoMobLimitTabTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.clicklisteners.GeoMobLimitTab#getPanelItems()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.flags.clicklisteners.GeoMobLimitTab#getPanelItems()}.
      */
     @Test
     public void testGetPanelItemsGeoLimit() {
@@ -191,7 +198,8 @@ public class GeoMobLimitTabTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.clicklisteners.GeoMobLimitTab#getPermission()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.flags.clicklisteners.GeoMobLimitTab#getPermission()}.
      */
     @Test
     public void testGetPermission() {

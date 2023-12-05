@@ -40,7 +40,7 @@ import world.bentobox.bentobox.managers.LocalesManager;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, User.class, PanelListenerManager.class })
+@PrepareForTest({ Bukkit.class, BentoBox.class, User.class, PanelListenerManager.class })
 public class BentoBoxReloadCommandTest {
 
     @Mock
@@ -95,7 +95,8 @@ public class BentoBoxReloadCommandTest {
         when(Bukkit.getScheduler()).thenReturn(sch);
 
         // User
-        when(user.getTranslation(Mockito.anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
+        when(user.getTranslation(Mockito.anyString()))
+                .thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
 
         // Panels
         PowerMockito.mockStatic(PanelListenerManager.class);
@@ -112,7 +113,8 @@ public class BentoBoxReloadCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.commands.BentoBoxReloadCommand#BentoBoxReloadCommand(world.bentobox.bentobox.api.commands.CompositeCommand)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.commands.BentoBoxReloadCommand#BentoBoxReloadCommand(world.bentobox.bentobox.api.commands.CompositeCommand)}.
      */
     @Test
     public void testBentoBoxReloadCommand() {
@@ -120,7 +122,8 @@ public class BentoBoxReloadCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.commands.BentoBoxReloadCommand#setup()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.commands.BentoBoxReloadCommand#setup()}.
      */
     @Test
     public void testSetup() {
@@ -130,26 +133,22 @@ public class BentoBoxReloadCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.commands.BentoBoxReloadCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.commands.BentoBoxReloadCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testExecuteUserStringListOfStringReloadAll() {
         reload.execute(user, "", Collections.emptyList());
-        Mockito.verify(user).sendMessage("commands.confirmation.confirm",
-                "[seconds]",
-                "10");
+        Mockito.verify(user).sendMessage("commands.confirmation.confirm", "[seconds]", "10");
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.commands.BentoBoxReloadCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.commands.BentoBoxReloadCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testExecuteUserStringListOfStringHelp() {
         reload.execute(user, "", Collections.singletonList("sdfsdfs"));
-        Mockito.verify(user).sendMessage(
-                "commands.help.header",
-                "[label]",
-                "commands.help.console"
-                );
+        Mockito.verify(user).sendMessage("commands.help.header", "[label]", "commands.help.console");
     }
 }

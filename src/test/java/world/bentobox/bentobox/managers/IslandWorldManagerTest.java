@@ -46,7 +46,7 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( { Bukkit.class, BentoBox.class, Util.class, Location.class })
+@PrepareForTest({ Bukkit.class, BentoBox.class, Util.class, Location.class })
 public class IslandWorldManagerTest {
 
     @Mock
@@ -110,7 +110,8 @@ public class IslandWorldManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#registerWorldsToMultiverse()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandWorldManager#registerWorldsToMultiverse()}.
      */
     @Test
     public void testRegisterWorldsToMultiverse() {
@@ -118,7 +119,8 @@ public class IslandWorldManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#inWorld(org.bukkit.Location)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandWorldManager#inWorld(org.bukkit.Location)}.
      */
     @Test
     public void testInWorldLocation() {
@@ -126,15 +128,17 @@ public class IslandWorldManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#inWorld(org.bukkit.Location)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandWorldManager#inWorld(org.bukkit.Location)}.
      */
     @Test
     public void testInWorldLocationNull() {
-        assertFalse(iwm.inWorld((Location)null));
+        assertFalse(iwm.inWorld((Location) null));
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#inWorld(org.bukkit.World)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandWorldManager#inWorld(org.bukkit.World)}.
      */
     @Test
     public void testInWorldWorld() {
@@ -142,15 +146,17 @@ public class IslandWorldManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#inWorld(org.bukkit.World)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandWorldManager#inWorld(org.bukkit.World)}.
      */
     @Test
     public void testInWorldWorldNull() {
-        assertFalse(iwm.inWorld((World)null));
+        assertFalse(iwm.inWorld((World) null));
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getWorlds()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandWorldManager#getWorlds()}.
      */
     @Test
     public void testGetWorlds() {
@@ -158,7 +164,8 @@ public class IslandWorldManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getOverWorlds()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandWorldManager#getOverWorlds()}.
      */
     @Test
     public void testGetOverWorlds() {
@@ -166,19 +173,21 @@ public class IslandWorldManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getOverWorldNames()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandWorldManager#getOverWorldNames()}.
      */
     @Test
     public void testGetOverWorldNames() {
         Map<String, String> map = iwm.getOverWorldNames();
-        map.forEach((k,v) -> {
+        map.forEach((k, v) -> {
             assertEquals("test-world", k);
             assertEquals("friendly", v);
         });
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#isKnownFriendlyWorldName(java.lang.String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandWorldManager#isKnownFriendlyWorldName(java.lang.String)}.
      */
     @Test
     public void testIsKnownFriendlyWorldName() {
@@ -187,7 +196,8 @@ public class IslandWorldManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#addGameMode(world.bentobox.bentobox.api.addons.GameModeAddon)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandWorldManager#addGameMode(world.bentobox.bentobox.api.addons.GameModeAddon)}.
      */
     @Test
     public void testAddGameMode() {
@@ -203,7 +213,8 @@ public class IslandWorldManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getWorldSettings(org.bukkit.World)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandWorldManager#getWorldSettings(org.bukkit.World)}.
      */
     @Test
     public void testGetWorldSettings() {
@@ -211,7 +222,8 @@ public class IslandWorldManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getOverWorld(java.lang.String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandWorldManager#getOverWorld(java.lang.String)}.
      */
     @Test
     public void testGetOverWorld() {
@@ -220,7 +232,8 @@ public class IslandWorldManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getIslandDistance(org.bukkit.World)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandWorldManager#getIslandDistance(org.bukkit.World)}.
      */
     @Test
     public void testGetIslandDistance() {
@@ -228,7 +241,8 @@ public class IslandWorldManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getIslandHeight(org.bukkit.World)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandWorldManager#getIslandHeight(org.bukkit.World)}.
      */
     @Test
     public void testGetIslandHeight() {
@@ -254,7 +268,8 @@ public class IslandWorldManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getIslandProtectionRange(org.bukkit.World)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandWorldManager#getIslandProtectionRange(org.bukkit.World)}.
      */
     @Test
     public void testGetIslandProtectionRange() {
@@ -262,7 +277,8 @@ public class IslandWorldManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getIslandStartX(org.bukkit.World)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandWorldManager#getIslandStartX(org.bukkit.World)}.
      */
     @Test
     public void testGetIslandStartX() {
@@ -270,7 +286,8 @@ public class IslandWorldManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getIslandStartZ(org.bukkit.World)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandWorldManager#getIslandStartZ(org.bukkit.World)}.
      */
     @Test
     public void testGetIslandStartZ() {
@@ -278,7 +295,8 @@ public class IslandWorldManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getIslandXOffset(org.bukkit.World)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandWorldManager#getIslandXOffset(org.bukkit.World)}.
      */
     @Test
     public void testGetIslandXOffset() {
@@ -286,7 +304,8 @@ public class IslandWorldManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getIslandZOffset(org.bukkit.World)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandWorldManager#getIslandZOffset(org.bukkit.World)}.
      */
     @Test
     public void testGetIslandZOffset() {
@@ -294,7 +313,8 @@ public class IslandWorldManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getMaxIslands(org.bukkit.World)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandWorldManager#getMaxIslands(org.bukkit.World)}.
      */
     @Test
     public void testGetMaxIslands() {
@@ -302,7 +322,8 @@ public class IslandWorldManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getNetherSpawnRadius(org.bukkit.World)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandWorldManager#getNetherSpawnRadius(org.bukkit.World)}.
      */
     @Test
     public void testGetNetherSpawnRadius() {
@@ -310,7 +331,8 @@ public class IslandWorldManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getSeaHeight(org.bukkit.World)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandWorldManager#getSeaHeight(org.bukkit.World)}.
      */
     @Test
     public void testGetSeaHeight() {
@@ -327,7 +349,8 @@ public class IslandWorldManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#isEndGenerate(org.bukkit.World)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandWorldManager#isEndGenerate(org.bukkit.World)}.
      */
     @Test
     public void testIsEndGenerate() {
@@ -335,7 +358,8 @@ public class IslandWorldManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#isEndIslands(org.bukkit.World)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandWorldManager#isEndIslands(org.bukkit.World)}.
      */
     @Test
     public void testIsEndIslands() {
@@ -343,7 +367,8 @@ public class IslandWorldManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#isNetherGenerate(org.bukkit.World)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandWorldManager#isNetherGenerate(org.bukkit.World)}.
      */
     @Test
     public void testIsNetherGenerate() {
@@ -351,7 +376,8 @@ public class IslandWorldManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#isNetherIslands(org.bukkit.World)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandWorldManager#isNetherIslands(org.bukkit.World)}.
      */
     @Test
     public void testIsNetherIslands() {
@@ -359,7 +385,8 @@ public class IslandWorldManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#isNether(org.bukkit.World)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandWorldManager#isNether(org.bukkit.World)}.
      */
     @Test
     public void testIsNether() {
@@ -367,7 +394,8 @@ public class IslandWorldManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#isIslandNether(org.bukkit.World)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandWorldManager#isIslandNether(org.bukkit.World)}.
      */
     @Test
     public void testIsIslandNether() {
@@ -375,7 +403,8 @@ public class IslandWorldManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#isEnd(org.bukkit.World)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandWorldManager#isEnd(org.bukkit.World)}.
      */
     @Test
     public void testIsEnd() {
@@ -383,7 +412,8 @@ public class IslandWorldManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#isIslandEnd(org.bukkit.World)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandWorldManager#isIslandEnd(org.bukkit.World)}.
      */
     @Test
     public void testIsIslandEnd() {
@@ -391,7 +421,8 @@ public class IslandWorldManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getNetherWorld(org.bukkit.World)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandWorldManager#getNetherWorld(org.bukkit.World)}.
      */
     @Test
     public void testGetNetherWorld() {
@@ -399,7 +430,8 @@ public class IslandWorldManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getNetherWorld(org.bukkit.World)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandWorldManager#getNetherWorld(org.bukkit.World)}.
      */
     @Test
     public void testGetNetherWorldNull() {
@@ -407,7 +439,8 @@ public class IslandWorldManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getEndWorld(org.bukkit.World)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandWorldManager#getEndWorld(org.bukkit.World)}.
      */
     @Test
     public void testGetEndWorld() {
@@ -415,7 +448,8 @@ public class IslandWorldManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getEndWorld(org.bukkit.World)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandWorldManager#getEndWorld(org.bukkit.World)}.
      */
     @Test
     public void testGetEndWorldNull() {
@@ -423,7 +457,8 @@ public class IslandWorldManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#isDragonSpawn(org.bukkit.World)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandWorldManager#isDragonSpawn(org.bukkit.World)}.
      */
     @Test
     public void testIsDragonSpawn() {
@@ -431,7 +466,8 @@ public class IslandWorldManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#isDragonSpawn(org.bukkit.World)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandWorldManager#isDragonSpawn(org.bukkit.World)}.
      */
     @Test
     public void testIsDragonSpawnNull() {
@@ -439,7 +475,8 @@ public class IslandWorldManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getFriendlyNames()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandWorldManager#getFriendlyNames()}.
      */
     @Test
     public void testGetFriendlyNames() {
@@ -459,7 +496,8 @@ public class IslandWorldManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getIslandWorld(java.lang.String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandWorldManager#getIslandWorld(java.lang.String)}.
      */
     @Test
     public void testGetIslandWorld() {
@@ -468,7 +506,8 @@ public class IslandWorldManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getMaxTeamSize(org.bukkit.World)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandWorldManager#getMaxTeamSize(org.bukkit.World)}.
      */
     @Test
     public void testGetMaxTeamSize() {
@@ -476,7 +515,8 @@ public class IslandWorldManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getMaxHomes(org.bukkit.World)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandWorldManager#getMaxHomes(org.bukkit.World)}.
      */
     @Test
     public void testGetMaxHomes() {
@@ -484,7 +524,8 @@ public class IslandWorldManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getFriendlyName(org.bukkit.World)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandWorldManager#getFriendlyName(org.bukkit.World)}.
      */
     @Test
     public void testGetFriendlyName() {
@@ -501,7 +542,8 @@ public class IslandWorldManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getIvSettings(org.bukkit.World)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandWorldManager#getIvSettings(org.bukkit.World)}.
      */
     @Test
     public void testGetIvSettings() {
@@ -511,7 +553,8 @@ public class IslandWorldManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#isWorldFlag(org.bukkit.World, world.bentobox.bentobox.api.flags.Flag)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandWorldManager#isWorldFlag(org.bukkit.World, world.bentobox.bentobox.api.flags.Flag)}.
      */
     @Test
     public void testIsWorldFlag() {
@@ -528,7 +571,8 @@ public class IslandWorldManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getRemoveMobsWhitelist(org.bukkit.World)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandWorldManager#getRemoveMobsWhitelist(org.bukkit.World)}.
      */
     @Test
     public void testGetRemoveMobsWhitelist() {
@@ -538,7 +582,8 @@ public class IslandWorldManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#isOnJoinResetMoney(org.bukkit.World)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandWorldManager#isOnJoinResetMoney(org.bukkit.World)}.
      */
     @Test
     public void testIsOnJoinResetMoney() {
@@ -546,7 +591,8 @@ public class IslandWorldManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#isOnJoinResetInventory(org.bukkit.World)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandWorldManager#isOnJoinResetInventory(org.bukkit.World)}.
      */
     @Test
     public void testIsOnJoinResetInventory() {
@@ -554,7 +600,8 @@ public class IslandWorldManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#isOnJoinResetEnderChest(org.bukkit.World)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandWorldManager#isOnJoinResetEnderChest(org.bukkit.World)}.
      */
     @Test
     public void testIsOnJoinResetEnderChest() {
@@ -562,7 +609,8 @@ public class IslandWorldManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#isOnLeaveResetMoney(org.bukkit.World)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandWorldManager#isOnLeaveResetMoney(org.bukkit.World)}.
      */
     @Test
     public void testIsOnLeaveResetMoney() {
@@ -570,7 +618,8 @@ public class IslandWorldManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#isOnLeaveResetInventory(org.bukkit.World)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandWorldManager#isOnLeaveResetInventory(org.bukkit.World)}.
      */
     @Test
     public void testIsOnLeaveResetInventory() {
@@ -578,7 +627,8 @@ public class IslandWorldManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#isOnLeaveResetEnderChest(org.bukkit.World)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandWorldManager#isOnLeaveResetEnderChest(org.bukkit.World)}.
      */
     @Test
     public void testIsOnLeaveResetEnderChest() {
@@ -586,7 +636,8 @@ public class IslandWorldManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getDataFolder(org.bukkit.World)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandWorldManager#getDataFolder(org.bukkit.World)}.
      */
     @Test
     public void testGetDataFolder() {
@@ -596,7 +647,8 @@ public class IslandWorldManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getAddon(org.bukkit.World)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandWorldManager#getAddon(org.bukkit.World)}.
      */
     @Test
     public void testGetAddon() {
@@ -604,7 +656,8 @@ public class IslandWorldManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getAddon(org.bukkit.World)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandWorldManager#getAddon(org.bukkit.World)}.
      */
     @Test
     public void testGetAddonNull() {
@@ -612,7 +665,8 @@ public class IslandWorldManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getDefaultIslandFlags(org.bukkit.World)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandWorldManager#getDefaultIslandFlags(org.bukkit.World)}.
      */
     @SuppressWarnings("removal")
     @Test
@@ -623,7 +677,8 @@ public class IslandWorldManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getHiddenFlags(org.bukkit.World)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandWorldManager#getHiddenFlags(org.bukkit.World)}.
      */
     @Test
     public void testGetVisibleSettings() {
@@ -633,18 +688,20 @@ public class IslandWorldManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getDefaultIslandSettings(org.bukkit.World)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandWorldManager#getDefaultIslandSettings(org.bukkit.World)}.
      */
     @SuppressWarnings("removal")
     @Test
     public void testGetDefaultIslandSettings() {
         Map<Flag, Integer> flags = new HashMap<>();
         when(ws.getDefaultIslandFlags()).thenReturn(flags);
-        assertEquals(flags,iwm.getDefaultIslandSettings(world));
+        assertEquals(flags, iwm.getDefaultIslandSettings(world));
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#isUseOwnGenerator(org.bukkit.World)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandWorldManager#isUseOwnGenerator(org.bukkit.World)}.
      */
     @Test
     public void testIsUseOwnGenerator() {
@@ -652,7 +709,8 @@ public class IslandWorldManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getVisitorBannedCommands(org.bukkit.World)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandWorldManager#getVisitorBannedCommands(org.bukkit.World)}.
      */
     @Test
     public void testGetVisitorBannedCommands() {
@@ -662,7 +720,8 @@ public class IslandWorldManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#isWaterNotSafe(org.bukkit.World)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandWorldManager#isWaterNotSafe(org.bukkit.World)}.
      */
     @Test
     public void testIsWaterNotSafe() {
@@ -670,7 +729,8 @@ public class IslandWorldManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getGeoLimitSettings(org.bukkit.World)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandWorldManager#getGeoLimitSettings(org.bukkit.World)}.
      */
     @Test
     public void testGetGeoLimitSettings() {
@@ -680,23 +740,26 @@ public class IslandWorldManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getResetLimit(org.bukkit.World)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandWorldManager#getResetLimit(org.bukkit.World)}.
      */
     @Test
     public void testGetResetLimit() {
-        assertEquals(0,iwm.getResetLimit(world));
+        assertEquals(0, iwm.getResetLimit(world));
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getResetEpoch(org.bukkit.World)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandWorldManager#getResetEpoch(org.bukkit.World)}.
      */
     @Test
     public void testGetResetEpoch() {
-        assertEquals(0,iwm.getResetEpoch(world));
+        assertEquals(0, iwm.getResetEpoch(world));
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#setResetEpoch(org.bukkit.World)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandWorldManager#setResetEpoch(org.bukkit.World)}.
      */
     @Test
     public void testSetResetEpoch() {
@@ -705,7 +768,8 @@ public class IslandWorldManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#isTeamJoinDeathReset(org.bukkit.World)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandWorldManager#isTeamJoinDeathReset(org.bukkit.World)}.
      */
     @Test
     public void testIsTeamJoinDeathReset() {
@@ -713,7 +777,8 @@ public class IslandWorldManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getDeathsMax(org.bukkit.World)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandWorldManager#getDeathsMax(org.bukkit.World)}.
      */
     @Test
     public void testGetDeathsMax() {
@@ -721,7 +786,8 @@ public class IslandWorldManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getBanLimit(org.bukkit.World)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandWorldManager#getBanLimit(org.bukkit.World)}.
      */
     @Test
     public void testGetBanLimit() {

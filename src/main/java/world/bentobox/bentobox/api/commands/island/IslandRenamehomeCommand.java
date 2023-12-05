@@ -20,6 +20,7 @@ import world.bentobox.bentobox.util.Util;
 
 /**
  * Renames a home
+ * 
  * @author tastybento
  *
  */
@@ -57,7 +58,8 @@ public class IslandRenamehomeCommand extends ConfirmableCommand {
         if (!getIslands().isHomeLocation(island, String.join(" ", args))) {
             user.sendMessage("commands.island.go.unknown-home");
             user.sendMessage("commands.island.sethome.homes-are");
-            island.getHomes().keySet().stream().filter(s -> !s.isEmpty()).forEach(s -> user.sendMessage("commands.island.sethome.home-list-syntax", TextVariables.NAME, s));
+            island.getHomes().keySet().stream().filter(s -> !s.isEmpty())
+                    .forEach(s -> user.sendMessage("commands.island.sethome.home-list-syntax", TextVariables.NAME, s));
             this.showHelp(this, user);
             return false;
         }
@@ -65,7 +67,8 @@ public class IslandRenamehomeCommand extends ConfirmableCommand {
         // check command permission
         int rank = Objects.requireNonNull(island).getRank(user);
         if (rank < island.getRankCommand(getUsage())) {
-            user.sendMessage("general.errors.insufficient-rank", TextVariables.RANK, user.getTranslation(getPlugin().getRanksManager().getRank(rank)));
+            user.sendMessage("general.errors.insufficient-rank", TextVariables.RANK,
+                    user.getTranslation(getPlugin().getRanksManager().getRank(rank)));
             return false;
         }
 
@@ -74,19 +77,15 @@ public class IslandRenamehomeCommand extends ConfirmableCommand {
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        new ConversationFactory(BentoBox.getInstance())
-        .withModality(true)
-        .withLocalEcho(false)
-        .withTimeout(90)
-        .withFirstPrompt(new NamePrompt(getPlugin(), island, user, String.join(" ", args)))
-        .buildConversation(user.getPlayer()).begin();
+        new ConversationFactory(BentoBox.getInstance()).withModality(true).withLocalEcho(false).withTimeout(90)
+                .withFirstPrompt(new NamePrompt(getPlugin(), island, user, String.join(" ", args)))
+                .buildConversation(user.getPlayer()).begin();
         return true;
     }
 
-
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
-        String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
+        String lastArg = !args.isEmpty() ? args.get(args.size() - 1) : "";
         Island is = getIslands().getIsland(getWorld(), user.getUniqueId());
         if (is != null) {
             return Optional.of(Util.tabLimit(new ArrayList<>(is.getHomes().keySet()), lastArg));

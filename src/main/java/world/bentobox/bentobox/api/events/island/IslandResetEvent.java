@@ -11,8 +11,7 @@ import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle;
 import world.bentobox.bentobox.database.objects.Island;
 
 /**
- * Fired when an island is going to be reset.
- * May be cancelled.
+ * Fired when an island is going to be reset. May be cancelled.
  */
 public class IslandResetEvent extends IslandBaseEvent {
 
@@ -29,7 +28,8 @@ public class IslandResetEvent extends IslandBaseEvent {
         return handlers;
     }
 
-    public IslandResetEvent(Island island, UUID player, boolean admin, Location location, @NonNull BlueprintBundle blueprintBundle, @NonNull Island oldIsland) {
+    public IslandResetEvent(Island island, UUID player, boolean admin, Location location,
+            @NonNull BlueprintBundle blueprintBundle, @NonNull Island oldIsland) {
         // Final variables have to be declared in the constructor
         super(island, player, admin, location);
         this.blueprintBundle = blueprintBundle;

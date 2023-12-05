@@ -43,11 +43,12 @@ import world.bentobox.bentobox.util.Util;
 
 /**
  * Test class for safe teleporting
+ * 
  * @author tastybento
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Util.class, Bukkit.class})
+@PrepareForTest({ Util.class, Bukkit.class })
 public class SafeSpotTeleportTest {
 
     // Class under test
@@ -88,6 +89,7 @@ public class SafeSpotTeleportTest {
 
     @Mock
     private BukkitTask task;
+
     /**
      */
     @Before
@@ -126,7 +128,6 @@ public class SafeSpotTeleportTest {
         // Provide an island
         when(im.getIslandAt(any(Location.class))).thenReturn(Optional.of(island));
 
-
         when(plugin.getIslands()).thenReturn(im);
 
         // Bukkit scheduler
@@ -152,7 +153,8 @@ public class SafeSpotTeleportTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.util.teleport.SafeSpotTeleport#SafeSpotTeleport(world.bentobox.bentobox.util.teleport.SafeSpotTeleport.Builder)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.util.teleport.SafeSpotTeleport#SafeSpotTeleport(world.bentobox.bentobox.util.teleport.SafeSpotTeleport.Builder)}.
      */
     @Test
     public void testSafeSpotTeleport() {
@@ -161,7 +163,8 @@ public class SafeSpotTeleportTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.util.teleport.SafeSpotTeleport#tryToGo(java.lang.String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.util.teleport.SafeSpotTeleport#tryToGo(java.lang.String)}.
      */
     @Test
     public void testTryToGoSafeNotPortal() {
@@ -187,7 +190,8 @@ public class SafeSpotTeleportTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.util.teleport.SafeSpotTeleport#gatherChunks(java.lang.String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.util.teleport.SafeSpotTeleport#gatherChunks(java.lang.String)}.
      */
     @Test
     public void testGatherChunks() {
@@ -228,15 +232,17 @@ public class SafeSpotTeleportTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.util.teleport.SafeSpotTeleport#makeAndTeleport(org.bukkit.Material)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.util.teleport.SafeSpotTeleport#makeAndTeleport(org.bukkit.Material)}.
      */
     @Test
     public void testMakeAndTeleport() {
-        //fail("Not yet implemented"); // TODO
+        // fail("Not yet implemented"); // TODO
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.util.teleport.SafeSpotTeleport#getChunksToScan()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.util.teleport.SafeSpotTeleport#getChunksToScan()}.
      */
     @Test
     public void testGetChunksToScan() {
@@ -246,35 +252,39 @@ public class SafeSpotTeleportTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.util.teleport.SafeSpotTeleport#scanChunk(org.bukkit.ChunkSnapshot)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.util.teleport.SafeSpotTeleport#scanChunk(org.bukkit.ChunkSnapshot)}.
      */
     @Test
     public void testScanChunk() {
-        //fail("Not yet implemented"); // TODO
+        // fail("Not yet implemented"); // TODO
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.util.teleport.SafeSpotTeleport#teleportEntity(org.bukkit.Location)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.util.teleport.SafeSpotTeleport#teleportEntity(org.bukkit.Location)}.
      */
     @Test
     public void testTeleportEntity() {
-        //fail("Not yet implemented"); // TODO
+        // fail("Not yet implemented"); // TODO
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.util.teleport.SafeSpotTeleport#checkBlock(org.bukkit.ChunkSnapshot, int, int, int)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.util.teleport.SafeSpotTeleport#checkBlock(org.bukkit.ChunkSnapshot, int, int, int)}.
      */
     @Test
     public void testCheckBlock() {
-        //fail("Not yet implemented"); // TODO
+        // fail("Not yet implemented"); // TODO
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.util.teleport.SafeSpotTeleport#safe(org.bukkit.ChunkSnapshot, int, int, int, org.bukkit.World)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.util.teleport.SafeSpotTeleport#safe(org.bukkit.ChunkSnapshot, int, int, int, org.bukkit.World)}.
      */
     @Test
     public void testSafe() {
-        //fail("Not yet implemented"); // TODO
+        // fail("Not yet implemented"); // TODO
     }
 
 }

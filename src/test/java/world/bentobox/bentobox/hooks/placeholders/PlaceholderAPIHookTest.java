@@ -42,7 +42,7 @@ import world.bentobox.bentobox.managers.IslandWorldManager;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({BentoBox.class, PlaceholderAPI.class, Bukkit.class })
+@PrepareForTest({ BentoBox.class, PlaceholderAPI.class, Bukkit.class })
 public class PlaceholderAPIHookTest {
 
     // Class under test
@@ -62,7 +62,6 @@ public class PlaceholderAPIHookTest {
     @Mock
     private Server server;
 
-
     /**
      */
     @Before
@@ -80,7 +79,8 @@ public class PlaceholderAPIHookTest {
         when(gma.getDescription()).thenReturn(desc);
         // PlaceholderAPI
         PowerMockito.mockStatic(PlaceholderAPI.class, Mockito.RETURNS_MOCKS);
-        when(PlaceholderAPI.setPlaceholders(any(Player.class), anyString())).thenAnswer((Answer<String>) i -> i.getArgument(1, String.class));
+        when(PlaceholderAPI.setPlaceholders(any(Player.class), anyString()))
+                .thenAnswer((Answer<String>) i -> i.getArgument(1, String.class));
         pah = new PlaceholderAPIHook();
         // Set a default bentoboxExpansion
         pah.setBentoboxExpansion(bentoboxExpansion);
@@ -88,7 +88,8 @@ public class PlaceholderAPIHookTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.hooks.placeholders.PlaceholderAPIHook#getFailureCause()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.hooks.placeholders.PlaceholderAPIHook#getFailureCause()}.
      */
     @Test
     public void testGetFailureCause() {
@@ -96,7 +97,8 @@ public class PlaceholderAPIHookTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.hooks.placeholders.PlaceholderAPIHook#registerPlaceholder(java.lang.String, world.bentobox.bentobox.api.placeholders.PlaceholderReplacer)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.hooks.placeholders.PlaceholderAPIHook#registerPlaceholder(java.lang.String, world.bentobox.bentobox.api.placeholders.PlaceholderReplacer)}.
      */
     @Test
     public void testRegisterPlaceholderStringPlaceholderReplacer() {
@@ -106,7 +108,8 @@ public class PlaceholderAPIHookTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.hooks.placeholders.PlaceholderAPIHook#registerPlaceholder(world.bentobox.bentobox.api.addons.Addon, java.lang.String, world.bentobox.bentobox.api.placeholders.PlaceholderReplacer)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.hooks.placeholders.PlaceholderAPIHook#registerPlaceholder(world.bentobox.bentobox.api.addons.Addon, java.lang.String, world.bentobox.bentobox.api.placeholders.PlaceholderReplacer)}.
      */
     @Test
     @Ignore("New version of PAPI breaks test")
@@ -117,7 +120,8 @@ public class PlaceholderAPIHookTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.hooks.placeholders.PlaceholderAPIHook#unregisterPlaceholder(java.lang.String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.hooks.placeholders.PlaceholderAPIHook#unregisterPlaceholder(java.lang.String)}.
      */
     @Test
     @Ignore("New version of PAPI breaks test")
@@ -129,7 +133,8 @@ public class PlaceholderAPIHookTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.hooks.placeholders.PlaceholderAPIHook#unregisterPlaceholder(world.bentobox.bentobox.api.addons.Addon, java.lang.String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.hooks.placeholders.PlaceholderAPIHook#unregisterPlaceholder(world.bentobox.bentobox.api.addons.Addon, java.lang.String)}.
      */
     @Test
     @Ignore("New version of PAPI breaks test")
@@ -140,7 +145,8 @@ public class PlaceholderAPIHookTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.hooks.placeholders.PlaceholderAPIHook#isPlaceholder(world.bentobox.bentobox.api.addons.Addon, java.lang.String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.hooks.placeholders.PlaceholderAPIHook#isPlaceholder(world.bentobox.bentobox.api.addons.Addon, java.lang.String)}.
      */
     @Test
     @Ignore("New version of PAPI breaks test")
@@ -150,12 +156,13 @@ public class PlaceholderAPIHookTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.hooks.placeholders.PlaceholderAPIHook#replacePlaceholders(org.bukkit.entity.Player, java.lang.String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.hooks.placeholders.PlaceholderAPIHook#replacePlaceholders(org.bukkit.entity.Player, java.lang.String)}.
      */
     @Test
     public void testReplacePlaceholders() {
-        assertEquals("This is a %test.name.level% test, with %placeholders%, and %name%",
-                pah.replacePlaceholders(mock(Player.class), "This is a %test.[gamemode].level% test, with %placeholders%, and %[gamemode]%"));
+        assertEquals("This is a %test.name.level% test, with %placeholders%, and %name%", pah.replacePlaceholders(
+                mock(Player.class), "This is a %test.[gamemode].level% test, with %placeholders%, and %[gamemode]%"));
     }
 
     /**

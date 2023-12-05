@@ -26,25 +26,26 @@ import world.bentobox.bentobox.versions.ServerCompatibility.ServerSoftware;
 public class ManagementPanel {
 
     private static final String LOCALE_REF = "management.panel.";
-    private static final int[] PANES = {0, 4, 5, 8, 9, 18, 26, 27, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44};
+    private static final int[] PANES = { 0, 4, 5, 8, 9, 18, 26, 27, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44 };
 
-    private ManagementPanel() {}
+    private ManagementPanel() {
+    }
 
     /**
      * Dynamically creates the panel.
+     * 
      * @param user the User to show the panel to
      */
     public static void openPanel(@NonNull User user, View view) {
         BentoBox plugin = BentoBox.getInstance();
 
-        PanelBuilder builder = new PanelBuilder()
-                .name(user.getTranslation(LOCALE_REF + "title"))
-                .size(45);
+        PanelBuilder builder = new PanelBuilder().name(user.getTranslation(LOCALE_REF + "title")).size(45);
 
         // Setup header and corner
         setupHeader(builder, user, view);
         for (int i : PANES) {
-            builder.item(i, new PanelItemBuilder().icon(plugin.getSettings().getPanelFillerMaterial()).name(" ").build());
+            builder.item(i,
+                    new PanelItemBuilder().icon(plugin.getSettings().getPanelFillerMaterial()).name(" ").build());
         }
 
         // Setup the views
@@ -52,112 +53,103 @@ public class ManagementPanel {
         int i = 0;
         List<? extends Addon> addons;
         switch (view) {
-            case GAMEMODES -> {
-                addons = plugin.getAddonsManager().getGameModeAddons();
-                if (addons.isEmpty()) {
-                    looksEmpty(builder, user);
-                    break;
-                }
-                for (Addon addon : addons) {
-                    GameModeAddon gameModeAddon = (GameModeAddon) addon;
-                    PanelItem addonItem = new PanelItemBuilder()
-                            .icon(addon.getDescription().getIcon())
-                            .name(user.getTranslation(LOCALE_REF + "views.gamemodes.gamemode.name", TextVariables.NAME, addon.getDescription().getName()))
-                            .description(user.getTranslation(LOCALE_REF + "views.gamemodes.gamemode.description",
-                                    "[islands]", String.valueOf(addon.getIslands().getIslandCount(gameModeAddon.getOverWorld()))))
-                            .clickHandler((panel, user1, clickType, slot) -> {
-                                if (clickType.equals(ClickType.MIDDLE)) {
-                                    CreditsPanel.openPanel(user, addon);
-                                }
-                                return true;
-                            })
-                            .build();
+        case GAMEMODES -> {
+            addons = plugin.getAddonsManager().getGameModeAddons();
+            if (addons.isEmpty()) {
+                looksEmpty(builder, user);
+                break;
+            }
+            for (Addon addon : addons) {
+                GameModeAddon gameModeAddon = (GameModeAddon) addon;
+                PanelItem addonItem = new PanelItemBuilder().icon(addon.getDescription().getIcon())
+                        .name(user.getTranslation(LOCALE_REF + "views.gamemodes.gamemode.name", TextVariables.NAME,
+                                addon.getDescription().getName()))
+                        .description(user.getTranslation(LOCALE_REF + "views.gamemodes.gamemode.description",
+                                "[islands]",
+                                String.valueOf(addon.getIslands().getIslandCount(gameModeAddon.getOverWorld()))))
+                        .clickHandler((panel, user1, clickType, slot) -> {
+                            if (clickType.equals(ClickType.MIDDLE)) {
+                                CreditsPanel.openPanel(user, addon);
+                            }
+                            return true;
+                        }).build();
 
-                    builder.item(startSlot + i, addonItem);
+                builder.item(startSlot + i, addonItem);
 
-                    PanelItem blueprints = new PanelItemBuilder()
-                            .icon(Material.STRUCTURE_BLOCK)
-                            .name(user.getTranslation(LOCALE_REF + "views.gamemodes.blueprints.name"))
-                            .description(user.getTranslation(LOCALE_REF + "views.gamemodes.blueprints.description"))
-                            .clickHandler((panel, user1, clickType, slot) -> {
-                                new BlueprintManagementPanel(plugin, user, gameModeAddon).openPanel();
-                                return true;
-                            })
-                            .build();
+                PanelItem blueprints = new PanelItemBuilder().icon(Material.STRUCTURE_BLOCK)
+                        .name(user.getTranslation(LOCALE_REF + "views.gamemodes.blueprints.name"))
+                        .description(user.getTranslation(LOCALE_REF + "views.gamemodes.blueprints.description"))
+                        .clickHandler((panel, user1, clickType, slot) -> {
+                            new BlueprintManagementPanel(plugin, user, gameModeAddon).openPanel();
+                            return true;
+                        }).build();
 
-                    builder.item(startSlot + i + 9, blueprints);
-                    i++;
+                builder.item(startSlot + i + 9, blueprints);
+                i++;
+            }
+        }
+        case ADDONS -> {
+            addons = plugin.getAddonsManager().getEnabledAddons().stream()
+                    .filter(addon -> !(addon instanceof GameModeAddon)).toList();
+            if (addons.isEmpty()) {
+                looksEmpty(builder, user);
+                break;
+            }
+            for (Addon addon : addons) {
+                PanelItem addonItem = new PanelItemBuilder().icon(addon.getDescription().getIcon())
+                        .name(ChatColor.WHITE + addon.getDescription().getName())
+                        .clickHandler((panel, user1, clickType, slot) -> {
+                            if (clickType.equals(ClickType.MIDDLE)) {
+                                CreditsPanel.openPanel(user, addon);
+                            }
+                            return true;
+                        }).build();
+
+                builder.item(startSlot + i, addonItem);
+                i++;
+                if (builder.slotOccupied(startSlot + i)) {
+                    i = i + 2;
                 }
             }
-            case ADDONS -> {
-                addons = plugin.getAddonsManager().getEnabledAddons().stream().filter(addon -> !(addon instanceof GameModeAddon)).toList();
-                if (addons.isEmpty()) {
-                    looksEmpty(builder, user);
-                    break;
-                }
-                for (Addon addon : addons) {
-                    PanelItem addonItem = new PanelItemBuilder()
-                            .icon(addon.getDescription().getIcon())
-                            .name(ChatColor.WHITE + addon.getDescription().getName())
-                            .clickHandler((panel, user1, clickType, slot) -> {
-                                if (clickType.equals(ClickType.MIDDLE)) {
-                                    CreditsPanel.openPanel(user, addon);
-                                }
-                                return true;
-                            })
-                            .build();
+        }
+        case HOOKS -> {
+            if (plugin.getHooks().getHooks().isEmpty()) {
+                looksEmpty(builder, user);
+                break;
+            }
+            for (Hook hook : plugin.getHooks().getHooks()) {
+                PanelItem hookItem = new PanelItemBuilder().icon(hook.getIcon())
+                        .name(ChatColor.WHITE + hook.getPluginName()).build();
 
-                    builder.item(startSlot + i, addonItem);
-                    i++;
-                    if (builder.slotOccupied(startSlot + i)) {
-                        i = i + 2;
-                    }
+                builder.item(startSlot + i, hookItem);
+                i++;
+                if (builder.slotOccupied(startSlot + i)) {
+                    i = i + 2;
                 }
             }
-            case HOOKS -> {
-                if (plugin.getHooks().getHooks().isEmpty()) {
-                    looksEmpty(builder, user);
-                    break;
-                }
-                for (Hook hook : plugin.getHooks().getHooks()) {
-                    PanelItem hookItem = new PanelItemBuilder()
-                            .icon(hook.getIcon())
-                            .name(ChatColor.WHITE + hook.getPluginName())
-                            .build();
-
-                    builder.item(startSlot + i, hookItem);
-                    i++;
-                    if (builder.slotOccupied(startSlot + i)) {
-                        i = i + 2;
-                    }
-                }
-            }
+        }
         }
 
         // Setup a few more buttons
         // Catalog
-        PanelItem catalog = new PanelItemBuilder()
-                .icon(Material.ENCHANTED_BOOK)
+        PanelItem catalog = new PanelItemBuilder().icon(Material.ENCHANTED_BOOK)
                 .name(user.getTranslation(LOCALE_REF + "buttons.catalog.name"))
                 .description(user.getTranslation(LOCALE_REF + "buttons.catalog.description"))
                 .clickHandler((panel, user1, clickType, slot) -> {
                     CatalogPanel.openPanel(user, CatalogPanel.View.GAMEMODES);
                     return true;
-                })
-                .build();
+                }).build();
 
         builder.item(17, catalog);
 
         // Credits
-        PanelItem credits = new PanelItemBuilder()
-                .icon(Material.KNOWLEDGE_BOOK)
+        PanelItem credits = new PanelItemBuilder().icon(Material.KNOWLEDGE_BOOK)
                 .name(user.getTranslation(LOCALE_REF + "buttons.credits.name"))
                 .description(user.getTranslation(LOCALE_REF + "buttons.credits.description"))
                 .clickHandler((panel, user1, clickType, slot) -> {
                     CreditsPanel.openPanel(user, "BentoBoxWorld/BentoBox");
                     return true;
-                })
-                .build();
+                }).build();
 
         builder.item(26, credits);
 
@@ -167,8 +159,7 @@ public class ManagementPanel {
 
     private static void setupHeader(PanelBuilder builder, User user, View view) {
         // Navigation buttons
-        PanelItemBuilder gamemodesIconBuilder = new PanelItemBuilder()
-                .icon(Material.COMMAND_BLOCK)
+        PanelItemBuilder gamemodesIconBuilder = new PanelItemBuilder().icon(Material.COMMAND_BLOCK)
                 .name(user.getTranslation(LOCALE_REF + "views.gamemodes.name"))
                 .description(user.getTranslation(LOCALE_REF + "views.gamemodes.description"))
                 .clickHandler((panel, user1, clickType, slot) -> {
@@ -176,8 +167,7 @@ public class ManagementPanel {
                     return true;
                 });
 
-        PanelItemBuilder addonsIconBuilder = new PanelItemBuilder()
-                .icon(Material.BOOK)
+        PanelItemBuilder addonsIconBuilder = new PanelItemBuilder().icon(Material.BOOK)
                 .name(user.getTranslation(LOCALE_REF + "views.addons.name"))
                 .description(user.getTranslation(LOCALE_REF + "views.addons.description"))
                 .clickHandler((panel, user1, clickType, slot) -> {
@@ -185,8 +175,7 @@ public class ManagementPanel {
                     return true;
                 });
 
-        PanelItemBuilder hooksIconBuilder = new PanelItemBuilder()
-                .icon(Material.TRIPWIRE_HOOK)
+        PanelItemBuilder hooksIconBuilder = new PanelItemBuilder().icon(Material.TRIPWIRE_HOOK)
                 .name(user.getTranslation(LOCALE_REF + "views.hooks.name"))
                 .description(user.getTranslation(LOCALE_REF + "views.hooks.description"))
                 .clickHandler((panel, user1, clickType, slot) -> {
@@ -195,24 +184,22 @@ public class ManagementPanel {
                 });
 
         switch (view) {
-            case GAMEMODES -> gamemodesIconBuilder.glow(true);
-            case ADDONS -> addonsIconBuilder.glow(true);
-            case HOOKS -> hooksIconBuilder.glow(true);
+        case GAMEMODES -> gamemodesIconBuilder.glow(true);
+        case ADDONS -> addonsIconBuilder.glow(true);
+        case HOOKS -> hooksIconBuilder.glow(true);
         }
 
         builder.item(1, gamemodesIconBuilder.build());
         builder.item(2, addonsIconBuilder.build());
         builder.item(3, hooksIconBuilder.build());
 
-        PanelItem reloadItem = new PanelItemBuilder()
-                .icon(Material.REDSTONE_TORCH)
+        PanelItem reloadItem = new PanelItemBuilder().icon(Material.REDSTONE_TORCH)
                 .name(user.getTranslation(LOCALE_REF + "actions.reload.name"))
                 .description(user.getTranslation(LOCALE_REF + "actions.reload.description"))
                 .clickHandler((panel, user1, clickType, slot) -> {
                     user1.performCommand("bentobox reload");
                     return true;
-                })
-                .build();
+                }).build();
 
         builder.item(6, reloadItem);
 
@@ -224,35 +211,34 @@ public class ManagementPanel {
         PanelItemBuilder compatibilityItemBuilder = new PanelItemBuilder()
                 .name(user.getTranslation(LOCALE_REF + "information.state.name"))
                 .description(user.getTranslation(LOCALE_REF + "information.state.description." + compatibility,
-                        TextVariables.NAME, serverSoftware.equals(ServerSoftware.UNKNOWN) ? serverSoftware.getName() : serverSoftware.toString(),
-                                TextVariables.VERSION, serverVersion != null ? serverVersion.toString() : user.getTranslation("general.invalid")));
+                        TextVariables.NAME,
+                        serverSoftware.equals(ServerSoftware.UNKNOWN) ? serverSoftware.getName()
+                                : serverSoftware.toString(),
+                        TextVariables.VERSION,
+                        serverVersion != null ? serverVersion.toString() : user.getTranslation("general.invalid")));
 
         switch (compatibility) {
-            case COMPATIBLE, SUPPORTED -> compatibilityItemBuilder.icon(Material.GREEN_CONCRETE);
-            case NOT_SUPPORTED -> compatibilityItemBuilder.icon(Material.ORANGE_CONCRETE);
-            case INCOMPATIBLE -> compatibilityItemBuilder.icon(Material.RED_CONCRETE);
+        case COMPATIBLE, SUPPORTED -> compatibilityItemBuilder.icon(Material.GREEN_CONCRETE);
+        case NOT_SUPPORTED -> compatibilityItemBuilder.icon(Material.ORANGE_CONCRETE);
+        case INCOMPATIBLE -> compatibilityItemBuilder.icon(Material.RED_CONCRETE);
         }
 
         builder.item(7, compatibilityItemBuilder.build());
     }
 
     private static void looksEmpty(@NonNull PanelBuilder builder, @NonNull User user) {
-        PanelItem emptyHere = new PanelItemBuilder()
-                .icon(Material.STRUCTURE_VOID)
+        PanelItem emptyHere = new PanelItemBuilder().icon(Material.STRUCTURE_VOID)
                 .name(user.getTranslation(LOCALE_REF + "buttons.empty-here.name"))
                 .description(user.getTranslation(LOCALE_REF + "buttons.empty-here.description"))
                 .clickHandler((panel, user1, clickType, slot) -> {
                     CatalogPanel.openPanel(user, CatalogPanel.View.GAMEMODES);
                     return true;
-                })
-                .build();
+                }).build();
 
         builder.item(22, emptyHere);
     }
 
     public enum View {
-        GAMEMODES,
-        ADDONS,
-        HOOKS
+        GAMEMODES, ADDONS, HOOKS
     }
 }

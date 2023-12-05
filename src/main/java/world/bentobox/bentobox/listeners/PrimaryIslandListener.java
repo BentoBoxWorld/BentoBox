@@ -15,6 +15,7 @@ import world.bentobox.bentobox.managers.IslandsManager;
 
 /**
  * Sets the player's primary island based on where they teleported or moved to
+ * 
  * @author tastybento
  *
  */
@@ -49,9 +50,8 @@ public class PrimaryIslandListener implements Listener {
     }
 
     private void setIsland(Player player, Location location) {
-        im.getIslandAt(location)
-        .filter(i -> player.getUniqueId().equals(i.getOwner()))
-        .ifPresent(i -> im.setPrimaryIsland(player.getUniqueId(), i));
+        im.getIslandAt(location).filter(i -> player.getUniqueId().equals(i.getOwner()))
+                .ifPresent(i -> im.setPrimaryIsland(player.getUniqueId(), i));
     }
 
 }

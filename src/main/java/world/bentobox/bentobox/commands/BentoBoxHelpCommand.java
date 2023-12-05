@@ -17,6 +17,7 @@ public class BentoBoxHelpCommand extends DefaultHelpCommand {
 
     /**
      * Custom help to show addon registered top level commands
+     * 
      * @param parent command parent
      */
     public BentoBoxHelpCommand(CompositeCommand parent) {
@@ -27,12 +28,11 @@ public class BentoBoxHelpCommand extends DefaultHelpCommand {
     public boolean execute(User user, String label, List<String> args) {
         super.execute(user, label, args);
         // Show registered addon commands
-        getPlugin().getCommandsManager().getCommands().values().stream()
-        .filter(cc -> cc.getAddon() != null)
-        .sorted(Comparator.comparing(CompositeCommand::getName))
-        .forEach(v -> showPrettyHelp(user, v.getUsage(),
-                user.getTranslationOrNothing(v.getParameters()),
-                user.getTranslationOrNothing(v.getDescription()) + " (" + v.getAddon().getDescription().getName() + ")"));
+        getPlugin().getCommandsManager().getCommands().values().stream().filter(cc -> cc.getAddon() != null)
+                .sorted(Comparator.comparing(CompositeCommand::getName))
+                .forEach(v -> showPrettyHelp(user, v.getUsage(), user.getTranslationOrNothing(v.getParameters()),
+                        user.getTranslationOrNothing(v.getDescription()) + " ("
+                                + v.getAddon().getDescription().getName() + ")"));
         user.sendMessage("commands.help.end");
         return true;
     }

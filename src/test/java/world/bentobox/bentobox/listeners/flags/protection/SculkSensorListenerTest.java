@@ -31,7 +31,7 @@ import world.bentobox.bentobox.util.Util;
  */
 @Ignore("Has mocking issues with GameEvent")
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( {BentoBox.class, Flags.class, Util.class, Bukkit.class} )
+@PrepareForTest({ BentoBox.class, Flags.class, Util.class, Bukkit.class })
 public class SculkSensorListenerTest extends AbstractCommonSetup {
 
     private SculkSensorListener ssl;
@@ -76,7 +76,8 @@ public class SculkSensorListenerTest extends AbstractCommonSetup {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.SculkSensorListener#onSculkSensor(org.bukkit.event.block.BlockReceiveGameEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.flags.protection.SculkSensorListener#onSculkSensor(org.bukkit.event.block.BlockReceiveGameEvent)}.
      */
     @Test
     public void testOnSculkSensorAllowed() {

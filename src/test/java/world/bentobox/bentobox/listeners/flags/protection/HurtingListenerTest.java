@@ -40,7 +40,7 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( {BentoBox.class, Flags.class, Util.class, Bukkit.class} )
+@PrepareForTest({ BentoBox.class, Flags.class, Util.class, Bukkit.class })
 public class HurtingListenerTest extends AbstractCommonSetup {
 
     @Mock
@@ -73,7 +73,8 @@ public class HurtingListenerTest extends AbstractCommonSetup {
     }
 
     /**
-     * Test method for {@link HurtingListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
+     * Test method for
+     * {@link HurtingListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
     @Test
     public void testOnEntityDamageMonsteronMonster() {
@@ -84,7 +85,8 @@ public class HurtingListenerTest extends AbstractCommonSetup {
     }
 
     /**
-     * Test method for {@link HurtingListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
+     * Test method for
+     * {@link HurtingListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
     @Test
     public void testOnEntityDamagePlayeronMonster() {
@@ -109,7 +111,8 @@ public class HurtingListenerTest extends AbstractCommonSetup {
     }
 
     /**
-     * Test method for {@link HurtingListener#onFishing(org.bukkit.event.player.PlayerFishEvent)}.
+     * Test method for
+     * {@link HurtingListener#onFishing(org.bukkit.event.player.PlayerFishEvent)}.
      */
     @Test
     public void testOnFishingDisallowArmorStandCatching() {
@@ -124,7 +127,8 @@ public class HurtingListenerTest extends AbstractCommonSetup {
     }
 
     /**
-     * Test method for {@link HurtingListener#onFishing(org.bukkit.event.player.PlayerFishEvent)}.
+     * Test method for
+     * {@link HurtingListener#onFishing(org.bukkit.event.player.PlayerFishEvent)}.
      */
     @Test
     public void testOnFishingAllowArmorStandCatching() {
@@ -141,7 +145,8 @@ public class HurtingListenerTest extends AbstractCommonSetup {
     }
 
     /**
-     * Test method for {@link HurtingListener#onFishing(org.bukkit.event.player.PlayerFishEvent)}.
+     * Test method for
+     * {@link HurtingListener#onFishing(org.bukkit.event.player.PlayerFishEvent)}.
      */
     @Test
     public void testOnFishingDisallowAnimalCatching() {
@@ -156,7 +161,8 @@ public class HurtingListenerTest extends AbstractCommonSetup {
     }
 
     /**
-     * Test method for {@link HurtingListener#onFishing(org.bukkit.event.player.PlayerFishEvent)}.
+     * Test method for
+     * {@link HurtingListener#onFishing(org.bukkit.event.player.PlayerFishEvent)}.
      */
     @Test
     public void testOnFishingAllowAnimalsCatching() {
@@ -173,7 +179,8 @@ public class HurtingListenerTest extends AbstractCommonSetup {
     }
 
     /**
-     * Test method for {@link HurtingListener#onFishing(org.bukkit.event.player.PlayerFishEvent)}.
+     * Test method for
+     * {@link HurtingListener#onFishing(org.bukkit.event.player.PlayerFishEvent)}.
      */
     @Test
     public void testOnFishingDisallowMonsterCatching() {
@@ -188,7 +195,8 @@ public class HurtingListenerTest extends AbstractCommonSetup {
     }
 
     /**
-     * Test method for {@link HurtingListener#onFishing(org.bukkit.event.player.PlayerFishEvent)}.
+     * Test method for
+     * {@link HurtingListener#onFishing(org.bukkit.event.player.PlayerFishEvent)}.
      */
     @Test
     public void testOnFishingAllowMonsterCatching() {
@@ -205,7 +213,8 @@ public class HurtingListenerTest extends AbstractCommonSetup {
     }
 
     /**
-     * Test method for {@link HurtingListener#onFishing(org.bukkit.event.player.PlayerFishEvent)}.
+     * Test method for
+     * {@link HurtingListener#onFishing(org.bukkit.event.player.PlayerFishEvent)}.
      */
     @Test
     public void testOnFishingDisallowVillagerCatching() {
@@ -221,7 +230,8 @@ public class HurtingListenerTest extends AbstractCommonSetup {
     }
 
     /**
-     * Test method for {@link HurtingListener#onFishing(org.bukkit.event.player.PlayerFishEvent)}.
+     * Test method for
+     * {@link HurtingListener#onFishing(org.bukkit.event.player.PlayerFishEvent)}.
      */
     @Test
     public void testOnFishingDisallowWanderingTraderCatching() {
@@ -236,9 +246,9 @@ public class HurtingListenerTest extends AbstractCommonSetup {
         verify(notifier).notify(user, "protection.protected");
     }
 
-
     /**
-     * Test method for {@link HurtingListener#onFishing(org.bukkit.event.player.PlayerFishEvent)}.
+     * Test method for
+     * {@link HurtingListener#onFishing(org.bukkit.event.player.PlayerFishEvent)}.
      */
     @Test
     public void testOnFishingAllowVillagerCatching() {
@@ -256,7 +266,8 @@ public class HurtingListenerTest extends AbstractCommonSetup {
     }
 
     /**
-     * Test method for {@link HurtingListener#onFishing(org.bukkit.event.player.PlayerFishEvent)}.
+     * Test method for
+     * {@link HurtingListener#onFishing(org.bukkit.event.player.PlayerFishEvent)}.
      */
     @Test
     public void testOnFishingAllowWanderingTraderCatching() {
@@ -274,39 +285,43 @@ public class HurtingListenerTest extends AbstractCommonSetup {
     }
 
     /**
-     * Test method for {@link HurtingListener#onPlayerFeedParrots(org.bukkit.event.player.PlayerInteractEntityEvent)}.
+     * Test method for
+     * {@link HurtingListener#onPlayerFeedParrots(org.bukkit.event.player.PlayerInteractEntityEvent)}.
      */
     @Ignore("Not yet implemented")
     @Test
     public void testOnPlayerFeedParrots() {
-        //fail("Not yet implemented"); // TODO
+        // fail("Not yet implemented"); // TODO
     }
 
     /**
-     * Test method for {@link HurtingListener#onSplashPotionSplash(org.bukkit.event.entity.PotionSplashEvent)}.
+     * Test method for
+     * {@link HurtingListener#onSplashPotionSplash(org.bukkit.event.entity.PotionSplashEvent)}.
      */
     @Ignore("Not yet implemented")
     @Test
     public void testOnSplashPotionSplash() {
-        //fail("Not yet implemented"); // TODO
+        // fail("Not yet implemented"); // TODO
     }
 
     /**
-     * Test method for {@link HurtingListener#onLingeringPotionSplash(org.bukkit.event.entity.LingeringPotionSplashEvent)}.
+     * Test method for
+     * {@link HurtingListener#onLingeringPotionSplash(org.bukkit.event.entity.LingeringPotionSplashEvent)}.
      */
     @Ignore("Not yet implemented")
     @Test
     public void testOnLingeringPotionSplash() {
-        //fail("Not yet implemented"); // TODO
+        // fail("Not yet implemented"); // TODO
     }
 
     /**
-     * Test method for {@link HurtingListener#onLingeringPotionDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
+     * Test method for
+     * {@link HurtingListener#onLingeringPotionDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
     @Ignore("Not yet implemented")
     @Test
     public void testOnLingeringPotionDamage() {
-        //fail("Not yet implemented"); // TODO
+        // fail("Not yet implemented"); // TODO
     }
 
 }

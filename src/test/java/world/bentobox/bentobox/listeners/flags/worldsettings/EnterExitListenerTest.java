@@ -58,7 +58,7 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, Util.class })
+@PrepareForTest({ Bukkit.class, BentoBox.class, Util.class })
 public class EnterExitListenerTest {
 
     private static final Integer PROTECTION_RANGE = 200;
@@ -123,7 +123,8 @@ public class EnterExitListenerTest {
         // Placeholders
         PlaceholdersManager placeholdersManager = mock(PlaceholdersManager.class);
         when(plugin.getPlaceholdersManager()).thenReturn(placeholdersManager);
-        when(placeholdersManager.replacePlaceholders(any(), any())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
+        when(placeholdersManager.replacePlaceholders(any(), any()))
+                .thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
 
         // Notifier
         when(plugin.getNotifier()).thenReturn(notifier);
@@ -161,7 +162,7 @@ public class EnterExitListenerTest {
         when(inside.getBlockX()).thenReturn(X + PROTECTION_RANGE - 2);
         when(inside.getBlockY()).thenReturn(Y);
         when(inside.getBlockZ()).thenReturn(Z);
-        when(inside.toVector()).thenReturn(new Vector(X + PROTECTION_RANGE -2, Y, Z));
+        when(inside.toVector()).thenReturn(new Vector(X + PROTECTION_RANGE - 2, Y, Z));
 
         // Same as inside, but another world
         when(anotherWorld.getWorld()).thenReturn(mock(World.class));
@@ -205,7 +206,8 @@ public class EnterExitListenerTest {
         Flags.ENTER_EXIT_MESSAGES.setSetting(world, true);
 
         // Util translate color codes (used in user translate methods)
-        when(Util.translateColorCodes(anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
+        when(Util.translateColorCodes(anyString()))
+                .thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
     }
 
     @After
@@ -215,7 +217,8 @@ public class EnterExitListenerTest {
     }
 
     /**
-     * Test method for {@link EnterExitListener#onMove(org.bukkit.event.player.PlayerMoveEvent)}.
+     * Test method for
+     * {@link EnterExitListener#onMove(org.bukkit.event.player.PlayerMoveEvent)}.
      */
     @Test
     public void testOnMoveInsideIsland() {
@@ -228,7 +231,8 @@ public class EnterExitListenerTest {
     }
 
     /**
-     * Test method for {@link EnterExitListener#onMove(org.bukkit.event.player.PlayerMoveEvent)}.
+     * Test method for
+     * {@link EnterExitListener#onMove(org.bukkit.event.player.PlayerMoveEvent)}.
      */
     @Test
     public void testOnMoveOutsideIsland() {
@@ -311,7 +315,10 @@ public class EnterExitListenerTest {
     }
 
     /**
-     * Asserts that no notifications are sent if {@link world.bentobox.bentobox.lists.Flags#ENTER_EXIT_MESSAGES Flags#ENTER_EXIT_MESSAGES} flag is set to false.
+     * Asserts that no notifications are sent if
+     * {@link world.bentobox.bentobox.lists.Flags#ENTER_EXIT_MESSAGES
+     * Flags#ENTER_EXIT_MESSAGES} flag is set to false.
+     * 
      * @since 1.4.0
      */
     @Test
@@ -329,7 +336,8 @@ public class EnterExitListenerTest {
     }
 
     /**
-     * Test method for {@link EnterExitListener#onTeleport(org.bukkit.event.player.PlayerTeleportEvent)}.
+     * Test method for
+     * {@link EnterExitListener#onTeleport(org.bukkit.event.player.PlayerTeleportEvent)}.
      */
     @Test
     public void testEnterIslandTeleport() {
@@ -341,7 +349,8 @@ public class EnterExitListenerTest {
     }
 
     /**
-     * Test method for {@link EnterExitListener#onTeleport(org.bukkit.event.player.PlayerTeleportEvent)}.
+     * Test method for
+     * {@link EnterExitListener#onTeleport(org.bukkit.event.player.PlayerTeleportEvent)}.
      */
     @Test
     public void testExitIslandTeleport() {
@@ -351,7 +360,6 @@ public class EnterExitListenerTest {
         verify(pim, never()).callEvent(any(IslandEnterEvent.class));
         verify(pim).callEvent(any(IslandExitEvent.class));
     }
-
 
     /**
      * Test method for {@link EnterExitListener#onTeleport(org.bukkit.event.player.PlayerTeleportEvent)}.
@@ -379,5 +387,6 @@ public class EnterExitListenerTest {
         verify(pim).callEvent(any(IslandExitEvent.class));
     }
 
-    // TODO add tests to make sure the enter/exit messages work properly when on an island the player is part of.
+    // TODO add tests to make sure the enter/exit messages work properly when on an
+    // island the player is part of.
 }

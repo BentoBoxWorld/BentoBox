@@ -48,7 +48,7 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, Util.class })
+@PrepareForTest({ Bukkit.class, BentoBox.class, Util.class })
 public class CleanSuperFlatListenerTest {
 
     @Mock
@@ -99,7 +99,6 @@ public class CleanSuperFlatListenerTest {
         when(iwm.isUseOwnGenerator(any())).thenReturn(false);
         when(iwm.getAddon(any())).thenReturn(Optional.empty());
 
-
         PowerMockito.mockStatic(Bukkit.class);
         ItemFactory itemF = mock(ItemFactory.class);
         ItemMeta im = mock(ItemMeta.class);
@@ -127,9 +126,7 @@ public class CleanSuperFlatListenerTest {
 
         when(plugin.getAddonsManager()).thenReturn(am);
         when(am.getDefaultWorldGenerator(anyString(), anyString())).thenReturn(cg);
-        
-        
-        
+
     }
 
     @After
@@ -152,7 +149,8 @@ public class CleanSuperFlatListenerTest {
     }
 
     /**
-     * Test method for {@link CleanSuperFlatListener#onChunkLoad(org.bukkit.event.world.ChunkLoadEvent)}.
+     * Test method for
+     * {@link CleanSuperFlatListener#onChunkLoad(org.bukkit.event.world.ChunkLoadEvent)}.
      */
     @Test
     public void testOnChunkLoadBedrock() {
@@ -162,7 +160,8 @@ public class CleanSuperFlatListenerTest {
     }
 
     /**
-     * Test method for {@link CleanSuperFlatListener#onChunkLoad(org.bukkit.event.world.ChunkLoadEvent)}.
+     * Test method for
+     * {@link CleanSuperFlatListener#onChunkLoad(org.bukkit.event.world.ChunkLoadEvent)}.
      */
     @Test
     public void testOnChunkLoadBedrockNoClean() {

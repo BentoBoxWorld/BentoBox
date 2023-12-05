@@ -44,9 +44,8 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, Util.class})
+@PrepareForTest({ Bukkit.class, BentoBox.class, Util.class })
 public class BlockInteractionListenerTest extends AbstractCommonSetup {
-
 
     private EquipmentSlot hand;
 
@@ -119,7 +118,6 @@ public class BlockInteractionListenerTest extends AbstractCommonSetup {
         clickedBlocks.put(Material.BEE_NEST, Flags.HIVE);
     }
 
-
     /**
      */
     @Override
@@ -173,21 +171,26 @@ public class BlockInteractionListenerTest extends AbstractCommonSetup {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BlockInteractionListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.flags.protection.BlockInteractionListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractEvent)}.
      */
     @Test
     public void testOnPlayerInteractNothingInHandPotsNotAllowed() {
         Arrays.stream(Material.values()).filter(m -> m.name().startsWith("POTTED")).forEach(bm -> {
             when(clickedBlock.getType()).thenReturn(bm);
-            PlayerInteractEvent e = new PlayerInteractEvent(player, Action.RIGHT_CLICK_BLOCK, item, clickedBlock, BlockFace.EAST, hand);
+            PlayerInteractEvent e = new PlayerInteractEvent(player, Action.RIGHT_CLICK_BLOCK, item, clickedBlock,
+                    BlockFace.EAST, hand);
             bil.onPlayerInteract(e);
             assertEquals("Failure " + bm, Event.Result.DENY, e.useInteractedBlock());
         });
-        verify(notifier, times((int)Arrays.stream(Material.values()).filter(m -> m.name().startsWith("POTTED")).count())).notify(any(), eq("protection.protected"));
+        verify(notifier,
+                times((int) Arrays.stream(Material.values()).filter(m -> m.name().startsWith("POTTED")).count()))
+                .notify(any(), eq("protection.protected"));
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BlockInteractionListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.flags.protection.BlockInteractionListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractEvent)}.
      */
     @Test
     public void testOnPlayerInteractNothingInHandNotAllowed() {
@@ -195,7 +198,8 @@ public class BlockInteractionListenerTest extends AbstractCommonSetup {
         int worldSettingCount = 0;
         for (Material bm : clickedBlocks.keySet()) {
             when(clickedBlock.getType()).thenReturn(bm);
-            PlayerInteractEvent e = new PlayerInteractEvent(player, Action.RIGHT_CLICK_BLOCK, item, clickedBlock, BlockFace.EAST, hand);
+            PlayerInteractEvent e = new PlayerInteractEvent(player, Action.RIGHT_CLICK_BLOCK, item, clickedBlock,
+                    BlockFace.EAST, hand);
             bil.onPlayerInteract(e);
             assertEquals("Failure " + bm, Event.Result.DENY, e.useInteractedBlock());
             if (clickedBlocks.get(bm).getType().equals(Type.PROTECTION)) {
@@ -275,10 +279,9 @@ public class BlockInteractionListenerTest extends AbstractCommonSetup {
         verify(notifier, times(2)).notify(any(), eq("protection.protected"));
     }
 
-
-
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BlockInteractionListener#onBlockBreak(org.bukkit.event.block.BlockBreakEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.flags.protection.BlockInteractionListener#onBlockBreak(org.bukkit.event.block.BlockBreakEvent)}.
      */
     @Ignore("TODO")
     @Test
@@ -287,7 +290,8 @@ public class BlockInteractionListenerTest extends AbstractCommonSetup {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BlockInteractionListener#onDragonEggTeleport(org.bukkit.event.block.BlockFromToEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.flags.protection.BlockInteractionListener#onDragonEggTeleport(org.bukkit.event.block.BlockFromToEvent)}.
      */
     @Ignore("TODO")
     @Test

@@ -31,7 +31,9 @@ import world.bentobox.bentobox.util.Util;
 import world.bentobox.bentobox.util.teleport.SafeSpotTeleport;
 
 /**
- * Listener for invincible visitor settings. Handles click listening and damage events
+ * Listener for invincible visitor settings. Handles click listening and damage
+ * events
+ * 
  * @author tastybento
  *
  */
@@ -71,7 +73,8 @@ public class InvincibleVisitorsListener extends FlagListener implements ClickHan
             // Apply change to panel
             panel.getInventory().setItem(slot, getPanelItem(c, user).getItem());
             // Save settings
-            BentoBox.getInstance().getIWM().getAddon(Util.getWorld(user.getWorld())).ifPresent(GameModeAddon::saveWorldSettings);
+            BentoBox.getInstance().getIWM().getAddon(Util.getWorld(user.getWorld()))
+                    .ifPresent(GameModeAddon::saveWorldSettings);
         } else {
             // Open the IV Settings panel
             openPanel(user, ivPanelName);
@@ -80,7 +83,8 @@ public class InvincibleVisitorsListener extends FlagListener implements ClickHan
     }
 
     private DamageCause getEnum(User user, String itemName) {
-        return Arrays.stream(EntityDamageEvent.DamageCause.values()).filter(dc -> getTranslation(user, dc.name()).equals(itemName)).findFirst().orElse(null);
+        return Arrays.stream(EntityDamageEvent.DamageCause.values())
+                .filter(dc -> getTranslation(user, dc.name()).equals(itemName)).findFirst().orElse(null);
     }
 
     private void openPanel(User user, String ivPanelName) {
@@ -91,12 +95,10 @@ public class InvincibleVisitorsListener extends FlagListener implements ClickHan
         pb.user(user).name(ivPanelName);
 
         // Make panel items - sort alphabetically.
-        Arrays.stream(EntityDamageEvent.DamageCause.values())
-        .map(c -> getPanelItem(c, user)).sorted(Comparator.comparing(PanelItem::getName)).forEach(pb::item);
+        Arrays.stream(EntityDamageEvent.DamageCause.values()).map(c -> getPanelItem(c, user))
+                .sorted(Comparator.comparing(PanelItem::getName)).forEach(pb::item);
         pb.build();
     }
-
-
 
     private PanelItem getPanelItem(DamageCause c, User user) {
         PanelItemBuilder pib = new PanelItemBuilder();
@@ -114,6 +116,7 @@ public class InvincibleVisitorsListener extends FlagListener implements ClickHan
 
     /**
      * Get the translation of the DamageCause enum
+     * 
      * @param user user seeing text
      * @param name enum name
      * @return translation or a prettified version of name
@@ -124,19 +127,17 @@ public class InvincibleVisitorsListener extends FlagListener implements ClickHan
     }
 
     /**
-     * Prevents visitors from getting damage if a particular damage type is listed in the config
+     * Prevents visitors from getting damage if a particular damage type is listed
+     * in the config
+     * 
      * @param e - event
      */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onVisitorGetDamage(EntityDamageEvent e) {
         World world = e.getEntity().getWorld();
-        if (!(e.getEntity() instanceof Player p)
-                || !getIWM().inWorld(world)
-                || p.hasMetadata("NPC")
+        if (!(e.getEntity() instanceof Player p) || !getIWM().inWorld(world) || p.hasMetadata("NPC")
                 || !getIWM().getIvSettings(world).contains(e.getCause().name())
-                || getIslands().userIsOnIsland(world, User.getInstance(p))
-                || PVPAllowed(p.getLocation())
-                ) {
+                || getIslands().userIsOnIsland(world, User.getInstance(p)) || PVPAllowed(p.getLocation())) {
             return;
         }
         // Fire event
@@ -150,16 +151,15 @@ public class InvincibleVisitorsListener extends FlagListener implements ClickHan
         // Player is a visitor and should be protected from damage
         e.setCancelled(true);
         // Handle the void - teleport player back to island in a safe spot
-        if(e.getCause().equals(DamageCause.VOID)) {
+        if (e.getCause().equals(DamageCause.VOID)) {
             if (getIslands().getIslandAt(p.getLocation()).isPresent()) {
                 getIslands().getIslandAt(p.getLocation()).ifPresent(island ->
                 // Teleport
-                new SafeSpotTeleport.Builder(getPlugin())
-                .entity(p)
-                .location(island.getProtectionCenter().toVector().toLocation(p.getWorld()))
-                .build());
+                new SafeSpotTeleport.Builder(getPlugin()).entity(p)
+                        .location(island.getProtectionCenter().toVector().toLocation(p.getWorld())).build());
             } else if (getIslands().hasIsland(p.getWorld(), p.getUniqueId())) {
-                // No island in this location - if the player has an island try to teleport them back
+                // No island in this location - if the player has an island try to teleport them
+                // back
                 getIslands().homeTeleportAsync(p.getWorld(), p);
             } else {
                 // Else die, sorry.
@@ -168,24 +168,20 @@ public class InvincibleVisitorsListener extends FlagListener implements ClickHan
         }
     }
 
-
     /**
-     * This listener cancels entity targeting a player if he is a visitor, and visitors are immune to entity damage.
+     * This listener cancels entity targeting a player if he is a visitor, and
+     * visitors are immune to entity damage.
+     * 
      * @param e EntityTargetLivingEntityEvent
      */
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void onVisitorTargeting(EntityTargetLivingEntityEvent e)
-    {
+    public void onVisitorTargeting(EntityTargetLivingEntityEvent e) {
         World world = e.getEntity().getWorld();
 
-        if (!(e.getTarget() instanceof Player p) ||
-                !this.getIWM().inWorld(world) ||
-                e.getTarget().hasMetadata("NPC") ||
-                this.getIslands().userIsOnIsland(world, User.getInstance(e.getTarget())) ||
-                this.PVPAllowed(p.getLocation()) ||
-                e.getReason() == EntityTargetEvent.TargetReason.TARGET_DIED ||
-                !this.getIWM().getIvSettings(world).contains(DamageCause.ENTITY_ATTACK.name()))
-        {
+        if (!(e.getTarget() instanceof Player p) || !this.getIWM().inWorld(world) || e.getTarget().hasMetadata("NPC")
+                || this.getIslands().userIsOnIsland(world, User.getInstance(e.getTarget()))
+                || this.PVPAllowed(p.getLocation()) || e.getReason() == EntityTargetEvent.TargetReason.TARGET_DIED
+                || !this.getIWM().getIvSettings(world).contains(DamageCause.ENTITY_ATTACK.name())) {
             return;
         }
 
@@ -194,4 +190,3 @@ public class InvincibleVisitorsListener extends FlagListener implements ClickHan
     }
 
 }
-

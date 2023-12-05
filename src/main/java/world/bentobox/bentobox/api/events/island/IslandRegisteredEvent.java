@@ -11,6 +11,7 @@ import world.bentobox.bentobox.database.objects.Island;
 
 /**
  * Fired when a player is registered from an island.
+ * 
  * @since 1.3.0
  */
 public class IslandRegisteredEvent extends IslandBaseEvent {

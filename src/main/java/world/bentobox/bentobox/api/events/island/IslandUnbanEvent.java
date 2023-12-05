@@ -10,8 +10,7 @@ import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.database.objects.Island;
 
 /**
- * Fired when a player will be banned from an island.
- * May be cancelled.
+ * Fired when a player will be banned from an island. May be cancelled.
  * Cancellation will result in the unban being aborted.
  *
  * @since 1.1

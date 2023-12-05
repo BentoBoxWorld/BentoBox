@@ -28,14 +28,16 @@ public class AdminBlueprintOriginCommand extends CompositeCommand {
     public boolean execute(User user, String label, List<String> args) {
         AdminBlueprintCommand parent = (AdminBlueprintCommand) getParent();
 
-        BlueprintClipboard clipboard = parent.getClipboards().computeIfAbsent(user.getUniqueId(), v -> new BlueprintClipboard());
+        BlueprintClipboard clipboard = parent.getClipboards().computeIfAbsent(user.getUniqueId(),
+                v -> new BlueprintClipboard());
         if (clipboard.getPos1() == null || clipboard.getPos2() == null) {
             user.sendMessage("commands.admin.blueprint.need-pos1-pos2");
             return false;
         }
 
         // Get the block player is looking at
-        Block b = Objects.requireNonNull(user.getPlayer()).getLineOfSight(null, 20).stream().filter(x -> !x.getType().equals(Material.AIR)).findFirst().orElse(null);
+        Block b = Objects.requireNonNull(user.getPlayer()).getLineOfSight(null, 20).stream()
+                .filter(x -> !x.getType().equals(Material.AIR)).findFirst().orElse(null);
         if (b != null) {
             clipboard.setOrigin(b.getLocation().toVector());
             user.getPlayer().sendBlockChange(b.getLocation(), Material.REDSTONE_BLOCK.createBlockData());

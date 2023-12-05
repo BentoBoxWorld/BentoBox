@@ -25,6 +25,7 @@ import world.bentobox.bentobox.util.Util;
 
 /**
  * Provides a tab GUI for viewing geo-limited mobs
+ * 
  * @author tastybento
  *
  */
@@ -33,15 +34,13 @@ public class GeoMobLimitTab implements Tab, ClickHandler {
     /**
      * A list of all living entity types, minus some
      */
-    private static final List<EntityType> LIVING_ENTITY_TYPES = Arrays.stream(EntityType.values())
-            .filter(EntityType::isAlive)
-            .filter(t -> !(t.equals(EntityType.PLAYER) || t.equals(EntityType.GIANT) || t.equals(EntityType.ARMOR_STAND)))
-            .sorted(Comparator.comparing(EntityType::name))
-            .toList();
+    private static final List<EntityType> LIVING_ENTITY_TYPES = Arrays
+            .stream(EntityType.values()).filter(EntityType::isAlive).filter(t -> !(t.equals(EntityType.PLAYER)
+                    || t.equals(EntityType.GIANT) || t.equals(EntityType.ARMOR_STAND)))
+            .sorted(Comparator.comparing(EntityType::name)).toList();
 
     public enum EntityLimitTabType {
-        GEO_LIMIT,
-        MOB_LIMIT
+        GEO_LIMIT, MOB_LIMIT
     }
 
     private final BentoBox plugin = BentoBox.getInstance();
@@ -50,8 +49,8 @@ public class GeoMobLimitTab implements Tab, ClickHandler {
     private final World world;
 
     /**
-     * @param user - user viewing the tab
-     * @param type - type of tab to show - Geo limit or Mob limit
+     * @param user  - user viewing the tab
+     * @param type  - type of tab to show - Geo limit or Mob limit
      * @param world - world where this tab is being used
      */
     public GeoMobLimitTab(@NonNull User user, @NonNull EntityLimitTabType type, World world) {
@@ -61,11 +60,10 @@ public class GeoMobLimitTab implements Tab, ClickHandler {
         this.world = world;
     }
 
-
     @Override
     public boolean onClick(Panel panel, User user, ClickType clickType, int slot) {
         // Case panel to Tabbed Panel to get the active page
-        TabbedPanel tp = (TabbedPanel)panel;
+        TabbedPanel tp = (TabbedPanel) panel;
         // Convert the slot and active page to an index
         int index = tp.getActivePage() * 36 + slot - 9;
         EntityType c = LIVING_ENTITY_TYPES.get(index);

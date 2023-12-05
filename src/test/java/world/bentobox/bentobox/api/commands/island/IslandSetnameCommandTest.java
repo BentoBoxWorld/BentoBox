@@ -57,7 +57,7 @@ import world.bentobox.bentobox.managers.RanksManager;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class})
+@PrepareForTest({ Bukkit.class, BentoBox.class })
 public class IslandSetnameCommandTest {
 
     @Mock
@@ -81,6 +81,7 @@ public class IslandSetnameCommandTest {
     private Settings settings;
     @Mock
     private PluginManager pim;
+
     /**
      * @throws java.lang.Exception
      */
@@ -141,7 +142,6 @@ public class IslandSetnameCommandTest {
         rm = new RanksManager();
         when(plugin.getRanksManager()).thenReturn(rm);
 
-
         // Test
         isc = new IslandSetnameCommand(ic);
     }
@@ -156,7 +156,8 @@ public class IslandSetnameCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandSetnameCommand#IslandSetnameCommand(world.bentobox.bentobox.api.commands.CompositeCommand)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.island.IslandSetnameCommand#IslandSetnameCommand(world.bentobox.bentobox.api.commands.CompositeCommand)}.
      */
     @Test
     public void testIslandSetnameCommand() {
@@ -165,7 +166,8 @@ public class IslandSetnameCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandSetnameCommand#setup()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.island.IslandSetnameCommand#setup()}.
      */
     @Test
     public void testSetup() {
@@ -177,7 +179,8 @@ public class IslandSetnameCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandSetnameCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.island.IslandSetnameCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testIslandSetnameCommandNoArgs() {
@@ -207,7 +210,8 @@ public class IslandSetnameCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandSetnameCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.island.IslandSetnameCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testIslandSetnameCommandNameTooShort() {
@@ -216,7 +220,8 @@ public class IslandSetnameCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandSetnameCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.island.IslandSetnameCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testIslandSetnameCommandNameOnlyColors() {
@@ -225,16 +230,19 @@ public class IslandSetnameCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandSetnameCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.island.IslandSetnameCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testIslandSetnameCommandNameTooLong() {
-        assertFalse(isc.canExecute(user, isc.getLabel(), List.of("This is a very long name that is not allowed and will have to be prevented")));
+        assertFalse(isc.canExecute(user, isc.getLabel(),
+                List.of("This is a very long name that is not allowed and will have to be prevented")));
         verify(user).sendMessage("commands.island.setname.name-too-long", TextVariables.NUMBER, "20");
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandSetnameCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.island.IslandSetnameCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testIslandSetnameCommandNameNotUnique() {
@@ -257,14 +265,14 @@ public class IslandSetnameCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandSetnameCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.island.IslandSetnameCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testIslandSetnameCommandAllOK() {
         assertTrue(isc.canExecute(user, isc.getLabel(), List.of("name-okay")));
         verify(user, never()).sendMessage(anyString());
     }
-
 
     /**
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandSetnameCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.

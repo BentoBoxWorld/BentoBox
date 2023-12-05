@@ -26,6 +26,7 @@ import world.bentobox.bentobox.managers.AddonsManager;
 
 /**
  * Loads addons and sets up permissions
+ * 
  * @author Tastybento, ComminQ
  */
 public class AddonClassLoader extends URLClassLoader {
@@ -36,25 +37,23 @@ public class AddonClassLoader extends URLClassLoader {
 
     /**
      * For testing only
-     * @param addon addon
-     * @param loader Addons Manager
+     * 
+     * @param addon   addon
+     * @param loader  Addons Manager
      * @param jarFile Jar File
      * @throws MalformedURLException exception
      */
     protected AddonClassLoader(Addon addon, AddonsManager loader, File jarFile) throws MalformedURLException {
-        super(new URL[]{jarFile.toURI().toURL()});
+        super(new URL[] { jarFile.toURI().toURL() });
         this.addon = addon;
         this.loader = loader;
     }
 
     public AddonClassLoader(AddonsManager addonsManager, YamlConfiguration data, File jarFile, ClassLoader parent)
-            throws InvalidAddonInheritException,
-            MalformedURLException,
-            InvalidDescriptionException,
-            InvalidAddonDescriptionException,
-            InstantiationException,
-            IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        super(new URL[]{jarFile.toURI().toURL()}, parent);
+            throws InvalidAddonInheritException, MalformedURLException, InvalidDescriptionException,
+            InvalidAddonDescriptionException, InstantiationException, IllegalAccessException, InvocationTargetException,
+            NoSuchMethodException {
+        super(new URL[] { jarFile.toURI().toURL() }, parent);
 
         loader = addonsManager;
 
@@ -65,11 +64,13 @@ public class AddonClassLoader extends URLClassLoader {
                 throw new InvalidAddonFormatException("addon.yml does not define a main class!");
             }
             javaClass = Class.forName(mainClass, true, this);
-            if(mainClass.startsWith("world.bentobox.bentobox")){
-                throw new InvalidAddonFormatException("Package declaration cannot start with 'world.bentobox.bentobox'");
+            if (mainClass.startsWith("world.bentobox.bentobox")) {
+                throw new InvalidAddonFormatException(
+                        "Package declaration cannot start with 'world.bentobox.bentobox'");
             }
         } catch (Exception e) {
-            throw new InvalidDescriptionException("Could not load '" + jarFile.getName() + "' in folder '" + jarFile.getParent() + "' - " + e.getMessage());
+            throw new InvalidDescriptionException("Could not load '" + jarFile.getName() + "' in folder '"
+                    + jarFile.getParent() + "' - " + e.getMessage());
         }
 
         Class<? extends Addon> addonClass;
@@ -83,10 +84,9 @@ public class AddonClassLoader extends URLClassLoader {
         addon.setDescription(asDescription(data));
     }
 
-
-
     /**
      * Converts the addon.yml to an AddonDescription
+     * 
      * @param data - yaml config (addon.yml)
      * @return Addon Description
      * @throws InvalidAddonDescriptionException - if there's a bug in the addon.yml
@@ -104,18 +104,17 @@ public class AddonClassLoader extends URLClassLoader {
             throw new InvalidAddonDescriptionException("Missing 'version' tag. A version must be listed in addon.yml");
         }
         if (!data.contains("authors")) {
-            throw new InvalidAddonDescriptionException("Missing 'authors' tag. At least one author must be listed in addon.yml");
+            throw new InvalidAddonDescriptionException(
+                    "Missing 'authors' tag. At least one author must be listed in addon.yml");
         }
 
         AddonDescription.Builder builder = new AddonDescription.Builder(
                 // Mandatory elements
-                Objects.requireNonNull(data.getString("main")),
-                Objects.requireNonNull(data.getString("name")),
+                Objects.requireNonNull(data.getString("main")), Objects.requireNonNull(data.getString("name")),
                 Objects.requireNonNull(data.getString("version")))
                 .authors(Objects.requireNonNull(data.getString("authors")))
                 // Optional elements
-                .metrics(data.getBoolean("metrics", true))
-                .repository(data.getString("repository", ""));
+                .metrics(data.getBoolean("metrics", true)).repository(data.getString("repository", ""));
 
         String depend = data.getString("depend");
         if (depend != null) {
@@ -127,17 +126,20 @@ public class AddonClassLoader extends URLClassLoader {
         }
         Material icon = Material.getMaterial(data.getString("icon", "PAPER").toUpperCase(Locale.ENGLISH));
         if (icon == null) {
-            throw new InvalidAddonDescriptionException("'icon' tag refers to an unknown Material: " + data.getString("icon"));
+            throw new InvalidAddonDescriptionException(
+                    "'icon' tag refers to an unknown Material: " + data.getString("icon"));
         }
         builder.icon(Objects.requireNonNull(icon));
 
         String apiVersion = data.getString("api-version");
         if (apiVersion != null) {
             if (!apiVersion.replace("-SNAPSHOT", "").matches("^(\\d+\\.)?(\\d+\\.)?(\\*|\\d+)$")) {
-                throw new InvalidAddonDescriptionException("Provided API version '" + apiVersion + "' is not valid. It must only contain digits and dots and not end with a dot.");
+                throw new InvalidAddonDescriptionException("Provided API version '" + apiVersion
+                        + "' is not valid. It must only contain digits and dots and not end with a dot.");
             }
             if (apiVersion.contains("-SNAPSHOT")) {
-                BentoBox.getInstance().logWarning(data.getString("name") + " addon depends on development version of BentoBox plugin. Some functions may be not implemented.");
+                BentoBox.getInstance().logWarning(data.getString("name")
+                        + " addon depends on development version of BentoBox plugin. Some functions may be not implemented.");
             }
             builder.apiVersion(apiVersion);
         }
@@ -149,7 +151,9 @@ public class AddonClassLoader extends URLClassLoader {
         return builder.build();
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see java.net.URLClassLoader#findClass(java.lang.String)
      */
     @Override
@@ -160,7 +164,8 @@ public class AddonClassLoader extends URLClassLoader {
 
     /**
      * This is a custom findClass that enables classes in other addons to be found
-     * @param name - class name
+     * 
+     * @param name        - class name
      * @param checkGlobal - check globally or not when searching
      * @return Class - class if found
      */

@@ -34,7 +34,7 @@ import world.bentobox.bentobox.managers.IslandsManager;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({BentoBox.class })
+@PrepareForTest({ BentoBox.class })
 public class MobTeleportListenerTest {
 
     @Mock
@@ -57,6 +57,7 @@ public class MobTeleportListenerTest {
     private Location to;
     @Mock
     private World world;
+
     /**
      * @throws java.lang.Exception
      */
@@ -93,7 +94,8 @@ public class MobTeleportListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.settings.MobTeleportListener#onEntityTeleportEvent(org.bukkit.event.entity.EntityTeleportEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.flags.settings.MobTeleportListener#onEntityTeleportEvent(org.bukkit.event.entity.EntityTeleportEvent)}.
      */
     @Test
     public void testOnEntityTeleportEventEndermanNotAllowed() {
@@ -130,7 +132,8 @@ public class MobTeleportListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.settings.MobTeleportListener#onEntityTeleportEvent(org.bukkit.event.entity.EntityTeleportEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.flags.settings.MobTeleportListener#onEntityTeleportEvent(org.bukkit.event.entity.EntityTeleportEvent)}.
      */
     @Test
     public void testOnEntityTeleportEventEndermanAllowedDefault() {
@@ -140,7 +143,8 @@ public class MobTeleportListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.settings.MobTeleportListener#onEntityTeleportEvent(org.bukkit.event.entity.EntityTeleportEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.flags.settings.MobTeleportListener#onEntityTeleportEvent(org.bukkit.event.entity.EntityTeleportEvent)}.
      */
     @Test
     public void testOnEntityTeleportEventOther() {
@@ -150,7 +154,8 @@ public class MobTeleportListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.settings.MobTeleportListener#onEntityTeleportEvent(org.bukkit.event.entity.EntityTeleportEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.flags.settings.MobTeleportListener#onEntityTeleportEvent(org.bukkit.event.entity.EntityTeleportEvent)}.
      */
     @Test
     public void testOnEntityTeleportEventEndermanNotAllowedButOther() {
@@ -164,7 +169,8 @@ public class MobTeleportListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.settings.MobTeleportListener#onEntityTeleportEvent(org.bukkit.event.entity.EntityTeleportEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.flags.settings.MobTeleportListener#onEntityTeleportEvent(org.bukkit.event.entity.EntityTeleportEvent)}.
      */
     @Test
     public void testOnEntityTeleportEventShulkerNotAllowed() {
@@ -201,7 +207,8 @@ public class MobTeleportListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.settings.MobTeleportListener#onEntityTeleportEvent(org.bukkit.event.entity.EntityTeleportEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.flags.settings.MobTeleportListener#onEntityTeleportEvent(org.bukkit.event.entity.EntityTeleportEvent)}.
      */
     @Test
     public void testOnEntityTeleportEventShulkerAllowedDefault() {

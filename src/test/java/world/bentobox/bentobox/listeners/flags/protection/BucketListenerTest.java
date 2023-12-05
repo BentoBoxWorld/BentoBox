@@ -36,9 +36,8 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( {BentoBox.class, Flags.class, Util.class, Bukkit.class} )
+@PrepareForTest({ BentoBox.class, Flags.class, Util.class, Bukkit.class })
 public class BucketListenerTest extends AbstractCommonSetup {
-
 
     private BucketListener l;
 
@@ -58,7 +57,8 @@ public class BucketListenerTest extends AbstractCommonSetup {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BucketListener#onBucketEmpty(org.bukkit.event.player.PlayerBucketEmptyEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.flags.protection.BucketListener#onBucketEmpty(org.bukkit.event.player.PlayerBucketEmptyEvent)}.
      */
     @Test
     public void testOnBucketEmptyAllowed() {
@@ -66,7 +66,8 @@ public class BucketListenerTest extends AbstractCommonSetup {
         when(block.getLocation()).thenReturn(location);
         when(block.getRelative(any())).thenReturn(block);
         ItemStack item = mock(ItemStack.class);
-        PlayerBucketEmptyEvent e = new PlayerBucketEmptyEvent(player, block, block, BlockFace.UP, Material.WATER_BUCKET, item, EquipmentSlot.HAND);
+        PlayerBucketEmptyEvent e = new PlayerBucketEmptyEvent(player, block, block, BlockFace.UP, Material.WATER_BUCKET,
+                item, EquipmentSlot.HAND);
         l.onBucketEmpty(e);
         assertFalse(e.isCancelled());
     }
@@ -88,7 +89,8 @@ public class BucketListenerTest extends AbstractCommonSetup {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BucketListener#onBucketFill(org.bukkit.event.player.PlayerBucketFillEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.flags.protection.BucketListener#onBucketFill(org.bukkit.event.player.PlayerBucketFillEvent)}.
      */
     @Test
     public void testOnBucketFillAllowed() {
@@ -97,22 +99,26 @@ public class BucketListenerTest extends AbstractCommonSetup {
         when(block.getRelative(any())).thenReturn(block);
         ItemStack item = mock(ItemStack.class);
         when(item.getType()).thenReturn(Material.WATER_BUCKET);
-        PlayerBucketFillEvent e = new PlayerBucketFillEvent(player, block, block, BlockFace.UP, Material.WATER_BUCKET, item, EquipmentSlot.HAND);
+        PlayerBucketFillEvent e = new PlayerBucketFillEvent(player, block, block, BlockFace.UP, Material.WATER_BUCKET,
+                item, EquipmentSlot.HAND);
         l.onBucketFill(e);
         assertFalse(e.isCancelled());
 
         when(item.getType()).thenReturn(Material.BUCKET);
-        e = new PlayerBucketFillEvent(player, block, block, BlockFace.UP, Material.WATER_BUCKET, item, EquipmentSlot.HAND);
+        e = new PlayerBucketFillEvent(player, block, block, BlockFace.UP, Material.WATER_BUCKET, item,
+                EquipmentSlot.HAND);
         l.onBucketFill(e);
         assertFalse(e.isCancelled());
 
         when(item.getType()).thenReturn(Material.LAVA_BUCKET);
-        e = new PlayerBucketFillEvent(player, block, block, BlockFace.UP, Material.WATER_BUCKET, item, EquipmentSlot.HAND);
+        e = new PlayerBucketFillEvent(player, block, block, BlockFace.UP, Material.WATER_BUCKET, item,
+                EquipmentSlot.HAND);
         l.onBucketFill(e);
         assertFalse(e.isCancelled());
 
         when(item.getType()).thenReturn(Material.MILK_BUCKET);
-        e = new PlayerBucketFillEvent(player, block, block, BlockFace.UP, Material.WATER_BUCKET, item, EquipmentSlot.HAND);
+        e = new PlayerBucketFillEvent(player, block, block, BlockFace.UP, Material.WATER_BUCKET, item,
+                EquipmentSlot.HAND);
         l.onBucketFill(e);
         assertFalse(e.isCancelled());
     }
@@ -187,7 +193,8 @@ public class BucketListenerTest extends AbstractCommonSetup {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BucketListener#onTropicalFishScooping(org.bukkit.event.player.PlayerInteractEntityEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.flags.protection.BucketListener#onTropicalFishScooping(org.bukkit.event.player.PlayerInteractEntityEvent)}.
      */
     @Test
     public void testOnTropicalFishScoopingNotFish() {
@@ -197,13 +204,14 @@ public class BucketListenerTest extends AbstractCommonSetup {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BucketListener#onTropicalFishScooping(org.bukkit.event.player.PlayerInteractEntityEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.flags.protection.BucketListener#onTropicalFishScooping(org.bukkit.event.player.PlayerInteractEntityEvent)}.
      */
     @Test
     public void testOnTropicalFishScoopingFishNoWaterBucket() {
         TropicalFish fish = mock(TropicalFish.class);
         when(fish.getLocation()).thenReturn(location);
-        PlayerInteractEntityEvent e = new PlayerInteractEntityEvent(player, fish );
+        PlayerInteractEntityEvent e = new PlayerInteractEntityEvent(player, fish);
         PlayerInventory inv = mock(PlayerInventory.class);
         ItemStack item = mock(ItemStack.class);
         when(item.getType()).thenReturn(Material.STONE);
@@ -214,13 +222,14 @@ public class BucketListenerTest extends AbstractCommonSetup {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BucketListener#onTropicalFishScooping(org.bukkit.event.player.PlayerInteractEntityEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.flags.protection.BucketListener#onTropicalFishScooping(org.bukkit.event.player.PlayerInteractEntityEvent)}.
      */
     @Test
     public void testOnTropicalFishScoopingFishWaterBucket() {
         TropicalFish fish = mock(TropicalFish.class);
         when(fish.getLocation()).thenReturn(location);
-        PlayerInteractEntityEvent e = new PlayerInteractEntityEvent(player, fish );
+        PlayerInteractEntityEvent e = new PlayerInteractEntityEvent(player, fish);
         PlayerInventory inv = mock(PlayerInventory.class);
         ItemStack item = mock(ItemStack.class);
         when(item.getType()).thenReturn(Material.WATER_BUCKET);

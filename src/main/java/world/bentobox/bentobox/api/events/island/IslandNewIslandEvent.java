@@ -10,8 +10,8 @@ import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.database.objects.Island;
 
 /**
- * Fired when an a player enters a new island for the first time.
- * Called before join commands are run, money reset, etc.
+ * Fired when an a player enters a new island for the first time. Called before
+ * join commands are run, money reset, etc.
  */
 public class IslandNewIslandEvent extends IslandBaseEvent {
 

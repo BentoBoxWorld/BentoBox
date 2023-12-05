@@ -15,7 +15,9 @@ import world.bentobox.bentobox.blueprints.Blueprint;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle;
 
 /**
- * This class listens to clicks in the inventory and changes the icons of Blueprints and Blueprint Bundles
+ * This class listens to clicks in the inventory and changes the icons of
+ * Blueprints and Blueprint Bundles
+ * 
  * @author tastybento
  *
  */
@@ -28,12 +30,14 @@ public class IconChanger implements PanelListener {
 
     /**
      * Change the icon of a blueprint bundle or blueprint
-     * @param plugin - Bentobox
-     * @param addon - the Game Mode Addon
+     * 
+     * @param plugin                   - Bentobox
+     * @param addon                    - the Game Mode Addon
      * @param blueprintManagementPanel - the open Blueprint Management Panel
-     * @param bb - the blueprint bundle
+     * @param bb                       - the blueprint bundle
      */
-    public IconChanger(BentoBox plugin, GameModeAddon addon, BlueprintManagementPanel blueprintManagementPanel, BlueprintBundle bb) {
+    public IconChanger(BentoBox plugin, GameModeAddon addon, BlueprintManagementPanel blueprintManagementPanel,
+            BlueprintBundle bb) {
         this.plugin = plugin;
         this.addon = addon;
         this.blueprintManagementPanel = blueprintManagementPanel;
@@ -43,7 +47,8 @@ public class IconChanger implements PanelListener {
     @Override
     public void onInventoryClick(User user, InventoryClickEvent event) {
         // Handle icon changing
-        if (event.getCurrentItem() != null && !event.getCurrentItem().getType().equals(Material.AIR) && event.getRawSlot() > 44) {
+        if (event.getCurrentItem() != null && !event.getCurrentItem().getType().equals(Material.AIR)
+                && event.getRawSlot() > 44) {
             Material icon = event.getCurrentItem().getType();
             Entry<Integer, Blueprint> selected = blueprintManagementPanel.getSelected();
             user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_METAL_HIT, 1F, 1F);

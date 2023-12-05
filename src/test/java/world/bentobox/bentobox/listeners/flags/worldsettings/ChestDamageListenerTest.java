@@ -65,9 +65,8 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( {Bukkit.class, BentoBox.class, Flags.class, Util.class} )
-public class ChestDamageListenerTest extends AbstractCommonSetup
-{
+@PrepareForTest({ Bukkit.class, BentoBox.class, Flags.class, Util.class })
+public class ChestDamageListenerTest extends AbstractCommonSetup {
 
     private Location location;
     private BentoBox plugin;
@@ -115,7 +114,6 @@ public class ChestDamageListenerTest extends AbstractCommonSetup
         FlagsManager flagsManager = new FlagsManager(plugin);
         when(plugin.getFlagsManager()).thenReturn(flagsManager);
 
-
         // Worlds
         IslandWorldManager iwm = mock(IslandWorldManager.class);
         when(iwm.inWorld(any(World.class))).thenReturn(true);
@@ -137,16 +135,15 @@ public class ChestDamageListenerTest extends AbstractCommonSetup
         Mockito.when(settings.getFakePlayers()).thenReturn(new HashSet<>());
 
         // Users
-        //User user = mock(User.class);
-        ///user.setPlugin(plugin);
+        // User user = mock(User.class);
+        /// user.setPlugin(plugin);
         User.setPlugin(plugin);
-
 
         // Locales - final
 
         LocalesManager lm = mock(LocalesManager.class);
         when(plugin.getLocalesManager()).thenReturn(lm);
-        Answer<String> answer = invocation -> (String)Arrays.asList(invocation.getArguments()).get(1);
+        Answer<String> answer = invocation -> (String) Arrays.asList(invocation.getArguments()).get(1);
         when(lm.get(any(), any())).thenAnswer(answer);
 
         // Player name
@@ -179,7 +176,8 @@ public class ChestDamageListenerTest extends AbstractCommonSetup
     }
 
     /**
-     * Test method for {@link ChestDamageListener#onExplosion(org.bukkit.event.entity.EntityExplodeEvent)}.
+     * Test method for
+     * {@link ChestDamageListener#onExplosion(org.bukkit.event.entity.EntityExplodeEvent)}.
      */
     @Test
     public void testOnExplosionChestDamageNotAllowed() {
@@ -211,7 +209,8 @@ public class ChestDamageListenerTest extends AbstractCommonSetup
     }
 
     /**
-     * Test method for {@link ChestDamageListener#onExplosion(org.bukkit.event.entity.EntityExplodeEvent)}.
+     * Test method for
+     * {@link ChestDamageListener#onExplosion(org.bukkit.event.entity.EntityExplodeEvent)}.
      */
     @Test
     public void testOnExplosionChestDamageAllowed() {

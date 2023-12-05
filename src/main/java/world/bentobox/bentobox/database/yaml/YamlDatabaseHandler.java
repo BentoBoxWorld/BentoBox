@@ -62,26 +62,35 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
     private static final String YML = ".yml";
 
     /**
-     * Flag to indicate if this is a config or a pure object database (difference is in comments and annotations)
+     * Flag to indicate if this is a config or a pure object database (difference is
+     * in comments and annotations)
      */
     protected boolean configFlag;
 
     /**
      * Constructor
-     * @param plugin - plugin
-     * @param type - class to store in the database
-     * @param databaseConnector - the database credentials, in this case, just the YAML functions
+     * 
+     * @param plugin            - plugin
+     * @param type              - class to store in the database
+     * @param databaseConnector - the database credentials, in this case, just the
+     *                          YAML functions
      */
     YamlDatabaseHandler(BentoBox plugin, Class<T> type, DatabaseConnector databaseConnector) {
         super(plugin, type, databaseConnector);
     }
 
-    /* (non-Javadoc)
-     * @see world.bentobox.bentobox.database.AbstractDatabaseHandler#loadObject(java.lang.String)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * world.bentobox.bentobox.database.AbstractDatabaseHandler#loadObject(java.lang
+     * .String)
      */
     @Override
-    public T loadObject(@NonNull String key) throws InstantiationException, IllegalAccessException, InvocationTargetException, ClassNotFoundException, IntrospectionException, NoSuchMethodException {
-        // Objects are loaded from a folder named after the simple name of the class being stored
+    public T loadObject(@NonNull String key) throws InstantiationException, IllegalAccessException,
+            InvocationTargetException, ClassNotFoundException, IntrospectionException, NoSuchMethodException {
+        // Objects are loaded from a folder named after the simple name of the class
+        // being stored
         String path = DATABASE_FOLDER_NAME + File.separator + dataObject.getSimpleName();
         // This path and key can be overridden by the StoreAt annotation in the code
         StoreAt storeAt = dataObject.getAnnotation(StoreAt.class);
@@ -90,7 +99,7 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             key = storeAt.filename();
         }
         // Load the YAML file at the location.
-        YamlConfiguration config = ((YamlDatabaseConnector)databaseConnector).loadYamlFile(path, key);
+        YamlConfiguration config = ((YamlDatabaseConnector) databaseConnector).loadYamlFile(path, key);
         // Use the createObject method to turn a YAML config into an Java object
         return createObject(config);
     }
@@ -101,15 +110,18 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         return databaseConnector.uniqueIdExists(dataObject.getSimpleName(), uniqueId);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see world.bentobox.bentobox.database.AbstractDatabaseHandler#loadObjects()
      */
     @Override
-    public List<T> loadObjects() throws InstantiationException, IllegalAccessException, InvocationTargetException, ClassNotFoundException, IntrospectionException, NoSuchMethodException {
+    public List<T> loadObjects() throws InstantiationException, IllegalAccessException, InvocationTargetException,
+            ClassNotFoundException, IntrospectionException, NoSuchMethodException {
         // In this case, all the objects of a specific type are being loaded.
         List<T> list = new ArrayList<>();
         // Look for any files that end in .yml in the folder
-        FilenameFilter ymlFilter = (dir, name) ->  name.toLowerCase(java.util.Locale.ENGLISH).endsWith(YML);
+        FilenameFilter ymlFilter = (dir, name) -> name.toLowerCase(java.util.Locale.ENGLISH).endsWith(YML);
         // The path is the simple name of the class
         String path = dataObject.getSimpleName();
         // The storeAt annotation may override the path
@@ -126,12 +138,13 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             tableFolder.mkdirs();
         }
         // Load each object from the file system, filtered, non-null
-        for (File file: Objects.requireNonNull(tableFolder.listFiles(ymlFilter))) {
+        for (File file : Objects.requireNonNull(tableFolder.listFiles(ymlFilter))) {
             String fileName = file.getName();
             if (storeAt != null) {
                 fileName = storeAt.filename();
             }
-            YamlConfiguration config = ((YamlDatabaseConnector)databaseConnector).loadYamlFile(DATABASE_FOLDER_NAME + File.separator + dataObject.getSimpleName(), fileName);
+            YamlConfiguration config = ((YamlDatabaseConnector) databaseConnector)
+                    .loadYamlFile(DATABASE_FOLDER_NAME + File.separator + dataObject.getSimpleName(), fileName);
             list.add(createObject(config));
         }
         return list;
@@ -143,11 +156,12 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      * @param config - YAML config file
      *
      * @return <T> filled with values
-     * @throws SecurityException security exception
-     * @throws NoSuchMethodException no such method
+     * @throws SecurityException        security exception
+     * @throws NoSuchMethodException    no such method
      * @throws IllegalArgumentException illegal argument
      */
-    private T createObject(YamlConfiguration config) throws InstantiationException, IllegalAccessException, IntrospectionException, InvocationTargetException, ClassNotFoundException, NoSuchMethodException {
+    private T createObject(YamlConfiguration config) throws InstantiationException, IllegalAccessException,
+            IntrospectionException, InvocationTargetException, ClassNotFoundException, NoSuchMethodException {
         // Create a new instance of the dataObject of type T (which can be any class)
         T instance = dataObject.getDeclaredConstructor().newInstance();
 
@@ -168,9 +182,11 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             ConfigEntry configEntry = field.getAnnotation(ConfigEntry.class);
 
             // Determine the storage location
-            String storageLocation = (configEntry != null && !configEntry.path().isEmpty()) ? configEntry.path() : field.getName();
+            String storageLocation = (configEntry != null && !configEntry.path().isEmpty()) ? configEntry.path()
+                    : field.getName();
 
-            // Some fields need custom handling to serialize or deserialize and the programmer will need to
+            // Some fields need custom handling to serialize or deserialize and the
+            // programmer will need to
             // define them herself. She can add an annotation to do that.
             Adapter adapterNotation = field.getAnnotation(Adapter.class);
             if (adapterNotation != null && AdapterInterface.class.isAssignableFrom(adapterNotation.value())) {
@@ -178,14 +194,18 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                 // Get the original value to be stored
                 Object value = config.get(storageLocation);
                 // Invoke the deserialization on this value
-                method.invoke(instance, ((AdapterInterface<?,?>)adapterNotation.value().getDeclaredConstructor().newInstance()).deserialize(value));
-                // We are done here. If a custom adapter was defined, the rest of this method does not need to be run
-            } else if (config.contains(storageLocation)) { // Look in the YAML Config to see if this field exists (it should)
+                method.invoke(instance,
+                        ((AdapterInterface<?, ?>) adapterNotation.value().getDeclaredConstructor().newInstance())
+                                .deserialize(value));
+                // We are done here. If a custom adapter was defined, the rest of this method
+                // does not need to be run
+            } else if (config.contains(storageLocation)) { // Look in the YAML Config to see if this field exists (it
+                                                           // should)
                 /*
                  * What follows is general deserialization code
                  */
                 if (config.get(storageLocation) == null) { // Check for null values
-                    method.invoke(instance, (Object)null);
+                    method.invoke(instance, (Object) null);
                 } else if (Map.class.isAssignableFrom(propertyDescriptor.getPropertyType())) {
                     // Maps
                     deserializeMap(method, instance, storageLocation, config);
@@ -201,16 +221,19 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                 }
             }
         }
-        // After deserialization is complete, return the instance of the class we have created
+        // After deserialization is complete, return the instance of the class we have
+        // created
         return instance;
     }
 
-    private void deserializeValue(Method method, T instance, PropertyDescriptor propertyDescriptor, String storageLocation, YamlConfiguration config) throws IllegalAccessException, InvocationTargetException {
+    private void deserializeValue(Method method, T instance, PropertyDescriptor propertyDescriptor,
+            String storageLocation, YamlConfiguration config) throws IllegalAccessException, InvocationTargetException {
         // Not a collection. Get the value and rely on YAML to supply it
         Object value = config.get(storageLocation);
-        // If the value is a yml MemorySection then something is wrong, so ignore it. Maybe an admin did some bad editing
+        // If the value is a yml MemorySection then something is wrong, so ignore it.
+        // Maybe an admin did some bad editing
         if (value != null && !value.getClass().equals(MemorySection.class)) {
-            Object setTo = deserialize(value,propertyDescriptor.getPropertyType());
+            Object setTo = deserialize(value, propertyDescriptor.getPropertyType());
             if (!(Enum.class.isAssignableFrom(propertyDescriptor.getPropertyType()) && setTo == null)) {
                 // Do not invoke null on Enums
                 try {
@@ -218,18 +241,20 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                     Type setType = propertyDescriptor.getWriteMethod().getGenericParameterTypes()[0];
                     if (setType.getTypeName().equals("float")) {
                         double d = (double) setTo;
-                        float f = (float)d;
+                        float f = (float) d;
                         method.invoke(instance, f);
                     } else {
                         method.invoke(instance, setTo);
                     }
                 } catch (Exception e) {
-                    plugin.logError("Could not deserialize. Attempt by " + instance.getClass().getCanonicalName() + " " + method.getName() + " to set to " + setTo);
+                    plugin.logError("Could not deserialize. Attempt by " + instance.getClass().getCanonicalName() + " "
+                            + method.getName() + " to set to " + setTo);
                     plugin.logError("Error message is: " + e.getMessage());
                     plugin.logStacktrace(e);
                 }
             } else {
-                plugin.logError("Default setting value will be used: " + propertyDescriptor.getReadMethod().invoke(instance));
+                plugin.logError(
+                        "Default setting value will be used: " + propertyDescriptor.getReadMethod().invoke(instance));
                 plugin.logError(method.getName());
                 plugin.logError(propertyDescriptor.getReadMethod().getName());
                 plugin.logError(instance.toString());
@@ -237,7 +262,8 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         }
     }
 
-    private void deserializeLists(Method method, T instance, String storageLocation, YamlConfiguration config) throws ClassNotFoundException, IllegalAccessException, InvocationTargetException {
+    private void deserializeLists(Method method, T instance, String storageLocation, YamlConfiguration config)
+            throws ClassNotFoundException, IllegalAccessException, InvocationTargetException {
         // Note that we have no idea what type of List this is
         List<Type> collectionTypes = getCollectionParameterTypes(method);
         // collectionTypes should be only 1 long
@@ -246,15 +272,16 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         List<Object> value = new ArrayList<>();
         // Lists are stored as lists in YAML
         if (config.getList(storageLocation) != null) {
-            for (Object listValue: config.getList(storageLocation)) {
-                value.add(deserialize(listValue,Class.forName(setType.getTypeName())));
+            for (Object listValue : config.getList(storageLocation)) {
+                value.add(deserialize(listValue, Class.forName(setType.getTypeName())));
             }
         }
         // Store the list using the setting
         method.invoke(instance, value);
     }
 
-    private void deserializeSet(Method method, T instance, String storageLocation, YamlConfiguration config) throws ClassNotFoundException, IllegalAccessException, InvocationTargetException {
+    private void deserializeSet(Method method, T instance, String storageLocation, YamlConfiguration config)
+            throws ClassNotFoundException, IllegalAccessException, InvocationTargetException {
         // Note that we have no idea what type this set is
         List<Type> collectionTypes = getCollectionParameterTypes(method);
         // collectionTypes should be only 1 long
@@ -263,34 +290,38 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         Set<Object> value = new HashSet<>();
         // Sets are stored as a list in YAML
         if (config.getList(storageLocation) != null) {
-            for (Object listValue: config.getList(storageLocation)) {
-                value.add(deserialize(listValue,Class.forName(setType.getTypeName())));
+            for (Object listValue : config.getList(storageLocation)) {
+                value.add(deserialize(listValue, Class.forName(setType.getTypeName())));
             }
         }
         // Store the set using the setter in the class
         method.invoke(instance, value);
     }
 
-    private void deserializeMap(Method method, T instance, String storageLocation, YamlConfiguration config) throws ClassNotFoundException, IllegalAccessException, InvocationTargetException {
+    private void deserializeMap(Method method, T instance, String storageLocation, YamlConfiguration config)
+            throws ClassNotFoundException, IllegalAccessException, InvocationTargetException {
         // Note that we have no idea what type of map this is, so we need to find out
         List<Type> collectionTypes = getCollectionParameterTypes(method);
-        // collectionTypes should be 2 long because there are two parameters in a Map (key, value)
+        // collectionTypes should be 2 long because there are two parameters in a Map
+        // (key, value)
         Type keyType = collectionTypes.get(0);
         Type valueType = collectionTypes.get(1);
         // Create a map that we'll put the values into
-        Map<Object,Object> value = new HashMap<>();
-        // Map values are stored in a configuration section in the YAML. Check that it exists
+        Map<Object, Object> value = new HashMap<>();
+        // Map values are stored in a configuration section in the YAML. Check that it
+        // exists
         if (config.getConfigurationSection(storageLocation) != null) {
             // Run through the values stored
             for (String key : config.getConfigurationSection(storageLocation).getKeys(false)) {
                 // Map values can be null - it is allowed here
-                Object mapValue = deserialize(config.get(storageLocation + "." + key), Class.forName(valueType.getTypeName()));
+                Object mapValue = deserialize(config.get(storageLocation + "." + key),
+                        Class.forName(valueType.getTypeName()));
                 // Keys cannot be null - skip if they exist
                 // Convert any serialized dots back to dots
                 // In YAML dots . cause a lot of problems, so I serialize them as :dot:
                 // There may be a better way to do this.
                 key = key.replace(":dot:", ".");
-                Object mapKey = deserialize(key,Class.forName(keyType.getTypeName()));
+                Object mapKey = deserialize(key, Class.forName(keyType.getTypeName()));
                 if (mapKey == null) {
                     continue;
                 }
@@ -298,25 +329,29 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                 value.put(mapKey, mapValue);
             }
         }
-        // Invoke the setter in the class (this is why JavaBeans requires getters and setters for every field)
+        // Invoke the setter in the class (this is why JavaBeans requires getters and
+        // setters for every field)
         method.invoke(instance, value);
     }
 
     /**
      * Get a list of parameter types for the collection argument in this method
+     * 
      * @param writeMethod - write method
      * @return a list of parameter types for the collection argument in this method
      */
     private List<Type> getCollectionParameterTypes(Method writeMethod) {
         List<Type> result = new ArrayList<>();
         // Get the return type
-        // This uses a trick to extract what the arguments are of the writeMethod of the field.
+        // This uses a trick to extract what the arguments are of the writeMethod of the
+        // field.
         // In this way, we can deduce what type needs to be written at runtime.
         Type[] genericParameterTypes = writeMethod.getGenericParameterTypes();
         // There could be more than one argument, so step through them
         for (Type genericParameterType : genericParameterTypes) {
-            // If the argument is a parameter, then do something - this should always be true if the parameter is a collection
-            if(genericParameterType instanceof ParameterizedType pt) {
+            // If the argument is a parameter, then do something - this should always be
+            // true if the parameter is a collection
+            if (genericParameterType instanceof ParameterizedType pt) {
                 // Get the actual type arguments of the parameter
                 Type[] parameters = pt.getActualTypeArguments();
                 result.addAll(Arrays.asList(parameters));
@@ -333,7 +368,8 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      */
     @SuppressWarnings("unchecked")
     @Override
-    public CompletableFuture<Boolean> saveObject(T instance) throws IllegalAccessException, InvocationTargetException, IntrospectionException {
+    public CompletableFuture<Boolean> saveObject(T instance)
+            throws IllegalAccessException, InvocationTargetException, IntrospectionException {
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
         // Null check
         if (instance == null) {
@@ -350,15 +386,18 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         // Comments for the file
         Map<String, String> yamlComments = new HashMap<>();
 
-        // Only allow storing in an arbitrary place if it is a config object. Otherwise it is in the database
+        // Only allow storing in an arbitrary place if it is a config object. Otherwise
+        // it is in the database
         StoreAt storeAt = instance.getClass().getAnnotation(StoreAt.class);
-        String path = storeAt == null ? DATABASE_FOLDER_NAME + File.separator + dataObject.getSimpleName() : storeAt.path();
+        String path = storeAt == null ? DATABASE_FOLDER_NAME + File.separator + dataObject.getSimpleName()
+                : storeAt.path();
         String filename = storeAt == null ? "" : storeAt.filename();
 
         // See if there are any top-level comments
         handleComments(instance.getClass(), config, yamlComments, "");
 
-        // Run through all the fields in the class that is being stored. EVERY field must have a get and set method
+        // Run through all the fields in the class that is being stored. EVERY field
+        // must have a get and set method
         for (Field field : dataObject.getDeclaredFields()) {
             if (field.isSynthetic()) {
                 continue;
@@ -367,7 +406,8 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             PropertyDescriptor propertyDescriptor = new PropertyDescriptor(field.getName(), dataObject);
             // Get the read method
             Method method = propertyDescriptor.getReadMethod();
-            // Invoke the read method to get the value. We have no idea what type of value it is.
+            // Invoke the read method to get the value. We have no idea what type of value
+            // it is.
             Object value = method.invoke(instance);
 
             String storageLocation = field.getName();
@@ -398,13 +438,13 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                 // Set the filename if it has not be set already
                 if (filename.isEmpty() && method.getName().equals("getUniqueId")) {
                     // Save the name for when the file is saved
-                    filename = getFilename(propertyDescriptor, instance, (String)value);
+                    filename = getFilename(propertyDescriptor, instance, (String) value);
                 }
                 // Collections need special serialization
                 if (Map.class.isAssignableFrom(propertyDescriptor.getPropertyType()) && value != null) {
-                    serializeMap((Map<Object,Object>)value, config, storageLocation);
+                    serializeMap((Map<Object, Object>) value, config, storageLocation);
                 } else if (Set.class.isAssignableFrom(propertyDescriptor.getPropertyType()) && value != null) {
-                    serializeSet((Set<Object>)value, config, storageLocation);
+                    serializeSet((Set<Object>) value, config, storageLocation);
                 } else {
                     // For all other data that doesn't need special serialization
                     config.set(storageLocation, serialize(value));
@@ -421,15 +461,16 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         return completableFuture;
     }
 
-    private void save(CompletableFuture<Boolean> completableFuture, String name, String data, String path, Map<String, String> yamlComments) {
+    private void save(CompletableFuture<Boolean> completableFuture, String name, String data, String path,
+            Map<String, String> yamlComments) {
         if (plugin.isEnabled()) {
             // Async
             processQueue.add(() -> completableFuture.complete(
-                    ((YamlDatabaseConnector)databaseConnector).saveYamlFile(data, path, name, yamlComments)));
+                    ((YamlDatabaseConnector) databaseConnector).saveYamlFile(data, path, name, yamlComments)));
         } else {
             // Sync for shutdown
-            completableFuture.complete(
-                    ((YamlDatabaseConnector)databaseConnector).saveYamlFile(data, path, name, yamlComments));
+            completableFuture
+                    .complete(((YamlDatabaseConnector) databaseConnector).saveYamlFile(data, path, name, yamlComments));
         }
     }
 
@@ -448,7 +489,7 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         Map<Object, Object> result = new HashMap<>();
         for (Entry<Object, Object> object : value.entrySet()) {
             // Serialize all key and values
-            String key = (String)serialize(object.getKey());
+            String key = (String) serialize(object.getKey());
             key = key.replace("\\.", ":dot:");
             result.put(key, serialize(object.getValue()));
         }
@@ -456,8 +497,10 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         config.set(storageLocation, result);
     }
 
-    private String getFilename(PropertyDescriptor propertyDescriptor, T instance, String id) throws IllegalAccessException, InvocationTargetException {
-        // If the object does not have a unique name assigned to it already, one is created at random
+    private String getFilename(PropertyDescriptor propertyDescriptor, T instance, String id)
+            throws IllegalAccessException, InvocationTargetException {
+        // If the object does not have a unique name assigned to it already, one is
+        // created at random
         if (id == null || id.isEmpty()) {
             id = databaseConnector.getUniqueId(dataObject.getSimpleName());
             // Set it in the class so that it will be used next time
@@ -467,23 +510,29 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
     }
 
     /**
-     * Checks if an adapter is to be used. If so, it is used and true returned, if not, fase is returned
-     * @param field Field
-     * @param config Yaml Config
+     * Checks if an adapter is to be used. If so, it is used and true returned, if
+     * not, fase is returned
+     * 
+     * @param field           Field
+     * @param config          Yaml Config
      * @param storageLocation Storage location
-     * @param value Value
+     * @param value           Value
      * @return true if adapater used
-     * @throws IllegalAccessException exception
+     * @throws IllegalAccessException    exception
      * @throws InvocationTargetException exception
      */
-    private boolean checkAdapter(Field field, YamlConfiguration config, String storageLocation, Object value) throws IllegalAccessException, InvocationTargetException {
+    private boolean checkAdapter(Field field, YamlConfiguration config, String storageLocation, Object value)
+            throws IllegalAccessException, InvocationTargetException {
         Adapter adapterNotation = field.getAnnotation(Adapter.class);
         if (adapterNotation != null && AdapterInterface.class.isAssignableFrom(adapterNotation.value())) {
             // A conversion adapter has been defined
             try {
-                config.set(storageLocation, ((AdapterInterface<?,?>)adapterNotation.value().getDeclaredConstructor().newInstance()).serialize(value));
+                config.set(storageLocation,
+                        ((AdapterInterface<?, ?>) adapterNotation.value().getDeclaredConstructor().newInstance())
+                                .serialize(value));
             } catch (InstantiationException | IllegalArgumentException | NoSuchMethodException | SecurityException e) {
-                plugin.logError("Could not instantiate adapter " + adapterNotation.value().getName() + " " + e.getMessage());
+                plugin.logError(
+                        "Could not instantiate adapter " + adapterNotation.value().getName() + " " + e.getMessage());
             }
             // We are done here
             return true;
@@ -492,10 +541,13 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
     }
 
     /**
-     * Handles comments that are set on a Field or a Class using the {@link ConfigComment} annotation.
+     * Handles comments that are set on a Field or a Class using the
+     * {@link ConfigComment} annotation.
+     * 
      * @since 1.3.0
      */
-    private void handleComments(@NonNull AnnotatedElement annotatedElement, @NonNull YamlConfiguration config, @NonNull Map<String, String> yamlComments, @NonNull String parent) {
+    private void handleComments(@NonNull AnnotatedElement annotatedElement, @NonNull YamlConfiguration config,
+            @NonNull Map<String, String> yamlComments, @NonNull String parent) {
         // See if there are multiple comments
         ConfigComment.Line comments = annotatedElement.getAnnotation(ConfigComment.Line.class);
         if (comments != null) {
@@ -511,10 +563,13 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
     }
 
     /**
-     * Handles comments that should be added according to the values set in the {@link ConfigEntry} annotation of a Field.
+     * Handles comments that should be added according to the values set in the
+     * {@link ConfigEntry} annotation of a Field.
+     * 
      * @since 1.3.0
      */
-    private void handleConfigEntryComments(@NonNull ConfigEntry configEntry, @NonNull YamlConfiguration config, @NonNull Map<String, String> yamlComments, @NonNull String parent) {
+    private void handleConfigEntryComments(@NonNull ConfigEntry configEntry, @NonNull YamlConfiguration config,
+            @NonNull Map<String, String> yamlComments, @NonNull String parent) {
         // Tell if there is a video associated to this configuration option.
         if (!configEntry.video().isEmpty()) {
             setComment("You can find more details in this video: " + configEntry.video(), config, yamlComments, parent);
@@ -527,29 +582,40 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
 
         // Tell if the configEntry is experimental
         if (configEntry.experimental()) {
-            setComment("/!\\ This feature is experimental and might not work as expected or might not work at all.", config, yamlComments, parent);
+            setComment("/!\\ This feature is experimental and might not work as expected or might not work at all.",
+                    config, yamlComments, parent);
         }
 
         // Tell if the configEntry needs a reset.
         if (configEntry.needsReset()) {
-            setComment("/!\\ BentoBox currently does not support changing this value mid-game. If you do need to change it, do a full reset of your databases and worlds.", config, yamlComments, parent);
+            setComment(
+                    "/!\\ BentoBox currently does not support changing this value mid-game. If you do need to change it, do a full reset of your databases and worlds.",
+                    config, yamlComments, parent);
         }
         // Tell if the configEntry needs the server to be restarted.
         if (configEntry.needsRestart()) {
-            setComment("/!\\ In order to apply the changes made to this option, you must restart your server. Reloading BentoBox or the server won't work.", config, yamlComments, parent);
+            setComment(
+                    "/!\\ In order to apply the changes made to this option, you must restart your server. Reloading BentoBox or the server won't work.",
+                    config, yamlComments, parent);
         }
     }
 
-    private void setComment(@NonNull String comment, @NonNull YamlConfiguration config, @NonNull Map<String, String> yamlComments, @NonNull String parent) {
+    private void setComment(@NonNull String comment, @NonNull YamlConfiguration config,
+            @NonNull Map<String, String> yamlComments, @NonNull String parent) {
         String random = "comment-" + UUID.randomUUID();
         // Store placeholder
         config.set(parent + random, " ");
         // Create comment
-        yamlComments.put(random, "# " + comment.replace(TextVariables.VERSION, Objects.isNull(getAddon()) ? plugin.getDescription().getVersion() : getAddon().getDescription().getVersion()));
+        yamlComments.put(random,
+                "# " + comment.replace(TextVariables.VERSION,
+                        Objects.isNull(getAddon()) ? plugin.getDescription().getVersion()
+                                : getAddon().getDescription().getVersion()));
     }
 
     /**
-     * Serialize an object if required. This means that an object will be turned into text to store in YAML
+     * Serialize an object if required. This means that an object will be turned
+     * into text to store in YAML
+     * 
      * @param object - object to serialize
      * @return - serialized object
      */
@@ -573,7 +639,7 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         }
         // Enums
         if (object instanceof Enum<?> e) {
-            //Custom enums are a child of the Enum class. Just get the names of each one.
+            // Custom enums are a child of the Enum class. Just get the names of each one.
             return e.name();
         }
         return object;
@@ -613,24 +679,24 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             }
         }
         if (clazz.equals(UUID.class)) {
-            value = UUID.fromString((String)value);
+            value = UUID.fromString((String) value);
         }
         // Bukkit Types
         if (clazz.equals(Location.class)) {
             // Get Location from String - may be null...
-            value = Util.getLocationString(((String)value));
+            value = Util.getLocationString(((String) value));
         }
         if (clazz.equals(World.class)) {
             // Get world by name - may be null...
-            value = Bukkit.getWorld((String)value);
+            value = Bukkit.getWorld((String) value);
         }
         // Enums
         if (Enum.class.isAssignableFrom(clazz)) {
-            //Custom enums are a child of the Enum class.
+            // Custom enums are a child of the Enum class.
             // Find out the value
-            Class<Enum> enumClass = (Class<Enum>)clazz;
+            Class<Enum> enumClass = (Class<Enum>) clazz;
             try {
-                String name = ((String)value).toUpperCase(Locale.ENGLISH);
+                String name = ((String) value).toUpperCase(Locale.ENGLISH);
                 // Backwards compatibility for upgrade to 1.16.1
                 if (name.equals("PIG_ZOMBIE") || name.equals("ZOMBIFIED_PIGLIN")) {
                     return Enums.getIfPresent(EntityType.class, "ZOMBIFIED_PIGLIN")
@@ -640,7 +706,8 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             } catch (Exception e) {
                 // This value does not exist - probably admin typed it wrongly
                 // Show what is available and pick one at random
-                plugin.logError("Error in YML file: " + value + " is not a valid value in the enum " + clazz.getCanonicalName() + "!");
+                plugin.logError("Error in YML file: " + value + " is not a valid value in the enum "
+                        + clazz.getCanonicalName() + "!");
                 plugin.logError("Options are : ");
                 for (Field fields : enumClass.getFields()) {
                     plugin.logError(fields.getName());
@@ -664,7 +731,8 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         if (uniqueId == null) {
             return;
         }
-        // The filename of the YAML file is the value of uniqueId field plus .yml. Sometimes the .yml is already appended.
+        // The filename of the YAML file is the value of uniqueId field plus .yml.
+        // Sometimes the .yml is already appended.
         if (!uniqueId.endsWith(YML)) {
             uniqueId = uniqueId + YML;
         }
@@ -682,11 +750,16 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         }
     }
 
-    /* (non-Javadoc)
-     * @see world.bentobox.bentobox.database.AbstractDatabaseHandler#deleteObject(java.lang.Object)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * world.bentobox.bentobox.database.AbstractDatabaseHandler#deleteObject(java.
+     * lang.Object)
      */
     @Override
-    public void deleteObject(T instance) throws IllegalAccessException, InvocationTargetException, IntrospectionException {
+    public void deleteObject(T instance)
+            throws IllegalAccessException, InvocationTargetException, IntrospectionException {
         // Null check
         if (instance == null) {
             plugin.logError("YAML database request to delete a null.");

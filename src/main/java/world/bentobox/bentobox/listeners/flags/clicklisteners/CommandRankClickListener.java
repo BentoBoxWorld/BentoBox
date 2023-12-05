@@ -34,14 +34,18 @@ public class CommandRankClickListener implements ClickHandler {
     private final BentoBox plugin = BentoBox.getInstance();
     private Island island;
 
-    /* (non-Javadoc)
-     * @see world.bentobox.bentobox.api.panels.PanelItem.ClickHandler#onClick(world.bentobox.bentobox.api.panels.Panel, world.bentobox.bentobox.api.user.User, org.bukkit.event.inventory.ClickType, int)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see world.bentobox.bentobox.api.panels.PanelItem.ClickHandler#onClick(world.
+     * bentobox.bentobox.api.panels.Panel, world.bentobox.bentobox.api.user.User,
+     * org.bukkit.event.inventory.ClickType, int)
      */
     @Override
     public boolean onClick(Panel panel, User user, ClickType clickType, int slot) {
         // This click listener is used with TabbedPanel and SettingsTabs only
-        TabbedPanel tp = (TabbedPanel)panel;
-        SettingsTab st = (SettingsTab)tp.getActiveTab();
+        TabbedPanel tp = (TabbedPanel) panel;
+        SettingsTab st = (SettingsTab) tp.getActiveTab();
         // Get the island for this tab
         island = st.getIsland();
 
@@ -56,22 +60,24 @@ public class CommandRankClickListener implements ClickHandler {
         String prefix = plugin.getIWM().getPermissionPrefix(w);
         String reqPerm = prefix + "settings." + Flags.COMMAND_RANKS.getID();
         String allPerms = prefix + "settings.*";
-        if (!user.hasPermission(reqPerm) && !user.hasPermission(allPerms)
-                && !user.isOp() && !user.hasPermission(prefix + "admin.settings")) {
+        if (!user.hasPermission(reqPerm) && !user.hasPermission(allPerms) && !user.isOp()
+                && !user.hasPermission(prefix + "admin.settings")) {
             user.sendMessage("general.errors.no-permission", TextVariables.PERMISSION, reqPerm);
             user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_METAL_HIT, 1F, 1F);
             return true;
         }
 
         // Check if user has rank enough on the island
-        //Island island = plugin.getIslands().getIsland(panel.getWorld().orElse(user.getWorld()), user.getUniqueId());
+        // Island island =
+        // plugin.getIslands().getIsland(panel.getWorld().orElse(user.getWorld()),
+        // user.getUniqueId());
         if (!island.isAllowed(user, Flags.CHANGE_SETTINGS)) {
-            String rank = user.getTranslation(plugin.getRanksManager().getRank(Objects.requireNonNull(island).getRank(user)));
+            String rank = user
+                    .getTranslation(plugin.getRanksManager().getRank(Objects.requireNonNull(island).getRank(user)));
             user.sendMessage("general.errors.insufficient-rank", TextVariables.RANK, rank);
             user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_METAL_HIT, 1F, 1F);
             return true;
         }
-
 
         String panelName = user.getTranslation("protection.flags.COMMAND_RANKS.name");
         if (panel.getName().equals(panelName)) {
@@ -79,7 +85,8 @@ public class CommandRankClickListener implements ClickHandler {
             // Slot relates to the command
             String c = getCommands(panel.getWorld().orElse(user.getWorld())).get(slot);
             // Apply change to panel
-            panel.getInventory().setItem(slot, getPanelItem(c, user, panel.getWorld().orElse(user.getWorld())).getItem());
+            panel.getInventory().setItem(slot,
+                    getPanelItem(c, user, panel.getWorld().orElse(user.getWorld())).getItem());
         } else {
             // Open the Sub Settings panel
             openPanel(user, panelName, panel.getWorld().orElse(user.getWorld()));
@@ -101,8 +108,9 @@ public class CommandRankClickListener implements ClickHandler {
 
     /**
      * Gets the rank command panel item
-     * @param c - rank string
-     * @param user - user
+     * 
+     * @param c     - rank string
+     * @param user  - user
      * @param world - world for this panel
      * @return panel item for this command
      */
@@ -116,11 +124,14 @@ public class CommandRankClickListener implements ClickHandler {
         pib.description(d);
         plugin.getRanksManager().getRanks().forEach((reference, score) -> {
             if (score >= RanksManager.MEMBER_RANK && score < island.getRankCommand(c)) {
-                pib.description(user.getTranslation("protection.panel.flag-item.blocked-rank") + user.getTranslation(reference));
+                pib.description(user.getTranslation("protection.panel.flag-item.blocked-rank")
+                        + user.getTranslation(reference));
             } else if (score <= RanksManager.OWNER_RANK && score > island.getRankCommand(c)) {
-                pib.description(user.getTranslation("protection.panel.flag-item.allowed-rank") + user.getTranslation(reference));
+                pib.description(user.getTranslation("protection.panel.flag-item.allowed-rank")
+                        + user.getTranslation(reference));
             } else if (score == island.getRankCommand(c)) {
-                pib.description(user.getTranslation("protection.panel.flag-item.minimal-rank") + user.getTranslation(reference));
+                pib.description(user.getTranslation("protection.panel.flag-item.minimal-rank")
+                        + user.getTranslation(reference));
             }
         });
         return pib.build();
@@ -129,8 +140,8 @@ public class CommandRankClickListener implements ClickHandler {
     private List<String> getCommands(World world) {
         List<String> result = new ArrayList<>();
         plugin.getCommandsManager().getCommands().values().stream()
-        .filter(c -> c.getWorld() != null &&  c.getWorld().equals(world))
-        .forEach(c -> result.addAll(getCmdRecursively("/", c)));
+                .filter(c -> c.getWorld() != null && c.getWorld().equals(world))
+                .forEach(c -> result.addAll(getCmdRecursively("/", c)));
         if (result.size() > 49) {
             plugin.logError("Number of rank setting commands is too big for GUI");
             result.subList(49, result.size()).clear();
@@ -139,9 +150,11 @@ public class CommandRankClickListener implements ClickHandler {
     }
 
     /**
-     * Recursively traverses the command tree looking for any configurable rank command and returns a string list of commands
+     * Recursively traverses the command tree looking for any configurable rank
+     * command and returns a string list of commands
+     * 
      * @param labels - preceding command's label list
-     * @param cc - composite command
+     * @param cc     - composite command
      * @return string list of commands
      */
     private List<String> getCmdRecursively(String labels, CompositeCommand cc) {

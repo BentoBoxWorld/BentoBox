@@ -23,6 +23,7 @@ public class BentoBoxMigrateCommand extends ConfirmableCommand {
 
     /**
      * Reloads settings, addons and localization command
+     * 
      * @param parent command parent
      */
     public BentoBoxMigrateCommand(CompositeCommand parent) {
@@ -48,7 +49,8 @@ public class BentoBoxMigrateCommand extends ConfirmableCommand {
             // Migrate addons data
             user.sendMessage("commands.bentobox.migrate.addons");
             getPlugin().getAddonsManager().getDataObjects().forEach(t -> {
-                user.sendMessage("commands.bentobox.migrate.class", TextVariables.DESCRIPTION, BentoBox.getInstance().getSettings().getDatabasePrefix() + t.getCanonicalName());
+                user.sendMessage("commands.bentobox.migrate.class", TextVariables.DESCRIPTION,
+                        BentoBox.getInstance().getSettings().getDatabasePrefix() + t.getCanonicalName());
                 new Database<>(getPlugin(), t).loadObjects();
                 user.sendMessage(MIGRATED);
             });

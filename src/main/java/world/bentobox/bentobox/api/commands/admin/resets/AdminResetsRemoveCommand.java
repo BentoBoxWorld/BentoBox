@@ -43,9 +43,8 @@ public class AdminResetsRemoveCommand extends CompositeCommand {
             // Make sure it cannot go under 0.
             int newResets = Math.max(getPlayers().getResets(getWorld(), targetUUID) - Integer.parseInt(args.get(1)), 0);
             getPlayers().setResets(getWorld(), targetUUID, newResets);
-            user.sendMessage("commands.admin.resets.remove.success",
-                    TextVariables.NAME, args.get(0), TextVariables.NUMBER, args.get(1),
-                    "[total]", String.valueOf(newResets));
+            user.sendMessage("commands.admin.resets.remove.success", TextVariables.NAME, args.get(0),
+                    TextVariables.NUMBER, args.get(1), "[total]", String.valueOf(newResets));
             return true;
         }
 

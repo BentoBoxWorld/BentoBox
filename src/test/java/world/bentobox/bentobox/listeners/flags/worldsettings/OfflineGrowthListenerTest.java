@@ -43,8 +43,9 @@ import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.util.Util;
+
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({BentoBox.class, Util.class, Bukkit.class })
+@PrepareForTest({ BentoBox.class, Util.class, Bukkit.class })
 public class OfflineGrowthListenerTest {
 
     @Mock
@@ -79,7 +80,6 @@ public class OfflineGrowthListenerTest {
         set.add(UUID.randomUUID());
         set.add(UUID.randomUUID());
         when(island.getMemberSet(Mockito.anyInt())).thenReturn(set.build());
-
 
         when(plugin.getIslands()).thenReturn(im);
         when(im.getIsland(any(), any(UUID.class))).thenReturn(island);

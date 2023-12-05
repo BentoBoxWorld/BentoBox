@@ -11,7 +11,6 @@ import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 
-
 /**
  * @author tastybento
  *
@@ -31,10 +30,8 @@ public class IslandSetnameCommand extends CompositeCommand {
         setConfigurableRankCommand();
     }
 
-
     @Override
-    public boolean canExecute(User user, String label, List<String> args)
-    {
+    public boolean canExecute(User user, String label, List<String> args) {
         // Explain command
         if (args.isEmpty()) {
             showHelp(this, user);
@@ -51,7 +48,8 @@ public class IslandSetnameCommand extends CompositeCommand {
         // Check command rank.
         int rank = Objects.requireNonNull(island).getRank(user);
         if (rank < island.getRankCommand(getUsage())) {
-            user.sendMessage("general.errors.insufficient-rank", TextVariables.RANK, user.getTranslation(getPlugin().getRanksManager().getRank(rank)));
+            user.sendMessage("general.errors.insufficient-rank", TextVariables.RANK,
+                    user.getTranslation(getPlugin().getRanksManager().getRank(rank)));
             return false;
         }
 
@@ -60,11 +58,13 @@ public class IslandSetnameCommand extends CompositeCommand {
 
         // Check if the name isn't too short or too long
         if (name.length() < getSettings().getNameMinLength() || ChatColor.stripColor(name).isEmpty()) {
-            user.sendMessage("commands.island.setname.name-too-short", TextVariables.NUMBER, String.valueOf(getSettings().getNameMinLength()));
+            user.sendMessage("commands.island.setname.name-too-short", TextVariables.NUMBER,
+                    String.valueOf(getSettings().getNameMinLength()));
             return false;
         }
         if (name.length() > getSettings().getNameMaxLength()) {
-            user.sendMessage("commands.island.setname.name-too-long", TextVariables.NUMBER, String.valueOf(getSettings().getNameMaxLength()));
+            user.sendMessage("commands.island.setname.name-too-long", TextVariables.NUMBER,
+                    String.valueOf(getSettings().getNameMaxLength()));
             return false;
         }
 
@@ -82,7 +82,6 @@ public class IslandSetnameCommand extends CompositeCommand {
         return true;
     }
 
-
     @Override
     public boolean execute(User user, String label, List<String> args) {
         // Naming the island - join all the arguments with spaces.
@@ -99,13 +98,8 @@ public class IslandSetnameCommand extends CompositeCommand {
         island.setName(name);
         user.sendMessage("commands.island.setname.success", TextVariables.NAME, name);
         // Fire the IslandNameEvent
-        new IslandEvent.IslandEventBuilder()
-        .island(island)
-        .involvedPlayer(user.getUniqueId())
-        .reason(IslandEvent.Reason.NAME)
-        .previousName(previousName)
-        .admin(false)
-        .build();
+        new IslandEvent.IslandEventBuilder().island(island).involvedPlayer(user.getUniqueId())
+                .reason(IslandEvent.Reason.NAME).previousName(previousName).admin(false).build();
         return true;
     }
 }

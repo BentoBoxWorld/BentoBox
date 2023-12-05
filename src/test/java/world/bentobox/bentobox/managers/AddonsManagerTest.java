@@ -49,7 +49,7 @@ import world.bentobox.bentobox.database.DatabaseSetup.DatabaseType;
 import world.bentobox.bentobox.database.objects.DataObject;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( {Bukkit.class, BentoBox.class, DefaultPermissions.class} )
+@PrepareForTest({ Bukkit.class, BentoBox.class, DefaultPermissions.class })
 public class AddonsManagerTest {
 
     private BentoBox plugin;
@@ -96,7 +96,8 @@ public class AddonsManagerTest {
     // TODO - add test cases that actually load an addon
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#AddonsManager(world.bentobox.bentobox.BentoBox)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.AddonsManager#AddonsManager(world.bentobox.bentobox.BentoBox)}.
      */
     @Test
     public void testAddonsManager() {
@@ -106,7 +107,8 @@ public class AddonsManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#loadAddons()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.AddonsManager#loadAddons()}.
      */
     @Test
     public void testLoadAddonsNoAddons() {
@@ -116,7 +118,8 @@ public class AddonsManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#enableAddons()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.AddonsManager#enableAddons()}.
      */
     @Test
     public void testEnableAddonsNoAddon() {
@@ -125,7 +128,8 @@ public class AddonsManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#reloadAddons()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.AddonsManager#reloadAddons()}.
      */
     @Test
     public void testReloadAddonsNoAddons() {
@@ -134,7 +138,8 @@ public class AddonsManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#getAddonByName(java.lang.String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.AddonsManager#getAddonByName(java.lang.String)}.
      */
     @Test
     public void testGetAddonByNameNoAddons() {
@@ -142,7 +147,8 @@ public class AddonsManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#disableAddons()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.AddonsManager#disableAddons()}.
      */
     @Test
     public void testDisableAddonsNoAddons() {
@@ -151,7 +157,8 @@ public class AddonsManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#getAddons()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.AddonsManager#getAddons()}.
      */
     @Test
     public void testGetAddonsNoAddons() {
@@ -159,7 +166,8 @@ public class AddonsManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#getGameModeAddons()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.AddonsManager#getGameModeAddons()}.
      */
     @Test
     public void testGetGameModeAddonsNoAddons() {
@@ -167,7 +175,8 @@ public class AddonsManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#getLoadedAddons()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.AddonsManager#getLoadedAddons()}.
      */
     @Test
     public void testGetLoadedAddonsnoAddons() {
@@ -175,7 +184,8 @@ public class AddonsManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#getEnabledAddons()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.AddonsManager#getEnabledAddons()}.
      */
     @Test
     public void testGetEnabledAddonsNoAddons() {
@@ -183,7 +193,8 @@ public class AddonsManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#getLoader(world.bentobox.bentobox.api.addons.Addon)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.AddonsManager#getLoader(world.bentobox.bentobox.api.addons.Addon)}.
      */
     @Test
     public void testGetLoaderNoSuchAddon() {
@@ -192,7 +203,8 @@ public class AddonsManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#getClassByName(java.lang.String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.AddonsManager#getClassByName(java.lang.String)}.
      */
     @Test
     public void testGetClassByNameNull() {
@@ -200,7 +212,8 @@ public class AddonsManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#setClass(java.lang.String, java.lang.Class)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.AddonsManager#setClass(java.lang.String, java.lang.Class)}.
      */
     @Test
     public void testSetClass() {
@@ -210,7 +223,8 @@ public class AddonsManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#getDefaultWorldGenerator(java.lang.String, java.lang.String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.AddonsManager#getDefaultWorldGenerator(java.lang.String, java.lang.String)}.
      */
     @Test
     public void testGetDefaultWorldGeneratorNoWorlds() {
@@ -218,7 +232,8 @@ public class AddonsManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#registerListener(world.bentobox.bentobox.api.addons.Addon, org.bukkit.event.Listener)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.AddonsManager#registerListener(world.bentobox.bentobox.api.addons.Addon, org.bukkit.event.Listener)}.
      */
     @Test
     public void testRegisterListener() {
@@ -232,7 +247,8 @@ public class AddonsManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#getDataObjects()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.AddonsManager#getDataObjects()}.
      */
     @Test
     public void testGetDataObjectsNone() {
@@ -240,7 +256,8 @@ public class AddonsManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#getDataObjects()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.AddonsManager#getDataObjects()}.
      */
     @Test
     public void testGetDataObjects() {
@@ -250,7 +267,8 @@ public class AddonsManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#isAddonCompatibleWithBentoBox(Addon, String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.AddonsManager#isAddonCompatibleWithBentoBox(Addon, String)}.
      */
     @Test
     public void testIsAddonCompatibleWithBentoBoxSnapshotNoAPIVersion() {
@@ -261,29 +279,34 @@ public class AddonsManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#isAddonCompatibleWithBentoBox(Addon, String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.AddonsManager#isAddonCompatibleWithBentoBox(Addon, String)}.
      */
     @Test
     public void testIsAddonCompatibleWithBentoBoxReleaseAPIVersion() {
         Addon addon = mock(Addon.class);
-        AddonDescription addonDesc = new AddonDescription.Builder("main.class", "Addon-name", "1.0.1").apiVersion("1.0.1").build();
+        AddonDescription addonDesc = new AddonDescription.Builder("main.class", "Addon-name", "1.0.1")
+                .apiVersion("1.0.1").build();
         when(addon.getDescription()).thenReturn(addonDesc);
         assertTrue(am.isAddonCompatibleWithBentoBox(addon, "1.0.1"));
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#isAddonCompatibleWithBentoBox(Addon, String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.AddonsManager#isAddonCompatibleWithBentoBox(Addon, String)}.
      */
     @Test
     public void testIsAddonCompatibleWithBentoBoxSnapshotAPIVersion() {
         Addon addon = mock(Addon.class);
-        AddonDescription addonDesc = new AddonDescription.Builder("main.class", "Addon-name", "1.0.1").apiVersion("1.0.1").build();
+        AddonDescription addonDesc = new AddonDescription.Builder("main.class", "Addon-name", "1.0.1")
+                .apiVersion("1.0.1").build();
         when(addon.getDescription()).thenReturn(addonDesc);
         assertTrue(am.isAddonCompatibleWithBentoBox(addon, "1.0.1-SNAPSHOT-b1642"));
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#isAddonCompatibleWithBentoBox(Addon, String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.AddonsManager#isAddonCompatibleWithBentoBox(Addon, String)}.
      */
     @Test
     public void testIsAddonCompatibleWithBentoBoxReleaseNoAPIVersion() {
@@ -294,98 +317,112 @@ public class AddonsManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#isAddonCompatibleWithBentoBox(Addon, String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.AddonsManager#isAddonCompatibleWithBentoBox(Addon, String)}.
      */
     @Test
     public void testIsAddonCompatibleWithBentoBoxSnapshotAPIVersionVariableDigits() {
         Addon addon = mock(Addon.class);
-        AddonDescription addonDesc = new AddonDescription.Builder("main.class", "Addon-name", "1.0.1").apiVersion("1.2.1").build();
+        AddonDescription addonDesc = new AddonDescription.Builder("main.class", "Addon-name", "1.0.1")
+                .apiVersion("1.2.1").build();
         when(addon.getDescription()).thenReturn(addonDesc);
         assertFalse(am.isAddonCompatibleWithBentoBox(addon, "1.2-SNAPSHOT-b1642"));
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#isAddonCompatibleWithBentoBox(Addon, String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.AddonsManager#isAddonCompatibleWithBentoBox(Addon, String)}.
      */
     @Test
     public void testIsAddonCompatibleWithBentoBoxOldSnapshot() {
         Addon addon = mock(Addon.class);
-        AddonDescription addonDesc = new AddonDescription.Builder("main.class", "Addon-name", "1.0.0").apiVersion("1.11.1").build();
+        AddonDescription addonDesc = new AddonDescription.Builder("main.class", "Addon-name", "1.0.0")
+                .apiVersion("1.11.1").build();
         when(addon.getDescription()).thenReturn(addonDesc);
         assertFalse(am.isAddonCompatibleWithBentoBox(addon, "1.0.1-SNAPSHOT-b1642"));
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#isAddonCompatibleWithBentoBox(Addon, String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.AddonsManager#isAddonCompatibleWithBentoBox(Addon, String)}.
      */
     @Test
     public void testIsAddonCompatibleWithBentoBoxOldRelease() {
         Addon addon = mock(Addon.class);
-        AddonDescription addonDesc = new AddonDescription.Builder("main.class", "Addon-name", "1.0.0").apiVersion("1.11.1").build();
+        AddonDescription addonDesc = new AddonDescription.Builder("main.class", "Addon-name", "1.0.0")
+                .apiVersion("1.11.1").build();
         when(addon.getDescription()).thenReturn(addonDesc);
         assertFalse(am.isAddonCompatibleWithBentoBox(addon, "1.0.1"));
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#isAddonCompatibleWithBentoBox(Addon, String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.AddonsManager#isAddonCompatibleWithBentoBox(Addon, String)}.
      */
     @Test
     public void testIsAddonCompatibleWithBentoBoxOldReleaseLong() {
         Addon addon = mock(Addon.class);
-        AddonDescription addonDesc = new AddonDescription.Builder("main.class", "Addon-name", "1.0.0").apiVersion("1.11.1").build();
+        AddonDescription addonDesc = new AddonDescription.Builder("main.class", "Addon-name", "1.0.0")
+                .apiVersion("1.11.1").build();
         when(addon.getDescription()).thenReturn(addonDesc);
         assertTrue(am.isAddonCompatibleWithBentoBox(addon, "1.11.1.11.1.1"));
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#isAddonCompatibleWithBentoBox(Addon, String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.AddonsManager#isAddonCompatibleWithBentoBox(Addon, String)}.
      */
     @Test
     public void testIsAddonCompatibleWithBentoBoxOldReleaseLongAPI() {
         Addon addon = mock(Addon.class);
-        AddonDescription addonDesc = new AddonDescription.Builder("main.class", "Addon-name", "1.0.0").apiVersion("1.11.1.0.0.0.1").build();
+        AddonDescription addonDesc = new AddonDescription.Builder("main.class", "Addon-name", "1.0.0")
+                .apiVersion("1.11.1.0.0.0.1").build();
         when(addon.getDescription()).thenReturn(addonDesc);
         assertFalse(am.isAddonCompatibleWithBentoBox(addon, "1.11.1"));
     }
 
     /**
-     * Test method for {@link AddonsManager#isAddonCompatibleWithBentoBox(Addon, String)}.
-     * Prevents regression on <a href="https://github.com/BentoBoxWorld/BentoBox/issues/1346">issue 1346</a>.
+     * Test method for
+     * {@link AddonsManager#isAddonCompatibleWithBentoBox(Addon, String)}. Prevents
+     * regression on
+     * <a href="https://github.com/BentoBoxWorld/BentoBox/issues/1346">issue
+     * 1346</a>.
      */
     @Test
     public void testIsAddonCompatibleWithBentoBoxNewRelease() {
         Addon addon = mock(Addon.class);
-        AddonDescription addonDesc = new AddonDescription.Builder("main.class", "Addon-name", "1.0.0").apiVersion("1.13.1").build();
+        AddonDescription addonDesc = new AddonDescription.Builder("main.class", "Addon-name", "1.0.0")
+                .apiVersion("1.13.1").build();
         when(addon.getDescription()).thenReturn(addonDesc);
         assertTrue(am.isAddonCompatibleWithBentoBox(addon, "1.14.0-SNAPSHOT-b1777"));
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#setPerms(Addon)}
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.AddonsManager#setPerms(Addon)}
      */
     @Test
     public void testSetPermsNoPerms() {
         Addon addon = mock(Addon.class);
-        AddonDescription addonDesc = new AddonDescription.Builder("main.class", "Addon-name", "1.0.0").apiVersion("1.11.1.0.0.0.1").build();
+        AddonDescription addonDesc = new AddonDescription.Builder("main.class", "Addon-name", "1.0.0")
+                .apiVersion("1.11.1.0.0.0.1").build();
         when(addon.getDescription()).thenReturn(addonDesc);
         assertFalse(am.setPerms(addon));
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#setPerms(Addon)}
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.AddonsManager#setPerms(Addon)}
      */
     @Test
     public void testSetPermsHasPerms() throws InvalidConfigurationException {
-        String perms =
-                "  '[gamemode].intopten':\n" +
-                        "    description: Player is in the top ten.\n" +
-                        "    default: true\n";
+        String perms = "  '[gamemode].intopten':\n" + "    description: Player is in the top ten.\n"
+                + "    default: true\n";
         YamlConfiguration config = new YamlConfiguration();
         config.loadFromString(perms);
         GameModeAddon addon = new MyGameMode();
-        AddonDescription addonDesc = new AddonDescription.Builder("main.class", "mygame", "1.0.0").apiVersion("1.11.1.0.0.0.1")
-                .permissions(config)
-                .build();
+        AddonDescription addonDesc = new AddonDescription.Builder("main.class", "mygame", "1.0.0")
+                .apiVersion("1.11.1.0.0.0.1").permissions(config).build();
         addon.setDescription(addonDesc);
         addon.setState(State.ENABLED);
         am.getAddons().add(addon);
@@ -394,39 +431,36 @@ public class AddonsManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#setPerms(Addon)}
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.AddonsManager#setPerms(Addon)}
      */
     @Test
     public void testSetPermsHasPermsError() throws InvalidConfigurationException {
-        String perms =
-                "  '[gamemode].intopten':\n" +
-                        "    description: Player is in the top ten.\n" +
-                        "    default: trudsfgsde\n";
+        String perms = "  '[gamemode].intopten':\n" + "    description: Player is in the top ten.\n"
+                + "    default: trudsfgsde\n";
         YamlConfiguration config = new YamlConfiguration();
         config.loadFromString(perms);
         GameModeAddon addon = new MyGameMode();
-        AddonDescription addonDesc = new AddonDescription.Builder("main.class", "mygame", "1.0.0").apiVersion("1.11.1.0.0.0.1")
-                .permissions(config)
-                .build();
+        AddonDescription addonDesc = new AddonDescription.Builder("main.class", "mygame", "1.0.0")
+                .apiVersion("1.11.1.0.0.0.1").permissions(config).build();
         addon.setDescription(addonDesc);
         addon.setState(State.ENABLED);
         am.getAddons().add(addon);
 
         assertTrue(am.setPerms(addon));
-        verify(plugin).logError(eq("Addon mygame: AddonException : Permission default is invalid in addon.yml: [gamemode].intopten.default"));
+        verify(plugin).logError(eq(
+                "Addon mygame: AddonException : Permission default is invalid in addon.yml: [gamemode].intopten.default"));
     }
 
-
-
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#registerPermission(org.bukkit.configuration.ConfigurationSection, String)}
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.AddonsManager#registerPermission(org.bukkit.configuration.ConfigurationSection, String)}
      */
     @Test
-    public void testRegisterPermissionStandardPerm() throws InvalidAddonDescriptionException, InvalidConfigurationException {
-        String perms =
-                "  'bskyblock.intopten':\n" +
-                        "    description: Player is in the top ten.\n" +
-                        "    default: true\n";
+    public void testRegisterPermissionStandardPerm()
+            throws InvalidAddonDescriptionException, InvalidConfigurationException {
+        String perms = "  'bskyblock.intopten':\n" + "    description: Player is in the top ten.\n"
+                + "    default: true\n";
         YamlConfiguration config = new YamlConfiguration();
         config.loadFromString(perms);
         am.registerPermission(config, "bskyblock.intopten");
@@ -435,20 +469,19 @@ public class AddonsManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#registerPermission(org.bukkit.configuration.ConfigurationSection, String)}
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.AddonsManager#registerPermission(org.bukkit.configuration.ConfigurationSection, String)}
      */
     @Test
-    public void testRegisterPermissionGameModePerm() throws InvalidAddonDescriptionException, InvalidConfigurationException {
-        String perms =
-                "  '[gamemode].intopten':\n" +
-                        "    description: Player is in the top ten.\n" +
-                        "    default: true\n";
+    public void testRegisterPermissionGameModePerm()
+            throws InvalidAddonDescriptionException, InvalidConfigurationException {
+        String perms = "  '[gamemode].intopten':\n" + "    description: Player is in the top ten.\n"
+                + "    default: true\n";
         YamlConfiguration config = new YamlConfiguration();
         config.loadFromString(perms);
         GameModeAddon addon = new MyGameMode();
-        AddonDescription addonDesc = new AddonDescription.Builder("main.class", "mygame", "1.0.0").apiVersion("1.11.1.0.0.0.1")
-                .permissions(config)
-                .build();
+        AddonDescription addonDesc = new AddonDescription.Builder("main.class", "mygame", "1.0.0")
+                .apiVersion("1.11.1.0.0.0.1").permissions(config).build();
         addon.setDescription(addonDesc);
         addon.setState(State.ENABLED);
         am.getAddons().add(addon);
@@ -456,8 +489,6 @@ public class AddonsManagerTest {
         PowerMockito.verifyStatic(DefaultPermissions.class);
         DefaultPermissions.registerPermission(eq("mygame.intopten"), anyString(), any(PermissionDefault.class));
     }
-
-
 
     class MyGameMode extends GameModeAddon {
 

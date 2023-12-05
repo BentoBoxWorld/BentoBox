@@ -48,23 +48,26 @@ public class AdminWhyCommand extends ConfirmableCommand {
         }
         // Determine the debug mode and toggle if required
         boolean newValue = !target.getPlayer().getMetadata(getWorld().getName() + "_why_debug").stream()
-                .filter(p -> getPlugin().equals(p.getOwningPlugin())).findFirst().map(MetadataValue::asBoolean).orElse(false);
+                .filter(p -> getPlugin().equals(p.getOwningPlugin())).findFirst().map(MetadataValue::asBoolean)
+                .orElse(false);
         if (newValue) {
             user.sendMessage("commands.admin.why.turning-on", TextVariables.NAME, target.getName());
         } else {
             user.sendMessage("commands.admin.why.turning-off", TextVariables.NAME, target.getName());
         }
         // Set the debug meta
-        target.getPlayer().setMetadata(getWorld().getName() + "_why_debug", new FixedMetadataValue(getPlugin(), newValue));
+        target.getPlayer().setMetadata(getWorld().getName() + "_why_debug",
+                new FixedMetadataValue(getPlugin(), newValue));
         if (user.isPlayer()) {
-            target.getPlayer().setMetadata(getWorld().getName() + "_why_debug_issuer", new FixedMetadataValue(getPlugin(), user.getUniqueId().toString()));
+            target.getPlayer().setMetadata(getWorld().getName() + "_why_debug_issuer",
+                    new FixedMetadataValue(getPlugin(), user.getUniqueId().toString()));
         }
         return true;
     }
 
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
-        String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
+        String lastArg = !args.isEmpty() ? args.get(args.size() - 1) : "";
         if (args.isEmpty()) {
             // Don't show every player on the server. Require at least the first letter
             return Optional.empty();

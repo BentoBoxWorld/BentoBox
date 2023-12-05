@@ -53,7 +53,7 @@ import world.bentobox.bentobox.managers.PlaceholdersManager;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class})
+@PrepareForTest({ Bukkit.class, BentoBox.class })
 public class IslandSpawnCommandTest {
 
     @Mock
@@ -104,7 +104,6 @@ public class IslandSpawnCommandTest {
         // Addon
         GameModeAddon addon = mock(GameModeAddon.class);
 
-
         // Parent command has no aliases
         when(ic.getSubCommandAliases()).thenReturn(new HashMap<>());
         when(ic.getParameters()).thenReturn("parameters");
@@ -141,7 +140,8 @@ public class IslandSpawnCommandTest {
         when(lm.get(any(), any())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
         PlaceholdersManager phm = mock(PlaceholdersManager.class);
         when(plugin.getPlaceholdersManager()).thenReturn(phm);
-        when(phm.replacePlaceholders(any(), any())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
+        when(phm.replacePlaceholders(any(), any()))
+                .thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
 
         // Command
         isc = new IslandSpawnCommand(ic);
@@ -156,7 +156,8 @@ public class IslandSpawnCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandSpawnCommand#IslandSpawnCommand(world.bentobox.bentobox.api.commands.CompositeCommand)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.island.IslandSpawnCommand#IslandSpawnCommand(world.bentobox.bentobox.api.commands.CompositeCommand)}.
      */
     @Test
     public void testIslandSpawnCommand() {
@@ -164,7 +165,8 @@ public class IslandSpawnCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandSpawnCommand#setup()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.island.IslandSpawnCommand#setup()}.
      */
     @Test
     public void testSetup() {
@@ -174,7 +176,8 @@ public class IslandSpawnCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandSpawnCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.island.IslandSpawnCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testExecuteUserStringListOfString() {

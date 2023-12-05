@@ -11,7 +11,9 @@ import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.lists.Flags;
 
 /**
- * Handles {@link Flags#POTION_THROWING} and {@link Flags#EXPERIENCE_BOTTLE_THROWING}.
+ * Handles {@link Flags#POTION_THROWING} and
+ * {@link Flags#EXPERIENCE_BOTTLE_THROWING}.
+ * 
  * @author Poslovitch
  * @since 1.1
  */
@@ -19,6 +21,7 @@ public class ThrowingListener extends FlagListener {
 
     /**
      * Prevents players from throwing potions / exp bottles.
+     * 
      * @param e ProjectileLaunchEvent
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)

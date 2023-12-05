@@ -27,7 +27,6 @@ import world.bentobox.bentobox.database.json.adapters.PotionEffectTypeAdapter;
 import world.bentobox.bentobox.database.json.adapters.VectorTypeAdapter;
 import world.bentobox.bentobox.database.json.adapters.WorldTypeAdapter;
 
-
 /**
  * Allocates type adapters based on class type.
  *
@@ -45,8 +44,11 @@ public class BentoboxTypeAdapterFactory implements TypeAdapterFactory {
         this.plugin = plugin;
     }
 
-    /* (non-Javadoc)
-     * @see com.google.gson.TypeAdapterFactory#create(com.google.gson.Gson, com.google.gson.reflect.TypeToken)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.google.gson.TypeAdapterFactory#create(com.google.gson.Gson,
+     * com.google.gson.reflect.TypeToken)
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override

@@ -35,8 +35,8 @@ public class AdminResetsSetCommand extends CompositeCommand {
             user.sendMessage("general.errors.must-be-positive-number", TextVariables.NUMBER, args.get(1));
         } else {
             getPlayers().setResets(getWorld(), targetUUID, Integer.parseInt(args.get(1)));
-            user.sendMessage("commands.admin.resets.set.success",
-                    TextVariables.NAME, args.get(0), TextVariables.NUMBER, args.get(1));
+            user.sendMessage("commands.admin.resets.set.success", TextVariables.NAME, args.get(0), TextVariables.NUMBER,
+                    args.get(1));
             return true;
         }
 

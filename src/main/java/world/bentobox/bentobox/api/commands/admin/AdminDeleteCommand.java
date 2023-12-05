@@ -45,7 +45,8 @@ public class AdminDeleteCommand extends ConfirmableCommand {
             return false;
         }
 
-        // Team members should be kicked before deleting otherwise the whole team will become weird
+        // Team members should be kicked before deleting otherwise the whole team will
+        // become weird
         if (getIslands().inTeam(getWorld(), targetUUID) && user.getUniqueId().equals(island.getOwner())) {
             user.sendMessage("commands.admin.delete.cannot-delete-owner");
             return false;
@@ -66,14 +67,10 @@ public class AdminDeleteCommand extends ConfirmableCommand {
         // Delete player and island
         for (Island oldIsland : getIslands().getIslands(getWorld(), targetUUID)) {
             // Fire island preclear event
-            IslandEvent.builder()
-            .involvedPlayer(user.getUniqueId())
-            .reason(Reason.PRECLEAR)
-            .island(oldIsland)
-            .oldIsland(oldIsland)
-            .location(oldIsland.getCenter())
-            .build();
-            user.sendMessage("commands.admin.delete.deleted-island", TextVariables.XYZ, Util.xyz(oldIsland.getCenter().toVector()));
+            IslandEvent.builder().involvedPlayer(user.getUniqueId()).reason(Reason.PRECLEAR).island(oldIsland)
+                    .oldIsland(oldIsland).location(oldIsland.getCenter()).build();
+            user.sendMessage("commands.admin.delete.deleted-island", TextVariables.XYZ,
+                    Util.xyz(oldIsland.getCenter().toVector()));
             getIslands().deleteIsland(oldIsland, true, targetUUID);
         }
         // Check if player is online and on the island
@@ -118,7 +115,7 @@ public class AdminDeleteCommand extends ConfirmableCommand {
 
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
-        String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
+        String lastArg = !args.isEmpty() ? args.get(args.size() - 1) : "";
         if (args.isEmpty()) {
             // Don't show every player on the server. Require at least the first letter
             return Optional.empty();

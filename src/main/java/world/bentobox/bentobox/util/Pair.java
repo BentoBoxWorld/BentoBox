@@ -1,8 +1,8 @@
 package world.bentobox.bentobox.util;
 
-
 /**
  * Class to store pairs of objects, e.g. coordinates
+ * 
  * @author tastybento
  *
  * @param <X> the x part of the pair
@@ -17,26 +17,27 @@ public class Pair<X, Z> {
         this.z = z;
     }
 
-
     /**
      * Returns X element as key.
+     * 
      * @return X element
      */
     public X getKey() {
         return x;
     }
 
-
     /**
      * Returns Z element as value.
+     * 
      * @return Z element
      */
     public Z getValue() {
         return z;
     }
 
-
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see java.lang.Object#toString()
      */
     @Override
@@ -44,7 +45,9 @@ public class Pair<X, Z> {
         return "Pair [x=" + x + ", z=" + z + "]";
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see java.lang.Object#hashCode()
      */
     @Override
@@ -56,7 +59,9 @@ public class Pair<X, Z> {
         return result;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
@@ -79,7 +84,8 @@ public class Pair<X, Z> {
         }
         if (z == null) {
             return other.z == null;
-        } else return z.equals(other.z);
+        } else
+            return z.equals(other.z);
     }
-    
+
 }

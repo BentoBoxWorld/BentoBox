@@ -24,7 +24,7 @@ public class AdminTeleportCommand extends CompositeCommand {
     private @Nullable User userToTeleport;
 
     /**
-     * @param parent - parent command
+     * @param parent    - parent command
      * @param tpCommand - should be "tp", "tpnether" or "tpend"
      */
     public AdminTeleportCommand(CompositeCommand parent, String tpCommand) {
@@ -98,8 +98,8 @@ public class AdminTeleportCommand extends CompositeCommand {
         }
 
         // Otherwise, ask the admin to go to a safe spot
-        String failureMessage = user.getTranslation("commands.admin.tp.manual", "[location]", warpSpot.getBlockX() + " " + warpSpot.getBlockY() + " "
-                + warpSpot.getBlockZ());
+        String failureMessage = user.getTranslation("commands.admin.tp.manual", "[location]",
+                warpSpot.getBlockX() + " " + warpSpot.getBlockY() + " " + warpSpot.getBlockZ());
         // Set the player
         Player player = args.size() == 2 ? userToTeleport.getPlayer() : user.getPlayer();
         if (args.size() == 2) {
@@ -107,12 +107,8 @@ public class AdminTeleportCommand extends CompositeCommand {
         }
 
         // Teleport
-        new SafeSpotTeleport.Builder(getPlugin())
-        .entity(player)
-        .location(warpSpot)
-        .failureMessage(failureMessage)
-        .thenRun(() -> user.sendMessage("general.success"))
-        .build();
+        new SafeSpotTeleport.Builder(getPlugin()).entity(player).location(warpSpot).failureMessage(failureMessage)
+                .thenRun(() -> user.sendMessage("general.success")).build();
         return true;
     }
 
@@ -128,7 +124,7 @@ public class AdminTeleportCommand extends CompositeCommand {
 
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
-        String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
+        String lastArg = !args.isEmpty() ? args.get(args.size() - 1) : "";
         if (args.isEmpty()) {
             // Don't show every player on the server. Require at least the first letter
             return Optional.empty();

@@ -57,7 +57,7 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, Util.class})
+@PrepareForTest({ Bukkit.class, BentoBox.class, Util.class })
 public class CommandRankClickListenerTest extends RanksManagerBeforeClassTest {
     @Mock
     private User user;
@@ -86,16 +86,17 @@ public class CommandRankClickListenerTest extends RanksManagerBeforeClassTest {
     private CommandsManager cm;
     @Mock
     private SettingsTab tab;
+
     /**
      * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {
-    	super.setUp();
+        super.setUp();
 
         // Bukkit
         PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
-        
+
         // Island
         when(island.getOwner()).thenReturn(uuid);
         when(island.isAllowed(user, Flags.CHANGE_SETTINGS)).thenReturn(true);
@@ -121,8 +122,10 @@ public class CommandRankClickListenerTest extends RanksManagerBeforeClassTest {
         when(user.getPlayer()).thenReturn(player);
         when(user.inWorld()).thenReturn(true);
         when(user.getWorld()).thenReturn(world);
-        when(user.getTranslation(anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
-        when(user.getTranslation(anyString(),anyString(),anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
+        when(user.getTranslation(anyString()))
+                .thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
+        when(user.getTranslation(anyString(), anyString(), anyString()))
+                .thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
 
         // Util
         PowerMockito.mockStatic(Util.class, Mockito.CALLS_REAL_METHODS);
@@ -187,7 +190,8 @@ public class CommandRankClickListenerTest extends RanksManagerBeforeClassTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.clicklisteners.CommandRankClickListener#onClick(world.bentobox.bentobox.api.panels.Panel, world.bentobox.bentobox.api.user.User, org.bukkit.event.inventory.ClickType, int)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.flags.clicklisteners.CommandRankClickListener#onClick(world.bentobox.bentobox.api.panels.Panel, world.bentobox.bentobox.api.user.User, org.bukkit.event.inventory.ClickType, int)}.
      */
     @Test
     public void testOnClick() {
@@ -196,7 +200,8 @@ public class CommandRankClickListenerTest extends RanksManagerBeforeClassTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.clicklisteners.CommandRankClickListener#onClick(world.bentobox.bentobox.api.panels.Panel, world.bentobox.bentobox.api.user.User, org.bukkit.event.inventory.ClickType, int)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.flags.clicklisteners.CommandRankClickListener#onClick(world.bentobox.bentobox.api.panels.Panel, world.bentobox.bentobox.api.user.User, org.bukkit.event.inventory.ClickType, int)}.
      */
     @Test
     public void testOnClickTooManyCommands() {
@@ -215,10 +220,9 @@ public class CommandRankClickListenerTest extends RanksManagerBeforeClassTest {
         verify(plugin).logError("Number of rank setting commands is too big for GUI");
     }
 
-
-
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.clicklisteners.CommandRankClickListener#getPanelItem(java.lang.String, world.bentobox.bentobox.api.user.User, org.bukkit.World)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.flags.clicklisteners.CommandRankClickListener#getPanelItem(java.lang.String, world.bentobox.bentobox.api.user.User, org.bukkit.World)}.
      */
     @Test
     public void testGetPanelItem() {

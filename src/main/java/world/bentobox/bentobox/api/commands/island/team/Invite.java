@@ -7,6 +7,7 @@ import world.bentobox.bentobox.database.objects.Island;
 
 /**
  * Represents an invite
+ * 
  * @author tastybento
  * @since 1.8.0
  */
@@ -17,9 +18,7 @@ public class Invite {
      *
      */
     public enum Type {
-        COOP,
-        TEAM,
-        TRUST
+        COOP, TEAM, TRUST
     }
 
     private final Type type;
@@ -28,10 +27,10 @@ public class Invite {
     private final Island island;
 
     /**
-     * @param type - invitation type, e.g., coop, team, trust
+     * @param type    - invitation type, e.g., coop, team, trust
      * @param inviter - UUID of inviter
      * @param invitee - UUID of invitee
-     * @param island - the island this invite is for
+     * @param island  - the island this invite is for
      */
     public Invite(Type type, UUID inviter, UUID invitee, Island island) {
         this.type = type;
@@ -68,7 +67,9 @@ public class Invite {
         return island;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see java.lang.Object#hashCode()
      */
     @Override
@@ -76,7 +77,9 @@ public class Invite {
         return Objects.hash(invitee, inviter, type);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override

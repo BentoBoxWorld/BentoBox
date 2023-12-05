@@ -17,6 +17,7 @@ import world.bentobox.bentobox.util.Util;
 
 /**
  * Command to trust another player
+ * 
  * @author tastybento
  *
  */
@@ -47,7 +48,8 @@ public class IslandTeamTrustCommand extends CompositeCommand {
             return false;
         }
         // Player issuing the command must have an island or be in a team
-        if (!getIslands().inTeam(getWorld(), user.getUniqueId()) && !getIslands().hasIsland(getWorld(), user.getUniqueId())) {
+        if (!getIslands().inTeam(getWorld(), user.getUniqueId())
+                && !getIslands().hasIsland(getWorld(), user.getUniqueId())) {
             user.sendMessage("general.errors.no-island");
             return false;
         }
@@ -55,7 +57,8 @@ public class IslandTeamTrustCommand extends CompositeCommand {
         Island island = getIslands().getIsland(getWorld(), user);
         int rank = Objects.requireNonNull(island).getRank(user);
         if (rank < island.getRankCommand(getUsage())) {
-            user.sendMessage("general.errors.insufficient-rank", TextVariables.RANK, user.getTranslation(getPlugin().getRanksManager().getRank(rank)));
+            user.sendMessage("general.errors.insufficient-rank", TextVariables.RANK,
+                    user.getTranslation(getPlugin().getRanksManager().getRank(rank)));
             return false;
         }
         // Get target player
@@ -79,7 +82,8 @@ public class IslandTeamTrustCommand extends CompositeCommand {
             user.sendMessage("commands.island.team.trust.player-already-trusted");
             return false;
         }
-        if (itc.isInvited(targetUUID) && itc.getInviter(targetUUID).equals(user.getUniqueId()) && itc.getInvite(targetUUID).getType().equals(Type.TRUST)) {
+        if (itc.isInvited(targetUUID) && itc.getInviter(targetUUID).equals(user.getUniqueId())
+                && itc.getInvite(targetUUID).getType().equals(Type.TRUST)) {
             // Prevent spam
             user.sendMessage("commands.island.team.invite.errors.you-have-already-invited");
             return false;
@@ -94,21 +98,28 @@ public class IslandTeamTrustCommand extends CompositeCommand {
         if (island != null) {
             if (getPlugin().getSettings().isInviteConfirmation()) {
                 // Put the invited player (key) onto the list with inviter (value)
-                // If someone else has invited a player, then this invite will overwrite the previous invite!
+                // If someone else has invited a player, then this invite will overwrite the
+                // previous invite!
                 itc.addInvite(Type.TRUST, user.getUniqueId(), target.getUniqueId(), island);
-                user.sendMessage("commands.island.team.invite.invitation-sent", TextVariables.NAME, target.getName(), TextVariables.DISPLAY_NAME, target.getDisplayName());
+                user.sendMessage("commands.island.team.invite.invitation-sent", TextVariables.NAME, target.getName(),
+                        TextVariables.DISPLAY_NAME, target.getDisplayName());
                 // Send message to online player
-                target.sendMessage("commands.island.team.trust.name-has-invited-you", TextVariables.NAME, user.getName(), TextVariables.DISPLAY_NAME, user.getDisplayName());
-                target.sendMessage("commands.island.team.invite.to-accept-or-reject", TextVariables.LABEL, getTopLabel());
+                target.sendMessage("commands.island.team.trust.name-has-invited-you", TextVariables.NAME,
+                        user.getName(), TextVariables.DISPLAY_NAME, user.getDisplayName());
+                target.sendMessage("commands.island.team.invite.to-accept-or-reject", TextVariables.LABEL,
+                        getTopLabel());
             } else {
-                if (island.getMemberSet(RanksManager.TRUSTED_RANK, false).size() >= getIslands().getMaxMembers(island, RanksManager.TRUSTED_RANK)) {
+                if (island.getMemberSet(RanksManager.TRUSTED_RANK, false).size() >= getIslands().getMaxMembers(island,
+                        RanksManager.TRUSTED_RANK)) {
                     user.sendMessage("commands.island.team.trust.is-full");
                     return false;
                 }
 
                 island.setRank(target, RanksManager.TRUSTED_RANK);
-                user.sendMessage("commands.island.team.trust.success", TextVariables.NAME, target.getName(), TextVariables.DISPLAY_NAME, target.getDisplayName());
-                target.sendMessage("commands.island.team.trust.you-are-trusted", TextVariables.NAME, user.getName(), TextVariables.DISPLAY_NAME, user.getDisplayName());
+                user.sendMessage("commands.island.team.trust.success", TextVariables.NAME, target.getName(),
+                        TextVariables.DISPLAY_NAME, target.getDisplayName());
+                target.sendMessage("commands.island.team.trust.you-are-trusted", TextVariables.NAME, user.getName(),
+                        TextVariables.DISPLAY_NAME, user.getDisplayName());
             }
             return true;
         } else {
@@ -120,7 +131,7 @@ public class IslandTeamTrustCommand extends CompositeCommand {
 
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
-        String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
+        String lastArg = !args.isEmpty() ? args.get(args.size() - 1) : "";
         if (lastArg.isEmpty()) {
             // Don't show every player on the server. Require at least the first letter
             return Optional.empty();

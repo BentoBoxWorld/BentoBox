@@ -49,7 +49,7 @@ import world.bentobox.bentobox.managers.LocalesManager;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class})
+@PrepareForTest({ Bukkit.class, BentoBox.class })
 public class LanguagePanelTest {
 
     @Mock
@@ -89,12 +89,12 @@ public class LanguagePanelTest {
         when(user.getUniqueId()).thenReturn(uuid);
         when(user.getPlayer()).thenReturn(player);
         when(user.hasPermission(anyString())).thenReturn(true);
-        when(user.getTranslation(any())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
+        when(user.getTranslation(any()))
+                .thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
         when(user.getLocale()).thenReturn(Locale.ENGLISH);
         User.setPlugin(plugin);
         // Set up user already
         User.getInstance(player);
-
 
         // Locales Manager
         when(plugin.getLocalesManager()).thenReturn(lm);
@@ -123,7 +123,8 @@ public class LanguagePanelTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.panels.LanguagePanel#openPanel(world.bentobox.bentobox.api.user.User)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.panels.LanguagePanel#openPanel(world.bentobox.bentobox.api.user.User)}.
      */
     @Test
     public void testOpenPanelNoLocales() {
@@ -133,7 +134,8 @@ public class LanguagePanelTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.panels.LanguagePanel#openPanel(world.bentobox.bentobox.api.user.User)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.panels.LanguagePanel#openPanel(world.bentobox.bentobox.api.user.User)}.
      */
     @Test
     public void testOpenPanelLocalesNullBanner() {
@@ -168,7 +170,8 @@ public class LanguagePanelTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.panels.LanguagePanel#openPanel(world.bentobox.bentobox.api.user.User)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.panels.LanguagePanel#openPanel(world.bentobox.bentobox.api.user.User)}.
      */
     @Test
     public void testOpenPanelLocalesNotNullBanner() {

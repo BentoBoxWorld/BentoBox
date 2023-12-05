@@ -43,7 +43,7 @@ import world.bentobox.bentobox.managers.LocalesManager;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, User.class })
+@PrepareForTest({ Bukkit.class, BentoBox.class, User.class })
 public class AdminBlueprintDeleteCommandTest {
 
     @Mock
@@ -101,7 +101,6 @@ public class AdminBlueprintDeleteCommandTest {
 
         PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
 
-
         abcc = new AdminBlueprintDeleteCommand(ac);
     }
 
@@ -114,7 +113,8 @@ public class AdminBlueprintDeleteCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintDeleteCommand#AdminBlueprintDeleteCommand(world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintCommand)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintDeleteCommand#AdminBlueprintDeleteCommand(world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintCommand)}.
      */
     @Test
     public void testAdminBlueprintDeleteCommand() {
@@ -122,7 +122,8 @@ public class AdminBlueprintDeleteCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintDeleteCommand#setup()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintDeleteCommand#setup()}.
      */
     @Test
     public void testSetup() {
@@ -133,7 +134,8 @@ public class AdminBlueprintDeleteCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintDeleteCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintDeleteCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testExecuteUserStringListOfStringHelp() {
@@ -142,7 +144,8 @@ public class AdminBlueprintDeleteCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintDeleteCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintDeleteCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testExecuteUserStringListOfStringNoBp() {
@@ -151,7 +154,8 @@ public class AdminBlueprintDeleteCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintDeleteCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintDeleteCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testExecuteUserStringListOfStringSuccessCaps() {
@@ -160,7 +164,8 @@ public class AdminBlueprintDeleteCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintDeleteCommand#tabComplete(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintDeleteCommand#tabComplete(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testTabCompleteUserStringListOfString() {

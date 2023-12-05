@@ -40,7 +40,8 @@ public class AdminDeathsSetCommand extends CompositeCommand {
             user.sendMessage("general.errors.must-be-positive-number", TextVariables.NUMBER, args.get(1));
         } else {
             getPlayers().setDeaths(getWorld(), targetUUID, Integer.parseInt(args.get(1)));
-            user.sendMessage("commands.admin.deaths.set.success", TextVariables.NAME, args.get(0), TextVariables.NUMBER, args.get(1));
+            user.sendMessage("commands.admin.deaths.set.success", TextVariables.NAME, args.get(0), TextVariables.NUMBER,
+                    args.get(1));
             return true;
         }
 

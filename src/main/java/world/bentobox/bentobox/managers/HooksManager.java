@@ -31,15 +31,20 @@ public class HooksManager {
             if (hook.hook()) {
                 hooks.add(hook);
             } else {
-                plugin.logError("Could not hook with " + hook.getPluginName() + ((hook.getFailureCause() != null) ? " because: " + hook.getFailureCause() : "") + ". Skipping...");
+                plugin.logError("Could not hook with " + hook.getPluginName()
+                        + ((hook.getFailureCause() != null) ? " because: " + hook.getFailureCause() : "")
+                        + ". Skipping...");
             }
         }
-        // Do not tell the user if we couldn't hook with a plugin which is not available.
-        // We may have in the near future almost ~25 hooks, which would basically spam the console and make users nervous.
+        // Do not tell the user if we couldn't hook with a plugin which is not
+        // available.
+        // We may have in the near future almost ~25 hooks, which would basically spam
+        // the console and make users nervous.
     }
 
     /**
      * Returns the list of successfully registered hooks.
+     * 
      * @return list of successfully registered hooks.
      */
     public List<Hook> getHooks() {

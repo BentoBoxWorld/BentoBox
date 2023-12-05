@@ -8,6 +8,7 @@ import world.bentobox.bentobox.api.user.User;
 
 /**
  * Displays the current status and progress of the purge.
+ * 
  * @since 1.13.0
  * @author Poslovitch
  */
@@ -32,15 +33,14 @@ public class AdminPurgeStatusCommand extends CompositeCommand {
             showHelp(this, user);
             return false;
         }
-        AdminPurgeCommand parentCommand = ((AdminPurgeCommand)getParent());
+        AdminPurgeCommand parentCommand = ((AdminPurgeCommand) getParent());
         if (parentCommand.isInPurge()) {
             int purged = parentCommand.getPurgedIslandsCount();
             int purgeable = parentCommand.getPurgeableIslandsCount();
             user.sendMessage("commands.admin.purge.purge-in-progress", TextVariables.LABEL, this.getTopLabel());
-            user.sendMessage("commands.admin.purge.status.status",
-                    "[purged]", String.valueOf(purged),
-                    "[purgeable]", String.valueOf(purgeable),
-                    "[percentage]", String.format("%.1f", (((float) purged)/purgeable) * 100));
+            user.sendMessage("commands.admin.purge.status.status", "[purged]", String.valueOf(purged), "[purgeable]",
+                    String.valueOf(purgeable), "[percentage]",
+                    String.format("%.1f", (((float) purged) / purgeable) * 100));
         } else {
             user.sendMessage("commands.admin.purge.no-purge-in-progress");
         }

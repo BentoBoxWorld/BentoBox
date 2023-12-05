@@ -40,11 +40,12 @@ import world.bentobox.bentobox.managers.IslandsManager;
 
 /**
  * Tests {@link TreesGrowingOutsideRangeListener}.
+ * 
  * @author Poslovitch
  * @since 1.3.0
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({BentoBox.class})
+@PrepareForTest({ BentoBox.class })
 public class TreesGrowingOutsideRangeListenerTest {
 
     /* IslandWorldManager */
@@ -96,7 +97,6 @@ public class TreesGrowingOutsideRangeListenerTest {
         /* Island World Manager */
         when(plugin.getIWM()).thenReturn(iwm);
 
-
         // WorldSettings and World Flags
         WorldSettings ws = mock(WorldSettings.class);
         when(iwm.getWorldSettings(any())).thenReturn(ws);
@@ -125,7 +125,8 @@ public class TreesGrowingOutsideRangeListenerTest {
     }
 
     /**
-     * Populates {@link TreesGrowingOutsideRangeListenerTest#blockStates} with a tree schema.
+     * Populates {@link TreesGrowingOutsideRangeListenerTest#blockStates} with a
+     * tree schema.
      */
     private void populateBlockStatesList() {
         Location a = new Location(world, 2, 0, 2);
@@ -142,7 +143,7 @@ public class TreesGrowingOutsideRangeListenerTest {
         }
 
         // Basic leaves pattern
-        for (int x = 0; x < 5 ; x++) {
+        for (int x = 0; x < 5; x++) {
             for (int y = 0; y < 5; y++) {
                 for (int z = 0; z < 5; z++) {
                     if (x != 2 && y >= 3 && z != 2) {
@@ -175,7 +176,8 @@ public class TreesGrowingOutsideRangeListenerTest {
     }
 
     /**
-     * Asserts that no interaction is done to the event when {@link Flags#TREES_GROWING_OUTSIDE_RANGE} is allowed.
+     * Asserts that no interaction is done to the event when
+     * {@link Flags#TREES_GROWING_OUTSIDE_RANGE} is allowed.
      */
     @Test
     public void testFlagIsAllowed() {
@@ -203,12 +205,14 @@ public class TreesGrowingOutsideRangeListenerTest {
     }
 
     /**
-     * Asserts that the event is cancelled and that there is no interaction with the blocks list when the sapling is outside an island but inside another island.
+     * Asserts that the event is cancelled and that there is no interaction with the
+     * blocks list when the sapling is outside an island but inside another island.
      */
     @Test
     public void testSaplingOutsideIslandButInAnotherIsland() {
-        // Sapling is on the island, but some leaves are in another island. For simplicity
-        for (BlockState b: blockStates) {
+        // Sapling is on the island, but some leaves are in another island. For
+        // simplicity
+        for (BlockState b : blockStates) {
             if (b.getLocation().getBlockY() == 4) {
                 when(islandsManager.getProtectedIslandAt(b.getLocation())).thenReturn(Optional.of(anotherIsland));
             }
@@ -220,7 +224,8 @@ public class TreesGrowingOutsideRangeListenerTest {
     }
 
     /**
-     * Asserts that no interaction is done to the event when everything's inside an island.
+     * Asserts that no interaction is done to the event when everything's inside an
+     * island.
      */
     @Test
     public void testTreeFullyInsideIsland() {

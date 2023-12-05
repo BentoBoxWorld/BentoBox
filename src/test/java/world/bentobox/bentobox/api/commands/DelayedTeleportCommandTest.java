@@ -48,7 +48,7 @@ import world.bentobox.bentobox.managers.PlaceholdersManager;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, CommandEvent.class})
+@PrepareForTest({ Bukkit.class, BentoBox.class, CommandEvent.class })
 public class DelayedTeleportCommandTest {
 
     private static final String HELLO = "hello";
@@ -107,17 +107,17 @@ public class DelayedTeleportCommandTest {
         when(player.getUniqueId()).thenReturn(uuid);
         User.getInstance(player);
         // Locations
-        when(to.toVector()).thenReturn(new Vector(1,2,3));
-        when(from.toVector()).thenReturn(new Vector(1,2,4)); // Player moved
+        when(to.toVector()).thenReturn(new Vector(1, 2, 3));
+        when(from.toVector()).thenReturn(new Vector(1, 2, 4)); // Player moved
         // Locales & Placeholders
         LocalesManager lm = mock(LocalesManager.class);
         when(lm.get(any(), any())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
         PlaceholdersManager phm = mock(PlaceholdersManager.class);
         when(plugin.getPlaceholdersManager()).thenReturn(phm);
-        when(phm.replacePlaceholders(any(), any())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
+        when(phm.replacePlaceholders(any(), any()))
+                .thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
 
         when(plugin.getLocalesManager()).thenReturn(lm);
-
 
         String[] alias = {};
         // Class under test
@@ -130,7 +130,6 @@ public class DelayedTeleportCommandTest {
         public TestClass(Addon addon, CompositeCommand parent, String label, String[] aliases) {
             super(addon, parent, label, aliases);
         }
-
 
         public TestClass(Addon addon, String label, String[] aliases) {
             super(addon, label, aliases);
@@ -158,7 +157,8 @@ public class DelayedTeleportCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.DelayedTeleportCommand#onPlayerMove(org.bukkit.event.player.PlayerMoveEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.DelayedTeleportCommand#onPlayerMove(org.bukkit.event.player.PlayerMoveEvent)}.
      */
     @Test
     public void testOnPlayerMoveNoCooldown() {
@@ -168,7 +168,8 @@ public class DelayedTeleportCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.DelayedTeleportCommand#onPlayerMove(org.bukkit.event.player.PlayerMoveEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.DelayedTeleportCommand#onPlayerMove(org.bukkit.event.player.PlayerMoveEvent)}.
      */
     @Test
     public void testOnPlayerMoveCommandCancelled() {
@@ -179,7 +180,8 @@ public class DelayedTeleportCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.DelayedTeleportCommand#onPlayerMove(org.bukkit.event.player.PlayerMoveEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.DelayedTeleportCommand#onPlayerMove(org.bukkit.event.player.PlayerMoveEvent)}.
      */
     @Test
     public void testOnPlayerMoveHeadMove() {
@@ -190,7 +192,8 @@ public class DelayedTeleportCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.DelayedTeleportCommand#onPlayerMove(org.bukkit.event.player.PlayerMoveEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.DelayedTeleportCommand#onPlayerMove(org.bukkit.event.player.PlayerMoveEvent)}.
      */
     @Test
     public void testOnPlayerTeleport() {
@@ -201,7 +204,8 @@ public class DelayedTeleportCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.DelayedTeleportCommand#DelayedTeleportCommand(world.bentobox.bentobox.api.addons.Addon, java.lang.String, java.lang.String[])}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.DelayedTeleportCommand#DelayedTeleportCommand(world.bentobox.bentobox.api.addons.Addon, java.lang.String, java.lang.String[])}.
      */
     @Test
     public void testDelayedTeleportCommandAddonStringStringArray() {
@@ -249,7 +253,8 @@ public class DelayedTeleportCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.DelayedTeleportCommand#delayCommand(world.bentobox.bentobox.api.user.User, java.lang.String, java.lang.Runnable)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.DelayedTeleportCommand#delayCommand(world.bentobox.bentobox.api.user.User, java.lang.String, java.lang.Runnable)}.
      */
     @Test
     public void testDelayCommandUserStringRunnableStandStill() {
@@ -262,7 +267,8 @@ public class DelayedTeleportCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.DelayedTeleportCommand#delayCommand(world.bentobox.bentobox.api.user.User, java.lang.String, java.lang.Runnable)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.DelayedTeleportCommand#delayCommand(world.bentobox.bentobox.api.user.User, java.lang.String, java.lang.Runnable)}.
      */
     @Test
     public void testDelayCommandUserStringRunnableStandStillDuplicate() {
@@ -273,7 +279,8 @@ public class DelayedTeleportCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.DelayedTeleportCommand#delayCommand(world.bentobox.bentobox.api.user.User, java.lang.Runnable)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.DelayedTeleportCommand#delayCommand(world.bentobox.bentobox.api.user.User, java.lang.Runnable)}.
      */
     @Test
     public void testDelayCommandUserRunnable() {

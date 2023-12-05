@@ -9,9 +9,10 @@ import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.lists.Flags;
 
 /**
- * Listens for Endermen
- * For the {@link world.bentobox.bentobox.lists.Flags#ENDERMAN_GRIEFING}
- * and {@link world.bentobox.bentobox.lists.Flags#CREEPER_GRIEFING} flags.
+ * Listens for Endermen For the
+ * {@link world.bentobox.bentobox.lists.Flags#ENDERMAN_GRIEFING} and
+ * {@link world.bentobox.bentobox.lists.Flags#CREEPER_GRIEFING} flags.
+ * 
  * @author tastybento
  *
  */

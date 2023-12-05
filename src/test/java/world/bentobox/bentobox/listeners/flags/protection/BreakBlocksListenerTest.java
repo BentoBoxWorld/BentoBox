@@ -53,7 +53,7 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( {BentoBox.class, Flags.class, Util.class, Bukkit.class} )
+@PrepareForTest({ BentoBox.class, Flags.class, Util.class, Bukkit.class })
 public class BreakBlocksListenerTest extends AbstractCommonSetup {
 
     private BreakBlocksListener bbl;
@@ -72,7 +72,8 @@ public class BreakBlocksListenerTest extends AbstractCommonSetup {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onBlockBreak(org.bukkit.event.block.BlockBreakEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onBlockBreak(org.bukkit.event.block.BlockBreakEvent)}.
      */
     @Test
     public void testOnBlockBreakAllowed() {
@@ -130,7 +131,8 @@ public class BreakBlocksListenerTest extends AbstractCommonSetup {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onBreakHanging(org.bukkit.event.hanging.HangingBreakByEntityEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onBreakHanging(org.bukkit.event.hanging.HangingBreakByEntityEvent)}.
      */
     @Test
     public void testOnBreakHangingAllowed() {
@@ -158,7 +160,8 @@ public class BreakBlocksListenerTest extends AbstractCommonSetup {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onBreakHanging(org.bukkit.event.hanging.HangingBreakByEntityEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onBreakHanging(org.bukkit.event.hanging.HangingBreakByEntityEvent)}.
      */
     @Test
     public void testOnBreakHangingNotPlayer() {
@@ -171,7 +174,8 @@ public class BreakBlocksListenerTest extends AbstractCommonSetup {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onBreakHanging(org.bukkit.event.hanging.HangingBreakByEntityEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onBreakHanging(org.bukkit.event.hanging.HangingBreakByEntityEvent)}.
      */
     @Test
     public void testOnBreakHangingNotPlayerProjectile() {
@@ -203,7 +207,8 @@ public class BreakBlocksListenerTest extends AbstractCommonSetup {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onBreakHanging(org.bukkit.event.hanging.HangingBreakByEntityEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onBreakHanging(org.bukkit.event.hanging.HangingBreakByEntityEvent)}.
      */
     @Test
     public void testOnBreakHangingPlayerProjectileAllowed() {
@@ -217,8 +222,10 @@ public class BreakBlocksListenerTest extends AbstractCommonSetup {
         assertFalse(e.isCancelled());
         verify(notifier, never()).notify(any(), eq("protection.protected"));
     }
+
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractEvent)}.
      */
     @Test
     public void testOnPlayerInteractNotHit() {
@@ -231,7 +238,8 @@ public class BreakBlocksListenerTest extends AbstractCommonSetup {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractEvent)}.
      */
     @Test
     public void testOnPlayerInteractHitWrongType() {
@@ -245,7 +253,8 @@ public class BreakBlocksListenerTest extends AbstractCommonSetup {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractEvent)}.
      */
     @SuppressWarnings("deprecation")
     @Test
@@ -292,7 +301,8 @@ public class BreakBlocksListenerTest extends AbstractCommonSetup {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onVehicleDamageEvent(org.bukkit.event.vehicle.VehicleDamageEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onVehicleDamageEvent(org.bukkit.event.vehicle.VehicleDamageEvent)}.
      */
     @Test
     public void testOnVehicleDamageEventAllowed() {
@@ -363,7 +373,8 @@ public class BreakBlocksListenerTest extends AbstractCommonSetup {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onVehicleDamageEvent(org.bukkit.event.vehicle.VehicleDamageEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onVehicleDamageEvent(org.bukkit.event.vehicle.VehicleDamageEvent)}.
      */
     @Test
     public void testOnVehicleDamageEventNotPlayer() {
@@ -375,7 +386,8 @@ public class BreakBlocksListenerTest extends AbstractCommonSetup {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
     @Test
     public void testOnEntityDamageNotCovered() {
@@ -388,7 +400,8 @@ public class BreakBlocksListenerTest extends AbstractCommonSetup {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
     @Test
     public void testOnEntityDamageAllowed() {
@@ -435,7 +448,8 @@ public class BreakBlocksListenerTest extends AbstractCommonSetup {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
     @Test
     public void testOnEntityDamageAllowedProjectile() {
@@ -457,7 +471,8 @@ public class BreakBlocksListenerTest extends AbstractCommonSetup {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
     @Test
     public void testOnEntityDamageAllowedProjectileNotPlayer() {
@@ -477,7 +492,6 @@ public class BreakBlocksListenerTest extends AbstractCommonSetup {
         bbl.onEntityDamage(e);
         assertFalse(e.isCancelled());
     }
-
 
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.

@@ -22,14 +22,15 @@ public class MyWorldsHook extends Hook implements WorldManagementHook {
     /**
      * Register the world with MyWorlds
      *
-     * @param world - world to register
+     * @param world       - world to register
      * @param islandWorld - if true, then this is an island world
      */
     @Override
     public void registerWorld(World world, boolean islandWorld) {
         if (islandWorld) {
             // Only register generator if one is defined in the addon (is not null)
-            boolean hasGenerator = BentoBox.getInstance().getIWM().getAddon(world).map(gm -> gm.getDefaultWorldGenerator(world.getName(), "") != null).orElse(false);
+            boolean hasGenerator = BentoBox.getInstance().getIWM().getAddon(world)
+                    .map(gm -> gm.getDefaultWorldGenerator(world.getName(), "") != null).orElse(false);
             setUseBentoboxGenerator(world, hasGenerator);
         } else {
             // Set the generator to null - this will remove any previous registration
@@ -43,21 +44,21 @@ public class MyWorldsHook extends Hook implements WorldManagementHook {
         try {
             WorldConfigStore.get(world).setChunkGeneratorName(name);
 
-            // Alternative Reflection way to do it, if a MyWorlds dependency isn't available at
+            // Alternative Reflection way to do it, if a MyWorlds dependency isn't available
+            // at
             // compile time.
             /*
-            // WorldConfigStore -> public static WorldConfig get(World world);
-            Object worldConfig = Class.forName("com.bergerkiller.bukkit.mw.WorldConfigStore")
-                    .getMethod("get", World.class)
-                    .invoke(null, world);
-
-            // WorldConfig -> public void setChunkGeneratorName(String name);
-            Class.forName("com.bergerkiller.bukkit.mw.WorldConfig")
-                    .getMethod("setChunkGeneratorName", String.class)
-                    .invoke(worldConfig, name);
+             * // WorldConfigStore -> public static WorldConfig get(World world); Object
+             * worldConfig = Class.forName("com.bergerkiller.bukkit.mw.WorldConfigStore")
+             * .getMethod("get", World.class) .invoke(null, world);
+             * 
+             * // WorldConfig -> public void setChunkGeneratorName(String name);
+             * Class.forName("com.bergerkiller.bukkit.mw.WorldConfig")
+             * .getMethod("setChunkGeneratorName", String.class) .invoke(worldConfig, name);
              */
         } catch (Exception t) {
-            BentoBox.getInstance().logError("Failed to register world " + world.getName() + " with MyWorlds " + t.getMessage());
+            BentoBox.getInstance()
+                    .logError("Failed to register world " + world.getName() + " with MyWorlds " + t.getMessage());
         }
     }
 

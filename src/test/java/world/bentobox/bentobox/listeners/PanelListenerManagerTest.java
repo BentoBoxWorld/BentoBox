@@ -49,11 +49,12 @@ import world.bentobox.bentobox.util.Util;
 
 /**
  * Test class for PanelListenerManager.java
+ * 
  * @author tastybento
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({BentoBox.class, Util.class, Bukkit.class })
+@PrepareForTest({ BentoBox.class, Util.class, Bukkit.class })
 public class PanelListenerManagerTest {
 
     private static final String PANEL_NAME = "name";
@@ -192,7 +193,8 @@ public class PanelListenerManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.PanelListenerManager#onInventoryClick(org.bukkit.event.inventory.InventoryClickEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.PanelListenerManager#onInventoryClick(org.bukkit.event.inventory.InventoryClickEvent)}.
      */
     @Test
     public void testOnInventoryClickOutsideUnknownPanel() {
@@ -203,7 +205,8 @@ public class PanelListenerManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.PanelListenerManager#onInventoryClick(org.bukkit.event.inventory.InventoryClickEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.PanelListenerManager#onInventoryClick(org.bukkit.event.inventory.InventoryClickEvent)}.
      */
     @Test
     public void testOnInventoryClickOutsideKnownPanel() {
@@ -216,7 +219,8 @@ public class PanelListenerManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.PanelListenerManager#onInventoryClick(org.bukkit.event.inventory.InventoryClickEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.PanelListenerManager#onInventoryClick(org.bukkit.event.inventory.InventoryClickEvent)}.
      */
     @Test
     public void testOnInventoryClickNoOpenPanels() {
@@ -227,7 +231,8 @@ public class PanelListenerManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.PanelListenerManager#onInventoryClick(org.bukkit.event.inventory.InventoryClickEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.PanelListenerManager#onInventoryClick(org.bukkit.event.inventory.InventoryClickEvent)}.
      */
     @Test
     public void testOnInventoryClickOpenPanelsWrongPanel() {
@@ -242,7 +247,8 @@ public class PanelListenerManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.PanelListenerManager#onInventoryClick(org.bukkit.event.inventory.InventoryClickEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.PanelListenerManager#onInventoryClick(org.bukkit.event.inventory.InventoryClickEvent)}.
      */
     @Test
     public void testOnInventoryClickOpenPanelsDifferentColorPanel() {
@@ -256,9 +262,9 @@ public class PanelListenerManagerTest {
         verify(pl).onInventoryClick(any(), any());
     }
 
-
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.PanelListenerManager#onInventoryClick(org.bukkit.event.inventory.InventoryClickEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.PanelListenerManager#onInventoryClick(org.bukkit.event.inventory.InventoryClickEvent)}.
      */
     @Test
     public void testOnInventoryClickOpenPanelsRightPanelWrongSlot() {
@@ -271,7 +277,8 @@ public class PanelListenerManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.PanelListenerManager#onInventoryClick(org.bukkit.event.inventory.InventoryClickEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.PanelListenerManager#onInventoryClick(org.bukkit.event.inventory.InventoryClickEvent)}.
      */
     @Test
     public void testOnInventoryClickOpenPanelsRightPanelRightSlot() {
@@ -285,7 +292,8 @@ public class PanelListenerManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.PanelListenerManager#onInventoryClose(org.bukkit.event.inventory.InventoryCloseEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.PanelListenerManager#onInventoryClose(org.bukkit.event.inventory.InventoryCloseEvent)}.
      */
     @Test
     public void testOnInventoryCloseNoPanels() {
@@ -298,7 +306,8 @@ public class PanelListenerManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.PanelListenerManager#onInventoryClose(org.bukkit.event.inventory.InventoryCloseEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.PanelListenerManager#onInventoryClose(org.bukkit.event.inventory.InventoryCloseEvent)}.
      */
     @Test
     public void testOnInventoryClosePanels() {
@@ -312,7 +321,8 @@ public class PanelListenerManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.PanelListenerManager#onLogOut(org.bukkit.event.player.PlayerQuitEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.PanelListenerManager#onLogOut(org.bukkit.event.player.PlayerQuitEvent)}.
      */
     @Test
     public void testOnLogOut() {
@@ -333,7 +343,8 @@ public class PanelListenerManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.PanelListenerManager#getOpenPanels()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.PanelListenerManager#getOpenPanels()}.
      */
     @Test
     public void testGetOpenPanels() {

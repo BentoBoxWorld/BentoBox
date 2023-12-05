@@ -8,7 +8,6 @@ import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 
-
 /**
  * @author tastybento
  *
@@ -26,10 +25,8 @@ public class IslandResetnameCommand extends CompositeCommand {
         setDescription("commands.island.resetname.description");
     }
 
-
     @Override
-    public boolean canExecute(User user, String label, List<String> args)
-    {
+    public boolean canExecute(User user, String label, List<String> args) {
         Island island = getIslands().getIsland(getWorld(), user);
 
         if (island == null) {
@@ -40,14 +37,13 @@ public class IslandResetnameCommand extends CompositeCommand {
         // Check command rank.
         int rank = Objects.requireNonNull(island).getRank(user);
         if (rank < island.getRankCommand(getUsage())) {
-            user.sendMessage("general.errors.insufficient-rank",
-                TextVariables.RANK, user.getTranslation(getPlugin().getRanksManager().getRank(rank)));
+            user.sendMessage("general.errors.insufficient-rank", TextVariables.RANK,
+                    user.getTranslation(getPlugin().getRanksManager().getRank(rank)));
             return false;
         }
 
         return true;
     }
-
 
     @Override
     public boolean execute(User user, String label, List<String> args) {

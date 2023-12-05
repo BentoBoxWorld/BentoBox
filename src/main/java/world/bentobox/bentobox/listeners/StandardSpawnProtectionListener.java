@@ -46,7 +46,8 @@ public class StandardSpawnProtectionListener implements Listener {
         }
         if (atSpawn(e.getBlock().getLocation())) {
             User user = User.getInstance(e.getPlayer());
-            user.sendMessage(SPAWN_PROTECTED, TextVariables.DESCRIPTION, user.getTranslation(Flags.PLACE_BLOCKS.getHintReference()));
+            user.sendMessage(SPAWN_PROTECTED, TextVariables.DESCRIPTION,
+                    user.getTranslation(Flags.PLACE_BLOCKS.getHintReference()));
             e.setCancelled(true);
         }
     }
@@ -63,7 +64,8 @@ public class StandardSpawnProtectionListener implements Listener {
         }
         if (atSpawn(e.getBlock().getLocation())) {
             User user = User.getInstance(e.getPlayer());
-            user.sendMessage(SPAWN_PROTECTED, TextVariables.DESCRIPTION, user.getTranslation(Flags.BREAK_BLOCKS.getHintReference()));
+            user.sendMessage(SPAWN_PROTECTED, TextVariables.DESCRIPTION,
+                    user.getTranslation(Flags.BREAK_BLOCKS.getHintReference()));
             e.setCancelled(true);
         }
     }
@@ -86,6 +88,7 @@ public class StandardSpawnProtectionListener implements Listener {
 
     /**
      * Protects standard nether or end spawn from bucket abuse.
+     * 
      * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
@@ -95,14 +98,15 @@ public class StandardSpawnProtectionListener implements Listener {
         }
         if (atSpawn(e.getBlockClicked().getLocation())) {
             User user = User.getInstance(e.getPlayer());
-            user.sendMessage(SPAWN_PROTECTED, TextVariables.DESCRIPTION, user.getTranslation(Flags.BUCKET.getHintReference()));
+            user.sendMessage(SPAWN_PROTECTED, TextVariables.DESCRIPTION,
+                    user.getTranslation(Flags.BUCKET.getHintReference()));
             e.setCancelled(true);
         }
     }
 
     /**
-     * Check proximity to nether or end spawn location.
-     * Used when playing with the standard nether or end.
+     * Check proximity to nether or end spawn location. Used when playing with the
+     * standard nether or end.
      *
      * @param location - the location
      * @return true if in the spawn area, false if not
@@ -120,9 +124,9 @@ public class StandardSpawnProtectionListener implements Listener {
     }
 
     /**
-     * If the player is not in the standard nether or standard end or op, do nothing.
-     * If portal making is true, then do not protect spawn.
-     * Used to protect the standard spawn for nether or end.
+     * If the player is not in the standard nether or standard end or op, do
+     * nothing. If portal making is true, then do not protect spawn. Used to protect
+     * the standard spawn for nether or end.
      *
      * @param player - the player
      * @return true if nothing needs to be done
@@ -130,9 +134,12 @@ public class StandardSpawnProtectionListener implements Listener {
     private boolean noAction(@NonNull Player player) {
         return (player.isOp() || player.getWorld().getEnvironment().equals(World.Environment.NORMAL)
                 || !plugin.getIWM().inWorld(Util.getWorld(player.getWorld()))
-                || (player.getWorld().getEnvironment().equals(World.Environment.NETHER) && plugin.getIWM().isNetherIslands(player.getWorld()))
-                || (player.getWorld().getEnvironment().equals(World.Environment.NETHER) && plugin.getIWM().getWorldSettings(player.getWorld()).isMakeNetherPortals())
-                || (player.getWorld().getEnvironment().equals(World.Environment.THE_END) && plugin.getIWM().isEndIslands(player.getWorld())));
+                || (player.getWorld().getEnvironment().equals(World.Environment.NETHER)
+                        && plugin.getIWM().isNetherIslands(player.getWorld()))
+                || (player.getWorld().getEnvironment().equals(World.Environment.NETHER)
+                        && plugin.getIWM().getWorldSettings(player.getWorld()).isMakeNetherPortals())
+                || (player.getWorld().getEnvironment().equals(World.Environment.THE_END)
+                        && plugin.getIWM().isEndIslands(player.getWorld())));
 
     }
 }

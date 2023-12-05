@@ -22,6 +22,7 @@ import world.bentobox.bentobox.util.Util;
 
 /**
  * Toggles a island setting on/off
+ * 
  * @author tastybento
  *
  */
@@ -40,34 +41,29 @@ public class IslandToggleClick implements ClickHandler {
     @Override
     public boolean onClick(Panel panel, User user, ClickType click, int slot) {
         // This click listener is used with TabbedPanel and SettingsTabs only
-        TabbedPanel tp = (TabbedPanel)panel;
-        SettingsTab st = (SettingsTab)tp.getActiveTab();
+        TabbedPanel tp = (TabbedPanel) panel;
+        SettingsTab st = (SettingsTab) tp.getActiveTab();
 
         // Permission prefix
         String prefix = plugin.getIWM().getPermissionPrefix(Util.getWorld(user.getWorld()));
         String reqPerm = prefix + "settings." + id;
         String allPerms = prefix + "settings.*";
-        if (!user.hasPermission(reqPerm) && !user.hasPermission(allPerms)
-                && !user.isOp() && !user.hasPermission(prefix + "admin.settings")) {
+        if (!user.hasPermission(reqPerm) && !user.hasPermission(allPerms) && !user.isOp()
+                && !user.hasPermission(prefix + "admin.settings")) {
             user.sendMessage("general.errors.no-permission", TextVariables.PERMISSION, reqPerm);
             user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_METAL_HIT, 1F, 1F);
             return true;
         }
         // Get the island for this tab
         Island island = st.getIsland();
-        if (island != null && (user.isOp() || island.isAllowed(user, Flags.CHANGE_SETTINGS) || user.hasPermission(prefix + "admin.settings")))
-        {
-            plugin.getFlagsManager().getFlag(id).ifPresent(flag ->
-            {
-                if (click.equals(ClickType.SHIFT_LEFT) && user.isOp())
-                {
+        if (island != null && (user.isOp() || island.isAllowed(user, Flags.CHANGE_SETTINGS)
+                || user.hasPermission(prefix + "admin.settings"))) {
+            plugin.getFlagsManager().getFlag(id).ifPresent(flag -> {
+                if (click.equals(ClickType.SHIFT_LEFT) && user.isOp()) {
                     shiftLeftClick(user, flag);
-                }
-                else
-                {
+                } else {
                     // Check cooldown
-                    if (!user.isOp() && island.isCooldown(flag))
-                    {
+                    if (!user.isOp() && island.isCooldown(flag)) {
                         user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_BEACON_DEACTIVATE, 1F, 1F);
                         user.notify("protection.panel.flag-item.setting-cooldown");
                         return;
@@ -88,19 +84,13 @@ public class IslandToggleClick implements ClickHandler {
         // Set cooldown
         island.setCooldown(flag);
         // Fire event
-        Bukkit.getPluginManager().callEvent(new FlagSettingChangeEvent(island,
-                user.getUniqueId(),
-                flag,
-                island.isAllowed(flag)));
+        Bukkit.getPluginManager()
+                .callEvent(new FlagSettingChangeEvent(island, user.getUniqueId(), flag, island.isAllowed(flag)));
 
-        if (flag.hasSubflags())
-        {
+        if (flag.hasSubflags()) {
             // Fire events for all subflags as well
-            flag.getSubflags().forEach(subflag -> Bukkit.getPluginManager()
-                    .callEvent(new FlagSettingChangeEvent(island,
-                            user.getUniqueId(),
-                            subflag,
-                            island.isAllowed(subflag))));
+            flag.getSubflags().forEach(subflag -> Bukkit.getPluginManager().callEvent(
+                    new FlagSettingChangeEvent(island, user.getUniqueId(), subflag, island.isAllowed(subflag))));
         }
 
     }
@@ -108,11 +98,10 @@ public class IslandToggleClick implements ClickHandler {
     private void reportError(User user, Island island) {
         if (island == null) {
             user.sendMessage("general.errors.not-on-island");
-        } else  {
+        } else {
             // Player is not the allowed to change settings.
-            user.sendMessage("general.errors.insufficient-rank",
-                    TextVariables.RANK,
-                    user.getTranslation(plugin.getRanksManager().getRank(Objects.requireNonNull(island).getRank(user))));
+            user.sendMessage("general.errors.insufficient-rank", TextVariables.RANK, user
+                    .getTranslation(plugin.getRanksManager().getRank(Objects.requireNonNull(island).getRank(user))));
         }
 
         user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_METAL_HIT, 1F, 1F);
@@ -120,13 +109,10 @@ public class IslandToggleClick implements ClickHandler {
     }
 
     private void shiftLeftClick(User user, Flag flag) {
-        if (!plugin.getIWM().getHiddenFlags(user.getWorld()).contains(flag.getID()))
-        {
+        if (!plugin.getIWM().getHiddenFlags(user.getWorld()).contains(flag.getID())) {
             plugin.getIWM().getHiddenFlags(user.getWorld()).add(flag.getID());
             user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_GLASS_BREAK, 1F, 1F);
-        }
-        else
-        {
+        } else {
             plugin.getIWM().getHiddenFlags(user.getWorld()).remove(flag.getID());
             user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1F, 1F);
         }

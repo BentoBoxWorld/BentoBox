@@ -54,7 +54,7 @@ import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ BentoBox.class, Flags.class, Util.class, Bukkit.class})
+@PrepareForTest({ BentoBox.class, Flags.class, Util.class, Bukkit.class })
 public class TestBentoBox extends AbstractCommonSetup {
     private static final UUID MEMBER_UUID = UUID.randomUUID();
     private static final UUID VISITOR_UUID = UUID.randomUUID();
@@ -106,10 +106,8 @@ public class TestBentoBox extends AbstractCommonSetup {
     public void testIslandEvent() {
         // Test island events
         IslandBaseEvent event = TeamEvent.builder()
-                //.island(getIslands().getIsland(playerUUID))
-                .reason(TeamEvent.Reason.INFO)
-                .involvedPlayer(uuid)
-                .build();
+                // .island(getIslands().getIsland(playerUUID))
+                .reason(TeamEvent.Reason.INFO).involvedPlayer(uuid).build();
         assertEquals(uuid, event.getPlayerUUID());
     }
 
@@ -122,7 +120,7 @@ public class TestBentoBox extends AbstractCommonSetup {
         testCommand.setPermission("default.permission");
         // Test basic execution
         assertTrue(testCommand.execute(user, testCommand.getLabel(), new ArrayList<>()));
-        assertEquals("test",testCommand.getLabel());
+        assertEquals("test", testCommand.getLabel());
         assertEquals(2, testCommand.getAliases().size());
         assertEquals("t", testCommand.getAliases().get(0));
         assertTrue(testCommand.isOnlyPlayer());
@@ -136,46 +134,47 @@ public class TestBentoBox extends AbstractCommonSetup {
                 assertEquals(testCommand.getSubCommand(alias), Optional.of(command.getValue()));
             }
         }
-        String[] args = {""};
+        String[] args = { "" };
         // Results are alphabetically sorted
         when(Util.tabLimit(any(), any())).thenCallRealMethod();
-        assertEquals(Arrays.asList("help", "sub1","sub2"), testCommand.tabComplete(player, "test", args));
-        assertNotSame(Arrays.asList("help", "sub1","sub2"), testCommand.tabComplete(sender, "test", args));
+        assertEquals(Arrays.asList("help", "sub1", "sub2"), testCommand.tabComplete(player, "test", args));
+        assertNotSame(Arrays.asList("help", "sub1", "sub2"), testCommand.tabComplete(sender, "test", args));
         args[0] = "su";
-        assertEquals(Arrays.asList("sub1","sub2"), testCommand.tabComplete(player, "test", args));
+        assertEquals(Arrays.asList("sub1", "sub2"), testCommand.tabComplete(player, "test", args));
         args[0] = "d";
-        assertNotSame(Arrays.asList("help", "sub1","sub2"), testCommand.tabComplete(player, "test", args));
+        assertNotSame(Arrays.asList("help", "sub1", "sub2"), testCommand.tabComplete(player, "test", args));
         args[0] = "sub1";
         assertEquals(Collections.emptyList(), testCommand.tabComplete(player, "test", args));
-        String[] args2 = {"sub2",""};
+        String[] args2 = { "sub2", "" };
         assertEquals(Arrays.asList("help", "subsub"), testCommand.tabComplete(player, "test", args2));
         args2[1] = "s";
         assertEquals(Collections.singletonList("subsub"), testCommand.tabComplete(player, "test", args2));
-        String[] args3 = {"sub2","subsub", ""};
+        String[] args3 = { "sub2", "subsub", "" };
         assertEquals(Arrays.asList("help", "subsubsub"), testCommand.tabComplete(player, "test", args3));
         // Test for overridden tabcomplete
         assertEquals(Arrays.asList("Ben", "Bill", "Florian", "Ted", "help"),
-                testCommand.tabComplete(player, "test", new String[] {"sub2", "subsub", "subsubsub", ""}));
+                testCommand.tabComplete(player, "test", new String[] { "sub2", "subsub", "subsubsub", "" }));
         // Test for partial word
         assertEquals(Arrays.asList("Ben", "Bill"),
-                testCommand.tabComplete(player, "test", new String[] {"sub2", "subsub", "subsubsub", "b"}));
+                testCommand.tabComplete(player, "test", new String[] { "sub2", "subsub", "subsubsub", "b" }));
 
         // Test command arguments
         CompositeCommand argCmd = new Test3ArgsCommand();
         argCmd.setOnlyPlayer(true);
         argCmd.setPermission("default.permission");
-        assertTrue(argCmd.execute(player, "args", new String[]{"give", "100", "ben"}));
-        assertFalse(testCommand.execute(player,  "test", new String[] {"sub2", "subsub", "subsubsub"}));
-        assertFalse(testCommand.execute(player,  "test", new String[] {"sub2", "subsub", "subsubsub", "ben"}));
-        assertFalse(testCommand.execute(player,  "test", new String[] {"sub2", "subsub", "subsubsub", "ben", "100"}));
-        assertTrue(testCommand.execute(player,  "test", new String[] {"sub2", "subsub", "subsubsub", "ben", "100", "today"}));
+        assertTrue(argCmd.execute(player, "args", new String[] { "give", "100", "ben" }));
+        assertFalse(testCommand.execute(player, "test", new String[] { "sub2", "subsub", "subsubsub" }));
+        assertFalse(testCommand.execute(player, "test", new String[] { "sub2", "subsub", "subsubsub", "ben" }));
+        assertFalse(testCommand.execute(player, "test", new String[] { "sub2", "subsub", "subsubsub", "ben", "100" }));
+        assertTrue(testCommand.execute(player, "test",
+                new String[] { "sub2", "subsub", "subsubsub", "ben", "100", "today" }));
 
         // Usage tests
         assertEquals("/test", testCommand.getUsage());
         assertEquals("test.params", testCommand.getParameters());
 
         // Test help
-        //assertTrue(testCommand.execute(player,  "test", new String[] {"help"}));
+        // assertTrue(testCommand.execute(player, "test", new String[] {"help"}));
     }
 
     private class TestCommand extends CompositeCommand {
@@ -263,7 +262,8 @@ public class TestBentoBox extends AbstractCommonSetup {
         }
 
         @Override
-        public void setup() {}
+        public void setup() {
+        }
 
         @Override
         public boolean execute(User user, String label, List<String> args) {
@@ -273,7 +273,7 @@ public class TestBentoBox extends AbstractCommonSetup {
 
         @Override
         public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
-            String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
+            String lastArg = !args.isEmpty() ? args.get(args.size() - 1) : "";
             List<String> options = new ArrayList<>(Arrays.asList("Florian", "Ben", "Bill", "Ted"));
             return Optional.of(Util.tabLimit(options, lastArg));
         }
@@ -286,7 +286,8 @@ public class TestBentoBox extends AbstractCommonSetup {
         }
 
         @Override
-        public void setup() {}
+        public void setup() {
+        }
 
         @Override
         public boolean execute(User user, String label, List<String> args) {
@@ -360,7 +361,8 @@ public class TestBentoBox extends AbstractCommonSetup {
         assertFalse(island.isAllowed(visitor, Flags.PLACE_BLOCKS));
         assertFalse(island.isAllowed(visitor, Flags.BREAK_BLOCKS));
 
-        // Set up protection settings - members can break blocks, visitors and place blocks
+        // Set up protection settings - members can break blocks, visitors and place
+        // blocks
         island.setFlag(Flags.BREAK_BLOCKS, RanksManager.MEMBER_RANK);
         assertFalse(island.isAllowed(visitor, Flags.BREAK_BLOCKS));
 

@@ -46,7 +46,7 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( { Bukkit.class, BentoBox.class, Util.class })
+@PrepareForTest({ Bukkit.class, BentoBox.class, Util.class })
 public class LocalesManagerTest {
 
     private BentoBox plugin;
@@ -68,6 +68,7 @@ public class LocalesManagerTest {
 
     /**
      * Makes fake English and French local files
+     * 
      * @throws IOException if the file saving fails
      */
     private void makeFakeLocaleFile() throws IOException {
@@ -91,10 +92,8 @@ public class LocalesManagerTest {
         File localeDir = new File(plugin.getDataFolder(), LOCALE_FOLDER);
         if (localeDir.exists()) {
             // Remove it
-            Files.walk(localeDir.toPath())
-            .map(Path::toFile)
-            .sorted((o1, o2) -> -o1.compareTo(o2))
-            .forEach(File::delete);
+            Files.walk(localeDir.toPath()).map(Path::toFile).sorted((o1, o2) -> -o1.compareTo(o2))
+                    .forEach(File::delete);
 
         }
 
@@ -102,10 +101,8 @@ public class LocalesManagerTest {
         localeDir = new File(plugin.getDataFolder(), "addons");
         if (localeDir.exists()) {
             // Remove it
-            Files.walk(localeDir.toPath())
-            .map(Path::toFile)
-            .sorted((o1, o2) -> -o1.compareTo(o2))
-            .forEach(File::delete);
+            Files.walk(localeDir.toPath()).map(Path::toFile).sorted((o1, o2) -> -o1.compareTo(o2))
+                    .forEach(File::delete);
 
         }
 
@@ -114,7 +111,8 @@ public class LocalesManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.LocalesManager#LocalesManager(BentoBox)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.LocalesManager#LocalesManager(BentoBox)}.
      */
     @Test
     public void testConstructor() {
@@ -124,7 +122,8 @@ public class LocalesManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.LocalesManager#get(java.lang.String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.LocalesManager#get(java.lang.String)}.
      */
     @Test
     public void testGetString() throws IOException {
@@ -134,7 +133,8 @@ public class LocalesManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.LocalesManager#get(java.lang.String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.LocalesManager#get(java.lang.String)}.
      */
     @Test
     public void testGetStringFail() throws IOException {
@@ -144,7 +144,8 @@ public class LocalesManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.LocalesManager#getOrDefault(java.lang.String, java.lang.String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.LocalesManager#getOrDefault(java.lang.String, java.lang.String)}.
      */
     @Test
     public void testGetOrDefaultStringString() throws IOException {
@@ -154,17 +155,19 @@ public class LocalesManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.LocalesManager#getOrDefault(java.lang.String, java.lang.String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.LocalesManager#getOrDefault(java.lang.String, java.lang.String)}.
      */
     @Test
     public void testGetOrDefaultStringStringFail() throws IOException {
         makeFakeLocaleFile();
         LocalesManager lm = new LocalesManager(plugin);
-        assertEquals("", lm.getOrDefault("test.test.test",""));
+        assertEquals("", lm.getOrDefault("test.test.test", ""));
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.LocalesManager#get(world.bentobox.bentobox.api.user.User, java.lang.String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.LocalesManager#get(world.bentobox.bentobox.api.user.User, java.lang.String)}.
      */
     @Test
     public void testGetNullUserString() throws IOException {
@@ -175,7 +178,8 @@ public class LocalesManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.LocalesManager#get(world.bentobox.bentobox.api.user.User, java.lang.String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.LocalesManager#get(world.bentobox.bentobox.api.user.User, java.lang.String)}.
      */
     @Test
     public void testGetUserString() throws IOException {
@@ -187,7 +191,8 @@ public class LocalesManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.LocalesManager#getOrDefault(world.bentobox.bentobox.api.user.User, java.lang.String, java.lang.String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.LocalesManager#getOrDefault(world.bentobox.bentobox.api.user.User, java.lang.String, java.lang.String)}.
      */
     @Test
     public void testGetOrDefaultUserStringString() throws IOException {
@@ -199,7 +204,8 @@ public class LocalesManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.LocalesManager#get(world.bentobox.bentobox.api.user.User, java.lang.String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.LocalesManager#get(world.bentobox.bentobox.api.user.User, java.lang.String)}.
      */
     @Test
     public void testGetCanadianUserString() throws IOException {
@@ -211,7 +217,8 @@ public class LocalesManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.LocalesManager#get(world.bentobox.bentobox.api.user.User, java.lang.String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.LocalesManager#get(world.bentobox.bentobox.api.user.User, java.lang.String)}.
      */
     @Test
     public void testGetUserStringFail() throws IOException {
@@ -223,7 +230,8 @@ public class LocalesManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.LocalesManager#getOrDefault(world.bentobox.bentobox.api.user.User, java.lang.String, java.lang.String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.LocalesManager#getOrDefault(world.bentobox.bentobox.api.user.User, java.lang.String, java.lang.String)}.
      */
     @Test
     public void testGetOrDefaultUserStringStringFail() throws IOException {
@@ -234,9 +242,9 @@ public class LocalesManagerTest {
         assertEquals("", lm.getOrDefault(user, "test.test.test", ""));
     }
 
-
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.LocalesManager#getAvailableLocales(boolean)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.LocalesManager#getAvailableLocales(boolean)}.
      */
     @Test
     public void testGetAvailableLocales() throws IOException {
@@ -255,17 +263,19 @@ public class LocalesManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.LocalesManager#getLanguages()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.LocalesManager#getLanguages()}.
      */
     @Test
     public void testGetLanguages() throws IOException {
         makeFakeLocaleFile();
         LocalesManager lm = new LocalesManager(plugin);
-        lm.getLanguages().forEach((k,v) -> assertEquals(k.toLanguageTag(), v.toLanguageTag()));
+        lm.getLanguages().forEach((k, v) -> assertEquals(k.toLanguageTag(), v.toLanguageTag()));
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.LocalesManager#reloadLanguages()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.LocalesManager#reloadLanguages()}.
      */
     @Test
     public void testReloadLanguagesNoAddons() throws IOException {
@@ -282,7 +292,8 @@ public class LocalesManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.LocalesManager#reloadLanguages()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.LocalesManager#reloadLanguages()}.
      */
     @Test
     public void testReloadLanguages() throws IOException {
@@ -304,7 +315,8 @@ public class LocalesManagerTest {
         jar.getParentFile().mkdirs();
         Manifest manifest = new Manifest();
         manifest.getMainAttributes().put(Attributes.Name.MANIFEST_VERSION, "1.0");
-        JarOutputStream target = new JarOutputStream(new FileOutputStream("addons" + File.separator + "AcidIsland.jar"), manifest);
+        JarOutputStream target = new JarOutputStream(new FileOutputStream("addons" + File.separator + "AcidIsland.jar"),
+                manifest);
         add(english, target);
         target.close();
         // When the file is requested, return it
@@ -318,39 +330,27 @@ public class LocalesManagerTest {
         // RELOAD!!!
         lm.reloadLanguages();
 
-        // Verify that the resources have been saved (note that they are not actually saved because addon is a mock)
-        verify(addon).saveResource(
-                Mockito.eq("locales/en-US.yml"),
-                Mockito.any(),
-                Mockito.eq(false),
-                Mockito.eq(true)
-                );
+        // Verify that the resources have been saved (note that they are not actually
+        // saved because addon is a mock)
+        verify(addon).saveResource(Mockito.eq("locales/en-US.yml"), Mockito.any(), Mockito.eq(false), Mockito.eq(true));
 
         // Clean up
         // Delete the temp folder we made. Other clean up is done globally
         localeDir = new File(plugin.getDataFolder(), "AcidIsland");
         if (localeDir.exists()) {
             // Remove it
-            Files.walk(localeDir.toPath())
-            .map(Path::toFile)
-            .sorted((o1, o2) -> -o1.compareTo(o2))
-            .forEach(File::delete);
+            Files.walk(localeDir.toPath()).map(Path::toFile).sorted((o1, o2) -> -o1.compareTo(o2))
+                    .forEach(File::delete);
         }
 
     }
-    
-    
 
-    private void add(File source, JarOutputStream target) throws IOException
-    {
+    private void add(File source, JarOutputStream target) throws IOException {
         BufferedInputStream in = null;
-        try
-        {
-            if (source.isDirectory())
-            {
+        try {
+            if (source.isDirectory()) {
                 String name = source.getPath().replace("\\", "/");
-                if (!name.isEmpty())
-                {
+                if (!name.isEmpty()) {
                     if (!name.endsWith("/"))
                         name += "/";
                     JarEntry entry = new JarEntry(name);
@@ -358,7 +358,7 @@ public class LocalesManagerTest {
                     target.putNextEntry(entry);
                     target.closeEntry();
                 }
-                for (File nestedFile: source.listFiles())
+                for (File nestedFile : source.listFiles())
                     add(nestedFile, target);
                 return;
             }
@@ -369,24 +369,22 @@ public class LocalesManagerTest {
             in = new BufferedInputStream(new FileInputStream(source));
 
             byte[] buffer = new byte[1024];
-            while (true)
-            {
+            while (true) {
                 int count = in.read(buffer);
                 if (count == -1)
                     break;
                 target.write(buffer, 0, count);
             }
             target.closeEntry();
-        }
-        finally
-        {
+        } finally {
             if (in != null)
                 in.close();
         }
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.LocalesManager#reloadLanguages()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.LocalesManager#reloadLanguages()}.
      */
     @Test
     public void testReloadLanguagesNoLocaleFolder() throws IOException {
@@ -402,18 +400,20 @@ public class LocalesManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.LocalesManager#setTranslation(Locale, String, String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.LocalesManager#setTranslation(Locale, String, String)}.
      */
     @Test
     public void testSetTranslationUnknownLocale() throws IOException {
         makeFakeLocaleFile();
         LocalesManager lm = new LocalesManager(plugin);
         assertFalse(lm.setTranslation(Locale.GERMAN, "anything.ref", "a translation"));
-        
+
     }
-    
+
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.LocalesManager#setTranslation(Locale, String, String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.LocalesManager#setTranslation(Locale, String, String)}.
      */
     @Test
     public void testSetTranslationKnownLocale() throws IOException {
@@ -422,6 +422,6 @@ public class LocalesManagerTest {
         assertEquals("test string", lm.get("test.test"));
         assertTrue(lm.setTranslation(Locale.US, "test.test", "a translation"));
         assertEquals("a translation", lm.get("test.test"));
-        
+
     }
 }

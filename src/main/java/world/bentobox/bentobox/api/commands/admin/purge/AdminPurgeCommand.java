@@ -76,13 +76,14 @@ public class AdminPurgeCommand extends CompositeCommand implements Listener {
                 return false;
             }
             islands = getOldIslands(days);
-            user.sendMessage("commands.admin.purge.purgable-islands", TextVariables.NUMBER, String.valueOf(islands.size()));
+            user.sendMessage("commands.admin.purge.purgable-islands", TextVariables.NUMBER,
+                    String.valueOf(islands.size()));
             if (!islands.isEmpty()) {
                 toBeConfirmed = true;
                 user.sendMessage("commands.admin.purge.confirm", TextVariables.LABEL, this.getTopLabel());
                 return false;
             }
-        } catch(Exception e) {
+        } catch (Exception e) {
             user.sendMessage("commands.admin.purge.number-error");
             return false;
         }
@@ -103,8 +104,9 @@ public class AdminPurgeCommand extends CompositeCommand implements Listener {
             getIslands().getIslandById(it.next()).ifPresent(i -> {
                 getIslands().deleteIsland(i, true, null);
                 count++;
-                String percentage = String.format("%.1f", (((float) count)/getPurgeableIslandsCount() * 100));
-                getPlugin().log(count + " islands purged out of " + getPurgeableIslandsCount() + " (" + percentage + " %)");
+                String percentage = String.format("%.1f", (((float) count) / getPurgeableIslandsCount() * 100));
+                getPlugin().log(
+                        count + " islands purged out of " + getPurgeableIslandsCount() + " (" + percentage + " %)");
             });
         } else {
             user.sendMessage("commands.admin.purge.completed");
@@ -121,28 +123,26 @@ public class AdminPurgeCommand extends CompositeCommand implements Listener {
     }
 
     Set<String> getOldIslands(int days) {
-        getPlugin().getIslands().getIslands().stream()
-        .filter(i -> !i.isSpawn())
-        .filter(i -> !i.getPurgeProtected())
-        .filter(i -> i.getWorld().equals(this.getWorld()))
-        .filter(Island::isOwned)
-        .filter(i -> i.getMembers().size() == 1)
-        .filter(i -> ((double)(System.currentTimeMillis() - Bukkit.getOfflinePlayer(i.getOwner()).getLastPlayed()) / 1000 / 3600 / 24) > days)
-        .forEach(i -> {
-            Date date = new Date(Bukkit.getOfflinePlayer(i.getOwner()).getLastPlayed());
-            BentoBox.getInstance().log("Will purge " +
-                    BentoBox.getInstance().getPlayers().getName(i.getOwner()) +
-                    " last logged in " + (int)((double)(System.currentTimeMillis() - Bukkit.getOfflinePlayer(i.getOwner()).getLastPlayed()) / 1000 / 3600 / 24) + " days ago. " + date);
-        });
-        return getPlugin().getIslands().getIslands().stream()
-                .filter(i -> !i.isSpawn())
-                .filter(i -> !i.getPurgeProtected())
-                .filter(i -> i.getWorld().equals(this.getWorld()))
-                .filter(Island::isOwned)
+        getPlugin().getIslands().getIslands().stream().filter(i -> !i.isSpawn()).filter(i -> !i.getPurgeProtected())
+                .filter(i -> i.getWorld().equals(this.getWorld())).filter(Island::isOwned)
                 .filter(i -> i.getMembers().size() == 1)
-                .filter(i -> ((double)(System.currentTimeMillis() - Bukkit.getOfflinePlayer(i.getOwner()).getLastPlayed()) / 1000 / 3600 / 24) > days)
-                .map(Island::getUniqueId)
-                .collect(Collectors.toSet());
+                .filter(i -> ((double) (System.currentTimeMillis()
+                        - Bukkit.getOfflinePlayer(i.getOwner()).getLastPlayed()) / 1000 / 3600 / 24) > days)
+                .forEach(i -> {
+                    Date date = new Date(Bukkit.getOfflinePlayer(i.getOwner()).getLastPlayed());
+                    BentoBox.getInstance()
+                            .log("Will purge " + BentoBox.getInstance().getPlayers().getName(i.getOwner())
+                                    + " last logged in "
+                                    + (int) ((double) (System.currentTimeMillis()
+                                            - Bukkit.getOfflinePlayer(i.getOwner()).getLastPlayed()) / 1000 / 3600 / 24)
+                                    + " days ago. " + date);
+                });
+        return getPlugin().getIslands().getIslands().stream().filter(i -> !i.isSpawn())
+                .filter(i -> !i.getPurgeProtected()).filter(i -> i.getWorld().equals(this.getWorld()))
+                .filter(Island::isOwned).filter(i -> i.getMembers().size() == 1)
+                .filter(i -> ((double) (System.currentTimeMillis()
+                        - Bukkit.getOfflinePlayer(i.getOwner()).getLastPlayed()) / 1000 / 3600 / 24) > days)
+                .map(Island::getUniqueId).collect(Collectors.toSet());
     }
 
     /**
@@ -175,6 +175,7 @@ public class AdminPurgeCommand extends CompositeCommand implements Listener {
 
     /**
      * Returns the amount of purged islands.
+     * 
      * @return the amount of islands that have been purged.
      * @since 1.13.0
      */
@@ -184,6 +185,7 @@ public class AdminPurgeCommand extends CompositeCommand implements Listener {
 
     /**
      * Returns the amount of islands that can be purged.
+     * 
      * @return the amount of islands that can be purged.
      * @since 1.13.0
      */

@@ -35,7 +35,7 @@ import world.bentobox.bentobox.api.user.User;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({BentoBox.class, Bukkit.class})
+@PrepareForTest({ BentoBox.class, Bukkit.class })
 public class BlueprintClipboardTest {
 
     private BlueprintClipboard bc;
@@ -58,9 +58,9 @@ public class BlueprintClipboardTest {
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
 
         // User
-        when(user.getTranslation(Mockito.anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
+        when(user.getTranslation(Mockito.anyString()))
+                .thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
         User.setPlugin(plugin);
-
 
         bc = new BlueprintClipboard();
 
@@ -75,7 +75,8 @@ public class BlueprintClipboardTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.blueprints.BlueprintClipboard#BlueprintClipboard(world.bentobox.bentobox.blueprints.Blueprint)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.blueprints.BlueprintClipboard#BlueprintClipboard(world.bentobox.bentobox.blueprints.Blueprint)}.
      */
     @Test
     public void testBlueprintClipboardBlueprint() {
@@ -84,7 +85,8 @@ public class BlueprintClipboardTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.blueprints.BlueprintClipboard#BlueprintClipboard()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.blueprints.BlueprintClipboard#BlueprintClipboard()}.
      */
     @Test
     public void testBlueprintClipboard() {
@@ -92,7 +94,8 @@ public class BlueprintClipboardTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.blueprints.BlueprintClipboard#copy(world.bentobox.bentobox.api.user.User, boolean, boolean)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.blueprints.BlueprintClipboard#copy(world.bentobox.bentobox.api.user.User, boolean, boolean)}.
      */
     @Test
     public void testCopy() {
@@ -102,7 +105,8 @@ public class BlueprintClipboardTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.blueprints.BlueprintClipboard#getVectors(org.bukkit.util.BoundingBox)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.blueprints.BlueprintClipboard#getVectors(org.bukkit.util.BoundingBox)}.
      */
     @Test
     public void testGetVectors() {
@@ -129,7 +133,8 @@ public class BlueprintClipboardTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.blueprints.BlueprintClipboard#getOrigin()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.blueprints.BlueprintClipboard#getOrigin()}.
      */
     @Test
     public void testGetOrigin() {
@@ -137,7 +142,8 @@ public class BlueprintClipboardTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.blueprints.BlueprintClipboard#getPos1()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.blueprints.BlueprintClipboard#getPos1()}.
      */
     @Test
     public void testGetPos1() {
@@ -145,7 +151,8 @@ public class BlueprintClipboardTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.blueprints.BlueprintClipboard#getPos2()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.blueprints.BlueprintClipboard#getPos2()}.
      */
     @Test
     public void testGetPos2() {
@@ -153,7 +160,8 @@ public class BlueprintClipboardTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.blueprints.BlueprintClipboard#isFull()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.blueprints.BlueprintClipboard#isFull()}.
      */
     @Test
     public void testIsFull() {
@@ -161,37 +169,41 @@ public class BlueprintClipboardTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.blueprints.BlueprintClipboard#setOrigin(org.bukkit.util.Vector)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.blueprints.BlueprintClipboard#setOrigin(org.bukkit.util.Vector)}.
      */
     @Test
     public void testSetOrigin() {
-        Vector v = new Vector(1,2,3);
+        Vector v = new Vector(1, 2, 3);
         bc.setOrigin(v);
         assertEquals(v, bc.getOrigin());
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.blueprints.BlueprintClipboard#setPos1(org.bukkit.Location)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.blueprints.BlueprintClipboard#setPos1(org.bukkit.Location)}.
      */
     @Test
     public void testSetPos1() {
-        Location l = new Location(world, 1,2,3);
+        Location l = new Location(world, 1, 2, 3);
         bc.setPos1(l);
         assertEquals(l, bc.getPos1());
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.blueprints.BlueprintClipboard#setPos2(org.bukkit.Location)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.blueprints.BlueprintClipboard#setPos2(org.bukkit.Location)}.
      */
     @Test
     public void testSetPos2() {
-        Location l = new Location(world, 1,2,3);
+        Location l = new Location(world, 1, 2, 3);
         bc.setPos2(l);
         assertEquals(l, bc.getPos2());
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.blueprints.BlueprintClipboard#getBlueprint()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.blueprints.BlueprintClipboard#getBlueprint()}.
      */
     @Test
     public void testGetBlueprint() {
@@ -199,7 +211,8 @@ public class BlueprintClipboardTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.blueprints.BlueprintClipboard#setBlueprint(world.bentobox.bentobox.blueprints.Blueprint)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.blueprints.BlueprintClipboard#setBlueprint(world.bentobox.bentobox.blueprints.Blueprint)}.
      */
     @Test
     public void testSetBlueprint() {

@@ -40,10 +40,10 @@ public class AdminResetsAddCommand extends CompositeCommand {
         } else if (!Util.isInteger(args.get(1), true) || Integer.parseInt(args.get(1)) < 0) {
             user.sendMessage("general.errors.must-be-positive-number", TextVariables.NUMBER, args.get(1));
         } else {
-            getPlayers().setResets(getWorld(), targetUUID, getPlayers().getResets(getWorld(), targetUUID) + Integer.parseInt(args.get(1)));
-            user.sendMessage("commands.admin.resets.add.success",
-                    TextVariables.NAME, args.get(0), TextVariables.NUMBER, args.get(1),
-                    "[total]", String.valueOf(getPlayers().getResets(getWorld(), targetUUID)));
+            getPlayers().setResets(getWorld(), targetUUID,
+                    getPlayers().getResets(getWorld(), targetUUID) + Integer.parseInt(args.get(1)));
+            user.sendMessage("commands.admin.resets.add.success", TextVariables.NAME, args.get(0), TextVariables.NUMBER,
+                    args.get(1), "[total]", String.valueOf(getPlayers().getResets(getWorld(), targetUUID)));
             return true;
         }
 

@@ -8,12 +8,14 @@ import world.bentobox.bentobox.api.user.User;
 
 /**
  * Displays generic information about BentoBox such as version and license.
+ * 
  * @author tastybento
  */
 public class BentoBoxAboutCommand extends CompositeCommand {
 
     /**
      * About
+     * 
      * @param parent parent CompositeCommand
      */
     public BentoBoxAboutCommand(CompositeCommand parent) {
@@ -27,7 +29,8 @@ public class BentoBoxAboutCommand extends CompositeCommand {
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        user.sendRawMessage("About " + BentoBox.getInstance().getDescription().getName() + " v" + BentoBox.getInstance().getDescription().getVersion() + ":");
+        user.sendRawMessage("About " + BentoBox.getInstance().getDescription().getName() + " v"
+                + BentoBox.getInstance().getDescription().getVersion() + ":");
         user.sendRawMessage("Copyright (c) 2017 - 2023 Tastybento, Poslovitch and the BentoBoxWorld contributors");
         user.sendRawMessage("See https://www.eclipse.org/legal/epl-2.0/ for license information.");
         return true;

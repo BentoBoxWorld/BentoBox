@@ -38,13 +38,13 @@ public class PlayersManager {
     private boolean isSaveTaskRunning;
 
     /**
-     * Provides a memory cache of online player information
-     * This is the one-stop-shop of player info
-     * If the player is not cached, then a request is made to Players to obtain it
+     * Provides a memory cache of online player information This is the
+     * one-stop-shop of player info If the player is not cached, then a request is
+     * made to Players to obtain it
      *
      * @param plugin - plugin object
      */
-    public PlayersManager(BentoBox plugin){
+    public PlayersManager(BentoBox plugin) {
         this.plugin = plugin;
         // Set up the database handler to store and retrieve Players classes
         handler = new Database<>(plugin, Players.class);
@@ -56,6 +56,7 @@ public class PlayersManager {
 
     /**
      * Used only for testing. Sets the database to a mock database.
+     * 
      * @param handler - handler
      */
     public void setHandler(Database<Players> handler) {
@@ -63,9 +64,10 @@ public class PlayersManager {
     }
 
     /**
-     * Load all players - not normally used as to load all players into memory will be wasteful
+     * Load all players - not normally used as to load all players into memory will
+     * be wasteful
      */
-    public void load(){
+    public void load() {
         playerCache.clear();
         inTeleport.clear();
         handler.loadObjects().forEach(p -> playerCache.put(p.getPlayerUUID(), p));
@@ -84,9 +86,11 @@ public class PlayersManager {
 
     /**
      * Save all players
-     * @param schedule true if we should let the task run over multiple ticks to reduce lag spikes
+     * 
+     * @param schedule true if we should let the task run over multiple ticks to
+     *                 reduce lag spikes
      */
-    public void saveAll(boolean schedule){
+    public void saveAll(boolean schedule) {
         if (!schedule) {
             for (Players player : playerCache.values()) {
                 try {
@@ -120,7 +124,7 @@ public class PlayersManager {
         }.runTaskTimer(plugin, 0, 1);
     }
 
-    public void shutdown(){
+    public void shutdown() {
         saveAll();
         playerCache.clear();
         handler.close();
@@ -128,11 +132,13 @@ public class PlayersManager {
 
     /**
      * Get player by UUID. Adds player to cache if not in there already
+     * 
      * @param uuid of player
-     * @return player object or null if it does not exist, for example the UUID is null
+     * @return player object or null if it does not exist, for example the UUID is
+     *         null
      */
     @Nullable
-    public Players getPlayer(UUID uuid){
+    public Players getPlayer(UUID uuid) {
         if (!playerCache.containsKey(uuid)) {
             addPlayer(uuid);
         }
@@ -140,7 +146,9 @@ public class PlayersManager {
     }
 
     /**
-     * Returns an <strong>unmodifiable collection</strong> of all the players that are <strong>currently in the cache</strong>.
+     * Returns an <strong>unmodifiable collection</strong> of all the players that
+     * are <strong>currently in the cache</strong>.
+     * 
      * @return unmodifiable collection containing every player in the cache.
      * @since 1.1
      */
@@ -155,6 +163,7 @@ public class PlayersManager {
 
     /**
      * Adds a player to the cache. If the UUID does not exist, a new player is made
+     * 
      * @param playerUUID - the player's UUID
      */
     public void addPlayer(UUID playerUUID) {
@@ -169,7 +178,8 @@ public class PlayersManager {
                 if (player == null) {
                     player = new Players(plugin, playerUUID);
                     // Corrupted database entry
-                    plugin.logError("Corrupted player database entry for " + playerUUID + " - unrecoverable. Recreated.");
+                    plugin.logError(
+                            "Corrupted player database entry for " + playerUUID + " - unrecoverable. Recreated.");
                     player.setUniqueId(playerUUID.toString());
                 }
             } else {
@@ -180,8 +190,8 @@ public class PlayersManager {
     }
 
     /**
-     * Checks if the player is known or not.
-     * Will check not just the cache but if the object but in the database too.
+     * Checks if the player is known or not. Will check not just the cache but if
+     * the object but in the database too.
      *
      * @param uniqueID - unique ID
      * @return true if player is known, otherwise false
@@ -192,6 +202,7 @@ public class PlayersManager {
 
     /**
      * Attempts to return a UUID for a given player's name.
+     * 
      * @param name - name of player
      * @return UUID of player or null if unknown
      */
@@ -207,14 +218,14 @@ public class PlayersManager {
             }
         }
         // Look in the name cache, then the data base and then give up
-        return playerCache.values().stream()
-                .filter(p -> p.getPlayerName().equalsIgnoreCase(name)).findFirst()
+        return playerCache.values().stream().filter(p -> p.getPlayerName().equalsIgnoreCase(name)).findFirst()
                 .map(p -> UUID.fromString(p.getUniqueId()))
                 .orElseGet(() -> names.objectExists(name) ? names.loadObject(name).getUuid() : null);
     }
 
     /**
      * Sets the player's name and updates the name to UUID database
+     * 
      * @param user - the User
      */
     public void setPlayerName(@NonNull User user) {
@@ -226,8 +237,8 @@ public class PlayersManager {
     }
 
     /**
-     * Obtains the name of the player from their UUID
-     * Player must have logged into the game before
+     * Obtains the name of the player from their UUID Player must have logged into
+     * the game before
      *
      * @param playerUUID - the player's UUID
      * @return String - playerName, empty string if UUID is null
@@ -243,7 +254,8 @@ public class PlayersManager {
 
     /**
      * Returns how many island resets the player has done.
-     * @param world world
+     * 
+     * @param world      world
      * @param playerUUID the player's UUID
      * @return number of resets
      */
@@ -254,9 +266,11 @@ public class PlayersManager {
 
     /**
      * Returns how many island resets the player can still do.
-     * @param world world
+     * 
+     * @param world      world
      * @param playerUUID the player's UUID
-     * @return number of resets the player can do (always {@code >= 0}), or {@code -1} if unlimited.
+     * @return number of resets the player can do (always {@code >= 0}), or
+     *         {@code -1} if unlimited.
      * @since 1.5.0
      * @see #getResets(World, UUID)
      */
@@ -272,9 +286,9 @@ public class PlayersManager {
     /**
      * Sets how many resets the player has performed
      *
-     * @param world world
+     * @param world      world
      * @param playerUUID player's UUID
-     * @param resets number of resets to set
+     * @param resets     number of resets to set
      */
     public void setResets(World world, UUID playerUUID, int resets) {
         addPlayer(playerUUID);
@@ -283,6 +297,7 @@ public class PlayersManager {
 
     /**
      * Returns the locale for this player. If missing, will return nothing
+     * 
      * @param playerUUID - the player's UUID
      * @return name of the locale this player uses
      */
@@ -296,6 +311,7 @@ public class PlayersManager {
 
     /**
      * Sets the locale this player wants to use
+     * 
      * @param playerUUID - the player's UUID
      * @param localeName - locale name, e.g., en-US
      */
@@ -306,7 +322,8 @@ public class PlayersManager {
 
     /**
      * Add death to player
-     * @param world - world
+     * 
+     * @param world      - world
      * @param playerUUID - the player's UUID
      */
     public void addDeath(World world, UUID playerUUID) {
@@ -316,9 +333,10 @@ public class PlayersManager {
 
     /**
      * Set death number for player
-     * @param world - world
+     * 
+     * @param world      - world
      * @param playerUUID - the player's UUID
-     * @param deaths - number of deaths
+     * @param deaths     - number of deaths
      */
     public void setDeaths(World world, UUID playerUUID, int deaths) {
         addPlayer(playerUUID);
@@ -327,7 +345,8 @@ public class PlayersManager {
 
     /**
      * Get number of times player has died since counting began
-     * @param world - world
+     * 
+     * @param world      - world
      * @param playerUUID - the player's UUID
      * @return number of deaths
      */
@@ -338,6 +357,7 @@ public class PlayersManager {
 
     /**
      * Sets if a player is mid-teleport or not
+     * 
      * @param uniqueId - unique ID
      */
     public void setInTeleport(UUID uniqueId) {
@@ -346,6 +366,7 @@ public class PlayersManager {
 
     /**
      * Removes player from in-teleport
+     * 
      * @param uniqueId - unique ID
      */
     public void removeInTeleport(UUID uniqueId) {
@@ -362,6 +383,7 @@ public class PlayersManager {
 
     /**
      * Saves the player to the database
+     * 
      * @param playerUUID - the player's UUID
      */
     public void save(UUID playerUUID) {
@@ -372,6 +394,7 @@ public class PlayersManager {
 
     /**
      * Tries to get the user from his name
+     * 
      * @param name - name
      * @return user - user or null if unknown
      */
@@ -382,6 +405,7 @@ public class PlayersManager {
 
     /**
      * Tries to get the user from his UUID
+     * 
      * @param uuid - UUID
      * @return user - user
      */
@@ -391,7 +415,8 @@ public class PlayersManager {
 
     /**
      * Adds a reset to this player's number of resets
-     * @param world world where island is
+     * 
+     * @param world      world where island is
      * @param playerUUID player's UUID
      */
     public void addReset(World world, UUID playerUUID) {
@@ -401,7 +426,8 @@ public class PlayersManager {
 
     /**
      * Sets the Flags display mode for the Settings Panel for this player.
-     * @param playerUUID player's UUID
+     * 
+     * @param playerUUID  player's UUID
      * @param displayMode the {@link Flag.Mode} to set
      * @since 1.6.0
      */
@@ -412,8 +438,10 @@ public class PlayersManager {
 
     /**
      * Returns the Flags display mode for the Settings Panel for this player.
+     * 
      * @param playerUUID player's UUID
-     * @return the {@link Flag.Mode display mode} for the Flags in the Settings Panel.
+     * @return the {@link Flag.Mode display mode} for the Flags in the Settings
+     *         Panel.
      * @since 1.6.0
      */
     public Flag.Mode getFlagsDisplayMode(UUID playerUUID) {
@@ -423,6 +451,7 @@ public class PlayersManager {
 
     /**
      * Remove player from cache. Clears players with the same name or UUID
+     * 
      * @param player player to remove
      */
     public void removePlayer(Player player) {
@@ -434,7 +463,8 @@ public class PlayersManager {
 
     /**
      * Cleans the player when leaving an island
-     * @param world - island world
+     * 
+     * @param world  - island world
      * @param target - target user
      * @param kicked - true if player is being kicked
      * @param island - island being left
@@ -446,10 +476,9 @@ public class PlayersManager {
         Util.runCommands(target, ownerName, plugin.getIWM().getOnLeaveCommands(world), "leave");
 
         // Remove any tamed animals
-        world.getEntitiesByClass(Tameable.class).stream()
-        .filter(Tameable::isTamed)
-        .filter(t -> t.getOwner() != null && t.getOwner().getUniqueId().equals(target.getUniqueId()))
-        .forEach(t -> t.setOwner(null));
+        world.getEntitiesByClass(Tameable.class).stream().filter(Tameable::isTamed)
+                .filter(t -> t.getOwner() != null && t.getOwner().getUniqueId().equals(target.getUniqueId()))
+                .forEach(t -> t.setOwner(null));
 
         // Remove money inventory etc.
         if (plugin.getIWM().isOnLeaveResetEnderChest(world)) {

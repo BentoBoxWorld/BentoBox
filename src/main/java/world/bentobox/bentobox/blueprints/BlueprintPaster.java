@@ -31,24 +31,20 @@ import world.bentobox.bentobox.util.Util;
 
 /**
  * This class pastes the clipboard it is given
+ * 
  * @author tastybento
  *
  */
 public class BlueprintPaster {
 
     enum PasteState {
-        CHUNK_LOAD,
-        CHUNK_LOADING,
-        BLOCKS,
-        ATTACHMENTS,
-        ENTITIES,
-        DONE,
-        CANCEL
+        CHUNK_LOAD, CHUNK_LOADING, BLOCKS, ATTACHMENTS, ENTITIES, DONE, CANCEL
     }
 
     /**
-     * Longest chunk loading time experienced when pasting an island.
-     * It is used to fine-tune the estimated pasting time.
+     * Longest chunk loading time experienced when pasting an island. It is used to
+     * fine-tune the estimated pasting time.
+     * 
      * @since 1.11.1
      */
     private static long chunkLoadTime = 0;
@@ -85,11 +81,13 @@ public class BlueprintPaster {
 
     /**
      * Paste a clipboard to a location. Run {@link #paste()} to paste
-     * @param plugin - BentoBox
+     * 
+     * @param plugin    - BentoBox
      * @param clipboard - clipboard to paste
-     * @param location - location to which to paste
+     * @param location  - location to which to paste
      */
-    public BlueprintPaster(@NonNull BentoBox plugin, @NonNull BlueprintClipboard clipboard, @NonNull Location location) {
+    public BlueprintPaster(@NonNull BentoBox plugin, @NonNull BlueprintClipboard clipboard,
+            @NonNull Location location) {
         this.plugin = plugin;
         this.clipboard = clipboard;
         // Calculate location for pasting
@@ -101,9 +99,10 @@ public class BlueprintPaster {
 
     /**
      * Pastes a blueprint to an island
+     * 
      * @param plugin - BentoBox
-     * @param bp - blueprint to paste
-     * @param world - world to paste to
+     * @param bp     - blueprint to paste
+     * @param world  - world to paste to
      * @param island - island related to this paste
      */
     public BlueprintPaster(@NonNull BentoBox plugin, @NonNull Blueprint bp, World world, @NonNull Island island) {
@@ -112,27 +111,29 @@ public class BlueprintPaster {
         this.island = island;
         this.world = world;
         // Offset due to bedrock
-        Vector off = bp.getBedrock() != null ? bp.getBedrock() : new Vector(0,0,0);
+        Vector off = bp.getBedrock() != null ? bp.getBedrock() : new Vector(0, 0, 0);
         // Calculate location for pasting
         this.location = island.getProtectionCenter().toVector().subtract(off).toLocation(world);
     }
 
-    private record Bits(Map<Vector, BlueprintBlock> blocks,
-            Map<Vector, BlueprintBlock> attached,
-            Map<Vector, List<BlueprintEntity>> entities,
-            Iterator<Entry<Vector, BlueprintBlock>> it,
-            Iterator<Entry<Vector, BlueprintBlock>> it2,
-            Iterator<Entry<Vector, List<BlueprintEntity>>> it3,
-            int pasteSpeed) {}
+    private record Bits(Map<Vector, BlueprintBlock> blocks, Map<Vector, BlueprintBlock> attached,
+            Map<Vector, List<BlueprintEntity>> entities, Iterator<Entry<Vector, BlueprintBlock>> it,
+            Iterator<Entry<Vector, BlueprintBlock>> it2, Iterator<Entry<Vector, List<BlueprintEntity>>> it3,
+            int pasteSpeed) {
+    }
+
     /**
      * The main pasting method
      */
     public CompletableFuture<Boolean> paste() {
         CompletableFuture<Boolean> result = new CompletableFuture<>();
         // Iterators for the various maps to paste
-        final Map<Vector, BlueprintBlock> blocks = blueprint.getBlocks() == null ? Collections.emptyMap() : blueprint.getBlocks();
-        final Map<Vector, BlueprintBlock> attached = blueprint.getAttached() == null ? Collections.emptyMap() : blueprint.getAttached();
-        final Map<Vector, List<BlueprintEntity>> entities = blueprint.getEntities() == null ? Collections.emptyMap() : blueprint.getEntities();
+        final Map<Vector, BlueprintBlock> blocks = blueprint.getBlocks() == null ? Collections.emptyMap()
+                : blueprint.getBlocks();
+        final Map<Vector, BlueprintBlock> attached = blueprint.getAttached() == null ? Collections.emptyMap()
+                : blueprint.getAttached();
+        final Map<Vector, List<BlueprintEntity>> entities = blueprint.getEntities() == null ? Collections.emptyMap()
+                : blueprint.getEntities();
 
         // Initial state & speed
         pasteState = PasteState.CHUNK_LOAD;
@@ -141,31 +142,29 @@ public class BlueprintPaster {
         final Optional<User> owner = Optional.ofNullable(island).map(i -> User.getInstance(i.getOwner()));
 
         // Tell the owner we're pasting blocks and how much time it might take
-        owner.ifPresent(user -> tellOwner(user, blocks.size(), attached.size(), entities.size(), plugin.getSettings().getPasteSpeed()));
-        Bits bits = new Bits(blocks, attached, entities,
-                blocks.entrySet().iterator(), attached.entrySet().iterator(), entities.entrySet().iterator(),
-                plugin.getSettings().getPasteSpeed());
+        owner.ifPresent(user -> tellOwner(user, blocks.size(), attached.size(), entities.size(),
+                plugin.getSettings().getPasteSpeed()));
+        Bits bits = new Bits(blocks, attached, entities, blocks.entrySet().iterator(), attached.entrySet().iterator(),
+                entities.entrySet().iterator(), plugin.getSettings().getPasteSpeed());
         pastingTask = Bukkit.getScheduler().runTaskTimer(plugin, () -> pasterTask(result, owner, bits), 0L, 1L);
 
         return result;
     }
 
     private void pasterTask(CompletableFuture<Boolean> result, Optional<User> owner, Bits bits) {
-        if (!currentTask.isDone()) return;
+        if (!currentTask.isDone())
+            return;
 
         final int pasteSpeed = plugin.getSettings().getPasteSpeed();
 
         int count = 0;
         if (pasteState.equals(PasteState.CHUNK_LOAD)) {
             loadChunk();
-        }
-        else if (pasteState.equals(PasteState.BLOCKS) || pasteState.equals(PasteState.ATTACHMENTS)) {
+        } else if (pasteState.equals(PasteState.BLOCKS) || pasteState.equals(PasteState.ATTACHMENTS)) {
             pasteBlocks(bits, count, owner, pasteSpeed);
-        }
-        else if (pasteState.equals(PasteState.ENTITIES)) {
+        } else if (pasteState.equals(PasteState.ENTITIES)) {
             pasteEntities(bits, count, owner, pasteSpeed);
-        }
-        else if (pasteState.equals(PasteState.DONE)) {
+        } else if (pasteState.equals(PasteState.DONE)) {
             // All done. Cancel task
             cancelTask(result);
         } else if (pasteState.equals(PasteState.CANCEL)) {
@@ -182,7 +181,7 @@ public class BlueprintPaster {
             clipboard.setPos2(pos2);
         }
         pasteState = PasteState.CANCEL;
-        result.complete(true);      
+        result.complete(true);
     }
 
     private void pasteEntities(Bits bits, int count, Optional<User> owner, int pasteSpeed) {
@@ -214,7 +213,8 @@ public class BlueprintPaster {
             default -> owner.map(user -> user.getTranslation("general.worlds.overworld")).orElse("");
             };
 
-            owner.ifPresent(user -> user.sendMessage("commands.island.create.pasting.dimension-done", "[world]", dimensionType));
+            owner.ifPresent(user -> user.sendMessage("commands.island.create.pasting.dimension-done", "[world]",
+                    dimensionType));
         }
 
     }
@@ -249,7 +249,8 @@ public class BlueprintPaster {
                 // Attachments done. Next paste entities
                 pasteState = PasteState.ENTITIES;
                 if (bits.entities.size() != 0) {
-                    owner.ifPresent(user -> user.sendMessage("commands.island.create.pasting.entities", TextVariables.NUMBER, String.valueOf(bits.entities.size())));
+                    owner.ifPresent(user -> user.sendMessage("commands.island.create.pasting.entities",
+                            TextVariables.NUMBER, String.valueOf(bits.entities.size())));
                 }
             }
         }
@@ -273,14 +274,18 @@ public class BlueprintPaster {
     private void tellOwner(User user, int blocksSize, int attachedSize, int entitiesSize, int pasteSpeed) {
         // Estimated time:
         double total = (double) blocksSize + attachedSize + entitiesSize;
-        BigDecimal time = BigDecimal.valueOf(total / (pasteSpeed * 20.0D) + (chunkLoadTime / 1000.0D)).setScale(1, RoundingMode.UP);
-        user.sendMessage("commands.island.create.pasting.estimated-time", TextVariables.NUMBER, String.valueOf(time.doubleValue()));
+        BigDecimal time = BigDecimal.valueOf(total / (pasteSpeed * 20.0D) + (chunkLoadTime / 1000.0D)).setScale(1,
+                RoundingMode.UP);
+        user.sendMessage("commands.island.create.pasting.estimated-time", TextVariables.NUMBER,
+                String.valueOf(time.doubleValue()));
         // We're pasting blocks!
-        user.sendMessage("commands.island.create.pasting.blocks", TextVariables.NUMBER, String.valueOf(blocksSize + attachedSize));
+        user.sendMessage("commands.island.create.pasting.blocks", TextVariables.NUMBER,
+                String.valueOf(blocksSize + attachedSize));
     }
 
     /**
      * Tracks the minimum and maximum block positions
+     * 
      * @param l - location of block pasted
      */
     private void updatePos(Location l) {

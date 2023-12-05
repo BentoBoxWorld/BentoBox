@@ -41,7 +41,7 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( {Bukkit.class, BentoBox.class, Flags.class, Util.class} )
+@PrepareForTest({ Bukkit.class, BentoBox.class, Flags.class, Util.class })
 public class BreedingListenerTest extends AbstractCommonSetup {
 
     private ItemStack itemInMainHand;
@@ -80,44 +80,48 @@ public class BreedingListenerTest extends AbstractCommonSetup {
     }
 
     /**
-     * Test method for {@link BreedingListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractAtEntityEvent)}.
+     * Test method for
+     * {@link BreedingListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractAtEntityEvent)}.
      */
     @Test
     public void testOnPlayerInteractNotAnimal() {
         Entity clickedEntity = mock(Entity.class);
-        Vector position = new Vector(0,0,0);
+        Vector position = new Vector(0, 0, 0);
         PlayerInteractAtEntityEvent e = new PlayerInteractAtEntityEvent(player, clickedEntity, position);
         new BreedingListener().onPlayerInteract(e);
         assertFalse("Not animal failed", e.isCancelled());
     }
 
     /**
-     * Test method for {@link BreedingListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractAtEntityEvent)}.
+     * Test method for
+     * {@link BreedingListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractAtEntityEvent)}.
      */
     @Test
     public void testOnPlayerInteractAnimalNothingInMainHand() {
         Animals clickedEntity = mock(Animals.class);
-        Vector position = new Vector(0,0,0);
+        Vector position = new Vector(0, 0, 0);
         PlayerInteractAtEntityEvent e = new PlayerInteractAtEntityEvent(player, clickedEntity, position);
         new BreedingListener().onPlayerInteract(e);
         assertFalse("Animal, nothing in main hand failed", e.isCancelled());
     }
 
     /**
-     * Test method for {@link BreedingListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractAtEntityEvent)}.
+     * Test method for
+     * {@link BreedingListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractAtEntityEvent)}.
      */
     @Test
     public void testOnPlayerInteractAnimalNothingInOffHand() {
         Animals clickedEntity = mock(Animals.class);
-        Vector position = new Vector(0,0,0);
-        PlayerInteractAtEntityEvent e = new PlayerInteractAtEntityEvent(player, clickedEntity, position, EquipmentSlot.OFF_HAND);
+        Vector position = new Vector(0, 0, 0);
+        PlayerInteractAtEntityEvent e = new PlayerInteractAtEntityEvent(player, clickedEntity, position,
+                EquipmentSlot.OFF_HAND);
         new BreedingListener().onPlayerInteract(e);
         assertFalse("Animal, nothing in off hand failed", e.isCancelled());
     }
 
-
     /**
-     * Test method for {@link BreedingListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractAtEntityEvent)}.
+     * Test method for
+     * {@link BreedingListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractAtEntityEvent)}.
      */
     @Test
     public void testOnPlayerInteractAnimalBreedingFoodInMainHandNotRightWorld() {
@@ -126,7 +130,7 @@ public class BreedingListenerTest extends AbstractCommonSetup {
         when(clickedEntity.getType()).thenReturn(ENTITY_TYPE);
         when(iwm.inWorld(any(World.class))).thenReturn(false);
         when(iwm.inWorld(any(Location.class))).thenReturn(false);
-        Vector position = new Vector(0,0,0);
+        Vector position = new Vector(0, 0, 0);
         PlayerInteractAtEntityEvent e = new PlayerInteractAtEntityEvent(player, clickedEntity, position);
         BreedingListener bl = new BreedingListener();
 
@@ -141,14 +145,15 @@ public class BreedingListenerTest extends AbstractCommonSetup {
     }
 
     /**
-     * Test method for {@link BreedingListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractAtEntityEvent)}.
+     * Test method for
+     * {@link BreedingListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractAtEntityEvent)}.
      */
     @Test
     public void testOnPlayerInteractAnimalBreedingFoodInMainHand() {
         Animals clickedEntity = mock(Animals.class);
         when(clickedEntity.getLocation()).thenReturn(location);
         when(clickedEntity.getType()).thenReturn(EntityType.COW);
-        Vector position = new Vector(0,0,0);
+        Vector position = new Vector(0, 0, 0);
         PlayerInteractAtEntityEvent e = new PlayerInteractAtEntityEvent(player, clickedEntity, position);
         BreedingListener bl = new BreedingListener();
 
@@ -163,7 +168,8 @@ public class BreedingListenerTest extends AbstractCommonSetup {
     }
 
     /**
-     * Test method for {@link BreedingListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractAtEntityEvent)}.
+     * Test method for
+     * {@link BreedingListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractAtEntityEvent)}.
      */
     @Test
     public void testOnPlayerInteractAnimalBreedingFoodInOffHandNotRightWorld() {
@@ -171,8 +177,9 @@ public class BreedingListenerTest extends AbstractCommonSetup {
         when(clickedEntity.getLocation()).thenReturn(location);
         when(iwm.inWorld(any(World.class))).thenReturn(false);
         when(iwm.inWorld(any(Location.class))).thenReturn(false);
-        Vector position = new Vector(0,0,0);
-        PlayerInteractAtEntityEvent e = new PlayerInteractAtEntityEvent(player, clickedEntity, position, EquipmentSlot.OFF_HAND);
+        Vector position = new Vector(0, 0, 0);
+        PlayerInteractAtEntityEvent e = new PlayerInteractAtEntityEvent(player, clickedEntity, position,
+                EquipmentSlot.OFF_HAND);
         BreedingListener bl = new BreedingListener();
 
         Material breedingMat = BREEDABLE_WITH;
@@ -186,15 +193,17 @@ public class BreedingListenerTest extends AbstractCommonSetup {
     }
 
     /**
-     * Test method for {@link BreedingListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractAtEntityEvent)}.
+     * Test method for
+     * {@link BreedingListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractAtEntityEvent)}.
      */
     @Test
     public void testOnPlayerInteractAnimalBreedingFoodInOffHand() {
         Animals clickedEntity = mock(Animals.class);
         when(clickedEntity.getLocation()).thenReturn(location);
         when(clickedEntity.getType()).thenReturn(ENTITY_TYPE);
-        Vector position = new Vector(0,0,0);
-        PlayerInteractAtEntityEvent e = new PlayerInteractAtEntityEvent(player, clickedEntity, position, EquipmentSlot.OFF_HAND);
+        Vector position = new Vector(0, 0, 0);
+        PlayerInteractAtEntityEvent e = new PlayerInteractAtEntityEvent(player, clickedEntity, position,
+                EquipmentSlot.OFF_HAND);
         BreedingListener bl = new BreedingListener();
 
         Material breedingMat = BREEDABLE_WITH;
@@ -211,7 +220,7 @@ public class BreedingListenerTest extends AbstractCommonSetup {
         Animals clickedEntity = mock(Animals.class);
         when(clickedEntity.getLocation()).thenReturn(location);
         when(clickedEntity.getType()).thenReturn(EntityType.COW);
-        Vector position = new Vector(0,0,0);
+        Vector position = new Vector(0, 0, 0);
         PlayerInteractAtEntityEvent e = new PlayerInteractAtEntityEvent(player, clickedEntity, position);
         BreedingListener bl = new BreedingListener();
 

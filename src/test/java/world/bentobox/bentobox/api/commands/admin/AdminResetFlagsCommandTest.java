@@ -53,7 +53,7 @@ import world.bentobox.bentobox.managers.PlayersManager;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, User.class })
+@PrepareForTest({ Bukkit.class, BentoBox.class, User.class })
 public class AdminResetFlagsCommandTest {
 
     @Mock
@@ -118,7 +118,8 @@ public class AdminResetFlagsCommandTest {
         when(lm.get(any(), any())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
         PlaceholdersManager phm = mock(PlaceholdersManager.class);
         when(plugin.getPlaceholdersManager()).thenReturn(phm);
-        when(phm.replacePlaceholders(any(), any())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
+        when(phm.replacePlaceholders(any(), any()))
+                .thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
 
         when(plugin.getLocalesManager()).thenReturn(lm);
 
@@ -131,7 +132,6 @@ public class AdminResetFlagsCommandTest {
         BukkitScheduler sch = mock(BukkitScheduler.class);
         PowerMockito.mockStatic(Bukkit.class);
         when(Bukkit.getScheduler()).thenReturn(sch);
-
 
         // Class
         arf = new AdminResetFlagsCommand(ac);
@@ -147,7 +147,8 @@ public class AdminResetFlagsCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminResetFlagsCommand#AdminResetFlagsCommand(world.bentobox.bentobox.api.commands.CompositeCommand)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.AdminResetFlagsCommand#AdminResetFlagsCommand(world.bentobox.bentobox.api.commands.CompositeCommand)}.
      */
     @Test
     public void testAdminResetFlagsCommand() {
@@ -158,7 +159,8 @@ public class AdminResetFlagsCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminResetFlagsCommand#setup()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.AdminResetFlagsCommand#setup()}.
      */
     @Test
     public void testSetup() {
@@ -169,7 +171,8 @@ public class AdminResetFlagsCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminResetFlagsCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.AdminResetFlagsCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testExecuteUserStringListOfStringTwoArgs() {
@@ -179,7 +182,8 @@ public class AdminResetFlagsCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminResetFlagsCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.AdminResetFlagsCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testExecuteUserStringListOfStringOneArgNotFlag() {
@@ -188,7 +192,8 @@ public class AdminResetFlagsCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminResetFlagsCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.AdminResetFlagsCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testExecuteUserStringListOfStringOneArgFlag2() {
@@ -196,7 +201,8 @@ public class AdminResetFlagsCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminResetFlagsCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.AdminResetFlagsCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testExecuteUserStringListOfStringOneArgFlag1() {
@@ -204,7 +210,8 @@ public class AdminResetFlagsCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminResetFlagsCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.AdminResetFlagsCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testExecuteUserStringListOfString() {
@@ -212,7 +219,8 @@ public class AdminResetFlagsCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminResetFlagsCommand#tabComplete(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.AdminResetFlagsCommand#tabComplete(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testTabCompleteUserStringListOfString() {

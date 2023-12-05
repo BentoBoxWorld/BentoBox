@@ -62,7 +62,7 @@ import world.bentobox.bentobox.database.objects.Island;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( {Bukkit.class, BentoBox.class, BlueprintPaster.class} )
+@PrepareForTest({ Bukkit.class, BentoBox.class, BlueprintPaster.class })
 public class BlueprintsManagerTest {
 
     public static int BUFFER_SIZE = 10240;
@@ -95,6 +95,7 @@ public class BlueprintsManagerTest {
     private int times;
     @Mock
     private Server server;
+
     /**
      */
     @Before
@@ -110,9 +111,9 @@ public class BlueprintsManagerTest {
         defaultBp = new Blueprint();
         defaultBp.setName("bedrock");
         defaultBp.setDescription(Collections.singletonList(ChatColor.AQUA + "A bedrock block"));
-        defaultBp.setBedrock(new Vector(0,0,0));
+        defaultBp.setBedrock(new Vector(0, 0, 0));
         Map<Vector, BlueprintBlock> map = new HashMap<>();
-        map.put(new Vector(0,0,0), new BlueprintBlock("minecraft:bedrock"));
+        map.put(new Vector(0, 0, 0), new BlueprintBlock("minecraft:bedrock"));
         defaultBp.setBlocks(map);
         // Scheduler
         PowerMockito.mockStatic(Bukkit.class);
@@ -128,10 +129,12 @@ public class BlueprintsManagerTest {
      */
     private class TestClass extends Addon {
         @Override
-        public void onEnable() { }
+        public void onEnable() {
+        }
 
         @Override
-        public void onDisable() { }
+        public void onDisable() {
+        }
     }
 
     public void makeAddon() throws Exception {
@@ -182,16 +185,14 @@ public class BlueprintsManagerTest {
     private void deleteDir(Path path) throws Exception {
         if (path.toFile().isDirectory()) {
             // Clean up file system
-            Files.walk(path)
-            .sorted(Comparator.reverseOrder())
-            .map(Path::toFile)
-            .forEach(File::delete);
+            Files.walk(path).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
         }
         Files.deleteIfExists(path);
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.BlueprintsManager#extractDefaultBlueprints(world.bentobox.bentobox.api.addons.GameModeAddon)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.BlueprintsManager#extractDefaultBlueprints(world.bentobox.bentobox.api.addons.GameModeAddon)}.
      */
     @Test
     public void testExtractDefaultBlueprintsFolderExists() throws IOException {
@@ -207,7 +208,8 @@ public class BlueprintsManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.BlueprintsManager#extractDefaultBlueprints(world.bentobox.bentobox.api.addons.GameModeAddon)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.BlueprintsManager#extractDefaultBlueprints(world.bentobox.bentobox.api.addons.GameModeAddon)}.
      */
     @Test
     public void testExtractDefaultBlueprints() {
@@ -230,7 +232,8 @@ public class BlueprintsManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.BlueprintsManager#getBlueprintBundles(world.bentobox.bentobox.api.addons.GameModeAddon)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.BlueprintsManager#getBlueprintBundles(world.bentobox.bentobox.api.addons.GameModeAddon)}.
      */
     @Test
     public void testGetBlueprintBundles() {
@@ -276,7 +279,8 @@ public class BlueprintsManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.BlueprintsManager#loadBlueprints(world.bentobox.bentobox.api.addons.GameModeAddon)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.BlueprintsManager#loadBlueprints(world.bentobox.bentobox.api.addons.GameModeAddon)}.
      */
     @Test
     public void testLoadBlueprintsFail() {
@@ -286,7 +290,8 @@ public class BlueprintsManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.BlueprintsManager#loadBlueprints(world.bentobox.bentobox.api.addons.GameModeAddon)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.BlueprintsManager#loadBlueprints(world.bentobox.bentobox.api.addons.GameModeAddon)}.
      */
     @Test
     public void testLoadBlueprintsFailZero() {
@@ -315,7 +320,8 @@ public class BlueprintsManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.BlueprintsManager#addBlueprint(world.bentobox.bentobox.api.addons.GameModeAddon, world.bentobox.bentobox.blueprints.Blueprint)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.BlueprintsManager#addBlueprint(world.bentobox.bentobox.api.addons.GameModeAddon, world.bentobox.bentobox.blueprints.Blueprint)}.
      */
     @Test
     public void testAddBlueprint() {
@@ -329,7 +335,8 @@ public class BlueprintsManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.BlueprintsManager#saveBlueprint(world.bentobox.bentobox.api.addons.GameModeAddon, world.bentobox.bentobox.blueprints.Blueprint)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.BlueprintsManager#saveBlueprint(world.bentobox.bentobox.api.addons.GameModeAddon, world.bentobox.bentobox.blueprints.Blueprint)}.
      */
     @Test
     public void testSaveBlueprint() {
@@ -342,7 +349,8 @@ public class BlueprintsManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.BlueprintsManager#saveBlueprintBundle(world.bentobox.bentobox.api.addons.GameModeAddon, world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.BlueprintsManager#saveBlueprintBundle(world.bentobox.bentobox.api.addons.GameModeAddon, world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle)}.
      */
     @Test
     public void testSaveBlueprintBundle() {
@@ -356,19 +364,21 @@ public class BlueprintsManagerTest {
         File blueprints = new File(dataFolder, BlueprintsManager.FOLDER_NAME);
 
         // Set up running and verification
-        when(scheduler.runTaskAsynchronously(eq(plugin), any(Runnable.class))).thenAnswer((Answer<BukkitTask>) invocation -> {
-            invocation.getArgument(1,Runnable.class).run();
-            File d = new File(blueprints, "bundle.json");
-            assertTrue(d.exists());
-            return task;
-        });
+        when(scheduler.runTaskAsynchronously(eq(plugin), any(Runnable.class)))
+                .thenAnswer((Answer<BukkitTask>) invocation -> {
+                    invocation.getArgument(1, Runnable.class).run();
+                    File d = new File(blueprints, "bundle.json");
+                    assertTrue(d.exists());
+                    return task;
+                });
 
         BlueprintsManager bpm = new BlueprintsManager(plugin);
         bpm.saveBlueprintBundle(addon, bb);
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.BlueprintsManager#saveBlueprintBundles()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.BlueprintsManager#saveBlueprintBundles()}.
      */
     @Test
     public void testSaveBlueprintBundles() {
@@ -396,22 +406,24 @@ public class BlueprintsManagerTest {
         File d2 = new File(blueprints, "bundle2.json");
         times = 0;
         // Set up running and verification
-        when(scheduler.runTaskAsynchronously(eq(plugin), any(Runnable.class))).thenAnswer((Answer<BukkitTask>) invocation -> {
-            invocation.getArgument(1,Runnable.class).run();
-            // Verify
-            times++;
-            if (times > 2) {
-                assertTrue(d.exists());
-                assertTrue(d2.exists());
-            }
-            return task;
-        });
+        when(scheduler.runTaskAsynchronously(eq(plugin), any(Runnable.class)))
+                .thenAnswer((Answer<BukkitTask>) invocation -> {
+                    invocation.getArgument(1, Runnable.class).run();
+                    // Verify
+                    times++;
+                    if (times > 2) {
+                        assertTrue(d.exists());
+                        assertTrue(d2.exists());
+                    }
+                    return task;
+                });
         // Save
         bpm.saveBlueprintBundles();
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.BlueprintsManager#getBlueprints(world.bentobox.bentobox.api.addons.GameModeAddon)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.BlueprintsManager#getBlueprints(world.bentobox.bentobox.api.addons.GameModeAddon)}.
      */
     @Test
     public void testGetBlueprints() {
@@ -420,7 +432,8 @@ public class BlueprintsManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.BlueprintsManager#paste(world.bentobox.bentobox.api.addons.GameModeAddon, world.bentobox.bentobox.database.objects.Island, java.lang.String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.BlueprintsManager#paste(world.bentobox.bentobox.api.addons.GameModeAddon, world.bentobox.bentobox.database.objects.Island, java.lang.String)}.
      */
     @Test
     public void testPasteGameModeAddonIslandStringFail() {
@@ -430,7 +443,8 @@ public class BlueprintsManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.BlueprintsManager#paste(world.bentobox.bentobox.api.addons.GameModeAddon, world.bentobox.bentobox.database.objects.Island, java.lang.String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.BlueprintsManager#paste(world.bentobox.bentobox.api.addons.GameModeAddon, world.bentobox.bentobox.database.objects.Island, java.lang.String)}.
      */
     @Test
     public void testPasteGameModeAddonIslandStringNoBlueprintsLoaded() {
@@ -448,9 +462,9 @@ public class BlueprintsManagerTest {
         verify(plugin).logError("No blueprints loaded for bundle 'bundle'!");
     }
 
-
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.BlueprintsManager#paste(world.bentobox.bentobox.api.addons.GameModeAddon, world.bentobox.bentobox.database.objects.Island, java.lang.String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.BlueprintsManager#paste(world.bentobox.bentobox.api.addons.GameModeAddon, world.bentobox.bentobox.database.objects.Island, java.lang.String)}.
      */
     @Test
     public void testPasteGameModeAddonIslandStringNoNormalBlueprint() {
@@ -471,7 +485,8 @@ public class BlueprintsManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.BlueprintsManager#validate(world.bentobox.bentobox.api.addons.GameModeAddon, java.lang.String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.BlueprintsManager#validate(world.bentobox.bentobox.api.addons.GameModeAddon, java.lang.String)}.
      */
     @Test
     public void testValidateNull() {
@@ -480,7 +495,8 @@ public class BlueprintsManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.BlueprintsManager#validate(world.bentobox.bentobox.api.addons.GameModeAddon, java.lang.String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.BlueprintsManager#validate(world.bentobox.bentobox.api.addons.GameModeAddon, java.lang.String)}.
      */
     @Test
     public void testValidateInvalid() {
@@ -489,7 +505,8 @@ public class BlueprintsManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.BlueprintsManager#validate(world.bentobox.bentobox.api.addons.GameModeAddon, java.lang.String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.BlueprintsManager#validate(world.bentobox.bentobox.api.addons.GameModeAddon, java.lang.String)}.
      */
     @Test
     public void testValidate() {
@@ -512,17 +529,20 @@ public class BlueprintsManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.BlueprintsManager#checkPerm(world.bentobox.bentobox.api.addons.Addon, world.bentobox.bentobox.api.user.User, java.lang.String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.BlueprintsManager#checkPerm(world.bentobox.bentobox.api.addons.Addon, world.bentobox.bentobox.api.user.User, java.lang.String)}.
      */
     @Test
     public void testCheckPermNoBundles() {
         BlueprintsManager bpm = new BlueprintsManager(plugin);
         assertFalse(bpm.checkPerm(addon, user, "name"));
-        verify(user).sendMessage(eq("general.errors.no-permission"), eq(TextVariables.PERMISSION), eq("bskyblock.island.create.name"));
+        verify(user).sendMessage(eq("general.errors.no-permission"), eq(TextVariables.PERMISSION),
+                eq("bskyblock.island.create.name"));
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.BlueprintsManager#checkPerm(world.bentobox.bentobox.api.addons.Addon, world.bentobox.bentobox.api.user.User, java.lang.String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.BlueprintsManager#checkPerm(world.bentobox.bentobox.api.addons.Addon, world.bentobox.bentobox.api.user.User, java.lang.String)}.
      */
     @Test
     public void testCheckPermBundlesNoPremissionRequired() {
@@ -543,11 +563,13 @@ public class BlueprintsManagerTest {
         bpm.addBlueprintBundle(addon, bb);
         // Check perm
         assertTrue(bpm.checkPerm(addon, user, "bundle"));
-        verify(user, Mockito.never()).sendMessage(eq("general.errors.no-permission"), eq(TextVariables.PERMISSION), eq("bskyblock.island.create.bundle"));
+        verify(user, Mockito.never()).sendMessage(eq("general.errors.no-permission"), eq(TextVariables.PERMISSION),
+                eq("bskyblock.island.create.bundle"));
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.BlueprintsManager#checkPerm(world.bentobox.bentobox.api.addons.Addon, world.bentobox.bentobox.api.user.User, java.lang.String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.BlueprintsManager#checkPerm(world.bentobox.bentobox.api.addons.Addon, world.bentobox.bentobox.api.user.User, java.lang.String)}.
      */
     @Test
     public void testCheckPermBundlesPremissionRequired() {
@@ -567,11 +589,13 @@ public class BlueprintsManagerTest {
         BlueprintsManager bpm = new BlueprintsManager(plugin);
         bpm.addBlueprintBundle(addon, bb);
         assertFalse(bpm.checkPerm(addon, user, "bundle"));
-        verify(user).sendMessage(eq("general.errors.no-permission"), eq(TextVariables.PERMISSION), eq("bskyblock.island.create.bundle"));
+        verify(user).sendMessage(eq("general.errors.no-permission"), eq(TextVariables.PERMISSION),
+                eq("bskyblock.island.create.bundle"));
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.BlueprintsManager#checkPerm(world.bentobox.bentobox.api.addons.Addon, world.bentobox.bentobox.api.user.User, java.lang.String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.BlueprintsManager#checkPerm(world.bentobox.bentobox.api.addons.Addon, world.bentobox.bentobox.api.user.User, java.lang.String)}.
      */
     @Test
     public void testCheckPermBundlesDefault() {
@@ -594,7 +618,8 @@ public class BlueprintsManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.BlueprintsManager#deleteBlueprintBundle(world.bentobox.bentobox.api.addons.GameModeAddon, world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.BlueprintsManager#deleteBlueprintBundle(world.bentobox.bentobox.api.addons.GameModeAddon, world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle)}.
      */
     @Test
     public void testDeleteBlueprintBundle() throws IOException {
@@ -612,13 +637,14 @@ public class BlueprintsManagerTest {
 
         BlueprintsManager bpm = new BlueprintsManager(plugin);
         // Set up running and verification
-        when(scheduler.runTaskAsynchronously(eq(plugin), any(Runnable.class))).thenAnswer((Answer<BukkitTask>) invocation -> {
-            invocation.getArgument(1,Runnable.class).run();
+        when(scheduler.runTaskAsynchronously(eq(plugin), any(Runnable.class)))
+                .thenAnswer((Answer<BukkitTask>) invocation -> {
+                    invocation.getArgument(1, Runnable.class).run();
 
-            // Verify
-            assertFalse(d.exists());
-            return task;
-        });
+                    // Verify
+                    assertFalse(d.exists());
+                    return task;
+                });
 
         // Delete it
         bpm.deleteBlueprintBundle(addon, bb);
@@ -626,7 +652,8 @@ public class BlueprintsManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.BlueprintsManager#renameBlueprint(world.bentobox.bentobox.api.addons.GameModeAddon, world.bentobox.bentobox.blueprints.Blueprint, java.lang.String, java.lang.String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.BlueprintsManager#renameBlueprint(world.bentobox.bentobox.api.addons.GameModeAddon, world.bentobox.bentobox.blueprints.Blueprint, java.lang.String, java.lang.String)}.
      */
     @Test
     public void testRenameBlueprint() {
@@ -652,7 +679,8 @@ public class BlueprintsManagerTest {
         // Open archive file
         try (FileOutputStream stream = new FileOutputStream(archiveFile)) {
             try (JarOutputStream out = new JarOutputStream(stream, new Manifest())) {
-                for (File j: tobeJaredList) addFile(folder, buffer, stream, out, j);
+                for (File j : tobeJaredList)
+                    addFile(folder, buffer, stream, out, j);
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -660,7 +688,8 @@ public class BlueprintsManagerTest {
         }
     }
 
-    private void addFile(File folder, byte[] buffer, FileOutputStream stream, JarOutputStream out, File tobeJared) throws IOException {
+    private void addFile(File folder, byte[] buffer, FileOutputStream stream, JarOutputStream out, File tobeJared)
+            throws IOException {
         if (tobeJared == null || !tobeJared.exists() || tobeJared.isDirectory())
             return;
         // Add archive entry

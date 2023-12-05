@@ -44,7 +44,7 @@ import world.bentobox.bentobox.managers.BlueprintsManager;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class})
+@PrepareForTest({ Bukkit.class, BentoBox.class })
 public class BlueprintManagementPanelTest {
 
     @Mock
@@ -89,7 +89,8 @@ public class BlueprintManagementPanelTest {
         when(user.getUniqueId()).thenReturn(uuid);
         when(user.getPlayer()).thenReturn(player);
         when(user.hasPermission(anyString())).thenReturn(true);
-        when(user.getTranslation(any())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
+        when(user.getTranslation(any()))
+                .thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
         User.setPlugin(plugin);
         // Set up user already
         User.getInstance(player);
@@ -123,7 +124,6 @@ public class BlueprintManagementPanelTest {
         // Blueprint
         when(blueprint.getName()).thenReturn("blueprint name");
 
-
         // Set up
         bmp = new BlueprintManagementPanel(plugin, user, addon);
 
@@ -138,7 +138,8 @@ public class BlueprintManagementPanelTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.panels.BlueprintManagementPanel#openPanel()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.panels.BlueprintManagementPanel#openPanel()}.
      */
     @Test
     public void testOpenPanel() {
@@ -147,7 +148,8 @@ public class BlueprintManagementPanelTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.panels.BlueprintManagementPanel#openBB(world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.panels.BlueprintManagementPanel#openBB(world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle)}.
      */
     @Test
     public void testOpenBB() {
@@ -158,7 +160,8 @@ public class BlueprintManagementPanelTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.panels.BlueprintManagementPanel#getBundleIcon(world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.panels.BlueprintManagementPanel#getBundleIcon(world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle)}.
      */
     @Test
     public void testGetBundleIcon() {
@@ -169,7 +172,8 @@ public class BlueprintManagementPanelTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.panels.BlueprintManagementPanel#getBlueprintItem(world.bentobox.bentobox.api.addons.GameModeAddon, int, world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle, world.bentobox.bentobox.blueprints.Blueprint)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.panels.BlueprintManagementPanel#getBlueprintItem(world.bentobox.bentobox.api.addons.GameModeAddon, int, world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle, world.bentobox.bentobox.blueprints.Blueprint)}.
      */
     @Test
     public void testGetBlueprintItem() {

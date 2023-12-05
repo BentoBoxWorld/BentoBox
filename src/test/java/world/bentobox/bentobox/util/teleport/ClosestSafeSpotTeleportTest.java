@@ -58,7 +58,7 @@ import world.bentobox.bentobox.util.teleport.ClosestSafeSpotTeleport.PositionDat
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Util.class, Bukkit.class})
+@PrepareForTest({ Util.class, Bukkit.class })
 public class ClosestSafeSpotTeleportTest {
 
     // Class under test
@@ -98,6 +98,7 @@ public class ClosestSafeSpotTeleportTest {
     private Block block;
 
     private Builder builder;
+
     /**
      */
     @Before
@@ -134,7 +135,7 @@ public class ClosestSafeSpotTeleportTest {
         // Plugin Island Manager
         // Default that locations are safe
         when(im.isSafeLocation(any(Location.class))).thenReturn(true);
-        when(im.checkIfSafe(any(),any(),any(),any())).thenReturn(true);
+        when(im.checkIfSafe(any(), any(), any(), any())).thenReturn(true);
         // Provide an island
         when(im.getIslandAt(any(Location.class))).thenReturn(Optional.of(island));
 
@@ -148,8 +149,7 @@ public class ClosestSafeSpotTeleportTest {
         when(Bukkit.getScheduler()).thenReturn(scheduler);
 
         // DUT
-        builder = ClosestSafeSpotTeleport.builder(plugin).entity(entity).portal()
-                .location(location)
+        builder = ClosestSafeSpotTeleport.builder(plugin).entity(entity).portal().location(location)
                 .successRunnable(failRunnable);
         csst = builder.build();
 
@@ -161,8 +161,10 @@ public class ClosestSafeSpotTeleportTest {
     public void tearDown() throws Exception {
         Mockito.framework().clearInlineMocks();
     }
+
     /**
-     * Test method for {@link world.bentobox.bentobox.util.teleport.ClosestSafeSpotTeleport#ClosestSafeSpotTeleport(world.bentobox.bentobox.util.teleport.ClosestSafeSpotTeleport.Builder)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.util.teleport.ClosestSafeSpotTeleport#ClosestSafeSpotTeleport(world.bentobox.bentobox.util.teleport.ClosestSafeSpotTeleport.Builder)}.
      */
     @Test
     public void testClosestSafeSpotTeleport() {
@@ -170,7 +172,8 @@ public class ClosestSafeSpotTeleportTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.util.teleport.ClosestSafeSpotTeleport#checkLocation()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.util.teleport.ClosestSafeSpotTeleport#checkLocation()}.
      */
     @Test
     public void testCheckLocation() {
@@ -181,12 +184,14 @@ public class ClosestSafeSpotTeleportTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.util.teleport.ClosestSafeSpotTeleport#checkLocation()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.util.teleport.ClosestSafeSpotTeleport#checkLocation()}.
      */
     @Test
     public void testCheckLocationSafeSpotImmediately() {
         // No portal
-        csst = ClosestSafeSpotTeleport.builder(plugin).entity(entity).location(location).successRunnable(failRunnable).build();
+        csst = ClosestSafeSpotTeleport.builder(plugin).entity(entity).location(location).successRunnable(failRunnable)
+                .build();
         when(im.isSafeLocation(this.location)).thenReturn(true);
         csst.checkLocation();
         PowerMockito.verifyStatic(Bukkit.class, VerificationModeFactory.times(1));
@@ -196,7 +201,8 @@ public class ClosestSafeSpotTeleportTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.util.teleport.ClosestSafeSpotTeleport#gatherChunks()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.util.teleport.ClosestSafeSpotTeleport#gatherChunks()}.
      */
     @Test
     public void testGatherChunks() {
@@ -207,7 +213,8 @@ public class ClosestSafeSpotTeleportTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.util.teleport.ClosestSafeSpotTeleport#getChunksToScan()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.util.teleport.ClosestSafeSpotTeleport#getChunksToScan()}.
      */
     @Test
     public void testGetChunksToScan() {
@@ -216,19 +223,21 @@ public class ClosestSafeSpotTeleportTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.util.teleport.ClosestSafeSpotTeleport#addChunk(java.util.List, world.bentobox.bentobox.util.Pair, world.bentobox.bentobox.util.Pair)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.util.teleport.ClosestSafeSpotTeleport#addChunk(java.util.List, world.bentobox.bentobox.util.Pair, world.bentobox.bentobox.util.Pair)}.
      */
     @Test
     public void testAddChunk() {
-        Pair<Integer, Integer> chunkCoord = new Pair<>(0,0);
-        Pair<Integer, Integer> chunksToScan = new Pair<>(0,0);
+        Pair<Integer, Integer> chunkCoord = new Pair<>(0, 0);
+        Pair<Integer, Integer> chunksToScan = new Pair<>(0, 0);
         List<Pair<Integer, Integer>> list = new ArrayList<>();
         csst.addChunk(list, chunksToScan, chunkCoord);
         assertEquals(1, list.size());
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.util.teleport.ClosestSafeSpotTeleport#scanAndPopulateBlockQueue(org.bukkit.ChunkSnapshot)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.util.teleport.ClosestSafeSpotTeleport#scanAndPopulateBlockQueue(org.bukkit.ChunkSnapshot)}.
      */
     @Test
     public void testScanAndPopulateBlockQueue() {
@@ -238,7 +247,9 @@ public class ClosestSafeSpotTeleportTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.util.teleport.ClosestSafeSpotTeleport#finishTask()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.util.teleport.ClosestSafeSpotTeleport#finishTask()}.
+     * 
      * @throws ExecutionException
      * @throws InterruptedException
      */
@@ -250,7 +261,8 @@ public class ClosestSafeSpotTeleportTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.util.teleport.ClosestSafeSpotTeleport#makeAndTeleport(org.bukkit.Material)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.util.teleport.ClosestSafeSpotTeleport#makeAndTeleport(org.bukkit.Material)}.
      */
     @Test
     public void testMakeAndTeleport() {
@@ -262,7 +274,8 @@ public class ClosestSafeSpotTeleportTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.util.teleport.ClosestSafeSpotTeleport#scanBlockQueue()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.util.teleport.ClosestSafeSpotTeleport#scanBlockQueue()}.
      */
     @Test
     public void testScanBlockQueue() {
@@ -271,7 +284,8 @@ public class ClosestSafeSpotTeleportTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.util.teleport.ClosestSafeSpotTeleport#teleportEntity(org.bukkit.Location)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.util.teleport.ClosestSafeSpotTeleport#teleportEntity(org.bukkit.Location)}.
      */
     @Test
     public void testTeleportEntity() {
@@ -281,7 +295,8 @@ public class ClosestSafeSpotTeleportTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.util.teleport.ClosestSafeSpotTeleport#asyncTeleport(org.bukkit.Location)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.util.teleport.ClosestSafeSpotTeleport#asyncTeleport(org.bukkit.Location)}.
      */
     @Test
     public void testAsyncTeleport() {
@@ -292,11 +307,12 @@ public class ClosestSafeSpotTeleportTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.util.teleport.ClosestSafeSpotTeleport#checkPosition(world.bentobox.bentobox.util.teleport.ClosestSafeSpotTeleport.PositionData)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.util.teleport.ClosestSafeSpotTeleport#checkPosition(world.bentobox.bentobox.util.teleport.ClosestSafeSpotTeleport.PositionData)}.
      */
     @Test
     public void testCheckPosition() {
-        Vector vector = new Vector(1,2,3);
+        Vector vector = new Vector(1, 2, 3);
         Material block = Material.STONE;
         Material space1 = Material.AIR;
         Material space2 = Material.AIR;

@@ -45,7 +45,7 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({BentoBox.class, Util.class, Bukkit.class })
+@PrepareForTest({ BentoBox.class, Util.class, Bukkit.class })
 public class RemoveMobsListenerTest {
 
     @Mock
@@ -89,7 +89,6 @@ public class RemoveMobsListenerTest {
         // Teleports are from far away
         when(inside.distanceSquared(any())).thenReturn(100D);
 
-
         Optional<Island> opIsland = Optional.ofNullable(island);
         when(im.getProtectedIslandAt(Mockito.eq(inside))).thenReturn(opIsland);
         // On island
@@ -127,11 +126,13 @@ public class RemoveMobsListenerTest {
     }
 
     /**
-     * Test method for {@link RemoveMobsListener#onUserTeleport(org.bukkit.event.player.PlayerTeleportEvent)}.
+     * Test method for
+     * {@link RemoveMobsListener#onUserTeleport(org.bukkit.event.player.PlayerTeleportEvent)}.
      */
     @Test
     public void testOnUserTeleport() {
-        PlayerTeleportEvent e = new PlayerTeleportEvent(player, inside, inside, PlayerTeleportEvent.TeleportCause.PLUGIN);
+        PlayerTeleportEvent e = new PlayerTeleportEvent(player, inside, inside,
+                PlayerTeleportEvent.TeleportCause.PLUGIN);
         new RemoveMobsListener().onUserTeleport(e);
         verify(scheduler).runTask(any(), any(Runnable.class));
     }
@@ -148,11 +149,13 @@ public class RemoveMobsListenerTest {
     }
 
     /**
-     * Test method for {@link RemoveMobsListener#onUserTeleport(org.bukkit.event.player.PlayerTeleportEvent)}.
+     * Test method for
+     * {@link RemoveMobsListener#onUserTeleport(org.bukkit.event.player.PlayerTeleportEvent)}.
      */
     @Test
     public void testOnUserTeleportChorusEtc() {
-        PlayerTeleportEvent e = new PlayerTeleportEvent(player, inside, inside, PlayerTeleportEvent.TeleportCause.CHORUS_FRUIT);
+        PlayerTeleportEvent e = new PlayerTeleportEvent(player, inside, inside,
+                PlayerTeleportEvent.TeleportCause.CHORUS_FRUIT);
         new RemoveMobsListener().onUserTeleport(e);
         e = new PlayerTeleportEvent(player, inside, inside, PlayerTeleportEvent.TeleportCause.ENDER_PEARL);
         new RemoveMobsListener().onUserTeleport(e);
@@ -174,12 +177,14 @@ public class RemoveMobsListenerTest {
     }
 
     /**
-     * Test method for {@link RemoveMobsListener#onUserTeleport(org.bukkit.event.player.PlayerTeleportEvent)}.
+     * Test method for
+     * {@link RemoveMobsListener#onUserTeleport(org.bukkit.event.player.PlayerTeleportEvent)}.
      */
     @Test
     public void testOnUserTeleportDoNotRemove() {
         Flags.REMOVE_MOBS.setSetting(world, false);
-        PlayerTeleportEvent e = new PlayerTeleportEvent(player, inside, inside, PlayerTeleportEvent.TeleportCause.PLUGIN);
+        PlayerTeleportEvent e = new PlayerTeleportEvent(player, inside, inside,
+                PlayerTeleportEvent.TeleportCause.PLUGIN);
         new RemoveMobsListener().onUserTeleport(e);
         verify(scheduler, never()).runTask(any(), any(Runnable.class));
     }
@@ -197,7 +202,8 @@ public class RemoveMobsListenerTest {
     }
 
     /**
-     * Test method for {@link RemoveMobsListener#onUserRespawn(org.bukkit.event.player.PlayerRespawnEvent)}.
+     * Test method for
+     * {@link RemoveMobsListener#onUserRespawn(org.bukkit.event.player.PlayerRespawnEvent)}.
      */
     @Test
     public void testOnUserRespawn() {
@@ -207,7 +213,8 @@ public class RemoveMobsListenerTest {
     }
 
     /**
-     * Test method for {@link RemoveMobsListener#onUserRespawn(org.bukkit.event.player.PlayerRespawnEvent)}.
+     * Test method for
+     * {@link RemoveMobsListener#onUserRespawn(org.bukkit.event.player.PlayerRespawnEvent)}.
      */
     @Test
     public void testOnUserRespawnDoNotRemove() {

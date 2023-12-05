@@ -32,20 +32,16 @@ public class IslandTeamInviteRejectCommand extends CompositeCommand {
         // Reject /island reject
         if (itc.isInvited(playerUUID)) {
             // Fire event so add-ons can run commands, etc.
-            IslandBaseEvent e = TeamEvent.builder()
-                    .island(getIslands().getIsland(getWorld(), user.getUniqueId()))
-                    .reason(TeamEvent.Reason.REJECT)
-                    .involvedPlayer(playerUUID)
-                    .build();
+            IslandBaseEvent e = TeamEvent.builder().island(getIslands().getIsland(getWorld(), user.getUniqueId()))
+                    .reason(TeamEvent.Reason.REJECT).involvedPlayer(playerUUID).build();
             if (e.getNewEvent().map(IslandBaseEvent::isCancelled).orElse(e.isCancelled())) {
                 return false;
             }
 
-            Optional.ofNullable(itc.getInviter(playerUUID))
-            .map(User::getInstance)
-            .ifPresent(inviter ->
-            inviter.sendMessage("commands.island.team.invite.reject.name-rejected-your-invite", TextVariables.NAME, user.getName(), TextVariables.DISPLAY_NAME, user.getDisplayName())
-                    );
+            Optional.ofNullable(itc.getInviter(playerUUID)).map(User::getInstance)
+                    .ifPresent(inviter -> inviter.sendMessage(
+                            "commands.island.team.invite.reject.name-rejected-your-invite", TextVariables.NAME,
+                            user.getName(), TextVariables.DISPLAY_NAME, user.getDisplayName()));
 
             // Remove this player from the global invite list
             itc.removeInvite(user.getUniqueId());

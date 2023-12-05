@@ -3,9 +3,7 @@
 // Copyright - 2021
 //
 
-
 package world.bentobox.bentobox.api.panels.builders;
-
 
 import java.io.File;
 import java.util.ArrayList;
@@ -26,14 +24,13 @@ import world.bentobox.bentobox.api.panels.reader.PanelTemplateRecord;
 import world.bentobox.bentobox.api.panels.reader.TemplateReader;
 import world.bentobox.bentobox.api.user.User;
 
-
 /**
  * Builds {@link TemplatedPanel}'s
+ * 
  * @author BONNe
  * @since 1.17.3
  */
-public class TemplatedPanelBuilder
-{
+public class TemplatedPanelBuilder {
 // ---------------------------------------------------------------------
 // Section: Builder
 // ---------------------------------------------------------------------
@@ -41,33 +38,28 @@ public class TemplatedPanelBuilder
     /**
      * Adds the template that must be loaded for Template panel builder.
      *
-     * @param guiName the gui name
+     * @param guiName    the gui name
      * @param dataFolder the data folder
      * @return the template panel builder
      */
-    public TemplatedPanelBuilder template(String guiName, File dataFolder)
-    {
+    public TemplatedPanelBuilder template(String guiName, File dataFolder) {
         this.panelTemplate = TemplateReader.readTemplatePanel(guiName, dataFolder);
         return this;
     }
 
-
-
     /**
      * Adds the template that must be loaded for Template panel builder.
      *
-     * @param panelName the gui name
+     * @param panelName    the gui name
      * @param templateName the name of the file
-     * @param dataFolder the data folder
+     * @param dataFolder   the data folder
      * @return the template panel builder
      * @since 1.20.0
      */
-    public TemplatedPanelBuilder template(String panelName, String templateName, File dataFolder)
-    {
+    public TemplatedPanelBuilder template(String panelName, String templateName, File dataFolder) {
         this.panelTemplate = TemplateReader.readTemplatePanel(panelName, templateName, dataFolder);
         return this;
     }
-
 
     /**
      * Adds the user for template panel builder.
@@ -75,12 +67,10 @@ public class TemplatedPanelBuilder
      * @param user the user
      * @return the template panel builder
      */
-    public TemplatedPanelBuilder user(User user)
-    {
+    public TemplatedPanelBuilder user(User user) {
         this.user = user;
         return this;
     }
-
 
     /**
      * Adds the world for template panel builder.
@@ -88,12 +78,10 @@ public class TemplatedPanelBuilder
      * @param world the world
      * @return the template panel builder
      */
-    public TemplatedPanelBuilder world(World world)
-    {
+    public TemplatedPanelBuilder world(World world) {
         this.world = world;
         return this;
     }
-
 
     /**
      * Parameters for title of templated panel.
@@ -102,16 +90,13 @@ public class TemplatedPanelBuilder
      * @return the templated panel builder
      * @since 1.20.0
      */
-    public TemplatedPanelBuilder parameters(@NonNull String... parameters)
-    {
-        if (parameters.length > 0)
-        {
+    public TemplatedPanelBuilder parameters(@NonNull String... parameters) {
+        if (parameters.length > 0) {
             this.parameters.addAll(Arrays.stream(parameters).toList());
         }
 
         return this;
     }
-
 
     /**
      * Adds the panel listener for template panel builder.
@@ -119,113 +104,94 @@ public class TemplatedPanelBuilder
      * @param listener the listener
      * @return the template panel builder
      */
-    public TemplatedPanelBuilder listener(PanelListener listener)
-    {
+    public TemplatedPanelBuilder listener(PanelListener listener) {
         this.listener = listener;
         return this;
     }
 
-
     /**
      * Registers new button type builder for template panel builder.
      *
-     * @param type the type
+     * @param type          the type
      * @param buttonCreator the button creator
      * @return the template panel builder
      */
-    public TemplatedPanelBuilder registerTypeBuilder(String type, BiFunction<ItemTemplateRecord, TemplatedPanel.ItemSlot, PanelItem> buttonCreator)
-    {
+    public TemplatedPanelBuilder registerTypeBuilder(String type,
+            BiFunction<ItemTemplateRecord, TemplatedPanel.ItemSlot, PanelItem> buttonCreator) {
         this.objectCreatorMap.put(type, buttonCreator);
         return this;
     }
-
 
     /**
      * Build templated panel.
      *
      * @return the templated panel
      */
-    public TemplatedPanel build()
-    {
+    public TemplatedPanel build() {
         return new TemplatedPanel(this);
     }
-
 
 // ---------------------------------------------------------------------
 // Section: Getters
 // ---------------------------------------------------------------------
-
 
     /**
      * Gets panel template.
      *
      * @return the panel template
      */
-    public PanelTemplateRecord getPanelTemplate()
-    {
+    public PanelTemplateRecord getPanelTemplate() {
         return this.panelTemplate;
     }
-
 
     /**
      * Gets user.
      *
      * @return the user
      */
-    public User getUser()
-    {
+    public User getUser() {
         return this.user;
     }
-
 
     /**
      * Gets world.
      *
      * @return the world
      */
-    public World getWorld()
-    {
+    public World getWorld() {
         return this.world;
     }
-
 
     /**
      * Get title parameters for panel title.
      *
      * @return the list of parameters for title.
      */
-    public List<String> getParameters()
-    {
+    public List<String> getParameters() {
         return this.parameters;
     }
-
 
     /**
      * Gets listener.
      *
      * @return the listener
      */
-    public PanelListener getListener()
-    {
+    public PanelListener getListener() {
         return this.listener;
     }
-
 
     /**
      * Gets object creator map.
      *
      * @return the object creator map
      */
-    public Map<String, BiFunction<ItemTemplateRecord, TemplatedPanel.ItemSlot, PanelItem>> getObjectCreatorMap()
-    {
+    public Map<String, BiFunction<ItemTemplateRecord, TemplatedPanel.ItemSlot, PanelItem>> getObjectCreatorMap() {
         return this.objectCreatorMap;
     }
-
 
 // ---------------------------------------------------------------------
 // Section: Variables
 // ---------------------------------------------------------------------
-
 
     /**
      * The GUI template record.

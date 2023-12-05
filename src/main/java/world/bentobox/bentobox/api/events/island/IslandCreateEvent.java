@@ -11,8 +11,7 @@ import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle;
 import world.bentobox.bentobox.database.objects.Island;
 
 /**
- * Fired when an island is going to be created.
- * May be cancelled.
+ * Fired when an island is going to be created. May be cancelled.
  *
  */
 public class IslandCreateEvent extends IslandBaseEvent {
@@ -28,7 +27,8 @@ public class IslandCreateEvent extends IslandBaseEvent {
         return handlers;
     }
 
-    public IslandCreateEvent(Island island, UUID player, boolean admin, Location location, @NonNull BlueprintBundle blueprintBundle) {
+    public IslandCreateEvent(Island island, UUID player, boolean admin, Location location,
+            @NonNull BlueprintBundle blueprintBundle) {
         // Final variables have to be declared in the constructor
         super(island, player, admin, location);
         this.blueprintBundle = blueprintBundle;

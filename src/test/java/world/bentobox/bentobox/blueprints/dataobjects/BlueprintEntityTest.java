@@ -46,7 +46,6 @@ public class BlueprintEntityTest {
     @Mock
     private Horse horse;
 
-
     /**
      * @throws java.lang.Exception
      */
@@ -71,7 +70,6 @@ public class BlueprintEntityTest {
     public void tearDown() throws Exception {
         Mockito.framework().clearInlineMocks();
     }
-
 
     @Test
     public void testConfigureEntityWithVillager() {

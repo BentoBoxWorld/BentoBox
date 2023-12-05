@@ -18,7 +18,7 @@ public class InvalidAddonFormatException extends AddonException {
     }
 
     @Override
-    public void printStackTrace(){
+    public void printStackTrace() {
         super.printStackTrace();
 
         Bukkit.getLogger().log(Level.WARNING, "   Basic format : (addon.yml)");

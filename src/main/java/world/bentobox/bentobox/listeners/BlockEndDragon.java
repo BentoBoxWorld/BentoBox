@@ -26,8 +26,10 @@ public class BlockEndDragon implements Listener {
     }
 
     /**
-     * Adds a portal frame at the top of the world, when a player joins an island End world.
-     * This prevents the Ender Dragon from spawning: if any portal frame exists, then the dragon is considered killed already.
+     * Adds a portal frame at the top of the world, when a player joins an island
+     * End world. This prevents the Ender Dragon from spawning: if any portal frame
+     * exists, then the dragon is considered killed already.
+     * 
      * @param event PlayerChangedWorldEvent
      */
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
@@ -37,8 +39,7 @@ public class BlockEndDragon implements Listener {
 
     private void testLocation(Location location) {
         World w = location.getWorld();
-        if (w == null || !plugin.getIWM().isIslandEnd(w)
-                || !Flags.REMOVE_END_EXIT_ISLAND.isSetForWorld(w)
+        if (w == null || !plugin.getIWM().isIslandEnd(w) || !Flags.REMOVE_END_EXIT_ISLAND.isSetForWorld(w)
                 || w.getBlockAt(0, w.getMaxHeight() - 1, 0).getType().equals(Material.END_PORTAL)) {
             return;
         }
@@ -48,8 +49,10 @@ public class BlockEndDragon implements Listener {
     }
 
     /**
-     * Adds a portal frame at the top of the world, when a player joins an island End world.
-     * This prevents the Ender Dragon from spawning: if any portal frame exists, then the dragon is considered killed already.
+     * Adds a portal frame at the top of the world, when a player joins an island
+     * End world. This prevents the Ender Dragon from spawning: if any portal frame
+     * exists, then the dragon is considered killed already.
+     * 
      * @param event PlayerJoinEvent
      */
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
@@ -58,8 +61,9 @@ public class BlockEndDragon implements Listener {
     }
 
     /**
-     * Silently prevents block placing in the dead zone.
-     * This is just a simple protection.
+     * Silently prevents block placing in the dead zone. This is just a simple
+     * protection.
+     * 
      * @param e - event
      */
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
@@ -68,19 +72,17 @@ public class BlockEndDragon implements Listener {
     }
 
     private boolean testBlock(Block block) {
-        return block.getX() == 0
-                && block.getZ() == 0
-                && block.getY() == block.getWorld().getMaxHeight() - 1
+        return block.getX() == 0 && block.getZ() == 0 && block.getY() == block.getWorld().getMaxHeight() - 1
                 && block.getWorld().getEnvironment().equals(Environment.THE_END)
                 && Flags.REMOVE_END_EXIT_ISLAND.isSetForWorld(block.getWorld())
-                && plugin.getIWM().inWorld(block.getWorld())
-                && plugin.getIWM().isEndGenerate(block.getWorld())
+                && plugin.getIWM().inWorld(block.getWorld()) && plugin.getIWM().isEndGenerate(block.getWorld())
                 && plugin.getIWM().isEndIslands(block.getWorld());
     }
 
     /**
-     * Silently prevents block breaking in the dead zone.
-     * This is just a simple protection.
+     * Silently prevents block breaking in the dead zone. This is just a simple
+     * protection.
+     * 
      * @param e - event
      */
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)

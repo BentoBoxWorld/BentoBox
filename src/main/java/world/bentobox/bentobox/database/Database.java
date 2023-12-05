@@ -15,6 +15,7 @@ import world.bentobox.bentobox.api.addons.Addon;
 
 /**
  * Handy class to store and load Java POJOs in the Database
+ * 
  * @author tastybento
  *
  * @param <T>
@@ -27,26 +28,29 @@ public class Database<T> {
 
     /**
      * Construct a database
+     * 
      * @param plugin - plugin
-     * @param type - to store this type
+     * @param type   - to store this type
      */
-    public Database(BentoBox plugin, Class<T> type)  {
+    public Database(BentoBox plugin, Class<T> type) {
         this.logger = plugin.getLogger();
         handler = databaseSetup.getHandler(type);
     }
 
     /**
      * Construct a database
+     * 
      * @param addon - addon requesting
-     * @param type - to store this type
+     * @param type  - to store this type
      */
-    public Database(Addon addon, Class<T> type)  {
+    public Database(Addon addon, Class<T> type) {
         this.logger = addon.getLogger();
         handler = databaseSetup.getHandler(type);
     }
 
     /**
      * Load all the config objects and supply them as a list
+     * 
      * @return list of config objects or an empty list if they cannot be loaded
      */
     @NonNull
@@ -54,9 +58,8 @@ public class Database<T> {
         List<T> result = new ArrayList<>();
         try {
             result = handler.loadObjects();
-        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException
-                | InvocationTargetException | ClassNotFoundException | IntrospectionException
-                | NoSuchMethodException | SecurityException e) {
+        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+                | ClassNotFoundException | IntrospectionException | NoSuchMethodException | SecurityException e) {
             logger.severe(() -> "Could not load objects from database! Error: " + e.getMessage());
         }
         return result;
@@ -64,6 +67,7 @@ public class Database<T> {
 
     /**
      * Loads the config object
+     * 
      * @param uniqueId - unique id of the object
      * @return the object or null if it cannot be loaded
      */
@@ -83,7 +87,9 @@ public class Database<T> {
     }
 
     /**
-     * Save object async. Saving may be done sync, depending on the underlying database.
+     * Save object async. Saving may be done sync, depending on the underlying
+     * database.
+     * 
      * @param instance to save
      * @return Completable future that results in true if successful.
      * @since 1.13.0
@@ -99,20 +105,24 @@ public class Database<T> {
     }
 
     /**
-     * Save object. Saving is done async. Same as {@link #saveObjectAsync(Object)}, which is recommended.
+     * Save object. Saving is done async. Same as {@link #saveObjectAsync(Object)},
+     * which is recommended.
+     * 
      * @param instance to save
      * @return true - always.
      * @since 1.13.0
      */
     public boolean saveObject(T instance) {
         saveObjectAsync(instance).thenAccept(r -> {
-            if (Boolean.FALSE.equals(r)) logger.severe(() -> "Could not save object to database!");
+            if (Boolean.FALSE.equals(r))
+                logger.severe(() -> "Could not save object to database!");
         });
         return true;
     }
 
     /**
      * Checks if a config object exists or not
+     * 
      * @param name - unique name of the config object
      * @return true if it exists
      */
@@ -122,6 +132,7 @@ public class Database<T> {
 
     /**
      * Attempts to delete the object with the uniqueId
+     * 
      * @param uniqueId - uniqueId of object
      * @since 1.1
      */
@@ -131,6 +142,7 @@ public class Database<T> {
 
     /**
      * Delete object from database
+     * 
      * @param object - object to delete
      */
     public void deleteObject(T object) {
@@ -148,7 +160,5 @@ public class Database<T> {
     public void close() {
         handler.close();
     }
-
-
 
 }

@@ -10,9 +10,10 @@ import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.user.User;
 
 /**
- * BentoBox Confirmable Command
- * Adds ability to confirm a command before execution.
- * See {@link #askConfirmation(User, Runnable)}, {@link #askConfirmation(User, String, Runnable)}
+ * BentoBox Confirmable Command Adds ability to confirm a command before
+ * execution. See {@link #askConfirmation(User, Runnable)},
+ * {@link #askConfirmation(User, String, Runnable)}
+ * 
  * @author tastybento
  * @author Poslovitch
  */
@@ -25,8 +26,9 @@ public abstract class ConfirmableCommand extends CompositeCommand {
 
     /**
      * Top level command
-     * @param addon - addon creating the command
-     * @param label - string for this command
+     * 
+     * @param addon   - addon creating the command
+     * @param label   - string for this command
      * @param aliases - aliases
      */
     protected ConfirmableCommand(Addon addon, String label, String... aliases) {
@@ -34,19 +36,21 @@ public abstract class ConfirmableCommand extends CompositeCommand {
     }
 
     /**
-     * Command to register a command from an addon under a parent command (that could be from another addon)
-     * @param addon - this command's addon
-     * @param parent - parent command
+     * Command to register a command from an addon under a parent command (that
+     * could be from another addon)
+     * 
+     * @param addon   - this command's addon
+     * @param parent  - parent command
      * @param aliases - aliases for this command
      */
-    protected ConfirmableCommand(Addon addon, CompositeCommand parent, String label, String... aliases ) {
+    protected ConfirmableCommand(Addon addon, CompositeCommand parent, String label, String... aliases) {
         super(addon, parent, label, aliases);
     }
 
     /**
      *
-     * @param parent - parent command
-     * @param label - command label
+     * @param parent  - parent command
+     * @param label   - command label
      * @param aliases - command aliases
      */
     protected ConfirmableCommand(CompositeCommand parent, String label, String... aliases) {
@@ -55,20 +59,24 @@ public abstract class ConfirmableCommand extends CompositeCommand {
 
     /**
      * Tells user to confirm command by retyping it.
-     * @param user User to ask confirmation to.
-     * @param message Optional message to send to the user to give them a bit more context. It must already be translated.
+     * 
+     * @param user      User to ask confirmation to.
+     * @param message   Optional message to send to the user to give them a bit more
+     *                  context. It must already be translated.
      * @param confirmed Runnable to be executed if successfully confirmed.
      */
     public void askConfirmation(User user, String message, Runnable confirmed) {
         // Check for pending confirmations
         if (toBeConfirmed.containsKey(user)) {
-            if (toBeConfirmed.get(user).topLabel().equals(getTopLabel()) && toBeConfirmed.get(user).label().equalsIgnoreCase(getLabel())) {
+            if (toBeConfirmed.get(user).topLabel().equals(getTopLabel())
+                    && toBeConfirmed.get(user).label().equalsIgnoreCase(getLabel())) {
                 toBeConfirmed.get(user).task().cancel();
                 Bukkit.getScheduler().runTask(getPlugin(), toBeConfirmed.get(user).runnable());
                 toBeConfirmed.remove(user);
                 return;
             } else {
-                // Player has another outstanding confirmation request that will now be cancelled
+                // Player has another outstanding confirmation request that will now be
+                // cancelled
                 user.sendMessage("commands.confirmation.previous-request-cancelled");
             }
         }
@@ -77,7 +85,8 @@ public abstract class ConfirmableCommand extends CompositeCommand {
             user.sendRawMessage(message);
         }
         // Tell user that they need to confirm
-        user.sendMessage("commands.confirmation.confirm", "[seconds]", String.valueOf(getSettings().getConfirmationTime()));
+        user.sendMessage("commands.confirmation.confirm", "[seconds]",
+                String.valueOf(getSettings().getConfirmationTime()));
         // Set up a cancellation task
         BukkitTask task = Bukkit.getScheduler().runTaskLater(getPlugin(), () -> {
             user.sendMessage("commands.confirmation.request-cancelled");
@@ -89,9 +98,13 @@ public abstract class ConfirmableCommand extends CompositeCommand {
     }
 
     /**
-     * Tells user to confirm command by retyping it. Uses the default message to retype it.<p>
-     * If you need a custom message, use {@link #askConfirmation(User, String, Runnable)}
-     * @param user User to ask confirmation to.
+     * Tells user to confirm command by retyping it. Uses the default message to
+     * retype it.
+     * <p>
+     * If you need a custom message, use
+     * {@link #askConfirmation(User, String, Runnable)}
+     * 
+     * @param user      User to ask confirmation to.
      * @param confirmed Runnable to be executed if successfully confirmed.
      */
     public void askConfirmation(User user, Runnable confirmed) {
@@ -102,6 +115,7 @@ public abstract class ConfirmableCommand extends CompositeCommand {
      * Record to hold the data to run once the confirmation is given
      *
      */
-    private record Confirmer (String topLabel, String label, Runnable runnable, BukkitTask task) { }
+    private record Confirmer(String topLabel, String label, Runnable runnable, BukkitTask task) {
+    }
 
 }

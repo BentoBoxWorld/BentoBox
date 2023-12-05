@@ -61,8 +61,8 @@ public class HeadGetter {
      * @param plugin - plugin
      */
     public HeadGetter(BentoBox plugin) {
-	this.plugin = plugin;
-	this.runPlayerHeadGetter();
+        this.plugin = plugin;
+        this.runPlayerHeadGetter();
     }
 
     /**
@@ -71,32 +71,32 @@ public class HeadGetter {
      * @since 1.14.1
      */
     public static void getHead(PanelItem panelItem, HeadRequester requester) {
-	// Freshen cache
-	// If memory is an issue we sacrifice performance?
-	// cachedHeads.values().removeIf(cache -> System.currentTimeMillis() -
-	// cache.getTimestamp() > TOO_LONG);
+        // Freshen cache
+        // If memory is an issue we sacrifice performance?
+        // cachedHeads.values().removeIf(cache -> System.currentTimeMillis() -
+        // cache.getTimestamp() > TOO_LONG);
 
-	HeadCache cache = cachedHeads.get(panelItem.getPlayerHeadName());
+        HeadCache cache = cachedHeads.get(panelItem.getPlayerHeadName());
 
-	// Get value from config. Multiply value to 60 000 as internally it uses
-	// milliseconds.
-	// Config value stores minutes.
-	long cacheTimeout = BentoBox.getInstance().getSettings().getPlayerHeadCacheTime() * 60 * 1000;
+        // Get value from config. Multiply value to 60 000 as internally it uses
+        // milliseconds.
+        // Config value stores minutes.
+        long cacheTimeout = BentoBox.getInstance().getSettings().getPlayerHeadCacheTime() * 60 * 1000;
 
-	// to avoid every time clearing stored heads (as they may become very large)
-	// just check if requested cache exists and compare it with value from plugin
-	// settings.
-	// If timestamp is set to 0, then it must be kept forever.
-	// If settings time is set to 0, then always use cache.
-	if (cache != null && (cache.getTimestamp() == 0 || cacheTimeout == 0
-		|| System.currentTimeMillis() - cache.getTimestamp() <= cacheTimeout)) {
-	    panelItem.setHead(cachedHeads.get(panelItem.getPlayerHeadName()).getPlayerHead());
-	    requester.setHead(panelItem);
-	} else {
-	    // Get the name
-	    headRequesters.computeIfAbsent(panelItem.getPlayerHeadName(), k -> new HashSet<>()).add(requester);
-	    names.add(new Pair<>(panelItem.getPlayerHeadName(), panelItem));
-	}
+        // to avoid every time clearing stored heads (as they may become very large)
+        // just check if requested cache exists and compare it with value from plugin
+        // settings.
+        // If timestamp is set to 0, then it must be kept forever.
+        // If settings time is set to 0, then always use cache.
+        if (cache != null && (cache.getTimestamp() == 0 || cacheTimeout == 0
+                || System.currentTimeMillis() - cache.getTimestamp() <= cacheTimeout)) {
+            panelItem.setHead(cachedHeads.get(panelItem.getPlayerHeadName()).getPlayerHead());
+            requester.setHead(panelItem);
+        } else {
+            // Get the name
+            headRequesters.computeIfAbsent(panelItem.getPlayerHeadName(), k -> new HashSet<>()).add(requester);
+            names.add(new Pair<>(panelItem.getPlayerHeadName(), panelItem));
+        }
     }
 
     /**
@@ -107,7 +107,7 @@ public class HeadGetter {
      * @since 1.14.1
      */
     public static void addToCache(HeadCache cache) {
-	cachedHeads.put(cache.getUserName(), cache);
+        cachedHeads.put(cache.getUserName(), cache);
     }
 
 // ---------------------------------------------------------------------
@@ -121,74 +121,74 @@ public class HeadGetter {
      * @since 1.14.1
      */
     private void runPlayerHeadGetter() {
-	Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {
-	    synchronized (HeadGetter.names) {
-		int counter = 0;
+        Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {
+            synchronized (HeadGetter.names) {
+                int counter = 0;
 
-		while (!HeadGetter.names.isEmpty() && counter < plugin.getSettings().getHeadsPerCall()) {
-		    Pair<String, PanelItem> elementEntry = HeadGetter.names.poll();
-		    final String userName = elementEntry.getKey();
+                while (!HeadGetter.names.isEmpty() && counter < plugin.getSettings().getHeadsPerCall()) {
+                    Pair<String, PanelItem> elementEntry = HeadGetter.names.poll();
+                    final String userName = elementEntry.getKey();
 
-		    // Hmm, task in task in task. That is a weird structure.
-		    Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-			// Check if we can get user Id.
-			UUID userId;
+                    // Hmm, task in task in task. That is a weird structure.
+                    Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+                        // Check if we can get user Id.
+                        UUID userId;
 
-			if (HeadGetter.cachedHeads.containsKey(userName)) {
-			    // If cache contains userName, it means that it was already stored.
-			    // We can reuse stored data, as they should not be changed.
-			    userId = HeadGetter.cachedHeads.get(userName).getUserId();
-			} else if (Bukkit.getServer().getOnlineMode()) {
-			    // If server is in online mode we can relay that UUID is correct.
-			    // So we use thing that is stored in BentoBox players data.
-			    userId = plugin.getPlayers().getUUID(userName);
-			} else {
-			    // Assign null for later check, as I do not want to write ifs inside
-			    // previous 2 checks.
-			    userId = null;
-			}
+                        if (HeadGetter.cachedHeads.containsKey(userName)) {
+                            // If cache contains userName, it means that it was already stored.
+                            // We can reuse stored data, as they should not be changed.
+                            userId = HeadGetter.cachedHeads.get(userName).getUserId();
+                        } else if (Bukkit.getServer().getOnlineMode()) {
+                            // If server is in online mode we can relay that UUID is correct.
+                            // So we use thing that is stored in BentoBox players data.
+                            userId = plugin.getPlayers().getUUID(userName);
+                        } else {
+                            // Assign null for later check, as I do not want to write ifs inside
+                            // previous 2 checks.
+                            userId = null;
+                        }
 
-			HeadCache cache;
+                        HeadCache cache;
 
-			if (plugin.getSettings().isUseCacheServer()) {
-			    // Cache server has an implementation to get a skin just from player name.
-			    Pair<UUID, String> playerSkin = HeadGetter.getTextureFromName(userName, userId);
+                        if (plugin.getSettings().isUseCacheServer()) {
+                            // Cache server has an implementation to get a skin just from player name.
+                            Pair<UUID, String> playerSkin = HeadGetter.getTextureFromName(userName, userId);
 
-			    // Create new cache object.
-			    cache = new HeadCache(userName, playerSkin.getKey(),
-				    HeadGetter.createProfile(userName, playerSkin.getKey(), playerSkin.getValue()));
-			} else {
-			    if (userId == null) {
-				// Use MojangAPI to get userId from userName.
-				userId = HeadGetter.getUserIdFromName(userName);
-			    }
+                            // Create new cache object.
+                            cache = new HeadCache(userName, playerSkin.getKey(),
+                                    HeadGetter.createProfile(userName, playerSkin.getKey(), playerSkin.getValue()));
+                        } else {
+                            if (userId == null) {
+                                // Use MojangAPI to get userId from userName.
+                                userId = HeadGetter.getUserIdFromName(userName);
+                            }
 
-			    // Create new cache object.
-			    cache = new HeadCache(userName, userId,
-				    HeadGetter.createProfile(userName, userId, HeadGetter.getTextureFromUUID(userId)));
-			}
+                            // Create new cache object.
+                            cache = new HeadCache(userName, userId,
+                                    HeadGetter.createProfile(userName, userId, HeadGetter.getTextureFromUUID(userId)));
+                        }
 
-			// Save in cache
-			HeadGetter.cachedHeads.put(userName, cache);
+                        // Save in cache
+                        HeadGetter.cachedHeads.put(userName, cache);
 
-			// Tell requesters the head came in, but only if the texture is usable.
-			if (cache.playerProfile != null && HeadGetter.headRequesters.containsKey(userName)) {
-			    for (HeadRequester req : HeadGetter.headRequesters.get(userName)) {
-				elementEntry.getValue().setHead(cache.getPlayerHead());
+                        // Tell requesters the head came in, but only if the texture is usable.
+                        if (cache.playerProfile != null && HeadGetter.headRequesters.containsKey(userName)) {
+                            for (HeadRequester req : HeadGetter.headRequesters.get(userName)) {
+                                elementEntry.getValue().setHead(cache.getPlayerHead());
 
-				if (!plugin.isShutdown()) {
-				    // Do not run task if plugin is shutting down.
-				    Bukkit.getScheduler().runTaskAsynchronously(this.plugin,
-					    () -> req.setHead(elementEntry.getValue()));
-				}
-			    }
-			}
-		    });
+                                if (!plugin.isShutdown()) {
+                                    // Do not run task if plugin is shutting down.
+                                    Bukkit.getScheduler().runTaskAsynchronously(this.plugin,
+                                            () -> req.setHead(elementEntry.getValue()));
+                                }
+                            }
+                        }
+                    });
 
-		    counter++;
-		}
-	    }
-	}, 0, plugin.getSettings().getTicksBetweenCalls());
+                    counter++;
+                }
+            }
+        }, 0, plugin.getSettings().getTicksBetweenCalls());
     }
 
     /**
@@ -199,33 +199,33 @@ public class HeadGetter {
      * @since 1.14.1
      */
     private static UUID getUserIdFromName(String name) {
-	UUID userId;
+        UUID userId;
 
-	try {
-	    Gson gsonReader = new Gson();
+        try {
+            Gson gsonReader = new Gson();
 
-	    // Get mojang user-id from given nickname
-	    JsonObject jsonObject = gsonReader.fromJson(
-		    HeadGetter.getURLContent("https://api.mojang.com/users/profiles/minecraft/" + name),
-		    JsonObject.class);
-	    /*
-	     * Returned Json Object: { name: USER_NAME, id: USER_ID }
-	     */
+            // Get mojang user-id from given nickname
+            JsonObject jsonObject = gsonReader.fromJson(
+                    HeadGetter.getURLContent("https://api.mojang.com/users/profiles/minecraft/" + name),
+                    JsonObject.class);
+            /*
+             * Returned Json Object: { name: USER_NAME, id: USER_ID }
+             */
 
-	    // Mojang returns ID without `-`. So it is necessary to insert them back.
-	    // Well technically it is not necessary and can use just a string instead of
-	    // UUID.
-	    // UUID just looks more fancy :)
-	    String userIdString = jsonObject.get("id").toString().replace("\"", "")
-		    .replaceFirst("(\\w{8})(\\w{4})(\\w{4})(\\w{4})(\\w{12})", "$1-$2-$3-$4-$5");
+            // Mojang returns ID without `-`. So it is necessary to insert them back.
+            // Well technically it is not necessary and can use just a string instead of
+            // UUID.
+            // UUID just looks more fancy :)
+            String userIdString = jsonObject.get("id").toString().replace("\"", "")
+                    .replaceFirst("(\\w{8})(\\w{4})(\\w{4})(\\w{4})(\\w{12})", "$1-$2-$3-$4-$5");
 
-	    userId = UUID.fromString(userIdString);
-	} catch (Exception ignored) {
-	    // Return random if failed?
-	    userId = UUID.randomUUID();
-	}
+            userId = UUID.fromString(userIdString);
+        } catch (Exception ignored) {
+            // Return random if failed?
+            userId = UUID.randomUUID();
+        }
 
-	return userId;
+        return userId;
     }
 
     /**
@@ -237,36 +237,36 @@ public class HeadGetter {
      * @since 1.14.1
      */
     private static @Nullable String getTextureFromUUID(UUID userId) {
-	try {
-	    Gson gsonReader = new Gson();
+        try {
+            Gson gsonReader = new Gson();
 
-	    // Get user encoded texture value.
-	    JsonObject jsonObject = gsonReader.fromJson(
-		    HeadGetter.getURLContent(
-			    "https://sessionserver.mojang.com/session/minecraft/profile/" + userId.toString()),
-		    JsonObject.class);
+            // Get user encoded texture value.
+            JsonObject jsonObject = gsonReader.fromJson(
+                    HeadGetter.getURLContent(
+                            "https://sessionserver.mojang.com/session/minecraft/profile/" + userId.toString()),
+                    JsonObject.class);
 
-	    /*
-	     * Returned Json Object: { id: USER_ID, name: USER_NAME, properties: [ { name:
-	     * "textures", value: ENCODED_BASE64_TEXTURE } ] }
-	     */
+            /*
+             * Returned Json Object: { id: USER_ID, name: USER_NAME, properties: [ { name:
+             * "textures", value: ENCODED_BASE64_TEXTURE } ] }
+             */
 
-	    String decodedTexture = "";
+            String decodedTexture = "";
 
-	    for (JsonElement element : jsonObject.getAsJsonArray("properties")) {
-		JsonObject object = element.getAsJsonObject();
+            for (JsonElement element : jsonObject.getAsJsonArray("properties")) {
+                JsonObject object = element.getAsJsonObject();
 
-		if (object.has(NAME) && object.get(NAME).getAsString().equals(TEXTURES)) {
-		    decodedTexture = object.get("value").getAsString();
-		    break;
-		}
-	    }
+                if (object.has(NAME) && object.get(NAME).getAsString().equals(TEXTURES)) {
+                    decodedTexture = object.get("value").getAsString();
+                    break;
+                }
+            }
 
-	    return decodedTexture;
-	} catch (Exception ignored) {
-	}
+            return decodedTexture;
+        } catch (Exception ignored) {
+        }
 
-	return null;
+        return null;
     }
 
     /**
@@ -280,42 +280,42 @@ public class HeadGetter {
      * @since 1.16.0
      */
     private static @NonNull Pair<UUID, String> getTextureFromName(String userName, @Nullable UUID userId) {
-	try {
-	    Gson gsonReader = new Gson();
+        try {
+            Gson gsonReader = new Gson();
 
-	    // Get user encoded texture value.
-	    // mc-heads returns correct skin with providing just a name, unlike mojang api,
-	    // which
-	    // requires UUID.
-	    JsonObject jsonObject = gsonReader.fromJson(HeadGetter.getURLContent(
-		    "https://mc-heads.net/minecraft/profile/" + (userId == null ? userName : userId.toString())),
-		    JsonObject.class);
+            // Get user encoded texture value.
+            // mc-heads returns correct skin with providing just a name, unlike mojang api,
+            // which
+            // requires UUID.
+            JsonObject jsonObject = gsonReader.fromJson(HeadGetter.getURLContent(
+                    "https://mc-heads.net/minecraft/profile/" + (userId == null ? userName : userId.toString())),
+                    JsonObject.class);
 
-	    /*
-	     * Returned Json Object: { id: USER_ID, name: USER_NAME, properties: [ { name:
-	     * "textures", value: ENCODED_BASE64_TEXTURE } ] }
-	     */
+            /*
+             * Returned Json Object: { id: USER_ID, name: USER_NAME, properties: [ { name:
+             * "textures", value: ENCODED_BASE64_TEXTURE } ] }
+             */
 
-	    String decodedTexture = "";
+            String decodedTexture = "";
 
-	    String userIdString = jsonObject.get("id").toString().replace("\"", "")
-		    .replaceFirst("(\\w{8})(\\w{4})(\\w{4})(\\w{4})(\\w{12})", "$1-$2-$3-$4-$5");
+            String userIdString = jsonObject.get("id").toString().replace("\"", "")
+                    .replaceFirst("(\\w{8})(\\w{4})(\\w{4})(\\w{4})(\\w{12})", "$1-$2-$3-$4-$5");
 
-	    for (JsonElement element : jsonObject.getAsJsonArray("properties")) {
-		JsonObject object = element.getAsJsonObject();
+            for (JsonElement element : jsonObject.getAsJsonArray("properties")) {
+                JsonObject object = element.getAsJsonObject();
 
-		if (object.has(NAME) && object.get(NAME).getAsString().equals(TEXTURES)) {
-		    decodedTexture = object.get("value").getAsString();
-		    break;
-		}
-	    }
+                if (object.has(NAME) && object.get(NAME).getAsString().equals(TEXTURES)) {
+                    decodedTexture = object.get("value").getAsString();
+                    break;
+                }
+            }
 
-	    return new Pair<>(UUID.fromString(userIdString), decodedTexture);
-	} catch (Exception ignored) {
-	}
+            return new Pair<>(UUID.fromString(userIdString), decodedTexture);
+        } catch (Exception ignored) {
+        }
 
-	// return random uuid and null, to assign some values for cache.
-	return new Pair<>(userId, null);
+        // return random uuid and null, to assign some values for cache.
+        return new Pair<>(userId, null);
     }
 
     /**
@@ -326,45 +326,45 @@ public class HeadGetter {
      * @since 1.14.1
      */
     private static String getURLContent(String requestedUrl) {
-	String returnValue;
+        String returnValue;
 
-	try {
-	    URL url = new URL(requestedUrl);
-	    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-	    BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-	    returnValue = br.lines().collect(Collectors.joining());
-	    br.close();
-	} catch (Exception e) {
-	    returnValue = "";
-	}
+        try {
+            URL url = new URL(requestedUrl);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            returnValue = br.lines().collect(Collectors.joining());
+            br.close();
+        } catch (Exception e) {
+            returnValue = "";
+        }
 
-	return returnValue;
+        return returnValue;
     }
 
     private static URL getSkinURLFromBase64(String base64) {
-	/*
-	 * Base64 encoded string is in format: { "timestamp": 0, "profileId": "UUID",
-	 * "profileName": "USERNAME", "textures": { "SKIN": { "url":
-	 * "https://textures.minecraft.net/texture/TEXTURE_ID" }, "CAPE": { "url":
-	 * "https://textures.minecraft.net/texture/TEXTURE_ID" } } }
-	 */
-	try {
-	    String decoded = new String(Base64.getDecoder().decode(base64));
-	    JsonObject json = new Gson().fromJson(decoded, JsonObject.class);
-	    String url = json.getAsJsonObject(TEXTURES).getAsJsonObject("SKIN").get("url").getAsString();
-	    return new URL(url);
-	} catch (Exception e) {
-	    return null;
-	}
+        /*
+         * Base64 encoded string is in format: { "timestamp": 0, "profileId": "UUID",
+         * "profileName": "USERNAME", "textures": { "SKIN": { "url":
+         * "https://textures.minecraft.net/texture/TEXTURE_ID" }, "CAPE": { "url":
+         * "https://textures.minecraft.net/texture/TEXTURE_ID" } } }
+         */
+        try {
+            String decoded = new String(Base64.getDecoder().decode(base64));
+            JsonObject json = new Gson().fromJson(decoded, JsonObject.class);
+            String url = json.getAsJsonObject(TEXTURES).getAsJsonObject("SKIN").get("url").getAsString();
+            return new URL(url);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     private static PlayerProfile createProfile(@NonNull String userName, @NonNull UUID uuid,
-	    @Nullable String encodedBase64Texture) {
-	PlayerProfile profile = Bukkit.createPlayerProfile(uuid, userName);
-	if (encodedBase64Texture != null && !encodedBase64Texture.isEmpty()) {
-	    URL skinURL = HeadGetter.getSkinURLFromBase64(encodedBase64Texture);
-	    profile.getTextures().setSkin(skinURL);
-	}
-	return profile;
+            @Nullable String encodedBase64Texture) {
+        PlayerProfile profile = Bukkit.createPlayerProfile(uuid, userName);
+        if (encodedBase64Texture != null && !encodedBase64Texture.isEmpty()) {
+            URL skinURL = HeadGetter.getSkinURLFromBase64(encodedBase64Texture);
+            profile.getTextures().setSkin(skinURL);
+        }
+        return profile;
     }
 }

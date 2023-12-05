@@ -49,10 +49,13 @@ public class LocalesManager {
     }
 
     /**
-     * Gets the translated String corresponding to the reference from the locale file for this user.
-     * @param user the User
+     * Gets the translated String corresponding to the reference from the locale
+     * file for this user.
+     * 
+     * @param user      the User
      * @param reference a reference that can be found in a locale file
-     * @return the translated String from the User's locale or from the server's locale or from the en-US locale, or null.
+     * @return the translated String from the User's locale or from the server's
+     *         locale or from the en-US locale, or null.
      */
     @Nullable
     public String get(User user, String reference) {
@@ -63,16 +66,20 @@ public class LocalesManager {
                 return locale.get(reference);
             }
         }
-        // No translation could be gotten from the player's locale, trying more generic solutions
+        // No translation could be gotten from the player's locale, trying more generic
+        // solutions
         return get(reference);
     }
 
     /**
-     * Gets the translated String corresponding to the reference from the locale file for this user.
-     * @param user the User
-     * @param reference a reference that can be found in a locale file
+     * Gets the translated String corresponding to the reference from the locale
+     * file for this user.
+     * 
+     * @param user        the User
+     * @param reference   a reference that can be found in a locale file
      * @param defaultText to return if the reference cannot be found anywhere
-     * @return the translated String from the User's locale or from the server's locale or from the en-US locale, or null.
+     * @return the translated String from the User's locale or from the server's
+     *         locale or from the en-US locale, or null.
      */
     public String getOrDefault(User user, String reference, String defaultText) {
         // Make sure the user is not null
@@ -82,20 +89,24 @@ public class LocalesManager {
                 return locale.get(reference);
             }
         }
-        // No translation could be gotten from the player's locale, trying more generic solutions
+        // No translation could be gotten from the player's locale, trying more generic
+        // solutions
         return getOrDefault(reference, defaultText);
     }
 
     /**
-     * Gets the translated String corresponding to the reference from the server's or the en-US locale file.
+     * Gets the translated String corresponding to the reference from the server's
+     * or the en-US locale file.
+     * 
      * @param reference a reference that can be found in a locale file
-     * @return the translated String from the server's locale or from the en-US locale, or null.
+     * @return the translated String from the server's locale or from the en-US
+     *         locale, or null.
      */
     @Nullable
     public String get(String reference) {
         // Get the translation from the server's locale
-        if (languages.containsKey(Locale.forLanguageTag(plugin.getSettings().getDefaultLanguage()))
-                && languages.get(Locale.forLanguageTag(plugin.getSettings().getDefaultLanguage())).contains(reference)) {
+        if (languages.containsKey(Locale.forLanguageTag(plugin.getSettings().getDefaultLanguage())) && languages
+                .get(Locale.forLanguageTag(plugin.getSettings().getDefaultLanguage())).contains(reference)) {
             return languages.get(Locale.forLanguageTag(plugin.getSettings().getDefaultLanguage())).get(reference);
         }
         // Get the translation from the en-US locale
@@ -104,15 +115,18 @@ public class LocalesManager {
         }
         return null;
     }
-    
+
     /**
-     * Set the translation for a reference for a specific locale. The locale must be a known locale on this server.
-     * User {@link #getAvailableLocales(boolean)} to find out what locales are available.
-     * Note, the usual default locale is {@code Locale.US}
-     * @param locale locale
-     * @param reference reference
+     * Set the translation for a reference for a specific locale. The locale must be
+     * a known locale on this server. User {@link #getAvailableLocales(boolean)} to
+     * find out what locales are available. Note, the usual default locale is
+     * {@code Locale.US}
+     * 
+     * @param locale      locale
+     * @param reference   reference
      * @param translation translation
-     * @return true if successful, false if the locale is not a known locale on this server
+     * @return true if successful, false if the locale is not a known locale on this
+     *         server
      * @since 1.22.1
      */
     public boolean setTranslation(Locale locale, String reference, String translation) {
@@ -120,16 +134,19 @@ public class LocalesManager {
         if (!languages.containsKey(locale)) {
             return false;
         }
-        languages.get(locale).set(reference, translation);       
+        languages.get(locale).set(reference, translation);
         return true;
     }
 
     /**
-     * Gets the translated String corresponding to the reference from the server's or the en-US locale file.
-     * or if it cannot be found anywhere, use the default text supplied.
-     * @param reference a reference that can be found in a locale file.
+     * Gets the translated String corresponding to the reference from the server's
+     * or the en-US locale file. or if it cannot be found anywhere, use the default
+     * text supplied.
+     * 
+     * @param reference   a reference that can be found in a locale file.
      * @param defaultText text to return if the reference cannot be found anywhere.
-     * @return the translated String from the server's locale or from the en-US locale, or default.
+     * @return the translated String from the server's locale or from the en-US
+     *         locale, or default.
      */
     public String getOrDefault(String reference, String defaultText) {
         String result = get(reference);
@@ -137,9 +154,12 @@ public class LocalesManager {
     }
 
     /**
-     * Gets the list of prefixes from the user's locale, the server's locale and the en-US locale file.
+     * Gets the list of prefixes from the user's locale, the server's locale and the
+     * en-US locale file.
+     * 
      * @param user the user to get the locale, not null.
-     * @return the set of prefixes from the user's locale, the server's locale and the en-US locale file.
+     * @return the set of prefixes from the user's locale, the server's locale and
+     *         the en-US locale file.
      * @since 1.13.0
      */
     public Set<String> getAvailablePrefixes(@NonNull User user) {
@@ -161,12 +181,15 @@ public class LocalesManager {
     }
 
     /**
-     * Copies locale files from the addon jar to the file system and updates current locales with the latest references
+     * Copies locale files from the addon jar to the file system and updates current
+     * locales with the latest references
+     * 
      * @param addon - addon
      */
     void copyLocalesFromAddonJar(Addon addon) {
         try (JarFile jar = new JarFile(addon.getFile())) {
-            File localeDir = new File(plugin.getDataFolder(), LOCALE_FOLDER + File.separator + addon.getDescription().getName());
+            File localeDir = new File(plugin.getDataFolder(),
+                    LOCALE_FOLDER + File.separator + addon.getDescription().getName());
             if (!localeDir.exists()) {
                 localeDir.mkdirs();
             }
@@ -192,25 +215,28 @@ public class LocalesManager {
             YamlConfiguration fileLocale = new YamlConfiguration();
             fileLocale.load(fileLocaleFile);
             // Copy new keys to file
-            jarLocale.getKeys(true).stream().filter(k -> !fileLocale.contains(k, false)).forEach(k -> fileLocale.set(k, jarLocale.get(k)));
+            jarLocale.getKeys(true).stream().filter(k -> !fileLocale.contains(k, false))
+                    .forEach(k -> fileLocale.set(k, jarLocale.get(k)));
             // Save file
             fileLocale.save(fileLocaleFile);
         } catch (InvalidConfigurationException e) {
             plugin.logError("Could not update locale file '" + lf + "' due to it being malformed: " + e.getMessage());
         } catch (Exception e) {
-            plugin.logError("Error updating locale file for " + addon.getDescription().getName() + "'s '" + lf + "': " + e.getMessage());
+            plugin.logError("Error updating locale file for " + addon.getDescription().getName() + "'s '" + lf + "': "
+                    + e.getMessage());
             plugin.logStacktrace(e);
         }
     }
 
     /**
-     * Copies all the locale files from the plugin jar to the filesystem.
-     * Only done if the locale folder does not already exist.
+     * Copies all the locale files from the plugin jar to the filesystem. Only done
+     * if the locale folder does not already exist.
      */
     private void copyLocalesFromPluginJar() {
         // Run through the files and store the locales
         File localeDir = new File(plugin.getDataFolder(), LOCALE_FOLDER + File.separator + LocalesManager.BENTOBOX);
-        // If the folder does not exist, then make it and fill with the locale files from the jar
+        // If the folder does not exist, then make it and fill with the locale files
+        // from the jar
         // If it does exist, then new files will NOT be written!
         if (!localeDir.exists()) {
             localeDir.mkdirs();
@@ -218,7 +244,8 @@ public class LocalesManager {
         FileLister lister = new FileLister(plugin);
         try {
             for (String name : lister.listJar(LOCALE_FOLDER)) {
-                // We cannot use Bukkit's saveResource, because we want it to go into a specific folder, so...
+                // We cannot use Bukkit's saveResource, because we want it to go into a specific
+                // folder, so...
                 // Get the last part of the name
                 int lastIndex = name.lastIndexOf('/');
                 File targetFile = new File(localeDir, name.substring(Math.max(lastIndex, 0)));
@@ -251,13 +278,16 @@ public class LocalesManager {
     }
 
     /**
-     * Loads all the locales available in the locale folder given. Used for loading all locales from plugin and addons
+     * Loads all the locales available in the locale folder given. Used for loading
+     * all locales from plugin and addons
      *
-     * @param localeFolder - locale folder location relative to the plugin's data folder
+     * @param localeFolder - locale folder location relative to the plugin's data
+     *                     folder
      */
     public void loadLocalesFromFile(String localeFolder) {
         // Filter for files ending with .yml with a name whose length is >= 6 (xx.yml)
-        FilenameFilter ymlFilter = (dir, name) -> name.toLowerCase(java.util.Locale.ENGLISH).endsWith(".yml") && name.length() >= 6;
+        FilenameFilter ymlFilter = (dir, name) -> name.toLowerCase(java.util.Locale.ENGLISH).endsWith(".yml")
+                && name.length() >= 6;
 
         // Get the folder
         File localeDir = new File(plugin.getDataFolder(), LOCALE_FOLDER + File.separator + localeFolder);
@@ -267,7 +297,8 @@ public class LocalesManager {
         }
         // Run through the files and store the locales
         for (File language : Objects.requireNonNull(localeDir.listFiles(ymlFilter))) {
-            Locale localeObject = Locale.forLanguageTag(language.getName().substring(0, language.getName().length() - 4));
+            Locale localeObject = Locale
+                    .forLanguageTag(language.getName().substring(0, language.getName().length() - 4));
 
             try {
                 YamlConfiguration languageYaml = YamlConfiguration.loadConfiguration(language);
@@ -281,8 +312,8 @@ public class LocalesManager {
                 }
             } catch (Exception e) {
                 plugin.logError("Could not load '" + language.getName() + "' : " + e.getMessage()
-                + " with the following cause '" + e.getCause() + "'." +
-                        " The file has likely an invalid YML format or has been made unreadable during the process.");
+                        + " with the following cause '" + e.getCause() + "'."
+                        + " The file has likely an invalid YML format or has been made unreadable during the process.");
             }
         }
     }
@@ -299,6 +330,7 @@ public class LocalesManager {
 
     /**
      * Gets a list of all the locales loaded
+     * 
      * @param sort - if true, the locales will be sorted by language tag
      * @return list of locales
      */
@@ -307,10 +339,14 @@ public class LocalesManager {
             List<Locale> locales = new LinkedList<>(languages.keySet());
 
             locales.sort((locale1, locale2) -> {
-                if (locale1.toLanguageTag().equals(plugin.getSettings().getDefaultLanguage())) return -2;
-                else if (locale1.toLanguageTag().startsWith("en")) return -1;
-                else if (locale1.toLanguageTag().equals(locale2.toLanguageTag())) return 0;
-                else return 1;
+                if (locale1.toLanguageTag().equals(plugin.getSettings().getDefaultLanguage()))
+                    return -2;
+                else if (locale1.toLanguageTag().startsWith("en"))
+                    return -1;
+                else if (locale1.toLanguageTag().equals(locale2.toLanguageTag()))
+                    return 0;
+                else
+                    return 1;
             });
 
             return locales;
@@ -321,7 +357,9 @@ public class LocalesManager {
 
     /**
      * Returns {@code true} if this locale is available, {@code false} otherwise.
-     * @param locale the locale, not null. Consider using {@link Locale#forLanguageTag(String)} if needed.
+     * 
+     * @param locale the locale, not null. Consider using
+     *               {@link Locale#forLanguageTag(String)} if needed.
      * @return {@code true} if this locale is available, {@code false} otherwise.
      * @since 1.14.0
      */
@@ -350,11 +388,11 @@ public class LocalesManager {
     }
 
     /**
-     * Loads all the locales available in the locale folder given.
-     * Used for loading all locales from plugin and addons.
+     * Loads all the locales available in the locale folder given. Used for loading
+     * all locales from plugin and addons.
      *
-     * @param fix whether or not locale files with missing translations should be fixed.
-     *            Not currently supported.
+     * @param fix whether or not locale files with missing translations should be
+     *            fixed. Not currently supported.
      * @since 1.5.0
      */
     public void analyzeLocales(boolean fix) {
@@ -394,7 +432,8 @@ public class LocalesManager {
      */
     private void analyze(User user) {
         user.sendRawMessage(ChatColor.GREEN + "The following locales are supported:");
-        languages.forEach((k,v) -> user.sendRawMessage(ChatColor.GOLD + k.toLanguageTag() + " " + k.getDisplayLanguage() + " " + k.getDisplayCountry()));
+        languages.forEach((k, v) -> user.sendRawMessage(
+                ChatColor.GOLD + k.toLanguageTag() + " " + k.getDisplayLanguage() + " " + k.getDisplayCountry()));
         // Start with US English
         YamlConfiguration usConfig = languages.get(Locale.US).getConfig();
         // Fix config

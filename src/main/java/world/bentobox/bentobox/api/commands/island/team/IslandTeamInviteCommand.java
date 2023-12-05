@@ -38,7 +38,6 @@ public class IslandTeamInviteCommand extends CompositeCommand {
         setConfigurableRankCommand();
     }
 
-
     @Override
     public boolean canExecute(User user, String label, List<String> args) {
         UUID playerUUID = user.getUniqueId();
@@ -67,8 +66,10 @@ public class IslandTeamInviteCommand extends CompositeCommand {
         if (inviteType != null) {
             String name = getPlayers().getName(playerUUID);
             switch (inviteType) {
-            case COOP ->  user.sendMessage("commands.island.team.invite.name-has-invited-you.coop", TextVariables.NAME, name);
-            case TRUST -> user.sendMessage("commands.island.team.invite.name-has-invited-you.trust", TextVariables.NAME, name);
+            case COOP ->
+                user.sendMessage("commands.island.team.invite.name-has-invited-you.coop", TextVariables.NAME, name);
+            case TRUST ->
+                user.sendMessage("commands.island.team.invite.name-has-invited-you.trust", TextVariables.NAME, name);
             default -> user.sendMessage("commands.island.team.invite.name-has-invited-you", TextVariables.NAME, name);
             }
             return true;
@@ -86,7 +87,8 @@ public class IslandTeamInviteCommand extends CompositeCommand {
         // Check rank to use command
         int requiredRank = island.getRankCommand(getUsage());
         if (rank < requiredRank) {
-            user.sendMessage("general.errors.insufficient-rank", TextVariables.RANK, user.getTranslation(ranksManager.getRank(rank)));
+            user.sendMessage("general.errors.insufficient-rank", TextVariables.RANK,
+                    user.getTranslation(ranksManager.getRank(rank)));
             return false;
         }
 
@@ -109,7 +111,8 @@ public class IslandTeamInviteCommand extends CompositeCommand {
         }
 
         // Check cooldown
-        if (this.getSettings().getInviteCooldown() > 0 && checkCooldown(user, island.getUniqueId(), invitedPlayerUUID.toString())) {
+        if (this.getSettings().getInviteCooldown() > 0
+                && checkCooldown(user, island.getUniqueId(), invitedPlayerUUID.toString())) {
             return false;
         }
 
@@ -159,7 +162,8 @@ public class IslandTeamInviteCommand extends CompositeCommand {
     @Override
     public boolean execute(User user, String label, List<String> args) {
         // Rare case when invited player is null. Could be a race condition.
-        if (invitedPlayer == null) return false;
+        if (invitedPlayer == null)
+            return false;
         // If that player already has an invite out then retract it.
         // Players can only have one invite one at a time - interesting
         if (itc.isInvited(invitedPlayer.getUniqueId())) {
@@ -172,21 +176,22 @@ public class IslandTeamInviteCommand extends CompositeCommand {
             return false;
         }
         // Fire event so add-ons can run commands, etc.
-        IslandBaseEvent e = TeamEvent.builder()
-                .island(island)
-                .reason(TeamEvent.Reason.INVITE)
-                .involvedPlayer(invitedPlayer.getUniqueId())
-                .build();
+        IslandBaseEvent e = TeamEvent.builder().island(island).reason(TeamEvent.Reason.INVITE)
+                .involvedPlayer(invitedPlayer.getUniqueId()).build();
         if (e.getNewEvent().map(IslandBaseEvent::isCancelled).orElse(e.isCancelled())) {
             return false;
         }
         // Put the invited player (key) onto the list with inviter (value)
-        // If someone else has invited a player, then this invite will overwrite the previous invite!
+        // If someone else has invited a player, then this invite will overwrite the
+        // previous invite!
         itc.addInvite(Invite.Type.TEAM, user.getUniqueId(), invitedPlayer.getUniqueId(), island);
-        user.sendMessage("commands.island.team.invite.invitation-sent", TextVariables.NAME, invitedPlayer.getName(), TextVariables.DISPLAY_NAME, invitedPlayer.getDisplayName());
+        user.sendMessage("commands.island.team.invite.invitation-sent", TextVariables.NAME, invitedPlayer.getName(),
+                TextVariables.DISPLAY_NAME, invitedPlayer.getDisplayName());
         // Send message to online player
-        invitedPlayer.sendMessage("commands.island.team.invite.name-has-invited-you", TextVariables.NAME, user.getName(), TextVariables.DISPLAY_NAME, user.getDisplayName());
-        invitedPlayer.sendMessage("commands.island.team.invite.to-accept-or-reject", TextVariables.LABEL, getTopLabel());
+        invitedPlayer.sendMessage("commands.island.team.invite.name-has-invited-you", TextVariables.NAME,
+                user.getName(), TextVariables.DISPLAY_NAME, user.getDisplayName());
+        invitedPlayer.sendMessage("commands.island.team.invite.to-accept-or-reject", TextVariables.LABEL,
+                getTopLabel());
         if (getIslands().hasIsland(getWorld(), invitedPlayer.getUniqueId())) {
             invitedPlayer.sendMessage("commands.island.team.invite.you-will-lose-your-island");
         }
@@ -195,7 +200,7 @@ public class IslandTeamInviteCommand extends CompositeCommand {
 
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
-        String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
+        String lastArg = !args.isEmpty() ? args.get(args.size() - 1) : "";
         if (lastArg.isEmpty()) {
             // Don't show every player on the server. Require at least the first letter
             return Optional.empty();

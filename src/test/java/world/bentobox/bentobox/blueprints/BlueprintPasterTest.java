@@ -33,12 +33,12 @@ import world.bentobox.bentobox.database.objects.Island;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({BentoBox.class, User.class, Bukkit.class})
+@PrepareForTest({ BentoBox.class, User.class, Bukkit.class })
 public class BlueprintPasterTest {
 
     private BlueprintPaster bp;
     private BlueprintPaster bp2;
-    
+
     @Mock
     private BentoBox plugin;
     @Mock
@@ -54,31 +54,30 @@ public class BlueprintPasterTest {
     @Mock
     private @NonNull User user;
 
-
     /**
      */
     @Before
     public void setUp() throws Exception {
         // Set up plugin
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
-        
+
         // Scheduler
         PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
-        
+
         Settings settings = new Settings();
         // Settings
         when(plugin.getSettings()).thenReturn(settings);
-        
+
         // Location
-        when(location.toVector()).thenReturn(new Vector(1D,2D,3D));
-        
+        when(location.toVector()).thenReturn(new Vector(1D, 2D, 3D));
+
         // Island
         when(island.getProtectionCenter()).thenReturn(location);
         when(island.getOwner()).thenReturn(UUID.randomUUID());
-        
+
         // Clipboard
         when(clipboard.getBlueprint()).thenReturn(blueprint);
-        
+
         // User
         PowerMockito.mockStatic(User.class, Mockito.RETURNS_MOCKS);
         when(User.getInstance(any(UUID.class))).thenReturn(user);
@@ -88,7 +87,8 @@ public class BlueprintPasterTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.blueprints.BlueprintPaster#BlueprintPaster(world.bentobox.bentobox.BentoBox, world.bentobox.bentobox.blueprints.BlueprintClipboard, org.bukkit.Location)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.blueprints.BlueprintPaster#BlueprintPaster(world.bentobox.bentobox.BentoBox, world.bentobox.bentobox.blueprints.BlueprintClipboard, org.bukkit.Location)}.
      */
     @Test
     public void testBlueprintPasterBentoBoxBlueprintClipboardLocation() {
@@ -96,7 +96,8 @@ public class BlueprintPasterTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.blueprints.BlueprintPaster#BlueprintPaster(world.bentobox.bentobox.BentoBox, world.bentobox.bentobox.blueprints.Blueprint, org.bukkit.World, world.bentobox.bentobox.database.objects.Island)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.blueprints.BlueprintPaster#BlueprintPaster(world.bentobox.bentobox.BentoBox, world.bentobox.bentobox.blueprints.Blueprint, org.bukkit.World, world.bentobox.bentobox.database.objects.Island)}.
      */
     @Test
     public void testBlueprintPasterBentoBoxBlueprintWorldIsland() {
@@ -104,18 +105,20 @@ public class BlueprintPasterTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.blueprints.BlueprintPaster#paste()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.blueprints.BlueprintPaster#paste()}.
      */
     @Test
     public void testPaste() {
-       CompletableFuture<Boolean> result = bp.paste();
-       assertNotNull(result);
-       PowerMockito.verifyStatic(Bukkit.class, times(1));
-       Bukkit.getScheduler();
+        CompletableFuture<Boolean> result = bp.paste();
+        assertNotNull(result);
+        PowerMockito.verifyStatic(Bukkit.class, times(1));
+        Bukkit.getScheduler();
     }
-    
+
     /**
-     * Test method for {@link world.bentobox.bentobox.blueprints.BlueprintPaster#paste()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.blueprints.BlueprintPaster#paste()}.
      */
     @Test
     public void testPaste2() {
@@ -124,6 +127,5 @@ public class BlueprintPasterTest {
         PowerMockito.verifyStatic(Bukkit.class, times(1));
         Bukkit.getScheduler();
     }
-
 
 }

@@ -30,7 +30,7 @@ import world.bentobox.bentobox.api.user.User;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class})
+@PrepareForTest({ Bukkit.class })
 public class PanelBuilderTest {
 
     /**
@@ -49,7 +49,8 @@ public class PanelBuilderTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.panels.builders.PanelBuilder#name(java.lang.String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.panels.builders.PanelBuilder#name(java.lang.String)}.
      */
     @Test
     public void testName() {
@@ -58,7 +59,8 @@ public class PanelBuilderTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.panels.builders.PanelBuilder#item(world.bentobox.bentobox.api.panels.PanelItem)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.panels.builders.PanelBuilder#item(world.bentobox.bentobox.api.panels.PanelItem)}.
      */
     @Test
     public void testItemPanelItem() {
@@ -74,7 +76,8 @@ public class PanelBuilderTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.panels.builders.PanelBuilder#item(int, world.bentobox.bentobox.api.panels.PanelItem)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.panels.builders.PanelBuilder#item(int, world.bentobox.bentobox.api.panels.PanelItem)}.
      */
     @Test
     public void testItemIntPanelItem() {
@@ -93,7 +96,8 @@ public class PanelBuilderTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.panels.builders.PanelBuilder#size(int)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.panels.builders.PanelBuilder#size(int)}.
      */
     @Test
     public void testSize() {
@@ -102,7 +106,8 @@ public class PanelBuilderTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.panels.builders.PanelBuilder#user(world.bentobox.bentobox.api.user.User)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.panels.builders.PanelBuilder#user(world.bentobox.bentobox.api.user.User)}.
      */
     @Test
     public void testUser() {
@@ -115,7 +120,8 @@ public class PanelBuilderTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.panels.builders.PanelBuilder#listener(world.bentobox.bentobox.api.panels.PanelListener)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.panels.builders.PanelBuilder#listener(world.bentobox.bentobox.api.panels.PanelListener)}.
      */
     @Test
     public void testListener() {
@@ -125,7 +131,8 @@ public class PanelBuilderTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.panels.builders.PanelBuilder#nextSlot()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.panels.builders.PanelBuilder#nextSlot()}.
      */
     @Test
     public void testNextSlot() {
@@ -144,7 +151,8 @@ public class PanelBuilderTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.panels.builders.PanelBuilder#slotOccupied(int)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.panels.builders.PanelBuilder#slotOccupied(int)}.
      */
     @Test
     public void testSlotOccupied() {
@@ -165,7 +173,8 @@ public class PanelBuilderTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.panels.builders.PanelBuilder#build()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.panels.builders.PanelBuilder#build()}.
      */
     @Test
     public void testBuild() {

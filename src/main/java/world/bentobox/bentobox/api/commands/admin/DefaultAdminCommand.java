@@ -19,8 +19,9 @@ import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 
 /**
- * This is default Admin command for console and op. It contains all necessary parts that
- * for main command.
+ * This is default Admin command for console and op. It contains all necessary
+ * parts that for main command.
+ * 
  * @since 1.13.0
  * @author BONNe
  */
@@ -28,18 +29,18 @@ public abstract class DefaultAdminCommand extends CompositeCommand {
     /**
      * This is the top-level command constructor for commands that have no parent.
      *
-     * @param addon   - GameMode addon
+     * @param addon - GameMode addon
      */
     protected DefaultAdminCommand(GameModeAddon addon) {
         // Register command with alias from config.
         // The first command listed is the "label" and the others are aliases.
-        super(addon,
-                addon.getWorldSettings().getAdminCommandAliases().split(" ")[0],
+        super(addon, addon.getWorldSettings().getAdminCommandAliases().split(" ")[0],
                 addon.getWorldSettings().getAdminCommandAliases().split(" "));
     }
 
     /**
      * Setups anything that is necessary for default main admin command.
+     * 
      * @see world.bentobox.bentobox.api.commands.BentoBoxCommand#setup()
      */
     @Override
@@ -103,7 +104,9 @@ public abstract class DefaultAdminCommand extends CompositeCommand {
 
     /**
      * Defines what will be executed when this command is run.
-     * @see world.bentobox.bentobox.api.commands.BentoBoxCommand#execute(User, String, List)
+     * 
+     * @see world.bentobox.bentobox.api.commands.BentoBoxCommand#execute(User,
+     *      String, List)
      */
     @Override
     public boolean execute(User user, String label, List<String> args) {

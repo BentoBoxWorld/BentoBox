@@ -73,7 +73,8 @@ public class PanelItemTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.panels.PanelItem#getItem()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.panels.PanelItem#getItem()}.
      */
     @Test
     public void testGetItem() {
@@ -83,7 +84,8 @@ public class PanelItemTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.panels.PanelItem#getDescription()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.panels.PanelItem#getDescription()}.
      */
     @Test
     public void testGetDescription() {
@@ -91,17 +93,19 @@ public class PanelItemTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.panels.PanelItem#setDescription(java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.panels.PanelItem#setDescription(java.util.List)}.
      */
     @Test
     public void testSetDescription() {
         assertEquals(2, pi.getDescription().size());
-        pi.setDescription(List.of("1","2","3"));
+        pi.setDescription(List.of("1", "2", "3"));
         assertEquals(3, pi.getDescription().size());
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.panels.PanelItem#getName()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.panels.PanelItem#getName()}.
      */
     @Test
     public void testGetName() {
@@ -109,7 +113,8 @@ public class PanelItemTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.panels.PanelItem#setName(java.lang.String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.panels.PanelItem#setName(java.lang.String)}.
      */
     @Test
     public void testSetName() {
@@ -119,7 +124,8 @@ public class PanelItemTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.panels.PanelItem#isInvisible()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.panels.PanelItem#isInvisible()}.
      */
     @Test
     public void testIsInvisible() {
@@ -127,7 +133,8 @@ public class PanelItemTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.panels.PanelItem#setInvisible(boolean)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.panels.PanelItem#setInvisible(boolean)}.
      */
     @Test
     public void testSetInvisible() {
@@ -137,7 +144,8 @@ public class PanelItemTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.panels.PanelItem#getClickHandler()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.panels.PanelItem#getClickHandler()}.
      */
     @Test
     public void testGetClickHandler() {
@@ -145,7 +153,8 @@ public class PanelItemTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.panels.PanelItem#setClickHandler(world.bentobox.bentobox.api.panels.PanelItem.ClickHandler)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.panels.PanelItem#setClickHandler(world.bentobox.bentobox.api.panels.PanelItem.ClickHandler)}.
      */
     @Test
     public void testSetClickHandler() {
@@ -155,7 +164,8 @@ public class PanelItemTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.panels.PanelItem#isGlow()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.panels.PanelItem#isGlow()}.
      */
     @Test
     public void testIsGlow() {
@@ -164,7 +174,8 @@ public class PanelItemTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.panels.PanelItem#setGlow(boolean)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.panels.PanelItem#setGlow(boolean)}.
      */
     @Test
     public void testSetGlow() {
@@ -174,7 +185,8 @@ public class PanelItemTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.panels.PanelItem#isPlayerHead()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.panels.PanelItem#isPlayerHead()}.
      */
     @Test
     public void testIsPlayerHead() {
@@ -183,7 +195,8 @@ public class PanelItemTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.panels.PanelItem#getPlayerHeadName()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.panels.PanelItem#getPlayerHeadName()}.
      */
     @Test
     public void testGetPlayerHeadName() {
@@ -191,7 +204,8 @@ public class PanelItemTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.panels.PanelItem#setHead(org.bukkit.inventory.ItemStack)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.panels.PanelItem#setHead(org.bukkit.inventory.ItemStack)}.
      */
     @Test
     public void testSetHead() {

@@ -28,7 +28,7 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( {BentoBox.class, Flags.class, Util.class, Bukkit.class} )
+@PrepareForTest({ BentoBox.class, Flags.class, Util.class, Bukkit.class })
 public class ThrowingListenerTest extends AbstractCommonSetup {
 
     private ThrowingListener tl;
@@ -46,7 +46,8 @@ public class ThrowingListenerTest extends AbstractCommonSetup {
     }
 
     /**
-     * Test method for {@link ThrowingListener#onPlayerThrowPotion(org.bukkit.event.entity.ProjectileLaunchEvent)}.
+     * Test method for
+     * {@link ThrowingListener#onPlayerThrowPotion(org.bukkit.event.entity.ProjectileLaunchEvent)}.
      */
     @Test
     public void testOnPlayerThrowPotion() {
@@ -75,7 +76,8 @@ public class ThrowingListenerTest extends AbstractCommonSetup {
     }
 
     /**
-     * Test method for {@link ThrowingListener#onPlayerThrowPotion(org.bukkit.event.entity.ProjectileLaunchEvent)}.
+     * Test method for
+     * {@link ThrowingListener#onPlayerThrowPotion(org.bukkit.event.entity.ProjectileLaunchEvent)}.
      */
     @Test
     public void testOnPlayerThrowPotionNonHuman() {

@@ -39,12 +39,9 @@ public class BreakBlocksListener extends FlagListener {
             this.checkIsland(e, p, l, Flags.HARVEST);
         } else {
             // Crops
-            if (Tag.CROPS.isTagged(m)
-                    && !m.equals(Material.MELON_STEM)
-                    && !m.equals(Material.PUMPKIN_STEM)
-                    && !m.equals(Material.ATTACHED_MELON_STEM)
-                    && !m.equals(Material.ATTACHED_PUMPKIN_STEM)) {
-                this.checkIsland(e,  p,  l, Flags.HARVEST);
+            if (Tag.CROPS.isTagged(m) && !m.equals(Material.MELON_STEM) && !m.equals(Material.PUMPKIN_STEM)
+                    && !m.equals(Material.ATTACHED_MELON_STEM) && !m.equals(Material.ATTACHED_PUMPKIN_STEM)) {
+                this.checkIsland(e, p, l, Flags.HARVEST);
             } else {
                 checkIsland(e, p, l, Flags.BREAK_BLOCKS);
             }
@@ -74,18 +71,15 @@ public class BreakBlocksListener extends FlagListener {
      * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void onPlayerInteract(final PlayerInteractEvent e)
-    {
+    public void onPlayerInteract(final PlayerInteractEvent e) {
         // Only handle hitting things
-        if (!e.getAction().equals(Action.LEFT_CLICK_BLOCK) || e.getClickedBlock() == null)
-        {
+        if (!e.getAction().equals(Action.LEFT_CLICK_BLOCK) || e.getClickedBlock() == null) {
             return;
         }
         Player p = e.getPlayer();
         Location l = e.getClickedBlock().getLocation();
         Material m = e.getClickedBlock().getType();
-        switch (m)
-        {
+        switch (m) {
         case CAKE -> this.checkIsland(e, p, l, Flags.BREAK_BLOCKS);
         case SPAWNER -> this.checkIsland(e, p, l, Flags.BREAK_SPAWNERS);
         case DRAGON_EGG -> this.checkIsland(e, p, l, Flags.DRAGON_EGG);
@@ -98,28 +92,22 @@ public class BreakBlocksListener extends FlagListener {
 
     /**
      * Handles vehicle breaking
+     * 
      * @param e - event
      */
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
-    public void onVehicleDamageEvent(VehicleDamageEvent e)
-    {
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    public void onVehicleDamageEvent(VehicleDamageEvent e) {
         Location l = e.getVehicle().getLocation();
 
-        if (getIWM().inWorld(l) && e.getAttacker() instanceof Player p)
-        {
+        if (getIWM().inWorld(l) && e.getAttacker() instanceof Player p) {
             String vehicleType = e.getVehicle().getType().name();
 
             // 1.19 introduced Chest Boat.
-            if (vehicleType.contains("BOAT"))
-            {
+            if (vehicleType.contains("BOAT")) {
                 this.checkIsland(e, p, l, Flags.BOAT);
-            }
-            else if (vehicleType.contains("MINECART"))
-            {
+            } else if (vehicleType.contains("MINECART")) {
                 this.checkIsland(e, p, l, Flags.MINECART);
-            }
-            else
-            {
+            } else {
                 this.checkIsland(e, p, l, Flags.BREAK_BLOCKS);
             }
         }
@@ -127,13 +115,13 @@ public class BreakBlocksListener extends FlagListener {
 
     /**
      * Protect item frames, armor stands, etc. Entities that are actually blocks...
+     * 
      * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onEntityDamage(EntityDamageByEntityEvent e) {
         // Only handle item frames, armor stands and end crystals
-        if (!(e.getEntity() instanceof ItemFrame)
-                && !(e.getEntity() instanceof ArmorStand)
+        if (!(e.getEntity() instanceof ItemFrame) && !(e.getEntity() instanceof ArmorStand)
                 && !(e.getEntity() instanceof EnderCrystal)) {
             return;
         }
@@ -149,7 +137,8 @@ public class BreakBlocksListener extends FlagListener {
     }
 
     private boolean notAllowed(EntityDamageByEntityEvent e, Player player, Location location) {
-        if (!checkIsland(e, player, location, Flags.BREAK_BLOCKS)) return true;
+        if (!checkIsland(e, player, location, Flags.BREAK_BLOCKS))
+            return true;
         if (e.getEntity() instanceof ItemFrame) {
             return !checkIsland(e, player, location, Flags.ITEM_FRAME);
         } else if (e.getEntity() instanceof ArmorStand) {
@@ -160,6 +149,7 @@ public class BreakBlocksListener extends FlagListener {
 
     /**
      * Prevents Chorus Flowers from being broken by an arrow or a trident
+     * 
      * @param e event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
@@ -175,11 +165,12 @@ public class BreakBlocksListener extends FlagListener {
         }
 
         // Find out who fired the arrow
-        if (e.getEntity().getShooter() instanceof Player s &&
-                !checkIsland(e, s, e.getHitBlock().getLocation(), Flags.BREAK_BLOCKS)) {
+        if (e.getEntity().getShooter() instanceof Player s
+                && !checkIsland(e, s, e.getHitBlock().getLocation(), Flags.BREAK_BLOCKS)) {
             final BlockData data = e.getHitBlock().getBlockData();
             // We seemingly can't prevent the block from being destroyed
-            // So we need to put it back with a slight delay (yup, this is hacky - it makes the block flicker sometimes)
+            // So we need to put it back with a slight delay (yup, this is hacky - it makes
+            // the block flicker sometimes)
             e.getHitBlock().setType(Material.AIR); // prevents the block from dropping a chorus flower
             getPlugin().getServer().getScheduler().runTask(getPlugin(), () -> e.getHitBlock().setBlockData(data, true));
             // Sorry, this might also cause some ghost blocks!

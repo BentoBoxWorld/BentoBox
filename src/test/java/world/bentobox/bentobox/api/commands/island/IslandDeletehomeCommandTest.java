@@ -51,7 +51,7 @@ import world.bentobox.bentobox.managers.RanksManagerBeforeClassTest;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, User.class })
+@PrepareForTest({ Bukkit.class, BentoBox.class, User.class })
 public class IslandDeletehomeCommandTest extends RanksManagerBeforeClassTest {
 
     @Mock
@@ -145,7 +145,8 @@ public class IslandDeletehomeCommandTest extends RanksManagerBeforeClassTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandDeletehomeCommand#IslandDeletehomeCommand(world.bentobox.bentobox.api.commands.CompositeCommand)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.island.IslandDeletehomeCommand#IslandDeletehomeCommand(world.bentobox.bentobox.api.commands.CompositeCommand)}.
      */
     @Test
     public void testIslandDeletehomeCommand() {
@@ -154,7 +155,8 @@ public class IslandDeletehomeCommandTest extends RanksManagerBeforeClassTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandDeletehomeCommand#setup()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.island.IslandDeletehomeCommand#setup()}.
      */
     @Test
     public void testSetup() {
@@ -166,12 +168,13 @@ public class IslandDeletehomeCommandTest extends RanksManagerBeforeClassTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandDeletehomeCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.island.IslandDeletehomeCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testCanExecuteHelp() {
         idh.canExecute(user, "label", List.of());
-        verify(user).sendMessage("commands.help.header","[label]","BSkyBlock");
+        verify(user).sendMessage("commands.help.header", "[label]", "BSkyBlock");
     }
 
     /**

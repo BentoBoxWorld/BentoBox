@@ -16,7 +16,9 @@ import world.bentobox.bentobox.api.panels.builders.PanelItemBuilder;
 import world.bentobox.bentobox.api.user.User;
 
 /**
- * Implements a {@link Tab} that enables the default world protection settings to be set
+ * Implements a {@link Tab} that enables the default world protection settings
+ * to be set
+ * 
  * @author tastybento
  * @since 1.6.0
  *
@@ -25,7 +27,7 @@ public class WorldDefaultSettingsTab extends SettingsTab implements Tab {
 
     /**
      * @param world - world
-     * @param user - user
+     * @param user  - user
      */
     public WorldDefaultSettingsTab(World world, User user) {
         super(world, user, Type.PROTECTION);
@@ -33,6 +35,7 @@ public class WorldDefaultSettingsTab extends SettingsTab implements Tab {
 
     /**
      * Get the icon for this tab
+     * 
      * @return panel item
      */
     @Override
@@ -45,16 +48,21 @@ public class WorldDefaultSettingsTab extends SettingsTab implements Tab {
         return pib.build();
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see world.bentobox.bentobox.panels.settings.SettingsTab#getName()
      */
     @Override
     public String getName() {
         // Different name
-        return user.getTranslation(PROTECTION_PANEL + "WORLD_DEFAULTS.title", "[world_name]", plugin.getIWM().getFriendlyName(world));
+        return user.getTranslation(PROTECTION_PANEL + "WORLD_DEFAULTS.title", "[world_name]",
+                plugin.getIWM().getFriendlyName(world));
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see world.bentobox.bentobox.panels.settings.SettingsTab#getPermission()
      */
     @Override
@@ -65,6 +73,7 @@ public class WorldDefaultSettingsTab extends SettingsTab implements Tab {
 
     /**
      * Get all the flags as panel items
+     * 
      * @return list of all the panel items for this flag type
      */
     @Override
@@ -75,11 +84,14 @@ public class WorldDefaultSettingsTab extends SettingsTab implements Tab {
             // Replace the click handler with WorldToggleClick
             i.setClickHandler(new WorldToggleClick(f.getID()));
             // Replace the description
-            String worldSetting = f.isSetForWorld(user.getWorld()) ? user.getTranslation("protection.panel.flag-item.setting-active")
+            String worldSetting = f.isSetForWorld(user.getWorld())
+                    ? user.getTranslation("protection.panel.flag-item.setting-active")
                     : user.getTranslation("protection.panel.flag-item.setting-disabled");
-            i.setDescription(Arrays.asList(user.getTranslation("protection.panel.flag-item.setting-layout",
-                    TextVariables.DESCRIPTION, user.getTranslation(f.getDescriptionReference()),
-                    "[setting]", worldSetting).split("\n")));
+            i.setDescription(
+                    Arrays.asList(user
+                            .getTranslation("protection.panel.flag-item.setting-layout", TextVariables.DESCRIPTION,
+                                    user.getTranslation(f.getDescriptionReference()), "[setting]", worldSetting)
+                            .split("\n")));
             return i;
         }).toList();
     }

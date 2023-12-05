@@ -14,6 +14,7 @@ import world.bentobox.bentobox.util.Util;
 
 /**
  * Deletes all named homes from an island
+ * 
  * @author tastybento
  *
  */
@@ -55,7 +56,8 @@ public class AdminDeleteHomesCommand extends ConfirmableCommand {
             return false;
         }
         // Confirm
-        askConfirmation(user, user.getTranslation("commands.admin.deletehomes.warning"), () -> deleteHomes(user, island));
+        askConfirmation(user, user.getTranslation("commands.admin.deletehomes.warning"),
+                () -> deleteHomes(user, island));
         return true;
     }
 
@@ -67,7 +69,7 @@ public class AdminDeleteHomesCommand extends ConfirmableCommand {
 
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
-        String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
+        String lastArg = !args.isEmpty() ? args.get(args.size() - 1) : "";
         if (args.isEmpty()) {
             // Don't show every player on the server. Require at least the first letter
             return Optional.empty();

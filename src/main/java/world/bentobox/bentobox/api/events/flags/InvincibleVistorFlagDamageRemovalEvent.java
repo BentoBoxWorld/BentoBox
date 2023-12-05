@@ -7,7 +7,9 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import world.bentobox.bentobox.api.events.BentoBoxEvent;
 
 /**
- * This event is fired just before damage is prevented to visitors on an island, if that protection is provided.
+ * This event is fired just before damage is prevented to visitors on an island,
+ * if that protection is provided.
+ * 
  * @author tastybento
  *
  */
@@ -17,18 +19,22 @@ public class InvincibleVistorFlagDamageRemovalEvent extends BentoBoxEvent implem
     private boolean cancel;
 
     /**
-     * This event is fired just before damage is prevented to visitors on an island, if that protection is provided.
+     * This event is fired just before damage is prevented to visitors on an island,
+     * if that protection is provided.
+     * 
      * @param player player being protected
-     * @param cause damage cause
+     * @param cause  damage cause
      */
     public InvincibleVistorFlagDamageRemovalEvent(Player player, DamageCause cause) {
         this.player = player;
         this.cause = cause;
     }
+
     @Override
     public boolean isCancelled() {
         return cancel;
     }
+
     @Override
     public void setCancelled(boolean cancel) {
         this.cancel = cancel;
@@ -40,6 +46,7 @@ public class InvincibleVistorFlagDamageRemovalEvent extends BentoBoxEvent implem
     public Player getPlayer() {
         return player;
     }
+
     /**
      * @return the cause
      */
@@ -47,4 +54,3 @@ public class InvincibleVistorFlagDamageRemovalEvent extends BentoBoxEvent implem
         return cause;
     }
 }
-

@@ -53,12 +53,11 @@ import world.bentobox.bentobox.util.Util;
 /**
  * Common items for testing. Don't forget to use super.setUp()!
  * <p>
- * Sets up BentoBox plugin, pluginManager and ItemFactory.
- * Location, world, playersManager and player.
- * IWM, Addon and WorldSettings. IslandManager with one
- * island with protection and nothing allowed by default.
- * Owner of island is player with same UUID.
- * Locales, placeholders.
+ * Sets up BentoBox plugin, pluginManager and ItemFactory. Location, world,
+ * playersManager and player. IWM, Addon and WorldSettings. IslandManager with
+ * one island with protection and nothing allowed by default. Owner of island is
+ * player with same UUID. Locales, placeholders.
+ * 
  * @author tastybento
  *
  */
@@ -92,7 +91,6 @@ public abstract class AbstractCommonSetup {
     @Mock
     protected FlagsManager fm;
 
-
     public void setUp() throws Exception {
         // Set up plugin
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
@@ -106,7 +104,7 @@ public abstract class AbstractCommonSetup {
         when(location.getBlockX()).thenReturn(0);
         when(location.getBlockY()).thenReturn(0);
         when(location.getBlockZ()).thenReturn(0);
-        when(location.toVector()).thenReturn(new Vector(0,0,0));
+        when(location.toVector()).thenReturn(new Vector(0, 0, 0));
 
         // Players Manager and meta data
         PlayersManager pm = mock(PlayersManager.class);
@@ -157,7 +155,8 @@ public abstract class AbstractCommonSetup {
         when(lm.get(any(), any())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
         PlaceholdersManager phm = mock(PlaceholdersManager.class);
         when(plugin.getPlaceholdersManager()).thenReturn(phm);
-        when(phm.replacePlaceholders(any(), any())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
+        when(phm.replacePlaceholders(any(), any()))
+                .thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
         when(plugin.getLocalesManager()).thenReturn(lm);
         // Notifier
         when(plugin.getNotifier()).thenReturn(notifier);
@@ -170,7 +169,8 @@ public abstract class AbstractCommonSetup {
         PowerMockito.mockStatic(Util.class);
         when(Util.getWorld(any())).thenReturn(mock(World.class));
         // Util translate color codes (used in user translate methods)
-        when(Util.translateColorCodes(anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
+        when(Util.translateColorCodes(anyString()))
+                .thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
 
         // Tags
         for (Material m : Material.values()) {

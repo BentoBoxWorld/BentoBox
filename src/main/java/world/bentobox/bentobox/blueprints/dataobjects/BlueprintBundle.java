@@ -14,8 +14,9 @@ import world.bentobox.bentobox.blueprints.Blueprint;
 import world.bentobox.bentobox.database.objects.DataObject;
 
 /**
- * Represents a bundle of three {@link Blueprint}s.
- * This is what the player will choose when creating his island.
+ * Represents a bundle of three {@link Blueprint}s. This is what the player will
+ * choose when creating his island.
+ * 
  * @since 1.5.0
  * @author Poslovitch, tastybento
  */
@@ -42,9 +43,9 @@ public class BlueprintBundle implements DataObject {
     @Expose
     private List<String> description = new ArrayList<>();
     /**
-     * If true, then the player needs to have a permission to view or use this bundle
-     * The permission is GameModeAddon.island.create.uniqueId of blueprint bundle.
-     * e.g. bskyblock.island.create.vip
+     * If true, then the player needs to have a permission to view or use this
+     * bundle The permission is GameModeAddon.island.create.uniqueId of blueprint
+     * bundle. e.g. bskyblock.island.create.vip
      */
     @Expose
     private boolean requirePermission;
@@ -61,8 +62,6 @@ public class BlueprintBundle implements DataObject {
     @Expose
     private int slot = 0;
 
-
-
     /**
      * @return the uniqueId
      */
@@ -70,6 +69,7 @@ public class BlueprintBundle implements DataObject {
     public String getUniqueId() {
         return uniqueId;
     }
+
     /**
      * @param uniqueId the uniqueId to set
      */
@@ -77,48 +77,56 @@ public class BlueprintBundle implements DataObject {
     public void setUniqueId(String uniqueId) {
         this.uniqueId = uniqueId;
     }
+
     /**
      * @return the icon
      */
     public Material getIcon() {
         return icon;
     }
+
     /**
      * @param icon the icon to set
      */
     public void setIcon(Material icon) {
         this.icon = icon;
     }
+
     /**
      * @return the displayName
      */
     public String getDisplayName() {
         return displayName;
     }
+
     /**
      * @param displayName the displayName to set
      */
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
     }
+
     /**
      * @return the description
      */
     public List<String> getDescription() {
         return description;
     }
+
     /**
      * @param description the description to set
      */
     public void setDescription(List<String> description) {
         this.description = description;
     }
+
     /**
      * @return the blueprints
      */
     public Map<World.Environment, String> getBlueprints() {
         return blueprints;
     }
+
     /**
      * @param blueprints the blueprints to set
      */
@@ -127,9 +135,11 @@ public class BlueprintBundle implements DataObject {
     }
 
     /**
-     * Adds a blueprint to the blueprint bundle. It will replace any blueprint that already exists of the same Environment type.
+     * Adds a blueprint to the blueprint bundle. It will replace any blueprint that
+     * already exists of the same Environment type.
+     * 
      * @param env - the Environment
-     * @param bp - blueprint
+     * @param bp  - blueprint
      */
     public void setBlueprint(World.Environment env, Blueprint bp) {
         this.blueprints.put(env, bp.getName());
@@ -137,6 +147,7 @@ public class BlueprintBundle implements DataObject {
 
     /**
      * Removes a blueprint from this environment slot
+     * 
      * @param env - the world environment
      */
     public void clearBlueprint(World.Environment env) {
@@ -145,6 +156,7 @@ public class BlueprintBundle implements DataObject {
 
     /**
      * Get the blueprint for the environment type
+     * 
      * @param env - Environment type
      * @return Blueprint or null if one does not exist
      */
@@ -163,24 +175,28 @@ public class BlueprintBundle implements DataObject {
         this.description.add(string);
 
     }
+
     /**
      * @return the requirePermission
      */
     public boolean isRequirePermission() {
         return requirePermission;
     }
+
     /**
      * @param requirePermission the requirePermission to set
      */
     public void setRequirePermission(boolean requirePermission) {
         this.requirePermission = requirePermission;
     }
+
     /**
      * @return the slot
      */
     public int getSlot() {
         return slot;
     }
+
     /**
      * @param slot the slot to set
      */

@@ -14,6 +14,7 @@ import world.bentobox.bentobox.api.user.User;
 
 /**
  * Represents an item in a {@link Panel}
+ * 
  * @author tastybento
  *
  */
@@ -88,7 +89,7 @@ public class PanelItem {
         this.name = name;
         if (meta != null) {
             meta.setDisplayName(name);
-            meta.setLocalizedName(name); //Localized name cannot be overridden by the player using an anvils
+            meta.setLocalizedName(name); // Localized name cannot be overridden by the player using an anvils
             icon.setItemMeta(meta);
         }
     }
@@ -162,10 +163,11 @@ public class PanelItem {
     public interface ClickHandler {
         /**
          * This is executed when the icon is clicked
-         * @param panel - the panel that is being clicked
-         * @param user - the User
+         * 
+         * @param panel     - the panel that is being clicked
+         * @param user      - the User
          * @param clickType - the click type
-         * @param slot - the slot that was clicked
+         * @param slot      - the slot that was clicked
          * @return true if the click event should be cancelled
          */
         boolean onClick(Panel panel, User user, ClickType clickType, int slot);

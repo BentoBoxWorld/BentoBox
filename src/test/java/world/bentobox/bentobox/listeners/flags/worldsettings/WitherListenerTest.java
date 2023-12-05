@@ -43,7 +43,7 @@ import world.bentobox.bentobox.managers.IslandWorldManager;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( {BentoBox.class, Bukkit.class} )
+@PrepareForTest({ BentoBox.class, Bukkit.class })
 public class WitherListenerTest {
 
     private WitherListener wl;
@@ -94,8 +94,6 @@ public class WitherListenerTest {
             blocks.add(block);
         }
 
-
-
         wl = new WitherListener();
 
         // Set flag
@@ -111,7 +109,8 @@ public class WitherListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.WitherListener#onExplosion(org.bukkit.event.entity.EntityExplodeEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.flags.worldsettings.WitherListener#onExplosion(org.bukkit.event.entity.EntityExplodeEvent)}.
      */
     @Test
     public void testOnExplosionWither() {
@@ -124,9 +123,9 @@ public class WitherListenerTest {
         assertTrue(blocks.isEmpty());
     }
 
-
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.WitherListener#onExplosion(org.bukkit.event.entity.EntityExplodeEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.flags.worldsettings.WitherListener#onExplosion(org.bukkit.event.entity.EntityExplodeEvent)}.
      */
     @Test
     public void testOnExplosionWitherWrongWorld() {
@@ -140,7 +139,8 @@ public class WitherListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.WitherListener#onExplosion(org.bukkit.event.entity.EntityExplodeEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.flags.worldsettings.WitherListener#onExplosion(org.bukkit.event.entity.EntityExplodeEvent)}.
      */
     @Test
     public void testOnExplosionWitherAllowed() {
@@ -156,7 +156,8 @@ public class WitherListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.WitherListener#onExplosion(org.bukkit.event.entity.EntityExplodeEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.flags.worldsettings.WitherListener#onExplosion(org.bukkit.event.entity.EntityExplodeEvent)}.
      */
     @Test
     public void testOnExplosionWitherSkull() {
@@ -170,7 +171,8 @@ public class WitherListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.WitherListener#onExplosion(org.bukkit.event.entity.EntityExplodeEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.flags.worldsettings.WitherListener#onExplosion(org.bukkit.event.entity.EntityExplodeEvent)}.
      */
     @Test
     public void testOnExplosionNotWither() {
@@ -184,7 +186,8 @@ public class WitherListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.WitherListener#WitherChangeBlocks(org.bukkit.event.entity.EntityChangeBlockEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.flags.worldsettings.WitherListener#WitherChangeBlocks(org.bukkit.event.entity.EntityChangeBlockEvent)}.
      */
     @Test
     public void testWitherChangeBlocks() {
@@ -202,7 +205,8 @@ public class WitherListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.WitherListener#WitherChangeBlocks(org.bukkit.event.entity.EntityChangeBlockEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.flags.worldsettings.WitherListener#WitherChangeBlocks(org.bukkit.event.entity.EntityChangeBlockEvent)}.
      */
     @Test
     public void testWitherChangeBlocksWrongWorld() {
@@ -220,7 +224,8 @@ public class WitherListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.WitherListener#WitherChangeBlocks(org.bukkit.event.entity.EntityChangeBlockEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.flags.worldsettings.WitherListener#WitherChangeBlocks(org.bukkit.event.entity.EntityChangeBlockEvent)}.
      */
     @Test
     public void testWitherChangeBlocksAllowed() {

@@ -15,6 +15,7 @@ import world.bentobox.bentobox.api.flags.Flag;
 
 /**
  * Class for tests that require world settings
+ * 
  * @author tastybento
  *
  */
@@ -48,7 +49,6 @@ public class TestWorldSettings implements WorldSettings {
 
     @Override
     public void setDifficulty(Difficulty difficulty) {
-
 
     }
 

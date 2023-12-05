@@ -18,29 +18,13 @@ import world.bentobox.bentobox.database.DatabaseConnectionSettingsImpl.DatabaseS
  */
 public class DatabaseConnectionSettingsImplTest {
 
-    private DatabaseSettings setting = new DatabaseSettings(
-            "localhost",
-            3306,
-            "mydb",
-            "myuser",
-            "mypassword",
-            true,
-            10,
-            Collections.singletonMap("key", "value")
-            );
+    private DatabaseSettings setting = new DatabaseSettings("localhost", 3306, "mydb", "myuser", "mypassword", true, 10,
+            Collections.singletonMap("key", "value"));
 
     @Test
     public void testConstructorWithDatabaseSettings() {
         DatabaseConnectionSettingsImpl.DatabaseSettings settings = new DatabaseConnectionSettingsImpl.DatabaseSettings(
-                "localhost",
-                3306,
-                "mydb",
-                "myuser",
-                "mypassword",
-                true,
-                10,
-                Collections.singletonMap("key", "value")
-                );
+                "localhost", 3306, "mydb", "myuser", "mypassword", true, 10, Collections.singletonMap("key", "value"));
 
         DatabaseConnectionSettingsImpl connectionSettings = new DatabaseConnectionSettingsImpl(settings);
 
@@ -70,15 +54,8 @@ public class DatabaseConnectionSettingsImplTest {
 
     @Test
     public void testConstructorWithoutExtraProperties() {
-        DatabaseConnectionSettingsImpl connectionSettings = new DatabaseConnectionSettingsImpl(
-                "localhost",
-                3306,
-                "mydb",
-                "myuser",
-                "mypassword",
-                true,
-                10
-                );
+        DatabaseConnectionSettingsImpl connectionSettings = new DatabaseConnectionSettingsImpl("localhost", 3306,
+                "mydb", "myuser", "mypassword", true, 10);
 
         assertEquals("localhost", connectionSettings.getHost());
         assertEquals(3306, connectionSettings.getPort());
@@ -122,4 +99,3 @@ public class DatabaseConnectionSettingsImplTest {
         assertEquals(extraProperties, connectionSettings.getExtraProperties());
     }
 }
-

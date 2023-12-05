@@ -12,8 +12,7 @@ import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.database.objects.Island;
 
 /**
- * Fired when an a player enters an island.
- * Cancellation has no effect.
+ * Fired when an a player enters an island. Cancellation has no effect.
  */
 public class IslandEnterEvent extends IslandBaseEvent {
 
@@ -29,7 +28,8 @@ public class IslandEnterEvent extends IslandBaseEvent {
         return handlers;
     }
 
-    public IslandEnterEvent(Island island, UUID player, boolean admin, Location location, @Nullable Island fromIsland, Event rawEvent) {
+    public IslandEnterEvent(Island island, UUID player, boolean admin, Location location, @Nullable Island fromIsland,
+            Event rawEvent) {
         // Final variables have to be declared in the constructor
         super(island, player, admin, location, rawEvent);
         this.fromIsland = fromIsland;

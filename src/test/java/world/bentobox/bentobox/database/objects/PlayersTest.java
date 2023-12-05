@@ -31,7 +31,7 @@ import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class})
+@PrepareForTest({ Bukkit.class, BentoBox.class })
 public class PlayersTest {
 
     @Mock
@@ -117,7 +117,8 @@ public class PlayersTest {
     }
 
     /**
-     * Test for {@link world.bentobox.bentobox.database.objects.Players#getDeaths(World)}
+     * Test for
+     * {@link world.bentobox.bentobox.database.objects.Players#getDeaths(World)}
      */
     @Test
     public void testGetDeaths() {

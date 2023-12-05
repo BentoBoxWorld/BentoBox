@@ -25,7 +25,7 @@ import world.bentobox.bentobox.util.DeleteIslandChunks;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({BentoBox.class, Bukkit.class, DeleteIslandChunks.class})
+@PrepareForTest({ BentoBox.class, Bukkit.class, DeleteIslandChunks.class })
 public class IslandChunkDeletionManagerTest {
 
     @Mock
@@ -46,16 +46,15 @@ public class IslandChunkDeletionManagerTest {
     public void setUp() throws Exception {
         // Set up plugin
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
-        
+
         // IWM
         when(plugin.getIWM()).thenReturn(iwm);
 
         // Scheduler
         PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
-        
+
         // DeleteIslandChunks
         PowerMockito.whenNew(DeleteIslandChunks.class).withAnyArguments().thenReturn(dic);
-        
 
         settings = new Settings();
         settings.setSlowDeletion(true);
@@ -67,16 +66,18 @@ public class IslandChunkDeletionManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandChunkDeletionManager#IslandChunkDeletionManager(world.bentobox.bentobox.BentoBox)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandChunkDeletionManager#IslandChunkDeletionManager(world.bentobox.bentobox.BentoBox)}.
      */
     @Test
-    public void testIslandChunkDeletionManager() {        
+    public void testIslandChunkDeletionManager() {
         PowerMockito.verifyStatic(Bukkit.class, times(1));
         Bukkit.getScheduler();
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandChunkDeletionManager#run()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandChunkDeletionManager#run()}.
      */
     @Test
     public void testRun() {
@@ -86,7 +87,8 @@ public class IslandChunkDeletionManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandChunkDeletionManager#add(world.bentobox.bentobox.database.objects.IslandDeletion)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandChunkDeletionManager#add(world.bentobox.bentobox.database.objects.IslandDeletion)}.
      */
     @Test
     public void testAdd() {

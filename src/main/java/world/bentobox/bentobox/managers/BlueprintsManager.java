@@ -65,16 +65,15 @@ public class BlueprintsManager {
     private static final String FOR = "' for ";
 
     /**
-     * Map of blueprint bundles to game mode addon.
-     * Inner map's key is the uniqueId of the blueprint bundle so it's
-     * easy to get from a UI
+     * Map of blueprint bundles to game mode addon. Inner map's key is the uniqueId
+     * of the blueprint bundle so it's easy to get from a UI
      */
     @NonNull
     private final Map<GameModeAddon, List<BlueprintBundle>> blueprintBundles;
 
     /**
-     * Map of blueprints. There can be many blueprints per game mode addon
-     * Inner map's key is the blueprint's name so it's easy to get from a UI
+     * Map of blueprints. There can be many blueprints per game mode addon Inner
+     * map's key is the blueprint's name so it's easy to get from a UI
      */
     @NonNull
     private final Map<GameModeAddon, List<Blueprint>> blueprints;
@@ -89,22 +88,20 @@ public class BlueprintsManager {
     @NonNull
     private final Set<GameModeAddon> blueprintsLoaded;
 
-
     public BlueprintsManager(@NonNull BentoBox plugin) {
         this.plugin = plugin;
-        // Must use ConcurrentHashMap because the maps are loaded async and they need to be thread safe
+        // Must use ConcurrentHashMap because the maps are loaded async and they need to
+        // be thread safe
         this.blueprintBundles = new ConcurrentHashMap<>();
         this.blueprints = new ConcurrentHashMap<>();
-        @SuppressWarnings({"rawtypes", "unchecked"})
-        GsonBuilder builder = new GsonBuilder()
-        .excludeFieldsWithoutExposeAnnotation()
-        .enableComplexMapKeySerialization()
-        .setPrettyPrinting()
-        // This enables gson to deserialize enum maps
-        .registerTypeAdapter(EnumMap.class, (InstanceCreator<EnumMap>) type -> {
-            Type[] types = (((ParameterizedType) type).getActualTypeArguments());
-            return new EnumMap((Class<?>) types[0]);
-        });
+        @SuppressWarnings({ "rawtypes", "unchecked" })
+        GsonBuilder builder = new GsonBuilder().excludeFieldsWithoutExposeAnnotation()
+                .enableComplexMapKeySerialization().setPrettyPrinting()
+                // This enables gson to deserialize enum maps
+                .registerTypeAdapter(EnumMap.class, (InstanceCreator<EnumMap>) type -> {
+                    Type[] types = (((ParameterizedType) type).getActualTypeArguments());
+                    return new EnumMap((Class<?>) types[0]);
+                });
         // Disable <>'s escaping etc.
         builder.disableHtmlEscaping();
         // Register adapter factory
@@ -115,8 +112,9 @@ public class BlueprintsManager {
     }
 
     /**
-     * Extracts the blueprints and bundles provided by this {@link GameModeAddon} in its .jar file.
-     * This will do nothing if the blueprints folder already exists for this GameModeAddon.
+     * Extracts the blueprints and bundles provided by this {@link GameModeAddon} in
+     * its .jar file. This will do nothing if the blueprints folder already exists
+     * for this GameModeAddon.
      *
      * @param addon the {@link GameModeAddon} to extract the blueprints from.
      */
@@ -135,7 +133,8 @@ public class BlueprintsManager {
 
         // Get any blueprints or bundles from the jar and save them.
         try (JarFile jar = new JarFile(addon.getFile())) {
-            Util.listJarFiles(jar, FOLDER_NAME, BLUEPRINT_BUNDLE_SUFFIX).forEach(name -> addon.saveResource(name, false));
+            Util.listJarFiles(jar, FOLDER_NAME, BLUEPRINT_BUNDLE_SUFFIX)
+                    .forEach(name -> addon.saveResource(name, false));
             Util.listJarFiles(jar, FOLDER_NAME, BLUEPRINT_SUFFIX).forEach(name -> addon.saveResource(name, false));
         } catch (IOException e) {
             plugin.logError("Could not load blueprint files from addon jar " + e.getMessage());
@@ -157,6 +156,7 @@ public class BlueprintsManager {
 
     /**
      * Get the default blueprint bundle for game mode
+     * 
      * @param addon - game mode addon
      * @return the default blueprint bundle or null if none
      * @since 1.8.0
@@ -164,16 +164,19 @@ public class BlueprintsManager {
     @Nullable
     public BlueprintBundle getDefaultBlueprintBundle(@NonNull GameModeAddon addon) {
         if (blueprintBundles.containsKey(addon)) {
-            return blueprintBundles.get(addon).stream().filter(bb -> bb.getUniqueId().equals(DEFAULT_BUNDLE_NAME)).findFirst().orElse(null);
+            return blueprintBundles.get(addon).stream().filter(bb -> bb.getUniqueId().equals(DEFAULT_BUNDLE_NAME))
+                    .findFirst().orElse(null);
         }
         return null;
     }
 
     /**
-     * Returns a {@link File} instance of the blueprints folder of this {@link GameModeAddon}.
+     * Returns a {@link File} instance of the blueprints folder of this
+     * {@link GameModeAddon}.
      *
      * @param addon the {@link GameModeAddon}
-     * @return a {@link File} instance of the blueprints folder of this GameModeAddon.
+     * @return a {@link File} instance of the blueprints folder of this
+     *         GameModeAddon.
      */
     @NonNull
     private File getBlueprintsFolder(@NonNull GameModeAddon addon) {
@@ -204,7 +207,9 @@ public class BlueprintsManager {
     }
 
     /**
-     * Check if all blueprints are loaded. Only query after all GameModes have been loaded.
+     * Check if all blueprints are loaded. Only query after all GameModes have been
+     * loaded.
+     * 
      * @return true if all blueprints are loaded
      */
     public boolean isBlueprintsLoaded() {
@@ -226,10 +231,8 @@ public class BlueprintsManager {
 
         for (File file : bundles) {
 
-            try (FileReader fileReader = new FileReader(file, StandardCharsets.UTF_8))
-            {
-                if (!file.getName().equals(Util.sanitizeInput(file.getName())))
-                {
+            try (FileReader fileReader = new FileReader(file, StandardCharsets.UTF_8)) {
+                if (!file.getName().equals(Util.sanitizeInput(file.getName()))) {
                     // fail on all blueprints with incorrect names.
                     throw new InputMismatchException(file.getName());
                 }
@@ -238,21 +241,27 @@ public class BlueprintsManager {
 
                 if (bb != null) {
                     // Make sure there is no existing bundle with the same uniqueId
-                    if (blueprintBundles.get(addon).stream().noneMatch(bundle ->  bundle.getUniqueId().equals(bb.getUniqueId()))) {
+                    if (blueprintBundles.get(addon).stream()
+                            .noneMatch(bundle -> bundle.getUniqueId().equals(bb.getUniqueId()))) {
                         blueprintBundles.get(addon).add(bb);
-                        plugin.log("Loaded Blueprint Bundle '" + bb.getUniqueId() + FOR + addon.getDescription().getName() + ".");
+                        plugin.log("Loaded Blueprint Bundle '" + bb.getUniqueId() + FOR
+                                + addon.getDescription().getName() + ".");
                         loaded = true;
                     } else {
                         // There is a bundle that already uses this uniqueId.
                         // In that case, we log that and do not load the new bundle.
-                        plugin.logWarning("Could not load blueprint bundle '" + file.getName() + FOR + addon.getDescription().getName() + ".");
-                        plugin.logWarning("The uniqueId '" + bb.getUniqueId() + "' is already used by another Blueprint Bundle.");
+                        plugin.logWarning("Could not load blueprint bundle '" + file.getName() + FOR
+                                + addon.getDescription().getName() + ".");
+                        plugin.logWarning(
+                                "The uniqueId '" + bb.getUniqueId() + "' is already used by another Blueprint Bundle.");
                         plugin.logWarning("This can occur if the Blueprint Bundles' files were manually edited.");
-                        plugin.logWarning("Please review your Blueprint Bundles' files and make sure their uniqueIds are not in duplicate.");
+                        plugin.logWarning(
+                                "Please review your Blueprint Bundles' files and make sure their uniqueIds are not in duplicate.");
                     }
                 }
             } catch (Exception e) {
-                plugin.logError("Could not load blueprint bundle '" + file.getName() + "'. Cause: " + e.getMessage() + ".");
+                plugin.logError(
+                        "Could not load blueprint bundle '" + file.getName() + "'. Cause: " + e.getMessage() + ".");
                 plugin.logStacktrace(e);
             }
         }
@@ -321,7 +330,8 @@ public class BlueprintsManager {
         for (File file : bps) {
 
             // Input sanitization is required for weirdos that edit files manually.
-            String fileName = Util.sanitizeInput(file.getName().substring(0, file.getName().length() - BLUEPRINT_SUFFIX.length()));
+            String fileName = Util
+                    .sanitizeInput(file.getName().substring(0, file.getName().length() - BLUEPRINT_SUFFIX.length()));
 
             try {
                 Blueprint bp = new BlueprintClipboardManager(plugin, bpf).loadBlueprint(fileName);
@@ -336,8 +346,8 @@ public class BlueprintsManager {
     }
 
     /**
-     * Adds a blueprint to addon's list of blueprints. If the list already contains a blueprint with the same name
-     * it is replaced.
+     * Adds a blueprint to addon's list of blueprints. If the list already contains
+     * a blueprint with the same name it is replaced.
      *
      * @param addon - the {@link GameModeAddon}
      * @param bp    - blueprint
@@ -381,7 +391,6 @@ public class BlueprintsManager {
         });
     }
 
-
     /**
      * Saves all the blueprint bundles
      */
@@ -404,38 +413,32 @@ public class BlueprintsManager {
 
     /**
      * Unregisters the Blueprint from the manager and deletes the file.
+     * 
      * @param addon game mode addon
-     * @param name name of the Blueprint to delete
+     * @param name  name of the Blueprint to delete
      * @since 1.9.0
      */
-    public void deleteBlueprint(GameModeAddon addon, String name)
-    {
+    public void deleteBlueprint(GameModeAddon addon, String name) {
         List<Blueprint> addonBlueprints = this.blueprints.get(addon);
         Iterator<Blueprint> it = addonBlueprints.iterator();
 
-        while (it.hasNext())
-        {
+        while (it.hasNext()) {
             Blueprint b = it.next();
 
-            if (b.getName().equalsIgnoreCase(name))
-            {
+            if (b.getName().equalsIgnoreCase(name)) {
                 it.remove();
 
                 File file = new File(this.getBlueprintsFolder(addon), b.getName() + BLUEPRINT_SUFFIX);
 
                 // Delete the file
-                try
-                {
+                try {
                     Files.deleteIfExists(file.toPath());
-                }
-                catch (IOException e)
-                {
+                } catch (IOException e) {
                     this.plugin.logError("Could not delete Blueprint " + e.getLocalizedMessage());
                 }
             }
         }
     }
-
 
     /**
      * Paste the islands to world
@@ -478,18 +481,18 @@ public class BlueprintsManager {
         }
         // Paste
         if (bp != null) {
-            new BlueprintPaster(plugin, bp, addon.getOverWorld(), island).paste().thenAccept(b -> pasteNether(addon, bb, island).thenAccept(b2 ->
-            pasteEnd(addon, bb, island).thenAccept(message -> sendMessage(island)).thenAccept(b3 -> Bukkit.getScheduler().runTask(plugin, task))));
+            new BlueprintPaster(plugin, bp, addon.getOverWorld(), island).paste()
+                    .thenAccept(b -> pasteNether(addon, bb, island)
+                            .thenAccept(b2 -> pasteEnd(addon, bb, island).thenAccept(message -> sendMessage(island))
+                                    .thenAccept(b3 -> Bukkit.getScheduler().runTask(plugin, task))));
         }
         return true;
 
     }
 
     private CompletableFuture<Boolean> pasteNether(GameModeAddon addon, BlueprintBundle bb, Island island) {
-        if (bb.getBlueprint(World.Environment.NETHER) != null
-                && addon.getWorldSettings().isNetherGenerate()
-                && addon.getWorldSettings().isNetherIslands()
-                && addon.getNetherWorld() != null) {
+        if (bb.getBlueprint(World.Environment.NETHER) != null && addon.getWorldSettings().isNetherGenerate()
+                && addon.getWorldSettings().isNetherIslands() && addon.getNetherWorld() != null) {
             Blueprint bp = getBlueprints(addon).get(bb.getBlueprint(World.Environment.NETHER));
             if (bp != null) {
                 return new BlueprintPaster(plugin, bp, addon.getNetherWorld(), island).paste();
@@ -500,10 +503,8 @@ public class BlueprintsManager {
 
     private CompletableFuture<Boolean> pasteEnd(GameModeAddon addon, BlueprintBundle bb, Island island) {
         // Make end island
-        if (bb.getBlueprint(World.Environment.THE_END) != null
-                && addon.getWorldSettings().isEndGenerate()
-                && addon.getWorldSettings().isEndIslands()
-                && addon.getEndWorld() != null) {
+        if (bb.getBlueprint(World.Environment.THE_END) != null && addon.getWorldSettings().isEndGenerate()
+                && addon.getWorldSettings().isEndIslands() && addon.getEndWorld() != null) {
             Blueprint bp = getBlueprints(addon).get(bb.getBlueprint(World.Environment.THE_END));
             if (bp != null) {
                 return new BlueprintPaster(plugin, bp, addon.getEndWorld(), island).paste();
@@ -512,9 +513,10 @@ public class BlueprintsManager {
         return CompletableFuture.completedFuture(false);
     }
 
-
     /**
-     * This method just sends a message to the island owner that island creating is completed.
+     * This method just sends a message to the island owner that island creating is
+     * completed.
+     * 
      * @param island Island which owner must receive a message.
      */
     private void sendMessage(Island island) {
@@ -542,7 +544,8 @@ public class BlueprintsManager {
     }
 
     /**
-     * Adds a blueprint bundle. If a bundle with the same uniqueId exists, it will be replaced
+     * Adds a blueprint bundle. If a bundle with the same uniqueId exists, it will
+     * be replaced
      *
      * @param addon - the game mode addon
      * @param bb    - the blueprint bundle
@@ -561,14 +564,16 @@ public class BlueprintsManager {
      * @param addon - addon making the request
      * @param user  - user making the request
      * @param name  - name of the blueprint bundle
-     * @return <tt>true</tt> if allowed, <tt>false</tt> if not or bundle does not exist
+     * @return <tt>true</tt> if allowed, <tt>false</tt> if not or bundle does not
+     *         exist
      */
     public boolean checkPerm(@NonNull Addon addon, @NonNull User user, @NonNull String name) {
         // Permission
         String permission = addon.getPermissionPrefix() + "island.create." + name;
         // Get Blueprint bundle
         BlueprintBundle bb = getBlueprintBundles((GameModeAddon) addon).get(name.toLowerCase());
-        if (bb == null || (bb.isRequirePermission() && !name.equals(DEFAULT_BUNDLE_NAME) && !user.hasPermission(permission))) {
+        if (bb == null
+                || (bb.isRequirePermission() && !name.equals(DEFAULT_BUNDLE_NAME) && !user.hasPermission(permission))) {
             user.sendMessage("general.errors.no-permission", TextVariables.PERMISSION, permission);
             return false;
         }
@@ -597,15 +602,13 @@ public class BlueprintsManager {
     /**
      * Rename a blueprint
      *
-     * @param addon - Game Mode Addon
-     * @param bp    - blueprint
-     * @param name  - new name
+     * @param addon       - Game Mode Addon
+     * @param bp          - blueprint
+     * @param name        - new name
      * @param displayName - display name for blueprint
      */
-    public void renameBlueprint(GameModeAddon addon, Blueprint bp, String name, String displayName)
-    {
-        if (bp.getName().equalsIgnoreCase(name))
-        {
+    public void renameBlueprint(GameModeAddon addon, Blueprint bp, String name, String displayName) {
+        if (bp.getName().equalsIgnoreCase(name)) {
             // If the name is the same, do not do anything
             return;
         }
@@ -615,12 +618,9 @@ public class BlueprintsManager {
         File fileName = new File(bpf, bp.getName() + BLUEPRINT_SUFFIX);
         // Delete the old file
 
-        try
-        {
+        try {
             Files.deleteIfExists(fileName.toPath());
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             this.plugin.logError("Could not delete old Blueprint " + e.getLocalizedMessage());
         }
 

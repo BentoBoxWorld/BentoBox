@@ -42,14 +42,16 @@ import world.bentobox.bentobox.nms.PasteHandler;
  */
 public class DefaultPasteUtil {
     private static final String MINECRAFT = "minecraft:";
-    private static final Map<String, String> BLOCK_CONVERSION = Map.of("sign", "oak_sign", "wall_sign", "oak_wall_sign");
+    private static final Map<String, String> BLOCK_CONVERSION = Map.of("sign", "oak_sign", "wall_sign",
+            "oak_wall_sign");
     private static final BentoBox plugin;
 
     static {
         plugin = BentoBox.getInstance();
     }
 
-    private DefaultPasteUtil() {} // private constructor to hide the implicit public one.
+    private DefaultPasteUtil() {
+    } // private constructor to hide the implicit public one.
 
     /**
      * Set the block to the location
@@ -97,7 +99,8 @@ public class DefaultPasteUtil {
         try {
             for (Map.Entry<String, String> en : BLOCK_CONVERSION.entrySet()) {
                 if (block.getBlockData().startsWith(MINECRAFT + en.getKey())) {
-                    blockData = Bukkit.createBlockData(block.getBlockData().replace(MINECRAFT + en.getKey(), MINECRAFT + en.getValue()));
+                    blockData = Bukkit.createBlockData(
+                            block.getBlockData().replace(MINECRAFT + en.getKey(), MINECRAFT + en.getValue()));
                     break;
                 }
             }
@@ -172,29 +175,31 @@ public class DefaultPasteUtil {
     public static CompletableFuture<Void> setEntity(Island island, Location location, List<BlueprintEntity> list) {
         World world = location.getWorld();
         assert world != null;
-        return Util.getChunkAtAsync(location).thenRun(() -> list.stream().filter(k -> k.getType() != null).forEach(k -> {
-            LivingEntity e = (LivingEntity) location.getWorld().spawnEntity(location, k.getType());
-            if (k.getCustomName() != null) {
-                String customName = k.getCustomName();
+        return Util.getChunkAtAsync(location)
+                .thenRun(() -> list.stream().filter(k -> k.getType() != null).forEach(k -> {
+                    LivingEntity e = (LivingEntity) location.getWorld().spawnEntity(location, k.getType());
+                    if (k.getCustomName() != null) {
+                        String customName = k.getCustomName();
 
-                if (island != null) {
-                    // Parse any placeholders in the entity's name, if the owner's connected (he should)
-                    Optional<Player> owner = Optional.ofNullable(island.getOwner())
-                            .map(User::getInstance)
-                            .map(User::getPlayer);
-                    if (owner.isPresent()) {
-                        // Parse for the player's name first (in case placeholders might need it)
-                        customName = customName.replace(TextVariables.NAME, owner.get().getName());
-                        // Now parse the placeholders
-                        customName = plugin.getPlaceholdersManager().replacePlaceholders(owner.get(), customName);
+                        if (island != null) {
+                            // Parse any placeholders in the entity's name, if the owner's connected (he
+                            // should)
+                            Optional<Player> owner = Optional.ofNullable(island.getOwner()).map(User::getInstance)
+                                    .map(User::getPlayer);
+                            if (owner.isPresent()) {
+                                // Parse for the player's name first (in case placeholders might need it)
+                                customName = customName.replace(TextVariables.NAME, owner.get().getName());
+                                // Now parse the placeholders
+                                customName = plugin.getPlaceholdersManager().replacePlaceholders(owner.get(),
+                                        customName);
+                            }
+                        }
+
+                        // Actually set the custom name
+                        e.setCustomName(customName);
                     }
-                }
-
-                // Actually set the custom name
-                e.setCustomName(customName);
-            }
-            k.configureEntity(e);
-        }));
+                    k.configureEntity(e);
+                }));
     }
 
     /**
@@ -218,11 +223,12 @@ public class DefaultPasteUtil {
             bf = sign.getRotation();
         }
         // Handle spawn sign
-        if (side == Side.FRONT && island != null && !lines.isEmpty() && lines.get(0).equalsIgnoreCase(TextVariables.SPAWN_HERE)) {
+        if (side == Side.FRONT && island != null && !lines.isEmpty()
+                && lines.get(0).equalsIgnoreCase(TextVariables.SPAWN_HERE)) {
             block.setType(Material.AIR);
             // Orient to face same direction as sign
-            Location spawnPoint = new Location(block.getWorld(), block.getX() + 0.5D, block.getY(),
-                    block.getZ() + 0.5D, Util.blockFaceToFloat(bf.getOppositeFace()), 30F);
+            Location spawnPoint = new Location(block.getWorld(), block.getX() + 0.5D, block.getY(), block.getZ() + 0.5D,
+                    Util.blockFaceToFloat(bf.getOppositeFace()), 30F);
             island.setSpawnPoint(block.getWorld().getEnvironment(), spawnPoint);
             return;
         }
@@ -234,15 +240,19 @@ public class DefaultPasteUtil {
         // Handle locale text for starting sign
         Sign s = (org.bukkit.block.Sign) block.getState();
         SignSide signSide = s.getSide(side);
-        // Sign text must be stored under the addon's name.sign.line0,1,2,3 in the yaml file
+        // Sign text must be stored under the addon's name.sign.line0,1,2,3 in the yaml
+        // file
         if (island != null && !lines.isEmpty() && lines.get(0).equalsIgnoreCase(TextVariables.START_TEXT)) {
             // Get the addon that is operating in this world
-            String addonName = plugin.getIWM().getAddon(island.getWorld()).map(addon -> addon.getDescription().getName().toLowerCase(Locale.ENGLISH)).orElse("");
+            String addonName = plugin.getIWM().getAddon(island.getWorld())
+                    .map(addon -> addon.getDescription().getName().toLowerCase(Locale.ENGLISH)).orElse("");
             Optional<User> user = Optional.ofNullable(island.getOwner()).map(User::getInstance);
             if (user.isPresent()) {
                 for (int i = 0; i < 4; i++) {
-                    signSide.setLine(i, Util.translateColorCodes(plugin.getLocalesManager().getOrDefault(user.get(),
-                            addonName + ".sign.line" + i, "").replace(TextVariables.NAME, name)));
+                    signSide.setLine(i,
+                            Util.translateColorCodes(plugin.getLocalesManager()
+                                    .getOrDefault(user.get(), addonName + ".sign.line" + i, "")
+                                    .replace(TextVariables.NAME, name)));
                 }
             }
         } else {

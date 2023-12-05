@@ -32,7 +32,8 @@ public class IslandBanlistCommand extends CompositeCommand {
             return false;
         }
         // Player issuing the command must have an island
-        if (!getIslands().hasIsland(getWorld(), user.getUniqueId()) && !getIslands().inTeam(getWorld(), user.getUniqueId())) {
+        if (!getIslands().hasIsland(getWorld(), user.getUniqueId())
+                && !getIslands().inTeam(getWorld(), user.getUniqueId())) {
             user.sendMessage("general.errors.no-island");
             return false;
         }
@@ -40,7 +41,8 @@ public class IslandBanlistCommand extends CompositeCommand {
         island = getIslands().getIsland(getWorld(), user.getUniqueId());
         int rank = Objects.requireNonNull(island).getRank(user);
         if (rank < island.getRankCommand(getUsage())) {
-            user.sendMessage("general.errors.insufficient-rank", TextVariables.RANK, user.getTranslation(getPlugin().getRanksManager().getRank(rank)));
+            user.sendMessage("general.errors.insufficient-rank", TextVariables.RANK,
+                    user.getTranslation(getPlugin().getRanksManager().getRank(rank)));
             return false;
         }
         return true;
@@ -59,7 +61,8 @@ public class IslandBanlistCommand extends CompositeCommand {
         List<String> names = island.getBanned().stream().map(u -> getPlayers().getName(u)).sorted().toList();
         List<String> lines = new ArrayList<>();
         StringBuilder line = new StringBuilder();
-        // Put the names into lines of no more than 40 characters long, separated by commas
+        // Put the names into lines of no more than 40 characters long, separated by
+        // commas
         names.forEach(n -> {
             if (line.length() + n.length() >= 41) {
                 lines.add(line.toString().trim());
@@ -77,9 +80,11 @@ public class IslandBanlistCommand extends CompositeCommand {
         // Send the strings
         lines.forEach(l -> user.sendMessage("commands.island.banlist.names", "[line]", l));
 
-        int banLimit = user.getPermissionValue(getPermissionPrefix() + "ban.maxlimit", getIWM().getBanLimit(getWorld()));
+        int banLimit = user.getPermissionValue(getPermissionPrefix() + "ban.maxlimit",
+                getIWM().getBanLimit(getWorld()));
         if (banLimit > -1 && island.getBanned().size() < banLimit) {
-            user.sendMessage("commands.island.banlist.you-can-ban", TextVariables.NUMBER, String.valueOf(banLimit - island.getBanned().size()));
+            user.sendMessage("commands.island.banlist.you-can-ban", TextVariables.NUMBER,
+                    String.valueOf(banLimit - island.getBanned().size()));
         }
         return true;
     }

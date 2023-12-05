@@ -37,9 +37,8 @@ import org.powermock.reflect.Whitebox;
 
 import world.bentobox.bentobox.BentoBox;
 
-
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({BentoBox.class, Bukkit.class})
+@PrepareForTest({ BentoBox.class, Bukkit.class })
 public class ItemParserTest {
 
     @Mock
@@ -62,23 +61,24 @@ public class ItemParserTest {
         PowerMockito.mockStatic(Bukkit.class);
         when(Bukkit.getItemFactory()).thenReturn(itemFactory);
         /*
-        when(itemFactory.getItemMeta(Mockito.eq(Material.POTION))).thenReturn(potionMeta);
-        when(itemFactory.getItemMeta(Mockito.eq(Material.SPLASH_POTION))).thenReturn(potionMeta);
-        when(itemFactory.getItemMeta(Mockito.eq(Material.LINGERING_POTION))).thenReturn(potionMeta);
-        when(itemFactory.getItemMeta(Mockito.eq(Material.TIPPED_ARROW))).thenReturn(potionMeta);
+         * when(itemFactory.getItemMeta(Mockito.eq(Material.POTION))).thenReturn(
+         * potionMeta);
+         * when(itemFactory.getItemMeta(Mockito.eq(Material.SPLASH_POTION))).thenReturn(
+         * potionMeta);
+         * when(itemFactory.getItemMeta(Mockito.eq(Material.LINGERING_POTION))).
+         * thenReturn(potionMeta);
+         * when(itemFactory.getItemMeta(Mockito.eq(Material.TIPPED_ARROW))).thenReturn(
+         * potionMeta);
          */
         UnsafeValues unsafe = mock(UnsafeValues.class);
         when(unsafe.getDataVersion()).thenReturn(777);
         when(Bukkit.getUnsafe()).thenReturn(unsafe);
         when(itemFactory.getItemMeta(any())).thenReturn(itemMeta);
         /*
-        when(itemFactory.getItemMeta(any())).thenAnswer((Answer<ItemMeta>) invocation -> {
-            return switch (invocation.getArgument(0, Material.class)) {
-            case RED_BANNER, WHITE_BANNER -> bannerMeta;
-            case POTION, SPLASH_POTION, LINGERING_POTION, TIPPED_ARROW -> potionMeta;
-            default -> itemMeta;
-            };
-        });
+         * when(itemFactory.getItemMeta(any())).thenAnswer((Answer<ItemMeta>) invocation
+         * -> { return switch (invocation.getArgument(0, Material.class)) { case
+         * RED_BANNER, WHITE_BANNER -> bannerMeta; case POTION, SPLASH_POTION,
+         * LINGERING_POTION, TIPPED_ARROW -> potionMeta; default -> itemMeta; }; });
          */
         defaultItem = new ItemStack(Material.STONE);
     }
@@ -107,15 +107,12 @@ public class ItemParserTest {
     }
 
     /*
-     * # Format POTION:NAME:<LEVEL>:<EXTENDED>:<SPLASH/LINGER>:QTY
-        # LEVEL, EXTENDED, SPLASH, LINGER are optional.
-        # LEVEL is a number, 1 or 2
-        # LINGER is for V1.9 servers and later
-        # Examples:
-        # POTION:STRENGTH:1:EXTENDED:SPLASH:1
-        # POTION:INSTANT_DAMAGE:2::LINGER:2
-        # POTION:JUMP:2:NOTEXTENDED:NOSPLASH:1
-        # POTION:WEAKNESS::::1   -  any weakness potion
+     * # Format POTION:NAME:<LEVEL>:<EXTENDED>:<SPLASH/LINGER>:QTY # LEVEL,
+     * EXTENDED, SPLASH, LINGER are optional. # LEVEL is a number, 1 or 2 # LINGER
+     * is for V1.9 servers and later # Examples: #
+     * POTION:STRENGTH:1:EXTENDED:SPLASH:1 # POTION:INSTANT_DAMAGE:2::LINGER:2 #
+     * POTION:JUMP:2:NOTEXTENDED:NOSPLASH:1 # POTION:WEAKNESS::::1 - any weakness
+     * potion
      */
 
     @Ignore("Extended potions now have their own names and are not extended like this")
@@ -180,27 +177,16 @@ public class ItemParserTest {
     }
 
     enum extend {
-        NOT_EXTENDED,
-        EXTENDED
+        NOT_EXTENDED, EXTENDED
     }
 
     enum type {
-        NO_SPLASH,
-        SPLASH,
-        LINGER
+        NO_SPLASH, SPLASH, LINGER
     }
 
-    List<PotionType> notExtendable = Arrays.asList(
-            PotionType.UNCRAFTABLE,
-            PotionType.WATER,
-            PotionType.MUNDANE,
-            PotionType.THICK,
-            PotionType.AWKWARD,
-            PotionType.INSTANT_HEAL,
-            PotionType.INSTANT_DAMAGE,
-            PotionType.LUCK,
-            PotionType.NIGHT_VISION
-            );
+    List<PotionType> notExtendable = Arrays.asList(PotionType.UNCRAFTABLE, PotionType.WATER, PotionType.MUNDANE,
+            PotionType.THICK, PotionType.AWKWARD, PotionType.INSTANT_HEAL, PotionType.INSTANT_DAMAGE, PotionType.LUCK,
+            PotionType.NIGHT_VISION);
 
     @SuppressWarnings("deprecation")
     @Test
@@ -249,7 +235,6 @@ public class ItemParserTest {
         assertNotNull(result);
         assertEquals(Material.TIPPED_ARROW, result.getType());
     }
-
 
     @Test
     public void testParseBannerSimple() {

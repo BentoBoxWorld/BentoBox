@@ -41,7 +41,7 @@ import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.util.Util;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({BentoBox.class, Util.class })
+@PrepareForTest({ BentoBox.class, Util.class })
 public class PistonPushListenerTest {
 
     @Mock
@@ -103,7 +103,7 @@ public class PistonPushListenerTest {
         Map<String, Boolean> worldFlags = new HashMap<>();
         when(ws.getWorldFlags()).thenReturn(worldFlags);
         GameModeAddon gma = mock(GameModeAddon.class);
-        Optional<GameModeAddon> opGma = Optional.of(gma );
+        Optional<GameModeAddon> opGma = Optional.of(gma);
         when(iwm.getAddon(any())).thenReturn(opGma);
         when(iwm.inWorld(world)).thenReturn(true);
 

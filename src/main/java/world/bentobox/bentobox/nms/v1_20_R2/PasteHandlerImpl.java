@@ -30,26 +30,18 @@ public class PasteHandlerImpl implements PasteHandler {
 
     @Override
     public CompletableFuture<Void> pasteBlocks(Island island, World world, Map<Location, BlueprintBlock> blockMap) {
-        return blockMap.entrySet().stream()
-                .map(entry -> setBlock(island, entry.getKey(), entry.getValue()))
-                .collect(
-                        Collectors.collectingAndThen(
-                                Collectors.toList(),
-                                list -> CompletableFuture.allOf(list.toArray(new CompletableFuture[0]))
-                                )
-                        );
+        return blockMap.entrySet().stream().map(entry -> setBlock(island, entry.getKey(), entry.getValue()))
+                .collect(Collectors.collectingAndThen(Collectors.toList(),
+                        list -> CompletableFuture.allOf(list.toArray(new CompletableFuture[0]))));
     }
 
     @Override
-    public CompletableFuture<Void> pasteEntities(Island island, World world, Map<Location, List<BlueprintEntity>> entityMap) {
+    public CompletableFuture<Void> pasteEntities(Island island, World world,
+            Map<Location, List<BlueprintEntity>> entityMap) {
         return entityMap.entrySet().stream()
                 .map(entry -> DefaultPasteUtil.setEntity(island, entry.getKey(), entry.getValue()))
-                .collect(
-                        Collectors.collectingAndThen(
-                                Collectors.toList(),
-                                list -> CompletableFuture.allOf(list.toArray(new CompletableFuture[0]))
-                                )
-                        );
+                .collect(Collectors.collectingAndThen(Collectors.toList(),
+                        list -> CompletableFuture.allOf(list.toArray(new CompletableFuture[0]))));
     }
 
     /**
@@ -68,7 +60,8 @@ public class PasteHandlerImpl implements PasteHandler {
             net.minecraft.world.level.World nmsWorld = ((CraftWorld) location.getWorld()).getHandle();
             Chunk nmsChunk = nmsWorld.d(location.getBlockX() >> 4, location.getBlockZ() >> 4);
             BlockPosition bp = new BlockPosition(location.getBlockX(), location.getBlockY(), location.getBlockZ());
-            // Setting the block to air before setting to another state prevents some console errors
+            // Setting the block to air before setting to another state prevents some
+            // console errors
             nmsChunk.a(bp, AIR, false);
             nmsChunk.a(bp, craft.getState(), false);
             block.setBlockData(bd, false);

@@ -43,27 +43,15 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( { Bukkit.class, BentoBox.class, Util.class })
+@PrepareForTest({ Bukkit.class, BentoBox.class, Util.class })
 public class MySQLDatabaseHandlerTest {
 
-    private static final String JSON = "{\n" +
-            "  \"deleted\": false,\n" +
-            "  \"uniqueId\": \"xyz\",\n" +
-            "  \"range\": 0,\n" +
-            "  \"protectionRange\": 0,\n" +
-            "  \"maxEverProtectionRange\": 0,\n" +
-            "  \"createdDate\": 0,\n" +
-            "  \"updatedDate\": 0,\n" +
-            "  \"members\": {},\n" +
-            "  \"spawn\": false,\n" +
-            "  \"purgeProtected\": false,\n" +
-            "  \"flags\": {},\n" +
-            "  \"history\": [],\n" +
-            "  \"levelHandicap\": 0,\n" +
-            "  \"spawnPoint\": {},\n" +
-            "  \"doNotLoad\": false,\n" +
-            "  \"cooldowns\": {}\n" +
-            "}";
+    private static final String JSON = "{\n" + "  \"deleted\": false,\n" + "  \"uniqueId\": \"xyz\",\n"
+            + "  \"range\": 0,\n" + "  \"protectionRange\": 0,\n" + "  \"maxEverProtectionRange\": 0,\n"
+            + "  \"createdDate\": 0,\n" + "  \"updatedDate\": 0,\n" + "  \"members\": {},\n" + "  \"spawn\": false,\n"
+            + "  \"purgeProtected\": false,\n" + "  \"flags\": {},\n" + "  \"history\": [],\n"
+            + "  \"levelHandicap\": 0,\n" + "  \"spawnPoint\": {},\n" + "  \"doNotLoad\": false,\n"
+            + "  \"cooldowns\": {}\n" + "}";
     private MySQLDatabaseHandler<Island> handler;
     private Island instance;
     private final String UNIQUE_ID = "xyz";
@@ -81,6 +69,7 @@ public class MySQLDatabaseHandlerTest {
     private PreparedStatement ps;
     @Mock
     private Settings settings;
+
     /**
      */
     @Before
@@ -135,7 +124,8 @@ public class MySQLDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#loadObjects()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#loadObjects()}.
      */
     @Test
     @Ignore("After reworking to HikariCP, this does not work.")
@@ -170,7 +160,8 @@ public class MySQLDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#loadObjects()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#loadObjects()}.
      */
     @Test
     @Ignore("After reworking to HikariCP, this does not work.")
@@ -183,11 +174,13 @@ public class MySQLDatabaseHandlerTest {
         List<Island> objects = handler.loadObjects();
         verify(ps).executeQuery("SELECT `json` FROM `Islands`");
         assertTrue(objects.isEmpty());
-        verify(plugin, Mockito.times(3)).logError("Could not load object java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING at line 1 column 1 path $");
+        verify(plugin, Mockito.times(3)).logError(
+                "Could not load object java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING at line 1 column 1 path $");
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#loadObjects()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#loadObjects()}.
      */
     @Test
     @Ignore("After reworking to HikariCP, this does not work.")
@@ -216,7 +209,8 @@ public class MySQLDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#loadObject(java.lang.String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#loadObject(java.lang.String)}.
      */
     @Test
     @Ignore("After reworking to HikariCP, this does not work.")
@@ -234,7 +228,8 @@ public class MySQLDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#loadObject(java.lang.String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#loadObject(java.lang.String)}.
      */
     @Test
     @Ignore("After reworking to HikariCP, this does not work.")
@@ -245,11 +240,13 @@ public class MySQLDatabaseHandlerTest {
         when(ps.executeQuery()).thenReturn(resultSet);
         Island object = handler.loadObject("abc");
         assertNull(object);
-        verify(plugin).logError("Could not load object abc java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING at line 1 column 1 path $");
+        verify(plugin).logError(
+                "Could not load object abc java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING at line 1 column 1 path $");
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#loadObject(java.lang.String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#loadObject(java.lang.String)}.
      */
     @Test
     @Ignore("After reworking to HikariCP, this does not work.")
@@ -264,7 +261,8 @@ public class MySQLDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#saveObject(java.lang.Object)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#saveObject(java.lang.Object)}.
      */
     @Test
     @Ignore("After reworking to HikariCP, this does not work.")
@@ -274,7 +272,8 @@ public class MySQLDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#saveObject(java.lang.Object)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#saveObject(java.lang.Object)}.
      */
     @Test
     @Ignore("After reworking to HikariCP, this does not work.")
@@ -331,7 +330,8 @@ public class MySQLDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#deleteObject(java.lang.Object)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#deleteObject(java.lang.Object)}.
      */
     @Test
     @Ignore("After reworking to HikariCP, this does not work.")
@@ -341,7 +341,8 @@ public class MySQLDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#deleteObject(java.lang.Object)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#deleteObject(java.lang.Object)}.
      */
     @Test
     @Ignore("After reworking to HikariCP, this does not work.")
@@ -366,7 +367,8 @@ public class MySQLDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#objectExists(java.lang.String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#objectExists(java.lang.String)}.
      */
     @Test
     @Ignore("After reworking to HikariCP, this does not work.")
@@ -375,13 +377,15 @@ public class MySQLDatabaseHandlerTest {
         when(ps.executeQuery()).thenReturn(resultSet);
         when(resultSet.next()).thenReturn(false);
         assertFalse(handler.objectExists("hello"));
-        verify(connection).prepareStatement("CREATE TABLE IF NOT EXISTS `Islands` (json JSON, uniqueId VARCHAR(255) GENERATED ALWAYS AS (json->\"$.uniqueId\"), UNIQUE INDEX i (uniqueId) ) ENGINE = INNODB");
+        verify(connection).prepareStatement(
+                "CREATE TABLE IF NOT EXISTS `Islands` (json JSON, uniqueId VARCHAR(255) GENERATED ALWAYS AS (json->\"$.uniqueId\"), UNIQUE INDEX i (uniqueId) ) ENGINE = INNODB");
         verify(ps).executeQuery();
         verify(ps).setString(1, "\"hello\"");
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#objectExists(java.lang.String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#objectExists(java.lang.String)}.
      */
     @Test
     @Ignore("After reworking to HikariCP, this does not work.")
@@ -391,13 +395,15 @@ public class MySQLDatabaseHandlerTest {
         when(resultSet.next()).thenReturn(true);
         when(resultSet.getBoolean(eq(1))).thenReturn(false);
         assertFalse(handler.objectExists("hello"));
-        verify(connection).prepareStatement("CREATE TABLE IF NOT EXISTS `Islands` (json JSON, uniqueId VARCHAR(255) GENERATED ALWAYS AS (json->\"$.uniqueId\"), UNIQUE INDEX i (uniqueId) ) ENGINE = INNODB");
+        verify(connection).prepareStatement(
+                "CREATE TABLE IF NOT EXISTS `Islands` (json JSON, uniqueId VARCHAR(255) GENERATED ALWAYS AS (json->\"$.uniqueId\"), UNIQUE INDEX i (uniqueId) ) ENGINE = INNODB");
         verify(ps).executeQuery();
         verify(ps).setString(1, "\"hello\"");
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#objectExists(java.lang.String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#objectExists(java.lang.String)}.
      */
     @Test
     @Ignore("After reworking to HikariCP, this does not work.")
@@ -407,7 +413,8 @@ public class MySQLDatabaseHandlerTest {
         when(resultSet.next()).thenReturn(true);
         when(resultSet.getBoolean(eq(1))).thenReturn(true);
         assertTrue(handler.objectExists("hello"));
-        verify(connection).prepareStatement("CREATE TABLE IF NOT EXISTS `Islands` (json JSON, uniqueId VARCHAR(255) GENERATED ALWAYS AS (json->\"$.uniqueId\"), UNIQUE INDEX i (uniqueId) ) ENGINE = INNODB");
+        verify(connection).prepareStatement(
+                "CREATE TABLE IF NOT EXISTS `Islands` (json JSON, uniqueId VARCHAR(255) GENERATED ALWAYS AS (json->\"$.uniqueId\"), UNIQUE INDEX i (uniqueId) ) ENGINE = INNODB");
         verify(ps).executeQuery();
         verify(ps).setString(1, "\"hello\"");
     }
@@ -430,7 +437,8 @@ public class MySQLDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#objectExists(java.lang.String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#objectExists(java.lang.String)}.
      */
     @Test
     @Ignore("After reworking to HikariCP, this does not work.")
@@ -481,13 +489,15 @@ public class MySQLDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#MySQLDatabaseHandler(world.bentobox.bentobox.BentoBox, java.lang.Class, world.bentobox.bentobox.database.DatabaseConnector)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#MySQLDatabaseHandler(world.bentobox.bentobox.BentoBox, java.lang.Class, world.bentobox.bentobox.database.DatabaseConnector)}.
      */
     @Test
     @Ignore("After reworking to HikariCP, this does not work.")
     public void testMySQLDatabaseHandlerCreateSchema() throws SQLException {
         verify(dbConn).createConnection(any());
-        verify(connection).prepareStatement("CREATE TABLE IF NOT EXISTS `Islands` (json JSON, uniqueId VARCHAR(255) GENERATED ALWAYS AS (json->\"$.uniqueId\"), UNIQUE INDEX i (uniqueId) ) ENGINE = INNODB");
+        verify(connection).prepareStatement(
+                "CREATE TABLE IF NOT EXISTS `Islands` (json JSON, uniqueId VARCHAR(255) GENERATED ALWAYS AS (json->\"$.uniqueId\"), UNIQUE INDEX i (uniqueId) ) ENGINE = INNODB");
     }
 
     /**
@@ -500,6 +510,7 @@ public class MySQLDatabaseHandlerTest {
         verify(dbConn).createConnection(any());
         verify(connection).prepareStatement("CREATE TABLE IF NOT EXISTS `aIslands` (json JSON, uniqueId VARCHAR(255) GENERATED ALWAYS AS (json->\"$.uniqueId\"), UNIQUE INDEX i (uniqueId) ) ENGINE = INNODB");
     }
+
     /**
      * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseHandler#MySQLDatabaseHandler(world.bentobox.bentobox.BentoBox, java.lang.Class, world.bentobox.bentobox.database.DatabaseConnector)}.
      */

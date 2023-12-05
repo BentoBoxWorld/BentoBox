@@ -29,10 +29,11 @@ public class FlagWorldSettingChangeEvent extends FlagChangeEvent {
 
     /**
      * Event that fires when a world setting is changed
-     * @param world - world
-     * @param player - player changing the flag
+     * 
+     * @param world      - world
+     * @param player     - player changing the flag
      * @param editedFlag - flag that has changed
-     * @param setTo - value it was set to
+     * @param setTo      - value it was set to
      */
     public FlagWorldSettingChangeEvent(World world, UUID player, Flag editedFlag, boolean setTo) {
         super(player, editedFlag);

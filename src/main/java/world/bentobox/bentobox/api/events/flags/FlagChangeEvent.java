@@ -16,7 +16,7 @@ public abstract class FlagChangeEvent extends BentoBoxEvent {
     private final Flag editedFlag;
 
     /**
-     * @param player - player changing the flag
+     * @param player     - player changing the flag
      * @param editedFlag - flag that has changed
      */
     protected FlagChangeEvent(UUID player, Flag editedFlag) {

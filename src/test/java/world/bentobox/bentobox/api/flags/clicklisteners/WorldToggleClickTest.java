@@ -36,7 +36,7 @@ import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.util.Util;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, Util.class })
+@PrepareForTest({ Bukkit.class, BentoBox.class, Util.class })
 public class WorldToggleClickTest {
 
     @Mock

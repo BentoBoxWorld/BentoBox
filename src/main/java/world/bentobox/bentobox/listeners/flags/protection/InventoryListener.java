@@ -47,47 +47,41 @@ import org.bukkit.inventory.StonecutterInventory;
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.lists.Flags;
 
-
 /**
  * Handles inventory protection
+ * 
  * @author tastybento
  */
-public class InventoryListener extends FlagListener
-{
+public class InventoryListener extends FlagListener {
     /**
      * Prevents players opening inventories
+     * 
      * @param event - event
      */
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
-    public void onInventoryOpen(InventoryOpenEvent event)
-    {
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    public void onInventoryOpen(InventoryOpenEvent event) {
         InventoryHolder inventoryHolder = event.getInventory().getHolder();
 
-        if (inventoryHolder == null || !(event.getPlayer() instanceof Player player))
-        {
+        if (inventoryHolder == null || !(event.getPlayer() instanceof Player player)) {
             return;
         }
 
-        if (inventoryHolder instanceof Animals)
-        {
+        if (inventoryHolder instanceof Animals) {
             // Prevent opening animal inventories.
             this.checkIsland(event, player, event.getInventory().getLocation(), Flags.MOUNT_INVENTORY);
-        }
-        else if (inventoryHolder instanceof ChestBoat)
-        {
+        } else if (inventoryHolder instanceof ChestBoat) {
             // Prevent opening chest inventories
             this.checkIsland(event, player, event.getInventory().getLocation(), Flags.CHEST);
         }
     }
 
-
     /**
      * Prevents players picking items from inventories
+     * 
      * @param e - event
      */
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
-    public void onInventoryClick(InventoryClickEvent e)
-    {
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    public void onInventoryClick(InventoryClickEvent e) {
         Player player = (Player) e.getWhoClicked();
 
         // Special inventory types
@@ -97,74 +91,43 @@ public class InventoryListener extends FlagListener
         // Inventory holders
         InventoryHolder inventoryHolder = e.getInventory().getHolder();
 
-        if (inventoryHolder == null || !(e.getWhoClicked() instanceof Player))
-        {
+        if (inventoryHolder == null || !(e.getWhoClicked() instanceof Player)) {
             return;
         }
 
-        if (inventoryHolder instanceof Animals)
-        {
+        if (inventoryHolder instanceof Animals) {
             this.checkIsland(e, player, e.getInventory().getLocation(), Flags.MOUNT_INVENTORY);
-        }
-        else if (inventoryHolder instanceof Dispenser)
-        {
+        } else if (inventoryHolder instanceof Dispenser) {
             this.checkIsland(e, player, e.getInventory().getLocation(), Flags.DISPENSER);
-        }
-        else if (inventoryHolder instanceof Dropper)
-        {
+        } else if (inventoryHolder instanceof Dropper) {
             this.checkIsland(e, player, e.getInventory().getLocation(), Flags.DROPPER);
-        }
-        else if (inventoryHolder instanceof Hopper || inventoryHolder instanceof HopperMinecart)
-        {
+        } else if (inventoryHolder instanceof Hopper || inventoryHolder instanceof HopperMinecart) {
             this.checkIsland(e, player, e.getInventory().getLocation(), Flags.HOPPER);
-        }
-        else if (inventoryHolder instanceof Furnace)
-        {
+        } else if (inventoryHolder instanceof Furnace) {
             this.checkIsland(e, player, e.getInventory().getLocation(), Flags.FURNACE);
-        }
-        else if (inventoryHolder instanceof BrewingStand)
-        {
+        } else if (inventoryHolder instanceof BrewingStand) {
             this.checkIsland(e, player, e.getInventory().getLocation(), Flags.BREWING);
-        }
-        else if (inventoryHolder instanceof Beacon)
-        {
+        } else if (inventoryHolder instanceof Beacon) {
             this.checkIsland(e, player, e.getInventory().getLocation(), Flags.BEACON);
-        }
-        else if (inventoryHolder instanceof NPC)
-        {
+        } else if (inventoryHolder instanceof NPC) {
             this.checkIsland(e, player, e.getInventory().getLocation(), Flags.TRADING);
-        }
-        else if (inventoryHolder instanceof Barrel)
-        {
+        } else if (inventoryHolder instanceof Barrel) {
             this.checkIsland(e, player, e.getInventory().getLocation(), Flags.BARREL);
-        }
-        else if (inventoryHolder instanceof ShulkerBox)
-        {
+        } else if (inventoryHolder instanceof ShulkerBox) {
             this.checkIsland(e, player, e.getInventory().getLocation(), Flags.SHULKER_BOX);
-        }
-        else if (inventoryHolder instanceof Chest c)
-        {
+        } else if (inventoryHolder instanceof Chest c) {
             this.checkInvHolder(c.getLocation(), e, player);
-        }
-        else if (inventoryHolder instanceof DoubleChest dc)
-        {
+        } else if (inventoryHolder instanceof DoubleChest dc) {
             this.checkInvHolder(dc.getLocation(), e, player);
-        }
-        else if (inventoryHolder instanceof StorageMinecart)
-        {
+        } else if (inventoryHolder instanceof StorageMinecart) {
             this.checkIsland(e, player, e.getInventory().getLocation(), Flags.CHEST);
-        }
-        else if (inventoryHolder instanceof ChestBoat)
-        {
+        } else if (inventoryHolder instanceof ChestBoat) {
             this.checkIsland(e, player, e.getInventory().getLocation(), Flags.CHEST);
-        }
-        else if (!(inventoryHolder instanceof Player))
-        {
+        } else if (!(inventoryHolder instanceof Player)) {
             // All other containers
             this.checkIsland(e, player, e.getInventory().getLocation(), Flags.CONTAINER);
         }
     }
-
 
     private boolean checkSpecificInventories(InventoryClickEvent e, Player player, Inventory inventory) {
         if (e.getInventory() instanceof AbstractHorseInventory) {
@@ -228,21 +191,17 @@ public class InventoryListener extends FlagListener
         return false;
     }
 
-
     /**
      * This method runs check based on clicked chest type.
-     * @param l location of chest.
-     * @param e click event.
+     * 
+     * @param l      location of chest.
+     * @param e      click event.
      * @param player player who clicked.
      */
-    private void checkInvHolder(Location l, InventoryClickEvent e, Player player)
-    {
-        if (l.getBlock().getType().equals(Material.TRAPPED_CHEST))
-        {
+    private void checkInvHolder(Location l, InventoryClickEvent e, Player player) {
+        if (l.getBlock().getType().equals(Material.TRAPPED_CHEST)) {
             this.checkIsland(e, player, l, Flags.TRAPPED_CHEST);
-        }
-        else
-        {
+        } else {
             this.checkIsland(e, player, l, Flags.CHEST);
         }
     }

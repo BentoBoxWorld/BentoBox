@@ -29,21 +29,15 @@ public class AddonDescriptionTest {
     @Before
     public void setUp() throws Exception {
         configSec = new YamlConfiguration();
-        ad = new AddonDescription.Builder("main", "name", "version")
-                .apiVersion("api")
-                .authors("tastybento", "poslovitch")
-                .dependencies(List.of("dep1", "dep2"))
-                .description("description")
-                .icon(Material.ACACIA_BOAT)
-                .metrics(true)
-                .permissions(configSec)
-                .repository("repo")
-                .softDependencies(List.of("sdep1", "sdep2"))
-                .build();
+        ad = new AddonDescription.Builder("main", "name", "version").apiVersion("api")
+                .authors("tastybento", "poslovitch").dependencies(List.of("dep1", "dep2")).description("description")
+                .icon(Material.ACACIA_BOAT).metrics(true).permissions(configSec).repository("repo")
+                .softDependencies(List.of("sdep1", "sdep2")).build();
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.addons.AddonDescription#getName()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.addons.AddonDescription#getName()}.
      */
     @Test
     public void testGetName() {
@@ -51,7 +45,8 @@ public class AddonDescriptionTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.addons.AddonDescription#getMain()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.addons.AddonDescription#getMain()}.
      */
     @Test
     public void testGetMain() {
@@ -59,7 +54,8 @@ public class AddonDescriptionTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.addons.AddonDescription#getVersion()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.addons.AddonDescription#getVersion()}.
      */
     @Test
     public void testGetVersion() {
@@ -67,7 +63,8 @@ public class AddonDescriptionTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.addons.AddonDescription#getDescription()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.addons.AddonDescription#getDescription()}.
      */
     @Test
     public void testGetDescription() {
@@ -75,7 +72,8 @@ public class AddonDescriptionTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.addons.AddonDescription#getAuthors()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.addons.AddonDescription#getAuthors()}.
      */
     @Test
     public void testGetAuthors() {
@@ -83,7 +81,8 @@ public class AddonDescriptionTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.addons.AddonDescription#getDependencies()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.addons.AddonDescription#getDependencies()}.
      */
     @Test
     public void testGetDependencies() {
@@ -91,7 +90,8 @@ public class AddonDescriptionTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.addons.AddonDescription#getSoftDependencies()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.addons.AddonDescription#getSoftDependencies()}.
      */
     @Test
     public void testGetSoftDependencies() {
@@ -99,7 +99,8 @@ public class AddonDescriptionTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.addons.AddonDescription#isMetrics()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.addons.AddonDescription#isMetrics()}.
      */
     @Test
     public void testIsMetrics() {
@@ -107,7 +108,8 @@ public class AddonDescriptionTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.addons.AddonDescription#getRepository()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.addons.AddonDescription#getRepository()}.
      */
     @Test
     public void testGetRepository() {
@@ -115,7 +117,8 @@ public class AddonDescriptionTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.addons.AddonDescription#getIcon()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.addons.AddonDescription#getIcon()}.
      */
     @Test
     public void testGetIcon() {
@@ -123,7 +126,8 @@ public class AddonDescriptionTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.addons.AddonDescription#getApiVersion()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.addons.AddonDescription#getApiVersion()}.
      */
     @Test
     public void testGetApiVersion() {
@@ -131,7 +135,8 @@ public class AddonDescriptionTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.addons.AddonDescription#getPermissions()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.addons.AddonDescription#getPermissions()}.
      */
     @Test
     public void testGetPermissions() {
@@ -139,7 +144,8 @@ public class AddonDescriptionTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.addons.AddonDescription#toString()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.addons.AddonDescription#toString()}.
      */
     @Test
     public void testToString() {

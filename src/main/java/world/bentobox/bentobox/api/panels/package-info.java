@@ -7,12 +7,14 @@
  * to make them. For examples, look at the Settings classes.
  * </p>
  * <p>
- * Clicking on a panel item is handled by classes that implement the PanelListener interface.
- * When a click is made, the listener is called with various parameters available. It is possible
- * to have an overall listener for the whole panel and also individual listeners just for the
- * icon that was clicked.
+ * Clicking on a panel item is handled by classes that implement the
+ * PanelListener interface. When a click is made, the listener is called with
+ * various parameters available. It is possible to have an overall listener for
+ * the whole panel and also individual listeners just for the icon that was
+ * clicked.
  * <p>
- * The tabbed panel contains Tabs that are accessible via icons at the top of the panel.
+ * The tabbed panel contains Tabs that are accessible via icons at the top of
+ * the panel.
  * </p>
  *
  * @author tastybento

@@ -23,7 +23,8 @@ public class AdminBlueprintPos1Command extends CompositeCommand {
     @Override
     public boolean execute(User user, String label, List<String> args) {
         AdminBlueprintCommand parent = (AdminBlueprintCommand) getParent();
-        BlueprintClipboard clipboard = parent.getClipboards().computeIfAbsent(user.getUniqueId(), v -> new BlueprintClipboard());
+        BlueprintClipboard clipboard = parent.getClipboards().computeIfAbsent(user.getUniqueId(),
+                v -> new BlueprintClipboard());
 
         if (user.getLocation().equals(clipboard.getPos2())) {
             user.sendMessage("commands.admin.blueprint.set-different-pos");

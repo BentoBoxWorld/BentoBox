@@ -16,20 +16,11 @@ import world.bentobox.bentobox.database.objects.Island;
 public class TeamEvent {
 
     public enum Reason {
-        INVITE,
-        JOIN,
-        REJECT,
-        LEAVE,
-        KICK,
-        SETOWNER,
-        INFO,
+        INVITE, JOIN, REJECT, LEAVE, KICK, SETOWNER, INFO,
         /**
          * The island has been reset by the owner.
          */
-        DELETE,
-        UNKNOWN,
-        UNINVITE,
-        JOINED
+        DELETE, UNKNOWN, UNINVITE, JOINED
     }
 
     public static TeamEventBuilder builder() {
@@ -50,6 +41,7 @@ public class TeamEvent {
 
         /**
          * True if this is an admin driven event
+         * 
          * @param admin - true if due to an admin event
          * @return TeamEvent
          */
@@ -99,6 +91,7 @@ public class TeamEvent {
 
         /**
          * Build the event and call it
+         * 
          * @return event
          */
         public IslandBaseEvent build() {

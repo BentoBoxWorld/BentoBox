@@ -50,7 +50,7 @@ import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( { BentoBox.class, Bukkit.class })
+@PrepareForTest({ BentoBox.class, Bukkit.class })
 public class AddonTest {
 
     public static int BUFFER_SIZE = 10240;
@@ -77,7 +77,6 @@ public class AddonTest {
 
         PluginManager pluginManager = mock(PluginManager.class);
 
-
         PowerMockito.mockStatic(Bukkit.class);
         when(Bukkit.getPluginManager()).thenReturn(pluginManager);
         when(Bukkit.getServer()).thenReturn(server);
@@ -89,7 +88,6 @@ public class AddonTest {
 
         // Addons manager
         when(plugin.getAddonsManager()).thenReturn(am);
-
 
         // Mock item factory (for itemstacks)
         ItemFactory itemFactory = mock(ItemFactory.class);
@@ -132,20 +130,19 @@ public class AddonTest {
     public void TearDown() throws IOException {
         Files.deleteIfExists(jarFile.toPath());
         if (dataFolder.exists()) {
-            Files.walk(dataFolder.toPath())
-            .sorted(Comparator.reverseOrder())
-            .map(Path::toFile)
-            .forEach(File::delete);
+            Files.walk(dataFolder.toPath()).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
         }
         Mockito.framework().clearInlineMocks();
     }
 
     class TestClass extends Addon {
         @Override
-        public void onEnable() { }
+        public void onEnable() {
+        }
 
         @Override
-        public void onDisable() { }
+        public void onDisable() {
+        }
     }
 
     @Test
@@ -200,7 +197,8 @@ public class AddonTest {
 
     @Test
     public void testRegisterListener() {
-        class TestListener implements Listener {}
+        class TestListener implements Listener {
+        }
         TestListener listener = new TestListener();
         test.registerListener(listener);
         Mockito.verify(am).registerListener(Mockito.any(), Mockito.eq(listener));
@@ -293,9 +291,8 @@ public class AddonTest {
     public void testGetAddonByName() {
         AddonsManager am = new AddonsManager(plugin);
         when(plugin.getAddonsManager()).thenReturn(am);
-        assertEquals(Optional.empty(),test.getAddonByName("addon"));
+        assertEquals(Optional.empty(), test.getAddonByName("addon"));
     }
-
 
     /*
      * Utility methods
@@ -305,7 +302,8 @@ public class AddonTest {
         // Open archive file
         try (FileOutputStream stream = new FileOutputStream(archiveFile)) {
             try (JarOutputStream out = new JarOutputStream(stream, new Manifest())) {
-                for (File j: tobeJaredList) addFile(buffer, stream, out, j);
+                for (File j : tobeJaredList)
+                    addFile(buffer, stream, out, j);
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -313,7 +311,8 @@ public class AddonTest {
         }
     }
 
-    private void addFile(byte[] buffer, FileOutputStream stream, JarOutputStream out, File tobeJared) throws IOException {
+    private void addFile(byte[] buffer, FileOutputStream stream, JarOutputStream out, File tobeJared)
+            throws IOException {
         if (tobeJared == null || !tobeJared.exists() || tobeJared.isDirectory())
             return;
         // Add archive entry

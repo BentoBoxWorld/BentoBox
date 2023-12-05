@@ -10,14 +10,15 @@ import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
 
 /**
- * API to enable plugins to request data from addons.
- * Addons can expose data that they want to expose. To access it, call this class with the appropriate addon name, the label for the
- * data that is requested and if required, a map of key-value pairs that will be given to the addon.
+ * API to enable plugins to request data from addons. Addons can expose data
+ * that they want to expose. To access it, call this class with the appropriate
+ * addon name, the label for the data that is requested and if required, a map
+ * of key-value pairs that will be given to the addon.
+ * 
  * @author HyKurtis
  *
  */
-public class AddonRequestBuilder
-{
+public class AddonRequestBuilder {
     private String addonName;
     private String requestLabel;
     private final Map<String, Object> metaData = new HashMap<>();
@@ -45,7 +46,7 @@ public class AddonRequestBuilder
     /**
      * Add meta data to addon request.
      *
-     * @param key key
+     * @param key   key
      * @param value value
      */
     public AddonRequestBuilder addMetaData(String key, Object value) {
@@ -63,7 +64,7 @@ public class AddonRequestBuilder
         Validate.notNull(requestLabel);
 
         Optional<Addon> addonOptional = BentoBox.getInstance().getAddonsManager().getAddonByName(addonName);
-        if(addonOptional.isPresent()) {
+        if (addonOptional.isPresent()) {
             Addon addon = addonOptional.get();
             return addon.request(requestLabel, metaData);
         }

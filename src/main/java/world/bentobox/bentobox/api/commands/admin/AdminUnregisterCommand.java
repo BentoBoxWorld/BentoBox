@@ -52,40 +52,32 @@ public class AdminUnregisterCommand extends ConfirmableCommand {
         // Get target
         UUID targetUUID = getPlayers().getUUID(args.get(0));
         // Everything's fine, we can set the island as spawn :)
-        askConfirmation(user,  () -> unregisterPlayer(user, args.get(0), targetUUID));
+        askConfirmation(user, () -> unregisterPlayer(user, args.get(0), targetUUID));
         return true;
     }
 
     void unregisterPlayer(User user, String targetName, UUID targetUUID) {
         // Unregister island
         Island oldIsland = getIslands().getIsland(getWorld(), targetUUID);
-        if (oldIsland == null) return;
-        IslandEvent.builder()
-        .island(oldIsland)
-        .location(oldIsland.getCenter())
-        .reason(IslandEvent.Reason.UNREGISTERED)
-        .involvedPlayer(targetUUID)
-        .admin(true)
-        .build();
-        IslandEvent.builder()
-        .island(oldIsland)
-        .involvedPlayer(targetUUID)
-        .admin(true)
-        .reason(IslandEvent.Reason.RANK_CHANGE)
-        .rankChange(RanksManager.OWNER_RANK, RanksManager.VISITOR_RANK)
-        .build();
+        if (oldIsland == null)
+            return;
+        IslandEvent.builder().island(oldIsland).location(oldIsland.getCenter()).reason(IslandEvent.Reason.UNREGISTERED)
+                .involvedPlayer(targetUUID).admin(true).build();
+        IslandEvent.builder().island(oldIsland).involvedPlayer(targetUUID).admin(true)
+                .reason(IslandEvent.Reason.RANK_CHANGE).rankChange(RanksManager.OWNER_RANK, RanksManager.VISITOR_RANK)
+                .build();
         // Remove all island members
         oldIsland.getMemberSet().forEach(m -> getIslands().removePlayer(getWorld(), m));
         // Remove all island players that reference this island
         oldIsland.getMembers().clear();
         getIslands().save(oldIsland);
-        user.sendMessage("commands.admin.unregister.unregistered-island", TextVariables.XYZ, Util.xyz(oldIsland.getCenter().toVector()),
-                TextVariables.NAME, targetName);
+        user.sendMessage("commands.admin.unregister.unregistered-island", TextVariables.XYZ,
+                Util.xyz(oldIsland.getCenter().toVector()), TextVariables.NAME, targetName);
     }
 
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
-        String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
+        String lastArg = !args.isEmpty() ? args.get(args.size() - 1) : "";
         if (args.isEmpty()) {
             // Don't show every player on the server. Require at least the first letter
             return Optional.empty();

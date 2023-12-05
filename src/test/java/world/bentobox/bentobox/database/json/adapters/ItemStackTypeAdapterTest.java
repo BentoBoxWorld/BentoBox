@@ -45,12 +45,13 @@ import world.bentobox.bentobox.BentoBox;
 
 /**
  * Tests the ItemStack type adapter for GSON
+ * 
  * @author tastybento
  *
  */
 @SuppressWarnings("deprecation")
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( {Bukkit.class, ItemStack.class} )
+@PrepareForTest({ Bukkit.class, ItemStack.class })
 public class ItemStackTypeAdapterTest {
     @Mock
     private BentoBox plugin;
@@ -103,7 +104,8 @@ public class ItemStackTypeAdapterTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.json.adapters.ItemStackTypeAdapter#write(com.google.gson.stream.JsonWriter, org.bukkit.inventory.ItemStack)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.json.adapters.ItemStackTypeAdapter#write(com.google.gson.stream.JsonWriter, org.bukkit.inventory.ItemStack)}.
      */
     @Test
     public void testWriteJsonWriterItemStack() throws IOException {
@@ -115,7 +117,8 @@ public class ItemStackTypeAdapterTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.json.adapters.ItemStackTypeAdapter#write(com.google.gson.stream.JsonWriter, org.bukkit.inventory.ItemStack)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.json.adapters.ItemStackTypeAdapter#write(com.google.gson.stream.JsonWriter, org.bukkit.inventory.ItemStack)}.
      */
     @Test
     public void testWriteJsonWriterItemStackNull() throws IOException {
@@ -133,12 +136,14 @@ public class ItemStackTypeAdapterTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.json.adapters.ItemStackTypeAdapter#read(com.google.gson.stream.JsonReader)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.json.adapters.ItemStackTypeAdapter#read(com.google.gson.stream.JsonReader)}.
      */
     @Test
     public void testReadJsonReader() throws IOException {
         File tmp = new File("test.json");
-        // Write a file - skip the meta because it causes the reader to choke if the class mentioned isn't known
+        // Write a file - skip the meta because it causes the reader to choke if the
+        // class mentioned isn't known
         try (FileWriter writer = new FileWriter(tmp.getName());
                 Writer buffWriter = new BufferedWriter(writer);
                 JsonWriter realOut = new JsonWriter(buffWriter)) {
@@ -158,12 +163,14 @@ public class ItemStackTypeAdapterTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.json.adapters.ItemStackTypeAdapter#read(com.google.gson.stream.JsonReader)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.json.adapters.ItemStackTypeAdapter#read(com.google.gson.stream.JsonReader)}.
      */
     @Test
     public void testReadJsonReaderUnknownMaterial() throws IOException {
         File tmp = new File("test.json");
-        // Write a file - skip the meta because it causes the reader to choke if the class mentioned isn't known
+        // Write a file - skip the meta because it causes the reader to choke if the
+        // class mentioned isn't known
         try (FileWriter writer = new FileWriter(tmp.getName());
                 Writer buffWriter = new BufferedWriter(writer);
                 JsonWriter realOut = new JsonWriter(buffWriter)) {

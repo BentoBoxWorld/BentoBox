@@ -8,6 +8,7 @@ import world.bentobox.bentobox.api.events.BentoBoxEvent;
 
 /**
  * Base abstract class for addon events
+ * 
  * @author Poslovitch
  */
 public abstract class AddonBaseEvent extends BentoBoxEvent {
@@ -36,6 +37,7 @@ public abstract class AddonBaseEvent extends BentoBoxEvent {
 
     /**
      * Get new event if this event is deprecated
+     * 
      * @return optional newEvent or empty if there is none
      */
     public Optional<AddonBaseEvent> getNewEvent() {
@@ -44,11 +46,11 @@ public abstract class AddonBaseEvent extends BentoBoxEvent {
 
     /**
      * Set the newer event so it can be obtained if this event is deprecated
+     * 
      * @param newEvent the newEvent to set
      */
     public void setNewEvent(AddonBaseEvent newEvent) {
         this.newEvent = newEvent;
     }
-
 
 }

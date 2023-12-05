@@ -12,6 +12,7 @@ import world.bentobox.bentobox.database.objects.Island;
 
 /**
  * Renames a home
+ * 
  * @author tastybento
  *
  */

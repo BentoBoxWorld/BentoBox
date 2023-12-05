@@ -31,11 +31,12 @@ import world.bentobox.bentobox.util.Util;
 
 /**
  * Tests the listener
+ * 
  * @author tastybento
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( {Bukkit.class, BentoBox.class, Flags.class, Util.class} )
+@PrepareForTest({ Bukkit.class, BentoBox.class, Flags.class, Util.class })
 public class ExperiencePickupListenerTest extends AbstractCommonSetup {
 
     private EntityTargetLivingEntityEvent e;
@@ -73,7 +74,8 @@ public class ExperiencePickupListenerTest extends AbstractCommonSetup {
     }
 
     /**
-     * Test method for {@link ExperiencePickupListener#onExperienceOrbTargetPlayer(org.bukkit.event.entity.EntityTargetLivingEntityEvent)}.
+     * Test method for
+     * {@link ExperiencePickupListener#onExperienceOrbTargetPlayer(org.bukkit.event.entity.EntityTargetLivingEntityEvent)}.
      */
     @Test
     public void testOnExperienceOrbTargetPlayerAllowed() {
@@ -83,7 +85,8 @@ public class ExperiencePickupListenerTest extends AbstractCommonSetup {
     }
 
     /**
-     * Test method for {@link ExperiencePickupListener#onExperienceOrbTargetPlayer(org.bukkit.event.entity.EntityTargetLivingEntityEvent)}.
+     * Test method for
+     * {@link ExperiencePickupListener#onExperienceOrbTargetPlayer(org.bukkit.event.entity.EntityTargetLivingEntityEvent)}.
      */
     @Test
     public void testOnExperienceOrbTargetNotPlayer() {
@@ -95,7 +98,8 @@ public class ExperiencePickupListenerTest extends AbstractCommonSetup {
     }
 
     /**
-     * Test method for {@link ExperiencePickupListener#onExperienceOrbTargetPlayer(org.bukkit.event.entity.EntityTargetLivingEntityEvent)}.
+     * Test method for
+     * {@link ExperiencePickupListener#onExperienceOrbTargetPlayer(org.bukkit.event.entity.EntityTargetLivingEntityEvent)}.
      */
     @Test
     public void testOnExperienceOrbTargetPlayerNotOrb() {

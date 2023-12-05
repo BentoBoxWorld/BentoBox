@@ -42,11 +42,13 @@ import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.util.Util;
+
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({BentoBox.class, Util.class, Bukkit.class })
+@PrepareForTest({ BentoBox.class, Util.class, Bukkit.class })
 public class OfflineRedstoneListenerTest {
 
-    private static final String[] NAMES = {"adam", "ben", "cara", "dave", "ed", "frank", "freddy", "george", "harry", "ian", "joe"};
+    private static final String[] NAMES = { "adam", "ben", "cara", "dave", "ed", "frank", "freddy", "george", "harry",
+            "ian", "joe" };
 
     @Mock
     private World world;
@@ -79,7 +81,6 @@ public class OfflineRedstoneListenerTest {
         set.add(UUID.randomUUID());
         set.add(UUID.randomUUID());
         when(island.getMemberSet(Mockito.anyInt())).thenReturn(set.build());
-
 
         // Island Manager
         when(plugin.getIslands()).thenReturn(im);
@@ -115,7 +116,7 @@ public class OfflineRedstoneListenerTest {
             // All ops
             when(p1.isOp()).thenReturn(true);
             onlinePlayers.add(p1);
-        }        
+        }
         when(Bukkit.getOnlinePlayers()).then((Answer<Set<Player>>) invocation -> onlinePlayers);
 
     }
@@ -127,7 +128,8 @@ public class OfflineRedstoneListenerTest {
     }
 
     /**
-     * Test method for {@link OfflineRedstoneListener#onBlockRedstone(BlockRedstoneEvent)}.
+     * Test method for
+     * {@link OfflineRedstoneListener#onBlockRedstone(BlockRedstoneEvent)}.
      */
     @Test
     public void testOnBlockRedstoneDoNothing() {
@@ -141,7 +143,8 @@ public class OfflineRedstoneListenerTest {
     }
 
     /**
-     * Test method for {@link OfflineRedstoneListener#onBlockRedstone(BlockRedstoneEvent)}.
+     * Test method for
+     * {@link OfflineRedstoneListener#onBlockRedstone(BlockRedstoneEvent)}.
      */
     @Test
     public void testOnBlockRedstoneMembersOnline() {
@@ -159,7 +162,8 @@ public class OfflineRedstoneListenerTest {
     }
 
     /**
-     * Test method for {@link OfflineRedstoneListener#onBlockRedstone(BlockRedstoneEvent)}.
+     * Test method for
+     * {@link OfflineRedstoneListener#onBlockRedstone(BlockRedstoneEvent)}.
      */
     @Test
     public void testOnBlockRedstoneMembersOffline() {
@@ -177,7 +181,8 @@ public class OfflineRedstoneListenerTest {
     }
 
     /**
-     * Test method for {@link OfflineRedstoneListener#onBlockRedstone(BlockRedstoneEvent)}.
+     * Test method for
+     * {@link OfflineRedstoneListener#onBlockRedstone(BlockRedstoneEvent)}.
      */
     @Test
     public void testOnBlockRedstoneMembersOfflineOpsOnlineNotOnIsland() {
@@ -195,7 +200,8 @@ public class OfflineRedstoneListenerTest {
     }
 
     /**
-     * Test method for {@link OfflineRedstoneListener#onBlockRedstone(BlockRedstoneEvent)}.
+     * Test method for
+     * {@link OfflineRedstoneListener#onBlockRedstone(BlockRedstoneEvent)}.
      */
     @Test
     public void testOnBlockRedstoneMembersOfflineOpsOnlineOnIsland() {
@@ -234,7 +240,8 @@ public class OfflineRedstoneListenerTest {
     }
 
     /**
-     * Test method for {@link OfflineRedstoneListener#onBlockRedstone(BlockRedstoneEvent)}.
+     * Test method for
+     * {@link OfflineRedstoneListener#onBlockRedstone(BlockRedstoneEvent)}.
      */
     @Test
     public void testOnBlockRedstoneNonIsland() {

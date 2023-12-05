@@ -5,8 +5,10 @@ import org.eclipse.jdt.annotation.NonNull;
 import com.google.gson.annotations.Expose;
 
 /**
- * Stores meta data value in a GSON friendly way so it can be serialized and deserialized.
- * Values that are null are not stored in the database, so only the appropriate type is stored.
+ * Stores meta data value in a GSON friendly way so it can be serialized and
+ * deserialized. Values that are null are not stored in the database, so only
+ * the appropriate type is stored.
+ * 
  * @author tastybento
  * @since 1.15.4
  *
@@ -33,6 +35,7 @@ public class MetaDataValue {
 
     /**
      * Initialize this meta data value
+     * 
      * @param value the value assigned to this metadata value
      */
     public MetaDataValue(@NonNull Object value) {

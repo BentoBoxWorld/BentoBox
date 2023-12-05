@@ -11,6 +11,7 @@ import world.bentobox.bentobox.database.objects.Island;
 
 /**
  * Fired when player leaves an island.
+ * 
  * @author tastybento
  *
  */

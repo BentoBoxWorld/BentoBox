@@ -24,7 +24,8 @@ public class ConfigHandler<T> extends YamlDatabaseHandler<T> {
         }
     }
 
-    public void saveSettings(T instance) throws IllegalAccessException, InvocationTargetException, IntrospectionException {
+    public void saveSettings(T instance)
+            throws IllegalAccessException, InvocationTargetException, IntrospectionException {
         // ConfigObject check
         if (!(instance instanceof ConfigObject)) {
             throw new java.lang.ClassFormatError("Config classes must implement ConfigObject");
@@ -33,7 +34,8 @@ public class ConfigHandler<T> extends YamlDatabaseHandler<T> {
         saveObject(instance);
     }
 
-    public T loadSettings(String uniqueId, T dbConfig) throws InstantiationException, IllegalAccessException, InvocationTargetException, ClassNotFoundException, IntrospectionException, NoSuchMethodException {
+    public T loadSettings(String uniqueId, T dbConfig) throws InstantiationException, IllegalAccessException,
+            InvocationTargetException, ClassNotFoundException, IntrospectionException, NoSuchMethodException {
 
         // TODO: compare the loaded with the database copy
 

@@ -12,6 +12,7 @@ import world.bentobox.bentobox.database.sql.postgresql.PostgreSQLDatabase;
 public class Json2PostgreSQLDatabase implements DatabaseSetup {
     @Override
     public <T> AbstractDatabaseHandler<T> getHandler(Class<T> dataObjectClass) {
-        return new TransitionDatabaseHandler<>(dataObjectClass, new JSONDatabase().getHandler(dataObjectClass), new PostgreSQLDatabase().getHandler(dataObjectClass));
+        return new TransitionDatabaseHandler<>(dataObjectClass, new JSONDatabase().getHandler(dataObjectClass),
+                new PostgreSQLDatabase().getHandler(dataObjectClass));
     }
 }

@@ -49,7 +49,7 @@ import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlaceholdersManager;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({BentoBox.class, PlayerEvent.class, PlayerInteractEvent.class, Bukkit.class})
+@PrepareForTest({ BentoBox.class, PlayerEvent.class, PlayerInteractEvent.class, Bukkit.class })
 public class ObsidianScoopingListenerTest {
 
     @Mock
@@ -218,7 +218,8 @@ public class ObsidianScoopingListenerTest {
 
     @Test
     public void testOnPlayerInteractNotInWorld() {
-        PlayerInteractEvent event = new PlayerInteractEvent(p, Action.RIGHT_CLICK_BLOCK, item, clickedBlock, BlockFace.EAST);
+        PlayerInteractEvent event = new PlayerInteractEvent(p, Action.RIGHT_CLICK_BLOCK, item, clickedBlock,
+                BlockFace.EAST);
         // Test not in world
         when(iwm.inWorld(any(World.class))).thenReturn(false);
         when(iwm.inWorld(any(Location.class))).thenReturn(false);
@@ -234,7 +235,8 @@ public class ObsidianScoopingListenerTest {
 
     @Test
     public void testOnPlayerInteractGameModes() {
-        PlayerInteractEvent event = new PlayerInteractEvent(p, Action.RIGHT_CLICK_BLOCK, item, clickedBlock, BlockFace.EAST);
+        PlayerInteractEvent event = new PlayerInteractEvent(p, Action.RIGHT_CLICK_BLOCK, item, clickedBlock,
+                BlockFace.EAST);
 
         // Test different game modes
         for (GameMode gm : GameMode.values()) {
@@ -247,7 +249,8 @@ public class ObsidianScoopingListenerTest {
 
     @Test
     public void testOnPlayerInteractSurvivalNotOnIsland() {
-        PlayerInteractEvent event = new PlayerInteractEvent(p, Action.RIGHT_CLICK_BLOCK, item, clickedBlock, BlockFace.EAST);
+        PlayerInteractEvent event = new PlayerInteractEvent(p, Action.RIGHT_CLICK_BLOCK, item, clickedBlock,
+                BlockFace.EAST);
 
         // Set as survival
         when(p.getGameMode()).thenReturn(GameMode.SURVIVAL);

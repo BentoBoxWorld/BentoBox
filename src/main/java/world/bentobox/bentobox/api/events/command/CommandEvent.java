@@ -73,7 +73,7 @@ public class CommandEvent extends BentoBoxEvent implements Cancellable {
         }
 
         public CommandEvent build() {
-            CommandEvent event =  new CommandEvent(sender, command, label, args);
+            CommandEvent event = new CommandEvent(sender, command, label, args);
             Bukkit.getPluginManager().callEvent(event);
             return event;
         }

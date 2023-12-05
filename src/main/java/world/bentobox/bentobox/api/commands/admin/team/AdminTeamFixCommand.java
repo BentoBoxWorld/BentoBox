@@ -7,7 +7,6 @@ import world.bentobox.bentobox.api.user.User;
 
 public class AdminTeamFixCommand extends CompositeCommand {
 
-
     public AdminTeamFixCommand(CompositeCommand parent) {
         super(parent, "fix");
     }
@@ -27,6 +26,7 @@ public class AdminTeamFixCommand extends CompositeCommand {
         }
         return true;
     }
+
     @Override
     public boolean execute(User user, String label, List<String> args) {
         getIslands().checkTeams(user, getWorld());

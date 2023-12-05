@@ -40,7 +40,7 @@ import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.util.Util;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( {BentoBox.class, Bukkit.class, Util.class, HandlerList.class} )
+@PrepareForTest({ BentoBox.class, Bukkit.class, Util.class, HandlerList.class })
 public class FlagsManagerTest {
 
     /**
@@ -69,7 +69,6 @@ public class FlagsManagerTest {
         IslandsManager im = mock(IslandsManager.class);
         when(plugin.getIslands()).thenReturn(im);
 
-
         World world = mock(World.class);
         when(server.getLogger()).thenReturn(Logger.getAnonymousLogger());
         when(server.getWorld("world")).thenReturn(world);
@@ -85,7 +84,7 @@ public class FlagsManagerTest {
         when(itemFactory.getItemMeta(any())).thenReturn(skullMeta);
         when(Bukkit.getItemFactory()).thenReturn(itemFactory);
         when(Bukkit.getLogger()).thenReturn(Logger.getAnonymousLogger());
-        //PowerMockito.mockStatic(Flags.class);
+        // PowerMockito.mockStatic(Flags.class);
 
     }
 
@@ -129,7 +128,6 @@ public class FlagsManagerTest {
         // nothing here
     }
 
-
     /**
      * Test for {@link FlagsManager#getFlags()}
      */
@@ -148,7 +146,8 @@ public class FlagsManagerTest {
         FlagsManager fm = new FlagsManager(plugin);
         // Test in forward and reverse order so that any duplicates are caught
         Flags.values().stream().sorted().forEach(flag -> assertEquals(flag, fm.getFlag(flag.getID()).get()));
-        Flags.values().stream().sorted(Comparator.reverseOrder()).forEach(flag -> assertEquals(flag, fm.getFlag(flag.getID()).get()));
+        Flags.values().stream().sorted(Comparator.reverseOrder())
+                .forEach(flag -> assertEquals(flag, fm.getFlag(flag.getID()).get()));
 
     }
 

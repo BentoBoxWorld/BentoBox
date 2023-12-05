@@ -64,7 +64,7 @@ import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.util.Util;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({BentoBox.class, Util.class, Bukkit.class })
+@PrepareForTest({ BentoBox.class, Util.class, Bukkit.class })
 public class InvincibleVisitorsListenerTest {
 
     @Mock
@@ -138,7 +138,8 @@ public class InvincibleVisitorsListenerTest {
         when(Util.getWorld(any())).thenReturn(mock(World.class));
         when(Util.prettifyText(anyString())).thenCallRealMethod();
         // Util translate color codes (used in user translate methods)
-        when(Util.translateColorCodes(anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
+        when(Util.translateColorCodes(anyString()))
+                .thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
         FlagsManager fm = mock(FlagsManager.class);
         Flag flag = mock(Flag.class);
         when(flag.isSetForWorld(any())).thenReturn(false);
@@ -207,7 +208,7 @@ public class InvincibleVisitorsListenerTest {
         ClickType clickType = ClickType.LEFT;
         int slot = 5;
         when(panel.getName()).thenReturn("not_panel");
-        listener.onClick(panel, user, clickType, slot );
+        listener.onClick(panel, user, clickType, slot);
         // Should open inv visitors
         verify(user).closeInventory();
         verify(player).openInventory(any(Inventory.class));
@@ -223,7 +224,8 @@ public class InvincibleVisitorsListenerTest {
         // Test all damage causes to make sure they can be clicked on and off
         for (int slot = 0; slot < DamageCause.values().length; slot++) {
             // Get the damage type
-            DamageCause dc = Arrays.stream(EntityDamageEvent.DamageCause.values()).sorted(Comparator.comparing(DamageCause::name)).toList().get(slot);
+            DamageCause dc = Arrays.stream(EntityDamageEvent.DamageCause.values())
+                    .sorted(Comparator.comparing(DamageCause::name)).toList().get(slot);
             // IV settings should be empty
             assertFalse(ivSettings.contains(dc.name()));
             // Click on the icon
@@ -234,7 +236,7 @@ public class InvincibleVisitorsListenerTest {
             assertTrue(ivSettings.contains(dc.name()));
 
             // Click on it again
-            listener.onClick(panel, user, clickType, slot );
+            listener.onClick(panel, user, clickType, slot);
             // Should keep panel open
             verify(user, never()).closeInventory();
             // IV settings should not have the damage cause in it anymore
@@ -294,7 +296,6 @@ public class InvincibleVisitorsListenerTest {
         listener.onVisitorGetDamage(e);
         assertFalse(e.isCancelled());
     }
-
 
     @Test
     public void testOnVisitorGetDamageVoidIslandHere() {

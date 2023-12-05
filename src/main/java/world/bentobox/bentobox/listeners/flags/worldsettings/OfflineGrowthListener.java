@@ -15,6 +15,7 @@ import world.bentobox.bentobox.managers.RanksManager;
 
 /**
  * Handles {@link Flags#OFFLINE_GROWTH} flag.
+ * 
  * @author Poslovitch, tastybento
  * @since 1.4.0
  */
@@ -23,7 +24,8 @@ public class OfflineGrowthListener extends FlagListener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onCropGrow(BlockGrowEvent e) {
         if (!getIWM().inWorld(e.getBlock().getWorld()) || Flags.OFFLINE_GROWTH.isSetForWorld(e.getBlock().getWorld())) {
-            // We do not want to run any check if this is not the right world or if it is allowed.
+            // We do not want to run any check if this is not the right world or if it is
+            // allowed.
             return;
         }
         // Check if island exists and members are online
@@ -40,7 +42,8 @@ public class OfflineGrowthListener extends FlagListener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onSpread(BlockSpreadEvent e) {
         if (!getIWM().inWorld(e.getBlock().getWorld()) || Flags.OFFLINE_GROWTH.isSetForWorld(e.getBlock().getWorld())) {
-            // We do not want to run any check if this is not the right world or if it is allowed.
+            // We do not want to run any check if this is not the right world or if it is
+            // allowed.
             return;
         }
         // Check what is spreading - disallow Bamboo and Kelp growth

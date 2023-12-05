@@ -11,6 +11,7 @@ import world.bentobox.bentobox.database.objects.Island;
 
 /**
  * Fired before an island has its player data cleared, e.g., just before a reset
+ * 
  * @since 1.12.0
  */
 public class IslandPreclearEvent extends IslandBaseEvent {
@@ -27,7 +28,8 @@ public class IslandPreclearEvent extends IslandBaseEvent {
         return handlers;
     }
 
-    public IslandPreclearEvent(Island island, UUID player, boolean admin, Location location, @NonNull Island oldIsland) {
+    public IslandPreclearEvent(Island island, UUID player, boolean admin, Location location,
+            @NonNull Island oldIsland) {
         // Final variables have to be declared in the constructor
         super(island, player, admin, location);
         // Create a copy of the old island

@@ -97,7 +97,8 @@ public class DefaultNewIslandLocationStrategyTest {
         // Util
         PowerMockito.mockStatic(Util.class);
         // Return back what the argument was, i.e., no change
-        when(Util.getClosestIsland(any())).thenAnswer((Answer<Location>) invocation -> invocation.getArgument(0, Location.class));
+        when(Util.getClosestIsland(any()))
+                .thenAnswer((Answer<Location>) invocation -> invocation.getArgument(0, Location.class));
         // Default is that chunks have been generated
         when(Util.isChunkGenerated(any())).thenReturn(true);
         // Last island location
@@ -114,11 +115,12 @@ public class DefaultNewIslandLocationStrategyTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.island.DefaultNewIslandLocationStrategy#getNextLocation(org.bukkit.World)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.island.DefaultNewIslandLocationStrategy#getNextLocation(org.bukkit.World)}.
      */
     @Test
     public void testGetNextLocationSuccess() {
-        assertEquals(location,dnils.getNextLocation(world));
+        assertEquals(location, dnils.getNextLocation(world));
         verify(im).setLast(location);
     }
 
@@ -137,7 +139,8 @@ public class DefaultNewIslandLocationStrategyTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.island.DefaultNewIslandLocationStrategy#getNextLocation(org.bukkit.World)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.island.DefaultNewIslandLocationStrategy#getNextLocation(org.bukkit.World)}.
      */
     @SuppressWarnings("unchecked")
     @Test
@@ -145,27 +148,29 @@ public class DefaultNewIslandLocationStrategyTest {
         Optional<Island> opIsland = Optional.of(new Island());
         Optional<Island> emptyIsland = Optional.empty();
         when(im.getIslandAt(any())).thenReturn(opIsland, opIsland, opIsland, opIsland, emptyIsland);
-        assertEquals(location,dnils.getNextLocation(world));
+        assertEquals(location, dnils.getNextLocation(world));
         verify(im).setLast(location);
     }
-    
+
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.island.DefaultNewIslandLocationStrategy#getNextLocation(org.bukkit.World)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.island.DefaultNewIslandLocationStrategy#getNextLocation(org.bukkit.World)}.
      */
     @Test
     public void testGetNextLocationSuccessSomeIslands10() {
         Optional<Island> opIsland = Optional.of(new Island());
         Optional<Island> emptyIsland = Optional.empty();
         count = 0;
-        //long time = System.currentTimeMillis();
-        when(im.getIslandAt(any())).thenAnswer(i -> count++ > 10 ? emptyIsland :opIsland);
-        assertEquals(location,dnils.getNextLocation(world));
-        //System.out.println(System.currentTimeMillis() - time);
+        // long time = System.currentTimeMillis();
+        when(im.getIslandAt(any())).thenAnswer(i -> count++ > 10 ? emptyIsland : opIsland);
+        assertEquals(location, dnils.getNextLocation(world));
+        // System.out.println(System.currentTimeMillis() - time);
         verify(im).setLast(location);
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.island.DefaultNewIslandLocationStrategy#isIsland(org.bukkit.Location)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.island.DefaultNewIslandLocationStrategy#isIsland(org.bukkit.Location)}.
      */
     @Test
     public void testIsIslandIslandFound() {
@@ -202,7 +207,8 @@ public class DefaultNewIslandLocationStrategyTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.island.DefaultNewIslandLocationStrategy#isIsland(org.bukkit.Location)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.island.DefaultNewIslandLocationStrategy#isIsland(org.bukkit.Location)}.
      */
     @Test
     public void testIsIslandFreeAirBlocks() {
@@ -228,7 +234,7 @@ public class DefaultNewIslandLocationStrategyTest {
         when(adjBlock.isEmpty()).thenReturn(false);
         assertEquals(Result.BLOCKS_IN_AREA, dnils.isIsland(location));
     }
-    
+
     /**
      * Test method for {@link world.bentobox.bentobox.managers.island.DefaultNewIslandLocationStrategy#isIsland(org.bukkit.Location)}.
      */

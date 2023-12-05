@@ -25,24 +25,30 @@ public class TransitionDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
 
     /**
      * Constructor
-     * @param type - class to store in the database
+     * 
+     * @param type        - class to store in the database
      * @param fromHandler - the database being moved away from
-     * @param toHandler - the database being moved to
+     * @param toHandler   - the database being moved to
      */
-    TransitionDatabaseHandler(Class<T> type, AbstractDatabaseHandler<T> fromHandler, AbstractDatabaseHandler<T> toHandler) {
+    TransitionDatabaseHandler(Class<T> type, AbstractDatabaseHandler<T> fromHandler,
+            AbstractDatabaseHandler<T> toHandler) {
         this.fromHandler = fromHandler;
         this.toHandler = toHandler;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see world.bentobox.bentobox.database.AbstractDatabaseHandler#loadObjects()
      */
     @Override
-    public List<T> loadObjects() throws InstantiationException, IllegalAccessException, InvocationTargetException, ClassNotFoundException, IntrospectionException, NoSuchMethodException {
+    public List<T> loadObjects() throws InstantiationException, IllegalAccessException, InvocationTargetException,
+            ClassNotFoundException, IntrospectionException, NoSuchMethodException {
         // Load all objects from both databases
         List<T> listFrom = fromHandler.loadObjects();
         List<T> listTo = toHandler.loadObjects();
-        // If source database has objects, then delete and save them in the destination database
+        // If source database has objects, then delete and save them in the destination
+        // database
         for (T object : listFrom) {
             toHandler.saveObject(object);
             fromHandler.deleteObject(object);
@@ -52,11 +58,16 @@ public class TransitionDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         return listTo;
     }
 
-    /* (non-Javadoc)
-     * @see world.bentobox.bentobox.database.AbstractDatabaseHandler#loadObject(java.lang.String)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * world.bentobox.bentobox.database.AbstractDatabaseHandler#loadObject(java.lang
+     * .String)
      */
     @Override
-    public T loadObject(@NonNull String uniqueId) throws InstantiationException, IllegalAccessException, InvocationTargetException, ClassNotFoundException, IntrospectionException, NoSuchMethodException {
+    public T loadObject(@NonNull String uniqueId) throws InstantiationException, IllegalAccessException,
+            InvocationTargetException, ClassNotFoundException, IntrospectionException, NoSuchMethodException {
         // Try destination database
         @Nullable
         T object = toHandler.loadObject(uniqueId);
@@ -72,8 +83,12 @@ public class TransitionDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         return object;
     }
 
-    /* (non-Javadoc)
-     * @see world.bentobox.bentobox.database.AbstractDatabaseHandler#objectExists(java.lang.String)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * world.bentobox.bentobox.database.AbstractDatabaseHandler#objectExists(java.
+     * lang.String)
      */
     @Override
     public boolean objectExists(String uniqueId) {
@@ -81,17 +96,26 @@ public class TransitionDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         return toHandler.objectExists(uniqueId) || fromHandler.objectExists(uniqueId);
     }
 
-    /* (non-Javadoc)
-     * @see world.bentobox.bentobox.database.AbstractDatabaseHandler#saveObject(java.lang.Object)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * world.bentobox.bentobox.database.AbstractDatabaseHandler#saveObject(java.lang
+     * .Object)
      */
     @Override
-    public CompletableFuture<Boolean> saveObject(T instance) throws IllegalAccessException, InvocationTargetException, IntrospectionException {
+    public CompletableFuture<Boolean> saveObject(T instance)
+            throws IllegalAccessException, InvocationTargetException, IntrospectionException {
         // Save only in the destination database
         return toHandler.saveObject(instance);
     }
 
-    /* (non-Javadoc)
-     * @see world.bentobox.bentobox.database.AbstractDatabaseHandler#deleteID(java.lang.String)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * world.bentobox.bentobox.database.AbstractDatabaseHandler#deleteID(java.lang.
+     * String)
      */
     @Override
     public void deleteID(String uniqueId) {
@@ -100,11 +124,16 @@ public class TransitionDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         fromHandler.deleteID(uniqueId);
     }
 
-    /* (non-Javadoc)
-     * @see world.bentobox.bentobox.database.AbstractDatabaseHandler#deleteObject(java.lang.Object)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * world.bentobox.bentobox.database.AbstractDatabaseHandler#deleteObject(java.
+     * lang.Object)
      */
     @Override
-    public void deleteObject(T instance) throws IllegalAccessException, InvocationTargetException, IntrospectionException {
+    public void deleteObject(T instance)
+            throws IllegalAccessException, InvocationTargetException, IntrospectionException {
         // Delete in both databases if the object exists
         toHandler.deleteObject(instance);
         fromHandler.deleteObject(instance);

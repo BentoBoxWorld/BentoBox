@@ -37,7 +37,6 @@ public class IslandTeamPromoteCommand extends CompositeCommand {
         this.setConfigurableRankCommand();
     }
 
-
     @Override
     public boolean canExecute(User user, String label, List<String> args) {
         // If args are not right, show help
@@ -54,7 +53,8 @@ public class IslandTeamPromoteCommand extends CompositeCommand {
         Island island = getIslands().getIsland(getWorld(), user);
         int rank = Objects.requireNonNull(island).getRank(user);
         if (rank < island.getRankCommand(getUsage())) {
-            user.sendMessage("general.errors.insufficient-rank", TextVariables.RANK, user.getTranslation(getPlugin().getRanksManager().getRank(rank)));
+            user.sendMessage("general.errors.insufficient-rank", TextVariables.RANK,
+                    user.getTranslation(getPlugin().getRanksManager().getRank(rank)));
             return false;
         }
 
@@ -102,14 +102,10 @@ public class IslandTeamPromoteCommand extends CompositeCommand {
             if (nextRank != RanksManager.OWNER_RANK && nextRank > currentRank) {
                 island.setRank(target, nextRank);
                 String rankName = user.getTranslation(getPlugin().getRanksManager().getRank(nextRank));
-                user.sendMessage("commands.island.team.promote.success", TextVariables.NAME, target.getName(), TextVariables.RANK, rankName, TextVariables.DISPLAY_NAME, target.getDisplayName());
-                IslandEvent.builder()
-                .island(island)
-                .involvedPlayer(user.getUniqueId())
-                .admin(false)
-                .reason(IslandEvent.Reason.RANK_CHANGE)
-                .rankChange(currentRank, nextRank)
-                .build();
+                user.sendMessage("commands.island.team.promote.success", TextVariables.NAME, target.getName(),
+                        TextVariables.RANK, rankName, TextVariables.DISPLAY_NAME, target.getDisplayName());
+                IslandEvent.builder().island(island).involvedPlayer(user.getUniqueId()).admin(false)
+                        .reason(IslandEvent.Reason.RANK_CHANGE).rankChange(currentRank, nextRank).build();
                 return true;
             } else {
                 user.sendMessage("commands.island.team.promote.failure");
@@ -122,14 +118,10 @@ public class IslandTeamPromoteCommand extends CompositeCommand {
             if (prevRank >= RanksManager.MEMBER_RANK && prevRank < currentRank) {
                 island.setRank(target, prevRank);
                 String rankName = user.getTranslation(getPlugin().getRanksManager().getRank(prevRank));
-                user.sendMessage("commands.island.team.demote.success", TextVariables.NAME, target.getName(), TextVariables.RANK, rankName, TextVariables.DISPLAY_NAME, target.getDisplayName());
-                IslandEvent.builder()
-                .island(island)
-                .involvedPlayer(user.getUniqueId())
-                .admin(false)
-                .reason(IslandEvent.Reason.RANK_CHANGE)
-                .rankChange(currentRank, prevRank)
-                .build();
+                user.sendMessage("commands.island.team.demote.success", TextVariables.NAME, target.getName(),
+                        TextVariables.RANK, rankName, TextVariables.DISPLAY_NAME, target.getDisplayName());
+                IslandEvent.builder().island(island).involvedPlayer(user.getUniqueId()).admin(false)
+                        .reason(IslandEvent.Reason.RANK_CHANGE).rankChange(currentRank, prevRank).build();
                 return true;
             } else {
                 user.sendMessage("commands.island.team.demote.failure");
@@ -142,11 +134,10 @@ public class IslandTeamPromoteCommand extends CompositeCommand {
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
         Island island = getIslands().getIsland(getWorld(), user);
         if (island != null) {
-            List<String> options = island.getMemberSet().stream()
-                    .map(Bukkit::getOfflinePlayer)
+            List<String> options = island.getMemberSet().stream().map(Bukkit::getOfflinePlayer)
                     .map(OfflinePlayer::getName).toList();
 
-            String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
+            String lastArg = !args.isEmpty() ? args.get(args.size() - 1) : "";
             return Optional.of(Util.tabLimit(options, lastArg));
         } else {
             return Optional.empty();

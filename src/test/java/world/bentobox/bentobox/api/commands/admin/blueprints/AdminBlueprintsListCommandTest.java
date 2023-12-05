@@ -41,7 +41,7 @@ import world.bentobox.bentobox.managers.LocalesManager;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, User.class })
+@PrepareForTest({ Bukkit.class, BentoBox.class, User.class })
 public class AdminBlueprintsListCommandTest {
 
     @Mock
@@ -92,7 +92,6 @@ public class AdminBlueprintsListCommandTest {
         // Class
         list = new AdminBlueprintListCommand(ac);
 
-
     }
 
     /**
@@ -100,15 +99,13 @@ public class AdminBlueprintsListCommandTest {
     @After
     public void tearDown() throws Exception {
         User.clearUsers();
-        Files.walk(dataFolder.toPath())
-        .sorted(Comparator.reverseOrder())
-        .map(Path::toFile)
-        .forEach(File::delete);
+        Files.walk(dataFolder.toPath()).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
         Mockito.framework().clearInlineMocks();
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintListCommand#AdminBlueprintListCommand(world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintCommand)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintListCommand#AdminBlueprintListCommand(world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintCommand)}.
      */
     @Test
     public void testAdminBlueprintListCommand() {
@@ -117,7 +114,8 @@ public class AdminBlueprintsListCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintListCommand#setup()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintListCommand#setup()}.
      */
     @Test
     public void testSetup() {
@@ -125,7 +123,8 @@ public class AdminBlueprintsListCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintListCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintListCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testCanExecute() {
@@ -134,7 +133,8 @@ public class AdminBlueprintsListCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintListCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintListCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testExecuteUserStringListOfStringNoBlueprintsFolder() {
@@ -143,7 +143,8 @@ public class AdminBlueprintsListCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintListCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintListCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testExecuteUserStringListOfStringNoBlueprintsFilesEmptyFolder() {
@@ -154,7 +155,8 @@ public class AdminBlueprintsListCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintListCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintListCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testExecuteUserStringListOfStringNoBlueprintsFiles() throws IOException {
@@ -166,7 +168,8 @@ public class AdminBlueprintsListCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintListCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintListCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testExecuteUserStringListOfStringWithBlueprintsFiles() throws IOException {

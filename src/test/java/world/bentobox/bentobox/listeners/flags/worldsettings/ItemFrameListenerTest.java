@@ -55,7 +55,7 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( {BentoBox.class, Flags.class, Util.class, Bukkit.class} )
+@PrepareForTest({ BentoBox.class, Flags.class, Util.class, Bukkit.class })
 public class ItemFrameListenerTest {
 
     @Mock
@@ -149,19 +149,21 @@ public class ItemFrameListenerTest {
     }
 
     /**
-     * Test method for {@link ItemFrameListener#onItemFrameDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
+     * Test method for
+     * {@link ItemFrameListener#onItemFrameDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
     @Test
     public void testOnItemFrameDamageEntityDamageByEntityEvent() {
         ItemFrameListener ifl = new ItemFrameListener();
         DamageCause cause = DamageCause.ENTITY_ATTACK;
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(enderman, entity, cause , 0);
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(enderman, entity, cause, 0);
         ifl.onItemFrameDamage(e);
         assertTrue(e.isCancelled());
     }
 
     /**
-     * Test method for {@link ItemFrameListener#onItemFrameDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
+     * Test method for
+     * {@link ItemFrameListener#onItemFrameDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
     @Test
     public void testNotItemFrame() {
@@ -169,13 +171,14 @@ public class ItemFrameListenerTest {
         Creeper creeper = mock(Creeper.class);
         when(creeper.getLocation()).thenReturn(location);
         DamageCause cause = DamageCause.ENTITY_ATTACK;
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(enderman, creeper, cause , 0);
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(enderman, creeper, cause, 0);
         ifl.onItemFrameDamage(e);
         assertFalse(e.isCancelled());
     }
 
     /**
-     * Test method for {@link ItemFrameListener#onItemFrameDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
+     * Test method for
+     * {@link ItemFrameListener#onItemFrameDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
     @Test
     public void testProjectile() {
@@ -183,13 +186,14 @@ public class ItemFrameListenerTest {
         DamageCause cause = DamageCause.ENTITY_ATTACK;
         Projectile p = mock(Projectile.class);
         when(p.getShooter()).thenReturn(enderman);
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(p, entity, cause , 0);
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(p, entity, cause, 0);
         ifl.onItemFrameDamage(e);
         assertTrue(e.isCancelled());
     }
 
     /**
-     * Test method for {@link ItemFrameListener#onItemFrameDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
+     * Test method for
+     * {@link ItemFrameListener#onItemFrameDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
     @Test
     public void testPlayerProjectile() {
@@ -198,13 +202,14 @@ public class ItemFrameListenerTest {
         Projectile p = mock(Projectile.class);
         Player player = mock(Player.class);
         when(p.getShooter()).thenReturn(player);
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(p, entity, cause , 0);
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(p, entity, cause, 0);
         ifl.onItemFrameDamage(e);
         assertFalse(e.isCancelled());
     }
 
     /**
-     * Test method for {@link ItemFrameListener#onItemFrameDamage(org.bukkit.event.hanging.HangingBreakByEntityEvent)}.
+     * Test method for
+     * {@link ItemFrameListener#onItemFrameDamage(org.bukkit.event.hanging.HangingBreakByEntityEvent)}.
      */
     @Test
     public void testOnItemFrameDamageHangingBreakByEntityEvent() {

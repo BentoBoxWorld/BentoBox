@@ -12,6 +12,7 @@ import world.bentobox.bentobox.lists.Flags;
 
 /**
  * Removes mobs when teleporting to an island
+ * 
  * @author tastybento
  *
  */
@@ -25,12 +26,14 @@ public class RemoveMobsListener extends FlagListener {
             return;
         }
         // Return if this is a small teleport
-        if (e.getTo().getWorld().equals(e.getPlayer().getWorld()) &&
-                e.getTo().distanceSquared(e.getPlayer().getLocation()) < getPlugin().getSettings().getClearRadius() * getPlugin().getSettings().getClearRadius()) {
+        if (e.getTo().getWorld().equals(e.getPlayer().getWorld())
+                && e.getTo().distanceSquared(e.getPlayer().getLocation()) < getPlugin().getSettings().getClearRadius()
+                        * getPlugin().getSettings().getClearRadius()) {
             return;
         }
         // Only process if flag is active
-        if (getIslands().locationIsOnIsland(e.getPlayer(), e.getTo()) && Flags.REMOVE_MOBS.isSetForWorld(e.getTo().getWorld())) {
+        if (getIslands().locationIsOnIsland(e.getPlayer(), e.getTo())
+                && Flags.REMOVE_MOBS.isSetForWorld(e.getTo().getWorld())) {
             Bukkit.getScheduler().runTask(getPlugin(), () -> getIslands().clearArea(e.getTo()));
         }
     }
@@ -38,7 +41,8 @@ public class RemoveMobsListener extends FlagListener {
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onUserRespawn(PlayerRespawnEvent e) {
         // Only process if flag is active
-        if (getIslands().locationIsOnIsland(e.getPlayer(), e.getRespawnLocation()) && Flags.REMOVE_MOBS.isSetForWorld(e.getRespawnLocation().getWorld())) {
+        if (getIslands().locationIsOnIsland(e.getPlayer(), e.getRespawnLocation())
+                && Flags.REMOVE_MOBS.isSetForWorld(e.getRespawnLocation().getWorld())) {
             Bukkit.getScheduler().runTask(getPlugin(), () -> getIslands().clearArea(e.getRespawnLocation()));
         }
     }

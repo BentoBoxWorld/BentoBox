@@ -34,7 +34,7 @@ import world.bentobox.bentobox.managers.IslandWorldManager;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class})
+@PrepareForTest({ Bukkit.class, BentoBox.class })
 public class IslandDeletionTest {
 
     @Mock
@@ -78,17 +78,12 @@ public class IslandDeletionTest {
         PowerMockito.mockStatic(UUID.class);
         when(UUID.randomUUID()).thenReturn(uuid);
         /*
-         *         uniqueId = UUID.randomUUID().toString();
-        location = island.getCenter();
-        minX = location.getBlockX() - range;
-        minXChunk =  minX >> 4;
-        maxX = range + location.getBlockX();
-        maxXChunk = maxX >> 4;
-        minZ = location.getBlockZ() - range;
-        minZChunk = minZ >> 4;
-        maxZ = range + location.getBlockZ();
-        maxZChunk = maxZ >> 4;
-        box = BoundingBox.of(new Vector(minX, 0, minZ), new Vector(maxX, 255, maxZ));
+         * uniqueId = UUID.randomUUID().toString(); location = island.getCenter(); minX
+         * = location.getBlockX() - range; minXChunk = minX >> 4; maxX = range +
+         * location.getBlockX(); maxXChunk = maxX >> 4; minZ = location.getBlockZ() -
+         * range; minZChunk = minZ >> 4; maxZ = range + location.getBlockZ(); maxZChunk
+         * = maxZ >> 4; box = BoundingBox.of(new Vector(minX, 0, minZ), new Vector(maxX,
+         * 255, maxZ));
          */
         id = new IslandDeletion(island);
     }
@@ -99,7 +94,8 @@ public class IslandDeletionTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.IslandDeletion#getLocation()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.IslandDeletion#getLocation()}.
      */
     @Test
     public void testGetLocation() {
@@ -107,7 +103,8 @@ public class IslandDeletionTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.IslandDeletion#getMaxXChunk()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.IslandDeletion#getMaxXChunk()}.
      */
     @Test
     public void testGetMaxXChunk() {
@@ -115,7 +112,8 @@ public class IslandDeletionTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.IslandDeletion#getMaxZChunk()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.IslandDeletion#getMaxZChunk()}.
      */
     @Test
     public void testGetMaxZChunk() {
@@ -123,7 +121,8 @@ public class IslandDeletionTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.IslandDeletion#getMinXChunk()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.IslandDeletion#getMinXChunk()}.
      */
     @Test
     public void testGetMinXChunk() {
@@ -131,7 +130,8 @@ public class IslandDeletionTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.IslandDeletion#getMinZChunk()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.IslandDeletion#getMinZChunk()}.
      */
     @Test
     public void testGetMinZChunk() {
@@ -139,7 +139,8 @@ public class IslandDeletionTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.IslandDeletion#getUniqueId()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.IslandDeletion#getUniqueId()}.
      */
     @Test
     public void testGetUniqueId() {
@@ -148,7 +149,8 @@ public class IslandDeletionTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.IslandDeletion#getWorld()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.IslandDeletion#getWorld()}.
      */
     @Test
     public void testGetWorld() {
@@ -156,7 +158,8 @@ public class IslandDeletionTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.IslandDeletion#getBox()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.IslandDeletion#getBox()}.
      */
     @Test
     public void testBox() {
@@ -164,13 +167,13 @@ public class IslandDeletionTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.IslandDeletion#toString()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.IslandDeletion#toString()}.
      */
     @Test
     public void testToString() {
-        assertTrue(id.toString().endsWith(
-                "minXChunk=77, maxXChunk=77, minZChunk=-328,"
-                        + " maxZChunk=-328, minX=1245, minZ=-5245, maxX=1245, maxZ=-5245, box=null]"));
+        assertTrue(id.toString().endsWith("minXChunk=77, maxXChunk=77, minZChunk=-328,"
+                + " maxZChunk=-328, minX=1245, minZ=-5245, maxX=1245, maxZ=-5245, box=null]"));
     }
 
 }

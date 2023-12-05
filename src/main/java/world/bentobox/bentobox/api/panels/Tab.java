@@ -25,18 +25,20 @@ public interface Tab {
 
     /**
      * Return an immutable list of the panel items for this tab
+     * 
      * @return a list of items in slot order
      */
     List<@Nullable PanelItem> getPanelItems();
 
     /**
-     * @return the permission required to view this tab or empty if no permission required
+     * @return the permission required to view this tab or empty if no permission
+     *         required
      */
     String getPermission();
 
     /**
-     * @return Map of icons to be shown in the tab row when the tab is active
-     * Make sure these do not overlap any tabs that are in the tab row
+     * @return Map of icons to be shown in the tab row when the tab is active Make
+     *         sure these do not overlap any tabs that are in the tab row
      */
     default Map<Integer, PanelItem> getTabIcons() {
         return Collections.emptyMap();

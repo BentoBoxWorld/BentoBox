@@ -19,6 +19,7 @@ import world.bentobox.bentobox.util.heads.HeadRequester;
 
 /**
  * A GUI panel that uses the Bukkit inventory API
+ * 
  * @author tastybento
  *
  */
@@ -33,15 +34,15 @@ public class Panel implements HeadRequester, InventoryHolder {
 
     /**
      * Various types of Panel that can be created.
+     * 
      * @since 1.7.0
      */
     public enum Type {
-        INVENTORY,
-        HOPPER,
-        DROPPER
+        INVENTORY, HOPPER, DROPPER
     }
 
-    public Panel() {}
+    public Panel() {
+    }
 
     public Panel(String name, Map<Integer, PanelItem> items, int size, User user, PanelListener listener) {
         this(name, items, size, user, listener, Type.INVENTORY);
@@ -65,28 +66,27 @@ public class Panel implements HeadRequester, InventoryHolder {
                 pb.getUser(), pb.getListener(), pb.getPanelType());
     }
 
-    protected void makePanel(String name, Map<Integer, PanelItem> items, int size, User user,
-            PanelListener listener) {
+    protected void makePanel(String name, Map<Integer, PanelItem> items, int size, User user, PanelListener listener) {
         this.makePanel(name, items, size, user, listener, Type.INVENTORY);
     }
 
     /**
      * @since 1.7.0
      */
-    protected void makePanel(String name, Map<Integer, PanelItem> items, int size, User user,
-            PanelListener listener, Type type) {
+    protected void makePanel(String name, Map<Integer, PanelItem> items, int size, User user, PanelListener listener,
+            Type type) {
         this.name = name;
         this.items = items;
 
         // Create panel
         switch (type) {
-            case INVENTORY -> inventory = Bukkit.createInventory(null, fixSize(size), name);
-            case HOPPER -> inventory = Bukkit.createInventory(null, InventoryType.HOPPER, name);
-            case DROPPER -> inventory = Bukkit.createInventory(null, InventoryType.DROPPER, name);
+        case INVENTORY -> inventory = Bukkit.createInventory(null, fixSize(size), name);
+        case HOPPER -> inventory = Bukkit.createInventory(null, InventoryType.HOPPER, name);
+        case DROPPER -> inventory = Bukkit.createInventory(null, InventoryType.DROPPER, name);
         }
 
         // Fill the inventory and return
-        for (Map.Entry<Integer, PanelItem> en: items.entrySet()) {
+        for (Map.Entry<Integer, PanelItem> en : items.entrySet()) {
             if (en.getKey() < 54) {
                 inventory.setItem(en.getKey(), en.getValue().getItem());
                 // Get player head async
@@ -97,11 +97,13 @@ public class Panel implements HeadRequester, InventoryHolder {
         }
         this.listener = listener;
         // If the listener is defined, then run setup
-        if (listener != null) listener.setup();
+        if (listener != null)
+            listener.setup();
 
         // If the user is defined, then open panel immediately
         this.user = user;
-        if (user != null) this.open(user);
+        if (user != null)
+            this.open(user);
     }
 
     private int fixSize(int size) {
@@ -113,7 +115,8 @@ public class Panel implements HeadRequester, InventoryHolder {
             // Make sure size is a multiple of 9 and is 54 max.
             size = size + 8;
             size -= (size % 9);
-            if (size > 54) size = 54;
+            if (size > 54)
+                size = 54;
         } else {
             return 9;
         }
@@ -150,6 +153,7 @@ public class Panel implements HeadRequester, InventoryHolder {
 
     /**
      * Open the inventory panel
+     * 
      * @param users - users that should see the panel
      */
     public void open(User... users) {
@@ -187,19 +191,21 @@ public class Panel implements HeadRequester, InventoryHolder {
         this.user = user;
     }
 
-    /* (non-Javadoc)
-     * @see world.bentobox.bentobox.util.heads.HeadRequester#setHead(world.bentobox.bentobox.api.panels.PanelItem)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see world.bentobox.bentobox.util.heads.HeadRequester#setHead(world.bentobox.
+     * bentobox.api.panels.PanelItem)
      */
     @Override
     public void setHead(PanelItem item) {
         // Update the panel item
-        // Find panel item index in items and replace it once more in inventory to update it.
-        this.items.entrySet().stream().
-        filter(entry -> entry.getValue() == item).
-        mapToInt(Map.Entry::getKey).findFirst()
-        .ifPresent(index ->
-        // Update item inside inventory to change icon only if item is inside panel.
-        this.inventory.setItem(index, item.getItem()));
+        // Find panel item index in items and replace it once more in inventory to
+        // update it.
+        this.items.entrySet().stream().filter(entry -> entry.getValue() == item).mapToInt(Map.Entry::getKey).findFirst()
+                .ifPresent(index ->
+                // Update item inside inventory to change icon only if item is inside panel.
+                this.inventory.setItem(index, item.getItem()));
     }
 
     /**
@@ -211,6 +217,7 @@ public class Panel implements HeadRequester, InventoryHolder {
 
     /**
      * Get the world that applies to this panel
+     * 
      * @return the optional world
      * @since 1.16.0
      */
@@ -225,6 +232,5 @@ public class Panel implements HeadRequester, InventoryHolder {
     public void setWorld(World world) {
         this.world = world;
     }
-
 
 }

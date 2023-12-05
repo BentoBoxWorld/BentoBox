@@ -57,14 +57,8 @@ public class AdminRangeResetCommand extends CompositeCommand {
 
         if (oldRange != range) {
             // Call Protection Range Change event. Does not support cancelling.
-            IslandEvent.builder()
-            .island(island)
-            .location(island.getCenter())
-            .reason(IslandEvent.Reason.RANGE_CHANGE)
-            .involvedPlayer(targetUUID)
-            .admin(true)
-            .protectionRange(range, oldRange)
-            .build();
+            IslandEvent.builder().island(island).location(island.getCenter()).reason(IslandEvent.Reason.RANGE_CHANGE)
+                    .involvedPlayer(targetUUID).admin(true).protectionRange(range, oldRange).build();
         }
 
         user.sendMessage("commands.admin.range.reset.success", TextVariables.NUMBER, String.valueOf(range));
@@ -74,7 +68,7 @@ public class AdminRangeResetCommand extends CompositeCommand {
 
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
-        String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
+        String lastArg = !args.isEmpty() ? args.get(args.size() - 1) : "";
         if (args.isEmpty()) {
             // Don't show every player on the server. Require at least the first letter
             return Optional.empty();

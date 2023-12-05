@@ -15,7 +15,8 @@ import org.junit.Test;
 public class NamesTest {
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Names#Names()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Names#Names()}.
      */
     @Test
     public void testNames() {
@@ -23,7 +24,8 @@ public class NamesTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Names#Names(java.lang.String, java.util.UUID)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Names#Names(java.lang.String, java.util.UUID)}.
      */
     @Test
     public void testNamesStringUUID() {
@@ -31,7 +33,8 @@ public class NamesTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Names#getUniqueId()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Names#getUniqueId()}.
      */
     @Test
     public void testGetUniqueId() {
@@ -40,8 +43,10 @@ public class NamesTest {
         name.setUniqueId("random");
         assertEquals("random", name.getUniqueId());
     }
+
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Names#getUuid()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Names#getUuid()}.
      */
     @Test
     public void testGetUuid() {
@@ -52,7 +57,5 @@ public class NamesTest {
         name.setUuid(t);
         assertEquals(t, name.getUuid());
     }
-
-
 
 }

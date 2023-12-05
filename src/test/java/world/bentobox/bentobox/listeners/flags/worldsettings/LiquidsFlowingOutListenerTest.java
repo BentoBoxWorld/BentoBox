@@ -33,12 +33,14 @@ import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 
 /**
- * Tests {@link world.bentobox.bentobox.listeners.flags.worldsettings.LiquidsFlowingOutListener}.
+ * Tests
+ * {@link world.bentobox.bentobox.listeners.flags.worldsettings.LiquidsFlowingOutListener}.
+ * 
  * @author Poslovitch
  * @since 1.3.0
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({BentoBox.class})
+@PrepareForTest({ BentoBox.class })
 public class LiquidsFlowingOutListenerTest {
 
     /* IslandWorldManager */
@@ -129,7 +131,8 @@ public class LiquidsFlowingOutListenerTest {
     }
 
     /**
-     * Asserts that the event is never cancelled when {@link Flags#LIQUIDS_FLOWING_OUT} is allowed.
+     * Asserts that the event is never cancelled when
+     * {@link Flags#LIQUIDS_FLOWING_OUT} is allowed.
      */
     @Test
     public void testFlagIsAllowed() {
@@ -156,7 +159,8 @@ public class LiquidsFlowingOutListenerTest {
     }
 
     /**
-     * Asserts that the event is never cancelled when the liquid flows to a location in an island's protection range.
+     * Asserts that the event is never cancelled when the liquid flows to a location
+     * in an island's protection range.
      */
     @Test
     public void testLiquidFlowsToLocationInIslandProtectionRange() {
@@ -170,9 +174,9 @@ public class LiquidsFlowingOutListenerTest {
     }
 
     /**
-     * Asserts that the event is cancelled when liquid flows from one island's protection range into different island's range,
-     * e.g., when islands abut.
-     * Test for {@link LiquidsFlowingOutListener#onLiquidFlow(BlockFromToEvent)}
+     * Asserts that the event is cancelled when liquid flows from one island's
+     * protection range into different island's range, e.g., when islands abut. Test
+     * for {@link LiquidsFlowingOutListener#onLiquidFlow(BlockFromToEvent)}
      */
     @Test
     public void testLiquidFlowsToAdjacentIsland() {
@@ -188,7 +192,8 @@ public class LiquidsFlowingOutListenerTest {
     }
 
     /**
-     * Asserts that the event is cancelled with the default configuration provided in {@link LiquidsFlowingOutListenerTest#setUp()}.
+     * Asserts that the event is cancelled with the default configuration provided
+     * in {@link LiquidsFlowingOutListenerTest#setUp()}.
      */
     @Test
     public void testLiquidFlowIsBlocked() {

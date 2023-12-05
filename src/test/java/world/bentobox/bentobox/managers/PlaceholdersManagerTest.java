@@ -31,7 +31,7 @@ import world.bentobox.bentobox.lists.GameModePlaceholder;
  * @since 1.5.0
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( {BentoBox.class} )
+@PrepareForTest({ BentoBox.class })
 public class PlaceholdersManagerTest {
 
     @Mock
@@ -53,7 +53,7 @@ public class PlaceholdersManagerTest {
 
         when(plugin.getPlaceholdersManager()).thenReturn(pm);
         // No placeholders registered yet
-        //when(pm.isPlaceholder(any(), any())).thenReturn(false);
+        // when(pm.isPlaceholder(any(), any())).thenReturn(false);
 
         // Hooks
         when(plugin.getHooks()).thenReturn(hm);
@@ -71,7 +71,8 @@ public class PlaceholdersManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.PlaceholdersManager#registerDefaultPlaceholders(GameModeAddon)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.PlaceholdersManager#registerDefaultPlaceholders(GameModeAddon)}.
      */
     @Test
     public void testRegisterGameModePlaceholdersAllDefaults() {

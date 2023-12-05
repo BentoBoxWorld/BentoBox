@@ -24,23 +24,27 @@ public final class AddonDescription {
     private final @Nullable ConfigurationSection permissions;
     /**
      * Whether the addon should be included in Metrics or not.
+     * 
      * @since 1.1
      */
     private final boolean metrics;
     /**
-     * Name of the GitHub repository of the addon or an empty String.
-     * It follows a {@code Owner/Name} format.
+     * Name of the GitHub repository of the addon or an empty String. It follows a
+     * {@code Owner/Name} format.
+     * 
      * @since 1.3.0
      */
     private final @NonNull String repository;
     /**
      * Icon representing the addon in various menus.
+     * 
      * @since 1.5.0
      */
     private final @NonNull Material icon;
     /**
      * Minimum BentoBox version this addon requires in order to work properly.
      * Defaults to {@code "1"}.
+     * 
      * @since 1.11.0
      */
     private final @NonNull String apiVersion;
@@ -103,7 +107,9 @@ public final class AddonDescription {
 
     /**
      * Returns whether the addon should be included in Metrics or not.
-     * @return {@code true} if the addon should be included in Metrics reports, {@code false} otherwise.
+     * 
+     * @return {@code true} if the addon should be included in Metrics reports,
+     *         {@code false} otherwise.
      * @since 1.1
      */
     public boolean isMetrics() {
@@ -111,8 +117,9 @@ public final class AddonDescription {
     }
 
     /**
-     * Returns the name of the GitHub repository of the addon.
-     * It follows a {@code Owner/Name} format.
+     * Returns the name of the GitHub repository of the addon. It follows a
+     * {@code Owner/Name} format.
+     * 
      * @return the name of the GitHub repository of the addon or an empty String.
      * @since 1.3.0
      */
@@ -123,6 +130,7 @@ public final class AddonDescription {
 
     /**
      * Returns the material representing the addon as an icon.
+     * 
      * @return the material representing the addon as an icon.
      * @since 1.5.0
      */
@@ -132,22 +140,25 @@ public final class AddonDescription {
     }
 
     /**
-     * Returns the minimum BentoBox version this addon requires in order to work properly.
-     * <br/>
+     * Returns the minimum BentoBox version this addon requires in order to work
+     * properly. <br/>
      * Examples:
      * <ul>
-     *     <li>{@code "1"} means that the addon relies on BentoBox {@code 1.0.0} or higher.</li>
-     *     <li>Similarly, {@code "2"} sets the requirement to BentoBox {@code 2.0.0} or higher.</li>
-     *     <li>
-     *         More specific versions can be provided:
-     *         <ul>
-     *             <li>{@code "1.10"} -> BentoBox {@code 1.10.0} or higher.</li>
-     *             <li>{@code "1.9.2"} -> BentoBox {@code 1.9.2} or higher.</li>
-     *         </ul>
-     *     </li>
+     * <li>{@code "1"} means that the addon relies on BentoBox {@code 1.0.0} or
+     * higher.</li>
+     * <li>Similarly, {@code "2"} sets the requirement to BentoBox {@code 2.0.0} or
+     * higher.</li>
+     * <li>More specific versions can be provided:
+     * <ul>
+     * <li>{@code "1.10"} -> BentoBox {@code 1.10.0} or higher.</li>
+     * <li>{@code "1.9.2"} -> BentoBox {@code 1.9.2} or higher.</li>
+     * </ul>
+     * </li>
      * </ul>
      * Defaults to {@code "1"}.
-     * @return the minimum BentoBox version this addon requires in order to work properly.
+     * 
+     * @return the minimum BentoBox version this addon requires in order to work
+     *         properly.
      */
     @NonNull
     public String getApiVersion() {
@@ -231,8 +242,9 @@ public final class AddonDescription {
         }
 
         /**
-         * Sets the name of the GitHub repository.
-         * Must follow the {@code Owner/Name} format.
+         * Sets the name of the GitHub repository. Must follow the {@code Owner/Name}
+         * format.
+         * 
          * @since 1.3.0
          */
         @NonNull
@@ -243,6 +255,7 @@ public final class AddonDescription {
 
         /**
          * Sets the icon representing the addon.
+         * 
          * @param icon Material to set as the icon. Default is {@link Material#PAPER}.
          * @since 1.5.0
          */
@@ -253,8 +266,11 @@ public final class AddonDescription {
         }
 
         /**
-         * Sets the minimum BentoBox version this addon requires in order to work properly.
-         * @param apiVersion the minimum BentoBox version this addon requires in order to work properly.
+         * Sets the minimum BentoBox version this addon requires in order to work
+         * properly.
+         * 
+         * @param apiVersion the minimum BentoBox version this addon requires in order
+         *                   to work properly.
          * @since 1.11.0
          * @see AddonDescription#getApiVersion()
          */
@@ -271,6 +287,7 @@ public final class AddonDescription {
 
         /**
          * Sets the permission config section. Taken from the addon.yml
+         * 
          * @param permissions - YAML configuration section
          * @return Builder
          * @since 1.13.0
@@ -282,12 +299,13 @@ public final class AddonDescription {
         }
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see java.lang.Object#toString()
      */
     @Override
     public String toString() {
-        return "AddonDescription [" + "name=" + name + ", "
-                + "version=" + version + "]";
+        return "AddonDescription [" + "name=" + name + ", " + "version=" + version + "]";
     }
 }

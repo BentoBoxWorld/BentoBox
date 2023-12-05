@@ -55,141 +55,141 @@ import world.bentobox.bentobox.managers.PlayersManager;
 @PrepareForTest({ Bukkit.class, BentoBox.class })
 public class IslandNearCommandTest {
 
-	@Mock
-	private CompositeCommand ic;
-	@Mock
-	private User user;
-	@Mock
-	private Settings s;
-	@Mock
-	private IslandsManager im;
-	@Mock
-	private PlayersManager pm;
-	@Mock
-	private World world;
-	@Mock
-	private IslandWorldManager iwm;
-	@Mock
-	private @Nullable Island island;
-	@Mock
-	private PluginManager pim;
-	@Mock
-	private Player pp;
+    @Mock
+    private CompositeCommand ic;
+    @Mock
+    private User user;
+    @Mock
+    private Settings s;
+    @Mock
+    private IslandsManager im;
+    @Mock
+    private PlayersManager pm;
+    @Mock
+    private World world;
+    @Mock
+    private IslandWorldManager iwm;
+    @Mock
+    private @Nullable Island island;
+    @Mock
+    private PluginManager pim;
+    @Mock
+    private Player pp;
 
-	private UUID uuid;
+    private UUID uuid;
 
-	private IslandNearCommand inc;
-	@Mock
-	private @Nullable Location location;
-	@Mock
-	private Block block;
+    private IslandNearCommand inc;
+    @Mock
+    private @Nullable Location location;
+    @Mock
+    private Block block;
 
-	/**
-	 */
-	@Before
-	public void setUp() throws Exception {
-		// Set up plugin
-		BentoBox plugin = mock(BentoBox.class);
-		Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+    /**
+     */
+    @Before
+    public void setUp() throws Exception {
+        // Set up plugin
+        BentoBox plugin = mock(BentoBox.class);
+        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
 
-		// Command manager
-		CommandsManager cm = mock(CommandsManager.class);
-		when(plugin.getCommandsManager()).thenReturn(cm);
-		// Player
-		Player p = mock(Player.class);
-		when(p.getUniqueId()).thenReturn(uuid);
-		User.getInstance(p);
-		when(p.isOnline()).thenReturn(true);
-		// User
-		User.setPlugin(plugin);
-		when(pm.getName(any())).thenReturn("tastybento");
+        // Command manager
+        CommandsManager cm = mock(CommandsManager.class);
+        when(plugin.getCommandsManager()).thenReturn(cm);
+        // Player
+        Player p = mock(Player.class);
+        when(p.getUniqueId()).thenReturn(uuid);
+        User.getInstance(p);
+        when(p.isOnline()).thenReturn(true);
+        // User
+        User.setPlugin(plugin);
+        when(pm.getName(any())).thenReturn("tastybento");
 
-		when(user.isOp()).thenReturn(false);
-		uuid = UUID.randomUUID();
-		when(user.getUniqueId()).thenReturn(uuid);
-		when(user.isOnline()).thenReturn(true);
-		when(user.getPlayer()).thenReturn(p);
-		when(user.getTranslation(any()))
-				.thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
+        when(user.isOp()).thenReturn(false);
+        uuid = UUID.randomUUID();
+        when(user.getUniqueId()).thenReturn(uuid);
+        when(user.isOnline()).thenReturn(true);
+        when(user.getPlayer()).thenReturn(p);
+        when(user.getTranslation(any()))
+                .thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
 
-		// Parent command has no aliases
-		when(ic.getSubCommandAliases()).thenReturn(new HashMap<>());
-		when(ic.getTopLabel()).thenReturn("island");
-		// World
-		when(ic.getWorld()).thenReturn(world);
+        // Parent command has no aliases
+        when(ic.getSubCommandAliases()).thenReturn(new HashMap<>());
+        when(ic.getTopLabel()).thenReturn("island");
+        // World
+        when(ic.getWorld()).thenReturn(world);
 
-		// IWM friendly name for help
-		when(iwm.getFriendlyName(any())).thenReturn("BSkyBlock");
-		when(plugin.getIWM()).thenReturn(iwm);
-		when(iwm.getIslandDistance(any())).thenReturn(400);
+        // IWM friendly name for help
+        when(iwm.getFriendlyName(any())).thenReturn("BSkyBlock");
+        when(plugin.getIWM()).thenReturn(iwm);
+        when(iwm.getIslandDistance(any())).thenReturn(400);
 
-		// No island for player to begin with (set it later in the tests)
-		when(im.hasIsland(any(), eq(uuid))).thenReturn(false);
-		// when(im.isOwner(any(), eq(uuid))).thenReturn(false);
-		when(plugin.getIslands()).thenReturn(im);
-		Optional<Island> optionalIsland = Optional.of(island);
-		when(im.getIslandAt(any(Location.class))).thenReturn(optionalIsland);
+        // No island for player to begin with (set it later in the tests)
+        when(im.hasIsland(any(), eq(uuid))).thenReturn(false);
+        // when(im.isOwner(any(), eq(uuid))).thenReturn(false);
+        when(plugin.getIslands()).thenReturn(im);
+        Optional<Island> optionalIsland = Optional.of(island);
+        when(im.getIslandAt(any(Location.class))).thenReturn(optionalIsland);
 
-		// Has team
-		when(im.inTeam(any(), eq(uuid))).thenReturn(true);
-		when(plugin.getPlayers()).thenReturn(pm);
+        // Has team
+        when(im.inTeam(any(), eq(uuid))).thenReturn(true);
+        when(plugin.getPlayers()).thenReturn(pm);
 
-		// Locales
-		LocalesManager lm = mock(LocalesManager.class);
-		when(lm.get(Mockito.any(), Mockito.any()))
-				.thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
-		when(plugin.getLocalesManager()).thenReturn(lm);
+        // Locales
+        LocalesManager lm = mock(LocalesManager.class);
+        when(lm.get(Mockito.any(), Mockito.any()))
+                .thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
+        when(plugin.getLocalesManager()).thenReturn(lm);
 
-		PlaceholdersManager phm = mock(PlaceholdersManager.class);
-		when(phm.replacePlaceholders(any(), any())).thenAnswer(invocation -> invocation.getArgument(1, String.class));
-		// Placeholder manager
-		when(plugin.getPlaceholdersManager()).thenReturn(phm);
+        PlaceholdersManager phm = mock(PlaceholdersManager.class);
+        when(phm.replacePlaceholders(any(), any())).thenAnswer(invocation -> invocation.getArgument(1, String.class));
+        // Placeholder manager
+        when(plugin.getPlaceholdersManager()).thenReturn(phm);
 
-		// Island
-		when(im.getIsland(any(), any(User.class))).thenReturn(island);
-		when(island.getCenter()).thenReturn(location);
-		when(island.getOwner()).thenReturn(uuid);
-		when(location.getBlock()).thenReturn(block);
-		when(block.getRelative(any(), anyInt())).thenReturn(block);
-		when(block.getLocation()).thenReturn(location);
-		when(island.getName()).thenReturn("Island name");
+        // Island
+        when(im.getIsland(any(), any(User.class))).thenReturn(island);
+        when(island.getCenter()).thenReturn(location);
+        when(island.getOwner()).thenReturn(uuid);
+        when(location.getBlock()).thenReturn(block);
+        when(block.getRelative(any(), anyInt())).thenReturn(block);
+        when(block.getLocation()).thenReturn(location);
+        when(island.getName()).thenReturn("Island name");
 
-		// The command
-		inc = new IslandNearCommand(ic);
-	}
+        // The command
+        inc = new IslandNearCommand(ic);
+    }
 
-	/**
-	 */
-	@After
-	public void tearDown() {
-		User.clearUsers();
-		Mockito.framework().clearInlineMocks();
-	}
+    /**
+     */
+    @After
+    public void tearDown() {
+        User.clearUsers();
+        Mockito.framework().clearInlineMocks();
+    }
 
-	/**
-	 * Test method for
-	 * {@link world.bentobox.bentobox.api.commands.island.IslandNearCommand#setup()}.
-	 */
-	@Test
-	public void testSetup() {
-		assertEquals("island.near", inc.getPermission());
-		assertTrue(inc.isOnlyPlayer());
-		assertEquals("commands.island.near.parameters", inc.getParameters());
-		assertEquals("commands.island.near.description", inc.getDescription());
+    /**
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.island.IslandNearCommand#setup()}.
+     */
+    @Test
+    public void testSetup() {
+        assertEquals("island.near", inc.getPermission());
+        assertTrue(inc.isOnlyPlayer());
+        assertEquals("commands.island.near.parameters", inc.getParameters());
+        assertEquals("commands.island.near.description", inc.getDescription());
 
-	}
+    }
 
-	/**
-	 * Test method for
-	 * {@link world.bentobox.bentobox.api.commands.island.IslandNearCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
-	 */
-	@Test
-	public void testCanExecuteWithArgsShowHelp() {
-		assertFalse(inc.canExecute(user, "near", Collections.singletonList("fghjk")));
-		verify(user).sendMessage("commands.help.header", TextVariables.LABEL, "BSkyBlock");
-	}
+    /**
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.island.IslandNearCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     */
+    @Test
+    public void testCanExecuteWithArgsShowHelp() {
+        assertFalse(inc.canExecute(user, "near", Collections.singletonList("fghjk")));
+        verify(user).sendMessage("commands.help.header", TextVariables.LABEL, "BSkyBlock");
+    }
 
-	/**
+    /**
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandNearCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
@@ -199,7 +199,7 @@ public class IslandNearCommandTest {
         assertTrue(inc.canExecute(user, "near", Collections.emptyList()));
     }
 
-	/**
+    /**
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandNearCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
@@ -209,7 +209,7 @@ public class IslandNearCommandTest {
         assertTrue(inc.canExecute(user, "near", Collections.emptyList()));
     }
 
-	/**
+    /**
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandNearCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
@@ -219,7 +219,7 @@ public class IslandNearCommandTest {
         assertTrue(inc.canExecute(user, "near", Collections.emptyList()));
     }
 
-	/**
+    /**
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandNearCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
@@ -229,25 +229,25 @@ public class IslandNearCommandTest {
         assertFalse(inc.canExecute(user, "near", Collections.emptyList()));
     }
 
-	/**
-	 * Test method for
-	 * {@link world.bentobox.bentobox.api.commands.island.IslandNearCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
-	 */
-	@Test
-	public void testExecuteUserStringListOfStringAllFourPoints() {
-		assertTrue(inc.execute(user, "near", Collections.emptyList()));
-		verify(user).sendMessage("commands.island.near.the-following-islands");
-		verify(user).sendMessage("commands.island.near.syntax", "[direction]", "commands.island.near.north",
-				TextVariables.NAME, "Island name");
-		verify(user).sendMessage("commands.island.near.syntax", "[direction]", "commands.island.near.east",
-				TextVariables.NAME, "Island name");
-		verify(user).sendMessage("commands.island.near.syntax", "[direction]", "commands.island.near.south",
-				TextVariables.NAME, "Island name");
-		verify(user).sendMessage("commands.island.near.syntax", "[direction]", "commands.island.near.west",
-				TextVariables.NAME, "Island name");
-	}
+    /**
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.island.IslandNearCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     */
+    @Test
+    public void testExecuteUserStringListOfStringAllFourPoints() {
+        assertTrue(inc.execute(user, "near", Collections.emptyList()));
+        verify(user).sendMessage("commands.island.near.the-following-islands");
+        verify(user).sendMessage("commands.island.near.syntax", "[direction]", "commands.island.near.north",
+                TextVariables.NAME, "Island name");
+        verify(user).sendMessage("commands.island.near.syntax", "[direction]", "commands.island.near.east",
+                TextVariables.NAME, "Island name");
+        verify(user).sendMessage("commands.island.near.syntax", "[direction]", "commands.island.near.south",
+                TextVariables.NAME, "Island name");
+        verify(user).sendMessage("commands.island.near.syntax", "[direction]", "commands.island.near.west",
+                TextVariables.NAME, "Island name");
+    }
 
-	/**
+    /**
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandNearCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
@@ -262,7 +262,7 @@ public class IslandNearCommandTest {
 		verify(user).sendMessage("commands.island.near.syntax", "[direction]", "commands.island.near.west", TextVariables.NAME, "commands.admin.info.unowned");
     }
 
-	/**
+    /**
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandNearCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
@@ -284,7 +284,7 @@ public class IslandNearCommandTest {
                 TextVariables.NAME, "tastybento");
     }
 
-	/**
+    /**
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandNearCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test

@@ -24,8 +24,9 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.lists.Flags;
 
 /**
- * Enables changing of obsidian back into lava
- * For {@link world.bentobox.bentobox.lists.Flags#OBSIDIAN_SCOOPING}
+ * Enables changing of obsidian back into lava For
+ * {@link world.bentobox.bentobox.lists.Flags#OBSIDIAN_SCOOPING}
+ * 
  * @author tastybento
  */
 public class ObsidianScoopingListener extends FlagListener {
@@ -39,6 +40,7 @@ public class ObsidianScoopingListener extends FlagListener {
     public void onPlayerInteractEvent(final PlayerInteractEvent e) {
         onPlayerInteract(e);
     }
+
     /**
      * Enables changing of obsidian back into lava
      *
@@ -56,11 +58,11 @@ public class ObsidianScoopingListener extends FlagListener {
             return false;
         }
 
-        if (Material.BUCKET.equals(e.getPlayer().getInventory().getItemInOffHand().getType()) &&
-            Material.BUCKET.equals(e.getPlayer().getInventory().getItemInMainHand().getType()) &&
-            EquipmentSlot.OFF_HAND.equals(e.getHand()))
-        {
-            // If player is holding bucket in both hands, then allow to interact only with main hand.
+        if (Material.BUCKET.equals(e.getPlayer().getInventory().getItemInOffHand().getType())
+                && Material.BUCKET.equals(e.getPlayer().getInventory().getItemInMainHand().getType())
+                && EquipmentSlot.OFF_HAND.equals(e.getHand())) {
+            // If player is holding bucket in both hands, then allow to interact only with
+            // main hand.
             // Prevents lava duplication glitch.
             return false;
         }
@@ -94,6 +96,7 @@ public class ObsidianScoopingListener extends FlagListener {
         return false;
 
     }
+
     private void givePlayerLava(Player player, Block b, ItemStack bucket) {
         if (bucket.getAmount() == 1) {
             // Needs some special handling when there is only 1 bucket in the stack

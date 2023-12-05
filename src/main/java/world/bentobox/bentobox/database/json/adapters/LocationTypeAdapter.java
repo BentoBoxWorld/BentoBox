@@ -41,8 +41,8 @@ public class LocationTypeAdapter extends TypeAdapter<Location> {
         double x = in.nextDouble();
         double y = in.nextDouble();
         double z = in.nextDouble();
-        float yaw = (float)in.nextDouble();
-        float pitch = (float)in.nextDouble();
+        float yaw = (float) in.nextDouble();
+        float pitch = (float) in.nextDouble();
         in.endArray();
         return new Location(world, x, y, z, yaw, pitch);
     }

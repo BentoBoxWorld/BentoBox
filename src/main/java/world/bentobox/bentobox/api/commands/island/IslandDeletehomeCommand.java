@@ -17,6 +17,7 @@ import world.bentobox.bentobox.util.Util;
 
 /**
  * Deletes a home
+ * 
  * @author tastybento
  *
  */
@@ -24,6 +25,7 @@ public class IslandDeletehomeCommand extends ConfirmableCommand {
 
     /**
      * Deletes a home
+     * 
      * @param islandCommand parent command
      */
     public IslandDeletehomeCommand(CompositeCommand islandCommand) {
@@ -56,8 +58,8 @@ public class IslandDeletehomeCommand extends ConfirmableCommand {
         // check command ranks
         int rank = Objects.requireNonNull(island).getRank(user);
         if (rank < island.getRankCommand(getUsage())) {
-            user.sendMessage("general.errors.insufficient-rank",
-                    TextVariables.RANK, user.getTranslation(getPlugin().getRanksManager().getRank(rank)));
+            user.sendMessage("general.errors.insufficient-rank", TextVariables.RANK,
+                    user.getTranslation(getPlugin().getRanksManager().getRank(rank)));
             return false;
         }
 
@@ -72,13 +74,13 @@ public class IslandDeletehomeCommand extends ConfirmableCommand {
         if (!map.containsKey(name)) {
             user.sendMessage("commands.island.go.unknown-home");
             user.sendMessage("commands.island.sethome.homes-are");
-            map.keySet().stream().filter(s -> !s.isEmpty()).forEach(s -> user.sendMessage("commands.island.sethome.home-list-syntax", TextVariables.NAME, s));
+            map.keySet().stream().filter(s -> !s.isEmpty())
+                    .forEach(s -> user.sendMessage("commands.island.sethome.home-list-syntax", TextVariables.NAME, s));
             return false;
         }
         this.askConfirmation(user, () -> delete(map.get(name), user, name));
         return true;
     }
-
 
     private void delete(Island island, User user, String name) {
         island.removeHome(name);
@@ -87,7 +89,7 @@ public class IslandDeletehomeCommand extends ConfirmableCommand {
 
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
-        String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
+        String lastArg = !args.isEmpty() ? args.get(args.size() - 1) : "";
 
         return Optional.of(Util.tabLimit(new ArrayList<>(getNameIslandMap(user).keySet()), lastArg));
 

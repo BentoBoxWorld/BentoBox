@@ -18,6 +18,7 @@ public class BentoBoxReloadCommand extends ConfirmableCommand {
 
     /**
      * Reloads settings, addons and localization command
+     * 
      * @param parent command parent
      */
     public BentoBoxReloadCommand(CompositeCommand parent) {
@@ -55,7 +56,8 @@ public class BentoBoxReloadCommand extends ConfirmableCommand {
                 user.sendMessage("commands.bentobox.reload.locales-reloaded");
 
                 // Register new default gamemode placeholders
-                getPlugin().getAddonsManager().getGameModeAddons().forEach(getPlugin().getPlaceholdersManager()::registerDefaultPlaceholders);
+                getPlugin().getAddonsManager().getGameModeAddons()
+                        .forEach(getPlugin().getPlaceholdersManager()::registerDefaultPlaceholders);
 
             });
         } else {

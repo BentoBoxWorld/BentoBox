@@ -15,6 +15,7 @@ import world.bentobox.bentobox.util.Util;
 
 /**
  * Toggles a worldwide setting on/off
+ * 
  * @author tastybento
  *
  */
@@ -37,7 +38,8 @@ public class WorldToggleClick implements ClickHandler {
             user.sendMessage("general.errors.wrong-world");
             return true;
         }
-        String reqPerm = plugin.getIWM().getPermissionPrefix(Util.getWorld(user.getWorld())) + "admin.world.settings." + id;
+        String reqPerm = plugin.getIWM().getPermissionPrefix(Util.getWorld(user.getWorld())) + "admin.world.settings."
+                + id;
         if (!user.hasPermission(reqPerm)) {
             user.sendMessage("general.errors.no-permission", TextVariables.PERMISSION, reqPerm);
             user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_METAL_HIT, 1F, 1F);
@@ -60,12 +62,16 @@ public class WorldToggleClick implements ClickHandler {
                 flag.setSetting(user.getWorld(), !flag.isSetForWorld(user.getWorld()));
                 user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 1F, 1F);
                 // Fire event
-                Bukkit.getPluginManager().callEvent(new FlagWorldSettingChangeEvent(user.getWorld(), user.getUniqueId(), flag, flag.isSetForWorld(user.getWorld())));
+                Bukkit.getPluginManager().callEvent(new FlagWorldSettingChangeEvent(user.getWorld(), user.getUniqueId(),
+                        flag, flag.isSetForWorld(user.getWorld())));
 
                 // Subflag support
                 if (flag.hasSubflags()) {
                     // Fire events for all subflags as well
-                    flag.getSubflags().forEach(subflag -> Bukkit.getPluginManager().callEvent(new FlagWorldSettingChangeEvent(user.getWorld(), user.getUniqueId(), subflag, subflag.isSetForWorld(user.getWorld()))));
+                    flag.getSubflags()
+                            .forEach(subflag -> Bukkit.getPluginManager()
+                                    .callEvent(new FlagWorldSettingChangeEvent(user.getWorld(), user.getUniqueId(),
+                                            subflag, subflag.isSetForWorld(user.getWorld()))));
                 }
             }
 

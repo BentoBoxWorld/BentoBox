@@ -14,12 +14,14 @@ import world.bentobox.bentobox.database.objects.Island;
 
 /**
  * Tells the players which islands are near to them
+ * 
  * @author tastybento
  * @since 1.5.0
  */
 public class IslandNearCommand extends CompositeCommand {
 
-    private static final List<BlockFace> COMPASS_POINTS = Arrays.asList(BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST);
+    private static final List<BlockFace> COMPASS_POINTS = Arrays.asList(BlockFace.NORTH, BlockFace.EAST,
+            BlockFace.SOUTH, BlockFace.WEST);
 
     public IslandNearCommand(CompositeCommand islandCommand) {
         super(islandCommand, "near");
@@ -57,17 +59,12 @@ public class IslandNearCommand extends CompositeCommand {
         int dist = getIWM().getIslandDistance(getWorld()) * 2;
         boolean noNeighbors = true;
         for (BlockFace face : COMPASS_POINTS) {
-            String name = getIslands().getIslandAt(
-                    island
-                    .getCenter()
-                    .getBlock()
-                    .getRelative(face, dist)
-                    .getLocation())
+            String name = getIslands().getIslandAt(island.getCenter().getBlock().getRelative(face, dist).getLocation())
                     .map(i -> getName(user, i)).orElse("");
             if (!name.isEmpty()) {
                 noNeighbors = false;
-                user.sendMessage("commands.island.near.syntax",
-                        "[direction]", user.getTranslation("commands.island.near." + face.name().toLowerCase(Locale.ENGLISH)),
+                user.sendMessage("commands.island.near.syntax", "[direction]",
+                        user.getTranslation("commands.island.near." + face.name().toLowerCase(Locale.ENGLISH)),
                         TextVariables.NAME, name);
             }
         }

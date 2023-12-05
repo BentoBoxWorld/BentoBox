@@ -44,7 +44,6 @@ public class TestWorldSettings implements WorldSettings {
     @Override
     public void setDifficulty(Difficulty difficulty) {
 
-
     }
 
     @Override
@@ -157,7 +156,7 @@ public class TestWorldSettings implements WorldSettings {
 
     @Override
     public Map<String, Boolean> getWorldFlags() {
-        return map ;
+        return map;
     }
 
     /**
@@ -326,7 +325,6 @@ public class TestWorldSettings implements WorldSettings {
 
     @Override
     public void setResetEpoch(long timestamp) {
-
 
     }
 

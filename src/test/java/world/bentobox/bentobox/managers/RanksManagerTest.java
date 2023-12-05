@@ -19,21 +19,22 @@ import world.bentobox.bentobox.database.DatabaseSetup;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({DatabaseSetup.class,})
+@PrepareForTest({ DatabaseSetup.class, })
 public class RanksManagerTest extends RanksManagerBeforeClassTest {
 
     public static RanksManager ranksManager;
-    
+
     /**
      */
     @Before
     public void setUp() throws Exception {
-    	super.setUp();
+        super.setUp();
         ranksManager = new RanksManager();
     }
-    
+
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.RanksManager#addRank(java.lang.String, int)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.RanksManager#addRank(java.lang.String, int)}.
      */
     @Test
     public void testAddRank() {
@@ -41,7 +42,8 @@ public class RanksManagerTest extends RanksManagerBeforeClassTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.RanksManager#removeRank(java.lang.String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.RanksManager#removeRank(java.lang.String)}.
      */
     @Test
     public void testRemoveRank() {
@@ -52,7 +54,8 @@ public class RanksManagerTest extends RanksManagerBeforeClassTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.RanksManager#getRankValue(java.lang.String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.RanksManager#getRankValue(java.lang.String)}.
      */
     @Test
     public void testGetRankValue() {
@@ -61,7 +64,8 @@ public class RanksManagerTest extends RanksManagerBeforeClassTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.RanksManager#getRanks()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.RanksManager#getRanks()}.
      */
     @Test
     public void testGetRanks() {
@@ -73,7 +77,8 @@ public class RanksManagerTest extends RanksManagerBeforeClassTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.RanksManager#getRankUpValue(int)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.RanksManager#getRankUpValue(int)}.
      */
     @Test
     public void testGetNextRankValue() {
@@ -86,7 +91,8 @@ public class RanksManagerTest extends RanksManagerBeforeClassTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.RanksManager#getRankDownValue(int)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.RanksManager#getRankDownValue(int)}.
      */
     @Test
     public void testGetPreviousRankValue() {
@@ -98,7 +104,8 @@ public class RanksManagerTest extends RanksManagerBeforeClassTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.RanksManager#getRank(int)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.RanksManager#getRank(int)}.
      */
     @Test
     public void testGetRank() {

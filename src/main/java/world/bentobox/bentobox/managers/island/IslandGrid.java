@@ -8,6 +8,7 @@ import world.bentobox.bentobox.database.objects.Island;
 
 /**
  * Handles the island location grid for each world
+ * 
  * @author tastybento
  *
  */
@@ -17,8 +18,10 @@ class IslandGrid {
 
     /**
      * Adds island to grid
+     * 
      * @param island - island to add
-     * @return true if successfully added, false if island already exists, or there is an overlap
+     * @return true if successfully added, false if island already exists, or there
+     *         is an overlap
      */
     public boolean addToGrid(Island island) {
         if (grid.containsKey(island.getMinX())) {
@@ -72,8 +75,10 @@ class IslandGrid {
 
     /**
      * Remove island from grid
+     * 
      * @param island - the island to remove
-     * @return true if island existed and was deleted, false if there was nothing to delete
+     * @return true if island existed and was deleted, false if there was nothing to
+     *         delete
      */
     public boolean removeFromGrid(Island island) {
         // Remove from grid
@@ -94,8 +99,8 @@ class IslandGrid {
     }
 
     /**
-     * Returns the island at the x,z location or null if there is none.
-     * This includes the full island space, not just the protected area.
+     * Returns the island at the x,z location or null if there is none. This
+     * includes the full island space, not just the protected area.
      *
      * @param x - x coordinate
      * @param z - z coordinate

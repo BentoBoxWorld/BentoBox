@@ -11,35 +11,33 @@ import com.google.gson.annotations.Expose;
  */
 @Table(name = "Ranks")
 public class Ranks implements DataObject {
-	
-	public static final String ID = "BentoBox-Ranks";
-	
-	public Ranks(Map<String, Integer> rankReference) {
-		super();
-		this.rankReference = rankReference;
-	}
 
-	@Expose
-	private Map<String, Integer> rankReference;
+    public static final String ID = "BentoBox-Ranks";
 
-	@Override
-	public String getUniqueId() {
-		return ID;
-	}
+    public Ranks(Map<String, Integer> rankReference) {
+        super();
+        this.rankReference = rankReference;
+    }
 
-	@Override
-	public void setUniqueId(String uniqueId) {
-		// Nothing to do
-	}
+    @Expose
+    private Map<String, Integer> rankReference;
 
-	public Map<String, Integer> getRankReference() {
-		return Objects.requireNonNullElse(rankReference, new LinkedHashMap<>());
-	}
+    @Override
+    public String getUniqueId() {
+        return ID;
+    }
 
-	public void setRankReference(Map<String, Integer> rankReference) {
-		this.rankReference = rankReference;
-	}
+    @Override
+    public void setUniqueId(String uniqueId) {
+        // Nothing to do
+    }
 
-	
-	
+    public Map<String, Integer> getRankReference() {
+        return Objects.requireNonNullElse(rankReference, new LinkedHashMap<>());
+    }
+
+    public void setRankReference(Map<String, Integer> rankReference) {
+        this.rankReference = rankReference;
+    }
+
 }

@@ -39,10 +39,12 @@ public class FlagTypeAdapter extends TypeAdapter<Flag> {
         }
         String id = reader.nextString();
         Flag f = plugin.getFlagsManager().getFlag(id).orElse(null);
-        // Flags can end up null if an addon that created one is removed or if a flag name was changed
+        // Flags can end up null if an addon that created one is removed or if a flag
+        // name was changed
         if (f == null) {
-            // Create a temporary flag with a unique key. It will be immediately deleted after loading
-            f = new Flag.Builder("NULL_FLAG_"+ UUID.randomUUID(), Material.STONE).build();
+            // Create a temporary flag with a unique key. It will be immediately deleted
+            // after loading
+            f = new Flag.Builder("NULL_FLAG_" + UUID.randomUUID(), Material.STONE).build();
         }
         return f;
     }

@@ -41,8 +41,10 @@ import world.bentobox.bentobox.database.objects.IslandDeletion;
 import world.bentobox.bentobox.util.MyBiomeGrid;
 
 /**
- * Regenerates by using a seed world. The seed world is created using the same generator as the game
- * world so that features created by methods like generateNoise or generateCaves can be regenerated.
+ * Regenerates by using a seed world. The seed world is created using the same
+ * generator as the game world so that features created by methods like
+ * generateNoise or generateCaves can be regenerated.
+ * 
  * @author tastybento
  *
  */
@@ -55,8 +57,9 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
     }
 
     /**
-     * Update the low-level chunk information for the given block to the new block ID and data.  This
-     * change will not be propagated to clients until the chunk is refreshed to them.
+     * Update the low-level chunk information for the given block to the new block
+     * ID and data. This change will not be propagated to clients until the chunk is
+     * refreshed to them.
      *
      * @param chunk        - chunk to be changed
      * @param x            - x coordinate within chunk 0 - 15
@@ -65,7 +68,8 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
      * @param blockData    - block data to set the block
      * @param applyPhysics - apply physics or not
      */
-    protected abstract void setBlockInNativeChunk(Chunk chunk, int x, int y, int z, BlockData blockData, boolean applyPhysics);
+    protected abstract void setBlockInNativeChunk(Chunk chunk, int x, int y, int z, BlockData blockData,
+            boolean applyPhysics);
 
     @Override
     public CompletableFuture<Void> regenerate(GameModeAddon gm, IslandDeletion di, World world) {
@@ -81,7 +85,8 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
 
             @Override
             public void run() {
-                if (!currentTask.isDone()) return;
+                if (!currentTask.isDone())
+                    return;
                 if (isEnded(chunkX)) {
                     cancel();
                     bigFuture.complete(null);
@@ -119,11 +124,13 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
     private CompletableFuture<Void> regenerateChunk(@Nullable IslandDeletion di, World world, int chunkX, int chunkZ) {
         CompletableFuture<Chunk> seedWorldFuture = getSeedWorldChunk(world, chunkX, chunkZ);
 
-        // Set up a future to get the chunk requests using Paper's Lib. If Paper is used, this should be done async
+        // Set up a future to get the chunk requests using Paper's Lib. If Paper is
+        // used, this should be done async
         CompletableFuture<Chunk> chunkFuture = PaperLib.getChunkAtAsync(world, chunkX, chunkZ);
 
         // If there is no island, do not clean chunk
-        CompletableFuture<Void> cleanFuture = di != null ? cleanChunk(chunkFuture, di) : CompletableFuture.completedFuture(null);
+        CompletableFuture<Void> cleanFuture = di != null ? cleanChunk(chunkFuture, di)
+                : CompletableFuture.completedFuture(null);
 
         CompletableFuture<Void> copyFuture = CompletableFuture.allOf(cleanFuture, chunkFuture, seedWorldFuture);
 
@@ -143,38 +150,43 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
 
     private CompletableFuture<Chunk> getSeedWorldChunk(World world, int chunkX, int chunkZ) {
         World seed = Bukkit.getWorld(world.getName() + "/bentobox");
-        if (seed == null) return CompletableFuture.completedFuture(null);
+        if (seed == null)
+            return CompletableFuture.completedFuture(null);
         return PaperLib.getChunkAtAsync(seed, chunkX, chunkZ);
     }
 
     /**
      * Cleans up the chunk of inventories and entities
+     * 
      * @param chunkFuture the future chunk to be cleaned
-     * @param di island deletion data
+     * @param di          island deletion data
      * @return future completion of this task
      */
     private CompletableFuture<Void> cleanChunk(CompletableFuture<Chunk> chunkFuture, IslandDeletion di) {
-        // when it is complete, then run through all the tile entities in the chunk and clear them, e.g., chests are emptied
-        CompletableFuture<Void> invFuture = chunkFuture.thenAccept(chunk ->
-        Arrays.stream(chunk.getTileEntities()).filter(InventoryHolder.class::isInstance)
-        .filter(te -> di.inBounds(te.getLocation().getBlockX(), te.getLocation().getBlockZ()))
-        .forEach(te -> ((InventoryHolder) te).getInventory().clear())
-                );
+        // when it is complete, then run through all the tile entities in the chunk and
+        // clear them, e.g., chests are emptied
+        CompletableFuture<Void> invFuture = chunkFuture
+                .thenAccept(chunk -> Arrays.stream(chunk.getTileEntities()).filter(InventoryHolder.class::isInstance)
+                        .filter(te -> di.inBounds(te.getLocation().getBlockX(), te.getLocation().getBlockZ()))
+                        .forEach(te -> ((InventoryHolder) te).getInventory().clear()));
 
-        // Similarly, when the chunk is loaded, remove all the entities in the chunk apart from players
+        // Similarly, when the chunk is loaded, remove all the entities in the chunk
+        // apart from players
         CompletableFuture<Void> entitiesFuture = chunkFuture.thenAccept(chunk ->
-        // Remove all entities in chunk, including any dropped items as a result of clearing the blocks above
-        Arrays.stream(chunk.getEntities())
-        .filter(e -> !(e instanceof Player) && di.inBounds(e.getLocation().getBlockX(), e.getLocation().getBlockZ()))
-        .forEach(Entity::remove));
+        // Remove all entities in chunk, including any dropped items as a result of
+        // clearing the blocks above
+        Arrays.stream(chunk.getEntities()).filter(
+                e -> !(e instanceof Player) && di.inBounds(e.getLocation().getBlockX(), e.getLocation().getBlockZ()))
+                .forEach(Entity::remove));
         return CompletableFuture.allOf(invFuture, entitiesFuture);
     }
 
     /**
      * Copies a chunk to another chunk
-     * @param toChunk - chunk to be copied into
+     * 
+     * @param toChunk   - chunk to be copied into
      * @param fromChunk - chunk to be copied from
-     * @param limitBox - limit box that the chunk needs to be in
+     * @param limitBox  - limit box that the chunk needs to be in
      */
     private void copyChunkDataToChunk(Chunk toChunk, Chunk fromChunk, BoundingBox limitBox) {
         double baseX = toChunk.getX() << 4;
@@ -196,10 +208,12 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
             }
         }
         // Entities
-        Arrays.stream(fromChunk.getEntities()).forEach(e -> processEntity(e, e.getLocation().toVector().toLocation(toChunk.getWorld())));
+        Arrays.stream(fromChunk.getEntities())
+                .forEach(e -> processEntity(e, e.getLocation().toVector().toLocation(toChunk.getWorld())));
 
         // Tile Entities
-        Arrays.stream(fromChunk.getTileEntities()).forEach(bs -> processTileEntity(bs.getBlock(), bs.getLocation().toVector().toLocation(toChunk.getWorld()).getBlock()));
+        Arrays.stream(fromChunk.getTileEntities()).forEach(bs -> processTileEntity(bs.getBlock(),
+                bs.getLocation().toVector().toLocation(toChunk.getWorld()).getBlock()));
     }
 
     private void processEntity(Entity entity, Location location) {
@@ -221,7 +235,8 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
         }
         // Only set if child. Most animals are adults
         if (entity instanceof Ageable a && bpe instanceof Ageable aa) {
-            if (a.isAdult()) aa.setAdult();
+            if (a.isAdult())
+                aa.setAdult();
         }
         if (entity instanceof AbstractHorse horse && bpe instanceof AbstractHorse horse2) {
             horse2.setDomestication(horse.getDomestication());
@@ -235,7 +250,8 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
 
     /**
      * Set the villager stats
-     * @param v - villager
+     * 
+     * @param v         - villager
      * @param villager2 villager
      */
     private void setVillager(Villager v, Villager villager2) {
@@ -272,7 +288,6 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
         }
     }
 
-
     private void writeSign(Sign fromSign, Sign toSign, Side side) {
         SignSide fromSide = fromSign.getSide(side);
         SignSide toSide = toSign.getSide(side);
@@ -292,7 +307,8 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
 
             @Override
             public void run() {
-                if (!currentTask.isDone()) return;
+                if (!currentTask.isDone())
+                    return;
                 if (isEnded(chunkX)) {
                     cancel();
                     bigFuture.complete(null);
@@ -323,13 +339,13 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
     }
 
     @SuppressWarnings("deprecation")
-    private CompletableFuture<Void> regenerateChunk(GameModeAddon gm, IslandDeletion di, World world, int chunkX, int chunkZ) {
+    private CompletableFuture<Void> regenerateChunk(GameModeAddon gm, IslandDeletion di, World world, int chunkX,
+            int chunkZ) {
         CompletableFuture<Chunk> chunkFuture = PaperLib.getChunkAtAsync(world, chunkX, chunkZ);
-        CompletableFuture<Void> invFuture = chunkFuture.thenAccept(chunk ->
-        Arrays.stream(chunk.getTileEntities()).filter(InventoryHolder.class::isInstance)
-        .filter(te -> di.inBounds(te.getLocation().getBlockX(), te.getLocation().getBlockZ()))
-        .forEach(te -> ((InventoryHolder) te).getInventory().clear())
-                );
+        CompletableFuture<Void> invFuture = chunkFuture
+                .thenAccept(chunk -> Arrays.stream(chunk.getTileEntities()).filter(InventoryHolder.class::isInstance)
+                        .filter(te -> di.inBounds(te.getLocation().getBlockX(), te.getLocation().getBlockZ()))
+                        .forEach(te -> ((InventoryHolder) te).getInventory().clear()));
         CompletableFuture<Void> entitiesFuture = chunkFuture.thenAccept(chunk -> {
             for (Entity e : chunk.getEntities()) {
                 if (!(e instanceof Player)) {
@@ -343,19 +359,24 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
             ChunkGenerator cg = gm.getDefaultWorldGenerator(chunk.getWorld().getName(), "delete");
             // Will be null if use-own-generator is set to true
             if (cg != null) {
-                ChunkGenerator.ChunkData cd = cg.generateChunkData(chunk.getWorld(), new Random(), chunk.getX(), chunk.getZ(), grid);
+                ChunkGenerator.ChunkData cd = cg.generateChunkData(chunk.getWorld(), new Random(), chunk.getX(),
+                        chunk.getZ(), grid);
                 copyChunkDataToChunk(chunk, cd, grid, di.getBox());
             }
             return chunk;
         });
         CompletableFuture<Void> postCopyFuture = copyFuture.thenAccept(chunk ->
-        // Remove all entities in chunk, including any dropped items as a result of clearing the blocks above
-        Arrays.stream(chunk.getEntities()).filter(e -> !(e instanceof Player) && di.inBounds(e.getLocation().getBlockX(), e.getLocation().getBlockZ())).forEach(Entity::remove));
+        // Remove all entities in chunk, including any dropped items as a result of
+        // clearing the blocks above
+        Arrays.stream(chunk.getEntities()).filter(
+                e -> !(e instanceof Player) && di.inBounds(e.getLocation().getBlockX(), e.getLocation().getBlockZ()))
+                .forEach(Entity::remove));
         return CompletableFuture.allOf(invFuture, entitiesFuture, postCopyFuture);
     }
 
     @SuppressWarnings("deprecation")
-    private void copyChunkDataToChunk(Chunk chunk, ChunkGenerator.ChunkData chunkData, ChunkGenerator.BiomeGrid biomeGrid, BoundingBox limitBox) {
+    private void copyChunkDataToChunk(Chunk chunk, ChunkGenerator.ChunkData chunkData,
+            ChunkGenerator.BiomeGrid biomeGrid, BoundingBox limitBox) {
         double baseX = chunk.getX() << 4;
         double baseZ = chunk.getZ() << 4;
         int minHeight = chunk.getWorld().getMinHeight();

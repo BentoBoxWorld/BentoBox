@@ -3,9 +3,7 @@
 // Copyright - 2021
 //
 
-
 package world.bentobox.bentobox.database.json.adapters;
-
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -19,14 +17,12 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 
-
 /**
- * Minecraft 1.18 reworked their biomes, and a lot of things were renamed or removed.
- * This adapter will address these changes in each database object, instead of manually fining it
- * per implementation.
+ * Minecraft 1.18 reworked their biomes, and a lot of things were renamed or
+ * removed. This adapter will address these changes in each database object,
+ * instead of manually fining it per implementation.
  */
-public  final class BiomeTypeAdapter extends TypeAdapter<Biome>
-{
+public final class BiomeTypeAdapter extends TypeAdapter<Biome> {
     /**
      * Map that contains string value to the actual Biome enum object.
      */
@@ -81,8 +77,7 @@ public  final class BiomeTypeAdapter extends TypeAdapter<Biome>
     }
 
     @Override
-    public Biome read(JsonReader input) throws IOException
-    {
+    public Biome read(JsonReader input) throws IOException {
         if (JsonToken.NULL.equals(input.peek())) {
             input.nextNull();
             return null;
@@ -96,4 +91,3 @@ public  final class BiomeTypeAdapter extends TypeAdapter<Biome>
         output.value(enumValue != null ? enumValue.name() : null);
     }
 }
-

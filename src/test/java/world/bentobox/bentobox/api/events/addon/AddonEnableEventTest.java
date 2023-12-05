@@ -36,7 +36,8 @@ public class AddonEnableEventTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.events.addon.AddonEnableEvent#getHandlers()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.events.addon.AddonEnableEvent#getHandlers()}.
      */
     @Test
     public void testGetHandlers() {
@@ -44,7 +45,8 @@ public class AddonEnableEventTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.events.addon.AddonEnableEvent#getHandlerList()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.events.addon.AddonEnableEvent#getHandlerList()}.
      */
     @Test
     public void testGetHandlerList() {
@@ -52,7 +54,8 @@ public class AddonEnableEventTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.events.addon.AddonEnableEvent#AddonEnableEvent(world.bentobox.bentobox.api.addons.Addon, java.util.Map)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.events.addon.AddonEnableEvent#AddonEnableEvent(world.bentobox.bentobox.api.addons.Addon, java.util.Map)}.
      */
     @Test
     public void testAddonEnableEvent() {
@@ -60,7 +63,8 @@ public class AddonEnableEventTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.events.addon.AddonBaseEvent#getKeyValues()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.events.addon.AddonBaseEvent#getKeyValues()}.
      */
     @Test
     public void testGetKeyValues() {
@@ -68,7 +72,8 @@ public class AddonEnableEventTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.events.addon.AddonBaseEvent#getAddon()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.events.addon.AddonBaseEvent#getAddon()}.
      */
     @Test
     public void testGetAddon() {
@@ -76,7 +81,8 @@ public class AddonEnableEventTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.events.addon.AddonBaseEvent#getNewEvent()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.events.addon.AddonBaseEvent#getNewEvent()}.
      */
     @Test
     public void testGetNewEvent() {
@@ -84,7 +90,8 @@ public class AddonEnableEventTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.events.addon.AddonBaseEvent#setNewEvent(world.bentobox.bentobox.api.events.addon.AddonBaseEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.events.addon.AddonBaseEvent#setNewEvent(world.bentobox.bentobox.api.events.addon.AddonBaseEvent)}.
      */
     @Test
     public void testSetNewEvent() {
@@ -93,7 +100,8 @@ public class AddonEnableEventTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.events.BentoBoxEvent#setKeyValues(java.util.Map)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.events.BentoBoxEvent#setKeyValues(java.util.Map)}.
      */
     @Test
     @Ignore

@@ -123,7 +123,7 @@ public class UserTest {
         // IWM
         when(plugin.getIWM()).thenReturn(iwm);
         // Addon
-        when(iwm .getAddon(any())).thenReturn(Optional.empty());
+        when(iwm.getAddon(any())).thenReturn(Optional.empty());
 
         user = User.getInstance(player);
 
@@ -135,8 +135,10 @@ public class UserTest {
         // Placeholders
         PlaceholdersManager placeholdersManager = mock(PlaceholdersManager.class);
         when(plugin.getPlaceholdersManager()).thenReturn(placeholdersManager);
-        // This will just return the value of the second argument of replacePlaceholders. i.e., it won't change anything
-        when(placeholdersManager.replacePlaceholders(any(), any())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
+        // This will just return the value of the second argument of
+        // replacePlaceholders. i.e., it won't change anything
+        when(placeholdersManager.replacePlaceholders(any(), any()))
+                .thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
 
         when(plugin.getPlayers()).thenReturn(pm);
         players = new Players();
@@ -149,17 +151,16 @@ public class UserTest {
         Mockito.framework().clearInlineMocks();
     }
 
-
     @Test
     public void testGetInstanceCommandSender() {
         User user = User.getInstance(sender);
         assertNotNull(user);
-        assertEquals(sender,user.getSender());
+        assertEquals(sender, user.getSender());
     }
 
     @Test
     public void testGetInstancePlayer() {
-        assertEquals(player,user.getPlayer());
+        assertEquals(player, user.getPlayer());
     }
 
     @Test
@@ -167,7 +168,7 @@ public class UserTest {
         UUID uuid = UUID.randomUUID();
         User user = User.getInstance(uuid);
         assertNotNull(user);
-        assertEquals(uuid,user.getUniqueId());
+        assertEquals(uuid, user.getUniqueId());
     }
 
     @Test
@@ -175,8 +176,10 @@ public class UserTest {
         assertNotNull(User.getInstance(uuid));
         assertEquals(user, User.getInstance(uuid));
         User.removePlayer(player);
-        // If the player has been removed from the cache, then code will ask server for player
-        // Return null and check if instance is null will show that the player is not in the cache
+        // If the player has been removed from the cache, then code will ask server for
+        // player
+        // Return null and check if instance is null will show that the player is not in
+        // the cache
         when(Bukkit.getPlayer(any(UUID.class))).thenReturn(null);
         verify(pm).removePlayer(player);
     }
@@ -194,7 +197,7 @@ public class UserTest {
         Set<PermissionAttachmentInfo> value = new HashSet<>();
         PermissionAttachmentInfo perm = new PermissionAttachmentInfo(sender, "perm", null, false);
         value.add(perm);
-        when(sender.getEffectivePermissions()).thenReturn(value );
+        when(sender.getEffectivePermissions()).thenReturn(value);
         User user = User.getInstance(sender);
         assertEquals(value, user.getEffectivePermissions());
     }
@@ -340,7 +343,7 @@ public class UserTest {
         // Set addon context
         user.setAddon(addon);
         Optional<GameModeAddon> optionalAddon = Optional.of(addon);
-        when(iwm .getAddon(any())).thenReturn(optionalAddon);
+        when(iwm.getAddon(any())).thenReturn(optionalAddon);
         when(lm.get(any(), eq("name.a.reference"))).thenReturn("mockmockmock");
         user.sendMessage("a.reference");
         verify(player, never()).sendMessage(eq(TEST_TRANSLATION));
@@ -384,7 +387,7 @@ public class UserTest {
     @Test
     public void testSendRawMessageNullUser() {
         String raw = ChatColor.RED + "" + ChatColor.BOLD + "test message";
-        user = User.getInstance((CommandSender)null);
+        user = User.getInstance((CommandSender) null);
         user.sendRawMessage(raw);
         verify(player, never()).sendMessage(anyString());
     }
@@ -404,10 +407,9 @@ public class UserTest {
         verify(notifier).notify(user, translation);
     }
 
-
     @Test
     public void testSetGameMode() {
-        for (GameMode gm: GameMode.values()) {
+        for (GameMode gm : GameMode.values()) {
             user.setGameMode(gm);
         }
         verify(player, times(GameMode.values().length)).setGameMode(any());
@@ -484,7 +486,7 @@ public class UserTest {
         assertNotEquals(null, user2);
         assertNotEquals("a string", user2);
 
-        user1 = User.getInstance((UUID)null);
+        user1 = User.getInstance((UUID) null);
         assertNotEquals(user2, user1);
     }
 
@@ -641,7 +643,8 @@ public class UserTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.user.User#getInstance(org.bukkit.OfflinePlayer)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.user.User#getInstance(org.bukkit.OfflinePlayer)}.
      */
     @Test
     public void testGetInstanceOfflinePlayer() {
@@ -655,7 +658,8 @@ public class UserTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.user.User#getOfflinePlayer()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.user.User#getOfflinePlayer()}.
      */
     @Test
     public void testGetOfflinePlayer() {
@@ -668,7 +672,8 @@ public class UserTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.user.User#isOfflinePlayer()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.user.User#isOfflinePlayer()}.
      */
     @Test
     public void testIsOfflinePlayer() {
@@ -687,7 +692,8 @@ public class UserTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.user.User#addPerm(java.lang.String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.user.User#addPerm(java.lang.String)}.
      */
     @Test
     public void testAddPerm() {
@@ -698,7 +704,8 @@ public class UserTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.user.User#removePerm(java.lang.String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.user.User#removePerm(java.lang.String)}.
      */
     @Test
     public void testRemovePerm() {
@@ -719,10 +726,9 @@ public class UserTest {
         verify(player).removeAttachment(attachment);
     }
 
-
-
     /**
-     * Test method for {@link world.bentobox.bentobox.api.user.User#getTranslation(org.bukkit.World, java.lang.String, java.lang.String[])}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.user.User#getTranslation(org.bukkit.World, java.lang.String, java.lang.String[])}.
      */
     @Test
     public void testGetTranslationWorldStringStringArray() {
@@ -734,7 +740,8 @@ public class UserTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.user.User#getTranslation(org.bukkit.World, java.lang.String, java.lang.String[])}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.user.User#getTranslation(org.bukkit.World, java.lang.String, java.lang.String[])}.
      */
     @Test
     public void testGetTranslationWorldStringStringArrayWwithAddon() {
@@ -750,7 +757,8 @@ public class UserTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.user.User#getTranslation(java.lang.String, java.lang.String[])}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.user.User#getTranslation(java.lang.String, java.lang.String[])}.
      */
     @Test
     public void testGetTranslationStringStringArray() {
@@ -760,7 +768,8 @@ public class UserTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.user.User#notify(java.lang.String, java.lang.String[])}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.user.User#notify(java.lang.String, java.lang.String[])}.
      */
     @Test
     public void testNotifyStringStringArray() {
@@ -774,7 +783,8 @@ public class UserTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.user.User#notify(org.bukkit.World, java.lang.String, java.lang.String[])}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.user.User#notify(org.bukkit.World, java.lang.String, java.lang.String[])}.
      */
     @Test
     public void testNotifyWorldStringStringArray() {
@@ -835,7 +845,8 @@ public class UserTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.user.User#spawnParticle(org.bukkit.Particle, java.lang.Object, double, double, double)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.user.User#spawnParticle(org.bukkit.Particle, java.lang.Object, double, double, double)}.
      */
     @Test
     public void testSpawnParticleParticleObjectDoubleDoubleDoubleError() {
@@ -844,19 +855,21 @@ public class UserTest {
         try {
             p.spawnParticle(Particle.REDSTONE, 4, 0.0d, 0.0d, 0.0d);
         } catch (Exception e) {
-            assertEquals("A non-null DustOptions must be provided when using Particle.REDSTONE as particle.", e.getMessage());
+            assertEquals("A non-null DustOptions must be provided when using Particle.REDSTONE as particle.",
+                    e.getMessage());
         }
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.user.User#spawnParticle(org.bukkit.Particle, java.lang.Object, double, double, double)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.user.User#spawnParticle(org.bukkit.Particle, java.lang.Object, double, double, double)}.
      */
     @Test
     public void testSpawnParticleParticleObjectDoubleDoubleDouble() {
         User.clearUsers();
         Location loc = mock(Location.class);
         when(player.getLocation()).thenReturn(loc);
-        when(loc.toVector()).thenReturn(new Vector(1,1,1));
+        when(loc.toVector()).thenReturn(new Vector(1, 1, 1));
         when(server.getViewDistance()).thenReturn(16);
 
         User p = User.getInstance(player);
@@ -866,14 +879,15 @@ public class UserTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.user.User#spawnParticle(org.bukkit.Particle, java.lang.Object, double, double, double)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.user.User#spawnParticle(org.bukkit.Particle, java.lang.Object, double, double, double)}.
      */
     @Test
     public void testSpawnParticleParticleObjectDoubleDoubleDoubleRedstone() {
         User.clearUsers();
         Location loc = mock(Location.class);
         when(player.getLocation()).thenReturn(loc);
-        when(loc.toVector()).thenReturn(new Vector(1,1,1));
+        when(loc.toVector()).thenReturn(new Vector(1, 1, 1));
         when(server.getViewDistance()).thenReturn(16);
 
         User p = User.getInstance(player);
@@ -884,14 +898,15 @@ public class UserTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.user.User#spawnParticle(org.bukkit.Particle, org.bukkit.Particle.DustOptions, double, double, double)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.user.User#spawnParticle(org.bukkit.Particle, org.bukkit.Particle.DustOptions, double, double, double)}.
      */
     @Test
     public void testSpawnParticleParticleDustOptionsDoubleDoubleDouble() {
         User.clearUsers();
         Location loc = mock(Location.class);
         when(player.getLocation()).thenReturn(loc);
-        when(loc.toVector()).thenReturn(new Vector(1,1,1));
+        when(loc.toVector()).thenReturn(new Vector(1, 1, 1));
         when(server.getViewDistance()).thenReturn(16);
 
         User p = User.getInstance(player);
@@ -902,14 +917,15 @@ public class UserTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.user.User#spawnParticle(org.bukkit.Particle, org.bukkit.Particle.DustOptions, int, int, int)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.user.User#spawnParticle(org.bukkit.Particle, org.bukkit.Particle.DustOptions, int, int, int)}.
      */
     @Test
     public void testSpawnParticleParticleDustOptionsIntIntInt() {
         User.clearUsers();
         Location loc = mock(Location.class);
         when(player.getLocation()).thenReturn(loc);
-        when(loc.toVector()).thenReturn(new Vector(1,1,1));
+        when(loc.toVector()).thenReturn(new Vector(1, 1, 1));
         when(server.getViewDistance()).thenReturn(16);
 
         User p = User.getInstance(player);
@@ -920,7 +936,8 @@ public class UserTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.user.User#setAddon(world.bentobox.bentobox.api.addons.Addon)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.user.User#setAddon(world.bentobox.bentobox.api.addons.Addon)}.
      */
     @Test
     public void testSetAddon() {
@@ -945,7 +962,8 @@ public class UserTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.user.User#setMetaData(java.util.Map)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.user.User#setMetaData(java.util.Map)}.
      */
     @Test
     public void testSetMetaData() {

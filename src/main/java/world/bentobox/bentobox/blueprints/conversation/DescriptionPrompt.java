@@ -15,9 +15,9 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle;
 import world.bentobox.bentobox.util.Util;
 
-
 /**
  * Collects a description
+ * 
  * @author tastybento
  *
  */
@@ -35,7 +35,7 @@ public class DescriptionPrompt extends StringPrompt {
     @SuppressWarnings("unchecked")
     @Override
     public @NonNull String getPromptText(ConversationContext context) {
-        User user = User.getInstance((Player)context.getForWhom());
+        User user = User.getInstance((Player) context.getForWhom());
         if (context.getSessionData(DESCRIPTION) != null) {
             StringBuilder sb = new StringBuilder();
             for (String line : ((List<String>) context.getSessionData(DESCRIPTION))) {
@@ -45,13 +45,14 @@ public class DescriptionPrompt extends StringPrompt {
             }
             return sb.toString();
         }
-        return user.getTranslation("commands.admin.blueprint.management.description.instructions", TextVariables.NAME, bb.getDisplayName());
+        return user.getTranslation("commands.admin.blueprint.management.description.instructions", TextVariables.NAME,
+                bb.getDisplayName());
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public Prompt acceptInput(ConversationContext context, String input) {
-        User user = User.getInstance((Player)context.getForWhom());
+        User user = User.getInstance((Player) context.getForWhom());
         if (input.equals(user.getTranslation("commands.admin.blueprint.management.description.quit"))) {
             return new DescriptionSuccessPrompt(addon, bb);
         }
@@ -64,4 +65,3 @@ public class DescriptionPrompt extends StringPrompt {
         return this;
     }
 }
-

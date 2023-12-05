@@ -31,9 +31,9 @@ import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.util.Util;
 
-
 /**
  * Handles hurting of monsters and animals directly and indirectly
+ * 
  * @author tastybento
  *
  */
@@ -48,29 +48,23 @@ public class HurtingListener extends FlagListener {
      * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void onEntityDamage(final EntityDamageByEntityEvent e)
-    {
+    public void onEntityDamage(final EntityDamageByEntityEvent e) {
         // Mobs being hurt
-        if (Util.isPassiveEntity(e.getEntity()))
-        {
+        if (Util.isPassiveEntity(e.getEntity())) {
             this.respond(e, e.getDamager(), Flags.HURT_ANIMALS);
-        }
-        else if (e.getEntity() instanceof AbstractVillager)
-        {
+        } else if (e.getEntity() instanceof AbstractVillager) {
             this.respond(e, e.getDamager(), Flags.HURT_VILLAGERS);
-        }
-        else if (Util.isHostileEntity(e.getEntity()))
-        {
+        } else if (Util.isHostileEntity(e.getEntity())) {
             this.respond(e, e.getDamager(), Flags.HURT_MONSTERS);
         }
     }
 
-
     /**
      * Finds the true attacker, even if the attack was via a projectile
-     * @param e - event
+     * 
+     * @param e       - event
      * @param damager - damager
-     * @param flag - flag
+     * @param flag    - flag
      */
     private void respond(EntityDamageByEntityEvent e, Entity damager, Flag flag) {
         // Get the attacker
@@ -84,6 +78,7 @@ public class HurtingListener extends FlagListener {
 
     /**
      * Handle attacks with a fishing rod
+     * 
      * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
@@ -92,62 +87,73 @@ public class HurtingListener extends FlagListener {
             return;
         }
 
-        if ((Util.isPassiveEntity(e.getCaught()) && checkIsland(e, e.getPlayer(), e.getCaught().getLocation(), Flags.HURT_ANIMALS))
-                || (Util.isHostileEntity(e.getCaught()) && checkIsland(e, e.getPlayer(), e.getCaught().getLocation(), Flags.HURT_MONSTERS))
-                || (e.getCaught() instanceof AbstractVillager && checkIsland(e, e.getPlayer(), e.getCaught().getLocation(), Flags.HURT_VILLAGERS))) {
+        if ((Util.isPassiveEntity(e.getCaught())
+                && checkIsland(e, e.getPlayer(), e.getCaught().getLocation(), Flags.HURT_ANIMALS))
+                || (Util.isHostileEntity(e.getCaught())
+                        && checkIsland(e, e.getPlayer(), e.getCaught().getLocation(), Flags.HURT_MONSTERS))
+                || (e.getCaught() instanceof AbstractVillager
+                        && checkIsland(e, e.getPlayer(), e.getCaught().getLocation(), Flags.HURT_VILLAGERS))) {
             e.getHook().remove();
         }
 
         // Handle Armor stands that can be pulled using a rod
-        if (e.getCaught() instanceof ArmorStand && checkIsland(e, e.getPlayer(), e.getCaught().getLocation(), Flags.ARMOR_STAND)) {
+        if (e.getCaught() instanceof ArmorStand
+                && checkIsland(e, e.getPlayer(), e.getCaught().getLocation(), Flags.ARMOR_STAND)) {
             e.getHook().remove();
         }
     }
 
     /**
      * Handles feeding cookies to parrots, which may hurt them
+     * 
      * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onPlayerFeedParrots(PlayerInteractEntityEvent e) {
         if (e.getRightClicked() instanceof Parrot
-                && (e.getHand().equals(EquipmentSlot.HAND) && e.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.COOKIE))
-                || (e.getHand().equals(EquipmentSlot.OFF_HAND) && e.getPlayer().getInventory().getItemInOffHand().getType().equals(Material.COOKIE))) {
+                && (e.getHand().equals(EquipmentSlot.HAND)
+                        && e.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.COOKIE))
+                || (e.getHand().equals(EquipmentSlot.OFF_HAND)
+                        && e.getPlayer().getInventory().getItemInOffHand().getType().equals(Material.COOKIE))) {
             checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.HURT_ANIMALS);
         }
     }
 
     /**
      * Checks for splash damage. Remove damage if it should not affect.
+     * 
      * @param e - event
      */
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onSplashPotionSplash(final PotionSplashEvent e) {
         // Try to get the shooter
         Projectile projectile = e.getEntity();
         if (projectile.getShooter() instanceof Player attacker) {
             // Run through all the affected entities
-            for (LivingEntity entity: e.getAffectedEntities()) {
+            for (LivingEntity entity : e.getAffectedEntities()) {
                 // Self damage
                 if (attacker.equals(entity)) {
                     continue;
                 }
                 // Monsters being hurt
-                if (Util.isHostileEntity(entity) && !checkIsland(e, attacker, entity.getLocation(), Flags.HURT_MONSTERS)) {
+                if (Util.isHostileEntity(entity)
+                        && !checkIsland(e, attacker, entity.getLocation(), Flags.HURT_MONSTERS)) {
                     for (PotionEffect effect : e.getPotion().getEffects()) {
                         entity.removePotionEffect(effect.getType());
                     }
                 }
 
                 // Mobs being hurt
-                if (Util.isPassiveEntity(entity) && !checkIsland(e, attacker, entity.getLocation(), Flags.HURT_ANIMALS)) {
+                if (Util.isPassiveEntity(entity)
+                        && !checkIsland(e, attacker, entity.getLocation(), Flags.HURT_ANIMALS)) {
                     for (PotionEffect effect : e.getPotion().getEffects()) {
                         entity.removePotionEffect(effect.getType());
                     }
                 }
 
                 // Villagers being hurt
-                if (entity instanceof AbstractVillager && !checkIsland(e, attacker, entity.getLocation(), Flags.HURT_VILLAGERS)) {
+                if (entity instanceof AbstractVillager
+                        && !checkIsland(e, attacker, entity.getLocation(), Flags.HURT_VILLAGERS)) {
                     for (PotionEffect effect : e.getPotion().getEffects()) {
                         entity.removePotionEffect(effect.getType());
                     }
@@ -157,21 +163,25 @@ public class HurtingListener extends FlagListener {
     }
 
     /**
-     * Handle lingering potions. This tracks when a potion has been initially splashed.
+     * Handle lingering potions. This tracks when a potion has been initially
+     * splashed.
+     * 
      * @param e - event
      */
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onLingeringPotionSplash(final LingeringPotionSplashEvent e) {
         // Try to get the shooter
         Projectile projectile = e.getEntity();
         if (projectile.getShooter() instanceof Player player) {
             // Store it and remove it when the effect is gone
             thrownPotions.put(e.getAreaEffectCloud().getEntityId(), player);
-            getPlugin().getServer().getScheduler().runTaskLater(getPlugin(), () -> thrownPotions.remove(e.getAreaEffectCloud().getEntityId()), e.getAreaEffectCloud().getDuration());
+            getPlugin().getServer().getScheduler().runTaskLater(getPlugin(),
+                    () -> thrownPotions.remove(e.getAreaEffectCloud().getEntityId()),
+                    e.getAreaEffectCloud().getDuration());
         }
     }
 
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onLingeringPotionDamage(final EntityDamageByEntityEvent e) {
         if (e.getCause().equals(DamageCause.ENTITY_ATTACK) && thrownPotions.containsKey(e.getDamager().getEntityId())) {
             Player attacker = thrownPotions.get(e.getDamager().getEntityId());
@@ -200,14 +210,14 @@ public class HurtingListener extends FlagListener {
 
     }
 
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onFireworkDamage(final EntityDamageByEntityEvent e) {
         if (e.getDamager() instanceof Firework && firedFireworks.containsKey(e.getDamager())) {
-            processDamage(e, (Player)firedFireworks.get(e.getDamager()));
+            processDamage(e, (Player) firedFireworks.get(e.getDamager()));
         }
     }
 
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onPlayerShootEvent(final EntityShootBowEvent e) {
         // Only care about players shooting fireworks
         if (e.getEntityType().equals(EntityType.PLAYER) && (e.getProjectile() instanceof Firework)) {

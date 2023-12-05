@@ -31,8 +31,9 @@ public abstract class SimpleWorldRegenerator implements WorldRegenerator {
     }
 
     /**
-     * Update the low-level chunk information for the given block to the new block ID and data.  This
-     * change will not be propagated to clients until the chunk is refreshed to them.
+     * Update the low-level chunk information for the given block to the new block
+     * ID and data. This change will not be propagated to clients until the chunk is
+     * refreshed to them.
      *
      * @param chunk        - chunk to be changed
      * @param x            - x coordinate within chunk 0 - 15
@@ -41,7 +42,8 @@ public abstract class SimpleWorldRegenerator implements WorldRegenerator {
      * @param blockData    - block data to set the block
      * @param applyPhysics - apply physics or not
      */
-    protected abstract void setBlockInNativeChunk(Chunk chunk, int x, int y, int z, BlockData blockData, boolean applyPhysics);
+    protected abstract void setBlockInNativeChunk(Chunk chunk, int x, int y, int z, BlockData blockData,
+            boolean applyPhysics);
 
     @Override
     public CompletableFuture<Void> regenerate(GameModeAddon gm, IslandDeletion di, World world) {
@@ -53,7 +55,8 @@ public abstract class SimpleWorldRegenerator implements WorldRegenerator {
 
             @Override
             public void run() {
-                if (!currentTask.isDone()) return;
+                if (!currentTask.isDone())
+                    return;
                 if (isEnded(chunkX)) {
                     cancel();
                     bigFuture.complete(null);
@@ -66,12 +69,12 @@ public abstract class SimpleWorldRegenerator implements WorldRegenerator {
                     }
                     final int x = chunkX;
                     final int z = chunkZ;
-                    
+
                     // Only process non-generated chunks
                     if (world.isChunkGenerated(x, z)) {
                         newTasks.add(regenerateChunk(gm, di, world, x, z));
                     }
-                    
+
                     chunkZ++;
                     if (chunkZ > di.getMaxZChunk()) {
                         chunkZ = di.getMinZChunk();
@@ -89,13 +92,13 @@ public abstract class SimpleWorldRegenerator implements WorldRegenerator {
     }
 
     @SuppressWarnings("deprecation")
-    private CompletableFuture<Void> regenerateChunk(GameModeAddon gm, IslandDeletion di, World world, int chunkX, int chunkZ) {
+    private CompletableFuture<Void> regenerateChunk(GameModeAddon gm, IslandDeletion di, World world, int chunkX,
+            int chunkZ) {
         CompletableFuture<Chunk> chunkFuture = PaperLib.getChunkAtAsync(world, chunkX, chunkZ);
-        CompletableFuture<Void> invFuture = chunkFuture.thenAccept(chunk ->
-        Arrays.stream(chunk.getTileEntities()).filter(InventoryHolder.class::isInstance)
-        .filter(te -> di.inBounds(te.getLocation().getBlockX(), te.getLocation().getBlockZ()))
-        .forEach(te -> ((InventoryHolder) te).getInventory().clear())
-                );
+        CompletableFuture<Void> invFuture = chunkFuture
+                .thenAccept(chunk -> Arrays.stream(chunk.getTileEntities()).filter(InventoryHolder.class::isInstance)
+                        .filter(te -> di.inBounds(te.getLocation().getBlockX(), te.getLocation().getBlockZ()))
+                        .forEach(te -> ((InventoryHolder) te).getInventory().clear()));
         CompletableFuture<Void> entitiesFuture = chunkFuture.thenAccept(chunk -> {
             for (Entity e : chunk.getEntities()) {
                 if (!(e instanceof Player)) {
@@ -109,22 +112,27 @@ public abstract class SimpleWorldRegenerator implements WorldRegenerator {
             ChunkGenerator cg = gm.getDefaultWorldGenerator(chunk.getWorld().getName(), "delete");
             // Will be null if use-own-generator is set to true
             if (cg != null) {
-                ChunkGenerator.ChunkData cd = cg.generateChunkData(chunk.getWorld(), new Random(), chunk.getX(), chunk.getZ(), grid);
+                ChunkGenerator.ChunkData cd = cg.generateChunkData(chunk.getWorld(), new Random(), chunk.getX(),
+                        chunk.getZ(), grid);
                 copyChunkDataToChunk(chunk, cd, grid, di.getBox());
                 for (BlockPopulator pop : cg.getDefaultPopulators(world)) {
-                pop.populate(world, new Random(), chunkX, chunkZ, null);
+                    pop.populate(world, new Random(), chunkX, chunkZ, null);
                 }
             }
             return chunk;
         });
         CompletableFuture<Void> postCopyFuture = copyFuture.thenAccept(chunk ->
-        // Remove all entities in chunk, including any dropped items as a result of clearing the blocks above
-        Arrays.stream(chunk.getEntities()).filter(e -> !(e instanceof Player) && di.inBounds(e.getLocation().getBlockX(), e.getLocation().getBlockZ())).forEach(Entity::remove));
+        // Remove all entities in chunk, including any dropped items as a result of
+        // clearing the blocks above
+        Arrays.stream(chunk.getEntities()).filter(
+                e -> !(e instanceof Player) && di.inBounds(e.getLocation().getBlockX(), e.getLocation().getBlockZ()))
+                .forEach(Entity::remove));
         return CompletableFuture.allOf(invFuture, entitiesFuture, postCopyFuture);
     }
 
     @SuppressWarnings("deprecation")
-    private void copyChunkDataToChunk(Chunk chunk, ChunkGenerator.ChunkData chunkData, ChunkGenerator.BiomeGrid biomeGrid, BoundingBox limitBox) {
+    private void copyChunkDataToChunk(Chunk chunk, ChunkGenerator.ChunkData chunkData,
+            ChunkGenerator.BiomeGrid biomeGrid, BoundingBox limitBox) {
         double baseX = chunk.getX() << 4;
         double baseZ = chunk.getZ() << 4;
         int minHeight = chunk.getWorld().getMinHeight();

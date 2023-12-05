@@ -38,6 +38,7 @@ public class LeashListener extends FlagListener {
 
     /**
      * Prevents hitching
+     * 
      * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)

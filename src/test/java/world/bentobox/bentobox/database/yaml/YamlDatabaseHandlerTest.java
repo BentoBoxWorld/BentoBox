@@ -52,7 +52,7 @@ import world.bentobox.bentobox.managers.FlagsManager;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( {BentoBox.class, Bukkit.class} )
+@PrepareForTest({ BentoBox.class, Bukkit.class })
 public class YamlDatabaseHandlerTest {
 
     @Mock
@@ -78,7 +78,6 @@ public class YamlDatabaseHandlerTest {
     private File record;
     private File record2;
     private UUID uuid;
-
 
     /**
      */
@@ -134,41 +133,43 @@ public class YamlDatabaseHandlerTest {
 
     private void deleteAll(File file) throws IOException {
         if (file.exists()) {
-            Files.walk(file.toPath())
-            .sorted(Comparator.reverseOrder())
-            .map(Path::toFile)
-            .forEach(File::delete);
+            Files.walk(file.toPath()).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
         }
 
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.yaml.YamlDatabaseHandler#loadObjects()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.yaml.YamlDatabaseHandler#loadObjects()}.
      */
     @Ignore("YAML database is no longer supported")
     @Test
-    public void testLoadObjects() throws InstantiationException, IllegalAccessException, InvocationTargetException, ClassNotFoundException, NoSuchMethodException, IntrospectionException {
+    public void testLoadObjects() throws InstantiationException, IllegalAccessException, InvocationTargetException,
+            ClassNotFoundException, NoSuchMethodException, IntrospectionException {
         List<Island> list = handler.loadObjects();
         assertFalse(list.isEmpty());
         // Check at least one contains correct info
         assertTrue(list.stream().anyMatch(i -> i.getOwner().toString().equals("5988eecd-1dcd-4080-a843-785b62419abb")));
         assertTrue(list.stream().anyMatch(i -> i.getUniqueId().equals(uuid.toString())));
         assertTrue(list.stream().anyMatch(i -> i.getCreatedDate() == 1552264678424L));
-        assertTrue(list.stream().anyMatch(i -> i.getMembers().get(UUID.fromString("5988eecd-1dcd-4080-a843-785b62419abb")) == 1000));
+        assertTrue(list.stream()
+                .anyMatch(i -> i.getMembers().get(UUID.fromString("5988eecd-1dcd-4080-a843-785b62419abb")) == 1000));
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.yaml.YamlDatabaseHandler#loadObject(java.lang.String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.yaml.YamlDatabaseHandler#loadObject(java.lang.String)}.
      */
     @Ignore("YAML database is no longer supported")
     @Test
-    public void testLoadObject() throws InstantiationException, IllegalAccessException, InvocationTargetException, ClassNotFoundException, NoSuchMethodException, IntrospectionException {
+    public void testLoadObject() throws InstantiationException, IllegalAccessException, InvocationTargetException,
+            ClassNotFoundException, NoSuchMethodException, IntrospectionException {
         String name = UUID.randomUUID().toString();
         Island is = handler.loadObject(name);
         assertEquals(uuid.toString(), is.getUniqueId());
         assertEquals("5988eecd-1dcd-4080-a843-785b62419abb", is.getOwner().toString());
         assertEquals(1552264678424L, is.getCreatedDate());
-        assertEquals((Integer)1000, is.getMembers().get(UUID.fromString("5988eecd-1dcd-4080-a843-785b62419abb")));
+        assertEquals((Integer) 1000, is.getMembers().get(UUID.fromString("5988eecd-1dcd-4080-a843-785b62419abb")));
     }
 
     /**
@@ -188,7 +189,8 @@ public class YamlDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.yaml.YamlDatabaseHandler#saveObject(java.lang.Object)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.yaml.YamlDatabaseHandler#saveObject(java.lang.Object)}.
      */
     @Test
     public void testSaveObjectNull() throws IllegalAccessException, InvocationTargetException, IntrospectionException {
@@ -197,10 +199,11 @@ public class YamlDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.yaml.YamlDatabaseHandler#saveObject(java.lang.Object)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.yaml.YamlDatabaseHandler#saveObject(java.lang.Object)}.
      */
     @Test
-    public void testSaveObjectNotDO() throws IllegalAccessException, InvocationTargetException, IntrospectionException{
+    public void testSaveObjectNotDO() throws IllegalAccessException, InvocationTargetException, IntrospectionException {
         YamlDatabaseHandler<String> h = new YamlDatabaseHandler<>(plugin, String.class, dbConnector);
         String test = "";
         h.saveObject(test);
@@ -208,7 +211,8 @@ public class YamlDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.yaml.YamlDatabaseHandler#deleteObject(java.lang.Object)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.yaml.YamlDatabaseHandler#deleteObject(java.lang.Object)}.
      */
     @Test
     public void testDeleteObject() throws IllegalAccessException, InvocationTargetException, IntrospectionException {
@@ -216,19 +220,23 @@ public class YamlDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.yaml.YamlDatabaseHandler#deleteObject(java.lang.Object)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.yaml.YamlDatabaseHandler#deleteObject(java.lang.Object)}.
      */
     @Test
-    public void testDeleteObjectNull() throws IllegalAccessException, InvocationTargetException, IntrospectionException {
+    public void testDeleteObjectNull()
+            throws IllegalAccessException, InvocationTargetException, IntrospectionException {
         handler.deleteObject(null);
         verify(plugin).logError("YAML database request to delete a null.");
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.yaml.YamlDatabaseHandler#deleteObject(java.lang.Object)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.yaml.YamlDatabaseHandler#deleteObject(java.lang.Object)}.
      */
     @Test
-    public void testDeleteObjectNotDO() throws IllegalAccessException, InvocationTargetException, IntrospectionException {
+    public void testDeleteObjectNotDO()
+            throws IllegalAccessException, InvocationTargetException, IntrospectionException {
         YamlDatabaseHandler<String> h = new YamlDatabaseHandler<>(plugin, String.class, dbConnector);
         String test = "";
         h.deleteObject(test);
@@ -247,7 +255,8 @@ public class YamlDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.yaml.YamlDatabaseHandler#deleteID(java.lang.String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.yaml.YamlDatabaseHandler#deleteID(java.lang.String)}.
      */
     @Test
     public void testDeleteID() {
@@ -277,7 +286,8 @@ public class YamlDatabaseHandlerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.yaml.YamlDatabaseHandler#YamlDatabaseHandler(world.bentobox.bentobox.BentoBox, java.lang.Class, world.bentobox.bentobox.database.DatabaseConnector)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.yaml.YamlDatabaseHandler#YamlDatabaseHandler(world.bentobox.bentobox.BentoBox, java.lang.Class, world.bentobox.bentobox.database.DatabaseConnector)}.
      */
     @Test
     public void testYamlDatabaseHandler() {
@@ -292,120 +302,39 @@ public class YamlDatabaseHandlerTest {
 
     // YAML
     private String getYaml(UUID uuid) {
-        return "deleted: false\n" +
-                "uniqueId: " + uuid.toString() + "\n" +
-                "center: cleanroom:384:100:-768:0:0\n" +
-                "range: 192\n" +
-                "protectionRange: 100\n" +
-                "maxEverProtectionRange: 100\n" +
-                "world: cleanroom\n" +
-                "name: 'null'\n" +
-                "createdDate: 1552264678424\n" +
-                "updatedDate: 1552264678424\n" +
-                "owner: 5988eecd-1dcd-4080-a843-785b62419abb\n" +
-                "members:\n" +
-                "  5988eecd-1dcd-4080-a843-785b62419abb: 1000\n" +
-                "spawn: false\n" +
-                "purgeProtected: false\n" +
-                "flags:\n" +
-                "  HURT_ANIMALS: 500\n" +
-                "  DRAGON_EGG: 500\n" +
-                "  REDSTONE: 500\n" +
-                "  BUCKET: 500\n" +
-                "  LOCK: 0\n" +
-                "  ENDER_PEARL: 500\n" +
-                "  DOOR: 500\n" +
-                "  FURNACE: 500\n" +
-                "  MINECART: 500\n" +
-                "  ANVIL: 500\n" +
-                "  FISH_SCOOPING: 500\n" +
-                "  FIRE_IGNITE: 500\n" +
-                "  END_PORTAL: 500\n" +
-                "  BREEDING: 500\n" +
-                "  TNT: 500\n" +
-                "  HURT_VILLAGERS: 500\n" +
-                "  FROST_WALKER: 500\n" +
-                "  TURTLE_EGGS: 500\n" +
-                "  CHALLENGES_ISLAND_PROTECTION: 0\n" +
-                "  LEAF_DECAY: 500\n" +
-                "  COLLECT_LAVA: 500\n" +
-                "  LEVER: 500\n" +
-                "  RIDING: 500\n" +
-                "  HURT_MONSTERS: 500\n" +
-                "  ARMOR_STAND: 500\n" +
-                "  NAME_TAG: 500\n" +
-                "  FIRE_SPREAD: 500\n" +
-                "  TRADING: 500\n" +
-                "  EGGS: 500\n" +
-                "  ITEM_DROP: 500\n" +
-                "  PVP_OVERWORLD: -1\n" +
-                "  NOTE_BLOCK: 500\n" +
-                "  FLINT_AND_STEEL: 500\n" +
-                "  NETHER_PORTAL: 500\n" +
-                "  CROP_TRAMPLE: 500\n" +
-                "  ITEM_PICKUP: 500\n" +
-                "  DROPPER: 500\n" +
-                "  BREWING: 500\n" +
-                "  PVP_END: -1\n" +
-                "  COLLECT_WATER: 500\n" +
-                "  GREENHOUSE: 500\n" +
-                "  BUTTON: 500\n" +
-                "  FIRE_EXTINGUISH: 500\n" +
-                "  BEACON: 500\n" +
-                "  TRAPDOOR: 500\n" +
-                "  PRESSURE_PLATE: 500\n" +
-                "  EXPERIENCE_BOTTLE_THROWING: 500\n" +
-                "  ITEM_FRAME: 500\n" +
-                "  PLACE_BLOCKS: 500\n" +
-                "  CRAFTING: 500\n" +
-                "  ENCHANTING: 500\n" +
-                "  SHEARING: 500\n" +
-                "  BOAT: 500\n" +
-                "  SPAWN_EGGS: 500\n" +
-                "  BED: 500\n" +
-                "  PVP_NETHER: -1\n" +
-                "  MILKING: 500\n" +
-                "  MONSTER_SPAWN: 500\n" +
-                "  DISPENSER: 500\n" +
-                "  GATE: 500\n" +
-                "  FIRE_BURNING: 500\n" +
-                "  EXPERIENCE_PICKUP: 500\n" +
-                "  HOPPER: 500\n" +
-                "  ANIMAL_SPAWN: 500\n" +
-                "  LEASH: 500\n" +
-                "  BREAK_BLOCKS: 500\n" +
-                "  MOUNT_INVENTORY: 500\n" +
-                "  CHORUS_FRUIT: 500\n" +
-                "  CONTAINER: 500\n" +
-                "  POTION_THROWING: 500\n" +
-                "  JUKEBOX: 500\n" +
-                "history: []\n" +
-                "levelHandicap: 0\n" +
-                "spawnPoint:\n" +
-                "  THE_END: cleanroom_the_end:383:106:-769:1134395392:1106247680\n" +
-                "  NORMAL: cleanroom:384:105:-766:0:1106247680\n" +
-                "doNotLoad: false\n";
+        return "deleted: false\n" + "uniqueId: " + uuid.toString() + "\n" + "center: cleanroom:384:100:-768:0:0\n"
+                + "range: 192\n" + "protectionRange: 100\n" + "maxEverProtectionRange: 100\n" + "world: cleanroom\n"
+                + "name: 'null'\n" + "createdDate: 1552264678424\n" + "updatedDate: 1552264678424\n"
+                + "owner: 5988eecd-1dcd-4080-a843-785b62419abb\n" + "members:\n"
+                + "  5988eecd-1dcd-4080-a843-785b62419abb: 1000\n" + "spawn: false\n" + "purgeProtected: false\n"
+                + "flags:\n" + "  HURT_ANIMALS: 500\n" + "  DRAGON_EGG: 500\n" + "  REDSTONE: 500\n" + "  BUCKET: 500\n"
+                + "  LOCK: 0\n" + "  ENDER_PEARL: 500\n" + "  DOOR: 500\n" + "  FURNACE: 500\n" + "  MINECART: 500\n"
+                + "  ANVIL: 500\n" + "  FISH_SCOOPING: 500\n" + "  FIRE_IGNITE: 500\n" + "  END_PORTAL: 500\n"
+                + "  BREEDING: 500\n" + "  TNT: 500\n" + "  HURT_VILLAGERS: 500\n" + "  FROST_WALKER: 500\n"
+                + "  TURTLE_EGGS: 500\n" + "  CHALLENGES_ISLAND_PROTECTION: 0\n" + "  LEAF_DECAY: 500\n"
+                + "  COLLECT_LAVA: 500\n" + "  LEVER: 500\n" + "  RIDING: 500\n" + "  HURT_MONSTERS: 500\n"
+                + "  ARMOR_STAND: 500\n" + "  NAME_TAG: 500\n" + "  FIRE_SPREAD: 500\n" + "  TRADING: 500\n"
+                + "  EGGS: 500\n" + "  ITEM_DROP: 500\n" + "  PVP_OVERWORLD: -1\n" + "  NOTE_BLOCK: 500\n"
+                + "  FLINT_AND_STEEL: 500\n" + "  NETHER_PORTAL: 500\n" + "  CROP_TRAMPLE: 500\n"
+                + "  ITEM_PICKUP: 500\n" + "  DROPPER: 500\n" + "  BREWING: 500\n" + "  PVP_END: -1\n"
+                + "  COLLECT_WATER: 500\n" + "  GREENHOUSE: 500\n" + "  BUTTON: 500\n" + "  FIRE_EXTINGUISH: 500\n"
+                + "  BEACON: 500\n" + "  TRAPDOOR: 500\n" + "  PRESSURE_PLATE: 500\n"
+                + "  EXPERIENCE_BOTTLE_THROWING: 500\n" + "  ITEM_FRAME: 500\n" + "  PLACE_BLOCKS: 500\n"
+                + "  CRAFTING: 500\n" + "  ENCHANTING: 500\n" + "  SHEARING: 500\n" + "  BOAT: 500\n"
+                + "  SPAWN_EGGS: 500\n" + "  BED: 500\n" + "  PVP_NETHER: -1\n" + "  MILKING: 500\n"
+                + "  MONSTER_SPAWN: 500\n" + "  DISPENSER: 500\n" + "  GATE: 500\n" + "  FIRE_BURNING: 500\n"
+                + "  EXPERIENCE_PICKUP: 500\n" + "  HOPPER: 500\n" + "  ANIMAL_SPAWN: 500\n" + "  LEASH: 500\n"
+                + "  BREAK_BLOCKS: 500\n" + "  MOUNT_INVENTORY: 500\n" + "  CHORUS_FRUIT: 500\n" + "  CONTAINER: 500\n"
+                + "  POTION_THROWING: 500\n" + "  JUKEBOX: 500\n" + "history: []\n" + "levelHandicap: 0\n"
+                + "spawnPoint:\n" + "  THE_END: cleanroom_the_end:383:106:-769:1134395392:1106247680\n"
+                + "  NORMAL: cleanroom:384:105:-766:0:1106247680\n" + "doNotLoad: false\n";
     }
 
     private String getYaml2(UUID uuid) {
-        return "deleted: false\n" +
-                "uniqueId: " + uuid.toString() + "\n" +
-                "center: cleanroom:0:100:0:0:0\n" +
-                "range: 192\n" +
-                "protectionRange: 100\n" +
-                "maxEverProtectionRange: 100\n" +
-                "world: cleanroom\n" +
-                "name: 'null'\n" +
-                "createdDate: 1552264640164\n" +
-                "updatedDate: 1552264640164\n" +
-                "owner: 'null'\n" +
-                "members: {}\n" +
-                "spawn: false\n" +
-                "purgeProtected: false\n" +
-                "flags: {}\n" +
-                "history: []\n" +
-                "levelHandicap: 0\n" +
-                "spawnPoint: {}\n" +
-                "doNotLoad: false\n";
+        return "deleted: false\n" + "uniqueId: " + uuid.toString() + "\n" + "center: cleanroom:0:100:0:0:0\n"
+                + "range: 192\n" + "protectionRange: 100\n" + "maxEverProtectionRange: 100\n" + "world: cleanroom\n"
+                + "name: 'null'\n" + "createdDate: 1552264640164\n" + "updatedDate: 1552264640164\n" + "owner: 'null'\n"
+                + "members: {}\n" + "spawn: false\n" + "purgeProtected: false\n" + "flags: {}\n" + "history: []\n"
+                + "levelHandicap: 0\n" + "spawnPoint: {}\n" + "doNotLoad: false\n";
     }
 }

@@ -13,6 +13,7 @@ public class AdminTrashCommand extends CompositeCommand {
 
     /**
      * A command for viewing islands in the database trash
+     * 
      * @param parent - admin command
      * @since 1.3.0
      */
@@ -63,7 +64,7 @@ public class AdminTrashCommand extends CompositeCommand {
     private void showTrash(User user, List<Island> islands) {
         user.sendMessage("commands.admin.trash.title");
         for (int i = 0; i < islands.size(); i++) {
-            user.sendMessage("commands.admin.trash.count", TextVariables.NUMBER, String.valueOf(i+1));
+            user.sendMessage("commands.admin.trash.count", TextVariables.NUMBER, String.valueOf(i + 1));
             new IslandInfo(islands.get(i)).showInfo(user);
         }
         user.sendMessage("commands.admin.trash.use-switch", TextVariables.LABEL, getTopLabel());

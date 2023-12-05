@@ -11,6 +11,7 @@ import world.bentobox.bentobox.database.objects.Island;
 
 /**
  * Fired when an island is reserved for a player
+ * 
  * @since 1.12.0
  */
 public class IslandReservedEvent extends IslandBaseEvent {

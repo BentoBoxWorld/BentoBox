@@ -37,7 +37,7 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, User.class, Util.class})
+@PrepareForTest({ Bukkit.class, BentoBox.class, User.class, Util.class })
 public class AdminSwitchCommandTest {
 
     private AdminSwitchCommand asc;
@@ -66,7 +66,7 @@ public class AdminSwitchCommandTest {
         when(user.isOp()).thenReturn(false);
         UUID uuid = UUID.randomUUID();
         notUUID = UUID.randomUUID();
-        while(notUUID.equals(uuid)) {
+        while (notUUID.equals(uuid)) {
             notUUID = UUID.randomUUID();
         }
         when(user.getUniqueId()).thenReturn(uuid);
@@ -89,9 +89,9 @@ public class AdminSwitchCommandTest {
     public void tearDown() throws Exception {
     }
 
-
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminSwitchCommand#setup()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.AdminSwitchCommand#setup()}.
      */
     @Test
     public void testSetup() {
@@ -102,7 +102,8 @@ public class AdminSwitchCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminSwitchCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.AdminSwitchCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testCanExecute() {
@@ -124,7 +125,8 @@ public class AdminSwitchCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminSwitchCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.AdminSwitchCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testExecuteUserStringListOfStringMetaFalse() {
@@ -137,7 +139,8 @@ public class AdminSwitchCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminSwitchCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.AdminSwitchCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testExecuteUserStringListOfStringMetaTrue() {

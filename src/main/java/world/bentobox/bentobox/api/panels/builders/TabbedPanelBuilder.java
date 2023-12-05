@@ -12,6 +12,7 @@ import world.bentobox.bentobox.api.user.User;
 
 /**
  * Builds {@link TabbedPanel}'s
+ * 
  * @author tastybento
  * @since 1.6.0
  */
@@ -26,6 +27,7 @@ public class TabbedPanelBuilder {
 
     /**
      * Forces panel to be a specific number of slots.
+     * 
      * @param size - size to be
      * @return PanelBuilder - PanelBuilder
      */
@@ -35,7 +37,9 @@ public class TabbedPanelBuilder {
     }
 
     /**
-     * Sets the user who will get this panel. This will open it immediately when it is built
+     * Sets the user who will get this panel. This will open it immediately when it
+     * is built
+     * 
      * @param user - the User
      * @return PanelBuilder
      */
@@ -55,8 +59,9 @@ public class TabbedPanelBuilder {
 
     /**
      * Add a tab to the panel
+     * 
      * @param slot - slot of panel (0 to 9)
-     * @param tab - tab to show
+     * @param tab  - tab to show
      * @return TabbedPanelBuilder
      */
     public TabbedPanelBuilder tab(int slot, Tab tab) {
@@ -69,6 +74,7 @@ public class TabbedPanelBuilder {
 
     /**
      * The default tab to show
+     * 
      * @param slot - slot value between 0 and 9
      * @return TabbedPanelBuilder
      */
@@ -82,20 +88,23 @@ public class TabbedPanelBuilder {
 
     /**
      * Hides the panel from view if there are no panel items in it
+     * 
      * @return TabbedPanelBuilder
      */
     public TabbedPanelBuilder hideIfEmpty() {
         this.hideIfEmpty = true;
         return this;
     }
+
     /**
      * Build the panel
+     * 
      * @return Panel
      */
     public TabbedPanel build() {
         // Set starting slot
         if (!tabs.isEmpty() && !tabs.containsKey(startingSlot)) {
-            startingSlot = ((TreeMap<Integer, Tab>)tabs).firstKey();
+            startingSlot = ((TreeMap<Integer, Tab>) tabs).firstKey();
         }
         return new TabbedPanel(this);
     }
@@ -141,7 +150,5 @@ public class TabbedPanelBuilder {
     public boolean isHideIfEmpty() {
         return hideIfEmpty;
     }
-
-
 
 }

@@ -55,7 +55,7 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({BentoBox.class, Util.class, Bukkit.class })
+@PrepareForTest({ BentoBox.class, Util.class, Bukkit.class })
 public class BlockEndDragonTest {
 
     @Mock
@@ -120,7 +120,8 @@ public class BlockEndDragonTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.BlockEndDragon#onPlayerChangeWorld(org.bukkit.event.player.PlayerChangedWorldEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.BlockEndDragon#onPlayerChangeWorld(org.bukkit.event.player.PlayerChangedWorldEvent)}.
      */
     @Test
     public void testOnPlayerChangeWorld() {
@@ -152,7 +153,8 @@ public class BlockEndDragonTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.BlockEndDragon#onPlayerChangeWorld(org.bukkit.event.player.PlayerChangedWorldEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.BlockEndDragon#onPlayerChangeWorld(org.bukkit.event.player.PlayerChangedWorldEvent)}.
      */
     @Test
     public void testOnPlayerChangeWorldNoFlag() {
@@ -163,7 +165,8 @@ public class BlockEndDragonTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.BlockEndDragon#onPlayerJoinWorld(org.bukkit.event.player.PlayerJoinEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.BlockEndDragon#onPlayerJoinWorld(org.bukkit.event.player.PlayerJoinEvent)}.
      */
     @Test
     public void testOnPlayerJoinWorld() {
@@ -173,7 +176,8 @@ public class BlockEndDragonTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.BlockEndDragon#onEndBlockPlace(org.bukkit.event.block.BlockPlaceEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.BlockEndDragon#onEndBlockPlace(org.bukkit.event.block.BlockPlaceEvent)}.
      */
     @Test
     public void testOnEndBlockPlace() {
@@ -192,6 +196,7 @@ public class BlockEndDragonTest {
         bed.onEndBlockPlace(e);
         assertFalse(e.isCancelled());
     }
+
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.BlockEndDragon#onEndBlockPlace(org.bukkit.event.block.BlockPlaceEvent)}.
      */
@@ -226,7 +231,8 @@ public class BlockEndDragonTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.BlockEndDragon#onEndBlockPlace(org.bukkit.event.block.BlockPlaceEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.BlockEndDragon#onEndBlockPlace(org.bukkit.event.block.BlockPlaceEvent)}.
      */
     @Test
     public void testOnEndBlockPlaceNoFlag() {
@@ -262,7 +268,8 @@ public class BlockEndDragonTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.BlockEndDragon#onEndBlockBreak(org.bukkit.event.block.BlockBreakEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.BlockEndDragon#onEndBlockBreak(org.bukkit.event.block.BlockBreakEvent)}.
      */
     @Test
     public void testOnEndBlockBreak() {

@@ -32,18 +32,15 @@ import world.bentobox.bentobox.database.yaml.YamlDatabase;
 public interface DatabaseSetup {
 
     /**
-     * Gets the type of database being used.
-     * Currently supported options are YAML, JSON, MYSQL, MARIADB and MONGODB.
-     * Default is JSON.
+     * Gets the type of database being used. Currently supported options are YAML,
+     * JSON, MYSQL, MARIADB and MONGODB. Default is JSON.
+     * 
      * @return Database type
      */
     static DatabaseSetup getDatabase() {
         BentoBox plugin = BentoBox.getInstance();
-        return Arrays.stream(DatabaseType.values())
-                .filter(plugin.getSettings().getDatabaseType()::equals)
-                .findFirst()
-                .map(t -> t.database)
-                .orElseGet(() -> DatabaseType.JSON.database);
+        return Arrays.stream(DatabaseType.values()).filter(plugin.getSettings().getDatabaseType()::equals).findFirst()
+                .map(t -> t.database).orElseGet(() -> DatabaseType.JSON.database);
     }
 
     /**
@@ -54,28 +51,33 @@ public interface DatabaseSetup {
         YAML(new YamlDatabase()),
         /**
          * Transition database, from YAML to JSON
+         * 
          * @since 1.5.0
          */
         YAML2JSON(new Yaml2JsonDatabase()),
         /**
          * Transition database, from YAML to MySQL
+         * 
          * @since 1.5.0
          */
         YAML2MYSQL(new Yaml2MySQLDatabase()),
         /**
          * Transition database, from YAML to MySQL (MariaDB)
+         * 
          * @since 1.5.0
          */
         YAML2MARIADB(new Yaml2MariaDBDatabase()),
 
         /**
          * Transition database, from YAML to MongoDB
+         * 
          * @since 1.6.0
          */
         YAML2MONGODB(new Yaml2MongoDBDatabase()),
 
         /**
          * Transition database, from YAML to SQLite
+         * 
          * @since 1.6.0
          */
         YAML2SQLITE(new Yaml2SQLiteDatabase()),
@@ -83,29 +85,34 @@ public interface DatabaseSetup {
         JSON(new JSONDatabase()),
         /**
          * Transition database, from JSON to MySQL
+         * 
          * @since 1.5.0
          */
         JSON2MYSQL(new Json2MySQLDatabase()),
         /**
          * Transition database, from JSON to MySQL (MariaDB)
+         * 
          * @since 1.5.0
          */
         JSON2MARIADB(new Json2MariaDBDatabase()),
 
         /**
          * Transition database, from JSON to MongoDB
+         * 
          * @since 1.6.0
          */
         JSON2MONGODB(new Json2MongoDBDatabase()),
 
         /**
          * Transition database, from JSON to SQLite
+         * 
          * @since 1.6.0
          */
         JSON2SQLITE(new Json2SQLiteDatabase()),
 
         /**
          * Transition database, from JSON to PostgreSQL
+         * 
          * @since 1.6.0
          */
         JSON2POSTGRESQL(new Json2PostgreSQLDatabase()),
@@ -114,6 +121,7 @@ public interface DatabaseSetup {
 
         /**
          * Transition database, from MySQL to JSON
+         * 
          * @since 1.5.0
          */
         MYSQL2JSON(new MySQL2JsonDatabase()),
@@ -124,6 +132,7 @@ public interface DatabaseSetup {
 
         /**
          * Transition database, from MariaDB to JSON
+         * 
          * @since 1.6.0
          */
         MARIADB2JSON(new MariaDB2JsonDatabase()),
@@ -132,6 +141,7 @@ public interface DatabaseSetup {
 
         /**
          * Transition database, from MongoDB to JSON
+         * 
          * @since 1.6.0
          */
         MONGODB2JSON(new MongoDB2JsonDatabase()),
@@ -143,6 +153,7 @@ public interface DatabaseSetup {
 
         /**
          * Transition database, from SQLite to JSON
+         * 
          * @since 1.6.0
          */
         SQLITE2JSON(new SQLite2JsonDatabase()),
@@ -154,20 +165,23 @@ public interface DatabaseSetup {
 
         /**
          * Transition database, from PostgreSQL to JSON
+         * 
          * @since 1.6.0
          */
         POSTGRESQL2JSON(new PostgreSQL2JsonDatabase());
 
         DatabaseSetup database;
 
-        DatabaseType(DatabaseSetup database){
+        DatabaseType(DatabaseSetup database) {
             this.database = database;
         }
     }
 
     /**
-     * Gets a database handler that will store and retrieve classes of type dataObjectClass
-     * @param <T> - Class type
+     * Gets a database handler that will store and retrieve classes of type
+     * dataObjectClass
+     * 
+     * @param <T>             - Class type
      * @param dataObjectClass - class of the object to be stored in the database
      * @return handler for this database object
      */

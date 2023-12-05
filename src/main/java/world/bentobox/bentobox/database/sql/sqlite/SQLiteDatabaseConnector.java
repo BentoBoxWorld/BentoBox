@@ -8,23 +8,19 @@ import world.bentobox.bentobox.database.sql.SQLDatabaseConnector;
  * @since 1.6.0
  * @author Poslovitch
  */
-public class SQLiteDatabaseConnector extends SQLDatabaseConnector
-{
+public class SQLiteDatabaseConnector extends SQLDatabaseConnector {
     /**
      * Default constructor.
      */
-    SQLiteDatabaseConnector(String connectionUrl)
-    {
+    SQLiteDatabaseConnector(String connectionUrl) {
         super(null, connectionUrl);
     }
-
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public HikariConfig createConfig()
-    {
+    public HikariConfig createConfig() {
         HikariConfig config = new HikariConfig();
         config.setDataSourceClassName("org.sqlite.SQLiteDataSource");
         config.setPoolName("BentoBox SQLite Pool");

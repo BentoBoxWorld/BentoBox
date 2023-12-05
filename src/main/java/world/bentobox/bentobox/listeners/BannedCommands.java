@@ -14,6 +14,7 @@ import world.bentobox.bentobox.lists.Flags;
 
 /**
  * Blocks command usage for various scenarios
+ * 
  * @author tastybento
  *
  */
@@ -30,15 +31,16 @@ public class BannedCommands implements Listener {
 
     /**
      * Prevents visitors from using commands on islands, like /spawner
+     * 
      * @param e - event
      */
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onVisitorCommand(PlayerCommandPreprocessEvent e) {
         if (!plugin.getIWM().inWorld(e.getPlayer().getLocation()) || e.getPlayer().isOp()
-                || e.getPlayer().hasPermission(plugin.getIWM().getPermissionPrefix(e.getPlayer().getWorld()) + "mod.bypassprotect")
+                || e.getPlayer().hasPermission(
+                        plugin.getIWM().getPermissionPrefix(e.getPlayer().getWorld()) + "mod.bypassprotect")
                 || plugin.getIslands().locationIsOnIsland(e.getPlayer(), e.getPlayer().getLocation())
-                || e.getMessage().isEmpty()
-                ) {
+                || e.getMessage().isEmpty()) {
             return;
         }
         World w = e.getPlayer().getWorld();
@@ -49,18 +51,20 @@ public class BannedCommands implements Listener {
         for (String cmd : plugin.getIWM().getVisitorBannedCommands(w)) {
             if (checkCmd(cmd, args)) {
                 User user = User.getInstance(e.getPlayer());
-                user.notify("protection.protected", TextVariables.DESCRIPTION, user.getTranslation("protection.command-is-banned"));
+                user.notify("protection.protected", TextVariables.DESCRIPTION,
+                        user.getTranslation("protection.command-is-banned"));
                 e.setCancelled(true);
                 return;
             }
         }
     }
-    
+
     private boolean checkCmd(String cmd, String[] args) {
         // Get the elements of the banned command by splitting it
         String[] bannedSplit = cmd.toLowerCase(java.util.Locale.ENGLISH).split(" ");
-        // If the banned command has the same number of elements or less than the entered command then it may be banned
-        if (bannedSplit.length <= args.length) {               
+        // If the banned command has the same number of elements or less than the
+        // entered command then it may be banned
+        if (bannedSplit.length <= args.length) {
             for (int i = 0; i < bannedSplit.length; i++) {
                 if (!bannedSplit[i].equalsIgnoreCase(args[i])) {
                     return false;
@@ -74,12 +78,14 @@ public class BannedCommands implements Listener {
 
     /**
      * Prevents falling players from using commands, like /warp
+     * 
      * @param e - event
      */
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onFallingCommand(PlayerCommandPreprocessEvent e) {
         if (!plugin.getIWM().inWorld(e.getPlayer().getLocation()) || e.getPlayer().isOp()
-                || e.getPlayer().hasPermission(plugin.getIWM().getPermissionPrefix(e.getPlayer().getWorld()) + "mod.bypassprotect")
+                || e.getPlayer().hasPermission(
+                        plugin.getIWM().getPermissionPrefix(e.getPlayer().getWorld()) + "mod.bypassprotect")
                 || !Flags.PREVENT_TELEPORT_WHEN_FALLING.isSetForWorld(e.getPlayer().getWorld())) {
             return;
         }

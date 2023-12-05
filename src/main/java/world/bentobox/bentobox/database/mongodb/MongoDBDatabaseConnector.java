@@ -25,6 +25,7 @@ public class MongoDBDatabaseConnector implements DatabaseConnector {
 
     /**
      * Class for MySQL database connections using the settings provided
+     * 
      * @param dbSettings - database settings
      */
     MongoDBDatabaseConnector(DatabaseConnectionSettingsImpl dbSettings, String mongoDbConnectionURI) {
@@ -37,13 +38,13 @@ public class MongoDBDatabaseConnector implements DatabaseConnector {
         types.add(type);
         // Only get one client
         if (client == null) {
-            if(mongoDbConnectionURI == null || mongoDbConnectionURI.isEmpty()){
+            if (mongoDbConnectionURI == null || mongoDbConnectionURI.isEmpty()) {
                 MongoCredential credential = MongoCredential.createCredential(dbSettings.getUsername(),
-                        dbSettings.getDatabaseName(),
-                        dbSettings.getPassword().toCharArray());
+                        dbSettings.getDatabaseName(), dbSettings.getPassword().toCharArray());
                 MongoClientOptions options = MongoClientOptions.builder().sslEnabled(dbSettings.isUseSSL()).build();
-                client = new MongoClient(new ServerAddress(dbSettings.getHost(), dbSettings.getPort()), credential,options);
-            }else {
+                client = new MongoClient(new ServerAddress(dbSettings.getHost(), dbSettings.getPort()), credential,
+                        options);
+            } else {
                 client = new MongoClient(new MongoClientURI(this.mongoDbConnectionURI));
             }
 

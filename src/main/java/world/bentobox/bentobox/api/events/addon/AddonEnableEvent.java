@@ -9,6 +9,7 @@ import world.bentobox.bentobox.api.addons.Addon;
 
 /**
  * Called when an addon is enabled
+ * 
  * @author tastybento
  *
  */

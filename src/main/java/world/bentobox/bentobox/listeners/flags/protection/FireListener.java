@@ -20,6 +20,7 @@ import world.bentobox.bentobox.lists.Flags;
 
 /**
  * Handles fire
+ * 
  * @author tastybento
  *
  */
@@ -27,8 +28,9 @@ public class FireListener extends FlagListener {
 
     /**
      * Checks if fire is allowed. If not, cancels the action
-     * @param e - cancellable event
-     * @param l - location
+     * 
+     * @param e    - cancellable event
+     * @param l    - location
      * @param flag - flag to check
      * @return - true if cancelled, false if not
      */
@@ -38,13 +40,15 @@ public class FireListener extends FlagListener {
             return false;
         }
         // Check if the island exists and if fire is allowed
-        boolean cancel = getIslands().getIslandAt(l).map(i -> !i.isAllowed(flag)).orElseGet(() -> !flag.isSetForWorld(l.getWorld()));
+        boolean cancel = getIslands().getIslandAt(l).map(i -> !i.isAllowed(flag))
+                .orElseGet(() -> !flag.isSetForWorld(l.getWorld()));
         e.setCancelled(cancel);
         return cancel;
     }
 
     /**
      * Prevents fire spread
+     * 
      * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
@@ -54,6 +58,7 @@ public class FireListener extends FlagListener {
 
     /**
      * Prevent fire spread
+     * 
      * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
@@ -65,6 +70,7 @@ public class FireListener extends FlagListener {
 
     /**
      * Igniting fires
+     * 
      * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
@@ -77,6 +83,7 @@ public class FireListener extends FlagListener {
 
     /**
      * Flint and Steel and Extinguishing fire
+     * 
      * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
@@ -85,7 +92,8 @@ public class FireListener extends FlagListener {
                 && (e.getMaterial() == Material.FLINT_AND_STEEL || e.getMaterial() == Material.FIRE_CHARGE)) {
             checkIsland(e, e.getPlayer(), e.getClickedBlock().getLocation(), Flags.FLINT_AND_STEEL);
         }
-        // Look along player's sight line to see if any blocks are fire. Players can hit fire out quite a long way away.
+        // Look along player's sight line to see if any blocks are fire. Players can hit
+        // fire out quite a long way away.
         try {
             BlockIterator iter = new BlockIterator(e.getPlayer(), 10);
             while (iter.hasNext()) {
@@ -95,7 +103,8 @@ public class FireListener extends FlagListener {
                 }
             }
         } catch (Exception ex) {
-            // To catch at block iterator exceptions that can happen in the void or at the very top of blocks
+            // To catch at block iterator exceptions that can happen in the void or at the
+            // very top of blocks
         }
     }
 

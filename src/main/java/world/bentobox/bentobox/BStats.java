@@ -27,18 +27,19 @@ public class BStats {
     private Metrics metrics;
 
     /**
-     * Counts of the islands that got created.
-     * It is reset to 0 when BStats gets the data.
+     * Counts of the islands that got created. It is reset to 0 when BStats gets the
+     * data.
+     * 
      * @since 1.1
      */
     private int islandsCreatedCount = 0;
 
     /**
      * Contains the amount of connected players since last data send.
+     * 
      * @since 1.17.1
      */
     private final Set<UUID> connectedPlayerSet = new HashSet<>();
-
 
     BStats(BentoBox plugin) {
         this.plugin = plugin;
@@ -95,7 +96,9 @@ public class BStats {
     }
 
     /**
-     * Increases the count of islands that got create since the last "data get" request from BStats.
+     * Increases the count of islands that got create since the last "data get"
+     * request from BStats.
+     * 
      * @since 1.1
      */
     public void increaseIslandsCreatedCount() {
@@ -104,6 +107,7 @@ public class BStats {
 
     /**
      * Adds given UUID to the connected player set.
+     * 
      * @param uuid UUID of a player who logins.
      * @since 1.17.1
      */
@@ -113,6 +117,7 @@ public class BStats {
 
     /**
      * Sends the enabled addons (except GameModeAddons) of this server.
+     * 
      * @since 1.1
      */
     private void registerAddonsChart() {
@@ -127,6 +132,7 @@ public class BStats {
 
     /**
      * Sends the enabled GameModeAddons of this server.
+     * 
      * @since 1.4.0
      */
     private void registerGameModeAddonsChart() {
@@ -141,6 +147,7 @@ public class BStats {
 
     /**
      * Sends the enabled Hooks of this server.
+     * 
      * @since 1.6.0
      */
     private void registerHooksChart() {
@@ -153,6 +160,7 @@ public class BStats {
 
     /**
      * Sends the "category" this server is in depending on how many players it has.
+     * 
      * @since 1.6.0
      */
     private void registerPlayersPerServerChart() {
@@ -160,19 +168,28 @@ public class BStats {
             int players = this.connectedPlayerSet.size();
             this.connectedPlayerSet.clear();
 
-            if (players <= 0) return "0";
-            else if (players <= 10) return "1-10";
-            else if (players <= 30) return "11-30";
-            else if (players <= 50) return "31-50";
-            else if (players <= 100) return "51-100";
-            else if (players <= 150) return "101-150";
-            else if (players <= 200) return "151-200";
-            else return "201+";
+            if (players <= 0)
+                return "0";
+            else if (players <= 10)
+                return "1-10";
+            else if (players <= 30)
+                return "11-30";
+            else if (players <= 50)
+                return "31-50";
+            else if (players <= 100)
+                return "51-100";
+            else if (players <= 150)
+                return "101-150";
+            else if (players <= 200)
+                return "151-200";
+            else
+                return "201+";
         }));
     }
 
     /**
      * Sends the "flags display mode" of all the online players.
+     * 
      * @since 1.6.0
      */
     private void registerFlagsDisplayModeChart() {
@@ -194,34 +211,37 @@ public class BStats {
 
     /**
      * Sends the enabled addons (except GameModeAddons) of this server as bar chart.
+     * 
      * @since 1.17.1
      */
     private void registerAddonsBarChart() {
         metrics.addCustomChart(new SimpleBarChart("addonsBar", () -> {
             Map<String, Integer> values = new HashMap<>();
             plugin.getAddonsManager().getEnabledAddons().stream()
-                .filter(addon -> !(addon instanceof GameModeAddon) && addon.getDescription().isMetrics())
-                .forEach(addon -> values.put(addon.getDescription().getName(), 1));
+                    .filter(addon -> !(addon instanceof GameModeAddon) && addon.getDescription().isMetrics())
+                    .forEach(addon -> values.put(addon.getDescription().getName(), 1));
             return values;
         }));
     }
 
     /**
      * Sends the enabled GameModeAddons of this server as a bar chart.
+     * 
      * @since 1.17.1
      */
     private void registerGameModeAddonsBarChart() {
         metrics.addCustomChart(new SimpleBarChart("gameModeAddonsBar", () -> {
             Map<String, Integer> values = new HashMap<>();
             plugin.getAddonsManager().getGameModeAddons().stream()
-                .filter(gameModeAddon -> gameModeAddon.getDescription().isMetrics())
-                .forEach(gameModeAddon -> values.put(gameModeAddon.getDescription().getName(), 1));
+                    .filter(gameModeAddon -> gameModeAddon.getDescription().isMetrics())
+                    .forEach(gameModeAddon -> values.put(gameModeAddon.getDescription().getName(), 1));
             return values;
         }));
     }
 
     /**
      * Sends the enabled Hooks of this server as a bar chart.
+     * 
      * @since 1.17.1
      */
     private void registerHooksBarChart() {

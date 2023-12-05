@@ -12,6 +12,7 @@ import world.bentobox.bentobox.api.user.User;
 /**
  * Adds a default help to every command that will show the usage of the command
  * and the usage of any subcommands that the command has.
+ * 
  * @author tastybento
  *
  */
@@ -40,24 +41,29 @@ public class DefaultHelpCommand extends CompositeCommand {
     @Override
     public boolean execute(User user, String label, List<String> args) {
         // If command is hidden, do not show anything
-        if (parent.isHidden()) return true;
+        if (parent.isHidden())
+            return true;
         // Show default help
         int depth = 0;
         if (args.size() == 1) {
             if (NumberUtils.isDigits(args.get(0))) {
-                // Converts first argument into an int, or returns -1 if it cannot. Avoids exceptions.
+                // Converts first argument into an int, or returns -1 if it cannot. Avoids
+                // exceptions.
                 depth = Optional.ofNullable(args.get(0)).map(NumberUtils::toInt).orElse(-1);
             } else {
                 String usage = parent.getUsage();
                 String params = user.getTranslation("commands.help.parameters");
                 String desc = user.getTranslation("commands.help.description");
-                user.sendMessage(HELP_SYNTAX_REF, USAGE_PLACEHOLDER, usage, PARAMS_PLACEHOLDER, params, DESC_PLACEHOLDER, desc);
+                user.sendMessage(HELP_SYNTAX_REF, USAGE_PLACEHOLDER, usage, PARAMS_PLACEHOLDER, params,
+                        DESC_PLACEHOLDER, desc);
                 return true;
             }
         }
         if (depth == 0) {
-            // Get the name of the world for the help header, or console if there is no world association
-            String labelText = getWorld() != null ? getIWM().getFriendlyName(getWorld()) : user.getTranslation("commands.help.console");
+            // Get the name of the world for the help header, or console if there is no
+            // world association
+            String labelText = getWorld() != null ? getIWM().getFriendlyName(getWorld())
+                    : user.getTranslation("commands.help.console");
             user.sendMessage("commands.help.header", TextVariables.LABEL, labelText);
         }
         if (depth < MAX_DEPTH) {
@@ -87,7 +93,8 @@ public class DefaultHelpCommand extends CompositeCommand {
             if (!subCommand.getLabel().equals(HELP)) {
                 // Every command should have help because every command has a default help
                 Optional<CompositeCommand> sub = subCommand.getSubCommand(HELP);
-                sub.ifPresent(compositeCommand -> compositeCommand.execute(user, HELP, Collections.singletonList(String.valueOf(newDepth))));
+                sub.ifPresent(compositeCommand -> compositeCommand.execute(user, HELP,
+                        Collections.singletonList(String.valueOf(newDepth))));
             }
         }
     }
@@ -100,10 +107,12 @@ public class DefaultHelpCommand extends CompositeCommand {
                 if (params == null || params.isEmpty()) {
                     user.sendMessage(HELP_SYNTAX_NO_PARAMETERS_REF, USAGE_PLACEHOLDER, usage, DESC_PLACEHOLDER, desc);
                 } else {
-                    user.sendMessage(HELP_SYNTAX_REF, USAGE_PLACEHOLDER, usage, PARAMS_PLACEHOLDER, params, DESC_PLACEHOLDER, desc);
+                    user.sendMessage(HELP_SYNTAX_REF, USAGE_PLACEHOLDER, usage, PARAMS_PLACEHOLDER, params,
+                            DESC_PLACEHOLDER, desc);
                 }
             } else {
-                // No permission, nothing to see here. If you don't have permission, you cannot see any sub commands
+                // No permission, nothing to see here. If you don't have permission, you cannot
+                // see any sub commands
                 return true;
             }
         } else if (!parent.isOnlyPlayer()) {
@@ -111,7 +120,8 @@ public class DefaultHelpCommand extends CompositeCommand {
             if (params == null || params.isEmpty()) {
                 user.sendMessage(HELP_SYNTAX_NO_PARAMETERS_REF, USAGE_PLACEHOLDER, usage, DESC_PLACEHOLDER, desc);
             } else {
-                user.sendMessage(HELP_SYNTAX_REF, USAGE_PLACEHOLDER, usage, PARAMS_PLACEHOLDER, params, DESC_PLACEHOLDER, desc);
+                user.sendMessage(HELP_SYNTAX_REF, USAGE_PLACEHOLDER, usage, PARAMS_PLACEHOLDER, params,
+                        DESC_PLACEHOLDER, desc);
             }
         }
         return false;

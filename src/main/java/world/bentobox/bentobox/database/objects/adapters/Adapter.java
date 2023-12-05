@@ -8,6 +8,7 @@ import java.lang.annotation.Target;
 /**
  *
  * Denotes which adapter should be used to serialize or deserialize this field
+ * 
  * @author tastybento
  */
 @Retention(RetentionPolicy.RUNTIME)

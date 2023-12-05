@@ -10,19 +10,12 @@ import world.bentobox.bentobox.api.logs.LogEntry;
 /**
  * @author Poslovitch
  */
-/*  The serialization might look a bit weird here, as I'm using JSON's array of object.
-    This means that, once serialized, the data will look like this (on YAML):
-        history:
-            - timestamp: 0
-              type: "test"
-              data:
-                player: "uuid"
-                action: "ISLAND_LEVEL_UPDATED"
-                value: 45
-            - timestamp: 4181
-              type: "lol"
-              data:
-                help: "yep"
+/*
+ * The serialization might look a bit weird here, as I'm using JSON's array of
+ * object. This means that, once serialized, the data will look like this (on
+ * YAML): history: - timestamp: 0 type: "test" data: player: "uuid" action:
+ * "ISLAND_LEVEL_UPDATED" value: 45 - timestamp: 4181 type: "lol" data: help:
+ * "yep"
  */
 public class LogEntryListAdapter implements AdapterInterface<List<LogEntry>, List<Map<String, Object>>> {
 

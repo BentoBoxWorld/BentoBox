@@ -38,7 +38,8 @@ public class IslandWorldManager {
 
     private final BentoBox plugin;
     /**
-     * Map associating Worlds (Overworld, Nether and End) with the GameModeAddon that creates them.
+     * Map associating Worlds (Overworld, Nether and End) with the GameModeAddon
+     * that creates them.
      */
     private final Map<@NonNull World, @NonNull GameModeAddon> gameModes;
 
@@ -55,7 +56,7 @@ public class IslandWorldManager {
      *
      * @param reg true to register, false to remove registration
      *
-     * Updated 1.24.0
+     *            Updated 1.24.0
      */
     public void registerWorldsToMultiverse(boolean reg) {
         gameModes.values().stream().distinct().forEach(gm -> {
@@ -68,7 +69,6 @@ public class IslandWorldManager {
             }
         });
     }
-
 
     private void registerToWorldManagementPlugins(@NonNull World world, boolean islandWorld, boolean reg) {
         if (plugin.getHooks() == null) {
@@ -86,7 +86,8 @@ public class IslandWorldManager {
 
     }
 
-    private void runTask(WorldManagementHook worldManagementHook, @NonNull World world, boolean islandWorld, boolean reg) {
+    private void runTask(WorldManagementHook worldManagementHook, @NonNull World world, boolean islandWorld,
+            boolean reg) {
         if (reg) {
             worldManagementHook.registerWorld(world, islandWorld);
         } else {
@@ -95,11 +96,12 @@ public class IslandWorldManager {
     }
 
     /**
-     * Checks if a location is in any of the island worlds.
-     * This will be false if the player is in the standard Nether or standard End.
+     * Checks if a location is in any of the island worlds. This will be false if
+     * the player is in the standard Nether or standard End.
      *
      * @param loc - location
-     * @return true if in a world or false if not. False if in standard Nether or standard End.
+     * @return true if in a world or false if not. False if in standard Nether or
+     *         standard End.
      */
     public boolean inWorld(@Nullable Location loc) {
         return loc != null && inWorld(loc.getWorld());
@@ -112,8 +114,8 @@ public class IslandWorldManager {
      * @return true if in a world or false if not
      */
     public boolean inWorld(@Nullable World world) {
-        return world != null && gameModes.containsKey(world) &&
-                (world.getEnvironment().equals(Environment.NORMAL) || isIslandNether(world) || isIslandEnd(world));
+        return world != null && gameModes.containsKey(world)
+                && (world.getEnvironment().equals(Environment.NORMAL) || isIslandNether(world) || isIslandEnd(world));
     }
 
     /**
@@ -129,8 +131,7 @@ public class IslandWorldManager {
      * @return List of over worlds
      */
     public List<World> getOverWorlds() {
-        return gameModes.keySet().stream().filter(w -> w.getEnvironment().equals(Environment.NORMAL))
-                .toList();
+        return gameModes.keySet().stream().filter(w -> w.getEnvironment().equals(Environment.NORMAL)).toList();
     }
 
     /**
@@ -139,9 +140,8 @@ public class IslandWorldManager {
      * @return Map of world names and associated GameModeAddon friendly name
      */
     public Map<String, String> getOverWorldNames() {
-        return gameModes.values().stream()
-                .distinct()
-                .collect(Collectors.toMap(a -> a.getOverWorld().getName(), a -> a.getWorldSettings().getFriendlyName()));
+        return gameModes.values().stream().distinct().collect(
+                Collectors.toMap(a -> a.getOverWorld().getName(), a -> a.getWorldSettings().getFriendlyName()));
     }
 
     /**
@@ -156,9 +156,10 @@ public class IslandWorldManager {
     }
 
     /**
-     * Associate a world with a game mode. This enables game modes to register more worlds than just the standard
-     * overworld, nether, and end worlds.
-     * @param world world
+     * Associate a world with a game mode. This enables game modes to register more
+     * worlds than just the standard overworld, nether, and end worlds.
+     * 
+     * @param world    world
      * @param gameMode game mode
      * @since 1.24.0
      */
@@ -168,6 +169,7 @@ public class IslandWorldManager {
 
     /**
      * Adds a GameMode to island world manager
+     * 
      * @param gameMode - game mode to add
      * @throws NullPointerException - exception if the game mode overworld is null
      */
@@ -175,7 +177,8 @@ public class IslandWorldManager {
         WorldSettings settings = gameMode.getWorldSettings();
         World world = gameMode.getOverWorld();
         if (world == null) {
-            throw new NullPointerException("Gamemode overworld object is null for " + gameMode.getDescription().getName());
+            throw new NullPointerException(
+                    "Gamemode overworld object is null for " + gameMode.getDescription().getName());
         }
         String friendlyName = settings.getFriendlyName().isEmpty() ? world.getName() : settings.getFriendlyName();
         // Add worlds to map
@@ -196,12 +199,10 @@ public class IslandWorldManager {
         }
 
         // Set default island settings
-        plugin.getFlagsManager().getFlags().stream().
-        filter(f -> f.getType().equals(Flag.Type.PROTECTION)).
-        forEach(f -> settings.getDefaultIslandFlagNames().putIfAbsent(f.getID(), f.getDefaultRank()));
-        plugin.getFlagsManager().getFlags().stream().
-        filter(f -> f.getType().equals(Flag.Type.SETTING)).
-        forEach(f -> settings.getDefaultIslandSettingNames().putIfAbsent(f.getID(), f.getDefaultRank()));
+        plugin.getFlagsManager().getFlags().stream().filter(f -> f.getType().equals(Flag.Type.PROTECTION))
+                .forEach(f -> settings.getDefaultIslandFlagNames().putIfAbsent(f.getID(), f.getDefaultRank()));
+        plugin.getFlagsManager().getFlags().stream().filter(f -> f.getType().equals(Flag.Type.SETTING))
+                .forEach(f -> settings.getDefaultIslandSettingNames().putIfAbsent(f.getID(), f.getDefaultRank()));
 
         Bukkit.getScheduler().runTask(plugin, () -> {
             // Set world difficulty
@@ -232,7 +233,8 @@ public class IslandWorldManager {
      */
     @NonNull
     public WorldSettings getWorldSettings(@NonNull World world) {
-        return Objects.requireNonNull(gameModes.get(world), "Attempt to get WorldSettings for non-game world " + world.getName()).getWorldSettings();
+        return Objects.requireNonNull(gameModes.get(world),
+                "Attempt to get WorldSettings for non-game world " + world.getName()).getWorldSettings();
     }
 
     /**
@@ -257,7 +259,9 @@ public class IslandWorldManager {
     }
 
     /**
-     * Value will always be greater than the world's min height and less than the world's max height.
+     * Value will always be greater than the world's min height and less than the
+     * world's max height.
+     * 
      * @return the islandHeight
      */
     public int getIslandHeight(@NonNull World world) {
@@ -328,7 +332,9 @@ public class IslandWorldManager {
      * @return the worldName
      */
     public String getWorldName(@NonNull World world) {
-        return gameModes.containsKey(world) ? gameModes.get(world).getWorldSettings().getWorldName().toLowerCase(Locale.ENGLISH) : world.getName();
+        return gameModes.containsKey(world)
+                ? gameModes.get(world).getWorldSettings().getWorldName().toLowerCase(Locale.ENGLISH)
+                : world.getName();
     }
 
     /**
@@ -366,7 +372,8 @@ public class IslandWorldManager {
      * @return true if world is a known and valid nether world
      */
     public boolean isNether(@Nullable World world) {
-        return world != null && (world.getEnvironment().equals(Environment.NETHER) && gameModes.containsKey(world) && gameModes.get(world).getWorldSettings().isNetherGenerate());
+        return world != null && (world.getEnvironment().equals(Environment.NETHER) && gameModes.containsKey(world)
+                && gameModes.get(world).getWorldSettings().isNetherGenerate());
     }
 
     /**
@@ -376,7 +383,8 @@ public class IslandWorldManager {
      * @return true if world is a known and valid nether world
      */
     public boolean isIslandNether(@Nullable World world) {
-        return world != null && (world.getEnvironment().equals(Environment.NETHER) && gameModes.containsKey(world) && gameModes.get(world).getWorldSettings().isNetherGenerate()
+        return world != null && (world.getEnvironment().equals(Environment.NETHER) && gameModes.containsKey(world)
+                && gameModes.get(world).getWorldSettings().isNetherGenerate()
                 && gameModes.get(world).getWorldSettings().isNetherIslands());
     }
 
@@ -387,18 +395,19 @@ public class IslandWorldManager {
      * @return true if world is a known and valid end world
      */
     public boolean isEnd(@Nullable World world) {
-        return world != null && (world.getEnvironment().equals(Environment.THE_END) && gameModes.containsKey(world) && gameModes.get(world).getWorldSettings().isEndGenerate());
+        return world != null && (world.getEnvironment().equals(Environment.THE_END) && gameModes.containsKey(world)
+                && gameModes.get(world).getWorldSettings().isEndGenerate());
     }
 
     /**
      * Checks if a world is a known island end world
      *
-     * @param world
-     *            - world
+     * @param world - world
      * @return true if world is a known and valid nether world
      */
     public boolean isIslandEnd(@Nullable World world) {
-        return world != null && (world.getEnvironment().equals(Environment.THE_END) && gameModes.containsKey(world) && gameModes.get(world).getWorldSettings().isEndGenerate()
+        return world != null && (world.getEnvironment().equals(Environment.THE_END) && gameModes.containsKey(world)
+                && gameModes.get(world).getWorldSettings().isEndGenerate()
                 && gameModes.get(world).getWorldSettings().isEndIslands());
     }
 
@@ -431,7 +440,8 @@ public class IslandWorldManager {
      * @return true (default) if it can spawn or not
      */
     public boolean isDragonSpawn(@Nullable World world) {
-        return world == null || (!gameModes.containsKey(world) || gameModes.get(world).getWorldSettings().isDragonSpawn());
+        return world == null
+                || (!gameModes.containsKey(world) || gameModes.get(world).getWorldSettings().isDragonSpawn());
     }
 
     /**
@@ -439,7 +449,8 @@ public class IslandWorldManager {
      */
     public String getFriendlyNames() {
         StringBuilder r = new StringBuilder();
-        gameModes.values().stream().distinct().forEach(n -> r.append(n.getWorldSettings().getFriendlyName()).append(", "));
+        gameModes.values().stream().distinct()
+                .forEach(n -> r.append(n.getWorldSettings().getFriendlyName()).append(", "));
         if (r.length() > 0) {
             r.setLength(r.length() - 2);
         }
@@ -454,8 +465,9 @@ public class IslandWorldManager {
      */
     @Nullable
     public World getIslandWorld(String friendlyWorldName) {
-        return gameModes.entrySet().stream().filter(e -> e.getValue().getWorldSettings().getFriendlyName().equalsIgnoreCase(friendlyWorldName)).findFirst()
-                .map(Map.Entry::getKey).orElse(null);
+        return gameModes.entrySet().stream()
+                .filter(e -> e.getValue().getWorldSettings().getFriendlyName().equalsIgnoreCase(friendlyWorldName))
+                .findFirst().map(Map.Entry::getKey).orElse(null);
     }
 
     /**
@@ -470,6 +482,7 @@ public class IslandWorldManager {
 
     /**
      * Get max coop size for this world
+     * 
      * @param world - world
      * @return max coop size or zero if world is not a game world
      * @since 1.13.0
@@ -480,6 +493,7 @@ public class IslandWorldManager {
 
     /**
      * Get max trust size for this world
+     * 
      * @param world - world
      * @return max trust size or zero if world is not a game world
      * @since 1.13.0
@@ -505,16 +519,16 @@ public class IslandWorldManager {
      * @return Friendly name or world name if world is not a game world
      */
     public String getFriendlyName(@NonNull World world) {
-        return gameModes.containsKey(world) ?
-                gameModes.get(world).getWorldSettings().getFriendlyName() :
-                    world.getName();
+        return gameModes.containsKey(world) ? gameModes.get(world).getWorldSettings().getFriendlyName()
+                : world.getName();
     }
 
     /**
      * Get the permission prefix for this world. Trailing dot included.
      *
      * @param world - world
-     * @return permission prefix for this world or empty string if world is not a game world
+     * @return permission prefix for this world or empty string if world is not a
+     *         game world
      */
     public String getPermissionPrefix(@NonNull World world) {
         return gameModes.containsKey(world) ? gameModes.get(world).getWorldSettings().getPermissionPrefix() + "." : "";
@@ -525,20 +539,20 @@ public class IslandWorldManager {
      * Get the invincible visitor settings for this world
      *
      * @param world - world
-     * @return invincible visitor settings or an empty list if world is not a game world
+     * @return invincible visitor settings or an empty list if world is not a game
+     *         world
      */
     public List<String> getIvSettings(@NonNull World world) {
-        return gameModes.containsKey(world) ? gameModes.get(world).getWorldSettings().getIvSettings() : Collections.emptyList();
+        return gameModes.containsKey(world) ? gameModes.get(world).getWorldSettings().getIvSettings()
+                : Collections.emptyList();
     }
 
     /**
      * Returns whether a world flag is set or not Same result as calling
      * {@link Flag#isSetForWorld(World)}
      *
-     * @param world
-     *            - world
-     * @param flag
-     *            - world setting flag
+     * @param world - world
+     * @param flag  - world setting flag
      * @return true or false
      */
     public boolean isWorldFlag(@NonNull World world, @NonNull Flag flag) {
@@ -549,10 +563,12 @@ public class IslandWorldManager {
      * Get the default game mode for this world.
      *
      * @param world - world
-     * @return GameMode: SURVIVAL, CREATIVE, ADVENTURE, SPECTATOR. Default is SURVIVAL if world is not a game world
+     * @return GameMode: SURVIVAL, CREATIVE, ADVENTURE, SPECTATOR. Default is
+     *         SURVIVAL if world is not a game world
      */
     public GameMode getDefaultGameMode(@NonNull World world) {
-        return gameModes.containsKey(world) ? gameModes.get(world).getWorldSettings().getDefaultGameMode() : GameMode.SURVIVAL;
+        return gameModes.containsKey(world) ? gameModes.get(world).getWorldSettings().getDefaultGameMode()
+                : GameMode.SURVIVAL;
     }
 
     /**
@@ -562,7 +578,8 @@ public class IslandWorldManager {
      * @return - set of entity types
      */
     public Set<EntityType> getRemoveMobsWhitelist(@NonNull World world) {
-        return gameModes.containsKey(world) ? gameModes.get(world).getWorldSettings().getRemoveMobsWhitelist() : Collections.emptySet();
+        return gameModes.containsKey(world) ? gameModes.get(world).getWorldSettings().getRemoveMobsWhitelist()
+                : Collections.emptySet();
     }
 
     /**
@@ -587,7 +604,9 @@ public class IslandWorldManager {
     }
 
     /**
-     * Returns whether a player's health should be reset upon him joining or creating an island in this World.
+     * Returns whether a player's health should be reset upon him joining or
+     * creating an island in this World.
+     * 
      * @param world the World
      * @return {@code true} if health should be reset, {@code false} otherwise.
      * @since 1.8.0
@@ -597,7 +616,9 @@ public class IslandWorldManager {
     }
 
     /**
-     * Returns whether a player's hunger should be reset upon him joining or creating an island in this World.
+     * Returns whether a player's hunger should be reset upon him joining or
+     * creating an island in this World.
+     * 
      * @param world the World
      * @return {@code true} if hunger should be reset, {@code false} otherwise.
      * @since 1.8.0
@@ -607,7 +628,9 @@ public class IslandWorldManager {
     }
 
     /**
-     * Returns whether a player's XP should be reset upon him joining or creating an island in this World.
+     * Returns whether a player's XP should be reset upon him joining or creating an
+     * island in this World.
+     * 
      * @param world the World
      * @return {@code true} if XP should be reset, {@code false} otherwise.
      * @since 1.8.0
@@ -617,7 +640,9 @@ public class IslandWorldManager {
     }
 
     /**
-     * Returns a list of commands to execute when the player creates or joins an island.
+     * Returns a list of commands to execute when the player creates or joins an
+     * island.
+     * 
      * @param world the World
      * @return a list of commands
      * @since 1.8.0
@@ -625,7 +650,8 @@ public class IslandWorldManager {
      */
     @NonNull
     public List<String> getOnJoinCommands(@NonNull World world) {
-        return gameModes.containsKey(world) ? gameModes.get(world).getWorldSettings().getOnJoinCommands() : Collections.emptyList();
+        return gameModes.containsKey(world) ? gameModes.get(world).getWorldSettings().getOnJoinCommands()
+                : Collections.emptyList();
     }
 
     /**
@@ -650,7 +676,9 @@ public class IslandWorldManager {
     }
 
     /**
-     * Returns whether a player's health should be reset upon him leaving or resetting his island in this World.
+     * Returns whether a player's health should be reset upon him leaving or
+     * resetting his island in this World.
+     * 
      * @param world the World
      * @return {@code true} if health should be reset, {@code false} otherwise.
      * @since 1.8.0
@@ -660,7 +688,9 @@ public class IslandWorldManager {
     }
 
     /**
-     * Returns whether a player's hunger should be reset upon him leaving or resetting his island in this World.
+     * Returns whether a player's hunger should be reset upon him leaving or
+     * resetting his island in this World.
+     * 
      * @param world the World
      * @return {@code true} if hunger should be reset, {@code false} otherwise.
      * @since 1.8.0
@@ -670,7 +700,9 @@ public class IslandWorldManager {
     }
 
     /**
-     * Returns whether a player's XP should be reset upon him leaving or resetting his island in this World.
+     * Returns whether a player's XP should be reset upon him leaving or resetting
+     * his island in this World.
+     * 
      * @param world the World
      * @return {@code true} if XP should be reset, {@code false} otherwise.
      * @since 1.8.0
@@ -680,7 +712,9 @@ public class IslandWorldManager {
     }
 
     /**
-     * Returns a list of commands to execute when the player resets or leaves an island.
+     * Returns a list of commands to execute when the player resets or leaves an
+     * island.
+     * 
      * @param world the World
      * @return a list of commands
      * @since 1.8.0
@@ -688,11 +722,14 @@ public class IslandWorldManager {
      */
     @NonNull
     public List<String> getOnLeaveCommands(@NonNull World world) {
-        return gameModes.containsKey(world) ? gameModes.get(world).getWorldSettings().getOnLeaveCommands() : Collections.emptyList();
+        return gameModes.containsKey(world) ? gameModes.get(world).getWorldSettings().getOnLeaveCommands()
+                : Collections.emptyList();
     }
 
     /**
-     * Returns a list of commands to execute when the player respawns and {@link Flags#ISLAND_RESPAWN} is true.
+     * Returns a list of commands to execute when the player respawns and
+     * {@link Flags#ISLAND_RESPAWN} is true.
+     * 
      * @param world the World
      * @return a list of commands
      * @since 1.14.0
@@ -700,7 +737,8 @@ public class IslandWorldManager {
      */
     @NonNull
     public List<String> getOnRespawnCommands(@NonNull World world) {
-        return gameModes.containsKey(world) ? gameModes.get(world).getWorldSettings().getOnRespawnCommands() : Collections.emptyList();
+        return gameModes.containsKey(world) ? gameModes.get(world).getWorldSettings().getOnRespawnCommands()
+                : Collections.emptyList();
     }
 
     /**
@@ -715,8 +753,7 @@ public class IslandWorldManager {
     /**
      * Get the game mode addon associated with this world set
      *
-     * @param world
-     *            - world
+     * @param world - world
      * @return GameModeAddon, or empty
      */
     public Optional<GameModeAddon> getAddon(@Nullable World world) {
@@ -729,20 +766,21 @@ public class IslandWorldManager {
      * @param world - world
      * @return default rank settings for new islands.
      */
-    public Map<Flag, Integer> getDefaultIslandFlags(@NonNull World world)
-    {
-        return this.gameModes.containsKey(world) ?
-                this.convertToFlags(this.gameModes.get(world).getWorldSettings().getDefaultIslandFlagNames()) :
-                    Collections.emptyMap();
+    public Map<Flag, Integer> getDefaultIslandFlags(@NonNull World world) {
+        return this.gameModes.containsKey(world)
+                ? this.convertToFlags(this.gameModes.get(world).getWorldSettings().getDefaultIslandFlagNames())
+                : Collections.emptyMap();
     }
 
     /**
      * Returns a list of flags that should NOT be visible to the player
+     * 
      * @param world - world
      * @return list of hidden flags
      */
     public List<String> getHiddenFlags(@NonNull World world) {
-        return gameModes.containsKey(world) ? gameModes.get(world).getWorldSettings().getHiddenFlags() : Collections.emptyList();
+        return gameModes.containsKey(world) ? gameModes.get(world).getWorldSettings().getHiddenFlags()
+                : Collections.emptyList();
     }
 
     /**
@@ -751,11 +789,10 @@ public class IslandWorldManager {
      * @param world - world
      * @return default settings for new islands
      */
-    public Map<Flag, Integer> getDefaultIslandSettings(@NonNull World world)
-    {
-        return this.gameModes.containsKey(world) ?
-                this.convertToFlags(this.gameModes.get(world).getWorldSettings().getDefaultIslandSettingNames()) :
-                    Collections.emptyMap();
+    public Map<Flag, Integer> getDefaultIslandSettings(@NonNull World world) {
+        return this.gameModes.containsKey(world)
+                ? this.convertToFlags(this.gameModes.get(world).getWorldSettings().getDefaultIslandSettingNames())
+                : Collections.emptyMap();
     }
 
     public boolean isUseOwnGenerator(@NonNull World world) {
@@ -763,11 +800,13 @@ public class IslandWorldManager {
     }
 
     /**
-     * Check for blocks when searching for a new island. This is a safety net check that does a look
-     * around the new island location (3x3x3 block check). If any non-air or non-water blocks are found
-     * then the island is marked as being used. It is mainly for migration handling from worlds that
-     * do not register island properly. It is incompatible with CaveBlock or other gamemodes that will
-     * have blocks there.
+     * Check for blocks when searching for a new island. This is a safety net check
+     * that does a look around the new island location (3x3x3 block check). If any
+     * non-air or non-water blocks are found then the island is marked as being
+     * used. It is mainly for migration handling from worlds that do not register
+     * island properly. It is incompatible with CaveBlock or other gamemodes that
+     * will have blocks there.
+     * 
      * @param world - world
      * @return true if a check for blocks should happen
      * @since 1.16.0
@@ -778,22 +817,27 @@ public class IslandWorldManager {
 
     /**
      * Return banned commands for visitors
+     * 
      * @return the visitorbannedcommands
      */
     public List<String> getVisitorBannedCommands(@NonNull World world) {
-        return gameModes.containsKey(world) ? gameModes.get(world).getWorldSettings().getVisitorBannedCommands() : Collections.emptyList();
+        return gameModes.containsKey(world) ? gameModes.get(world).getWorldSettings().getVisitorBannedCommands()
+                : Collections.emptyList();
     }
 
     /**
      * Return banned commands when falling
+     * 
      * @return the fallingbannedcommands
      */
     public List<String> getFallingBannedCommands(@NonNull World world) {
-        return gameModes.containsKey(world) ? gameModes.get(world).getWorldSettings().getFallingBannedCommands() : Collections.emptyList();
+        return gameModes.containsKey(world) ? gameModes.get(world).getWorldSettings().getFallingBannedCommands()
+                : Collections.emptyList();
     }
 
     /**
      * Check if water is not safe, e.g., it is acid, in the world
+     * 
      * @param world - world
      * @return true if water is not safe, e.g.for home locations
      */
@@ -803,25 +847,30 @@ public class IslandWorldManager {
 
     /**
      * Get a list of entity types that should not exit the island limits
+     * 
      * @param world - world
      * @return list
      */
     public List<String> getGeoLimitSettings(@NonNull World world) {
-        return gameModes.containsKey(world) ? gameModes.get(world).getWorldSettings().getGeoLimitSettings() : Collections.emptyList();
+        return gameModes.containsKey(world) ? gameModes.get(world).getWorldSettings().getGeoLimitSettings()
+                : Collections.emptyList();
     }
 
     /**
      * Check if a mob type should not spawn in this world
+     * 
      * @param world - world
      * @return list of limited mobs
      * @since 1.12.0
      */
     public List<String> getMobLimitSettings(@NonNull World world) {
-        return gameModes.containsKey(world) ? gameModes.get(world).getWorldSettings().getMobLimitSettings() : Collections.emptyList();
+        return gameModes.containsKey(world) ? gameModes.get(world).getWorldSettings().getMobLimitSettings()
+                : Collections.emptyList();
     }
 
     /**
      * Get the reset limit for this world
+     * 
      * @param world - world
      * @return number of resets allowed. -1 = unlimited
      */
@@ -829,9 +878,9 @@ public class IslandWorldManager {
         return gameModes.containsKey(world) ? gameModes.get(world).getWorldSettings().getResetLimit() : -1;
     }
 
-
     /**
      * Gets the time stamp for when all player resets were zeroed
+     * 
      * @param world - world
      */
     public long getResetEpoch(@NonNull World world) {
@@ -840,14 +889,17 @@ public class IslandWorldManager {
 
     /**
      * Sets the time stamp for when all player resets were zeroed
+     * 
      * @param world - world
      */
     public void setResetEpoch(@NonNull World world) {
-        if (gameModes.containsKey(world)) gameModes.get(world).getWorldSettings().setResetEpoch(System.currentTimeMillis());
+        if (gameModes.containsKey(world))
+            gameModes.get(world).getWorldSettings().setResetEpoch(System.currentTimeMillis());
     }
 
     /**
      * Check if the death count should be reset when joining a team in this world
+     * 
      * @param world - world
      * @return true or false
      */
@@ -858,6 +910,7 @@ public class IslandWorldManager {
     /**
      * Check if deaths in the world are reset when the player starts a new island.
      * This includes a totally new island and also a new island from a reset.
+     * 
      * @param world - world
      * @return true or false
      * @since 1.6.0
@@ -868,6 +921,7 @@ public class IslandWorldManager {
 
     /**
      * Get the maximum number of deaths allowed in this world
+     * 
      * @param world - world
      * @return max deaths
      */
@@ -877,6 +931,7 @@ public class IslandWorldManager {
 
     /**
      * Get the ban limit for this world
+     * 
      * @param world - world
      * @return ban limit
      */
@@ -892,7 +947,8 @@ public class IslandWorldManager {
     }
 
     /**
-     * @return whether players keep their inventory if they are kicked. Overrides leave inventory clearing
+     * @return whether players keep their inventory if they are kicked. Overrides
+     *         leave inventory clearing
      */
     public boolean isKickedKeepInventory(@NonNull World world) {
         return !gameModes.containsKey(world) || gameModes.get(world).getWorldSettings().isKickedKeepInventory();
@@ -905,7 +961,8 @@ public class IslandWorldManager {
      * @since 1.9.0
      */
     public boolean isCreateIslandOnFirstLoginEnabled(@NonNull World world) {
-        return gameModes.containsKey(world) && gameModes.get(world).getWorldSettings().isCreateIslandOnFirstLoginEnabled();
+        return gameModes.containsKey(world)
+                && gameModes.get(world).getWorldSettings().isCreateIslandOnFirstLoginEnabled();
     }
 
     /**
@@ -915,7 +972,8 @@ public class IslandWorldManager {
      * @since 1.9.0
      */
     public int getCreateIslandOnFirstLoginDelay(@NonNull World world) {
-        return gameModes.containsKey(world) ? gameModes.get(world).getWorldSettings().getCreateIslandOnFirstLoginDelay() : 0;
+        return gameModes.containsKey(world) ? gameModes.get(world).getWorldSettings().getCreateIslandOnFirstLoginDelay()
+                : 0;
     }
 
     /**
@@ -925,11 +983,13 @@ public class IslandWorldManager {
      * @since 1.9.0
      */
     public boolean isCreateIslandOnFirstLoginAbortOnLogout(@NonNull World world) {
-        return gameModes.containsKey(world) && gameModes.get(world).getWorldSettings().isCreateIslandOnFirstLoginAbortOnLogout();
+        return gameModes.containsKey(world)
+                && gameModes.get(world).getWorldSettings().isCreateIslandOnFirstLoginAbortOnLogout();
     }
 
     /**
      * Check if nether or end islands should be pasted on teleporting
+     * 
      * @param world - over world
      * @return true if missing nether or end islands should be pasted
      * @since 1.10.0
@@ -939,35 +999,38 @@ public class IslandWorldManager {
     }
 
     /**
-     * Toggles whether the player should be teleported on his island after it got created.
+     * Toggles whether the player should be teleported on his island after it got
+     * created. <br/>
+     * If set to {@code true}, the player will be teleported right away. <br/>
+     * If set to {@code false}, the player will remain where he is and a message
+     * will be sent inviting him to teleport to his island. <br/>
      * <br/>
-     * If set to {@code true}, the player will be teleported right away.
+     * This does not apply to any other occurrences such as island reset, or island
+     * join. <br/>
      * <br/>
-     * If set to {@code false}, the player will remain where he is and a message will be sent inviting him to teleport to his island.
-     * <br/><br/>
-     * This does not apply to any other occurrences such as island reset, or island join.
-     * <br/><br/>
      * Default value: {@code true} (to retain backward compatibility).
+     * 
      * @param world world, not null.
-     * @return {@code true} if the player should be teleported to his island, {@code false} otherwise.
+     * @return {@code true} if the player should be teleported to his island,
+     *         {@code false} otherwise.
      * @since 1.10.0
      */
     public boolean isTeleportPlayerToIslandUponIslandCreation(@NonNull World world) {
-        return gameModes.containsKey(world) && gameModes.get(world).getWorldSettings().isTeleportPlayerToIslandUponIslandCreation();
+        return gameModes.containsKey(world)
+                && gameModes.get(world).getWorldSettings().isTeleportPlayerToIslandUponIslandCreation();
     }
-
 
     /**
      * This method migrates Map of String, Integer to Map of Flag, Integer.
+     * 
      * @param flagNamesMap Map that contains flag names to their values.
      * @return Flag objects to their values.
      * @since 1.21
      */
-    private Map<Flag, Integer> convertToFlags(Map<String, Integer> flagNamesMap)
-    {
+    private Map<Flag, Integer> convertToFlags(Map<String, Integer> flagNamesMap) {
         Map<Flag, Integer> flagMap = new HashMap<>();
-        flagNamesMap.forEach((key, value) ->
-        this.plugin.getFlagsManager().getFlag(key).ifPresent(flag -> flagMap.put(flag, value)));
+        flagNamesMap.forEach(
+                (key, value) -> this.plugin.getFlagsManager().getFlag(key).ifPresent(flag -> flagMap.put(flag, value)));
         return flagMap;
     }
 }

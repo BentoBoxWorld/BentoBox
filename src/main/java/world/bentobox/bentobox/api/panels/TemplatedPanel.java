@@ -34,38 +34,38 @@ public class TemplatedPanel extends Panel {
      *                must be generated.
      */
     public TemplatedPanel(@NonNull TemplatedPanelBuilder builder) {
-	this.user = builder.getUser();
-	this.setWorld(builder.getWorld());
-	this.setListener(builder.getListener());
+        this.user = builder.getUser();
+        this.setWorld(builder.getWorld());
+        this.setListener(builder.getListener());
 
-	this.panelTemplate = builder.getPanelTemplate();
-	// Init type creators
-	this.typeCreators = new HashMap<>(builder.getObjectCreatorMap());
-	this.typeIndex = new HashMap<>(builder.getObjectCreatorMap().size());
-	this.typeSlotMap = new HashMap<>(builder.getObjectCreatorMap().size());
+        this.panelTemplate = builder.getPanelTemplate();
+        // Init type creators
+        this.typeCreators = new HashMap<>(builder.getObjectCreatorMap());
+        this.typeIndex = new HashMap<>(builder.getObjectCreatorMap().size());
+        this.typeSlotMap = new HashMap<>(builder.getObjectCreatorMap().size());
 
-	this.parameters = builder.getParameters().toArray(new String[0]);
+        this.parameters = builder.getParameters().toArray(new String[0]);
 
-	if (this.panelTemplate == null) {
-	    BentoBox.getInstance().logError("Cannot generate panel because template is not loaded.");
-	} else {
-	    this.generatePanel();
-	}
+        if (this.panelTemplate == null) {
+            BentoBox.getInstance().logError("Cannot generate panel because template is not loaded.");
+        } else {
+            this.generatePanel();
+        }
     }
 
     /**
      * This method generates the panel from the template.
      */
     private void generatePanel() {
-	Map<Integer, PanelItem> items = switch (this.panelTemplate.type()) {
-	case INVENTORY -> this.populateInventoryPanel(new PanelItem[6][9]);
-	case HOPPER -> this.populateInventoryPanel(new PanelItem[1][5]);
-	case DROPPER -> this.populateInventoryPanel(new PanelItem[3][3]);
-	};
+        Map<Integer, PanelItem> items = switch (this.panelTemplate.type()) {
+        case INVENTORY -> this.populateInventoryPanel(new PanelItem[6][9]);
+        case HOPPER -> this.populateInventoryPanel(new PanelItem[1][5]);
+        case DROPPER -> this.populateInventoryPanel(new PanelItem[3][3]);
+        };
 
-	super.makePanel(this.user.getTranslation(this.panelTemplate.title(), this.parameters), items,
-		items.keySet().stream().max(Comparator.naturalOrder()).orElse(9), this.user,
-		this.getListener().orElse(null), this.panelTemplate.type());
+        super.makePanel(this.user.getTranslation(this.panelTemplate.title(), this.parameters), items,
+                items.keySet().stream().max(Comparator.naturalOrder()).orElse(9), this.user,
+                this.getListener().orElse(null), this.panelTemplate.type());
     }
 
     /**
@@ -76,13 +76,13 @@ public class TemplatedPanel extends Panel {
      */
     @NonNull
     private Map<Integer, PanelItem> populateInventoryPanel(PanelItem[][] itemArray) {
-	this.preProcessPanelTemplate(itemArray);
-	this.processItemData(itemArray);
-	this.removeEmptyLines(itemArray);
-	this.fillBorder(itemArray);
-	this.fillBackground(itemArray);
+        this.preProcessPanelTemplate(itemArray);
+        this.processItemData(itemArray);
+        this.removeEmptyLines(itemArray);
+        this.fillBorder(itemArray);
+        this.fillBackground(itemArray);
 
-	return this.createItemMap(itemArray);
+        return this.createItemMap(itemArray);
     }
 
     /**
@@ -93,22 +93,22 @@ public class TemplatedPanel extends Panel {
      * @param itemArray The double array with items into panel
      */
     private void preProcessPanelTemplate(PanelItem[][] itemArray) {
-	final int numRows = itemArray.length;
-	final int numCols = itemArray[0].length;
+        final int numRows = itemArray.length;
+        final int numCols = itemArray[0].length;
 
-	// Analyze the GUI button layout a bit.
-	for (int i = 0; i < numRows; i++) {
-	    for (int k = 0; k < numCols; k++) {
-		ItemTemplateRecord rec = this.panelTemplate.content()[i][k];
+        // Analyze the GUI button layout a bit.
+        for (int i = 0; i < numRows; i++) {
+            for (int k = 0; k < numCols; k++) {
+                ItemTemplateRecord rec = this.panelTemplate.content()[i][k];
 
-		if (rec != null && rec.dataMap().containsKey("type")) {
-		    String type = String.valueOf(rec.dataMap().get("type"));
+                if (rec != null && rec.dataMap().containsKey("type")) {
+                    String type = String.valueOf(rec.dataMap().get("type"));
 
-		    int counter = this.typeSlotMap.computeIfAbsent(type, key -> 0);
-		    this.typeSlotMap.put(type, counter + 1);
-		}
-	    }
-	}
+                    int counter = this.typeSlotMap.computeIfAbsent(type, key -> 0);
+                    this.typeSlotMap.put(type, counter + 1);
+                }
+            }
+        }
     }
 
     /**
@@ -117,14 +117,14 @@ public class TemplatedPanel extends Panel {
      * @param itemArray The double array with items into panel
      */
     private void processItemData(PanelItem[][] itemArray) {
-	final int numRows = itemArray.length;
-	final int numCols = itemArray[0].length;
+        final int numRows = itemArray.length;
+        final int numCols = itemArray[0].length;
 
-	for (int i = 0; i < numRows; i++) {
-	    for (int k = 0; k < numCols; k++) {
-		itemArray[i][k] = this.makeButton(this.panelTemplate.content()[i][k]);
-	    }
-	}
+        for (int i = 0; i < numRows; i++) {
+            for (int k = 0; k < numCols; k++) {
+                itemArray[i][k] = this.makeButton(this.panelTemplate.content()[i][k]);
+            }
+        }
     }
 
     /**
@@ -133,22 +133,22 @@ public class TemplatedPanel extends Panel {
      * @param itemArray The double array with items into panel
      */
     private void removeEmptyLines(PanelItem[][] itemArray) {
-	// After items are created, remove empty lines.
-	boolean[] showLine = this.panelTemplate.forcedRows();
+        // After items are created, remove empty lines.
+        boolean[] showLine = this.panelTemplate.forcedRows();
 
-	final int numRows = itemArray.length;
-	final int numCols = itemArray[0].length;
+        final int numRows = itemArray.length;
+        final int numCols = itemArray[0].length;
 
-	for (int i = 0; i < numRows; i++) {
-	    boolean emptyLine = true;
+        for (int i = 0; i < numRows; i++) {
+            boolean emptyLine = true;
 
-	    for (int k = 0; emptyLine && k < numCols; k++) {
-		emptyLine = itemArray[i][k] == null;
-	    }
+            for (int k = 0; emptyLine && k < numCols; k++) {
+                emptyLine = itemArray[i][k] == null;
+            }
 
-	    // Do not generate fallback for "empty" lines.
-	    showLine[i] = showLine[i] || !emptyLine;
-	}
+            // Do not generate fallback for "empty" lines.
+            showLine[i] = showLine[i] || !emptyLine;
+        }
     }
 
     /**
@@ -157,26 +157,26 @@ public class TemplatedPanel extends Panel {
      * @param itemArray 2D array of panel items
      */
     private void fillBorder(PanelItem[][] itemArray) {
-	if (this.panelTemplate.border() == null)
-	    return;
+        if (this.panelTemplate.border() == null)
+            return;
 
-	PanelItem template = makeTemplate(this.panelTemplate.border());
-	int numRows = itemArray.length;
-	int numCols = itemArray[0].length;
+        PanelItem template = makeTemplate(this.panelTemplate.border());
+        int numRows = itemArray.length;
+        int numCols = itemArray[0].length;
 
-	for (int row = 0; row < numRows; row++) {
-	    for (int col = 0; col < numCols; col++) {
-		// Fill border rows completely, and first/last columns of other rows
-		if (row == 0 || row == numRows - 1 || col == 0 || col == numCols - 1) {
-		    if (itemArray[row][col] == null) {
-			itemArray[row][col] = template;
-		    }
-		}
-	    }
-	}
+        for (int row = 0; row < numRows; row++) {
+            for (int col = 0; col < numCols; col++) {
+                // Fill border rows completely, and first/last columns of other rows
+                if (row == 0 || row == numRows - 1 || col == 0 || col == numCols - 1) {
+                    if (itemArray[row][col] == null) {
+                        itemArray[row][col] = template;
+                    }
+                }
+            }
+        }
 
-	this.panelTemplate.forcedRows()[0] = true;
-	this.panelTemplate.forcedRows()[numRows - 1] = true;
+        this.panelTemplate.forcedRows()[0] = true;
+        this.panelTemplate.forcedRows()[numRows - 1] = true;
     }
 
     /**
@@ -185,21 +185,21 @@ public class TemplatedPanel extends Panel {
      * @param itemArray The double array with items into panel
      */
     private void fillBackground(PanelItem[][] itemArray) {
-	if (this.panelTemplate.background() == null) {
-	    return;
-	}
+        if (this.panelTemplate.background() == null) {
+            return;
+        }
 
-	PanelItem template = this.makeTemplate(this.panelTemplate.background());
-	final int numRows = itemArray.length;
-	final int numCols = itemArray[0].length;
+        PanelItem template = this.makeTemplate(this.panelTemplate.background());
+        final int numRows = itemArray.length;
+        final int numCols = itemArray[0].length;
 
-	for (int i = 0; i < numRows; i++) {
-	    for (int k = 0; k < numCols; k++) {
-		if (itemArray[i][k] == null) {
-		    itemArray[i][k] = template;
-		}
-	    }
-	}
+        for (int i = 0; i < numRows; i++) {
+            for (int k = 0; k < numCols; k++) {
+                if (itemArray[i][k] == null) {
+                    itemArray[i][k] = template;
+                }
+            }
+        }
     }
 
     /**
@@ -209,22 +209,22 @@ public class TemplatedPanel extends Panel {
      * @return The map that links index of button to panel item.
      */
     private Map<Integer, PanelItem> createItemMap(PanelItem[][] itemArray) {
-	Map<Integer, PanelItem> itemMap = new HashMap<>(itemArray.length * itemArray[0].length);
-	int correctIndex = 0;
+        Map<Integer, PanelItem> itemMap = new HashMap<>(itemArray.length * itemArray[0].length);
+        int correctIndex = 0;
 
-	for (int i = 0; i < itemArray.length; i++) {
-	    final boolean iterate = this.panelTemplate.forcedRows()[i];
+        for (int i = 0; i < itemArray.length; i++) {
+            final boolean iterate = this.panelTemplate.forcedRows()[i];
 
-	    for (int k = 0; iterate && k < itemArray[i].length; k++) {
-		if (itemArray[i][k] != null) {
-		    itemMap.put(correctIndex, itemArray[i][k]);
-		}
+            for (int k = 0; iterate && k < itemArray[i].length; k++) {
+                if (itemArray[i][k] != null) {
+                    itemMap.put(correctIndex, itemArray[i][k]);
+                }
 
-		correctIndex++;
-	    }
-	}
+                correctIndex++;
+            }
+        }
 
-	return itemMap;
+        return itemMap;
     }
 
     /**
@@ -235,37 +235,37 @@ public class TemplatedPanel extends Panel {
      */
     @Nullable
     private PanelItem makeButton(@Nullable ItemTemplateRecord rec) {
-	if (rec == null) {
-	    // Immediate exit if record is null.
-	    return null;
-	}
+        if (rec == null) {
+            // Immediate exit if record is null.
+            return null;
+        }
 
-	if (rec.dataMap().containsKey("type")) {
-	    // If dataMap is not null, and it is not empty, then pass button to the object
-	    // creator function.
+        if (rec.dataMap().containsKey("type")) {
+            // If dataMap is not null, and it is not empty, then pass button to the object
+            // creator function.
 
-	    return this.makeAddonButton(rec);
-	} else {
-	    PanelItemBuilder itemBuilder = new PanelItemBuilder();
+            return this.makeAddonButton(rec);
+        } else {
+            PanelItemBuilder itemBuilder = new PanelItemBuilder();
 
-	    if (rec.icon() != null) {
-		itemBuilder.icon(rec.icon().clone());
-	    }
+            if (rec.icon() != null) {
+                itemBuilder.icon(rec.icon().clone());
+            }
 
-	    if (rec.title() != null) {
-		itemBuilder.name(this.user.getTranslation(rec.title()));
-	    }
+            if (rec.title() != null) {
+                itemBuilder.name(this.user.getTranslation(rec.title()));
+            }
 
-	    if (rec.description() != null) {
-		itemBuilder.description(this.user.getTranslation(rec.description()));
-	    }
+            if (rec.description() != null) {
+                itemBuilder.description(this.user.getTranslation(rec.description()));
+            }
 
-	    // If there are generic click handlers that could be added, then this is a place
-	    // where to process them.
+            // If there are generic click handlers that could be added, then this is a place
+            // where to process them.
 
-	    // Click Handlers are managed by custom addon buttons.
-	    return itemBuilder.build();
-	}
+            // Click Handlers are managed by custom addon buttons.
+            return itemBuilder.build();
+        }
     }
 
     /**
@@ -276,23 +276,23 @@ public class TemplatedPanel extends Panel {
      */
     @Nullable
     private PanelItem makeAddonButton(@NonNull ItemTemplateRecord rec) {
-	// Get object type.
-	String type = String.valueOf(rec.dataMap().getOrDefault("type", ""));
+        // Get object type.
+        String type = String.valueOf(rec.dataMap().getOrDefault("type", ""));
 
-	if (!this.typeCreators.containsKey(type)) {
-	    // There are no object with a given type.
-	    return this.makeFallBack(rec.fallback());
-	}
+        if (!this.typeCreators.containsKey(type)) {
+            // There are no object with a given type.
+            return this.makeFallBack(rec.fallback());
+        }
 
-	BiFunction<ItemTemplateRecord, ItemSlot, PanelItem> buttonBuilder = this.typeCreators.get(type);
+        BiFunction<ItemTemplateRecord, ItemSlot, PanelItem> buttonBuilder = this.typeCreators.get(type);
 
-	// Get next slot index.
-	ItemSlot itemSlot = this.typeIndex.containsKey(type) ? this.typeIndex.get(type) : new ItemSlot(0, this);
-	this.typeIndex.put(type, itemSlot.nextItemSlot());
+        // Get next slot index.
+        ItemSlot itemSlot = this.typeIndex.containsKey(type) ? this.typeIndex.get(type) : new ItemSlot(0, this);
+        this.typeIndex.put(type, itemSlot.nextItemSlot());
 
-	// Try to get next object.
-	PanelItem item = buttonBuilder.apply(rec, itemSlot);
-	return item == null ? this.makeFallBack(rec.fallback()) : item;
+        // Try to get next object.
+        PanelItem item = buttonBuilder.apply(rec, itemSlot);
+        return item == null ? this.makeFallBack(rec.fallback()) : item;
     }
 
     /**
@@ -303,7 +303,7 @@ public class TemplatedPanel extends Panel {
      */
     @Nullable
     private PanelItem makeFallBack(@Nullable ItemTemplateRecord rec) {
-	return rec == null ? null : this.makeButton(rec.fallback());
+        return rec == null ? null : this.makeButton(rec.fallback());
     }
 
     /**
@@ -313,25 +313,25 @@ public class TemplatedPanel extends Panel {
      * @return PanelItem that contains all information from the record.
      */
     private PanelItem makeTemplate(PanelTemplateRecord.TemplateItem rec) {
-	PanelItemBuilder itemBuilder = new PanelItemBuilder();
+        PanelItemBuilder itemBuilder = new PanelItemBuilder();
 
-	// Read icon only if it is not null.
-	if (rec.icon() != null) {
-	    itemBuilder.icon(rec.icon().clone());
-	}
+        // Read icon only if it is not null.
+        if (rec.icon() != null) {
+            itemBuilder.icon(rec.icon().clone());
+        }
 
-	// Read title only if it is not null.
-	if (rec.title() != null) {
-	    itemBuilder.name(this.user.getTranslation(rec.title()));
-	}
+        // Read title only if it is not null.
+        if (rec.title() != null) {
+            itemBuilder.name(this.user.getTranslation(rec.title()));
+        }
 
-	// Read description only if it is not null.
-	if (rec.description() != null) {
-	    itemBuilder.description(this.user.getTranslation(rec.description()));
-	}
+        // Read description only if it is not null.
+        if (rec.description() != null) {
+            itemBuilder.description(this.user.getTranslation(rec.description()));
+        }
 
-	// Click Handlers are managed by custom addon buttons.
-	return itemBuilder.build();
+        // Click Handlers are managed by custom addon buttons.
+        return itemBuilder.build();
     }
 
 // ---------------------------------------------------------------------
@@ -347,47 +347,47 @@ public class TemplatedPanel extends Panel {
      * @param parentPanel The parent panel for current Item.
      */
     public record ItemSlot(int slot, TemplatedPanel parentPanel) {
-	/**
-	 * This method returns new record object with iterative slot index.
-	 * 
-	 * @return New ItemSlot object that has increased slot index by 1.
-	 */
-	ItemSlot nextItemSlot() {
-	    return new ItemSlot(this.slot() + 1, this.parentPanel());
-	}
+        /**
+         * This method returns new record object with iterative slot index.
+         * 
+         * @return New ItemSlot object that has increased slot index by 1.
+         */
+        ItemSlot nextItemSlot() {
+            return new ItemSlot(this.slot() + 1, this.parentPanel());
+        }
 
-	/**
-	 * This method returns map that links button types with a number of slots that
-	 * this button is present.
-	 * 
-	 * @return Map that links button type to amount in the gui.
-	 * @deprecated Use {@link #amount(String)} instead.
-	 */
-	@Deprecated
-	public Map<String, Integer> amountMap() {
-	    return this.parentPanel.typeSlotMap;
-	}
+        /**
+         * This method returns map that links button types with a number of slots that
+         * this button is present.
+         * 
+         * @return Map that links button type to amount in the gui.
+         * @deprecated Use {@link #amount(String)} instead.
+         */
+        @Deprecated
+        public Map<String, Integer> amountMap() {
+            return this.parentPanel.typeSlotMap;
+        }
 
-	/**
-	 * This returns amount of slots for given button type.
-	 * 
-	 * @param type Type of the button.
-	 * @return Number of slots in panel.
-	 */
-	public int amount(String type) {
-	    return this.amount(type, 0);
-	}
+        /**
+         * This returns amount of slots for given button type.
+         * 
+         * @param type Type of the button.
+         * @return Number of slots in panel.
+         */
+        public int amount(String type) {
+            return this.amount(type, 0);
+        }
 
-	/**
-	 * This returns amount of slots for given button type.
-	 * 
-	 * @param type         Type of the button.
-	 * @param defaultValue The default value if the type is not found
-	 * @return Number of slots in panel.
-	 */
-	public int amount(String type, int defaultValue) {
-	    return this.parentPanel.typeSlotMap.getOrDefault(type, defaultValue);
-	}
+        /**
+         * This returns amount of slots for given button type.
+         * 
+         * @param type         Type of the button.
+         * @param defaultValue The default value if the type is not found
+         * @return Number of slots in panel.
+         */
+        public int amount(String type, int defaultValue) {
+            return this.parentPanel.typeSlotMap.getOrDefault(type, defaultValue);
+        }
 
     }
 

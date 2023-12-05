@@ -49,7 +49,6 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.nms.PasteHandler;
 import world.bentobox.bentobox.nms.WorldRegenerator;
 
-
 /**
  * A set of utility methods
  *
@@ -68,7 +67,8 @@ public class Util {
     private static PasteHandler pasteHandler = null;
     private static WorldRegenerator regenerator = null;
 
-    private Util() {}
+    private Util() {
+    }
 
     /**
      * Used for testing only
@@ -79,6 +79,7 @@ public class Util {
 
     /**
      * Returns the server version
+     * 
      * @return server version
      */
     public static String getServerVersion() {
@@ -97,8 +98,10 @@ public class Util {
      */
     public static Location getClosestIsland(Location location) {
         int dist = plugin.getIWM().getIslandDistance(location.getWorld()) * 2;
-        long x = Math.round((double) location.getBlockX() / dist) * dist + plugin.getIWM().getIslandXOffset(location.getWorld());
-        long z = Math.round((double) location.getBlockZ() / dist) * dist + plugin.getIWM().getIslandZOffset(location.getWorld());
+        long x = Math.round((double) location.getBlockX() / dist) * dist
+                + plugin.getIWM().getIslandXOffset(location.getWorld());
+        long z = Math.round((double) location.getBlockZ() / dist) * dist
+                + plugin.getIWM().getIslandZOffset(location.getWorld());
         if (location.getBlockX() == x && location.getBlockZ() == z) {
             return location;
         }
@@ -107,8 +110,7 @@ public class Util {
     }
 
     /**
-     * Converts a serialized location to a Location. Returns null if string is
-     * empty
+     * Converts a serialized location to a Location. Returns null if string is empty
      *
      * @param s - serialized location in format "world:x:y:z:y:p"
      * @return Location
@@ -135,9 +137,9 @@ public class Util {
     }
 
     /**
-     * Converts a location to a simple string representation
-     * If location is null, returns empty string
-     * Only stores block ints. Inverse function returns block centers
+     * Converts a location to a simple string representation If location is null,
+     * returns empty string Only stores block ints. Inverse function returns block
+     * centers
      *
      * @param l - the location
      * @return String of location in format "world:x:y:z:y:p"
@@ -146,14 +148,14 @@ public class Util {
         if (l == null || l.getWorld() == null) {
             return "";
         }
-        return l.getWorld().getName() + ":" + l.getBlockX() + ":" + l.getBlockY() + ":" + l.getBlockZ() + ":" + Float.floatToIntBits(l.getYaw()) + ":" + Float.floatToIntBits(l.getPitch());
+        return l.getWorld().getName() + ":" + l.getBlockX() + ":" + l.getBlockY() + ":" + l.getBlockZ() + ":"
+                + Float.floatToIntBits(l.getYaw()) + ":" + Float.floatToIntBits(l.getPitch());
     }
 
     /**
      * Converts a name like IRON_INGOT into Iron Ingot to improve readability
      *
-     * @param ugly
-     *            The string such as IRON_INGOT
+     * @param ugly The string such as IRON_INGOT
      * @return A nicer version, such as Iron Ingot
      *
      *         Credits to mikenon on GitHub!
@@ -178,7 +180,9 @@ public class Util {
     }
 
     /**
-     * Return an immutable list of online players this player can see, i.e. are not invisible
+     * Return an immutable list of online players this player can see, i.e. are not
+     * invisible
+     * 
      * @param user - the User - if null, all player names on the server are shown
      * @return a list of online players this player can see
      */
@@ -192,10 +196,10 @@ public class Util {
     }
 
     /**
-     * Returns all of the items that begin with the given start,
-     * ignoring case.  Intended for tabcompletion.
+     * Returns all of the items that begin with the given start, ignoring case.
+     * Intended for tabcompletion.
      *
-     * @param list - string list
+     * @param list  - string list
      * @param start - first few chars of a string
      * @return List of items that start with the letters
      */
@@ -218,8 +222,10 @@ public class Util {
     }
 
     /**
-     * Checks is world = world2 irrespective of the world type. Only strips _nether and _the_end from world name.
-     * @param world - world
+     * Checks is world = world2 irrespective of the world type. Only strips _nether
+     * and _the_end from world name.
+     * 
+     * @param world  - world
      * @param world2 - world
      * @return true if the same
      */
@@ -239,6 +245,7 @@ public class Util {
 
     /**
      * Convert world to an overworld
+     * 
      * @param world - world
      * @return over world or null if world is null or a world cannot be found
      */
@@ -247,14 +254,16 @@ public class Util {
         if (world == null) {
             return null;
         }
-        return world.getEnvironment().equals(Environment.NORMAL) ? world : Bukkit.getWorld(world.getName().replace(NETHER, "").replace(THE_END, ""));
+        return world.getEnvironment().equals(Environment.NORMAL) ? world
+                : Bukkit.getWorld(world.getName().replace(NETHER, "").replace(THE_END, ""));
     }
 
     /**
      * Lists files found in the jar in the folderPath with the suffix given
-     * @param jar - the jar file
+     * 
+     * @param jar        - the jar file
      * @param folderPath - the path within the jar
-     * @param suffix - the suffix required
+     * @param suffix     - the suffix required
      * @return a list of files
      */
     public static List<String> listJarFiles(JarFile jar, String folderPath, String suffix) {
@@ -278,8 +287,8 @@ public class Util {
     }
 
     /**
-     * Converts block face direction to radial degrees. Returns 0 if block face
-     * is not radial.
+     * Converts block face direction to radial degrees. Returns 0 if block face is
+     * not radial.
      *
      * @param face - blockface
      * @return degrees
@@ -305,9 +314,12 @@ public class Util {
     }
 
     /**
-     * Returns a Date instance corresponding to the input, or null if the input could not be parsed.
+     * Returns a Date instance corresponding to the input, or null if the input
+     * could not be parsed.
+     * 
      * @param gitHubDate the input to parse
-     * @return the Date instance following a {@code yyyy-MM-dd HH:mm:ss} format, or {@code null}.
+     * @return the Date instance following a {@code yyyy-MM-dd HH:mm:ss} format, or
+     *         {@code null}.
      * @since 1.3.0
      */
     @Nullable
@@ -320,9 +332,9 @@ public class Util {
         }
     }
 
-
     /**
      * Returns whether this entity is naturally hostile towards the player or not.
+     * 
      * @param entity the entity to check.
      * @return {@code true} if this entity is hostile, {@code false} otherwise.
      * @since 1.4.0
@@ -337,14 +349,14 @@ public class Util {
         // Most of hostile mobs extends Monster.
         // PufferFish is a unique fix.
 
-        return entity instanceof Monster || entity instanceof Flying || entity instanceof Slime ||
-                entity instanceof Shulker || entity instanceof EnderDragon || entity instanceof PufferFish;
+        return entity instanceof Monster || entity instanceof Flying || entity instanceof Slime
+                || entity instanceof Shulker || entity instanceof EnderDragon || entity instanceof PufferFish;
     }
-
 
     /**
      * Returns whether this entity is naturally passive towards the player or not.
      * This means that this entity normally won't hurt the player.
+     * 
      * @param entity the entity to check.
      * @return {@code true} if this entity is passive, {@code false} otherwise.
      * @since 1.4.0
@@ -355,9 +367,9 @@ public class Util {
         // Bat extends Mob
         // Most of passive mobs extends Animals
 
-        return entity instanceof Animals || entity instanceof IronGolem || entity instanceof Snowman ||
-                entity instanceof WaterMob && !(entity instanceof PufferFish) || entity instanceof Bat ||
-                entity instanceof Allay;
+        return entity instanceof Animals || entity instanceof IronGolem || entity instanceof Snowman
+                || entity instanceof WaterMob && !(entity instanceof PufferFish) || entity instanceof Bat
+                || entity instanceof Allay;
     }
 
     /*
@@ -365,8 +377,10 @@ public class Util {
      */
 
     /**
-     * Teleports an Entity to the target location, loading the chunk asynchronously first if needed.
-     * @param entity The Entity to teleport
+     * Teleports an Entity to the target location, loading the chunk asynchronously
+     * first if needed.
+     * 
+     * @param entity   The Entity to teleport
      * @param location The Location to Teleport to
      * @return Future that completes with the result of the teleport
      */
@@ -376,19 +390,23 @@ public class Util {
     }
 
     /**
-     * Teleports an Entity to the target location, loading the chunk asynchronously first if needed.
-     * @param entity The Entity to teleport
+     * Teleports an Entity to the target location, loading the chunk asynchronously
+     * first if needed.
+     * 
+     * @param entity   The Entity to teleport
      * @param location The Location to Teleport to
-     * @param cause The cause for the teleportation
+     * @param cause    The cause for the teleportation
      * @return Future that completes with the result of the teleport
      */
     @NonNull
-    public static CompletableFuture<Boolean> teleportAsync(@NonNull Entity entity, @NonNull Location location, TeleportCause cause) {
+    public static CompletableFuture<Boolean> teleportAsync(@NonNull Entity entity, @NonNull Location location,
+            TeleportCause cause) {
         return PaperLib.teleportAsync(entity, location, cause);
     }
 
     /**
      * Gets the chunk at the target location, loading it asynchronously if needed.
+     * 
      * @param loc Location to get chunk for
      * @return Future that completes with the chunk
      */
@@ -399,9 +417,12 @@ public class Util {
 
     /**
      * Gets the chunk at the target location, loading it asynchronously if needed.
+     * 
      * @param loc Location to get chunk for
-     * @param gen Should the chunk generate or not. Only respected on some MC versions, 1.13 for CB, 1.12 for Paper
-     * @return Future that completes with the chunk, or null if the chunk did not exists and generation was not requested.
+     * @param gen Should the chunk generate or not. Only respected on some MC
+     *            versions, 1.13 for CB, 1.12 for Paper
+     * @return Future that completes with the chunk, or null if the chunk did not
+     *         exists and generation was not requested.
      */
     @NonNull
     public static CompletableFuture<Chunk> getChunkAtAsync(@NonNull Location loc, boolean gen) {
@@ -410,9 +431,10 @@ public class Util {
 
     /**
      * Gets the chunk at the target location, loading it asynchronously if needed.
+     * 
      * @param world World to load chunk for
-     * @param x X coordinate of the chunk to load
-     * @param z Z coordinate of the chunk to load
+     * @param x     X coordinate of the chunk to load
+     * @param z     Z coordinate of the chunk to load
      * @return Future that completes with the chunk
      */
     @NonNull
@@ -422,11 +444,14 @@ public class Util {
 
     /**
      * Gets the chunk at the target location, loading it asynchronously if needed.
+     * 
      * @param world World to load chunk for
-     * @param x X coordinate of the chunk to load
-     * @param z Z coordinate of the chunk to load
-     * @param gen Should the chunk generate or not. Only respected on some MC versions, 1.13 for CB, 1.12 for Paper
-     * @return Future that completes with the chunk, or null if the chunk did not exists and generation was not requested.
+     * @param x     X coordinate of the chunk to load
+     * @param z     Z coordinate of the chunk to load
+     * @param gen   Should the chunk generate or not. Only respected on some MC
+     *              versions, 1.13 for CB, 1.12 for Paper
+     * @return Future that completes with the chunk, or null if the chunk did not
+     *         exists and generation was not requested.
      */
     @NonNull
     public static CompletableFuture<Chunk> getChunkAtAsync(@NonNull World world, int x, int z, boolean gen) {
@@ -434,7 +459,9 @@ public class Util {
     }
 
     /**
-     * Checks if the chunk has been generated or not. Only works on Paper 1.12+ or any 1.13.1+ version
+     * Checks if the chunk has been generated or not. Only works on Paper 1.12+ or
+     * any 1.13.1+ version
+     * 
      * @param loc Location to check if the chunk is generated
      * @return If the chunk is generated or not
      */
@@ -443,10 +470,12 @@ public class Util {
     }
 
     /**
-     * Checks if the chunk has been generated or not. Only works on Paper 1.12+ or any 1.13.1+ version
+     * Checks if the chunk has been generated or not. Only works on Paper 1.12+ or
+     * any 1.13.1+ version
+     * 
      * @param world World to check for
-     * @param x X coordinate of the chunk to check
-     * @param z Z coordinate of the chunk to checl
+     * @param x     X coordinate of the chunk to check
+     * @param z     Z coordinate of the chunk to checl
      * @return If the chunk is generated or not
      */
     public static boolean isChunkGenerated(@NonNull World world, int x, int z) {
@@ -455,7 +484,8 @@ public class Util {
 
     /**
      * Get's a BlockState, optionally not using a snapshot
-     * @param block The block to get a State of
+     * 
+     * @param block       The block to get a State of
      * @param useSnapshot Whether or not to use a snapshot when supported
      * @return The BlockState
      */
@@ -478,6 +508,7 @@ public class Util {
 
     /**
      * Detects if the current MC version is at least the following version.
+     * 
      * @param minor Min Minor Version
      * @param patch Min Patch Version
      * @return Meets the version requested
@@ -488,6 +519,7 @@ public class Util {
 
     /**
      * Gets the current Minecraft Minor version. IE: 1.13.1 returns 13
+     * 
      * @return The Minor Version
      */
     public static int getMinecraftVersion() {
@@ -496,6 +528,7 @@ public class Util {
 
     /**
      * Gets the current Minecraft Patch version. IE: 1.13.1 returns 1
+     * 
      * @return The Patch Version
      */
     public static int getMinecraftPatchVersion() {
@@ -504,6 +537,7 @@ public class Util {
 
     /**
      * Check if the server has access to the Spigot API
+     * 
      * @return True for Spigot <em>and</em> Paper environments
      */
     public static boolean isSpigot() {
@@ -512,6 +546,7 @@ public class Util {
 
     /**
      * Check if the server has access to the Paper API
+     * 
      * @return True for Paper environments
      */
     public static boolean isPaper() {
@@ -531,10 +566,10 @@ public class Util {
         return false;
     }
 
-
     /**
-     * This method translates color codes in given string and strips whitespace after them.
-     * This code parses both: hex and old color codes.
+     * This method translates color codes in given string and strips whitespace
+     * after them. This code parses both: hex and old color codes.
+     * 
      * @param textToColor Text which color codes must be parsed.
      * @return String text with parsed colors and stripped whitespaces after them.
      */
@@ -542,7 +577,8 @@ public class Util {
     public static String translateColorCodes(@NonNull String textToColor) {
         // Use matcher to find hex patterns in given text.
         Matcher matcher = HEX_PATTERN.matcher(textToColor);
-        // Increase buffer size by 32 like it is in bungee cord api. Use buffer because it is sync.
+        // Increase buffer size by 32 like it is in bungee cord api. Use buffer because
+        // it is sync.
         StringBuilder buffer = new StringBuilder(textToColor.length() + 32);
 
         while (matcher.find()) {
@@ -550,16 +586,18 @@ public class Util {
 
             if (group.length() == 6) {
                 // Parses #ffffff to a color text.
-                matcher.appendReplacement(buffer, ChatColor.COLOR_CHAR + "x"
-                        + ChatColor.COLOR_CHAR + group.charAt(0) + ChatColor.COLOR_CHAR + group.charAt(1)
-                        + ChatColor.COLOR_CHAR + group.charAt(2) + ChatColor.COLOR_CHAR + group.charAt(3)
-                        + ChatColor.COLOR_CHAR + group.charAt(4) + ChatColor.COLOR_CHAR + group.charAt(5));
+                matcher.appendReplacement(buffer,
+                        ChatColor.COLOR_CHAR + "x" + ChatColor.COLOR_CHAR + group.charAt(0) + ChatColor.COLOR_CHAR
+                                + group.charAt(1) + ChatColor.COLOR_CHAR + group.charAt(2) + ChatColor.COLOR_CHAR
+                                + group.charAt(3) + ChatColor.COLOR_CHAR + group.charAt(4) + ChatColor.COLOR_CHAR
+                                + group.charAt(5));
             } else {
                 // Parses #fff to a color text.
-                matcher.appendReplacement(buffer, ChatColor.COLOR_CHAR + "x"
-                        + ChatColor.COLOR_CHAR + group.charAt(0) + ChatColor.COLOR_CHAR + group.charAt(0)
-                        + ChatColor.COLOR_CHAR + group.charAt(1) + ChatColor.COLOR_CHAR + group.charAt(1)
-                        + ChatColor.COLOR_CHAR + group.charAt(2) + ChatColor.COLOR_CHAR + group.charAt(2));
+                matcher.appendReplacement(buffer,
+                        ChatColor.COLOR_CHAR + "x" + ChatColor.COLOR_CHAR + group.charAt(0) + ChatColor.COLOR_CHAR
+                                + group.charAt(0) + ChatColor.COLOR_CHAR + group.charAt(1) + ChatColor.COLOR_CHAR
+                                + group.charAt(1) + ChatColor.COLOR_CHAR + group.charAt(2) + ChatColor.COLOR_CHAR
+                                + group.charAt(2));
             }
         }
 
@@ -568,31 +606,37 @@ public class Util {
                 ChatColor.translateAlternateColorCodes('&', matcher.appendTail(buffer).toString()));
     }
 
-
     /**
-     * Strips spaces immediately after color codes. Used by {@link User#getTranslation(String, String...)}.
+     * Strips spaces immediately after color codes. Used by
+     * {@link User#getTranslation(String, String...)}.
+     * 
      * @param textToStrip - text to strip
      * @return text with spaces after color codes removed
      * @since 1.9.0
      */
     @NonNull
     public static String stripSpaceAfterColorCodes(@NonNull String textToStrip) {
-        if (textToStrip == null) return "";
+        if (textToStrip == null)
+            return "";
         textToStrip = textToStrip.replaceAll("(" + ChatColor.COLOR_CHAR + ".)[\\s]", "$1");
         return textToStrip;
     }
 
     /**
      * Returns whether the input is an integer or not.
-     * @param nbr the input.
-     * @param parse whether the input should be checked to ensure it can be parsed as an Integer without throwing an exception.
+     * 
+     * @param nbr   the input.
+     * @param parse whether the input should be checked to ensure it can be parsed
+     *              as an Integer without throwing an exception.
      * @return {@code true} if the input is an integer, {@code false} otherwise.
      * @since 1.10.0
      */
     public static boolean isInteger(@NonNull String nbr, boolean parse) {
-        // Original code from Jonas Klemming on StackOverflow (https://stackoverflow.com/q/237159).
+        // Original code from Jonas Klemming on StackOverflow
+        // (https://stackoverflow.com/q/237159).
         // I slightly refined it to catch more edge cases.
-        // It is a faster alternative to catch malformed strings than the NumberFormatException.
+        // It is a faster alternative to catch malformed strings than the
+        // NumberFormatException.
         int length = nbr.length();
         if (length == 0) {
             return false;
@@ -641,6 +685,7 @@ public class Util {
 
     /**
      * Get a UUID from a string. The string can be a known player's name or a UUID
+     * 
      * @param nameOrUUID - name or UUID
      * @return UUID or null if unknown
      * @since 1.13.0
@@ -648,7 +693,8 @@ public class Util {
     @Nullable
     public static UUID getUUID(@NonNull String nameOrUUID) {
         UUID targetUUID = plugin.getPlayers().getUUID(nameOrUUID);
-        if (targetUUID != null) return targetUUID;
+        if (targetUUID != null)
+            return targetUUID;
         // Check if UUID is being used
         try {
             return UUID.fromString(nameOrUUID);
@@ -660,9 +706,11 @@ public class Util {
 
     /**
      * Run a list of commands for a user
-     * @param user - user affected by the commands
-     * @param commands - a list of commands
-     * @param commandType - the type of command being run - used in the console error message
+     * 
+     * @param user        - user affected by the commands
+     * @param commands    - a list of commands
+     * @param commandType - the type of command being run - used in the console
+     *                    error message
      */
     public static void runCommands(User user, @NonNull List<String> commands, String commandType) {
         runCommands(user, user.getName(), commands, commandType);
@@ -670,10 +718,13 @@ public class Util {
 
     /**
      * Run a list of commands for a user
-     * @param user - user affected by the commands
-     * @param ownerName - name of the island owner, or the user's name if it is the user's island
-     * @param commands - a list of commands
-     * @param commandType - the type of command being run - used in the console error message
+     * 
+     * @param user        - user affected by the commands
+     * @param ownerName   - name of the island owner, or the user's name if it is
+     *                    the user's island
+     * @param commands    - a list of commands
+     * @param commandType - the type of command being run - used in the console
+     *                    error message
      * @since 1.22.0
      */
     public static void runCommands(User user, String ownerName, @NonNull List<String> commands, String commandType) {
@@ -683,7 +734,8 @@ public class Util {
             if (command.startsWith("[SUDO]")) {
                 // Execute the command by the player
                 if (!user.isOnline() || !user.performCommand(command.substring(6))) {
-                    plugin.logError("Could not execute " + commandType + " command for " + user.getName() + ": " + command.substring(6));
+                    plugin.logError("Could not execute " + commandType + " command for " + user.getName() + ": "
+                            + command.substring(6));
                 }
             } else {
                 // Otherwise execute as the server console
@@ -697,6 +749,7 @@ public class Util {
 
     /**
      * Resets the player's heath to maximum
+     * 
      * @param player - player
      */
     public static void resetHealth(Player player) {
@@ -706,6 +759,7 @@ public class Util {
 
     /**
      * Set the regenerator the plugin will use
+     * 
      * @param regenerator the regenerator
      */
     public static void setRegenerator(WorldRegenerator regenerator) {
@@ -714,6 +768,7 @@ public class Util {
 
     /**
      * Get the regenerator the plugin will use
+     * 
      * @return an accelerated regenerator class for this server
      */
     public static WorldRegenerator getRegenerator() {
@@ -727,7 +782,8 @@ public class Util {
                 if (WorldRegenerator.class.isAssignableFrom(clazz)) {
                     handler = (WorldRegenerator) clazz.getConstructor().newInstance();
                 } else {
-                    throw new IllegalStateException("Class " + clazz.getName() + " does not implement WorldRegenerator");
+                    throw new IllegalStateException(
+                            "Class " + clazz.getName() + " does not implement WorldRegenerator");
                 }
             } catch (Exception e) {
                 plugin.logWarning("No Regenerator found for " + version + ", falling back to Bukkit API.");
@@ -739,7 +795,9 @@ public class Util {
     }
 
     /**
-     * Checks what version the server is running and picks the appropriate NMS handler, or fallback
+     * Checks what version the server is running and picks the appropriate NMS
+     * handler, or fallback
+     * 
      * @return PasteHandler
      */
     public static PasteHandler getPasteHandler() {
@@ -766,6 +824,7 @@ public class Util {
 
     /**
      * Set the paste handler the plugin will use
+     * 
      * @param pasteHandler the NMS paster
      */
     public static void setPasteHandler(PasteHandler pasteHandler) {
@@ -773,7 +832,8 @@ public class Util {
     }
 
     /**
-     * Broadcast a localized message to all players with the permission {@link Server#BROADCAST_CHANNEL_USERS}
+     * Broadcast a localized message to all players with the permission
+     * {@link Server#BROADCAST_CHANNEL_USERS}
      *
      * @param localeKey locale key for the message to broadcast
      * @param variables any variables for the message
@@ -790,18 +850,16 @@ public class Util {
         return count;
     }
 
-
     /**
-     * This method removes all special characters that are not allowed in filenames (windows).
-     * It also includes any white-spaces, as for some reason, I do like it more without them.
-     * Also, all cases are lower cased for easier blueprint mapping.
+     * This method removes all special characters that are not allowed in filenames
+     * (windows). It also includes any white-spaces, as for some reason, I do like
+     * it more without them. Also, all cases are lower cased for easier blueprint
+     * mapping.
+     * 
      * @param input Input that need to be sanitized.
      * @return A sanitized input without illegal characters in names.
      */
-    public static String sanitizeInput(String input)
-    {
-        return ChatColor.stripColor(
-                Util.translateColorCodes(input.replaceAll("[\\\\/:*?\"<>|\s]", "_"))).
-                toLowerCase();
+    public static String sanitizeInput(String input) {
+        return ChatColor.stripColor(Util.translateColorCodes(input.replaceAll("[\\\\/:*?\"<>|\s]", "_"))).toLowerCase();
     }
 }

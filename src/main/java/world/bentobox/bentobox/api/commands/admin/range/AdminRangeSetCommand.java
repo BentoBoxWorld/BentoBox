@@ -55,13 +55,15 @@ public class AdminRangeSetCommand extends CompositeCommand {
         // Get island
         Island island = Objects.requireNonNull(getIslands().getIsland(getWorld(), targetUUID));
 
-        // Do some sanity checks to make sure the new protection range won't cause problems
+        // Do some sanity checks to make sure the new protection range won't cause
+        // problems
         if (range < 1) {
             user.sendMessage("commands.admin.range.invalid-value.too-low", TextVariables.NUMBER, args.get(1));
             return false;
         }
         if (range > island.getRange() * 2) {
-            user.sendMessage("commands.admin.range.invalid-value.too-high", TextVariables.NUMBER, String.valueOf(2 * island.getRange()));
+            user.sendMessage("commands.admin.range.invalid-value.too-high", TextVariables.NUMBER,
+                    String.valueOf(2 * island.getRange()));
             return false;
         }
         if (range == island.getProtectionRange()) {
@@ -76,14 +78,8 @@ public class AdminRangeSetCommand extends CompositeCommand {
         island.setProtectionRange(range);
 
         // Call Protection Range Change event. Does not support canceling.
-        IslandEvent.builder()
-        .island(island)
-        .location(island.getCenter())
-        .reason(IslandEvent.Reason.RANGE_CHANGE)
-        .involvedPlayer(targetUUID)
-        .admin(true)
-        .protectionRange(range, oldRange)
-        .build();
+        IslandEvent.builder().island(island).location(island.getCenter()).reason(IslandEvent.Reason.RANGE_CHANGE)
+                .involvedPlayer(targetUUID).admin(true).protectionRange(range, oldRange).build();
 
         user.sendMessage("commands.admin.range.set.success", TextVariables.NUMBER, String.valueOf(range));
 
@@ -92,7 +88,7 @@ public class AdminRangeSetCommand extends CompositeCommand {
 
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
-        String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
+        String lastArg = !args.isEmpty() ? args.get(args.size() - 1) : "";
         if (args.isEmpty()) {
             // Don't show every player on the server. Require at least the first letter
             return Optional.empty();

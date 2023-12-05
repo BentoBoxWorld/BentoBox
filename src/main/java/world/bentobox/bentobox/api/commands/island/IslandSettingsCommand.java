@@ -32,7 +32,8 @@ public class IslandSettingsCommand extends CompositeCommand {
     public boolean canExecute(User user, String label, List<String> args) {
         if (Util.getWorld(user.getWorld()).equals(getWorld())) {
             // Player is in same world
-            island = getIslands().getIslandAt(user.getLocation()).orElseGet(() -> getIslands().getIsland(user.getWorld(), user.getUniqueId()));
+            island = getIslands().getIslandAt(user.getLocation())
+                    .orElseGet(() -> getIslands().getIsland(user.getWorld(), user.getUniqueId()));
         } else {
             island = getIslands().getIsland(getWorld(), user);
         }
@@ -45,15 +46,10 @@ public class IslandSettingsCommand extends CompositeCommand {
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        new TabbedPanelBuilder()
-        .user(user)
-        .world(island.getWorld())
-        .tab(1, new SettingsTab(user, island, Flag.Type.PROTECTION))
-        .tab(2, new SettingsTab(user, island, Flag.Type.SETTING))
-        .startingSlot(1)
-        .size(54)
-        .hideIfEmpty()
-        .build().openPanel();
+        new TabbedPanelBuilder().user(user).world(island.getWorld())
+                .tab(1, new SettingsTab(user, island, Flag.Type.PROTECTION))
+                .tab(2, new SettingsTab(user, island, Flag.Type.SETTING)).startingSlot(1).size(54).hideIfEmpty().build()
+                .openPanel();
         return true;
     }
 }

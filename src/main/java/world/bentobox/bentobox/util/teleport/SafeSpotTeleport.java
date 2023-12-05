@@ -28,7 +28,8 @@ import world.bentobox.bentobox.util.Pair;
 import world.bentobox.bentobox.util.Util;
 
 /**
- * A class that calculates finds a safe spot asynchronously and then teleports the player there.
+ * A class that calculates finds a safe spot asynchronously and then teleports
+ * the player there.
  *
  * @author tastybento
  */
@@ -82,12 +83,14 @@ public class SafeSpotTeleport {
     void tryToGo(String failureMessage) {
         if (plugin.getIslands().isSafeLocation(location)) {
             if (portal) {
-                // If the desired location is safe, then that's where you'll go if there's no portal
+                // If the desired location is safe, then that's where you'll go if there's no
+                // portal
                 bestSpot = location;
             } else {
                 // If this is not a portal teleport, then go to the safe location immediately
                 Util.teleportAsync(entity, location).thenRun(() -> {
-                    if (runnable != null) Bukkit.getScheduler().runTask(plugin, runnable);
+                    if (runnable != null)
+                        Bukkit.getScheduler().runTask(plugin, runnable);
                     result.complete(true);
                 });
                 return;
@@ -122,15 +125,14 @@ public class SafeSpotTeleport {
         }
 
         // Get the chunk snapshot and scan it
-        Util.getChunkAtAsync(world, chunkPair.x, chunkPair.z)
-        .thenApply(Chunk::getChunkSnapshot)
-        .whenCompleteAsync((snapshot, e) -> {
-            if (snapshot != null && scanChunk(snapshot)) {
-                task.cancel();
-            } else {
-                checking.set(false);
-            }
-        });
+        Util.getChunkAtAsync(world, chunkPair.x, chunkPair.z).thenApply(Chunk::getChunkSnapshot)
+                .whenCompleteAsync((snapshot, e) -> {
+                    if (snapshot != null && scanChunk(snapshot)) {
+                        task.cancel();
+                    } else {
+                        checking.set(false);
+                    }
+                });
         return true;
     }
 
@@ -181,7 +183,8 @@ public class SafeSpotTeleport {
         location.getBlock().getRelative(BlockFace.UP).setType(Material.AIR, false);
         location.getBlock().getRelative(BlockFace.UP).getRelative(BlockFace.UP).setType(m, false);
         Util.teleportAsync(entity, location.clone().add(new Vector(0.5D, 0D, 0.5D))).thenRun(() -> {
-            if (runnable != null) Bukkit.getScheduler().runTask(plugin, runnable);
+            if (runnable != null)
+                Bukkit.getScheduler().runTask(plugin, runnable);
             result.complete(true);
         });
     }
@@ -193,7 +196,8 @@ public class SafeSpotTeleport {
      */
     List<Pair<Integer, Integer>> getChunksToScan() {
         List<Pair<Integer, Integer>> chunksToScan = new ArrayList<>();
-        int maxRadius = plugin.getIslands().getIslandAt(location).map(Island::getProtectionRange).orElseGet(() -> plugin.getIWM().getIslandProtectionRange(world));
+        int maxRadius = plugin.getIslands().getIslandAt(location).map(Island::getProtectionRange)
+                .orElseGet(() -> plugin.getIWM().getIslandProtectionRange(world));
         maxRadius = Math.min(MAX_RADIUS, maxRadius);
         int x = location.getBlockX();
         int z = location.getBlockZ();
@@ -210,8 +214,10 @@ public class SafeSpotTeleport {
         return chunksToScan;
     }
 
-    private void addChunk(List<Pair<Integer, Integer>> chunksToScan, Pair<Integer, Integer> blockCoord, Pair<Integer, Integer> chunkCoord) {
-        if (!chunksToScan.contains(chunkCoord) && plugin.getIslands().getIslandAt(location).map(is -> is.inIslandSpace(blockCoord)).orElse(true)) {
+    private void addChunk(List<Pair<Integer, Integer>> chunksToScan, Pair<Integer, Integer> blockCoord,
+            Pair<Integer, Integer> chunkCoord) {
+        if (!chunksToScan.contains(chunkCoord)
+                && plugin.getIslands().getIslandAt(location).map(is -> is.inIslandSpace(blockCoord)).orElse(true)) {
             chunksToScan.add(chunkCoord);
         }
     }
@@ -284,7 +290,8 @@ public class SafeSpotTeleport {
                 plugin.getIslands().setHomeLocation(User.getInstance(entity), loc, homeName);
             }
             Util.teleportAsync(entity, loc).thenRun(() -> {
-                if (runnable != null) Bukkit.getScheduler().runTask(plugin, runnable);
+                if (runnable != null)
+                    Bukkit.getScheduler().runTask(plugin, runnable);
                 result.complete(true);
             });
         });
@@ -413,7 +420,8 @@ public class SafeSpotTeleport {
         /**
          * Try to teleport the player
          *
-         * @return CompletableFuture that will become true if successful and false if not
+         * @return CompletableFuture that will become true if successful and false if
+         *         not
          * @since 1.14.0
          */
         @Nullable
@@ -451,19 +459,17 @@ public class SafeSpotTeleport {
             return new SafeSpotTeleport(this);
         }
 
-
         /**
          * This method allows stopping "safe" block generation if teleportation fails.
+         * 
          * @param cancelIfFail - value for canceling
          * @return Builder
          * @since 1.20.1
          */
-        public Builder cancelIfFail(boolean cancelIfFail)
-        {
+        public Builder cancelIfFail(boolean cancelIfFail) {
             this.cancelIfFail = cancelIfFail;
             return this;
         }
-
 
         /**
          * The task to run after the player is safely teleported.
@@ -560,13 +566,11 @@ public class SafeSpotTeleport {
             return failRunnable;
         }
 
-
         /**
          * @return the cancelIfFail
          * @since 1.20.1
          */
-        public boolean isCancelIfFail()
-        {
+        public boolean isCancelIfFail() {
             return this.cancelIfFail;
         }
     }

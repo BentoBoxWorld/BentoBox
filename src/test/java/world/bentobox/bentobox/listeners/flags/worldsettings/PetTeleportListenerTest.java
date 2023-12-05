@@ -32,7 +32,7 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, Util.class})
+@PrepareForTest({ Bukkit.class, BentoBox.class, Util.class })
 public class PetTeleportListenerTest extends AbstractCommonSetup {
 
     private PetTeleportListener ptl;
@@ -55,7 +55,8 @@ public class PetTeleportListenerTest extends AbstractCommonSetup {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.PetTeleportListener#onPetTeleport(org.bukkit.event.entity.EntityTeleportEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.flags.worldsettings.PetTeleportListener#onPetTeleport(org.bukkit.event.entity.EntityTeleportEvent)}.
      */
     @Test
     public void testOnPetTeleportNotTameable() {
@@ -65,7 +66,8 @@ public class PetTeleportListenerTest extends AbstractCommonSetup {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.PetTeleportListener#onPetTeleport(org.bukkit.event.entity.EntityTeleportEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.flags.worldsettings.PetTeleportListener#onPetTeleport(org.bukkit.event.entity.EntityTeleportEvent)}.
      */
     @Test
     public void testOnPetTeleportNullTo() {
@@ -86,7 +88,8 @@ public class PetTeleportListenerTest extends AbstractCommonSetup {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.PetTeleportListener#onPetTeleport(org.bukkit.event.entity.EntityTeleportEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.flags.worldsettings.PetTeleportListener#onPetTeleport(org.bukkit.event.entity.EntityTeleportEvent)}.
      */
     @Test
     public void testOnPetTeleportFlagNotSet() {
@@ -97,7 +100,8 @@ public class PetTeleportListenerTest extends AbstractCommonSetup {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.PetTeleportListener#onPetTeleport(org.bukkit.event.entity.EntityTeleportEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.flags.worldsettings.PetTeleportListener#onPetTeleport(org.bukkit.event.entity.EntityTeleportEvent)}.
      */
     @Test
     public void testOnPetTeleportFlagSetGoingHome() {
@@ -107,7 +111,8 @@ public class PetTeleportListenerTest extends AbstractCommonSetup {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.PetTeleportListener#onPetTeleport(org.bukkit.event.entity.EntityTeleportEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.flags.worldsettings.PetTeleportListener#onPetTeleport(org.bukkit.event.entity.EntityTeleportEvent)}.
      */
     @Test
     public void testOnPetTeleportFlagSetNoIsland() {
@@ -119,14 +124,15 @@ public class PetTeleportListenerTest extends AbstractCommonSetup {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.PetTeleportListener#onPetTeleport(org.bukkit.event.entity.EntityTeleportEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.flags.worldsettings.PetTeleportListener#onPetTeleport(org.bukkit.event.entity.EntityTeleportEvent)}.
      */
     @Test
     public void testOnPetTeleportFlagSetNotHome() {
         Location l = mock(Location.class);
         Island otherIsland = mock(Island.class);
         when(otherIsland.getMemberSet()).thenReturn(ImmutableSet.of());
-        when(im.getProtectedIslandAt(l)).thenReturn(Optional.of(otherIsland ));
+        when(im.getProtectedIslandAt(l)).thenReturn(Optional.of(otherIsland));
         EntityTeleportEvent e = new EntityTeleportEvent(tamed, location, l);
         ptl.onPetTeleport(e);
         assertTrue(e.isCancelled());

@@ -17,6 +17,7 @@ import world.bentobox.bentobox.util.Util;
 
 /**
  * Tells the rank of the player
+ * 
  * @author tastybento
  *
  */
@@ -63,7 +64,8 @@ public class AdminGetrankCommand extends CompositeCommand {
         } else {
             // We want to get the rank of the player on the island of the owner we specify.
             // So we have to make sure that the island owner actually owns an island
-            @Nullable UUID ownerUUID = getPlayers().getUUID(args.get(1));
+            @Nullable
+            UUID ownerUUID = getPlayers().getUUID(args.get(1));
             if (ownerUUID == null) {
                 user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(1));
                 return false;
@@ -86,8 +88,9 @@ public class AdminGetrankCommand extends CompositeCommand {
         RanksManager rm = getPlugin().getRanksManager();
         User target = User.getInstance(targetUUID);
         int currentRank = island.getRank(target);
-        user.sendMessage("commands.admin.getrank.rank-is", TextVariables.RANK, user.getTranslation(rm.getRank(currentRank)),
-                TextVariables.NAME, getPlayers().getName(island.getOwner()));
+        user.sendMessage("commands.admin.getrank.rank-is", TextVariables.RANK,
+                user.getTranslation(rm.getRank(currentRank)), TextVariables.NAME,
+                getPlayers().getName(island.getOwner()));
         return true;
     }
 

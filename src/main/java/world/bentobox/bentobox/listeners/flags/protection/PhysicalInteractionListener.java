@@ -13,28 +13,24 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.lists.Flags;
 
-
 /**
  * @author tastybento
  *
  */
-public class PhysicalInteractionListener extends FlagListener
-{
+public class PhysicalInteractionListener extends FlagListener {
     /**
-     * Handle physical interaction with blocks
-     * Crop trample, pressure plates, triggering redstone, tripwires
+     * Handle physical interaction with blocks Crop trample, pressure plates,
+     * triggering redstone, tripwires
+     * 
      * @param e - event
      */
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-    public void onPlayerInteract(PlayerInteractEvent e)
-    {
-        if (!e.getAction().equals(Action.PHYSICAL) || e.getClickedBlock() == null)
-        {
+    public void onPlayerInteract(PlayerInteractEvent e) {
+        if (!e.getAction().equals(Action.PHYSICAL) || e.getClickedBlock() == null) {
             return;
         }
 
-        if (Tag.PRESSURE_PLATES.isTagged(e.getClickedBlock().getType()))
-        {
+        if (Tag.PRESSURE_PLATES.isTagged(e.getClickedBlock().getType())) {
             // Pressure plates
             this.checkIsland(e, e.getPlayer(), e.getPlayer().getLocation(), Flags.PRESSURE_PLATE);
             return;
@@ -46,29 +42,24 @@ public class PhysicalInteractionListener extends FlagListener
         }
     }
 
-
     /**
      * Protects buttons and plates from being activated by projectiles
-     * @param e  - event
+     * 
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-    public void onProjectileHit(EntityInteractEvent e)
-    {
-        if (!(e.getEntity() instanceof Projectile p))
-        {
+    public void onProjectileHit(EntityInteractEvent e) {
+        if (!(e.getEntity() instanceof Projectile p)) {
             return;
         }
 
-        if (p.getShooter() instanceof Player player)
-        {
-            if (Tag.WOODEN_BUTTONS.isTagged(e.getBlock().getType()))
-            {
+        if (p.getShooter() instanceof Player player) {
+            if (Tag.WOODEN_BUTTONS.isTagged(e.getBlock().getType())) {
                 this.checkIsland(e, player, e.getBlock().getLocation(), Flags.BUTTON);
                 return;
             }
 
-            if (Tag.PRESSURE_PLATES.isTagged(e.getBlock().getType()))
-            {
+            if (Tag.PRESSURE_PLATES.isTagged(e.getBlock().getType())) {
                 // Pressure plates
                 this.checkIsland(e, player, e.getBlock().getLocation(), Flags.PRESSURE_PLATE);
             }

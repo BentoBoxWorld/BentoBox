@@ -15,9 +15,10 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.lists.Flags;
 
 /**
- * Listens for creepers hsssssssh!
- * For the {@link world.bentobox.bentobox.lists.Flags#CREEPER_DAMAGE}
- * and {@link world.bentobox.bentobox.lists.Flags#CREEPER_GRIEFING} flags.
+ * Listens for creepers hsssssssh! For the
+ * {@link world.bentobox.bentobox.lists.Flags#CREEPER_DAMAGE} and
+ * {@link world.bentobox.bentobox.lists.Flags#CREEPER_GRIEFING} flags.
+ * 
  * @author tastybento
  *
  */
@@ -25,6 +26,7 @@ public class CreeperListener extends FlagListener {
 
     /**
      * Prevent blocks being destroyed from explosion
+     * 
      * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
@@ -40,26 +42,28 @@ public class CreeperListener extends FlagListener {
             return;
         }
         // Check for griefing
-        Creeper creeper = (Creeper)e.getEntity();
+        Creeper creeper = (Creeper) e.getEntity();
         if (!Flags.CREEPER_GRIEFING.isSetForWorld(e.getLocation().getWorld())
                 && creeper.getTarget() instanceof Player target // if getTarget is null this won'e be true
                 && !getIslands().locationIsOnIsland(target, e.getLocation())) {
             User user = User.getInstance(target);
-            user.notify("protection.protected", TextVariables.DESCRIPTION, user.getTranslation(Flags.CREEPER_GRIEFING.getHintReference()));
+            user.notify("protection.protected", TextVariables.DESCRIPTION,
+                    user.getTranslation(Flags.CREEPER_GRIEFING.getHintReference()));
             e.setCancelled(true);
             e.blockList().clear();
         }
     }
 
-
     /**
      * Prevent entities being damaged by explosion
+     * 
      * @param e - event
      * @since 1.10.0
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onExplosion(final EntityDamageByEntityEvent e) {
-        if (!e.getCause().equals(EntityDamageEvent.DamageCause.ENTITY_EXPLOSION) || !getIWM().inWorld(e.getEntity().getLocation())
+        if (!e.getCause().equals(EntityDamageEvent.DamageCause.ENTITY_EXPLOSION)
+                || !getIWM().inWorld(e.getEntity().getLocation())
                 || !e.getDamager().getType().equals(EntityType.CREEPER)) {
             return;
         }

@@ -18,10 +18,12 @@ import world.bentobox.bentobox.api.panels.builders.TabbedPanelBuilder;
 import world.bentobox.bentobox.api.user.User;
 
 /**
- * Represents a panel with tabs. The top row of the panel is made up of up to 9 icons that are made of {@link world.bentobox.bentobox.api.panels.Tab}s.
- * Only the active tab is shown. The panel will auto-refresh when a panel item is clicked, so panel item
- * click listeners do not have to actively update the panel. Viewers of the panel who do not have permission
- * to see a {@link world.bentobox.bentobox.api.panels.Tab} will not be shown it.
+ * Represents a panel with tabs. The top row of the panel is made up of up to 9
+ * icons that are made of {@link world.bentobox.bentobox.api.panels.Tab}s. Only
+ * the active tab is shown. The panel will auto-refresh when a panel item is
+ * clicked, so panel item click listeners do not have to actively update the
+ * panel. Viewers of the panel who do not have permission to see a
+ * {@link world.bentobox.bentobox.api.panels.Tab} will not be shown it.
  *
  * @author tastybento
  * @since 1.6.0
@@ -39,6 +41,7 @@ public class TabbedPanel extends Panel implements PanelListener {
 
     /**
      * Construct the tabbed panel
+     * 
      * @param tpb - tabbed panel builder
      */
     public TabbedPanel(TabbedPanelBuilder tpb) {
@@ -46,12 +49,15 @@ public class TabbedPanel extends Panel implements PanelListener {
         this.setWorld(tpb.getWorld());
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see world.bentobox.bentobox.api.panels.PanelListener#refreshPanel()
      */
     @Override
     public void refreshPanel() {
-        if (closed) return;
+        if (closed)
+            return;
         // Called when a player clicks on the panel
         openPanel(activeTab, activePage);
         // Reset the closed flag
@@ -67,13 +73,15 @@ public class TabbedPanel extends Panel implements PanelListener {
 
     /**
      * Open the tabbed panel
+     * 
      * @param activeTab - the tab to show referenced by the slot (0 through 8)
-     * @param page - the page of the tab to show (if multi paged)
+     * @param page      - the page of the tab to show (if multi paged)
      */
     public void openPanel(int activeTab, int page) {
         if (!tpb.getTabs().containsKey(activeTab)) {
             // Request to open a non-existent tab
-            throw new InvalidParameterException("Attempt to open a non-existent tab in a tabbed panel. Missing tab #" + activeTab);
+            throw new InvalidParameterException(
+                    "Attempt to open a non-existent tab in a tabbed panel. Missing tab #" + activeTab);
         }
         if (page < 0) {
             // Request to open a non-existent tab
@@ -88,7 +96,8 @@ public class TabbedPanel extends Panel implements PanelListener {
 
         // Remove any tabs that have no items, if required
         if (tpb.isHideIfEmpty()) {
-            tpb.getTabs().values().removeIf(t -> !t.equals(tab) && t.getPanelItems().stream().noneMatch(Objects::nonNull));
+            tpb.getTabs().values()
+                    .removeIf(t -> !t.equals(tab) && t.getPanelItems().stream().noneMatch(Objects::nonNull));
         }
 
         // Set up the tabbed header
@@ -98,26 +107,33 @@ public class TabbedPanel extends Panel implements PanelListener {
         if (tpb.getTabs().containsKey(activeTab)) {
             List<PanelItem> panelItems = tab.getPanelItems();
             // Adds the flag items
-            panelItems.stream().filter(Objects::nonNull).skip(page * ITEMS_PER_PAGE).limit(page * ITEMS_PER_PAGE + ITEMS_PER_PAGE).forEach(i -> items.put(items.lastKey() + 1, i));
+            panelItems.stream().filter(Objects::nonNull).skip(page * ITEMS_PER_PAGE)
+                    .limit(page * ITEMS_PER_PAGE + ITEMS_PER_PAGE).forEach(i -> items.put(items.lastKey() + 1, i));
 
             // set up the footer
             setupFooter(items);
             // Add forward and backward icons
             if (page > 0) {
                 // Previous page icon
-                items.put(46, new PanelItemBuilder().icon(Material.ARROW).name(tpb.getUser().getTranslation(PROTECTION_PANEL + "previous")).clickHandler((panel, user1, clickType, slot1) -> {
-                    this.activePage--;
-                    this.refreshPanel();
-                    return true;
-                }).build());
+                items.put(46,
+                        new PanelItemBuilder().icon(Material.ARROW)
+                                .name(tpb.getUser().getTranslation(PROTECTION_PANEL + "previous"))
+                                .clickHandler((panel, user1, clickType, slot1) -> {
+                                    this.activePage--;
+                                    this.refreshPanel();
+                                    return true;
+                                }).build());
             }
             if ((page + 1) * ITEMS_PER_PAGE < panelItems.stream().filter(Objects::nonNull).count()) {
                 // Next page icon
-                items.put(52, new PanelItemBuilder().icon(Material.ARROW).name(tpb.getUser().getTranslation(PROTECTION_PANEL + "next")).clickHandler((panel, user1, clickType, slot1) -> {
-                    this.activePage++;
-                    this.refreshPanel();
-                    return true;
-                }).build());
+                items.put(52,
+                        new PanelItemBuilder().icon(Material.ARROW)
+                                .name(tpb.getUser().getTranslation(PROTECTION_PANEL + "next"))
+                                .clickHandler((panel, user1, clickType, slot1) -> {
+                                    this.activePage++;
+                                    this.refreshPanel();
+                                    return true;
+                                }).build());
             }
         } else {
             throw new InvalidParameterException("Unknown tab slot number " + activeTab);
@@ -128,7 +144,8 @@ public class TabbedPanel extends Panel implements PanelListener {
 
     /**
      * Shows the top row of icons
-     * @param tab  - active tab
+     * 
+     * @param tab   - active tab
      * @param items - panel builder
      */
     private void setupHeader(Tab tab, TreeMap<Integer, PanelItem> items) {
@@ -163,7 +180,8 @@ public class TabbedPanel extends Panel implements PanelListener {
 
     @Override
     public void onInventoryClose(InventoryCloseEvent event) {
-        // This flag is set every time the inventory is closed or refreshed (closed and opened)
+        // This flag is set every time the inventory is closed or refreshed (closed and
+        // opened)
         closed = true;
     }
 
@@ -172,7 +190,8 @@ public class TabbedPanel extends Panel implements PanelListener {
         // Trap top row tab clicks
         if (event.isLeftClick() && tpb.getTabs().containsKey(event.getRawSlot())
                 && (tpb.getTabs().get(event.getRawSlot()).getPermission().isEmpty()
-                        || tpb.getUser().hasPermission(tpb.getTabs().get(event.getRawSlot()).getPermission()) || tpb.getUser().isOp())) {
+                        || tpb.getUser().hasPermission(tpb.getTabs().get(event.getRawSlot()).getPermission())
+                        || tpb.getUser().isOp())) {
             event.setCancelled(true);
             this.openPanel(event.getRawSlot(), 0);
             user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_OFF, 1F, 1F);

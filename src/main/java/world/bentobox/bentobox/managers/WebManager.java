@@ -26,8 +26,9 @@ import world.bentobox.bentobox.web.catalog.CatalogEntry;
 import world.bentobox.bentobox.web.credits.Contributor;
 
 /**
- * Handles web-related stuff.
- * Should be instantiated after all addons are loaded.
+ * Handles web-related stuff. Should be instantiated after all addons are
+ * loaded.
+ * 
  * @author Poslovitch
  * @since 1.3.0
  */
@@ -61,7 +62,8 @@ public class WebManager {
             } else {
                 // Set connection interval to be at least 60 minutes.
                 connectionInterval = Math.max(connectionInterval, 60 * 20 * 60L);
-                plugin.getServer().getScheduler().runTaskTimerAsynchronously(plugin, this::requestGitHubData, 20L, connectionInterval);
+                plugin.getServer().getScheduler().runTaskTimerAsynchronously(plugin, this::requestGitHubData, 20L,
+                        connectionInterval);
             }
         }
     }
@@ -100,10 +102,8 @@ public class WebManager {
             List<String> repositories = new ArrayList<>();
             // Gather all the repositories of installed addons.
             repositories.add("BentoBoxWorld/BentoBox");
-            repositories.addAll(plugin.getAddonsManager().getEnabledAddons()
-                    .stream().map(addon -> addon.getDescription().getRepository())
-                    .filter(repo -> !repo.isEmpty())
-                    .toList());
+            repositories.addAll(plugin.getAddonsManager().getEnabledAddons().stream()
+                    .map(addon -> addon.getDescription().getRepository()).filter(repo -> !repo.isEmpty()).toList());
 
             /* Download the contributors */
             if (plugin.getSettings().isLogGithubDownloadData()) {
@@ -116,7 +116,8 @@ public class WebManager {
                     repo = new GitHubRepository(gh, repository);
                 } catch (Exception e) {
                     if (plugin.getSettings().isLogGithubDownloadData()) {
-                        plugin.logError("An unhandled exception occurred when gathering contributors data from the '" + repository + "' repository...");
+                        plugin.logError("An unhandled exception occurred when gathering contributors data from the '"
+                                + repository + "' repository...");
                         plugin.logStacktrace(e);
                     }
                     repo = null;
@@ -126,7 +127,8 @@ public class WebManager {
                 }
             }
 
-            // People were concerned that the download took ages, so we need to tell them it's over now.
+            // People were concerned that the download took ages, so we need to tell them
+            // it's over now.
             if (plugin.getSettings().isLogGithubDownloadData()) {
                 plugin.log("Successfully downloaded data from GitHub.");
             }
@@ -155,12 +157,13 @@ public class WebManager {
         if (!topicsContent.isEmpty()) {
             try {
                 JsonObject topics = JsonParser.parseString(topicsContent).getAsJsonObject();
-                topics.entrySet().forEach(entry -> plugin.getLocalesManager().getLanguages().values().forEach(locale -> {
-                    JsonElement translation = entry.getValue().getAsJsonObject().get(locale.toLanguageTag());
-                    if (translation != null) {
-                        locale.set("catalog.topics." + entry.getKey(), translation.getAsString());
-                    }
-                }));
+                topics.entrySet()
+                        .forEach(entry -> plugin.getLocalesManager().getLanguages().values().forEach(locale -> {
+                            JsonElement translation = entry.getValue().getAsJsonObject().get(locale.toLanguageTag());
+                            if (translation != null) {
+                                locale.set("catalog.topics." + entry.getKey(), translation.getAsString());
+                            }
+                        }));
             } catch (JsonParseException e) {
                 if (plugin.getSettings().isLogGithubDownloadData()) {
                     plugin.log("Could not update the Catalog Topics: the gathered JSON data is malformed.");
@@ -176,8 +179,10 @@ public class WebManager {
                 this.addonsCatalog.clear();
                 this.gamemodesCatalog.clear();
 
-                catalog.getAsJsonArray("gamemodes").forEach(gamemode -> gamemodesCatalog.add(new CatalogEntry(gamemode.getAsJsonObject())));
-                catalog.getAsJsonArray("addons").forEach(addon -> addonsCatalog.add(new CatalogEntry(addon.getAsJsonObject())));
+                catalog.getAsJsonArray("gamemodes")
+                        .forEach(gamemode -> gamemodesCatalog.add(new CatalogEntry(gamemode.getAsJsonObject())));
+                catalog.getAsJsonArray("addons")
+                        .forEach(addon -> addonsCatalog.add(new CatalogEntry(addon.getAsJsonObject())));
             } catch (JsonParseException e) {
                 if (plugin.getSettings().isLogGithubDownloadData()) {
                     plugin.log("Could not update the Catalog content: the gathered JSON data is malformed.");
@@ -188,7 +193,7 @@ public class WebManager {
 
     /**
      *
-     * @param repo - Github repository
+     * @param repo     - Github repository
      * @param fileName - file name
      * @return content or nothing
      * @since 1.8.0
@@ -196,7 +201,8 @@ public class WebManager {
     @NonNull
     private String getContent(@NonNull GitHubRepository repo, String fileName) {
         try {
-            String content = repo.getContent(fileName).getContent().replaceAll("\\n", ""); // replaceAll is required here
+            String content = repo.getContent(fileName).getContent().replaceAll("\\n", ""); // replaceAll is required
+                                                                                           // here
             return new String(Base64.getDecoder().decode(content), StandardCharsets.UTF_8);
         } catch (IllegalAccessException e) {
             // Fail silently
@@ -213,7 +219,8 @@ public class WebManager {
         try {
             List<Contributor> addonContributors = new LinkedList<>();
             for (GitHubContributor gitHubContributor : repo.getContributors()) {
-                addonContributors.add(new Contributor(gitHubContributor.getUsername(), gitHubContributor.getContributionsAmount()));
+                addonContributors.add(
+                        new Contributor(gitHubContributor.getUsername(), gitHubContributor.getContributionsAmount()));
             }
             contributors.put(repo.getFullName(), addonContributors);
         } catch (IllegalAccessException e) {
@@ -223,6 +230,7 @@ public class WebManager {
 
     /**
      * Returns the contents of the addons catalog (may be an empty list).
+     * 
      * @return the contents of the addons catalog.
      * @since 1.5.0
      */
@@ -233,6 +241,7 @@ public class WebManager {
 
     /**
      * Returns the contents of the gamemodes catalog (may be an empty list).
+     * 
      * @return the contents of the gamemodes catalog.
      * @since 1.5.0
      */
@@ -253,7 +262,9 @@ public class WebManager {
     }
 
     /**
-     * Returns an optional that may contain the {@link GitHubWebAPI} instance only and only if {@link Settings#isGithubDownloadData()} is {@code true}.
+     * Returns an optional that may contain the {@link GitHubWebAPI} instance only
+     * and only if {@link Settings#isGithubDownloadData()} is {@code true}.
+     * 
      * @return the GitHub instance.
      * @since 1.5.0
      */

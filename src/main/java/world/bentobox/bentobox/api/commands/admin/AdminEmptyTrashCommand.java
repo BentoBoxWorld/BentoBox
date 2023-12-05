@@ -13,6 +13,7 @@ public class AdminEmptyTrashCommand extends ConfirmableCommand {
 
     /**
      * Clear trash for player, or all unowned islands in trash
+     * 
      * @param parent - admin command
      * @since 1.3.0
      */

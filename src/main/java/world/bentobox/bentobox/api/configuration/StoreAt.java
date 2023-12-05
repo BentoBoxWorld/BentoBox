@@ -7,6 +7,7 @@ import java.lang.annotation.Target;
 
 /**
  * Defines where this data object will be stored.
+ * 
  * @author tastybento
  *
  */

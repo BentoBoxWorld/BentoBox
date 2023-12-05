@@ -48,7 +48,7 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( { Bukkit.class, BentoBox.class, Util.class, Location.class })
+@PrepareForTest({ Bukkit.class, BentoBox.class, Util.class, Location.class })
 public class IslandDeletionManagerTest {
 
     @Mock
@@ -115,10 +115,7 @@ public class IslandDeletionManagerTest {
 
     private void deleteAll(File file) throws IOException {
         if (file.exists()) {
-            Files.walk(file.toPath())
-            .sorted(Comparator.reverseOrder())
-            .map(Path::toFile)
-            .forEach(File::delete);
+            Files.walk(file.toPath()).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
         }
 
     }
@@ -139,7 +136,8 @@ public class IslandDeletionManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandDeletionManager#onBentoBoxReady(world.bentobox.bentobox.api.events.BentoBoxReadyEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandDeletionManager#onBentoBoxReady(world.bentobox.bentobox.api.events.BentoBoxReadyEvent)}.
      */
     @Test
     public void testOnBentoBoxReady() {
@@ -156,7 +154,8 @@ public class IslandDeletionManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandDeletionManager#onIslandDelete(world.bentobox.bentobox.api.events.island.IslandEvent.IslandDeleteChunksEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandDeletionManager#onIslandDelete(world.bentobox.bentobox.api.events.island.IslandEvent.IslandDeleteChunksEvent)}.
      */
     @Test
     public void testOnIslandDelete() {
@@ -176,7 +175,8 @@ public class IslandDeletionManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandDeletionManager#onIslandDeleted(world.bentobox.bentobox.api.events.island.IslandEvent.IslandDeletedEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandDeletionManager#onIslandDeleted(world.bentobox.bentobox.api.events.island.IslandEvent.IslandDeletedEvent)}.
      */
     @Ignore("To do")
     @Test
@@ -185,7 +185,8 @@ public class IslandDeletionManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandDeletionManager#inDeletion(org.bukkit.Location)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.managers.IslandDeletionManager#inDeletion(org.bukkit.Location)}.
      */
     @Test
     public void testInDeletion() {

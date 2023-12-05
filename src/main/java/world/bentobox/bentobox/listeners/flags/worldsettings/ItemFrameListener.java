@@ -15,6 +15,7 @@ import world.bentobox.bentobox.lists.Flags;
 
 /**
  * Protects item frames from damage by mobs
+ * 
  * @author tastybento
  *
  */
@@ -31,10 +32,8 @@ public class ItemFrameListener extends FlagListener {
     }
 
     private void check(Cancellable e, Entity entity, Entity damager) {
-        if (entity instanceof ItemFrame
-                && getIWM().inWorld(entity.getLocation())
-                && !Flags.ITEM_FRAME_DAMAGE.isSetForWorld(entity.getWorld())
-                && !(damager instanceof Player)) {
+        if (entity instanceof ItemFrame && getIWM().inWorld(entity.getLocation())
+                && !Flags.ITEM_FRAME_DAMAGE.isSetForWorld(entity.getWorld()) && !(damager instanceof Player)) {
             if (damager instanceof Projectile projectile) {
                 if (!(projectile.getShooter() instanceof Player)) {
                     e.setCancelled(true);

@@ -28,7 +28,6 @@ import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.ItemParser;
 
-
 public class Flag implements Comparable<Flag> {
 
     /**
@@ -36,21 +35,19 @@ public class Flag implements Comparable<Flag> {
      */
     public enum Type {
         /**
-         * Flag protecting an island.
-         * It can be modified by the players (island owner).
-         * It applies differently depending on the rank of the player who performs the action protected by the flag.
+         * Flag protecting an island. It can be modified by the players (island owner).
+         * It applies differently depending on the rank of the player who performs the
+         * action protected by the flag.
          */
         PROTECTION(Material.SHIELD),
         /**
-         * Flag modifying parameters of the island.
-         * It can be modified by the players (island owner).
-         * This is usually an on/off setting.
+         * Flag modifying parameters of the island. It can be modified by the players
+         * (island owner). This is usually an on/off setting.
          */
         SETTING(Material.COMPARATOR),
         /**
-         * Flag applying to the world.
-         * It can only be modified by administrators (permission or operator).
-         * This is usually an on/off setting.
+         * Flag applying to the world. It can only be modified by administrators
+         * (permission or operator). This is usually an on/off setting.
          */
         WORLD_SETTING(Material.GRASS_BLOCK);
 
@@ -69,6 +66,7 @@ public class Flag implements Comparable<Flag> {
 
     /**
      * Defines the flag mode
+     * 
      * @author tastybento
      * @since 1.6.0
      */
@@ -91,7 +89,9 @@ public class Flag implements Comparable<Flag> {
         TOP_ROW;
 
         /**
-         * Get the next ranking mode above this one. If at the top, it cycles back to the bottom mode
+         * Get the next ranking mode above this one. If at the top, it cycles back to
+         * the bottom mode
+         * 
          * @return next ranking mode
          */
         public Mode getNext() {
@@ -104,6 +104,7 @@ public class Flag implements Comparable<Flag> {
 
         /**
          * Get a list of ranks that are ranked greater than this rank
+         * 
          * @param rank - rank to compare
          * @return true if ranked greater
          */
@@ -171,9 +172,11 @@ public class Flag implements Comparable<Flag> {
 
     /**
      * Check if a setting is set in this world
+     * 
      * @param world - world
-     * @return world setting or default flag setting if a specific world setting is not set.
-     * If world is not a game world, then the result will always be false!
+     * @return world setting or default flag setting if a specific world setting is
+     *         not set. If world is not a game world, then the result will always be
+     *         false!
      */
     public boolean isSetForWorld(World world) {
         if (!BentoBox.getInstance().getIWM().inWorld(world)) {
@@ -193,26 +196,21 @@ public class Flag implements Comparable<Flag> {
 
     /**
      * Set a world setting
-     * @param world - world
+     * 
+     * @param world   - world
      * @param setting - true or false
      */
     public void setSetting(World world, boolean setting) {
         if (getType().equals(Type.WORLD_SETTING) || type.equals(Type.PROTECTION)) {
-            BentoBox.getInstance()
-            .getIWM()
-            .getWorldSettings(world)
-            .getWorldFlags()
-            .put(getID(), setting);
+            BentoBox.getInstance().getIWM().getWorldSettings(world).getWorldFlags().put(getID(), setting);
 
             // Subflag support
             if (hasSubflags()) {
                 subflags.stream()
-                .filter(subflag -> subflag.getType().equals(Type.WORLD_SETTING) || subflag.getType().equals(Type.PROTECTION))
-                .forEach(subflag -> BentoBox.getInstance()
-                        .getIWM()
-                        .getWorldSettings(world)
-                        .getWorldFlags()
-                        .put(subflag.getID(), setting));
+                        .filter(subflag -> subflag.getType().equals(Type.WORLD_SETTING)
+                                || subflag.getType().equals(Type.PROTECTION))
+                        .forEach(subflag -> BentoBox.getInstance().getIWM().getWorldSettings(world).getWorldFlags()
+                                .put(subflag.getID(), setting));
             }
 
             // Save config file
@@ -222,23 +220,27 @@ public class Flag implements Comparable<Flag> {
 
     /**
      * Set the original status of this flag for locations outside of island spaces.
-     * May be overridden by the setting for this world.
-     * Does not affect subflags.
-     * @param defaultSetting - true means it is allowed. false means it is not allowed
+     * May be overridden by the setting for this world. Does not affect subflags.
+     * 
+     * @param defaultSetting - true means it is allowed. false means it is not
+     *                       allowed
      */
     public void setDefaultSetting(boolean defaultSetting) {
         this.setting = defaultSetting;
     }
 
     /**
-     * Set the status of this flag for locations outside of island spaces for a specific world.
-     * World must exist and be registered before this method can be called.
-     * Does not affect subflags.
-     * @param defaultSetting - true means it is allowed. false means it is not allowed
+     * Set the status of this flag for locations outside of island spaces for a
+     * specific world. World must exist and be registered before this method can be
+     * called. Does not affect subflags.
+     * 
+     * @param defaultSetting - true means it is allowed. false means it is not
+     *                       allowed
      */
     public void setDefaultSetting(World world, boolean defaultSetting) {
         if (!BentoBox.getInstance().getIWM().inWorld(world)) {
-            BentoBox.getInstance().logError("Attempt to set default world setting for unregistered world. Register flags in onEnable.");
+            BentoBox.getInstance().logError(
+                    "Attempt to set default world setting for unregistered world. Register flags in onEnable.");
             return;
         }
         BentoBox.getInstance().getIWM().getWorldSettings(world).getWorldFlags().put(getID(), defaultSetting);
@@ -269,6 +271,7 @@ public class Flag implements Comparable<Flag> {
 
     /**
      * Get the addon that made this flag
+     * 
      * @return the addon
      * @since 1.5.0
      */
@@ -276,7 +279,9 @@ public class Flag implements Comparable<Flag> {
         return addon;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see java.lang.Object#hashCode()
      */
     @Override
@@ -288,7 +293,9 @@ public class Flag implements Comparable<Flag> {
         return result;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
@@ -343,6 +350,7 @@ public class Flag implements Comparable<Flag> {
 
     /**
      * A set of game mode addons that use this flag. If empty, flag applies to all.
+     * 
      * @return the gameModeAddon
      */
     public Set<GameModeAddon> getGameModes() {
@@ -358,6 +366,7 @@ public class Flag implements Comparable<Flag> {
 
     /**
      * Add a gameModeAddon to this flag
+     * 
      * @param gameModeAddon - game mode addon
      */
     public void addGameModeAddon(GameModeAddon gameModeAddon) {
@@ -366,6 +375,7 @@ public class Flag implements Comparable<Flag> {
 
     /**
      * Remove a gameModeAddon to this flag
+     * 
      * @param gameModeAddon - game mode addon
      * @return <tt>true</tt> if this set contained the specified element
      */
@@ -374,10 +384,12 @@ public class Flag implements Comparable<Flag> {
     }
 
     /**
-     * Converts a flag to a panel item. The content of the flag will change depending on who the user is and where they are.
-     * @param plugin - plugin
-     * @param user - user that will see this flag
-     * @param island - target island, if any
+     * Converts a flag to a panel item. The content of the flag will change
+     * depending on who the user is and where they are.
+     * 
+     * @param plugin    - plugin
+     * @param user      - user that will see this flag
+     * @param island    - target island, if any
      * @param invisible - true if this flag is not visible to players
      * @return - PanelItem for this flag or null if item is invisible to user
      */
@@ -390,11 +402,12 @@ public class Flag implements Comparable<Flag> {
         // Start the flag conversion
         PanelItemBuilder pib = new PanelItemBuilder()
                 .icon(ItemParser.parse(user.getTranslationOrNothing(this.getIconReference()), new ItemStack(icon)))
-                .name(user.getTranslation("protection.panel.flag-item.name-layout", TextVariables.NAME, user.getTranslation(getNameReference())))
-                .clickHandler(clickHandler)
-                .invisible(invisible);
+                .name(user.getTranslation("protection.panel.flag-item.name-layout", TextVariables.NAME,
+                        user.getTranslation(getNameReference())))
+                .clickHandler(clickHandler).invisible(invisible);
         if (hasSubPanel()) {
-            pib.description(user.getTranslation("protection.panel.flag-item.menu-layout", TextVariables.DESCRIPTION, user.getTranslation(getDescriptionReference())));
+            pib.description(user.getTranslation("protection.panel.flag-item.menu-layout", TextVariables.DESCRIPTION,
+                    user.getTranslation(getDescriptionReference())));
             return pib.build();
         }
         return switch (getType()) {
@@ -405,19 +418,21 @@ public class Flag implements Comparable<Flag> {
     }
 
     private PanelItemBuilder createWorldSettingFlag(User user, PanelItemBuilder pib) {
-        String worldSetting = this.isSetForWorld(user.getWorld()) ? user.getTranslation("protection.panel.flag-item.setting-active")
+        String worldSetting = this.isSetForWorld(user.getWorld())
+                ? user.getTranslation("protection.panel.flag-item.setting-active")
                 : user.getTranslation("protection.panel.flag-item.setting-disabled");
-        pib.description(user.getTranslation("protection.panel.flag-item.setting-layout", TextVariables.DESCRIPTION, user.getTranslation(getDescriptionReference())
-                , "[setting]", worldSetting));
+        pib.description(user.getTranslation("protection.panel.flag-item.setting-layout", TextVariables.DESCRIPTION,
+                user.getTranslation(getDescriptionReference()), "[setting]", worldSetting));
         return pib;
     }
 
     private PanelItemBuilder createSettingFlag(User user, Island island, PanelItemBuilder pib) {
         if (island != null) {
-            String islandSetting = island.isAllowed(this) ? user.getTranslation("protection.panel.flag-item.setting-active")
+            String islandSetting = island.isAllowed(this)
+                    ? user.getTranslation("protection.panel.flag-item.setting-active")
                     : user.getTranslation("protection.panel.flag-item.setting-disabled");
-            pib.description(user.getTranslation("protection.panel.flag-item.setting-layout", TextVariables.DESCRIPTION, user.getTranslation(getDescriptionReference())
-                    , "[setting]", islandSetting));
+            pib.description(user.getTranslation("protection.panel.flag-item.setting-layout", TextVariables.DESCRIPTION,
+                    user.getTranslation(getDescriptionReference()), "[setting]", islandSetting));
             if (this.cooldown > 0 && island.isCooldown(this)) {
                 pib.description(user.getTranslation("protection.panel.flag-item.setting-cooldown"));
             }
@@ -432,17 +447,19 @@ public class Flag implements Comparable<Flag> {
                     TextVariables.DESCRIPTION, user.getTranslation(getDescriptionReference())));
             plugin.getRanksManager().getRanks().forEach((reference, score) -> {
                 if (score > RanksManager.BANNED_RANK && score < island.getFlag(this)) {
-                    pib.description(user.getTranslation("protection.panel.flag-item.blocked-rank") + user.getTranslation(reference));
+                    pib.description(user.getTranslation("protection.panel.flag-item.blocked-rank")
+                            + user.getTranslation(reference));
                 } else if (score <= RanksManager.OWNER_RANK && score > island.getFlag(this)) {
-                    pib.description(user.getTranslation("protection.panel.flag-item.allowed-rank") + user.getTranslation(reference));
+                    pib.description(user.getTranslation("protection.panel.flag-item.allowed-rank")
+                            + user.getTranslation(reference));
                 } else if (score == island.getFlag(this)) {
-                    pib.description(user.getTranslation("protection.panel.flag-item.minimal-rank") + user.getTranslation(reference));
+                    pib.description(user.getTranslation("protection.panel.flag-item.minimal-rank")
+                            + user.getTranslation(reference));
                 }
             });
         }
         return pib;
     }
-
 
     /**
      * @return the mode
@@ -467,32 +484,41 @@ public class Flag implements Comparable<Flag> {
     public Set<Flag> getSubflags() {
         return subflags;
     }
-    
+
     /**
-     * Set the name of this flag for a specified locale. This enables the flag's name to be assigned via API. It will not be stored anywhere
-     * and must be rewritten using this call every time the flag is built.
-     * @param locale locale (language) to which this name should be assigned. Assigning to {@code Locale.US} will make this the default
-     * @param name the translated name for this flag
+     * Set the name of this flag for a specified locale. This enables the flag's
+     * name to be assigned via API. It will not be stored anywhere and must be
+     * rewritten using this call every time the flag is built.
+     * 
+     * @param locale locale (language) to which this name should be assigned.
+     *               Assigning to {@code Locale.US} will make this the default
+     * @param name   the translated name for this flag
      * @return true if successful, false if the locale is unknown to this server.
-     * See {@link world.bentobox.bentobox.managers.LocalesManager#getAvailableLocales(boolean sort)}
+     *         See
+     *         {@link world.bentobox.bentobox.managers.LocalesManager#getAvailableLocales(boolean sort)}
      * @since 1.22.1
      */
     public boolean setTranslatedName(Locale locale, String name) {
         return BentoBox.getInstance().getLocalesManager().setTranslation(locale, getNameReference(), name);
     }
-    
+
     /**
-     * Set the name of this flag for a specified locale. This enables the flag's name to be assigned via API. It will not be stored anywhere
-     * and must be rewritten using this call every time the flag is built.
-     * @param locale locale (language) to which this name should be assigned. Assigning to {@code Locale.US} will make this the default
+     * Set the name of this flag for a specified locale. This enables the flag's
+     * name to be assigned via API. It will not be stored anywhere and must be
+     * rewritten using this call every time the flag is built.
+     * 
+     * @param locale      locale (language) to which this name should be assigned.
+     *                    Assigning to {@code Locale.US} will make this the default
      * @param description the translated description for this flag
      * @return true if successful, false if the locale is unknown to this server.
-     * See {@link world.bentobox.bentobox.managers.LocalesManager#getAvailableLocales(boolean sort)}
+     *         See
+     *         {@link world.bentobox.bentobox.managers.LocalesManager#getAvailableLocales(boolean sort)}
      * @since 1.22.1
      */
 
     public boolean setTranslatedDescription(Locale locale, String description) {
-        return BentoBox.getInstance().getLocalesManager().setTranslation(locale, getDescriptionReference(), description);
+        return BentoBox.getInstance().getLocalesManager().setTranslation(locale, getDescriptionReference(),
+                description);
     }
 
     @Override
@@ -507,6 +533,7 @@ public class Flag implements Comparable<Flag> {
 
     /**
      * Builder for making flags
+     * 
      * @author tastybento, Poslovitch
      */
     public static class Builder {
@@ -545,7 +572,8 @@ public class Flag implements Comparable<Flag> {
 
         /**
          * Builder for making flags
-         * @param id - a unique id that MUST be the same as the enum of the flag
+         * 
+         * @param id   - a unique id that MUST be the same as the enum of the flag
          * @param icon - a material that will be used as the icon in the GUI
          */
         public Builder(String id, Material icon) {
@@ -555,8 +583,10 @@ public class Flag implements Comparable<Flag> {
         }
 
         /**
-         * The listener that should be instantiated to handle events this flag cares about.
-         * If the listener class already exists, then do not create it again in another flag.
+         * The listener that should be instantiated to handle events this flag cares
+         * about. If the listener class already exists, then do not create it again in
+         * another flag.
+         * 
          * @param listener - Bukkit Listener
          * @return Builder
          */
@@ -567,7 +597,9 @@ public class Flag implements Comparable<Flag> {
 
         /**
          * The type of flag.
-         * @param type {@link Type#PROTECTION}, {@link Type#SETTING} or {@link Type#WORLD_SETTING}
+         * 
+         * @param type {@link Type#PROTECTION}, {@link Type#SETTING} or
+         *             {@link Type#WORLD_SETTING}
          * @return Builder
          */
         public Builder type(Type type) {
@@ -577,6 +609,7 @@ public class Flag implements Comparable<Flag> {
 
         /**
          * The click handler to use when this icon is clicked
+         * 
          * @param clickHandler - click handler
          * @return Builder
          */
@@ -586,7 +619,9 @@ public class Flag implements Comparable<Flag> {
         }
 
         /**
-         * Set the default setting for {@link Type#SETTING} or {@link Type#WORLD_SETTING} flags
+         * Set the default setting for {@link Type#SETTING} or
+         * {@link Type#WORLD_SETTING} flags
+         * 
          * @param defaultSetting - true or false
          * @return Builder
          */
@@ -597,6 +632,7 @@ public class Flag implements Comparable<Flag> {
 
         /**
          * Set the default rank for {@link Type#PROTECTION} flags
+         * 
          * @param defaultRank - default rank
          * @return Builder
          */
@@ -607,6 +643,7 @@ public class Flag implements Comparable<Flag> {
 
         /**
          * Set that this flag icon will open up a sub-panel
+         * 
          * @param usePanel - true or false
          * @return Builder
          */
@@ -617,6 +654,7 @@ public class Flag implements Comparable<Flag> {
 
         /**
          * Make this flag specific to this gameMode
+         * 
          * @param gameModeAddon game mode addon
          * @return Builder
          */
@@ -626,7 +664,9 @@ public class Flag implements Comparable<Flag> {
         }
 
         /**
-         * The addon registering this flag. Ensure this is set to enable the addon to be reloaded.
+         * The addon registering this flag. Ensure this is set to enable the addon to be
+         * reloaded.
+         * 
          * @param addon addon
          * @return Builder
          * @since 1.5.0
@@ -638,6 +678,7 @@ public class Flag implements Comparable<Flag> {
 
         /**
          * Set a cooldown for {@link Type#SETTING} flag. Only applicable for settings.
+         * 
          * @param cooldown in seconds
          * @return Builder
          * @since 1.6.0
@@ -648,8 +689,8 @@ public class Flag implements Comparable<Flag> {
         }
 
         /**
-         * Set the flag difficulty mode.
-         * Defaults to {@link Flag.Mode#EXPERT}.
+         * Set the flag difficulty mode. Defaults to {@link Flag.Mode#EXPERT}.
+         * 
          * @param mode - difficulty mode
          * @return Builder - flag builder
          * @since 1.6.0
@@ -660,9 +701,10 @@ public class Flag implements Comparable<Flag> {
         }
 
         /**
-         * Add subflags and designate this flag as a parent flag.
-         * Subflags have their state simultaneously changed with the parent flag.
-         * Take extra care to ensure that subflags have the same number of possible values as the parent flag.
+         * Add subflags and designate this flag as a parent flag. Subflags have their
+         * state simultaneously changed with the parent flag. Take extra care to ensure
+         * that subflags have the same number of possible values as the parent flag.
+         * 
          * @param flags all Flags that are subflags
          * @return Builder - flag builder
          * @since 1.17.1
@@ -674,6 +716,7 @@ public class Flag implements Comparable<Flag> {
 
         /**
          * Build the flag
+         * 
          * @return Flag
          */
         public Flag build() {

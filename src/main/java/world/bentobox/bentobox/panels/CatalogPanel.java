@@ -21,29 +21,29 @@ import world.bentobox.bentobox.web.catalog.CatalogEntry;
 public class CatalogPanel {
 
     private static final String LOCALE_REF = "catalog.panel.";
-    private static final int[] PANES = {0, 3, 4, 5, 6, 7, 8, 9, 17, 18, 26, 27, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44};
+    private static final int[] PANES = { 0, 3, 4, 5, 6, 7, 8, 9, 17, 18, 26, 27, 35, 36, 37, 38, 39, 40, 41, 42, 43,
+            44 };
 
-    private CatalogPanel() {}
+    private CatalogPanel() {
+    }
 
     public static void openPanel(@NonNull User user, @NonNull View view) {
         BentoBox plugin = BentoBox.getInstance();
 
-        PanelBuilder builder = new PanelBuilder()
-                .name(user.getTranslation(LOCALE_REF + view.name() + ".title"))
+        PanelBuilder builder = new PanelBuilder().name(user.getTranslation(LOCALE_REF + view.name() + ".title"))
                 .size(45);
 
         // Setup header and corners
         for (int i : PANES) {
-            builder.item(i, new PanelItemBuilder().icon(plugin.getSettings().getPanelFillerMaterial()).name(" ").build());
+            builder.item(i,
+                    new PanelItemBuilder().icon(plugin.getSettings().getPanelFillerMaterial()).name(" ").build());
         }
 
-        PanelItemBuilder gamemodesButton = new PanelItemBuilder()
-                .icon(Material.COMMAND_BLOCK)
+        PanelItemBuilder gamemodesButton = new PanelItemBuilder().icon(Material.COMMAND_BLOCK)
                 .name(user.getTranslation(LOCALE_REF + "views.gamemodes.name"))
                 .description(user.getTranslation(LOCALE_REF + "views.gamemodes.description"));
 
-        PanelItemBuilder addonsButton = new PanelItemBuilder()
-                .icon(Material.BOOK)
+        PanelItemBuilder addonsButton = new PanelItemBuilder().icon(Material.BOOK)
                 .name(user.getTranslation(LOCALE_REF + "views.addons.name"))
                 .description(user.getTranslation(LOCALE_REF + "views.addons.description"));
 
@@ -80,7 +80,8 @@ public class CatalogPanel {
 
                 String name = ChatColor.WHITE + addon.getName();
                 if (addon.getTag() != null) {
-                    name += " " + ChatColor.AQUA + "" + ChatColor.BOLD + user.getTranslation("catalog.tags." + addon.getTag());
+                    name += " " + ChatColor.AQUA + "" + ChatColor.BOLD
+                            + user.getTranslation("catalog.tags." + addon.getTag());
                 }
 
                 itemBuilder.icon(addon.getIcon()).name(name);
@@ -94,14 +95,14 @@ public class CatalogPanel {
                     install = user.getTranslation(LOCALE_REF + "icon.install-now");
                 }
 
-                itemBuilder.description(user.getTranslation(LOCALE_REF + "icon.description-template",
-                        "[topic]", StringUtils.capitalize(user.getTranslation("catalog.topics." + addon.getTopic())),
-                        "[install]", install,
-                        "[description]", addon.getDescription()));
+                itemBuilder.description(user.getTranslation(LOCALE_REF + "icon.description-template", "[topic]",
+                        StringUtils.capitalize(user.getTranslation("catalog.topics." + addon.getTopic())), "[install]",
+                        install, "[description]", addon.getDescription()));
 
                 // Send the link to the releases tab on click
                 itemBuilder.clickHandler((panel, user1, clickType, slot) -> {
-                    user1.sendRawMessage(ChatColor.GRAY + "" + ChatColor.ITALIC + "https://github.com/" + addon.getRepository() + "/releases");
+                    user1.sendRawMessage(ChatColor.GRAY + "" + ChatColor.ITALIC + "https://github.com/"
+                            + addon.getRepository() + "/releases");
                     return true;
                 });
 
@@ -113,17 +114,14 @@ public class CatalogPanel {
     }
 
     private static void looksEmpty(@NonNull PanelBuilder builder, @NonNull User user) {
-        PanelItem emptyHere = new PanelItemBuilder()
-                .icon(Material.STRUCTURE_VOID)
+        PanelItem emptyHere = new PanelItemBuilder().icon(Material.STRUCTURE_VOID)
                 .name(user.getTranslation(LOCALE_REF + "empty-here.name"))
-                .description(user.getTranslation(LOCALE_REF + "empty-here.description"))
-                .build();
+                .description(user.getTranslation(LOCALE_REF + "empty-here.description")).build();
 
         builder.item(22, emptyHere);
     }
 
     public enum View {
-        GAMEMODES,
-        ADDONS
+        GAMEMODES, ADDONS
     }
 }

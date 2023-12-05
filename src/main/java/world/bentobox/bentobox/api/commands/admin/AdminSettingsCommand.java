@@ -52,18 +52,15 @@ public class AdminSettingsCommand extends CompositeCommand {
         protectionFlagNames = getPlugin().getFlagsManager().getFlags().stream()
                 .filter(f -> f.getType().equals(Type.PROTECTION))
                 .filter(f -> f.getGameModes().isEmpty() || gameMode == null || f.getGameModes().contains(gameMode))
-                .map(Flag::getID)
-                .toList();
+                .map(Flag::getID).toList();
         settingFlagNames = getPlugin().getFlagsManager().getFlags().stream()
                 .filter(f -> f.getType().equals(Type.SETTING))
                 .filter(f -> f.getGameModes().isEmpty() || gameMode == null || f.getGameModes().contains(gameMode))
-                .map(Flag::getID)
-                .toList();
+                .map(Flag::getID).toList();
         worldSettingFlagNames = getPlugin().getFlagsManager().getFlags().stream()
                 .filter(f -> f.getType().equals(Type.WORLD_SETTING))
                 .filter(f -> f.getGameModes().isEmpty() || gameMode == null || f.getGameModes().contains(gameMode))
-                .map(Flag::getID)
-                .toList();
+                .map(Flag::getID).toList();
     }
 
     @Override
@@ -92,7 +89,8 @@ public class AdminSettingsCommand extends CompositeCommand {
             return true;
         }
         // Get target player
-        @Nullable UUID targetUUID = Util.getUUID(args.get(0));
+        @Nullable
+        UUID targetUUID = Util.getUUID(args.get(0));
         if (targetUUID == null) {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
             return false;
@@ -170,7 +168,8 @@ public class AdminSettingsCommand extends CompositeCommand {
 
     /**
      * Check the rank given.
-     * @param user - user
+     * 
+     * @param user   - user
      * @param string - the rank given in the command line
      * @return true if rank is valid
      */
@@ -228,25 +227,15 @@ public class AdminSettingsCommand extends CompositeCommand {
         }
         getPlayers().setFlagsDisplayMode(user.getUniqueId(), Mode.EXPERT);
         if (args.isEmpty()) {
-            new TabbedPanelBuilder()
-            .user(user)
-            .world(getWorld())
-            .tab(1, new SettingsTab(getWorld(), user, Flag.Type.WORLD_SETTING))
-            .tab(2, new WorldDefaultSettingsTab(getWorld(), user))
-            .startingSlot(1)
-            .size(54)
-            .build().openPanel();
+            new TabbedPanelBuilder().user(user).world(getWorld())
+                    .tab(1, new SettingsTab(getWorld(), user, Flag.Type.WORLD_SETTING))
+                    .tab(2, new WorldDefaultSettingsTab(getWorld(), user)).startingSlot(1).size(54).build().openPanel();
             return true;
         }
         // Player settings
-        new TabbedPanelBuilder()
-        .user(user)
-        .world(island.getWorld())
-        .tab(1, new SettingsTab(user, island, Flag.Type.PROTECTION))
-        .tab(2, new SettingsTab(user, island, Flag.Type.SETTING))
-        .startingSlot(1)
-        .size(54)
-        .build().openPanel();
+        new TabbedPanelBuilder().user(user).world(island.getWorld())
+                .tab(1, new SettingsTab(user, island, Flag.Type.PROTECTION))
+                .tab(2, new SettingsTab(user, island, Flag.Type.SETTING)).startingSlot(1).size(54).build().openPanel();
         return true;
     }
 
@@ -257,7 +246,7 @@ public class AdminSettingsCommand extends CompositeCommand {
         String active = ChatColor.stripColor(user.getTranslation("protection.panel.flag-item.setting-active"));
         String disabled = ChatColor.stripColor(user.getTranslation("protection.panel.flag-item.setting-disabled"));
         List<String> options = new ArrayList<>();
-        String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
+        String lastArg = !args.isEmpty() ? args.get(args.size() - 1) : "";
         if (args.size() == 2) {
             // Player names or world settings
             options = Util.tabLimit(Util.getOnlinePlayerList(user), lastArg);
@@ -276,15 +265,15 @@ public class AdminSettingsCommand extends CompositeCommand {
             }
         } else if (args.size() == 4) {
             // Get flag in previous argument
-            options = getPlugin().getFlagsManager().getFlag(args.get(2).toUpperCase(Locale.ENGLISH)).map(f -> switch (f.getType()) {
-            case PROTECTION -> getPlugin().getRanksManager()
-            .getRanks().entrySet().stream()
-            .filter(en -> en.getValue() > RanksManager.BANNED_RANK && en.getValue() <= RanksManager.OWNER_RANK)
-            .map(Entry::getKey)
-            .map(user::getTranslation).toList();
-            case SETTING -> Arrays.asList(active, disabled);
-            default -> Collections.<String>emptyList();
-            }).orElse(Collections.emptyList());
+            options = getPlugin().getFlagsManager().getFlag(args.get(2).toUpperCase(Locale.ENGLISH))
+                    .map(f -> switch (f.getType()) {
+                    case PROTECTION -> getPlugin().getRanksManager().getRanks().entrySet().stream()
+                            .filter(en -> en.getValue() > RanksManager.BANNED_RANK
+                                    && en.getValue() <= RanksManager.OWNER_RANK)
+                            .map(Entry::getKey).map(user::getTranslation).toList();
+                    case SETTING -> Arrays.asList(active, disabled);
+                    default -> Collections.<String>emptyList();
+                    }).orElse(Collections.emptyList());
         }
         return Optional.of(Util.tabLimit(options, lastArg));
 

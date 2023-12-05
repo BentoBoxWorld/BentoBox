@@ -9,8 +9,9 @@ import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.lists.Flags;
 
 /**
- * Prevents pets from teleporting to islands unless
- * the owner is a member of the island.
+ * Prevents pets from teleporting to islands unless the owner is a member of the
+ * island.
+ * 
  * @author tastybento
  * @since 1.16.0
  */
@@ -18,15 +19,15 @@ public class PetTeleportListener extends FlagListener {
 
     /**
      * Prevents pets teleporting
+     * 
      * @param e - event
      */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPetTeleport(final EntityTeleportEvent e) {
-        if (e.getTo() == null
-                || !getIWM().inWorld(e.getFrom())
+        if (e.getTo() == null || !getIWM().inWorld(e.getFrom())
                 || !Flags.PETS_STAY_AT_HOME.isSetForWorld(e.getFrom().getWorld())
-                || !(e.getEntity() instanceof Tameable t)
-                ) return;
+                || !(e.getEntity() instanceof Tameable t))
+            return;
         if (t.isTamed() && t.getOwner() != null) {
             // Get where the pet is going
             e.setCancelled(getIslands().getProtectedIslandAt(e.getTo())

@@ -36,7 +36,7 @@ import world.bentobox.bentobox.managers.IslandsManager;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, User.class })
+@PrepareForTest({ Bukkit.class, BentoBox.class, User.class })
 public class AdminPurgeUnownedCommandTest {
 
     @Mock

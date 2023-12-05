@@ -17,6 +17,7 @@ import world.bentobox.bentobox.util.Util;
 
 /**
  * Provide geo limiting to mobs - removed them if they go outside island bounds
+ * 
  * @author tastybento
  *
  */
@@ -49,12 +50,8 @@ public class GeoLimitClickListener implements ClickHandler {
         // Close the current panel
         user.closeInventory();
         // Open a new panel
-        new TabbedPanelBuilder()
-        .user(user)
-        .world(world)
-        .tab(1, new GeoMobLimitTab(user, EntityLimitTabType.GEO_LIMIT, world))
-        .startingSlot(1)
-        .size(54)
-        .build().openPanel();
+        new TabbedPanelBuilder().user(user).world(world)
+                .tab(1, new GeoMobLimitTab(user, EntityLimitTabType.GEO_LIMIT, world)).startingSlot(1).size(54).build()
+                .openPanel();
     }
 }

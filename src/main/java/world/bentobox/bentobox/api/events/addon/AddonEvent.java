@@ -9,14 +9,9 @@ import world.bentobox.bentobox.api.addons.Addon;
 
 public class AddonEvent {
 
-
     public enum Reason {
-        ENABLE,
-        DISABLE,
-        LOAD,
-        UNKNOWN
+        ENABLE, DISABLE, LOAD, UNKNOWN
     }
-
 
     /**
      * @return Addon event builder
@@ -32,7 +27,9 @@ public class AddonEvent {
         private Map<String, Object> keyValues = new HashMap<>();
 
         /**
-         * Add a map of key-value pairs to the event. Use this to transfer data from the addon to the external world.
+         * Add a map of key-value pairs to the event. Use this to transfer data from the
+         * addon to the external world.
+         * 
          * @param keyValues - map
          * @return AddonEvent
          */
@@ -62,7 +59,9 @@ public class AddonEvent {
 
         /**
          * Build and fire event
-         * @return event - deprecated event. To obtain the new event use {@link AddonBaseEvent#getNewEvent()}
+         * 
+         * @return event - deprecated event. To obtain the new event use
+         *         {@link AddonBaseEvent#getNewEvent()}
          */
         public AddonBaseEvent build() {
             // Call new event

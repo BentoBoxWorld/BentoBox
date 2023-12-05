@@ -36,7 +36,7 @@ import world.bentobox.bentobox.managers.FlagsManager;
 import world.bentobox.bentobox.util.Util;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( {Bukkit.class, BentoBox.class, Flags.class, Util.class} )
+@PrepareForTest({ Bukkit.class, BentoBox.class, Flags.class, Util.class })
 public class FlagAdapterTest {
 
     private BentoBox plugin;

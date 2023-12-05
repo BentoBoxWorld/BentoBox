@@ -11,7 +11,7 @@ import world.bentobox.bentobox.api.user.User;
 public class AdminRangeCommand extends CompositeCommand {
 
     public AdminRangeCommand(CompositeCommand parent) {
-        super (parent, "range");
+        super(parent, "range");
     }
 
     @Override

@@ -11,8 +11,7 @@ import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.database.objects.IslandDeletion;
 
 /**
- * Fired when an island chunks are going to be deleted.
- * May be cancelled.
+ * Fired when an island chunks are going to be deleted. May be cancelled.
  *
  */
 public class IslandDeleteChunksEvent extends IslandBaseEvent {
@@ -28,7 +27,8 @@ public class IslandDeleteChunksEvent extends IslandBaseEvent {
         return handlers;
     }
 
-    public IslandDeleteChunksEvent(Island island, UUID player, boolean admin, Location location, IslandDeletion deletedIsland) {
+    public IslandDeleteChunksEvent(Island island, UUID player, boolean admin, Location location,
+            IslandDeletion deletedIsland) {
         // Final variables have to be declared in the constructor
         super(island, player, admin, location);
         this.deletedIslandInfo = deletedIsland;

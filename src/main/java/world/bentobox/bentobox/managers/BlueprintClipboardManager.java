@@ -67,7 +67,8 @@ public class BlueprintClipboardManager {
     }
 
     private void getGson() {
-        GsonBuilder builder = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().enableComplexMapKeySerialization();
+        GsonBuilder builder = new GsonBuilder().excludeFieldsWithoutExposeAnnotation()
+                .enableComplexMapKeySerialization();
         // Disable <>'s escaping etc.
         builder.disableHtmlEscaping();
         // Register adapter factory
@@ -77,6 +78,7 @@ public class BlueprintClipboardManager {
 
     /**
      * Load a file to clipboard
+     * 
      * @param fileName - filename in blueprints folder
      * @throws IOException - if there's a load error with unzipping or name
      */
@@ -87,6 +89,7 @@ public class BlueprintClipboardManager {
 
     /**
      * Loads a blueprint
+     * 
      * @param fileName - the sanitized filename without the suffix
      * @return the blueprint
      * @throws IOException exception if there's an issue loading or unzipping
@@ -115,14 +118,16 @@ public class BlueprintClipboardManager {
         if (bp.getBedrock() == null) {
             bp.setBedrock(new Vector(bp.getxSize() / 2, bp.getySize() / 2, bp.getzSize() / 2));
             bp.getBlocks().put(bp.getBedrock(), new BlueprintBlock(Material.BEDROCK.createBlockData().getAsString()));
-            plugin.logWarning("Blueprint " + fileName + BlueprintsManager.BLUEPRINT_SUFFIX + " had no bedrock block in it so one was added automatically in the center. You should check it.");
+            plugin.logWarning("Blueprint " + fileName + BlueprintsManager.BLUEPRINT_SUFFIX
+                    + " had no bedrock block in it so one was added automatically in the center. You should check it.");
         }
         return bp;
     }
 
     /**
      * Load a blueprint to the clipboard for a user
-     * @param user - user trying to load
+     * 
+     * @param user     - user trying to load
      * @param fileName - filename
      * @return - <tt>true</tt> if load is successful, <tt>false</tt> if not
      */
@@ -131,7 +136,8 @@ public class BlueprintClipboardManager {
             load(fileName);
         } catch (IOException e1) {
             user.sendMessage("commands.admin.blueprint.could-not-load");
-            plugin.logError("Could not load blueprint file: " + fileName + BlueprintsManager.BLUEPRINT_SUFFIX + " " + e1.getMessage());
+            plugin.logError("Could not load blueprint file: " + fileName + BlueprintsManager.BLUEPRINT_SUFFIX + " "
+                    + e1.getMessage());
             return false;
         }
         user.sendMessage("general.success");
@@ -140,19 +146,17 @@ public class BlueprintClipboardManager {
 
     /**
      * Save the clipboard to a file
-     * @param user - user who is copying
+     * 
+     * @param user    - user who is copying
      * @param newName - new name of this blueprint
      * @return - true if successful, false if error
      */
-    public boolean save(User user, String newName, String displayName)
-    {
-        if (this.clipboard.isFull())
-        {
+    public boolean save(User user, String newName, String displayName) {
+        if (this.clipboard.isFull()) {
             this.clipboard.getBlueprint().setName(newName);
             this.clipboard.getBlueprint().setDisplayName(displayName);
 
-            if (this.saveBlueprint(this.clipboard.getBlueprint()))
-            {
+            if (this.saveBlueprint(this.clipboard.getBlueprint())) {
                 user.sendMessage("general.success");
                 return true;
             }
@@ -164,6 +168,7 @@ public class BlueprintClipboardManager {
 
     /**
      * Save a blueprint
+     * 
      * @param blueprint - blueprint
      * @return true if successful, false if not
      */
@@ -217,7 +222,8 @@ public class BlueprintClipboardManager {
         if (!unzipFilePath.toFile().getCanonicalPath().startsWith(blueprintFolder.getCanonicalPath())) {
             throw new IOException("Entry is outside of the target directory");
         }
-        try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(unzipFilePath.toFile().getCanonicalPath()))) {
+        try (BufferedOutputStream bos = new BufferedOutputStream(
+                new FileOutputStream(unzipFilePath.toFile().getCanonicalPath()))) {
             byte[] bytesIn = new byte[1024];
             int read;
             while ((read = zipInputStream.read(bytesIn)) != -1) {
@@ -227,12 +233,13 @@ public class BlueprintClipboardManager {
     }
 
     private void zip(File targetFile) throws IOException {
-        try (ZipOutputStream zipOutputStream = new ZipOutputStream(new FileOutputStream(targetFile.getCanonicalPath() + BlueprintsManager.BLUEPRINT_SUFFIX))) {
+        try (ZipOutputStream zipOutputStream = new ZipOutputStream(
+                new FileOutputStream(targetFile.getCanonicalPath() + BlueprintsManager.BLUEPRINT_SUFFIX))) {
             zipOutputStream.putNextEntry(new ZipEntry(targetFile.getName()));
             try (FileInputStream inputStream = new FileInputStream(targetFile)) {
                 final byte[] buffer = new byte[1024];
                 int length;
-                while((length = inputStream.read(buffer)) >= 0) {
+                while ((length = inputStream.read(buffer)) >= 0) {
                     zipOutputStream.write(buffer, 0, length);
                 }
             }

@@ -54,7 +54,7 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, User.class, Util.class })
+@PrepareForTest({ Bukkit.class, BentoBox.class, User.class, Util.class })
 public class StandardSpawnProtectionListenerTest {
 
     @Mock
@@ -112,9 +112,9 @@ public class StandardSpawnProtectionListenerTest {
         PowerMockito.mockStatic(Util.class);
         when(Util.getWorld(any())).thenReturn(world);
         // Location
-        when(location.toVector()).thenReturn(new Vector(5,5,5));
+        when(location.toVector()).thenReturn(new Vector(5, 5, 5));
         when(location.getWorld()).thenReturn(nether);
-        when(spawnLocation.toVector()).thenReturn(new Vector(0,0,0));
+        when(spawnLocation.toVector()).thenReturn(new Vector(0, 0, 0));
         when(spawnLocation.getWorld()).thenReturn(nether);
         // Player
         when(player.getWorld()).thenReturn(nether);
@@ -127,13 +127,15 @@ public class StandardSpawnProtectionListenerTest {
         // Placeholders
         PlaceholdersManager placeholdersManager = mock(PlaceholdersManager.class);
         when(plugin.getPlaceholdersManager()).thenReturn(placeholdersManager);
-        when(placeholdersManager.replacePlaceholders(Mockito.any(), Mockito.any())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
+        when(placeholdersManager.replacePlaceholders(Mockito.any(), Mockito.any()))
+                .thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
 
         // Block
         when(block.getLocation()).thenReturn(location);
 
         // Util translate color codes (used in user translate methods)
-        when(Util.translateColorCodes(anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
+        when(Util.translateColorCodes(anyString()))
+                .thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
 
         // Set up class
         ssp = new StandardSpawnProtectionListener(plugin);
@@ -147,9 +149,9 @@ public class StandardSpawnProtectionListenerTest {
         Mockito.framework().clearInlineMocks();
     }
 
-
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.StandardSpawnProtectionListener#onBlockPlace(org.bukkit.event.block.BlockPlaceEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.StandardSpawnProtectionListener#onBlockPlace(org.bukkit.event.block.BlockPlaceEvent)}.
      */
     @Test
     public void testOnBlockPlaceDisallowed() {
@@ -236,7 +238,8 @@ public class StandardSpawnProtectionListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.StandardSpawnProtectionListener#onBlockBreak(org.bukkit.event.block.BlockBreakEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.StandardSpawnProtectionListener#onBlockBreak(org.bukkit.event.block.BlockBreakEvent)}.
      */
     @Test
     public void testOnBlockBreakDisallowed() {
@@ -271,7 +274,8 @@ public class StandardSpawnProtectionListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.StandardSpawnProtectionListener#onExplosion(org.bukkit.event.entity.EntityExplodeEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.StandardSpawnProtectionListener#onExplosion(org.bukkit.event.entity.EntityExplodeEvent)}.
      */
     @Test
     public void testOnExplosion() {
@@ -282,17 +286,13 @@ public class StandardSpawnProtectionListenerTest {
         blockList.add(block);
         blockList.add(block);
         // Make some inside and outside spawn
-        when(location.toVector()).thenReturn(new Vector(0,0,0),
-                new Vector(0,0,0),
-                new Vector(0,0,0),
-                new Vector(0,0,0),
-                new Vector(10000,0,0));
+        when(location.toVector()).thenReturn(new Vector(0, 0, 0), new Vector(0, 0, 0), new Vector(0, 0, 0),
+                new Vector(0, 0, 0), new Vector(10000, 0, 0));
         EntityExplodeEvent e = new EntityExplodeEvent(player, location, blockList, 0);
         ssp.onExplosion(e);
         // 4 blocks inside the spawn should be removed, leaving one
         assertEquals(1, blockList.size());
     }
-
 
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.StandardSpawnProtectionListener#onExplosion(org.bukkit.event.entity.EntityExplodeEvent)}.
@@ -318,9 +318,9 @@ public class StandardSpawnProtectionListenerTest {
         assertEquals(5, blockList.size());
     }
 
-
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.StandardSpawnProtectionListener#onBucketEmpty(org.bukkit.event.player.PlayerBucketEmptyEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.StandardSpawnProtectionListener#onBucketEmpty(org.bukkit.event.player.PlayerBucketEmptyEvent)}.
      */
     @Test
     public void testOnBucketEmptyDisallowed() {

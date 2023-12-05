@@ -24,7 +24,7 @@ public class CommandsManager {
     public void registerCommand(@NonNull CompositeCommand command) {
         commands.put(command.getLabel(), command);
         // Use reflection to obtain the commandMap method in Bukkit's server.
-        try{
+        try {
             Field commandMapField = Bukkit.getServer().getClass().getDeclaredField("commandMap");
             commandMapField.setAccessible(true);
             commandMap = (SimpleCommandMap) commandMapField.get(Bukkit.getServer());
@@ -34,11 +34,12 @@ public class CommandsManager {
                 commandPrefix = command.getAddon().getDescription().getName().toLowerCase(Locale.ENGLISH);
             }
             if (!commandMap.register(commandPrefix, command)) {
-                BentoBox.getInstance().logError("Failed to register command " + commandPrefix + " " + command.getLabel());
+                BentoBox.getInstance()
+                        .logError("Failed to register command " + commandPrefix + " " + command.getLabel());
             }
-        }
-        catch(Exception exception){
-            Bukkit.getLogger().severe("Bukkit server commandMap method is not there! This means no commands can be registered!");
+        } catch (Exception exception) {
+            Bukkit.getLogger()
+                    .severe("Bukkit server commandMap method is not there! This means no commands can be registered!");
         }
     }
 
@@ -49,20 +50,23 @@ public class CommandsManager {
         // Use reflection to obtain the knownCommands in the commandMap
         try {
             @SuppressWarnings("unchecked")
-            Map<String, Command> knownCommands = (Map<String, Command>) commandMap.getClass().getMethod("getKnownCommands").invoke(commandMap);
-            //noinspection SuspiciousMethodCalls
+            Map<String, Command> knownCommands = (Map<String, Command>) commandMap.getClass()
+                    .getMethod("getKnownCommands").invoke(commandMap);
+            // noinspection SuspiciousMethodCalls
             knownCommands.values().removeIf(commands.values()::contains);
             // Not sure if this is needed, but it clears out all references
             commands.values().forEach(c -> c.unregister(commandMap));
             // Zap everything
             commands.clear();
-        } catch(Exception e){
-            Bukkit.getLogger().severe("Known commands reflection was not possible, BentoBox is now unstable, so restart server!");
+        } catch (Exception e) {
+            Bukkit.getLogger()
+                    .severe("Known commands reflection was not possible, BentoBox is now unstable, so restart server!");
         }
     }
 
     /**
      * Try to get a registered command.
+     * 
      * @param command - command string
      * @return CompositeCommand or null if it does not exist
      */
@@ -81,6 +85,7 @@ public class CommandsManager {
 
     /**
      * List all commands registered so far
+     * 
      * @return set of commands
      */
     @NonNull

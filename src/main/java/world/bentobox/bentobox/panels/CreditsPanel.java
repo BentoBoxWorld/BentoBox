@@ -20,20 +20,21 @@ import world.bentobox.bentobox.web.credits.Contributor;
 public class CreditsPanel {
 
     private static final String LOCALE_REF = "panel.credits.";
-    private static final int[] PANES = {0, 1, 2, 3, 4, 5, 6, 7, 8};
+    private static final int[] PANES = { 0, 1, 2, 3, 4, 5, 6, 7, 8 };
 
-    private CreditsPanel() {}
+    private CreditsPanel() {
+    }
 
     public static void openPanel(User user, String repository) {
         BentoBox plugin = BentoBox.getInstance();
 
         PanelBuilder builder = new PanelBuilder()
-                .name(user.getTranslation(LOCALE_REF + "title", TextVariables.NAME, repository.split("/")[1]))
-                .size(45);
+                .name(user.getTranslation(LOCALE_REF + "title", TextVariables.NAME, repository.split("/")[1])).size(45);
 
         // Setup header and corners
         for (int i : PANES) {
-            builder.item(i, new PanelItemBuilder().icon(plugin.getSettings().getPanelFillerMaterial()).name(" ").build());
+            builder.item(i,
+                    new PanelItemBuilder().icon(plugin.getSettings().getPanelFillerMaterial()).name(" ").build());
         }
 
         if (plugin.getWebManager().getContributors(repository).isEmpty()) {
@@ -43,19 +44,18 @@ public class CreditsPanel {
                 int slot = getFirstAvailableSlot(builder);
 
                 if (slot == -1) {
-                    break; //TODO support multi paging
+                    break; // TODO support multi paging
                 }
 
-                PanelItem contributorItem = new PanelItemBuilder()
-                        .icon(contributor.getName())
-                        .name(user.getTranslation(LOCALE_REF + "contributor.name", TextVariables.NAME, contributor.getName()))
-                        .description(user.getTranslation(LOCALE_REF + "contributor.description",
-                                "[commits]", String.valueOf(contributor.getCommits())))
+                PanelItem contributorItem = new PanelItemBuilder().icon(contributor.getName())
+                        .name(user.getTranslation(LOCALE_REF + "contributor.name", TextVariables.NAME,
+                                contributor.getName()))
+                        .description(user.getTranslation(LOCALE_REF + "contributor.description", "[commits]",
+                                String.valueOf(contributor.getCommits())))
                         .clickHandler((panel, user1, clickType, slot1) -> {
                             user.sendRawMessage(ChatColor.GRAY + contributor.getURL());
                             return true;
-                        })
-                        .build();
+                        }).build();
                 builder.item(getFirstAvailableSlot(builder), contributorItem);
             }
         }
@@ -68,11 +68,9 @@ public class CreditsPanel {
     }
 
     private static void looksEmpty(@NonNull PanelBuilder builder, @NonNull User user) {
-        PanelItem emptyHere = new PanelItemBuilder()
-                .icon(Material.STRUCTURE_VOID)
+        PanelItem emptyHere = new PanelItemBuilder().icon(Material.STRUCTURE_VOID)
                 .name(user.getTranslation(LOCALE_REF + "empty-here.name"))
-                .description(user.getTranslation(LOCALE_REF + "empty-here.description"))
-                .build();
+                .description(user.getTranslation(LOCALE_REF + "empty-here.description")).build();
 
         builder.item(22, emptyHere);
     }

@@ -16,6 +16,7 @@ import world.bentobox.bentobox.database.yaml.YamlDatabase;
 
 /**
  * Handy config class to store and load Java POJOs as YAML configs
+ * 
  * @author tastybento
  *
  * @param <T>
@@ -26,12 +27,12 @@ public class Config<T> {
     private final Logger logger;
     private Addon addon;
 
-    public Config(BentoBox plugin, Class<T> type)  {
+    public Config(BentoBox plugin, Class<T> type) {
         this.logger = plugin.getLogger();
         handler = new YamlDatabase().getConfig(type);
     }
 
-    public Config(Addon addon, Class<T> type)  {
+    public Config(Addon addon, Class<T> type) {
         this.logger = addon.getLogger();
         this.addon = addon;
         handler = new YamlDatabase().getConfig(type);
@@ -39,15 +40,15 @@ public class Config<T> {
 
     /**
      * Load all the config objects and supply them as a list
+     * 
      * @return list of config objects or an empty list if they cannot be loaded
      */
     public List<T> loadConfigObjects() {
         List<T> result = new ArrayList<>();
         try {
             result = handler.loadObjects();
-        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException
-                | InvocationTargetException | ClassNotFoundException | IntrospectionException
-                | NoSuchMethodException | SecurityException e) {
+        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+                | ClassNotFoundException | IntrospectionException | NoSuchMethodException | SecurityException e) {
             logger.severe(() -> "Could not load config! Error: " + e.getMessage());
         }
         return result;
@@ -55,6 +56,7 @@ public class Config<T> {
 
     /**
      * Loads the config object
+     * 
      * @param uniqueId - unique id of the object
      * @return the object or null if it cannot be loaded
      */
@@ -74,6 +76,7 @@ public class Config<T> {
 
     /**
      * Loads a config object
+     * 
      * @return the object or null if it cannot be loaded
      */
     @Nullable
@@ -83,6 +86,7 @@ public class Config<T> {
 
     /**
      * Save config object
+     * 
      * @param instance to save
      */
     public boolean saveConfigObject(T instance) {
@@ -100,6 +104,7 @@ public class Config<T> {
 
     /**
      * Checks if a config object exists or not
+     * 
      * @param name - unique name of the config object
      * @return true if it exists
      */

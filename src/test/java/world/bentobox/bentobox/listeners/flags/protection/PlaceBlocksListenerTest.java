@@ -44,7 +44,7 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( {BentoBox.class, Flags.class, Util.class, Bukkit.class} )
+@PrepareForTest({ BentoBox.class, Flags.class, Util.class, Bukkit.class })
 public class PlaceBlocksListenerTest extends AbstractCommonSetup {
 
     private PlaceBlocksListener pbl;
@@ -63,7 +63,8 @@ public class PlaceBlocksListenerTest extends AbstractCommonSetup {
     }
 
     /**
-     * Test method for {@link PlaceBlocksListener#onBlockPlace(org.bukkit.event.block.BlockPlaceEvent)}.
+     * Test method for
+     * {@link PlaceBlocksListener#onBlockPlace(org.bukkit.event.block.BlockPlaceEvent)}.
      */
     @Test
     public void testOnBlockPlaceFire() {
@@ -73,13 +74,15 @@ public class PlaceBlocksListenerTest extends AbstractCommonSetup {
         Block placedAgainst = mock(Block.class);
         ItemStack itemInHand = mock(ItemStack.class);
         EquipmentSlot hand = EquipmentSlot.HAND;
-        BlockPlaceEvent e = new BlockPlaceEvent(placedBlock, replacedBlockState, placedAgainst, itemInHand, player, true, hand);
+        BlockPlaceEvent e = new BlockPlaceEvent(placedBlock, replacedBlockState, placedAgainst, itemInHand, player,
+                true, hand);
         pbl.onBlockPlace(e);
         assertFalse(e.isCancelled());
     }
 
     /**
-     * Test method for {@link PlaceBlocksListener#onBlockPlace(org.bukkit.event.block.BlockPlaceEvent)}.
+     * Test method for
+     * {@link PlaceBlocksListener#onBlockPlace(org.bukkit.event.block.BlockPlaceEvent)}.
      */
     @Test
     public void testOnBlockPlace() {
@@ -92,13 +95,15 @@ public class PlaceBlocksListenerTest extends AbstractCommonSetup {
         ItemStack itemInHand = mock(ItemStack.class);
         when(itemInHand.getType()).thenReturn(Material.STONE);
         EquipmentSlot hand = EquipmentSlot.HAND;
-        BlockPlaceEvent e = new BlockPlaceEvent(placedBlock, replacedBlockState, placedAgainst, itemInHand, player, true, hand);
+        BlockPlaceEvent e = new BlockPlaceEvent(placedBlock, replacedBlockState, placedAgainst, itemInHand, player,
+                true, hand);
         pbl.onBlockPlace(e);
         assertFalse(e.isCancelled());
     }
 
     /**
-     * Test method for {@link PlaceBlocksListener#onHangingPlace(org.bukkit.event.hanging.HangingPlaceEvent)}.
+     * Test method for
+     * {@link PlaceBlocksListener#onHangingPlace(org.bukkit.event.hanging.HangingPlaceEvent)}.
      */
     @Test
     public void testOnHangingPlaceAllowed() {
@@ -127,7 +132,8 @@ public class PlaceBlocksListenerTest extends AbstractCommonSetup {
     }
 
     /**
-     * Test method for {@link PlaceBlocksListener#onBlockPlace(org.bukkit.event.block.BlockPlaceEvent)}.
+     * Test method for
+     * {@link PlaceBlocksListener#onBlockPlace(org.bukkit.event.block.BlockPlaceEvent)}.
      */
     @Test
     public void testOnBlockPlaceNullItemInHand() {
@@ -137,7 +143,8 @@ public class PlaceBlocksListenerTest extends AbstractCommonSetup {
         BlockState replacedBlockState = mock(BlockState.class);
         Block placedAgainst = mock(Block.class);
         EquipmentSlot hand = EquipmentSlot.HAND;
-        BlockPlaceEvent e = new BlockPlaceEvent(placedBlock, replacedBlockState, placedAgainst, null, player, true, hand);
+        BlockPlaceEvent e = new BlockPlaceEvent(placedBlock, replacedBlockState, placedAgainst, null, player, true,
+                hand);
         pbl.onBlockPlace(e);
         assertFalse(e.isCancelled());
     }
@@ -256,7 +263,8 @@ public class PlaceBlocksListenerTest extends AbstractCommonSetup {
     }
 
     /**
-     * Test method for {@link PlaceBlocksListener#onPlayerHitItemFrame(org.bukkit.event.player.PlayerInteractEntityEvent)}.
+     * Test method for
+     * {@link PlaceBlocksListener#onPlayerHitItemFrame(org.bukkit.event.player.PlayerInteractEntityEvent)}.
      */
     @Test
     public void testOnPlayerHitItemFrameNotItemFrame() {
@@ -269,7 +277,8 @@ public class PlaceBlocksListenerTest extends AbstractCommonSetup {
     }
 
     /**
-     * Test method for {@link PlaceBlocksListener#onPlayerHitItemFrame(org.bukkit.event.player.PlayerInteractEntityEvent)}.
+     * Test method for
+     * {@link PlaceBlocksListener#onPlayerHitItemFrame(org.bukkit.event.player.PlayerInteractEntityEvent)}.
      */
     @Test
     public void testOnPlayerHitItemFrame() {
@@ -297,17 +306,20 @@ public class PlaceBlocksListenerTest extends AbstractCommonSetup {
     }
 
     /**
-     * Test method for {@link PlaceBlocksListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractEvent)}.
+     * Test method for
+     * {@link PlaceBlocksListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractEvent)}.
      */
     @Test
     public void testOnPlayerInteract() {
         ItemStack item = mock(ItemStack.class);
-        when(item.getType()).thenReturn(Material.ARMOR_STAND, Material.FIREWORK_ROCKET, Material.ITEM_FRAME, Material.END_CRYSTAL, Material.CHEST, Material.TRAPPED_CHEST, Material.JUNGLE_BOAT);
+        when(item.getType()).thenReturn(Material.ARMOR_STAND, Material.FIREWORK_ROCKET, Material.ITEM_FRAME,
+                Material.END_CRYSTAL, Material.CHEST, Material.TRAPPED_CHEST, Material.JUNGLE_BOAT);
         Block clickedBlock = mock(Block.class);
         when(clickedBlock.getLocation()).thenReturn(location);
         when(clickedBlock.getType()).thenReturn(Material.GRASS_BLOCK);
         for (int i = 0; i < 7; i++) {
-            PlayerInteractEvent e = new PlayerInteractEvent(player, Action.RIGHT_CLICK_BLOCK, item, clickedBlock, BlockFace.UP, EquipmentSlot.HAND);
+            PlayerInteractEvent e = new PlayerInteractEvent(player, Action.RIGHT_CLICK_BLOCK, item, clickedBlock,
+                    BlockFace.UP, EquipmentSlot.HAND);
             pbl.onPlayerInteract(e);
             assertEquals("Failed on " + item.getType().toString(), Result.ALLOW, e.useInteractedBlock());
         }

@@ -8,8 +8,9 @@ import org.eclipse.jdt.annotation.NonNull;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
 
 /**
- * Fired when attempting to make a new island.
- * May be cancelled. No island object exists at this point.
+ * Fired when attempting to make a new island. May be cancelled. No island
+ * object exists at this point.
+ * 
  * @since 1.15.1
  */
 public class IslandPreCreateEvent extends IslandBaseEvent {

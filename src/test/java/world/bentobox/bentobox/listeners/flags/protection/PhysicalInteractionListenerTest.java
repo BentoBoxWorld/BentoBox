@@ -45,7 +45,7 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( {BentoBox.class, Flags.class, Util.class, Bukkit.class} )
+@PrepareForTest({ BentoBox.class, Flags.class, Util.class, Bukkit.class })
 public class PhysicalInteractionListenerTest extends AbstractCommonSetup {
 
     private ItemStack item;
@@ -151,13 +151,14 @@ public class PhysicalInteractionListenerTest extends AbstractCommonSetup {
     }
 
     /**
-     * Test method for {@link PhysicalInteractionListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractEvent)}.
+     * Test method for
+     * {@link PhysicalInteractionListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractEvent)}.
      */
     @Test
     public void testOnPlayerInteractPressurePlate() {
         Arrays.stream(Material.values()).filter(m -> m.name().contains("PRESSURE_PLATE")).forEach(p -> {
             when(clickedBlock.getType()).thenReturn(p);
-            PlayerInteractEvent e  = new PlayerInteractEvent(player, Action.PHYSICAL, item, clickedBlock, BlockFace.UP);
+            PlayerInteractEvent e = new PlayerInteractEvent(player, Action.PHYSICAL, item, clickedBlock, BlockFace.UP);
             PhysicalInteractionListener i = new PhysicalInteractionListener();
             i.onPlayerInteract(e);
             assertEquals(Result.DENY, e.useInteractedBlock());
@@ -166,7 +167,8 @@ public class PhysicalInteractionListenerTest extends AbstractCommonSetup {
     }
 
     /**
-     * Test method for {@link PhysicalInteractionListener#onProjectileHit(org.bukkit.event.entity.EntityInteractEvent)}.
+     * Test method for
+     * {@link PhysicalInteractionListener#onProjectileHit(org.bukkit.event.entity.EntityInteractEvent)}.
      */
     @Test
     public void testOnProjectileHitNotProjectile() {
@@ -179,7 +181,8 @@ public class PhysicalInteractionListenerTest extends AbstractCommonSetup {
     }
 
     /**
-     * Test method for {@link PhysicalInteractionListener#onProjectileHit(org.bukkit.event.entity.EntityInteractEvent)}.
+     * Test method for
+     * {@link PhysicalInteractionListener#onProjectileHit(org.bukkit.event.entity.EntityInteractEvent)}.
      */
     @Test
     public void testOnProjectileHitProjectileBlockNull() {
@@ -194,7 +197,8 @@ public class PhysicalInteractionListenerTest extends AbstractCommonSetup {
     }
 
     /**
-     * Test method for {@link PhysicalInteractionListener#onProjectileHit(org.bukkit.event.entity.EntityInteractEvent)}.
+     * Test method for
+     * {@link PhysicalInteractionListener#onProjectileHit(org.bukkit.event.entity.EntityInteractEvent)}.
      */
     @Test
     public void testOnProjectileHitProjectile() {
@@ -209,23 +213,23 @@ public class PhysicalInteractionListenerTest extends AbstractCommonSetup {
     }
 
     /**
-     * Test method for {@link PhysicalInteractionListener#onProjectileHit(org.bukkit.event.entity.EntityInteractEvent)}.
+     * Test method for
+     * {@link PhysicalInteractionListener#onProjectileHit(org.bukkit.event.entity.EntityInteractEvent)}.
      */
     @Test
     public void testOnProjectileHitProjectilePlayer() {
         Projectile entity = mock(Projectile.class);
-        ProjectileSource source = player ;
+        ProjectileSource source = player;
         when(entity.getShooter()).thenReturn(source);
         Block block = mock(Block.class);
         when(block.getLocation()).thenReturn(location);
-        Arrays.stream(Material.values())
-        .filter(m -> !m.name().contains("LEGACY"))
-        .filter(m -> m.name().contains("PRESSURE_PLATE") || m.name().contains("BUTTON")).forEach(p -> {
-            when(block.getType()).thenReturn(p);
-            EntityInteractEvent e = new EntityInteractEvent(entity, block);
-            PhysicalInteractionListener i = new PhysicalInteractionListener();
-            i.onProjectileHit(e);
-            assertTrue(p.name() +" failed", e.isCancelled());
-        });
+        Arrays.stream(Material.values()).filter(m -> !m.name().contains("LEGACY"))
+                .filter(m -> m.name().contains("PRESSURE_PLATE") || m.name().contains("BUTTON")).forEach(p -> {
+                    when(block.getType()).thenReturn(p);
+                    EntityInteractEvent e = new EntityInteractEvent(entity, block);
+                    PhysicalInteractionListener i = new PhysicalInteractionListener();
+                    i.onProjectileHit(e);
+                    assertTrue(p.name() + " failed", e.isCancelled());
+                });
     }
 }

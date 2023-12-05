@@ -28,118 +28,118 @@ public class BentoBoxRankCommand extends CompositeCommand {
      * @param parent command parent
      */
     public BentoBoxRankCommand(CompositeCommand parent) {
-	super(parent, "rank");
-	rm = getPlugin().getRanksManager();
+        super(parent, "rank");
+        rm = getPlugin().getRanksManager();
     }
 
     @Override
     public void setup() {
-	setPermission("bentobox.admin.rank");
-	setDescription("commands.bentobox.rank.description");
-	this.setParametersHelp("commands.bentobox.rank.parameters");
+        setPermission("bentobox.admin.rank");
+        setDescription("commands.bentobox.rank.description");
+        this.setParametersHelp("commands.bentobox.rank.parameters");
     }
 
     @Override
     public boolean canExecute(User user, String label, List<String> args) {
 
-	if (args.isEmpty()) {
-	    // Show help
-	    showHelp(this, user);
-	    return false;
-	}
-	// Check if the first element is "add" or REMOVE or "list"
-	firstElement = args.get(0);
-	if (!("list".equals(firstElement) || "add".equals(firstElement) || REMOVE.equals(firstElement))) {
-	    // Show help
-	    showHelp(this, user);
-	    return false;
-	}
+        if (args.isEmpty()) {
+            // Show help
+            showHelp(this, user);
+            return false;
+        }
+        // Check if the first element is "add" or REMOVE or "list"
+        firstElement = args.get(0);
+        if (!("list".equals(firstElement) || "add".equals(firstElement) || REMOVE.equals(firstElement))) {
+            // Show help
+            showHelp(this, user);
+            return false;
+        }
 
-	if (REMOVE.equals(firstElement) && args.size() != 2) {
-	    // Show help
-	    showHelp(this, user);
-	    return false;
-	}
+        if (REMOVE.equals(firstElement) && args.size() != 2) {
+            // Show help
+            showHelp(this, user);
+            return false;
+        }
 
-	// If the first element is "add", then check if the third element is an integer
-	if ("add".equals(firstElement)) {
-	    // Check if there is a third element
-	    if (args.size() < 3) {
-		// Show help
-		showHelp(this, user);
-		return false;
-	    }
+        // If the first element is "add", then check if the third element is an integer
+        if ("add".equals(firstElement)) {
+            // Check if there is a third element
+            if (args.size() < 3) {
+                // Show help
+                showHelp(this, user);
+                return false;
+            }
 
-	    // Check if the third element is an integer
-	    String thirdElement = args.get(2);
-	    try {
-		rankValue = Integer.parseInt(thirdElement);
-	    } catch (NumberFormatException e) {
-		// Show help
-		showHelp(this, user);
-		return false;
-	    }
-	}
+            // Check if the third element is an integer
+            String thirdElement = args.get(2);
+            try {
+                rankValue = Integer.parseInt(thirdElement);
+            } catch (NumberFormatException e) {
+                // Show help
+                showHelp(this, user);
+                return false;
+            }
+        }
 
-	// If all checks passed, return true
-	return true;
+        // If all checks passed, return true
+        return true;
     }
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
 
-	if ("list".equals(firstElement)) {
-	    showRanks(user);
-	    return true;
-	}
-	if ("add".equals(firstElement)) {
-	    if (rm.addRank(args.get(1), rankValue)) {
-		user.sendMessage("commands.bentobox.rank.add.success", TextVariables.RANK, args.get(1),
-			TextVariables.NUMBER, String.valueOf(rankValue));
-		showRanks(user);
-	    } else {
-		user.sendMessage("commands.bentobox.rank.add.failure", TextVariables.RANK, args.get(1),
-			TextVariables.NUMBER, String.valueOf(rankValue));
-		return false;
-	    }
-	} else {
-	    if (rm.removeRank(args.get(1))) {
-		user.sendMessage("commands.bentobox.rank.remove.success", TextVariables.RANK, args.get(1));
-		showRanks(user);
-	    } else {
-		user.sendMessage("commands.bentobox.rank.remove.failure", TextVariables.RANK, args.get(1));
-		return false;
-	    }
-	}
-	return true;
+        if ("list".equals(firstElement)) {
+            showRanks(user);
+            return true;
+        }
+        if ("add".equals(firstElement)) {
+            if (rm.addRank(args.get(1), rankValue)) {
+                user.sendMessage("commands.bentobox.rank.add.success", TextVariables.RANK, args.get(1),
+                        TextVariables.NUMBER, String.valueOf(rankValue));
+                showRanks(user);
+            } else {
+                user.sendMessage("commands.bentobox.rank.add.failure", TextVariables.RANK, args.get(1),
+                        TextVariables.NUMBER, String.valueOf(rankValue));
+                return false;
+            }
+        } else {
+            if (rm.removeRank(args.get(1))) {
+                user.sendMessage("commands.bentobox.rank.remove.success", TextVariables.RANK, args.get(1));
+                showRanks(user);
+            } else {
+                user.sendMessage("commands.bentobox.rank.remove.failure", TextVariables.RANK, args.get(1));
+                return false;
+            }
+        }
+        return true;
     }
 
     private void showRanks(User user) {
-	user.sendMessage("commands.bentobox.rank.list");
-	rm.getRanks().forEach((ref, rank) -> {
-	    user.sendRawMessage(user.getTranslation(ref) + ": " + ref + " " + String.valueOf(rank));
-	});
+        user.sendMessage("commands.bentobox.rank.list");
+        rm.getRanks().forEach((ref, rank) -> {
+            user.sendRawMessage(user.getTranslation(ref) + ": " + ref + " " + String.valueOf(rank));
+        });
 
     }
 
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
-	if (args.size() <= 1) {
-	    return Optional.empty();
-	}
-	firstElement = args.get(1);
-	if (args.size() <= 2) {
-	    return Optional.of(List.of("add", REMOVE, "list"));
-	}
-	if (args.size() > 1 && "add".equals(firstElement)) {
-	    List<String> options = new ArrayList<>(RanksManager.DEFAULT_RANKS.keySet());
-	    options.removeIf(rm.getRanks().keySet()::contains);
-	    return Optional.of(options);
-	}
-	if (args.size() > 1 && REMOVE.equals(firstElement)) {
-	    return Optional.of(new ArrayList<>(rm.getRanks().keySet()));
-	}
-	return Optional.empty();
+        if (args.size() <= 1) {
+            return Optional.empty();
+        }
+        firstElement = args.get(1);
+        if (args.size() <= 2) {
+            return Optional.of(List.of("add", REMOVE, "list"));
+        }
+        if (args.size() > 1 && "add".equals(firstElement)) {
+            List<String> options = new ArrayList<>(RanksManager.DEFAULT_RANKS.keySet());
+            options.removeIf(rm.getRanks().keySet()::contains);
+            return Optional.of(options);
+        }
+        if (args.size() > 1 && REMOVE.equals(firstElement)) {
+            return Optional.of(new ArrayList<>(rm.getRanks().keySet()));
+        }
+        return Optional.empty();
 
     }
 }

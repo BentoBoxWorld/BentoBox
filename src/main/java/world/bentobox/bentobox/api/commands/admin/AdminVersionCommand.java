@@ -21,8 +21,9 @@ public class AdminVersionCommand extends CompositeCommand {
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        user.sendMessage("commands.bentobox.version.addon-syntax", TextVariables.NAME, getAddon().getDescription().getName(),
-                TextVariables.VERSION, getAddon().getDescription().getVersion(), "[state]", getAddon().getState().name());
+        user.sendMessage("commands.bentobox.version.addon-syntax", TextVariables.NAME,
+                getAddon().getDescription().getName(), TextVariables.VERSION, getAddon().getDescription().getVersion(),
+                "[state]", getAddon().getState().name());
         return true;
     }
 

@@ -20,7 +20,7 @@ public class PotionEffectTypeAdapter extends TypeAdapter<PotionEffectType> {
         out.value(value.getName());
 
     }
-    
+
     @Override
     public PotionEffectType read(JsonReader reader) throws IOException {
         if (reader.peek() == JsonToken.NULL) {

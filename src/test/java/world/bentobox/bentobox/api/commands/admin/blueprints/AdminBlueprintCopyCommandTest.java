@@ -44,7 +44,7 @@ import world.bentobox.bentobox.managers.LocalesManager;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, User.class })
+@PrepareForTest({ Bukkit.class, BentoBox.class, User.class })
 public class AdminBlueprintCopyCommandTest {
 
     @Mock
@@ -92,7 +92,7 @@ public class AdminBlueprintCopyCommandTest {
         when(ac.getTopLabel()).thenReturn("admin");
 
         Map<UUID, BlueprintClipboard> map = new HashMap<>();
-        map.put(uuid , clip);
+        map.put(uuid, clip);
         when(ac.getClipboards()).thenReturn(map);
 
         // Clipboard
@@ -104,7 +104,6 @@ public class AdminBlueprintCopyCommandTest {
         when(plugin.getLocalesManager()).thenReturn(lm);
 
         PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
-
 
         abcc = new AdminBlueprintCopyCommand(ac);
     }
@@ -118,7 +117,8 @@ public class AdminBlueprintCopyCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintCopyCommand#AdminBlueprintCopyCommand(world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintCommand)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintCopyCommand#AdminBlueprintCopyCommand(world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintCommand)}.
      */
     @Test
     public void testAdminBlueprintCopyCommand() {
@@ -126,7 +126,8 @@ public class AdminBlueprintCopyCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintCopyCommand#setup()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintCopyCommand#setup()}.
      */
     @Test
     public void testSetup() {
@@ -137,7 +138,8 @@ public class AdminBlueprintCopyCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintCopyCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintCopyCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testExecuteUserStringListOfStringHelp() {
@@ -146,7 +148,8 @@ public class AdminBlueprintCopyCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintCopyCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintCopyCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testExecuteUserStringListOfStringSuccess() {
@@ -155,7 +158,8 @@ public class AdminBlueprintCopyCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintCopyCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintCopyCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testExecuteUserStringListOfStringSuccessCaps() {
@@ -164,7 +168,8 @@ public class AdminBlueprintCopyCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintCopyCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintCopyCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testExecuteUserStringListOfStringJunk() {
@@ -173,7 +178,8 @@ public class AdminBlueprintCopyCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintCopyCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintCopyCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testExecuteUserStringListOfStringNothing() {
@@ -182,7 +188,8 @@ public class AdminBlueprintCopyCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintCopyCommand#tabComplete(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintCopyCommand#tabComplete(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testTabCompleteUserStringListOfString() {

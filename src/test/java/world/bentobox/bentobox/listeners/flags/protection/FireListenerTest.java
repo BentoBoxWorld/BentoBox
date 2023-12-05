@@ -53,7 +53,7 @@ import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.util.Util;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( {BentoBox.class, Bukkit.class, Flags.class, Util.class} )
+@PrepareForTest({ BentoBox.class, Bukkit.class, Flags.class, Util.class })
 public class FireListenerTest {
 
     private Location location;
@@ -98,7 +98,6 @@ public class FireListenerTest {
         FlagsManager flagsManager = new FlagsManager(plugin);
         when(plugin.getFlagsManager()).thenReturn(flagsManager);
 
-
         // Worlds
         IslandWorldManager iwm = mock(IslandWorldManager.class);
         when(iwm.inWorld(any(World.class))).thenReturn(true);
@@ -137,7 +136,7 @@ public class FireListenerTest {
 
         when(ws.getWorldFlags()).thenReturn(worldFlags);
         GameModeAddon gma = mock(GameModeAddon.class);
-        Optional<GameModeAddon> opGma = Optional.of(gma );
+        Optional<GameModeAddon> opGma = Optional.of(gma);
         when(iwm.getAddon(any())).thenReturn(opGma);
 
         PowerMockito.mockStatic(Util.class);

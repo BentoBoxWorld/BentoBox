@@ -28,9 +28,10 @@ public class FlagsManager {
     private final Map<@NonNull Flag, @Nullable Addon> flags = new HashMap<>();
 
     /**
-     * Stores the flag listeners that have already been registered into Bukkit's API to avoid duplicates.
-     * Value is true if the listener has been registered already.
-     * This helps to make sure each flag listener is loaded correctly.
+     * Stores the flag listeners that have already been registered into Bukkit's API
+     * to avoid duplicates. Value is true if the listener has been registered
+     * already. This helps to make sure each flag listener is loaded correctly.
+     * 
      * @see #registerListeners()
      */
     private final Map<@NonNull Listener, @NonNull Boolean> registeredListeners = new HashMap<>();
@@ -43,10 +44,12 @@ public class FlagsManager {
     }
 
     /**
-     * Registers a new flag.
-     * Consider using {@link #registerFlag(Addon, Flag)} instead if your flag declares a listener.
+     * Registers a new flag. Consider using {@link #registerFlag(Addon, Flag)}
+     * instead if your flag declares a listener.
+     * 
      * @param flag flag to be registered
-     * @return true if successfully registered, false if not, e.g., because one with the same ID already exists
+     * @return true if successfully registered, false if not, e.g., because one with
+     *         the same ID already exists
      * @see #registerFlag(Addon, Flag)
      */
     public boolean registerFlag(@NonNull Flag flag) {
@@ -55,9 +58,11 @@ public class FlagsManager {
 
     /**
      * Registers a new flag.
+     * 
      * @param addon - addon that is registering this flag
-     * @param flag flag to be registered
-     * @return true if successfully registered, false if not, e.g., because one with the same ID already exists
+     * @param flag  flag to be registered
+     * @return true if successfully registered, false if not, e.g., because one with
+     *         the same ID already exists
      * @since 1.5.0
      */
     public boolean registerFlag(@Nullable Addon addon, @NonNull Flag flag) {
@@ -68,21 +73,24 @@ public class FlagsManager {
             }
         }
         flags.put(flag, addon);
-        // If there is a listener which is not already registered, register it into Bukkit if the plugin is fully loaded
+        // If there is a listener which is not already registered, register it into
+        // Bukkit if the plugin is fully loaded
         flag.getListener().ifPresent(this::registerListener);
         return true;
     }
 
     /**
-     * Register any unregistered listeners.
-     * This helps to make sure each flag listener is correctly loaded.
+     * Register any unregistered listeners. This helps to make sure each flag
+     * listener is correctly loaded.
      */
     public void registerListeners() {
-        registeredListeners.entrySet().stream().filter(e -> !e.getValue()).map(Map.Entry::getKey).forEach(this::registerListener);
+        registeredListeners.entrySet().stream().filter(e -> !e.getValue()).map(Map.Entry::getKey)
+                .forEach(this::registerListener);
     }
 
     /**
      * Tries to register a listener
+     * 
      * @param l - listener
      */
     private void registerListener(@NonNull Listener l) {
@@ -102,6 +110,7 @@ public class FlagsManager {
 
     /**
      * Gets a Flag by providing an ID.
+     * 
      * @param id Unique ID for this Flag.
      * @return Optional containing the Flag instance or empty.
      * @since 1.1
@@ -113,19 +122,21 @@ public class FlagsManager {
 
     /**
      * Unregister flags for addon
+     * 
      * @param addon - addon
      * @since 1.5.0
      */
     public void unregister(@NonNull Addon addon) {
         // Unregister listeners
         flags.entrySet().stream().filter(e -> addon.equals(e.getValue())).map(Map.Entry::getKey)
-        .forEach(f -> f.getListener().ifPresent(HandlerList::unregisterAll));
+                .forEach(f -> f.getListener().ifPresent(HandlerList::unregisterAll));
         // Remove flags
         flags.values().removeIf(addon::equals);
     }
 
     /**
      * Unregister a specific flag
+     * 
      * @param flag - flag
      * @since 1.14.0
      */

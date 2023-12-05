@@ -27,7 +27,7 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, Util.class})
+@PrepareForTest({ Bukkit.class, BentoBox.class, Util.class })
 public class ElytraListenerTest extends AbstractCommonSetup {
 
     private ElytraListener el;
@@ -50,7 +50,8 @@ public class ElytraListenerTest extends AbstractCommonSetup {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.ElytraListener#onGlide(org.bukkit.event.entity.EntityToggleGlideEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.flags.protection.ElytraListener#onGlide(org.bukkit.event.entity.EntityToggleGlideEvent)}.
      */
     @Test
     public void testOnGlideAllowed() {
@@ -73,7 +74,8 @@ public class ElytraListenerTest extends AbstractCommonSetup {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.ElytraListener#onGliding(org.bukkit.event.player.PlayerTeleportEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.flags.protection.ElytraListener#onGliding(org.bukkit.event.player.PlayerTeleportEvent)}.
      */
     @Test
     public void testGlidingAllowed() {
@@ -94,6 +96,7 @@ public class ElytraListenerTest extends AbstractCommonSetup {
         verify(notifier).notify(any(), eq("protection.protected"));
         assertTrue(e.isCancelled());
     }
+
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.ElytraListener#onGliding(org.bukkit.event.player.PlayerTeleportEvent)}.
      */

@@ -29,7 +29,7 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( {BentoBox.class, Flags.class, Util.class, Bukkit.class} )
+@PrepareForTest({ BentoBox.class, Flags.class, Util.class, Bukkit.class })
 public class EggListenerTest extends AbstractCommonSetup {
 
     private EggListener el;
@@ -48,7 +48,8 @@ public class EggListenerTest extends AbstractCommonSetup {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.EggListener#onEggThrow(org.bukkit.event.player.PlayerEggThrowEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.flags.protection.EggListener#onEggThrow(org.bukkit.event.player.PlayerEggThrowEvent)}.
      */
     @Test
     public void testOnEggThrowAllowed() {

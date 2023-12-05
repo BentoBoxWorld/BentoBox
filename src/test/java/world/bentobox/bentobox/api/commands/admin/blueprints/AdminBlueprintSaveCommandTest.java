@@ -48,7 +48,7 @@ import world.bentobox.bentobox.managers.LocalesManager;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, User.class })
+@PrepareForTest({ Bukkit.class, BentoBox.class, User.class })
 public class AdminBlueprintSaveCommandTest {
 
     private AdminBlueprintSaveCommand absc;
@@ -97,7 +97,7 @@ public class AdminBlueprintSaveCommandTest {
         when(ac.getTopLabel()).thenReturn("admin");
 
         Map<UUID, BlueprintClipboard> map = new HashMap<>();
-        map.put(uuid , clip);
+        map.put(uuid, clip);
         when(ac.getClipboards()).thenReturn(map);
         blueprintsFolder = new File("blueprints");
         when(ac.getBlueprintsFolder()).thenReturn(blueprintsFolder);
@@ -109,7 +109,6 @@ public class AdminBlueprintSaveCommandTest {
 
         PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
 
-
         absc = new AdminBlueprintSaveCommand(ac);
     }
 
@@ -120,15 +119,14 @@ public class AdminBlueprintSaveCommandTest {
         User.clearUsers();
         Mockito.framework().clearInlineMocks();
         if (blueprintsFolder.exists()) {
-            Files.walk(blueprintsFolder.toPath())
-            .sorted(Comparator.reverseOrder())
-            .map(Path::toFile)
-            .forEach(File::delete);
+            Files.walk(blueprintsFolder.toPath()).sorted(Comparator.reverseOrder()).map(Path::toFile)
+                    .forEach(File::delete);
         }
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintSaveCommand#AdminBlueprintSaveCommand(world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintCommand)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintSaveCommand#AdminBlueprintSaveCommand(world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintCommand)}.
      */
     @Test
     public void testAdminBlueprintSaveCommand() {
@@ -136,7 +134,8 @@ public class AdminBlueprintSaveCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintSaveCommand#setup()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintSaveCommand#setup()}.
      */
     @Test
     public void testSetup() {
@@ -146,7 +145,8 @@ public class AdminBlueprintSaveCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintSaveCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintSaveCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testCanExecuteShowHelp() {
@@ -165,7 +165,8 @@ public class AdminBlueprintSaveCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintSaveCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintSaveCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testCanExecuteNoBedrock() {
@@ -176,20 +177,21 @@ public class AdminBlueprintSaveCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintSaveCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintSaveCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testCanExecute() {
 
-        bp.setBedrock(new Vector(1,2,3));
+        bp.setBedrock(new Vector(1, 2, 3));
         clip.setBlueprint(bp);
         assertTrue(absc.canExecute(user, "", List.of("")));
         verify(user, never()).sendMessage(anyString());
     }
 
-
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintSaveCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintSaveCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testExecuteUserStringListOfString() {
@@ -200,7 +202,8 @@ public class AdminBlueprintSaveCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintSaveCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintSaveCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testExecuteUserStringListOfStringFileExists() {

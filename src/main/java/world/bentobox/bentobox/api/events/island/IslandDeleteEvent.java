@@ -10,8 +10,7 @@ import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.database.objects.Island;
 
 /**
- * Fired when an island is going to be deleted.
- * May be cancelled.
+ * Fired when an island is going to be deleted. May be cancelled.
  *
  */
 public class IslandDeleteEvent extends IslandBaseEvent {

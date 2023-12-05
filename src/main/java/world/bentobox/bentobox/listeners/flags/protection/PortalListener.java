@@ -10,6 +10,7 @@ import world.bentobox.bentobox.lists.Flags;
 
 /**
  * Handles portal protection
+ * 
  * @author tastybento
  */
 public class PortalListener extends FlagListener {

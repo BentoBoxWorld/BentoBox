@@ -55,7 +55,7 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({BentoBox.class, Util.class})
+@PrepareForTest({ BentoBox.class, Util.class })
 public class VisitorKeepInventoryListenerTest {
 
     // Class under test
@@ -79,7 +79,6 @@ public class VisitorKeepInventoryListenerTest {
     @Mock
     private Location location;
 
-
     /**
      */
     @Before
@@ -97,10 +96,12 @@ public class VisitorKeepInventoryListenerTest {
         when(player.getName()).thenReturn("tastybento");
         when(player.getLocation()).thenReturn(location);
         when(location.getWorld()).thenReturn(world);
-        when(location.toVector()).thenReturn(new Vector(1,2,3));
+        when(location.toVector()).thenReturn(new Vector(1, 2, 3));
         // Turn on why for player
-        when(player.getMetadata(eq("bskyblock_world_why_debug"))).thenReturn(Collections.singletonList(new FixedMetadataValue(plugin, true)));
-        when(player.getMetadata(eq("bskyblock_world_why_debug_issuer"))).thenReturn(Collections.singletonList(new FixedMetadataValue(plugin, uuid.toString())));
+        when(player.getMetadata(eq("bskyblock_world_why_debug")))
+                .thenReturn(Collections.singletonList(new FixedMetadataValue(plugin, true)));
+        when(player.getMetadata(eq("bskyblock_world_why_debug_issuer")))
+                .thenReturn(Collections.singletonList(new FixedMetadataValue(plugin, uuid.toString())));
         User.getInstance(player);
 
         // WorldSettings and World Flags
@@ -148,7 +149,8 @@ public class VisitorKeepInventoryListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.VisitorKeepInventoryListener#onVisitorDeath(org.bukkit.event.entity.PlayerDeathEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.flags.worldsettings.VisitorKeepInventoryListener#onVisitorDeath(org.bukkit.event.entity.PlayerDeathEvent)}.
      */
     @Test
     public void testOnVisitorDeath() {
@@ -156,7 +158,8 @@ public class VisitorKeepInventoryListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.VisitorKeepInventoryListener#onVisitorDeath(org.bukkit.event.entity.PlayerDeathEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.flags.worldsettings.VisitorKeepInventoryListener#onVisitorDeath(org.bukkit.event.entity.PlayerDeathEvent)}.
      */
     @Test
     public void testOnVisitorDeathFalseFlag() {
@@ -171,7 +174,8 @@ public class VisitorKeepInventoryListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.VisitorKeepInventoryListener#onVisitorDeath(org.bukkit.event.entity.PlayerDeathEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.flags.worldsettings.VisitorKeepInventoryListener#onVisitorDeath(org.bukkit.event.entity.PlayerDeathEvent)}.
      */
     @Test
     public void testOnVisitorDeathTrueFlag() {

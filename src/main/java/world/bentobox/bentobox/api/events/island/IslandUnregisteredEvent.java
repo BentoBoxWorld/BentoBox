@@ -11,6 +11,7 @@ import world.bentobox.bentobox.database.objects.Island;
 
 /**
  * Fired when a player is unregistered from an island.
+ * 
  * @since 1.3.0
  */
 public class IslandUnregisteredEvent extends IslandBaseEvent {

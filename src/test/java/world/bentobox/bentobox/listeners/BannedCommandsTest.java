@@ -50,7 +50,7 @@ import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.util.Util;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({BentoBox.class, Util.class, Bukkit.class })
+@PrepareForTest({ BentoBox.class, Util.class, Bukkit.class })
 public class BannedCommandsTest {
 
     @Mock
@@ -244,7 +244,7 @@ public class BannedCommandsTest {
         assertTrue(e.isCancelled());
 
     }
-    
+
     /**
      * Test for {@link BannedCommands#onCommand(PlayerCommandPreprocessEvent)}
      */
@@ -261,7 +261,7 @@ public class BannedCommandsTest {
         assertTrue(e.isCancelled());
 
     }
-    
+
     /**
      * Test for {@link BannedCommands#onCommand(PlayerCommandPreprocessEvent)}
      */
@@ -277,7 +277,7 @@ public class BannedCommandsTest {
         assertFalse(e.isCancelled());
 
     }
-    
+
     /**
      * Test for {@link BannedCommands#onCommand(PlayerCommandPreprocessEvent)}
      */
@@ -293,7 +293,7 @@ public class BannedCommandsTest {
         assertTrue(e.isCancelled());
 
     }
-    
+
     /**
      * Test for {@link BannedCommands#onCommand(PlayerCommandPreprocessEvent)}
      */
@@ -309,7 +309,7 @@ public class BannedCommandsTest {
         assertFalse(e.isCancelled());
 
     }
-    
+
     /**
      * Test for {@link BannedCommands#onCommand(PlayerCommandPreprocessEvent)}
      */
@@ -325,7 +325,7 @@ public class BannedCommandsTest {
         assertFalse(e.isCancelled());
 
     }
-    
+
     /**
      * Test for {@link BannedCommands#onCommand(PlayerCommandPreprocessEvent)}
      */
@@ -342,7 +342,7 @@ public class BannedCommandsTest {
         assertFalse(e.isCancelled());
 
     }
-    
+
     /**
      * Test for {@link BannedCommands#onCommand(PlayerCommandPreprocessEvent)}
      */
@@ -360,8 +360,7 @@ public class BannedCommandsTest {
         assertFalse(e.isCancelled());
 
     }
-    
-    
+
     /**
      * Test for {@link BannedCommands#onCommand(PlayerCommandPreprocessEvent)}
      */
@@ -379,7 +378,8 @@ public class BannedCommandsTest {
      */
     @Test
     public void testAnotherBannedCommandsWithBannedCommandWithExtra() {
-        PlayerCommandPreprocessEvent e = new PlayerCommandPreprocessEvent(player, "/another_banned_command with extra stuff");
+        PlayerCommandPreprocessEvent e = new PlayerCommandPreprocessEvent(player,
+                "/another_banned_command with extra stuff");
         BannedCommands bvc = new BannedCommands(plugin);
         List<String> banned = new ArrayList<>();
         banned.add("banned_command");
@@ -390,7 +390,6 @@ public class BannedCommandsTest {
         assertTrue(e.isCancelled());
 
     }
-
 
     /**
      * Test for {@link BannedCommands#onCommand(PlayerCommandPreprocessEvent)}

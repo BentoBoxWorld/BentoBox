@@ -45,6 +45,7 @@ public class Players implements DataObject, MetaDataAble {
 
     /**
      * This variable stores set of worlds where user inventory must be cleared.
+     * 
      * @since 1.3.0
      */
     @Expose
@@ -52,6 +53,7 @@ public class Players implements DataObject, MetaDataAble {
 
     /**
      * Stores the display mode of the Settings Panel.
+     * 
      * @since 1.6.0
      */
     @Expose
@@ -59,6 +61,7 @@ public class Players implements DataObject, MetaDataAble {
 
     /**
      * A place to store meta data for this player.
+     * 
      * @since 1.15.4
      */
     @Expose
@@ -67,12 +70,12 @@ public class Players implements DataObject, MetaDataAble {
     /**
      * This is required for database storage
      */
-    public Players() {}
+    public Players() {
+    }
 
     /**
-     * @param plugin - plugin object
-     * @param uniqueId - unique ID
-     *            Constructor - initializes the state variables
+     * @param plugin   - plugin object
+     * @param uniqueId - unique ID Constructor - initializes the state variables
      *
      */
     public Players(BentoBox plugin, UUID uniqueId) {
@@ -88,11 +91,12 @@ public class Players implements DataObject, MetaDataAble {
 
     /**
      * Gets the default home location.
+     * 
      * @param world - world to check
      * @return Location - home location in world
      * @deprecated Homes are stored in the Island object now
      */
-    @Deprecated(since="1.18.0", forRemoval=true)
+    @Deprecated(since = "1.18.0", forRemoval = true)
     @Nullable
     public Location getHomeLocation(World world) {
         return getHomeLocation(world, 1); // Default
@@ -100,21 +104,20 @@ public class Players implements DataObject, MetaDataAble {
 
     /**
      * Gets the home location by number for world
-     * @param world - includes world and any related nether or end worlds
+     * 
+     * @param world  - includes world and any related nether or end worlds
      * @param number - a number
      * @return Location of this home or null if not available
      * @deprecated Homes are stored in the island object now
      */
-    @Deprecated(since="1.18.0", forRemoval=true)
+    @Deprecated(since = "1.18.0", forRemoval = true)
     @Nullable
     public Location getHomeLocation(World world, int number) {
         // Remove any lost worlds/locations
         homeLocations.keySet().removeIf(l -> l == null || l.getWorld() == null);
         return homeLocations.entrySet().stream()
                 .filter(en -> Util.sameWorld(en.getKey().getWorld(), world) && en.getValue() == number)
-                .map(Map.Entry::getKey)
-                .findFirst()
-                .orElse(null);
+                .map(Map.Entry::getKey).findFirst().orElse(null);
     }
 
     /**
@@ -122,11 +125,11 @@ public class Players implements DataObject, MetaDataAble {
      * @return Map of home locations
      * @deprecated Homes are stored in the island object now
      */
-    @Deprecated(since="1.18.0", forRemoval=true)
+    @Deprecated(since = "1.18.0", forRemoval = true)
     public Map<Location, Integer> getHomeLocations(World world) {
         // Remove any lost worlds/locations
         homeLocations.keySet().removeIf(l -> l == null || l.getWorld() == null);
-        return homeLocations.entrySet().stream().filter(e -> Util.sameWorld(e.getKey().getWorld(),world))
+        return homeLocations.entrySet().stream().filter(e -> Util.sameWorld(e.getKey().getWorld(), world))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
@@ -134,7 +137,7 @@ public class Players implements DataObject, MetaDataAble {
      * @return the homeLocations
      * @deprecated Homes are stored in the Island object now
      */
-    @Deprecated(since="1.18.0", forRemoval=true)
+    @Deprecated(since = "1.18.0", forRemoval = true)
     public Map<Location, Integer> getHomeLocations() {
         // Remove any lost worlds/locations
         homeLocations.keySet().removeIf(l -> l == null || l.getWorld() == null);
@@ -145,7 +148,7 @@ public class Players implements DataObject, MetaDataAble {
      * @param homeLocations the homeLocations to set
      * @deprecated Homes are stored in the Island object now
      */
-    @Deprecated(since="1.18.0", forRemoval=true)
+    @Deprecated(since = "1.18.0", forRemoval = true)
     public void setHomeLocations(Map<Location, Integer> homeLocations) {
         this.homeLocations = homeLocations;
         // Remove any lost worlds/locations
@@ -173,6 +176,7 @@ public class Players implements DataObject, MetaDataAble {
 
     /**
      * Get number of resets done in this world
+     * 
      * @param world - world
      * @return the resetsLeft
      */
@@ -195,8 +199,7 @@ public class Players implements DataObject, MetaDataAble {
     }
 
     /**
-     * @param resets
-     *            the resets to set
+     * @param resets the resets to set
      */
     public void setResets(World world, int resets) {
         this.resets.put(world.getName(), resets);
@@ -208,26 +211,30 @@ public class Players implements DataObject, MetaDataAble {
      * @param l a Bukkit location
      * @deprecated Home locations are stored in islands
      */
-    @Deprecated(since="1.18.0", forRemoval=true)
+    @Deprecated(since = "1.18.0", forRemoval = true)
     public void setHomeLocation(final Location l) {
         setHomeLocation(l, 1);
     }
 
     /**
      * Stores the numbered home location of the player. Numbering starts at 1.
+     * 
      * @param location - the location
-     * @param number - a number
-     * @deprecated Home locations are no longer stored for players. They are stored in islands.
+     * @param number   - a number
+     * @deprecated Home locations are no longer stored for players. They are stored
+     *             in islands.
      */
-    @Deprecated(since="1.18.0", forRemoval=true)
+    @Deprecated(since = "1.18.0", forRemoval = true)
     public void setHomeLocation(Location location, int number) {
         // Remove any home locations in the same world with the same number
-        homeLocations.entrySet().removeIf(e -> e.getKey() == null || (Util.sameWorld(location.getWorld(), e.getKey().getWorld()) && e.getValue().equals(number)));
+        homeLocations.entrySet().removeIf(e -> e.getKey() == null
+                || (Util.sameWorld(location.getWorld(), e.getKey().getWorld()) && e.getValue().equals(number)));
         homeLocations.put(location, number);
     }
 
     /**
      * Set the uuid for this player object
+     * 
      * @param uuid - UUID
      */
     public void setPlayerUUID(UUID uuid) {
@@ -236,10 +243,12 @@ public class Players implements DataObject, MetaDataAble {
 
     /**
      * Clears all home Locations in world
+     * 
      * @param world - world
-     * @deprecated Home locations are no longer stored for players. Use {@link world.bentobox.bentobox.managers.IslandsManager}
+     * @deprecated Home locations are no longer stored for players. Use
+     *             {@link world.bentobox.bentobox.managers.IslandsManager}
      */
-    @Deprecated(since="1.18.0", forRemoval=true)
+    @Deprecated(since = "1.18.0", forRemoval = true)
     public void clearHomeLocations(World world) {
         homeLocations.keySet().removeIf(l -> l == null || l.getWorld() == null || Util.sameWorld(l.getWorld(), world));
     }
@@ -266,7 +275,7 @@ public class Players implements DataObject, MetaDataAble {
     }
 
     /**
-     * @param world - world
+     * @param world  - world
      * @param deaths the deaths to set
      */
     public void setDeaths(World world, int deaths) {
@@ -295,6 +304,7 @@ public class Players implements DataObject, MetaDataAble {
 
     /**
      * Increments the reset counter for player in world
+     * 
      * @param world - world
      */
     public void addReset(World world) {
@@ -303,6 +313,7 @@ public class Players implements DataObject, MetaDataAble {
 
     /**
      * Get the number of deaths in this world.
+     * 
      * @param world - world
      * @return number of deaths
      */
@@ -319,31 +330,31 @@ public class Players implements DataObject, MetaDataAble {
 
     /**
      * Returns the pendingKicks value.
+     * 
      * @return the value of pendingKicks.
      * @since 1.3.0
      */
-    public Set<String> getPendingKicks()
-    {
+    public Set<String> getPendingKicks() {
         return pendingKicks;
     }
 
     /**
      * Sets the pendingKicks value.
+     * 
      * @param pendingKicks the pendingKicks new value.
      * @since 1.3.0
      */
-    public void setPendingKicks(Set<String> pendingKicks)
-    {
+    public void setPendingKicks(Set<String> pendingKicks) {
         this.pendingKicks = pendingKicks;
     }
 
     /**
      * Adds given world in pendingKicks world set.
+     * 
      * @param world World that must be added to pendingKicks set.
      * @since 1.3.0
      */
-    public void addToPendingKick(World world)
-    {
+    public void addToPendingKick(World world) {
         World w = Util.getWorld(world);
         if (w != null) {
             this.pendingKicks.add(w.getName());
@@ -352,6 +363,7 @@ public class Players implements DataObject, MetaDataAble {
 
     /**
      * Returns the display mode for the Flags in the Settings Panel.
+     * 
      * @return the display mode for the Flags in the Settings Panel.
      * @since 1.6.0
      */
@@ -361,6 +373,7 @@ public class Players implements DataObject, MetaDataAble {
 
     /**
      * Sets the display mode for the Flags in the Settings Panel.
+     * 
      * @param flagsDisplayMode the display mode for the Flags in the Settings Panel.
      * @since 1.6.0
      */
@@ -390,6 +403,5 @@ public class Players implements DataObject, MetaDataAble {
     public void setMetaData(Map<String, MetaDataValue> metaData) {
         this.metaData = metaData;
     }
-
 
 }

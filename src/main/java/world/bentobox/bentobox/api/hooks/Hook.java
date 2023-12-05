@@ -26,6 +26,7 @@ public abstract class Hook {
 
     /**
      * Returns the name of the plugin related to this Hook.
+     * 
      * @return the plugin name.
      */
     @NonNull
@@ -35,6 +36,7 @@ public abstract class Hook {
 
     /**
      * Returns the icon representing this Hook.
+     * 
      * @return the icon.
      */
     @NonNull
@@ -43,7 +45,9 @@ public abstract class Hook {
     }
 
     /**
-     * Returns the Plugin instance related to this Hook or null if it could not be found.
+     * Returns the Plugin instance related to this Hook or null if it could not be
+     * found.
+     * 
      * @return the Plugin instance of the plugin this Hook hooks into.
      */
     @Nullable
@@ -53,6 +57,7 @@ public abstract class Hook {
 
     /**
      * Returns whether the plugin is available or not.
+     * 
      * @return true if the plugin is available, false otherwise.
      */
     public boolean isPluginAvailable() {
@@ -61,12 +66,15 @@ public abstract class Hook {
 
     /**
      * Tries to hook into the plugin and returns whether it succeeded or not.
+     * 
      * @return true if it successfully hooked into the plugin, false otherwise.
      */
     public abstract boolean hook();
 
     /**
-     * Returns an explanation that will be sent to the user to tell them why the hook process did not succeed.
+     * Returns an explanation that will be sent to the user to tell them why the
+     * hook process did not succeed.
+     * 
      * @return the probable causes why the hook process did not succeed.
      */
     public abstract String getFailureCause();

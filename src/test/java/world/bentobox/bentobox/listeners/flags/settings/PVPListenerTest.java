@@ -94,7 +94,7 @@ import world.bentobox.bentobox.util.Util;
  */
 @SuppressWarnings("deprecation")
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({BentoBox.class, Util.class, Bukkit.class })
+@PrepareForTest({ BentoBox.class, Util.class, Bukkit.class })
 public class PVPListenerTest {
 
     @Mock
@@ -125,7 +125,8 @@ public class PVPListenerTest {
         // Set up plugin
         BentoBox plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
-        // Make sure you set the plung for the User class otherwise it'll use an old object
+        // Make sure you set the plung for the User class otherwise it'll use an old
+        // object
         User.setPlugin(plugin);
         // Island World Manager
         when(iwm.inWorld(any(World.class))).thenReturn(true);
@@ -137,7 +138,6 @@ public class PVPListenerTest {
 
         Panel panel = mock(Panel.class);
         when(panel.getInventory()).thenReturn(mock(Inventory.class));
-
 
         // World
         when(world.getEnvironment()).thenReturn(World.Environment.NORMAL);
@@ -220,7 +220,7 @@ public class PVPListenerTest {
         Map<String, Boolean> worldFlags = new HashMap<>();
         when(ws.getWorldFlags()).thenReturn(worldFlags);
         GameModeAddon gma = mock(GameModeAddon.class);
-        Optional<GameModeAddon> opGma = Optional.of(gma );
+        Optional<GameModeAddon> opGma = Optional.of(gma);
         when(iwm.getAddon(any())).thenReturn(opGma);
 
         // Notifier
@@ -230,7 +230,8 @@ public class PVPListenerTest {
         when(iwm.getAddon(any())).thenReturn(Optional.empty());
 
         // Util translate color codes (used in user translate methods)
-        when(Util.translateColorCodes(anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
+        when(Util.translateColorCodes(anyString()))
+                .thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
 
     }
 
@@ -246,28 +247,32 @@ public class PVPListenerTest {
     }
 
     /**
-     * Test method for {@link PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
+     * Test method for
+     * {@link PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
     @Test
     public void testOnEntityDamageNotPlayer() {
         Entity damager = mock(Zombie.class);
         Entity damagee = mock(Creeper.class);
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(damager, damagee, EntityDamageEvent.DamageCause.ENTITY_ATTACK,
-                new EnumMap<>(ImmutableMap.of(DamageModifier.BASE, 0D)),
-                new EnumMap<DamageModifier, Function<? super Double, Double>>(ImmutableMap.of(DamageModifier.BASE, Functions.constant(-0.0))));
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(damager, damagee,
+                EntityDamageEvent.DamageCause.ENTITY_ATTACK, new EnumMap<>(ImmutableMap.of(DamageModifier.BASE, 0D)),
+                new EnumMap<DamageModifier, Function<? super Double, Double>>(
+                        ImmutableMap.of(DamageModifier.BASE, Functions.constant(-0.0))));
         new PVPListener().onEntityDamage(e);
         assertFalse(e.isCancelled());
     }
 
     /**
-     * Test method for {@link PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
+     * Test method for
+     * {@link PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
     @Test
     public void testOnEntityDamageSelfDamage() {
         Entity damager = mock(Player.class);
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(damager, damager, EntityDamageEvent.DamageCause.ENTITY_ATTACK,
-                new EnumMap<>(ImmutableMap.of(DamageModifier.BASE, 0D)),
-                new EnumMap<DamageModifier, Function<? super Double, Double>>(ImmutableMap.of(DamageModifier.BASE, Functions.constant(-0.0))));
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(damager, damager,
+                EntityDamageEvent.DamageCause.ENTITY_ATTACK, new EnumMap<>(ImmutableMap.of(DamageModifier.BASE, 0D)),
+                new EnumMap<DamageModifier, Function<? super Double, Double>>(
+                        ImmutableMap.of(DamageModifier.BASE, Functions.constant(-0.0))));
         new PVPListener().onEntityDamage(e);
         assertFalse(e.isCancelled());
     }
@@ -292,7 +297,8 @@ public class PVPListenerTest {
     }
 
     /**
-     * Test method for {@link PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
+     * Test method for
+     * {@link PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
     @Test
     public void testOnEntityDamageOnPlayerByZombie() {
@@ -304,31 +310,34 @@ public class PVPListenerTest {
         when(damagee.getWorld()).thenReturn(world);
         when(damager.getLocation()).thenReturn(loc);
         when(damagee.getLocation()).thenReturn(loc);
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(damager, damagee, EntityDamageEvent.DamageCause.ENTITY_ATTACK,
-                new EnumMap<>(ImmutableMap.of(DamageModifier.BASE, 0D)),
-                new EnumMap<DamageModifier, Function<? super Double, Double>>(ImmutableMap.of(DamageModifier.BASE, Functions.constant(-0.0))));
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(damager, damagee,
+                EntityDamageEvent.DamageCause.ENTITY_ATTACK, new EnumMap<>(ImmutableMap.of(DamageModifier.BASE, 0D)),
+                new EnumMap<DamageModifier, Function<? super Double, Double>>(
+                        ImmutableMap.of(DamageModifier.BASE, Functions.constant(-0.0))));
         new PVPListener().onEntityDamage(e);
         assertFalse(e.isCancelled());
 
         // Different attack type
         e = new EntityDamageByEntityEvent(damager, damagee, EntityDamageEvent.DamageCause.ENTITY_SWEEP_ATTACK,
                 new EnumMap<>(ImmutableMap.of(DamageModifier.BASE, 0D)),
-                new EnumMap<DamageModifier, Function<? super Double, Double>>(ImmutableMap.of(DamageModifier.BASE, Functions.constant(-0.0))));
+                new EnumMap<DamageModifier, Function<? super Double, Double>>(
+                        ImmutableMap.of(DamageModifier.BASE, Functions.constant(-0.0))));
         new PVPListener().onEntityDamage(e);
         assertFalse(e.isCancelled());
 
         // Wrong world
         e = new EntityDamageByEntityEvent(damager, damagee, EntityDamageEvent.DamageCause.ENTITY_ATTACK,
                 new EnumMap<>(ImmutableMap.of(DamageModifier.BASE, 0D)),
-                new EnumMap<DamageModifier, Function<? super Double, Double>>(ImmutableMap.of(DamageModifier.BASE, Functions.constant(-0.0))));
+                new EnumMap<DamageModifier, Function<? super Double, Double>>(
+                        ImmutableMap.of(DamageModifier.BASE, Functions.constant(-0.0))));
         wrongWorld();
         new PVPListener().onEntityDamage(e);
         assertFalse(e.isCancelled());
     }
 
-
     /**
-     * Test method for {@link PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
+     * Test method for
+     * {@link PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
     @Test
     public void testOnEntityDamageOnPlayerByZombieVisitorProtected() {
@@ -346,22 +355,25 @@ public class PVPListenerTest {
         when(iwm.getIvSettings(world)).thenReturn(visitorProtectionList);
         // This player is on their island, i.e., not a visitor
 
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(damager, damagee, EntityDamageEvent.DamageCause.ENTITY_ATTACK,
-                new EnumMap<>(ImmutableMap.of(DamageModifier.BASE, 0D)),
-                new EnumMap<DamageModifier, Function<? super Double, Double>>(ImmutableMap.of(DamageModifier.BASE, Functions.constant(-0.0))));
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(damager, damagee,
+                EntityDamageEvent.DamageCause.ENTITY_ATTACK, new EnumMap<>(ImmutableMap.of(DamageModifier.BASE, 0D)),
+                new EnumMap<DamageModifier, Function<? super Double, Double>>(
+                        ImmutableMap.of(DamageModifier.BASE, Functions.constant(-0.0))));
         new PVPListener().onEntityDamage(e);
         assertFalse(e.isCancelled());
         // Wrong world
         e = new EntityDamageByEntityEvent(damager, damagee, EntityDamageEvent.DamageCause.ENTITY_ATTACK,
                 new EnumMap<>(ImmutableMap.of(DamageModifier.BASE, 0D)),
-                new EnumMap<DamageModifier, Function<? super Double, Double>>(ImmutableMap.of(DamageModifier.BASE, Functions.constant(-0.0))));
+                new EnumMap<DamageModifier, Function<? super Double, Double>>(
+                        ImmutableMap.of(DamageModifier.BASE, Functions.constant(-0.0))));
         wrongWorld();
         new PVPListener().onEntityDamage(e);
         assertFalse(e.isCancelled());
     }
 
     /**
-     * Test method for {@link PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
+     * Test method for
+     * {@link PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
     @Test
     public void testOnEntityDamageOnVisitorByZombieVisitorProtected() {
@@ -376,15 +388,17 @@ public class PVPListenerTest {
         // This player is a visitor
         when(im.userIsOnIsland(any(), any())).thenReturn(false);
 
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(damager, damagee, EntityDamageEvent.DamageCause.ENTITY_ATTACK,
-                new EnumMap<>(ImmutableMap.of(DamageModifier.BASE, 0D)),
-                new EnumMap<DamageModifier, Function<? super Double, Double>>(ImmutableMap.of(DamageModifier.BASE, Functions.constant(-0.0))));
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(damager, damagee,
+                EntityDamageEvent.DamageCause.ENTITY_ATTACK, new EnumMap<>(ImmutableMap.of(DamageModifier.BASE, 0D)),
+                new EnumMap<DamageModifier, Function<? super Double, Double>>(
+                        ImmutableMap.of(DamageModifier.BASE, Functions.constant(-0.0))));
         new PVPListener().onEntityDamage(e);
         assertTrue(e.isCancelled());
     }
 
     /**
-     * Test method for {@link PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
+     * Test method for
+     * {@link PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
     @Test
     public void testOnEntityDamageOnVisitorByZombieVisitorProtectedWrongWorld() {
@@ -403,16 +417,18 @@ public class PVPListenerTest {
         // This player is a visitor
         when(im.userIsOnIsland(any(), any())).thenReturn(false);
 
-        EntityDamageByEntityEvent e  = new EntityDamageByEntityEvent(damager, damagee, EntityDamageEvent.DamageCause.ENTITY_ATTACK,
-                new EnumMap<>(ImmutableMap.of(DamageModifier.BASE, 0D)),
-                new EnumMap<DamageModifier, Function<? super Double, Double>>(ImmutableMap.of(DamageModifier.BASE, Functions.constant(-0.0))));
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(damager, damagee,
+                EntityDamageEvent.DamageCause.ENTITY_ATTACK, new EnumMap<>(ImmutableMap.of(DamageModifier.BASE, 0D)),
+                new EnumMap<DamageModifier, Function<? super Double, Double>>(
+                        ImmutableMap.of(DamageModifier.BASE, Functions.constant(-0.0))));
         wrongWorld();
         new PVPListener().onEntityDamage(e);
         assertFalse(e.isCancelled());
     }
 
     /**
-     * Test method for {@link PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
+     * Test method for
+     * {@link PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
     @Test
     public void testOnEntityDamageOnVisitorByZombieVisitorProtectedWrongDamage() {
@@ -431,9 +447,10 @@ public class PVPListenerTest {
         // This player is a visitor
         when(im.userIsOnIsland(any(), any())).thenReturn(false);
         // Damage is not entity attack
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(damager, damagee, EntityDamageEvent.DamageCause.THORNS,
-                new EnumMap<>(ImmutableMap.of(DamageModifier.BASE, 0D)),
-                new EnumMap<DamageModifier, Function<? super Double, Double>>(ImmutableMap.of(DamageModifier.BASE, Functions.constant(-0.0))));
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(damager, damagee,
+                EntityDamageEvent.DamageCause.THORNS, new EnumMap<>(ImmutableMap.of(DamageModifier.BASE, 0D)),
+                new EnumMap<DamageModifier, Function<? super Double, Double>>(
+                        ImmutableMap.of(DamageModifier.BASE, Functions.constant(-0.0))));
         new PVPListener().onEntityDamage(e);
         assertFalse(e.isCancelled());
         // Wrong world
@@ -443,7 +460,8 @@ public class PVPListenerTest {
     }
 
     /**
-     * Test method for {@link PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
+     * Test method for
+     * {@link PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
     @Test
     public void testOnEntityDamageOnVisitorByZombieVisitorNotProtected() {
@@ -458,15 +476,17 @@ public class PVPListenerTest {
         // This player is a visitor
         when(im.userIsOnIsland(any(), any())).thenReturn(false);
 
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(damager, damagee, EntityDamageEvent.DamageCause.ENTITY_ATTACK,
-                new EnumMap<>(ImmutableMap.of(DamageModifier.BASE, 0D)),
-                new EnumMap<DamageModifier, Function<? super Double, Double>>(ImmutableMap.of(DamageModifier.BASE, Functions.constant(-0.0))));
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(damager, damagee,
+                EntityDamageEvent.DamageCause.ENTITY_ATTACK, new EnumMap<>(ImmutableMap.of(DamageModifier.BASE, 0D)),
+                new EnumMap<DamageModifier, Function<? super Double, Double>>(
+                        ImmutableMap.of(DamageModifier.BASE, Functions.constant(-0.0))));
         new PVPListener().onEntityDamage(e);
         assertFalse(e.isCancelled());
         // Wrong world
         e = new EntityDamageByEntityEvent(damager, damagee, EntityDamageEvent.DamageCause.ENTITY_ATTACK,
                 new EnumMap<>(ImmutableMap.of(DamageModifier.BASE, 0D)),
-                new EnumMap<DamageModifier, Function<? super Double, Double>>(ImmutableMap.of(DamageModifier.BASE, Functions.constant(-0.0))));
+                new EnumMap<DamageModifier, Function<? super Double, Double>>(
+                        ImmutableMap.of(DamageModifier.BASE, Functions.constant(-0.0))));
         wrongWorld();
         new PVPListener().onEntityDamage(e);
         assertFalse(e.isCancelled());
@@ -476,22 +496,22 @@ public class PVPListenerTest {
     /*
      * PVP Tests
      *
-     * Variables:
-     * PVP on/off -> Direct hit / Projectile
-     * Visitor protection on/off -> protection type correct/incorrect
+     * Variables: PVP on/off -> Direct hit / Projectile Visitor protection on/off ->
+     * protection type correct/incorrect
      *
      */
 
-
     /**
-     * Test method for {@link PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
+     * Test method for
+     * {@link PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
     @Test
     public void testOnEntityDamagePVPNotAllowed() {
         // No visitor protection
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(player, player2, EntityDamageEvent.DamageCause.ENTITY_ATTACK,
-                new EnumMap<>(ImmutableMap.of(DamageModifier.BASE, 0D)),
-                new EnumMap<DamageModifier, Function<? super Double, Double>>(ImmutableMap.of(DamageModifier.BASE, Functions.constant(-0.0))));
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(player, player2,
+                EntityDamageEvent.DamageCause.ENTITY_ATTACK, new EnumMap<>(ImmutableMap.of(DamageModifier.BASE, 0D)),
+                new EnumMap<DamageModifier, Function<? super Double, Double>>(
+                        ImmutableMap.of(DamageModifier.BASE, Functions.constant(-0.0))));
         new PVPListener().onEntityDamage(e);
         // PVP should be banned
         assertTrue(e.isCancelled());
@@ -500,13 +520,15 @@ public class PVPListenerTest {
     }
 
     /**
-     * Test method for {@link PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
+     * Test method for
+     * {@link PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
     @Test
     public void testOnEntityDamagePVPNotAllowedInvVisitor() {
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(player, player2, EntityDamageEvent.DamageCause.ENTITY_ATTACK,
-                new EnumMap<>(ImmutableMap.of(DamageModifier.BASE, 0D)),
-                new EnumMap<DamageModifier, Function<? super Double, Double>>(ImmutableMap.of(DamageModifier.BASE, Functions.constant(-0.0))));
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(player, player2,
+                EntityDamageEvent.DamageCause.ENTITY_ATTACK, new EnumMap<>(ImmutableMap.of(DamageModifier.BASE, 0D)),
+                new EnumMap<DamageModifier, Function<? super Double, Double>>(
+                        ImmutableMap.of(DamageModifier.BASE, Functions.constant(-0.0))));
 
         // Enable visitor protection
         // This player is a visitor and any damage is not allowed
@@ -544,7 +566,8 @@ public class PVPListenerTest {
     }
 
     /**
-     * Test method for {@link PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
+     * Test method for
+     * {@link PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
     @Test
     public void testOnEntityDamageOnPVPNotAllowedProjectile() {
@@ -552,9 +575,10 @@ public class PVPListenerTest {
         when(p.getShooter()).thenReturn(player);
         when(p.getLocation()).thenReturn(loc);
         when(p.getWorld()).thenReturn(world);
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(p, player2, EntityDamageEvent.DamageCause.ENTITY_ATTACK,
-                new EnumMap<>(ImmutableMap.of(DamageModifier.BASE, 0D)),
-                new EnumMap<DamageModifier, Function<? super Double, Double>>(ImmutableMap.of(DamageModifier.BASE, Functions.constant(-0.0))));
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(p, player2,
+                EntityDamageEvent.DamageCause.ENTITY_ATTACK, new EnumMap<>(ImmutableMap.of(DamageModifier.BASE, 0D)),
+                new EnumMap<DamageModifier, Function<? super Double, Double>>(
+                        ImmutableMap.of(DamageModifier.BASE, Functions.constant(-0.0))));
         new PVPListener().onEntityDamage(e);
         // PVP should be banned
         assertTrue(e.isCancelled());
@@ -573,23 +597,26 @@ public class PVPListenerTest {
     }
 
     /**
-     * Test method for {@link PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
+     * Test method for
+     * {@link PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
     @Test
     public void testOnEntityDamageSelfDamageProjectile() {
         Projectile p = mock(Projectile.class);
         when(p.getShooter()).thenReturn(player);
         when(p.getLocation()).thenReturn(loc);
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(p, player, EntityDamageEvent.DamageCause.ENTITY_ATTACK,
-                new EnumMap<>(ImmutableMap.of(DamageModifier.BASE, 0D)),
-                new EnumMap<DamageModifier, Function<? super Double, Double>>(ImmutableMap.of(DamageModifier.BASE, Functions.constant(-0.0))));
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(p, player,
+                EntityDamageEvent.DamageCause.ENTITY_ATTACK, new EnumMap<>(ImmutableMap.of(DamageModifier.BASE, 0D)),
+                new EnumMap<DamageModifier, Function<? super Double, Double>>(
+                        ImmutableMap.of(DamageModifier.BASE, Functions.constant(-0.0))));
         new PVPListener().onEntityDamage(e);
         // Self damage okay
         assertFalse(e.isCancelled());
     }
 
     /**
-     * Test method for {@link PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
+     * Test method for
+     * {@link PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
     @Test
     public void testOnEntityDamagePVPAllowedProjectile() {
@@ -598,9 +625,10 @@ public class PVPListenerTest {
         when(p.getLocation()).thenReturn(loc);
         // PVP is allowed
         when(island.isAllowed(any())).thenReturn(true);
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(p, player2, EntityDamageEvent.DamageCause.ENTITY_ATTACK,
-                new EnumMap<>(ImmutableMap.of(DamageModifier.BASE, 0D)),
-                new EnumMap<DamageModifier, Function<? super Double, Double>>(ImmutableMap.of(DamageModifier.BASE, Functions.constant(-0.0))));
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(p, player2,
+                EntityDamageEvent.DamageCause.ENTITY_ATTACK, new EnumMap<>(ImmutableMap.of(DamageModifier.BASE, 0D)),
+                new EnumMap<DamageModifier, Function<? super Double, Double>>(
+                        ImmutableMap.of(DamageModifier.BASE, Functions.constant(-0.0))));
         new PVPListener().onEntityDamage(e);
         // PVP should be allowed
         assertFalse(e.isCancelled());
@@ -617,7 +645,8 @@ public class PVPListenerTest {
     }
 
     /**
-     * Test method for {@link PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
+     * Test method for
+     * {@link PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
     @Test
     public void testOnEntityDamagePVPAllowedProjectileNullSource() {
@@ -626,9 +655,10 @@ public class PVPListenerTest {
         when(p.getLocation()).thenReturn(loc);
         // PVP is allowed
         when(island.isAllowed(any())).thenReturn(true);
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(p, player2, EntityDamageEvent.DamageCause.ENTITY_ATTACK,
-                new EnumMap<>(ImmutableMap.of(DamageModifier.BASE, 0D)),
-                new EnumMap<DamageModifier, Function<? super Double, Double>>(ImmutableMap.of(DamageModifier.BASE, Functions.constant(-0.0))));
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(p, player2,
+                EntityDamageEvent.DamageCause.ENTITY_ATTACK, new EnumMap<>(ImmutableMap.of(DamageModifier.BASE, 0D)),
+                new EnumMap<DamageModifier, Function<? super Double, Double>>(
+                        ImmutableMap.of(DamageModifier.BASE, Functions.constant(-0.0))));
         new PVPListener().onEntityDamage(e);
         // PVP should be allowed
         assertFalse(e.isCancelled());
@@ -636,7 +666,8 @@ public class PVPListenerTest {
     }
 
     /**
-     * Test method for {@link PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
+     * Test method for
+     * {@link PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
     @Test
     public void testOnEntityDamagePVPAllowedProjectileNonEntitySource() {
@@ -646,9 +677,10 @@ public class PVPListenerTest {
         when(p.getLocation()).thenReturn(loc);
         // PVP is allowed
         when(island.isAllowed(any())).thenReturn(true);
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(p, player2, EntityDamageEvent.DamageCause.ENTITY_ATTACK,
-                new EnumMap<>(ImmutableMap.of(DamageModifier.BASE, 0D)),
-                new EnumMap<DamageModifier, Function<? super Double, Double>>(ImmutableMap.of(DamageModifier.BASE, Functions.constant(-0.0))));
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(p, player2,
+                EntityDamageEvent.DamageCause.ENTITY_ATTACK, new EnumMap<>(ImmutableMap.of(DamageModifier.BASE, 0D)),
+                new EnumMap<DamageModifier, Function<? super Double, Double>>(
+                        ImmutableMap.of(DamageModifier.BASE, Functions.constant(-0.0))));
         new PVPListener().onEntityDamage(e);
         // PVP should be allowed
         assertFalse(e.isCancelled());
@@ -656,7 +688,8 @@ public class PVPListenerTest {
     }
 
     /**
-     * Test method for {@link PVPListener#onFishing(org.bukkit.event.player.PlayerFishEvent)}.
+     * Test method for
+     * {@link PVPListener#onFishing(org.bukkit.event.player.PlayerFishEvent)}.
      */
     @Test
     public void testOnFishing() {
@@ -701,7 +734,6 @@ public class PVPListenerTest {
         new PVPListener().onFishing(pfe);
         assertFalse(pfe.isCancelled());
 
-
         // Wrong world
         wrongWorld();
         pfe = new PlayerFishEvent(player, player2, hook, null);
@@ -710,7 +742,8 @@ public class PVPListenerTest {
     }
 
     /**
-     * Test method for {@link PVPListener#onFishing(org.bukkit.event.player.PlayerFishEvent)}.
+     * Test method for
+     * {@link PVPListener#onFishing(org.bukkit.event.player.PlayerFishEvent)}.
      */
     @Test
     public void testOnFishingProtectVisitors() {
@@ -732,7 +765,8 @@ public class PVPListenerTest {
     }
 
     /**
-     * Test method for {@link PVPListener#onFishing(org.bukkit.event.player.PlayerFishEvent)}.
+     * Test method for
+     * {@link PVPListener#onFishing(org.bukkit.event.player.PlayerFishEvent)}.
      */
     @Test
     public void testOnFishingSelfDamage() {
@@ -745,7 +779,8 @@ public class PVPListenerTest {
     }
 
     /**
-     * Test method for {@link PVPListener#onFishing(org.bukkit.event.player.PlayerFishEvent)}.
+     * Test method for
+     * {@link PVPListener#onFishing(org.bukkit.event.player.PlayerFishEvent)}.
      */
     @Test
     public void testOnFishingNoPVPProtectVisitors() {
@@ -768,7 +803,8 @@ public class PVPListenerTest {
     }
 
     /**
-     * Test method for {@link PVPListener#onSplashPotionSplash(org.bukkit.event.entity.PotionSplashEvent)}.
+     * Test method for
+     * {@link PVPListener#onSplashPotionSplash(org.bukkit.event.entity.PotionSplashEvent)}.
      */
     @Test
     public void testOnSplashPotionSplashWitch() {
@@ -781,7 +817,8 @@ public class PVPListenerTest {
     }
 
     /**
-     * Test method for {@link PVPListener#onSplashPotionSplash(org.bukkit.event.entity.PotionSplashEvent)}.
+     * Test method for
+     * {@link PVPListener#onSplashPotionSplash(org.bukkit.event.entity.PotionSplashEvent)}.
      */
     @Test
     public void testOnSplashPotionSplashNoPlayers() {
@@ -884,7 +921,6 @@ public class PVPListenerTest {
         verify(player, never()).sendMessage(Flags.PVP_OVERWORLD.getHintReference());
     }
 
-
     /**
      * Test method for {@link PVPListener#onSplashPotionSplash(org.bukkit.event.entity.PotionSplashEvent)}.
      */
@@ -921,7 +957,8 @@ public class PVPListenerTest {
     }
 
     /**
-     * Test method for {@link PVPListener#onLingeringPotionSplash(org.bukkit.event.entity.LingeringPotionSplashEvent)}.
+     * Test method for
+     * {@link PVPListener#onLingeringPotionSplash(org.bukkit.event.entity.LingeringPotionSplashEvent)}.
      */
     @Test
     public void testOnLingeringPotionSplash() {
@@ -941,7 +978,8 @@ public class PVPListenerTest {
     }
 
     /**
-     * Test method for {@link PVPListener#onLingeringPotionSplash(org.bukkit.event.entity.LingeringPotionSplashEvent)}.
+     * Test method for
+     * {@link PVPListener#onLingeringPotionSplash(org.bukkit.event.entity.LingeringPotionSplashEvent)}.
      */
     @Test
     public void testOnLingeringPotionSplashNonHuman() {
@@ -1030,7 +1068,6 @@ public class PVPListenerTest {
         verify(player, never()).sendMessage(Flags.PVP_OVERWORLD.getHintReference());
     }
 
-
     /**
      * Test method for {@link PVPListener#onLingeringPotionDamage(org.bukkit.event.entity.AreaEffectCloudApplyEvent)}.
      */
@@ -1114,7 +1151,8 @@ public class PVPListenerTest {
     }
 
     /**
-     * Test method for {@link PVPListener#onPlayerShootFireworkEvent(org.bukkit.event.entity.EntityShootBowEvent)}.
+     * Test method for
+     * {@link PVPListener#onPlayerShootFireworkEvent(org.bukkit.event.entity.EntityShootBowEvent)}.
      */
     @Test
     public void testOnPlayerShootFireworkEventNotPlayer() {
@@ -1132,7 +1170,8 @@ public class PVPListenerTest {
     }
 
     /**
-     * Test method for {@link PVPListener#onPlayerShootFireworkEvent(org.bukkit.event.entity.EntityShootBowEvent)}.
+     * Test method for
+     * {@link PVPListener#onPlayerShootFireworkEvent(org.bukkit.event.entity.EntityShootBowEvent)}.
      */
     @Test
     public void testOnPlayerShootFireworkEventNotFirework() {

@@ -67,10 +67,12 @@ public class YamlDatabaseConnector implements DatabaseConnector {
                     try {
                         Objects.requireNonNull(config).load(yamlFile);
                     } catch (IOException | InvalidConfigurationException e1) {
-                        plugin.logError("Could not load yml file from database " + tableName + " " + fileName + " " + e.getMessage());
+                        plugin.logError("Could not load yml file from database " + tableName + " " + fileName + " "
+                                + e.getMessage());
                     }
                 } else {
-                    plugin.logError("Could not load yml file from database " + tableName + " " + fileName + " " + e.getMessage());
+                    plugin.logError("Could not load yml file from database " + tableName + " " + fileName + " "
+                            + e.getMessage());
                 }
             }
         } else {
@@ -95,7 +97,8 @@ public class YamlDatabaseConnector implements DatabaseConnector {
 
     private void removeStringFromFile(File yamlFile) {
         PrintWriter writer = null;
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(yamlFile), StandardCharsets.UTF_8))){
+        try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(new FileInputStream(yamlFile), StandardCharsets.UTF_8))) {
             File temp = File.createTempFile("file", ".tmp", yamlFile.getParentFile());
             writer = new PrintWriter(new OutputStreamWriter(new FileOutputStream(temp), StandardCharsets.UTF_8));
             String line = reader.readLine();
@@ -138,7 +141,8 @@ public class YamlDatabaseConnector implements DatabaseConnector {
 
     /**
      * Adds comments to a YAML file
-     * @param file - file
+     * 
+     * @param file       - file
      * @param commentMap - map of comments to apply to file
      */
     private void commentFile(File file, Map<String, String> commentMap) {
@@ -152,14 +156,13 @@ public class YamlDatabaseConnector implements DatabaseConnector {
                 for (Entry<String, String> e : commentMap.entrySet()) {
                     if (nextLine.contains(e.getKey())) {
                         // We want the comment to start at the same level as the entry
-                        nextLine = " ".repeat(Math.max(0, nextLine.indexOf(e.getKey()))) +
-                                e.getValue();
+                        nextLine = " ".repeat(Math.max(0, nextLine.indexOf(e.getKey()))) + e.getValue();
                         break;
                     }
                 }
                 newFile.add(nextLine);
             }
-            Files.write(commentedFile.toPath(), (Iterable<String>)newFile.stream()::iterator);
+            Files.write(commentedFile.toPath(), (Iterable<String>) newFile.stream()::iterator);
             copyFileUsingStream(commentedFile, file);
             Files.delete(commentedFile.toPath());
         } catch (IOException e1) {
@@ -169,9 +172,11 @@ public class YamlDatabaseConnector implements DatabaseConnector {
     }
 
     /**
-     * This method is necessary because Windows has problems with Files.copy and file locking.
+     * This method is necessary because Windows has problems with Files.copy and
+     * file locking.
+     * 
      * @param source - file
-     * @param dest - file
+     * @param dest   - file
      * @throws IOException - exception
      */
     private void copyFileUsingStream(File source, File dest) throws IOException {
@@ -208,7 +213,6 @@ public class YamlDatabaseConnector implements DatabaseConnector {
         // Not used
         return null;
     }
-
 
     @Override
     public void closeConnection(Class<?> type) {

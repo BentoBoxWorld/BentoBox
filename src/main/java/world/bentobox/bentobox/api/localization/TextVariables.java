@@ -2,11 +2,13 @@ package world.bentobox.bentobox.api.localization;
 
 /**
  * Contains the common variables that can be used in texts.
+ * 
  * @author Poslovitch
  */
 public class TextVariables {
 
-    private TextVariables() {}
+    private TextVariables() {
+    }
 
     public static final String NAME = "[name]";
     public static final String DISPLAY_NAME = "[display_name]";
@@ -32,6 +34,7 @@ public class TextVariables {
     public static final String GAMEMODE = "[gamemode]";
     /**
      * Used for coordinates
+     * 
      * @since 1.16.0
      */
     public static final String XYZ = "[xyz]";

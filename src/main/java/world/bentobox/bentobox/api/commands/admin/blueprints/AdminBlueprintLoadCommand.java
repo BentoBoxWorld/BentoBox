@@ -46,7 +46,7 @@ public class AdminBlueprintLoadCommand extends CompositeCommand {
         options.add("island");
         options.add("nether-island");
         options.add("end-island");
-        String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
+        String lastArg = !args.isEmpty() ? args.get(args.size() - 1) : "";
 
         return Optional.of(Util.tabLimit(options, lastArg));
     }

@@ -11,7 +11,6 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 
-
 /**
  * @author tastybento
  *
@@ -19,12 +18,10 @@ import com.google.gson.stream.JsonWriter;
  */
 public final class EnumTypeAdapter<T extends Enum<T>> extends TypeAdapter<T> {
 
-
     /**
      * Bimap to store name,enum pair references
      */
     private final BiMap<String, T> enumMap = HashBiMap.create();
-
 
     public EnumTypeAdapter(Class<T> enumClass) {
         for (T value : enumClass.getEnumConstants()) {
@@ -47,7 +44,8 @@ public final class EnumTypeAdapter<T extends Enum<T>> extends TypeAdapter<T> {
         }
     }
 
-    @Override public T read(JsonReader input) throws IOException {
+    @Override
+    public T read(JsonReader input) throws IOException {
         if (JsonToken.NULL.equals(input.peek())) {
             input.nextNull();
             return null;
@@ -55,7 +53,8 @@ public final class EnumTypeAdapter<T extends Enum<T>> extends TypeAdapter<T> {
         return enumMap.get(input.nextString());
     }
 
-    @Override public void write(JsonWriter output, T enumValue) throws IOException {
+    @Override
+    public void write(JsonWriter output, T enumValue) throws IOException {
         output.value(enumValue != null ? enumMap.inverse().get(enumValue) : null);
     }
 }

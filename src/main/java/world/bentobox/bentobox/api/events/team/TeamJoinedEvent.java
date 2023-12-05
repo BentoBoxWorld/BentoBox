@@ -11,6 +11,7 @@ import world.bentobox.bentobox.database.objects.Island;
 
 /**
  * Called after a player has joined an island
+ * 
  * @since 1.3.0
  */
 public class TeamJoinedEvent extends IslandBaseEvent {
@@ -28,9 +29,10 @@ public class TeamJoinedEvent extends IslandBaseEvent {
 
     /**
      * Called after a player has joined an island
-     * @param island - island
-     * @param player - player
-     * @param admin - whether this was due to an admin action
+     * 
+     * @param island   - island
+     * @param player   - player
+     * @param admin    - whether this was due to an admin action
      * @param location - location
      * @since 1.3.0
      */

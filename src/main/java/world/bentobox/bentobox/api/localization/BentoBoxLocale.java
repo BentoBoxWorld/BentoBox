@@ -27,6 +27,7 @@ public class BentoBoxLocale {
 
     /**
      * List of available prefixes in this locale.
+     * 
      * @since 1.12.0
      */
     private final Set<String> prefixes;
@@ -49,8 +50,10 @@ public class BentoBoxLocale {
 
     /**
      * Get text from the yml file for this locale
+     * 
      * @param reference - the YAML node where the text is
-     * @return Text for this locale reference or the reference if nothing has been found
+     * @return Text for this locale reference or the reference if nothing has been
+     *         found
      */
     public String get(String reference) {
         Object obj = config.get(reference);
@@ -62,10 +65,11 @@ public class BentoBoxLocale {
 
     /**
      * Returns the locale language
+     * 
      * @return the locale language
      */
-    public String getLanguage(){
-        if(locale == null) {
+    public String getLanguage() {
+        if (locale == null) {
             return UNKNOWN;
         }
 
@@ -74,10 +78,11 @@ public class BentoBoxLocale {
 
     /**
      * Returns the locale country
+     * 
      * @return the locale country
      */
-    public String getCountry(){
-        if(locale == null) {
+    public String getCountry() {
+        if (locale == null) {
             return UNKNOWN;
         }
 
@@ -86,10 +91,11 @@ public class BentoBoxLocale {
 
     /**
      * Returns the locale language tag (e.g: en-GB)
+     * 
      * @return the locale language tag
      */
-    public String toLanguageTag(){
-        if(locale == null) {
+    public String toLanguageTag() {
+        if (locale == null) {
             return UNKNOWN;
         }
         return locale.toLanguageTag();
@@ -97,6 +103,7 @@ public class BentoBoxLocale {
 
     /**
      * Returns the banner ItemStack representing this locale
+     * 
      * @return the banner ItemStack
      */
     public ItemStack getBanner() {
@@ -109,6 +116,7 @@ public class BentoBoxLocale {
 
     /**
      * Merges a language YAML file to this locale
+     * 
      * @param toBeMerged the YamlConfiguration of the language file
      */
     public void merge(@NonNull YamlConfiguration toBeMerged) {
@@ -122,10 +130,11 @@ public class BentoBoxLocale {
     }
 
     /**
-     * Sets a reference and its value in the locale.
-     * If the reference already exists, it will overwrite its value.
+     * Sets a reference and its value in the locale. If the reference already
+     * exists, it will overwrite its value.
+     * 
      * @param reference the reference to add, not null.
-     * @param value the value to set, not null.
+     * @param value     the value to set, not null.
      * @since 1.6.0
      */
     public void set(@NonNull String reference, @NonNull String value) {
@@ -163,6 +172,7 @@ public class BentoBoxLocale {
 
     /**
      * Returns the list of prefixes available in this locale.
+     * 
      * @return Set of prefixes available in this locale.
      * @since 1.13.0
      */

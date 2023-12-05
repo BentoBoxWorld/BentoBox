@@ -48,7 +48,7 @@ import world.bentobox.bentobox.managers.RanksManager;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, User.class })
+@PrepareForTest({ Bukkit.class, BentoBox.class, User.class })
 public class AdminPurgeCommandTest {
 
     @Mock
@@ -112,7 +112,8 @@ public class AdminPurgeCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.purge.AdminPurgeCommand#AdminPurgeCommand(CompositeCommand)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.purge.AdminPurgeCommand#AdminPurgeCommand(CompositeCommand)}.
      */
     @Test
     public void testConstructor() {
@@ -120,7 +121,8 @@ public class AdminPurgeCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.purge.AdminPurgeCommand#setup()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.purge.AdminPurgeCommand#setup()}.
      */
     @Test
     public void testSetup() {
@@ -131,20 +133,19 @@ public class AdminPurgeCommandTest {
         assertEquals(5, apc.getSubCommands().size());
     }
 
-
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.purge.AdminPurgeCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.purge.AdminPurgeCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testCanExecuteUserStringListOfStringEmptyArgs() {
         assertFalse(apc.canExecute(user, "", Collections.emptyList()));
-        verify(user).sendMessage("commands.help.header",
-                "[label]",
-                "BSkyBlock");
+        verify(user).sendMessage("commands.help.header", "[label]", "BSkyBlock");
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.purge.AdminPurgeCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.purge.AdminPurgeCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testCanExecuteUserStringListOfStringWithArg() {
@@ -152,7 +153,8 @@ public class AdminPurgeCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.purge.AdminPurgeCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.purge.AdminPurgeCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testExecuteUserStringListOfStringNotNumber() {
@@ -161,7 +163,8 @@ public class AdminPurgeCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.purge.AdminPurgeCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.purge.AdminPurgeCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testExecuteUserStringListOfStringZero() {
@@ -170,7 +173,8 @@ public class AdminPurgeCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.purge.AdminPurgeCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.purge.AdminPurgeCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testExecuteUserStringListOfStringNoIslands() {
@@ -288,9 +292,9 @@ public class AdminPurgeCommandTest {
         verify(user).sendMessage(eq("commands.admin.purge.confirm"), eq("[label]"), eq("bsb"));
     }
 
-
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.purge.AdminPurgeCommand#removeIslands()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.purge.AdminPurgeCommand#removeIslands()}.
      */
     @Test
     public void testRemoveIslands() {
@@ -305,7 +309,8 @@ public class AdminPurgeCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.purge.AdminPurgeCommand#onIslandDeleted(world.bentobox.bentobox.api.events.island.IslandEvent.IslandDeletedEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.purge.AdminPurgeCommand#onIslandDeleted(world.bentobox.bentobox.api.events.island.IslandEvent.IslandDeletedEvent)}.
      */
     @Test
     public void testOnIslandDeletedNotInPurge() {
@@ -316,7 +321,8 @@ public class AdminPurgeCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.purge.AdminPurgeCommand#onIslandDeleted(world.bentobox.bentobox.api.events.island.IslandEvent.IslandDeletedEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.purge.AdminPurgeCommand#onIslandDeleted(world.bentobox.bentobox.api.events.island.IslandEvent.IslandDeletedEvent)}.
      */
     @Test
     public void testOnIslandDeletedPurgeCompleted() {
@@ -328,7 +334,8 @@ public class AdminPurgeCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.purge.AdminPurgeCommand#isInPurge()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.purge.AdminPurgeCommand#isInPurge()}.
      */
     @Test
     public void testIsInPurge() {
@@ -338,7 +345,8 @@ public class AdminPurgeCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.purge.AdminPurgeCommand#stop()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.purge.AdminPurgeCommand#stop()}.
      */
     @Test
     public void testStop() {
@@ -349,7 +357,8 @@ public class AdminPurgeCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.purge.AdminPurgeCommand#setUser(world.bentobox.bentobox.api.user.User)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.purge.AdminPurgeCommand#setUser(world.bentobox.bentobox.api.user.User)}.
      */
     @Test
     public void testSetUser() {

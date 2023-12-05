@@ -10,7 +10,8 @@ import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.lists.Flags;
 
 /**
- * Handles the {@link world.bentobox.bentobox.lists.Flags#EXPERIENCE_PICKUP} flag.
+ * Handles the {@link world.bentobox.bentobox.lists.Flags#EXPERIENCE_PICKUP}
+ * flag.
  *
  * @author Poslovitch
  */

@@ -43,9 +43,8 @@ public class AdminDeathsRemoveCommand extends CompositeCommand {
             // Make sure it cannot go under 0.
             int newDeaths = Math.max(getPlayers().getDeaths(getWorld(), targetUUID) - Integer.parseInt(args.get(1)), 0);
             getPlayers().setDeaths(getWorld(), targetUUID, newDeaths);
-            user.sendMessage("commands.admin.deaths.remove.success",
-                    TextVariables.NAME, args.get(0), TextVariables.NUMBER, args.get(1),
-                    "[total]", String.valueOf(newDeaths));
+            user.sendMessage("commands.admin.deaths.remove.success", TextVariables.NAME, args.get(0),
+                    TextVariables.NUMBER, args.get(1), "[total]", String.valueOf(newDeaths));
             return true;
         }
 

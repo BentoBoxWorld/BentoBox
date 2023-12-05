@@ -6,6 +6,7 @@ import org.junit.Test;
 
 /**
  * Test class just to check that these constants don't accidentally change
+ * 
  * @author tastybento
  */
 public class TextVariablesTest {

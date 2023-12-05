@@ -11,8 +11,9 @@ import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.database.objects.Island;
 
 /**
- * Fired when an a player reuqets info about an island
- * Cancellation has no effect.
+ * Fired when an a player reuqets info about an island Cancellation has no
+ * effect.
+ * 
  * @since 1.24.0
  */
 public class IslandInfoEvent extends IslandBaseEvent {
@@ -30,11 +31,12 @@ public class IslandInfoEvent extends IslandBaseEvent {
     }
 
     /**
-     * @param island island
-     * @param player player asking for the info
-     * @param admin true if this is an admin request
+     * @param island   island
+     * @param player   player asking for the info
+     * @param admin    true if this is an admin request
      * @param location location of the player asking for the info
-     * @param addon the addon parent that is calling this info command, e.g., BSkyBlock
+     * @param addon    the addon parent that is calling this info command, e.g.,
+     *                 BSkyBlock
      */
     public IslandInfoEvent(Island island, UUID player, boolean admin, Location location, Addon addon) {
         // Final variables have to be declared in the constructor
@@ -48,8 +50,5 @@ public class IslandInfoEvent extends IslandBaseEvent {
     public Addon getAddon() {
         return addon;
     }
-    
-    
-    
 
 }

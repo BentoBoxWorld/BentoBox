@@ -72,18 +72,17 @@ public class DefaultPasteUtilTest {
     private IslandWorldManager iwm;
     @Mock
     private GameModeAddon addon;
-    @Mock(extraInterfaces = {WallSign.class})
+    @Mock(extraInterfaces = { WallSign.class })
     BlockData wallSignData;
-    @Mock(extraInterfaces = {org.bukkit.block.data.type.Sign.class})
+    @Mock(extraInterfaces = { org.bukkit.block.data.type.Sign.class })
     BlockData signData;
-    @Mock(extraInterfaces = {org.bukkit.block.Sign.class})
+    @Mock(extraInterfaces = { org.bukkit.block.Sign.class })
     BlockState sign;
 
     @Mock
     private World world;
     @Mock
     private PlayersManager pm;
-
 
     /**
      * @throws java.lang.Exception
@@ -102,8 +101,8 @@ public class DefaultPasteUtilTest {
         when(player.getUniqueId()).thenReturn(uuid);
         when(island.getOwner()).thenReturn(uuid);
         User.getInstance(player);
-        when(((WallSign)wallSignData).getFacing()).thenReturn(BlockFace.NORTH);
-        when(((org.bukkit.block.data.type.Sign)signData).getRotation()).thenReturn(BlockFace.NORTH);
+        when(((WallSign) wallSignData).getFacing()).thenReturn(BlockFace.NORTH);
+        when(((org.bukkit.block.data.type.Sign) signData).getRotation()).thenReturn(BlockFace.NORTH);
 
         when(pm.getName(any())).thenReturn("tastybento");
         LocalesManager localesManager = mock(LocalesManager.class);
@@ -157,7 +156,7 @@ public class DefaultPasteUtilTest {
 
         DefaultPasteUtil.writeSign(island, block, bpSign, side);
 
-        //verify(((Sign) sign), times(4)).setLine(anyInt(), anyString());
+        // verify(((Sign) sign), times(4)).setLine(anyInt(), anyString());
         verify(((Sign) sign).getSide(side), times(4)).setLine(anyInt(), anyString());
 
         ArgumentCaptor<String> lineCaptor = ArgumentCaptor.forClass(String.class);

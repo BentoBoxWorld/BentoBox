@@ -36,12 +36,14 @@ public class IslandEvent extends IslandBaseEvent {
     }
 
     /**
-     * Fired every time an island event occurs. For developers who just want one event and will use an enum to track the reason
-     * @param island - the island involved in the event
+     * Fired every time an island event occurs. For developers who just want one
+     * event and will use an enum to track the reason
+     * 
+     * @param island     - the island involved in the event
      * @param playerUUID - the player's UUID involved in the event
-     * @param admin - true if this is due to an admin event
-     * @param location - location of event
-     * @param reason - see {@link #getReason()}
+     * @param admin      - true if this is due to an admin event
+     * @param location   - location of event
+     * @param reason     - see {@link #getReason()}
      */
     public IslandEvent(Island island, UUID playerUUID, boolean admin, Location location, Reason reason) {
         super(island, playerUUID, admin, location);
@@ -61,28 +63,30 @@ public class IslandEvent extends IslandBaseEvent {
     public enum Reason {
         /**
          * Fired when a player will be banned from an island.
+         * 
          * @since 1.1
          */
         BAN,
         /**
-         * Fired when a player tries to create a new island. If canceled will
-         * proceed no further.
+         * Fired when a player tries to create a new island. If canceled will proceed no
+         * further.
+         * 
          * @since 1.15.1
          */
         PRECREATE,
         /**
-         * Called when a player has been allocated a new island spot
-         * but before the island itself has been pasted or the player teleported.
+         * Called when a player has been allocated a new island spot but before the
+         * island itself has been pasted or the player teleported.
          */
         CREATE,
         /**
-         * Fired when an island is created for the very first time. Occurs after everything
-         * has been completed.
+         * Fired when an island is created for the very first time. Occurs after
+         * everything has been completed.
          */
         CREATED,
         /**
-         * Fired when an island is to be deleted. Note an island can be deleted without having
-         * chunks removed.
+         * Fired when an island is to be deleted. Note an island can be deleted without
+         * having chunks removed.
          */
         DELETE,
         /**
@@ -90,7 +94,8 @@ public class IslandEvent extends IslandBaseEvent {
          */
         DELETE_CHUNKS,
         /**
-         * Fired after all island chunks have been deleted or set for regeneration by the server
+         * Fired after all island chunks have been deleted or set for regeneration by
+         * the server
          */
         DELETED,
         /**
@@ -102,35 +107,38 @@ public class IslandEvent extends IslandBaseEvent {
          */
         EXIT,
         /**
-         * Fired when there a player makes a change to the lock state of their island
-         * To read the rank value, check the {@link Flags#LOCK} flag.
+         * Fired when there a player makes a change to the lock state of their island To
+         * read the rank value, check the {@link Flags#LOCK} flag.
          */
         LOCK,
         /**
          * Called when a player goes to their new island for the first time
+         * 
          * @since 1.16.1
          */
         NEW_ISLAND,
         /**
-         * Called before an island is going to be cleared of island members.
-         * This event occurs before resets or other island clearing activities.
-         * Cannot be cancelled.
+         * Called before an island is going to be cleared of island members. This event
+         * occurs before resets or other island clearing activities. Cannot be
+         * cancelled.
+         * 
          * @since 1.12.0
          */
         PRECLEAR,
         /**
-         * Called when a player has been reset and a new island spot allocated
-         * but before the island itself has been pasted or the player teleported.
+         * Called when a player has been reset and a new island spot allocated but
+         * before the island itself has been pasted or the player teleported.
          */
         RESET,
         /**
-         * Called when an island has been pasted due to a reset.
-         * Occurs before the old island has been deleted but after everything else.
-         * ie., island pasted, player teleported, etc.
+         * Called when an island has been pasted due to a reset. Occurs before the old
+         * island has been deleted but after everything else. ie., island pasted, player
+         * teleported, etc.
          */
         RESETTED,
         /**
          * Fired when a player will be unbanned from an island.
+         * 
          * @since 1.1
          */
         UNBAN,
@@ -144,41 +152,50 @@ public class IslandEvent extends IslandBaseEvent {
         UNKNOWN,
         /**
          * Player was unregistered from the island by admin
+         * 
          * @since 1.3.0
          */
         UNREGISTERED,
         /**
          * Player was registered to the island by admin
+         * 
          * @since 1.3.0
          */
         REGISTERED,
         /**
          * Player was expelled
+         * 
          * @since 1.4.0
          */
         EXPEL,
         /**
          * The island was reserved and now is being pasted.
+         * 
          * @since 1.6.0
          */
         RESERVED,
         /**
          * The island protection range was changed.
+         * 
          * @since 1.11.0
          */
         RANGE_CHANGE,
         /**
          * Event that will fire any time a player's rank changes on an island.
+         * 
          * @since 1.13.0
          */
         RANK_CHANGE,
         /**
          * Event that will fire when an island is named or renamed
+         * 
          * @since 1.24.0
          */
         NAME,
         /**
-         * Event that will fire when the info command is executed. Allows addons to add to it
+         * Event that will fire when the info command is executed. Allows addons to add
+         * to it
+         * 
          * @since 1.24.0
          */
         INFO
@@ -187,7 +204,6 @@ public class IslandEvent extends IslandBaseEvent {
     public static IslandEventBuilder builder() {
         return new IslandEventBuilder();
     }
-
 
     public static class IslandEventBuilder {
         // Here field are NOT final. They are just used for the building.
@@ -212,6 +228,7 @@ public class IslandEvent extends IslandBaseEvent {
 
         /**
          * Stores old island object
+         * 
          * @since 1.12.0
          */
         private Island oldIsland;
@@ -251,6 +268,7 @@ public class IslandEvent extends IslandBaseEvent {
 
         /**
          * True if this is an admin driven event
+         * 
          * @param admin - true if due to admin event
          * @return TeamEvent
          */
@@ -301,9 +319,9 @@ public class IslandEvent extends IslandBaseEvent {
             return this;
         }
 
-
         /**
          * Allows to set new and old protection range.
+         * 
          * @param newRange New value of protection range.
          * @param oldRange Old value of protection range.
          * @since 1.11.0
@@ -319,7 +337,7 @@ public class IslandEvent extends IslandBaseEvent {
          * @since 1.13.0
          */
         @NonNull
-        public IslandEventBuilder rankChange(int oldRank, int newRank){
+        public IslandEventBuilder rankChange(int oldRank, int newRank) {
             this.oldRank = oldRank;
             this.newRank = newRank;
             return this;
@@ -327,6 +345,7 @@ public class IslandEvent extends IslandBaseEvent {
 
         /**
          * Sets the previous name of the island
+         * 
          * @param previousName previous name. May be null.
          * @since 1.24.0
          */
@@ -337,6 +356,7 @@ public class IslandEvent extends IslandBaseEvent {
 
         /**
          * Addon that triggered this event, e.g. BSkyBlock
+         * 
          * @param addon Addon.
          * @since 1.24.0
          */
@@ -364,7 +384,8 @@ public class IslandEvent extends IslandBaseEvent {
             case UNLOCK -> new IslandUnlockEvent(island, player, admin, location);
             case REGISTERED -> new IslandRegisteredEvent(island, player, admin, location);
             case UNREGISTERED -> new IslandUnregisteredEvent(island, player, admin, location);
-            case RANGE_CHANGE -> new IslandProtectionRangeChangeEvent(island, player, admin, location, newRange, oldRange);
+            case RANGE_CHANGE ->
+                new IslandProtectionRangeChangeEvent(island, player, admin, location, newRange, oldRange);
             case PRECLEAR -> new IslandPreclearEvent(island, player, admin, location, oldIsland);
             case RESERVED -> new IslandReservedEvent(island, player, admin, location);
             case RANK_CHANGE -> new IslandRankChangeEvent(island, player, admin, location, oldRank, newRank);
@@ -377,10 +398,13 @@ public class IslandEvent extends IslandBaseEvent {
 
         /**
          * Builds and fires the deprecated and new IslandEvent.
-         * @return deprecated event. To obtain the new event use {@link IslandBaseEvent#getNewEvent()}
+         * 
+         * @return deprecated event. To obtain the new event use
+         *         {@link IslandBaseEvent#getNewEvent()}
          */
         public IslandBaseEvent build() {
-            // Call the generic event for developers who just want one event and use the Reason enum
+            // Call the generic event for developers who just want one event and use the
+            // Reason enum
             Bukkit.getPluginManager().callEvent(new IslandEvent(island, player, admin, location, reason));
             // Generate new event
             IslandBaseEvent newEvent = getEvent();

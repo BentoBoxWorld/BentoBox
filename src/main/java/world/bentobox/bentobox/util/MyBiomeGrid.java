@@ -11,6 +11,7 @@ import org.eclipse.jdt.annotation.NonNull;
 
 /**
  * A biome grid for generators
+ * 
  * @author tastybento
  *
  */
@@ -18,6 +19,7 @@ import org.eclipse.jdt.annotation.NonNull;
 public class MyBiomeGrid implements BiomeGrid {
     Map<Vector, Biome> map = new HashMap<>();
     private Biome defaultBiome;
+
     public MyBiomeGrid(Environment environment) {
         switch (environment) {
         case NETHER -> {
@@ -34,18 +36,22 @@ public class MyBiomeGrid implements BiomeGrid {
         }
 
     }
+
     @Override
     public @NonNull Biome getBiome(int x, int z) {
-        return map.getOrDefault(new Vector(x,0,z), defaultBiome);
+        return map.getOrDefault(new Vector(x, 0, z), defaultBiome);
     }
+
     @Override
     public void setBiome(int x, int z, @NonNull Biome bio) {
-        map.put(new Vector(x,0,z), bio);
+        map.put(new Vector(x, 0, z), bio);
     }
+
     @Override
     public @NonNull Biome getBiome(int x, int y, int z) {
-        return map.getOrDefault(new Vector(x,y,z), defaultBiome);
+        return map.getOrDefault(new Vector(x, y, z), defaultBiome);
     }
+
     @Override
     public void setBiome(int x, int y, int z, @NonNull Biome bio) {
         map.put(new Vector(x, y, z), bio);

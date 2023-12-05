@@ -44,28 +44,33 @@ public class MongoDBDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
     private final DatabaseConnector dbConnecter;
 
     /**
-     * Handles the connection to the database and creation of the initial database schema (tables) for
-     * the class that will be stored.
-     * @param plugin - plugin object
-     * @param type - the type of class to be stored in the database. Must inherit DataObject
+     * Handles the connection to the database and creation of the initial database
+     * schema (tables) for the class that will be stored.
+     * 
+     * @param plugin      - plugin object
+     * @param type        - the type of class to be stored in the database. Must
+     *                    inherit DataObject
      * @param dbConnecter - authentication details for the database
      */
     MongoDBDatabaseHandler(BentoBox plugin, Class<T> type, DatabaseConnector dbConnecter) {
         super(plugin, type, dbConnecter);
         this.dbConnecter = dbConnecter;
 
-        boolean connected = true; // if it is set to false, it will consider there has been an error upon connecting.
+        boolean connected = true; // if it is set to false, it will consider there has been an error upon
+                                  // connecting.
         try {
             // Connection to the database
             MongoDatabase database = (MongoDatabase) dbConnecter.createConnection(dataObject);
             if (database == null) {
-                plugin.logError("Could not connect to the database. Are the credentials in the config.yml file correct?");
+                plugin.logError(
+                        "Could not connect to the database. Are the credentials in the config.yml file correct?");
                 connected = false;
             } else {
                 // Check for old collections
                 String oldName = plugin.getSettings().getDatabasePrefix() + type.getCanonicalName();
                 String newName = getName(plugin, dataObject);
-                if (!oldName.equals((newName)) && collectionExists(database, oldName) && !collectionExists(database, newName)){
+                if (!oldName.equals((newName)) && collectionExists(database, oldName)
+                        && !collectionExists(database, newName)) {
                     collection = database.getCollection(oldName);
                     collection.renameCollection(new MongoNamespace(database.getName(), newName));
                 } else {
@@ -101,11 +106,9 @@ public class MongoDBDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
     }
 
     private String getName(BentoBox plugin, Class<T> type) {
-        return plugin.getSettings().getDatabasePrefix() +
-                (type.getAnnotation(Table.class) == null ?
-                        type.getCanonicalName()
-                        : type.getAnnotation(Table.class)
-                        .name());
+        return plugin.getSettings().getDatabasePrefix()
+                + (type.getAnnotation(Table.class) == null ? type.getCanonicalName()
+                        : type.getAnnotation(Table.class).name());
     }
 
     @Override
@@ -113,7 +116,8 @@ public class MongoDBDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
         List<T> list = new ArrayList<>();
         Gson gson = getGson();
         for (Document document : collection.find(new Document())) {
-            // The deprecated serialize option does not have a viable alternative without involving a huge amount of custom code
+            // The deprecated serialize option does not have a viable alternative without
+            // involving a huge amount of custom code
             String json = JSON.serialize(document);
             json = json.replaceFirst(MONGO_ID, UNIQUEID);
             try {
@@ -174,7 +178,8 @@ public class MongoDBDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
         try {
             collection.findOneAndDelete(new Document(MONGO_ID, uniqueId));
         } catch (Exception e) {
-            plugin.logError("Could not delete object " + getName(plugin, dataObject) + " " + uniqueId + " " + e.getMessage());
+            plugin.logError(
+                    "Could not delete object " + getName(plugin, dataObject) + " " + uniqueId + " " + e.getMessage());
         }
     }
 
@@ -189,7 +194,7 @@ public class MongoDBDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
             plugin.logError("This class is not a DataObject: " + instance.getClass().getName());
             return;
         }
-        deleteID(((DataObject)instance).getUniqueId());
+        deleteID(((DataObject) instance).getUniqueId());
     }
 
     @Override

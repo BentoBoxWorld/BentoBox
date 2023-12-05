@@ -54,7 +54,8 @@ public class DynmapHook extends Hook {
     public void registerMarkerSet(@NonNull GameModeAddon addon) {
         String name = addon.getDescription().getName();
         if (getMarkerSet(addon) == null) {
-            // From the javadoc: createMarkerSet(String id, String label, Set<MarkerIcon> allowedIcons, boolean persistent)
+            // From the javadoc: createMarkerSet(String id, String label, Set<MarkerIcon>
+            // allowedIcons, boolean persistent)
             MarkerSet set = markerAPI.createMarkerSet(name.toLowerCase(Locale.ENGLISH) + ".markers", name, null, true);
             markerSets.put(addon, set);
         }
@@ -76,6 +77,7 @@ public class DynmapHook extends Hook {
 
     /**
      * Returns the MarkerAPI instance. Not null.
+     * 
      * @return the MarkerAPI instance.
      */
     @NonNull

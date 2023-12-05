@@ -17,8 +17,9 @@ import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.user.User;
 
 /**
- * BentoBox Delayed Teleport Command
- * Adds ability to require the player stays still for a period of time before a command is executed
+ * BentoBox Delayed Teleport Command Adds ability to require the player stays
+ * still for a period of time before a command is executed
+ * 
  * @author tastybento
  */
 public abstract class DelayedTeleportCommand extends CompositeCommand implements Listener {
@@ -32,7 +33,8 @@ public abstract class DelayedTeleportCommand extends CompositeCommand implements
     public void onPlayerMove(PlayerMoveEvent e) {
         UUID uuid = e.getPlayer().getUniqueId();
         // Only check x,y,z
-        if (toBeMonitored.containsKey(uuid) && !e.getTo().toVector().equals(toBeMonitored.get(uuid).location().toVector())) {
+        if (toBeMonitored.containsKey(uuid)
+                && !e.getTo().toVector().equals(toBeMonitored.get(uuid).location().toVector())) {
             moved(uuid);
         }
     }
@@ -41,7 +43,8 @@ public abstract class DelayedTeleportCommand extends CompositeCommand implements
         // Player moved
         toBeMonitored.get(uuid).task().cancel();
         toBeMonitored.remove(uuid);
-        // Player has another outstanding confirmation request that will now be cancelled
+        // Player has another outstanding confirmation request that will now be
+        // cancelled
         User.getInstance(uuid).notify("commands.delay.moved-so-command-cancelled");
     }
 
@@ -53,11 +56,11 @@ public abstract class DelayedTeleportCommand extends CompositeCommand implements
         }
     }
 
-
     /**
      * Top level command
-     * @param addon - addon creating the command
-     * @param label - string for this command
+     * 
+     * @param addon   - addon creating the command
+     * @param label   - string for this command
      * @param aliases - aliases
      */
     protected DelayedTeleportCommand(Addon addon, String label, String... aliases) {
@@ -66,20 +69,22 @@ public abstract class DelayedTeleportCommand extends CompositeCommand implements
     }
 
     /**
-     * Command to register a command from an addon under a parent command (that could be from another addon)
-     * @param addon - this command's addon
-     * @param parent - parent command
+     * Command to register a command from an addon under a parent command (that
+     * could be from another addon)
+     * 
+     * @param addon   - this command's addon
+     * @param parent  - parent command
      * @param aliases - aliases for this command
      */
-    protected DelayedTeleportCommand(Addon addon, CompositeCommand parent, String label, String... aliases ) {
+    protected DelayedTeleportCommand(Addon addon, CompositeCommand parent, String label, String... aliases) {
         super(addon, parent, label, aliases);
         Bukkit.getPluginManager().registerEvents(this, getPlugin());
     }
 
     /**
      *
-     * @param parent - parent command
-     * @param label - command label
+     * @param parent  - parent command
+     * @param label   - command label
      * @param aliases - command aliases
      */
     protected DelayedTeleportCommand(CompositeCommand parent, String label, String... aliases) {
@@ -89,12 +94,15 @@ public abstract class DelayedTeleportCommand extends CompositeCommand implements
 
     /**
      * Tells user to stand still for a period of time before teleporting
-     * @param user User to tell
-     * @param message Optional message to send to the user to give them a bit more context. It must already be translated.
+     * 
+     * @param user      User to tell
+     * @param message   Optional message to send to the user to give them a bit more
+     *                  context. It must already be translated.
      * @param confirmed Runnable to be executed if successfully delayed.
      */
     public void delayCommand(User user, String message, Runnable confirmed) {
-        if (getSettings().getDelayTime() < 1 || user.isOp() || user.hasPermission(getPermissionPrefix() + "mod.bypasscooldowns")
+        if (getSettings().getDelayTime() < 1 || user.isOp()
+                || user.hasPermission(getPermissionPrefix() + "mod.bypasscooldowns")
                 || user.hasPermission(getPermissionPrefix() + "mod.bypassdelays")) {
             Bukkit.getScheduler().runTask(getPlugin(), confirmed);
             return;
@@ -105,7 +113,8 @@ public abstract class DelayedTeleportCommand extends CompositeCommand implements
             // A double request - clear out the old one
             toBeMonitored.get(uuid).task().cancel();
             toBeMonitored.remove(uuid);
-            // Player has another outstanding confirmation request that will now be cancelled
+            // Player has another outstanding confirmation request that will now be
+            // cancelled
             user.sendMessage("commands.delay.previous-command-cancelled");
         }
         // Send user the context message if it is not empty
@@ -126,7 +135,8 @@ public abstract class DelayedTeleportCommand extends CompositeCommand implements
 
     /**
      * Tells user to stand still for a period of time before teleporting
-     * @param user User to monitor.
+     * 
+     * @param user    User to monitor.
      * @param command Runnable to be executed if player does not move.
      */
     public void delayCommand(User user, Runnable command) {
@@ -137,6 +147,7 @@ public abstract class DelayedTeleportCommand extends CompositeCommand implements
      * Holds the data to run once the confirmation is given
      *
      */
-    private record DelayedCommand(Runnable runnable, BukkitTask task, Location location) {}
+    private record DelayedCommand(Runnable runnable, BukkitTask task, Location location) {
+    }
 
 }

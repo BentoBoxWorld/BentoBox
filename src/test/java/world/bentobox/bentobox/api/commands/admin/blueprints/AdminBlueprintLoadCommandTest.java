@@ -47,7 +47,7 @@ import world.bentobox.bentobox.managers.LocalesManager;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, User.class })
+@PrepareForTest({ Bukkit.class, BentoBox.class, User.class })
 public class AdminBlueprintLoadCommandTest {
 
     @Mock
@@ -114,7 +114,6 @@ public class AdminBlueprintLoadCommandTest {
 
         PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
 
-
         abcc = new AdminBlueprintLoadCommand(ac);
     }
 
@@ -126,15 +125,14 @@ public class AdminBlueprintLoadCommandTest {
         Mockito.framework().clearInlineMocks();
 
         if (blueprintsFolder.exists()) {
-            Files.walk(blueprintsFolder.toPath())
-            .sorted(Comparator.reverseOrder())
-            .map(Path::toFile)
-            .forEach(File::delete);
+            Files.walk(blueprintsFolder.toPath()).sorted(Comparator.reverseOrder()).map(Path::toFile)
+                    .forEach(File::delete);
         }
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintLoadCommand#AdminBlueprintLoadCommand(world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintCommand)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintLoadCommand#AdminBlueprintLoadCommand(world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintCommand)}.
      */
     @Test
     public void testAdminBlueprintLoadCommand() {
@@ -142,7 +140,8 @@ public class AdminBlueprintLoadCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintLoadCommand#setup()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintLoadCommand#setup()}.
      */
     @Test
     public void testSetup() {
@@ -153,7 +152,8 @@ public class AdminBlueprintLoadCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintLoadCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintLoadCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testExecuteUserStringListOfStringHelp() {
@@ -162,7 +162,8 @@ public class AdminBlueprintLoadCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintLoadCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintLoadCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testExecuteUserStringListOfStringNoLoad() {
@@ -171,7 +172,8 @@ public class AdminBlueprintLoadCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintLoadCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintLoadCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testExecuteUserStringListOfStringSuccessCaps() {
@@ -180,7 +182,8 @@ public class AdminBlueprintLoadCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintLoadCommand#tabComplete(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintLoadCommand#tabComplete(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testTabCompleteUserStringListOfString() {
@@ -190,7 +193,8 @@ public class AdminBlueprintLoadCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintLoadCommand#tabComplete(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintLoadCommand#tabComplete(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testTabCompleteUserStringListOfStringIsland() {

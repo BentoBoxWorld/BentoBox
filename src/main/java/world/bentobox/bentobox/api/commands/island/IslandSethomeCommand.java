@@ -13,7 +13,6 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.RanksManager;
 
-
 public class IslandSethomeCommand extends ConfirmableCommand {
 
     private @Nullable Island island;
@@ -46,7 +45,8 @@ public class IslandSethomeCommand extends ConfirmableCommand {
 
         int rank = Objects.requireNonNull(island).getRank(user);
         if (rank < island.getRankCommand(getUsage())) {
-            user.sendMessage("general.errors.insufficient-rank", TextVariables.RANK, user.getTranslation(getPlugin().getRanksManager().getRank(rank)));
+            user.sendMessage("general.errors.insufficient-rank", TextVariables.RANK,
+                    user.getTranslation(getPlugin().getRanksManager().getRank(rank)));
             return false;
         }
 
@@ -56,8 +56,9 @@ public class IslandSethomeCommand extends ConfirmableCommand {
         if (getIslands().getNumberOfHomesIfAdded(island, String.join(" ", args)) > maxHomes) {
             user.sendMessage("commands.island.sethome.too-many-homes", TextVariables.NUMBER, String.valueOf(maxHomes));
             user.sendMessage("commands.island.sethome.homes-are");
-            getIslands().getIslands(getWorld(), user).forEach(is ->
-            is.getHomes().keySet().stream().filter(s -> !s.isEmpty()).forEach(s -> user.sendMessage("commands.island.sethome.home-list-syntax", TextVariables.NAME, s)));
+            getIslands().getIslands(getWorld(), user)
+                    .forEach(is -> is.getHomes().keySet().stream().filter(s -> !s.isEmpty()).forEach(
+                            s -> user.sendMessage("commands.island.sethome.home-list-syntax", TextVariables.NAME, s)));
             return false;
         }
         return true;
@@ -77,7 +78,8 @@ public class IslandSethomeCommand extends ConfirmableCommand {
 
             // Check if a confirmation is required
             if (ws.isRequireConfirmationToSetHomeInNether()) {
-                askConfirmation(user, user.getTranslation("commands.island.sethome.nether.confirmation"), () -> doSetHome(user, number));
+                askConfirmation(user, user.getTranslation("commands.island.sethome.nether.confirmation"),
+                        () -> doSetHome(user, number));
             } else {
                 doSetHome(user, number);
             }
@@ -90,7 +92,8 @@ public class IslandSethomeCommand extends ConfirmableCommand {
 
             // Check if a confirmation is required
             if (ws.isRequireConfirmationToSetHomeInTheEnd()) {
-                askConfirmation(user, user.getTranslation("commands.island.sethome.the-end.confirmation"), () -> doSetHome(user, number));
+                askConfirmation(user, user.getTranslation("commands.island.sethome.the-end.confirmation"),
+                        () -> doSetHome(user, number));
             } else {
                 doSetHome(user, number);
             }
@@ -106,10 +109,8 @@ public class IslandSethomeCommand extends ConfirmableCommand {
         user.sendMessage("commands.island.sethome.home-set");
         if (island.getHomes().size() > 1) {
             user.sendMessage("commands.island.sethome.homes-are");
-            island
-            .getHomes()
-            .keySet()
-            .stream().filter(s -> !s.isEmpty()).forEach(s -> user.sendMessage("commands.island.sethome.home-list-syntax", TextVariables.NAME, s));
+            island.getHomes().keySet().stream().filter(s -> !s.isEmpty())
+                    .forEach(s -> user.sendMessage("commands.island.sethome.home-list-syntax", TextVariables.NAME, s));
         }
     }
 }

@@ -31,9 +31,11 @@ public class JSONDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
      * Constructor
      *
      * @param plugin            BentoBox plugin
-     * @param type              The type of the objects that should be created and filled with
-     *                          values from the database or inserted into the database
-     * @param databaseConnector Contains the settings to create a connection to the database
+     * @param type              The type of the objects that should be created and
+     *                          filled with values from the database or inserted
+     *                          into the database
+     * @param databaseConnector Contains the settings to create a connection to the
+     *                          database
      */
     JSONDatabaseHandler(BentoBox plugin, Class<T> type, DatabaseConnector databaseConnector) {
         super(plugin, type, databaseConnector);
@@ -56,8 +58,9 @@ public class JSONDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
             tableFolder.mkdirs();
         }
         // Load each object from the file system, filtered, non-null
-        for (File file: Objects.requireNonNull(tableFolder.listFiles((dir, name) ->  name.toLowerCase(Locale.ENGLISH).endsWith(JSON)))) {
-            try (FileReader reader = new FileReader(file)){
+        for (File file : Objects.requireNonNull(
+                tableFolder.listFiles((dir, name) -> name.toLowerCase(Locale.ENGLISH).endsWith(JSON)))) {
+            try (FileReader reader = new FileReader(file)) {
                 T object = getGson().fromJson(reader, dataObject);
                 if (object != null) {
                     list.add(object);
@@ -77,7 +80,8 @@ public class JSONDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
 
     @Override
     public T loadObject(@NonNull String uniqueId) {
-        // Objects are loaded from a folder named after the simple name of the class being stored
+        // Objects are loaded from a folder named after the simple name of the class
+        // being stored
         String path = DATABASE_FOLDER_NAME + File.separator + dataObject.getSimpleName();
 
         String fileName = path + File.separator + uniqueId;
@@ -98,7 +102,8 @@ public class JSONDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
     }
 
     @Override
-    public CompletableFuture<Boolean> saveObject(T instance) throws IntrospectionException, IllegalAccessException, InvocationTargetException {
+    public CompletableFuture<Boolean> saveObject(T instance)
+            throws IntrospectionException, IllegalAccessException, InvocationTargetException {
         CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
         // Null check
         if (instance == null) {
@@ -133,7 +138,8 @@ public class JSONDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
         String toStore = getGson().toJson(instance);
         if (plugin.isEnabled()) {
             // Async
-            processQueue.add(() -> store(completableFuture, toStore, file, tableFolder, backupTableFolder, fileName, true));
+            processQueue
+                    .add(() -> store(completableFuture, toStore, file, tableFolder, backupTableFolder, fileName, true));
         } else {
             // Sync
             store(completableFuture, toStore, file, tableFolder, backupTableFolder, fileName, false);
@@ -141,16 +147,19 @@ public class JSONDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
         return completableFuture;
     }
 
-    private void store(CompletableFuture<Boolean> completableFuture, String toStore, File file, File tableFolder, File backupTableFolder, String fileName, boolean async) {
+    private void store(CompletableFuture<Boolean> completableFuture, String toStore, File file, File tableFolder,
+            File backupTableFolder, String fileName, boolean async) {
         // Do not save anything if plug is disabled and this was an async request
-        if (async && !plugin.isEnabled()) return;
+        if (async && !plugin.isEnabled())
+            return;
         File tmpFile = new File(backupTableFolder, fileName);
         if (file.exists()) {
             // Make a backup of file
             try {
                 Files.copy(file.toPath(), tmpFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
             } catch (IOException e) {
-                plugin.logError("Could not backup JSON file: " + tableFolder.getName() + " " + fileName + " " + e.getMessage());
+                plugin.logError(
+                        "Could not backup JSON file: " + tableFolder.getName() + " " + fileName + " " + e.getMessage());
             }
         }
 
@@ -158,13 +167,18 @@ public class JSONDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
             fileWriter.write(toStore);
             completableFuture.complete(true);
         } catch (IOException e) {
-            plugin.logError("Could not save JSON file: " + tableFolder.getName() + " " + fileName + " " + e.getMessage());
+            plugin.logError(
+                    "Could not save JSON file: " + tableFolder.getName() + " " + fileName + " " + e.getMessage());
             completableFuture.complete(false);
         }
     }
 
-    /* (non-Javadoc)
-     * @see world.bentobox.bentobox.database.AbstractDatabaseHandler#deleteID(java.lang.String)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * world.bentobox.bentobox.database.AbstractDatabaseHandler#deleteID(java.lang.
+     * String)
      */
     @Override
     public void deleteID(String uniqueId) {
@@ -176,7 +190,8 @@ public class JSONDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
     }
 
     private void delete(String uniqueId) {
-        // The filename of the JSON file is the value of uniqueId field plus .json. Sometimes the .json is already appended.
+        // The filename of the JSON file is the value of uniqueId field plus .json.
+        // Sometimes the .json is already appended.
         if (!uniqueId.endsWith(JSON)) {
             uniqueId = uniqueId + JSON;
         }

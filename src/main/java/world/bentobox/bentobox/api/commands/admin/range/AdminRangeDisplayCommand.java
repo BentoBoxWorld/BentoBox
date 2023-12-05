@@ -40,7 +40,8 @@ public class AdminRangeDisplayCommand extends CompositeCommand {
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        // According to the label used to execute the command, there is a different behaviour
+        // According to the label used to execute the command, there is a different
+        // behaviour
         // - display : toggle on/off
         // - show : only set on - and send "error" if already on
         // - hide : only set off - same if already off
@@ -72,15 +73,18 @@ public class AdminRangeDisplayCommand extends CompositeCommand {
 
             getIslands().getIslandAt(user.getLocation()).ifPresent(island -> {
                 // Draw the island protected area
-                drawZone(user, Particle.BLOCK_MARKER, Material.BARRIER.createBlockData(), island, island.getProtectionRange());
+                drawZone(user, Particle.BLOCK_MARKER, Material.BARRIER.createBlockData(), island,
+                        island.getProtectionRange());
 
                 // Draw the default protected area if island protected zone is different
                 if (island.getProtectionRange() != getPlugin().getIWM().getIslandProtectionRange(getWorld())) {
-                    drawZone(user, Particle.VILLAGER_HAPPY, null, island, getPlugin().getIWM().getIslandProtectionRange(getWorld()));
+                    drawZone(user, Particle.VILLAGER_HAPPY, null, island,
+                            getPlugin().getIWM().getIslandProtectionRange(getWorld()));
                 }
 
                 // Draw the island area
-                drawZone(user, Particle.REDSTONE, new Particle.DustOptions(Color.GRAY, 1.0F), island, island.getRange());
+                drawZone(user, Particle.REDSTONE, new Particle.DustOptions(Color.GRAY, 1.0F), island,
+                        island.getRange());
             });
         }, 20, 30));
     }
@@ -97,12 +101,16 @@ public class AdminRangeDisplayCommand extends CompositeCommand {
         int playerY = user.getPlayer().getLocation().getBlockY() + 1;
 
         // Draw 3 "stages" (one line below, at and above player's y coordinate)
-        for (int stage = -1 ; stage <= 1 ; stage++) {
-            for (int i = -range ; i <= range ; i++) {
-                user.spawnParticle(particle, dustOptions, (double)center.getBlockX() + i, (double)playerY + stage, (double)center.getBlockZ() + range);
-                user.spawnParticle(particle, dustOptions, (double)center.getBlockX() + i, (double)playerY + stage, (double)center.getBlockZ() - range);
-                user.spawnParticle(particle, dustOptions, (double)center.getBlockX() + range, (double)playerY + stage, (double)center.getBlockZ() + i);
-                user.spawnParticle(particle, dustOptions, (double)center.getBlockX() - range, (double)playerY + stage, (double)center.getBlockZ() + i);
+        for (int stage = -1; stage <= 1; stage++) {
+            for (int i = -range; i <= range; i++) {
+                user.spawnParticle(particle, dustOptions, (double) center.getBlockX() + i, (double) playerY + stage,
+                        (double) center.getBlockZ() + range);
+                user.spawnParticle(particle, dustOptions, (double) center.getBlockX() + i, (double) playerY + stage,
+                        (double) center.getBlockZ() - range);
+                user.spawnParticle(particle, dustOptions, (double) center.getBlockX() + range, (double) playerY + stage,
+                        (double) center.getBlockZ() + i);
+                user.spawnParticle(particle, dustOptions, (double) center.getBlockX() - range, (double) playerY + stage,
+                        (double) center.getBlockZ() + i);
             }
         }
     }

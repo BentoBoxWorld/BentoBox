@@ -21,7 +21,7 @@ public class DescriptionSuccessPrompt extends MessagePrompt {
 
     /**
      * @param addon game mode addon
-     * @param bb blueprint bundle
+     * @param bb    blueprint bundle
      */
     public DescriptionSuccessPrompt(GameModeAddon addon, BlueprintBundle bb) {
         this.addon = addon;
@@ -30,9 +30,9 @@ public class DescriptionSuccessPrompt extends MessagePrompt {
 
     @Override
     public @NonNull String getPromptText(ConversationContext context) {
-        User user = User.getInstance((Player)context.getForWhom());
+        User user = User.getInstance((Player) context.getForWhom());
         @SuppressWarnings("unchecked")
-        List<String> description = (List<String>)context.getSessionData("description");
+        List<String> description = (List<String>) context.getSessionData("description");
         if (description != null) {
             bb.setDescription(description);
             BentoBox.getInstance().getBlueprintsManager().addBlueprintBundle(addon, bb);

@@ -25,7 +25,7 @@ public class AdminPurgeStopCommand extends CompositeCommand {
             showHelp(this, user);
             return false;
         }
-        AdminPurgeCommand parentCommand = ((AdminPurgeCommand)getParent());
+        AdminPurgeCommand parentCommand = ((AdminPurgeCommand) getParent());
         if (parentCommand.isInPurge()) {
             user.sendMessage("commands.admin.purge.stop.stopping");
             parentCommand.stop();

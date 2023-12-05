@@ -52,7 +52,7 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, Util.class})
+@PrepareForTest({ Bukkit.class, BentoBox.class, Util.class })
 public class IslandInfoCommandTest extends RanksManagerBeforeClassTest {
 
     @Mock
@@ -104,25 +104,29 @@ public class IslandInfoCommandTest extends RanksManagerBeforeClassTest {
         when(user.getWorld()).thenReturn(world);
         when(user.getPlayer()).thenReturn(player);
         when(user.isPlayer()).thenReturn(true);
-        //user = User.getInstance(player);
+        // user = User.getInstance(player);
         // Set the User class plugin as this one
         User.setPlugin(plugin);
 
         // Locales
         LocalesManager lm = mock(LocalesManager.class);
-        when(lm.get(Mockito.any(), Mockito.any())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
+        when(lm.get(Mockito.any(), Mockito.any()))
+                .thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
         when(plugin.getLocalesManager()).thenReturn(lm);
         // Return the same string
-        when(phm.replacePlaceholders(any(), anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
+        when(phm.replacePlaceholders(any(), anyString()))
+                .thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
         when(plugin.getPlaceholdersManager()).thenReturn(phm);
         // Translate
-        when(user.getTranslation(anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
-        when(user.getTranslation(anyString(), anyString(), anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
+        when(user.getTranslation(anyString()))
+                .thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
+        when(user.getTranslation(anyString(), anyString(), anyString()))
+                .thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
 
         // Island manager
         island = new Island(location, uuid, 100);
         island.setRange(400);
-        when(location.toVector()).thenReturn(new Vector(1,2,3));
+        when(location.toVector()).thenReturn(new Vector(1, 2, 3));
         when(plugin.getIslands()).thenReturn(im);
         Optional<Island> optionalIsland = Optional.of(island);
         when(im.getIslandAt(any())).thenReturn(optionalIsland);
@@ -132,13 +136,13 @@ public class IslandInfoCommandTest extends RanksManagerBeforeClassTest {
         when(plugin.getPlayers()).thenReturn(pm);
         when(pm.getUUID(any())).thenReturn(uuid);
 
-
         // Command
         iic = new IslandInfoCommand(ic);
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandInfoCommand#setup()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.island.IslandInfoCommand#setup()}.
      */
     @Test
     public void testSetup() {
@@ -149,7 +153,8 @@ public class IslandInfoCommandTest extends RanksManagerBeforeClassTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandInfoCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.island.IslandInfoCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testExecuteUserStringListOfStringTooManyArgs() {
@@ -158,7 +163,8 @@ public class IslandInfoCommandTest extends RanksManagerBeforeClassTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandInfoCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.island.IslandInfoCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testExecuteUserStringListOfStringNoArgsConsole() {
@@ -179,7 +185,8 @@ public class IslandInfoCommandTest extends RanksManagerBeforeClassTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandInfoCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.island.IslandInfoCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testExecuteUserStringListOfStringNoArgsSuccess() {
@@ -196,7 +203,8 @@ public class IslandInfoCommandTest extends RanksManagerBeforeClassTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandInfoCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.island.IslandInfoCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testExecuteUserStringListOfStringArgsSuccess() {

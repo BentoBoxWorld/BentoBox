@@ -54,7 +54,8 @@ public class IslandGoCommand extends DelayedTeleportCommand {
         // Prevent command if player is falling and its not allowed
         if ((getIWM().inWorld(user.getWorld()) && Flags.PREVENT_TELEPORT_WHEN_FALLING.isSetForWorld(user.getWorld()))
                 && user.getPlayer().getFallDistance() > 0) {
-            // We're sending the "hint" to the player to tell them they cannot teleport while falling.
+            // We're sending the "hint" to the player to tell them they cannot teleport
+            // while falling.
             user.sendMessage(Flags.PREVENT_TELEPORT_WHEN_FALLING.getHintReference());
             return false;
         }
@@ -71,23 +72,22 @@ public class IslandGoCommand extends DelayedTeleportCommand {
                 // Failed home name check
                 user.sendMessage("commands.island.go.unknown-home");
                 user.sendMessage("commands.island.sethome.homes-are");
-                names.keySet().forEach(n -> user.sendMessage("commands.island.sethome.home-list-syntax", TextVariables.NAME, n));
+                names.keySet().forEach(
+                        n -> user.sendMessage("commands.island.sethome.home-list-syntax", TextVariables.NAME, n));
                 return false;
             } else {
                 IslandInfo info = names.get(name);
                 getIslands().setPrimaryIsland(user.getUniqueId(), info.island);
                 if (info.islandName) {
-                    this.delayCommand(user, () -> new SafeSpotTeleport.Builder(getPlugin())
-                            .entity(user.getPlayer())
-                            .location(getIslands().getHomeLocation(info.island))
-                            .thenRun(() -> user.sendMessage("general.success"))
-                            .build());
+                    this.delayCommand(user,
+                            () -> new SafeSpotTeleport.Builder(getPlugin()).entity(user.getPlayer())
+                                    .location(getIslands().getHomeLocation(info.island))
+                                    .thenRun(() -> user.sendMessage("general.success")).build());
                 } else {
-                    this.delayCommand(user, () -> new SafeSpotTeleport.Builder(getPlugin())
-                            .entity(user.getPlayer())
-                            .location(getIslands().getHomeLocation(info.island, name))
-                            .thenRun(() -> user.sendMessage("general.success"))
-                            .build());
+                    this.delayCommand(user,
+                            () -> new SafeSpotTeleport.Builder(getPlugin()).entity(user.getPlayer())
+                                    .location(getIslands().getHomeLocation(info.island, name))
+                                    .thenRun(() -> user.sendMessage("general.success")).build());
                 }
             }
         } else {
@@ -100,23 +100,24 @@ public class IslandGoCommand extends DelayedTeleportCommand {
         for (Island island : islands) {
             if (island.isReserved()) {
                 // Send player to create an island
-                getParent().getSubCommand("create").ifPresent(createCmd -> createCmd.call(user, createCmd.getLabel(), Collections.emptyList()));
+                getParent().getSubCommand("create")
+                        .ifPresent(createCmd -> createCmd.call(user, createCmd.getLabel(), Collections.emptyList()));
                 return true;
             }
         }
         return false;
     }
 
-
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
-        String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
+        String lastArg = !args.isEmpty() ? args.get(args.size() - 1) : "";
 
         return Optional.of(Util.tabLimit(new ArrayList<>(getNameIslandMap(user).keySet()), lastArg));
 
     }
 
-    private record IslandInfo(Island island, boolean islandName) {}
+    private record IslandInfo(Island island, boolean islandName) {
+    }
 
     private Map<String, IslandInfo> getNameIslandMap(User user) {
         Map<String, IslandInfo> islandMap = new HashMap<>();
@@ -128,7 +129,8 @@ public class IslandGoCommand extends DelayedTeleportCommand {
                 islandMap.put(island.getName(), new IslandInfo(island, true));
             } else {
                 // Name has not been set
-                String text = user.getTranslation("protection.flags.ENTER_EXIT_MESSAGES.island", TextVariables.NAME, user.getName(), TextVariables.DISPLAY_NAME, user.getDisplayName()) + " " + index;
+                String text = user.getTranslation("protection.flags.ENTER_EXIT_MESSAGES.island", TextVariables.NAME,
+                        user.getName(), TextVariables.DISPLAY_NAME, user.getDisplayName()) + " " + index;
                 islandMap.put(text, new IslandInfo(island, true));
             }
             // Add homes. Homes do not need an island specified

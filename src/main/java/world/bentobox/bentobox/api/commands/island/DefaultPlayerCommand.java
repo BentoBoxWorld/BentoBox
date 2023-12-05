@@ -10,7 +10,9 @@ import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 
 /**
- * This is default player command class. It contains all necessary parts for main /[gamemode] command.
+ * This is default player command class. It contains all necessary parts for
+ * main /[gamemode] command.
+ * 
  * @since 1.13.0
  * @author BONNe
  */
@@ -19,18 +21,18 @@ public abstract class DefaultPlayerCommand extends CompositeCommand {
     /**
      * This is the top-level command constructor for commands that have no parent.
      *
-     * @param addon   - GameMode addon
+     * @param addon - GameMode addon
      */
     protected DefaultPlayerCommand(GameModeAddon addon) {
         // Register command with alias from config.
         // The first command listed is the "label" and the others are aliases.
-        super(addon,
-                addon.getWorldSettings().getPlayerCommandAliases().split(" ")[0],
+        super(addon, addon.getWorldSettings().getPlayerCommandAliases().split(" ")[0],
                 addon.getWorldSettings().getPlayerCommandAliases().split(" "));
     }
 
     /**
      * Setups anything that is necessary for default main user command.
+     * 
      * @see world.bentobox.bentobox.api.commands.BentoBoxCommand#setup()
      */
     @Override
@@ -82,10 +84,11 @@ public abstract class DefaultPlayerCommand extends CompositeCommand {
         new IslandHomesCommand(this);
     }
 
-
     /**
      * Defines what will be executed when this command is run.
-     * @see world.bentobox.bentobox.api.commands.BentoBoxCommand#execute(User, String, List)
+     * 
+     * @see world.bentobox.bentobox.api.commands.BentoBoxCommand#execute(User,
+     *      String, List)
      */
     @Override
     public boolean execute(User user, String label, List<String> args) {
@@ -101,10 +104,12 @@ public abstract class DefaultPlayerCommand extends CompositeCommand {
         // Check if user has an island.
         if (this.getIslands().getIsland(this.getWorld(), user.getUniqueId()) != null) {
             // Default command if user has an island.
-            return runCommand(user, label, this.<GameModeAddon>getAddon().getWorldSettings().getDefaultPlayerAction(), "go");
+            return runCommand(user, label, this.<GameModeAddon>getAddon().getWorldSettings().getDefaultPlayerAction(),
+                    "go");
         } else {
             // Default command if user does not have an island.
-            return runCommand(user, label, this.<GameModeAddon>getAddon().getWorldSettings().getDefaultNewPlayerAction(), "create");
+            return runCommand(user, label,
+                    this.<GameModeAddon>getAddon().getWorldSettings().getDefaultNewPlayerAction(), "create");
         }
     }
 
@@ -114,11 +119,11 @@ public abstract class DefaultPlayerCommand extends CompositeCommand {
         }
         // Call sub command or perform command if it does not exist
         if (this.getSubCommand(command).isPresent()) {
-            return this.getSubCommand(command).
-                    map(c -> c.call(user, c.getLabel(), Collections.emptyList())).
-                    orElse(false);
+            return this.getSubCommand(command).map(c -> c.call(user, c.getLabel(), Collections.emptyList()))
+                    .orElse(false);
         } else {
-            // Command is not a known sub command - try to perform it directly - some plugins trap these commands, like Deluxe menus
+            // Command is not a known sub command - try to perform it directly - some
+            // plugins trap these commands, like Deluxe menus
             if (command.startsWith("/")) {
                 // If commands starts with Slash, don't append the prefix
                 return user.performCommand(command.substring(1));

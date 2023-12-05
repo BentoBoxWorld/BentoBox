@@ -17,6 +17,7 @@ public interface DatabaseConnector {
 
     /**
      * Close the database connection
+     * 
      * @param type of class being closed
      */
     void closeConnection(Class<?> type);
@@ -46,4 +47,3 @@ public interface DatabaseConnector {
      */
     boolean uniqueIdExists(String tableName, String key);
 }
-

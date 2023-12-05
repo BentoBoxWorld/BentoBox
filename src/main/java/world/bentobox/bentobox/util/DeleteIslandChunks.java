@@ -58,13 +58,10 @@ public class DeleteIslandChunks {
 
     private void regenerateChunks() {
         CompletableFuture<Void> all = plugin.getIWM().getAddon(di.getWorld())
-                .map(gm -> new CompletableFuture[]{
-                        processWorld(gm, di.getWorld()), // Overworld
+                .map(gm -> new CompletableFuture[] { processWorld(gm, di.getWorld()), // Overworld
                         processWorld(gm, netherWorld), // Nether
                         processWorld(gm, endWorld) // End
-                })
-                .map(CompletableFuture::allOf)
-                .orElseGet(() -> CompletableFuture.completedFuture(null));
+                }).map(CompletableFuture::allOf).orElseGet(() -> CompletableFuture.completedFuture(null));
         new BukkitRunnable() {
             @Override
             public void run() {

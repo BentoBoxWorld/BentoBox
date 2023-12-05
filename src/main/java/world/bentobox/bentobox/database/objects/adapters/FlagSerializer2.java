@@ -25,11 +25,13 @@ public class FlagSerializer2 implements AdapterInterface<Map<Flag, Integer>, Map
         // For YAML
         if (object instanceof MemorySection section) {
             for (String key : section.getKeys(false)) {
-                BentoBox.getInstance().getFlagsManager().getFlag(key).ifPresent(flag -> result.put(flag, section.getBoolean(key) ? 0 : -1));
+                BentoBox.getInstance().getFlagsManager().getFlag(key)
+                        .ifPresent(flag -> result.put(flag, section.getBoolean(key) ? 0 : -1));
             }
         } else {
-            for (Entry<String, Boolean> en : ((Map<String, Boolean>)object).entrySet()) {
-                BentoBox.getInstance().getFlagsManager().getFlag(en.getKey()).ifPresent(flag -> result.put(flag, Boolean.TRUE.equals(en.getValue()) ? 0 : -1));
+            for (Entry<String, Boolean> en : ((Map<String, Boolean>) object).entrySet()) {
+                BentoBox.getInstance().getFlagsManager().getFlag(en.getKey())
+                        .ifPresent(flag -> result.put(flag, Boolean.TRUE.equals(en.getValue()) ? 0 : -1));
             }
         }
         return result;
@@ -42,8 +44,8 @@ public class FlagSerializer2 implements AdapterInterface<Map<Flag, Integer>, Map
         if (object == null) {
             return result;
         }
-        Map<Flag, Integer> flags = (Map<Flag, Integer>)object;
-        for (Entry<Flag, Integer> en: flags.entrySet()) {
+        Map<Flag, Integer> flags = (Map<Flag, Integer>) object;
+        for (Entry<Flag, Integer> en : flags.entrySet()) {
             result.put(en.getKey().getID(), en.getValue() >= 0);
         }
         return result;

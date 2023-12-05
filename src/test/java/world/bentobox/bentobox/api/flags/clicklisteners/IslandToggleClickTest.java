@@ -41,7 +41,7 @@ import world.bentobox.bentobox.panels.settings.SettingsTab;
 import world.bentobox.bentobox.util.Util;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, Util.class })
+@PrepareForTest({ Bukkit.class, BentoBox.class, Util.class })
 public class IslandToggleClickTest {
 
     @Mock

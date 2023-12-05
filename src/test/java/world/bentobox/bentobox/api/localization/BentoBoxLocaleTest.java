@@ -31,11 +31,12 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 /**
  * Tests BentoBoxLocale class
+ * 
  * @author tastybento
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( { Bukkit.class })
+@PrepareForTest({ Bukkit.class })
 public class BentoBoxLocaleTest {
 
     private BentoBoxLocale localeObject;
@@ -58,7 +59,7 @@ public class BentoBoxLocaleTest {
         List<String> authors = new ArrayList<>();
         authors.add("tastybento");
         authors.add("tastybento2");
-        config.set("meta.authors", authors );
+        config.set("meta.authors", authors);
         config.set("reference.to.test", "test result");
         localeObject = new BentoBoxLocale(locale, config);
     }
@@ -69,7 +70,8 @@ public class BentoBoxLocaleTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.localization.BentoBoxLocale#get(java.lang.String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.localization.BentoBoxLocale#get(java.lang.String)}.
      */
     @Test
     public void testGet() {
@@ -78,7 +80,8 @@ public class BentoBoxLocaleTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.localization.BentoBoxLocale#getLanguage()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.localization.BentoBoxLocale#getLanguage()}.
      */
     @Test
     public void testGetLanguage() {
@@ -87,7 +90,8 @@ public class BentoBoxLocaleTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.localization.BentoBoxLocale#getCountry()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.localization.BentoBoxLocale#getCountry()}.
      */
     @Test
     public void testGetCountry() {
@@ -96,7 +100,8 @@ public class BentoBoxLocaleTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.localization.BentoBoxLocale#toLanguageTag()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.localization.BentoBoxLocale#toLanguageTag()}.
      */
     @Test
     public void testToLanguageTag() {
@@ -105,7 +110,8 @@ public class BentoBoxLocaleTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.localization.BentoBoxLocale#getBanner()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.localization.BentoBoxLocale#getBanner()}.
      */
     @Test
     public void testGetBanner() {
@@ -116,7 +122,8 @@ public class BentoBoxLocaleTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.localization.BentoBoxLocale#getAuthors()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.localization.BentoBoxLocale#getAuthors()}.
      */
     @Test
     public void testGetAuthors() {
@@ -125,7 +132,8 @@ public class BentoBoxLocaleTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.localization.BentoBoxLocale#merge(org.bukkit.configuration.file.YamlConfiguration)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.localization.BentoBoxLocale#merge(org.bukkit.configuration.file.YamlConfiguration)}.
      */
     @Test
     public void testMerge() {
@@ -133,7 +141,7 @@ public class BentoBoxLocaleTest {
         config2.set("meta.banner", "SHOULD NOT BE MERGED");
         List<String> authors = new ArrayList<>();
         authors.add("new author");
-        config2.set("meta.authors", authors );
+        config2.set("meta.authors", authors);
         config2.set("reference.to.test", "DO NOT OVERWRITE");
         config2.set("new.string", "this is okay");
         localeObject.merge(config2);
@@ -148,7 +156,8 @@ public class BentoBoxLocaleTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.localization.BentoBoxLocale#contains(java.lang.String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.localization.BentoBoxLocale#contains(java.lang.String)}.
      */
     @Test
     public void testContains() {

@@ -16,6 +16,7 @@ import world.bentobox.bentobox.util.Util;
 
 /**
  * The default strategy for generating locations for island
+ * 
  * @author tastybento, leonardochaia
  * @since 1.8.0
  *
@@ -74,7 +75,8 @@ public class DefaultNewIslandLocationStrategy implements NewIslandLocationStrate
      */
     protected Result isIsland(Location location) {
         // Quick check
-        if (plugin.getIslands().getIslandAt(location).isPresent()) return Result.ISLAND_FOUND;
+        if (plugin.getIslands().getIslandAt(location).isPresent())
+            return Result.ISLAND_FOUND;
 
         World world = location.getWorld();
 
@@ -93,18 +95,17 @@ public class DefaultNewIslandLocationStrategy implements NewIslandLocationStrate
             if (plugin.getIslands().getIslandAt(l).isPresent() || plugin.getIslandDeletionManager().inDeletion(l)) {
                 return Result.ISLAND_FOUND;
             }
-            if (Util.isChunkGenerated(l)) generated = true;
+            if (Util.isChunkGenerated(l))
+                generated = true;
         }
         // If chunk has not been generated yet, then it's not occupied
         if (!generated) {
             return Result.FREE;
         }
         // Block check
-        if (plugin.getIWM().isCheckForBlocks(world) 
-                && !plugin.getIWM().isUseOwnGenerator(world) 
-                && Arrays.stream(BlockFace.values()).anyMatch(bf ->
-                !location.getBlock().getRelative(bf).isEmpty() 
-                && !location.getBlock().getRelative(bf).getType().equals(Material.WATER))) {
+        if (plugin.getIWM().isCheckForBlocks(world) && !plugin.getIWM().isUseOwnGenerator(world)
+                && Arrays.stream(BlockFace.values()).anyMatch(bf -> !location.getBlock().getRelative(bf).isEmpty()
+                        && !location.getBlock().getRelative(bf).getType().equals(Material.WATER))) {
             // Block found
             plugin.getIslands().createIsland(location);
             return Result.BLOCKS_IN_AREA;

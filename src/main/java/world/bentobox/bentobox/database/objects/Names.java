@@ -6,6 +6,7 @@ import com.google.gson.annotations.Expose;
 
 /**
  * Stores player names and uuid's
+ * 
  * @author tastybento
  *
  */
@@ -17,7 +18,8 @@ public class Names implements DataObject {
     @Expose
     private UUID uuid;
 
-    public Names() {}
+    public Names() {
+    }
 
     public Names(String name, UUID uuid) {
         this.uniqueId = name;
@@ -47,6 +49,5 @@ public class Names implements DataObject {
     public void setUuid(UUID uuid) {
         this.uuid = uuid;
     }
-
 
 }

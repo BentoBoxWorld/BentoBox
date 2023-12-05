@@ -60,13 +60,12 @@ public class GameModePlaceholderTest extends RanksManagerBeforeClassTest {
     @Mock
     private @Nullable Location location;
 
-
     /**
      */
     @Before
     public void setUp() throws Exception {
-    	super.setUp();
-    	rm = new RanksManager();
+        super.setUp();
+        rm = new RanksManager();
         uuid = UUID.randomUUID();
         when(addon.getPlayers()).thenReturn(pm);
         when(addon.getIslands()).thenReturn(im);
@@ -89,7 +88,8 @@ public class GameModePlaceholderTest extends RanksManagerBeforeClassTest {
         when(pm.getName(any())).thenReturn("tastybento");
         when(plugin.getIWM()).thenReturn(iwm);
         when(plugin.getRanksManager()).thenReturn(rm);
-        when(user.getTranslation(anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
+        when(user.getTranslation(anyString()))
+                .thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
         when(user.getLocation()).thenReturn(location);
         when(im.getIslandAt(any())).thenReturn(Optional.of(island));
         when(user.isPlayer()).thenReturn(true);
@@ -98,7 +98,8 @@ public class GameModePlaceholderTest extends RanksManagerBeforeClassTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.lists.GameModePlaceholder#getReplacer()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.lists.GameModePlaceholder#getReplacer()}.
      */
     @Test
     public void testGetReplacerIsland() {
@@ -108,22 +109,26 @@ public class GameModePlaceholderTest extends RanksManagerBeforeClassTest {
         assertEquals("456", GameModePlaceholder.ISLAND_CENTER_Y.getReplacer().onReplace(addon, user, island));
         assertEquals("789", GameModePlaceholder.ISLAND_CENTER_Z.getReplacer().onReplace(addon, user, island));
         assertEquals("1", GameModePlaceholder.ISLAND_COOPS_COUNT.getReplacer().onReplace(addon, user, island));
-        // As the local time zone of the compiling machine can vary, the exact value cannot be checked.
+        // As the local time zone of the compiling machine can vary, the exact value
+        // cannot be checked.
         assertFalse(GameModePlaceholder.ISLAND_CREATION_DATE.getReplacer().onReplace(addon, user, island).isEmpty());
         assertEquals("1", GameModePlaceholder.ISLAND_MEMBERS_COUNT.getReplacer().onReplace(addon, user, island));
-        assertEquals("tastybento", GameModePlaceholder.ISLAND_MEMBERS_LIST.getReplacer().onReplace(addon, user, island));
+        assertEquals("tastybento",
+                GameModePlaceholder.ISLAND_MEMBERS_LIST.getReplacer().onReplace(addon, user, island));
         assertEquals("10", GameModePlaceholder.ISLAND_MEMBERS_MAX.getReplacer().onReplace(addon, user, island));
         assertEquals("island", GameModePlaceholder.ISLAND_NAME.getReplacer().onReplace(addon, user, island));
         assertEquals("tastybento", GameModePlaceholder.ISLAND_OWNER.getReplacer().onReplace(addon, user, island));
         assertEquals("0", GameModePlaceholder.ISLAND_PROTECTION_RANGE.getReplacer().onReplace(addon, user, island));
-        assertEquals("0", GameModePlaceholder.ISLAND_PROTECTION_RANGE_DIAMETER.getReplacer().onReplace(addon, user, island));
+        assertEquals("0",
+                GameModePlaceholder.ISLAND_PROTECTION_RANGE_DIAMETER.getReplacer().onReplace(addon, user, island));
         assertEquals("1", GameModePlaceholder.ISLAND_TRUSTEES_COUNT.getReplacer().onReplace(addon, user, island));
         assertEquals(uuid.toString(), GameModePlaceholder.ISLAND_UUID.getReplacer().onReplace(addon, user, island));
         assertEquals("0", GameModePlaceholder.ISLAND_VISITORS_COUNT.getReplacer().onReplace(addon, user, island));
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.lists.GameModePlaceholder#getReplacer()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.lists.GameModePlaceholder#getReplacer()}.
      */
     @Test
     public void testGetReplacerNullIsland() {
@@ -141,14 +146,16 @@ public class GameModePlaceholderTest extends RanksManagerBeforeClassTest {
         assertEquals("", GameModePlaceholder.ISLAND_NAME.getReplacer().onReplace(addon, user, island));
         assertEquals("", GameModePlaceholder.ISLAND_OWNER.getReplacer().onReplace(addon, user, island));
         assertEquals("", GameModePlaceholder.ISLAND_PROTECTION_RANGE.getReplacer().onReplace(addon, user, island));
-        assertEquals("", GameModePlaceholder.ISLAND_PROTECTION_RANGE_DIAMETER.getReplacer().onReplace(addon, user, island));
+        assertEquals("",
+                GameModePlaceholder.ISLAND_PROTECTION_RANGE_DIAMETER.getReplacer().onReplace(addon, user, island));
         assertEquals("", GameModePlaceholder.ISLAND_TRUSTEES_COUNT.getReplacer().onReplace(addon, user, island));
         assertEquals("", GameModePlaceholder.ISLAND_UUID.getReplacer().onReplace(addon, user, island));
         assertEquals("", GameModePlaceholder.ISLAND_VISITORS_COUNT.getReplacer().onReplace(addon, user, island));
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.lists.GameModePlaceholder#getReplacer()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.lists.GameModePlaceholder#getReplacer()}.
      */
     @Test
     public void testGetReplacerPlayer() {
@@ -163,7 +170,8 @@ public class GameModePlaceholderTest extends RanksManagerBeforeClassTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.lists.GameModePlaceholder#getReplacer()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.lists.GameModePlaceholder#getReplacer()}.
      */
     @Test
     public void testGetReplacerNullPlayer() {
@@ -178,28 +186,40 @@ public class GameModePlaceholderTest extends RanksManagerBeforeClassTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.lists.GameModePlaceholder#getReplacer()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.lists.GameModePlaceholder#getReplacer()}.
      */
     @Test
     public void testGetReplacerVisitedIslands() {
         assertEquals("0", GameModePlaceholder.VISITED_ISLAND_BANS_COUNT.getReplacer().onReplace(addon, user, island));
-        assertEquals("123,456,789", GameModePlaceholder.VISITED_ISLAND_CENTER.getReplacer().onReplace(addon, user, island));
+        assertEquals("123,456,789",
+                GameModePlaceholder.VISITED_ISLAND_CENTER.getReplacer().onReplace(addon, user, island));
         assertEquals("123", GameModePlaceholder.VISITED_ISLAND_CENTER_X.getReplacer().onReplace(addon, user, island));
         assertEquals("456", GameModePlaceholder.VISITED_ISLAND_CENTER_Y.getReplacer().onReplace(addon, user, island));
         assertEquals("789", GameModePlaceholder.VISITED_ISLAND_CENTER_Z.getReplacer().onReplace(addon, user, island));
         assertEquals("1", GameModePlaceholder.VISITED_ISLAND_COOPS_COUNT.getReplacer().onReplace(addon, user, island));
-        // As the local time zone of the compiling machine can vary, the exact value cannot be checked.
-        assertFalse(GameModePlaceholder.VISITED_ISLAND_CREATION_DATE.getReplacer().onReplace(addon, user, island).isEmpty());
-        assertEquals("1", GameModePlaceholder.VISITED_ISLAND_MEMBERS_COUNT.getReplacer().onReplace(addon, user, island));
-        assertEquals("tastybento", GameModePlaceholder.VISITED_ISLAND_MEMBERS_LIST.getReplacer().onReplace(addon, user, island));
+        // As the local time zone of the compiling machine can vary, the exact value
+        // cannot be checked.
+        assertFalse(GameModePlaceholder.VISITED_ISLAND_CREATION_DATE.getReplacer().onReplace(addon, user, island)
+                .isEmpty());
+        assertEquals("1",
+                GameModePlaceholder.VISITED_ISLAND_MEMBERS_COUNT.getReplacer().onReplace(addon, user, island));
+        assertEquals("tastybento",
+                GameModePlaceholder.VISITED_ISLAND_MEMBERS_LIST.getReplacer().onReplace(addon, user, island));
         assertEquals("10", GameModePlaceholder.VISITED_ISLAND_MEMBERS_MAX.getReplacer().onReplace(addon, user, island));
         assertEquals("island", GameModePlaceholder.VISITED_ISLAND_NAME.getReplacer().onReplace(addon, user, island));
-        assertEquals("tastybento", GameModePlaceholder.VISITED_ISLAND_OWNER.getReplacer().onReplace(addon, user, island));
-        assertEquals("0", GameModePlaceholder.VISITED_ISLAND_PROTECTION_RANGE.getReplacer().onReplace(addon, user, island));
-        assertEquals("0", GameModePlaceholder.VISITED_ISLAND_PROTECTION_RANGE_DIAMETER.getReplacer().onReplace(addon, user, island));
-        assertEquals("1", GameModePlaceholder.VISITED_ISLAND_TRUSTEES_COUNT.getReplacer().onReplace(addon, user, island));
-        assertEquals(uuid.toString(), GameModePlaceholder.VISITED_ISLAND_UUID.getReplacer().onReplace(addon, user, island));
-        assertEquals("0", GameModePlaceholder.VISITED_ISLAND_VISITORS_COUNT.getReplacer().onReplace(addon, user, island));
+        assertEquals("tastybento",
+                GameModePlaceholder.VISITED_ISLAND_OWNER.getReplacer().onReplace(addon, user, island));
+        assertEquals("0",
+                GameModePlaceholder.VISITED_ISLAND_PROTECTION_RANGE.getReplacer().onReplace(addon, user, island));
+        assertEquals("0", GameModePlaceholder.VISITED_ISLAND_PROTECTION_RANGE_DIAMETER.getReplacer().onReplace(addon,
+                user, island));
+        assertEquals("1",
+                GameModePlaceholder.VISITED_ISLAND_TRUSTEES_COUNT.getReplacer().onReplace(addon, user, island));
+        assertEquals(uuid.toString(),
+                GameModePlaceholder.VISITED_ISLAND_UUID.getReplacer().onReplace(addon, user, island));
+        assertEquals("0",
+                GameModePlaceholder.VISITED_ISLAND_VISITORS_COUNT.getReplacer().onReplace(addon, user, island));
     }
 
     /**
@@ -228,13 +248,15 @@ public class GameModePlaceholderTest extends RanksManagerBeforeClassTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.lists.GameModePlaceholder#getReplacer()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.lists.GameModePlaceholder#getReplacer()}.
      */
     @Test
     public void testGetReplacerWorld() {
         assertEquals("0", GameModePlaceholder.ISLAND_DISTANCE.getReplacer().onReplace(addon, user, island));
         assertEquals("0", GameModePlaceholder.ISLAND_DISTANCE_DIAMETER.getReplacer().onReplace(addon, user, island));
-        assertEquals("friendly_name", GameModePlaceholder.WORLD_FRIENDLY_NAME.getReplacer().onReplace(addon, user, island));
+        assertEquals("friendly_name",
+                GameModePlaceholder.WORLD_FRIENDLY_NAME.getReplacer().onReplace(addon, user, island));
         assertEquals("0", GameModePlaceholder.WORLD_ISLANDS.getReplacer().onReplace(addon, user, island));
 
     }

@@ -48,7 +48,7 @@ import world.bentobox.bentobox.managers.PlaceholdersManager;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, User.class })
+@PrepareForTest({ Bukkit.class, BentoBox.class, User.class })
 public class BentoBoxPermsCommandTest {
 
     @Mock
@@ -69,6 +69,7 @@ public class BentoBoxPermsCommandTest {
     private Permission perm;
 
     private PermissionDefault defaultPerm = PermissionDefault.OP;
+
     /**
      * @throws java.lang.Exception
      */
@@ -85,7 +86,6 @@ public class BentoBoxPermsCommandTest {
         cmdMap.put("test", ac);
         when(cm.getCommands()).thenReturn(cmdMap);
 
-
         // Parent command has no aliases
         when(ac.getSubCommandAliases()).thenReturn(new HashMap<>());
         when(ac.getSubCommands()).thenReturn(new HashMap<>());
@@ -94,9 +94,9 @@ public class BentoBoxPermsCommandTest {
         when(ac.getPermission()).thenReturn("admin.bbox");
         when(ac.getDescription()).thenReturn("description");
 
-
         // User
-        when(user.getTranslation(Mockito.anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
+        when(user.getTranslation(Mockito.anyString()))
+                .thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
         when(user.isPlayer()).thenReturn(false);
         User.setPlugin(plugin);
 
@@ -107,7 +107,8 @@ public class BentoBoxPermsCommandTest {
         when(Bukkit.getPluginManager()).thenReturn(pim);
 
         // Placeholders
-        when(phm.replacePlaceholders(any(), anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
+        when(phm.replacePlaceholders(any(), anyString()))
+                .thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
 
         // BentoBox
         when(plugin.getLocalesManager()).thenReturn(lm);
@@ -116,7 +117,6 @@ public class BentoBoxPermsCommandTest {
         when(plugin.getIWM()).thenReturn(iwm);
 
         // Commands for perms
-
 
         cmd = new BentoBoxPermsCommand(ac);
     }
@@ -130,7 +130,8 @@ public class BentoBoxPermsCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.commands.BentoBoxPermsCommand#BentoBoxPermsCommand(world.bentobox.bentobox.api.commands.CompositeCommand)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.commands.BentoBoxPermsCommand#BentoBoxPermsCommand(world.bentobox.bentobox.api.commands.CompositeCommand)}.
      */
     @Test
     public void testBentoBoxPermsCommand() {
@@ -138,7 +139,8 @@ public class BentoBoxPermsCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.commands.BentoBoxPermsCommand#setup()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.commands.BentoBoxPermsCommand#setup()}.
      */
     @Test
     public void testSetup() {
@@ -150,7 +152,8 @@ public class BentoBoxPermsCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.commands.BentoBoxPermsCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.commands.BentoBoxPermsCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testExecuteUserStringListOfString() {
@@ -166,7 +169,8 @@ public class BentoBoxPermsCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.commands.BentoBoxPermsCommand#execute(Player, java.lang.String, String[])}.
+     * Test method for
+     * {@link world.bentobox.bentobox.commands.BentoBoxPermsCommand#execute(Player, java.lang.String, String[])}.
      */
     @Test
     public void testExecuteUserStringListOfStringConsole() {

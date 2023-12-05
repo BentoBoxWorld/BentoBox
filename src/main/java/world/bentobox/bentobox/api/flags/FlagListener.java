@@ -26,31 +26,19 @@ import world.bentobox.bentobox.util.Util;
 
 /**
  * Abstract class for flag listeners. Provides common code.
+ * 
  * @author tastybento
  */
 public abstract class FlagListener implements Listener {
 
     /**
-     * Reason for why flag was allowed or disallowed
-     * Used by admins for debugging player actions
+     * Reason for why flag was allowed or disallowed Used by admins for debugging
+     * player actions
      */
     protected enum Why {
-        UNPROTECTED_WORLD,
-        OP,
-        BYPASS_EVERYWHERE,
-        BYPASS_ISLAND,
-        RANK_ALLOWED,
-        ALLOWED_IN_WORLD,
-        ALLOWED_ON_ISLAND,
-        NOT_ALLOWED_ON_ISLAND,
-        NOT_ALLOWED_IN_WORLD,
-        ERROR_NO_ASSOCIATED_USER,
-        NOT_SET,
-        SETTING_ALLOWED_ON_ISLAND,
-        SETTING_NOT_ALLOWED_ON_ISLAND,
-        SETTING_ALLOWED_IN_WORLD,
-        SETTING_NOT_ALLOWED_IN_WORLD,
-        NULL_LOCATION
+        UNPROTECTED_WORLD, OP, BYPASS_EVERYWHERE, BYPASS_ISLAND, RANK_ALLOWED, ALLOWED_IN_WORLD, ALLOWED_ON_ISLAND,
+        NOT_ALLOWED_ON_ISLAND, NOT_ALLOWED_IN_WORLD, ERROR_NO_ASSOCIATED_USER, NOT_SET, SETTING_ALLOWED_ON_ISLAND,
+        SETTING_NOT_ALLOWED_ON_ISLAND, SETTING_ALLOWED_IN_WORLD, SETTING_NOT_ALLOWED_IN_WORLD, NULL_LOCATION
     }
 
     @NonNull
@@ -68,6 +56,7 @@ public abstract class FlagListener implements Listener {
 
     /**
      * Used for unit testing only to set the plugin
+     * 
      * @param plugin - plugin object
      */
     public void setPlugin(@NonNull BentoBox plugin) {
@@ -75,12 +64,14 @@ public abstract class FlagListener implements Listener {
     }
 
     /*
-     * The following methods cover the cancellable events and enable a simple noGo(e) to be used to cancel and send the error message
+     * The following methods cover the cancellable events and enable a simple
+     * noGo(e) to be used to cancel and send the error message
      */
 
     /**
      * Cancels the event and sends the island public message to user
-     * @param e - event
+     * 
+     * @param e    - event
      * @param flag - the flag that has been checked
      */
     public void noGo(@NonNull Event e, @NonNull Flag flag) {
@@ -88,9 +79,11 @@ public abstract class FlagListener implements Listener {
     }
 
     /**
-     * Cancels the event and sends the island protected message to user unless silent is true
-     * @param e - event
-     * @param flag - the flag that has been checked
+     * Cancels the event and sends the island protected message to user unless
+     * silent is true
+     * 
+     * @param e      - event
+     * @param flag   - the flag that has been checked
      * @param silent - if true, message is not sent
      * @param string - translation reference
      */
@@ -104,11 +97,13 @@ public abstract class FlagListener implements Listener {
     }
 
     /**
-     * Check if flag is allowed at location. Uses player object because Bukkit events provide player.
-     * @param e - event
+     * Check if flag is allowed at location. Uses player object because Bukkit
+     * events provide player.
+     * 
+     * @param e      - event
      * @param player - player affected by this flag, or null if none
-     * @param loc - location, will return true if null
-     * @param flag - flag {@link world.bentobox.bentobox.lists.Flags}
+     * @param loc    - location, will return true if null
+     * @param flag   - flag {@link world.bentobox.bentobox.lists.Flags}
      * @return true if allowed, false if not
      */
     public boolean checkIsland(@NonNull Event e, @Nullable Player player, @Nullable Location loc, @NonNull Flag flag) {
@@ -117,15 +112,17 @@ public abstract class FlagListener implements Listener {
 
     /**
      * Check if flag is allowed at location
-     * @param e - event
+     * 
+     * @param e      - event
      * @param player - player affected by this flag, or null if none
-     * @param loc - location, will return true if null
-     * @param flag - flag {@link world.bentobox.bentobox.lists.Flags}
+     * @param loc    - location, will return true if null
+     * @param flag   - flag {@link world.bentobox.bentobox.lists.Flags}
      * @param silent - if true, no attempt is made to tell the user
      * @return true if the check is okay, false if it was disallowed
      */
-    public boolean checkIsland(@NonNull Event e, @Nullable Player player, @Nullable Location loc, @NonNull Flag flag, boolean silent) {
-        
+    public boolean checkIsland(@NonNull Event e, @Nullable Player player, @Nullable Location loc, @NonNull Flag flag,
+            boolean silent) {
+
         // Set user
         user = player == null ? null : User.getInstance(player);
         if (loc == null) {
@@ -150,14 +147,16 @@ public abstract class FlagListener implements Listener {
 
         // Protection flag
 
-        // Ops or "bypass everywhere" moderators can do anything unless they have switched it off
-        if (!user.getMetaData(AdminSwitchCommand.META_TAG).map(MetaDataValue::asBoolean).orElse(false)
-                && (user.hasPermission(getIWM().getPermissionPrefix(loc.getWorld()) + "mod.bypassprotect")
-                        || user.hasPermission(getIWM().getPermissionPrefix(loc.getWorld()) + "mod.bypass." + flag.getID() + ".everywhere"))) {
+        // Ops or "bypass everywhere" moderators can do anything unless they have
+        // switched it off
+        if (!user.getMetaData(AdminSwitchCommand.META_TAG).map(MetaDataValue::asBoolean).orElse(false) && (user
+                .hasPermission(getIWM().getPermissionPrefix(loc.getWorld()) + "mod.bypassprotect")
+                || user.hasPermission(
+                        getIWM().getPermissionPrefix(loc.getWorld()) + "mod.bypass." + flag.getID() + ".everywhere"))) {
             if (user.isOp()) {
-                report(user, e, loc, flag,  Why.OP);
+                report(user, e, loc, flag, Why.OP);
             } else {
-                report(user, e, loc, flag,  Why.BYPASS_EVERYWHERE);
+                report(user, e, loc, flag, Why.BYPASS_EVERYWHERE);
             }
             return true;
         }
@@ -173,65 +172,79 @@ public abstract class FlagListener implements Listener {
         if (island.isPresent()) {
             return processBypass(flag, island.get(), e, loc, silent);
         }
-        // The player is in the world, but not on an island, so general world settings apply
+        // The player is in the world, but not on an island, so general world settings
+        // apply
         if (flag.isSetForWorld(loc.getWorld())) {
-            report(user, e, loc, flag,  Why.ALLOWED_IN_WORLD);
+            report(user, e, loc, flag, Why.ALLOWED_IN_WORLD);
             return true;
         } else {
-            report(user, e, loc, flag,  Why.NOT_ALLOWED_IN_WORLD);
+            report(user, e, loc, flag, Why.NOT_ALLOWED_IN_WORLD);
             noGo(e, flag, silent, "protection.world-protected");
             return false;
         }
     }
 
-    private boolean processBypass(@NonNull Flag flag, Island island, @NonNull Event e, @NonNull Location loc, boolean silent) {
-        // If it is not allowed on the island, "bypass island" moderators can do anything
+    private boolean processBypass(@NonNull Flag flag, Island island, @NonNull Event e, @NonNull Location loc,
+            boolean silent) {
+        // If it is not allowed on the island, "bypass island" moderators can do
+        // anything
         if (island.isAllowed(user, flag)) {
-            report(user, e, loc, flag,  Why.RANK_ALLOWED);
+            report(user, e, loc, flag, Why.RANK_ALLOWED);
             return true;
         } else if (!user.getMetaData(AdminSwitchCommand.META_TAG).map(MetaDataValue::asBoolean).orElse(false)
-                && (user.hasPermission(getIWM().getPermissionPrefix(loc.getWorld()) + "mod.bypass." + flag.getID() + ".island"))) {
-            report(user, e, loc, flag,  Why.BYPASS_ISLAND);
+                && (user.hasPermission(
+                        getIWM().getPermissionPrefix(loc.getWorld()) + "mod.bypass." + flag.getID() + ".island"))) {
+            report(user, e, loc, flag, Why.BYPASS_ISLAND);
             return true;
         }
-        report(user, e, loc, flag,  Why.NOT_ALLOWED_ON_ISLAND);
+        report(user, e, loc, flag, Why.NOT_ALLOWED_ON_ISLAND);
         noGo(e, flag, silent, island.isSpawn() ? "protection.spawn-protected" : "protection.protected");
         return false;
     }
 
     private boolean processWorldSetting(@NonNull Flag flag, @NonNull Location loc, @NonNull Event e, boolean silent) {
         if (flag.isSetForWorld(loc.getWorld())) {
-            report(user, e, loc, flag,  Why.ALLOWED_IN_WORLD);
+            report(user, e, loc, flag, Why.ALLOWED_IN_WORLD);
             return true;
         }
-        report(user, e, loc, flag,  Why.NOT_ALLOWED_IN_WORLD);
+        report(user, e, loc, flag, Why.NOT_ALLOWED_IN_WORLD);
         noGo(e, flag, silent, "protection.world-protected");
         return false;
     }
 
-    private boolean processSetting(@NonNull Flag flag, Optional<Island> island, @NonNull Event e, @NonNull Location loc) {
-        // If the island exists, return the setting, otherwise return the default setting for this flag
+    private boolean processSetting(@NonNull Flag flag, Optional<Island> island, @NonNull Event e,
+            @NonNull Location loc) {
+        // If the island exists, return the setting, otherwise return the default
+        // setting for this flag
         if (island.isPresent()) {
-            report(user, e, loc, flag,  island.map(x -> x.isAllowed(flag)).orElse(false) ? Why.SETTING_ALLOWED_ON_ISLAND : Why.SETTING_NOT_ALLOWED_ON_ISLAND);
+            report(user, e, loc, flag, island.map(x -> x.isAllowed(flag)).orElse(false) ? Why.SETTING_ALLOWED_ON_ISLAND
+                    : Why.SETTING_NOT_ALLOWED_ON_ISLAND);
         } else {
-            report(user, e, loc, flag,  flag.isSetForWorld(loc.getWorld()) ? Why.SETTING_ALLOWED_IN_WORLD : Why.SETTING_NOT_ALLOWED_IN_WORLD);
+            report(user, e, loc, flag, flag.isSetForWorld(loc.getWorld()) ? Why.SETTING_ALLOWED_IN_WORLD
+                    : Why.SETTING_NOT_ALLOWED_IN_WORLD);
         }
         return island.map(x -> x.isAllowed(flag)).orElseGet(() -> flag.isSetForWorld(loc.getWorld()));
     }
 
     /**
      * Report why something did or did not happen for the admin why command
+     * 
      * @param user user involved
-     * @param e associated event
-     * @param loc location
+     * @param e    associated event
+     * @param loc  location
      * @param flag flag
-     * @param why reason enum
+     * @param why  reason enum
      */
-    protected void report(@Nullable User user, @NonNull Event e, @NonNull Location loc, @NonNull Flag flag, @NonNull Why why) {
-        // A quick way to debug flag listener unit tests is to add this line here: System.out.println(why.name()); NOSONAR
-        if (user != null && user.isPlayer() && user.getPlayer().getMetadata(loc.getWorld().getName() + "_why_debug").stream()
-                .filter(p -> p.getOwningPlugin().equals(getPlugin())).findFirst().map(MetadataValue::asBoolean).orElse(false)) {
-            String whyEvent = "Why: " + e.getEventName() + " in world " + loc.getWorld().getName() + " at " + Util.xyz(loc.toVector());
+    protected void report(@Nullable User user, @NonNull Event e, @NonNull Location loc, @NonNull Flag flag,
+            @NonNull Why why) {
+        // A quick way to debug flag listener unit tests is to add this line here:
+        // System.out.println(why.name()); NOSONAR
+        if (user != null && user.isPlayer()
+                && user.getPlayer().getMetadata(loc.getWorld().getName() + "_why_debug").stream()
+                        .filter(p -> p.getOwningPlugin().equals(getPlugin())).findFirst().map(MetadataValue::asBoolean)
+                        .orElse(false)) {
+            String whyEvent = "Why: " + e.getEventName() + " in world " + loc.getWorld().getName() + " at "
+                    + Util.xyz(loc.toVector());
             String whyBypass = "Why: " + user.getName() + " " + flag.getID() + " - " + why.name();
 
             plugin.log(whyEvent);
@@ -239,7 +252,8 @@ public abstract class FlagListener implements Listener {
 
             // See if there is a player that issued the debug
             String issuerUUID = user.getPlayer().getMetadata(loc.getWorld().getName() + "_why_debug_issuer").stream()
-                    .filter(p -> getPlugin().equals(p.getOwningPlugin())).findFirst().map(MetadataValue::asString).orElse("");
+                    .filter(p -> getPlugin().equals(p.getOwningPlugin())).findFirst().map(MetadataValue::asString)
+                    .orElse("");
             if (!issuerUUID.isEmpty()) {
                 User issuer = User.getInstance(UUID.fromString(issuerUUID));
                 if (issuer.isPlayer()) {
@@ -252,6 +266,7 @@ public abstract class FlagListener implements Listener {
 
     /**
      * Get the flag for this ID
+     * 
      * @param id the flag ID
      * @return Optional of the Flag denoted by the id
      * @since 1.1
@@ -263,6 +278,7 @@ public abstract class FlagListener implements Listener {
 
     /**
      * Get the island database manager
+     * 
      * @return the island database manager
      */
     protected IslandsManager getIslands() {
@@ -271,6 +287,7 @@ public abstract class FlagListener implements Listener {
 
     /**
      * Get the island database manager
+     * 
      * @return the island database manager
      */
     protected IslandsManager getIslandsManager() {
@@ -279,6 +296,7 @@ public abstract class FlagListener implements Listener {
 
     /**
      * Get the island world manager
+     * 
      * @return Island World Manager
      */
     protected IslandWorldManager getIWM() {
@@ -287,11 +305,13 @@ public abstract class FlagListener implements Listener {
 
     /**
      * Check if PVP is allowed here or not
+     * 
      * @param location location where action is taking
      * @return true if PVP is allowed, false if not
      */
     protected boolean PVPAllowed(Location location) {
-        return plugin.getIslands().getIslandAt(location).map(i -> i.isAllowed(this.getFlag(location.getWorld()))).orElse(false);
+        return plugin.getIslands().getIslandAt(location).map(i -> i.isAllowed(this.getFlag(location.getWorld())))
+                .orElse(false);
     }
 
     protected Flag getFlag(World w) {

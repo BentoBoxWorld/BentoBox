@@ -18,6 +18,7 @@ import world.bentobox.bentobox.util.Util;
 
 /**
  * Kicks the specified player from the island team.
+ * 
  * @author tastybento
  */
 public class AdminTeamKickCommand extends CompositeCommand {
@@ -72,22 +73,14 @@ public class AdminTeamKickCommand extends CompositeCommand {
         target.sendMessage("commands.admin.team.kick.admin-kicked");
 
         getIslands().removePlayer(getWorld(), targetUUID);
-        user.sendMessage("commands.admin.team.kick.success", TextVariables.NAME, target.getName(), "[owner]", getPlayers().getName(island.getOwner()));
+        user.sendMessage("commands.admin.team.kick.success", TextVariables.NAME, target.getName(), "[owner]",
+                getPlayers().getName(island.getOwner()));
 
         // Fire event so add-ons know
-        TeamEvent.builder()
-        .island(island)
-        .reason(TeamEvent.Reason.KICK)
-        .involvedPlayer(targetUUID)
-        .admin(true)
-        .build();
-        IslandEvent.builder()
-        .island(island)
-        .involvedPlayer(targetUUID)
-        .admin(true)
-        .reason(IslandEvent.Reason.RANK_CHANGE)
-        .rankChange(island.getRank(target), RanksManager.VISITOR_RANK)
-        .build();
+        TeamEvent.builder().island(island).reason(TeamEvent.Reason.KICK).involvedPlayer(targetUUID).admin(true).build();
+        IslandEvent.builder().island(island).involvedPlayer(targetUUID).admin(true)
+                .reason(IslandEvent.Reason.RANK_CHANGE).rankChange(island.getRank(target), RanksManager.VISITOR_RANK)
+                .build();
         return true;
     }
 }

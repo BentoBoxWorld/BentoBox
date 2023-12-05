@@ -11,6 +11,7 @@ import com.google.gson.annotations.Expose;
 
 /**
  * Data object to store islands in deletion
+ * 
  * @author tastybento
  * @since 1.1
  */
@@ -50,7 +51,8 @@ public class IslandDeletion implements DataObject {
     @Expose
     BoundingBox box;
 
-    public IslandDeletion() {}
+    public IslandDeletion() {
+    }
 
     public IslandDeletion(Island island) {
         // Calculate the minimum required range to delete the island
@@ -58,7 +60,7 @@ public class IslandDeletion implements DataObject {
         uniqueId = UUID.randomUUID().toString();
         location = island.getCenter();
         minX = location.getBlockX() - range;
-        minXChunk =  minX >> 4;
+        minXChunk = minX >> 4;
         maxX = range + location.getBlockX();
         maxXChunk = maxX >> 4;
         minZ = location.getBlockZ() - range;
@@ -68,7 +70,9 @@ public class IslandDeletion implements DataObject {
         box = island.getBoundingBox();
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
@@ -84,7 +88,8 @@ public class IslandDeletion implements DataObject {
         }
         if (uniqueId == null) {
             return other.uniqueId == null;
-        } else return uniqueId.equals(other.uniqueId);
+        } else
+            return uniqueId.equals(other.uniqueId);
     }
 
     /**
@@ -134,7 +139,9 @@ public class IslandDeletion implements DataObject {
         return location.getWorld();
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see java.lang.Object#hashCode()
      */
     @Override
@@ -235,7 +242,9 @@ public class IslandDeletion implements DataObject {
         this.box = box;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see java.lang.Object#toString()
      */
     @Override
@@ -246,4 +255,3 @@ public class IslandDeletion implements DataObject {
     }
 
 }
-

@@ -9,6 +9,7 @@ import world.bentobox.bentobox.lists.Flags;
 
 /**
  * Handles shearing
+ * 
  * @author tastybento
  *
  */

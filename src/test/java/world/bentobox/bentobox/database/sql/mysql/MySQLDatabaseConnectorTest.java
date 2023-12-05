@@ -63,7 +63,8 @@ public class MySQLDatabaseConnectorTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseConnector#MySQLDatabaseConnector(world.bentobox.bentobox.database.DatabaseConnectionSettingsImpl)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseConnector#MySQLDatabaseConnector(world.bentobox.bentobox.database.DatabaseConnectionSettingsImpl)}.
      */
     @Test
     public void testMySQLDatabaseConnector() {
@@ -74,7 +75,8 @@ public class MySQLDatabaseConnectorTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseConnector#createConnection()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseConnector#createConnection()}.
      */
     @Ignore("This is apparently very hard to do!")
     @Test
@@ -84,7 +86,8 @@ public class MySQLDatabaseConnectorTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseConnector#createConnection()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseConnector#createConnection()}.
      */
     @Ignore("Does not work in Java 11")
     @Test
@@ -93,22 +96,26 @@ public class MySQLDatabaseConnectorTest {
         DriverManager.getConnection(any(), any(), any());
         MySQLDatabaseConnector dc = new MySQLDatabaseConnector(dbSettings);
         dc.createConnection(null);
-        verify(logger).severe("Could not connect to the database! No suitable driver found for jdbc:mysql://localhost:1234/bentobox?autoReconnect=true&useSSL=false&allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8");
+        verify(logger).severe(
+                "Could not connect to the database! No suitable driver found for jdbc:mysql://localhost:1234/bentobox?autoReconnect=true&useSSL=false&allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8");
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseConnector#getConnectionUrl()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseConnector#getConnectionUrl()}.
      */
     @Test
     @Ignore("After reworking to HikariCP, this does not work.")
     public void testGetConnectionUrl() {
         MySQLDatabaseConnector dc = new MySQLDatabaseConnector(dbSettings);
         assertEquals("jdbc:mysql://localhost:1234/bentobox"
-                + "?autoReconnect=true&useSSL=false&allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8", dc.getConnectionUrl());
+                + "?autoReconnect=true&useSSL=false&allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8",
+                dc.getConnectionUrl());
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseConnector#getUniqueId(java.lang.String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseConnector#getUniqueId(java.lang.String)}.
      */
     @Test
     public void testGetUniqueId() {
@@ -117,7 +124,8 @@ public class MySQLDatabaseConnectorTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseConnector#uniqueIdExists(java.lang.String, java.lang.String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseConnector#uniqueIdExists(java.lang.String, java.lang.String)}.
      */
     @Test
     public void testUniqueIdExists() {
@@ -125,7 +133,8 @@ public class MySQLDatabaseConnectorTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseConnector#closeConnection()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseConnector#closeConnection()}.
      */
     @Test
     @Ignore("After reworking to HikariCP, this does not work.")
@@ -136,7 +145,8 @@ public class MySQLDatabaseConnectorTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseConnector#closeConnection()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.sql.mysql.MySQLDatabaseConnector#closeConnection()}.
      */
     @Test
     @Ignore("After reworking to HikariCP, this does not work.")

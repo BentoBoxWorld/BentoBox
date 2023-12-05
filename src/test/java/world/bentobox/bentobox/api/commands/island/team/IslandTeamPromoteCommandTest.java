@@ -49,7 +49,7 @@ import world.bentobox.bentobox.managers.RanksManagerBeforeClassTest;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, User.class })
+@PrepareForTest({ Bukkit.class, BentoBox.class, User.class })
 public class IslandTeamPromoteCommandTest extends RanksManagerBeforeClassTest {
 
     @Mock
@@ -74,7 +74,6 @@ public class IslandTeamPromoteCommandTest extends RanksManagerBeforeClassTest {
     private @Nullable Island island;
     @Mock
     private User target;
-
 
     /**
      * @throws java.lang.Exception
@@ -136,14 +135,14 @@ public class IslandTeamPromoteCommandTest extends RanksManagerBeforeClassTest {
         when(Bukkit.getOfflinePlayer(uuid)).thenReturn(player);
         when(player.getName()).thenReturn("tastybento");
 
-
         ipc = new IslandTeamPromoteCommand(ic, "promote");
         idc = new IslandTeamPromoteCommand(ic, "demote");
 
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamPromoteCommand#IslandTeamPromoteCommand(world.bentobox.bentobox.api.commands.CompositeCommand, java.lang.String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamPromoteCommand#IslandTeamPromoteCommand(world.bentobox.bentobox.api.commands.CompositeCommand, java.lang.String)}.
      */
     @Test
     public void testIslandTeamPromoteCommand() {
@@ -152,7 +151,8 @@ public class IslandTeamPromoteCommandTest extends RanksManagerBeforeClassTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamPromoteCommand#setup()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamPromoteCommand#setup()}.
      */
     @Test
     public void testSetup() {
@@ -169,7 +169,8 @@ public class IslandTeamPromoteCommandTest extends RanksManagerBeforeClassTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamPromoteCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamPromoteCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testCanExecuteUserStringListOfStringShowHelp() {
@@ -274,7 +275,8 @@ public class IslandTeamPromoteCommandTest extends RanksManagerBeforeClassTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamPromoteCommand#tabComplete(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.commands.island.team.IslandTeamPromoteCommand#tabComplete(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testTabCompleteUserStringListOfString() {

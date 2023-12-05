@@ -89,7 +89,7 @@ public class FlagTest {
         WorldSettings ws = mock(WorldSettings.class);
         when(iwm.getWorldSettings(any())).thenReturn(ws);
         GameModeAddon gma = mock(GameModeAddon.class);
-        Optional<GameModeAddon> opGma = Optional.of(gma );
+        Optional<GameModeAddon> opGma = Optional.of(gma);
         when(iwm.getAddon(any())).thenReturn(opGma);
         when(iwm.inWorld(any(World.class))).thenReturn(true);
         worldFlags = new HashMap<>();
@@ -100,7 +100,7 @@ public class FlagTest {
         ItemMeta im = mock(ItemMeta.class);
         when(itemF.getItemMeta(any())).thenReturn(im);
         when(Bukkit.getItemFactory()).thenReturn(itemF);
-        
+
         // Locales manager
         when(plugin.getLocalesManager()).thenReturn(lm);
         // Setting US text is successful
@@ -172,7 +172,8 @@ public class FlagTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.flags.Flag#isSetForWorld(org.bukkit.World)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.flags.Flag#isSetForWorld(org.bukkit.World)}.
      */
     @Test
     public void testIsSetForWorld() {
@@ -180,7 +181,8 @@ public class FlagTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.flags.Flag#isSetForWorld(org.bukkit.World)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.flags.Flag#isSetForWorld(org.bukkit.World)}.
      */
     @Test
     public void testIsSetForWorldWorldSetting() {
@@ -192,7 +194,8 @@ public class FlagTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.flags.Flag#setSetting(org.bukkit.World, boolean)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.flags.Flag#setSetting(org.bukkit.World, boolean)}.
      */
     @Test
     public void testSetSetting() {
@@ -203,7 +206,8 @@ public class FlagTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.flags.Flag#setDefaultSetting(boolean)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.flags.Flag#setDefaultSetting(boolean)}.
      */
     @Test
     public void testSetDefaultSettingBoolean() {
@@ -216,7 +220,8 @@ public class FlagTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.flags.Flag#setDefaultSetting(org.bukkit.World, boolean)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.flags.Flag#setDefaultSetting(org.bukkit.World, boolean)}.
      */
     @Test
     public void testSetDefaultSettingWorldBoolean() {
@@ -246,7 +251,8 @@ public class FlagTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.flags.Flag#getDefaultRank()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.flags.Flag#getDefaultRank()}.
      */
     @Test
     public void testGetDefaultRank() {
@@ -264,7 +270,8 @@ public class FlagTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.flags.Flag#equals(java.lang.Object)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.flags.Flag#equals(java.lang.Object)}.
      */
     @Test
     public void testEqualsObject() {
@@ -276,13 +283,15 @@ public class FlagTest {
 
         assertEquals(f, f);
 
-        Flag f2 = new Flag.Builder("flagID2", Material.ACACIA_PLANKS).type(Flag.Type.WORLD_SETTING).usePanel(true).build();
+        Flag f2 = new Flag.Builder("flagID2", Material.ACACIA_PLANKS).type(Flag.Type.WORLD_SETTING).usePanel(true)
+                .build();
         assertNotEquals(f, f2);
         assertNotEquals(f2, flag1);
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.flags.Flag#getNameReference()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.flags.Flag#getNameReference()}.
      */
     @Test
     public void testGetNameReference() {
@@ -290,7 +299,8 @@ public class FlagTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.flags.Flag#getDescriptionReference()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.flags.Flag#getDescriptionReference()}.
      */
     @Test
     public void testGetDescriptionReference() {
@@ -298,7 +308,8 @@ public class FlagTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.flags.Flag#getHintReference()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.flags.Flag#getHintReference()}.
      */
     @Test
     public void testGetHintReference() {
@@ -306,7 +317,8 @@ public class FlagTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.flags.Flag#getGameModes()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.flags.Flag#getGameModes()}.
      */
     @Test
     public void testGetGameModes() {
@@ -314,7 +326,8 @@ public class FlagTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.flags.Flag#setGameModes(java.util.Set)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.flags.Flag#setGameModes(java.util.Set)}.
      */
     @Test
     public void testSetGameModes() {
@@ -326,7 +339,8 @@ public class FlagTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.flags.Flag#addGameModeAddon(world.bentobox.bentobox.api.addons.GameModeAddon)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.flags.Flag#addGameModeAddon(world.bentobox.bentobox.api.addons.GameModeAddon)}.
      */
     @Test
     public void testAddGameModeAddon() {
@@ -336,7 +350,8 @@ public class FlagTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.flags.Flag#removeGameModeAddon(world.bentobox.bentobox.api.addons.GameModeAddon)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.flags.Flag#removeGameModeAddon(world.bentobox.bentobox.api.addons.GameModeAddon)}.
      */
     @Test
     public void testRemoveGameModeAddon() {
@@ -348,7 +363,8 @@ public class FlagTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.flags.Flag#toPanelItem(BentoBox, User, Island, boolean)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.flags.Flag#toPanelItem(BentoBox, User, Island, boolean)}.
      */
     @Test
     public void testToPanelItem() {
@@ -368,7 +384,7 @@ public class FlagTest {
             return sb.toString();
         };
 
-        when(user.getTranslation(any(String.class),any(),any())).thenAnswer(answer);
+        when(user.getTranslation(any(String.class), any(), any())).thenAnswer(answer);
 
         when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
         when(im.getIsland(any(), any(User.class))).thenReturn(island);
@@ -381,7 +397,6 @@ public class FlagTest {
         when(rm.getRank(RanksManager.VISITOR_RANK)).thenReturn("Visitor");
         when(rm.getRank(RanksManager.OWNER_RANK)).thenReturn("Owner");
 
-
         PanelItem pi = f.toPanelItem(plugin, user, island, false);
 
         verify(user).getTranslation("protection.flags.flagID.name");
@@ -389,18 +404,20 @@ public class FlagTest {
 
         assertEquals(Material.ACACIA_PLANKS, pi.getItem().getType());
     }
-    
+
     /**
-     * Test method for {@link world.bentobox.bentobox.api.flags.Flag#setTranslatedName(java.util.Locale, String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.flags.Flag#setTranslatedName(java.util.Locale, String)}.
      */
     @Test
     public void testSetTranslatedName() {
         assertFalse(f.setTranslatedName(Locale.CANADA, "Good eh?"));
         assertTrue(f.setTranslatedName(Locale.US, "Yihaa"));
     }
-    
+
     /**
-     * Test method for {@link world.bentobox.bentobox.api.flags.Flag#setTranslatedDescription(java.util.Locale, String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.flags.Flag#setTranslatedDescription(java.util.Locale, String)}.
      */
     @Test
     public void testSetTranslatedDescription() {
@@ -417,7 +434,8 @@ public class FlagTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.flags.Flag#compareTo(world.bentobox.bentobox.api.flags.Flag)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.flags.Flag#compareTo(world.bentobox.bentobox.api.flags.Flag)}.
      */
     @Test
     public void testCompareTo() {

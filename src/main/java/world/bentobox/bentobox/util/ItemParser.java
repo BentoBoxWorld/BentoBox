@@ -26,19 +26,21 @@ import com.mojang.authlib.properties.Property;
 
 import world.bentobox.bentobox.BentoBox;
 
-
 /**
- * Utility class that parses a String into an ItemStack.
- * It is used for converting config file entries to objects.
+ * Utility class that parses a String into an ItemStack. It is used for
+ * converting config file entries to objects.
  *
  * @author tastybento, Poslovitch
  */
 @SuppressWarnings("deprecation")
 public class ItemParser {
 
-    private ItemParser() {} // private constructor to hide the implicit public one.
+    private ItemParser() {
+    } // private constructor to hide the implicit public one.
+
     /**
      * Parse given string to ItemStack.
+     * 
      * @param text String value of item stack.
      * @return ItemStack of parsed item or null.
      */
@@ -46,10 +48,10 @@ public class ItemParser {
         return ItemParser.parse(text, null);
     }
 
-
     /**
      * Parse given string to ItemStack.
-     * @param text String value of item stack.
+     * 
+     * @param text             String value of item stack.
      * @param defaultItemStack Material that should be returned if parsing failed.
      * @return ItemStack of parsed item or defaultItemStack.
      */
@@ -66,7 +68,8 @@ public class ItemParser {
         String[] part = text.split(":");
 
         try {
-            // Because I am lazy, and do not want to rewrite every parser, I will just add custom data as
+            // Because I am lazy, and do not want to rewrite every parser, I will just add
+            // custom data as
             // parameter and remove that array part form input data.
             Optional<String> first = Arrays.stream(part).filter(field -> field.matches("(CMD-\\d*)")).findFirst();
             Integer customModelData = null;
@@ -127,7 +130,6 @@ public class ItemParser {
 
     }
 
-
     private static @Nullable ItemStack customValue(ItemStack returnValue, Integer customModelData) {
         // We have custom data model. Now assign it to the item-stack.
         ItemMeta itemMeta = returnValue.getItemMeta();
@@ -140,13 +142,15 @@ public class ItemParser {
         }
         return null;
     }
+
     /**
-     * This method parses array of 2 items into an item stack.
-     * First array element is material, while second array element is integer, that represents item count.
-     * Example:
-     *      DIAMOND:20
+     * This method parses array of 2 items into an item stack. First array element
+     * is material, while second array element is integer, that represents item
+     * count. Example: DIAMOND:20
+     * 
      * @param part String array that contains 2 elements.
-     * @return ItemStack with material from first array element and amount based on second array element.
+     * @return ItemStack with material from first array element and amount based on
+     *         second array element.
      */
     private static ItemStack parseItemQuantity(String[] part) {
         int reqAmount = Integer.parseInt(part[1]);
@@ -159,19 +163,19 @@ public class ItemParser {
         return new ItemStack(reqItem, reqAmount);
     }
 
-
     /**
-     * This method parses array of 3 items into an item stack.
-     * First array element is material, while second and third array element are integers.
-     * The middle element represents durability, while third element represents quantity.
-     * Example:
-     *      IRON_SWORD:20:1
+     * This method parses array of 3 items into an item stack. First array element
+     * is material, while second and third array element are integers. The middle
+     * element represents durability, while third element represents quantity.
+     * Example: IRON_SWORD:20:1
+     * 
      * @param part String array that contains 3 elements.
-     * @return ItemStack with material from first array element, durability from second element and amount based on third array element.
+     * @return ItemStack with material from first array element, durability from
+     *         second element and amount based on third array element.
      */
     private static ItemStack parseItemDurabilityAndQuantity(String[] part) {
         // Rearrange
-        String[] parsable = {part[0], part[2]};
+        String[] parsable = { part[0], part[2] };
         ItemStack durability = parseItemQuantity(parsable);
 
         ItemMeta meta = durability.getItemMeta();
@@ -184,17 +188,19 @@ public class ItemParser {
         return durability;
     }
 
-
     /**
-     * This method parses array of 6 items into an item stack.
-     * Format:
+     * This method parses array of 6 items into an item stack. Format:
+     * 
      * <pre>{@code
      *      POTION:NAME:<LEVEL>:<EXTENDED>:<SPLASH/LINGER>:QTY
      * }</pre>
+     * 
      * Example:
+     * 
      * <pre>{@code
      *      POTION:STRENGTH:1:EXTENDED:SPLASH:1
      * }</pre>
+     * 
      * @param part String array that contains 6 elements.
      * @return Potion with given properties.
      */
@@ -204,15 +210,12 @@ public class ItemParser {
         }
 
         /*
-         * # Format POTION:NAME:<LEVEL>:<EXTENDED>:<SPLASH/LINGER>:QTY
-            # LEVEL, EXTENDED, SPLASH, LINGER are optional.
-            # LEVEL is a number, 1 or 2
-            # LINGER is for V1.9 servers and later
-            # Examples:
-            # POTION:STRENGTH:1:EXTENDED:SPLASH:1
-            # POTION:INSTANT_DAMAGE:2::LINGER:2
-            # POTION:JUMP:2:NOTEXTENDED:NOSPLASH:1
-            # POTION:WEAKNESS::::1   -  any weakness potion
+         * # Format POTION:NAME:<LEVEL>:<EXTENDED>:<SPLASH/LINGER>:QTY # LEVEL,
+         * EXTENDED, SPLASH, LINGER are optional. # LEVEL is a number, 1 or 2 # LINGER
+         * is for V1.9 servers and later # Examples: #
+         * POTION:STRENGTH:1:EXTENDED:SPLASH:1 # POTION:INSTANT_DAMAGE:2::LINGER:2 #
+         * POTION:JUMP:2:NOTEXTENDED:NOSPLASH:1 # POTION:WEAKNESS::::1 - any weakness
+         * potion
          */
         ItemStack result = new ItemStack(Material.POTION);
         if (part[4].equalsIgnoreCase("SPLASH")) {
@@ -223,7 +226,7 @@ public class ItemParser {
         if (part[0].equalsIgnoreCase("TIPPED_ARROW")) {
             result = new ItemStack(Material.TIPPED_ARROW);
         }
-        PotionMeta potionMeta = (PotionMeta)(result.getItemMeta());
+        PotionMeta potionMeta = (PotionMeta) (result.getItemMeta());
         PotionType type = PotionType.valueOf(part[1].toUpperCase(java.util.Locale.ENGLISH));
         boolean isUpgraded = !part[2].isEmpty() && !part[2].equalsIgnoreCase("1");
         boolean isExtended = part[3].equalsIgnoreCase("EXTENDED");
@@ -234,9 +237,9 @@ public class ItemParser {
         return result;
     }
 
-
     /**
      * This method parses array of multiple elements for the Banner.
+     * 
      * @param part String array that contains at least 2 elements.
      * @return Banner as item stack.
      */
@@ -263,21 +266,24 @@ public class ItemParser {
         }
     }
 
-
     /**
      * This method parses array of 2 to 3 elements that represents player head.
      * Format:
+     * 
      * <pre>{@code
      *    PLAYER_HEAD:<STRING/Trimmed UUID/UUID/Texture>:QTY
      *    PLAYER_HEAD:<STRING/Trimmed UUID/UUID/Texture>
      *    PLAYER_HEAD:QTY
      * }</pre>
+     * 
      * Example:
+     * 
      * <pre>{@code
      *    PLAYER_HEAD:1
      *    PLAYER_HEAD:BONNe1704
      *    PLAYER_HEAD:eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYWY1ZjE1OTg4NmNjNTMxZmZlYTBkOGFhNWY5MmVkNGU1ZGE2NWY3MjRjMDU3MGFmODZhOTBiZjAwYzY3YzQyZSJ9fX0:1
      * }</pre>
+     * 
      * @param part String array that contains at least 2 elements.
      * @return Player head with given properties.
      */
@@ -285,7 +291,7 @@ public class ItemParser {
         ItemStack playerHead;
 
         if (part.length == 3) {
-            String[] parsable = {part[0], part[2]};
+            String[] parsable = { part[0], part[2] };
             // create parse item and quantity.
             playerHead = parseItemQuantity(parsable);
         } else if (isNumeric(part[1])) {
@@ -305,8 +311,8 @@ public class ItemParser {
                 meta.setOwner(part[1]);
             } else if (part[1].length() == 32) {
                 // trimmed UUID length are 32 chars.
-                meta.setOwningPlayer(Bukkit.getOfflinePlayer(
-                        UUID.fromString(part[1].replaceAll("(\\w{8})(\\w{4})(\\w{4})(\\w{4})(\\w{12})", "$1-$2-$3-$4-$5"))));
+                meta.setOwningPlayer(Bukkit.getOfflinePlayer(UUID.fromString(
+                        part[1].replaceAll("(\\w{8})(\\w{4})(\\w{4})(\\w{4})(\\w{12})", "$1-$2-$3-$4-$5"))));
             } else if (part[1].length() == 36) {
                 // full UUID length are 36 chars.
                 meta.setOwningPlayer(Bukkit.getOfflinePlayer(UUID.fromString(part[1])));
@@ -330,14 +336,14 @@ public class ItemParser {
         return playerHead;
     }
 
-
     /**
      * Check if given sting is an integer.
+     * 
      * @param string Value that must be checked.
      * @return {@code true} if value is integer, {@code false} otherwise.
      */
     private static boolean isNumeric(String string) {
-        if(string == null || string.equals("")) {
+        if (string == null || string.equals("")) {
             return false;
         }
 

@@ -10,9 +10,11 @@ import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.flags.Flag;
 
 /**
- * Serializes the {@link world.bentobox.bentobox.database.objects.Island#getFlags() getFlags()} and
- * {@link world.bentobox.bentobox.database.objects.Island#setFlags(Map)} () setFlags()}
- * in {@link world.bentobox.bentobox.database.objects.Island}
+ * Serializes the
+ * {@link world.bentobox.bentobox.database.objects.Island#getFlags() getFlags()}
+ * and {@link world.bentobox.bentobox.database.objects.Island#setFlags(Map)} ()
+ * setFlags()} in {@link world.bentobox.bentobox.database.objects.Island}
+ * 
  * @author tastybento
  * @since 1.6.0
  */
@@ -28,11 +30,13 @@ public class FlagSerializer3 implements AdapterInterface<Map<Flag, Long>, Map<St
         // For YAML
         if (object instanceof MemorySection section) {
             for (String key : section.getKeys(false)) {
-                BentoBox.getInstance().getFlagsManager().getFlag(key).ifPresent(flag -> result.put(flag, section.getLong(key)));
+                BentoBox.getInstance().getFlagsManager().getFlag(key)
+                        .ifPresent(flag -> result.put(flag, section.getLong(key)));
             }
         } else {
-            for (Entry<String, Long> en : ((Map<String, Long>)object).entrySet()) {
-                BentoBox.getInstance().getFlagsManager().getFlag(en.getKey()).ifPresent(flag -> result.put(flag, en.getValue()));
+            for (Entry<String, Long> en : ((Map<String, Long>) object).entrySet()) {
+                BentoBox.getInstance().getFlagsManager().getFlag(en.getKey())
+                        .ifPresent(flag -> result.put(flag, en.getValue()));
             }
         }
         return result;
@@ -45,8 +49,8 @@ public class FlagSerializer3 implements AdapterInterface<Map<Flag, Long>, Map<St
         if (object == null) {
             return result;
         }
-        Map<Flag, Long> flags = (Map<Flag, Long>)object;
-        for (Entry<Flag, Long> en: flags.entrySet()) {
+        Map<Flag, Long> flags = (Map<Flag, Long>) object;
+        for (Entry<Flag, Long> en : flags.entrySet()) {
             if (en != null && en.getKey() != null) {
                 result.put(en.getKey().getID(), en.getValue());
             }

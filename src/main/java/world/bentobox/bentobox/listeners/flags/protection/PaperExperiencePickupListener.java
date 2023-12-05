@@ -8,7 +8,9 @@ import com.destroystokyo.paper.event.player.PlayerPickupExperienceEvent;
 import world.bentobox.bentobox.lists.Flags;
 
 /**
- * Handles the {@link Flags#EXPERIENCE_PICKUP} flag with a Paper specific pickup event.
+ * Handles the {@link Flags#EXPERIENCE_PICKUP} flag with a Paper specific pickup
+ * event.
+ * 
  * @since 1.13.0
  * @author KennyTV
  */

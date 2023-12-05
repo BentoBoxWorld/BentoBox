@@ -18,6 +18,7 @@ public class BentoBoxPermsCommand extends CompositeCommand {
 
     /**
      * Info command
+     * 
      * @param parent - command parent
      */
     public BentoBoxPermsCommand(CompositeCommand parent) {
@@ -51,7 +52,8 @@ public class BentoBoxPermsCommand extends CompositeCommand {
     }
 
     private void printData(User user, CompositeCommand cc, String label) {
-        if (cc.getPermission().isBlank()) return;
+        if (cc.getPermission().isBlank())
+            return;
         String desc = user.getTranslation(cc.getWorld(), cc.getDescription());
         user.sendRawMessage("  " + cc.getPermission() + ":");
         user.sendRawMessage("    description: Allow use of '/" + label + "' command - " + desc);
@@ -66,13 +68,15 @@ public class BentoBoxPermsCommand extends CompositeCommand {
 
     /**
      * Iterates over sub-commands
-     * @param user user
+     * 
+     * @param user   user
      * @param parent parent command
-     * @param label label
+     * @param label  label
      */
     private void printSubCommandData(User user, CompositeCommand parent, String label) {
         for (CompositeCommand cc : parent.getSubCommands().values()) {
-            if (cc.getLabel().equalsIgnoreCase("help")) continue; // Ignore the help command
+            if (cc.getLabel().equalsIgnoreCase("help"))
+                continue; // Ignore the help command
             String newLabel = label + " " + cc.getLabel();
             printData(user, cc, newLabel);
             printSubCommandData(user, cc, newLabel);

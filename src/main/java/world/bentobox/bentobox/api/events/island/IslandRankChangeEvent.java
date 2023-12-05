@@ -10,8 +10,9 @@ import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.database.objects.Island;
 
 /**
- * Fired when a player's rank has changed on an island.
- * Cancellation has no effect.
+ * Fired when a player's rank has changed on an island. Cancellation has no
+ * effect.
+ * 
  * @since 1.13.0
  */
 public class IslandRankChangeEvent extends IslandBaseEvent {
@@ -29,7 +30,8 @@ public class IslandRankChangeEvent extends IslandBaseEvent {
         return handlers;
     }
 
-    public IslandRankChangeEvent(Island island, UUID playerUUID, boolean admin, Location location, int oldRank, int newRank) {
+    public IslandRankChangeEvent(Island island, UUID playerUUID, boolean admin, Location location, int oldRank,
+            int newRank) {
         super(island, playerUUID, admin, location);
         this.oldRank = oldRank;
         this.newRank = newRank;
@@ -39,7 +41,7 @@ public class IslandRankChangeEvent extends IslandBaseEvent {
         return oldRank;
     }
 
-    public int getNewRank(){
+    public int getNewRank() {
         return newRank;
     }
 }

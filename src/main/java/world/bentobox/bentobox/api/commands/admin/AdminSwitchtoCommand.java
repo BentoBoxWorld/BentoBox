@@ -21,6 +21,7 @@ public class AdminSwitchtoCommand extends ConfirmableCommand {
 
     /**
      * Switch player's island to the numbered one in trash
+     * 
      * @param parent - admin command
      * @since 1.3.0
      */
@@ -65,11 +66,12 @@ public class AdminSwitchtoCommand extends ConfirmableCommand {
             try {
                 int n = Integer.parseInt(args.get(1));
                 if (n < 1 || n > islands.size()) {
-                    user.sendMessage("commands.admin.switchto.out-of-range", TextVariables.NUMBER, String.valueOf(islands.size()), TextVariables.LABEL, getTopLabel());
+                    user.sendMessage("commands.admin.switchto.out-of-range", TextVariables.NUMBER,
+                            String.valueOf(islands.size()), TextVariables.LABEL, getTopLabel());
                     return false;
                 }
                 this.askConfirmation(user, () -> {
-                    if (getIslands().switchIsland(getWorld(), targetUUID, islands.get(n -1))) {
+                    if (getIslands().switchIsland(getWorld(), targetUUID, islands.get(n - 1))) {
                         user.sendMessage("commands.admin.switchto.success");
                     } else {
                         user.sendMessage("commands.admin.switchto.cannot-switch");

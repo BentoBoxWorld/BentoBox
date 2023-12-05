@@ -7,28 +7,22 @@ import com.zaxxer.hikari.HikariConfig;
 import world.bentobox.bentobox.database.DatabaseConnectionSettingsImpl;
 import world.bentobox.bentobox.database.sql.SQLDatabaseConnector;
 
-public class MySQLDatabaseConnector extends SQLDatabaseConnector
-{
+public class MySQLDatabaseConnector extends SQLDatabaseConnector {
     /**
      * Class for MySQL database connections using the settings provided
      *
      * @param dbSettings - database settings
      */
-    MySQLDatabaseConnector(@NonNull DatabaseConnectionSettingsImpl dbSettings)
-    {
-        super(dbSettings, String.format("jdbc:mysql://%s:%s/%s",
-            dbSettings.getHost(),
-            dbSettings.getPort(),
-            dbSettings.getDatabaseName()));
+    MySQLDatabaseConnector(@NonNull DatabaseConnectionSettingsImpl dbSettings) {
+        super(dbSettings, String.format("jdbc:mysql://%s:%s/%s", dbSettings.getHost(), dbSettings.getPort(),
+                dbSettings.getDatabaseName()));
     }
-
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public HikariConfig createConfig()
-    {
+    public HikariConfig createConfig() {
         HikariConfig config = new HikariConfig();
         config.setPoolName("BentoBox MySQL Pool");
 

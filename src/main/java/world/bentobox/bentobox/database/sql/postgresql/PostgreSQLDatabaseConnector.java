@@ -7,31 +7,26 @@ import com.zaxxer.hikari.HikariConfig;
 import world.bentobox.bentobox.database.DatabaseConnectionSettingsImpl;
 import world.bentobox.bentobox.database.sql.SQLDatabaseConnector;
 
-
 /**
  * @since 1.6.0
  * @author Poslovitch
  */
-public class PostgreSQLDatabaseConnector extends SQLDatabaseConnector
-{
+public class PostgreSQLDatabaseConnector extends SQLDatabaseConnector {
     /**
      * Class for PostgreSQL database connections using the settings provided
      *
      * @param dbSettings - database settings
      */
-    PostgreSQLDatabaseConnector(@NonNull DatabaseConnectionSettingsImpl dbSettings)
-    {
+    PostgreSQLDatabaseConnector(@NonNull DatabaseConnectionSettingsImpl dbSettings) {
         // connectionUrl is not used in PostgreSQL connection.
         super(dbSettings, "");
     }
-
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public HikariConfig createConfig()
-    {
+    public HikariConfig createConfig() {
         HikariConfig config = new HikariConfig();
         config.setPoolName("BentoBox PostgreSQL Pool");
 

@@ -13,8 +13,9 @@ import world.bentobox.bentobox.listeners.flags.protection.BlockInteractionListen
 import world.bentobox.bentobox.lists.Flags;
 
 /**
- * Prevents enderchest creation in world if it is not allowed
- * Enderchest opening is handled in {@link BlockInteractionListener}
+ * Prevents enderchest creation in world if it is not allowed Enderchest opening
+ * is handled in {@link BlockInteractionListener}
+ * 
  * @author tastybento
  *
  */
@@ -27,18 +28,18 @@ public class EnderChestListener extends FlagListener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onCraft(CraftItemEvent e) {
-        e.setCancelled(checkEnderChest((Player)e.getWhoClicked(), e.getRecipe().getResult().getType()));
+        e.setCancelled(checkEnderChest((Player) e.getWhoClicked(), e.getRecipe().getResult().getType()));
     }
 
     private boolean checkEnderChest(Player player, Material type) {
-        if (type.equals(Material.ENDER_CHEST)
-                && getIWM().inWorld(player.getWorld())
-                && !player.isOp()
-                && !player.hasPermission(getPlugin().getIWM().getPermissionPrefix(player.getWorld()) + "craft.enderchest")
+        if (type.equals(Material.ENDER_CHEST) && getIWM().inWorld(player.getWorld()) && !player.isOp()
+                && !player
+                        .hasPermission(getPlugin().getIWM().getPermissionPrefix(player.getWorld()) + "craft.enderchest")
                 && !Flags.ENDER_CHEST.isSetForWorld(player.getWorld())) {
             // Not allowed
             User user = User.getInstance(player);
-            user.notify("protection.protected", TextVariables.DESCRIPTION, user.getTranslation(Flags.ENDER_CHEST.getHintReference()));
+            user.notify("protection.protected", TextVariables.DESCRIPTION,
+                    user.getTranslation(Flags.ENDER_CHEST.getHintReference()));
             return true;
         }
         return false;

@@ -46,9 +46,10 @@ import world.bentobox.bentobox.blueprints.dataobjects.BlueprintEntity;
 
 /**
  * The clipboard provides the holding spot for an active blueprint that is being
- * manipulated by a user. It supports copying from the world and setting of coordinates
- * such as the bounding box around the cuboid copy area.
- * Pasting is done by the {@link BlueprintPaster} class.
+ * manipulated by a user. It supports copying from the world and setting of
+ * coordinates such as the bounding box around the cuboid copy area. Pasting is
+ * done by the {@link BlueprintPaster} class.
+ * 
  * @author tastybento
  * @since 1.5.0
  */
@@ -70,18 +71,21 @@ public class BlueprintClipboard {
 
     /**
      * Create a clipboard for blueprint
+     * 
      * @param blueprint - the blueprint to load into the clipboard
      */
     public BlueprintClipboard(@NonNull Blueprint blueprint) {
         this.blueprint = blueprint;
     }
 
-    public BlueprintClipboard() { }
+    public BlueprintClipboard() {
+    }
 
     /**
-     * Copy the blocks between pos1 and pos2 into the clipboard for a user.
-     * This will erase any previously registered data from the clipboard.
-     * Copying is done async.
+     * Copy the blocks between pos1 and pos2 into the clipboard for a user. This
+     * will erase any previously registered data from the clipboard. Copying is done
+     * async.
+     * 
      * @param user - user
      * @return true if successful, false if pos1 or pos2 are undefined.
      */
@@ -114,17 +118,19 @@ public class BlueprintClipboard {
         index = 0;
         lastPercentage = 0;
         BoundingBox toCopy = BoundingBox.of(pos1, pos2);
-        blueprint.setxSize((int)toCopy.getWidthX());
-        blueprint.setySize((int)toCopy.getHeight());
-        blueprint.setzSize((int)toCopy.getWidthZ());
+        blueprint.setxSize((int) toCopy.getWidthX());
+        blueprint.setySize((int) toCopy.getHeight());
+        blueprint.setzSize((int) toCopy.getWidthZ());
 
         int speed = plugin.getSettings().getPasteSpeed();
         List<Vector> vectorsToCopy = getVectors(toCopy);
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> copyAsync(world, user, vectorsToCopy, speed, copyAir, copyBiome));
+        Bukkit.getScheduler().runTaskAsynchronously(plugin,
+                () -> copyAsync(world, user, vectorsToCopy, speed, copyAir, copyBiome));
         return true;
     }
 
-    private void copyAsync(World world, User user, List<Vector> vectorsToCopy, int speed, boolean copyAir, boolean copyBiome) {
+    private void copyAsync(World world, User user, List<Vector> vectorsToCopy, int speed, boolean copyAir,
+            boolean copyBiome) {
         copying = false;
         copyTask = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
             if (copying) {
@@ -132,21 +138,19 @@ public class BlueprintClipboard {
             }
             copying = true;
             vectorsToCopy.stream().skip(index).limit(speed).forEach(v -> {
-                List<LivingEntity> ents = world.getLivingEntities().stream()
-                        .filter(Objects::nonNull)
-                        .filter(e -> !(e instanceof Player))
-                        .filter(e -> new Vector(Math.rint(e.getLocation().getX()),
-                                Math.rint(e.getLocation().getY()),
-                                Math.rint(e.getLocation().getZ())).equals(v))
+                List<LivingEntity> ents = world.getLivingEntities().stream().filter(Objects::nonNull)
+                        .filter(e -> !(e instanceof Player)).filter(e -> new Vector(Math.rint(e.getLocation().getX()),
+                                Math.rint(e.getLocation().getY()), Math.rint(e.getLocation().getZ())).equals(v))
                         .toList();
                 if (copyBlock(v.toLocation(world), copyAir, copyBiome, ents)) {
                     count++;
                 }
             });
             index += speed;
-            int percent = (int)(index * 100 / (double)vectorsToCopy.size());
+            int percent = (int) (index * 100 / (double) vectorsToCopy.size());
             if (percent != lastPercentage && percent % 10 == 0) {
-                user.sendMessage("commands.admin.blueprint.copied-percent", TextVariables.NUMBER, String.valueOf(percent));
+                user.sendMessage("commands.admin.blueprint.copied-percent", TextVariables.NUMBER,
+                        String.valueOf(percent));
                 lastPercentage = percent;
             }
             if (index > vectorsToCopy.size()) {
@@ -164,6 +168,7 @@ public class BlueprintClipboard {
 
     /**
      * Get all the x,y,z coords that must be copied
+     * 
      * @param b - bounding box
      * @return - list of vectors
      */
@@ -172,7 +177,7 @@ public class BlueprintClipboard {
         for (int y = (int) Math.floor(b.getMinY()); y <= b.getMaxY(); y++) {
             for (int x = (int) Math.floor(b.getMinX()); x <= b.getMaxX(); x++) {
                 for (int z = (int) Math.floor(b.getMinZ()); z <= b.getMaxZ(); z++) {
-                    r.add(new Vector(x,y,z));
+                    r.add(new Vector(x, y, z));
                 }
             }
         }
@@ -185,7 +190,7 @@ public class BlueprintClipboard {
             return false;
         }
         // Create position
-        Vector origin2 = origin == null ? new Vector(0,0,0) : origin;
+        Vector origin2 = origin == null ? new Vector(0, 0, 0) : origin;
         int x = l.getBlockX() - origin2.getBlockX();
         int y = l.getBlockY() - origin2.getBlockY();
         int z = l.getBlockZ() - origin2.getBlockZ();
@@ -237,7 +242,7 @@ public class BlueprintClipboard {
 
         if (block.getType().equals(Material.BEDROCK)) {
             // Find highest bedrock
-            if(blueprint.getBedrock() == null) {
+            if (blueprint.getBedrock() == null) {
                 blueprint.setBedrock(pos);
             } else {
                 if (pos.getBlockY() > blueprint.getBedrock().getBlockY()) {
@@ -283,7 +288,7 @@ public class BlueprintClipboard {
 
     private List<BlueprintEntity> setEntities(Collection<LivingEntity> entities) {
         List<BlueprintEntity> bpEnts = new ArrayList<>();
-        for (LivingEntity entity: entities) {
+        for (LivingEntity entity : entities) {
             BlueprintEntity bpe = new BlueprintEntity();
             bpe.setType(entity.getType());
             bpe.setCustomName(entity.getCustomName());
@@ -324,7 +329,8 @@ public class BlueprintClipboard {
 
     /**
      * Set the villager stats
-     * @param v - villager
+     * 
+     * @param v   - villager
      * @param bpe - Blueprint Entity
      */
     private void setVillager(Villager v, BlueprintEntity bpe) {
@@ -341,6 +347,7 @@ public class BlueprintClipboard {
     public Vector getOrigin() {
         return origin;
     }
+
     /**
      * @return the pos1
      */
@@ -348,6 +355,7 @@ public class BlueprintClipboard {
     public Location getPos1() {
         return pos1;
     }
+
     /**
      * @return the pos2
      */
@@ -376,13 +384,11 @@ public class BlueprintClipboard {
             final int minHeight = pos1.getWorld() == null ? 0 : pos1.getWorld().getMinHeight();
             final int maxHeight = pos1.getWorld() == null ? 255 : pos1.getWorld().getMaxHeight();
 
-            if (pos1.getBlockY() < minHeight)
-            {
+            if (pos1.getBlockY() < minHeight) {
                 pos1.setY(minHeight);
             }
 
-            if (pos1.getBlockY() > maxHeight)
-            {
+            if (pos1.getBlockY() > maxHeight) {
                 pos1.setY(maxHeight);
             }
         }
@@ -398,13 +404,11 @@ public class BlueprintClipboard {
             final int minHeight = pos2.getWorld() == null ? 0 : pos2.getWorld().getMinHeight();
             final int maxHeight = pos2.getWorld() == null ? 255 : pos2.getWorld().getMaxHeight();
 
-            if (pos2.getBlockY() < minHeight)
-            {
+            if (pos2.getBlockY() < minHeight) {
                 pos2.setY(minHeight);
             }
 
-            if (pos2.getBlockY() > maxHeight)
-            {
+            if (pos2.getBlockY() > maxHeight) {
                 pos2.setY(maxHeight);
             }
         }

@@ -16,6 +16,7 @@ public class BentoBoxLocaleCommand extends ConfirmableCommand {
 
     /**
      * Localization management command
+     * 
      * @param parent command parent
      */
     public BentoBoxLocaleCommand(CompositeCommand parent) {

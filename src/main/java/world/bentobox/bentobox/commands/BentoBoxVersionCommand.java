@@ -24,6 +24,7 @@ public class BentoBoxVersionCommand extends CompositeCommand {
 
     /**
      * Info command
+     * 
      * @param parent - command parent
      */
     public BentoBoxVersionCommand(CompositeCommand parent) {
@@ -40,15 +41,19 @@ public class BentoBoxVersionCommand extends CompositeCommand {
         ServerCompatibility.ServerSoftware serverSoftware = ServerCompatibility.getInstance().getServerSoftware();
         ServerCompatibility.ServerVersion serverVersion = ServerCompatibility.getInstance().getServerVersion();
 
-        user.sendMessage("commands.bentobox.version.server",
-                TextVariables.NAME, serverSoftware.equals(ServerSoftware.UNKNOWN) ? user.getTranslation("general.invalid") + " (" + serverSoftware.getName() + ")" : serverSoftware.toString(),
-                        TextVariables.VERSION, serverVersion != null ? serverVersion.toString() : user.getTranslation("general.invalid"));
-        user.sendMessage("commands.bentobox.version.plugin-version", TextVariables.VERSION, getPlugin().getDescription().getVersion());
-        user.sendMessage("commands.bentobox.version.database", "[database]", getSettings().getDatabaseType().toString());
+        user.sendMessage("commands.bentobox.version.server", TextVariables.NAME,
+                serverSoftware.equals(ServerSoftware.UNKNOWN)
+                        ? user.getTranslation("general.invalid") + " (" + serverSoftware.getName() + ")"
+                        : serverSoftware.toString(),
+                TextVariables.VERSION,
+                serverVersion != null ? serverVersion.toString() : user.getTranslation("general.invalid"));
+        user.sendMessage("commands.bentobox.version.plugin-version", TextVariables.VERSION,
+                getPlugin().getDescription().getVersion());
+        user.sendMessage("commands.bentobox.version.database", "[database]",
+                getSettings().getDatabaseType().toString());
         user.sendMessage("commands.bentobox.version.loaded-game-worlds");
 
-        getIWM().getOverWorldNames().entrySet().stream().sorted(Map.Entry.comparingByKey())
-        .forEach(e -> {
+        getIWM().getOverWorldNames().entrySet().stream().sorted(Map.Entry.comparingByKey()).forEach(e -> {
             String worlds = user.getTranslation("general.worlds.overworld");
 
             // It should be present, but let's stay safe.
@@ -56,8 +61,8 @@ public class BentoBoxVersionCommand extends CompositeCommand {
             if (addonOptional.isPresent()) {
                 GameModeAddon addon = addonOptional.get();
                 /*
-                 * If the dimension is generated, it is displayed.
-                 * If the dimension is not made up of islands, a '*' is appended to its name.
+                 * If the dimension is generated, it is displayed. If the dimension is not made
+                 * up of islands, a '*' is appended to its name.
                  */
                 // Append the nether
                 if (addon.getNetherWorld() != null && getIWM().isNetherGenerate(addon.getOverWorld())) {
@@ -76,14 +81,16 @@ public class BentoBoxVersionCommand extends CompositeCommand {
                 }
             }
 
-            user.sendMessage(user.getTranslation("commands.bentobox.version.game-world", TextVariables.NAME, e.getKey(), "[addon]", e.getValue(),
-                    "[worlds]", worlds));
+            user.sendMessage(user.getTranslation("commands.bentobox.version.game-world", TextVariables.NAME, e.getKey(),
+                    "[addon]", e.getValue(), "[worlds]", worlds));
         });
 
         user.sendMessage("commands.bentobox.version.loaded-addons");
-        getPlugin().getAddonsManager().getAddons().stream().sorted(Comparator.comparing(o -> o.getDescription().getName().toLowerCase(Locale.ENGLISH)))
-        .forEach(a -> user.sendMessage("commands.bentobox.version.addon-syntax", TextVariables.NAME, a.getDescription().getName(),
-                TextVariables.VERSION, a.getDescription().getVersion(), "[state]", a.getState().toString()));
+        getPlugin().getAddonsManager().getAddons().stream()
+                .sorted(Comparator.comparing(o -> o.getDescription().getName().toLowerCase(Locale.ENGLISH)))
+                .forEach(a -> user.sendMessage("commands.bentobox.version.addon-syntax", TextVariables.NAME,
+                        a.getDescription().getName(), TextVariables.VERSION, a.getDescription().getVersion(), "[state]",
+                        a.getState().toString()));
 
         return true;
     }

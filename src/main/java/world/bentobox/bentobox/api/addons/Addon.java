@@ -27,8 +27,8 @@ import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 
 /**
- * Add-on class for BentoBox. Extend this to create an add-on. The operation
- * and methods are very similar to Bukkit's JavaPlugin.
+ * Add-on class for BentoBox. Extend this to create an add-on. The operation and
+ * methods are very similar to Bukkit's JavaPlugin.
  *
  * @author tastybento, ComminQ_Q
  */
@@ -47,11 +47,11 @@ public abstract class Addon {
     }
 
     /**
-     * Executes code when enabling the addon.
-     * This is called after {@link #onLoad()}.
-     * <br/>
-     * Note that commands and worlds registration <b>must</b> be done in {@link #onLoad()}, if need be.
-     * Failure to do so <b>will</b> result in issues such as tab-completion not working for commands.
+     * Executes code when enabling the addon. This is called after
+     * {@link #onLoad()}. <br/>
+     * Note that commands and worlds registration <b>must</b> be done in
+     * {@link #onLoad()}, if need be. Failure to do so <b>will</b> result in issues
+     * such as tab-completion not working for commands.
      */
     public abstract void onEnable();
 
@@ -61,16 +61,18 @@ public abstract class Addon {
     public abstract void onDisable();
 
     /**
-     * Executes code when loading the addon.
-     * This is called before {@link #onEnable()}.
-     * This <b>must</b> be used to setup configuration, worlds and commands.
+     * Executes code when loading the addon. This is called before
+     * {@link #onEnable()}. This <b>must</b> be used to setup configuration, worlds
+     * and commands.
      */
-    public void onLoad() {}
+    public void onLoad() {
+    }
 
     /**
      * Executes code when reloading the addon.
      */
-    public void onReload() {}
+    public void onReload() {
+    }
 
     public BentoBox getPlugin() {
         return BentoBox.getInstance();
@@ -84,6 +86,7 @@ public abstract class Addon {
     public enum State {
         /**
          * The addon has been correctly loaded.
+         * 
          * @since 1.1
          */
         LOADED,
@@ -99,7 +102,8 @@ public abstract class Addon {
         DISABLED,
 
         /**
-         * The addon has not been loaded because it requires a different version of BentoBox or of the server software.
+         * The addon has not been loaded because it requires a different version of
+         * BentoBox or of the server software.
          */
         INCOMPATIBLE,
 
@@ -109,7 +113,8 @@ public abstract class Addon {
         MISSING_DEPENDENCY,
 
         /**
-         * The addon loading or enabling process has been interrupted by an unhandled error.
+         * The addon loading or enabling process has been interrupted by an unhandled
+         * error.
          */
         ERROR
     }
@@ -167,6 +172,7 @@ public abstract class Addon {
 
     /**
      * Gets the current {@link State} of this Addon.
+     * 
      * @return the current State of this Addon.
      * @since 1.1
      */
@@ -195,7 +201,8 @@ public abstract class Addon {
     }
 
     /**
-     * Register a listener for this addon. This MUST be used in order for the addon to be reloadable
+     * Register a listener for this addon. This MUST be used in order for the addon
+     * to be reloadable
      *
      * @param listener - listener
      */
@@ -210,12 +217,14 @@ public abstract class Addon {
         try {
             getConfig().save(new File(dataFolder, ADDON_CONFIG_FILENAME));
         } catch (IOException e) {
-            Bukkit.getLogger().severe("Could not save config! " + this.getDescription().getName() + " " + e.getMessage());
+            Bukkit.getLogger()
+                    .severe("Could not save config! " + this.getDescription().getName() + " " + e.getMessage());
         }
     }
 
     /**
      * Discards any data in getConfig() and reloads from disk.
+     * 
      * @since 1.13.0
      */
     public void reloadConfig() {
@@ -235,10 +244,8 @@ public abstract class Addon {
      * Saves a resource contained in this add-on's jar file to the addon's data
      * folder.
      *
-     * @param resourcePath
-     *            in jar file
-     * @param replace
-     *            - if true, will overwrite previous file
+     * @param resourcePath in jar file
+     * @param replace      - if true, will overwrite previous file
      */
     public void saveResource(String resourcePath, boolean replace) {
         saveResource(resourcePath, dataFolder, replace, false);
@@ -248,14 +255,11 @@ public abstract class Addon {
      * Saves a resource contained in this add-on's jar file to the destination
      * folder.
      *
-     * @param jarResource
-     *            in jar file
-     * @param destinationFolder
-     *            on file system
-     * @param replace
-     *            - if true, will overwrite previous file
-     * @param noPath
-     *            - if true, the resource's path will be ignored when saving
+     * @param jarResource       in jar file
+     * @param destinationFolder on file system
+     * @param replace           - if true, will overwrite previous file
+     * @param noPath            - if true, the resource's path will be ignored when
+     *                          saving
      * @return file written, or null if none
      */
     public File saveResource(String jarResource, File destinationFolder, boolean replace, boolean noPath) {
@@ -298,9 +302,11 @@ public abstract class Addon {
 
     /**
      * Tries to load a YAML file from the Jar
+     * 
      * @param jarResource - YAML file in jar
      * @return YamlConfiguration - may be empty
-     * @throws IOException - if the file cannot be found or loaded from the Jar
+     * @throws IOException                   - if the file cannot be found or loaded
+     *                                       from the Jar
      * @throws InvalidConfigurationException - if the yaml is malformed
      */
     public YamlConfiguration getYamlFromJar(String jarResource) throws IOException, InvalidConfigurationException {
@@ -322,6 +328,7 @@ public abstract class Addon {
 
     /**
      * Get the resource from Jar file
+     * 
      * @param jarResource - jar resource filename
      * @return resource or null if there is a problem
      */
@@ -343,6 +350,7 @@ public abstract class Addon {
         }
         return null;
     }
+
     /**
      * Set the file that contains this addon
      *
@@ -372,6 +380,7 @@ public abstract class Addon {
 
     /**
      * Sets the addon's state.
+     * 
      * @param state the state to set
      */
     public void setState(State state) {
@@ -380,6 +389,7 @@ public abstract class Addon {
 
     /**
      * Get Players Manager
+     * 
      * @return Players manager
      */
     public PlayersManager getPlayers() {
@@ -388,14 +398,16 @@ public abstract class Addon {
 
     /**
      * Get Islands Manager
+     * 
      * @return Islands manager
      */
     public IslandsManager getIslands() {
         return getPlugin().getIslands();
     }
-    
+
     /**
      * Get Islands Manager
+     * 
      * @return Islands manager
      * @see #getIslands()
      * @since 1.17.1
@@ -406,6 +418,7 @@ public abstract class Addon {
 
     /**
      * Get the Addon By Name
+     * 
      * @return Optional Addon
      */
     public Optional<Addon> getAddonByName(String name) {
@@ -425,8 +438,9 @@ public abstract class Addon {
     }
 
     /**
-     * Returns the permission prefix corresponding to this addon.
-     * It contains the addon's name plus a trailing dot.
+     * Returns the permission prefix corresponding to this addon. It contains the
+     * addon's name plus a trailing dot.
+     * 
      * @return Permission prefix string
      */
     public String getPermissionPrefix() {
@@ -435,6 +449,7 @@ public abstract class Addon {
 
     /**
      * Register request handler to answer requests from plugins.
+     * 
      * @param handler request handler
      */
     public void registerRequestHandler(AddonRequestHandler handler) {
@@ -443,25 +458,27 @@ public abstract class Addon {
 
     /**
      * Send request to addon.
-     * @param label label
+     * 
+     * @param label    label
      * @param metaData meta data
      * @return request response, null if no response.
      */
     public Object request(String label, Map<String, Object> metaData) {
         label = label.toLowerCase(Locale.ENGLISH);
         AddonRequestHandler handler = requestHandlers.get(label);
-        if(handler != null) {
+        if (handler != null) {
             return handler.handle(metaData);
         } else {
             return null;
         }
     }
 
-
     /**
      * Register a flag for this addon.
+     * 
      * @param flag the flag to register.
-     * @return {@code true} if the flag was registered successfully, {@code false} otherwise.
+     * @return {@code true} if the flag was registered successfully, {@code false}
+     *         otherwise.
      * @since 1.5.0
      */
     public boolean registerFlag(Flag flag) {
@@ -470,7 +487,9 @@ public abstract class Addon {
 
     /**
      * Called when all addons have been loaded by BentoBox
+     * 
      * @since 1.8.0
      */
-    public void allLoaded() {}
+    public void allLoaded() {
+    }
 }

@@ -52,15 +52,12 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( {BentoBox.class, Flags.class, Util.class, Bukkit.class} )
+@PrepareForTest({ BentoBox.class, Flags.class, Util.class, Bukkit.class })
 public class InventoryListenerTest extends AbstractCommonSetup {
 
-    private final static List<Class<?>> HOLDERS = Arrays.asList(Horse.class, Chest.class,
-            DoubleChest.class,
-            ShulkerBox.class, StorageMinecart.class,
-            Dispenser.class,
-            Dropper.class, Hopper.class, Furnace.class, BrewingStand.class,
-            Villager.class, WanderingTrader.class);
+    private final static List<Class<?>> HOLDERS = Arrays.asList(Horse.class, Chest.class, DoubleChest.class,
+            ShulkerBox.class, StorageMinecart.class, Dispenser.class, Dropper.class, Hopper.class, Furnace.class,
+            BrewingStand.class, Villager.class, WanderingTrader.class);
     private InventoryListener l;
     private Material type;
 
@@ -84,7 +81,8 @@ public class InventoryListenerTest extends AbstractCommonSetup {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.InventoryListener#onInventoryClick(org.bukkit.event.inventory.InventoryClickEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.flags.protection.InventoryListener#onInventoryClick(org.bukkit.event.inventory.InventoryClickEvent)}.
      */
     @Test
     public void testOnInventoryClickEnchantingAllowed() {
@@ -97,13 +95,14 @@ public class InventoryListenerTest extends AbstractCommonSetup {
         when(view.getBottomInventory()).thenReturn(inv);
         SlotType slotType = SlotType.CRAFTING;
         InventoryAction action = InventoryAction.PLACE_ONE;
-        InventoryClickEvent e = new InventoryClickEvent(view, slotType, 0, ClickType.LEFT, action );
+        InventoryClickEvent e = new InventoryClickEvent(view, slotType, 0, ClickType.LEFT, action);
         l.onInventoryClick(e);
         assertFalse(e.isCancelled());
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.InventoryListener#onInventoryClick(org.bukkit.event.inventory.InventoryClickEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.flags.protection.InventoryListener#onInventoryClick(org.bukkit.event.inventory.InventoryClickEvent)}.
      */
     @Test
     public void testOnInventoryClickAllowed() {
@@ -116,17 +115,17 @@ public class InventoryListenerTest extends AbstractCommonSetup {
             Object holder = mock(c);
             when(inv.getHolder()).thenReturn((InventoryHolder) holder);
             if (c.equals(Chest.class)) {
-                when(((Chest)holder).getLocation()).thenReturn(location);
+                when(((Chest) holder).getLocation()).thenReturn(location);
             }
             if (c.equals(DoubleChest.class)) {
-                when(((DoubleChest)holder).getLocation()).thenReturn(location);
+                when(((DoubleChest) holder).getLocation()).thenReturn(location);
             }
             when(view.getTopInventory()).thenReturn(inv);
             when(inv.getLocation()).thenReturn(location);
             when(view.getBottomInventory()).thenReturn(inv);
             SlotType slotType = SlotType.CONTAINER;
             InventoryAction action = InventoryAction.PICKUP_ONE;
-            InventoryClickEvent e = new InventoryClickEvent(view, slotType, 0, ClickType.LEFT, action );
+            InventoryClickEvent e = new InventoryClickEvent(view, slotType, 0, ClickType.LEFT, action);
             l.onInventoryClick(e);
             assertFalse(e.isCancelled());
         });
@@ -134,7 +133,8 @@ public class InventoryListenerTest extends AbstractCommonSetup {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.InventoryListener#onInventoryClick(org.bukkit.event.inventory.InventoryClickEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.flags.protection.InventoryListener#onInventoryClick(org.bukkit.event.inventory.InventoryClickEvent)}.
      */
     @Test
     public void testOnInventoryClickAllowedTrappedChest() {
@@ -143,7 +143,8 @@ public class InventoryListenerTest extends AbstractCommonSetup {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.InventoryListener#onInventoryClick(org.bukkit.event.inventory.InventoryClickEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.flags.protection.InventoryListener#onInventoryClick(org.bukkit.event.inventory.InventoryClickEvent)}.
      */
     @Test
     public void testOnInventoryClickNullHolder() {
@@ -158,13 +159,14 @@ public class InventoryListenerTest extends AbstractCommonSetup {
         when(view.getBottomInventory()).thenReturn(inv);
         SlotType slotType = SlotType.CONTAINER;
         InventoryAction action = InventoryAction.PICKUP_ONE;
-        InventoryClickEvent e = new InventoryClickEvent(view, slotType, 0, ClickType.LEFT, action );
+        InventoryClickEvent e = new InventoryClickEvent(view, slotType, 0, ClickType.LEFT, action);
         l.onInventoryClick(e);
         assertFalse(e.isCancelled());
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.InventoryListener#onInventoryClick(org.bukkit.event.inventory.InventoryClickEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.flags.protection.InventoryListener#onInventoryClick(org.bukkit.event.inventory.InventoryClickEvent)}.
      */
     @Test
     public void testOnInventoryClickNotPlayer() {
@@ -179,7 +181,7 @@ public class InventoryListenerTest extends AbstractCommonSetup {
         when(view.getBottomInventory()).thenReturn(inv);
         SlotType slotType = SlotType.CONTAINER;
         InventoryAction action = InventoryAction.PICKUP_ONE;
-        InventoryClickEvent e = new InventoryClickEvent(view, slotType, 0, ClickType.LEFT, action );
+        InventoryClickEvent e = new InventoryClickEvent(view, slotType, 0, ClickType.LEFT, action);
         l.onInventoryClick(e);
         assertFalse(e.isCancelled());
     }
@@ -237,7 +239,8 @@ public class InventoryListenerTest extends AbstractCommonSetup {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.InventoryListener#onInventoryClick(org.bukkit.event.inventory.InventoryClickEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.flags.protection.InventoryListener#onInventoryClick(org.bukkit.event.inventory.InventoryClickEvent)}.
      */
     @Test
     public void testOnInventoryClickNotAllowedTrappedChest() {
@@ -245,9 +248,9 @@ public class InventoryListenerTest extends AbstractCommonSetup {
         testOnInventoryClickNotAllowed();
     }
 
-
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.InventoryListener#onInventoryClick(org.bukkit.event.inventory.InventoryClickEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.flags.protection.InventoryListener#onInventoryClick(org.bukkit.event.inventory.InventoryClickEvent)}.
      */
     @Test
     public void testOnInventoryClickOtherHolderAllowed() {
@@ -262,7 +265,7 @@ public class InventoryListenerTest extends AbstractCommonSetup {
         when(view.getBottomInventory()).thenReturn(inv);
         SlotType slotType = SlotType.CONTAINER;
         InventoryAction action = InventoryAction.PICKUP_ONE;
-        InventoryClickEvent e = new InventoryClickEvent(view, slotType, 0, ClickType.LEFT, action );
+        InventoryClickEvent e = new InventoryClickEvent(view, slotType, 0, ClickType.LEFT, action);
         l.onInventoryClick(e);
         assertFalse(e.isCancelled());
     }
@@ -310,6 +313,5 @@ public class InventoryListenerTest extends AbstractCommonSetup {
         l.onInventoryClick(e);
         assertFalse(e.isCancelled());
     }
-
 
 }

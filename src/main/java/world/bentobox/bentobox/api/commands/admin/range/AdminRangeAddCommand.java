@@ -57,7 +57,8 @@ public class AdminRangeAddCommand extends CompositeCommand {
         int newRange = island.getProtectionRange() + Integer.parseInt(args.get(1));
 
         if (newRange > island.getRange()) {
-            user.sendMessage("commands.admin.range.invalid-value.too-high", TextVariables.NUMBER, String.valueOf(island.getRange()));
+            user.sendMessage("commands.admin.range.invalid-value.too-high", TextVariables.NUMBER,
+                    String.valueOf(island.getRange()));
             return false;
         } else if (newRange == island.getProtectionRange()) {
             user.sendMessage("commands.admin.range.invalid-value.same-as-before", TextVariables.NUMBER, args.get(1));
@@ -71,18 +72,11 @@ public class AdminRangeAddCommand extends CompositeCommand {
         island.setProtectionRange(newRange);
 
         // Call Protection Range Change event. Does not support cancelling.
-        IslandEvent.builder()
-        .island(island)
-        .location(island.getCenter())
-        .reason(IslandEvent.Reason.RANGE_CHANGE)
-        .involvedPlayer(targetUUID)
-        .admin(true)
-        .protectionRange(newRange, oldRange)
-        .build();
+        IslandEvent.builder().island(island).location(island.getCenter()).reason(IslandEvent.Reason.RANGE_CHANGE)
+                .involvedPlayer(targetUUID).admin(true).protectionRange(newRange, oldRange).build();
 
-        user.sendMessage("commands.admin.range.add.success",
-                TextVariables.NAME, args.get(0), TextVariables.NUMBER, args.get(1),
-                "[total]", String.valueOf(newRange));
+        user.sendMessage("commands.admin.range.add.success", TextVariables.NAME, args.get(0), TextVariables.NUMBER,
+                args.get(1), "[total]", String.valueOf(newRange));
 
         return true;
     }

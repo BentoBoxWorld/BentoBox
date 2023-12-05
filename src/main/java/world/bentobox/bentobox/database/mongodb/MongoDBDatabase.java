@@ -11,8 +11,11 @@ public class MongoDBDatabase implements DatabaseSetup {
 
     private MongoDBDatabaseConnector connector;
 
-    /* (non-Javadoc)
-     * @see world.bentobox.bentobox.database.DatabaseSetup#getHandler(java.lang.Class)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * world.bentobox.bentobox.database.DatabaseSetup#getHandler(java.lang.Class)
      */
     @Override
     public <T> AbstractDatabaseHandler<T> getHandler(Class<T> type) {
@@ -25,14 +28,12 @@ public class MongoDBDatabase implements DatabaseSetup {
             return null;
         }
         if (connector == null) {
-            connector = new MongoDBDatabaseConnector(new DatabaseConnectionSettingsImpl(
-                    plugin.getSettings().getDatabaseHost(),
-                    plugin.getSettings().getDatabasePort(),
-                    plugin.getSettings().getDatabaseName(),
-                    plugin.getSettings().getDatabaseUsername(),
-                    plugin.getSettings().getDatabasePassword(),
-                    plugin.getSettings().isUseSSL()
-            ), plugin.getSettings().getMongodbConnectionUri());
+            connector = new MongoDBDatabaseConnector(
+                    new DatabaseConnectionSettingsImpl(plugin.getSettings().getDatabaseHost(),
+                            plugin.getSettings().getDatabasePort(), plugin.getSettings().getDatabaseName(),
+                            plugin.getSettings().getDatabaseUsername(), plugin.getSettings().getDatabasePassword(),
+                            plugin.getSettings().isUseSSL()),
+                    plugin.getSettings().getMongodbConnectionUri());
         }
         return new MongoDBDatabaseHandler<>(plugin, type, connector);
     }

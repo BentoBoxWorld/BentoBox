@@ -35,6 +35,7 @@ abstract class BasicPlaceholderExpansion extends PlaceholderExpansion {
 
     /**
      * Unregisters a placeholder from the expansion.
+     * 
      * @param placeholder the placeholder to unregister.
      * @since 1.4.0
      */
@@ -52,6 +53,7 @@ abstract class BasicPlaceholderExpansion extends PlaceholderExpansion {
 
     /**
      * Checks if a placeholder with this name is already registered
+     * 
      * @param placeholder - name of placeholder
      * @return <tt>true</tt> if a placeholder with this name is already registered
      * @since 1.4.0

@@ -9,6 +9,7 @@ import world.bentobox.bentobox.lists.Flags;
 
 /**
  * Handles throwing regular eggs (not spawn eggs)
+ * 
  * @author tastybento
  *
  */
@@ -16,6 +17,7 @@ public class EggListener extends FlagListener {
 
     /**
      * Handle visitor chicken egg throwing
+     * 
      * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)

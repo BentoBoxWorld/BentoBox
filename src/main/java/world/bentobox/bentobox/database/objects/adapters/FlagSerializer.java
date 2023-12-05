@@ -10,9 +10,11 @@ import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.flags.Flag;
 
 /**
- * Serializes the {@link world.bentobox.bentobox.database.objects.Island#getFlags() getFlags()} and
- * {@link world.bentobox.bentobox.database.objects.Island#setFlags(Map)} () setFlags()}
- * in {@link world.bentobox.bentobox.database.objects.Island}
+ * Serializes the
+ * {@link world.bentobox.bentobox.database.objects.Island#getFlags() getFlags()}
+ * and {@link world.bentobox.bentobox.database.objects.Island#setFlags(Map)} ()
+ * setFlags()} in {@link world.bentobox.bentobox.database.objects.Island}
+ * 
  * @author tastybento
  *
  */
@@ -28,11 +30,13 @@ public class FlagSerializer implements AdapterInterface<Map<Flag, Integer>, Map<
         // For YAML
         if (object instanceof MemorySection section) {
             for (String key : section.getKeys(false)) {
-                BentoBox.getInstance().getFlagsManager().getFlag(key).ifPresent(flag -> result.put(flag, section.getInt(key)));
+                BentoBox.getInstance().getFlagsManager().getFlag(key)
+                        .ifPresent(flag -> result.put(flag, section.getInt(key)));
             }
         } else {
-            for (Entry<String, Integer> en : ((Map<String, Integer>)object).entrySet()) {
-                BentoBox.getInstance().getFlagsManager().getFlag(en.getKey()).ifPresent(flag -> result.put(flag, en.getValue()));
+            for (Entry<String, Integer> en : ((Map<String, Integer>) object).entrySet()) {
+                BentoBox.getInstance().getFlagsManager().getFlag(en.getKey())
+                        .ifPresent(flag -> result.put(flag, en.getValue()));
             }
         }
         return result;
@@ -45,8 +49,8 @@ public class FlagSerializer implements AdapterInterface<Map<Flag, Integer>, Map<
         if (object == null) {
             return result;
         }
-        Map<Flag, Integer> flags = (Map<Flag, Integer>)object;
-        for (Entry<Flag, Integer> en: flags.entrySet()) {
+        Map<Flag, Integer> flags = (Map<Flag, Integer>) object;
+        for (Entry<Flag, Integer> en : flags.entrySet()) {
             if (en != null && en.getKey() != null) {
                 result.put(en.getKey().getID(), en.getValue());
             }

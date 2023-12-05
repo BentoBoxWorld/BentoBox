@@ -53,14 +53,14 @@ import world.bentobox.bentobox.managers.PlaceholdersManager;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({BentoBox.class, Bukkit.class})
+@PrepareForTest({ BentoBox.class, Bukkit.class })
 public class CoarseDirtTillingListenerTest {
 
     @SuppressWarnings("deprecation")
     private static final List<Material> HOES = Collections.unmodifiableList(Arrays.stream(Material.values())
             .filter(m -> !m.isLegacy()).filter(m -> m.name().endsWith("_HOE")).toList());
-    private static final List<Material> NOT_HOES = Collections.unmodifiableList(Arrays.stream(Material.values())
-            .filter(m -> !m.name().endsWith("_HOE")).toList());
+    private static final List<Material> NOT_HOES = Collections
+            .unmodifiableList(Arrays.stream(Material.values()).filter(m -> !m.name().endsWith("_HOE")).toList());
 
     // Class under test
     private CoarseDirtTillingListener ctl;
@@ -74,7 +74,6 @@ public class CoarseDirtTillingListenerTest {
     private Player player;
     @Mock
     private Notifier notifier;
-
 
     /**
      */
@@ -108,11 +107,11 @@ public class CoarseDirtTillingListenerTest {
         when(lm.get(any(), any())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
         PlaceholdersManager phm = mock(PlaceholdersManager.class);
         when(plugin.getPlaceholdersManager()).thenReturn(phm);
-        when(phm.replacePlaceholders(any(), any())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
+        when(phm.replacePlaceholders(any(), any()))
+                .thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
         when(plugin.getLocalesManager()).thenReturn(lm);
         // Notifier
         when(plugin.getNotifier()).thenReturn(notifier);
-
 
         // Flag
         Flags.COARSE_DIRT_TILLING.setDefaultSetting(world, false);
@@ -129,12 +128,14 @@ public class CoarseDirtTillingListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.CoarseDirtTillingListener#onTillingCoarseDirt(org.bukkit.event.player.PlayerInteractEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.flags.worldsettings.CoarseDirtTillingListener#onTillingCoarseDirt(org.bukkit.event.player.PlayerInteractEvent)}.
      */
     @Test
     public void testOnTillingCoarseDirtNotAllowed() {
         ItemStack itemStack = mock(ItemStack.class);
-        PlayerInteractEvent e = new PlayerInteractEvent(player, Action.RIGHT_CLICK_BLOCK, itemStack, clickedBlock, BlockFace.UP);
+        PlayerInteractEvent e = new PlayerInteractEvent(player, Action.RIGHT_CLICK_BLOCK, itemStack, clickedBlock,
+                BlockFace.UP);
 
         HOES.forEach(m -> {
             when(itemStack.getType()).thenReturn(m);
@@ -145,14 +146,16 @@ public class CoarseDirtTillingListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.CoarseDirtTillingListener#onTillingCoarseDirt(org.bukkit.event.player.PlayerInteractEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.flags.worldsettings.CoarseDirtTillingListener#onTillingCoarseDirt(org.bukkit.event.player.PlayerInteractEvent)}.
      */
     @Test
     public void testOnTillingCoarseDirtAllowed() {
         // Flag
         Flags.COARSE_DIRT_TILLING.setDefaultSetting(world, true);
         ItemStack itemStack = mock(ItemStack.class);
-        PlayerInteractEvent e = new PlayerInteractEvent(player, Action.RIGHT_CLICK_BLOCK, itemStack, clickedBlock, BlockFace.UP);
+        PlayerInteractEvent e = new PlayerInteractEvent(player, Action.RIGHT_CLICK_BLOCK, itemStack, clickedBlock,
+                BlockFace.UP);
         HOES.forEach(m -> {
             when(itemStack.getType()).thenReturn(m);
             ctl.onTillingCoarseDirt(e);
@@ -162,12 +165,14 @@ public class CoarseDirtTillingListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.CoarseDirtTillingListener#onTillingCoarseDirt(org.bukkit.event.player.PlayerInteractEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.flags.worldsettings.CoarseDirtTillingListener#onTillingCoarseDirt(org.bukkit.event.player.PlayerInteractEvent)}.
      */
     @Test
     public void testOnTillingCoarseDirtNotHoe() {
         ItemStack itemStack = mock(ItemStack.class);
-        PlayerInteractEvent e = new PlayerInteractEvent(player, Action.RIGHT_CLICK_BLOCK, itemStack, clickedBlock, BlockFace.UP);
+        PlayerInteractEvent e = new PlayerInteractEvent(player, Action.RIGHT_CLICK_BLOCK, itemStack, clickedBlock,
+                BlockFace.UP);
         NOT_HOES.forEach(m -> {
             when(itemStack.getType()).thenReturn(m);
             ctl.onTillingCoarseDirt(e);
@@ -177,23 +182,27 @@ public class CoarseDirtTillingListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.CoarseDirtTillingListener#onTillingCoarseDirt(org.bukkit.event.player.PlayerInteractEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.flags.worldsettings.CoarseDirtTillingListener#onTillingCoarseDirt(org.bukkit.event.player.PlayerInteractEvent)}.
      */
     @Test
     public void testOnTillingCoarseDirtWrongAction() {
         ItemStack itemStack = mock(ItemStack.class);
-        PlayerInteractEvent e = new PlayerInteractEvent(player, Action.LEFT_CLICK_AIR, itemStack, clickedBlock, BlockFace.UP);
+        PlayerInteractEvent e = new PlayerInteractEvent(player, Action.LEFT_CLICK_AIR, itemStack, clickedBlock,
+                BlockFace.UP);
         ctl.onTillingCoarseDirt(e);
         assertEquals(Result.ALLOW, e.useInteractedBlock());
         verify(notifier, never()).notify(any(), eq("protection.protected"));
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.CoarseDirtTillingListener#onTillingCoarseDirt(org.bukkit.event.player.PlayerInteractEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.flags.worldsettings.CoarseDirtTillingListener#onTillingCoarseDirt(org.bukkit.event.player.PlayerInteractEvent)}.
      */
     @Test
     public void testOnTillingCoarseDirtNullItem() {
-        PlayerInteractEvent e = new PlayerInteractEvent(player, Action.RIGHT_CLICK_BLOCK, null, clickedBlock, BlockFace.UP);
+        PlayerInteractEvent e = new PlayerInteractEvent(player, Action.RIGHT_CLICK_BLOCK, null, clickedBlock,
+                BlockFace.UP);
         ctl.onTillingCoarseDirt(e);
         assertEquals(Result.ALLOW, e.useInteractedBlock());
         verify(notifier, never()).notify(any(), eq("protection.protected"));
@@ -230,7 +239,8 @@ public class CoarseDirtTillingListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.CoarseDirtTillingListener#onBreakingPodzol(org.bukkit.event.block.BlockBreakEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.flags.worldsettings.CoarseDirtTillingListener#onBreakingPodzol(org.bukkit.event.block.BlockBreakEvent)}.
      */
     @Test
     public void testOnBreakingPodzolNotPodzol() {
@@ -250,7 +260,6 @@ public class CoarseDirtTillingListenerTest {
         verify(clickedBlock).setType(eq(Material.AIR));
         verify(world).dropItemNaturally(any(), any());
     }
-
 
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.CoarseDirtTillingListener#onBreakingPodzol(org.bukkit.event.block.BlockBreakEvent)}.
@@ -277,7 +286,8 @@ public class CoarseDirtTillingListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.worldsettings.CoarseDirtTillingListener#onBreakingPodzol(org.bukkit.event.block.BlockBreakEvent)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.listeners.flags.worldsettings.CoarseDirtTillingListener#onBreakingPodzol(org.bukkit.event.block.BlockBreakEvent)}.
      */
     @Test
     public void testOnBreakingPodzolFlagAllowed() {

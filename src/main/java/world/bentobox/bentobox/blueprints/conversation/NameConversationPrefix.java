@@ -11,7 +11,7 @@ public class NameConversationPrefix implements ConversationPrefix {
 
     @Override
     public @NonNull String getPrefix(ConversationContext context) {
-        User user = User.getInstance((Player)context.getForWhom());
+        User user = User.getInstance((Player) context.getForWhom());
         return user.getTranslation("commands.admin.blueprint.management.name.conversation-prefix");
     }
 }

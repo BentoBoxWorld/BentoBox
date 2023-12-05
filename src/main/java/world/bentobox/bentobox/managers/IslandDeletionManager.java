@@ -19,7 +19,9 @@ import world.bentobox.bentobox.database.objects.IslandDeletion;
 import world.bentobox.bentobox.util.Util;
 
 /**
- * Listens for island deletions and adds them to the database. Removes them when the island is deleted.
+ * Listens for island deletions and adds them to the database. Removes them when
+ * the island is deleted.
+ * 
  * @author tastybento
  * @since 1.1
  */
@@ -41,7 +43,9 @@ public class IslandDeletionManager implements Listener {
     }
 
     /**
-     * When BentoBox is fully loaded, load the islands that still need to be deleted and kick them off
+     * When BentoBox is fully loaded, load the islands that still need to be deleted
+     * and kick them off
+     * 
      * @param e BentoBox Ready event
      */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -56,7 +60,8 @@ public class IslandDeletionManager implements Listener {
                     plugin.logError("Island queued for deletion refers to a non-existent game world. Skipping...");
                     toBeRemoved.add(di);
                 } else {
-                    plugin.log("Resuming deletion of island at " + di.getLocation().getWorld().getName() + " " + Util.xyz(di.getLocation().toVector()));
+                    plugin.log("Resuming deletion of island at " + di.getLocation().getWorld().getName() + " "
+                            + Util.xyz(di.getLocation().toVector()));
                     inDeletion.add(di.getLocation());
                     this.islandChunkDeletionManager.add(di);
                 }
@@ -82,6 +87,7 @@ public class IslandDeletionManager implements Listener {
 
     /**
      * Check if an island location is in deletion
+     * 
      * @param location - center of location
      * @return true if island is in the process of being deleted
      */

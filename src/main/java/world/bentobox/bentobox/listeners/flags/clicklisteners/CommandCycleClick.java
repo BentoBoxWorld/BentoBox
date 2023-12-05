@@ -27,8 +27,12 @@ public class CommandCycleClick implements ClickHandler {
         this.command = c;
     }
 
-    /* (non-Javadoc)
-     * @see world.bentobox.bentobox.api.panels.PanelItem.ClickHandler#onClick(world.bentobox.bentobox.api.panels.Panel, world.bentobox.bentobox.api.user.User, org.bukkit.event.inventory.ClickType, int)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see world.bentobox.bentobox.api.panels.PanelItem.ClickHandler#onClick(world.
+     * bentobox.bentobox.api.panels.Panel, world.bentobox.bentobox.api.user.User,
+     * org.bukkit.event.inventory.ClickType, int)
      */
     @Override
     public boolean onClick(Panel panel, User user, ClickType click, int slot) {

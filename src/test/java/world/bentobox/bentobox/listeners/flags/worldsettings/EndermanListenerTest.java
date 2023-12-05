@@ -51,11 +51,12 @@ import world.bentobox.bentobox.util.Util;
 
 /**
  * Tests enderman related listeners
+ * 
  * @author tastybento
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( {BentoBox.class, Flags.class, Util.class, Bukkit.class} )
+@PrepareForTest({ BentoBox.class, Flags.class, Util.class, Bukkit.class })
 public class EndermanListenerTest {
 
     private static IslandWorldManager iwm;
@@ -98,7 +99,6 @@ public class EndermanListenerTest {
 
         FlagsManager flagsManager = new FlagsManager(plugin);
         when(plugin.getFlagsManager()).thenReturn(flagsManager);
-
 
         // Worlds
         iwm = mock(IslandWorldManager.class);
@@ -148,7 +148,8 @@ public class EndermanListenerTest {
     }
 
     /**
-     * Test method for {@link EndermanListener#onEndermanGrief(org.bukkit.event.entity.EntityChangeBlockEvent)}.
+     * Test method for
+     * {@link EndermanListener#onEndermanGrief(org.bukkit.event.entity.EntityChangeBlockEvent)}.
      */
     @Test
     public void testNotEnderman() {
@@ -176,7 +177,8 @@ public class EndermanListenerTest {
     }
 
     /**
-     * Test method for {@link EndermanListener#onEndermanGrief(org.bukkit.event.entity.EntityChangeBlockEvent)}.
+     * Test method for
+     * {@link EndermanListener#onEndermanGrief(org.bukkit.event.entity.EntityChangeBlockEvent)}.
      */
     @Test
     public void testOnEndermanGriefAllowed() {
@@ -190,7 +192,8 @@ public class EndermanListenerTest {
     }
 
     /**
-     * Test method for {@link EndermanListener#onEndermanGrief(org.bukkit.event.entity.EntityChangeBlockEvent)}.
+     * Test method for
+     * {@link EndermanListener#onEndermanGrief(org.bukkit.event.entity.EntityChangeBlockEvent)}.
      */
     @Test
     public void testOnEndermanGrief() {

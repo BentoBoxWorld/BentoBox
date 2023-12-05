@@ -19,6 +19,7 @@ import world.bentobox.bentobox.database.objects.Island;
 
 /**
  * Provide geo limiting to mobs - removed them if they go outside island bounds
+ * 
  * @author tastybento
  *
  */
@@ -33,16 +34,16 @@ public class GeoLimitMobsListener extends FlagListener {
     public void onPluginReady(BentoBoxReadyEvent event) {
         // Kick off the task to remove entities that go outside island boundaries
         Bukkit.getScheduler().runTaskTimer(getPlugin(), () -> {
-            mobSpawnTracker.entrySet().stream()
-            .filter(e -> !e.getValue().onIsland(e.getKey().getLocation()))
-            .map(Map.Entry::getKey)
-            .forEach(Entity::remove);
+            mobSpawnTracker.entrySet().stream().filter(e -> !e.getValue().onIsland(e.getKey().getLocation()))
+                    .map(Map.Entry::getKey).forEach(Entity::remove);
             mobSpawnTracker.keySet().removeIf(e -> e == null || e.isDead());
         }, 20L, 20L);
     }
 
     /**
-     * Track where the mob was created. This will determine its allowable movement zone.
+     * Track where the mob was created. This will determine its allowable movement
+     * zone.
+     * 
      * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
@@ -63,14 +64,14 @@ public class GeoLimitMobsListener extends FlagListener {
 
     /**
      * Deal with projectiles fired by entities
+     * 
      * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onProjectileExplode(final ExplosionPrimeEvent e) {
         if (e.getEntity() instanceof Projectile projectile && getIWM().inWorld(e.getEntity().getLocation())) {
             ProjectileSource source = projectile.getShooter();
-            if (source instanceof Entity shooter
-                    && mobSpawnTracker.containsKey(shooter)
+            if (source instanceof Entity shooter && mobSpawnTracker.containsKey(shooter)
                     && !mobSpawnTracker.get(shooter).onIsland(e.getEntity().getLocation())) {
                 e.getEntity().remove();
                 e.setCancelled(true);
@@ -78,4 +79,3 @@ public class GeoLimitMobsListener extends FlagListener {
         }
     }
 }
-

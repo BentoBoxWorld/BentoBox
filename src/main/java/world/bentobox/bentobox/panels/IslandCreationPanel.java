@@ -16,39 +16,41 @@ import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle;
 import world.bentobox.bentobox.managers.BlueprintsManager;
 import world.bentobox.bentobox.util.Util;
 
-
 /**
  * Displays the available BlueprintBundles to pick up as the island.
+ * 
  * @author tastybento
  * @since 1.5.0
  */
 public class IslandCreationPanel {
 
-    private IslandCreationPanel() {}
+    private IslandCreationPanel() {
+    }
 
     /**
-     * Shows a player a panel of selectable blueprint bundles. Checks user's permission
+     * Shows a player a panel of selectable blueprint bundles. Checks user's
+     * permission
+     * 
      * @param command - the command requesting the panel, e.g., create or reset
-     * @param user - the user
-     * @param label - label
+     * @param user    - the user
+     * @param label   - label
      */
     public static void openPanel(@NonNull CompositeCommand command, @NonNull User user, @NonNull String label) {
         BentoBox plugin = BentoBox.getInstance();
         // Create the panel
         PanelBuilder pb = new PanelBuilder().name(user.getTranslation("commands.island.create.pick")).user(user);
         // Get the bundles
-        Comparator<BlueprintBundle> sortByDisplayName = (p, o) -> p.getDisplayName().compareToIgnoreCase(o.getDisplayName());
+        Comparator<BlueprintBundle> sortByDisplayName = (p, o) -> p.getDisplayName()
+                .compareToIgnoreCase(o.getDisplayName());
         List<BlueprintBundle> bbs = plugin.getBlueprintsManager().getBlueprintBundles(command.getAddon()).values()
                 .stream().sorted(sortByDisplayName).toList();
         // Loop through them and create items in the panel
         for (BlueprintBundle bb : bbs) {
             String perm = command.getPermissionPrefix() + "island.create." + bb.getUniqueId();
-            if (bb.getUniqueId().equals(BlueprintsManager.DEFAULT_BUNDLE_NAME)
-                    || !bb.isRequirePermission()
+            if (bb.getUniqueId().equals(BlueprintsManager.DEFAULT_BUNDLE_NAME) || !bb.isRequirePermission()
                     || user.hasPermission(perm)) {
                 // Add an item
-                PanelItem item = new PanelItemBuilder()
-                        .name(bb.getDisplayName())
+                PanelItem item = new PanelItemBuilder().name(bb.getDisplayName())
                         .description(bb.getDescription().stream().map(Util::translateColorCodes).toList())
                         .icon(bb.getIcon()).clickHandler((panel, user1, clickType, slot1) -> {
                             user1.closeInventory();

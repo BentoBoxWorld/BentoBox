@@ -10,6 +10,7 @@ import world.bentobox.bentobox.lists.Flags;
 
 /**
  * Handles teleporting due to enderpearl or chorus fruit.
+ * 
  * @author tastybento
  *
  */

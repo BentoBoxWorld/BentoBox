@@ -15,13 +15,15 @@ import world.bentobox.bentobox.blueprints.dataobjects.BlueprintEntity;
 
 /**
  * Stores all details of a blueprint
+ * 
  * @author tastybento
  *
  */
 public class Blueprint {
 
     /**
-     * Unique name for this blueprint. The filename will be this plus the blueprint suffix
+     * Unique name for this blueprint. The filename will be this plus the blueprint
+     * suffix
      */
     @Expose
     private @NonNull String name = "";
@@ -45,15 +47,18 @@ public class Blueprint {
     private int zSize;
     @Expose
     private Vector bedrock;
+
     /**
      * @return the name
      */
     @NonNull
     public String getName() {
-        if (name == null) name = "unnamed";
+        if (name == null)
+            name = "unnamed";
         // Force lower case
         return name;
     }
+
     /**
      * @param name the name to set
      */
@@ -62,12 +67,14 @@ public class Blueprint {
         this.name = name;
         return this;
     }
+
     /**
      * @return the displayName
      */
     public String getDisplayName() {
         return displayName;
     }
+
     /**
      * @param displayName the displayName to set
      */
@@ -75,12 +82,14 @@ public class Blueprint {
         this.displayName = displayName;
         return this;
     }
+
     /**
      * @return the icon
      */
     public @NonNull Material getIcon() {
         return icon;
     }
+
     /**
      * @param icon the icon to set
      * @return blueprint
@@ -89,12 +98,14 @@ public class Blueprint {
         this.icon = icon;
         return this;
     }
+
     /**
      * @return the description
      */
     public List<String> getDescription() {
         return description;
     }
+
     /**
      * @param description the description to set
      */
@@ -102,32 +113,38 @@ public class Blueprint {
         this.description = description;
         return this;
     }
+
     /**
      * @param description the description to set
      */
     public Blueprint setDescription(String description) {
-        if (this.description == null) this.description = new ArrayList<>();
+        if (this.description == null)
+            this.description = new ArrayList<>();
         this.description.add(description);
         return this;
     }
+
     /**
      * @return the attached
      */
     public Map<Vector, BlueprintBlock> getAttached() {
         return attached;
     }
+
     /**
      * @param attached the attached to set
      */
     public void setAttached(Map<Vector, BlueprintBlock> attached) {
         this.attached = attached;
     }
+
     /**
      * @return the entities
      */
     public Map<Vector, List<BlueprintEntity>> getEntities() {
         return entities;
     }
+
     /**
      * @param entities the entities to set
      */
@@ -138,60 +155,70 @@ public class Blueprint {
             this.entities.putAll(entities);
         }
     }
+
     /**
      * @return the blocks
      */
     public Map<Vector, BlueprintBlock> getBlocks() {
         return blocks;
     }
+
     /**
      * @param blocks the blocks to set
      */
     public void setBlocks(Map<Vector, BlueprintBlock> blocks) {
         this.blocks = blocks;
     }
+
     /**
      * @return the xSize
      */
     public int getxSize() {
         return xSize;
     }
+
     /**
      * @param xSize the xSize to set
      */
     public void setxSize(int xSize) {
         this.xSize = xSize;
     }
+
     /**
      * @return the ySize
      */
     public int getySize() {
         return ySize;
     }
+
     /**
      * @param ySize the ySize to set
      */
     public void setySize(int ySize) {
         this.ySize = ySize;
     }
+
     /**
      * @return the zSize
      */
     public int getzSize() {
         return zSize;
     }
+
     /**
      * @param zSize the zSize to set
      */
     public void setzSize(int zSize) {
         this.zSize = zSize;
     }
+
     /**
      * @return the bedrock
      */
     public Vector getBedrock() {
         return bedrock;
     }
+
     /**
      * @param bedrock the bedrock to set
      */

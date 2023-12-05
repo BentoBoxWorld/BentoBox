@@ -159,7 +159,7 @@ public class BlueprintBlock {
     }
 
     /**
-     * @param side side of sign
+     * @param side        side of sign
      * @param glowingText the glowingText to set
      * @since 1.24.0
      */
@@ -178,7 +178,8 @@ public class BlueprintBlock {
      * @since 1.24.0
      */
     public boolean isGlowingText(Side side) {
-        if (side == Side.FRONT) return glowingText;
+        if (side == Side.FRONT)
+            return glowingText;
         return glowingText2;
     }
 
@@ -188,12 +189,13 @@ public class BlueprintBlock {
      * @since 1.24.0
      */
     public List<String> getSignLines(Side side) {
-        if (side == Side.FRONT) return signLines;
+        if (side == Side.FRONT)
+            return signLines;
         return signLines2;
     }
 
     /**
-     * @param side side of sign
+     * @param side      side of sign
      * @param signLines the signLines to set
      * @since 1.24.0
      */

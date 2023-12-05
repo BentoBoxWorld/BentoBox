@@ -17,6 +17,7 @@ import world.bentobox.bentobox.util.Util;
 
 /**
  * Provide limiting of mob types globally
+ * 
  * @author tastybento
  *
  */
@@ -49,15 +50,9 @@ public class MobLimitClickListener implements ClickHandler {
         // Close the current panel
         user.closeInventory();
         // Open a new panel
-        new TabbedPanelBuilder()
-        .user(user)
-        .world(world)
-        .tab(1, new GeoMobLimitTab(user, EntityLimitTabType.MOB_LIMIT, world))
-        .startingSlot(1)
-        .size(54)
-        .build().openPanel();
+        new TabbedPanelBuilder().user(user).world(world)
+                .tab(1, new GeoMobLimitTab(user, EntityLimitTabType.MOB_LIMIT, world)).startingSlot(1).size(54).build()
+                .openPanel();
     }
-
-
 
 }

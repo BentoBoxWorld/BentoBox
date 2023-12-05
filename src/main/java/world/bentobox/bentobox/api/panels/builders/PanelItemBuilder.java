@@ -13,7 +13,6 @@ import world.bentobox.bentobox.api.panels.PanelItem;
 import world.bentobox.bentobox.api.panels.PanelItem.ClickHandler;
 import world.bentobox.bentobox.util.Util;
 
-
 public class PanelItemBuilder {
     private ItemStack icon = new ItemStack(Material.AIR);
     private @Nullable String name = "";
@@ -24,9 +23,9 @@ public class PanelItemBuilder {
     private boolean invisible;
 
     /**
-     * Allows to define amount of elements in stack.
-     * Note: it uses item.setAmount, so it cannot overwrite minimal and maximal values.
-     * f.e. Eggs will never be more than 16, and 0 will mean empty icon.
+     * Allows to define amount of elements in stack. Note: it uses item.setAmount,
+     * so it cannot overwrite minimal and maximal values. f.e. Eggs will never be
+     * more than 16, and 0 will mean empty icon.
      */
     private int amount = 1;
 
@@ -34,7 +33,6 @@ public class PanelItemBuilder {
      * Default icon if someone gives invalid material or item stack.
      */
     private static final ItemStack DEFAULT_ICON = new ItemStack(Material.PAPER);
-
 
     public PanelItemBuilder icon(@Nullable Material icon) {
         this.icon = icon == null ? DEFAULT_ICON.clone() : new ItemStack(icon);
@@ -50,6 +48,7 @@ public class PanelItemBuilder {
 
     /**
      * Set icon to player's head
+     * 
      * @param playerName - player's name
      * @return PanelItemBuilder
      */
@@ -66,6 +65,7 @@ public class PanelItemBuilder {
 
     /**
      * Sets amount of items in stack.
+     * 
      * @param amount new amount of items.
      * @return PanelItemBuilder
      */
@@ -76,6 +76,7 @@ public class PanelItemBuilder {
 
     /**
      * Adds a list of strings to the descriptions
+     * 
      * @param description - List of strings
      * @return PanelItemBuilder
      */
@@ -86,6 +87,7 @@ public class PanelItemBuilder {
 
     /**
      * Add any number of lines to the description
+     * 
      * @param description strings of lines
      * @return PanelItemBuilder
      */
@@ -100,6 +102,7 @@ public class PanelItemBuilder {
 
     /**
      * Adds a line to the description
+     * 
      * @param description - string
      * @return PanelItemBuilder
      */
@@ -168,14 +171,14 @@ public class PanelItemBuilder {
     public boolean isPlayerHead() {
         return playerHeadName != null && !playerHeadName.isEmpty();
     }
-    
+
     /**
      * @return the playerHead
      * @since 1.9.0
      */
     public String getPlayerHeadName() {
         return playerHeadName;
-    }    
+    }
 
     /**
      * @return the invisible
@@ -184,13 +187,11 @@ public class PanelItemBuilder {
         return invisible;
     }
 
-
     /**
      * @return amount of items in stack.
      * @since 1.13.0
      */
-    public int getAmount()
-    {
+    public int getAmount() {
         return this.amount;
     }
 }

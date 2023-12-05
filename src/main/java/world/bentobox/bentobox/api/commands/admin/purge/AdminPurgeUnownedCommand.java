@@ -30,13 +30,14 @@ public class AdminPurgeUnownedCommand extends ConfirmableCommand {
             showHelp(this, user);
             return false;
         }
-        AdminPurgeCommand parentCommand = ((AdminPurgeCommand)getParent());
+        AdminPurgeCommand parentCommand = ((AdminPurgeCommand) getParent());
         if (parentCommand.isInPurge()) {
             user.sendMessage("commands.admin.purge.purge-in-progress", TextVariables.LABEL, this.getTopLabel());
             return false;
         }
         Set<String> unowned = getUnownedIslands();
-        user.sendMessage("commands.admin.purge.unowned.unowned-islands", TextVariables.NUMBER, String.valueOf(unowned.size()));
+        user.sendMessage("commands.admin.purge.unowned.unowned-islands", TextVariables.NUMBER,
+                String.valueOf(unowned.size()));
         if (!unowned.isEmpty()) {
             this.askConfirmation(user, () -> {
                 parentCommand.setUser(user);
@@ -48,13 +49,9 @@ public class AdminPurgeUnownedCommand extends ConfirmableCommand {
     }
 
     Set<String> getUnownedIslands() {
-        return getPlugin().getIslands().getIslands().stream()
-                .filter(i -> !i.isSpawn())
-                .filter(i -> !i.getPurgeProtected())
-                .filter(i -> i.getWorld().equals(this.getWorld()))
-                .filter(Island::isUnowned)
-                .map(Island::getUniqueId)
-                .collect(Collectors.toSet());
+        return getPlugin().getIslands().getIslands().stream().filter(i -> !i.isSpawn())
+                .filter(i -> !i.getPurgeProtected()).filter(i -> i.getWorld().equals(this.getWorld()))
+                .filter(Island::isUnowned).map(Island::getUniqueId).collect(Collectors.toSet());
 
     }
 

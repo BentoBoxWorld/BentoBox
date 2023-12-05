@@ -48,7 +48,7 @@ import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.util.Util;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( {BentoBox.class, Util.class, Bukkit.class} )
+@PrepareForTest({ BentoBox.class, Util.class, Bukkit.class })
 public class TNTListenerTest extends AbstractCommonSetup {
 
     @Mock
@@ -94,7 +94,7 @@ public class TNTListenerTest extends AbstractCommonSetup {
         when(clickedBlock.getLocation()).thenReturn(location);
         ItemStack item = new ItemStack(Material.FLINT_AND_STEEL);
         Action action = Action.RIGHT_CLICK_BLOCK;
-        PlayerInteractEvent e = new PlayerInteractEvent(player , action, item, clickedBlock, clickedFace);
+        PlayerInteractEvent e = new PlayerInteractEvent(player, action, item, clickedBlock, clickedFace);
 
         listener.onTNTPriming(e);
         assertEquals(Result.DENY, e.useInteractedBlock());
@@ -156,6 +156,7 @@ public class TNTListenerTest extends AbstractCommonSetup {
         assertFalse(e.isCancelled());
 
     }
+
     @Test
     public void testOnTNTDamageTNTWrongWorld() {
         // Block on fire
@@ -166,6 +167,7 @@ public class TNTListenerTest extends AbstractCommonSetup {
         listener.onTNTDamage(e);
         assertFalse(e.isCancelled());
     }
+
     @Test
     public void testOnTNTDamageObsidianWrongWorld() {
         // Block on fire

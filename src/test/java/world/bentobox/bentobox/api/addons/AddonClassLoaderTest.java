@@ -42,20 +42,18 @@ import world.bentobox.bentobox.managers.AddonsManager;
 
 /**
  * Test class for addon class loading
+ * 
  * @author tastybento
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( { BentoBox.class, Bukkit.class })
+@PrepareForTest({ BentoBox.class, Bukkit.class })
 public class AddonClassLoaderTest {
 
     private enum mandatoryTags {
-        MAIN,
-        NAME,
-        VERSION,
-        AUTHORS,
-        ICON
+        MAIN, NAME, VERSION, AUTHORS, ICON
     }
+
     /**
      * Used for file writing etc.
      */
@@ -65,7 +63,6 @@ public class AddonClassLoaderTest {
     private File dataFolder;
     private File jarFile;
     private TestClass testAddon;
-
 
     // Class under test
     private AddonClassLoader acl;
@@ -147,7 +144,8 @@ public class AddonClassLoaderTest {
         // Open archive file
         try (FileOutputStream stream = new FileOutputStream(archiveFile)) {
             try (JarOutputStream out = new JarOutputStream(stream, new Manifest())) {
-                for (File j: tobeJaredList) addFile(buffer, stream, out, j);
+                for (File j : tobeJaredList)
+                    addFile(buffer, stream, out, j);
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -155,7 +153,8 @@ public class AddonClassLoaderTest {
         }
     }
 
-    private void addFile(byte[] buffer, FileOutputStream stream, JarOutputStream out, File tobeJared) throws IOException {
+    private void addFile(byte[] buffer, FileOutputStream stream, JarOutputStream out, File tobeJared)
+            throws IOException {
         if (tobeJared == null || !tobeJared.exists() || tobeJared.isDirectory())
             return;
         // Add archive entry
@@ -183,25 +182,24 @@ public class AddonClassLoaderTest {
     public void TearDown() throws IOException {
         Files.deleteIfExists(jarFile.toPath());
         if (dataFolder.exists()) {
-            Files.walk(dataFolder.toPath())
-            .sorted(Comparator.reverseOrder())
-            .map(Path::toFile)
-            .forEach(File::delete);
+            Files.walk(dataFolder.toPath()).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
         }
         Mockito.framework().clearInlineMocks();
     }
 
     class TestClass extends Addon {
         @Override
-        public void onEnable() { }
+        public void onEnable() {
+        }
 
         @Override
-        public void onDisable() { }
+        public void onDisable() {
+        }
     }
 
-
     /**
-     * Test method for {@link world.bentobox.bentobox.api.addons.AddonClassLoader#AddonClassLoader(world.bentobox.bentobox.managers.AddonsManager, org.bukkit.configuration.file.YamlConfiguration, java.io.File, java.lang.ClassLoader)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.addons.AddonClassLoader#AddonClassLoader(world.bentobox.bentobox.managers.AddonsManager, org.bukkit.configuration.file.YamlConfiguration, java.io.File, java.lang.ClassLoader)}.
      */
     @Test
     public void testAddonClassLoader() throws MalformedURLException {
@@ -209,7 +207,8 @@ public class AddonClassLoaderTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.addons.AddonClassLoader#asDescription(org.bukkit.configuration.file.YamlConfiguration)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.addons.AddonClassLoader#asDescription(org.bukkit.configuration.file.YamlConfiguration)}.
      */
     @Test
     public void testAsDescription() throws InvalidAddonDescriptionException {
@@ -228,11 +227,13 @@ public class AddonClassLoaderTest {
         assertEquals(List.of("Boxed", "AcidIsland"), desc.getSoftDependencies());
         assertEquals("1.0.0", desc.getVersion());
         assertNull(desc.getPermissions());
-        verify(plugin).logWarning("TestAddon addon depends on development version of BentoBox plugin. Some functions may be not implemented.");
+        verify(plugin).logWarning(
+                "TestAddon addon depends on development version of BentoBox plugin. Some functions may be not implemented.");
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.addons.AddonClassLoader#asDescription(org.bukkit.configuration.file.YamlConfiguration)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.addons.AddonClassLoader#asDescription(org.bukkit.configuration.file.YamlConfiguration)}.
      */
     @Test
     public void testAsDescriptionNoName() {
@@ -240,12 +241,14 @@ public class AddonClassLoaderTest {
         try {
             AddonClassLoader.asDescription(yml);
         } catch (InvalidAddonDescriptionException e) {
-            assertEquals("AddonException : Missing 'name' tag. An addon name must be listed in addon.yml", e.getMessage());
+            assertEquals("AddonException : Missing 'name' tag. An addon name must be listed in addon.yml",
+                    e.getMessage());
         }
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.addons.AddonClassLoader#asDescription(org.bukkit.configuration.file.YamlConfiguration)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.addons.AddonClassLoader#asDescription(org.bukkit.configuration.file.YamlConfiguration)}.
      */
     @Test
     public void testAsDescriptionNoAuthors() {
@@ -253,12 +256,14 @@ public class AddonClassLoaderTest {
         try {
             AddonClassLoader.asDescription(yml);
         } catch (InvalidAddonDescriptionException e) {
-            assertEquals("AddonException : Missing 'authors' tag. At least one author must be listed in addon.yml", e.getMessage());
+            assertEquals("AddonException : Missing 'authors' tag. At least one author must be listed in addon.yml",
+                    e.getMessage());
         }
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.addons.AddonClassLoader#asDescription(org.bukkit.configuration.file.YamlConfiguration)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.addons.AddonClassLoader#asDescription(org.bukkit.configuration.file.YamlConfiguration)}.
      */
     @Test
     public void testAsDescriptionNoVersion() {
@@ -266,12 +271,14 @@ public class AddonClassLoaderTest {
         try {
             AddonClassLoader.asDescription(yml);
         } catch (InvalidAddonDescriptionException e) {
-            assertEquals("AddonException : Missing 'version' tag. A version must be listed in addon.yml", e.getMessage());
+            assertEquals("AddonException : Missing 'version' tag. A version must be listed in addon.yml",
+                    e.getMessage());
         }
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.addons.AddonClassLoader#asDescription(org.bukkit.configuration.file.YamlConfiguration)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.addons.AddonClassLoader#asDescription(org.bukkit.configuration.file.YamlConfiguration)}.
      */
     @Test
     public void testAsDescriptionNoMain() {
@@ -279,12 +286,14 @@ public class AddonClassLoaderTest {
         try {
             AddonClassLoader.asDescription(yml);
         } catch (InvalidAddonDescriptionException e) {
-            assertEquals("AddonException : Missing 'main' tag. A main class must be listed in addon.yml", e.getMessage());
+            assertEquals("AddonException : Missing 'main' tag. A main class must be listed in addon.yml",
+                    e.getMessage());
         }
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.addons.AddonClassLoader#asDescription(org.bukkit.configuration.file.YamlConfiguration)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.addons.AddonClassLoader#asDescription(org.bukkit.configuration.file.YamlConfiguration)}.
      */
     @Test
     public void testAsDescriptionUnknownIconMaterial() {
@@ -297,7 +306,8 @@ public class AddonClassLoaderTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.addons.AddonClassLoader#findClass(java.lang.String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.addons.AddonClassLoader#findClass(java.lang.String)}.
      */
     @Test
     public void testFindClassString() throws IOException {
@@ -308,7 +318,8 @@ public class AddonClassLoaderTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.addons.AddonClassLoader#findClass(java.lang.String, boolean)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.addons.AddonClassLoader#findClass(java.lang.String, boolean)}.
      */
     @Test
     public void testFindClassStringBoolean() throws IOException {
@@ -319,7 +330,8 @@ public class AddonClassLoaderTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.addons.AddonClassLoader#getAddon()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.addons.AddonClassLoader#getAddon()}.
      */
     @Test
     public void testGetAddon() throws IOException {
@@ -330,7 +342,8 @@ public class AddonClassLoaderTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.addons.AddonClassLoader#getClasses()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.api.addons.AddonClassLoader#getClasses()}.
      */
     @Test
     public void testGetClasses() throws IOException {

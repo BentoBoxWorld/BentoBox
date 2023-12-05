@@ -29,10 +29,11 @@ public class FlagSettingChangeEvent extends FlagChangeEvent {
 
     /**
      * Event that fires when an island setting flag is changed
-     * @param island - island
-     * @param player - player changing the flag
+     * 
+     * @param island     - island
+     * @param player     - player changing the flag
      * @param editedFlag - flag that has changed
-     * @param setTo - value it was set to
+     * @param setTo      - value it was set to
      */
     public FlagSettingChangeEvent(Island island, UUID player, Flag editedFlag, boolean setTo) {
         super(player, editedFlag);

@@ -38,8 +38,10 @@ public class LogEntryListAdapterTest {
         issuer = UUID.randomUUID();
 
         toLog = new ArrayList<>();
-        toLog.add(new LogEntry.Builder("BAN").data("player", target.toString()).data("issuer", issuer.toString()).build());
-        toLog.add(new LogEntry.Builder("UNBAN").data("player", target.toString()).data("issuer", issuer.toString()).build());
+        toLog.add(new LogEntry.Builder("BAN").data("player", target.toString()).data("issuer", issuer.toString())
+                .build());
+        toLog.add(new LogEntry.Builder("UNBAN").data("player", target.toString()).data("issuer", issuer.toString())
+                .build());
         toLog.add(new LogEntry.Builder("UNOWNED").build());
         history.addAll(toLog);
     }
@@ -50,8 +52,10 @@ public class LogEntryListAdapterTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.adapters.LogEntryListAdapter#serialize(java.lang.Object)}
-     * and {@link world.bentobox.bentobox.database.objects.adapters.LogEntryListAdapter#deserialize(java.lang.Object)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.adapters.LogEntryListAdapter#serialize(java.lang.Object)}
+     * and
+     * {@link world.bentobox.bentobox.database.objects.adapters.LogEntryListAdapter#deserialize(java.lang.Object)}.
      */
     @Test
     public void testSerializeDeserialize() {

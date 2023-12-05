@@ -19,27 +19,29 @@ import org.bukkit.plugin.java.JavaPlugin;
  * @author Tastybento
  * @author Poslovitch
  */
-public class FileLister{
+public class FileLister {
     private final Plugin plugin;
 
-    public FileLister(Plugin level){
+    public FileLister(Plugin level) {
         plugin = level;
     }
 
     /**
-     * Returns a list of yml files in the folder given. If the folder does not exist in the file system
-     * it can check the plugin jar instead.
+     * Returns a list of yml files in the folder given. If the folder does not exist
+     * in the file system it can check the plugin jar instead.
+     * 
      * @param folderPath - folder path
-     * @param checkJar - if true, the jar will be checked
+     * @param checkJar   - if true, the jar will be checked
      * @return List of file names
-
+     * 
      */
     public List<String> list(String folderPath, boolean checkJar) throws IOException {
         List<String> result = new ArrayList<>();
         // Check if the folder exists
         File localeDir = new File(plugin.getDataFolder(), folderPath);
         if (localeDir.exists()) {
-            FilenameFilter ymlFilter = (File dir, String name) -> name.toLowerCase(java.util.Locale.ENGLISH).endsWith(".yml");
+            FilenameFilter ymlFilter = (File dir, String name) -> name.toLowerCase(java.util.Locale.ENGLISH)
+                    .endsWith(".yml");
             return Arrays.asList(Objects.requireNonNull(localeDir.list(ymlFilter)));
         } else if (checkJar) {
             // Else look in the JAR

@@ -55,7 +55,7 @@ import world.bentobox.bentobox.util.Pair;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class})
+@PrepareForTest({ Bukkit.class })
 public class IslandTest {
 
     private static final int DISTANCE = 400;
@@ -75,7 +75,6 @@ public class IslandTest {
     @Mock
     private CommandsManager cm;
 
-
     /**
      */
     @Before
@@ -89,7 +88,7 @@ public class IslandTest {
 
         // Location
         when(location.clone()).thenReturn(location);
-        when(location.toVector()).thenReturn(new Vector(0,0,0));
+        when(location.toVector()).thenReturn(new Vector(0, 0, 0));
         when(world.getName()).thenReturn("bskyblock_world");
         when(location.getWorld()).thenReturn(world);
         when(world.getEnvironment()).thenReturn(Environment.NORMAL);
@@ -109,7 +108,7 @@ public class IslandTest {
         // Commands manager
         when(plugin.getCommandsManager()).thenReturn(cm);
 
-        i = new Island(new Island(location, uuid , 100));
+        i = new Island(new Island(location, uuid, 100));
     }
 
     /**
@@ -119,7 +118,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#Island(org.bukkit.Location, java.util.UUID, int)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#Island(org.bukkit.Location, java.util.UUID, int)}.
      */
     @Test
     public void testIslandLocationUUIDInt() {
@@ -129,7 +129,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#Island(world.bentobox.bentobox.database.objects.Island)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#Island(world.bentobox.bentobox.database.objects.Island)}.
      */
     @Test
     public void testIslandIsland() {
@@ -139,7 +140,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#addMember(java.util.UUID)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#addMember(java.util.UUID)}.
      */
     @Test
     public void testAddMember() {
@@ -148,7 +150,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#ban(java.util.UUID, java.util.UUID)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#ban(java.util.UUID, java.util.UUID)}.
      */
     @Test
     public void testBan() {
@@ -159,7 +162,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getBanned()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#getBanned()}.
      */
     @Test
     public void testGetBanned() {
@@ -167,7 +171,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#unban(java.util.UUID, java.util.UUID)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#unban(java.util.UUID, java.util.UUID)}.
      */
     @Test
     public void testUnban() {
@@ -178,7 +183,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getCenter()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#getCenter()}.
      */
     @Test
     public void testGetCenter() {
@@ -186,7 +192,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getCreatedDate()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#getCreatedDate()}.
      */
     @Test
     public void testGetCreatedDate() {
@@ -194,7 +201,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getFlag(world.bentobox.bentobox.api.flags.Flag)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#getFlag(world.bentobox.bentobox.api.flags.Flag)}.
      */
     @Test
     public void testGetFlag() {
@@ -202,7 +210,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getFlags()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#getFlags()}.
      */
     @Test
     public void testGetFlags() {
@@ -210,7 +219,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getMembers()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#getMembers()}.
      */
     @Test
     public void testGetMembers() {
@@ -218,7 +228,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getMemberSet()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#getMemberSet()}.
      */
     @Test
     public void testGetMemberSet() {
@@ -226,7 +237,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getMemberSet(int)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#getMemberSet(int)}.
      */
     @Test
     public void testGetMemberSetInt() {
@@ -235,7 +247,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getMemberSet(int, boolean)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#getMemberSet(int, boolean)}.
      */
     @Test
     public void testGetMemberSetIntBoolean() {
@@ -246,7 +259,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getMinProtectedX()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#getMinProtectedX()}.
      */
     @Test
     public void testGetMinProtectedX() {
@@ -254,7 +268,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getMaxProtectedX()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#getMaxProtectedX()}.
      */
     @Test
     public void testGetMaxProtectedX() {
@@ -262,7 +277,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getMinProtectedZ()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#getMinProtectedZ()}.
      */
     @Test
     public void testGetMinProtectedZ() {
@@ -270,7 +286,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getMaxProtectedZ()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#getMaxProtectedZ()}.
      */
     @Test
     public void testGetMaxProtectedZ() {
@@ -278,7 +295,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getMinX()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#getMinX()}.
      */
     @Test
     public void testGetMinX() {
@@ -286,7 +304,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getMaxX()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#getMaxX()}.
      */
     @Test
     public void testGetMaxX() {
@@ -294,7 +313,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getMinZ()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#getMinZ()}.
      */
     @Test
     public void testGetMinZ() {
@@ -302,7 +322,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getMaxZ()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#getMaxZ()}.
      */
     @Test
     public void testGetMaxZ() {
@@ -310,7 +331,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getName()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#getName()}.
      */
     @Test
     public void testGetName() {
@@ -318,7 +340,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getOwner()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#getOwner()}.
      */
     @Test
     public void testGetOwner() {
@@ -326,7 +349,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#isOwned()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#isOwned()}.
      */
     @Test
     public void testIsOwned() {
@@ -334,7 +358,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#isUnowned()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#isUnowned()}.
      */
     @Test
     public void testIsUnowned() {
@@ -342,7 +367,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getProtectionRange()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#getProtectionRange()}.
      */
     @Test
     public void testGetProtectionRange() {
@@ -350,7 +376,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getMaxEverProtectionRange()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#getMaxEverProtectionRange()}.
      */
     @Test
     public void testGetMaxEverProtectionRange() {
@@ -358,7 +385,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setMaxEverProtectionRange(int)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#setMaxEverProtectionRange(int)}.
      */
     @Test
     public void testSetMaxEverProtectionRange() {
@@ -369,7 +397,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getPurgeProtected()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#getPurgeProtected()}.
      */
     @Test
     public void testGetPurgeProtected() {
@@ -377,7 +406,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getRange()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#getRange()}.
      */
     @Test
     public void testGetRange() {
@@ -385,7 +415,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getRank(world.bentobox.bentobox.api.user.User)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#getRank(world.bentobox.bentobox.api.user.User)}.
      */
     @Test
     public void testGetRankUser() {
@@ -393,7 +424,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getRank(java.util.UUID)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#getRank(java.util.UUID)}.
      */
     @Test
     public void testGetRankUUID() {
@@ -401,7 +433,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getUniqueId()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#getUniqueId()}.
      */
     @Test
     public void testGetUniqueId() {
@@ -409,7 +442,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getUpdatedDate()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#getUpdatedDate()}.
      */
     @Test
     public void testGetUpdatedDate() {
@@ -417,7 +451,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getWorld()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#getWorld()}.
      */
     @Test
     public void testGetWorld() {
@@ -425,7 +460,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getX()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#getX()}.
      */
     @Test
     public void testGetX() {
@@ -433,7 +469,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getY()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#getY()}.
      */
     @Test
     public void testGetY() {
@@ -441,7 +478,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getZ()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#getZ()}.
      */
     @Test
     public void testGetZ() {
@@ -449,15 +487,17 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#inIslandSpace(int, int)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#inIslandSpace(int, int)}.
      */
     @Test
     public void testInIslandSpaceIntInt() {
-        assertTrue(i.inIslandSpace(0,0));
+        assertTrue(i.inIslandSpace(0, 0));
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#inIslandSpace(org.bukkit.Location)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#inIslandSpace(org.bukkit.Location)}.
      */
     @Test
     public void testInIslandSpaceLocation() {
@@ -467,7 +507,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#inIslandSpace(world.bentobox.bentobox.util.Pair)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#inIslandSpace(world.bentobox.bentobox.util.Pair)}.
      */
     @Test
     public void testInIslandSpacePairOfIntegerInteger() {
@@ -475,18 +516,21 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getBoundingBox()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#getBoundingBox()}.
      */
     @Test
     public void testGetBoundingBox() {
         i.setWorld(world);
         when(location.getWorld()).thenReturn(world);
         assertNotNull(i.getBoundingBox());
-        assertEquals("BoundingBox [minX=-" + DISTANCE + ".0, minY=0.0, minZ=-" + DISTANCE + ".0, maxX=" + DISTANCE + ".0, maxY=0.0, maxZ=" + DISTANCE + ".0]", i.getBoundingBox().toString());
+        assertEquals("BoundingBox [minX=-" + DISTANCE + ".0, minY=0.0, minZ=-" + DISTANCE + ".0, maxX=" + DISTANCE
+                + ".0, maxY=0.0, maxZ=" + DISTANCE + ".0]", i.getBoundingBox().toString());
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getVisitors()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#getVisitors()}.
      */
     @Test
     public void testGetVisitors() {
@@ -494,7 +538,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#hasVisitors()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#hasVisitors()}.
      */
     @Test
     public void testHasVisitors() {
@@ -502,7 +547,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getPlayersOnIsland()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#getPlayersOnIsland()}.
      */
     @Test
     public void testGetPlayersOnIsland() {
@@ -510,7 +556,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#hasPlayersOnIsland()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#hasPlayersOnIsland()}.
      */
     @Test
     public void testHasPlayersOnIsland() {
@@ -518,7 +565,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#isAllowed(world.bentobox.bentobox.api.flags.Flag)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#isAllowed(world.bentobox.bentobox.api.flags.Flag)}.
      */
     @Test
     public void testIsAllowedFlag() {
@@ -526,7 +574,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#isAllowed(world.bentobox.bentobox.api.user.User, world.bentobox.bentobox.api.flags.Flag)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#isAllowed(world.bentobox.bentobox.api.user.User, world.bentobox.bentobox.api.flags.Flag)}.
      */
     @Test
     public void testIsAllowedUserFlag() {
@@ -534,7 +583,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#isBanned(java.util.UUID)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#isBanned(java.util.UUID)}.
      */
     @Test
     public void testIsBanned() {
@@ -542,7 +592,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#isSpawn()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#isSpawn()}.
      */
     @Test
     public void testIsSpawn() {
@@ -550,7 +601,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#onIsland(org.bukkit.Location)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#onIsland(org.bukkit.Location)}.
      */
     @Test
     public void testOnIsland() {
@@ -560,17 +612,20 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getProtectionBoundingBox()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#getProtectionBoundingBox()}.
      */
     @Test
     public void testGetProtectionBoundingBox() {
         i.setWorld(world);
         assertNotNull(i.getProtectionBoundingBox());
-        assertEquals("BoundingBox [minX=-100.0, minY=0.0, minZ=-100.0, maxX=100.0, maxY=0.0, maxZ=100.0]", i.getProtectionBoundingBox().toString());
+        assertEquals("BoundingBox [minX=-100.0, minY=0.0, minZ=-100.0, maxX=100.0, maxY=0.0, maxZ=100.0]",
+                i.getProtectionBoundingBox().toString());
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#removeMember(java.util.UUID)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#removeMember(java.util.UUID)}.
      */
     @Test
     public void testRemoveMember() {
@@ -589,7 +644,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setCreatedDate(long)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#setCreatedDate(long)}.
      */
     @Test
     public void testSetCreatedDate() {
@@ -598,7 +654,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setFlag(world.bentobox.bentobox.api.flags.Flag, int)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#setFlag(world.bentobox.bentobox.api.flags.Flag, int)}.
      */
     @Test
     public void testSetFlagFlagInt() {
@@ -607,7 +664,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setFlag(world.bentobox.bentobox.api.flags.Flag, int, boolean)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#setFlag(world.bentobox.bentobox.api.flags.Flag, int, boolean)}.
      */
     @Test
     public void testSetFlagFlagIntBoolean() {
@@ -619,7 +677,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setFlags(java.util.Map)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#setFlags(java.util.Map)}.
      */
     @Test
     public void testSetFlags() {
@@ -628,7 +687,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setFlagsDefaults()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#setFlagsDefaults()}.
      */
     @Test
     public void testSetFlagsDefaults() {
@@ -637,7 +697,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setMembers(java.util.Map)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#setMembers(java.util.Map)}.
      */
     @Test
     public void testSetMembers() {
@@ -646,7 +707,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setName(java.lang.String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#setName(java.lang.String)}.
      */
     @Test
     public void testSetName() {
@@ -655,7 +717,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setOwner(java.util.UUID)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#setOwner(java.util.UUID)}.
      */
     @Test
     public void testSetOwner() {
@@ -665,7 +728,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setProtectionRange(int)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#setProtectionRange(int)}.
      */
     @Test
     public void testSetProtectionRange() {
@@ -681,7 +745,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#updateMaxEverProtectionRange()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#updateMaxEverProtectionRange()}.
      */
     @Test
     public void testUpdateMaxEverProtectionRange() {
@@ -690,7 +755,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setPurgeProtected(boolean)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#setPurgeProtected(boolean)}.
      */
     @Test
     public void testSetPurgeProtected() {
@@ -701,7 +767,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setRange(int)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#setRange(int)}.
      */
     @Test
     public void testSetRange() {
@@ -711,7 +778,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setRank(world.bentobox.bentobox.api.user.User, int)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#setRank(world.bentobox.bentobox.api.user.User, int)}.
      */
     @Test
     public void testSetRankUserInt() {
@@ -720,7 +788,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setRank(java.util.UUID, int)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#setRank(java.util.UUID, int)}.
      */
     @Test
     public void testSetRankUUIDInt() {
@@ -729,7 +798,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setRanks(java.util.Map)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#setRanks(java.util.Map)}.
      */
     @Test
     public void testSetRanks() {
@@ -739,7 +809,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setSpawn(boolean)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#setSpawn(boolean)}.
      */
     @Test
     public void testSetSpawn() {
@@ -749,7 +820,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getSpawnPoint()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#getSpawnPoint()}.
      */
     @Test
     public void testGetSpawnPoint() {
@@ -757,7 +829,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setSpawnPoint(java.util.Map)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#setSpawnPoint(java.util.Map)}.
      */
     @Test
     public void testSetSpawnPointMapOfEnvironmentLocation() {
@@ -768,7 +841,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setUniqueId(java.lang.String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#setUniqueId(java.lang.String)}.
      */
     @Test
     public void testSetUniqueId() {
@@ -778,7 +852,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setUpdatedDate(long)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#setUpdatedDate(long)}.
      */
     @Test
     public void testSetUpdatedDate() {
@@ -787,7 +862,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setWorld(org.bukkit.World)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#setWorld(org.bukkit.World)}.
      */
     @Test
     public void testSetWorld() {
@@ -797,7 +873,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#toggleFlag(world.bentobox.bentobox.api.flags.Flag)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#toggleFlag(world.bentobox.bentobox.api.flags.Flag)}.
      */
     @Test
     public void testToggleFlagFlag() {
@@ -809,12 +886,12 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#toggleFlag(world.bentobox.bentobox.api.flags.Flag, boolean)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#toggleFlag(world.bentobox.bentobox.api.flags.Flag, boolean)}.
      */
     @Test
     public void testToggleFlagFlagBoolean() {
-        Flag f = Flags.values().stream().filter(Flag::hasSubflags)
-                .filter(fl -> fl.getType().equals(Type.SETTING))
+        Flag f = Flags.values().stream().filter(Flag::hasSubflags).filter(fl -> fl.getType().equals(Type.SETTING))
                 .findFirst().orElse(null);
         if (f != null) {
             i.toggleFlag(f, true);
@@ -827,7 +904,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setSettingsFlag(world.bentobox.bentobox.api.flags.Flag, boolean)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#setSettingsFlag(world.bentobox.bentobox.api.flags.Flag, boolean)}.
      */
     @Test
     public void testSetSettingsFlagFlagBoolean() {
@@ -838,7 +916,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setSettingsFlag(world.bentobox.bentobox.api.flags.Flag, boolean, boolean)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#setSettingsFlag(world.bentobox.bentobox.api.flags.Flag, boolean, boolean)}.
      */
     @Test
     public void testSetSettingsFlagFlagBooleanBoolean() {
@@ -849,7 +928,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setSpawnPoint(org.bukkit.World.Environment, org.bukkit.Location)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#setSpawnPoint(org.bukkit.World.Environment, org.bukkit.Location)}.
      */
     @Test
     public void testSetSpawnPointEnvironmentLocation() {
@@ -858,7 +938,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getSpawnPoint(org.bukkit.World.Environment)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#getSpawnPoint(org.bukkit.World.Environment)}.
      */
     @Test
     public void testGetSpawnPointEnvironment() {
@@ -867,7 +948,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#removeRank(java.lang.Integer)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#removeRank(java.lang.Integer)}.
      */
     @Test
     public void testRemoveRank() {
@@ -877,7 +959,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getHistory()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#getHistory()}.
      */
     @Test
     public void testGetHistory() {
@@ -885,7 +968,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#log(world.bentobox.bentobox.api.logs.LogEntry)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#log(world.bentobox.bentobox.api.logs.LogEntry)}.
      */
     @Test
     public void testLog() {
@@ -895,7 +979,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setHistory(java.util.List)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#setHistory(java.util.List)}.
      */
     @Test
     public void testSetHistory() {
@@ -905,7 +990,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#isDoNotLoad()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#isDoNotLoad()}.
      */
     @Test
     public void testIsDoNotLoad() {
@@ -913,7 +999,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setDoNotLoad(boolean)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#setDoNotLoad(boolean)}.
      */
     @Test
     public void testSetDoNotLoad() {
@@ -924,7 +1011,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#isDeleted()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#isDeleted()}.
      */
     @Test
     public void testIsDeleted() {
@@ -932,7 +1020,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setDeleted(boolean)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#setDeleted(boolean)}.
      */
     @Test
     public void testSetDeleted() {
@@ -943,7 +1032,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getGameMode()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#getGameMode()}.
      */
     @Test
     public void testGetGameMode() {
@@ -951,7 +1041,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setGameMode(java.lang.String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#setGameMode(java.lang.String)}.
      */
     @Test
     public void testSetGameMode() {
@@ -960,7 +1051,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#hasNetherIsland()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#hasNetherIsland()}.
      */
     @Test
     public void testHasNetherIsland() {
@@ -975,7 +1067,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#hasEndIsland()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#hasEndIsland()}.
      */
     @Test
     public void testHasEndIsland() {
@@ -991,7 +1084,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#isCooldown(world.bentobox.bentobox.api.flags.Flag)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#isCooldown(world.bentobox.bentobox.api.flags.Flag)}.
      */
     @Test
     public void testIsCooldown() {
@@ -999,7 +1093,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setCooldown(world.bentobox.bentobox.api.flags.Flag)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#setCooldown(world.bentobox.bentobox.api.flags.Flag)}.
      */
     @Test
     public void testSetCooldown() {
@@ -1009,7 +1104,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getCooldowns()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#getCooldowns()}.
      */
     @Test
     public void testGetCooldowns() {
@@ -1017,7 +1113,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setCooldowns(java.util.Map)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#setCooldowns(java.util.Map)}.
      */
     @Test
     public void testSetCooldowns() {
@@ -1026,7 +1123,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getCommandRanks()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#getCommandRanks()}.
      */
     @Test
     public void testGetCommandRanks() {
@@ -1034,7 +1132,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setCommandRanks(java.util.Map)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#setCommandRanks(java.util.Map)}.
      */
     @Test
     public void testSetCommandRanks() {
@@ -1043,7 +1142,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getRankCommand(java.lang.String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#getRankCommand(java.lang.String)}.
      */
     @Test
     public void testGetRankCommand() {
@@ -1051,7 +1151,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setRankCommand(java.lang.String, int)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#setRankCommand(java.lang.String, int)}.
      */
     @Test
     public void testSetRankCommand() {
@@ -1060,7 +1161,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#isReserved()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#isReserved()}.
      */
     @Test
     public void testIsReserved() {
@@ -1068,7 +1170,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setReserved(boolean)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#setReserved(boolean)}.
      */
     @Test
     public void testSetReserved() {
@@ -1079,7 +1182,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getMetaData()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#getMetaData()}.
      */
     @Test
     public void testGetMetaData() {
@@ -1087,7 +1191,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setMetaData(java.util.Map)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#setMetaData(java.util.Map)}.
      */
     @Test
     public void testSetMetaData() {
@@ -1097,7 +1202,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#isChanged()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#isChanged()}.
      */
     @Test
     public void testIsChanged() {
@@ -1105,7 +1211,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setChanged()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#setChanged()}.
      */
     @Test
     public void testSetChanged() {
@@ -1115,7 +1222,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setChanged(boolean)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#setChanged(boolean)}.
      */
     @Test
     public void testSetChangedBoolean() {
@@ -1124,7 +1232,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getProtectionCenter()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#getProtectionCenter()}.
      */
     @Test
     public void testGetProtectionCenter() {
@@ -1132,7 +1241,9 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setProtectionCenter(org.bukkit.Location)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#setProtectionCenter(org.bukkit.Location)}.
+     * 
      * @throws IOException if the location is not in island space
      */
     @Test
@@ -1146,7 +1257,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getHomes()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#getHomes()}.
      */
     @Test
     public void testGetHomes() {
@@ -1154,7 +1266,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getHome(java.lang.String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#getHome(java.lang.String)}.
      */
     @Test
     public void testGetHome() {
@@ -1162,7 +1275,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setHomes(java.util.Map)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#setHomes(java.util.Map)}.
      */
     @Test
     public void testSetHomes() {
@@ -1171,14 +1285,15 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#addHome(java.lang.String, org.bukkit.Location)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#addHome(java.lang.String, org.bukkit.Location)}.
      */
     @Test
     public void testAddHome() {
         i.addHome("backyard", location);
         assertEquals(location, i.getHome("backyard"));
     }
-    
+
     /**
      * Test method for {@link world.bentobox.bentobox.database.objects.Island#addHome(java.lang.String, org.bukkit.Location)}.
      */
@@ -1192,7 +1307,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#removeHome(java.lang.String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#removeHome(java.lang.String)}.
      */
     @Test
     public void testRemoveHome() {
@@ -1202,7 +1318,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#renameHome(java.lang.String, java.lang.String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#renameHome(java.lang.String, java.lang.String)}.
      */
     @Test
     public void testRenameHome() {
@@ -1213,7 +1330,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getMaxHomes()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#getMaxHomes()}.
      */
     @Test
     public void testGetMaxHomes() {
@@ -1221,7 +1339,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setMaxHomes(java.lang.Integer)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#setMaxHomes(java.lang.Integer)}.
      */
     @Test
     public void testSetMaxHomes() {
@@ -1230,7 +1349,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getMaxMembers()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#getMaxMembers()}.
      */
     @Test
     public void testGetMaxMembers() {
@@ -1238,7 +1358,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setMaxMembers(java.util.Map)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#setMaxMembers(java.util.Map)}.
      */
     @Test
     public void testSetMaxMembersMapOfIntegerInteger() {
@@ -1247,7 +1368,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#getMaxMembers(int)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#getMaxMembers(int)}.
      */
     @Test
     public void testGetMaxMembersInt() {
@@ -1257,7 +1379,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#setMaxMembers(int, java.lang.Integer)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#setMaxMembers(int, java.lang.Integer)}.
      */
     @Test
     public void testSetMaxMembersIntInteger() {
@@ -1266,7 +1389,8 @@ public class IslandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.database.objects.Island#toString()}.
+     * Test method for
+     * {@link world.bentobox.bentobox.database.objects.Island#toString()}.
      */
     @Test
     public void testToString() {

@@ -40,7 +40,8 @@ public class AdminResetsResetCommand extends ConfirmableCommand {
                 // Set the reset epoch to now
                 getIWM().setResetEpoch(getWorld());
                 // Reset all current players
-                Bukkit.getOnlinePlayers().stream().map(Player::getUniqueId).filter(getPlayers()::isKnown).forEach(u -> getPlayers().setResets(getWorld(), u, 0));
+                Bukkit.getOnlinePlayers().stream().map(Player::getUniqueId).filter(getPlayers()::isKnown)
+                        .forEach(u -> getPlayers().setResets(getWorld(), u, 0));
                 user.sendMessage("commands.admin.resets.reset.success-everyone");
             });
             return true;

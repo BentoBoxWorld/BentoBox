@@ -17,6 +17,7 @@ import world.bentobox.bentobox.util.Util;
 
 /**
  * Unban command
+ * 
  * @author tastybento
  *
  */
@@ -46,7 +47,8 @@ public class IslandUnbanCommand extends CompositeCommand {
         }
         UUID playerUUID = user.getUniqueId();
         // Player issuing the command must have an island or be in a team
-        if (!getIslands().inTeam(getWorld(), user.getUniqueId()) && !getIslands().hasIsland(getWorld(), user.getUniqueId())) {
+        if (!getIslands().inTeam(getWorld(), user.getUniqueId())
+                && !getIslands().hasIsland(getWorld(), user.getUniqueId())) {
             user.sendMessage("general.errors.no-island");
             return false;
         }
@@ -54,7 +56,8 @@ public class IslandUnbanCommand extends CompositeCommand {
         Island island = getIslands().getIsland(getWorld(), user);
         int rank = Objects.requireNonNull(island).getRank(user);
         if (rank < island.getRankCommand(getUsage())) {
-            user.sendMessage("general.errors.insufficient-rank", TextVariables.RANK, user.getTranslation(getPlugin().getRanksManager().getRank(rank)));
+            user.sendMessage("general.errors.insufficient-rank", TextVariables.RANK,
+                    user.getTranslation(getPlugin().getRanksManager().getRank(rank)));
             return false;
         }
         // Get target player
@@ -82,24 +85,22 @@ public class IslandUnbanCommand extends CompositeCommand {
         Island island = getIslands().getIsland(getWorld(), user.getUniqueId());
 
         // Run the event
-        IslandBaseEvent unbanEvent = IslandEvent.builder()
-                .island(island)
-                .involvedPlayer(target.getUniqueId())
-                .admin(false)
-                .reason(IslandEvent.Reason.UNBAN)
-                .build();
+        IslandBaseEvent unbanEvent = IslandEvent.builder().island(island).involvedPlayer(target.getUniqueId())
+                .admin(false).reason(IslandEvent.Reason.UNBAN).build();
         if (unbanEvent.getNewEvent().map(IslandBaseEvent::isCancelled).orElse(unbanEvent.isCancelled())) {
             // Unbanning was blocked due to an event cancellation.
             return false;
         }
         // Event is not cancelled
         if (island.unban(user.getUniqueId(), target.getUniqueId())) {
-            user.sendMessage("commands.island.unban.player-unbanned", TextVariables.NAME, target.getName(), TextVariables.DISPLAY_NAME, target.getDisplayName());
-            target.sendMessage("commands.island.unban.you-are-unbanned", TextVariables.NAME, user.getName(), TextVariables.DISPLAY_NAME, user.getDisplayName());
+            user.sendMessage("commands.island.unban.player-unbanned", TextVariables.NAME, target.getName(),
+                    TextVariables.DISPLAY_NAME, target.getDisplayName());
+            target.sendMessage("commands.island.unban.you-are-unbanned", TextVariables.NAME, user.getName(),
+                    TextVariables.DISPLAY_NAME, user.getDisplayName());
             // Set cooldown
             if (getSettings().getBanCooldown() > 0 && getParent() != null) {
-                getParent().getSubCommand("ban").ifPresent(subCommand ->
-                subCommand.setCooldown(island.getUniqueId(), target.getUniqueId().toString(), getSettings().getBanCooldown() * 60));
+                getParent().getSubCommand("ban").ifPresent(subCommand -> subCommand.setCooldown(island.getUniqueId(),
+                        target.getUniqueId().toString(), getSettings().getBanCooldown() * 60));
             }
             return true;
         }
@@ -112,7 +113,7 @@ public class IslandUnbanCommand extends CompositeCommand {
         Island island = getIslands().getIsland(getWorld(), user.getUniqueId());
         if (island != null) {
             List<String> options = island.getBanned().stream().map(getPlayers()::getName).toList();
-            String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
+            String lastArg = !args.isEmpty() ? args.get(args.size() - 1) : "";
             return Optional.of(Util.tabLimit(options, lastArg));
         } else {
             return Optional.empty();

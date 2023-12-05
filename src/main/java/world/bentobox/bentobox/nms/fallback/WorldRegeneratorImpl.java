@@ -16,5 +16,4 @@ public class WorldRegeneratorImpl extends CopyWorldRegenerator {
         chunk.getBlock(x, y, z).setBlockData(blockData, applyPhysics);
     }
 
-
 }

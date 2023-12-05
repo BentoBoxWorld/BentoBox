@@ -69,7 +69,8 @@ public class AdminSetrankCommand extends CompositeCommand {
             // We want to change the player's rank on the island he is part of.
 
             // Check if the target is part of an island
-            if (!getIslands().hasIsland(getWorld(), targetUUID) && !getPlugin().getIslands().inTeam(getWorld(), targetUUID)) {
+            if (!getIslands().hasIsland(getWorld(), targetUUID)
+                    && !getPlugin().getIslands().inTeam(getWorld(), targetUUID)) {
                 user.sendMessage("general.errors.player-has-no-island");
                 return false;
             }
@@ -106,13 +107,8 @@ public class AdminSetrankCommand extends CompositeCommand {
         }
         int currentRank = island.getRank(target);
         island.setRank(target, rankValue);
-        IslandEvent.builder()
-        .island(island)
-        .involvedPlayer(targetUUID)
-        .admin(true)
-        .reason(IslandEvent.Reason.RANK_CHANGE)
-        .rankChange(currentRank, rankValue)
-        .build();
+        IslandEvent.builder().island(island).involvedPlayer(targetUUID).admin(true)
+                .reason(IslandEvent.Reason.RANK_CHANGE).rankChange(currentRank, rankValue).build();
 
         String ownerName;
         if (ownerUUID != null) {
@@ -120,10 +116,8 @@ public class AdminSetrankCommand extends CompositeCommand {
         } else {
             ownerName = target.getName();
         }
-        user.sendMessage("commands.admin.setrank.rank-set",
-                "[from]", user.getTranslation(rm.getRank(currentRank)),
-                "[to]", user.getTranslation(rm.getRank(rankValue)),
-                TextVariables.NAME, ownerName);
+        user.sendMessage("commands.admin.setrank.rank-set", "[from]", user.getTranslation(rm.getRank(currentRank)),
+                "[to]", user.getTranslation(rm.getRank(rankValue)), TextVariables.NAME, ownerName);
         return true;
     }
 
@@ -136,8 +130,7 @@ public class AdminSetrankCommand extends CompositeCommand {
 
         // Return the ranks
         if (args.size() == 3) {
-            return Optional.of(getPlugin().getRanksManager().getRanks()
-                    .entrySet().stream()
+            return Optional.of(getPlugin().getRanksManager().getRanks().entrySet().stream()
                     .filter(entry -> entry.getValue() > RanksManager.VISITOR_RANK)
                     .map(entry -> user.getTranslation(entry.getKey())).toList());
         }

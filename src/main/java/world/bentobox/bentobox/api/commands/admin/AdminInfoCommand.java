@@ -33,10 +33,12 @@ public class AdminInfoCommand extends CompositeCommand {
             showHelp(this, user);
             return false;
         }
-        // If there are no args, then the player wants info on the island at this location
+        // If there are no args, then the player wants info on the island at this
+        // location
         if (args.isEmpty()) {
-            getIslands().getIslandAt(user.getLocation()).ifPresentOrElse(i -> new IslandInfo(i).showAdminInfo(user, getAddon()), () ->
-            user.sendMessage("commands.admin.info.no-island"));
+            getIslands().getIslandAt(user.getLocation()).ifPresentOrElse(
+                    i -> new IslandInfo(i).showAdminInfo(user, getAddon()),
+                    () -> user.sendMessage("commands.admin.info.no-island"));
             return true;
         }
         // Get target player
@@ -61,7 +63,7 @@ public class AdminInfoCommand extends CompositeCommand {
 
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
-        String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
+        String lastArg = !args.isEmpty() ? args.get(args.size() - 1) : "";
         if (args.isEmpty()) {
             // Don't show every player on the server. Require at least the first letter
             return Optional.empty();

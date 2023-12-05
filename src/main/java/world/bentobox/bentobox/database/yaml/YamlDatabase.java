@@ -10,7 +10,8 @@ public class YamlDatabase implements DatabaseSetup {
 
     /**
      * Get the config
-     * @param <T> - Class type
+     * 
+     * @param <T>  - Class type
      * @param type - config object type
      * @return - the config handler
      */
@@ -18,8 +19,11 @@ public class YamlDatabase implements DatabaseSetup {
         return new ConfigHandler<>(BentoBox.getInstance(), type, connector);
     }
 
-    /* (non-Javadoc)
-     * @see world.bentobox.bentobox.database.DatabaseSetup#getHandler(java.lang.Class)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * world.bentobox.bentobox.database.DatabaseSetup#getHandler(java.lang.Class)
      */
     @Override
     public <T> AbstractDatabaseHandler<T> getHandler(Class<T> type) {

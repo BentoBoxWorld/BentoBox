@@ -17,6 +17,7 @@ public class AdminSwitchCommand extends ConfirmableCommand {
 
     /**
      * Switches bypass on and off
+     * 
      * @param parent - admin command
      * @since 1.5.0
      */

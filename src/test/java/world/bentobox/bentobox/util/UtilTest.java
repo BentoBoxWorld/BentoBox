@@ -54,10 +54,11 @@ import world.bentobox.bentobox.managers.PlaceholdersManager;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( { Bukkit.class })
+@PrepareForTest({ Bukkit.class })
 public class UtilTest {
 
-    private static final String[] NAMES = {"adam", "ben", "cara", "dave", "ed", "frank", "freddy", "george", "harry", "ian", "joe"};
+    private static final String[] NAMES = { "adam", "ben", "cara", "dave", "ed", "frank", "freddy", "george", "harry",
+            "ian", "joe" };
 
     @Mock
     private BentoBox plugin;
@@ -122,7 +123,8 @@ public class UtilTest {
         when(lm.get(any(), any())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
         PlaceholdersManager phm = mock(PlaceholdersManager.class);
         when(plugin.getPlaceholdersManager()).thenReturn(phm);
-        when(phm.replacePlaceholders(any(), any())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
+        when(phm.replacePlaceholders(any(), any()))
+                .thenAnswer((Answer<String>) invocation -> invocation.getArgument(1, String.class));
 
         when(plugin.getLocalesManager()).thenReturn(lm);
 
@@ -142,7 +144,8 @@ public class UtilTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.util.Util#getClosestIsland(org.bukkit.Location)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.util.Util#getClosestIsland(org.bukkit.Location)}.
      */
     @Test
     public void testGetClosestIsland() throws Exception {
@@ -160,7 +163,8 @@ public class UtilTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.util.Util#getLocationString(java.lang.String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.util.Util#getLocationString(java.lang.String)}.
      */
     @Test
     public void testGetLocationString() {
@@ -177,7 +181,8 @@ public class UtilTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.util.Util#getStringLocation(org.bukkit.Location)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.util.Util#getStringLocation(org.bukkit.Location)}.
      */
     @Test
     public void testGetStringLocation() {
@@ -189,7 +194,8 @@ public class UtilTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.util.Util#prettifyText(java.lang.String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.util.Util#prettifyText(java.lang.String)}.
      */
     @Test
     public void testPrettifyText() {
@@ -199,7 +205,8 @@ public class UtilTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.util.Util#getOnlinePlayerList(world.bentobox.bentobox.api.user.User)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.util.Util#getOnlinePlayerList(world.bentobox.bentobox.api.user.User)}.
      */
     @Test
     public void testGetOnlinePlayerList() {
@@ -217,7 +224,8 @@ public class UtilTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.util.Util#tabLimit(java.util.List, java.lang.String)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.util.Util#tabLimit(java.util.List, java.lang.String)}.
      */
     @Test
     public void testTabLimit() {
@@ -237,7 +245,8 @@ public class UtilTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.util.Util#xyz(org.bukkit.util.Vector)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.util.Util#xyz(org.bukkit.util.Vector)}.
      */
     @Test
     public void testXyz() {
@@ -245,7 +254,8 @@ public class UtilTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.util.Util#sameWorld(org.bukkit.World, org.bukkit.World)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.util.Util#sameWorld(org.bukkit.World, org.bukkit.World)}.
      */
     @Test
     public void testSameWorld() {
@@ -280,7 +290,8 @@ public class UtilTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.util.Util#getWorld(org.bukkit.World)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.util.Util#getWorld(org.bukkit.World)}.
      */
     @Test
     public void testGetWorld() {
@@ -302,28 +313,29 @@ public class UtilTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.util.Util#blockFaceToFloat(org.bukkit.block.BlockFace)}.
+     * Test method for
+     * {@link world.bentobox.bentobox.util.Util#blockFaceToFloat(org.bukkit.block.BlockFace)}.
      */
     @Test
     public void testBlockFaceToFloat() {
         for (BlockFace bf : BlockFace.values()) {
             float r = Util.blockFaceToFloat(bf);
             switch (bf) {
-                case EAST -> assertEquals(90F, r, 0);
-                case EAST_NORTH_EAST -> assertEquals(67.5F, r, 0);
-                case NORTH_EAST -> assertEquals(45F, r, 0);
-                case NORTH_NORTH_EAST -> assertEquals(22.5F, r, 0);
-                case NORTH_NORTH_WEST -> assertEquals(337.5F, r, 0);
-                case NORTH_WEST -> assertEquals(315F, r, 0);
-                case SOUTH -> assertEquals(180F, r, 0);
-                case SOUTH_EAST -> assertEquals(135F, r, 0);
-                case SOUTH_SOUTH_EAST -> assertEquals(157.5F, r, 0);
-                case SOUTH_SOUTH_WEST -> assertEquals(202.5F, r, 0);
-                case SOUTH_WEST -> assertEquals(225F, r, 0);
-                case WEST -> assertEquals(270F, r, 0);
-                case WEST_NORTH_WEST -> assertEquals(292.5F, r, 0);
-                case WEST_SOUTH_WEST -> assertEquals(247.5F, r, 0);
-                default -> assertEquals(0F, r, 0);
+            case EAST -> assertEquals(90F, r, 0);
+            case EAST_NORTH_EAST -> assertEquals(67.5F, r, 0);
+            case NORTH_EAST -> assertEquals(45F, r, 0);
+            case NORTH_NORTH_EAST -> assertEquals(22.5F, r, 0);
+            case NORTH_NORTH_WEST -> assertEquals(337.5F, r, 0);
+            case NORTH_WEST -> assertEquals(315F, r, 0);
+            case SOUTH -> assertEquals(180F, r, 0);
+            case SOUTH_EAST -> assertEquals(135F, r, 0);
+            case SOUTH_SOUTH_EAST -> assertEquals(157.5F, r, 0);
+            case SOUTH_SOUTH_WEST -> assertEquals(202.5F, r, 0);
+            case SOUTH_WEST -> assertEquals(225F, r, 0);
+            case WEST -> assertEquals(270F, r, 0);
+            case WEST_NORTH_WEST -> assertEquals(292.5F, r, 0);
+            case WEST_SOUTH_WEST -> assertEquals(247.5F, r, 0);
+            default -> assertEquals(0F, r, 0);
             }
         }
     }

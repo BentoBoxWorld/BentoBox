@@ -29,7 +29,7 @@ import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.util.Util;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({BentoBox.class, Util.class, Bukkit.class })
+@PrepareForTest({ BentoBox.class, Util.class, Bukkit.class })
 public class DeathListenerTest {
 
     private Player player;
@@ -67,7 +67,7 @@ public class DeathListenerTest {
         worldSettings = mock(WorldSettings.class);
         when(worldSettings.isDeathsCounted()).thenReturn(true);
         // Deaths counted
-        when(iwm.getWorldSettings(Mockito.any())).thenReturn(worldSettings );
+        when(iwm.getWorldSettings(Mockito.any())).thenReturn(worldSettings);
 
     }
 
@@ -108,6 +108,5 @@ public class DeathListenerTest {
         dl.onPlayerDeath(e);
         Mockito.verify(pm, Mockito.never()).addDeath(world, uuid);
     }
-
 
 }

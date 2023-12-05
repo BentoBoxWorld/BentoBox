@@ -21,15 +21,16 @@ import world.bentobox.bentobox.managers.LocalesManager;
  */
 public class LanguagePanel {
 
-    private LanguagePanel() {}
+    private LanguagePanel() {
+    }
 
     /**
      * Dynamically creates the panel.
+     * 
      * @param user the User to show the panel to
      */
     public static void openPanel(User user) {
-        PanelBuilder panelBuilder = new PanelBuilder()
-                .name(user.getTranslation("language.panel-title"));
+        PanelBuilder panelBuilder = new PanelBuilder().name(user.getTranslation("language.panel-title"));
 
         LocalesManager localesManager = BentoBox.getInstance().getLocalesManager();
 
@@ -42,12 +43,13 @@ public class LanguagePanel {
             // Set to a blank banner.
             localeIcon.icon(Objects.requireNonNullElseGet(localeBanner, () -> new ItemStack(Material.WHITE_BANNER, 1)));
             localeIcon.name(ChatColor.WHITE + WordUtils.capitalize(locale.getDisplayName(user.getLocale())))
-            .clickHandler((panel, u, click, slot) -> {
-                BentoBox.getInstance().getPlayers().setLocale(u.getUniqueId(), locale.toLanguageTag());
-                u.sendMessage("language.edited", "[lang]", WordUtils.capitalize(locale.getDisplayName(user.getLocale())));
-                openPanel(u);
-                return true;
-            });
+                    .clickHandler((panel, u, click, slot) -> {
+                        BentoBox.getInstance().getPlayers().setLocale(u.getUniqueId(), locale.toLanguageTag());
+                        u.sendMessage("language.edited", "[lang]",
+                                WordUtils.capitalize(locale.getDisplayName(user.getLocale())));
+                        openPanel(u);
+                        return true;
+                    });
             if (user.getLocale().equals(locale)) {
                 localeIcon.description(user.getTranslation("language.description.selected"), "");
             } else {
