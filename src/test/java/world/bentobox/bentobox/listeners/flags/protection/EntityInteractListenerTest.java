@@ -44,7 +44,7 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, Util.class})
+@PrepareForTest({ Bukkit.class, BentoBox.class, Util.class })
 public class EntityInteractListenerTest extends AbstractCommonSetup {
 
     private EntityInteractListener eil;
@@ -65,13 +65,13 @@ public class EntityInteractListenerTest extends AbstractCommonSetup {
 
         // Hand - main hand
         hand = EquipmentSlot.HAND;
-        position = new Vector(10,10,10);
+        position = new Vector(10, 10, 10);
         when(inv.getItemInMainHand()).thenReturn(new ItemStack(Material.NAME_TAG));
 
         // Initialize the Flags class. This is a workaround to prevent weird errors when mocking
         // I think it's because the flag class needs to be initialized before use in argument matchers
         Flags.TRADING.setDefaultSetting(false);
-        
+
         // Class under test
         eil = new EntityInteractListener();
     }
@@ -278,9 +278,9 @@ public class EntityInteractListenerTest extends AbstractCommonSetup {
 
     public void testOnPlayerInteractEntityNamingWanderingTraderAllowedNoTrading() {
         when(island.isAllowed(any(), 
-        		eq(Flags.TRADING))).thenReturn(false);
+                eq(Flags.TRADING))).thenReturn(false);
         when(island.isAllowed(any(User.class), 
-        		eq(Flags.NAME_TAG))).thenReturn(true);
+                eq(Flags.NAME_TAG))).thenReturn(true);
         clickedEntity = mock(WanderingTrader.class);
         when(clickedEntity.getType()).thenReturn(EntityType.WANDERING_TRADER);
         when(clickedEntity.getLocation()).thenReturn(location);

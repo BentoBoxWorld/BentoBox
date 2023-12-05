@@ -76,68 +76,68 @@ public class IslandTeamLeaveCommandTest {
      */
     @Before
     public void setUp() throws Exception {
-	// Set up plugin
-	BentoBox plugin = mock(BentoBox.class);
-	Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        // Set up plugin
+        BentoBox plugin = mock(BentoBox.class);
+        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
 
-	// Command manager
-	CommandsManager cm = mock(CommandsManager.class);
-	when(plugin.getCommandsManager()).thenReturn(cm);
+        // Command manager
+        CommandsManager cm = mock(CommandsManager.class);
+        when(plugin.getCommandsManager()).thenReturn(cm);
 
-	// Settings
-	when(s.getResetCooldown()).thenReturn(0);
-	when(plugin.getSettings()).thenReturn(s);
+        // Settings
+        when(s.getResetCooldown()).thenReturn(0);
+        when(plugin.getSettings()).thenReturn(s);
 
-	// Player
-	// Sometimes use Mockito.withSettings().verboseLogging()
-	when(user.isOp()).thenReturn(false);
-	uuid = UUID.randomUUID();
-	when(user.getUniqueId()).thenReturn(uuid);
-	when(user.getPlayer()).thenReturn(player);
-	when(user.getName()).thenReturn("tastybento");
-	User.setPlugin(plugin);
+        // Player
+        // Sometimes use Mockito.withSettings().verboseLogging()
+        when(user.isOp()).thenReturn(false);
+        uuid = UUID.randomUUID();
+        when(user.getUniqueId()).thenReturn(uuid);
+        when(user.getPlayer()).thenReturn(player);
+        when(user.getName()).thenReturn("tastybento");
+        User.setPlugin(plugin);
 
-	// Parent command has no aliases
-	ic = mock(CompositeCommand.class);
-	when(ic.getSubCommandAliases()).thenReturn(new HashMap<>());
-	Optional<CompositeCommand> optionalCommand = Optional.of(subCommand);
-	when(ic.getSubCommand(Mockito.anyString())).thenReturn(optionalCommand);
-	when(ic.getWorld()).thenReturn(world);
+        // Parent command has no aliases
+        ic = mock(CompositeCommand.class);
+        when(ic.getSubCommandAliases()).thenReturn(new HashMap<>());
+        Optional<CompositeCommand> optionalCommand = Optional.of(subCommand);
+        when(ic.getSubCommand(Mockito.anyString())).thenReturn(optionalCommand);
+        when(ic.getWorld()).thenReturn(world);
 
-	// Player has island to begin with
-	when(island.getOwner()).thenReturn(UUID.randomUUID());
-	when(im.getPrimaryIsland(world, uuid)).thenReturn(island);
-	// when(im.isOwner(any(), any())).thenReturn(true);
-	when(plugin.getIslands()).thenReturn(im);
+        // Player has island to begin with
+        when(island.getOwner()).thenReturn(UUID.randomUUID());
+        when(im.getPrimaryIsland(world, uuid)).thenReturn(island);
+        // when(im.isOwner(any(), any())).thenReturn(true);
+        when(plugin.getIslands()).thenReturn(im);
 
-	// Has team
-	when(im.inTeam(any(), eq(uuid))).thenReturn(true);
-	when(plugin.getPlayers()).thenReturn(pm);
+        // Has team
+        when(im.inTeam(any(), eq(uuid))).thenReturn(true);
+        when(plugin.getPlayers()).thenReturn(pm);
 
-	// Server & Scheduler
-	BukkitScheduler sch = mock(BukkitScheduler.class);
-	PowerMockito.mockStatic(Bukkit.class);
-	when(Bukkit.getScheduler()).thenReturn(sch);
+        // Server & Scheduler
+        BukkitScheduler sch = mock(BukkitScheduler.class);
+        PowerMockito.mockStatic(Bukkit.class);
+        when(Bukkit.getScheduler()).thenReturn(sch);
 
-	// Island World Manager
-	when(plugin.getIWM()).thenReturn(iwm);
+        // Island World Manager
+        when(plugin.getIWM()).thenReturn(iwm);
 
-	// Plugin Manager
-	PluginManager pim = mock(PluginManager.class);
-	when(Bukkit.getPluginManager()).thenReturn(pim);
+        // Plugin Manager
+        PluginManager pim = mock(PluginManager.class);
+        when(Bukkit.getPluginManager()).thenReturn(pim);
 
-	// Island
-	when(island.getUniqueId()).thenReturn("uniqueid");
-	when(im.getIsland(world, user)).thenReturn(island);
+        // Island
+        when(island.getUniqueId()).thenReturn("uniqueid");
+        when(im.getIsland(world, user)).thenReturn(island);
 
-	// Locales
-	LocalesManager lm = mock(LocalesManager.class);
-	when(lm.get(any(), any())).thenAnswer(invocation -> invocation.getArgument(1, String.class));
-	when(plugin.getLocalesManager()).thenReturn(lm);
-	PlaceholdersManager phm = mock(PlaceholdersManager.class);
-	when(phm.replacePlaceholders(any(), any())).thenAnswer(invocation -> invocation.getArgument(1, String.class));
-	// Placeholder manager
-	when(plugin.getPlaceholdersManager()).thenReturn(phm);
+        // Locales
+        LocalesManager lm = mock(LocalesManager.class);
+        when(lm.get(any(), any())).thenAnswer(invocation -> invocation.getArgument(1, String.class));
+        when(plugin.getLocalesManager()).thenReturn(lm);
+        PlaceholdersManager phm = mock(PlaceholdersManager.class);
+        when(phm.replacePlaceholders(any(), any())).thenAnswer(invocation -> invocation.getArgument(1, String.class));
+        // Placeholder manager
+        when(plugin.getPlaceholdersManager()).thenReturn(phm);
 
     }
 
@@ -158,10 +158,10 @@ public class IslandTeamLeaveCommandTest {
      */
     @Test
     public void testExecuteIsOwner() {
-	when(island.getOwner()).thenReturn(uuid);
-	IslandTeamLeaveCommand itl = new IslandTeamLeaveCommand(ic);
-	assertFalse(itl.execute(user, itl.getLabel(), new ArrayList<>()));
-	verify(user).sendMessage(eq("commands.island.team.leave.cannot-leave"));
+        when(island.getOwner()).thenReturn(uuid);
+        IslandTeamLeaveCommand itl = new IslandTeamLeaveCommand(ic);
+        assertFalse(itl.execute(user, itl.getLabel(), new ArrayList<>()));
+        verify(user).sendMessage(eq("commands.island.team.leave.cannot-leave"));
     }
 
     /**

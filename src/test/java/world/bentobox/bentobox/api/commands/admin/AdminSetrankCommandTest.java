@@ -68,41 +68,41 @@ public class AdminSetrankCommandTest extends RanksManagerBeforeClassTest {
      */
     @Before
     public void setUp() throws Exception {
-	super.setUp();
-	Util.setPlugin(plugin);
+        super.setUp();
+        Util.setPlugin(plugin);
 
-	// Ranks Manager
-	rm = new RanksManager();
-	when(plugin.getRanksManager()).thenReturn(rm);
+        // Ranks Manager
+        rm = new RanksManager();
+        when(plugin.getRanksManager()).thenReturn(rm);
 
-	// Players Manager
-	when(plugin.getPlayers()).thenReturn(pm);
+        // Players Manager
+        when(plugin.getPlayers()).thenReturn(pm);
 
-	// Islands manager
-	when(plugin.getIslands()).thenReturn(im);
+        // Islands manager
+        when(plugin.getIslands()).thenReturn(im);
 
-	// Target
-	targetUUID = UUID.randomUUID();
-	Player p = mock(Player.class);
-	when(p.getUniqueId()).thenReturn(targetUUID);
-	User.getInstance(p);
+        // Target
+        targetUUID = UUID.randomUUID();
+        Player p = mock(Player.class);
+        when(p.getUniqueId()).thenReturn(targetUUID);
+        User.getInstance(p);
 
-	// Online players
-	PowerMockito.mockStatic(Util.class);
-	when(Util.getOnlinePlayerList(any())).thenReturn(Collections.singletonList("tastybento"));
-	when(Util.getUUID(anyString())).thenCallRealMethod();
+        // Online players
+        PowerMockito.mockStatic(Util.class);
+        when(Util.getOnlinePlayerList(any())).thenReturn(Collections.singletonList("tastybento"));
+        when(Util.getUUID(anyString())).thenCallRealMethod();
 
-	// Translations
-	when(user.getTranslation(anyString()))
-		.thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
+        // Translations
+        when(user.getTranslation(anyString()))
+                .thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
 
-	// Command
-	c = new AdminSetrankCommand(ac);
+        // Command
+        c = new AdminSetrankCommand(ac);
 
-	// Plugin Manager
-	PowerMockito.mockStatic(Bukkit.class);
-	PluginManager pim = mock(PluginManager.class);
-	when(Bukkit.getPluginManager()).thenReturn(pim);
+        // Plugin Manager
+        PowerMockito.mockStatic(Bukkit.class);
+        PluginManager pim = mock(PluginManager.class);
+        when(Bukkit.getPluginManager()).thenReturn(pim);
     }
 
     /**
@@ -111,7 +111,7 @@ public class AdminSetrankCommandTest extends RanksManagerBeforeClassTest {
      */
     @Test
     public void testAdminSetrankCommand() {
-	assertEquals("setrank", c.getLabel());
+        assertEquals("setrank", c.getLabel());
     }
 
     /**
@@ -120,10 +120,10 @@ public class AdminSetrankCommandTest extends RanksManagerBeforeClassTest {
      */
     @Test
     public void testSetup() {
-	assertEquals("admin.setrank", c.getPermission());
-	assertFalse(c.isOnlyPlayer());
-	assertEquals("commands.admin.setrank.parameters", c.getParameters());
-	assertEquals("commands.admin.setrank.description", c.getDescription());
+        assertEquals("admin.setrank", c.getPermission());
+        assertFalse(c.isOnlyPlayer());
+        assertEquals("commands.admin.setrank.parameters", c.getParameters());
+        assertEquals("commands.admin.setrank.description", c.getDescription());
 
     }
 
@@ -133,8 +133,8 @@ public class AdminSetrankCommandTest extends RanksManagerBeforeClassTest {
      */
     @Test
     public void testCanExecuteNoArgs() {
-	assertFalse(c.canExecute(user, "", Collections.emptyList()));
-	verify(user).getTranslation("commands.help.console");
+        assertFalse(c.canExecute(user, "", Collections.emptyList()));
+        verify(user).getTranslation("commands.help.console");
     }
 
     /**
@@ -143,8 +143,8 @@ public class AdminSetrankCommandTest extends RanksManagerBeforeClassTest {
      */
     @Test
     public void testCanExecuteOneArg() {
-	assertFalse(c.canExecute(user, "", Collections.singletonList("test")));
-	verify(user).getTranslation("commands.help.console");
+        assertFalse(c.canExecute(user, "", Collections.singletonList("test")));
+        verify(user).getTranslation("commands.help.console");
     }
 
     /**
@@ -153,8 +153,8 @@ public class AdminSetrankCommandTest extends RanksManagerBeforeClassTest {
      */
     @Test
     public void testCanExecuteUnknownPlayer() {
-	assertFalse(c.canExecute(user, "", Arrays.asList("tastybento", "member")));
-	verify(user).sendMessage("general.errors.unknown-player", "[name]", "tastybento");
+        assertFalse(c.canExecute(user, "", Arrays.asList("tastybento", "member")));
+        verify(user).sendMessage("general.errors.unknown-player", "[name]", "tastybento");
     }
 
     /**
@@ -205,15 +205,15 @@ public class AdminSetrankCommandTest extends RanksManagerBeforeClassTest {
      */
     @Test
     public void testExecuteUserStringListOfString() {
-	// Set the target
-	testCanExecuteKnownPlayerHasIslandSuccess();
-	Island island = mock(Island.class);
-	when(island.getRank(any(User.class))).thenReturn(RanksManager.SUB_OWNER_RANK);
-	when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
-	when(island.getCenter()).thenReturn(location);
-	assertTrue(c.execute(user, "", Arrays.asList("tastybento", "member")));
-	verify(user).sendMessage(eq("commands.admin.setrank.rank-set"), eq("[from]"), eq("ranks.sub-owner"), eq("[to]"),
-		eq("ranks.member"), eq("[name]"), eq(null));
+        // Set the target
+        testCanExecuteKnownPlayerHasIslandSuccess();
+        Island island = mock(Island.class);
+        when(island.getRank(any(User.class))).thenReturn(RanksManager.SUB_OWNER_RANK);
+        when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
+        when(island.getCenter()).thenReturn(location);
+        assertTrue(c.execute(user, "", Arrays.asList("tastybento", "member")));
+        verify(user).sendMessage(eq("commands.admin.setrank.rank-set"), eq("[from]"), eq("ranks.sub-owner"), eq("[to]"),
+                eq("ranks.member"), eq("[name]"), eq(null));
     }
 
     /**
@@ -222,12 +222,12 @@ public class AdminSetrankCommandTest extends RanksManagerBeforeClassTest {
      */
     @Test
     public void testTabCompleteUserStringListOfString() {
-	Optional<List<String>> result = c.tabComplete(user, "", Arrays.asList("setrank", ""));
-	assertTrue(result.isPresent());
-	result.ifPresent(list -> {
-	    assertEquals(1, list.size());
-	    assertEquals("tastybento", list.get(0));
-	});
+        Optional<List<String>> result = c.tabComplete(user, "", Arrays.asList("setrank", ""));
+        assertTrue(result.isPresent());
+        result.ifPresent(list -> {
+            assertEquals(1, list.size());
+            assertEquals("tastybento", list.get(0));
+        });
     }
 
 }

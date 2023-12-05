@@ -24,12 +24,12 @@ public abstract class IslandBaseEvent extends BentoBoxEvent implements Cancellab
     protected IslandBaseEvent newEvent;
 
     public IslandBaseEvent(Island island) {
-	super();
-	this.island = island;
-	playerUUID = island == null ? null : island.getOwner();
-	admin = false;
-	location = island == null ? null : island.getCenter();
-	rawEvent = null;
+        super();
+        this.island = island;
+        playerUUID = island == null ? null : island.getOwner();
+        admin = false;
+        location = island == null ? null : island.getCenter();
+        rawEvent = null;
     }
 
     /**
@@ -39,18 +39,18 @@ public abstract class IslandBaseEvent extends BentoBoxEvent implements Cancellab
      * @param location   - the location
      */
     public IslandBaseEvent(Island island, UUID playerUUID, boolean admin, Location location) {
-	super();
-	this.island = island;
-	this.playerUUID = playerUUID;
-	this.admin = admin;
-	if (location != null) {
-	    this.location = location;
-	} else if (island != null) {
-	    this.location = island.getCenter();
-	} else {
-	    this.location = null;
-	}
-	rawEvent = null;
+        super();
+        this.island = island;
+        this.playerUUID = playerUUID;
+        this.admin = admin;
+        if (location != null) {
+            this.location = location;
+        } else if (island != null) {
+            this.location = island.getCenter();
+        } else {
+            this.location = null;
+        }
+        rawEvent = null;
     }
 
     /**
@@ -61,18 +61,18 @@ public abstract class IslandBaseEvent extends BentoBoxEvent implements Cancellab
      * @param rawEvent   - the raw event
      */
     public IslandBaseEvent(Island island, UUID playerUUID, boolean admin, Location location, Event rawEvent) {
-	super();
-	this.island = island;
-	this.playerUUID = playerUUID;
-	this.admin = admin;
-	if (location != null) {
-	    this.location = location;
-	} else if (island != null) {
-	    this.location = island.getCenter();
-	} else {
-	    this.location = null;
-	}
-	this.rawEvent = rawEvent;
+        super();
+        this.island = island;
+        this.playerUUID = playerUUID;
+        this.admin = admin;
+        if (location != null) {
+            this.location = location;
+        } else if (island != null) {
+            this.location = island.getCenter();
+        } else {
+            this.location = null;
+        }
+        this.rawEvent = rawEvent;
     }
 
     /**
@@ -80,28 +80,28 @@ public abstract class IslandBaseEvent extends BentoBoxEvent implements Cancellab
      *         deleted islands, so use location instead
      */
     public Island getIsland() {
-	return island;
+        return island;
     }
 
     /**
      * @return the owner of the island
      */
     public UUID getOwner() {
-	return island.getOwner();
+        return island.getOwner();
     }
 
     /**
      * @return the playerUUID
      */
     public UUID getPlayerUUID() {
-	return playerUUID;
+        return playerUUID;
     }
 
     /**
      * @return the admin
      */
     public boolean isAdmin() {
-	return admin;
+        return admin;
     }
 
     /**
@@ -109,7 +109,7 @@ public abstract class IslandBaseEvent extends BentoBoxEvent implements Cancellab
      */
     @Nullable
     public Location getLocation() {
-	return location;
+        return location;
     }
 
     /**
@@ -117,17 +117,17 @@ public abstract class IslandBaseEvent extends BentoBoxEvent implements Cancellab
      */
     @Nullable
     public Event getRawEvent() {
-	return rawEvent;
+        return rawEvent;
     }
 
     @Override
     public boolean isCancelled() {
-	return cancelled;
+        return cancelled;
     }
 
     @Override
     public void setCancelled(boolean cancel) {
-	cancelled = cancel;
+        cancelled = cancel;
     }
 
     /**
@@ -136,7 +136,7 @@ public abstract class IslandBaseEvent extends BentoBoxEvent implements Cancellab
      * @return optional newEvent or empty if there is none
      */
     public Optional<IslandBaseEvent> getNewEvent() {
-	return Optional.ofNullable(newEvent);
+        return Optional.ofNullable(newEvent);
     }
 
     /**
@@ -145,6 +145,6 @@ public abstract class IslandBaseEvent extends BentoBoxEvent implements Cancellab
      * @param newEvent the newEvent to set
      */
     public void setNewEvent(IslandBaseEvent newEvent) {
-	this.newEvent = newEvent;
+        this.newEvent = newEvent;
     }
 }
