@@ -19,19 +19,19 @@ import world.bentobox.bentobox.database.DatabaseSetup;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({DatabaseSetup.class,})
+@PrepareForTest({ DatabaseSetup.class, })
 public class RanksManagerTest extends RanksManagerBeforeClassTest {
 
     public static RanksManager ranksManager;
-    
+
     /**
      */
     @Before
     public void setUp() throws Exception {
-    	super.setUp();
+        super.setUp();
         ranksManager = new RanksManager();
     }
-    
+
     /**
      * Test method for {@link world.bentobox.bentobox.managers.RanksManager#addRank(java.lang.String, int)}.
      */

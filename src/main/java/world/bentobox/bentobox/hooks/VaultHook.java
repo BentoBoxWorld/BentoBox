@@ -17,7 +17,7 @@ import world.bentobox.bentobox.api.user.User;
 public class VaultHook extends Hook {
 
     private static final String AMOUNT_MUST_BE_POSITIVE = "Amount must be positive.";
-	private static final String PLAYER_OR_OFFLINEPLAYER_REQUIRED = "User must be a Player or an OfflinePlayer";
+    private static final String PLAYER_OR_OFFLINEPLAYER_REQUIRED = "User must be a Player or an OfflinePlayer";
     private Economy economy;
 
     public VaultHook() {
@@ -27,7 +27,8 @@ public class VaultHook extends Hook {
     @Override
     public boolean hook() {
         try {
-            RegisteredServiceProvider<Economy> rsp = Bukkit.getServer().getServicesManager().getRegistration(Economy.class);
+            RegisteredServiceProvider<Economy> rsp = Bukkit.getServer().getServicesManager()
+                    .getRegistration(Economy.class);
             if (rsp == null) {
                 return false;
             }
@@ -48,9 +49,9 @@ public class VaultHook extends Hook {
     }
 
     // ------ CONVENIENCE METHODS ------
-    
+
     public String format(double amount) {
-    	return economy.format(amount);
+        return economy.format(amount);
     }
 
     /**
@@ -66,7 +67,7 @@ public class VaultHook extends Hook {
     public double getBalance(User user) {
         return this.getBalance(user, user.getWorld());
     }
-    
+
     /**
      * Get balance of this User for this world.
      * If this User is not a Player (or OfflinePlayer), it will always return {@code 0.0D}.
@@ -77,13 +78,13 @@ public class VaultHook extends Hook {
      * @return the balance of this User for this world.
      */
     public double getBalance(User user, World world) {
-    	if (!user.isOfflinePlayer())
-    		return 0.0D;
-    	
-    	if (world == null)
-    		return economy.getBalance(user.getOfflinePlayer());
-    	
-    	return economy.getBalance(user.getOfflinePlayer(), world.getName());
+        if (!user.isOfflinePlayer())
+            return 0.0D;
+
+        if (world == null)
+            return economy.getBalance(user.getOfflinePlayer());
+
+        return economy.getBalance(user.getOfflinePlayer(), world.getName());
     }
 
     /**
@@ -98,7 +99,7 @@ public class VaultHook extends Hook {
     public EconomyResponse withdraw(User user, double amount) {
         return withdraw(user, amount, user.getWorld());
     }
-    
+
     /**
      * Withdraws an amount from this User on the balance from this World.
      * If the economy plugin don't support world or world is null, It will return general balance.
@@ -115,14 +116,14 @@ public class VaultHook extends Hook {
         if (amount < 0.0D) {
             throw new IllegalArgumentException(AMOUNT_MUST_BE_POSITIVE);
         }
-        
+
         if (world == null)
-        	return economy.withdrawPlayer(user.getOfflinePlayer(), amount);
-        
+            return economy.withdrawPlayer(user.getOfflinePlayer(), amount);
+
         EconomyResponse response = economy.withdrawPlayer(user.getOfflinePlayer(), world.getName(), amount);
-        
+
         if (response == null || response.type == ResponseType.NOT_IMPLEMENTED)
-        	return economy.withdrawPlayer(user.getOfflinePlayer(), amount);
+            return economy.withdrawPlayer(user.getOfflinePlayer(), amount);
         return response;
     }
 
@@ -138,7 +139,7 @@ public class VaultHook extends Hook {
     public EconomyResponse deposit(User user, double amount) {
         return deposit(user, amount, user.getWorld());
     }
-    
+
     /**
      * Deposits an amount to this User on the balance from this World.
      * If the economy plugin don't support world or world is null, It will return general balance.
@@ -155,14 +156,14 @@ public class VaultHook extends Hook {
         if (amount < 0.0D) {
             throw new IllegalArgumentException(AMOUNT_MUST_BE_POSITIVE);
         }
-        
+
         if (world == null)
-        	return economy.depositPlayer(user.getOfflinePlayer(), amount);
-        
+            return economy.depositPlayer(user.getOfflinePlayer(), amount);
+
         EconomyResponse response = economy.depositPlayer(user.getOfflinePlayer(), world.getName(), amount);
-        
+
         if (response == null || response.type == ResponseType.NOT_IMPLEMENTED)
-        	return economy.depositPlayer(user.getOfflinePlayer(), amount);
+            return economy.depositPlayer(user.getOfflinePlayer(), amount);
         return response;
     }
 
@@ -182,7 +183,7 @@ public class VaultHook extends Hook {
         }
         return user.isOfflinePlayer() && economy.has(user.getOfflinePlayer(), amount);
     }
-    
+
     /**
      * Checks if this User has the amount on the balance from this World.
      * If this User is not a Player (or OfflinePlayer), it will always return {@code false}.
@@ -197,14 +198,14 @@ public class VaultHook extends Hook {
         if (amount < 0.0D) {
             throw new IllegalArgumentException(AMOUNT_MUST_BE_POSITIVE);
         }
-        
+
         if (!user.isOfflinePlayer()) {
             throw new IllegalArgumentException(PLAYER_OR_OFFLINEPLAYER_REQUIRED);
         }
-        
+
         if (world == null)
-        	return economy.has(user.getOfflinePlayer(), amount);
-        
+            return economy.has(user.getOfflinePlayer(), amount);
+
         return economy.has(user.getOfflinePlayer(), world.getName(), amount);
     }
 }

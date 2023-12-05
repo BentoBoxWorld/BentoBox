@@ -34,11 +34,11 @@ import world.bentobox.bentobox.database.DatabaseSetup;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({BentoBox.class, DatabaseSetup.class,})
+@PrepareForTest({ BentoBox.class, DatabaseSetup.class })
 public abstract class RanksManagerBeforeClassTest {
 
     private static AbstractDatabaseHandler<Object> h;
-    
+
     @Mock
     public BentoBox plugin;
 
@@ -55,8 +55,6 @@ public abstract class RanksManagerBeforeClassTest {
         when(h.saveObject(any())).thenReturn(CompletableFuture.completedFuture(true));
     }
 
-    /**
-     */
     @Before
     public void setUp() throws Exception {
         // Set up plugin
@@ -65,18 +63,15 @@ public abstract class RanksManagerBeforeClassTest {
 
     @After
     public void tearDown() throws IOException {
-    	User.clearUsers();
+        User.clearUsers();
         Mockito.framework().clearInlineMocks();
         deleteAll(new File("database"));
         deleteAll(new File("database_backup"));
     }
-    
+
     private void deleteAll(File file) throws IOException {
         if (file.exists()) {
-            Files.walk(file.toPath())
-            .sorted(Comparator.reverseOrder())
-            .map(Path::toFile)
-            .forEach(File::delete);
+            Files.walk(file.toPath()).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
         }
 
     }

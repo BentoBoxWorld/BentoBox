@@ -61,7 +61,7 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, User.class, Util.class})
+@PrepareForTest({ Bukkit.class, BentoBox.class, User.class, Util.class })
 public class AdminSettingsCommandTest extends RanksManagerBeforeClassTest {
 
     private AdminSettingsCommand asc;
@@ -95,7 +95,7 @@ public class AdminSettingsCommandTest extends RanksManagerBeforeClassTest {
      */
     @Before
     public void setUp() throws Exception {
-    	super.setUp();
+        super.setUp();
         Util.setPlugin(plugin);
 
         // Command manager
@@ -106,7 +106,7 @@ public class AdminSettingsCommandTest extends RanksManagerBeforeClassTest {
         when(user.isOp()).thenReturn(false);
         UUID uuid = UUID.randomUUID();
         notUUID = UUID.randomUUID();
-        while(notUUID.equals(uuid)) {
+        while (notUUID.equals(uuid)) {
             notUUID = UUID.randomUUID();
         }
         when(user.getUniqueId()).thenReturn(uuid);
@@ -134,9 +134,12 @@ public class AdminSettingsCommandTest extends RanksManagerBeforeClassTest {
         when(lm.get(any(), any())).thenReturn("mock translation");
         when(plugin.getLocalesManager()).thenReturn(lm);
 
-        when(user.getTranslation(anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
-        when(user.getTranslation(anyString(), anyString(), anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
-        when(user.getTranslation(anyString(), anyString(), anyString(), anyString(), anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
+        when(user.getTranslation(anyString()))
+                .thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
+        when(user.getTranslation(anyString(), anyString(), anyString()))
+                .thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
+        when(user.getTranslation(anyString(), anyString(), anyString(), anyString(), anyString()))
+                .thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
 
         // IWM
         when(plugin.getIWM()).thenReturn(iwm);
@@ -176,8 +179,6 @@ public class AdminSettingsCommandTest extends RanksManagerBeforeClassTest {
         // RnksManager
         RanksManager rm = new RanksManager();
         when(plugin.getRanksManager()).thenReturn(rm);
-
-
 
         asc = new AdminSettingsCommand(ac);
 
@@ -286,7 +287,7 @@ public class AdminSettingsCommandTest extends RanksManagerBeforeClassTest {
      */
     @Test
     public void testExecuteUserStringListOfStringArgs() {
-        assertTrue(asc.execute(user, "", Arrays.asList("blah","blah")));
+        assertTrue(asc.execute(user, "", Arrays.asList("blah", "blah")));
         verify(user).sendMessage("general.success");
     }
 
@@ -295,7 +296,7 @@ public class AdminSettingsCommandTest extends RanksManagerBeforeClassTest {
      */
     @Test
     public void testTabCompleteUserStringListOfStringTwoArgs() {
-        Optional<List<String>> r = asc.tabComplete(user, "", Arrays.asList("b","WORLD_TNT"));
+        Optional<List<String>> r = asc.tabComplete(user, "", Arrays.asList("b", "WORLD_TNT"));
         assertFalse(r.isEmpty());
         assertEquals("WORLD_TNT_DAMAGE", r.get().get(0));
     }
@@ -305,7 +306,7 @@ public class AdminSettingsCommandTest extends RanksManagerBeforeClassTest {
      */
     @Test
     public void testTabCompleteUserStringListOfStringThreeArgs() {
-        Optional<List<String>> r = asc.tabComplete(user, "", Arrays.asList("b","WORLD_TNT", "BEACO"));
+        Optional<List<String>> r = asc.tabComplete(user, "", Arrays.asList("b", "WORLD_TNT", "BEACO"));
         assertFalse(r.isEmpty());
         assertEquals("BEACON", r.get().get(0));
     }
@@ -315,7 +316,7 @@ public class AdminSettingsCommandTest extends RanksManagerBeforeClassTest {
      */
     @Test
     public void testTabCompleteUserStringListOfStringFourArgs() {
-        Optional<List<String>> r = asc.tabComplete(user, "", Arrays.asList("b","b", "PVP_OVERWORLD", "t"));
+        Optional<List<String>> r = asc.tabComplete(user, "", Arrays.asList("b", "b", "PVP_OVERWORLD", "t"));
         assertFalse(r.isEmpty());
         // TODO - finish this.
     }
