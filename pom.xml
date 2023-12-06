@@ -501,6 +501,8 @@
                         <!-- This is required to prevent Jacoco from adding 
                             synthetic fields to a JavaBean class (causes errors in testing) -->
                         <exclude>**/*Names*</exclude>
+                        <!-- Prevents the Material is too large to mock error -->
+                        <exclude>org/bukkit/Material*</exclude>
                     </excludes>
                 </configuration>
                 <executions>
