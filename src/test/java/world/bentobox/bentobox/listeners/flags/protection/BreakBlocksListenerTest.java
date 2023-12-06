@@ -53,7 +53,7 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( {BentoBox.class, Flags.class, Util.class, Bukkit.class} )
+@PrepareForTest({ BentoBox.class, Flags.class, Util.class, Bukkit.class })
 public class BreakBlocksListenerTest extends AbstractCommonSetup {
 
     private BreakBlocksListener bbl;
@@ -104,7 +104,8 @@ public class BreakBlocksListenerTest extends AbstractCommonSetup {
      */
     @Test
     public void testOnBlockHarvestNotAllowed() {
-        when(island.isAllowed(any(), eq(Flags.HARVEST))).thenReturn(false);
+        when(island.isAllowed(any(), 
+                eq(Flags.HARVEST))).thenReturn(false);
         Block block = mock(Block.class);
         when(block.getType()).thenReturn(Material.PUMPKIN);
         when(block.getLocation()).thenReturn(location);
@@ -217,6 +218,7 @@ public class BreakBlocksListenerTest extends AbstractCommonSetup {
         assertFalse(e.isCancelled());
         verify(notifier, never()).notify(any(), eq("protection.protected"));
     }
+
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractEvent)}.
      */
@@ -477,7 +479,6 @@ public class BreakBlocksListenerTest extends AbstractCommonSetup {
         bbl.onEntityDamage(e);
         assertFalse(e.isCancelled());
     }
-
 
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.

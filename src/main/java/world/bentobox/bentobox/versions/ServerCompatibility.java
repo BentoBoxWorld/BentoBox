@@ -23,7 +23,8 @@ public class ServerCompatibility {
         return instance;
     }
 
-    private ServerCompatibility() { }
+    private ServerCompatibility() {
+    }
 
     // ---- CONTENT ----
 
@@ -70,14 +71,9 @@ public class ServerCompatibility {
      * Any software that is not listed here is implicitly considered as "INCOMPATIBLE".
      */
     public enum ServerSoftware {
-        CRAFTBUKKIT(Compatibility.INCOMPATIBLE),
-        BUKKIT(Compatibility.INCOMPATIBLE),
-        GLOWSTONE(Compatibility.INCOMPATIBLE),
-        SPIGOT(Compatibility.COMPATIBLE),
-        PAPER(Compatibility.SUPPORTED),
-        PURPUR(Compatibility.SUPPORTED),
-        TACOSPIGOT(Compatibility.NOT_SUPPORTED),
-        AKARIN(Compatibility.NOT_SUPPORTED),
+        CRAFTBUKKIT(Compatibility.INCOMPATIBLE), BUKKIT(Compatibility.INCOMPATIBLE),
+        GLOWSTONE(Compatibility.INCOMPATIBLE), SPIGOT(Compatibility.COMPATIBLE), PAPER(Compatibility.SUPPORTED),
+        PURPUR(Compatibility.SUPPORTED), TACOSPIGOT(Compatibility.NOT_SUPPORTED), AKARIN(Compatibility.NOT_SUPPORTED),
         /**
          * @since 1.14.0
          */
@@ -120,9 +116,7 @@ public class ServerCompatibility {
      * Any version that is not listed here is implicitly considered as "INCOMPATIBLE".
      */
     public enum ServerVersion {
-        V1_13(Compatibility.INCOMPATIBLE),
-        V1_13_1(Compatibility.INCOMPATIBLE),
-        V1_13_2(Compatibility.INCOMPATIBLE),
+        V1_13(Compatibility.INCOMPATIBLE), V1_13_1(Compatibility.INCOMPATIBLE), V1_13_2(Compatibility.INCOMPATIBLE),
         /**
          * @since 1.5.0
          */
@@ -230,7 +224,10 @@ public class ServerCompatibility {
          * @since 2.0.0
          */
         V1_20_2(Compatibility.COMPATIBLE),
-        ;
+        /**
+         * @since 2.0.0
+         */
+        V1_20_3(Compatibility.COMPATIBLE),;
 
         private final Compatibility compatibility;
 
@@ -287,12 +284,14 @@ public class ServerCompatibility {
                 return result;
             }
 
-            if (software.getCompatibility().equals(Compatibility.NOT_SUPPORTED) || version.getCompatibility().equals(Compatibility.NOT_SUPPORTED)) {
+            if (software.getCompatibility().equals(Compatibility.NOT_SUPPORTED)
+                    || version.getCompatibility().equals(Compatibility.NOT_SUPPORTED)) {
                 result = Compatibility.NOT_SUPPORTED;
                 return result;
             }
 
-            if (software.getCompatibility().equals(Compatibility.SUPPORTED) || version.getCompatibility().equals(Compatibility.SUPPORTED)) {
+            if (software.getCompatibility().equals(Compatibility.SUPPORTED)
+                    || version.getCompatibility().equals(Compatibility.SUPPORTED)) {
                 result = Compatibility.SUPPORTED;
                 return result;
             }

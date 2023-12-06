@@ -1,4 +1,4 @@
-package world.bentobox.bentobox.nms.v1_20_R2;
+package world.bentobox.bentobox.nms.v1_20_R3;
 
 import java.util.List;
 import java.util.Map;
@@ -11,8 +11,8 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
-import org.bukkit.craftbukkit.v1_20_R2.CraftWorld;
-import org.bukkit.craftbukkit.v1_20_R2.block.data.CraftBlockData;
+import org.bukkit.craftbukkit.v1_20_R3.CraftWorld;
+import org.bukkit.craftbukkit.v1_20_R3.block.data.CraftBlockData;
 
 import net.minecraft.core.BlockPosition;
 import net.minecraft.world.level.block.state.IBlockData;
@@ -30,26 +30,18 @@ public class PasteHandlerImpl implements PasteHandler {
 
     @Override
     public CompletableFuture<Void> pasteBlocks(Island island, World world, Map<Location, BlueprintBlock> blockMap) {
-        return blockMap.entrySet().stream()
-                .map(entry -> setBlock(island, entry.getKey(), entry.getValue()))
-                .collect(
-                        Collectors.collectingAndThen(
-                                Collectors.toList(),
-                                list -> CompletableFuture.allOf(list.toArray(new CompletableFuture[0]))
-                                )
-                        );
+        return blockMap.entrySet().stream().map(entry -> setBlock(island, entry.getKey(), entry.getValue()))
+                .collect(Collectors.collectingAndThen(Collectors.toList(),
+                        list -> CompletableFuture.allOf(list.toArray(new CompletableFuture[0]))));
     }
 
     @Override
-    public CompletableFuture<Void> pasteEntities(Island island, World world, Map<Location, List<BlueprintEntity>> entityMap) {
+    public CompletableFuture<Void> pasteEntities(Island island, World world,
+            Map<Location, List<BlueprintEntity>> entityMap) {
         return entityMap.entrySet().stream()
                 .map(entry -> DefaultPasteUtil.setEntity(island, entry.getKey(), entry.getValue()))
-                .collect(
-                        Collectors.collectingAndThen(
-                                Collectors.toList(),
-                                list -> CompletableFuture.allOf(list.toArray(new CompletableFuture[0]))
-                                )
-                        );
+                .collect(Collectors.collectingAndThen(Collectors.toList(),
+                        list -> CompletableFuture.allOf(list.toArray(new CompletableFuture[0]))));
     }
 
     /**
