@@ -128,7 +128,8 @@ public class AddonsManager {
 
     }
 
-    private void setAddonFile(Plugin parent, Addon addon) throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+    private void setAddonFile(Plugin parent, Addon addon) throws NoSuchMethodException, SecurityException,
+            IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         Method getFileMethod = JavaPlugin.class.getDeclaredMethod("getFile");
         getFileMethod.setAccessible(true);
         addon.setFile((File) getFileMethod.invoke(parent));
@@ -144,7 +145,8 @@ public class AddonsManager {
             plugin.logError("Cannot create addons folder!");
             return;
         }
-        Arrays.stream(Objects.requireNonNull(f.listFiles())).filter(x -> !x.isDirectory() && x.getName().endsWith(".jar")).forEach(this::loadAddon);
+        Arrays.stream(Objects.requireNonNull(f.listFiles()))
+                .filter(x -> !x.isDirectory() && x.getName().endsWith(".jar")).forEach(this::loadAddon);
         plugin.log("Loaded " + getLoadedAddons().size() + " addons.");
 
         if (!getLoadedAddons().isEmpty()) {
@@ -152,7 +154,8 @@ public class AddonsManager {
         }
     }
 
-    private record PladdonData(Addon addon, boolean success) {}
+    private record PladdonData(Addon addon, boolean success) {
+    }
 
     private void loadAddon(@NonNull File f) {
         PladdonData result = new PladdonData(null, false);
@@ -164,7 +167,8 @@ public class AddonsManager {
             String main = data.getString("main");
             if (main != null && this.getAddonByMainClassName(main).isPresent()) {
                 getAddonByMainClassName(main).ifPresent(a -> {
-                    plugin.logError("Duplicate addon! Addon " + a.getDescription().getName() + " " + a.getDescription().getVersion() + " has already been loaded!");
+                    plugin.logError("Duplicate addon! Addon " + a.getDescription().getName() + " "
+                            + a.getDescription().getVersion() + " has already been loaded!");
                     plugin.logError("Remove the duplicate and restart!");
                 });
                 return;
@@ -187,7 +191,9 @@ public class AddonsManager {
         }
     }
 
-    private PladdonData loadPladdon(YamlConfiguration data, @NonNull File f) throws InvalidAddonInheritException, MalformedURLException, InvalidAddonDescriptionException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException, InvalidDescriptionException {
+    private PladdonData loadPladdon(YamlConfiguration data, @NonNull File f) throws InvalidAddonInheritException,
+            MalformedURLException, InvalidAddonDescriptionException, InstantiationException, IllegalAccessException,
+            InvocationTargetException, NoSuchMethodException, InvalidDescriptionException {
         Addon addon;
         try {
             Plugin pladdon = Bukkit.getPluginManager().loadPlugin(f);
@@ -226,7 +232,8 @@ public class AddonsManager {
         // Checks if this addon is compatible with the current BentoBox version.
         if (!isAddonCompatibleWithBentoBox(addon)) {
             // It is not, abort.
-            plugin.logError("Cannot load " + addon.getDescription().getName() + " because it requires BentoBox version " + addon.getDescription().getApiVersion() + " or greater.");
+            plugin.logError("Cannot load " + addon.getDescription().getName() + " because it requires BentoBox version "
+                    + addon.getDescription().getApiVersion() + " or greater.");
             plugin.logError("NOTE: Please update BentoBox.");
             addon.setState(State.INCOMPATIBLE);
             return;
@@ -256,12 +263,15 @@ public class AddonsManager {
      * Enables all the addons
      */
     public void enableAddons() {
-        if (getLoadedAddons().isEmpty()) return;
+        if (getLoadedAddons().isEmpty())
+            return;
         plugin.log("Enabling game mode addons...");
         // Enable GameModes first, then other addons
-        getLoadedAddons().stream().filter(a -> !a.getState().equals(State.DISABLED)).filter(GameModeAddon.class::isInstance).forEach(this::enableAddon);
+        getLoadedAddons().stream().filter(a -> !a.getState().equals(State.DISABLED))
+                .filter(GameModeAddon.class::isInstance).forEach(this::enableAddon);
         plugin.log("Enabling other addons...");
-        getLoadedAddons().stream().filter(a -> !a.getState().equals(State.DISABLED)).filter(g -> !(g instanceof GameModeAddon)).forEach(this::enableAddon);
+        getLoadedAddons().stream().filter(a -> !a.getState().equals(State.DISABLED))
+                .filter(g -> !(g instanceof GameModeAddon)).forEach(this::enableAddon);
         // Set perms for enabled addons
         this.getEnabledAddons().forEach(this::setPerms);
         plugin.log("Addons successfully enabled.");
@@ -269,7 +279,8 @@ public class AddonsManager {
 
     boolean setPerms(Addon addon) {
         ConfigurationSection perms = addon.getDescription().getPermissions();
-        if (perms == null) return false;
+        if (perms == null)
+            return false;
         for (String perm : perms.getKeys(true)) {
             // Only try to register perms for end nodes
             if (perms.contains(perm + DEFAULT) && perms.contains(perm + ".description")) {
@@ -296,7 +307,7 @@ public class AddonsManager {
         // Replace placeholders for Game Mode Addon names
         if (perm.contains(GAMEMODE)) {
             getGameModeAddons().stream().map(Addon::getPermissionPrefix)
-            .forEach(p -> DefaultPermissions.registerPermission(perm.replace(GAMEMODE, p), desc, pd));
+                    .forEach(p -> DefaultPermissions.registerPermission(perm.replace(GAMEMODE, p), desc, pd));
         } else {
             // Single perm
             DefaultPermissions.registerPermission(perm, desc, pd);
@@ -308,7 +319,8 @@ public class AddonsManager {
      * @param addon addon
      */
     private void enableAddon(Addon addon) {
-        plugin.log("Enabling " + addon.getDescription().getName() + " (" + addon.getDescription().getVersion() + ")...");
+        plugin.log(
+                "Enabling " + addon.getDescription().getName() + " (" + addon.getDescription().getVersion() + ")...");
         try {
             // If this is a GameModeAddon create the worlds, register it and load the blueprints
             if (addon instanceof GameModeAddon gameMode) {
@@ -361,9 +373,10 @@ public class AddonsManager {
 
     private void seedWorld(GameModeAddon gameMode, @NonNull World world) {
         // Use the Flat type of world because this is a copy and no vanilla creation is required
-        WorldCreator wc = WorldCreator.name(world.getName() + "/bentobox").type(WorldType.FLAT).environment(world.getEnvironment())
-                .seed(world.getSeed());
-        World w = gameMode.getWorldSettings().isUseOwnGenerator() ? wc.createWorld() : wc.generator(world.getGenerator()).createWorld();
+        WorldCreator wc = WorldCreator.name(world.getName() + "/bentobox").type(WorldType.FLAT)
+                .environment(world.getEnvironment()).seed(world.getSeed());
+        World w = gameMode.getWorldSettings().isUseOwnGenerator() ? wc.createWorld()
+                : wc.generator(world.getGenerator()).createWorld();
         w.setDifficulty(Difficulty.PEACEFUL);
     }
 
@@ -376,7 +389,8 @@ public class AddonsManager {
     private void handleAddonIncompatibility(@NonNull Addon addon, LinkageError e) {
         // Set the AddonState as "INCOMPATIBLE".
         addon.setState(Addon.State.INCOMPATIBLE);
-        plugin.logWarning("Skipping " + addon.getDescription().getName() + " as it is incompatible with the current version of BentoBox or of server software...");
+        plugin.logWarning("Skipping " + addon.getDescription().getName()
+                + " as it is incompatible with the current version of BentoBox or of server software...");
         plugin.logWarning("NOTE: The addon is referring to no longer existing classes.");
         plugin.logWarning("NOTE: DO NOT report this as a bug from BentoBox.");
         StringBuilder a = new StringBuilder();
@@ -471,8 +485,9 @@ public class AddonsManager {
      */
     @NonNull
     @SuppressWarnings("unchecked")
-    public <T extends Addon> Optional<T> getAddonByName(@NonNull String name){
-        return addons.stream().filter(a -> a.getDescription().getName().equalsIgnoreCase(name)).map(a -> (T) a).findFirst();
+    public <T extends Addon> Optional<T> getAddonByName(@NonNull String name) {
+        return addons.stream().filter(a -> a.getDescription().getName().equalsIgnoreCase(name)).map(a -> (T) a)
+                .findFirst();
     }
 
     /**
@@ -482,12 +497,14 @@ public class AddonsManager {
      */
     @NonNull
     @SuppressWarnings("unchecked")
-    public <T extends Addon> Optional<T> getAddonByMainClassName(@NonNull String name){
-        return addons.stream().filter(a -> a.getDescription().getMain().equalsIgnoreCase(name)).map(a -> (T) a).findFirst();
+    public <T extends Addon> Optional<T> getAddonByMainClassName(@NonNull String name) {
+        return addons.stream().filter(a -> a.getDescription().getMain().equalsIgnoreCase(name)).map(a -> (T) a)
+                .findFirst();
     }
 
     @NonNull
-    private YamlConfiguration addonDescription(@NonNull JarFile jar) throws InvalidAddonFormatException, IOException, InvalidConfigurationException {
+    private YamlConfiguration addonDescription(@NonNull JarFile jar)
+            throws InvalidAddonFormatException, IOException, InvalidConfigurationException {
         // Obtain the addon.yml file
         JarEntry entry = jar.getJarEntry("addon.yml");
         if (entry == null) {
@@ -513,9 +530,7 @@ public class AddonsManager {
      */
     @NonNull
     public List<GameModeAddon> getGameModeAddons() {
-        return getEnabledAddons().stream()
-                .filter(GameModeAddon.class::isInstance)
-                .map(GameModeAddon.class::cast)
+        return getEnabledAddons().stream().filter(GameModeAddon.class::isInstance).map(GameModeAddon.class::cast)
                 .toList();
     }
 
@@ -552,7 +567,8 @@ public class AddonsManager {
     @Nullable
     public Class<?> getClassByName(@NonNull final String name) {
         try {
-            return classes.getOrDefault(name, loaders.values().stream().filter(Objects::nonNull).map(l -> l.findClass(name, false)).filter(Objects::nonNull).findFirst().orElse(null));
+            return classes.getOrDefault(name, loaders.values().stream().filter(Objects::nonNull)
+                    .map(l -> l.findClass(name, false)).filter(Objects::nonNull).findFirst().orElse(null));
         } catch (Exception ignored) {
             // Ignored.
         }
@@ -582,7 +598,8 @@ public class AddonsManager {
             Addon a = addonsIterator.next();
             for (String dependency : a.getDescription().getDependencies()) {
                 if (!names.contains(dependency)) {
-                    plugin.logError(a.getDescription().getName() + " has dependency on " + dependency + " that does not exist. Addon will not load!");
+                    plugin.logError(a.getDescription().getName() + " has dependency on " + dependency
+                            + " that does not exist. Addon will not load!");
                     addonsIterator.remove();
                     break;
                 }
@@ -590,12 +607,15 @@ public class AddonsManager {
         }
 
         // Load dependencies or soft dependencies
-        Map<String,Addon> sortedAddons = new LinkedHashMap<>();
+        Map<String, Addon> sortedAddons = new LinkedHashMap<>();
         // Start with nodes with no dependencies
-        addons.stream().filter(a -> a.getDescription().getDependencies().isEmpty() && a.getDescription().getSoftDependencies().isEmpty())
-        .forEach(a -> sortedAddons.put(a.getDescription().getName(), a));
+        addons.stream()
+                .filter(a -> a.getDescription().getDependencies().isEmpty()
+                        && a.getDescription().getSoftDependencies().isEmpty())
+                .forEach(a -> sortedAddons.put(a.getDescription().getName(), a));
         // Fill remaining
-        List<Addon> remaining = addons.stream().filter(a -> !sortedAddons.containsKey(a.getDescription().getName())).toList();
+        List<Addon> remaining = addons.stream().filter(a -> !sortedAddons.containsKey(a.getDescription().getName()))
+                .toList();
 
         // Run through remaining addons
         remaining.forEach(addon -> {
@@ -606,7 +626,8 @@ public class AddonsManager {
             // Remove already sorted addons (dependencies) from the list
             dependencies.removeIf(sortedAddons::containsKey);
 
-            if (dependencies.stream().noneMatch(dependency -> addon.getDescription().getDependencies().contains(dependency))) {
+            if (dependencies.stream()
+                    .noneMatch(dependency -> addon.getDescription().getDependencies().contains(dependency))) {
                 sortedAddons.put(addon.getDescription().getName(), addon);
             }
         });
@@ -625,7 +646,8 @@ public class AddonsManager {
     @Nullable
     public ChunkGenerator getDefaultWorldGenerator(String worldName, String id) {
         // Clean up world name
-        String w = worldName.replace("_nether", "").replace("_the_end", "").toLowerCase(Locale.ENGLISH);
+        String w = worldName.replace("_nether", "").replace("_the_end", "").replace("/bentobox", "")
+                .toLowerCase(Locale.ENGLISH);
         if (worldNames.containsKey(w) && worldNames.get(w) != null) {
             return worldNames.get(w).getDefaultWorldGenerator(worldName, id);
         }
@@ -693,11 +715,9 @@ public class AddonsManager {
      * @since 1.5.0
      */
     public List<Class<?>> getDataObjects() {
-        return classes.values().stream()
-                .filter(DataObject.class::isAssignableFrom)
+        return classes.values().stream().filter(DataObject.class::isAssignableFrom)
                 // Do not include config files
-                .filter(c -> !ConfigObject.class.isAssignableFrom(c))
-                .toList();
+                .filter(c -> !ConfigObject.class.isAssignableFrom(c)).toList();
     }
 
     /**
@@ -707,7 +727,6 @@ public class AddonsManager {
     public void allLoaded() {
         this.getEnabledAddons().forEach(this::allLoaded);
     }
-
 
     /**
      * This method calls Addon#allLoaded in safe manner. If for some reason addon crashes on Addon#allLoaded, then
