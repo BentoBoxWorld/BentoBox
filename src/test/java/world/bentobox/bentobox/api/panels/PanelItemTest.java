@@ -4,18 +4,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.Server;
-import org.bukkit.World;
-import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.ItemStack;
 import org.junit.After;
 import org.junit.Before;
@@ -23,6 +18,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import world.bentobox.bentobox.api.panels.PanelItem.ClickHandler;
@@ -33,35 +30,29 @@ import world.bentobox.bentobox.api.panels.builders.PanelItemBuilder;
  *
  */
 @RunWith(PowerMockRunner.class)
+@PrepareForTest({ Bukkit.class })
 public class PanelItemTest {
 
+    @Mock
     private PanelItemBuilder pib;
     private PanelItem pi;
     @Mock
     private ClickHandler clickHandler;
-    @Mock
-    private Server server;
-    @Mock
-    private ItemFactory itemFac;
 
     /**
      * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {
-        World world = mock(World.class);
-        when(server.getLogger()).thenReturn(Logger.getAnonymousLogger());
-        when(server.getWorld("world")).thenReturn(world);
-        when(server.getVersion()).thenReturn("BSB_Mocking");
-        when(server.getItemFactory()).thenReturn(itemFac);
-
-        if (Bukkit.getServer() == null) {
-            Bukkit.setServer(server);
-        }
-
-        pib = new PanelItemBuilder().amount(2).clickHandler(clickHandler).description(List.of("Description", "hello"))
-                .icon(new ItemStack(Material.STONE)).name("Name");
-        pi = pib.build();
+        PowerMockito.mockStatic(Bukkit.class, Mockito.RETURNS_MOCKS);
+        // Builder
+        when(pib.getAmount()).thenReturn(2);
+        when(pib.getClickHandler()).thenReturn(clickHandler);
+        when(pib.getDescription()).thenReturn(List.of("Description", "hello"));
+        when(pib.getIcon()).thenReturn(new ItemStack(Material.STONE));
+        when(pib.getName()).thenReturn("Name");
+        when(pib.getPlayerHeadName()).thenReturn("tastybento");
+        pi = new PanelItem(pib);
     }
 
     /**
@@ -105,7 +96,7 @@ public class PanelItemTest {
     @Test
     public void testSetDescription() {
         assertEquals(2, pi.getDescription().size());
-        pi.setDescription(List.of("1", "2", "3"));
+        pi.setDescription(List.of("1","2","3"));
         assertEquals(3, pi.getDescription().size());
     }
 
@@ -187,10 +178,6 @@ public class PanelItemTest {
      */
     @Test
     public void testIsPlayerHead() {
-        // Make a head
-        pib = new PanelItemBuilder().amount(2).clickHandler(clickHandler).description(List.of("Description", "hello"))
-                .icon("tastybento").name("Name");
-        pi = pib.build();
         assertTrue(pi.isPlayerHead());
 
     }
@@ -200,11 +187,6 @@ public class PanelItemTest {
      */
     @Test
     public void testGetPlayerHeadName() {
-        // Make a head
-        pib = new PanelItemBuilder().amount(2).clickHandler(clickHandler).description(List.of("Description", "hello"))
-                .icon("tastybento").name("Name");
-        pi = pib.build();
-
         assertEquals("tastybento", pi.getPlayerHeadName());
     }
 
