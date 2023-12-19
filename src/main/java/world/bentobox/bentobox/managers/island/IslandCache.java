@@ -313,7 +313,8 @@ public class IslandCache {
         if (!islandsByUUID.containsKey(uuid)) {
             return false;
         }
-        return this.islandsByUUID.get(uuid).stream().anyMatch(i -> uuid.equals(i.getOwner()));
+        return this.islandsByUUID.get(uuid).stream().filter(i -> world.equals(i.getWorld()))
+                .anyMatch(i -> uuid.equals(i.getOwner()));
     }
 
     /**
