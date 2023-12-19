@@ -378,6 +378,8 @@ public class AddonsManager {
         World w = gameMode.getWorldSettings().isUseOwnGenerator() ? wc.createWorld()
                 : wc.generator(world.getGenerator()).createWorld();
         w.setDifficulty(Difficulty.PEACEFUL);
+        // Register seed world
+        plugin.getIWM().addWorld(w, gameMode);
     }
 
     /**
