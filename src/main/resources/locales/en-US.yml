@@ -108,8 +108,7 @@ commands:
       status:
         description: displays the status of the purge
         status: '&b [purged] &a islands purged out of &b [purgeable] &7(&b[percentage]
-          %&7)&a.'
-    
+          %&7)&a.' 
     team:
       description: manage teams
       add:
@@ -613,6 +612,15 @@ commands:
       success: '&a Successfully reset your island name.'
     team:
       description: manage your team
+      gui:
+        titles:
+          team-panel: Team Management
+        buttons:
+          status:
+            name: Status
+            description: The status of the team
+        tips:
+          click-to-view: Click to view
       info:
         description: display detailed info about your team
         member-layout:
