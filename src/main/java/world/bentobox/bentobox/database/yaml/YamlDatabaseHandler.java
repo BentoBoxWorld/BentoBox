@@ -636,6 +636,10 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                     return Enums.getIfPresent(EntityType.class, "ZOMBIFIED_PIGLIN")
                             .or(Enums.getIfPresent(EntityType.class, "PIG_ZOMBIE").or(EntityType.PIG));
                 }
+                // Backwards compatibility for upgrade to 1.20.4
+                if (name.equals("GRASS")) {
+                    return Enums.getIfPresent(EntityType.class, "SHORT_GRASS");
+                }
                 value = Enum.valueOf(enumClass, name);
             } catch (Exception e) {
                 // This value does not exist - probably admin typed it wrongly
