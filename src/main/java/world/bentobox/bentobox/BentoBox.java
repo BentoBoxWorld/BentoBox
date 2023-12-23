@@ -24,6 +24,7 @@ import world.bentobox.bentobox.commands.BentoBoxCommand;
 import world.bentobox.bentobox.database.DatabaseSetup;
 import world.bentobox.bentobox.hooks.MultiverseCoreHook;
 import world.bentobox.bentobox.hooks.MyWorldsHook;
+import world.bentobox.bentobox.hooks.SlimefunHook;
 import world.bentobox.bentobox.hooks.VaultHook;
 import world.bentobox.bentobox.hooks.placeholders.PlaceholderAPIHook;
 import world.bentobox.bentobox.listeners.BannedCommands;
@@ -230,6 +231,9 @@ public class BentoBox extends JavaPlugin implements Listener {
         hooksManager.registerHook(new MultiverseCoreHook());
         hooksManager.registerHook(new MyWorldsHook());
         islandWorldManager.registerWorldsToMultiverse(true);
+
+        // Register Slimefun
+        hooksManager.registerHook(new SlimefunHook());
 
         // TODO: re-enable after implementation
         //hooksManager.registerHook(new DynmapHook());

@@ -38,6 +38,7 @@ import io.papermc.lib.PaperLib;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.database.objects.IslandDeletion;
+import world.bentobox.bentobox.hooks.SlimefunHook;
 import world.bentobox.bentobox.util.MyBiomeGrid;
 
 /**
@@ -117,6 +118,11 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
     }
 
     private CompletableFuture<Void> regenerateChunk(@Nullable IslandDeletion di, World world, int chunkX, int chunkZ) {
+
+        // Notify Slimefun
+        plugin.getHooks().getHook("Slimefun")
+                .ifPresent(sf -> ((SlimefunHook) sf).clearAllBlockInfoAtChunk(world, chunkX, chunkZ, true));
+
         CompletableFuture<Chunk> seedWorldFuture = getSeedWorldChunk(world, chunkX, chunkZ);
 
         // Set up a future to get the chunk requests using Paper's Lib. If Paper is used, this should be done async
@@ -324,6 +330,10 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
 
     @SuppressWarnings("deprecation")
     private CompletableFuture<Void> regenerateChunk(GameModeAddon gm, IslandDeletion di, World world, int chunkX, int chunkZ) {
+        // Notify Slimefun
+        plugin.getHooks().getHook("Slimefun")
+                .ifPresent(sf -> ((SlimefunHook) sf).clearAllBlockInfoAtChunk(world, chunkX, chunkZ, true));
+
         CompletableFuture<Chunk> chunkFuture = PaperLib.getChunkAtAsync(world, chunkX, chunkZ);
         CompletableFuture<Void> invFuture = chunkFuture.thenAccept(chunk ->
         Arrays.stream(chunk.getTileEntities()).filter(InventoryHolder.class::isInstance)
