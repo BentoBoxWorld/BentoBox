@@ -4,7 +4,6 @@ import java.io.File;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +13,7 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.event.inventory.ClickType;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
@@ -27,6 +27,7 @@ import world.bentobox.bentobox.api.panels.TemplatedPanel;
 import world.bentobox.bentobox.api.panels.builders.PanelItemBuilder;
 import world.bentobox.bentobox.api.panels.builders.TemplatedPanelBuilder;
 import world.bentobox.bentobox.api.panels.reader.ItemTemplateRecord;
+import world.bentobox.bentobox.api.panels.reader.ItemTemplateRecord.ActionRecords;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.RanksManager;
@@ -171,12 +172,11 @@ public class IslandTeamCommand extends CompositeCommand {
         }
         if (slot.slot() == 0 && island.getOwner() != null) {
             // Owner
-            User owner = User.getInstance(island.getOwner());
-            return builder.icon(owner.getName())
-                    .name(owner.getDisplayName())
-                    .description(user.getTranslation("commands.island.team.info.rank-layout.owner", TextVariables.RANK,
-                            user.getTranslation(RanksManager.OWNER_RANK_REF)))
-                    .build();
+            PanelItem item = getMemberButton(RanksManager.OWNER_RANK_REF, RanksManager.OWNER_RANK, 1, 1,
+                    template.actions());
+            if (item != null) {
+                return item;
+            }
         }
         long subOwnerCount = island.getMemberSet(RanksManager.SUB_OWNER_RANK, false).stream().count();
         long memberCount = island.getMemberSet(RanksManager.MEMBER_RANK, false).stream().count();
@@ -187,7 +187,7 @@ public class IslandTeamCommand extends CompositeCommand {
         if (slot.slot() > 0 && slot.slot() < subOwnerCount + 1) {
             // Show sub owners
             PanelItem item = getMemberButton(RanksManager.SUB_OWNER_RANK_REF, RanksManager.SUB_OWNER_RANK,
-                    subOwnerCount, slot.slot());
+                    subOwnerCount, slot.slot(), template.actions());
             if (item != null) {
                 return item;
             }
@@ -196,7 +196,7 @@ public class IslandTeamCommand extends CompositeCommand {
         if (slot.slot() > subOwnerCount && slot.slot() < subOwnerCount + memberCount + 1) {
             // Show members 
             PanelItem item = getMemberButton(RanksManager.MEMBER_RANK_REF, RanksManager.MEMBER_RANK, memberCount,
-                    slot.slot());
+                    slot.slot(), template.actions());
             if (item != null) {
                 return item;
             }
@@ -204,7 +204,7 @@ public class IslandTeamCommand extends CompositeCommand {
         if (slot.slot() > subOwnerCount + memberCount && slot.slot() < subOwnerCount + memberCount + trustedCount + 1) {
             // Show trusted
             PanelItem item = getMemberButton(RanksManager.TRUSTED_RANK_REF, RanksManager.TRUSTED_RANK, trustedCount,
-                    slot.slot());
+                    slot.slot(), template.actions());
             if (item != null) {
                 return item;
             }
@@ -214,7 +214,7 @@ public class IslandTeamCommand extends CompositeCommand {
                 && slot.slot() < subOwnerCount + memberCount + trustedCount + coopCount + 1) {
             // Show coops
             PanelItem item = getMemberButton(RanksManager.COOP_RANK_REF, RanksManager.COOP_RANK, coopCount,
-                    slot.slot());
+                    slot.slot(), template.actions());
             if (item != null) {
                 return item;
             }
@@ -223,15 +223,31 @@ public class IslandTeamCommand extends CompositeCommand {
         return builder.icon(Material.BLACK_STAINED_GLASS_PANE).name("&b&r").build();
     }
 
-    private PanelItem getMemberButton(String ref, int rank, long count, int slot) {
+    private PanelItem getMemberButton(String ref, int rank, long count, int slot, List<ActionRecords> actions) {
         BentoBox.getInstance().logDebug(ref + " " + rank + " count = " + count + " slot = " + slot);
         User player = island.getMemberSet(rank, false).stream().sorted().skip(slot - 1).limit(1L)
                 .map(User::getInstance).findFirst().orElse(null);
         if (player != null) {
+            if (player.isOnline()) {
             return new PanelItemBuilder().icon(player.getName()).name(player.getDisplayName())
                     .description(user.getTranslation("commands.island.team.info.rank-layout.generic",
                             TextVariables.RANK, user.getTranslation(ref), TextVariables.NUMBER, String.valueOf(count)))
+                    .clickHandler((panel, user, clickType, i) -> {
+                        BentoBox.getInstance().logDebug("Clicked " + clickType);
+                        actions.forEach(ar -> BentoBox.getInstance().logDebug(ar.content() + " " + ar.clickType()));
+                        return true;
+                    })
                     .build();
+            } else {
+                // Offline player
+                return new PanelItemBuilder().icon(player.getName()).name(player.getDisplayName())
+                        .description(offlinePlayerStatus(user, Bukkit.getOfflinePlayer(player.getUniqueId())))
+                        .clickHandler((panel, user, clickType, i) -> {
+                            BentoBox.getInstance().logDebug("Clicked " + clickType);
+                            actions.forEach(ar -> BentoBox.getInstance().logDebug(ar.content() + " " + ar.clickType()));
+                            return true;
+                        }).build();
+            }
         } else {
             BentoBox.getInstance().logDebug("no player found");
         }
