@@ -314,6 +314,13 @@
             <version>${spigot.version}</version>
             <scope>provided</scope>
         </dependency>
+        <!-- Slimefun -->
+        <dependency>
+            <groupId>com.github.Slimefun</groupId>
+            <artifactId>Slimefun4</artifactId>
+            <version>RC-36</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>
