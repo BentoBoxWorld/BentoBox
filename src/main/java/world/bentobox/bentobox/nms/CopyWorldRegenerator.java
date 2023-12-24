@@ -119,10 +119,6 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
 
     private CompletableFuture<Void> regenerateChunk(@Nullable IslandDeletion di, World world, int chunkX, int chunkZ) {
 
-        // Notify Slimefun
-        plugin.getHooks().getHook("Slimefun")
-                .ifPresent(sf -> ((SlimefunHook) sf).clearAllBlockInfoAtChunk(world, chunkX, chunkZ, true));
-
         CompletableFuture<Chunk> seedWorldFuture = getSeedWorldChunk(world, chunkX, chunkZ);
 
         // Set up a future to get the chunk requests using Paper's Lib. If Paper is used, this should be done async
@@ -198,6 +194,10 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
                     if (x % 4 == 0 && y % 4 == 0 && z % 4 == 0) {
                         toChunk.getBlock(x, y, z).setBiome(fromChunk.getBlock(x, y, z).getBiome());
                     }
+                    // Delete any slimefun blocks
+                    Location loc = new Location(toChunk.getWorld(), baseX + x, y, baseZ + z);
+                    plugin.getHooks().getHook("Slimefun")
+                            .ifPresent(sf -> ((SlimefunHook) sf).clearBlockInfo(loc, true));
                 }
             }
         }

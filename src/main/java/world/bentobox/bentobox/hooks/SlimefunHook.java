@@ -4,6 +4,7 @@
 package world.bentobox.bentobox.hooks;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -44,6 +45,10 @@ public class SlimefunHook extends Hook {
 
     public void clearBlockInfo(Block b, boolean destroy) {
         BlockStorage.clearBlockInfo(b, destroy);
+    }
+
+    public void clearBlockInfo(Location location, boolean destroy) {
+        BlockStorage.clearBlockInfo(location, destroy);
     }
 
 
