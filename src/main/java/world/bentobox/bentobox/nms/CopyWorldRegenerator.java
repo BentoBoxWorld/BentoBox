@@ -330,10 +330,6 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
 
     @SuppressWarnings("deprecation")
     private CompletableFuture<Void> regenerateChunk(GameModeAddon gm, IslandDeletion di, World world, int chunkX, int chunkZ) {
-        // Notify Slimefun
-        plugin.getHooks().getHook("Slimefun")
-                .ifPresent(sf -> ((SlimefunHook) sf).clearAllBlockInfoAtChunk(world, chunkX, chunkZ, true));
-
         CompletableFuture<Chunk> chunkFuture = PaperLib.getChunkAtAsync(world, chunkX, chunkZ);
         CompletableFuture<Void> invFuture = chunkFuture.thenAccept(chunk ->
         Arrays.stream(chunk.getTileEntities()).filter(InventoryHolder.class::isInstance)
