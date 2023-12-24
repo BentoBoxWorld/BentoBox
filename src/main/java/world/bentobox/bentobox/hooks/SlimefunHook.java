@@ -21,7 +21,7 @@ public class SlimefunHook extends Hook {
     private Slimefun sfPlugin;
 
     public SlimefunHook() {
-        super("SlimeFun", Material.SLIME_BLOCK);
+        super("Slimefun", Material.SLIME_BLOCK);
     }
 
     @Override

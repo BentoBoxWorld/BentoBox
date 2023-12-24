@@ -144,6 +144,7 @@ public abstract class SimpleWorldRegenerator implements WorldRegenerator {
                     }
                     // Delete any slimefun blocks
                     Location loc = new Location(chunk.getWorld(), baseX + x, y, baseZ + z);
+                    BentoBox.getInstance().logDebug(loc + " " + plugin.getHooks().getHook("Slimefun").isPresent());
                     plugin.getHooks().getHook("Slimefun")
                             .ifPresent(sf -> ((SlimefunHook) sf).clearBlockInfo(loc, true));
                 }
