@@ -38,6 +38,7 @@ import io.papermc.lib.PaperLib;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.database.objects.IslandDeletion;
+import world.bentobox.bentobox.hooks.SlimefunHook;
 import world.bentobox.bentobox.util.MyBiomeGrid;
 
 /**
@@ -117,6 +118,7 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
     }
 
     private CompletableFuture<Void> regenerateChunk(@Nullable IslandDeletion di, World world, int chunkX, int chunkZ) {
+
         CompletableFuture<Chunk> seedWorldFuture = getSeedWorldChunk(world, chunkX, chunkZ);
 
         // Set up a future to get the chunk requests using Paper's Lib. If Paper is used, this should be done async
@@ -192,6 +194,10 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
                     if (x % 4 == 0 && y % 4 == 0 && z % 4 == 0) {
                         toChunk.getBlock(x, y, z).setBiome(fromChunk.getBlock(x, y, z).getBiome());
                     }
+                    // Delete any slimefun blocks
+                    Location loc = new Location(toChunk.getWorld(), baseX + x, y, baseZ + z);
+                    plugin.getHooks().getHook("Slimefun")
+                            .ifPresent(sf -> ((SlimefunHook) sf).clearBlockInfo(loc, true));
                 }
             }
         }
@@ -371,6 +377,10 @@ public abstract class CopyWorldRegenerator implements WorldRegenerator {
                     if (x % 4 == 0 && y % 4 == 0 && z % 4 == 0) {
                         chunk.getBlock(x, y, z).setBiome(biomeGrid.getBiome(x, y, z));
                     }
+                    // Delete any slimefun blocks
+                    Location loc = new Location(chunk.getWorld(), baseX + x, y, baseZ + z);
+                    plugin.getHooks().getHook("Slimefun")
+                            .ifPresent(sf -> ((SlimefunHook) sf).clearBlockInfo(loc, true));
                 }
             }
         }

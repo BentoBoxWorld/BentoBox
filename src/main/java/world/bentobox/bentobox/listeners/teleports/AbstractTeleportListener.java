@@ -19,6 +19,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -308,9 +309,20 @@ public abstract class AbstractTeleportListener
             }
         }
 
-        // Find the maximum x and z corner
-        for (; (i < x + 5) && fromWorld.getBlockAt(i, k, z).getType().equals(Material.END_PORTAL); i++) ;
-        for (; (j < z + 5) && fromWorld.getBlockAt(x, k, j).getType().equals(Material.END_PORTAL); j++) ;
+        // Find the maximum x and z corner using relative block search.
+        Block portalBlock = fromWorld.getBlockAt(i, k, j);
+
+        while (portalBlock.getRelative(1, 0, 0).getType() == Material.END_PORTAL)
+        {
+            portalBlock = portalBlock.getRelative(1, 0, 0);
+            i++;
+        }
+
+        while (portalBlock.getRelative(0, 0, 1).getType() == Material.END_PORTAL)
+        {
+            portalBlock = portalBlock.getRelative(0, 0, 1);
+            j++;
+        }
 
         // Mojang end platform generation is:
         // AIR
@@ -318,7 +330,7 @@ public abstract class AbstractTeleportListener
         // OBSIDIAN
         // and player is placed on second air block above obsidian.
         // If Y coordinate is below 2, then obsidian platform is not generated and player falls in void.
-        return new Location(toWorld, i, Math.min(toWorld.getMaxHeight() - 2, Math.max(toWorld.getMinHeight() + 2, k)), j);
+        return new Location(toWorld, i - 0.5, Math.min(toWorld.getMaxHeight() - 2, Math.max(toWorld.getMinHeight() + 2, k)), j - 0.5);
     }
 
 
