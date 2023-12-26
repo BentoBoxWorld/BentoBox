@@ -6,6 +6,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -22,6 +23,7 @@ import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.team.TeamEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
+import world.bentobox.bentobox.api.panels.Panel;
 import world.bentobox.bentobox.api.panels.PanelItem;
 import world.bentobox.bentobox.api.panels.TemplatedPanel;
 import world.bentobox.bentobox.api.panels.builders.PanelItemBuilder;
@@ -130,11 +132,31 @@ public class IslandTeamCommand extends CompositeCommand {
 
         panelBuilder.registerTypeBuilder("STATUS", this::createStatusButton);
         panelBuilder.registerTypeBuilder("MEMBER", this::createMemberButton);
-        //panelBuilder.registerTypeBuilder("INVITE", this::createInviteButton);
+        panelBuilder.registerTypeBuilder("INVITE", this::createInviteButton);
         //panelBuilder.registerTypeBuilder("KICK", this::createKickButton);
 
         // Register unknown type builder.
         panelBuilder.build();
+    }
+
+    /**
+     * Create invite button panel item.
+     *
+     * @param template the template
+     * @param slot     the slot
+     * @return the panel item
+     */
+    private PanelItem createInviteButton(ItemTemplateRecord template, TemplatedPanel.ItemSlot slot) {
+        PanelItemBuilder builder = new PanelItemBuilder();
+        // Player issuing the command must have an island
+        Island island = getIslands().getPrimaryIsland(getWorld(), user.getUniqueId());
+        if (island == null) {
+            return builder.icon(Material.BARRIER).name(user.getTranslation("general.errors.no-island")).build();
+        }
+        // The player must be able to invite a player
+
+        return builder.icon(user.getName()).name(user.getTranslation("commands.island.team.gui.buttons.status.name"))
+                .description(showMembers()).build();
     }
 
     /**
@@ -164,11 +186,11 @@ public class IslandTeamCommand extends CompositeCommand {
      * @return the panel item
      */
     private PanelItem createMemberButton(ItemTemplateRecord template, TemplatedPanel.ItemSlot slot) {
-        PanelItemBuilder builder = new PanelItemBuilder();
         // Player issuing the command must have an island
         Island island = getIslands().getPrimaryIsland(getWorld(), user.getUniqueId());
         if (island == null) {
-            return builder.icon(Material.BARRIER).name(user.getTranslation("general.errors.no-island")).build();
+            return new PanelItemBuilder().icon(Material.BARRIER).name(user.getTranslation("general.errors.no-island"))
+                    .build();
         }
         if (slot.slot() == 0 && island.getOwner() != null) {
             // Owner
@@ -182,7 +204,6 @@ public class IslandTeamCommand extends CompositeCommand {
         long memberCount = island.getMemberSet(RanksManager.MEMBER_RANK, false).stream().count();
         long coopCount = island.getMemberSet(RanksManager.COOP_RANK, false).stream().count();
         long trustedCount = island.getMemberSet(RanksManager.TRUSTED_RANK, false).stream().count();
-        BentoBox.getInstance().logDebug("Slot = " + slot.slot());
 
         if (slot.slot() > 0 && slot.slot() < subOwnerCount + 1) {
             // Show sub owners
@@ -220,11 +241,10 @@ public class IslandTeamCommand extends CompositeCommand {
             }
 
         }
-        return builder.icon(Material.BLACK_STAINED_GLASS_PANE).name("&b&r").build();
+        return new PanelItemBuilder().icon(Material.BLACK_STAINED_GLASS_PANE).name("&b&r").build();
     }
 
     private PanelItem getMemberButton(String ref, int rank, long count, int slot, List<ActionRecords> actions) {
-        BentoBox.getInstance().logDebug(ref + " " + rank + " count = " + count + " slot = " + slot);
         User player = island.getMemberSet(rank, false).stream().sorted().skip(slot - 1).limit(1L)
                 .map(User::getInstance).findFirst().orElse(null);
         if (player != null) {
@@ -232,26 +252,40 @@ public class IslandTeamCommand extends CompositeCommand {
             return new PanelItemBuilder().icon(player.getName()).name(player.getDisplayName())
                     .description(user.getTranslation("commands.island.team.info.rank-layout.generic",
                             TextVariables.RANK, user.getTranslation(ref), TextVariables.NUMBER, String.valueOf(count)))
-                    .clickHandler((panel, user, clickType, i) -> {
-                        BentoBox.getInstance().logDebug("Clicked " + clickType);
-                        actions.forEach(ar -> BentoBox.getInstance().logDebug(ar.content() + " " + ar.clickType()));
-                        return true;
-                    })
+                    .clickHandler(
+                            (panel, user, clickType, i) -> clickListener(panel, user, clickType, i, player, actions))
                     .build();
             } else {
                 // Offline player
                 return new PanelItemBuilder().icon(player.getName()).name(player.getDisplayName())
                         .description(offlinePlayerStatus(user, Bukkit.getOfflinePlayer(player.getUniqueId())))
-                        .clickHandler((panel, user, clickType, i) -> {
-                            BentoBox.getInstance().logDebug("Clicked " + clickType);
-                            actions.forEach(ar -> BentoBox.getInstance().logDebug(ar.content() + " " + ar.clickType()));
-                            return true;
-                        }).build();
+                        .clickHandler((panel, user, clickType, i) -> clickListener(panel, user, clickType, i, player,
+                                actions))
+                        .build();
             }
-        } else {
-            BentoBox.getInstance().logDebug("no player found");
         }
         return null;
+    }
+
+    private boolean clickListener(Panel panel, User user, ClickType clickType, int i, User player,
+            List<ActionRecords> actions) {
+        for (ItemTemplateRecord.ActionRecords action : actions) {
+            if (clickType == action.clickType() || action.clickType() == ClickType.UNKNOWN) {
+                switch (action.actionType().toUpperCase(Locale.ENGLISH)) {
+                case "KICK" -> {
+                    // Kick the player
+                    if (!player.equals(user)) {
+                        this.user.closeInventory();
+                        BentoBox.getInstance()
+                                .logDebug(this.getTopLabel() + " " + this.getLabel() + " kick " + player.getName());
+                        user.performCommand(this.getTopLabel() + " " + this.getLabel() + " kick " + player.getName());
+                        }
+
+                }
+                }
+            }
+        }
+        return true;
     }
 
     private List<String> showMembers() {
@@ -308,6 +342,12 @@ public class IslandTeamCommand extends CompositeCommand {
         }
     }
 
+    /**
+     * Creates text to describe the status of the player
+     * @param user2 user asking to see the status
+     * @param offlineMember member of the team
+     * @return string
+     */
     private String offlinePlayerStatus(User user2, OfflinePlayer offlineMember) {
         // A bit of handling for the last joined date
         Instant lastJoined = Instant.ofEpochMilli(offlineMember.getLastPlayed());

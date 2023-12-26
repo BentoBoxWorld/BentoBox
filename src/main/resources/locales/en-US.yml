@@ -621,6 +621,8 @@ commands:
             description: The status of the team
         tips:
           click-to-view: Click to view
+          right-click-to-kick: Right click to kick player - requires confirmation
+          click-to-invite: Click to invite a team member
       info:
         description: display detailed info about your team
         member-layout:

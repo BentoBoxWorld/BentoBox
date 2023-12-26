@@ -37,6 +37,14 @@ team_panel:
             click-type: UNKNOWN
             # tooltip is a locale reference that will be translated for the user and shown when they hover over the button.
             tooltip: commands.island.team.gui.tips.click-to-view
+      4:
+        # Invite member
+        data:
+          type: INVITE
+        actions:
+          add:
+            click-type: LEFT
+            tooltip: commands.island.team.gui.tips.click-to-invite
     2:
       2: member_button
       3: member_button
@@ -77,7 +85,7 @@ team_panel:
       6: member_button
       7: member_button
       8: member_button
-  # This is where reuable buttons are defined.
+  # This is where reusable buttons are defined.
   reusable:
     # This is the name of the button that is referenced
     member_button:
@@ -85,15 +93,15 @@ team_panel:
       # icons are usually not defined if the icon is going to be dynamically set in the panel, e.g. in this case the material will vary
       #icon: STONE
       title: commands.island.team.gui.buttons.member.name
-      description: levcommands.island.team.gui.buttons.member.description
+      description: commands.island.team.gui.buttons.member.description
       data:
         type: MEMBER
       # Actions cover what happens if the button is clicked or the mouse is moved over it. There can be multiple actions possible for different
         # click-types.
       actions:
         # Each action has an arbitrary descriptive name to define it. 
-        view:
+        kick:
           # The click-type is the same as the bukkit {@link org.bukkit.event.inventory.ClickType}. UNKNOWN is the default.
-          click-type: RIGHT_CLICK
+          click-type: RIGHT
           # tooltip is a locale reference that will be translated for the user and shown when they hover over the button.
           tooltip: commands.island.team.gui.tips.right-click-to-kick

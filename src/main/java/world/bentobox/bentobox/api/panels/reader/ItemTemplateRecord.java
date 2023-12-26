@@ -73,6 +73,22 @@ public record ItemTemplateRecord(@Nullable ItemStack icon, @Nullable String titl
      * @param content the content of the action
      * @param tooltip the tooltip of action
      */
-    public record ActionRecords(ClickType clickType, String actionType, String content, String tooltip) {
+    public record ActionRecords(
+            /**
+            * the click type
+            */
+            ClickType clickType,
+            /**
+            * the string that represents action type
+            */
+            String actionType,
+            /**
+             * the content of the action
+             */
+            String content,
+            /**
+             * the tooltip of action
+             */
+            String tooltip) {
     }
 }
