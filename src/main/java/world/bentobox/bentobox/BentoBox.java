@@ -22,6 +22,7 @@ import world.bentobox.bentobox.api.user.Notifier;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.commands.BentoBoxCommand;
 import world.bentobox.bentobox.database.DatabaseSetup;
+import world.bentobox.bentobox.hooks.ItemsAdderHook;
 import world.bentobox.bentobox.hooks.MultiverseCoreHook;
 import world.bentobox.bentobox.hooks.MyWorldsHook;
 import world.bentobox.bentobox.hooks.SlimefunHook;
@@ -234,6 +235,9 @@ public class BentoBox extends JavaPlugin implements Listener {
 
         // Register Slimefun
         hooksManager.registerHook(new SlimefunHook());
+
+        // Register ItemsAdder
+        hooksManager.registerHook(new ItemsAdderHook(this));
 
         // TODO: re-enable after implementation
         //hooksManager.registerHook(new DynmapHook());

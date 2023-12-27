@@ -22,6 +22,7 @@ import io.papermc.lib.PaperLib;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.database.objects.IslandDeletion;
+import world.bentobox.bentobox.hooks.ItemsAdderHook;
 import world.bentobox.bentobox.hooks.SlimefunHook;
 import world.bentobox.bentobox.util.MyBiomeGrid;
 
@@ -142,11 +143,12 @@ public abstract class SimpleWorldRegenerator implements WorldRegenerator {
                     if (x % 4 == 0 && y % 4 == 0 && z % 4 == 0) {
                         chunk.getBlock(x, y, z).setBiome(biomeGrid.getBiome(x, y, z));
                     }
-                    // Delete any slimefun blocks
+                    // Delete any 3rd party blocks
                     Location loc = new Location(chunk.getWorld(), baseX + x, y, baseZ + z);
-                    BentoBox.getInstance().logDebug(loc + " " + plugin.getHooks().getHook("Slimefun").isPresent());
                     plugin.getHooks().getHook("Slimefun")
                             .ifPresent(sf -> ((SlimefunHook) sf).clearBlockInfo(loc, true));
+                    plugin.getHooks().getHook("ItemsAdder")
+                            .ifPresent(hook -> ((ItemsAdderHook) hook).clearBlockInfo(loc));
                 }
             }
         }
