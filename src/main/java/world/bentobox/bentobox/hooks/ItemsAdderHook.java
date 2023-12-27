@@ -38,6 +38,12 @@ public class ItemsAdderHook extends Hook {
 
     private BentoBox plugin;
 
+    private BlockInteractListener listener;
+
+    /**
+     * Register the hook
+     * @param plugin BentoBox
+     */
     public ItemsAdderHook(BentoBox plugin) {
         super("ItemsAdder", Material.NETHER_STAR);
         this.plugin = plugin;
@@ -50,14 +56,17 @@ public class ItemsAdderHook extends Hook {
             return false;
         }
         // Register listener
-        Bukkit.getPluginManager().registerEvents(new BlockInteractListener(), plugin);
+        listener = new BlockInteractListener();
+        Bukkit.getPluginManager().registerEvents(listener, plugin);
         plugin.getFlagsManager().registerFlag(ITEMS_ADDER_EXPLOSIONS);
         return true;
     }
 
-    @Override
-    public String getFailureCause() {
-        return ""; // No errors
+    /**
+     * @return the listener
+     */
+    protected BlockInteractListener getListener() {
+        return listener;
     }
 
     /**
@@ -70,6 +79,10 @@ public class ItemsAdderHook extends Hook {
 
     class BlockInteractListener extends FlagListener {
 
+        /**
+         * Handles explosions of ItemAdder items
+         * @param event explosion event
+         */
         @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
         public void onExplosion(EntityExplodeEvent event)
         {
