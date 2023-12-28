@@ -321,6 +321,13 @@
             <version>RC-36</version>
             <scope>provided</scope>
         </dependency>
+        <!-- ItemsAdder -->
+        <dependency>
+            <groupId>com.github.LoneDev6</groupId>
+            <artifactId>api-itemsadder</artifactId>
+            <version>3.6.1</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>
