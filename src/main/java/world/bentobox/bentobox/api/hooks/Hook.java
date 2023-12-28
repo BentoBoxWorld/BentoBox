@@ -71,5 +71,5 @@ public abstract class Hook {
      */
     public String getFailureCause() {
         return "";
-    };
+    }
 }

@@ -27,7 +27,7 @@ public class ItemsAdderHook extends Hook {
     /**
      * This flag allows to switch which island member group can use explosive items from Items Adder.
      */
-    public final static Flag ITEMS_ADDER_EXPLOSIONS =
+    public static final Flag ITEMS_ADDER_EXPLOSIONS =
             new Flag.Builder("ITEMS_ADDER_EXPLOSIONS", Material.TNT).
             type(Flag.Type.PROTECTION).
             defaultRank(RanksManager.MEMBER_RANK).
