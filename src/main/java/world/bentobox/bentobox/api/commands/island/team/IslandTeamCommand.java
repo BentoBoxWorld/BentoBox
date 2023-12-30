@@ -26,6 +26,7 @@ import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.panels.Panel;
 import world.bentobox.bentobox.api.panels.PanelItem;
 import world.bentobox.bentobox.api.panels.TemplatedPanel;
+import world.bentobox.bentobox.api.panels.TemplatedPanel.ItemSlot;
 import world.bentobox.bentobox.api.panels.builders.PanelItemBuilder;
 import world.bentobox.bentobox.api.panels.builders.TemplatedPanelBuilder;
 import world.bentobox.bentobox.api.panels.reader.ItemTemplateRecord;
@@ -53,6 +54,8 @@ public class IslandTeamCommand extends CompositeCommand {
 
     private Island island;
 
+    private int rank = RanksManager.OWNER_RANK;
+
     public IslandTeamCommand(CompositeCommand parent) {
         super(parent, "team");
         inviteMap = new HashMap<>();
@@ -70,11 +73,11 @@ public class IslandTeamCommand extends CompositeCommand {
         new IslandTeamKickCommand(this);
         new IslandTeamInviteAcceptCommand(this);
         new IslandTeamInviteRejectCommand(this);
-        if (getPlugin().getRanksManager().rankExists(RanksManager.COOP_RANK_REF)) {
+        if (RanksManager.getInstance().rankExists(RanksManager.COOP_RANK_REF)) {
             new IslandTeamCoopCommand(this);
             new IslandTeamUncoopCommand(this);
         }
-        if (getPlugin().getRanksManager().rankExists(RanksManager.TRUSTED_RANK_REF)) {
+        if (RanksManager.getInstance().rankExists(RanksManager.TRUSTED_RANK_REF)) {
             new IslandTeamTrustCommand(this);
             new IslandTeamUntrustCommand(this);
         }
@@ -133,6 +136,7 @@ public class IslandTeamCommand extends CompositeCommand {
         panelBuilder.registerTypeBuilder("STATUS", this::createStatusButton);
         panelBuilder.registerTypeBuilder("MEMBER", this::createMemberButton);
         panelBuilder.registerTypeBuilder("INVITE", this::createInviteButton);
+        //panelBuilder.registerTypeBuilder("RANK", this::createRankButton);
         //panelBuilder.registerTypeBuilder("KICK", this::createKickButton);
 
         // Register unknown type builder.
@@ -192,6 +196,19 @@ public class IslandTeamCommand extends CompositeCommand {
             return new PanelItemBuilder().icon(Material.BARRIER).name(user.getTranslation("general.errors.no-island"))
                     .build();
         }
+        return switch (rank) {
+        case RanksManager.OWNER_RANK -> ownerView(template, slot);
+        default -> generalView(template, slot, rank);
+        };
+    }
+
+    private PanelItem generalView(ItemTemplateRecord template, ItemSlot slot, int rank2) {
+        getMemberButton(RanksManager.MEMBER_RANK_REF, RanksManager.MEMBER_RANK,
+                island.getMemberSet(rank2, false).size(), slot.slot(), template.actions());
+        return null;
+    }
+
+    private PanelItem ownerView(ItemTemplateRecord template, ItemSlot slot) {
         if (slot.slot() == 0 && island.getOwner() != null) {
             // Owner
             PanelItem item = getMemberButton(RanksManager.OWNER_RANK_REF, RanksManager.OWNER_RANK, 1, 1,
@@ -242,6 +259,7 @@ public class IslandTeamCommand extends CompositeCommand {
 
         }
         return new PanelItemBuilder().icon(Material.BLACK_STAINED_GLASS_PANE).name("&b&r").build();
+
     }
 
     private PanelItem getMemberButton(String ref, int rank, long count, int slot, List<ActionRecords> actions) {
@@ -249,12 +267,13 @@ public class IslandTeamCommand extends CompositeCommand {
                 .map(User::getInstance).findFirst().orElse(null);
         if (player != null) {
             if (player.isOnline()) {
-            return new PanelItemBuilder().icon(player.getName()).name(player.getDisplayName())
-                    .description(user.getTranslation("commands.island.team.info.rank-layout.generic",
-                            TextVariables.RANK, user.getTranslation(ref), TextVariables.NUMBER, String.valueOf(count)))
-                    .clickHandler(
-                            (panel, user, clickType, i) -> clickListener(panel, user, clickType, i, player, actions))
-                    .build();
+                return new PanelItemBuilder().icon(player.getName()).name(player.getDisplayName())
+                        .description(
+                                user.getTranslation("commands.island.team.info.rank-layout.generic", TextVariables.RANK,
+                                        user.getTranslation(ref), TextVariables.NUMBER, String.valueOf(count)))
+                        .clickHandler((panel, user, clickType, i) -> clickListener(panel, user, clickType, i, player,
+                                actions))
+                        .build();
             } else {
                 // Offline player
                 return new PanelItemBuilder().icon(player.getName()).name(player.getDisplayName())
@@ -279,7 +298,7 @@ public class IslandTeamCommand extends CompositeCommand {
                         BentoBox.getInstance()
                                 .logDebug(this.getTopLabel() + " " + this.getLabel() + " kick " + player.getName());
                         user.performCommand(this.getTopLabel() + " " + this.getLabel() + " kick " + player.getName());
-                        }
+                    }
 
                 }
                 }
@@ -314,7 +333,7 @@ public class IslandTeamCommand extends CompositeCommand {
                             user.getTranslation(RanksManager.OWNER_RANK_REF)));
                 } else {
                     message.add(user.getTranslation("commands.island.team.info.rank-layout.generic", TextVariables.RANK,
-                            user.getTranslation(getPlugin().getRanksManager().getRank(rank)), TextVariables.NUMBER,
+                            user.getTranslation(RanksManager.getInstance().getRank(rank)), TextVariables.NUMBER,
                             String.valueOf(island.getMemberSet(rank, false).size())));
                 }
                 message.addAll(displayOnOffline(user, rank, island, onlineMembers));

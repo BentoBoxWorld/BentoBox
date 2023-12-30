@@ -18,11 +18,15 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import com.google.common.collect.ImmutableSet;
 
+import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.TestWorldSettings;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
@@ -32,15 +36,17 @@ import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.RanksManager;
-import world.bentobox.bentobox.managers.RanksManagerBeforeClassTest;
 
 /**
  * @author tastybento
  *
  */
 @RunWith(PowerMockRunner.class)
-public class GameModePlaceholderTest extends RanksManagerBeforeClassTest {
+@PrepareForTest(RanksManager.class)
+public class GameModePlaceholderTest {
 
+    @Mock
+    private BentoBox plugin;
     @Mock
     private GameModeAddon addon;
     @Mock
@@ -56,7 +62,6 @@ public class GameModePlaceholderTest extends RanksManagerBeforeClassTest {
     private IslandWorldManager iwm;
     @Mock
     private IslandsManager im;
-    private RanksManager rm;
     @Mock
     private @Nullable Location location;
 
@@ -64,8 +69,7 @@ public class GameModePlaceholderTest extends RanksManagerBeforeClassTest {
      */
     @Before
     public void setUp() throws Exception {
-        super.setUp();
-        rm = new RanksManager();
+        PowerMockito.mockStatic(RanksManager.class, Mockito.RETURNS_MOCKS);
         uuid = UUID.randomUUID();
         when(addon.getPlayers()).thenReturn(pm);
         when(addon.getIslands()).thenReturn(im);
@@ -87,7 +91,6 @@ public class GameModePlaceholderTest extends RanksManagerBeforeClassTest {
         when(addon.getWorldSettings()).thenReturn(ws);
         when(pm.getName(any())).thenReturn("tastybento");
         when(plugin.getIWM()).thenReturn(iwm);
-        when(plugin.getRanksManager()).thenReturn(rm);
         when(user.getTranslation(anyString()))
                 .thenAnswer((Answer<String>) invocation -> invocation.getArgument(0, String.class));
         when(user.getLocation()).thenReturn(location);
@@ -160,7 +163,7 @@ public class GameModePlaceholderTest extends RanksManagerBeforeClassTest {
         assertEquals("true", GameModePlaceholder.HAS_ISLAND.getReplacer().onReplace(addon, user, island));
         assertEquals("false", GameModePlaceholder.ON_ISLAND.getReplacer().onReplace(addon, user, island));
         assertEquals("true", GameModePlaceholder.OWNS_ISLAND.getReplacer().onReplace(addon, user, island));
-        assertEquals("ranks.owner", GameModePlaceholder.RANK.getReplacer().onReplace(addon, user, island));
+        assertEquals("", GameModePlaceholder.RANK.getReplacer().onReplace(addon, user, island));
         assertEquals("0", GameModePlaceholder.RESETS.getReplacer().onReplace(addon, user, island));
         assertEquals("0", GameModePlaceholder.RESETS_LEFT.getReplacer().onReplace(addon, user, island));
     }

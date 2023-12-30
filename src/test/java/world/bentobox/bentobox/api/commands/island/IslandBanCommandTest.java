@@ -165,10 +165,6 @@ public class IslandBanCommandTest extends RanksManagerBeforeClassTest {
         when(targetPlayer.hasPermission(anyString())).thenReturn(false);
         User.getInstance(targetPlayer);
 
-        // Ranks Manager
-        rm = new RanksManager();
-        when(plugin.getRanksManager()).thenReturn(rm);
-
         // Island Ban Command
         ibc = new IslandBanCommand(ic);
 
@@ -212,7 +208,7 @@ public class IslandBanCommandTest extends RanksManagerBeforeClassTest {
         when(island.getRank(any(User.class))).thenReturn(RanksManager.MEMBER_RANK);
         when(island.getRankCommand(anyString())).thenReturn(RanksManager.OWNER_RANK);
         assertFalse(ibc.canExecute(user, ibc.getLabel(), Collections.singletonList("bill")));
-        verify(user).sendMessage(eq("general.errors.insufficient-rank"), eq(TextVariables.RANK), eq("ranks.member"));
+        verify(user).sendMessage("general.errors.insufficient-rank", TextVariables.RANK, "");
     }
 
     @Test

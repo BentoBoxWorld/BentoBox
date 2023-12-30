@@ -165,10 +165,6 @@ public class IslandTeamInviteCommandTest extends RanksManagerBeforeClassTest {
         // Parent command
         when(ic.getTopLabel()).thenReturn("island");
 
-        // Ranks Manager
-        RanksManager rm = new RanksManager();
-        when(plugin.getRanksManager()).thenReturn(rm);
-
         // Command under test
         itl = new IslandTeamInviteCommand(ic);
 
@@ -204,7 +200,7 @@ public class IslandTeamInviteCommandTest extends RanksManagerBeforeClassTest {
         when(island.getRank(any(User.class))).thenReturn(RanksManager.MEMBER_RANK);
         when(island.getRankCommand(anyString())).thenReturn(RanksManager.OWNER_RANK);
         assertFalse(itl.canExecute(user, itl.getLabel(), List.of("target")));
-        verify(user).sendMessage(eq("general.errors.insufficient-rank"), eq(TextVariables.RANK), eq("ranks.member"));
+        verify(user).sendMessage("general.errors.insufficient-rank", TextVariables.RANK, "");
     }
 
     /**

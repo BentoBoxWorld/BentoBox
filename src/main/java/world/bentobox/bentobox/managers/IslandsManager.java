@@ -1116,7 +1116,7 @@ public class IslandsManager {
                         .ifFail(() -> goingHome.remove(user.getUniqueId())).buildFuture().thenAccept(result::complete);
                 return;
             }
-            PaperLib.teleportAsync(player, home).thenAccept(b -> {
+            PaperLib.teleportAsync(Objects.requireNonNull(player), home).thenAccept(b -> {
                 // Only run the commands if the player is successfully teleported
                 if (Boolean.TRUE.equals(b)) {
                     teleported(world, user, name, newIsland, island);
@@ -1512,7 +1512,12 @@ public class IslandsManager {
                         // Move player to spawn
                         if (spawn.containsKey(w)) {
                             // go to island spawn
-                            PaperLib.teleportAsync(p, spawn.get(w).getSpawnPoint(w.getEnvironment()));
+                            Location sp = spawn.get(w).getSpawnPoint(w.getEnvironment());
+                            if (sp != null) {
+                                PaperLib.teleportAsync(p, sp);
+                            } else {
+                                plugin.logWarning("Spawn exists but its location is null!");
+                            }
                         }
                     }
                 });
@@ -1925,7 +1930,7 @@ public class IslandsManager {
                 Island highestIsland = null;
                 for (Island i : en.getValue()) {
                     int rankValue = i.getRank(en.getKey());
-                    String rank = plugin.getRanksManager().getRank(rankValue);
+                    String rank = RanksManager.getInstance().getRank(rankValue);
                     if (rankValue > highestRank || highestIsland == null) {
                         highestRank = rankValue;
                         highestIsland = i;
@@ -1937,7 +1942,7 @@ public class IslandsManager {
                 }
                 // Fix island ownership in cache
                 // Correct island cache
-                if (highestRank == RanksManager.OWNER_RANK
+                if (highestRank == RanksManager.OWNER_RANK && highestIsland != null
                         && islandCache.getIslandById(highestIsland.getUniqueId()) != null) {
                     islandCache.setOwner(islandCache.getIslandById(highestIsland.getUniqueId()), en.getKey());
                 }

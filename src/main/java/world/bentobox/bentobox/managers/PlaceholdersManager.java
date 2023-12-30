@@ -95,7 +95,7 @@ public class PlaceholdersManager {
                     int j = 1;
                     for (UUID uuid : island.getMemberSet(RanksManager.MEMBER_RANK)) {
                         if (j++ == count) {
-                            return user.getTranslationOrNothing(plugin.getRanksManager().getRank(island.getRank(uuid)));
+                            return user.getTranslationOrNothing(RanksManager.getInstance().getRank(island.getRank(uuid)));
                         }
                     }
                 }
@@ -140,7 +140,7 @@ public class PlaceholdersManager {
                                 int j = 1;
                                 for (UUID uuid : island.getMemberSet(RanksManager.MEMBER_RANK)) {
                                     if (j++ == count) {
-                                        return user.getTranslationOrNothing(plugin.getRanksManager().getRank(island.getRank(uuid)));
+                                        return user.getTranslationOrNothing(RanksManager.getInstance().getRank(island.getRank(uuid)));
                                     }
                                 }
                                 return "";

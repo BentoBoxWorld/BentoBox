@@ -81,15 +81,14 @@ public class CycleClick implements PanelItem.ClickHandler {
         // Shift Left Click toggles player visibility
         if (island != null && (user.isOp() || island.isAllowed(user, Flags.CHANGE_SETTINGS) || user.hasPermission(prefix + "admin.settings"))) {
             changeOccurred = true;
-            RanksManager rm = plugin.getRanksManager();
             plugin.getFlagsManager().getFlag(id).ifPresent(flag -> {
                 // Rank
                 int currentRank = island.getFlag(flag);
                 if (click.equals(ClickType.LEFT)) {
-                    leftClick(flag, rm, currentRank);
+                    leftClick(flag, currentRank);
 
                 } else if (click.equals(ClickType.RIGHT)) {
-                    rightClick(flag, rm, currentRank);
+                    rightClick(flag, currentRank);
 
                 } else if (click.equals(ClickType.SHIFT_LEFT) && user2.isOp()) {
                     leftShiftClick(flag);
@@ -109,16 +108,16 @@ public class CycleClick implements PanelItem.ClickHandler {
             // Player is not the allowed to change settings.
             user.sendMessage("general.errors.insufficient-rank",
                     TextVariables.RANK,
-                    user.getTranslation(plugin.getRanksManager().getRank(Objects.requireNonNull(island).getRank(user))));
+                    user.getTranslation(RanksManager.getInstance().getRank(Objects.requireNonNull(island).getRank(user))));
         }
         user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_METAL_HIT, 1F, 1F);
     }
 
-    private void leftClick(Flag flag, RanksManager rm, int currentRank) {
+    private void leftClick(Flag flag, int currentRank) {
         if (currentRank >= maxRank) {
             island.setFlag(flag, minRank);
         } else {
-            island.setFlag(flag, rm.getRankUpValue(currentRank));
+            island.setFlag(flag, RanksManager.getInstance().getRankUpValue(currentRank));
         }
         user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_OFF, 1F, 1F);
         // Fire event
@@ -132,11 +131,11 @@ public class CycleClick implements PanelItem.ClickHandler {
 
     }
 
-    private void rightClick(Flag flag, RanksManager rm, int currentRank) {
+    private void rightClick(Flag flag, int currentRank) {
         if (currentRank <= minRank) {
             island.setFlag(flag, maxRank);
         } else {
-            island.setFlag(flag, rm.getRankDownValue(currentRank));
+            island.setFlag(flag, RanksManager.getInstance().getRankDownValue(currentRank));
         }
         user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 1F, 1F);
         // Fire event

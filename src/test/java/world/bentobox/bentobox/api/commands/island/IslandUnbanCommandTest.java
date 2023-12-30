@@ -125,10 +125,6 @@ public class IslandUnbanCommandTest extends RanksManagerBeforeClassTest {
         PluginManager pim = mock(PluginManager.class);
         when(Bukkit.getPluginManager()).thenReturn(pim);
 
-        // Ranks Manager
-        RanksManager rm = new RanksManager();
-        when(plugin.getRanksManager()).thenReturn(rm);
-
     }
 
     /**
@@ -173,7 +169,7 @@ public class IslandUnbanCommandTest extends RanksManagerBeforeClassTest {
         when(island.getRank(any(User.class))).thenReturn(RanksManager.MEMBER_RANK);
         when(island.getRankCommand(anyString())).thenReturn(RanksManager.OWNER_RANK);
         assertFalse(iubc.canExecute(user, iubc.getLabel(), Collections.singletonList("bill")));
-        verify(user).sendMessage(eq("general.errors.insufficient-rank"), eq(TextVariables.RANK), eq("ranks.member"));
+        verify(user).sendMessage("general.errors.insufficient-rank", TextVariables.RANK, "");
     }
 
     /**

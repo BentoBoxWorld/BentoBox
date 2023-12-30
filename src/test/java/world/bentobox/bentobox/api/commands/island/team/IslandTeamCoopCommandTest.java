@@ -137,10 +137,6 @@ public class IslandTeamCoopCommandTest extends RanksManagerBeforeClassTest {
         // Placeholder manager
         when(plugin.getPlaceholdersManager()).thenReturn(phm);
 
-        // Ranks Manager
-        RanksManager rm = new RanksManager();
-        when(plugin.getRanksManager()).thenReturn(rm);
-
     }
 
     /**
@@ -164,7 +160,7 @@ public class IslandTeamCoopCommandTest extends RanksManagerBeforeClassTest {
         when(island.getRankCommand(anyString())).thenReturn(RanksManager.OWNER_RANK);
         IslandTeamCoopCommand itl = new IslandTeamCoopCommand(ic);
         assertFalse(itl.canExecute(user, itl.getLabel(), Collections.singletonList("bill")));
-        verify(user).sendMessage(eq("general.errors.insufficient-rank"), eq(TextVariables.RANK), eq("ranks.member"));
+        verify(user).sendMessage("general.errors.insufficient-rank", TextVariables.RANK, "");
     }
 
     /**

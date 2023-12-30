@@ -45,7 +45,7 @@ public class IslandTeamKickCommand extends ConfirmableCommand {
         int rank = Objects.requireNonNull(island).getRank(user);
         if (rank < island.getRankCommand(getUsage())) {
             user.sendMessage("general.errors.insufficient-rank", TextVariables.RANK,
-                    user.getTranslation(getPlugin().getRanksManager().getRank(rank)));
+                    user.getTranslation(RanksManager.getInstance().getRank(rank)));
             return false;
         }
         // If args are not right, show help

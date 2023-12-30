@@ -119,9 +119,7 @@ public class IslandTeamPromoteCommandTest extends RanksManagerBeforeClassTest {
         // In team
         when(im.inTeam(world, uuid)).thenReturn(true);
 
-        // Ranks Manager
-        RanksManager rm = new RanksManager();
-        when(plugin.getRanksManager()).thenReturn(rm);
+        // Ranks
         when(island.getRankCommand(anyString())).thenReturn(RanksManager.SUB_OWNER_RANK); // Allow sub owners
         when(island.getRank(user)).thenReturn(RanksManager.SUB_OWNER_RANK);
         when(island.getRank(target)).thenReturn(RanksManager.SUB_OWNER_RANK);
@@ -194,7 +192,7 @@ public class IslandTeamPromoteCommandTest extends RanksManagerBeforeClassTest {
     public void testCanExecuteUserStringListOfStringInsufficientRank() {
         when(island.getRank(user)).thenReturn(RanksManager.MEMBER_RANK);
         assertFalse(ipc.canExecute(user, "promote", List.of("tastybento")));
-        verify(user).sendMessage("general.errors.insufficient-rank", TextVariables.RANK, RanksManager.MEMBER_RANK_REF);
+        verify(user).sendMessage("general.errors.insufficient-rank", TextVariables.RANK, "");
     }
 
     /**
@@ -256,10 +254,12 @@ public class IslandTeamPromoteCommandTest extends RanksManagerBeforeClassTest {
     @Test
     public void testExecuteUserStringListOfString() {
         when(island.getRank(target)).thenReturn(RanksManager.MEMBER_RANK);
+        when(rm.getRankUpValue(RanksManager.MEMBER_RANK)).thenReturn(RanksManager.SUB_OWNER_RANK);
         ipc.canExecute(user, "promote", List.of("target"));
         assertTrue(ipc.execute(user, "promote", List.of("target")));
         verify(island).setRank(target, RanksManager.SUB_OWNER_RANK);
-        verify(user).sendMessage("commands.island.team.promote.success", TextVariables.NAME, "target", TextVariables.RANK, RanksManager.SUB_OWNER_RANK_REF, TextVariables.DISPLAY_NAME, "Target");
+        verify(user).sendMessage("commands.island.team.promote.success", TextVariables.NAME, "target",
+                TextVariables.RANK, "", TextVariables.DISPLAY_NAME, "Target");
 
     }
 

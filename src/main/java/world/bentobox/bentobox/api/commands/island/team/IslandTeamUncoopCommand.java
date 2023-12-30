@@ -55,7 +55,7 @@ public class IslandTeamUncoopCommand extends CompositeCommand {
         int rank = Objects.requireNonNull(island).getRank(user);
         if (rank < island.getRankCommand(getUsage())) {
             user.sendMessage("general.errors.insufficient-rank", TextVariables.RANK,
-                    user.getTranslation(getPlugin().getRanksManager().getRank(rank)));
+                    user.getTranslation(RanksManager.getInstance().getRank(rank)));
             return false;
         }
         // Get target player

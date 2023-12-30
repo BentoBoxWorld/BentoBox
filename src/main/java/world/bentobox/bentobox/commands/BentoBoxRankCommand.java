@@ -20,7 +20,6 @@ public class BentoBoxRankCommand extends CompositeCommand {
     private static final String REMOVE = "remove";
     private int rankValue;
     private String firstElement;
-    private final RanksManager rm;
 
     /**
      * Rank management. Add and remove
@@ -29,7 +28,6 @@ public class BentoBoxRankCommand extends CompositeCommand {
      */
     public BentoBoxRankCommand(CompositeCommand parent) {
         super(parent, "rank");
-        rm = getPlugin().getRanksManager();
     }
 
     @Override
@@ -93,7 +91,7 @@ public class BentoBoxRankCommand extends CompositeCommand {
             return true;
         }
         if ("add".equals(firstElement)) {
-            if (rm.addRank(args.get(1), rankValue)) {
+            if (RanksManager.getInstance().addRank(args.get(1), rankValue)) {
                 user.sendMessage("commands.bentobox.rank.add.success", TextVariables.RANK, args.get(1),
                         TextVariables.NUMBER, String.valueOf(rankValue));
                 showRanks(user);
@@ -103,7 +101,7 @@ public class BentoBoxRankCommand extends CompositeCommand {
                 return false;
             }
         } else {
-            if (rm.removeRank(args.get(1))) {
+            if (RanksManager.getInstance().removeRank(args.get(1))) {
                 user.sendMessage("commands.bentobox.rank.remove.success", TextVariables.RANK, args.get(1));
                 showRanks(user);
             } else {
@@ -116,7 +114,7 @@ public class BentoBoxRankCommand extends CompositeCommand {
 
     private void showRanks(User user) {
         user.sendMessage("commands.bentobox.rank.list");
-        rm.getRanks().forEach((ref, rank) -> {
+        RanksManager.getInstance().getRanks().forEach((ref, rank) -> {
             user.sendRawMessage(user.getTranslation(ref) + ": " + ref + " " + String.valueOf(rank));
         });
 
@@ -133,11 +131,11 @@ public class BentoBoxRankCommand extends CompositeCommand {
         }
         if (args.size() > 1 && "add".equals(firstElement)) {
             List<String> options = new ArrayList<>(RanksManager.DEFAULT_RANKS.keySet());
-            options.removeIf(rm.getRanks().keySet()::contains);
+            options.removeIf(RanksManager.getInstance().getRanks().keySet()::contains);
             return Optional.of(options);
         }
         if (args.size() > 1 && REMOVE.equals(firstElement)) {
-            return Optional.of(new ArrayList<>(rm.getRanks().keySet()));
+            return Optional.of(new ArrayList<>(RanksManager.getInstance().getRanks().keySet()));
         }
         return Optional.empty();
 

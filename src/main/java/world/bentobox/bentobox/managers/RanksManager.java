@@ -41,16 +41,32 @@ public class RanksManager {
     public static final int BANNED_RANK = -1;
 
     // The store of ranks
-    private LinkedHashMap<String, Integer> ranks = new LinkedHashMap<>();
+    private static LinkedHashMap<String, Integer> ranks = new LinkedHashMap<>();
     public static final Map<String, Integer> DEFAULT_RANKS = Map.of(ADMIN_RANK_REF, ADMIN_RANK, MOD_RANK_REF, MOD_RANK,
             OWNER_RANK_REF, OWNER_RANK, SUB_OWNER_RANK_REF, SUB_OWNER_RANK, MEMBER_RANK_REF, MEMBER_RANK,
             TRUSTED_RANK_REF, TRUSTED_RANK, COOP_RANK_REF, COOP_RANK, VISITOR_RANK_REF, VISITOR_RANK, BANNED_RANK_REF,
             BANNED_RANK);
 
     @NonNull
-    private Database<Ranks> handler;
+    private static Database<Ranks> handler;
+    private static RanksManager instance;
 
-    public RanksManager() {
+    // Private constructor for singleton
+    private RanksManager() {
+        handler = new Database<>(BentoBox.getInstance(), Ranks.class);
+        ranks = new LinkedHashMap<>();
+        loadRanksFromDatabase();
+    }
+
+    // Public method to get the singleton instance
+    public static synchronized RanksManager getInstance() {
+        if (instance == null) {
+            instance = new RanksManager();
+        }
+        return instance;
+    }
+
+    public void loadRanksFromDatabase() {
         // Set up the database handler to store and retrieve Island classes
         handler = new Database<>(BentoBox.getInstance(), Ranks.class);
         if (!handler.objectExists(Ranks.ID)) {
@@ -59,7 +75,8 @@ public class RanksManager {
             handler.saveObject(new Ranks(ranks));
         } else {
             // Load the ranks from the database
-            Objects.requireNonNull(handler.loadObject(Ranks.ID)).getRankReference().forEach(this::ranksPut);
+            Objects.requireNonNull(handler.loadObject(Ranks.ID)).getRankReference()
+                    .forEach((rankRef, rankValue) -> ranksPut(rankRef, rankValue));
         }
 
     }

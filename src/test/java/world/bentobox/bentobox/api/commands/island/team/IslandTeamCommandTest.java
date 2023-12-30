@@ -123,10 +123,6 @@ public class IslandTeamCommandTest extends RanksManagerBeforeClassTest {
         when(plugin.getIWM()).thenReturn(iwm);
         when(iwm.getPermissionPrefix(any())).thenReturn("bskyblock.");
 
-        // RanksManager
-        RanksManager rm = new RanksManager();
-        when(plugin.getRanksManager()).thenReturn(rm);
-
         // Command under test
         tc = new IslandTeamCommand(ic);
     }

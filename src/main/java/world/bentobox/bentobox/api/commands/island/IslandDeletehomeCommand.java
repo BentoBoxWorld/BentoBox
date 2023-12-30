@@ -57,7 +57,7 @@ public class IslandDeletehomeCommand extends ConfirmableCommand {
         int rank = Objects.requireNonNull(island).getRank(user);
         if (rank < island.getRankCommand(getUsage())) {
             user.sendMessage("general.errors.insufficient-rank",
-                    TextVariables.RANK, user.getTranslation(getPlugin().getRanksManager().getRank(rank)));
+                    TextVariables.RANK, user.getTranslation(RanksManager.getInstance().getRank(rank)));
             return false;
         }
 

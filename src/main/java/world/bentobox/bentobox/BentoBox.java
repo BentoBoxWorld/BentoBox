@@ -71,7 +71,6 @@ public class BentoBox extends JavaPlugin implements Listener {
     private AddonsManager addonsManager;
     private FlagsManager flagsManager;
     private IslandWorldManager islandWorldManager;
-    private RanksManager ranksManager;
     private BlueprintsManager blueprintsManager;
     private HooksManager hooksManager;
     private PlaceholdersManager placeholdersManager;
@@ -139,7 +138,6 @@ public class BentoBox extends JavaPlugin implements Listener {
             return;
         }
         islandsManager = new IslandsManager(this);
-        ranksManager = new RanksManager();
 
         // Start head getter
         headGetter = new HeadGetter(this);
@@ -427,9 +425,11 @@ public class BentoBox extends JavaPlugin implements Listener {
 
     /**
      * @return the ranksManager
+     * @deprecated Just use {@code RanksManager.getInstance()}
      */
+    @Deprecated(since = "2.0.0")
     public RanksManager getRanksManager() {
-        return ranksManager;
+        return RanksManager.getInstance();
     }
 
     /**

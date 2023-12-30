@@ -54,7 +54,8 @@ public class IslandTeamPromoteCommand extends CompositeCommand {
         Island island = getIslands().getIsland(getWorld(), user);
         int rank = Objects.requireNonNull(island).getRank(user);
         if (rank < island.getRankCommand(getUsage())) {
-            user.sendMessage("general.errors.insufficient-rank", TextVariables.RANK, user.getTranslation(getPlugin().getRanksManager().getRank(rank)));
+            user.sendMessage("general.errors.insufficient-rank", TextVariables.RANK,
+                    user.getTranslation(RanksManager.getInstance().getRank(rank)));
             return false;
         }
 
@@ -97,11 +98,11 @@ public class IslandTeamPromoteCommand extends CompositeCommand {
         Island island = getIslands().getIsland(getWorld(), user);
         int currentRank = island.getRank(target);
         if (this.getLabel().equals("promote")) {
-            int nextRank = getPlugin().getRanksManager().getRankUpValue(currentRank);
+            int nextRank = RanksManager.getInstance().getRankUpValue(currentRank);
             // Stop short of owner
             if (nextRank != RanksManager.OWNER_RANK && nextRank > currentRank) {
                 island.setRank(target, nextRank);
-                String rankName = user.getTranslation(getPlugin().getRanksManager().getRank(nextRank));
+                String rankName = user.getTranslation(RanksManager.getInstance().getRank(nextRank));
                 user.sendMessage("commands.island.team.promote.success", TextVariables.NAME, target.getName(), TextVariables.RANK, rankName, TextVariables.DISPLAY_NAME, target.getDisplayName());
                 IslandEvent.builder()
                 .island(island)
@@ -117,11 +118,11 @@ public class IslandTeamPromoteCommand extends CompositeCommand {
             }
         } else {
             // Demote
-            int prevRank = getPlugin().getRanksManager().getRankDownValue(currentRank);
+            int prevRank = RanksManager.getInstance().getRankDownValue(currentRank);
             // Lowest is Member
             if (prevRank >= RanksManager.MEMBER_RANK && prevRank < currentRank) {
                 island.setRank(target, prevRank);
-                String rankName = user.getTranslation(getPlugin().getRanksManager().getRank(prevRank));
+                String rankName = user.getTranslation(RanksManager.getInstance().getRank(prevRank));
                 user.sendMessage("commands.island.team.demote.success", TextVariables.NAME, target.getName(), TextVariables.RANK, rankName, TextVariables.DISPLAY_NAME, target.getDisplayName());
                 IslandEvent.builder()
                 .island(island)

@@ -175,7 +175,7 @@ public class AdminSettingsCommand extends CompositeCommand {
      * @return true if rank is valid
      */
     private boolean checkRank(User user, String string) {
-        for (Entry<String, Integer> en : getPlugin().getRanksManager().getRanks().entrySet()) {
+        for (Entry<String, Integer> en : RanksManager.getInstance().getRanks().entrySet()) {
             if (en.getValue() > RanksManager.BANNED_RANK && en.getValue() <= RanksManager.OWNER_RANK
                     && string.equalsIgnoreCase(ChatColor.stripColor(user.getTranslation(en.getKey())))) {
                 // We have a winner
@@ -277,8 +277,7 @@ public class AdminSettingsCommand extends CompositeCommand {
         } else if (args.size() == 4) {
             // Get flag in previous argument
             options = getPlugin().getFlagsManager().getFlag(args.get(2).toUpperCase(Locale.ENGLISH)).map(f -> switch (f.getType()) {
-            case PROTECTION -> getPlugin().getRanksManager()
-            .getRanks().entrySet().stream()
+            case PROTECTION -> RanksManager.getInstance().getRanks().entrySet().stream()
             .filter(en -> en.getValue() > RanksManager.BANNED_RANK && en.getValue() <= RanksManager.OWNER_RANK)
             .map(Entry::getKey)
             .map(user::getTranslation).toList();

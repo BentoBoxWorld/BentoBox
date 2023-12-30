@@ -17,6 +17,7 @@ import world.bentobox.bentobox.api.panels.TabbedPanel;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.Flags;
+import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.panels.settings.SettingsTab;
 import world.bentobox.bentobox.util.Util;
 
@@ -112,7 +113,7 @@ public class IslandToggleClick implements ClickHandler {
             // Player is not the allowed to change settings.
             user.sendMessage("general.errors.insufficient-rank",
                     TextVariables.RANK,
-                    user.getTranslation(plugin.getRanksManager().getRank(Objects.requireNonNull(island).getRank(user))));
+                    user.getTranslation(RanksManager.getInstance().getRank(Objects.requireNonNull(island).getRank(user))));
         }
 
         user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_METAL_HIT, 1F, 1F);

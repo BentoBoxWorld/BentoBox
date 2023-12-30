@@ -79,14 +79,14 @@ public class IslandTeamInviteCommand extends CompositeCommand {
     }
 
     private boolean checkRankAndInvitePlayer(User user, Island island, int rank, String playerName) {
-        RanksManager ranksManager = getPlugin().getRanksManager();
         PlayersManager playersManager = getPlayers();
         UUID playerUUID = user.getUniqueId();
 
         // Check rank to use command
         int requiredRank = island.getRankCommand(getUsage());
         if (rank < requiredRank) {
-            user.sendMessage("general.errors.insufficient-rank", TextVariables.RANK, user.getTranslation(ranksManager.getRank(rank)));
+            user.sendMessage("general.errors.insufficient-rank", TextVariables.RANK,
+                    user.getTranslation(RanksManager.getInstance().getRank(rank)));
             return false;
         }
 

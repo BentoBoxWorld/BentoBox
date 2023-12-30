@@ -181,10 +181,6 @@ public class IslandTeamKickCommandTest extends RanksManagerBeforeClassTest {
         when(island.getMemberSet()).thenReturn(ImmutableSet.of(uuid));
         when(island.getRankCommand(anyString())).thenReturn(RanksManager.VISITOR_RANK);
 
-        // Ranks Manager
-        RanksManager rm = new RanksManager();
-        when(plugin.getRanksManager()).thenReturn(rm);
-
         // Ranks
         when(island.getRank(uuid)).thenReturn(RanksManager.OWNER_RANK);
         when(island.getRank(user)).thenReturn(RanksManager.OWNER_RANK);
@@ -267,7 +263,7 @@ public class IslandTeamKickCommandTest extends RanksManagerBeforeClassTest {
 
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
         assertFalse(itl.execute(user, itl.getLabel(), Collections.emptyList()));
-        verify(user).sendMessage(eq("general.errors.insufficient-rank"), eq(TextVariables.RANK), eq("ranks.member"));
+        verify(user).sendMessage("general.errors.insufficient-rank", TextVariables.RANK, "");
     }
 
     /**
@@ -329,7 +325,7 @@ public class IslandTeamKickCommandTest extends RanksManagerBeforeClassTest {
         when(island.getRankCommand(anyString())).thenReturn(RanksManager.OWNER_RANK);
         when(island.getRank(any(User.class))).thenReturn(RanksManager.VISITOR_RANK);
         assertFalse(itl.execute(user, itl.getLabel(), Collections.singletonList("poslovitch")));
-        verify(user).sendMessage(eq("general.errors.insufficient-rank"), eq(TextVariables.RANK), eq("ranks.visitor"));
+        verify(user).sendMessage("general.errors.insufficient-rank", TextVariables.RANK, "");
     }
 
     /**

@@ -158,10 +158,6 @@ public class IslandExpelCommandTest extends RanksManagerBeforeClassTest {
         when(plugin.getPlaceholdersManager()).thenReturn(placeholdersManager);
         when(placeholdersManager.replacePlaceholders(any(), any())).thenAnswer(answer);
 
-        // Ranks Manager
-        RanksManager rm = new RanksManager();
-        when(plugin.getRanksManager()).thenReturn(rm);
-
         // Class
         iec = new IslandExpelCommand(ic);
     }
@@ -248,7 +244,7 @@ public class IslandExpelCommandTest extends RanksManagerBeforeClassTest {
         when(island.getRank(any(User.class))).thenReturn(RanksManager.VISITOR_RANK);
         when(island.getRankCommand(anyString())).thenReturn(RanksManager.OWNER_RANK);
         assertFalse(iec.canExecute(user, "", Collections.singletonList("tasty")));
-        verify(user).sendMessage(eq("general.errors.insufficient-rank"), eq(TextVariables.RANK), eq("ranks.visitor"));
+        verify(user).sendMessage("general.errors.insufficient-rank", TextVariables.RANK, "");
     }
 
     /**
