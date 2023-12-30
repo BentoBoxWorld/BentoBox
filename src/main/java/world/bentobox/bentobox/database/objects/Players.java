@@ -298,7 +298,7 @@ public class Players implements DataObject, MetaDataAble {
      * @param world - world
      */
     public void addReset(World world) {
-        resets.merge(world.getName(), 1, Integer::sum);
+        resets.merge(world.getName(), 1, (oldValue, newValue) -> Integer.valueOf(oldValue + newValue));
     }
 
     /**
