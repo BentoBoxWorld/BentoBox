@@ -118,12 +118,10 @@ public class AdminTeleportCommand extends CompositeCommand {
 
     private Location getSpot(World world) {
         Island island = getIslands().getIsland(world, targetUUID);
-        if (island != null && island.getSpawnPoint(world.getEnvironment()) != null) {
-            // Return the defined spawn point
-            return island.getSpawnPoint(world.getEnvironment());
+        if (island == null) {
+            return null;
         }
-        // Return the default island protection center
-        return island.getProtectionCenter().toVector().toLocation(world);
+        return island.getSpawnPoint(world.getEnvironment()) != null ? island.getSpawnPoint(world.getEnvironment()) : island.getProtectionCenter().toVector().toLocation(world);
     }
 
     @Override
