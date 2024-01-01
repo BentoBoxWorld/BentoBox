@@ -21,9 +21,9 @@ team_panel:
   # The content section contains details of each item/button in the panel. The numbers indicate the rows and then then columns of each item.
   content:
     # Row number
-    1:
+    0:
       # Column number
-      2:
+      1:
         # The data section is a key-value list of data relavent for this button. It is interpreted by the code implemented the panel.
         # The convention is to specify the type and the panel tab that will open if pressed. These are Enums in the code.
         data:
@@ -37,14 +37,15 @@ team_panel:
             click-type: UNKNOWN
             # tooltip is a locale reference that will be translated for the user and shown when they hover over the button.
             tooltip: commands.island.team.gui.tips.click-to-view
-      4:
-        # Invite member
+      3:
+        # Change rank
         data:
-          type: INVITE
+          type: RANK
         actions:
           add:
             click-type: LEFT
-            tooltip: commands.island.team.gui.tips.click-to-invite
+            tooltip: commands.island.team.gui.tips.click-to-change-rank
+      
     2:
       2: member_button
       3: member_button

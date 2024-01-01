@@ -136,13 +136,34 @@ public class IslandTeamCommand extends CompositeCommand {
         panelBuilder.registerTypeBuilder("STATUS", this::createStatusButton);
         panelBuilder.registerTypeBuilder("MEMBER", this::createMemberButton);
         panelBuilder.registerTypeBuilder("INVITE", this::createInviteButton);
-        //panelBuilder.registerTypeBuilder("RANK", this::createRankButton);
+        panelBuilder.registerTypeBuilder("RANK", this::createRankButton);
         //panelBuilder.registerTypeBuilder("KICK", this::createKickButton);
 
         // Register unknown type builder.
         panelBuilder.build();
     }
 
+    private PanelItem createRankButton(ItemTemplateRecord template, TemplatedPanel.ItemSlot slot) {
+        PanelItemBuilder builder = new PanelItemBuilder();
+        builder.name("Rank");
+        builder.icon(Material.AMETHYST_SHARD);
+        builder.description("Rank shown = " + user.getTranslation(RanksManager.getInstance().getRank(rank)));
+        builder.clickHandler((panel, user, clickType, clickSlot) -> {
+            BentoBox.getInstance().logDebug("Rank = " + rank);
+            if (clickType.equals(ClickType.RIGHT)) {
+                rank = RanksManager.getInstance().getRankDownValue(rank);
+
+            } else {
+                rank = RanksManager.getInstance().getRankUpValue(rank);
+            }
+            BentoBox.getInstance().logDebug("New Rank = " + rank);
+            // Update panel after click
+            build();
+            return true;
+        });
+
+        return builder.build();
+    }
     /**
      * Create invite button panel item.
      *
@@ -198,21 +219,20 @@ public class IslandTeamCommand extends CompositeCommand {
         }
         return switch (rank) {
         case RanksManager.OWNER_RANK -> ownerView(template, slot);
-        default -> generalView(template, slot, rank);
+        default -> getMemberButton(rank, slot.slot(), template.actions());
         };
     }
 
-    private PanelItem generalView(ItemTemplateRecord template, ItemSlot slot, int rank2) {
-        getMemberButton(RanksManager.MEMBER_RANK_REF, RanksManager.MEMBER_RANK,
-                island.getMemberSet(rank2, false).size(), slot.slot(), template.actions());
-        return null;
-    }
-
+    /**
+     * The owner view shows all the ranks, in order
+     * @param template template reference
+     * @param slot slot to show
+     * @return panel item
+     */
     private PanelItem ownerView(ItemTemplateRecord template, ItemSlot slot) {
         if (slot.slot() == 0 && island.getOwner() != null) {
             // Owner
-            PanelItem item = getMemberButton(RanksManager.OWNER_RANK_REF, RanksManager.OWNER_RANK, 1, 1,
-                    template.actions());
+            PanelItem item = getMemberButton(RanksManager.OWNER_RANK, 1, template.actions());
             if (item != null) {
                 return item;
             }
@@ -224,8 +244,7 @@ public class IslandTeamCommand extends CompositeCommand {
 
         if (slot.slot() > 0 && slot.slot() < subOwnerCount + 1) {
             // Show sub owners
-            PanelItem item = getMemberButton(RanksManager.SUB_OWNER_RANK_REF, RanksManager.SUB_OWNER_RANK,
-                    subOwnerCount, slot.slot(), template.actions());
+            PanelItem item = getMemberButton(RanksManager.SUB_OWNER_RANK, slot.slot(), template.actions());
             if (item != null) {
                 return item;
             }
@@ -233,16 +252,14 @@ public class IslandTeamCommand extends CompositeCommand {
         }
         if (slot.slot() > subOwnerCount && slot.slot() < subOwnerCount + memberCount + 1) {
             // Show members 
-            PanelItem item = getMemberButton(RanksManager.MEMBER_RANK_REF, RanksManager.MEMBER_RANK, memberCount,
-                    slot.slot(), template.actions());
+            PanelItem item = getMemberButton(RanksManager.MEMBER_RANK, slot.slot(), template.actions());
             if (item != null) {
                 return item;
             }
         }
         if (slot.slot() > subOwnerCount + memberCount && slot.slot() < subOwnerCount + memberCount + trustedCount + 1) {
             // Show trusted
-            PanelItem item = getMemberButton(RanksManager.TRUSTED_RANK_REF, RanksManager.TRUSTED_RANK, trustedCount,
-                    slot.slot(), template.actions());
+            PanelItem item = getMemberButton(RanksManager.TRUSTED_RANK, slot.slot(), template.actions());
             if (item != null) {
                 return item;
             }
@@ -251,8 +268,7 @@ public class IslandTeamCommand extends CompositeCommand {
         if (slot.slot() > subOwnerCount + memberCount + trustedCount
                 && slot.slot() < subOwnerCount + memberCount + trustedCount + coopCount + 1) {
             // Show coops
-            PanelItem item = getMemberButton(RanksManager.COOP_RANK_REF, RanksManager.COOP_RANK, coopCount,
-                    slot.slot(), template.actions());
+            PanelItem item = getMemberButton(RanksManager.COOP_RANK, slot.slot(), template.actions());
             if (item != null) {
                 return item;
             }
@@ -262,8 +278,21 @@ public class IslandTeamCommand extends CompositeCommand {
 
     }
 
-    private PanelItem getMemberButton(String ref, int rank, long count, int slot, List<ActionRecords> actions) {
-        User player = island.getMemberSet(rank, false).stream().sorted().skip(slot - 1).limit(1L)
+    /**
+     * Shows a member's head
+     * @param rank - the rank to show
+     * @param slot - the slot number
+     * @param actions - actions that need to apply to this member button as provided by the template
+     * @return panel item
+     */
+    private PanelItem getMemberButton(int rank, int slot, List<ActionRecords> actions) {
+        if (slot == 0 && island.getOwner() != null) {
+            // Owner
+            return getMemberButton(RanksManager.OWNER_RANK, 1, actions);
+        }
+        long count = island.getMemberSet(rank, false).size();
+        String ref = RanksManager.getInstance().getRank(rank);
+        User player = island.getMemberSet(rank, false).stream().sorted().skip(slot - 1L).limit(1L)
                 .map(User::getInstance).findFirst().orElse(null);
         if (player != null) {
             if (player.isOnline()) {
