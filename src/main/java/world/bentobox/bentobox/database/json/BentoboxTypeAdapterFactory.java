@@ -3,6 +3,7 @@ package world.bentobox.bentobox.database.json;
 import java.util.Map;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Biome;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -23,6 +24,7 @@ import world.bentobox.bentobox.database.json.adapters.EnumTypeAdapter;
 import world.bentobox.bentobox.database.json.adapters.FlagTypeAdapter;
 import world.bentobox.bentobox.database.json.adapters.ItemStackTypeAdapter;
 import world.bentobox.bentobox.database.json.adapters.LocationTypeAdapter;
+import world.bentobox.bentobox.database.json.adapters.MaterialTypeAdapter;
 import world.bentobox.bentobox.database.json.adapters.PotionEffectTypeAdapter;
 import world.bentobox.bentobox.database.json.adapters.VectorTypeAdapter;
 import world.bentobox.bentobox.database.json.adapters.WorldTypeAdapter;
@@ -55,6 +57,8 @@ public class BentoboxTypeAdapterFactory implements TypeAdapterFactory {
         if (Location.class.isAssignableFrom(rawType)) {
             // Use our current location adapter for backward compatibility
             return (TypeAdapter<T>) new LocationTypeAdapter();
+        } else if (Material.class.isAssignableFrom(rawType)) {
+            return (TypeAdapter<T>) new MaterialTypeAdapter();
         } else if (Biome.class.isAssignableFrom(rawType)) {
             return (TypeAdapter<T>) new BiomeTypeAdapter();
         } else if (Enum.class.isAssignableFrom(rawType)) {
