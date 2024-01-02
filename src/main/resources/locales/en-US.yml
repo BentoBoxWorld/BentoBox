@@ -1742,6 +1742,38 @@ panel:
 
         &a Allow BentoBox to connect to GitHub in
         &a the configuration or try again later.
+
+# This section contains values for BentoBox panels.
+panels:
+  # The section of translations used in Island Creation Panel
+  island_creation:
+    title: "&a&l Pick an island"
+    buttons:
+      # This button is used for displaying blueprint bundle in the island creation panel.
+      bundle:
+        name: "&l [name]"
+        description: |-
+          [description]
+  # The set of common buttons used in multiple panels.
+  buttons:
+    # Button that is used in multi-page GUIs which allows to return to previous page.
+    previous:
+      name: "&f&l Previous Page"
+      description: |-
+        &7 Switch to [number] page
+    # Button that is used in multi-page GUIs which allows to go to next page.
+    next:
+      name: "&f&l Next Page"
+      description: |-
+        &7 Switch to [number] page
+  tips:
+    click-to-next: "&e Click &7 for next."
+    click-to-previous: "&e Click &7 for previous."
+    click-to-choose: "&e Click &7 to select."
+    click-to-toggle: "&e Click &7 to toggle."
+    left-click-to-cycle-down: "&e Left Click &7 to cycle downwards."
+    right-click-to-cycle-up: "&e Right Click &7 to cycle upwards."
+
 successfully-loaded: |2
 
   &6   ____             _        ____
